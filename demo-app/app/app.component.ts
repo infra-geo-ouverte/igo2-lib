@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'demo-root',
+  selector: 'igo-demo',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.styl']
 })
 export class AppComponent {
-  title = 'demo works!';
+  public searchTerm: string;
+
+  handleSearch(term: string) {
+    this.searchTerm = term;
+  }
 }

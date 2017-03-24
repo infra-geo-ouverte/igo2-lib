@@ -1,15 +1,17 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
+import { MaterialModule } from '@angular/material';
 
-import { SearchModule } from './search/index';
+import { IgoSearchModule } from './search/index';
 
-const MATERIAL_MODULES = [
-  SearchModule
+const IGO_MODULES = [
+  IgoSearchModule
 ];
 
 @NgModule({
   imports: [
-    SearchModule.forRoot()
+    MaterialModule.forRoot(),
+    IgoSearchModule
   ],
-  exports: MATERIAL_MODULES,
+  exports: IGO_MODULES
 })
-export class MaterialRootModule { }
+export class IgoModule { }

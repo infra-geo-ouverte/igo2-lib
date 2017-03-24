@@ -1,3 +1,11 @@
-<h1>
-  {{title}}
-</h1>
+<md-card>
+  <md-card-subtitle>Search module</md-card-subtitle>
+  <md-card-title>search-bar.component</md-card-title>   
+  <md-card-content>
+    <igo-search-bar
+      [placeholder]="'Search'"
+      (search)="handleSearch($event)">
+    </igo-search-bar>
+    <p>Searching for: {{searchTerm}}</p>
+  </md-card-content>
+</md-card>
