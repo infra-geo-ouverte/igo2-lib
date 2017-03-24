@@ -17,7 +17,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   set term(value: string) {
     this._term = value;
   }
-  private _term: string;
+  private _term: string = '';
 
   @Input()
   get placeholder() { return this._placeholder; }
@@ -32,6 +32,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this._disabled = value;
   }
   private _disabled: boolean = false;
+
+  @Input()
+  get buttonColor() { return this._buttonColor; }
+  set buttonColor(value: string) {
+    this._buttonColor = value;
+  }
+  private _buttonColor: string = 'primary';
 
   @Input()
   get debounce() { return this._debounce; }
@@ -73,10 +80,17 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (this.disabled) { return; }
 
     const term = (event.target as HTMLInputElement).value;
+    this.term = term;
+
     if (this.keyIsValid(term) &&
         (term.length >= this.length || term.length === 0)) {
       this._stream$.next(term);
     }
+  }
+
+  clear() {
+    this.term = '';
+    this._stream$.next(this.term);
   }
 
   private keyIsValid(key: string) {

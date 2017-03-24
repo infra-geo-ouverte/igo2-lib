@@ -6,10 +6,12 @@
     [placeholder]="placeholder"
     [ngModel]="term"
     (keyup)="keyup($event)">
-  <button
-    md-icon-button
-    (click)="clear()"
-    *ngIf="term">
-    <md-icon>clear</md-icon>
-  </button>
 </md-input-container>
+
+<button
+  md-icon-button
+  [color]="buttonColor"
+  (click)="clear()"
+  *ngIf="term.length > 0 ? true : false">
+  <md-icon>clear</md-icon>
+</button>
