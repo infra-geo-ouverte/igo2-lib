@@ -7,6 +7,9 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/throw';
 
+import 'openlayers';
+
+import { IgoCoreModule } from './core/index';
 import { IgoSearchModule } from './search/index';
 
 const IGO_MODULES = [
@@ -16,8 +19,16 @@ const IGO_MODULES = [
 @NgModule({
   imports: [
     MaterialModule.forRoot(),
-    IgoSearchModule
+    IgoCoreModule.forRoot(),
+    IgoSearchModule.forRoot()
   ],
   exports: IGO_MODULES
 })
-export class IgoModule { }
+export class IgoModule {
+  static forRoot(): ModuleWithProviders {
+    return {
+      ngModule: IgoModule,
+      providers: []
+    };
+  }
+}

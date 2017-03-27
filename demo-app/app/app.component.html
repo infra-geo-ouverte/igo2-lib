@@ -6,6 +6,13 @@
       [placeholder]="'Search'"
       (search)="handleSearch($event)">
     </igo-search-bar>
-    <p>Searching for: {{searchTerm}}</p>
+
+    <p>Results for: {{searchTerm}}</p>
+
+    <div *ngFor="let sourceResult of searchService.results$ | async">
+      <h4>{{sourceResult.title}}</h4>
+      <p *ngFor="let result of sourceResult[1]">{{result.title}}</p>
+    </div>
+
   </md-card-content>
 </md-card>

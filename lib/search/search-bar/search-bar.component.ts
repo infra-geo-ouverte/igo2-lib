@@ -5,6 +5,8 @@ import { Component, OnInit, Input, Output,
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
+import { SearchService } from '../shared';
+
 
 @Component({
   selector: 'igo-search-bar',
@@ -56,26 +58,25 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
   private _length: number = 3;
 
-  private readonly _invalidKeys = ['Control', 'Shift', 'Alt'];
-  private _stream$ = new Subject<string>();
-  private _streamS: Subscription;
+  private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
+  private stream$ = new Subject<string>();
+  private streamS: Subscription;
 
-  @Output() key = new EventEmitter<string>();
   @Output() search = new EventEmitter<string>();
 
   @ViewChild('input') input: ElementRef;
 
-  constructor() {}
+  constructor(private searchService: SearchService) {}
 
   ngOnInit(): void {
-    this._streamS = this._stream$
+    this.streamS = this.stream$
       .debounceTime(this._debounce)
       .distinctUntilChanged()
       .subscribe((term: string) => this.handleTermChanged(term));
   }
 
   ngOnDestroy() {
-    this._streamS.unsubscribe();
+    this.streamS.unsubscribe();
   }
 
   keyup(event: KeyboardEvent) {
@@ -86,20 +87,23 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     if (this.keyIsValid(term) &&
         (term.length >= this.length || term.length === 0)) {
-      this._stream$.next(term);
+      this.stream$.next(term);
     }
   }
 
   clear() {
     this.term = '';
-    this._stream$.next(this.term);
+    this.stream$.next(this.term);
   }
 
   private keyIsValid(key: string) {
-    return this._invalidKeys.find(value => value === key) === undefined;
+    return this.invalidKeys.find(value => value === key) === undefined;
   }
 
-  private handleTermChanged(term: string | undefined) {
-    this.search.emit(term);
+  private handleTermChanged(term: string) {
+    if (term !== undefined) {
+      this.search.emit(term);
+      this.searchService.search(term);
+    }
   }
 }

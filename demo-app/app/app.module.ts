@@ -1,12 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpModule, Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
-import { IgoModule } from '../../lib';
+import { IgoModule, provideDefaultSearchSources } from '../../lib';
 
 import { AppComponent } from './app.component';
+
 
 @NgModule({
   declarations: [
@@ -17,9 +18,11 @@ import { AppComponent } from './app.component';
     FormsModule,
     HttpModule,
     MaterialModule.forRoot(),
-    IgoModule
+    IgoModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    ...provideDefaultSearchSources()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
