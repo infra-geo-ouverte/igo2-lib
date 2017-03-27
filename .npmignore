@@ -1,6 +1,3 @@
-*.ts
-!*.d.ts
-
 /lib/typings.json
 /node_modules/
 /.gitignore
@@ -8,11 +5,6 @@
 /.travis.yml
 
 /karma.conf.js
-
-/rollup.config.js
-/rollup-min.config.js
-
-/systemjs.config.js
 
 /demo-app/tsconfig*.json
 /lib/tsconfig*.json
