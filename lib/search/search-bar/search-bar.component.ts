@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter,
-         ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output,
+         EventEmitter, ViewChild, ElementRef,
+         OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,7 +9,8 @@ import { Subscription } from 'rxjs/Subscription';
 @Component({
   selector: 'igo-search-bar',
   templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.styl']
+  styleUrls: ['./search-bar.component.styl'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
 

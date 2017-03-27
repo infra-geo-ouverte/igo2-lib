@@ -1,22 +1,33 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "stripInternal": false,
     "experimentalDecorators": true,
-    "target": "es5",
-    "lib": [
-      "es2016",
-      "dom"
-    ],
-    "outDir": "../out-tsc/app",
     "module": "es2015",
-    "baseUrl": "",
+    "moduleResolution": "node",
+    "outDir": "../../dist",
+    "paths": {},
+    "rootDir": ".",
+    "sourceMap": true,
+    "inlineSources": true,
+    "target": "es2015",
+    "lib": ["es2015", "dom"],
+    "skipLibCheck": true,
     "types": []
   },
   "exclude": [
-    "test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  "files": [
+    "index.ts",
+    "typings.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
+    "strictMetadataEmit": true,
+    "flatModuleOutFile": "index.js",
+    "flatModuleId": "igo",
+    "skipTemplateCodegen": true
+  }
 }

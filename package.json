@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "main": "lib/index.ts",
-  "typings": "lib/index.ts",
+  "typings": "lib/typings.d.ts",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

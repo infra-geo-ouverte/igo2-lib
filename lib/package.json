@@ -1,0 +1,26 @@
+{
+  "name": "igo",
+  "version": "0.0.0",
+  "description": "IGO Library",
+  "main": "igo.bundle.js",
+  "module": "igo.module.js",
+  "jsnext:main": "igo.module.js",
+  "typings": "./igo.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cbourget/igo-lib.git"
+  },
+  "keywords": [
+    "igo"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cbourget/igo-lib/issues"
+  },
+  "homepage": "https://github.com/cbourget/igo-lib#readme",
+  "peerDependencies": {
+    "@angular/core": "^4.0.0",
+    "@angular/common": "^4.0.0",
+    "@angular/http": "^4.0.0"
+  }
+}
