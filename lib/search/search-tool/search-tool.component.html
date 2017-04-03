@@ -1,0 +1,6 @@
+<igo-search-result-list
+  [results$]="searchService.results$"
+  [focusedResult]="searchService.focusedResult$.value"
+  (focus)="searchService.focusResult($event)"
+  (select)="searchService.selectResult($event)">
+</igo-search-result-list>

@@ -1,10 +1,15 @@
 import { TestBed, async } from '@angular/core/testing';
 
+import { IgoModule } from '../../lib';
+
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        IgoModule
+      ],
       declarations: [
         AppComponent
       ],

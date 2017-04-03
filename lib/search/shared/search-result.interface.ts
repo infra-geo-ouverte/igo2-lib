@@ -20,10 +20,12 @@ export interface SearchResultGeometry {
 
 export enum SearchResultType {
   Layer = <any> 'Layer',
-  Feature = <any> 'Feature'
+  Feature = <any> 'Feature',
+  Record = <any> 'Record'
 }
 
 export enum SearchResultFormat {
   WMS,
-  GeoJSON
+  GeoJSON,
+  JSON
 }

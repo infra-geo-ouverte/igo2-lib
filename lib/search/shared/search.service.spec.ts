@@ -2,10 +2,8 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { SearchService } from './search.service';
-import {
-  provideSearchSources,
-  provideSearchSourceService
-} from '../search.module';
+import { provideDefaultSearchSources,
+         provideSearchSourceService } from '../search';
 
 describe('SearchService', () => {
   beforeEach(() => {
@@ -17,7 +15,7 @@ describe('SearchService', () => {
       providers: [
         SearchService,
         provideSearchSourceService(),
-        ...provideSearchSources()
+        ...provideDefaultSearchSources()
       ]
     });
   });

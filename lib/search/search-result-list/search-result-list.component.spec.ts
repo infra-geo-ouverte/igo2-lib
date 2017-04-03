@@ -3,18 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoSharedModule } from '../../shared';
 
 import { SearchService } from '../shared';
-import { SearchBarComponent } from './search-bar.component';
+import { SearchResultItemComponent } from '../search-result-item';
+import { SearchResultListComponent } from './search-result-list.component';
 
-describe('SearchBarComponent', () => {
-  let component: SearchBarComponent;
-  let fixture: ComponentFixture<SearchBarComponent>;
+describe('SearchResultListComponent', () => {
+  let component: SearchTResultListComponent;
+  let fixture: ComponentFixture<SearchResultListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule
       ],
-      declarations: [ SearchBarComponent ],
+      declarations: [
+        SearchResultListComponent,
+        SearchResultItemComponent
+      ],
       providers: [
         SearchService
       ]
@@ -23,7 +27,7 @@ describe('SearchBarComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SearchBarComponent);
+    fixture = TestBed.createComponent(SearchResultListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

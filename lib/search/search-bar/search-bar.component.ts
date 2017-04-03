@@ -38,11 +38,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private _disabled: boolean = false;
 
   @Input()
-  get buttonColor() { return this._buttonColor; }
-  set buttonColor(value: string) {
-    this._buttonColor = value;
+  get color() { return this._color; }
+  set color(value: string) {
+    this._color = value;
   }
-  private _buttonColor: string = 'primary';
+  private _color: string = 'primary';
 
   @Input()
   get debounce() { return this._debounce; }
@@ -60,7 +60,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private stream$ = new Subject<string>();
-  private streamS: Subscription;
+  private stream$$: Subscription;
 
   @Output() search = new EventEmitter<string>();
 
@@ -69,14 +69,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   constructor(private searchService: SearchService) {}
 
   ngOnInit(): void {
-    this.streamS = this.stream$
+    this.stream$$ = this.stream$
       .debounceTime(this._debounce)
       .distinctUntilChanged()
       .subscribe((term: string) => this.handleTermChanged(term));
   }
 
   ngOnDestroy() {
-    this.streamS.unsubscribe();
+    this.stream$$.unsubscribe();
   }
 
   keyup(event: KeyboardEvent) {

@@ -1,14 +1,16 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '@angular/material';
 import { HttpModule, Http } from '@angular/http';
+
+import { IgoSharedModule } from '../shared';
 
 import { SearchService, SearchSourceService } from './shared';
 import { SearchSource,
          SearchSourceNominatim } from './search-sources';
 
-import { SearchBarComponent } from './search-bar/search-bar.component';
+import { SearchBarComponent } from './search-bar';
+import { SearchResultListComponent } from './search-result-list';
+import { SearchResultItemComponent } from './search-result-item';
+import { SearchToolComponent } from './search-tool';
 
 
 export function searchSourceServiceFactory(sources: SearchSource[]) {
@@ -36,16 +38,19 @@ export function provideDefaultSearchSources() {
 
 @NgModule({
   imports: [
-    CommonModule,
-    FormsModule,
-    MaterialModule,
+    IgoSharedModule,
     HttpModule
   ],
   exports: [
-    SearchBarComponent
+    SearchBarComponent,
+    SearchResultListComponent,
+    SearchToolComponent
   ],
   declarations: [
-    SearchBarComponent
+    SearchBarComponent,
+    SearchResultListComponent,
+    SearchResultItemComponent,
+    SearchToolComponent
   ]
 })
 export class IgoSearchModule {
@@ -61,5 +66,7 @@ export class IgoSearchModule {
 }
 
 export * from './search-bar';
+export * from './search-result-list';
+export * from './search-tool';
 export * from './search-sources';
 export * from './shared';

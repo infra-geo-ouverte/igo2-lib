@@ -7,12 +7,14 @@
       (search)="handleSearch($event)">
     </igo-search-bar>
 
-    <p>Results for: {{searchTerm}}</p>
+    <p>Searching for: {{searchTerm}}</p>
+  </md-card-content>
+</md-card>
 
-    <div *ngFor="let sourceResult of searchService.results$ | async">
-      <h4>{{sourceResult.title}}</h4>
-      <p *ngFor="let result of sourceResult[1]">{{result.title}}</p>
-    </div>
-
+<md-card>
+  <md-card-subtitle>Search module</md-card-subtitle>
+  <md-card-title>search-tool.component</md-card-title>   
+  <md-card-content>
+    <igo-search-tool></igo-search-tool>
   </md-card-content>
 </md-card>

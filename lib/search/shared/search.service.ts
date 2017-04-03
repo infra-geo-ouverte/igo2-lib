@@ -12,6 +12,8 @@ import { SearchSource } from '../search-sources/search-source';
 @Injectable()
 export class SearchService {
 
+  public focusedResult$ = new BehaviorSubject<SearchResult>(undefined);
+  public selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
   public results$ = new BehaviorSubject<SearchResult[]>([]);
   public subscriptions: Subscription[] = [];
 
@@ -41,6 +43,14 @@ export class SearchService {
   clear() {
     this.unsubscribe();
      this.results$.next([]);
+  }
+
+  focusResult(result: SearchResult) {
+    this.focusedResult$.next(result);
+  }
+
+  selectResult(result: SearchResult) {
+    this.selectedResult$.next(result);
   }
 
   private unsubscribe() {

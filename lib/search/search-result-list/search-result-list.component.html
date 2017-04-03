@@ -1,0 +1,17 @@
+<igo-list [navigation]="true"> 
+  <template ngFor let-sourceResult [ngForOf]="sourceResults">
+    <igo-collapsible title="{{sourceResult[0]}} ({{sourceResult[1].length}})">
+      <template ngFor let-result [ngForOf]="sourceResult[1]">
+        <igo-search-result-item
+          igoListItem
+          color="primary"
+          [focused]="focusedResult && focusedResult.id === result.id
+                     && focusedResult.source === sourceResult[0]"
+          [result]="result"
+          (focus)="focus.emit(result)"
+          (select)="select.emit(result)">
+        </igo-search-result-item>
+      </template>
+    </igo-collapsible>
+  </template>
+</igo-list>

@@ -11,6 +11,7 @@ import { SearchResult, SearchResultType,
 export class SearchSourceNominatim extends SearchSource {
 
   static _name: string = 'Nominatim (OSM)';
+  static sortIndex: number = 10;
   static searchUrl: string = 'https://nominatim.openstreetmap.org/search';
 
   constructor(private http: Http) {
