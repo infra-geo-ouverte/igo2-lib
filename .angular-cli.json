@@ -5,20 +5,46 @@
   },
   "apps": [
     {
+      "name": "lib",
+      "root": "lib",
+      "outDir": "dist",
+      "assets": [],
+      "index": "index.html",
+      "main": "main.ts",
+      "polyfills": "polyfills.ts",
+      "test": "test.ts",
+      "tsconfig": "tsconfig.lib.json",
+      "testTsconfig": "tsconfig.spec.json",
+      "prefix": "igo",
+      "mobile": true,
+      "styles": [],
+      "scripts": [],
+      "environmentSource": "environments/environment.ts",
+      "environments": {
+        "dev": "environments/environment.ts",
+        "prod": "environments/environment.prod.ts"
+      }
+    },
+    {
+      "name": "demo",
       "root": "demo-app",
       "outDir": "dist",
       "assets": [
-        "assets",
+        "assets/favicon",
+        "assets/icons",
+        "assets/locale",
         "favicon.ico"
       ],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
+      "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "igo",
+      "mobile": true,
       "styles": [
-        "styles.styl"
+        "css/styles.styl"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
@@ -38,16 +64,24 @@
   },
   "lint": [
     {
-      "project": "lib/tsconfig.lib.json"
+      "project": "lib/tsconfig.lib.json",
+      "exclude": "**/node_modules/**/*"
     },
     {
-      "project": "demo-app/tsconfig.app.json"
+      "project": "lib/tsconfig.spec.json",
+      "exclude": "**/node_modules/**/*"
     },
     {
-      "project": "demo-app/tsconfig.spec.json"
+      "project": "demo-app/tsconfig.app.json",
+      "exclude": "**/node_modules/**/*"
     },
     {
-      "project": "e2e/tsconfig.e2e.json"
+      "project": "demo-app/tsconfig.spec.json",
+      "exclude": "**/node_modules/**/*"
+    },
+    {
+      "project": "e2e/tsconfig.e2e.json",
+      "exclude": "**/node_modules/**/*"
     }
   ],
   "test": {
@@ -57,6 +91,9 @@
   },
   "defaults": {
     "styleExt": "styl",
-    "component": {}
+    "component": {
+      "inlineTemplate": false,
+      "spec": true
+    }
   }
 }

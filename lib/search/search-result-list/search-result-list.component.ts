@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, Input, Output,
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 
-import { SearchResult, SearchResultType } from '../shared';
+import { SearchResult } from '../shared';
 
 
 @Component({

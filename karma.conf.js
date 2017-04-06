@@ -16,9 +16,11 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     files: [
+      // { pattern: './lib/test.ts', watched: false },
       { pattern: './demo-app/test.ts', watched: false }
     ],
     preprocessors: {
+      // './lib/test.ts': ['@angular/cli'],
       './demo-app/test.ts': ['@angular/cli']
     },
     mime: {
@@ -39,6 +41,18 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    customLaunchers: {
+      Chrome_travis_ci: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    },
     singleRun: false
   });
+
+  if (process.env.TRAVIS) {
+    config.browsers = ['Chrome_travis_ci'];
+    config.singleRun = true;
+    config.browserNoActivityTimeout = 90000;
+  }
 };
