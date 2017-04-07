@@ -11,7 +11,7 @@ import { SearchResult } from '../shared';
 export class SearchResultItemComponent {
 
   @Input()
-  get result() { return this._result; }
+  get result(): SearchResult { return this._result; }
   set result(value: SearchResult) {
     this._result = value;
   }

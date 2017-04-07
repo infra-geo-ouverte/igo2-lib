@@ -5,7 +5,7 @@ import { Message } from '../../core/message';
 
 import { SearchSource } from './search-source';
 import { SearchResult, SearchResultType,
-         SearchResultFormat} from '../shared/search-result.interface';
+         SearchResultFormat} from '../shared';
 
 
 export class SearchSourceNominatim extends SearchSource {

@@ -1,4 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { MaterialModule } from '@angular/material';
+
+import { RequestService, MessageService } from '../../core';
+
+import {
+  SearchSource,
+  SearchService,
+  SearchSourceService,
+  provideSearchSourceService,
+  IgoSearchModule
+} from '../search';
 
 import { SearchToolComponent } from './search-tool.component';
 
@@ -8,7 +19,15 @@ describe('SearchToolComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SearchToolComponent ]
+      imports: [ MaterialModule, IgoSearchModule ],
+      declarations: [],
+      providers: [
+        RequestService,
+        MessageService,
+        SearchSource,
+        SearchService,
+        provideSearchSourceService()
+      ]
     })
     .compileComponents();
   }));
@@ -19,7 +38,7 @@ describe('SearchToolComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', inject([SearchSourceService], (service: SearchSourceService) => {
     expect(component).toBeTruthy();
-  });
+  }));
 });

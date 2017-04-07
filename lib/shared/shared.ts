@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '@angular/material';
 
 import { ClickoutDirective } from './clickout';
@@ -17,6 +18,7 @@ import { ListComponent, ListItemDirective } from './list';
   exports: [
     CommonModule,
     FormsModule,
+    BrowserAnimationsModule,
     MaterialModule,
     ClickoutDirective,
     CollapsibleComponent,

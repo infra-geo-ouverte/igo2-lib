@@ -3,7 +3,8 @@ import { HttpModule, JsonpModule } from '@angular/http';
 
 import { SearchSourceService } from './search-source.service';
 import {
-  provideSearchSourceService
+  provideSearchSourceService,
+  SearchSource
 } from '../search';
 
 describe('SearchSourceService', () => {
@@ -14,6 +15,7 @@ describe('SearchSourceService', () => {
         JsonpModule
       ],
       providers: [
+        SearchSource,
         provideSearchSourceService()
       ]
     });

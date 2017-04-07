@@ -7,7 +7,7 @@ import { SearchResultItemComponent } from '../search-result-item';
 import { SearchResultListComponent } from './search-result-list.component';
 
 describe('SearchResultListComponent', () => {
-  let component: SearchTResultListComponent;
+  let component: SearchResultListComponent;
   let fixture: ComponentFixture<SearchResultListComponent>;
 
   beforeEach(async(() => {

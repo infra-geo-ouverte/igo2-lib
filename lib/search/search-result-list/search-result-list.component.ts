@@ -14,14 +14,14 @@ import { SearchResult } from '../shared';
 export class SearchResultListComponent implements OnInit, OnDestroy {
 
   @Input()
-  get results$() { return this._results$; }
+  get results$(): Observable<SearchResult[]> { return this._results$; }
   set results$(value: Observable<SearchResult[]>) {
     this._results$ = value;
   }
   private _results$: Observable<SearchResult[]>;
 
   @Input()
-  get focusedResult() { return this._focusedResult; }
+  get focusedResult(): SearchResult { return this._focusedResult; }
   set focusedResult(value: SearchResult) {
     this._focusedResult = value;
   }
@@ -36,6 +36,8 @@ export class SearchResultListComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
+    if (!this.results$) { return false; }
+
     this.results$$ = this.results$
       .subscribe((results: SearchResult[]) => this.handleResultsChanged(results));
   }

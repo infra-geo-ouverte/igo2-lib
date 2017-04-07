@@ -1,8 +1,10 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
+import { RequestService, MessageService } from '../../core';
 import { IgoSharedModule } from '../../shared';
 
-import { SearchService } from '../shared';
+import { provideSearchSourceService, SearchSource } from '../search';
+import { SearchService, SearchSourceService } from '../shared';
 import { SearchBarComponent } from './search-bar.component';
 
 describe('SearchBarComponent', () => {
@@ -16,7 +18,11 @@ describe('SearchBarComponent', () => {
       ],
       declarations: [ SearchBarComponent ],
       providers: [
-        SearchService
+        RequestService,
+        MessageService,
+        SearchService,
+        SearchSource,
+        provideSearchSourceService()
       ]
     })
     .compileComponents();
@@ -28,7 +34,7 @@ describe('SearchBarComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create', inject([SearchSourceService], (service: SearchSourceService) => {
     expect(component).toBeTruthy();
-  });
+  }));
 });
