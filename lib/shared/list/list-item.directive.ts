@@ -36,7 +36,7 @@ export class ListItemDirective {
 
     value === true ? this.select.emit() : this.unselect.emit();
   }
-  private _selected: boolean = true;
+  private _selected: boolean = false;
 
   @Output() click_ = new EventEmitter<ListItemDirective>();
   @Output() focus = new EventEmitter<ListItemDirective>();

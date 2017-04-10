@@ -4,8 +4,9 @@ import { HttpModule, JsonpModule } from '@angular/http';
 import { RequestService, MessageService } from '../../core';
 
 import { SearchService } from './search.service';
+import { FeatureService } from '../../feature';
 import { provideDefaultSearchSources,
-         provideSearchSourceService } from '../search';
+         provideSearchSourceService } from '../module';
 
 describe('SearchService', () => {
   beforeEach(() => {
@@ -17,6 +18,7 @@ describe('SearchService', () => {
       providers: [
         RequestService,
         MessageService,
+        FeatureService,
         SearchService,
         provideSearchSourceService(),
         ...provideDefaultSearchSources()

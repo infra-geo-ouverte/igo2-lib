@@ -1,23 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { RequestService } from '../../core';
+import { Feature, FeatureService } from '../../feature';
 
 import { SearchSourceService } from './search-source.service';
-import { SearchResult } from './search-result.interface';
 import { SearchSource } from '../search-sources/search-source';
 
 
 @Injectable()
 export class SearchService {
 
-  public focusedResult$ = new BehaviorSubject<SearchResult>(undefined);
-  public selectedResult$ = new BehaviorSubject<SearchResult>(undefined);
-  public results$ = new BehaviorSubject<SearchResult[]>([]);
-  public subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   constructor(private searchSourceService: SearchSourceService,
+              private featureService: FeatureService,
               private requestService: RequestService) {
   }
 
@@ -34,32 +31,15 @@ export class SearchService {
 
     return this.requestService
       .register(request, source.getName())
-      .subscribe((results: SearchResult[]) =>
-        this.handleSearchResults(results, source));
-  }
-
-  clear() {
-    this.unsubscribe();
-     this.results$.next([]);
-  }
-
-  focusResult(result: SearchResult) {
-    this.focusedResult$.next(result);
-  }
-
-  selectResult(result: SearchResult) {
-    this.selectedResult$.next(result);
+      .subscribe((features: Feature[]) =>
+        this.handleFeatures(features, source));
   }
 
   private unsubscribe() {
     this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
   }
 
-  private handleSearchResults(results: SearchResult[], source: SearchSource) {
-    const results_ = this.results$.value
-      .filter(result => result.source !== source.getName())
-      .concat(results);
-
-    this.results$.next(results_);
+  private handleFeatures(features: Feature[], source: SearchSource) {
+    this.featureService.updateFeatures(features, source.getName());
   }
 }

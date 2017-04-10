@@ -2,10 +2,9 @@ import { Http, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Message } from '../../core/message';
+import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SearchResult, SearchResultType,
-         SearchResultFormat} from '../shared';
 
 
 export class SearchSourceNominatim extends SearchSource {
@@ -22,7 +21,7 @@ export class SearchSourceNominatim extends SearchSource {
     return SearchSourceNominatim._name;
   }
 
-  search (term?: string): Observable<SearchResult[] | Message[]>  {
+  search (term?: string): Observable<Feature[] | Message[]>  {
     const search = this.getSearchParams(term);
 
     return this.http
@@ -30,7 +29,7 @@ export class SearchSourceNominatim extends SearchSource {
       .map(res => this.extractData(res));
   }
 
-  private extractData (response: Response): SearchResult[] {
+  private extractData (response: Response): Feature[] {
     return response.json().map(this.formatResult);
   }
 
@@ -43,12 +42,12 @@ export class SearchSourceNominatim extends SearchSource {
     return search;
   }
 
-  private formatResult (result: any): SearchResult {
+  private formatResult (result: any): Feature {
     return {
       id: result.place_id,
       source: SearchSourceNominatim._name,
-      type: SearchResultType.Feature,
-      format: SearchResultFormat.GeoJSON,
+      type: FeatureType.Feature,
+      format: FeatureFormat.GeoJSON,
       title: result.display_name,
       icon: 'place',
       projection: 'EPSG:4326',

@@ -69,7 +69,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.listItems$$.unsubscribe();
   }
 
-  private focus(item?: ListItemDirective) {
+  focus(item?: ListItemDirective) {
     if (!this.selection) {
       return;
     }
@@ -153,6 +153,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const selectedItem = this.findSelectedItem();
     if (selectedItem) {
+      console.log(selectedItem);
       this.select(selectedItem);
     } else {
       this.focus(this.findFocusedItem());

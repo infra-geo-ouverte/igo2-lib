@@ -12,9 +12,23 @@
 </md-card>
 
 <md-card>
-  <md-card-subtitle>Search module</md-card-subtitle>
-  <md-card-title>search-tool.component</md-card-title>
+  <md-card-subtitle>Feature module</md-card-subtitle>
+  <md-card-title>feature-list.component</md-card-title>   
   <md-card-content>
-    <igo-search-tool></igo-search-tool>
+    <igo-feature-list></igo-feature-list>
+  </md-card-content>
+</md-card>
+
+<md-card>
+  <md-card-subtitle>Map module</md-card-subtitle>
+  <md-card-title>map-browser.component</md-card-title>   
+  <md-card-content class="igo-map-browser-container">
+    <igo-map-browser
+      [map]="map"
+      [view]="mapView"
+      igoQuery
+      igoOverlay>
+      <igo-zoom [map]="map" color="primary"></igo-zoom>
+    </igo-map-browser>
   </md-card-content>
 </md-card>

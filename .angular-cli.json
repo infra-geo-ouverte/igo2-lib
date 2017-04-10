@@ -44,9 +44,11 @@
       "prefix": "igo",
       "mobile": true,
       "styles": [
-        "css/styles.styl"
+        "../node_modules/openlayers/dist/ol.css",
+        "css/styles.styl"      ],
+      "scripts": [
+        "../node_modules/openlayers/dist/ol.js"
       ],
-      "scripts": [],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
