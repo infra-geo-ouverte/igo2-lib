@@ -1,9 +1,10 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
-import { RequestService, MessageService } from '../../core';
 import { IgoSharedModule } from '../../shared';
+import { RequestService, MessageService } from '../../core';
+import { FeatureService } from '../../feature';
 
-import { provideSearchSourceService, SearchSource } from '../search';
+import { provideSearchSourceService, SearchSource } from '../module';
 import { SearchService, SearchSourceService } from '../shared';
 import { SearchBarComponent } from './search-bar.component';
 
@@ -20,6 +21,7 @@ describe('SearchBarComponent', () => {
       providers: [
         RequestService,
         MessageService,
+        FeatureService,
         SearchService,
         SearchSource,
         provideSearchSourceService()
