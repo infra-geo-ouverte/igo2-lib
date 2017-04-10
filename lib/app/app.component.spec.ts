@@ -1,7 +1,4 @@
 import { TestBed, async } from '@angular/core/testing';
-import { MaterialModule } from '@angular/material';
-
-import { IgoModule, provideDefaultSearchSources } from '../../lib';
 
 import { AppComponent } from './app.component';
 
@@ -9,19 +6,14 @@ describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MaterialModule,
-        IgoModule.forRoot()
       ],
       declarations: [
         AppComponent
       ],
-      providers: [
-        ...provideDefaultSearchSources()
-      ],
     }).compileComponents();
   }));
 
-  it('should create the app', async(() => {
+  it('should create the lib', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
@@ -31,6 +23,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('md-card-subtitle').textContent).toContain('Search module');
+    expect(compiled.querySelector('h1').textContent).toContain('Igo Lib');
   }));
 });

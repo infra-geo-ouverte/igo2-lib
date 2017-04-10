@@ -1,27 +1,18 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "declaration": true,
     "stripInternal": false,
-    "experimentalDecorators": true,
-    "module": "es2015",
-    "moduleResolution": "node",
-    "outDir": "../../dist",
-    "paths": {},
-    "rootDir": ".",
-    "sourceMap": true,
+    "outDir": "../out-tsc/lib",
     "inlineSources": true,
-    "target": "es2015",
-    "lib": ["es2015", "dom"],
     "skipLibCheck": true,
+    "module": "es2015",
+    "baseUrl": "",
     "types": []
   },
   "exclude": [
+    "test.ts",
     "**/*.spec.ts"
-  ],
-  "files": [
-    "index.ts",
-    "typings.d.ts"
   ],
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,

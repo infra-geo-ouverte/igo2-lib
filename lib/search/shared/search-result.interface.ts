@@ -1,3 +1,5 @@
+import { SearchResultType, SearchResultFormat } from './search-result.enum';
+
 export interface SearchResult {
   id: string;
   source: string;
@@ -16,16 +18,4 @@ export interface SearchResult {
 export interface SearchResultGeometry {
   type: ol.geom.GeometryType;
   coordinates: [any];
-}
-
-export enum SearchResultType {
-  Layer = <any> 'Layer',
-  Feature = <any> 'Feature',
-  Record = <any> 'Record'
-}
-
-export enum SearchResultFormat {
-  WMS,
-  GeoJSON,
-  JSON
 }

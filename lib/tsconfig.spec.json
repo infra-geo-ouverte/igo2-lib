@@ -1,14 +1,7 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": [
-      "es2016"
-    ],
-    "outDir": "../out-tsc/spec",
+    "outDir": "../out-tsc/spec-lib",
     "module": "commonjs",
     "target": "es5",
     "baseUrl": "",
@@ -21,6 +14,7 @@
     "test.ts"
   ],
   "include": [
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.d.ts"
   ]
 }

@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { SearchService } from '../shared';
 
+import 'rxjs/add/operator/debounceTime.js';
+import 'rxjs/add/operator/distinctUntilChanged';
 
 @Component({
   selector: 'igo-search-bar',

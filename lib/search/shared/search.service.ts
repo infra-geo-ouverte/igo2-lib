@@ -17,8 +17,6 @@ export class SearchService {
   public results$ = new BehaviorSubject<SearchResult[]>([]);
   public subscriptions: Subscription[] = [];
 
-  private results = [];
-
   constructor(private searchSourceService: SearchSourceService,
               private requestService: RequestService) {
   }

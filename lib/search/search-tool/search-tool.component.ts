@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { SearchResult, SearchService } from '../shared';
+import { SearchService } from '../shared';
 
 @Component({
   selector: 'igo-search-tool',
