@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { RequestService } from '../../core';
@@ -11,9 +10,6 @@ import { SearchSource } from '../search-sources/search-source';
 
 @Injectable()
 export class SearchService {
-
-  public focusedResult$ = new BehaviorSubject<Feature>(undefined);
-  public selectedResult$ = new BehaviorSubject<Feature>(undefined);
 
   private subscriptions: Subscription[] = [];
 
