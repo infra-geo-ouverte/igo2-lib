@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IgoTestModule } from '../../test.module';
+import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
 
 import { OSMLayer } from '../shared';

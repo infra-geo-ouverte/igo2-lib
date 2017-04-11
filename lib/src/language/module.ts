@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { MissingTranslationHandler } from 'ng2-translate';
 
-import { LanguageService, IgoMissingTranslationHandler } from './language';
+import { LanguageService, IgoMissingTranslationHandler } from './shared';
 
 
 @NgModule({
@@ -23,4 +23,4 @@ export class IgoLanguageModule {
   }
 }
 
-export * from './language';
+export * from './shared';
