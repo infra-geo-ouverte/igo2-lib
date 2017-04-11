@@ -17,10 +17,10 @@ module.exports = function (config) {
     },
     files: [
       './node_modules/openlayers/dist/ol.js',
-      { pattern: './lib/test.ts', watched: false }
+      { pattern: './lib/test/test.ts', watched: false }
     ],
     preprocessors: {
-      './lib/test.ts': ['@angular/cli']
+      './lib/test/test.ts': ['@angular/cli']
     },
     mime: {
       'text/x-typescript': ['ts','tsx']

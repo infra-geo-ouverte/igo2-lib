@@ -2,8 +2,13 @@
 
 # compiled output
 /dist
+/lib/dist
 /tmp
 /out-tsc
+*.metadata.json
+*.ngsummary.json
+*.ngfactory.ts
+*.ngstyle.ts
 
 # dependencies
 /node_modules

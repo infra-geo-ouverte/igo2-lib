@@ -3,22 +3,20 @@
   "compilerOptions": {
     "declaration": true,
     "stripInternal": false,
-    "outDir": "../out-tsc/lib",
+    "outDir": "./dist",
     "inlineSources": true,
     "skipLibCheck": true,
     "module": "es2015",
     "baseUrl": "",
     "types": []
   },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts"
+  "files": [
+    "./src/index.ts"
   ],
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,
     "strictMetadataEmit": true,
-    "flatModuleOutFile": "index.js",
-    "flatModuleId": "igo",
-    "skipTemplateCodegen": true
+    "skipTemplateCodegen": true,
+    "genDir": "compiled"
   }
 }

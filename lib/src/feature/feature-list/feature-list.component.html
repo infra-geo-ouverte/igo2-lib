@@ -1,7 +1,7 @@
-<igo-list [navigation]="true"> 
-  <template ngFor let-sourceFeature [ngForOf]="sourceFeatures">
+<igo-list [navigation]="true">
+  <ng-template ngFor let-sourceFeature [ngForOf]="sourceFeatures">
     <igo-collapsible title="{{sourceFeature[0]}} ({{sourceFeature[1].length}})">
-      <template ngFor let-feature [ngForOf]="sourceFeature[1]">
+      <ng-template ngFor let-feature [ngForOf]="sourceFeature[1]">
         <igo-feature-item
           igoListItem
           color="primary"
@@ -12,7 +12,7 @@
           (focus)="featureService.focusFeature(feature)"
           (select)="featureService.selectFeature(feature)">
         </igo-feature-item>
-      </template>
+      </ng-template>
     </igo-collapsible>
-  </template>
+  </ng-template>
 </igo-list>
