@@ -8,3 +8,5 @@
 
 /demo-app/tsconfig*.json
 /lib/tsconfig*.json
+
+*.ngFactory.ts

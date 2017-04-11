@@ -9,6 +9,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --app demo",
+    "build.lib": "ngc -p ./lib/tsconfig.lib.json",
     "build.demo": "ng build --app demo",
     "test.lib": "ng test --single-run ",
     "test.demo": "ng test -c karma.demo.conf.js --single-run",

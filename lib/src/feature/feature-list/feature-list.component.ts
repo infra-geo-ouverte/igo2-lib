@@ -12,7 +12,7 @@ import { Feature, FeatureService } from '../shared';
 export class FeatureListComponent implements OnInit, OnDestroy {
 
   private features$$: Subscription;
-  private sourceFeatures: [string, Feature[]];
+  public sourceFeatures: [string, Feature[]];
 
   constructor(public featureService: FeatureService) {}
 

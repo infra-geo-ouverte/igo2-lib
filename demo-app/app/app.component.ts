@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { IgoMap, LayerService, QueryFormat,
-         SearchService, WMSLayerOptions } from '../../lib';
+         SearchService, WMSLayerOptions } from '../../lib/src';
 
 @Component({
   selector: 'igo-demo',
