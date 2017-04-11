@@ -8,7 +8,9 @@
       "name": "lib",
       "root": "lib",
       "outDir": "dist",
-      "assets": [],
+      "assets": [
+        "assets"
+      ],
       "index": "test/index.html",
       "main": "test/main.ts",
       "polyfills": "test/polyfills.ts",
@@ -30,10 +32,8 @@
       "root": "demo-app",
       "outDir": "dist",
       "assets": [
-        "assets/favicon",
-        "assets/icons",
-        "assets/locale",
-        "favicon.ico"
+        "assets",
+        "locale"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -45,7 +45,8 @@
       "mobile": true,
       "styles": [
         "../node_modules/openlayers/dist/ol.css",
-        "css/styles.styl"      ],
+        "css/styles.styl"
+      ],
       "scripts": [
         "../node_modules/openlayers/dist/ol.js"
       ],

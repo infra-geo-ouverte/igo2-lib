@@ -3,11 +3,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoSharedModule } from '../../shared';
 
 import { FeatureService } from '../shared';
-import { FeatureItemComponent } from './feature-item.component';
+import { FeatureDetailsComponent } from './feature-details.component';
 
-describe('FeatureItemComponent', () => {
-  let component: FeatureItemComponent;
-  let fixture: ComponentFixture<FeatureItemComponent>;
+describe('FeatureDetailsComponent', () => {
+  let component: FeatureDetailsComponent;
+  let fixture: ComponentFixture<FeatureDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -15,14 +15,17 @@ describe('FeatureItemComponent', () => {
         IgoSharedModule
       ],
       declarations: [
-        FeatureItemComponent
+        FeatureDetailsComponent
+      ],
+      providers: [
+        FeatureService
       ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FeatureItemComponent);
+    fixture = TestBed.createComponent(FeatureDetailsComponent);
     component = fixture.componentInstance;
   });
 

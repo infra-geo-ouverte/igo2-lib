@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { CapabilitiesService } from './capabilities.service';
 
@@ -12,6 +13,8 @@ import { Layer, LayerOptions,
 
 @Injectable()
 export class LayerService {
+
+  public editedLayer$ = new BehaviorSubject<Layer>(undefined);
 
   constructor(private capabilitiesService: CapabilitiesService) { }
 
@@ -38,6 +41,10 @@ export class LayerService {
     }
 
     return layer;
+  }
+
+  editLayer(layer: Layer) {
+    this.editedLayer$.next(layer);
   }
 
   private createOSMLayer(options: OSMLayerOptions): Observable<OSMLayer> {
