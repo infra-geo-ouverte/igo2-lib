@@ -17,6 +17,13 @@ module.exports = function (config) {
     },
     files: [
       './node_modules/openlayers/dist/ol.js',
+      {
+        pattern: './assets/locale/*.json', 
+        watched: false, 
+        included: false, 
+        nocache: false, 
+        served: true
+      },
       { pattern: './lib/test/test.ts', watched: false }
     ],
     preprocessors: {
@@ -37,7 +44,7 @@ module.exports = function (config) {
               : ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
     autoWatch: true,
     browsers: ['Chrome'],
     customLaunchers: {

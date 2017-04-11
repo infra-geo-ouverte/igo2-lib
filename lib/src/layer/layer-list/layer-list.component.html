@@ -1,0 +1,14 @@
+<igo-list [navigation]="false" [selection]="false"> 
+  <ng-template ngFor let-layer [ngForOf]="map.layers$ | async">
+    <igo-layer-item
+      igoListItem
+      [color]="color"
+      [layer]="layer"
+      [edition]="edition"
+      (editLayer)="editLayer($event)"
+      (removeLayer)="map.removeLayer($event)"
+      (raiseLayer)="map.raiseLayer($event)"
+      (lowerLayer)="map.lowerLayer($event)">
+    </igo-layer-item>
+  </ng-template>
+</igo-list>

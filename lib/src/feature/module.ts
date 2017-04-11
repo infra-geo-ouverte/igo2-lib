@@ -4,6 +4,7 @@ import { HttpModule } from '@angular/http';
 import { IgoSharedModule } from '../shared';
 
 import { FeatureService } from './shared';
+import { FeatureDetailsComponent } from './feature-details';
 import { FeatureListComponent } from './feature-list';
 import { FeatureItemComponent } from './feature-item';
 
@@ -14,9 +15,11 @@ import { FeatureItemComponent } from './feature-item';
     HttpModule
   ],
   exports: [
+    FeatureDetailsComponent,
     FeatureListComponent
   ],
   declarations: [
+    FeatureDetailsComponent,
     FeatureListComponent,
     FeatureItemComponent
   ]
@@ -32,5 +35,6 @@ export class IgoFeatureModule {
   }
 }
 
+export * from './feature-details';
 export * from './feature-list';
 export * from './shared';

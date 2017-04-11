@@ -5,9 +5,9 @@ import { IgoSharedModule } from '../../shared';
 import { FeatureService } from '../shared';
 import { FeatureDetailsComponent } from './feature-details.component';
 
-describe('FeatureItemComponent', () => {
-  let component: FeatureItemComponent;
-  let fixture: ComponentFixture<FeatureItemComponent>;
+describe('FeatureComponent', () => {
+  let component: FeatureComponent;
+  let fixture: ComponentFixture<FeatureComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -15,14 +15,17 @@ describe('FeatureItemComponent', () => {
         IgoSharedModule
       ],
       declarations: [
-        FeatureItemComponent
+        FeatureDetailsComponent
+      ],
+      providers: [
+        FeatureService
       ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FeatureItemComponent);
+    fixture = TestBed.createComponent(FeatureComponent);
     component = fixture.componentInstance;
   });
 

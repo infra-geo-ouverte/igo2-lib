@@ -1,4 +1,5 @@
 export * from './core';
+export * from './language';
 export * from './module';
 
 export * from './feature';

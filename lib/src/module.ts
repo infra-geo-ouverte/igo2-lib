@@ -12,6 +12,7 @@ import 'rxjs/add/operator/finally';
 import 'openlayers';
 
 import { IgoCoreModule } from './core/index';
+import { IgoLanguageModule } from './language/index';
 import { IgoFeatureModule } from './feature/index';
 import { IgoLayerModule } from './layer/index';
 import { IgoMapModule } from './map/index';
@@ -21,6 +22,7 @@ import { IgoSearchModule } from './search/index';
 import { IgoSharedModule } from './shared/index';
 
 const IGO_MODULES = [
+  IgoLanguageModule,
   IgoFeatureModule,
   IgoLayerModule,
   IgoMapModule,
@@ -33,7 +35,9 @@ const IGO_MODULES = [
 @NgModule({
   imports: [
     MaterialModule.forRoot(),
+
     IgoCoreModule.forRoot(),
+    IgoLanguageModule.forRoot(),
     IgoFeatureModule.forRoot(),
     IgoLayerModule.forRoot(),
     IgoMapModule.forRoot(),

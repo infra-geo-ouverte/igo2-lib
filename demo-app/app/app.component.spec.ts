@@ -1,15 +1,27 @@
 import { TestBed, async } from '@angular/core/testing';
+import { Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
+import { TranslateModule, TranslateLoader,
+         TranslateStaticLoader } from 'ng2-translate';
 
 import { IgoModule, provideDefaultSearchSources } from '../../lib/src';
 
 import { AppComponent } from './app.component';
+
+export function createTranslateLoader(http: Http) {
+  return new TranslateStaticLoader(http, './locale', '.json');
+}
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         MaterialModule,
+        TranslateModule.forRoot({
+          provide: TranslateLoader,
+          useFactory: createTranslateLoader,
+          deps: [Http]
+        }),
         IgoModule.forRoot()
       ],
       declarations: [
