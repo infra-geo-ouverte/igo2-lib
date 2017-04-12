@@ -9,7 +9,7 @@ gulp.task('copyHtml', () => {
 });
 
 gulp.task('copyTs', () => {
-   gulp.src('./lib/src/**/*.ts')
+   gulp.src(['./lib/src/**/*.ts', '!./lib/src/**/*.spec.ts'])
       .pipe(replace(/styleUrls: \[(\'\.\/|\')(.*?)\.styl\'\]/g, 'styleUrls: [\'$2.css\']'))
       .pipe(gulp.dest('./lib/dist'));
 });
