@@ -1,7 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { IgoMap } from '../../map';
-import { Layer, LayerService } from '../shared';
 
 
 @Component({
@@ -33,10 +32,6 @@ export class LayerListComponent {
   }
   private _color: string = 'primary';
 
-  constructor(private layerService: LayerService) { }
-
-  editLayer(layer: Layer) {
-    this.layerService.editLayer(layer);
-  }
+  constructor() { }
 
 }
