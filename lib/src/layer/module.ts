@@ -14,6 +14,8 @@ import { LayerListComponent } from './layer-list';
     IgoSharedModule
   ],
   exports: [
+    LayerItemComponent,
+    LayerLegendComponent,
     LayerListComponent
   ],
   declarations: [

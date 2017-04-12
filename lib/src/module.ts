@@ -14,6 +14,7 @@ import 'openlayers';
 import { IgoCoreModule } from './core/index';
 import { IgoLanguageModule } from './language/index';
 import { IgoFeatureModule } from './feature/index';
+import { IgoFilterModule } from './filter/index';
 import { IgoLayerModule } from './layer/index';
 import { IgoMapModule } from './map/index';
 import { IgoOverlayModule } from './overlay/index';
@@ -24,6 +25,7 @@ import { IgoSharedModule } from './shared/index';
 const IGO_MODULES = [
   IgoLanguageModule,
   IgoFeatureModule,
+  IgoFilterModule,
   IgoLayerModule,
   IgoMapModule,
   IgoOverlayModule,
@@ -39,6 +41,7 @@ const IGO_MODULES = [
     IgoCoreModule.forRoot(),
     IgoLanguageModule.forRoot(),
     IgoFeatureModule.forRoot(),
+    IgoFilterModule.forRoot(),
     IgoLayerModule.forRoot(),
     IgoMapModule.forRoot(),
     IgoOverlayModule.forRoot(),

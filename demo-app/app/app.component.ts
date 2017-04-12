@@ -44,6 +44,27 @@ export class AppComponent implements OnInit {
       queryFormat: QueryFormat.GML2,
       queryTitle: 'Municipalite'
     } as WMSLayerOptions).subscribe(layer => this.map.addLayer(layer));
+
+    this.layerService.createAsyncLayer({
+      title: 'Embâcle',
+      type: 'wms',
+      source: {
+        url: 'http://geoegl.msp.gouv.qc.ca/cgi-wms/igo_gouvouvert.fcgi',
+        params: {
+          layers: 'vg_observation_v_inondation_embacle_wmst',
+          version: '1.3.0'
+        },
+        projection: 'EPSG:3857'
+      },
+      queryFormat: QueryFormat.GML2,
+      queryTitle: 'Municipalite',
+      timeFilter: {
+        min: '2017-01-01',
+        max: '2018-01-01',
+        type: 'date',
+        range: true
+      }
+    } as WMSLayerOptions).subscribe(layer => this.map.addLayer(layer));
   }
 
   handleSearch(term: string) {
