@@ -1,5 +1,4 @@
-import { Component, Input, Output,
-         EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../shared/layers/layer';
 
@@ -39,11 +38,6 @@ export class LayerItemComponent {
   set opacity (opacity: number) {
     this.layer.opacity = opacity / 100;
   }
-
-  @Output() editLayer: EventEmitter<Layer> = new EventEmitter();
-  @Output() removeLayer: EventEmitter<Layer> = new EventEmitter();
-  @Output() raiseLayer: EventEmitter<Layer> = new EventEmitter();
-  @Output() lowerLayer: EventEmitter<Layer> = new EventEmitter();
 
   constructor() { }
 

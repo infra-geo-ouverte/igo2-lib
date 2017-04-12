@@ -13,7 +13,6 @@
   <button
     md-icon-button
     collapsibleButton
-    class="igo-icon-button"
     tooltip-position="below"
     [md-tooltip]="(layer.visible ? 'Hide Layer' : 'Show Layer') | translate"
     [color]="color"
@@ -31,7 +30,6 @@
   <button
     md-icon-button
     igoCollapse
-    class="igo-icon-button"
     [color]="color"
     [target]="actions"
     [collapsed]="true">
@@ -58,45 +56,32 @@
     <div class="igo-layer-button-group">
       <button
         md-icon-button
-        class="igo-icon-button"
         tooltip-position="below"
         [md-tooltip]="'Raise Layer' | translate"
         [color]="color"
-        (click)="raiseLayer.emit(layer)">
+        (click)="layer.map.raiseLayer(layer)">
         <md-icon>arrow_upward</md-icon>
       </button>
 
       <button
         md-icon-button
-        class="igo-icon-button"
         tooltip-position="below"
         [md-tooltip]="'Lower Layer' | translate"
         [color]="color"
-        (click)="lowerLayer.emit(layer)">
+        (click)="layer.map.lowerLayer(layer)">
         <md-icon>arrow_downward</md-icon>
-      </button>
-
-       <button
-        md-icon-button
-        class="igo-icon-button"
-        tooltip-position="below"
-        [md-tooltip]="'Remove Layer' | translate"
-        [color]="color"
-        (click)="removeLayer.emit(layer)">
-        <md-icon>delete</md-icon>
       </button>
 
       <button
         md-icon-button
-        collapsibleButton
-        class="igo-icon-button"
         tooltip-position="below"
-        [md-tooltip]="'Edit Layer' | translate"
+        [md-tooltip]="'Remove Layer' | translate"
         [color]="color"
-        (click)="editLayer.emit(layer)"
-        *ngIf="edition">
-        <md-icon>settings</md-icon>
+        (click)="layer.map.removeLayer(layer)">
+        <md-icon>delete</md-icon>
       </button>
+
+      <ng-content select="[igoLayerAction]"></ng-content>
     </div>
   </div>
 </div>

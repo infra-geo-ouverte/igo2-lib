@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IgoMap, LayerService, QueryFormat,
+import { IgoMap, Layer, LayerService, QueryFormat,
          SearchService, WMSLayerOptions } from '../../lib/src';
 
 @Component({
@@ -69,5 +69,9 @@ export class AppComponent implements OnInit {
 
   handleSearch(term: string) {
     this.searchTerm = term;
+  }
+
+  editLayer(layer: Layer) {
+    alert('Custom layer action triggered!');
   }
 }

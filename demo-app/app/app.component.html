@@ -13,11 +13,12 @@
 
 <md-card>
   <md-card-subtitle>Feature module</md-card-subtitle>
-  <md-card-title>feature-list.component</md-card-title>   
+  <md-card-title>feature-list.component</md-card-title>
   <md-card-content>
     <igo-feature-list></igo-feature-list>
   </md-card-content>
 
+  <md-card-title>feature-details.component</md-card-title>
   <md-card-content>
     <igo-feature-details></igo-feature-details>
   </md-card-content>
@@ -41,7 +42,21 @@
   <md-card-subtitle>Layer module</md-card-subtitle>
   <md-card-title>layer-list.component</md-card-title>   
   <md-card-content>
-    <igo-layer-list [map]="map"></igo-layer-list>
+    <igo-layer-list>
+      <ng-template ngFor let-layer [ngForOf]="map.layers$ | async">
+        <igo-layer-item igoListItem color="primary" [layer]="layer">
+          <button
+            igoLayerAction
+            md-icon-button
+            tooltip-position="below"
+            color="primary"
+            [md-tooltip]="'Edit Layer' | translate"
+            (click)="editLayer(layer)">
+            <md-icon>settings</md-icon>
+          </button>
+        </igo-layer-item>
+      </ng-template>
+    </igo-layer-list>
   </md-card-content>
 </md-card>
 

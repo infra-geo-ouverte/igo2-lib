@@ -1,5 +1,5 @@
 <igo-list [navigation]="true"> 
-  <ng-template ngFor let-sourceFeature [ngForOf]="sourceFeatures">
+  <ng-template ngFor let-sourceFeature [ngForOf]="featureService.features$ | async | featureGroup">
     <igo-collapsible title="{{sourceFeature[0]}} ({{sourceFeature[1].length}})">
       <ng-template ngFor let-feature [ngForOf]="sourceFeature[1]">
         <igo-feature-item

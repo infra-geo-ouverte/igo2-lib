@@ -4,9 +4,10 @@ import { Md2Module } from 'md2';
 import { IgoSharedModule } from '../../shared';
 import { IgoMap } from '../../map/shared/map';
 
-import { TimeFilterListComponent } from './time-filter-list.component';
+import { FilterableLayerPipe } from '../filterable-layer';
 import { TimeFilterItemComponent } from '../time-filter-item';
 import { TimeFilterFormComponent } from '../time-filter-form';
+import { TimeFilterListComponent } from './time-filter-list.component';
 
 describe('TimeFilterListComponent', () => {
   let component: TimeFilterListComponent;
@@ -19,6 +20,7 @@ describe('TimeFilterListComponent', () => {
         Md2Module
       ],
       declarations: [
+        FilterableLayerPipe,
         TimeFilterListComponent,
         TimeFilterItemComponent,
         TimeFilterFormComponent
