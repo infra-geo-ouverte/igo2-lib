@@ -2,10 +2,8 @@
   "name": "igo",
   "version": "0.0.0",
   "description": "IGO Library",
-  "main": "module.bundle.js",
-  "module": "module.js",
-  "jsnext:main": "module.js",
-  "typings": "./module.d.ts",
+  "main": "bundle/igo.js",
+  "typings": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/infra-geo-ouverte/igo2-lib.git"

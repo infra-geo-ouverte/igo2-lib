@@ -3,7 +3,6 @@
   "compilerOptions": {
     "declaration": true,
     "stripInternal": false,
-    "outDir": "./dist",
     "inlineSources": true,
     "skipLibCheck": true,
     "module": "es2015",
@@ -11,7 +10,7 @@
     "types": []
   },
   "files": [
-    "./src/index.ts"
+    "./dist/index.ts"
   ],
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,

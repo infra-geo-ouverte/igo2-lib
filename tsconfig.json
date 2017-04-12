@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./out-tsc",
     "baseUrl": "demo-app",
     "sourceMap": true,
     "declaration": false,
