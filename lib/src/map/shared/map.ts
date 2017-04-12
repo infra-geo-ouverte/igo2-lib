@@ -59,7 +59,9 @@ export class IgoMap {
   }
 
   addLayer(layer: Layer, push = true) {
-    layer.zIndex = this.layers.length + 1;
+    if (layer.zIndex === undefined) {
+      layer.zIndex = this.layers.length + 1;
+    }
 
     const existingLayer = this.getLayerById(layer.id);
     if (existingLayer !== undefined) {

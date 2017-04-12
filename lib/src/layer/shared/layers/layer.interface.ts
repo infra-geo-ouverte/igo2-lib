@@ -1,4 +1,6 @@
 import { QueryFormat } from '../../../query';
+import { TimeFilterOptions } from '../../../filter';
+
 import { Layer } from './layer';
 
 export interface LayerOptions extends olx.layer.BaseOptions {
@@ -19,6 +21,7 @@ export interface LayerLegendOptions {
 
 export interface FilterableLayerOptions extends LayerOptions {
   filterable?: boolean;
+  timeFilter?: TimeFilterOptions;
 }
 
 export interface FilterableLayer extends Layer {

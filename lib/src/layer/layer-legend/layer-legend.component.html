@@ -3,9 +3,7 @@
 </small>
 
 <ng-template ngFor let-item [ngForOf]="layer.getLegend()">
-  <md-list-item
-    class="igo-collapsible-header"
-    *ngIf="item.title">
+  <md-list-item *ngIf="item.title">
     <md-icon
       id="legend-toggle"
       class="igo-chevron"

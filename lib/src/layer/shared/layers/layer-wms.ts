@@ -125,20 +125,27 @@ export class WMSLayer
   }
 
   filterByDate(date: Date | [Date, Date]) {
-    const dates = [];
+
+    let time = null;
     if (Array.isArray(date)) {
-      if (date[0] !== undefined) {
+      const dates = [];
+      if (date[0]) {
         dates.push(date[0]);
       }
 
-      if (date[1] !== undefined) {
+      if (date[1]) {
         dates.push(date[1]);
       }
-    } else if (date !== undefined) {
-      dates.push(date);
+
+      if (dates.length === 2) {
+        time = dates.map(d => d.toISOString()).join('/');
+      }
+    } else if (date) {
+      time = date.toISOString();
     }
 
+    const params = {time: time};
     const source = this.olLayer.getSource() as ol.source.ImageWMS;
-    source.updateParams({'time': dates.map(d => d.toISOString()).join('/')});
+    source.updateParams(params);
   }
 }
