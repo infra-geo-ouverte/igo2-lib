@@ -10,8 +10,10 @@ describe('LanguageService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoTestModule
-      ]
+        IgoTestModule,
+        TranslateModule
+      ],
+      providers: []
     });
   });
 

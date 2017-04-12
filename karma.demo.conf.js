@@ -18,10 +18,10 @@ module.exports = function (config) {
     files: [
       './node_modules/openlayers/dist/ol.js',
       {
-        pattern: './assets/locale/*.json', 
-        watched: false, 
-        included: false, 
-        nocache: false, 
+        pattern: './assets/locale/*.json',
+        watched: false,
+        included: false,
+        nocache: false,
         served: true
       },
       { pattern: './demo-app/test.ts', watched: false }
@@ -44,7 +44,7 @@ module.exports = function (config) {
               : ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
     autoWatch: true,
     browsers: ['Chrome'],
     customLaunchers: {

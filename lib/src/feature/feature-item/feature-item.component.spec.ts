@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoSharedModule } from '../../shared';
 
-import { FeatureService } from '../shared';
 import { FeatureItemComponent } from './feature-item.component';
 
 describe('FeatureItemComponent', () => {
