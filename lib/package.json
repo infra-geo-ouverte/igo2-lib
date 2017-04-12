@@ -1,6 +1,6 @@
 {
-  "name": "igo",
-  "version": "0.0.0",
+  "name": "igo2",
+  "version": "0.0.2",
   "description": "IGO Library",
   "main": "bundle/igo.js",
   "typings": "dist/index.d.ts",
@@ -16,9 +16,20 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
-  "peerDependencies": {
-    "@angular/core": "^4.0.0",
+  "dependencies": {
+    "@angular/animations": "^4.0.2",
     "@angular/common": "^4.0.0",
-    "@angular/http": "^4.0.0"
+    "@angular/core": "^4.0.0",
+    "@angular/forms": "^4.0.0",
+    "@angular/http": "^4.0.0",
+    "@angular/material": "git+https://github.com/angular/material2-builds.git",
+    "md2": "0.0.17-2",
+    "ng2-translate": "^5.0.0",
+    "openlayers": "^4.0.1",
+    "rxjs": "^5.1.0",
+    "ts-md5": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/openlayers": "^4.0.1"
   }
 }

@@ -56,7 +56,15 @@ module.exports = {
    },
 
    // require those dependencies but don't bundle them
-   externals: [/^\@angular\//, /^rxjs\//, /^lodash/],
+   externals: [
+     /^\@angular\//,
+     /^rxjs\//,
+     /^md2/,
+     /^ts-md5/,
+     /^ng2-translate/,
+     /^zone.js/,
+     /openlayers/
+   ],
 
    module: {
       rules: [{
