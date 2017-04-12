@@ -2,10 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
-import { MessageService, RequestService } from '../../core';
 import { IgoMap } from '../../map';
-
-import { CapabilitiesService, LayerService } from '../shared';
 
 import { LayerListComponent } from './layer-list.component';
 import { LayerItemComponent } from '../layer-item/layer-item.component';
@@ -25,12 +22,6 @@ describe('LayerListComponent', () => {
         LayerListComponent,
         LayerItemComponent,
         LayerLegendComponent
-      ],
-      providers: [
-        CapabilitiesService,
-        LayerService,
-        MessageService,
-        RequestService
       ]
     })
     .compileComponents();

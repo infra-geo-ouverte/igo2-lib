@@ -4,6 +4,7 @@ import { IgoSharedModule } from '../../shared';
 
 import { FeatureService } from '../shared';
 import { FeatureItemComponent } from '../feature-item';
+import { FeatureGroupPipe } from '../feature-group';
 import { FeatureListComponent } from './feature-list.component';
 
 describe('FeatureListComponent', () => {
@@ -17,7 +18,8 @@ describe('FeatureListComponent', () => {
       ],
       declarations: [
         FeatureListComponent,
-        FeatureItemComponent
+        FeatureItemComponent,
+        FeatureGroupPipe
       ],
       providers: [
         FeatureService
