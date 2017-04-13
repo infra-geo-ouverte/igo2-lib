@@ -6,6 +6,10 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## IGO2LIB project plan
+
+For more information on IGO2LIB, you can read the [planning of the project and its features related](https://github.com/infra-geo-ouverte/igo2-lib/wiki/Project-(draft)-plan)
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
