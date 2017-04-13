@@ -11,16 +11,16 @@ export class IgoMap {
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
 
+  get projection(): string {
+    return this.olMap.getView().getProjection().getCode();
+  }
+
   constructor() {
     this.olMap = new ol.Map({
       controls: [
         new ol.control.Attribution()
       ]
     });
-  }
-
-  getProjection() {
-    return this.olMap.getView().getProjection().getCode();
   }
 
   updateView(options: MapViewOptions) {
@@ -37,7 +37,7 @@ export class IgoMap {
     this.olMap.setView(view);
 
     if (options && options.center) {
-      const center = ol.proj.fromLonLat(options.center, this.getProjection());
+      const center = ol.proj.fromLonLat(options.center, this.projection);
       view.setCenter(center);
     }
   }
@@ -59,7 +59,7 @@ export class IgoMap {
   }
 
   addLayer(layer: Layer, push = true) {
-    if (layer.zIndex === undefined) {
+    if (layer.zIndex === 0) {
       layer.zIndex = this.layers.length + 1;
     }
 
@@ -117,6 +117,10 @@ export class IgoMap {
     const zIndexTo = layerTo.zIndex;
     const zIndexFrom = layer.zIndex;
 
+    console.log(layer);
+    console.log(layerTo);
+    console.log(zIndexTo);
+    console.log(zIndexFrom);
     layer.zIndex = zIndexTo;
     layerTo.zIndex = zIndexFrom;
 

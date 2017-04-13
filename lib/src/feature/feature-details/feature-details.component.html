@@ -1,6 +1,6 @@
-<table class="igo-striped" *ngIf="featureService.focusedFeature$.value">
+<table class="igo-striped" *ngIf="feature">
   <tbody>
-    <tr *ngFor="let property of (featureService.focusedFeature$ | async).properties | keyvalue">
+    <tr *ngFor="let property of feature.properties | keyvalue">
       <td>
         {{property.key}}
       </td>

@@ -1,18 +1,21 @@
 <igo-list [navigation]="true"> 
-  <ng-template ngFor let-sourceFeature [ngForOf]="featureService.features$ | async | featureGroup">
-    <igo-collapsible title="{{sourceFeature[0]}} ({{sourceFeature[1].length}})">
-      <ng-template ngFor let-feature [ngForOf]="sourceFeature[1]">
-        <igo-feature-item
-          igoListItem
-          color="primary"
-          [feature]="feature"
-          [focused]="featureService.focusedFeature$.value
-                     && featureService.focusedFeature$.value.id === feature.id
-                     && featureService.focusedFeature$.value.source === sourceFeature[0]"
-          (focus)="featureService.focusFeature(feature)"
-          (select)="featureService.selectFeature(feature)">
-        </igo-feature-item>
-      </ng-template>
-    </igo-collapsible>
-  </ng-template>
+  <ng-container *ngIf="features">
+    <ng-template
+      ngFor let-sourceFeature let-i="index"
+      [ngForOf]="features | featureGroup">
+
+      <igo-collapsible title="{{sourceFeature[0]}} ({{sourceFeature[1].length}})">
+        <ng-template ngFor let-feature let-j="index" [ngForOf]="sourceFeature[1]">
+          <igo-feature-item
+            igoListItem color="accent"
+            [feature]="feature"
+            [focused]="focusFirst && i + j === 0"
+            (focus)="focus.emit(feature)"
+            (select)="select.emit(feature)">
+          </igo-feature-item>
+        </ng-template>
+      </igo-collapsible>
+
+    </ng-template>
+  </ng-container>
 </igo-list>

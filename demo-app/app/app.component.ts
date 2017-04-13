@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { IgoMap, Layer, LayerService, QueryFormat,
-         SearchService, WMSLayerOptions } from '../../lib/src';
+import { IgoMap, Layer, LayerService,
+         OverlayService, QueryFormat,
+         Feature, FeatureService, WMSLayerOptions } from '../../lib/src';
 
 @Component({
   selector: 'igo-demo',
@@ -11,6 +13,7 @@ import { IgoMap, Layer, LayerService, QueryFormat,
 export class AppComponent implements OnInit {
 
   public searchTerm: string;
+  public feature$ = new BehaviorSubject<Feature>(undefined);
 
   public map = new IgoMap();
   public mapView = {
@@ -19,8 +22,9 @@ export class AppComponent implements OnInit {
     zoom: 6
   };
 
-  constructor(public layerService: LayerService,
-              public searchService: SearchService) {}
+  constructor(public featureService: FeatureService,
+              public layerService: LayerService,
+              public overlayService: OverlayService) {}
 
   ngOnInit() {
     this.map.removeLayers();
@@ -71,7 +75,13 @@ export class AppComponent implements OnInit {
     this.searchTerm = term;
   }
 
-  editLayer(layer: Layer) {
-    alert('Custom layer action triggered!');
+  handleFeatureFocus(feature: Feature) {
+    this.feature$.next(feature);
+    this.overlayService.setFeatures([feature], 'move');
+  }
+
+  handleFeatureSelect(feature: Feature) {
+    this.feature$.next(feature);
+    this.overlayService.setFeatures([feature], 'zoom');
   }
 }

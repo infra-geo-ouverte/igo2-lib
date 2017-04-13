@@ -22,7 +22,7 @@ export class ListItemDirective {
     this.renderer.setElementClass(
       this.el.nativeElement, ListItemDirective.cls, value);
 
-    value === true ? this.focus.emit() : this.unfocus.emit();
+    value === true ? this.focus.emit(this) : this.unfocus.emit(this);
   }
   private _focused: boolean = false;
 
@@ -34,7 +34,7 @@ export class ListItemDirective {
     this.renderer.setElementClass(
       this.el.nativeElement, ListItemDirective.cls, value);
 
-    value === true ? this.select.emit() : this.unselect.emit();
+    value === true ? this.select.emit(this) : this.unselect.emit(this);
   }
   private _selected: boolean = false;
 
@@ -45,7 +45,7 @@ export class ListItemDirective {
   @Output() unselect = new EventEmitter<ListItemDirective>();
 
   @HostListener('click') onClick() {
-    this.click_.emit(this);
+    this.selected = true;
   }
 
   constructor(public renderer: Renderer, private el: ElementRef) { }

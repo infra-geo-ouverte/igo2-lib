@@ -1,14 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-import { FeatureService } from '../shared';
+import { Feature } from '../shared';
 
 @Component({
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',
-  styleUrls: ['./feature-details.component.styl']
+  styleUrls: ['./feature-details.component.styl'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureDetailsComponent {
 
-  constructor(public featureService: FeatureService) { }
+  @Input()
+  get feature(): Feature { return this._feature; }
+  set feature(value: Feature) {
+    this._feature = value;
+  }
+  private _feature: Feature;
+
+  constructor() { }
 
 }

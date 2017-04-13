@@ -116,7 +116,7 @@ export class WMSLayer
     const url = source.getGetFeatureInfoUrl(
       coordinates,
       view.getResolution(),
-      this.map.getProjection(), {
+      this.map.projection, {
         'INFO_FORMAT': this.queryInfoFormat,
         'QUERY_LAYERS': this.params.layers
       });

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { RequestService } from '../../core';
@@ -18,8 +17,6 @@ export enum QueryFormat {
 
 @Injectable()
 export class QueryService {
-
-  public features$ = new BehaviorSubject<Feature[]>([]);
 
   private subscriptions: Subscription[] = [];
 
@@ -42,11 +39,6 @@ export class QueryService {
       .map(res => this.extractData(res, layer))
       .subscribe((features: Feature[]) =>
         this.handleQueryResults(features, layer));
-  }
-
-  clear() {
-    this.unsubscribe();
-    this.features$.next([]);
   }
 
   private unsubscribe() {
@@ -84,7 +76,7 @@ export class QueryService {
       return Object.assign(feature, {
         source: layer.title,
         title: title ? title : `${layer.title} (${index + 1})`,
-        projection: layer.map.getProjection()
+        projection: layer.map.projection
       });
     });
   }
