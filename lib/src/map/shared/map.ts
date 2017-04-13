@@ -117,10 +117,6 @@ export class IgoMap {
     const zIndexTo = layerTo.zIndex;
     const zIndexFrom = layer.zIndex;
 
-    console.log(layer);
-    console.log(layerTo);
-    console.log(zIndexTo);
-    console.log(zIndexFrom);
     layer.zIndex = zIndexTo;
     layerTo.zIndex = zIndexFrom;
 
