@@ -26,8 +26,22 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   private _selection: boolean = true;
 
-  private selectedItem: ListItemDirective;
-  private focusedItem: ListItemDirective;
+  get selectedItem() { return this._selectedItem; }
+  set selectedItem(value: ListItemDirective) {
+    this.focusedItem = value;
+    this._selectedItem = value;
+  }
+  private _selectedItem: ListItemDirective;
+
+  get focusedItem() { return this._focusedItem; }
+  set focusedItem(value: ListItemDirective) {
+    this._focusedItem = value;
+    if (value !== undefined) {
+      this.scrollToItem(value);
+    }
+  }
+  private _focusedItem: ListItemDirective;
+
   private navigationEnabled: boolean;
   private listItems$$: Subscription;
   private subscriptions: Subscription[] = [];
@@ -81,7 +95,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     if (item !== undefined) {
       item.focused = true;
       this.focusedItem = item;
-      this.scrollToItem(item);
     }
   }
 
@@ -123,8 +136,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     if (item !== undefined) {
       item.selected = true;
       this.selectedItem = item;
-      this.focusedItem = item;
-      this.scrollToItem(item);
     }
   }
 
@@ -151,13 +162,8 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   private init() {
     this.subscribe();
 
-    const selectedItem = this.findSelectedItem();
-    if (selectedItem) {
-      console.log(selectedItem);
-      this.select(selectedItem);
-    } else {
-      this.focus(this.findFocusedItem());
-    }
+    this.selectedItem = this.findSelectedItem();
+    this.focusedItem = this.findFocusedItem();
 
     this.enableNavigation();
   }
@@ -166,14 +172,31 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribe();
 
     this.listItems.toArray().forEach(item => {
-      this.subscriptions.push(item.click_.subscribe(
-        (item_: ListItemDirective) => this.select(item_)));
+      this.subscriptions.push(item.select.subscribe(
+        (item_: ListItemDirective) => this.handleItemSelect(item_)));
+
+      this.subscriptions.push(item.focus.subscribe(
+        (item_: ListItemDirective) => this.handleItemFocus(item_)));
     }, this);
   }
 
   private unsubscribe() {
     this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
     this.subscriptions = [];
+  }
+
+  private handleItemFocus(item: ListItemDirective) {
+    if (item !== this.focusedItem) {
+      this.unselect();
+    }
+    this.focusedItem = item;
+  }
+
+  private handleItemSelect(item: ListItemDirective) {
+    if (item !== this.focusedItem) {
+      this.unselect();
+    }
+    this.selectedItem = item;
   }
 
   private findSelectedItem() {

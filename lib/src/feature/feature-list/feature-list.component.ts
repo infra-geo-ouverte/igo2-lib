@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { FeatureService } from '../shared';
+import { Feature } from '../shared';
 
 
 @Component({
@@ -10,6 +10,23 @@ import { FeatureService } from '../shared';
 })
 export class FeatureListComponent {
 
-  constructor(public featureService: FeatureService) {}
+  @Input()
+  get features(): Feature[] { return this._features; }
+  set features(value: Feature[]) {
+    this._features = value;
+  }
+  private _features: Feature[];
+
+  @Input()
+  get focusFirst() { return this._focusFirst; }
+  set focusFirst(value: boolean) {
+    this._focusFirst = value;
+  }
+  private _focusFirst: boolean = false;
+
+  @Output() focus = new EventEmitter<Feature>();
+  @Output() select = new EventEmitter<Feature>();
+
+  constructor() {}
 
 }

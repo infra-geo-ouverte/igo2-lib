@@ -1,9 +1,7 @@
 <igo-list [navigation]="false" [selection]="false">
-  <ng-container *ngIf="map">
-    <ng-template ngFor let-layer [ngForOf]="map.layers$ | async | filterableLayer: 'time'">
-      <igo-time-filter-item igoListItem [layer]="layer"></igo-time-filter-item>
-    </ng-template>
-  </ng-container>
+  <ng-template ngFor let-layer [ngForOf]="layers | filterableLayer: 'time'">
+    <igo-time-filter-item igoListItem [layer]="layer"></igo-time-filter-item>
+  </ng-template>
 
   <ng-content></ng-content>
 </igo-list>

@@ -69,7 +69,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
   private handleFeatures(features: Feature[], action: OverlayAction) {
     this.overlaySource.clear();
 
-    if (features.length === 0) {
+    if (!features || features.length === 0) {
       return;
     }
 
@@ -79,7 +79,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
     features.forEach((feature: Feature) => {
       const olFeature = this.format.readFeature(feature, {
         dataProjection: feature.projection,
-        featureProjection: this.map.getProjection()
+        featureProjection: this.map.projection
       });
 
       featureExtent = this.getFeatureExtent(feature);
@@ -121,7 +121,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     if (feature.extent && feature.projection) {
       extent = ol.proj.transformExtent(
-        feature.extent, feature.projection, this.map.getProjection());
+        feature.extent, feature.projection, this.map.projection);
     }
 
     return extent;

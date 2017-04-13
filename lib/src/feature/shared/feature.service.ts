@@ -7,8 +7,6 @@ import { Feature } from './feature.interface';
 @Injectable()
 export class FeatureService {
 
-  public focusedFeature$ = new BehaviorSubject<Feature>(undefined);
-  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
   public features$ = new BehaviorSubject<Feature[]>([]);
 
   constructor() { }
@@ -27,14 +25,5 @@ export class FeatureService {
 
   clear() {
     this.features$.next([]);
-  }
-
-  focusFeature(feature: Feature) {
-    this.focusedFeature$.next(feature);
-  }
-
-  selectFeature(feature: Feature) {
-    this.focusFeature(feature);
-    this.selectedFeature$.next(feature);
   }
 }

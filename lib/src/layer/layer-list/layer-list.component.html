@@ -1,13 +1,7 @@
 <igo-list [navigation]="false" [selection]="false"> 
-  <ng-container *ngIf="map">
-    <ng-template ngFor let-layer [ngForOf]="map.layers$ | async">
-      <igo-layer-item
-        igoListItem
-        [color]="color"
-        [layer]="layer">
-      </igo-layer-item>
-    </ng-template>
-  </ng-container>
+  <ng-template ngFor let-layer [ngForOf]="layers">
+    <igo-layer-item igoListItem [color]="color" [layer]="layer"></igo-layer-item>
+  </ng-template>
 
   <ng-content></ng-content>
 </igo-list>

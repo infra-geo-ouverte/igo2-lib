@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-import { IgoMap } from '../../map';
+import { Layer } from '../shared';
 
 
 @Component({
@@ -12,18 +12,11 @@ import { IgoMap } from '../../map';
 export class LayerListComponent {
 
   @Input()
-  get map(): IgoMap { return this._map; }
-  set map(value: IgoMap) {
-    this._map = value;
+  get layers(): Layer[] { return this._layers; }
+  set layers(value: Layer[]) {
+    this._layers = value;
   }
-  private _map: IgoMap;
-
-  @Input()
-  get edition() { return this._edition; }
-  set edition(value: boolean) {
-    this._edition = value;
-  }
-  private _edition: boolean = false;
+  private _layers: Layer[] = [];
 
   @Input()
   get color() { return this._color; }

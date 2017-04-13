@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { IgoMap } from '../../map';
+import { Layer } from '../../layer';
 
 @Component({
   selector: 'igo-time-filter-list',
@@ -10,11 +10,11 @@ import { IgoMap } from '../../map';
 export class TimeFilterListComponent {
 
   @Input()
-  get map(): IgoMap { return this._map; }
-  set map(value: IgoMap) {
-    this._map = value;
+  get layers(): Layer[] { return this._layers; }
+  set layers(value: Layer[]) {
+    this._layers = value;
   }
-  private _map: IgoMap;
+  private _layers: Layer[] = [];
 
   constructor() {}
 
