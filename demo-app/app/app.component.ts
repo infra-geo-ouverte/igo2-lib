@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { IgoMap, Layer, LayerService,
+import { IgoMap, LayerService,
          OverlayService, QueryFormat,
          Feature, FeatureService, WMSLayerOptions } from '../../lib/src';
 
