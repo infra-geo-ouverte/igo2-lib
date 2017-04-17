@@ -10,17 +10,12 @@ The latest release of IGO2 Library can be installed from npm `npm install --save
 
 ### Getting started
 
-See our [Getting Started Guide][getting-started]
+See our [Getting Started Guide](https://github.com/infra-geo-ouverte/igo2-lib/blob/master/guides/getting-started.md)
 if you're building your first project with IGO2 Library.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ### Project status
 
 IGO2 Library is under active development and new features will be regularly added. If you'd like to contribute, you must follow our [contributing guidelines](https://github.com/infra-geo-ouverte/igo2-lib/blob/master/CONTRIBUTING.md).
-
 
 High levels items planned for the next few months:
 
@@ -28,3 +23,4 @@ High levels items planned for the next few months:
 - Better support of non-spatial data sources
 - PDF Print
 - Time slider (for filtering)
+- Tests
