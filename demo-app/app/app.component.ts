@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
               public overlayService: OverlayService,
               private language: LanguageService) {
 
-    language.readTranslation('/assets/locale/');
+    this.language.readTranslation('/assets/locale/');
   }
 
   ngOnInit() {
