@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { TranslateModule, MissingTranslationHandler,
-  TranslateService } from '@ngx-translate/core';
+         TranslateService } from '@ngx-translate/core';
 
 
 import { LanguageService, IgoMissingTranslationHandler } from './shared';
