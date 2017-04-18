@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Http } from '@angular/http';
-import { TranslateModule, TranslateLoader,
-         TranslateStaticLoader } from 'ng2-translate';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IgoLanguageModule } from '../src/language';
 
@@ -15,18 +13,9 @@ import 'rxjs/add/operator/finally';
 
 import 'openlayers';
 
-
-export function createTranslateLoader(http: Http) {
-  return new TranslateStaticLoader(http, 'base/assets/locale', '.json');
-}
-
 @NgModule({
   imports: [
-    TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: createTranslateLoader,
-      deps: [Http]
-    }),
+    TranslateModule.forRoot(),
     IgoLanguageModule.forRoot()
   ],
   exports: [
