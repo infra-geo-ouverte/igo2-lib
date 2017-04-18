@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { TranslateModule, MissingTranslationHandler,
-  TranslateService } from '@ngx-translate/core';
+         TranslateService } from '@ngx-translate/core';
 
 import { IgoTestModule } from '../../../test/module';
 
