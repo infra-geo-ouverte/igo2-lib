@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from "@angular/http";
+import { Http, Response } from '@angular/http';
 
 import { TranslateService } from '@ngx-translate/core';
 
-declare function require(arg:string): any;
+declare function require(arg: string): any;
 
 @Injectable()
 export class LanguageService {

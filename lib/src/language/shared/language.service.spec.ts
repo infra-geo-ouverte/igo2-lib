@@ -1,4 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { HttpModule } from '@angular/http';
+
 import { TranslateModule, MissingTranslationHandler,
          TranslateService } from '@ngx-translate/core';
 
@@ -12,15 +14,16 @@ describe('LanguageService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
+        HttpModule,
         IgoTestModule,
-        TranslateModule.forRoot({
+        TranslateModule/*.forRoot({
           missingTranslationHandler: {
             provide: MissingTranslationHandler,
             useClass: IgoMissingTranslationHandler
           }
-        })
+        })*/
       ],
-      providers: [ TranslateService ]
+      // providers: [ TranslateService ]
     });
   });
 
