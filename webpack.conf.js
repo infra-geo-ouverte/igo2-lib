@@ -61,7 +61,7 @@ module.exports = {
      /^rxjs\//,
      /^md2/,
      /^ts-md5/,
-     /^ng2-translate/,
+     /^ngx-translate/,
      /^zone.js/,
      /openlayers/
    ],

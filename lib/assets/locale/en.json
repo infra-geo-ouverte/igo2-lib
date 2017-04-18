@@ -5,6 +5,7 @@
   "Description": "Description",
   "Edit Context": "Edit Context",
   "Edit Layer": "Edit Layer",
+  "Start Date": "Start Date",
   "End Date": "End Date",
   "Map": "Map",
   "Go Back": "Go back",
@@ -32,7 +33,6 @@
   "Search for an address or a place": "Search for an address, a place or a layer",
   "Search disabled": "The search tool is disabled in this context",
   "Show Layer": "Show Layer",
-  "Start Date": "Start Date",
   "Time Analysis": "Time Analysis",
   "Title": "Title",
 

@@ -3,7 +3,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { IgoMap, LayerService,
          OverlayService, QueryFormat,
-         Feature, FeatureService, WMSLayerOptions } from '../../lib/src';
+         Feature, FeatureService,
+         WMSLayerOptions, LanguageService } from '../../lib/src';
 
 @Component({
   selector: 'igo-demo',
@@ -24,7 +25,11 @@ export class AppComponent implements OnInit {
 
   constructor(public featureService: FeatureService,
               public layerService: LayerService,
-              public overlayService: OverlayService) {}
+              public overlayService: OverlayService,
+              translate: LanguageService) {
+
+    translate.readTranslation('/assets/locale/');
+  }
 
   ngOnInit() {
     this.map.removeLayers();

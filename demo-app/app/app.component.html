@@ -3,7 +3,7 @@
   <md-card-title>search-bar.component</md-card-title>
   <md-card-content>
     <igo-search-bar
-      [placeholder]="'Search'"
+      [placeholder]="'Search Results' | translate"
       (search)="handleSearch($event)">
     </igo-search-bar>
 
@@ -31,7 +31,7 @@
 
 <md-card>
   <md-card-subtitle>Map module</md-card-subtitle>
-  <md-card-title>map-browser.component</md-card-title>   
+  <md-card-title>map-browser.component</md-card-title>
   <md-card-content class="igo-map-browser-container">
     <igo-map-browser
       [map]="map" [view]="mapView"
@@ -43,7 +43,7 @@
 
 <md-card>
   <md-card-subtitle>Layer module</md-card-subtitle>
-  <md-card-title>layer-list.component</md-card-title>   
+  <md-card-title>layer-list.component</md-card-title>
   <md-card-content>
     <igo-layer-list [layers]="map.layers$ | async"></igo-layer-list>
   </md-card-content>
@@ -51,7 +51,7 @@
 
 <md-card>
   <md-card-subtitle>Filter module</md-card-subtitle>
-  <md-card-title>time-filter.component</md-card-title>   
+  <md-card-title>time-filter.component</md-card-title>
   <md-card-content>
     <igo-time-filter-list [layers]="map.layers$ | async"></igo-time-filter-list>
   </md-card-content>

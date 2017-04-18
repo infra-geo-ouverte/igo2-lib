@@ -1,5 +1,5 @@
 import { MissingTranslationHandler,
-         MissingTranslationHandlerParams } from 'ng2-translate';
+         MissingTranslationHandlerParams } from '@ngx-translate/core';
 
 export class IgoMissingTranslationHandler
   implements MissingTranslationHandler {
