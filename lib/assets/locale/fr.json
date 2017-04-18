@@ -5,7 +5,6 @@
   "Description": "Description",
   "Edit Context": "Modifier contexte",
   "Edit Layer": "Modifier couche",
-  "Start Date": "Date de début",
   "End Date": "Date de fin",
   "Map": "Carte",
   "Go Back": "Revenir",
@@ -33,6 +32,7 @@
   "Search for an address or a place": "Rechercher une adresse, un lieu ou une couche",
   "Search disabled": "L'outil de recherche est désactivé dans ce contexte",
   "Show Layer": "Afficher couche",
+  "Start Date": "Date de début",
   "Time Analysis": "Analyse Temporelle",
   "Title": "Titre",
 
