@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
-import { IgoMap } from '../../map';
 
 import { LayerListComponent } from './layer-list.component';
 import { LayerItemComponent } from '../layer-item/layer-item.component';
@@ -33,7 +32,7 @@ describe('LayerListComponent', () => {
   });
 
   it('should create', () => {
-    component.map = new IgoMap();
+    component.layers = [];
     expect(component).toBeTruthy();
   });
 });

@@ -13,7 +13,7 @@ export function Register(toolDef: Tool) {
 @Injectable()
 export class ToolService {
 
-  static tools: {[key: string]: [Tool, (typeof Component)]} = {};
+  static tools: {[key: string]: [Tool, Component]} = {};
 
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
 

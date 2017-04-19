@@ -4,14 +4,14 @@ import { AfterViewInit, ChangeDetectorRef, Component,
 import { Subscription } from 'rxjs/Subscription';
 
 import { Tool, ToolService } from '../shared';
-import { toolSlideInOut} from './toolbox.animation';
+import { toolSlideInOut } from './toolbox.animation';
 
 @Component({
   selector: 'igo-toolbox',
   templateUrl: 'toolbox.component.html',
   styleUrls: ['toolbox.component.styl'],
   animations: [
-    toolSlideInOut
+    toolSlideInOut()
   ]
 })
 export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {

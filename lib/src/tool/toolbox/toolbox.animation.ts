@@ -1,20 +1,22 @@
-import {trigger, state, style, transition, animate } from '@angular/core';
+import { trigger, state, style, transition,
+         animate, AnimationTriggerMetadata } from '@angular/animations';
 
-const transitionSpeed = '300ms';
-const transitionType = 'ease-in-out';
+export function toolSlideInOut(
+    speed = '300ms',type = 'ease-in-out'): AnimationTriggerMetadata {
 
-export const toolSlideInOut = trigger('toolSlideInOut', [
-  state('left',   style({
-    transform: 'translate3d(-100%, 0, 0)'
-  })),
-  state('center',   style({
-    transform: 'translate3d(0, 0, 0)'
-  })),
-  state('right', style({
-    transform: 'translate3d(100%, 0, 0)'
-  })),
-  transition('left => center', animate(transitionSpeed + ' ' + transitionType)),
-  transition('right => center', animate(transitionSpeed + ' ' + transitionType)),
-  transition('center => right', animate('0ms ' + transitionType)),
-  transition('center => left', animate('0ms ' + transitionType)),
-]);
+  return trigger('toolSlideInOut', [
+    state('left',   style({
+      transform: 'translate3d(-100%, 0, 0)'
+    })),
+    state('center',   style({
+      transform: 'translate3d(0, 0, 0)'
+    })),
+    state('right', style({
+      transform: 'translate3d(100%, 0, 0)'
+    })),
+    transition('left => center', animate(speed + ' ' + type)),
+    transition('right => center', animate(speed + ' ' + type)),
+    transition('center => right', animate('0ms ' + type)),
+    transition('center => left', animate('0ms ' + type)),
+  ]);
+};

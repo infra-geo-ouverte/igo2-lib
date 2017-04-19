@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Md2Module } from 'md2';
 
 import { IgoSharedModule } from '../../shared';
-import { IgoMap } from '../../map/shared/map';
 
 import { FilterableLayerPipe } from '../filterable-layer';
 import { TimeFilterItemComponent } from '../time-filter-item';
@@ -35,7 +34,7 @@ describe('TimeFilterListComponent', () => {
   });
 
   it('should create', () => {
-    component.map = new IgoMap();
+    component.layers = [];
     expect(component).toBeTruthy();
   });
 });
