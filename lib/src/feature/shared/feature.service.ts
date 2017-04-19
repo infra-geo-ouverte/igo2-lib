@@ -30,7 +30,7 @@ export class FeatureService {
   }
 
   focusFeature(feature: Feature) {
-    this.selectedFeature$.next(feature);
+    this.focusedFeature$.next(feature);
   }
 
   selectFeature(feature: Feature) {
