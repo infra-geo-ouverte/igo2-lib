@@ -9,3 +9,4 @@ export * from './map';
 export * from './overlay';
 export * from './query';
 export * from './search';
+export * from './tool';

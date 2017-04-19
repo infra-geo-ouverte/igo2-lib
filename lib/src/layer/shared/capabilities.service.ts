@@ -92,13 +92,6 @@ export class CapabilitiesService {
       options.minResolution = layer.MinScaleDenominator;
     }
 
-    if (layer.DataURL && layer.DataURL[0] && layer.DataURL.OnlineResource) {
-      options.dataUrl = {
-        format: layer.DataURL[0].Format,
-        onlineResource: layer.DataURL[0].OnlineResource
-      };
-    }
-
     return Object.assign(options, baseOptions);
   }
 

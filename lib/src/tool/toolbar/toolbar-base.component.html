@@ -1,0 +1,14 @@
+<igo-list navigation="false"> 
+  <ng-template ngFor let-tool [ngForOf]="tools">
+    <igo-toolbar-item
+      igoListItem
+      color="accent"
+      [withTitle]="withTitle"
+      [withIcon]="withIcon"
+      [tool]=tool
+      (select)="handleToolSelect(tool)">
+    </igo-toolbar-item>
+  </ng-template>
+
+  <ng-content></ng-content>
+</igo-list>
