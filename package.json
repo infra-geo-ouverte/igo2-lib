@@ -14,7 +14,7 @@
     "build.demo": "ng build --app demo",
     "test.lib": "ng test --single-run ",
     "test.demo": "ng test -c karma.demo.conf.js --single-run",
-    "test": "npm run test.lib && npm run test.demo",
+    "test": "npm run lint && npm run test.lib && npm run test.demo",
     "lint": "ng lint",
     "e2e": "ng e2e --app demo"
   },
