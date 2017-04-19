@@ -7,7 +7,8 @@
       <igo-collapsible title="{{sourceFeature[0]}} ({{sourceFeature[1].length}})">
         <ng-template ngFor let-feature let-j="index" [ngForOf]="sourceFeature[1]">
           <igo-feature-item
-            igoListItem color="accent"
+            igoListItem
+            color="accent"
             [feature]="feature"
             [focused]="focusFirst && i + j === 0"
             (focus)="focus.emit(feature)"

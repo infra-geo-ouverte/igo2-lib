@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { IgoMap, LayerService,
+import { IgoMap, LayerService, Tool,
          OverlayService, QueryFormat,
          Feature, FeatureService,
          WMSLayerOptions, LanguageService } from '../../lib/src';
@@ -22,6 +22,11 @@ export class AppComponent implements OnInit {
     center: [-72, 52],
     zoom: 6
   };
+
+  public tools = [
+    {name: 'tool1', title: 'Tool 1', icon: 'map', tooltip: 'tooltip1'},
+    {name: 'tool2', title: 'Tool 2', icon: 'bookmark', tooltip: 'tooltip2'}
+  ];
 
   constructor(public featureService: FeatureService,
               public layerService: LayerService,
@@ -88,5 +93,9 @@ export class AppComponent implements OnInit {
   handleFeatureSelect(feature: Feature) {
     this.feature$.next(feature);
     this.overlayService.setFeatures([feature], 'zoom');
+  }
+
+  handleToolSelect(tool: Tool) {
+    alert(`Tool '${tool.name}' selected!`);
   }
 }

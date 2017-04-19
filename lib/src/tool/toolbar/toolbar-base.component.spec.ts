@@ -3,13 +3,12 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
 
-import { OSMLayer } from '../shared';
-import { LayerItemComponent } from './layer-item.component';
-import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
+import { ToolbarBaseComponent } from './toolbar-base.component';
+import { ToolbarItemComponent } from '../toolbar-item';
 
-describe('LayerItemComponent', () => {
-  let component: LayerItemComponent;
-  let fixture: ComponentFixture<LayerItemComponent>;
+describe('ToolbarBaseComponent', () => {
+  let component: ToolbarBaseComponent;
+  let fixture: ComponentFixture<ToolbarBaseComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -18,20 +17,20 @@ describe('LayerItemComponent', () => {
         IgoSharedModule
       ],
       declarations: [
-        LayerItemComponent,
-        LayerLegendComponent
+        ToolbarBaseComponent,
+        ToolbarItemComponent
       ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LayerItemComponent);
+    fixture = TestBed.createComponent(ToolbarBaseComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
-    component.layer = new OSMLayer({title: 'foo', type: 'osm'});
     expect(component).toBeTruthy();
   });
 });

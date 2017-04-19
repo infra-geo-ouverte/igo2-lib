@@ -21,6 +21,7 @@ import { IgoOverlayModule } from './overlay/index';
 import { IgoQueryModule } from './query/index';
 import { IgoSearchModule } from './search/index';
 import { IgoSharedModule } from './shared/index';
+import { IgoToolModule } from './tool/index';
 
 
 const IGO_MODULES = [
@@ -32,7 +33,8 @@ const IGO_MODULES = [
   IgoOverlayModule,
   IgoQueryModule,
   IgoSearchModule,
-  IgoSharedModule
+  IgoSharedModule,
+  IgoToolModule
 ];
 
 @NgModule({
@@ -47,7 +49,8 @@ const IGO_MODULES = [
     IgoMapModule.forRoot(),
     IgoOverlayModule.forRoot(),
     IgoQueryModule.forRoot(),
-    IgoSearchModule.forRoot()
+    IgoSearchModule.forRoot(),
+    IgoToolModule.forRoot()
   ],
   exports: IGO_MODULES
 })

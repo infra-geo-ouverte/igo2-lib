@@ -1,0 +1,22 @@
+:host.withIcon:not(.withTitle):not(.horizontal) {
+  igo-list {
+    width: 40px;
+  }
+
+  igo-toolbar-item >>> .mat-list-item.mat-list-item-avatar .mat-list-item-content {
+    width: 40px;
+    height: 40px;
+    padding: 0px;
+  }
+}
+
+:host.horizontal {
+  igo-list {
+    width: auto;
+    white-space: nowrap;
+  }
+
+  igo-toolbar-item {
+    display: inline-block;
+  }
+};

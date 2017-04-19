@@ -34,8 +34,10 @@
   <md-card-title>map-browser.component</md-card-title>
   <md-card-content class="igo-map-browser-container">
     <igo-map-browser
-      [map]="map" [view]="mapView"
-      igoQuery igoOverlay>
+      igoQuery
+      igoOverlay
+      [map]="map"
+      [view]="mapView">
       <igo-zoom [map]="map" color="primary"></igo-zoom>
     </igo-map-browser>
   </md-card-content>
@@ -55,4 +57,23 @@
   <md-card-content>
     <igo-time-filter-list [layers]="map.layers$ | async"></igo-time-filter-list>
   </md-card-content>
+</md-card>
+
+<md-card>
+  <md-card-subtitle>Tool module</md-card-subtitle>
+  <md-card-title>toolbar.component</md-card-title>   
+  <md-card-content>
+    <igo-toolbar
+      [tools]="tools"
+      [withIcon]="true"
+      [withTitle]="true"
+      [horizontal]="true"
+      (select)="handleToolSelect($event)">
+    </igo-toolbar>
+  </md-card-content>
+
+  <!--md-card-title>toolbox.component</md-card-title>
+  <md-card-content>
+    <igo-toolbox></igo-toolbox>
+  </md-card-content-->
 </md-card>
