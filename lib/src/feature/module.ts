@@ -3,11 +3,11 @@ import { HttpModule } from '@angular/http';
 
 import { IgoSharedModule } from '../shared';
 
-import { FeatureService } from './shared';
+import { FeatureService, FeatureGroupPipe } from './shared';
 import { FeatureDetailsComponent } from './feature-details';
-import { FeatureListComponent } from './feature-list';
+import { FeatureListComponent,
+         FeatureListBaseComponent } from './feature-list';
 import { FeatureItemComponent } from './feature-item';
-import { FeatureGroupPipe } from './feature-group';
 
 
 @NgModule({
@@ -18,12 +18,14 @@ import { FeatureGroupPipe } from './feature-group';
   exports: [
     FeatureDetailsComponent,
     FeatureListComponent,
+    FeatureListBaseComponent,
     FeatureItemComponent,
     FeatureGroupPipe
   ],
   declarations: [
     FeatureDetailsComponent,
     FeatureListComponent,
+    FeatureListBaseComponent,
     FeatureItemComponent,
     FeatureGroupPipe
   ]
@@ -42,5 +44,4 @@ export class IgoFeatureModule {
 export * from './feature-details';
 export * from './feature-list';
 export * from './feature-item';
-export * from './feature-group';
 export * from './shared';

@@ -8,6 +8,8 @@ import { Feature } from './feature.interface';
 export class FeatureService {
 
   public features$ = new BehaviorSubject<Feature[]>([]);
+  public focusedFeature$ = new BehaviorSubject<Feature>(undefined);
+  public selectedFeature$ = new BehaviorSubject<Feature>(undefined);
 
   constructor() { }
 
@@ -25,5 +27,14 @@ export class FeatureService {
 
   clear() {
     this.features$.next([]);
+  }
+
+  focusFeature(feature: Feature) {
+    this.selectedFeature$.next(feature);
+  }
+
+  selectFeature(feature: Feature) {
+    this.selectedFeature$.next(feature);
+    this.focusFeature(feature);
   }
 }
