@@ -10,7 +10,7 @@ import { Tool } from '../shared';
 export class ToolbarItemComponent {
 
   @Input()
-  get tool() { return this._tool; }
+  get tool(): Tool { return this._tool; }
   set tool(value: Tool) {
     this._tool = value;
   }
