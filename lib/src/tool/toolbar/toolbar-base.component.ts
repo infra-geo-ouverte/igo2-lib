@@ -11,7 +11,7 @@ import { Tool } from '../shared/tool.interface';
 export class ToolbarBaseComponent {
 
   @Input()
-  get tools() { return this._tools; }
+  get tools(): Tool[] { return this._tools; }
   set tools(value: Tool[]) {
     this._tools = value;
   }
