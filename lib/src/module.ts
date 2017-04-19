@@ -1,8 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
-import { TranslateModule, TranslateLoader,
-         TranslateStaticLoader } from 'ng2-translate';
 
 import 'rxjs/add/operator/debounceTime.js';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -26,9 +23,6 @@ import { IgoSearchModule } from './search/index';
 import { IgoSharedModule } from './shared/index';
 import { IgoToolModule } from './tool/index';
 
-export function createTranslateLoader(http: Http) {
-  return new TranslateStaticLoader(http, './locale', '.json');
-}
 
 const IGO_MODULES = [
   IgoLanguageModule,
@@ -46,11 +40,6 @@ const IGO_MODULES = [
 @NgModule({
   imports: [
     MaterialModule.forRoot(),
-    TranslateModule.forRoot({
-      provide: TranslateLoader,
-      useFactory: createTranslateLoader,
-      deps: [Http]
-    }),
 
     IgoCoreModule.forRoot(),
     IgoLanguageModule.forRoot(),

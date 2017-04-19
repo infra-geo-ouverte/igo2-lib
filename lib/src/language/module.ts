@@ -1,11 +1,20 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { MissingTranslationHandler } from 'ng2-translate';
+
+import { TranslateModule, MissingTranslationHandler,
+         TranslateService } from '@ngx-translate/core';
+
 
 import { LanguageService, IgoMissingTranslationHandler } from './shared';
 
-
 @NgModule({
-  imports: [],
+  imports: [
+    TranslateModule.forRoot({
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: IgoMissingTranslationHandler
+      }
+    })
+  ],
   exports: []
 })
 export class IgoLanguageModule {
@@ -13,11 +22,8 @@ export class IgoLanguageModule {
     return {
       ngModule: IgoLanguageModule,
       providers: [
-        LanguageService,
-        {
-          provide: MissingTranslationHandler,
-          useClass: IgoMissingTranslationHandler
-        }
+        TranslateService,
+        LanguageService
       ]
     };
   }
