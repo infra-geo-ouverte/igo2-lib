@@ -5,11 +5,10 @@ import { IgoSharedModule } from '../../shared';
 import { FeatureService, FeatureGroupPipe } from '../shared';
 import { FeatureItemComponent } from '../feature-item';
 import { FeatureListBaseComponent } from './feature-list-base.component';
-import { FeatureListComponent } from './feature-list.component';
 
-describe('FeatureListComponent', () => {
-  let component: FeatureListComponent;
-  let fixture: ComponentFixture<FeatureListComponent>;
+describe('FeatureListBaseComponent', () => {
+  let component: FeatureListBaseComponent;
+  let fixture: ComponentFixture<FeatureListBaseComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -18,7 +17,6 @@ describe('FeatureListComponent', () => {
       ],
       declarations: [
         FeatureListBaseComponent,
-        FeatureListComponent,
         FeatureItemComponent,
         FeatureGroupPipe
       ],
@@ -30,7 +28,7 @@ describe('FeatureListComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FeatureListComponent);
+    fixture = TestBed.createComponent(FeatureListBaseComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

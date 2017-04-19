@@ -15,12 +15,12 @@
   <md-card-subtitle>Feature module</md-card-subtitle>
   <md-card-title>feature-list.component</md-card-title>
   <md-card-content>
-    <igo-feature-list
+    <igo-feature-list-base
       [focusFirst]="true"
       [features]="featureService.features$ | async"
       (focus)="handleFeatureFocus($event)"
       (select)="handleFeatureSelect($event)">
-    </igo-feature-list>
+    </igo-feature-list-base>
   </md-card-content>
 
   <md-card-title>feature-details.component</md-card-title>
@@ -63,13 +63,13 @@
   <md-card-subtitle>Tool module</md-card-subtitle>
   <md-card-title>toolbar.component</md-card-title>   
   <md-card-content>
-    <igo-toolbar
+    <igo-toolbar-base
       [tools]="tools"
       [withIcon]="true"
       [withTitle]="true"
       [horizontal]="true"
       (select)="handleToolSelect($event)">
-    </igo-toolbar>
+    </igo-toolbar-base>
   </md-card-content>
 
   <!--md-card-title>toolbox.component</md-card-title>
