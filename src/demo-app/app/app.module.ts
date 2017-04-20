@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
-import { IgoModule, provideDefaultSearchSources } from '../../lib/src';
+import { IgoModule, provideDefaultSearchSources } from '../../lib';
 import { AppComponent } from './app.component';
 
 @NgModule({

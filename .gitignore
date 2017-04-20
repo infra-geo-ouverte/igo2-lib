@@ -2,8 +2,7 @@
 
 # compiled output
 /dist
-/lib/dist
-/lib/bundle
+/bundle
 /tmp
 /out-tsc
 *.metadata.json

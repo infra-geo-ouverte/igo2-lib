@@ -1,22 +1,32 @@
 {
-  "name": "igo-lib",
-  "version": "0.0.1",
-  "description": "Infrastructure géomatique ouverte",
+  "name": "igo2",
+  "version": "0.0.5",
+  "description": "IGO Library",
+  "main": "bundle/igo.js",
+  "typings": "dist/index.d.ts",
   "repository": {
+    "type": "git",
     "url": "https://github.com/infra-geo-ouverte/igo2-lib.git"
   },
-  "license": "LiLiQ-R",
+  "keywords": [
+    "igo"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
+  },
+  "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --app demo --proxy-config proxy.conf.json",
-    "build.lib": "gulp && ngc -p ./lib/tsconfig.lib.json && npm run build.lib.bundle",
+    "start.lib": "ng serve --proxy-config proxy.conf.json",
+    "build.lib": "npm run clean && gulp && ngc -p ./src/lib/tsconfig.lib.json && npm run build.lib.bundle",
     "build.lib.bundle": "webpack --config webpack.conf.js  --bail",
     "build.demo": "ng build --app demo",
-    "test.lib": "ng test --single-run ",
-    "test.demo": "ng test -c karma.demo.conf.js --single-run",
-    "test": "npm run lint && npm run test.lib && npm run test.demo",
+    "test": "npm run lint && ng test --single-run",
     "lint": "ng lint",
-    "e2e": "ng e2e --app demo"
+    "e2e": "ng e2e --app demo",
+    "clean": "rimraf dist && rimraf bundle"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",

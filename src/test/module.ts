@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IgoLanguageModule } from '../src/language';
+import { IgoLanguageModule } from '../lib/language';
 
 import 'rxjs/add/operator/debounceTime.js';
 import 'rxjs/add/operator/distinctUntilChanged';

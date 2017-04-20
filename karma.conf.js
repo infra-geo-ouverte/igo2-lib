@@ -18,16 +18,16 @@ module.exports = function (config) {
     files: [
       './node_modules/openlayers/dist/ol.js',
       {
-        pattern: './assets/locale/*.json',
+        pattern: './src/assets/locale/*.json',
         watched: false,
         included: false,
         nocache: false,
         served: true
       },
-      { pattern: './demo-app/test.ts', watched: false }
+      { pattern: './src/test/test.ts', watched: false }
     ],
     preprocessors: {
-      './demo-app/test.ts': ['@angular/cli']
+      './src/test/test.ts': ['@angular/cli']
     },
     mime: {
       'text/x-typescript': ['ts','tsx']
