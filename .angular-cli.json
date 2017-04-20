@@ -6,49 +6,39 @@
   "apps": [
     {
       "name": "lib",
-      "root": "lib",
+      "root": "src/lib",
+      "outDir": "dist",
+      "assets": [],
+      "index": "../demo-app/index.html",
+      "main": "../demo-app/main.ts",
+      "polyfills": "../demo-app/polyfills.ts",
+      "test": "../test/test.ts",
+      "tsconfig": "tsconfig.lib.json",
+      "testTsconfig": "../tsconfig.spec.json",
+      "prefix": "igo",
+      "mobile": true,
+      "styles": [],
+      "scripts": []
+    },
+    {
+      "name": "demo",
+      "root": "src/demo-app",
       "outDir": "dist",
       "assets": [
         "assets"
       ],
-      "index": "test/index.html",
-      "main": "test/main.ts",
-      "polyfills": "test/polyfills.ts",
-      "test": "test/test.ts",
-      "tsconfig": "tsconfig.lib.json",
-      "testTsconfig": "tsconfig.spec.json",
-      "prefix": "igo",
-      "mobile": true,
-      "styles": [],
-      "scripts": [],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
-    },
-    {
-      "name": "demo",
-      "root": "demo-app",
-      "outDir": "dist",
-      "assets": [
-        "assets",
-        "locale"
-      ],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
-      "test": "test.ts",
-      "tsconfig": "tsconfig.app.json",
-      "testTsconfig": "tsconfig.spec.json",
-      "prefix": "igo",
+      "tsconfig": "tsconfig.demo.json",
+      "prefix": "demo",
       "mobile": true,
       "styles": [
-        "../node_modules/openlayers/dist/ol.css",
+        "../../node_modules/openlayers/dist/ol.css",
         "css/styles.styl"
       ],
       "scripts": [
-        "../node_modules/openlayers/dist/ol.js"
+        "../../node_modules/openlayers/dist/ol.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
@@ -67,19 +57,15 @@
   },
   "lint": [
     {
-      "project": "lib/tsconfig.lib.json",
+      "project": "src/lib/tsconfig.lib.json",
       "exclude": "**/node_modules/**/*"
     },
     {
-      "project": "lib/tsconfig.spec.json",
+      "project": "src/tsconfig.spec.json",
       "exclude": "**/node_modules/**/*"
     },
     {
-      "project": "demo-app/tsconfig.app.json",
-      "exclude": "**/node_modules/**/*"
-    },
-    {
-      "project": "demo-app/tsconfig.spec.json",
+      "project": "src/demo-app/tsconfig.demo.json",
       "exclude": "**/node_modules/**/*"
     },
     {
@@ -89,7 +75,7 @@
   ],
   "test": {
     "karma": {
-      "config": "./karma.lib.conf.js"
+      "config": "./karma.conf.js"
     }
   },
   "defaults": {

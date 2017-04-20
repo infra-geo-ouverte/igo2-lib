@@ -4,20 +4,20 @@ var stylus = require('gulp-stylus');
 
 
 gulp.task('copyHtml', () => {
-   gulp.src('./lib/src/**/*.html')
-      .pipe(gulp.dest('./lib/dist'));
+   gulp.src('./src/lib/**/*.html')
+      .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('copyTs', () => {
-   gulp.src(['./lib/src/**/*.ts', '!./lib/src/**/*.spec.ts'])
+   gulp.src(['./src/lib/**/*.ts', '!./src/lib/**/*.spec.ts'])
       .pipe(replace(/styleUrls: \[(\'\.\/|\')(.*?)\.styl\'\]/g, 'styleUrls: [\'$2.css\']'))
-      .pipe(gulp.dest('./lib/dist'));
+      .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('copyStylus', () => {
-   gulp.src('./lib/src/**/*.styl')
+   gulp.src('./src/lib/**/*.styl')
       .pipe(stylus())
-      .pipe(gulp.dest('./lib/dist'));
+      .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('default', ['copyHtml', 'copyTs', 'copyStylus']);

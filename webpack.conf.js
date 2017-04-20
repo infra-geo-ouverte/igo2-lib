@@ -46,10 +46,10 @@ module.exports = {
       extensions: ['.ts', '.js']
    },
 
-   entry: './lib/src/index.ts',
+   entry: './src/lib/index.ts',
 
    output: {
-      path: helpers.root('lib', 'bundle'),
+      path: helpers.root('bundle'),
       filename: 'igo.js',
       libraryTarget: 'commonjs2',
       library: 'igo'
@@ -72,7 +72,7 @@ module.exports = {
          use: [{
             loader: 'awesome-typescript-loader?declaration=false',
             options: {
-               tsconfig: './lib/tsconfig.lib.json'
+               tsconfig: './src/lib/tsconfig.lib.json'
             }
          },
          {
@@ -99,7 +99,7 @@ module.exports = {
    plugins: [
       new ContextReplacementPlugin(
          /angular(\\|\/)core(\\|\/)src(\\|\/)linker/,
-         helpers.root('lib/src'), // location of your web
+         helpers.root('src/lib'), // location of your web
          {}
       ),
       // Fix Angular 2

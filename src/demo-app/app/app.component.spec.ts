@@ -1,6 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
-import { IgoModule, provideDefaultSearchSources } from '../../lib/src';
+import { IgoModule, provideDefaultSearchSources } from '../../lib';
 
 import { AppComponent } from './app.component';
 
