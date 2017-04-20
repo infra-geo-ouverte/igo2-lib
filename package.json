@@ -26,7 +26,8 @@
     "test": "npm run lint && ng test --single-run",
     "lint": "ng lint",
     "e2e": "ng e2e --app demo",
-    "clean": "rimraf dist && rimraf bundle"
+    "clean": "rimraf dist && rimraf bundle",
+    "i18n.extract": "ngx-translate-extract -i ./src/lib -o ./src/assets/locale/fr.json ./src/assets/locale/en.json -s -f namespaced-json -m _ -c"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",
