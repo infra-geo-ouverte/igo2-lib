@@ -13,7 +13,9 @@
     md-icon-button
     collapsibleButton
     tooltip-position="below"
-    [md-tooltip]="(layer.visible ? 'Hide Layer' : 'Show Layer') | translate"
+    [md-tooltip]="layer.visible ?
+                  ('igo.hideLayer' | translate) :
+                  ('igo.showLayer' | translate)"
     [color]="color"
     (click)="toggleVisibility()">
     <md-icon>
@@ -38,7 +40,7 @@
 
 <div #actions class="igo-layer-actions-container">
   <div class="igo-col igo-col-40 igo-col-100-m">
-    <md-slider 
+    <md-slider
       id="opacity-slider"
       thumbLabel
       tickInterval="5"
@@ -46,7 +48,7 @@
       [min]="0"
       [max]="100"
       [(ngModel)]="opacity"
-      [md-tooltip]="'Opacity' | translate"
+      [md-tooltip]="'igo.opacity' | translate"
       tooltip-position="below">
     </md-slider>
   </div>
@@ -56,7 +58,7 @@
       <button
         md-icon-button
         tooltip-position="below"
-        [md-tooltip]="'Raise Layer' | translate"
+        [md-tooltip]="'igo.raiseLayer' | translate"
         [color]="color"
         (click)="layer.map.raiseLayer(layer)">
         <md-icon>arrow_upward</md-icon>
@@ -65,7 +67,7 @@
       <button
         md-icon-button
         tooltip-position="below"
-        [md-tooltip]="'Lower Layer' | translate"
+        [md-tooltip]="'igo.lowerLayer' | translate"
         [color]="color"
         (click)="layer.map.lowerLayer(layer)">
         <md-icon>arrow_downward</md-icon>
@@ -74,7 +76,7 @@
       <button
         md-icon-button
         tooltip-position="below"
-        [md-tooltip]="'Remove Layer' | translate"
+        [md-tooltip]="'igo.removeLayer' | translate"
         [color]="color"
         (click)="layer.map.removeLayer(layer)">
         <md-icon>delete</md-icon>

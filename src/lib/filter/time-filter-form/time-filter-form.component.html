@@ -1,7 +1,7 @@
 <div *ngIf="!isRange">
   <div class="igo-col igo-col-100 igo-col-100-m">
     <md2-datepicker
-      placeholder="{{'Date' | translate}}"
+      placeholder="{{igo.date | translate}}"
       container="dialog"
       format="{{format}}"
       type="{{type}}"
@@ -16,7 +16,7 @@
 <div *ngIf="isRange">
   <div class="igo-col igo-col-100">
     <md2-datepicker
-      placeholder="{{'Start Date' | translate}}"
+      placeholder="{{'igo.startDate' | translate}}"
       container="dialog"
       format="{{format}}"
       type="{{type}}"
@@ -29,7 +29,7 @@
 
   <div class="igo-col igo-col-100">
     <md2-datepicker
-      placeholder="{{'End Date' | translate}}"
+      placeholder="{{'igo.endDate' | translate}}"
       container="dialog"
       format="{{format}}"
       type="{{type}}"
