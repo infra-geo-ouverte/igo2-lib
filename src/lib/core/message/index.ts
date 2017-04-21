@@ -1,2 +1,3 @@
-export * from './message.service';
+export * from './message.enum';
 export * from './message.interface';
+export * from './message.service';
