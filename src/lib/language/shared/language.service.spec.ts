@@ -14,14 +14,8 @@ describe('LanguageService', () => {
       imports: [
         HttpModule,
         IgoTestModule,
-        TranslateModule/*.forRoot({
-          missingTranslationHandler: {
-            provide: MissingTranslationHandler,
-            useClass: IgoMissingTranslationHandler
-          }
-        })*/
-      ],
-      // providers: [ TranslateService ]
+        TranslateModule
+      ]
     });
   });
 
