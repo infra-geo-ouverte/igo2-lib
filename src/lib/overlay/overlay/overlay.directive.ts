@@ -44,7 +44,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     this.overlayMarkerStyle = new ol.style.Style({
       image: new ol.style.Icon({
-        src: 'assets/icons/place_blue_36px.svg',
+        src: 'src/assets/icons/place_blue_36px.svg',
         imgSize: [36, 36], // for ie
         anchor: [0.5, 1]
       })
