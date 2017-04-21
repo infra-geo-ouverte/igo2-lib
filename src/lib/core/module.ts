@@ -1,7 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
-import { RequestService } from './request';
+import { MediaService } from './media';
 import { MessageService } from './message';
+import { RequestService } from './request';
 
 
 @NgModule({
@@ -13,6 +14,7 @@ export class IgoCoreModule {
     return {
       ngModule: IgoCoreModule,
       providers: [
+        MediaService,
         MessageService,
         RequestService
       ]
@@ -20,5 +22,6 @@ export class IgoCoreModule {
   }
 }
 
-export * from './request';
+export * from './media';
 export * from './message';
+export * from './request';
