@@ -1,5 +1,5 @@
 import { Http, Response } from '@angular/http';
-import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 
 import { TranslateLoader } from '@ngx-translate/core';
 import 'rxjs/add/operator/map';
