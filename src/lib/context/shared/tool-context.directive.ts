@@ -1,7 +1,7 @@
-import { Directive, Self, OnInit, OnDestroy,  } from '@angular/core';
+import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Tool, ToolbarBaseComponent, ToolService } from '../../tool';
+import { Tool, ToolbarComponent, ToolService } from '../../tool';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
@@ -12,10 +12,10 @@ import { DetailedContext } from './context.interface';
 })
 export class ToolContextDirective implements OnInit, OnDestroy {
 
-  private component: ToolbarBaseComponent;
+  private component: ToolbarComponent;
   private context$$: Subscription;
 
-  constructor(@Self() component: ToolbarBaseComponent,
+  constructor(@Self() component: ToolbarComponent,
               private contextService: ContextService,
               private toolService: ToolService) {
     this.component = component;

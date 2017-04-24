@@ -5,7 +5,7 @@ import { MapBrowserComponent, IgoMap } from '../../map';
 import { VectorLayer } from '../../layer';
 import { Feature } from '../../feature';
 
-import { OverlayService } from '../shared';
+import { OverlayService } from '../shared/overlay.service';
 import { OverlayAction } from '../shared/overlay.interface';
 
 

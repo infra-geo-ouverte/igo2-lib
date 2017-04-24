@@ -2,8 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
 
-import { QueryService } from './shared';
-import { QueryDirective } from './query';
+import { QueryService, QueryDirective } from './shared';
 
 
 @NgModule({
@@ -29,4 +28,3 @@ export class IgoQueryModule {
 }
 
 export * from './shared';
-export * from './query';

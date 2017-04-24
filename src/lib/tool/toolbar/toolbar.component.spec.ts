@@ -4,11 +4,9 @@ import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
 
 import { ToolbarComponent } from './toolbar.component';
-import { ToolbarBaseComponent } from './toolbar-base.component';
 import { ToolbarItemComponent } from '../toolbar-item';
-import { ToolService } from '../shared';
 
-describe('ToolbarComponent', () => {
+describe('ToolbarBaseComponent', () => {
   let component: ToolbarComponent;
   let fixture: ComponentFixture<ToolbarComponent>;
 
@@ -20,11 +18,7 @@ describe('ToolbarComponent', () => {
       ],
       declarations: [
         ToolbarComponent,
-        ToolbarBaseComponent,
         ToolbarItemComponent
-      ],
-      providers: [
-        ToolService
       ]
     })
     .compileComponents();

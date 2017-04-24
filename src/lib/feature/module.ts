@@ -5,7 +5,7 @@ import { IgoSharedModule } from '../shared';
 import { FeatureService, FeatureGroupPipe } from './shared';
 import { FeatureDetailsComponent } from './feature-details';
 import { FeatureListComponent,
-         FeatureListBaseComponent } from './feature-list';
+         FeatureListBehaviorDirective } from './feature-list';
 import { FeatureItemComponent } from './feature-item';
 
 
@@ -16,14 +16,14 @@ import { FeatureItemComponent } from './feature-item';
   exports: [
     FeatureDetailsComponent,
     FeatureListComponent,
-    FeatureListBaseComponent,
+    FeatureListBehaviorDirective,
     FeatureItemComponent,
     FeatureGroupPipe
   ],
   declarations: [
     FeatureDetailsComponent,
     FeatureListComponent,
-    FeatureListBaseComponent,
+    FeatureListBehaviorDirective,
     FeatureItemComponent,
     FeatureGroupPipe
   ]

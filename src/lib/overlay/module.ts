@@ -2,8 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
 
-import { OverlayService } from './shared';
-import { OverlayDirective } from './overlay';
+import { OverlayService, OverlayDirective } from './shared';
 
 
 @NgModule({
@@ -29,4 +28,3 @@ export class IgoOverlayModule {
 }
 
 export * from './shared';
-export * from './overlay';

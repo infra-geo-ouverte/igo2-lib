@@ -3,7 +3,7 @@ import { Md2Module } from 'md2';
 
 import { IgoSharedModule } from '../../shared';
 
-import { FilterableLayerPipe } from '../filterable-layer';
+import { FilterableLayerPipe } from '../shared';
 import { TimeFilterItemComponent } from '../time-filter-item';
 import { TimeFilterFormComponent } from '../time-filter-form';
 import { TimeFilterListComponent } from './time-filter-list.component';
