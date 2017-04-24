@@ -3,11 +3,14 @@
 		"endDate": "Date de fin",
 		"hideLayer": "Masquer la couche",
 		"lowerLayer": "Descendre la couche",
+		"map": "Carte",
 		"noLegendText": "Aucune légende disponible pour cette couche",
 		"opacity": "Opacité",
 		"raiseLayer": "Monter la couche",
 		"removeLayer": "Retirer la couche de la carte",
+		"searchResults": "Résultats de recherche",
 		"showLayer": "Afficher la couche",
-		"startDate": "Date de début"
+		"startDate": "Date de début",
+		"timeAnalysis": "Analyse Temporelle"
 	}
 }

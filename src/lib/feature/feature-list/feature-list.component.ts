@@ -1,9 +1,16 @@
 import { Component } from '@angular/core';
 
+import { Register } from '../../tool';
+
 import { Feature, FeatureService } from '../shared';
 import { FeatureListBaseComponent } from './feature-list-base.component';
 
 
+@Register({
+  name: 'featureList',
+  title: 'igo.searchResults',
+  icon: 'search'
+})
 @Component({
   selector: 'igo-feature-list',
   templateUrl: './feature-list.component.html',

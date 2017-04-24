@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HttpModule, Http } from '@angular/http';
+import { Http } from '@angular/http';
 
 import { IgoSharedModule } from '../shared';
 
@@ -35,8 +35,7 @@ export function provideDefaultSearchSources() {
 
 @NgModule({
   imports: [
-    IgoSharedModule,
-    HttpModule
+    IgoSharedModule
   ],
   exports: [
     SearchBarComponent

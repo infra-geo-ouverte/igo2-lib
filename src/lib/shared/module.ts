@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '@angular/material';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,12 +16,14 @@ import { ListComponent, ListItemDirective } from './list';
   imports: [
     CommonModule,
     FormsModule,
+    HttpModule,
     MaterialModule,
     TranslateModule
   ],
   exports: [
     CommonModule,
     FormsModule,
+    HttpModule,
     BrowserAnimationsModule,
     MaterialModule,
     TranslateModule,

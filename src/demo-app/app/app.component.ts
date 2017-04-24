@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { IgoMap, LayerService, Tool,
-         OverlayService, QueryFormat,
+import { IgoMap, Tool, QueryFormat,
+         OverlayService, ContextService,
          Feature, FeatureService,
          WMSLayerOptions, LanguageService } from '../../lib';
 
@@ -17,65 +17,80 @@ export class AppComponent implements OnInit {
   public feature$ = new BehaviorSubject<Feature>(undefined);
 
   public map = new IgoMap();
-  public mapView = {
-    projection: 'EPSG:3857',
-    center: [-72, 52],
-    zoom: 6
-  };
 
-  public tools = [
-    {name: 'tool1', title: 'Tool 1', icon: 'map', tooltip: 'tooltip1'},
-    {name: 'tool2', title: 'Tool 2', icon: 'bookmark', tooltip: 'tooltip2'}
-  ];
-
-  constructor(public featureService: FeatureService,
-              public layerService: LayerService,
+  constructor(public contextService: ContextService,
+              public featureService: FeatureService,
               public overlayService: OverlayService,
               public language: LanguageService) {}
 
   ngOnInit() {
-    this.map.removeLayers();
+    const projection = 'EPSG:3857';
 
-    this.layerService.createAsyncLayer({
-      type: 'osm',
-      title: 'OSM'
-    }).subscribe(layer => this.map.addLayer(layer));
-
-    this.layerService.createAsyncLayer({
-      title: 'MSP DESSERTE MUN 911',
-      type: 'wms',
-      source: {
-        url: '/cgi-wms/igo_gouvouvert.fcgi',
-        params: {
-          layers: 'MSP_DESSERTE_MUN_911',
-          version: '1.3.0'
-        },
-        projection: 'EPSG:3857'
+    this.contextService.setContext({
+      uri: 'qc911',
+      title: 'Qc-911',
+      map: {
+        view: {
+          projection: projection,
+          center: [-72, 52],
+          zoom: 6
+        }
       },
-      queryFormat: QueryFormat.GML2,
-      queryTitle: 'Municipalite'
-    } as WMSLayerOptions).subscribe(layer => this.map.addLayer(layer));
-
-    this.layerService.createAsyncLayer({
-      title: 'Embâcle',
-      type: 'wms',
-      source: {
-        url: 'http://geoegl.msp.gouv.qc.ca/cgi-wms/igo_gouvouvert.fcgi',
-        params: {
-          layers: 'vg_observation_v_inondation_embacle_wmst',
-          version: '1.3.0'
+      layers: [
+        {
+          type: 'osm',
+          title: 'OSM'
         },
-        projection: 'EPSG:3857'
-      },
-      queryFormat: QueryFormat.GML2,
-      queryTitle: 'Municipalite',
-      timeFilter: {
-        min: '2017-01-01',
-        max: '2018-01-01',
-        type: 'date',
-        range: true
-      }
-    } as WMSLayerOptions).subscribe(layer => this.map.addLayer(layer));
+        {
+          title: 'MSP DESSERTE MUN 911',
+          type: 'wms',
+          source: {
+            url: '/cgi-wms/igo_gouvouvert.fcgi',
+            params: {
+              layers: 'MSP_DESSERTE_MUN_911',
+              version: '1.3.0'
+            },
+            projection: projection
+          },
+          queryFormat: QueryFormat.GML2,
+          queryTitle: 'Municipalite'
+        } as WMSLayerOptions,
+        {
+          title: 'Embâcle',
+          type: 'wms',
+          source: {
+            url: 'http://geoegl.msp.gouv.qc.ca/cgi-wms/igo_gouvouvert.fcgi',
+            params: {
+              layers: 'vg_observation_v_inondation_embacle_wmst',
+              version: '1.3.0'
+            },
+            projection: projection
+          },
+          timeFilter: {
+            min: '2017-01-01',
+            max: '2018-01-01',
+            type: 'date',
+            range: true
+          }
+        } as WMSLayerOptions
+      ],
+      toolbar: [
+        'featureList',
+        'layerList',
+        'timeFilter'
+      ],
+      tools: [
+        {
+          name: 'featureList'
+        },
+        {
+          name: 'layerList'
+        },
+        {
+          name: 'timeFilter'
+        }
+      ]
+    });
   }
 
   handleSearch(term: string) {

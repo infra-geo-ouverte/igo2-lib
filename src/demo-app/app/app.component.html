@@ -36,6 +36,8 @@
     <igo-map-browser
       igoQuery
       igoOverlay
+      igoMapContext
+      igoLayerContext
       [map]="map"
       [view]="mapView">
       <igo-zoom [map]="map" color="primary"></igo-zoom>
@@ -64,7 +66,7 @@
   <md-card-title>toolbar.component</md-card-title>   
   <md-card-content>
     <igo-toolbar-base
-      [tools]="tools"
+      igoToolContext
       [withIcon]="true"
       [withTitle]="true"
       [horizontal]="true"

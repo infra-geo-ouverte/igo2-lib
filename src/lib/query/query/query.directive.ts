@@ -26,7 +26,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.queryLayers$$ = this.component.map.layers$
-      .subscribe((layers: Layer[]) => this.handleLayersChanged(layers));
+      .subscribe((layers: Layer[]) => this.handleLayersChange(layers));
 
     this.component.map.olMap.on('singleclick', this.handleMapClick, this);
   }
@@ -35,7 +35,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     this.queryLayers$$.unsubscribe();
   }
 
-  private handleLayersChanged(layers: Layer[]) {
+  private handleLayersChange(layers: Layer[]) {
     this.queryLayers = layers.filter(layer => layer.isQueryable());
   }
 

@@ -3,11 +3,14 @@
 		"endDate": "End Date",
 		"hideLayer": "Hide Layer",
 		"lowerLayer": "Bring layer backward",
+		"map": "Map",
 		"noLegendText": "No legend available for this layer",
 		"opacity": "Opacity",
 		"raiseLayer": "Bring layer forward",
 		"removeLayer": "Remove this layer from the map",
+		"searchResults": "Search Results",
 		"showLayer": "Show Layer",
-		"startDate": "Start Date"
+		"startDate": "Start Date",
+		"timeAnalysis": "Time Analysis"
 	}
 }

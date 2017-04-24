@@ -1,5 +1,4 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HttpModule } from '@angular/http';
 
 import { IgoSharedModule } from '../shared';
 
@@ -9,8 +8,7 @@ import { QueryDirective } from './query';
 
 @NgModule({
   imports: [
-    IgoSharedModule,
-    HttpModule
+    IgoSharedModule
   ],
   exports: [
     QueryDirective

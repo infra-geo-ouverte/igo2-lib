@@ -2,6 +2,7 @@ export * from './core';
 export * from './language';
 export * from './module';
 
+export * from './context';
 export * from './feature';
 export * from './filter';
 export * from './layer';
