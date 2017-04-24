@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { IgoSharedModule } from '../shared';
 
 import { ToolService } from './shared';
-import { ToolbarComponent, ToolbarBaseComponent } from './toolbar';
+import { ToolbarComponent, ToolbarBehaviorDirective } from './toolbar';
 import { ToolbarItemComponent } from './toolbar-item';
 import { ToolboxComponent } from './toolbox';
 
@@ -12,14 +12,14 @@ import { ToolboxComponent } from './toolbox';
     IgoSharedModule
   ],
   exports: [
-    ToolbarBaseComponent,
     ToolbarComponent,
+    ToolbarBehaviorDirective,
     ToolbarItemComponent,
     ToolboxComponent
   ],
   declarations: [
-    ToolbarBaseComponent,
     ToolbarComponent,
+    ToolbarBehaviorDirective,
     ToolbarItemComponent,
     ToolboxComponent
   ]})

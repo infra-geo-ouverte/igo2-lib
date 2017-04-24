@@ -1,38 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { Register } from '../../tool';
-
-import { Feature, FeatureService } from '../shared';
-import { FeatureListBaseComponent } from './feature-list-base.component';
+import { Feature } from '../shared';
 
 
-@Register({
-  name: 'featureList',
-  title: 'igo.searchResults',
-  icon: 'search'
-})
 @Component({
   selector: 'igo-feature-list',
   templateUrl: './feature-list.component.html',
   styleUrls: ['./feature-list.component.styl']
 })
-export class FeatureListComponent extends FeatureListBaseComponent {
+export class FeatureListComponent {
 
-  // Override input features
-  public features: Feature[] = [];
-
-  constructor(public featureService: FeatureService) {
-    super();
+  @Input()
+  get features(): Feature[] { return this._features; }
+  set features(value: Feature[]) {
+    this._features = value;
   }
+  private _features: Feature[];
 
-  handleFeatureFocus(feature: Feature) {
-    super.handleFeatureFocus(feature);
-    this.featureService.focusFeature(feature);
+  @Input()
+  get focusFirst() { return this._focusFirst; }
+  set focusFirst(value: boolean) {
+    this._focusFirst = value;
   }
+  private _focusFirst: boolean = true;
 
-  handleFeatureSelect(feature: Feature) {
-    super.handleFeatureSelect(feature);
-    this.featureService.selectFeature(feature);
-  }
+  @Output() focus = new EventEmitter<Feature>();
+  @Output() select = new EventEmitter<Feature>();
+
+  constructor() {}
 
 }

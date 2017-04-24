@@ -1,4 +1,4 @@
-import { Directive, Self, OnInit, OnDestroy,  } from '@angular/core';
+import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { IgoMap, MapBrowserComponent } from '../../map';

@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { IgoMap, Tool, QueryFormat,
-         OverlayService, ContextService,
-         Feature, FeatureService,
+         OverlayService, ContextService, Feature,
          WMSLayerOptions, LanguageService } from '../../lib';
 
 @Component({
@@ -19,7 +18,6 @@ export class AppComponent implements OnInit {
   public map = new IgoMap();
 
   constructor(public contextService: ContextService,
-              public featureService: FeatureService,
               public overlayService: OverlayService,
               public language: LanguageService) {}
 

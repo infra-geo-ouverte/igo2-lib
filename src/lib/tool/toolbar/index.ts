@@ -1,2 +1,2 @@
 export * from './toolbar.component';
-export * from './toolbar-base.component';
+export * from './toolbar-behavior.directive';
