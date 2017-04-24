@@ -1,14 +1,14 @@
 import { Http } from '@angular/http';
 import { TranslateLoader } from '@ngx-translate/core';
 
-import { LanguageIgoLoader } from './language-igo-loader';
+import { LanguageLoader } from './language-loader';
 
 export interface LanguageModuleConfig {
-  loader?: (http: Http) => LanguageIgoLoader;
+  loader?: (http: Http) => LanguageLoader;
 }
 
-export function defaultTranslateLoader(http: Http) {
-  return new LanguageIgoLoader();
+export function defaultTranslateLoader() {
+  return new LanguageLoader();
 }
 
 export function provideLanguageService(config: LanguageModuleConfig = {}) {
