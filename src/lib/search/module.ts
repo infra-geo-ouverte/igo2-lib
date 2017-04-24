@@ -5,6 +5,7 @@ import { IgoSharedModule } from '../shared';
 
 import { SearchService, SearchSourceService } from './shared';
 import { SearchSource,
+         SearchSourceOptions,
          SearchSourceNominatim } from './search-sources';
 
 import { SearchBarComponent } from './search-bar';
@@ -22,13 +23,21 @@ export function provideSearchSourceService() {
   };
 }
 
-export function provideDefaultSearchSources() {
+export function nominatimSearchSourcesFactory(http: Http, options: any) {
+  return new SearchSourceNominatim(http, options);
+}
+
+export function provideDefaultSearchSources(options?: SearchSourceOptions) {
   return [
     {
+      provide: 'searchSourceOptions',
+      useValue: options
+    },
+    {
       provide: SearchSource,
-      useClass: SearchSourceNominatim,
+      useFactory: nominatimSearchSourcesFactory,
       multi: true,
-      deps: [Http]
+      deps: [Http, 'searchSourceOptions']
     }
   ];
 }
