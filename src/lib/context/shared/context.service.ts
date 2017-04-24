@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-// import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+// import { Observable } from 'rxjs/Observable';
 
 import { RequestService } from '../../core';
 
 import { DetailedContext } from './context.interface';
+
 
 @Injectable()
 export class ContextService {

@@ -37,9 +37,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   private handleContextChange(context: DetailedContext) {
-    if (context.layers === undefined) {
-      return;
-    }
+    if (context.layers === undefined) { return; }
 
     this.map.removeLayers();
     const layerOptions: Array<LayerOptions> = context.layers;

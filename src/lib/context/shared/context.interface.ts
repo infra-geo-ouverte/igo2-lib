@@ -2,6 +2,7 @@ import { MapViewOptions } from '../../map';
 import { LayerOptions } from '../../layer';
 import { Tool } from '../../tool/shared/tool.interface';
 
+
 export interface Context {
   title: string;
   uri: string;

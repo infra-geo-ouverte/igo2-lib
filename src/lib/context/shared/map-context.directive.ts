@@ -35,9 +35,8 @@ export class MapContextDirective implements OnInit, OnDestroy {
   }
 
   private handleContextChange(context: DetailedContext) {
-    if (context.map === undefined) {
-      return;
-    }
+    if (context.map === undefined) { return; }
+
     const viewOptions: MapViewOptions = context.map.view;
     this.component.view = viewOptions;
   }
