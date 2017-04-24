@@ -25,7 +25,17 @@ export function translateLoader(http: Http) {
     IgoModule.forRoot()
   ],
   providers: [
-    ...provideDefaultSearchSources(),
+    ...provideDefaultSearchSources({
+        limit: 5
+    }),
+    /*{
+      provide: SearchSource,
+      useFactory: (http: Http) => {
+        return new SearchSourceNominatim(http, {limit: 4})
+      },
+      multi: true,
+      deps: [Http]
+    },*/
     provideLanguageService({
       loader: translateLoader
     })
