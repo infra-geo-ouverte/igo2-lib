@@ -5,12 +5,12 @@ import { HttpModule, Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
 import { IgoModule, provideDefaultSearchSources,
-         LanguageIgoLoader, provideLanguageService } from '../../lib';
+         LanguageLoader, provideLanguageService } from '../../lib';
 
 import { AppComponent } from './app.component';
 
 export function translateLoader(http: Http) {
-  return new LanguageIgoLoader(http, './assets/locale/', '.json');
+  return new LanguageLoader(http, './assets/locale/', '.json');
 }
 
 @NgModule({
