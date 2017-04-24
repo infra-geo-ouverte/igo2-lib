@@ -2,8 +2,6 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { TranslateLoader } from '@ngx-translate/core';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/combineLatest';
 
 declare function require(arg: string): any;
 

@@ -5,7 +5,9 @@ export class IgoMissingTranslationHandler
   implements MissingTranslationHandler {
 
   handle(params: MissingTranslationHandlerParams) {
-    console.log(`The Key "${params.key}" is missing in locale file.`);
-    // throw new Error(`The Key "${params.key}" is missing in locale file.`);
+    if (!params.translateService.langs.length) {
+        throw new Error(`LanguageService must be injected.`);
+    }
+    throw new Error(`The Key "${params.key}" is missing in locale file.`);
   }
 }

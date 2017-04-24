@@ -27,7 +27,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e --app demo",
     "clean": "rimraf dist && rimraf bundle",
-    "i18n.extract": "ngx-translate-extract -i ./src/lib -o ./src/assets/locale/fr.json ./src/assets/locale/en.json -s -f namespaced-json -m _ -c"
+    "language.extract": "npm run language.extract.lib && npm run language.extract.demo",
+    "language.extract.lib": "ngx-translate-extract -i ./src/lib -o ./src/assets/locale/fr.json ./src/assets/locale/en.json -s -f namespaced-json -m _ -c",
+    "language.extract.demo": "ngx-translate-extract -i ./src/demo-app -o ./src/demo-app/assets/locale/fr.json ./src/demo-app/assets/locale/en.json -s -f namespaced-json -m _ -c"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",

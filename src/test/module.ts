@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { Http } from '@angular/http';
 
-import { IgoLanguageModule } from '../lib/language';
+import { IgoLanguageModule, LanguageLoader, provideLanguageService } from '../lib/language';
 
 import 'rxjs/add/operator/debounceTime.js';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -13,13 +13,18 @@ import 'rxjs/add/operator/finally';
 
 import 'openlayers';
 
+export function translateLoader(http: Http) {
+  return new LanguageLoader(http, './base/src/demo-app/assets/locale/', '.json');
+}
+
 @NgModule({
   imports: [
-    TranslateModule.forRoot(),
     IgoLanguageModule.forRoot()
   ],
-  exports: [
-    TranslateModule
-  ]
+  providers: [
+    provideLanguageService({
+      loader: translateLoader
+    })
+  ],
 })
 export class IgoTestModule { }

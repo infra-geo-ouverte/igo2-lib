@@ -1,5 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
+
+import { IgoTestModule } from '../../test/module';
 import { IgoModule, provideDefaultSearchSources } from '../../lib';
 
 import { AppComponent } from './app.component';
@@ -9,7 +11,8 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         MaterialModule,
-        IgoModule.forRoot()
+        IgoModule.forRoot(),
+        IgoTestModule
       ],
       declarations: [
         AppComponent
