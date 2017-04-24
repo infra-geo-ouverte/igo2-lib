@@ -3,8 +3,8 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { TranslateModule, MissingTranslationHandler,
          TranslateService } from '@ngx-translate/core';
 
-
-import { LanguageService, IgoMissingTranslationHandler } from './shared';
+import { LanguageService, IgoMissingTranslationHandler,
+  provideLanguageService } from './shared';
 
 @NgModule({
   imports: [
@@ -23,7 +23,8 @@ export class IgoLanguageModule {
       ngModule: IgoLanguageModule,
       providers: [
         TranslateService,
-        LanguageService
+        LanguageService,
+        provideLanguageService()
       ]
     };
   }

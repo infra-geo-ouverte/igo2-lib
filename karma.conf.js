@@ -24,6 +24,13 @@ module.exports = function (config) {
         nocache: false,
         served: true
       },
+      {
+        pattern: './src/demo-app/assets/locale/*.json',
+        watched: false,
+        included: false,
+        nocache: false,
+        served: true
+      },
       { pattern: './src/test/test.ts', watched: false }
     ],
     preprocessors: {

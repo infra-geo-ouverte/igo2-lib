@@ -1,11 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpModule, Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
-import { IgoModule, provideDefaultSearchSources } from '../../lib';
+import { IgoModule, provideDefaultSearchSources,
+         LanguageIgoLoader, provideLanguageService } from '../../lib';
+
 import { AppComponent } from './app.component';
+
+export function translateLoader(http: Http) {
+  return new LanguageIgoLoader(http, './assets/locale/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -19,7 +25,10 @@ import { AppComponent } from './app.component';
     IgoModule.forRoot()
   ],
   providers: [
-    ...provideDefaultSearchSources()
+    ...provideDefaultSearchSources(),
+    provideLanguageService({
+      loader: translateLoader
+    })
   ],
   bootstrap: [AppComponent]
 })

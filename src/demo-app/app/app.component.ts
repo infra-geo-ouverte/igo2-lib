@@ -31,10 +31,7 @@ export class AppComponent implements OnInit {
   constructor(public featureService: FeatureService,
               public layerService: LayerService,
               public overlayService: OverlayService,
-              public language: LanguageService) {
-
-    // this.language.readTranslation('/assets/locale/');
-  }
+              public language: LanguageService) {}
 
   ngOnInit() {
     this.map.removeLayers();
