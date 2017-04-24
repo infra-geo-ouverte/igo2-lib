@@ -1,8 +1,15 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
+import { Register } from '../../tool';
+
 import { Layer } from '../shared';
 
 
+@Register({
+  name: 'layerList',
+  title: 'igo.map',
+  icon: 'map'
+})
 @Component({
   selector: 'igo-layer-list',
   templateUrl: './layer-list.component.html',

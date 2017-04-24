@@ -1,5 +1,4 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { IgoSharedModule } from '../shared';
 
@@ -10,7 +9,6 @@ import { LayerListComponent } from './layer-list';
 
 @NgModule({
   imports: [
-    CommonModule,
     IgoSharedModule
   ],
   exports: [
