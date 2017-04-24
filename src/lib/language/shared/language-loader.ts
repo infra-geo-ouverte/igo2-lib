@@ -7,7 +7,7 @@ import 'rxjs/add/operator/combineLatest';
 
 declare function require(arg: string): any;
 
-export class LanguageIgoLoader implements TranslateLoader {
+export class LanguageLoader implements TranslateLoader {
     constructor(private http?: Http,
                 private prefix: string = '/assets/locale/',
                 private suffix: string = '.json') {}
