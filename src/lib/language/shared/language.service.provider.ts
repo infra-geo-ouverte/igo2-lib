@@ -7,7 +7,7 @@ export interface LanguageModuleConfig {
   loader?: (http: Http) => LanguageLoader;
 }
 
-export function defaultTranslateLoader() {
+export function defaultTranslateLoader(http: Http) {
   return new LanguageLoader();
 }
 

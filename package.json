@@ -3,7 +3,7 @@
   "version": "0.0.5",
   "description": "IGO Library",
   "main": "bundle/igo.js",
-  "typings": "dist/index.d.ts",
+  "typings": "dist/lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/infra-geo-ouverte/igo2-lib.git"

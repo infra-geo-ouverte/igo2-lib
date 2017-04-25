@@ -10,7 +10,7 @@
     "types": []
   },
   "files": [
-    "../../dist/index.ts"
+    "../../dist/lib/index.ts"
   ],
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,
