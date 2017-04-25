@@ -18,14 +18,25 @@
     <igo-feature-list
       igoFeatureListBehavior
       [focusFirst]="true"
+      [focusedFeature]="feature$ | async"
       (focus)="handleFeatureFocus($event)"
       (select)="handleFeatureSelect($event)">
     </igo-feature-list>
   </md-card-content>
 
   <md-card-title>feature-details.component</md-card-title>
-  <md-card-content>
-    <igo-feature-details [feature]="feature$ | async"></igo-feature-details>
+  <md-card-content *ngIf="(feature$ | async)">
+    <igo-panel [title]="'Details'">
+      <igo-feature-details [feature]="feature$ | async"></igo-feature-details>
+
+      <button
+        md-icon-button
+        panelRightButton
+        (click)="clearFeature()">
+        <md-icon>close</md-icon>
+      </button>
+
+    </igo-panel>
   </md-card-content>
 </md-card>
 

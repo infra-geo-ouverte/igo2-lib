@@ -1,20 +1,4 @@
-media_queries = {
-  mobile  : "only screen and (max-width: 400px)",
-  tablet  : "only screen and (min-width: 401px) and (max-width: 800px)",
-  desktop : "only screen and (min-width: 801px)"
-}
-
-media(breakpoints)
-  $conditions = ()
-  for breakpoint in breakpoints
-    push($conditions, media_queries[breakpoint])
-  $conditions = join(", ", $conditions)
-  @media $conditions
-    {block}
-
-$igo-margin = 5px;
-$igo-padding = 5px;
-$igo-icon-size = 40px;
+@require './media.styl';
 
 .igo-col {
   float: left;

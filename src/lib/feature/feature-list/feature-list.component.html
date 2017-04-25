@@ -1,5 +1,5 @@
 <igo-list [navigation]="true"> 
-  <ng-container *ngIf="features">
+  <ng-container *ngIf="features.length > 0">
     <ng-template
       ngFor let-sourceFeature let-i="index"
       [ngForOf]="features | featureGroup">
@@ -10,9 +10,13 @@
             igoListItem
             color="accent"
             [feature]="feature"
-            [focused]="focusFirst && i + j === 0"
+            [focused]="((!focusedFeature && focusFirst && i + j === 0) ||
+                       (focusedFeature && feature.id === focusedFeature.id
+                        && focusedFeature.source === sourceFeature[0])) ? true : false"
             (focus)="focus.emit(feature)"
-            (select)="select.emit(feature)">
+            (select)="select.emit(feature)"
+            (unfocus)="unfocus.emit(feature)"
+            (unselect)="unselect.emit(feature)">
           </igo-feature-item>
         </ng-template>
       </igo-collapsible>

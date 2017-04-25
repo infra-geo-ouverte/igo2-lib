@@ -1,11 +1,23 @@
+$primary-color = rgb(103, 58, 183);
+$accent-color = rgb(255, 215, 64);
+
 [igolistitem][color="primary"].igo-list-item-selected md-list-item {
-  background-color: rgba(103, 58, 183, 1);
+  background-color: $primary-color;
 }
 
 [igolistitem][color="accent"].igo-list-item-selected md-list-item {
-  background-color: rgba(255, 215, 64, 1);
+  background-color: $accent-color
 }
 
 table.igo-striped tbody tr:nth-child(odd) {
   background-color: rgba(103, 58, 183, 0.12);
+}
+
+igo-panel .igo-panel-header {
+  background-color: $primary-color;
+  color: rgb(255, 255, 255);
+}
+
+igo-panel .igo-panel-header .mat-icon {
+  color: rgb(255, 255, 255);
 }
