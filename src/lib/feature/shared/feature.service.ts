@@ -37,4 +37,8 @@ export class FeatureService {
     this.selectedFeature$.next(feature);
     this.focusFeature(feature);
   }
+
+  selectNextFeature() {
+    this.selectedFeature$.next(this.features$.value[4]);
+  }
 }

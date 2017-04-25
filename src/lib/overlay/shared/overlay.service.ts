@@ -9,12 +9,16 @@ import { OverlayAction } from './overlay.interface';
 export class OverlayService {
 
   public features$ =
-    new BehaviorSubject<[Feature[], OverlayAction]>([undefined, undefined]);
+    new BehaviorSubject<[Feature[], OverlayAction]>([[], undefined]);
 
   constructor() {}
 
   setFeatures(features: Feature[], action: OverlayAction = 'none') {
     this.features$.next([features, action]);
+  }
+
+  clear() {
+    this.features$.next([[], 'none']);
   }
 
 }

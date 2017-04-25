@@ -108,4 +108,9 @@ export class AppComponent implements OnInit {
   handleToolSelect(tool: Tool) {
     alert(`Tool '${tool.name}' selected!`);
   }
+
+  clearFeature() {
+    this.feature$.next(undefined);
+    this.overlayService.clear();
+  }
 }

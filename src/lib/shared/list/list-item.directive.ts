@@ -18,27 +18,54 @@ export class ListItemDirective {
   @Input()
   get focused() { return this._focused; }
   set focused(value: boolean) {
-    this._focused = value;
+    let event;
+    if (value) {
+      event = this.focus;
+      this.beforeFocus.emit(this);
+    } else if (this._focused) {
+      event = this.unfocus;
+      this.beforeUnfocus.emit(this);
+    }
+
     this.renderer.setElementClass(
       this.el.nativeElement, ListItemDirective.cls, value);
+    this._focused = value;
 
-    value === true ? this.focus.emit(this) : this.unfocus.emit(this);
+    if (event !== undefined) {
+      event.emit(this);
+    }
   }
   private _focused: boolean = false;
 
   @Input()
   get selected() { return this._selected; }
   set selected(value: boolean) {
-    this._selected = value;
-    this._focused = value;
+    value ? this.beforeSelect.emit(this) : this.beforeUnselect.emit(this);
+
+    let event;
+    if (value) {
+      event = this.select;
+      this.beforeSelect.emit(this);
+    } else if (this._selected) {
+      event = this.unselect;
+      this.beforeUnselect.emit(this);
+    }
+
     this.renderer.setElementClass(
       this.el.nativeElement, ListItemDirective.cls, value);
+    this._selected = value;
+    this._focused = value;
 
-    value === true ? this.select.emit(this) : this.unselect.emit(this);
+    if (event !== undefined) {
+      event.emit(this);
+    }
   }
   private _selected: boolean = false;
 
-  @Output() click_ = new EventEmitter<ListItemDirective>();
+  @Output() beforeSelect = new EventEmitter<ListItemDirective>();
+  @Output() beforeFocus = new EventEmitter<ListItemDirective>();
+  @Output() beforeUnselect = new EventEmitter<ListItemDirective>();
+  @Output() beforeUnfocus = new EventEmitter<ListItemDirective>();
   @Output() focus = new EventEmitter<ListItemDirective>();
   @Output() unfocus = new EventEmitter<ListItemDirective>();
   @Output() select = new EventEmitter<ListItemDirective>();

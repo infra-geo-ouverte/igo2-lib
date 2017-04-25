@@ -35,7 +35,8 @@
       "mobile": true,
       "styles": [
         "../../node_modules/openlayers/dist/ol.css",
-        "css/styles.styl"
+        "style/main.styl",
+        "style/material-font.styl"
       ],
       "scripts": [
         "../../node_modules/openlayers/dist/ol.js"

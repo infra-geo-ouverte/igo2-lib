@@ -172,8 +172,14 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribe();
 
     this.listItems.toArray().forEach(item => {
+      this.subscriptions.push(item.beforeSelect.subscribe(
+        (item_: ListItemDirective) => this.handleItemBeforeSelect(item_)));
+
       this.subscriptions.push(item.select.subscribe(
         (item_: ListItemDirective) => this.handleItemSelect(item_)));
+
+      this.subscriptions.push(item.beforeFocus.subscribe(
+        (item_: ListItemDirective) => this.handleItemBeforeFocus(item_)));
 
       this.subscriptions.push(item.focus.subscribe(
         (item_: ListItemDirective) => this.handleItemFocus(item_)));
@@ -185,17 +191,23 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.subscriptions = [];
   }
 
-  private handleItemFocus(item: ListItemDirective) {
+  private handleItemBeforeFocus(item: ListItemDirective) {
     if (item !== this.focusedItem) {
       this.unselect();
     }
+  }
+
+  private handleItemFocus(item: ListItemDirective) {
     this.focusedItem = item;
   }
 
-  private handleItemSelect(item: ListItemDirective) {
+  private handleItemBeforeSelect(item: ListItemDirective) {
     if (item !== this.focusedItem) {
       this.unselect();
     }
+  }
+
+  private handleItemSelect(item: ListItemDirective) {
     this.selectedItem = item;
   }
 
