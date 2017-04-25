@@ -62,4 +62,9 @@ export class ToolService {
     this.toolHistory$.next(toolHistory);
     this.selectedTool$.next(toolHistory[toolHistory.length - 1]);
   }
+
+  unselectTool() {
+    this.toolHistory$.next([]);
+    this.selectedTool$.next(undefined);
+  }
 }
