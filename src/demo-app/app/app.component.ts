@@ -103,7 +103,7 @@ export class AppComponent implements OnInit {
   }
 
   handleToolSelect(tool: Tool) {
-    // alert(`Tool '${tool.name}' selected!`);
+    alert(`Tool '${tool.name}' selected!`);
   }
 
   clearFeature() {
