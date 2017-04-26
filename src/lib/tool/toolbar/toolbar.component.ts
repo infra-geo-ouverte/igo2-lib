@@ -39,7 +39,6 @@ export class ToolbarComponent {
   private _withIcon: boolean = true;
 
   @Output() select = new EventEmitter<Tool>();
-  @Output() test = new EventEmitter<Tool>();
 
   @HostBinding('class.withTitle')
   get withTitleClass() { return this.withTitle; }

@@ -6,7 +6,7 @@ import { Tool } from './tool.interface';
 
 export function Register(toolDef: Tool) {
   return function(cls) {
-    ToolService.register(cls, toolDef);
+    ToolService.register(toolDef, cls);
   };
 }
 
@@ -18,14 +18,8 @@ export class ToolService {
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
   public selectedTool$ = new BehaviorSubject<Tool>(undefined);
 
-  static register(cls: any, toolDef: Tool) {
-    const tool = Object.assign({}, toolDef);
-
-    if (cls.toolbar !== undefined) {
-      tool['toolbar'] = cls.toolbar;
-    }
-
-    ToolService.tools[tool.name] = [tool, cls];
+  static register(toolDef: Tool, cls?: Component) {
+    ToolService.tools[toolDef.name] = [Object.assign({}, toolDef), cls];
   }
 
   constructor() {}

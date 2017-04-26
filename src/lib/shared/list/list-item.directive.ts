@@ -18,47 +18,31 @@ export class ListItemDirective {
   @Input()
   get focused() { return this._focused; }
   set focused(value: boolean) {
-    let event;
-    if (value) {
-      event = this.focus;
-      this.beforeFocus.emit(this);
-    } else if (this._focused) {
-      event = this.unfocus;
-      this.beforeUnfocus.emit(this);
-    }
+    if (value === this._focused) { return; }
+
+    value ? this.beforeFocus.emit(this) : this.beforeUnfocus.emit(this);
 
     this.renderer.setElementClass(
       this.el.nativeElement, ListItemDirective.cls, value);
     this._focused = value;
 
-    if (event !== undefined) {
-      event.emit(this);
-    }
+    value ? this.focus.emit(this) : this.unfocus.emit(this);
   }
   private _focused: boolean = false;
 
   @Input()
   get selected() { return this._selected; }
   set selected(value: boolean) {
-    value ? this.beforeSelect.emit(this) : this.beforeUnselect.emit(this);
+    if (value === this._selected) { return; }
 
-    let event;
-    if (value) {
-      event = this.select;
-      this.beforeSelect.emit(this);
-    } else if (this._selected) {
-      event = this.unselect;
-      this.beforeUnselect.emit(this);
-    }
+    value ? this.beforeSelect.emit(this) : this.beforeUnselect.emit(this);
 
     this.renderer.setElementClass(
       this.el.nativeElement, ListItemDirective.cls, value);
     this._selected = value;
     this._focused = value;
 
-    if (event !== undefined) {
-      event.emit(this);
-    }
+    value ? this.select.emit(this) : this.unselect.emit(this);
   }
   private _selected: boolean = false;
 

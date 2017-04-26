@@ -8,7 +8,7 @@ import { Layer, FilterableLayer } from '../../layer';
 export class FilterableLayerPipe implements PipeTransform {
 
   transform(value: Layer[], arg: string): any {
-    let layers = value;
+    let layers;
 
     if (arg === 'time') {
       layers = value.filter(layer => {

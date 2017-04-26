@@ -3,9 +3,10 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { IgoSharedModule } from '../shared';
 
 import { FeatureService, FeatureGroupPipe } from './shared';
-import { FeatureDetailsComponent } from './feature-details';
+import { FeatureDetailsComponent,
+         FeatureDetailsBindingDirective } from './feature-details';
 import { FeatureListComponent,
-         FeatureListBehaviorDirective } from './feature-list';
+         FeatureListBindingDirective } from './feature-list';
 import { FeatureItemComponent } from './feature-item';
 
 
@@ -15,15 +16,17 @@ import { FeatureItemComponent } from './feature-item';
   ],
   exports: [
     FeatureDetailsComponent,
+    FeatureDetailsBindingDirective,
     FeatureListComponent,
-    FeatureListBehaviorDirective,
+    FeatureListBindingDirective,
     FeatureItemComponent,
     FeatureGroupPipe
   ],
   declarations: [
     FeatureDetailsComponent,
+    FeatureDetailsBindingDirective,
     FeatureListComponent,
-    FeatureListBehaviorDirective,
+    FeatureListBindingDirective,
     FeatureItemComponent,
     FeatureGroupPipe
   ]

@@ -74,7 +74,7 @@ export class IgoMap {
     if (push) {
       this.layers.splice(0, 0, layer);
       this.sortLayers();
-      this.layers$.next(this.layers);
+      this.layers$.next(this.layers.slice(0));
     }
   }
 
@@ -89,6 +89,7 @@ export class IgoMap {
     if (index >= 0) {
       this.olMap.removeLayer(layer.olLayer);
       this.layers.splice(index, 1);
+      this.layers$.next(this.layers.slice(0));
     }
   }
 
@@ -96,6 +97,7 @@ export class IgoMap {
     this.layers.forEach(layer =>
       this.olMap.removeLayer(layer.olLayer), this);
     this.layers = [];
+    this.layers$.next(this.layers.slice(0));
   }
 
   raiseLayer(layer: Layer) {

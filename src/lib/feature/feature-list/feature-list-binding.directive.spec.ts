@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-describe('ToolbarBehaviorDirective', () => {
+describe('FeatureListBindingDirective', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],

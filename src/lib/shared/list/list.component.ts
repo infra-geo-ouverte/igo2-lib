@@ -94,7 +94,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     // lists such as in the search results list may fail
     if (item !== undefined) {
       item.focused = true;
-      this.focusedItem = item;
     }
   }
 
@@ -135,7 +134,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (item !== undefined) {
       item.selected = true;
-      this.selectedItem = item;
     }
   }
 

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { IgoMap, Tool, QueryFormat,
-         OverlayService, ContextService, Feature,
-         WMSLayerOptions, LanguageService } from '../../lib';
+import { ContextService, Feature, FeatureService, IgoMap,
+         LanguageService, OverlayService, QueryFormat,
+         Tool, WMSLayerOptions } from '../../lib';
 
 @Component({
   selector: 'igo-demo',
@@ -13,11 +12,11 @@ import { IgoMap, Tool, QueryFormat,
 export class AppComponent implements OnInit {
 
   public searchTerm: string;
-  public feature$ = new BehaviorSubject<Feature>(undefined);
 
   public map = new IgoMap();
 
   constructor(public contextService: ContextService,
+              public featureService: FeatureService,
               public overlayService: OverlayService,
               public language: LanguageService) {}
 
@@ -73,19 +72,19 @@ export class AppComponent implements OnInit {
         } as WMSLayerOptions
       ],
       toolbar: [
-        'featureList',
-        'layerList',
+        'searchResults',
+        'map',
         'timeFilter'
       ],
       tools: [
         {
-          name: 'featureList'
+          name: 'searchResults'
         },
         {
-          name: 'layerList'
+          name: 'map'
         },
         {
-          name: 'timeFilter'
+          name: 'timeAnalysis'
         }
       ]
     });
@@ -96,21 +95,19 @@ export class AppComponent implements OnInit {
   }
 
   handleFeatureFocus(feature: Feature) {
-    this.feature$.next(feature);
     this.overlayService.setFeatures([feature], 'move');
   }
 
   handleFeatureSelect(feature: Feature) {
-    this.feature$.next(feature);
     this.overlayService.setFeatures([feature], 'zoom');
   }
 
   handleToolSelect(tool: Tool) {
-    alert(`Tool '${tool.name}' selected!`);
+    // alert(`Tool '${tool.name}' selected!`);
   }
 
   clearFeature() {
-    this.feature$.next(undefined);
+    this.featureService.unfocusFeature();
     this.overlayService.clear();
   }
 }

@@ -5,9 +5,9 @@ import { ToolbarComponent } from './toolbar.component';
 
 
 @Directive({
-  selector: '[igoToolbarBehavior]'
+  selector: '[igoToolbarBinding]'
 })
-export class ToolbarBehaviorDirective {
+export class ToolbarBindingDirective {
 
   private component: ToolbarComponent;
 

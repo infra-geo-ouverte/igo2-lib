@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy,
+         ChangeDetectorRef } from '@angular/core';
 
 import { Feature } from '../shared';
 
@@ -14,9 +15,10 @@ export class FeatureDetailsComponent {
   get feature(): Feature { return this._feature; }
   set feature(value: Feature) {
     this._feature = value;
+    this.cdRef.detectChanges();
   }
   private _feature: Feature;
 
-  constructor() { }
+  constructor(private cdRef: ChangeDetectorRef) { }
 
 }

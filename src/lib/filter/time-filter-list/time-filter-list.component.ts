@@ -1,18 +1,13 @@
-import { Component, Input } from '@angular/core';
-
-import { Register } from '../../tool';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../../layer';
 
-@Register({
-  name: 'timeFilter',
-  title: 'igo.timeAnalysis',
-  icon: 'history'
-})
+
 @Component({
   selector: 'igo-time-filter-list',
   templateUrl: './time-filter-list.component.html',
-  styleUrls: ['./time-filter-list.component.styl']
+  styleUrls: ['./time-filter-list.component.styl'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeFilterListComponent {
 
