@@ -18,7 +18,7 @@ module.exports = function (config) {
     files: [
       './node_modules/openlayers/dist/ol.js',
       {
-        pattern: './src/assets/locale/*.json',
+        pattern: './src/locale/*.json',
         watched: false,
         included: false,
         nocache: false,

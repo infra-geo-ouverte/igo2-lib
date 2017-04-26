@@ -1,10 +1,10 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class LanguageService {
 
-  constructor(private translate: TranslateService, private zone: NgZone) {
+  constructor(private translate: TranslateService) {
     const lang = this.getLanguage();
     this.translate.setDefaultLang(lang);
   }
@@ -15,8 +15,7 @@ export class LanguageService {
   }
 
   public setLanguage(language: string) {
-    this.translate.use(language);
-    this.translate.reloadLang(language);
-    this.zone.run(() => {});
+      this.translate.use(language);
+      this.translate.reloadLang(language);
   }
 }

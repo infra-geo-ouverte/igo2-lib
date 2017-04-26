@@ -72,7 +72,7 @@ module.exports = {
          use: [{
             loader: 'awesome-typescript-loader?declaration=false',
             options: {
-               tsconfig: './src/lib/tsconfig.lib.json'
+               tsconfig: './src/tsconfig.lib.json'
             }
          },
          {
