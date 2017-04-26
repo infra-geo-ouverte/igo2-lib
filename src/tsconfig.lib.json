@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
     "stripInternal": false,
@@ -10,7 +10,7 @@
     "types": []
   },
   "files": [
-    "../../dist/lib/index.ts"
+    "../dist/lib/index.ts"
   ],
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,

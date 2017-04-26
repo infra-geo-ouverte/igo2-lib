@@ -11,7 +11,7 @@ export class LanguageLoader implements TranslateLoader {
                 private suffix: string = '.json') {}
 
     public getTranslation(lang: string): any {
-      const translation = require(`../../../../src/assets/locale/${lang}.json`);
+      const translation = require(`../../../../src/locale/${lang}.json`);
       const igoLocale$ = Observable.of(translation);
 
       if (!this.http) {

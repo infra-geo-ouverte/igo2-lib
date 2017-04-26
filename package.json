@@ -20,7 +20,7 @@
     "ng": "ng",
     "start": "ng serve --app demo --proxy-config proxy.conf.json",
     "start.lib": "ng serve --proxy-config proxy.conf.json",
-    "build.lib": "npm run clean && gulp && ngc -p ./src/lib/tsconfig.lib.json && npm run build.lib.bundle",
+    "build.lib": "npm run clean && gulp && ngc -p ./src/tsconfig.lib.json && npm run build.lib.bundle",
     "build.lib.bundle": "webpack --config webpack.conf.js  --bail",
     "build.demo": "ng build --app demo",
     "test": "npm run lint && ng test --single-run",
@@ -28,7 +28,7 @@
     "e2e": "ng e2e --app demo",
     "clean": "rimraf dist && rimraf bundle",
     "language.extract": "npm run language.extract.lib && npm run language.extract.demo",
-    "language.extract.lib": "ngx-translate-extract -i ./src/lib -o ./src/assets/locale/fr.json ./src/assets/locale/en.json -s -f namespaced-json -m _ -c",
+    "language.extract.lib": "ngx-translate-extract -i ./src/lib -o ./src/locale/fr.json ./src/locale/en.json -s -f namespaced-json -m _ -c",
     "language.extract.demo": "ngx-translate-extract -i ./src/demo-app -o ./src/demo-app/assets/locale/fr.json ./src/demo-app/assets/locale/en.json -s -f namespaced-json -m _ -c"
   },
   "dependencies": {

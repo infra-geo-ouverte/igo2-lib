@@ -13,7 +13,7 @@
       "main": "../demo-app/main.ts",
       "polyfills": "../demo-app/polyfills.ts",
       "test": "../test/test.ts",
-      "tsconfig": "tsconfig.lib.json",
+      "tsconfig": "../tsconfig.lib.json",
       "testTsconfig": "../tsconfig.spec.json",
       "prefix": "igo",
       "mobile": true,
@@ -25,18 +25,20 @@
       "root": "src/demo-app",
       "outDir": "dist",
       "assets": [
-        "assets"
+        "assets",
+        { "glob": "**/*", "input": "../assets/", "output": "./assets/igo-lib/" }
       ],
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
-      "tsconfig": "tsconfig.demo.json",
+      "tsconfig": "../tsconfig.demo.json",
       "prefix": "demo",
       "mobile": true,
       "styles": [
         "../../node_modules/openlayers/dist/ol.css",
-        "style/main.styl",
-        "style/material-font.styl"
+        "../themes/deeppurple-amber.styl",
+        "../style/igo.styl",
+        "style/main.styl"
       ],
       "scripts": [
         "../../node_modules/openlayers/dist/ol.js"
@@ -48,9 +50,6 @@
       }
     }
   ],
-  "addons": [
-    "assets/fonts/*.+(otf|eot|svg|ttf|woff|woff2)"
-  ],
   "e2e": {
     "protractor": {
       "config": "./protractor.conf.js"
@@ -58,7 +57,7 @@
   },
   "lint": [
     {
-      "project": "src/lib/tsconfig.lib.json",
+      "project": "src/tsconfig.lib.json",
       "exclude": "**/node_modules/**/*"
     },
     {
@@ -66,7 +65,7 @@
       "exclude": "**/node_modules/**/*"
     },
     {
-      "project": "src/demo-app/tsconfig.demo.json",
+      "project": "src/tsconfig.demo.json",
       "exclude": "**/node_modules/**/*"
     },
     {
