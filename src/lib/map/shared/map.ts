@@ -124,6 +124,7 @@ export class IgoMap {
 
     this.layers[to] = layer;
     this.layers[from] = layerTo;
+    this.layers$.next(this.layers.slice(0));
   }
 
   moveToExtent(extent: ol.Extent) {
