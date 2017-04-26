@@ -11,6 +11,7 @@ import { CollapsibleComponent, CollapseDirective } from './collapsible';
 import { KeyvaluePipe } from './keyvalue';
 import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
+import { SidenavShimDirective } from './sidenav';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { PanelComponent } from './panel';
     KeyvaluePipe,
     ListComponent,
     ListItemDirective,
-    PanelComponent
+    PanelComponent,
+    SidenavShimDirective
   ],
   declarations: [
     ClickoutDirective,
@@ -43,7 +45,8 @@ import { PanelComponent } from './panel';
     KeyvaluePipe,
     ListComponent,
     ListItemDirective,
-    PanelComponent
+    PanelComponent,
+    SidenavShimDirective
   ]
 })
 export class IgoSharedModule {
@@ -60,3 +63,4 @@ export * from './clickout';
 export * from './keyvalue';
 export * from './list';
 export * from './panel';
+export * from './sidenav';
