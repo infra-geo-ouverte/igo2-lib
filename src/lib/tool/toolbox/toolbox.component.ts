@@ -72,20 +72,16 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
   private createComponent(tool) {
     const selectedTool = this.selectedTool;
 
-    if (!this.viewInitialized || !tool) {
-      return;
-    }
+    if (!this.viewInitialized || !tool) { return; }
 
     /* If the component is created already, simply update its options */
-    if (selectedTool && selectedTool.name === tool.name) {
+    if (this.component && selectedTool && selectedTool.name === tool.name) {
       this.setOptions(tool.options);
       return;
     }
 
     const toolCls = this.toolService.getToolClass(tool.name);
-    if (toolCls === undefined) {
-      return;
-    }
+    if (toolCls === undefined) { return; }
 
     this.destroyComponent();
 
