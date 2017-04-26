@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-describe('FeatureListBehaviorDirective', () => {
+describe('LayerListBindingDirective', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],

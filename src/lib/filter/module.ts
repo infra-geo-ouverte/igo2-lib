@@ -7,7 +7,8 @@ import { IgoSharedModule } from '../shared';
 import { FilterableLayerPipe } from './shared';
 import { TimeFilterFormComponent } from './time-filter-form';
 import { TimeFilterItemComponent } from './time-filter-item';
-import { TimeFilterListComponent } from './time-filter-list/';
+import { TimeFilterListComponent,
+         TimeFilterListBindingDirective } from './time-filter-list/';
 
 @NgModule({
   imports: [
@@ -19,13 +20,15 @@ import { TimeFilterListComponent } from './time-filter-list/';
     FilterableLayerPipe,
     TimeFilterFormComponent,
     TimeFilterItemComponent,
-    TimeFilterListComponent
+    TimeFilterListComponent,
+    TimeFilterListBindingDirective
   ],
   declarations: [
     FilterableLayerPipe,
     TimeFilterFormComponent,
     TimeFilterItemComponent,
-    TimeFilterListComponent
+    TimeFilterListComponent,
+    TimeFilterListBindingDirective
   ]
 })
 export class IgoFilterModule {

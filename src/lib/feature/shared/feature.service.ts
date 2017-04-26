@@ -38,7 +38,12 @@ export class FeatureService {
     this.focusFeature(feature);
   }
 
-  selectNextFeature() {
-    this.selectedFeature$.next(this.features$.value[4]);
+  unfocusFeature() {
+    this.focusFeature(undefined);
   }
+
+  unselectFeature() {
+    this.selectFeature(undefined);
+  }
+
 }

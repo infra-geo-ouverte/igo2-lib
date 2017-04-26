@@ -5,7 +5,7 @@ import { IgoSharedModule } from '../shared';
 import { CapabilitiesService, LayerService } from './shared';
 import { LayerItemComponent } from './layer-item';
 import { LayerLegendComponent } from './layer-legend';
-import { LayerListComponent } from './layer-list';
+import { LayerListComponent, LayerListBindingDirective } from './layer-list';
 
 @NgModule({
   imports: [
@@ -14,12 +14,14 @@ import { LayerListComponent } from './layer-list';
   exports: [
     LayerItemComponent,
     LayerLegendComponent,
-    LayerListComponent
+    LayerListComponent,
+    LayerListBindingDirective
   ],
   declarations: [
     LayerItemComponent,
     LayerLegendComponent,
-    LayerListComponent
+    LayerListComponent,
+    LayerListBindingDirective
   ],
   providers: [
     LayerService
