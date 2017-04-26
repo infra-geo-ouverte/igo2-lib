@@ -26,7 +26,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        { "glob": "**/*", "input": "../assets/", "output": "./assets/igo-lib/" }
+        { "glob": "**/*", "input": "../assets/", "output": "./assets/igo2/" }
       ],
       "index": "index.html",
       "main": "main.ts",
