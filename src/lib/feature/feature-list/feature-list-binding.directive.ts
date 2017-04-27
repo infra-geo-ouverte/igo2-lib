@@ -13,7 +13,7 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
 
   private component: FeatureListComponent;
   private features$$: Subscription;
-  private focusedFeatures$$: Subscription;
+  private focusedFeature$$: Subscription;
 
   @HostListener('focus', ['$event']) onFocus(feature: Feature) {
     this.featureService.focusFeature(feature);
@@ -40,14 +40,14 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     // We can bypass this issue using a debounce time. Since
     // having multiple feature list is unusual, no better fix is provided
     // for now.
-    this.focusedFeatures$$ = this.featureService.focusedFeature$
+    this.focusedFeature$$ = this.featureService.focusedFeature$
       .debounceTime(100)
       .subscribe(feature => this.component.focusedFeature = feature);
   }
 
   ngOnDestroy() {
     this.features$$.unsubscribe();
-    this.focusedFeatures$$.unsubscribe();
+    this.focusedFeature$$.unsubscribe();
   }
 
 }

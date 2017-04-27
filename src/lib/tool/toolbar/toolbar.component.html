@@ -6,6 +6,7 @@
       [withTitle]="withTitle"
       [withIcon]="withIcon"
       [tool]=tool
+      [selected]="selectedTool && selectedTool.name === tool.name"
       (select)="select.emit(tool)">
     </igo-toolbar-item>
   </ng-template>
