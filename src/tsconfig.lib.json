@@ -7,7 +7,9 @@
     "skipLibCheck": true,
     "module": "es2015",
     "baseUrl": "",
-    "types": []
+    "types": [
+      "openlayers"
+    ]
   },
   "files": [
     "../dist/lib/index.ts"

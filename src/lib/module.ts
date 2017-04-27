@@ -10,8 +10,6 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/combineLatest';
 
-import 'openlayers';
-
 import { IgoCoreModule } from './core/index';
 import { IgoLanguageModule } from './language/index';
 import { IgoContextModule } from './context/index';

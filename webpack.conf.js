@@ -61,9 +61,12 @@ module.exports = {
      /^rxjs\//,
      /^md2/,
      /^ts-md5/,
-     /^ngx-translate/,
+     /^@ngx-translate/,
      /^zone.js/,
-     /openlayers/
+     /^ieee754/,
+     /^node-libs-browser/,
+     /\/buffer\//,
+     /^base64-js/
    ],
 
    module: {
