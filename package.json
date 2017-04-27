@@ -21,7 +21,7 @@
     "start": "ng serve --app demo --proxy-config proxy.conf.json",
     "start.lib": "ng serve --proxy-config proxy.conf.json",
     "build.lib": "npm run clean && gulp && ngc -p ./src/tsconfig.lib.json && npm run build.lib.bundle",
-    "build.lib.bundle": "webpack --config webpack.conf.js  --bail",
+    "build.lib.bundle": "webpack --config webpack.conf.js  --bail --display-modules",
     "build.demo": "ng build --app demo",
     "test": "npm run lint && ng test --single-run",
     "lint": "ng lint",

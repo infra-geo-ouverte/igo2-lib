@@ -11,8 +11,6 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 
-import 'openlayers';
-
 export function translateLoader(http: Http) {
   return new LanguageLoader(http, './base/src/demo-app/assets/locale/', '.json');
 }
