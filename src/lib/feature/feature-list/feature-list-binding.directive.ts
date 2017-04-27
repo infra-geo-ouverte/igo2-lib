@@ -33,7 +33,7 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     this.component.features = [];
 
     this.features$$ = this.featureService.features$
-      .subscribe(features => this.component.features = features);
+      .subscribe(features => this.handleFeaturesChange(features));
 
     // When there are multiple feature list with this directive,
     // selecting moving up and down using the keyboard skips some features.
@@ -48,6 +48,19 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.features$$.unsubscribe();
     this.focusedFeature$$.unsubscribe();
+  }
+
+  private handleFeaturesChange(features: Feature[]) {
+    // If the features change but are not cleared completely,
+    // we unfocus the focused feature to let the list
+    // focus on the first item. This is useful when
+    // the focused item can still be found in the new features.
+    // In this case, the first item would not be focused, unless
+    // it was the focused feature itself.
+    if (features.length > 0) {
+      this.component.focusedFeature = undefined;
+    }
+    this.component.features = features;
   }
 
 }
