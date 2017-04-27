@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component,
+import { AfterViewInit, ChangeDetectorRef, Component, Input,
          ComponentRef, ComponentFactoryResolver,
          OnDestroy, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
@@ -18,7 +18,21 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
 
   @ViewChild('target', {read: ViewContainerRef}) target: ViewContainerRef;
 
-  public toolState: string = 'center';
+  @Input()
+  get animate() { return this._animate; }
+  set animate(value: boolean) {
+    this._animate = value;
+  }
+  private _animate: boolean = false;
+
+  get toolState(): string {
+    if (!this.animate) {
+      return 'none';
+    }
+
+    return this._toolState;
+  }
+  private _toolState: string = 'center';
 
   private component: ComponentRef<Component>;
   private depth: number = 0;
@@ -50,7 +64,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private handleToolHistoryChange(toolHistory?: Tool[]) {
     const depth = toolHistory.length;
-    this.toolState = depth > this.depth ? 'right' : 'left';
+    this._toolState = depth >= this.depth ? 'right' : 'left';
 
     this.depth = depth;
     this.selectTool(toolHistory[depth - 1]);
@@ -66,7 +80,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     this.selectedTool = tool;
-    this.toolState = 'center';
+    this._toolState = 'center';
   }
 
   private createComponent(tool) {

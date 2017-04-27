@@ -40,10 +40,10 @@ export class ToolbarComponent {
 
   @Output() select = new EventEmitter<Tool>();
 
-  @HostBinding('class.withTitle')
+  @HostBinding('class.with-title')
   get withTitleClass() { return this.withTitle; }
 
-  @HostBinding('class.withIcon')
+  @HostBinding('class.with-icon')
   get withIconClass() { return this.withIcon; }
 
   @HostBinding('class.horizontal')

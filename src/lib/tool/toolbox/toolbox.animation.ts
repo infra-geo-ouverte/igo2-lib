@@ -6,16 +6,13 @@ export function toolSlideInOut(
 
   return trigger('toolSlideInOut', [
     state('left',   style({
-      transform: 'translate3d(-100%, 0, 0)',
-      display: 'none'
+      transform: 'translate3d(-100%, 0, 0)'
     })),
     state('center',   style({
-      transform: 'translate3d(0, 0, 0)',
-      display: 'block'
+      transform: 'translate3d(0, 0, 0)'
     })),
     state('right', style({
-      transform: 'translate3d(100%, 0, 0)',
-      display: 'none'
+      transform: 'translate3d(100%, 0, 0)'
     })),
     transition('left => center', animate(speed + ' ' + type)),
     transition('right => center', animate(speed + ' ' + type)),
