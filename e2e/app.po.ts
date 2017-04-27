@@ -5,7 +5,11 @@ export class IgoLibPage {
     return browser.get('/');
   }
 
-  getParagraphText() {
-    return element(by.css('demo-root h1')).getText();
+  getIgoSearchBar() {
+    return element(by.css('igo-demo igo-search-bar'));
+  }
+
+  getIgoSearchModule() {
+    return element.all(by.css('igo-demo md-card-subtitle')).get(0);
   }
 }
