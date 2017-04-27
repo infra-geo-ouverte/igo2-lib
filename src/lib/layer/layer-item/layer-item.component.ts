@@ -47,7 +47,6 @@ export class LayerItemComponent {
 
   toggleVisibility() {
     this.layer.visible = !this.layer.visible;
-    this.toggleLegend(!this.layer.visible);
   }
 
 }
