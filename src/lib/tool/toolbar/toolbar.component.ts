@@ -1,12 +1,13 @@
-import { Component, Input, Output,
-         EventEmitter, HostBinding } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostBinding,
+         ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { Tool } from '../shared/tool.interface';
 
 @Component({
   selector: 'igo-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.styl']
+  styleUrls: ['./toolbar.component.styl'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolbarComponent {
 
@@ -38,6 +39,14 @@ export class ToolbarComponent {
   }
   private _withIcon: boolean = true;
 
+  @Input()
+  get selectedTool(): Tool { return this._selectedTool; }
+  set selectedTool(value: Tool) {
+    this._selectedTool = value;
+    this.cdRef.detectChanges();
+  }
+  private _selectedTool: Tool;
+
   @Output() select = new EventEmitter<Tool>();
 
   @HostBinding('class.with-title')
@@ -49,6 +58,6 @@ export class ToolbarComponent {
   @HostBinding('class.horizontal')
   get horizontalClass() { return this.horizontal; }
 
-  constructor() {}
+  constructor(private cdRef: ChangeDetectorRef) {}
 
 }

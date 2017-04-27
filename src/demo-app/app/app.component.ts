@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ContextService, Feature, FeatureService, IgoMap,
          LanguageService, OverlayService, QueryFormat,
-         Tool, WMSLayerOptions } from '../../lib';
+         ToolService, WMSLayerOptions } from '../../lib';
 
 @Component({
   selector: 'igo-demo',
@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
   constructor(public contextService: ContextService,
               public featureService: FeatureService,
               public overlayService: OverlayService,
+              public toolService: ToolService,
               public language: LanguageService) {}
 
   ngOnInit() {
@@ -92,6 +93,8 @@ export class AppComponent implements OnInit {
 
   handleSearch(term: string) {
     this.searchTerm = term;
+    const tool = this.toolService.getTool('searchResults');
+    this.toolService.selectTool(tool);
   }
 
   handleFeatureFocus(feature: Feature) {
@@ -100,10 +103,6 @@ export class AppComponent implements OnInit {
 
   handleFeatureSelect(feature: Feature) {
     this.overlayService.setFeatures([feature], 'zoom');
-  }
-
-  handleToolSelect(tool: Tool) {
-    // (`Tool '${tool.name}' selected!`);
   }
 
   clearFeature() {
