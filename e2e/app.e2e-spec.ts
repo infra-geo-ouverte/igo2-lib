@@ -7,8 +7,14 @@ describe('igo-lib App', () => {
     page = new IgoLibPage();
   });
 
-  it('should display message saying app works', () => {
+  it('should have a Igo Search Bar', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('demo works!');
+    expect(page.getIgoSearchBar().isPresent()).toBeTruthy();
   });
+
+  it('should display title saying Search module', () => {
+    page.navigateTo();
+    expect(page.getIgoSearchModule().getText()).toEqual('Search module');
+  });
+
 });
