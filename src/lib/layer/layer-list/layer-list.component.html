@@ -1,6 +1,11 @@
 <igo-list [navigation]="false" [selection]="false"> 
   <ng-template ngFor let-layer [ngForOf]="layers">
-    <igo-layer-item igoListItem [color]="color" [layer]="layer"></igo-layer-item>
+    <igo-layer-item
+        igoListItem
+        [color]="color"
+        [layer]="layer"
+        [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange">
+    </igo-layer-item>
   </ng-template>
 
   <ng-content></ng-content>

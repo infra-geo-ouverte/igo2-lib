@@ -4,12 +4,17 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { CapabilitiesService } from './capabilities.service';
 
-import { Layer, LayerOptions,
+import { Layer,
          OSMLayer, OSMLayerOptions,
          VectorLayer, VectorLayerOptions,
          XYZLayer, XYZLayerOptions,
          WMTSLayer, WMTSLayerOptions,
          WMSLayer, WMSLayerOptions } from './layers';
+
+export type AnyLayerOptions =
+  OSMLayerOptions | VectorLayerOptions |
+  XYZLayerOptions | WMTSLayerOptions | WMSLayerOptions;
+
 
 @Injectable()
 export class LayerService {
@@ -18,14 +23,14 @@ export class LayerService {
 
   constructor(private capabilitiesService: CapabilitiesService) { }
 
-  createAsyncLayer(options: LayerOptions): Observable<Layer> {
+  createAsyncLayer(options: AnyLayerOptions): Observable<Layer> {
     let layer;
     switch (options.type) {
       case 'osm':
-        layer = this.createOSMLayer(options);
+        layer = this.createOSMLayer(options as OSMLayerOptions);
         break;
       case 'vector':
-        layer = this.createVectorLayer(options);
+        layer = this.createVectorLayer(options as VectorLayerOptions);
         break;
       case 'wms':
         layer = this.createWMSLayer(options as WMSLayerOptions);
@@ -34,7 +39,7 @@ export class LayerService {
         layer = this.createWMTSLayer(options as WMTSLayerOptions);
         break;
       case 'xyz':
-        layer = this.createXYZLayer(options);
+        layer = this.createXYZLayer(options as XYZLayerOptions);
         break;
       default:
         break;

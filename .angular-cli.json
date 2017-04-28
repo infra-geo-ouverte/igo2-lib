@@ -26,6 +26,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
+        "contexts",
         { "glob": "**/*", "input": "../assets/", "output": "./assets/igo2/" }
       ],
       "index": "index.html",

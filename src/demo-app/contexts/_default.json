@@ -1,0 +1,37 @@
+{
+  "uri": "_default",
+  "title": "Default Context",
+  "map": {
+    "view": {
+      "projection": "EPSG:3857",
+      "center": [-72, 50],
+      "zoom": 5
+    }
+  },
+  "layers": [
+    {
+      "title" : "OSM",
+      "type" : "osm"
+    }
+  ],
+  "toolbar": [
+    "searchResults",
+    "mapDetails",
+    "timeAnalysis",
+    "contextManager"
+  ],
+  "tools": [
+    {
+      "name": "searchResults"
+    },
+    {
+      "name": "mapDetails"
+    },
+    {
+      "name": "timeAnalysis"
+    },
+    {
+      "name": "contextManager"
+    }
+  ]
+}

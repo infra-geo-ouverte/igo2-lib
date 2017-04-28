@@ -5,7 +5,7 @@ import { Message } from '../../core/message';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SearchSourceOptions } from './search-source-options';
+import { SearchSourceOptions } from './search-source.interface';
 
 
 export class SearchSourceNominatim extends SearchSource {
@@ -14,8 +14,10 @@ export class SearchSourceNominatim extends SearchSource {
   static sortIndex: number = 10;
   static searchUrl: string = 'https://nominatim.openstreetmap.org/search';
 
-  constructor(private http: Http, private options: SearchSourceOptions = {}) {
+  constructor(private http: Http, private options: SearchSourceOptions) {
     super();
+
+    this.options = options ? options : {};
   }
 
   getName (): string {

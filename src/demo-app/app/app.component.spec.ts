@@ -2,7 +2,8 @@ import { TestBed, async } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
 
 import { IgoTestModule } from '../../test/module';
-import { IgoModule, provideDefaultSearchSources } from '../../lib';
+import { IgoModule, provideDefaultSearchSources,
+         provideContextService } from '../../lib';
 
 import { AppComponent } from './app.component';
 
@@ -18,7 +19,11 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
-        ...provideDefaultSearchSources()
+        ...provideDefaultSearchSources(),
+        ...provideContextService({
+          basePath: './contexts',
+          contextListFile: '_contexts.json'
+        })
       ],
     }).compileComponents();
   }));
@@ -33,6 +38,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('md-card-subtitle').textContent).toContain('Search module');
+    expect(compiled.querySelector('md-card-subtitle').textContent)
+      .toContain('Context module');
   }));
 });

@@ -13,32 +13,49 @@ export function Register(toolDef: Tool) {
 @Injectable()
 export class ToolService {
 
-  static tools: {[key: string]: [Tool, Component]} = {};
+  static toolDefs: {[key: string]: [Tool, Component]} = {};
 
+  public tools$ = new BehaviorSubject<{[key: string]: Tool}>({});
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
   public selectedTool$ = new BehaviorSubject<Tool>(undefined);
 
-  static register(toolDef: Tool, cls?: Component) {
-    ToolService.tools[toolDef.name] = [Object.assign({}, toolDef), cls];
+  static register(tool: Tool, cls?: Component) {
+    ToolService.toolDefs[tool.name] = [Object.assign({}, tool), cls];
   }
 
-  constructor() {}
+  constructor() {
+    this.tools$.subscribe(tools => this.handleToolsChange());
 
-  getTool(name: string) {
-    const tool = ToolService.tools[name];
+    const tools = Object.keys(ToolService.toolDefs).map(name => {
+      return {name: name}; 
+    });
+    this.setTools(tools);
+  }
 
-    return tool === undefined ? undefined : tool[0];
+  setTools(tools: Tool[]) {
+    const _tools = {};
+    tools.forEach(tool => {
+      const toolDef = ToolService.toolDefs[tool.name];
+      const baseTool = toolDef ? toolDef[0] : {};
+      _tools[tool.name] = Object.assign({}, baseTool, tool);
+    });
+
+    this.tools$.next(_tools);
+  }
+
+  getTool(name: string): Tool {
+    return this.tools$.value[name];
   }
 
   getToolClass(name: string) {
-    const tool = ToolService.tools[name];
+    const toolDef = ToolService.toolDefs[name];
 
-    return tool === undefined ? undefined : tool[1];
+    return toolDef === undefined ? undefined : toolDef[1];
   }
 
-  selectTool(tool: Tool) {
+  selectTool(tool: Tool, force = false) {
     const selectedTool = this.selectedTool$.value;
-    if (selectedTool && tool.name === selectedTool.name) {
+    if (!force && selectedTool && tool.name === selectedTool.name) {
       return;
     }
 
@@ -60,5 +77,20 @@ export class ToolService {
   unselectTool() {
     this.toolHistory$.next([]);
     this.selectedTool$.next(undefined);
+  }
+
+  private handleToolsChange() {
+    const selectedTool = this.selectedTool$.value;
+    if (selectedTool === undefined) { return; }
+
+    const tool = this.getTool(selectedTool.name);
+    if (tool === undefined) {
+      this.unselectTool();
+    } else {
+      // Force a reselect of the tool even if it's the same
+      // to trigger changes in every components that oberve
+      // selectedTool$ ou toolHistory$
+      this.selectTool(tool, true);
+    }
   }
 }

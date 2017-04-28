@@ -15,6 +15,7 @@ export class ToolbarComponent {
   get tools(): Tool[] { return this._tools; }
   set tools(value: Tool[]) {
     this._tools = value;
+    this.cdRef.detectChanges();
   }
   private _tools: Tool[] = [];
 
@@ -48,6 +49,7 @@ export class ToolbarComponent {
   private _selectedTool: Tool;
 
   @Output() select = new EventEmitter<Tool>();
+  @Output() unselect = new EventEmitter<Tool>();
 
   @HostBinding('class.with-title')
   get withTitleClass() { return this.withTitle; }

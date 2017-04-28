@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 
 import { Register } from '../../shared';
 
+import { MapDetailsToolOptions } from './map-details-tool.interface';
+
 
 @Register({
-  name: 'map',
+  name: 'mapDetails',
   title: 'igo.map',
   icon: 'map'
 })
@@ -14,6 +16,13 @@ import { Register } from '../../shared';
   styleUrls: ['./map-details-tool.component.styl']
 })
 export class MapDetailsToolComponent {
+
+  public options: MapDetailsToolOptions = {};
+
+  get toggleLegendOnVisibilityChange(): boolean {
+    return this.options.toggleLegendOnVisibilityChange === undefined ?
+      false : this.options.toggleLegendOnVisibilityChange;
+  }
 
   constructor() { }
 

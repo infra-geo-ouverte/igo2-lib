@@ -1,5 +1,6 @@
 {
 	"igo": {
+		"contexts": "Contexts",
 		"endDate": "End Date",
 		"hideLayer": "Hide Layer",
 		"lowerLayer": "Bring layer backward",

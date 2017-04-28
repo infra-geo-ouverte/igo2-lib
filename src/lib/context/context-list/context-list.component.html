@@ -1,0 +1,12 @@
+<igo-list [navigation]="true"> 
+  <ng-template ngFor let-context [ngForOf]="contexts">
+    <igo-context-item
+      igoListItem
+      color="accent"
+      [selected]="selectedContext && selectedContext.uri === context.uri"
+      [context]="context"
+      (select)="select.emit(context)"
+      (unselect)="unselect.emit(context)">
+    </igo-context-item>
+  </ng-template>
+</igo-list>

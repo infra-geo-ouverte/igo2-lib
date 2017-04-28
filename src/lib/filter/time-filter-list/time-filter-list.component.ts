@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy,
+         ChangeDetectorRef } from '@angular/core';
 
 import { Layer } from '../../layer';
 
@@ -15,9 +16,10 @@ export class TimeFilterListComponent {
   get layers(): Layer[] { return this._layers; }
   set layers(value: Layer[]) {
     this._layers = value;
+    this.cdRef.detectChanges();
   }
   private _layers: Layer[] = [];
 
-  constructor() {}
+  constructor(private cdRef: ChangeDetectorRef) {}
 
 }

@@ -2,8 +2,17 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
 
-import { ContextService, MapContextDirective,
-         LayerContextDirective, ToolContextDirective } from './shared';
+import { ContextService, MapContextDirective, LayerContextDirective,
+         ToolContextDirective, provideContextServiceOptions } from './shared';
+import { ContextListComponent,
+         ContextListBindingDirective } from './context-list';
+import { ContextItemComponent } from './context-item';
+
+const CONTEXT_DIRECTIVES = [
+  MapContextDirective,
+  LayerContextDirective,
+  ToolContextDirective
+];
 
 
 @NgModule({
@@ -11,14 +20,18 @@ import { ContextService, MapContextDirective,
     IgoSharedModule
   ],
   exports: [
-    MapContextDirective,
-    LayerContextDirective,
-    ToolContextDirective
+    ContextListComponent,
+    ContextListBindingDirective,
+    ContextItemComponent,
+
+    ...CONTEXT_DIRECTIVES
   ],
   declarations: [
-    MapContextDirective,
-    LayerContextDirective,
-    ToolContextDirective
+    ContextListComponent,
+    ContextListBindingDirective,
+    ContextItemComponent,
+
+    ...CONTEXT_DIRECTIVES
   ]
 })
 export class IgoContextModule {
@@ -26,6 +39,10 @@ export class IgoContextModule {
     return {
       ngModule: IgoContextModule,
       providers: [
+        provideContextServiceOptions({
+          basePath: 'contexts',
+          contextListFile: '_contexts.json'
+        }),
         ContextService
       ]
     };
@@ -33,3 +50,5 @@ export class IgoContextModule {
 }
 
 export * from './shared';
+export * from './context-list';
+export * from './context-item';
