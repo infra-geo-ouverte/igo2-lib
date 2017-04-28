@@ -24,9 +24,7 @@ export class ToolbarBindingDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // See feature-list.component for an explanation about the debounce time
     this.selectedTool$$ = this.toolService.selectedTool$
-      .debounceTime(100)
       .subscribe(tool => this.component.selectedTool = tool);
   }
 
