@@ -24,8 +24,6 @@ export class ToolService {
   }
 
   constructor() {
-    this.tools$.subscribe(tools => this.handleToolsChange());
-
     const tools = Object.keys(ToolService.toolDefs).map(name => {
       return {name: name};
     });
@@ -79,18 +77,4 @@ export class ToolService {
     this.selectedTool$.next(undefined);
   }
 
-  private handleToolsChange() {
-    const selectedTool = this.selectedTool$.value;
-    if (selectedTool === undefined) { return; }
-
-    const tool = this.getTool(selectedTool.name);
-    if (tool === undefined) {
-      this.unselectTool();
-    } else {
-      // Force a reselect of the tool even if it's the same
-      // to trigger changes in every components that oberve
-      // selectedTool$ ou toolHistory$
-      this.selectTool(tool, true);
-    }
-  }
 }
