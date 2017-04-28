@@ -17,7 +17,7 @@ export function provideContextServiceOptions(options: ContextServiceOptions) {
   return {
     provide: CONTEXT_SERVICE_OPTIONS,
     useValue: options
-  }
+  };
 }
 
 @Injectable()
@@ -46,7 +46,7 @@ export class ContextService {
     this.requestService.register(
       this.http.get(this.getPath(`${uri}.json`)), 'Context')
         .map(res => res.json())
-        .subscribe(context => this.setContext(context));
+        .subscribe(_context => this.setContext(_context));
   }
 
   setContext(context: DetailedContext) {

@@ -31,7 +31,7 @@ export function translateLoader(http: Http) {
     }),
     provideContextServiceOptions({
       basePath: './contexts',
-      contextListFile: '_contexts.json' 
+      contextListFile: '_contexts.json'
     }),
     /*{
       provide: SearchSource,

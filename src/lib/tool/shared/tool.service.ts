@@ -27,7 +27,7 @@ export class ToolService {
     this.tools$.subscribe(tools => this.handleToolsChange());
 
     const tools = Object.keys(ToolService.toolDefs).map(name => {
-      return {name: name}; 
+      return {name: name};
     });
     this.setTools(tools);
   }

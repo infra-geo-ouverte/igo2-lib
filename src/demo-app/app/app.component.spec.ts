@@ -2,8 +2,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
 
 import { IgoTestModule } from '../../test/module';
-import { IgoModule, provideDefaultSearchSources,
-         provideContextService } from '../../lib';
+import { IgoModule, provideDefaultSearchSources } from '../../lib';
 
 import { AppComponent } from './app.component';
 
@@ -19,11 +18,7 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
-        ...provideDefaultSearchSources(),
-        ...provideContextService({
-          basePath: './contexts',
-          contextListFile: '_contexts.json'
-        })
+        ...provideDefaultSearchSources()
       ],
     }).compileComponents();
   }));
