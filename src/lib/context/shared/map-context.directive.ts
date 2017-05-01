@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { IgoMap, MapBrowserComponent, MapViewOptions } from '../../map';
 
 import { ContextService } from './context.service';
-import { DetailedContext } from './context.interface';
+import { DetailedContext, MapViewContext } from './context.interface';
 
 
 @Directive({
@@ -37,8 +37,10 @@ export class MapContextDirective implements OnInit, OnDestroy {
   private handleContextChange(context: DetailedContext) {
     if (context.map === undefined) { return; }
 
-    const viewOptions: MapViewOptions = context.map.view;
-    this.component.view = viewOptions;
+    const viewOptions: MapViewContext = context.map.view;
+    if (viewOptions.keepCurrentView !== true) {
+      this.component.view = viewOptions as MapViewOptions;
+    }
   }
 
 }
