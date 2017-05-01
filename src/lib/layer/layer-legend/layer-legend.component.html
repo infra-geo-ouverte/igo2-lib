@@ -21,6 +21,7 @@
       src="{{item.url}}"
       alt="{{'igo.noLegendText' | translate}}">
     <div
+      [ngStyle]="item.style"
       [innerHTML]="item.html"
       *ngIf="item.html">
     </div>

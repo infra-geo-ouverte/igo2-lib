@@ -32,7 +32,19 @@
           "color": "rgba(140, 140, 255, 0.3)"  
         }
       },
-      "version" : "1.3.0"
+      "version" : "1.3.0",
+      "legend": {
+        "html": "<span>Custom legend</span>",
+        "collapsed": false,
+        "style": {
+          "height": "30px",
+          "width" : "120px",
+          "text-align": "center",
+          "line-height": "26px",
+          "background-color": "rgba(140, 140, 255, 0.3)",
+          "border": "1px solid rgba(140, 140, 255, 1.0)"
+        }
+      }
     },
     {
       "title": "Embâcle",

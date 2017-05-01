@@ -16,6 +16,7 @@ export interface LayerLegendOptions {
   collapsed?: boolean;
   url?: string;
   html?: string;
+  style?: {[key: string]: string | number};
   title?: string;
 }
 
