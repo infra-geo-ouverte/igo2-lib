@@ -59,7 +59,7 @@ export class IgoMap {
   }
 
   addLayer(layer: Layer, push = true) {
-    if (layer.zIndex === 0) {
+    if (layer.zIndex === undefined || layer.zIndex === 0) {
       layer.zIndex = this.layers.length + 1;
     }
 
