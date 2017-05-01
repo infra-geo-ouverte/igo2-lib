@@ -18,8 +18,12 @@ export interface DetailedContext extends Context {
   toolbar?: string[];
 }
 
+export interface MapViewContext extends MapViewOptions {
+  keepCurrentView?: boolean;
+}
+
 export interface MapContext  {
-  view: MapViewOptions;
+  view: MapViewContext;
 }
 
 export interface ContextServiceOptions {
