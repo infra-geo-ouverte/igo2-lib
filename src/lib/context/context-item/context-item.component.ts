@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { Context } from '../shared/context.interface';
 
@@ -9,15 +9,12 @@ import { Context } from '../shared/context.interface';
 })
 export class ContextItemComponent {
 
-  @Input() context: Context;
-  @Input() edition: boolean = true;
-
-  @Output() editContext: EventEmitter<Context> = new EventEmitter();
-
-  handleEditButtonClick(event: MouseEvent) {
-    event.stopPropagation();
-    this.editContext.emit(this.context);
+  @Input()
+  get context(): Context { return this._context; }
+  set context(value: Context) {
+    this._context = value;
   }
+  private _context: Context;
 
   constructor() { }
 
