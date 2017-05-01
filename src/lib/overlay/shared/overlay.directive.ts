@@ -75,31 +75,37 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     const extent = ol.extent.createEmpty();
 
-    let featureExtent;
+    let featureExtent, geometry;
     features.forEach((feature: Feature) => {
       const olFeature = this.format.readFeature(feature, {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
 
+      geometry = olFeature.getGeometry();
       featureExtent = this.getFeatureExtent(feature);
       if (ol.extent.isEmpty(featureExtent)) {
-        featureExtent = olFeature.getGeometry().getExtent();
+        if (geometry !== null) {
+          featureExtent = geometry.getExtent();
+        }
       }
       ol.extent.extend(extent, featureExtent);
 
       this.addMarker(olFeature);
     }, this);
 
-    if (action === 'zoom') {
-      this.map.zoomToExtent(extent);
-    } else if (action === 'move') {
-      this.map.moveToExtent(extent);
+    if (!ol.extent.isEmpty(featureExtent)) {
+      if (action === 'zoom') {
+        this.map.zoomToExtent(extent);
+      } else if (action === 'move') {
+        this.map.moveToExtent(extent);
+      }
     }
   }
 
   private addMarker(feature: ol.Feature) {
     const geometry = feature.getGeometry();
+    if (geometry === null) { return; }
 
     let marker;
     if (geometry.getType() === 'Point') {
