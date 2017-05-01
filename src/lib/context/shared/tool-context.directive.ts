@@ -1,7 +1,9 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Tool, ToolbarComponent, ToolService } from '../../tool';
+// Import from shared and toolbar to avoid circular dependencies
+import { Tool, ToolService } from '../../tool/shared';
+import { ToolbarComponent } from '../../tool/toolbar';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
@@ -38,12 +40,9 @@ export class ToolContextDirective implements OnInit, OnDestroy {
 
     const tools: Tool[] = [];
     (context.tools || []).forEach((tool_: Tool) => {
-      // TODO: Remove the " || {}" when more tool will be defined
-      const tool = this.toolService.getTool(tool_.name) || {};
-      if (tool !== undefined) {
-        tools.push(Object.assign({
-          toolbar: context.toolbar.indexOf(tool_.name) >= 0
-        }, tool, tool_));
+      const tool = this.toolService.getTool(tool_.name);
+      if (tool !== undefined && context.toolbar.indexOf(tool_.name) >= 0) {
+        tools.push(tool);
       }
     });
 

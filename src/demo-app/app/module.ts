@@ -5,7 +5,8 @@ import { HttpModule, Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 
 import { IgoModule, provideDefaultSearchSources,
-         LanguageLoader, provideLanguageService } from '../../lib';
+         LanguageLoader, provideLanguageService,
+         provideContextServiceOptions } from '../../lib';
 
 import { AppComponent } from './app.component';
 
@@ -26,7 +27,11 @@ export function translateLoader(http: Http) {
   ],
   providers: [
     ...provideDefaultSearchSources({
-        limit: 5
+      limit: 5
+    }),
+    provideContextServiceOptions({
+      basePath: './contexts',
+      contextListFile: '_contexts.json'
     }),
     /*{
       provide: SearchSource,

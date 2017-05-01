@@ -33,6 +33,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('md-card-subtitle').textContent).toContain('Search module');
+    expect(compiled.querySelector('md-card-subtitle').textContent)
+      .toContain('Context module');
   }));
 });

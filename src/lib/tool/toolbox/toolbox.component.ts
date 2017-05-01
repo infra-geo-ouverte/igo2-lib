@@ -117,7 +117,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
   private setOptions(options: any) {
     if (this.component !== undefined &&
         this.component.instance.hasOwnProperty('options')) {
-      this.component.instance['options'] = options;
+      this.component.instance['options'] = options || {};
     }
   }
 }

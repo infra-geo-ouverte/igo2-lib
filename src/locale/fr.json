@@ -1,5 +1,6 @@
 {
 	"igo": {
+		"contexts": "Contextes",
 		"endDate": "Date de fin",
 		"hideLayer": "Masquer la couche",
 		"lowerLayer": "Descendre la couche",

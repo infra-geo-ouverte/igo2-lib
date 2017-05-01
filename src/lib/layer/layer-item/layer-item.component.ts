@@ -31,6 +31,15 @@ export class LayerItemComponent {
   }
   private _color: string = 'primary';
 
+  @Input()
+  get toggleLegendOnVisibilityChange() {
+    return this._toggleLegendOnVisibilityChange;
+  }
+  set toggleLegendOnVisibilityChange(value: boolean) {
+    this._toggleLegendOnVisibilityChange = value;
+  }
+  private _toggleLegendOnVisibilityChange: boolean = false;
+
   get opacity () {
     return this.layer.opacity * 100;
   }
@@ -47,6 +56,9 @@ export class LayerItemComponent {
 
   toggleVisibility() {
     this.layer.visible = !this.layer.visible;
+    if (this.toggleLegendOnVisibilityChange) {
+      this.toggleLegend(!this.layer.visible);
+    }
   }
 
 }

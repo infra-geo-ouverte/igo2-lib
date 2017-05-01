@@ -1,5 +1,5 @@
 import { MapViewOptions } from '../../map';
-import { LayerOptions } from '../../layer';
+import { AnyLayerOptions } from '../../layer';
 import { Tool } from '../../tool/shared/tool.interface';
 
 
@@ -13,11 +13,16 @@ export interface Context {
 
 export interface DetailedContext extends Context {
   map?: MapContext;
-  layers?: LayerOptions[];
+  layers?: AnyLayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
 }
 
 export interface MapContext  {
   view: MapViewOptions;
+}
+
+export interface ContextServiceOptions {
+  basePath: string;
+  contextListFile: string;
 }

@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
+import { IgoContextModule } from '../context/module';
 import { IgoFeatureModule } from '../feature';
 import { IgoFilterModule } from '../filter';
 import { IgoLayerModule } from '../layer';
@@ -10,18 +11,20 @@ import { ToolbarComponent, ToolbarBindingDirective } from './toolbar';
 import { ToolbarItemComponent } from './toolbar-item';
 import { ToolboxComponent } from './toolbox';
 
-import { MapDetailsToolComponent, SearchResultsToolComponent,
-         TimeAnalysisToolComponent } from './tools';
+import { ContextManagerToolComponent, MapDetailsToolComponent,
+         SearchResultsToolComponent, TimeAnalysisToolComponent } from './tools';
 
 const IGO_TOOLS = [
   MapDetailsToolComponent,
   SearchResultsToolComponent,
-  TimeAnalysisToolComponent
+  TimeAnalysisToolComponent,
+  ContextManagerToolComponent
 ];
 
 @NgModule({
   imports: [
     IgoSharedModule,
+    IgoContextModule,
     IgoFeatureModule,
     IgoFilterModule,
     IgoLayerModule

@@ -25,6 +25,15 @@ export class LayerListComponent {
   }
   private _color: string = 'primary';
 
+  @Input()
+  get toggleLegendOnVisibilityChange() {
+    return this._toggleLegendOnVisibilityChange;
+  }
+  set toggleLegendOnVisibilityChange(value: boolean) {
+    this._toggleLegendOnVisibilityChange = value;
+  }
+  private _toggleLegendOnVisibilityChange: boolean = false;
+
   constructor() { }
 
 }
