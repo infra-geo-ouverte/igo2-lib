@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Input,
          ComponentRef, ComponentFactoryResolver,
          OnDestroy, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Tool, ToolService } from '../shared';
 import { toolSlideInOut } from './toolbox.animation';
@@ -39,6 +40,8 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
   private selectedTool: Tool;
   private toolHistory$$: Subscription;
   private viewInitialized: boolean = false;
+  private animating$ = new BehaviorSubject<boolean>(false);
+  private animating$$: Subscription;
 
   constructor(private resolver: ComponentFactoryResolver,
               private cdRef: ChangeDetectorRef,
@@ -47,8 +50,14 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit() {
     this.toolHistory$$ = this.toolService.toolHistory$
       .distinctUntilChanged()
-      .subscribe((toolHistory: Tool[]) =>
-        this.handleToolHistoryChange(toolHistory));
+      .subscribe((toolHistory: Tool[]) => {
+        if (!this.animate) {
+          this.handleToolHistoryChange(toolHistory);
+        } else {
+          this.subscribeToAnimation(() =>
+            this.handleToolHistoryChange(toolHistory));
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -60,6 +69,30 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
   ngAfterViewInit() {
     this.viewInitialized = true;
     this.createComponent(this.selectedTool);
+  }
+
+  animationStart(event) {
+    this.animating$.next(true);
+  }
+
+  animationDone(event) {
+    this.animating$.next(false);
+  }
+
+  private subscribeToAnimation(callback) {
+    this.unsubscribeToAnimation();
+    this.animating$$ = this.animating$.subscribe(animating => {
+      if (!animating) {
+        callback.call(this);
+        this.unsubscribeToAnimation();
+      }
+    });
+  }
+
+  private unsubscribeToAnimation() {
+    if (this.animating$$) {
+      this.animating$$.unsubscribe();
+    }
   }
 
   private handleToolHistoryChange(toolHistory?: Tool[]) {
@@ -84,6 +117,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private createComponent(tool) {
+
     const selectedTool = this.selectedTool;
 
     if (!this.viewInitialized || !tool) { return; }
