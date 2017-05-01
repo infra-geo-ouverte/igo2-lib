@@ -40,10 +40,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     if (context.layers === undefined) { return; }
 
     this.map.removeLayers();
-    const layerOptions: Array<LayerOptions> = context.layers;
-    layerOptions.forEach((options: LayerOptions) => {
-      this.layerService.createAsyncLayer(options).subscribe(
-        layer => this.map.addLayer(layer));
+
+    const layerOptions: LayerOptions[] = context.layers;
+    layerOptions.forEach((options: LayerOptions, index: number) => {
+      this.layerService.createAsyncLayer(Object.assign({
+        zIndex: index + 1
+      }, options)).subscribe(layer => this.map.addLayer(layer));
     });
   }
 

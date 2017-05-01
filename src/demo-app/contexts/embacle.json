@@ -33,7 +33,25 @@
         "range": true,
         "type": "datetime"
       }
-     }
+    },
+    {
+      "name" : "Bassin (WFS)",
+      "title": "Bassin (WFS)",
+      "type" : "wfs",
+      "source":{
+        "url" : "/cgi-wms/adnInternetV2.fcgi?service=WFS&version=1.1.0&request=GetFeature&typename=adn_bassin_n1_simplify_500&srsname=EPSG:3857"
+      },
+      "style" : {
+        "stroke" : {
+          "color" : "rgba(140, 140, 255, 1.0)",
+          "width" : 3
+        },
+        "fill": {
+          "color": "rgba(140, 140, 255, 0.3)"  
+        }
+      },
+      "version" : "1.3.0"
+    }
   ],
   "toolbar": [
     "timeAnalysis",
