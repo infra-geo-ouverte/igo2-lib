@@ -1,5 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { MaterialModule } from '@angular/material';
+import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { MaterialModule, GestureConfig } from '@angular/material';
+
+import 'hammerjs/hammer';
 
 import 'rxjs/add/operator/debounceTime.js';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -60,7 +63,10 @@ export class IgoModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoModule,
-      providers: []
+      providers: [
+        // Need this provider to support touch gestures. Used by the slider.
+        { provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig }
+      ]
     };
   }
 }
