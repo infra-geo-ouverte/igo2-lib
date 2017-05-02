@@ -5,6 +5,7 @@ import { IgoContextModule } from '../context/module';
 import { IgoFeatureModule } from '../feature';
 import { IgoFilterModule } from '../filter';
 import { IgoLayerModule } from '../layer';
+import { IgoPrintModule } from '../print';
 
 import { ToolService } from './shared';
 import { ToolbarComponent, ToolbarBindingDirective } from './toolbar';
@@ -12,13 +13,15 @@ import { ToolbarItemComponent } from './toolbar-item';
 import { ToolboxComponent } from './toolbox';
 
 import { ContextManagerToolComponent, MapDetailsToolComponent,
-         SearchResultsToolComponent, TimeAnalysisToolComponent } from './tools';
+         SearchResultsToolComponent, PrintToolComponent,
+         TimeAnalysisToolComponent } from './tools';
 
 const IGO_TOOLS = [
+  ContextManagerToolComponent,
   MapDetailsToolComponent,
   SearchResultsToolComponent,
-  TimeAnalysisToolComponent,
-  ContextManagerToolComponent
+  PrintToolComponent,
+  TimeAnalysisToolComponent
 ];
 
 @NgModule({
@@ -27,7 +30,8 @@ const IGO_TOOLS = [
     IgoContextModule,
     IgoFeatureModule,
     IgoFilterModule,
-    IgoLayerModule
+    IgoLayerModule,
+    IgoPrintModule
   ],
   exports: [
     ToolbarComponent,

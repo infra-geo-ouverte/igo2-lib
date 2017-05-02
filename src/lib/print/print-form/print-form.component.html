@@ -1,0 +1,41 @@
+<form [formGroup]="form">
+
+  <div class="igo-input-container">
+    <md-select
+      formControlName="format"
+      placeholder="{{'igo.format' | translate}}">
+      <md-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+        {{format.value}}
+      </md-option>
+    </md-select>
+  </div>
+
+  <div class="igo-input-container">
+    <md-select
+      formControlName="resolution"
+      placeholder="{{'igo.resolution' | translate}}">
+      <md-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
+        {{resolution.value + ' PPI'}}
+      </md-option>
+    </md-select>
+  </div>
+
+  <div class="igo-input-container">
+    <md-radio-group formControlName="orientation" class="horizontal">
+      <md-radio-button *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
+        {{('igo.' + orientation.value) | translate}}  
+      </md-radio-button>
+    </md-radio-group>
+  </div>
+
+  <div class="igo-form-button-group">
+    <button
+      md-raised-button
+      type="button"
+      [disabled]="!form.valid"
+      (click)="handleFormSubmit(form.value, form.valid)">
+      {{'igo.print' | translate}}
+    </button>
+  </div>
+
+</form>

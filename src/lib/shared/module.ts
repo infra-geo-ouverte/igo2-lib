@@ -1,6 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '@angular/material';
@@ -18,6 +18,7 @@ import { SidenavShimDirective } from './sidenav';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     MaterialModule,
     TranslateModule
@@ -25,6 +26,7 @@ import { SidenavShimDirective } from './sidenav';
   exports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     BrowserAnimationsModule,
     MaterialModule,
