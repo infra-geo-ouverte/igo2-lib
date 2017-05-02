@@ -43,7 +43,8 @@
       ],
       "scripts": [
         "../../node_modules/openlayers/dist/ol.js",
-        "../../node_modules/hammerjs/hammer.min.js"
+        "../../node_modules/hammerjs/hammer.min.js",
+        "../../node_modules/jspdf/dist/jspdf.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

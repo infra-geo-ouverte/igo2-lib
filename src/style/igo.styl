@@ -1,2 +1,28 @@
 @require './material-font.styl';
 @require './cls.styl';
+@require './var.styl';
+
+/*** Form ***/
+
+form {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+md-select, md-input-container {
+  width: 100%;
+}
+
+md-radio-group.horizontal {
+  display: block;
+  text-align: center;
+
+  +media(mobile) {
+    text-align: inherit;
+  }
+}
+
+md-radio-group.horizontal md-radio-button {
+  padding: 0 8px;
+}

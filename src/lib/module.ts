@@ -18,11 +18,11 @@ import { IgoFilterModule } from './filter/index';
 import { IgoLayerModule } from './layer/index';
 import { IgoMapModule } from './map/index';
 import { IgoOverlayModule } from './overlay/index';
+import { IgoPrintModule } from './print/index';
 import { IgoQueryModule } from './query/index';
 import { IgoSearchModule } from './search/index';
 import { IgoSharedModule } from './shared/index';
 import { IgoToolModule } from './tool/index';
-
 
 const IGO_MODULES = [
   IgoLanguageModule,
@@ -32,6 +32,7 @@ const IGO_MODULES = [
   IgoLayerModule,
   IgoMapModule,
   IgoOverlayModule,
+  IgoPrintModule,
   IgoQueryModule,
   IgoSearchModule,
   IgoSharedModule,
@@ -43,16 +44,7 @@ const IGO_MODULES = [
     MaterialModule.forRoot(),
 
     IgoCoreModule.forRoot(),
-    IgoLanguageModule.forRoot(),
-    IgoContextModule.forRoot(),
-    IgoFeatureModule.forRoot(),
-    IgoFilterModule.forRoot(),
-    IgoLayerModule.forRoot(),
-    IgoMapModule.forRoot(),
-    IgoOverlayModule.forRoot(),
-    IgoQueryModule.forRoot(),
-    IgoSearchModule.forRoot(),
-    IgoToolModule.forRoot()
+    ...IGO_MODULES.map(m => m.forRoot())
   ],
   exports: IGO_MODULES
 })
