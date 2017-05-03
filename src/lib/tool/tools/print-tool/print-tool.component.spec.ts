@@ -4,6 +4,7 @@ import { IgoTestModule } from '../../../../test/module';
 import { IgoSharedModule } from '../../../shared';
 import { IgoPrintModule } from '../../../print';
 import { IgoMapModule } from '../../../map';
+import { MessageService, RequestService } from '../../../core';
 
 import { PrintToolComponent } from './print-tool.component';
 
@@ -21,6 +22,10 @@ describe('PrintToolComponent', () => {
       ],
       declarations: [
         PrintToolComponent
+      ],
+      providers: [
+        MessageService,
+        RequestService
       ]
     })
     .compileComponents();

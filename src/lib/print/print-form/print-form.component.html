@@ -32,7 +32,7 @@
     <button
       md-raised-button
       type="button"
-      [disabled]="!form.valid"
+      [disabled]="!form.valid || disabled"
       (click)="handleFormSubmit(form.value, form.valid)">
       {{'igo.print' | translate}}
     </button>

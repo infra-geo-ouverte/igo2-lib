@@ -12,6 +12,8 @@ import { PrintFormat, PrintOptions, PrintOrientation,
 })
 export class PrintComponent {
 
+  public disabled: boolean = false;
+
   @Input()
   get map(): IgoMap { return this._map; }
   set map(value: IgoMap) {
@@ -43,7 +45,9 @@ export class PrintComponent {
   constructor(private printService: PrintService) { }
 
   handleFormSubmit(data: PrintOptions) {
-    this.printService.print(this.map, data);
+    this.disabled = true;
+    this.printService.print(this.map, data).subscribe((status) =>
+      this.disabled = false);
   }
 
 }

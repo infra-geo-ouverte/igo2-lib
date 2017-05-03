@@ -16,6 +16,10 @@ export class IgoMap {
   }
 
   constructor() {
+    this.init();
+  }
+
+  init() {
     this.olMap = new ol.Map({
       controls: [
         new ol.control.Attribution()

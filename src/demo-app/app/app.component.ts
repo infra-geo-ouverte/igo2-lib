@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ContextService, Feature, FeatureService, IgoMap,
-         LanguageService, OverlayService, ToolService} from '../../lib';
+         LanguageService, MessageService, OverlayService,
+         ToolService } from '../../lib';
 
 @Component({
   selector: 'igo-demo',
@@ -15,6 +16,7 @@ export class AppComponent implements OnInit {
 
   constructor(public contextService: ContextService,
               public featureService: FeatureService,
+              public messageService: MessageService,
               public overlayService: OverlayService,
               public toolService: ToolService,
               public language: LanguageService) {}

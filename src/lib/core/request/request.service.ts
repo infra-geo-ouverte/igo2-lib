@@ -2,32 +2,32 @@ import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Message, MessageService } from '../message';
 
 @Injectable()
 export class RequestService {
 
-  public requestCounter$ = new Subject<number>();
-
-  private count = 0;
+  public counter$ = new BehaviorSubject<number>(0);
 
   constructor(private messageService: MessageService) { }
 
   register(request: Observable<any>, title?: string) {
-    this.count += 1;
-    this.requestCounter$.next(this.count);
+    this.increment();
 
     return request
       .do((res) => this.handleError200(res))
       .catch((res) => this.handleError(res, title))
-      .finally(this.unregister.call(this));
+      .finally(this.decrement.call(this));
   }
 
-  private unregister() {
-    this.count -= 1;
-    this.requestCounter$.next(this.count);
+  increment() {
+    this.counter$.next(this.counter$.value + 1);
+  }
+
+  decrement() {
+    this.counter$.next(this.counter$.value - 1);
   }
 
   private handleError200(res: Response | any) {

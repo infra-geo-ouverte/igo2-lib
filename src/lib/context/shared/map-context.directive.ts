@@ -37,6 +37,20 @@ export class MapContextDirective implements OnInit, OnDestroy {
   private handleContextChange(context: DetailedContext) {
     if (context.map === undefined) { return; }
 
+    // This creates a new ol.Map when the context changes. Doing that
+    // allows the print tool to work properly even when the map's canvas
+    // has been tainted (CORS) with the layers of another context. This could
+    // have some side effects such as unbinding all listeners on the first map.
+    // A better solution would be to create a new map (preview) before
+    // printing and avoid the tainted canvas issue. This will come later so
+    // this snippet of code is kept here in case it takes too long becomes
+    // an issue
+
+    // const target = this.component.map.olMap.getTarget();
+    // this.component.map.olMap.setTarget(undefined);
+    // this.component.map.init();
+    // this.component.map.olMap.setTarget(target);
+
     const viewOptions: MapViewContext = context.map.view;
     if (viewOptions.keepCurrentView !== true) {
       this.component.view = viewOptions as MapViewOptions;
