@@ -97,6 +97,8 @@
     <md-card-title>print.component</md-card-title>
     <md-card-content>
       <igo-print [map]="map"></igo-print>
+
+      <p *ngFor="let message of (messageService.messages$ | async)">{{message.text}}</p>
     </md-card-content>
   </md-card>
 

@@ -19,6 +19,13 @@ export class PrintFormComponent {
   public resolutions = PrintResolution;
 
   @Input()
+  get disabled(): boolean { return this._disabled; }
+  set disabled(value: boolean) {
+    this._disabled = value;
+  }
+  private _disabled: boolean = false;
+
+  @Input()
   get format(): PrintFormat { return this.formatField.value; }
   set format(value: PrintFormat) {
     this.formatField.setValue(value || PrintFormat.Letter, {
@@ -37,7 +44,7 @@ export class PrintFormComponent {
   @Input()
   get resolution(): PrintResolution { return this.resolutionField.value; }
   set resolution(value: PrintResolution) {
-    this.resolutionField.setValue(value || PrintResolution['72'], {
+    this.resolutionField.setValue(value || PrintResolution['96'], {
       onlySelf: true
     });
   }
