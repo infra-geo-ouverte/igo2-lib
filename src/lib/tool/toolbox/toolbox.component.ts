@@ -79,7 +79,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
     this.animating$.next(false);
   }
 
-  private subscribeToAnimation(callback) {
+  private subscribeToAnimation(callback: Function) {
     this.unsubscribeToAnimation();
     this.animating$$ = this.animating$.subscribe(animating => {
       if (!animating) {

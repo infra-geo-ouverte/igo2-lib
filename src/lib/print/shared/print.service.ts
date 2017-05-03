@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { IgoMap } from '../../map';
+import { SourceQueue } from '../../utils/sourcequeue';
 
 import { PrintOptions } from './print.interface';
 import { PrintDimension } from './print.type';
@@ -10,8 +11,6 @@ declare var jsPDF: any;
 
 @Injectable()
 export class PrintService {
-
-  private interval: any;
 
   constructor() {}
 
@@ -27,21 +26,31 @@ export class PrintService {
     const size = olMap.getSize();
     const extent = olMap.getView().calculateExtent(size);
 
-    let interval = this.interval;
     olMap.once('postcompose', function(event: any) {
-      interval = setInterval(function () {
-        clearInterval(interval);
+      const canvas = event.context.canvas;
 
-        const canvas = event.context.canvas;
-        const data = canvas.toDataURL('image/jpeg');
-        const pdf = new jsPDF(orientation, undefined, format);
-        pdf.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
-        pdf.save('map.pdf');
+      new SourceQueue(olMap).subscribe(() => {
+        window.setTimeout(function() {
+          const pdf = new jsPDF(orientation, undefined, format);
 
-        olMap.setSize(size);
-        olMap.getView().fit(extent);
-        olMap.renderSync();
-      }, 100);
+          let image;
+          try {
+            image = canvas.toDataURL('image/jpeg');
+          } catch (err) {
+            // TODO: Handle CORS errors
+            console.log('Security error: This map cannot be printed.');
+          }
+
+          if (image !== undefined) {
+            pdf.addImage(image, 'JPEG', 0, 0, dim[0], dim[1]);
+            pdf.save('map.pdf');
+          }
+
+          olMap.setSize(size);
+          olMap.getView().fit(extent);
+          olMap.renderSync();
+        }, 100);
+      }, this);
     });
 
     olMap.setSize([width, height]);
