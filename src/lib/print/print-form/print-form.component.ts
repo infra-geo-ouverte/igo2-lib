@@ -21,7 +21,7 @@ export class PrintFormComponent {
   @Input()
   get format(): PrintFormat { return this.formatField.value; }
   set format(value: PrintFormat) {
-    this.formatField.setValue(value || PrintFormat.A4, {
+    this.formatField.setValue(value || PrintFormat.Letter, {
       onlySelf: true
     });
   }
