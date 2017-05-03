@@ -47,7 +47,17 @@ const IGO_MODULES = [
     MaterialModule.forRoot(),
 
     IgoCoreModule.forRoot(),
-    ...IGO_MODULES.map(m => m.forRoot())
+    IgoLanguageModule.forRoot(),
+    IgoContextModule.forRoot(),
+    IgoFeatureModule.forRoot(),
+    IgoFilterModule.forRoot(),
+    IgoLayerModule.forRoot(),
+    IgoMapModule.forRoot(),
+    IgoOverlayModule.forRoot(),
+    IgoPrintModule.forRoot(),
+    IgoQueryModule.forRoot(),
+    IgoSearchModule.forRoot(),
+    IgoToolModule.forRoot()
   ],
   exports: IGO_MODULES
 })
