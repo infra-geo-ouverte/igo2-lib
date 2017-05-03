@@ -19,7 +19,7 @@ export class MessageService {
     this.messages$.next(messages_);
   }
 
-  success(text: string, title?) {
+  success(text: string, title?: string) {
     this.message({
       text: text,
       title: title,
@@ -27,7 +27,7 @@ export class MessageService {
     });
   }
 
-  error(text: string, title?) {
+  error(text: string, title?: string) {
     this.message({
       text: text,
       title: title,
