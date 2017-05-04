@@ -48,11 +48,16 @@ export class TileQueue {
   private handleLoadEnd() {
     this.loaded += 1;
 
-    if (this.loaded === this.loading) {
-      this.subject$.next(true);
-      this.source.un(`tileloadstart`, this.handleLoadStart, this);
-      this.source.un(`tileloadend`, this.handleLoadEnd, this);
-      this.source.un(`tileloaderror`, this.handleLoadEnd, this);
+    const loading = this.loading;
+    if (this.loaded >= loading) {
+      window.setTimeout(() => {
+        if (loading === this.loading) {
+          this.subject$.next(true);
+          this.source.un(`tileloadstart`, this.handleLoadStart, this);
+          this.source.un(`tileloadend`, this.handleLoadEnd, this);
+          this.source.un(`tileloaderror`, this.handleLoadEnd, this);
+        }
+      }, 100);
     }
   }
 }
