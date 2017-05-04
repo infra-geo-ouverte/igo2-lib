@@ -1,6 +1,15 @@
 <form [formGroup]="form">
 
   <div class="igo-input-container">
+    <md-input-container>
+      <input
+        mdInput
+        formControlName="title"
+        placeholder="{{'igo.title' | translate}}">
+    </md-input-container>
+  </div>
+
+  <div class="igo-input-container">
     <md-select
       formControlName="format"
       placeholder="{{'igo.format' | translate}}">

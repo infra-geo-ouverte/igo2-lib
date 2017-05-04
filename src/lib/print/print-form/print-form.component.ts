@@ -49,6 +49,12 @@ export class PrintFormComponent {
     });
   }
 
+  @Input()
+  get title(): string { return this.titleField.value; }
+  set title(value: string) {
+    this.titleField.setValue(value, {onlySelf: true});
+  }
+
   get formatField () {
     return (<FormControl>this.form.controls['format']);
   }
@@ -61,10 +67,15 @@ export class PrintFormComponent {
     return (<FormControl>this.form.controls['resolution']);
   }
 
+  get titleField () {
+    return (<FormControl>this.form.controls['title']);
+  }
+
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
+      title: ['', []],
       format: ['', [
         Validators.required
       ]],

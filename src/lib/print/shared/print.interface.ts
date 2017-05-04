@@ -4,4 +4,5 @@ export interface PrintOptions {
   format: PrintFormat;
   orientation: PrintOrientation;
   resolution: PrintResolution;
+  title?: string;
 }
