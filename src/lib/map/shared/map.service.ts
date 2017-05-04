@@ -20,18 +20,10 @@ export class MapService {
   constructor() {}
 
   getMap(): IgoMap {
-    if (this.map === undefined) {
-      throw new Error('No map instance found.');
-    }
-
     return this.map;
   }
 
   setMap(map: IgoMap) {
-    if (this.map !== undefined) {
-      throw new Error('No more than one map is supported.');
-    }
-
     this.map = map;
   }
 }
