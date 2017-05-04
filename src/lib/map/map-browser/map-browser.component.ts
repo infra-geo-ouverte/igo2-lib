@@ -1,6 +1,6 @@
 import { Component, Input, AfterViewInit } from '@angular/core';
 
-import { IgoMap, MapViewOptions, MapService } from '../shared';
+import { IgoMap, MapViewOptions } from '../shared';
 
 @Component({
   selector: 'igo-map-browser',
@@ -26,10 +26,9 @@ export class MapBrowserComponent implements AfterViewInit {
 
   public id: string = 'igo-map-target';
 
-  constructor(private mapService: MapService) {}
+  constructor() {}
 
   ngAfterViewInit(): any {
     this.map.olMap.setTarget(this.id);
-    this.mapService.setMap(this.map);
   }
 }
