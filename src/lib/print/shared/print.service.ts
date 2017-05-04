@@ -31,7 +31,7 @@ export class PrintService {
     const pdfResolution = 96;
     const marginLeft = 20;
     const marginRight = 20;
-    const marginTop = title ? 30 : 20;
+    const marginTop = 20;
     const marginBottom = 20;
 
     const width = dim[0] - marginLeft - marginRight;
@@ -78,7 +78,7 @@ export class PrintService {
             }
 
             pdf.setFontSize(32);
-            pdf.text(titleMarginLeft, 25, title);
+            pdf.text(titleMarginLeft, 15, title);
           }
 
           pdf.save('map.pdf');
