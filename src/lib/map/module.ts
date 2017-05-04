@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { IgoSharedModule } from '../shared';
 
 import { MapService } from './shared';
-import { MapBrowserComponent } from './map-browser';
+import { MapBrowserComponent, MapBrowserBindingDirective } from './map-browser';
 import { ZoomComponent } from './zoom';
 
 
@@ -13,10 +13,12 @@ import { ZoomComponent } from './zoom';
   ],
   exports: [
     MapBrowserComponent,
+    MapBrowserBindingDirective,
     ZoomComponent
   ],
   declarations: [
     MapBrowserComponent,
+    MapBrowserBindingDirective,
     ZoomComponent
   ]
 })
