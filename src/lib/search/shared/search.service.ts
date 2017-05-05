@@ -19,6 +19,11 @@ export class SearchService {
   }
 
   search(term: string) {
+    if (!term || term === '') {
+      this.featureService.setFeatures([]);
+      return;
+    }
+
     const sources = this.searchSourceService.sources;
 
     this.unsubscribe();

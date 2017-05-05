@@ -1,34 +1,50 @@
+import { Inject } from '@angular/core';
 import { Http, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Message } from '../../core/message';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
-import { SearchSource } from './search-source';
+import { SEARCH_SOURCE_OPTIONS, SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
 
-export class SearchSourceNominatim extends SearchSource {
+export function nominatimSearchSourcesFactory(http: Http, options: any) {
+  return new NominatimSearchSource(http, options);
+}
+
+export function provideNominatimSearchSource() {
+  return {
+    provide: SearchSource,
+    useFactory: nominatimSearchSourcesFactory,
+    multi: true,
+    deps: [Http, SEARCH_SOURCE_OPTIONS]
+  };
+}
+
+export class NominatimSearchSource extends SearchSource {
 
   static _name: string = 'Nominatim (OSM)';
   static sortIndex: number = 10;
   static searchUrl: string = 'https://nominatim.openstreetmap.org/search';
 
-  constructor(private http: Http, private options: SearchSourceOptions) {
+  constructor(private http: Http,
+              @Inject(SEARCH_SOURCE_OPTIONS)
+              private options: SearchSourceOptions) {
     super();
 
     this.options = options ? options : {};
   }
 
   getName (): string {
-    return SearchSourceNominatim._name;
+    return NominatimSearchSource._name;
   }
 
   search (term?: string): Observable<Feature[] | Message[]>  {
     const search = this.getSearchParams(term);
 
     return this.http
-      .get(SearchSourceNominatim.searchUrl, { search })
+      .get(NominatimSearchSource.searchUrl, { search })
       .map(res => this.extractData(res));
   }
 
@@ -38,7 +54,7 @@ export class SearchSourceNominatim extends SearchSource {
 
   private getSearchParams (term: string): URLSearchParams {
     const search = new URLSearchParams();
-    const limit = this.options.limit || 2;
+    const limit = this.options.limit === undefined ? 5 : this.options.limit;
 
     search.set('q', term);
     search.set('format', 'json');
@@ -50,7 +66,7 @@ export class SearchSourceNominatim extends SearchSource {
   private formatResult (result: any): Feature {
     return {
       id: result.place_id,
-      source: SearchSourceNominatim._name,
+      source: NominatimSearchSource._name,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.display_name,

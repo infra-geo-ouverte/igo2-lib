@@ -5,7 +5,9 @@ import { HttpModule, Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 
-import { IgoModule, provideDefaultSearchSources,
+import { IgoModule, provideSearchSourceOptions,
+         provideIChercheSearchSource,
+         provideNominatimSearchSource,
          LanguageLoader, provideLanguageService,
          provideContextServiceOptions } from '../../lib';
 
@@ -28,21 +30,15 @@ export function translateLoader(http: Http) {
     IgoModule.forRoot()
   ],
   providers: [
-    ...provideDefaultSearchSources({
+    provideSearchSourceOptions({
       limit: 5
     }),
+    provideNominatimSearchSource(),
+    provideIChercheSearchSource(),
     provideContextServiceOptions({
       basePath: './contexts',
       contextListFile: '_contexts.json'
     }),
-    /*{
-      provide: SearchSource,
-      useFactory: (http: Http) => {
-        return new SearchSourceNominatim(http, {limit: 4})
-      },
-      multi: true,
-      deps: [Http]
-    },*/
     provideLanguageService({
       loader: translateLoader
     })
