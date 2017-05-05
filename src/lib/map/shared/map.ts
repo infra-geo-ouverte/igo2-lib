@@ -111,6 +111,10 @@ export class IgoMap {
     }
   }
 
+  addLayers(layers: Layer[], push = true) {
+    layers.forEach(layer => this.addLayer(layer, push));
+  }
+
   getLayerById(id: string): Layer {
     return this.layers.find(layer => {
       return layer.id && layer.id === id;

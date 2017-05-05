@@ -14,17 +14,19 @@ export class MapBrowserComponent implements AfterViewInit {
   set map(value: IgoMap) {
     this._map = value;
   }
-  private _map: IgoMap;
+  protected _map: IgoMap;
 
   @Input()
   get view(): MapViewOptions { return this._view; }
   set view(value: MapViewOptions) {
     this._view = value;
-    this.map.setView(value);
+    if (this.map !== undefined) {
+      this.map.setView(value);
+    }
   }
-  private _view: MapViewOptions;
+  protected _view: MapViewOptions;
 
-  public id: string = 'igo-map-target';
+  public id: string = `igo-map-target-${new Date().getTime()}`;
 
   constructor() {}
 

@@ -139,4 +139,16 @@
     </md-card-content>
   </md-card>
 
+  <md-card>
+    <md-card-subtitle>Form module</md-card-subtitle>
+    <md-card-title>map-field.component</md-card-title>
+    <md-card-content>
+      <div class="igo-map-field-container">
+        <igo-map-field 
+          [layers]="map.layers$ | async" [view]="contextService.context$.value ? (contextService.context$ | async).map.view : undefined">    
+        </igo-map-field>
+      </div>
+    </md-card-content>
+  </md-card>
+
 </md-sidenav-container>
