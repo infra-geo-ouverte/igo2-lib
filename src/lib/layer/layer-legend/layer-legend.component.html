@@ -1,8 +1,8 @@
-<small *ngIf="layer.getLegend().length === 0">
+<small *ngIf="layer.dataSource.getLegend().length === 0">
   {{'igo.noLegendText' | translate}}
 </small>
 
-<ng-template ngFor let-item [ngForOf]="layer.getLegend()">
+<ng-template ngFor let-item [ngForOf]="layer.dataSource.getLegend()">
   <md-list-item *ngIf="item.title">
     <md-icon
       id="legend-toggle"

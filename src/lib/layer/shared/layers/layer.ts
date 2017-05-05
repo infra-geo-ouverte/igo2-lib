@@ -1,17 +1,24 @@
+import { DataSource } from '../../../datasource';
 import { IgoMap } from '../../../map';
-import { LayerOptions, LayerLegendOptions,
-         QueryableLayer, FilterableLayer } from './layer.interface';
+
+import { LayerOptions } from './layer.interface';
 
 export abstract class Layer {
 
   public collapsed: boolean;
-  public id: string;
+  public dataSource: DataSource;
   public map: IgoMap;
   public olLayer: ol.layer.Layer;
   public options: LayerOptions;
 
+  get id(): string {
+    return this.dataSource.id;
+  }
+
   get title(): string {
-    return this.options.alias ? this.options.alias : this.options.title;
+    const title = this.options.alias ? this.options.alias : this.options.title;
+
+    return title ? title : this.dataSource.title;
   }
 
   set title(title: string) {
@@ -42,49 +49,25 @@ export abstract class Layer {
     this.olLayer.setOpacity(opacity);
   }
 
-  constructor(options: LayerOptions) {
+  constructor(dataSource: DataSource, options: LayerOptions) {
+    this.dataSource = dataSource;
     this.options = options;
-    this.id = this.generateId();
 
     this.olLayer = this.createOlLayer();
     if (options.zIndex !== undefined) {
       this.zIndex = options.zIndex;
     }
 
-    const legend = options.legend || {};
+    const legend = dataSource.options.legend || {};
     this.visible = options.visible === undefined ? true : options.visible;
     this.collapsed = legend.collapsed === undefined ? true : !this.visible;
   }
 
   protected abstract createOlLayer(): ol.layer.Layer;
 
-  protected abstract generateId(): string;
-
   addToMap(map: IgoMap) {
     this.map = map;
     map.olMap.addLayer(this.olLayer);
-  }
-
-  getLegend(): LayerLegendOptions[] {
-    return this.options.legend ? [this.options.legend] : [];
-  }
-
-  isFilterable(): this is FilterableLayer {
-    const layer = this as any as FilterableLayer;
-    if (typeof layer.filterByDate === 'function') {
-      return layer.options.filterable !== undefined ? layer.options.filterable : true;
-    }
-
-    return false;
-  }
-
-  isQueryable(): this is QueryableLayer {
-    const layer = this as any as QueryableLayer;
-    if (typeof layer.getQueryUrl === 'function') {
-      return layer.options.queryable !== undefined ? layer.options.queryable : true;
-    }
-
-    return false;
   }
 
 }

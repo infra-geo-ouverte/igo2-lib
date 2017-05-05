@@ -2,8 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
+import { OSMDataSource } from '../../datasource';
 
-import { OSMLayer } from '../shared';
+import { TileLayer } from '../shared';
 import { LayerItemComponent } from './layer-item.component';
 import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
 
@@ -31,7 +32,7 @@ describe('LayerItemComponent', () => {
   });
 
   it('should create', () => {
-    component.layer = new OSMLayer({title: 'foo', type: 'osm'});
+    component.layer = new TileLayer(new OSMDataSource({title: 'foo'}), {});
     expect(component).toBeTruthy();
   });
 });

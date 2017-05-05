@@ -2,44 +2,60 @@ import { Directive, Self, Output, EventEmitter,
          OnDestroy, AfterViewInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { MapBrowserComponent } from '../../map';
+import { IgoMap, MapBrowserComponent } from '../../map';
+import { DataSource } from '../../datasource';
 import { Layer } from '../../layer';
 import { Feature } from '../../feature';
 
 import { QueryService } from '../shared/query.service';
+
 
 @Directive({
   selector: '[igoQuery]'
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
 
-  private component: MapBrowserComponent;
-  private queryLayers: Layer[];
-  private queryLayers$$: Subscription;
+  private queryDataSources: DataSource[];
+  private queryDataSources$$: Subscription;
+
+  get map(): IgoMap {
+    return this.component.map;
+  }
 
   @Output() query = new EventEmitter<Feature>();
 
-  constructor(@Self() component: MapBrowserComponent,
-              private queryService: QueryService) {
-    this.component = component;
-  }
+  constructor(@Self() private component: MapBrowserComponent,
+              private queryService: QueryService) {}
 
   ngAfterViewInit() {
-    this.queryLayers$$ = this.component.map.layers$
+    this.queryDataSources$$ = this.component.map.layers$
       .subscribe((layers: Layer[]) => this.handleLayersChange(layers));
 
-    this.component.map.olMap.on('singleclick', this.handleMapClick, this);
+    this.map.olMap.on('singleclick', this.handleMapClick, this);
   }
 
   ngOnDestroy() {
-    this.queryLayers$$.unsubscribe();
+    this.queryDataSources$$.unsubscribe();
   }
 
   private handleLayersChange(layers: Layer[]) {
-    this.queryLayers = layers.filter(layer => layer.isQueryable());
+    const dataSources = [];
+    layers.forEach(layer => {
+      const dataSource = layer.dataSource;
+      if (dataSource.isQueryable()) {
+        dataSources.push(dataSource);
+      }
+    });
+
+    this.queryDataSources = dataSources;
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
-    this.queryService.query(this.queryLayers, event.coordinate);
+    const view = this.map.olMap.getView();
+    this.queryService.query(this.queryDataSources, {
+      coordinates: event.coordinate,
+      projection: this.map.projection,
+      resolution: view.getResolution()
+    });
   }
 }

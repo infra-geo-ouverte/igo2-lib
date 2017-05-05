@@ -2,6 +2,7 @@ import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MapBrowserComponent, IgoMap } from '../../map';
+import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer';
 import { Feature } from '../../feature';
 
@@ -15,7 +16,7 @@ import { OverlayAction } from '../shared/overlay.interface';
 export class OverlayDirective implements OnInit, OnDestroy {
 
   private component: MapBrowserComponent;
-  private overlaySource: ol.source.Vector;
+  private overlayDataSource: FeatureDataSource;
   private overlayStyle: ol.style.Style;
   private overlayMarkerStyle: ol.style.Style;
   private features$$: Subscription;
@@ -50,13 +51,17 @@ export class OverlayDirective implements OnInit, OnDestroy {
       })
     });
 
-    const overlayLayer = new VectorLayer({
+    this.overlayDataSource = new FeatureDataSource({
       title: 'Overlay',
+      type: 'feature'
+    });
+
+    const overlayLayer = new VectorLayer(this.overlayDataSource, {
       type: 'vector',
       zIndex: 999
     });
+
     this.map.addLayer(overlayLayer, false);
-    this.overlaySource = overlayLayer.olLayer.getSource();
 
     this.features$$ = this.overlayService.features$
       .subscribe(res => this.handleFeatures(res[0], res[1]));
@@ -67,7 +72,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
   }
 
   private handleFeatures(features: Feature[], action: OverlayAction) {
-    this.overlaySource.clear();
+    this.overlayDataSource.olSource.clear();
 
     if (!features || features.length === 0) {
       return;
@@ -115,11 +120,11 @@ export class OverlayDirective implements OnInit, OnDestroy {
       marker = new ol.Feature(new ol.geom.Point(centroid));
 
       feature.setStyle(this.overlayStyle);
-      this.overlaySource.addFeature(feature);
+      this.overlayDataSource.olSource.addFeature(feature);
     }
 
     marker.setStyle(this.overlayMarkerStyle);
-    this.overlaySource.addFeature(marker);
+    this.overlayDataSource.olSource.addFeature(marker);
   }
 
   private getFeatureExtent(feature: Feature): ol.Extent {
