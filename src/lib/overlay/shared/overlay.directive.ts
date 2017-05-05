@@ -2,8 +2,6 @@ import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MapBrowserComponent, IgoMap } from '../../map';
-import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer';
 import { Feature } from '../../feature';
 
 import { OverlayService } from '../shared/overlay.service';
@@ -15,54 +13,17 @@ import { OverlayAction } from '../shared/overlay.interface';
 })
 export class OverlayDirective implements OnInit, OnDestroy {
 
-  private component: MapBrowserComponent;
-  private overlayDataSource: FeatureDataSource;
-  private overlayStyle: ol.style.Style;
-  private overlayMarkerStyle: ol.style.Style;
   private features$$: Subscription;
-
   private format = new ol.format.GeoJSON();
 
   get map(): IgoMap {
     return this.component.map;
   }
 
-  constructor(@Self() component: MapBrowserComponent,
-              private overlayService: OverlayService) {
-    this.component = component;
-  }
+  constructor(@Self() private component: MapBrowserComponent,
+              private overlayService: OverlayService) {}
 
   ngOnInit() {
-    this.overlayStyle = new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: [0, 161, 222, 1],
-        width: 3
-      }),
-      fill: new ol.style.Fill({
-        color: [0, 161, 222, 0.1]
-      })
-    });
-
-    this.overlayMarkerStyle = new ol.style.Style({
-      image: new ol.style.Icon({
-        src: './assets/igo2/icons/place_blue_36px.svg',
-        imgSize: [36, 36], // for ie
-        anchor: [0.5, 1]
-      })
-    });
-
-    this.overlayDataSource = new FeatureDataSource({
-      title: 'Overlay',
-      type: 'feature'
-    });
-
-    const overlayLayer = new VectorLayer(this.overlayDataSource, {
-      type: 'vector',
-      zIndex: 999
-    });
-
-    this.map.addLayer(overlayLayer, false);
-
     this.features$$ = this.overlayService.features$
       .subscribe(res => this.handleFeatures(res[0], res[1]));
   }
@@ -72,7 +33,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
   }
 
   private handleFeatures(features: Feature[], action: OverlayAction) {
-    this.overlayDataSource.olSource.clear();
+    this.map.clearOverlay();
 
     if (!features || features.length === 0) {
       return;
@@ -96,7 +57,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       }
       ol.extent.extend(extent, featureExtent);
 
-      this.addMarker(olFeature);
+      this.map.addOverlay(olFeature);
     }, this);
 
     if (!ol.extent.isEmpty(featureExtent)) {
@@ -106,25 +67,6 @@ export class OverlayDirective implements OnInit, OnDestroy {
         this.map.moveToExtent(extent);
       }
     }
-  }
-
-  private addMarker(feature: ol.Feature) {
-    const geometry = feature.getGeometry();
-    if (geometry === null) { return; }
-
-    let marker;
-    if (geometry.getType() === 'Point') {
-      marker = feature;
-    } else {
-      const centroid = ol.extent.getCenter(geometry.getExtent());
-      marker = new ol.Feature(new ol.geom.Point(centroid));
-
-      feature.setStyle(this.overlayStyle);
-      this.overlayDataSource.olSource.addFeature(feature);
-    }
-
-    marker.setStyle(this.overlayMarkerStyle);
-    this.overlayDataSource.olSource.addFeature(marker);
   }
 
   private getFeatureExtent(feature: Feature): ol.Extent {

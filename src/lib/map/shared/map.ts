@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { Layer } from '../../layer';
+import { Layer, VectorLayer } from '../../layer/shared/layers';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { MapViewOptions } from './map.interface';
 
@@ -10,6 +11,9 @@ export class IgoMap {
   public olMap: ol.Map;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
+
+  private overlayDataSource: FeatureDataSource;
+  private overlayMarkerStyle: ol.style.Style;
 
   get projection(): string {
     return this.olMap.getView().getProjection().getCode();
@@ -25,6 +29,31 @@ export class IgoMap {
         new ol.control.Attribution()
       ]
     });
+
+    this.overlayMarkerStyle = new ol.style.Style({
+      image: new ol.style.Icon({
+        src: './assets/igo2/icons/place_blue_36px.svg',
+        imgSize: [36, 36], // for ie
+        anchor: [0.5, 1]
+      })
+    });
+
+    this.overlayDataSource = new FeatureDataSource({
+      title: 'Overlay'
+    });
+
+    this.addLayer(new VectorLayer(this.overlayDataSource, {
+      zIndex: 999,
+      style: {
+        stroke: {
+          color: [0, 161, 222, 1],
+          width: 3
+        },
+        fill: {
+          color: [0, 161, 222, 0.1]
+        }
+      }
+    }), false);
   }
 
   updateView(options: MapViewOptions) {
@@ -151,6 +180,28 @@ export class IgoMap {
 
   zoomToFeature(feature: ol.Feature) {
     this.zoomToExtent(feature.getGeometry().getExtent());
+  }
+
+  addOverlay(feature: ol.Feature) {
+    const geometry = feature.getGeometry();
+    if (geometry === null) { return; }
+
+    let marker;
+    if (geometry.getType() === 'Point') {
+      marker = feature;
+    } else {
+      const centroid = ol.extent.getCenter(geometry.getExtent());
+      marker = new ol.Feature(new ol.geom.Point(centroid));
+
+      this.overlayDataSource.olSource.addFeature(feature);
+    }
+
+    marker.setStyle(this.overlayMarkerStyle);
+    this.overlayDataSource.olSource.addFeature(marker);
+  }
+
+  clearOverlay() {
+    this.overlayDataSource.olSource.clear();
   }
 
   private sortLayers() {
