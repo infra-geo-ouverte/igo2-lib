@@ -52,7 +52,7 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   private getSearchParams (term: string): URLSearchParams {
-    const limit = options.limit === undefined ? 5 : options.limit;
+    const limit = this.options.limit === undefined ? 5 : this.options.limit;
     const search = new URLSearchParams();
     search.set('q', term);
     search.set('limit', limit);
