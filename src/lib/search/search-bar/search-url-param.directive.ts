@@ -15,7 +15,9 @@ export class SearchUrlParamDirective implements OnInit {
   ngOnInit() {
     const queryParams$$ = this.route.queryParams
       .subscribe(params => {
-        queryParams$$.unsubscribe();
+        if (queryParams$$ !== undefined) {
+          queryParams$$.unsubscribe();
+        }
         if (params['search']) {
           this.component.setTerm(params['search']);
         }
