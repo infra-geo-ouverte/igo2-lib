@@ -2,7 +2,8 @@ import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { IgoMap, MapBrowserComponent } from '../../map';
-import { LayerService, LayerOptions } from '../../layer';
+import { DataSourceService } from '../../datasource/shared';
+import { LayerService } from '../../layer/shared';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
@@ -13,18 +14,16 @@ import { DetailedContext } from './context.interface';
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
 
-  private component: MapBrowserComponent;
   private context$$: Subscription;
 
   get map(): IgoMap {
     return this.component.map;
   }
 
-  constructor(@Self() component: MapBrowserComponent,
+  constructor(@Self() private component: MapBrowserComponent,
               private contextService: ContextService,
-              private layerService: LayerService) {
-    this.component = component;
-  }
+              private dataSourceService: DataSourceService,
+              private layerService: LayerService) {}
 
   ngOnInit() {
     this.context$$ = this.contextService.context$
@@ -41,11 +40,19 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
     this.map.removeLayers();
 
-    const layerOptions: LayerOptions[] = context.layers;
-    layerOptions.forEach((options: LayerOptions, index: number) => {
-      this.layerService.createAsyncLayer(Object.assign({
-        zIndex: index + 1
-      }, options)).subscribe(layer => this.map.addLayer(layer));
+    context.layers.forEach((layerContext, index) => {
+      const sourceOptions = layerContext.source;
+      const layerOptions = Object.assign({}, layerContext);
+      delete layerOptions.source;
+
+      const dataSourceOptions = Object.assign({}, layerOptions, sourceOptions);
+
+      this.dataSourceService
+        .createAsyncDataSource(dataSourceOptions)
+        .subscribe(dataSource =>  {
+          this.map.addLayer(
+            this.layerService.createLayer(dataSource, layerOptions));
+        });
     });
   }
 

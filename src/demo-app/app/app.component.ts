@@ -26,13 +26,16 @@ export class AppComponent implements OnInit {
     // you can simply do contextService.setContext(context)
     // where "context" is an object with the same interface
     // as the contexts in ../contexts/
+
     this.contextService.loadContext('_default');
   }
 
   handleSearch(term: string) {
     this.searchTerm = term;
     const tool = this.toolService.getTool('searchResults');
-    this.toolService.selectTool(tool);
+    if (tool !== undefined) {
+      this.toolService.selectTool(tool);
+    }
   }
 
   handleFeatureFocus(feature: Feature) {

@@ -3,7 +3,7 @@ import { Md2Module } from 'md2';
 
 import { IgoSharedModule } from '../../shared';
 
-import { WMSLayer } from '../../layer';
+import { WMSDataSource } from '../../datasource';
 
 import { TimeFilterItemComponent } from './time-filter-item.component';
 import { TimeFilterFormComponent } from '../time-filter-form';
@@ -32,19 +32,17 @@ describe('TimeFilterItemComponent', () => {
   });
 
   it('should create', () => {
-    const layer = new WMSLayer({
+    const dataSource = new WMSDataSource({
       title: 'WMS',
       type: 'wms',
-      source: {
-        url: 'foo',
-        projection: 'EPSG:3857',
-        params: {
-          layers: 'bar'
-        }
+      url: 'foo',
+      projection: 'EPSG:3857',
+      params: {
+        layers: 'bar'
       },
       timeFilter: {}
     });
-    component.layer = layer;
+    component.datasource = dataSource;
     expect(component).toBeTruthy();
   });
 });

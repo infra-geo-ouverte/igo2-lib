@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { FilterableLayer } from '../../layer';
+import { FilterableDataSource } from '../../datasource';
 
 @Component({
   selector: 'igo-time-filter-item',
@@ -10,16 +10,16 @@ import { FilterableLayer } from '../../layer';
 export class TimeFilterItemComponent {
 
   @Input()
-  get layer(): FilterableLayer { return this._layer; }
-  set layer(value: FilterableLayer) {
-    this._layer = value;
+  get datasource(): FilterableDataSource { return this._dataSource; }
+  set datasource(value: FilterableDataSource) {
+    this._dataSource = value;
   }
-  private _layer: FilterableLayer;
+  private _dataSource: FilterableDataSource;
 
   constructor() { }
 
   handleDateChange(date: Date | [Date, Date]) {
-    this.layer.filterByDate(date);
+    this.datasource.filterByDate(date);
   }
 
 }

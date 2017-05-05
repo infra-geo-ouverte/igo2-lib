@@ -3,7 +3,7 @@ import { Md2Module } from 'md2';
 
 import { IgoSharedModule } from '../../shared';
 
-import { FilterableLayerPipe } from '../shared';
+import { FilterableDataSourcePipe } from '../shared';
 import { TimeFilterItemComponent } from '../time-filter-item';
 import { TimeFilterFormComponent } from '../time-filter-form';
 import { TimeFilterListComponent } from './time-filter-list.component';
@@ -19,7 +19,7 @@ describe('TimeFilterListComponent', () => {
         Md2Module
       ],
       declarations: [
-        FilterableLayerPipe,
+        FilterableDataSourcePipe,
         TimeFilterListComponent,
         TimeFilterItemComponent,
         TimeFilterFormComponent
@@ -34,7 +34,7 @@ describe('TimeFilterListComponent', () => {
   });
 
   it('should create', () => {
-    component.layers = [];
+    component.datasources = [];
     expect(component).toBeTruthy();
   });
 });

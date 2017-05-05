@@ -4,7 +4,7 @@ import { Md2Module } from 'md2';
 
 import { IgoSharedModule } from '../shared';
 
-import { FilterableLayerPipe } from './shared';
+import { FilterableDataSourcePipe } from './shared';
 import { TimeFilterFormComponent } from './time-filter-form';
 import { TimeFilterItemComponent } from './time-filter-item';
 import { TimeFilterListComponent,
@@ -17,14 +17,14 @@ import { TimeFilterListComponent,
     Md2Module
   ],
   exports: [
-    FilterableLayerPipe,
+    FilterableDataSourcePipe,
     TimeFilterFormComponent,
     TimeFilterItemComponent,
     TimeFilterListComponent,
     TimeFilterListBindingDirective
   ],
   declarations: [
-    FilterableLayerPipe,
+    FilterableDataSourcePipe,
     TimeFilterFormComponent,
     TimeFilterItemComponent,
     TimeFilterListComponent,

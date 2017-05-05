@@ -1,6 +1,7 @@
+import { DataSource } from '../../../datasource';
+
 import { Layer } from './layer';
-import { VectorLayerOptions,
-         VectorLayerSource } from './layer-vector.interface';
+import { VectorLayerOptions } from './vector-layer.interface';
 
 
 export class VectorLayer extends Layer {
@@ -8,51 +9,22 @@ export class VectorLayer extends Layer {
   public options: VectorLayerOptions;
   public olLayer: ol.layer.Vector;
 
+  constructor(dataSource: DataSource, options: VectorLayerOptions) {
+    super(dataSource, options);
+  }
+
   protected createOlLayer(): ol.layer.Vector {
-    const sourceOptions = {};
-    if (this.options.source) {
-      sourceOptions['format'] = this.getSourceFormatFromOptions(this.options.source);
-    }
+    const style = this.getStyleFromOptions(this.options);
 
-    const sourceStyle = this.getSourceStyleFromOptions(this.options);
-    Object.assign(sourceOptions, this.options.source);
-
-    const WFSLayerOptions = Object.assign(this.options.view || {}, {
-      style: sourceStyle,
-      source: new ol.source.Vector(sourceOptions)
+    const layerOptions = Object.assign(this.options.view || {}, {
+      style: style,
+      source: this.dataSource.olSource as ol.source.Vector
     });
 
-    return new ol.layer.Vector(WFSLayerOptions);
+    return new ol.layer.Vector(layerOptions);
   }
 
-  protected generateId() {
-    return undefined;
-  }
-
-  private getSourceFormatFromOptions(sourceOptions: VectorLayerSource) {
-    let olFormatCls;
-    const formatType = sourceOptions.formatType;
-    if (!formatType) {
-      olFormatCls = new ol.format.GeoJSON();
-    } else {
-      olFormatCls = ol.format[formatType];
-      if (olFormatCls === undefined) {
-        throw new Error('Invalid vector source format ${formatType}.');
-      }
-    }
-
-    const formatOptions = sourceOptions.formatOptions;
-    let format;
-    if (formatOptions) {
-      format = new olFormatCls(formatOptions);
-    } else {
-      format = new olFormatCls();
-    }
-
-     return format;
-  }
-
-  private getSourceStyleFromOptions(options: VectorLayerOptions) {
+  private getStyleFromOptions(options: VectorLayerOptions) {
     let style;
     if (options.style) {
       style = this.parseStyle('style', options.style);

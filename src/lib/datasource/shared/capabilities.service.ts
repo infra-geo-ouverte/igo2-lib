@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { RequestService } from '../../core';
 
-import { WMTSLayerOptions, WMSLayerOptions } from './layers';
+import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
 
 @Injectable()
 export class CapabilitiesService {
@@ -18,22 +18,22 @@ export class CapabilitiesService {
   constructor(private http: Http,
               private requestService: RequestService) { }
 
-  getWMSOptions(baseOptions: WMSLayerOptions):
-      Observable<WMSLayerOptions> {
+  getWMSOptions(baseOptions: WMSDataSourceOptions):
+      Observable<WMSDataSourceOptions> {
 
-    const url = baseOptions.source.url;
-    const version = (baseOptions.source.params as any).version;
+    const url = baseOptions.url;
+    const version = (baseOptions.params as any).version;
 
     return this.getCapabilities('wms', url, version)
       .map((capabilities: any) =>
         this.parseWMSOptions(baseOptions, capabilities));
   }
 
-  getWMTSOptions(baseOptions: WMTSLayerOptions):
-      Observable<WMTSLayerOptions> {
+  getWMTSOptions(baseOptions: WMTSDataSourceOptions):
+      Observable<WMTSDataSourceOptions> {
 
-    const url = baseOptions.source.url;
-    const version = baseOptions.source.version;
+    const url = baseOptions.url;
+    const version = baseOptions.version;
 
     const options = this.getCapabilities('wmts', url, version)
       .map((capabilities: any) =>
@@ -68,11 +68,11 @@ export class CapabilitiesService {
       });
   }
 
-  private parseWMSOptions(baseOptions: WMSLayerOptions,
-                          capabilities: any): WMSLayerOptions {
-    const layers = (baseOptions.source.params as any).layers;
-    const layer = this.findLayerInCapabilities(
-      capabilities.Capability.Layer, layers);
+  private parseWMSOptions(baseOptions: WMSDataSourceOptions,
+                          capabilities: any): WMSDataSourceOptions {
+    const layers = (baseOptions.params as any).layers;
+    const layer = this.findDataSourceInCapabilities(
+      capabilities.Capability.DataSource, layers);
 
     const options: any = {};
     if (layer.Title) {
@@ -95,25 +95,25 @@ export class CapabilitiesService {
     return Object.assign(options, baseOptions);
   }
 
-  private parseWMTSOptions(baseOptions: WMTSLayerOptions,
-                           capabilities: any): WMTSLayerOptions {
-    const sourceOptions = ol.source.WMTS.optionsFromCapabilities(
-      capabilities, baseOptions.source);
+  private parseWMTSOptions(baseOptions: WMTSDataSourceOptions,
+                           capabilities: any): WMTSDataSourceOptions {
+    const options = ol.source.WMTS.optionsFromCapabilities(
+      capabilities, baseOptions);
 
-    return Object.assign({}, baseOptions, {source: sourceOptions});
+    return Object.assign(options, baseOptions);
   }
 
-  private findLayerInCapabilities(layerArray, name): any {
+  private findDataSourceInCapabilities(layerArray, name): any {
     if (Array.isArray(layerArray)) {
       let layer;
       layerArray.find(value => {
-        layer = this.findLayerInCapabilities(value, name);
+        layer = this.findDataSourceInCapabilities(value, name);
         return layer !== undefined;
       }, this);
 
       return layer;
-    } else if (layerArray.Layer) {
-      return this.findLayerInCapabilities(layerArray.Layer, name);
+    } else if (layerArray.DataSource) {
+      return this.findDataSourceInCapabilities(layerArray.DataSource, name);
     } else {
       if (layerArray.Name && layerArray.Name === name) {
         return layerArray;

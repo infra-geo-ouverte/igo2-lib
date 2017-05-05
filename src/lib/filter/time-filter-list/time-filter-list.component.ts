@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy,
          ChangeDetectorRef } from '@angular/core';
 
-import { Layer } from '../../layer';
+import { DataSource } from '../../datasource';
 
 
 @Component({
@@ -13,12 +13,12 @@ import { Layer } from '../../layer';
 export class TimeFilterListComponent {
 
   @Input()
-  get layers(): Layer[] { return this._layers; }
-  set layers(value: Layer[]) {
-    this._layers = value;
+  get datasources(): DataSource[] { return this._dataSources; }
+  set datasources(value: DataSource[]) {
+    this._dataSources = value;
     this.cdRef.detectChanges();
   }
-  private _layers: Layer[] = [];
+  private _dataSources: DataSource[] = [];
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

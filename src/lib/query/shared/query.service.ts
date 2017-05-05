@@ -5,15 +5,11 @@ import { Subscription } from 'rxjs/Subscription';
 import { RequestService } from '../../core';
 import { Feature, FeatureType, FeatureFormat,
          FeatureService } from '../../feature';
+import { DataSource, QueryableDataSource } from '../../datasource';
 
-import { Layer, QueryableLayer } from '../../layer';
+import { QueryFormat } from './query.enum';
+import { QueryOptions } from './query.interface';
 
-export enum QueryFormat {
-  GML2 = 'gml2' as any,
-  GML3 = 'gml3' as any,
-  JSON = 'json' as any,
-  TEXT = 'text' as any
-}
 
 @Injectable()
 export class QueryService {
@@ -24,36 +20,38 @@ export class QueryService {
               private featureService: FeatureService,
               private requestService: RequestService) { }
 
-  query(layers: Layer[], coordinates: [number, number]) {
+  query(dataSources: DataSource[], options: QueryOptions) {
+
     this.unsubscribe();
-    this.subscriptions = layers.map((layer: Layer) =>
-      this.queryLayer(layer, coordinates));
+    this.subscriptions = dataSources.map((dataSource: DataSource) =>
+      this.queryDataSource(dataSource, options));
   }
 
-  queryLayer(layer: Layer, coordinates: [number, number]) {
-    const request = this.http.get(
-      (layer as any as QueryableLayer).getQueryUrl(coordinates));
+  queryDataSource(dataSource: DataSource, options: QueryOptions) {
+    const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
+    const request = this.http.get(url);
 
     return this.requestService
-      .register(request, layer.title)
-      .map(res => this.extractData(res, layer))
+      .register(request, dataSource.title)
+      .map(res => this.extractData(res, dataSource, options))
       .subscribe((features: Feature[]) =>
-        this.handleQueryResults(features, layer));
+        this.handleQueryResults(features, dataSource));
   }
 
   private unsubscribe() {
     this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
   }
 
-  private handleQueryResults(features: Feature[], layer: Layer) {
-    this.featureService.updateFeatures(features, layer.title);
+  private handleQueryResults(features: Feature[], dataSource: DataSource) {
+    this.featureService.updateFeatures(features, dataSource.title);
   }
 
-  private extractData(res: Response, layer: Layer): Feature[] {
-    const queryLayer = (layer as any as QueryableLayer);
+  private extractData(res: Response, dataSource: DataSource,
+                      options: QueryOptions): Feature[] {
+    const queryDataSource = (dataSource as any as QueryableDataSource);
 
     let features = [];
-    switch (queryLayer.queryFormat) {
+    switch (queryDataSource.queryFormat) {
       case QueryFormat.GML2:
         features = this.extractGML2Data(res);
         break;
@@ -71,12 +69,12 @@ export class QueryService {
     }
 
     return features.map((feature: Feature, index: number) => {
-      const title = feature.properties[queryLayer.queryTitle];
+      const title = feature.properties[queryDataSource.queryTitle];
 
       return Object.assign(feature, {
-        source: layer.title,
-        title: title ? title : `${layer.title} (${index + 1})`,
-        projection: layer.map.projection
+        source: dataSource.title,
+        title: title ? title : `${dataSource.title} (${index + 1})`,
+        projection: options.projection
       });
     });
   }

@@ -1,21 +1,22 @@
 import { Md5 } from 'ts-md5/dist/md5';
 
-import { Layer } from './layer';
-import { LayerLegendOptions, QueryableLayer,
-         FilterableLayer } from './layer.interface';
-import { WMSLayerOptions } from './layer-wms.interface';
-import { QueryFormat } from '../../../query';
+import { QueryFormat, QueryOptions } from '../../../query';
 
-export class WMSLayer
-  extends Layer implements QueryableLayer, FilterableLayer {
+import { DataSource } from './datasource';
+import { DataSourceLegendOptions, FilterableDataSource,
+         QueryableDataSource } from './datasource.interface';
+import { WMSDataSourceOptions } from './wms-datasource.interface';
 
-  public options: WMSLayerOptions;
-  public olLayer: ol.layer.Image;
+export class WMSDataSource
+  extends DataSource implements QueryableDataSource, FilterableDataSource {
+
+  public options: WMSDataSourceOptions;
+  public olSource: ol.source.ImageWMS;
 
   private queryInfoFormat: string;
 
   get params(): any {
-    return this.options.source.params as any;
+    return this.options.params as any;
   }
 
   get queryFormat(): QueryFormat {
@@ -26,13 +27,13 @@ export class WMSLayer
     return this.options.queryTitle ? this.options.queryTitle : 'title';
   }
 
-  constructor(options: WMSLayerOptions) {
+  constructor(options: WMSDataSourceOptions) {
     // Important: To use wms versions smaller than 1.3.0, SRS
     // needs to be supplied in the source "params"
 
     // We need to do this to override the default version
     // of openlayers which is uppercase
-    const sourceParams: any = options.source.params;
+    const sourceParams: any = options.params;
     if (sourceParams && sourceParams.version) {
       sourceParams.VERSION = sourceParams.version;
     }
@@ -60,24 +61,18 @@ export class WMSLayer
     this.queryInfoFormat = queryInfoFormat;
   }
 
-  protected createOlLayer(): ol.layer.Image {
-    const layerOptions = Object.assign({},
-      this.options.view || {},
-      this.options, {
-        source: new ol.source.ImageWMS(this.options.source)
-    });
-
-    return new ol.layer.Image(layerOptions);
+  protected createOlSource(): ol.source.ImageWMS {
+    return new ol.source.ImageWMS(this.options);
   }
 
   protected generateId() {
     const layers = this.params.layers;
-    const chain = this.options.type + this.options.source.url + layers;
+    const chain = this.options.type + this.options.url + layers;
 
     return Md5.hashStr(chain) as string;
   }
 
-  getLegend(): LayerLegendOptions[] {
+  getLegend(): DataSourceLegendOptions[] {
     let legend = super.getLegend();
     if (legend.length > 0) {
       return legend;
@@ -90,7 +85,7 @@ export class WMSLayer
       layers = sourceParams.layers.split(',');
     }
 
-    const baseUrl = this.options.source.url.replace(/\?$/, '');
+    const baseUrl = this.options.url.replace(/\?$/, '');
     const params = [
       'REQUEST=GetLegendGraphic',
       'SERVICE=wms',
@@ -109,14 +104,10 @@ export class WMSLayer
     return legend;
   }
 
-  getQueryUrl(coordinates: [number, number]): string {
-    const view = this.map.olMap.getView();
-    const source = this.olLayer.getSource() as ol.source.ImageWMS;
+  getQueryUrl(options: QueryOptions): string {
 
-    const url = source.getGetFeatureInfoUrl(
-      coordinates,
-      view.getResolution(),
-      this.map.projection, {
+    const url = this.olSource.getGetFeatureInfoUrl(
+      options.coordinates, options.resolution, options.projection, {
         'INFO_FORMAT': this.queryInfoFormat,
         'QUERY_LAYERS': this.params.layers
       });
@@ -125,7 +116,6 @@ export class WMSLayer
   }
 
   filterByDate(date: Date | [Date, Date]) {
-
     let time = null;
     if (Array.isArray(date)) {
       const dates = [];
@@ -145,7 +135,6 @@ export class WMSLayer
     }
 
     const params = {time: time};
-    const source = this.olLayer.getSource() as ol.source.ImageWMS;
-    source.updateParams(params);
+    this.olSource.updateParams(params);
   }
 }

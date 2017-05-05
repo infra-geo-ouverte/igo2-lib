@@ -2,7 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
 
-import { CapabilitiesService, LayerService } from './shared';
+import { LayerService } from './shared';
 import { LayerItemComponent } from './layer-item';
 import { LayerLegendComponent } from './layer-legend';
 import { LayerListComponent, LayerListBindingDirective } from './layer-list';
@@ -22,9 +22,6 @@ import { LayerListComponent, LayerListBindingDirective } from './layer-list';
     LayerLegendComponent,
     LayerListComponent,
     LayerListBindingDirective
-  ],
-  providers: [
-    LayerService
   ]
 })
 export class IgoLayerModule {
@@ -32,8 +29,7 @@ export class IgoLayerModule {
     return {
       ngModule: IgoLayerModule,
       providers: [
-        LayerService,
-        CapabilitiesService
+        LayerService
       ]
     };
   }

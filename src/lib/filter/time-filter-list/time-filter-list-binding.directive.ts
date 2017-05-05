@@ -21,10 +21,11 @@ export class TimeFilterListBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Override input layers
-    this.component.layers = [];
+    this.component.datasources = [];
 
-    this.layers$$ = this.mapService.getMap().layers$
-      .subscribe(layers => this.component.layers = layers);
+    this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
+      this.component.datasources = layers.map(layer => layer.dataSource);
+    });
   }
 
   ngOnDestroy() {
