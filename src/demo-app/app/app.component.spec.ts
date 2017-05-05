@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from '@angular/material';
 
 import { IgoTestModule } from '../../test/module';
-import { IgoModule, provideDefaultSearchSources } from '../../lib';
+import { IgoModule, provideNominatimSearchSource } from '../../lib';
 
 import { AppComponent } from './app.component';
 
@@ -22,7 +22,7 @@ describe('AppComponent', () => {
       ],
       providers: [
         [{provide: APP_BASE_HREF, useValue : '/' }],
-        ...provideDefaultSearchSources()
+        provideNominatimSearchSource()
       ],
     }).compileComponents();
   }));

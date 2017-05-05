@@ -5,8 +5,8 @@ import { RequestService, MessageService } from '../../core';
 
 import { SearchService } from './search.service';
 import { FeatureService } from '../../feature';
-import { provideDefaultSearchSources,
-         provideSearchSourceService } from '../module';
+import { provideSearchSourceOptions, provideNominatimSearchSource } from '../search-sources';
+import { provideSearchSourceService } from '../module';
 
 describe('SearchService', () => {
   beforeEach(() => {
@@ -20,8 +20,11 @@ describe('SearchService', () => {
         MessageService,
         FeatureService,
         SearchService,
+        provideSearchSourceOptions({
+          limit: 1
+        }),
         provideSearchSourceService(),
-        ...provideDefaultSearchSources()
+        provideNominatimSearchSource()
       ]
     });
   });

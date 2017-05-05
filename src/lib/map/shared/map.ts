@@ -50,7 +50,7 @@ export class IgoMap {
           width: 3
         },
         fill: {
-          color: [0, 161, 222, 0.1]
+          color: [0, 161, 222, 0.15]
         }
       }
     }), false);
