@@ -54,7 +54,7 @@ export class NominatimSearchSource extends SearchSource {
 
   private getSearchParams (term: string): URLSearchParams {
     const search = new URLSearchParams();
-    const limit = this.options.limit === undefined ? 5 : this.options.limit;
+    const limit = this.options.limit === undefined ? 5 : this.options.limit;
 
     search.set('q', term);
     search.set('format', 'json');
