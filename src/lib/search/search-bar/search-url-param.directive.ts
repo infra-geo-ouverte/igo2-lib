@@ -1,8 +1,6 @@
 import { Directive, Self, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { Subscription } from 'rxjs/Subscription';
-
 import { SearchBarComponent } from './search-bar.component';
 
 
@@ -17,7 +15,7 @@ export class SearchUrlParamDirective implements OnInit {
   ngOnInit() {
     const queryParams$$ = this.route.queryParams
       .subscribe(params => {
-        queryParams$$.unsubscribe();        
+        queryParams$$.unsubscribe();
         if (params['search']) {
           this.component.setTerm(params['search']);
         }
