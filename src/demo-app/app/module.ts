@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, Http } from '@angular/http';
 import { MaterialModule } from '@angular/material';
+import { RouterModule } from '@angular/router';
 
 import { IgoModule, provideDefaultSearchSources,
          LanguageLoader, provideLanguageService,
@@ -20,6 +21,7 @@ export function translateLoader(http: Http) {
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot([]),
     FormsModule,
     HttpModule,
     MaterialModule.forRoot(),

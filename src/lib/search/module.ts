@@ -8,7 +8,7 @@ import { SearchSource,
          SearchSourceOptions,
          SearchSourceNominatim } from './search-sources';
 
-import { SearchBarComponent } from './search-bar';
+import { SearchBarComponent, SearchUrlParamDirective } from './search-bar';
 
 
 export function searchSourceServiceFactory(sources: SearchSource[]) {
@@ -47,10 +47,12 @@ export function provideDefaultSearchSources(options?: SearchSourceOptions) {
     IgoSharedModule
   ],
   exports: [
-    SearchBarComponent
+    SearchBarComponent,
+    SearchUrlParamDirective
   ],
   declarations: [
-    SearchBarComponent
+    SearchBarComponent,
+    SearchUrlParamDirective
   ]
 })
 export class IgoSearchModule {

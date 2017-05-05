@@ -82,9 +82,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   keyup(event: KeyboardEvent) {
+    const term = (event.target as HTMLInputElement).value;
+    this.setTerm(term);
+  }
+
+  setTerm(term: string) {
     if (this.disabled) { return; }
 
-    const term = (event.target as HTMLInputElement).value;
     this.term = term;
 
     if (this.keyIsValid(term) &&

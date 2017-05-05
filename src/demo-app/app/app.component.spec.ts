@@ -1,4 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
+import { APP_BASE_HREF } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MaterialModule } from '@angular/material';
 
 import { IgoTestModule } from '../../test/module';
@@ -10,6 +12,7 @@ describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        RouterModule.forRoot([]),
         MaterialModule,
         IgoModule.forRoot(),
         IgoTestModule
@@ -18,6 +21,7 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
+        [{provide: APP_BASE_HREF, useValue : '/' }],
         ...provideDefaultSearchSources()
       ],
     }).compileComponents();
