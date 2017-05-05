@@ -52,9 +52,10 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   private getSearchParams (term: string): URLSearchParams {
+    const limit = options.limit === undefined ? 5 : options.limit;
     const search = new URLSearchParams();
     search.set('q', term);
-    search.set('limit', '2');
+    search.set('limit', limit);
     search.set('callback', 'JSONP_CALLBACK');
     search.set('geometries', 'geom');
 
