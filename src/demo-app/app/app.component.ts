@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 
 import { ContextService, Feature, FeatureService, IgoMap,
          LanguageService, MessageService, OverlayService,
@@ -13,13 +14,19 @@ export class AppComponent implements OnInit {
 
   public map = new IgoMap();
   public searchTerm: string;
+  public demoForm: FormGroup;
+
+  get locationField () {
+    return (<FormControl>this.demoForm.controls['location']);
+  }
 
   constructor(public contextService: ContextService,
               public featureService: FeatureService,
               public messageService: MessageService,
               public overlayService: OverlayService,
               public toolService: ToolService,
-              public language: LanguageService) {}
+              public language: LanguageService,
+              private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     // If you do not want to load a context from a file,
@@ -28,6 +35,12 @@ export class AppComponent implements OnInit {
     // as the contexts in ../contexts/
 
     this.contextService.loadContext('_default');
+
+    this.demoForm = this.formBuilder.group({
+      location: ['', [
+        Validators.required
+      ]]
+    });
   }
 
   handleSearch(term: string) {
@@ -49,5 +62,10 @@ export class AppComponent implements OnInit {
   clearFeature() {
     this.featureService.unfocusFeature();
     this.overlayService.clear();
+  }
+
+  handleFormSubmit(data: any, isValid: boolean) {
+    console.log(data);
+    console.log(isValid);
   }
 }

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoSharedModule } from '../../../shared';
+import { MapBrowserComponent } from '../../../map';
 
 import { MapFieldComponent } from './map-field.component';
 
@@ -13,7 +14,10 @@ describe('MapFieldComponent', () => {
       imports: [
         IgoSharedModule,
       ],
-      declarations: [ MapFieldComponent ]
+      declarations: [
+        MapBrowserComponent,
+        MapFieldComponent
+      ]
     })
     .compileComponents();
   }));

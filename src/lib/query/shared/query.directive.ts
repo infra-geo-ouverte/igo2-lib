@@ -36,6 +36,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.queryDataSources$$.unsubscribe();
+    this.map.olMap.un('singleclick', this.handleMapClick, this);
   }
 
   private handleLayersChange(layers: Layer[]) {

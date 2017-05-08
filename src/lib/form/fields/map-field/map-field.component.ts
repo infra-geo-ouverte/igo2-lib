@@ -1,4 +1,5 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef,
+         AfterViewInit, OnDestroy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { IgoMap, MapViewOptions } from '../../../map';
@@ -17,21 +18,54 @@ import { Layer } from '../../../layer';
     }
   ]
 })
-export class MapFieldComponent implements ControlValueAccessor {
+export class MapFieldComponent
+  implements AfterViewInit, OnDestroy, ControlValueAccessor {
 
   @Input()
-  get label() { return this._label; }
-  set label(value: string) {
-    this._label = value;
+  get placeholder() { return this._placeholder; }
+  set placeholder(value: string) {
+    this._placeholder = value;
   }
-  private _label: string = 'map';
+  private _placeholder: string;
+
+  @Input()
+  get decimals(): number { return this._decimals; }
+  set decimals(value: number) {
+    this._decimals = value;
+  }
+  private _decimals: number = 6;
+
+  @Input()
+  get readonly(): boolean { return this._readonly; }
+  set readonly(value: boolean) {
+    this._readonly = value;
+  }
+  protected _readonly: boolean = false;
 
   @Input()
   get value(): [number, number] { return this._value; }
   set value(value: [number, number]) {
-    this._value = value;
-    this.onChange(value);
-    this.onTouched();
+    this.map.clearOverlay();
+
+    if (value === undefined) {
+      this._value = value;
+      this.onChange(this._value);
+      return;
+    }
+
+    if (!isNaN(+value[0]) && !isNaN(+value[1])) {
+      const values = [+value[0], +value[1]] as [number, number];
+
+      this.addOverlay(values);
+
+      this._value = [
+        +values[0].toFixed(this.decimals),
+        +values[1].toFixed(this.decimals)
+      ];
+
+      this.onChange(this._value);
+      this.onTouched();
+    }
   }
   private _value: [number, number];
 
@@ -55,11 +89,20 @@ export class MapFieldComponent implements ControlValueAccessor {
   private _layers: Layer[];
 
   public map = new IgoMap();
+  public projection = 'EPSG:4326';
 
   onChange: any = () => {};
   onTouched: any = () => {};
 
   constructor() {}
+
+  ngAfterViewInit() {
+    this.map.olMap.on('singleclick', this.handleMapClick, this);
+  }
+
+  ngOnDestroy() {
+    this.map.olMap.un('singleclick', this.handleMapClick, this);
+  }
 
   registerOnChange(fn: Function) {
     this.onChange = fn;
@@ -75,12 +118,36 @@ export class MapFieldComponent implements ControlValueAccessor {
     }
   }
 
-  ngAfterViewInit() {
-    this.map.olMap.on('singleclick', this.handleMapClick, this);
+  handleValueChange(value: string) {
+    this.value = this.parseValue(value);
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
-    this.value = event.coordinate;
-    console.log(this.value);
+    this.value = ol.proj.transform(
+      event.coordinate, this.map.projection, this.projection);
   }
+
+  private parseValue(value: string): [number, number] | undefined {
+    if (value === undefined || value === '') {
+      return undefined;
+    }
+
+    const values = value.split(',').filter(v => v !== '');
+    if (values.length === 2) {
+      return [+values[0], +values[1]];
+    }
+
+    return undefined;
+  }
+
+  private addOverlay(coordinates: [number, number]) {
+    const geometry = new ol.geom.Point(
+      ol.proj.transform(coordinates, this.projection, this.map.projection));
+    const extent = geometry.getExtent();
+    const feature = new ol.Feature({geometry: geometry});
+
+    this.map.moveToExtent(extent);
+    this.map.addOverlay(feature);
+  }
+
 }
