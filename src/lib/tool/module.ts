@@ -2,9 +2,11 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
 import { IgoContextModule } from '../context/module';
+import { IgoDataSourceModule } from '../datasource';
 import { IgoFeatureModule } from '../feature';
 import { IgoFilterModule } from '../filter';
 import { IgoLayerModule } from '../layer';
+import { IgoMapModule } from '../map';
 import { IgoPrintModule } from '../print';
 
 import { ToolService } from './shared';
@@ -28,9 +30,11 @@ const IGO_TOOLS = [
   imports: [
     IgoSharedModule,
     IgoContextModule,
+    IgoDataSourceModule,
     IgoFeatureModule,
     IgoFilterModule,
     IgoLayerModule,
+    IgoMapModule,
     IgoPrintModule
   ],
   exports: [

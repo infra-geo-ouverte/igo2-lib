@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { IgoModule, provideSearchSourceOptions,
          provideIChercheSearchSource,
          provideNominatimSearchSource,
+         provideDataSourceSearchSource,
          LanguageLoader, provideLanguageService,
          provideContextServiceOptions } from '../../lib';
 
@@ -35,6 +36,7 @@ export function translateLoader(http: Http) {
     }),
     provideNominatimSearchSource(),
     provideIChercheSearchSource(),
+    provideDataSourceSearchSource(),
     provideContextServiceOptions({
       basePath: './contexts',
       contextListFile: '_contexts.json'

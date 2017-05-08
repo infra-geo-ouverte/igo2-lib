@@ -4,8 +4,8 @@ export interface Feature {
   id: string;
   source: string;
   type: FeatureType;
-  format: FeatureFormat;
   title: string;
+  format?: FeatureFormat;
   title_html?: string;
   icon?: string;
 

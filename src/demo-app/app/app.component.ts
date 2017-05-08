@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 
-import { ContextService, Feature, FeatureService, IgoMap,
-         LanguageService, MessageService, OverlayService,
-         ToolService } from '../../lib';
+import { ContextService,
+         Feature, FeatureType, FeatureService, IgoMap,
+         LanguageService, LayerService, MapService, MessageService,
+         OverlayService, ToolService } from '../../lib';
+
+import { AnyDataSourceOptions, DataSourceService } from '../../lib/datasource';
+
 
 @Component({
   selector: 'igo-demo',
@@ -21,7 +25,10 @@ export class AppComponent implements OnInit {
   }
 
   constructor(public contextService: ContextService,
+              public dataSourceService: DataSourceService,
               public featureService: FeatureService,
+              public layerService: LayerService,
+              public mapService: MapService,
               public messageService: MessageService,
               public overlayService: OverlayService,
               public toolService: ToolService,
@@ -52,11 +59,26 @@ export class AppComponent implements OnInit {
   }
 
   handleFeatureFocus(feature: Feature) {
-    this.overlayService.setFeatures([feature], 'move');
+    if (feature.type === FeatureType.Feature) {
+      this.overlayService.setFeatures([feature], 'move');
+    }
   }
 
   handleFeatureSelect(feature: Feature) {
-    this.overlayService.setFeatures([feature], 'zoom');
+    if (feature.type === FeatureType.Feature) {
+      this.overlayService.setFeatures([feature], 'zoom');
+    } else if (feature.type === FeatureType.DataSource) {
+      const map = this.mapService.getMap();
+
+      if (map !== undefined) {
+        this.dataSourceService
+          .createAsyncDataSource(feature.properties as AnyDataSourceOptions)
+          .subscribe(dataSource =>  {
+            map.addLayer(
+              this.layerService.createLayer(dataSource, feature.properties));
+          });
+      }
+    }
   }
 
   clearFeature() {

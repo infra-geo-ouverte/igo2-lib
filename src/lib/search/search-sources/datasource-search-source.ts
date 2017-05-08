@@ -3,29 +3,30 @@ import { Jsonp, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Message } from '../../core/message';
-import { Feature, FeatureType, FeatureFormat} from '../../feature';
+import { Feature, FeatureType } from '../../feature';
 
 import { SEARCH_SOURCE_OPTIONS, SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
 
-export function ichercheSearchSourcesFactory(jsonp: Jsonp, options: any) {
-  return new IChercheSearchSource(jsonp, options);
+export function dataSourceSearchSourcesFactory(jsonp: Jsonp, options: any) {
+  return new DataSourceSearchSource(jsonp, options);
 }
 
-export function provideIChercheSearchSource() {
+export function provideDataSourceSearchSource() {
   return {
     provide: SearchSource,
-    useFactory: ichercheSearchSourcesFactory,
+    useFactory: dataSourceSearchSourcesFactory,
     multi: true,
     deps: [Jsonp, SEARCH_SOURCE_OPTIONS]
   };
 }
 
-export class IChercheSearchSource extends SearchSource {
 
-  static _name: string = 'ICherche Québec';
-  static searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
+export class DataSourceSearchSource extends SearchSource {
+
+  static _name: string = 'Data Sources';
+  static searchUrl: string = 'http://spssogl19d.sso.msp.gouv.qc.ca/igo2/api/layers/search';
 
   constructor(private jsonp: Jsonp,
               @Inject(SEARCH_SOURCE_OPTIONS)
@@ -36,19 +37,19 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   getName(): string {
-    return IChercheSearchSource._name;
+    return DataSourceSearchSource._name;
   }
 
   search(term?: string): Observable<Feature[] | Message[]>  {
     const search = this.getSearchParams(term);
 
     return this.jsonp
-      .get(IChercheSearchSource.searchUrl, {search})
+      .get(DataSourceSearchSource.searchUrl, { search })
       .map(res => this.extractData(res));
   }
 
   private extractData(response: Response): Feature[] {
-    return response.json().features.map(this.formatResult);
+    return response.json().items.map(this.formatResult);
   }
 
   private getSearchParams(term: string): URLSearchParams {
@@ -58,26 +59,24 @@ export class IChercheSearchSource extends SearchSource {
     search.set('q', term);
     search.set('limit', String(limit));
     search.set('callback', 'JSONP_CALLBACK');
-    search.set('geometries', 'geom');
 
     return search;
   }
 
   private formatResult(result: any): Feature {
     return {
-      id: result._id,
-      source: IChercheSearchSource._name,
-      type: FeatureType.Feature,
-      format: FeatureFormat.GeoJSON,
-      title: result.properties.recherche,
-      title_html: result.highlight,
-      icon: 'place',
-      projection: 'EPSG:4326',
-      properties: Object.assign({
-        type: result.doc_type
-      }, result.properties),
-      geometry: result.geometry,
-      extent: result.bbox
+      id: result.id,
+      source: DataSourceSearchSource._name,
+      type: FeatureType.DataSource,
+      title: result.source.title,
+      title_html: result.highlight.title,
+      icon: result.source.type === 'Layer' ? 'layers' : 'map',
+      properties: Object.assign({}, result.source, {
+        type: result.source.format,
+        params: {
+          layers: result.source.name
+        }
+      })
     };
   }
 
