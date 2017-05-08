@@ -18,6 +18,7 @@ import { IgoLanguageModule } from './language/index';
 import { IgoContextModule } from './context/index';
 import { IgoDataSourceModule } from './datasource/index';
 import { IgoFeatureModule } from './feature/index';
+import { IgoFormModule } from './form/index';
 import { IgoFilterModule } from './filter/index';
 import { IgoLayerModule } from './layer/index';
 import { IgoMapModule } from './map/index';
@@ -33,6 +34,7 @@ const IGO_MODULES = [
   IgoContextModule,
   IgoDataSourceModule,
   IgoFeatureModule,
+  IgoFormModule,
   IgoFilterModule,
   IgoLayerModule,
   IgoMapModule,
@@ -53,6 +55,7 @@ const IGO_MODULES = [
     IgoDataSourceModule.forRoot(),
     IgoContextModule.forRoot(),
     IgoFeatureModule.forRoot(),
+    IgoFormModule.forRoot(),
     IgoFilterModule.forRoot(),
     IgoLayerModule.forRoot(),
     IgoMapModule.forRoot(),

@@ -1,0 +1,11 @@
+<div>
+  <md-input-container>
+    <input
+      mdInput
+      [placeholder]="placeholder"
+      [readonly]="readonly"
+      [ngModel]="value"
+      (ngModelChange)="handleValueChange($event)">
+  </md-input-container>
+  <igo-map-browser [map]="map" [view]="view"></igo-map-browser>
+</div>
