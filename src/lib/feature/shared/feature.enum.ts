@@ -1,11 +1,10 @@
 export enum FeatureType {
-  Layer = <any> 'Layer',
+  DataSource = <any> 'DataSource',
   Feature = <any> 'Feature',
   Record = <any> 'Record'
 }
 
 export enum FeatureFormat {
-  WMS,
   GeoJSON,
   JSON
 }

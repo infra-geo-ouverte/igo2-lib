@@ -36,11 +36,11 @@ export class NominatimSearchSource extends SearchSource {
     this.options = options ? options : {};
   }
 
-  getName (): string {
+  getName(): string {
     return NominatimSearchSource._name;
   }
 
-  search (term?: string): Observable<Feature[] | Message[]>  {
+  search(term?: string): Observable<Feature[] | Message[]>  {
     const search = this.getSearchParams(term);
 
     return this.http
@@ -48,11 +48,11 @@ export class NominatimSearchSource extends SearchSource {
       .map(res => this.extractData(res));
   }
 
-  private extractData (response: Response): Feature[] {
+  private extractData(response: Response): Feature[] {
     return response.json().map(this.formatResult);
   }
 
-  private getSearchParams (term: string): URLSearchParams {
+  private getSearchParams(term: string): URLSearchParams {
     const search = new URLSearchParams();
     const limit = this.options.limit === undefined ? 5 : this.options.limit;
 
@@ -63,7 +63,7 @@ export class NominatimSearchSource extends SearchSource {
     return search;
   }
 
-  private formatResult (result: any): Feature {
+  private formatResult(result: any): Feature {
     return {
       id: result.place_id,
       source: NominatimSearchSource._name,

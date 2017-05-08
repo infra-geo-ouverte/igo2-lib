@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ClickoutDirective } from './clickout';
 import { CollapsibleComponent, CollapseDirective } from './collapsible';
+import { ClonePipe } from './clone';
 import { KeyvaluePipe } from './keyvalue';
 import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
@@ -34,6 +35,7 @@ import { SidenavShimDirective } from './sidenav';
     ClickoutDirective,
     CollapsibleComponent,
     CollapseDirective,
+    ClonePipe,
     KeyvaluePipe,
     ListComponent,
     ListItemDirective,
@@ -44,6 +46,7 @@ import { SidenavShimDirective } from './sidenav';
     ClickoutDirective,
     CollapsibleComponent,
     CollapseDirective,
+    ClonePipe,
     KeyvaluePipe,
     ListComponent,
     ListItemDirective,
@@ -62,6 +65,7 @@ export class IgoSharedModule {
 
 export * from './collapsible';
 export * from './clickout';
+export * from './clone';
 export * from './keyvalue';
 export * from './list';
 export * from './panel';

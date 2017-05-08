@@ -123,6 +123,7 @@ export class IgoMap {
 
   removeLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
+
     if (index >= 0) {
       this.olMap.removeLayer(layer.olLayer);
       this.layers.splice(index, 1);

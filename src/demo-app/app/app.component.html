@@ -151,7 +151,7 @@
             [placeholder]="'Location' | translate"
             [decimals]="8"
             [readonly]="false"
-            [layers]="map.layers$ | async"
+            [layers]="(map.layers$ | async) | clone"
             [view]="contextService.context$.value ? (contextService.context$ | async).map.view : undefined">
           </igo-map-field>
         </div>
