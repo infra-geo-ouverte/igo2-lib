@@ -67,7 +67,7 @@ export class WMSDataSource
 
   protected generateId() {
     const layers = this.params.layers;
-    const chain = this.options.type + this.options.url + layers;
+    const chain = 'wms' + this.options.url + layers;
 
     return Md5.hashStr(chain) as string;
   }

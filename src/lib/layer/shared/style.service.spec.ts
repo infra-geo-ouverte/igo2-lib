@@ -1,21 +1,19 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { StyleService } from './style.service';
-import { LayerService } from './layer.service';
 
 
-describe('LayerService', () => {
+describe('StyleService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
-        StyleService,
-        LayerService
+        StyleService
       ]
     });
   });
 
-  it('should ...', inject([LayerService], (service: LayerService) => {
+  it('should ...', inject([StyleService], (service: StyleService) => {
     expect(service).toBeTruthy();
   }));
 

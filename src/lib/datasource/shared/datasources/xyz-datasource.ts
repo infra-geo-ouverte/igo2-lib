@@ -13,7 +13,7 @@ export class XYZDataSource extends DataSource {
   }
 
   protected generateId() {
-    const chain = this.options.type + this.options.url;
+    const chain = 'xyz' + this.options.url;
 
     return Md5.hashStr(chain) as string;
   }

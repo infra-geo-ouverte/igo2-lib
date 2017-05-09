@@ -9,7 +9,7 @@ export class ImageLayer extends Layer {
   public options: ImageLayerOptions;
   public ol: ol.layer.Image;
 
-  constructor(dataSource: DataSource, options: ImageLayerOptions) {
+  constructor(dataSource: DataSource, options?: ImageLayerOptions) {
     super(dataSource, options);
   }
 

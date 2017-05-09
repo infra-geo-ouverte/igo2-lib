@@ -1,6 +1,6 @@
 import { MapViewOptions } from '../../map';
-import { LayerOptions } from '../../layer';
-import { DataSourceOptions } from '../../datasource';
+import { LayerContext } from '../../layer';
+import { DataSourceContext } from '../../datasource';
 import { Tool } from '../../tool/shared/tool.interface';
 
 
@@ -13,22 +13,22 @@ export interface Context {
 }
 
 export interface DetailedContext extends Context {
-  map?: MapContext;
-  layers?: LayerContext[];
+  map?: ContextMap;
+  layers?: ContextLayer[];
   tools?: Tool[];
   toolbar?: string[];
 }
 
-export interface LayerContext extends LayerOptions {
-  source: DataSourceOptions;
+export interface ContextLayer extends LayerContext {
+  source: DataSourceContext;
 }
 
-export interface MapViewContext extends MapViewOptions {
+export interface ContextMapView extends MapViewOptions {
   keepCurrentView?: boolean;
 }
 
-export interface MapContext  {
-  view: MapViewContext;
+export interface ContextMap  {
+  view: ContextMapView;
 }
 
 export interface ContextServiceOptions {
