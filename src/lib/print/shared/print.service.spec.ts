@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { MessageService, RequestService } from '../../core';
+import { ActivityService, MessageService, RequestService } from '../../core';
 
 import { PrintService } from './print.service';
 
@@ -9,6 +9,7 @@ describe('PrintService', () => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
+        ActivityService,
         MessageService,
         RequestService,
         PrintService

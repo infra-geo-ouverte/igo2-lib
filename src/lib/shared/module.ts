@@ -13,6 +13,7 @@ import { KeyvaluePipe } from './keyvalue';
 import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
 import { SidenavShimDirective } from './sidenav';
+import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
 
 
 @NgModule({
@@ -40,7 +41,9 @@ import { SidenavShimDirective } from './sidenav';
     ListComponent,
     ListItemDirective,
     PanelComponent,
-    SidenavShimDirective
+    SidenavShimDirective,
+    SpinnerComponent,
+    SpinnerBindingDirective
   ],
   declarations: [
     ClickoutDirective,
@@ -51,7 +54,9 @@ import { SidenavShimDirective } from './sidenav';
     ListComponent,
     ListItemDirective,
     PanelComponent,
-    SidenavShimDirective
+    SidenavShimDirective,
+    SpinnerComponent,
+    SpinnerBindingDirective
   ]
 })
 export class IgoSharedModule {
@@ -70,3 +75,4 @@ export * from './keyvalue';
 export * from './list';
 export * from './panel';
 export * from './sidenav';
+export * from './spinner';

@@ -2,6 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { MessageService } from '../message';
+import { ActivityService } from '../activity';
 import { RequestService } from '.';
 
 describe('RequestService', () => {
@@ -12,6 +13,7 @@ describe('RequestService', () => {
         JsonpModule
       ],
       providers: [
+        ActivityService,
         MessageService,
         RequestService
       ]

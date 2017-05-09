@@ -3,7 +3,7 @@ import { Subject } from 'rxjs/Subject';
 
 import { IgoMap } from '../../map';
 import { SourceQueue } from '../../utils/sourcequeue';
-import { MessageService, MessageType, RequestService } from '../../core';
+import { MessageService, MessageType, ActivityService } from '../../core';
 
 import { PrintOptions } from './print.interface';
 import { PrintDimension, PrintOrientation } from './print.type';
@@ -15,11 +15,11 @@ declare var jsPDF: any;
 export class PrintService {
 
   constructor(private messageService: MessageService,
-              private requestService: RequestService) {}
+              private activityService: ActivityService) {}
 
   print(map: IgoMap, options: PrintOptions): Subject<MessageType> {
     const status$ = new Subject();
-    this.requestService.increment();
+    const id = this.activityService.register();
 
     const format = options.format;
     const resolution = +options.resolution;
@@ -29,8 +29,8 @@ export class PrintService {
     const title = options.title;
 
     const pdfResolution = 96;
-    const marginLeft = 20;
-    const marginRight = 20;
+    const marginLeft = 10;
+    const marginRight = 10;
     const marginTop = 20;
     const marginBottom = 20;
 
@@ -64,6 +64,7 @@ export class PrintService {
           if (image !== undefined) {
             pdf.addImage(image, 'JPEG', marginLeft, marginTop,
                          width, height);
+            pdf.rect(marginLeft, marginTop, width, height);
           }
 
           if (title !== undefined) {
@@ -77,6 +78,7 @@ export class PrintService {
               titleMarginLeft = (dim[0] - titleWidth) / 2;
             }
 
+            pdf.setFont('courier');
             pdf.setFontSize(32);
             pdf.text(titleMarginLeft, 15, title);
           }
@@ -88,7 +90,7 @@ export class PrintService {
         olMap.getView().fit(extent);
         olMap.renderSync();
 
-        this.requestService.decrement();
+        this.activityService.unregister(id);
         status$.next(status);
       }, 100));
 
