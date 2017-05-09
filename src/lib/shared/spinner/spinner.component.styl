@@ -1,0 +1,25 @@
+@require '../../../style/var.styl';
+
+.igo-spinner {
+  display: none;
+}
+
+.igo-spinner-shown {
+  display: block;
+}
+
+md-progress-spinner {
+  height: $igo-spinner-size;
+  width: $igo-spinner-size;
+  border-radius: 50%;
+}
+
+.igo-spinner-background {
+  height: $igo-spinner-size - $igo-spinner-border-width;
+  width: $igo-spinner-size - $igo-spinner-border-width;
+  border-radius: 50%;
+  border: $igo-spinner-border-width solid #ffffff;
+  position: absolute;
+  top: $igo-spinner-top-left;
+  left: $igo-spinner-top-left;
+}

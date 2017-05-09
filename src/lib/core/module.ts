@@ -1,5 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
+import { ActivityService } from './activity';
 import { MediaService } from './media';
 import { MessageService } from './message';
 import { RequestService } from './request';
@@ -14,6 +15,7 @@ export class IgoCoreModule {
     return {
       ngModule: IgoCoreModule,
       providers: [
+        ActivityService,
         MediaService,
         MessageService,
         RequestService
@@ -22,6 +24,7 @@ export class IgoCoreModule {
   }
 }
 
+export * from './activity';
 export * from './media';
 export * from './message';
 export * from './request';

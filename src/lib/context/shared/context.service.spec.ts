@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule } from '@angular/http';
 
-import { RequestService, MessageService } from '../../core';
+import { ActivityService, RequestService, MessageService } from '../../core';
 import { ToolService } from '../../tool';
 
 import { ContextService,
@@ -19,6 +19,7 @@ describe('ContextService', () => {
           basePath: 'contexts',
           contextListFile: '_contexts.json'
         }),
+        ActivityService,
         ContextService,
         MessageService,
         RequestService,

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { IgoSharedModule } from '../../shared';
-import { RequestService, MessageService } from '../../core';
+import { ActivityService, RequestService, MessageService } from '../../core';
 import { FeatureService } from '../../feature';
 
 import { provideSearchSourceService, SearchSource } from '../module';
@@ -19,6 +19,7 @@ describe('SearchBarComponent', () => {
       ],
       declarations: [ SearchBarComponent ],
       providers: [
+        ActivityService,
         RequestService,
         MessageService,
         FeatureService,

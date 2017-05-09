@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule } from '@angular/http';
 
-import { RequestService, MessageService } from '../../core';
+import { ActivityService, RequestService, MessageService } from '../../core';
 import { FeatureService } from '../../feature';
 
 import { QueryService } from './query.service';
@@ -13,6 +13,7 @@ describe('QueryService', () => {
         HttpModule
       ],
       providers: [
+        ActivityService,
         RequestService,
         MessageService,
         FeatureService,
