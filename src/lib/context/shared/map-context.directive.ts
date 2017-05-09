@@ -46,10 +46,10 @@ export class MapContextDirective implements OnInit, OnDestroy {
     // this snippet of code is kept here in case it takes too long becomes
     // an issue
 
-    // const target = this.component.map.olMap.getTarget();
-    // this.component.map.olMap.setTarget(undefined);
+    // const target = this.component.map.ol.getTarget();
+    // this.component.map.ol.setTarget(undefined);
     // this.component.map.init();
-    // this.component.map.olMap.setTarget(target);
+    // this.component.map.ol.setTarget(target);
 
     const viewOptions: MapViewContext = context.map.view;
     if (viewOptions.keepCurrentView !== true) {

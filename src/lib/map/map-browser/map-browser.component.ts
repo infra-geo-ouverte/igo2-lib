@@ -31,6 +31,6 @@ export class MapBrowserComponent implements AfterViewInit {
   constructor() {}
 
   ngAfterViewInit(): any {
-    this.map.olMap.setTarget(this.id);
+    this.map.ol.setTarget(this.id);
   }
 }

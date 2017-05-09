@@ -6,7 +6,7 @@ import { XYZDataSourceOptions } from './xyz-datasource.interface';
 export class XYZDataSource extends DataSource {
 
   public options: XYZDataSourceOptions;
-  public olSource: ol.source.XYZ;
+  public ol: ol.source.XYZ;
 
   protected createOlSource(): ol.source.XYZ {
     return new ol.source.XYZ(this.options);

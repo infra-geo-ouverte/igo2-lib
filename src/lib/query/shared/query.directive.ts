@@ -31,12 +31,12 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     this.queryDataSources$$ = this.component.map.layers$
       .subscribe((layers: Layer[]) => this.handleLayersChange(layers));
 
-    this.map.olMap.on('singleclick', this.handleMapClick, this);
+    this.map.ol.on('singleclick', this.handleMapClick, this);
   }
 
   ngOnDestroy() {
     this.queryDataSources$$.unsubscribe();
-    this.map.olMap.un('singleclick', this.handleMapClick, this);
+    this.map.ol.un('singleclick', this.handleMapClick, this);
   }
 
   private handleLayersChange(layers: Layer[]) {
@@ -52,7 +52,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
-    const view = this.map.olMap.getView();
+    const view = this.map.ol.getView();
     this.queryService.query(this.queryDataSources, {
       coordinates: event.coordinate,
       projection: this.map.projection,

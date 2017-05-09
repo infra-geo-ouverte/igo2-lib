@@ -39,14 +39,13 @@ export class PrintService {
     const widthPixels = Math.round(width * resolution / 25.4);
     const heightPixels = Math.round(height * resolution / 25.4);
 
-    const olMap = map.olMap;
-    const size = olMap.getSize();
-    const extent = olMap.getView().calculateExtent(size);
+    const size = map.ol.getSize();
+    const extent = map.ol.getView().calculateExtent(size);
 
-    olMap.once('postcompose', (event: any) => {
+    map.ol.once('postcompose', (event: any) => {
       const canvas = event.context.canvas;
 
-      new SourceQueue(olMap).subscribe(() => window.setTimeout(() => {
+      new SourceQueue(map.ol).subscribe(() => window.setTimeout(() => {
         let status = MessageType.SUCCESS;
         const pdf = new jsPDF(orientation, undefined, format);
 
@@ -84,9 +83,9 @@ export class PrintService {
           pdf.save('map.pdf');
         }
 
-        olMap.setSize(size);
-        olMap.getView().fit(extent);
-        olMap.renderSync();
+        map.ol.setSize(size);
+        map.ol.getView().fit(extent);
+        map.ol.renderSync();
 
         this.requestService.decrement();
         status$.next(status);
@@ -94,9 +93,9 @@ export class PrintService {
 
     });
 
-    olMap.setSize([widthPixels, heightPixels]);
-    olMap.getView().fit(extent);
-    olMap.renderSync();
+    map.ol.setSize([widthPixels, heightPixels]);
+    map.ol.getView().fit(extent);
+    map.ol.renderSync();
 
     return status$;
   }
