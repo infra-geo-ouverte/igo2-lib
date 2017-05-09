@@ -8,7 +8,7 @@ import { MapViewOptions } from './map.interface';
 
 export class IgoMap {
 
-  public olMap: ol.Map;
+  public ol: ol.Map;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
 
@@ -16,7 +16,7 @@ export class IgoMap {
   private overlayMarkerStyle: ol.style.Style;
 
   get projection(): string {
-    return this.olMap.getView().getProjection().getCode();
+    return this.ol.getView().getProjection().getCode();
   }
 
   constructor() {
@@ -24,7 +24,7 @@ export class IgoMap {
   }
 
   init() {
-    this.olMap = new ol.Map({
+    this.ol = new ol.Map({
       controls: [
         new ol.control.Attribution()
       ]
@@ -57,7 +57,7 @@ export class IgoMap {
   }
 
   updateView(options: MapViewOptions) {
-    const currentView = this.olMap.getView();
+    const currentView = this.ol.getView();
     const viewOptions = Object.assign({
       zoom: currentView.getZoom()
     }, currentView.getProperties());
@@ -67,7 +67,7 @@ export class IgoMap {
 
   setView(options: MapViewOptions) {
     const view = new ol.View(options);
-    this.olMap.setView(view);
+    this.ol.setView(view);
 
     if (options && options.center) {
       const center = ol.proj.fromLonLat(options.center, this.projection);
@@ -76,15 +76,15 @@ export class IgoMap {
   }
 
   zoomIn() {
-    this.zoomTo(this.olMap.getView().getZoom() + 1);
+    this.zoomTo(this.ol.getView().getZoom() + 1);
   }
 
   zoomOut() {
-    this.zoomTo(this.olMap.getView().getZoom() - 1);
+    this.zoomTo(this.ol.getView().getZoom() - 1);
   }
 
   zoomTo(zoom: number) {
-    this.olMap.getView().animate({
+    this.ol.getView().animate({
       zoom: zoom,
       duration: 250,
       easing: ol.easing.easeOut
@@ -92,17 +92,16 @@ export class IgoMap {
   }
 
   addLayer(layer: Layer, push = true) {
-    if (layer.zIndex === undefined || layer.zIndex === 0) {
-      layer.zIndex = this.layers.length + 1;
-    }
-
     const existingLayer = this.getLayerById(layer.id);
     if (existingLayer !== undefined) {
       existingLayer.visible = true;
       return;
     }
 
-    layer.addToMap(this);
+    if (layer.zIndex === undefined || layer.zIndex === 0) {
+      layer.zIndex = this.layers.length + 1;
+    }
+    layer.add(this);
 
     if (push) {
       this.layers.splice(0, 0, layer);
@@ -116,24 +115,21 @@ export class IgoMap {
   }
 
   getLayerById(id: string): Layer {
-    return this.layers.find(layer => {
-      return layer.id && layer.id === id;
-    });
+    return this.layers.find(layer => layer.id && layer.id === id);
   }
 
   removeLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
 
     if (index >= 0) {
-      this.olMap.removeLayer(layer.olLayer);
+      layer.remove();
       this.layers.splice(index, 1);
       this.layers$.next(this.layers.slice(0));
     }
   }
 
   removeLayers() {
-    this.layers.forEach(layer =>
-      this.olMap.removeLayer(layer.olLayer), this);
+    this.layers.forEach(layer => layer.remove());
     this.layers = [];
     this.layers$.next(this.layers.slice(0));
   }
@@ -166,7 +162,7 @@ export class IgoMap {
   }
 
   moveToExtent(extent: ol.Extent) {
-    const view = this.olMap.getView();
+    const view = this.ol.getView();
     view.fit(extent, {
       maxZoom: view.getZoom()
     });
@@ -177,7 +173,7 @@ export class IgoMap {
   }
 
   zoomToExtent(extent: ol.Extent) {
-    const view = this.olMap.getView();
+    const view = this.ol.getView();
     view.fit(extent, {
       maxZoom: 17
     });
@@ -198,15 +194,15 @@ export class IgoMap {
       const centroid = ol.extent.getCenter(geometry.getExtent());
       marker = new ol.Feature(new ol.geom.Point(centroid));
 
-      this.overlayDataSource.olSource.addFeature(feature);
+      this.overlayDataSource.ol.addFeature(feature);
     }
 
     marker.setStyle(this.overlayMarkerStyle);
-    this.overlayDataSource.olSource.addFeature(marker);
+    this.overlayDataSource.ol.addFeature(marker);
   }
 
   clearOverlay() {
-    this.overlayDataSource.olSource.clear();
+    this.overlayDataSource.ol.clear();
   }
 
   private sortLayers() {

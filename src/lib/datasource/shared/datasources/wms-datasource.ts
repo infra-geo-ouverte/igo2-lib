@@ -11,7 +11,7 @@ export class WMSDataSource
   extends DataSource implements QueryableDataSource, FilterableDataSource {
 
   public options: WMSDataSourceOptions;
-  public olSource: ol.source.ImageWMS;
+  public ol: ol.source.ImageWMS;
 
   private queryInfoFormat: string;
 
@@ -106,7 +106,7 @@ export class WMSDataSource
 
   getQueryUrl(options: QueryOptions): string {
 
-    const url = this.olSource.getGetFeatureInfoUrl(
+    const url = this.ol.getGetFeatureInfoUrl(
       options.coordinates, options.resolution, options.projection, {
         'INFO_FORMAT': this.queryInfoFormat,
         'QUERY_LAYERS': this.params.layers
@@ -135,6 +135,6 @@ export class WMSDataSource
     }
 
     const params = {time: time};
-    this.olSource.updateParams(params);
+    this.ol.updateParams(params);
   }
 }

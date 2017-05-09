@@ -4,4 +4,5 @@ export interface LayerOptions extends olx.layer.BaseOptions {
   alias?: string;
   zIndex?: number;
   visible?: boolean;
+  view?: olx.layer.BaseOptions;
 }

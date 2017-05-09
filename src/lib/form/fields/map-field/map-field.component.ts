@@ -97,11 +97,11 @@ export class MapFieldComponent
   constructor() {}
 
   ngAfterViewInit() {
-    this.map.olMap.on('singleclick', this.handleMapClick, this);
+    this.map.ol.on('singleclick', this.handleMapClick, this);
   }
 
   ngOnDestroy() {
-    this.map.olMap.un('singleclick', this.handleMapClick, this);
+    this.map.ol.un('singleclick', this.handleMapClick, this);
   }
 
   registerOnChange(fn: Function) {

@@ -7,7 +7,7 @@ import { VectorLayerOptions } from './vector-layer.interface';
 export class VectorLayer extends Layer {
 
   public options: VectorLayerOptions;
-  public olLayer: ol.layer.Vector;
+  public ol: ol.layer.Vector;
 
   constructor(dataSource: DataSource, options: VectorLayerOptions) {
     super(dataSource, options);
@@ -16,12 +16,12 @@ export class VectorLayer extends Layer {
   protected createOlLayer(): ol.layer.Vector {
     const style = this.getStyleFromOptions(this.options);
 
-    const layerOptions = Object.assign(this.options.view || {}, {
+    const olOptions = Object.assign(this.options.view || {}, {
       style: style,
-      source: this.dataSource.olSource as ol.source.Vector
+      source: this.dataSource.ol as ol.source.Vector
     });
 
-    return new ol.layer.Vector(layerOptions);
+    return new ol.layer.Vector(olOptions);
   }
 
   private getStyleFromOptions(options: VectorLayerOptions) {

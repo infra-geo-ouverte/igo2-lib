@@ -8,7 +8,7 @@ export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
   public map: IgoMap;
-  public olLayer: ol.layer.Layer;
+  public ol: ol.layer.Layer;
   public options: LayerOptions;
 
   get id(): string {
@@ -26,34 +26,34 @@ export abstract class Layer {
   }
 
   get zIndex(): number {
-    return this.olLayer.getZIndex();
+    return this.ol.getZIndex();
   }
 
   set zIndex(zIndex: number) {
-    this.olLayer.setZIndex(zIndex);
+    this.ol.setZIndex(zIndex);
   }
 
   get visible(): boolean {
-    return this.olLayer.get('visible');
+    return this.ol.get('visible');
   }
 
   set visible(visibility: boolean) {
-    this.olLayer.setVisible(visibility);
+    this.ol.setVisible(visibility);
   }
 
   get opacity(): number {
-    return this.olLayer.get('opacity');
+    return this.ol.get('opacity');
   }
 
   set opacity(opacity: number) {
-    this.olLayer.setOpacity(opacity);
+    this.ol.setOpacity(opacity);
   }
 
   constructor(dataSource: DataSource, options: LayerOptions) {
     this.dataSource = dataSource;
     this.options = options;
 
-    this.olLayer = this.createOlLayer();
+    this.ol = this.createOlLayer();
     if (options.zIndex !== undefined) {
       this.zIndex = options.zIndex;
     }
@@ -65,9 +65,14 @@ export abstract class Layer {
 
   protected abstract createOlLayer(): ol.layer.Layer;
 
-  addToMap(map: IgoMap) {
+  add(map: IgoMap) {
     this.map = map;
-    map.olMap.addLayer(this.olLayer);
+    map.ol.addLayer(this.ol);
+  }
+
+  remove() {
+    this.map = undefined;
+    map.ol.removeLayer(this.ol);
   }
 
 }

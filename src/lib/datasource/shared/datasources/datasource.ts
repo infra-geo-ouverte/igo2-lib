@@ -4,7 +4,7 @@ import { DataSourceOptions, DataSourceLegendOptions, FilterableDataSource,
 export abstract class DataSource {
 
   public id: string;
-  public olSource: ol.source.Source;
+  public ol: ol.source.Source;
   public options: DataSourceOptions;
 
   get title(): string {
@@ -18,7 +18,7 @@ export abstract class DataSource {
   constructor(options: DataSourceOptions) {
     this.options = options;
     this.id = this.generateId();
-    this.olSource = this.createOlSource();
+    this.ol = this.createOlSource();
   }
 
   protected abstract createOlSource(): ol.source.Source;
@@ -32,7 +32,8 @@ export abstract class DataSource {
   isFilterable(): this is FilterableDataSource {
     const dataSource = this as any as FilterableDataSource;
     if (typeof dataSource.filterByDate === 'function') {
-      return dataSource.options.filterable !== undefined ? dataSource.options.filterable : true;
+      return dataSource.options.filterable !== undefined ?
+        dataSource.options.filterable : true;
     }
 
     return false;
@@ -41,7 +42,8 @@ export abstract class DataSource {
   isQueryable(): this is QueryableDataSource {
     const layer = this as any as QueryableDataSource;
     if (typeof layer.getQueryUrl === 'function') {
-      return layer.options.queryable !== undefined ? layer.options.queryable : true;
+      return layer.options.queryable !== undefined ?
+        layer.options.queryable : true;
     }
 
     return false;

@@ -7,7 +7,7 @@ import { WMTSDataSourceOptions } from './wmts-datasource.interface';
 export class WMTSDataSource extends DataSource {
 
   public options: WMTSDataSourceOptions;
-  public olSource: ol.source.WMTS;
+  public ol: ol.source.WMTS;
 
   constructor(options: WMTSDataSourceOptions) {
     super(options);
