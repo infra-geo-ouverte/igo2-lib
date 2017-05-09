@@ -23,7 +23,7 @@ export class WMTSDataSource extends DataSource {
 
   protected generateId() {
     const layer = this.options.layer;
-    const chain = this.options.type + this.options.url + layer;
+    const chain = 'wmts' + this.options.url + layer;
 
     return Md5.hashStr(chain) as string;
   }

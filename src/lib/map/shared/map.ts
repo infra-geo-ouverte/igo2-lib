@@ -42,27 +42,28 @@ export class IgoMap {
       title: 'Overlay'
     });
 
-    const stroke = {
+    const stroke = new ol.style.Stroke({
       color: [0, 161, 222, 1],
       width: 2
-    };
+    });
 
-    const fill = {
+    const fill = new ol.style.Fill({
       color: [0, 161, 222, 0.15]
-    };
+    });
 
-    this.addLayer(new VectorLayer(this.overlayDataSource, {
+    const layer = new VectorLayer(this.overlayDataSource, {
       zIndex: 999,
-      style: {
+      style: new ol.style.Style({
         stroke: stroke,
         fill: fill,
-        circle: {
+        image: new ol.style.Circle({
           radius: 5,
           stroke: stroke,
           fill: fill
-        }
-      }
-    }), false);
+        })
+      })
+    });
+    this.addLayer(layer, false);
   }
 
   updateView(options: MapViewOptions) {

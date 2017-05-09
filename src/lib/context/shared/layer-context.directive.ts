@@ -6,7 +6,7 @@ import { DataSourceService } from '../../datasource/shared';
 import { LayerService } from '../../layer/shared';
 
 import { ContextService } from './context.service';
-import { DetailedContext } from './context.interface';
+import { DetailedContext, ContextLayer } from './context.interface';
 
 
 @Directive({
@@ -40,20 +40,22 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
     this.map.removeLayers();
 
-    context.layers.forEach((layerContext, index) => {
-      const sourceOptions = layerContext.source;
-      const layerOptions = Object.assign({}, layerContext);
-      delete layerOptions.source;
+    context.layers.forEach((contextLayer) => this.addLayerToMap(contextLayer));
+  }
 
-      const dataSourceOptions = Object.assign({}, layerOptions, sourceOptions);
+  private addLayerToMap(contextLayer: ContextLayer) {
+    const sourceContext = contextLayer.source;
+    const layerContext = Object.assign({}, contextLayer);
+    delete layerContext.source;
 
-      this.dataSourceService
-        .createAsyncDataSource(dataSourceOptions)
-        .subscribe(dataSource =>  {
-          this.map.addLayer(
-            this.layerService.createLayer(dataSource, layerOptions));
-        });
-    });
+    const dataSourceContext = Object.assign({}, layerContext, sourceContext);
+
+    this.dataSourceService
+      .createAsyncDataSource(dataSourceContext)
+      .subscribe(dataSource =>  {
+        this.map.addLayer(
+          this.layerService.createLayer(dataSource, layerContext));
+      });
   }
 
 }

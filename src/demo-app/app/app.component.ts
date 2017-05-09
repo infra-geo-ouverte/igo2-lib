@@ -6,7 +6,7 @@ import { ContextService,
          LanguageService, LayerService, MapService, MessageService,
          OverlayService, ToolService } from '../../lib';
 
-import { AnyDataSourceOptions, DataSourceService } from '../../lib/datasource';
+import { AnyDataSourceContext, DataSourceService } from '../../lib/datasource';
 
 
 @Component({
@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
 
       if (map !== undefined) {
         this.dataSourceService
-          .createAsyncDataSource(feature.properties as AnyDataSourceOptions)
+          .createAsyncDataSource(feature.properties as AnyDataSourceContext)
           .subscribe(dataSource =>  {
             map.addLayer(
               this.layerService.createLayer(dataSource, feature.properties));

@@ -5,16 +5,16 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CapabilitiesService } from './capabilities.service';
 
 import { DataSource,
-         OSMDataSource, OSMDataSourceOptions,
-         FeatureDataSource, FeatureDataSourceOptions,
-         XYZDataSource, XYZDataSourceOptions,
-         WFSDataSource, WFSDataSourceOptions,
-         WMTSDataSource, WMTSDataSourceOptions,
-         WMSDataSource, WMSDataSourceOptions } from './datasources';
+         OSMDataSource, OSMDataSourceContext,
+         FeatureDataSource, FeatureDataSourceContext,
+         XYZDataSource, XYZDataSourceContext,
+         WFSDataSource, WFSDataSourceContext,
+         WMTSDataSource, WMTSDataSourceContext,
+         WMSDataSource, WMSDataSourceContext } from './datasources';
 
-export type AnyDataSourceOptions =
-  OSMDataSourceOptions | FeatureDataSourceOptions | WFSDataSourceOptions |
-  XYZDataSourceOptions | WMTSDataSourceOptions | WMSDataSourceOptions;
+export type AnyDataSourceContext =
+  OSMDataSourceContext | FeatureDataSourceContext | WFSDataSourceContext |
+  XYZDataSourceContext | WMTSDataSourceContext | WMSDataSourceContext;
 
 
 @Injectable()
@@ -24,26 +24,26 @@ export class DataSourceService {
 
   constructor(private capabilitiesService: CapabilitiesService) { }
 
-  createAsyncDataSource(options: AnyDataSourceOptions): Observable<DataSource> {
+  createAsyncDataSource(context: AnyDataSourceContext): Observable<DataSource> {
     let dataSource;
-    switch (options.type) {
+    switch (context.type) {
       case 'osm':
-        dataSource = this.createOSMDataSource(options as OSMDataSourceOptions);
+        dataSource = this.createOSMDataSource(context as OSMDataSourceContext);
         break;
       case 'vector':
-        dataSource = this.createFeatureDataSource(options as FeatureDataSourceOptions);
+        dataSource = this.createFeatureDataSource(context as FeatureDataSourceContext);
         break;
       case 'wfs':
-        dataSource = this.createWFSDataSource(options as WFSDataSourceOptions);
+        dataSource = this.createWFSDataSource(context as WFSDataSourceContext);
         break;
       case 'wms':
-        dataSource = this.createWMSDataSource(options as WMSDataSourceOptions);
+        dataSource = this.createWMSDataSource(context as WMSDataSourceContext);
         break;
       case 'wmts':
-        dataSource = this.createWMTSDataSource(options as WMTSDataSourceOptions);
+        dataSource = this.createWMTSDataSource(context as WMTSDataSourceContext);
         break;
       case 'xyz':
-        dataSource = this.createXYZDataSource(options as XYZDataSourceOptions);
+        dataSource = this.createXYZDataSource(context as XYZDataSourceContext);
         break;
       default:
         break;
@@ -55,50 +55,50 @@ export class DataSourceService {
   }
 
   private createOSMDataSource(
-      options: OSMDataSourceOptions): Observable<OSMDataSource> {
+      context: OSMDataSourceContext): Observable<OSMDataSource> {
 
-    return new Observable(d => d.next(new OSMDataSource(options)));
+    return new Observable(d => d.next(new OSMDataSource(context)));
   }
 
   private createFeatureDataSource(
-      options: FeatureDataSourceOptions): Observable<FeatureDataSource> {
+      context: FeatureDataSourceContext): Observable<FeatureDataSource> {
 
-    return new Observable(d => d.next(new FeatureDataSource(options)));
+    return new Observable(d => d.next(new FeatureDataSource(context)));
   }
 
   private createWFSDataSource(
-      options: WFSDataSourceOptions): Observable<WFSDataSource> {
+      context: WFSDataSourceContext): Observable<WFSDataSource> {
 
-    return new Observable(d => d.next(new WFSDataSource(options)));
+    return new Observable(d => d.next(new WFSDataSource(context)));
   }
 
   private createWMSDataSource(
-      options: WMSDataSourceOptions): Observable<WMSDataSource> {
+      context: WMSDataSourceContext): Observable<WMSDataSource> {
 
-    if (options.optionsFromCapabilities) {
+    if (context.optionsFromCapabilities) {
       return this.capabilitiesService
-        .getWMSOptions(options)
-        .map((options_: WMSDataSourceOptions) => new WMSDataSource(options_));
+        .getWMSOptions(context)
+        .map((options: WMSDataSourceContext) => new WMSDataSource(options));
     }
 
-    return new Observable(d => d.next(new WMSDataSource(options)));
+    return new Observable(d => d.next(new WMSDataSource(context)));
   }
 
   private createWMTSDataSource(
-      options: WMTSDataSourceOptions): Observable<WMTSDataSource> {
+      context: WMTSDataSourceContext): Observable<WMTSDataSource> {
 
-    if (options.optionsFromCapabilities) {
+    if (context.optionsFromCapabilities) {
       return this.capabilitiesService
-        .getWMTSOptions(options)
-        .map((options_: WMTSDataSourceOptions) => new WMTSDataSource(options_));
+        .getWMTSOptions(context)
+        .map((options: WMTSDataSourceContext) => new WMTSDataSource(options));
     }
 
-    return new Observable(d => d.next(new WMTSDataSource(options)));
+    return new Observable(d => d.next(new WMTSDataSource(context)));
   }
 
   private createXYZDataSource(
-      options: XYZDataSourceOptions): Observable<XYZDataSource> {
+      context: XYZDataSourceContext): Observable<XYZDataSource> {
 
-    return new Observable(d => d.next(new XYZDataSource(options)));
+    return new Observable(d => d.next(new XYZDataSource(context)));
   }
 }

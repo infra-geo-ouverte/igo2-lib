@@ -9,12 +9,12 @@ export class TileLayer extends Layer {
   public options: TileLayerOptions;
   public ol: ol.layer.Tile;
 
-  constructor(dataSource: DataSource, options: TileLayerOptions) {
+  constructor(dataSource: DataSource, options?: TileLayerOptions) {
     super(dataSource, options);
   }
 
   protected createOlLayer(): ol.layer.Tile {
-    const olOptions = Object.assign(this.options.view || {}, {
+    const olOptions = Object.assign({}, this.options.view || {}, {
       source: this.dataSource.ol as ol.source.TileImage
     });
 

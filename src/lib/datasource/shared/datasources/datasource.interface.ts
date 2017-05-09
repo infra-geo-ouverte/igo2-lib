@@ -6,9 +6,12 @@ import { DataSource } from './datasource';
 
 export interface DataSourceOptions {
   title: string;
-  type?: string;
   alias?: string;
   legend?: DataSourceLegendOptions;
+}
+
+export interface DataSourceContext extends DataSourceOptions {
+  type: string;
 }
 
 export interface DataSourceLegendOptions {

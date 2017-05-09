@@ -1,35 +1,39 @@
 import { Injectable } from '@angular/core';
 
-import { DataSource } from '../../datasource';
+import { DataSource, OSMDataSource, FeatureDataSource,
+         XYZDataSource, WFSDataSource, WMTSDataSource,
+         WMSDataSource } from '../../datasource';
 
 import { Layer,
-         ImageLayer, ImageLayerOptions,
-         TileLayer, TileLayerOptions,
-         VectorLayer, VectorLayerOptions } from './layers';
+         ImageLayer, ImageLayerContext,
+         TileLayer, TileLayerContext,
+         VectorLayer, VectorLayerContext } from './layers';
+import { StyleService } from './style.service';
 
-export type AnyLayerOptions =
-  ImageLayerOptions | TileLayerOptions | VectorLayerOptions;
+
+export type AnyLayerContext =
+  ImageLayerContext | TileLayerContext | VectorLayerContext;
 
 
 @Injectable()
 export class LayerService {
 
-  constructor() { }
+  constructor(private styleService: StyleService) { }
 
-  createLayer(dataSource: DataSource, options: AnyLayerOptions): Layer {
+  createLayer(dataSource: DataSource, context: AnyLayerContext): Layer {
     let layer;
-    switch (dataSource.options.type) {
-      case 'osm':
-      case 'wmts':
-      case 'xyz':
-        layer = this.createTileLayer(dataSource, options as TileLayerOptions);
+    switch (dataSource.constructor) {
+      case OSMDataSource:
+      case WMTSDataSource:
+      case XYZDataSource:
+        layer = this.createTileLayer(dataSource, context as TileLayerContext);
         break;
-      case 'vector':
-      case 'wfs':
-        layer = this.createVectorLayer(dataSource, options as VectorLayerOptions);
+      case FeatureDataSource:
+      case WFSDataSource:
+        layer = this.createVectorLayer(dataSource, context as VectorLayerContext);
         break;
-      case 'wms':
-        layer = this.createImageLayer(dataSource, options as ImageLayerOptions);
+      case WMSDataSource:
+        layer = this.createImageLayer(dataSource, context as ImageLayerContext);
         break;
       default:
         break;
@@ -39,17 +43,27 @@ export class LayerService {
   }
 
   private createImageLayer(
-      dataSource: DataSource, options: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(dataSource, options);
+      dataSource: DataSource, context: ImageLayerContext): ImageLayer {
+    return new ImageLayer(dataSource, context);
   }
 
   private createTileLayer(
-      dataSource: DataSource, options: TileLayerOptions): TileLayer {
-    return new TileLayer(dataSource, options);
+      dataSource: DataSource, context: TileLayerContext): TileLayer {
+    return new TileLayer(dataSource, context);
   }
 
   private createVectorLayer(
-      dataSource: DataSource, options: VectorLayerOptions): VectorLayer {
-    return new VectorLayer(dataSource, options);
+      dataSource: DataSource, context: VectorLayerContext): VectorLayer {
+
+    let style;
+    if (context.style !== undefined) {
+      style = this.styleService.createStyle(context.style);
+    }
+
+    const layerOptions = Object.assign({}, context, {
+      style: style
+    });
+
+    return new VectorLayer(dataSource, layerOptions);
   }
 }

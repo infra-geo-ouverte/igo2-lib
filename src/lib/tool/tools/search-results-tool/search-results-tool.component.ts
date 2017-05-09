@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { Feature, FeatureType } from '../../../feature';
 import { OverlayService } from '../../../overlay';
-import { AnyDataSourceOptions, DataSourceService } from '../../../datasource';
+import { AnyDataSourceContext, DataSourceService } from '../../../datasource';
 import { LayerService } from '../../../layer';
 import { MapService } from '../../../map';
 
@@ -40,7 +40,7 @@ export class SearchResultsToolComponent {
 
       if (map !== undefined) {
         this.dataSourceService
-          .createAsyncDataSource(feature.properties as AnyDataSourceOptions)
+          .createAsyncDataSource(feature.properties as AnyDataSourceContext)
           .subscribe(dataSource =>  {
             map.addLayer(
               this.layerService.createLayer(dataSource, feature.properties));

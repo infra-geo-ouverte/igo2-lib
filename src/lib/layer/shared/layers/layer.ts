@@ -16,9 +16,7 @@ export abstract class Layer {
   }
 
   get title(): string {
-    const title = this.options.alias ? this.options.alias : this.options.title;
-
-    return title ? title : this.dataSource.title;
+    return this.options.title ? this.options.title : this.dataSource.title;
   }
 
   set title(title: string) {
@@ -49,9 +47,9 @@ export abstract class Layer {
     this.ol.setOpacity(opacity);
   }
 
-  constructor(dataSource: DataSource, options: LayerOptions) {
+  constructor(dataSource: DataSource, options?: LayerOptions) {
     this.dataSource = dataSource;
-    this.options = options;
+    this.options = options || {};
 
     this.ol = this.createOlLayer();
     if (options.zIndex !== undefined) {
@@ -71,8 +69,8 @@ export abstract class Layer {
   }
 
   remove() {
-    this.map = undefined;
     this.map.ol.removeLayer(this.ol);
+    this.map = undefined;
   }
 
 }
