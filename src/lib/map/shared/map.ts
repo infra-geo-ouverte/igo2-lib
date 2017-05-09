@@ -42,15 +42,24 @@ export class IgoMap {
       title: 'Overlay'
     });
 
+    const stroke = {
+      color: [0, 161, 222, 1],
+      width: 2
+    };
+
+    const fill = {
+      color: [0, 161, 222, 0.15]
+    };
+
     this.addLayer(new VectorLayer(this.overlayDataSource, {
       zIndex: 999,
       style: {
-        stroke: {
-          color: [0, 161, 222, 1],
-          width: 3
-        },
-        fill: {
-          color: [0, 161, 222, 0.15]
+        stroke: stroke,
+        fill: fill,
+        circle: {
+          radius: 5,
+          stroke: stroke,
+          fill: fill
         }
       }
     }), false);
