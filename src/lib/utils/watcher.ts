@@ -13,7 +13,6 @@ export abstract class Watcher {
 
   public status$ = new Subject<SubjectStatus>();
   protected status$$: Subscription;
-  protected state$ = new Subject<SubjectStatus>();
 
   get status(): SubjectStatus { return this._status; }
   set status(value: SubjectStatus) {
