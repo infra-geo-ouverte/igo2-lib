@@ -1,4 +1,4 @@
-<div class="igo-spinner" [ngClass]="{'igo-spinner-shown': shown}">
+<div *ngIf="shown">
   <div class="igo-spinner-background"></div>
   <md-progress-spinner mode="indeterminate"></md-progress-spinner>  
 </div>

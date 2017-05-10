@@ -26,5 +26,3 @@ export class IgoFormModule {
     };
   }
 }
-
-export * from './fields';

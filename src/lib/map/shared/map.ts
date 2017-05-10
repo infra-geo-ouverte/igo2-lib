@@ -1,5 +1,8 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subject } from 'rxjs/Subject';
 
+import { LayerWatcher } from '../utils';
+import { SubjectStatus } from '../../utils';
 import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
@@ -11,15 +14,20 @@ export class IgoMap {
   public ol: ol.Map;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
+  public status$: Subject<SubjectStatus>;
 
   private overlayDataSource: FeatureDataSource;
   private overlayMarkerStyle: ol.style.Style;
+  private layerWatcher: LayerWatcher;
 
   get projection(): string {
     return this.ol.getView().getProjection().getCode();
   }
 
   constructor() {
+    this.layerWatcher = new LayerWatcher();
+    this.status$ = this.layerWatcher.status$;
+
     this.init();
   }
 
@@ -64,6 +72,15 @@ export class IgoMap {
       })
     });
     this.addLayer(layer, false);
+  }
+
+  setTarget(id: string) {
+    this.ol.setTarget(id);
+    if (id !== undefined) {
+      this.layerWatcher.subscribe(() => {}, null);
+    } else {
+      this.layerWatcher.unsubscribe();
+    }
   }
 
   updateView(options: MapViewOptions) {
@@ -113,6 +130,8 @@ export class IgoMap {
     }
     layer.add(this);
 
+    this.layerWatcher.watchLayer(layer);
+
     if (push) {
       this.layers.splice(0, 0, layer);
       this.sortLayers();
@@ -132,6 +151,7 @@ export class IgoMap {
     const index = this.getLayerIndex(layer);
 
     if (index >= 0) {
+      this.layerWatcher.unwatchLayer(layer);
       layer.remove();
       this.layers.splice(index, 1);
       this.layers$.next(this.layers.slice(0));
@@ -139,7 +159,11 @@ export class IgoMap {
   }
 
   removeLayers() {
-    this.layers.forEach(layer => layer.remove());
+    this.layers.forEach(layer => {
+      this.layerWatcher.unwatchLayer(layer);
+      layer.remove();
+    }, this);
+
     this.layers = [];
     this.layers$.next(this.layers.slice(0));
   }

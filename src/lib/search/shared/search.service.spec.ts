@@ -4,9 +4,10 @@ import { HttpModule, JsonpModule } from '@angular/http';
 import { ActivityService, RequestService, MessageService } from '../../core';
 
 import { SearchService } from './search.service';
+import { provideSearchSourceService } from './search-source.service';
 import { FeatureService } from '../../feature';
 import { provideSearchSourceOptions, provideNominatimSearchSource } from '../search-sources';
-import { provideSearchSourceService } from '../module';
+
 
 describe('SearchService', () => {
   beforeEach(() => {

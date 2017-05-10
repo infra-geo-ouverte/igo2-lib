@@ -29,5 +29,3 @@ export class IgoLanguageModule {
     };
   }
 }
-
-export * from './shared';

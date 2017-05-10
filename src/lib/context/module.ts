@@ -48,7 +48,3 @@ export class IgoContextModule {
     };
   }
 }
-
-export * from './shared';
-export * from './context-list';
-export * from './context-item';

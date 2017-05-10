@@ -32,7 +32,3 @@ export class IgoPrintModule {
     };
   }
 }
-
-export * from './shared';
-export * from './print';
-export * from './print-form';

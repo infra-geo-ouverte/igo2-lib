@@ -26,5 +26,3 @@ export class IgoOverlayModule {
     };
   }
 }
-
-export * from './shared';

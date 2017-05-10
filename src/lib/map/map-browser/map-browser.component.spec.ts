@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ActivityService } from '../../core';
 import { IgoMap } from '../shared';
 import { MapBrowserComponent } from './map-browser.component';
 
@@ -13,6 +14,9 @@ describe('MapBrowserComponent', () => {
       imports: [],
       declarations: [
         MapBrowserComponent
+      ],
+      providers: [
+        ActivityService
       ]
     })
     .compileComponents();

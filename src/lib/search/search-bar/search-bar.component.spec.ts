@@ -4,8 +4,9 @@ import { IgoSharedModule } from '../../shared';
 import { ActivityService, RequestService, MessageService } from '../../core';
 import { FeatureService } from '../../feature';
 
-import { provideSearchSourceService, SearchSource } from '../module';
-import { SearchService, SearchSourceService } from '../shared';
+import { provideSearchSourceService,
+         SearchService, SearchSourceService } from '../shared';
+import { SearchSource } from '../search-sources';
 import { SearchBarComponent } from './search-bar.component';
 
 describe('SearchBarComponent', () => {
