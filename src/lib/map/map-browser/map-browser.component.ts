@@ -21,7 +21,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   set map(value: IgoMap) {
     this._map = value;
   }
-  protected _map: IgoMap;
+  private _map: IgoMap;
 
   @Input()
   get view(): MapViewOptions { return this._view; }
@@ -31,7 +31,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
       this.map.setView(value);
     }
   }
-  protected _view: MapViewOptions;
+  private _view: MapViewOptions;
 
   public id: string = `igo-map-target-${new Date().getTime()}`;
 
@@ -42,11 +42,11 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
       status => this.handleStatusChange(status));
   }
 
-  ngAfterViewInit(): any {
+  ngAfterViewInit() {
     this.map.setTarget(this.id);
   }
 
-  ngOnDestroy(): any {
+  ngOnDestroy() {
     this.map.setTarget(undefined);
     this.status$$.unsubscribe();
   }
