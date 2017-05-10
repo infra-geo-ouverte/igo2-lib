@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 
+import { SubjectStatus } from '../../utils';
 import { IgoMap } from '../../map';
 
 import { PrintFormat, PrintOptions, PrintOrientation,
@@ -46,8 +47,9 @@ export class PrintComponent {
 
   handleFormSubmit(data: PrintOptions) {
     this.disabled = true;
-    this.printService.print(this.map, data).subscribe((status) =>
-      this.disabled = false);
+    this.printService.print(this.map, data).subscribe((status: SubjectStatus) => {
+      this.disabled = false;
+    });
   }
 
 }

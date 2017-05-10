@@ -1,4 +1,7 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+
+import { SubjectStatus } from '../../utils';
+import { ActivityService } from '../../core';
 
 import { IgoMap, MapViewOptions } from '../shared';
 
@@ -7,7 +10,9 @@ import { IgoMap, MapViewOptions } from '../shared';
   templateUrl: './map-browser.component.html',
   styleUrls: ['./map-browser.component.styl']
 })
-export class MapBrowserComponent implements AfterViewInit {
+export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  private activityId: string;
 
   @Input()
   get map(): IgoMap { return this._map; }
@@ -28,9 +33,24 @@ export class MapBrowserComponent implements AfterViewInit {
 
   public id: string = `igo-map-target-${new Date().getTime()}`;
 
-  constructor() {}
+  constructor(private activityService: ActivityService) {}
+
+  ngOnInit() {
+    this.map.status$.subscribe(status => {
+      if (status === SubjectStatus.Working && this.activityId === undefined) {
+        this.activityId = this.activityService.register();
+      } else if (status === SubjectStatus.Done && this.activityId !== undefined) {
+        this.activityService.unregister(this.activityId);
+        this.activityId = undefined;
+      }
+    });
+  }
 
   ngAfterViewInit(): any {
-    this.map.ol.setTarget(this.id);
+    this.map.setTarget(this.id);
+  }
+
+  ngOnDestroy(): any {
+    this.map.setTarget(undefined);
   }
 }

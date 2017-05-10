@@ -23,8 +23,3 @@ export class IgoCoreModule {
     };
   }
 }
-
-export * from './activity';
-export * from './media';
-export * from './message';
-export * from './request';

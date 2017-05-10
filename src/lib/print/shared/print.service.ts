@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { IgoMap } from '../../map';
-import { SourceQueue } from '../../utils/sourcequeue';
-import { MessageService, MessageType, ActivityService } from '../../core';
+import { SubjectStatus } from '../../utils';
+import { MessageService, ActivityService } from '../../core';
 
 import { PrintOptions } from './print.interface';
 import { PrintDimension, PrintOrientation } from './print.type';
@@ -17,89 +17,133 @@ export class PrintService {
   constructor(private messageService: MessageService,
               private activityService: ActivityService) {}
 
-  print(map: IgoMap, options: PrintOptions): Subject<MessageType> {
+  print(map: IgoMap, options: PrintOptions): Subject<SubjectStatus> {
     const status$ = new Subject();
-    const id = this.activityService.register();
 
     const format = options.format;
     const resolution = +options.resolution;
     const orientation = options.orientation;
-    const dim = orientation === PrintOrientation.portrait ?
+    const dimensions = orientation === PrintOrientation.portrait ?
       PrintDimension[format] : PrintDimension[format].slice().reverse();
-    const title = options.title;
 
+    const margins = [20, 10, 20, 10];
+    const width = dimensions[0] - margins[3] - margins[1];
+    const height = dimensions[1] - margins[0] - margins[2];
+    const size = [width, height];
+
+    const activityId = this.activityService.register();
+    const doc = new jsPDF(options.orientation, undefined, format);
+
+    if (options.title !== undefined) {
+      this.addTitle(doc, options.title, dimensions[0]);
+    }
+
+    this.addMap(doc, map, resolution, size, margins)
+      .subscribe((status: SubjectStatus) => {
+        if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
+          doc.save('map.pdf');
+        }
+
+        this.activityService.unregister(activityId);
+        status$.next(SubjectStatus.Done);
+      });
+
+    return status$;
+  }
+
+  private addTitle(doc: typeof jsPDF, title: string, pageWidth: number) {
     const pdfResolution = 96;
-    const marginLeft = 10;
-    const marginRight = 10;
-    const marginTop = 20;
-    const marginBottom = 20;
+    const titleSize = 32;
+    const titleWidth = (titleSize * 25.4 / pdfResolution) * title.length;
 
-    const width = dim[0] - marginLeft - marginRight;
-    const height = dim[1] - marginTop - marginBottom;
-    const widthPixels = Math.round(width * resolution / 25.4);
-    const heightPixels = Math.round(height * resolution / 25.4);
+    let titleMarginLeft;
+    if (titleWidth > pageWidth) {
+      titleMarginLeft = 0;
+    } else {
+      titleMarginLeft = (pageWidth - titleWidth) / 2;
+    }
 
-    const size = map.ol.getSize();
-    const extent = map.ol.getView().calculateExtent(size);
+    doc.setFont('courier');
+    doc.setFontSize(32);
+    doc.text(titleMarginLeft, 15, title);
+  }
+
+  private addCanvas(doc: typeof jsPDF, canvas: HTMLCanvasElement,
+                    size: Array<number>, margins: Array<number>) {
+
+    let image;
+    try {
+      image = canvas.toDataURL('image/jpeg');
+    } catch (err) {
+      this.messageService.error(err, 'Print');
+      throw new Error('Security error: This map cannot be printed.');
+    }
+
+    if (image !== undefined) {
+      doc.addImage(image, 'JPEG', margins[3], margins[0], size[0], size[1]);
+      doc.rect(margins[3], margins[0], size[0], size[1]);
+    }
+  }
+
+  private addMap(doc: typeof jsPDF, map: IgoMap, resolution: number,
+                 size: Array<number>, margins: Array<number>) {
+
+    const status$ = new Subject();
+
+    const mapSize = map.ol.getSize();
+    const extent = map.ol.getView().calculateExtent(mapSize);
+
+    const widthPixels = Math.round(size[0] * resolution / 25.4);
+    const heightPixels = Math.round(size[1] * resolution / 25.4);
+
+    let timeout;
 
     map.ol.once('postcompose', (event: any) => {
       const canvas = event.context.canvas;
+      const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
+        clearTimeout(timeout);
 
-      new SourceQueue(map.ol).subscribe(() => window.setTimeout(() => {
-        let status = MessageType.SUCCESS;
-        const pdf = new jsPDF(orientation, undefined, format);
+        if (mapStatus !== SubjectStatus.Done) { return; }
 
-        let image;
+        mapStatus$$.unsubscribe();
+
+        let status = SubjectStatus.Done;
         try {
-          image = canvas.toDataURL('image/jpeg');
+          this.addCanvas(doc, canvas, size, margins);
         } catch (err) {
-          console.log(err);
-          this.messageService.error(
-            'Security error: This map cannot be printed.', 'Print');
-          status = MessageType.ERROR;
+          status = SubjectStatus.Error;
         }
 
-        if (status === MessageType.SUCCESS) {
-          if (image !== undefined) {
-            pdf.addImage(image, 'JPEG', marginLeft, marginTop,
-                         width, height);
-            pdf.rect(marginLeft, marginTop, width, height);
-          }
-
-          if (title !== undefined) {
-            const titleSize = 32;
-            const titleWidth = (titleSize * 25.4 / pdfResolution) * title.length;
-
-            let titleMarginLeft;
-            if (titleWidth > dim[0]) {
-              titleMarginLeft = 0;
-            } else {
-              titleMarginLeft = (dim[0] - titleWidth) / 2;
-            }
-
-            pdf.setFont('courier');
-            pdf.setFontSize(32);
-            pdf.text(titleMarginLeft, 15, title);
-          }
-
-          pdf.save('map.pdf');
-        }
-
-        map.ol.setSize(size);
-        map.ol.getView().fit(extent);
-        map.ol.renderSync();
-
-        this.activityService.unregister(id);
+        this.renderMap(map, mapSize, extent);
         status$.next(status);
-      }, 100));
+      });
 
+      // If no loading as started after 200ms, then probably no loading
+      // is required.
+      timeout = window.setTimeout(() => {
+        mapStatus$$.unsubscribe();
+
+        let status = SubjectStatus.Done;
+        try {
+          this.addCanvas(doc, canvas, size, margins);
+        } catch (err) {
+          status = SubjectStatus.Error;
+        }
+
+        this.renderMap(map, mapSize, extent);
+        status$.next(status);
+      }, 200);
     });
 
-    map.ol.setSize([widthPixels, heightPixels]);
-    map.ol.getView().fit(extent);
-    map.ol.renderSync();
+    this.renderMap(map, [widthPixels, heightPixels], extent);
 
     return status$;
+  }
+
+  private renderMap(map, size, extent) {
+    map.ol.setSize(size);
+    map.ol.getView().fit(extent);
+    map.ol.renderSync();
   }
 
 }

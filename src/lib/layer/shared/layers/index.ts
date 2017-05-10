@@ -1,4 +1,5 @@
 export * from './layer';
+export * from './layer.enum';
 export * from './layer.interface';
 export * from './image-layer';
 export * from './image-layer.interface';

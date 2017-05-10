@@ -1,7 +1,11 @@
+import { Subject } from 'rxjs/Subject';
+
 import { DataSource } from '../../../datasource';
 import { IgoMap } from '../../../map';
 
+import { SubjectStatus } from '../../../utils';
 import { LayerOptions } from './layer.interface';
+
 
 export abstract class Layer {
 
@@ -10,6 +14,7 @@ export abstract class Layer {
   public map: IgoMap;
   public ol: ol.layer.Layer;
   public options: LayerOptions;
+  public status$: Subject<SubjectStatus>;
 
   get id(): string {
     return this.dataSource.id;

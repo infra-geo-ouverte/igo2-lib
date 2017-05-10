@@ -26,5 +26,3 @@ export class IgoQueryModule {
     };
   }
 }
-
-export * from './shared';

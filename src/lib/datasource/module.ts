@@ -22,5 +22,3 @@ export class IgoDataSourceModule {
     };
   }
 }
-
-export * from './shared';

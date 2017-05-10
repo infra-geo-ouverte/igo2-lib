@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ActivityService } from '../../../core';
 import { IgoSharedModule } from '../../../shared';
 import { MapBrowserComponent } from '../../../map';
 
@@ -17,6 +18,9 @@ describe('MapFieldComponent', () => {
       declarations: [
         MapBrowserComponent,
         MapFieldComponent
+      ],
+      providers: [
+        ActivityService
       ]
     })
     .compileComponents();
