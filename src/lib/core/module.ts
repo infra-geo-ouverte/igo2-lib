@@ -1,5 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
+import { SimpleNotificationsModule } from 'angular2-notifications';
+
 import { TranslateModule, MissingTranslationHandler,
          TranslateService } from '@ngx-translate/core';
 
@@ -9,11 +11,12 @@ import { LanguageService, IgoMissingTranslationHandler,
 import { ActivityService } from './activity';
 import { MediaService } from './media';
 import { RequestService } from './request';
-import { MessageService } from './message';
+import { MessageCenterComponent, MessageService } from './message';
 
 
 @NgModule({
   imports: [
+    SimpleNotificationsModule.forRoot(),
     TranslateModule.forRoot({
       missingTranslationHandler: {
         provide: MissingTranslationHandler,
@@ -21,7 +24,12 @@ import { MessageService } from './message';
       }
     })
   ],
-  exports: []
+  declarations: [
+    MessageCenterComponent
+  ],
+  exports: [
+    MessageCenterComponent
+  ]
 })
 export class IgoCoreModule {
   static forRoot(): ModuleWithProviders {

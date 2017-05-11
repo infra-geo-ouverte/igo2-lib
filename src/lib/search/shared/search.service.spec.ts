@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule, JsonpModule } from '@angular/http';
 
-import { ActivityService, RequestService, MessageService } from '../../core';
+import { IgoCoreModule } from '../../core';
 
 import { SearchService } from './search.service';
 import { provideSearchSourceService } from './search-source.service';
@@ -14,12 +14,10 @@ describe('SearchService', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpModule,
-        JsonpModule
+        JsonpModule,
+        IgoCoreModule.forRoot()
       ],
       providers: [
-        ActivityService,
-        RequestService,
-        MessageService,
         FeatureService,
         SearchService,
         provideSearchSourceOptions({

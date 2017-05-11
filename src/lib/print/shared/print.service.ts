@@ -40,12 +40,14 @@ export class PrintService {
 
     this.addMap(doc, map, resolution, size, margins)
       .subscribe((status: SubjectStatus) => {
-        if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
+        if (status === SubjectStatus.Done) {
           doc.save('map.pdf');
         }
 
-        this.activityService.unregister(activityId);
-        status$.next(SubjectStatus.Done);
+        if (status === SubjectStatus.Done || status === SubjectStatus.Error) {
+          this.activityService.unregister(activityId);
+          status$.next(SubjectStatus.Done);
+        }
       });
 
     return status$;
@@ -75,8 +77,11 @@ export class PrintService {
     try {
       image = canvas.toDataURL('image/jpeg');
     } catch (err) {
-      this.messageService.error(err, 'Print');
-      throw new Error('Security error: This map cannot be printed.');
+      this.messageService.error(
+        'Security error: This map cannot be printed.',
+        'Print', 'print');
+
+      throw new Error(err);
     }
 
     if (image !== undefined) {

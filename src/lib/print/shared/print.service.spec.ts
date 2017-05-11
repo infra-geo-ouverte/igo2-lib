@@ -1,17 +1,16 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { ActivityService, MessageService, RequestService } from '../../core';
+import { IgoCoreModule } from '../../core';
 
 import { PrintService } from './print.service';
 
 describe('PrintService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [],
+      imports: [
+        IgoCoreModule.forRoot()
+      ],
       providers: [
-        ActivityService,
-        MessageService,
-        RequestService,
         PrintService
       ]
     });

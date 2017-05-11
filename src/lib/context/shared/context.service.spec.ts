@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule } from '@angular/http';
 
-import { ActivityService, RequestService, MessageService } from '../../core';
+import { IgoCoreModule } from '../../core';
 import { ToolService } from '../../tool';
 
 import { ContextService,
@@ -12,17 +12,15 @@ describe('ContextService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule
+        HttpModule,
+        IgoCoreModule.forRoot()
       ],
       providers: [
         provideContextServiceOptions({
           basePath: 'contexts',
           contextListFile: '_contexts.json'
         }),
-        ActivityService,
         ContextService,
-        MessageService,
-        RequestService,
         ToolService
       ]
     });
