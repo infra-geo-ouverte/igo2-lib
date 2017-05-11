@@ -34,7 +34,6 @@ describe('TimeFilterItemComponent', () => {
   it('should create', () => {
     const dataSource = new WMSDataSource({
       title: 'WMS',
-      type: 'wms',
       url: 'foo',
       projection: 'EPSG:3857',
       params: {

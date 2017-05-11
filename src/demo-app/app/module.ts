@@ -9,12 +9,13 @@ import { IgoModule, provideSearchSourceOptions,
          provideIChercheSearchSource,
          provideNominatimSearchSource,
          provideDataSourceSearchSource,
-         LanguageLoader, provideLanguageService,
+         LanguageLoader, provideLanguageLoader,
          provideContextServiceOptions } from '../../lib';
 
 import { AppComponent } from './app.component';
 
-export function translateLoader(http: Http) {
+
+export function languageLoader(http: Http) {
   return new LanguageLoader(http, './assets/locale/', '.json');
 }
 
@@ -41,9 +42,7 @@ export function translateLoader(http: Http) {
       basePath: './contexts',
       contextListFile: '_contexts.json'
     }),
-    provideLanguageService({
-      loader: translateLoader
-    })
+    provideLanguageLoader(languageLoader)
   ],
   bootstrap: [AppComponent]
 })

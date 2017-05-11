@@ -1,14 +1,27 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
+import { TranslateModule, MissingTranslationHandler,
+         TranslateService } from '@ngx-translate/core';
+
+import { LanguageService, IgoMissingTranslationHandler,
+         provideLanguageLoader } from './language';
+
 import { ActivityService } from './activity';
 import { MediaService } from './media';
-import { MessageService } from './message';
 import { RequestService } from './request';
+import { MessageService } from './message';
 
 
 @NgModule({
-  imports: [],
-  exports: [],
+  imports: [
+    TranslateModule.forRoot({
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: IgoMissingTranslationHandler
+      }
+    })
+  ],
+  exports: []
 })
 export class IgoCoreModule {
   static forRoot(): ModuleWithProviders {
@@ -18,7 +31,11 @@ export class IgoCoreModule {
         ActivityService,
         MediaService,
         MessageService,
-        RequestService
+        RequestService,
+
+        TranslateService,
+        LanguageService,
+        provideLanguageLoader()
       ]
     };
   }
