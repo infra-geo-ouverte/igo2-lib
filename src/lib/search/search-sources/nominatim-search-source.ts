@@ -1,27 +1,16 @@
-import { Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Message } from '../../core/message';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
-import { SEARCH_SOURCE_OPTIONS, SearchSource } from './search-source';
+import { SearchSource } from './search-source';
+import { SEARCH_SOURCE_OPTIONS } from './search-source.provider';
 import { SearchSourceOptions } from './search-source.interface';
 
 
-export function nominatimSearchSourcesFactory(http: Http, options: any) {
-  return new NominatimSearchSource(http, options);
-}
-
-export function provideNominatimSearchSource() {
-  return {
-    provide: SearchSource,
-    useFactory: nominatimSearchSourcesFactory,
-    multi: true,
-    deps: [Http, SEARCH_SOURCE_OPTIONS]
-  };
-}
-
+@Injectable()
 export class NominatimSearchSource extends SearchSource {
 
   static _name: string = 'Nominatim (OSM)';

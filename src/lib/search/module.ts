@@ -5,17 +5,10 @@ import { IgoSharedModule } from '../shared';
 
 import { SearchService,
          provideSearchSourceService } from './shared';
-import { provideSearchSourceOptions, SearchSourceOptions,
-         provideNominatimSearchSource } from './search-sources';
+import { provideSearchSourceOptions } from './search-sources';
 
 import { SearchBarComponent, SearchUrlParamDirective } from './search-bar';
 
-
-export function provideDefaultSearchSources(options?: SearchSourceOptions) {
-  return [
-    provideNominatimSearchSource()
-  ];
-}
 
 @NgModule({
   imports: [

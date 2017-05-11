@@ -1,27 +1,16 @@
-import { Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Jsonp, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Message } from '../../core/message';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
-import { SEARCH_SOURCE_OPTIONS, SearchSource } from './search-source';
+import { SearchSource } from './search-source';
+import { SEARCH_SOURCE_OPTIONS } from './search-source.provider';
 import { SearchSourceOptions } from './search-source.interface';
 
 
-export function ichercheSearchSourcesFactory(jsonp: Jsonp, options: any) {
-  return new IChercheSearchSource(jsonp, options);
-}
-
-export function provideIChercheSearchSource() {
-  return {
-    provide: SearchSource,
-    useFactory: ichercheSearchSourcesFactory,
-    multi: true,
-    deps: [Jsonp, SEARCH_SOURCE_OPTIONS]
-  };
-}
-
+@Injectable()
 export class IChercheSearchSource extends SearchSource {
 
   static _name: string = 'ICherche Québec';

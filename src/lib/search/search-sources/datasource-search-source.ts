@@ -1,28 +1,16 @@
-import { Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Jsonp, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Message } from '../../core/message';
 import { Feature, FeatureType } from '../../feature';
 
-import { SEARCH_SOURCE_OPTIONS, SearchSource } from './search-source';
+import { SearchSource } from './search-source';
+import { SEARCH_SOURCE_OPTIONS } from './search-source.provider';
 import { SearchSourceOptions } from './search-source.interface';
 
 
-export function dataSourceSearchSourcesFactory(jsonp: Jsonp, options: any) {
-  return new DataSourceSearchSource(jsonp, options);
-}
-
-export function provideDataSourceSearchSource() {
-  return {
-    provide: SearchSource,
-    useFactory: dataSourceSearchSourcesFactory,
-    multi: true,
-    deps: [Jsonp, SEARCH_SOURCE_OPTIONS]
-  };
-}
-
-
+@Injectable()
 export class DataSourceSearchSource extends SearchSource {
 
   static _name: string = 'Data Sources';
