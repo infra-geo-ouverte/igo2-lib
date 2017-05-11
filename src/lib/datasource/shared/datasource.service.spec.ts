@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule } from '@angular/http';
 
-import { ActivityService, RequestService, MessageService } from '../../core';
+import { IgoCoreModule } from '../../core';
 
 import { CapabilitiesService } from './capabilities.service';
 import { DataSourceService } from './datasource.service';
@@ -11,12 +11,10 @@ describe('DataSourceService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule
+        HttpModule,
+        IgoCoreModule.forRoot()
       ],
       providers: [
-        ActivityService,
-        RequestService,
-        MessageService,
         CapabilitiesService,
         DataSourceService
       ]

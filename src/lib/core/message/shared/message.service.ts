@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { NotificationsService } from 'angular2-notifications';
+import { Notification } from 'angular2-notifications/src/notification.type';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Message } from './message.interface';
@@ -10,29 +12,51 @@ export class MessageService {
 
   public messages$ = new BehaviorSubject<Message[]>([]);
 
-  constructor() { }
+  constructor(private notificationService: NotificationsService) { }
 
   message(message: Message) {
-    const messages_ = this.messages$.value;
-    messages_.push(message);
+    this.messages$.next(this.messages$.value.concat([message]));
 
-    this.messages$.next(messages_);
+    const notification = this.notificationService.create(
+      message.title, message.text, message.type as any as string);
+
+    if (message.icon !== undefined) {
+      this.addIcon(notification, message.icon);
+    }
   }
 
-  success(text: string, title?: string) {
+  html(message: Message) {
+    this.messages$.next(this.messages$.value.concat([message]));
+
+    this.notificationService.html(message.title, message.text);
+  }
+
+  success(text: string, title?: string, icon?: string) {
     this.message({
       text: text,
       title: title,
+      icon: icon,
       type: MessageType.SUCCESS
     });
   }
 
-  error(text: string, title?: string) {
+  error(text: string, title?: string, icon?: string) {
     this.message({
       text: text,
       title: title,
+      icon: icon,
       type: MessageType.ERROR
     });
+  }
+
+  private addIcon(notification: Notification, icon: string) {
+    // There is no way to add an icon to a notification when reating
+    // it so we simply set it on the notification directly.
+    // See https://github.com/flauc/angular2-notifications/issues/165
+    notification.icon = `
+      <md-icon class="material-icons mat-icon mat-list-avatar">
+        ${icon}
+      </md-icon>`;
   }
 
 }

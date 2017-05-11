@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { NotificationsService } from 'angular2-notifications';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { MessageService } from '../message';
@@ -13,6 +14,7 @@ describe('RequestService', () => {
         JsonpModule
       ],
       providers: [
+        NotificationsService,
         ActivityService,
         MessageService,
         RequestService
