@@ -14,7 +14,6 @@ import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/combineLatest';
 
 import { IgoCoreModule } from './core/index';
-import { IgoLanguageModule } from './language/index';
 import { IgoContextModule } from './context/index';
 import { IgoDataSourceModule } from './datasource/index';
 import { IgoFeatureModule } from './feature/index';
@@ -30,7 +29,7 @@ import { IgoSharedModule } from './shared/index';
 import { IgoToolModule } from './tool/index';
 
 const IGO_MODULES = [
-  IgoLanguageModule,
+  IgoCoreModule,
   IgoContextModule,
   IgoDataSourceModule,
   IgoFeatureModule,
@@ -51,7 +50,6 @@ const IGO_MODULES = [
     MaterialModule.forRoot(),
 
     IgoCoreModule.forRoot(),
-    IgoLanguageModule.forRoot(),
     IgoDataSourceModule.forRoot(),
     IgoContextModule.forRoot(),
     IgoFeatureModule.forRoot(),

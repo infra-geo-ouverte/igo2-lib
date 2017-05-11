@@ -3,7 +3,7 @@ import { HttpModule } from '@angular/http';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IgoTestModule } from '../../../test/module';
+import { IgoTestModule } from '../../../../test/module';
 
 import { LanguageService } from './language.service';
 

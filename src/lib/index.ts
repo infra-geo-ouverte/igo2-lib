@@ -6,7 +6,6 @@ export * from './datasource';
 export * from './feature';
 export * from './filter';
 export * from './form';
-export * from './language';
 export * from './layer';
 export * from './map';
 export * from './overlay';
