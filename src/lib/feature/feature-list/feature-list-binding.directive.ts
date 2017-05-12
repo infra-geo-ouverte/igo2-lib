@@ -40,10 +40,6 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     this.features$$ = this.featureService.features$
       .subscribe(features => this.handleFeaturesChange(features));
 
-    if (this.featureService.focusedFeature$.value !== undefined) {
-      this.component.focusFirst = false;
-    }
-
     // When there are multiple feature list with this directive,
     // selecting moving up and down using the keyboard skips some features.
     // We can bypass this issue using a debounce time. Since
