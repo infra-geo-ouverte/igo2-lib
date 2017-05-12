@@ -14,13 +14,18 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
   private component: FeatureListComponent;
   private features$$: Subscription;
   private focusedFeature$$: Subscription;
+  private initialized: boolean = false;
 
   @HostListener('focus', ['$event']) onFocus(feature: Feature) {
-    this.featureService.focusFeature(feature);
+    if (this.initialized) {
+      this.featureService.focusFeature(feature);
+    }
   }
 
   @HostListener('select', ['$event']) onSelect(feature: Feature) {
-    this.featureService.selectFeature(feature);
+    if (this.initialized) {
+      this.featureService.selectFeature(feature);
+    }
   }
 
   constructor(@Self() component: FeatureListComponent,
@@ -35,6 +40,10 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     this.features$$ = this.featureService.features$
       .subscribe(features => this.handleFeaturesChange(features));
 
+    if (this.featureService.focusedFeature$.value !== undefined) {
+      this.component.focusFirst = false;
+    }
+
     // When there are multiple feature list with this directive,
     // selecting moving up and down using the keyboard skips some features.
     // We can bypass this issue using a debounce time. Since
@@ -43,6 +52,8 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     this.focusedFeature$$ = this.featureService.focusedFeature$
       .debounceTime(100)
       .subscribe(feature => this.component.focusedFeature = feature);
+
+    this.initialized = true;
   }
 
   ngOnDestroy() {

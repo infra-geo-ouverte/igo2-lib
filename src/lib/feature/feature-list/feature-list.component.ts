@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter,
+         ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { Feature } from '../shared';
 
@@ -6,7 +7,8 @@ import { Feature } from '../shared';
 @Component({
   selector: 'igo-feature-list',
   templateUrl: './feature-list.component.html',
-  styleUrls: ['./feature-list.component.styl']
+  styleUrls: ['./feature-list.component.styl'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureListComponent {
 
@@ -17,6 +19,7 @@ export class FeatureListComponent {
   set features(value: Feature[]) {
     this.changed = true;
     this._features = value;
+    this.cdRef.detectChanges();
   }
   private _features: Feature[] = [];
 
@@ -48,6 +51,7 @@ export class FeatureListComponent {
     // only if there is no feature in the list. That way, focusFirst
     // will take effect if true
     this.changed = this._features.length === 0;
+    this.cdRef.detectChanges();
   }
   private _focusedFeature: Feature;
 
@@ -56,7 +60,7 @@ export class FeatureListComponent {
   @Output() unfocus = new EventEmitter<Feature>();
   @Output() unselect = new EventEmitter<Feature>();
 
-  constructor() {}
+  constructor(private cdRef: ChangeDetectorRef) {}
 
   private featureFound(feature: Feature): boolean {
     if (feature === undefined) { return false; }

@@ -30,11 +30,15 @@ export class FeatureService {
   }
 
   focusFeature(feature: Feature) {
-    this.focusedFeature$.next(feature);
+    if (!this.featuresAreTheSame(feature, this.focusedFeature$.value)) {
+      this.focusedFeature$.next(feature);
+    }
   }
 
   selectFeature(feature: Feature) {
-    this.selectedFeature$.next(feature);
+    if (!this.featuresAreTheSame(feature, this.selectedFeature$.value)) {
+      this.selectedFeature$.next(feature);
+    }
     this.focusFeature(feature);
   }
 
@@ -44,6 +48,12 @@ export class FeatureService {
 
   unselectFeature() {
     this.selectFeature(undefined);
+  }
+
+  featuresAreTheSame(feature1, feature2) {
+    if (feature1 === undefined || feature2 === undefined) { return false; }
+
+    return feature1.id === feature2.id && feature1.source === feature2.source;
   }
 
 }
