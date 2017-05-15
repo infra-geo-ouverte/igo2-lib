@@ -17,13 +17,13 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
   private initialized: boolean = false;
 
   @HostListener('focus', ['$event']) onFocus(feature: Feature) {
-    if (this.initialized) {
+    if (this.initialized || this.featureService.focusedFeature$.value === undefined) {
       this.featureService.focusFeature(feature);
     }
   }
 
   @HostListener('select', ['$event']) onSelect(feature: Feature) {
-    if (this.initialized) {
+    if (this.initialized || this.featureService.selectedFeature$.value === undefined) {
       this.featureService.selectFeature(feature);
     }
   }
@@ -46,6 +46,7 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     // having multiple feature list is unusual, no better fix is provided
     // for now.
     this.focusedFeature$$ = this.featureService.focusedFeature$
+      .filter(feature => feature !== undefined)
       .debounceTime(100)
       .subscribe(feature => this.component.focusedFeature = feature);
 
