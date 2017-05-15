@@ -47,7 +47,7 @@ const IGO_MODULES = [
 
 @NgModule({
   imports: [
-    MaterialModule.forRoot(),
+    MaterialModule,
 
     IgoCoreModule.forRoot(),
     IgoDataSourceModule.forRoot(),

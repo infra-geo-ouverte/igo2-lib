@@ -28,7 +28,7 @@ export function languageLoader(http: Http) {
     RouterModule.forRoot([]),
     FormsModule,
     HttpModule,
-    MaterialModule.forRoot(),
+    MaterialModule,
     IgoModule.forRoot()
   ],
   providers: [
