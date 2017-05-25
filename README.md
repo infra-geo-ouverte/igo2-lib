@@ -6,7 +6,7 @@ This repository is home to the IGO2 Library on which IGO2 is built. IGO2 and thi
 
 ### Installation
 
-The latest release of IGO2 Library can be installed from npm `npm install --save @angular/material`
+The latest release of IGO2 Library can be installed from npm `npm install --save igo2`
 
 ### Getting started
 
