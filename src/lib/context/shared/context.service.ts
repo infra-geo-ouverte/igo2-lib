@@ -1,5 +1,7 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { Http } from '@angular/http';
+import { ActivatedRoute } from '@angular/router';
+
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { RequestService } from '../../core';
@@ -25,8 +27,10 @@ export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<Context[]>([]);
+  private defaultContextUri = '_default';
 
-  constructor(private http: Http,
+  constructor(private route: ActivatedRoute,
+              private http: Http,
               private requestService: RequestService,
               private toolService: ToolService,
               @Inject(CONTEXT_SERVICE_OPTIONS)
@@ -36,7 +40,17 @@ export class ContextService {
     this.requestService.register(
       this.http.get(this.getPath(this.options.contextListFile)))
         .map(res => res.json())
-        .subscribe(contexts => this.contexts$.next(contexts));
+        .subscribe(contexts => {
+          this.contexts$.next(contexts)
+        });
+  }
+
+
+  loadDefaultContext() {
+    this.route.queryParams.subscribe(params => {
+      let contextUri = params['context'] || this.defaultContextUri;
+      this.loadContext(contextUri);
+    });
   }
 
   loadContext(uri: string) {
@@ -46,7 +60,9 @@ export class ContextService {
     this.requestService.register(
       this.http.get(this.getPath(`${uri}.json`)), 'Context')
         .map(res => res.json())
-        .subscribe(_context => this.setContext(_context));
+        .subscribe((_context: DetailedContext) => {
+          this.updateContextWithQueryParams(_context);
+        });
   }
 
   setContext(context: DetailedContext) {
@@ -56,6 +72,29 @@ export class ContextService {
     }
 
     this.context$.next(context);
+  }
+
+  private updateContextWithQueryParams(context: DetailedContext) {
+    return this.route.queryParams
+      .subscribe(params => {
+        if (!context.map) {
+          context.map = {view: {}};
+        }
+
+        if (params['center']) {
+          context.map.view.center = params['center'].split(',').map(Number);
+        }
+
+        if (params['projection']) {
+          context.map.view.projection = params['projection'];
+        }
+
+        if (params['zoom']) {
+          context.map.view.zoom = Number(params['zoom']);
+        }
+
+        this.setContext(context);
+      });
   }
 
   private getPath(file: string) {

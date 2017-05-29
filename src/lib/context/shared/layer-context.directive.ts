@@ -40,7 +40,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
     this.map.removeLayers();
 
-    context.layers.forEach((contextLayer) => this.addLayerToMap(contextLayer));
+    context.layers.forEach((contextLayer) => {
+      this.addLayerToMap(contextLayer);
+    });
   }
 
   private addLayerToMap(contextLayer: ContextLayer) {
