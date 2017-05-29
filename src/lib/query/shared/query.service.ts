@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 
+import { uuid } from '../../utils/uuid';
 import { RequestService } from '../../core';
 import { Feature, FeatureType, FeatureFormat,
          FeatureService } from '../../feature';
@@ -72,6 +73,7 @@ export class QueryService {
       const title = feature.properties[queryDataSource.queryTitle];
 
       return Object.assign(feature, {
+        id: uuid(),
         source: dataSource.title,
         title: title ? title : `${dataSource.title} (${index + 1})`,
         projection: options.projection
