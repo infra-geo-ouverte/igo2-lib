@@ -9,7 +9,7 @@ import { RequestService } from '../../core';
 import { ToolService } from '../../tool/shared';
 
 import { Context, ContextServiceOptions,
-         DetailedContext } from './context.interface';
+         DetailedContext, ContextMapView } from './context.interface';
 
 
 export let CONTEXT_SERVICE_OPTIONS =
@@ -27,14 +27,18 @@ export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<Context[]>([]);
-  private defaultContextUri = '_default';
+  private defaultContextUri: string = '_default';
+  private mapViewFromRoute: ContextMapView = {};
 
   constructor(private route: ActivatedRoute,
               private http: Http,
               private requestService: RequestService,
               private toolService: ToolService,
               @Inject(CONTEXT_SERVICE_OPTIONS)
-              private options: ContextServiceOptions) {}
+              private options: ContextServiceOptions) {
+
+    this.readQueryParamsRoute();
+  }
 
   loadContexts() {
     this.requestService.register(
@@ -48,8 +52,7 @@ export class ContextService {
 
   loadDefaultContext() {
     this.route.queryParams.subscribe(params => {
-      let contextUri = params['context'] || this.defaultContextUri;
-      this.loadContext(contextUri);
+      this.loadContext(this.defaultContextUri);
     });
   }
 
@@ -61,7 +64,7 @@ export class ContextService {
       this.http.get(this.getPath(`${uri}.json`)), 'Context')
         .map(res => res.json())
         .subscribe((_context: DetailedContext) => {
-          this.updateContextWithQueryParams(_context);
+          this.setContext(_context);
         });
   }
 
@@ -71,29 +74,33 @@ export class ContextService {
       this.toolService.setTools(context.tools);
     }
 
+    if (!context.map) {
+      context.map = {view: {}};
+    }
+
+    Object.assign(context.map.view, this.mapViewFromRoute);
+
     this.context$.next(context);
   }
 
-  private updateContextWithQueryParams(context: DetailedContext) {
-    return this.route.queryParams
+  private readQueryParamsRoute() {
+    this.route.queryParams
       .subscribe(params => {
-        if (!context.map) {
-          context.map = {view: {}};
+        if (params['context']) {
+          this.defaultContextUri = params['context'];
         }
 
         if (params['center']) {
-          context.map.view.center = params['center'].split(',').map(Number);
+          this.mapViewFromRoute.center = params['center'].split(',').map(Number);
         }
 
         if (params['projection']) {
-          context.map.view.projection = params['projection'];
+          this.mapViewFromRoute.projection = params['projection'];
         }
 
         if (params['zoom']) {
-          context.map.view.zoom = Number(params['zoom']);
+          this.mapViewFromRoute.zoom = Number(params['zoom']);
         }
-
-        this.setContext(context);
       });
   }
 
