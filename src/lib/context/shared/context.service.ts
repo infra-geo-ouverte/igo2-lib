@@ -1,10 +1,8 @@
-import { Inject, Injectable, InjectionToken } from '@angular/core';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
 import { Http } from '@angular/http';
-import { ActivatedRoute } from '@angular/router';
-
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { RequestService } from '../../core';
+import { RequestService, Message, RouteService } from '../../core';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
@@ -30,14 +28,14 @@ export class ContextService {
   private defaultContextUri: string = '_default';
   private mapViewFromRoute: ContextMapView = {};
 
-  constructor(private route: ActivatedRoute,
-              private http: Http,
+  constructor(private http: Http,
               private requestService: RequestService,
               private toolService: ToolService,
               @Inject(CONTEXT_SERVICE_OPTIONS)
-              private options: ContextServiceOptions) {
+              private options: ContextServiceOptions,
+              @Optional() private route: RouteService) {
 
-    this.readQueryParamsRoute();
+    this.readParamsFromRoute();
   }
 
   loadContexts() {
@@ -45,15 +43,22 @@ export class ContextService {
       this.http.get(this.getPath(this.options.contextListFile)))
         .map(res => res.json())
         .subscribe(contexts => {
-          this.contexts$.next(contexts)
+          this.contexts$.next(contexts);
         });
   }
 
-
   loadDefaultContext() {
-    this.route.queryParams.subscribe(params => {
+    if (this.route && this.route.options.contextKey) {
+      this.route.queryParams.subscribe(params => {
+        const contextParam = params[this.route.options.contextKey as string];
+        if (contextParam) {
+          this.defaultContextUri = contextParam;
+        }
+        this.loadContext(this.defaultContextUri);
+      });
+    } else {
       this.loadContext(this.defaultContextUri);
-    });
+    }
   }
 
   loadContext(uri: string) {
@@ -61,11 +66,13 @@ export class ContextService {
     if (context && context.uri === uri) { return; }
 
     this.requestService.register(
-      this.http.get(this.getPath(`${uri}.json`)), 'Context')
+      this.http.get(this.getPath(`${uri}.json`))
         .map(res => res.json())
-        .subscribe((_context: DetailedContext) => {
-          this.setContext(_context);
-        });
+        .catch(res => this.handleError(res))
+    , 'Context')
+    .subscribe((_context: DetailedContext) => {
+      this.setContext(_context);
+    });
   }
 
   setContext(context: DetailedContext) {
@@ -83,23 +90,29 @@ export class ContextService {
     this.context$.next(context);
   }
 
-  private readQueryParamsRoute() {
+  private readParamsFromRoute() {
+    if (!this.route) {
+      return;
+    }
+
     this.route.queryParams
       .subscribe(params => {
-        if (params['context']) {
-          this.defaultContextUri = params['context'];
+        const centerKey = this.route.options.centerKey;
+        if (centerKey && params[centerKey as string]) {
+          const centerParams = params[centerKey as string];
+          this.mapViewFromRoute.center = centerParams.split(',').map(Number);
         }
 
-        if (params['center']) {
-          this.mapViewFromRoute.center = params['center'].split(',').map(Number);
+        const projectionKey = this.route.options.projectionKey;
+        if (projectionKey && params[projectionKey as string]) {
+          const projectionParam = params[projectionKey as string];
+          this.mapViewFromRoute.projection = projectionParam;
         }
 
-        if (params['projection']) {
-          this.mapViewFromRoute.projection = params['projection'];
-        }
-
-        if (params['zoom']) {
-          this.mapViewFromRoute.zoom = Number(params['zoom']);
+        const zoomKey = this.route.options.zoomKey;
+        if (zoomKey && params[zoomKey as string]) {
+          const zoomParam = params[zoomKey as string];
+          this.mapViewFromRoute.zoom = Number(zoomParam);
         }
       });
   }
@@ -108,6 +121,10 @@ export class ContextService {
     const basePath = this.options.basePath.replace(/\/$/, '');
 
     return `${basePath}/${file}`;
+  }
+
+  private handleError(res: Response): Message[] {
+    throw [{text: 'Invalid context'}];
   }
 
 }
