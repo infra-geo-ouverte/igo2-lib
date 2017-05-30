@@ -22,7 +22,7 @@ export function provideLanguageLoader(loader?) {
 @Injectable()
 export class LanguageService {
 
-  constructor(private translate: TranslateService) {
+  constructor(public translate: TranslateService) {
     const lang = this.getLanguage();
     this.translate.setDefaultLang(lang);
   }
