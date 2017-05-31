@@ -1,5 +1,7 @@
-import { Directive, Self, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Directive, Self, OnInit, Optional,
+         ChangeDetectorRef } from '@angular/core';
+
+import { RouteService } from '../../core';
 
 import { SearchBarComponent } from './search-bar.component';
 
@@ -10,18 +12,19 @@ import { SearchBarComponent } from './search-bar.component';
 export class SearchUrlParamDirective implements OnInit {
 
   constructor(@Self() private component: SearchBarComponent,
-              private route: ActivatedRoute) {}
+              private ref: ChangeDetectorRef,
+              @Optional() private route: RouteService) {}
 
   ngOnInit() {
-    const queryParams$$ = this.route.queryParams
-      .subscribe(params => {
-        if (queryParams$$ !== undefined) {
-          queryParams$$.unsubscribe();
-        }
-        if (params['search']) {
-          this.component.setTerm(params['search']);
+    if (this.route && this.route.options.searchKey) {
+      this.route.queryParams.subscribe(params => {
+        const searchParams = params[this.route.options.searchKey as string];
+        if (searchParams) {
+          this.component.setTerm(searchParams);
+          this.ref.detectChanges();
         }
       });
+    }
   }
 
 }

@@ -5,4 +5,4 @@ export * from './language';
 export * from './media';
 export * from './message';
 export * from './request';
-
+export * from './route';

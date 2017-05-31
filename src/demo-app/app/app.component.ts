@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
     // where "context" is an object with the same interface
     // as the contexts in ../contexts/
 
-    this.contextService.loadContext('_default');
+    this.contextService.loadDefaultContext();
 
     this.demoForm = this.formBuilder.group({
       location: ['', [

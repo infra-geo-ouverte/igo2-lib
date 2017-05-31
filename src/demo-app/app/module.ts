@@ -10,7 +10,8 @@ import { IgoModule, provideSearchSourceOptions,
          provideNominatimSearchSource,
          provideDataSourceSearchSource,
          LanguageLoader, provideLanguageLoader,
-         provideContextServiceOptions } from '../../lib';
+         provideContextServiceOptions,
+         RouteService } from '../../lib';
 
 import { AppComponent } from './app.component';
 
@@ -26,12 +27,14 @@ export function languageLoader(http: Http) {
   imports: [
     BrowserModule,
     RouterModule.forRoot([]),
+
     FormsModule,
     HttpModule,
     MaterialModule,
     IgoModule.forRoot()
   ],
   providers: [
+    RouteService,
     provideSearchSourceOptions({
       limit: 5
     }),
