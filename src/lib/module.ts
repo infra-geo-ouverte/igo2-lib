@@ -13,20 +13,21 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/combineLatest';
 
-import { IgoCoreModule } from './core/index';
-import { IgoContextModule } from './context/index';
-import { IgoDataSourceModule } from './datasource/index';
-import { IgoFeatureModule } from './feature/index';
-import { IgoFormModule } from './form/index';
-import { IgoFilterModule } from './filter/index';
-import { IgoLayerModule } from './layer/index';
-import { IgoMapModule } from './map/index';
-import { IgoOverlayModule } from './overlay/index';
-import { IgoPrintModule } from './print/index';
-import { IgoQueryModule } from './query/index';
-import { IgoSearchModule } from './search/index';
-import { IgoSharedModule } from './shared/index';
-import { IgoToolModule } from './tool/index';
+import { IgoCoreModule } from './core';
+import { IgoContextModule } from './context';
+import { IgoDataSourceModule } from './datasource';
+import { IgoFeatureModule } from './feature';
+import { IgoFormModule } from './form';
+import { IgoFilterModule } from './filter';
+import { IgoLayerModule } from './layer';
+import { IgoMapModule } from './map';
+import { IgoMetadataModule } from './metadata';
+import { IgoOverlayModule } from './overlay';
+import { IgoPrintModule } from './print';
+import { IgoQueryModule } from './query';
+import { IgoSearchModule } from './search';
+import { IgoSharedModule } from './shared';
+import { IgoToolModule } from './tool';
 
 const IGO_MODULES = [
   IgoCoreModule,
@@ -37,6 +38,7 @@ const IGO_MODULES = [
   IgoFilterModule,
   IgoLayerModule,
   IgoMapModule,
+  IgoMetadataModule,
   IgoOverlayModule,
   IgoPrintModule,
   IgoQueryModule,
@@ -57,6 +59,7 @@ const IGO_MODULES = [
     IgoFilterModule.forRoot(),
     IgoLayerModule.forRoot(),
     IgoMapModule.forRoot(),
+    IgoMetadataModule.forRoot(),
     IgoOverlayModule.forRoot(),
     IgoPrintModule.forRoot(),
     IgoQueryModule.forRoot(),

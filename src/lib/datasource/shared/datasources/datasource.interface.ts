@@ -1,5 +1,6 @@
 import { TimeFilterOptions } from '../../../filter';
 import { QueryFormat, QueryOptions } from '../../../query';
+import { MetadataOptions } from '../../../metadata';
 
 import { DataSource } from './datasource';
 
@@ -8,6 +9,7 @@ export interface DataSourceOptions {
   title: string;
   alias?: string;
   legend?: DataSourceLegendOptions;
+  metadata?: MetadataOptions;
 }
 
 export interface DataSourceContext extends DataSourceOptions {
