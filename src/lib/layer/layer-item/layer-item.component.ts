@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
+import { MetadataService, MetadataOptions } from '../../metadata';
 import { Layer } from '../shared/layers/layer';
 
 @Component({
@@ -48,7 +49,7 @@ export class LayerItemComponent {
     this.layer.opacity = opacity / 100;
   }
 
-  constructor() { }
+  constructor(private metadataService: MetadataService) { }
 
   toggleLegend(collapsed: boolean) {
     this.layer.collapsed = collapsed;
@@ -61,4 +62,7 @@ export class LayerItemComponent {
     }
   }
 
+  openMetadata(metadata: MetadataOptions) {
+    this.metadataService.open(metadata);
+  }
 }

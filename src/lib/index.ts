@@ -8,6 +8,7 @@ export * from './filter';
 export * from './form';
 export * from './layer';
 export * from './map';
+export * from './metadata';
 export * from './overlay';
 export * from './query';
 export * from './search';

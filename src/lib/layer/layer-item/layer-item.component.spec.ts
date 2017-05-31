@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
 import { OSMDataSource } from '../../datasource';
+import { MetadataService } from '../../metadata';
 
 import { TileLayer } from '../shared';
 import { LayerItemComponent } from './layer-item.component';
@@ -21,6 +22,9 @@ describe('LayerItemComponent', () => {
       declarations: [
         LayerItemComponent,
         LayerLegendComponent
+      ],
+      providers: [
+        MetadataService
       ]
     })
     .compileComponents();

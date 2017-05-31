@@ -56,6 +56,16 @@
   <div class="igo-col igo-col-60 igo-col-100-m">
     <div class="igo-layer-button-group">
       <button
+        *ngIf="layer.options.metadata"
+        md-icon-button
+        tooltip-position="below"
+        [md-tooltip]="'igo.showMetadata' | translate"
+        [color]="color"
+        (click)="openMetadata(layer.options.metadata)">
+        <md-icon>info_outline</md-icon>
+      </button>
+
+      <button
         md-icon-button
         tooltip-position="below"
         [md-tooltip]="'igo.raiseLayer' | translate"
