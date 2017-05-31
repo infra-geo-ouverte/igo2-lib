@@ -1,5 +1,6 @@
 import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 import { RouteServiceOptions } from '.';
 
@@ -31,7 +32,7 @@ export class RouteService {
     this.options = Object.assign({}, defaultOptions, options);
   }
 
-  get queryParams() {
+  get queryParams(): Observable<Params> {
     return this.route.queryParams;
   }
 
