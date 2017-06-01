@@ -1,4 +1,4 @@
 export interface ConfigOptions {
-  default?: {[key: string]: any},
-  jsonPathFile?: string
+  default?: {[key: string]: any};
+  path?: string;
 }

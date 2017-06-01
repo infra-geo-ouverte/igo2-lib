@@ -1,4 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
+import { HttpModule } from '@angular/http';
 
 import { IgoCoreModule } from '../../core';
 
@@ -8,7 +9,8 @@ describe('PrintService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoCoreModule.forRoot()
+        IgoCoreModule.forRoot(),
+        HttpModule
       ],
       providers: [
         PrintService

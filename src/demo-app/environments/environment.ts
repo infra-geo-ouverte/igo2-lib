@@ -8,7 +8,7 @@ export const environment = {
   igo: {
     searchSource: {
       icherche: {
-          url: "https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode"
+          url: 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode'
       }
     }
   }

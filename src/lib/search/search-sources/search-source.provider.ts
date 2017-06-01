@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Http, Jsonp } from '@angular/http';
 
-import { ConfigService } from "../../core";
+import { ConfigService } from '../../core';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';

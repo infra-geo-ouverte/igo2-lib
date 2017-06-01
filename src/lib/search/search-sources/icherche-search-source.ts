@@ -22,7 +22,7 @@ export class IChercheSearchSource extends SearchSource {
               private config: ConfigService) {
     super();
 
-    this.searchUrl = this.config.getConfig('searchSource.icherche.url') || this.searchUrl;
+    this.searchUrl = this.config.getConfig('searchSource.icherche.url') || this.searchUrl;
     this.options = options ? options : {};
   }
 

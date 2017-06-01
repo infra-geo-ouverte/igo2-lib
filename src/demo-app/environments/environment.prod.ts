@@ -3,7 +3,7 @@ export const environment = {
   igo: {
     searchSource: {
       icherche: {
-          url: "/icherche/geopasdecode"
+          url: '/icherche/geopasdecode'
       }
     }
   }

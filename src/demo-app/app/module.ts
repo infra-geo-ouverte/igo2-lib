@@ -38,7 +38,7 @@ export function languageLoader(http: Http) {
   providers: [
     provideConfigOptions({
       default: environment.igo,
-      jsonPathFile: './config/config.json'
+      path: './config/config.json'
     }),
     RouteService,
     provideSearchSourceOptions({
