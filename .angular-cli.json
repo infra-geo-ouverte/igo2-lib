@@ -25,6 +25,7 @@
       "root": "src/demo-app",
       "outDir": "dist",
       "assets": [
+        "config",
         "assets",
         "contexts",
         { "glob": "**/*", "input": "../assets/", "output": "./assets/igo2/" }

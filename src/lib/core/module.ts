@@ -5,6 +5,8 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
 import { TranslateModule, MissingTranslationHandler,
          TranslateService } from '@ngx-translate/core';
 
+import { ConfigService, provideConfigLoader , provideConfigOptions} from './config';
+
 import { LanguageService, IgoMissingTranslationHandler,
          provideLanguageLoader } from './language';
 
@@ -36,6 +38,10 @@ export class IgoCoreModule {
     return {
       ngModule: IgoCoreModule,
       providers: [
+        ConfigService,
+        provideConfigOptions({}),
+        provideConfigLoader(),
+
         ActivityService,
         MediaService,
         MessageService,
