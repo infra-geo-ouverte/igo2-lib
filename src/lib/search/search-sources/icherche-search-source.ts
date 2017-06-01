@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Jsonp, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Message } from '../../core/message';
+import { ConfigService, Message } from '../../core';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
 import { SearchSource } from './search-source';
@@ -14,13 +14,15 @@ import { SearchSourceOptions } from './search-source.interface';
 export class IChercheSearchSource extends SearchSource {
 
   static _name: string = 'ICherche Québec';
-  static searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
+  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
 
   constructor(private jsonp: Jsonp,
               @Inject(SEARCH_SOURCE_OPTIONS)
-              private options: SearchSourceOptions) {
+              private options: SearchSourceOptions,
+              private config: ConfigService) {
     super();
 
+    this.searchUrl = this.config.getConfig('searchSource.icherche.url') || this.searchUrl;
     this.options = options ? options : {};
   }
 
@@ -32,7 +34,7 @@ export class IChercheSearchSource extends SearchSource {
     const search = this.getSearchParams(term);
 
     return this.jsonp
-      .get(IChercheSearchSource.searchUrl, {search})
+      .get(this.searchUrl, {search})
       .map(res => this.extractData(res));
   }
 

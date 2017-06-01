@@ -1,6 +1,8 @@
 import { InjectionToken } from '@angular/core';
 import { Http, Jsonp } from '@angular/http';
 
+import { ConfigService } from '../../core';
+
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 import { NominatimSearchSource } from './nominatim-search-source';
@@ -33,8 +35,8 @@ export function provideNominatimSearchSource() {
 }
 
 
-export function ichercheSearchSourcesFactory(jsonp: Jsonp, options: any) {
-  return new IChercheSearchSource(jsonp, options);
+export function ichercheSearchSourcesFactory(jsonp: Jsonp, options: any, config: ConfigService) {
+  return new IChercheSearchSource(jsonp, options, config);
 }
 
 export function provideIChercheSearchSource() {
@@ -42,7 +44,7 @@ export function provideIChercheSearchSource() {
     provide: SearchSource,
     useFactory: (ichercheSearchSourcesFactory),
     multi: true,
-    deps: [Jsonp, SEARCH_SOURCE_OPTIONS]
+    deps: [Jsonp, SEARCH_SOURCE_OPTIONS, ConfigService]
   };
 }
 

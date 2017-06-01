@@ -11,14 +11,16 @@ import { IgoModule, provideSearchSourceOptions,
          provideDataSourceSearchSource,
          LanguageLoader, provideLanguageLoader,
          provideContextServiceOptions,
-         RouteService } from '../../lib';
+         RouteService, provideConfigOptions } from '../../lib';
 
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 
 
 export function languageLoader(http: Http) {
   return new LanguageLoader(http, './assets/locale/', '.json');
 }
+
 
 @NgModule({
   declarations: [
@@ -34,6 +36,10 @@ export function languageLoader(http: Http) {
     IgoModule.forRoot()
   ],
   providers: [
+    provideConfigOptions({
+      default: environment.igo,
+      path: './config/config.json'
+    }),
     RouteService,
     provideSearchSourceOptions({
       limit: 5

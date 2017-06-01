@@ -1,23 +1,21 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule } from '@angular/http';
 
-import { IgoCoreModule } from '../../core';
-import { MetadataService } from './metadata.service';
+import { ConfigService } from './config.service';
 
-describe('MetadataService', () => {
+describe('ConfigService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoCoreModule.forRoot(),
         HttpModule
       ],
       providers: [
-        MetadataService
+        ConfigService
       ]
     });
   });
 
-  it('should ...', inject([MetadataService], (service: MetadataService) => {
+  it('should ...', inject([ConfigService], (service: ConfigService) => {
     expect(service).toBeTruthy();
   }));
 });

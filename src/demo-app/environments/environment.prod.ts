@@ -1,3 +1,10 @@
 export const environment = {
-  production: true
+  production: true,
+  igo: {
+    searchSource: {
+      icherche: {
+          url: '/icherche/geopasdecode'
+      }
+    }
+  }
 };
