@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 import { provideSearchSourceService, SearchSourceService } from './search-source.service';
-import { provideSearchSourceOptions, SearchSource } from '../search-sources';
+import { SearchSource } from '../search-sources';
 
 
 describe('SearchSourceService', () => {
@@ -14,9 +14,6 @@ describe('SearchSourceService', () => {
       ],
       providers: [
         SearchSource,
-        provideSearchSourceOptions({
-          limit: 1
-        }),
         provideSearchSourceService()
       ]
     });

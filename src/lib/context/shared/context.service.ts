@@ -1,24 +1,13 @@
-import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Http } from '@angular/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { RequestService, Message, RouteService } from '../../core';
+import { RequestService, ConfigService, Message, RouteService } from '../../core';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
 import { Context, ContextServiceOptions,
          DetailedContext, ContextMapView } from './context.interface';
-
-
-export let CONTEXT_SERVICE_OPTIONS =
-  new InjectionToken<ContextServiceOptions>('contextServiceOptions');
-
-export function provideContextServiceOptions(options: ContextServiceOptions) {
-  return {
-    provide: CONTEXT_SERVICE_OPTIONS,
-    useValue: options
-  };
-}
 
 @Injectable()
 export class ContextService {
@@ -27,13 +16,18 @@ export class ContextService {
   public contexts$ = new BehaviorSubject<Context[]>([]);
   private defaultContextUri: string = '_default';
   private mapViewFromRoute: ContextMapView = {};
+  private options: ContextServiceOptions;
 
   constructor(private http: Http,
               private requestService: RequestService,
               private toolService: ToolService,
-              @Inject(CONTEXT_SERVICE_OPTIONS)
-              private options: ContextServiceOptions,
+              private config: ConfigService,
               @Optional() private route: RouteService) {
+
+    this.options = Object.assign({
+      basePath: 'contexts',
+      contextListFile: '_contexts.json'
+    }, this.config.getConfig('context'));
 
     this.readParamsFromRoute();
   }

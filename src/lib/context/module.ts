@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { IgoSharedModule } from '../shared';
 
 import { ContextService, MapContextDirective, LayerContextDirective,
-         ToolContextDirective, provideContextServiceOptions } from './shared';
+         ToolContextDirective } from './shared';
 import { ContextListComponent,
          ContextListBindingDirective } from './context-list';
 import { ContextItemComponent } from './context-item';
@@ -39,10 +39,6 @@ export class IgoContextModule {
     return {
       ngModule: IgoContextModule,
       providers: [
-        provideContextServiceOptions({
-          basePath: 'contexts',
-          contextListFile: '_contexts.json'
-        }),
         ContextService
       ]
     };

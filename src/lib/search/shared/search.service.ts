@@ -24,7 +24,8 @@ export class SearchService {
       return;
     }
 
-    const sources = this.searchSourceService.sources;
+    const sources = this.searchSourceService.sources
+      .filter((source: SearchSource) => source.enabled);
 
     this.unsubscribe();
     this.subscriptions = sources.map((source: SearchSource) =>

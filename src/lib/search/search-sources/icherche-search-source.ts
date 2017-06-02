@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Jsonp, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
@@ -6,24 +6,26 @@ import { ConfigService, Message } from '../../core';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SEARCH_SOURCE_OPTIONS } from './search-source.provider';
 import { SearchSourceOptions } from './search-source.interface';
 
 
 @Injectable()
 export class IChercheSearchSource extends SearchSource {
 
+  get enabled(): boolean { return this.options.enabled !== false; }
+  set enabled(value: boolean) { this.options.enabled = value; }
+
   static _name: string = 'ICherche Québec';
+
   private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
+  private options: SearchSourceOptions;
 
   constructor(private jsonp: Jsonp,
-              @Inject(SEARCH_SOURCE_OPTIONS)
-              private options: SearchSourceOptions,
               private config: ConfigService) {
     super();
 
-    this.searchUrl = this.config.getConfig('searchSource.icherche.url') || this.searchUrl;
-    this.options = options ? options : {};
+    this.options = this.config.getConfig('searchSources.icherche') || {};
+    this.searchUrl = this.options.url || this.searchUrl;
   }
 
   getName(): string {

@@ -1,26 +1,19 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule, Http } from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { MaterialModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 
-import { IgoModule, provideSearchSourceOptions,
+import { IgoModule,
          provideIChercheSearchSource,
          provideNominatimSearchSource,
          provideDataSourceSearchSource,
-         LanguageLoader, provideLanguageLoader,
-         provideContextServiceOptions,
-         RouteService, provideConfigOptions } from '../../lib';
+         RouteService,
+         provideConfigOptions } from '../../lib';
 
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
-
-
-export function languageLoader(http: Http) {
-  return new LanguageLoader(http, './assets/locale/', '.json');
-}
-
 
 @NgModule({
   declarations: [
@@ -41,17 +34,9 @@ export function languageLoader(http: Http) {
       path: './config/config.json'
     }),
     RouteService,
-    provideSearchSourceOptions({
-      limit: 5
-    }),
     provideNominatimSearchSource(),
     provideIChercheSearchSource(),
-    provideDataSourceSearchSource(),
-    provideContextServiceOptions({
-      basePath: './contexts',
-      contextListFile: '_contexts.json'
-    }),
-    provideLanguageLoader(languageLoader)
+    provideDataSourceSearchSource()
   ],
   bootstrap: [AppComponent]
 })

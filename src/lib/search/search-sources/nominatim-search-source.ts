@@ -1,28 +1,32 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Message } from '../../core/message';
+import { ConfigService, Message } from '../../core';
 import { Feature, FeatureType, FeatureFormat} from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SEARCH_SOURCE_OPTIONS } from './search-source.provider';
 import { SearchSourceOptions } from './search-source.interface';
 
 
 @Injectable()
 export class NominatimSearchSource extends SearchSource {
 
+  get enabled(): boolean { return this.options.enabled !== false; }
+  set enabled(value: boolean) { this.options.enabled = value; }
+
   static _name: string = 'Nominatim (OSM)';
   static sortIndex: number = 10;
-  static searchUrl: string = 'https://nominatim.openstreetmap.org/search';
+
+  private searchUrl: string = 'https://nominatim.openstreetmap.org/search';
+  private options: SearchSourceOptions;
 
   constructor(private http: Http,
-              @Inject(SEARCH_SOURCE_OPTIONS)
-              private options: SearchSourceOptions) {
+              private config: ConfigService) {
     super();
 
-    this.options = options ? options : {};
+    this.options = this.config.getConfig('searchSources.nominatim') || {};
+    this.searchUrl = this.options.url || this.searchUrl;
   }
 
   getName(): string {
@@ -33,7 +37,7 @@ export class NominatimSearchSource extends SearchSource {
     const search = this.getSearchParams(term);
 
     return this.http
-      .get(NominatimSearchSource.searchUrl, { search })
+      .get(this.searchUrl, { search })
       .map(res => this.extractData(res));
   }
 

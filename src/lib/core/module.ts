@@ -8,7 +8,7 @@ import { TranslateModule, MissingTranslationHandler,
 import { ConfigService, provideConfigLoader , provideConfigOptions} from './config';
 
 import { LanguageService, IgoMissingTranslationHandler,
-         provideLanguageLoader } from './language';
+         provideDefaultLanguageLoader } from './language';
 
 import { ActivityService } from './activity';
 import { MediaService } from './media';
@@ -49,7 +49,7 @@ export class IgoCoreModule {
 
         TranslateService,
         LanguageService,
-        provideLanguageLoader()
+        provideDefaultLanguageLoader()
       ]
     };
   }

@@ -5,7 +5,6 @@ import { IgoSharedModule } from '../shared';
 
 import { SearchService,
          provideSearchSourceService } from './shared';
-import { provideSearchSourceOptions } from './search-sources';
 
 import { SearchBarComponent, SearchUrlParamDirective } from './search-bar';
 
@@ -29,9 +28,6 @@ export class IgoSearchModule {
     return {
       ngModule: IgoSearchModule,
       providers: [
-        provideSearchSourceOptions({
-          limit: 5
-        }),
         provideSearchSourceService(),
         SearchService,
       ]
