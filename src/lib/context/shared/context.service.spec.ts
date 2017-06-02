@@ -4,8 +4,7 @@ import { HttpModule } from '@angular/http';
 import { IgoCoreModule } from '../../core';
 import { ToolService } from '../../tool';
 
-import { ContextService,
-         provideContextServiceOptions } from './context.service';
+import { ContextService } from './context.service';
 
 
 describe('ContextService', () => {
@@ -16,10 +15,6 @@ describe('ContextService', () => {
         IgoCoreModule.forRoot()
       ],
       providers: [
-        provideContextServiceOptions({
-          basePath: 'contexts',
-          contextListFile: '_contexts.json'
-        }),
         ContextService,
         ToolService
       ]

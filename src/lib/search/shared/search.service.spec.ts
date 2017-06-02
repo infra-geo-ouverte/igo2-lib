@@ -6,7 +6,7 @@ import { IgoCoreModule } from '../../core';
 import { SearchService } from './search.service';
 import { provideSearchSourceService } from './search-source.service';
 import { FeatureService } from '../../feature';
-import { provideSearchSourceOptions, provideNominatimSearchSource } from '../search-sources';
+import { provideNominatimSearchSource } from '../search-sources';
 
 
 describe('SearchService', () => {
@@ -20,9 +20,6 @@ describe('SearchService', () => {
       providers: [
         FeatureService,
         SearchService,
-        provideSearchSourceOptions({
-          limit: 1
-        }),
         provideSearchSourceService(),
         provideNominatimSearchSource()
       ]

@@ -3,13 +3,26 @@
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
-export const environment = {
+import { SearchSourcesOptions, LanguageOptions } from '../../lib';
+
+interface Environment {
+  production: boolean;
+  igo: {
+    searchSources?: SearchSourcesOptions;
+    language?: LanguageOptions;
+  };
+};
+
+export const environment: Environment = {
   production: false,
   igo: {
-    searchSource: {
+    searchSources: {
       icherche: {
-          url: 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode'
+        enabled: false
       }
+    },
+    language: {
+      prefix: './assets/locale/'
     }
   }
 };

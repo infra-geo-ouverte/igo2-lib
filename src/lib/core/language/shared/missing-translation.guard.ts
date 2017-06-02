@@ -6,7 +6,8 @@ export class IgoMissingTranslationHandler
 
   handle(params: MissingTranslationHandlerParams) {
     if (!params.translateService.langs.length) {
-        throw new Error(`LanguageService must be injected.`);
+      const error = 'Translations are not yet loaded. Check that the LanguageService is injected.';
+      throw new Error(error);
     }
     throw new Error(`The Key "${params.key}" is missing in locale file.`);
   }

@@ -1,27 +1,31 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Jsonp, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Message } from '../../core/message';
+import { ConfigService, Message } from '../../core';
 import { Feature, FeatureType } from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SEARCH_SOURCE_OPTIONS } from './search-source.provider';
 import { SearchSourceOptions } from './search-source.interface';
 
 
 @Injectable()
 export class DataSourceSearchSource extends SearchSource {
 
+  get enabled(): boolean { return this.options.enabled !== false; }
+  set enabled(value: boolean) { this.options.enabled = value; }
+
   static _name: string = 'Data Sources';
-  static searchUrl: string = 'http://spssogl19d.sso.msp.gouv.qc.ca/igo2/api/layers/search';
+
+  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search';
+  private options: SearchSourceOptions;
 
   constructor(private jsonp: Jsonp,
-              @Inject(SEARCH_SOURCE_OPTIONS)
-              private options: SearchSourceOptions) {
+              private config: ConfigService) {
     super();
 
-    this.options = options ? options : {};
+    this.options = this.config.getConfig('searchSources.datasource') || {};
+    this.searchUrl = this.options.url || this.searchUrl;
   }
 
   getName(): string {
@@ -32,7 +36,7 @@ export class DataSourceSearchSource extends SearchSource {
     const search = this.getSearchParams(term);
 
     return this.jsonp
-      .get(DataSourceSearchSource.searchUrl, { search })
+      .get(this.searchUrl, { search })
       .map(res => this.extractData(res));
   }
 

@@ -1,28 +1,15 @@
-import { InjectionToken } from '@angular/core';
 import { Http, Jsonp } from '@angular/http';
 
 import { ConfigService } from '../../core';
 
 import { SearchSource } from './search-source';
-import { SearchSourceOptions } from './search-source.interface';
 import { NominatimSearchSource } from './nominatim-search-source';
 import { IChercheSearchSource } from './icherche-search-source';
 import { DataSourceSearchSource } from './datasource-search-source';
 
 
-export let SEARCH_SOURCE_OPTIONS =
-  new InjectionToken<SearchSourceOptions>('searchSourceOptions');
-
-export function provideSearchSourceOptions(options: SearchSourceOptions) {
-  return {
-    provide: SEARCH_SOURCE_OPTIONS,
-    useValue: options
-  };
-}
-
-
-export function nominatimSearchSourcesFactory(http: Http, options: any) {
-  return new NominatimSearchSource(http, options);
+export function nominatimSearchSourcesFactory(http: Http, config: ConfigService) {
+  return new NominatimSearchSource(http, config);
 }
 
 export function provideNominatimSearchSource() {
@@ -30,13 +17,13 @@ export function provideNominatimSearchSource() {
     provide: SearchSource,
     useFactory: (nominatimSearchSourcesFactory),
     multi: true,
-    deps: [Http, SEARCH_SOURCE_OPTIONS]
+    deps: [Http, ConfigService]
   };
 }
 
 
-export function ichercheSearchSourcesFactory(jsonp: Jsonp, options: any, config: ConfigService) {
-  return new IChercheSearchSource(jsonp, options, config);
+export function ichercheSearchSourcesFactory(jsonp: Jsonp, config: ConfigService) {
+  return new IChercheSearchSource(jsonp, config);
 }
 
 export function provideIChercheSearchSource() {
@@ -44,13 +31,13 @@ export function provideIChercheSearchSource() {
     provide: SearchSource,
     useFactory: (ichercheSearchSourcesFactory),
     multi: true,
-    deps: [Jsonp, SEARCH_SOURCE_OPTIONS, ConfigService]
+    deps: [Jsonp, ConfigService]
   };
 }
 
 
-export function dataSourceSearchSourcesFactory(jsonp: Jsonp, options: any) {
-  return new DataSourceSearchSource(jsonp, options);
+export function dataSourceSearchSourcesFactory(jsonp: Jsonp, config: ConfigService) {
+  return new DataSourceSearchSource(jsonp, config);
 }
 
 export function provideDataSourceSearchSource() {
@@ -58,6 +45,6 @@ export function provideDataSourceSearchSource() {
     provide: SearchSource,
     useFactory: (dataSourceSearchSourcesFactory),
     multi: true,
-    deps: [Jsonp, SEARCH_SOURCE_OPTIONS]
+    deps: [Jsonp, ConfigService]
   };
 }

@@ -1,10 +1,23 @@
-export const environment = {
+import { SearchSourcesOptions, LanguageOptions } from '../../lib';
+
+interface Environment {
+  production: boolean;
+  igo: {
+    searchSources?: SearchSourcesOptions;
+    language?: LanguageOptions;
+  };
+};
+
+export const environment: Environment = {
   production: true,
   igo: {
-    searchSource: {
+    searchSources: {
       icherche: {
-          url: '/icherche/geopasdecode'
+        enabled: false
       }
+    },
+    language: {
+      prefix: './assets/locale/'
     }
   }
 };
