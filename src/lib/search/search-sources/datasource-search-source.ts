@@ -17,7 +17,7 @@ export class DataSourceSearchSource extends SearchSource {
 
   static _name: string = 'Data Sources';
 
-  private searchUrl: string = 'http://spssogl19d.sso.msp.gouv.qc.ca/igo2/api/layers/search';
+  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search';
   private options: SearchSourceOptions;
 
   constructor(private jsonp: Jsonp,
