@@ -17,9 +17,12 @@ export class FeatureService {
     this.features$.next(features);
   }
 
-  updateFeatures(features: Feature[], source: string) {
+  updateFeatures(features: Feature[], source: string, sourcesToKeep?: string[]) {
     const features_ = this.features$.value
-      .filter(feature => feature.source !== source)
+      .filter(feature => {
+        return feature.source !== source &&
+               (!sourcesToKeep || sourcesToKeep.includes(feature.source));
+      })
       .concat(features);
 
     this.features$.next(features_);

@@ -32,6 +32,7 @@ export class QueryService {
     const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
     const request = this.http.get(url);
 
+    this.featureService.clear();
     return this.requestService
       .register(request, dataSource.title)
       .map(res => this.extractData(res, dataSource, options))

@@ -24,12 +24,11 @@ export class SearchService {
       return;
     }
 
-    const sources = this.searchSourceService.sources
-      .filter((source: SearchSource) => source.enabled);
-
     this.unsubscribe();
-    this.subscriptions = sources.map((source: SearchSource) =>
-      this.searchSource(source, term));
+
+    this.subscriptions = this.searchSourceService.sources
+      .filter((source: SearchSource) => source.enabled)
+      .map((source: SearchSource) => this.searchSource(source, term));
   }
 
   searchSource(source: SearchSource, term?: string) {
@@ -46,6 +45,7 @@ export class SearchService {
   }
 
   private handleFeatures(features: Feature[], source: SearchSource) {
-    this.featureService.updateFeatures(features, source.getName());
+    const sourcesToKeep = this.searchSourceService.sources.map(source => source.getName());
+    this.featureService.updateFeatures(features, source.getName(), sourcesToKeep);
   }
 }
