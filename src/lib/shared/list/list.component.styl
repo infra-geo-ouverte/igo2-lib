@@ -14,12 +14,13 @@ md-list {
 
 // We need to make sure the firs ancestor with a
 // position other than static is the host itself
-// to properly scroll to the focused list item 
+// to properly scroll to the focused list item
 :host {
   position: static;
 }
 
 :host >>> .mat-list .mat-list-item.mat-list-item-avatar .mat-list-item-content {
+  display: -webkit-flex;
   height: $igo-list-item-height;
   padding: $igo-list-item-padding;
 }

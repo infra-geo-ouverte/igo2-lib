@@ -5,7 +5,8 @@
     [disabled]="disabled"
     [placeholder]="placeholder"
     [ngModel]="term"
-    (keyup)="keyup($event)">
+    (keyup)="keyup($event)"
+    (touchend)="keyup($event)">
 </md-input-container>
 
 <button
