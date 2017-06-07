@@ -3,7 +3,7 @@ import { Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Message, MessageService } from '../message';
+import { Message, MessageService, MessageType } from '../message';
 import { ActivityService } from '../activity';
 
 @Injectable()
@@ -74,7 +74,10 @@ export class RequestService {
 
   private pushMessages(messages, title?: string) {
     messages.forEach((message: Message) =>
-      this.messageService.message(Object.assign({title: title}, message)));
+      this.messageService.message(Object.assign({
+        title: title,
+        type: MessageType.ERROR
+      }, message)));
   }
 
 }

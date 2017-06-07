@@ -2,6 +2,15 @@
 
 :host >>> simple-notifications {
 
+  div.simple-notification-wrapper {
+    bottom: 0;
+    right: calc(50% - 150px);
+    +media(mobile) {
+      right: 0;
+      width: 100%;
+    }
+  }
+
   div.simple-notification {
     min-height: 50px;
     margin-bottom: 5px;

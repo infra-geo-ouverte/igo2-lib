@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Options } from 'angular2-notifications/src/options.type';
+import { Options } from 'angular2-notifications/src/simple-notifications.module';
 
 
 @Component({
@@ -12,7 +12,7 @@ import { Options } from 'angular2-notifications/src/options.type';
 export class MessageCenterComponent {
 
   static defaultOptions = {
-    timeOut: 500000,
+    timeOut: 5000,
     showProgressBar: true,
     pauseOnHover: true,
     clickToClose: true,
