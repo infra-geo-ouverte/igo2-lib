@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NotificationsService } from 'angular2-notifications';
-import { Notification } from 'angular2-notifications/src/notification.type';
+import { Notification, NotificationsService } from 'angular2-notifications';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { Message } from './message.interface';
@@ -12,7 +11,7 @@ export class MessageService {
 
   public messages$ = new BehaviorSubject<Message[]>([]);
 
-  constructor(private notificationService: NotificationsService) { }
+  constructor(private notificationService: NotificationsService) {}
 
   message(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));

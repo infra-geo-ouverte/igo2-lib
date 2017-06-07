@@ -1,5 +1,10 @@
 {
 	"igo": {
+		"context": "Context",
+		"contextInvalid": {
+			"text": "Context '{{value}}' is invalid",
+			"title": "Context invalid"
+		},
 		"contexts": "Contexts",
 		"endDate": "End Date",
 		"format": "Format",

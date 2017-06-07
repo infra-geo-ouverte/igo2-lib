@@ -2,7 +2,8 @@ import { Injectable, Optional } from '@angular/core';
 import { Http } from '@angular/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { RequestService, ConfigService, Message, RouteService } from '../../core';
+import { RequestService, ConfigService, RouteService,
+        Message, LanguageService } from '../../core';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
@@ -20,6 +21,7 @@ export class ContextService {
 
   constructor(private http: Http,
               private requestService: RequestService,
+              private languageService: LanguageService,
               private toolService: ToolService,
               private config: ConfigService,
               @Optional() private route: RouteService) {
@@ -62,7 +64,7 @@ export class ContextService {
     this.requestService.register(
       this.http.get(this.getPath(`${uri}.json`))
         .map(res => res.json())
-        .catch(res => this.handleError(res))
+        .catch(res => this.handleError(res, uri))
     , 'Context')
     .subscribe((_context: DetailedContext) => {
       this.setContext(_context);
@@ -117,8 +119,16 @@ export class ContextService {
     return `${basePath}/${file}`;
   }
 
-  private handleError(res: Response): Message[] {
-    throw [{text: 'Invalid context'}];
+  private handleError(res: Response, uri: string): Message[] {
+    const context = this.contexts$.value.find((obj) => obj.uri === uri);
+    const titleContext = context ? context.title : uri;
+    const titleError = this.languageService.translate
+      .instant('igo.contextInvalid.title');
+
+    const textError = this.languageService.translate
+      .instant('igo.contextInvalid.text', {value: titleContext});
+
+    throw [{title: titleError, text: textError}];
   }
 
 }
