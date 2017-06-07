@@ -1,7 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnDestroy, ChangeDetectorRef,
+         ChangeDetectionStrategy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import { MetadataService, MetadataOptions } from '../../metadata';
 import { Layer } from '../shared/layers/layer';
+
 
 @Component({
   selector: 'igo-layer-item',
@@ -9,12 +12,13 @@ import { Layer } from '../shared/layers/layer';
   styleUrls: ['./layer-item.component.styl'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayerItemComponent {
+export class LayerItemComponent implements OnDestroy {
 
   @Input()
   get layer(): Layer { return this._layer; }
   set layer(value: Layer) {
     this._layer = value;
+    this.subscribeResolutionObserver();
   }
   private _layer: Layer;
 
@@ -49,7 +53,14 @@ export class LayerItemComponent {
     this.layer.opacity = opacity / 100;
   }
 
-  constructor(private metadataService: MetadataService) { }
+  private resolution$$: Subscription;
+
+  constructor(private cdRef: ChangeDetectorRef,
+              private metadataService: MetadataService) {}
+
+  ngOnDestroy() {
+    this.resolution$$.unsubscribe();
+  }
 
   toggleLegend(collapsed: boolean) {
     this.layer.collapsed = collapsed;
@@ -62,7 +73,23 @@ export class LayerItemComponent {
     }
   }
 
+  isInResolutionsRange() {
+    const resolution = this.layer.map.resolution;
+    const minResolution = this.layer.ol.getMinResolution();
+    const maxResolution = this.layer.ol.getMaxResolution();
+
+    return resolution >= minResolution &&
+           resolution <= maxResolution;
+  }
+
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
+  }
+
+  private subscribeResolutionObserver() {
+    if (!this.layer) {return;}
+    this.resolution$$ = this.layer.map.resolution$.subscribe((resolution) => {
+      this.cdRef.detectChanges();
+    });
   }
 }
