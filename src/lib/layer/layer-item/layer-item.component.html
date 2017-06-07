@@ -18,7 +18,8 @@
                   ('igo.showLayer' | translate)"
     [color]="color"
     (click)="toggleVisibility()">
-    <md-icon>
+    <md-icon
+      [ngClass]='{disabled: !isInResolutionsRange()}'>
       <ng-container *ngIf="layer.visible">
         visibility
       </ng-container>
@@ -56,7 +57,7 @@
   <div class="igo-col igo-col-60 igo-col-100-m">
     <div class="igo-layer-button-group">
       <button
-        *ngIf="layer.dataSource.options.metadata"
+        *ngIf="layer.dataSource.options.metadata && layer.dataSource.options.metadata.url"
         md-icon-button
         tooltip-position="below"
         [md-tooltip]="'igo.showMetadata' | translate"

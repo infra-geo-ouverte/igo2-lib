@@ -45,7 +45,7 @@ export class SearchService {
   }
 
   private handleFeatures(features: Feature[], source: SearchSource) {
-    const sourcesToKeep = this.searchSourceService.sources.map(source => source.getName());
+    const sourcesToKeep = this.searchSourceService.sources.map(s => s.getName());
     this.featureService.updateFeatures(features, source.getName(), sourcesToKeep);
   }
 }

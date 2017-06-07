@@ -15,6 +15,7 @@ export class IgoMap {
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
+  public resolution$ = new BehaviorSubject<Number>(undefined);
 
   private overlayDataSource: FeatureDataSource;
   private overlayMarkerStyle: ol.style.Style;
@@ -22,6 +23,10 @@ export class IgoMap {
 
   get projection(): string {
     return this.ol.getView().getProjection().getCode();
+  }
+
+  get resolution(): number {
+    return this.ol.getView().getResolution();
   }
 
   constructor() {
@@ -36,6 +41,12 @@ export class IgoMap {
       controls: [
         new ol.control.Attribution()
       ]
+    });
+
+    this.ol.on('moveend', (e) => {
+      if (this.resolution$.value !== this.resolution) {
+        this.resolution$.next(this.resolution);
+      }
     });
 
     this.overlayMarkerStyle = new ol.style.Style({

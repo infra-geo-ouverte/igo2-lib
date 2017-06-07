@@ -90,8 +90,8 @@ export class CapabilitiesService {
       // defined under "alias" in the context
       alias: layer.Title,
       view: {
-        maxResolution: Number(layer.MaxScaleDenominator),
-        minResolution: Number(layer.MinScaleDenominator),
+        maxResolution: layer.MaxScaleDenominator ? Number(layer.MaxScaleDenominator) : Infinity,
+        minResolution: layer.MaxScaleDenominator ? Number(layer.MinScaleDenominator) : 8000,
       },
       metadata: {
         url: metadata ? metadata.OnlineResource : undefined
