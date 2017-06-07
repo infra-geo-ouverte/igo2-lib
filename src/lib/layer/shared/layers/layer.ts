@@ -55,6 +55,7 @@ export abstract class Layer {
   constructor(dataSource: DataSource, options?: LayerOptions) {
     this.dataSource = dataSource;
     this.options = options || {};
+    this.options.view = Object.assign({}, dataSource.options.view, this.options.view);
 
     this.ol = this.createOlLayer();
     if (options.zIndex !== undefined) {

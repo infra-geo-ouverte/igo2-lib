@@ -10,6 +10,7 @@ export interface DataSourceOptions {
   alias?: string;
   legend?: DataSourceLegendOptions;
   metadata?: MetadataOptions;
+  view?: olx.layer.ImageOptions;
 }
 
 export interface DataSourceContext extends DataSourceOptions {
