@@ -3,6 +3,7 @@ import { Http, URLSearchParams, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { RequestService } from '../../core';
+import { ObjectUtils } from '../../utils';
 
 import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
 
@@ -70,29 +71,34 @@ export class CapabilitiesService {
 
   private parseWMSOptions(baseOptions: WMSDataSourceOptions,
                           capabilities: any): WMSDataSourceOptions {
+
     const layers = (baseOptions.params as any).layers;
     const layer = this.findDataSourceInCapabilities(
-      capabilities.Capability.DataSource, layers);
+      capabilities.Capability.Layer, layers);
 
-    const options: any = {};
-    if (layer.Title) {
+    if (!layer) {
+      return baseOptions;
+    }
+
+    const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
+
+    const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       // Save title under "alias" because we want to overwrite
       // the default, mandatory title. If the title defined
       // in the context is to be used along with the
       // "optionsFromCapabilities" option, then it should be
       // defined under "alias" in the context
-      options.alias = layer.Title;
-    }
+      alias: layer.Title,
+      view: {
+        maxResolution: Number(layer.MaxScaleDenominator),
+        minResolution: Number(layer.MinScaleDenominator),
+      },
+      metadata: {
+        url: metadata ? metadata.OnlineResource : undefined
+      }
+    });
 
-    if (layer.MaxScaleDenominator) {
-      options.maxResolution = layer.MaxScaleDenominator;
-    }
-
-    if (layer.MinScaleDenominator) {
-      options.minResolution = layer.MinScaleDenominator;
-    }
-
-    return Object.assign(options, baseOptions);
+    return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
   private parseWMTSOptions(baseOptions: WMTSDataSourceOptions,
@@ -112,8 +118,8 @@ export class CapabilitiesService {
       }, this);
 
       return layer;
-    } else if (layerArray.DataSource) {
-      return this.findDataSourceInCapabilities(layerArray.DataSource, name);
+    } else if (layerArray.Layer) {
+      return this.findDataSourceInCapabilities(layerArray.Layer, name);
     } else {
       if (layerArray.Name && layerArray.Name === name) {
         return layerArray;
