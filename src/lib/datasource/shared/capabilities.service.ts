@@ -90,8 +90,8 @@ export class CapabilitiesService {
       // defined under "alias" in the context
       alias: layer.Title,
       view: {
-        maxResolution: layer.MaxScaleDenominator ? Number(layer.MaxScaleDenominator) : Infinity,
-        minResolution: layer.MaxScaleDenominator ? Number(layer.MinScaleDenominator) : 8000,
+        maxResolution: this.getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
+        minResolution: this.getResolutionFromScale(layer.MinScaleDenominator) || 0
       },
       metadata: {
         url: metadata ? metadata.OnlineResource : undefined
@@ -134,6 +134,11 @@ export class CapabilitiesService {
       url: url,
       capabilities: capabilities
     });
+  }
+
+  private getResolutionFromScale(scale: number): number {
+    const dpi = 25.4 / 0.28;
+    return scale/(39.37 * dpi);
   }
 
 }
