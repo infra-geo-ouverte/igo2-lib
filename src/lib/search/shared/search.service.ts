@@ -20,7 +20,7 @@ export class SearchService {
 
   search(term: string) {
     if (!term || term === '') {
-      this.featureService.setFeatures([]);
+      this.featureService.clear();
       return;
     }
 

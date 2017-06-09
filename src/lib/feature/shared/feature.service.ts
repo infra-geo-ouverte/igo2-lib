@@ -30,6 +30,8 @@ export class FeatureService {
 
   clear() {
     this.features$.next([]);
+    this.unfocusFeature();
+    this.unselectFeature();
   }
 
   focusFeature(feature: Feature) {
