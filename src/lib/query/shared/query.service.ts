@@ -7,6 +7,7 @@ import { RequestService } from '../../core';
 import { Feature, FeatureType, FeatureFormat,
          FeatureService } from '../../feature';
 import { DataSource, QueryableDataSource } from '../../datasource';
+import { Layer } from '../../layer';
 
 import { QueryFormat } from './query.enum';
 import { QueryOptions } from './query.interface';
@@ -21,11 +22,11 @@ export class QueryService {
               private featureService: FeatureService,
               private requestService: RequestService) { }
 
-  query(dataSources: DataSource[], options: QueryOptions) {
-
+  query(layers: Layer[], options: QueryOptions) {
     this.unsubscribe();
-    this.subscriptions = dataSources.map((dataSource: DataSource) =>
-      this.queryDataSource(dataSource, options));
+    this.subscriptions = layers
+      .filter((layer: Layer) => layer.visible)
+      .map((layer: Layer) => this.queryDataSource(layer.dataSource, options));
   }
 
   queryDataSource(dataSource: DataSource, options: QueryOptions) {

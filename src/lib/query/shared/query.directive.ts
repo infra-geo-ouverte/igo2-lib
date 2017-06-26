@@ -3,7 +3,6 @@ import { Directive, Self, Output, EventEmitter,
 import { Subscription } from 'rxjs/Subscription';
 
 import { IgoMap, MapBrowserComponent } from '../../map';
-import { DataSource } from '../../datasource';
 import { Layer } from '../../layer';
 import { Feature } from '../../feature';
 
@@ -15,8 +14,8 @@ import { QueryService } from '../shared/query.service';
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
 
-  private queryDataSources: DataSource[];
-  private queryDataSources$$: Subscription;
+  private queryLayers: Layer[];
+  private queryLayers$$: Subscription;
 
   get map(): IgoMap {
     return this.component.map;
@@ -28,32 +27,31 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
               private queryService: QueryService) {}
 
   ngAfterViewInit() {
-    this.queryDataSources$$ = this.component.map.layers$
+    this.queryLayers$$ = this.component.map.layers$
       .subscribe((layers: Layer[]) => this.handleLayersChange(layers));
 
     this.map.ol.on('singleclick', this.handleMapClick, this);
   }
 
   ngOnDestroy() {
-    this.queryDataSources$$.unsubscribe();
+    this.queryLayers$$.unsubscribe();
     this.map.ol.un('singleclick', this.handleMapClick, this);
   }
 
   private handleLayersChange(layers: Layer[]) {
-    const dataSources = [];
+    const queryLayers = [];
     layers.forEach(layer => {
-      const dataSource = layer.dataSource;
-      if (dataSource.isQueryable()) {
-        dataSources.push(dataSource);
+      if (layer.dataSource.isQueryable()) {
+        queryLayers.push(layer);
       }
     });
 
-    this.queryDataSources = dataSources;
+    this.queryLayers = queryLayers;
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
     const view = this.map.ol.getView();
-    this.queryService.query(this.queryDataSources, {
+    this.queryService.query(this.queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
       resolution: view.getResolution()
