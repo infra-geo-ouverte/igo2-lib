@@ -107,9 +107,14 @@ export class IgoMap {
     const view = new ol.View(options);
     this.ol.setView(view);
 
-    if (options && options.center) {
-      const center = ol.proj.fromLonLat(options.center, this.projection);
-      view.setCenter(center);
+    if (options) {
+      if (options.center) {
+        const center = ol.proj.fromLonLat(options.center, this.projection);
+        view.setCenter(center);
+      }
+      if (options.geolocate) {
+        this.geolocate();
+      }
     }
   }
 
@@ -257,5 +262,29 @@ export class IgoMap {
 
   private getLayerIndex(layer: Layer) {
     return this.layers.findIndex(layer_ => layer_ === layer);
+  }
+
+  private geolocate() {
+    const geolocation = new ol.Geolocation({
+      projection: this.projection,
+      tracking: true
+    });
+
+    geolocation.once('change', (evt) => {
+      const accuracy = geolocation.getAccuracy();
+      if (accuracy < 10000) {
+        const geometry = geolocation.getAccuracyGeometry();
+        const extent = geometry.getExtent();
+        const feature = new ol.Feature({geometry: geometry});
+        this.addOverlay(feature);
+        this.zoomToExtent(extent);
+      } else {
+        const view = this.ol.getView();
+        const coordinates = geolocation.getPosition();
+        view.setCenter(coordinates);
+        view.setZoom(14);
+      }
+    });
+
   }
 }
