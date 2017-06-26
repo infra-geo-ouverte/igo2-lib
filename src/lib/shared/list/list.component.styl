@@ -19,6 +19,19 @@ md-list {
   position: static;
 }
 
+
+:host >>> .mat-list .mat-list-item .mat-list-text>* {
+  white-space: normal
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  max-height: 36px;
+  line-height: 18px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+
 :host >>> .mat-list .mat-list-item.mat-list-item-avatar .mat-list-item-content {
   display: -webkit-flex;
   height: $igo-list-item-height;
