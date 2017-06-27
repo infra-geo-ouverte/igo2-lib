@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 import { LayerWatcher } from '../utils';
 import { SubjectStatus } from '../../utils';
@@ -16,10 +17,14 @@ export class IgoMap {
   public layers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
   public resolution$ = new BehaviorSubject<Number>(undefined);
+  public geolocation$ = new BehaviorSubject<ol.Geolocation>(undefined);
 
   private overlayDataSource: FeatureDataSource;
   private overlayMarkerStyle: ol.style.Style;
   private layerWatcher: LayerWatcher;
+  private geolocation: ol.Geolocation;
+  private geolocation$$: Subscription;
+  private geolocationFeature: ol.Feature;
 
   get projection(): string {
     return this.ol.getView().getProjection().getCode();
@@ -107,13 +112,15 @@ export class IgoMap {
     const view = new ol.View(options);
     this.ol.setView(view);
 
+    this.unsubscribeGeolocation();
+    this.stopGeolocation();
     if (options) {
       if (options.center) {
         const center = ol.proj.fromLonLat(options.center, this.projection);
         view.setCenter(center);
       }
       if (options.geolocate) {
-        this.geolocate();
+        this.subscribeGeolocation();
       }
     }
   }
@@ -255,6 +262,27 @@ export class IgoMap {
     this.overlayDataSource.ol.clear();
   }
 
+  startGeolocation() {
+    if (!this.geolocation) {
+      this.geolocation = new ol.Geolocation({
+        projection: this.projection,
+        tracking: true
+      });
+
+      this.geolocation.on('change', (evt) => {
+        this.geolocation$.next(this.geolocation);
+      });
+    } else {
+      this.geolocation.setTracking(true);
+    }
+  }
+
+  stopGeolocation() {
+    if (this.geolocation) {
+      this.geolocation.setTracking(false);
+    }
+  }
+
   private sortLayers() {
     // Sort by descending zIndex
     this.layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
@@ -264,27 +292,39 @@ export class IgoMap {
     return this.layers.findIndex(layer_ => layer_ === layer);
   }
 
-  private geolocate() {
-    const geolocation = new ol.Geolocation({
-      projection: this.projection,
-      tracking: true
-    });
+  private subscribeGeolocation() {
+    let first = true;
+    this.startGeolocation();
 
-    geolocation.once('change', (evt) => {
+    this.geolocation$$ = this.geolocation$.subscribe((geolocation) => {
+      if (!geolocation) {return;}
       const accuracy = geolocation.getAccuracy();
       if (accuracy < 10000) {
         const geometry = geolocation.getAccuracyGeometry();
         const extent = geometry.getExtent();
-        const feature = new ol.Feature({geometry: geometry});
-        this.addOverlay(feature);
-        this.zoomToExtent(extent);
-      } else {
+        if (this.geolocationFeature) {
+          this.overlayDataSource.ol.removeFeature(this.geolocationFeature);
+        }
+        this.geolocationFeature = new ol.Feature({geometry: geometry});
+        this.addOverlay(this.geolocationFeature);
+        if (first) {
+          this.zoomToExtent(extent);
+        }
+      } else if (first) {
         const view = this.ol.getView();
         const coordinates = geolocation.getPosition();
         view.setCenter(coordinates);
         view.setZoom(14);
       }
-    });
 
+      first = false;
+    });
+  }
+
+  private unsubscribeGeolocation() {
+    this.stopGeolocation();
+    if (this.geolocation$$) {
+      this.geolocation$$.unsubscribe();
+    }
   }
 }
