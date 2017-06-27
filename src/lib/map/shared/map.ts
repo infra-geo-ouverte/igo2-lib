@@ -297,7 +297,7 @@ export class IgoMap {
     this.startGeolocation();
 
     this.geolocation$$ = this.geolocation$.subscribe((geolocation) => {
-      if (!geolocation) {return;}
+      if (!geolocation) { return; }
       const accuracy = geolocation.getAccuracy();
       if (accuracy < 10000) {
         const geometry = geolocation.getAccuracyGeometry();
