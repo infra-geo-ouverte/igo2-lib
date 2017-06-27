@@ -100,6 +100,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   clear() {
     this.term = '';
     this.stream$.next(this.term);
+    this.input.nativeElement.focus();
   }
 
   private keyIsValid(key: string) {
