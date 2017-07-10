@@ -1,0 +1,9 @@
+<div *ngIf="!auth.logged" class="backgroundDisable"></div>
+
+<div *ngIf="!auth.logged" class="login center-block">
+  <h1>{{'igo.auth.connection' | translate}}</h1>
+
+  <igo-auth-google *ngIf="options.google && options.google.enabled !== false"></igo-auth-google>
+  <igo-auth-facebook *ngIf="options.facebook && options.facebook.enabled !== false"></igo-auth-facebook>
+  <igo-auth-intern *ngIf="!options.intern || options.intern.enabled !== false"></igo-auth-intern>
+</div>

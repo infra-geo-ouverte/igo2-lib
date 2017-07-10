@@ -13,6 +13,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/combineLatest';
 
+import { IgoAuthModule } from './auth';
 import { IgoCoreModule } from './core';
 import { IgoContextModule } from './context';
 import { IgoDataSourceModule } from './datasource';
@@ -30,6 +31,7 @@ import { IgoSharedModule } from './shared';
 import { IgoToolModule } from './tool';
 
 const IGO_MODULES = [
+  IgoAuthModule,
   IgoCoreModule,
   IgoContextModule,
   IgoDataSourceModule,
@@ -51,6 +53,7 @@ const IGO_MODULES = [
   imports: [
     MaterialModule,
 
+    IgoAuthModule.forRoot(),
     IgoCoreModule.forRoot(),
     IgoDataSourceModule.forRoot(),
     IgoContextModule.forRoot(),
