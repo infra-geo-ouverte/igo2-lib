@@ -1,5 +1,6 @@
 export * from './module';
 
+export * from './auth';
 export * from './core';
 export * from './context';
 export * from './datasource';

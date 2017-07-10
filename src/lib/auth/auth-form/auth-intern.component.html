@@ -1,0 +1,12 @@
+<form [formGroup]="form" role="form">
+  <md-input-container class="example-full-width">
+    <input mdInput required placeholder="{{'igo.auth.user' | translate}}" formControlName="username">
+  </md-input-container>
+
+  <md-input-container class="example-full-width">
+    <input mdInput required type="password" placeholder="{{'igo.auth.password' | translate}}" formControlName="password">
+  </md-input-container>
+
+  <button md-raised-button (click)="login(form.value)" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
+  <div *ngIf="error"><font size="3" color="red">{{error}}</font></div>
+</form>

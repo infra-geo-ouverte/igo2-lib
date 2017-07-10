@@ -1,5 +1,11 @@
 {
 	"igo": {
+		"auth": {
+			"connection": "Connexion",
+			"login": "Connecter",
+			"password": "Mot de passe",
+			"user": "Utilisateur"
+		},
 		"context": "Contexte",
 		"contextInvalid": {
 			"text": "Le contexte \"{{value}}\" est invalide",

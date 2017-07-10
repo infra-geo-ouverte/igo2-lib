@@ -1,5 +1,11 @@
 {
 	"igo": {
+		"auth": {
+			"connection": "Connection",
+			"login": "Login",
+			"password": "Password",
+			"user": "User"
+		},
 		"context": "Context",
 		"contextInvalid": {
 			"text": "Context '{{value}}' is invalid",
