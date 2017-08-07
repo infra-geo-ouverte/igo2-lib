@@ -99,5 +99,5 @@
 </div>
 
 <div #legend class="igo-layer-legend-container">
-  <igo-layer-legend [layer]="layer"></igo-layer-legend>
+  <igo-layer-legend *ngIf="!layer.collapsed" [layer]="layer"></igo-layer-legend>
 </div>
