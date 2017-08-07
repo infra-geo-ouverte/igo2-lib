@@ -5,11 +5,18 @@ import { Tool } from '../../tool/shared/tool.interface';
 
 
 export interface Context {
+  id?: string;
   title: string;
   uri: string;
   scope?: 'public' | 'protected' | 'private';
   description?: string;
   icon?: string;
+}
+
+export interface ContextsList {
+  ours: Context[],
+  shared?: Context[],
+  public?: Context[]
 }
 
 export interface DetailedContext extends Context {
@@ -32,6 +39,8 @@ export interface ContextMap  {
 }
 
 export interface ContextServiceOptions {
-  basePath: string;
-  contextListFile: string;
+  url?: string;
+  basePath?: string;
+  contextListFile?: string;
+  defaultContextUri?: string;
 }

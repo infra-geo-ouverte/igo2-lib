@@ -1,25 +1,25 @@
 import { Injectable, Optional } from '@angular/core';
-import { Http } from '@angular/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { RequestService, ConfigService, RouteService,
         Message, LanguageService } from '../../core';
+
+import { AuthHttp } from '../../auth';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
-import { Context, ContextServiceOptions,
+import { ContextsList, ContextServiceOptions,
          DetailedContext, ContextMapView } from './context.interface';
 
 @Injectable()
 export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
-  public contexts$ = new BehaviorSubject<Context[]>([]);
-  private defaultContextUri: string = '_default';
+  public contexts$ = new BehaviorSubject<ContextsList>({ours: []});
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
 
-  constructor(private http: Http,
+  constructor(private authHttp: AuthHttp,
               private requestService: RequestService,
               private languageService: LanguageService,
               private toolService: ToolService,
@@ -28,19 +28,27 @@ export class ContextService {
 
     this.options = Object.assign({
       basePath: 'contexts',
-      contextListFile: '_contexts.json'
+      contextListFile: '_contexts.json',
+      defaultContextUri: '_default'
     }, this.config.getConfig('context'));
 
     this.readParamsFromRoute();
   }
 
   loadContexts() {
+    let url: string;
+    if (this.options.url) {
+      url = this.options.url + 'contexts';
+    } else {
+      url = this.getPath(this.options.contextListFile);
+    }
     this.requestService.register(
-      this.http.get(this.getPath(this.options.contextListFile)))
-        .map(res => res.json())
-        .subscribe(contexts => {
-          this.contexts$.next(contexts);
-        });
+      this.authHttp.get(url)
+    )
+    .map(res => res.json().ours ? res.json() : {ours: res.json()})
+    .subscribe(contexts => {
+      this.contexts$.next(contexts);
+    });
   }
 
   loadDefaultContext() {
@@ -48,21 +56,41 @@ export class ContextService {
       this.route.queryParams.subscribe(params => {
         const contextParam = params[this.route.options.contextKey as string];
         if (contextParam) {
-          this.defaultContextUri = contextParam;
+          this.options.defaultContextUri = contextParam;
         }
-        this.loadContext(this.defaultContextUri);
+        this.loadContext(this.options.defaultContextUri);
       });
     } else {
-      this.loadContext(this.defaultContextUri);
+      this.loadContext(this.options.defaultContextUri);
     }
   }
 
   loadContext(uri: string) {
     const context = this.context$.value;
+
     if (context && context.uri === uri) { return; }
 
+    let url: string;
+    if (this.options.url) {
+      let contextToLoad;
+      for (var key in this.contexts$.value) {
+        contextToLoad = this.contexts$.value[key].find((c) => {
+          return c.uri === uri;
+        });
+        if (contextToLoad) {
+          break;
+        }
+      }
+
+      // TODO : use always id or uri
+      const id = contextToLoad ? contextToLoad.id : uri;
+      url = `${this.options.url}contexts/${id}/details`;
+    } else {
+      url = this.getPath(`${uri}.json`);
+    }
+
     this.requestService.register(
-      this.http.get(this.getPath(`${uri}.json`))
+      this.authHttp.get(url)
         .map(res => res.json())
         .catch(res => this.handleError(res, uri))
     , 'Context')
@@ -120,7 +148,7 @@ export class ContextService {
   }
 
   private handleError(res: Response, uri: string): Message[] {
-    const context = this.contexts$.value.find((obj) => obj.uri === uri);
+    const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
     const titleContext = context ? context.title : uri;
     const titleError = this.languageService.translate
       .instant('igo.contextInvalid.title');

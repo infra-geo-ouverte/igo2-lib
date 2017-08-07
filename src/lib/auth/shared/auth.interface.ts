@@ -16,6 +16,8 @@ export interface AuthGoogleOptions {
 export interface AuthOptions {
   url: string;
   tokenKey: string;
+  loginRoute?: string;
+  logoutRoute?: string;
   intern?: AuthInternOptions;
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;

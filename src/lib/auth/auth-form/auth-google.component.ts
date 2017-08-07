@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, ApplicationRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ApplicationRef,
+  Output, EventEmitter } from '@angular/core';
 
 import { ConfigService } from '../../core';
 import { AuthService, AuthGoogleOptions } from '../shared';
@@ -12,6 +13,8 @@ import { AuthService, AuthGoogleOptions } from '../shared';
 export class AuthGoogleComponent {
 
   private options: AuthGoogleOptions;
+
+  @Output() onLogin: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private authService: AuthService,
               private config: ConfigService,
@@ -60,6 +63,7 @@ export class AuthGoogleComponent {
   private login(token) {
     this.authService.loginWithToken(token, 'google').subscribe(() => {
       this.appRef.tick();
+      this.onLogin.emit(true);
     });
   }
 

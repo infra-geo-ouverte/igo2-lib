@@ -1,7 +1,7 @@
 import { Component, Input, Output,
          EventEmitter, ChangeDetectorRef } from '@angular/core';
 
-import { Context } from '../shared';
+import { Context, ContextsList } from '../shared';
 
 
 @Component({
@@ -12,11 +12,11 @@ import { Context } from '../shared';
 export class ContextListComponent {
 
   @Input()
-  get contexts(): Context[] { return this._contexts; }
-  set contexts(value: Context[]) {
+  get contexts(): ContextsList { return this._contexts; }
+  set contexts(value: ContextsList) {
     this._contexts = value;
   }
-  private _contexts: Context[] = [];
+  private _contexts: ContextsList = {ours: []};
 
   @Input()
   get selectedContext(): Context { return this._selectedContext; }
@@ -28,6 +28,12 @@ export class ContextListComponent {
 
   @Output() select = new EventEmitter<Context>();
   @Output() unselect = new EventEmitter<Context>();
+
+  public titleMapping = {
+      ours: 'Our contexts',
+      shared: 'Shared contexts',
+      public: 'Public contexts'
+  }
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

@@ -1,8 +1,9 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { Http, RequestOptions } from '@angular/http';
 
-import { AuthHttp, AuthConfig } from 'angular2-jwt';
+import { AuthHttp } from 'angular2-jwt';
 
+import { ConfigService } from '../core';
 import { IgoSharedModule } from '../shared';
 import { AuthFormComponent,
          AuthInternComponent,
@@ -10,18 +11,10 @@ import { AuthFormComponent,
          AuthGoogleComponent
 } from './auth-form';
 
-import { AuthService } from './shared';
-
-
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-  return new AuthHttp(new AuthConfig({
-    headerName: 'Authorization',
-    headerPrefix: '',
-    tokenName: 'id_token_igo', // TODO : move in config
-    tokenGetter: (() => localStorage.getItem('id_token_igo')),
-    noJwtError: true
-  }), http, options);
-}
+import { AuthService,
+        AuthGuard,
+        ProtectedDirective,
+        authHttpServiceFactory } from './shared';
 
 @NgModule({
     imports: [IgoSharedModule],
@@ -29,9 +22,13 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
       AuthFormComponent,
       AuthInternComponent,
       AuthFacebookComponent,
-      AuthGoogleComponent
+      AuthGoogleComponent,
+      ProtectedDirective
     ],
-    exports: [AuthFormComponent]
+    exports: [
+      AuthFormComponent,
+      ProtectedDirective
+    ]
 })
 
 
@@ -41,10 +38,11 @@ export class IgoAuthModule {
       ngModule: IgoAuthModule,
       providers: [
         AuthService,
+        AuthGuard,
         {
           provide: AuthHttp,
           useFactory: authHttpServiceFactory,
-          deps: [Http, RequestOptions]
+          deps: [Http, RequestOptions, ConfigService]
         }
       ]
     };
