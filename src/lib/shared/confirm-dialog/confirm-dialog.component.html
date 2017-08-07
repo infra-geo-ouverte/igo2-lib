@@ -1,0 +1,6 @@
+<h1 md-dialog-title>{{'confirmDialog.title' | translate}}</h1>
+<div md-dialog-content>{{confirmMessage}}</div>
+<div md-dialog-actions>
+  <button md-button color="accent" (click)="dialogRef.close(true)">{{'confirmDialog.confirmBtn' | translate}}</button>
+  <button md-button (click)="dialogRef.close(false)">{{'confirmDialog.cancelBtn' | translate}}</button>
+</div>
