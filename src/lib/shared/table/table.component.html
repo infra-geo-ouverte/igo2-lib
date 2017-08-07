@@ -1,0 +1,40 @@
+<div class='table-container'>
+  <div class='table-header'>
+    <md-input-container floatPlaceholder='never'>
+      <input mdInput #filter [placeholder]="'Filter' | translate">
+    </md-input-container>
+  </div>
+
+  <md-table #table [dataSource]='dataSource' mdSort>
+
+    <ng-container [cdkColumnDef]='column.name' *ngFor='let column of model.columns'>
+      <ng-container *ngIf='column.sortable'>
+        <md-header-cell *cdkHeaderCellDef md-sort-header> {{column.title}} </md-header-cell>
+      </ng-container>
+
+      <ng-container *ngIf='!column.sortable'>
+        <md-header-cell *cdkHeaderCellDef> {{column.title}} </md-header-cell>
+      </ng-container>
+
+      <md-cell *cdkCellDef='let row' class="mat-cell-text"> {{getValue(row, column.name)}} </md-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container cdkColumnDef='action'>
+      <md-header-cell *cdkHeaderCellDef></md-header-cell>
+      <md-cell *cdkCellDef='let row'>
+        <button *ngFor='let action of model.actions'
+        md-mini-fab
+        [color]='getActionColor(action.color)'
+        (click)='action.click(row)'>
+          <md-icon>{{action.icon}}</md-icon>
+        </button>
+      </md-cell>
+    </ng-container>
+
+    <md-header-row *cdkHeaderRowDef='displayedColumns'></md-header-row>
+    <md-row *cdkRowDef='let row; columns: displayedColumns;'></md-row>
+
+  </md-table>
+
+</div>

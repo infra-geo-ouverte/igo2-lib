@@ -13,7 +13,9 @@ export class ObjectUtils {
   }
 
   static isObject(item: Object) {
-    return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+    return (item && typeof item === 'object' &&
+            !Array.isArray(item) && item !== null &&
+            !(item instanceof Date));
   }
 
   static mergeDeep(target: Object, source: Object, ignoreUndefined = false): any {
@@ -42,13 +44,47 @@ export class ObjectUtils {
       Object.keys(obj)
         .filter((key) => obj[key] !== undefined)
         .forEach(key => {
-          if (ObjectUtils.isObject(obj[key])) {
+          if (ObjectUtils.isObject(obj[key]) || Array.isArray(obj[key])) {
             output[key] = ObjectUtils.removeUndefined(obj[key]);
           } else {
             output[key] = obj[key];
           }
         });
+
+      return output;
     }
-    return output;
+
+    if (Array.isArray(obj)) {
+      return obj.map(
+        (o) => ObjectUtils.removeUndefined(o)
+      );
+    }
+
+    return obj;
+  }
+
+  static removeNull(obj: Object): any {
+    const output = {};
+    if (ObjectUtils.isObject(obj)) {
+      Object.keys(obj)
+        .filter((key) => obj[key] !== null)
+        .forEach(key => {
+          if (ObjectUtils.isObject(obj[key]) || Array.isArray(obj[key])) {
+            output[key] = ObjectUtils.removeNull(obj[key]);
+          } else {
+            output[key] = obj[key];
+          }
+        });
+
+      return output;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(
+        (o) => ObjectUtils.removeNull(o)
+      );
+    }
+
+    return obj;
   }
 }

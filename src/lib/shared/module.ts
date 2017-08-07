@@ -1,5 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CdkTableModule } from '@angular/cdk';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,17 +9,20 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ClickoutDirective } from './clickout';
 import { CollapsibleComponent, CollapseDirective } from './collapsible';
+import { ConfirmDialogComponent, ConfirmDialogService } from './confirm-dialog';
 import { ClonePipe } from './clone';
 import { KeyvaluePipe } from './keyvalue';
 import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
 import { SidenavShimDirective } from './sidenav';
 import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
+import { TableComponent } from './table';
 
 
 @NgModule({
   imports: [
     CommonModule,
+    CdkTableModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
@@ -43,12 +47,14 @@ import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
     PanelComponent,
     SidenavShimDirective,
     SpinnerComponent,
-    SpinnerBindingDirective
+    SpinnerBindingDirective,
+    TableComponent
   ],
   declarations: [
     ClickoutDirective,
     CollapsibleComponent,
     CollapseDirective,
+    ConfirmDialogComponent,
     ClonePipe,
     KeyvaluePipe,
     ListComponent,
@@ -56,14 +62,20 @@ import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
     PanelComponent,
     SidenavShimDirective,
     SpinnerComponent,
-    SpinnerBindingDirective
+    SpinnerBindingDirective,
+    TableComponent
+  ],
+  entryComponents: [
+    ConfirmDialogComponent
+  ],
+  providers: [
+    ConfirmDialogService
   ]
 })
 export class IgoSharedModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: IgoSharedModule,
-      providers: []
+      ngModule: IgoSharedModule
     };
   }
 }
