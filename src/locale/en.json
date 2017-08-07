@@ -3,8 +3,10 @@
 		"auth": {
 			"connection": "Connection",
 			"login": "Login",
+      "signOut": "Sign out",
 			"password": "Password",
-			"user": "User"
+			"user": "User",
+      "welcome": "Welcome {{name}}!"
 		},
 		"context": "Context",
 		"contextInvalid": {
@@ -21,12 +23,15 @@
 		"noLegendText": "No legend available for this layer",
 		"opacity": "Opacity",
 		"orientation": "Orientation",
+    "Our contexts": "Our contextes",
 		"portrait": "Portrait",
 		"print": "Print",
+    "Public contexts": "Public contexts",
 		"raiseLayer": "Bring layer forward",
 		"removeLayer": "Remove this layer from the map",
 		"resolution": "Resolution",
 		"searchResults": "Search Results",
+    "Shared contexts": "Shared contexts",
 		"showLayer": "Show Layer",
 		"showMetadata": "Show metadata",
 		"startDate": "Start Date",

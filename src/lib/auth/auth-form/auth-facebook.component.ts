@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, ApplicationRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ApplicationRef,
+  Output, EventEmitter } from '@angular/core';
 
 import { ConfigService } from '../../core';
 import { AuthService, AuthFacebookOptions } from '../shared';
@@ -12,6 +13,8 @@ import { AuthService, AuthFacebookOptions } from '../shared';
 export class AuthFacebookComponent {
 
   private options: AuthFacebookOptions;
+
+  @Output() onLogin: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private authService: AuthService,
               private config: ConfigService,
@@ -40,6 +43,7 @@ export class AuthFacebookComponent {
   private login(token) {
     this.authService.loginWithToken(token, 'facebook').subscribe(() => {
       this.appRef.tick();
+      this.onLogin.emit(true);
     });
   }
 

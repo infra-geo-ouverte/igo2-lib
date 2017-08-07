@@ -2,7 +2,7 @@ import { Directive, Self, OnInit, OnDestroy,
          HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Context, ContextService } from '../shared';
+import { Context, ContextsList, ContextService } from '../shared';
 import { ContextListComponent } from './context-list.component';
 
 
@@ -26,7 +26,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Override input contexts
-    this.component.contexts = [];
+    this.component.contexts = {ours: []};
 
     this.contexts$$ = this.contextService.contexts$
       .subscribe(contexts => this.handleContextsChange(contexts));
@@ -44,7 +44,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     this.selectedContext$$.unsubscribe();
   }
 
-  private handleContextsChange(contexts: Context[]) {
+  private handleContextsChange(contexts: ContextsList) {
     this.component.contexts = contexts;
   }
 

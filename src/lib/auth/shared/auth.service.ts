@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
+import { Router } from '@angular/router';
+
 import { Observable } from 'rxjs/Rx';
 import { JwtHelper } from 'angular2-jwt';
 
@@ -10,11 +12,15 @@ import { AuthOptions } from '../shared';
 
 @Injectable()
 export class AuthService {
+  public redirectUrl: string;
   private options: AuthOptions;
   private token: string;
 
-  constructor(private http: Http, private config: ConfigService) {
-    this.options = this.config.getConfig('auth.intern') || {};
+  constructor(private http: Http,
+              private config: ConfigService,
+              private router: Router) {
+
+    this.options = this.config.getConfig('auth') || {};
     this.token = localStorage.getItem(this.options.tokenKey);
   }
 
@@ -75,6 +81,16 @@ export class AuthService {
       return jwtHelper.decodeToken(token);
     }
     return false;
+  }
+
+  goToRedirectUrl() {
+    let redirectUrl = this.redirectUrl || this.router.url;
+
+    if (redirectUrl === this.options.loginRoute) {
+      this.router.navigateByUrl('/');
+    } else if (redirectUrl) {
+      this.router.navigateByUrl(redirectUrl);
+    }
   }
 
   private encodePassword(password: string) {
