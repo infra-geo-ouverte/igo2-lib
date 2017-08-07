@@ -48,6 +48,24 @@ export class MessageService {
     });
   }
 
+  info(text: string, title?: string, icon?: string) {
+    this.message({
+      text: text,
+      title: title,
+      icon: icon,
+      type: MessageType.INFO
+    });
+  }
+
+  alert(text: string, title?: string, icon?: string) {
+    this.message({
+      text: text,
+      title: title,
+      icon: icon,
+      type: MessageType.ALERT
+    });
+  }
+
   private addIcon(notification: Notification, icon: string) {
     // There is no way to add an icon to a notification when reating
     // it so we simply set it on the notification directly.
