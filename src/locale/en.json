@@ -1,41 +1,41 @@
 {
-	"igo": {
-		"auth": {
-			"connection": "Connection",
-			"login": "Login",
+  "igo": {
+    "auth": {
+      "connection": "Connection",
+      "login": "Login",
       "signOut": "Sign out",
-			"password": "Password",
-			"user": "User",
+      "password": "Password",
+      "user": "User",
       "welcome": "Welcome {{name}}!"
-		},
-		"context": "Context",
-		"contextInvalid": {
-			"text": "Context '{{value}}' is invalid",
-			"title": "Invalid context"
-		},
-		"contexts": "Contexts",
-		"endDate": "End Date",
-		"format": "Format",
-		"hideLayer": "Hide Layer",
-		"landscape": "Landscape",
-		"lowerLayer": "Bring layer backward",
-		"map": "Map",
-		"noLegendText": "No legend available for this layer",
-		"opacity": "Opacity",
-		"orientation": "Orientation",
+    },
+    "context": "Context",
+    "contextInvalid": {
+      "text": "Context '{{value}}' is invalid",
+      "title": "Invalid context"
+    },
+    "contexts": "Contexts",
+    "endDate": "End Date",
+    "format": "Format",
+    "hideLayer": "Hide Layer",
+    "landscape": "Landscape",
+    "lowerLayer": "Bring layer backward",
+    "map": "Map",
+    "noLegendText": "No legend available for this layer",
+    "opacity": "Opacity",
+    "orientation": "Orientation",
     "Our contexts": "Our contextes",
-		"portrait": "Portrait",
-		"print": "Print",
+    "portrait": "Portrait",
+    "print": "Print",
     "Public contexts": "Public contexts",
-		"raiseLayer": "Bring layer forward",
-		"removeLayer": "Remove this layer from the map",
-		"resolution": "Resolution",
-		"searchResults": "Search Results",
+    "raiseLayer": "Bring layer forward",
+    "removeLayer": "Remove this layer from the map",
+    "resolution": "Resolution",
+    "searchResults": "Search Results",
     "Shared contexts": "Shared contexts",
-		"showLayer": "Show Layer",
-		"showMetadata": "Show metadata",
-		"startDate": "Start Date",
-		"timeAnalysis": "Time Analysis",
-		"title": "Title"
-	}
+    "showLayer": "Show Layer",
+    "showMetadata": "Show metadata",
+    "startDate": "Start Date",
+    "timeAnalysis": "Time Analysis",
+    "title": "Title"
+  }
 }

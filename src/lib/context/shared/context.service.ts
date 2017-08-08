@@ -45,7 +45,7 @@ export class ContextService {
     this.requestService.register(
       this.authHttp.get(url)
     )
-    .map(res => res.json().ours ? res.json() : {ours: res.json()})
+    .map(res => res.json().ours ? res.json() : {ours: res.json()} )
     .subscribe(contexts => {
       this.contexts$.next(contexts);
     });
@@ -73,7 +73,7 @@ export class ContextService {
     let url: string;
     if (this.options.url) {
       let contextToLoad;
-      for (var key in this.contexts$.value) {
+      for (const key of Object.keys(this.contexts$.value)) {
         contextToLoad = this.contexts$.value[key].find((c) => {
           return c.uri === uri;
         });

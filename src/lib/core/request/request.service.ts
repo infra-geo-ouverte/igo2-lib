@@ -64,8 +64,8 @@ export class RequestService {
     const contentType = res.headers.get('content-type');
     if (contentType && contentType.indexOf('application/json') === 0) {
       const body = res.json() || {};
-      if (body.messages || body.message) {
-        messages = body.messages || [{text: body.message}];
+      if (body.messages || body.message) {
+        messages = body.messages || [{text: body.message}];
       }
     }
 

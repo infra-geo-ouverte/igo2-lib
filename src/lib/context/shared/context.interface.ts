@@ -14,9 +14,9 @@ export interface Context {
 }
 
 export interface ContextsList {
-  ours: Context[],
-  shared?: Context[],
-  public?: Context[]
+  ours: Context[];
+  shared?: Context[];
+  public?: Context[];
 }
 
 export interface DetailedContext extends Context {

@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy,
   OnInit, Input } from '@angular/core';
-import { Router }      from '@angular/router';
+import { Router } from '@angular/router';
 
 import { ConfigService } from '../../core';
-import { AuthService, AuthOptions } from "../shared";
+import { AuthService, AuthOptions } from '../shared';
 
 @Component({
   selector: 'igo-auth-form',
@@ -39,12 +39,12 @@ export class AuthFormComponent implements OnInit {
     private config: ConfigService,
     private router: Router
   ) {
-    this.options = this.config.getConfig('auth') || {};
+    this.options = this.config.getConfig('auth') || {};
 
     if (this.auth.decodeToken()) {
         this.user = {
           name: this.auth.decodeToken().user.sourceId
-        }
+        };
     }
   }
 

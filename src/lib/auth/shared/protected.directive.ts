@@ -2,7 +2,7 @@ import { Directive, ElementRef } from '@angular/core';
 import { AuthService } from './index';
 
 @Directive({
-    selector: "[igoProtected]"
+    selector: '[igoProtected]'
 })
 
 export class ProtectedDirective {

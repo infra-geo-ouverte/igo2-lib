@@ -33,7 +33,7 @@ export class ContextListComponent {
       ours: 'Our contexts',
       shared: 'Shared contexts',
       public: 'Public contexts'
-  }
+  };
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

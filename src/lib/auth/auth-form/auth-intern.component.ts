@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy,
   Output, EventEmitter } from '@angular/core';
-import { Validators, FormGroup, FormBuilder } from "@angular/forms";
-import { AuthService } from "../shared/auth.service";
+import { Validators, FormGroup, FormBuilder } from '@angular/forms';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'igo-auth-intern',
@@ -10,7 +10,7 @@ import { AuthService } from "../shared/auth.service";
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class AuthInternComponent {
-  public error: string = "";
+  public error: string = '';
   private form: FormGroup;
 
   @Output() onLogin: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -20,8 +20,8 @@ export class AuthInternComponent {
     fb: FormBuilder
   ) {
     this.form = fb.group({
-      username: ["", Validators.required],
-      password: ["", Validators.required]
+      username: ['', Validators.required],
+      password: ['', Validators.required]
     });
   }
 
@@ -32,8 +32,8 @@ export class AuthInternComponent {
           this.onLogin.emit(true);
         },
         (errors: any) => {
-          let message = "";
-          for (let err in errors) {
+          let message = '';
+          for (const err in errors) {
             if (!errors.hasOwnProperty(err)) { continue; }
             message += errors[err]['message'] + '\n';
           }

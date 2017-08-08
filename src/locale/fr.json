@@ -1,41 +1,41 @@
 {
-	"igo": {
-		"auth": {
-			"connection": "Connexion",
-			"login": "Connecter",
+  "igo": {
+    "auth": {
+      "connection": "Connexion",
+      "login": "Connecter",
       "signOut": "Se déconnecter",
-			"password": "Mot de passe",
-			"user": "Utilisateur",
+      "password": "Mot de passe",
+      "user": "Utilisateur",
       "welcome": "Bienvenue {{name}}!"
-		},
-		"context": "Contexte",
-		"contextInvalid": {
-			"text": "Le contexte \"{{value}}\" est invalide",
-			"title": "Contexte invalide"
-		},
-		"contexts": "Contextes",
-		"endDate": "Date de fin",
-		"format": "Format",
-		"hideLayer": "Masquer la couche",
-		"landscape": "Paysage",
-		"lowerLayer": "Descendre la couche",
-		"map": "Carte",
-		"noLegendText": "Aucune légende disponible pour cette couche",
-		"opacity": "Opacité",
-		"orientation": "Orientation",
+    },
+    "context": "Contexte",
+    "contextInvalid": {
+      "text": "Le contexte \"{{value}}\" est invalide",
+      "title": "Contexte invalide"
+    },
+    "contexts": "Contextes",
+    "endDate": "Date de fin",
+    "format": "Format",
+    "hideLayer": "Masquer la couche",
+    "landscape": "Paysage",
+    "lowerLayer": "Descendre la couche",
+    "map": "Carte",
+    "noLegendText": "Aucune légende disponible pour cette couche",
+    "opacity": "Opacité",
+    "orientation": "Orientation",
     "Our contexts": "Vos contextes",
-		"portrait": "Portrait",
-		"print": "Imprimer",
+    "portrait": "Portrait",
+    "print": "Imprimer",
     "Public contexts": "Contextes publics",
-		"raiseLayer": "Monter la couche",
-		"removeLayer": "Retirer la couche de la carte",
-		"resolution": "Resolution",
-		"searchResults": "Résultats de recherche",
-		"showLayer": "Afficher la couche",
-		"showMetadata": "Montrer les métadonnées",
-		"startDate": "Date de début",
+    "raiseLayer": "Monter la couche",
+    "removeLayer": "Retirer la couche de la carte",
+    "resolution": "Resolution",
+    "searchResults": "Résultats de recherche",
+    "showLayer": "Afficher la couche",
+    "showMetadata": "Montrer les métadonnées",
+    "startDate": "Date de début",
     "Shared contexts": "Contextes partagés",
-		"timeAnalysis": "Analyse Temporelle",
-		"title": "Titre"
-	}
+    "timeAnalysis": "Analyse Temporelle",
+    "title": "Titre"
+  }
 }

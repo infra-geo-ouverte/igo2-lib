@@ -25,34 +25,34 @@ export class AuthService {
   }
 
   login(username: string, password: string): any {
-    let myHeader = new Headers();
+    const myHeader = new Headers();
     myHeader.append('Content-Type', 'application/json');
 
-    let body = JSON.stringify({
+    const body = JSON.stringify({
       username: username,
       password: this.encodePassword(password)
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
       .map((res: any) => {
-        let data = res.json();
+        const data = res.json();
         this.token = data.token;
         localStorage.setItem(this.options.tokenKey, this.token);
       });
   }
 
   loginWithToken(token: string, type: string): any {
-    let myHeader = new Headers();
+    const myHeader = new Headers();
     myHeader.append('Content-Type', 'application/json');
 
-    let body = JSON.stringify({
+    const body = JSON.stringify({
       token: token,
       typeConnexion: type
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
       .map((res: any) => {
-        let data = res.json();
+        const data = res.json();
         this.token = data.token;
         localStorage.setItem(this.options.tokenKey, this.token);
       });
@@ -65,8 +65,8 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    let token = localStorage.getItem(this.options.tokenKey);
-    let jwtHelper = new JwtHelper();
+    const token = localStorage.getItem(this.options.tokenKey);
+    const jwtHelper = new JwtHelper();
     return token && !jwtHelper.isTokenExpired(token);
   }
 
@@ -76,15 +76,15 @@ export class AuthService {
 
   decodeToken() {
     if (this.isAuthenticated()) {
-      let token = localStorage.getItem(this.options.tokenKey);
-      let jwtHelper = new JwtHelper();
+      const token = localStorage.getItem(this.options.tokenKey);
+      const jwtHelper = new JwtHelper();
       return jwtHelper.decodeToken(token);
     }
     return false;
   }
 
   goToRedirectUrl() {
-    let redirectUrl = this.redirectUrl || this.router.url;
+    const redirectUrl = this.redirectUrl || this.router.url;
 
     if (redirectUrl === this.options.loginRoute) {
       this.router.navigateByUrl('/');

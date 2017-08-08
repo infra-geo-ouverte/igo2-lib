@@ -44,12 +44,12 @@ export class AuthGoogleComponent {
     window['gapi'].client.init({
         apiKey: this.options.apiKey,
         clientId: this.options.clientId,
-        discoveryDocs: ["https://people.googleapis.com/$discovery/rest?version=v1"],
+        discoveryDocs: ['https://people.googleapis.com/$discovery/rest?version=v1'],
         scope: 'profile'
     }).then(() => {
       this.handleSignOutClick();
       window['gapi'].auth2.getAuthInstance().isSignedIn.listen((rep) => {
-        this.updateSigninStatus(rep)
+        this.updateSigninStatus(rep);
       });
     });
   }
@@ -68,17 +68,17 @@ export class AuthGoogleComponent {
   }
 
   private loadSDKGoogle() {
-    var js, fjs = document.getElementsByTagName('script')[0];
-    js = document.createElement('script');
+    const fjs = document.getElementsByTagName('script')[0];
+    const js = document.createElement('script');
     js.id = 'google-jssdk';
     js.src = 'https://apis.google.com/js/api.js';
-    js.onload = () => {this.handleClientLoad();};
+    js.onload = () => { this.handleClientLoad(); };
     fjs.parentNode.insertBefore(js, fjs);
   }
 
   private loadPlatform() {
-    var js, fjs = document.getElementsByTagName('script')[0];
-    js = document.createElement('script');
+    const fjs = document.getElementsByTagName('script')[0];
+    const js = document.createElement('script');
     js.id = 'google-platform';
     js.src = 'https://apis.google.com/js/platform.js';
     fjs.parentNode.insertBefore(js, fjs);

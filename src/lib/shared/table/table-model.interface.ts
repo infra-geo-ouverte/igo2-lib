@@ -1,24 +1,22 @@
 import { TableActionColor } from './table-action-color.enum';
 
 export interface TableColumn {
-  name: string,
-  title: string,
-  sortable?: boolean,
-  filterable?: boolean,
-  displayed?: boolean
+  name: string;
+  title: string;
+  sortable?: boolean;
+  filterable?: boolean;
+  displayed?: boolean;
 }
 
-export interface ClickAction {
-  ( item: any ): void;
-}
+export type ClickAction = ( item: any ) => void;
 
 export interface TableAction {
-  icon: string,
-  color?: TableActionColor
-  click: ClickAction
+  icon: string;
+  color?: TableActionColor;
+  click: ClickAction;
 }
 
 export interface TableModel  {
-  columns: TableColumn[],
-  actions?: TableAction[]
+  columns: TableColumn[];
+  actions?: TableAction[];
 }

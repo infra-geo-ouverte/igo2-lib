@@ -43,11 +43,15 @@ export class TableComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.dataSource = new TableDataSource(this.database, this.model, this.sort);
-    this.displayedColumns = this.model.columns
-      .filter((c) => c.displayed !== false)
-      .map((c) => c.name);
-    if (this.model.actions && this.model.actions.length) {
-      this.displayedColumns.push('action');
+
+    if (this.model) {
+      this.displayedColumns = this.model.columns
+        .filter((c) => c.displayed !== false)
+        .map((c) => c.name);
+
+      if (this.model.actions && this.model.actions.length) {
+        this.displayedColumns.push('action');
+      }
     }
 
     Observable.fromEvent(this.filter.nativeElement, 'keyup')

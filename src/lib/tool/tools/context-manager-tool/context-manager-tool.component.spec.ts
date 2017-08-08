@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoCoreModule } from '../../../core';
 import { IgoSharedModule } from '../../../shared';
+import { IgoAuthModule } from '../../../auth';
 import { IgoContextModule } from '../../../context';
 import { ToolService } from '../../shared/tool.service';
 
@@ -17,6 +18,7 @@ describe('ContextManagerToolComponent', () => {
         IgoCoreModule.forRoot(),
         IgoSharedModule,
         IgoContextModule.forRoot(),
+        IgoAuthModule.forRoot()
       ],
       declarations: [
         ContextManagerToolComponent

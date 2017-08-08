@@ -48,13 +48,18 @@ export class AuthFacebookComponent {
   }
 
   private loadSDKFacebook() {
-    const urlSDK = 'https://connect.facebook.net/fr_CA/sdk.js#xfbml=1&version=v2.9';
-    var js, fjs = document.getElementsByTagName('script')[0];
-    if (document.getElementById('facebook-jssdk')) return;
-    js = document.createElement('script');
+    if (document.getElementById('facebook-jssdk')) {
+      return;
+    };
+
+    const urlSDK =
+      'https://connect.facebook.net/fr_CA/sdk.js#xfbml=1&version=v2.9';
+
+    const fjs = document.getElementsByTagName('script')[0];
+    const js = document.createElement('script');
     js.id = 'facebook-jssdk';
     js.src = `${urlSDK}&appId=${this.options.apiKey}`;
-    js.onload = () => {this.subscribeEvents();};
+    js.onload = () => { this.subscribeEvents(); };
     fjs.parentNode.insertBefore(js, fjs);
   }
 }
