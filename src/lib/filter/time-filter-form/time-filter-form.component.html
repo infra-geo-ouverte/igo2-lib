@@ -1,5 +1,5 @@
-<div *ngIf="!isRange">
-  <div class="igo-col igo-col-100 igo-col-100-m">
+<div *ngIf="style === 'calendar'">
+  <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
     <md2-datepicker
       placeholder="{{igo.date | translate}}"
       container="dialog"
@@ -11,32 +11,49 @@
       (change)="handleDateChange($event)">
     </md2-datepicker>
   </div>
+
+  <div *ngIf="isRange">
+    <div class="igo-col igo-col-100">
+      <md2-datepicker
+        placeholder="{{'igo.startDate' | translate}}"
+        container="dialog"
+        format="{{format}}"
+        type="{{type}}"
+        [min]="min"
+        [max]="max"
+        [(ngModel)]="startDate"
+        (change)="handleDateChange($event)">
+      </md2-datepicker>
+    </div>
+
+    <div class="igo-col igo-col-100">
+      <md2-datepicker
+        placeholder="{{'igo.endDate' | translate}}"
+        container="dialog"
+        format="{{format}}"
+        type="{{type}}"
+        [min]="min"
+        [max]="max"
+        [(ngModel)]="endDate"
+        (change)="handleDateChange($event)">
+      </md2-datepicker>
+    </div>
+  </div>
 </div>
 
-<div *ngIf="isRange">
-  <div class="igo-col igo-col-100">
-    <md2-datepicker
-      placeholder="{{'igo.startDate' | translate}}"
-      container="dialog"
-      format="{{format}}"
-      type="{{type}}"
-      [min]="min"
-      [max]="max"
-      [(ngModel)]="startDate"
+<div *ngIf="style === 'slider'" class="igo-col igo-col-100-m">
+  <i #playFilterIcon class="material-icons" (click)="playFilter($event)">play_circle_filled</i>
+  <md-slider
+      id="time-slider"
+      tickInterval="48"
+      step="{{step}}"
+      [min]="dateToNumber(min)"
+      [max]="dateToNumber(max)"
+      [value]="date"
+      [md-tooltip]="numberToDate(date)"
+      tooltip-position="below"
+      thumbLabel
+      (input)="handleDateChange($event)"
       (change)="handleDateChange($event)">
-    </md2-datepicker>
-  </div>
-
-  <div class="igo-col igo-col-100">
-    <md2-datepicker
-      placeholder="{{'igo.endDate' | translate}}"
-      container="dialog"
-      format="{{format}}"
-      type="{{type}}"
-      [min]="min"
-      [max]="max"
-      [(ngModel)]="endDate"
-      (change)="handleDateChange($event)">
-    </md2-datepicker>
-  </div>
+  </md-slider>
 </div>
