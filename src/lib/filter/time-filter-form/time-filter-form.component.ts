@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MdSlider } from '@angular/material'
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+
 import { TimeFilterOptions } from '../shared';
 
 @Component({
