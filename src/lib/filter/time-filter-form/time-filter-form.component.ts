@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MdSlider } from '@angular/material'
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+
 import { TimeFilterOptions } from '../shared';
 
 @Component({
@@ -79,7 +79,7 @@ export class TimeFilterFormComponent {
 
   constructor() { }
 
-  handleDateChange(event: any) {    
+  handleDateChange(event: any) {
     if (this.isRange) {
       this.change.emit([this.startDate, this.endDate]);
     } else {
@@ -143,23 +143,14 @@ export class TimeFilterFormComponent {
       
       this.interval = setInterval(function(that){
         
-        let newMinDateNumber;
+        let newDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
         let maxDateNumber = new Date(that.max);
-    
-        newMinDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
-        newMinDateNumber += that.mySlider.step;
-        that.date = new Date(newMinDateNumber);
-       
-        if(newMinDateNumber > maxDateNumber.getTime()){
+        if(newDateNumber >maxDateNumber.getTime()){
           that.stopFilter();
         }
-              
-        that.handleDateChange({});
-        /*if (that.isRange) {
-          that.change.emit([that.startDate, that.endDate]);
-        } else {
-          that.change.emit(that.date);
-        } */ 
+        newDateNumber += that.mySlider.step;
+        that.date = new Date(newDateNumber);
+        that.handleDateChange({source:{constructor:{name:"MdSlider"}},value:that.date});
 
       }, this.timeInterval, this)
     }
