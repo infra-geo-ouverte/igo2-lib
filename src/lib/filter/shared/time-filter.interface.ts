@@ -6,4 +6,7 @@ export interface TimeFilterOptions {
   values?: [string, string];
   type?: 'date' | 'time' | 'datetime';
   format?: string;
+  style?: string;
+  step?: string;
+  timeInterval?: number;
 }
