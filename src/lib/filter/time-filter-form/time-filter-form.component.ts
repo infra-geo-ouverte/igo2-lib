@@ -99,7 +99,7 @@ export class TimeFilterFormComponent {
   }
 
    numberToDate(date: number): String{
-     let newDate;
+    let newDate;
     if(date){
       newDate = new Date(date);
       newDate = newDate.toLocaleString();
