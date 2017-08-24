@@ -5,6 +5,8 @@ import { IgoSharedModule } from '../shared';
 import { MapService } from './shared';
 import { MapBrowserComponent, MapBrowserBindingDirective } from './map-browser';
 import { ZoomComponent } from './zoom';
+import { GeolocateComponent } from './geolocate';
+import { BookmarkComponent, BookmarkDialogComponent } from './bookmark';
 
 
 @NgModule({
@@ -14,12 +16,20 @@ import { ZoomComponent } from './zoom';
   exports: [
     MapBrowserComponent,
     MapBrowserBindingDirective,
-    ZoomComponent
+    ZoomComponent,
+    GeolocateComponent,
+    BookmarkComponent
   ],
   declarations: [
     MapBrowserComponent,
     MapBrowserBindingDirective,
-    ZoomComponent
+    ZoomComponent,
+    GeolocateComponent,
+    BookmarkComponent,
+    BookmarkDialogComponent
+  ],
+  entryComponents: [
+    BookmarkDialogComponent
   ]
 })
 export class IgoMapModule {
@@ -35,4 +45,6 @@ export class IgoMapModule {
 
 export * from './map-browser';
 export * from './zoom';
+export * from './geolocate';
+export * from './bookmark';
 export * from './shared';

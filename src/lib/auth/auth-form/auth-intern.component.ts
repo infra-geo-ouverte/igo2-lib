@@ -32,7 +32,7 @@ export class AuthInternComponent {
           this.onLogin.emit(true);
         },
         (error: any) => {
-          this.error = error.message;
+          this.error = error[0].text;
         }
       );
     return false;

@@ -1,0 +1,17 @@
+<h1 md-dialog-title>New context</h1>
+<div md-dialog-content>
+  <md-input-container>
+    <input mdInput required placeholder="Title" [(ngModel)]="title" autocomplete="off">
+  </md-input-container>
+</div>
+<div md-dialog-actions>
+  <button md-button color="primary"
+         [disabled]="!title"
+         (click)="dialogRef.close(title)">
+    {{'igo.confirmDialog.confirmBtn' | translate}}
+  </button>
+  <button md-button
+          (click)="dialogRef.close(false)">
+    {{'igo.confirmDialog.cancelBtn' | translate}}
+  </button>
+</div>

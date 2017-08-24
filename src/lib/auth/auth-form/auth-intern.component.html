@@ -8,5 +8,8 @@
   </md-form-field>
 
   <button md-raised-button (click)="login(form.value)" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
-  <div *ngIf="error"><font size="3" color="red">{{error}}</font></div>
+  <div *ngIf="error">
+    <br/>
+    <font size="3" color="red">{{error}}</font>
+  </div>
 </form>
