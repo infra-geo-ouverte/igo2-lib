@@ -1,5 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
+import { Http } from '@angular/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
 
 import { RequestService, ConfigService, RouteService,
         Message, LanguageService } from '../../core';
@@ -8,18 +10,22 @@ import { AuthHttp } from '../../auth';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
-import { ContextsList, ContextServiceOptions,
-         DetailedContext, ContextMapView } from './context.interface';
+import { TypePermission } from './context.enum';
+import { ContextsList, ContextServiceOptions, Context, DetailedContext,
+  ContextMapView, ContextPermission } from './context.interface';
 
 @Injectable()
 export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ours: []});
+  public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
+  private baseUrl: string;
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: Http,
+              private authHttp: AuthHttp,
               private requestService: RequestService,
               private languageService: LanguageService,
               private toolService: ToolService,
@@ -32,21 +38,167 @@ export class ContextService {
       defaultContextUri: '_default'
     }, this.config.getConfig('context'));
 
+    this.baseUrl = this.options.url;
+
     this.readParamsFromRoute();
   }
 
+  get(): Observable<ContextsList> {
+    const url = this.baseUrl + '/contexts';
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get contexts error')
+      .map((res) => {
+        const contexts: ContextsList = res.json();
+        return contexts;
+      });
+  }
+
+  getById(id: string): Observable<Context> {
+    const url = this.baseUrl + '/contexts/' + id;
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get context error')
+      .map((res) => {
+        const context: Context = res.json();
+        return context;
+      });
+  }
+
+  getDetails(id: string): Observable<DetailedContext> {
+    const url = this.baseUrl + '/contexts/' + id + '/details';
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get context details error')
+      .map((res) => {
+        const context: DetailedContext = res.json();
+        return context;
+      })
+      .catch(res => this.handleError(res, id));
+  }
+
+  delete(id: string): Observable<void> {
+    const url = this.baseUrl + '/contexts/' + id;
+    const request = this.authHttp.delete(url);
+    return this.requestService.register(request, 'Delete context error')
+      .map((res) => {
+        const contexts: ContextsList = {ours: []};
+        Object.keys(this.contexts$.value).forEach(
+          key => contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id)
+        );
+        this.contexts$.next(contexts);
+        return res;
+      });
+  }
+
+  create(context: Context): Observable<Context> {
+    const url = this.baseUrl + '/contexts';
+    const request = this.authHttp.post(url, JSON.stringify(context));
+    return this.requestService.register(request, 'Create context error')
+      .map((res) => {
+        const contextCreated: Context = res.json();
+        contextCreated.permission = TypePermission[TypePermission.write];
+        this.contexts$.value.ours.push(contextCreated);
+        this.contexts$.next(this.contexts$.value);
+        return contextCreated;
+      });
+  }
+
+  clone(id: string, properties = {}): Observable<Context> {
+    const url = this.baseUrl + '/contexts/' + id + '/clone';
+    const request = this.authHttp.post(url, JSON.stringify(properties));
+    return this.requestService.register(request, 'Clone context error')
+      .map((res) => {
+        const contextCloned: Context = res.json();
+        contextCloned.permission = TypePermission[TypePermission.write];
+        this.contexts$.value.ours.push(contextCloned);
+        this.contexts$.next(this.contexts$.value);
+        return contextCloned;
+      });
+  }
+
+  update(id: string, context: Context): Observable<Context> {
+    const url = this.baseUrl + '/contexts/' + id;
+    const request = this.authHttp.patch(url, JSON.stringify(context));
+    return this.requestService.register(request, 'Update context error')
+      .map((res) => {
+        const contextUpdated: Context = res.json();
+        return contextUpdated;
+      });
+  }
+
+// =================================================================
+
+addToolAssociation(contextId: string, toolId: string): Observable<void> {
+  const url = `${this.baseUrl}/contexts/${contextId}/tools`;
+  const association = {
+    toolId: toolId
+  };
+  const request = this.authHttp.post(url, JSON.stringify(association));
+  return this.requestService.register(request, 'Add tool association error');
+}
+
+deleteToolAssociation(contextId: string, toolId: string): Observable<any> {
+  const url = `${this.baseUrl}/contexts/${contextId}/tools/${toolId}`;
+  const request = this.authHttp.delete(url);
+  return this.requestService.register(request, 'Delete tool association error')
+    .map((res) => {
+      const toolAssociation = res.json();
+      return toolAssociation;
+    });
+}
+
+getPermissions(id: string): Observable<ContextPermission[]> {
+  const url = this.baseUrl + '/contexts/' + id + '/permissions';
+  const request = this.authHttp.get(url);
+  return this.requestService.register(request, 'Get context permissions error')
+    .map((res) => {
+      const permissions: ContextPermission[] = res.json().permissions;
+      return permissions;
+    });
+}
+
+addPermissionAssociation(contextId: string, profil: string,
+  type: TypePermission): Observable<ContextPermission> {
+
+  const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
+  const association = {
+    profil: profil,
+    typePermission: type
+  };
+  const request = this.authHttp.post(url, JSON.stringify(association));
+  return this.requestService.register(request, 'Add permission association error')
+    .map((res) => {
+      return res.json();
+    });
+}
+
+deletePermissionAssociation(contextId: string, permissionId: string): Observable<void> {
+  const url = `${this.baseUrl}/contexts/${contextId}/permissions/${permissionId}`;
+  const request = this.authHttp.delete(url);
+  return this.requestService.register(request, 'Delete permission association error');
+}
+
+// ======================================================================
+
+  getLocalContexts(): Observable<ContextsList> {
+    const url = this.getPath(this.options.contextListFile);
+    return this.requestService.register(this.http.get(url))
+      .map(res => { return {ours: res.json()}; });
+  }
+
+  getLocalContext(uri): Observable<DetailedContext> {
+    const url = this.getPath(`${uri}.json`);
+    return this.requestService.register(this.http.get(url))
+      .map(res => res.json())
+      .catch(res => this.handleError(res, uri));
+  }
+
   loadContexts() {
-    let url: string;
-    if (this.options.url) {
-      url = this.options.url + 'contexts';
+    let request;
+    if (this.baseUrl) {
+      request = this.get();
     } else {
-      url = this.getPath(this.options.contextListFile);
+      request = this.getLocalContexts();
     }
-    this.requestService.register(
-      this.authHttp.get(url)
-    )
-    .map(res => res.json().ours ? res.json() : {ours: res.json()} )
-    .subscribe(contexts => {
+    request.subscribe(contexts => {
       this.contexts$.next(contexts);
     });
   }
@@ -67,34 +219,9 @@ export class ContextService {
 
   loadContext(uri: string) {
     const context = this.context$.value;
-
     if (context && context.uri === uri) { return; }
 
-    let url: string;
-    if (this.options.url) {
-      let contextToLoad;
-      for (const key of Object.keys(this.contexts$.value)) {
-        contextToLoad = this.contexts$.value[key].find((c) => {
-          return c.uri === uri;
-        });
-        if (contextToLoad) {
-          break;
-        }
-      }
-
-      // TODO : use always id or uri
-      const id = contextToLoad ? contextToLoad.id : uri;
-      url = `${this.options.url}contexts/${id}/details`;
-    } else {
-      url = this.getPath(`${uri}.json`);
-    }
-
-    this.requestService.register(
-      this.authHttp.get(url)
-        .map(res => res.json())
-        .catch(res => this.handleError(res, uri))
-    , 'Context')
-    .subscribe((_context: DetailedContext) => {
+    this.getContextByUri(uri).subscribe((_context: DetailedContext) => {
       this.setContext(_context);
     });
   }
@@ -112,6 +239,36 @@ export class ContextService {
     Object.assign(context.map.view, this.mapViewFromRoute);
 
     this.context$.next(context);
+  }
+
+  loadEditedContext(uri: string) {
+    this.getContextByUri(uri).subscribe((_context: DetailedContext) => {
+      this.setEditedContext(_context);
+    });
+  }
+
+  setEditedContext(context: DetailedContext) {
+    this.editedContext$.next(context);
+  }
+
+  private getContextByUri(uri: string): Observable<DetailedContext> {
+    if (this.baseUrl) {
+      let contextToLoad;
+      for (const key of Object.keys(this.contexts$.value)) {
+        contextToLoad = this.contexts$.value[key].find((c) => {
+          return c.uri === uri;
+        });
+        if (contextToLoad) {
+          break;
+        }
+      }
+
+      // TODO : use always id or uri
+      const id = contextToLoad ? contextToLoad.id : uri;
+      return this.getDetails(id);
+    }
+
+    return this.getLocalContext(uri);
   }
 
   private readParamsFromRoute() {

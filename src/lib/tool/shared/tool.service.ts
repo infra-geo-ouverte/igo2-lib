@@ -1,6 +1,9 @@
 import { Injectable, Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
 
+import { RequestService, ConfigService } from '../../core';
+import { AuthHttp } from '../../auth';
 import { Tool } from './tool.interface';
 
 export function Register(toolDef: Tool) {
@@ -17,18 +20,34 @@ export class ToolService {
   public tools$ = new BehaviorSubject<{[key: string]: Tool}>({});
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
   public selectedTool$ = new BehaviorSubject<Tool>(undefined);
+  private baseUrl: string;
 
   static register(tool: Tool, cls?: Component) {
     ToolService.toolDefs[tool.name] = [Object.assign({}, tool), cls];
   }
 
-  constructor() {
+  constructor(private authHttp: AuthHttp,
+              private requestService: RequestService,
+              private config: ConfigService) {
+
+    this.baseUrl = this.config.getConfig('context.url');
+
     this.tools$.subscribe(tools => this.handleToolsChange());
 
     const tools = Object.keys(ToolService.toolDefs).map(name => {
       return {name: name};
     });
     this.setTools(tools);
+  }
+
+  get(): Observable<Tool[]> {
+    const url = this.baseUrl + '/tools';
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get tools error')
+      .map((res) => {
+        const tools: Tool[] = res.json();
+        return tools;
+      });
   }
 
   setTools(tools: Tool[]) {

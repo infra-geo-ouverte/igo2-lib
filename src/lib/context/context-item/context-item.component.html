@@ -1,4 +1,86 @@
 <md-list-item>
   <md-icon md-list-avatar>{{context.icon ? context.icon : 'star'}}</md-icon>
-  <h4 mdLine>{{context.title}}</h4>
+  <h4 [ngClass]="{'hiddenTitle': !collapsed}" mdLine>{{context.title}}</h4>
+
+  <div *ngIf="context.permission === typePermission.read"
+       igoStopPropagation
+       class="igo-actions-container">
+
+       <button
+         md-icon-button
+         [md-tooltip]="'igo.context.clone' | translate"
+         [color]="color"
+         (click)="clone.emit(context)">
+         <md-icon>content_copy</md-icon>
+       </button>
+ </div>
+
+
+  <div *ngIf="context.permission === typePermission[typePermission.write]"
+       igoStopPropagation
+       class="igo-actions-container">
+
+     <button *ngIf="collapsed"
+       md-icon-button
+       [md-tooltip]="'igo.context.save' | translate"
+       [color]="color"
+       (click)="save.emit(context)">
+       <md-icon>save</md-icon>
+     </button>
+
+    <div #actions class="igo-actions-expand-container">
+
+      <button
+        md-icon-button
+        [md-tooltip]="'igo.context.managePermissions' | translate"
+        [color]="color"
+        (click)="managePermissions.emit(context)">
+        <md-icon>perm_identity</md-icon>
+      </button>
+
+      <button
+        md-icon-button
+        [md-tooltip]="'igo.context.manageTools' | translate"
+        [color]="color"
+        (click)="manageTools.emit(context)">
+        <md-icon>widgets</md-icon>
+      </button>
+
+      <button
+        md-icon-button
+        [md-tooltip]="'igo.context.clone' | translate"
+        [color]="color"
+        (click)="clone.emit(context)">
+        <md-icon>content_copy</md-icon>
+      </button>
+
+      <button
+        md-icon-button
+        [color]="color"
+        [md-tooltip]="'igo.context.edit' | translate"
+        (click)="edit.emit(context)">
+        <md-icon>edit</md-icon>
+      </button>
+
+      <button
+        md-icon-button
+        color="warn"
+        [md-tooltip]="'igo.context.delete' | translate"
+        (click)="delete.emit(context)">
+        <md-icon>delete</md-icon>
+      </button>
+    </div>
+
+    <button
+      md-icon-button
+      igoCollapse
+      [color]="color"
+      [target]="actions"
+      [collapsed]=collapsed
+      (click)="collapsed = !collapsed">
+      <md-icon>more_horiz</md-icon>
+    </button>
+
+  </div>
+
 </md-list-item>

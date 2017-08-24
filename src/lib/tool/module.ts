@@ -14,12 +14,20 @@ import { ToolbarComponent, ToolbarBindingDirective } from './toolbar';
 import { ToolbarItemComponent } from './toolbar-item';
 import { ToolboxComponent } from './toolbox';
 
-import { ContextManagerToolComponent, MapDetailsToolComponent,
-         SearchResultsToolComponent, PrintToolComponent,
+import { ContextManagerToolComponent,
+         ContextEditorToolComponent,
+         ToolsContextManagerToolComponent,
+         PermissionsContextManagerToolComponent,
+         MapDetailsToolComponent,
+         SearchResultsToolComponent,
+         PrintToolComponent,
          TimeAnalysisToolComponent } from './tools';
 
 const IGO_TOOLS = [
   ContextManagerToolComponent,
+  ContextEditorToolComponent,
+  ToolsContextManagerToolComponent,
+  PermissionsContextManagerToolComponent,
   MapDetailsToolComponent,
   SearchResultsToolComponent,
   PrintToolComponent,
@@ -65,10 +73,3 @@ export class IgoToolModule {
     };
   }
 }
-
-export * from './shared';
-export * from './toolbar';
-export * from './toolbar-item';
-export * from './toolbox';
-
-export * from './tools'

@@ -8,6 +8,12 @@
           color="accent"
           [selected]="selectedContext && selectedContext.uri === context.uri"
           [context]="context"
+          (edit)="edit.emit(context)"
+          (delete)="delete.emit(context)"
+          (clone)="clone.emit(context)"
+          (save)="save.emit(context)"
+          (manageTools)="manageTools.emit(context)"
+          (managePermissions)="managePermissions.emit(context)"
           (select)="select.emit(context)"
           (unselect)="unselect.emit(context)">
         </igo-context-item>

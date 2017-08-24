@@ -1,0 +1,5 @@
+<igo-context-form *ngIf="context"
+   btnSubmitText="Save"
+   [context]="context"
+   (submitForm)="submitForm.emit($event)">
+</igo-context-form>

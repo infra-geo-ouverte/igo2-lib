@@ -2,13 +2,15 @@ import { MapViewOptions } from '../../map';
 import { LayerContext } from '../../layer';
 import { DataSourceContext } from '../../datasource';
 import { Tool } from '../../tool/shared/tool.interface';
+import { Scope, TypePermission } from './context.enum';
 
 
 export interface Context {
   id?: string;
-  title: string;
-  uri: string;
-  scope?: 'public' | 'protected' | 'private';
+  title?: string;
+  uri?: string;
+  scope?: Scope; // 'public' | 'protected' | 'private';
+  permission?: string; // 'read' | 'write'
   description?: string;
   icon?: string;
 }
@@ -43,4 +45,16 @@ export interface ContextServiceOptions {
   basePath?: string;
   contextListFile?: string;
   defaultContextUri?: string;
+}
+
+export interface ContextPermission  {
+  id?: string;
+  contextId?: string;
+  profil: string;
+  typePermission: TypePermission;
+}
+
+export interface ContextPermissionsList  {
+  read: ContextPermission[];
+  write: ContextPermission[];
 }

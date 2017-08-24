@@ -1,7 +1,7 @@
 import { Component, Input, Output,
          EventEmitter, ChangeDetectorRef } from '@angular/core';
 
-import { Context, ContextsList } from '../shared';
+import { DetailedContext, ContextsList } from '../shared';
 
 
 @Component({
@@ -19,15 +19,21 @@ export class ContextListComponent {
   private _contexts: ContextsList = {ours: []};
 
   @Input()
-  get selectedContext(): Context { return this._selectedContext; }
-  set selectedContext(value: Context) {
+  get selectedContext(): DetailedContext { return this._selectedContext; }
+  set selectedContext(value: DetailedContext) {
     this._selectedContext = value;
     this.cdRef.detectChanges();
   }
-  private _selectedContext: Context;
+  private _selectedContext: DetailedContext;
 
-  @Output() select = new EventEmitter<Context>();
-  @Output() unselect = new EventEmitter<Context>();
+  @Output() select = new EventEmitter<DetailedContext>();
+  @Output() unselect = new EventEmitter<DetailedContext>();
+  @Output() edit = new EventEmitter<DetailedContext>();
+  @Output() delete = new EventEmitter<DetailedContext>();
+  @Output() save = new EventEmitter<DetailedContext>();
+  @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() managePermissions = new EventEmitter<DetailedContext>();
+  @Output() manageTools = new EventEmitter<DetailedContext>();
 
   public titleMapping = {
       ours: 'igo.ourContexts',

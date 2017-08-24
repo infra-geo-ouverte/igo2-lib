@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { Context } from '../shared/context.interface';
+import { TypePermission } from '../shared/context.enum';
+import { DetailedContext } from '../shared/context.interface';
 
 @Component({
   selector: 'igo-context-item',
@@ -8,14 +9,21 @@ import { Context } from '../shared/context.interface';
   styleUrls: ['./context-item.component.styl']
 })
 export class ContextItemComponent {
+  public typePermission = TypePermission;
+  public color: string = 'primary';
+  public collapsed: boolean = true;
 
   @Input()
-  get context(): Context { return this._context; }
-  set context(value: Context) {
+  get context(): DetailedContext { return this._context; }
+  set context(value: DetailedContext) {
     this._context = value;
   }
-  private _context: Context;
+  private _context: DetailedContext;
 
-  constructor() { }
-
+  @Output() edit = new EventEmitter<DetailedContext>();
+  @Output() delete = new EventEmitter<DetailedContext>();
+  @Output() save = new EventEmitter<DetailedContext>();
+  @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() managePermissions = new EventEmitter<DetailedContext>();
+  @Output() manageTools = new EventEmitter<DetailedContext>();
 }
