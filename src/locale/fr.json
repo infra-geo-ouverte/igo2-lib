@@ -8,12 +8,28 @@
       "user": "Utilisateur",
       "welcome": "Bienvenue {{name}}!"
     },
-    "context": "Contexte",
+    "confirmDialog": {
+      "title": "Confirmation",
+      "confirmBtn": "Confirmer",
+      "cancelBtn": "Annuler",
+      "confirmDeleteContext": "Êtes-vous sûr de vouloir supprimer ce contexte ?"
+    },
+    "context": {
+      "save": "Sauvegarder ce contexte",
+      "edit": "Éditer ce contexte",
+      "clone": "Cloner ce contexte",
+      "delete": "Supprimer ce contexte",
+      "managePermissions": "Gérer les permissions du contexte",
+      "manageTools": "Gérer les outils du contexte"
+    },
     "contextInvalid": {
       "text": "Le contexte \"{{value}}\" est invalide",
       "title": "Contexte invalide"
     },
     "contexts": "Contextes",
+    "ourContexts": "Vos contextes",
+    "publicContexts": "Contextes publics",
+    "sharedContexts": "Contextes partagés",
     "endDate": "Date de fin",
     "format": "Format",
     "hideLayer": "Masquer la couche",

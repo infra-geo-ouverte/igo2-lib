@@ -8,12 +8,28 @@
       "user": "User",
       "welcome": "Welcome {{name}}!"
     },
-    "context": "Context",
+    "confirmDialog": {
+      "title": "Confirm",
+      "confirmBtn": "Confirm",
+      "cancelBtn": "Cancel",
+      "confirmDeleteContext": "Are you sure you want to delete this context?"
+    },
+    "context": {
+      "save": "Save this context",
+      "edit": "Edit this context",
+      "clone": "Clone this context",
+      "delete": "Delete this context",
+      "managePermissions": "Manage permissions context",
+      "manageTools": "Manage tools context"
+    },
     "contextInvalid": {
       "text": "Context '{{value}}' is invalid",
       "title": "Invalid context"
     },
     "contexts": "Contexts",
+    "ourContexts": "Our contexts",
+    "publicContexts": "Public contexts",
+    "sharedContexts": "Shared contexts",
     "endDate": "End Date",
     "format": "Format",
     "hideLayer": "Hide Layer",
