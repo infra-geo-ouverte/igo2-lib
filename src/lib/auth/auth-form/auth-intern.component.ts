@@ -31,13 +31,8 @@ export class AuthInternComponent {
         () => {
           this.onLogin.emit(true);
         },
-        (errors: any) => {
-          let message = '';
-          for (const err in errors) {
-            if (!errors.hasOwnProperty(err)) { continue; }
-            message += errors[err]['message'] + '\n';
-          }
-          this.error = message;
+        (error: any) => {
+          this.error = error.message;
         }
       );
     return false;
