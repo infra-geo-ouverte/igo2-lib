@@ -9,4 +9,5 @@ export * from './list';
 export * from './panel';
 export * from './sidenav';
 export * from './spinner';
+export * from './stop-propagation';
 export * from './table';

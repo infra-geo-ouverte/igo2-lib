@@ -16,6 +16,7 @@ import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
 import { SidenavShimDirective } from './sidenav';
 import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
+import { StopPropagationDirective } from './stop-propagation';
 import { TableComponent } from './table';
 
 
@@ -48,6 +49,7 @@ import { TableComponent } from './table';
     SidenavShimDirective,
     SpinnerComponent,
     SpinnerBindingDirective,
+    StopPropagationDirective,
     TableComponent
   ],
   declarations: [
@@ -63,6 +65,7 @@ import { TableComponent } from './table';
     SidenavShimDirective,
     SpinnerComponent,
     SpinnerBindingDirective,
+    StopPropagationDirective,
     TableComponent
   ],
   entryComponents: [
