@@ -1,0 +1,39 @@
+<form class="igo-form" [formGroup]="form"
+  (ngSubmit)="handleFormSubmit(form.value)">
+
+  <md-input-container>
+    <input mdInput required
+           [placeholder]="'igo.title' | translate"
+           formControlName="title">
+   <md-error>
+     Title required
+   </md-error>
+  </md-input-container>
+
+
+  <md-radio-group formControlName="scope">
+    <md-radio-button value="private">
+      Private
+      <!--{{ 'form.private' | translate }}-->
+    </md-radio-button>
+    <md-radio-button value="protected">
+      Protected
+      <!--{{ 'form.protected' | translate }}-->
+    </md-radio-button>
+    <md-radio-button value="public">
+      Public
+      <!--{{ 'form.public' | translate }}-->
+    </md-radio-button>
+  </md-radio-group>
+
+
+  <div class="igo-form-button-group">
+    <button
+      md-raised-button
+      type="submit"
+      [disabled]="!form.valid || disabled">
+      Edit
+    </button>
+  </div>
+
+</form>

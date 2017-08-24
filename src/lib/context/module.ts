@@ -7,6 +7,15 @@ import { ContextService, MapContextDirective, LayerContextDirective,
 import { ContextListComponent,
          ContextListBindingDirective } from './context-list';
 import { ContextItemComponent } from './context-item';
+import { ContextFormComponent } from './context-form';
+import { ContextEditComponent,
+         ContextEditBindingDirective } from './context-edit';
+
+import { ContextToolsComponent,
+         ContextToolsBindingDirective } from './context-tools';
+
+import { ContextPermissionsComponent,
+         ContextPermissionsBindingDirective } from './context-permissions';
 
 const CONTEXT_DIRECTIVES = [
   MapContextDirective,
@@ -23,6 +32,13 @@ const CONTEXT_DIRECTIVES = [
     ContextListComponent,
     ContextListBindingDirective,
     ContextItemComponent,
+    ContextFormComponent,
+    ContextEditComponent,
+    ContextEditBindingDirective,
+    ContextToolsComponent,
+    ContextToolsBindingDirective,
+    ContextPermissionsComponent,
+    ContextPermissionsBindingDirective,
 
     ...CONTEXT_DIRECTIVES
   ],
@@ -30,6 +46,13 @@ const CONTEXT_DIRECTIVES = [
     ContextListComponent,
     ContextListBindingDirective,
     ContextItemComponent,
+    ContextFormComponent,
+    ContextEditComponent,
+    ContextEditBindingDirective,
+    ContextToolsComponent,
+    ContextToolsBindingDirective,
+    ContextPermissionsComponent,
+    ContextPermissionsBindingDirective,
 
     ...CONTEXT_DIRECTIVES
   ]

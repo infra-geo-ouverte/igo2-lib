@@ -1,0 +1,59 @@
+<igo-list *ngIf="permissions">
+  <ng-template ngFor let-groupPermissions [ngForOf]="permissions | keyvalue">
+    <igo-collapsible *ngIf="groupPermissions.value.length" [title]="groupPermissions.key">
+      <ng-template ngFor let-permission [ngForOf]="groupPermissions.value">
+        <md-list-item>
+          <md-icon md-list-avatar>perm_identity</md-icon>
+          <h4 md-line>{{permission.profil}}</h4>
+
+          <div igoStopPropagation
+               class="igo-actions-container">
+
+             <button
+               md-icon-button
+               md-tooltip="Delete permission"
+               color="warn"
+               (click)="removePermission.emit(permission)">
+               <md-icon>delete</md-icon>
+             </button>
+          </div>
+
+        </md-list-item>
+      </ng-template>
+    </igo-collapsible>
+  </ng-template>
+</igo-list>
+
+<form class="igo-form" [formGroup]="form"
+  (ngSubmit)="handleFormSubmit(form.value)">
+
+  <md-input-container>
+    <input mdInput required
+           placeholder="Profil"
+           formControlName="profil">
+   <md-error>
+     Profil required
+   </md-error>
+  </md-input-container>
+
+
+  <md-radio-group formControlName="typePermission">
+    <md-radio-button value="read">
+      Read only
+    </md-radio-button>
+    <md-radio-button value="write">
+      Read and write
+    </md-radio-button>
+  </md-radio-group>
+
+
+  <div class="igo-form-button-group">
+    <button
+      md-raised-button
+      type="submit"
+      [disabled]="!form.valid">
+      Add
+    </button>
+  </div>
+
+</form>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Register } from '../../shared';
+import { Register, ToolService } from '../../shared';
 
 
 @Register({
@@ -15,6 +15,27 @@ import { Register } from '../../shared';
 })
 export class ContextManagerToolComponent {
 
-  constructor() { }
+  constructor(private toolService: ToolService) {}
+
+  editContext() {
+    const tool = this.toolService.getTool('contextEditor');
+    if (tool) {
+      this.toolService.selectTool(tool);
+    }
+  }
+
+  manageTools() {
+    const tool = this.toolService.getTool('toolsContextManager');
+    if (tool) {
+      this.toolService.selectTool(tool);
+    }
+  }
+
+  managePermissions() {
+    const tool = this.toolService.getTool('permissionsContextManager');
+    if (tool) {
+      this.toolService.selectTool(tool);
+    }
+  }
 
 }
