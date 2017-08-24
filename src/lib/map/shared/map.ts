@@ -112,15 +112,14 @@ export class IgoMap {
     const view = new ol.View(options);
     this.ol.setView(view);
 
-    this.unsubscribeGeolocation();
-    this.stopGeolocation();
+    this.unsubscribeGeolocate();
     if (options) {
       if (options.center) {
         const center = ol.proj.fromLonLat(options.center, this.projection);
         view.setCenter(center);
       }
       if (options.geolocate) {
-        this.subscribeGeolocation();
+        this.geolocate(true);
       }
     }
   }
@@ -262,38 +261,12 @@ export class IgoMap {
     this.overlayDataSource.ol.clear();
   }
 
-  startGeolocation() {
-    if (!this.geolocation) {
-      this.geolocation = new ol.Geolocation({
-        projection: this.projection,
-        tracking: true
-      });
-
-      this.geolocation.on('change', (evt) => {
-        this.geolocation$.next(this.geolocation);
-      });
-    } else {
-      this.geolocation.setTracking(true);
-    }
-  }
-
-  stopGeolocation() {
-    if (this.geolocation) {
-      this.geolocation.setTracking(false);
-    }
-  }
-
-  private sortLayers() {
-    // Sort by descending zIndex
-    this.layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
-  }
-
-  private getLayerIndex(layer: Layer) {
-    return this.layers.findIndex(layer_ => layer_ === layer);
-  }
-
-  private subscribeGeolocation() {
+  geolocate(track = false) {
     let first = true;
+    if (this.geolocation$$) {
+      track = this.geolocation.getTracking();
+      this.unsubscribeGeolocate()
+    }
     this.startGeolocation();
 
     this.geolocation$$ = this.geolocation$.subscribe((geolocation) => {
@@ -316,15 +289,47 @@ export class IgoMap {
         view.setCenter(coordinates);
         view.setZoom(14);
       }
-
-      first = false;
+      if (track) {
+        this.unsubscribeGeolocate();
+      }
     });
   }
 
-  private unsubscribeGeolocation() {
+  unsubscribeGeolocate() {
     this.stopGeolocation();
     if (this.geolocation$$) {
       this.geolocation$$.unsubscribe();
+      this.geolocation$$ = undefined;
     }
+  }
+
+  private startGeolocation() {
+    if (!this.geolocation) {
+      this.geolocation = new ol.Geolocation({
+        projection: this.projection,
+        tracking: true
+      });
+
+      this.geolocation.on('change', (evt) => {
+        this.geolocation$.next(this.geolocation);
+      });
+    } else {
+      this.geolocation.setTracking(true);
+    }
+  }
+
+ private stopGeolocation() {
+    if (this.geolocation) {
+      this.geolocation.setTracking(false);
+    }
+  }
+
+  private sortLayers() {
+    // Sort by descending zIndex
+    this.layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
+  }
+
+  private getLayerIndex(layer: Layer) {
+    return this.layers.findIndex(layer_ => layer_ === layer);
   }
 }
