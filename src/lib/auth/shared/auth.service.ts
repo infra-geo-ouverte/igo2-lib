@@ -38,6 +38,10 @@ export class AuthService {
         const data = res.json();
         this.token = data.token;
         localStorage.setItem(this.options.tokenKey, this.token);
+      })
+      .catch((err: any) => {
+        const body = err.json();
+        return Observable.throw([{text: body.message}]);
       });
   }
 
@@ -55,6 +59,10 @@ export class AuthService {
         const data = res.json();
         this.token = data.token;
         localStorage.setItem(this.options.tokenKey, this.token);
+      })
+      .catch((err: any) => {
+        const body = err.json();
+        return Observable.throw([{text: body.message}]);
       });
   }
 

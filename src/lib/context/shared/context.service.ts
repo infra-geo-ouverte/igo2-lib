@@ -88,7 +88,7 @@ export class ContextService {
       });
   }
 
-  create(context: Context): Observable<Context> {
+  create(context: DetailedContext): Observable<Context> {
     const url = this.baseUrl + '/contexts';
     const request = this.authHttp.post(url, JSON.stringify(context));
     return this.requestService.register(request, 'Create context error')

@@ -10,9 +10,23 @@
   height: 100%;
 }
 
-:host >>> .igo-zoom-container {
+:host >>> igo-zoom {
   position: absolute;
   bottom: $igo-margin;
+  right: $igo-margin;
+  width: $igo-icon-button-width;
+}
+
+:host >>> igo-bookmark {
+  position: absolute;
+  bottom: $igo-margin;
+  right: "calc(%s + 50px)" % $igo-margin;
+  width: $igo-icon-button-width;
+}
+
+:host >>> igo-geolocate {
+  position: absolute;
+  bottom: 95px;
   right: $igo-margin;
   width: $igo-icon-button-width;
 }
