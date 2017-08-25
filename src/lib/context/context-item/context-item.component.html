@@ -2,7 +2,7 @@
   <md-icon md-list-avatar>{{context.icon ? context.icon : 'star'}}</md-icon>
   <h4 [ngClass]="{'hiddenTitle': !collapsed}" mdLine>{{context.title}}</h4>
 
-  <div *ngIf="context.permission === typePermission.read"
+  <div *ngIf="context.permission === typePermission[typePermission.read]"
        igoStopPropagation
        class="igo-actions-container">
 
