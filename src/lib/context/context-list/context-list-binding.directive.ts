@@ -31,6 +31,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     const changes = {
       layers: []
     };
+
+    let order = layers.length;
     for (const l of layers) {
         const layer: any = l;
         const opts = {
@@ -40,7 +42,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
           source: {
             params: layer.dataSource.options.params,
             url: layer.dataSource.options.url
-          }
+          },
+          order: order--
         }
         changes.layers.push(opts);
     }
