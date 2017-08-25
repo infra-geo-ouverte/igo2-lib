@@ -1,4 +1,5 @@
 @require '../../../style/var.styl';
+@require '../../../style/media.styl';
 
 :host {
   position: relative;
@@ -15,6 +16,9 @@
   bottom: $igo-margin;
   right: $igo-margin;
   width: $igo-icon-button-width;
+  +media(mobile) {
+    display: none;
+  }
 }
 
 :host >>> igo-bookmark {
@@ -29,6 +33,9 @@
   bottom: 95px;
   right: $igo-margin;
   width: $igo-icon-button-width;
+  +media(mobile) {
+    bottom: $igo-margin;
+  }
 }
 
 :host >>> .ol-attribution {
