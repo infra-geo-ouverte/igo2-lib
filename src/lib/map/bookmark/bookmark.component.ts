@@ -34,19 +34,22 @@ export class BookmarkComponent {
     private contextService: ContextService,
     private toolService: ToolService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   createContext() {
     const view = this.map.ol.getView();
+    const proj = view.getProjection().getCode();
+    const center: any = new ol.geom.Point(view.getCenter()).transform(proj,'EPSG:4326');
+
     let context = {
       uri: uuid(),
       title: '',
       scope: 'private',
       map: {
         view: {
-          center: view.getCenter(),
+          center: center.getCoordinates(),
           zoom: view.getZoom(),
-          projection: view.getProjection().getCode()
+          projection: proj
         }
       },
       layers: [],
@@ -54,6 +57,7 @@ export class BookmarkComponent {
     };
 
     const layers = this.map.layers$.getValue();
+    let order = layers.length;
     for (const l of layers) {
         const layer: any = l;
         const opts = {
@@ -63,7 +67,8 @@ export class BookmarkComponent {
           source: {
             params: layer.dataSource.options.params,
             url: layer.dataSource.options.url
-          }
+          },
+          order: order--
         }
         context.layers.push(opts);
     }
