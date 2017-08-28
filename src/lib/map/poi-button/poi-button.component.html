@@ -1,0 +1,24 @@
+<md-select placeholder="Zones of interest" floatPlaceholder="never" (change)="handlePoiChanged($event.value)">
+  <md-option>
+    <div class="titlePoi">Create a new zone</div>
+    <button igoStopPropagation class="addPoi buttonPoi"
+      md-icon-button
+      color="primary"
+      (click)="createPoi()">
+      <md-icon>
+        <span></span>
+      </md-icon>
+    </button>
+  </md-option>
+  <md-option *ngFor="let poi of pois" [value]="poi.id">
+    <div class="titlePoi">{{ poi.title }}</div>
+    <button igoStopPropagation class="deletePoi buttonPoi"
+      md-icon-button
+      color="warn"
+      (click)="deletePoi(poi)">
+      <md-icon>
+        <span></span>
+      </md-icon>
+    </button>
+  </md-option>
+</md-select>

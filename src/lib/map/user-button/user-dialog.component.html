@@ -1,0 +1,12 @@
+<h1 md-dialog-title>User info</h1>
+<div md-dialog-content>
+  <p>User: {{user.sourceId}}</p>
+  <p>Email: {{user.email}}</p>
+  <p>Expiration: {{exp}}</p>
+</div>
+<div md-dialog-actions style="justify-content: center">
+  <button md-button color="primary"
+         (click)="dialogRef.close(false)">
+    OK
+  </button>
+</div>

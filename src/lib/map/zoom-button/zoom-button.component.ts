@@ -3,11 +3,11 @@ import { Component, Input } from '@angular/core';
 import { IgoMap } from '../shared/map';
 
 @Component({
-  selector: 'igo-zoom',
-  templateUrl: './zoom.component.html',
-  styleUrls: ['./zoom.component.styl']
+  selector: 'igo-zoom-button',
+  templateUrl: './zoom-button.component.html',
+  styleUrls: ['./zoom-button.component.styl']
 })
-export class ZoomComponent {
+export class ZoomButtonComponent {
 
   @Input()
   get map(): IgoMap { return this._map; }

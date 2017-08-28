@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { Router } from '@angular/router';
 
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Rx';
 import { JwtHelper } from 'angular2-jwt';
 
@@ -12,9 +13,11 @@ import { AuthOptions } from '../shared';
 
 @Injectable()
 export class AuthService {
+  public authenticate$ = new BehaviorSubject<Boolean>(undefined);
   public redirectUrl: string;
   private options: AuthOptions;
   private token: string;
+  private anonymous: boolean = false;
 
   constructor(private http: Http,
               private config: ConfigService,
@@ -22,6 +25,7 @@ export class AuthService {
 
     this.options = this.config.getConfig('auth') || {};
     this.token = localStorage.getItem(this.options.tokenKey);
+    this.authenticate$.next(this.authenticated);
   }
 
   login(username: string, password: string): any {
@@ -38,6 +42,7 @@ export class AuthService {
         const data = res.json();
         this.token = data.token;
         localStorage.setItem(this.options.tokenKey, this.token);
+        this.authenticate$.next(true);
       })
       .catch((err: any) => {
         const body = err.json();
@@ -59,6 +64,7 @@ export class AuthService {
         const data = res.json();
         this.token = data.token;
         localStorage.setItem(this.options.tokenKey, this.token);
+        this.authenticate$.next(true);
       })
       .catch((err: any) => {
         const body = err.json();
@@ -66,9 +72,16 @@ export class AuthService {
       });
   }
 
+  loginAnonymous() {
+    this.anonymous = true;
+    return Observable.of(true);
+  }
+
   logout() {
+    this.anonymous = false;
     this.token = undefined;
     localStorage.removeItem(this.options.tokenKey);
+    this.authenticate$.next(false);
     return Observable.of(true);
   }
 
@@ -105,7 +118,15 @@ export class AuthService {
     return Base64.encode(password);
   }
 
-  get logged() {
+  get logged(): boolean {
+    return this.authenticated || this.isAnonymous;
+  }
+
+  get isAnonymous(): boolean {
+    return this.anonymous;
+  }
+
+  get authenticated(): boolean {
     return this.isAuthenticated();
   }
 }
