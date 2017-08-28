@@ -2,7 +2,7 @@ import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
-import { RouteServiceOptions } from '.';
+import { RouteServiceOptions } from './route.interface';
 
 export let ROUTE_SERVICE_OPTIONS =
   new InjectionToken<RouteServiceOptions>('routeServiceOptions');

@@ -23,10 +23,10 @@
     "noLegendText": "Aucune légende disponible pour cette couche",
     "opacity": "Opacité",
     "orientation": "Orientation",
-    "Our contexts": "Vos contextes",
+    "ourContexts": "Vos contextes",
     "portrait": "Portrait",
     "print": "Imprimer",
-    "Public contexts": "Contextes publics",
+    "publicContexts": "Contextes publics",
     "raiseLayer": "Monter la couche",
     "removeLayer": "Retirer la couche de la carte",
     "resolution": "Resolution",
@@ -34,7 +34,7 @@
     "showLayer": "Afficher la couche",
     "showMetadata": "Montrer les métadonnées",
     "startDate": "Date de début",
-    "Shared contexts": "Contextes partagés",
+    "sharedContexts": "Contextes partagés",
     "timeAnalysis": "Analyse Temporelle",
     "title": "Titre"
   }

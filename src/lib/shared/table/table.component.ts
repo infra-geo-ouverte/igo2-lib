@@ -11,8 +11,11 @@ import 'rxjs/add/operator/map';
 
 import { ObjectUtils } from '../../utils';
 
-import { TableDataSource, TableDatabase,
-  TableModel, TableActionColor } from './index';
+import { TableModel } from './table-model.interface';
+import { TableDatabase } from './table-database';
+import { TableDataSource } from './table-datasource';
+import { TableActionColor } from './table-action-color.enum';
+
 
 @Component({
   selector: 'igo-table',

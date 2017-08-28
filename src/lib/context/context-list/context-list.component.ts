@@ -30,9 +30,9 @@ export class ContextListComponent {
   @Output() unselect = new EventEmitter<Context>();
 
   public titleMapping = {
-      ours: 'Our contexts',
-      shared: 'Shared contexts',
-      public: 'Public contexts'
+      ours: 'igo.ourContexts',
+      shared: 'igo.sharedContexts',
+      public: 'igo.publicContexts'
   };
 
   constructor(private cdRef: ChangeDetectorRef) {}
