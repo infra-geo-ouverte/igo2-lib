@@ -14,7 +14,8 @@ import { AuthFormComponent,
 import { AuthService,
         AuthGuard,
         ProtectedDirective,
-        authHttpServiceFactory } from './shared';
+        authHttpServiceFactory,
+        PoiService } from './shared';
 
 @NgModule({
     imports: [IgoSharedModule],
@@ -38,6 +39,7 @@ export class IgoAuthModule {
       ngModule: IgoAuthModule,
       providers: [
         AuthService,
+        PoiService,
         AuthGuard,
         {
           provide: AuthHttp,

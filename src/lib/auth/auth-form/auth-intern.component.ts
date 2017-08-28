@@ -37,4 +37,10 @@ export class AuthInternComponent {
       );
     return false;
   }
+
+  protected loginAnonymous() {
+    this.auth.loginAnonymous().subscribe(() => {
+      this.onLogin.emit(true);
+    });
+  }
 }

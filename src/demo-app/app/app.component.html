@@ -1,5 +1,7 @@
 <igo-spinner igoSpinnerBinding></igo-spinner>
 <igo-message-center></igo-message-center>
+<!--igo-auth-form></igo-auth-form-->
+
 <md-sidenav-container>
 
   <md-sidenav
@@ -91,7 +93,9 @@
         igoLayerContext
         igoMapBrowserBinding
         [map]="map">
-        <igo-zoom [map]="map" color="primary"></igo-zoom>
+        <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+        <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
+        <!--igo-user-button [map]="map" color="primary"></igo-user-button-->
       </igo-map-browser>
     </md-card-content>
   </md-card>
