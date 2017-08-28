@@ -9,11 +9,11 @@ import { IgoMap } from '../shared';
 import { BookmarkDialogComponent } from './bookmark-dialog.component';
 
 @Component({
-  selector: 'igo-bookmark',
-  templateUrl: './bookmark.component.html',
-  styleUrls: ['./bookmark.component.styl']
+  selector: 'igo-bookmark-button',
+  templateUrl: './bookmark-button.component.html',
+  styleUrls: ['./bookmark-button.component.styl']
 })
-export class BookmarkComponent {
+export class BookmarkButtonComponent {
 
   @Input()
   get map(): IgoMap { return this._map; }

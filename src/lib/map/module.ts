@@ -4,9 +4,11 @@ import { IgoSharedModule } from '../shared';
 
 import { MapService } from './shared';
 import { MapBrowserComponent, MapBrowserBindingDirective } from './map-browser';
-import { ZoomComponent } from './zoom';
-import { GeolocateComponent } from './geolocate';
-import { BookmarkComponent, BookmarkDialogComponent } from './bookmark';
+import { ZoomButtonComponent } from './zoom-button';
+import { GeolocateButtonComponent } from './geolocate-button';
+import { BookmarkButtonComponent, BookmarkDialogComponent } from './bookmark-button';
+import { PoiButtonComponent, PoiDialogComponent } from './poi-button';
+import { UserButtonComponent, UserDialogComponent } from './user-button';
 
 
 @NgModule({
@@ -16,20 +18,28 @@ import { BookmarkComponent, BookmarkDialogComponent } from './bookmark';
   exports: [
     MapBrowserComponent,
     MapBrowserBindingDirective,
-    ZoomComponent,
-    GeolocateComponent,
-    BookmarkComponent
+    ZoomButtonComponent,
+    GeolocateButtonComponent,
+    BookmarkButtonComponent,
+    PoiButtonComponent,
+    UserButtonComponent
   ],
   declarations: [
     MapBrowserComponent,
     MapBrowserBindingDirective,
-    ZoomComponent,
-    GeolocateComponent,
-    BookmarkComponent,
-    BookmarkDialogComponent
+    ZoomButtonComponent,
+    GeolocateButtonComponent,
+    BookmarkButtonComponent,
+    BookmarkDialogComponent,
+    PoiButtonComponent,
+    PoiDialogComponent,
+    UserButtonComponent,
+    UserDialogComponent
   ],
   entryComponents: [
-    BookmarkDialogComponent
+    BookmarkDialogComponent,
+    PoiDialogComponent,
+    UserDialogComponent
   ]
 })
 export class IgoMapModule {
@@ -44,7 +54,9 @@ export class IgoMapModule {
 }
 
 export * from './map-browser';
-export * from './zoom';
-export * from './geolocate';
-export * from './bookmark';
+export * from './zoom-button';
+export * from './geolocate-button';
+export * from './bookmark-button';
+export * from './poi-button';
+export * from './user-button';
 export * from './shared';

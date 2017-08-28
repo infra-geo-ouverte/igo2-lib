@@ -2,24 +2,24 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoSharedModule } from '../../shared';
 
-import { BookmarkComponent } from './bookmark.component';
+import { ZoomButtonComponent } from './zoom-button.component';
 
-describe('bookmarkComponent', () => {
-  let component: BookmarkComponent;
-  let fixture: ComponentFixture<BookmarkComponent>;
+describe('ZoomButtonComponent', () => {
+  let component: ZoomButtonComponent;
+  let fixture: ComponentFixture<ZoomButtonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule
       ],
-      declarations: [ BookmarkComponent ]
+      declarations: [ ZoomButtonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BookmarkComponent);
+    fixture = TestBed.createComponent(ZoomButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

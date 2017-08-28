@@ -3,11 +3,11 @@ import { Component, Input } from '@angular/core';
 import { IgoMap } from '../shared/map';
 
 @Component({
-  selector: 'igo-geolocate',
-  templateUrl: './geolocate.component.html',
-  styleUrls: ['./geolocate.component.styl']
+  selector: 'igo-geolocate-button',
+  templateUrl: './geolocate-button.component.html',
+  styleUrls: ['./geolocate-button.component.styl']
 })
-export class GeolocateComponent {
+export class GeolocateButtonComponent {
 
   @Input()
   get map(): IgoMap { return this._map; }

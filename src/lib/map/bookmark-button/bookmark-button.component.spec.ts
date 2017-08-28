@@ -2,24 +2,24 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoSharedModule } from '../../shared';
 
-import { GeolocateComponent } from './geolocate.component';
+import { BookmarkButtonComponent } from './bookmark-button.component';
 
-describe('geolocateComponent', () => {
-  let component: GeolocateComponent;
-  let fixture: ComponentFixture<GeolocateComponent>;
+describe('bookmarkButtonComponent', () => {
+  let component: BookmarkButtonComponent;
+  let fixture: ComponentFixture<BookmarkButtonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule
       ],
-      declarations: [ GeolocateComponent ]
+      declarations: [ BookmarkButtonComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GeolocateComponent);
+    fixture = TestBed.createComponent(BookmarkButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
