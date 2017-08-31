@@ -1,10 +1,10 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CdkTableModule } from '@angular/cdk';
+import { CdkTableModule } from '@angular/cdk/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from '@angular/material';
+import { CustomMaterialModule } from '../customMaterialModule';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ClickoutDirective } from './clickout';
@@ -26,7 +26,7 @@ import { TableComponent } from './table';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    MaterialModule,
+    CustomMaterialModule,
     TranslateModule
   ],
   exports: [
@@ -35,7 +35,7 @@ import { TableComponent } from './table';
     ReactiveFormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    MaterialModule,
+    CustomMaterialModule,
     TranslateModule,
     ClickoutDirective,
     CollapsibleComponent,
