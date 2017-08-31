@@ -1,4 +1,4 @@
-import { DataSource } from '@angular/cdk';
+import { DataSource } from '@angular/cdk/table';
 import { MdSort } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';

@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { MaterialModule, GestureConfig } from '@angular/material';
+import { GestureConfig } from '@angular/material';
+import { CustomMaterialModule } from './customMaterialModule';
 
 import 'hammerjs/hammer';
 
@@ -51,7 +52,7 @@ const IGO_MODULES = [
 
 @NgModule({
   imports: [
-    MaterialModule,
+    CustomMaterialModule,
 
     IgoAuthModule.forRoot(),
     IgoCoreModule.forRoot(),

@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 import { APP_BASE_HREF } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '@angular/material';
+import { MdSidenavModule, MdCardModule, MdIconModule } from '@angular/material';
 
 import { IgoTestModule } from '../../test/module';
 import { IgoModule, provideNominatimSearchSource } from '../../lib';
@@ -13,7 +13,9 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
-        MaterialModule,
+        MdSidenavModule,
+        MdCardModule,
+        MdIconModule,
         IgoModule.forRoot(),
         IgoTestModule
       ],
