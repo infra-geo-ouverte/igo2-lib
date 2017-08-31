@@ -49,7 +49,7 @@ export class LayerService {
   private createImageLayer(
       dataSource: DataSource, context: ImageLayerContext): ImageLayer {
 
-    context = context || {};
+    context = context || {};
     context.token = this.authService.getToken();
     return new ImageLayer(dataSource, context);
   }

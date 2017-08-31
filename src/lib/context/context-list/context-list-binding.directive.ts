@@ -44,7 +44,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
             url: layer.dataSource.options.url
           },
           order: order--
-        }
+        };
         changes.layers.push(opts);
     }
 

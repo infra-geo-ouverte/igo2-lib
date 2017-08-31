@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { APP_BASE_HREF } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
+import { IgoCoreModule } from '../../core';
 import { IgoSharedModule } from '../../shared';
+import { IgoAuthModule } from '../../auth';
 
 import { ContextItemComponent } from './context-item.component';
 
@@ -11,10 +15,16 @@ describe('ContextItemComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoSharedModule
+        RouterModule.forRoot([]),
+        IgoSharedModule,
+        IgoCoreModule.forRoot(),
+        IgoAuthModule.forRoot()
       ],
       declarations: [
         ContextItemComponent
+      ],
+      providers: [
+        [{provide: APP_BASE_HREF, useValue : '/' }]
       ]
     })
     .compileComponents();

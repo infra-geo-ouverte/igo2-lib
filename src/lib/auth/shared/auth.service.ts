@@ -45,8 +45,8 @@ export class AuthService {
         this.authenticate$.next(true);
       })
       .catch((err: any) => {
-        const body = err.json();
-        return Observable.throw([{text: body.message}]);
+        const message = err.json().message;
+        return Observable.throw([{text: message}]);
       });
   }
 
@@ -67,8 +67,8 @@ export class AuthService {
         this.authenticate$.next(true);
       })
       .catch((err: any) => {
-        const body = err.json();
-        return Observable.throw([{text: body.message}]);
+        const message = err.json().message;
+        return Observable.throw([{text: message}]);
       });
   }
 
@@ -119,7 +119,7 @@ export class AuthService {
   }
 
   get logged(): boolean {
-    return this.authenticated || this.isAnonymous;
+    return this.authenticated || this.isAnonymous;
   }
 
   get isAnonymous(): boolean {

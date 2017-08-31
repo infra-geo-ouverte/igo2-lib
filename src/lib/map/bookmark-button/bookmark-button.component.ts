@@ -3,7 +3,7 @@ import { MdDialog } from '@angular/material';
 
 import { uuid } from '../../utils/uuid';
 import { MessageService } from '../../core';
-import { ContextService } from '../../context/shared';
+import { ContextService } from '../../context/shared/context.service';
 import { ToolService } from '../../tool/shared';
 import { IgoMap } from '../shared';
 import { BookmarkDialogComponent } from './bookmark-dialog.component';
@@ -39,9 +39,9 @@ export class BookmarkButtonComponent {
   createContext() {
     const view = this.map.ol.getView();
     const proj = view.getProjection().getCode();
-    const center: any = new ol.geom.Point(view.getCenter()).transform(proj,'EPSG:4326');
+    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
 
-    let context = {
+    const context = {
       uri: uuid(),
       title: '',
       scope: 'private',
@@ -69,15 +69,17 @@ export class BookmarkButtonComponent {
             url: layer.dataSource.options.url
           },
           order: order--
-        }
+        };
         context.layers.push(opts);
     }
 
     const tools = this.toolService.tools$.value;
-    for (let key in tools) {
+    for (const key in tools) {
+      if (tools.hasOwnProperty(key)) {
         context.tools.push({
           id: String(tools[key].id)
         });
+      }
     }
 
     this.dialog.open(BookmarkDialogComponent, {disableClose: false})

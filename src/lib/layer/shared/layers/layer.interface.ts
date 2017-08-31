@@ -13,10 +13,10 @@ export interface LayerCatalog {
   url: string;
   params: {
     layers: string;
-  }
+  };
 }
 
 export interface GroupLayers {
   title: string;
-  layers?: LayerCatalog
+  layers?: LayerCatalog;
 }

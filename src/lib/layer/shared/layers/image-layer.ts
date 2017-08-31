@@ -53,10 +53,10 @@ export class ImageLayer extends Layer {
 
   private customLoader(tile, src, token?) {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", src);
+    xhr.open('GET', src);
 
     xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-    xhr.responseType = "arraybuffer";
+    xhr.responseType = 'arraybuffer';
 
     xhr.onload = function () {
       const arrayBufferView = new Uint8Array((this as any).response);
