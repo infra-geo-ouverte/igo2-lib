@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { AuthHttp } from 'angular2-jwt';
 
 import { RequestService, ConfigService } from '../../../core';
-import { AuthHttp } from '../../../auth';
 import { Poi } from './poi.interface';
 
 @Injectable()

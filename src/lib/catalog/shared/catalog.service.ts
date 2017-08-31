@@ -18,11 +18,11 @@ export class CatalogService {
               private requestService: RequestService,
               private config: ConfigService) {
 
-    const options = this.config.getConfig('context');
-    const catalog = this.config.getConfig('catalog');
+    const options = this.config.getConfig('context') || {};
+    const catalog = this.config.getConfig('catalog') || {};
     this.baseUrl = options.url;
 
-    if (catalog && catalog.sources) {
+    if (catalog.sources) {
       this.catalogs$.next(catalog.sources);
     }
   }

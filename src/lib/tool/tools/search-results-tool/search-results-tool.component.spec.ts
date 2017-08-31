@@ -1,7 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { APP_BASE_HREF } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { IgoCoreModule } from '../../../core';
+import { IgoAuthModule } from '../../../auth';
 import { IgoSharedModule } from '../../../shared';
 import { IgoFeatureModule } from '../../../feature';
 import { IgoOverlayModule } from '../../../overlay';
@@ -19,7 +21,9 @@ describe('SearchResultsToolComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule,
+        RouterModule.forRoot([]),
         IgoCoreModule.forRoot(),
+        IgoAuthModule.forRoot(),
         IgoFeatureModule.forRoot(),
         IgoOverlayModule.forRoot(),
         IgoDataSourceModule.forRoot(),
@@ -29,7 +33,9 @@ describe('SearchResultsToolComponent', () => {
       declarations: [
         SearchResultsToolComponent
       ],
-      providers: []
+      providers: [
+        [{provide: APP_BASE_HREF, useValue : '/' }]
+      ]
     })
     .compileComponents();
   }));

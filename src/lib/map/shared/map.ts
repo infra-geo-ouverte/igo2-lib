@@ -265,7 +265,7 @@ export class IgoMap {
     let first = true;
     if (this.geolocation$$) {
       track = this.geolocation.getTracking();
-      this.unsubscribeGeolocate()
+      this.unsubscribeGeolocate();
     }
     this.startGeolocation();
 
@@ -292,6 +292,7 @@ export class IgoMap {
       if (track) {
         this.unsubscribeGeolocate();
       }
+      first = false;
     });
   }
 

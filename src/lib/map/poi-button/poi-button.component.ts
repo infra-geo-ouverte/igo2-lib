@@ -80,9 +80,9 @@ export class PoiButtonComponent implements OnInit {
   private createPoi() {
     const view = this.map.ol.getView();
     const proj = view.getProjection().getCode();
-    const center: any = new ol.geom.Point(view.getCenter()).transform(proj,'EPSG:4326');
+    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
 
-    let poi: Poi = {
+    const poi: Poi = {
       title: '',
       x: center.getCoordinates()[0],
       y: center.getCoordinates()[1],

@@ -51,14 +51,14 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
   }
 
   handleCatalogChanged(catalog: Catalog) {
-    if (!catalog || !catalog.url) {
+    if (!catalog || !catalog.url) {
       return;
     }
 
     const groupsLayers: GroupLayers[] = [];
     this.capabilitiesService.getCapabilities('wms', catalog.url)
       .subscribe((capabilities) => {
-        for (let group of capabilities.Capability.Layer.Layer) {
+        for (const group of capabilities.Capability.Layer.Layer) {
           groupsLayers.push({
             title: group.Title,
             layers: group.Layer.map((layer) => {

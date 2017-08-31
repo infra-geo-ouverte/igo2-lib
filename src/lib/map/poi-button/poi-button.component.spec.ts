@@ -1,6 +1,11 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { APP_BASE_HREF } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+import { IgoCoreModule } from '../../core';
 import { IgoSharedModule } from '../../shared';
+import { IgoAuthModule } from '../../auth';
 
 import { PoiButtonComponent } from './poi-button.component';
 
@@ -11,9 +16,15 @@ describe('poiButtonComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoSharedModule
+        RouterModule.forRoot([]),
+        IgoSharedModule,
+        IgoCoreModule.forRoot(),
+        IgoAuthModule.forRoot()
       ],
-      declarations: [ PoiButtonComponent ]
+      declarations: [ PoiButtonComponent ],
+      providers: [
+        [{provide: APP_BASE_HREF, useValue : '/' }]
+      ]
     })
     .compileComponents();
   }));

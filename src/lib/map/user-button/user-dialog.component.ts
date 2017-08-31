@@ -17,6 +17,6 @@ export class UserDialogComponent {
     private auth: AuthService
   ) {
     this.user = this.auth.decodeToken().user;
-    this.exp = new Date(this.user.exp*1000).toLocaleString();
+    this.exp = new Date(this.user.exp * 1000).toLocaleString();
   }
 }

@@ -70,7 +70,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
               return p.typePermission.toString() === 'write';
             })
           };
-          return this.component.permissions = permissions
+          return this.component.permissions = permissions;
         });
     }
   }

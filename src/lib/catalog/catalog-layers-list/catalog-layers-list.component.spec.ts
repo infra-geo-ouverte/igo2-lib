@@ -4,6 +4,8 @@ import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
 
 import { CatalogLayersListComponent } from './catalog-layers-list.component';
+import { CatalogLayerItemComponent } from '../catalog-layer-item';
+
 
 describe('CatalogLayersListComponent', () => {
   let component: CatalogLayersListComponent;
@@ -16,7 +18,8 @@ describe('CatalogLayersListComponent', () => {
         IgoSharedModule
       ],
       declarations: [
-        CatalogLayersListComponent
+        CatalogLayersListComponent,
+        CatalogLayerItemComponent
       ]
     })
     .compileComponents();
