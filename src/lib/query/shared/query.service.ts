@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 
 import { uuid } from '../../utils/uuid';
 import { RequestService } from '../../core';
+import { AuthHttp } from '../../auth';
 import { Feature, FeatureType, FeatureFormat,
          FeatureService } from '../../feature';
 import { DataSource, QueryableDataSource } from '../../datasource';
@@ -18,7 +19,7 @@ export class QueryService {
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private http: Http,
+  constructor(private authHttp: AuthHttp,
               private featureService: FeatureService,
               private requestService: RequestService) { }
 
@@ -31,7 +32,7 @@ export class QueryService {
 
   queryDataSource(dataSource: DataSource, options: QueryOptions) {
     const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
-    const request = this.http.get(url);
+    const request = this.authHttp.get(url);
 
     this.featureService.clear();
     return this.requestService

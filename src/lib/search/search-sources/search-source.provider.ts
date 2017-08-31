@@ -1,6 +1,7 @@
 import { Http, Jsonp } from '@angular/http';
 
 import { ConfigService } from '../../core';
+import { AuthHttp } from '../../auth';
 
 import { SearchSource } from './search-source';
 import { NominatimSearchSource } from './nominatim-search-source';
@@ -36,8 +37,8 @@ export function provideIChercheSearchSource() {
 }
 
 
-export function dataSourceSearchSourcesFactory(jsonp: Jsonp, config: ConfigService) {
-  return new DataSourceSearchSource(jsonp, config);
+export function dataSourceSearchSourcesFactory(authHttp: AuthHttp, config: ConfigService) {
+  return new DataSourceSearchSource(authHttp, config);
 }
 
 export function provideDataSourceSearchSource() {
@@ -45,6 +46,6 @@ export function provideDataSourceSearchSource() {
     provide: SearchSource,
     useFactory: (dataSourceSearchSourcesFactory),
     multi: true,
-    deps: [Jsonp, ConfigService]
+    deps: [AuthHttp, ConfigService]
   };
 }

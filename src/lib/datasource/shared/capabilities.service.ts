@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Http, URLSearchParams, Response } from '@angular/http';
+import { URLSearchParams, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { RequestService } from '../../core';
 import { ObjectUtils } from '../../utils';
+import { AuthHttp } from '../../auth';
 
 import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
 
@@ -16,7 +17,7 @@ export class CapabilitiesService {
     'wmts': new ol.format.WMTSCapabilities()
   };
 
-  constructor(private http: Http,
+  constructor(private authHttp: AuthHttp,
               private requestService: RequestService) { }
 
   getWMSOptions(baseOptions: WMSDataSourceOptions):
@@ -58,7 +59,7 @@ export class CapabilitiesService {
       return new Observable(c => c.next(cached.capabilities));
     }
 
-    const request = this.http.get(baseUrl, {search: params});
+    const request = this.authHttp.get(baseUrl, {search: params});
 
     return this.requestService.register(request)
       .map((res: Response) => {
