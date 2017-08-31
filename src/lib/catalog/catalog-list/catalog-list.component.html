@@ -1,0 +1,12 @@
+<igo-list [navigation]="true">
+    <ng-template ngFor let-catalog [ngForOf]="catalogs">
+      <igo-catalog-item
+        igoListItem
+        color="accent"
+        [selected]="selectedCatalog"
+        [catalog]="catalog"
+        (select)="select.emit(catalog)"
+        (unselect)="unselect.emit(catalog)">
+      </igo-catalog-item>
+    </ng-template>
+</igo-list>

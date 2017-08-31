@@ -12,7 +12,8 @@
       "title": "Confirm",
       "confirmBtn": "Confirm",
       "cancelBtn": "Cancel",
-      "confirmDeleteContext": "Are you sure you want to delete this context?"
+      "confirmDeleteContext": "Are you sure you want to delete this context?",
+      "confirmDeletePoi": "Are you sure you want to delete this zone of interest?"
     },
     "context": {
       "save": "Save this context",
@@ -26,6 +27,7 @@
       "text": "Context '{{value}}' is invalid",
       "title": "Invalid context"
     },
+    "catalog": "Catalog",
     "contexts": "Contexts",
     "ourContexts": "Our contexts",
     "publicContexts": "Public contexts",

@@ -7,6 +7,7 @@ import { IgoFeatureModule } from '../feature';
 import { IgoFilterModule } from '../filter';
 import { IgoLayerModule } from '../layer';
 import { IgoMapModule } from '../map';
+import { IgoCatalogModule } from '../catalog';
 import { IgoPrintModule } from '../print';
 
 import { ToolService } from './shared';
@@ -19,6 +20,8 @@ import { ContextManagerToolComponent,
          ToolsContextManagerToolComponent,
          PermissionsContextManagerToolComponent,
          MapDetailsToolComponent,
+         CatalogToolComponent,
+         CatalogLayersToolComponent,
          SearchResultsToolComponent,
          PrintToolComponent,
          TimeAnalysisToolComponent } from './tools';
@@ -29,6 +32,8 @@ const IGO_TOOLS = [
   ToolsContextManagerToolComponent,
   PermissionsContextManagerToolComponent,
   MapDetailsToolComponent,
+  CatalogToolComponent,
+  CatalogLayersToolComponent,
   SearchResultsToolComponent,
   PrintToolComponent,
   TimeAnalysisToolComponent
@@ -43,6 +48,7 @@ const IGO_TOOLS = [
     IgoFilterModule,
     IgoLayerModule,
     IgoMapModule,
+    IgoCatalogModule,
     IgoPrintModule
   ],
   exports: [
