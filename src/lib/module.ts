@@ -17,6 +17,7 @@ import 'rxjs/add/operator/combineLatest';
 import { IgoAuthModule } from './auth';
 import { IgoCoreModule } from './core';
 import { IgoContextModule } from './context';
+import { IgoCatalogModule } from './catalog';
 import { IgoDataSourceModule } from './datasource';
 import { IgoFeatureModule } from './feature';
 import { IgoFormModule } from './form';
@@ -35,6 +36,7 @@ const IGO_MODULES = [
   IgoAuthModule,
   IgoCoreModule,
   IgoContextModule,
+  IgoCatalogModule,
   IgoDataSourceModule,
   IgoFeatureModule,
   IgoFormModule,
@@ -56,8 +58,9 @@ const IGO_MODULES = [
 
     IgoAuthModule.forRoot(),
     IgoCoreModule.forRoot(),
-    IgoDataSourceModule.forRoot(),
     IgoContextModule.forRoot(),
+    IgoCatalogModule.forRoot(),
+    IgoDataSourceModule.forRoot(),
     IgoFeatureModule.forRoot(),
     IgoFormModule.forRoot(),
     IgoFilterModule.forRoot(),
