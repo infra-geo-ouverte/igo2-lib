@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Jsonp, Response, URLSearchParams } from '@angular/http';
+import { Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
+import { AuthHttp } from '../../auth';
 import { Feature, FeatureType } from '../../feature';
 
 import { SearchSource } from './search-source';
@@ -20,7 +21,7 @@ export class DataSourceSearchSource extends SearchSource {
   private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search';
   private options: SearchSourceOptions;
 
-  constructor(private jsonp: Jsonp,
+  constructor(private authHttp: AuthHttp,
               private config: ConfigService) {
     super();
 
@@ -35,7 +36,7 @@ export class DataSourceSearchSource extends SearchSource {
   search(term?: string): Observable<Feature[] | Message[]>  {
     const search = this.getSearchParams(term);
 
-    return this.jsonp
+    return this.authHttp
       .get(this.searchUrl, { search })
       .map(res => this.extractData(res));
   }
@@ -50,7 +51,7 @@ export class DataSourceSearchSource extends SearchSource {
 
     search.set('q', term);
     search.set('limit', String(limit));
-    search.set('callback', 'JSONP_CALLBACK');
+    // search.set('callback', 'JSONP_CALLBACK');
 
     return search;
   }

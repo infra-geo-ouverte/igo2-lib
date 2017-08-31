@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { AuthService } from '../../auth';
 import { DataSource, OSMDataSource, FeatureDataSource,
          XYZDataSource, WFSDataSource, WMTSDataSource,
          WMSDataSource } from '../../datasource';
@@ -18,7 +19,10 @@ export type AnyLayerContext =
 @Injectable()
 export class LayerService {
 
-  constructor(private styleService: StyleService) { }
+  constructor(
+    private styleService: StyleService,
+    private authService: AuthService
+  ) { }
 
   createLayer(dataSource: DataSource, context: AnyLayerContext): Layer {
     let layer;
@@ -44,6 +48,9 @@ export class LayerService {
 
   private createImageLayer(
       dataSource: DataSource, context: ImageLayerContext): ImageLayer {
+
+    context = context || {};
+    context.token = this.authService.getToken();
     return new ImageLayer(dataSource, context);
   }
 
