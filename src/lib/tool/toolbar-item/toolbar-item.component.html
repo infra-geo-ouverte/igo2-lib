@@ -3,5 +3,5 @@
   [md-tooltip]="tool.tooltip | translate"
   (select)="select.emit(tool)">
   <md-icon *ngIf="withIcon" md-list-avatar>{{tool.icon}}</md-icon>
-  <h4 *ngIf="withTitle" md-line>{{tool.title | translate}}</h4>
+  <h4 *ngIf="withTitle" mdLine>{{tool.title | translate}}</h4>
 </md-list-item>
