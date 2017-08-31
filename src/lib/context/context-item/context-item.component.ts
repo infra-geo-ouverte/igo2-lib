@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
+import { AuthService } from '../../auth';
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
 
@@ -26,4 +27,7 @@ export class ContextItemComponent {
   @Output() clone = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
+
+  constructor(public auth: AuthService) {}
+
 }
