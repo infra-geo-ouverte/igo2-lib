@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { MdSlider } from '@angular/material'
 import { TimeFilterOptions } from '../shared';
 
 @Component({
@@ -80,6 +80,17 @@ export class TimeFilterFormComponent {
   constructor() { }
 
   handleDateChange(event: any) {
+
+    if(event.source.constructor.name === 'MdSlider'){
+      if (this.isRange) {
+        this.startDate = new Date(event.value);
+        let tempDate = this.startDate.getTime() + this.mySlider.step;
+        this.endDate = new Date(tempDate);
+      }
+      this.date = new Date(event.value);
+      this.setSliderThumbLabel(this.date.toLocaleString());
+    }
+    
     if (this.isRange) {
       this.change.emit([this.startDate, this.endDate]);
     } else {
@@ -99,7 +110,7 @@ export class TimeFilterFormComponent {
   }
 
    numberToDate(date: number): String{
-    let newDate;
+     let newDate;
     if(date){
       newDate = new Date(date);
       newDate = newDate.toLocaleString();
