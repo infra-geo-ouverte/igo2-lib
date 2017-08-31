@@ -79,18 +79,7 @@ export class TimeFilterFormComponent {
 
   constructor() { }
 
-  handleDateChange(event: any) {
-
-    if(event.source.constructor.name === 'MdSlider'){
-      if (this.isRange) {
-        this.startDate = new Date(event.value);
-        let tempDate = this.startDate.getTime() + this.mySlider.step;
-        this.endDate = new Date(tempDate);
-      }
-      this.date = new Date(event.value);
-      this.setSliderThumbLabel(this.date.toLocaleString());
-    }
-    
+  handleDateChange(event: any) {    
     if (this.isRange) {
       this.change.emit([this.startDate, this.endDate]);
     } else {
@@ -110,7 +99,7 @@ export class TimeFilterFormComponent {
   }
 
    numberToDate(date: number): String{
-     let newDate;
+    let newDate;
     if(date){
       newDate = new Date(date);
       newDate = newDate.toLocaleString();
@@ -154,14 +143,23 @@ export class TimeFilterFormComponent {
       
       this.interval = setInterval(function(that){
         
-        let newDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
+        let newMinDateNumber;
         let maxDateNumber = new Date(that.max);
-        if(newDateNumber >maxDateNumber.getTime()){
+    
+        newMinDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
+        newMinDateNumber += that.mySlider.step;
+        that.date = new Date(newMinDateNumber);
+       
+        if(newMinDateNumber > maxDateNumber.getTime()){
           that.stopFilter();
         }
-        newDateNumber += that.mySlider.step;
-        that.date = new Date(newDateNumber);
-        that.handleDateChange({source:{constructor:{name:"MdSlider"}},value:that.date});
+              
+        that.handleDateChange({});
+        /*if (that.isRange) {
+          that.change.emit([that.startDate, that.endDate]);
+        } else {
+          that.change.emit(that.date);
+        } */ 
 
       }, this.timeInterval, this)
     }
