@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MdDialog } from '@angular/material';
 
-import { MessageService } from '../../core';
+import { MessageService, LanguageService } from '../../core';
+import { ConfirmDialogService } from '../../shared';
 import { AuthService, PoiService, Poi } from '../../auth';
 import { IgoMap } from '../shared';
 import { PoiDialogComponent } from './poi-dialog.component';
@@ -33,7 +34,9 @@ export class PoiButtonComponent implements OnInit {
     private dialog: MdDialog,
     private authService: AuthService,
     private poiService: PoiService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private languageService: LanguageService,
+    private confirmDialogService: ConfirmDialogService
   ) {}
 
   ngOnInit() {
@@ -54,11 +57,17 @@ export class PoiButtonComponent implements OnInit {
 
   deletePoi(poi: Poi) {
     if (poi && poi.id) {
-      this.poiService.delete(poi.id).subscribe(() => {
-        const message = `The zone of interest '${poi.title}' was deleted`;
-        this.messageService.info(message, 'Zone of interest deleted');
-        this.pois = this.pois.filter((p) => p.id !== poi.id);
-      });
+      this.confirmDialogService
+        .open(this.languageService.translate.instant('igo.confirmDialog.confirmDeletePoi'))
+        .subscribe((confirm) => {
+          if (confirm) {
+            this.poiService.delete(poi.id).subscribe(() => {
+              const message = `The zone of interest '${poi.title}' was deleted`;
+              this.messageService.info(message, 'Zone of interest deleted');
+              this.pois = this.pois.filter((p) => p.id !== poi.id);
+            });
+          }
+        });
     }
   }
 
