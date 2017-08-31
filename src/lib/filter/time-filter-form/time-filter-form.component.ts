@@ -43,7 +43,7 @@ export class TimeFilterFormComponent {
   }
 
   get isRange(): boolean {
-    return this.options.range === undefined ?
+    return this.options.range === undefined || this.options.style === 'slider' ?
       false : this.options.range;
   }
 
@@ -79,18 +79,7 @@ export class TimeFilterFormComponent {
 
   constructor() { }
 
-  handleDateChange(event: any) {
-
-    if(event.source.constructor.name === 'MdSlider'){
-      if (this.isRange) {
-        this.startDate = new Date(event.value);
-        let tempDate = this.startDate.getTime() + this.mySlider.step;
-        this.endDate = new Date(tempDate);
-      }
-      this.date = new Date(event.value);
-      this.setSliderThumbLabel(this.date.toLocaleString());
-    }
-    
+  handleDateChange(event: any) {    
     if (this.isRange) {
       this.change.emit([this.startDate, this.endDate]);
     } else {
@@ -110,7 +99,7 @@ export class TimeFilterFormComponent {
   }
 
    numberToDate(date: number): String{
-     let newDate;
+    let newDate;
     if(date){
       newDate = new Date(date);
       newDate = newDate.toLocaleString();
@@ -154,14 +143,23 @@ export class TimeFilterFormComponent {
       
       this.interval = setInterval(function(that){
         
-        let newDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
+        let newMinDateNumber;
         let maxDateNumber = new Date(that.max);
-        if(newDateNumber >maxDateNumber.getTime()){
+    
+        newMinDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
+        newMinDateNumber += that.mySlider.step;
+        that.date = new Date(newMinDateNumber);
+       
+        if(newMinDateNumber > maxDateNumber.getTime()){
           that.stopFilter();
         }
-        newDateNumber += that.mySlider.step;
-        that.date = new Date(newDateNumber);
-        that.handleDateChange({source:{constructor:{name:"MdSlider"}},value:that.date});
+              
+        that.handleDateChange({});
+        /*if (that.isRange) {
+          that.change.emit([that.startDate, that.endDate]);
+        } else {
+          that.change.emit(that.date);
+        } */ 
 
       }, this.timeInterval, this)
     }
@@ -173,5 +171,29 @@ export class TimeFilterFormComponent {
     this.playFilterIcon.nativeElement.textContent = "play_circle_filled";
   }
 
+  handleSliderDateChange(event: any) {
+
+    this.date = new Date(event.value);
+    this.setSliderThumbLabel(this.date.toLocaleString());
+    this.handleDateChange({});
+  }
+
+  handleSliderValue(): Date{
+    if(this.isRange){
+      return this.startDate;
+    }
+    else{
+      return this.date;
+    }
+  }
+
+  handleSliderTooltip(){
+    if(this.isRange){
+      return this.startDate === undefined ? this.min.toLocaleString(): this.startDate.toLocaleString();
+    }
+    else{
+      return this.date === undefined ? this.min.toLocaleString(): this.date.toLocaleString();
+    }
+  }
 
 }

@@ -49,11 +49,11 @@
       step="{{step}}"
       [min]="dateToNumber(min)"
       [max]="dateToNumber(max)"
-      [value]="date"
-      [md-tooltip]="numberToDate(date)"
+      [value]="handleSliderValue()"
+      [md-tooltip]="handleSliderTooltip()"
       tooltip-position="below"
       thumbLabel
-      (input)="handleDateChange($event)"
-      (change)="handleDateChange($event)">
+      (input)="handleSliderDateChange($event)"
+      (change)="handleSliderDateChange($event)">
   </md-slider>
 </div>
