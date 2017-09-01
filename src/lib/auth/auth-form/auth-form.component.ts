@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy,
-  OnInit, Input } from '@angular/core';
+  OnInit, Input, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ConfigService } from '../../core';
@@ -37,7 +37,7 @@ export class AuthFormComponent implements OnInit {
   constructor(
     public auth: AuthService,
     private config: ConfigService,
-    private router: Router
+    @Optional() private router: Router
   ) {
     this.options = this.config.getConfig('auth') || {};
 
@@ -58,13 +58,15 @@ export class AuthFormComponent implements OnInit {
 
   protected logout() {
     this.auth.logout().subscribe(() => {
-      if (this.options.loginRoute) {
+      if (this.router && this.options.loginRoute) {
         this.router.navigate([this.options.loginRoute]);
       }
     });
   }
 
   private analyzeRoute() {
+    if (!this.router) { return; }
+
     const logoutRoute = this.options.logoutRoute;
     const loginRoute = this.options.loginRoute;
     const currentRoute = this.router.url;

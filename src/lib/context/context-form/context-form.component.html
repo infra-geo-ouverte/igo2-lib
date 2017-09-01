@@ -1,14 +1,14 @@
 <form class="igo-form" [formGroup]="form"
   (ngSubmit)="handleFormSubmit(form.value)">
 
-  <md-input-container>
+  <md-form-field class="full-width">
     <input mdInput required
            [placeholder]="'igo.title' | translate"
            formControlName="title">
    <md-error>
      Title required
    </md-error>
-  </md-input-container>
+  </md-form-field>
 
 
   <md-radio-group formControlName="scope">

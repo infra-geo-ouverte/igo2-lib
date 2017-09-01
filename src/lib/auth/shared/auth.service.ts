@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { Router } from '@angular/router';
 
@@ -21,7 +21,7 @@ export class AuthService {
 
   constructor(private http: Http,
               private config: ConfigService,
-              private router: Router) {
+              @Optional() private router: Router) {
 
     this.options = this.config.getConfig('auth') || {};
     this.token = localStorage.getItem(this.options.tokenKey);
@@ -105,6 +105,7 @@ export class AuthService {
   }
 
   goToRedirectUrl() {
+    if (!this.router) { return; }
     const redirectUrl = this.redirectUrl || this.router.url;
 
     if (redirectUrl === this.options.loginRoute) {
