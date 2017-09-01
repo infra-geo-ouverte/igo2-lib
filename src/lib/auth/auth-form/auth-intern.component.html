@@ -1,11 +1,15 @@
 <form [formGroup]="form" role="form">
-  <md-form-field class="example-full-width">
-    <input mdInput required placeholder="{{'igo.auth.user' | translate}}" formControlName="username">
-  </md-form-field>
+  <div>
+    <md-form-field class="full-width">
+      <input mdInput required placeholder="{{'igo.auth.user' | translate}}" formControlName="username">
+    </md-form-field>
+  </div>
 
-  <md-form-field class="example-full-width">
-    <input mdInput required type="password" placeholder="{{'igo.auth.password' | translate}}" formControlName="password">
-  </md-form-field>
+  <div>
+    <md-form-field class="full-width">
+      <input mdInput required type="password" placeholder="{{'igo.auth.password' | translate}}" formControlName="password">
+    </md-form-field>
+  </div>
 
   <button md-raised-button (click)="login(form.value)" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
   <button md-raised-button (click)="loginAnonymous()">Access as anonymous</button>
