@@ -15,8 +15,6 @@ export function toolSlideInOut(
       transform: 'translate3d(100%, 0, 0)'
     })),
     transition('left => center', animate(speed + ' ' + type)),
-    transition('right => center', animate(speed + ' ' + type)),
-    transition('center => right', animate('0ms ' + type)),
-    transition('center => left', animate('0ms ' + type)),
+    transition('right => center', animate(speed + ' ' + type))
   ]);
 };
