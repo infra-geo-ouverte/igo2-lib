@@ -34,7 +34,7 @@ export class UserButtonComponent {
 
   constructor(
     private dialog: MdDialog,
-    private auth: AuthService
+    public auth: AuthService
   ) {}
 
   accountClick() {

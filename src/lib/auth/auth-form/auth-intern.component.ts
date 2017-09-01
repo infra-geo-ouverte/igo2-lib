@@ -11,7 +11,7 @@ import { AuthService } from '../shared/auth.service';
 })
 export class AuthInternComponent {
   public error: string = '';
-  private form: FormGroup;
+  public form: FormGroup;
 
   @Output() onLogin: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -25,7 +25,7 @@ export class AuthInternComponent {
     });
   }
 
-  protected login(values: any) {
+  login(values: any) {
     this.auth.login(values.username, values.password)
       .subscribe(
         () => {
@@ -38,7 +38,7 @@ export class AuthInternComponent {
     return false;
   }
 
-  protected loginAnonymous() {
+  loginAnonymous() {
     this.auth.loginAnonymous().subscribe(() => {
       this.onLogin.emit(true);
     });

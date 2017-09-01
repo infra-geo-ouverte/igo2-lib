@@ -77,7 +77,7 @@ export class PoiButtonComponent implements OnInit {
     });
   }
 
-  private createPoi() {
+  createPoi() {
     const view = this.map.ol.getView();
     const proj = view.getProjection().getCode();
     const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');

@@ -38,8 +38,8 @@ export class TableComponent implements OnChanges, OnInit {
   }
   private _model: TableModel;
 
-  private displayedColumns;
-  private dataSource: TableDataSource | null;
+  public displayedColumns;
+  public dataSource: TableDataSource | null;
 
   @ViewChild('filter') filter: ElementRef;
   @ViewChild(MdSort) sort: MdSort;
