@@ -52,6 +52,9 @@ export class LayerWatcher extends Watcher {
       this.subscriptions[index].unsubscribe();
       this.subscriptions.splice(index, 1);
       this.layers.splice(index, 1);
+      if ((layer as any).watcher.status === SubjectStatus.Working) {
+        this.loaded += 1;
+      }
     }
   }
 }
