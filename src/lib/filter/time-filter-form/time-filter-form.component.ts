@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { MdSlider } from '@angular/material'
 import { TimeFilterOptions } from '../shared';
 
 @Component({
@@ -98,18 +98,6 @@ export class TimeFilterFormComponent {
     return newDate.getTime();
   }
 
-   numberToDate(date: number): String{
-    let newDate;
-    if(date){
-      newDate = new Date(date);
-      newDate = newDate.toLocaleString();
-    }else{
-      newDate = new Date(this.min);
-      newDate = newDate.toLocaleString(); 
-    }
-    return newDate;
-  }
-
   setSliderThumbLabel(label: string){
     var thumbLabel = this.findThumbLabel(this.mySlider._elementRef.nativeElement.childNodes);
     if(thumbLabel){
@@ -155,12 +143,7 @@ export class TimeFilterFormComponent {
         }
               
         that.handleDateChange({});
-        /*if (that.isRange) {
-          that.change.emit([that.startDate, that.endDate]);
-        } else {
-          that.change.emit(that.date);
-        } */ 
-
+        
       }, this.timeInterval, this)
     }
   }
@@ -174,26 +157,30 @@ export class TimeFilterFormComponent {
   handleSliderDateChange(event: any) {
 
     this.date = new Date(event.value);
-    this.setSliderThumbLabel(this.date.toLocaleString());
+    this.setSliderThumbLabel(this.handleSliderTooltip());
     this.handleDateChange({});
   }
 
-  handleSliderValue(): Date{
-    if(this.isRange){
-      return this.startDate;
-    }
-    else{
-      return this.date;
-    }
+  handleSliderValue(): number{
+    return this.date ===  undefined ? this.min.getTime() : this.date.getTime();
   }
 
   handleSliderTooltip(){
-    if(this.isRange){
-      return this.startDate === undefined ? this.min.toLocaleString(): this.startDate.toLocaleString();
+    let label:string;
+
+    switch (this.type) {
+      case "date":
+        label = this.date === undefined ? this.min.toDateString() : this.date.toDateString();
+        break;
+      case "time":
+        label = this.date === undefined ? this.min.toTimeString() : this.date.toTimeString();
+        break;
+      //datetime      
+      default:
+        label = this.date === undefined ? this.min.toUTCString() : this.date.toUTCString();
+        break;
     }
-    else{
-      return this.date === undefined ? this.min.toLocaleString(): this.date.toLocaleString();
-    }
+    return label;
   }
 
 }
