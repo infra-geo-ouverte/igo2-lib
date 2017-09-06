@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { RequestService } from '../../core';
 import { ObjectUtils } from '../../utils';
+import { TimeFilterOptions } from '../../filter';
 
 import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
 
@@ -95,7 +96,8 @@ export class CapabilitiesService {
       },
       metadata: {
         url: metadata ? metadata.OnlineResource : undefined
-      }
+      },
+      timeFilter: this.getTimeFilter(layer)
     });
 
     return ObjectUtils.mergeDeep(options, baseOptions);
@@ -141,4 +143,24 @@ export class CapabilitiesService {
     return scale / (39.37 * dpi);
   }
 
+  private getTimeFilter(layer): TimeFilterOptions {
+    let dimension;
+    let timeFilter: TimeFilterOptions = {};
+    if(layer.Dimension){
+      dimension = layer.Dimension[0];
+    }
+
+    if(dimension.values){
+      let minMaxDim = dimension.values.split('/');
+      timeFilter.min = minMaxDim[0] != undefined ? minMaxDim[0] : null;
+      timeFilter.max = minMaxDim[1] != undefined ? minMaxDim[1] : null;
+      timeFilter.step = minMaxDim[2] != undefined ? minMaxDim[2] : null;
+    }
+
+    if(dimension.default){
+      timeFilter.value = dimension.default;
+    }
+
+    return timeFilter;
+  }
 }

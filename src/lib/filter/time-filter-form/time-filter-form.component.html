@@ -1,7 +1,7 @@
 <div *ngIf="style === 'calendar'">
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
     <md2-datepicker
-      placeholder="{{igo.date | translate}}"
+      placeholder="{{'Date' | translate}}"
       container="dialog"
       format="{{format}}"
       type="{{type}}"
@@ -11,8 +11,6 @@
       (change)="handleDateChange($event)">
     </md2-datepicker>
   </div>
-
-
 
   <div *ngIf="isRange">
     <div class="igo-col igo-col-100">
