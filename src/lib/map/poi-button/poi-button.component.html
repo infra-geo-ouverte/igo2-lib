@@ -1,8 +1,7 @@
 <md-select [placeholder]="'igo.poiButton.placeholder' | translate"
-           floatPlaceholder="never"
-           (change)="handlePoiChanged($event.value)">
+           floatPlaceholder="never">
 
-  <md-option>
+  <md-option (click)="createPoi()">
     <div class="titlePoi">{{ 'igo.poiButton.create' | translate }}</div>
     <button igoStopPropagation class="addPoi buttonPoi"
       md-icon-button
@@ -13,7 +12,7 @@
       </md-icon>
     </button>
   </md-option>
-  <md-option *ngFor="let poi of pois" [value]="poi.id">
+  <md-option *ngFor="let poi of pois" [value]="poi.id" (click)="zoomOnPoi(poi.id)">
     <div class="titlePoi">{{ poi.title }}</div>
     <button igoStopPropagation class="deletePoi buttonPoi"
       md-icon-button

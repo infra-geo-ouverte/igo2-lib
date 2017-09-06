@@ -47,14 +47,6 @@ export class PoiButtonComponent implements OnInit {
     });
   }
 
-  handlePoiChanged(value: string) {
-    if (!value) {
-      this.createPoi();
-    } else {
-      this.zoomOnPoi(value);
-    }
-  }
-
   deletePoi(poi: Poi) {
     if (poi && poi.id) {
       const translate = this.languageService.translate;
@@ -111,7 +103,7 @@ export class PoiButtonComponent implements OnInit {
       });
   }
 
-  private zoomOnPoi(id) {
+  zoomOnPoi(id) {
     const poi = this.pois.find((p) => p.id === id);
 
     const center = ol.proj.fromLonLat([poi.x, poi.y], this.map.projection);
