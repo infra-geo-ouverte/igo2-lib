@@ -16,7 +16,8 @@ export class UserDialogComponent {
     public dialogRef: MdDialogRef<UserDialogComponent>,
     private auth: AuthService
   ) {
-    this.user = this.auth.decodeToken().user;
-    this.exp = new Date(this.user.exp * 1000).toLocaleString();
+    const decodeToken = this.auth.decodeToken();
+    this.user = decodeToken.user;
+    this.exp = new Date(decodeToken.exp * 1000).toLocaleString();
   }
 }

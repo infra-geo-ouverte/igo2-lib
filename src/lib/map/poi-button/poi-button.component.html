@@ -1,6 +1,9 @@
-<md-select placeholder="Zones of interest" floatPlaceholder="never" (change)="handlePoiChanged($event.value)">
+<md-select [placeholder]="'igo.poiButton.placeholder' | translate"
+           floatPlaceholder="never"
+           (change)="handlePoiChanged($event.value)">
+
   <md-option>
-    <div class="titlePoi">Create a new zone</div>
+    <div class="titlePoi">{{ 'igo.poiButton.create' | translate }}</div>
     <button igoStopPropagation class="addPoi buttonPoi"
       md-icon-button
       color="primary"

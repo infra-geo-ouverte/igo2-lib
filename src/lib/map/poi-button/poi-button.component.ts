@@ -57,13 +57,17 @@ export class PoiButtonComponent implements OnInit {
 
   deletePoi(poi: Poi) {
     if (poi && poi.id) {
+      const translate = this.languageService.translate;
       this.confirmDialogService
-        .open(this.languageService.translate.instant('igo.confirmDialog.confirmDeletePoi'))
+        .open(translate.instant('igo.poiButton.dialog.confirmDelete'))
         .subscribe((confirm) => {
           if (confirm) {
             this.poiService.delete(poi.id).subscribe(() => {
-              const message = `The zone of interest '${poi.title}' was deleted`;
-              this.messageService.info(message, 'Zone of interest deleted');
+              const title = translate.instant('igo.poiButton.dialog.deleteTitle');
+              const message = translate.instant('igo.poiButton.dialog.deleteMsg', {
+                value: poi.title
+              });
+              this.messageService.info(message, title);
               this.pois = this.pois.filter((p) => p.id !== poi.id);
             });
           }
@@ -94,8 +98,12 @@ export class PoiButtonComponent implements OnInit {
         if (title) {
           poi.title = title;
           this.poiService.create(poi).subscribe((newPoi) => {
-            const message = `The zone of interest '${poi.title}' was created`;
-            this.messageService.info(message, 'Zone of interest created');
+            const translate = this.languageService.translate;
+            const title = translate.instant('igo.poiButton.dialog.createTitle');
+            const message = translate.instant('igo.poiButton.dialog.createMsg', {
+              value: poi.title
+            });
+            this.messageService.info(message, title);
             poi.id = newPoi.id;
             this.pois.push(poi);
           });

@@ -49,8 +49,12 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     }
 
     this.contextService.update(context.id, changes).subscribe(() => {
-      const message = `The context '${context.title}' was saved`;
-      this.messageService.info(message, 'Context saved');
+      const translate = this.languageService.translate;
+      const message = translate.instant('igo.context.dialog.saveMsg', {
+        value: context.title
+      });
+      const title = translate.instant('igo.context.dialog.saveTitle');
+      this.messageService.info(message, title);
     });
 
   }
@@ -64,13 +68,17 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   }
 
   @HostListener('delete', ['$event']) onDelete(context: Context) {
+    const translate = this.languageService.translate;
     this.confirmDialogService
-      .open(this.languageService.translate.instant('igo.confirmDialog.confirmDeleteContext'))
+      .open(translate.instant('igo.context.dialog.confirmDelete'))
       .subscribe((confirm) => {
         if (confirm) {
           this.contextService.delete(context.id).subscribe(() => {
-            const message = `The context '${context.title}' was deleted`;
-            this.messageService.info(message, 'Context deleted');
+            const message = translate.instant('igo.context.dialog.deleteMsg', {
+              value: context.title
+            });
+            const title = translate.instant('igo.context.dialog.deleteTitle');
+            this.messageService.info(message, title);
           });
         }
       });
@@ -82,8 +90,12 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       uri: context.uri + '-copy'
     };
     this.contextService.clone(context.id, properties).subscribe(() => {
-      const message = `The context '${context.title}' was cloned`;
-      this.messageService.info(message, 'Context cloned');
+      const translate = this.languageService.translate;
+      const message = translate.instant('igo.context.dialog.cloneMsg', {
+        value: context.title
+      });
+      const title = translate.instant('igo.context.dialog.cloneTitle');
+      this.messageService.info(message, title);
     });
   }
 

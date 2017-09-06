@@ -150,7 +150,7 @@ getPermissions(id: string): Observable<ContextPermission[]> {
   const request = this.authHttp.get(url);
   return this.requestService.register(request, 'Get context permissions error')
     .map((res) => {
-      const permissions: ContextPermission[] = res.json().permissions;
+      const permissions: ContextPermission[] = res.json();
       return permissions;
     });
 }
@@ -308,10 +308,10 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
     const titleContext = context ? context.title : uri;
     const titleError = this.languageService.translate
-      .instant('igo.contextInvalid.title');
+      .instant('igo.context.invalid.title');
 
     const textError = this.languageService.translate
-      .instant('igo.contextInvalid.text', {value: titleContext});
+      .instant('igo.context.invalid.text', {value: titleContext});
 
     throw [{title: titleError, text: textError}];
   }

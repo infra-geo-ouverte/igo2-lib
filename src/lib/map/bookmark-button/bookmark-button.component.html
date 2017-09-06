@@ -1,7 +1,7 @@
 <div class="igo-bookmark-button-container">
   <button
     md-icon-button
-    mdTooltip="Create a new context"
+    [mdTooltip]="'igo.bookmarkButton.create' | translate"
     mdTooltipPosition="above"
     [color]="color"
     (click)="createContext()">

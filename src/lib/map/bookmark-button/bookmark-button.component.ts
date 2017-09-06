@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MdDialog } from '@angular/material';
 
 import { uuid } from '../../utils/uuid';
-import { MessageService } from '../../core';
+import { MessageService, LanguageService } from '../../core';
 import { ContextService } from '../../context/shared/context.service';
 import { ToolService } from '../../tool/shared';
 import { IgoMap } from '../shared';
@@ -33,6 +33,7 @@ export class BookmarkButtonComponent {
     private dialog: MdDialog,
     private contextService: ContextService,
     private toolService: ToolService,
+    private languageService: LanguageService,
     private messageService: MessageService
   ) {}
 
@@ -87,8 +88,12 @@ export class BookmarkButtonComponent {
         if (title) {
           context.title = title;
           this.contextService.create(context).subscribe(() => {
-            const message = `The context '${context.title}' was created`;
-            this.messageService.info(message, 'Context created');
+            const translate = this.languageService.translate;
+            const title = translate.instant('igo.bookmarkButton.dialog.createTitle');
+            const message = translate.instant('igo.bookmarkButton.dialog.createMsg', {
+              value: context.title
+            });
+            this.messageService.info(message, title);
           });
         }
       });

@@ -1,7 +1,9 @@
-<h1 md-dialog-title>New context</h1>
+<h1 md-dialog-title>{{ 'igo.bookmarkButton.dialog.title' | translate }}</h1>
 <div md-dialog-content>
   <md-form-field>
-    <input mdInput required placeholder="Title" [(ngModel)]="title" autocomplete="off">
+    <input mdInput required autocomplete="off"
+      [placeholder]="'igo.bookmarkButton.dialog.placeholder' | translate"
+      [(ngModel)]="title">
   </md-form-field>
 </div>
 <div md-dialog-actions>

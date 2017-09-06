@@ -1,7 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { MessageService } from '../../core/message';
+import { MessageService, LanguageService } from '../../core';
 import { ContextPermission, DetailedContext, ContextService } from '../shared';
 import { ContextPermissionsComponent } from './context-permissions.component';
 
@@ -20,9 +20,13 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
       .addPermissionAssociation(contextId, permission.profil, permission.typePermission)
       .subscribe((p) => {
         this.component.permissions[permission.typePermission].push(p);
-        const title = permission.profil;
-        const message = `The permission '${title}' was added.`;
-        this.messageService.success(message, 'Tool added');
+        const profil = permission.profil;
+        const translate = this.languageService.translate;
+        const message = translate.instant('igo.permission.dialog.addMsg', {
+          value: profil
+        });
+        const title = translate.instant('igo.permission.dialog.addTitle');
+        this.messageService.success(message, title);
       });
   }
 
@@ -34,15 +38,21 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
       });
       this.component.permissions[permission.typePermission].splice(index, 1);
 
-      const title = permission.profil;
-      const message = `The permission '${title}' was removed.`;
-      this.messageService.success(message, 'Tool removed');
+      const profil = permission.profil;
+      const translate = this.languageService.translate;
+      const message = translate.instant('igo.permission.dialog.deleteMsg', {
+        value: profil
+      });
+      const title = translate.instant('igo.permission.dialog.deleteTitle');
+      this.messageService.success(message, title);
     });
   }
 
   constructor(@Self() component: ContextPermissionsComponent,
               private contextService: ContextService,
+              private languageService: LanguageService,
               private messageService: MessageService) {
+
     this.component = component;
   }
 
@@ -62,6 +72,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
     if (context) {
       this.contextService.getPermissions(context.id)
         .subscribe((permissionsArray) => {
+          permissionsArray = permissionsArray || [];
           const permissions = {
             read: permissionsArray.filter((p) => {
               return p.typePermission.toString() === 'read';

@@ -3,26 +3,23 @@
 
   <md-form-field class="full-width">
     <input mdInput required
-           [placeholder]="'igo.title' | translate"
+           [placeholder]="'igo.context.form.title' | translate"
            formControlName="title">
    <md-error>
-     Title required
+    {{ 'igo.context.form.titleRequired' | translate }}
    </md-error>
   </md-form-field>
 
 
   <md-radio-group formControlName="scope">
     <md-radio-button value="private">
-      Private
-      <!--{{ 'form.private' | translate }}-->
+      {{ 'igo.context.form.private' | translate }}
     </md-radio-button>
     <md-radio-button value="protected">
-      Protected
-      <!--{{ 'form.protected' | translate }}-->
+      {{ 'igo.context.form.protected' | translate }}
     </md-radio-button>
     <md-radio-button value="public">
-      Public
-      <!--{{ 'form.public' | translate }}-->
+      {{ 'igo.context.form.public' | translate }}
     </md-radio-button>
   </md-radio-group>
 
@@ -32,7 +29,7 @@
       md-raised-button
       type="submit"
       [disabled]="!form.valid || disabled">
-      Edit
+      {{ 'igo.context.form.edit' | translate }}
     </button>
   </div>
 

@@ -6,7 +6,7 @@
 
     <button
       md-icon-button
-      mdTooltip="Info user"
+      [mdTooltip]="'igo.userButton.infoTitle' | translate"
       mdTooltipPosition="above"
       [color]="color"
       (click)="infoUser()">
@@ -17,7 +17,7 @@
 
     <button
       md-icon-button
-      mdTooltip="Logout"
+      [mdTooltip]="'igo.userButton.logout' | translate"
       mdTooltipPosition="above"
       [color]="color"
       (click)="logout()">

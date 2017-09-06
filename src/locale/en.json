@@ -1,59 +1,134 @@
 {
-  "igo": {
-    "auth": {
-      "connection": "Connection",
-      "login": "Login",
-      "signOut": "Sign out",
-      "password": "Password",
-      "user": "User",
-      "welcome": "Welcome {{name}}!"
-    },
-    "confirmDialog": {
-      "title": "Confirm",
-      "confirmBtn": "Confirm",
-      "cancelBtn": "Cancel",
-      "confirmDeleteContext": "Are you sure you want to delete this context?",
-      "confirmDeletePoi": "Are you sure you want to delete this zone of interest?"
-    },
-    "context": {
-      "save": "Save this context",
-      "edit": "Edit this context",
-      "clone": "Clone this context",
-      "delete": "Delete this context",
-      "managePermissions": "Manage permissions context",
-      "manageTools": "Manage tools context"
-    },
-    "contextInvalid": {
-      "text": "Context '{{value}}' is invalid",
-      "title": "Invalid context"
-    },
-    "catalog": "Catalog",
-    "contexts": "Contexts",
-    "ourContexts": "Our contexts",
-    "publicContexts": "Public contexts",
-    "sharedContexts": "Shared contexts",
-    "endDate": "End Date",
-    "format": "Format",
-    "hideLayer": "Hide Layer",
-    "landscape": "Landscape",
-    "lowerLayer": "Bring layer backward",
-    "map": "Map",
-    "noLegendText": "No legend available for this layer",
-    "opacity": "Opacity",
-    "orientation": "Orientation",
-    "ourContexts": "Our contextes",
-    "portrait": "Portrait",
-    "print": "Print",
-    "publicContexts": "Public contexts",
-    "raiseLayer": "Bring layer forward",
-    "removeLayer": "Remove this layer from the map",
-    "resolution": "Resolution",
-    "searchResults": "Search Results",
-    "sharedContexts": "Shared contexts",
-    "showLayer": "Show Layer",
-    "showMetadata": "Show metadata",
-    "startDate": "Start Date",
-    "timeAnalysis": "Time Analysis",
-    "title": "Title"
-  }
+	"igo": {
+		"auth": {
+			"accessAnonymous": "Access as anonymous",
+			"connection": "Connection",
+			"login": "Login",
+			"password": "Password",
+			"signOut": "Sign out",
+			"user": "User",
+			"welcome": "Welcome {{name}}!"
+		},
+		"bookmarkButton": {
+			"create": "Create a new context",
+			"dialog": {
+				"createMsg": "The context '{{value}}' was created",
+				"createTitle": "Context created",
+				"placeholder": "Title",
+				"title": "New context"
+			}
+		},
+		"catalog": "Catalog",
+		"confirmDialog": {
+			"cancelBtn": "Cancel",
+			"confirmBtn": "Confirm",
+			"title": "Confirm"
+		},
+		"context": {
+			"clone": "Clone this context",
+			"delete": "Delete this context",
+			"dialog": {
+				"cloneMsg": "The context '{{value}}' was cloned",
+				"cloneTitle": "Context cloned",
+				"confirmDelete": "Are you sure you want to delete this context?",
+				"deleteMsg": "The context '{{value}}' was deleted",
+				"deleteTitle": "Context deleted",
+				"saveMsg": "The context '{{value}}' was saved",
+				"saveTitle": "Context saved"
+			},
+			"edit": "Edit this context",
+			"form": {
+				"edit": "Edit",
+				"private": "Private",
+				"protected": "Protected",
+				"public": "Public",
+				"title": "Title",
+				"titleRequired": "Title required"
+			},
+			"invalid": {
+				"text": "Context '{{value}}' is invalid",
+				"title": "Invalid context"
+			},
+			"managePermissions": "Manage permissions context",
+			"manageTools": "Manage tools context",
+			"ourContexts": "Our contexts",
+			"publicContexts": "Public contexts",
+			"save": "Save this context",
+			"sharedContexts": "Shared contexts"
+		},
+		"contexts": "Contexts",
+		"layer": {
+			"hideLayer": "Hide Layer",
+			"lowerLayer": "Bring layer backward",
+			"noLegendText": "No legend available for this layer",
+			"opacity": "Opacity",
+			"raiseLayer": "Bring layer forward",
+			"removeLayer": "Remove this layer from the map",
+			"showLayer": "Show Layer",
+			"showMetadata": "Show metadata"
+		},
+		"map": "Map",
+		"permission": {
+			"addBtn": "Add",
+			"delete": "Remove permission",
+			"dialog": {
+				"addMsg": "The permission '{{value}}' was added",
+				"addTitle": "Permission added",
+				"deleteMsg": "The permission '{{value}}' was removed",
+				"deleteTitle": "Permission removed"
+			},
+			"profil": "Profil",
+			"profilRequired": "Profil required",
+			"write": "Read and Write",
+			"read": "Read only"
+		},
+		"poiButton": {
+			"create": "Create a new zone of interest",
+			"dialog": {
+				"confirmDelete": "Are you sure you want to delete this zone of interest?",
+				"createMsg": "The zone of interest '{{value}}' was created",
+				"createTitle": "Zone of interest created",
+				"deleteMsg": "The zone of interest '{{value}}' was deleted",
+				"deleteTitle": "Zone of interest deleted",
+				"placeholder": "Title",
+				"title": "New zone of interest"
+			},
+			"placeholder": "Zones of interest"
+		},
+		"print": "Print",
+		"printForm": {
+			"format": "Format",
+			"landscape": "Landscape",
+			"portrait": "Portrait",
+			"printBtn": "Print",
+			"resolution": "Resolution",
+			"title": "Title"
+		},
+		"searchResults": "Search Results",
+		"table": {
+			"filter": "Filter"
+		},
+		"timeAnalysis": "Time Analysis",
+		"timeFilter": {
+			"endDate": "End Date",
+			"startDate": "Start Date"
+		},
+		"tool": {
+			"dialog": {
+				"addMsg": "The tool '{{value}}' was added",
+				"addTitle": "Tool added",
+				"deleteMsg": "The tool '{{value}}' was removed",
+				"deleteTitle": "Tool removed"
+			}
+		},
+		"userButton": {
+			"dialog": {
+				"email": "Email",
+				"expiration": "Expiration",
+				"user": "User"
+			},
+			"infoTitle": "User info",
+			"logout": "Logout"
+		}
+	}
 }

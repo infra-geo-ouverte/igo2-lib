@@ -1,5 +1,5 @@
 <small *ngIf="layer.dataSource.getLegend().length === 0">
-  {{'igo.noLegendText' | translate}}
+  {{'igo.layer.noLegendText' | translate}}
 </small>
 
 <ng-template ngFor let-item [ngForOf]="layer.dataSource.getLegend()">
@@ -19,7 +19,7 @@
     <img
       *ngIf="item.url"
       src="{{item.url}}"
-      alt="{{'igo.noLegendText' | translate}}">
+      alt="{{'igo.layer.noLegendText' | translate}}">
     <div
       [ngStyle]="item.style"
       [innerHTML]="item.html"
