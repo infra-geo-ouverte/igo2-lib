@@ -89,11 +89,11 @@ export class BookmarkButtonComponent {
           context.title = title;
           this.contextService.create(context).subscribe(() => {
             const translate = this.languageService.translate;
-            const title = translate.instant('igo.bookmarkButton.dialog.createTitle');
+            const titleD = translate.instant('igo.bookmarkButton.dialog.createTitle');
             const message = translate.instant('igo.bookmarkButton.dialog.createMsg', {
               value: context.title
             });
-            this.messageService.info(message, title);
+            this.messageService.info(message, titleD);
           });
         }
       });

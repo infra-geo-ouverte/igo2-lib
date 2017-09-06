@@ -11,8 +11,8 @@
     </md-form-field>
   </div>
 
-  <button md-raised-button (click)="login(form.value)" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
-  <button md-raised-button (click)="loginAnonymous()">{{'igo.auth.accessAnonymous' | translate }}</button>
+  <button md-raised-button type="button" (click)="login(form.value)" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
+  <button md-raised-button type="button" (click)="loginAnonymous()">{{'igo.auth.accessAnonymous' | translate }}</button>
   <div *ngIf="error">
     <br/>
     <font size="3" color="red">{{error}}</font>

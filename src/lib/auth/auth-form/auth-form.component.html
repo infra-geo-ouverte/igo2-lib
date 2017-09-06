@@ -19,5 +19,5 @@
 
 <div *ngIf="auth.logged && alreadyConnectedDiv" class="login center-block">
   <p>{{'igo.auth.welcome' | translate: user}}</p>
-  <button (click)="logout()">{{'igo.auth.signOut' | translate}}</button>
+  <button type="button" (click)="logout()">{{'igo.auth.signOut' | translate}}</button>
 </div>

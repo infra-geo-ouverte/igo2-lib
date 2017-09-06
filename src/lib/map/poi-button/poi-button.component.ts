@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MdDialog } from '@angular/material';
+import { Subscription } from 'rxjs/Subscription';
 
 import { MessageService, LanguageService } from '../../core';
 import { ConfirmDialogService } from '../../shared';
@@ -12,7 +13,7 @@ import { PoiDialogComponent } from './poi-dialog.component';
   templateUrl: './poi-button.component.html',
   styleUrls: ['./poi-button.component.styl']
 })
-export class PoiButtonComponent implements OnInit {
+export class PoiButtonComponent implements OnInit, OnDestroy {
 
   @Input()
   get map(): IgoMap { return this._map; }
@@ -29,6 +30,7 @@ export class PoiButtonComponent implements OnInit {
   private _color: string;
 
   public pois: Poi[];
+  private authenticate$$: Subscription;
 
   constructor(
     private dialog: MdDialog,
@@ -40,11 +42,16 @@ export class PoiButtonComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.authenticate$.subscribe((auth) => {
-      if (auth) {
-        this.getPois();
-      }
-    });
+    this.authenticate$$ = this.authService.authenticate$
+      .subscribe((auth) => {
+        if (auth) {
+          this.getPois();
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.authenticate$$.unsubscribe();
   }
 
   deletePoi(poi: Poi) {
@@ -91,11 +98,11 @@ export class PoiButtonComponent implements OnInit {
           poi.title = title;
           this.poiService.create(poi).subscribe((newPoi) => {
             const translate = this.languageService.translate;
-            const title = translate.instant('igo.poiButton.dialog.createTitle');
+            const titleD = translate.instant('igo.poiButton.dialog.createTitle');
             const message = translate.instant('igo.poiButton.dialog.createMsg', {
               value: poi.title
             });
-            this.messageService.info(message, title);
+            this.messageService.info(message, titleD);
             poi.id = newPoi.id;
             this.pois.push(poi);
           });

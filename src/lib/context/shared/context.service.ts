@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { RequestService, ConfigService, RouteService,
         Message, LanguageService } from '../../core';
 
-import { AuthHttp } from '../../auth';
+import { AuthHttp, AuthService } from '../../auth';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
@@ -26,6 +26,7 @@ export class ContextService {
 
   constructor(private http: Http,
               private authHttp: AuthHttp,
+              private authService: AuthService,
               private requestService: RequestService,
               private languageService: LanguageService,
               private toolService: ToolService,
@@ -41,6 +42,20 @@ export class ContextService {
     this.baseUrl = this.options.url;
 
     this.readParamsFromRoute();
+
+    this.authService.authenticate$
+      .subscribe((authenticated) => {
+        if (authenticated === null) {
+          return;
+        }
+        const contexts$$ = this.contexts$.subscribe((contexts) => {
+          if (contexts$$) {
+            contexts$$.unsubscribe();
+            this.handleContextsChange(contexts);
+          }
+        });
+        this.loadContexts();
+      });
   }
 
   get(): Observable<ContextsList> {
@@ -316,4 +331,38 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     throw [{title: titleError, text: textError}];
   }
 
+  private handleContextsChange(contexts: ContextsList) {
+
+    const context = this.context$.value;
+    const editedContext = this.editedContext$.value;
+
+    if (!this.findContext(context)) {
+      this.loadDefaultContext();
+    } else {
+      context.map.view.keepCurrentView = true;
+      this.context$.next(context);
+    }
+    const editedFound = this.findContext(editedContext);
+    if (!editedFound || editedFound.permission !== 'write') {
+      this.setEditedContext(undefined);
+    }
+  }
+
+  private findContext(context: Context) {
+    if (!context || !context.id) {
+      return false;
+    }
+
+    const contexts = this.contexts$.value;
+    let found;
+    for (const key of Object.keys(contexts)) {
+      const value = contexts[key];
+      found = value.find(c => c.id === context.id);
+      if (found) {
+        break;
+      }
+    }
+
+    return found;
+  }
 }
