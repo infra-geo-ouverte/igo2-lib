@@ -2,7 +2,7 @@ import { Directive, Self, OnInit, OnDestroy, HostListener } from '@angular/core'
 import { Subscription } from 'rxjs/Subscription';
 
 import { MessageService, LanguageService } from '../../core';
-import { ContextPermission, DetailedContext, ContextService } from '../shared';
+import { Context, ContextPermission, DetailedContext, ContextService } from '../shared';
 import { ContextPermissionsComponent } from './context-permissions.component';
 
 
@@ -18,8 +18,10 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
     const contextId = this.component.context.id;
     this.contextService
       .addPermissionAssociation(contextId, permission.profil, permission.typePermission)
-      .subscribe((p) => {
-        this.component.permissions[permission.typePermission].push(p);
+      .subscribe((profils) => {
+        for (const p of profils) {
+          this.component.permissions[permission.typePermission].push(p);
+        }
         const profil = permission.profil;
         const translate = this.languageService.translate;
         const message = translate.instant('igo.permission.dialog.addMsg', {
@@ -44,6 +46,18 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
         value: profil
       });
       const title = translate.instant('igo.permission.dialog.deleteTitle');
+      this.messageService.success(message, title);
+    });
+  }
+
+  @HostListener('scopeChanged', ['$event']) onScopeChanged(context: Context) {
+    const scope = context.scope;
+    this.contextService.update(context.id, {scope: scope}).subscribe(() => {
+      const translate = this.languageService.translate;
+      const message = translate.instant('igo.permission.dialog.scopeChangedMsg', {
+        value: translate.instant('igo.permission.scope.' + scope)
+      });
+      const title = translate.instant('igo.permission.dialog.scopeChangedTitle');
       this.messageService.success(message, title);
     });
   }

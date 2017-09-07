@@ -28,6 +28,8 @@ _('igo.permission.dialog.addTitle');
 _('igo.permission.dialog.addMsg');
 _('igo.permission.dialog.deleteTitle');
 _('igo.permission.dialog.deleteMsg');
+_('igo.permission.dialog.scopeChangedTitle');
+_('igo.permission.dialog.scopeChangedMsg');
 
 _('igo.poiButton.dialog.createTitle');
 _('igo.poiButton.dialog.createMsg');

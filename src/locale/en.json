@@ -39,9 +39,6 @@
 			"edit": "Edit this context",
 			"form": {
 				"edit": "Edit",
-				"private": "Private",
-				"protected": "Protected",
-				"public": "Public",
 				"title": "Title",
 				"titleRequired": "Title required"
 			},
@@ -75,10 +72,17 @@
 				"addMsg": "The permission '{{value}}' was added",
 				"addTitle": "Permission added",
 				"deleteMsg": "The permission '{{value}}' was removed",
-				"deleteTitle": "Permission removed"
+				"deleteTitle": "Permission removed",
+        "scopeChangedMsg": "The scope was changed to {{value}}",
+				"scopeChangedTitle": "Scope changed"
 			},
 			"profil": "Profil",
 			"profilRequired": "Profil required",
+      "scope": {
+        "private": "Private",
+        "protected": "Protected",
+        "public": "Public"
+      },
 			"write": "Read and Write",
 			"read": "Read only"
 		},

@@ -54,8 +54,7 @@ export class ContextFormComponent implements OnInit {
     const context: any = this.context || {};
 
     this.form = this.formBuilder.group({
-      'title': [context.title],
-      'scope': [context.scope || 'public']
+      'title': [context.title]
     });
   }
 

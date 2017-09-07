@@ -28,6 +28,7 @@ export class ContextPermissionsComponent implements OnInit {
 
   @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
   @Output() removePermission: EventEmitter<ContextPermission> = new EventEmitter();
+  @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
 
   constructor(private formBuilder: FormBuilder) { }
 
