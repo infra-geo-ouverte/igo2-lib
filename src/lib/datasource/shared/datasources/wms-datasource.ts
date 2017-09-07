@@ -109,7 +109,8 @@ export class WMSDataSource
     const url = this.ol.getGetFeatureInfoUrl(
       options.coordinates, options.resolution, options.projection, {
         'INFO_FORMAT': this.queryInfoFormat,
-        'QUERY_LAYERS': this.params.layers
+        'QUERY_LAYERS': this.params.layers,
+        'FEATURE_COUNT': '10'
       });
 
     return url;
