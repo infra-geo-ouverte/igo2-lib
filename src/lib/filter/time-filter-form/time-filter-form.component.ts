@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MdSlider } from '@angular/material'
+import { MdSlider } from '@angular/material';
 import { TimeFilterOptions } from '../shared';
 
 @Component({
@@ -30,7 +30,7 @@ export class TimeFilterFormComponent {
   @Output() change: EventEmitter<Date | [Date | Date]> = new EventEmitter();
 
   @ViewChild(MdSlider) mySlider;
-  @ViewChild("playFilterIcon") playFilterIcon;
+  @ViewChild('playFilterIcon') playFilterIcon;
 
   get type(): 'date' | 'time' | 'datetime' {
     return this.options.type === undefined ?
@@ -48,17 +48,17 @@ export class TimeFilterFormComponent {
   }
 
   get style(): string {
-    return this.options.style === undefined ? 
+    return this.options.style === undefined ?
       'calendar' : this.options.style;
   }
 
   get step(): string {
-    return this.options.step === undefined ? 
+    return this.options.step === undefined ?
       '86400000' : this.options.step;
   }
 
   get timeInterval(): number {
-    return this.options.timeInterval === undefined ? 
+    return this.options.timeInterval === undefined ?
       2000 : this.options.timeInterval;
   }
 
@@ -79,103 +79,124 @@ export class TimeFilterFormComponent {
 
   constructor() { }
 
-  handleDateChange(event: any) {    
+  handleDateChange(event: any) {
     if (this.isRange) {
+      switch (this.type) {
+        case 'date':
+          this.startDate = new Date(this.startDate.setHours(0));
+          this.startDate = new Date(this.startDate.setMinutes(0));
+          this.startDate = new Date(this.startDate.setSeconds(0));
+          this.endDate = new Date(this.endDate.setHours(0));
+          this.endDate = new Date(this.endDate.setMinutes(0));
+          this.endDate = new Date(this.endDate.setSeconds(0));
+        break;
+        // datetime
+         // time
+        default:
+          // do nothing
+      }
       this.change.emit([this.startDate, this.endDate]);
-    } else {
+    }else {
+      switch (this.type) {
+        case 'date':
+          // set at midnight
+          this.date = new Date(this.date.setHours(0));
+          this.date = new Date(this.date.setMinutes(0));
+          this.date = new Date(this.date.setSeconds(0));
+        break;
+        // datetime
+        // time
+        default:
+          // do nothing
+      }
       this.change.emit(this.date);
-    }    
+    }
   }
 
-  dateToNumber(date: Date): number{
+  dateToNumber(date: Date): number {
     let newDate;
-    if(date){
+    if (date) {
       newDate = new Date(date);
-    }else{
+    }else {
       newDate = new Date(this.min);
     }
 
     return newDate.getTime();
   }
 
-  setSliderThumbLabel(label: string){
-    var thumbLabel = this.findThumbLabel(this.mySlider._elementRef.nativeElement.childNodes);
-    if(thumbLabel){
+  setSliderThumbLabel(label: string) {
+    const thumbLabel = this.findThumbLabel(this.mySlider._elementRef.nativeElement.childNodes);
+    if (thumbLabel) {
       thumbLabel.textContent = label;
     }
   }
 
-  findThumbLabel(test: any[]): any{
+  findThumbLabel(test: any[]): any {
      let thumbLabel;
 
      test.forEach(value => {
-        
-       if(value.className === 'mat-slider-thumb-label-text'){
+       if (value.className === 'mat-slider-thumb-label-text') {
          thumbLabel = value;
        }
 
-       if((value.children.length > 0 )&& (!thumbLabel)){
-         thumbLabel = this.findThumbLabel(value.childNodes)
+       if ((value.children.length > 0 ) && (!thumbLabel)) {
+         thumbLabel = this.findThumbLabel(value.childNodes);
        }
      }, this);
      return thumbLabel;
   }
 
-  playFilter(event: any){
+  playFilter(event: any) {
 
-    if(this.interval){
+    if (this.interval) {
       this.stopFilter();
-    }else{
-      
+    }else {
       this.playFilterIcon.nativeElement.textContent = 'pause_circle_filled';
-      
-      this.interval = setInterval(function(that){
-        
+      this.interval = setInterval(function(that) {
         let newMinDateNumber;
-        let maxDateNumber = new Date(that.max);
-    
+        const maxDateNumber = new Date(that.max);
+
         newMinDateNumber = that.date === undefined ? that.min.getTime() : that.date.getTime();
         newMinDateNumber += that.mySlider.step;
         that.date = new Date(newMinDateNumber);
-       
-        if(newMinDateNumber > maxDateNumber.getTime()){
+
+        if (newMinDateNumber > maxDateNumber.getTime()) {
           that.stopFilter();
         }
-              
+
         that.handleDateChange({});
-        
-      }, this.timeInterval, this)
+
+      }, this.timeInterval, this);
     }
   }
 
-  stopFilter(){
+  stopFilter() {
     clearInterval(this.interval.data.handleId);
-    this.interval=undefined;
-    this.playFilterIcon.nativeElement.textContent = "play_circle_filled";
+    this.interval = undefined;
+    this.playFilterIcon.nativeElement.textContent = 'play_circle_filled';
   }
 
   handleSliderDateChange(event: any) {
-
     this.date = new Date(event.value);
     this.setSliderThumbLabel(this.handleSliderTooltip());
     this.handleDateChange({});
   }
 
-  handleSliderValue(): number{
+  handleSliderValue(): number {
     return this.date ===  undefined ? this.min.getTime() : this.date.getTime();
   }
 
-  handleSliderTooltip(){
-    let label:string;
+  handleSliderTooltip() {
+    let label: string;
 
     switch (this.type) {
-      case "date":
+      case 'date':
         label = this.date === undefined ? this.min.toDateString() : this.date.toDateString();
         break;
-      case "time":
+      case 'time':
         label = this.date === undefined ? this.min.toTimeString() : this.date.toTimeString();
         break;
-      //datetime      
+      // datetime
       default:
         label = this.date === undefined ? this.min.toUTCString() : this.date.toUTCString();
         break;
