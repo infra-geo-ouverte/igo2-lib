@@ -28,4 +28,19 @@ describe('TimeFilterFormComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('test HandleDateChange with format "date" and !isRange', () => {
+    component.setOptions({
+        'type': 'date',
+        'style': 'calendar',
+        'timeinterval': 2000,
+        'min': '1980-01-01T05:00:00Z',
+        'max': '2020-03-29T05:00:00Z',
+        'step': null
+    });
+    component.date = '1999-02-02T15:00:00-0400';
+    const dateAfterHandle = '1999-02-02T00:00:00-0400';
+    component.handleDateChange({});
+    expect(component.date.toISOString()).toBe(dateAfterHandle.toISOString());
+  });
 });
