@@ -58,6 +58,7 @@ export class BookmarkButtonComponent {
     };
 
     const layers = this.map.layers$.getValue();
+
     let order = layers.length;
     for (const l of layers) {
         const layer: any = l;
@@ -69,7 +70,8 @@ export class BookmarkButtonComponent {
             params: layer.dataSource.options.params,
             url: layer.dataSource.options.url
           },
-          order: order--
+          order: order--,
+          visible: layer.visible
         };
         context.layers.push(opts);
     }
