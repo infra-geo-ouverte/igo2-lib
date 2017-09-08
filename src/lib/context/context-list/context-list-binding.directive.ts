@@ -27,9 +27,21 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   }
 
   @HostListener('save', ['$event']) onSave(context: Context) {
-    const layers = this.mapService.getMap().layers$.getValue();
+    const map = this.mapService.getMap();
+    const view = map.ol.getView();
+    const proj = view.getProjection().getCode();
+    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
+    const layers = map.layers$.getValue();
+
     const changes = {
-      layers: []
+      layers: [],
+      map: {
+        view: {
+          center: center.getCoordinates(),
+          zoom: view.getZoom(),
+          projection: proj
+        }
+      }
     };
 
     let order = layers.length;
