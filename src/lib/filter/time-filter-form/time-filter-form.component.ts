@@ -52,9 +52,9 @@ export class TimeFilterFormComponent {
       'calendar' : this.options.style;
   }
 
-  get step(): string {
+  get step(): number {
     return this.options.step === undefined ?
-      '86400000' : this.options.step;
+      86400000 : this.options.step;
   }
 
   get timeInterval(): number {
@@ -80,37 +80,33 @@ export class TimeFilterFormComponent {
   constructor() { }
 
   handleDateChange(event: any) {
-    if (this.isRange) {
-      switch (this.type) {
-        case 'date':
-          this.startDate = new Date(this.startDate.setHours(0));
-          this.startDate = new Date(this.startDate.setMinutes(0));
-          this.startDate = new Date(this.startDate.setSeconds(0));
-          this.endDate = new Date(this.endDate.setHours(0));
-          this.endDate = new Date(this.endDate.setMinutes(0));
-          this.endDate = new Date(this.endDate.setSeconds(0));
-        break;
-        // datetime
-         // time
-        default:
-          // do nothing
-      }
-      this.change.emit([this.startDate, this.endDate]);
-    }else {
-      switch (this.type) {
-        case 'date':
-          // set at midnight
-          this.date = new Date(this.date.setHours(0));
-          this.date = new Date(this.date.setMinutes(0));
-          this.date = new Date(this.date.setSeconds(0));
-        break;
-        // datetime
-        // time
-        default:
-          // do nothing
-      }
-      this.change.emit(this.date);
+
+    if (!this.isRange) {
+      this.startDate = new Date(this.date);
+      this.endDate = new Date(this.date);
     }
+
+    this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
+    this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
+    if (this.startDate > this.endDate) {
+      this.startDate = new Date(this.endDate);
+    }
+
+    switch (this.type) {
+      case 'date':
+        this.startDate.setHours(0);
+        this.startDate.setMinutes(0);
+        this.startDate.setSeconds(0);
+        this.endDate.setHours(23);
+        this.endDate.setMinutes(59);
+        this.endDate.setSeconds(59);
+      break;
+      // datetime
+       // time
+      default:
+        // do nothing
+    }
+    this.change.emit([this.startDate, this.endDate]);
   }
 
   dateToNumber(date: Date): number {

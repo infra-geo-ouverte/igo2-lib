@@ -7,6 +7,6 @@ export interface TimeFilterOptions {
   type?: 'date' | 'time' | 'datetime';
   format?: string;
   style?: 'calendar' | 'slider';
-  step?: string;
+  step?: number;
   timeInterval?: number;
 }

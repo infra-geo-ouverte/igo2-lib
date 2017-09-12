@@ -151,9 +151,9 @@ export class CapabilitiesService {
 
       if (dimension.values) {
         const minMaxDim = dimension.values.split('/');
-        timeFilter.min = minMaxDim[0] !== undefined ? minMaxDim[0] : null;
-        timeFilter.max = minMaxDim[1] !== undefined ? minMaxDim[1] : null;
-        timeFilter.step = minMaxDim[2] !== undefined ? minMaxDim[2] : null;
+        timeFilter.min = minMaxDim[0] !== undefined ? minMaxDim[0] : undefined;
+        timeFilter.max = minMaxDim[1] !== undefined ? minMaxDim[1] : undefined;
+        timeFilter.step = minMaxDim[2] !== undefined ? minMaxDim[2] : undefined;
       }
 
       if (dimension.default) {
