@@ -110,7 +110,7 @@ export class WMSDataSource
       options.coordinates, options.resolution, options.projection, {
         'INFO_FORMAT': this.queryInfoFormat,
         'QUERY_LAYERS': this.params.layers,
-        'FEATURE_COUNT': '10'
+        'FEATURE_COUNT': this.params.feature_count || '5'
       });
 
     return url;

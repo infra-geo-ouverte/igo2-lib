@@ -7,7 +7,6 @@ _('igo.print');
 _('igo.searchResults');
 _('igo.timeAnalysis');
 
-
 _('igo.bookmarkButton.dialog.createTitle');
 _('igo.bookmarkButton.dialog.createMsg');
 
@@ -39,6 +38,13 @@ _('igo.poiButton.dialog.confirmDelete');
 
 _('igo.printForm.landscape');
 _('igo.printForm.portrait');
+
+_('igo.search.dataSources.name');
+_('igo.search.dataSources.properties.title');
+_('igo.search.dataSources.properties.groupTitle');
+_('igo.search.dataSources.properties.abstract');
+_('igo.search.dataSources.properties.url');
+_('igo.search.dataSources.properties.type');
 
 _('igo.tool.dialog.addTitle');
 _('igo.tool.dialog.addMsg');

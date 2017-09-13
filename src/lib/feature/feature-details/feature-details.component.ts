@@ -21,4 +21,8 @@ export class FeatureDetailsComponent {
 
   constructor(private cdRef: ChangeDetectorRef) { }
 
+  isObject(value) {
+    return typeof value === 'object';
+  }
+
 }

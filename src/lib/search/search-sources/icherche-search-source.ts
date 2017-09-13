@@ -57,6 +57,15 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   private formatResult(result: any): Feature {
+    const properties = Object.assign({
+      type: result.doc_type
+    }, result.properties);
+    delete properties['@timestamp'];
+    delete properties['@version'];
+    delete properties.recherche;
+    delete properties.id;
+    delete properties.cote;
+
     return {
       id: result._id,
       source: IChercheSearchSource._name,
@@ -66,9 +75,7 @@ export class IChercheSearchSource extends SearchSource {
       title_html: result.highlight,
       icon: 'place',
       projection: 'EPSG:4326',
-      properties: Object.assign({
-        type: result.doc_type
-      }, result.properties),
+      properties: properties,
       geometry: result.geometry,
       extent: result.bbox
     };
