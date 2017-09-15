@@ -109,6 +109,18 @@
 			"title": "Title"
 		},
 		"searchResults": "Search Results",
+    "search": {
+      "dataSources": {
+        "name": "Layers",
+        "properties": {
+          "title": "Title",
+          "group": "Group",
+          "abstract": "Abstract",
+          "url": "URL",
+          "type": "Type"
+        }
+      }
+    },
 		"table": {
 			"filter": "Filter"
 		},

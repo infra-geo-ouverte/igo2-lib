@@ -109,6 +109,18 @@
 			"resolution": "Résolution",
 			"title": "Titre"
 		},
+    "search": {
+      "dataSources": {
+        "name": "Couches",
+        "properties": {
+          "title": "Titre",
+          "group": "Groupe",
+          "abstract": "Description",
+          "url": "URL",
+          "type": "Type"
+        }
+      }
+    },
 		"searchResults": "Résultats de recherche",
 		"table": {
 			"filter": "Filtre"

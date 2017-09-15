@@ -34,12 +34,15 @@ export class AuthFormComponent implements OnInit {
   private options: AuthOptions;
   private user;
 
+  public visible: boolean = true;
+
   constructor(
     public auth: AuthService,
     private config: ConfigService,
     @Optional() private router: Router
   ) {
     this.options = this.config.getConfig('auth') || {};
+    this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
 
     if (this.auth.decodeToken()) {
         this.user = {
