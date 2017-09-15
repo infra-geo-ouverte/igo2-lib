@@ -13,7 +13,7 @@
       "title": "MSP Base Map",
       "type": "xyz",
       "source": {
-        "url": "https://geoegl.msp.gouv.qc.ca/cgi-wms/mapcache.fcgi/tms/1.0.0/carte_gouv_qc_ro@EPSG_3857/{z}/{x}/{-y}.png"
+        "url": "https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_ro@EPSG_3857/{z}/{x}/{-y}.png"
       }
     },
     {
@@ -21,7 +21,7 @@
       "title": "Bassin (WFS)",
       "type" : "wfs",
       "source":{
-        "url" : "/cgi-wms/adnInternetV2.fcgi?service=WFS&version=1.1.0&request=GetFeature&typename=adn_bassin_n1_simplify_500&srsname=EPSG:3857"
+        "url" : "https://geoegl.msp.gouv.qc.ca/ws/adnInternetV2.fcgi?service=WFS&version=1.1.0&request=GetFeature&typename=adn_bassin_n1_simplify_500&srsname=EPSG:3857"
       },
       "style" : {
         "stroke" : {
@@ -47,10 +47,22 @@
       }
     },
     {
+      "title": "enclave",
+      "type": "wms",
+      "source": {
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "params": {
+          "layers": "MTQ_511_P",
+          "version": "1.3.0"
+        },
+        "projection": "EPSG:3857"
+      }
+    },
+    {
       "title": "Embâcle",
       "type": "wms",
       "source": {
-        "url": "http://geoegl.msp.gouv.qc.ca/cgi-wms/igo_gouvouvert.fcgi",
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
         "params": {
           "layers": "vg_observation_v_inondation_embacle_wmst",
           "version": "1.3.0"
@@ -71,7 +83,8 @@
   ],
   "toolbar": [
     "timeAnalysis",
-    "mapDetails"
+    "mapDetails",
+    "contextManager"
   ],
   "tools": [
     {
@@ -82,6 +95,12 @@
     },
     {
       "name": "timeAnalysis"
+    },
+    {
+      "name": "contextManager"
+    },
+    {
+      "name": "contextEditor"
     }
   ]
 }
