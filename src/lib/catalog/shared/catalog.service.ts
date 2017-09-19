@@ -50,9 +50,15 @@ export class CatalogService {
   }
 
   load() {
-    this.get().subscribe((catalogs) => {
-      const catalogConfig = this.config.getConfig('catalog') || {};
+    const catalogConfig = this.config.getConfig('catalog') || {};
+    if (!this.baseUrl) {
+      if (catalogConfig.sources) {
+        this.catalogs$.next(catalogConfig.sources);
+      }
+      return;
+    }
 
+    this.get().subscribe((catalogs) => {
       if (catalogConfig.sources) {
         catalogs = catalogs.concat(catalogConfig.sources);
       }
