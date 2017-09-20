@@ -12,17 +12,22 @@ describe('TimeFilterFormComponent', () => {
   const max = '2020-03-29T05:00:00Z';
   const dateX = '1999-02-02T15:00:00-0500';
   const dateY = '1999-02-03T11:00:00-0500';
+  const dateZ = '1999-02-03T17:00:00-0500';
 
   const dateXAfterHandle = new Date('1999-02-02T05:00:00Z');
   const dateYAfterHandle = new Date('1999-02-04T04:59:59Z');
   const dateZAfterHandle = new Date('1999-02-03T04:59:59Z');
 
   const dateTimeXAfterHandle = new Date('1999-02-02T20:00:00Z');
-  const dateTimeYAfterHandle = new Date('1999-02-03T16:00:00Z');  
+  const dateTimeYAfterHandle = new Date('1999-02-03T16:00:00Z');
 
   const dateXAfterHandleStep2Day = new Date('1999-02-04T05:00:00Z');
   const dateYAfterHandleStep2Day = new Date('1999-02-05T04:59:59Z');
 
+  const dateXAfterHandleTime = new Date('1999-02-02T20:00:00Z');
+  const dateXAfterHandleTimeStep1hour = new Date('1999-02-02T20:59:59Z');
+  //const dateYAfterHandleTime = new Date('1999-02-02T11:00:00Z');
+  const dateZAfterHandleTime = new Date('1999-02-02T17:00:00Z');
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -58,13 +63,13 @@ describe('TimeFilterFormComponent', () => {
       expect(value[0].toISOString()).toBe(dateXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateZAfterHandle.toISOString());
     });
-
+    fixture.detectChanges();
     component.date = new Date(dateX);
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-    
+
   });
 
   it('HandleDateChange: calendar, "date", isRange', () => {
@@ -80,15 +85,16 @@ describe('TimeFilterFormComponent', () => {
     component.change.subscribe((value)=>{
       expect(value[0].toISOString()).toBe(dateXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateYAfterHandle.toISOString());
-      
+
     });
+    fixture.detectChanges();
     component.startDate = new Date(dateX);
     component.endDate = new Date(dateY)
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
 
   it('HandleDateChange: calendar, "datetime", isRange', () => {
@@ -105,15 +111,16 @@ describe('TimeFilterFormComponent', () => {
     component.change.subscribe((value)=>{
       expect(value[0].toISOString()).toBe(dateTimeXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateTimeYAfterHandle.toISOString());
-      
+
     });
+    fixture.detectChanges();
     component.startDate = new Date(dateX);
     component.endDate = new Date(dateY)
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
 
   it('HandleDateChange: calendar, "datetime", !isRange', () => {
@@ -126,18 +133,68 @@ describe('TimeFilterFormComponent', () => {
         'max': max,
         'step': null
     };
+    fixture.detectChanges();
     component.change.subscribe((value)=>{
       expect(value[0].toISOString()).toBe(dateTimeXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateTimeXAfterHandle.toISOString());
     });
 
     component.date = new Date(dateX);
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
+
+  it('HandleDateChange: calendar, "time", isRange', () => {
+
+    component.options = {
+        'type': 'time',
+        'style': 'calendar',
+        'timeInterval': 2000,
+        'min': min,
+        'max': max,
+        'range': true
+    };
+    component.change.subscribe((value)=>{
+      expect(value[0].toISOString()).toBe(dateXAfterHandleTime.toISOString());
+      expect(value[1].toISOString()).toBe(dateZAfterHandleTime.toISOString());
+    });
+
+    component.startDate = new Date(dateX);
+    component.endDate = new Date(dateZ);
+    fixture.detectChanges();
+    component.handleDateChange({source:{date:"", value:""}});
+
+    expect(component.min.toISOString()).toBe(new Date(min).toISOString());
+    expect(component.max.toISOString()).toBe(new Date(max).toISOString());
+
+  });
+
+  it('HandleDateChange: calendar, "time", !isRange', () => {
+
+    component.options = {
+        'type': 'time',
+        'style': 'calendar',
+        'timeInterval': 2000,
+        'min': min,
+        'max': max,
+        'range': false
+    };
+    component.change.subscribe((value)=>{
+      expect(value[0].toISOString()).toBe(dateXAfterHandleTime.toISOString());
+      expect(value[1].toISOString()).toBe(dateXAfterHandleTimeStep1hour.toISOString());
+    });
+    fixture.detectChanges();
+    component.date = new Date(dateX);
+    component.handleDateChange({source:{date:"", value:""}});
+
+    expect(component.min.toISOString()).toBe(new Date(min).toISOString());
+    expect(component.max.toISOString()).toBe(new Date(max).toISOString());
+
+  });
+
 
   it('Calendar with range. Must have 2 calendars', () => {
 
@@ -149,17 +206,17 @@ describe('TimeFilterFormComponent', () => {
         'max': max,
         'range': true
     };
-     
+
     component.startDate = new Date(dateX);
     component.endDate = new Date(dateY)
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     fixture.detectChanges();
     // check there is 2 calendar
     const regex = /<md2-datepicker/gi;
     const numberOfCalendar = fixture.nativeElement.innerHTML.match(regex);
     expect(numberOfCalendar.length).toBe(2);
-    
+
   });
 
   it('Calendar with no range. Must have 1 calendar', () => {
@@ -172,17 +229,17 @@ describe('TimeFilterFormComponent', () => {
         'max': max,
         'range': false
     };
-     
+
     component.startDate = new Date(dateX);
     component.endDate = new Date(dateY)
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     fixture.detectChanges();
     // check there is 2 calendar
     const regex = /<md2-datepicker/gi;
     const numberOfCalendar = fixture.nativeElement.innerHTML.match(regex);
     expect(numberOfCalendar.length).toBe(1);
-    
+
   });
 
   it('HandleDateChange: slider, "date"', () => {
@@ -199,13 +256,13 @@ describe('TimeFilterFormComponent', () => {
       expect(value[0].toISOString()).toBe(dateXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateZAfterHandle.toISOString());
     });
-
+    fixture.detectChanges();
     component.date = new Date(dateX);
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
 
 
@@ -224,13 +281,13 @@ describe('TimeFilterFormComponent', () => {
       expect(value[0].toISOString()).toBe(dateXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateZAfterHandle.toISOString());
     });
-
+    fixture.detectChanges();
     component.date = new Date(dateX);
-    component.handleDateChange({});
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
 
   it('HandleDateChange: slider, "datetime", !isRange, step=null', () => {
@@ -246,14 +303,14 @@ describe('TimeFilterFormComponent', () => {
       expect(value[0].toISOString()).toBe(dateTimeXAfterHandle.toISOString());
       expect(value[1].toISOString()).toBe(dateTimeXAfterHandle.toISOString());
     });
-
+    fixture.detectChanges();
     component.date = new Date(dateX);
-      
-    component.handleDateChange({});
-    
+
+    component.handleDateChange({source:{date:"", value:""}});
+
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
 
   it('HandleDateChange: slider, "date", step=172800000', () => {
@@ -272,18 +329,48 @@ describe('TimeFilterFormComponent', () => {
     });
 
     fixture.detectChanges();
-    // check step 
+    // check step
     expect(component.mySlider.step).toBe(172800000);
     component.date = new Date(dateX);
 
     //add 1 step
-    component.date = new Date(component.date.getTime() + component.mySlider.step); 
+    component.date = new Date(component.date.getTime() + component.mySlider.step);
 
-    component.handleDateChange({}); 
+    component.handleDateChange({source:{date:"", value:""}});
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
-   
+
   });
+
+  it('HandleDateChange: slider, "time"', () => {
+
+    component.options = {
+        'type': 'time',
+        'style': 'slider',
+        'timeInterval': 2000,
+        'min': min,
+        'max': max
+    };
+    component.change.subscribe((value)=>{
+      expect(value[0].toISOString()).toBe(dateXAfterHandleTime.toISOString());
+      expect(value[1].toISOString()).toBe(dateXAfterHandleTimeStep1hour.toISOString());
+    });
+
+    fixture.detectChanges();
+    // check step
+    expect(component.mySlider.step).toBe(3600000);
+    component.date = new Date(dateX);
+
+    //add 1 step
+    //component.date = new Date(component.date.getTime() + component.mySlider.step);
+
+    component.handleDateChange({source:{date:"", value:""}});
+
+    expect(component.min.toISOString()).toBe(new Date(min).toISOString());
+    expect(component.max.toISOString()).toBe(new Date(max).toISOString());
+
+  });
+
 
 });
