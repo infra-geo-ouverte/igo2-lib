@@ -53,8 +53,25 @@ export class TimeFilterFormComponent {
   }
 
   get step(): number {
-    return this.options.step === undefined ?
-      86400000 : this.options.step;
+    let step = 86400000;
+    if(this.options.step === undefined){
+      switch(this.type){
+        case 'date':
+        case 'datetime':
+          step = 86400000
+        break;
+        case 'time':
+          step = 3600000;
+        break;
+        default:
+          step = 86400000;
+      }
+    }
+    else{
+      step = this.options.step;
+    }
+
+    return step;
   }
 
   get timeInterval(): number {
@@ -80,33 +97,17 @@ export class TimeFilterFormComponent {
   constructor() { }
 
   handleDateChange(event: any) {
+    // Calendar throw handleDateChange when first selected with weird date
+    if( (event.source.constructor.name === "MdSlider") ||
+        (event.source.date == event.source.value) ){
 
-    if (!this.isRange) {
-      this.startDate = new Date(this.date);
-      this.endDate = new Date(this.date);
-    }
+      this.setupDateOutput();
 
-    this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
-    this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
-    if (this.startDate > this.endDate) {
-      this.startDate = new Date(this.endDate);
-    }
+      this.applyTypeChange();
 
-    switch (this.type) {
-      case 'date':
-        this.startDate.setHours(0);
-        this.startDate.setMinutes(0);
-        this.startDate.setSeconds(0);
-        this.endDate.setHours(23);
-        this.endDate.setMinutes(59);
-        this.endDate.setSeconds(59);
-      break;
-      // datetime
-       // time
-      default:
-        // do nothing
+
+      this.change.emit([this.startDate, this.endDate]);
     }
-    this.change.emit([this.startDate, this.endDate]);
   }
 
   dateToNumber(date: Date): number {
@@ -160,7 +161,7 @@ export class TimeFilterFormComponent {
           that.stopFilter();
         }
 
-        that.handleDateChange({});
+        that.handleDateChange({source:{value:that.date, date:that.date}});
 
       }, this.timeInterval, this);
     }
@@ -175,7 +176,9 @@ export class TimeFilterFormComponent {
   handleSliderDateChange(event: any) {
     this.date = new Date(event.value);
     this.setSliderThumbLabel(this.handleSliderTooltip());
-    this.handleDateChange({});
+    event.source.value = this.date;
+    event.source.date = this.date;
+    this.handleDateChange(event);
   }
 
   handleSliderValue(): number {
@@ -198,6 +201,73 @@ export class TimeFilterFormComponent {
         break;
     }
     return label;
+  }
+
+  setupDateOutput(){
+    if (!this.isRange) {
+      this.startDate = new Date(this.date);
+      this.endDate = new Date(this.date);
+    }
+    this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
+    this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
+    if (this.startDate > this.endDate) {
+      this.startDate = new Date(this.endDate);
+    }
+  }
+
+  applyTypeChange(){
+    switch (this.type) {
+      case 'date':
+        this.startDate.setHours(0);
+        this.startDate.setMinutes(0);
+        this.startDate.setSeconds(0);
+        this.endDate.setHours(23);
+        this.endDate.setMinutes(59);
+        this.endDate.setSeconds(59);
+      break;
+      case 'time':
+        if(this.style === 'calendar'){
+          if(this.startDate.getDay()!== this.min.getDay()){
+            const selectedHour = this.startDate.getHours();
+            const selectedMinute = this.startDate.getMinutes();
+            this.startDate = this.min;
+            this.startDate.setHours(selectedHour);
+            this.startDate.setMinutes(selectedMinute);
+          }
+
+          if(this.endDate.getDay() !== this.min.getDay()){
+            const selectedHour = this.endDate.getHours();
+            const selectedMinute = this.endDate.getMinutes();
+            this.endDate = this.min;
+            this.endDate.setHours(selectedHour);
+            this.endDate.setMinutes(selectedMinute);
+          }
+        }
+
+        if(!this.isRange){
+          this.startDate.setMinutes(0);
+          this.startDate.setSeconds(0);
+          this.endDate.setMinutes(59);
+          this.endDate.setSeconds(59);
+        }
+
+
+      // datetime
+      default:
+        // do nothing
+    }
+  }
+
+  getRangeMinDate(): Date{
+    console.log("min:" + (this.min === undefined?"null":this.min.toISOString()));
+    console.log("startDAte: "+ (this.startDate === undefined?"null":this.startDate.toISOString()));
+    return this.startDate === undefined ? this.min : this.startDate;
+  }
+
+  getRangeMaxDate():Date {
+    console.log("max:" + (this.max === undefined?"null":this.max.toISOString()));
+    console.log("endDAte: "+ (this.endDate === undefined?"null":this.endDate.toISOString()));
+    return this.endDate === undefined ? this.max : this.endDate;
   }
 
 }

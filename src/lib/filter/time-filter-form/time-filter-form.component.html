@@ -12,8 +12,6 @@
     </md2-datepicker>
   </div>
 
-
-
   <div *ngIf="isRange">
     <div class="igo-col igo-col-100">
       <md2-datepicker
@@ -22,7 +20,7 @@
         format="{{format}}"
         type="{{type}}"
         [min]="min"
-        [max]="max"
+        [max]="getRangeMaxDate()"
         [(ngModel)]="startDate"
         (change)="handleDateChange($event)">
       </md2-datepicker>
@@ -34,7 +32,7 @@
         container="dialog"
         format="{{format}}"
         type="{{type}}"
-        [min]="min"
+        [min]="getRangeMinDate()"
         [max]="max"
         [(ngModel)]="endDate"
         (change)="handleDateChange($event)">
@@ -47,7 +45,7 @@
   <i #playFilterIcon class="material-icons" (click)="playFilter($event)">play_circle_filled</i>
   <md-slider
       id="time-slider"
-      tickInterval="48"
+      tickInterval="auto"
       step="{{step}}"
       [min]="dateToNumber(min)"
       [max]="dateToNumber(max)"
