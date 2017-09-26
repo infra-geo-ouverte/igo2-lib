@@ -250,8 +250,7 @@ export class TimeFilterFormComponent {
           this.endDate.setMinutes(59);
           this.endDate.setSeconds(59);
         }
-
-
+      break;
       // datetime
       default:
         // do nothing
@@ -259,14 +258,10 @@ export class TimeFilterFormComponent {
   }
 
   getRangeMinDate(): Date{
-    console.log("min:" + (this.min === undefined?"null":this.min.toISOString()));
-    console.log("startDAte: "+ (this.startDate === undefined?"null":this.startDate.toISOString()));
     return this.startDate === undefined ? this.min : this.startDate;
   }
 
   getRangeMaxDate():Date {
-    console.log("max:" + (this.max === undefined?"null":this.max.toISOString()));
-    console.log("endDAte: "+ (this.endDate === undefined?"null":this.endDate.toISOString()));
     return this.endDate === undefined ? this.max : this.endDate;
   }
 
