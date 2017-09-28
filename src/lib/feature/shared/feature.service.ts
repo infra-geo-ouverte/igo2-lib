@@ -36,7 +36,6 @@ export class FeatureService {
   }
 
   focusFeature(feature: Feature) {
-   // if (feature === undefined) { return false; }
     if (!this.featuresAreTheSame(feature, this.focusedFeature$.value)) {
       this.focusedFeature$.next(feature);
     }

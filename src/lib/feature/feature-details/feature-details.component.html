@@ -1,17 +1,30 @@
 <table class="igo-striped" *ngIf="feature">
   <tbody>
     <tr *ngFor="let property of feature.properties | keyvalue">
-    
-    
-    
-      <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'"><md-icon md-list-avatar>{{feature.icon}}</md-icon></td>
-      <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'"><a href="{{property.value}}" target='_blank'> {{ 'igo.targetHtmlUrl' | translate }} {{feature.title}}</a></td>
-      <td *ngIf="feature.properties.target === 'innerhtml' && property.key === 'body'"></td>
-      <td *ngIf="feature.properties.target === 'innerhtml' && property.key === 'body'" [innerHTML]=property.value></td>
-      <td *ngIf="feature.properties.target === undefined">{{property.key }}</td>
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value)" [innerHTML]=property.value></td>
-      <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json"></td>
-            
+
+      <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
+        <md-icon md-list-avatar>{{feature.icon}}</md-icon>
+      </td>
+
+      <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
+        <a href="{{property.value}}" target='_blank'> {{ 'igo.targetHtmlUrl' | translate }} {{feature.title}}</a>
+      </td>
+
+      <td *ngIf="feature.properties.target === 'innerhtml' && property.key === 'body'">
+      </td>
+
+      <td *ngIf="feature.properties.target === 'innerhtml' && property.key === 'body'" [innerHTML]=property.value>
+      </td>
+
+      <td *ngIf="feature.properties.target === undefined">
+        {{property.key }}
+      </td>
+
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value)" [innerHTML]=property.value>
+      </td>
+
+      <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
+      </td>
 
     </tr>
   </tbody>
