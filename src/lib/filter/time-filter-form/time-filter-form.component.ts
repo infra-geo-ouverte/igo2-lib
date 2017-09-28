@@ -54,11 +54,11 @@ export class TimeFilterFormComponent {
 
   get step(): number {
     let step = 86400000;
-    if(this.options.step === undefined){
-      switch(this.type){
+    if (this.options.step === undefined) {
+      switch (this.type) {
         case 'date':
         case 'datetime':
-          step = 86400000
+          step = 86400000;
         break;
         case 'time':
           step = 3600000;
@@ -66,8 +66,7 @@ export class TimeFilterFormComponent {
         default:
           step = 86400000;
       }
-    }
-    else{
+    }else {
       step = this.options.step;
     }
 
@@ -98,14 +97,11 @@ export class TimeFilterFormComponent {
 
   handleDateChange(event: any) {
     // Calendar throw handleDateChange when first selected with weird date
-    if( (event.source.constructor.name === "MdSlider") ||
-        (event.source.date == event.source.value) ){
+    if ( (event.source.constructor.name === 'MdSlider') ||
+        (event.source.date === event.source.value) ) {
 
       this.setupDateOutput();
-
       this.applyTypeChange();
-
-
       this.change.emit([this.startDate, this.endDate]);
     }
   }
@@ -161,7 +157,7 @@ export class TimeFilterFormComponent {
           that.stopFilter();
         }
 
-        that.handleDateChange({source:{value:that.date, date:that.date}});
+        that.handleDateChange({source: {value: that.date, date: that.date}});
 
       }, this.timeInterval, this);
     }
@@ -203,7 +199,7 @@ export class TimeFilterFormComponent {
     return label;
   }
 
-  setupDateOutput(){
+  setupDateOutput() {
     if (!this.isRange) {
       this.startDate = new Date(this.date);
       this.endDate = new Date(this.date);
@@ -215,7 +211,7 @@ export class TimeFilterFormComponent {
     }
   }
 
-  applyTypeChange(){
+  applyTypeChange() {
     switch (this.type) {
       case 'date':
         this.startDate.setHours(0);
@@ -226,8 +222,8 @@ export class TimeFilterFormComponent {
         this.endDate.setSeconds(59);
       break;
       case 'time':
-        if(this.style === 'calendar'){
-          if(this.startDate.getDay()!== this.min.getDay()){
+        if (this.style === 'calendar') {
+          if (this.startDate.getDay() !== this.min.getDay()) {
             const selectedHour = this.startDate.getHours();
             const selectedMinute = this.startDate.getMinutes();
             this.startDate = this.min;
@@ -235,7 +231,7 @@ export class TimeFilterFormComponent {
             this.startDate.setMinutes(selectedMinute);
           }
 
-          if(this.endDate.getDay() !== this.min.getDay()){
+          if (this.endDate.getDay() !== this.min.getDay()) {
             const selectedHour = this.endDate.getHours();
             const selectedMinute = this.endDate.getMinutes();
             this.endDate = this.min;
@@ -244,7 +240,7 @@ export class TimeFilterFormComponent {
           }
         }
 
-        if(!this.isRange){
+        if (!this.isRange) {
           this.startDate.setMinutes(0);
           this.startDate.setSeconds(0);
           this.endDate.setMinutes(59);
@@ -257,11 +253,11 @@ export class TimeFilterFormComponent {
     }
   }
 
-  getRangeMinDate(): Date{
+  getRangeMinDate(): Date {
     return this.startDate === undefined ? this.min : this.startDate;
   }
 
-  getRangeMaxDate():Date {
+  getRangeMaxDate(): Date {
     return this.endDate === undefined ? this.max : this.endDate;
   }
 
