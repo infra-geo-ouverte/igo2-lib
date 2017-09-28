@@ -27,6 +27,9 @@ export class WMSDataSource
     return this.options.queryTitle ? this.options.queryTitle : 'title';
   }
 
+  get queryHtmlTarget(): string {
+    return this.options.queryHtmlTarget ? this.options.queryHtmlTarget : 'newtab';
+  }
   constructor(options: WMSDataSourceOptions) {
     // Important: To use wms versions smaller than 1.3.0, SRS
     // needs to be supplied in the source "params"
@@ -53,6 +56,9 @@ export class WMSDataSource
         break;
       case QueryFormat.TEXT:
         queryInfoFormat = 'text/plain';
+        break;
+      case QueryFormat.HTML:
+        queryInfoFormat = 'text/html';
         break;
       default:
         break;
