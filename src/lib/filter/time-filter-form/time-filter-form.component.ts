@@ -26,14 +26,14 @@ export class TimeFilterFormComponent {
   @Input()
   set currentValue(value: string) {
     if (value) {
-      const valueArray = value.split("/");
-      if (valueArray.length > 0 ){
+      const valueArray = value.split('/');
+      if (valueArray.length > 0 ) {
         const startDate = new Date(valueArray[0]);
         const endDate = new Date(valueArray[1]);
-        if(!isNaN(startDate.valueOf())){
+        if (!isNaN(startDate.valueOf())) {
           this.startDate = startDate;
         }
-        if(!isNaN(endDate.valueOf())){
+        if (!isNaN(endDate.valueOf())) {
           this.endDate = endDate;
         }
       }
