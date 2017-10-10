@@ -3,6 +3,7 @@ import { Md2Module } from 'md2';
 import { IgoSharedModule } from '../../shared';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeFilterFormComponent,  } from './time-filter-form.component';
+import { By }              from '@angular/platform-browser';
 
 describe('TimeFilterFormComponent', () => {
   let component: TimeFilterFormComponent;
@@ -370,6 +371,33 @@ describe('TimeFilterFormComponent', () => {
 
     expect(component.min.toISOString()).toBe(new Date(min).toISOString());
     expect(component.max.toISOString()).toBe(new Date(max).toISOString());
+
+  });
+
+  it('should have current value', () => {
+
+    expect(component).toBeTruthy();
+
+    component.options = {
+        'type': 'datetime',
+        'style': 'calendar',
+        'timeInterval': 2000,
+        'min': min,
+        'max': max,
+        'range' : true
+    };
+
+    const expectedValue = '2017-09-02 00:00:00/2017-09-05 18:00:00';
+    const expectedDay1 = new Date("2017-09-02 00:00:00");
+    component.currentValue = expectedValue;
+
+    fixture.detectChanges();
+
+    fixture.whenStable().then(()=>{
+      let dateLabel = fixture.debugElement.query(By.css('.md2-datepicker-value'));
+      expect(dateLabel.componentInstance.value.toString()).toBe(expectedDay1.toString());
+    })
+
 
   });
 

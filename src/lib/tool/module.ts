@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
 import { IgoContextModule } from '../context/module';
@@ -67,6 +67,7 @@ const IGO_TOOLS = [
 
     ...IGO_TOOLS
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   entryComponents: IGO_TOOLS
 })
 export class IgoToolModule {
