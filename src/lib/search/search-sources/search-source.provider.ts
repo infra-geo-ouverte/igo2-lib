@@ -1,6 +1,6 @@
 import { Http, Jsonp } from '@angular/http';
 
-import { ConfigService } from '../../core';
+import { ConfigService, LanguageService } from '../../core';
 import { AuthHttp } from '../../auth';
 
 import { SearchSource } from './search-source';
@@ -37,8 +37,9 @@ export function provideIChercheSearchSource() {
 }
 
 
-export function dataSourceSearchSourcesFactory(authHttp: AuthHttp, config: ConfigService) {
-  return new DataSourceSearchSource(authHttp, config);
+export function dataSourceSearchSourcesFactory(
+    authHttp: AuthHttp, config: ConfigService, languageService: LanguageService) {
+  return new DataSourceSearchSource(authHttp, config, languageService);
 }
 
 export function provideDataSourceSearchSource() {
@@ -46,6 +47,6 @@ export function provideDataSourceSearchSource() {
     provide: SearchSource,
     useFactory: (dataSourceSearchSourcesFactory),
     multi: true,
-    deps: [AuthHttp, ConfigService]
+    deps: [AuthHttp, ConfigService, LanguageService]
   };
 }

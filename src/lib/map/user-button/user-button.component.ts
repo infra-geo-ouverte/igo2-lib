@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MdDialog } from '@angular/material';
 
+import { ConfigService } from '../../core';
 import { AuthService } from '../../auth';
 import { IgoMap } from '../shared';
 import { UserDialogComponent } from './user-dialog.component';
@@ -31,11 +32,15 @@ export class UserButtonComponent {
   private _color: string;
 
   public expand: boolean = false;
+  public visible: boolean = false;
 
   constructor(
     private dialog: MdDialog,
+    private config: ConfigService,
     public auth: AuthService
-  ) {}
+  ) {
+    this.visible = this.config.getConfig('auth') ? true : false;
+  }
 
   accountClick() {
     if (this.auth.authenticated) {

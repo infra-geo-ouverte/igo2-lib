@@ -1,4 +1,4 @@
-<div class="igo-user-button-container">
+<div *ngIf="visible" class="igo-user-button-container">
   <div class="igo-user-button-more-container" [@userButtonState]="expand ? 'expand' : 'collapse'">
 
     <igo-poi-button [color]="color" [map]="map"></igo-poi-button>

@@ -40,10 +40,10 @@ export class SearchResultsToolComponent {
 
       if (map !== undefined) {
         this.dataSourceService
-          .createAsyncDataSource(feature.properties as AnyDataSourceContext)
+          .createAsyncDataSource(feature.layer as AnyDataSourceContext)
           .subscribe(dataSource =>  {
             map.addLayer(
-              this.layerService.createLayer(dataSource, feature.properties));
+              this.layerService.createLayer(dataSource, feature.layer));
           });
       }
     }

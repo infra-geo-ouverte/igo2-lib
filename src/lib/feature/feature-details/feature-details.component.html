@@ -4,7 +4,12 @@
       <td>
         {{property.key}}
       </td>
-      <td [innerHTML]=property.value></td>
+      <td *ngIf="!isObject(property.value)"
+          [innerHTML]="property.value">
+      </td>
+      <td *ngIf="isObject(property.value)"
+          [innerHTML]="property.value | json">
+      </td>
     </tr>
   </tbody>
 </table>

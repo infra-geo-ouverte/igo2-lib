@@ -171,7 +171,7 @@ getPermissions(id: string): Observable<ContextPermission[]> {
 }
 
 addPermissionAssociation(contextId: string, profil: string,
-  type: TypePermission): Observable<ContextPermission> {
+  type: TypePermission): Observable<ContextPermission[]> {
 
   const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
   const association = {

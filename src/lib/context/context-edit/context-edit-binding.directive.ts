@@ -1,7 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { MessageService } from '../../core/message';
+import { MessageService, LanguageService } from '../../core';
 import { Context, DetailedContext, ContextService } from '../shared';
 import { ContextEditComponent } from './context-edit.component';
 
@@ -17,15 +17,19 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   @HostListener('submitForm', ['$event']) onEdit(context: Context) {
     const id = this.component.context.id;
     this.contextService.update(id, context).subscribe(() => {
-      const title = context.title || this.component.context.title;
-      const message = `The context '${title}' was saved.`;
-      this.messageService.success(message, 'Context saved');
+      const translate = this.languageService.translate;
+      const message = translate.instant('igo.context.dialog.saveMsg', {
+        value: context.title || this.component.context.title
+      });
+      const title = translate.instant('igo.context.dialog.saveTitle');
+      this.messageService.success(message, title);
     });
   }
 
   constructor(@Self() component: ContextEditComponent,
               private contextService: ContextService,
-              private messageService: MessageService) {
+              private messageService: MessageService,
+              private languageService: LanguageService) {
     this.component = component;
   }
 

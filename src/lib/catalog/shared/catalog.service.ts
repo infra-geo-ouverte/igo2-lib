@@ -19,12 +19,8 @@ export class CatalogService {
               private config: ConfigService) {
 
     const options = this.config.getConfig('context') || {};
-    const catalog = this.config.getConfig('catalog') || {};
-    this.baseUrl = options.url;
 
-    if (catalog.sources) {
-      this.catalogs$.next(catalog.sources);
-    }
+    this.baseUrl = options.url;
   }
 
   get(): Observable<Catalog[]> {
@@ -51,6 +47,25 @@ export class CatalogService {
     if (this.catalog$.value !== catalog) {
       this.catalog$.next(catalog);
     }
+  }
+
+  load() {
+    const catalogConfig = this.config.getConfig('catalog') || {};
+    if (!this.baseUrl) {
+      if (catalogConfig.sources) {
+        this.catalogs$.next(catalogConfig.sources);
+      }
+      return;
+    }
+
+    this.get().subscribe((catalogs) => {
+      if (catalogConfig.sources) {
+        catalogs = catalogs.concat(catalogConfig.sources);
+      }
+      if (catalogs) {
+        this.catalogs$.next(catalogs);
+      }
+    });
   }
 
 }
