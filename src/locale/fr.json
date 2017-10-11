@@ -128,7 +128,8 @@
 		"timeAnalysis": "Analyse Temporelle",
 		"timeFilter": {
 			"endDate": "Date de fin",
-			"startDate": "Date de début"
+			"startDate": "Date de début",
+			"date": "Date"
 		},
 		"tool": {
 			"dialog": {

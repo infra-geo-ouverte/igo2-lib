@@ -127,7 +127,8 @@
 		"timeAnalysis": "Time Analysis",
 		"timeFilter": {
 			"endDate": "End Date",
-			"startDate": "Start Date"
+			"startDate": "Start Date",
+      "date": "Date"
 		},
 		"tool": {
 			"dialog": {

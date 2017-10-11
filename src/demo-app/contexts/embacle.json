@@ -77,7 +77,9 @@
         "min": "2017-01-01",
         "max": "2018-01-01",
         "range": true,
-        "type": "datetime"
+        "type": "datetime",
+        "style": "slider",
+        "timeinterval": 2000
       }
     }
   ],
