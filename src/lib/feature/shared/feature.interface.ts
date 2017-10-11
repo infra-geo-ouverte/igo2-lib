@@ -1,3 +1,5 @@
+import { AnyDataSourceContext } from '../../datasource';
+
 import { FeatureType, FeatureFormat } from './feature.enum';
 
 export interface Feature {
@@ -13,6 +15,7 @@ export interface Feature {
   geometry?: FeatureGeometry;
   extent?: ol.Extent;
   properties?: {[key: string]: any};
+  layer?: AnyDataSourceContext;
 }
 
 export interface FeatureGeometry {

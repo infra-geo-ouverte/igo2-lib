@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
-import { ConfigService, Message } from '../../core';
+import { ConfigService, Message, LanguageService } from '../../core';
 import { AuthHttp } from '../../auth';
 import { Feature, FeatureType } from '../../feature';
 
@@ -16,13 +16,14 @@ export class DataSourceSearchSource extends SearchSource {
   get enabled(): boolean { return this.options.enabled !== false; }
   set enabled(value: boolean) { this.options.enabled = value; }
 
-  static _name: string = 'Data Sources';
+  static _name: string = 'igo.search.dataSources.name';
 
   private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search';
   private options: SearchSourceOptions;
 
   constructor(private authHttp: AuthHttp,
-              private config: ConfigService) {
+              private config: ConfigService,
+              private languageService: LanguageService) {
     super();
 
     this.options = this.config.getConfig('searchSources.datasource') || {};
@@ -30,7 +31,7 @@ export class DataSourceSearchSource extends SearchSource {
   }
 
   getName(): string {
-    return DataSourceSearchSource._name;
+    return this.languageService.translate.instant(DataSourceSearchSource._name);
   }
 
   search(term?: string): Observable<Feature[] | Message[]>  {
@@ -42,7 +43,9 @@ export class DataSourceSearchSource extends SearchSource {
   }
 
   private extractData(response: Response): Feature[] {
-    return response.json().items.map(this.formatResult);
+    return response.json().items.map(
+      (res) => this.formatResult(res)
+    );
   }
 
   private getSearchParams(term: string): URLSearchParams {
@@ -57,19 +60,32 @@ export class DataSourceSearchSource extends SearchSource {
   }
 
   private formatResult(result: any): Feature {
+    const t = this.languageService.translate;
+    const properties = {};
+    const prefix = 'igo.search.dataSources.properties.';
+    properties[t.instant(prefix + 'title')] = result.source.title;
+    properties[t.instant(prefix + 'group')] = result.source.groupTitle;
+    properties[t.instant(prefix + 'abstract')] = result.source.abstract;
+    properties[t.instant(prefix + 'type')] = result.source.format;
+    properties[t.instant(prefix + 'url')] = result.source.url;
+
+    const layer = Object.assign({}, result.source, {
+      type: result.source.format,
+      properties: properties,
+      params: {
+        layers: result.source.name
+      }
+    });
+
     return {
       id: result.id,
-      source: DataSourceSearchSource._name,
+      source: this.getName(),
       type: FeatureType.DataSource,
       title: result.source.title,
       title_html: result.highlight.title,
       icon: result.source.type === 'Layer' ? 'layers' : 'map',
-      properties: Object.assign({}, result.source, {
-        type: result.source.format,
-        params: {
-          layers: result.source.name
-        }
-      })
+      properties: properties,
+      layer: layer
     };
   }
 

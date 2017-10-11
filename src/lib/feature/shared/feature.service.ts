@@ -18,6 +18,7 @@ export class FeatureService {
   }
 
   updateFeatures(features: Feature[], source: string, sourcesToKeep?: string[]) {
+
     const features_ = this.features$.value
       .filter(feature => {
         return feature.source !== source &&

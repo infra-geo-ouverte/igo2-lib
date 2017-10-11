@@ -27,6 +27,8 @@ export class CatalogListBindingDirective implements OnInit, OnDestroy {
     // Override input catalogs
     this.catalogs$$ = this.catalogService.catalogs$
       .subscribe(catalogs => this.handleCatalogsChange(catalogs));
+
+    this.catalogService.load();
   }
 
   ngOnDestroy() {

@@ -28,20 +28,17 @@
 			"clone": "Cloner ce contexte",
 			"delete": "Supprimer ce contexte",
 			"dialog": {
-				"cloneMsg": "Le contexte a été cloné",
+				"cloneMsg": "Le contexte '{{value}}' a été cloné",
 				"cloneTitle": "Contexte cloné",
 				"confirmDelete": "Êtes-vous sûr de vouloir supprimer ce context ?",
-				"deleteMsg": "Le contexte a été supprimé",
+				"deleteMsg": "Le contexte '{{value}}' a été supprimé",
 				"deleteTitle": "Contexte supprimé",
-				"saveMsg": "Le contexte a été sauvegardé",
+				"saveMsg": "Le contexte '{{value}}' a été sauvegardé",
 				"saveTitle": "Contexte sauvegardé"
 			},
 			"edit": "Éditer ce contexte",
 			"form": {
 				"edit": "Éditer",
-				"private": "Privé",
-				"protected": "Protégé",
-				"public": "Public",
 				"title": "Titre",
 				"titleRequired": "Le titre est obligatoire"
 			},
@@ -72,13 +69,21 @@
 			"addBtn": "Ajouter",
 			"delete": "Retirer la permission",
 			"dialog": {
-				"addMsg": "La permission a été ajoutée",
+				"addMsg": "La permission '{{value}}' a été ajoutée",
 				"addTitle": "Permission ajoutée",
-				"deleteMsg": "La permission a été supprimée",
-				"deleteTitle": "Permission retirée"
+				"deleteMsg": "La permission '{{value}}' a été supprimée",
+				"deleteTitle": "Permission retirée",
+        "scopeChangedMsg": "La portée du contexte a été changée pour {{value}}",
+				"scopeChangedTitle": "Changement de la portée"
 			},
-			"profil": "Profil",
+
+      "profil": "Profil",
 			"profilRequired": "Le profil est obligatoire",
+      "scope": {
+        "private": "Privé",
+        "protected": "Protégé",
+        "public": "Public"
+      },
 			"write": "Lecture et écriture",
 			"read": "Lecture seule"
 		},
@@ -104,6 +109,18 @@
 			"resolution": "Résolution",
 			"title": "Titre"
 		},
+    "search": {
+      "dataSources": {
+        "name": "Couches",
+        "properties": {
+          "title": "Titre",
+          "group": "Groupe",
+          "abstract": "Description",
+          "url": "URL",
+          "type": "Type"
+        }
+      }
+    },
 		"searchResults": "Résultats de recherche",
 		"table": {
 			"filter": "Filtre"
