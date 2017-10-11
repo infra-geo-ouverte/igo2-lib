@@ -1,18 +1,18 @@
 <form class="igo-form" [formGroup]="form"
   (ngSubmit)="handleFormSubmit(form.value)">
 
-  <md-form-field class="full-width">
-    <input mdInput required
+  <mat-form-field class="full-width">
+    <input matInput required
            [placeholder]="'igo.context.form.title' | translate"
            formControlName="title">
-   <md-error>
-    {{ 'igo.context.form.titleRequired' | translate }}
-   </md-error>
-  </md-form-field>
+     <mat-error>
+      {{ 'igo.context.form.titleRequired' | translate }}
+     </mat-error>
+  </mat-form-field>
 
   <div class="igo-form-button-group">
     <button
-      md-raised-button
+      mat-raised-button
       type="submit"
       [disabled]="!form.valid || disabled">
       {{ 'igo.context.form.edit' | translate }}

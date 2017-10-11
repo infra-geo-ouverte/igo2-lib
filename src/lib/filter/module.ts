@@ -1,6 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Md2Module } from 'md2';
+import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
 
 import { IgoSharedModule } from '../shared';
 
@@ -14,7 +14,8 @@ import { TimeFilterListComponent,
   imports: [
     IgoSharedModule,
     ReactiveFormsModule,
-    Md2Module
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   exports: [
     FilterableDataSourcePipe,

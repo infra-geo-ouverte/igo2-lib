@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'igo-poi-dialog',
@@ -9,5 +9,5 @@ export class PoiDialogComponent {
 
   public title: string;
 
-  constructor(public dialogRef: MdDialogRef<PoiDialogComponent>) {}
+  constructor(public dialogRef: MatDialogRef<PoiDialogComponent>) {}
 }

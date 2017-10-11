@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Md2Module } from 'md2';
+import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
 import { IgoSharedModule } from '../../shared';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeFilterFormComponent,  } from './time-filter-form.component';
@@ -34,7 +34,8 @@ describe('TimeFilterFormComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule,
-        Md2Module,
+        MatDatepickerModule,
+        MatNativeDateModule,
         TranslateModule.forRoot()
       ],
       declarations: [ TimeFilterFormComponent ]
@@ -215,9 +216,9 @@ describe('TimeFilterFormComponent', () => {
 
     fixture.detectChanges();
     // check there is 2 calendar
-    const regex = /<md2-datepicker/gi;
+    const regex = /mat-datepicker-toggle/gi;
     const numberOfCalendar = fixture.nativeElement.innerHTML.match(regex);
-    expect(numberOfCalendar.length).toBe(2);
+    expect(numberOfCalendar.length).toBe(6);
 
   });
 
@@ -238,9 +239,9 @@ describe('TimeFilterFormComponent', () => {
 
     fixture.detectChanges();
     // check there is 2 calendar
-    const regex = /<md2-datepicker/gi;
+    const regex = /mat-datepicker-toggle/gi;
     const numberOfCalendar = fixture.nativeElement.innerHTML.match(regex);
-    expect(numberOfCalendar.length).toBe(1);
+    expect(numberOfCalendar.length).toBe(3);
 
   });
 
@@ -374,7 +375,7 @@ describe('TimeFilterFormComponent', () => {
 
   });
 
-  it('should have current value', () => {
+  it('should have current value', async(() => {
 
     expect(component).toBeTruthy();
 
@@ -388,18 +389,15 @@ describe('TimeFilterFormComponent', () => {
     };
 
     const expectedValue = '2017-09-02 00:00:00/2017-09-05 18:00:00';
-    const expectedDay1 = new Date( '2017-09-02 00:00:00' );
+    // const expectedDay1 = new Date( '2017-09-02 00:00:00' );
     component.currentValue = expectedValue;
 
     fixture.detectChanges();
-
     fixture.whenStable().then(() => {
-      const dateLabel = fixture.debugElement.query(By.css('.md2-datepicker-value'));
-      expect(dateLabel.componentInstance.value.toString()).toBe(expectedDay1.toString());
+      const dateLabel = fixture.debugElement.query(By.css('.mat-input-element'));
+      expect(dateLabel.nativeElement.value).toBe('9/2/2017');
     });
 
-
-  });
-
+  }));
 
 });

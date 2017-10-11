@@ -78,7 +78,7 @@
         "max": "2018-01-01",
         "range": true,
         "type": "datetime",
-        "style": "slider",
+        "style": "calendar",
         "timeinterval": 2000
       }
     }

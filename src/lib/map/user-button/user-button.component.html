@@ -5,35 +5,35 @@
     <igo-bookmark-button [color]="color" [map]="map"></igo-bookmark-button>
 
     <button
-      md-icon-button
-      [mdTooltip]="'igo.userButton.infoTitle' | translate"
-      mdTooltipPosition="above"
+      mat-icon-button
+      [matTooltip]="'igo.userButton.infoTitle' | translate"
+      matTooltipPosition="above"
       [color]="color"
       (click)="infoUser()">
-      <md-icon>
+      <mat-icon>
         info_outline
-      </md-icon>
+      </mat-icon>
     </button>
 
     <button
-      md-icon-button
-      [mdTooltip]="'igo.userButton.logout' | translate"
-      mdTooltipPosition="above"
+      mat-icon-button
+      [matTooltip]="'igo.userButton.logout' | translate"
+      matTooltipPosition="above"
       [color]="color"
       (click)="logout()">
-      <md-icon>
+      <mat-icon>
         power_settings_new
-      </md-icon>
+      </mat-icon>
     </button>
 
   </div>
 
   <button
-    md-icon-button
+    mat-icon-button
     [color]="auth.authenticated ? color : 'warn'"
     (click)="accountClick()">
-    <md-icon>
+    <mat-icon>
       account_box
-    </md-icon>
+    </mat-icon>
   </button>
 </div>

@@ -25,7 +25,7 @@ describe('CatalogItemComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
+  it('should create',  async( () => {
     expect(component).toBeTruthy();
-  });
+  }));
 });

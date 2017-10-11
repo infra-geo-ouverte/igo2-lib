@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Md2Module } from 'md2';
+import { MatDatepickerModule } from '@angular/material';
 
 import { IgoSharedModule } from '../../shared';
 
@@ -16,7 +16,7 @@ describe('TimeFilterListComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule,
-        Md2Module
+        MatDatepickerModule
       ],
       declarations: [
         FilterableDataSourcePipe,

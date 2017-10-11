@@ -2,48 +2,48 @@
 <igo-message-center></igo-message-center>
 <igo-auth-form></igo-auth-form>
 
-<md-sidenav-container>
+<mat-sidenav-container>
 
-  <md-sidenav
+  <mat-sidenav
     #sidenav
     mode="side"
     igoSidenavShim>
     <button
-      md-icon-button
+      mat-icon-button
       color="primary"
       (click)="sidenav.close()"
       *ngIf="sidenav.opened">
-      <md-icon>close</md-icon>
+      <mat-icon>close</mat-icon>
     </button>
 
     <p>
       This sidenav has a directive that prevents
       the default focus behavior when it's closed.
     </p>
-  </md-sidenav>
+  </mat-sidenav>
 
   <div id="menu">
     <button
-      md-icon-button
+      mat-icon-button
       color="primary"
       (click)="sidenav.open()"
       *ngIf="!sidenav.opened">
-      <md-icon>menu</md-icon>
+      <mat-icon>menu</mat-icon>
     </button>
   </div>
 
-  <md-card>
-    <md-card-subtitle>Context module</md-card-subtitle>
-    <md-card-title>context-list.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Context module</mat-card-subtitle>
+    <mat-card-title>context-list.component</mat-card-title>
+    <mat-card-content>
       <igo-context-list igoContextListBinding></igo-context-list>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Search module</md-card-subtitle>
-    <md-card-title>search-bar.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Search module</mat-card-subtitle>
+    <mat-card-title>search-bar.component</mat-card-title>
+    <mat-card-content>
       <igo-search-bar
         igoSearchUrlParam
         [placeholder]="'Search for an address or a place' | translate"
@@ -51,41 +51,41 @@
       </igo-search-bar>
 
       <p>Searching for: {{searchTerm}}</p>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Feature module</md-card-subtitle>
-    <md-card-title>feature-list.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Feature module</mat-card-subtitle>
+    <mat-card-title>feature-list.component</mat-card-title>
+    <mat-card-content>
       <igo-feature-list
         igoFeatureListBinding
         [focusFirst]="true"
         (focus)="handleFeatureFocus($event)"
         (select)="handleFeatureSelect($event)">
       </igo-feature-list>
-    </md-card-content>
+    </mat-card-content>
 
-    <md-card-title>feature-details.component</md-card-title>
-    <md-card-content>
+    <mat-card-title>feature-details.component</mat-card-title>
+    <mat-card-content>
       <igo-panel [title]="'Details'">
         <igo-feature-details [feature]="featureService.focusedFeature$ | async"></igo-feature-details>
 
         <button
-          md-icon-button
+          mat-icon-button
           panelRightButton
           (click)="clearFeature()">
-          <md-icon>close</md-icon>
+          <mat-icon>close</mat-icon>
         </button>
 
       </igo-panel>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Map module</md-card-subtitle>
-    <md-card-title>map-browser.component</md-card-title>
-    <md-card-content class="igo-map-browser-container">
+  <mat-card>
+    <mat-card-subtitle>Map module</mat-card-subtitle>
+    <mat-card-title>map-browser.component</mat-card-title>
+    <mat-card-content class="igo-map-browser-container">
       <igo-map-browser
         igoQuery
         igoOverlay
@@ -97,37 +97,37 @@
         <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
         <igo-user-button [map]="map" color="primary"></igo-user-button>
       </igo-map-browser>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Print module</md-card-subtitle>
-    <md-card-title>print.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Print module</mat-card-subtitle>
+    <mat-card-title>print.component</mat-card-title>
+    <mat-card-content>
       <igo-print [map]="map"></igo-print>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Layer module</md-card-subtitle>
-    <md-card-title>layer-list.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Layer module</mat-card-subtitle>
+    <mat-card-title>layer-list.component</mat-card-title>
+    <mat-card-content>
       <igo-layer-list [layers]="map.layers$ | async"></igo-layer-list>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Filter module</md-card-subtitle>
-    <md-card-title>time-filter.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Filter module</mat-card-subtitle>
+    <mat-card-title>time-filter.component</mat-card-title>
+    <mat-card-content>
       <igo-time-filter-list igoTimeFilterListBinding></igo-time-filter-list>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Tool module</md-card-subtitle>
-    <md-card-title>toolbar.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Tool module</mat-card-subtitle>
+    <mat-card-title>toolbar.component</mat-card-title>
+    <mat-card-content>
       <igo-toolbar
         igoToolContext
         igoToolbarBinding
@@ -135,18 +135,18 @@
         [withTitle]="true"
         [horizontal]="true">
       </igo-toolbar>
-    </md-card-content>
+    </mat-card-content>
 
-    <md-card-title>toolbox.component</md-card-title>
-    <md-card-content>
+    <mat-card-title>toolbox.component</mat-card-title>
+    <mat-card-content>
         <igo-toolbox [animate]="true"></igo-toolbox>
-    </md-card-content>
-  </md-card>
+    </mat-card-content>
+  </mat-card>
 
-  <md-card>
-    <md-card-subtitle>Form module</md-card-subtitle>
-    <md-card-title>map-field.component</md-card-title>
-    <md-card-content>
+  <mat-card>
+    <mat-card-subtitle>Form module</mat-card-subtitle>
+    <mat-card-title>map-field.component</mat-card-title>
+    <mat-card-content>
       <form class="igo-form" [formGroup]="demoForm">
 
         <div class="igo-map-field-container">
@@ -162,7 +162,7 @@
 
         <div class="igo-form-button-group">
           <button
-            md-raised-button
+            mat-raised-button
             type="button"
             [disabled]="!demoForm.valid"
             (click)="handleFormSubmit(demoForm.value, demoForm.valid)">
@@ -171,6 +171,6 @@
         </div>
 
       </form>
-    </md-card-content>
-  </md-card>
-</md-sidenav-container>
+    </mat-card-content>
+  </mat-card>
+</mat-sidenav-container>

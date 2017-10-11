@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { MdSidenavModule, MdCardModule, MdIconModule } from '@angular/material';
+import { MatSidenavModule, MatCardModule, MatIconModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 
 import { IgoModule,
@@ -25,9 +25,9 @@ import { AppComponent } from './app.component';
 
     FormsModule,
     HttpModule,
-    MdSidenavModule,
-    MdCardModule,
-    MdIconModule,
+    MatSidenavModule,
+    MatCardModule,
+    MatIconModule,
     IgoModule.forRoot()
   ],
   providers: [

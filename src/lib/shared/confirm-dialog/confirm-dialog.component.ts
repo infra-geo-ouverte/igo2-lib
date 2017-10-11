@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'igo-confirm-dialog',
@@ -9,6 +9,6 @@ export class ConfirmDialogComponent {
 
   public confirmMessage: string;
 
-  constructor(public dialogRef: MdDialogRef<ConfirmDialogComponent>) {}
+  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>) {}
 
 }

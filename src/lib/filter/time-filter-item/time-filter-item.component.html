@@ -1,13 +1,13 @@
-<md-list-item>
-  <md-icon
+<mat-list-item>
+  <mat-icon
     class="igo-chevron"
-    md-list-avatar
+    mat-list-avatar
     igoCollapse
     [target]="filters"
     [collapsed]="false">
-  </md-icon>
-  <h4 mdLine>{{datasource.title}}</h4>
-</md-list-item>
+  </mat-icon>
+  <h4 matLine>{{datasource.title}}</h4>
+</mat-list-item>
 
 <div #filters class="igo-datasource-filters-container">
   <igo-time-filter-form
