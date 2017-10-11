@@ -49,3 +49,8 @@ Thumbs.db
 
 #Compodoc
 /documentation
+
+# Ada Library Information
+*.ali
+# Object file
+*.o

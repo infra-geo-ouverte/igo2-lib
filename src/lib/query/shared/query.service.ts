@@ -68,6 +68,9 @@ export class QueryService {
       case QueryFormat.TEXT:
         features = this.extractTextData(res);
         break;
+      case QueryFormat.HTML:
+        features = this.extractHtmlData(res, queryDataSource.queryHtmlTarget);
+        break;
       default:
         break;
     }
@@ -111,6 +114,80 @@ export class QueryService {
   private extractTextData(res: Response) {
     // TODO
     return [];
+  }
+
+  private extractHtmlData(res: Response, html_target) {
+      // _blank , modal , innerhtml or undefined
+      const searchParams = new URLSearchParams(res['url'].toLowerCase());
+      const bbox_raw = searchParams.get('bbox');
+      const width = parseInt(searchParams.get('width'), 10);
+      const height = parseInt(searchParams.get('height'), 10);
+      const wms_version = searchParams.get('version');
+      let x_position;
+      let y_position;
+
+      if (wms_version === '1.3.0') {
+        x_position = parseInt(searchParams.get('i'), 10);
+        y_position = parseInt(searchParams.get('j'), 10);
+      } else {
+        x_position = parseInt(searchParams.get('x'), 10);
+        y_position = parseInt(searchParams.get('y'), 10);
+      }
+
+      const bbox = bbox_raw.split(',');
+      let threshold = 5000;
+      // for context in degree (EPSG:4326,4269...)
+      if (Math.abs(parseFloat(bbox[0])) < 180) {
+         threshold = 0.045;
+      }
+
+      const clickx = parseFloat(bbox[0]) + Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2]))
+                    * x_position / width - threshold;
+      const clicky = parseFloat(bbox[1]) + Math.abs(parseFloat(bbox[1]) - parseFloat(bbox[3]))
+                    * y_position / height - threshold;
+      const clickx1 = clickx + threshold * 2;
+      const clicky1 = clicky + threshold * 2;
+
+      const wkts = 'POLYGON((' + clickx + ' ' + clicky + ', ' + clickx + ' ' + clicky1 +
+                  ', ' + clickx1 + ' ' + clicky1 + ', ' + clickx1 + ' ' + clicky +
+                  ', ' + clickx + ' ' + clicky + '))';
+
+
+      const format = new ol.format.WKT();
+      const yourGeometry = format.readFeature(wkts);
+      const f = (yourGeometry.getGeometry() as any);
+
+      let target_igo2 = '_blank';
+      let icon_html = 'link';
+
+      switch (html_target) {
+        case 'newtab':
+          target_igo2 = '_blank';
+          break;
+        case 'modal':
+          target_igo2 = 'modal';
+          icon_html = 'place';
+          break;
+        case 'innerhtml':
+          target_igo2 = 'innerhtml';
+          icon_html = 'place';
+          const pos_body_debut = res['_body'].toLowerCase().indexOf('<body>');
+          const pos_body_fin = res['_body'].toLowerCase().lastIndexOf('</body>') + 7;
+          res['_body'] = res['_body'].slice(pos_body_debut, pos_body_fin);
+          break;
+      }
+
+      return [{
+        id: 'html1',
+        source: 'title',
+        type: FeatureType.Feature,
+        format: FeatureFormat.GeoJSON,
+        title: 'title',
+        icon: icon_html,
+        projection: 'EPSG:3857',
+        properties: {target: target_igo2, body: res['_body'], url: res['url']},
+        geometry: {type: f.getType(), coordinates: f.getCoordinates()}
+      }];
   }
 
   private featureToResult(feature: ol.Feature): Feature {

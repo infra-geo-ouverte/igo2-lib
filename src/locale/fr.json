@@ -1,5 +1,6 @@
 {
 	"igo": {
+		"targetHtmlUrl": "Ouvrir le lien externe",
 		"auth": {
 			"accessAnonymous": "Rester anonyme",
 			"connection": "Connexion",
