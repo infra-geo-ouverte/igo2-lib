@@ -24,7 +24,7 @@ export class TableDataSource extends DataSource<any> {
     const displayDataChanges = [
       this._database.dataChange,
       this._filterChange,
-      this._sort.sortChange
+      this._sort.mdSortChange
     ];
 
     return Observable.merge(...displayDataChanges)

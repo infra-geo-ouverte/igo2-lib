@@ -181,7 +181,9 @@ export class TimeFilterFormComponent {
   }
 
   stopFilter() {
-    clearInterval(this.interval.data.handleId);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     this.interval = undefined;
     this.playFilterIcon.nativeElement.textContent = 'play_circle_filled';
   }
