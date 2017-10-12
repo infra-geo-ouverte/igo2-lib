@@ -181,7 +181,7 @@ export class TimeFilterFormComponent {
   }
 
   stopFilter() {
-    if(this.interval){
+    if (this.interval) {
       clearInterval(this.interval);
     }
     this.interval = undefined;
