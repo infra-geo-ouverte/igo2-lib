@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, Input,
   OnChanges, OnInit } from '@angular/core';
-import { MdSort } from '@angular/material';
+import { MatSort } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
@@ -42,7 +42,7 @@ export class TableComponent implements OnChanges, OnInit {
   public dataSource: TableDataSource | null;
 
   @ViewChild('filter') filter: ElementRef;
-  @ViewChild(MdSort) sort: MdSort;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit() {
     this.dataSource = new TableDataSource(this.database, this.model, this.sort);

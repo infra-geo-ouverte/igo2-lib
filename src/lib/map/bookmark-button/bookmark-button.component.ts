@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import { uuid } from '../../utils/uuid';
 import { MessageService, LanguageService } from '../../core';
@@ -30,7 +30,7 @@ export class BookmarkButtonComponent {
   private _color: string;
 
   constructor(
-    private dialog: MdDialog,
+    private dialog: MatDialog,
     private contextService: ContextService,
     private toolService: ToolService,
     private languageService: LanguageService,

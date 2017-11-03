@@ -1,5 +1,5 @@
 import { Directive, Self, HostListener, Renderer } from '@angular/core';
-import { MdSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material';
 
 
 /**
@@ -38,7 +38,7 @@ export class SidenavShimDirective {
     this.focusedElement = undefined;
   }
 
-  constructor(@Self() component: MdSidenav,
+  constructor(@Self() component: MatSidenav,
               private renderer: Renderer) {}
 
 }

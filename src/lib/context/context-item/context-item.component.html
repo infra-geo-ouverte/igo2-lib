@@ -1,17 +1,17 @@
-<md-list-item>
-  <md-icon md-list-avatar>{{context.icon ? context.icon : 'star'}}</md-icon>
-  <h4 mdLine>{{context.title}}</h4>
+<mat-list-item>
+  <mat-icon mat-list-avatar>{{context.icon ? context.icon : 'star'}}</mat-icon>
+  <h4 matLine>{{context.title}}</h4>
 
   <div *ngIf="auth.authenticated && context.permission === typePermission[typePermission.read]"
        igoStopPropagation
        class="igo-actions-container">
 
        <button
-         md-icon-button
-         [md-tooltip]="'igo.context.clone' | translate"
+         mat-icon-button
+         [matTooltip]="'igo.context.clone' | translate"
          [color]="color"
          (click)="clone.emit(context)">
-         <md-icon>content_copy</md-icon>
+         <mat-icon>content_copy</mat-icon>
        </button>
  </div>
 
@@ -21,66 +21,66 @@
        class="igo-actions-container">
 
      <button *ngIf="collapsed"
-       md-icon-button
-       [md-tooltip]="'igo.context.save' | translate"
+       mat-icon-button
+       [matTooltip]="'igo.context.save' | translate"
        [color]="color"
        (click)="save.emit(context)">
-       <md-icon>save</md-icon>
+       <mat-icon>save</mat-icon>
      </button>
 
     <div #actions class="igo-actions-expand-container">
 
       <button
-        md-icon-button
-        [md-tooltip]="'igo.context.managePermissions' | translate"
+        mat-icon-button
+        [matTooltip]="'igo.context.managePermissions' | translate"
         [color]="color"
         (click)="managePermissions.emit(context)">
-        <md-icon>perm_identity</md-icon>
+        <mat-icon>perm_identity</mat-icon>
       </button>
 
       <!--button
-        md-icon-button
-        [md-tooltip]="'igo.context.manageTools' | translate"
+        mat-icon-button
+        [matTooltip]="'igo.context.manageTools' | translate"
         [color]="color"
         (click)="manageTools.emit(context)">
-        <md-icon>widgets</md-icon>
+        <mat-icon>widgets</mat-icon>
       </button-->
 
       <button
-        md-icon-button
-        [md-tooltip]="'igo.context.clone' | translate"
+        mat-icon-button
+        [matTooltip]="'igo.context.clone' | translate"
         [color]="color"
         (click)="clone.emit(context)">
-        <md-icon>content_copy</md-icon>
+        <mat-icon>content_copy</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         [color]="color"
-        [md-tooltip]="'igo.context.edit' | translate"
+        [matTooltip]="'igo.context.edit' | translate"
         (click)="edit.emit(context)">
-        <md-icon>edit</md-icon>
+        <mat-icon>edit</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         color="warn"
-        [md-tooltip]="'igo.context.delete' | translate"
+        [matTooltip]="'igo.context.delete' | translate"
         (click)="delete.emit(context)">
-        <md-icon>delete</md-icon>
+        <mat-icon>delete</mat-icon>
       </button>
     </div>
 
     <button
-      md-icon-button
+      mat-icon-button
       igoCollapse
       [color]="color"
       [target]="actions"
       [collapsed]=collapsed
       (click)="collapsed = !collapsed">
-      <md-icon>more_horiz</md-icon>
+      <mat-icon>more_horiz</mat-icon>
     </button>
 
   </div>
 
-</md-list-item>
+</mat-list-item>

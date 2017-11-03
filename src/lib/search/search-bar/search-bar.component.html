@@ -1,19 +1,19 @@
-<md-form-field>
+<mat-form-field>
   <input
     #input
-    mdInput
+    matInput
     autocomplete="off"
     [disabled]="disabled"
     [placeholder]="placeholder"
     [ngModel]="term"
     (keyup)="keyup($event)"
     (touchend)="keyup($event)">
-</md-form-field>
+</mat-form-field>
 
 <button
-  md-icon-button
+  mat-icon-button
   [color]="color"
   (click)="clear()"
   *ngIf="term.length > 0 ? true : false">
-  <md-icon>clear</md-icon>
+  <mat-icon>clear</mat-icon>
 </button>

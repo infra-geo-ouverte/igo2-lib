@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MdSlider } from '@angular/material';
+import { MatSlider } from '@angular/material';
 import { TimeFilterOptions } from '../shared';
 
 @Component({
@@ -46,7 +46,7 @@ export class TimeFilterFormComponent {
 
   @Output() change: EventEmitter<Date | [Date | Date]> = new EventEmitter();
 
-  @ViewChild(MdSlider) mySlider;
+  @ViewChild(MatSlider) mySlider;
   @ViewChild('playFilterIcon') playFilterIcon;
 
   get type(): 'date' | 'time' | 'datetime' {
@@ -114,13 +114,13 @@ export class TimeFilterFormComponent {
 
   handleDateChange(event: any) {
     // Calendar throw handleDateChange when first selected with weird date
-    if ( (event.source.constructor.name === 'MdSlider') ||
-        (event.source.date === event.source.value) ) {
+    // if ( (event.source.constructor.name === 'MatSlider') ||
+    //    (event.source.date === event.source.value) ) {
 
       this.setupDateOutput();
       this.applyTypeChange();
       this.change.emit([this.startDate, this.endDate]);
-    }
+    // }
   }
 
   dateToNumber(date: Date): number {

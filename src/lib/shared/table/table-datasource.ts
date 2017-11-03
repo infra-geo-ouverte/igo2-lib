@@ -1,5 +1,5 @@
 import { DataSource } from '@angular/cdk/table';
-import { MdSort } from '@angular/material';
+import { MatSort } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -14,7 +14,7 @@ export class TableDataSource extends DataSource<any> {
 
   constructor(private _database: TableDatabase,
               private _model: TableModel,
-              private _sort: MdSort) {
+              private _sort: MatSort) {
     super();
   }
 

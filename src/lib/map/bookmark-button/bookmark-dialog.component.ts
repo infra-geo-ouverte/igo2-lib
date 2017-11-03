@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'igo-bookmark-dialog',
@@ -9,5 +9,5 @@ export class BookmarkDialogComponent {
 
   public title: string;
 
-  constructor(public dialogRef: MdDialogRef<BookmarkDialogComponent>) {}
+  constructor(public dialogRef: MatDialogRef<BookmarkDialogComponent>) {}
 }

@@ -1,21 +1,27 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { APP_BASE_HREF } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MdSidenavModule, MdCardModule, MdIconModule } from '@angular/material';
+import { MatSidenavModule, MatCardModule, MatIconModule } from '@angular/material';
 
 import { IgoTestModule } from '../../test/module';
 import { IgoModule, provideNominatimSearchSource } from '../../lib';
 
 import { AppComponent } from './app.component';
 
+import { By } from '@angular/platform-browser';
+
 describe('AppComponent', () => {
+
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([]),
-        MdSidenavModule,
-        MdCardModule,
-        MdIconModule,
+        MatSidenavModule,
+        MatCardModule,
+        MatIconModule,
         IgoModule.forRoot(),
         IgoTestModule
       ],
@@ -29,16 +35,21 @@ describe('AppComponent', () => {
     }).compileComponents();
   }));
 
-  it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  }));
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+  });
 
-  it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('md-card-subtitle').textContent)
-      .toContain('Context module');
-  }));
+  it('should create the app', () => {
+    expect(component).toBeTruthy();
+  });
+
+   it('should render title in a h1 tag',  async(() => {
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      const test = fixture.debugElement.query(By.css('.mat-card-subtitle'));
+      expect(test).toContain('Context module');
+    });
+
+   }));
 });

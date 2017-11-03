@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MdListModule } from '@angular/material';
+import { MatListModule } from '@angular/material';
 
 import { ListComponent } from './list.component';
 
@@ -11,7 +11,7 @@ describe('ListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MdListModule
+        MatListModule
       ],
       declarations: [ ListComponent ]
     })

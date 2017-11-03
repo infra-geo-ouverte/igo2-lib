@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 
 import { AuthService } from '../../auth';
 
@@ -13,7 +13,7 @@ export class UserDialogComponent {
   public exp;
 
   constructor(
-    public dialogRef: MdDialogRef<UserDialogComponent>,
+    public dialogRef: MatDialogRef<UserDialogComponent>,
     private auth: AuthService
   ) {
     const decodeToken = this.auth.decodeToken();
