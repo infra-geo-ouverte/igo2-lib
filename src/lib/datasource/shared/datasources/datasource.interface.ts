@@ -40,7 +40,9 @@ export interface QueryableDataSource extends DataSource {
   getQueryUrl(options: QueryOptions): string;
 }
 
-export interface FilterableDataSourceOptions extends DataSourceOptions {
+export interface FilterableDataSourceOptions extends DataSourceOptions,
+    olx.source.ImageWMSOptions {
+
   filterable?: boolean;
   timeFilter?: TimeFilterOptions;
 }
