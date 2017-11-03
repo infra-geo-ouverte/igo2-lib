@@ -114,9 +114,8 @@ export class TimeFilterFormComponent {
 
   handleDateChange(event: any) {
     // Calendar throw handleDateChange when first selected with weird date
-    if ( (event.source.constructor.name === 'MdSlider') ||
+    if ( (event.source instanceof MdSlider) ||
         (event.source.date === event.source.value) ) {
-
       this.setupDateOutput();
       this.applyTypeChange();
       this.change.emit([this.startDate, this.endDate]);
