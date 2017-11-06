@@ -113,7 +113,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   zoomOnPoi(id) {
     const poi = this.pois.find((p) => p.id === id);
 
-    const center = ol.proj.fromLonLat([poi.x, poi.y], this.map.projection);
+    const center = ol.proj.fromLonLat([Number(poi.x), Number(poi.y)], this.map.projection);
 
     this.map.ol.getView().animate({
       center: center,
