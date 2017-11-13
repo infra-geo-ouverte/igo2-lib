@@ -135,7 +135,7 @@ export class QueryService {
       }
 
       const bbox = bbox_raw.split(',');
-      let threshold = 5000;
+      let threshold = (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2])))*(0.1);
       // for context in degree (EPSG:4326,4269...)
       if (Math.abs(parseFloat(bbox[0])) < 180) {
          threshold = 0.045;
