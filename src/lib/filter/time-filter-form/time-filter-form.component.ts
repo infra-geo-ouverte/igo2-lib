@@ -219,8 +219,9 @@ export class TimeFilterFormComponent {
 
   setupDateOutput() {
     if (!this.isRange) {
-      this.startDate = new Date(this.date);
       this.endDate = new Date(this.date);
+      this.date.setSeconds(-(this.step));
+      this.startDate = new Date(this.date);
     }
     this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
     this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
