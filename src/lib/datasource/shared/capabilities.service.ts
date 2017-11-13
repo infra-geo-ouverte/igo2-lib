@@ -145,8 +145,9 @@ export class CapabilitiesService {
 
   private getTimeFilter(layer): TimeFilterOptions {
     let dimension;
-    const timeFilter: TimeFilterOptions = {};
+
     if (layer.Dimension) {
+      const timeFilter: TimeFilterOptions = {};
       dimension = layer.Dimension[0];
 
       if (dimension.values) {
@@ -159,8 +160,7 @@ export class CapabilitiesService {
       if (dimension.default) {
         timeFilter.value = dimension.default;
       }
-    }
-
     return timeFilter;
+    }
   }
 }
