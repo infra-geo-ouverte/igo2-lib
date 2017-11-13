@@ -1,5 +1,14 @@
 <md-list-item>
-  <md-icon md-list-avatar>{{context.icon ? context.icon : 'star'}}</md-icon>
+  <button md-list-avatar
+    md-icon-button
+    igoStopPropagation
+    [md-tooltip]="'igo.context.favorite' | translate"
+    [color]="default ? 'primary' : 'default'"
+    (click)="favorite.emit(context)">
+    <md-icon>
+      {{context.icon ? context.icon : 'star'}}
+    </md-icon>
+  </button>
   <h4 mdLine>{{context.title}}</h4>
 
   <div *ngIf="auth.authenticated && context.permission === typePermission[typePermission.read]"

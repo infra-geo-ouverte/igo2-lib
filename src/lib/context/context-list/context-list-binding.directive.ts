@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MessageService, LanguageService } from '../../core';
 import { ConfirmDialogService } from '../../shared';
 import { MapService } from '../../map';
+import { AuthService } from '../../auth';
 import { Context, DetailedContext, ContextsList, ContextService } from '../shared';
 import { ContextListComponent } from './context-list.component';
 
@@ -17,6 +18,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   private component: ContextListComponent;
   private contexts$$: Subscription;
   private selectedContext$$: Subscription;
+  private defaultContextId$$: Subscription;
 
   @HostListener('select', ['$event']) onSelect(context: Context) {
     this.contextService.loadContext(context.uri);
@@ -72,6 +74,20 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   }
 
+  @HostListener('favorite', ['$event']) onFavorite(context: Context) {
+    this.authService.updateUser({
+      defaultContextId: String(context.id)
+    }).subscribe(() => {
+      this.contextService.defaultContextId$.next(context.id);
+      const translate = this.languageService.translate;
+      const message = translate.instant('igo.context.dialog.favoriteMsg', {
+        value: context.title
+      });
+      const title = translate.instant('igo.context.dialog.favoriteTitle');
+      this.messageService.info(message, title);
+    });
+  }
+
   @HostListener('manageTools', ['$event']) onManageTools(context: Context) {
     this.contextService.loadEditedContext(context.uri);
   }
@@ -114,6 +130,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   constructor(@Self() component: ContextListComponent,
               private contextService: ContextService,
+              private authService: AuthService,
               private mapService: MapService,
               private languageService: LanguageService,
               private confirmDialogService: ConfirmDialogService,
@@ -128,6 +145,11 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     this.contexts$$ = this.contextService.contexts$
       .subscribe(contexts => this.handleContextsChange(contexts));
 
+    this.defaultContextId$$ = this.contextService.defaultContextId$
+      .subscribe(id => {
+        this.component.defaultContextId = id
+      });
+
     // See feature-list.component for an explanation about the debounce time
     this.selectedContext$$ = this.contextService.context$
       .debounceTime(100)
@@ -139,6 +161,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.contexts$$.unsubscribe();
     this.selectedContext$$.unsubscribe();
+    this.defaultContextId$$.unsubscribe();
   }
 
   private handleContextsChange(contexts: ContextsList) {

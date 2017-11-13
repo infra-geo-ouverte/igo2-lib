@@ -22,3 +22,10 @@ export interface AuthOptions {
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;
 }
+
+export interface User {
+  source?: string;
+  sourceId?: string;
+  email?: string;
+  defaultContextId?: string;
+}

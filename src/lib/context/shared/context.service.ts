@@ -19,6 +19,7 @@ export class ContextService {
 
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ours: []});
+  public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
@@ -46,6 +47,7 @@ export class ContextService {
     this.authService.authenticate$
       .subscribe((authenticated) => {
         if (authenticated === null) {
+          this.loadDefaultContext();
           return;
         }
         const contexts$$ = this.contexts$.subscribe((contexts) => {
@@ -87,6 +89,17 @@ export class ContextService {
         return context;
       })
       .catch(res => this.handleError(res, id));
+  }
+
+  getDefault(): Observable<DetailedContext> {
+    const url = this.baseUrl + '/contexts/default';
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get context default error')
+      .map((res) => {
+        const context: DetailedContext = res.json();
+        this.defaultContextId$.next(context.id);
+        return context;
+      });
   }
 
   delete(id: string): Observable<void> {
@@ -219,16 +232,30 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
   }
 
   loadDefaultContext() {
+    const loadFct = () => {
+      if (this.baseUrl && this.authService.authenticated) {
+        this.getDefault().subscribe(
+          (_context: DetailedContext) => this.setContext(_context),
+          () => {
+            this.defaultContextId$.next(undefined);
+            this.loadContext(this.options.defaultContextUri);
+          }
+        );
+      } else {
+        this.loadContext(this.options.defaultContextUri);
+      }
+    }
+
     if (this.route && this.route.options.contextKey) {
       this.route.queryParams.subscribe(params => {
         const contextParam = params[this.route.options.contextKey as string];
         if (contextParam) {
           this.options.defaultContextUri = contextParam;
         }
-        this.loadContext(this.options.defaultContextUri);
+        loadFct();
       });
     } else {
-      this.loadContext(this.options.defaultContextUri);
+      loadFct();
     }
   }
 
@@ -242,6 +269,13 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
   }
 
   setContext(context: DetailedContext) {
+    const currentContext = this.context$.value;
+    if (currentContext && context && context.id === currentContext.id) {
+      context.map.view.keepCurrentView = true;
+      this.context$.next(context);
+      return;
+    }
+
     // Update the tools options with those found in the context
     if (context.tools !== undefined) {
       this.toolService.setTools(context.tools);
@@ -331,16 +365,17 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     throw [{title: titleError, text: textError}];
   }
 
-  private handleContextsChange(contexts: ContextsList) {
+  private handleContextsChange(contexts: ContextsList, keepCurrentContext = false) {
 
     const context = this.context$.value;
     const editedContext = this.editedContext$.value;
 
-    if (!this.findContext(context)) {
+    if (!keepCurrentContext || !this.findContext(context)) {
       this.loadDefaultContext();
     } else {
       context.map.view.keepCurrentView = true;
       this.context$.next(context);
+      this.getDefault().subscribe(() => {});
     }
     const editedFound = this.findContext(editedContext);
     if (!editedFound || editedFound.permission !== 'write') {

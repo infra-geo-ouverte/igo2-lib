@@ -1,15 +1,16 @@
 import { Injectable, Optional } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { Router } from '@angular/router';
+import { AuthHttp } from 'angular2-jwt';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Rx';
 import { JwtHelper } from 'angular2-jwt';
 
-import { ConfigService } from '../../core';
+import { ConfigService, RequestService } from '../../core';
 import { Base64 } from '../../utils';
 
-import { AuthOptions } from '../shared';
+import { AuthOptions, User } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,8 @@ export class AuthService {
   private anonymous: boolean = false;
 
   constructor(private http: Http,
+              private authHttp: AuthHttp,
+              private requestService: RequestService,
               private config: ConfigService,
               @Optional() private router: Router) {
 
@@ -113,6 +116,26 @@ export class AuthService {
     } else if (redirectUrl) {
       this.router.navigateByUrl(redirectUrl);
     }
+  }
+
+  getUserInfo(): Observable<User> {
+    const url = this.options.url + '/info';
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get user info error')
+      .map((res) => {
+        const user: User = res.json();
+        return user;
+      });
+  }
+
+  updateUser(user: User): Observable<User> {
+    const url = this.options.url;
+    const request = this.authHttp.patch(url, JSON.stringify(user));
+    return this.requestService.register(request, 'Update user error')
+      .map((res) => {
+        const userUpdated: User = res.json();
+        return userUpdated;
+      });
   }
 
   private encodePassword(password: string) {

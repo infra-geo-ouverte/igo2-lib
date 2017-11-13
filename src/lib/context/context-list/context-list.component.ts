@@ -26,12 +26,20 @@ export class ContextListComponent {
   }
   private _selectedContext: DetailedContext;
 
+  @Input()
+  get defaultContextId(): string { return this._defaultContextId; }
+  set defaultContextId(value: string) {
+    this._defaultContextId = value;
+  }
+  private _defaultContextId: string;
+
   @Output() select = new EventEmitter<DetailedContext>();
   @Output() unselect = new EventEmitter<DetailedContext>();
   @Output() edit = new EventEmitter<DetailedContext>();
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
 

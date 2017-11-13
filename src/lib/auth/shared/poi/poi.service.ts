@@ -18,6 +18,8 @@ export class PoiService {
   }
 
   get(): Observable<Poi[]> {
+    if (!this.baseUrl) { return Observable.empty(); }
+
     const url = this.baseUrl + '/pois';
     const request = this.authHttp.get(url);
     return this.requestService.register(request, 'Get POIs error')

@@ -21,10 +21,18 @@ export class ContextItemComponent {
   }
   private _context: DetailedContext;
 
+  @Input()
+  get default(): boolean { return this._default; }
+  set default(value: boolean) {
+    this._default = value;
+  }
+  private _default: boolean = false;
+
   @Output() edit = new EventEmitter<DetailedContext>();
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
 
