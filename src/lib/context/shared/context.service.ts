@@ -215,8 +215,12 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
   getLocalContext(uri): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.requestService.register(this.http.get(url))
-      .map(res => res.json())
-      .catch(res => this.handleError(res, uri));
+      .map(res => {
+        return res.json();
+      })
+      .catch(res => {
+        return this.handleError(res, uri);
+      });
   }
 
   loadContexts() {
@@ -263,9 +267,14 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     const context = this.context$.value;
     if (context && context.uri === uri) { return; }
 
-    this.getContextByUri(uri).subscribe((_context: DetailedContext) => {
-      this.setContext(_context);
-    });
+    const contexts$$ = this.getContextByUri(uri).subscribe(
+      (_context: DetailedContext) => {
+        contexts$$.unsubscribe();
+        this.setContext(_context);
+      },
+      (err) => {
+        contexts$$.unsubscribe();
+      });
   }
 
   setContext(context: DetailedContext) {
