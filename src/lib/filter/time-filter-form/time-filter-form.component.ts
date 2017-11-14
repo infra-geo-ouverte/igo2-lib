@@ -218,15 +218,18 @@ export class TimeFilterFormComponent {
   }
 
   setupDateOutput() {
-    if (!this.isRange) {
+    if (this.style === 'slider') {
       this.endDate = new Date(this.date);
-      this.date.setSeconds(-(this.step));
+      this.startDate = this.min;
+    } else if (!this.isRange) {
+      this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
-    }
+    } else {
     this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
     this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
-    if (this.startDate > this.endDate) {
-      this.startDate = new Date(this.endDate);
+        if (this.startDate > this.endDate) {
+          this.startDate = new Date(this.endDate);
+      }
     }
   }
 
