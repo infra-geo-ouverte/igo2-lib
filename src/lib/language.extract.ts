@@ -20,6 +20,8 @@ _('igo.context.dialog.cloneTitle');
 _('igo.context.dialog.cloneMsg');
 _('igo.context.dialog.deleteTitle');
 _('igo.context.dialog.deleteMsg');
+_('igo.context.dialog.favoriteTitle');
+_('igo.context.dialog.favoriteMsg');
 _('igo.context.invalid.title');
 _('igo.context.invalid.text');
 
@@ -41,7 +43,7 @@ _('igo.printForm.portrait');
 
 _('igo.search.dataSources.name');
 _('igo.search.dataSources.properties.title');
-_('igo.search.dataSources.properties.groupTitle');
+_('igo.search.dataSources.properties.group');
 _('igo.search.dataSources.properties.abstract');
 _('igo.search.dataSources.properties.url');
 _('igo.search.dataSources.properties.type');

@@ -244,7 +244,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
       } else {
         this.loadContext(this.options.defaultContextUri);
       }
-    }
+    };
 
     if (this.route && this.route.options.contextKey) {
       this.route.queryParams.subscribe(params => {

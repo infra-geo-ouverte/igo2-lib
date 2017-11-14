@@ -147,7 +147,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
     this.defaultContextId$$ = this.contextService.defaultContextId$
       .subscribe(id => {
-        this.component.defaultContextId = id
+        this.component.defaultContextId = id;
       });
 
     // See feature-list.component for an explanation about the debounce time

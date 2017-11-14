@@ -1,6 +1,5 @@
 {
 	"igo": {
-		"targetHtmlUrl": "Ouvrir le lien externe",
 		"auth": {
 			"accessAnonymous": "Rester anonyme",
 			"connection": "Connexion",
@@ -34,10 +33,13 @@
 				"confirmDelete": "Êtes-vous sûr de vouloir supprimer ce context ?",
 				"deleteMsg": "Le contexte '{{value}}' a été supprimé",
 				"deleteTitle": "Contexte supprimé",
+				"favoriteMsg": "Le contexte '{{value}}' a été défini comme favori",
+				"favoriteTitle": "Favori sauvegardé",
 				"saveMsg": "Le contexte '{{value}}' a été sauvegardé",
 				"saveTitle": "Contexte sauvegardé"
 			},
 			"edit": "Éditer ce contexte",
+			"favorite": "Favori",
 			"form": {
 				"edit": "Éditer",
 				"title": "Titre",
@@ -74,19 +76,18 @@
 				"addTitle": "Permission ajoutée",
 				"deleteMsg": "La permission '{{value}}' a été supprimée",
 				"deleteTitle": "Permission retirée",
-        "scopeChangedMsg": "La portée du contexte a été changée pour {{value}}",
+				"scopeChangedMsg": "La portée du contexte a été changée pour {{value}}",
 				"scopeChangedTitle": "Changement de la portée"
 			},
-
-      "profil": "Profil",
+			"profil": "Profil",
 			"profilRequired": "Le profil est obligatoire",
-      "scope": {
-        "private": "Privé",
-        "protected": "Protégé",
-        "public": "Public"
-      },
-			"write": "Lecture et écriture",
-			"read": "Lecture seule"
+			"read": "Lecture seule",
+			"scope": {
+				"private": "Privé",
+				"protected": "Protégé",
+				"public": "Public"
+			},
+			"write": "Lecture et écriture"
 		},
 		"poiButton": {
 			"create": "Créer une zone d'intérêt",
@@ -110,27 +111,28 @@
 			"resolution": "Résolution",
 			"title": "Titre"
 		},
-    "search": {
-      "dataSources": {
-        "name": "Couches",
-        "properties": {
-          "title": "Titre",
-          "group": "Groupe",
-          "abstract": "Description",
-          "url": "URL",
-          "type": "Type"
-        }
-      }
-    },
+		"search": {
+			"dataSources": {
+				"name": "Couches",
+				"properties": {
+					"abstract": "Description",
+					"group": "Groupe",
+					"title": "Titre",
+					"type": "Type",
+					"url": "URL"
+				}
+			}
+		},
 		"searchResults": "Résultats de recherche",
 		"table": {
 			"filter": "Filtre"
 		},
+		"targetHtmlUrl": "Ouvrir le lien externe",
 		"timeAnalysis": "Analyse Temporelle",
 		"timeFilter": {
+			"date": "Date",
 			"endDate": "Date de fin",
-			"startDate": "Date de début",
-			"date": "Date"
+			"startDate": "Date de début"
 		},
 		"tool": {
 			"dialog": {

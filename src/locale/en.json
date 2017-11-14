@@ -1,6 +1,5 @@
 {
 	"igo": {
-		"targetHtmlUrl ": "Open external link",
 		"auth": {
 			"accessAnonymous": "Access as anonymous",
 			"connection": "Connection",
@@ -34,10 +33,13 @@
 				"confirmDelete": "Are you sure you want to delete this context?",
 				"deleteMsg": "The context '{{value}}' was deleted",
 				"deleteTitle": "Context deleted",
+				"favoriteMsg": "The context '{{value}}' was set as favorite",
+				"favoriteTitle": "Favorite saved",
 				"saveMsg": "The context '{{value}}' was saved",
 				"saveTitle": "Context saved"
 			},
 			"edit": "Edit this context",
+			"favorite": "Favorite",
 			"form": {
 				"edit": "Edit",
 				"title": "Title",
@@ -74,18 +76,18 @@
 				"addTitle": "Permission added",
 				"deleteMsg": "The permission '{{value}}' was removed",
 				"deleteTitle": "Permission removed",
-        "scopeChangedMsg": "The scope was changed to {{value}}",
+				"scopeChangedMsg": "The scope was changed to {{value}}",
 				"scopeChangedTitle": "Scope changed"
 			},
 			"profil": "Profil",
 			"profilRequired": "Profil required",
-      "scope": {
-        "private": "Private",
-        "protected": "Protected",
-        "public": "Public"
-      },
-			"write": "Read and Write",
-			"read": "Read only"
+			"read": "Read only",
+			"scope": {
+				"private": "Private",
+				"protected": "Protected",
+				"public": "Public"
+			},
+			"write": "Read and Write"
 		},
 		"poiButton": {
 			"create": "Create a new zone of interest",
@@ -109,27 +111,28 @@
 			"resolution": "Resolution",
 			"title": "Title"
 		},
+		"search": {
+			"dataSources": {
+				"name": "Layers",
+				"properties": {
+					"abstract": "Abstract",
+					"group": "Group",
+					"title": "Title",
+					"type": "Type",
+					"url": "URL"
+				}
+			}
+		},
 		"searchResults": "Search Results",
-    "search": {
-      "dataSources": {
-        "name": "Layers",
-        "properties": {
-          "title": "Title",
-          "group": "Group",
-          "abstract": "Abstract",
-          "url": "URL",
-          "type": "Type"
-        }
-      }
-    },
 		"table": {
 			"filter": "Filter"
 		},
+		"targetHtmlUrl": "Open the external link",
 		"timeAnalysis": "Time Analysis",
 		"timeFilter": {
+			"date": "Date",
 			"endDate": "End Date",
-			"startDate": "Start Date",
-      "date": "Date"
+			"startDate": "Start Date"
 		},
 		"tool": {
 			"dialog": {
