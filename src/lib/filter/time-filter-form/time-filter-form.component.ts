@@ -66,22 +66,22 @@ export class TimeFilterFormComponent {
 
   get style(): string {
     return this.options.style === undefined ?
-      'calendar' : this.options.style;
+      'slider' : this.options.style;
   }
 
   get step(): number {
-    let step = 86400000;
+    let step = 10800000;
     if (this.options.step === undefined) {
       switch (this.type) {
         case 'date':
         case 'datetime':
-          step = 86400000;
+          step = 10800000;
         break;
         case 'time':
           step = 3600000;
         break;
         default:
-          step = 86400000;
+          step = 10800000;
       }
     }else {
       step = this.options.step;
@@ -219,8 +219,10 @@ export class TimeFilterFormComponent {
 
   setupDateOutput() {
     if (this.style === 'slider') {
-      this.endDate = new Date(this.date);
-      this.startDate = this.min;
+       this.startDate = new Date(this.date);
+       this.startDate.setSeconds(-(this.step / 1000));
+       this.endDate = new Date(this.startDate);
+       this.endDate.setSeconds((this.step / 1000));
     } else if (!this.isRange) {
       this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
