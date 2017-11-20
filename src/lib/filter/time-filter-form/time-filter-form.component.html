@@ -41,8 +41,7 @@
   </div>
 </div>
 
-<div *ngIf="style === 'slider'" class="igo-col igo-col-100-m">
-  <i #playFilterIcon class="material-icons" (click)="playFilter($event)">play_circle_filled</i>
+<div *ngIf="style === 'slider'" class="igo-col igo-col-40 igo-col-100-m">
   <md-slider
       id="time-slider"
       tickInterval="auto"
@@ -50,10 +49,12 @@
       [min]="dateToNumber(min)"
       [max]="dateToNumber(max)"
       [value]="handleSliderValue()"
-      [md-tooltip]="handleSliderTooltip()"
-      tooltip-position="below"
       thumbLabel
       (input)="handleSliderDateChange($event)"
       (change)="handleSliderDateChange($event)">
   </md-slider>
+  <p>{{handleSliderTooltip()}}</p>
+  <button md-icon-button color="primary" (click)="playFilter($event)">
+   <md-icon>{{playIcon}}</md-icon>
+  </button>
 </div>

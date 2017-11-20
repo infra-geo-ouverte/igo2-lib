@@ -43,11 +43,10 @@ export class TimeFilterFormComponent {
   public startDate: Date;
   public endDate: Date;
   public interval: any;
+  public playIcon: string = 'play_circle_filled';
 
   @Output() change: EventEmitter<Date | [Date | Date]> = new EventEmitter();
-
   @ViewChild(MdSlider) mySlider;
-  @ViewChild('playFilterIcon') playFilterIcon;
 
   get type(): 'date' | 'time' | 'datetime' {
     return this.options.type === undefined ?
@@ -66,22 +65,22 @@ export class TimeFilterFormComponent {
 
   get style(): string {
     return this.options.style === undefined ?
-      'calendar' : this.options.style;
+      'slider' : this.options.style;
   }
 
   get step(): number {
-    let step = 86400000;
+    let step = 10800000;
     if (this.options.step === undefined) {
       switch (this.type) {
         case 'date':
         case 'datetime':
-          step = 86400000;
+          step = 10800000;
         break;
         case 'time':
           step = 3600000;
         break;
         default:
-          step = 86400000;
+          step = 10800000;
       }
     }else {
       step = this.options.step;
@@ -160,7 +159,7 @@ export class TimeFilterFormComponent {
     if (this.interval) {
       this.stopFilter();
     }else {
-      this.playFilterIcon.nativeElement.textContent = 'pause_circle_filled';
+      this.playIcon = 'pause_circle_filled';
       this.interval = setInterval(function(that) {
         let newMinDateNumber;
         const maxDateNumber = new Date(that.max);
@@ -184,7 +183,7 @@ export class TimeFilterFormComponent {
       clearInterval(this.interval);
     }
     this.interval = undefined;
-    this.playFilterIcon.nativeElement.textContent = 'play_circle_filled';
+    this.playIcon = 'play_circle_filled';
   }
 
   handleSliderDateChange(event: any) {
@@ -219,8 +218,10 @@ export class TimeFilterFormComponent {
 
   setupDateOutput() {
     if (this.style === 'slider') {
-      this.endDate = new Date(this.date);
-      this.startDate = this.min;
+       this.startDate = new Date(this.date);
+       this.startDate.setSeconds(-(this.step / 1000));
+       this.endDate = new Date(this.startDate);
+       this.endDate.setSeconds((this.step / 1000));
     } else if (!this.isRange) {
       this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
