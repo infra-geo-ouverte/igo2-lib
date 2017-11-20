@@ -43,11 +43,10 @@ export class TimeFilterFormComponent {
   public startDate: Date;
   public endDate: Date;
   public interval: any;
+  public playIcon: string = 'play_circle_filled';
 
   @Output() change: EventEmitter<Date | [Date | Date]> = new EventEmitter();
-
   @ViewChild(MdSlider) mySlider;
-  @ViewChild('playFilterIcon') playFilterIcon;
 
   get type(): 'date' | 'time' | 'datetime' {
     return this.options.type === undefined ?
@@ -160,7 +159,7 @@ export class TimeFilterFormComponent {
     if (this.interval) {
       this.stopFilter();
     }else {
-      this.playFilterIcon.nativeElement.textContent = 'pause_circle_filled';
+      this.playIcon = 'pause_circle_filled';
       this.interval = setInterval(function(that) {
         let newMinDateNumber;
         const maxDateNumber = new Date(that.max);
@@ -184,7 +183,7 @@ export class TimeFilterFormComponent {
       clearInterval(this.interval);
     }
     this.interval = undefined;
-    this.playFilterIcon.nativeElement.textContent = 'play_circle_filled';
+    this.playIcon = 'play_circle_filled';
   }
 
   handleSliderDateChange(event: any) {
