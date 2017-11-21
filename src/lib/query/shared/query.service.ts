@@ -178,6 +178,11 @@ export class QueryService {
           break;
       }
 
+      if ( res['_body'] === '<body></body>') {
+        return [];
+      }
+
+
       return [{
         id: 'html1',
         source: 'title',
