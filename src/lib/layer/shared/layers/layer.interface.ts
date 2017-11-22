@@ -3,6 +3,7 @@ export interface LayerOptions extends olx.layer.BaseOptions {
   zIndex?: number;
   visible?: boolean;
   view?: olx.layer.BaseOptions;
+  baseLayer?: boolean;
 }
 
 export interface LayerContext extends LayerOptions {}

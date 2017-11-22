@@ -7,7 +7,7 @@ import { SubjectStatus } from '../../utils';
 import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
-import { MapViewOptions } from './map.interface';
+import { MapViewOptions, MapOptions } from './map.interface';
 
 
 export class IgoMap {
@@ -15,6 +15,10 @@ export class IgoMap {
   public ol: ol.Map;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
+  public baseLayer$ = new BehaviorSubject<Layer>(undefined);
+  public baseLayer: Layer;
+  public baseLayers$ = new BehaviorSubject<Layer[]>([]);
+  public baseLayers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
   public resolution$ = new BehaviorSubject<Number>(undefined);
   public geolocation$ = new BehaviorSubject<ol.Geolocation>(undefined);
@@ -26,6 +30,11 @@ export class IgoMap {
   private geolocation$$: Subscription;
   private geolocationFeature: ol.Feature;
 
+  private options: MapOptions = {
+    controls: {attribution: true},
+    overlay: true
+  };
+
   get projection(): string {
     return this.ol.getView().getProjection().getCode();
   }
@@ -34,7 +43,8 @@ export class IgoMap {
     return this.ol.getView().getResolution();
   }
 
-  constructor() {
+  constructor(options?: MapOptions) {
+    this.options = options || this.options;
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
 
@@ -42,10 +52,28 @@ export class IgoMap {
   }
 
   init() {
+    const controls = [];
+    if (this.options.controls && this.options.controls.attribution) {
+      controls.push(new ol.control.Attribution());
+    }
+
+    let interactions = {};
+    if (this.options.interactions === false) {
+      interactions = {
+        altShiftDragRotate: false,
+        doubleClickZoom: false,
+        keyboard: false,
+        mouseWheelZoom: false,
+        shiftDragZoom: false,
+        dragPan: false,
+        pinchRotate: false,
+        pinchZoom: false
+      };
+    }
+
     this.ol = new ol.Map({
-      controls: [
-        new ol.control.Attribution()
-      ]
+      interactions: ol.interaction.defaults(interactions),
+      controls: controls
     });
 
     this.ol.on('moveend', (e) => {
@@ -54,40 +82,42 @@ export class IgoMap {
       }
     });
 
-    this.overlayMarkerStyle = new ol.style.Style({
-      image: new ol.style.Icon({
-        src: './assets/igo2/icons/place_blue_36px.svg',
-        imgSize: [36, 36], // for ie
-        anchor: [0.5, 1]
-      })
-    });
-
-    this.overlayDataSource = new FeatureDataSource({
-      title: 'Overlay'
-    });
-
-    const stroke = new ol.style.Stroke({
-      color: [0, 161, 222, 1],
-      width: 2
-    });
-
-    const fill = new ol.style.Fill({
-      color: [0, 161, 222, 0.15]
-    });
-
-    const layer = new VectorLayer(this.overlayDataSource, {
-      zIndex: 999,
-      style: new ol.style.Style({
-        stroke: stroke,
-        fill: fill,
-        image: new ol.style.Circle({
-          radius: 5,
-          stroke: stroke,
-          fill: fill
+    if (this.options.overlay) {
+      this.overlayMarkerStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          src: './assets/igo2/icons/place_blue_36px.svg',
+          imgSize: [36, 36], // for ie
+          anchor: [0.5, 1]
         })
-      })
-    });
-    this.addLayer(layer, false);
+      });
+
+      this.overlayDataSource = new FeatureDataSource({
+        title: 'Overlay'
+      });
+
+      const stroke = new ol.style.Stroke({
+        color: [0, 161, 222, 1],
+        width: 2
+      });
+
+      const fill = new ol.style.Fill({
+        color: [0, 161, 222, 0.15]
+      });
+
+      const layer = new VectorLayer(this.overlayDataSource, {
+        zIndex: 999,
+        style: new ol.style.Style({
+          stroke: stroke,
+          fill: fill,
+          image: new ol.style.Circle({
+            radius: 5,
+            stroke: stroke,
+            fill: fill
+          })
+        })
+      });
+      this.addLayer(layer, false);
+    }
   }
 
   setTarget(id: string) {
@@ -141,6 +171,18 @@ export class IgoMap {
   }
 
   addLayer(layer: Layer, push = true) {
+    if (layer.options.baseLayer) {
+      const existingLayer = this.getLayerById(layer.id, this.baseLayers);
+      if (existingLayer !== undefined) { return; }
+      layer.map = this;
+      this.baseLayers.splice(0, 0, layer);
+      this.baseLayers$.next(this.baseLayers.slice(0));
+      if (layer.options.visible || !this.baseLayer) {
+        this.changeBaseLayer(layer);
+      }
+      return;
+    }
+
     const existingLayer = this.getLayerById(layer.id);
     if (existingLayer !== undefined) {
       existingLayer.visible = true;
@@ -150,6 +192,7 @@ export class IgoMap {
     if (layer.zIndex === undefined || layer.zIndex === 0) {
       layer.zIndex = this.layers.length + 1;
     }
+
     layer.add(this);
 
     this.layerWatcher.watchLayer(layer);
@@ -165,8 +208,31 @@ export class IgoMap {
     layers.forEach(layer => this.addLayer(layer, push));
   }
 
-  getLayerById(id: string): Layer {
-    return this.layers.find(layer => layer.id && layer.id === id);
+  changeBaseLayer(baseLayer: Layer) {
+    if (!baseLayer) { return; }
+    baseLayer.zIndex = 0;
+    baseLayer.visible = true;
+    if (this.baseLayer) {
+      this.baseLayer.visible = false;
+      this.layerWatcher.unwatchLayer(this.baseLayer);
+      const index = this.ol.getLayers().getArray().findIndex((l) => l === this.baseLayer.ol);
+      if (index >= 0) {
+        baseLayer.map = this;
+        this.ol.getLayers().setAt(index, baseLayer.ol);
+      } else {
+        baseLayer.add(this);
+      }
+    } else {
+      baseLayer.add(this);
+    }
+    this.baseLayer = baseLayer;
+    this.layerWatcher.watchLayer(baseLayer);
+    this.baseLayer$.next(this.baseLayer);
+  }
+
+  getLayerById(id: string, layersArray?: Layer[]): Layer {
+    layersArray = layersArray || this.layers;
+    return layersArray.find(layer => layer.id && layer.id === id);
   }
 
   removeLayer(layer: Layer) {
@@ -180,14 +246,27 @@ export class IgoMap {
     }
   }
 
-  removeLayers() {
+  removeLayers(keepBaseLayers = false) {
     this.layers.forEach(layer => {
       this.layerWatcher.unwatchLayer(layer);
       layer.remove();
     }, this);
 
     this.layers = [];
-    this.layers$.next(this.layers.slice(0));
+    this.layers$.next([]);
+    if (!keepBaseLayers) {
+      this.removeBaseLayers();
+    }
+  }
+
+  removeBaseLayers() {
+    if (this.baseLayer) {
+      this.layerWatcher.unwatchLayer(this.baseLayer);
+      this.baseLayer.remove();
+    }
+
+    this.baseLayers = [];
+    this.baseLayers$.next([]);
   }
 
   raiseLayer(layer: Layer) {

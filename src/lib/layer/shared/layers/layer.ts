@@ -76,8 +76,10 @@ export abstract class Layer {
   }
 
   remove() {
-    this.map.ol.removeLayer(this.ol);
-    this.map = undefined;
+    if (this.map) {
+      this.map.ol.removeLayer(this.ol);
+      this.map = undefined;
+    }
   }
 
 }

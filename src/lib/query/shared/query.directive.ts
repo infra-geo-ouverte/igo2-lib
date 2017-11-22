@@ -2,7 +2,8 @@ import { Directive, Self, Output, EventEmitter,
          OnDestroy, AfterViewInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { IgoMap, MapBrowserComponent } from '../../map';
+import { IgoMap } from '../../map/shared';
+import { MapBrowserComponent } from '../../map/map-browser';
 import { Layer } from '../../layer';
 import { Feature } from '../../feature';
 

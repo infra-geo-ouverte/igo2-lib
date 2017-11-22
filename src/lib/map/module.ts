@@ -9,7 +9,7 @@ import { GeolocateButtonComponent } from './geolocate-button';
 import { BookmarkButtonComponent, BookmarkDialogComponent } from './bookmark-button';
 import { PoiButtonComponent, PoiDialogComponent } from './poi-button';
 import { UserButtonComponent, UserDialogComponent } from './user-button';
-
+import { BaseLayersSwitcherComponent, MiniBaseMapComponent } from './baselayers-switcher';
 
 @NgModule({
   imports: [
@@ -22,7 +22,8 @@ import { UserButtonComponent, UserDialogComponent } from './user-button';
     GeolocateButtonComponent,
     BookmarkButtonComponent,
     PoiButtonComponent,
-    UserButtonComponent
+    UserButtonComponent,
+    BaseLayersSwitcherComponent
   ],
   declarations: [
     MapBrowserComponent,
@@ -34,7 +35,9 @@ import { UserButtonComponent, UserDialogComponent } from './user-button';
     PoiButtonComponent,
     PoiDialogComponent,
     UserButtonComponent,
-    UserDialogComponent
+    UserDialogComponent,
+    BaseLayersSwitcherComponent,
+    MiniBaseMapComponent
   ],
   entryComponents: [
     BookmarkDialogComponent,
@@ -59,4 +62,5 @@ export * from './geolocate-button';
 export * from './bookmark-button';
 export * from './poi-button';
 export * from './user-button';
+export * from './baselayers-switcher';
 export * from './shared';

@@ -15,7 +15,6 @@
   position: absolute;
   bottom: $igo-margin;
   right: $igo-margin;
-  width: $igo-icon-button-width;
   +media(mobile) {
     display: none;
   }
@@ -34,21 +33,45 @@
   position: absolute;
   bottom: 95px;
   right: $igo-margin;
-  width: $igo-icon-button-width;
   +media(mobile) {
     bottom: $igo-margin;
   }
 }
 
-:host >>> .ol-attribution {
+:host >>> igo-baselayers-switcher {
+  position: absolute;
+  bottom: $igo-margin;
   left: $igo-margin;
-  right: inherit;
-  text-align: left;
-  padding: 0;
 }
 
-:host >>> .ol-attribution ul {
+:host.igo-attribution-offset >>> .ol-attribution {
+  left: 90px;
+  width: calc(100% - 200px);
+}
+
+:host >>> .ol-attribution {
+  left: $igo-margin;
+  bottom: 4px;
+  text-align: left;
   padding: 0;
+  margin-right: 90px;
+  background-color: rgba(255,255,255,0);
+  width: calc(100% - 100px);
+
+  &.ol-logo-only {
+    height: inherit;
+  }
+  &.ol-collapsed {
+    background: none;
+    button {
+      transform: none;
+    }
+  }
+  button {
+    transform: rotate(180deg);
+    background-color: white;
+    cursor: pointer;
+  }
 }
 
 :host >>> canvas {

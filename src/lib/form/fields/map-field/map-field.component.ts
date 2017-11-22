@@ -80,10 +80,18 @@ export class MapFieldComponent
   protected _view: MapViewOptions;
 
   @Input()
+  get baselayer(): Layer { return this._baselayer; }
+  set baselayer(value: Layer) {
+    this._baselayer = value;
+    this.map.changeBaseLayer(value);
+  }
+  private _baselayer: Layer;
+
+  @Input()
   get layers(): Layer[] { return this._layers; }
   set layers(value: Layer[]) {
     this._layers = value;
-    this.map.removeLayers();
+    this.map.removeLayers(true);
     this.map.addLayers(value);
   }
   private _layers: Layer[];

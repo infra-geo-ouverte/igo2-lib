@@ -1,0 +1,19 @@
+<div *ngIf="baseLayers.length > 0"
+     class="igo-baselayers-switcher-container"
+     [ngClass]="{'container-expand': expand}"
+     [@baseLayerSwitcherState]="expand ? 'expand' : 'collapse'"
+     (click)="collapseOrExpand()">
+
+    <igo-mini-basemap *ngFor="let baseLayer of baseLayers; let i = index"
+      [map]="map"
+      [baseLayer]="baseLayer"
+      [disabled]="!expand && baseLayers.length > 1">
+    </igo-mini-basemap>
+
+    <div class="more-baselayers">
+      <md-icon class="material-icons mat-icon mat-list-avatar" color="primary">
+        arrow_drop_down
+      </md-icon>
+    </div>
+
+</div>

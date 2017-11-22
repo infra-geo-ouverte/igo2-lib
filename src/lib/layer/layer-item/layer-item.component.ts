@@ -74,6 +74,8 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   isInResolutionsRange() {
+    if (!this.layer.map) { return false; }
+
     const resolution = this.layer.map.resolution;
     const minResolution = this.layer.ol.getMinResolution();
     const maxResolution = this.layer.ol.getMaxResolution();
