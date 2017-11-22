@@ -41,7 +41,7 @@
   </div>
 </div>
 
-<div *ngIf="style === 'slider'" class="igo-col igo-col-40 igo-col-100-m">
+<div *ngIf="style === 'slider'" class="igo-col igo-col-100 igo-col-100-m">
   <md-slider
       id="time-slider"
       tickInterval="auto"
@@ -53,7 +53,7 @@
       (input)="handleSliderDateChange($event)"
       (change)="handleSliderDateChange($event)">
   </md-slider>
-  <p>{{handleSliderTooltip()}}</p>
+  <p class="date-below">{{handleSliderTooltip()}} </p>
   <button md-icon-button color="primary" (click)="playFilter($event)">
    <md-icon>{{playIcon}}</md-icon>
   </button>
