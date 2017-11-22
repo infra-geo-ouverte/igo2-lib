@@ -277,7 +277,6 @@ export class TimeFilterFormComponent {
         // datetime
       default:
         // do nothing
-
     }
   }
 
