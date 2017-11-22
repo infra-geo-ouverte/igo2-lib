@@ -10,9 +10,9 @@ import { TimeFilterOptions } from '../shared';
 export class TimeFilterFormComponent {
 
   static formats = {
-    date: 'y/MM/dd',
+    date: 'y-MM-dd',
     time: 'HH:mm',
-    datetime: 'y/MM/dd HH:mm'
+    datetime: 'y-MM-dd HH:mm:ss'
   };
 
   @Input()
@@ -114,11 +114,16 @@ export class TimeFilterFormComponent {
   handleDateChange(event: any) {
     // Calendar throw handleDateChange when first selected with weird date
     if ( (event.source instanceof MdSlider) ||
-        (event.source.date === event.source.value) ) {
+        (event.source.date === event.source.value) ||
+        (event.source.value === null) ) {
+
       this.setupDateOutput();
       this.applyTypeChange();
       this.change.emit([this.startDate, this.endDate]);
     }
+
+
+
   }
 
   dateToNumber(date: Date): number {
@@ -222,27 +227,29 @@ export class TimeFilterFormComponent {
        this.startDate.setSeconds(-(this.step / 1000));
        this.endDate = new Date(this.startDate);
        this.endDate.setSeconds((this.step / 1000));
-    } else if (!this.isRange) {
+    } else if ((!this.isRange) && (this.date !== null)) {
       this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
-    } else {
-    this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
-    this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
-        if (this.startDate > this.endDate) {
-          this.startDate = new Date(this.endDate);
-      }
+    } else if ((this.isRange) && ((this.date !== null)  || (this.date == null))) {
+      this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
+      this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
+    } else if ((!this.isRange) && (this.date == null)) {
+      this.startDate = undefined;
+      this.endDate = undefined;
     }
   }
 
   applyTypeChange() {
     switch (this.type) {
       case 'date':
+        if ( this.startDate !== undefined || this.endDate !== undefined ) {
         this.startDate.setHours(0);
         this.startDate.setMinutes(0);
         this.startDate.setSeconds(0);
         this.endDate.setHours(23);
         this.endDate.setMinutes(59);
         this.endDate.setSeconds(59);
+          }
       break;
       case 'time':
         if (this.style === 'calendar') {
@@ -273,6 +280,7 @@ export class TimeFilterFormComponent {
       // datetime
       default:
         // do nothing
+
     }
   }
 

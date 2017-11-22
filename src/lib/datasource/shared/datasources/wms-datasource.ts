@@ -122,23 +122,55 @@ export class WMSDataSource
     return url;
   }
 
-  filterByDate(date: Date | [Date, Date]) {
+  reformatDateTime(value) {
+
+    const year = value.getFullYear();
+    let month = value.getMonth() + 1;
+    let day = value.getUTCDate();
+    let hour = value.getUTCHours();
+
+    if ( Number(month) < 10 ) {
+       month = '0' + month;
+    }
+
+    if ( Number(day) < 10) {
+       day = '0' + day;
+    }
+
+    if ( Number(hour) < 10) {
+       hour = '0' + hour;
+    }
+
+    return year + '-' + month + '-' + day + 'T' + hour + ':00:00Z';
+
+   }
+
+ filterByDate(date: Date | [Date, Date]) {
     let time = null;
+    let newdateform = null;
+    let newdateform_start = null;
+    let newdateform_end = null;
+
     if (Array.isArray(date)) {
       const dates = [];
       if (date[0]) {
+        newdateform_start = this.reformatDateTime(date[0]);
         dates.push(date[0]);
       }
-
       if (date[1]) {
+        newdateform_end = this.reformatDateTime(date[1]);
         dates.push(date[1]);
       }
-
-      if (dates.length === 2) {
-        time = dates.map(d => d.toISOString()).join('/');
+      if (dates.length === 2 && newdateform_start !== newdateform_end) {
+         time = newdateform_start + '/' +  newdateform_end ;
       }
+      if (newdateform_start === newdateform_end) {
+         time = newdateform_start;
+       }
+
     } else if (date) {
-      time = date.toISOString();
+      newdateform = this.reformatDateTime(date);
+      time = newdateform;
     }
 
     const params = {time: time};
