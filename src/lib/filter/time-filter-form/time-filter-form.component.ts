@@ -240,13 +240,13 @@ export class TimeFilterFormComponent {
     switch (this.type) {
       case 'date':
         if ( this.startDate !== undefined || this.endDate !== undefined ) {
-        this.startDate.setHours(0);
-        this.startDate.setMinutes(0);
-        this.startDate.setSeconds(0);
-        this.endDate.setHours(23);
-        this.endDate.setMinutes(59);
-        this.endDate.setSeconds(59);
-          }
+          this.startDate.setHours(0);
+          this.startDate.setMinutes(0);
+          this.startDate.setSeconds(0);
+          this.endDate.setHours(23);
+          this.endDate.setMinutes(59);
+          this.endDate.setSeconds(59);
+        }
       break;
       case 'time':
         if (this.style === 'calendar') {
@@ -274,7 +274,7 @@ export class TimeFilterFormComponent {
           this.endDate.setSeconds(59);
         }
       break;
-      // datetime
+        // datetime
       default:
         // do nothing
 
