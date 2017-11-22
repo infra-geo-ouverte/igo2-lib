@@ -121,9 +121,6 @@ export class TimeFilterFormComponent {
       this.applyTypeChange();
       this.change.emit([this.startDate, this.endDate]);
     }
-
-
-
   }
 
   dateToNumber(date: Date): number {
