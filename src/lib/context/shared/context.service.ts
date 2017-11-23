@@ -236,6 +236,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
   }
 
   loadDefaultContext() {
+
     const loadFct = (direct = false) => {
       if (!direct && this.baseUrl && this.authService.authenticated) {
         this.getDefault().subscribe(
@@ -251,7 +252,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     };
 
     if (this.route && this.route.options.contextKey) {
-      this.route.queryParams.subscribe(params => {
+      this.route.queryParams.debounceTime(100).subscribe(params => {
         const contextParam = params[this.route.options.contextKey as string];
         let direct = false;
         if (contextParam) {
