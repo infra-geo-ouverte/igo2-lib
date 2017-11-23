@@ -3,6 +3,7 @@
     md-icon-button
     igoStopPropagation
     [md-tooltip]="'igo.context.favorite' | translate"
+    mdTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
     (click)="favorite.emit(context)">
     <md-icon>
@@ -18,6 +19,7 @@
        <button
          md-icon-button
          [md-tooltip]="'igo.context.clone' | translate"
+         mdTooltipShowDelay="500"
          [color]="color"
          (click)="clone.emit(context)">
          <md-icon>content_copy</md-icon>
@@ -32,6 +34,7 @@
      <button *ngIf="collapsed"
        md-icon-button
        [md-tooltip]="'igo.context.save' | translate"
+       mdTooltipShowDelay="500"
        [color]="color"
        (click)="save.emit(context)">
        <md-icon>save</md-icon>
@@ -42,6 +45,7 @@
       <button
         md-icon-button
         [md-tooltip]="'igo.context.managePermissions' | translate"
+        mdTooltipShowDelay="500"
         [color]="color"
         (click)="managePermissions.emit(context)">
         <md-icon>perm_identity</md-icon>
@@ -58,6 +62,7 @@
       <button
         md-icon-button
         [md-tooltip]="'igo.context.clone' | translate"
+        mdTooltipShowDelay="500"
         [color]="color"
         (click)="clone.emit(context)">
         <md-icon>content_copy</md-icon>
@@ -67,6 +72,7 @@
         md-icon-button
         [color]="color"
         [md-tooltip]="'igo.context.edit' | translate"
+        mdTooltipShowDelay="500"
         (click)="edit.emit(context)">
         <md-icon>edit</md-icon>
       </button>
@@ -75,6 +81,7 @@
         md-icon-button
         color="warn"
         [md-tooltip]="'igo.context.delete' | translate"
+        mdTooltipShowDelay="500"
         (click)="delete.emit(context)">
         <md-icon>delete</md-icon>
       </button>

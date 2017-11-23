@@ -7,12 +7,13 @@
     [collapsed]="layer.collapsed"
     (toggle)="toggleLegend($event)">
   </md-icon>
-  <h4 mdLine [md-tooltip]="layer.title">{{layer.title}}</h4>
+  <h4 mdLine [md-tooltip]="layer.title" mdTooltipShowDelay="500">{{layer.title}}</h4>
 
   <button
     md-icon-button
     collapsibleButton
     tooltip-position="below"
+    mdTooltipShowDelay="500"
     [md-tooltip]="layer.visible ?
                   ('igo.layer.hideLayer' | translate) :
                   ('igo.layer.showLayer' | translate)"
@@ -50,6 +51,7 @@
       [max]="100"
       [(ngModel)]="opacity"
       [md-tooltip]="'igo.layer.opacity' | translate"
+      mdTooltipShowDelay="500"
       tooltip-position="below">
     </md-slider>
   </div>
@@ -60,6 +62,7 @@
         *ngIf="layer.dataSource.options.metadata && layer.dataSource.options.metadata.url"
         md-icon-button
         tooltip-position="below"
+        mdTooltipShowDelay="500"
         [md-tooltip]="'igo.layer.showMetadata' | translate"
         [color]="color"
         (click)="openMetadata(layer.dataSource.options.metadata)">
@@ -69,6 +72,7 @@
       <button
         md-icon-button
         tooltip-position="below"
+        mdTooltipShowDelay="500"
         [md-tooltip]="'igo.layer.raiseLayer' | translate"
         [color]="color"
         (click)="layer.map.raiseLayer(layer)">
@@ -78,6 +82,7 @@
       <button
         md-icon-button
         tooltip-position="below"
+        mdTooltipShowDelay="500"
         [md-tooltip]="'igo.layer.lowerLayer' | translate"
         [color]="color"
         (click)="layer.map.lowerLayer(layer)">
@@ -87,6 +92,7 @@
       <button
         md-icon-button
         tooltip-position="below"
+        mdTooltipShowDelay="500"
         [md-tooltip]="'igo.layer.removeLayer' | translate"
         color="warn"
         (click)="layer.map.removeLayer(layer)">
