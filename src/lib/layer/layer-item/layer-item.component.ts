@@ -1,5 +1,5 @@
-import { Component, Input, OnDestroy, ChangeDetectorRef,
-         ChangeDetectionStrategy, Optional, OnInit} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ChangeDetectorRef,
+         ChangeDetectionStrategy, Optional} from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MetadataService, MetadataOptions } from '../../metadata';
@@ -13,7 +13,7 @@ import { RouteService } from '../../core';
   styleUrls: ['./layer-item.component.styl'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayerItemComponent implements OnDestroy {
+export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input()
   get layer(): Layer { return this._layer; }
@@ -68,7 +68,7 @@ export class LayerItemComponent implements OnDestroy {
     return this.layer.dataSource.options['id'] ?
     this.layer.dataSource.options['id'] : this.layer.id;
   }
-  OnInit() {
+  ngOnInit() {
     this.getLayerParamVisibilityUrl();
    }
 
