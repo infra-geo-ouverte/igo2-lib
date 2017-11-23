@@ -354,10 +354,13 @@ export class IgoMap {
       if (accuracy < 10000) {
         const geometry = geolocation.getAccuracyGeometry();
         const extent = geometry.getExtent();
-        if (this.geolocationFeature) {
+        if (this.geolocationFeature &&
+            this.overlayDataSource.ol.getFeatureById(this.geolocationFeature.getId())) {
+
           this.overlayDataSource.ol.removeFeature(this.geolocationFeature);
         }
         this.geolocationFeature = new ol.Feature({geometry: geometry});
+        this.geolocationFeature.setId('geolocationFeature');
         this.addOverlay(this.geolocationFeature);
         if (first) {
           this.zoomToExtent(extent);
