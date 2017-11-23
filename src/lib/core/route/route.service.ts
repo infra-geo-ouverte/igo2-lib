@@ -27,7 +27,9 @@ export class RouteService {
       zoomKey: 'zoom',
       projectionKey: 'projection',
       contextKey: 'context',
-      searchKey: 'search'
+      searchKey: 'search',
+      visibleOnLayersKey: 'visiblelayers',
+      visibleOffLayersKey: 'invisiblelayers'
     };
     this.options = Object.assign({}, defaultOptions, options);
   }
