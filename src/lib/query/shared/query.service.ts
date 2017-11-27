@@ -200,6 +200,7 @@ export class QueryService {
     const featureGeometry = (feature.getGeometry() as any);
     const properties = Object.assign({}, feature.getProperties());
     delete properties['geometry'];
+    delete properties['boundedBy'];
 
     let geometry;
     if (featureGeometry !== undefined) {
