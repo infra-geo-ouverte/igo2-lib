@@ -20,4 +20,5 @@ export interface LayerCatalog {
 export interface GroupLayers {
   title: string;
   layers?: LayerCatalog;
+  collapsed?: boolean;
 }

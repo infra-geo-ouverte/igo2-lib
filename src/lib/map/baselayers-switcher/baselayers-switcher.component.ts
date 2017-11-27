@@ -23,31 +23,33 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
   private _map: IgoMap;
 
-  public baseLayers: Layer[] = [];
+  public _baseLayers: Layer[] = [];
   public expand: boolean = false;
 
-  private baseLayer$$: Subscription;
-  private baseLayers$$: Subscription;
+  private layers$$: Subscription;
 
   constructor() {}
 
   ngAfterViewInit() {
-    this.baseLayers$$ = this.map.baseLayers$.subscribe((arrayBL) => {
-      this.baseLayers = arrayBL.filter((l) => l !== this._map.baseLayer);
-    });
-    this.baseLayer$$ = this.map.baseLayer$.subscribe((bl) => {
-      this.baseLayers = this._map.baseLayers.filter((l) => l !== bl);
+    this.layers$$ = this.map.layers$.subscribe((arrayLayers) => {
+      this._baseLayers = arrayLayers.filter(l => l.baseLayer);
     });
   }
 
   ngOnDestroy() {
-    this.baseLayers$$.unsubscribe();
-    this.baseLayer$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   collapseOrExpand() {
     if (this.baseLayers.length > 1) {
       this.expand = !this.expand;
+    } else {
+      this.expand = false;
     }
+  }
+
+  get baseLayers(): Layer[] {
+    const blHidden = this._baseLayers.filter(l => !l.visible);
+    return (blHidden.length + 1) ===  this._baseLayers.length ? blHidden : this._baseLayers;
   }
 }

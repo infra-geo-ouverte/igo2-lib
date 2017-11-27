@@ -10,7 +10,7 @@ import { Layer } from '../shared/layers/layer';
   selector: 'igo-layer-item',
   templateUrl: './layer-item.component.html',
   styleUrls: ['./layer-item.component.styl'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class LayerItemComponent implements OnDestroy {
 

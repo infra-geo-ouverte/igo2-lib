@@ -86,7 +86,7 @@
     <md-card-subtitle>Map module</md-card-subtitle>
     <md-card-title>map-browser.component</md-card-title>
     <md-card-content class="igo-map-browser-container">
-      <igo-map-browser [ngClass]="{'igo-attribution-offset': (map.baseLayers$ | async).length > 1}"
+      <igo-map-browser [ngClass]="{'igo-attribution-offset': map.getBaseLayers().length > 1}"
         igoQuery
         igoOverlay
         igoMapContext
@@ -156,7 +156,6 @@
             [placeholder]="'Location' | translate"
             [decimals]="8"
             [readonly]="false"
-            [baselayer]="(map.baseLayer$ | async) | clone"
             [layers]="(map.layers$ | async) | clone"
             [view]="contextService.context$.value ? (contextService.context$ | async).map.view : undefined">
           </igo-map-field>

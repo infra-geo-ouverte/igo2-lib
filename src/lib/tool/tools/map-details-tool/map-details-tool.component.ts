@@ -24,6 +24,11 @@ export class MapDetailsToolComponent {
       false : this.options.toggleLegendOnVisibilityChange;
   }
 
+  get excludeBaseLayers(): boolean {
+    return this.options.excludeBaseLayers === undefined ?
+      false : this.options.excludeBaseLayers;
+  }
+
   constructor() { }
 
 }

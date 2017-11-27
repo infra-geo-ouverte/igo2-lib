@@ -57,7 +57,7 @@ export class BookmarkButtonComponent {
       tools: []
     };
 
-    const layers = this.map.baseLayers$.getValue().concat(this.map.layers$.getValue());
+    const layers = this.map.layers$.getValue();
 
     let order = layers.length;
     for (const l of layers) {

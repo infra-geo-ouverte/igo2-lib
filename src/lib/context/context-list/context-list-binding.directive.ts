@@ -33,7 +33,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     const view = map.ol.getView();
     const proj = view.getProjection().getCode();
     const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
-    const layers = map.baseLayers$.getValue().concat(map.layers$.getValue());
+    const layers = map.layers$.getValue();
 
     const changes = {
       layers: [],

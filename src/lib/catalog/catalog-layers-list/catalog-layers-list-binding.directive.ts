@@ -24,11 +24,20 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('select', ['$event']) onSelect(layer: LayerCatalog) {
     const map = this.mapService.getMap();
+    const contextLayer: any = layer as any;
+
+    const sourceContext = contextLayer.source;
+    const layerContext = Object.assign({}, contextLayer);
+    layerContext.visible = true;
+    delete layerContext.source;
+
+    const dataSourceContext = Object.assign({}, layerContext, sourceContext);
+
     this.dataSourceService
-      .createAsyncDataSource(layer as AnyDataSourceContext)
+      .createAsyncDataSource(dataSourceContext as AnyDataSourceContext)
       .subscribe(dataSource =>  {
-        map.addLayer(
-          this.layerService.createLayer(dataSource, layer));
+        const layerInstance = this.layerService.createLayer(dataSource, layerContext);
+        map.addLayer(layerInstance);
       });
   }
 
@@ -52,6 +61,17 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
 
   handleCatalogChanged(catalog: Catalog) {
     if (!catalog || !catalog.url) {
+      return;
+    }
+
+    if (catalog.type === 'layers') {
+      this.catalogService.getBaseLayers(catalog.url).subscribe((baselayers) => {
+        this.component.groupsLayers = [{
+          title: catalog.title,
+          layers: baselayers,
+          collapsed: false
+        }];
+      });
       return;
     }
 

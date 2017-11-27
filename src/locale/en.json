@@ -19,6 +19,9 @@
 			}
 		},
 		"catalog": "Catalog",
+    "catalogTool": {
+      "baseLayers": "Base Layers"
+    },
 		"confirmDialog": {
 			"cancelBtn": "Cancel",
 			"confirmBtn": "Confirm",

@@ -28,6 +28,15 @@ export class LayerListComponent {
   private _color: string = 'primary';
 
   @Input()
+  get excludeBaseLayers() {
+    return this._excludeBaseLayers;
+  }
+  set excludeBaseLayers(value: boolean) {
+    this._excludeBaseLayers = value;
+  }
+  private _excludeBaseLayers: boolean = false;
+
+  @Input()
   get toggleLegendOnVisibilityChange() {
     return this._toggleLegendOnVisibilityChange;
   }

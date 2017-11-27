@@ -15,10 +15,6 @@ export class IgoMap {
   public ol: ol.Map;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
-  public baseLayer$ = new BehaviorSubject<Layer>(undefined);
-  public baseLayer: Layer;
-  public baseLayers$ = new BehaviorSubject<Layer[]>([]);
-  public baseLayers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
   public resolution$ = new BehaviorSubject<Number>(undefined);
   public geolocation$ = new BehaviorSubject<ol.Geolocation>(undefined);
@@ -171,16 +167,8 @@ export class IgoMap {
   }
 
   addLayer(layer: Layer, push = true) {
-    if (layer.options.baseLayer) {
-      const existingLayer = this.getLayerById(layer.id, this.baseLayers);
-      if (existingLayer !== undefined) { return; }
-      layer.map = this;
-      this.baseLayers.splice(0, 0, layer);
-      this.baseLayers$.next(this.baseLayers.slice(0));
-      if (layer.options.visible || !this.baseLayer) {
-        this.changeBaseLayer(layer);
-      }
-      return;
+    if (layer.baseLayer && layer.visible) {
+      this.changeBaseLayer(layer);
     }
 
     const existingLayer = this.getLayerById(layer.id);
@@ -190,7 +178,8 @@ export class IgoMap {
     }
 
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      layer.zIndex = this.layers.length + 1;
+      const offset = layer.baseLayer ? 1 : 10;
+      layer.zIndex = this.layers.length + offset;
     }
 
     layer.add(this);
@@ -210,29 +199,20 @@ export class IgoMap {
 
   changeBaseLayer(baseLayer: Layer) {
     if (!baseLayer) { return; }
-    baseLayer.zIndex = 0;
-    baseLayer.visible = true;
-    if (this.baseLayer) {
-      this.baseLayer.visible = false;
-      this.layerWatcher.unwatchLayer(this.baseLayer);
-      const index = this.ol.getLayers().getArray().findIndex((l) => l === this.baseLayer.ol);
-      if (index >= 0) {
-        baseLayer.map = this;
-        this.ol.getLayers().setAt(index, baseLayer.ol);
-      } else {
-        baseLayer.add(this);
-      }
-    } else {
-      baseLayer.add(this);
+
+    for (const bl of this.getBaseLayers()) {
+      bl.visible = false;
     }
-    this.baseLayer = baseLayer;
-    this.layerWatcher.watchLayer(baseLayer);
-    this.baseLayer$.next(this.baseLayer);
+
+    baseLayer.visible = true;
   }
 
-  getLayerById(id: string, layersArray?: Layer[]): Layer {
-    layersArray = layersArray || this.layers;
-    return layersArray.find(layer => layer.id && layer.id === id);
+  getBaseLayers(): Layer[] {
+    return this.layers.filter(layer => layer.baseLayer);
+  }
+
+  getLayerById(id: string): Layer {
+    return this.layers.find(layer => layer.id && layer.id === id);
   }
 
   removeLayer(layer: Layer) {
@@ -246,7 +226,7 @@ export class IgoMap {
     }
   }
 
-  removeLayers(keepBaseLayers = false) {
+  removeLayers() {
     this.layers.forEach(layer => {
       this.layerWatcher.unwatchLayer(layer);
       layer.remove();
@@ -254,19 +234,6 @@ export class IgoMap {
 
     this.layers = [];
     this.layers$.next([]);
-    if (!keepBaseLayers) {
-      this.removeBaseLayers();
-    }
-  }
-
-  removeBaseLayers() {
-    if (this.baseLayer) {
-      this.layerWatcher.unwatchLayer(this.baseLayer);
-      this.baseLayer.remove();
-    }
-
-    this.baseLayers = [];
-    this.baseLayers$.next([]);
   }
 
   raiseLayer(layer: Layer) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { RequestService, ConfigService } from '../../core';
+import { RequestService, LanguageService, ConfigService } from '../../core';
 import { AuthHttp } from '../../auth';
 
 import { Catalog } from './catalog.interface';
@@ -16,7 +16,8 @@ export class CatalogService {
 
   constructor(private authHttp: AuthHttp,
               private requestService: RequestService,
-              private config: ConfigService) {
+              private config: ConfigService,
+              private languageService: LanguageService) {
 
     const options = this.config.getConfig('context') || {};
 
@@ -43,6 +44,14 @@ export class CatalogService {
       });
   }
 
+  getBaseLayers(url: string) {
+    const request = this.authHttp.get(url);
+    return this.requestService.register(request, 'Get base layers error')
+      .map((res) => {
+        return res.json();
+      });
+  }
+
   selectCatalog(catalog: Catalog) {
     if (this.catalog$.value !== catalog) {
       this.catalog$.next(catalog);
@@ -51,6 +60,7 @@ export class CatalogService {
 
   load() {
     const catalogConfig = this.config.getConfig('catalog') || {};
+
     if (!this.baseUrl) {
       if (catalogConfig.sources) {
         this.catalogs$.next(catalogConfig.sources);
@@ -59,6 +69,15 @@ export class CatalogService {
     }
 
     this.get().subscribe((catalogs) => {
+      if (catalogConfig.baseLayers) {
+        const translate = this.languageService.translate;
+        const title = translate.instant('igo.catalogTool.baseLayers');
+        catalogs.unshift({
+          title: title,
+          url: this.baseUrl + '/baselayers',
+          type: 'layers'
+        });
+      }
       if (catalogConfig.sources) {
         catalogs = catalogs.concat(catalogConfig.sources);
       }

@@ -19,6 +19,9 @@
 			}
 		},
 		"catalog": "Catalogue",
+    "catalogTool": {
+      "baseLayers": "Fonds de carte"
+    },
 		"confirmDialog": {
 			"cancelBtn": "Annuler",
 			"confirmBtn": "Confirmer",

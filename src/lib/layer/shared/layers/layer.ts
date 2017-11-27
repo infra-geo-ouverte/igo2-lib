@@ -36,6 +36,14 @@ export abstract class Layer {
     this.ol.setZIndex(zIndex);
   }
 
+  set baseLayer(baseLayer: boolean) {
+    this.options.baseLayer = baseLayer;
+  }
+
+  get baseLayer(): boolean {
+    return this.options.baseLayer;
+  }
+
   get visible(): boolean {
     return this.ol.get('visible');
   }
