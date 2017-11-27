@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ChangeDetectorRef,
-         ChangeDetectionStrategy, Optional} from '@angular/core';
+         ChangeDetectionStrategy, Optional } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MetadataService, MetadataOptions } from '../../metadata';
