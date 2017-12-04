@@ -10,6 +10,15 @@
    </md-error>
   </md-form-field>
 
+  <md-form-field id="uriInput" class="full-width">
+    <span *ngIf="prefix" class="prefix">{{prefix}}-</span>
+    <span class="fieldWrapper">
+      <input mdInput
+           [placeholder]="'igo.context.form.uri' | translate"
+           formControlName="uri">
+    </span>
+  </md-form-field>
+
   <div class="igo-form-button-group">
     <button
       md-raised-button

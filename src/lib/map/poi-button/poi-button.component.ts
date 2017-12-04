@@ -102,7 +102,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
             const message = translate.instant('igo.poiButton.dialog.createMsg', {
               value: poi.title
             });
-            this.messageService.info(message, titleD);
+            this.messageService.success(message, titleD);
             poi.id = newPoi.id;
             this.pois.push(poi);
           });

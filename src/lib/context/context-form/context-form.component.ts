@@ -11,6 +11,7 @@ import { Context } from '../shared';
 })
 export class ContextFormComponent implements OnInit {
   public form: FormGroup;
+  public prefix: string;
 
   @Input()
   get btnSubmitText(): string { return this._btnSubmitText; }
@@ -47,14 +48,25 @@ export class ContextFormComponent implements OnInit {
 
   public handleFormSubmit(value) {
     value = ObjectUtils.removeNull(value);
+    value.uri = value.uri.replace(' ', '');
+    if (value.uri) {
+      value.uri = this.prefix + '-' + value.uri;
+    } else {
+      value.uri = this.prefix;
+    }
     this.submitForm.emit(value);
   }
 
   private buildForm(): void {
     const context: any = this.context || {};
 
+    const uriSplit = context.uri.split('-');
+    this.prefix = uriSplit.shift();
+    const uri = uriSplit.join('-');
+
     this.form = this.formBuilder.group({
-      'title': [context.title]
+      'title': [context.title],
+      'uri': [uri || ' ']
     });
   }
 

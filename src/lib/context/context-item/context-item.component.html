@@ -7,7 +7,7 @@
     [color]="default ? 'primary' : 'default'"
     (click)="favorite.emit(context)">
     <md-icon>
-      {{context.icon ? context.icon : 'star'}}
+      {{context.icon ? context.icon : context.scope === 'public' ? 'public' : 'star'}}
     </md-icon>
   </button>
   <h4 mdLine>{{context.title}}</h4>
