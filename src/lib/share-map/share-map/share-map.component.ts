@@ -48,8 +48,9 @@ export class ShareMapComponent implements OnInit {
   }
 
   resetUrl(values) {
-    values.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
-    this.url = this.shareMapService.getUrl(this.map, values);
+    const inputs = Object.assign({}, values);
+    inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
+    this.url = this.shareMapService.getUrl(this.map, inputs);
   }
 
   copyTextToClipboard(textArea) {

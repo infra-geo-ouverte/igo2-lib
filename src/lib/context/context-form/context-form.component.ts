@@ -47,14 +47,15 @@ export class ContextFormComponent implements OnInit {
   }
 
   public handleFormSubmit(value) {
-    value = ObjectUtils.removeNull(value);
-    value.uri = value.uri.replace(' ', '');
-    if (value.uri) {
-      value.uri = this.prefix + '-' + value.uri;
+    let inputs = Object.assign({}, value);
+    inputs = ObjectUtils.removeNull(inputs);
+    inputs.uri = inputs.uri.replace(' ', '');
+    if (inputs.uri) {
+      inputs.uri = this.prefix + '-' + inputs.uri;
     } else {
-      value.uri = this.prefix;
+      inputs.uri = this.prefix;
     }
-    this.submitForm.emit(value);
+    this.submitForm.emit(inputs);
   }
 
   private buildForm(): void {
