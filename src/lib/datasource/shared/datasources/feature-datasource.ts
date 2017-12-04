@@ -1,6 +1,6 @@
 import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
-
+import { Md5 } from 'ts-md5/dist/md5';
 
 export class FeatureDataSource extends DataSource {
 
@@ -16,7 +16,8 @@ export class FeatureDataSource extends DataSource {
   }
 
   protected generateId() {
-    return undefined;
+    const chain = 'feature' + this.options.url;
+    return Md5.hashStr(chain) as string;
   }
 
   private getSourceFormatFromOptions(options: FeatureDataSourceOptions) {

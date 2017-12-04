@@ -4,4 +4,6 @@ export interface RouteServiceOptions {
   projectionKey?: boolean | string;
   contextKey?: boolean | string;
   searchKey?: boolean | string;
+  visibleOnLayersKey?: boolean | string;
+  visibleOffLayersKey?: boolean | string;
 }
