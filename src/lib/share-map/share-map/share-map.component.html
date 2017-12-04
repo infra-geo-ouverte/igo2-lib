@@ -1,0 +1,55 @@
+<form class="igo-form" [formGroup]="form"
+  (ngSubmit)="resetUrl(form.value)">
+
+  <div *ngIf="hasApi" class="igo-input-container">
+    <md-form-field>
+      <input mdInput required
+             [placeholder]="'igo.context.form.title' | translate"
+             formControlName="title">
+     <md-error>
+      {{ 'igo.context.form.titleRequired' | translate }}
+     </md-error>
+    </md-form-field>
+  </div>
+
+  <div *ngIf="hasApi" id="uriInput" class="igo-input-container">
+    <md-form-field>
+      <span *ngIf="userId" class="prefix">{{userId}}-</span>
+      <span class="fieldWrapper">
+        <input mdInput required
+             [readonly]="!userId"
+             [placeholder]="'igo.context.form.uri' | translate"
+             formControlName="uri">
+       </span>
+     <md-error>
+      {{ 'igo.context.form.uriRequired' | translate }}
+     </md-error>
+    </md-form-field>
+  </div>
+
+  <div class="igo-form-button-group">
+    <button
+      md-raised-button
+      type="submit"
+      [disabled]="!form.valid || disabled">
+      {{ 'igo.shareMap.button' | translate }}
+    </button>
+  </div>
+
+</form>
+
+<div *ngIf="url" class="igo-input-container linkToShare">
+  <md-form-field>
+    <textarea #textArea mdInput readonly rows="1"
+      [placeholder]="'igo.shareMap.placeholderLink' | translate">{{url}}</textarea>
+    <button
+      md-icon-button
+      tooltip-position="below"
+      mdTooltipShowDelay="500"
+      [md-tooltip]="'igo.shareMap.copy' | translate"
+      color="primary"
+      (click)="copyTextToClipboard(textArea)">
+      <md-icon>content_copy</md-icon>
+    </button>
+  </md-form-field>
+</div>

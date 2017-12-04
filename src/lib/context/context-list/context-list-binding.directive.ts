@@ -30,38 +30,14 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('save', ['$event']) onSave(context: Context) {
     const map = this.mapService.getMap();
-    const view = map.ol.getView();
-    const proj = view.getProjection().getCode();
-    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
-    const layers = map.layers$.getValue();
+    const contextFromMap = this.contextService.getContextFromMap(map);
 
     const changes = {
-      layers: [],
+      layers: contextFromMap.layers,
       map: {
-        view: {
-          center: center.getCoordinates(),
-          zoom: view.getZoom(),
-          projection: proj
-        }
+        view: contextFromMap.map.view
       }
     };
-
-    let order = layers.length;
-    for (const l of layers) {
-        const layer: any = l;
-        const opts = {
-          id: layer.options.id ? String(layer.options.id) : undefined,
-          title: layer.options.title,
-          type: layer.options.type,
-          source: {
-            params: layer.dataSource.options.params,
-            url: layer.dataSource.options.url
-          },
-          order: order--,
-          visible: layer.visible
-        };
-        changes.layers.push(opts);
-    }
 
     this.contextService.update(context.id, changes).subscribe(() => {
       const translate = this.languageService.translate;
@@ -69,7 +45,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         value: context.title
       });
       const title = translate.instant('igo.context.dialog.saveTitle');
-      this.messageService.info(message, title);
+      this.messageService.success(message, title);
     });
 
   }
@@ -84,7 +60,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         value: context.title
       });
       const title = translate.instant('igo.context.dialog.favoriteTitle');
-      this.messageService.info(message, title);
+      this.messageService.success(message, title);
     });
   }
 
@@ -124,7 +100,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         value: context.title
       });
       const title = translate.instant('igo.context.dialog.cloneTitle');
-      this.messageService.info(message, title);
+      this.messageService.success(message, title);
     });
   }
 

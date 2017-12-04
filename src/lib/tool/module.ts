@@ -9,6 +9,7 @@ import { IgoLayerModule } from '../layer';
 import { IgoMapModule } from '../map';
 import { IgoCatalogModule } from '../catalog';
 import { IgoPrintModule } from '../print';
+import { IgoShareMapModule } from '../share-map';
 
 import { ToolService } from './shared';
 import { ToolbarComponent, ToolbarBindingDirective } from './toolbar';
@@ -24,6 +25,7 @@ import { ContextManagerToolComponent,
          CatalogLayersToolComponent,
          SearchResultsToolComponent,
          PrintToolComponent,
+         ShareMapToolComponent,
          TimeAnalysisToolComponent } from './tools';
 
 const IGO_TOOLS = [
@@ -36,6 +38,7 @@ const IGO_TOOLS = [
   CatalogLayersToolComponent,
   SearchResultsToolComponent,
   PrintToolComponent,
+  ShareMapToolComponent,
   TimeAnalysisToolComponent
 ];
 
@@ -49,7 +52,8 @@ const IGO_TOOLS = [
     IgoLayerModule,
     IgoMapModule,
     IgoCatalogModule,
-    IgoPrintModule
+    IgoPrintModule,
+    IgoShareMapModule
   ],
   exports: [
     ToolbarComponent,

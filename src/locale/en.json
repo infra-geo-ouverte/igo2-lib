@@ -46,7 +46,9 @@
 			"form": {
 				"edit": "Edit",
 				"title": "Title",
-				"titleRequired": "Title required"
+				"titleRequired": "Title required",
+        "uri": "URI",
+        "uriRequired": "URI required"
 			},
 			"invalid": {
 				"text": "Context '{{value}}' is invalid",
@@ -126,6 +128,16 @@
 				}
 			}
 		},
+    "shareMap": {
+      "button": "Share map",
+      "copy": "Copy to clipboard",
+      "dialog": {
+				"copyMsg": "Link copied to clipboard",
+        "copyTitle": "Link"
+      },
+      "placeholderLink": "Link",
+      "share": "Share"
+    },
 		"searchResults": "Search Results",
 		"table": {
 			"filter": "Filter"

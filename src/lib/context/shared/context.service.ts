@@ -3,10 +3,13 @@ import { Http } from '@angular/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
+import { uuid } from '../../utils/uuid';
 import { RequestService, ConfigService, RouteService,
         Message, LanguageService } from '../../core';
 
 import { AuthHttp, AuthService } from '../../auth';
+
+import { IgoMap } from '../../map';
 // Import from shared to avoid circular dependencies
 import { ToolService } from '../../tool/shared';
 
@@ -122,7 +125,11 @@ export class ContextService {
     return this.requestService.register(request, 'Create context error')
       .map((res) => {
         const contextCreated: Context = res.json();
-        contextCreated.permission = TypePermission[TypePermission.write];
+        if (this.authService.authenticated) {
+          contextCreated.permission = TypePermission[TypePermission.write];
+        } else {
+          contextCreated.permission = TypePermission[TypePermission.read];
+        }
         this.contexts$.value.ours.push(contextCreated);
         this.contexts$.next(this.contexts$.value);
         return contextCreated;
@@ -214,13 +221,14 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
 
   getLocalContext(uri): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
-    return this.requestService.register(this.http.get(url))
+    return this.requestService.register(this.http.get(url)
       .map(res => {
         return res.json();
       })
       .catch(res => {
         return this.handleError(res, uri);
-      });
+      })
+    );
   }
 
   loadContexts() {
@@ -273,6 +281,20 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     const contexts$$ = this.getContextByUri(uri).subscribe(
       (_context: DetailedContext) => {
         contexts$$.unsubscribe();
+        const contextFound = this.findContext(_context);
+        if (!contextFound) {
+          const contextSimplifie = {
+            id: _context.id,
+            uri: _context.uri,
+            title: _context.title,
+            scope: _context.scope,
+            permission: TypePermission[TypePermission.read]
+          };
+          if (this.contexts$.value && this.contexts$.value.public) {
+            this.contexts$.value.public.push(contextSimplifie);
+            this.contexts$.next(this.contexts$.value);
+          }
+        }
         this.setContext(_context);
       },
       (err) => {
@@ -310,6 +332,57 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
 
   setEditedContext(context: DetailedContext) {
     this.editedContext$.next(context);
+  }
+
+  getContextFromMap(map: IgoMap): DetailedContext {
+    const view = map.ol.getView();
+    const proj = view.getProjection().getCode();
+    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
+
+    const context = {
+      uri: uuid(),
+      title: '',
+      scope: 'private',
+      map: {
+        view: {
+          center: center.getCoordinates(),
+          zoom: view.getZoom(),
+          projection: proj
+        }
+      },
+      layers: [],
+      tools: []
+    };
+
+    const layers = map.layers$.getValue();
+
+    let order = layers.length;
+    for (const l of layers) {
+        const layer: any = l;
+        const opts = {
+          id: layer.options.id ? String(layer.options.id) : undefined,
+          title: layer.options.title,
+          type: layer.options.type,
+          source: {
+            params: layer.dataSource.options.params,
+            url: layer.dataSource.options.url
+          },
+          order: order--,
+          visible: layer.visible
+        };
+        context.layers.push(opts);
+    }
+
+    const tools = this.toolService.tools$.value;
+    for (const key in tools) {
+      if (tools.hasOwnProperty(key)) {
+        context.tools.push({
+          id: String(tools[key].id)
+        });
+      }
+    }
+
+    return context;
   }
 
   private getContextByUri(uri: string): Observable<DetailedContext> {

@@ -15,5 +15,6 @@ export * from './overlay';
 export * from './query';
 export * from './search';
 export * from './shared';
+export * from './share-map';
 export * from './tool';
 export * from './utils';

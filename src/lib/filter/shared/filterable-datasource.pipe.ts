@@ -11,9 +11,10 @@ export class FilterableDataSourcePipe implements PipeTransform {
     let dataSources;
 
     if (arg === 'time') {
-      dataSources = value.filter(dataSource => {
+      dataSources = value.filter((dataSource: any) => {
         return dataSource.isFilterable() &&
-          dataSource.options.timeFilter !== undefined;
+          dataSource.options.timeFilter !== undefined &&
+          Object.keys(dataSource.options.timeFilter).length;
       }) as any[] as FilterableDataSource[];
     }
 

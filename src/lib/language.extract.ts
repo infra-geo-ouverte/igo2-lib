@@ -48,6 +48,11 @@ _('igo.search.dataSources.properties.abstract');
 _('igo.search.dataSources.properties.url');
 _('igo.search.dataSources.properties.type');
 
+
+_('igo.shareMap.dialog.copyTitle');
+_('igo.shareMap.dialog.copyMsg');
+_('igo.shareMap.share');
+
 _('igo.tool.dialog.addTitle');
 _('igo.tool.dialog.addMsg');
 _('igo.tool.dialog.deleteTitle');

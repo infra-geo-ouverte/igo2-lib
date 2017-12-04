@@ -150,6 +150,18 @@ export class IgoMap {
     }
   }
 
+  getCenter(projection?): [number, number] {
+    let center = this.ol.getView().getCenter();
+    if (projection && center) {
+      center = ol.proj.transform(center, this.projection, projection);
+    }
+    return center;
+  }
+
+  getZoom(): number {
+    return this.ol.getView().getZoom();
+  }
+
   zoomIn() {
     this.zoomTo(this.ol.getView().getZoom() + 1);
   }

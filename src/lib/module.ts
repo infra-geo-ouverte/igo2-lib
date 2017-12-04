@@ -30,6 +30,7 @@ import { IgoPrintModule } from './print';
 import { IgoQueryModule } from './query';
 import { IgoSearchModule } from './search';
 import { IgoSharedModule } from './shared';
+import { IgoShareMapModule } from './share-map';
 import { IgoToolModule } from './tool';
 
 const IGO_MODULES = [
@@ -49,6 +50,7 @@ const IGO_MODULES = [
   IgoQueryModule,
   IgoSearchModule,
   IgoSharedModule,
+  IgoShareMapModule,
   IgoToolModule
 ];
 
@@ -71,6 +73,7 @@ const IGO_MODULES = [
     IgoPrintModule.forRoot(),
     IgoQueryModule.forRoot(),
     IgoSearchModule.forRoot(),
+    IgoShareMapModule.forRoot(),
     IgoToolModule.forRoot()
   ],
   exports: IGO_MODULES
