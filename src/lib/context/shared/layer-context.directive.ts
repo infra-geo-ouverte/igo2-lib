@@ -1,6 +1,7 @@
-import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Directive, Self, OnInit, OnDestroy, Optional } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
+import { RouteService } from '../../core';
 import { IgoMap, MapBrowserComponent } from '../../map';
 import { DataSourceService } from '../../datasource/shared';
 import { LayerService } from '../../layer/shared';
@@ -15,6 +16,7 @@ import { DetailedContext, ContextLayer } from './context.interface';
 export class LayerContextDirective implements OnInit, OnDestroy {
 
   private context$$: Subscription;
+  private queryParams: any;
 
   get map(): IgoMap {
     return this.component.map;
@@ -23,12 +25,23 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   constructor(@Self() private component: MapBrowserComponent,
               private contextService: ContextService,
               private dataSourceService: DataSourceService,
-              private layerService: LayerService) {}
+              private layerService: LayerService,
+              @Optional() private route: RouteService) {}
 
   ngOnInit() {
     this.context$$ = this.contextService.context$
       .filter(context => context !== undefined)
       .subscribe(context => this.handleContextChange(context));
+
+    if (this.route && this.route.options.visibleOnLayersKey &&
+        this.route.options.visibleOffLayersKey &&
+        this.route.options.contextKey ) {
+
+      const queryParams$$ = this.route.queryParams.skip(1).subscribe(params => {
+        this.queryParams = params;
+        queryParams$$.unsubscribe();
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -55,9 +68,57 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     this.dataSourceService
       .createAsyncDataSource(dataSourceContext)
       .subscribe(dataSource =>  {
+        this.getLayerParamVisibilityUrl(dataSource.id, layerContext);
         this.map.addLayer(
           this.layerService.createLayer(dataSource, layerContext));
       });
   }
+
+  private getLayerParamVisibilityUrl(id, layer) {
+    const params = this.queryParams;
+    const current_context = this.contextService.context$.value['uri'];
+    const current_layerid: string = id;
+
+    if (!params || !current_layerid) {
+      return;
+    }
+
+    const contextParams = params[this.route.options.contextKey as string];
+    if (contextParams === current_context || !contextParams) {
+       let visibleOnLayersParams = '';
+       let visibleOffLayersParams = '';
+       let visiblelayers: string[] = [];
+       let invisiblelayers: string[] = [];
+
+       if (this.route.options.visibleOnLayersKey &&
+         params[this.route.options.visibleOnLayersKey as string]) {
+         visibleOnLayersParams = params[this.route.options.visibleOnLayersKey as string];
+       }
+       if (this.route.options.visibleOffLayersKey &&
+         params[this.route.options.visibleOffLayersKey as string]) {
+         visibleOffLayersParams = params[this.route.options.visibleOffLayersKey as string];
+       }
+
+       /* This order is important because to control whichever
+       the order of * param. First whe open and close everything.*/
+       if (visibleOnLayersParams === '*') {
+         layer.visible = true;
+       }
+       if (visibleOffLayersParams === '*') {
+         layer.visible = false;
+       }
+
+       // After, managing named layer by id (context.json OR id from datasource)
+       visiblelayers =  visibleOnLayersParams.split(',');
+       invisiblelayers =  visibleOffLayersParams.split(',');
+       if (visiblelayers.indexOf(current_layerid) > -1) {
+         layer.visible = true;
+       }
+       if (invisiblelayers.indexOf(current_layerid) > -1) {
+         layer.visible = false;
+       }
+
+     }
+   }
 
 }

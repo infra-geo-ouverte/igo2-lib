@@ -16,6 +16,7 @@ export class FeatureDataSource extends DataSource {
   }
 
   protected generateId() {
+    if (!this.options.url) { return; }
     const chain = 'feature' + this.options.url;
     return Md5.hashStr(chain) as string;
   }
