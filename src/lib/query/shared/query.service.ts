@@ -174,7 +174,8 @@ export class QueryService {
           icon_html = 'place';
           const body_tag_start = res['_body'].toLowerCase().indexOf('<body>');
           const body_tag_end = res['_body'].toLowerCase().lastIndexOf('</body>') + 7;
-          if ( res['_body'].slice(body_tag_start, body_tag_end) === '<body></body>') {
+          // replace \r \n  and ' ' with '' to validate that the body is really empty.
+          if ( res['_body'].replace(/ /g,"").replace(/(?:\r\n|\r|\n)/g, '').slice(body_tag_start, body_tag_end).replace(' ','') === '<body></body>' || res['_body'] === "") {
             return [];
           }
           res['_body'] = res['_body'];
