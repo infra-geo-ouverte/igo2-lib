@@ -1,4 +1,4 @@
-<table class="igo-striped" *ngIf="feature">
+<table class="igo-striped" *ngIf="feature && feature.properties.target !== 'innerhtml'">
   <tbody>
     <tr *ngFor="let property of feature.properties | keyvalue">
 
@@ -8,12 +8,6 @@
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
         <a href="{{property.value}}" target='_blank'> {{ 'igo.targetHtmlUrl' | translate }} {{feature.title}}</a>
-      </td>
-
-      <td *ngIf="feature.properties.target === 'innerhtml' && property.key === 'body'">
-      </td>
-
-      <td *ngIf="feature.properties.target === 'innerhtml' && property.key === 'body'" [innerHTML]=property.value>
       </td>
 
       <td *ngIf="feature.properties.target === undefined">
@@ -29,3 +23,4 @@
     </tr>
   </tbody>
 </table>
+<iframe *ngIf="feature && feature.properties.target === 'innerhtml'" width=100% [src]='isUrl(feature.properties.url)'></iframe>
