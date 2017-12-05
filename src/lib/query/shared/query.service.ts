@@ -183,7 +183,7 @@ export class QueryService {
           }
           res['_body'] = res['_body'];
           break;
-        }
+      }
 
 
       return [{
