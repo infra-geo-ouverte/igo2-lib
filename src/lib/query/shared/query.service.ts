@@ -149,14 +149,14 @@ export class QueryService {
       const clickx1 = clickx + threshold * 2;
       const clicky1 = clicky + threshold * 2;
 
-      const wkts = 'POLYGON((' + clickx + ' ' + clicky + ', ' + clickx + ' ' + clicky1 +
+      const wkt_poly = 'POLYGON((' + clickx + ' ' + clicky + ', ' + clickx + ' ' + clicky1 +
                   ', ' + clickx1 + ' ' + clicky1 + ', ' + clickx1 + ' ' + clicky +
                   ', ' + clickx + ' ' + clicky + '))';
 
 
       const format = new ol.format.WKT();
-      const yourGeometry = format.readFeature(wkts);
-      const f = (yourGeometry.getGeometry() as any);
+      const tenPercentWidthGeom = format.readFeature(wkt_poly);
+      const f = (tenPercentWidthGeom.getGeometry() as any);
 
       let target_igo2 = '_blank';
       let icon_html = 'link';
@@ -172,14 +172,17 @@ export class QueryService {
         case 'innerhtml':
           target_igo2 = 'innerhtml';
           icon_html = 'place';
-          const pos_body_debut = res['_body'].toLowerCase().indexOf('<body>');
-          const pos_body_fin = res['_body'].toLowerCase().lastIndexOf('</body>') + 7;
-          res['_body'] = res['_body'].slice(pos_body_debut, pos_body_fin);
+          const body_tag_start = res['_body'].toLowerCase().indexOf('<body>');
+          const body_tag_end = res['_body'].toLowerCase().lastIndexOf('</body>') + 7;
+          // replace \r \n  and ' ' with '' to validate that the body is really empty.
+          if ( res['_body'].replace(/ /g, '')
+          .replace(/(?:\r\n|\r|\n)/g, '' )
+          .slice(body_tag_start, body_tag_end)
+          .replace(' ', '') === '<body></body>' || res['_body'] === '' ) {
+            return [];
+          }
+          res['_body'] = res['_body'];
           break;
-      }
-
-      if ( res['_body'] === '<body></body>') {
-        return [];
       }
 
 
