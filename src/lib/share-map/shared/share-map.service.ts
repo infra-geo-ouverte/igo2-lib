@@ -38,8 +38,8 @@ export class ShareMapService {
           return;
     }
 
-    const visibleKey = this.route.options.visibleOffLayersKey;
-    const invisibleKey = this.route.options.visibleOnLayersKey;
+    const visibleKey = this.route.options.visibleOnLayersKey;
+    const invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
 
     const visibleLayers = layers.filter(lay => lay.visible);
