@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy,
          ChangeDetectorRef } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Feature } from '../shared';
 
 @Component({
@@ -21,9 +21,10 @@ export class FeatureDetailsComponent {
 
   constructor(private cdRef: ChangeDetectorRef, private sanitizer: DomSanitizer) { }
 
-  isUrl(value) {
+  isUrl(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
+
   isObject(value) {
     return typeof value === 'object';
   }
