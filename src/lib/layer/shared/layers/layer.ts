@@ -17,7 +17,7 @@ export abstract class Layer {
   public status$: Subject<SubjectStatus>;
 
   get id(): string {
-    return this.dataSource.id;
+    return this.options.id || this.dataSource.id;
   }
 
   get title(): string {

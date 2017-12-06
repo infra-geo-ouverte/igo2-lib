@@ -4,6 +4,7 @@ export interface LayerOptions extends olx.layer.BaseOptions {
   visible?: boolean;
   view?: olx.layer.BaseOptions;
   baseLayer?: boolean;
+  id?: string;
 }
 
 export interface LayerContext extends LayerOptions {}
