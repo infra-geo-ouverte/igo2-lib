@@ -21,9 +21,10 @@ export class MediaService {
 
   getMedia(): Media {
     const width = window.innerWidth;
+    const height = window.innerHeight;
 
     let media = 'desktop';
-    if (width <= 500) {
+    if (width <= 450 || height <= 450) {
       media = 'mobile';
     } else if (width <= 800) {
       media = 'tablet';
