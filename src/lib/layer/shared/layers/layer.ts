@@ -71,6 +71,9 @@ export abstract class Layer {
     }
 
     const legend = dataSource.options.legend || {};
+    if (options.baseLayer && options.visible === undefined) {
+      options.visible = false;
+    }
     this.visible = options.visible === undefined ? true : options.visible;
     this.opacity = options.opacity === undefined ? 1 : options.opacity;
     this.collapsed = legend.collapsed === undefined ? true : !this.visible;
