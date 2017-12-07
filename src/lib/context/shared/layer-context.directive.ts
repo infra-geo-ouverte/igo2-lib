@@ -69,8 +69,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       .createAsyncDataSource(dataSourceContext)
       .subscribe(dataSource =>  {
         this.getLayerParamVisibilityUrl(
-          dataSource.options['id']?
-          dataSource.options['id']:dataSource.id  , layerContext);
+          dataSource.options['id'] ?
+          dataSource.options['id'] : dataSource.id  , layerContext);
         this.map.addLayer(
           this.layerService.createLayer(dataSource, layerContext));
       });
