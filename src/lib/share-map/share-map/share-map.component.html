@@ -41,7 +41,8 @@
 <div *ngIf="url" class="igo-input-container linkToShare">
   <md-form-field>
     <textarea #textArea mdInput readonly rows="1"
-      [placeholder]="'igo.shareMap.placeholderLink' | translate">{{url}}</textarea>
+      [placeholder]="'igo.shareMap.placeholderLink' | translate"
+      [value]="url"></textarea>
     <button
       md-icon-button
       tooltip-position="below"
