@@ -239,6 +239,17 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
       request = this.getLocalContexts();
     }
     request.subscribe(contexts => {
+      const publicsContexts = this.contexts$.value.public;
+
+      if (publicsContexts) {
+        const contextUri = publicsContexts.find((c) => c.uri === this.options.defaultContextUri);
+        if (contextUri) {
+          if (!contexts.public) {
+            contexts.public = [];
+          }
+          contexts.public.push(contextUri);
+        }
+      }
       this.contexts$.next(contexts);
     });
   }
@@ -248,7 +259,11 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     const loadFct = (direct = false) => {
       if (!direct && this.baseUrl && this.authService.authenticated) {
         this.getDefault().subscribe(
-          (_context: DetailedContext) => this.setContext(_context),
+          (_context: DetailedContext) => {
+            this.options.defaultContextUri = _context.uri;
+            this.addContextToList(_context);
+            this.setContext(_context)
+          },
           () => {
             this.defaultContextId$.next(undefined);
             this.loadContext(this.options.defaultContextUri);
@@ -281,20 +296,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     const contexts$$ = this.getContextByUri(uri).subscribe(
       (_context: DetailedContext) => {
         contexts$$.unsubscribe();
-        const contextFound = this.findContext(_context);
-        if (!contextFound) {
-          const contextSimplifie = {
-            id: _context.id,
-            uri: _context.uri,
-            title: _context.title,
-            scope: _context.scope,
-            permission: TypePermission[TypePermission.read]
-          };
-          if (this.contexts$.value && this.contexts$.value.public) {
-            this.contexts$.value.public.push(contextSimplifie);
-            this.contexts$.next(this.contexts$.value);
-          }
-        }
+        this.addContextToList(_context);
         this.setContext(_context);
       },
       (err) => {
@@ -416,6 +418,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
         if (centerKey && params[centerKey as string]) {
           const centerParams = params[centerKey as string];
           this.mapViewFromRoute.center = centerParams.split(',').map(Number);
+          this.mapViewFromRoute.geolocate = false;
         }
 
         const projectionKey = this.route.options.projectionKey;
@@ -465,6 +468,23 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     const editedFound = this.findContext(editedContext);
     if (!editedFound || editedFound.permission !== 'write') {
       this.setEditedContext(undefined);
+    }
+  }
+
+  private addContextToList(context: Context) {
+    const contextFound = this.findContext(context);
+    if (!contextFound) {
+      const contextSimplifie = {
+        id: context.id,
+        uri: context.uri,
+        title: context.title,
+        scope: context.scope,
+        permission: TypePermission[TypePermission.read]
+      };
+      if (this.contexts$.value && this.contexts$.value.public) {
+        this.contexts$.value.public.push(contextSimplifie);
+        this.contexts$.next(this.contexts$.value);
+      }
     }
   }
 
