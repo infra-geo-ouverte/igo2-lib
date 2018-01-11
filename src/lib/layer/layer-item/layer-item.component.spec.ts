@@ -4,6 +4,8 @@ import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
 import { OSMDataSource } from '../../datasource';
 import { MetadataService } from '../../metadata';
+import { MapService } from '../../map';
+import { FeatureService } from '../../feature';
 
 import { TileLayer } from '../shared';
 import { LayerItemComponent } from './layer-item.component';
@@ -24,7 +26,9 @@ describe('LayerItemComponent', () => {
         LayerLegendComponent
       ],
       providers: [
-        MetadataService
+        MetadataService,
+        MapService,
+        FeatureService
       ]
     })
     .compileComponents();

@@ -4,6 +4,7 @@ export * from './collapsible';
 export * from './confirm-dialog';
 export * from './clickout';
 export * from './clone';
+export * from './drag-drop';
 export * from './keyvalue';
 export * from './list';
 export * from './panel';

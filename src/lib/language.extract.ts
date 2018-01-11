@@ -2,6 +2,7 @@ import { _ } from '@biesbjerg/ngx-translate-extract';
 
 _('igo.catalog');
 _('igo.contexts');
+_('igo.importExport');
 _('igo.map');
 _('igo.print');
 _('igo.searchResults');
@@ -25,6 +26,13 @@ _('igo.context.dialog.favoriteMsg');
 _('igo.context.invalid.title');
 _('igo.context.invalid.text');
 
+_('igo.dropGeoFile.success.title');
+_('igo.dropGeoFile.success.text');
+_('igo.dropGeoFile.invalid.title');
+_('igo.dropGeoFile.invalid.text');
+_('igo.dropGeoFile.unreadable.title');
+_('igo.dropGeoFile.unreadable.text');
+
 _('igo.permission.dialog.addTitle');
 _('igo.permission.dialog.addMsg');
 _('igo.permission.dialog.deleteTitle');
@@ -47,7 +55,6 @@ _('igo.search.dataSources.properties.group');
 _('igo.search.dataSources.properties.abstract');
 _('igo.search.dataSources.properties.url');
 _('igo.search.dataSources.properties.type');
-
 
 _('igo.shareMap.dialog.copyTitle');
 _('igo.shareMap.dialog.copyMsg');

@@ -14,7 +14,7 @@ export class VectorLayer extends Layer {
   }
 
   protected createOlLayer(): ol.layer.Vector {
-    const olOptions = Object.assign({}, this.options.view || {}, {
+    const olOptions = Object.assign({}, this.options || {}, {
       source: this.dataSource.ol as ol.source.Vector
     });
 

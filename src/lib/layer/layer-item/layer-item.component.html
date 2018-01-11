@@ -59,6 +59,17 @@
   <div class="igo-col igo-col-60 igo-col-100-m">
     <div class="igo-layer-button-group">
       <button
+        *ngIf="layer.constructor.name==='VectorLayer'"
+        md-icon-button
+        tooltip-position="below"
+        mdTooltipShowDelay="500"
+        [md-tooltip]="'igo.layer.showFeaturesList' | translate"
+        [color]="color"
+        (click)="showFeaturesList(layer)">
+        <md-icon>list</md-icon>
+      </button>
+
+      <button
         *ngIf="layer.dataSource.options.metadata && layer.dataSource.options.metadata.url"
         md-icon-button
         tooltip-position="below"

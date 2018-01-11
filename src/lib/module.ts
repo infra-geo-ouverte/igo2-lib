@@ -22,6 +22,7 @@ import { IgoDataSourceModule } from './datasource';
 import { IgoFeatureModule } from './feature';
 import { IgoFormModule } from './form';
 import { IgoFilterModule } from './filter';
+import { IgoImportExportModule } from './import-export';
 import { IgoLayerModule } from './layer';
 import { IgoMapModule } from './map';
 import { IgoMetadataModule } from './metadata';
@@ -42,6 +43,7 @@ const IGO_MODULES = [
   IgoFeatureModule,
   IgoFormModule,
   IgoFilterModule,
+  IgoImportExportModule,
   IgoLayerModule,
   IgoMapModule,
   IgoMetadataModule,
@@ -66,6 +68,7 @@ const IGO_MODULES = [
     IgoFeatureModule.forRoot(),
     IgoFormModule.forRoot(),
     IgoFilterModule.forRoot(),
+    IgoImportExportModule.forRoot(),
     IgoLayerModule.forRoot(),
     IgoMapModule.forRoot(),
     IgoMetadataModule.forRoot(),

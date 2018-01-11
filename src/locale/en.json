@@ -62,6 +62,30 @@
 			"sharedContexts": "Shared contexts"
 		},
 		"contexts": "Contexts",
+    "dropGeoFile": {
+      "success": {
+        "title": "The layer '{{value}}' was added to the map",
+        "text": "Imported file ({{i}}/{{count}})"
+      },
+      "invalid": {
+        "title": "The file '{{value}}' is invalid",
+        "text": "Invalid file ({{i}}/{{count}})"
+      },
+      "unreadable": {
+        "title": "The file '{{value}}' is unreadable",
+        "text": "Unreadable file"
+      }
+    },
+    "importExport": "Import & export",
+    "importExportForm": {
+			"importButton": "Import",
+			"importProjPlaceholder": "Source projection (EPSG:4326)",
+      "importTabTitle": "Import",
+      "exportButton": "Export",
+      "exportFormatPlaceholder": "Format",
+      "exportLayerPlaceholder": "Layer",
+      "exportTabTitle": "Export"
+		},
 		"layer": {
 			"hideLayer": "Hide Layer",
 			"lowerLayer": "Bring layer backward",
@@ -69,6 +93,7 @@
 			"opacity": "Opacity",
 			"raiseLayer": "Bring layer forward",
 			"removeLayer": "Remove this layer from the map",
+			"showFeaturesList": "Show features list",
 			"showLayer": "Show Layer",
 			"showMetadata": "Show metadata"
 		},

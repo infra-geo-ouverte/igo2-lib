@@ -262,7 +262,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
           (_context: DetailedContext) => {
             this.options.defaultContextUri = _context.uri;
             this.addContextToList(_context);
-            this.setContext(_context)
+            this.setContext(_context);
           },
           () => {
             this.defaultContextId$.next(undefined);

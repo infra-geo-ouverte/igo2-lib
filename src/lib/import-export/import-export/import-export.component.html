@@ -1,0 +1,54 @@
+<md-tab-group>
+  <md-tab [label]="'igo.importExportForm.importTabTitle' | translate">
+    <br>
+    <div class="igo-input-container">
+      <md-form-field>
+        <input
+          mdInput
+          placeholder="{{'igo.importExportForm.importProjPlaceholder' | translate}}"
+          name="inputProj"
+          [(ngModel)]="inputProj">
+      </md-form-field>
+    </div>
+    <button md-raised-button type="button" (click)="inputFile.click()">
+      {{'igo.importExportForm.importButton' | translate}}
+    </button>
+    <input #inputFile type="file" [style.display]="'none'" (change)="loadFile($event.target.files)">
+    <br><br>
+  </md-tab>
+  <md-tab [label]="'igo.importExportForm.exportTabTitle' | translate">
+    <form class="igo-form" [formGroup]="form">
+
+      <div class="igo-input-container">
+        <md-select
+          formControlName="layer"
+          placeholder="{{'igo.importExportForm.exportLayerPlaceholder' | translate}}">
+          <md-option *ngFor="let layer of layers" [value]="layer.id">
+            {{layer.title}}
+          </md-option>
+        </md-select>
+      </div>
+
+      <div class="igo-input-container">
+        <md-select
+          formControlName="format"
+          placeholder="{{'igo.importExportForm.exportFormatPlaceholder' | translate}}">
+          <md-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+            {{format.value}}
+          </md-option>
+        </md-select>
+      </div>
+
+      <div class="igo-form-button-group">
+        <button
+          md-raised-button
+          type="button"
+          [disabled]="!form.valid"
+          (click)="handleFormSubmit(form.value)">
+          {{'igo.importExportForm.exportButton' | translate}}
+        </button>
+      </div>
+
+    </form>
+  </md-tab>
+</md-tab-group>

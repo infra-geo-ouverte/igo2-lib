@@ -8,6 +8,7 @@ export * from './datasource';
 export * from './feature';
 export * from './filter';
 export * from './form';
+export * from './import-export';
 export * from './layer';
 export * from './map';
 export * from './metadata';

@@ -11,12 +11,13 @@ import { ClickoutDirective } from './clickout';
 import { CollapsibleComponent, CollapseDirective } from './collapsible';
 import { ConfirmDialogComponent, ConfirmDialogService } from './confirm-dialog';
 import { ClonePipe } from './clone';
+import { DragAndDropDirective } from './drag-drop';
 import { KeyvaluePipe } from './keyvalue';
 import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
 import { SidenavShimDirective } from './sidenav';
 import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
-import { StopPropagationDirective } from './stop-propagation';
+import { StopPropagationDirective, StopDropPropagationDirective } from './stop-propagation';
 import { TableComponent } from './table';
 
 
@@ -42,6 +43,7 @@ import { TableComponent } from './table';
     CollapsibleComponent,
     CollapseDirective,
     ClonePipe,
+    DragAndDropDirective,
     KeyvaluePipe,
     ListComponent,
     ListItemDirective,
@@ -50,6 +52,7 @@ import { TableComponent } from './table';
     SpinnerComponent,
     SpinnerBindingDirective,
     StopPropagationDirective,
+    StopDropPropagationDirective,
     TableComponent
   ],
   declarations: [
@@ -58,6 +61,7 @@ import { TableComponent } from './table';
     CollapseDirective,
     ConfirmDialogComponent,
     ClonePipe,
+    DragAndDropDirective,
     KeyvaluePipe,
     ListComponent,
     ListItemDirective,
@@ -66,6 +70,7 @@ import { TableComponent } from './table';
     SpinnerComponent,
     SpinnerBindingDirective,
     StopPropagationDirective,
+    StopDropPropagationDirective,
     TableComponent
   ],
   entryComponents: [

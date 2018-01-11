@@ -52,8 +52,8 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
     const mapResolution = this.map.resolution$.value;
 
     const bl = this._baseLayers.filter(l => {
-      return (!l.options.view.maxResolution || mapResolution <= l.options.view.maxResolution) &&
-             (!l.options.view.minResolution || mapResolution >= l.options.view.minResolution);
+      return (!l.options.view.maxResolution || mapResolution <= l.options.view.maxResolution) &&
+             (!l.options.view.minResolution || mapResolution >= l.options.view.minResolution);
     });
 
     const blHidden = bl.filter(l => !l.visible);

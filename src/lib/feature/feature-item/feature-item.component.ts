@@ -17,6 +17,11 @@ export class FeatureItemComponent {
   }
   private _feature: Feature;
 
+  get title(): string {
+    return this.feature.title || this.feature.properties.title ||
+           this.feature.properties.label || this.feature.id;
+  }
+
   constructor() { }
 
 }

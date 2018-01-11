@@ -2,6 +2,8 @@ import { Component, Input, OnDestroy, ChangeDetectorRef,
          ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
+import { MapService } from '../../map/shared/map.service';
+import { FeatureService } from '../../feature';
 import { MetadataService, MetadataOptions } from '../../metadata';
 import { Layer } from '../shared/layers/layer';
 
@@ -60,6 +62,8 @@ export class LayerItemComponent implements OnDestroy {
   private resolution$$: Subscription;
 
   constructor(private cdRef: ChangeDetectorRef,
+              private mapService: MapService,
+              private featureService: FeatureService,
               private metadataService: MetadataService) {}
 
   ngOnDestroy() {
@@ -90,6 +94,28 @@ export class LayerItemComponent implements OnDestroy {
 
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
+  }
+
+  showFeaturesList(layer: Layer) {
+    this.featureService.unfocusFeature();
+    this.featureService.unselectFeature();
+
+    const map = this.mapService.getMap();
+    const featuresOL = (layer.dataSource.ol as any).getFeatures();
+
+    const format = new ol.format.GeoJSON();
+    const featuresGeoJSON = JSON.parse(format.writeFeatures(featuresOL, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: map.projection
+    }));
+
+    let i = 0;
+    const features = featuresGeoJSON.features.map(f => Object.assign({}, f, {
+      source: layer.dataSource.title,
+      id: layer.dataSource.title + String(i++)
+    }));
+
+    this.featureService.setFeatures(features);
   }
 
   private subscribeResolutionObserver() {

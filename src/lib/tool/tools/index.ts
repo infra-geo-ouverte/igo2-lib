@@ -2,6 +2,7 @@ export * from './context-manager-tool';
 export * from './context-editor-tool';
 export * from './catalog-tool';
 export * from './catalog-layers-tool';
+export * from './import-export-tool';
 export * from './tools-context-manager-tool';
 export * from './permissions-context-manager-tool';
 export * from './map-details-tool';
