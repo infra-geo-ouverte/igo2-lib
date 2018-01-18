@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature';
 import { MetadataService, MetadataOptions } from '../../metadata';
-import { Layer } from '../shared/layers/layer';
+import { Layer, VectorLayer } from '../shared/layers';
 
 @Component({
   selector: 'igo-layer-item',
@@ -116,6 +116,10 @@ export class LayerItemComponent implements OnDestroy {
     }));
 
     this.featureService.setFeatures(features);
+  }
+
+  isVectorLayer(val) {
+    return val instanceof VectorLayer;
   }
 
   private subscribeResolutionObserver() {

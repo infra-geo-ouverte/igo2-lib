@@ -59,7 +59,7 @@
   <div class="igo-col igo-col-60 igo-col-100-m">
     <div class="igo-layer-button-group">
       <button
-        *ngIf="layer.constructor.name==='VectorLayer'"
+        *ngIf="isVectorLayer(layer)"
         md-icon-button
         tooltip-position="below"
         mdTooltipShowDelay="500"

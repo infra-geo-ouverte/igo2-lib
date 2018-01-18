@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MapService } from '../../map';
+import { VectorLayer } from '../../layer/shared/layers';
 import { ImportExportService, ExportFormat, ExportOptions } from '../shared';
 
 @Component({
@@ -39,7 +40,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
-      this.layers = layers.filter((l) => l.constructor.name === 'VectorLayer');
+      this.layers = layers.filter((layer) => layer instanceof VectorLayer);
     });
   }
 
