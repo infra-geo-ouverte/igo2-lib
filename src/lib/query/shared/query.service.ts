@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
+import { URLSearchParams, Response } from '@angular/http';
 import { Subscription } from 'rxjs/Subscription';
 
 import { uuid } from '../../utils/uuid';
