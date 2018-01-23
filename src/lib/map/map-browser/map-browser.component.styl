@@ -51,7 +51,7 @@
 
 :host >>> .ol-attribution {
   left: $igo-margin;
-  bottom: 4px;
+  bottom: 30px;
   text-align: left;
   padding: 0;
   margin-right: 90px;
@@ -73,6 +73,24 @@
     cursor: pointer;
   }
 }
+
+
+:host >>> .ol-scale-line-inner {
+ font-size:11px;
+ text-align:center;
+ margin:1px;
+}
+
+:host >>> .ol-scale-line {
+ background:rgba(255,255,255,0);
+ background-color: white;
+ border-radius:4px;
+ bottom:4px;
+ left:$igo-margin;
+ padding:4px;
+ position:absolute
+}
+
 
 :host >>> canvas {
   display: block;
