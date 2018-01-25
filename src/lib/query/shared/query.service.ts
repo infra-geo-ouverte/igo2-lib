@@ -136,7 +136,7 @@ export class QueryService {
 
       let bbox = bbox_raw.split(',');
       if (bbox.length === 1) {
-        bbox = bbox_raw.split('%2c');
+        bbox = decodeURIComponent(bbox_raw).split(',');
       }
       let threshold = (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * (0.1);
 
