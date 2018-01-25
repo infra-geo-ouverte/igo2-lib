@@ -134,7 +134,7 @@ export class QueryService {
         y_position = parseInt(searchParams.get('y'), 10);
       }
 
-      const bbox = bbox_raw.split(',');
+      const bbox = decodeURIComponent(bbox_raw).split(',');
       let threshold = (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * (0.1);
 
       // for context in degree (EPSG:4326,4269...)
