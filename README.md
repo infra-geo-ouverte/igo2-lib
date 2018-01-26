@@ -6,7 +6,15 @@ This repository is home to the IGO2 Library on which IGO2 is built. IGO2 and thi
 
 ### Installation
 
-The latest release of IGO2 Library can be installed from npm `npm install --save igo2`
+## Install developer instance
+If you want to develop in IGO2 Library, it can be installed by:
+1. Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
+2. Deploy in `cd igo2-lib/` and install from npm `npm install`
+3. Start form npm `npm start`
+4. Open your browser at http://localhost:4200/
+
+## Install user instance
+The latest release of IGO2 Library can be used and installed from npm `npm install --save igo2`
 
 ### Getting started
 

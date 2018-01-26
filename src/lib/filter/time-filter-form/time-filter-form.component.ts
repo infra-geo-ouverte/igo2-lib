@@ -23,8 +23,15 @@ export class TimeFilterFormComponent {
   private _options: TimeFilterOptions;
 
   public date: Date;
+  public startDate: Date;
+  public endDate: Date;
+
   @Input()
   set currentValue(value: string) {
+
+   this.startDate = new Date(this.options.min);
+   this.endDate = new Date(this.options.max);
+
     if (value) {
       const valueArray = value.split('/');
       if (valueArray.length > 0 ) {
@@ -40,8 +47,7 @@ export class TimeFilterFormComponent {
     }
   }
 
-  public startDate: Date;
-  public endDate: Date;
+
   public interval: any;
   public playIcon: string = 'play_circle_filled';
 
@@ -230,9 +236,9 @@ export class TimeFilterFormComponent {
     } else if ((this.isRange) && ((this.date !== null)  || (this.date == null))) {
       this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
       this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
-    } else if ((!this.isRange) && (this.date == null)) {
-      this.startDate = undefined;
-      this.endDate = undefined;
+    } else if ((this.date == null)) {
+      this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
+      this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
     }
   }
 
