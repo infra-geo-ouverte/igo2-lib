@@ -36,9 +36,6 @@ module.exports = function (config) {
     preprocessors: {
       './src/test/test.ts': ['@angular/cli']
     },
-    mime: {
-      'text/x-typescript': ['ts','tsx']
-    },
     coverageIstanbulReporter: {
       reports: [ 'html', 'lcovonly' ],
       fixWebpackSourcePaths: true
@@ -46,9 +43,7 @@ module.exports = function (config) {
     angularCli: {
       environment: 'dev'
     },
-    reporters: config.angularCli && config.angularCli.codeCoverage
-              ? ['progress', 'coverage-istanbul']
-              : ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_DEBUG,

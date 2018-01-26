@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IgoCoreModule } from '../../core';
 import { IgoAuthModule } from '../../auth';
@@ -15,7 +15,7 @@ describe('ToolboxComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule,
+        HttpClientModule,
         IgoCoreModule.forRoot(),
         IgoAuthModule.forRoot(),
         IgoSharedModule

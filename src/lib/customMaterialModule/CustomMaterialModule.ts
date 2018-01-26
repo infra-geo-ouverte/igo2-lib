@@ -1,66 +1,62 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { A11yModule } from '@angular/material';
-import { CompatibilityModule } from '@angular/material';
-import { MdAutocompleteModule } from '@angular/material';
-import { MdButtonToggleModule } from '@angular/material';
-import { MdButtonModule } from '@angular/material';
-import { MdCheckboxModule } from '@angular/material';
-import { MdDialogModule } from '@angular/material';
-import { MdListModule } from '@angular/material';
-import { MdGridListModule } from '@angular/material';
-import { MdCardModule } from '@angular/material';
-import { MdChipsModule } from '@angular/material';
-import { MdIconModule } from '@angular/material';
-import { MdInputModule } from '@angular/material';
-import { MdMenuModule } from '@angular/material';
-import { MdProgressSpinnerModule } from '@angular/material';
-import { MdProgressBarModule } from '@angular/material';
-import { MdRadioModule } from '@angular/material';
-import { MdRippleModule } from '@angular/material';
-import { MdSelectModule } from '@angular/material';
-import { MdSlideToggleModule } from '@angular/material';
-import { MdSliderModule } from '@angular/material';
-import { MdSidenavModule } from '@angular/material';
-import { MdSnackBarModule } from '@angular/material';
-import { MdTabsModule } from '@angular/material';
-import { MdToolbarModule } from '@angular/material';
-import { MdTooltipModule } from '@angular/material';
-import { StyleModule } from '@angular/material';
-import { MdTableModule } from '@angular/material';
+import { A11yModule } from '@angular/cdk/a11y';
+import { MatAutocompleteModule } from '@angular/material';
+import { MatButtonToggleModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material';
+import { MatCheckboxModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material';
+import { MatListModule } from '@angular/material';
+import { MatGridListModule } from '@angular/material';
+import { MatCardModule } from '@angular/material';
+import { MatChipsModule } from '@angular/material';
+import { MatIconModule } from '@angular/material';
+import { MatInputModule } from '@angular/material';
+import { MatMenuModule } from '@angular/material';
+import { MatProgressSpinnerModule } from '@angular/material';
+import { MatProgressBarModule } from '@angular/material';
+import { MatRadioModule } from '@angular/material';
+import { MatRippleModule } from '@angular/material';
+import { MatSelectModule } from '@angular/material';
+import { MatSlideToggleModule } from '@angular/material';
+import { MatSliderModule } from '@angular/material';
+import { MatSidenavModule } from '@angular/material';
+import { MatSnackBarModule } from '@angular/material';
+import { MatTabsModule } from '@angular/material';
+import { MatToolbarModule } from '@angular/material';
+import { MatTooltipModule } from '@angular/material';
+import { MatTableModule } from '@angular/material';
 
 const MATERIAL_MODULES = [
   CommonModule,
-  MdAutocompleteModule,
-  MdButtonModule,
-  MdCardModule,
-  MdChipsModule,
-  MdCheckboxModule,
-  MdGridListModule,
-  MdInputModule,
-  MdListModule,
-  MdProgressBarModule,
-  MdProgressSpinnerModule,
-  MdRippleModule,
-  MdSelectModule,
-  MdSidenavModule,
-  MdTabsModule,
-  MdToolbarModule,
-  MdTableModule,
+  MatAutocompleteModule,
+  MatButtonModule,
+  MatCardModule,
+  MatChipsModule,
+  MatCheckboxModule,
+  MatGridListModule,
+  MatInputModule,
+  MatListModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatRippleModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatTabsModule,
+  MatToolbarModule,
+  MatTableModule,
   // These modules include providers.
   A11yModule,
-  CompatibilityModule,
-  MdButtonToggleModule,
-  MdDialogModule,
-  MdIconModule,
-  MdMenuModule,
-  MdRadioModule,
-  MdSliderModule,
-  MdSlideToggleModule,
-  MdSnackBarModule,
-  MdTooltipModule,
-  StyleModule
+  MatButtonToggleModule,
+  MatDialogModule,
+  MatIconModule,
+  MatMenuModule,
+  MatRadioModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatTooltipModule
 ];
 
 

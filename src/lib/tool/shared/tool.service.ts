@@ -1,16 +1,10 @@
 import { Injectable, Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
 import { RequestService, ConfigService } from '../../core';
-import { AuthHttp } from '../../auth';
 import { Tool } from './tool.interface';
-
-export function Register(toolDef: Tool) {
-  return function(cls) {
-    ToolService.register(toolDef, cls);
-  };
-}
 
 @Injectable()
 export class ToolService {
@@ -26,13 +20,13 @@ export class ToolService {
     ToolService.toolDefs[tool.name] = [Object.assign({}, tool), cls];
   }
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private requestService: RequestService,
               private config: ConfigService) {
 
     this.baseUrl = this.config.getConfig('context.url');
 
-    this.tools$.subscribe(tools => this.handleToolsChange());
+    this.tools$.subscribe(rep => this.handleToolsChange());
 
     const tools = Object.keys(ToolService.toolDefs).map(name => {
       return {name: name};
@@ -42,12 +36,8 @@ export class ToolService {
 
   get(): Observable<Tool[]> {
     const url = this.baseUrl + '/tools';
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get tools error')
-      .map((res) => {
-        const tools: Tool[] = res.json();
-        return tools;
-      });
+    const request = this.http.get<Tool[]>(url);
+    return this.requestService.register(request, 'Get tools error');
   }
 
   setTools(tools: Tool[]) {
@@ -111,4 +101,10 @@ export class ToolService {
       this.selectTool(tool, true);
     }
   }
+}
+
+export function Register(toolDef: Tool) {
+  return function(cls) {
+    ToolService.register(toolDef, cls);
+  };
 }

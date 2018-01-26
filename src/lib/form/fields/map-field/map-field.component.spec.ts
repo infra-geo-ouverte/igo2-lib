@@ -28,6 +28,7 @@ describe('MapFieldComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MapFieldComponent);
+    fixture.detectChanges();
     component = fixture.componentInstance;
   });
 

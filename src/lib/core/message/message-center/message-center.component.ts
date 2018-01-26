@@ -1,8 +1,5 @@
 import { Component, Input } from '@angular/core';
 
-import { Options } from 'angular2-notifications/src/simple-notifications.module';
-
-
 @Component({
   selector: 'igo-message-center',
   templateUrl: './message-center.component.html',
@@ -22,14 +19,14 @@ export class MessageCenterComponent {
   };
 
   @Input()
-  get options(): Options {
+  get options(): any {
     return Object.assign(
       {}, MessageCenterComponent.defaultOptions, this._options);
   }
-  set options(value: Options) {
+  set options(value: any) {
     this._options = value;
   }
-  private _options: Options = '';
+  private _options: any = {};
 
   constructor() { }
 

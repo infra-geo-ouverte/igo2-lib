@@ -1,45 +1,45 @@
 <form class="igo-form" [formGroup]="form">
 
   <div class="igo-input-container">
-    <md-form-field>
+    <mat-form-field>
       <input
-        mdInput
+        matInput
         formControlName="title"
         placeholder="{{'igo.printForm.title' | translate}}">
-    </md-form-field>
+    </mat-form-field>
   </div>
 
   <div class="igo-input-container">
-    <md-select
+    <mat-select
       formControlName="format"
       placeholder="{{'igo.printForm.format' | translate}}">
-      <md-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+      <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
         {{format.value}}
-      </md-option>
-    </md-select>
+      </mat-option>
+    </mat-select>
   </div>
 
   <div class="igo-input-container">
-    <md-select
+    <mat-select
       formControlName="resolution"
       placeholder="{{'igo.printForm.resolution' | translate}}">
-      <md-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
+      <mat-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
         {{resolution.value + ' PPI'}}
-      </md-option>
-    </md-select>
+      </mat-option>
+    </mat-select>
   </div>
 
   <div class="igo-input-container">
-    <md-radio-group formControlName="orientation" class="horizontal">
-      <md-radio-button *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
+    <mat-radio-group formControlName="orientation" class="horizontal">
+      <mat-radio-button *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
         {{('igo.printForm.' + orientation.value) | translate}}
-      </md-radio-button>
-    </md-radio-group>
+      </mat-radio-button>
+    </mat-radio-group>
   </div>
 
   <div class="igo-form-button-group">
     <button
-      md-raised-button
+      mat-raised-button
       type="button"
       [disabled]="!form.valid || disabled"
       (click)="handleFormSubmit(form.value, form.valid)">

@@ -1,47 +1,47 @@
-<md-tab-group>
-  <md-tab [label]="'igo.importExportForm.importTabTitle' | translate">
+<mat-tab-group>
+  <mat-tab [label]="'igo.importExportForm.importTabTitle' | translate">
     <br>
     <div class="igo-input-container">
-      <md-form-field>
+      <mat-form-field>
         <input
-          mdInput
+          matInput
           placeholder="{{'igo.importExportForm.importProjPlaceholder' | translate}}"
           name="inputProj"
           [(ngModel)]="inputProj">
-      </md-form-field>
+      </mat-form-field>
     </div>
-    <button md-raised-button type="button" (click)="inputFile.click()">
+    <button mat-raised-button type="button" (click)="inputFile.click()">
       {{'igo.importExportForm.importButton' | translate}}
     </button>
     <input #inputFile type="file" [style.display]="'none'" (change)="loadFile($event.target.files)">
     <br><br>
-  </md-tab>
-  <md-tab [label]="'igo.importExportForm.exportTabTitle' | translate">
+  </mat-tab>
+  <mat-tab [label]="'igo.importExportForm.exportTabTitle' | translate">
     <form class="igo-form" [formGroup]="form">
 
       <div class="igo-input-container">
-        <md-select
+        <mat-select
           formControlName="layer"
           placeholder="{{'igo.importExportForm.exportLayerPlaceholder' | translate}}">
-          <md-option *ngFor="let layer of layers" [value]="layer.id">
+          <mat-option *ngFor="let layer of layers" [value]="layer.id">
             {{layer.title}}
-          </md-option>
-        </md-select>
+          </mat-option>
+        </mat-select>
       </div>
 
       <div class="igo-input-container">
-        <md-select
+        <mat-select
           formControlName="format"
           placeholder="{{'igo.importExportForm.exportFormatPlaceholder' | translate}}">
-          <md-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+          <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
             {{format.value}}
-          </md-option>
-        </md-select>
+          </mat-option>
+        </mat-select>
       </div>
 
       <div class="igo-form-button-group">
         <button
-          md-raised-button
+          mat-raised-button
           type="button"
           [disabled]="!form.valid"
           (click)="handleFormSubmit(form.value)">
@@ -50,5 +50,5 @@
       </div>
 
     </form>
-  </md-tab>
-</md-tab-group>
+  </mat-tab>
+</mat-tab-group>

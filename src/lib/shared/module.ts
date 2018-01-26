@@ -2,7 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkTableModule } from '@angular/cdk/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CustomMaterialModule } from '../customMaterialModule';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,7 +27,7 @@ import { TableComponent } from './table';
     CdkTableModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
+    HttpClientModule,
     CustomMaterialModule,
     TranslateModule
   ],
@@ -35,7 +35,7 @@ import { TableComponent } from './table';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     CustomMaterialModule,
     TranslateModule,

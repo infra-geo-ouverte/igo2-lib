@@ -1,5 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IgoCoreModule } from '../../core';
 import { MetadataService } from './metadata.service';
@@ -9,7 +9,7 @@ describe('MetadataService', () => {
     TestBed.configureTestingModule({
       imports: [
         IgoCoreModule.forRoot(),
-        HttpModule
+        HttpClientModule
       ],
       providers: [
         MetadataService

@@ -1,5 +1,5 @@
 import { Injectable, Optional } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
@@ -7,7 +7,7 @@ import { uuid } from '../../utils/uuid';
 import { RequestService, ConfigService, RouteService,
         Message, LanguageService } from '../../core';
 
-import { AuthHttp, AuthService } from '../../auth';
+import { AuthService } from '../../auth';
 
 import { IgoMap } from '../../map';
 // Import from shared to avoid circular dependencies
@@ -28,8 +28,7 @@ export class ContextService {
   private options: ContextServiceOptions;
   private baseUrl: string;
 
-  constructor(private http: Http,
-              private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private authService: AuthService,
               private requestService: RequestService,
               private languageService: LanguageService,
@@ -65,41 +64,28 @@ export class ContextService {
 
   get(): Observable<ContextsList> {
     const url = this.baseUrl + '/contexts';
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get contexts error')
-      .map((res) => {
-        const contexts: ContextsList = res.json();
-        return contexts;
-      });
+    const request = this.http.get<ContextsList>(url);
+    return this.requestService.register(request, 'Get contexts error');
   }
 
   getById(id: string): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id;
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get context error')
-      .map((res) => {
-        const context: Context = res.json();
-        return context;
-      });
+    const request = this.http.get<Context>(url);
+    return this.requestService.register(request, 'Get context error');
   }
 
   getDetails(id: string): Observable<DetailedContext> {
     const url = this.baseUrl + '/contexts/' + id + '/details';
-    const request = this.authHttp.get(url);
+    const request = this.http.get<DetailedContext>(url);
     return this.requestService.register(request, 'Get context details error')
-      .map((res) => {
-        const context: DetailedContext = res.json();
-        return context;
-      })
       .catch(res => this.handleError(res, id));
   }
 
   getDefault(): Observable<DetailedContext> {
     const url = this.baseUrl + '/contexts/default';
-    const request = this.authHttp.get(url);
+    const request = this.http.get<DetailedContext>(url);
     return this.requestService.register(request, 'Get context default error')
-      .map((res) => {
-        const context: DetailedContext = res.json();
+      .map((context) => {
         this.defaultContextId$.next(context.id);
         return context;
       });
@@ -107,7 +93,7 @@ export class ContextService {
 
   delete(id: string): Observable<void> {
     const url = this.baseUrl + '/contexts/' + id;
-    const request = this.authHttp.delete(url);
+    const request = this.http.delete(url);
     return this.requestService.register(request, 'Delete context error')
       .map((res) => {
         const contexts: ContextsList = {ours: []};
@@ -121,10 +107,9 @@ export class ContextService {
 
   create(context: DetailedContext): Observable<Context> {
     const url = this.baseUrl + '/contexts';
-    const request = this.authHttp.post(url, JSON.stringify(context));
+    const request = this.http.post<Context>(url, JSON.stringify(context));
     return this.requestService.register(request, 'Create context error')
-      .map((res) => {
-        const contextCreated: Context = res.json();
+      .map((contextCreated) => {
         if (this.authService.authenticated) {
           contextCreated.permission = TypePermission[TypePermission.write];
         } else {
@@ -138,10 +123,9 @@ export class ContextService {
 
   clone(id: string, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
-    const request = this.authHttp.post(url, JSON.stringify(properties));
+    const request = this.http.post<Context>(url, JSON.stringify(properties));
     return this.requestService.register(request, 'Clone context error')
-      .map((res) => {
-        const contextCloned: Context = res.json();
+      .map((contextCloned) => {
         contextCloned.permission = TypePermission[TypePermission.write];
         this.contexts$.value.ours.push(contextCloned);
         this.contexts$.next(this.contexts$.value);
@@ -151,12 +135,8 @@ export class ContextService {
 
   update(id: string, context: Context): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id;
-    const request = this.authHttp.patch(url, JSON.stringify(context));
-    return this.requestService.register(request, 'Update context error')
-      .map((res) => {
-        const contextUpdated: Context = res.json();
-        return contextUpdated;
-      });
+    const request = this.http.patch<Context>(url, JSON.stringify(context));
+    return this.requestService.register(request, 'Update context error');
   }
 
 // =================================================================
@@ -166,28 +146,20 @@ addToolAssociation(contextId: string, toolId: string): Observable<void> {
   const association = {
     toolId: toolId
   };
-  const request = this.authHttp.post(url, JSON.stringify(association));
+  const request = this.http.post(url, JSON.stringify(association));
   return this.requestService.register(request, 'Add tool association error');
 }
 
 deleteToolAssociation(contextId: string, toolId: string): Observable<any> {
   const url = `${this.baseUrl}/contexts/${contextId}/tools/${toolId}`;
-  const request = this.authHttp.delete(url);
-  return this.requestService.register(request, 'Delete tool association error')
-    .map((res) => {
-      const toolAssociation = res.json();
-      return toolAssociation;
-    });
+  const request = this.http.delete(url);
+  return this.requestService.register(request, 'Delete tool association error');
 }
 
 getPermissions(id: string): Observable<ContextPermission[]> {
   const url = this.baseUrl + '/contexts/' + id + '/permissions';
-  const request = this.authHttp.get(url);
-  return this.requestService.register(request, 'Get context permissions error')
-    .map((res) => {
-      const permissions: ContextPermission[] = res.json();
-      return permissions;
-    });
+  const request = this.http.get<ContextPermission[]>(url);
+  return this.requestService.register(request, 'Get context permissions error');
 }
 
 addPermissionAssociation(contextId: string, profil: string,
@@ -198,16 +170,13 @@ addPermissionAssociation(contextId: string, profil: string,
     profil: profil,
     typePermission: type
   };
-  const request = this.authHttp.post(url, JSON.stringify(association));
-  return this.requestService.register(request, 'Add permission association error')
-    .map((res) => {
-      return res.json();
-    });
+  const request = this.http.post(url, JSON.stringify(association));
+  return this.requestService.register(request, 'Add permission association error');
 }
 
 deletePermissionAssociation(contextId: string, permissionId: string): Observable<void> {
   const url = `${this.baseUrl}/contexts/${contextId}/permissions/${permissionId}`;
-  const request = this.authHttp.delete(url);
+  const request = this.http.delete(url);
   return this.requestService.register(request, 'Delete permission association error');
 }
 
@@ -216,15 +185,12 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
   getLocalContexts(): Observable<ContextsList> {
     const url = this.getPath(this.options.contextListFile);
     return this.requestService.register(this.http.get(url))
-      .map(res => { return {ours: res.json()}; });
+      .map(res => { return {ours: res}; });
   }
 
   getLocalContext(uri): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.requestService.register(this.http.get(url)
-      .map(res => {
-        return res.json();
-      })
       .catch(res => {
         return this.handleError(res, uri);
       })

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { IgoCoreModule, LanguageLoader, provideLanguageLoader } from '../lib';
 
@@ -12,7 +12,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 
 
-export function translateLoader(http: Http) {
+export function translateLoader(http: HttpClient) {
   return new LanguageLoader(http, './base/src/demo-app/assets/locale/', '.json');
 }
 

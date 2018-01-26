@@ -1,48 +1,52 @@
 <div *ngIf="style === 'calendar'">
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
-    <md2-datepicker
-      placeholder="{{'igo.timeFilter.date' | translate}}"
-      container="dialog"
-      format="{{format}}"
-      type="{{type}}"
-      [min]="min"
-      [max]="max"
-      [(ngModel)]="date"
-      (change)="handleDateChange($event)">
-    </md2-datepicker>
+    <mat-form-field>
+      <mat-datetimepicker-toggle [for]="datetimePicker" matSuffix></mat-datetimepicker-toggle>
+      <mat-datetimepicker #datetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+      <input matInput autocomplete="false"
+        placeholder="{{'igo.timeFilter.date' | translate}}"
+        [matDatetimepicker]="datetimePicker"
+        [(ngModel)]="date"
+        [min]="min"
+        [max]="max"
+        (dateChange)="handleDateChange($event)">
+    </mat-form-field>
+
   </div>
 
   <div *ngIf="isRange">
     <div class="igo-col igo-col-100">
-      <md2-datepicker
-        placeholder="{{'igo.timeFilter.startDate' | translate}}"
-        container="dialog"
-        format="{{format}}"
-        type="{{type}}"
-        [min]="min"
-        [max]="getRangeMaxDate()"
-        [(ngModel)]="startDate"
-        (change)="handleDateChange($event)">
-      </md2-datepicker>
+      <mat-form-field>
+        <mat-datetimepicker-toggle [for]="minDatetimePicker" matSuffix></mat-datetimepicker-toggle>
+        <mat-datetimepicker #minDatetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+        <input matInput autocomplete="false"
+          placeholder="{{'igo.timeFilter.startDate' | translate}}"
+          [matDatetimepicker]="minDatetimePicker"
+          [(ngModel)]="startDate"
+          [min]="min"
+          [max]="getRangeMaxDate()"
+          (dateChange)="handleDateChange($event)">
+      </mat-form-field>
     </div>
 
     <div class="igo-col igo-col-100">
-      <md2-datepicker
-        placeholder="{{'igo.timeFilter.endDate' | translate}}"
-        container="dialog"
-        format="{{format}}"
-        type="{{type}}"
-        [min]="getRangeMinDate()"
-        [max]="max"
-        [(ngModel)]="endDate"
-        (change)="handleDateChange($event)">
-      </md2-datepicker>
+      <mat-form-field>
+        <mat-datetimepicker-toggle [for]="maxDatetimePicker" matSuffix></mat-datetimepicker-toggle>
+        <mat-datetimepicker #maxDatetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+        <input matInput autocomplete="false"
+          placeholder="{{'igo.timeFilter.endDate' | translate}}"
+          [matDatetimepicker]="maxDatetimePicker"
+          [(ngModel)]="endDate"
+          [min]="getRangeMinDate()"
+          [max]="max"
+          (change)="handleDateChange($event)">
+      </mat-form-field>
     </div>
   </div>
 </div>
   <br>
 <div *ngIf="style === 'slider'" class="igo-col igo-col-100 igo-col-100-m">
-  <md-slider
+  <mat-slider
       id="time-slider"
       tickInterval="auto"
       step="{{step}}"
@@ -52,9 +56,9 @@
       thumbLabel
       (input)="handleSliderDateChange($event)"
       (change)="handleSliderDateChange($event)">
-  </md-slider>
+  </mat-slider>
   <p class="date-below">{{handleSliderTooltip()}} </p>
-  <button md-icon-button color="primary" (click)="playFilter($event)">
-   <md-icon>{{playIcon}}</md-icon>
+  <button mat-icon-button color="primary" (click)="playFilter($event)">
+   <mat-icon>{{playIcon}}</mat-icon>
   </button>
 </div>

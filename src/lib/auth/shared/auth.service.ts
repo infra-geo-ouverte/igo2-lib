@@ -1,38 +1,35 @@
 import { Injectable, Optional } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthHttp } from 'angular2-jwt';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Rx';
-import { JwtHelper } from 'angular2-jwt';
+import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, RequestService } from '../../core';
 import { Base64 } from '../../utils';
 
 import { AuthOptions, User } from './auth.interface';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
   public authenticate$ = new BehaviorSubject<Boolean>(undefined);
   public redirectUrl: string;
   private options: AuthOptions;
-  private token: string;
   private anonymous: boolean = false;
 
-  constructor(private http: Http,
-              private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
+              private tokenService: TokenService,
               private requestService: RequestService,
               private config: ConfigService,
               @Optional() private router: Router) {
 
     this.options = this.config.getConfig('auth') || {};
-    this.token = localStorage.getItem(this.options.tokenKey);
     this.authenticate$.next(this.authenticated);
   }
 
   login(username: string, password: string): any {
-    const myHeader = new Headers();
+    const myHeader = new HttpHeaders();
     myHeader.append('Content-Type', 'application/json');
 
     const body = JSON.stringify({
@@ -41,10 +38,8 @@ export class AuthService {
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
-      .map((res: any) => {
-        const data = res.json();
-        this.token = data.token;
-        localStorage.setItem(this.options.tokenKey, this.token);
+      .map((data: any) => {
+        this.tokenService.set(data.token);
         this.authenticate$.next(true);
       })
       .catch((err: any) => {
@@ -54,7 +49,7 @@ export class AuthService {
   }
 
   loginWithToken(token: string, type: string): any {
-    const myHeader = new Headers();
+    const myHeader = new HttpHeaders();
     myHeader.append('Content-Type', 'application/json');
 
     const body = JSON.stringify({
@@ -63,10 +58,8 @@ export class AuthService {
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
-      .map((res: any) => {
-        const data = res.json();
-        this.token = data.token;
-        localStorage.setItem(this.options.tokenKey, this.token);
+      .map((data: any) => {
+        this.tokenService.set(data.token);
         this.authenticate$.next(true);
       })
       .catch((err: any) => {
@@ -82,27 +75,22 @@ export class AuthService {
 
   logout() {
     this.anonymous = false;
-    this.token = undefined;
-    localStorage.removeItem(this.options.tokenKey);
+    this.tokenService.remove();
     this.authenticate$.next(false);
     return Observable.of(true);
   }
 
   isAuthenticated(): boolean {
-    const token = localStorage.getItem(this.options.tokenKey);
-    const jwtHelper = new JwtHelper();
-    return token && !jwtHelper.isTokenExpired(token);
+    return !this.tokenService.isExpired();
   }
 
   getToken(): string {
-    return localStorage.getItem(this.options.tokenKey);
+    return this.tokenService.get();
   }
 
   decodeToken() {
     if (this.isAuthenticated()) {
-      const token = localStorage.getItem(this.options.tokenKey);
-      const jwtHelper = new JwtHelper();
-      return jwtHelper.decodeToken(token);
+      return this.tokenService.decode();
     }
     return false;
   }
@@ -120,22 +108,14 @@ export class AuthService {
 
   getUserInfo(): Observable<User> {
     const url = this.options.url + '/info';
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get user info error')
-      .map((res) => {
-        const user: User = res.json();
-        return user;
-      });
+    const request = this.http.get<User>(url);
+    return this.requestService.register(request, 'Get user info error');
   }
 
   updateUser(user: User): Observable<User> {
     const url = this.options.url;
-    const request = this.authHttp.patch(url, JSON.stringify(user));
-    return this.requestService.register(request, 'Update user error')
-      .map((res) => {
-        const userUpdated: User = res.json();
-        return userUpdated;
-      });
+    const request = this.http.patch<User>(url, JSON.stringify(user));
+    return this.requestService.register(request, 'Update user error');
   }
 
   private encodePassword(password: string) {

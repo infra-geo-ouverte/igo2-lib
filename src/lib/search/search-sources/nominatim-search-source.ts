@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, URLSearchParams } from '@angular/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
@@ -21,7 +21,7 @@ export class NominatimSearchSource extends SearchSource {
   private searchUrl: string = 'https://nominatim.openstreetmap.org/search';
   private options: SearchSourceOptions;
 
-  constructor(private http: Http,
+  constructor(private http: HttpClient,
               private config: ConfigService) {
     super();
 
@@ -34,26 +34,27 @@ export class NominatimSearchSource extends SearchSource {
   }
 
   search(term?: string): Observable<Feature[] | Message[]>  {
-    const search = this.getSearchParams(term);
+    const searchParams = this.getSearchParams(term);
 
     return this.http
-      .get(this.searchUrl, { search })
+      .get(this.searchUrl, { params: searchParams })
       .map(res => this.extractData(res));
   }
 
-  private extractData(response: Response): Feature[] {
-    return response.json().map(this.formatResult);
+  private extractData(response): Feature[] {
+    return response.map(this.formatResult);
   }
 
-  private getSearchParams(term: string): URLSearchParams {
-    const search = new URLSearchParams();
+  private getSearchParams(term: string): HttpParams {
     const limit = this.options.limit === undefined ? 5 : this.options.limit;
 
-    search.set('q', term);
-    search.set('format', 'json');
-    search.set('limit', String(limit));
-
-    return search;
+    return new HttpParams({
+      fromObject: {
+        q: term,
+        format: 'json',
+        limit: String(limit)
+      }
+    });
   }
 
   private formatResult(result: any): Feature {

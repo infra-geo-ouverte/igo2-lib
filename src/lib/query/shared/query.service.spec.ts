@@ -1,5 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IgoCoreModule } from '../../core';
 import { IgoAuthModule } from '../../auth';
@@ -11,7 +11,7 @@ describe('QueryService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule,
+        HttpClientModule,
         IgoCoreModule.forRoot(),
         IgoAuthModule.forRoot()
       ],

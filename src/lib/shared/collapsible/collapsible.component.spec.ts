@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MdListModule, MdIconModule } from '@angular/material';
+import { MatListModule, MatIconModule } from '@angular/material';
 
 import { CollapsibleComponent } from './collapsible.component';
 import { CollapseDirective } from './collapse.directive';
@@ -12,8 +12,8 @@ describe('CollapsibleComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MdListModule,
-        MdIconModule
+        MatListModule,
+        MatIconModule
       ],
       declarations: [
         CollapsibleComponent,

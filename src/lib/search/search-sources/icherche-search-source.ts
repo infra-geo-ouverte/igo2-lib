@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Jsonp, Response, URLSearchParams } from '@angular/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
@@ -20,7 +20,7 @@ export class IChercheSearchSource extends SearchSource {
   private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
   private options: SearchSourceOptions;
 
-  constructor(private jsonp: Jsonp,
+  constructor(private http: HttpClient,
               private config: ConfigService) {
     super();
 
@@ -33,27 +33,27 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   search(term?: string): Observable<Feature[] | Message[]>  {
-    const search = this.getSearchParams(term);
+    const searchParams = this.getSearchParams(term);
 
-    return this.jsonp
-      .get(this.searchUrl, {search})
+    return this.http
+      .get(this.searchUrl, {params: searchParams})
       .map(res => this.extractData(res));
   }
 
-  private extractData(response: Response): Feature[] {
-    return response.json().features.map(this.formatResult);
+  private extractData(response): Feature[] {
+    return response.features.map(this.formatResult);
   }
 
-  private getSearchParams(term: string): URLSearchParams {
-    const search = new URLSearchParams();
+  private getSearchParams(term: string): HttpParams {
     const limit = this.options.limit === undefined ? 5 : this.options.limit;
 
-    search.set('q', term);
-    search.set('limit', String(limit));
-    search.set('callback', 'JSONP_CALLBACK');
-    search.set('geometries', 'geom');
-
-    return search;
+    return new HttpParams({
+      fromObject: {
+        q: term,
+        limit: String(limit),
+        geometries: 'geom'
+      }
+    });
   }
 
   private formatResult(result: any): Feature {

@@ -1,15 +1,13 @@
-import { Http, Jsonp } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { ConfigService, LanguageService } from '../../core';
-import { AuthHttp } from '../../auth';
-
 import { SearchSource } from './search-source';
 import { NominatimSearchSource } from './nominatim-search-source';
 import { IChercheSearchSource } from './icherche-search-source';
 import { DataSourceSearchSource } from './datasource-search-source';
 
 
-export function nominatimSearchSourcesFactory(http: Http, config: ConfigService) {
+export function nominatimSearchSourcesFactory(http: HttpClient, config: ConfigService) {
   return new NominatimSearchSource(http, config);
 }
 
@@ -18,13 +16,13 @@ export function provideNominatimSearchSource() {
     provide: SearchSource,
     useFactory: (nominatimSearchSourcesFactory),
     multi: true,
-    deps: [Http, ConfigService]
+    deps: [HttpClient, ConfigService]
   };
 }
 
 
-export function ichercheSearchSourcesFactory(jsonp: Jsonp, config: ConfigService) {
-  return new IChercheSearchSource(jsonp, config);
+export function ichercheSearchSourcesFactory(http: HttpClient, config: ConfigService) {
+  return new IChercheSearchSource(http, config);
 }
 
 export function provideIChercheSearchSource() {
@@ -32,14 +30,14 @@ export function provideIChercheSearchSource() {
     provide: SearchSource,
     useFactory: (ichercheSearchSourcesFactory),
     multi: true,
-    deps: [Jsonp, ConfigService]
+    deps: [HttpClient, ConfigService]
   };
 }
 
 
 export function dataSourceSearchSourcesFactory(
-    authHttp: AuthHttp, config: ConfigService, languageService: LanguageService) {
-  return new DataSourceSearchSource(authHttp, config, languageService);
+    http: HttpClient, config: ConfigService, languageService: LanguageService) {
+  return new DataSourceSearchSource(http, config, languageService);
 }
 
 export function provideDataSourceSearchSource() {
@@ -47,6 +45,6 @@ export function provideDataSourceSearchSource() {
     provide: SearchSource,
     useFactory: (dataSourceSearchSourcesFactory),
     multi: true,
-    deps: [AuthHttp, ConfigService, LanguageService]
+    deps: [HttpClient, ConfigService, LanguageService]
   };
 }

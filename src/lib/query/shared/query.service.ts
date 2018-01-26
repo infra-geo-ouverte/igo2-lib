@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs/Subscription';
 
 import { uuid } from '../../utils/uuid';
 import { RequestService } from '../../core';
-import { AuthHttp } from '../../auth';
 import { Feature, FeatureType, FeatureFormat,
          FeatureService } from '../../feature';
 import { DataSource, QueryableDataSource } from '../../datasource';
@@ -19,7 +18,7 @@ export class QueryService {
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private featureService: FeatureService,
               private requestService: RequestService) { }
 
@@ -32,7 +31,7 @@ export class QueryService {
 
   queryDataSource(dataSource: DataSource, options: QueryOptions) {
     const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
-    const request = this.authHttp.get(url);
+    const request = this.http.get(url, {responseType: 'text'});
 
     this.featureService.clear();
     return this.requestService
@@ -50,7 +49,7 @@ export class QueryService {
     this.featureService.updateFeatures(features, dataSource.title);
   }
 
-  private extractData(res: Response, dataSource: DataSource,
+  private extractData(res, dataSource: DataSource,
                       options: QueryOptions): Feature[] {
     const queryDataSource = (dataSource as any as QueryableDataSource);
 
@@ -87,7 +86,7 @@ export class QueryService {
     });
   }
 
-  private extractGML2Data(res: Response) {
+  private extractGML2Data(res) {
     let parser = new ol.format.GML2();
     let features = parser.readFeatures(res.text());
 
@@ -100,23 +99,23 @@ export class QueryService {
     return features.map(feature => this.featureToResult(feature));
   }
 
-  private extractGML3Data(res: Response) {
+  private extractGML3Data(res) {
     const parser = new ol.format.GML3();
     const features = parser.readFeatures(res.text());
 
     return features.map(feature => this.featureToResult(feature));
   }
 
-  private extractGeoJSONData(res: Response) {
+  private extractGeoJSONData(res) {
     return res.json().features;
   }
 
-  private extractTextData(res: Response) {
+  private extractTextData(res) {
     // TODO
     return [];
   }
 
-  private extractHtmlData(res: Response, html_target) {
+  private extractHtmlData(res, html_target) {
       // _blank , modal , innerhtml or undefined
       const searchParams = new URLSearchParams(res['url'].toLowerCase());
       const bbox_raw = searchParams.get('bbox');

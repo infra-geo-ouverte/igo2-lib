@@ -71,9 +71,9 @@ export class MessageService {
     // it so we simply set it on the notification directly.
     // See https://github.com/flauc/angular2-notifications/issues/165
     notification.icon = `
-      <md-icon class="material-icons mat-icon mat-list-avatar">
+      <mat-icon class="material-icons mat-icon mat-list-avatar">
         ${icon}
-      </md-icon>`;
+      </mat-icon>`;
   }
 
 }

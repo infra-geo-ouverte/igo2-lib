@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IgoTestModule } from '../../../../test';
 import { IgoSharedModule } from '../../../shared';
@@ -16,7 +16,7 @@ describe('ContextEditorToolComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule,
+        HttpClientModule,
         IgoTestModule,
         IgoSharedModule,
         IgoContextModule.forRoot(),

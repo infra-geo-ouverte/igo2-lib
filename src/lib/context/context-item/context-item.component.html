@@ -1,28 +1,28 @@
-<md-list-item>
-  <button md-list-avatar
-    md-icon-button
+<mat-list-item>
+  <button mat-list-avatar
+    mat-icon-button
     igoStopPropagation
-    [md-tooltip]="'igo.context.favorite' | translate"
-    mdTooltipShowDelay="500"
+    [matTooltip]="'igo.context.favorite' | translate"
+    matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
     (click)="favorite.emit(context)">
-    <md-icon>
+    <mat-icon>
       {{context.icon ? context.icon : context.scope === 'public' ? 'public' : 'star'}}
-    </md-icon>
+    </mat-icon>
   </button>
-  <h4 mdLine>{{context.title}}</h4>
+  <h4 matLine>{{context.title}}</h4>
 
   <div *ngIf="auth.authenticated && context.permission === typePermission[typePermission.read]"
        igoStopPropagation
        class="igo-actions-container">
 
        <button
-         md-icon-button
-         [md-tooltip]="'igo.context.clone' | translate"
-         mdTooltipShowDelay="500"
+         mat-icon-button
+         [matTooltip]="'igo.context.clone' | translate"
+         matTooltipShowDelay="500"
          [color]="color"
          (click)="clone.emit(context)">
-         <md-icon>content_copy</md-icon>
+         <mat-icon>content_copy</mat-icon>
        </button>
  </div>
 
@@ -32,71 +32,71 @@
        class="igo-actions-container">
 
      <button *ngIf="collapsed"
-       md-icon-button
-       [md-tooltip]="'igo.context.save' | translate"
-       mdTooltipShowDelay="500"
+       mat-icon-button
+       [matTooltip]="'igo.context.save' | translate"
+       matTooltipShowDelay="500"
        [color]="color"
        (click)="save.emit(context)">
-       <md-icon>save</md-icon>
+       <mat-icon>save</mat-icon>
      </button>
 
     <div #actions class="igo-actions-expand-container">
 
       <button
-        md-icon-button
-        [md-tooltip]="'igo.context.managePermissions' | translate"
-        mdTooltipShowDelay="500"
+        mat-icon-button
+        [matTooltip]="'igo.context.managePermissions' | translate"
+        matTooltipShowDelay="500"
         [color]="color"
         (click)="managePermissions.emit(context)">
-        <md-icon>perm_identity</md-icon>
+        <mat-icon>perm_identity</mat-icon>
       </button>
 
       <!--button
-        md-icon-button
-        [md-tooltip]="'igo.context.manageTools' | translate"
+        mat-icon-button
+        [matTooltip]="'igo.context.manageTools' | translate"
         [color]="color"
         (click)="manageTools.emit(context)">
-        <md-icon>widgets</md-icon>
+        <mat-icon>widgets</mat-icon>
       </button-->
 
       <button
-        md-icon-button
-        [md-tooltip]="'igo.context.clone' | translate"
-        mdTooltipShowDelay="500"
+        mat-icon-button
+        [matTooltip]="'igo.context.clone' | translate"
+        matTooltipShowDelay="500"
         [color]="color"
         (click)="clone.emit(context)">
-        <md-icon>content_copy</md-icon>
+        <mat-icon>content_copy</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         [color]="color"
-        [md-tooltip]="'igo.context.edit' | translate"
-        mdTooltipShowDelay="500"
+        [matTooltip]="'igo.context.edit' | translate"
+        matTooltipShowDelay="500"
         (click)="edit.emit(context)">
-        <md-icon>edit</md-icon>
+        <mat-icon>edit</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         color="warn"
-        [md-tooltip]="'igo.context.delete' | translate"
-        mdTooltipShowDelay="500"
+        [matTooltip]="'igo.context.delete' | translate"
+        matTooltipShowDelay="500"
         (click)="delete.emit(context)">
-        <md-icon>delete</md-icon>
+        <mat-icon>delete</mat-icon>
       </button>
     </div>
 
     <button
-      md-icon-button
+      mat-icon-button
       igoCollapse
       [color]="color"
       [target]="actions"
       [collapsed]=collapsed
       (click)="collapsed = !collapsed">
-      <md-icon>more_horiz</md-icon>
+      <mat-icon>more_horiz</mat-icon>
     </button>
 
   </div>
 
-</md-list-item>
+</mat-list-item>

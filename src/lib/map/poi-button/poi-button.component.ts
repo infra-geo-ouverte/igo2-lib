@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MessageService, LanguageService } from '../../core';
@@ -33,7 +33,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   private authenticate$$: Subscription;
 
   constructor(
-    private dialog: MdDialog,
+    private dialog: MatDialog,
     private authService: AuthService,
     private poiService: PoiService,
     private messageService: MessageService,

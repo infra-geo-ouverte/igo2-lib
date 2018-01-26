@@ -1,5 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { HttpModule, JsonpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { provideSearchSourceService, SearchSourceService } from './search-source.service';
 import { SearchSource } from '../search-sources';
@@ -9,8 +9,7 @@ describe('SearchSourceService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule,
-        JsonpModule
+        HttpClientModule
       ],
       providers: [
         SearchSource,

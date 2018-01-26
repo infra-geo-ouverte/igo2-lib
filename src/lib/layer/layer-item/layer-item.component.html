@@ -1,25 +1,25 @@
-<md-list-item>
-  <md-icon
+<mat-list-item>
+  <mat-icon
     class="igo-chevron"
-    md-list-avatar
+    mat-list-avatar
     igoCollapse
     [target]="legend"
     [collapsed]="layer.collapsed"
     (toggle)="toggleLegend($event)">
-  </md-icon>
-  <h4 mdLine [md-tooltip]="layer.title +' ('+ id +') '" mdTooltipShowDelay="500">{{layer.title}}</h4>
+  </mat-icon>
+  <h4 matLine [matTooltip]="layer.title +' ('+ id +') '" matTooltipShowDelay="500">{{layer.title}}</h4>
 
   <button
-    md-icon-button
+    mat-icon-button
     collapsibleButton
     tooltip-position="below"
-    mdTooltipShowDelay="500"
-    [md-tooltip]="layer.visible ?
+    matTooltipShowDelay="500"
+    [matTooltip]="layer.visible ?
                   ('igo.layer.hideLayer' | translate) :
                   ('igo.layer.showLayer' | translate)"
     [color]="color"
     (click)="toggleVisibility()">
-    <md-icon
+    <mat-icon
       [ngClass]='{disabled: !isInResolutionsRange()}'>
       <ng-container *ngIf="layer.visible">
         visibility
@@ -27,22 +27,22 @@
       <ng-container *ngIf="!layer.visible">
         visibility_off
       </ng-container>
-    </md-icon>
+    </mat-icon>
   </button>
 
   <button
-    md-icon-button
+    mat-icon-button
     igoCollapse
     [color]="color"
     [target]="actions"
     [collapsed]="true">
-    <md-icon>more_horiz</md-icon>
+    <mat-icon>more_horiz</mat-icon>
   </button>
-</md-list-item>
+</mat-list-item>
 
 <div #actions class="igo-layer-actions-container">
   <div class="igo-col igo-col-40 igo-col-100-m">
-    <md-slider
+    <mat-slider
       id="opacity-slider"
       thumbLabel
       tickInterval="5"
@@ -50,64 +50,64 @@
       [min]="0"
       [max]="100"
       [(ngModel)]="opacity"
-      [md-tooltip]="'igo.layer.opacity' | translate"
-      mdTooltipShowDelay="500"
+      [matTooltip]="'igo.layer.opacity' | translate"
+      matTooltipShowDelay="500"
       tooltip-position="below">
-    </md-slider>
+    </mat-slider>
   </div>
 
   <div class="igo-col igo-col-60 igo-col-100-m">
     <div class="igo-layer-button-group">
       <button
         *ngIf="isVectorLayer(layer)"
-        md-icon-button
+        mat-icon-button
         tooltip-position="below"
-        mdTooltipShowDelay="500"
-        [md-tooltip]="'igo.layer.showFeaturesList' | translate"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.layer.showFeaturesList' | translate"
         [color]="color"
         (click)="showFeaturesList(layer)">
-        <md-icon>list</md-icon>
+        <mat-icon>list</mat-icon>
       </button>
 
       <button
         *ngIf="layer.dataSource.options.metadata && layer.dataSource.options.metadata.url"
-        md-icon-button
+        mat-icon-button
         tooltip-position="below"
-        mdTooltipShowDelay="500"
-        [md-tooltip]="'igo.layer.showMetadata' | translate"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.layer.showMetadata' | translate"
         [color]="color"
         (click)="openMetadata(layer.dataSource.options.metadata)">
-        <md-icon>info_outline</md-icon>
+        <mat-icon>info_outline</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         tooltip-position="below"
-        mdTooltipShowDelay="500"
-        [md-tooltip]="'igo.layer.raiseLayer' | translate"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.layer.raiseLayer' | translate"
         [color]="color"
         (click)="layer.map.raiseLayer(layer)">
-        <md-icon>arrow_upward</md-icon>
+        <mat-icon>arrow_upward</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         tooltip-position="below"
-        mdTooltipShowDelay="500"
-        [md-tooltip]="'igo.layer.lowerLayer' | translate"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.layer.lowerLayer' | translate"
         [color]="color"
         (click)="layer.map.lowerLayer(layer)">
-        <md-icon>arrow_downward</md-icon>
+        <mat-icon>arrow_downward</mat-icon>
       </button>
 
       <button
-        md-icon-button
+        mat-icon-button
         tooltip-position="below"
-        mdTooltipShowDelay="500"
-        [md-tooltip]="'igo.layer.removeLayer' | translate"
+        matTooltipShowDelay="500"
+        [matTooltip]="'igo.layer.removeLayer' | translate"
         color="warn"
         (click)="layer.map.removeLayer(layer)">
-        <md-icon>delete</md-icon>
+        <mat-icon>delete</mat-icon>
       </button>
 
       <ng-content select="[igoLayerAction]"></ng-content>

@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
-
 import { Observable } from 'rxjs/Observable';
 
 import { Message, MessageService, MessageType } from '../message';
@@ -25,7 +23,7 @@ export class RequestService {
     this.activityService.unregister(id);
   }
 
-  private handleError200(res: Response | any) {
+  private handleError200(res: any) {
     if (!res || !res.headers) { return; }
 
     const contentType = res.headers.get('content-type');
@@ -43,12 +41,12 @@ export class RequestService {
     }
   }
 
-  private handleError(res: Response | Message[], title?: string) {
+  private handleError(res: Message[] | any, title?: string) {
     let messages: Message[];
     if (Array.isArray(res)) {
       messages = res as Message[];
     } else {
-      messages = this.extractMessages(res as Response);
+      messages = this.extractMessages(res);
     }
 
     this.pushMessages(messages, title);
@@ -56,7 +54,7 @@ export class RequestService {
     return Observable.throw(res);
   }
 
-  private extractMessages(res: Response): Message[] {
+  private extractMessages(res: any): Message[] {
     if (!res || !res.headers) { return []; }
 
     let messages = [];

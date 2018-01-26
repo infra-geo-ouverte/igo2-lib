@@ -1,5 +1,4 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { JsonpModule } from '@angular/http';
 
 import { IgoSharedModule } from '../shared';
 
@@ -11,7 +10,6 @@ import { SearchBarComponent, SearchUrlParamDirective } from './search-bar';
 
 @NgModule({
   imports: [
-    JsonpModule,
     IgoSharedModule
   ],
   exports: [

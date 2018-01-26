@@ -1,5 +1,5 @@
 import { Directive, Input, Output, ElementRef,
-         Renderer, HostListener, EventEmitter } from '@angular/core';
+         Renderer2, HostListener, EventEmitter } from '@angular/core';
 
 @Directive({
   selector: '[igoListItem]'
@@ -22,8 +22,12 @@ export class ListItemDirective {
 
     value ? this.beforeFocus.emit(this) : this.beforeUnfocus.emit(this);
 
-    this.renderer.setElementClass(
-      this.el.nativeElement, ListItemDirective.cls, value);
+    if (value) {
+      this.renderer.addClass(this.el.nativeElement, ListItemDirective.cls);
+    } else {
+      this.renderer.removeClass(this.el.nativeElement, ListItemDirective.cls);
+    }
+
     this._focused = value;
 
     value ? this.focus.emit(this) : this.unfocus.emit(this);
@@ -37,8 +41,12 @@ export class ListItemDirective {
 
     value ? this.beforeSelect.emit(this) : this.beforeUnselect.emit(this);
 
-    this.renderer.setElementClass(
-      this.el.nativeElement, ListItemDirective.cls, value);
+    if (value) {
+      this.renderer.addClass(this.el.nativeElement, ListItemDirective.cls);
+    } else {
+      this.renderer.removeClass(this.el.nativeElement, ListItemDirective.cls);
+    }
+
     this._selected = value;
     this._focused = value;
 
@@ -59,7 +67,7 @@ export class ListItemDirective {
     this.selected = true;
   }
 
-  constructor(public renderer: Renderer, private el: ElementRef) { }
+  constructor(public renderer: Renderer2, private el: ElementRef) { }
 
   getOffsetTop(): number {
     const padding = 5;

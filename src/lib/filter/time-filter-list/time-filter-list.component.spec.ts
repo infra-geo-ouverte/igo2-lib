@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Md2Module } from 'md2';
+// import { Md2Module } from 'md2';
 
 import { IgoSharedModule } from '../../shared';
 
@@ -15,8 +15,7 @@ describe('TimeFilterListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoSharedModule,
-        Md2Module
+        IgoSharedModule
       ],
       declarations: [
         FilterableDataSourcePipe,
