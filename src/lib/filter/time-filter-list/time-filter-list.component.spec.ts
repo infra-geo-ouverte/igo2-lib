@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-// import { Md2Module } from 'md2';
+import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
+import { MatDatetimepickerModule, MatNativeDatetimeModule } from '@mat-datetimepicker/core';
 
 import { IgoSharedModule } from '../../shared';
 
@@ -15,7 +16,11 @@ describe('TimeFilterListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        IgoSharedModule
+        IgoSharedModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatDatetimepickerModule,
+        MatNativeDatetimeModule
       ],
       declarations: [
         FilterableDataSourcePipe,

@@ -12,7 +12,6 @@ export class RequestService {
 
   register(request: Observable<any>, title?: string) {
     const id = this.activityService.register();
-
     return request
       .do((res) => this.handleError200(res))
       .catch((res) => this.handleError(res, title))

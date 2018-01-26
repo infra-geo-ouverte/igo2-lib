@@ -1,5 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-// import { Md2Module } from 'md2';
+import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
+import { MatDatetimepickerModule, MatNativeDatetimeModule } from '@mat-datetimepicker/core';
+
 import { IgoSharedModule } from '../../shared';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeFilterFormComponent,  } from './time-filter-form.component';
@@ -34,7 +36,10 @@ describe('TimeFilterFormComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         IgoSharedModule,
-//        Md2Module,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatDatetimepickerModule,
+        MatNativeDatetimeModule,
         TranslateModule.forRoot()
       ],
       declarations: [ TimeFilterFormComponent ]
@@ -215,12 +220,12 @@ describe('TimeFilterFormComponent', () => {
   //
   //   fixture.detectChanges();
   //   // check there is 2 calendar
-  //   const regex = /<md2-datepicker/gi;
+  //   const regex = /<mat-datetimepicker-calendar/gi;
   //   const numberOfCalendar = fixture.nativeElement.innerHTML.match(regex);
   //   expect(numberOfCalendar.length).toBe(2);
   //
   // });
-
+  //
   // it('Calendar with no range. Must have 1 calendar', () => {
   //
   //   component.options = {
@@ -238,7 +243,7 @@ describe('TimeFilterFormComponent', () => {
   //
   //   fixture.detectChanges();
   //   // check there is 2 calendar
-  //   const regex = /<md2-datepicker/gi;
+  //   const regex = /<mat-datetimepicker-calendar/gi;
   //   const numberOfCalendar = fixture.nativeElement.innerHTML.match(regex);
   //   expect(numberOfCalendar.length).toBe(1);
   //
