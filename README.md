@@ -35,5 +35,8 @@ High levels items planned for the next few months:
 - Better documentation
 - Better support of non-spatial data sources
 - PDF Print
-- Time slider (for filtering)
+- Time slider (wms-time for filtering)
+- WMS Catalog
+- Import & export (GeoJSON, KML)
+- Sharing map
 - Tests
