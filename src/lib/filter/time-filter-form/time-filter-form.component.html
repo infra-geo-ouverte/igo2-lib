@@ -22,6 +22,7 @@
         [min]="min"
         [max]="getRangeMaxDate()"
         [(ngModel)]="startDate"
+        (input)="startDate"
         (change)="handleDateChange($event)">
       </md2-datepicker>
     </div>
@@ -35,6 +36,7 @@
         [min]="getRangeMinDate()"
         [max]="max"
         [(ngModel)]="endDate"
+        (input)="endDate"
         (change)="handleDateChange($event)">
       </md2-datepicker>
     </div>
