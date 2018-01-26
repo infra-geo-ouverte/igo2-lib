@@ -25,7 +25,7 @@ export class TimeFilterFormComponent {
   public date: Date;
   public startDate: Date;
   public endDate: Date;
-  
+
   @Input()
   set currentValue(value: string) {
     if (value) {
