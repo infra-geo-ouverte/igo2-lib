@@ -30,8 +30,7 @@ if you're building your first project with IGO2 Library.
 
 IGO2 Library is under active development and new features will be regularly added. If you'd like to contribute, you must follow our [contributing guidelines](https://github.com/infra-geo-ouverte/igo2-lib/blob/master/CONTRIBUTING.md).
 
-High levels items planned for the next few months:
-
+Items developed and planned:
 - Better documentation
 - Better support of non-spatial data sources
 - PDF Print
