@@ -23,9 +23,8 @@ if you're building your first project with IGO2 Library.
 
 ### Demo
 
-[Demo IGO2 for Open Data Quebec](https://geoegl.msp.gouv.qc.ca/igo2/apercu-qc/)
-[Demo IGO2 on GitHub](https://github.com/infra-geo-ouverte/igo2#table-of-content-english)
-
+- [Demo IGO2 for Open Data Quebec](https://geoegl.msp.gouv.qc.ca/igo2/apercu-qc/)
+- [Demo IGO2 on GitHub](https://github.com/infra-geo-ouverte/igo2#table-of-content-english)
 
 ### Project status
 
