@@ -1,12 +1,12 @@
 {
-  "name": "igo2",
+  "name": "@igo2/igo2",
   "version": "0.13.0",
   "description": "IGO Library",
   "main": "bundle/igo.js",
   "typings": "dist/lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/infra-geo-ouverte/igo2-lib.git"
+    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git"
   },
   "keywords": [
     "igo"
@@ -96,5 +96,6 @@
     "typescript": "~2.5.3",
     "webpack": "^3.10.0",
     "webpack-merge": "^4.1.1"
-  }
+  },
+  "author": "MSP"
 }

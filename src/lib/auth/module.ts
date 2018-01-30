@@ -1,4 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { IgoSharedModule } from '../shared';
 import { AuthFormComponent,
@@ -11,7 +12,7 @@ import { TokenService,
         AuthService,
         AuthGuard,
         ProtectedDirective,
-        provideAuthInterceptor,
+        AuthInterceptor,
         PoiService } from './shared';
 
 @NgModule({
@@ -39,7 +40,11 @@ export class IgoAuthModule {
         TokenService,
         PoiService,
         AuthGuard,
-        provideAuthInterceptor()
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: AuthInterceptor,
+          multi: true
+        }
       ]
     };
   }
