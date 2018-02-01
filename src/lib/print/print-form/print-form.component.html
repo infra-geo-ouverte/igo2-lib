@@ -10,23 +10,27 @@
   </div>
 
   <div class="igo-input-container">
-    <mat-select
-      formControlName="format"
-      placeholder="{{'igo.printForm.format' | translate}}">
-      <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
-        {{format.value}}
-      </mat-option>
-    </mat-select>
+    <mat-form-field>
+      <mat-select
+        formControlName="format"
+        placeholder="{{'igo.printForm.format' | translate}}">
+        <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+          {{format.value}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <div class="igo-input-container">
-    <mat-select
-      formControlName="resolution"
-      placeholder="{{'igo.printForm.resolution' | translate}}">
-      <mat-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
-        {{resolution.value + ' PPI'}}
-      </mat-option>
-    </mat-select>
+    <mat-form-field>
+      <mat-select
+        formControlName="resolution"
+        placeholder="{{'igo.printForm.resolution' | translate}}">
+        <mat-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
+          {{resolution.value + ' PPI'}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <div class="igo-input-container">

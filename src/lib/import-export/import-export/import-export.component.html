@@ -20,23 +20,27 @@
     <form class="igo-form" [formGroup]="form">
 
       <div class="igo-input-container">
-        <mat-select
-          formControlName="layer"
-          placeholder="{{'igo.importExportForm.exportLayerPlaceholder' | translate}}">
-          <mat-option *ngFor="let layer of layers" [value]="layer.id">
-            {{layer.title}}
-          </mat-option>
-        </mat-select>
+        <mat-form-field>
+          <mat-select
+            formControlName="layer"
+            placeholder="{{'igo.importExportForm.exportLayerPlaceholder' | translate}}">
+            <mat-option *ngFor="let layer of layers" [value]="layer.id">
+              {{layer.title}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="igo-input-container">
-        <mat-select
-          formControlName="format"
-          placeholder="{{'igo.importExportForm.exportFormatPlaceholder' | translate}}">
-          <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
-            {{format.value}}
-          </mat-option>
-        </mat-select>
+        <mat-form-field>
+          <mat-select
+            formControlName="format"
+            placeholder="{{'igo.importExportForm.exportFormatPlaceholder' | translate}}">
+            <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+              {{format.value}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="igo-form-button-group">

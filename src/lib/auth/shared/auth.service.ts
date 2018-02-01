@@ -43,7 +43,8 @@ export class AuthService {
         this.authenticate$.next(true);
       })
       .catch((err: any) => {
-        const message = err.json().message;
+        console.log(err);
+        const message = err.error.message;
         return Observable.throw([{text: message}]);
       });
   }
@@ -63,7 +64,7 @@ export class AuthService {
         this.authenticate$.next(true);
       })
       .catch((err: any) => {
-        const message = err.json().message;
+        const message = err.error.message;
         return Observable.throw([{text: message}]);
       });
   }
