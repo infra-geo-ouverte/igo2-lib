@@ -35,7 +35,7 @@ export class ConfigService {
       .catch((error: any): any => {
         console.log(`Configuration file ${options.path} could not be read`);
         resolve(true);
-        return Observable.throw(error.json().error || 'Server error');
+        return Observable.throw(error.error || 'Server error');
       }).subscribe((configResponse) => {
         Object.assign(this.config, configResponse);
         resolve(true);

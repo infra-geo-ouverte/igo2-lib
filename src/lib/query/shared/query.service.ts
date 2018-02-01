@@ -88,12 +88,12 @@ export class QueryService {
 
   private extractGML2Data(res) {
     let parser = new ol.format.GML2();
-    let features = parser.readFeatures(res.text());
+    let features = parser.readFeatures(res);
 
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
       parser = new ol.format.WMSGetFeatureInfo();
-      features = parser.readFeatures(res.text());
+      features = parser.readFeatures(res);
     }
 
     return features.map(feature => this.featureToResult(feature));
@@ -101,13 +101,13 @@ export class QueryService {
 
   private extractGML3Data(res) {
     const parser = new ol.format.GML3();
-    const features = parser.readFeatures(res.text());
+    const features = parser.readFeatures(res);
 
     return features.map(feature => this.featureToResult(feature));
   }
 
   private extractGeoJSONData(res) {
-    return res.json().features;
+    return JSON.parse(res).features;
   }
 
   private extractTextData(res) {

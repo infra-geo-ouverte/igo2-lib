@@ -187,9 +187,6 @@ export class ImportExportService {
     });
 
     this.requestService.register(request, 'Convert error')
-      .map((res) => {
-        return res.json();
-      })
       .subscribe(
         (res) => {
           this.addFeaturesLayer(res, layerTitle, map.projection);
