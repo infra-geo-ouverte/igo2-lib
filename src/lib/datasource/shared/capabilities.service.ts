@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { URLSearchParams, Response } from '@angular/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { RequestService } from '../../core';
 import { ObjectUtils } from '../../utils';
-import { AuthHttp } from '../../auth';
 import { TimeFilterOptions } from '../../filter';
 
 import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
@@ -18,7 +17,7 @@ export class CapabilitiesService {
     'wmts': new ol.format.WMTSCapabilities()
   };
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private requestService: RequestService) { }
 
   getWMSOptions(baseOptions: WMSDataSourceOptions):
@@ -49,10 +48,13 @@ export class CapabilitiesService {
                   baseUrl: string,
                   version?: string): Observable<any> {
 
-    const params = new URLSearchParams();
-    params.set('request', 'GetCapabilities');
-    params.set('service', service);
-    params.set('version', version || '1.3.0');
+    const params = new HttpParams({
+      fromObject: {
+        request: 'GetCapabilities',
+        service: service,
+        version: version || '1.3.0'
+      }
+    });
 
     const url = baseUrl + '?' + params.toString();
     const cached = this.capabilitiesStore.find(value => value.url === url);
@@ -60,11 +62,14 @@ export class CapabilitiesService {
       return new Observable(c => c.next(cached.capabilities));
     }
 
-    const request = this.authHttp.get(baseUrl, {search: params});
+    const request = this.http.get(baseUrl, {
+      params: params,
+      responseType: 'text'
+    });
 
     return this.requestService.register(request)
-      .map((res: Response) => {
-        const capabilities = this.parsers[service].read(res.text());
+      .map((res) => {
+        const capabilities = this.parsers[service].read(res);
         this.cache(url, capabilities);
 
         return capabilities;

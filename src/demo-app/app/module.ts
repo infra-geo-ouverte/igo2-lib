@@ -1,8 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-import { MdSidenavModule, MdCardModule, MdIconModule } from '@angular/material';
+import { HttpClientModule } from '@angular/common/http';
+import { MatSidenavModule, MatCardModule, MatIconModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 
 import { IgoModule,
@@ -24,10 +24,10 @@ import { AppComponent } from './app.component';
     RouterModule.forRoot([]),
 
     FormsModule,
-    HttpModule,
-    MdSidenavModule,
-    MdCardModule,
-    MdIconModule,
+    HttpClientModule,
+    MatSidenavModule,
+    MatCardModule,
+    MatIconModule,
     IgoModule.forRoot()
   ],
   providers: [

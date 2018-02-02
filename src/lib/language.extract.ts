@@ -11,6 +11,8 @@ _('igo.timeAnalysis');
 _('igo.bookmarkButton.dialog.createTitle');
 _('igo.bookmarkButton.dialog.createMsg');
 
+_('igo.catalogTool.baseLayers');
+
 _('igo.context.publicContexts');
 _('igo.context.sharedContexts');
 _('igo.context.ourContexts');

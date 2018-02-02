@@ -19,9 +19,9 @@
 			}
 		},
 		"catalog": "Catalog",
-    "catalogTool": {
-      "baseLayers": "Base Layers"
-    },
+		"catalogTool": {
+			"baseLayers": "Base Layers"
+		},
 		"confirmDialog": {
 			"cancelBtn": "Cancel",
 			"confirmBtn": "Confirm",
@@ -47,8 +47,8 @@
 				"edit": "Edit",
 				"title": "Title",
 				"titleRequired": "Title required",
-        "uri": "URI",
-        "uriRequired": "URI required"
+				"uri": "URI",
+				"uriRequired": "URI required"
 			},
 			"invalid": {
 				"text": "Context '{{value}}' is invalid",
@@ -62,29 +62,29 @@
 			"sharedContexts": "Shared contexts"
 		},
 		"contexts": "Contexts",
-    "dropGeoFile": {
-      "success": {
-        "title": "The layer '{{value}}' was added to the map",
-        "text": "Imported file ({{i}}/{{count}})"
-      },
-      "invalid": {
-        "title": "The file '{{value}}' is invalid",
-        "text": "Invalid file ({{i}}/{{count}})"
-      },
-      "unreadable": {
-        "title": "The file '{{value}}' is unreadable",
-        "text": "Unreadable file"
-      }
-    },
-    "importExport": "Import & export",
-    "importExportForm": {
+		"dropGeoFile": {
+			"invalid": {
+				"text": "Invalid file ({{i}}/{{count}})",
+				"title": "The file '{{value}}' is invalid"
+			},
+			"success": {
+				"text": "Imported file ({{i}}/{{count}})",
+				"title": "The layer '{{value}}' was added to the map"
+			},
+			"unreadable": {
+				"text": "Unreadable file",
+				"title": "The file '{{value}}' is unreadable"
+			}
+		},
+		"importExport": "Import & export",
+		"importExportForm": {
+			"exportButton": "Export",
+			"exportFormatPlaceholder": "Format",
+			"exportLayerPlaceholder": "Layer",
+			"exportTabTitle": "Export",
 			"importButton": "Import",
 			"importProjPlaceholder": "Source projection (EPSG:4326)",
-      "importTabTitle": "Import",
-      "exportButton": "Export",
-      "exportFormatPlaceholder": "Format",
-      "exportLayerPlaceholder": "Layer",
-      "exportTabTitle": "Export"
+			"importTabTitle": "Import"
 		},
 		"layer": {
 			"hideLayer": "Hide Layer",
@@ -153,17 +153,17 @@
 				}
 			}
 		},
-    "shareMap": {
-      "button": "Share map",
-      "copy": "Copy to clipboard",
-      "dialog": {
-				"copyMsg": "Link copied to clipboard",
-        "copyTitle": "Link"
-      },
-      "placeholderLink": "Link",
-      "share": "Share"
-    },
 		"searchResults": "Search Results",
+		"shareMap": {
+			"button": "Share map",
+			"copy": "Copy to clipboard",
+			"dialog": {
+				"copyMsg": "Link copied to clipboard",
+				"copyTitle": "Link"
+			},
+			"placeholderLink": "Link",
+			"share": "Share"
+		},
 		"table": {
 			"filter": "Filter"
 		},

@@ -59,7 +59,6 @@ module.exports = {
    externals: [
      /^\@angular\//,
      /^rxjs\//,
-     /^md2/,
      /^ts-md5/,
      /^@ngx-translate/,
      /^zone.js/,

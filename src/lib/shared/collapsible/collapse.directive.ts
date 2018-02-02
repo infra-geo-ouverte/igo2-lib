@@ -1,5 +1,5 @@
 import { Directive, Input, Output, EventEmitter,
-         HostListener, ElementRef, Renderer } from '@angular/core';
+         HostListener, ElementRef, Renderer2 } from '@angular/core';
 
 
 @Directive({
@@ -29,16 +29,16 @@ export class CollapseDirective {
     this.collapsed = !this.collapsed;
   }
 
-  constructor(private renderer: Renderer, private el: ElementRef) { }
+  constructor(private renderer: Renderer2, private el: ElementRef) { }
 
   private collapseTarget() {
-    this.renderer.setElementClass(this.target, 'igo-collapsed', true);
-    this.renderer.setElementClass(this.el.nativeElement, 'collapsed', true);
+    this.renderer.addClass(this.target, 'igo-collapsed');
+    this.renderer.addClass(this.el.nativeElement, 'collapsed');
   }
 
   private expandTarget() {
-    this.renderer.setElementClass(this.target, 'igo-collapsed', false);
-    this.renderer.setElementClass(this.el.nativeElement, 'collapsed', false);
+    this.renderer.removeClass(this.target, 'igo-collapsed');
+    this.renderer.removeClass(this.el.nativeElement, 'collapsed');
   }
 
 }

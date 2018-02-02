@@ -1,9 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { Http, RequestOptions } from '@angular/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { AuthHttp } from 'angular2-jwt';
-
-import { ConfigService } from '../core';
 import { IgoSharedModule } from '../shared';
 import { AuthFormComponent,
          AuthInternComponent,
@@ -11,10 +8,11 @@ import { AuthFormComponent,
          AuthGoogleComponent
 } from './auth-form';
 
-import { AuthService,
+import { TokenService,
+        AuthService,
         AuthGuard,
         ProtectedDirective,
-        authHttpServiceFactory,
+        AuthInterceptor,
         PoiService } from './shared';
 
 @NgModule({
@@ -39,12 +37,13 @@ export class IgoAuthModule {
       ngModule: IgoAuthModule,
       providers: [
         AuthService,
+        TokenService,
         PoiService,
         AuthGuard,
         {
-          provide: AuthHttp,
-          useFactory: authHttpServiceFactory,
-          deps: [Http, RequestOptions, ConfigService]
+          provide: HTTP_INTERCEPTORS,
+          useClass: AuthInterceptor,
+          multi: true
         }
       ]
     };

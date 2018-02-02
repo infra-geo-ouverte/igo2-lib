@@ -13,6 +13,9 @@ import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 import 'rxjs/add/operator/combineLatest';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/skip';
+import 'rxjs/add/observable/empty';
 
 import { IgoAuthModule } from './auth';
 import { IgoCoreModule } from './core';

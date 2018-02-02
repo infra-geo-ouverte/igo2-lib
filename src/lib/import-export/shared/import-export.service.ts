@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { ConfigService, MessageService, LanguageService, RequestService } from '../../core';
 import { MapService } from '../../map/shared/map.service';
@@ -13,7 +13,7 @@ export class ImportExportService {
 
   private urlApi: string;
 
-  constructor(private http: Http,
+  constructor(private http: HttpClient,
               private config: ConfigService,
               private mapService: MapService,
               private requestService: RequestService,
@@ -183,13 +183,10 @@ export class ImportExportService {
     formData.append('sourceSrs', sourceSrs);
     formData.append('targetSrs', map.projection);
     const request = this.http.post(url, formData, {
-      headers: new Headers()
+      headers: new HttpHeaders()
     });
 
     this.requestService.register(request, 'Convert error')
-      .map((res) => {
-        return res.json();
-      })
       .subscribe(
         (res) => {
           this.addFeaturesLayer(res, layerTitle, map.projection);

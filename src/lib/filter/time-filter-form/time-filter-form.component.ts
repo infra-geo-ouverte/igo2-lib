@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { MdSlider } from '@angular/material';
+import { MatSlider } from '@angular/material';
 import { TimeFilterOptions } from '../shared';
 
 @Component({
@@ -8,12 +8,6 @@ import { TimeFilterOptions } from '../shared';
   styleUrls: ['./time-filter-form.component.styl']
 })
 export class TimeFilterFormComponent {
-
-  static formats = {
-    date: 'y-MM-dd',
-    time: 'HH:mm',
-    datetime: 'y-MM-dd HH:mm:ss'
-  };
 
   @Input()
   get options(): TimeFilterOptions { return this._options; }
@@ -47,16 +41,11 @@ export class TimeFilterFormComponent {
   public playIcon: string = 'play_circle_filled';
 
   @Output() change: EventEmitter<Date | [Date | Date]> = new EventEmitter();
-  @ViewChild(MdSlider) mySlider;
+  @ViewChild(MatSlider) mySlider;
 
   get type(): 'date' | 'time' | 'datetime' {
     return this.options.type === undefined ?
       'date' : this.options.type;
-  }
-
-  get format(): string {
-    return this.options.format === undefined ?
-      TimeFilterFormComponent.formats[this.type] : this.options.format;
   }
 
   get isRange(): boolean {
@@ -83,7 +72,7 @@ export class TimeFilterFormComponent {
         default:
           step = 10800000;
       }
-    }else {
+    } else {
       step = this.options.step;
     }
 
@@ -113,22 +102,16 @@ export class TimeFilterFormComponent {
   constructor() { }
 
   handleDateChange(event: any) {
-    // Calendar throw handleDateChange when first selected with weird date
-    if ( (event.source instanceof MdSlider) ||
-        (event.source.date === event.source.value) ||
-        (event.source.value === null) ) {
-
-      this.setupDateOutput();
-      this.applyTypeChange();
-      this.change.emit([this.startDate, this.endDate]);
-    }
+    this.setupDateOutput();
+    this.applyTypeChange();
+    this.change.emit([this.startDate, this.endDate]);
   }
 
   dateToNumber(date: Date): number {
     let newDate;
     if (date) {
       newDate = new Date(date);
-    }else {
+    } else {
       newDate = new Date(this.min);
     }
 
@@ -161,7 +144,7 @@ export class TimeFilterFormComponent {
 
     if (this.interval) {
       this.stopFilter();
-    }else {
+    } else {
       this.playIcon = 'pause_circle_filled';
       this.interval = setInterval(function(that) {
         let newMinDateNumber;
@@ -175,7 +158,7 @@ export class TimeFilterFormComponent {
           that.stopFilter();
         }
 
-        that.handleDateChange({source: {value: that.date, date: that.date}});
+        that.handleDateChange({value: that.date, date: that.date});
 
       }, this.timeInterval, this);
     }

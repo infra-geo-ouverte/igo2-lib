@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import { ConfigService } from '../../core';
 import { AuthService } from '../../auth';
@@ -35,7 +35,7 @@ export class UserButtonComponent {
   public visible: boolean = false;
 
   constructor(
-    private dialog: MdDialog,
+    private dialog: MatDialog,
     private config: ConfigService,
     public auth: AuthService
   ) {

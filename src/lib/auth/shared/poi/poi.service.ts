@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { AuthHttp } from 'angular2-jwt';
 
 import { RequestService, ConfigService } from '../../../core';
 import { Poi } from './poi.interface';
@@ -10,7 +10,7 @@ export class PoiService {
 
   private baseUrl: string;
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private requestService: RequestService,
               private config: ConfigService) {
 
@@ -21,30 +21,20 @@ export class PoiService {
     if (!this.baseUrl) { return Observable.empty(); }
 
     const url = this.baseUrl + '/pois';
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get POIs error')
-      .map((res) => {
-        const pois: Poi[] = res.json();
-        return pois;
-      });
+    const request = this.http.get<Poi[]>(url);
+    return this.requestService.register(request, 'Get POIs error');
   }
 
   delete(id: string): Observable<void> {
     const url = this.baseUrl + '/pois/' + id;
-    const request = this.authHttp.delete(url);
-    return this.requestService.register(request, 'Delete POI error')
-      .map((res) => {
-        return res;
-      });
+    const request = this.http.delete(url);
+    return this.requestService.register(request, 'Delete POI error');
   }
 
   create(context: Poi): Observable<Poi> {
     const url = this.baseUrl + '/pois';
-    const request = this.authHttp.post(url, JSON.stringify(context));
-    return this.requestService.register(request, 'Create POI error')
-      .map((res) => {
-        return res.json();
-      });
+    const request = this.http.post<Poi>(url, JSON.stringify(context));
+    return this.requestService.register(request, 'Create POI error');
   }
 
 }

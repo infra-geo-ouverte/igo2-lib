@@ -10,6 +10,6 @@ export class IgoLibPage {
   }
 
   getIgoSearchModule() {
-    return element.all(by.css('igo-demo md-card-subtitle')).get(1);
+    return element.all(by.css('igo-demo mat-card-subtitle')).get(1);
   }
 }

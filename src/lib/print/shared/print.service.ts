@@ -17,7 +17,7 @@ export class PrintService {
   constructor(private messageService: MessageService,
               private activityService: ActivityService) {}
 
-  print(map: IgoMap, options: PrintOptions): Subject<SubjectStatus> {
+  print(map: IgoMap, options: PrintOptions): Subject<any> {
     const status$ = new Subject();
 
     const format = options.format;

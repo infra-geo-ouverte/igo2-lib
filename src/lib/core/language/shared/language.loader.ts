@@ -1,4 +1,4 @@
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { TranslateLoader } from '@ngx-translate/core';
 
@@ -7,7 +7,7 @@ import { ConfigService } from '../../config';
 declare function require(arg: string): any;
 
 export class LanguageLoader implements TranslateLoader {
-  constructor(private http: Http,
+  constructor(private http: HttpClient,
               private prefix?: string,
               private suffix: string = '.json',
               private config?: ConfigService) {}
@@ -24,8 +24,7 @@ export class LanguageLoader implements TranslateLoader {
         return igoLocale$;
     }
 
-    const appLocale$ = this.http.get(`${this.prefix}${lang}${this.suffix}`)
-        .map((res: Response) => res.json());
+    const appLocale$ = this.http.get(`${this.prefix}${lang}${this.suffix}`);
 
     return igoLocale$.combineLatest(appLocale$, (igoTranslation, appTranslation) => {
       return Object.assign(igoTranslation, appTranslation);

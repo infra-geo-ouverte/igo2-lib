@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output,
          EventEmitter, ViewChild, ElementRef,
          OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { FloatLabelType } from '@angular/material'
 
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -31,6 +32,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this._placeholder = value;
   }
   private _placeholder: string = '';
+
+  @Input()
+  get floatLabel() { return this._floatLabel; }
+  set floatLabel(value: FloatLabelType) {
+    this._floatLabel = value;
+  }
+  private _floatLabel: FloatLabelType = 'auto';
 
   @Input()
   get disabled() { return this._disabled; }

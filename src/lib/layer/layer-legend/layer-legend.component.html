@@ -3,17 +3,17 @@
 </small>
 
 <ng-template ngFor let-item [ngForOf]="layer.dataSource.getLegend()">
-  <md-list-item *ngIf="item.title">
-    <md-icon
+  <mat-list-item *ngIf="item.title">
+    <mat-icon
       id="legend-toggle"
       class="igo-chevron"
-      md-list-avatar
+      mat-list-avatar
       igoCollapse
       [target]="legend"
       [collapsed]="false">
-    </md-icon>
-    <h4 mdLine>{{item.title}}</h4>
-  </md-list-item>
+    </mat-icon>
+    <h4 matLine>{{item.title}}</h4>
+  </mat-list-item>
 
   <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
     <img

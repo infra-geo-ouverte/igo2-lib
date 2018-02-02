@@ -32,7 +32,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     const map = this.mapService.getMap();
     const contextFromMap = this.contextService.getContextFromMap(map);
 
-    const changes = {
+    const changes: any = {
       layers: contextFromMap.layers,
       map: {
         view: contextFromMap.map.view

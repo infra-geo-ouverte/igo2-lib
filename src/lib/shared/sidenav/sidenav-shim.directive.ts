@@ -1,5 +1,5 @@
-import { Directive, Self, HostListener, Renderer } from '@angular/core';
-import { MdSidenav } from '@angular/material';
+import { Directive, Self, HostListener, Renderer2 } from '@angular/core';
+import { MatSidenav } from '@angular/material';
 
 
 /**
@@ -31,14 +31,14 @@ export class SidenavShimDirective {
 
   @HostListener('close', ['$event']) onClose() {
     if (this.blurElement) {
-      this.renderer.invokeElementMethod(this.blurElement, 'blur');
+      this.renderer.selectRootElement(this.blurElement).blur();
     }
 
     this.blurElement = undefined;
     this.focusedElement = undefined;
   }
 
-  constructor(@Self() component: MdSidenav,
-              private renderer: Renderer) {}
+  constructor(@Self() component: MatSidenav,
+              private renderer: Renderer2) {}
 
 }

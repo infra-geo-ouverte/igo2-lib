@@ -1,5 +1,5 @@
 import { async, inject, TestBed } from '@angular/core/testing';
-import { ElementRef, Renderer } from '@angular/core';
+import { ElementRef, Renderer2 } from '@angular/core';
 
 import { CollapseDirective } from './collapse.directive';
 
@@ -9,14 +9,14 @@ describe('CollapseDirective', () => {
    beforeEach(async(() => {
     TestBed.configureTestingModule({
       providers: [
-        Renderer
+        Renderer2
       ]
     })
     .compileComponents();
   }));
 
   it('should create an instance',
-    inject([Renderer], (renderer: Renderer) => {
+    inject([Renderer2], (renderer: Renderer2) => {
       const directive = new CollapseDirective(renderer, new MockElementRef({}));
       expect(directive).toBeTruthy();
   }));

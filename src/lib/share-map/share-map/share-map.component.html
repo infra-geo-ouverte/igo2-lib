@@ -2,34 +2,34 @@
   (ngSubmit)="resetUrl(form.value)">
 
   <div *ngIf="hasApi" class="igo-input-container">
-    <md-form-field>
-      <input mdInput required
+    <mat-form-field>
+      <input matInput required
              [placeholder]="'igo.context.form.title' | translate"
              formControlName="title">
-     <md-error>
+     <mat-error>
       {{ 'igo.context.form.titleRequired' | translate }}
-     </md-error>
-    </md-form-field>
+     </mat-error>
+    </mat-form-field>
   </div>
 
   <div *ngIf="hasApi" id="uriInput" class="igo-input-container">
-    <md-form-field>
+    <mat-form-field>
       <span *ngIf="userId" class="prefix">{{userId}}-</span>
       <span class="fieldWrapper">
-        <input mdInput required
+        <input matInput required
              [readonly]="!userId"
              [placeholder]="'igo.context.form.uri' | translate"
              formControlName="uri">
        </span>
-     <md-error>
+     <mat-error>
       {{ 'igo.context.form.uriRequired' | translate }}
-     </md-error>
-    </md-form-field>
+     </mat-error>
+    </mat-form-field>
   </div>
 
   <div class="igo-form-button-group">
     <button
-      md-raised-button
+      mat-raised-button
       type="submit"
       [disabled]="!form.valid">
       {{ 'igo.shareMap.button' | translate }}
@@ -39,18 +39,18 @@
 </form>
 
 <div *ngIf="url" class="igo-input-container linkToShare">
-  <md-form-field>
-    <textarea #textArea mdInput readonly rows="1"
+  <mat-form-field>
+    <textarea #textArea matInput readonly rows="1"
       [placeholder]="'igo.shareMap.placeholderLink' | translate"
       [value]="url"></textarea>
     <button
-      md-icon-button
+      mat-icon-button
       tooltip-position="below"
-      mdTooltipShowDelay="500"
-      [md-tooltip]="'igo.shareMap.copy' | translate"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.shareMap.copy' | translate"
       color="primary"
       (click)="copyTextToClipboard(textArea)">
-      <md-icon>content_copy</md-icon>
+      <mat-icon>content_copy</mat-icon>
     </button>
-  </md-form-field>
+  </mat-form-field>
 </div>

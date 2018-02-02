@@ -14,7 +14,7 @@ If you want to develop in IGO2 Library, it can be installed by:
 4. Open your browser at http://localhost:4200/
 
 ## Install user instance
-The latest release of IGO2 Library can be used and installed from npm `npm install --save igo2`
+The latest release of IGO2 Library can be used and installed from npm `npm install --save @igo2/igo2`
 
 ### Getting started
 

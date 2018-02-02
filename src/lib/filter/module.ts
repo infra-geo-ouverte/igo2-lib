@@ -1,6 +1,9 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Md2Module } from 'md2';
+import { MatDatepickerModule,
+         MatNativeDateModule,
+         MAT_DATE_LOCALE} from '@angular/material';
+import { MatDatetimepickerModule, MatNativeDatetimeModule } from '@mat-datetimepicker/core';
 
 import { IgoSharedModule } from '../shared';
 
@@ -14,7 +17,10 @@ import { TimeFilterListComponent,
   imports: [
     IgoSharedModule,
     ReactiveFormsModule,
-    Md2Module
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatDatetimepickerModule,
+    MatNativeDatetimeModule
   ],
   exports: [
     FilterableDataSourcePipe,
@@ -35,7 +41,10 @@ export class IgoFilterModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoFilterModule,
-      providers: []
+      providers: [{
+        provide: MAT_DATE_LOCALE,
+        useValue: 'fr'
+      }]
     };
   }
 }

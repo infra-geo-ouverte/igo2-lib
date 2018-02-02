@@ -60,7 +60,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private addLayerToMap(contextLayer: ContextLayer) {
     const sourceContext = contextLayer.source;
-    const layerContext = Object.assign({}, contextLayer);
+    const layerContext: any = Object.assign({}, contextLayer);
     delete layerContext.source;
 
     const dataSourceContext = Object.assign({}, layerContext, sourceContext);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
 
 import { ObjectUtils } from '../../utils';
 
@@ -11,7 +11,7 @@ export class ConfigService {
 
   private config: Object = {};
 
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient) {}
 
   /**
    * Use to get the data found in config file
@@ -31,10 +31,11 @@ export class ConfigService {
       return true;
     }
     return new Promise((resolve, reject) => {
-      this.http.get(options.path).map(res => res.json()).catch((error: any): any => {
+      this.http.get(options.path)
+      .catch((error: any): any => {
         console.log(`Configuration file ${options.path} could not be read`);
         resolve(true);
-        return Observable.throw(error.json().error || 'Server error');
+        return Observable.throw(error.error || 'Server error');
       }).subscribe((configResponse) => {
         Object.assign(this.config, configResponse);
         resolve(true);

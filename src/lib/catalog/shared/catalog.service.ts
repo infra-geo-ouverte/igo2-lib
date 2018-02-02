@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
 import { RequestService, LanguageService, ConfigService } from '../../core';
-import { AuthHttp } from '../../auth';
 
 import { Catalog } from './catalog.interface';
 
@@ -14,7 +14,7 @@ export class CatalogService {
   public catalogs$ = new BehaviorSubject<Catalog[]>(undefined);
   private baseUrl: string;
 
-  constructor(private authHttp: AuthHttp,
+  constructor(private http: HttpClient,
               private requestService: RequestService,
               private config: ConfigService,
               private languageService: LanguageService) {
@@ -26,30 +26,19 @@ export class CatalogService {
 
   get(): Observable<Catalog[]> {
     const url = this.baseUrl + '/catalogs';
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get catalogs error')
-      .map((res) => {
-        const catalogs: Catalog[] = res.json();
-        return catalogs;
-      });
+    const request = this.http.get<Catalog[]>(url);
+    return this.requestService.register(request, 'Get catalogs error');
   }
 
   getById(id: string): Observable<Catalog> {
     const url = this.baseUrl + '/catalogs/' + id;
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get catalog error')
-      .map((res) => {
-        const catalog: Catalog = res.json();
-        return catalog;
-      });
+    const request = this.http.get<Catalog>(url);
+    return this.requestService.register(request, 'Get catalog error');
   }
 
   getBaseLayers(url: string) {
-    const request = this.authHttp.get(url);
-    return this.requestService.register(request, 'Get base layers error')
-      .map((res) => {
-        return res.json();
-      });
+    const request = this.http.get(url);
+    return this.requestService.register(request, 'Get base layers error');
   }
 
   selectCatalog(catalog: Catalog) {

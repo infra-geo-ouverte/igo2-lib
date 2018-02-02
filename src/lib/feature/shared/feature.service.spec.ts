@@ -1,5 +1,5 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { HttpModule, JsonpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { FeatureService } from './feature.service';
 
@@ -7,8 +7,7 @@ describe('FeatureService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule,
-        JsonpModule
+        HttpClientModule
       ],
       providers: [
         FeatureService
