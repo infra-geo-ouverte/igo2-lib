@@ -25,6 +25,7 @@
           [(ngModel)]="startDate"
           [min]="min"
           [max]="getRangeMaxDate()"
+          (input)="startDate"
           (dateChange)="handleDateChange($event)">
       </mat-form-field>
     </div>
