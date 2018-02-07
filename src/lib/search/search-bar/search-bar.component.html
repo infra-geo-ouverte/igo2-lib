@@ -10,10 +10,19 @@
     (touchend)="keyup($event)">
 </mat-form-field>
 
-<button
-  mat-icon-button
-  [color]="color"
-  (click)="clear()"
-  *ngIf="term.length > 0 ? true : false">
-  <mat-icon>clear</mat-icon>
-</button>
+<div class="searchButtonDiv">
+  <button
+    mat-icon-button
+    [color]="color"
+    *ngIf="searchIcon">
+    <mat-icon>search</mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    [color]="color"
+    (click)="clear()"
+    *ngIf="term.length > 0 ? true : false">
+    <mat-icon>clear</mat-icon>
+  </button>
+</div>

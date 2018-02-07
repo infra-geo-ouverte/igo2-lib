@@ -66,6 +66,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
   private _length: number = 3;
 
+  @Input()
+  get searchIcon() { return this._searchIcon; }
+  set searchIcon(value: boolean) {
+    this._searchIcon = value;
+  }
+  private _searchIcon: boolean = false;
+
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private stream$ = new Subject<string>();
   private stream$$: Subscription;
