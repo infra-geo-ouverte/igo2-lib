@@ -2,9 +2,10 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { catchError, debounceTime, map, tap } from 'rxjs/operators';
 
 import { uuid } from '../../utils/uuid';
-import { RequestService, ConfigService, RouteService,
+import { ConfigService, RouteService,
         Message, LanguageService } from '../../core';
 
 import { AuthService } from '../../auth';
@@ -30,7 +31,6 @@ export class ContextService {
 
   constructor(private http: HttpClient,
               private authService: AuthService,
-              private requestService: RequestService,
               private languageService: LanguageService,
               private toolService: ToolService,
               private config: ConfigService,
@@ -64,52 +64,47 @@ export class ContextService {
 
   get(): Observable<ContextsList> {
     const url = this.baseUrl + '/contexts';
-    const request = this.http.get<ContextsList>(url);
-    return this.requestService.register(request, 'Get contexts error');
+    return this.http.get<ContextsList>(url);
   }
 
   getById(id: string): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id;
-    const request = this.http.get<Context>(url);
-    return this.requestService.register(request, 'Get context error');
+    return this.http.get<Context>(url);
   }
 
   getDetails(id: string): Observable<DetailedContext> {
     const url = this.baseUrl + '/contexts/' + id + '/details';
-    const request = this.http.get<DetailedContext>(url);
-    return this.requestService.register(request, 'Get context details error')
-      .catch(res => this.handleError(res, id));
+    return this.http.get<DetailedContext>(url).pipe(
+      catchError(res => this.handleError(res, id))
+    );
   }
 
   getDefault(): Observable<DetailedContext> {
     const url = this.baseUrl + '/contexts/default';
-    const request = this.http.get<DetailedContext>(url);
-    return this.requestService.register(request, 'Get context default error')
-      .map((context) => {
+    return this.http.get<DetailedContext>(url).pipe(
+      tap((context) => {
         this.defaultContextId$.next(context.id);
-        return context;
-      });
+      })
+    );
   }
 
   delete(id: string): Observable<void> {
     const url = this.baseUrl + '/contexts/' + id;
-    const request = this.http.delete(url);
-    return this.requestService.register(request, 'Delete context error')
-      .map((res) => {
+    return this.http.delete<void>(url).pipe(
+      tap((res) => {
         const contexts: ContextsList = {ours: []};
         Object.keys(this.contexts$.value).forEach(
           key => contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id)
         );
         this.contexts$.next(contexts);
-        return res;
-      });
+      })
+    );
   }
 
   create(context: DetailedContext): Observable<Context> {
     const url = this.baseUrl + '/contexts';
-    const request = this.http.post<Context>(url, JSON.stringify(context));
-    return this.requestService.register(request, 'Create context error')
-      .map((contextCreated) => {
+    return this.http.post<Context>(url, JSON.stringify(context)).pipe(
+      map((contextCreated) => {
         if (this.authService.authenticated) {
           contextCreated.permission = TypePermission[TypePermission.write];
         } else {
@@ -118,25 +113,25 @@ export class ContextService {
         this.contexts$.value.ours.push(contextCreated);
         this.contexts$.next(this.contexts$.value);
         return contextCreated;
-      });
+      })
+    );
   }
 
   clone(id: string, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
-    const request = this.http.post<Context>(url, JSON.stringify(properties));
-    return this.requestService.register(request, 'Clone context error')
-      .map((contextCloned) => {
+    return this.http.post<Context>(url, JSON.stringify(properties)).pipe(
+      map((contextCloned) => {
         contextCloned.permission = TypePermission[TypePermission.write];
         this.contexts$.value.ours.push(contextCloned);
         this.contexts$.next(this.contexts$.value);
         return contextCloned;
-      });
+      })
+    );
   }
 
   update(id: string, context: Context): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id;
-    const request = this.http.patch<Context>(url, JSON.stringify(context));
-    return this.requestService.register(request, 'Update context error');
+    return this.http.patch<Context>(url, JSON.stringify(context));
   }
 
 // =================================================================
@@ -146,20 +141,17 @@ addToolAssociation(contextId: string, toolId: string): Observable<void> {
   const association = {
     toolId: toolId
   };
-  const request = this.http.post(url, JSON.stringify(association));
-  return this.requestService.register(request, 'Add tool association error');
+  return this.http.post<void>(url, JSON.stringify(association));
 }
 
 deleteToolAssociation(contextId: string, toolId: string): Observable<any> {
   const url = `${this.baseUrl}/contexts/${contextId}/tools/${toolId}`;
-  const request = this.http.delete(url);
-  return this.requestService.register(request, 'Delete tool association error');
+  return this.http.delete(url);
 }
 
 getPermissions(id: string): Observable<ContextPermission[]> {
   const url = this.baseUrl + '/contexts/' + id + '/permissions';
-  const request = this.http.get<ContextPermission[]>(url);
-  return this.requestService.register(request, 'Get context permissions error');
+  return this.http.get<ContextPermission[]>(url);
 }
 
 addPermissionAssociation(contextId: string, profil: string,
@@ -170,28 +162,27 @@ addPermissionAssociation(contextId: string, profil: string,
     profil: profil,
     typePermission: type
   };
-  const request = this.http.post(url, JSON.stringify(association));
-  return this.requestService.register(request, 'Add permission association error');
+  return this.http.post<ContextPermission[]>(url, JSON.stringify(association));
 }
 
 deletePermissionAssociation(contextId: string, permissionId: string): Observable<void> {
   const url = `${this.baseUrl}/contexts/${contextId}/permissions/${permissionId}`;
-  const request = this.http.delete(url);
-  return this.requestService.register(request, 'Delete permission association error');
+  return this.http.delete<void>(url);
 }
 
 // ======================================================================
 
   getLocalContexts(): Observable<ContextsList> {
     const url = this.getPath(this.options.contextListFile);
-    return this.requestService.register(this.http.get(url))
-      .map(res => { return {ours: res}; });
+    return this.http.get<ContextsList>(url).pipe(
+      map((res: any) => { return {ours: res}; })
+    );
   }
 
   getLocalContext(uri): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
-    return this.requestService.register(this.http.get(url)
-      .catch(res => {
+    return this.http.get<DetailedContext>(url).pipe(
+      catchError(res => {
         return this.handleError(res, uri);
       })
     );
@@ -241,7 +232,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     };
 
     if (this.route && this.route.options.contextKey) {
-      this.route.queryParams.debounceTime(100).subscribe(params => {
+      this.route.queryParams.pipe(debounceTime(100)).subscribe(params => {
         const contextParam = params[this.route.options.contextKey as string];
         let direct = false;
         if (contextParam) {
@@ -302,8 +293,8 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
     this.editedContext$.next(context);
   }
 
-  getContextFromMap(map: IgoMap): DetailedContext {
-    const view = map.ol.getView();
+  getContextFromMap(igoMap: IgoMap): DetailedContext {
+    const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
     const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
 
@@ -322,7 +313,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
       tools: []
     };
 
-    const layers = map.layers$.getValue();
+    const layers = igoMap.layers$.getValue();
 
     let order = layers.length;
     for (const l of layers) {

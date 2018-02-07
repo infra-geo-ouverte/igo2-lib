@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { ConfigService, MessageService, LanguageService, RequestService } from '../../core';
+import { ConfigService, MessageService, LanguageService } from '../../core';
 import { MapService } from '../../map/shared/map.service';
 import { VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -16,7 +16,6 @@ export class ImportExportService {
   constructor(private http: HttpClient,
               private config: ConfigService,
               private mapService: MapService,
-              private requestService: RequestService,
               private messageService: MessageService,
               private languageService: LanguageService) {
 
@@ -186,8 +185,7 @@ export class ImportExportService {
       headers: new HttpHeaders()
     });
 
-    this.requestService.register(request, 'Convert error')
-      .subscribe(
+    request.subscribe(
         (res) => {
           this.addFeaturesLayer(res, layerTitle, map.projection);
           const title = translate.instant('igo.dropGeoFile.success.title', {

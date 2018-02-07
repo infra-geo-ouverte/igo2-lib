@@ -17,7 +17,7 @@ export class IChercheSearchSource extends SearchSource {
 
   static _name: string = 'ICherche Québec';
 
-  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
+  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geocode';
   private options: SearchSourceOptions;
 
   constructor(private http: HttpClient,

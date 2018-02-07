@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { RequestService } from '../../core';
 import { ObjectUtils } from '../../utils';
 import { TimeFilterOptions } from '../../filter';
 
@@ -17,8 +16,7 @@ export class CapabilitiesService {
     'wmts': new ol.format.WMTSCapabilities()
   };
 
-  constructor(private http: HttpClient,
-              private requestService: RequestService) { }
+  constructor(private http: HttpClient) { }
 
   getWMSOptions(baseOptions: WMSDataSourceOptions):
       Observable<WMSDataSourceOptions> {
@@ -67,7 +65,7 @@ export class CapabilitiesService {
       responseType: 'text'
     });
 
-    return this.requestService.register(request)
+    return request
       .map((res) => {
         const capabilities = this.parsers[service].read(res);
         this.cache(url, capabilities);

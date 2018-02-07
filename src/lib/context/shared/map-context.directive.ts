@@ -1,5 +1,6 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { filter } from 'rxjs/operators';
 
 import { IgoMap, MapBrowserComponent, MapViewOptions } from '../../map';
 
@@ -25,9 +26,9 @@ export class MapContextDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.context$$ = this.contextService.context$
-      .filter(context => context !== undefined)
-      .subscribe(context => this.handleContextChange(context));
+    this.context$$ = this.contextService.context$.pipe(
+      filter(context => context !== undefined)
+    ).subscribe(context => this.handleContextChange(context));
   }
 
   ngOnDestroy() {

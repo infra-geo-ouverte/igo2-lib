@@ -3,6 +3,7 @@ import { MatSort } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/observable/merge';
 
 import { TableDatabase, TableModel } from './index';
 

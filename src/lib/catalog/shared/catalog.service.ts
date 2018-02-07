@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { RequestService, LanguageService, ConfigService } from '../../core';
+import { LanguageService, ConfigService } from '../../core';
 
 import { Catalog } from './catalog.interface';
 
@@ -15,7 +15,6 @@ export class CatalogService {
   private baseUrl: string;
 
   constructor(private http: HttpClient,
-              private requestService: RequestService,
               private config: ConfigService,
               private languageService: LanguageService) {
 
@@ -26,19 +25,16 @@ export class CatalogService {
 
   get(): Observable<Catalog[]> {
     const url = this.baseUrl + '/catalogs';
-    const request = this.http.get<Catalog[]>(url);
-    return this.requestService.register(request, 'Get catalogs error');
+    return this.http.get<Catalog[]>(url);
   }
 
   getById(id: string): Observable<Catalog> {
     const url = this.baseUrl + '/catalogs/' + id;
-    const request = this.http.get<Catalog>(url);
-    return this.requestService.register(request, 'Get catalog error');
+    return this.http.get<Catalog>(url);
   }
 
-  getBaseLayers(url: string) {
-    const request = this.http.get(url);
-    return this.requestService.register(request, 'Get base layers error');
+  getBaseLayers(url: string): Observable<any> {
+    return this.http.get(url);
   }
 
   selectCatalog(catalog: Catalog) {

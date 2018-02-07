@@ -1,6 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy,
          HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { debounceTime } from 'rxjs/operators';
 
 import { MessageService, LanguageService } from '../../core';
 import { ConfirmDialogService } from '../../shared';
@@ -127,9 +128,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       });
 
     // See feature-list.component for an explanation about the debounce time
-    this.selectedContext$$ = this.contextService.context$
-      .debounceTime(100)
-      .subscribe(context => this.component.selectedContext = context);
+    this.selectedContext$$ = this.contextService.context$.pipe(
+      debounceTime(100)
+    ).subscribe(context => this.component.selectedContext = context);
 
     this.contextService.loadContexts();
   }

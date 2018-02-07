@@ -61,23 +61,33 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
         .open(translate.instant('igo.poiButton.dialog.confirmDelete'))
         .subscribe((confirm) => {
           if (confirm) {
-            this.poiService.delete(poi.id).subscribe(() => {
-              const title = translate.instant('igo.poiButton.dialog.deleteTitle');
-              const message = translate.instant('igo.poiButton.dialog.deleteMsg', {
-                value: poi.title
-              });
-              this.messageService.info(message, title);
-              this.pois = this.pois.filter((p) => p.id !== poi.id);
-            });
+            this.poiService.delete(poi.id).subscribe(
+              () => {
+                const title = translate.instant('igo.poiButton.dialog.deleteTitle');
+                const message = translate.instant('igo.poiButton.dialog.deleteMsg', {
+                  value: poi.title
+                });
+                this.messageService.info(message, title);
+                this.pois = this.pois.filter((p) => p.id !== poi.id);
+              },
+              (err) => {
+                this.messageService.error(err.error.message, 'DELETE Pois');
+              }
+            );
           }
         });
     }
   }
 
   private getPois() {
-    this.poiService.get().subscribe((rep) => {
-      this.pois = rep;
-    });
+    this.poiService.get().subscribe(
+      (rep) => {
+        this.pois = rep;
+      },
+      (err) => {
+        this.messageService.error(err.error.message, 'GET Pois');
+      }
+    );
   }
 
   createPoi() {
@@ -96,16 +106,21 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
       .afterClosed().subscribe((title) => {
         if (title) {
           poi.title = title;
-          this.poiService.create(poi).subscribe((newPoi) => {
-            const translate = this.languageService.translate;
-            const titleD = translate.instant('igo.poiButton.dialog.createTitle');
-            const message = translate.instant('igo.poiButton.dialog.createMsg', {
-              value: poi.title
-            });
-            this.messageService.success(message, titleD);
-            poi.id = newPoi.id;
-            this.pois.push(poi);
-          });
+          this.poiService.create(poi).subscribe(
+            (newPoi) => {
+              const translate = this.languageService.translate;
+              const titleD = translate.instant('igo.poiButton.dialog.createTitle');
+              const message = translate.instant('igo.poiButton.dialog.createMsg', {
+                value: poi.title
+              });
+              this.messageService.success(message, titleD);
+              poi.id = newPoi.id;
+              this.pois.push(poi);
+            },
+            (err) => {
+              this.messageService.error(err.error.message, 'POST Pois');
+            }
+          );
         }
       });
   }

@@ -1,4 +1,5 @@
 import { Subscription } from 'rxjs/Subscription';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { Watcher, SubjectStatus } from '../../utils';
 import { Layer } from '../../layer/shared/layers';
@@ -26,9 +27,9 @@ export class LayerWatcher extends Watcher {
 
     this.layers.push(layer);
 
-    const layer$$ = layer.status$
-      .distinctUntilChanged()
-      .subscribe(status => {
+    const layer$$ = layer.status$.pipe(
+      distinctUntilChanged()
+    ).subscribe(status => {
         if (status === SubjectStatus.Working) {
           this.loading += 1;
         } else if (status === SubjectStatus.Done) {

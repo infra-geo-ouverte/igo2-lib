@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs/Subscription';
 
 import { uuid } from '../../utils/uuid';
-import { RequestService } from '../../core';
 import { Feature, FeatureType, FeatureFormat,
          FeatureService } from '../../feature';
 import { DataSource, QueryableDataSource } from '../../datasource';
@@ -19,8 +18,7 @@ export class QueryService {
   private subscriptions: Subscription[] = [];
 
   constructor(private http: HttpClient,
-              private featureService: FeatureService,
-              private requestService: RequestService) { }
+              private featureService: FeatureService) { }
 
   query(layers: Layer[], options: QueryOptions) {
     this.unsubscribe();
@@ -34,9 +32,7 @@ export class QueryService {
     const request = this.http.get(url, {responseType: 'text'});
 
     this.featureService.clear();
-    return this.requestService
-      .register(request, dataSource.title)
-      .map(res => this.extractData(res, dataSource, options, url))
+    return request.map(res => this.extractData(res, dataSource, options, url))
       .subscribe((features: Feature[]) =>
         this.handleQueryResults(features, dataSource));
   }

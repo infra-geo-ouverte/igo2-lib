@@ -1,5 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy, Optional } from '@angular/core';
+
 import { Subscription } from 'rxjs/Subscription';
+import { filter, skip } from 'rxjs/operators';
 
 import { RouteService } from '../../core';
 import { IgoMap, MapBrowserComponent } from '../../map';
@@ -29,15 +31,17 @@ export class LayerContextDirective implements OnInit, OnDestroy {
               @Optional() private route: RouteService) {}
 
   ngOnInit() {
-    this.context$$ = this.contextService.context$
-      .filter(context => context !== undefined)
-      .subscribe(context => this.handleContextChange(context));
+    this.context$$ = this.contextService.context$.pipe(
+      filter(context => context !== undefined)
+    ).subscribe(context => this.handleContextChange(context));
 
     if (this.route && this.route.options.visibleOnLayersKey &&
         this.route.options.visibleOffLayersKey &&
         this.route.options.contextKey ) {
 
-      const queryParams$$ = this.route.queryParams.skip(1).subscribe(params => {
+      const queryParams$$ = this.route.queryParams.pipe(
+        skip(1)
+      ).subscribe(params => {
         this.queryParams = params;
         queryParams$$.unsubscribe();
       });

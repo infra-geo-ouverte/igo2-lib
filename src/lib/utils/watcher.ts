@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-
+import { distinctUntilChanged } from 'rxjs/operators';
 
 export enum SubjectStatus {
   Error = 0,
@@ -28,9 +28,9 @@ export abstract class Watcher {
   subscribe(callback: Function, scope?: any) {
     this.watch();
 
-    this.status$$ = this.status$
-      .distinctUntilChanged()
-      .subscribe((status: SubjectStatus) => {
+    this.status$$ = this.status$.pipe(
+      distinctUntilChanged()
+    ).subscribe((status: SubjectStatus) => {
         this.handleStatusChange(status);
         callback.call(scope, this);
       });

@@ -4,17 +4,6 @@ import { GestureConfig } from '@angular/material';
 import { CustomMaterialModule } from './customMaterialModule';
 
 import 'hammerjs/hammer';
-
-import 'rxjs/add/operator/debounceTime.js';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/finally';
-import 'rxjs/add/operator/combineLatest';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/skip';
 import 'rxjs/add/observable/empty';
 
 import { IgoAuthModule } from './auth';

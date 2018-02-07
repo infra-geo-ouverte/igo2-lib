@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '../../utils';
 
@@ -31,12 +32,13 @@ export class ConfigService {
       return true;
     }
     return new Promise((resolve, reject) => {
-      this.http.get(options.path)
-      .catch((error: any): any => {
-        console.log(`Configuration file ${options.path} could not be read`);
-        resolve(true);
-        return Observable.throw(error.error || 'Server error');
-      }).subscribe((configResponse) => {
+      this.http.get(options.path).pipe(
+        catchError((error: any): any => {
+          console.log(`Configuration file ${options.path} could not be read`);
+          resolve(true);
+          return Observable.throw(error.error || 'Server error');
+        })
+      ).subscribe((configResponse) => {
         Object.assign(this.config, configResponse);
         resolve(true);
       });

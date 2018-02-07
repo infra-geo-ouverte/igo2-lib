@@ -10,9 +10,9 @@ import { ConfigService, provideConfigLoader , provideConfigOptions} from './conf
 import { LanguageService, IgoMissingTranslationHandler,
          provideDefaultLanguageLoader } from './language';
 
-import { ActivityService } from './activity';
+import { ActivityService, provideActivityInterceptor } from './activity';
 import { MediaService } from './media';
-import { RequestService } from './request';
+import { provideErrorInterceptor } from './request';
 import { MessageCenterComponent, MessageService } from './message';
 
 
@@ -43,9 +43,11 @@ export class IgoCoreModule {
         provideConfigLoader(),
 
         ActivityService,
+        provideActivityInterceptor(),
+
         MediaService,
         MessageService,
-        RequestService,
+        provideErrorInterceptor(),
 
         TranslateService,
         LanguageService,

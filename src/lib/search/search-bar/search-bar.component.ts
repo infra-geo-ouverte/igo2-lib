@@ -5,11 +5,9 @@ import { FloatLabelType } from '@angular/material'
 
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchService } from '../shared';
-
-import 'rxjs/add/operator/debounceTime.js';
-import 'rxjs/add/operator/distinctUntilChanged';
 
 @Component({
   selector: 'igo-search-bar',
@@ -79,10 +77,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   constructor(private searchService: SearchService) {}
 
   ngOnInit(): void {
-    this.stream$$ = this.stream$
-      .debounceTime(this._debounce)
-      .distinctUntilChanged()
-      .subscribe((term: string) => this.handleTermChanged(term));
+    this.stream$$ = this.stream$.pipe(
+      debounceTime(this._debounce),
+      distinctUntilChanged()
+    ).subscribe((term: string) => this.handleTermChanged(term));
   }
 
   ngOnDestroy() {
