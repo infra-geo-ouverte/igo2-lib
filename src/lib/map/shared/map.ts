@@ -49,6 +49,7 @@ export class IgoMap {
 
   init() {
     const controls = [];
+    controls.push(new ol.control.ScaleLine());
     if (this.options.controls && this.options.controls.attribution) {
       controls.push(new ol.control.Attribution());
     }
