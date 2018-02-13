@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { uuid } from '../../utils/uuid';
 
@@ -13,7 +13,7 @@ import { ShareMapService } from '../shared';
   templateUrl: './share-map.component.html',
   styleUrls: ['./share-map.component.styl']
 })
-export class ShareMapComponent implements OnInit {
+export class ShareMapComponent implements AfterViewInit, OnInit {
 
   public form: FormGroup;
 
@@ -43,6 +43,15 @@ export class ShareMapComponent implements OnInit {
       const decodeToken = this.auth.decodeToken();
       this.userId = decodeToken.user ? decodeToken.user.id : undefined;
       this.url = undefined;
+      this.buildForm();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.auth.authenticate$.subscribe((auth) => {
+      const decodeToken = this.auth.decodeToken();
+      this.userId = decodeToken.user ? decodeToken.user.id : undefined;
+      this.url = this.shareMapService.getUrl(this.map, this.userId);
       this.buildForm();
     });
   }

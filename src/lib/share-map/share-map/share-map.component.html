@@ -27,7 +27,7 @@
     </mat-form-field>
   </div>
 
-  <div class="igo-form-button-group">
+  <div *ngIf="hasApi" class="igo-form-button-group">
     <button
       mat-raised-button
       type="submit"
@@ -38,7 +38,7 @@
 
 </form>
 
-<div *ngIf="url" class="igo-input-container linkToShare">
+<div class="igo-input-container linkToShare">
   <mat-form-field>
     <textarea #textArea matInput readonly rows="1"
       [placeholder]="'igo.shareMap.placeholderLink' | translate"
