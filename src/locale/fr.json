@@ -98,6 +98,11 @@
 			"showMetadata": "Montrer les métadonnées"
 		},
 		"map": "Carte",
+    "mapButtons": {
+      "geolocate": "Positionnement GPS",
+      "zoomIn": "Zoomer ({{zoom}})",
+      "zoomOut": "Dézoomer ({{zoom}})"
+    },
 		"permission": {
 			"addBtn": "Ajouter",
 			"delete": "Retirer la permission",

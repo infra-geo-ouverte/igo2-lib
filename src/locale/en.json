@@ -98,6 +98,11 @@
 			"showMetadata": "Show metadata"
 		},
 		"map": "Map",
+		"mapButtons": {
+      "geolocate": "Geolocate",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out"
+    },
 		"permission": {
 			"addBtn": "Add",
 			"delete": "Remove permission",
