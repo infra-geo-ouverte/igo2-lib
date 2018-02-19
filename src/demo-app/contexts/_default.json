@@ -4,74 +4,80 @@
   "map": {
     "view": {
       "projection": "EPSG:3857",
-      "center": [-72, 50],
-      "zoom": 5,
-      "geolocate": true
+      "center": [-71, 47],
+      "zoom": 9,
+      "geolocate": false
     }
   },
   "layers": [
     {
-      "title" : "OSM",
-      "type" : "osm"
-    },
-    {
-      "title": "Embâcle",
-      "type": "wms",
-      "optionsFromCapabilities": true,
+      "title": "MSP Base Map",
+      "baseLayer": true,
+      "visible": true,
+      "id": "mspbm",
+      "type": "xyz",
       "source": {
-        "url": "/ws/igo_gouvouvert.fcgi",
-        "params": {
-          "layers": "vg_observation_v_inondation_embacle_wmst",
-          "version": "1.3.0"
-        },
-        "projection": "EPSG:3857"
-      },
-      "metadata": {
-        "url": "https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp",
-        "extern": true
-      },
-      "timeFilter": {
-        "min": "2011-03-01",
-        "max": "2018-04-01",
-        "range": true,
-        "type": "date",
-        "style": "slider",
-	"timeinterval": 3153600,
-	"step": 3153600
+        "url": "https://geoegl.msp.gouv.qc.ca/carto/tms/1.0.0/carte_gouv_qc_ro@EPSG_3857/{z}/{x}/{-y}.png",
+        "attributions": " </br> © <a href='https://www.droitauteur.gouv.qc.ca/copyright.php'> <img src='https://geoegl.msp.gouv.qc.ca/gouvouvert/public/images/quebec/gouv_qc_logo.png' width='64' height='14'>Gouvernement du Québec</a> </br>  Fondé sur<a href='https://github.com/infra-geo-ouverte/igo2'> IGO2</a>"
+
       }
     },
-   {
-      "type": "wms",
-      "opacity": 0.6,
-      "optionsFromCapabilities": true,
-      "metadata": {
-          "extern": true
-      },
-      "source": {
-        "url": "/ws/adnInternetV2.fcgi",
-        "params": {
-          "layers": "adn_reg_admin_public_v",
-          "version": "1.3.0"
-        }
-      }
-      },
+   
     {
-      "type": "wms",
-      "visible": false,
-      "optionsFromCapabilities": true,
-      "metadata": {
-          "extern": true
-      },
-      "source": {
-        "url": "/ws/igo_gouvouvert.fcgi",
-        "params": {
-          "layers": "MELS_CS_ANGLO_S",
-          "version": "1.3.0"
-        }
-      },
-       "queryFormat": "html",
-       "queryHtmlTarget": "innerhtml"
+      
+      "name" : "gml",
+      "id": "gml",
+      "title": "gml",
+      "type" : "wfs",
+      "featureTypes": "bgr_v_centr_servc_geomt_act",
+      "fieldNameGeometry": "geometry",
+      "maxFeatures" : 5000,
+      "version" : "2.0.0",
+      "outputFormat": "text/xml; subtype=gml/3.1.1",
+      "outputFormatDownload": "shp",
+      "filters":        {"logical" : "Or", "filters":
+        [
+          {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
+          {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
+          {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
+        ]
+      }, 
+      
+      "source"  :   {"url" : "/swtq"}
+    
     }
+    ,
+       
+    {
+      
+      "name" : "geojson",
+      "id": "geojson",
+      "title": "geojson",
+      "type" : "wfs",
+      "featureTypes": "bgr_v_centr_servc_geomt_act",
+      "fieldNameGeometry": "geometry",
+      "maxFeatures" : 5000,
+      "version" : "2.0.0",
+      "outputFormat": "geojson",
+      "outputFormatDownload": "shp",
+      "filters":         {"logical" : "Or", "filters":
+        [
+          {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
+          {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
+          {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
+
+        ]
+      }, 
+      "source"  :   {"url" : "/swtq"}
+    
+    }
+
+
+
+
+
+
+
   ],
   "toolbar": [
     "searchResults",
