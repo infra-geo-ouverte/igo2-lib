@@ -13,7 +13,7 @@ export class ToolService {
   // TODO: Find a way to not use global variables
   // Currently, once compiled, the class is split and custom tools are not available.
   static toolDefs: {[key: string]: [Tool, Component]} = window['igoToolDefs'] =
-    window['igoToolDefs'] === undefined ? {} : window['igoToolDefs'];
+    window['igoToolDefs'] === undefined ? {} : window['igoToolDefs'];
 
   public tools$ = new BehaviorSubject<{[key: string]: Tool}>({});
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);

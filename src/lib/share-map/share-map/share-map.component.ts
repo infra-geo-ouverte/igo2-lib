@@ -67,7 +67,7 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
     }
   }
 
-  resetUrl(values: any = {}) {
+  resetUrl(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrl(this.map, inputs);
