@@ -46,10 +46,13 @@ export class IChercheSearchSource extends SearchSource {
 
   private getSearchParams(term: string): HttpParams {
     const limit = this.options.limit === undefined ? 5 : this.options.limit;
+    const type = this.options.type ||
+      'adresse,code_postal,route,municipalite,mrc,region_administrative'
 
     return new HttpParams({
       fromObject: {
         q: term,
+        type: type,
         limit: String(limit),
         geometries: 'geom'
       }
