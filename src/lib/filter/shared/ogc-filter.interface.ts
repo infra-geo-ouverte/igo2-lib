@@ -10,7 +10,7 @@ OgcFilterCondionsArrayOptions |OgcFilterSpatialOptions | OgcFilterDuringOptions 
 OgcFilterIsBetweenOptions | OgcFilterEqualToOptions | OgcFilterGreaterLessOptions |
 OgcFilterIsLikeOptions | OgcFilterIsNullOptions
 
-export type IgoFilterArray = IgoLogicalArrayOptions | AnyBaseOgcFilterOptions
+export type IgoFilterObject = IgoLogicalArrayOptions | AnyBaseOgcFilterOptions
 
 
 export interface IgoLogicalArrayOptions {
