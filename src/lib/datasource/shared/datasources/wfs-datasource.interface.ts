@@ -5,6 +5,6 @@ export interface WFSDataSourceOptions extends DataSourceOptions, olx.source.Vect
     outputFormat?: string;
     version?: string;
   }
-  
+
   export interface WFSDataSourceContext extends DataSourceContext, WFSDataSourceOptions {}
-  
+
