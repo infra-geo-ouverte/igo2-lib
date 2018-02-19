@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { FilterableDataSource } from '../../datasource';
+import { TimeFilterableDataSource } from '../../datasource';
 
 @Component({
   selector: 'igo-time-filter-item',
@@ -10,11 +10,11 @@ import { FilterableDataSource } from '../../datasource';
 export class TimeFilterItemComponent {
 
   @Input()
-  get datasource(): FilterableDataSource { return this._dataSource; }
-  set datasource(value: FilterableDataSource) {
+  get datasource(): TimeFilterableDataSource { return this._dataSource; }
+  set datasource(value: TimeFilterableDataSource) {
     this._dataSource = value;
   }
-  private _dataSource: FilterableDataSource;
+  private _dataSource: TimeFilterableDataSource;
 
   constructor() { }
 

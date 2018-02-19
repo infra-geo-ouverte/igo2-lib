@@ -1,9 +1,9 @@
 import { DataSourceContext,
-         FilterableDataSourceOptions,
+         TimeFilterableDataSourceOptions,
          QueryableDataSourceOptions } from './datasource.interface';
 
 export interface WMSDataSourceOptions extends olx.source.ImageWMSOptions,
-    FilterableDataSourceOptions, QueryableDataSourceOptions {
+    TimeFilterableDataSourceOptions, QueryableDataSourceOptions {
 
   optionsFromCapabilities?: boolean;
 }

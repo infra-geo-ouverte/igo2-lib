@@ -104,6 +104,12 @@
 			"showLayer": "Afficher la couche",
 			"showMetadata": "Montrer les métadonnées"
 		},
+		"download":{ 
+			"action": "Télécharger les données associées",
+			"title": "Téléchargement des données",
+			"start": "Vérifiez la progression du téléchargement dans votre navigateur",
+			"end": "Terminé"
+		},
 		"map": "Carte",
     "mapButtons": {
       "geolocate": "Positionnement GPS",

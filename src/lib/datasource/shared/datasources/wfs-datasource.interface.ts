@@ -1,5 +1,10 @@
-import { FeatureDataSourceOptions, FeatureDataSourceContext } from './feature-datasource.interface';
+import { DataSourceOptions, DataSourceContext } from './datasource.interface';
 
-export interface WFSDataSourceOptions extends FeatureDataSourceOptions {}
-
-export interface WFSDataSourceContext extends FeatureDataSourceContext {}
+export interface WFSDataSourceOptions extends DataSourceOptions, olx.source.VectorOptions {
+    fieldNameGeometry: string;
+    outputFormat?: string;
+    version?: string;
+  }
+  
+  export interface WFSDataSourceContext extends DataSourceContext, WFSDataSourceOptions {}
+  
