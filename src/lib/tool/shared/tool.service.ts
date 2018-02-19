@@ -6,10 +6,14 @@ import { Observable } from 'rxjs/Observable';
 import { ConfigService } from '../../core';
 import { Tool } from './tool.interface';
 
+
 @Injectable()
 export class ToolService {
 
-  static toolDefs: {[key: string]: [Tool, Component]} = {};
+  // TODO: Find a way to not use global variables
+  // Currently, once compiled, the class is split and custom tools are not available.
+  static toolDefs: {[key: string]: [Tool, Component]} = window['igoToolDefs'] =
+    window['igoToolDefs'] === undefined ? {} : window['igoToolDefs'];
 
   public tools$ = new BehaviorSubject<{[key: string]: Tool}>({});
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
