@@ -12,8 +12,7 @@ export class DownloadService {
     const translate = this.languageService.translate;
     const title = translate.instant('igo.download.title');
     this.messageService.success(translate.instant('igo.download.start'), title);
-    window.location.assign(download.url);
-
+    window.open(download.url, '_blank');
   }
 
 }
