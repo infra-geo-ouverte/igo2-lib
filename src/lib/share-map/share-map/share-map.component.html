@@ -27,7 +27,7 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="hasApi" class="igo-form-button-group">
+  <div *ngIf="hasShareMapButton" class="igo-form-button-group">
     <button
       mat-raised-button
       type="submit"
@@ -38,7 +38,7 @@
 
 </form>
 
-<div class="igo-input-container linkToShare">
+<div *ngIf="url" class="igo-input-container linkToShare">
   <mat-form-field>
     <textarea #textArea matInput readonly rows="1"
       [placeholder]="'igo.shareMap.placeholderLink' | translate"
@@ -53,4 +53,13 @@
       <mat-icon>content_copy</mat-icon>
     </button>
   </mat-form-field>
+
+  <div *ngIf="hasCopyLinkButton" class="igo-form-button-group">
+    <button
+      mat-raised-button
+      (click)="copyTextToClipboard(textArea)">
+      {{ 'igo.shareMap.copy' | translate }}
+    </button>
+  </div>
+
 </div>

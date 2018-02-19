@@ -24,6 +24,20 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
   }
   private _map: IgoMap;
 
+  @Input()
+  get hasShareMapButton(): boolean { return this._hasShareMapButton; }
+  set hasShareMapButton(value: boolean) {
+    this._hasShareMapButton = value;
+  }
+  private _hasShareMapButton: boolean = true;
+
+  @Input()
+  get hasCopyLinkButton(): boolean { return this._hasCopyLinkButton; }
+  set hasCopyLinkButton(value: boolean) {
+    this._hasCopyLinkButton = value;
+  }
+  private _hasCopyLinkButton: boolean = false;
+
   public url: string;
   public hasApi: boolean = false;
   public userId;
@@ -48,15 +62,12 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.auth.authenticate$.subscribe((auth) => {
-      const decodeToken = this.auth.decodeToken();
-      this.userId = decodeToken.user ? decodeToken.user.id : undefined;
-      this.url = this.shareMapService.getUrl(this.map, this.userId);
-      this.buildForm();
-    });
+    if (!this.hasApi) {
+      this.resetUrl();
+    }
   }
 
-  resetUrl(values) {
+  resetUrl(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrl(this.map, inputs);

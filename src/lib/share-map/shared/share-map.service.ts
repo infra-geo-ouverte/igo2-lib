@@ -40,7 +40,7 @@ export class ShareMapService {
 
   getUrlWithoutApi(map: IgoMap) {
     if (!this.route || !this.route.options.visibleOnLayersKey ||
-        !this.route.options.visibleOffLayersKey) {
+        !this.route.options.visibleOffLayersKey || !map.getZoom()) {
           return;
     }
 
