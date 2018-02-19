@@ -49,9 +49,13 @@ export class IgoMap {
 
   init() {
     const controls = [];
-    controls.push(new ol.control.ScaleLine());
-    if (this.options.controls && this.options.controls.attribution) {
-      controls.push(new ol.control.Attribution());
+    if (this.options.controls) {
+      if (this.options.controls.attribution) {
+        controls.push(new ol.control.Attribution());
+      }
+      if (this.options.controls.scaleLine) {
+        controls.push(new ol.control.ScaleLine());
+      }
     }
 
     let interactions = {};
@@ -160,7 +164,7 @@ export class IgoMap {
   }
 
   getZoom(): number {
-    return this.ol.getView().getZoom();
+    return Math.round(this.ol.getView().getZoom());
   }
 
   zoomIn() {
@@ -302,22 +306,17 @@ export class IgoMap {
     const geometry = feature.getGeometry();
     if (geometry === null) { return; }
 
-    let marker;
     if (geometry.getType() === 'Point') {
-      marker = feature;
-    } else {
-      const centroid = ol.extent.getCenter(geometry.getExtent());
-      marker = new ol.Feature(new ol.geom.Point(centroid));
-
-      this.overlayDataSource.ol.addFeature(feature);
+      feature.setStyle(this.overlayMarkerStyle);
     }
 
-    marker.setStyle(this.overlayMarkerStyle);
-    this.overlayDataSource.ol.addFeature(marker);
+    this.overlayDataSource.ol.addFeature(feature);
   }
 
   clearOverlay() {
-    this.overlayDataSource.ol.clear();
+    if (this.overlayDataSource.ol) {
+      this.overlayDataSource.ol.clear();
+    }
   }
 
   geolocate(track = false) {

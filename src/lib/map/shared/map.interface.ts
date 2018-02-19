@@ -7,6 +7,7 @@ export interface MapViewOptions extends olx.ViewOptions {
 
 export interface ControlsMapOptions {
   attribution?: boolean;
+  scaleLine?: boolean;
 }
 
 export interface MapOptions {
