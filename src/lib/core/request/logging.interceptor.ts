@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpHandler, HTTP_INTERCEPTORS,
+import { HttpInterceptor, HttpHandler, HttpEvent,
   HttpRequest, HttpResponse } from '@angular/common/http';
+
+import { Observable } from 'rxjs/Observable';
 import { finalize, tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements HttpInterceptor {
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const started = Date.now();
     let ok: string;
 
@@ -30,15 +32,3 @@ export class LoggingInterceptor implements HttpInterceptor {
       );
   }
 }
-
-export function LoggingInterceptorFactory() {
-  return new LoggingInterceptor();
-}
-
-export function provideLoggingInterceptor() {
-  return {
-    provide: HTTP_INTERCEPTORS,
-    useFactory: (LoggingInterceptorFactory),
-    multi: true
-  };
-};

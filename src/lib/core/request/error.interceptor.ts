@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpHandler, HttpRequest,
-  HttpErrorResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent,
+  HttpErrorResponse } from '@angular/common/http';
 
+import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error) => this.handleError(error, req))
     );
@@ -25,15 +26,3 @@ export class ErrorInterceptor implements HttpInterceptor {
     return new ErrorObservable(error);
   };
 }
-
-export function ErrorInterceptorFactory() {
-  return new ErrorInterceptor();
-}
-
-export function provideErrorInterceptor() {
-  return {
-    provide: HTTP_INTERCEPTORS,
-    useFactory: (ErrorInterceptorFactory),
-    multi: true
-  };
-};

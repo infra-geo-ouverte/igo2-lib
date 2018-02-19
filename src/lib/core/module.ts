@@ -1,4 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { SimpleNotificationsModule } from 'angular2-notifications';
 
@@ -10,9 +11,9 @@ import { ConfigService, provideConfigLoader , provideConfigOptions} from './conf
 import { LanguageService, IgoMissingTranslationHandler,
          provideDefaultLanguageLoader } from './language';
 
-import { ActivityService, provideActivityInterceptor } from './activity';
+import { ActivityService, ActivityInterceptor } from './activity';
 import { MediaService } from './media';
-import { provideErrorInterceptor } from './request';
+import { ErrorInterceptor } from './request';
 import { MessageCenterComponent, MessageService } from './message';
 
 
@@ -43,11 +44,19 @@ export class IgoCoreModule {
         provideConfigLoader(),
 
         ActivityService,
-        provideActivityInterceptor(),
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: ActivityInterceptor,
+          multi: true
+        },
 
         MediaService,
         MessageService,
-        provideErrorInterceptor(),
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: ErrorInterceptor,
+          multi: true
+        },
 
         TranslateService,
         LanguageService,

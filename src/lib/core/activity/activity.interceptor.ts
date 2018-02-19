@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor,
-  HttpRequest, HTTP_INTERCEPTORS } from '@angular/common/http';
+  HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { finalize } from 'rxjs/operators';
 
@@ -21,16 +21,3 @@ export class ActivityInterceptor implements HttpInterceptor {
     );
   }
 }
-
-export function ActivityInterceptorFactory(activityService: ActivityService) {
-  return new ActivityInterceptor(activityService);
-}
-
-export function provideActivityInterceptor() {
-  return {
-    provide: HTTP_INTERCEPTORS,
-    useFactory: (ActivityInterceptorFactory),
-    deps: [ActivityService],
-    multi: true
-  };
-};
