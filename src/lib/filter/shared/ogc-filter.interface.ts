@@ -10,7 +10,7 @@ OgcFilterCondionsArrayOptions |OgcFilterSpatialOptions | OgcFilterDuringOptions 
 OgcFilterIsBetweenOptions | OgcFilterEqualToOptions | OgcFilterGreaterLessOptions |
 OgcFilterIsLikeOptions | OgcFilterIsNullOptions
 
-export type IgoFilterObject = IgoLogicalArrayOptions | AnyBaseOgcFilterOptions
+export type IgoOgcFilterObject = IgoLogicalArrayOptions | AnyBaseOgcFilterOptions
 
 
 export interface IgoLogicalArrayOptions {
@@ -21,6 +21,7 @@ export interface IgoLogicalArrayOptions {
 export interface OgcFilterCondionsArrayOptions {
   conditions: OgcFilter[]
 }
+
 export interface OgcFilterSpatialOptions {
   geometryName: string;
   geometry?: ol.geom.Geometry;
