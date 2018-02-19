@@ -2,7 +2,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { uuid } from '../../../utils';
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { IgoFilterArray, OgcFilter, WFSWriteGetFeatureOptions,
+import { IgoOgcFilterObject, OgcFilter, WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions, OgcFilterWriter } from '../../../filter/shared';
 
 
@@ -11,7 +11,7 @@ export class WFSDataSource extends DataSource {
 
   public options: WFSDataSourceOptions;
   public ol: ol.source.Vector;
-  public igoFilterArray: IgoFilterArray;
+  public igoFilterArray: IgoOgcFilterObject;
   public ogcFilter: OgcFilter;
   public wfsWriteGetFeatureOptions: WFSWriteGetFeatureOptions;
   public anyBaseOgcFilterOptions: AnyBaseOgcFilterOptions;

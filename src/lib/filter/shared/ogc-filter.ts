@@ -1,11 +1,11 @@
-import { OgcFilter, IgoFilterArray, WFSWriteGetFeatureOptions,
+import { OgcFilter, IgoOgcFilterObject, WFSWriteGetFeatureOptions,
     AnyBaseOgcFilterOptions } from './ogc-filter.interface';
 
 
 export class OgcFilterWriter {
 
 
-  public buildFilter(igofilterObject: IgoFilterArray,
+  public buildFilter(igofilterObject: IgoOgcFilterObject,
     extent: ol.Extent, proj, version: string, wfs_geometryName: string): string {
     const f = ol.format.filter;
     const bboxFilter = f.bbox(wfs_geometryName, extent, proj.getCode());
