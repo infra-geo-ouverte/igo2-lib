@@ -16,12 +16,11 @@ export class OgcFilterWriter {
       filterAssembly = f.bbox(wfs_geometryName, extent, proj.getCode())
      }
 
-    const split_char: string = 'featureTypes'
     const wfsOptions: WFSWriteGetFeatureOptions = {
                   srsName: '',
                   featureNS: '',
                   featurePrefix: '',
-                  featureTypes: [split_char],
+                  featureTypes: ['featureTypes'],
                   filter: filterAssembly,
                   outputFormat: '',
                   geometryName: wfs_geometryName
@@ -29,8 +28,9 @@ export class OgcFilterWriter {
 
     const query = new ol.format.WFS().writeGetFeature(wfsOptions);
     const str = new XMLSerializer().serializeToString(query);
-    // console.log(str.split('typeName=\"featureTypes\">')[1].split('</Query></GetFeature>')[0])
-    return str.split('typeName=\"' + split_char + '\">')[1].split('</Query></GetFeature>')[0]
+    const regexp1 = /typenames *=|typename *=\"featureTypes\" *>/gi;
+    const regexp2 = /<\/Query><\/GetFeature>/gi;
+    return str.split(regexp1)[1].split(regexp2)[0]
 
 }
 
