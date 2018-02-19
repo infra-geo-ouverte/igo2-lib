@@ -22,6 +22,7 @@ import { IgoCoreModule } from './core';
 import { IgoContextModule } from './context';
 import { IgoCatalogModule } from './catalog';
 import { IgoDataSourceModule } from './datasource';
+import { IgoDownloadModule } from './download';
 import { IgoFeatureModule } from './feature';
 import { IgoFormModule } from './form';
 import { IgoFilterModule } from './filter';
@@ -43,6 +44,7 @@ const IGO_MODULES = [
   IgoContextModule,
   IgoCatalogModule,
   IgoDataSourceModule,
+  IgoDownloadModule,
   IgoFeatureModule,
   IgoFormModule,
   IgoFilterModule,
@@ -68,6 +70,7 @@ const IGO_MODULES = [
     IgoContextModule.forRoot(),
     IgoCatalogModule.forRoot(),
     IgoDataSourceModule.forRoot(),
+    IgoDownloadModule.forRoot(),
     IgoFeatureModule.forRoot(),
     IgoFormModule.forRoot(),
     IgoFilterModule.forRoot(),

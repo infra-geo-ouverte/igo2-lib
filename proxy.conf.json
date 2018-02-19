@@ -1,1 +1,68 @@
-{}
+{
+
+        "/ws/mffpecofor.fcgi": {
+            "target": "https://geoegl.msp.gouv.qc.ca",
+            "changeOrigin": true,
+            "secure": false
+          },
+          "/ws/igo_gouvouvert.fcgi": {
+            "target": "https://geoegl.msp.gouv.qc.ca",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/swtq": {
+            "target": "https://ws.mapserver.transports.gouv.qc.ca",
+            "changeOrigin": true,
+            "secure": false
+          }
+          , "/internet/swtq": {
+            "target": "https://ws.mapserver.unit.mtq.min.intra",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer": {
+            "target": "https://infogeo.education.gouv.qc.ca",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/SIGEOM_WMS/service.svc/get": {
+            "target": "http://sigeom.mines.gouv.qc.ca/SIGEOM_WMS/service.svc/get",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/geoserver/ows": {
+            "target": "http://geocatalogue.mtq.qc",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/ws/adnInternetV2.fcgi": {
+            "target": "https://geoegl.msp.gouv.qc.ca/",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/cgi-bin/meteo.fcgi": {
+            "target": "http://10.100.228.134:8080/",
+            "changeOrigin": true,
+            "secure": false
+          },
+          "/cgi-bin/mapserv?map=/mf/mapfiles/service.map": {
+            "target": "http://10.100.228.134:8080",
+            "changeOrigin": true,
+            "secure": false
+          }
+          ,
+          "/arcgis/services/Service_Public/OGD/MapServer/WFSServer": {
+            "target": "https://gis.tirol.gv.at",
+            "changeOrigin": true,
+            "secure": false
+          }
+
+        }
+        
+

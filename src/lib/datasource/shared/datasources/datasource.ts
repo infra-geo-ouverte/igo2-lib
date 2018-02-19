@@ -1,4 +1,4 @@
-import { DataSourceOptions, DataSourceLegendOptions, FilterableDataSource,
+import { DataSourceOptions, DataSourceLegendOptions, TimeFilterableDataSource,
          QueryableDataSource } from './datasource.interface';
 
 export abstract class DataSource {
@@ -29,11 +29,11 @@ export abstract class DataSource {
     return this.options.legend ? [this.options.legend] : [];
   }
 
-  isFilterable(): this is FilterableDataSource {
-    const dataSource = this as any as FilterableDataSource;
+  isTimeFilterable(): this is TimeFilterableDataSource {
+    const dataSource = this as any as TimeFilterableDataSource;
     if (typeof dataSource.filterByDate === 'function') {
-      return dataSource.options.filterable !== undefined ?
-        dataSource.options.filterable : true;
+      return dataSource.options.timeFilterable !== undefined ?
+        dataSource.options.timeFilterable : true;
     }
 
     return false;
