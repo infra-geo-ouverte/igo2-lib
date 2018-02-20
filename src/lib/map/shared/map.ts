@@ -49,15 +49,6 @@ export class IgoMap {
 
   init() {
     const controls = [];
-    if (this.options.controls) {
-      if (this.options.controls.attribution) {
-        controls.push(new ol.control.Attribution());
-      }
-      if (this.options.controls.scaleLine) {
-        controls.push(new ol.control.ScaleLine());
-      }
-    }
-
     let interactions = {};
     if (this.options.interactions === false) {
       interactions = {
@@ -149,6 +140,15 @@ export class IgoMap {
         const center = ol.proj.fromLonLat(options.center, this.projection);
         view.setCenter(center);
       }
+
+    if (options.attributioncollapse === false) {
+        this.ol.addControl(new ol.control.Attribution({collapsible: false}));
+        this.ol.addControl(new ol.control.ScaleLine());
+      } else {
+        this.ol.addControl(new ol.control.Attribution());
+        this.ol.addControl(new ol.control.ScaleLine());
+      }
+
       if (options.geolocate) {
         this.geolocate(true);
       }
@@ -395,3 +395,4 @@ export class IgoMap {
     return this.layers.findIndex(layer_ => layer_ === layer);
   }
 }
+
