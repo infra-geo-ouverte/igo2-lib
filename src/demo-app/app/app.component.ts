@@ -16,7 +16,13 @@ import { AnyDataSourceContext, DataSourceService } from '../../lib/datasource';
 })
 export class AppComponent implements OnInit {
 
-  public map = new IgoMap();
+  public map = new IgoMap({
+    controls: {
+      attribution: {
+        collapsed: true
+      }
+    }
+  });
   public searchTerm: string;
   public demoForm: FormGroup;
 
