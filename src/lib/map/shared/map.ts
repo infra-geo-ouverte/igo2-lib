@@ -25,9 +25,11 @@ export class IgoMap {
   private geolocation: ol.Geolocation;
   private geolocation$$: Subscription;
   private geolocationFeature: ol.Feature;
+  private attributionControl: ol.control.Attribution;
+
 
   private options: MapOptions = {
-    controls: {attribution: true},
+    controls: {attribution: true, scaleLine: false},
     overlay: true
   };
 
@@ -49,6 +51,15 @@ export class IgoMap {
 
   init() {
     const controls = [];
+    if (this.options.controls) {
+      if (this.options.controls.attribution) {
+         this.attributionControl = new ol.control.Attribution();
+         controls.push(this.attributionControl);
+       }
+       if (this.options.controls.scaleLine) {
+         controls.push(new ol.control.ScaleLine());
+       }
+     }
     let interactions = {};
     if (this.options.interactions === false) {
       interactions = {
@@ -132,23 +143,20 @@ export class IgoMap {
 
   setView(options: MapViewOptions) {
     const view = new ol.View(options);
+
     this.ol.setView(view);
 
     this.unsubscribeGeolocate();
     if (options) {
+    const attributionCollapse = options.attributionCollapse !== undefined ?
+    options.attributionCollapse : true;
       if (options.center) {
-        const center = ol.proj.fromLonLat(options.center, this.projection);
+    const center = ol.proj.fromLonLat(options.center, this.projection);
         view.setCenter(center);
       }
-
-    if (options.attributioncollapse === false) {
-        this.ol.addControl(new ol.control.Attribution({collapsible: false}));
-        this.ol.addControl(new ol.control.ScaleLine());
-      } else {
-        this.ol.addControl(new ol.control.Attribution());
-        this.ol.addControl(new ol.control.ScaleLine());
+      if (this.attributionControl) {
+        this.attributionControl.setCollapsed(attributionCollapse);
       }
-
       if (options.geolocate) {
         this.geolocate(true);
       }
