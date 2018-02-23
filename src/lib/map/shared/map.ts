@@ -40,7 +40,7 @@ export class IgoMap {
   }
 
   constructor(options?: MapOptions) {
-    this.options = options || this.options;
+    Object.assign(this.options, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
 
@@ -318,7 +318,7 @@ export class IgoMap {
   }
 
   clearOverlay() {
-    if (this.overlayDataSource.ol) {
+    if (this.overlayDataSource && this.overlayDataSource.ol) {
       this.overlayDataSource.ol.clear();
     }
   }
