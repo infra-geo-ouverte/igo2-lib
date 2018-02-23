@@ -36,7 +36,10 @@ export class SearchService {
 
     return request.subscribe(
       (features: Feature[]) => this.handleFeatures(features, source),
-      (err) => this.messageService.error(err.error.message, source.getName())
+      (err) => {
+        err.error.title = source.getName();
+        this.messageService.showError(err);
+      }
     );
   }
 

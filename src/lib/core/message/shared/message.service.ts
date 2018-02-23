@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Notification, NotificationsService } from 'angular2-notifications';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
@@ -12,6 +13,11 @@ export class MessageService {
   public messages$ = new BehaviorSubject<Message[]>([]);
 
   constructor(private notificationService: NotificationsService) {}
+
+  showError(httpError: HttpErrorResponse) {
+    httpError.error.caught = true;
+    this.error(httpError.error.message, httpError.error.title);
+  }
 
   message(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));

@@ -32,7 +32,8 @@ export class ShareMapService {
     this.contextService.create(context).subscribe(
       (rep) => {},
       (err) => {
-        this.messageService.error(err.error.message, 'Share Map');
+        err.error.title = 'Share Map';
+        this.messageService.showError(err);
       }
     );
     return `${location.origin + location.pathname}?context=${formValues.uri}`;

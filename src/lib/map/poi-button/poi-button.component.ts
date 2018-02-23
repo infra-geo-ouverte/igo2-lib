@@ -71,7 +71,8 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
                 this.pois = this.pois.filter((p) => p.id !== poi.id);
               },
               (err) => {
-                this.messageService.error(err.error.message, 'DELETE Pois');
+                err.error.title = 'DELETE Pois';
+                this.messageService.showError(err);
               }
             );
           }
@@ -85,7 +86,8 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
         this.pois = rep;
       },
       (err) => {
-        this.messageService.error(err.error.message, 'GET Pois');
+        err.error.title = 'GET Pois';
+        this.messageService.showError(err);
       }
     );
   }
@@ -118,7 +120,8 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
               this.pois.push(poi);
             },
             (err) => {
-              this.messageService.error(err.error.message, 'POST Pois');
+              err.error.title = 'POST Pois';
+              this.messageService.showError(err);
             }
           );
         }
