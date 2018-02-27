@@ -95,6 +95,7 @@
 		"layer": {
 			"hideLayer": "Masquer la couche",
 			"lowerLayer": "Descendre la couche",
+			"loadingLegendText": "Chargement de la légende",
 			"noLegendText": "Aucune légende disponible pour cette couche",
 			"opacity": "Opacité",
 			"raiseLayer": "Monter la couche",

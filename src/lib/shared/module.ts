@@ -12,6 +12,7 @@ import { CollapsibleComponent, CollapseDirective } from './collapsible';
 import { ConfirmDialogComponent, ConfirmDialogService } from './confirm-dialog';
 import { ClonePipe } from './clone';
 import { DragAndDropDirective } from './drag-drop';
+import { SecureImagePipe } from './image';
 import { KeyvaluePipe } from './keyvalue';
 import { ListComponent, ListItemDirective } from './list';
 import { PanelComponent } from './panel';
@@ -45,6 +46,7 @@ import { TableComponent } from './table';
     ClonePipe,
     DragAndDropDirective,
     KeyvaluePipe,
+    SecureImagePipe,
     ListComponent,
     ListItemDirective,
     PanelComponent,
@@ -63,6 +65,7 @@ import { TableComponent } from './table';
     ClonePipe,
     DragAndDropDirective,
     KeyvaluePipe,
+    SecureImagePipe,
     ListComponent,
     ListItemDirective,
     PanelComponent,

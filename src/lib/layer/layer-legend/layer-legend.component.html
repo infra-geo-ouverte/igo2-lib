@@ -1,8 +1,8 @@
-<small *ngIf="layer.dataSource.getLegend().length === 0">
+<small *ngIf="legend.length === 0">
   {{'igo.layer.noLegendText' | translate}}
 </small>
 
-<ng-template ngFor let-item [ngForOf]="layer.dataSource.getLegend()">
+<ng-template ngFor let-item [ngForOf]="legend">
   <mat-list-item *ngIf="item.title">
     <mat-icon
       id="legend-toggle"
@@ -18,8 +18,8 @@
   <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
     <img
       *ngIf="item.url"
-      src="{{item.url}}"
-      alt="{{'igo.layer.noLegendText' | translate}}">
+      src="{{(item.url | secureImage) | async}}"
+      alt="{{'igo.layer.loadingLegendText' | translate}}">
     <div
       [ngStyle]="item.style"
       [innerHTML]="item.html"

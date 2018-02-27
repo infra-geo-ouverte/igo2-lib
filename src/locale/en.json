@@ -95,6 +95,7 @@
 		"layer": {
 			"hideLayer": "Hide Layer",
 			"lowerLayer": "Bring layer backward",
+			"loadingLegendText": "Loading legend",
 			"noLegendText": "No legend available for this layer",
 			"opacity": "Opacity",
 			"raiseLayer": "Bring layer forward",

@@ -14,9 +14,13 @@ export class LayerLegendComponent {
   get layer(): Layer { return this._layer; }
   set layer(value: Layer) {
     this._layer = value;
+    this._legend = value.dataSource.getLegend();
   }
   private _layer: Layer;
 
-  constructor() { }
+  get legend() { return this._legend; }
+  private _legend;
+
+  constructor() {}
 
 }
