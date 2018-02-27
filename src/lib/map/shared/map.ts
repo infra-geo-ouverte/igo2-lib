@@ -56,8 +56,8 @@ export class IgoMap {
         controls.push(new ol.control.Attribution(attributionOpt));
       }
       if (this.options.controls.scaleLine) {
-        const scaleLineOpt = (this.options.controls.attribution === true ?
-          {} : this.options.controls.attribution) as olx.control.AttributionOptions;
+        const scaleLineOpt = (this.options.controls.scaleLine === true ?
+          {} : this.options.controls.scaleLine) as olx.control.ScaleLineOptions;
         controls.push(new ol.control.ScaleLine(scaleLineOpt));
       }
     }
