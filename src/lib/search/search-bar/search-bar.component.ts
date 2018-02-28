@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output,
-         EventEmitter, ViewChild, ElementRef,
+         EventEmitter, ViewChild, ElementRef, ChangeDetectorRef,
          OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FloatLabelType } from '@angular/material'
 
@@ -7,6 +7,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
+import { FeatureService, SourceFeatureType, FeatureType } from '../../feature';
 import { SearchService } from '../shared';
 
 @Component({
@@ -76,22 +77,38 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private stream$ = new Subject<string>();
   private stream$$: Subscription;
+  private selectedFeature$$: Subscription;
 
   @Output() search = new EventEmitter<string>();
 
   @ViewChild('input') input: ElementRef;
 
-  constructor(private searchService: SearchService) {}
+  constructor(
+    private searchService: SearchService,
+    private featureService: FeatureService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.stream$$ = this.stream$.pipe(
       debounceTime(this._debounce),
       distinctUntilChanged()
     ).subscribe((term: string) => this.handleTermChanged(term));
+
+    this.selectedFeature$$ = this.featureService.selectedFeature$.subscribe(
+      (feature) => {
+        if (feature && feature.type === FeatureType.Feature &&
+            feature.sourceType === SourceFeatureType.Search) {
+          this.term = feature.title;
+          this.changeDetectorRef.markForCheck();
+        }
+      }
+    );
   }
 
   ngOnDestroy() {
     this.stream$$.unsubscribe();
+    this.selectedFeature$$.unsubscribe();
   }
 
   keyup(event: KeyboardEvent) {

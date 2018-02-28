@@ -8,3 +8,8 @@ export enum FeatureFormat {
   GeoJSON,
   JSON
 }
+
+export enum SourceFeatureType {
+  Query = <any> 'Query',
+  Search = <any> 'Search'
+}

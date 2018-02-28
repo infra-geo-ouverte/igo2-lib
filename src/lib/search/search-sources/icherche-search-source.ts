@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
-import { Feature, FeatureType, FeatureFormat} from '../../feature';
+import { Feature, FeatureType, FeatureFormat, SourceFeatureType} from '../../feature';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
@@ -72,6 +72,7 @@ export class IChercheSearchSource extends SearchSource {
     return {
       id: result._id,
       source: IChercheSearchSource._name,
+      sourceType: SourceFeatureType.Search,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.recherche,

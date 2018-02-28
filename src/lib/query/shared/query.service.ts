@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs/Subscription';
 
 import { uuid } from '../../utils/uuid';
-import { Feature, FeatureType, FeatureFormat,
+import { Feature, FeatureType, FeatureFormat, SourceFeatureType,
          FeatureService } from '../../feature';
 import { DataSource, QueryableDataSource } from '../../datasource';
 import { Layer } from '../../layer';
@@ -76,6 +76,7 @@ export class QueryService {
       return Object.assign(feature, {
         id: uuid(),
         source: dataSource.title,
+        sourceType: SourceFeatureType.Query,
         title: title ? title : `${dataSource.title} (${index + 1})`,
         projection: options.projection
       });
@@ -223,6 +224,7 @@ export class QueryService {
     return {
       id: undefined,
       source: undefined,
+      sourceType: SourceFeatureType.Query,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: undefined,
