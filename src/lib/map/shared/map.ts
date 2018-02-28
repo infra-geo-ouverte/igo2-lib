@@ -167,6 +167,14 @@ export class IgoMap {
     return center;
   }
 
+  getExtent(projection?): [number, number, number, number] {
+    let ext = this.ol.getView().calculateExtent(this.ol.getSize());
+    if (projection && ext) {
+      ext = ol.proj.transformExtent(ext, this.projection, projection);
+    }
+    return ext;
+  }
+
   getZoom(): number {
     return Math.round(this.ol.getView().getZoom());
   }

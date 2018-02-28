@@ -81,13 +81,13 @@
       </button>
 
       <button
-      *ngIf="layer.dataSource.options.download && layer.dataSource.options.download.url "
+      *ngIf="(layer.options['type'] === 'wfs' && layer.dataSource.options['outputFormatDownload']) || (layer.options['type'] !== 'wfs' && layer.dataSource.options.download && layer.dataSource.options.download.url)"
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="'igo.download.action' | translate"
       [color]="color"
-      (click)="openDownload(layer.dataSource.options.download)">
+      (click)="openDownload(layer)">
       <mat-icon>file_download</mat-icon>
     </button>
 

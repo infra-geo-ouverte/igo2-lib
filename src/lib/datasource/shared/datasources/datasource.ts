@@ -1,5 +1,5 @@
 import { DataSourceOptions, DataSourceLegendOptions, TimeFilterableDataSource,
-         QueryableDataSource } from './datasource.interface';
+         QueryableDataSource, OgcFilterableDataSource } from './datasource.interface';
 
 export abstract class DataSource {
 
@@ -49,4 +49,12 @@ export abstract class DataSource {
     return false;
   }
 
+  isOgcFilterable(): this is OgcFilterableDataSource {
+    const dataSource = this as any as OgcFilterableDataSource;
+    if (typeof dataSource.filterByOgc === 'function') {
+      return true;
+    }
+
+    return false;
+  }
 }

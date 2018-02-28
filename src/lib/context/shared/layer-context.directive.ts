@@ -63,6 +63,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   private addLayerToMap(contextLayer: ContextLayer) {
+    if (contextLayer.maxScaleDenom) {
+      contextLayer.maxResolution = this.getResolutionFromScale(contextLayer.maxScaleDenom)
+    }
+    if (contextLayer.minScaleDenom) {
+      contextLayer.minResolution = this.getResolutionFromScale(contextLayer.minScaleDenom)
+    }
     const sourceContext = contextLayer.source;
     const layerContext: any = Object.assign({}, contextLayer);
     delete layerContext.source;
@@ -81,6 +87,13 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         }
       );
   }
+
+
+  public getResolutionFromScale(scale: number): number {
+    const dpi = 25.4 / 0.28;
+    return scale / (39.37 * dpi);
+  }
+
 
   private getLayerParamVisibilityUrl(id, layer) {
     const params = this.queryParams;

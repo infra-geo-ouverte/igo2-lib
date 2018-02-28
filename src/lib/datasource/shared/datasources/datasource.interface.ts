@@ -1,4 +1,4 @@
-import { TimeFilterOptions } from '../../../filter';
+import { TimeFilterOptions, IgoOgcFilterObject } from '../../../filter';
 import { QueryFormat, QueryOptions } from '../../../query';
 import { MetadataOptions } from '../../../metadata';
 import { DownloadOptions } from '../../../download';
@@ -51,4 +51,15 @@ export interface TimeFilterableDataSourceOptions extends DataSourceOptions,
 export interface TimeFilterableDataSource extends DataSource {
   options: TimeFilterableDataSourceOptions;
   filterByDate(date: Date | [Date, Date]);
+}
+
+export interface OgcFilterableDataSourceOptions extends DataSourceOptions,
+    olx.source.VectorOptions {
+
+  ogcFilterable?: boolean;
+  filters?: IgoOgcFilterObject;
+}
+export interface OgcFilterableDataSource extends DataSource {
+  options: OgcFilterableDataSourceOptions;
+  filterByOgc(IgoOgcFilterObject);
 }
