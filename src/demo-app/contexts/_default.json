@@ -71,32 +71,33 @@
       },
        "queryFormat": "html",
        "queryHtmlTarget": "innerhtml"
+    },
+    {     
+      "name" : "cs avec filtre geojson",
+      "id": "cs avec filtre",
+      "title": "cs avec filtre",
+      "type" : "wfs",
+      "source"  :   {
+           "url" : "/swtq",
+           "featureTypes": "bgr_v_centr_servc_geomt_act",
+           "fieldNameGeometry": "geometry",
+           "maxFeatures" : 10000,
+           "version" : "2.0.0",
+           "outputFormat": "geojson",
+           "outputFormatDownload": "shp"
+         },        
+      "filters":         {"logical" : "Or", "filters":
+        [
+          {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
+          {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
+          {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
+
+        ]
+      }
     }
-    ,
-       
-       {
-         
-         "name" : "geojson",
-         "id": "geojson",
-         "title": "geojson",
-         "type" : "wfs",
-         "featureTypes": "bgr_v_centr_servc_geomt_act",
-         "fieldNameGeometry": "geometry",
-         "maxFeatures" : 5000,
-         "version" : "2.0.0",
-         "outputFormat": "geojson",
-         "outputFormatDownload": "shp",
-         "filters":         {"logical" : "Or", "filters":
-           [
-             {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
-             {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
-             {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
-   
-           ]
-         }, 
-         "source"  :   {"url" : "/swtq"}
-       
-       }
+
+
+
   ],
   "toolbar": [
     "searchResults",

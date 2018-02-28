@@ -5,16 +5,18 @@ import { OgcFilter, IgoOgcFilterObject, WFSWriteGetFeatureOptions,
 export class OgcFilterWriter {
 
 
-  public buildFilter(igofilterObject: IgoOgcFilterObject,
-    extent: ol.Extent, proj, version: string, wfs_geometryName: string): string {
+  public buildFilter(
+      filters: IgoOgcFilterObject,
+      extent: ol.Extent, proj ,
+      fieldNameGeometry: string): string {
     const f = ol.format.filter;
-    const bboxFilter = f.bbox(wfs_geometryName, extent, proj.getCode());
+    const bboxFilter = f.bbox(fieldNameGeometry, extent, proj.getCode());
     let filterAssembly: OgcFilter;
-     if (igofilterObject !== undefined) {
-        filterAssembly =  f.and(bboxFilter, this.bundleFilter(igofilterObject));
-     } else {
-      filterAssembly = f.bbox(wfs_geometryName, extent, proj.getCode())
-     }
+    if (filters) {
+        filterAssembly =  f.and(bboxFilter, this.bundleFilter(filters));
+    } else {
+        return 'bbox=' + extent.join(',') + ',EPSG:3857'
+    }
 
     const wfsOptions: WFSWriteGetFeatureOptions = {
                   srsName: '',
@@ -23,18 +25,16 @@ export class OgcFilterWriter {
                   featureTypes: ['featureTypes'],
                   filter: filterAssembly,
                   outputFormat: '',
-                  geometryName: wfs_geometryName
+                  geometryName: fieldNameGeometry
     }
 
     const query = new ol.format.WFS().writeGetFeature(wfsOptions);
     const str = new XMLSerializer().serializeToString(query);
     const regexp1 = /typenames *=|typename *=\"featureTypes\" *>/gi;
     const regexp2 = /<\/Query><\/GetFeature>/gi;
-    return str.split(regexp1)[1].split(regexp2)[0]
+    return 'filter=' + str.split(regexp1)[1].split(regexp2)[0]
 
 }
-
-
 
 private bundleFilter(filterObject: any) {
   if (filterObject instanceof Array) {

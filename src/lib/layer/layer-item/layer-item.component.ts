@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature';
 import { MetadataService, MetadataOptions } from '../../metadata';
-import { DownloadService, DownloadOptions } from '../../download';
+import { DownloadService} from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
 
 @Component({
@@ -97,8 +97,8 @@ export class LayerItemComponent implements OnDestroy {
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
   }
-  openDownload(download: DownloadOptions) {
-    this.downloadService.open(download);
+  openDownload(layer: Layer) {
+    this.downloadService.open(layer);
   }
 
   showFeaturesList(layer: Layer) {
