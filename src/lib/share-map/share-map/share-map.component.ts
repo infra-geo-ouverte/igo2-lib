@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { uuid } from '../../utils/uuid';
 
+import { uuid, Clipboard } from '../../utils';
 import { ConfigService, MessageService, LanguageService } from '../../core';
 import { AuthService } from '../../auth';
 import { IgoMap } from '../../map';
@@ -74,11 +74,7 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
   }
 
   copyTextToClipboard(textArea) {
-    textArea.select();
-    const successful = document.execCommand('copy');
-    if ( window.getSelection ) {
-      window.getSelection().removeAllRanges();
-    }
+    const successful = Clipboard.copy(textArea);
     if (successful) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.shareMap.dialog.copyTitle');
