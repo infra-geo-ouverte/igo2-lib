@@ -9,6 +9,7 @@
       "geolocate": true
     }
   },
+
   "layers": [{
       "title": "OSM",
       "type": "osm"
@@ -146,6 +147,7 @@
       },
       "filters": {"operator": "PropertyIsLike", "propertyName": "Code_d_organisme", "pattern": "01*"}
     }
+
   ],
   "toolbar": [
     "searchResults",
@@ -154,7 +156,9 @@
     "contextManager",
     "print"
   ],
-  "tools": [{
+
+  "tools": [
+    {
       "name": "searchResults"
     },
     {

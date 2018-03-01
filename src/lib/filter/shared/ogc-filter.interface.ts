@@ -1,3 +1,4 @@
+
 export interface OgcFilter extends ol.format.filter.Filter {}
 
 export interface WFSWriteGetFeatureOptions extends olx.format.WFSWriteGetFeatureOptions {}
@@ -9,6 +10,7 @@ export type AnyBaseOgcFilterOptions =
   OgcFilterIsLikeOptions | OgcFilterIsNullOptions;
 
 export type IgoOgcFilterObject = IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
+
 
 
 export interface IgoLogicalArrayOptions {
@@ -30,24 +32,29 @@ export interface OgcFilterAttributeOptions {
   propertyName: string;
 }
 
+
 export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
   begin: string;
   end: string;
 }
+
 
 export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
   lowerBoundary: number;
   upperBoundary: number;
 }
 
+
 export interface OgcFilterEqualToOptions extends OgcFilterAttributeOptions {
   expression: string | number;
   matchCase: boolean;
 }
 
+
 export interface OgcFilterGreaterLessOptions extends OgcFilterAttributeOptions {
   expression: number;
 }
+
 
 export interface OgcFilterIsLikeOptions extends OgcFilterAttributeOptions {
   pattern: string;
@@ -57,4 +64,6 @@ export interface OgcFilterIsLikeOptions extends OgcFilterAttributeOptions {
   matchCase: boolean;
 }
 
+
 export interface OgcFilterIsNullOptions extends OgcFilterAttributeOptions {}
+

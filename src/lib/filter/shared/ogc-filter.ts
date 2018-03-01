@@ -6,6 +6,7 @@ import {
 
 export class OgcFilterWriter {
 
+
   public buildFilter(filters: IgoOgcFilterObject, extent: ol.Extent,
     proj: ol.proj.Projection, fieldNameGeometry: string): string {
 
@@ -27,11 +28,11 @@ export class OgcFilterWriter {
       geometryName: fieldNameGeometry
     };
 
+
     const query = new ol.format.WFS().writeGetFeature(wfsOptions);
     const str = new XMLSerializer().serializeToString(query);
     const regexp1 = /typenames *=|typename *=\"featureTypes\" *>/gi;
     const regexp2 = /<\/Query><\/GetFeature>/gi;
-
     return 'filter=' + str.split(regexp1)[1].split(regexp2)[0];
   }
 
@@ -77,7 +78,6 @@ export class OgcFilterWriter {
     const wfs_extent = filterOptions.extent;
     const wfs_wkt_geometry = filterOptions.wkt_geometry;
     const wfs_srsName = filterOptions.srsName ? filterOptions.srsName : 'EPSG:3857';
-
     const wfs_begin = filterOptions.begin;
     const wfs_end = filterOptions.end;
 
