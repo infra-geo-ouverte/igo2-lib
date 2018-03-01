@@ -2,6 +2,14 @@
   {
     "uri": "_default",
     "title": "Default Context"
+  },  
+  {
+    "uri": "wfs_test",
+    "title": "wfs_test"
+  },
+  {
+    "uri": "wfs_test",
+    "title": "WFS examples"
   },
   {
     "uri": "embacle",

@@ -1,5 +1,5 @@
-import { DataSourceOptions, DataSourceLegendOptions, FilterableDataSource,
-         QueryableDataSource } from './datasource.interface';
+import { DataSourceOptions, DataSourceLegendOptions, TimeFilterableDataSource,
+         QueryableDataSource, OgcFilterableDataSource } from './datasource.interface';
 
 export abstract class DataSource {
 
@@ -29,11 +29,11 @@ export abstract class DataSource {
     return this.options.legend ? [this.options.legend] : [];
   }
 
-  isFilterable(): this is FilterableDataSource {
-    const dataSource = this as any as FilterableDataSource;
+  isTimeFilterable(): this is TimeFilterableDataSource {
+    const dataSource = this as any as TimeFilterableDataSource;
     if (typeof dataSource.filterByDate === 'function') {
-      return dataSource.options.filterable !== undefined ?
-        dataSource.options.filterable : true;
+      return dataSource.options.timeFilterable !== undefined ?
+        dataSource.options.timeFilterable : true;
     }
 
     return false;
@@ -49,4 +49,12 @@ export abstract class DataSource {
     return false;
   }
 
+  isOgcFilterable(): this is OgcFilterableDataSource {
+    const dataSource = this as any as OgcFilterableDataSource;
+    if (typeof dataSource.filterByOgc === 'function') {
+      return true;
+    }
+
+    return false;
+  }
 }

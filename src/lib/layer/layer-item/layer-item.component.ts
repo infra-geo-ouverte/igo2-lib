@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature';
 import { MetadataService, MetadataOptions } from '../../metadata';
+import { DownloadService} from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
 
 @Component({
@@ -65,7 +66,8 @@ export class LayerItemComponent implements OnDestroy {
   constructor(private cdRef: ChangeDetectorRef,
               private mapService: MapService,
               private featureService: FeatureService,
-              private metadataService: MetadataService) {}
+              private metadataService: MetadataService,
+              private downloadService: DownloadService) {}
 
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
@@ -96,6 +98,10 @@ export class LayerItemComponent implements OnDestroy {
 
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
+  }
+
+  openDownload(layer: Layer) {
+    this.downloadService.open(layer);
   }
 
   showFeaturesList(layer: Layer) {

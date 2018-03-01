@@ -5,6 +5,8 @@ export interface LayerOptions extends olx.layer.BaseOptions {
   view?: olx.layer.BaseOptions;
   baseLayer?: boolean;
   id?: string;
+  minScaleDenom?: number;
+  maxScaleDenom?: number;
 }
 
 export interface LayerContext extends LayerOptions {}

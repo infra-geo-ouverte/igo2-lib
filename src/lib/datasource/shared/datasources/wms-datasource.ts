@@ -3,12 +3,12 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { QueryFormat, QueryOptions } from '../../../query';
 
 import { DataSource } from './datasource';
-import { DataSourceLegendOptions, FilterableDataSource,
+import { DataSourceLegendOptions, TimeFilterableDataSource,
          QueryableDataSource } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 
 export class WMSDataSource
-  extends DataSource implements QueryableDataSource, FilterableDataSource {
+  extends DataSource implements QueryableDataSource, TimeFilterableDataSource {
 
   public options: WMSDataSourceOptions;
   public ol: ol.source.ImageWMS;

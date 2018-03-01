@@ -103,6 +103,12 @@
 			"showFeaturesList": "Show features list",
 			"showLayer": "Show Layer",
 			"showMetadata": "Show metadata"
+		},		
+		"download":{ 
+			"action": "Download data",
+			"title": "Downloading file",
+			"start": "Started. Check the download progression in your browser",
+			"end": "Completed"
 		},
 		"map": "Map",
 		"mapButtons": {

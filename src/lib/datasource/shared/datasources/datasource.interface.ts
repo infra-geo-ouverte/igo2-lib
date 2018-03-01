@@ -1,7 +1,7 @@
-import { TimeFilterOptions } from '../../../filter';
+import { TimeFilterOptions, IgoOgcFilterObject } from '../../../filter';
 import { QueryFormat, QueryOptions } from '../../../query';
 import { MetadataOptions } from '../../../metadata';
-
+import { DownloadOptions } from '../../../download';
 import { DataSource } from './datasource';
 
 
@@ -10,6 +10,7 @@ export interface DataSourceOptions {
   alias?: string;
   legend?: DataSourceLegendOptions;
   metadata?: MetadataOptions;
+  download?: DownloadOptions;
   view?: olx.layer.ImageOptions;
 }
 
@@ -40,14 +41,26 @@ export interface QueryableDataSource extends DataSource {
   getQueryUrl(options: QueryOptions): string;
 }
 
-export interface FilterableDataSourceOptions extends DataSourceOptions,
+export interface TimeFilterableDataSourceOptions extends DataSourceOptions,
     olx.source.ImageWMSOptions {
 
-  filterable?: boolean;
+  timeFilterable?: boolean;
   timeFilter?: TimeFilterOptions;
 }
 
-export interface FilterableDataSource extends DataSource {
-  options: FilterableDataSourceOptions;
+export interface TimeFilterableDataSource extends DataSource {
+  options: TimeFilterableDataSourceOptions;
   filterByDate(date: Date | [Date, Date]);
+}
+
+export interface OgcFilterableDataSourceOptions extends DataSourceOptions,
+    olx.source.VectorOptions {
+
+  ogcFilterable?: boolean;
+  filters?: IgoOgcFilterObject;
+}
+
+export interface OgcFilterableDataSource extends DataSource {
+  options: OgcFilterableDataSourceOptions;
+  filterByOgc(IgoOgcFilterObject);
 }

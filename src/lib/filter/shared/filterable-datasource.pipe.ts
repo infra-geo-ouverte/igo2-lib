@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { DataSource, FilterableDataSource } from '../../datasource';
+import { DataSource, TimeFilterableDataSource } from '../../datasource';
 
 @Pipe({
   name: 'filterableDataSource'
@@ -12,10 +12,10 @@ export class FilterableDataSourcePipe implements PipeTransform {
 
     if (arg === 'time') {
       dataSources = value.filter((dataSource: any) => {
-        return dataSource.isFilterable() &&
+        return dataSource.isTimeFilterable() &&
           dataSource.options.timeFilter !== undefined &&
           Object.keys(dataSource.options.timeFilter).length;
-      }) as any[] as FilterableDataSource[];
+      }) as any[] as TimeFilterableDataSource[];
     }
 
     return dataSources;
