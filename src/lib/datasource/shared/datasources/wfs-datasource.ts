@@ -1,14 +1,11 @@
 import { Md5 } from 'ts-md5/dist/md5';
 
-
 import { uuid } from '../../../utils';
 import { IgoOgcFilterObject, OgcFilter, WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions, OgcFilterWriter } from '../../../filter/shared';
 import { DataSource } from './datasource';
 import { OgcFilterableDataSource } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { IgoOgcFilterObject, OgcFilter, WFSWriteGetFeatureOptions,
-  AnyBaseOgcFilterOptions, OgcFilterWriter } from '../../../filter/shared';
 
 
 export class WFSDataSource extends DataSource implements OgcFilterableDataSource {
@@ -21,13 +18,11 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
   public anyBaseOgcFilterOptions: AnyBaseOgcFilterOptions;
   public ogcFilterWriter: OgcFilterWriter;
 
-
   constructor(options: WFSDataSourceOptions) {
     super(options);
     this.ogcFilterWriter = new OgcFilterWriter;
     this.checkOutputFormat(options);
   }
-
 
   protected generateId() {
     if (!this.options.url) {
@@ -36,7 +31,6 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
     const chain = 'feature' + this.options.url;
     return Md5.hashStr(chain) as string;
   }
-
 
   protected createOlSource(): ol.source.Vector {
     const wfsOptions: WFSDataSourceOptions = this.options;

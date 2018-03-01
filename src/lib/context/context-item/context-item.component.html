@@ -6,9 +6,10 @@
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
     (click)="favorite.emit(context)">
-    <mat-icon>
+    <mat-icon *ngIf="!context.iconImage">
       {{context.icon ? context.icon : context.scope === 'public' ? 'public' : 'star'}}
     </mat-icon>
+    <img *ngIf="context.iconImage" [src]="context.iconImage">
   </button>
   <h4 matLine>{{context.title}}</h4>
 

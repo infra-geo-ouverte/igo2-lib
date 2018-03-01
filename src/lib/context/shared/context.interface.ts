@@ -13,6 +13,7 @@ export interface Context {
   permission?: string; // TypePermission: 'read' | 'write'
   description?: string;
   icon?: string;
+  iconImage?: string;
 }
 
 export interface ContextsList {
