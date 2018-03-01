@@ -99,6 +99,13 @@ export class LayerItemComponent implements OnDestroy {
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
   }
+  openDownload(layer: Layer) {
+    this.downloadService.open(layer);
+  }
+
+  openDownload(layer: Layer) {
+    this.downloadService.open(layer);
+  }
 
   openDownload(layer: Layer) {
     this.downloadService.open(layer);
