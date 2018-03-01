@@ -88,12 +88,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       );
   }
 
-
   public getResolutionFromScale(scale: number): number {
     const dpi = 25.4 / 0.28;
     return scale / (39.37 * dpi);
   }
-
 
   private getLayerParamVisibilityUrl(id, layer) {
     const params = this.queryParams;

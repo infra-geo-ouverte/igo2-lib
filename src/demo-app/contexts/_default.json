@@ -19,7 +19,7 @@
       "type": "wms",
       "optionsFromCapabilities": true,
       "source": {
-        "url": "/ws/igo_gouvouvert.fcgi",
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
         "params": {
           "layers": "vg_observation_v_inondation_embacle_wmst",
           "version": "1.3.0"
@@ -36,11 +36,11 @@
         "range": true,
         "type": "date",
         "style": "slider",
-	"timeinterval": 3153600,
-	"step": 3153600
+      	"timeinterval": 3153600,
+        "step": 3153600
       }
     },
-   {
+    {
       "type": "wms",
       "opacity": 0.6,
       "optionsFromCapabilities": true,
@@ -48,7 +48,7 @@
           "extern": true
       },
       "source": {
-        "url": "/ws/adnInternetV2.fcgi",
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/adnInternetV2.fcgi",
         "params": {
           "layers": "adn_reg_admin_public_v",
           "version": "1.3.0"
@@ -63,7 +63,7 @@
           "extern": true
       },
       "source": {
-        "url": "/ws/igo_gouvouvert.fcgi",
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
         "params": {
           "layers": "MELS_CS_ANGLO_S",
           "version": "1.3.0"
@@ -71,33 +71,7 @@
       },
        "queryFormat": "html",
        "queryHtmlTarget": "innerhtml"
-    },
-    {     
-      "name" : "cs avec filtre geojson",
-      "id": "cs avec filtre",
-      "title": "cs avec filtre",
-      "type" : "wfs",
-      "source"  :   {
-           "url" : "/swtq",
-           "featureTypes": "bgr_v_centr_servc_geomt_act",
-           "fieldNameGeometry": "geometry",
-           "maxFeatures" : 10000,
-           "version" : "2.0.0",
-           "outputFormat": "geojson",
-           "outputFormatDownload": "shp"
-         },        
-      "filters":         {"logical" : "Or", "filters":
-        [
-          {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
-          {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
-          {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
-
-        ]
-      }
     }
-
-
-
   ],
   "toolbar": [
     "searchResults",

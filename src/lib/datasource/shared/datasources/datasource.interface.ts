@@ -59,6 +59,7 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions,
   ogcFilterable?: boolean;
   filters?: IgoOgcFilterObject;
 }
+
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
   filterByOgc(IgoOgcFilterObject);
