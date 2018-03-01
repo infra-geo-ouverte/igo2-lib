@@ -32,7 +32,7 @@
     "language.extract.lib": "ngx-translate-extract -i ./src/lib -o ./src/locale/fr.json ./src/locale/en.json -s -f namespaced-json -m _ -c",
     "language.extract.demo": "ngx-translate-extract -i ./src/demo-app -o ./src/demo-app/assets/locale/fr.json ./src/demo-app/assets/locale/en.json -s -f namespaced-json -m _ -c",
     "preversion": "npm test && npm run build.lib",
-    "postversion": "git push && git push --tags && npm publish"
+    "postversion": "git push && git push --tags && npm publish --access public"
   },
   "dependencies": {
     "@angular/animations": "^5.1.0",
@@ -50,6 +50,7 @@
     "@mat-datetimepicker/core": "^1.0.2",
     "@ngx-translate/core": "^8.0.0",
     "angular2-notifications": "^0.9.7",
+    "bowser": "^1.9.2",
     "core-js": "^2.4.1",
     "hammerjs": "^2.0.8",
     "jspdf": "^1.3.5",

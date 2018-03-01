@@ -1,5 +1,6 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { filter } from 'rxjs/operators';
 
 import { FeatureService } from '../shared';
 import { FeatureDetailsComponent } from './feature-details.component';
@@ -19,9 +20,9 @@ export class FeatureDetailsBindingDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.focusedFeatures$$ = this.featureService.focusedFeature$
-      .filter(feature => feature !== undefined)
-      .subscribe(feature => this.component.feature = feature);
+    this.focusedFeatures$$ = this.featureService.focusedFeature$.pipe(
+      filter(feature => feature !== undefined)
+    ).subscribe(feature => this.component.feature = feature);
   }
 
   ngOnDestroy() {

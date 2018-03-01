@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
-import { Feature, FeatureType, FeatureFormat} from '../../feature';
+import { Feature, FeatureType, FeatureFormat, SourceFeatureType} from '../../feature';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
@@ -17,7 +17,7 @@ export class IChercheSearchSource extends SearchSource {
 
   static _name: string = 'ICherche Québec';
 
-  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geopasdecode';
+  private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geocode';
   private options: SearchSourceOptions;
 
   constructor(private http: HttpClient,
@@ -46,10 +46,13 @@ export class IChercheSearchSource extends SearchSource {
 
   private getSearchParams(term: string): HttpParams {
     const limit = this.options.limit === undefined ? 5 : this.options.limit;
+    const type = this.options.type ||
+      'adresse,code_postal,route,municipalite,mrc,region_administrative'
 
     return new HttpParams({
       fromObject: {
         q: term,
+        type: type,
         limit: String(limit),
         geometries: 'geom'
       }
@@ -69,6 +72,7 @@ export class IChercheSearchSource extends SearchSource {
     return {
       id: result._id,
       source: IChercheSearchSource._name,
+      sourceType: SourceFeatureType.Search,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.recherche,

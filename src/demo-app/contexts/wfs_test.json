@@ -9,202 +9,144 @@
       "geolocate": true
     }
   },
-  "layers": [
-    {
-      "title" : "OSM",
-      "type" : "osm"
+
+  "layers": [{
+      "title": "OSM",
+      "type": "osm"
     },
-  
     {
-         
-      "name" : "cs sans filtre gml",
+      "name": "cs sans filtre gml",
       "visible": false,
       "id": "cs sans filtre gml",
       "title": "cs sans filtre gml",
-      "type" : "wfs",
-      "source"  :   {
-           "url" : "/swtq",
-           "featureTypes": "bgr_v_centr_servc_geomt_act",
-           "fieldNameGeometry": "geometry",
-           "maxFeatures" : 10000,
-           "version" : "2.0.0",
-           "outputFormat": "text/xml; subtype=gml/3.1.1",
-           "outputFormatDownload": "shp"
-         }
+      "type": "wfs",
+      "source": {
+        "url": "https://ws.mapserver.transports.gouv.qc.ca/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subtype=gml/3.1.1",
+        "outputFormatDownload": "shp"
+      }
     },
-
     {
-         
-      "name" : "cs avec filtre gml",
+      "name": "cs avec filtre gml",
       "visible": false,
       "id": "cs avec filtre gml",
       "title": "cs avec filtre gml",
-      "type" : "wfs",
-      "source"  :   {
-           "url" : "/swtq",
-           "featureTypes": "bgr_v_centr_servc_geomt_act",
-           "fieldNameGeometry": "geometry",
-           "maxFeatures" : 10000,
-           "version" : "2.0.0",
-           "outputFormat": "text/xml; subtype=gml/3.1.1",
-           "outputFormatDownload": "shp"
-         },        
-      "filters":         {"logical" : "Or", "filters":
-        [
-          {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
-          {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
-          {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
-
+      "type": "wfs",
+      "source": {
+        "url": "https://ws.mapserver.transports.gouv.qc.ca/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subtype=gml/3.1.1",
+        "outputFormatDownload": "shp"
+      },
+      "filters": {
+        "logical": "Or",
+        "filters": [
+          {"operator": "During", "propertyName": "dat_debut_", "begin": "2014", "end": "2016"},
+          {"operator": "PropertyIsEqualTo", "propertyName": "nom_unite_", "pattern": "CS de Lévis"},
+          {"operator": "PropertyIsLike", "propertyName": "ide_unite_", "pattern": "3*"}
         ]
       }
-    
     },
-       
-       {     
-         "name" : "cs avec filtre geojson",
-         "visible": false,
-         "id": "cs avec filtre",
-         "title": "cs avec filtre",
-         "type" : "wfs",
-         "source"  :   {
-              "url" : "/swtq",
-              "featureTypes": "bgr_v_centr_servc_geomt_act",
-              "fieldNameGeometry": "geometry",
-              "maxFeatures" : 10000,
-              "version" : "2.0.0",
-              "outputFormat": "geojson",
-              "outputFormatDownload": "shp"
-            },        
-         "filters":         {"logical" : "Or", "filters":
-           [
-             {"operator" : "During","propertyName" : "dat_debut_", "begin" : "2014" ,"end" : "2016"},
-             {"operator" : "PropertyIsEqualTo","propertyName" : "nom_unite_", "pattern" : "CS de Lévis"},
-             {"operator" : "PropertyIsLike","propertyName" : "ide_unite_", "pattern" : "3*"}
-   
-           ]
-         }
-       
-       },
-
-       {
-         
-        "name" : "vg avec filtre",
-        "visible": false,
-        "id": "vg",
-        "title": "vg avec filtre",
-        "type" : "wfs",
-
-        "source"  :   {
-             "url" : "/ws/igo_gouvouvert.fcgi",
-             "featureTypes": "vg_observation_v_inondation_embacle_wmst",
-             "fieldNameGeometry": "geometry",
-             "maxFeatures" : 10000,
-             "version" : "2.0.0",
-             "outputFormat": "geojson",
-             "outputFormatDownload": "shp"
-
-           },
-          "filters": {"operator" : "PropertyIsEqualTo","propertyName" : "cap_severite", "pattern" : "Mineure"}
-      }
-,
-{
-         
-  "name" : "vg sans filtre",
-  "visible": false,
-  "id": "vg sans filtre",
-  "title": "vg sans filtre",
-  "type" : "wfs",
-
-
-  "source"  :   {
-       "url" : "/ws/igo_gouvouvert.fcgi",
-       "featureTypes": "vg_observation_v_inondation_embacle_wmst",
-       "fieldNameGeometry": "geometry",
-       "maxFeatures" : 10000,
-       "version" : "2.0.0",
-       "outputFormat": "geojson",
-       "outputFormatDownload": "shp"
-
-     }
-}
-, 
-{
-         
-  "name" : "edu sans filtre",
-  "visible": false,
-  "id": "edu sans filtre",
-  "title": "edu sans filtre",
-  "type" : "wfs",
-  "minScaleDenom": 200000,
-  "maxScaleDenom": 5000000,
-  "source"  :   {
-       "url" : "/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer",
-       "featureTypes": "Établissement_privé",
-       "fieldNameGeometry": "SHAPE",
-       "maxFeatures" : 10000,
-       "version" : "2.0.0",
-       "outputFormat": "text/xml; subType=gml/3.1.1"
-
-     }
-}
-,
-{
-         
-        "name" : "edu avec filtre",
-        "visible": false,
-        "id": "edu avec filtre",
-        "title": "edu avec filtre",
-        "type" : "wfs",
-        "minScaleDenom": 200000,
-        "maxScaleDenom": 5000000,
-        "source"  :   {
-             "url" : "/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer",
-             "featureTypes": "Établissement_privé",
-             "fieldNameGeometry": "SHAPE",
-             "maxFeatures" : 10000,
-             "version" : "2.0.0",
-             "outputFormat": "text/xml; subType=gml/3.1.1"
-
-           },
-           "filters": {"operator" : "PropertyIsLike","propertyName" : "Code_d_organisme", "pattern" : "01*"}
-      }
-      ,
-      {
-         
-        "name" : "giin sans filtre",
-        "id": "giin sans filtre",
-        "visible": false,
-        "title": "giin sans filtre",
-        "type" : "wfs",
-        "source"  :   {
-             "url" : "/IDS_GIIN_INDEX_PROJET_WFS/service.svc/get",
-             "featureTypes": "Decennal_Partenariat_DGIG",
-             "fieldNameGeometry": "SHAPE",
-             "maxFeatures" : 10000,
-             "version" : "2.0.0",
-             "outputFormat": "text/xml; subtype=gml/3.1.1",
-             "outputFormatDownload": "text/xml; subtype=gml/3.1.1"
-           }
+    {
+      "name": "cs avec filtre geojson",
+      "visible": false,
+      "id": "cs avec filtre",
+      "title": "cs avec filtre",
+      "type": "wfs",
+      "source": {
+        "url": "https://ws.mapserver.transports.gouv.qc.ca/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
       },
-      {
-         
-         "name" : "giin avec filtre",
-         "id": "giin avec filtre",
-         "visible": false,
-         "title": "giin avec filtre",
-         "type" : "wfs",
-         "source"  :   {
-              "url" : "/IDS_GIIN_INDEX_PROJET_WFS/service.svc/get",
-              "featureTypes": "Decennal_Partenariat_DGIG",
-              "fieldNameGeometry": "SHAPE",
-              "maxFeatures" : 10000,
-              "version" : "2.0.0",
-              "outputFormat": "text/xml; subtype=gml/3.1.1",
-              "outputFormatDownload": "text/xml; subtype=gml/3.1.1"
-            },
-            "filters": {"operator" : "PropertyIsLike","propertyName" : "PROPRIETAIRE", "pattern" : "DIF"}
-       }
+      "filters": {
+        "logical": "Or",
+        "filters": [
+          {"operator": "During", "propertyName": "dat_debut_", "begin": "2014", "end": "2016"},
+          {"operator": "PropertyIsEqualTo", "propertyName": "nom_unite_", "pattern": "CS de Lévis"},
+          {"operator": "PropertyIsLike", "propertyName": "ide_unite_", "pattern": "3*"}
+        ]
+      }
+    },
+    {
+      "name": "vg avec filtre",
+      "visible": false,
+      "id": "vg",
+      "title": "vg avec filtre",
+      "type": "wfs",
+      "source": {
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "featureTypes": "vg_observation_v_inondation_embacle_wmst",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
+      },
+      "filters": {"operator": "PropertyIsEqualTo", "propertyName": "cap_severite", "pattern": "Mineure"}
+    },
+    {
+      "name": "vg sans filtre",
+      "visible": false,
+      "id": "vg sans filtre",
+      "title": "vg sans filtre",
+      "type": "wfs",
+      "source": {
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "featureTypes": "vg_observation_v_inondation_embacle_wmst",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
+      }
+    },
+    {
+      "name": "edu sans filtre",
+      "visible": false,
+      "id": "edu sans filtre",
+      "title": "edu sans filtre",
+      "type": "wfs",
+      "minScaleDenom": 200000,
+      "maxScaleDenom": 5000000,
+      "source": {
+        "url": "https://infogeo.education.gouv.qc.ca/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer",
+        "featureTypes": "Établissement_privé",
+        "fieldNameGeometry": "SHAPE",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subType=gml/3.1.1"
+      }
+    },
+    {
+      "name": "edu avec filtre",
+      "visible": false,
+      "id": "edu avec filtre",
+      "title": "edu avec filtre",
+      "type": "wfs",
+      "minScaleDenom": 200000,
+      "maxScaleDenom": 5000000,
+      "source": {
+        "url": "https://infogeo.education.gouv.qc.ca/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer",
+        "featureTypes": "Établissement_privé",
+        "fieldNameGeometry": "SHAPE",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subType=gml/3.1.1"
 
+      },
+      "filters": {"operator": "PropertyIsLike", "propertyName": "Code_d_organisme", "pattern": "01*"}
+    }
 
   ],
   "toolbar": [
@@ -214,6 +156,7 @@
     "contextManager",
     "print"
   ],
+
   "tools": [
     {
       "name": "searchResults"

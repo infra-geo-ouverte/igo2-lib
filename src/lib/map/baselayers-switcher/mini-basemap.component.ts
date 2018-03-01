@@ -36,7 +36,10 @@ export class MiniBaseMapComponent
   }
   private _disabled: boolean;
 
-  public basemap = new IgoMap({interactions: false});
+  public basemap = new IgoMap({
+    controls: {},
+    interactions: false
+  });
 
   constructor(private layerService: LayerService) {}
 

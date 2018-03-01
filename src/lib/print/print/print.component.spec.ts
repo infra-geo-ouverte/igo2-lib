@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
-import { ActivityService, MessageService, RequestService } from '../../core';
+import { ActivityService, MessageService } from '../../core';
 
 import { PrintService } from '../shared';
 import { PrintFormComponent } from '../print-form';
@@ -26,7 +26,6 @@ describe('PrintComponent', () => {
       providers: [
         ActivityService,
         MessageService,
-        RequestService,
         PrintService
       ]
     })

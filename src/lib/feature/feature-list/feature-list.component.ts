@@ -24,6 +24,20 @@ export class FeatureListComponent {
   private _features: Feature[] = [];
 
   @Input()
+  get groupFeatures(): Boolean { return this._groupFeatures; }
+  set groupFeatures(value: Boolean) {
+    this._groupFeatures = value;
+  }
+  private _groupFeatures: Boolean = true;
+
+  @Input()
+  get display() {
+    return this._display;
+  }
+  set display(value: boolean) { this._display = value; }
+  private _display: boolean = true;
+
+  @Input()
   get focusFirst() {
     // Focus on the first item only if the list is changed.
     // After that, the focusedFeature input should be prioritized.

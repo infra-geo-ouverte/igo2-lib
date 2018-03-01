@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 
-import { RouteService, ConfigService } from '../../core';
+import { RouteService, ConfigService, MessageService } from '../../core';
 import { IgoMap } from '../../map';
 import { ContextService } from '../../context';
 
@@ -11,6 +11,7 @@ export class ShareMapService {
 
   constructor(private config: ConfigService,
               private contextService: ContextService,
+              private messageService: MessageService,
               @Optional() private route: RouteService) {
 
     this.urlApi = this.config.getConfig('context.url');
@@ -28,13 +29,19 @@ export class ShareMapService {
     context.scope = 'public';
     context.title = formValues.title;
     context.uri = formValues.uri;
-    this.contextService.create(context).subscribe((rep) => {});
+    this.contextService.create(context).subscribe(
+      (rep) => {},
+      (err) => {
+        err.error.title = 'Share Map';
+        this.messageService.showError(err);
+      }
+    );
     return `${location.origin + location.pathname}?context=${formValues.uri}`;
   }
 
   getUrlWithoutApi(map: IgoMap) {
     if (!this.route || !this.route.options.visibleOnLayersKey ||
-        !this.route.options.visibleOffLayersKey) {
+        !this.route.options.visibleOffLayersKey || !map.getZoom()) {
           return;
     }
 

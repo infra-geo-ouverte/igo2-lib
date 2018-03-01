@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import { RequestService } from '../../core';
+import { MessageService } from '../../core';
 import { Feature, FeatureService } from '../../feature';
 
 import { SearchSourceService } from './search-source.service';
@@ -15,7 +15,7 @@ export class SearchService {
 
   constructor(private searchSourceService: SearchSourceService,
               private featureService: FeatureService,
-              private requestService: RequestService) {
+              private messageService: MessageService) {
   }
 
   search(term: string) {
@@ -34,10 +34,13 @@ export class SearchService {
   searchSource(source: SearchSource, term?: string) {
     const request = source.search(term);
 
-    return this.requestService
-      .register(request, source.getName())
-      .subscribe((features: Feature[]) =>
-        this.handleFeatures(features, source));
+    return request.subscribe(
+      (features: Feature[]) => this.handleFeatures(features, source),
+      (err) => {
+        err.error.title = source.getName();
+        this.messageService.showError(err);
+      }
+    );
   }
 
   private unsubscribe() {

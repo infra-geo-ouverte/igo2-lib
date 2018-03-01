@@ -6,6 +6,7 @@ import { OSMDataSource } from '../../datasource';
 import { MetadataService } from '../../metadata';
 import { MapService } from '../../map';
 import { FeatureService } from '../../feature';
+import { DownloadService } from '../../download';
 
 import { TileLayer } from '../shared';
 import { LayerItemComponent } from './layer-item.component';
@@ -28,7 +29,8 @@ describe('LayerItemComponent', () => {
       providers: [
         MetadataService,
         MapService,
-        FeatureService
+        FeatureService,
+        DownloadService
       ]
     })
     .compileComponents();

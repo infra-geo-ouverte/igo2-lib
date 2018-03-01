@@ -3,6 +3,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Input,
          OnDestroy, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { Tool, ToolService } from '../shared';
 import { toolSlideInOut } from './toolbox.animation';
@@ -48,9 +49,9 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
               private toolService: ToolService) {}
 
   ngOnInit() {
-    this.toolHistory$$ = this.toolService.toolHistory$
-      .distinctUntilChanged()
-      .subscribe((toolHistory: Tool[]) => {
+    this.toolHistory$$ = this.toolService.toolHistory$.pipe(
+      distinctUntilChanged()
+    ).subscribe((toolHistory: Tool[]) => {
         if (!this.animate) {
           this.handleToolHistoryChange(toolHistory);
         } else {

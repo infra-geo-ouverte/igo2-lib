@@ -8,6 +8,10 @@
     "title": "wfs_test"
   },
   {
+    "uri": "wfs_test",
+    "title": "WFS examples"
+  },
+  {
     "uri": "embacle",
     "title": "Embâcle (analyse temporelle)"
   }

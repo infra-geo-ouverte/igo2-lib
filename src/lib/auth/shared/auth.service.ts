@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { tap } from 'rxjs/operators';
 
-import { ConfigService, RequestService } from '../../core';
+import { ConfigService } from '../../core';
 import { Base64 } from '../../utils';
 
 import { AuthOptions, User } from './auth.interface';
@@ -20,7 +21,6 @@ export class AuthService {
 
   constructor(private http: HttpClient,
               private tokenService: TokenService,
-              private requestService: RequestService,
               private config: ConfigService,
               @Optional() private router: Router) {
 
@@ -38,15 +38,12 @@ export class AuthService {
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
-      .map((data: any) => {
-        this.tokenService.set(data.token);
-        this.authenticate$.next(true);
-      })
-      .catch((err: any) => {
-        console.log(err);
-        const message = err.error.message;
-        return Observable.throw([{text: message}]);
-      });
+      .pipe(
+        tap((data: any) => {
+          this.tokenService.set(data.token);
+          this.authenticate$.next(true);
+        })
+      );
   }
 
   loginWithToken(token: string, type: string): any {
@@ -59,14 +56,12 @@ export class AuthService {
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
-      .map((data: any) => {
-        this.tokenService.set(data.token);
-        this.authenticate$.next(true);
-      })
-      .catch((err: any) => {
-        const message = err.error.message;
-        return Observable.throw([{text: message}]);
-      });
+      .pipe(
+        tap((data: any) => {
+          this.tokenService.set(data.token);
+          this.authenticate$.next(true);
+        })
+      );
   }
 
   loginAnonymous() {
@@ -109,14 +104,12 @@ export class AuthService {
 
   getUserInfo(): Observable<User> {
     const url = this.options.url + '/info';
-    const request = this.http.get<User>(url);
-    return this.requestService.register(request, 'Get user info error');
+    return this.http.get<User>(url);
   }
 
   updateUser(user: User): Observable<User> {
     const url = this.options.url;
-    const request = this.http.patch<User>(url, JSON.stringify(user));
-    return this.requestService.register(request, 'Update user error');
+    return this.http.patch<User>(url, JSON.stringify(user));
   }
 
   private encodePassword(password: string) {

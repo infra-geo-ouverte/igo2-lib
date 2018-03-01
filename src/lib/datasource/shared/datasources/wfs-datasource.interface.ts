@@ -1,5 +1,7 @@
+
+import { IgoOgcFilterObject } from '../../../filter';
 import { DataSourceOptions, DataSourceContext } from './datasource.interface';
-import { IgoOgcFilterObject } from '../../..';
+
 
 export interface WFSDataSourceOptions extends DataSourceOptions, olx.source.VectorOptions {
     version?: string;
@@ -13,5 +15,4 @@ export interface WFSDataSourceOptions extends DataSourceOptions, olx.source.Vect
     filters?: IgoOgcFilterObject;
   }
 
-  export interface WFSDataSourceContext extends DataSourceContext, WFSDataSourceOptions {}
-
+export interface WFSDataSourceContext extends DataSourceContext, WFSDataSourceOptions {}

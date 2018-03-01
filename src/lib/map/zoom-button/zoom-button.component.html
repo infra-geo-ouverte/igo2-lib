@@ -1,6 +1,8 @@
 <div class="igo-zoom-button-container">
   <button
     mat-icon-button
+    [matTooltip]="'igo.mapButtons.zoomIn' | translate: {zoom: map.getZoom()+1}"
+    matTooltipPosition="left"
     [color]="color"
     (click)="map.zoomIn()">
     <mat-icon>
@@ -10,6 +12,8 @@
 
   <button
     mat-icon-button
+    [matTooltip]="'igo.mapButtons.zoomOut' | translate: {zoom: map.getZoom()-1}"
+    matTooltipPosition="left"
     [color]="color"
     (click)="map.zoomOut()">
     <mat-icon>

@@ -5,6 +5,7 @@ export * from './confirm-dialog';
 export * from './clickout';
 export * from './clone';
 export * from './drag-drop';
+export * from './image';
 export * from './keyvalue';
 export * from './list';
 export * from './panel';

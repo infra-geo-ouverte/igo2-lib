@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { ActivityService } from './activity.service';
 
-describe('RequestService', () => {
+describe('ActivityService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [

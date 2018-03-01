@@ -76,6 +76,12 @@
 				"title": "Fichier illisible"
 			}
 		},
+    "errors": {
+      "uncaught": {
+        "message": "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
+        "title": "Erreur serveur"
+      }
+    },
 		"importExport": "Importation et exportation",
 		"importExportForm": {
 			"exportButton": "Exporter",
@@ -89,6 +95,7 @@
 		"layer": {
 			"hideLayer": "Masquer la couche",
 			"lowerLayer": "Descendre la couche",
+			"loadingLegendText": "Chargement de la légende",
 			"noLegendText": "Aucune légende disponible pour cette couche",
 			"opacity": "Opacité",
 			"raiseLayer": "Monter la couche",
@@ -104,6 +111,11 @@
 			"end": "Terminé"
 		},
 		"map": "Carte",
+    "mapButtons": {
+      "geolocate": "Positionnement GPS",
+      "zoomIn": "Zoomer ({{zoom}})",
+      "zoomOut": "Dézoomer ({{zoom}})"
+    },
 		"permission": {
 			"addBtn": "Ajouter",
 			"delete": "Retirer la permission",

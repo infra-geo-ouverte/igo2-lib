@@ -1,6 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy,
          HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { filter, debounceTime } from 'rxjs/operators';
 
 import { Feature, FeatureService } from '../shared';
 import { FeatureListComponent } from './feature-list.component';
@@ -45,10 +46,10 @@ export class FeatureListBindingDirective implements OnInit, OnDestroy {
     // We can bypass this issue using a debounce time. Since
     // having multiple feature list is unusual, no better fix is provided
     // for now.
-    this.focusedFeature$$ = this.featureService.focusedFeature$
-      .filter(feature => feature !== undefined)
-      .debounceTime(100)
-      .subscribe(feature => this.component.focusedFeature = feature);
+    this.focusedFeature$$ = this.featureService.focusedFeature$.pipe(
+      filter(feature => feature !== undefined),
+      debounceTime(100)
+    ).subscribe(feature => this.component.focusedFeature = feature);
 
     this.initialized = true;
   }

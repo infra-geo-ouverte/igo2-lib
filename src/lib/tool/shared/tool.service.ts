@@ -3,13 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { RequestService, ConfigService } from '../../core';
+import { ConfigService } from '../../core';
 import { Tool } from './tool.interface';
+
 
 @Injectable()
 export class ToolService {
 
-  static toolDefs: {[key: string]: [Tool, Component]} = {};
+  // TODO: Find a way to not use global variables
+  // Currently, once compiled, the class is split and custom tools are not available.
+  static toolDefs: {[key: string]: [Tool, Component]} = window['igoToolDefs'] =
+    window['igoToolDefs'] === undefined ? {} : window['igoToolDefs'];
 
   public tools$ = new BehaviorSubject<{[key: string]: Tool}>({});
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
@@ -21,7 +25,6 @@ export class ToolService {
   }
 
   constructor(private http: HttpClient,
-              private requestService: RequestService,
               private config: ConfigService) {
 
     this.baseUrl = this.config.getConfig('context.url');
@@ -36,8 +39,7 @@ export class ToolService {
 
   get(): Observable<Tool[]> {
     const url = this.baseUrl + '/tools';
-    const request = this.http.get<Tool[]>(url);
-    return this.requestService.register(request, 'Get tools error');
+    return this.http.get<Tool[]>(url);
   }
 
   setTools(tools: Tool[]) {

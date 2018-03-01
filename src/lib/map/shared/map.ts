@@ -40,7 +40,7 @@ export class IgoMap {
   }
 
   constructor(options?: MapOptions) {
-    this.options = options || this.options;
+    Object.assign(this.options, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
 
@@ -49,11 +49,18 @@ export class IgoMap {
 
   init() {
     const controls = [];
-    controls.push(new ol.control.ScaleLine());
-    if (this.options.controls && this.options.controls.attribution) {
-      controls.push(new ol.control.Attribution());
+    if (this.options.controls) {
+      if (this.options.controls.attribution) {
+        const attributionOpt = (this.options.controls.attribution === true ?
+          {} : this.options.controls.attribution) as olx.control.AttributionOptions;
+        controls.push(new ol.control.Attribution(attributionOpt));
+      }
+      if (this.options.controls.scaleLine) {
+        const scaleLineOpt = (this.options.controls.scaleLine === true ?
+          {} : this.options.controls.scaleLine) as olx.control.ScaleLineOptions;
+        controls.push(new ol.control.ScaleLine(scaleLineOpt));
+      }
     }
-
     let interactions = {};
     if (this.options.interactions === false) {
       interactions = {
@@ -145,6 +152,7 @@ export class IgoMap {
         const center = ol.proj.fromLonLat(options.center, this.projection);
         view.setCenter(center);
       }
+
       if (options.geolocate) {
         this.geolocate(true);
       }
@@ -168,7 +176,7 @@ export class IgoMap {
   }
 
   getZoom(): number {
-    return this.ol.getView().getZoom();
+    return Math.round(this.ol.getView().getZoom());
   }
 
   zoomIn() {
@@ -310,22 +318,17 @@ export class IgoMap {
     const geometry = feature.getGeometry();
     if (geometry === null) { return; }
 
-    let marker;
     if (geometry.getType() === 'Point') {
-      marker = feature;
-    } else {
-      const centroid = ol.extent.getCenter(geometry.getExtent());
-      marker = new ol.Feature(new ol.geom.Point(centroid));
-
-      this.overlayDataSource.ol.addFeature(feature);
+      feature.setStyle(this.overlayMarkerStyle);
     }
 
-    marker.setStyle(this.overlayMarkerStyle);
-    this.overlayDataSource.ol.addFeature(marker);
+    this.overlayDataSource.ol.addFeature(feature);
   }
 
   clearOverlay() {
-    this.overlayDataSource.ol.clear();
+    if (this.overlayDataSource && this.overlayDataSource.ol) {
+      this.overlayDataSource.ol.clear();
+    }
   }
 
   geolocate(track = false) {

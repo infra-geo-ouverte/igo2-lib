@@ -42,6 +42,12 @@
 				"saveTitle": "Context saved"
 			},
 			"edit": "Edit this context",
+			"errors": {
+	      "uncaught": {
+	        "message": "Sorry, service is currently not available. Please try again later",
+	        "title": "Error server"
+	      }
+	    },
 			"favorite": "Favorite",
 			"form": {
 				"edit": "Edit",
@@ -89,6 +95,7 @@
 		"layer": {
 			"hideLayer": "Hide Layer",
 			"lowerLayer": "Bring layer backward",
+			"loadingLegendText": "Loading legend",
 			"noLegendText": "No legend available for this layer",
 			"opacity": "Opacity",
 			"raiseLayer": "Bring layer forward",
@@ -104,6 +111,11 @@
 			"end": "Completed"
 		},
 		"map": "Map",
+		"mapButtons": {
+      "geolocate": "Geolocate",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out"
+    },
 		"permission": {
 			"addBtn": "Add",
 			"delete": "Remove permission",

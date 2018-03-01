@@ -3,11 +3,8 @@ import { Component, ElementRef, ViewChild, Input,
 import { MatSort } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/map';
 
 import { ObjectUtils } from '../../utils';
 
@@ -57,10 +54,10 @@ export class TableComponent implements OnChanges, OnInit {
       }
     }
 
-    Observable.fromEvent(this.filter.nativeElement, 'keyup')
-      .debounceTime(150)
-      .distinctUntilChanged()
-      .subscribe(() => {
+    Observable.fromEvent(this.filter.nativeElement, 'keyup').pipe(
+      debounceTime(150),
+      distinctUntilChanged()
+    ).subscribe(() => {
         if (!this.dataSource) { return; }
         this.dataSource.filter = this.filter.nativeElement.value;
       });

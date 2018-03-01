@@ -60,6 +60,7 @@ export class LayerItemComponent implements OnDestroy {
     this.layer.dataSource.options['id'] : this.layer.id;
   }
 
+  public legendLoaded = false;
   private resolution$$: Subscription;
 
   constructor(private cdRef: ChangeDetectorRef,
@@ -74,6 +75,7 @@ export class LayerItemComponent implements OnDestroy {
 
   toggleLegend(collapsed: boolean) {
     this.layer.collapsed = collapsed;
+    this.legendLoaded = collapsed ? this.legendLoaded : true;
   }
 
   toggleVisibility() {
@@ -97,6 +99,10 @@ export class LayerItemComponent implements OnDestroy {
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
   }
+  openDownload(layer: Layer) {
+    this.downloadService.open(layer);
+  }
+
   openDownload(layer: Layer) {
     this.downloadService.open(layer);
   }

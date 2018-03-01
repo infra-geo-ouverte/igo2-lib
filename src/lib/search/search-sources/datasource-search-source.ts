@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message, LanguageService } from '../../core';
-import { Feature, FeatureType } from '../../feature';
+import { Feature, FeatureType, SourceFeatureType } from '../../feature';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
@@ -79,6 +79,7 @@ export class DataSourceSearchSource extends SearchSource {
     return {
       id: result.id,
       source: this.getName(),
+      sourceType: SourceFeatureType.Search,
       type: FeatureType.DataSource,
       title: result.source.title,
       title_html: result.highlight.title,

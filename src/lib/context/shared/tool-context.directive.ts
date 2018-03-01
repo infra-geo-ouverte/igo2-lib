@@ -1,5 +1,6 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { filter } from 'rxjs/operators';
 
 // Import from shared and toolbar to avoid circular dependencies
 import { Tool, ToolService } from '../../tool/shared';
@@ -24,9 +25,9 @@ export class ToolContextDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.context$$ = this.contextService.context$
-      .filter(context => context !== undefined)
-      .subscribe(context => this.handleContextChange(context));
+    this.context$$ = this.contextService.context$.pipe(
+      filter(context => context !== undefined)
+    ).subscribe(context => this.handleContextChange(context));
   }
 
   ngOnDestroy() {

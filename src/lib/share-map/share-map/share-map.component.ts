@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { uuid } from '../../utils/uuid';
 
+import { uuid, Clipboard } from '../../utils';
 import { ConfigService, MessageService, LanguageService } from '../../core';
 import { AuthService } from '../../auth';
 import { IgoMap } from '../../map';
@@ -23,6 +23,20 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
     this._map = value;
   }
   private _map: IgoMap;
+
+  @Input()
+  get hasShareMapButton(): boolean { return this._hasShareMapButton; }
+  set hasShareMapButton(value: boolean) {
+    this._hasShareMapButton = value;
+  }
+  private _hasShareMapButton: boolean = true;
+
+  @Input()
+  get hasCopyLinkButton(): boolean { return this._hasCopyLinkButton; }
+  set hasCopyLinkButton(value: boolean) {
+    this._hasCopyLinkButton = value;
+  }
+  private _hasCopyLinkButton: boolean = false;
 
   public url: string;
   public hasApi: boolean = false;
@@ -48,26 +62,19 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.auth.authenticate$.subscribe((auth) => {
-      const decodeToken = this.auth.decodeToken();
-      this.userId = decodeToken.user ? decodeToken.user.id : undefined;
-      this.url = this.shareMapService.getUrl(this.map, this.userId);
-      this.buildForm();
-    });
+    if (!this.hasApi) {
+      this.resetUrl();
+    }
   }
 
-  resetUrl(values) {
+  resetUrl(values: any = {}) {
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrl(this.map, inputs);
   }
 
   copyTextToClipboard(textArea) {
-    textArea.select();
-    const successful = document.execCommand('copy');
-    if ( window.getSelection ) {
-      window.getSelection().removeAllRanges();
-    }
+    const successful = Clipboard.copy(textArea);
     if (successful) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.shareMap.dialog.copyTitle');

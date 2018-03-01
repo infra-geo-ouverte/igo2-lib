@@ -81,7 +81,8 @@
       </button>
 
       <button
-      *ngIf="(layer.options['type'] === 'wfs' && layer.dataSource.options['outputFormatDownload']) || (layer.options['type'] !== 'wfs' && layer.dataSource.options.download && layer.dataSource.options.download.url)"
+      *ngIf="(layer.options['type'] === 'wfs' && layer.dataSource.options['outputFormatDownload']) ||
+             (layer.options['type'] !== 'wfs' && layer.dataSource.options.download && layer.dataSource.options.download.url)"
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
@@ -127,5 +128,5 @@
 </div>
 
 <div #legend class="igo-layer-legend-container">
-  <igo-layer-legend *ngIf="!layer.collapsed" [layer]="layer"></igo-layer-legend>
+  <igo-layer-legend *ngIf="legendLoaded" [layer]="layer"></igo-layer-legend>
 </div>

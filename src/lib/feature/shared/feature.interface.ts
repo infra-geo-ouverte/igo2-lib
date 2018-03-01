@@ -1,10 +1,11 @@
 import { AnyDataSourceContext } from '../../datasource';
 
-import { FeatureType, FeatureFormat } from './feature.enum';
+import { FeatureType, FeatureFormat, SourceFeatureType } from './feature.enum';
 
 export interface Feature {
   id: string;
   source: string;
+  sourceType?: SourceFeatureType;
   type: FeatureType;
   title: string;
   format?: FeatureFormat;
