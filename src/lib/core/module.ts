@@ -6,6 +6,7 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
 import { TranslateModule, MissingTranslationHandler,
          TranslateService } from '@ngx-translate/core';
 
+import { CustomMaterialModule } from '../customMaterialModule';
 import { ConfigService, provideConfigLoader , provideConfigOptions} from './config';
 
 import { LanguageService, IgoMissingTranslationHandler,
@@ -19,6 +20,7 @@ import { MessageCenterComponent, MessageService } from './message';
 
 @NgModule({
   imports: [
+    CustomMaterialModule,
     SimpleNotificationsModule.forRoot(),
     TranslateModule.forRoot({
       missingTranslationHandler: {

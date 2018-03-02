@@ -1,1 +1,4 @@
-<simple-notifications [options]="options"></simple-notifications>
+<simple-notifications
+  [ngClass]="{closeIcon: options.hasCloseIcon}"
+  [options]="options">
+</simple-notifications>

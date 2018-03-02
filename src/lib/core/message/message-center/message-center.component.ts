@@ -10,6 +10,7 @@ export class MessageCenterComponent {
 
   static defaultOptions = {
     timeOut: 5000,
+    hasCloseIcon: false,
     showProgressBar: true,
     pauseOnHover: true,
     clickToClose: true,

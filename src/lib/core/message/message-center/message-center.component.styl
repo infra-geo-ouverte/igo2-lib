@@ -14,16 +14,11 @@
   div.simple-notification {
     min-height: 50px;
     margin-bottom: 5px;
-    padding-right: 45px;
+    padding-left: 45px;
+    padding-right: 25px;
 
     +media(mobile) {
       margin-bottom: 0;
-    }
-
-    svg {
-      width: 63px;
-      height: 63px;
-      padding: 15px;
     }
 
     .sn-title {
@@ -37,17 +32,29 @@
       font-size: 15px;
     }
 
+    .icon {
+      top: 0;
+      left: 0;
+      width: 45px;
+      height: 100%;
+      padding: 5px;
+    }
+
     &.error {
       background-color: #d32f2f;
       .sn-progress-loader span {
         background-color: #c41515;
       }
     }
+  }
 
-    mat-icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
+  .closeIcon >>> .sn-title:after {
+    content: "close";
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-weight: normal;
+    right: 5px;
+    top: 5px;
+    position: absolute;
   }
 }
