@@ -19,8 +19,11 @@ export class FeatureGroupPipe implements PipeTransform {
       groupedFeatures[source].push(feature);
     });
 
-    const sourceFeatures = Object.keys(groupedFeatures).sort().map(
-      (source: string) => [source, groupedFeatures[source]]);
+    const sourceFeatures = Object.keys(groupedFeatures).sort((a, b) => {
+      return groupedFeatures[a][0].order - groupedFeatures[b][0].order;
+    }).map(
+      (source: string) => [source, groupedFeatures[source]]
+    );
 
     return sourceFeatures;
   }

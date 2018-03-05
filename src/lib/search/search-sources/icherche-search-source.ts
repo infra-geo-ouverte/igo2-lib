@@ -73,6 +73,7 @@ export class IChercheSearchSource extends SearchSource {
       id: result._id,
       source: IChercheSearchSource._name,
       sourceType: SourceFeatureType.Search,
+      order: 1,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.recherche,

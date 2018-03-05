@@ -6,6 +6,7 @@ export interface Feature {
   id: string;
   source: string;
   sourceType?: SourceFeatureType;
+  order?: number;
   type: FeatureType;
   title: string;
   format?: FeatureFormat;

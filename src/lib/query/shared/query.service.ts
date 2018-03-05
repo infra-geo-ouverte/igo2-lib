@@ -22,17 +22,18 @@ export class QueryService {
 
   query(layers: Layer[], options: QueryOptions) {
     this.unsubscribe();
+
     this.subscriptions = layers
       .filter((layer: Layer) => layer.visible)
-      .map((layer: Layer) => this.queryDataSource(layer.dataSource, options));
+      .map((layer: Layer) => this.queryDataSource(layer.dataSource, options, layer.zIndex));
   }
 
-  queryDataSource(dataSource: DataSource, options: QueryOptions) {
+  queryDataSource(dataSource: DataSource, options: QueryOptions, zIndex: number) {
     const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
     const request = this.http.get(url, {responseType: 'text'});
 
     this.featureService.clear();
-    return request.map(res => this.extractData(res, dataSource, options, url))
+    return request.map(res => this.extractData(res, dataSource, options, url, zIndex))
       .subscribe((features: Feature[]) =>
         this.handleQueryResults(features, dataSource));
   }
@@ -45,17 +46,18 @@ export class QueryService {
     this.featureService.updateFeatures(features, dataSource.title);
   }
 
-  private extractData(res, dataSource: DataSource,
-                      options: QueryOptions, url: string): Feature[] {
+  private extractData(res, dataSource: DataSource, options: QueryOptions,
+                      url: string, zIndex: number): Feature[] {
+
     const queryDataSource = (dataSource as any as QueryableDataSource);
 
     let features = [];
     switch (queryDataSource.queryFormat) {
       case QueryFormat.GML2:
-        features = this.extractGML2Data(res);
+        features = this.extractGML2Data(res, zIndex);
         break;
       case QueryFormat.GML3:
-        features = this.extractGML3Data(res);
+        features = this.extractGML3Data(res, zIndex);
         break;
       case QueryFormat.JSON:
         features = this.extractGeoJSONData(res);
@@ -77,13 +79,14 @@ export class QueryService {
         id: uuid(),
         source: dataSource.title,
         sourceType: SourceFeatureType.Query,
+        order: zIndex,
         title: title ? title : `${dataSource.title} (${index + 1})`,
         projection: options.projection
       });
     });
   }
 
-  private extractGML2Data(res) {
+  private extractGML2Data(res, zIndex) {
     let parser = new ol.format.GML2();
     let features = parser.readFeatures(res);
 
@@ -93,14 +96,14 @@ export class QueryService {
       features = parser.readFeatures(res);
     }
 
-    return features.map(feature => this.featureToResult(feature));
+    return features.map(feature => this.featureToResult(feature, zIndex));
   }
 
-  private extractGML3Data(res) {
+  private extractGML3Data(res, zIndex) {
     const parser = new ol.format.GML3();
     const features = parser.readFeatures(res);
 
-    return features.map(feature => this.featureToResult(feature));
+    return features.map(feature => this.featureToResult(feature, zIndex));
   }
 
   private extractGeoJSONData(res) {
@@ -207,7 +210,7 @@ export class QueryService {
     return result;
   }
 
-  private featureToResult(feature: ol.Feature): Feature {
+  private featureToResult(feature: ol.Feature, zIndex: number): Feature {
     const featureGeometry = (feature.getGeometry() as any);
     const properties = Object.assign({}, feature.getProperties());
     delete properties['geometry'];
@@ -226,6 +229,7 @@ export class QueryService {
       source: undefined,
       sourceType: SourceFeatureType.Query,
       type: FeatureType.Feature,
+      order: zIndex,
       format: FeatureFormat.GeoJSON,
       title: undefined,
       icon: 'place',

@@ -80,6 +80,7 @@ export class DataSourceSearchSource extends SearchSource {
       id: result.id,
       source: this.getName(),
       sourceType: SourceFeatureType.Search,
+      order: 2,
       type: FeatureType.DataSource,
       title: result.source.title,
       title_html: result.highlight.title,

@@ -62,6 +62,7 @@ export class NominatimSearchSource extends SearchSource {
       id: result.place_id,
       source: NominatimSearchSource._name,
       sourceType: SourceFeatureType.Search,
+      order: 0,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.display_name,
