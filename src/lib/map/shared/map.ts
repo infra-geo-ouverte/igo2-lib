@@ -19,8 +19,10 @@ export class IgoMap {
   public resolution$ = new BehaviorSubject<Number>(undefined);
   public geolocation$ = new BehaviorSubject<ol.Geolocation>(undefined);
 
+  public overlayMarkerStyle: ol.style.Style;
+  public overlayStyle: ol.style.Style;
   private overlayDataSource: FeatureDataSource;
-  private overlayMarkerStyle: ol.style.Style;
+
   private layerWatcher: LayerWatcher;
   private geolocation: ol.Geolocation;
   private geolocation$$: Subscription;
@@ -108,17 +110,19 @@ export class IgoMap {
         color: [0, 161, 222, 0.15]
       });
 
+      this.overlayStyle = new ol.style.Style({
+        stroke: stroke,
+        fill: fill,
+        image: new ol.style.Circle({
+          radius: 5,
+          stroke: stroke,
+          fill: fill
+        })
+      });
+
       const layer = new VectorLayer(this.overlayDataSource, {
         zIndex: 999,
-        style: new ol.style.Style({
-          stroke: stroke,
-          fill: fill,
-          image: new ol.style.Circle({
-            radius: 5,
-            stroke: stroke,
-            fill: fill
-          })
-        })
+        style: this.overlayStyle
       });
       this.addLayer(layer, false);
     }
