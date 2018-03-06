@@ -1,4 +1,5 @@
 @require '../../../style/var.styl';
+@require '../../../style/media.styl';
 
 .igo-mini-basemap-container {
   width: "calc(%s * 2)" % $igo-icon-size;
@@ -19,7 +20,10 @@
 .igo-mini-basemap-container > div {
   width: 100%;
   height: 100%;
-  display: table;
+
+  +media(ie) {
+    display: table;
+  }
 }
 
 .igo-mini-basemap-title {
