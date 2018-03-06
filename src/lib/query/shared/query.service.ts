@@ -79,7 +79,7 @@ export class QueryService {
         id: uuid(),
         source: dataSource.title,
         sourceType: SourceFeatureType.Query,
-        order: zIndex,
+        order: 1000 - zIndex,
         title: title ? title : `${dataSource.title} (${index + 1})`,
         projection: options.projection
       });
@@ -229,7 +229,7 @@ export class QueryService {
       source: undefined,
       sourceType: SourceFeatureType.Query,
       type: FeatureType.Feature,
-      order: zIndex,
+      order: 1000 - zIndex,
       format: FeatureFormat.GeoJSON,
       title: undefined,
       icon: 'place',
