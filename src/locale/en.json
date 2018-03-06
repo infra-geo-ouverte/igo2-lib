@@ -103,8 +103,8 @@
 			"showFeaturesList": "Show features list",
 			"showLayer": "Show Layer",
 			"showMetadata": "Show metadata"
-		},		
-		"download":{ 
+		},
+		"download":{
 			"action": "Download data",
 			"title": "Downloading file",
 			"start": "Started. Check the download progression in your browser",
@@ -112,6 +112,7 @@
 		},
 		"map": "Map",
 		"mapButtons": {
+			"baselayerSwitcher": "Change base layer",
       "geolocate": "Geolocate",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out"

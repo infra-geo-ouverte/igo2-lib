@@ -4,7 +4,12 @@ import { trigger, state, style, transition,
 export function baseLayersSwitcherSlideInOut(): AnimationTriggerMetadata {
 
   return trigger('baseLayerSwitcherState', [
-    state('collapse', style({
+    state('collapseIcon', style({
+      height: '40px',
+      width: '40px',
+      overflow: 'hidden'
+    })),
+    state('collapseMap', style({
       height: '85px',
       overflow: 'hidden'
     })),

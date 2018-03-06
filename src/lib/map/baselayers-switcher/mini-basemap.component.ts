@@ -36,6 +36,13 @@ export class MiniBaseMapComponent
   }
   private _disabled: boolean;
 
+  @Input()
+  get display(): boolean { return this._display; }
+  set display(value: boolean) {
+    this._display = value;
+  }
+  private _display: boolean;
+
   public basemap = new IgoMap({
     controls: {},
     interactions: false

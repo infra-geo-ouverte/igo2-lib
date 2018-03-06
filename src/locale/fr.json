@@ -112,6 +112,7 @@
 		},
 		"map": "Carte",
     "mapButtons": {
+			"baselayerSwitcher": "Changer le fond de carte",
       "geolocate": "Positionnement GPS",
       "zoomIn": "Zoomer ({{zoom}})",
       "zoomOut": "Dézoomer ({{zoom}})"

@@ -2,6 +2,7 @@ import { Component, Input,
   AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
+import { MediaService } from '../../core';
 import { Layer } from '../../layer';
 import { IgoMap } from '../shared';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
@@ -23,12 +24,24 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
   private _map: IgoMap;
 
+  @Input()
+  get useStaticIcon(): boolean { return this._useStaticIcon; }
+  set useStaticIcon(value: boolean) {
+    this._useStaticIcon = value;
+  }
+  private _useStaticIcon: boolean;
+
   public _baseLayers: Layer[] = [];
   public expand: boolean = false;
 
   private layers$$: Subscription;
 
-  constructor() {}
+  constructor(private mediaService: MediaService) {
+    const media = this.mediaService.media$.value;
+    if (media === 'mobile' && this.useStaticIcon === undefined) {
+      this.useStaticIcon = true;
+    }
+  }
 
   ngAfterViewInit() {
     this.layers$$ = this.map.layers$.subscribe((arrayLayers) => {
@@ -41,7 +54,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   collapseOrExpand() {
-    if (this.baseLayers.length > 1) {
+    if (this.baseLayers.length > 1 || this.useStaticIcon) {
       this.expand = !this.expand;
     } else {
       this.expand = false;
