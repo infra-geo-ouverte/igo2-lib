@@ -14,7 +14,7 @@ export class FeatureService {
   constructor() { }
 
   setFeatures(features: Feature[]) {
-    this.features$.next(features);
+    this.features$.next(features.sort(this.sortFeatures));
   }
 
   updateFeatures(features: Feature[], source: string, sourcesToKeep?: string[]) {
@@ -23,7 +23,8 @@ export class FeatureService {
         return feature.source !== source &&
                (!sourcesToKeep || sourcesToKeep.includes(feature.source));
       })
-      .concat(features);
+      .concat(features)
+      .sort(this.sortFeatures);
 
     this.features$.next(features_);
   }
@@ -61,4 +62,7 @@ export class FeatureService {
     return feature1.id === feature2.id && feature1.source === feature2.source;
   }
 
+  private sortFeatures(feature1, feature2) {
+    return feature1.order - feature2.order;
+  }
 }
