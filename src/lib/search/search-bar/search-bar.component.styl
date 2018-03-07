@@ -10,8 +10,14 @@ mat-form-field {
 }
 
 input {
-  width: calc(100% - $igo-icon-size);
+  padding-left: 10px;
+  padding-right: $igo-icon-size;
 }
+
+input.hasSearchIcon {
+  padding-right: "calc(%s * 2)" % $igo-icon-size;
+}
+
 
 .searchButtonDiv {
   position: absolute;
