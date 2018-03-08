@@ -16,60 +16,79 @@ export class MessageService {
 
   showError(httpError: HttpErrorResponse) {
     httpError.error.caught = true;
-    this.error(httpError.error.message, httpError.error.title);
+    return this.error(httpError.error.message, httpError.error.title);
   }
 
   message(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));
 
     const notification = this.notificationService.create(
-      message.title, message.text, message.type as any as string);
+      message.title, message.text, message.type as any as string, {id: message.id}
+    );
 
     if (message.icon !== undefined) {
       this.addIcon(notification, message.icon);
     }
+
+    return notification.id;
   }
 
   html(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));
 
-    this.notificationService.html(message.title, message.text);
+    const notification = this.notificationService.html(
+      message.text, message.type as any as string, {id: message.id}
+    );
+
+    if (message.icon !== undefined) {
+      this.addIcon(notification, message.icon);
+    }
+
+    return notification.id;
   }
 
-  success(text: string, title?: string, icon?: string) {
-    this.message({
+  success(text: string, title?: string, icon?: string, id?: string) {
+    return this.message({
       text: text,
       title: title,
       icon: icon,
+      id: id,
       type: MessageType.SUCCESS
     });
   }
 
-  error(text: string, title?: string, icon?: string) {
-    this.message({
+  error(text: string, title?: string, icon?: string, id?: string) {
+    return this.message({
       text: text,
       title: title,
       icon: icon,
+      id: id,
       type: MessageType.ERROR
     });
   }
 
-  info(text: string, title?: string, icon?: string) {
-    this.message({
+  info(text: string, title?: string, icon?: string, id?: string) {
+    return this.message({
       text: text,
       title: title,
       icon: icon,
+      id: id,
       type: MessageType.INFO
     });
   }
 
-  alert(text: string, title?: string, icon?: string) {
-    this.message({
+  alert(text: string, title?: string, icon?: string, id?: string) {
+    return this.message({
       text: text,
       title: title,
       icon: icon,
+      id: id,
       type: MessageType.ALERT
     });
+  }
+
+  remove(id?) {
+    this.notificationService.remove(id);
   }
 
   private addIcon(notification: Notification, icon: string) {

@@ -1,6 +1,7 @@
 import { MessageType } from './message.enum';
 
 export interface Message {
+  id?: string;
   title?: string;
   text: string;
   icon?: string;
