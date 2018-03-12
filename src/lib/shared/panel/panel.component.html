@@ -1,7 +1,9 @@
 <div class="igo-panel-header">
   <h3>
     <ng-content select="[panelLeftButton]"></ng-content>
+    <ng-content select="[panelBeforeTitle]"></ng-content>
     <div class="igo-panel-title">{{title}}</div>
+    <ng-content select="[panelAfterTitle]"></ng-content>
     <ng-content select="[panelRightButton]"></ng-content>
   </h3>
 </div>
