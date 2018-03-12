@@ -23,7 +23,7 @@ export class MessageService {
     this.messages$.next(this.messages$.value.concat([message]));
 
     const notification = this.notificationService.create(
-      message.title, message.text, message.type as any as string, {id: message.id}
+      message.title, message.text, message.type as any as string, message.options
     );
 
     if (message.icon !== undefined) {
@@ -37,7 +37,7 @@ export class MessageService {
     this.messages$.next(this.messages$.value.concat([message]));
 
     const notification = this.notificationService.html(
-      message.text, message.type as any as string, {id: message.id}
+      message.text, message.type as any as string, message.options
     );
 
     if (message.icon !== undefined) {
@@ -47,42 +47,42 @@ export class MessageService {
     return notification.id;
   }
 
-  success(text: string, title?: string, icon?: string, id?: string) {
+  success(text: string, title?: string, icon?: string, options?: any) {
     return this.message({
       text: text,
       title: title,
       icon: icon,
-      id: id,
+      options: options,
       type: MessageType.SUCCESS
     });
   }
 
-  error(text: string, title?: string, icon?: string, id?: string) {
+  error(text: string, title?: string, icon?: string, options?: any) {
     return this.message({
       text: text,
       title: title,
       icon: icon,
-      id: id,
+      options: options,
       type: MessageType.ERROR
     });
   }
 
-  info(text: string, title?: string, icon?: string, id?: string) {
+  info(text: string, title?: string, icon?: string, options?: any) {
     return this.message({
       text: text,
       title: title,
       icon: icon,
-      id: id,
+      options: options,
       type: MessageType.INFO
     });
   }
 
-  alert(text: string, title?: string, icon?: string, id?: string) {
+  alert(text: string, title?: string, icon?: string, options?: any) {
     return this.message({
       text: text,
       title: title,
       icon: icon,
-      id: id,
+      options: options,
       type: MessageType.ALERT
     });
   }
