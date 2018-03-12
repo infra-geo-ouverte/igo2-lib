@@ -7,8 +7,9 @@
   <mat-icon *ngIf="withIcon && !tool.iconImage"
     mat-list-avatar
     tooltip-position="below"
+    matTooltipClass="toolbarItemTooltip"
     matTooltipShowDelay="500"
-    [matTooltip]="(tool.tooltip || tool.title) | translate">
+    [matTooltip]="tool.tooltip ? '' : (tool.title | translate)">
       {{tool.icon}}
   </mat-icon>
 
@@ -16,7 +17,8 @@
     mat-list-avatar
     mat-icon-button
     igoStopPropagation
-    [matTooltip]="(tool.tooltip || tool.title) | translate"
+    [matTooltip]="tool.tooltip ? '' : (tool.title | translate)"
+    matTooltipClass="toolbarItemTooltip"
     matTooltipShowDelay="500">
 
     <img [src]="tool.iconImage">
