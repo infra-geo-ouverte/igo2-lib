@@ -18,7 +18,12 @@ export class LayerLegendComponent {
   }
   private _layer: Layer;
 
-  get legend() { return this._legend; }
+  get legend() {
+    if (this._legend && this._legend.display === false) {
+      return [];
+    }
+    return this._legend;
+  }
   private _legend;
 
   constructor() {}

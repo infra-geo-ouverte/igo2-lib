@@ -24,6 +24,7 @@ export interface DataSourceLegendOptions {
   html?: string;
   style?: {[key: string]: string | number};
   title?: string;
+  display?: boolean;
 }
 
 export interface QueryableDataSourceOptions extends DataSourceOptions {
