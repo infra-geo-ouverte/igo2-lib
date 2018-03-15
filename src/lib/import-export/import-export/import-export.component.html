@@ -1,21 +1,26 @@
 <mat-tab-group>
+
   <mat-tab [label]="'igo.importExportForm.importTabTitle' | translate">
-    <br>
-    <div class="igo-input-container">
-      <mat-form-field>
-        <input
-          matInput
-          placeholder="{{'igo.importExportForm.importProjPlaceholder' | translate}}"
-          name="inputProj"
-          [(ngModel)]="inputProj">
-      </mat-form-field>
-    </div>
-    <button mat-raised-button type="button" (click)="inputFile.click()">
-      {{'igo.importExportForm.importButton' | translate}}
-    </button>
-    <input #inputFile type="file" [style.display]="'none'" (change)="loadFile($event.target.files)">
-    <br><br>
+    <form class="igo-form">
+      <div class="igo-input-container">
+        <mat-form-field>
+          <input
+            matInput
+            placeholder="{{'igo.importExportForm.importProjPlaceholder' | translate}}"
+            name="inputProj"
+            [(ngModel)]="inputProj">
+        </mat-form-field>
+      </div>
+
+      <div class="igo-form-button-group">
+        <button mat-raised-button type="button" (click)="inputFile.click()">
+          {{'igo.importExportForm.importButton' | translate}}
+        </button>
+        <input #inputFile type="file" [style.display]="'none'" (change)="loadFile($event.target.files)">
+      </div>
+    </form>
   </mat-tab>
+
   <mat-tab [label]="'igo.importExportForm.exportTabTitle' | translate">
     <form class="igo-form" [formGroup]="form">
 
@@ -55,4 +60,5 @@
 
     </form>
   </mat-tab>
+
 </mat-tab-group>
