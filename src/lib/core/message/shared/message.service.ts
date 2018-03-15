@@ -30,7 +30,7 @@ export class MessageService {
       this.addIcon(notification, message.icon);
     }
 
-    return notification.id;
+    return notification;
   }
 
   html(message: Message) {
@@ -44,44 +44,44 @@ export class MessageService {
       this.addIcon(notification, message.icon);
     }
 
-    return notification.id;
+    return notification;
   }
 
-  success(text: string, title?: string, icon?: string, options?: any) {
+  success(text: string, title?: string, options: any = {}) {
     return this.message({
       text: text,
       title: title,
-      icon: icon,
+      icon: options.icon,
       options: options,
       type: MessageType.SUCCESS
     });
   }
 
-  error(text: string, title?: string, icon?: string, options?: any) {
+  error(text: string, title?: string, options: any = {}) {
     return this.message({
       text: text,
       title: title,
-      icon: icon,
+      icon: options.icon,
       options: options,
       type: MessageType.ERROR
     });
   }
 
-  info(text: string, title?: string, icon?: string, options?: any) {
+  info(text: string, title?: string, options: any = {}) {
     return this.message({
       text: text,
       title: title,
-      icon: icon,
+      icon: options.icon,
       options: options,
       type: MessageType.INFO
     });
   }
 
-  alert(text: string, title?: string, icon?: string, options?: any) {
+  alert(text: string, title?: string, options: any = {}) {
     return this.message({
       text: text,
       title: title,
-      icon: icon,
+      icon: options.icon,
       options: options,
       type: MessageType.ALERT
     });
