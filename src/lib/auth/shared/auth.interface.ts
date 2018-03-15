@@ -21,6 +21,7 @@ export interface AuthOptions {
   intern?: AuthInternOptions;
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;
+  trustHosts?: string[];
 }
 
 export interface User {

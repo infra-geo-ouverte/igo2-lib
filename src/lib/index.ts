@@ -19,3 +19,5 @@ export * from './shared';
 export * from './share-map';
 export * from './tool';
 export * from './utils';
+
+export * from './environment.interface';
