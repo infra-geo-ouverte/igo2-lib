@@ -54,6 +54,9 @@ export class WMSDataSource
       case QueryFormat.JSON:
         queryInfoFormat = 'application/json';
         break;
+     case QueryFormat.GEOJSON:
+        queryInfoFormat = 'application/geojson';
+        break;
       case QueryFormat.TEXT:
         queryInfoFormat = 'text/plain';
         break;

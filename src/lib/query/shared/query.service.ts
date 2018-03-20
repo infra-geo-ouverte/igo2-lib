@@ -62,6 +62,9 @@ export class QueryService {
       case QueryFormat.JSON:
         features = this.extractGeoJSONData(res);
         break;
+      case QueryFormat.GEOJSON:
+        features = this.extractGeoJSONData(res);
+        break;
       case QueryFormat.TEXT:
         features = this.extractTextData(res);
         break;
