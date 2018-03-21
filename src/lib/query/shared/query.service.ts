@@ -111,7 +111,7 @@ export class QueryService {
     let features = [];
     try {
       features = JSON.parse(res).features;
-    } catch(e) {
+    } catch (e) {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
     return features;
