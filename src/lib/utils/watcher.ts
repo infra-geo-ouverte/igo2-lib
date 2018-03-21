@@ -31,9 +31,9 @@ export abstract class Watcher {
     this.status$$ = this.status$.pipe(
       distinctUntilChanged()
     ).subscribe((status: SubjectStatus) => {
-        this.handleStatusChange(status);
-        callback.call(scope, this);
-      });
+      this.handleStatusChange(status);
+      callback.call(scope, this);
+    });
   };
 
   unsubscribe() {

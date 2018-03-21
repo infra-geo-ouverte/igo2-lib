@@ -48,6 +48,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.map.setTarget(undefined);
+    this.activityService.unregister(this.activityId);
     this.status$$.unsubscribe();
   }
 

@@ -12,7 +12,7 @@ export class ActivityService {
 
   private ids: string[] = [];
 
-  constructor() { }
+  constructor() {}
 
   register(): string {
     const id = uuid();
@@ -23,7 +23,12 @@ export class ActivityService {
   }
 
   unregister(id: string) {
-    this.ids.splice(this.ids.indexOf(id), 1);
+    const index = this.ids.indexOf(id);
+    if (index === -1) {
+      return;
+    }
+    this.ids.splice(index, 1);
+
     this.counter$.next(this.ids.length);
   }
 

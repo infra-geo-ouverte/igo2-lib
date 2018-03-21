@@ -49,12 +49,10 @@ export class TileWatcher extends Watcher {
 
     const loading = this.loading;
     if (this.loaded >= loading) {
-      window.setTimeout(() => {
-        if (loading === this.loading) {
-          this.status =  SubjectStatus.Done;
-          this.loaded = this.loading = 0;
-        }
-      }, 100);
+      if (loading === this.loading) {
+        this.status =  SubjectStatus.Done;
+        this.loaded = this.loading = 0;
+      }
     }
   }
 }

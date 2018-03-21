@@ -36,7 +36,7 @@ export class LayerWatcher extends Watcher {
           this.loaded += 1;
         }
 
-        if (this.loading === this.loaded) {
+        if (this.loaded >= this.loading) {
           this.loading = this.loaded = 0;
           this.status = SubjectStatus.Done;
         } else if (this.loading > 0) {
@@ -50,12 +50,13 @@ export class LayerWatcher extends Watcher {
   unwatchLayer(layer: Layer) {
     const index = this.layers.indexOf(layer);
     if (index >= 0) {
+      const status = (layer as any).watcher.status;
+      if ([SubjectStatus.Working, SubjectStatus.Waiting].includes(status)) {
+        this.loaded += 1;
+      }
       this.subscriptions[index].unsubscribe();
       this.subscriptions.splice(index, 1);
       this.layers.splice(index, 1);
-      if ((layer as any).watcher.status === SubjectStatus.Working) {
-        this.loaded += 1;
-      }
     }
   }
 }
