@@ -20,7 +20,7 @@
     [color]="color"
     (click)="toggleVisibility()">
     <mat-icon
-      [ngClass]='{disabled: !isInResolutionsRange()}'>
+      [ngClass]='{disabled: !layer.isInResolutionsRange}'>
       <ng-container *ngIf="layer.visible">
         visibility
       </ng-container>

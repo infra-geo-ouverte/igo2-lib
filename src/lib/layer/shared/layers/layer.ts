@@ -60,6 +60,17 @@ export abstract class Layer {
     this.ol.setOpacity(opacity);
   }
 
+  get isInResolutionsRange(): boolean {
+    if (!this.map) { return false; }
+
+    const resolution = this.map.resolution;
+    const minResolution = this.ol.getMinResolution();
+    const maxResolution = this.ol.getMaxResolution();
+
+    return resolution >= minResolution &&
+           resolution <= maxResolution;
+  }
+
   constructor(dataSource: DataSource, options?: LayerOptions) {
     this.dataSource = dataSource;
     this.options = options || {};

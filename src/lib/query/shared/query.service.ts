@@ -24,7 +24,7 @@ export class QueryService {
     this.unsubscribe();
 
     this.subscriptions = layers
-      .filter((layer: Layer) => layer.visible)
+      .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
       .map((layer: Layer) => this.queryDataSource(layer.dataSource, options, layer.zIndex));
   }
 
