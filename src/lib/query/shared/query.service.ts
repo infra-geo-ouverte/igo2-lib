@@ -60,6 +60,7 @@ export class QueryService {
         features = this.extractGML3Data(res, zIndex);
         break;
       case QueryFormat.JSON:
+      case QueryFormat.GEOJSON:
         features = this.extractGeoJSONData(res);
         break;
       case QueryFormat.TEXT:
