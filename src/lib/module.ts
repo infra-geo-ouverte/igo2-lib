@@ -6,6 +6,7 @@ import { CustomMaterialModule } from './customMaterialModule';
 import 'hammerjs/hammer';
 import 'rxjs/add/observable/empty';
 
+import { IgoAnalyticsModule } from './analytics';
 import { IgoAuthModule } from './auth';
 import { IgoCoreModule } from './core';
 import { IgoContextModule } from './context';
@@ -28,6 +29,7 @@ import { IgoShareMapModule } from './share-map';
 import { IgoToolModule } from './tool';
 
 const IGO_MODULES = [
+  IgoAnalyticsModule,
   IgoAuthModule,
   IgoCoreModule,
   IgoContextModule,
@@ -54,6 +56,7 @@ const IGO_MODULES = [
   imports: [
     CustomMaterialModule,
 
+    IgoAnalyticsModule.forRoot(),
     IgoAuthModule.forRoot(),
     IgoCoreModule.forRoot(),
     IgoContextModule.forRoot(),
