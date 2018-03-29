@@ -22,6 +22,12 @@ export class MessageService {
   message(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));
 
+    if (!message.icon) {
+      message.options = message.options || {};
+      message.options.theClass = message.options.theClass ?
+        message.options.theClass + ' noIcon' : 'noIcon';
+    }
+
     const notification = this.notificationService.create(
       message.title, message.text, message.type as any as string, message.options
     );
@@ -35,6 +41,12 @@ export class MessageService {
 
   html(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));
+
+    if (!message.icon) {
+      message.options = message.options || {};
+      message.options.theClass = message.options.theClass ?
+        message.options.theClass + ' noIcon' : 'noIcon';
+    }
 
     const notification = this.notificationService.html(
       message.text, message.type as any as string, message.options
