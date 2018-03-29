@@ -32,17 +32,17 @@ export class MessageService {
     message.options = message.options || {};
     message = this.handleTemplate(message);
 
-    if (!message.icon) {
-      message.options.theClass = message.options.theClass ?
-        message.options.theClass + ' noIcon' : 'noIcon';
-    }
-
     let notification;
     if (message.text) {
       notification = this.notificationService.create(
         message.title, message.text, message.type as any as string, message.options
       );
     } else if (message.html) {
+      if (!message.icon) {
+        message.options.theClass = message.options.theClass ?
+          message.options.theClass + ' noIcon' : 'noIcon';
+      }
+
       notification = this.notificationService.html(
         message.html, message.type as any as string, message.options
       );
@@ -61,7 +61,7 @@ export class MessageService {
     return this.message({
       text: text,
       title: title,
-      icon: options.icon,
+      icon: options.icon || 'check',
       options: options,
       type: MessageType.SUCCESS
     });
@@ -71,7 +71,7 @@ export class MessageService {
     return this.message({
       text: text,
       title: title,
-      icon: options.icon,
+      icon: options.icon || 'error_outline',
       options: options,
       type: MessageType.ERROR
     });
@@ -81,7 +81,7 @@ export class MessageService {
     return this.message({
       text: text,
       title: title,
-      icon: options.icon,
+      icon: options.icon || 'info_outline',
       options: options,
       type: MessageType.INFO
     });
@@ -91,7 +91,7 @@ export class MessageService {
     return this.message({
       text: text,
       title: title,
-      icon: options.icon,
+      icon: options.icon || 'access_alarm',
       options: options,
       type: MessageType.ALERT
     });
