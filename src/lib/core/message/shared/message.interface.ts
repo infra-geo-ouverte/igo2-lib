@@ -2,7 +2,8 @@ import { MessageType } from './message.enum';
 
 export interface Message {
   title?: string;
-  text: string;
+  text?: string;
+  html?: string;
   icon?: string;
   type?: MessageType;
   options?: any;
@@ -10,5 +11,6 @@ export interface Message {
 }
 
 export interface MessageOptions {
-  timeOut: number;
+  timeOut?: number;
+  template?: string;
 }

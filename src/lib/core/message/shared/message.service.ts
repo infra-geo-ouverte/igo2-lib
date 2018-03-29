@@ -3,7 +3,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Notification, NotificationsService } from 'angular2-notifications';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { Message } from './message.interface';
+import { ConfigService } from '../../config';
+
+import { Message, MessageOptions } from './message.interface';
 import { MessageType } from './message.enum';
 
 
@@ -11,8 +13,13 @@ import { MessageType } from './message.enum';
 export class MessageService {
 
   public messages$ = new BehaviorSubject<Message[]>([]);
+  private options: MessageOptions;
 
-  constructor(private notificationService: NotificationsService) {}
+  constructor(private notificationService: NotificationsService,
+              private configService: ConfigService) {
+
+    this.options = this.configService.getConfig('message') || {};
+  }
 
   showError(httpError: HttpErrorResponse) {
     httpError.error.caught = true;
@@ -22,35 +29,26 @@ export class MessageService {
   message(message: Message) {
     this.messages$.next(this.messages$.value.concat([message]));
 
+    message.options = message.options || {};
+    message = this.handleTemplate(message);
+
     if (!message.icon) {
-      message.options = message.options || {};
       message.options.theClass = message.options.theClass ?
         message.options.theClass + ' noIcon' : 'noIcon';
     }
 
-    const notification = this.notificationService.create(
-      message.title, message.text, message.type as any as string, message.options
-    );
-
-    if (message.icon !== undefined) {
-      this.addIcon(notification, message.icon);
+    let notification;
+    if (message.text) {
+      notification = this.notificationService.create(
+        message.title, message.text, message.type as any as string, message.options
+      );
+    } else if (message.html) {
+      notification = this.notificationService.html(
+        message.html, message.type as any as string, message.options
+      );
+    } else {
+      return;
     }
-
-    return notification;
-  }
-
-  html(message: Message) {
-    this.messages$.next(this.messages$.value.concat([message]));
-
-    if (!message.icon) {
-      message.options = message.options || {};
-      message.options.theClass = message.options.theClass ?
-        message.options.theClass + ' noIcon' : 'noIcon';
-    }
-
-    const notification = this.notificationService.html(
-      message.text, message.type as any as string, message.options
-    );
 
     if (message.icon !== undefined) {
       this.addIcon(notification, message.icon);
@@ -113,4 +111,20 @@ export class MessageService {
       </mat-icon>`;
   }
 
+  private handleTemplate(message: Message): Message {
+    if (!this.options.template || message.html) {
+      return message;
+    }
+
+    let html = this.options.template;
+    html = html.replace('${text}', message.text);
+    html = html.replace('${title}', message.title);
+    html = html.replace('${icon}', message.icon);
+
+    message.html = html;
+    message.text = undefined;
+    message.title = undefined;
+    message.icon = undefined;
+    return message;
+  }
 }

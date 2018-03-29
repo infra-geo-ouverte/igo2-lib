@@ -1,5 +1,6 @@
 import { SearchSourcesOptions, LanguageOptions, AuthOptions, AnalyticsOptions,
-  ContextServiceOptions, CatalogServiceOptions, ImportExportServiceOptions
+  ContextServiceOptions, CatalogServiceOptions, ImportExportServiceOptions,
+  MessageOptions
 } from './';
 
 export interface IgoEnvironment {
@@ -10,4 +11,5 @@ export interface IgoEnvironment {
   context?: ContextServiceOptions;
   catalog?: CatalogServiceOptions;
   importExport?: ImportExportServiceOptions;
+  message?: MessageOptions;
 }
