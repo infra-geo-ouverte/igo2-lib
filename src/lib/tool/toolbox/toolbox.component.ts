@@ -1,9 +1,10 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Input,
          ComponentRef, ComponentFactoryResolver,
          OnDestroy, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
+
 import { Subscription } from 'rxjs/Subscription';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 
 import { Tool, ToolService } from '../shared';
 import { toolSlideInOut } from './toolbox.animation';

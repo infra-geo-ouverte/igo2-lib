@@ -1,7 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy,
          HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators/debounceTime';
 
 import { MessageService, LanguageService } from '../../core';
 import { ConfirmDialogService } from '../../shared';

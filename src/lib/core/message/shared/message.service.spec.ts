@@ -1,6 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { NotificationsService } from 'angular2-notifications';
 
+import { ConfigService } from '../../config';
 import { MessageService } from '.';
 
 describe('MessageService', () => {
@@ -9,7 +10,8 @@ describe('MessageService', () => {
       imports: [],
       providers: [
         NotificationsService,
-        MessageService
+        MessageService,
+        ConfigService
       ]
     });
   });

@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-import { switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators/switchMap';
 
 
 @Pipe({

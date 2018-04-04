@@ -3,7 +3,8 @@ import { HttpInterceptor, HttpHandler, HttpEvent,
   HttpRequest, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-import { finalize, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators/tap';
+import { finalize } from 'rxjs/operators/finalize';
 
 @Injectable()
 export class LoggingInterceptor implements HttpInterceptor {

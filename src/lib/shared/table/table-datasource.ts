@@ -3,7 +3,7 @@ import { MatSort } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/observable/merge';
+import { merge } from 'rxjs/observable/merge';
 
 import { TableDatabase, TableModel } from './index';
 
@@ -21,14 +21,14 @@ export class TableDataSource extends DataSource<any> {
 
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   connect(): Observable<any[]> {
-    if (!this._database) { return Observable.merge([]); }
+    if (!this._database) { return merge([]); }
     const displayDataChanges = [
       this._database.dataChange,
       this._filterChange,
       this._sort.sortChange
     ];
 
-    return Observable.merge(...displayDataChanges)
+    return merge(...displayDataChanges)
     .map(() => {
       return this.getFilteredData(this._database.data);
     }).map((data) => {

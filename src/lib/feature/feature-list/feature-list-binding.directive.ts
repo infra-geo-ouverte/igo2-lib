@@ -1,7 +1,9 @@
 import { Directive, Self, OnInit, OnDestroy,
          HostListener } from '@angular/core';
+
 import { Subscription } from 'rxjs/Subscription';
-import { filter, debounceTime } from 'rxjs/operators';
+import { filter } from 'rxjs/operators/filter';
+import { debounceTime } from 'rxjs/operators/debounceTime';
 
 import { Feature, FeatureService } from '../shared';
 import { FeatureListComponent } from './feature-list.component';

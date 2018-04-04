@@ -5,7 +5,8 @@ import { FloatLabelType } from '@angular/material'
 
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators/debounceTime';
+import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 
 import { FeatureService, SourceFeatureType, FeatureType } from '../../feature';
 import { SearchService } from '../shared';

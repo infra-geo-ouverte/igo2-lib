@@ -1,6 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+
 import { Subscription } from 'rxjs/Subscription';
-import { filter } from 'rxjs/operators';
+import { filter } from 'rxjs/operators/filter';
 
 // Import from shared and toolbar to avoid circular dependencies
 import { Tool, ToolService } from '../../tool/shared';

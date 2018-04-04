@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
+
 import { Observable } from 'rxjs/Observable';
-import { combineLatest } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/operators/combineLatest';
+
 import { TranslateLoader } from '@ngx-translate/core';
 
 import { ConfigService } from '../../config';

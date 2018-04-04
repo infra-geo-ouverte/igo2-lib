@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators/tap';
 
 import { ConfigService } from '../../core';
 import { Base64 } from '../../utils';

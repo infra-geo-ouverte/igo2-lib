@@ -4,7 +4,6 @@ import { GestureConfig } from '@angular/material';
 import { CustomMaterialModule } from './customMaterialModule';
 
 import 'hammerjs/hammer';
-import 'rxjs/add/observable/empty';
 
 import { IgoAnalyticsModule } from './analytics';
 import { IgoAuthModule } from './auth';
