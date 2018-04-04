@@ -1,6 +1,9 @@
-import { Directive, Self, Output, EventEmitter,
+import { Directive, Self, Input, Output, EventEmitter,
          OnDestroy, AfterViewInit } from '@angular/core';
+
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 
 import { IgoMap } from '../../map/shared';
 import { MapBrowserComponent } from '../../map/map-browser';
@@ -17,12 +20,20 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   private queryLayers: Layer[];
   private queryLayers$$: Subscription;
+  private subscriptions: Subscription[] = [];
 
   get map(): IgoMap {
     return this.component.map;
   }
 
-  @Output() query = new EventEmitter<Feature>();
+  @Input()
+  get waitForAllQueries(): boolean { return this._waitForAllQueries; }
+  set waitForAllQueries(value: boolean) {
+    this._waitForAllQueries = value;
+  }
+  private _waitForAllQueries: boolean = false;
+
+  @Output() query = new EventEmitter<Feature[] | Feature[][]>();
 
   constructor(@Self() private component: MapBrowserComponent,
               private queryService: QueryService) {}
@@ -36,6 +47,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.queryLayers$$.unsubscribe();
+    this.unsubscribe();
     this.map.ol.un('singleclick', this.handleMapClick, this);
   }
 
@@ -51,11 +63,25 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
+    this.unsubscribe();
+
     const view = this.map.ol.getView();
-    this.queryService.query(this.queryLayers, {
+    const query$ = this.queryService.query(this.queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
       resolution: view.getResolution()
     });
+
+    if (this.waitForAllQueries) {
+      forkJoin(...query$).subscribe((features: Feature[][]) => this.query.emit(features));
+    } else {
+      query$.forEach((query$$: Observable<Feature[]>) => {
+        query$$.subscribe((features: Feature[]) => this.query.emit(features));
+      });
+    }
+  }
+
+  private unsubscribe() {
+    this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
   }
 }

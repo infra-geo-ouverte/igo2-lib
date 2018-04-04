@@ -46,7 +46,6 @@ export class AppComponent implements OnInit {
     // you can simply do contextService.setContext(context)
     // where "context" is an object with the same interface
     // as the contexts in ../contexts/
-
     this.demoForm = this.formBuilder.group({
       location: ['', [
         Validators.required
@@ -93,5 +92,11 @@ export class AppComponent implements OnInit {
   handleFormSubmit(data: any, isValid: boolean) {
     console.log(data);
     console.log(isValid);
+  }
+
+  handleQueryResults(features: Feature[]) {
+    if (features[0]) {
+      this.featureService.updateFeatures(features, features[0].source);
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
+
+import { Observable } from 'rxjs/Observable';
 
 import { uuid } from '../../utils/uuid';
 import { Feature, FeatureType, FeatureFormat, SourceFeatureType,
@@ -15,35 +16,26 @@ import { QueryOptions } from './query.interface';
 @Injectable()
 export class QueryService {
 
-  private subscriptions: Subscription[] = [];
 
   constructor(private http: HttpClient,
               private featureService: FeatureService) { }
 
-  query(layers: Layer[], options: QueryOptions) {
-    this.unsubscribe();
+  query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
 
-    this.subscriptions = layers
+    return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
       .map((layer: Layer) => this.queryDataSource(layer.dataSource, options, layer.zIndex));
   }
 
-  queryDataSource(dataSource: DataSource, options: QueryOptions, zIndex: number) {
+  queryDataSource(dataSource: DataSource, options: QueryOptions,
+    zIndex: number): Observable<Feature[]> {
+
     const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
     const request = this.http.get(url, {responseType: 'text'});
 
     this.featureService.clear();
-    return request.map(res => this.extractData(res, dataSource, options, url, zIndex))
-      .subscribe((features: Feature[]) =>
-        this.handleQueryResults(features, dataSource));
-  }
 
-  private unsubscribe() {
-    this.subscriptions.forEach((sub: Subscription) => sub.unsubscribe());
-  }
-
-  private handleQueryResults(features: Feature[], dataSource: DataSource) {
-    this.featureService.updateFeatures(features, dataSource.title);
+    return request.map(res => this.extractData(res, dataSource, options, url, zIndex));
   }
 
   private extractData(res, dataSource: DataSource, options: QueryOptions,
