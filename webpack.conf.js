@@ -1,4 +1,6 @@
-var path = require('path');
+const rxPaths = require('rxjs/_esm5/path-mapping');
+const webpack = require('webpack');
+const path = require('path');
 
 // Helper functions
 var ROOT = path.resolve(__dirname);
@@ -27,15 +29,10 @@ helpers.hasNpmFlag = hasNpmFlag;
 helpers.isWebpackDevServer = isWebpackDevServer;
 helpers.root = root;
 
-const webpack = require('webpack');
-
 /**
  * Webpack Plugins
  */
-const ProvidePlugin = require('webpack/lib/ProvidePlugin');
-const DefinePlugin = require('webpack/lib/DefinePlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 
@@ -43,7 +40,8 @@ module.exports = {
    devtool: 'source-map',
 
    resolve: {
-      extensions: ['.ts', '.js']
+      extensions: ['.ts', '.js'],
+      alias: rxPaths()
    },
 
    entry: './src/lib/index.ts',
@@ -141,8 +139,19 @@ module.exports = {
                ],
                customAttrAssign: [/\)?\]?=/]
             },
-
+            tslint: {
+                emitErrors: true,
+                failOnHint: true
+            }
          }
+      }),
+
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new webpack.optimize.UglifyJsPlugin({
+          mangle: false,
+          compress: { warnings: false, pure_getters: true, passes: 3, screw_ie8: true, sequences: false },
+          output: { comments: false, beautify: true },
+          sourceMap: true
       })
    ]
 };
