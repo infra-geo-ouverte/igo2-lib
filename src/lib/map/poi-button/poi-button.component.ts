@@ -7,6 +7,7 @@ import { ConfirmDialogService } from '../../shared';
 import { AuthService, PoiService, Poi } from '../../auth';
 import { IgoMap } from '../shared';
 import { PoiDialogComponent } from './poi-dialog.component';
+import ol = require('openlayers');
 
 @Component({
   selector: 'igo-poi-button',

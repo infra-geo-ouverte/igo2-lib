@@ -8,6 +8,7 @@ import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { MapViewOptions, MapOptions } from './map.interface';
+import * as ol from 'openlayers';
 
 
 export class IgoMap {
@@ -54,12 +55,12 @@ export class IgoMap {
     if (this.options.controls) {
       if (this.options.controls.attribution) {
         const attributionOpt = (this.options.controls.attribution === true ?
-          {} : this.options.controls.attribution) as olx.control.AttributionOptions;
+          {} : this.options.controls.attribution) as ol.olx.control.AttributionOptions;
         controls.push(new ol.control.Attribution(attributionOpt));
       }
       if (this.options.controls.scaleLine) {
         const scaleLineOpt = (this.options.controls.scaleLine === true ?
-          {} : this.options.controls.scaleLine) as olx.control.ScaleLineOptions;
+          {} : this.options.controls.scaleLine) as ol.olx.control.ScaleLineOptions;
         controls.push(new ol.control.ScaleLine(scaleLineOpt));
       }
     }

@@ -1,7 +1,7 @@
 
 export interface OgcFilter extends ol.format.filter.Filter {}
 
-export interface WFSWriteGetFeatureOptions extends olx.format.WFSWriteGetFeatureOptions {}
+export interface WFSWriteGetFeatureOptions extends ol.olx.format.WFSWriteGetFeatureOptions {}
 
 
 export type AnyBaseOgcFilterOptions =

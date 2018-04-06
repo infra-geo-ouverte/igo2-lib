@@ -6,6 +6,7 @@ import { DataSource } from './datasource';
 import { DataSourceLegendOptions, TimeFilterableDataSource,
          QueryableDataSource } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
+import ol = require('openlayers');
 
 export class WMSDataSource
   extends DataSource implements QueryableDataSource, TimeFilterableDataSource {

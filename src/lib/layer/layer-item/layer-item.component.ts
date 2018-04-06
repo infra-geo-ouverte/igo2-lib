@@ -7,6 +7,7 @@ import { FeatureService } from '../../feature';
 import { MetadataService, MetadataOptions } from '../../metadata';
 import { DownloadService} from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
+import ol = require('openlayers');
 
 @Component({
   selector: 'igo-layer-item',

@@ -11,7 +11,7 @@ export interface DataSourceOptions {
   legend?: DataSourceLegendOptions;
   metadata?: MetadataOptions;
   download?: DownloadOptions;
-  view?: olx.layer.ImageOptions;
+  view?: ol.olx.layer.ImageOptions;
 }
 
 export interface DataSourceContext extends DataSourceOptions {
@@ -43,7 +43,7 @@ export interface QueryableDataSource extends DataSource {
 }
 
 export interface TimeFilterableDataSourceOptions extends DataSourceOptions,
-    olx.source.ImageWMSOptions {
+    ol.olx.source.ImageWMSOptions {
 
   timeFilterable?: boolean;
   timeFilter?: TimeFilterOptions;
@@ -55,7 +55,7 @@ export interface TimeFilterableDataSource extends DataSource {
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions,
-    olx.source.VectorOptions {
+    ol.olx.source.VectorOptions {
 
   ogcFilterable?: boolean;
   filters?: IgoOgcFilterObject;

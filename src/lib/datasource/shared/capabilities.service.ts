@@ -6,6 +6,7 @@ import { ObjectUtils } from '../../utils';
 import { TimeFilterOptions } from '../../filter';
 
 import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
+import ol = require('openlayers');
 
 @Injectable()
 export class CapabilitiesService {

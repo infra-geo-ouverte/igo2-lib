@@ -5,6 +5,7 @@ import { IgoMap } from '../../../map';
 
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
+import ol = require('openlayers');
 
 
 export class ImageLayer extends Layer {
