@@ -26,6 +26,7 @@ import { IgoSearchModule } from './search';
 import { IgoSharedModule } from './shared';
 import { IgoShareMapModule } from './share-map';
 import { IgoToolModule } from './tool';
+import { IgoWktModule } from './wkt';
 
 const IGO_MODULES = [
   IgoAnalyticsModule,
@@ -48,7 +49,8 @@ const IGO_MODULES = [
   IgoSearchModule,
   IgoSharedModule,
   IgoShareMapModule,
-  IgoToolModule
+  IgoToolModule,
+  IgoWktModule
 ];
 
 @NgModule({
@@ -74,7 +76,8 @@ const IGO_MODULES = [
     IgoQueryModule.forRoot(),
     IgoSearchModule.forRoot(),
     IgoShareMapModule.forRoot(),
-    IgoToolModule.forRoot()
+    IgoToolModule.forRoot(),
+    IgoWktModule.forRoot()
   ],
   exports: IGO_MODULES
 })

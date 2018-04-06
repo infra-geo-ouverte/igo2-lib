@@ -1,4 +1,4 @@
-import { TimeFilterOptions, IgoOgcFilterObject } from '../../../filter';
+import { TimeFilterOptions, OgcFiltersOptions } from '../../../filter';
 import { QueryFormat, QueryOptions } from '../../../query';
 import { MetadataOptions } from '../../../metadata';
 import { DownloadOptions } from '../../../download';
@@ -24,7 +24,6 @@ export interface DataSourceLegendOptions {
   html?: string;
   style?: {[key: string]: string | number};
   title?: string;
-  display?: boolean;
 }
 
 export interface QueryableDataSourceOptions extends DataSourceOptions {
@@ -54,14 +53,10 @@ export interface TimeFilterableDataSource extends DataSource {
   filterByDate(date: Date | [Date, Date]);
 }
 
-export interface OgcFilterableDataSourceOptions extends DataSourceOptions,
-    ol.olx.source.VectorOptions {
-
-  ogcFilterable?: boolean;
-  filters?: IgoOgcFilterObject;
+export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
+  isOgcFilterable?: boolean;
+  ogcFilters?: OgcFiltersOptions;
 }
-
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
-  filterByOgc(IgoOgcFilterObject);
 }
