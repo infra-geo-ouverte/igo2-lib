@@ -1,11 +1,15 @@
 import { DataSourceContext,
-         TimeFilterableDataSourceOptions,
-         QueryableDataSourceOptions } from './datasource.interface';
+  TimeFilterableDataSourceOptions,
+  QueryableDataSourceOptions, OgcFilterableDataSourceOptions } from './datasource.interface';
+import { WFSDataSourceOptions } from './wfs-datasource.interface';
 
-export interface WMSDataSourceOptions extends olx.source.ImageWMSOptions,
-    TimeFilterableDataSourceOptions, QueryableDataSourceOptions {
 
-  optionsFromCapabilities?: boolean;
+
+export interface WMSDataSourceOptions extends ol.olx.source.ImageWMSOptions,
+TimeFilterableDataSourceOptions, QueryableDataSourceOptions, OgcFilterableDataSourceOptions {
+
+optionsFromCapabilities?: boolean;
+wfsSource?: WFSDataSourceOptions;
 }
 
 export interface WMSDataSourceContext extends DataSourceContext, WMSDataSourceOptions {}

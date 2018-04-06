@@ -6,6 +6,7 @@ import { Feature } from '../../feature';
 
 import { OverlayService } from '../shared/overlay.service';
 import { OverlayAction } from '../shared/overlay.interface';
+import ol = require('openlayers');
 
 
 @Directive({

@@ -5,6 +5,7 @@ import { IgoMap } from '../../../map';
 
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
+import ol = require('openlayers');
 
 export class TileLayer extends Layer {
 

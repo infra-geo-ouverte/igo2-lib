@@ -1,0 +1,6 @@
+<igo-list [navigation]="false" [selection]="false">
+  <ng-template ngFor let-datasource [ngForOf]="datasources | filterableDataSource: 'ogc'">
+    <igo-ogc-filterable-item igoListItem [datasource]="datasource"></igo-ogc-filterable-item>
+  </ng-template>
+  <ng-content></ng-content>
+</igo-list>

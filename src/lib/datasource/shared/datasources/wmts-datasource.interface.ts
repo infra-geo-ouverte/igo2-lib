@@ -1,6 +1,6 @@
 import { DataSourceOptions, DataSourceContext } from './datasource.interface';
 
-export interface WMTSDataSourceOptions extends DataSourceOptions, olx.source.WMTSOptions {
+export interface WMTSDataSourceOptions extends DataSourceOptions, ol.olx.source.WMTSOptions {
   optionsFromCapabilities?: boolean;
 }
 

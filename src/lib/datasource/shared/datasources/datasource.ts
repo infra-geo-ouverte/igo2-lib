@@ -1,11 +1,12 @@
 import { DataSourceOptions, DataSourceLegendOptions, TimeFilterableDataSource,
          QueryableDataSource, OgcFilterableDataSource } from './datasource.interface';
+import { DataService } from './data.service';
 
 export abstract class DataSource {
 
   public id: string;
   public ol: ol.source.Source;
-  public options: DataSourceOptions;
+
 
   get title(): string {
     return this.options.alias ? this.options.alias : this.options.title;
@@ -15,7 +16,7 @@ export abstract class DataSource {
     this.options.title = title;
   }
 
-  constructor(options: DataSourceOptions) {
+  constructor(public options: DataSourceOptions, protected dataSourceService?: DataService) {
     this.options = options;
     this.id = this.generateId();
     this.ol = this.createOlSource();
@@ -51,10 +52,10 @@ export abstract class DataSource {
 
   isOgcFilterable(): this is OgcFilterableDataSource {
     const dataSource = this as any as OgcFilterableDataSource;
-    if (typeof dataSource.filterByOgc === 'function') {
+    if (dataSource.options.isOgcFilterable && dataSource.options.ogcFilters.filtersAreEditable) {
       return true;
     }
-
     return false;
   }
+
 }

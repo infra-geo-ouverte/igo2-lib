@@ -3,6 +3,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { createDefaultTileGrid } from '../../../utils/tilegrid';
 import { DataSource } from './datasource';
 import { WMTSDataSourceOptions } from './wmts-datasource.interface';
+import ol = require('openlayers');
 
 export class WMTSDataSource extends DataSource {
 
