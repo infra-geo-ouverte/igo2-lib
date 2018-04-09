@@ -1,12 +1,13 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
+import * as ol from 'openlayers';
+
 import { MapBrowserComponent, IgoMap } from '../../map';
 import { Feature } from '../../feature';
 
 import { OverlayService } from '../shared/overlay.service';
 import { OverlayAction } from '../shared/overlay.interface';
-import ol = require('openlayers');
 
 
 @Directive({

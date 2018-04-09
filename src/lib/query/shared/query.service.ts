@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { Observable } from 'rxjs/Observable';
+
+import * as ol from 'openlayers';
 
 import { uuid } from '../../utils/uuid';
 import { Feature, FeatureType, FeatureFormat, SourceFeatureType,
@@ -11,7 +12,6 @@ import { Layer } from '../../layer';
 
 import { QueryFormat } from './query.enum';
 import { QueryOptions } from './query.interface';
-import ol = require('openlayers');
 
 
 @Injectable()

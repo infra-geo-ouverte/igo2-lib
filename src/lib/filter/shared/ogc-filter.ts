@@ -1,8 +1,9 @@
+import * as ol from 'openlayers';
+
 import {
   OgcFilter, IgoOgcFilterObject, WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions
 } from './ogc-filter.interface';
-import ol = require('openlayers');
 
 
 export class OgcFilterWriter {

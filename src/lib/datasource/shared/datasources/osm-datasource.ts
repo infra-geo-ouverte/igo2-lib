@@ -1,6 +1,7 @@
+import * as ol from 'openlayers';
+
 import { DataSource } from './datasource';
 import { OSMDataSourceOptions } from './osm-datasource.interface';
-import ol = require('openlayers');
 
 export class OSMDataSource extends DataSource {
 

@@ -2,9 +2,10 @@ import { Component, Input, forwardRef,
          AfterViewInit, OnDestroy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+import * as ol from 'openlayers';
+
 import { IgoMap, MapViewOptions } from '../../../map';
 import { Layer } from '../../../layer';
-import ol = require('openlayers');
 
 
 @Component({

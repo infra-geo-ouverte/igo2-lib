@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import * as ol from 'openlayers';
+
 import { MessageService, LanguageService } from '../../core';
 import { Layer } from '../../layer/shared';
 import { OgcFilterWriter } from '../../filter/shared';
-import ol = require('openlayers');
+
 
 @Injectable()
 export class DownloadService {

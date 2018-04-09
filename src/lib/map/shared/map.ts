@@ -1,3 +1,5 @@
+import * as ol from 'openlayers';
+
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,7 +10,6 @@ import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { MapViewOptions, MapOptions } from './map.interface';
-import * as ol from 'openlayers';
 
 
 export class IgoMap {

@@ -8,6 +8,8 @@ import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators/catchError';
 import { debounceTime } from 'rxjs/operators/debounceTime';
 
+import * as ol from 'openlayers';
+
 import { uuid } from '../../utils/uuid';
 import { ConfigService, RouteService,
         Message, LanguageService } from '../../core';
@@ -21,7 +23,7 @@ import { ToolService } from '../../tool/shared';
 import { TypePermission } from './context.enum';
 import { ContextsList, ContextServiceOptions, Context, DetailedContext,
   ContextMapView, ContextPermission } from './context.interface';
-import ol = require('openlayers');
+
 
 @Injectable()
 export class ContextService {

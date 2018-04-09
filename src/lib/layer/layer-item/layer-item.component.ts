@@ -2,12 +2,14 @@ import { Component, Input, OnDestroy, ChangeDetectorRef,
          ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
+import * as ol from 'openlayers';
+
 import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature';
 import { MetadataService, MetadataOptions } from '../../metadata';
 import { DownloadService} from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
-import ol = require('openlayers');
+
 
 @Component({
   selector: 'igo-layer-item',

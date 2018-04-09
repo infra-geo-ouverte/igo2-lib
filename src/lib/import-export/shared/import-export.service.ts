@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+import * as ol from 'openlayers';
+
 import { ConfigService, MessageService, LanguageService } from '../../core';
 import { MapService } from '../../map/shared/map.service';
 import { VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { ExportOptions } from './import-export.interface';
-import ol = require('openlayers');
+
 
 @Injectable()
 export class ImportExportService {
