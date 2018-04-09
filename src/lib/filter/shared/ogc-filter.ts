@@ -132,7 +132,7 @@ switch (operator) {
   case 'PropertyIsBetween':
       return f.between(wfs_propertyName, wfs_lowerBoundary, wfs_upperBoundary);
   case 'Contains':
-      // return f.contains(wfs_geometryName, geometry, wfs_srsName);
+      return f.contains(wfs_geometryName, geometry, wfs_srsName);
   case 'During':
       return f.during(wfs_propertyName, wfs_begin, wfs_end);
   case 'PropertyIsEqualTo':
