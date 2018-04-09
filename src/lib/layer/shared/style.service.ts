@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import ol = require('openlayers');
 
 
 @Injectable()

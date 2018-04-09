@@ -2,6 +2,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { uuid } from '../../../utils';
 import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
+import ol = require('openlayers');
 
 
 export class FeatureDataSource extends DataSource {

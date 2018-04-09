@@ -2,6 +2,7 @@ import { DataSource } from '../../../datasource';
 
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
+import ol = require('openlayers');
 
 
 export class VectorLayer extends Layer {

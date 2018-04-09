@@ -11,6 +11,7 @@ import { Layer } from '../../layer';
 
 import { QueryFormat } from './query.enum';
 import { QueryOptions } from './query.interface';
+import ol = require('openlayers');
 
 
 @Injectable()

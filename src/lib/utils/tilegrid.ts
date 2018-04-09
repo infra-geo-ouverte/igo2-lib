@@ -1,3 +1,5 @@
+import ol = require('openlayers');
+
 export function createDefaultTileGrid(epsg?: string): ol.tilegrid.WMTS {
   const projection = epsg ? ol.proj.get(epsg) : ol.proj.get('EPSG:3857');
   const projectionExtent = projection.getExtent();

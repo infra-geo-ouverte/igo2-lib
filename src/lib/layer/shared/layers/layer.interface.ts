@@ -1,8 +1,8 @@
-export interface LayerOptions extends olx.layer.BaseOptions {
+export interface LayerOptions extends ol.olx.layer.BaseOptions {
   title?: string;
   zIndex?: number;
   visible?: boolean;
-  view?: olx.layer.BaseOptions;
+  view?: ol.olx.layer.BaseOptions;
   baseLayer?: boolean;
   id?: string;
   minScaleDenom?: number;

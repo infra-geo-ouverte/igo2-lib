@@ -6,6 +6,7 @@ import { IgoOgcFilterObject, OgcFilter, WFSWriteGetFeatureOptions,
 import { DataSource } from './datasource';
 import { OgcFilterableDataSource } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import ol = require('openlayers');
 
 
 export class WFSDataSource extends DataSource implements OgcFilterableDataSource {

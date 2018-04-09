@@ -1,4 +1,4 @@
-export interface MapViewOptions extends olx.ViewOptions {
+export interface MapViewOptions extends ol.olx.ViewOptions {
   projection?: string;
   center?: [number, number];
   geolocate?: boolean;
@@ -6,8 +6,8 @@ export interface MapViewOptions extends olx.ViewOptions {
 
 
 export interface ControlsMapOptions {
-  attribution?: boolean | olx.control.AttributionOptions;
-  scaleLine?: boolean | olx.control.ScaleLineOptions;
+  attribution?: boolean | ol.olx.control.AttributionOptions;
+  scaleLine?: boolean | ol.olx.control.ScaleLineOptions;
 }
 
 export interface MapOptions {

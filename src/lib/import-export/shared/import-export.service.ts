@@ -7,6 +7,7 @@ import { VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { ExportOptions } from './import-export.interface';
+import ol = require('openlayers');
 
 @Injectable()
 export class ImportExportService {

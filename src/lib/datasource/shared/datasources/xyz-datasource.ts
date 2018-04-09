@@ -2,6 +2,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 
 import { DataSource } from './datasource';
 import { XYZDataSourceOptions } from './xyz-datasource.interface';
+import ol = require('openlayers');
 
 export class XYZDataSource extends DataSource {
 
