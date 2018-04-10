@@ -94,7 +94,8 @@ export class AppComponent implements OnInit {
     console.log(isValid);
   }
 
-  handleQueryResults(features: Feature[]) {
+  handleQueryResults(results) {
+    const features: Feature[] = results.features;
     if (features[0]) {
       this.featureService.updateFeatures(features, features[0].source);
     }
