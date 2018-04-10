@@ -11,6 +11,7 @@ import { IgoMap } from '../shared';
 import { PoiDialogComponent } from './poi-dialog.component';
 
 
+
 @Component({
   selector: 'igo-poi-button',
   templateUrl: './poi-button.component.html',

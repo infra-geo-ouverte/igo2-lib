@@ -3,6 +3,7 @@ import * as ol from 'openlayers';
 import { DataSource } from './datasource';
 import { OSMDataSourceOptions } from './osm-datasource.interface';
 
+
 export class OSMDataSource extends DataSource {
 
   public options: OSMDataSourceOptions;

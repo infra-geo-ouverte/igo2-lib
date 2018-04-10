@@ -8,6 +8,7 @@ import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 
 
+
 export class TileLayer extends Layer {
 
   public dataSource: DataSource;

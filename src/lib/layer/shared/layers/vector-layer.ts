@@ -6,6 +6,7 @@ import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 
 
+
 export class VectorLayer extends Layer {
 
   public options: VectorLayerOptions;

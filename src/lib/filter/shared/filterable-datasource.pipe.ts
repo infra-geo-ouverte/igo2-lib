@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { DataSource, TimeFilterableDataSource } from '../../datasource';
+import { DataSource, TimeFilterableDataSource, OgcFilterableDataSource } from '../../datasource';
 
 @Pipe({
   name: 'filterableDataSource'
@@ -17,7 +17,11 @@ export class FilterableDataSourcePipe implements PipeTransform {
           Object.keys(dataSource.options.timeFilter).length;
       }) as any[] as TimeFilterableDataSource[];
     }
-
+    if (arg === 'ogc') {
+      dataSources = value.filter((dataSource: any) => {
+        return dataSource.isOgcFilterable() ;
+      }) as any[] as OgcFilterableDataSource[];
+    }
     return dataSources;
   }
 

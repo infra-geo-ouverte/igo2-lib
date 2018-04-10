@@ -8,7 +8,19 @@
     (toggle)="toggleLegend($event)">
   </mat-icon>
   <h4 matLine [matTooltip]="layer.title +' ('+ id +') '" matTooltipShowDelay="500">{{layer.title}}</h4>
-
+  
+  <button
+    *ngIf="layer.dataSource.options.ogcFiltered"
+    mat-icon-button
+    collapsibleButton
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.filter.layerFiltered' | translate"
+    [color]="gray"
+    disabled = true>
+    <mat-icon> filter_list </mat-icon>
+  </button>
+  
   <button
     mat-icon-button
     collapsibleButton
@@ -81,8 +93,7 @@
       </button>
 
       <button
-      *ngIf="(layer.options['type'] === 'wfs' && layer.dataSource.options['outputFormatDownload']) ||
-             (layer.options['type'] !== 'wfs' && layer.dataSource.options.download && layer.dataSource.options.download.url)"
+      *ngIf="layer.dataSource.options.download "
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"

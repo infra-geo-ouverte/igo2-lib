@@ -9,17 +9,16 @@
       "geolocate": true
     }
   },
-  "layers": [
-    {
-      "title" : "OSM",
-      "type" : "osm"
+  "layers": [{
+      "title": "OSM",
+      "type": "osm"
     },
     {
       "title": "Embâcle",
       "type": "wms",
       "optionsFromCapabilities": true,
       "source": {
-        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "url": "/ws/igo_gouvouvert.fcgi",
         "params": {
           "layers": "vg_observation_v_inondation_embacle_wmst",
           "version": "1.3.0"
@@ -36,52 +35,151 @@
         "range": true,
         "type": "date",
         "style": "slider",
-      	"timeinterval": 3153600,
+        "timeinterval": 3153600,
         "step": 3153600
       }
     },
+
     {
       "type": "wms",
       "opacity": 0.6,
       "optionsFromCapabilities": true,
       "metadata": {
-          "extern": true
+        "extern": true
       },
       "source": {
-        "url": "https://geoegl.msp.gouv.qc.ca/ws/adnInternetV2.fcgi",
+        "url": "/ws/adnInternetV2.fcgi",
         "params": {
           "layers": "adn_reg_admin_public_v",
           "version": "1.3.0"
         }
       }
-      },
+    },
     {
       "type": "wms",
       "visible": false,
       "optionsFromCapabilities": true,
       "metadata": {
-          "extern": true
+        "extern": true
       },
       "source": {
-        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "url": "/ws/igo_gouvouvert.fcgi",
         "params": {
           "layers": "MELS_CS_ANGLO_S",
           "version": "1.3.0"
         }
       },
-       "queryFormat": "html",
-       "queryHtmlTarget": "innerhtml"
+      "queryFormat": "html",
+      "queryHtmlTarget": "innerhtml"
+    },
+
+    {
+      "title": "WFS filtered: filtered and with source field,controled by scale",
+
+      "minScaleDenom": 1,
+      "maxScaleDenom": 6000000,
+      "type": "wfs",
+      "source": {
+        "url": "/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
+      },
+      "isOgcFilterable": true,
+      "ogcFilters": {
+        "filtersAreEditable": true,
+        "filters": {
+          "logical": "Or",
+          "filters": [{
+              "operator": "During",
+              "propertyName": "dat_debut_",
+              "begin": "2014",
+              "end": "2016"
+            },
+            {
+              "operator": "PropertyIsEqualTo",
+              "propertyName": "nom_unite_",
+              "expression": "CS de Lévis"
+            },
+            {
+              "operator": "PropertyIsLike",
+              "propertyName": "ide_unite_",
+              "pattern": "3*"
+            },
+            {
+              "operator": "Intersects",
+              "geometryName": "the_geom",
+              "wkt_geometry": "POLYGON((-9022809 5555639,-9022809 5922537,-7816938 5922537,-7816938 5555639,-9022809 5555639))"
+            }
+
+          ]
+        }
+      },
+      "sourceFields": [{
+          "name": "dat_debut_",
+          "alias": "Date création de l'unité administrative"
+        },
+        {
+          "name": "nom_unite_",
+          "alias": "Nom unité administrative",
+          "values": ["CS de Lévis", "*"]
+        },
+        {
+          "name": "ide_unite_",
+          "alias": "# de l'unité administrative"
+        }
+      ]
+
+    },
+    {
+      "title": "WMS with a wfs source linked: filtered, with source field",
+      "type": "wms",
+      "source": {
+        "url": "/geoserver/wms",
+        "params": {
+          "layers": "water_areas",
+          "version": "1.3.0"
+        }
+      },
+      "isOgcFilterable": true,
+      "ogcFilters": {
+        "filtersAreEditable": true,
+        "filters": {
+          "operator": "Intersects",
+          "geometryName": "the_geom",
+          "wkt_geometry": "POLYGON((-9022809 5555639,-9022809 5922537,-7816938 5922537,-7816938 5555639,-9022809 5555639))"
+        }
+      },
+      "sourceFields": [{
+        "name": "landuse",
+        "alias": "Land use alias"
+      }],
+      "wfsSource": {
+        "url": "/geoserver/wms",
+        "featureTypes": "water_areas",
+        "fieldNameGeometry": "the_geom",
+        "maxFeatures": 10000,
+        "version": "1.1.0",
+        "outputFormat": "application/json",
+        "outputFormatDownload": "application/vnd.google-earth.kml+xml"
+      }
     }
+
+
+
   ],
   "toolbar": [
     "searchResults",
     "mapDetails",
     "timeAnalysis",
     "contextManager",
-    "print"
+    "print",
+    "importExport"
   ],
-  "tools": [
-    {
+  "tools": [{
       "name": "searchResults"
     },
     {
@@ -95,6 +193,9 @@
     },
     {
       "name": "print"
+    },
+    {
+      "name": "importExport"
     }
   ]
 }

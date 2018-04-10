@@ -92,6 +92,40 @@
 			"importProjPlaceholder": "Source projection (EPSG:4326)",
 			"importTabTitle": "Import"
 		},
+		"operators": {
+		  "And": "And",
+		  "Or": "Or",
+		  "PropertyIsEqualTo": "=",
+		  "PropertyIsNotEqualTo": "!=",
+		  "PropertyIsLike": "≈",
+		  "PropertyIsGreaterThan": ">",
+		  "PropertyIsGreaterThanOrEqualTo": ">=",
+		  "PropertyIsLessThan": "<",
+		  "PropertyIsLessThanOrEqualTo": "<=",
+		  "PropertyIsBetween": "between",
+		  "During": "during",
+		  "PropertyIsNull": "is null",
+		  "Intersects": "intersects",
+		  "Within": "within",
+		  "Contains": "contains"
+		},
+		"sourceFields": {
+		  "selectField": "Choose a field"
+		},
+		"filter": {
+		  "addFilter": "Add an empty filter to the current list",
+		  "removeFilter": "Remove the current filter from the filters's list",
+		  "toggleFilterState": "Enable/disable the current filter",
+		  "refreshFilters": "Update this datasource with the active filter(s)",
+		  "layerFiltered": "This layer is currently filtered"
+		},
+		"spatialSelector": {
+		  "fixedExtent": "Fixed extent",
+		  "btnSetExtent": "Define the extent of the spatial filter to the current view",
+		  "snrc": "SNRC (ex:21L14)",
+		  "selectFeature": "",
+		  "drawFeature": ""
+		},
 		"layer": {
 			"hideLayer": "Hide Layer",
 			"lowerLayer": "Bring layer backward",

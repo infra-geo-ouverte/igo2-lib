@@ -12,6 +12,11 @@ import { TimeFilterFormComponent } from './time-filter-form';
 import { TimeFilterItemComponent } from './time-filter-item';
 import { TimeFilterListComponent,
          TimeFilterListBindingDirective } from './time-filter-list/';
+import { OgcFilterFormComponent } from './ogc-filter-form';
+import { OgcFilterableFormComponent } from './ogc-filterable-form';
+import { OgcFilterableItemComponent } from './ogc-filterable-item';
+import { OgcFilterableListComponent,
+        OgcFilterableListBindingDirective } from './ogc-filterable-list/';
 
 @NgModule({
   imports: [
@@ -27,14 +32,24 @@ import { TimeFilterListComponent,
     TimeFilterFormComponent,
     TimeFilterItemComponent,
     TimeFilterListComponent,
-    TimeFilterListBindingDirective
+    TimeFilterListBindingDirective,
+    OgcFilterFormComponent,
+    OgcFilterableFormComponent,
+    OgcFilterableItemComponent,
+    OgcFilterableListComponent,
+    OgcFilterableListBindingDirective
   ],
   declarations: [
     FilterableDataSourcePipe,
     TimeFilterFormComponent,
     TimeFilterItemComponent,
     TimeFilterListComponent,
-    TimeFilterListBindingDirective
+    TimeFilterListBindingDirective,
+    OgcFilterFormComponent,
+    OgcFilterableFormComponent,
+    OgcFilterableItemComponent,
+    OgcFilterableListComponent,
+    OgcFilterableListBindingDirective
   ]
 })
 export class IgoFilterModule {

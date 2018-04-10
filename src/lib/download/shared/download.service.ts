@@ -1,45 +1,54 @@
 import { Injectable } from '@angular/core';
 import * as ol from 'openlayers';
 
-import { MessageService, LanguageService } from '../../core';
 import { Layer } from '../../layer/shared';
+import { MessageService, LanguageService } from '../../core';
 import { OgcFilterWriter } from '../../filter/shared';
 
 
 @Injectable()
 export class DownloadService {
-  public ogcFilterWriter: OgcFilterWriter;
+
+  private ogcFilterWriter: OgcFilterWriter;
 
   constructor(private messageService: MessageService,
-              private languageService: LanguageService) {
+    private languageService: LanguageService) {
     this.ogcFilterWriter = new OgcFilterWriter;
   }
 
   open(layer: Layer) {
-    if (layer.options['type'] === 'wfs' && layer.dataSource.options['outputFormatDownload']) {
-      const translate = this.languageService.translate;
-      const title = translate.instant('igo.download.title');
-      this.messageService.success(translate.instant('igo.download.start'), title);
+    const translate = this.languageService.translate;
+    const title = translate.instant('igo.download.title');
+    this.messageService.success(translate.instant('igo.download.start'), title);
 
-      const outputFormatDownload = 'outputformat=' +
-        layer.dataSource.options['outputFormatDownload'];
+    if (
+      layer.dataSource.options.download['dynamicUrl'] &&
+      layer.dataSource.options.download.url === undefined) {
+      let wfsOptions;
+      if (layer.dataSource.options['wfsSource']) {
+        wfsOptions = layer.dataSource.options['wfsSource'];
+      } else {
+        wfsOptions = layer.dataSource.options;
+      }
 
-      const baseurl = layer.dataSource.options.download.url
+      const outputFormatDownload =
+        wfsOptions['outputFormatDownload'] === undefined ?
+          'outputformat=' + wfsOptions['outputFormat'] :
+          'outputformat=' + wfsOptions['outputFormatDownload'];
+
+      const baseurl = layer.dataSource.options.download['dynamicUrl']
         .replace(/&?outputformat=[^&]*/gi, '')
         .replace(/&?filter=[^&]*/gi, '')
         .replace(/&?bbox=[^&]*/gi, '');
 
       const rebuildFilter = this.ogcFilterWriter.buildFilter(
-        layer.options['filters'],
+        layer.dataSource.options['ogcFilters']['filters'],
         layer.map.getExtent(),
-        new ol.proj.Projection({code: layer.map.projection}),
-        layer.dataSource.options['fieldNameGeometry']
-      );
-
+        new ol.proj.Projection({ code: layer.map.projection }),
+        wfsOptions['fieldNameGeometry']);
       window.open(`${baseurl}&${rebuildFilter}&${outputFormatDownload}`, '_blank');
-    } else {
+    } else if (layer.dataSource.options.download) {
       window.open(layer.dataSource.options.download.url, '_blank');
     }
   }
-
 }

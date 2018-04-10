@@ -14,6 +14,7 @@ import { QueryFormat } from './query.enum';
 import { QueryOptions } from './query.interface';
 
 
+
 @Injectable()
 export class QueryService {
 
