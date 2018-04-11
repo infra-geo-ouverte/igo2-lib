@@ -152,7 +152,7 @@ export class WFSDataSourceService extends DataService {
     return valueList;
   }
 
-  wfsGetCapabilities(options) {
+  wfsGetCapabilities(options): Observable<any> {
     const baseWfsQuery = 'service=wfs&request=GetCapabilities';
     const wfsVersion = options.version
       ? 'version=' + options.version : 'version=' + '2.0.0';
