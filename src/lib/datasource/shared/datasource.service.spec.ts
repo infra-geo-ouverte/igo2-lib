@@ -6,6 +6,7 @@ import { IgoAuthModule } from '../../auth';
 
 import { CapabilitiesService } from './capabilities.service';
 import { DataSourceService } from './datasource.service';
+import { WFSDataSourceService } from './datasources/wfs-datasource.service';
 
 
 describe('DataSourceService', () => {
@@ -18,7 +19,8 @@ describe('DataSourceService', () => {
       ],
       providers: [
         CapabilitiesService,
-        DataSourceService
+        DataSourceService,
+        WFSDataSourceService
       ]
     });
   });

@@ -8,7 +8,7 @@ import { DataSource,
          OSMDataSource, OSMDataSourceContext,
          FeatureDataSource, FeatureDataSourceContext,
          XYZDataSource, XYZDataSourceContext,
-         WFSDataSource, WFSDataSourceContext,
+         WFSDataSource, WFSDataSourceContext, WFSDataSourceService,
          WMTSDataSource, WMTSDataSourceContext,
          WMSDataSource, WMSDataSourceContext } from './datasources';
 
@@ -22,7 +22,10 @@ export class DataSourceService {
 
   public datasources$ = new BehaviorSubject<DataSource[]>([]);
 
-  constructor(private capabilitiesService: CapabilitiesService) { }
+  constructor(
+    private capabilitiesService: CapabilitiesService,
+    private wfsDataSourceService: WFSDataSourceService
+  ) { }
 
   createAsyncDataSource(context: AnyDataSourceContext): Observable<DataSource> {
     let dataSource;
@@ -69,7 +72,7 @@ export class DataSourceService {
   private createWFSDataSource(
       context: WFSDataSourceContext): Observable<WFSDataSource> {
 
-    return new Observable(d => d.next(new WFSDataSource(context)));
+    return new Observable(d => d.next(new WFSDataSource(context, this.wfsDataSourceService)));
   }
 
   private createWMSDataSource(
@@ -78,10 +81,11 @@ export class DataSourceService {
     if (context.optionsFromCapabilities) {
       return this.capabilitiesService
         .getWMSOptions(context)
-        .map((options: WMSDataSourceContext) => new WMSDataSource(options));
+        .map((options: WMSDataSourceContext) =>
+        new WMSDataSource(options, this.wfsDataSourceService));
     }
 
-    return new Observable(d => d.next(new WMSDataSource(context)));
+    return new Observable(d => d.next(new WMSDataSource(context, this.wfsDataSourceService)));
   }
 
   private createWMTSDataSource(

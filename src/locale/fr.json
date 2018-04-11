@@ -92,6 +92,40 @@
 			"importProjPlaceholder": "Projection de l'intrant (EPSG:4326)",
 			"importTabTitle": "Importer"
 		},
+		"operators": {
+		  "And": "Et",
+		  "Or": "Ou",
+		  "PropertyIsEqualTo": "=",
+		  "PropertyIsNotEqualTo": "!=",
+		  "PropertyIsLike": "≈",
+		  "PropertyIsGreaterThan": ">",
+		  "PropertyIsGreaterThanOrEqualTo": ">=",
+		  "PropertyIsLessThan": "<",
+		  "PropertyIsLessThanOrEqualTo": "<=",
+		  "PropertyIsBetween": "entre",
+		  "During": "durant",
+		  "PropertyIsNull": "est nul",
+		  "Intersects": "intersecte",
+		  "Within": "contenu dans",
+		  "Contains": "contient"
+		},
+		"sourceFields": {
+		  "selectField": "Choisir un champ"
+		},
+		"filter": {
+		  "addFilter": "Ajouter un filtre vidre à la liste courante",
+		  "removeFilter": "Supprimer le présent filtre à la liste des filtres",
+		  "toggleFilterState": "Activer/désactiver le présent filtre",
+		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste",
+		  "layerFiltered": "Cette couche d'information est présentement filtrée."
+		},	
+		"spatialSelector": {
+		  "fixedExtent": "Étendue fixe",
+		  "btnSetExtent": "Définir l'étendue du filtre selon l'étendue courante de la carte",
+		  "snrc": "SNRC (ex:21L14)",
+		  "selectFeature": "",
+		  "drawFeature": ""
+		},
 		"layer": {
 			"hideLayer": "Masquer la couche",
 			"lowerLayer": "Descendre la couche",

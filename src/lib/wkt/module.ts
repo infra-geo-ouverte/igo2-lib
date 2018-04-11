@@ -1,7 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
-import { CapabilitiesService, DataSourceService, WFSDataSourceService } from './shared';
+
+import { WktService } from './shared';
 
 
 @NgModule({
@@ -11,14 +12,12 @@ import { CapabilitiesService, DataSourceService, WFSDataSourceService } from './
   exports: [],
   declarations: []
 })
-export class IgoDataSourceModule {
+export class IgoWktModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: IgoDataSourceModule,
+      ngModule: IgoWktModule,
       providers: [
-        DataSourceService,
-        CapabilitiesService,
-        WFSDataSourceService
+        WktService
       ]
     };
   }

@@ -9,6 +9,7 @@ import { TimeFilterOptions } from '../../filter';
 
 import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
 
+
 @Injectable()
 export class CapabilitiesService {
 
