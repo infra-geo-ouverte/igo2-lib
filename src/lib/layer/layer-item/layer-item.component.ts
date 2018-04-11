@@ -11,7 +11,6 @@ import { DownloadService} from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
 
 
-
 @Component({
   selector: 'igo-layer-item',
   templateUrl: './layer-item.component.html',

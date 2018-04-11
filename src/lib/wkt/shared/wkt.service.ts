@@ -17,7 +17,6 @@ export class WktService {
     extent = this.roundCoordinateArray(extent, epsgTO, 0);
     const wkt = new ol.format.WKT().writeGeometry(ol.geom.Polygon.fromExtent(extent));
     return wkt;
-
   }
 
   private roundCoordinateArray(coordinateArray, projection, decimal = 0) {

@@ -25,7 +25,6 @@ import { ContextsList, ContextServiceOptions, Context, DetailedContext,
   ContextMapView, ContextPermission } from './context.interface';
 
 
-
 @Injectable()
 export class ContextService {
 

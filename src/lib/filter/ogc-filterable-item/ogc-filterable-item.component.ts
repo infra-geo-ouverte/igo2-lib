@@ -46,7 +46,6 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     this.datasource.options['disableRefreshFilter'] = true;
   }
 
-
   ngOnDestroy() {
     this.layers$$.unsubscribe();
   }
@@ -72,9 +71,11 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         }, fieldNameGeometry, lastLevel, this.defaultLogicalParent));
     this.datasource.options.ogcFilters.interfaceOgcFilters = arr;
   }
+
   openDownload() {
     this.downloadService.open(this.layers[0]);
   }
+
   refreshFilters() {
     const activeFilters = this.datasource.options.ogcFilters.interfaceOgcFilters
       .filter((f) => f.active === true);

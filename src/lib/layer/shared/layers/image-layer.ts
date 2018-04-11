@@ -8,7 +8,6 @@ import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 
 
-
 export class ImageLayer extends Layer {
 
   public options: ImageLayerOptions;

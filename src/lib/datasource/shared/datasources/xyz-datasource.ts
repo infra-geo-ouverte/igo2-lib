@@ -5,7 +5,6 @@ import { DataSource } from './datasource';
 import { XYZDataSourceOptions } from './xyz-datasource.interface';
 
 
-
 export class XYZDataSource extends DataSource {
 
   public options: XYZDataSourceOptions;
