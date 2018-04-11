@@ -1,6 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { IgoCoreModule } from '../../core';
+import { MapService } from '../../map';
 import { WktService } from './wkt.service';
 
 describe('WktService', () => {
@@ -10,7 +11,8 @@ describe('WktService', () => {
         IgoCoreModule.forRoot()
       ],
       providers: [
-        WktService
+        WktService,
+        MapService
       ]
     });
   });

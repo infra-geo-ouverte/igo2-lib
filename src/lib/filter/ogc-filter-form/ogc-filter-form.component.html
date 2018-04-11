@@ -1,5 +1,4 @@
 <mat-list-item>
-  <h4 matLine matTooltipShowDelay="500"></h4>
 
   <div class="igo-col igo-col-30 igo-col-100-m">
     <mat-select [disabled]="!currentFilter.active" (change)="disableRefreshFilter()" [(ngModel)]="currentFilter.parentLogical"
@@ -76,10 +75,7 @@
     <!-- PropertyIsLike  -->
 
     <!-- PropertyIsNull  -->
-    <span *ngIf="currentFilter.operator === 'PropertyIsNull'">
-      <mat-form-field>
-      </mat-form-field>
-    </span>
+    <span *ngIf="currentFilter.operator === 'PropertyIsNull'"></span>
     <!-- PropertyIsNull  -->
 
     <!-- PropertyIs_Than  -->
@@ -167,12 +163,12 @@
 
 
   <!-- PropertySpatial  -->
-  <div class="igo-col igo-col-50 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
     <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (change)="disableRefreshFilter()">
       <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{operator.value.alias}}</mat-option>
     </mat-select>
   </div>
-  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
+  <div class="igo-col igo-col-50 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
     <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.igoSpatialSelector" (change)="changeGeometry(currentFilter,value)">
       <mat-option *ngFor="let igoSpatialSelector of igoSpatialSelectors" [value]="igoSpatialSelector.type">{{igoSpatialSelector.alias}}</mat-option>
     </mat-select>
