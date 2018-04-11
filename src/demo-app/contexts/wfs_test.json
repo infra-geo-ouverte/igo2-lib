@@ -1,74 +1,152 @@
 {
-  "uri": "wfs_test",
-  "title": "wfs_test",
+  "uri": "test_wfs",
+  "title": "test_wfs",
   "map": {
     "view": {
       "projection": "EPSG:3857",
       "center": [-72, 50],
-      "zoom": 5,
+      "zoom": 7,
       "geolocate": true
     }
   },
+
   "layers": [{
       "title": "OSM",
       "type": "osm"
     },
     {
+      "name": "cs sans filtre gml",
       "visible": false,
-      "id": "a",
-      "title": "WFS - isOgcFilterable HasFilters HasSourceFields",
+      "id": "cs sans filtre gml",
+      "title": "cs sans filtre gml",
       "type": "wfs",
-      "source": {"url": "swtq","featureTypes": "bgr_v_centr_servc_geomt_act","fieldNameGeometry": "geometry","maxFeatures": 10000,"version": "2.0.0","outputFormat": "geojson","outputFormatDownload": "shp"},
-      "isOgcFilterable": true,
-      "ogcFilters": {"filtersAreEditable": true,"filters": {"operator": "Intersects", "propertyName": "geometry", "wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
-      "sourceFields": [{"name": "nom_unite_","alias": "Nom unité administrative"}]
+      "source": {
+        "url": "https://ws.mapserver.transports.gouv.qc.ca/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subtype=gml/3.1.1",
+        "outputFormatDownload": "shp"
+      }
     },
     {
+      "name": "cs avec filtre gml",
       "visible": false,
-      "id": "b",
-      "title": "WFS - NOTisOgcFilterable HasFilters HasSourceFields",
+      "id": "cs avec filtre gml",
+      "title": "cs avec filtre gml",
       "type": "wfs",
-      "source": {"url": "swtq","featureTypes": "bgr_v_centr_servc_geomt_act","fieldNameGeometry": "geometry","maxFeatures": 10000,"version": "2.0.0","outputFormat": "geojson","outputFormatDownload": "shp"},
-      "isOgcFilterable": false,
-      "ogcFilters": {"filtersAreEditable": true,"filters": {"operator": "Intersects", "propertyName": "geometry", "wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
-      "sourceFields": [{"name": "nom_unite_","alias": "Nom unité administrative"}]
+      "source": {
+        "url": "https://ws.mapserver.transports.gouv.qc.ca/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subtype=gml/3.1.1",
+        "outputFormatDownload": "shp"
+      },
+      "filters": {
+        "logical": "Or",
+        "filters": [
+          {"operator": "During", "propertyName": "dat_debut_", "begin": "2014", "end": "2016"},
+          {"operator": "PropertyIsEqualTo", "propertyName": "nom_unite_", "pattern": "CS de Lévis"},
+          {"operator": "PropertyIsLike", "propertyName": "ide_unite_", "pattern": "3*"}
+        ]
+      }
     },
     {
+      "name": "cs avec filtre geojson",
       "visible": false,
-      "id": "c",
-      "title": "WFS - isOgcFilterable HasFilters HasSourceFields NOT USER EDITABLE",
+      "id": "cs avec filtre",
+      "title": "cs avec filtre",
       "type": "wfs",
-      "source": {"url": "swtq","featureTypes": "bgr_v_centr_servc_geomt_act","fieldNameGeometry": "geometry","maxFeatures": 10000,"version": "2.0.0","outputFormat": "geojson","outputFormatDownload": "shp"},
-      "isOgcFilterable": true,
-      "ogcFilters": {"filtersAreEditable": false,"filters": {"operator": "Intersects", "propertyName": "geometry", "wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
-      "sourceFields": [{"name": "nom_unite_","alias": "Nom unité administrative"}]
+      "source": {
+        "url": "https://ws.mapserver.transports.gouv.qc.ca/swtq",
+        "featureTypes": "bgr_v_centr_servc_geomt_act",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
+      },
+      "filters": {
+        "logical": "Or",
+        "filters": [
+          {"operator": "During", "propertyName": "dat_debut_", "begin": "2014", "end": "2016"},
+          {"operator": "PropertyIsEqualTo", "propertyName": "nom_unite_", "pattern": "CS de Lévis"},
+          {"operator": "PropertyIsLike", "propertyName": "ide_unite_", "pattern": "3*"}
+        ]
+      }
     },
     {
+      "name": "vg avec filtre",
       "visible": false,
-      "id": "d",
-      "title": "WFS - isOgcFilterable HasFilters",
+      "id": "vg",
+      "title": "vg avec filtre",
       "type": "wfs",
-      "source": {"url": "swtq","featureTypes": "bgr_v_centr_servc_geomt_act","fieldNameGeometry": "geometry","maxFeatures": 10000,"version": "2.0.0","outputFormat": "geojson","outputFormatDownload": "shp"},
-      "isOgcFilterable": true,
-      "ogcFilters": {"filtersAreEditable": true,"filters": {"operator": "Intersects", "propertyName": "geometry", "wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}}
+      "source": {
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "featureTypes": "vg_observation_v_inondation_embacle_wmst",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
+      },
+      "filters": {"operator": "PropertyIsEqualTo", "propertyName": "cap_severite", "pattern": "Mineure"}
     },
     {
+      "name": "vg sans filtre",
       "visible": false,
-      "id": "e",
-      "title": "WFS - isOgcFilterable",
+      "id": "vg sans filtre",
+      "title": "vg sans filtre",
       "type": "wfs",
-      "source": {"url": "swtq","featureTypes": "bgr_v_centr_servc_geomt_act","fieldNameGeometry": "geometry","maxFeatures": 10000,"version": "2.0.0","outputFormat": "geojson","outputFormatDownload": "shp"},
-      "isOgcFilterable": true
+      "source": {
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "featureTypes": "vg_observation_v_inondation_embacle_wmst",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "geojson",
+        "outputFormatDownload": "shp"
+      }
     },
     {
+      "name": "edu sans filtre",
       "visible": false,
-      "id": "f",
-      "title": "WFS - NotOgcFilterable",
+      "id": "edu sans filtre",
+      "title": "edu sans filtre",
       "type": "wfs",
-      "source": {"url": "swtq","featureTypes": "bgr_v_centr_servc_geomt_act","fieldNameGeometry": "geometry","maxFeatures": 10000,"version": "2.0.0","outputFormat": "geojson","outputFormatDownload": "shp"},
-      "isOgcFilterable": false
-    }
+      "minScaleDenom": 200000,
+      "maxScaleDenom": 5000000,
+      "source": {
+        "url": "https://infogeo.education.gouv.qc.ca/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer",
+        "featureTypes": "Établissement_privé",
+        "fieldNameGeometry": "SHAPE",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subType=gml/3.1.1"
+      }
+    },
+    {
+      "name": "edu avec filtre",
+      "visible": false,
+      "id": "edu avec filtre",
+      "title": "edu avec filtre",
+      "type": "wfs",
+      "minScaleDenom": 200000,
+      "maxScaleDenom": 5000000,
+      "source": {
+        "url": "https://infogeo.education.gouv.qc.ca/arcgis/services/DonneesOuvertes/SW_MEES/MapServer/WFSServer",
+        "featureTypes": "Établissement_privé",
+        "fieldNameGeometry": "SHAPE",
+        "maxFeatures": 10000,
+        "version": "2.0.0",
+        "outputFormat": "text/xml; subType=gml/3.1.1"
 
+      },
+      "filters": {"operator": "PropertyIsLike", "propertyName": "Code_d_organisme", "pattern": "01*"}
+    }
 
   ],
   "toolbar": [
@@ -78,7 +156,9 @@
     "contextManager",
     "print"
   ],
-  "tools": [{
+
+  "tools": [
+    {
       "name": "searchResults"
     },
     {
