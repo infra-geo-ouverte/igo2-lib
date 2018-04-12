@@ -16,7 +16,7 @@
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="'igo.filter.layerFiltered' | translate"
-    [color]="gray"
+    color="gray"
     disabled = true>
     <mat-icon> filter_list </mat-icon>
   </button>
@@ -29,7 +29,7 @@
     [matTooltip]="layer.visible ?
                   ('igo.layer.hideLayer' | translate) :
                   ('igo.layer.showLayer' | translate)"
-    [color]="color"
+    [color]="layer.visible ? color : 'default'"
     (click)="toggleVisibility()">
     <mat-icon
       [ngClass]='{disabled: !layer.isInResolutionsRange}'>
