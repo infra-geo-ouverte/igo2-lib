@@ -21,7 +21,7 @@
       "title": "Bassin (WFS)",
       "type" : "wfs",
       "source": {
-        "url": "/ws/adnInternetV2.fcgi",
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/adnInternetV2.fcgi",
         "featureTypes": "adn_bassin_n1_simplify_500",
         "fieldNameGeometry": "geometry",
         "maxFeatures": 10000,
