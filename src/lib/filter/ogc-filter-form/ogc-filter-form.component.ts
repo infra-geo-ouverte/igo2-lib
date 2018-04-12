@@ -23,6 +23,7 @@ export class OgcFilterFormComponent {
   public values: Observable<any>;
   public color = 'primary';
   public snrc = '';
+  public disabled;
 
   @Input()
   get datasource(): OgcFilterableDataSource { return this._dataSource; }
