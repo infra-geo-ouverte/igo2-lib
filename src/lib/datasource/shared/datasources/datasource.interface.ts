@@ -22,6 +22,7 @@ export interface DataSourceContext extends DataSourceOptions {
 
 export interface DataSourceLegendOptions {
   collapsed?: boolean;
+  display?: boolean;
   url?: string;
   html?: string;
   style?: {[key: string]: string | number};
