@@ -20,8 +20,13 @@
       "name" : "Bassin (WFS)",
       "title": "Bassin (WFS)",
       "type" : "wfs",
-      "source":{
-        "url" : "https://geoegl.msp.gouv.qc.ca/ws/adnInternetV2.fcgi?service=WFS&version=1.1.0&request=GetFeature&typename=adn_bassin_n1_simplify_500&srsname=EPSG:3857"
+      "source": {
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/adnInternetV2.fcgi",
+        "featureTypes": "adn_bassin_n1_simplify_500",
+        "fieldNameGeometry": "geometry",
+        "maxFeatures": 10000,
+        "version": "1.1.0",
+        "outputFormat": "text/xml; subtype=gml/3.1.1"
       },
       "style" : {
         "stroke" : {
