@@ -45,13 +45,29 @@
         "outputFormat": "text/xml; subtype=gml/3.1.1",
         "outputFormatDownload": "shp"
       },
-      "filters": {
-        "logical": "Or",
-        "filters": [
-          {"operator": "During", "propertyName": "dat_debut_", "begin": "2014", "end": "2016"},
-          {"operator": "PropertyIsEqualTo", "propertyName": "nom_unite_", "pattern": "CS de Lévis"},
-          {"operator": "PropertyIsLike", "propertyName": "ide_unite_", "pattern": "3*"}
-        ]
+      "isOgcFilterable": true,
+      "ogcFilters": {
+        "filtersAreEditable": true,
+        "filters": {
+          "logical": "Or",
+          "filters": [{
+              "operator": "During",
+              "propertyName": "dat_debut_",
+              "begin": "2014",
+              "end": "2016"
+            },
+            {
+              "operator": "PropertyIsEqualTo",
+              "propertyName": "nom_unite_",
+              "pattern": "CS de Lévis"
+            },
+            {
+              "operator": "PropertyIsLike",
+              "propertyName": "ide_unite_",
+              "pattern": "3*"
+            }
+          ]
+        }
       }
     },
     {
@@ -69,13 +85,29 @@
         "outputFormat": "geojson",
         "outputFormatDownload": "shp"
       },
-      "filters": {
-        "logical": "Or",
-        "filters": [
-          {"operator": "During", "propertyName": "dat_debut_", "begin": "2014", "end": "2016"},
-          {"operator": "PropertyIsEqualTo", "propertyName": "nom_unite_", "pattern": "CS de Lévis"},
-          {"operator": "PropertyIsLike", "propertyName": "ide_unite_", "pattern": "3*"}
-        ]
+      "isOgcFilterable": true,
+      "ogcFilters": {
+        "filtersAreEditable": true,
+        "filters": {
+          "logical": "Or",
+          "filters": [{
+              "operator": "During",
+              "propertyName": "dat_debut_",
+              "begin": "2014",
+              "end": "2016"
+            },
+            {
+              "operator": "PropertyIsEqualTo",
+              "propertyName": "nom_unite_",
+              "pattern": "CS de Lévis"
+            },
+            {
+              "operator": "PropertyIsLike",
+              "propertyName": "ide_unite_",
+              "pattern": "3*"
+            }
+          ]
+        }
       }
     },
     {
@@ -93,7 +125,15 @@
         "outputFormat": "geojson",
         "outputFormatDownload": "shp"
       },
-      "filters": {"operator": "PropertyIsEqualTo", "propertyName": "cap_severite", "pattern": "Mineure"}
+      "isOgcFilterable": true,
+      "ogcFilters": {
+        "filtersAreEditable": true,
+        "filters": {
+          "operator": "PropertyIsEqualTo",
+          "propertyName": "cap_severite",
+          "pattern": "Mineure"
+        }
+      }
     },
     {
       "name": "vg sans filtre",
@@ -145,7 +185,15 @@
         "outputFormat": "text/xml; subType=gml/3.1.1"
 
       },
-      "filters": {"operator": "PropertyIsLike", "propertyName": "Code_d_organisme", "pattern": "01*"}
+      "isOgcFilterable": true,
+      "ogcFilters": {
+        "filtersAreEditable": true,
+        "filters": {
+          "operator": "PropertyIsLike",
+          "propertyName": "Code_d_organisme",
+          "pattern": "01*"
+        }
+      }
     }
 
   ],
@@ -157,8 +205,7 @@
     "print"
   ],
 
-  "tools": [
-    {
+  "tools": [{
       "name": "searchResults"
     },
     {
