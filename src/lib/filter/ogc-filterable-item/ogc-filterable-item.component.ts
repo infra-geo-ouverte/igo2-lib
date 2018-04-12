@@ -53,8 +53,11 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   addFilterToSequence() {
     const arr = this.datasource.options.ogcFilters.interfaceOgcFilters
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
-    const firstFieldName = this.datasource.options['sourceFields'][0].name === undefined ?
+    let firstFieldName = '';
+    if (this.datasource.options['sourceFields'].length > 0) {
+      firstFieldName = this.datasource.options['sourceFields'][0].name === undefined ?
       '' : this.datasource.options['sourceFields'][0].name;
+    }
     let fieldNameGeometry = undefined;
     if (this.datasource.options['fieldNameGeometry']) {
       fieldNameGeometry = this.datasource.options['fieldNameGeometry'];

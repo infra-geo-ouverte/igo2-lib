@@ -18,8 +18,8 @@
       <mat-icon>file_download</mat-icon>
     </button>
   </span>
-  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.filter.addFilter' | translate"
-    [color]="color" (click)="addFilterToSequence()">
+  <button [disabled]="datasource.options['sourceFields'].length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon>
       add
     </mat-icon>
