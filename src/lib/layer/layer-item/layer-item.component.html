@@ -8,9 +8,9 @@
     (toggle)="toggleLegend($event)">
   </mat-icon>
   <h4 matLine [matTooltip]="layer.title +' ('+ id +') '" matTooltipShowDelay="500">{{layer.title}}</h4>
-  
+
   <button
-    *ngIf="layer.dataSource.options.ogcFiltered"
+    *ngIf="layer.dataSource.options['ogcFiltered']"
     mat-icon-button
     collapsibleButton
     tooltip-position="below"
@@ -20,7 +20,7 @@
     disabled = true>
     <mat-icon> filter_list </mat-icon>
   </button>
-  
+
   <button
     mat-icon-button
     collapsibleButton

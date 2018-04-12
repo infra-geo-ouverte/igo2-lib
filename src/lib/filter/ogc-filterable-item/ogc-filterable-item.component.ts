@@ -11,8 +11,8 @@ import { DownloadService } from '../../download';
   styleUrls: ['./ogc-filterable-item.component.styl']
 })
 export class OgcFilterableItemComponent implements OnInit, OnDestroy {
-  color = 'primary';
-  private layers;
+  public color = 'primary';
+  public layers;
   private layers$$: Subscription;
   private lastRunOgcFilter;
   private defaultLogicalParent = 'And';
@@ -50,7 +50,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
     this.layers$$.unsubscribe();
   }
 
-  addFilterToSequence(event) {
+  addFilterToSequence() {
     const arr = this.datasource.options.ogcFilters.interfaceOgcFilters
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     const firstFieldName = this.datasource.options['sourceFields'][0].name === undefined ?

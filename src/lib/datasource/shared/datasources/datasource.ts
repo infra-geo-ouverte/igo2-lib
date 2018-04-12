@@ -7,7 +7,6 @@ export abstract class DataSource {
   public id: string;
   public ol: ol.source.Source;
 
-
   get title(): string {
     return this.options.alias ? this.options.alias : this.options.title;
   }

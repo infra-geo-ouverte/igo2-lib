@@ -198,7 +198,7 @@
     <div class="igo-layer-button-group">
       <mat-slide-toggle class="example-margin" (change)="toggleFilterState($event,currentFilter,'active')" tooltip-position="below"
         matTooltipShowDelay="500" [matTooltip]="'igo.filter.toggleFilterState' | translate" [color]="color" [checked]="currentFilter.active"
-        [disabled]="disabled">
+        [disabled]="!currentFilter.active">
       </mat-slide-toggle>
       <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.filter.removeFilter' | translate"
         color="warn" (click)="deleteFilter(currentFilter)">
