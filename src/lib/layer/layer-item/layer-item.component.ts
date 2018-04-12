@@ -35,7 +35,11 @@ export class LayerItemComponent implements OnDestroy {
   private _edition: boolean = false;
 
   @Input()
-  get color() { return this._color; }
+  get color() {
+    this._color = this.layer.visible ? 'primary' : 'background';
+    return this._color;
+  }
+
   set color(value: string) {
     this._color = value;
   }
