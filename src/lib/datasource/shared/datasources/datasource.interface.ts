@@ -1,3 +1,5 @@
+import * as ol from 'openlayers';
+
 import { TimeFilterOptions, OgcFiltersOptions } from '../../../filter';
 import { QueryFormat, QueryOptions } from '../../../query';
 import { MetadataOptions } from '../../../metadata';

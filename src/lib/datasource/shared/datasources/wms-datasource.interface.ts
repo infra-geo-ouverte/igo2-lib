@@ -1,3 +1,4 @@
+import * as ol from 'openlayers';
 import { DataSourceContext,
   TimeFilterableDataSourceOptions,
   QueryableDataSourceOptions, OgcFilterableDataSourceOptions } from './datasource.interface';
