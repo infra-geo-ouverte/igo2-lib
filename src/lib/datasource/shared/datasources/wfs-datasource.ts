@@ -94,7 +94,6 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
         if (wfsOptions.version === '2.0.0' || !wfsOptions.version) {
           paramTypename = 'typenames';
           paramMaxFeatures = 'count';
-
         }
 
         const featureTypes = paramTypename + '=' + wfsOptions.featureTypes;
@@ -114,8 +113,8 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
           this.options['ogcFiltered'] = false;
         }
 
-        const baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&
-          ${outputFormat}&${srsname}&${filterXML}&${maxFeatures}`;
+        let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
+        baseUrl += `${outputFormat}&${srsname}&${filterXML}&${maxFeatures}`;
 
         this.options['download'] = Object.assign({},
           this.options['download'], { 'dynamicUrl': baseUrl });
