@@ -59,7 +59,7 @@
             {
               "operator": "PropertyIsEqualTo",
               "propertyName": "nom_unite_",
-              "pattern": "CS de Lévis"
+              "expression": "CS de Lévis"
             },
             {
               "operator": "PropertyIsLike",
@@ -99,7 +99,7 @@
             {
               "operator": "PropertyIsEqualTo",
               "propertyName": "nom_unite_",
-              "pattern": "CS de Lévis"
+              "expression": "CS de Lévis"
             },
             {
               "operator": "PropertyIsLike",
@@ -131,7 +131,7 @@
         "filters": {
           "operator": "PropertyIsEqualTo",
           "propertyName": "cap_severite",
-          "pattern": "Mineure"
+          "expression": "Mineure"
         }
       }
     },
