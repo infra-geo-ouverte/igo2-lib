@@ -325,7 +325,7 @@ export class IgoMap {
     if (geometry === null) { return; }
 
     if (geometry.getType() === 'Point') {
-      feature.setStyle(this.overlayMarkerStyle);
+      feature.setStyle([this.overlayMarkerStyle]);
     }
 
     this.overlayDataSource.ol.addFeature(feature);
