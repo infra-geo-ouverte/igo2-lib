@@ -65,12 +65,13 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       this.datasource.options['wfsSource']['fieldNameGeometry']) {
       fieldNameGeometry = this.datasource.options['wfsSource']['fieldNameGeometry'];
     }
+    const status = arr.length === 0 ? true : false;
     arr.push(this.datasource['ogcFilterWriter']
       .addInterfaceFilter(
         {
           'propertyName': firstFieldName,
           'operator': 'PropertyIsEqualTo',
-          'active': false
+          'active': status
         }, fieldNameGeometry, lastLevel, this.defaultLogicalParent));
     this.datasource.options.ogcFilters.interfaceOgcFilters = arr;
   }
