@@ -118,7 +118,7 @@
       "type": "wfs",
       "source": {
         "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
-        "featureTypes": "vg_observation_v_inondation_embacle_wmst",
+        "featureTypes": "vg_observation_v_autre_wmst",
         "fieldNameGeometry": "geometry",
         "maxFeatures": 10000,
         "version": "2.0.0",
@@ -143,7 +143,7 @@
       "type": "wfs",
       "source": {
         "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
-        "featureTypes": "vg_observation_v_inondation_embacle_wmst",
+        "featureTypes": "vg_observation_v_autre_wmst",
         "fieldNameGeometry": "geometry",
         "maxFeatures": 10000,
         "version": "2.0.0",
