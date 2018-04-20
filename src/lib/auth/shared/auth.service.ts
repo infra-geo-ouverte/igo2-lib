@@ -52,7 +52,7 @@ export class AuthService {
 
     const body = JSON.stringify({
       token: token,
-      typeConnexion: type
+      typeConnection: type
     });
 
     return this.http.post(`${this.options.url}/login`, body, { headers: myHeader })
