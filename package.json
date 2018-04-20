@@ -48,7 +48,7 @@
     "@angular/platform-browser-dynamic": "^5.1.0",
     "@angular/router": "^5.1.0",
     "@auth0/angular-jwt": "^1.0.0-beta.9",
-    "@mat-datetimepicker/core": "^1.0.2",
+    "@mat-datetimepicker/core": "^1.0.4",
     "@ngx-translate/core": "^8.0.0",
     "angular2-notifications": "^0.9.7",
     "bowser": "^1.9.2",
