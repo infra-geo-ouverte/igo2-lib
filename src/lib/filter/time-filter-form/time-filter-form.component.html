@@ -9,6 +9,7 @@
         [(ngModel)]="date"
         [min]="min"
         [max]="max"
+        readonly="readonly"
         (dateChange)="handleDateChange($event)">
     </mat-form-field>
 
@@ -25,6 +26,7 @@
           [(ngModel)]="startDate"
           [min]="min"
           [max]="getRangeMaxDate()"
+          readonly="readonly"
           (input)="startDate"
           (dateChange)="handleDateChange($event)">
       </mat-form-field>
@@ -40,7 +42,8 @@
           [(ngModel)]="endDate"
           [min]="getRangeMinDate()"
           [max]="max"
-          (change)="handleDateChange($event)">
+          readonly="readonly"
+          (dateChange)="handleDateChange($event)">
       </mat-form-field>
     </div>
   </div>
@@ -58,7 +61,7 @@
       (input)="handleSliderDateChange($event)"
       (change)="handleSliderDateChange($event)">
   </mat-slider>
-  <p class="date-below">{{handleSliderTooltip()}} </p>
+  <p class="date-below">{{handleSliderTooltip()}}</p>
   <button mat-icon-button color="primary" (click)="playFilter($event)">
    <mat-icon>{{playIcon}}</mat-icon>
   </button>
