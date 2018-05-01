@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatSlider } from '@angular/material';
 import { TimeFilterOptions } from '../shared';
 
@@ -7,7 +7,7 @@ import { TimeFilterOptions } from '../shared';
   templateUrl: './time-filter-form.component.html',
   styleUrls: ['./time-filter-form.component.styl']
 })
-export class TimeFilterFormComponent {
+export class TimeFilterFormComponent implements OnInit {
 
   @Input()
   get options(): TimeFilterOptions { return this._options; }
