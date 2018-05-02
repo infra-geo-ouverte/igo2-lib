@@ -9,17 +9,22 @@
   </mat-icon>
   <h4 matLine [matTooltip]="layer.title +' ('+ id +') '" matTooltipShowDelay="500">{{layer.title}}</h4>
 
-  <button
-    *ngIf="layer.dataSource.options['ogcFiltered']"
-    mat-icon-button
-    collapsibleButton
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.filter.layerFiltered' | translate"
-    color="gray"
-    disabled = true>
-    <mat-icon> filter_list </mat-icon>
-  </button>
+
+<button *ngIf="layer.dataSource.options.isOgcFilterable && layer.isInResolutionsRange 
+&& layer.dataSource.options.ogcFilters.filtersAreEditable"
+  mat-icon-button
+  collapsibleButton
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.ogcFilter' | translate"
+  [color]="layer.visible ? color : 'default'"
+  (click)="toggleOgcFilter()">
+  <mat-icon
+  [ngClass]='{disabled: !layer.isInResolutionsRange}'>
+  filter_list</mat-icon>
+</button>
+
+
 
   <button
     mat-icon-button
@@ -140,4 +145,7 @@
 
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend *ngIf="legendLoaded" [layer]="layer"></igo-layer-legend>
+</div>
+<div #ogcFilter class="igo-layer-actions-container">
+  <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && layer.dataSource.options.isOgcFilterable" igoListItem [datasource]="layer.dataSource"></igo-ogc-filterable-item>
 </div>

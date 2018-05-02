@@ -64,6 +64,7 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   public legendLoaded = false;
+  public ogcFilterCollapse = false;
   private resolution$$: Subscription;
 
   constructor(private cdRef: ChangeDetectorRef,
@@ -87,6 +88,11 @@ export class LayerItemComponent implements OnDestroy {
       this.toggleLegend(!this.layer.visible);
     }
   }
+  toggleOgcFilter() {
+    if (this.layer.isInResolutionsRange) {
+      this.ogcFilterCollapse = !this.ogcFilterCollapse;
+    }
+  } 
 
   openMetadata(metadata: MetadataOptions) {
     this.metadataService.open(metadata);
