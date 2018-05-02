@@ -131,7 +131,7 @@
     <mat-card-subtitle>Layer module</mat-card-subtitle>
     <mat-card-title>layer-list.component</mat-card-title>
     <mat-card-content>
-      <igo-layer-list [layers]="map.layers$ | async"></igo-layer-list>
+      <igo-layer-list [ogcFilterInLayerItem]="true" [layers]="map.layers$ | async"></igo-layer-list>
     </mat-card-content>
   </mat-card>
 

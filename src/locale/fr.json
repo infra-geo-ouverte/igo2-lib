@@ -112,7 +112,7 @@
 		"sourceFields": {
 		  "selectField": "Choisir un champ"
 		},
-		"ogcFilter": "Filtrer par (géométrie & attributs)",
+		"ogcFilter": "Filtrer par",
 		"filter": {
 		  "addFilter": "Ajouter un filtre vidre à la liste courante",
 		  "removeFilter": "Supprimer le présent filtre à la liste des filtres",

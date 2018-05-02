@@ -77,6 +77,7 @@
     "searchResults",
     "mapDetails",
     "timeAnalysis",
+    "ogcFilter",
     "contextManager",
     "print"
   ],
@@ -85,7 +86,11 @@
       "name": "searchResults"
     },
     {
-      "name": "mapDetails"
+      "name": "mapDetails",
+      "options": {
+        "toggleLegendOnVisibilityChange": true,
+        "ogcFiltersInLayers": true
+      }
     },
     {
       "name": "timeAnalysis"

@@ -112,7 +112,7 @@
 		"sourceFields": {
 		  "selectField": "Choose a field"
 		},
-		"ogcFilter": "Filters by (spatial & attributes)",
+		"ogcFilter": "Filter by",
 		"filter": {
 		  "addFilter": "Add an empty filter to the current list",
 		  "removeFilter": "Remove the current filter from the filters's list",

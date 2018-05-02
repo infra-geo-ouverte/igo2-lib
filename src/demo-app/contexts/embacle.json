@@ -90,6 +90,7 @@
   ],
   "toolbar": [
     "timeAnalysis",
+    "ogcFilter",
     "mapDetails",
     "contextManager"
   ],
@@ -97,8 +98,12 @@
     {
       "name": "mapDetails",
       "options": {
-        "toggleLegendOnVisibilityChange": true
+        "toggleLegendOnVisibilityChange": true,
+        "ogcFiltersInLayers": true
       }
+    },
+    {
+      "name": "ogcFilter"
     },
     {
       "name": "timeAnalysis"
