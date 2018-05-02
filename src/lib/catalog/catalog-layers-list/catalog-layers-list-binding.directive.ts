@@ -71,52 +71,51 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
     let currentRegFilter;
     let boolRegFilter = true;
     let objGroupLayers;
-    //Dig all levels until last level (layer object are not defined on last level)
+    // Dig all levels until last level (layer object are not defined on last level)
     for (const group of layerList.Layer) {
-      if (group.queryable === false && typeof group.Layer !== "undefined") {
-        //recursive, check next level
+      if (group.queryable === false && typeof group.Layer !== 'undefined') {
+        // recursive, check next level
         this.includeRecursiveLayer(catalog, group, groupsLayers);
-      }
-      else {
-        //Define object of group layer
-        objGroupLayers =
-          {
-            title: layerList.Title,
-            //Add only layers with regFilter condition respected
-            layers: layerList.Layer.reduce(function(arrLayer, layer) {
-              boolRegFilter = true;
-              //Check for regex validation on layer's name
-              if (typeof catalog.regFilters !== "undefined") {
-                //Test layer.Name for each regex define in config.json
-                for (const regFilter of catalog.regFilters) {
-                  boolRegFilter = false;
-                  currentRegFilter = new RegExp(regFilter);
-                  boolRegFilter = currentRegFilter.test(layer.Name);
-                  //If regex is respected, stop the for loop
-                  if (boolRegFilter == true) {
-                    break;
-                  }
+      } else {
+        // Define object of group layer
+        objGroupLayers = {
+          title: layerList.Title,
+          // Add only layers with regFilter condition respected
+          layers: layerList.Layer.reduce((arrLayer, layer) => {
+            boolRegFilter = true;
+            // Check for regex validation on layer's name
+            if (typeof catalog.regFilters !== 'undefined') {
+              // Test layer.Name for each regex define in config.json
+              for (const regFilter of catalog.regFilters) {
+                boolRegFilter = false;
+                currentRegFilter = new RegExp(regFilter);
+                boolRegFilter = currentRegFilter.test(layer.Name);
+                // If regex is respected, stop the for loop
+                if (boolRegFilter === true) {
+                  break;
                 }
               }
-              //If layer regex is okay (or not define), add the layer to the group
-              if (boolRegFilter == true) {
-                arrLayer.push({
-                  title: layer.Title,
-                  type: 'wms',
-                  url: catalog.url,
-                  params: {
-                    layers: layer.Name
-                  }
-                });
-              }
-              return arrLayer;
-            }, [])
-          };
-        //If object contain layers (when regFilters is define, the condition in Layer.map can define group with no layer)
-        if (objGroupLayers.layers.length != 0) {
+            }
+            // If layer regex is okay (or not define), add the layer to the group
+            if (boolRegFilter === true) {
+              arrLayer.push({
+                title: layer.Title,
+                type: 'wms',
+                url: catalog.url,
+                params: {
+                  layers: layer.Name
+                }
+              });
+            }
+            return arrLayer;
+          }, [])
+        };
+        /* If object contain layers (when regFilters is define, the condition
+        in Layer.map can define group with no layer) */
+        if (objGroupLayers.layers.length !== 0) {
           groupsLayers.push(objGroupLayers);
         }
-        //Break the group (don't add a group of layer for each of their layer!)
+        // Break the group (don't add a group of layer for each of their layer!)
         break;
       }
     }
