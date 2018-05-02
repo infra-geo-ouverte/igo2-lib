@@ -3,6 +3,7 @@ export interface Catalog {
   title?: string;
   url?: string;
   type?: string;
+  regFilters?: Array<string>;
 }
 
 export interface CatalogServiceOptions {
