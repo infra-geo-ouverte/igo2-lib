@@ -10,12 +10,12 @@
     </button>
   </span>
 
-  <span *ngIf="datasource.options.download">
+  <!-- <span *ngIf="datasource.options.download">
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.download.action' | translate"
       [color]="color" (click)="openDownload()">
       <mat-icon>file_download</mat-icon>
     </button>
-  </span>
+  </span> -->
   <button [disabled]="datasource.options['sourceFields'].length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     [matTooltip]="'igo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon>
