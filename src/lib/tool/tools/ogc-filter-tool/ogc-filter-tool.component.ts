@@ -15,7 +15,6 @@ import { Register } from '../../shared';
 })
 export class OgcFilterToolComponent {
 
-
   constructor() { }
 
 }
