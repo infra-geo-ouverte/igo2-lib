@@ -102,8 +102,12 @@ export class TimeFilterFormComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-     this.startDate = new Date(this.min);
-     this.endDate = new Date(this.max);
+    if (this.startDate === undefined) {
+       this.startDate = new Date(this.min);
+     }
+    if (this.endDate === undefined) {
+       this.endDate = new Date(this.max);
+      }
     }
 
   handleDateChange(event: any) {
