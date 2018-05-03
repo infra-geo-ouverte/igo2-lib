@@ -30,11 +30,9 @@ export class MapDetailsToolComponent {
   }
 
   get ogcFilterInLayerItem(): boolean {
-    const r = this.options.ogcFiltersInLayers === undefined ?
-    true : this.options.ogcFiltersInLayers;
-    return r;
+    return this.options.ogcFiltersInLayers === undefined ?
+      true : this.options.ogcFiltersInLayers;
   }
-
 
   constructor() { }
 
