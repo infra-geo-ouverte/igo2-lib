@@ -59,8 +59,6 @@ export class LayerItemComponent implements OnDestroy {
   }
   private _ogcFilterInLayers: boolean  = false;
 
-
-
   get opacity () {
     return this.layer.opacity * 100;
   }
