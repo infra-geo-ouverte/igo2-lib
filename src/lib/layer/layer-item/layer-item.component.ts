@@ -50,6 +50,15 @@ export class LayerItemComponent implements OnDestroy {
   }
   private _toggleLegendOnVisibilityChange: boolean = false;
 
+  @Input()
+  get ogcFilterInLayerItem() {
+    return this._ogcFilterInLayers;
+  }
+  set ogcFilterInLayerItem(value: boolean) {
+    this._ogcFilterInLayers = value;
+  }
+  private _ogcFilterInLayers: boolean  = false;
+
   get opacity () {
     return this.layer.opacity * 100;
   }
@@ -64,6 +73,7 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   public legendLoaded = false;
+  public ogcFilterCollapse = false;
   private resolution$$: Subscription;
 
   constructor(private cdRef: ChangeDetectorRef,
@@ -85,6 +95,11 @@ export class LayerItemComponent implements OnDestroy {
     this.layer.visible = !this.layer.visible;
     if (this.toggleLegendOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
+    }
+  }
+  toggleOgcFilter() {
+    if (this.layer.isInResolutionsRange) {
+      this.ogcFilterCollapse = !this.ogcFilterCollapse;
     }
   }
 

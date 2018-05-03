@@ -112,12 +112,14 @@
 		"sourceFields": {
 		  "selectField": "Choose a field"
 		},
+		"ogcFilter": "Filter by",
 		"filter": {
 		  "addFilter": "Add an empty filter to the current list",
 		  "removeFilter": "Remove the current filter from the filters's list",
 		  "toggleFilterState": "Enable/disable the current filter",
 		  "refreshFilters": "Update this datasource with the active filter(s)",
-		  "layerFiltered": "This layer is currently filtered"
+		  "layerFiltered": "This layer is currently filtered",
+		  "layerFilterable": "This layer is filterable"
 		},
 		"spatialSelector": {
 		  "fixedExtent": "Fixed extent",

@@ -45,6 +45,16 @@ export class LayerListComponent {
   }
   private _toggleLegendOnVisibilityChange: boolean = false;
 
+  @Input()
+  get ogcFilterInLayerItem() {
+    return this._ogcFilterInLayers;
+  }
+  set ogcFilterInLayerItem(value: boolean) {
+    this._ogcFilterInLayers = value;
+  }
+  private _ogcFilterInLayers: boolean = false;
+
+
   constructor(private cdRef: ChangeDetectorRef) { }
 
 }

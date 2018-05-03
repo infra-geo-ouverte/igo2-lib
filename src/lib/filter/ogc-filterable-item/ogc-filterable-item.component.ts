@@ -24,6 +24,13 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   }
   private _dataSource: OgcFilterableDataSource;
 
+  @Input()
+  get ogcFiltersHeaderShown(): boolean { return this._ogcFiltersHeaderShown; }
+  set ogcFiltersHeaderShown(value: boolean) {
+    this._ogcFiltersHeaderShown = value;
+  }
+  private _ogcFiltersHeaderShown: boolean;
+
   constructor(
     private mapService: MapService,
     private downloadService: DownloadService) { }

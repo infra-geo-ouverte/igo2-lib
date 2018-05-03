@@ -116,6 +116,7 @@
     "toolbar": [
       "searchResults",
       "mapDetails",
+      "ogcFilter",
       "timeAnalysis",
       "contextManager",
       "print"
@@ -124,7 +125,15 @@
         "name": "searchResults"
       },
       {
-        "name": "mapDetails"
+        "name": "mapDetails",
+        "options": {
+          "toggleLegendOnVisibilityChange": true,
+          "excludeBaseLayers": true,
+          "ogcFiltersInLayers": true
+        }
+      },
+      {
+        "name": "ogcFilter"
       },
       {
         "name": "timeAnalysis"

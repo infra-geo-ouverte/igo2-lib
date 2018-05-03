@@ -130,8 +130,8 @@
         "filtersAreEditable": true,
         "filters": {
           "operator": "PropertyIsEqualTo",
-          "propertyName": "cap_severite",
-          "expression": "Mineure"
+          "propertyName": "certitude",
+          "expression": "Observé"
         }
       }
     },
@@ -201,6 +201,7 @@
     "searchResults",
     "mapDetails",
     "timeAnalysis",
+    "ogcFilter",
     "contextManager",
     "print"
   ],
@@ -209,7 +210,15 @@
       "name": "searchResults"
     },
     {
-      "name": "mapDetails"
+      "name": "mapDetails",
+      "options": {
+        "toggleLegendOnVisibilityChange": true,
+        "excludeBaseLayers": true,
+        "ogcFiltersInLayers": true
+      }
+    },
+    {
+      "name": "ogcFilter"
     },
     {
       "name": "timeAnalysis"

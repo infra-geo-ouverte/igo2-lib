@@ -29,6 +29,11 @@ export class MapDetailsToolComponent {
       false : this.options.excludeBaseLayers;
   }
 
+  get ogcFilterInLayerItem(): boolean {
+    return this.options.ogcFiltersInLayers === undefined ?
+      true : this.options.ogcFiltersInLayers;
+  }
+
   constructor() { }
 
 }

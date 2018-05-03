@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from '../shared';
+import { IgoFilterModule } from '../filter';
 
 import { LayerService, StyleService } from './shared';
 import { LayerItemComponent } from './layer-item';
@@ -9,7 +10,8 @@ import { LayerListComponent, LayerListBindingDirective } from './layer-list';
 
 @NgModule({
   imports: [
-    IgoSharedModule
+    IgoSharedModule,
+    IgoFilterModule
   ],
   exports: [
     LayerItemComponent,
