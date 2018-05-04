@@ -1,4 +1,4 @@
-<table class="igo-striped" *ngIf="feature && feature.properties.target !== 'innerhtml'">
+<table class="igo-striped" *ngIf="feature && isObject(feature.properties) && feature.properties.target !== 'innerhtml'">
   <tbody>
     <tr *ngFor="let property of feature.properties | keyvalue">
 
@@ -23,4 +23,4 @@
     </tr>
   </tbody>
 </table>
-<iframe *ngIf="feature && feature.properties.target === 'innerhtml'" [src]='isUrl(feature.properties.url)'></iframe>
+<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'" [src]='isUrl(feature.properties.url)'></iframe>
