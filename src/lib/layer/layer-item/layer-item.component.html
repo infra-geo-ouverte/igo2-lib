@@ -60,9 +60,9 @@
 
   <div class="igo-col igo-col-60 igo-col-100-m">
     <div class="igo-layer-button-group">
-        <button *ngIf="layer.dataSource.options.isOgcFilterable 
-        && layer.isInResolutionsRange 
-        && layer.dataSource.options.ogcFilters.filtersAreEditable && ogcFilterInLayerItem"
+        <button *ngIf="ogcFilterableOptions.isOgcFilterable
+        && layer.isInResolutionsRange
+        && ogcFilterableOptions.ogcFilters.filtersAreEditable && ogcFilterInLayerItem"
           mat-icon-button
           collapsibleButton
           tooltip-position="below"
@@ -146,7 +146,7 @@
   <igo-layer-legend *ngIf="legendLoaded" [layer]="layer"></igo-layer-legend>
 </div>
 <div #ogcFilter class="igo-layer-actions-container">
-  <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && layer.dataSource.options.isOgcFilterable" igoListItem 
+  <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && ogcFilterableOptions.isOgcFilterable" igoListItem
   [ogcFiltersHeaderShown]="false"
   [datasource]="layer.dataSource"></igo-ogc-filterable-item>
 </div>
