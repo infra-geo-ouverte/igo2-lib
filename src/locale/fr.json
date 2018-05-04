@@ -112,12 +112,14 @@
 		"sourceFields": {
 		  "selectField": "Choisir un champ"
 		},
+		"ogcFilter": "Filtrer par",
 		"filter": {
 		  "addFilter": "Ajouter un filtre vidre à la liste courante",
 		  "removeFilter": "Supprimer le présent filtre à la liste des filtres",
 		  "toggleFilterState": "Activer/désactiver le présent filtre",
 		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste",
-		  "layerFiltered": "Cette couche d'information est présentement filtrée."
+		  "layerFiltered": "Cette couche d'information est présentement filtrée.",
+		  "layerFilterable": "Cette couche d'information est filtrable"
 		},	
 		"spatialSelector": {
 		  "fixedExtent": "Étendue fixe",
