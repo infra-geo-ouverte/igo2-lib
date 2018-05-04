@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IgoTestModule } from '../../../test/module';
 import { IgoSharedModule } from '../../shared';
+import { IgoFilterModule } from '../../filter';
 
 import { LayerListComponent } from './layer-list.component';
 import { LayerItemComponent } from '../layer-item/layer-item.component';
@@ -11,20 +12,18 @@ describe('LayerListComponent', () => {
   let component: LayerListComponent;
   let fixture: ComponentFixture<LayerListComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        IgoTestModule,
-        IgoSharedModule
-      ],
-      declarations: [
-        LayerListComponent,
-        LayerItemComponent,
-        LayerLegendComponent
-      ]
+  beforeEach(
+    async(() => {
+      TestBed.configureTestingModule({
+        imports: [IgoTestModule, IgoSharedModule, IgoFilterModule],
+        declarations: [
+          LayerListComponent,
+          LayerItemComponent,
+          LayerLegendComponent
+        ]
+      }).compileComponents();
     })
-    .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LayerListComponent);
