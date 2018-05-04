@@ -1,3 +1,4 @@
+require '@types/geojson';
 import { AnyDataSourceContext } from '../../datasource';
 
 import { FeatureType, FeatureFormat, SourceFeatureType } from './feature.enum';
@@ -21,6 +22,6 @@ export interface Feature {
 }
 
 export interface FeatureGeometry {
-  type: ol.geom.GeometryType;
+  type: GeoJSON.GeoJsonGeometryTypes;
   coordinates: [any];
 }
