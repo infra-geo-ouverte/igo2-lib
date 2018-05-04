@@ -1,6 +1,6 @@
 {
   "name": "@igo2/igo2",
-  "version": "0.19.7",
+  "version": "0.19.8",
   "description": "IGO Library",
   "main": "bundle/igo.js",
   "typings": "dist/lib/index.d.ts",
@@ -67,7 +67,7 @@
     "@angular/language-service": "^5.1.0",
     "@angular/platform-server": "^5.1.0",
     "@biesbjerg/ngx-translate-extract": "^2.3.4",
-    "@types/geojson":"^7946.0.3",
+    "@types/geojson": "^7946.0.3",
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
     "@types/jspdf": "^1.1.31",
