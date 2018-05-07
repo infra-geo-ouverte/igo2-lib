@@ -1,7 +1,7 @@
 <mat-list-item>
 
   <div class="igo-col igo-col-90 igo-col-100-m">
-    <mat-select [disabled]="!currentFilter.active" (change)="disableRefreshFilter()" [(ngModel)]="currentFilter.parentLogical"
+    <mat-select class="logical" [disabled]="!currentFilter.active" (change)="disableRefreshFilter()" [(ngModel)]="currentFilter.parentLogical"
       *ngIf="activeFilters.indexOf(currentFilter) !== 0 && currentFilter.active===true">
       <mat-option value="And">{{'igo.operators.And' | translate}}</mat-option>
       <mat-option value="Or">{{'igo.operators.Or' | translate}}</mat-option>

@@ -14,40 +14,30 @@
     display: inline-table;
   }
 
+.logical {
+    font-weight: bold;
+  }
+
   mat-select, input {
     margin-top: 10px;
     text-align: center
   }
 
-.igo-layer-actions-container,
-.igo-layer-legend-container {
-  width: 100%;
-  display: inline-block;
-}
 
 .igo-layer-actions-container {
   bordered-top();
   bordered-bottom();
+  width: 100%;
+  display: inline-block;
 }
 
 .igo-layer-actions-container > div {
   text-align: center;
 }
 
-.igo-layer-legend-container {
-  padding-left: $igo-layer-legend-padding-left;
-}
-
-#opacity-slider {
-  width: 100%;
-
-  +media(mobile) {
-    width: 70%;
-  }
-}
 
 .igo-layer-button-group {
-  float: right;
+  float: center;
   padding: 0 $igo-list-item-padding;
 
   +media(mobile) {
