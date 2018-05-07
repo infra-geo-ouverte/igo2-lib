@@ -7,7 +7,7 @@
 
   <!-- <span *ngIf="!datasource.options['disableRefreshFilter'] && layers[0].visible"> -->
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.filter.refreshFilters' | translate"
-    [disabled]="!layers[0].visible || datasource.options['disableRefreshFilter' || !layer.isInResolutionsRange]"
+    [disabled]="!layers[0].visible || datasource.options['disableRefreshFilter'] || !layers[0].isInResolutionsRange"
     [color]="color" (click)="refreshFilters()">
       <mat-icon>
         refresh
