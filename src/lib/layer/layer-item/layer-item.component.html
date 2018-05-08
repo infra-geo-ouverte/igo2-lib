@@ -139,13 +139,13 @@
       <ng-content select="[igoLayerAction]"></ng-content>
     </div>
   </div>
+  <div #ogcFilter class="igo-layer-actions-container">
+    <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && ogcFilterableOptions.isOgcFilterable" igoListItem
+    [ogcFiltersHeaderShown]="false"
+    [datasource]="layer.dataSource"></igo-ogc-filterable-item>
+  </div> 
 </div>
 
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend *ngIf="legendLoaded" [layer]="layer"></igo-layer-legend>
-</div>
-<div #ogcFilter class="igo-layer-actions-container">
-  <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && ogcFilterableOptions.isOgcFilterable" igoListItem
-  [ogcFiltersHeaderShown]="false"
-  [datasource]="layer.dataSource"></igo-ogc-filterable-item>
 </div>
