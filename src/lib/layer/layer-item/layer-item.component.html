@@ -43,7 +43,7 @@
 </mat-list-item>
 
 <div #actions class="igo-layer-actions-container">
-  <div class="igo-col igo-col-40 igo-col-100-m">
+  <div class="igo-col igo-col-100 igo-col-100-m">
     <mat-slider
       id="opacity-slider"
       thumbLabel
@@ -58,10 +58,9 @@
     </mat-slider>
   </div>
 
-  <div class="igo-col igo-col-60 igo-col-100-m">
+  <div class="igo-col igo-col-100 igo-col-100-m">
     <div class="igo-layer-button-group">
         <button *ngIf="ogcFilterableOptions.isOgcFilterable
-        && layer.isInResolutionsRange
         && ogcFilterableOptions.ogcFilters.filtersAreEditable && ogcFilterInLayerItem"
           mat-icon-button
           collapsibleButton
@@ -140,13 +139,13 @@
       <ng-content select="[igoLayerAction]"></ng-content>
     </div>
   </div>
+  <div #ogcFilter class="igo-layer-actions-container">
+    <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && ogcFilterableOptions.isOgcFilterable" igoListItem
+    [ogcFiltersHeaderShown]="false"
+    [datasource]="layer.dataSource"></igo-ogc-filterable-item>
+  </div> 
 </div>
 
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend *ngIf="legendLoaded" [layer]="layer"></igo-layer-legend>
-</div>
-<div #ogcFilter class="igo-layer-actions-container">
-  <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && ogcFilterableOptions.isOgcFilterable" igoListItem
-  [ogcFiltersHeaderShown]="false"
-  [datasource]="layer.dataSource"></igo-ogc-filterable-item>
 </div>
