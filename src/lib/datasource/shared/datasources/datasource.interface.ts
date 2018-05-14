@@ -54,6 +54,7 @@ export interface TimeFilterableDataSourceOptions extends DataSourceOptions,
 export interface TimeFilterableDataSource extends DataSource {
   options: TimeFilterableDataSourceOptions;
   filterByDate(date: Date | [Date, Date]);
+  filterByYear(year: string | [string, string]);
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {

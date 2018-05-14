@@ -31,7 +31,8 @@ export abstract class DataSource {
 
   isTimeFilterable(): this is TimeFilterableDataSource {
     const dataSource = this as any as TimeFilterableDataSource;
-    if (typeof dataSource.filterByDate === 'function') {
+    if (typeof dataSource.filterByDate === 'function' ||
+    typeof dataSource.filterByYear === 'function') {
       return dataSource.options.timeFilterable !== undefined ?
         dataSource.options.timeFilterable : true;
     }

@@ -260,6 +260,36 @@ export class WMSDataSource extends DataSource implements
     this.ol.updateParams(params);
   }
 
+  filterByYear(year: string | [string, string]) {
+    let time = null;
+    let newdateform_start = null;
+    let newdateform_end = null;
+
+    if (Array.isArray(year)) {
+      const years = [];
+      if (year[0]) {
+        newdateform_start = year[0];
+        years.push(year[0]);
+      }
+      if (year[1]) {
+        newdateform_end = year[1];
+        years.push(year[1]);
+      }
+      if (years.length === 2 && newdateform_start !== newdateform_end) {
+        time = newdateform_start + '/' + newdateform_end;
+      }
+      if (newdateform_start === newdateform_end) {
+        time = newdateform_start;
+      }
+
+    } else if (year) {
+      time = year;
+    }
+
+    const params = { time: time };
+    this.ol.updateParams(params);
+  }
+
   public filterByOgc(filterString: string) {
     const wmsFilterValue = filterString.length > 0 ?
       filterString.substr(7, filterString.length + 1) : undefined;

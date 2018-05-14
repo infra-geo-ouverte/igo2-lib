@@ -19,10 +19,17 @@ export class TimeFilterFormComponent implements OnInit {
   public date: Date;
   public startDate: Date;
   public endDate: Date;
+  public year: any;
+  public startYear: any;
+  public endYear: any;
+  public listYears: Array<string> = [];
+  public startListYears: Array<string> = [];
+  public endListYears: Array<string> = [];
 
   @Input()
   set currentValue(value: string) {
     if (value) {
+      if (this.type !== 'year') {
       const valueArray = value.split('/');
       if (valueArray.length > 0 ) {
         const startDate = new Date(valueArray[0]);
@@ -35,15 +42,17 @@ export class TimeFilterFormComponent implements OnInit {
         }
       }
     }
+   }
   }
 
   public interval: any;
   public playIcon: string = 'play_circle_filled';
 
-  @Output() change: EventEmitter<Date | [Date | Date]> = new EventEmitter();
+  @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
+  @Output() yearChange: EventEmitter<string | [string, string]> = new EventEmitter();
   @ViewChild(MatSlider) mySlider;
 
-  get type(): 'date' | 'time' | 'datetime' {
+  get type(): 'date' | 'time' | 'datetime' | 'year' {
     return this.options.type === undefined ?
       'date' : this.options.type;
   }
@@ -68,6 +77,9 @@ export class TimeFilterFormComponent implements OnInit {
         break;
         case 'time':
           step = 3600000;
+        break;
+        case 'year':
+          step = 31536000000;
         break;
         default:
           step = 10800000;
@@ -102,19 +114,71 @@ export class TimeFilterFormComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (this.startDate === undefined) {
-       this.startDate = new Date(this.min);
-     }
-    if (this.endDate === undefined) {
-       this.endDate = new Date(this.max);
+
+      if (this.startDate === undefined) {
+         const utcmin = new Date(this.min);
+         this.startDate = new Date(utcmin.getTime() + utcmin.getTimezoneOffset() * 60000);
+        }
+      if (this.endDate === undefined) {
+        const utcmax = new Date(this.max);
+         this.endDate = new Date(utcmax.getTime() + utcmax.getTimezoneOffset() * 60000);
+        }
+      if (this.startYear === undefined) {
+           this.startYear = new Date(this.startDate).getFullYear();
+        }
+      if (this.endYear === undefined) {
+           this.endYear = new Date(this.endDate).getFullYear();
+        }
+
+      if (!this.isRange) {
+          for (let i = this.startYear; i <= this.endYear + 1; i++) {
+              this.listYears.push(i);
+          }
+      } else {
+          for (let i = this.startYear; i <= this.endYear + 1; i++) {
+                this.startListYears.push(i);
+          }
+          for (let i = this.startYear + 1; i <= this.endYear + 1; i++) {
+                this.endListYears.push(i);
+          }
       }
+
     }
 
-  handleDateChange(event: any) {
-    this.setupDateOutput();
-    this.applyTypeChange();
-    this.change.emit([this.startDate, this.endDate]);
-  }
+    handleDateChange(event: any) {
+      this.setupDateOutput();
+      this.applyTypeChange();
+      this.change.emit([this.startDate, this.endDate]);
+    }
+
+    handleYearChange(event: any) {
+        if (this.isRange) {
+          this.endListYears = [];
+           for (let i = this.startYear; i < this.endYear + 1; i++) {
+                   this.endListYears.push(i);
+          }
+         this.startListYears = [];
+           for (let i = this.startYear; i <= this.endYear; i++) {
+                  this.startListYears.push(i);
+           }
+          this.yearChange.emit([this.startYear, this.endYear]);
+        } else {
+          this.yearChange.emit(this.year);
+        }
+    }
+
+    handleListYearChange(event: any) {
+        this.handleYearChange([this.startYear, this.endYear]);
+      }
+
+   handleListYearStartChange(event: any) {
+     this.change.emit([this.startDate, this.endDate]);
+    }
+
+    handleListYearEndChange(event: any) {
+
+      //  this.change.emit([this.startYear, this.endYear]);
+      }
 
   dateToNumber(date: Date): number {
     let newDate;
@@ -214,9 +278,9 @@ export class TimeFilterFormComponent implements OnInit {
   setupDateOutput() {
     if (this.style === 'slider') {
        this.startDate = new Date(this.date);
-       this.startDate.setSeconds(-(this.step / 1000));
+       this.startDate.setSeconds((this.step / 1000));
        this.endDate = new Date(this.startDate);
-       this.endDate.setSeconds((this.step / 1000));
+       this.endDate.setSeconds(+(this.step / 1000));
     } else if ((!this.isRange) && (this.date !== null)) {
       this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
