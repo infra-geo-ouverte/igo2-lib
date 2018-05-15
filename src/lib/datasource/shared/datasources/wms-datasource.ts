@@ -229,10 +229,10 @@ export class WMSDataSource extends DataSource implements
   }
 
   filterByDate(date: Date | [Date, Date]) {
-    let time = null;
-    let newdateform = null;
-    let newdateform_start = null;
-    let newdateform_end = null;
+    let time ;
+    let newdateform ;
+    let newdateform_start ;
+    let newdateform_end ;
 
     if (Array.isArray(date)) {
       const dates = [];
@@ -261,9 +261,9 @@ export class WMSDataSource extends DataSource implements
   }
 
   filterByYear(year: string | [string, string]) {
-    let time = null;
-    let newdateform_start = null;
-    let newdateform_end = null;
+    let time ;
+    let newdateform_start ;
+    let newdateform_end ;
 
     if (Array.isArray(year)) {
       const years = [];
