@@ -281,13 +281,13 @@ export class TimeFilterFormComponent implements OnInit {
        this.startDate.setSeconds((this.step / 1000));
        this.endDate = new Date(this.startDate);
        this.endDate.setSeconds(+(this.step / 1000));
-    } else if ((!this.isRange) && (this.date !== null)) {
+    } else if ((!this.isRange) && (!this.date)) {
       this.endDate = new Date(this.date);
       this.startDate = new Date(this.date);
-    } else if ((this.isRange) && ((this.date !== null)  || (this.date == null))) {
+    } else if ((this.isRange) && ((!this.date)  || (this.date))) {
       this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
       this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
-     } else if ((this.date == null)) {
+     } else if ((this.date)) {
       this.startDate = this.startDate === undefined ? new Date(this.min) : this.startDate;
       this.endDate = this.endDate === undefined ? new Date(this.max) : this.endDate;
     }
