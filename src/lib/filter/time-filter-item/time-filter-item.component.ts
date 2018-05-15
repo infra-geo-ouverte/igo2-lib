@@ -18,6 +18,10 @@ export class TimeFilterItemComponent {
 
   constructor() { }
 
+  handleYearChange(year: string | [string, string]) {
+    this.datasource.filterByYear(year);
+  }
+
   handleDateChange(date: Date | [Date, Date]) {
     this.datasource.filterByDate(date);
   }

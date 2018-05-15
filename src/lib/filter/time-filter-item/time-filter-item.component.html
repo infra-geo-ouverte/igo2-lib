@@ -13,6 +13,7 @@
   <igo-time-filter-form
     [options]="datasource.options.timeFilter"
     [currentValue]="datasource.options.params.time"
-    (change)="handleDateChange($event)">
+    (change)="handleDateChange($event)"
+    (yearChange)="handleYearChange($event)">
   </igo-time-filter-form>
 </div>
