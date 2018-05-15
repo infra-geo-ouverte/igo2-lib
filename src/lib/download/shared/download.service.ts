@@ -20,7 +20,6 @@ export class DownloadService {
     const translate = this.languageService.translate;
     const title = translate.instant('igo.download.title');
     this.messageService.success(translate.instant('igo.download.start'), title);
-    console.log(layer.dataSource)
     if (Object.keys(layer.dataSource.options.download).length > 0 ) {
       if (
         layer.dataSource.options.download['dynamicUrl'] &&
