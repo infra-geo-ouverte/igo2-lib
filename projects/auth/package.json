@@ -1,0 +1,15 @@
+{
+  "name": "@igo/auth",
+  "version": "0.20.0",
+  "peerDependencies": {
+    "@angular/cdk": "^6.0.0",
+    "@angular/common": "^6.0.0",
+    "@angular/core": "^6.0.0",
+    "@angular/forms": "^6.0.0",
+    "@angular/material": "^6.0.0",
+    "@igo/core": "^0.20.0",
+    "@igo/utils": "^0.20.0",
+    "jwt-decode": "^2.2.0",
+    "rxjs": "^6.0.0"
+  }
+}

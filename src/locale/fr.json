@@ -1,0 +1,250 @@
+{
+	"igo": {
+		"auth": {
+			"accessAnonymous": "Rester anonyme",
+			"connection": "Connexion",
+			"login": "Connecter",
+			"password": "Mot de passe",
+			"signOut": "Se déconnecter",
+			"user": "Utilisateur",
+			"welcome": "Bienvenue {{name}}!"
+		},
+		"bookmarkButton": {
+			"create": "Créer un contexte",
+			"dialog": {
+				"createMsg": "Le contexte '{{value}}' a été créé",
+				"createTitle": "Contexte créé",
+				"placeholder": "Titre",
+				"title": "Nouveau contexte"
+			}
+		},
+		"catalog": "Catalogue",
+		"catalogTool": {
+			"baseLayers": "Fonds de carte"
+		},
+		"confirmDialog": {
+			"cancelBtn": "Annuler",
+			"confirmBtn": "Confirmer",
+			"title": "Confirmation"
+		},
+		"context": {
+			"clone": "Cloner ce contexte",
+			"delete": "Supprimer ce contexte",
+			"dialog": {
+				"cloneMsg": "Le contexte '{{value}}' a été cloné",
+				"cloneTitle": "Contexte cloné",
+				"confirmDelete": "Êtes-vous sûr de vouloir supprimer ce context ?",
+				"deleteMsg": "Le contexte '{{value}}' a été supprimé",
+				"deleteTitle": "Contexte supprimé",
+				"favoriteMsg": "Le contexte '{{value}}' a été défini comme favori",
+				"favoriteTitle": "Favori sauvegardé",
+				"saveMsg": "Le contexte '{{value}}' a été sauvegardé",
+				"saveTitle": "Contexte sauvegardé"
+			},
+			"edit": "Éditer ce contexte",
+			"favorite": "Favori",
+			"form": {
+				"edit": "Éditer",
+				"title": "Titre",
+				"titleRequired": "Le titre est obligatoire",
+				"uri": "URI",
+				"uriRequired": "Le URI est obligatoire"
+			},
+			"invalid": {
+				"text": "Le contexte \"{{value}}\" est invalide",
+				"title": "Contexte invalide"
+			},
+			"managePermissions": "Gérer les permissions du contexte",
+			"manageTools": "Gérer les outils du contexte",
+			"ourContexts": "Vos contextes",
+			"publicContexts": "Contextes publics",
+			"save": "Sauvegarder ce contexte",
+			"sharedContexts": "Contextes partagés"
+		},
+		"contexts": "Contextes",
+		"dropGeoFile": {
+			"invalid": {
+				"text": "Le fichier '{{value}}' est invalide",
+				"title": "Fichier invalide ({{i}}/{{count}})"
+			},
+			"success": {
+				"text": "La couche '{{value}}' a été ajoutée à la carte",
+				"title": "Fichier importé ({{i}}/{{count}})"
+			},
+			"unreadable": {
+				"text": "Le fichier '{{value}}' est impossible à lire",
+				"title": "Fichier illisible"
+			}
+		},
+    "errors": {
+      "uncaught": {
+        "message": "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
+        "title": "Erreur serveur"
+      }
+    },
+		"importExport": "Importation et exportation",
+		"importExportForm": {
+			"exportButton": "Exporter",
+			"exportFormatPlaceholder": "Format",
+			"exportLayerPlaceholder": "Couche",
+			"exportTabTitle": "Exporter",
+			"importButton": "Importer",
+			"importProjPlaceholder": "Projection de l'intrant (EPSG:4326)",
+			"importTabTitle": "Importer"
+		},
+		"operators": {
+		  "And": "Et",
+		  "Or": "Ou",
+		  "PropertyIsEqualTo": "=",
+		  "PropertyIsNotEqualTo": "!=",
+		  "PropertyIsLike": "≈",
+		  "PropertyIsGreaterThan": ">",
+		  "PropertyIsGreaterThanOrEqualTo": ">=",
+		  "PropertyIsLessThan": "<",
+		  "PropertyIsLessThanOrEqualTo": "<=",
+		  "PropertyIsBetween": "entre",
+		  "During": "durant",
+		  "PropertyIsNull": "est nul",
+		  "Intersects": "intersecte",
+		  "Within": "contenu dans",
+		  "Contains": "contient"
+		},
+		"sourceFields": {
+		  "selectField": "Choisir un champ"
+		},
+		"ogcFilter": "Filtrer par",
+		"filter": {
+		  "addFilter": "Ajouter un filtre vidre à la liste courante",
+		  "removeFilter": "Supprimer le présent filtre à la liste des filtres",
+		  "toggleFilterState": "Activer/désactiver le présent filtre",
+		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
+		  "layerFiltered": "Cette couche d'information est présentement filtrée.",
+		  "layerFilterable": "Cette couche d'information est filtrable"
+		},	
+		"spatialSelector": {
+		  "fixedExtent": "Étendue fixe",
+		  "btnSetExtent": "Définir l'étendue du filtre selon l'étendue courante de la carte",
+		  "snrc": "SNRC (ex:21L14)",
+		  "selectFeature": "",
+		  "drawFeature": ""
+		},
+		"layer": {
+			"hideLayer": "Masquer la couche",
+			"lowerLayer": "Descendre la couche",
+			"loadingLegendText": "Chargement de la légende",
+			"noLegendText": "Aucune légende disponible pour cette couche",
+			"opacity": "Opacité",
+			"raiseLayer": "Monter la couche",
+			"removeLayer": "Retirer la couche de la carte",
+			"showFeaturesList": "Afficher la liste des entités",
+			"showLayer": "Afficher la couche",
+			"showMetadata": "Montrer les métadonnées"
+		},
+		"download":{
+			"action": "Télécharger les données associées",
+			"title": "Téléchargement des données",
+			"start": "Vérifiez la progression du téléchargement dans votre navigateur",
+			"end": "Terminé"
+		},
+		"map": "Carte",
+    "mapButtons": {
+			"baselayerSwitcher": "Changer le fond de carte",
+      "geolocate": "Positionnement GPS",
+      "zoomIn": "Zoomer ({{zoom}})",
+      "zoomOut": "Dézoomer ({{zoom}})"
+    },
+		"permission": {
+			"addBtn": "Ajouter",
+			"delete": "Retirer la permission",
+			"dialog": {
+				"addMsg": "La permission '{{value}}' a été ajoutée",
+				"addTitle": "Permission ajoutée",
+				"deleteMsg": "La permission '{{value}}' a été supprimée",
+				"deleteTitle": "Permission retirée",
+				"scopeChangedMsg": "La portée du contexte a été changée pour {{value}}",
+				"scopeChangedTitle": "Changement de la portée"
+			},
+			"profil": "Profil",
+			"profilRequired": "Le profil est obligatoire",
+			"read": "Lecture seule",
+			"scope": {
+				"private": "Privé",
+				"protected": "Protégé",
+				"public": "Public"
+			},
+			"write": "Lecture et écriture"
+		},
+		"poiButton": {
+			"create": "Créer une zone d'intérêt",
+			"dialog": {
+				"confirmDelete": "Êtes-vous sûr de vouloir supprimer cette zone d'intérêt ?",
+				"createMsg": "La zone d'intérêt '{{value}}' a été créée",
+				"createTitle": "Zone d'intérêt créée",
+				"deleteMsg": "La zone d'intérêt '{{value}}' a été supprimée",
+				"deleteTitle": "Zone d'intérêt supprimée",
+				"placeholder": "Titre",
+				"title": "Nouvelle zone d'intérêt"
+			},
+			"placeholder": "Zones d'intérêt"
+		},
+		"print": "Imprimer",
+		"printForm": {
+			"format": "Format",
+			"landscape": "Paysage",
+			"portrait": "Portrait",
+			"printBtn": "Imprimer",
+			"resolution": "Résolution",
+			"title": "Titre"
+		},
+		"search": {
+			"dataSources": {
+				"name": "Couches",
+				"properties": {
+					"abstract": "Description",
+					"group": "Groupe",
+					"title": "Titre",
+					"type": "Type",
+					"url": "URL"
+				}
+			}
+		},
+		"searchResults": "Résultats de recherche",
+		"shareMap": {
+			"button": "Partager la carte",
+			"copy": "Copier le lien",
+			"dialog": {
+				"copyMsg": "Lien copié",
+				"copyTitle": "Lien"
+			},
+			"placeholderLink": "Lien",
+			"share": "Partager"
+		},
+		"table": {
+			"filter": "Filtre"
+		},
+		"targetHtmlUrl": "Ouvrir le lien externe",
+		"timeAnalysis": "Analyse Temporelle",
+		"timeFilter": {
+			"date": "Date",
+			"endDate": "Date de fin",
+			"startDate": "Date de début"
+		},
+		"tool": {
+			"dialog": {
+				"addMsg": "L'outil a été ajouté",
+				"addTitle": "Outil ajouté",
+				"deleteMsg": "L'outil a été supprimé",
+				"deleteTitle": "Outil retiré"
+			}
+		},
+		"userButton": {
+			"dialog": {
+				"email": "Courriel",
+				"expiration": "Expiration",
+				"user": "Utilisateur"
+			},
+			"infoTitle": "Info sur l'utilisateur",
+			"logout": "Se déconnecter"
+		}
+	}
+}
