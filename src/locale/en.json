@@ -22,6 +22,9 @@
 		"catalogTool": {
 			"baseLayers": "Base Layers"
 		},
+		"clickOnMap": {
+			"clickedFeature": "Clicked Feature"
+		},		
 		"confirmDialog": {
 			"cancelBtn": "Cancel",
 			"confirmBtn": "Confirm",
@@ -117,7 +120,7 @@
 		  "addFilter": "Add an empty filter to the current list",
 		  "removeFilter": "Remove the current filter from the filters's list",
 		  "toggleFilterState": "Enable/disable the current filter",
-		  "refreshFilters": "Update this datasource with the active filter(s)",
+		  "refreshFilters": "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
 		  "layerFiltered": "This layer is currently filtered",
 		  "layerFilterable": "This layer is filterable"
 		},

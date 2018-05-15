@@ -78,7 +78,8 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
         {
           'propertyName': firstFieldName,
           'operator': 'PropertyIsEqualTo',
-          'active': status
+          'active': status,
+          'igoSpatialSelector': 'fixedExtent'
         }, fieldNameGeometry, lastLevel, this.defaultLogicalParent));
     this.datasource.options.ogcFilters.interfaceOgcFilters = arr;
   }
