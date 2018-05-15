@@ -55,11 +55,12 @@ export class WMSDataSource extends DataSource implements
       sourceParams.VERSION = sourceParams.version;
     }
 
-    if (options['sourceFields'] === undefined) {
+    if (options['sourceFields'] === undefined ||
+    Object.keys(options['sourceFields']).length === 0) {
       options['sourceFields'] = [{ 'name': '', 'alias': '' }]
     }
     // WMS With linked wfs
-    if (options.wfsSource) {
+    if (options.wfsSource && Object.keys(options.wfsSource).length > 0) {
       options.wfsSource = this.dataSourceService.checkWfsOptions(options.wfsSource);
       delete options.wfsSource.ogcFilters;
       options['fieldNameGeometry'] = options.wfsSource['fieldNameGeometry'];

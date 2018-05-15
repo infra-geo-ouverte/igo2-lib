@@ -175,7 +175,7 @@
   </div>
 
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
-    <button mat-button [disabled]="!currentFilter.active" *ngIf="currentFilter['wkt_geometry'] && currentFilter.igoSpatialSelector === 'fixedExtent'"
+    <button mat-button [disabled]="!currentFilter.active" *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
       matSuffix mat-icon-button aria-label="Clear" (click)="changeGeometry(currentFilter,value)" tooltip-position="below" matTooltipShowDelay="500"
       [matTooltip]="'igo.spatialSelector.btnSetExtent' | translate">
       <mat-icon>

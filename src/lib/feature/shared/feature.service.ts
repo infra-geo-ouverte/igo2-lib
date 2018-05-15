@@ -59,7 +59,9 @@ export class FeatureService {
   featuresAreTheSame(feature1, feature2) {
     if (feature1 === undefined || feature2 === undefined) { return false; }
 
-    return feature1.id === feature2.id && feature1.source === feature2.source;
+    return feature1.id === feature2.id
+    && feature1.source === feature2.source
+    && feature1.properties === feature2.properties;
   }
 
   private sortFeatures(feature1, feature2) {
