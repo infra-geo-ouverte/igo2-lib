@@ -6,6 +6,7 @@
     "@angular/core": "^6.0.0",
     "@igo/utils": "^0.20.0",
     "@ngx-translate/core": "^10.0.0",
+    "angular2-notifications": "^1.0.2",
     "rxjs": "^6.0.0"
   }
 }

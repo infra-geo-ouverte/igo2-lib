@@ -1,5 +1,4 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material';
@@ -15,12 +14,7 @@ import {
 } from './auth-form';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    IgoCoreModule
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, IgoCoreModule],
   declarations: [
     AuthFormComponent,
     AuthGoogleComponent,
