@@ -13,4 +13,6 @@ export abstract class SearchSource {
 
   abstract search(term?: string): Observable<Feature[] | Message[]>
 
+  abstract locate(coordinate: [number, number], zoom?: number): Observable<Feature[] | Message[]>
+
 }

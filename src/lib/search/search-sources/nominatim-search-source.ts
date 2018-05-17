@@ -19,6 +19,7 @@ export class NominatimSearchSource extends SearchSource {
   static sortIndex: number = 10;
 
   private searchUrl: string = 'https://nominatim.openstreetmap.org/search';
+  private locateUrl: string = 'https://nominatim.openstreetmap.org/reverse'
   private options: SearchSourceOptions;
 
   constructor(private http: HttpClient,
@@ -27,6 +28,7 @@ export class NominatimSearchSource extends SearchSource {
 
     this.options = this.config.getConfig('searchSources.nominatim') || {};
     this.searchUrl = this.options.url || this.searchUrl;
+    this.locateUrl = this.options.locateUrl || this.locateUrl;
   }
 
   getName(): string {
@@ -41,6 +43,11 @@ export class NominatimSearchSource extends SearchSource {
       .map(res => this.extractData(res));
   }
 
+  locate(coordinate: [number, number], zoom: number): Observable<Feature[] | Message[]>  {
+    const locateParams = this.getLocateParams(coordinate, zoom);
+    return this.http.get(this.locateUrl, {params: locateParams}).map(res => this.extractData([res]));
+    }
+
   private extractData(response): Feature[] {
     return response.map(this.formatResult);
   }
@@ -53,6 +60,18 @@ export class NominatimSearchSource extends SearchSource {
         q: term,
         format: 'json',
         limit: String(limit)
+      }
+    });
+  }
+
+  private getLocateParams(coordinate: [number, number], zoom: number): HttpParams {
+    return new HttpParams({
+      fromObject: {
+        lat: String(coordinate[1]),
+        lon: String(coordinate[0]),
+        format: 'json',
+        zoom: String(18),
+        polygon_geojson: String(1)
       }
     });
   }

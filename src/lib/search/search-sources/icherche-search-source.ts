@@ -18,6 +18,7 @@ export class IChercheSearchSource extends SearchSource {
   static _name: string = 'ICherche Québec';
 
   private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geocode';
+  private locateUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/xy'
   private options: SearchSourceOptions;
 
   constructor(private http: HttpClient,
@@ -26,6 +27,7 @@ export class IChercheSearchSource extends SearchSource {
 
     this.options = this.config.getConfig('searchSources.icherche') || {};
     this.searchUrl = this.options.url || this.searchUrl;
+    this.locateUrl = this.options.locateUrl || this.locateUrl;
   }
 
   getName(): string {
@@ -39,6 +41,11 @@ export class IChercheSearchSource extends SearchSource {
       .get(this.searchUrl, {params: searchParams})
       .map(res => this.extractData(res));
   }
+
+  locate(coordinate: [number, number], zoom: number): Observable<Feature[] | Message[]>  {
+    const locateParams = this.getLocateParams(coordinate, zoom);
+    return this.http.get(this.locateUrl, {params: locateParams}).map(res => this.extractData(res));
+  }  
 
   private extractData(response): Feature[] {
     return response.features.map(this.formatResult);
@@ -54,6 +61,24 @@ export class IChercheSearchSource extends SearchSource {
         q: term,
         type: type,
         limit: String(limit),
+        geometries: 'geom'
+      }
+    });
+  }
+
+  private getLocateParams(coordinate: [number, number], currentZoom: number): HttpParams {
+    let distance = 100;
+    const type = this.options.type || 'adresse'
+    if (currentZoom >= 16) {
+      distance = 30
+    } else if (currentZoom < 8) {
+      distance = 500
+    }
+    return new HttpParams({
+      fromObject: {
+        loc: coordinate.join(','),
+        type: type,
+        distance: String(distance),
         geometries: 'geom'
       }
     });
