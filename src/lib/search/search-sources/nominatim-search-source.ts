@@ -3,27 +3,33 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
-import { Feature, FeatureType, FeatureFormat, SourceFeatureType} from '../../feature';
+import {
+  Feature,
+  FeatureType,
+  FeatureFormat,
+  SourceFeatureType
+} from '../../feature';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
-
 @Injectable()
 export class NominatimSearchSource extends SearchSource {
-
-  get enabled(): boolean { return this.options.enabled !== false; }
-  set enabled(value: boolean) { this.options.enabled = value; }
+  get enabled(): boolean {
+    return this.options.enabled !== false;
+  }
+  set enabled(value: boolean) {
+    this.options.enabled = value;
+  }
 
   static _name: string = 'Nominatim (OSM)';
   static sortIndex: number = 10;
 
   private searchUrl: string = 'https://nominatim.openstreetmap.org/search';
-  private locateUrl: string = 'https://nominatim.openstreetmap.org/reverse'
+  private locateUrl: string = 'https://nominatim.openstreetmap.org/reverse';
   private options: SearchSourceOptions;
 
-  constructor(private http: HttpClient,
-              private config: ConfigService) {
+  constructor(private http: HttpClient, private config: ConfigService) {
     super();
 
     this.options = this.config.getConfig('searchSources.nominatim') || {};
@@ -35,7 +41,7 @@ export class NominatimSearchSource extends SearchSource {
     return NominatimSearchSource._name;
   }
 
-  search(term?: string): Observable<Feature[] | Message[]>  {
+  search(term?: string): Observable<Feature[] | Message[]> {
     const searchParams = this.getSearchParams(term);
 
     return this.http
@@ -43,10 +49,15 @@ export class NominatimSearchSource extends SearchSource {
       .map(res => this.extractData(res));
   }
 
-  locate(coordinate: [number, number], zoom: number): Observable<Feature[] | Message[]>  {
+  locate(
+    coordinate: [number, number],
+    zoom: number
+  ): Observable<Feature[] | Message[]> {
     const locateParams = this.getLocateParams(coordinate, zoom);
-    return this.http.get(this.locateUrl, {params: locateParams}).map(res => this.extractData([res]));
-    }
+    return this.http
+      .get(this.locateUrl, { params: locateParams })
+      .map(res => this.extractData([res]));
+  }
 
   private extractData(response): Feature[] {
     return response.map(this.formatResult);
@@ -64,7 +75,10 @@ export class NominatimSearchSource extends SearchSource {
     });
   }
 
-  private getLocateParams(coordinate: [number, number], zoom: number): HttpParams {
+  private getLocateParams(
+    coordinate: [number, number],
+    zoom: number
+  ): HttpParams {
     return new HttpParams({
       fromObject: {
         lat: String(coordinate[1]),
@@ -96,10 +110,7 @@ export class NominatimSearchSource extends SearchSource {
       },
       geometry: {
         type: 'Point',
-        coordinates: [
-          parseFloat(result.lon),
-          parseFloat(result.lat)
-        ]
+        coordinates: [parseFloat(result.lon), parseFloat(result.lat)]
       },
       extent: [
         parseFloat(result.boundingbox[2]),
@@ -109,5 +120,4 @@ export class NominatimSearchSource extends SearchSource {
       ]
     };
   }
-
 }
