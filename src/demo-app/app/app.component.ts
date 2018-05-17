@@ -98,6 +98,11 @@ export class AppComponent implements OnInit {
     const features: Feature[] = results.features;
     if (features[0]) {
       this.featureService.updateFeatures(features, features[0].source);
+      const a = features.filter(feature =>
+        feature.source === 'Entités cliquées' ||
+        feature.source === 'Clicked Feature')
+        this.featureService.features$.subscribe(f => this.featureService.selectFeature(a[0]))
+
     }
   }
 }

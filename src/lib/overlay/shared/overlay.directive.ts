@@ -61,7 +61,9 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
       this.map.addOverlay(olFeature);
     }, this);
-
+    if (features[0].source === 'Entités cliquées' || features[0].source === 'Clicked Feature') {
+      action = 'none';
+    }
     if (!ol.extent.isEmpty(featureExtent)) {
       if (action === 'zoom') {
         this.map.zoomToExtent(extent);
