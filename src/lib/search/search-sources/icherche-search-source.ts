@@ -3,26 +3,32 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ConfigService, Message } from '../../core';
-import { Feature, FeatureType, FeatureFormat, SourceFeatureType} from '../../feature';
+import {
+  Feature,
+  FeatureType,
+  FeatureFormat,
+  SourceFeatureType
+} from '../../feature';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
-
 @Injectable()
 export class IChercheSearchSource extends SearchSource {
-
-  get enabled(): boolean { return this.options.enabled !== false; }
-  set enabled(value: boolean) { this.options.enabled = value; }
+  get enabled(): boolean {
+    return this.options.enabled !== false;
+  }
+  set enabled(value: boolean) {
+    this.options.enabled = value;
+  }
 
   static _name: string = 'ICherche Québec';
 
   private searchUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/geocode';
-  private locateUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/xy'
+  private locateUrl: string = 'https://geoegl.msp.gouv.qc.ca/icherche/xy';
   private options: SearchSourceOptions;
 
-  constructor(private http: HttpClient,
-              private config: ConfigService) {
+  constructor(private http: HttpClient, private config: ConfigService) {
     super();
 
     this.options = this.config.getConfig('searchSources.icherche') || {};
@@ -34,11 +40,21 @@ export class IChercheSearchSource extends SearchSource {
     return IChercheSearchSource._name;
   }
 
-  search(term?: string): Observable<Feature[] | Message[]>  {
+  search(term?: string): Observable<Feature[] | Message[]> {
     const searchParams = this.getSearchParams(term);
 
     return this.http
-      .get(this.searchUrl, {params: searchParams})
+      .get(this.searchUrl, { params: searchParams })
+      .map(res => this.extractData(res));
+  }
+
+  locate(
+    coordinate: [number, number],
+    zoom: number
+  ): Observable<Feature[] | Message[]> {
+    const locateParams = this.getLocateParams(coordinate, zoom);
+    return this.http
+      .get(this.locateUrl, { params: locateParams })
       .map(res => this.extractData(res));
   }
 
@@ -53,8 +69,9 @@ export class IChercheSearchSource extends SearchSource {
 
   private getSearchParams(term: string): HttpParams {
     const limit = this.options.limit === undefined ? 5 : this.options.limit;
-    const type = this.options.type ||
-      'adresse,code_postal,route,municipalite,mrc,region_administrative'
+    const type =
+      this.options.type ||
+      'adresse,code_postal,route,municipalite,mrc,region_administrative';
 
     return new HttpParams({
       fromObject: {
@@ -66,13 +83,16 @@ export class IChercheSearchSource extends SearchSource {
     });
   }
 
-  private getLocateParams(coordinate: [number, number], currentZoom: number): HttpParams {
+  private getLocateParams(
+    coordinate: [number, number],
+    currentZoom: number
+  ): HttpParams {
     let distance = 100;
-    const type = this.options.type || 'adresse'
+    const type = this.options.type || 'adresse';
     if (currentZoom >= 16) {
-      distance = 30
+      distance = 30;
     } else if (currentZoom < 8) {
-      distance = 500
+      distance = 500;
     }
     return new HttpParams({
       fromObject: {
@@ -85,9 +105,12 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   private formatResult(result: any): Feature {
-    const properties = Object.assign({
-      type: result.doc_type
-    }, result.properties);
+    const properties = Object.assign(
+      {
+        type: result.doc_type
+      },
+      result.properties
+    );
     delete properties['@timestamp'];
     delete properties['@version'];
     delete properties.recherche;
@@ -110,5 +133,4 @@ export class IChercheSearchSource extends SearchSource {
       extent: result.bbox
     };
   }
-
 }
