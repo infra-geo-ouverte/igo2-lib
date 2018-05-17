@@ -30,6 +30,8 @@ export class TimeFilterFormComponent implements OnInit {
   public year: any;
   public startYear: any;
   public endYear: any;
+  public initStartYear: any;
+  public initEndYear: any;
   public listYears: Array<string> = [];
   public startListYears: Array<string> = [];
   public endListYears: Array<string> = [];
@@ -138,9 +140,11 @@ export class TimeFilterFormComponent implements OnInit {
     }
     if (this.startYear === undefined) {
       this.startYear = new Date(this.startDate).getFullYear();
+      this.initStartYear = this.startYear;
     }
     if (this.endYear === undefined) {
       this.endYear = new Date(this.endDate).getFullYear();
+      this.initEndYear = this.endYear;
     }
 
     if (!this.isRange) {
@@ -148,10 +152,10 @@ export class TimeFilterFormComponent implements OnInit {
         this.listYears.push(i);
       }
     } else {
-      for (let i = this.startYear; i <= this.endYear + 1; i++) {
+      for (let i = this.startYear; i < this.endYear; i++) {
         this.startListYears.push(i);
       }
-      for (let i = this.startYear + 1; i <= this.endYear + 1; i++) {
+      for (let i = this.startYear + 1; i <= this.endYear; i++) {
         this.endListYears.push(i);
       }
     }
@@ -166,11 +170,11 @@ export class TimeFilterFormComponent implements OnInit {
   handleYearChange(event: any) {
     if (this.isRange) {
       this.endListYears = [];
-      for (let i = this.startYear; i < this.endYear + 1; i++) {
+      for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
         this.endListYears.push(i);
       }
       this.startListYears = [];
-      for (let i = this.startYear; i <= this.endYear; i++) {
+      for (let i = this.initStartYear + 1; i < this.endYear; i++) {
         this.startListYears.push(i);
       }
       this.yearChange.emit([this.startYear, this.endYear]);
