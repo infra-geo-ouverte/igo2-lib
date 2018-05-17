@@ -42,6 +42,7 @@ export class DataSourceSearchSource extends SearchSource {
   }
 
   locate(coordinate?: [number, number]): Observable<Feature[] | Message[]>  {
+    // It should be a good idea to locate layers by coordinates ?
     return
   }
 
