@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { debounceTime } from 'rxjs/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 
-import { FeatureService, SourceFeatureType, FeatureType } from '../../feature';
+import { FeatureService, SourceFeatureType, FeatureType, Feature } from '../../feature';
 import { SearchService } from '../shared';
 
 @Component({
@@ -139,9 +139,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   private handleTermChanged(term: string) {
-    if (term !== undefined) {
+    if (term !== undefined || term !== '') {
+      this.featureService.clear()
       this.search.emit(term);
-      this.searchService.search(term);
+      const r = this.searchService.search(term)
+      if (r) {
+        r.map(res => res.subscribe(
+          (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))}
     }
   }
 }

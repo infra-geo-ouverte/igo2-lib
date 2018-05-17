@@ -41,6 +41,10 @@ export class DataSourceSearchSource extends SearchSource {
       .map(res => this.extractData(res));
   }
 
+  locate(coordinate?: [number, number]): Observable<Feature[] | Message[]>  {
+    return
+  }
+
   private extractData(response): Feature[] {
     return response.items.map(
       (res) => this.formatResult(res)
