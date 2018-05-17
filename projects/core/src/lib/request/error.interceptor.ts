@@ -9,7 +9,6 @@ import {
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import {} from 'rxjs';
 
 import { MessageService } from '../message/shared';
 import { LanguageService } from '../language/shared/language.service';
