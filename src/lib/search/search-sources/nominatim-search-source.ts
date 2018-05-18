@@ -46,7 +46,7 @@ export class NominatimSearchSource extends SearchSource {
 
     return this.http
       .get(this.searchUrl, { params: searchParams })
-      .map(res => this.extractData(res));
+      .map(res => this.extractData(res, SourceFeatureType.Search));
   }
 
   locate(
@@ -56,11 +56,11 @@ export class NominatimSearchSource extends SearchSource {
     const locateParams = this.getLocateParams(coordinate, zoom);
     return this.http
       .get(this.locateUrl, { params: locateParams })
-      .map(res => this.extractData([res]));
+      .map(res => this.extractData([res], SourceFeatureType.LocateXY));
   }
 
-  private extractData(response): Feature[] {
-    return response.map(this.formatResult);
+  private extractData(response, resultType): Feature[] {
+    return response.map(this.formatResult, resultType);
   }
 
   private getSearchParams(term: string): HttpParams {
@@ -90,11 +90,11 @@ export class NominatimSearchSource extends SearchSource {
     });
   }
 
-  private formatResult(result: any): Feature {
+  private formatResult(result: any, resultType): Feature {
     return {
       id: result.place_id,
       source: NominatimSearchSource._name,
-      sourceType: SourceFeatureType.Search,
+      sourceType: resultType,
       order: 0,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
