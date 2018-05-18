@@ -25,7 +25,8 @@ export class DownloadService {
         layer.dataSource.options.download['dynamicUrl'] &&
         layer.dataSource.options.download.url === undefined) {
         let wfsOptions;
-        if (Object.keys(layer.dataSource.options['wfsSource']).length > 0) {
+        if (layer.dataSource.options['wfsSource'] &&
+        Object.keys(layer.dataSource.options['wfsSource']).length > 0) {
           wfsOptions = layer.dataSource.options['wfsSource'];
         } else {
           wfsOptions = layer.dataSource.options;
