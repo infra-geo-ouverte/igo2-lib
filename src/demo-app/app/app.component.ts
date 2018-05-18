@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { ContextService,
          Feature, FeatureType, FeatureService, IgoMap,
          LanguageService, LayerService, MapService, MessageService,
-         OverlayService, ToolService } from '../../lib';
+         OverlayService, ToolService, SourceFeatureType } from '../../lib';
 
 import { AnyDataSourceContext, DataSourceService } from '../../lib/datasource';
 
@@ -98,6 +98,10 @@ export class AppComponent implements OnInit {
     const features: Feature[] = results.features;
     if (features[0]) {
       this.featureService.updateFeatures(features, features[0].source);
+      const firstClickFeature = features.filter(feature =>
+        feature.sourceType === SourceFeatureType.Click)[0]
+        this.featureService.features$.subscribe(f =>
+          this.featureService.selectFeature(firstClickFeature))
     }
   }
 }
