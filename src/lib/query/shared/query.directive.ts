@@ -30,6 +30,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
+  public dragBox = new ol.interaction.DragBox({
+    condition: ol.events.condition.platformModifierKeyOnly
+  });
+
   get map(): IgoMap {
     return this.component.map;
   }
@@ -61,6 +65,11 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     );
 
     this.map.ol.on('singleclick', this.handleMapClick, this);
+    this.dragBox = new ol.interaction.DragBox({
+      condition: ol.events.condition.platformModifierKeyOnly
+    });
+    this.map.ol.addInteraction(this.dragBox);
+    this.dragBox.on('boxend', this.handleMapClick, this);
   }
 
   ngOnDestroy() {
@@ -80,29 +89,51 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     this.queryLayers = queryLayers;
   }
 
+  private manageFeatureByClick(feature: ol.Feature, layer: ol.layer.Layer): ol.Feature {
+    if (layer.getZIndex() !== 999) {
+      let title;
+      if (layer.get('title') !== undefined) {
+        title = layer.get('title');
+      } else {
+        title = this.map.layers.filter(
+          f => f['zIndex'] === layer.getZIndex()
+        )[0].dataSource['options']['title'];
+      }
+      let displayFieldValue = ''
+      if (
+        layer.get('displayField') &&
+        feature.getProperties().hasOwnProperty(layer.get('displayField'))) {
+          displayFieldValue = ' (' + feature.getProperties()[layer.get('displayField')] + ')'
+      }
+      feature.set('clickedTitle', title + displayFieldValue);
+      return feature;
+    }
+
+  }
+
   private handleMapClick(event: ol.MapBrowserEvent) {
     this.unsubscribeQueries();
-
     const clickedFeatures: ol.Feature[] = [];
     const format = new ol.format.GeoJSON();
     const mapProjection = this.map.projection;
-    this.map.ol.forEachFeatureAtPixel(
-      event.pixel,
-      (feature: ol.Feature, layer: ol.layer.Layer) => {
-        if (layer.getZIndex() !== 999) {
-          let title;
-          if (layer.get('title') !== undefined) {
-            title = layer.get('title');
-          } else {
-            title = this.map.layers.filter(
-              f => f['zIndex'] === layer.getZIndex()
-            )[0].dataSource['options']['title'];
-          }
-          feature.set('clickedTitle', title);
-          clickedFeatures.push(feature);
+    if (event.type === 'singleclick') {
+      this.map.ol.forEachFeatureAtPixel(
+        event.pixel,
+        (feature: ol.Feature, layer: ol.layer.Layer) => {
+            clickedFeatures.push(this.manageFeatureByClick(feature, layer));
+        }, { hitTolerance: 5 }
+      );
+    } else if (event.type === 'boxend') {
+      const dragExtent = this.dragBox.getGeometry().getExtent();
+      this.map.layers.forEach(layer => {
+        if (layer.ol['type'] === 'VECTOR' && layer.visible && layer.zIndex !== 999) {
+          const featuresOL = layer.dataSource.ol as any
+          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (feature) => {
+            clickedFeatures.push(this.manageFeatureByClick(feature, layer.ol));
+          });
         }
-      }, { hitTolerance: 5 }
-    );
+      });
+    }
     const featuresGeoJSON = JSON.parse(
       format.writeFeatures(clickedFeatures, {
         dataProjection: 'EPSG:4326',

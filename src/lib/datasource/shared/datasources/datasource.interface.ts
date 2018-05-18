@@ -14,6 +14,7 @@ export interface DataSourceOptions {
   metadata?: MetadataOptions;
   download?: DownloadOptions;
   view?: ol.olx.layer.ImageOptions;
+  displayField?: string;
 }
 
 export interface DataSourceContext extends DataSourceOptions {
