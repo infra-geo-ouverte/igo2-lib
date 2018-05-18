@@ -1,5 +1,3 @@
-import * as ol from 'openlayers';
-import * as proj4 from 'proj4'
 import { Component, OnInit, Input, Output,
          EventEmitter, ViewChild, ElementRef, ChangeDetectorRef,
          OnDestroy, ChangeDetectionStrategy } from '@angular/core';
@@ -90,9 +88,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private featureService: FeatureService,
     private changeDetectorRef: ChangeDetectorRef
-  ) {
-    ol.proj.setProj4(proj4);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.stream$$ = this.stream$.pipe(
@@ -146,30 +142,28 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (term !== undefined || term !== '') {
       this.featureService.clear()
       this.search.emit(term);
-            // tslint:disable-next-line:max-line-length
-      if (/^@([-+]?)([\d]{1,15})(((\.)?(\d+)?(,)))(\s*)(([-+]?)([\d]{1,15})((\.)?(\d+)?(;[\d]{4,5})?))$/g.test(term)) {
-        term = term.replace('@', '')
+      // tslint:disable-next-line:max-line-length
+      if (/^([-+]?)([\d]{1,15})(((\.)?(\d+)?(,)))(\s*)(([-+]?)([\d]{1,15})((\.)?(\d+)?(;[\d]{4,5})?))$/g.test(term)) {
         let xy
         if (/(;[\d]{4,5})$/g.test(term)) {
-          const xyTerm = term.split(';')
-          xy = ol.proj.transform(
-            JSON.parse('[' + xyTerm[0] + ']'),
-            'EPSG:' + xyTerm[1],
-            'EPSG:4326');
+          const xyTerm = term.split(';');
+          // TODO Reproject coordinates
+          xy = JSON.parse('[' + xyTerm[0] + ']');
         } else {
           if (term.endsWith('.')) {
-            term += '0'
+            term += '0';
           }
           xy = JSON.parse('[' + term + ']');
         }
-        const r = this.searchService.locate(xy)
+        const r = this.searchService.locate(xy);
         if (r) {
-          r.filter(res => res !== undefined).map(res => res.subscribe(
-            (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))
-          }
-
+          r.filter(res => res !== undefined)
+            .map(res => res.subscribe(
+              (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined)))
+            )
+        }
       } else {
-      const r = this.searchService.search(term)
+      const r = this.searchService.search(term);
       if (r) {
         r.map(res => res.subscribe(
           (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))

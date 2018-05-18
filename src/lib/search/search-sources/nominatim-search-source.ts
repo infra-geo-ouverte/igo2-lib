@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { ConfigService, Message } from '../../core';
+import { ConfigService } from '../../core';
 import {
   Feature,
   FeatureType,
@@ -41,7 +41,7 @@ export class NominatimSearchSource extends SearchSource {
     return NominatimSearchSource._name;
   }
 
-  search(term?: string): Observable<Feature[] | Message[]> {
+  search(term?: string): Observable<Feature[]> {
     const searchParams = this.getSearchParams(term);
 
     return this.http
@@ -52,7 +52,7 @@ export class NominatimSearchSource extends SearchSource {
   locate(
     coordinate: [number, number],
     zoom: number
-  ): Observable<Feature[] | Message[]> {
+  ): Observable<Feature[]> {
     const locateParams = this.getLocateParams(coordinate, zoom);
     return this.http
       .get(this.locateUrl, { params: locateParams })
@@ -60,6 +60,9 @@ export class NominatimSearchSource extends SearchSource {
   }
 
   private extractData(response, resultType): Feature[] {
+    if (response[0] && response[0].error) {
+      return [];
+    }
     return response.map(this.formatResult, resultType);
   }
 

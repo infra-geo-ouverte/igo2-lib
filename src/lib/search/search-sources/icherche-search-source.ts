@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
 
-import { ConfigService, Message } from '../../core';
+import { Observable } from 'rxjs/Observable';
+import { catchError } from 'rxjs/operators/catchError';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
+
+import { ConfigService } from '../../core';
 import {
   Feature,
   FeatureType,
@@ -40,7 +43,7 @@ export class IChercheSearchSource extends SearchSource {
     return IChercheSearchSource._name;
   }
 
-  search(term?: string): Observable<Feature[] | Message[]> {
+  search(term?: string): Observable<Feature[]> {
     const searchParams = this.getSearchParams(term);
 
     return this.http
@@ -51,14 +54,26 @@ export class IChercheSearchSource extends SearchSource {
   locate(
     coordinate: [number, number],
     zoom: number
-  ): Observable<Feature[] | Message[]> {
+  ): Observable<Feature[]> {
     const locateParams = this.getLocateParams(coordinate, zoom);
-    if (coordinate[0]> -81 && coordinate[0] < -55 && coordinate[1]>= 43.1 && coordinate[1] < 64) {
+    if (
+      coordinate[0] > -81 &&
+      coordinate[0] < -55 &&
+      coordinate[1] >= 43.1 &&
+      coordinate[1] < 64
+    ) {
       return this.http
-      .get(this.locateUrl, { params: locateParams })
-      .map(res => this.extractLocateData(res));
+        .get(this.locateUrl, { params: locateParams })
+        .map(res => this.extractLocateData(res))
+        .pipe(
+          catchError(error => {
+            error.error.toDisplay = true;
+            error.error.title = this.getName();
+            error.error.message = error.error.message_erreur;
+            return new ErrorObservable(error);
+          })
+        );
     }
-
   }
 
   private extractSearchData(response): Feature[] {
@@ -96,18 +111,10 @@ export class IChercheSearchSource extends SearchSource {
     } else if (currentZoom < 8) {
       distance = 500;
     }
-    let floatCoordinates = []; // Issue on Icherche. Do no manage integers
-    coordinate.forEach(element => {
-      if (element % 1 === 0) {
-        floatCoordinates.push(element.toFixed(1))
-      } else {
-        floatCoordinates.push(element)
-      }
-    });
 
     return new HttpParams({
       fromObject: {
-        loc: floatCoordinates.join(','),
+        loc: coordinate.join(','),
         type: type,
         distance: String(distance),
         geometries: 'geom'
