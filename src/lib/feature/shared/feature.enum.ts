@@ -12,5 +12,6 @@ export enum FeatureFormat {
 export enum SourceFeatureType {
   Query = <any> 'Query',
   Search = <any> 'Search',
-  Click = <any> 'Click'
+  Click = <any> 'Click',
+  LocateXY = <any> 'LocateXY'
 }

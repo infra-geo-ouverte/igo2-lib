@@ -45,7 +45,7 @@ export class IChercheSearchSource extends SearchSource {
 
     return this.http
       .get(this.searchUrl, { params: searchParams })
-      .map(res => this.extractData(res));
+      .map(res => this.extractSearchData(res));
   }
 
   locate(
@@ -53,13 +53,20 @@ export class IChercheSearchSource extends SearchSource {
     zoom: number
   ): Observable<Feature[] | Message[]> {
     const locateParams = this.getLocateParams(coordinate, zoom);
-    return this.http
+    if (coordinate[0]> -81 && coordinate[0] < -55 && coordinate[1]>= 43.1 && coordinate[1] < 64) {
+      return this.http
       .get(this.locateUrl, { params: locateParams })
-      .map(res => this.extractData(res));
+      .map(res => this.extractLocateData(res));
+    }
+
   }
 
-  private extractData(response): Feature[] {
-    return response.features.map(this.formatResult);
+  private extractSearchData(response): Feature[] {
+    return response.features.map(this.formatSearchResult);
+  }
+
+  private extractLocateData(response): Feature[] {
+    return response.features.map(this.formatLocateResult);
   }
 
   private getSearchParams(term: string): HttpParams {
@@ -83,15 +90,24 @@ export class IChercheSearchSource extends SearchSource {
     currentZoom: number
   ): HttpParams {
     let distance = 100;
-    const type = this.options.type || 'adresse';
+    const type = this.options.type || 'adresse,municipalite,mrc,regadmin';
     if (currentZoom >= 16) {
       distance = 30;
     } else if (currentZoom < 8) {
       distance = 500;
     }
+    let floatCoordinates = []; // Issue on Icherche. Do no manage integers
+    coordinate.forEach(element => {
+      if (element % 1 === 0) {
+        floatCoordinates.push(element.toFixed(1))
+      } else {
+        floatCoordinates.push(element)
+      }
+    });
+
     return new HttpParams({
       fromObject: {
-        loc: coordinate.join(','),
+        loc: floatCoordinates.join(','),
         type: type,
         distance: String(distance),
         geometries: 'geom'
@@ -99,7 +115,7 @@ export class IChercheSearchSource extends SearchSource {
     });
   }
 
-  private formatResult(result: any): Feature {
+  private formatSearchResult(result: any): Feature {
     const properties = Object.assign(
       {
         type: result.doc_type
@@ -126,6 +142,36 @@ export class IChercheSearchSource extends SearchSource {
       properties: properties,
       geometry: result.geometry,
       extent: result.bbox
+    };
+  }
+
+  private formatLocateResult(result: any): Feature {
+    const properties = Object.assign(
+      {
+        type: result.properties.doc_type
+      },
+      result.properties
+    );
+    delete properties.doc_type;
+    return {
+      id: result._id,
+      source: IChercheSearchSource._name,
+      sourceType: SourceFeatureType.LocateXY,
+      order: 1,
+      type: FeatureType.Feature,
+      format: FeatureFormat.GeoJSON,
+      title: result.properties.nom,
+      title_html: result.properties.nom,
+      icon: 'place',
+      projection: 'EPSG:4326',
+      properties: properties,
+      geometry: result.geometry,
+      extent: [
+        parseFloat(result.bbox[0]),
+        parseFloat(result.bbox[2]),
+        parseFloat(result.bbox[1]),
+        parseFloat(result.bbox[3])
+      ]
     };
   }
 }

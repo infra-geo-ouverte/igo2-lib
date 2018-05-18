@@ -84,7 +84,7 @@ export class NominatimSearchSource extends SearchSource {
         lat: String(coordinate[1]),
         lon: String(coordinate[0]),
         format: 'json',
-        zoom: String(18),
+        zoom: String(zoom),
         polygon_geojson: String(1)
       }
     });
