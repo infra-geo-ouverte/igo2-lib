@@ -58,11 +58,6 @@ export class IChercheSearchSource extends SearchSource {
       .map(res => this.extractData(res));
   }
 
-  locate(coordinate: [number, number], zoom: number): Observable<Feature[] | Message[]>  {
-    const locateParams = this.getLocateParams(coordinate, zoom);
-    return this.http.get(this.locateUrl, {params: locateParams}).map(res => this.extractData(res));
-  }  
-
   private extractData(response): Feature[] {
     return response.features.map(this.formatResult);
   }

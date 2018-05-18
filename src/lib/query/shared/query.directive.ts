@@ -18,7 +18,7 @@ import { LanguageService } from '../../core';
 import { IgoMap } from '../../map/shared';
 import { MapBrowserComponent } from '../../map/map-browser';
 import { Layer } from '../../layer';
-import { Feature } from '../../feature';
+import { Feature, SourceFeatureType } from '../../feature';
 
 import { QueryService } from '../shared/query.service';
 
@@ -101,7 +101,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           feature.set('clickedTitle', title);
           clickedFeatures.push(feature);
         }
-      }
+      }, { hitTolerance: 5 }
     );
     const featuresGeoJSON = JSON.parse(
       format.writeFeatures(clickedFeatures, {
@@ -113,6 +113,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     let parsedClickedFeatures: Feature[] = [];
     parsedClickedFeatures = featuresGeoJSON.features.map(f =>
       Object.assign({}, f, {
+        sourceType: SourceFeatureType.Click,
         source: this.languageService.translate.instant(
           'igo.clickOnMap.clickedFeature'
         ),
