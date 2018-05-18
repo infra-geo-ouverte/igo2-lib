@@ -142,11 +142,33 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (term !== undefined || term !== '') {
       this.featureService.clear()
       this.search.emit(term);
-      const r = this.searchService.search(term)
-      if (r) {
-        r.map(res => res.subscribe(
-          (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))
+      // tslint:disable-next-line:max-line-length
+      if (/^([-+]?)([\d]{1,15})(((\.)?(\d+)?(,)))(\s*)(([-+]?)([\d]{1,15})((\.)?(\d+)?(;[\d]{4,5})?))$/g.test(term)) {
+        let xy
+        if (/(;[\d]{4,5})$/g.test(term)) {
+          const xyTerm = term.split(';');
+          // TODO Reproject coordinates
+          xy = JSON.parse('[' + xyTerm[0] + ']');
+        } else {
+          if (term.endsWith('.')) {
+            term += '0';
+          }
+          xy = JSON.parse('[' + term + ']');
         }
+        const r = this.searchService.locate(xy);
+        if (r) {
+          r.filter(res => res !== undefined)
+            .map(res => res.subscribe(
+              (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined)))
+            )
+        }
+      } else {
+        const r = this.searchService.search(term);
+        if (r) {
+          r.map(res => res.subscribe(
+            (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))
+        }
+      }
     }
   }
 }
