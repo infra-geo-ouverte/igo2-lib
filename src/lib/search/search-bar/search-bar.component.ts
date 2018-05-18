@@ -163,10 +163,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             )
         }
       } else {
-      const r = this.searchService.search(term);
-      if (r) {
-        r.map(res => res.subscribe(
-          (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))
+        const r = this.searchService.search(term);
+        if (r) {
+          r.map(res => res.subscribe(
+            (features) =>  (this.featureService.updateFeatures(features as Feature[], undefined))))
         }
       }
     }
