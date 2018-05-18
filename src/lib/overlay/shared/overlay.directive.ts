@@ -65,7 +65,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       if (ol.extent.intersects(featureExtent, this.map.getExtent())) {
         action = 'none';
       } else {
-      action = 'move';
+        action = 'move';
       }
     }
     if (!ol.extent.isEmpty(featureExtent)) {
