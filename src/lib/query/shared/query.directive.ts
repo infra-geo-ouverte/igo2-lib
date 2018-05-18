@@ -99,7 +99,11 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           f => f['zIndex'] === layer.getZIndex()
         )[0].dataSource['options']['title'];
       }
-      feature.set('clickedTitle', title);
+      let displayFieldValue = ''
+      if (layer.get('displayField')) {
+        displayFieldValue = ' (' + feature.getProperties()[layer.get('displayField')] + ')'
+      }
+      feature.set('clickedTitle', title + displayFieldValue);
       return feature;
     }
 
