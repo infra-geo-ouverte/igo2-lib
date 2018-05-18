@@ -100,8 +100,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         )[0].dataSource['options']['title'];
       }
       let displayFieldValue = ''
-      if (layer.get('displayField')) {
-        displayFieldValue = ' (' + feature.getProperties()[layer.get('displayField')] + ')'
+      if (
+        layer.get('displayField') &&
+        feature.getProperties().hasOwnProperty(layer.get('displayField'))) {
+          displayFieldValue = ' (' + feature.getProperties()[layer.get('displayField')] + ')'
       }
       feature.set('clickedTitle', title + displayFieldValue);
       return feature;
