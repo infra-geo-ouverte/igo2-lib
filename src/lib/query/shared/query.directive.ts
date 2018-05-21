@@ -135,7 +135,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       });
     }
     const featuresGeoJSON = JSON.parse(
-      format.writeFeatures(clickedFeatures, {
+      format.writeFeatures(clickedFeatures.filter(f => f !== undefined), {
         dataProjection: 'EPSG:4326',
         featureProjection: mapProjection
       })

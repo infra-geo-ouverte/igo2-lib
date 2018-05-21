@@ -1,6 +1,6 @@
 {
-  "uri": "test_wfs",
-  "title": "test_wfs",
+  "uri": "wfs_test",
+  "title": "wfs_test",
   "map": {
     "view": {
       "projection": "EPSG:3857",
