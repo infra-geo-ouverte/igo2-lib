@@ -38,7 +38,7 @@ export class ImportExportService {
       ];
       const extensionAllowed = [
         'geojson', 'kml', 'json' ];  //  ,'gml'
-      if (mimeTypeAllowed.includes(mimeType) || extensionAllowed.includes(ext)) {
+      if (mimeTypeAllowed.includes(mimeType) || extensionAllowed.includes(ext.toLowerCase())) {
         this.readFile(file, sourceSrs, ext, i++, count);
       } else if (mimeType === 'application/zip') {
         this.callImportService(file, sourceSrs);
