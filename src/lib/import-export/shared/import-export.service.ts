@@ -36,8 +36,10 @@ export class ImportExportService {
         'application/vnd.google-earth.kml+xml',
         'application/json'
       ];
-      if (ext === 'geojson' || mimeTypeAllowed.includes(mimeType)) {
-        this.readFile(file, sourceSrs, i++, count);
+      const extensionAllowed = [
+        'geojson', 'kml', 'json' ];  //  ,'gml'
+      if (mimeTypeAllowed.includes(mimeType) || extensionAllowed.includes(ext)) {
+        this.readFile(file, sourceSrs, ext, i++, count);
       } else if (mimeType === 'application/zip') {
         this.callImportService(file, sourceSrs);
       } else {
@@ -101,13 +103,13 @@ export class ImportExportService {
     document.body.removeChild(element);
   }
 
-  private readFile(file: File, sourceSrs, i = 1, count = 1) {
+  private readFile(file: File, sourceSrs, ext, i = 1, count = 1) {
     const translate = this.languageService.translate;
     const reader = new FileReader();
 
     reader.onload = (evt: any) => {
       const layerTitle = file.name.substr(0, file.name.lastIndexOf('.'));
-      this.addFeaturesLayer(evt.target.result, layerTitle, sourceSrs, file.type);
+      this.addFeaturesLayer(evt.target.result, layerTitle, sourceSrs, ext, file.type);
       const title = translate.instant('igo.dropGeoFile.success.title', {
         i: i,
         count: count
@@ -129,7 +131,7 @@ export class ImportExportService {
     reader.readAsText(file, 'UTF-8');
   }
 
-  private addFeaturesLayer(text, title, sourceSrs, mimeType?) {
+  private addFeaturesLayer(text, title, sourceSrs, ext?, mimeType?) {
     const map = this.mapService.getMap();
     const overlayDataSource = new FeatureDataSource({
       title: title
@@ -140,6 +142,18 @@ export class ImportExportService {
       format = new ol.format.KML();
     } else if (mimeType === 'application/gml+xml') {
       format = new ol.format.GML();
+    } else {
+      ext = ext.toLowerCase();
+      switch (ext) {
+        case 'kml':
+          format = new ol.format.KML();
+          break;
+        case 'gml':
+          format = new ol.format.GML();
+          break;
+        default:
+          break;
+      }
     }
 
     const olFeature = format.readFeatures(text, {
