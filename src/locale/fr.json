@@ -120,7 +120,7 @@
 		  "addFilter": "Ajouter un filtre vidre à la liste courante",
 		  "removeFilter": "Supprimer le présent filtre à la liste des filtres",
 		  "toggleFilterState": "Activer/désactiver le présent filtre",
-		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
+		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit être visible (et dans les échelles permises) ou veuillez modifier le présent filtre.",
 		  "layerFiltered": "Cette couche d'information est présentement filtrée.",
 		  "layerFilterable": "Cette couche d'information est filtrable"
 		},	
