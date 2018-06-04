@@ -96,7 +96,7 @@
       </button>
 
       <button
-      *ngIf="layer.dataSource.options.download && (layer.dataSource.options.download.dynamicUrl || layer.dataSource.options.download.url) "
+      *ngIf="layer.dataSource.options.download && (layer.dataSource.options.download['dynamicUrl'] || layer.dataSource.options.download['url']) "
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
