@@ -142,8 +142,7 @@ export class ImportExportService {
       format = new ol.format.KML();
     } else if (mimeType === 'application/gml+xml') {
       format = new ol.format.GML();
-    } else {
-      ext = ext.toLowerCase();
+    } else if (ext) {
       switch (ext) {
         case 'kml':
           format = new ol.format.KML();
