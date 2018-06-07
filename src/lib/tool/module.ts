@@ -10,6 +10,7 @@ import { IgoMapModule } from '../map';
 import { IgoCatalogModule } from '../catalog';
 import { IgoImportExportModule } from '../import-export';
 import { IgoPrintModule } from '../print';
+import { IgoRoutingModule } from '../routing';
 import { IgoShareMapModule } from '../share-map';
 
 import { ToolService } from './shared';
@@ -27,6 +28,7 @@ import { ContextManagerToolComponent,
          CatalogLayersToolComponent,
          SearchResultsToolComponent,
          PrintToolComponent,
+         DirectionsToolComponent,
          ShareMapToolComponent,
          TimeAnalysisToolComponent,
          OgcFilterToolComponent} from './tools';
@@ -42,6 +44,7 @@ const IGO_TOOLS = [
   CatalogLayersToolComponent,
   SearchResultsToolComponent,
   PrintToolComponent,
+  DirectionsToolComponent,
   ShareMapToolComponent,
   TimeAnalysisToolComponent,
   OgcFilterToolComponent
@@ -59,6 +62,7 @@ const IGO_TOOLS = [
     IgoCatalogModule,
     IgoImportExportModule,
     IgoPrintModule,
+    IgoRoutingModule,
     IgoShareMapModule
   ],
   exports: [
