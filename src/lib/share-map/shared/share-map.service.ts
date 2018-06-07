@@ -1,5 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 
+import * as ol from 'openlayers';
 import { RouteService, ConfigService, MessageService } from '../../core';
 import { IgoMap } from '../../map';
 import { ContextService } from '../../context';
@@ -48,6 +49,20 @@ export class ShareMapService {
     const visibleKey = this.route.options.visibleOnLayersKey;
     const invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
+    const routingKey = this.route.options.routingCoordKey;
+    const stopsCoordinates = [];
+
+    if (map.routingRoutesOverlayDataSource &&
+      map.routingRoutesOverlayDataSource.ol.getFeatures().length !== 0) {
+        map.routingStopsOverlayDataSource.ol.getFeatures().forEach(stopFeature => {
+        const coord = (stopFeature.getGeometry() as any).getCoordinates();
+        stopsCoordinates.push(ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326').join(','));
+      });
+    }
+    let routingUrl: string = '';
+    if (stopsCoordinates.length >= 2 ) {
+      routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
+    }
 
     const visibleLayers = layers.filter(lay => lay.visible);
     const invisibleLayers = layers.filter(lay => !lay.visible);
@@ -76,7 +91,8 @@ export class ShareMapService {
     if (this.contextService.context$.value) {
         context = 'context=' + this.contextService.context$.value.uri;
     }
-    return `${location.origin + location.pathname}?${context}&${zoom}&${center}&${layersUrl}`;
+    const p1 = `${location.origin + location.pathname}?${context}&${zoom}&${center}&${layersUrl}`
+    return p1  + `&${routingUrl}`;
   }
 
 }
