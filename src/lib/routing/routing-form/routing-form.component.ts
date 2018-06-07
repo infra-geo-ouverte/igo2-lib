@@ -792,7 +792,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         const polygonExtent = proposal.extent;
         const long = polygonExtent[0] + (polygonExtent[2] - polygonExtent[0]) / 2;
         const lat = polygonExtent[1] + (polygonExtent[3] - polygonExtent[1]) / 2;
-        geomCoord = [long,lat];
+        geomCoord = [long, lat];
       }
 
       if (geomCoord !== undefined) {
