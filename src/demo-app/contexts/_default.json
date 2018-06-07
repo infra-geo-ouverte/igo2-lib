@@ -74,6 +74,7 @@
     }
   ],
   "toolbar": [
+    "directions",
     "searchResults",
     "mapDetails",
     "timeAnalysis",
@@ -82,6 +83,9 @@
     "print"
   ],
   "tools": [
+    {
+      "name": "directions"      
+    },
     {
       "name": "searchResults"
     },
