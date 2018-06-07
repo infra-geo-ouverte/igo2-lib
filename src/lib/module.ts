@@ -22,6 +22,7 @@ import { IgoMetadataModule } from './metadata';
 import { IgoOverlayModule } from './overlay';
 import { IgoPrintModule } from './print';
 import { IgoQueryModule } from './query';
+import { IgoRoutingModule } from './routing';
 import { IgoSearchModule } from './search';
 import { IgoSharedModule } from './shared';
 import { IgoShareMapModule } from './share-map';
@@ -46,6 +47,7 @@ const IGO_MODULES = [
   IgoOverlayModule,
   IgoPrintModule,
   IgoQueryModule,
+  IgoRoutingModule,
   IgoSearchModule,
   IgoSharedModule,
   IgoShareMapModule,
@@ -74,6 +76,7 @@ const IGO_MODULES = [
     IgoOverlayModule.forRoot(),
     IgoPrintModule.forRoot(),
     IgoQueryModule.forRoot(),
+    IgoRoutingModule.forRoot(),
     IgoSearchModule.forRoot(),
     IgoShareMapModule.forRoot(),
     IgoToolModule.forRoot(),
