@@ -21,6 +21,7 @@ import { Layer } from '../../layer';
 import { Feature, SourceFeatureType } from '../../feature';
 
 import { QueryService } from '../shared/query.service';
+import { RoutingFormService } from '../../routing/routing-form/routing-form.service';
 
 @Directive({
   selector: '[igoQuery]'
@@ -56,7 +57,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   constructor(
     @Self() private component: MapBrowserComponent,
     private queryService: QueryService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private routingFormService: RoutingFormService
   ) {}
 
   ngAfterViewInit() {
@@ -112,6 +114,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
+    if (this.routingFormService.isMapWaitingForRoutingClick() === true) { return; }
     this.unsubscribeQueries();
     const clickedFeatures: ol.Feature[] = [];
     const format = new ol.format.GeoJSON();

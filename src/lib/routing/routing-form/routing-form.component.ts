@@ -130,14 +130,22 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         // TODO: Check to disable pointermove IF a stop is already selected
     const selectRouteHover = new ol.interaction.Select({
       layers: [routesLayer.ol],
-      condition: ol.events.condition.pointerMove
+      condition: ol.events.condition.pointerMove,
+      hitTolerance: 7
     });
 
     this.selectRoute = new ol.interaction.Select({
       layers: [routesLayer.ol]
     });
 
-
+    this.map.ol.on('pointermove', function(evt) {
+      const selectRouteCnt = selectRouteHover.getFeatures().getLength()
+      if (selectRouteCnt === 0) {
+        this.routingFormService.unsetMapWaitingForRoutingClick();
+      } else {
+        this.routingFormService.setMapWaitingForRoutingClick();
+      }
+    }, this);
 
     selectStops.on('select', function(evt) {
       selectedStopFeature = evt.target.getFeatures()[0]
@@ -813,6 +821,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   focus(i) {
     this.currentStopIndex = i;
     this.focusOnStop = true;
+    this.routingFormService.setMapWaitingForRoutingClick();
     this.map.ol.once('singleclick', evt => {this.handleMapClick(evt as ol.MapBrowserEvent, i)});
   }
 
@@ -834,6 +843,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.focusOnStop = false;  // prevent to trigger map click and Select on routes at same time.
     }, 500);
+    this.routingFormService.unsetMapWaitingForRoutingClick();
   }
 
   geolocateStop(index: number) {
