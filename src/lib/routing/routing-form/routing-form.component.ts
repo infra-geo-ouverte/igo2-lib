@@ -681,7 +681,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   copyDirectionsToClipboard() {
-    const indent = '    ';
+    const indent = '\t';
     let activeRouteDirective =
     this.languageService.translate.instant('igo.routingForm.instructions') + ':\n';
     let wayPointList = '';
