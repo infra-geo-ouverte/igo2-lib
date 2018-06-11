@@ -227,7 +227,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
  handleLocationProposals(coordinates: [number, number], stopIndex: number) {
   const groupedLocations = [];
-  this.searchService.locate(coordinates, this.map.getZoom())
+  this.searchService.locate(coordinates, this.map.getZoom()).filter(f => f !== undefined)
   .map(res => res.map(f => f).subscribe(features => {
     (features as any).forEach(element => {
       if (groupedLocations.filter(f => f.source === element.source).length === 0) {
