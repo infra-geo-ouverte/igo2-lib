@@ -6,7 +6,7 @@ import { IgoMapModule } from '../../../map';
 
 import { OgcFilterToolComponent } from './ogc-filter-tool.component';
 
-describe('TimeAnalysisToolComponent', () => {
+describe('OgcFilterToolComponent', () => {
   let component: OgcFilterToolComponent;
   let fixture: ComponentFixture<OgcFilterToolComponent>;
 

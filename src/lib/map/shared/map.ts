@@ -24,11 +24,13 @@ export class IgoMap {
   public overlayMarkerStyle: ol.style.Style;
   public overlayStyle: ol.style.Style;
   private overlayDataSource: FeatureDataSource;
+  public routingStopsOverlayDataSource: FeatureDataSource;
+  public routingRoutesOverlayDataSource: FeatureDataSource;
 
   private layerWatcher: LayerWatcher;
   private geolocation: ol.Geolocation;
   private geolocation$$: Subscription;
-  private geolocationFeature: ol.Feature;
+  public geolocationFeature: ol.Feature;
 
   private options: MapOptions = {
     controls: {attribution: true},
@@ -91,16 +93,16 @@ export class IgoMap {
     });
 
     if (this.options.overlay) {
-      this.overlayMarkerStyle = new ol.style.Style({
-        image: new ol.style.Icon({
-          src: './assets/igo2/icons/place_blue_36px.svg',
-          imgSize: [36, 36], // for ie
-          anchor: [0.5, 1]
-        })
-      });
+      this.overlayMarkerStyle = this.overlayMarkerStyle = this.setPointOverlayStyleWithParams();
 
       this.overlayDataSource = new FeatureDataSource({
         title: 'Overlay'
+      });
+      this.routingStopsOverlayDataSource = new FeatureDataSource({
+        title: 'routingStopOverlay'
+      });
+      this.routingRoutesOverlayDataSource = new FeatureDataSource({
+        title: 'routingRoutesOverlay'
       });
 
       const stroke = new ol.style.Stroke({
@@ -129,6 +131,42 @@ export class IgoMap {
       this.addLayer(layer, false);
     }
   }
+
+  setPointOverlayStyleWithParams(color = 'blue', text = undefined): ol.style.Style {
+    let iconColor;
+    switch (color) {
+      case 'blue':
+        iconColor = 'blue';
+        break;
+      case 'red':
+        iconColor = 'red';
+        break;
+      case 'yellow':
+        iconColor = 'yellow';
+        break;
+      case 'green':
+        iconColor = 'green';
+        break;
+      default:
+        iconColor = 'blue';
+        break;
+    }
+
+    return new ol.style.Style({
+      image: new ol.style.Icon({
+        src: './assets/igo2/icons/place_' + iconColor + '_36px.svg',
+        imgSize: [36, 36], // for ie
+        anchor: [0.5, 1]
+      }),
+      text: new ol.style.Text({
+        font: '12px Calibri,sans-serif',
+        text: text,
+        fill: new ol.style.Fill({color: '#000'}),
+        stroke: new ol.style.Stroke({color: '#fff', width: 3})
+      })
+    })
+  }
+
 
   setTarget(id: string) {
     this.ol.setTarget(id);

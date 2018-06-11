@@ -117,7 +117,7 @@
 		},
 		"ogcFilter": "Filtrer par",
 		"filter": {
-		  "addFilter": "Ajouter un filtre vidre à la liste courante",
+		  "addFilter": "Ajouter un filtre vide à la liste courante",
 		  "removeFilter": "Supprimer le présent filtre à la liste des filtres",
 		  "toggleFilterState": "Activer/désactiver le présent filtre",
 		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit être visible (et dans les échelles permises) ou veuillez modifier le présent filtre.",
@@ -198,6 +198,51 @@
 			"printBtn": "Imprimer",
 			"resolution": "Résolution",
 			"title": "Titre"
+		},
+		"routingForm": {
+			"start": "Début",
+			"intermediate": "Intermédiaire",
+			"end": "Fin",
+			"routingBtn": "Obtenir l'itinéraire",
+			"resetRoutingBtn": "Supprimer l'itinéraire",
+			"zoomRoute": "Zoomer sur l'itinéraire",
+			"null": "",
+			"directions": "Itinéraire",
+			"raiseStop": "Prioriser l'arrêt",
+			"lowerStop": "Reporter l'arrêt plus loin dans le parcours",
+			"addStop": "Ajouter un arrêt",
+			"removeStop": "Supprimer l'arrêt",
+			"drivingOptions": "Choix d'itinéraires",
+			"summary": "Résumé de l'itinéraire",
+			"stopsList": "Liste des lieux d'arrêts",
+			"instructions": "Indications",
+			"copy": "Copier l'itinéraire",
+			"geolocate": "Utiliser sa localisation comme point d'arrêt",
+			"link": "Lien",
+			"dialog": {
+				"copyMsg": "Itinéraire copié dans le presse-papier",
+				"copyTitle": "Itinéraire"
+			}
+		},
+		"routing" : {
+			"uturn" : "demi-tour",
+			"sharp right" : "fortement à droite",
+			"right" : "droite",
+			"slight right" : "légèrement à droite",
+			"sharp left" : "fortement à gauche",
+			"left" : "gauche",
+			"slight left" : "légèrement à gauche",
+			"straight" : "tout droit"
+		},
+		"cardinalPoints" : {
+			"n" : "nord",
+			"ne":"nord-est",
+			"e":"est",
+			"se":"sud-est",
+			"s":"sud",
+			"sw":"sud-ouest",
+			"w":"ouest",
+			"nw":"nord-ouest"
 		},
 		"search": {
 			"dataSources": {

@@ -3,6 +3,7 @@ import { Injectable, Optional } from '@angular/core';
 import { RouteService, ConfigService, MessageService } from '../../core';
 import { IgoMap } from '../../map';
 import { ContextService } from '../../context';
+import { RoutingFormService } from '../../routing/routing-form/routing-form.service';
 
 @Injectable()
 export class ShareMapService {
@@ -12,6 +13,7 @@ export class ShareMapService {
   constructor(private config: ConfigService,
               private contextService: ContextService,
               private messageService: MessageService,
+              private routingFormService: RoutingFormService,
               @Optional() private route: RouteService) {
 
     this.urlApi = this.config.getConfig('context.url');
@@ -48,6 +50,19 @@ export class ShareMapService {
     const visibleKey = this.route.options.visibleOnLayersKey;
     const invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
+    const routingKey = this.route.options.routingCoordKey;
+    const stopsCoordinates = [];
+
+    if (this.routingFormService.getStopsCoordinates() &&
+    this.routingFormService.getStopsCoordinates().length !== 0) {
+      this.routingFormService.getStopsCoordinates().forEach(coord => {
+        stopsCoordinates.push(coord);
+      })
+    }
+    let routingUrl: string = '';
+    if (stopsCoordinates.length >= 2 ) {
+      routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
+    }
 
     const visibleLayers = layers.filter(lay => lay.visible);
     const invisibleLayers = layers.filter(lay => !lay.visible);
@@ -76,7 +91,8 @@ export class ShareMapService {
     if (this.contextService.context$.value) {
         context = 'context=' + this.contextService.context$.value.uri;
     }
-    return `${location.origin + location.pathname}?${context}&${zoom}&${center}&${layersUrl}`;
+    const p1 = `${location.origin + location.pathname}?${context}&${zoom}&${center}&${layersUrl}`
+    return p1  + `&${routingUrl}`;
   }
 
 }

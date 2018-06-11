@@ -15,6 +15,7 @@ export * from './map';
 export * from './metadata';
 export * from './overlay';
 export * from './query';
+export * from './routing';
 export * from './search';
 export * from './shared';
 export * from './share-map';

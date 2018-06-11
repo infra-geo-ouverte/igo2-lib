@@ -10,7 +10,8 @@ import { IgoModule,
          provideNominatimSearchSource,
          provideDataSourceSearchSource,
          RouteService,
-         provideConfigOptions } from '../../lib';
+         provideConfigOptions,
+         provideOsrmRoutingSource } from '../../lib';
 
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
@@ -35,6 +36,7 @@ import { AppComponent } from './app.component';
       default: environment.igo,
       path: './config/config.json'
     }),
+    provideOsrmRoutingSource(),
     RouteService,
     provideNominatimSearchSource(),
     provideIChercheSearchSource(),
