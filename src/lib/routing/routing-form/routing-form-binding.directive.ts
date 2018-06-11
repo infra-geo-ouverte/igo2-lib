@@ -59,9 +59,12 @@ export class RoutingFormBindingDirective implements OnInit, AfterViewInit {
           if (i !== 0 && i !== storedStopsCoordinates.length - 1) {
             this.component.stops.insert(i, this.component.createStop());
           }
+          if (storedStopsCoordinates[i] instanceof Array) {
+            this.component.addStopOverlay(storedStopsCoordinates[i], i);
             this.component.stops.at(i).patchValue({stopCoordinates: storedStopsCoordinates[i]});
             this.component.stops.at(i).patchValue({stopPoint: storedStopsCoordinates[i]});
             this.component.handleLocationProposals(storedStopsCoordinates[i], i);
+        }
       }
     }
   }
