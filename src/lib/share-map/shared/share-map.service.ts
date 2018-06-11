@@ -1,9 +1,9 @@
 import { Injectable, Optional } from '@angular/core';
 
-import * as ol from 'openlayers';
 import { RouteService, ConfigService, MessageService } from '../../core';
 import { IgoMap } from '../../map';
 import { ContextService } from '../../context';
+import { RoutingFormService } from '../../routing/routing-form/routing-form.service';
 
 @Injectable()
 export class ShareMapService {
@@ -13,6 +13,7 @@ export class ShareMapService {
   constructor(private config: ConfigService,
               private contextService: ContextService,
               private messageService: MessageService,
+              private routingFormService: RoutingFormService,
               @Optional() private route: RouteService) {
 
     this.urlApi = this.config.getConfig('context.url');
@@ -52,12 +53,11 @@ export class ShareMapService {
     const routingKey = this.route.options.routingCoordKey;
     const stopsCoordinates = [];
 
-    if (map.routingRoutesOverlayDataSource &&
-      map.routingRoutesOverlayDataSource.ol.getFeatures().length !== 0) {
-        map.routingStopsOverlayDataSource.ol.getFeatures().forEach(stopFeature => {
-        const coord = (stopFeature.getGeometry() as any).getCoordinates();
-        stopsCoordinates.push(ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326').join(','));
-      });
+    if (this.routingFormService.getStopsCoordinates() &&
+    this.routingFormService.getStopsCoordinates().length !== 0) {
+      this.routingFormService.getStopsCoordinates().forEach(coord => {
+        stopsCoordinates.push(coord);
+      })
     }
     let routingUrl: string = '';
     if (stopsCoordinates.length >= 2 ) {

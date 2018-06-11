@@ -16,6 +16,7 @@ import { Message, LanguageService, MessageService } from '../../core';
 import { Clipboard } from '../../utils';
 import { RoutingFormService } from './routing-form.service';
 import { ShareMapService } from '../../share-map';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 @Component({
   selector: 'igo-routing-form',
@@ -35,6 +36,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stream$ = new Subject<string>();
 
+  public routingStopsOverlayDataSource: FeatureDataSource;
+  public routingRoutesOverlayDataSource: FeatureDataSource;
   public RoutingOverlayMarkerStyle: ol.style.Style;
   public RoutingOverlayStyle: ol.style.Style;
 
@@ -100,14 +103,22 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       routingFixedStartEnd: false,
       stops: this.formBuilder.array([this.createStop('start'), this.createStop('end')])
     });
+
+
+    this.routingStopsOverlayDataSource = new FeatureDataSource({
+      title: 'routingStopOverlay'
+    });
+    this.routingRoutesOverlayDataSource = new FeatureDataSource({
+      title: 'routingRoutesOverlay'
+    });
   }
 
   ngAfterViewInit(): void {
     this.focusOnStop = false;
-    const stopsLayer = new VectorLayer(this.map.routingStopsOverlayDataSource, {
+    const stopsLayer = new VectorLayer(this.routingStopsOverlayDataSource, {
       zIndex: 999,
       id: 'routingStops' });
-      const routesLayer = new VectorLayer(this.map.routingRoutesOverlayDataSource, {
+      const routesLayer = new VectorLayer(this.routingRoutesOverlayDataSource, {
         zIndex: 999,
         id: 'routingRoutes',
         opacity: 0.75 });
@@ -310,7 +321,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeStop(index: number): void {
-    this.map.routingStopsOverlayDataSource.ol.clear();
+    this.routingStopsOverlayDataSource.ol.clear();
     this.stops.removeAt(index);
     let cnt = 0;
     this.stops.value.forEach(stop => {
@@ -329,22 +340,22 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.stops.insert(0, this.createStop('start'));
     this.stops.insert(1, this.createStop('end'));
-    this.map.routingStopsOverlayDataSource.ol.getFeatures().forEach(element => {
+    this.routingStopsOverlayDataSource.ol.getFeatures().forEach(element => {
       this.deleteRoutingOverlaybyID(element.getId());
     });
-    this.map.routingRoutesOverlayDataSource.ol.clear();
-    this.map.routingStopsOverlayDataSource.ol.clear();
+    this.routingRoutesOverlayDataSource.ol.clear();
+    this.routingStopsOverlayDataSource.ol.clear();
     this.selectRoute.getFeatures().clear();
   }
 
   onFormChange() {
     if (this.stopsForm.valid) {
-      this.map.routingRoutesOverlayDataSource.ol.clear();
+      this.routingRoutesOverlayDataSource.ol.clear();
       const coords = this.getStopsCoordinates();
       if (coords.length >= 2) {
         this.getRoutes(coords);
       } else {
-        this.map.routingRoutesOverlayDataSource.ol.clear();
+        this.routingRoutesOverlayDataSource.ol.clear();
       }
     }
   }
@@ -643,11 +654,11 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (zoomToExtent) {
       this.map.zoomToExtent(feature.getGeometry().getExtent());
     }
-    this.map.routingRoutesOverlayDataSource.ol.addFeature(feature);
+    this.routingRoutesOverlayDataSource.ol.addFeature(feature);
   }
 
   zoomRoute() {
-    this.map.zoomToExtent(this.map.routingRoutesOverlayDataSource.ol.getExtent());
+    this.map.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
   }
 
 
@@ -655,15 +666,15 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const geom = this.activeRoute.geometry.coordinates;
     const geometry4326 = new ol.geom.LineString(geom);
     const geometry3857 = geometry4326.transform('EPSG:4326', 'EPSG:3857');
-    this.map.routingRoutesOverlayDataSource.ol.clear();
+    this.routingRoutesOverlayDataSource.ol.clear();
     const routingFeature = new ol.Feature({geometry: geometry3857});
     routingFeature.setStyle([
         new ol.style.Style({stroke: new ol.style.Stroke({color: '#6a7982', width: 10})}),
         new ol.style.Style({stroke: new ol.style.Stroke({color: '#4fa9dd', width: 6})})
     ]);
-    this.map.routingRoutesOverlayDataSource.ol.addFeature(routingFeature);
+    this.routingRoutesOverlayDataSource.ol.addFeature(routingFeature);
     if (moveToExtent) {
-       this.map.zoomToExtent(this.map.routingRoutesOverlayDataSource.ol.getExtent());
+       this.map.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
     }
   }
 
@@ -777,7 +788,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.deleteRoutingOverlaybyID(this.getStopOverlayID(stopIndex));
     this.stops.removeAt(stopIndex);
     this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex)));
-    this.map.routingRoutesOverlayDataSource.ol.clear();
+    this.routingRoutesOverlayDataSource.ol.clear();
   }
 
   chooseProposal(proposal, i) {
@@ -806,7 +817,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       if (geomCoord !== undefined) {
         this.stops.at(i).patchValue({stopCoordinates: geomCoord});
         this.addStopOverlay(geomCoord, i);
-        const proposalExtent = this.map.routingStopsOverlayDataSource.ol
+        const proposalExtent = this.routingStopsOverlayDataSource.ol
         .getFeatureById(this.getStopOverlayID(i))
         .getGeometry()
         .getExtent();
@@ -882,7 +893,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (geometry.getType() === 'Point') {
       feature.setStyle([this.map.setPointOverlayStyleWithParams(stopColor, stopText)]);
     }
-    this.map.routingStopsOverlayDataSource.ol.addFeature(feature);
+    this.routingStopsOverlayDataSource.ol.addFeature(feature);
   }
 
   public getStopOverlayID(index: number): string {
@@ -898,13 +909,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private deleteRoutingOverlaybyID(id) {
-    if (this.map.routingStopsOverlayDataSource.ol.getFeatureById(id)) {
-      this.map.routingStopsOverlayDataSource.ol
-      .removeFeature(this.map.routingStopsOverlayDataSource.ol.getFeatureById(id));
+    if (this.routingStopsOverlayDataSource.ol.getFeatureById(id)) {
+      this.routingStopsOverlayDataSource.ol
+      .removeFeature(this.routingStopsOverlayDataSource.ol.getFeatureById(id));
     }
-    if (this.map.routingRoutesOverlayDataSource.ol.getFeatureById(id)) {
-      this.map.routingRoutesOverlayDataSource.ol
-      .removeFeature(this.map.routingRoutesOverlayDataSource.ol.getFeatureById(id));
+    if (this.routingRoutesOverlayDataSource.ol.getFeatureById(id)) {
+      this.routingRoutesOverlayDataSource.ol
+      .removeFeature(this.routingRoutesOverlayDataSource.ol.getFeatureById(id));
     }
   }
 

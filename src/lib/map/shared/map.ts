@@ -24,9 +24,6 @@ export class IgoMap {
   public overlayMarkerStyle: ol.style.Style;
   public overlayStyle: ol.style.Style;
   private overlayDataSource: FeatureDataSource;
-  public routingStopsOverlayDataSource: FeatureDataSource;
-  public routingRoutesOverlayDataSource: FeatureDataSource;
-
 
   private layerWatcher: LayerWatcher;
   private geolocation: ol.Geolocation;
@@ -98,13 +95,6 @@ export class IgoMap {
 
       this.overlayDataSource = new FeatureDataSource({
         title: 'Overlay'
-      });
-
-      this.routingStopsOverlayDataSource = new FeatureDataSource({
-        title: 'routingStopOverlay'
-      });
-      this.routingRoutesOverlayDataSource = new FeatureDataSource({
-        title: 'routingRoutesOverlay'
       });
 
       const stroke = new ol.style.Stroke({
