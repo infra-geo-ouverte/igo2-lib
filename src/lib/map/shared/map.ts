@@ -331,6 +331,12 @@ export class IgoMap {
     this.overlayDataSource.ol.addFeature(feature);
   }
 
+  removeOverlayByID(id) {
+    if (this.overlayDataSource.ol.getFeatureById(id)) {
+      this.overlayDataSource.ol.removeFeature(this.overlayDataSource.ol.getFeatureById(id))
+    }
+  }
+
   clearOverlay() {
     if (this.overlayDataSource && this.overlayDataSource.ol) {
       this.overlayDataSource.ol.clear();
