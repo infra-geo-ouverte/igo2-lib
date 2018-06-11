@@ -10,6 +10,8 @@ import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 
 import { FeatureService, SourceFeatureType, FeatureType, Feature } from '../../feature';
 import { SearchService } from '../shared';
+import { MapService, IgoMap } from '../../map';
+import * as ol from 'openlayers';
 
 @Component({
   selector: 'igo-search-bar',
@@ -74,6 +76,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this._searchIcon = value;
   }
   private _searchIcon: boolean = false;
+  private locateID: string = 'locateXY'
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
   private stream$ = new Subject<string>();
@@ -84,7 +87,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @ViewChild('input') input: ElementRef;
 
+  get map(): IgoMap {
+    return this.mapService.getMap();
+};
+
   constructor(
+    private mapService: MapService,
     private searchService: SearchService,
     private featureService: FeatureService,
     private changeDetectorRef: ChangeDetectorRef
@@ -138,13 +146,30 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     return this.invalidKeys.find(value => value === key) === undefined;
   }
 
+  private addOverlay(coordinates: [number, number]) {
+
+    const geometry = new ol.geom.Point(
+      ol.proj.transform(coordinates, 'EPSG:4326', this.map.projection));
+    const extent = geometry.getExtent();
+    const feature = new ol.Feature({geometry: geometry});
+    feature.setId(this.locateID);
+    // TODO: SETTING A NEW COLOR AND TEXT BASED ON PR 166
+    // feature.setStyle([this.map.setPointOverlayStyleWithParams('yellow', coordinates)]);
+    // https://github.com/infra-geo-ouverte/igo2-lib/
+    // blob/6d0e9a2a5d3fd2290339c123b674aca7ca9e7102/src/lib/map/shared/map.ts#L135
+    this.map.removeOverlayByID(this.locateID)
+    this.map.moveToExtent(extent);
+    this.map.addOverlay(feature);
+  }
+
   private handleTermChanged(term: string) {
     if (term !== undefined || term !== '') {
+      this.map.removeOverlayByID(this.locateID)
       this.featureService.clear()
       this.search.emit(term);
       // tslint:disable-next-line:max-line-length
       if (/^([-+]?)([\d]{1,15})(((\.)?(\d+)?(,)))(\s*)(([-+]?)([\d]{1,15})((\.)?(\d+)?(;[\d]{4,5})?))$/g.test(term)) {
-        let xy
+        let xy;
         if (/(;[\d]{4,5})$/g.test(term)) {
           const xyTerm = term.split(';');
           // TODO Reproject coordinates
@@ -155,7 +180,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           }
           xy = JSON.parse('[' + term + ']');
         }
-        const r = this.searchService.locate(xy);
+        this.addOverlay(xy);
+        const r = this.searchService.locate(xy, this.map.getZoom());
         if (r) {
           r.filter(res => res !== undefined)
             .map(res => res.subscribe(
