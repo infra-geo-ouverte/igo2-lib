@@ -1,0 +1,7 @@
+<mat-list
+  igoClickout
+  [ngClass]="{'selectable': selection}"
+  (clickout)="disableNavigation()"
+  (click)="enableNavigation()">
+  <ng-content></ng-content>
+</mat-list>

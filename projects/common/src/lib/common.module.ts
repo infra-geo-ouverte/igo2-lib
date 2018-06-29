@@ -2,8 +2,12 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import {
   MatProgressSpinnerModule,
   MatIconModule,
-  MatListModule
+  MatListModule,
+  MatTableModule,
+  MatFormFieldModule,
+  MatButtonModule
 } from '@angular/material';
+import { CdkTableModule } from '@angular/cdk/table';
 
 import { IgoCoreModule } from '@igo/core';
 
@@ -14,18 +18,26 @@ import { ConfirmDialogComponent, ConfirmDialogService } from './confirm-dialog';
 import { DragAndDropDirective } from './drag-drop';
 import { KeyvaluePipe } from './keyvalue';
 import { SecureImagePipe } from './image';
+import { ListComponent, ListItemDirective } from './list';
+import { PanelComponent } from './panel';
+import { SidenavShimDirective } from './sidenav';
 import { SpinnerComponent, SpinnerBindingDirective } from './spinner';
 import {
   StopPropagationDirective,
   StopDropPropagationDirective
 } from './stop-propagation';
+import { TableComponent } from './table';
 
 @NgModule({
   imports: [
     IgoCoreModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatListModule
+    MatListModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    CdkTableModule
   ],
   declarations: [
     ClickoutDirective,
@@ -35,11 +47,16 @@ import {
     ConfirmDialogComponent,
     DragAndDropDirective,
     KeyvaluePipe,
+    ListComponent,
+    ListItemDirective,
+    PanelComponent,
+    SidenavShimDirective,
     SecureImagePipe,
     SpinnerComponent,
     SpinnerBindingDirective,
     StopPropagationDirective,
-    StopDropPropagationDirective
+    StopDropPropagationDirective,
+    TableComponent
   ],
   exports: [
     ClickoutDirective,
@@ -49,11 +66,16 @@ import {
     ConfirmDialogComponent,
     DragAndDropDirective,
     KeyvaluePipe,
+    ListComponent,
+    ListItemDirective,
+    PanelComponent,
+    SidenavShimDirective,
     SecureImagePipe,
     SpinnerComponent,
     SpinnerBindingDirective,
     StopPropagationDirective,
-    StopDropPropagationDirective
+    StopDropPropagationDirective,
+    TableComponent
   ],
   entryComponents: [ConfirmDialogComponent]
 })

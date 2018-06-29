@@ -5,6 +5,7 @@
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
     "@angular/material": "^6.0.0",
-    "@igo/core": "^0.20.1"
+    "@igo/core": "^0.20.1",
+    "@igo/utils": "^0.20.1"
   }
 }
