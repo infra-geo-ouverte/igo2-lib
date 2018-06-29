@@ -1,6 +1,6 @@
 {
-  "name": "@igo2/demo",
-  "version": "0.20.0",
+  "name": "@igo/demo",
+  "version": "0.20.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

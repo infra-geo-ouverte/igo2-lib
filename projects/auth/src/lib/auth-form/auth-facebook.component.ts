@@ -25,8 +25,7 @@ export class AuthFacebookComponent {
     private config: ConfigService,
     private appRef: ApplicationRef
   ) {
-    this.config.getConfig('auth.google') || {};
-    this.options = {} as AuthFacebookOptions;
+    this.options = this.config.getConfig('auth.google') || {};
 
     if (this.options.apiKey) {
       this.loadSDKFacebook();

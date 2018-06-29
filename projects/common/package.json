@@ -1,0 +1,10 @@
+{
+  "name": "@igo/common",
+  "version": "0.20.1",
+  "peerDependencies": {
+    "@angular/common": "^6.0.0",
+    "@angular/core": "^6.0.0",
+    "@angular/material": "^6.0.0",
+    "@igo/core": "^0.20.1"
+  }
+}

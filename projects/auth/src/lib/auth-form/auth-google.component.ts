@@ -25,7 +25,6 @@ export class AuthGoogleComponent {
     private config: ConfigService,
     private appRef: ApplicationRef
   ) {
-    this.options = {} as AuthGoogleOptions;
     this.options = this.config.getConfig('auth.google') || {};
 
     if (this.options.apiKey && this.options.clientId) {
