@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import jwtDecode from 'jwt-decode';
 
-import { ConfigService } from '@igo/core';
+import { ConfigService } from '@igo2/core';
 import { AuthOptions } from './auth.interface';
 
 @Injectable({

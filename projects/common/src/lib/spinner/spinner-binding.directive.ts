@@ -1,7 +1,7 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { ActivityService } from '@igo/core';
+import { ActivityService } from '@igo2/core';
 import { SpinnerComponent } from './spinner.component';
 
 @Directive({

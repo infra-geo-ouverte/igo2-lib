@@ -10,7 +10,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
-import { MessageService } from '../message/shared';
+import { MessageService } from '../message/shared/message.service';
 import { LanguageService } from '../language/shared/language.service';
 
 @Injectable({
@@ -32,6 +32,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       .handle(req)
       .pipe(
         catchError(error => this.handleError(error, req)),
+        finalize(() => this.handleCaughtError()),
         finalize(() => this.handleUncaughtError())
       );
   }
@@ -57,6 +58,16 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
 
     return throwError(this.httpError);
+  }
+
+  private handleCaughtError() {
+    if (this.httpError && this.httpError.error.toDisplay) {
+      this.httpError.error.caught = true;
+      this.messageService.error(
+        this.httpError.error.message,
+        this.httpError.error.title
+      );
+    }
   }
 
   private handleUncaughtError() {

@@ -6,8 +6,9 @@ import {
   EventEmitter
 } from '@angular/core';
 
-import { ConfigService } from '@igo/core';
-import { AuthService, AuthFacebookOptions } from '../shared';
+import { ConfigService } from '@igo2/core';
+import { AuthFacebookOptions } from '../shared/auth.interface';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'igo-auth-facebook',

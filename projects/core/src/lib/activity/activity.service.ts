@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { uuid } from '@igo/utils';
+import { uuid } from '@igo2/utils';
 
 @Injectable({
   providedIn: 'root'

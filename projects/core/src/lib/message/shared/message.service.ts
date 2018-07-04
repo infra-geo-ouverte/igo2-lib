@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { Notification, NotificationsService } from 'angular2-notifications';
 
-import { ConfigService } from '../../config';
+import { ConfigService } from '../../config/config.service';
 
 import { Message, MessageOptions } from './message.interface';
 import { MessageType } from './message.enum';

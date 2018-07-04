@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { ObjectUtils } from '@igo/utils';
+import { ObjectUtils } from '@igo2/utils';
 
 import { ConfigOptions } from '.';
 

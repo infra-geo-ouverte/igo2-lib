@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
-import { IgoAuthModule } from '@igo/auth';
+import { IgoAuthModule } from '@igo2/auth';
 
 describe('AppComponent', () => {
   beforeEach(

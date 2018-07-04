@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo/core';
+import { LanguageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-root',

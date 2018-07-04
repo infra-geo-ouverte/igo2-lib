@@ -6,8 +6,9 @@ import {
   EventEmitter
 } from '@angular/core';
 
-import { ConfigService } from '@igo/core';
-import { AuthService, AuthGoogleOptions } from '../shared';
+import { ConfigService } from '@igo2/core';
+import { AuthGoogleOptions } from '../shared/auth.interface';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'igo-auth-google',

@@ -8,12 +8,16 @@ import {
 } from '@ngx-translate/core';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 
-import { ActivityInterceptor } from './activity';
+import { ActivityInterceptor } from './activity/activity.interceptor';
 import { provideConfigOptions, provideConfigLoader } from './config';
 import { provideDefaultLanguageLoader } from './language/shared';
-import { IgoMissingTranslationHandler } from './language/shared/missing-translation.guard';
-import { MessageCenterComponent } from './message/message-center/message-center.component';
-import { ErrorInterceptor } from './request';
+import {
+  IgoMissingTranslationHandler
+} from './language/shared/missing-translation.guard';
+import {
+  MessageCenterComponent
+} from './message/message-center/message-center.component';
+import { ErrorInterceptor } from './request/error.interceptor';
 
 @NgModule({
   imports: [

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, of } from 'rxjs';
-import { combineLatest } from 'rxjs/operators';
+import { of, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { TranslateLoader } from '@ngx-translate/core';
 
@@ -31,8 +31,13 @@ export class LanguageLoader implements TranslateLoader {
 
     const appLocale$ = this.http.get(`${this.prefix}${lang}${this.suffix}`);
 
-    return igoLocale$.pipe(
-      combineLatest(appLocale$, (igoTranslation, appTranslation) => {
+    const locale$ = combineLatest(
+      igoLocale$,
+      appLocale$
+    );
+
+    return locale$.pipe(
+      map((igoTranslation, appTranslation) => {
         return Object.assign(igoTranslation, appTranslation);
       })
     );

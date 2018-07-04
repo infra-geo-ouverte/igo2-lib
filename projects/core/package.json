@@ -1,12 +1,14 @@
 {
-  "name": "@igo/core",
+  "name": "@igo2/core",
   "version": "0.20.1",
+  "dependencies": {
+    "@ngx-translate/core": "^10.0.0",
+    "angular2-notifications": "^1.0.2"
+  },
   "peerDependencies": {
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
-    "@igo/utils": "^0.20.1",
-    "@ngx-translate/core": "^10.0.0",
-    "angular2-notifications": "^1.0.2",
+    "@igo2/utils": "^0.20.1",
     "rxjs": "^6.0.0"
   }
 }

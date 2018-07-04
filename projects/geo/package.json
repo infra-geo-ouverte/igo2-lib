@@ -1,5 +1,5 @@
 {
-  "name": "@igo/geo",
+  "name": "@igo2/geo",
   "version": "0.20.1",
   "peerDependencies": {
     "@angular/common": "^6.0.0",

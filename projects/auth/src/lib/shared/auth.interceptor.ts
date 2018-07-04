@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { ConfigService } from '@igo/core';
+import { ConfigService } from '@igo2/core';
 import { TokenService } from './token.service';
 
 @Injectable({

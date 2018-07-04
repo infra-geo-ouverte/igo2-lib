@@ -9,7 +9,7 @@ import {
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 
-import { IgoCoreModule } from '@igo/core';
+import { IgoCoreModule } from '@igo2/core';
 
 import { ClickoutDirective } from './clickout';
 import { ClonePipe } from './clone';

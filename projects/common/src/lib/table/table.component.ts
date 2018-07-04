@@ -11,7 +11,7 @@ import { MatSort } from '@angular/material';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
-import { ObjectUtils } from '@igo/utils';
+import { ObjectUtils } from '@igo2/utils';
 
 import { TableModel } from './table-model.interface';
 import { TableDatabase } from './table-database';
