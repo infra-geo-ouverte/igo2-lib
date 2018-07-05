@@ -2,7 +2,16 @@
   "name": "@igo2/geo",
   "version": "0.20.1",
   "peerDependencies": {
+    "@angular/animations": "^6.0.0",
     "@angular/common": "^6.0.0",
-    "@angular/core": "^6.0.0"
+    "@angular/core": "^6.0.0",
+    "@angular/forms": "^6.0.0",
+    "@angular/material": "^6.0.0",
+    "@igo2/auth": "^0.20.1",
+    "@igo2/common": "^0.20.1",
+    "@igo2/core": "^0.20.1",
+    "@igo2/utils": "^0.20.1",
+    "openlayers": "^4.6.5",
+    "rxjs": "^6.0.0"
   }
 }

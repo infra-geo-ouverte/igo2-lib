@@ -1,9 +1,11 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
+import { IgoMapModule } from './map';
+
 @NgModule({
-  imports: [],
+  imports: [IgoMapModule],
   declarations: [],
-  exports: []
+  exports: [IgoMapModule]
 })
 export class IgoGeoModule {
   static forRoot(): ModuleWithProviders {
