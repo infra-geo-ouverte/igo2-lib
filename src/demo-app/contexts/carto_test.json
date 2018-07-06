@@ -1,0 +1,112 @@
+{
+  "uri": "carto_test",
+  "title": "Carto",
+  "map": {
+    "view": {
+      "projection": "EPSG:3857",
+      "center": [0, 0],
+      "zoom": 2,
+      "geolocate": true
+    }
+  },
+  "layers": [
+    {
+      "title": "OSM",
+      "type": "osm"
+    },
+    {
+      "title": "Toothed Whales",
+      "type": "carto",
+      "queryPrecision": "3000",
+      "source": {
+        "account": "gignacnicuqar",
+        "crossOrigin": "Anonymous",
+        "config": {
+          "version": "1.3.0",
+          "layers": [
+            {
+              "type": "cartodb",
+              "options": {
+                "cartocss_version": "2.3.0",
+                "cartocss":
+                  "#layer {marker-width: 7; marker-fill: #EE4D5A; marker-fill-opacity: 0.9; marker-line-color: #FFFFFF; marker-line-width: 1; marker-line-opacity: 1; marker-placement: point;marker-type: ellipse; marker-allow-overlap: true; }",
+                "sql": "select * from obis_toothed_whales"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "US State 1850",
+      "type": "carto",
+      "source": {
+        "account": "mohammedb",
+        "crossOrigin": "Anonymous",
+        "config": {
+          "version": "1.7.0",
+          "layers": [
+            {
+              "type": "cartodb",
+              "options": {
+                "cartocss":
+                  "#layer { polygon-fill: #826DBA; polygon-opacity: 0.9; ::outline { line-color: #FFFFFF; line-width: 1; line-opacity: 0.5; }}",
+                "cartocss_version": "2.3.0",
+                "sql": "select * from us_state_1850"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "title": "Urban Areas",
+      "type": "carto",
+      "source": {
+        "account": "mohammedb",
+        "crossOrigin": "Anonymous",
+        "config": {
+          "version": "1.7.0",
+          "layers": [
+            {
+              "type": "cartodb",
+              "options": {
+                "cartocss_version": "2.1.1",
+                "cartocss": "#layer { polygon-fill: #F90; }",
+                "sql": "select * from ne_50m_urban_areas"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "toolbar": [
+    "searchResults",
+    "mapDetails",
+    "timeAnalysis",
+    "contextManager",
+    "print"
+  ],
+  "tools": [
+    {
+      "name": "searchResults"
+    },
+    {
+      "name": "mapDetails",
+      "options": {
+        "toggleLegendOnVisibilityChange": true,
+        "ogcFiltersInLayers": true
+      }
+    },
+    {
+      "name": "timeAnalysis"
+    },
+    {
+      "name": "contextManager"
+    },
+    {
+      "name": "print"
+    }
+  ]
+}
