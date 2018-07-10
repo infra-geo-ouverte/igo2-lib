@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from "@angular/core";
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoSharedModule } from "../shared";
 import {
@@ -6,7 +6,7 @@ import {
   DataSourceService,
   WFSDataSourceService,
   ArcGISRestDataSourceService
-} from "./shared";
+} from './shared';
 
 @NgModule({
   imports: [IgoSharedModule],
