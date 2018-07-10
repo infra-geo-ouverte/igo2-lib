@@ -16,3 +16,6 @@ export * from './wmts-datasource';
 export * from './wmts-datasource.interface';
 export * from './carto-datasource';
 export * from './carto-datasource.interface';
+export * from './arcgisrest-datasource.service';
+export * from './tilearcgisrest-datasource';
+export * from './tilearcgisrest-datasource.interface';

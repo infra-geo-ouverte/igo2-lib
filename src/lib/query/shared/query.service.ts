@@ -5,43 +5,59 @@ import { Observable } from 'rxjs/Observable';
 import * as ol from 'openlayers';
 
 import { uuid } from '../../utils/uuid';
-import { Feature, FeatureType, FeatureFormat, SourceFeatureType,
-         FeatureService } from '../../feature';
+import {
+  Feature,
+  FeatureType,
+  FeatureFormat,
+  SourceFeatureType,
+  FeatureService
+} from '../../feature';
 import { DataSource, QueryableDataSource } from '../../datasource';
 import { Layer } from '../../layer';
 
 import { QueryFormat } from './query.enum';
 import { QueryOptions } from './query.interface';
 
-
 @Injectable()
 export class QueryService {
-
-  constructor(private http: HttpClient,
-              private featureService: FeatureService) { }
+  constructor(
+    private http: HttpClient,
+    private featureService: FeatureService
+  ) {}
 
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
-
     return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) => this.queryDataSource(layer.dataSource, options, layer.zIndex));
+      .map((layer: Layer) =>
+        this.queryDataSource(layer.dataSource, options, layer.zIndex)
+      );
   }
 
-  queryDataSource(dataSource: DataSource, options: QueryOptions,
-    zIndex: number): Observable<Feature[]> {
-
-    const url = (dataSource as any as QueryableDataSource).getQueryUrl(options);
-    const request = this.http.get(url, {responseType: 'text'});
+  queryDataSource(
+    dataSource: DataSource,
+    options: QueryOptions,
+    zIndex: number
+  ): Observable<Feature[]> {
+    const url = ((dataSource as any) as QueryableDataSource).getQueryUrl(
+      options
+    );
+    const request = this.http.get(url, { responseType: 'text' });
 
     this.featureService.clear();
 
-    return request.map(res => this.extractData(res, dataSource, options, url, zIndex));
+    return request.map(res =>
+      this.extractData(res, dataSource, options, url, zIndex)
+    );
   }
 
-  private extractData(res, dataSource: DataSource, options: QueryOptions,
-                      url: string, zIndex: number): Feature[] {
-
-    const queryDataSource = (dataSource as any as QueryableDataSource);
+  private extractData(
+    res,
+    dataSource: DataSource,
+    options: QueryOptions,
+    url: string,
+    zIndex: number
+  ): Feature[] {
+    const queryDataSource = (dataSource as any) as QueryableDataSource;
 
     let features = [];
     switch (queryDataSource.queryFormat) {
@@ -55,11 +71,18 @@ export class QueryService {
       case QueryFormat.GEOJSON:
         features = this.extractGeoJSONData(res);
         break;
+      case QueryFormat.ESRIJSON:
+        features = this.extractEsriJSONData(res, zIndex);
+        break;
       case QueryFormat.TEXT:
         features = this.extractTextData(res);
         break;
       case QueryFormat.HTML:
-        features = this.extractHtmlData(res, queryDataSource.queryHtmlTarget, url);
+        features = this.extractHtmlData(
+          res,
+          queryDataSource.queryHtmlTarget,
+          url
+        );
         break;
       default:
         break;
@@ -106,7 +129,15 @@ export class QueryService {
     } catch (e) {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
+
     return features;
+  }
+
+  private extractEsriJSONData(res, zIndex) {
+    const parser = new ol.format.EsriJSON();
+    const features = parser.readFeatures(res);
+
+    return features.map(feature => this.featureToResult(feature, zIndex));
   }
 
   private extractTextData(res) {
@@ -133,28 +164,53 @@ export class QueryService {
     }
 
     const bbox = bboxRaw.split(',');
-    let threshold = (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * (0.1);
+    let threshold =
+      (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.1;
 
     // for context in degree (EPSG:4326,4269...)
     if (Math.abs(parseFloat(bbox[0])) < 180) {
-       threshold = 0.045;
+      threshold = 0.045;
     }
 
-    const clickx = parseFloat(bbox[0]) + Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2]))
-                  * xPosition / width - threshold;
-    const clicky = parseFloat(bbox[1]) + Math.abs(parseFloat(bbox[1]) - parseFloat(bbox[3]))
-                  * yPosition / height - threshold;
+    const clickx =
+      parseFloat(bbox[0]) +
+      (Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2])) * xPosition) /
+        width -
+      threshold;
+    const clicky =
+      parseFloat(bbox[1]) +
+      (Math.abs(parseFloat(bbox[1]) - parseFloat(bbox[3])) * yPosition) /
+        height -
+      threshold;
     const clickx1 = clickx + threshold * 2;
     const clicky1 = clicky + threshold * 2;
 
-    const wktPoly = 'POLYGON((' + clickx + ' ' + clicky + ', ' + clickx + ' ' + clicky1 +
-                ', ' + clickx1 + ' ' + clicky1 + ', ' + clickx1 + ' ' + clicky +
-                ', ' + clickx + ' ' + clicky + '))';
-
+    const wktPoly =
+      'POLYGON((' +
+      clickx +
+      ' ' +
+      clicky +
+      ', ' +
+      clickx +
+      ' ' +
+      clicky1 +
+      ', ' +
+      clickx1 +
+      ' ' +
+      clicky1 +
+      ', ' +
+      clickx1 +
+      ' ' +
+      clicky +
+      ', ' +
+      clickx +
+      ' ' +
+      clicky +
+      '))';
 
     const format = new ol.format.WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
-    const f = (tenPercentWidthGeom.getGeometry() as any);
+    const f = tenPercentWidthGeom.getGeometry() as any;
 
     let targetIgo2 = '_blank';
     let iconHtml = 'link';
@@ -173,25 +229,28 @@ export class QueryService {
         const bodyTagStart = res.toLowerCase().indexOf('<body>');
         const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
         // replace \r \n  and ' ' with '' to validate if the body is really empty.
-        const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '' );
-        if ( body === '<body></body>' || res === '' ) {
+        const body = res
+          .slice(bodyTagStart, bodyTagEnd)
+          .replace(/(\r|\n|\s)/g, '');
+        if (body === '<body></body>' || res === '') {
           return [];
         }
         break;
     }
 
-
-    return [{
-      id: 'html1',
-      source: 'title',
-      type: FeatureType.Feature,
-      format: FeatureFormat.GeoJSON,
-      title: 'title',
-      icon: iconHtml,
-      projection: 'EPSG:3857',
-      properties: {target: targetIgo2, body: res, url: url},
-      geometry: {type: f.getType(), coordinates: f.getCoordinates()}
-    }];
+    return [
+      {
+        id: 'html1',
+        source: 'title',
+        type: FeatureType.Feature,
+        format: FeatureFormat.GeoJSON,
+        title: 'title',
+        icon: iconHtml,
+        projection: 'EPSG:3857',
+        properties: { target: targetIgo2, body: res, url: url },
+        geometry: { type: f.getType(), coordinates: f.getCoordinates() }
+      }
+    ];
   }
 
   private getQueryParams(url) {
@@ -203,14 +262,14 @@ export class QueryService {
 
     const result = {};
     pairs.forEach(function(pair) {
-        pair = pair.split('=');
-        result[pair[0]] = decodeURIComponent(pair[1] || '');
+      pair = pair.split('=');
+      result[pair[0]] = decodeURIComponent(pair[1] || '');
     });
     return result;
   }
 
   private featureToResult(feature: ol.Feature, zIndex: number): Feature {
-    const featureGeometry = (feature.getGeometry() as any);
+    const featureGeometry = feature.getGeometry() as any;
     const properties = Object.assign({}, feature.getProperties());
     delete properties['geometry'];
     delete properties['boundedBy'];
