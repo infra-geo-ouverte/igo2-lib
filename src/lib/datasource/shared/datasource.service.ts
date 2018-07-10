@@ -20,7 +20,10 @@ import {
   WMSDataSource,
   WMSDataSourceContext,
   CartoDataSource,
-  CartoDataSourceContext
+  CartoDataSourceContext,
+  ArcGISRestDataSourceService,
+  TileArcGISRestDataSource,
+  TileArcGISRestDataSourceContext
 } from './datasources';
 
 export type AnyDataSourceContext =
@@ -30,7 +33,8 @@ export type AnyDataSourceContext =
   | XYZDataSourceContext
   | WMTSDataSourceContext
   | WMSDataSourceContext
-  | CartoDataSourceContext;
+  | CartoDataSourceContext
+  | TileArcGISRestDataSourceContext;
 
 @Injectable()
 export class DataSourceService {
@@ -38,7 +42,8 @@ export class DataSourceService {
 
   constructor(
     private capabilitiesService: CapabilitiesService,
-    private wfsDataSourceService: WFSDataSourceService
+    private wfsDataSourceService: WFSDataSourceService,
+    private ArcGISRestDataSourceService: ArcGISRestDataSourceService
   ) {}
 
   createAsyncDataSource(context: AnyDataSourceContext): Observable<DataSource> {
@@ -69,6 +74,11 @@ export class DataSourceService {
       case 'carto':
         dataSource = this.createCartoDataSource(
           context as CartoDataSourceContext
+        );
+        break;
+      case 'tilearcgisrest':
+        dataSource = this.createTileArcGISRestDataSource(
+          context as TileArcGISRestDataSourceContext
         );
         break;
       default:
@@ -139,5 +149,15 @@ export class DataSourceService {
     context: CartoDataSourceContext
   ): Observable<CartoDataSource> {
     return new Observable(d => d.next(new CartoDataSource(context)));
+  }
+
+  private createTileArcGISRestDataSource(
+    context: TileArcGISRestDataSourceContext
+  ): Observable<TileArcGISRestDataSource> {
+    return new Observable(d =>
+      d.next(
+        new TileArcGISRestDataSource(context, this.ArcGISRestDataSourceService)
+      )
+    );
   }
 }

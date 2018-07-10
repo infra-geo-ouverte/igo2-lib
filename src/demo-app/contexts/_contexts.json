@@ -18,5 +18,9 @@
   {
     "uri": "carto_test",
     "title": "Carto"
+  },
+  {
+    "uri": "tilearcgisrest",
+    "title": "ArcGIS Rest Tuiles"
   }
 ]

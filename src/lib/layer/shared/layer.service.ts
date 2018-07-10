@@ -9,7 +9,8 @@ import {
   WFSDataSource,
   WMTSDataSource,
   WMSDataSource,
-  CartoDataSource
+  CartoDataSource,
+  TileArcGISRestDataSource
 } from '../../datasource';
 
 import {
@@ -42,6 +43,7 @@ export class LayerService {
       case WMTSDataSource:
       case XYZDataSource:
       case CartoDataSource:
+      case TileArcGISRestDataSource:
         layer = this.createTileLayer(dataSource, context as TileLayerContext);
         break;
       case FeatureDataSource:
