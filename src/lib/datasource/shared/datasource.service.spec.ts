@@ -1,15 +1,15 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { TestBed, inject } from "@angular/core/testing";
+import { HttpClientModule } from "@angular/common/http";
 
-import { IgoCoreModule } from '../../core';
-import { IgoAuthModule } from '../../auth';
+import { IgoCoreModule } from "../../core";
+import { IgoAuthModule } from "../../auth";
 
-import { CapabilitiesService } from './capabilities.service';
-import { DataSourceService } from './datasource.service';
-import { WFSDataSourceService } from './datasources/wfs-datasource.service';
+import { CapabilitiesService } from "./capabilities.service";
+import { DataSourceService } from "./datasource.service";
+import { WFSDataSourceService } from "./datasources/wfs-datasource.service";
+import { ArcGISRestDataSourceService } from "./datasources/arcgisrest-datasource.service";
 
-
-describe('DataSourceService', () => {
+describe("DataSourceService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -20,13 +20,13 @@ describe('DataSourceService', () => {
       providers: [
         CapabilitiesService,
         DataSourceService,
-        WFSDataSourceService
+        WFSDataSourceService,
+        ArcGISRestDataSourceService
       ]
     });
   });
 
-  it('should ...', inject([DataSourceService], (service: DataSourceService) => {
+  it("should ...", inject([DataSourceService], (service: DataSourceService) => {
     expect(service).toBeTruthy();
   }));
-
 });
