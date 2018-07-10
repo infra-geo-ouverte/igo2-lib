@@ -4,28 +4,42 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { CapabilitiesService } from './capabilities.service';
 
-import { DataSource,
-         OSMDataSource, OSMDataSourceContext,
-         FeatureDataSource, FeatureDataSourceContext,
-         XYZDataSource, XYZDataSourceContext,
-         WFSDataSource, WFSDataSourceContext, WFSDataSourceService,
-         WMTSDataSource, WMTSDataSourceContext,
-         WMSDataSource, WMSDataSourceContext } from './datasources';
+import {
+  DataSource,
+  OSMDataSource,
+  OSMDataSourceContext,
+  FeatureDataSource,
+  FeatureDataSourceContext,
+  XYZDataSource,
+  XYZDataSourceContext,
+  WFSDataSource,
+  WFSDataSourceContext,
+  WFSDataSourceService,
+  WMTSDataSource,
+  WMTSDataSourceContext,
+  WMSDataSource,
+  WMSDataSourceContext,
+  CartoDataSource,
+  CartoDataSourceContext
+} from './datasources';
 
 export type AnyDataSourceContext =
-  OSMDataSourceContext | FeatureDataSourceContext | WFSDataSourceContext |
-  XYZDataSourceContext | WMTSDataSourceContext | WMSDataSourceContext;
-
+  | OSMDataSourceContext
+  | FeatureDataSourceContext
+  | WFSDataSourceContext
+  | XYZDataSourceContext
+  | WMTSDataSourceContext
+  | WMSDataSourceContext
+  | CartoDataSourceContext;
 
 @Injectable()
 export class DataSourceService {
-
   public datasources$ = new BehaviorSubject<DataSource[]>([]);
 
   constructor(
     private capabilitiesService: CapabilitiesService,
     private wfsDataSourceService: WFSDataSourceService
-  ) { }
+  ) {}
 
   createAsyncDataSource(context: AnyDataSourceContext): Observable<DataSource> {
     let dataSource;
@@ -34,7 +48,9 @@ export class DataSourceService {
         dataSource = this.createOSMDataSource(context as OSMDataSourceContext);
         break;
       case 'vector':
-        dataSource = this.createFeatureDataSource(context as FeatureDataSourceContext);
+        dataSource = this.createFeatureDataSource(
+          context as FeatureDataSourceContext
+        );
         break;
       case 'wfs':
         dataSource = this.createWFSDataSource(context as WFSDataSourceContext);
@@ -43,10 +59,17 @@ export class DataSourceService {
         dataSource = this.createWMSDataSource(context as WMSDataSourceContext);
         break;
       case 'wmts':
-        dataSource = this.createWMTSDataSource(context as WMTSDataSourceContext);
+        dataSource = this.createWMTSDataSource(
+          context as WMTSDataSourceContext
+        );
         break;
       case 'xyz':
         dataSource = this.createXYZDataSource(context as XYZDataSourceContext);
+        break;
+      case 'carto':
+        dataSource = this.createCartoDataSource(
+          context as CartoDataSourceContext
+        );
         break;
       default:
         break;
@@ -58,39 +81,45 @@ export class DataSourceService {
   }
 
   private createOSMDataSource(
-      context: OSMDataSourceContext): Observable<OSMDataSource> {
-
+    context: OSMDataSourceContext
+  ): Observable<OSMDataSource> {
     return new Observable(d => d.next(new OSMDataSource(context)));
   }
 
   private createFeatureDataSource(
-      context: FeatureDataSourceContext): Observable<FeatureDataSource> {
-
+    context: FeatureDataSourceContext
+  ): Observable<FeatureDataSource> {
     return new Observable(d => d.next(new FeatureDataSource(context)));
   }
 
   private createWFSDataSource(
-      context: WFSDataSourceContext): Observable<WFSDataSource> {
-
-    return new Observable(d => d.next(new WFSDataSource(context, this.wfsDataSourceService)));
+    context: WFSDataSourceContext
+  ): Observable<WFSDataSource> {
+    return new Observable(d =>
+      d.next(new WFSDataSource(context, this.wfsDataSourceService))
+    );
   }
 
   private createWMSDataSource(
-      context: WMSDataSourceContext): Observable<WMSDataSource> {
-
+    context: WMSDataSourceContext
+  ): Observable<WMSDataSource> {
     if (context.optionsFromCapabilities) {
       return this.capabilitiesService
         .getWMSOptions(context)
-        .map((options: WMSDataSourceContext) =>
-        new WMSDataSource(options, this.wfsDataSourceService));
+        .map(
+          (options: WMSDataSourceContext) =>
+            new WMSDataSource(options, this.wfsDataSourceService)
+        );
     }
 
-    return new Observable(d => d.next(new WMSDataSource(context, this.wfsDataSourceService)));
+    return new Observable(d =>
+      d.next(new WMSDataSource(context, this.wfsDataSourceService))
+    );
   }
 
   private createWMTSDataSource(
-      context: WMTSDataSourceContext): Observable<WMTSDataSource> {
-
+    context: WMTSDataSourceContext
+  ): Observable<WMTSDataSource> {
     if (context.optionsFromCapabilities) {
       return this.capabilitiesService
         .getWMTSOptions(context)
@@ -101,8 +130,14 @@ export class DataSourceService {
   }
 
   private createXYZDataSource(
-      context: XYZDataSourceContext): Observable<XYZDataSource> {
-
+    context: XYZDataSourceContext
+  ): Observable<XYZDataSource> {
     return new Observable(d => d.next(new XYZDataSource(context)));
+  }
+
+  private createCartoDataSource(
+    context: CartoDataSourceContext
+  ): Observable<CartoDataSource> {
+    return new Observable(d => d.next(new CartoDataSource(context)));
   }
 }
