@@ -7,7 +7,9 @@ import {
   MatSelectModule,
   MatOptionModule,
   MatTooltipModule,
-  MatFormFieldModule
+  MatFormFieldModule,
+  MatDialogModule,
+  MatInputModule
 } from '@angular/material';
 
 // import { IgoAuthModule } from '@igo2/auth';
@@ -39,7 +41,9 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     MatSelectModule,
     MatOptionModule,
     MatTooltipModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatDialogModule,
+    MatInputModule
   ],
   exports: [
     MapBrowserComponent,
