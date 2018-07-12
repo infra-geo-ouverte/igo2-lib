@@ -10,9 +10,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap, finalize } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class LoggingInterceptor implements HttpInterceptor {
   intercept(
     req: HttpRequest<any>,

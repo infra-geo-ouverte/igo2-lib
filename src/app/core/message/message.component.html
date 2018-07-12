@@ -1,0 +1,16 @@
+<mat-card>
+  <mat-card-subtitle>Core</mat-card-subtitle>
+  <mat-card-title>Message</mat-card-title>
+  <mat-card-content>
+    <p>Show message to user.</p>
+    <p>* Import <code>IgoMessageModule</code> only once</p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button (click)="success()">Success message</button>
+    <button mat-raised-button color='primary' (click)="info()">Info message</button>
+    <button mat-raised-button color='accent' (click)="alert()">Alert message</button>
+    <button mat-raised-button color='warn' (click)="error()">Error message</button>
+  </mat-card-actions>
+</mat-card>
+
+<igo-message-center></igo-message-center>

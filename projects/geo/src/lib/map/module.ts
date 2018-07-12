@@ -10,31 +10,29 @@ import {
   MatFormFieldModule
 } from '@angular/material';
 
+// import { IgoAuthModule } from '@igo2/auth';
 import { IgoCoreModule } from '@igo2/core';
 import { IgoCommonModule } from '@igo2/common';
 
-import { MapBrowserComponent, MapBrowserBindingDirective } from './map-browser';
-import { ZoomButtonComponent } from './zoom-button';
-import { GeolocateButtonComponent } from './geolocate-button';
-import {
-  BookmarkButtonComponent,
-  BookmarkDialogComponent
-} from './bookmark-button';
-import {
-  PoiButtonComponent,
-  PoiDialogComponent,
-  PoiService
-} from './poi-button';
-import { UserButtonComponent, UserDialogComponent } from './user-button';
-import {
-  BaseLayersSwitcherComponent,
-  MiniBaseMapComponent
-} from './baselayers-switcher';
+import { MapBrowserBindingDirective } from './map-browser/map-browser-binding.directive';
+import { MapBrowserComponent } from './map-browser/map-browser.component';
+import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
+import { GeolocateButtonComponent } from './geolocate-button/geolocate-button.component';
+import { BookmarkButtonComponent } from './bookmark-button/bookmark-button.component';
+import { BookmarkDialogComponent } from './bookmark-button/bookmark-dialog.component';
+import { PoiButtonComponent } from './poi-button/poi-button.component';
+import { PoiDialogComponent } from './poi-button/poi-dialog.component';
+import { PoiService } from './poi-button/shared/poi.service';
+import { UserDialogComponent } from './user-button/user-dialog.component';
+import { UserButtonComponent } from './user-button/user-button.component';
+import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
+import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
 
 @NgModule({
   imports: [
     IgoCoreModule,
     IgoCommonModule,
+    // IgoAuthModule,
     FormsModule,
     MatIconModule,
     MatButtonModule,

@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-subtitle>Core</mat-card-subtitle>
+  <mat-card-title>Request</mat-card-title>
+  <mat-card-content>
+    <p>Register http calls in console</p>
+    <p>* Import <code>IgoLoggingModule</code> only if you want register http calls in console</p>
+    <p>* Import <code>IgoErrorModule</code> only if you want register errors from http call in console</p>
+    <p>* Import modules only once</p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button (click)="callHttp()">Log</button>
+    <button mat-raised-button (click)="callHttpError()">Error</button>
+  </mat-card-actions>
+</mat-card>

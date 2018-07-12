@@ -1,43 +1,68 @@
 import { Injectable } from '@angular/core';
+import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
+
 import { BehaviorSubject } from 'rxjs';
 
-import { Media } from './media.type';
+import { Media, MediaOrientation } from './media.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MediaService {
   public media$ = new BehaviorSubject<Media>(undefined);
+  public orientation$ = new BehaviorSubject<MediaOrientation>(undefined);
 
-  private media: Media;
+  constructor(breakpointObserver: BreakpointObserver) {
+    breakpointObserver
+      .observe([Breakpoints.HandsetLandscape])
+      .subscribe(res => {
+        if (res.matches) {
+          this.media$.next(Media.Mobile);
+          this.orientation$.next(MediaOrientation.Landscape);
+        }
+      });
 
-  constructor() {
-    this.setMedia();
+    breakpointObserver.observe([Breakpoints.HandsetPortrait]).subscribe(res => {
+      if (res.matches) {
+        this.media$.next(Media.Mobile);
+        this.orientation$.next(MediaOrientation.Portrait);
+      }
+    });
 
-    window.addEventListener('resize', event => {
-      this.setMedia();
+    breakpointObserver.observe([Breakpoints.TabletLandscape]).subscribe(res => {
+      if (res.matches) {
+        this.media$.next(Media.Tablet);
+        this.orientation$.next(MediaOrientation.Landscape);
+      }
+    });
+
+    breakpointObserver.observe([Breakpoints.TabletPortrait]).subscribe(res => {
+      if (res.matches) {
+        this.media$.next(Media.Tablet);
+        this.orientation$.next(MediaOrientation.Portrait);
+      }
+    });
+
+    breakpointObserver.observe([Breakpoints.WebLandscape]).subscribe(res => {
+      if (res.matches) {
+        this.media$.next(Media.Desktop);
+        this.orientation$.next(MediaOrientation.Landscape);
+      }
+    });
+
+    breakpointObserver.observe([Breakpoints.WebPortrait]).subscribe(res => {
+      if (res.matches) {
+        this.media$.next(Media.Desktop);
+        this.orientation$.next(MediaOrientation.Portrait);
+      }
     });
   }
 
   getMedia(): Media {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    let media = 'desktop';
-    if (width <= 450 || height <= 450) {
-      media = 'mobile';
-    } else if (width <= 800) {
-      media = 'tablet';
-    }
-
-    return media as Media;
+    return this.media$.value;
   }
 
-  private setMedia() {
-    const media = this.getMedia();
-    if (media !== this.media) {
-      this.media = media;
-      this.media$.next(media);
-    }
+  getOrientation(): MediaOrientation {
+    return this.orientation$.value;
   }
 }

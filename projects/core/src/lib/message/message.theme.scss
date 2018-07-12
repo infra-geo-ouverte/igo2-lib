@@ -1,0 +1,68 @@
+@import '~@angular/material/theming';
+
+@mixin _mat-button-theme-property($theme, $property, $hue) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  &.mat-primary {
+    #{$property}: mat-color($primary, $hue);
+  }
+  &.mat-accent {
+    #{$property}: mat-color($accent, $hue);
+  }
+  &.mat-warn {
+    #{$property}: mat-color($warn, $hue);
+  }
+
+  &.mat-primary, &.mat-accent, &.mat-warn, &[disabled] {
+    &[disabled] {
+      $palette: if($property == 'color', $foreground, $background);
+      #{$property}: mat-color($palette, disabled-button);
+    }
+  }
+}
+
+@mixin igo-message-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  div.simple-notification {
+    &.info {
+      color: mat-color($primary, default-contrast);
+      background-color: mat-color($primary);
+      .sn-progress-loader span {
+        background-color: mat-color($primary, A700);
+      }
+      svg {
+        fill: mat-color($primary, default-contrast);
+      }
+    }
+
+    &.alert {
+      color: mat-color($accent, default-contrast);
+      background-color: mat-color($accent);
+      .sn-progress-loader span {
+        background-color: mat-color($accent, A700);
+      }
+      svg {
+        fill: mat-color($accent, default-contrast);
+      }
+    }
+
+    &.error {
+      color: mat-color($warn, default-contrast);
+      background-color: mat-color($warn);
+      .sn-progress-loader span {
+        background-color: mat-color($warn, A700);
+      }
+      svg {
+        fill: mat-color($warn, default-contrast);
+      }
+    }
+  }
+
+}

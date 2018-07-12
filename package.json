@@ -27,6 +27,7 @@
     "jwt-decode": "^2.2.0",
     "openlayers": "^4.6.5",
     "rxjs": "^6.0.0",
+    "ts-md5": "^1.2.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

@@ -1,6 +1,9 @@
 {
   "name": "@igo2/geo",
   "version": "0.20.1",
+  "dependencies": {
+    "ts-md5": "^1.2.0"
+  },
   "peerDependencies": {
     "@angular/animations": "^6.0.0",
     "@angular/common": "^6.0.0",

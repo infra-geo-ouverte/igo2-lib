@@ -1,2 +1,2 @@
-export * from './media.type';
+export * from './media.enum';
 export * from './media.service';

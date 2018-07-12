@@ -1,7 +1,7 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { MediaService } from '@igo2/core';
+import { MediaService, Media } from '@igo2/core';
 // import { Layer } from '../../layer';
 import { IgoMap } from '../shared';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
@@ -38,7 +38,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
 
   constructor(private mediaService: MediaService) {
     const media = this.mediaService.media$.value;
-    if (media === 'mobile' && this.useStaticIcon === undefined) {
+    if (media === Media.Mobile && this.useStaticIcon === undefined) {
       this.useStaticIcon = true;
     }
   }

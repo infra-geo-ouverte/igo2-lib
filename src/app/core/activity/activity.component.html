@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-subtitle>Core</mat-card-subtitle>
+  <mat-card-title>Activity</mat-card-title>
+  <mat-card-content>
+    <p>Register activities in service. Use to display a loading icon</p>
+    <p>* Import <code>IgoActivityModule</code> only if you want register http calls</p>
+    <p>* Import <code>IgoActivityModule</code> only once</p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button (click)="register()">Register</button>
+    <button mat-raised-button (click)="unregister()">Unregister</button>
+  </mat-card-actions>
+  <p>Counter: {{counter}}</p>
+</mat-card>

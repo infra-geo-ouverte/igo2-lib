@@ -4,18 +4,10 @@ import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 import { SubjectStatus } from '@igo2/utils';
 
-// import { Layer, VectorLayer } from '../../layer/shared/layers';
-// import { FeatureDataSource }
-// from '../../datasource/shared/datasources/feature-datasource';
-export interface Layer {
-  [index: string]: any;
-}
-export interface VectorLayer {
-  [index: string]: any;
-}
-export interface FeatureDataSource {
-  [index: string]: any;
-}
+import { Layer, VectorLayer } from '../../layer/shared/layers';
+import {
+  FeatureDataSource
+} from '../../datasource/shared/datasources/feature-datasource';
 
 import { LayerWatcher } from '../utils';
 import { MapViewOptions, MapOptions } from './map.interface';
@@ -112,9 +104,9 @@ export class IgoMap {
         })
       });
 
-      // this.overlayDataSource = new FeatureDataSource({
-      //   title: 'Overlay'
-      // });
+      this.overlayDataSource = new FeatureDataSource({
+        title: 'Overlay'
+      });
 
       const stroke = new ol.style.Stroke({
         color: [0, 161, 222, 1],
@@ -135,11 +127,11 @@ export class IgoMap {
         })
       });
 
-      // const layer = new VectorLayer(this.overlayDataSource, {
-      //   zIndex: 999,
-      //   style: this.overlayStyle
-      // });
-      // this.addLayer(layer, false);
+      const layer = new VectorLayer(this.overlayDataSource, {
+        zIndex: 999,
+        style: this.overlayStyle
+      });
+      this.addLayer(layer, false);
     }
   }
 

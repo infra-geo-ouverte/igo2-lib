@@ -11,9 +11,7 @@ import { finalize } from 'rxjs/operators';
 
 import { ActivityService } from './activity.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ActivityInterceptor implements HttpInterceptor {
   constructor(private activityService: ActivityService) {}
 

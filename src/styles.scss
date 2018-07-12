@@ -1,1 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+
+// @import '../all-theme';
+@import '../projects/core/src/lib/message/message.theme';
+
+@mixin igo-material-theme($theme) {
+  @include igo-message-theme($theme);
+  @include angular-material-theme($theme);
+}
+
+// ================
+
+
+@import 'style/theme.scss';
+
+@include mat-core();
+@include igo-material-theme($theme);
+
+
+
+@import 'style/material-font.scss';

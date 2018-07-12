@@ -28,7 +28,7 @@ export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   set map(value: IgoMap) {
     this._map = value;
   }
-  private _map: IgoMap;
+  private _map: IgoMap = new IgoMap();
 
   @Input()
   get view(): MapViewOptions {

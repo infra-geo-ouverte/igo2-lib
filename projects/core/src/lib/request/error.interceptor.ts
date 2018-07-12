@@ -13,9 +13,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { MessageService } from '../message/shared/message.service';
 import { LanguageService } from '../language/shared/language.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private httpError: HttpErrorResponse;
 
@@ -28,13 +26,11 @@ export class ErrorInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    return next
-      .handle(req)
-      .pipe(
-        catchError(error => this.handleError(error, req)),
-        finalize(() => this.handleCaughtError()),
-        finalize(() => this.handleUncaughtError())
-      );
+    return next.handle(req).pipe(
+      catchError(error => this.handleError(error, req)),
+      finalize(() => this.handleCaughtError()),
+      finalize(() => this.handleUncaughtError())
+    );
   }
 
   private handleError(httpError: HttpErrorResponse, req: HttpRequest<any>) {

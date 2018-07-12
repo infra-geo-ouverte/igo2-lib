@@ -1,6 +1,6 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 
-import { MapService } from '../shared';
+import { MapService } from '../shared/map.service';
 import { MapBrowserComponent } from './map-browser.component';
 
 @Directive({
