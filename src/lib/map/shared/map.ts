@@ -524,7 +524,7 @@ export class IgoMap {
 
       //For each legend, define an html table cell
       listLegend.forEach(function(legend) {
-        html += "<table border=1 style='display:inline-block'><tr><th width='170px'>" + legend.title + "</th>";
+        html += "<table border=1 style='display:inline-block;vertical-align: top'><tr><th width='170px'>" + legend.title + "</th>";
         html += "<td><img class='printImageLegend' src='" + legend.url + "'></td></tr></table>";
       });
 
@@ -607,4 +607,57 @@ export class IgoMap {
   private getLayerIndex(layer: Layer) {
     return this.layers.findIndex(layer_ => layer_ === layer);
   }
+
+  addLegend(doc) {
+  //map.addToDocAllLayersLegendImage(doc);
+  //Get html code for the legend
+  let width = doc.internal.pageSize.width-10; //let a 10mm for extra
+  let html = this.getAllLayersLegendHtml(width);
+
+  //If no legend, save the map directly
+  if(html=="") {
+    doc.save('map.pdf')
+    return true;
+  }
+
+  //Create new temporary window to define html code to generate canvas image
+  let winTempCanva = window.open("", "legend", "width=10, height=10");
+
+  //Create div to contain html code for legend
+  let div = winTempCanva.document.createElement('div');
+//  let that = this;
+  //Define event to execute after all images are loaded to create the canvas (it's why we use window.open)
+  winTempCanva.addEventListener('load',function() {
+    html2canvas(div, {useCORS : true}).then(canvas => {
+      var imgData;
+      var position = 10;
+      var pageHeight = doc.internal.pageSize.height;
+      var pageWidth = doc.internal.pageSize.width;
+      try {
+        imgData = canvas.toDataURL('image/png');
+
+        //doc.addPage();
+        //doc.addImage(imgData, 'PNG', 10, 10);
+        doc.addPage();
+        doc.addImage(imgData, 'PNG', 10, position, pageWidth, pageHeight-20);
+
+        winTempCanva.onunload = function(){doc.save('map.pdf')};
+        winTempCanva.close(); //close temp window
+
+      } catch (err) {
+        winTempCanva.close(); //close temp window
+    /*    that.messageService.error(
+          'Security error: The legend cannot be printed.',
+          'Print', 'print');
+*/
+        throw new Error(err);
+      }
+    });
+  }, false);
+
+  //Add html code to convert in the new window
+  winTempCanva.document.body.appendChild(div);
+  div.innerHTML = html;
+}
+
 }

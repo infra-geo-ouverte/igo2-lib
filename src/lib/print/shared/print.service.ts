@@ -52,7 +52,8 @@ export class PrintService {
       .subscribe((status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           if(options.showLegend === true) {
-            this.addLegend(doc, map);
+            //this.addLegend(doc, map);
+            map.addLegend(doc);
             //map.getAllLayersLegendImage();
           }
           else {
@@ -171,7 +172,7 @@ export class PrintService {
     div.innerHTML = html;
   }*/
 
-  private addLegend(doc: typeof jsPDF, map: IgoMap) {
+  addLegend(doc: typeof jsPDF, map: IgoMap) {
     //Get html code for the legend
     let width = 200; //milimeters unit, originally define for document pdf
     let html = map.getAllLayersLegendHtml(width);
@@ -185,7 +186,7 @@ export class PrintService {
     }
 
     //Create new temporary window to define html code to generate canvas image
-    let winTempCanva = window.open("", "legend", "width=10, height=10");
+    let winTempCanva = window.open("", "_blank", "width=10, height=10");
 
     //Create div to contain html code for legend
     let div = winTempCanva.document.createElement('div');
