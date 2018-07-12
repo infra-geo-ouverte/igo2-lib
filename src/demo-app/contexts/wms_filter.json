@@ -15,61 +15,72 @@
         "type": "osm",
         "opacity": 0.5
       },
-    
+
       {
         "title": "WMS-WFS isOgcFilterable HasFilters HasSourceFields",
         "id": "a",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": true,
         "ogcFilters": { "filtersAreEditable": true, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
         "sourceFields": [{"name": "landuse","alias": "Land use alias"}],
-        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
+        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
       },
       {
         "title": "WMS-WFS NOTisOgcFilterable HasFilters HasSourceFields",
         "id": "a0",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": false,
         "ogcFilters": { "filtersAreEditable": true, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
         "sourceFields": [{"name": "landuse","alias": "Land use alias"}],
-        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
+        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
       },
       {
         "title": "WMS-WFS isOgcFilterable HasFilters HasSourceFields NOT USER EDITABLE",
         "id": "a1",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": true,
         "ogcFilters": { "filtersAreEditable": false, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-11349857 5394940,-11349857 6862531,-6076313 6862531,-6076313 5394940,-11349857 5394940))"}},
         "sourceFields": [{"name": "landuse","alias": "Land use alias"}],
-        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
+        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
       },
       {
         "title": "WMS-WFS isOgcFilterable HasFilters",
         "id": "b",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": true,
         "ogcFilters": { "filtersAreEditable": true, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
-  
-        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
+
+        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
       }
       ,
       {
         "title": "WMS-WFS isOgcFilterable",
         "id": "c",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": true,
-        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
+        "wfsSource": {"url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous", "featureTypes": "water_areas","fieldNameGeometry": "the_geom", "maxFeatures": 10000, "version": "1.1.0", "outputFormat": "application/json","outputFormatDownload": "application/vnd.google-earth.kml+xml"}
       },
       {
         "title": "WMS isOgcFilterable HasFilters HasSourceFields",
         "id": "d",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": true,
         "ogcFilters": { "filtersAreEditable": true, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
         "sourceFields": [{"name": "landuse","alias": "Land use alias"}]
@@ -79,7 +90,8 @@
         "title": "WMS isOgcFilterable HasFilters",
         "id": "e",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": true,
         "ogcFilters": { "filtersAreEditable": true, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}}
          }
@@ -88,7 +100,8 @@
           "title": "WMS isOgcFilterable",
           "id": "f",
           "type": "wms",
-          "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+          "source": { "url": "https://ahocevar.com/geoserver/wms",
+          "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
           "isOgcFilterable": true
         }
         ,
@@ -96,7 +109,8 @@
         "title": "WMS HasFilters HasSourceFields",
         "id": "g",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.3.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.3.0" }},
         "isOgcFilterable": false,
         "ogcFilters": { "filtersAreEditable": true, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074))"}},
         "sourceFields": [{"name": "landuse","alias": "Land use alias"}]
@@ -106,16 +120,18 @@
         "title": "WMS isOgcFilterable HasFilters HasSourceFields NOT USER EDITABLE",
         "id": "h",
         "type": "wms",
-        "source": { "url": "https://ahocevar.com/geoserver/wms","params": {"layers": "water_areas","version": "1.1.0" }},
+        "source": { "url": "https://ahocevar.com/geoserver/wms",
+        "crossOrigin": "anonymous","params": {"layers": "water_areas","version": "1.1.0" }},
         "isOgcFilterable": true,
         "ogcFilters": { "filtersAreEditable": false, "filters": {"operator": "Intersects","geometryName": "the_geom","wkt_geometry": "POLYGON((-11349857 5394940,-11349857 6862531,-6076313 6862531,-6076313 5394940,-11349857 5394940))"}},
         "sourceFields": [{"name": "landuse","alias": "Land use alias"}]
           }
-  
+
     ],
     "toolbar": [
       "searchResults",
       "mapDetails",
+      "ogcFilter",
       "timeAnalysis",
       "contextManager",
       "print"
@@ -124,7 +140,15 @@
         "name": "searchResults"
       },
       {
-        "name": "mapDetails"
+        "name": "mapDetails",
+        "options": {
+          "toggleLegendOnVisibilityChange": true,
+          "excludeBaseLayers": true,
+          "ogcFiltersInLayers": true
+        }
+      },
+      {
+        "name": "ogcFilter"
       },
       {
         "name": "timeAnalysis"
@@ -137,4 +161,3 @@
       }
     ]
   }
-  

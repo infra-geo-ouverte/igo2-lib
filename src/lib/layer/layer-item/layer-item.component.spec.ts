@@ -9,6 +9,7 @@ import { FeatureService } from '../../feature';
 import { DownloadService } from '../../download';
 
 import { TileLayer } from '../shared';
+import { IgoFilterModule } from '../../filter';
 import { LayerItemComponent } from './layer-item.component';
 import { LayerLegendComponent } from '../layer-legend/layer-legend.component';
 
@@ -16,25 +17,20 @@ describe('LayerItemComponent', () => {
   let component: LayerItemComponent;
   let fixture: ComponentFixture<LayerItemComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        IgoTestModule,
-        IgoSharedModule
-      ],
-      declarations: [
-        LayerItemComponent,
-        LayerLegendComponent
-      ],
-      providers: [
-        MetadataService,
-        MapService,
-        FeatureService,
-        DownloadService
-      ]
+  beforeEach(
+    async(() => {
+      TestBed.configureTestingModule({
+        imports: [IgoTestModule, IgoSharedModule, IgoFilterModule],
+        declarations: [LayerItemComponent, LayerLegendComponent],
+        providers: [
+          MetadataService,
+          MapService,
+          FeatureService,
+          DownloadService
+        ]
+      }).compileComponents();
     })
-    .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LayerItemComponent);
@@ -42,7 +38,7 @@ describe('LayerItemComponent', () => {
   });
 
   it('should create', () => {
-    component.layer = new TileLayer(new OSMDataSource({title: 'foo'}), {});
+    component.layer = new TileLayer(new OSMDataSource({ title: 'foo' }), {});
     expect(component).toBeTruthy();
   });
 });

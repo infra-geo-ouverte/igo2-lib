@@ -11,6 +11,9 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 
 import { MapViewOptions, MapOptions } from './map.interface';
 
+import { saveAs } from 'file-saver';
+
+import * as html2canvas from "html2canvas";
 
 export class IgoMap {
 
@@ -31,7 +34,7 @@ export class IgoMap {
   private geolocationFeature: ol.Feature;
 
   private options: MapOptions = {
-    controls: {attribution: true},
+    controls: { attribution: true },
     overlay: true
   };
 
@@ -133,7 +136,7 @@ export class IgoMap {
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
-      this.layerWatcher.subscribe(() => {}, null);
+      this.layerWatcher.subscribe(() => { }, null);
     } else {
       this.layerWatcher.unsubscribe();
     }
@@ -352,11 +355,11 @@ export class IgoMap {
         const geometry = geolocation.getAccuracyGeometry();
         const extent = geometry.getExtent();
         if (this.geolocationFeature &&
-            this.overlayDataSource.ol.getFeatureById(this.geolocationFeature.getId())) {
+          this.overlayDataSource.ol.getFeatureById(this.geolocationFeature.getId())) {
 
           this.overlayDataSource.ol.removeFeature(this.geolocationFeature);
         }
-        this.geolocationFeature = new ol.Feature({geometry: geometry});
+        this.geolocationFeature = new ol.Feature({ geometry: geometry });
         this.geolocationFeature.setId('geolocationFeature');
         this.addOverlay(this.geolocationFeature);
         if (first) {
@@ -383,6 +386,198 @@ export class IgoMap {
     }
   }
 
+  /**
+  Get Projection of the map
+  */
+  getProjection() {
+    return this.projection;
+  }
+
+  /**
+  Get Scale of the map
+  */
+  getMapScale(approximative, resolution) {
+    if (approximative) {
+      let scale = this.getScale(resolution);
+      scale = Math.round(scale);
+      if (scale < 10000) {
+        return scale;
+      }
+      scale = Math.round(scale / 1000);
+      if (scale < 1000) {
+        return scale + 'K';
+      }
+      scale = Math.round(scale / 1000);
+      return scale + 'M';
+    }
+    return this.getScale(resolution);
+  }
+
+  getScale(dpi = 96) {
+    let unit = this.ol.getView().getProjection().getUnits();
+    let resolution = this.ol.getView().getResolution();
+    let inchesPerMetre = 39.37;
+
+    return resolution * ol.proj.METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
+  }
+
+  /**
+  Get all layers activate in the map
+  @return {Array} Arrat of layers
+  */
+  getLayers()
+  {
+    return this.layers;
+  }
+
+  /**
+  Get all the layers legend
+  @return {Array} Array of legend
+  */
+  getAllLayersLegend() {
+    //Get layers list
+    let layers = this.getLayers();
+    let listLegend = [];
+    let title, legendUrls, legendImage;
+    let heightPos = 0;
+    let newCanvas = document.createElement('canvas');
+    let newContext = newCanvas.getContext('2d');
+    newContext.font = "20px Calibri";
+
+    //For each layers in the map
+    layers.forEach(function(layer) {
+
+      //Add legend for only visible layer
+      if(layer.visible === true) {
+        //Get the list of legend
+        legendUrls = layer.dataSource.getLegend();
+        //If legend(s) are defined
+        if(legendUrls.length > 0) {
+          title = layer.title;
+          //For each legend
+          legendUrls.forEach(function(legendUrl) {
+
+            //If the legend really exist
+            if(legendUrl.url !== undefined) {
+              //Create an image for the legend
+              legendImage = new Image;
+              legendImage.crossOrigin = 'Anonymous';
+              legendImage.src = legendUrl.url;
+              legendImage.onload = function(){
+                newContext.fillText(title, 0, heightPos);
+                newContext.drawImage(legendImage,0, heightPos+20);
+                heightPos+=legendImage.height+5;
+              };
+              //Add legend info to the list
+              listLegend.push({title: title, url: legendUrl.url, image: legendImage});
+            }
+          });
+        }
+      }
+    });
+    return listLegend;
+  }
+
+  /**
+  Get all individual legend images
+  @return {file(s)} All images of the legend by name
+  */
+  getAllLayersIndividualLegendImages() {
+
+    let listLegend = this.getAllLayersLegend();
+    let newCanvas = document.createElement('canvas');
+    let newContext = newCanvas.getContext('2d');
+    let format = "png";
+    let blobFormat = "image/" + format;
+    listLegend.forEach(function(legend) {
+      legend.image.onload = function(){
+
+        newContext.drawImage(legend.image, 0, 0);
+
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(newCanvas.msToBlob(), 'map.' + format);
+        } else {
+          newCanvas.toBlob(function(blob) {
+            saveAs(blob, legend.title+"." + format);
+          }, blobFormat);
+        }
+      }
+    });
+  }
+
+  /**
+  Get html code for all layers legend
+  @param {string} width - The width that the legend need to be
+  @return {string} Html code for the legend
+  */
+  getAllLayersLegendHtml(width) {
+    //Get html code for the legend
+    let listLegend = this.getAllLayersLegend();
+    let html = "";
+    if(listLegend.length > 0) {
+      //Define important style to be sure that all container is convert to image not just visible part
+      html += '<style media="screen" type="text/css">';
+      html += '.html2canvas-container { width: 3000px !important; height: 3000px !important; }';
+      html += '</style>';
+      html += '<font size="2" face="Courier New" >';
+      html += "<div style='display:inline-block;width:" + width + "mm;max-width:" + width + "mm'>";
+
+      //For each legend, define an html table cell
+      listLegend.forEach(function(legend) {
+        html += "<table border=1 style='display:inline-block'><tr><th width='170px'>" + legend.title + "</th>";
+        html += "<td><img class='printImageLegend' src='" + legend.url + "'></td></tr></table>";
+      });
+
+      html += "</div>";
+    }
+
+    return html;
+  }
+
+  /**
+  Get all the legend in a single image
+    @param {string} format - Image format. default value to "png"
+    @return {file} The image of the legend
+  */
+  getAllLayersLegendImage(format="png") {
+    //Get html code for the legend
+    let width = 200; //milimeters unit, originally define for document pdf
+    let html = this.getAllLayersLegendHtml(width);
+    format = format.toLowerCase();
+    let blobFormat = "image/" + format;
+
+    //If no legend show No LEGEND in an image
+    if (html.length == 0) {
+      html = '<font size="12" face="Courier New" >';
+      html += "<div align='center'><b>NO LEGEND</b></div>";
+    }
+
+    //Create new temporary window to define html code to generate canvas image
+    let winTempCanva = window.open("", "legend", "width=10, height=10");
+
+    //Create div to contain html code for legend
+    let div = winTempCanva.document.createElement('div');
+
+    //Define event to execute after all images are loaded to create the canvas
+    winTempCanva.addEventListener('load',function() {
+      html2canvas(div, {useCORS : true}).then(canvas => {
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(canvas.msToBlob(), 'legendImage.' + format);
+        } else {
+          canvas.toBlob(function(blob) {
+            //download image
+            saveAs(blob, "legendImage." + format);
+          }, blobFormat);
+        }
+        winTempCanva.close(); //close temp window
+      });
+    }, false);
+
+    //Add html code to convert in the new window
+    winTempCanva.document.body.appendChild(div);
+    div.innerHTML = html;
+  }
+
   private startGeolocation() {
     if (!this.geolocation) {
       this.geolocation = new ol.Geolocation({
@@ -398,7 +593,7 @@ export class IgoMap {
     }
   }
 
- private stopGeolocation() {
+  private stopGeolocation() {
     if (this.geolocation) {
       this.geolocation.setTracking(false);
     }

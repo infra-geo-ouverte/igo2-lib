@@ -28,9 +28,11 @@ export class ImportExportService {
   public import(fileList: Array<File>, sourceSrs = 'EPSG:4326') {
     const count = fileList.length;
     let i = 1;
+    let fileType;
     for (const file of fileList) {
-      const ext = file.name.split('.')[file.name.split('.').length - 1];
-      const mimeType = file.type;
+      const ext = file.name.split('.')[file.name.split('.').length - 1].toLowerCase();
+
+      const mimeType = file.type || fileType;
       const mimeTypeAllowed = [
         'application/gml+xml',
         'application/vnd.google-earth.kml+xml',

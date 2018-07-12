@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import * as ol from 'openlayers';
 
 import { MapBrowserComponent, IgoMap } from '../../map';
-import { Feature } from '../../feature';
+import { Feature, SourceFeatureType } from '../../feature';
 
 import { OverlayService } from '../shared/overlay.service';
 import { OverlayAction } from '../shared/overlay.interface';
@@ -61,7 +61,13 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
       this.map.addOverlay(olFeature);
     }, this);
-
+    if (features[0].sourceType === SourceFeatureType.Click) {
+      if (ol.extent.intersects(featureExtent, this.map.getExtent())) {
+        action = 'none';
+      } else {
+        action = 'move';
+      }
+    }
     if (!ol.extent.isEmpty(featureExtent)) {
       if (action === 'zoom') {
         this.map.zoomToExtent(extent);

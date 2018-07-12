@@ -22,6 +22,9 @@
 		"catalogTool": {
 			"baseLayers": "Base Layers"
 		},
+		"clickOnMap": {
+			"clickedFeature": "Clicked Feature"
+		},
 		"confirmDialog": {
 			"cancelBtn": "Cancel",
 			"confirmBtn": "Confirm",
@@ -112,12 +115,14 @@
 		"sourceFields": {
 		  "selectField": "Choose a field"
 		},
+		"ogcFilter": "Filter by",
 		"filter": {
 		  "addFilter": "Add an empty filter to the current list",
 		  "removeFilter": "Remove the current filter from the filters's list",
 		  "toggleFilterState": "Enable/disable the current filter",
-		  "refreshFilters": "Update this datasource with the active filter(s)",
-		  "layerFiltered": "This layer is currently filtered"
+		  "refreshFilters": "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
+		  "layerFiltered": "This layer is currently filtered",
+		  "layerFilterable": "This layer is filterable"
 		},
 		"spatialSelector": {
 		  "fixedExtent": "Fixed extent",
@@ -187,11 +192,19 @@
 		},
 		"print": "Print",
 		"printForm": {
+			"comment": "Commentaire",
 			"format": "Format",
+			"imageFormat": "Image format",
 			"landscape": "Landscape",
 			"portrait": "Portrait",
+			"projection": "Projection",
 			"printBtn": "Print",
 			"resolution": "Resolution",
+			"saveBtn": "Save",
+			"scale": "Scale",
+			"showLegend": "Show legend",
+			"showProjection": "Show projection",
+			"showScale": "Show scale",
 			"title": "Title"
 		},
 		"search": {

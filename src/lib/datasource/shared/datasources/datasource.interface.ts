@@ -14,6 +14,7 @@ export interface DataSourceOptions {
   metadata?: MetadataOptions;
   download?: DownloadOptions;
   view?: ol.olx.layer.ImageOptions;
+  displayField?: string;
 }
 
 export interface DataSourceContext extends DataSourceOptions {
@@ -54,6 +55,7 @@ export interface TimeFilterableDataSourceOptions extends DataSourceOptions,
 export interface TimeFilterableDataSource extends DataSource {
   options: TimeFilterableDataSourceOptions;
   filterByDate(date: Date | [Date, Date]);
+  filterByYear(year: string | [string, string]);
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {

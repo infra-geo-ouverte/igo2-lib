@@ -32,7 +32,8 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
     this.ogcFilterWriter = new OgcFilterWriter;
 
     this.dataSourceService.checkWfsOptions(options);
-    if (options['sourceFields'] === undefined) {
+    if (options['sourceFields'] === undefined ||
+    Object.keys(options['sourceFields']).length === 0) {
       options['sourceFields'] = []
       this.dataSourceService.wfsGetCapabilities(options)
         .map(wfsCapabilities => options['wfsCapabilities'] = {

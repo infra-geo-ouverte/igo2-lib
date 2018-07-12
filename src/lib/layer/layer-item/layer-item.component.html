@@ -9,17 +9,7 @@
   </mat-icon>
   <h4 matLine [matTooltip]="layer.title +' ('+ id +') '" matTooltipShowDelay="500">{{layer.title}}</h4>
 
-  <button
-    *ngIf="layer.dataSource.options['ogcFiltered']"
-    mat-icon-button
-    collapsibleButton
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.filter.layerFiltered' | translate"
-    color="gray"
-    disabled = true>
-    <mat-icon> filter_list </mat-icon>
-  </button>
+
 
   <button
     mat-icon-button
@@ -53,7 +43,7 @@
 </mat-list-item>
 
 <div #actions class="igo-layer-actions-container">
-  <div class="igo-col igo-col-40 igo-col-100-m">
+  <div class="igo-col igo-col-100 igo-col-100-m">
     <mat-slider
       id="opacity-slider"
       thumbLabel
@@ -68,8 +58,21 @@
     </mat-slider>
   </div>
 
-  <div class="igo-col igo-col-60 igo-col-100-m">
+  <div class="igo-col igo-col-100 igo-col-100-m">
     <div class="igo-layer-button-group">
+        <button *ngIf="ogcFilterableOptions.isOgcFilterable
+        && ogcFilterableOptions.ogcFilters.filtersAreEditable && ogcFilterInLayerItem"
+          mat-icon-button
+          collapsibleButton
+          tooltip-position="below"
+          matTooltipShowDelay="500"
+          [matTooltip]="'igo.ogcFilter' | translate"
+          [color]="color"
+          (click)="toggleOgcFilter()">
+          <mat-icon
+          [ngClass]='{disabled: !layer.isInResolutionsRange}'>
+          filter_list</mat-icon>
+        </button>
       <button
         *ngIf="isVectorLayer(layer)"
         mat-icon-button
@@ -93,7 +96,7 @@
       </button>
 
       <button
-      *ngIf="layer.dataSource.options.download "
+      *ngIf="layer.dataSource.options.download && (layer.dataSource.options.download['dynamicUrl'] || layer.dataSource.options.download['url']) "
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
@@ -136,6 +139,11 @@
       <ng-content select="[igoLayerAction]"></ng-content>
     </div>
   </div>
+  <div #ogcFilter class="igo-layer-actions-container">
+    <igo-ogc-filterable-item *ngIf="ogcFilterCollapse && ogcFilterableOptions.isOgcFilterable" igoListItem
+    [ogcFiltersHeaderShown]="false"
+    [datasource]="layer.dataSource"></igo-ogc-filterable-item>
+  </div> 
 </div>
 
 <div #legend class="igo-layer-legend-container">

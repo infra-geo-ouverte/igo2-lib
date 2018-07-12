@@ -1,7 +1,7 @@
 import { strEnum } from '../../utils/strenum';
 
 export const PrintFormat = strEnum(
-  ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'Letter', 'Legal']);
+  ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'Letter', 'Legal', 'Image']);
 export type PrintFormat = keyof typeof PrintFormat;
 
 export const PrintOrientation = strEnum(['landscape', 'portrait']);
@@ -20,3 +20,6 @@ export const PrintDimension = {
   'Letter': [216, 279],
   'Legal': [216, 356]
 };
+
+export const PrintSaveImageFormat = strEnum(['Jpeg', 'Png', 'Bmp', 'Gif']);
+export type PrintSaveImageFormat = keyof typeof PrintSaveImageFormat;

@@ -11,11 +11,45 @@
 
   <div class="igo-input-container">
     <mat-form-field>
-      <mat-select
+      <input
+        matInput
+        formControlName="comment"
+        placeholder="{{'igo.printForm.comment' | translate}}">
+    </mat-form-field>
+  </div>
+
+  <div class="igo-input-container">
+    <mat-checkbox class="horizontal-left" formControlName="showProjection">
+        {{'igo.printForm.showProjection' | translate}}
+    </mat-checkbox>
+
+    <mat-checkbox class="horizontal-left" formControlName="showScale">
+        {{'igo.printForm.showScale' | translate}}
+    </mat-checkbox>
+
+    <mat-checkbox class="horizontal-left" formControlName="showLegend">
+        {{'igo.printForm.showLegend' | translate}}
+    </mat-checkbox>
+  </div>
+  <div class="igo-input-container">
+    <mat-form-field>
+      <mat-select (change)="toggleImageSaveProp()"
         formControlName="format"
         placeholder="{{'igo.printForm.format' | translate}}">
         <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
           {{format.value}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="igo-input-container">
+    <mat-form-field>
+      <mat-select [disabled]="isPrintService"
+        formControlName="imageFormat"
+        placeholder="{{'igo.printForm.imageFormat' | translate}}">
+        <mat-option *ngFor="let imageFormat of imageFormats | keyvalue " [value]="imageFormat.key">
+          {{imageFormat.value}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -47,7 +81,7 @@
       type="button"
       [disabled]="!form.valid || disabled"
       (click)="handleFormSubmit(form.value, form.valid)">
-      {{'igo.printForm.printBtn' | translate}}
+      {{(isPrintService ? 'igo.printForm.printBtn' : 'igo.printForm.saveBtn') | translate}}
     </button>
   </div>
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { ConfigService, Message, LanguageService } from '../../core';
+import { ConfigService, LanguageService } from '../../core';
 import { Feature, FeatureType, SourceFeatureType } from '../../feature';
 
 import { SearchSource } from './search-source';
@@ -33,12 +33,17 @@ export class DataSourceSearchSource extends SearchSource {
     return this.languageService.translate.instant(DataSourceSearchSource._name);
   }
 
-  search(term?: string): Observable<Feature[] | Message[]>  {
+  search(term?: string): Observable<Feature[]>  {
     const searchParams = this.getSearchParams(term);
 
     return this.http
       .get(this.searchUrl, { params: searchParams })
       .map(res => this.extractData(res));
+  }
+
+  locate(coordinate?: [number, number]): Observable<Feature[]>  {
+    // It should be a good idea to locate layers by coordinates ?
+    return
   }
 
   private extractData(response): Feature[] {
