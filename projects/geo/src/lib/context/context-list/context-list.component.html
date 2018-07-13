@@ -1,0 +1,26 @@
+<igo-list [navigation]="true">
+  <ng-template ngFor let-groupContexts [ngForOf]="contexts | keyvalue">
+    <igo-collapsible *ngIf="groupContexts.value.length" [title]="titleMapping[groupContexts.key] | translate">
+
+      <ng-template ngFor let-context [ngForOf]="groupContexts.value">
+        <igo-context-item
+          igoListItem
+          color="accent"
+          [selected]="selectedContext && selectedContext.uri === context.uri"
+          [context]="context"
+          [default]="this.defaultContextId === context.id"
+          (edit)="edit.emit(context)"
+          (delete)="delete.emit(context)"
+          (clone)="clone.emit(context)"
+          (save)="save.emit(context)"
+          (favorite)="favorite.emit(context)"
+          (manageTools)="manageTools.emit(context)"
+          (managePermissions)="managePermissions.emit(context)"
+          (select)="select.emit(context)"
+          (unselect)="unselect.emit(context)">
+        </igo-context-item>
+      </ng-template>
+
+    </igo-collapsible>
+  </ng-template>
+</igo-list>

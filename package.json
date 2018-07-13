@@ -23,6 +23,7 @@
     "@angular/router": "^6.0.0",
     "@ngx-translate/core": "^10.0.1",
     "angular2-notifications": "^1.0.2",
+    "bowser": "^1.9.2",
     "core-js": "^2.5.4",
     "jwt-decode": "^2.2.0",
     "openlayers": "^4.6.5",

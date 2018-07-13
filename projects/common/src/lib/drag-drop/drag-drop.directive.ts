@@ -18,7 +18,7 @@ export class DragAndDropDirective {
   set allowed_extensions(value: Array<string>) {
     this._allowed_extensions = value;
   }
-  private _allowed_extensions: Array<string> = [];
+  protected _allowed_extensions: Array<string> = [];
 
   @Output() protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   @Output() protected filesInvalid: EventEmitter<File[]> = new EventEmitter();

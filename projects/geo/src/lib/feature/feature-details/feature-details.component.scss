@@ -1,0 +1,10 @@
+@import '../../../../../../src/style/var.scss';
+
+table td {
+  padding: $igo-padding;
+}
+iframe {
+  height: calc(100% - 4px);
+  width: 100%;
+  border: 0;
+}
