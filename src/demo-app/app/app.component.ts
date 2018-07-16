@@ -43,7 +43,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
 
-    window['IGO'] = this;
     // If you do not want to load a context from a file,
     // you can simply do contextService.setContext(context)
     // where "context" is an object with the same interface
