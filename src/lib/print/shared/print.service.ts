@@ -52,7 +52,7 @@ export class PrintService {
       .subscribe((status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           if(options.showLegend === true) {
-            //this.addLegend(doc, map);
+            //this.addLegend(doc, map); TODO!
             map.addLegend(doc);
             //map.getAllLayersLegendImage();
           }
@@ -87,6 +87,12 @@ export class PrintService {
     doc.text(titleMarginLeft, 15, title);
   }
 
+  /**
+  Add comment to the document
+  @param {jsPDF} doc - pdf document
+  @param {string} comment - Comment to add in the document
+  @param {array} size - Size of the document
+  */
   private addComment(doc: typeof jsPDF, comment: string, size: Array<number>) {
     const commentSize = 16;
     const commentMarginLeft = 20;
@@ -98,6 +104,15 @@ export class PrintService {
     doc.text(commentMarginLeft, heightPixels, comment);
   }
 
+  /**
+  Add projection and/or scale to the document
+  @param {jsPDF} doc - pdf document
+  @param {IgoMap} map - Map of the app
+  @param {number} resolution - DPI resolution of the document
+  @param {array} size - Size of the document
+  @param {boolean} projection - Bool to indicate if projection need to be added
+  @param {boolean} scale - Bool to indicate if scale need to be added
+  */
   private addProjScale(doc: typeof jsPDF, map: IgoMap, resolution: number, size: Array<number>, projection: boolean, scale: boolean) {
     const translate = this.languageService.translate;
     const projScaleSize = 16;
@@ -126,90 +141,9 @@ export class PrintService {
   }
 /*
   private addLegend(doc: typeof jsPDF, map: IgoMap) {
-    //map.addToDocAllLayersLegendImage(doc);
-    //Get html code for the legend
-    let width = doc.internal.pageSize.width-10; //let a 10mm for extra
-    let html = map.getAllLayersLegendHtml(width);
-
-    //If no legend, save the map directly
-    if(html=="") {
-      doc.save('map.pdf')
-      return true;
-    }
-
-    //Create new temporary window to define html code to generate canvas image
-    //The width need to be large because contain gonna be crop in pdf if not full displayed
-    let winTempCanva = window.open("", "legend", "width="+screen.width+", height="+screen.height);
-
-    //Create div to contain html code for legend
-    let div = winTempCanva.document.createElement('div');
-    let that = this;
-    //Define event to execute after all images are loaded to create the canvas (it's why we use window.open)
-    winTempCanva.addEventListener('load',function() {
-      html2canvas(div, {useCORS : true}).then(canvas => {
-        var imgData;
-
-        try {
-          imgData = canvas.toDataURL('image/png');
-          doc.addPage();
-          doc.addImage(imgData, 'PNG', 10, 10);
-          winTempCanva.onunload = function(){doc.save('map.pdf')};
-          winTempCanva.close(); //close temp window
-
-        } catch (err) {
-          winTempCanva.close(); //close temp window
-          that.messageService.error(
-            'Security error: The legend cannot be printed.',
-            'Print', 'print');
-
-          throw new Error(err);
-        }
-      });
-    }, false);
-
-    //Add html code to convert in the new window
-    winTempCanva.document.body.appendChild(div);
-    div.innerHTML = html;
+    //TODO use map.ts/addLegend function
+    For now, the code of this function doesn't work here
   }*/
-
-  addLegend(doc: typeof jsPDF, map: IgoMap) {
-    //Get html code for the legend
-    let width = 200; //milimeters unit, originally define for document pdf
-    let html = map.getAllLayersLegendHtml(width);
-    let format = "png";
-    let blobFormat = "image/" + format;
-
-    //If no legend show No LEGEND in an image
-    if (html.length == 0) {
-      html = '<font size="12" face="Courier New" >';
-      html += "<div align='center'><b>NO LEGEND</b></div>";
-    }
-
-    //Create new temporary window to define html code to generate canvas image
-    let winTempCanva = window.open("", "_blank", "width=10, height=10");
-
-    //Create div to contain html code for legend
-    let div = winTempCanva.document.createElement('div');
-
-    //Define event to execute after all images are loaded to create the canvas
-    winTempCanva.addEventListener('load',function() {
-      html2canvas(div, {useCORS : true}).then(canvas => {
-        if (navigator.msSaveBlob) {
-          navigator.msSaveBlob(canvas.msToBlob(), 'legendImage.' + format);
-        } else {
-          canvas.toBlob(function(blob) {
-            //download image
-            saveAs(blob, "legendImage." + format);
-          }, blobFormat);
-        }
-        winTempCanva.close(); //close temp window
-      });
-    }, false);
-
-    //Add html code to convert in the new window
-    winTempCanva.document.body.appendChild(div);
-    div.innerHTML = html;
-  }
 
   private addCanvas(doc: typeof jsPDF, canvas: HTMLCanvasElement,
                     size: Array<number>, margins: Array<number>) {

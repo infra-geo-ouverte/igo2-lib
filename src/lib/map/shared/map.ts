@@ -388,6 +388,7 @@ export class IgoMap {
 
   /**
   Get Projection of the map
+  @return {string} Projection of the map
   */
   getProjection() {
     return this.projection;
@@ -395,6 +396,7 @@ export class IgoMap {
 
   /**
   Get Scale of the map
+  @return {string} Scale of the map
   */
   getMapScale(approximative, resolution) {
     if (approximative) {
@@ -559,7 +561,6 @@ export class IgoMap {
     let div = winTempCanva.document.createElement('div');
 
     //Define event to execute after all images are loaded to create the canvas
-    winTempCanva.addEventListener('load',function() {
       html2canvas(div, {useCORS : true}).then(canvas => {
         if (navigator.msSaveBlob) {
           navigator.msSaveBlob(canvas.msToBlob(), 'legendImage.' + format);
@@ -571,7 +572,6 @@ export class IgoMap {
         }
         winTempCanva.close(); //close temp window
       });
-    }, false);
 
     //Add html code to convert in the new window
     winTempCanva.document.body.appendChild(div);
@@ -608,40 +608,47 @@ export class IgoMap {
     return this.layers.findIndex(layer_ => layer_ === layer);
   }
 
+/**
+Add the legend to the document
+//TODO This function need to be integrate in print module, code of function doesn't work in print.service.ts BUG?
+@param {document} doc - Pdf document where legend will be added
+*/
   addLegend(doc) {
-  //map.addToDocAllLayersLegendImage(doc);
-  //Get html code for the legend
-  let width = doc.internal.pageSize.width-10; //let a 10mm for extra
-  let html = this.getAllLayersLegendHtml(width);
+    //Get html code for the legend
+    let width = doc.internal.pageSize.width;
+    let html = this.getAllLayersLegendHtml(width);
 
-  //If no legend, save the map directly
-  if(html=="") {
-    doc.save('map.pdf')
-    return true;
-  }
+    //If no legend, save the map directly
+    if(html=="") {
+      doc.save('map.pdf')
+      return true;
+    }
 
-  //Create new temporary window to define html code to generate canvas image
-  let winTempCanva = window.open("", "legend", "width=10, height=10");
+    //Create new temporary window to define html code to generate canvas image
+    let winTempCanva = window.open("", "legend", "width=10, height=10");
 
-  //Create div to contain html code for legend
-  let div = winTempCanva.document.createElement('div');
-//  let that = this;
-  //Define event to execute after all images are loaded to create the canvas (it's why we use window.open)
-  winTempCanva.addEventListener('load',function() {
+    //Create div to contain html code for legend
+    let div = winTempCanva.document.createElement('div');
+
     html2canvas(div, {useCORS : true}).then(canvas => {
-      var imgData;
-      var position = 10;
-      var pageHeight = doc.internal.pageSize.height;
-      var pageWidth = doc.internal.pageSize.width;
+      let imgData;
+      let position = 10;
+      //Define variable to calculate best legend size to fit in one page
+      let pageHeight = doc.internal.pageSize.height;
+      let pageWidth = doc.internal.pageSize.width;
+      let canHeight = canvas.height;
+      let canWidth = canvas.width;
+      let heightRatio = canHeight/pageHeight;
+      let widthRatio = canWidth/pageWidth;
+      let maxRatio = (heightRatio>widthRatio) ? heightRatio : widthRatio;
+      let imgHeigh = (maxRatio>1) ? canHeight/maxRatio : canHeight;
+      let imgWidth = (maxRatio>1) ? canWidth/maxRatio : canWidth;
       try {
         imgData = canvas.toDataURL('image/png');
 
-        //doc.addPage();
-        //doc.addImage(imgData, 'PNG', 10, 10);
         doc.addPage();
-        doc.addImage(imgData, 'PNG', 10, position, pageWidth, pageHeight-20);
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeigh);
 
-        winTempCanva.onunload = function(){doc.save('map.pdf')};
         winTempCanva.close(); //close temp window
 
       } catch (err) {
@@ -649,15 +656,17 @@ export class IgoMap {
     /*    that.messageService.error(
           'Security error: The legend cannot be printed.',
           'Print', 'print');
-*/
+          */
         throw new Error(err);
       }
     });
-  }, false);
 
-  //Add html code to convert in the new window
-  winTempCanva.document.body.appendChild(div);
-  div.innerHTML = html;
+    //Save canvas on window close
+    winTempCanva.addEventListener("unload", function(){doc.save('map.pdf')});
+
+    //Add html code to convert in the new window
+    winTempCanva.document.body.appendChild(div);
+    div.innerHTML = html;
 }
 
 }
