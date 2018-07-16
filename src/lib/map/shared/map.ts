@@ -1,4 +1,17 @@
-import * as ol from 'openlayers';
+import Map from 'ol/map';
+import View from 'ol/view';
+import proj from 'ol/proj';
+import easing from 'ol/easing';
+import Stroke from 'ol/style/stroke';
+import Fill from 'ol/style/fill';
+import Style from 'ol/style/style';
+import Circle from 'ol/style/circle';
+import Icon from 'ol/style/icon';
+import Attribution from 'ol/control/attribution';
+import ScaleLine from 'ol/control/scaleline';
+import Interaction from 'ol/interaction';
+import Feature from 'ol/feature';
+import Geolocation from 'ol/geolocation';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
@@ -14,15 +27,15 @@ import { MapViewOptions, MapOptions } from './map.interface';
 
 export class IgoMap {
 
-  public ol: ol.Map;
+  public ol: Map;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
   public resolution$ = new BehaviorSubject<Number>(undefined);
   public geolocation$ = new BehaviorSubject<ol.Geolocation>(undefined);
 
-  public overlayMarkerStyle: ol.style.Style;
-  public overlayStyle: ol.style.Style;
+  public overlayMarkerStyle: Style;
+  public overlayStyle: Style;
   private overlayDataSource: FeatureDataSource;
 
   private layerWatcher: LayerWatcher;
@@ -57,12 +70,12 @@ export class IgoMap {
       if (this.options.controls.attribution) {
         const attributionOpt = (this.options.controls.attribution === true ?
           {} : this.options.controls.attribution) as ol.olx.control.AttributionOptions;
-        controls.push(new ol.control.Attribution(attributionOpt));
+        controls.push(new Attribution(attributionOpt));
       }
       if (this.options.controls.scaleLine) {
         const scaleLineOpt = (this.options.controls.scaleLine === true ?
           {} : this.options.controls.scaleLine) as ol.olx.control.ScaleLineOptions;
-        controls.push(new ol.control.ScaleLine(scaleLineOpt));
+        controls.push(new ScaleLine(scaleLineOpt));
       }
     }
     let interactions = {};
@@ -79,8 +92,8 @@ export class IgoMap {
       };
     }
 
-    this.ol = new ol.Map({
-      interactions: ol.interaction.defaults(interactions),
+    this.ol = new Map({
+      interactions: Interaction.defaults(interactions),
       controls: controls
     });
 
@@ -91,8 +104,8 @@ export class IgoMap {
     });
 
     if (this.options.overlay) {
-      this.overlayMarkerStyle = new ol.style.Style({
-        image: new ol.style.Icon({
+      this.overlayMarkerStyle = new Style({
+        image: new Icon({
           src: './assets/igo2/icons/place_blue_36px.svg',
           imgSize: [36, 36], // for ie
           anchor: [0.5, 1]
@@ -103,19 +116,19 @@ export class IgoMap {
         title: 'Overlay'
       });
 
-      const stroke = new ol.style.Stroke({
+      const stroke = new Stroke({
         color: [0, 161, 222, 1],
         width: 2
       });
 
-      const fill = new ol.style.Fill({
+      const fill = new Fill({
         color: [0, 161, 222, 0.15]
       });
 
-      this.overlayStyle = new ol.style.Style({
+      this.overlayStyle = new Style({
         stroke: stroke,
         fill: fill,
-        image: new ol.style.Circle({
+        image: new Circle({
           radius: 5,
           stroke: stroke,
           fill: fill
@@ -149,13 +162,13 @@ export class IgoMap {
   }
 
   setView(options: MapViewOptions) {
-    const view = new ol.View(options);
+    const view = new View(options);
     this.ol.setView(view);
 
     this.unsubscribeGeolocate();
     if (options) {
       if (options.center) {
-        const center = ol.proj.fromLonLat(options.center, this.projection);
+        const center = proj.fromLonLat(options.center, this.projection);
         view.setCenter(center);
       }
 
@@ -168,7 +181,7 @@ export class IgoMap {
   getCenter(projection?): [number, number] {
     let center = this.ol.getView().getCenter();
     if (projection && center) {
-      center = ol.proj.transform(center, this.projection, projection);
+      center = proj.transform(center, this.projection, projection);
     }
     return center;
   }
@@ -176,7 +189,7 @@ export class IgoMap {
   getExtent(projection?): [number, number, number, number] {
     let ext = this.ol.getView().calculateExtent(this.ol.getSize());
     if (projection && ext) {
-      ext = ol.proj.transformExtent(ext, this.projection, projection);
+      ext = proj.transformExtent(ext, this.projection, projection);
     }
     return ext;
   }
@@ -197,7 +210,7 @@ export class IgoMap {
     this.ol.getView().animate({
       zoom: zoom,
       duration: 250,
-      easing: ol.easing.easeOut
+      easing: easing.easeOut
     });
   }
 
@@ -356,7 +369,7 @@ export class IgoMap {
 
           this.overlayDataSource.ol.removeFeature(this.geolocationFeature);
         }
-        this.geolocationFeature = new ol.Feature({geometry: geometry});
+        this.geolocationFeature = new Feature({geometry: geometry});
         this.geolocationFeature.setId('geolocationFeature');
         this.addOverlay(this.geolocationFeature);
         if (first) {
@@ -385,7 +398,7 @@ export class IgoMap {
 
   private startGeolocation() {
     if (!this.geolocation) {
-      this.geolocation = new ol.Geolocation({
+      this.geolocation = new Geolocation({
         projection: this.projection,
         tracking: true
       });

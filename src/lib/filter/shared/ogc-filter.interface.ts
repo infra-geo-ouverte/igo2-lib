@@ -1,4 +1,3 @@
-import * as ol from 'openlayers';
 import { Md5 } from 'ts-md5';
 
 export interface OgcFilter extends ol.format.filter.Filter {}

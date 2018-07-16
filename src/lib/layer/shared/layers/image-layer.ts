@@ -1,4 +1,4 @@
-import * as ol from 'openlayers';
+import Image from 'ol/layer/image';
 import { DataSource } from '../../../datasource';
 
 import { ImageWatcher } from '../../utils';
@@ -30,7 +30,7 @@ export class ImageLayer extends Layer {
       source: this.dataSource.ol as ol.source.Image
     });
 
-    const image = new ol.layer.Image(olOptions);
+    const image = new Image(olOptions);
     const token = this.options.token;
     if (token) {
       const self = this;

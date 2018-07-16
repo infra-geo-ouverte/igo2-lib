@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import * as ol from 'openlayers';
+import GML from 'ol/format/gml';
+import KML from 'ol/format/kml';
+import GeoJSON from 'ol/format/geojson';
+import Stroke from 'ol/style/stroke';
+import Fill from 'ol/style/fill';
+import Style from 'ol/style/style';
+import Circle from 'ol/style/circle';
 
 import { ConfigService, MessageService, LanguageService } from '../../core';
 import { MapService } from '../../map/shared/map.service';
@@ -67,10 +73,25 @@ export class ImportExportService {
     const layer = map.getLayerById(data.layer);
     const source: any = layer.ol.getSource();
 
-    const formatStr: any = data.format;
-    const format = data.format === 'shapefile' ?
-                   new ol.format.GeoJSON() :
-                   new ol.format[formatStr]();
+    let format;
+
+    switch (data.format) {
+      case 'shapefile':
+        format =  new GeoJSON();
+        break;
+      case 'GML':
+        format =  new GML();
+        break;
+      case 'KML':
+        format =  new KML();
+        break;
+      case 'GeoJSON':
+        format =  new GeoJSON();
+        break;
+      default:
+        format =  new GeoJSON();
+        break;
+    }
 
     const featuresText = format.writeFeatures(source.getFeatures(), {
       dataProjection: 'EPSG:4326',
@@ -135,11 +156,11 @@ export class ImportExportService {
       title: title
     });
 
-    let format: any = new ol.format.GeoJSON();
+    let format: any = new GeoJSON();
     if (mimeType === 'application/vnd.google-earth.kml+xml') {
-      format = new ol.format.KML();
+      format = new KML();
     } else if (mimeType === 'application/gml+xml') {
-      format = new ol.format.GML();
+      format = new GML();
     }
 
     const olFeature = format.readFeatures(text, {
@@ -151,20 +172,20 @@ export class ImportExportService {
     const r = Math.floor(Math.random() * 255);
     const g = Math.floor(Math.random() * 255);
     const b = Math.floor(Math.random() * 255);
-    const stroke = new ol.style.Stroke({
+    const stroke = new Stroke({
       color: [r, g, b, 1],
       width: 2
     });
 
-    const fill = new ol.style.Fill({
+    const fill = new Fill({
       color: [r, g, b, 0.40]
     });
 
     const layer = new VectorLayer(overlayDataSource, {
-      style: new ol.style.Style({
+      style: new Style({
           stroke: stroke,
           fill: fill,
-          image: new ol.style.Circle({
+          image: new Circle({
             radius: 5,
             stroke: stroke,
             fill: fill

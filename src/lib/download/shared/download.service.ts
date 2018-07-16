@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as ol from 'openlayers';
+import Projection from 'ol/proj/projection';
 
 import { Layer } from '../../layer/shared';
 import { MessageService, LanguageService } from '../../core';
@@ -45,7 +45,7 @@ export class DownloadService {
         const rebuildFilter = this.ogcFilterWriter.buildFilter(
           layer.dataSource.options['ogcFilters']['filters'],
           layer.map.getExtent(),
-          new ol.proj.Projection({ code: layer.map.projection }),
+          new Projection({ code: layer.map.projection }),
           wfsOptions['fieldNameGeometry']);
         window.open(`${baseurl}&${rebuildFilter}&${outputFormatDownload}`, '_blank');
       } else if (layer.dataSource.options.download) {

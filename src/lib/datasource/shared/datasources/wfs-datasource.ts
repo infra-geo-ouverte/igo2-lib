@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import * as ol from 'openlayers';
 
+import Vector from 'ol/source/vector';
+import loadingstrategy from 'ol/loadingstrategy';
 import { uuid } from '../../../utils';
 import {
   IgoOgcFilterObject, OgcFilter, WFSWriteGetFeatureOptions,
@@ -72,12 +73,12 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
     return uuid();
   }
 
-  protected createOlSource(): ol.source.Vector {
+  protected createOlSource(): Vector {
     const wfsOptions: WFSDataSourceOptions = this.options
 
     this.dataSourceService.checkWfsOptions(wfsOptions);
 
-    return new ol.source.Vector({
+    return new Vector({
       format: this.dataSourceService.getFormatFromOptions(wfsOptions),
       overlaps: false,
       url: function(extent: ol.Extent, resolution, proj) {
@@ -121,7 +122,7 @@ export class WFSDataSource extends DataSource implements OgcFilterableDataSource
           this.options['download'], { 'dynamicUrl': baseUrl });
         return baseUrl;
       }.bind(this),
-      strategy: ol.loadingstrategy.bbox
+      strategy: loadingstrategy.bbox
     });
 
   }

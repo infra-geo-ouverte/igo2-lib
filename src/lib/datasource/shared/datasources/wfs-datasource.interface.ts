@@ -1,4 +1,3 @@
-import * as ol from 'openlayers';
 import {
   DataSourceOptions,
   DataSourceContext,

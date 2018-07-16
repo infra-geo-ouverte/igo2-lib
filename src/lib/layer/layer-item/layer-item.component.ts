@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import * as ol from 'openlayers';
+import GeoJSON from 'ol/format/geojson';
 
 import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature';
@@ -135,7 +135,7 @@ export class LayerItemComponent implements OnDestroy {
     const map = this.mapService.getMap();
     const featuresOL = (layer.dataSource.ol as any).getFeatures();
 
-    const format = new ol.format.GeoJSON();
+    const format = new GeoJSON();
     const featuresGeoJSON = JSON.parse(
       format.writeFeatures(featuresOL, {
         dataProjection: 'EPSG:4326',

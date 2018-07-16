@@ -1,4 +1,4 @@
-import * as ol from 'openlayers';
+import Vector from 'ol/layer/vector';
 
 import { DataSource } from '../../../datasource';
 
@@ -20,7 +20,7 @@ export class VectorLayer extends Layer {
       source: this.dataSource.ol as ol.source.Vector
     });
 
-    return new ol.layer.Vector(olOptions);
+    return new Vector(olOptions);
   }
 
 }

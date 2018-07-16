@@ -1,7 +1,9 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
-import * as ol from 'openlayers';
+import GeoJSON from 'ol/format/geojson';
+import extent from 'ol/extent';
+import proj from 'ol/proj';
 
 import { MapBrowserComponent, IgoMap } from '../../map';
 import { Feature, SourceFeatureType } from '../../feature';
@@ -16,7 +18,7 @@ import { OverlayAction } from '../shared/overlay.interface';
 export class OverlayDirective implements OnInit, OnDestroy {
 
   private features$$: Subscription;
-  private format = new ol.format.GeoJSON();
+  private format = new GeoJSON();
 
   get map(): IgoMap {
     return this.component.map;
@@ -41,7 +43,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       return;
     }
 
-    const extent = ol.extent.createEmpty();
+    const extentlocal = extent.createEmpty();
 
     let featureExtent, geometry;
     features.forEach((feature: Feature) => {
@@ -52,39 +54,39 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
       geometry = olFeature.getGeometry();
       featureExtent = this.getFeatureExtent(feature);
-      if (ol.extent.isEmpty(featureExtent)) {
+      if (extent.isEmpty(featureExtent)) {
         if (geometry !== null) {
           featureExtent = geometry.getExtent();
         }
       }
-      ol.extent.extend(extent, featureExtent);
+      extent.extend(extentlocal, featureExtent);
 
       this.map.addOverlay(olFeature);
     }, this);
     if (features[0].sourceType === SourceFeatureType.Click) {
-      if (ol.extent.intersects(featureExtent, this.map.getExtent())) {
+      if (extent.intersects(featureExtent, this.map.getExtent())) {
         action = 'none';
       } else {
         action = 'move';
       }
     }
-    if (!ol.extent.isEmpty(featureExtent)) {
+    if (!extent.isEmpty(featureExtent)) {
       if (action === 'zoom') {
-        this.map.zoomToExtent(extent);
+        this.map.zoomToExtent(extentlocal);
       } else if (action === 'move') {
-        this.map.moveToExtent(extent);
+        this.map.moveToExtent(extentlocal);
       }
     }
   }
 
   private getFeatureExtent(feature: Feature): ol.Extent {
-    let extent = ol.extent.createEmpty();
+    let extentlocal = extent.createEmpty();
 
     if (feature.extent && feature.projection) {
-      extent = ol.proj.transformExtent(
+      extentlocal = proj.transformExtent(
         feature.extent, feature.projection, this.map.projection);
     }
 
-    return extent;
+    return extentlocal;
   }
 }

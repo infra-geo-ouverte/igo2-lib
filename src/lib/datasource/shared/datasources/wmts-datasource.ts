@@ -1,4 +1,4 @@
-import * as ol from 'openlayers';
+import WMTS from 'ol/source/wmts';
 import { Md5 } from 'ts-md5/dist/md5';
 
 import { createDefaultTileGrid } from '../../../utils/tilegrid';
@@ -15,12 +15,12 @@ export class WMTSDataSource extends DataSource {
     super(options);
   }
 
-  protected createOlSource(): ol.source.WMTS {
+  protected createOlSource(): WMTS {
     const sourceOptions = Object.assign({
       tileGrid: createDefaultTileGrid(this.options.projection as string)
     }, this.options);
 
-    return new ol.source.WMTS(sourceOptions);
+    return new WMTS(sourceOptions);
   }
 
   protected generateId() {

@@ -1,4 +1,3 @@
-import * as ol from 'openlayers';
 import { LayerOptions, LayerContext } from './layer.interface';
 
 export interface ImageLayerOptions extends LayerOptions {

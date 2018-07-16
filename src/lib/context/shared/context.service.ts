@@ -8,7 +8,7 @@ import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators/catchError';
 import { debounceTime } from 'rxjs/operators/debounceTime';
 
-import * as ol from 'openlayers';
+import Point from 'ol/geom/polygon';
 
 import { uuid } from '../../utils/uuid';
 import { ConfigService, RouteService,
@@ -303,7 +303,7 @@ deletePermissionAssociation(contextId: string, permissionId: string): Observable
   getContextFromMap(igoMap: IgoMap): DetailedContext {
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
-    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
+    const center: any = new Point(view.getCenter() as any).transform(proj, 'EPSG:4326');
 
     const context = {
       uri: uuid(),

@@ -14,5 +14,9 @@
   {
     "uri": "embacle",
     "title": "Embâcle (analyse temporelle)"
+  },
+  {
+    "uri": "various_sources",
+    "title": "Various datasources"
   }
 ]

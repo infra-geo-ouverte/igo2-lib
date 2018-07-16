@@ -2,7 +2,9 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import * as ol from 'openlayers';
+import proj from 'ol/proj';
+import easing from 'ol/easing';
+import Point from 'ol/geom/point';
 
 import { MessageService, LanguageService } from '../../core';
 import { ConfirmDialogService } from '../../shared';
@@ -97,8 +99,8 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
 
   createPoi() {
     const view = this.map.ol.getView();
-    const proj = view.getProjection().getCode();
-    const center: any = new ol.geom.Point(view.getCenter()).transform(proj, 'EPSG:4326');
+    const projlocal = view.getProjection().getCode();
+    const center: any = new Point(view.getCenter()).transform(projlocal, 'EPSG:4326');
 
     const poi: Poi = {
       title: '',
@@ -134,13 +136,13 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   zoomOnPoi(id) {
     const poi = this.pois.find((p) => p.id === id);
 
-    const center = ol.proj.fromLonLat([Number(poi.x), Number(poi.y)], this.map.projection);
+    const center = proj.fromLonLat([Number(poi.x), Number(poi.y)], this.map.projection);
 
     this.map.ol.getView().animate({
       center: center,
       zoom: poi.zoom,
       duration: 500,
-      easing: ol.easing.easeOut
+      easing: easing.easeOut
     });
   }
 

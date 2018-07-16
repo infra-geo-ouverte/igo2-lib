@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import * as ol from 'openlayers';
+import proj from 'ol/proj';
+import WKT from 'ol/format/wkt';
+import Polygon from 'ol/geom/polygon';
 
 import { MapService } from '../../map';
 
@@ -10,17 +12,17 @@ export class WktService {
   constructor(private mapService: MapService) { }
 
   public mapExtentToWKT(epsgTO = this.mapService.getMap().projection) {
-    let extent = ol.proj.transformExtent(
+    let extent = proj.transformExtent(
       this.mapService.getMap().getExtent(),
       this.mapService.getMap().projection,
       epsgTO);
     extent = this.roundCoordinateArray(extent, epsgTO, 0);
-    const wkt = new ol.format.WKT().writeGeometry(ol.geom.Polygon.fromExtent(extent));
+    const wkt = new WKT().writeGeometry(Polygon.fromExtent(extent));
     return wkt;
   }
 
   private roundCoordinateArray(coordinateArray, projection, decimal = 0) {
-    const lproj = ol.proj.get(projection);
+    const lproj = proj.get(projection);
     const units = lproj.getUnits();
     const olUnits = ['ft', 'm', 'us-ft'];
     if (olUnits.indexOf(units) !== -1) {
@@ -169,10 +171,10 @@ export class WktService {
       coord['ur'] = [coord['ul'][0], coord['ul'][1] - unitPerType_SN];
       coord['ll'] = [coord['ul'][0] + unitPerType_EW, coord['ul'][1]];
 
-      coord.ul = ol.proj.transform([coord.ul[0], coord.ul[1]], 'EPSG:4326', epsgTO);
-      coord['lr'] = ol.proj.transform([coord['lr'][0], coord['lr'][1]], 'EPSG:4326', epsgTO);
-      coord['ur'] = ol.proj.transform([coord['ur'][0], coord['ur'][1]], 'EPSG:4326', epsgTO);
-      coord['ll'] = ol.proj.transform([coord['ll'][0], coord['ll'][1]], 'EPSG:4326', epsgTO);
+      coord.ul = proj.transform([coord.ul[0], coord.ul[1]], 'EPSG:4326', epsgTO);
+      coord['lr'] = proj.transform([coord['lr'][0], coord['lr'][1]], 'EPSG:4326', epsgTO);
+      coord['ur'] = proj.transform([coord['ur'][0], coord['ur'][1]], 'EPSG:4326', epsgTO);
+      coord['ll'] = proj.transform([coord['ll'][0], coord['ll'][1]], 'EPSG:4326', epsgTO);
 
       // Rounded coordinate to shorten url in get
       coord['ul'] = this.roundCoordinateArray(coord['ul'], epsgTO, 0);

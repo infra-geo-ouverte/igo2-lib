@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import * as ol from 'openlayers';
+import RegularShape from 'ol/style/regularshape';
+import Icon from 'ol/style/icon';
+import Circle from 'ol/style/circle';
+import Stroke from 'ol/style/stroke';
+import Fill from 'ol/style/fill';
+import Style from 'ol/style/style';
+import Image from 'ol/style/image';
 
 
 @Injectable()
@@ -45,20 +51,29 @@ export class StyleService {
     let olCls;
     switch (key) {
       case 'fill':
-      case 'image':
-      case 'stroke':
-      case 'style':
-      case 'text':
-        olCls = ol.style[key.charAt(0).toUpperCase() + key.slice(1)];
+        olCls = Fill;
         break;
+      case 'image':
+        olCls = Image;
+        break;
+      case 'stroke':
+        olCls = Stroke;
+        break;
+      case 'style':
+        olCls = Style;
+        break;
+      case 'text':
+        // FOR VALIDATION olCls = ol.style[key.charAt(0).toUpperCase() + key.slice(1)];
+        olCls = this.getOlCls(key.charAt(0).toUpperCase() + key.slice(1))
+       break;
       case 'circle':
-        olCls = ol.style.Circle;
+        olCls = Circle;
         break;
       case 'regularshape':
-        olCls = ol.style.RegularShape;
+        olCls = RegularShape;
         break;
       case 'icon':
-        olCls = ol.style.Icon;
+        olCls = Icon;
         break;
       default:
         break;

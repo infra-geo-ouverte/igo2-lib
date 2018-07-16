@@ -1,5 +1,5 @@
-import * as ol from 'openlayers';
 
+import OSM from 'ol/source/osm';
 import { DataSource } from './datasource';
 import { OSMDataSourceOptions } from './osm-datasource.interface';
 
@@ -7,10 +7,10 @@ import { OSMDataSourceOptions } from './osm-datasource.interface';
 export class OSMDataSource extends DataSource {
 
   public options: OSMDataSourceOptions;
-  public ol: ol.source.OSM;
+  public ol: OSM;
 
   protected createOlSource(): ol.source.OSM {
-   return new ol.source.OSM(this.options);
+   return new OSM(this.options);
   }
 
   protected generateId() {

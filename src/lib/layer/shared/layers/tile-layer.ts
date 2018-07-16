@@ -1,4 +1,4 @@
-import * as ol from 'openlayers';
+import Tile from 'ol/layer/tile';
 import { DataSource } from '../../../datasource';
 
 import { TileWatcher } from '../../utils';
@@ -28,7 +28,7 @@ export class TileLayer extends Layer {
       source: this.dataSource.ol as ol.source.TileImage
     });
 
-    return new ol.layer.Tile(olOptions);
+    return new Tile(olOptions);
   }
 
   public add(map: IgoMap) {
