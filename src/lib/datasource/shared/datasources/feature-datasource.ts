@@ -1,6 +1,6 @@
 import Vector from 'ol/source/vector';
 import GeoJSON from 'ol/format/geojson';
-
+import KML from 'ol/format/kml';
 import { Md5 } from 'ts-md5/dist/md5';
 
 import { uuid } from '../../../utils';
@@ -31,15 +31,25 @@ export class FeatureDataSource extends DataSource {
 
   private getSourceFormatFromOptions(options: FeatureDataSourceOptions) {
     let olFormatCls;
-    const formatType = options.formatType;
-    if (!formatType) {
-      olFormatCls = GeoJSON;
-    } /*else {
-      olFormatCls = ol.format[formatType];
-      if (olFormatCls === undefined) {
-        throw new Error('Invalid vector source format ${formatType}.');
-      }
-    }*/
+    const formatType =
+    options.formatType === undefined ? undefined : options.formatType.toLowerCase();
+    // Only geojson supported
+    if (formatType) {
+      switch (formatType) {
+        case 'geojson':
+          olFormatCls = GeoJSON;
+          break;
+        case 'kml':
+          olFormatCls = KML;
+          break;
+        default:
+          console.log('Invalid vector source format.');
+          break;
+        }
+       } else {
+          return;
+        }
+
     const formatOptions = options.formatOptions;
     let format;
     if (formatOptions) {
