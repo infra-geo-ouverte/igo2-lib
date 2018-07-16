@@ -519,10 +519,10 @@ export class IgoMap {
     if(listLegend.length > 0) {
       //Define important style to be sure that all container is convert to image not just visible part
       html += '<style media="screen" type="text/css">';
-      html += '.html2canvas-container { width: 3000px !important; height: 3000px !important; }';
+      html += '.html2canvas-container { width: '+width+ 'mm !important; height: 2000px !important; }';
       html += '</style>';
       html += '<font size="2" face="Courier New" >';
-      html += "<div style='display:inline-block;width:" + width + "mm;max-width:" + width + "mm'>";
+      html += "<div style='display:inline-block;max-width:" + width + "mm'>";
 
       //For each legend, define an html table cell
       listLegend.forEach(function(legend) {
@@ -607,66 +607,5 @@ export class IgoMap {
   private getLayerIndex(layer: Layer) {
     return this.layers.findIndex(layer_ => layer_ === layer);
   }
-
-/**
-Add the legend to the document
-//TODO This function need to be integrate in print module, code of function doesn't work in print.service.ts BUG?
-@param {document} doc - Pdf document where legend will be added
-*/
-  addLegend(doc) {
-    //Get html code for the legend
-    let width = doc.internal.pageSize.width;
-    let html = this.getAllLayersLegendHtml(width);
-
-    //If no legend, save the map directly
-    if(html=="") {
-      doc.save('map.pdf')
-      return true;
-    }
-
-    //Create new temporary window to define html code to generate canvas image
-    let winTempCanva = window.open("", "legend", "width=10, height=10");
-
-    //Create div to contain html code for legend
-    let div = winTempCanva.document.createElement('div');
-
-    html2canvas(div, {useCORS : true}).then(canvas => {
-      let imgData;
-      let position = 10;
-      //Define variable to calculate best legend size to fit in one page
-      let pageHeight = doc.internal.pageSize.height;
-      let pageWidth = doc.internal.pageSize.width;
-      let canHeight = canvas.height;
-      let canWidth = canvas.width;
-      let heightRatio = canHeight/pageHeight;
-      let widthRatio = canWidth/pageWidth;
-      let maxRatio = (heightRatio>widthRatio) ? heightRatio : widthRatio;
-      let imgHeigh = (maxRatio>1) ? canHeight/maxRatio : canHeight;
-      let imgWidth = (maxRatio>1) ? canWidth/maxRatio : canWidth;
-      try {
-        imgData = canvas.toDataURL('image/png');
-
-        doc.addPage();
-        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeigh);
-
-        winTempCanva.close(); //close temp window
-
-      } catch (err) {
-        winTempCanva.close(); //close temp window
-    /*    that.messageService.error(
-          'Security error: The legend cannot be printed.',
-          'Print', 'print');
-          */
-        throw new Error(err);
-      }
-    });
-
-    //Save canvas on window close
-    winTempCanva.addEventListener("unload", function(){doc.save('map.pdf')});
-
-    //Add html code to convert in the new window
-    winTempCanva.document.body.appendChild(div);
-    div.innerHTML = html;
-}
 
 }

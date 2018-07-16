@@ -10,6 +10,8 @@ import { PrintDimension, PrintOrientation} from './print.type';
 
 import { saveAs } from 'file-saver';
 
+import * as html2canvas from "html2canvas";
+
 declare var jsPDF: any;
 
 @Injectable()
@@ -52,9 +54,7 @@ export class PrintService {
       .subscribe((status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           if(options.showLegend === true) {
-            //this.addLegend(doc, map); TODO!
-            map.addLegend(doc);
-            //map.getAllLayersLegendImage();
+            this.addLegend(doc, map);
           }
           else {
             doc.save('map.pdf');
@@ -139,11 +139,66 @@ export class PrintService {
     doc.setFontSize(projScaleSize);
     doc.text(projScaleMarginLeft, heightPixels, textProjScale);
   }
-/*
+
+  /**
+  Add the legend to the document
+  @param {document} doc - Pdf document where legend will be added
+  */
   private addLegend(doc: typeof jsPDF, map: IgoMap) {
-    //TODO use map.ts/addLegend function
-    For now, the code of this function doesn't work here
-  }*/
+    //Get html code for the legend
+    let width = doc.internal.pageSize.width;
+    let html = map.getAllLayersLegendHtml(width);
+
+    //If no legend, save the map directly
+    if(html=="") {
+      doc.save('map.pdf')
+      return true;
+    }
+
+    //Create new temporary window to define html code to generate canvas image
+    let winTempCanva = window.open("", "legend", "width=10, height=10");
+
+    //Create div to contain html code for legend
+    let div = winTempCanva.document.createElement('div');
+
+    html2canvas(div, {useCORS : true}).then(canvas => {
+      let imgData;
+      let position = 10;
+      //Define variable to calculate best legend size to fit in one page
+      let pageHeight = doc.internal.pageSize.height-20; //-20 to let margin work great
+      let pageWidth = doc.internal.pageSize.width-20; //-20 to let margin work great
+      let canHeight = canvas.height;
+      let canWidth = canvas.width;
+      let heightRatio = canHeight/pageHeight;
+      let widthRatio = canWidth/pageWidth;
+      let maxRatio = (heightRatio>widthRatio) ? heightRatio : widthRatio;
+      let imgHeigh = (maxRatio>1) ? canHeight/maxRatio : canHeight;
+      let imgWidth = (maxRatio>1) ? canWidth/maxRatio : canWidth;
+      try {
+        imgData = canvas.toDataURL('image/png');
+
+        doc.addPage();
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeigh);
+
+        winTempCanva.close(); //close temp window
+
+      } catch (err) {
+        winTempCanva.close(); //close temp window
+        this.messageService.error(
+          'Security error: The legend cannot be printed.',
+          'Print', 'print');
+
+        throw new Error(err);
+      }
+    });
+
+    //Save canvas on window close
+    winTempCanva.addEventListener("unload", function(){doc.save('map.pdf')});
+
+    //Add html code to convert in the new window
+    winTempCanva.document.body.appendChild(div);
+    div.innerHTML = html;
+  }
 
   private addCanvas(doc: typeof jsPDF, canvas: HTMLCanvasElement,
                     size: Array<number>, margins: Array<number>) {
@@ -226,7 +281,7 @@ export class PrintService {
   @param {string} format - Image format. default value to "png"
   @param {boolean} projection - Bool to indicate if projection need to be shown for the map. Default to false
   @param {boolean} scale - Bool to indicate if scale need to be shown for the map. Default to false
-  @param {boolean} legend - Bool to indicate if the legend of layers need to be download. Default to false TODO include?
+  @param {boolean} legend - Bool to indicate if the legend of layers need to be download. Default to false
   @param {string} title - Title to add for the map - Default to blank
   @param {string} comment - Comment to add for the map - Default to blank
   @param {string} resolution - Resolution detail of the map - Default to 96 ppi
