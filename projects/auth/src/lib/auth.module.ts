@@ -1,9 +1,10 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material';
 
-import { IgoCoreModule } from '@igo2/core';
+import { IgoLanguageModule } from '@igo2/core';
 
 import { ProtectedDirective } from './shared/protected.directive';
 import { AuthInterceptor } from './shared/auth.interceptor';
@@ -13,9 +14,13 @@ import { AuthFormComponent } from './auth-form/auth-form.component';
 import { AuthGoogleComponent } from './auth-form/auth-google.component';
 import { AuthFacebookComponent } from './auth-form/auth-facebook.component';
 
-
 @NgModule({
-  imports: [ReactiveFormsModule, MatFormFieldModule, IgoCoreModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    IgoLanguageModule
+  ],
   declarations: [
     AuthFormComponent,
     AuthGoogleComponent,

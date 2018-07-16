@@ -6,20 +6,19 @@ import { LoggingInterceptor } from './logging.interceptor';
 @NgModule({
   imports: [],
   declarations: [],
-  exports: [],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LoggingInterceptor,
-      multi: true
-    }
-  ]
+  exports: []
 })
 export class IgoLoggingModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoLoggingModule,
-      providers: []
+      providers: [
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: LoggingInterceptor,
+          multi: true
+        }
+      ]
     };
   }
 }

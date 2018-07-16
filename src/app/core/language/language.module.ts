@@ -12,7 +12,7 @@ import { AppLanguageRoutingModule } from './language-routing.module';
     AppLanguageRoutingModule,
     MatCardModule,
     MatButtonModule,
-    IgoLanguageModule
+    IgoLanguageModule.forRoot()
   ],
   exports: [AppLanguageComponent]
 })

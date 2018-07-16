@@ -6,20 +6,19 @@ import { ErrorInterceptor } from './error.interceptor';
 @NgModule({
   imports: [],
   declarations: [],
-  exports: [],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true
-    }
-  ]
+  exports: []
 })
 export class IgoErrorModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoErrorModule,
-      providers: []
+      providers: [
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: ErrorInterceptor,
+          multi: true
+        }
+      ]
     };
   }
 }

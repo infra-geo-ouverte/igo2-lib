@@ -14,7 +14,11 @@ import {
 
 import { IgoAuthModule } from '@igo2/auth';
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoCommonModule } from '@igo2/common';
+import {
+  IgoListModule,
+  IgoKeyValueModule,
+  IgoCollapsibleModule
+} from '@igo2/common';
 
 import { MapContextDirective } from './shared/map-context.directive';
 import { LayerContextDirective } from './shared/layer-context.directive';
@@ -50,7 +54,9 @@ const CONTEXT_DIRECTIVES = [
     MatCheckboxModule,
     MatRadioModule,
     IgoAuthModule,
-    IgoCommonModule,
+    IgoListModule,
+    IgoKeyValueModule,
+    IgoCollapsibleModule,
     IgoLanguageModule
   ],
   exports: [

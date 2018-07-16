@@ -6,7 +6,11 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
-import { IgoCommonModule } from '@igo2/common';
+import {
+  IgoKeyValueModule,
+  IgoCollapsibleModule,
+  IgoListModule
+} from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { FeatureGroupPipe } from './shared/feature-group.pipe';
@@ -22,7 +26,9 @@ import { FeatureItemComponent } from './feature-item/feature-item.component';
     MatIconModule,
     MatListModule,
     MatTooltipModule,
-    IgoCommonModule,
+    IgoKeyValueModule,
+    IgoCollapsibleModule,
+    IgoListModule,
     IgoLanguageModule
   ],
   exports: [

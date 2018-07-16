@@ -1,20 +1,27 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
-import { provideConfigOptions, provideConfigLoader } from './config';
-import { IgoErrorModule } from './request/error.module';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IgoActivityModule } from './activity/activity.module';
+import { IgoConfigModule } from './config/config.module';
 import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
+import { IgoErrorModule } from './request/error.module';
 
 @NgModule({
-  imports: [CommonModule, HttpClientModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    IgoActivityModule.forRoot(),
+    IgoConfigModule.forRoot(),
+    IgoErrorModule.forRoot(),
+    IgoLanguageModule.forRoot(),
+    IgoMessageModule.forRoot()
+  ],
   declarations: [],
   exports: [
-    CommonModule,
     IgoActivityModule,
+    IgoConfigModule,
     IgoErrorModule,
     IgoLanguageModule,
     IgoMessageModule
@@ -24,7 +31,7 @@ export class IgoCoreModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoCoreModule,
-      providers: [provideConfigOptions({}), provideConfigLoader()]
+      providers: []
     };
   }
 }

@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'keyvalue'
 })
-export class KeyvaluePipe implements PipeTransform {
+export class KeyValuePipe implements PipeTransform {
   transform(value: any, args?: any): any {
     const keyValues = [];
     Object.getOwnPropertyNames(value).forEach((key: string) =>

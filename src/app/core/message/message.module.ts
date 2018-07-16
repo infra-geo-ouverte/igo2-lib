@@ -12,7 +12,7 @@ import { AppMessageRoutingModule } from './message-routing.module';
     AppMessageRoutingModule,
     MatCardModule,
     MatButtonModule,
-    IgoMessageModule
+    IgoMessageModule.forRoot()
   ],
   exports: [AppMessageComponent]
 })

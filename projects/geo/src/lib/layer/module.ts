@@ -9,8 +9,12 @@ import {
   MatSliderModule
 } from '@angular/material';
 
-import { IgoCoreModule } from '@igo2/core';
-import { IgoCommonModule } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core';
+import {
+  IgoListModule,
+  IgoCollapsibleModule,
+  IgoImageModule
+} from '@igo2/common';
 // import { IgoFilterModule } from '../filter';
 
 import { LayerService } from './shared/layer.service';
@@ -29,8 +33,10 @@ import { LayerListBindingDirective } from './layer-list/layer-list-binding.direc
     MatTooltipModule,
     MatListModule,
     MatSliderModule,
-    IgoCoreModule,
-    IgoCommonModule
+    IgoLanguageModule,
+    IgoListModule,
+    IgoCollapsibleModule,
+    IgoImageModule
     /*IgoFilterModule*/
   ],
   exports: [

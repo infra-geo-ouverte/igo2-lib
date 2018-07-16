@@ -17,14 +17,13 @@ import { IgoMissingTranslationHandler } from './shared/missing-translation.guard
     })
   ],
   declarations: [],
-  exports: [TranslateModule],
-  providers: [provideDefaultLanguageLoader()]
+  exports: [TranslateModule]
 })
 export class IgoLanguageModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoLanguageModule,
-      providers: []
+      providers: [provideDefaultLanguageLoader()]
     };
   }
 }

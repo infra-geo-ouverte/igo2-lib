@@ -1,4 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -13,8 +14,8 @@ import {
 } from '@angular/material';
 
 // import { IgoAuthModule } from '@igo2/auth';
-import { IgoCoreModule } from '@igo2/core';
-import { IgoCommonModule } from '@igo2/common';
+import { IgoLanguageModule } from '@igo2/core';
+import { IgoConfirmDialogModule } from '@igo2/common';
 
 import { MapBrowserBindingDirective } from './map-browser/map-browser-binding.directive';
 import { MapBrowserComponent } from './map-browser/map-browser.component';
@@ -32,8 +33,9 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
 
 @NgModule({
   imports: [
-    IgoCoreModule,
-    IgoCommonModule,
+    CommonModule,
+    IgoLanguageModule,
+    IgoConfirmDialogModule,
     // IgoAuthModule,
     FormsModule,
     MatIconModule,

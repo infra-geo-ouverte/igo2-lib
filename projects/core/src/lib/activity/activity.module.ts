@@ -6,20 +6,19 @@ import { ActivityInterceptor } from './activity.interceptor';
 @NgModule({
   imports: [],
   declarations: [],
-  exports: [],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ActivityInterceptor,
-      multi: true
-    }
-  ]
+  exports: []
 })
 export class IgoActivityModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoActivityModule,
-      providers: []
+      providers: [
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: ActivityInterceptor,
+          multi: true
+        }
+      ]
     };
   }
 }

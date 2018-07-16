@@ -58,7 +58,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.authenticate$$.unsubscribe();
+    // this.authenticate$$.unsubscribe();
   }
 
   deletePoi(poi: Poi) {

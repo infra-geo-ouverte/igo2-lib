@@ -6,7 +6,7 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
-import { IgoCommonModule } from '@igo2/common';
+import { IgoListModule, IgoCollapsibleModule } from '@igo2/common';
 
 import { CatalogItemComponent } from './catalog-item/catalog-item.component';
 import { CatalogLayersListComponent } from './catalog-layers-list/catalog-layers-list.component';
@@ -21,7 +21,8 @@ import { CatalogLayerItemComponent } from './catalog-layer-item/catalog-layer-it
     MatIconModule,
     MatListModule,
     MatTooltipModule,
-    IgoCommonModule
+    IgoListModule,
+    IgoCollapsibleModule
   ],
   exports: [
     CatalogListComponent,

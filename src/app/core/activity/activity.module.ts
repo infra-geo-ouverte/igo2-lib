@@ -12,7 +12,7 @@ import { AppActivityRoutingModule } from './activity-routing.module';
     AppActivityRoutingModule,
     MatCardModule,
     MatButtonModule,
-    IgoActivityModule // Only if you want register http calls
+    IgoActivityModule.forRoot() // Only if you want register http calls
   ],
   exports: [AppActivityComponent]
 })
