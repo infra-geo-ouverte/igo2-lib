@@ -77,35 +77,32 @@
     "searchResults",
     "mapDetails",
     "timeAnalysis",
+    "ogcFilter",
     "contextManager",
-    "print",
-    "catalog",
-    "importExport"
+    "print"
   ],
   "tools": [
     {
       "name": "searchResults"
     },
     {
-      "name": "mapDetails"
+      "name": "mapDetails",
+      "options": {
+        "toggleLegendOnVisibilityChange": true,
+        "ogcFiltersInLayers": true
+      }
     },
     {
       "name": "timeAnalysis"
+    },
+    {
+      "name": "ogcFilter"
     },
     {
       "name": "contextManager"
     },
     {
       "name": "print"
-    },
-    {
-      "name": "catalog"
-    },
-    {
-      "name": "catalogLayers"
-    },
-    {
-      "name": "importExport"
     }
   ]
 }
