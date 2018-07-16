@@ -12,7 +12,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 
-import * as ol from 'openlayers';
+import DragBox from 'ol/interaction/dragbox';
+import condition from 'ol/events/condition';
+import GeoJSON from 'ol/format/geojson';
 
 import { LanguageService } from '../../core';
 import { IgoMap } from '../../map/shared';
@@ -30,8 +32,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
-  public dragBox = new ol.interaction.DragBox({
-    condition: ol.events.condition.platformModifierKeyOnly
+  public dragBox = new DragBox({
+    condition: condition.platformModifierKeyOnly
   });
 
   get map(): IgoMap {
@@ -65,8 +67,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     );
 
     this.map.ol.on('singleclick', this.handleMapClick, this);
-    this.dragBox = new ol.interaction.DragBox({
-      condition: ol.events.condition.platformModifierKeyOnly
+    this.dragBox = new DragBox({
+      condition: condition.platformModifierKeyOnly
     });
     this.map.ol.addInteraction(this.dragBox);
     this.dragBox.on('boxend', this.handleMapClick, this);
@@ -114,7 +116,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private handleMapClick(event: ol.MapBrowserEvent) {
     this.unsubscribeQueries();
     const clickedFeatures: ol.Feature[] = [];
-    const format = new ol.format.GeoJSON();
+    const format = new GeoJSON();
     const mapProjection = this.map.projection;
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
