@@ -24,7 +24,7 @@
         "type" : "osm"
       },
       {
-        "title": "Vector geojson (feature-datasource)",
+        "title": "feature-datasource geojson",
         "type" : "vector",
         "formatType": "geojson",
         "source":{
@@ -32,7 +32,7 @@
         }
       },
       {
-        "title": "Vector kml (white-colored) (feature-datasource)",
+        "title": "feature-datasource kml (white-colored)",
         "type" : "vector",
         "formatType": "kml",
         "source":{

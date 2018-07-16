@@ -33,7 +33,7 @@ export class FeatureDataSource extends DataSource {
     let olFormatCls;
     const formatType =
     options.formatType === undefined ? undefined : options.formatType.toLowerCase();
-    // Only geojson supported
+    // Only geojson & kml supported
     if (formatType) {
       switch (formatType) {
         case 'geojson':
