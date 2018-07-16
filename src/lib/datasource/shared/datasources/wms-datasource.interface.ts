@@ -1,4 +1,3 @@
-
 import { DataSourceContext,
   TimeFilterableDataSourceOptions,
   QueryableDataSourceOptions, OgcFilterableDataSourceOptions } from './datasource.interface';

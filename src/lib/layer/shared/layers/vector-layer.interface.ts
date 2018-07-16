@@ -1,4 +1,3 @@
-
 import { LayerOptions, LayerContext } from './layer.interface';
 
 export interface VectorLayerOptions extends LayerOptions {
