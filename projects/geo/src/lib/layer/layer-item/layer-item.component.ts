@@ -40,7 +40,7 @@ export class LayerItemComponent implements OnDestroy {
   set edition(value: boolean) {
     this._edition = value;
   }
-  private _edition: boolean = false;
+  private _edition = false;
 
   @Input()
   get color() {
@@ -49,7 +49,7 @@ export class LayerItemComponent implements OnDestroy {
   set color(value: string) {
     this._color = value;
   }
-  private _color: string = 'primary';
+  private _color = 'primary';
 
   @Input()
   get toggleLegendOnVisibilityChange() {
@@ -58,7 +58,7 @@ export class LayerItemComponent implements OnDestroy {
   set toggleLegendOnVisibilityChange(value: boolean) {
     this._toggleLegendOnVisibilityChange = value;
   }
-  private _toggleLegendOnVisibilityChange: boolean = false;
+  private _toggleLegendOnVisibilityChange = false;
 
   @Input()
   get ogcFilterInLayerItem() {
@@ -67,7 +67,7 @@ export class LayerItemComponent implements OnDestroy {
   set ogcFilterInLayerItem(value: boolean) {
     this._ogcFilterInLayers = value;
   }
-  private _ogcFilterInLayers: boolean = false;
+  private _ogcFilterInLayers = false;
 
   get opacity() {
     return this.layer.opacity * 100;
@@ -92,11 +92,11 @@ export class LayerItemComponent implements OnDestroy {
   private resolution$$: Subscription;
 
   constructor(
-    private cdRef: ChangeDetectorRef,
-    private mapService: MapService,
     // private featureService: FeatureService,
     // private metadataService: MetadataService,
     // private downloadService: DownloadService
+    private cdRef: ChangeDetectorRef,
+    private mapService: MapService
   ) {}
 
   ngOnDestroy() {

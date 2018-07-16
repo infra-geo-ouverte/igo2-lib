@@ -152,7 +152,7 @@ export class WFSDataSourceService extends DataService {
       startIndex
     ).subscribe(
       str => {
-        str = str.replace(/&#39;/gi, "'");
+        str = str.replace(/&#39;/gi, "'"); // tslint:disable-line
         const regex_excp = /exception/gi;
         if (regex_excp.test(str)) {
           retry++;

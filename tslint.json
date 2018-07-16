@@ -16,7 +16,10 @@
     "indent": [true, "spaces"],
     "interface-over-type-literal": true,
     "label-position": true,
-    "max-line-length": [true, 80],
+    "max-line-length": [
+      true,
+      { "limit": 120, "ignore-pattern": "^import {(.*?)}" }
+    ],
     "member-access": false,
     "member-ordering": [
       true,
@@ -36,7 +39,7 @@
     "no-debugger": true,
     "no-duplicate-super": true,
     "no-empty": false,
-    "no-empty-interface": true,
+    "no-empty-interface": false,
     "no-eval": true,
     "no-inferrable-types": [true, "ignore-params"],
     "no-misused-new": true,

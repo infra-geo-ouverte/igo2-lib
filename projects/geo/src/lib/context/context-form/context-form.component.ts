@@ -39,7 +39,7 @@ export class ContextFormComponent implements OnInit {
   set disabled(value: boolean) {
     this._disabled = value;
   }
-  private _disabled: boolean = false;
+  private _disabled = false;
 
   // TODO: replace any by ContextOptions or Context
   @Output() submitForm: EventEmitter<any> = new EventEmitter();

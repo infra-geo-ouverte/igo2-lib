@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, empty } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 
 import { ConfigService } from '@igo2/core';
 import { Poi } from './poi.interface';
@@ -15,7 +15,7 @@ export class PoiService {
 
   get(): Observable<Poi[]> {
     if (!this.baseUrl) {
-      return empty();
+      return EMPTY;
     }
 
     const url = this.baseUrl + '/pois';

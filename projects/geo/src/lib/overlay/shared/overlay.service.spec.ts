@@ -8,10 +8,7 @@ describe('OverlayService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
-      providers: [
-        FeatureService,
-        OverlayService
-      ]
+      providers: [FeatureService, OverlayService]
     });
   });
 

@@ -1,8 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy,
-         ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 
 import { Layer } from '../shared';
-
 
 @Component({
   selector: 'igo-layer-list',
@@ -10,9 +13,10 @@ import { Layer } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerListComponent {
-
   @Input()
-  get layers(): Layer[] { return this._layers; }
+  get layers(): Layer[] {
+    return this._layers;
+  }
   set layers(value: Layer[]) {
     this._layers = value;
     this.cdRef.detectChanges();
@@ -20,11 +24,13 @@ export class LayerListComponent {
   private _layers: Layer[] = [];
 
   @Input()
-  get color() { return this._color; }
+  get color() {
+    return this._color;
+  }
   set color(value: string) {
     this._color = value;
   }
-  private _color: string = 'primary';
+  private _color = 'primary';
 
   @Input()
   get excludeBaseLayers() {
@@ -33,7 +39,7 @@ export class LayerListComponent {
   set excludeBaseLayers(value: boolean) {
     this._excludeBaseLayers = value;
   }
-  private _excludeBaseLayers: boolean = false;
+  private _excludeBaseLayers = false;
 
   @Input()
   get toggleLegendOnVisibilityChange() {
@@ -42,7 +48,7 @@ export class LayerListComponent {
   set toggleLegendOnVisibilityChange(value: boolean) {
     this._toggleLegendOnVisibilityChange = value;
   }
-  private _toggleLegendOnVisibilityChange: boolean = false;
+  private _toggleLegendOnVisibilityChange = false;
 
   @Input()
   get ogcFilterInLayerItem() {
@@ -51,9 +57,7 @@ export class LayerListComponent {
   set ogcFilterInLayerItem(value: boolean) {
     this._ogcFilterInLayers = value;
   }
-  private _ogcFilterInLayers: boolean = false;
+  private _ogcFilterInLayers = false;
 
-
-  constructor(private cdRef: ChangeDetectorRef) { }
-
+  constructor(private cdRef: ChangeDetectorRef) {}
 }

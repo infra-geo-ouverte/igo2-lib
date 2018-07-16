@@ -16,7 +16,6 @@ export class ContextEditComponent {
   }
   private _context: Context;
 
-  // @Output() submit: EventEmitter<ContextOptions> = new EventEmitter();
   @Output() submitForm: EventEmitter<any> = new EventEmitter();
 
   constructor() {}

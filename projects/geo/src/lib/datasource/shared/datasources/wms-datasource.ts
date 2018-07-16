@@ -65,8 +65,10 @@ export class WMSDataSource extends DataSource
       sourceParams.VERSION = sourceParams.version;
     }
 
-    if (options['sourceFields'] === undefined ||
-    Object.keys(options['sourceFields']).length === 0) {
+    if (
+      options['sourceFields'] === undefined ||
+      Object.keys(options['sourceFields']).length === 0
+    ) {
       options['sourceFields'] = [{ name: '', alias: '' }];
     }
     // WMS With linked wfs
@@ -94,14 +96,14 @@ export class WMSDataSource extends DataSource
         //           : false
         //       })
         //   )
-          // .subscribe(
-          //   val =>
-          //     (options[
-          //       'sourceFields'
-          //     ] = this.dataSourceService.defineFieldAndValuefromWFS(
-          //       options.wfsSource
-          //     ))
-          // );
+        // .subscribe(
+        //   val =>
+        //     (options[
+        //       'sourceFields'
+        //     ] = this.dataSourceService.defineFieldAndValuefromWFS(
+        //       options.wfsSource
+        //     ))
+        // );
       } else {
         options['sourceFields']
           .filter(

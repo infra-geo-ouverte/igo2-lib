@@ -5,9 +5,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { DataSource } from './datasource';
 import { WMTSDataSourceOptions } from './wmts-datasource.interface';
 
-
 export class WMTSDataSource extends DataSource {
-
   public options: WMTSDataSourceOptions;
   public ol: ol.source.WMTS;
 
@@ -16,9 +14,12 @@ export class WMTSDataSource extends DataSource {
   }
 
   protected createOlSource(): ol.source.WMTS {
-    const sourceOptions = Object.assign({
-      // tileGrid: createDefaultTileGrid(this.options.projection as string)
-    }, this.options);
+    const sourceOptions = Object.assign(
+      {
+        // tileGrid: createDefaultTileGrid(this.options.projection as string)
+      },
+      this.options
+    );
 
     return new ol.source.WMTS(sourceOptions);
   }
@@ -29,5 +30,4 @@ export class WMTSDataSource extends DataSource {
 
     return Md5.hashStr(chain) as string;
   }
-
 }

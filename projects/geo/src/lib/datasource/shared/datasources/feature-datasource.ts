@@ -5,9 +5,7 @@ import { uuid } from '@igo2/utils';
 import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
-
 export class FeatureDataSource extends DataSource {
-
   public options: FeatureDataSourceOptions;
   public ol: ol.source.Vector;
 
@@ -49,5 +47,4 @@ export class FeatureDataSource extends DataSource {
 
     return format;
   }
-
 }

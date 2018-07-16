@@ -1,9 +1,13 @@
-import { DataSourceOptions, DataSourceLegendOptions, TimeFilterableDataSource,
-         QueryableDataSource, OgcFilterableDataSource } from './datasource.interface';
+import {
+  DataSourceOptions,
+  DataSourceLegendOptions,
+  TimeFilterableDataSource,
+  QueryableDataSource,
+  OgcFilterableDataSource
+} from './datasource.interface';
 import { DataService } from './data.service';
 
 export abstract class DataSource {
-
   public id: string;
   public ol: ol.source.Source;
 
@@ -15,7 +19,10 @@ export abstract class DataSource {
     this.options.title = title;
   }
 
-  constructor(public options: DataSourceOptions, protected dataSourceService?: DataService) {
+  constructor(
+    public options: DataSourceOptions,
+    protected dataSourceService?: DataService
+  ) {
     this.options = options;
     this.id = this.generateId();
     this.ol = this.createOlSource();
@@ -30,11 +37,14 @@ export abstract class DataSource {
   }
 
   isTimeFilterable(): this is TimeFilterableDataSource {
-    const dataSource = this as any as TimeFilterableDataSource;
-    if (typeof dataSource.filterByDate === 'function' ||
-    typeof dataSource.filterByYear === 'function') {
-      return dataSource.options.timeFilterable !== undefined ?
-        dataSource.options.timeFilterable : true;
+    const dataSource = (this as any) as TimeFilterableDataSource;
+    if (
+      typeof dataSource.filterByDate === 'function' ||
+      typeof dataSource.filterByYear === 'function'
+    ) {
+      return dataSource.options.timeFilterable !== undefined
+        ? dataSource.options.timeFilterable
+        : true;
     }
 
     return false;
@@ -51,11 +61,10 @@ export abstract class DataSource {
   }
 
   isOgcFilterable(): this is OgcFilterableDataSource {
-    const dataSource = this as any as OgcFilterableDataSource;
+    const dataSource = (this as any) as OgcFilterableDataSource;
     // if (dataSource.options.isOgcFilterable && dataSource.options.ogcFilters.filtersAreEditable) {
     //   return true;
     // }
     return false;
   }
-
 }
