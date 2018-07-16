@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import * as ol from 'openlayers';
+import WMSCapabilities from 'ol/format/wmscapabilities';
+import WMTSCapabilities from 'ol/format/wmtscapabilities';
+import WMTS from 'ol/source/wmts';
 
 import { ObjectUtils } from '../../utils';
 import { TimeFilterOptions } from '../../filter';
@@ -15,8 +17,8 @@ export class CapabilitiesService {
 
   private capabilitiesStore: any[] = [];
   private parsers = {
-    'wms': new ol.format.WMSCapabilities(),
-    'wmts': new ol.format.WMTSCapabilities()
+    'wms': new WMSCapabilities(),
+    'wmts': new WMTSCapabilities()
   };
 
   constructor(private http: HttpClient) { }
@@ -112,7 +114,7 @@ export class CapabilitiesService {
 
   private parseWMTSOptions(baseOptions: WMTSDataSourceOptions,
                            capabilities: any): WMTSDataSourceOptions {
-    const options = ol.source.WMTS.optionsFromCapabilities(
+    const options = WMTS.optionsFromCapabilities(
       capabilities, baseOptions);
 
     return Object.assign(options, baseOptions);

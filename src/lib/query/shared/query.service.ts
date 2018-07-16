@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import * as ol from 'openlayers';
+import GML2 from 'ol/format/gml2';
+import GML3 from 'ol/format/gml3';
+import WMSGetFeatureInfo from 'ol/format/wmsgetfeatureinfo';
+import WKT from 'ol/format/wkt';
 
 import { uuid } from '../../utils/uuid';
 import { Feature, FeatureType, FeatureFormat, SourceFeatureType,
@@ -80,12 +83,12 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex) {
-    let parser = new ol.format.GML2();
+    let parser = new GML2();
     let features = parser.readFeatures(res);
 
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new ol.format.WMSGetFeatureInfo();
+      parser = new WMSGetFeatureInfo();
       features = parser.readFeatures(res);
     }
 
@@ -93,7 +96,7 @@ export class QueryService {
   }
 
   private extractGML3Data(res, zIndex) {
-    const parser = new ol.format.GML3();
+    const parser = new GML3();
     const features = parser.readFeatures(res);
 
     return features.map(feature => this.featureToResult(feature, zIndex));
@@ -152,7 +155,7 @@ export class QueryService {
                 ', ' + clickx + ' ' + clicky + '))';
 
 
-    const format = new ol.format.WKT();
+    const format = new WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = (tenPercentWidthGeom.getGeometry() as any);
 
