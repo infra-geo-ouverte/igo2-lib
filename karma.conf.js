@@ -16,7 +16,6 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     files: [
-      './node_modules/openlayers/dist/ol.js',
       {
         pattern: './src/locale/*.json',
         watched: false,
