@@ -37,13 +37,12 @@
       "prefix": "demo",
       "mobile": true,
       "styles": [
-        "../../node_modules/openlayers/dist/ol.css",
+        "../../node_modules/ol/ol.css",
         "../themes/deeppurple-amber.styl",
         "../style/igo.styl",
         "style/main.styl"
       ],
       "scripts": [
-        "../../node_modules/openlayers/dist/ol.js",
         "../../node_modules/jspdf/dist/jspdf.min.js"
       ],
       "environmentSource": "environments/environment.ts",
