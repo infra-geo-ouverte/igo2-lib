@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import * as ol from 'openlayers';
+import GeoJSON from 'ol/format/geojson';
+import WFS from 'ol/format/wfs';
 
 import { OgcFiltersOptions } from '../../../filter/shared';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -28,10 +29,10 @@ export class WFSDataSourceService extends DataService {
     const patternGeojson = new RegExp('.*?json.*?');
 
     if (patternGeojson.test(outputFormat)) {
-      olFormatCls = ol.format.GeoJSON;
+      olFormatCls = GeoJSON;
     }
     if (patternGml3.test(outputFormat)) {
-      olFormatCls = ol.format.WFS;
+      olFormatCls = WFS;
     }
 
     return new olFormatCls();
@@ -168,9 +169,9 @@ export class WFSDataSourceService extends DataService {
     let olFormats;
     const patternGml3 = /gml/gi;
     if (wfsDataSourceOptions.outputFormat.match(patternGml3)) {
-      olFormats = ol.format.WFS;
+      olFormats = WFS;
     } else {
-      olFormats = ol.format.GeoJSON;
+      olFormats = GeoJSON;
     }
     if (wfsDataSourceOptions['wfsCapabilities']['GetPropertyValue']) {
       this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe((oneFeature) => {

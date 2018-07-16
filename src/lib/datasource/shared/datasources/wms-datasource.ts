@@ -1,4 +1,4 @@
-import * as ol from 'openlayers';
+import ImageWMS from 'ol/source/imagewms';
 import { Md5 } from 'ts-md5/dist/md5';
 
 import { QueryFormat, QueryOptions } from '../../../query';
@@ -206,7 +206,7 @@ export class WMSDataSource extends DataSource
   }
 
   protected createOlSource(): ol.source.ImageWMS {
-    return new ol.source.ImageWMS(this.options);
+    return new ImageWMS(this.options);
   }
 
   protected generateId() {
