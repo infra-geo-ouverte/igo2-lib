@@ -1,4 +1,6 @@
-import * as ol from 'openlayers';
+import filter from 'ol/format/filter';
+import WKT from 'ol/format/wkt';
+import WFS from 'ol/format/wfs';
 
 import { uuid } from '../../utils';
 import { OgcFilter, IgoOgcFilterObject, WFSWriteGetFeatureOptions,
@@ -28,7 +30,7 @@ public buildFilter(
     extent?: ol.Extent, proj? ,
     fieldNameGeometry?: string): string {
 
-  const f = ol.format.filter;
+  const f = filter;
   let bboxFilter;
   let enableBbox: boolean;
   if (/intersects|contains|within/gi.test(JSON.stringify(filters))) {
@@ -65,7 +67,7 @@ public buildFilter(
                 geometryName: fieldNameGeometry
   }
 
-  const query = new ol.format.WFS().writeGetFeature(wfsOptions);
+  const query = new WFS().writeGetFeature(wfsOptions);
   const str = new XMLSerializer().serializeToString(query);
   const regexp1 = /typenames *=|typename *=\"featureTypes\" *>/gi;
   const regexp2 = /<\/Query><\/GetFeature>/gi;
@@ -95,7 +97,7 @@ if (filterObject instanceof Array) {
 private createFilter(filterOptions): OgcFilter {
   const operator = filterOptions.operator;
   const logical_array = filterOptions.logical_array;
-  const f = ol.format.filter;
+  const f = filter;
 
   const wfs_propertyName = filterOptions.propertyName;
   const wfs_pattern = filterOptions.pattern;
@@ -121,7 +123,7 @@ private createFilter(filterOptions): OgcFilter {
 
   let geometry: ol.geom.Geometry;
   if (wfs_wkt_geometry) {
-  const wkt = new ol.format.WKT();
+  const wkt = new WKT();
   geometry = wkt.readGeometry(wfs_wkt_geometry, {
     dataProjection: wfs_srsName,
     featureProjection: 'EPSG:3857'
