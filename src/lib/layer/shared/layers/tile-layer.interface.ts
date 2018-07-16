@@ -1,4 +1,4 @@
-import * as ol from 'openlayers';
+
 import { LayerOptions, LayerContext } from './layer.interface';
 
 export interface TileLayerOptions extends LayerOptions {

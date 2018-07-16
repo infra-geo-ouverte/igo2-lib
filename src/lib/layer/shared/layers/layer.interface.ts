@@ -1,4 +1,3 @@
-import * as ol from 'openlayers';
 
 export interface LayerOptions extends ol.olx.layer.BaseOptions {
   title?: string;
