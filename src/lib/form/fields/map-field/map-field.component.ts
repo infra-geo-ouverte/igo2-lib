@@ -2,7 +2,9 @@ import { Component, Input, forwardRef,
          AfterViewInit, OnDestroy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import * as ol from 'openlayers';
+import proj from 'ol/proj';
+import Point from 'ol/geom/point';
+import Feature from 'ol/feature';
 
 import { IgoMap, MapViewOptions } from '../../../map';
 import { Layer } from '../../../layer';
@@ -125,7 +127,7 @@ export class MapFieldComponent
   }
 
   private handleMapClick(event: ol.MapBrowserEvent) {
-    this.value = ol.proj.transform(
+    this.value = proj.transform(
       event.coordinate, this.map.projection, this.projection);
   }
 
@@ -143,10 +145,10 @@ export class MapFieldComponent
   }
 
   private addOverlay(coordinates: [number, number]) {
-    const geometry = new ol.geom.Point(
-      ol.proj.transform(coordinates, this.projection, this.map.projection));
+    const geometry = new Point(
+      proj.transform(coordinates, this.projection, this.map.projection));
     const extent = geometry.getExtent();
-    const feature = new ol.Feature({geometry: geometry});
+    const feature = new Feature({geometry: geometry});
 
     this.map.moveToExtent(extent);
     this.map.addOverlay(feature);
