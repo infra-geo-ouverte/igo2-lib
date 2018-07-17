@@ -13,7 +13,7 @@ import { MapViewOptions, MapOptions } from './map.interface';
 
 import { saveAs } from 'file-saver';
 
-import * as html2canvas from "html2canvas";
+import * as html2canvas from 'html2canvas';
 
 export class IgoMap {
 
@@ -416,19 +416,18 @@ export class IgoMap {
   }
 
   getScale(dpi = 96) {
-    let unit = this.ol.getView().getProjection().getUnits();
-    let resolution = this.ol.getView().getResolution();
-    let inchesPerMetre = 39.37;
+    const unit = this.ol.getView().getProjection().getUnits();
+    const resolution = this.ol.getView().getResolution();
+    const inchesPerMetre = 39.37;
 
     return resolution * ol.proj.METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
   }
 
   /**
   Get all layers activate in the map
-  @return {Array} Arrat of layers
+  @return {Array} Array of layers
   */
-  getLayers()
-  {
+  getLayers() {
     return this.layers;
   }
 
@@ -437,40 +436,40 @@ export class IgoMap {
   @return {Array} Array of legend
   */
   getAllLayersLegend() {
-    //Get layers list
-    let layers = this.getLayers();
-    let listLegend = [];
+    // Get layers list
+    const layers = this.getLayers();
+    const listLegend = [];
     let title, legendUrls, legendImage;
     let heightPos = 0;
-    let newCanvas = document.createElement('canvas');
-    let newContext = newCanvas.getContext('2d');
-    newContext.font = "20px Calibri";
+    const newCanvas = document.createElement('canvas');
+    const newContext = newCanvas.getContext('2d');
+    newContext.font = '20px Calibri';
 
-    //For each layers in the map
+    // For each layers in the map
     layers.forEach(function(layer) {
 
-      //Add legend for only visible layer
-      if(layer.visible === true) {
-        //Get the list of legend
+      // Add legend for only visible layer
+      if (layer.visible === true) {
+        // Get the list of legend
         legendUrls = layer.dataSource.getLegend();
-        //If legend(s) are defined
-        if(legendUrls.length > 0) {
+        // If legend(s) are defined
+        if (legendUrls.length > 0) {
           title = layer.title;
-          //For each legend
+          // For each legend
           legendUrls.forEach(function(legendUrl) {
 
-            //If the legend really exist
-            if(legendUrl.url !== undefined) {
-              //Create an image for the legend
+            // If the legend really exist
+            if (legendUrl.url !== undefined) {
+              // Create an image for the legend
               legendImage = new Image;
               legendImage.crossOrigin = 'Anonymous';
               legendImage.src = legendUrl.url;
-              legendImage.onload = function(){
+              legendImage.onload = function() {
                 newContext.fillText(title, 0, heightPos);
-                newContext.drawImage(legendImage,0, heightPos+20);
-                heightPos+=legendImage.height+5;
+                newContext.drawImage(legendImage, 0, heightPos + 20);
+                heightPos += legendImage.height + 5;
               };
-              //Add legend info to the list
+              // Add legend info to the list
               listLegend.push({title: title, url: legendUrl.url, image: legendImage});
             }
           });
@@ -485,14 +484,13 @@ export class IgoMap {
   @return {file(s)} All images of the legend by name
   */
   getAllLayersIndividualLegendImages() {
-
-    let listLegend = this.getAllLayersLegend();
-    let newCanvas = document.createElement('canvas');
-    let newContext = newCanvas.getContext('2d');
-    let format = "png";
-    let blobFormat = "image/" + format;
+    const listLegend = this.getAllLayersLegend();
+    const newCanvas = document.createElement('canvas');
+    const newContext = newCanvas.getContext('2d');
+    const format = 'png';
+    const blobFormat = 'image/' + format;
     listLegend.forEach(function(legend) {
-      legend.image.onload = function(){
+      legend.image.onload = function() {
 
         newContext.drawImage(legend.image, 0, 0);
 
@@ -500,7 +498,7 @@ export class IgoMap {
           navigator.msSaveBlob(newCanvas.msToBlob(), 'map.' + format);
         } else {
           newCanvas.toBlob(function(blob) {
-            saveAs(blob, legend.title+"." + format);
+            saveAs(blob, legend.title + '.' + format);
           }, blobFormat);
         }
       }
@@ -513,24 +511,28 @@ export class IgoMap {
   @return {string} Html code for the legend
   */
   getAllLayersLegendHtml(width) {
-    //Get html code for the legend
-    let listLegend = this.getAllLayersLegend();
-    let html = "";
-    if(listLegend.length > 0) {
-      //Define important style to be sure that all container is convert to image not just visible part
+    // Get html code for the legend
+    const listLegend = this.getAllLayersLegend();
+    let html = '';
+    if (listLegend.length > 0) {
+      // Define important style to be sure that all container is convert
+      // to image not just visible part
       html += '<style media="screen" type="text/css">';
-      html += '.html2canvas-container { width: '+width+ 'mm !important; height: 2000px !important; }';
+      html += '.html2canvas-container { width: ' + width
+      html += 'mm !important; height: 2000px !important; }';
       html += '</style>';
       html += '<font size="2" face="Courier New" >';
-      html += "<div style='display:inline-block;max-width:" + width + "mm'>";
+      html += '<div style="display:inline-block;max-width:' + width + 'mm">';
 
-      //For each legend, define an html table cell
+      // For each legend, define an html table cell
       listLegend.forEach(function(legend) {
-        html += "<table border=1 style='display:inline-block;vertical-align: top'><tr><th width='170px'>" + legend.title + "</th>";
-        html += "<td><img class='printImageLegend' src='" + legend.url + "'></td></tr></table>";
+        html += '<table border=1 style="display:inline-block;vertical-align:top">';
+        html += '<tr><th width="170px">' + legend.title + '</th>';
+        html += '<td><img class="printImageLegend" src="' + legend.url + '">';
+        html += '</td></tr></table>';
       });
 
-      html += "</div>";
+      html += '</div>';
     }
 
     return html;
@@ -541,39 +543,39 @@ export class IgoMap {
     @param {string} format - Image format. default value to "png"
     @return {file} The image of the legend
   */
-  getAllLayersLegendImage(format="png") {
-    //Get html code for the legend
-    let width = 200; //milimeters unit, originally define for document pdf
+  getAllLayersLegendImage(format = 'png') {
+    // Get html code for the legend
+    const width = 200; // milimeters unit, originally define for document pdf
     let html = this.getAllLayersLegendHtml(width);
     format = format.toLowerCase();
-    let blobFormat = "image/" + format;
+    const blobFormat = 'image/' + format;
 
-    //If no legend show No LEGEND in an image
-    if (html.length == 0) {
+    // If no legend show No LEGEND in an image
+    if (html.length === 0) {
       html = '<font size="12" face="Courier New" >';
-      html += "<div align='center'><b>NO LEGEND</b></div>";
+      html += '<div align="center"><b>NO LEGEND</b></div>';
     }
 
-    //Create new temporary window to define html code to generate canvas image
-    let winTempCanva = window.open("", "legend", "width=10, height=10");
+    // Create new temporary window to define html code to generate canvas image
+    const winTempCanva = window.open('', 'legend', 'width=10, height=10');
 
-    //Create div to contain html code for legend
-    let div = winTempCanva.document.createElement('div');
+    // Create div to contain html code for legend
+    const div = winTempCanva.document.createElement('div');
 
-    //Define event to execute after all images are loaded to create the canvas
+    // Define event to execute after all images are loaded to create the canvas
       html2canvas(div, {useCORS : true}).then(canvas => {
         if (navigator.msSaveBlob) {
           navigator.msSaveBlob(canvas.msToBlob(), 'legendImage.' + format);
         } else {
           canvas.toBlob(function(blob) {
-            //download image
-            saveAs(blob, "legendImage." + format);
+            // download image
+            saveAs(blob, 'legendImage.' + format);
           }, blobFormat);
         }
-        winTempCanva.close(); //close temp window
+        winTempCanva.close(); // close temp window
       });
 
-    //Add html code to convert in the new window
+    // Add html code to convert in the new window
     winTempCanva.document.body.appendChild(div);
     div.innerHTML = html;
   }

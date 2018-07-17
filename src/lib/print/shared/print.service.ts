@@ -10,7 +10,7 @@ import { PrintDimension, PrintOrientation} from './print.type';
 
 import { saveAs } from 'file-saver';
 
-import * as html2canvas from "html2canvas";
+import * as html2canvas from 'html2canvas';
 
 declare var jsPDF: any;
 
@@ -26,7 +26,6 @@ export class PrintService {
     const format = options.format;
     const resolution = +options.resolution;
     const orientation = options.orientation;
-    //const imageFormat = options.imageFormat;
     const dimensions = orientation === PrintOrientation.portrait ?
       PrintDimension[format] : PrintDimension[format].slice().reverse();
 
@@ -42,22 +41,21 @@ export class PrintService {
       this.addTitle(doc, options.title, dimensions[0]);
     }
 
-    if(options.showProjection === true || options.showScale === true) {
+    if (options.showProjection === true || options.showScale === true) {
       this.addProjScale(doc, map, resolution, size, options.showProjection, options.showScale)
     }
 
-    if(options.comment !== "") {
+    if (options.comment !== '') {
       this.addComment(doc, options.comment, size);
     }
 
     this.addMap(doc, map, resolution, size, margins)
       .subscribe((status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
-          if(options.showLegend === true) {
+          if (options.showLegend === true) {
             this.addLegend(doc, map);
-          }
-          else {
-            doc.save('map.pdf');
+          } else {
+            this.saveDoc(doc);
           }
         }
 
@@ -113,26 +111,27 @@ export class PrintService {
   @param {boolean} projection - Bool to indicate if projection need to be added
   @param {boolean} scale - Bool to indicate if scale need to be added
   */
-  private addProjScale(doc: typeof jsPDF, map: IgoMap, resolution: number, size: Array<number>, projection: boolean, scale: boolean) {
+  private addProjScale(doc: typeof jsPDF, map: IgoMap, resolution: number,
+                       size: Array<number>, projection: boolean, scale: boolean) {
     const translate = this.languageService.translate;
     const projScaleSize = 16;
 
     let textProjScale;
-    let projScaleMarginLeft = 20;
+    const projScaleMarginLeft = 20;
 
     const heightPixels = size[1] + 25;
 
-    if(projection === true) {
+    if (projection === true) {
     const projText = translate.instant('igo.printForm.projection');
-     textProjScale = projText + ": " + map.getProjection();
+     textProjScale = projText + ': ' + map.getProjection();
     }
 
-    if(scale === true) {
-      if(projection === true) {
-        textProjScale+= "   ";
+    if (scale === true) {
+      if (projection === true) {
+        textProjScale += '   ';
       }
       const scaleText = translate.instant('igo.printForm.scale');
-      textProjScale+= scaleText + " ~ 1 " + map.getMapScale(true, resolution);
+      textProjScale += scaleText + ' ~ 1 ' + map.getMapScale(true, resolution);
     }
 
     doc.setFont('courier');
@@ -145,45 +144,46 @@ export class PrintService {
   @param {document} doc - Pdf document where legend will be added
   */
   private addLegend(doc: typeof jsPDF, map: IgoMap) {
-    //Get html code for the legend
-    let width = doc.internal.pageSize.width;
-    let html = map.getAllLayersLegendHtml(width);
+    const that = this;
+    // Get html code for the legend
+    const width = doc.internal.pageSize.width;
+    const html = map.getAllLayersLegendHtml(width);
 
-    //If no legend, save the map directly
-    if(html=="") {
-      doc.save('map.pdf')
+    // If no legend, save the map directly
+    if (html === '') {
+      this.saveDoc(doc);
       return true;
     }
 
-    //Create new temporary window to define html code to generate canvas image
-    let winTempCanva = window.open("", "legend", "width=10, height=10");
+    // Create new temporary window to define html code to generate canvas image
+    const winTempCanva = window.open('', 'legend', 'width=10, height=10');
 
-    //Create div to contain html code for legend
-    let div = winTempCanva.document.createElement('div');
+    // Create div to contain html code for legend
+    const div = winTempCanva.document.createElement('div');
 
     html2canvas(div, {useCORS : true}).then(canvas => {
       let imgData;
-      let position = 10;
-      //Define variable to calculate best legend size to fit in one page
-      let pageHeight = doc.internal.pageSize.height-20; //-20 to let margin work great
-      let pageWidth = doc.internal.pageSize.width-20; //-20 to let margin work great
-      let canHeight = canvas.height;
-      let canWidth = canvas.width;
-      let heightRatio = canHeight/pageHeight;
-      let widthRatio = canWidth/pageWidth;
-      let maxRatio = (heightRatio>widthRatio) ? heightRatio : widthRatio;
-      let imgHeigh = (maxRatio>1) ? canHeight/maxRatio : canHeight;
-      let imgWidth = (maxRatio>1) ? canWidth/maxRatio : canWidth;
+      const position = 10;
+      // Define variable to calculate best legend size to fit in one page
+      const pageHeight = doc.internal.pageSize.height - 20; // -20 to let margin work great
+      const pageWidth = doc.internal.pageSize.width - 20; // -20 to let margin work great
+      const canHeight = canvas.height;
+      const canWidth = canvas.width;
+      const heightRatio = canHeight / pageHeight;
+      const widthRatio = canWidth / pageWidth;
+      const maxRatio = (heightRatio > widthRatio) ? heightRatio : widthRatio;
+      const imgHeigh = (maxRatio > 1) ? canHeight / maxRatio : canHeight;
+      const imgWidth = (maxRatio > 1) ? canWidth / maxRatio : canWidth;
       try {
         imgData = canvas.toDataURL('image/png');
 
         doc.addPage();
         doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeigh);
 
-        winTempCanva.close(); //close temp window
+        winTempCanva.close(); // close temp window
 
       } catch (err) {
-        winTempCanva.close(); //close temp window
+        winTempCanva.close(); // close temp window
         this.messageService.error(
           'Security error: The legend cannot be printed.',
           'Print', 'print');
@@ -192,10 +192,10 @@ export class PrintService {
       }
     });
 
-    //Save canvas on window close
-    winTempCanva.addEventListener("unload", function(){doc.save('map.pdf')});
+    // Save canvas on window close
+    winTempCanva.addEventListener('unload', function() { that.saveDoc(doc); });
 
-    //Add html code to convert in the new window
+    // Add html code to convert in the new window
     winTempCanva.document.body.appendChild(div);
     div.innerHTML = html;
   }
@@ -253,8 +253,8 @@ export class PrintService {
         status$.next(status);
       });
 
-      // If no loading as started after 200ms, then probably no loading
-      // is required.
+      //  If no loading as started after 200ms, then probably no loading
+      //  is required.
       timeout = window.setTimeout(() => {
         mapStatus$$.unsubscribe();
 
@@ -279,123 +279,126 @@ export class PrintService {
   Download an image of the map with addition of informations
   @param {IgoMap} map - Map of the app
   @param {string} format - Image format. default value to "png"
-  @param {boolean} projection - Bool to indicate if projection need to be shown for the map. Default to false
-  @param {boolean} scale - Bool to indicate if scale need to be shown for the map. Default to false
-  @param {boolean} legend - Bool to indicate if the legend of layers need to be download. Default to false
+  @param {boolean} projection - Indicate if projection need to be add. Default to false
+  @param {boolean} scale - Indicate if scale need to be add. Default to false
+  @param {boolean} legend - Indicate if the legend of layers need to be download. Default to false
   @param {string} title - Title to add for the map - Default to blank
   @param {string} comment - Comment to add for the map - Default to blank
   @param {string} resolution - Resolution detail of the map - Default to 96 ppi
   @return {file} Image file of the map with extension format given as parameter
   */
-  downloadMapImage(map: IgoMap, format = "png", projection = false, scale = false, legend = false, title = "", comment = "", resolution=96) {
+  downloadMapImage(map: IgoMap, format = 'png', projection = false, scale = false,
+                   legend = false, title = '', comment = '', resolution = 96) {
     const translate = this.languageService.translate;
     map.ol.once('postcompose', (event: any) => {
 
       format = format.toLowerCase();
-      let context = event.context;
-      let newCanvas = document.createElement('canvas');
-      let newContext = newCanvas.getContext('2d');
-      //Postion in height to set the canvas in new canvas
+      const context = event.context;
+      const newCanvas = document.createElement('canvas');
+      const newContext = newCanvas.getContext('2d');
+      // Postion in height to set the canvas in new canvas
       let positionHCanvas = 0;
-      //Position in width to set the Proj/Scale in new canvas
+      // Position in width to set the Proj/Scale in new canvas
       let positionWProjScale = 10;
-      //Get height/width of map canvas
-      let width = context.canvas.width;
+      // Get height/width of map canvas
+      const width = context.canvas.width;
       let height = context.canvas.height;
 
-      //Set Font to calculate comment width
-      newContext.font = "20px Calibri";
-      let commentWidth = newContext.measureText(comment).width;
+      // Set Font to calculate comment width
+      newContext.font = '20px Calibri';
+      const commentWidth = newContext.measureText(comment).width;
 
-      //Add height for title if defined
-      height = (title !== "") ? height + 30 : height;
-      //Add height for projection or scale (same line) if defined
+      // Add height for title if defined
+      height = (title !== '') ? height + 30 : height;
+      // Add height for projection or scale (same line) if defined
       height = (projection !== false || scale !== false) ? height + 30 : height;
-      let positionHProjScale = height - 10;
+      const positionHProjScale = height - 10;
 
-      //Define number of line depending of the comment length
-      let commentNbLine = Math.ceil(commentWidth / width);
-      //Add height for multiline comment if defined
-      height = (comment !== "") ? height + (commentNbLine * 20) : height;
+      // Define number of line depending of the comment length
+      const commentNbLine = Math.ceil(commentWidth / width);
+      // Add height for multiline comment if defined
+      height = (comment !== '') ? height + (commentNbLine * 20) : height;
       let positionHComment = height - (commentNbLine * 20) + 5;
 
-      //Set the new canvas with the new calculated size
+      // Set the new canvas with the new calculated size
       newCanvas.width = width;
       newCanvas.height = height;
 
-      //Patch Jpeg default black background to white
-      if(format === "jpeg") {
-        newContext.fillStyle = "#ffffff";
-        newContext.fillRect(0,0, width,height);
-        newContext.fillStyle = "#000000";
+      // Patch Jpeg default black background to white
+      if (format === 'jpeg') {
+        newContext.fillStyle = '#ffffff';
+        newContext.fillRect(0, 0, width, height);
+        newContext.fillStyle = '#000000';
       }
 
-      //If a title need to be added to canvas
-      if (title !== "") {
-        //Set font for title
-        newContext.font = "26px Calibri";
+      // If a title need to be added to canvas
+      if (title !== '') {
+        // Set font for title
+        newContext.font = '26px Calibri';
         positionHCanvas = 30;
-        newContext.textAlign = "center";
+        newContext.textAlign = 'center';
         newContext.fillText(title, width / 2, 20);
       }
 
-      //Set font for next section
-      newContext.font = "20px Calibri";
+      // Set font for next section
+      newContext.font = '20px Calibri';
 
-      //If projection need to be added to canvas
+      // If projection need to be added to canvas
       if (projection !== false) {
         const projText = translate.instant('igo.printForm.projection');
-        newContext.textAlign = "start";
-        newContext.fillText(projText + ": " + map.getProjection(), positionWProjScale, positionHProjScale);
-        positionWProjScale += 200; //Width position change for scale position
+        newContext.textAlign = 'start';
+        newContext.fillText(projText + ': ' + map.getProjection(),
+                            positionWProjScale, positionHProjScale);
+        positionWProjScale += 200; // Width position change for scale position
       }
 
-      //If scale need to be added to canvas
+      // If scale need to be added to canvas
       if (scale !== false) {
         const scaleText = translate.instant('igo.printForm.scale');
-        newContext.textAlign = "start";
-        newContext.fillText(scaleText + " ~ 1 : " + map.getMapScale(true, resolution), positionWProjScale, positionHProjScale);
+        newContext.textAlign = 'start';
+        newContext.fillText(scaleText + ' ~ 1 : ' + map.getMapScale(true, resolution),
+                            positionWProjScale, positionHProjScale);
       }
 
-      //If a comment need to be added to canvas
-      if (comment !== "") {
-        newContext.textAlign = "center";
-        //If only one line, no need to multiline the comment
-        if (commentNbLine == 1) {
+      // If a comment need to be added to canvas
+      if (comment !== '') {
+        newContext.textAlign = 'center';
+        // If only one line, no need to multiline the comment
+        if (commentNbLine === 1) {
           newContext.fillText(comment, width / 2, positionHComment);
-        }
-        else {
-          //Separate the setenses to be approx. the same length
-          let nbCommentChar = comment.length;
-          let CommentLengthToCut = Math.floor(nbCommentChar / commentNbLine);
-          let commentCurrentLine = "";
+        } else {
+          // Separate the setenses to be approx. the same length
+          const nbCommentChar = comment.length;
+          const CommentLengthToCut = Math.floor(nbCommentChar / commentNbLine);
+          let commentCurrentLine = '';
           let positionFirstCutChar = 0;
           let positionLastBlank;
-          //Loop for the number of line calculated
+          // Loop for the number of line calculated
           for (let i = 0; i < commentNbLine; i++) {
-            //For all line except last
+            // For all line except last
             if (commentNbLine - 1 > i) {
-              //Get comment current line to find the right place tu cut comment
+              // Get comment current line to find the right place tu cut comment
               commentCurrentLine = comment.substr(positionFirstCutChar, CommentLengthToCut);
-              //Cut the setence at blank
-              positionLastBlank = commentCurrentLine.lastIndexOf(" ");
-              newContext.fillText(commentCurrentLine.substr(0, positionLastBlank), width / 2, positionHComment);
+              // Cut the setence at blank
+              positionLastBlank = commentCurrentLine.lastIndexOf(' ');
+              newContext.fillText(commentCurrentLine.substr(0, positionLastBlank),
+                                  width / 2, positionHComment);
               positionFirstCutChar += positionLastBlank;
 
-              //Go to next line for insertion
+              // Go to next line for insertion
               positionHComment += 20;
-            }
-            else { //Don't cut last part
-              newContext.fillText(comment.substr(positionFirstCutChar), width / 2, positionHComment);
+            } else { // Don't cut last part
+              newContext.fillText(comment.substr(positionFirstCutChar),
+                                  width / 2, positionHComment);
             }
           }
         }
       }
 
-      //Add map to new canvas
+      // Add map to new canvas
       newContext.drawImage(context.canvas, 0, positionHCanvas);
-      //Define output format
-      let blobFormat = "image/" + format;
+      // Define output format
+      const blobFormat = 'image/' + format;
 
       if (navigator.msSaveBlob) {
         navigator.msSaveBlob(newCanvas.msToBlob(), 'map.' + format);
@@ -412,6 +415,14 @@ export class PrintService {
     map.ol.setSize(size);
     map.ol.getView().fit(extent);
     map.ol.renderSync();
+  }
+
+  /**
+  Save document
+  @param {jsPDF} doc - Document to save
+  */
+  private saveDoc(doc: typeof jsPDF) {
+    doc.save('map.pdf');
   }
 
 }

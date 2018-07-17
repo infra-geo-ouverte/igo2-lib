@@ -55,11 +55,10 @@ export class PrintComponent {
   handleFormSubmit(data: PrintOptions) {
     this.disabled = true;
 
-    if(data.isPrintService === true) {
+    if (data.isPrintService === true) {
       this.printService.print(this.map, data).subscribe((status: SubjectStatus) => {
       });
-    }
-    else {
+    } else {
       this.printService.downloadMapImage(this.map, data.imageFormat,
                              data.showProjection,
                              data.showScale,
@@ -67,7 +66,7 @@ export class PrintComponent {
                              data.title,
                              data.comment);
 
-      if(data.showLegend) {
+      if (data.showLegend) {
         this.map.getAllLayersLegendImage(data.imageFormat);
       }
     }

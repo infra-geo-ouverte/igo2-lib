@@ -84,7 +84,7 @@ export class PrintFormComponent {
   }
 
   @Input()
-  get showLegend(): boolean { return this.showLegendField.value;; }
+  get showLegend(): boolean { return this.showLegendField.value; }
   set showLegend(value: boolean) {
     this.showLegendField.setValue(value, {onlySelf: true});
   }
@@ -151,18 +151,17 @@ export class PrintFormComponent {
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {
     this.submitted = true;
-    data["isPrintService"] = this.isPrintService;
+    data['isPrintService'] = this.isPrintService;
     if (isValid) {
       this.submit.emit(data);
     }
   }
 
   toggleImageSaveProp() {
-    if (this.formatField.value === "Image") {
+    if (this.formatField.value === 'Image') {
       this.imageFormatField.enable();
        this.isPrintService = false;
-    }
-    else {
+    } else {
       this.imageFormatField.disable();
       this.isPrintService = true;
     }
