@@ -123,7 +123,7 @@
 		  "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit être visible (et dans les échelles permises) ou veuillez modifier le présent filtre.",
 		  "layerFiltered": "Cette couche d'information est présentement filtrée.",
 		  "layerFilterable": "Cette couche d'information est filtrable"
-		},	
+		},
 		"spatialSelector": {
 		  "fixedExtent": "Étendue fixe",
 		  "btnSetExtent": "Définir l'étendue du filtre selon l'étendue courante de la carte",
@@ -192,11 +192,19 @@
 		},
 		"print": "Imprimer",
 		"printForm": {
+			"comment": "Commentaire",
 			"format": "Format",
+			"imageFormat": "Format de l'image",
 			"landscape": "Paysage",
 			"portrait": "Portrait",
 			"printBtn": "Imprimer",
+			"projection": "Projection",
 			"resolution": "Résolution",
+			"saveBtn": "Sauvergarder",
+			"scale": "Échelle",
+			"showLegend": "Afficher la légende",
+			"showProjection": "Afficher la projection",
+			"showScale": "Afficher l'échelle",
 			"title": "Titre"
 		},
 		"search": {
