@@ -87,9 +87,9 @@ export class PrintService {
 
   /**
   Add comment to the document
-  @param {jsPDF} doc - pdf document
-  @param {string} comment - Comment to add in the document
-  @param {array} size - Size of the document
+  @param  doc - pdf document
+  @param  comment - Comment to add in the document
+  @param  size - Size of the document
   */
   private addComment(doc: typeof jsPDF, comment: string, size: Array<number>) {
     const commentSize = 16;
@@ -104,12 +104,12 @@ export class PrintService {
 
   /**
   Add projection and/or scale to the document
-  @param {jsPDF} doc - pdf document
-  @param {IgoMap} map - Map of the app
-  @param {number} resolution - DPI resolution of the document
-  @param {array} size - Size of the document
-  @param {boolean} projection - Bool to indicate if projection need to be added
-  @param {boolean} scale - Bool to indicate if scale need to be added
+  @param  doc - pdf document
+  @param  map - Map of the app
+  @param  resolution - DPI resolution of the document
+  @param  size - Size of the document
+  @param  projection - Bool to indicate if projection need to be added
+  @param  scale - Bool to indicate if scale need to be added
   */
   private addProjScale(doc: typeof jsPDF, map: IgoMap, resolution: number,
                        size: Array<number>, projection: boolean, scale: boolean) {
@@ -141,7 +141,7 @@ export class PrintService {
 
   /**
   Add the legend to the document
-  @param {document} doc - Pdf document where legend will be added
+  @param  doc - Pdf document where legend will be added
   */
   private addLegend(doc: typeof jsPDF, map: IgoMap) {
     const that = this;
@@ -277,15 +277,15 @@ export class PrintService {
 
   /**
   Download an image of the map with addition of informations
-  @param {IgoMap} map - Map of the app
-  @param {string} format - Image format. default value to "png"
-  @param {boolean} projection - Indicate if projection need to be add. Default to false
-  @param {boolean} scale - Indicate if scale need to be add. Default to false
-  @param {boolean} legend - Indicate if the legend of layers need to be download. Default to false
-  @param {string} title - Title to add for the map - Default to blank
-  @param {string} comment - Comment to add for the map - Default to blank
-  @param {string} resolution - Resolution detail of the map - Default to 96 ppi
-  @return {file} Image file of the map with extension format given as parameter
+  @param  map - Map of the app
+  @param  format - Image format. default value to "png"
+  @param  projection - Indicate if projection need to be add. Default to false
+  @param  scale - Indicate if scale need to be add. Default to false
+  @param  legend - Indicate if the legend of layers need to be download. Default to false
+  @param  title - Title to add for the map - Default to blank
+  @param  comment - Comment to add for the map - Default to blank
+  @param  resolution - Resolution detail of the map - Default to 96 ppi
+  @return Image file of the map with extension format given as parameter
   */
   downloadMapImage(map: IgoMap, format = 'png', projection = false, scale = false,
                    legend = false, title = '', comment = '', resolution = 96) {
@@ -419,7 +419,7 @@ export class PrintService {
 
   /**
   Save document
-  @param {jsPDF} doc - Document to save
+  @param  doc - Document to save
   */
   private saveDoc(doc: typeof jsPDF) {
     doc.save('map.pdf');

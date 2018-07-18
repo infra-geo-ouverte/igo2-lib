@@ -388,7 +388,7 @@ export class IgoMap {
 
   /**
   Get Projection of the map
-  @return {string} Projection of the map
+  @return Projection of the map
   */
   getProjection() {
     return this.projection;
@@ -396,7 +396,7 @@ export class IgoMap {
 
   /**
   Get Scale of the map
-  @return {string} Scale of the map
+  @return Scale of the map
   */
   getMapScale(approximative, resolution) {
     if (approximative) {
@@ -425,7 +425,7 @@ export class IgoMap {
 
   /**
   Get all layers activate in the map
-  @return {Array} Array of layers
+  @return Array of layers
   */
   getLayers() {
     return this.layers;
@@ -433,7 +433,7 @@ export class IgoMap {
 
   /**
   Get all the layers legend
-  @return {Array} Array of legend
+  @return Array of legend
   */
   getAllLayersLegend() {
     // Get layers list
@@ -481,7 +481,7 @@ export class IgoMap {
 
   /**
   Get all individual legend images
-  @return {file(s)} All images of the legend by name
+  @return All images file of the legend by name
   */
   getAllLayersIndividualLegendImages() {
     const listLegend = this.getAllLayersLegend();
@@ -507,8 +507,8 @@ export class IgoMap {
 
   /**
   Get html code for all layers legend
-  @param {string} width - The width that the legend need to be
-  @return {string} Html code for the legend
+  @param  width - The width that the legend need to be
+  @return Html code for the legend
   */
   getAllLayersLegendHtml(width) {
     // Get html code for the legend
@@ -540,8 +540,8 @@ export class IgoMap {
 
   /**
   Get all the legend in a single image
-    @param {string} format - Image format. default value to "png"
-    @return {file} The image of the legend
+    @param  format - Image format. default value to "png"
+    @return The image of the legend
   */
   getAllLayersLegendImage(format = 'png') {
     // Get html code for the legend
