@@ -1,0 +1,7 @@
+@import './list/list.theme';
+@import './panel/panel.theme';
+
+@mixin igo-common-theme($theme) {
+  @include igo-list-theme($theme);
+  @include igo-panel-theme($theme);
+}

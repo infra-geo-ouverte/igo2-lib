@@ -5,9 +5,7 @@ import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { SubjectStatus } from '@igo2/utils';
 
 import { Layer, VectorLayer } from '../../layer/shared/layers';
-import {
-  FeatureDataSource
-} from '../../datasource/shared/datasources/feature-datasource';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { LayerWatcher } from '../utils';
 import { MapViewOptions, MapOptions } from './map.interface';
@@ -98,7 +96,7 @@ export class IgoMap {
     if (this.options.overlay) {
       this.overlayMarkerStyle = new ol.style.Style({
         image: new ol.style.Icon({
-          src: './assets/igo2/icons/place_blue_36px.svg',
+          src: './assets/igo2/geo/icons/place_blue_36px.svg',
           imgSize: [36, 36], // for ie
           anchor: [0.5, 1]
         })

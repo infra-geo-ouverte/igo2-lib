@@ -1,5 +1,10 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  Renderer2
+} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -9,12 +14,19 @@ import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 export class AppComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
 
+  private themeClass = 'deeppurple-theme';
   private _mobileQueryListener: () => void;
 
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private media: MediaMatcher,
+    private renderer: Renderer2
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+
+    this.renderer.addClass(document.body, this.themeClass);
   }
 
   ngOnDestroy(): void {

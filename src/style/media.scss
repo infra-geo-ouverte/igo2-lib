@@ -19,19 +19,3 @@ $desktop: 'only screen and (min-width: 801px)';
     @content;
   }
 }
-
-// $media_queries: (
-//   mobile:
-//     'only screen and (max-width: 450px), only screen and (max-height: 450px)',
-//   tablet:
-//     'only screen and (min-width: 451px) and (min-height: 451px) and (max-width: 800px)',
-//   desktop: 'only screen and (min-width: 801px)'
-// );
-//
-// @mixin media($media) {
-//   @if map_has_key($media_queries, $media) {
-//     @media #{map_get($media_queries, $media)} {
-//       @content;
-//     }
-//   }
-// }

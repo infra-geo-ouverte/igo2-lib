@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import * as ol from 'openlayers';
 
@@ -41,15 +42,14 @@ export class QueryService {
     options: QueryOptions,
     zIndex: number
   ): Observable<Feature[]> {
-    const url = ((dataSource as any) as QueryableDataSource).getQueryUrl(
-      options
-    );
+    const url = ((dataSource as any) as any) /* as QueryableDataSource*/
+      .getQueryUrl(options);
     const request = this.http.get(url, { responseType: 'text' });
 
     this.featureService.clear();
 
-    return request.map(res =>
-      this.extractData(res, dataSource, options, url, zIndex)
+    return request.pipe(
+      map(res => this.extractData(res, dataSource, options, url, zIndex))
     );
   }
 
@@ -60,7 +60,7 @@ export class QueryService {
     url: string,
     zIndex: number
   ): Feature[] {
-    const queryDataSource = (dataSource as any) as QueryableDataSource;
+    const queryDataSource = (dataSource as any) as any; // as QueryableDataSource;
 
     let features = [];
     switch (queryDataSource.queryFormat) {
@@ -232,7 +232,7 @@ export class QueryService {
 
     return [
       {
-        id: 'html1',
+        id: uuid(),
         source: 'title',
         type: FeatureType.Feature,
         format: FeatureFormat.GeoJSON,
@@ -275,7 +275,7 @@ export class QueryService {
     }
 
     return {
-      id: undefined,
+      id: uuid(),
       source: undefined,
       sourceType: SourceFeatureType.Query,
       type: FeatureType.Feature,

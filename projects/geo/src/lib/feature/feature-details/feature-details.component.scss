@@ -1,8 +1,14 @@
 @import '../../../../../../src/style/var.scss';
 
+table {
+  width: 100%;
+  white-space: nowrap;
+}
+
 table td {
   padding: $igo-padding;
 }
+
 iframe {
   height: calc(100% - 4px);
   width: 100%;

@@ -1,0 +1,11 @@
+@import '~@angular/material/theming';
+
+@mixin igo-panel-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  igo-panel > div.igo-panel-header {
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+  }
+
+}

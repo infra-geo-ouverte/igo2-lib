@@ -21,9 +21,9 @@ export class FeatureDetailsBindingDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.focusedFeatures$$ = this.featureService.focusedFeature$
-      .pipe(filter(feature => feature !== undefined))
-      .subscribe(feature => (this.component.feature = feature));
+    this.focusedFeatures$$ = this.featureService.focusedFeature$.subscribe(
+      feature => (this.component.feature = feature)
+    );
   }
 
   ngOnDestroy() {

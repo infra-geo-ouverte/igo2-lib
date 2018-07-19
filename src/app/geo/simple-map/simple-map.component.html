@@ -1,15 +1,13 @@
 <mat-card>
-  <mat-card-subtitle>Core</mat-card-subtitle>
-  <mat-card-title>Geo</mat-card-title>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Simple Map</mat-card-title>
   <mat-card-content>
-    <p>Map</p>
     <p>* Dependencies: LanguageService</p>
 
   </mat-card-content>
 
   <igo-map-browser [map]="map" [view]="view">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
-    <igo-poi-button [map]="map" color="primary"></igo-poi-button>
   </igo-map-browser>
 
 </mat-card>

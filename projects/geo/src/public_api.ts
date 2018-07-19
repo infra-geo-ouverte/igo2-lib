@@ -15,5 +15,6 @@ export * from './lib/layer';
 export * from './lib/map';
 export * from './lib/metadata';
 export * from './lib/overlay';
+export * from './lib/query';
 export * from './lib/share-map';
 export * from './lib/wkt';

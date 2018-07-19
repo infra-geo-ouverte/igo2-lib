@@ -1,0 +1,5 @@
+@import './message/message.theme';
+
+@mixin igo-core-theme($theme) {
+  @include igo-message-theme($theme);
+}

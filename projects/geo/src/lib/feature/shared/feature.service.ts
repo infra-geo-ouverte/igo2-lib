@@ -19,12 +19,13 @@ export class FeatureService {
 
   updateFeatures(
     features: Feature[],
-    source: string,
+    source?: string,
     sourcesToKeep?: string[]
   ) {
     const features_ = this.features$.value
       .filter(feature => {
         return (
+          source &&
           feature.source !== source &&
           (!sourcesToKeep || sourcesToKeep.indexOf(feature.source) !== -1)
         );

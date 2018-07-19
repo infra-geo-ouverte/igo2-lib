@@ -1,22 +1,14 @@
 import { Component } from '@angular/core';
 
-import * as ol from 'openlayers';
-
 import { LanguageService } from '@igo2/core';
-import {
-  IgoMap,
-  OSMDataSource,
-  TileLayer,
-  DataSourceService,
-  LayerService
-} from '@igo2/geo';
+import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
 
 @Component({
-  selector: 'app-geo',
-  templateUrl: './geo.component.html',
-  styleUrls: ['./geo.component.scss']
+  selector: 'app-simple-map',
+  templateUrl: './simple-map.component.html',
+  styleUrls: ['./simple-map.component.scss']
 })
-export class AppGeoComponent {
+export class AppSimpleMapComponent {
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -43,17 +35,5 @@ export class AppGeoComponent {
       .subscribe(dataSource => {
         this.map.addLayer(this.layerService.createLayer(dataSource, {}));
       });
-    // const osmDS = new OSMDataSource({
-    //   title: 'OSM'
-    // });
-
-    // const osmLayer = new TileLayer(osmDS);
-    // osmLayer.add(this.map);
-
-    // this.map.ol.addLayer(
-    //   new ol.layer.Tile({
-    //     source: new ol.source.OSM()
-    //   })
-    // );
   }
 }

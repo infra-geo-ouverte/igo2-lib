@@ -1,21 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 
-// @import '../all-theme';
-@import '../projects/core/src/lib/message/message.theme';
+@import 'style/theming.scss';
 
-@mixin igo-material-theme($theme) {
-  @include igo-message-theme($theme);
-  @include angular-material-theme($theme);
+.indigo-theme {
+  @import 'style/themes/indigo-theme.scss';
+  @include igo-theme($theme);
 }
 
-// ================
+.deeppurple-theme {
+  @import 'style/themes/deeppurple-theme.scss';
+  @include igo-theme($theme);
+}
 
+.orange-theme {
+  @import 'style/themes/orange-theme.scss';
+  @include igo-theme($theme);
+}
 
-@import 'style/theme.scss';
+.bluegrey-theme {
+  @import 'style/themes/bluegrey-theme.scss';
+  @include igo-theme($theme);
+}
 
-@include mat-core();
-@include igo-material-theme($theme);
-
-
-
-@import 'style/material-font.scss';
+.dark-theme {
+  @import 'style/themes/dark-theme.scss';
+  @include igo-theme($theme);
+}

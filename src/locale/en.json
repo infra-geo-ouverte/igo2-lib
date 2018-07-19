@@ -23,6 +23,9 @@
     "catalogTool": {
       "baseLayers": "Base Layers"
     },
+    "clickOnMap": {
+      "clickedFeature": "Clicked Feature"
+    },
     "confirmDialog": {
       "cancelBtn": "Cancel",
       "confirmBtn": "Confirm",

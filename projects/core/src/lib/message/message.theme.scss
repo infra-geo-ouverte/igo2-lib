@@ -1,30 +1,5 @@
 @import '~@angular/material/theming';
 
-@mixin _mat-button-theme-property($theme, $property, $hue) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $warn: map-get($theme, warn);
-  $background: map-get($theme, background);
-  $foreground: map-get($theme, foreground);
-
-  &.mat-primary {
-    #{$property}: mat-color($primary, $hue);
-  }
-  &.mat-accent {
-    #{$property}: mat-color($accent, $hue);
-  }
-  &.mat-warn {
-    #{$property}: mat-color($warn, $hue);
-  }
-
-  &.mat-primary, &.mat-accent, &.mat-warn, &[disabled] {
-    &[disabled] {
-      $palette: if($property == 'color', $foreground, $background);
-      #{$property}: mat-color($palette, disabled-button);
-    }
-  }
-}
-
 @mixin igo-message-theme($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);

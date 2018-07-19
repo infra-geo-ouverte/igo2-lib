@@ -1,0 +1,16 @@
+@import '~openlayers/dist/ol';
+@import './material-font';
+
+@import '../../projects/core/src/lib/core.theme';
+@import '../../projects/common/src/lib/common.theme';
+@import '../../projects/geo/src/lib/geo.theme';
+
+@mixin igo-theme($theme) {
+  @include mat-core();
+  @include angular-material-theme($theme);
+  @include igo-font();
+
+  @include igo-core-theme($theme);
+  @include igo-common-theme($theme);
+  @include igo-geo-theme($theme);
+}

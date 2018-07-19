@@ -23,6 +23,9 @@
     "catalogTool": {
       "baseLayers": "Fonds de carte"
     },
+    "clickOnMap": {
+      "clickedFeature": "Entités cliquées"
+    },
     "confirmDialog": {
       "cancelBtn": "Annuler",
       "confirmBtn": "Confirmer",

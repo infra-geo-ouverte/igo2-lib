@@ -1,5 +1,9 @@
 @import '../../../../../src/style/var.scss';
 
+:host {
+  display: block;
+}
+
 .igo-panel-header {
   height: $igo-panel-header-height;
   padding: $igo-panel-header-padding;
