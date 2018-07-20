@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { MatInputModule, MatFormFieldModule } from '@angular/material';
 
-import { IgoMapModule } from '../map/module';
+import { IgoMapModule } from '../map/map.module';
 import { MapFieldComponent } from './fields/map-field/map-field.component';
 
 @NgModule({

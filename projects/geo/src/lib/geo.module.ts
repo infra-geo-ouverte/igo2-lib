@@ -1,18 +1,18 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
-import { IgoCatalogModule } from './catalog/module';
-import { IgoContextModule } from './context/module';
-import { IgoDataSourceModule } from './datasource/module';
-import { IgoDownloadModule } from './download/module';
-import { IgoFeatureModule } from './feature/module';
-import { IgoFormModule } from './form/module';
-import { IgoImportExportModule } from './import-export/module';
-import { IgoLayerModule } from './layer/module';
-import { IgoMapModule } from './map/module';
-import { IgoMetadataModule } from './metadata/module';
-import { IgoOverlayModule } from './overlay/module';
-import { IgoShareMapModule } from './share-map/module';
-import { IgoWktModule } from './wkt/module';
+import { IgoCatalogModule } from './catalog/catalog.module';
+import { IgoContextModule } from './context/context.module';
+import { IgoDataSourceModule } from './datasource/datasource.module';
+import { IgoDownloadModule } from './download/download.module';
+import { IgoFeatureModule } from './feature/feature.module';
+import { IgoFormModule } from './form/form.module';
+import { IgoImportExportModule } from './import-export/import-export.module';
+import { IgoLayerModule } from './layer/layer.module';
+import { IgoMapModule } from './map/map.module';
+import { IgoMetadataModule } from './metadata/metadata.module';
+import { IgoOverlayModule } from './overlay/overlay.module';
+import { IgoShareMapModule } from './share-map/share-map.module';
+import { IgoWktModule } from './wkt/wkt.module';
 
 @NgModule({
   imports: [],

@@ -1,9 +1,11 @@
 {
   "name": "@igo2/utils",
-  "version": "0.20.1",
+  "version": "0.21.0",
+  "dependencies": {
+    "bowser": "^1.9.2"
+  },
   "peerDependencies": {
     "@angular/common": "^6.0.0",
-    "@angular/core": "^6.0.0",
-    "bowser": "^1.9.2"
+    "@angular/core": "^6.0.0"
   }
 }

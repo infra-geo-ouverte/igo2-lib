@@ -8,7 +8,6 @@
 @mixin igo-theme($theme) {
   @include mat-core();
   @include angular-material-theme($theme);
-  @include igo-font();
 
   @include igo-core-theme($theme);
   @include igo-common-theme($theme);
