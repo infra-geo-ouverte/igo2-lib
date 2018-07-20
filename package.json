@@ -7,7 +7,18 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "build.utils": "ng build utils",
+    "build.core": "ng build core && npm run build.core-styles && npm run build.core-assets",
+    "build.core-styles": "cpx \"./projects/core/src/style/**/*\" \"./dist/core/style\" && scss-bundle -e ./projects/core/src/style/core.theming.scss -d ./dist/core/style/core.theming.scss && scss-bundle -e ./projects/core/src/style/theming.scss -d ./dist/core/style/theming.scss && scss-bundle -e ./projects/core/src/style/all.theming.scss -d ./dist/core/style/all.theming.scss",
+    "build.core-assets": "cpx \"./projects/core/src/assets/**/*\" \"./dist/core/assets\"",
+    "build.common": "ng build common && npm run build.common-styles && npm run build.common-assets",
+    "build.common-styles": "cpx \"./projects/common/src/style/**/*\" \"./dist/common/style\" && scss-bundle -e ./projects/common/src/style/common.theming.scss -d ./dist/common/style/common.theming.scss",
+    "build.common-assets": "cpx \"./projects/common/src/assets/**/*\" \"./dist/common/assets\"",
+    "build.auth": "ng build auth",
+    "build.geo": "ng build geo && npm run build.geo-styles && npm run build.geo-assets",
+    "build.geo-styles": "cpx \"./projects/geo/src/style/**/*\" \"./dist/geo/style\" && scss-bundle -e ./projects/geo/src/style/geo.theming.scss -d ./dist/geo/style/geo.theming.scss",
+    "build.geo-assets": "cpx \"./projects/geo/src/assets/**/*\" \"./dist/geo/assets\""
   },
   "private": true,
   "dependencies": {

@@ -1,5 +1,4 @@
-@import '../../../../../../src/style/media.scss';
-// @import '../../../../../../src/style/theme.scss';
+@import '../../../style/partial/media';
 
 :host >>> {
   div.simple-notification-wrapper {
@@ -51,27 +50,6 @@
         font-size: 32px;
       }
     }
-
-    // &.info {
-    //   background-color: mat-color($primary);
-    //   .sn-progress-loader span {
-    //     background-color: mat-color($primary, A400);
-    //   }
-    // }
-    //
-    // &.alert {
-    //   background-color: mat-color($accent);
-    //   .sn-progress-loader span {
-    //     background-color: mat-color($accent, A400);
-    //   }
-    // }
-    //
-    // &.error {
-    //   background-color: mat-color($warn);
-    //   .sn-progress-loader span {
-    //     background-color: mat-color($warn, A400);
-    //   }
-    // }
   }
 
   .closeIcon >>> .sn-title:after {

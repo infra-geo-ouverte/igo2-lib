@@ -1,6 +1,4 @@
-@import '~@angular/material/theming';
-
-@mixin igo-map-browser-theme($theme) {
+@mixin igo-zoom-button-theming($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $is-dark: map-get($theme, is-dark);

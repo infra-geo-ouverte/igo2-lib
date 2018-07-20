@@ -1,8 +1,0 @@
-@import './feature/feature.theme';
-@import './map/map.theme';
-
-
-@mixin igo-geo-theme($theme) {
-  @include igo-feature-theme($theme);
-  @include igo-map-theme($theme);
-}

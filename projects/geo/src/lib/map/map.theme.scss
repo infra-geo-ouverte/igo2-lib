@@ -1,7 +1,0 @@
-@import './map-browser/map-browser.theme';
-@import './zoom-button/zoom-button.theme';
-
-@mixin igo-map-theme($theme) {
-  @include igo-map-browser-theme($theme);
-  @include igo-zoom-button-theme($theme);
-}

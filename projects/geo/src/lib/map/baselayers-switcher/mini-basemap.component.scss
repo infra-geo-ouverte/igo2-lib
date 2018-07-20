@@ -1,4 +1,4 @@
-@import '../../../../../../src/style/var.scss';
+@import '../../../../../core/src/style/partial/core.variables';
 
 .igo-mini-basemap-container {
   width: calc(#{$igo-icon-size} * 2);

@@ -1,6 +1,4 @@
-@import '~@angular/material/theming';
-
-@mixin igo-panel-theme($theme) {
+@mixin igo-panel-theming($theme) {
   $primary: map-get($theme, primary);
 
   igo-panel > div.igo-panel-header {

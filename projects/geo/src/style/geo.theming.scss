@@ -1,0 +1,9 @@
+@import '~openlayers/dist/ol';
+
+@import '../lib/feature/feature.theming';
+@import '../lib/map/map.theming';
+
+@mixin igo-geo-theming($theme) {
+  @include igo-feature-theming($theme);
+  @include igo-map-theming($theme);
+}
