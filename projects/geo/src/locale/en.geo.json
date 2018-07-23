@@ -140,6 +140,12 @@
         "end": "Completed"
       },
       "map": "Map",
+      "mapButtons": {
+        "baselayerSwitcher": "Change base layer",
+        "geolocate": "Geolocate",
+        "zoomIn": "Zoom in ({{zoom}})",
+        "zoomOut": "Zoom out ({{zoom}})"
+      },
       "permission": {
         "addBtn": "Add",
         "delete": "Remove permission",
