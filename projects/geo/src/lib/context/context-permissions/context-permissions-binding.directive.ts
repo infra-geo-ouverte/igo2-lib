@@ -39,10 +39,10 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
         }
         const profil = permission.profil;
         const translate = this.languageService.translate;
-        const message = translate.instant('igo.permission.dialog.addMsg', {
+        const message = translate.instant('igo.geo.permission.dialog.addMsg', {
           value: profil
         });
-        const title = translate.instant('igo.permission.dialog.addTitle');
+        const title = translate.instant('igo.geo.permission.dialog.addTitle');
         this.messageService.success(message, title);
       });
   }
@@ -62,10 +62,10 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
 
         const profil = permission.profil;
         const translate = this.languageService.translate;
-        const message = translate.instant('igo.permission.dialog.deleteMsg', {
+        const message = translate.instant('igo.geo.permission.dialog.deleteMsg', {
           value: profil
         });
-        const title = translate.instant('igo.permission.dialog.deleteTitle');
+        const title = translate.instant('igo.geo.permission.dialog.deleteTitle');
         this.messageService.success(message, title);
       });
   }
@@ -76,13 +76,13 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
     this.contextService.update(context.id, { scope: scope }).subscribe(() => {
       const translate = this.languageService.translate;
       const message = translate.instant(
-        'igo.permission.dialog.scopeChangedMsg',
+        'igo.geo.permission.dialog.scopeChangedMsg',
         {
-          value: translate.instant('igo.permission.scope.' + scope)
+          value: translate.instant('igo.geo.permission.scope.' + scope)
         }
       );
       const title = translate.instant(
-        'igo.permission.dialog.scopeChangedTitle'
+        'igo.geo.permission.dialog.scopeChangedTitle'
       );
       this.messageService.success(message, title);
     });

@@ -25,10 +25,10 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
     const id = this.component.context.id;
     this.contextService.update(id, context).subscribe(() => {
       const translate = this.languageService.translate;
-      const message = translate.instant('igo.context.dialog.saveMsg', {
+      const message = translate.instant('igo.geo.context.dialog.saveMsg', {
         value: context.title || this.component.context.title
       });
-      const title = translate.instant('igo.context.dialog.saveTitle');
+      const title = translate.instant('igo.geo.context.dialog.saveTitle');
       this.messageService.success(message, title);
     });
   }

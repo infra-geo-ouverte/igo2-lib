@@ -1,12 +1,12 @@
 <mat-tab-group>
 
-  <mat-tab [label]="'igo.importExportForm.importTabTitle' | translate">
+  <mat-tab [label]="'igo.geo.importExportForm.importTabTitle' | translate">
     <form class="igo-form">
       <div class="igo-input-container">
         <mat-form-field>
           <input
             matInput
-            placeholder="{{'igo.importExportForm.importProjPlaceholder' | translate}}"
+            placeholder="{{'igo.geo.importExportForm.importProjPlaceholder' | translate}}"
             name="inputProj"
             [(ngModel)]="inputProj">
         </mat-form-field>
@@ -14,21 +14,21 @@
 
       <div class="igo-form-button-group">
         <button mat-raised-button type="button" (click)="inputFile.click()">
-          {{'igo.importExportForm.importButton' | translate}}
+          {{'igo.geo.importExportForm.importButton' | translate}}
         </button>
         <input #inputFile type="file" [style.display]="'none'" (change)="loadFile($event.target.files)">
       </div>
     </form>
   </mat-tab>
 
-  <mat-tab [label]="'igo.importExportForm.exportTabTitle' | translate">
+  <mat-tab [label]="'igo.geo.importExportForm.exportTabTitle' | translate">
     <form class="igo-form" [formGroup]="form">
 
       <div class="igo-input-container">
         <mat-form-field>
           <mat-select
             formControlName="layer"
-            placeholder="{{'igo.importExportForm.exportLayerPlaceholder' | translate}}">
+            placeholder="{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}">
             <mat-option *ngFor="let layer of layers" [value]="layer.id">
               {{layer.title}}
             </mat-option>
@@ -40,7 +40,7 @@
         <mat-form-field>
           <mat-select
             formControlName="format"
-            placeholder="{{'igo.importExportForm.exportFormatPlaceholder' | translate}}">
+            placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
             <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
               {{format.value}}
             </mat-option>
@@ -54,7 +54,7 @@
           type="button"
           [disabled]="!form.valid"
           (click)="handleFormSubmit(form.value)">
-          {{'igo.importExportForm.exportButton' | translate}}
+          {{'igo.geo.importExportForm.exportButton' | translate}}
         </button>
       </div>
 

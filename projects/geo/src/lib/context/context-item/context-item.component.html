@@ -2,7 +2,7 @@
   <button mat-list-avatar
     mat-icon-button
     igoStopPropagation
-    [matTooltip]="'igo.context.favorite' | translate"
+    [matTooltip]="'igo.geo.context.favorite' | translate"
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
     (click)="favorite.emit(context)">
@@ -19,7 +19,7 @@
 
        <button
          mat-icon-button
-         [matTooltip]="'igo.context.clone' | translate"
+         [matTooltip]="'igo.geo.context.clone' | translate"
          matTooltipShowDelay="500"
          [color]="color"
          (click)="clone.emit(context)">
@@ -34,7 +34,7 @@
 
      <button *ngIf="collapsed"
        mat-icon-button
-       [matTooltip]="'igo.context.save' | translate"
+       [matTooltip]="'igo.geo.context.save' | translate"
        matTooltipShowDelay="500"
        [color]="color"
        (click)="save.emit(context)">
@@ -45,7 +45,7 @@
 
       <button
         mat-icon-button
-        [matTooltip]="'igo.context.managePermissions' | translate"
+        [matTooltip]="'igo.geo.context.managePermissions' | translate"
         matTooltipShowDelay="500"
         [color]="color"
         (click)="managePermissions.emit(context)">
@@ -54,7 +54,7 @@
 
       <!--button
         mat-icon-button
-        [matTooltip]="'igo.context.manageTools' | translate"
+        [matTooltip]="'igo.geo.context.manageTools' | translate"
         [color]="color"
         (click)="manageTools.emit(context)">
         <mat-icon>widgets</mat-icon>
@@ -62,7 +62,7 @@
 
       <button
         mat-icon-button
-        [matTooltip]="'igo.context.clone' | translate"
+        [matTooltip]="'igo.geo.context.clone' | translate"
         matTooltipShowDelay="500"
         [color]="color"
         (click)="clone.emit(context)">
@@ -72,7 +72,7 @@
       <button
         mat-icon-button
         [color]="color"
-        [matTooltip]="'igo.context.edit' | translate"
+        [matTooltip]="'igo.geo.context.edit' | translate"
         matTooltipShowDelay="500"
         (click)="edit.emit(context)">
         <mat-icon>edit</mat-icon>
@@ -81,7 +81,7 @@
       <button
         mat-icon-button
         color="warn"
-        [matTooltip]="'igo.context.delete' | translate"
+        [matTooltip]="'igo.geo.context.delete' | translate"
         matTooltipShowDelay="500"
         (click)="delete.emit(context)">
         <mat-icon>delete</mat-icon>

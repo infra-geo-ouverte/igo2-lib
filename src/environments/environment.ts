@@ -2,8 +2,20 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
-  production: false
+// import { IgoEnvironment } from '@igo2/core';
+
+interface Environment {
+  production: boolean;
+  igo: any;
+}
+
+export const environment: Environment = {
+  production: false,
+  igo: {
+    language: {
+      prefix: './locale/'
+    }
+  }
 };
 
 /*

@@ -154,7 +154,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       Object.assign({}, f, {
         sourceType: SourceFeatureType.Click,
         source: this.languageService.translate.instant(
-          'igo.clickOnMap.clickedFeature'
+          'igo.geo.clickOnMap.clickedFeature'
         ),
         id: f.properties.clickedTitle + ' ' + String(i++),
         icon: 'mouse',

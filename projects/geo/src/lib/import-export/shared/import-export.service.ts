@@ -52,11 +52,11 @@ export class ImportExportService {
     const count = fileList.length;
     let i = 1;
     for (const file of fileList) {
-      const title = translate.instant('igo.dropGeoFile.invalid.title', {
+      const title = translate.instant('igo.geo.dropGeoFile.invalid.title', {
         i: i++,
         count: count
       });
-      const message = translate.instant('igo.dropGeoFile.invalid.text', {
+      const message = translate.instant('igo.geo.dropGeoFile.invalid.text', {
         value: file.name
       });
       this.messageService.error(message, title);
@@ -122,19 +122,19 @@ export class ImportExportService {
         sourceSrs,
         file.type
       );
-      const title = translate.instant('igo.dropGeoFile.success.title', {
+      const title = translate.instant('igo.geo.dropGeoFile.success.title', {
         i: i,
         count: count
       });
-      const message = translate.instant('igo.dropGeoFile.success.text', {
+      const message = translate.instant('igo.geo.dropGeoFile.success.text', {
         value: layerTitle
       });
       this.messageService.success(message, title);
     };
 
     reader.onerror = evt => {
-      const title = translate.instant('igo.dropGeoFile.unreadable.title');
-      const message = translate.instant('igo.dropGeoFile.unreadable.text', {
+      const title = translate.instant('igo.geo.dropGeoFile.unreadable.title');
+      const message = translate.instant('igo.geo.dropGeoFile.unreadable.text', {
         value: file.name
       });
       this.messageService.error(message, title);
@@ -205,18 +205,18 @@ export class ImportExportService {
     request.subscribe(
       res => {
         this.addFeaturesLayer(res, layerTitle, map.projection);
-        const title = translate.instant('igo.dropGeoFile.success.title', {
+        const title = translate.instant('igo.geo.dropGeoFile.success.title', {
           i: 1,
           count: 1
         });
-        const message = translate.instant('igo.dropGeoFile.success.text', {
+        const message = translate.instant('igo.geo.dropGeoFile.success.text', {
           value: layerTitle
         });
         this.messageService.success(message, title);
       },
       err => {
-        const title = translate.instant('igo.dropGeoFile.unreadable.title');
-        const message = translate.instant('igo.dropGeoFile.unreadable.text', {
+        const title = translate.instant('igo.geo.dropGeoFile.unreadable.title');
+        const message = translate.instant('igo.geo.dropGeoFile.unreadable.text', {
           value: file.name
         });
         this.messageService.error(message, title);

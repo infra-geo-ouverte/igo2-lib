@@ -436,11 +436,11 @@ export class ContextService {
     const context = this.contexts$.value.ours.find(obj => obj.uri === uri);
     const titleContext = context ? context.title : uri;
     const titleError = this.languageService.translate.instant(
-      'igo.context.invalid.title'
+      'igo.geo.context.invalid.title'
     );
 
     const textError = this.languageService.translate.instant(
-      'igo.context.invalid.text',
+      'igo.geo.context.invalid.text',
       { value: titleContext }
     );
 

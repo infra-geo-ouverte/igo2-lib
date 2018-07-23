@@ -18,7 +18,7 @@ export class LanguageLoader implements TranslateLoader {
   ) {}
 
   public getTranslation(lang: string): any {
-    const translation = require(`../../../src/locale/${lang}.json`);
+    const translation = require(`../locale/${lang}.json`);
     const igoLocale$ = of(translation);
 
     if (this.config && !this.prefix) {
@@ -34,8 +34,8 @@ export class LanguageLoader implements TranslateLoader {
     const locale$ = combineLatest(igoLocale$, appLocale$);
 
     return locale$.pipe(
-      map((igoTranslation, appTranslation) => {
-        return Object.assign(igoTranslation, appTranslation);
+      map(translations => {
+        return Object.assign(translations[0], translations[1]);
       })
     );
   }

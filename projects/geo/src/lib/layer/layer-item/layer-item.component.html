@@ -15,8 +15,8 @@
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="layer.visible ?
-                  ('igo.layer.hideLayer' | translate) :
-                  ('igo.layer.showLayer' | translate)"
+                  ('igo.geo.layer.hideLayer' | translate) :
+                  ('igo.geo.layer.showLayer' | translate)"
     [color]="layer.visible ? color : 'default'"
     (click)="toggleVisibility()">
     <mat-icon
@@ -50,7 +50,7 @@
       [min]="0"
       [max]="100"
       [(ngModel)]="opacity"
-      [matTooltip]="'igo.layer.opacity' | translate"
+      [matTooltip]="'igo.geo.layer.opacity' | translate"
       matTooltipShowDelay="500"
       tooltip-position="below">
     </mat-slider>
@@ -64,7 +64,7 @@
           collapsibleButton
           tooltip-position="below"
           matTooltipShowDelay="500"
-          [matTooltip]="'igo.ogcFilter' | translate"
+          [matTooltip]="'igo.geo.ogcFilter' | translate"
           [color]="color"
           (click)="toggleOgcFilter()">
           <mat-icon
@@ -76,7 +76,7 @@
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.layer.showFeaturesList' | translate"
+        [matTooltip]="'igo.geo.layer.showFeaturesList' | translate"
         [color]="color"
         (click)="showFeaturesList(layer)">
         <mat-icon>list</mat-icon>
@@ -87,7 +87,7 @@
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.layer.showMetadata' | translate"
+        [matTooltip]="'igo.geo.layer.showMetadata' | translate"
         [color]="color"
         (click)="openMetadata(layer.dataSource.options.metadata)">
         <mat-icon>info_outline</mat-icon>
@@ -98,7 +98,7 @@
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.download.action' | translate"
+      [matTooltip]="'igo.geo.download.action' | translate"
       [color]="color"
       (click)="openDownload(layer)">
       <mat-icon>file_download</mat-icon>
@@ -108,7 +108,7 @@
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.layer.raiseLayer' | translate"
+        [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
         [color]="color"
         (click)="layer.map.raiseLayer(layer)">
         <mat-icon>arrow_upward</mat-icon>
@@ -118,7 +118,7 @@
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.layer.lowerLayer' | translate"
+        [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
         [color]="color"
         (click)="layer.map.lowerLayer(layer)">
         <mat-icon>arrow_downward</mat-icon>
@@ -128,7 +128,7 @@
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.layer.removeLayer' | translate"
+        [matTooltip]="'igo.geo.layer.removeLayer' | translate"
         color="warn"
         (click)="layer.map.removeLayer(layer)">
         <mat-icon>delete</mat-icon>

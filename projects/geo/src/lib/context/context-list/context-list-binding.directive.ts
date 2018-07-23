@@ -55,10 +55,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
     this.contextService.update(context.id, changes).subscribe(() => {
       const translate = this.languageService.translate;
-      const message = translate.instant('igo.context.dialog.saveMsg', {
+      const message = translate.instant('igo.geo.context.dialog.saveMsg', {
         value: context.title
       });
-      const title = translate.instant('igo.context.dialog.saveTitle');
+      const title = translate.instant('igo.geo.context.dialog.saveTitle');
       this.messageService.success(message, title);
     });
   }
@@ -72,10 +72,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       .subscribe(() => {
         this.contextService.defaultContextId$.next(context.id);
         const translate = this.languageService.translate;
-        const message = translate.instant('igo.context.dialog.favoriteMsg', {
+        const message = translate.instant('igo.geo.context.dialog.favoriteMsg', {
           value: context.title
         });
-        const title = translate.instant('igo.context.dialog.favoriteTitle');
+        const title = translate.instant('igo.geo.context.dialog.favoriteTitle');
         this.messageService.success(message, title);
       });
   }
@@ -94,14 +94,14 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   onDelete(context: Context) {
     const translate = this.languageService.translate;
     this.confirmDialogService
-      .open(translate.instant('igo.context.dialog.confirmDelete'))
+      .open(translate.instant('igo.geo.context.dialog.confirmDelete'))
       .subscribe(confirm => {
         if (confirm) {
           this.contextService.delete(context.id).subscribe(() => {
-            const message = translate.instant('igo.context.dialog.deleteMsg', {
+            const message = translate.instant('igo.geo.context.dialog.deleteMsg', {
               value: context.title
             });
-            const title = translate.instant('igo.context.dialog.deleteTitle');
+            const title = translate.instant('igo.geo.context.dialog.deleteTitle');
             this.messageService.info(message, title);
           });
         }
@@ -116,10 +116,10 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     };
     this.contextService.clone(context.id, properties).subscribe(() => {
       const translate = this.languageService.translate;
-      const message = translate.instant('igo.context.dialog.cloneMsg', {
+      const message = translate.instant('igo.geo.context.dialog.cloneMsg', {
         value: context.title
       });
-      const title = translate.instant('igo.context.dialog.cloneTitle');
+      const title = translate.instant('igo.geo.context.dialog.cloneTitle');
       this.messageService.success(message, title);
     });
   }

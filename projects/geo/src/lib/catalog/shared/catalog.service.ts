@@ -57,7 +57,7 @@ export class CatalogService {
     this.get().subscribe(catalogs => {
       if (catalogConfig.baseLayers) {
         const translate = this.languageService.translate;
-        const title = translate.instant('igo.catalogTool.baseLayers');
+        const title = translate.instant('igo.geo.catalogTool.baseLayers');
         catalogs.unshift({
           title: title,
           url: this.baseUrl + '/baselayers',

@@ -83,8 +83,8 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
     const successful = Clipboard.copy(textArea);
     if (successful) {
       const translate = this.languageService.translate;
-      const title = translate.instant('igo.shareMap.dialog.copyTitle');
-      const msg = translate.instant('igo.shareMap.dialog.copyMsg');
+      const title = translate.instant('igo.geo.shareMap.dialog.copyTitle');
+      const msg = translate.instant('igo.geo.shareMap.dialog.copyMsg');
       this.messageService.success(msg, title);
     }
   }

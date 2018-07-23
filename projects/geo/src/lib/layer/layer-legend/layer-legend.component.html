@@ -1,5 +1,5 @@
 <small *ngIf="legend.length === 0">
-  {{'igo.layer.noLegendText' | translate}}
+  {{'igo.geo.layer.noLegendText' | translate}}
 </small>
 
 <ng-template ngFor let-item [ngForOf]="legend">
@@ -19,7 +19,7 @@
     <img
       *ngIf="item.url"
       src="{{(item.url | secureImage) | async}}"
-      alt="{{'igo.layer.loadingLegendText' | translate}}">
+      alt="{{'igo.geo.layer.loadingLegendText' | translate}}">
     <div
       [ngStyle]="item.style"
       [innerHTML]="item.html"

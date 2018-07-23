@@ -52,9 +52,9 @@ export class ContextListComponent {
   @Output() manageTools = new EventEmitter<DetailedContext>();
 
   public titleMapping = {
-    ours: 'igo.context.ourContexts',
-    shared: 'igo.context.sharedContexts',
-    public: 'igo.context.publicContexts'
+    ours: 'igo.geo.context.ourContexts',
+    shared: 'igo.geo.context.sharedContexts',
+    public: 'igo.geo.context.publicContexts'
   };
 
   constructor(private cdRef: ChangeDetectorRef) {}

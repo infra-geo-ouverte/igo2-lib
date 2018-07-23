@@ -39,10 +39,10 @@ export class ContextToolsBindingDirective implements OnInit, OnDestroy {
     this.contextService.addToolAssociation(contextId, tool.id).subscribe(() => {
       const name = tool.title || tool.name;
       const translate = this.languageService.translate;
-      const message = translate.instant('igo.tool.dialog.addMsg', {
+      const message = translate.instant('igo.geo.tool.dialog.addMsg', {
         value: name
       });
-      const title = translate.instant('igo.tool.dialog.addTitle');
+      const title = translate.instant('igo.geo.tool.dialog.addTitle');
       this.messageService.success(message, title);
     });
   }
@@ -55,10 +55,10 @@ export class ContextToolsBindingDirective implements OnInit, OnDestroy {
       .subscribe(() => {
         const name = tool.title || tool.name;
         const translate = this.languageService.translate;
-        const message = translate.instant('igo.tool.dialog.removeMsg', {
+        const message = translate.instant('igo.geo.tool.dialog.removeMsg', {
           value: name
         });
-        const title = translate.instant('igo.tool.dialog.removeTitle');
+        const title = translate.instant('igo.geo.tool.dialog.removeTitle');
         this.messageService.success(message, title);
       });
   }

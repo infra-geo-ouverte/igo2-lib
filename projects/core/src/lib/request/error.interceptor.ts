@@ -69,8 +69,8 @@ export class ErrorInterceptor implements HttpInterceptor {
   private handleUncaughtError() {
     if (this.httpError && !this.httpError.error.caught) {
       const translate = this.injector.get(LanguageService).translate;
-      const message = translate.instant('igo.errors.uncaught.message');
-      const title = translate.instant('igo.errors.uncaught.title');
+      const message = translate.instant('igo.core.errors.uncaught.message');
+      const title = translate.instant('igo.core.errors.uncaught.title');
       this.messageService.error(message, title);
     }
   }

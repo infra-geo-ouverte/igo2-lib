@@ -1,8 +1,8 @@
-<h1 mat-dialog-title>{{ 'igo.bookmarkButton.dialog.title' | translate }}</h1>
+<h1 mat-dialog-title>{{ 'igo.geo.bookmarkButton.dialog.title' | translate }}</h1>
 <div mat-dialog-content>
   <mat-form-field>
     <input matInput required autocomplete="off"
-      [placeholder]="'igo.bookmarkButton.dialog.placeholder' | translate"
+      [placeholder]="'igo.geo.bookmarkButton.dialog.placeholder' | translate"
       [(ngModel)]="title">
   </mat-form-field>
 </div>
@@ -10,10 +10,10 @@
   <button mat-button color="primary"
          [disabled]="!title"
          (click)="dialogRef.close(title)">
-    {{'igo.confirmDialog.confirmBtn' | translate}}
+    {{'igo.common.confirmDialog.confirmBtn' | translate}}
   </button>
   <button mat-button
           (click)="dialogRef.close(false)">
-    {{'igo.confirmDialog.cancelBtn' | translate}}
+    {{'igo.common.confirmDialog.cancelBtn' | translate}}
   </button>
 </div>

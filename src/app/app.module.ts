@@ -10,6 +10,7 @@ import {
 
 import { AppHomeModule } from './core/home/home.module';
 import { AppActivityModule } from './core/activity/activity.module';
+import { AppConfigModule } from './core/config/config.module';
 import { AppLanguageModule } from './core/language/language.module';
 import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
@@ -35,6 +36,7 @@ import { AppComponent } from './app.component';
 
     AppHomeModule,
     AppActivityModule,
+    AppConfigModule,
     AppLanguageModule,
     AppMediaModule,
     AppMessageModule,
