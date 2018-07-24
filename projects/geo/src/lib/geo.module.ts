@@ -13,6 +13,7 @@ import { IgoMapModule } from './map/map.module';
 import { IgoMetadataModule } from './metadata/metadata.module';
 import { IgoOverlayModule } from './overlay/overlay.module';
 import { IgoPrintModule } from './print/print.module';
+import { IgoSearchModule } from './search/search.module';
 import { IgoShareMapModule } from './share-map/share-map.module';
 import { IgoToolModule } from './tool/tool.module';
 import { IgoWktModule } from './wkt/wkt.module';
@@ -34,6 +35,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoMetadataModule,
     IgoOverlayModule,
     IgoPrintModule,
+    IgoSearchModule,
     IgoShareMapModule,
     IgoToolModule,
     IgoWktModule

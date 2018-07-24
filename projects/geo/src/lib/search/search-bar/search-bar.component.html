@@ -1,0 +1,29 @@
+<mat-form-field [floatLabel]="floatLabel">
+  <input
+    #input
+    matInput
+    autocomplete="off"
+    [ngClass]="{'hasSearchIcon': searchIcon}"
+    [disabled]="disabled"
+    [placeholder]="placeholder"
+    [ngModel]="term"
+    (keyup)="keyup($event)"
+    (touchend)="keyup($event)">
+</mat-form-field>
+
+<div class="searchButtonDiv">
+  <button
+    mat-icon-button
+    [color]="color"
+    *ngIf="searchIcon">
+    <mat-icon>search</mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    [color]="color"
+    (click)="clear()"
+    *ngIf="term.length > 0 ? true : false">
+    <mat-icon>clear</mat-icon>
+  </button>
+</div>
