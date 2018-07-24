@@ -152,6 +152,12 @@ gulp.task('geo:copyLocale', () => {
   gulp.src('./projects/geo/src/locale/*').pipe(gulp.dest('./dist/core/locale'));
 });
 
+gulp.task('tools:copyLocale', () => {
+  gulp
+    .src('./projects/tools/src/locale/*')
+    .pipe(gulp.dest('./dist/core/locale'));
+});
+
 gulp.task('core:bundleLocale.fr', () => {
   gulp
     .src('./dist/core/locale/fr.*.json')
@@ -220,4 +226,6 @@ gulp.task(
   )
 );
 
-gulp.task('default', ['core', 'common', 'auth', 'geo']);
+gulp.task('tools', gulpSequence(['tools:copyLocale'], 'core:bundleLocale'));
+
+gulp.task('default', ['core', 'common', 'auth', 'geo', 'tools']);

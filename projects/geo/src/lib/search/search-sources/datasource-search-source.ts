@@ -23,7 +23,7 @@ export class DataSourceSearchSource extends SearchSource {
     this.options.enabled = value;
   }
 
-  static _name = 'igo.search.dataSources.name';
+  static _name = 'igo.geo.search.dataSources.name';
 
   private searchUrl = 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search';
   private options: SearchSourceOptions;
@@ -74,7 +74,7 @@ export class DataSourceSearchSource extends SearchSource {
   private formatResult(result: any): Feature {
     const t = this.languageService.translate;
     const properties = {};
-    const prefix = 'igo.search.dataSources.properties.';
+    const prefix = 'igo.geo.search.dataSources.properties.';
     properties[t.instant(prefix + 'title')] = result.source.title;
     properties[t.instant(prefix + 'group')] = result.source.groupTitle;
     properties[t.instant(prefix + 'abstract')] = result.source.abstract;

@@ -1,0 +1,15 @@
+{
+  "igo": {
+    "tools": {
+      "catalog": "Catalog",
+      "contexts": "Contexts",
+      "importExport": "Import & export",
+      "ogcFilter": "Filter by",
+      "map": "Map",
+      "print": "Print",
+      "searchResults": "Search Results",
+      "shareMap": "Share",
+      "timeAnalysis": "Time Analysis"
+    }
+  }
+}

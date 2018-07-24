@@ -10,7 +10,6 @@
           "title": "Nouveau contexte"
         }
       },
-      "catalog": "Catalogue",
       "catalogTool": {
         "baseLayers": "Fonds de carte"
       },
@@ -51,7 +50,6 @@
         "save": "Sauvegarder ce contexte",
         "sharedContexts": "Contextes partagés"
       },
-      "contexts": "Contextes",
       "dropGeoFile": {
         "invalid": {
           "text": "Le fichier '{{value}}' est invalide",
@@ -66,7 +64,6 @@
           "title": "Fichier illisible"
         }
       },
-      "importExport": "Importation et exportation",
       "importExportForm": {
         "exportButton": "Exporter",
         "exportFormatPlaceholder": "Format",
@@ -133,7 +130,6 @@
           "Vérifiez la progression du téléchargement dans votre navigateur",
         "end": "Terminé"
       },
-      "map": "Carte",
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Positionnement GPS",
@@ -176,7 +172,6 @@
         },
         "placeholder": "Zones d'intérêt"
       },
-      "print": "Imprimer",
       "printForm": {
         "format": "Format",
         "landscape": "Paysage",
@@ -197,7 +192,6 @@
           }
         }
       },
-      "searchResults": "Résultats de recherche",
       "shareMap": {
         "button": "Partager la carte",
         "copy": "Copier le lien",
@@ -205,11 +199,9 @@
           "copyMsg": "Lien copié",
           "copyTitle": "Lien"
         },
-        "placeholderLink": "Lien",
-        "share": "Partager"
+        "placeholderLink": "Lien"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
-      "timeAnalysis": "Analyse Temporelle",
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",

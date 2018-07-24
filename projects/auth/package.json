@@ -3,9 +3,9 @@
   "version": "0.21.0",
   "peerDependencies": {
     "@angular/cdk": "^6.3.3",
-    "@angular/common": "^6.0.7",
-    "@angular/core": "^6.0.7",
-    "@angular/forms": "^6.0.7",
+    "@angular/common": "^6.0.0",
+    "@angular/core": "^6.0.0",
+    "@angular/forms": "^6.0.0",
     "@angular/material": "^6.3.3",
     "@igo2/auth": "^0.21.0",
     "@igo2/core": "^0.21.0",

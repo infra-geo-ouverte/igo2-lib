@@ -6,7 +6,7 @@
   <h4 *ngIf="!ogcFiltersHeaderShown" matLine></h4>
 
   <!-- <span *ngIf="!datasource.options['disableRefreshFilter'] && layers[0].visible"> -->
-    <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.filter.refreshFilters' | translate"
+    <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.refreshFilters' | translate"
     [disabled]="!layers[0].visible || datasource.options['disableRefreshFilter'] || !layers[0].isInResolutionsRange"
     [color]="color" (click)="refreshFilters()">
       <mat-icon>
@@ -16,13 +16,13 @@
   <!-- </span> -->
 
   <span *ngIf="downloadable && ogcFiltersHeaderShown">
-    <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.download.action' | translate"
+    <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.download.action' | translate"
       [color]="color" (click)="openDownload()">
       <mat-icon>file_download</mat-icon>
     </button>
   </span>
   <button [disabled]="datasource.options['sourceFields'].length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-    [matTooltip]="'igo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
+    [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon>
       add
     </mat-icon>

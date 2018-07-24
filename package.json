@@ -8,12 +8,14 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build.libs": "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo",
+    "build.libs":
+      "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.tools",
     "build.utils": "ng build utils --prod",
     "build.core": "ng build core --prod && gulp core",
     "build.common": "ng build common --prod && gulp common",
     "build.auth": "ng build auth --prod && gulp auth",
-    "build.geo": "ng build geo --prod && gulp geo"
+    "build.geo": "ng build geo --prod && gulp geo",
+    "build.tools": "ng build tools --prod && gulp tools"
   },
   "private": true,
   "dependencies": {

@@ -5,7 +5,7 @@
       <input
         matInput
         formControlName="title"
-        placeholder="{{'igo.printForm.title' | translate}}">
+        placeholder="{{'igo.geo.printForm.title' | translate}}">
     </mat-form-field>
   </div>
 
@@ -13,7 +13,7 @@
     <mat-form-field>
       <mat-select
         formControlName="format"
-        placeholder="{{'igo.printForm.format' | translate}}">
+        placeholder="{{'igo.geo.printForm.format' | translate}}">
         <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
           {{format.value}}
         </mat-option>
@@ -25,7 +25,7 @@
     <mat-form-field>
       <mat-select
         formControlName="resolution"
-        placeholder="{{'igo.printForm.resolution' | translate}}">
+        placeholder="{{'igo.geo.printForm.resolution' | translate}}">
         <mat-option *ngFor="let resolution of resolutions | keyvalue " [value]="resolution.key">
           {{resolution.value + ' PPI'}}
         </mat-option>
@@ -36,7 +36,7 @@
   <div class="igo-input-container">
     <mat-radio-group formControlName="orientation" class="horizontal">
       <mat-radio-button *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
-        {{('igo.printForm.' + orientation.value) | translate}}
+        {{('igo.geo.printForm.' + orientation.value) | translate}}
       </mat-radio-button>
     </mat-radio-group>
   </div>
@@ -47,7 +47,7 @@
       type="button"
       [disabled]="!form.valid || disabled"
       (click)="handleFormSubmit(form.value, form.valid)">
-      {{'igo.printForm.printBtn' | translate}}
+      {{'igo.geo.printForm.printBtn' | translate}}
     </button>
   </div>
 

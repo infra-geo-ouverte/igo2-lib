@@ -69,7 +69,7 @@ export class OgcFilterFormComponent {
       if (this.operators.hasOwnProperty(property)) {
         this.operators[property] = Object.assign({}, this.operators[property], {
           alias: this.languageService.translate.instant(
-            'igo.operators.' + property
+            'igo.geo.operators.' + property
           )
         });
       }
@@ -78,13 +78,13 @@ export class OgcFilterFormComponent {
       {
         type: 'fixedExtent',
         alias: this.languageService.translate.instant(
-          'igo.spatialSelector.fixedExtent'
+          'igo.geo.spatialSelector.fixedExtent'
         )
       },
       {
         type: 'snrc',
         alias: this.languageService.translate.instant(
-          'igo.spatialSelector.snrc'
+          'igo.geo.spatialSelector.snrc'
         )
       }
     ];

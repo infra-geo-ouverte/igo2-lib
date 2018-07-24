@@ -10,7 +10,6 @@
           "title": "New context"
         }
       },
-      "catalog": "Catalog",
       "catalogTool": {
         "baseLayers": "Base Layers"
       },
@@ -58,7 +57,6 @@
         "save": "Save this context",
         "sharedContexts": "Shared contexts"
       },
-      "contexts": "Contexts",
       "dropGeoFile": {
         "invalid": {
           "text": "Invalid file ({{i}}/{{count}})",
@@ -73,7 +71,6 @@
           "title": "The file '{{value}}' is unreadable"
         }
       },
-      "importExport": "Import & export",
       "importExportForm": {
         "exportButton": "Export",
         "exportFormatPlaceholder": "Format",
@@ -139,7 +136,6 @@
         "start": "Started. Check the download progression in your browser",
         "end": "Completed"
       },
-      "map": "Map",
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
@@ -181,7 +177,6 @@
         },
         "placeholder": "Zones of interest"
       },
-      "print": "Print",
       "printForm": {
         "format": "Format",
         "landscape": "Landscape",
@@ -202,7 +197,6 @@
           }
         }
       },
-      "searchResults": "Search Results",
       "shareMap": {
         "button": "Share map",
         "copy": "Copy to clipboard",
@@ -210,11 +204,9 @@
           "copyMsg": "Link copied to clipboard",
           "copyTitle": "Link"
         },
-        "placeholderLink": "Link",
-        "share": "Share"
+        "placeholderLink": "Link"
       },
       "targetHtmlUrl": "Open the external link",
-      "timeAnalysis": "Time Analysis",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",
