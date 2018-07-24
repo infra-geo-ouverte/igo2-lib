@@ -1,14 +1,14 @@
 import * as ol from 'openlayers';
-import { Md5 } from 'ts-md5/dist/md5';
+import { Md5 } from 'ts-md5';
 
 // import { QueryFormat, QueryOptions } from '../../../query';
 
 import { DataSource } from './datasource';
 import {
-  DataSourceLegendOptions,
-  TimeFilterableDataSource,
-  QueryableDataSource,
-  OgcFilterableDataSource
+  DataSourceLegendOptions
+  // TimeFilterableDataSource,
+  // QueryableDataSource
+  // OgcFilterableDataSource
 } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 // import {
@@ -18,11 +18,10 @@ import { WMSDataSourceOptions } from './wms-datasource.interface';
 // } from '../../../filter/shared';
 import { WFSDataSourceService } from './wfs-datasource.service';
 
-export class WMSDataSource extends DataSource
-  implements
-    QueryableDataSource,
-    TimeFilterableDataSource,
-    OgcFilterableDataSource {
+export class WMSDataSource extends DataSource {
+  // implements QueryableDataSource {
+  // OgcFilterableDataSource,
+  // TimeFilterableDataSource {
   // public options: WMSDataSourceOptions;
   public ol: ol.source.ImageWMS;
   // public ogcFilterWriter: OgcFilterWriter;
@@ -40,12 +39,14 @@ export class WMSDataSource extends DataSource
   // }
 
   get queryTitle(): string {
-    return this.options.queryTitle ? this.options.queryTitle : 'title';
+    return (this.options as any).queryTitle
+      ? (this.options as any).queryTitle
+      : 'title';
   }
 
   get queryHtmlTarget(): string {
-    return this.options.queryHtmlTarget
-      ? this.options.queryHtmlTarget
+    return (this.options as any).queryHtmlTarget
+      ? (this.options as any).queryHtmlTarget
       : 'newtab';
   }
 
@@ -145,8 +146,8 @@ export class WMSDataSource extends DataSource
     }
 
     // WMS with filter AND fiterable by OGC
-    options.isOgcFilterable =
-      options.isOgcFilterable === undefined ? false : options.isOgcFilterable;
+    // options.isOgcFilterable =
+    //   options.isOgcFilterable === undefined ? false : options.isOgcFilterable;
     // options.ogcFilters =
     //   options.ogcFilters === undefined
     //     ? ({

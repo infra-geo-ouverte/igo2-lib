@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { TranslateLoader } from '@ngx-translate/core';
 
-import { ConfigService } from '../../config';
+import { ConfigService } from '../../config/config.service';
 import { LanguageLoader } from './language.loader';
 
 export function defaultLanguageLoader(

@@ -10,8 +10,8 @@ import { Subscription } from 'rxjs';
 import * as ol from 'openlayers';
 
 import { MapService } from '../../map/shared/map.service';
-// import { FeatureService } from '../../feature';
-import { OgcFilterableDataSourceOptions } from '../../datasource';
+import { FeatureService } from '../../feature/shared/feature.service';
+// import { OgcFilterableDataSourceOptions } from '../../datasource';
 // import { MetadataService, MetadataOptions } from '../../metadata';
 // import { DownloadService } from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
@@ -83,7 +83,8 @@ export class LayerItemComponent implements OnDestroy {
       : this.layer.id;
   }
 
-  get ogcFilterableOptions(): OgcFilterableDataSourceOptions {
+  get ogcFilterableOptions(): any {
+    // OgcFilterableDataSourceOptions {
     return this.layer.dataSource.options;
   }
 
@@ -92,7 +93,7 @@ export class LayerItemComponent implements OnDestroy {
   private resolution$$: Subscription;
 
   constructor(
-    // private featureService: FeatureService,
+    private featureService: FeatureService,
     // private metadataService: MetadataService,
     // private downloadService: DownloadService
     private cdRef: ChangeDetectorRef,
@@ -129,8 +130,8 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   showFeaturesList(layer: Layer) {
-    // this.featureService.unfocusFeature();
-    // this.featureService.unselectFeature();
+    this.featureService.unfocusFeature();
+    this.featureService.unselectFeature();
 
     const map = this.mapService.getMap();
     const featuresOL = (layer.dataSource.ol as any).getFeatures();
@@ -151,7 +152,7 @@ export class LayerItemComponent implements OnDestroy {
       })
     );
 
-    // this.featureService.setFeatures(features);
+    this.featureService.setFeatures(features);
   }
 
   isVectorLayer(val) {

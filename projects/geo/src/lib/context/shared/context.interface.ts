@@ -1,7 +1,7 @@
 import { MapViewOptions } from '../../map';
 import { LayerContext } from '../../layer';
 import { DataSourceContext } from '../../datasource';
-// import { Tool } from '../../tool/shared/tool.interface';
+import { Tool } from '../../tool/shared/tool.interface';
 import { TypePermission } from './context.enum';
 
 export interface Context {
@@ -24,7 +24,7 @@ export interface ContextsList {
 export interface DetailedContext extends Context {
   map?: ContextMap;
   layers?: ContextLayer[];
-  tools?: any; // Tool[];
+  tools?: Tool[];
   toolbar?: string[];
 }
 

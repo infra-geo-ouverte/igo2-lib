@@ -14,11 +14,10 @@ import {
   SourceFeatureType
 } from '../../feature/shared/feature.enum';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
-import { QueryableDataSource } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer } from '../../layer/shared/layers/layer';
 
 import { QueryFormat } from './query.enum';
-import { QueryOptions } from './query.interface';
+import { QueryOptions, QueryableDataSource } from './query.interface';
 
 @Injectable({
   providedIn: 'root'

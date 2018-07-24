@@ -1,17 +1,19 @@
 import * as ol from 'openlayers';
 import {
   DataSourceContext,
-  TimeFilterableDataSourceOptions,
-  QueryableDataSourceOptions,
-  OgcFilterableDataSourceOptions
+  DataSourceOptions
+  // TimeFilterableDataSourceOptions,
+  // QueryableDataSourceOptions
+  // OgcFilterableDataSourceOptions
 } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 
 export interface WMSDataSourceOptions
   extends ol.olx.source.ImageWMSOptions,
-    TimeFilterableDataSourceOptions,
-    QueryableDataSourceOptions,
-    OgcFilterableDataSourceOptions {
+    DataSourceOptions {
+  // QueryableDataSourceOptions {
+  // OgcFilterableDataSourceOptions
+  // TimeFilterableDataSourceOptions,
   optionsFromCapabilities?: boolean;
   wfsSource?: WFSDataSourceOptions;
 }

@@ -9,22 +9,12 @@ import { Subscription } from 'rxjs';
 
 import { MessageService, LanguageService } from '@igo2/core';
 
-// import { Tool } from '../../tool/shared';
-// import { ToolService } from '../../tool/shared';
+import { Tool } from '../../tool/shared/tool.interface';
+import { ToolService } from '../../tool/shared/tool.service';
+
 import { DetailedContext } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';
 import { ContextToolsComponent } from './context-tools.component';
-
-export interface Tool2 {
-  id?: string;
-  name: string;
-  title?: string;
-  icon?: string;
-  iconImage?: string;
-  inToolbar?: boolean;
-  tooltip?: string;
-  options?: { [key: string]: any };
-}
 
 @Directive({
   selector: '[igoContextToolsBinding]'
@@ -34,7 +24,7 @@ export class ContextToolsBindingDirective implements OnInit, OnDestroy {
   private editedContext$$: Subscription;
 
   @HostListener('addTool', ['$event'])
-  onAddTool(tool: Tool2) {
+  onAddTool(tool: Tool) {
     const contextId = this.component.context.id;
     this.contextService.addToolAssociation(contextId, tool.id).subscribe(() => {
       const name = tool.title || tool.name;
@@ -48,7 +38,7 @@ export class ContextToolsBindingDirective implements OnInit, OnDestroy {
   }
 
   @HostListener('removeTool', ['$event'])
-  onRemoveTool(tool: Tool2) {
+  onRemoveTool(tool: Tool) {
     const contextId = this.component.context.id;
     this.contextService
       .deleteToolAssociation(contextId, tool.id)
@@ -66,7 +56,7 @@ export class ContextToolsBindingDirective implements OnInit, OnDestroy {
   constructor(
     @Self() component: ContextToolsComponent,
     private contextService: ContextService,
-    // private toolService: ToolService,
+    private toolService: ToolService,
     private languageService: LanguageService,
     private messageService: MessageService
   ) {
@@ -74,11 +64,11 @@ export class ContextToolsBindingDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.toolService.get().subscribe(tools => (this.component.tools = tools));
-    //
-    // this.editedContext$$ = this.contextService.editedContext$.subscribe(
-    //   context => this.handleEditedContextChange(context)
-    // );
+    this.toolService.get().subscribe(tools => (this.component.tools = tools));
+
+    this.editedContext$$ = this.contextService.editedContext$.subscribe(
+      context => this.handleEditedContextChange(context)
+    );
   }
 
   ngOnDestroy() {

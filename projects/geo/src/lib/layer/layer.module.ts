@@ -15,7 +15,6 @@ import {
   IgoCollapsibleModule,
   IgoImageModule
 } from '@igo2/common';
-// import { IgoFilterModule } from '../filter';
 
 import { LayerService } from './shared/layer.service';
 import { StyleService } from './shared/style.service';
@@ -37,7 +36,6 @@ import { LayerListBindingDirective } from './layer-list/layer-list-binding.direc
     IgoListModule,
     IgoCollapsibleModule,
     IgoImageModule
-    /*IgoFilterModule*/
   ],
   exports: [
     LayerItemComponent,

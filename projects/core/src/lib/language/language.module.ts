@@ -4,7 +4,7 @@ import {
   MissingTranslationHandler
 } from '@ngx-translate/core';
 
-import { provideDefaultLanguageLoader } from './shared';
+import { provideDefaultLanguageLoader } from './shared/language.provider';
 import { IgoMissingTranslationHandler } from './shared/missing-translation.guard';
 
 @NgModule({

@@ -1,18 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { DetailedContext } from '../shared/context.interface';
-// import { Tool } from '../../tool';
-
-export interface Tool {
-  id?: string;
-  name: string;
-  title?: string;
-  icon?: string;
-  iconImage?: string;
-  inToolbar?: boolean;
-  tooltip?: string;
-  options?: { [key: string]: any };
-}
+import { Tool } from '../../tool/shared/tool.interface';
 
 @Component({
   selector: 'igo-context-tools',

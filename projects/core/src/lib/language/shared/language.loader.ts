@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { TranslateLoader } from '@ngx-translate/core';
 
-import { ConfigService } from '../../config';
+import { ConfigService } from '../../config/config.service';
 
 declare function require(arg: string): any;
 

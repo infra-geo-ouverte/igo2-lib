@@ -1,5 +1,5 @@
 import * as ol from 'openlayers';
-import { Md5 } from 'ts-md5/dist/md5';
+import { Md5 } from 'ts-md5';
 
 import { DataSource } from './datasource';
 import { XYZDataSourceOptions } from './xyz-datasource.interface';

@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
 
-import { ConfigOptions } from '.';
+import { ConfigOptions } from './config.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -40,11 +40,15 @@ export class ConfigService {
       http
         .get(options.path)
         .pipe(
-          catchError((error: any): any => {
-            console.log(`Configuration file ${options.path} could not be read`);
-            resolve(true);
-            return throwError(error.error || 'Server error');
-          })
+          catchError(
+            (error: any): any => {
+              console.log(
+                `Configuration file ${options.path} could not be read`
+              );
+              resolve(true);
+              return throwError(error.error || 'Server error');
+            }
+          )
         )
         .subscribe(configResponse => {
           Object.assign(this.config, configResponse);

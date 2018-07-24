@@ -1,5 +1,5 @@
 import * as ol from 'openlayers';
-import { Md5 } from 'ts-md5/dist/md5';
+import { Md5 } from 'ts-md5';
 
 import { uuid } from '@igo2/utils';
 import { DataSource } from './datasource';

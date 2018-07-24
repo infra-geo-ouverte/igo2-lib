@@ -1,14 +1,14 @@
 import * as ol from 'openlayers';
 import {
   DataSourceOptions,
-  DataSourceContext,
-  OgcFilterableDataSourceOptions
+  DataSourceContext
+  // OgcFilterableDataSourceOptions
 } from './datasource.interface';
 
 export interface WFSDataSourceOptions
   extends DataSourceOptions,
-    ol.olx.source.VectorOptions,
-    OgcFilterableDataSourceOptions {
+    ol.olx.source.VectorOptions {
+  // OgcFilterableDataSourceOptions {
   version?: string;
   url: string;
   featureTypes: string;

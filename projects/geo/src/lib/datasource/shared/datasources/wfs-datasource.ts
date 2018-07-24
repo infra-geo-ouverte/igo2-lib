@@ -8,12 +8,12 @@ import { uuid } from '@igo2/utils';
 // } from '../../../filter/shared';
 
 import { DataSource } from './datasource';
-import { OgcFilterableDataSource } from './datasource.interface';
+// import { OgcFilterableDataSource } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSDataSourceService } from './wfs-datasource.service';
 
-export class WFSDataSource extends DataSource
-  implements OgcFilterableDataSource {
+export class WFSDataSource extends DataSource {
+  // implements OgcFilterableDataSource {
   public ol: ol.source.Vector;
   // public igoFilterArray: IgoOgcFilterObject;
   // public ogcFilter: OgcFilter;
