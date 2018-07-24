@@ -16,6 +16,7 @@ export * from './lib/route/route.service';
 export * from './lib/route/route.interface';
 
 export * from './lib/activity';
+export * from './lib/analytics';
 export * from './lib/config';
 export * from './lib/language';
 export * from './lib/media';
