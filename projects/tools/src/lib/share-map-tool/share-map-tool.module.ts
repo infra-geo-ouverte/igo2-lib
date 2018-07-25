@@ -4,7 +4,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 
-import { IgoShareMapModule } from '@igo2/geo';
+import { IgoShareMapModule } from '@igo2/context';
 import { ShareMapToolComponent } from './share-map-tool.component';
 
 @NgModule({

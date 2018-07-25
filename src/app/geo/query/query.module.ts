@@ -6,7 +6,6 @@ import {
   MatIconModule
 } from '@angular/material';
 
-import { IgoLanguageModule } from '@igo2/core';
 import { IgoPanelModule } from '@igo2/common';
 import {
   IgoMapModule,
@@ -30,8 +29,7 @@ import { AppQueryRoutingModule } from './query-routing.module';
     IgoMapModule,
     IgoOverlayModule,
     IgoQueryModule,
-    IgoFeatureModule,
-    IgoLanguageModule.forRoot()
+    IgoFeatureModule
   ],
   exports: [AppQueryComponent]
 })

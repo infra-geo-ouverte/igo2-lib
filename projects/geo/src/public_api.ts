@@ -4,7 +4,6 @@
 
 export * from './lib/geo.module';
 export * from './lib/catalog/catalog.module';
-export * from './lib/context/context.module';
 export * from './lib/datasource/datasource.module';
 export * from './lib/download/download.module';
 export * from './lib/feature/feature.module';
@@ -18,12 +17,9 @@ export * from './lib/overlay/overlay.module';
 export * from './lib/print/print.module';
 export * from './lib/query/query.module';
 export * from './lib/search/search.module';
-export * from './lib/share-map/share-map.module';
-export * from './lib/tool/tool.module';
 export * from './lib/wkt/wkt.module';
 
 export * from './lib/catalog';
-export * from './lib/context';
 export * from './lib/datasource';
 export * from './lib/download';
 export * from './lib/feature';
@@ -37,6 +33,4 @@ export * from './lib/overlay';
 export * from './lib/print';
 export * from './lib/query';
 export * from './lib/search';
-export * from './lib/share-map';
-export * from './lib/tool';
 export * from './lib/wkt';

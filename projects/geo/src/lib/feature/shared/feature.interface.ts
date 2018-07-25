@@ -1,4 +1,4 @@
-// import { GeoJsonGeometryTypes } from 'geojson';
+import { GeoJsonGeometryTypes } from 'geojson';
 import { AnyDataSourceContext } from '../../datasource';
 
 import { FeatureType, FeatureFormat, SourceFeatureType } from './feature.enum';
@@ -22,6 +22,6 @@ export interface Feature {
 }
 
 export interface FeatureGeometry {
-  type: any; // GeoJsonGeometryTypes;
+  type: GeoJsonGeometryTypes;
   coordinates: any;
 }

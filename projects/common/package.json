@@ -1,11 +1,11 @@
 {
   "name": "@igo2/common",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "peerDependencies": {
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
-    "@angular/material": "^6.3.3",
-    "@igo2/core": "^0.21.0",
-    "@igo2/utils": "^0.21.0"
+    "@angular/material": "^6.0.0",
+    "@igo2/core": "^0.21.1",
+    "@igo2/utils": "^0.21.1"
   }
 }

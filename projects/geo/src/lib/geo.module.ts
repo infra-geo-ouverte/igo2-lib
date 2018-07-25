@@ -1,7 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { IgoCatalogModule } from './catalog/catalog.module';
-import { IgoContextModule } from './context/context.module';
 import { IgoDataSourceModule } from './datasource/datasource.module';
 import { IgoDownloadModule } from './download/download.module';
 import { IgoFeatureModule } from './feature/feature.module';
@@ -14,8 +13,6 @@ import { IgoMetadataModule } from './metadata/metadata.module';
 import { IgoOverlayModule } from './overlay/overlay.module';
 import { IgoPrintModule } from './print/print.module';
 import { IgoSearchModule } from './search/search.module';
-import { IgoShareMapModule } from './share-map/share-map.module';
-import { IgoToolModule } from './tool/tool.module';
 import { IgoWktModule } from './wkt/wkt.module';
 
 @NgModule({
@@ -23,7 +20,6 @@ import { IgoWktModule } from './wkt/wkt.module';
   declarations: [],
   exports: [
     IgoCatalogModule,
-    IgoContextModule,
     IgoDataSourceModule,
     IgoDownloadModule,
     IgoFeatureModule,
@@ -36,8 +32,6 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoOverlayModule,
     IgoPrintModule,
     IgoSearchModule,
-    IgoShareMapModule,
-    IgoToolModule,
     IgoWktModule
   ]
 })

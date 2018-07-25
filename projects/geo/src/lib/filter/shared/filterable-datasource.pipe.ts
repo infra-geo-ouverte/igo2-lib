@@ -15,7 +15,7 @@ export class FilterableDataSourcePipe implements PipeTransform {
     if (arg === 'time') {
       dataSources = (value.filter((dataSource: any) => {
         return (
-          dataSource.isTimeFilterable() &&
+          this.isTimeFilterable(dataSource) &&
           dataSource.options.timeFilter !== undefined &&
           Object.keys(dataSource.options.timeFilter).length
         );
@@ -23,9 +23,32 @@ export class FilterableDataSourcePipe implements PipeTransform {
     }
     if (arg === 'ogc') {
       dataSources = (value.filter((dataSource: any) => {
-        return dataSource.isOgcFilterable();
+        return this.isOgcFilterable(dataSource);
       }) as any[]) as OgcFilterableDataSource[];
     }
     return dataSources;
+  }
+
+  private isTimeFilterable(dataSource: TimeFilterableDataSource) {
+    if (
+      typeof dataSource.filterByDate === 'function' ||
+      typeof dataSource.filterByYear === 'function'
+    ) {
+      return dataSource.options.timeFilterable !== undefined
+        ? dataSource.options.timeFilterable
+        : true;
+    }
+
+    return false;
+  }
+
+  private isOgcFilterable(dataSource: OgcFilterableDataSource) {
+    if (
+      dataSource.options.isOgcFilterable &&
+      dataSource.options.ogcFilters.filtersAreEditable
+    ) {
+      return true;
+    }
+    return false;
   }
 }

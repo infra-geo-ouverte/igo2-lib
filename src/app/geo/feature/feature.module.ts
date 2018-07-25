@@ -6,7 +6,6 @@ import {
   MatIconModule
 } from '@angular/material';
 
-import { IgoLanguageModule } from '@igo2/core';
 import { IgoPanelModule } from '@igo2/common';
 import { IgoMapModule, IgoOverlayModule, IgoFeatureModule } from '@igo2/geo';
 
@@ -24,8 +23,7 @@ import { AppFeatureRoutingModule } from './feature-routing.module';
     IgoPanelModule,
     IgoMapModule,
     IgoOverlayModule,
-    IgoFeatureModule,
-    IgoLanguageModule.forRoot()
+    IgoFeatureModule
   ],
   exports: [AppFeatureComponent]
 })

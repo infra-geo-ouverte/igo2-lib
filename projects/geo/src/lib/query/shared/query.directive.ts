@@ -19,7 +19,8 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { Feature } from '../../feature/shared/feature.interface';
 import { SourceFeatureType } from '../../feature/shared/feature.enum';
 
-import { QueryService } from '../shared/query.service';
+import { QueryableDataSource } from './query.interface';
+import { QueryService } from './query.service';
 
 @Directive({
   selector: '[igoQuery]'
@@ -80,7 +81,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private handleLayersChange(layers: Layer[]) {
     const queryLayers = [];
     layers.forEach(layer => {
-      if (layer.dataSource.isQueryable()) {
+      if (this.isQueryable(layer.dataSource as QueryableDataSource)) {
         queryLayers.push(layer);
       }
     });
@@ -200,5 +201,15 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private unsubscribeQueries() {
     this.queries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.queries$$ = [];
+  }
+
+  private isQueryable(dataSource: QueryableDataSource) {
+    if (typeof dataSource.getQueryUrl === 'function') {
+      return dataSource.options.queryable !== undefined
+        ? dataSource.options.queryable
+        : true;
+    }
+
+    return false;
   }
 }

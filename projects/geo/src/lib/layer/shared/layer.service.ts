@@ -32,7 +32,7 @@ export type AnyLayerContext =
 })
 export class LayerService {
   constructor(
-    private styleService: StyleService // private authService: AuthService
+    private styleService: StyleService // @Optional() private authService: AuthService
   ) {}
 
   createLayer(dataSource: DataSource, context: AnyLayerContext): Layer {

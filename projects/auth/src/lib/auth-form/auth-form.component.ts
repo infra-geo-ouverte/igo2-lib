@@ -37,7 +37,7 @@ export class AuthFormComponent implements OnInit {
   private _backgroundDisable = true;
 
   public options: AuthOptions;
-  private user;
+  public user;
 
   public visible = true;
 

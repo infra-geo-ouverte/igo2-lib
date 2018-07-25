@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "dependencies": {
     "ts-md5": "^1.2.0"
   },
@@ -9,11 +9,10 @@
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
     "@angular/forms": "^6.0.0",
-    "@angular/material": "^6.3.3",
-    "@igo2/auth": "^0.21.0",
-    "@igo2/common": "^0.21.0",
-    "@igo2/core": "^0.21.0",
-    "@igo2/utils": "^0.21.0",
+    "@angular/material": "^6.0.0",
+    "@igo2/common": "^0.21.1",
+    "@igo2/core": "^0.21.1",
+    "@igo2/utils": "^0.21.1",
     "openlayers": "^4.6.5",
     "rxjs": "^6.1.0"
   },

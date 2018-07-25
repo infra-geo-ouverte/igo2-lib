@@ -16,7 +16,10 @@ import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
 import { AppRequestModule } from './core/request/request.module';
 
+import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
+
 import { AppSimpleMapModule } from './geo/simple-map/simple-map.module';
+import { AppLayerModule } from './geo/layer/layer.module';
 import { AppOverlayModule } from './geo/overlay/overlay.module';
 import { AppFeatureModule } from './geo/feature/feature.module';
 import { AppQueryModule } from './geo/query/query.module';
@@ -42,7 +45,10 @@ import { AppComponent } from './app.component';
     AppMessageModule,
     AppRequestModule,
 
+    AppAuthFormModule,
+
     AppSimpleMapModule,
+    AppLayerModule,
     AppOverlayModule,
     AppFeatureModule,
     AppQueryModule,

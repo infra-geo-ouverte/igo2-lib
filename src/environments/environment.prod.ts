@@ -6,6 +6,11 @@ interface Environment {
 export const environment: Environment = {
   production: true,
   igo: {
+    auth: {
+      intern: {
+        enabled: true
+      }
+    },
     language: {
       prefix: './locale/'
     }
