@@ -14,7 +14,6 @@ import {
 
 import { Catalog, CatalogService } from '../shared';
 import { CatalogLayersListComponent } from './catalog-layers-list.component';
-import { TimeFilterOptions } from '../../filter';
 
 @Directive({
   selector: '[igoCatalogLayersListBinding]'
@@ -107,7 +106,7 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
                 params: {
                   layers: layer.Name
                 },
-                 //Merge catalog time filter in layer timeFilter
+                 // Merge catalog time filter in layer timeFilter
                 timeFilter: {...timeFilter, ...catalog.timeFilter}
               });
             }
