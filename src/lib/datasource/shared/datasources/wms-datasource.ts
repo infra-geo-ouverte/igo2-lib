@@ -268,6 +268,7 @@ export class WMSDataSource extends DataSource
     let month = value.getMonth() + 1;
     let day = value.getUTCDate();
     let hour = value.getUTCHours();
+    let minute = value.getUTCMinutes();
 
     if (Number(month) < 10) {
       month = '0' + month;
@@ -281,7 +282,11 @@ export class WMSDataSource extends DataSource
       hour = '0' + hour;
     }
 
-    return year + '-' + month + '-' + day + 'T' + hour + ':00:00Z';
+    if (Number(minute) < 10) {
+      minute = '0' + minute;
+    }
+
+    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':00Z';
   }
 
   filterByDate(date: Date | [Date, Date]) {

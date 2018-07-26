@@ -9,4 +9,5 @@ export interface TimeFilterOptions {
   style?: 'calendar' | 'slider';
   step?: number;
   timeInterval?: number;
+  current?: boolean;
 }
