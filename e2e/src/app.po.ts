@@ -6,6 +6,6 @@ export class AppPage {
   }
 
   getParagraphText() {
-    return element(by.css('igo-root h1')).getText();
+    return element(by.css('app-root app-home h1')).getText();
   }
 }

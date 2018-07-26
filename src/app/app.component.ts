@@ -14,6 +14,7 @@ import {
 export class AppComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
 
+  public title = 'IGO';
   private themeClass = 'deeppurple-theme';
   private _mobileQueryListener: () => void;
 

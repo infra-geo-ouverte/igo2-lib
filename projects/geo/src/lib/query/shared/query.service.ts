@@ -15,6 +15,7 @@ import {
 } from '../../feature/shared/feature.enum';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { Layer } from '../../layer/shared/layers/layer';
+import { WMSDataSource } from '../../datasource';
 
 import { QueryFormat } from './query.enum';
 import { QueryOptions, QueryableDataSource } from './query.interface';
@@ -41,9 +42,7 @@ export class QueryService {
     options: QueryOptions,
     zIndex: number
   ): Observable<Feature[]> {
-    const url = ((dataSource as any) as QueryableDataSource).getQueryUrl(
-      options
-    );
+    const url = this.getQueryUrl(dataSource, options);
     const request = this.http.get(url, { responseType: 'text' });
 
     this.featureService.clear();
@@ -63,10 +62,7 @@ export class QueryService {
     const queryDataSource = (dataSource as any) as QueryableDataSource;
 
     let features = [];
-    switch (queryDataSource.queryFormat) {
-      case QueryFormat.GML2:
-        features = this.extractGML2Data(res, zIndex);
-        break;
+    switch (queryDataSource.options.queryFormat) {
       case QueryFormat.GML3:
         features = this.extractGML3Data(res, zIndex);
         break;
@@ -84,7 +80,9 @@ export class QueryService {
           url
         );
         break;
+      case QueryFormat.GML2:
       default:
+        features = this.extractGML2Data(res, zIndex);
         break;
     }
 
@@ -287,5 +285,59 @@ export class QueryService {
       properties: properties,
       geometry: geometry
     };
+  }
+
+  private getQueryUrl(
+    datasource: QueryableDataSource,
+    options: QueryOptions
+  ): string {
+    let url;
+    switch (datasource.constructor) {
+      case WMSDataSource:
+        const wmsDatasource = datasource as WMSDataSource;
+        url = wmsDatasource.ol.getGetFeatureInfoUrl(
+          options.coordinates,
+          options.resolution,
+          options.projection,
+          {
+            INFO_FORMAT: this.getMimeInfoFormat(datasource.options.queryFormat),
+            QUERY_LAYERS: wmsDatasource.params.layers,
+            FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
+          }
+        );
+        break;
+      default:
+        break;
+    }
+
+    return url;
+  }
+
+  private getMimeInfoFormat(queryFormat) {
+    let mime;
+    switch (queryFormat) {
+      case QueryFormat.GML2:
+        mime = 'application/vnd.ogc.gml';
+        break;
+      case QueryFormat.GML3:
+        mime = 'application/vnd.ogc.gml/3.1.1';
+        break;
+      case QueryFormat.JSON:
+        mime = 'application/json';
+        break;
+      case QueryFormat.GEOJSON:
+        mime = 'application/geojson';
+        break;
+      case QueryFormat.TEXT:
+        mime = 'text/plain';
+        break;
+      case QueryFormat.HTML:
+        mime = 'text/html';
+        break;
+      default:
+        break;
+    }
+
+    return mime;
   }
 }

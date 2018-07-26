@@ -51,7 +51,9 @@ export class LayerWatcher extends Watcher {
     const index = this.layers.indexOf(layer);
     if (index >= 0) {
       const status = (layer as any).watcher.status;
-      if ([SubjectStatus.Working, SubjectStatus.Waiting].includes(status)) {
+      if (
+        [SubjectStatus.Working, SubjectStatus.Waiting].indexOf(status) !== -1
+      ) {
         this.loaded += 1;
       }
       this.subscriptions[index].unsubscribe();

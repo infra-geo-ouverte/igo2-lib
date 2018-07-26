@@ -204,12 +204,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private isQueryable(dataSource: QueryableDataSource) {
-    if (typeof dataSource.getQueryUrl === 'function') {
-      return dataSource.options.queryable !== undefined
-        ? dataSource.options.queryable
-        : true;
-    }
-
-    return false;
+    return dataSource.options.queryable !== undefined
+      ? dataSource.options.queryable
+      : true;
   }
 }

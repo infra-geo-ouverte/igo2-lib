@@ -1,8 +1,8 @@
-import { KeyvaluePipe } from './keyvalue.pipe';
+import { KeyValuePipe } from './keyvalue.pipe';
 
 describe('KeyvaluePipe', () => {
   it('create an instance', () => {
-    const pipe = new KeyvaluePipe();
+    const pipe = new KeyValuePipe();
     expect(pipe).toBeTruthy();
   });
 });

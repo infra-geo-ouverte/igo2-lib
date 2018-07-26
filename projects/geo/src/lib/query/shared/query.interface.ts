@@ -17,9 +17,7 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
 }
 
 export interface QueryableDataSource extends DataSource {
-  queryFormat: QueryFormat;
   queryTitle?: string;
   queryHtmlTarget?: string;
   options: QueryableDataSourceOptions;
-  getQueryUrl(options: QueryOptions): string;
 }

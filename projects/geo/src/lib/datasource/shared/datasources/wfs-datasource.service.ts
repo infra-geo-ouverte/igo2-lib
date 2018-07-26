@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 
 import * as ol from 'openlayers';
 
-// import { OgcFiltersOptions } from '../../../filter/shared';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { DataService } from './data.service';
 
