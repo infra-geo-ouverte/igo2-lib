@@ -1,10 +1,26 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { DownloadService } from './shared/download.service';
+import { CommonModule } from '@angular/common';
+
+import {
+  MatIconModule,
+  MatButtonModule,
+  MatTooltipModule
+} from '@angular/material';
+
+import { IgoLanguageModule } from '@igo2/core';
+
+import { DownloadButtonComponent } from './download-button/download-button.component';
 
 @NgModule({
-  imports: [],
-  exports: [],
-  declarations: []
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    IgoLanguageModule
+  ],
+  exports: [DownloadButtonComponent],
+  declarations: [DownloadButtonComponent]
 })
 export class IgoDownloadModule {
   static forRoot(): ModuleWithProviders {

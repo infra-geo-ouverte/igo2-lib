@@ -1,15 +1,6 @@
 {
   "igo": {
     "geo": {
-      "bookmarkButton": {
-        "create": "Create a new context",
-        "dialog": {
-          "createMsg": "The context '{{value}}' was created",
-          "createTitle": "Context created",
-          "placeholder": "Title",
-          "title": "New context"
-        }
-      },
       "catalogTool": {
         "baseLayers": "Base Layers"
       },
@@ -59,7 +50,6 @@
       "sourceFields": {
         "selectField": "Choose a field"
       },
-      "ogcFilter": "Filter by",
       "filter": {
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
@@ -67,7 +57,8 @@
         "refreshFilters":
           "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
         "layerFiltered": "This layer is currently filtered",
-        "layerFilterable": "This layer is filterable"
+        "layerFilterable": "This layer is filterable",
+        "filterBy": "Filter by"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -86,8 +77,7 @@
         "raiseLayer": "Bring layer forward",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
-        "showLayer": "Show Layer",
-        "showMetadata": "Show metadata"
+        "showLayer": "Show Layer"
       },
       "download": {
         "action": "Download data",
@@ -100,6 +90,9 @@
         "geolocate": "Geolocate",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})"
+      },
+      "metadata": {
+        "show": "Show metadata"
       },
       "permission": {
         "addBtn": "Add",
@@ -121,20 +114,6 @@
           "public": "Public"
         },
         "write": "Read and Write"
-      },
-      "poiButton": {
-        "create": "Create a new zone of interest",
-        "dialog": {
-          "confirmDelete":
-            "Are you sure you want to delete this zone of interest?",
-          "createMsg": "The zone of interest '{{value}}' was created",
-          "createTitle": "Zone of interest created",
-          "deleteMsg": "The zone of interest '{{value}}' was deleted",
-          "deleteTitle": "Zone of interest deleted",
-          "placeholder": "Title",
-          "title": "New zone of interest"
-        },
-        "placeholder": "Zones of interest"
       },
       "printForm": {
         "format": "Format",
@@ -161,15 +140,6 @@
         "date": "Date",
         "endDate": "End Date",
         "startDate": "Start Date"
-      },
-      "userButton": {
-        "dialog": {
-          "email": "Email",
-          "expiration": "Expiration",
-          "user": "User"
-        },
-        "infoTitle": "User info",
-        "logout": "Logout"
       }
     }
   }

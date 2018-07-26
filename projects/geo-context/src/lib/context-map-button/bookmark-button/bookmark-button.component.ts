@@ -2,8 +2,9 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { MessageService, LanguageService } from '@igo2/core';
-// import { ContextService } from '../../context/shared/context.service';
-import { IgoMap } from '../shared';
+import { IgoMap } from '@igo2/geo';
+
+import { ContextService } from '../../context/shared/context.service';
 import { BookmarkDialogComponent } from './bookmark-dialog.component';
 
 @Component({
@@ -32,7 +33,7 @@ export class BookmarkButtonComponent {
 
   constructor(
     private dialog: MatDialog,
-    // private contextService: ContextService,
+    private contextService: ContextService,
     private languageService: LanguageService,
     private messageService: MessageService
   ) {}
@@ -43,21 +44,21 @@ export class BookmarkButtonComponent {
       .afterClosed()
       .subscribe(title => {
         if (title) {
-          // const context = this.contextService.getContextFromMap(this.map);
-          // context.title = title;
-          // this.contextService.create(context).subscribe(() => {
-          //   const translate = this.languageService.translate;
-          //   const titleD = translate.instant(
-          //     'igo.geo.bookmarkButton.dialog.createTitle'
-          //   );
-          //   const message = translate.instant(
-          //     'igo.geo.bookmarkButton.dialog.createMsg',
-          //     {
-          //       value: context.title
-          //     }
-          //   );
-          //   this.messageService.success(message, titleD);
-          // });
+          const context = this.contextService.getContextFromMap(this.map);
+          context.title = title;
+          this.contextService.create(context).subscribe(() => {
+            const translate = this.languageService.translate;
+            const titleD = translate.instant(
+              'igo.geo.bookmarkButton.dialog.createTitle'
+            );
+            const message = translate.instant(
+              'igo.geo.bookmarkButton.dialog.createMsg',
+              {
+                value: context.title
+              }
+            );
+            this.messageService.success(message, titleD);
+          });
         }
       });
   }

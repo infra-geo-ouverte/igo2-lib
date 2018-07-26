@@ -6,3 +6,4 @@ export * from './ogc-filterable-form';
 export * from './ogc-filterable-item';
 export * from './ogc-filterable-list';
 export * from './ogc-filter-form';
+export * from './ogc-filter-button';

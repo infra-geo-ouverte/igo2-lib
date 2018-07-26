@@ -1,6 +1,15 @@
 {
   "igo": {
     "geoContext": {
+      "bookmarkButton": {
+        "create": "Create a new context",
+        "dialog": {
+          "createMsg": "The context '{{value}}' was created",
+          "createTitle": "Context created",
+          "placeholder": "Title",
+          "title": "New context"
+        }
+      },
       "context": {
         "clone": "Clone this context",
         "delete": "Delete this context",
@@ -42,6 +51,20 @@
         "save": "Save this context",
         "sharedContexts": "Shared contexts"
       },
+      "poiButton": {
+        "create": "Create a new zone of interest",
+        "dialog": {
+          "confirmDelete":
+            "Are you sure you want to delete this zone of interest?",
+          "createMsg": "The zone of interest '{{value}}' was created",
+          "createTitle": "Zone of interest created",
+          "deleteMsg": "The zone of interest '{{value}}' was deleted",
+          "deleteTitle": "Zone of interest deleted",
+          "placeholder": "Title",
+          "title": "New zone of interest"
+        },
+        "placeholder": "Zones of interest"
+      },
       "shareMap": {
         "button": "Share map",
         "copy": "Copy to clipboard",
@@ -58,6 +81,15 @@
           "deleteMsg": "The tool '{{value}}' was removed",
           "deleteTitle": "Tool removed"
         }
+      },
+      "userButton": {
+        "dialog": {
+          "email": "Email",
+          "expiration": "Expiration",
+          "user": "User"
+        },
+        "infoTitle": "User info",
+        "logout": "Logout"
       }
     }
   }

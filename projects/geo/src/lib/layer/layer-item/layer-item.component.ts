@@ -11,9 +11,6 @@ import * as ol from 'openlayers';
 
 import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature/shared/feature.service';
-// import { OgcFilterableDataSourceOptions } from '../../datasource';
-// import { MetadataService, MetadataOptions } from '../../metadata';
-// import { DownloadService } from '../../download';
 import { Layer, VectorLayer } from '../shared/layers';
 
 @Component({
@@ -60,15 +57,6 @@ export class LayerItemComponent implements OnDestroy {
   }
   private _toggleLegendOnVisibilityChange = false;
 
-  @Input()
-  get ogcFilterInLayerItem() {
-    return this._ogcFilterInLayers;
-  }
-  set ogcFilterInLayerItem(value: boolean) {
-    this._ogcFilterInLayers = value;
-  }
-  private _ogcFilterInLayers = false;
-
   get opacity() {
     return this.layer.opacity * 100;
   }
@@ -83,19 +71,11 @@ export class LayerItemComponent implements OnDestroy {
       : this.layer.id;
   }
 
-  get ogcFilterableOptions(): any {
-    // OgcFilterableDataSourceOptions {
-    return this.layer.dataSource.options;
-  }
-
   public legendLoaded = false;
-  public ogcFilterCollapse = false;
   private resolution$$: Subscription;
 
   constructor(
     private featureService: FeatureService,
-    // private metadataService: MetadataService,
-    // private downloadService: DownloadService
     private cdRef: ChangeDetectorRef,
     private mapService: MapService
   ) {}
@@ -114,19 +94,6 @@ export class LayerItemComponent implements OnDestroy {
     if (this.toggleLegendOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
     }
-  }
-  toggleOgcFilter() {
-    if (this.layer.isInResolutionsRange) {
-      this.ogcFilterCollapse = !this.ogcFilterCollapse;
-    }
-  }
-
-  // openMetadata(metadata: MetadataOptions) {
-  //   this.metadataService.open(metadata);
-  // }
-
-  openDownload(layer: Layer) {
-    // this.downloadService.open(layer);
   }
 
   showFeaturesList(layer: Layer) {

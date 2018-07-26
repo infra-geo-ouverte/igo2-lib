@@ -39,6 +39,7 @@ import { OgcFilterableFormComponent } from './ogc-filterable-form/ogc-filterable
 import { OgcFilterableItemComponent } from './ogc-filterable-item/ogc-filterable-item.component';
 import { OgcFilterableListBindingDirective } from './ogc-filterable-list/ogc-filterable-list-binding.directive';
 import { OgcFilterableListComponent } from './ogc-filterable-list/ogc-filterable-list.component';
+import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.component';
 
 @NgModule({
   imports: [
@@ -71,6 +72,7 @@ import { OgcFilterableListComponent } from './ogc-filterable-list/ogc-filterable
     TimeFilterListComponent,
     TimeFilterListBindingDirective,
     OgcFilterFormComponent,
+    OgcFilterButtonComponent,
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
@@ -83,6 +85,7 @@ import { OgcFilterableListComponent } from './ogc-filterable-list/ogc-filterable
     TimeFilterListComponent,
     TimeFilterListBindingDirective,
     OgcFilterFormComponent,
+    OgcFilterButtonComponent,
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,

@@ -1,8 +1,17 @@
 import { NgModule } from '@angular/core';
-import { MatCardModule, MatButtonModule } from '@angular/material';
+import {
+  MatCardModule,
+  MatButtonModule,
+  MatIconModule
+} from '@angular/material';
 
 import { IgoPanelModule } from '@igo2/common';
-import { IgoMapModule, IgoLayerModule } from '@igo2/geo';
+import {
+  IgoMapModule,
+  IgoLayerModule,
+  IgoMetadataModule,
+  IgoDownloadModule
+} from '@igo2/geo';
 
 import { AppLayerComponent } from './layer.component';
 import { AppLayerRoutingModule } from './layer-routing.module';
@@ -13,9 +22,12 @@ import { AppLayerRoutingModule } from './layer-routing.module';
     AppLayerRoutingModule,
     MatCardModule,
     MatButtonModule,
+    MatIconModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoLayerModule
+    IgoLayerModule,
+    IgoMetadataModule,
+    IgoDownloadModule
   ],
   exports: [AppLayerComponent]
 })

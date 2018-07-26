@@ -2,7 +2,7 @@ import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { MediaService, Media } from '@igo2/core';
-// import { Layer } from '../../layer';
+import { Layer } from '../../layer';
 import { IgoMap } from '../shared';
 import { baseLayersSwitcherSlideInOut } from './baselayers-switcher.animation';
 
@@ -31,8 +31,9 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
   private _useStaticIcon: boolean;
 
-  public _baseLayers: any; // Layer[] = [];
+  public _baseLayers: Layer[] = [];
   public expand = false;
+  public showButton = true;
 
   private layers$$: Subscription;
 
@@ -61,7 +62,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  get baseLayers() /*: Layer[] */ {
+  get baseLayers(): Layer[] {
     const mapResolution = this.map.resolution$.value;
 
     const bl = this._baseLayers.filter(l => {

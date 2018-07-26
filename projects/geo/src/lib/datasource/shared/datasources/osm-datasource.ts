@@ -8,6 +8,7 @@ export class OSMDataSource extends DataSource {
   public ol: ol.source.OSM;
 
   protected createOlSource(): ol.source.OSM {
+    this.options.url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     return new ol.source.OSM(this.options);
   }
 

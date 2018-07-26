@@ -14,7 +14,7 @@
     "build.common": "ng build common --prod && gulp common",
     "build.auth": "ng build auth --prod && gulp auth",
     "build.geo": "ng build geo --prod && gulp geo",
-    "build.geo-context": "ng build geoContext --prod && gulp geoContext",
+    "build.geoContext": "ng build geoContext --prod && gulp geoContext",
     "build.tools": "ng build tools --prod && gulp tools"
   },
   "private": true,

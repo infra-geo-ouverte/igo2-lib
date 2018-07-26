@@ -21,21 +21,21 @@
   }
 }
 
-:host >>> igo-user-button {
-  position: absolute;
-  bottom: $igo-margin;
-  right: calc(#{$igo-margin} + 50px);
-  @include mobile {
-    right: calc(#{$igo-margin} + 90px);
-  }
-}
-
 :host >>> igo-geolocate-button {
   position: absolute;
   bottom: 95px;
   right: $igo-margin;
   @include mobile {
     bottom: $igo-margin;
+  }
+}
+
+:host >>> igo-user-button {
+  position: absolute;
+  bottom: $igo-margin;
+  right: calc(#{$igo-margin} + 50px);
+  +media(mobile) {
+    right: calc(#{$igo-margin} + 90px);
   }
 }
 

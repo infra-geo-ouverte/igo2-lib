@@ -1,15 +1,6 @@
 {
   "igo": {
     "geo": {
-      "bookmarkButton": {
-        "create": "Créer un contexte",
-        "dialog": {
-          "createMsg": "Le contexte '{{value}}' a été créé",
-          "createTitle": "Contexte créé",
-          "placeholder": "Titre",
-          "title": "Nouveau contexte"
-        }
-      },
       "catalogTool": {
         "baseLayers": "Fonds de carte"
       },
@@ -59,7 +50,6 @@
       "sourceFields": {
         "selectField": "Choisir un champ"
       },
-      "ogcFilter": "Filtrer par",
       "filter": {
         "addFilter": "Ajouter un filtre vidre à la liste courante",
         "removeFilter": "Supprimer le présent filtre à la liste des filtres",
@@ -67,7 +57,8 @@
         "refreshFilters":
           "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
         "layerFiltered": "Cette couche d'information est présentement filtrée.",
-        "layerFilterable": "Cette couche d'information est filtrable"
+        "layerFilterable": "Cette couche d'information est filtrable",
+        "filterBy": "Filtrer par"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -86,8 +77,7 @@
         "raiseLayer": "Monter la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
-        "showLayer": "Afficher la couche",
-        "showMetadata": "Montrer les métadonnées"
+        "showLayer": "Afficher la couche"
       },
       "download": {
         "action": "Télécharger les données associées",
@@ -101,6 +91,9 @@
         "geolocate": "Positionnement GPS",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})"
+      },
+      "metadata": {
+        "show": "Montrer les métadonnées"
       },
       "permission": {
         "addBtn": "Ajouter",
@@ -123,20 +116,6 @@
           "public": "Public"
         },
         "write": "Lecture et écriture"
-      },
-      "poiButton": {
-        "create": "Créer une zone d'intérêt",
-        "dialog": {
-          "confirmDelete":
-            "Êtes-vous sûr de vouloir supprimer cette zone d'intérêt ?",
-          "createMsg": "La zone d'intérêt '{{value}}' a été créée",
-          "createTitle": "Zone d'intérêt créée",
-          "deleteMsg": "La zone d'intérêt '{{value}}' a été supprimée",
-          "deleteTitle": "Zone d'intérêt supprimée",
-          "placeholder": "Titre",
-          "title": "Nouvelle zone d'intérêt"
-        },
-        "placeholder": "Zones d'intérêt"
       },
       "printForm": {
         "format": "Format",
@@ -163,15 +142,6 @@
         "date": "Date",
         "endDate": "Date de fin",
         "startDate": "Date de début"
-      },
-      "userButton": {
-        "dialog": {
-          "email": "Courriel",
-          "expiration": "Expiration",
-          "user": "Utilisateur"
-        },
-        "infoTitle": "Info sur l'utilisateur",
-        "logout": "Se déconnecter"
       }
     }
   }

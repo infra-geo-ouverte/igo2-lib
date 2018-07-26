@@ -2,7 +2,9 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  TemplateRef,
+  ContentChild
 } from '@angular/core';
 
 import { Layer } from '../shared';
@@ -13,6 +15,8 @@ import { Layer } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerListComponent {
+  @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
+
   @Input()
   get layers(): Layer[] {
     return this._layers;
@@ -49,15 +53,6 @@ export class LayerListComponent {
     this._toggleLegendOnVisibilityChange = value;
   }
   private _toggleLegendOnVisibilityChange = false;
-
-  @Input()
-  get ogcFilterInLayerItem() {
-    return this._ogcFilterInLayers;
-  }
-  set ogcFilterInLayerItem(value: boolean) {
-    this._ogcFilterInLayers = value;
-  }
-  private _ogcFilterInLayers = false;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 }

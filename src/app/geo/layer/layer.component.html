@@ -11,7 +11,14 @@
   </igo-map-browser>
 
   <igo-panel title="Layers">
-    <igo-layer-list [layers]="map.layers"></igo-layer-list>
+    <igo-layer-list [layers]="map.layers">
+
+      <ng-template #igoLayerItemToolbar let-layer="layer">
+        <igo-metadata-button [layer]="layer"></igo-metadata-button>
+        <igo-download-button [layer]="layer"></igo-download-button>
+      </ng-template>
+
+    </igo-layer-list>
   </igo-panel>
 
 </mat-card>

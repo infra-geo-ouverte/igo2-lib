@@ -41,8 +41,9 @@ export class QueryService {
     options: QueryOptions,
     zIndex: number
   ): Observable<Feature[]> {
-    const url = ((dataSource as any) as any) /* as QueryableDataSource*/
-      .getQueryUrl(options);
+    const url = ((dataSource as any) as QueryableDataSource).getQueryUrl(
+      options
+    );
     const request = this.http.get(url, { responseType: 'text' });
 
     this.featureService.clear();
@@ -59,7 +60,7 @@ export class QueryService {
     url: string,
     zIndex: number
   ): Feature[] {
-    const queryDataSource = (dataSource as any) as any; // as QueryableDataSource;
+    const queryDataSource = (dataSource as any) as QueryableDataSource;
 
     let features = [];
     switch (queryDataSource.queryFormat) {

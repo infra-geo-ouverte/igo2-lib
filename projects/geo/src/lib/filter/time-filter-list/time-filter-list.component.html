@@ -2,6 +2,4 @@
   <ng-template ngFor let-datasource [ngForOf]="datasources | filterableDataSource: 'time'">
     <igo-time-filter-item igoListItem [datasource]="datasource"></igo-time-filter-item>
   </ng-template>
-
-  <ng-content></ng-content>
 </igo-list>

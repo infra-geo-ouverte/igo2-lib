@@ -6,9 +6,9 @@ import * as ol from 'openlayers';
 
 import { MessageService, LanguageService } from '@igo2/core';
 import { ConfirmDialogService } from '@igo2/common';
-// import { AuthService } from '@igo2/auth';
+import { AuthService } from '@igo2/auth';
+import { IgoMap } from '@igo2/geo';
 
-import { IgoMap } from '../shared';
 import { PoiService } from './shared/poi.service';
 import { Poi } from './shared/poi.interface';
 import { PoiDialogComponent } from './poi-dialog.component';
@@ -42,7 +42,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialog: MatDialog,
-    // private authService: AuthService,
+    private authService: AuthService,
     private poiService: PoiService,
     private messageService: MessageService,
     private languageService: LanguageService,
@@ -50,15 +50,15 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // this.authenticate$$ = this.authService.authenticate$.subscribe(auth => {
-    //   if (auth) {
-    //     this.getPois();
-    //   }
-    // });
+    this.authenticate$$ = this.authService.authenticate$.subscribe(auth => {
+      if (auth) {
+        this.getPois();
+      }
+    });
   }
 
   ngOnDestroy() {
-    // this.authenticate$$.unsubscribe();
+    this.authenticate$$.unsubscribe();
   }
 
   deletePoi(poi: Poi) {

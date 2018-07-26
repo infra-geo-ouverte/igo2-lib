@@ -1,4 +1,5 @@
 import * as ol from 'openlayers';
+
 import { DataSource } from '../../../datasource';
 
 import { ImageWatcher } from '../../utils';
@@ -7,18 +8,13 @@ import { IgoMap } from '../../../map';
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 
-
 export class ImageLayer extends Layer {
-
   public options: ImageLayerOptions;
   public ol: ol.layer.Image;
 
   private watcher: ImageWatcher;
 
-  constructor(
-    dataSource: DataSource,
-    options?: ImageLayerOptions
-  ) {
+  constructor(dataSource: DataSource, options?: ImageLayerOptions) {
     super(dataSource, options);
 
     this.watcher = new ImageWatcher(this.dataSource.ol as ol.source.Image);
@@ -59,7 +55,7 @@ export class ImageLayer extends Layer {
     xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     xhr.responseType = 'arraybuffer';
 
-    xhr.onload = function () {
+    xhr.onload = function() {
       const arrayBufferView = new Uint8Array((this as any).response);
       const blob = new Blob([arrayBufferView], { type: 'image/png' });
       const urlCreator = window.URL;
@@ -68,5 +64,4 @@ export class ImageLayer extends Layer {
     };
     xhr.send();
   }
-
 }

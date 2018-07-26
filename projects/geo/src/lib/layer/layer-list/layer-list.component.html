@@ -4,10 +4,13 @@
         igoListItem
         [color]="color"
         [layer]="layer"
-        [ogcFilterInLayerItem]="ogcFilterInLayerItem"
         [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange">
+
+        <ng-container igoLayerItemToolbar
+          [ngTemplateOutlet]="templateLayerToolbar"
+          [ngTemplateOutletContext]="{layer: layer}">
+        </ng-container>
+
     </igo-layer-item>
   </ng-template>
-
-  <ng-content></ng-content>
 </igo-list>

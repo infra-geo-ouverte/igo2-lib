@@ -1,6 +1,15 @@
 {
   "igo": {
     "geoContext": {
+      "bookmarkButton": {
+        "create": "Créer un contexte",
+        "dialog": {
+          "createMsg": "Le contexte '{{value}}' a été créé",
+          "createTitle": "Contexte créé",
+          "placeholder": "Titre",
+          "title": "Nouveau contexte"
+        }
+      },
       "context": {
         "clone": "Cloner ce contexte",
         "delete": "Supprimer ce contexte",
@@ -35,6 +44,20 @@
         "save": "Sauvegarder ce contexte",
         "sharedContexts": "Contextes partagés"
       },
+      "poiButton": {
+        "create": "Créer une zone d'intérêt",
+        "dialog": {
+          "confirmDelete":
+            "Êtes-vous sûr de vouloir supprimer cette zone d'intérêt ?",
+          "createMsg": "La zone d'intérêt '{{value}}' a été créée",
+          "createTitle": "Zone d'intérêt créée",
+          "deleteMsg": "La zone d'intérêt '{{value}}' a été supprimée",
+          "deleteTitle": "Zone d'intérêt supprimée",
+          "placeholder": "Titre",
+          "title": "Nouvelle zone d'intérêt"
+        },
+        "placeholder": "Zones d'intérêt"
+      },
       "shareMap": {
         "button": "Partager la carte",
         "copy": "Copier le lien",
@@ -51,6 +74,15 @@
           "deleteMsg": "L'outil a été supprimé",
           "deleteTitle": "Outil retiré"
         }
+      },
+      "userButton": {
+        "dialog": {
+          "email": "Courriel",
+          "expiration": "Expiration",
+          "user": "Utilisateur"
+        },
+        "infoTitle": "Info sur l'utilisateur",
+        "logout": "Se déconnecter"
       }
     }
   }

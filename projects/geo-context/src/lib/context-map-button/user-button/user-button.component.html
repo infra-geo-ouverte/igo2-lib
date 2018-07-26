@@ -1,7 +1,7 @@
 <div *ngIf="visible" class="igo-user-button-container">
   <div class="igo-user-button-more-container" [@userButtonState]="expand ? 'expand' : 'collapse'">
 
-    <!-- <igo-poi-button [color]="color" [map]="map"></igo-poi-button> -->
+    <igo-poi-button [color]="color" [map]="map"></igo-poi-button>
     <igo-bookmark-button [color]="color" [map]="map"></igo-bookmark-button>
 
     <button
@@ -28,12 +28,12 @@
 
   </div>
 
-  <!-- <button
+  <button
     mat-icon-button
     [color]="auth.authenticated ? color : 'warn'"
     (click)="accountClick()">
     <mat-icon>
       account_box
     </mat-icon>
-  </button> -->
+  </button>
 </div>

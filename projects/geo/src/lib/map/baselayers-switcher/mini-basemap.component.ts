@@ -1,7 +1,7 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 
-// import { Layer } from '../../layer/shared';
-// import { LayerService } from '../../layer/shared/layer.service';
+import { Layer } from '../../layer/shared';
+import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../shared';
 
 @Component({
@@ -21,14 +21,14 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   private _map: IgoMap;
 
   @Input()
-  get baseLayer() /*Layer*/ {
+  get baseLayer(): Layer {
     return this._baseLayer;
   }
-  set baseLayer(value /*: Layer*/) {
+  set baseLayer(value: Layer) {
     this._baseLayer = value;
     this.handleBaseLayerChanged(value);
   }
-  private _baseLayer; /*: Layer*/
+  private _baseLayer: Layer;
 
   @Input()
   get disabled(): boolean {
@@ -53,7 +53,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     interactions: false
   });
 
-  constructor(/*private layerService: LayerService*/) {}
+  constructor(private layerService: LayerService) {}
 
   ngAfterViewInit() {
     this.map.ol.on('moveend', this.handleMoveEnd, this);
@@ -64,7 +64,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     this.map.ol.un('moveend', this.handleMoveEnd, this);
   }
 
-  changeBaseLayer(baseLayer /*: Layer*/) {
+  changeBaseLayer(baseLayer: Layer) {
     if (this.disabled) {
       return;
     }
@@ -84,8 +84,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     );
     options.visible = true;
 
-    // const layer =
-    // this.layerService.createLayer(baselayer.dataSource, options);
-    // this.basemap.addLayer(layer);
+    const layer = this.layerService.createLayer(baselayer.dataSource, options);
+    this.basemap.addLayer(layer);
   }
 }

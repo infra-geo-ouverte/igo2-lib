@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 
-// import { AuthService } from '@igo2/auth';
+import { ConfigService } from '@igo2/core';
+
 import {
   DataSource,
   OSMDataSource,
@@ -20,6 +21,7 @@ import {
   VectorLayer,
   VectorLayerContext
 } from './layers';
+
 import { StyleService } from './style.service';
 
 export type AnyLayerContext =
@@ -31,9 +33,16 @@ export type AnyLayerContext =
   providedIn: 'root'
 })
 export class LayerService {
+  private tokenKey: string;
+
   constructor(
-    private styleService: StyleService // @Optional() private authService: AuthService
-  ) {}
+    private styleService: StyleService,
+    @Optional() private config: ConfigService
+  ) {
+    if (this.config) {
+      this.tokenKey = this.config.getConfig('auth.tokenKey');
+    }
+  }
 
   createLayer(dataSource: DataSource, context: AnyLayerContext): Layer {
     let layer;
@@ -65,7 +74,10 @@ export class LayerService {
     context: ImageLayerContext
   ): ImageLayer {
     context = context || {};
-    // context.token = this.authService.getToken();
+    if (this.tokenKey) {
+      context.token = localStorage.getItem(this.tokenKey);
+    }
+
     return new ImageLayer(dataSource, context);
   }
 

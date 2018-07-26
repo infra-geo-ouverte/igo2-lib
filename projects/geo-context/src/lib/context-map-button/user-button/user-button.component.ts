@@ -2,8 +2,9 @@ import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { ConfigService } from '@igo2/core';
-// import { AuthService } from '@igo2/auth';
-import { IgoMap } from '../shared';
+import { AuthService } from '@igo2/auth';
+import { IgoMap } from '@igo2/geo';
+
 import { UserDialogComponent } from './user-dialog.component';
 import { userButtonSlideInOut } from './user-button.animation';
 
@@ -37,22 +38,23 @@ export class UserButtonComponent {
 
   constructor(
     private dialog: MatDialog,
-    private config: ConfigService // public auth: AuthService
+    private config: ConfigService,
+    public auth: AuthService
   ) {
     this.visible = this.config.getConfig('auth') ? true : false;
   }
 
   accountClick() {
-    // if (this.auth.authenticated) {
-    //   this.expand = !this.expand;
-    // } else {
-    //   this.auth.logout();
-    // }
+    if (this.auth.authenticated) {
+      this.expand = !this.expand;
+    } else {
+      this.auth.logout();
+    }
   }
 
   logout() {
     this.expand = false;
-    // this.auth.logout();
+    this.auth.logout();
   }
 
   infoUser() {
