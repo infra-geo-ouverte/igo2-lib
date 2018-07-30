@@ -10,7 +10,12 @@ import {
 
 import { Subscription, Observable, forkJoin } from 'rxjs';
 
-import * as ol from 'openlayers';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import DragBox from 'ol/interaction/DragBox';
+import { MAC } from 'ol/has';
+import GeoJSON from 'ol/format/GeoJSON';
+import FeatureOL from 'ol/Feature';
+import LayerOL from 'ol/layer/Layer';
 
 import { LanguageService } from '@igo2/core';
 import { IgoMap } from '../../map/shared/map';
@@ -30,8 +35,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
-  public dragBox = new ol.interaction.DragBox({
-    condition: ol.events.condition.platformModifierKeyOnly
+  public dragBox = new DragBox({
+    condition: this.platformModifierKeyOnly
   });
 
   get map(): IgoMap {
@@ -50,7 +55,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   @Output()
   query = new EventEmitter<{
     features: Feature[] | Feature[][];
-    event: ol.MapBrowserEvent;
+    event: MapBrowserEvent;
   }>();
 
   constructor(
@@ -65,8 +70,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     );
 
     this.map.ol.on('singleclick', this.handleMapClick, this);
-    this.dragBox = new ol.interaction.DragBox({
-      condition: ol.events.condition.platformModifierKeyOnly
+    this.dragBox = new DragBox({
+      condition: this.platformModifierKeyOnly
     });
     this.map.ol.addInteraction(this.dragBox);
     this.dragBox.on('boxend', this.handleMapClick, this);
@@ -90,41 +95,41 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private manageFeatureByClick(
-    feature: ol.Feature,
-    layer: ol.layer.Layer
-  ): ol.Feature {
-    if (layer.getZIndex() !== 999) {
+    featureOL: FeatureOL,
+    layerOL: LayerOL
+  ): Feature {
+    if (layerOL.getZIndex() !== 999) {
       let title;
-      if (layer.get('title') !== undefined) {
-        title = layer.get('title');
+      if (layerOL.get('title') !== undefined) {
+        title = layerOL.get('title');
       } else {
         title = this.map.layers.filter(
-          f => f['zIndex'] === layer.getZIndex()
+          f => f['zIndex'] === layerOL.getZIndex()
         )[0].dataSource['options']['title'];
       }
       let displayFieldValue = '';
       if (
-        layer.get('displayField') &&
-        feature.getProperties().hasOwnProperty(layer.get('displayField'))
+        layerOL.get('displayField') &&
+        featureOL.getProperties().hasOwnProperty(layerOL.get('displayField'))
       ) {
         displayFieldValue =
-          ' (' + feature.getProperties()[layer.get('displayField')] + ')';
+          ' (' + featureOL.getProperties()[layerOL.get('displayField')] + ')';
       }
-      feature.set('clickedTitle', title + displayFieldValue);
-      return feature;
+      featureOL.set('clickedTitle', title + displayFieldValue);
+      return featureOL;
     }
   }
 
-  private handleMapClick(event: ol.MapBrowserEvent) {
+  private handleMapClick(event: MapBrowserEvent) {
     this.unsubscribeQueries();
-    const clickedFeatures: ol.Feature[] = [];
-    const format = new ol.format.GeoJSON();
+    const clickedFeatures: FeatureOL[] = [];
+    const format = new GeoJSON();
     const mapProjection = this.map.projection;
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (feature: ol.Feature, layer: ol.layer.Layer) => {
-          clickedFeatures.push(this.manageFeatureByClick(feature, layer));
+        (featureOL: FeatureOL, layerOL: LayerOL) => {
+          clickedFeatures.push(this.manageFeatureByClick(featureOL, layerOL));
         },
         { hitTolerance: 5 }
       );
@@ -205,5 +210,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   private isQueryable(dataSource: QueryableDataSource) {
     return dataSource.options.queryable;
+  }
+
+  private platformModifierKeyOnly(mapBrowserEvent) {
+    const originalEvent = mapBrowserEvent.originalEvent;
+    return (
+      !originalEvent.altKey &&
+      (MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
+      !originalEvent.shiftKey
+    );
   }
 }

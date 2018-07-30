@@ -1,5 +1,3 @@
-import * as ol from 'openlayers';
-
 import { DataSource } from './datasource';
 
 export interface DataSourceOptions {
@@ -10,6 +8,7 @@ export interface DataSourceOptions {
 
   // view?: ol.olx.layer.ImageOptions;
   // displayField?: string;
+  ol?: any;
 }
 
 export interface DataSourceLegendOptions {

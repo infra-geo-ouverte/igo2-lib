@@ -1,15 +1,15 @@
-import * as ol from 'openlayers';
+import OSM from 'ol/source/OSM';
 
 import { DataSource } from './datasource';
 import { OSMDataSourceOptions } from './osm-datasource.interface';
 
 export class OSMDataSource extends DataSource {
   public options: OSMDataSourceOptions;
-  public ol: ol.source.OSM;
+  public ol: OSM;
 
-  protected createOlSource(): ol.source.OSM {
+  protected createOlSource(): OSM {
     this.options.url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-    return new ol.source.OSM(this.options);
+    return new OSM(this.options);
   }
 
   protected generateId() {

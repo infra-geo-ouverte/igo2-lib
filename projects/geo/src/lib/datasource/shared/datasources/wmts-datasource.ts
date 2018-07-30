@@ -1,5 +1,5 @@
-import * as ol from 'openlayers';
 import { Md5 } from 'ts-md5';
+import WMTS from 'ol/source/WMTS';
 
 import { createDefaultTileGrid } from '../../utils/tilegrid';
 import { DataSource } from './datasource';
@@ -7,13 +7,13 @@ import { WMTSDataSourceOptions } from './wmts-datasource.interface';
 
 export class WMTSDataSource extends DataSource {
   public options: WMTSDataSourceOptions;
-  public ol: ol.source.WMTS;
+  public ol: WMTS;
 
   constructor(options: WMTSDataSourceOptions) {
     super(options);
   }
 
-  protected createOlSource(): ol.source.WMTS {
+  protected createOlSource(): WMTS {
     const sourceOptions = Object.assign(
       {
         tileGrid: createDefaultTileGrid(this.options.projection as string)
@@ -21,7 +21,7 @@ export class WMTSDataSource extends DataSource {
       this.options
     );
 
-    return new ol.source.WMTS(sourceOptions);
+    return new WMTS(sourceOptions);
   }
 
   protected generateId() {

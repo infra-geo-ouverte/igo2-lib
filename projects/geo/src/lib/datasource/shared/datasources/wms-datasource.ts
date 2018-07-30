@@ -1,5 +1,5 @@
-import * as ol from 'openlayers';
 import { Md5 } from 'ts-md5';
+import ImageWMS from 'ol/source/ImageWMS';
 
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
@@ -7,7 +7,7 @@ import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSDataSourceService } from './wfs-datasource.service';
 
 export class WMSDataSource extends DataSource {
-  public ol: ol.source.ImageWMS;
+  public ol: ImageWMS;
 
   private queryInfoFormat: string;
 
@@ -159,8 +159,8 @@ export class WMSDataSource extends DataSource {
     //   }
   }
 
-  protected createOlSource(): ol.source.ImageWMS {
-    return new ol.source.ImageWMS(this.options);
+  protected createOlSource(): ImageWMS {
+    return new ImageWMS(this.options);
   }
 
   protected generateId() {

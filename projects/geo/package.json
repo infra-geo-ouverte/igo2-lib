@@ -13,7 +13,7 @@
     "@igo2/common": "^0.21.1",
     "@igo2/core": "^0.21.1",
     "@igo2/utils": "^0.21.1",
-    "openlayers": "^4.6.5",
+    "ol": "^5.1.3",
     "rxjs": "^6.1.0"
   },
   "optionalDependencies": {

@@ -1,15 +1,19 @@
-import * as ol from 'openlayers';
+import LayerOL from 'ol/layer/Laver';
 
-export interface LayerOptions extends ol.olx.layer.BaseOptions {
+import { DataSourceOptions } from '../../../datasource/shared/datasources/datasource.interface';
+
+export interface LayerOptions {
+  source: DataSourceOptions;
   title?: string;
   id?: string;
   baseLayer?: boolean;
-  source: any;
-  // zIndex?: number;
-  // visible?: boolean;
-  // view?: ol.olx.layer.BaseOptions;
-  // minScaleDenom?: number;
-  // maxScaleDenom?: number;
+  opacity?: number;
+  visible?: boolean;
+  extent?: [number, number, number, number];
+  zIndex?: number;
+  minResolution?: number;
+  maxResolution?: number;
+  ol?: LayerOL;
 }
 
 export interface LayerCatalog {

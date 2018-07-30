@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import * as ol from 'openlayers';
+import { GML, KML, WKT, GPX, GeoJSON } from 'ol/format';
+import { Stroke, Fill, Style, Circle } from 'ol/style';
 
 import { ConfigService, MessageService, LanguageService } from '@igo2/core';
 import { MapService } from '../../map/shared/map.service';
@@ -14,6 +15,8 @@ import { ExportOptions } from './import-export.interface';
   providedIn: 'root'
 })
 export class ImportExportService {
+  static formats = { GeoJSON: GeoJSON, KML: KML, WKT: WKT, GPX: GPX, GML: GML };
+
   private urlApi: string;
 
   constructor(
@@ -71,8 +74,8 @@ export class ImportExportService {
     const formatStr: any = data.format;
     const format =
       data.format === 'shapefile'
-        ? new ol.format.GeoJSON()
-        : new ol.format[formatStr]();
+        ? new GeoJSON()
+        : new ImportExportService.formats[formatStr]();
 
     const featuresText = format.writeFeatures(source.getFeatures(), {
       dataProjection: 'EPSG:4326',
@@ -149,11 +152,11 @@ export class ImportExportService {
       // title: title
     });
 
-    let format: any = new ol.format.GeoJSON();
+    let format: any = new GeoJSON();
     if (mimeType === 'application/vnd.google-earth.kml+xml') {
-      format = new ol.format.KML();
+      format = new KML();
     } else if (mimeType === 'application/gml+xml') {
-      format = new ol.format.GML();
+      format = new GML();
     }
 
     const olFeature = format.readFeatures(text, {
@@ -165,21 +168,21 @@ export class ImportExportService {
     const r = Math.floor(Math.random() * 255);
     const g = Math.floor(Math.random() * 255);
     const b = Math.floor(Math.random() * 255);
-    const stroke = new ol.style.Stroke({
+    const stroke = new Stroke({
       color: [r, g, b, 1],
       width: 2
     });
 
-    const fill = new ol.style.Fill({
+    const fill = new Fill({
       color: [r, g, b, 0.4]
     });
 
     const layer = new VectorLayer({
       source: overlayDataSource,
-      style: new ol.style.Style({
+      style: new Style({
         stroke: stroke,
         fill: fill,
-        image: new ol.style.Circle({
+        image: new Circle({
           radius: 5,
           stroke: stroke,
           fill: fill

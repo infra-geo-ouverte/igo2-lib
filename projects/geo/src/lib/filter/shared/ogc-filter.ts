@@ -1,4 +1,24 @@
-import * as ol from 'openlayers';
+import andFilter from 'ol/format/filter/And';
+import bboxFilter from 'ol/format/filter/Bbox';
+import betweenFilter from 'ol/format/filter/IsBetween';
+import containsFilter from 'ol/format/filter/Contains';
+import duringFilter from 'ol/format/filter/During';
+import equalToFilter from 'ol/format/filter/EqualTo';
+import greaterThanFilter from 'ol/format/filter/GreaterThan';
+import greaterThanOrEqualToFilter from 'ol/format/filter/GreaterThanOrEqualTo';
+import intersectsFilter from 'ol/format/filter/Intersects';
+import isNullFilter from 'ol/format/filter/IsNull';
+import lessThanFilter from 'ol/format/filter/LessThan';
+import lessThanOrEqualToFilter from 'ol/format/filter/LessThanOrEqualTo';
+import likeFilter from 'ol/format/filter/IsLike';
+import notEqualToFilter from 'ol/format/filter/NotEqualTo';
+import withinFilter from 'ol/format/filter/Within';
+import notFilter from 'ol/format/filter/Not';
+import orFilter from 'ol/format/filter/Or';
+
+import WKT from 'ol/format/WKT';
+import WFS from 'ol/format/WFS';
+import Geometry from 'ol/geom/Geometry';
 
 import { uuid } from '@igo2/utils';
 
@@ -30,11 +50,10 @@ export class OgcFilterWriter {
 
   public buildFilter(
     filters: IgoOgcFilterObject,
-    extent?: ol.Extent,
+    extent?: [number, number, number, number],
     proj?,
     fieldNameGeometry?: string
   ): string {
-    const f = ol.format.filter;
     let bboxFilter;
     let enableBbox: boolean;
     if (/intersects|contains|within/gi.test(JSON.stringify(filters))) {
@@ -49,13 +68,13 @@ export class OgcFilterWriter {
           : fieldNameGeometry;
     }
     if (extent && filters) {
-      bboxFilter = f.bbox(fieldNameGeometry, extent, proj.getCode());
+      bboxFilter = bboxFilter(fieldNameGeometry, extent, proj.getCode());
     }
     let filterAssembly: OgcFilter;
     if (filters) {
       filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry);
       if (extent && enableBbox) {
-        filterAssembly = f.and(bboxFilter, this.bundleFilter(filters));
+        filterAssembly = andFilter(bboxFilter, this.bundleFilter(filters));
       } else {
         filterAssembly = this.bundleFilter(filters);
       }
@@ -73,7 +92,7 @@ export class OgcFilterWriter {
       geometryName: fieldNameGeometry
     };
 
-    const query = new ol.format.WFS().writeGetFeature(wfsOptions);
+    const query = new WFS().writeGetFeature(wfsOptions);
     const str = new XMLSerializer().serializeToString(query);
     const regexp1 = /typenames *=|typename *=\"featureTypes\" *>/gi;
     const regexp2 = /<\/Query><\/GetFeature>/gi;
@@ -103,7 +122,6 @@ export class OgcFilterWriter {
   private createFilter(filterOptions): OgcFilter {
     const operator = filterOptions.operator;
     const logical_array = filterOptions.logical_array;
-    const f = ol.format.filter;
 
     const wfs_propertyName = filterOptions.propertyName;
     const wfs_pattern = filterOptions.pattern;
@@ -133,9 +151,9 @@ export class OgcFilterWriter {
 
     const wfs_expression = filterOptions.expression;
 
-    let geometry: ol.geom.Geometry;
+    let geometry: Geometry;
     if (wfs_wkt_geometry) {
-      const wkt = new ol.format.WKT();
+      const wkt = new WKT();
       geometry = wkt.readGeometry(wfs_wkt_geometry, {
         dataProjection: wfs_srsName,
         featureProjection: 'EPSG:3857'
@@ -144,33 +162,33 @@ export class OgcFilterWriter {
 
     switch (operator) {
       case 'BBOX':
-        return f.bbox(wfs_geometryName, wfs_extent, wfs_srsName);
+        return bboxFilter(wfs_geometryName, wfs_extent, wfs_srsName);
       case 'PropertyIsBetween':
-        return f.between(
+        return betweenFilter(
           wfs_propertyName,
           wfs_lowerBoundary,
           wfs_upperBoundary
         );
       case 'Contains':
-        return (f as any).contains(wfs_geometryName, geometry, wfs_srsName);
+        return containsFilter(wfs_geometryName, geometry, wfs_srsName);
       case 'During':
-        return f.during(wfs_propertyName, wfs_begin, wfs_end);
+        return duringFilter(wfs_propertyName, wfs_begin, wfs_end);
       case 'PropertyIsEqualTo':
-        return f.equalTo(wfs_propertyName, wfs_expression, wfs_matchCase);
+        return equalToFilter(wfs_propertyName, wfs_expression, wfs_matchCase);
       case 'PropertyIsGreaterThan':
-        return f.greaterThan(wfs_propertyName, wfs_expression);
+        return greaterThanFilter(wfs_propertyName, wfs_expression);
       case 'PropertyIsGreaterThanOrEqualTo':
-        return f.greaterThanOrEqualTo(wfs_propertyName, wfs_expression);
+        return greaterThanOrEqualToFilter(wfs_propertyName, wfs_expression);
       case 'Intersects':
-        return f.intersects(wfs_geometryName, geometry, wfs_srsName);
+        return intersectsFilter(wfs_geometryName, geometry, wfs_srsName);
       case 'PropertyIsNull':
-        return f.isNull(wfs_propertyName);
+        return isNullFilter(wfs_propertyName);
       case 'PropertyIsLessThan':
-        return f.lessThan(wfs_propertyName, wfs_expression);
+        return lessThanFilter(wfs_propertyName, wfs_expression);
       case 'PropertyIsLessThanOrEqualTo':
-        return f.lessThanOrEqualTo(wfs_propertyName, wfs_expression);
+        return lessThanOrEqualToFilter(wfs_propertyName, wfs_expression);
       case 'PropertyIsLike':
-        return f.like(
+        return likeFilter(
           wfs_propertyName,
           wfs_pattern.replace(/[()_]/gi, wfs_singleChar),
           wfs_wildCard,
@@ -179,16 +197,20 @@ export class OgcFilterWriter {
           wfs_matchCase
         );
       case 'PropertyIsNotEqualTo':
-        return f.notEqualTo(wfs_propertyName, wfs_expression, wfs_matchCase);
+        return notEqualToFilter(
+          wfs_propertyName,
+          wfs_expression,
+          wfs_matchCase
+        );
       case 'Within':
-        return f.within(wfs_geometryName, geometry, wfs_srsName);
+        return withinFilter(wfs_geometryName, geometry, wfs_srsName);
       // LOGICAL
       case 'And':
-        return f.and.apply(null, logical_array);
+        return andFilter.apply(null, logical_array);
       case 'Or':
-        return f.or.apply(null, logical_array);
+        return orFilter.apply(null, logical_array);
       case 'Not':
-        return f.not.apply(null, logical_array);
+        return notFilter.apply(null, logical_array);
 
       default:
         return undefined;

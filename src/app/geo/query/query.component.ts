@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 
-import * as ol from 'openlayers';
+import FeatureOL from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import Polygon from 'ol/geom/Polygon';
+import LineString from 'ol/geom/LineString';
+import { transform as transformProj } from 'ol/proj.js';
 
 import { LanguageService } from '@igo2/core';
 import {
@@ -72,29 +76,27 @@ export class AppQueryComponent {
   }
 
   addFeatures(dataSource: FeatureDataSource) {
-    const feature1 = new ol.Feature({
+    const feature1 = new FeatureOL({
       name: 'feature1',
-      geometry: new ol.geom.LineString([
-        ol.proj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
-        ol.proj.transform([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
-        ol.proj.transform([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
+      geometry: new LineString([
+        transformProj([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
+        transformProj([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
+        transformProj([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
       ])
     });
 
-    const feature2 = new ol.Feature({
+    const feature2 = new FeatureOL({
       name: 'feature2',
-      geometry: new ol.geom.Point(
-        ol.proj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
-      )
+      geometry: new Point(transformProj([-73, 46.6], 'EPSG:4326', 'EPSG:3857'))
     });
 
-    const feature3 = new ol.Feature({
+    const feature3 = new FeatureOL({
       name: 'feature3',
-      geometry: new ol.geom.Polygon([
+      geometry: new Polygon([
         [
-          ol.proj.transform([-71, 46.8], 'EPSG:4326', 'EPSG:3857'),
-          ol.proj.transform([-73, 47], 'EPSG:4326', 'EPSG:3857'),
-          ol.proj.transform([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
+          transformProj([-71, 46.8], 'EPSG:4326', 'EPSG:3857'),
+          transformProj([-73, 47], 'EPSG:4326', 'EPSG:3857'),
+          transformProj([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
         ]
       ])
     });

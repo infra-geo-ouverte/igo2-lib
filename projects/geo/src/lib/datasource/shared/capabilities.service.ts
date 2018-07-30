@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import * as ol from 'openlayers';
+import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
+import WMTSSource from 'ol/source/WMTS';
 
 import { ObjectUtils } from '@igo2/utils';
 
@@ -15,8 +16,8 @@ import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
 export class CapabilitiesService {
   private capabilitiesStore: any[] = [];
   private parsers = {
-    wms: new ol.format.WMSCapabilities(),
-    wmts: new ol.format.WMTSCapabilities()
+    wms: new WMSCapabilities(),
+    wmts: new WMTSCapabilities()
   };
 
   constructor(private http: HttpClient) {}
@@ -124,7 +125,7 @@ export class CapabilitiesService {
     baseOptions: WMTSDataSourceOptions,
     capabilities: any
   ): WMTSDataSourceOptions {
-    const options = ol.source.WMTS.optionsFromCapabilities(
+    const options = WMTSSource.optionsFromCapabilities(
       capabilities,
       baseOptions
     );

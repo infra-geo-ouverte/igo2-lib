@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import * as ol from 'openlayers';
+import { WKT, WMSGetFeatureInfo } from 'ol/format';
+import GML2 from 'ol/format/GML2';
+import GML3 from 'ol/format/GML3';
+import FeatureOL from 'ol/Feature';
 
 import { uuid } from '@igo2/utils';
 import { Feature } from '../../feature/shared/feature.interface';
@@ -101,12 +104,12 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex) {
-    let parser = new ol.format.GML2();
+    let parser = new GML2();
     let features = parser.readFeatures(res);
 
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new ol.format.WMSGetFeatureInfo();
+      parser = new WMSGetFeatureInfo();
       features = parser.readFeatures(res);
     }
 
@@ -114,7 +117,7 @@ export class QueryService {
   }
 
   private extractGML3Data(res, zIndex) {
-    const parser = new ol.format.GML3();
+    const parser = new GML3();
     const features = parser.readFeatures(res);
 
     return features.map(feature => this.featureToResult(feature, zIndex));
@@ -198,7 +201,7 @@ export class QueryService {
       clicky +
       '))';
 
-    const format = new ol.format.WKT();
+    const format = new WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
 
@@ -258,9 +261,9 @@ export class QueryService {
     return result;
   }
 
-  private featureToResult(feature: ol.Feature, zIndex: number): Feature {
-    const featureGeometry = feature.getGeometry() as any;
-    const properties = Object.assign({}, feature.getProperties());
+  private featureToResult(featureOL: FeatureOL, zIndex: number): Feature {
+    const featureGeometry = featureOL.getGeometry() as any;
+    const properties = Object.assign({}, featureOL.getProperties());
     delete properties['geometry'];
     delete properties['boundedBy'];
 

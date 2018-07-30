@@ -1,4 +1,5 @@
-import * as ol from 'openlayers';
+import VectorLayerOL from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
 
 import { DataSource } from '../../../datasource';
 
@@ -7,17 +8,17 @@ import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
   public options: VectorLayerOptions;
-  public ol: ol.layer.Vector;
+  public ol: VectorLayerOL;
 
   constructor(options: VectorLayerOptions) {
     super(options);
   }
 
-  protected createOlLayer(): ol.layer.Vector {
+  protected createOlLayer(): VectorLayerOL {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as ol.source.Vector
+      source: this.options.source.ol as VectorSource
     });
 
-    return new ol.layer.Vector(olOptions);
+    return new VectorLayerOL(olOptions);
   }
 }

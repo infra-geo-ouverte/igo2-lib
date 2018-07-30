@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import * as ol from 'openlayers';
+
+import VectorSource from 'ol/source/Vector';
+import { bbox } from 'ol/loadingstrategy.js';
 
 import { uuid } from '@igo2/utils';
 
@@ -8,7 +10,7 @@ import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSDataSourceService } from './wfs-datasource.service';
 
 export class WFSDataSource extends DataSource {
-  public ol: ol.source.Vector;
+  public ol: VectorSource;
   public httpClient: HttpClient;
 
   constructor(
@@ -68,12 +70,12 @@ export class WFSDataSource extends DataSource {
     return uuid();
   }
 
-  protected createOlSource(): ol.source.Vector {
+  protected createOlSource(): VectorSource {
     const wfsOptions: WFSDataSourceOptions = this.options;
 
     this.dataSourceService.checkWfsOptions(wfsOptions);
 
-    return new ol.source.Vector({
+    return new VectorSource({
       // format: this.dataSourceService.getFormatFromOptions(wfsOptions),
       // overlaps: false,
       // url: function(extent: ol.Extent, resolution, proj) {
@@ -125,7 +127,7 @@ export class WFSDataSource extends DataSource {
       //   });
       //   return baseUrl;
       // }.bind(this),
-      strategy: ol.loadingstrategy.bbox
+      strategy: bbox
     });
   }
 }

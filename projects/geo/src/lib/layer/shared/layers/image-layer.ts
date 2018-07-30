@@ -1,4 +1,5 @@
-import * as ol from 'openlayers';
+import ImageLayerOL from 'ol/layer/Image';
+import ImageSource from 'ol/source/Image';
 
 import { DataSource } from '../../../datasource';
 
@@ -10,23 +11,23 @@ import { ImageLayerOptions } from './image-layer.interface';
 
 export class ImageLayer extends Layer {
   public options: ImageLayerOptions;
-  public ol: ol.layer.Image;
+  public ol: ImageLayerOL;
 
   private watcher: ImageWatcher;
 
   constructor(options: ImageLayerOptions) {
     super(options);
 
-    this.watcher = new ImageWatcher(this.options.source.ol as ol.source.Image);
+    this.watcher = new ImageWatcher(this.options.source.ol as ImageSource);
     this.status$ = this.watcher.status$;
   }
 
-  protected createOlLayer(): ol.layer.Image {
+  protected createOlLayer(): ImageLayerOL {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as ol.source.Image
+      source: this.options.source.ol as ImageSource
     });
 
-    const image = new ol.layer.Image(olOptions);
+    const image = new ImageLayerOL(olOptions);
     const token = this.options.token;
     if (token) {
       const self = this;

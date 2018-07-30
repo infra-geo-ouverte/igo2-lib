@@ -1,5 +1,7 @@
 import { Subject } from 'rxjs';
 
+import LayerOL from 'ol/layer/Layer';
+
 import { DataSource } from '../../../datasource';
 import { IgoMap } from '../../../map';
 
@@ -10,7 +12,7 @@ export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
   public map: IgoMap;
-  public ol: ol.layer.Layer;
+  public ol: LayerOL;
   public options: LayerOptions;
   public status$: Subject<SubjectStatus>;
 

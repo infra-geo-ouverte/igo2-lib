@@ -1,5 +1,3 @@
-import * as ol from 'openlayers';
-
 export interface MapViewOptions extends ol.olx.ViewOptions {
   projection?: string;
   center?: [number, number];

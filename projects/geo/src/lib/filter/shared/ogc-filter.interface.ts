@@ -1,12 +1,15 @@
-import * as ol from 'openlayers';
+import Geometry from 'ol/geom/Geometry';
+import Filter from 'ol/format/filter/Filter';
 
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
-export interface OgcFilter extends ol.format.filter.Filter {}
+export interface OgcFilter extends Filter {}
 
 export interface WFSWriteGetFeatureOptions
-  extends ol.olx.format.WFSWriteGetFeatureOptions {}
+  extends ol.olx.format.WFSWriteGetFeatureOptions {
+  filter: any;
+}
 
 export type AnyBaseOgcFilterOptions =
   | OgcFilterCondionsArrayOptions
@@ -47,9 +50,9 @@ export interface OgcFilterCondionsArrayOptions {
 
 export interface OgcFilterSpatialOptions {
   geometryName: string;
-  geometry?: ol.geom.Geometry;
+  geometry?: Geometry;
   wkt_geometry?: string;
-  extent?: ol.Extent;
+  extent?: [number, number, number, number];
   srsName?: string;
   active: boolean;
   id: string;
@@ -102,8 +105,8 @@ export interface OgcInterfaceFilterOptions {
   escapeChar?: string;
   matchCase?: boolean;
   geometryName?: string;
-  geometry?: ol.geom.Geometry;
-  extent?: ol.Extent;
+  geometry?: Geometry;
+  extent?: [number, number, number, number];
   srsName?: string;
   parentLogical?: string;
   abbrev?: string;

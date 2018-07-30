@@ -1,4 +1,6 @@
-import * as ol from 'openlayers';
+import VectorSource from 'ol/source/Vector';
+import { GeoJSON, KML, WKT, GPX, GML } from 'ol/format';
+
 import { Md5 } from 'ts-md5';
 
 import { uuid } from '@igo2/utils';
@@ -6,15 +8,17 @@ import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export class FeatureDataSource extends DataSource {
-  public options: FeatureDataSourceOptions;
-  public ol: ol.source.Vector;
+  static formats = { GeoJSON: GeoJSON, KML: KML, WKT: WKT, GPX: GPX, GML: GML };
 
-  protected createOlSource(): ol.source.Vector {
+  public options: FeatureDataSourceOptions;
+  public ol: VectorSource;
+
+  protected createOlSource(): VectorSource {
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)
     };
 
-    return new ol.source.Vector(Object.assign(sourceOptions, this.options));
+    return new VectorSource(Object.assign(sourceOptions, this.options));
   }
 
   protected generateId() {
@@ -29,9 +33,9 @@ export class FeatureDataSource extends DataSource {
     let olFormatCls;
     const formatType = options.formatType;
     if (!formatType) {
-      olFormatCls = ol.format.GeoJSON;
+      olFormatCls = GeoJSON;
     } else {
-      olFormatCls = ol.format[formatType];
+      olFormatCls = FeatureDataSource.formats[formatType];
       if (olFormatCls === undefined) {
         throw new Error('Invalid vector source format ${formatType}.');
       }

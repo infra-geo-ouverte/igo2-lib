@@ -1,7 +1,14 @@
 import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import * as ol from 'openlayers';
+import GeoJSON from 'ol/format/GeoJSON';
+import {
+  createEmpty as createEmptyExtent,
+  isEmpty as extentIsEmpty,
+  extend as extendExtent,
+  intersects as intersectsExtent
+} from 'ol/extent.js';
+import { transformExtent } from 'ol/proj.js';
 
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
@@ -16,7 +23,7 @@ import { OverlayAction } from '../shared/overlay.interface';
 })
 export class OverlayDirective implements OnInit, OnDestroy {
   private features$$: Subscription;
-  private format = new ol.format.GeoJSON();
+  private format = new GeoJSON();
 
   get map(): IgoMap {
     return this.component.map;
@@ -44,7 +51,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       return;
     }
 
-    const extent = ol.extent.createEmpty();
+    const extent = createEmptyExtent();
 
     let featureExtent, geometry;
     features.forEach((feature: Feature) => {
@@ -55,23 +62,23 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
       geometry = olFeature.getGeometry();
       featureExtent = this.getFeatureExtent(feature);
-      if (ol.extent.isEmpty(featureExtent)) {
+      if (extentIsEmpty(featureExtent)) {
         if (geometry !== null) {
           featureExtent = geometry.getExtent();
         }
       }
-      ol.extent.extend(extent, featureExtent);
+      extendExtent(extent, featureExtent);
 
       this.map.addOverlay(olFeature);
     }, this);
     if (features[0].sourceType === SourceFeatureType.Click) {
-      if (ol.extent.intersects(featureExtent, this.map.getExtent())) {
+      if (intersectsExtent(featureExtent, this.map.getExtent())) {
         action = 'none';
       } else {
         action = 'move';
       }
     }
-    if (!ol.extent.isEmpty(featureExtent)) {
+    if (!extentIsEmpty(featureExtent)) {
       if (action === 'zoom') {
         this.map.zoomToExtent(extent);
       } else if (action === 'move') {
@@ -80,11 +87,11 @@ export class OverlayDirective implements OnInit, OnDestroy {
     }
   }
 
-  private getFeatureExtent(feature: Feature): ol.Extent {
-    let extent = ol.extent.createEmpty();
+  private getFeatureExtent(feature: Feature): [number, number, number, number] {
+    let extent = createEmptyExtent();
 
     if (feature.extent && feature.projection) {
-      extent = ol.proj.transformExtent(
+      extent = transformExtent(
         feature.extent,
         feature.projection,
         this.map.projection
