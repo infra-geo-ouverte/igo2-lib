@@ -31,7 +31,6 @@
     "@angular/router": "^6.0.0",
     "@mat-datetimepicker/core": "^2.0.1",
     "@ngx-translate/core": "^10.0.1",
-    "@types/openlayers": "^4.6.10",
     "angular2-notifications": "^1.0.2",
     "bowser": "^1.9.2",
     "core-js": "^2.5.4",
