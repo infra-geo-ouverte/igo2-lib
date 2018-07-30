@@ -1,5 +1,5 @@
 import * as ol from 'openlayers';
-import { DataSourceContext, DataSourceOptions } from './datasource.interface';
+import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 
 export interface WMSDataSourceOptions
@@ -8,7 +8,3 @@ export interface WMSDataSourceOptions
   optionsFromCapabilities?: boolean;
   wfsSource?: WFSDataSourceOptions;
 }
-
-export interface WMSDataSourceContext
-  extends DataSourceContext,
-    WMSDataSourceOptions {}

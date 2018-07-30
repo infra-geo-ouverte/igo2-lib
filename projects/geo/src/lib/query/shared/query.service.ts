@@ -91,10 +91,10 @@ export class QueryService {
 
       return Object.assign(feature, {
         id: uuid(),
-        source: dataSource.title,
+        source: 'title', // dataSource.title,
         sourceType: SourceFeatureType.Query,
         order: 1000 - zIndex,
-        title: title ? title : `${dataSource.title} (${index + 1})`,
+        title: 'title', // title ? title : `${dataSource.title} (${index + 1})`,
         projection: options.projection
       });
     });

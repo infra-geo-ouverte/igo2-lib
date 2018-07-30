@@ -74,57 +74,57 @@ export class WFSDataSource extends DataSource {
     this.dataSourceService.checkWfsOptions(wfsOptions);
 
     return new ol.source.Vector({
-      format: this.dataSourceService.getFormatFromOptions(wfsOptions),
-      overlaps: false,
-      url: function(extent: ol.Extent, resolution, proj) {
-        const baseWfsQuery = 'service=WFS&request=GetFeature';
-        // Mandatory
-        const url = wfsOptions.url;
-        // Optional
-        const outputFormat = wfsOptions.outputFormat
-          ? 'outputFormat=' + wfsOptions.outputFormat
-          : '';
-        const wfsVersion = wfsOptions.version
-          ? 'version=' + wfsOptions.version
-          : 'version=' + '2.0.0';
-
-        let paramTypename = 'typename';
-        let paramMaxFeatures = 'maxFeatures';
-        if (wfsOptions.version === '2.0.0' || !wfsOptions.version) {
-          paramTypename = 'typenames';
-          paramMaxFeatures = 'count';
-        }
-
-        const featureTypes = paramTypename + '=' + wfsOptions.featureTypes;
-
-        const maxFeatures = wfsOptions.maxFeatures
-          ? paramMaxFeatures + '=' + wfsOptions.maxFeatures
-          : paramMaxFeatures + '=5000';
-        const srsname = wfsOptions.srsname
-          ? 'srsname=' + wfsOptions.srsname
-          : 'srsname=' + proj.getCode();
-        const filterXML = this.ogcFilterWriter.buildFilter(
-          this.options.ogcFilters.filters,
-          extent,
-          proj,
-          this.options.fieldNameGeometry
-        );
-
-        const patternFilter = /filter=.*/gi;
-        if (patternFilter.test(filterXML)) {
-          this.options['ogcFiltered'] = true;
-        } else {
-          this.options['ogcFiltered'] = false;
-        }
-
-        let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
-        baseUrl += `${outputFormat}&${srsname}&${filterXML}&${maxFeatures}`;
-
-        this.options['download'] = Object.assign({}, this.options['download'], {
-          dynamicUrl: baseUrl
-        });
-        return baseUrl;
-      }.bind(this),
+      // format: this.dataSourceService.getFormatFromOptions(wfsOptions),
+      // overlaps: false,
+      // url: function(extent: ol.Extent, resolution, proj) {
+      //   const baseWfsQuery = 'service=WFS&request=GetFeature';
+      //   // Mandatory
+      //   const url = wfsOptions.url;
+      //   // Optional
+      //   const outputFormat = wfsOptions.outputFormat
+      //     ? 'outputFormat=' + wfsOptions.outputFormat
+      //     : '';
+      //   const wfsVersion = wfsOptions.version
+      //     ? 'version=' + wfsOptions.version
+      //     : 'version=' + '2.0.0';
+      //
+      //   let paramTypename = 'typename';
+      //   let paramMaxFeatures = 'maxFeatures';
+      //   if (wfsOptions.version === '2.0.0' || !wfsOptions.version) {
+      //     paramTypename = 'typenames';
+      //     paramMaxFeatures = 'count';
+      //   }
+      //
+      //   const featureTypes = paramTypename + '=' + wfsOptions.featureTypes;
+      //
+      //   const maxFeatures = wfsOptions.maxFeatures
+      //     ? paramMaxFeatures + '=' + wfsOptions.maxFeatures
+      //     : paramMaxFeatures + '=5000';
+      //   const srsname = wfsOptions.srsname
+      //     ? 'srsname=' + wfsOptions.srsname
+      //     : 'srsname=' + proj.getCode();
+      //   const filterXML = this.ogcFilterWriter.buildFilter(
+      //     this.options.ogcFilters.filters,
+      //     extent,
+      //     proj,
+      //     this.options.fieldNameGeometry
+      //   );
+      //
+      //   const patternFilter = /filter=.*/gi;
+      //   if (patternFilter.test(filterXML)) {
+      //     this.options['ogcFiltered'] = true;
+      //   } else {
+      //     this.options['ogcFiltered'] = false;
+      //   }
+      //
+      //   let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
+      //   baseUrl += `${outputFormat}&${srsname}&${filterXML}&${maxFeatures}`;
+      //
+      //   this.options['download'] = Object.assign({}, this.options['download'], {
+      //     dynamicUrl: baseUrl
+      //   });
+      //   return baseUrl;
+      // }.bind(this),
       strategy: ol.loadingstrategy.bbox
     });
   }

@@ -146,7 +146,7 @@ export class ImportExportService {
   private addFeaturesLayer(text, title, sourceSrs, mimeType?) {
     const map = this.mapService.getMap();
     const overlayDataSource = new FeatureDataSource({
-      title: title
+      // title: title
     });
 
     let format: any = new ol.format.GeoJSON();
@@ -174,7 +174,8 @@ export class ImportExportService {
       color: [r, g, b, 0.4]
     });
 
-    const layer = new VectorLayer(overlayDataSource, {
+    const layer = new VectorLayer({
+      source: overlayDataSource,
       style: new ol.style.Style({
         stroke: stroke,
         fill: fill,
@@ -216,9 +217,12 @@ export class ImportExportService {
       },
       err => {
         const title = translate.instant('igo.geo.dropGeoFile.unreadable.title');
-        const message = translate.instant('igo.geo.dropGeoFile.unreadable.text', {
-          value: file.name
-        });
+        const message = translate.instant(
+          'igo.geo.dropGeoFile.unreadable.text',
+          {
+            value: file.name
+          }
+        );
         this.messageService.error(message, title);
       }
     );

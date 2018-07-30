@@ -14,16 +14,16 @@ export class ImageLayer extends Layer {
 
   private watcher: ImageWatcher;
 
-  constructor(dataSource: DataSource, options?: ImageLayerOptions) {
-    super(dataSource, options);
+  constructor(options: ImageLayerOptions) {
+    super(options);
 
-    this.watcher = new ImageWatcher(this.dataSource.ol as ol.source.Image);
+    this.watcher = new ImageWatcher(this.options.source.ol as ol.source.Image);
     this.status$ = this.watcher.status$;
   }
 
   protected createOlLayer(): ol.layer.Image {
-    const olOptions: any = Object.assign({}, this.options.view || {}, {
-      source: this.dataSource.ol as ol.source.Image
+    const olOptions = Object.assign({}, this.options, {
+      source: this.options.source.ol as ol.source.Image
     });
 
     const image = new ol.layer.Image(olOptions);

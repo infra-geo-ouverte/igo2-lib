@@ -3,7 +3,6 @@ import { Injectable, Optional } from '@angular/core';
 import { ConfigService } from '@igo2/core';
 
 import {
-  DataSource,
   OSMDataSource,
   FeatureDataSource,
   XYZDataSource,
@@ -15,19 +14,19 @@ import {
 import {
   Layer,
   ImageLayer,
-  ImageLayerContext,
+  ImageLayerOptions,
   TileLayer,
-  TileLayerContext,
+  TileLayerOptions,
   VectorLayer,
-  VectorLayerContext
+  VectorLayerOptions
 } from './layers';
 
 import { StyleService } from './style.service';
 
-export type AnyLayerContext =
-  | ImageLayerContext
-  | TileLayerContext
-  | VectorLayerContext;
+export type AnyLayerOptions =
+  | ImageLayerOptions
+  | TileLayerOptions
+  | VectorLayerOptions;
 
 @Injectable({
   providedIn: 'root'
@@ -44,23 +43,20 @@ export class LayerService {
     }
   }
 
-  createLayer(dataSource: DataSource, context: AnyLayerContext): Layer {
+  createLayer(layerOptions: AnyLayerOptions): Layer {
     let layer;
-    switch (dataSource.constructor) {
+    switch (layerOptions.source.constructor) {
       case OSMDataSource:
       case WMTSDataSource:
       case XYZDataSource:
-        layer = this.createTileLayer(dataSource, context as TileLayerContext);
+        layer = this.createTileLayer(layerOptions as TileLayerOptions);
         break;
       case FeatureDataSource:
       case WFSDataSource:
-        layer = this.createVectorLayer(
-          dataSource,
-          context as VectorLayerContext
-        );
+        layer = this.createVectorLayer(layerOptions as VectorLayerOptions);
         break;
       case WMSDataSource:
-        layer = this.createImageLayer(dataSource, context as ImageLayerContext);
+        layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
       default:
         break;
@@ -69,38 +65,28 @@ export class LayerService {
     return layer;
   }
 
-  private createImageLayer(
-    dataSource: DataSource,
-    context: ImageLayerContext
-  ): ImageLayer {
-    context = context || {};
+  private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
     if (this.tokenKey) {
-      context.token = localStorage.getItem(this.tokenKey);
+      layerOptions.token = localStorage.getItem(this.tokenKey);
     }
 
-    return new ImageLayer(dataSource, context);
+    return new ImageLayer(layerOptions);
   }
 
-  private createTileLayer(
-    dataSource: DataSource,
-    context: TileLayerContext
-  ): TileLayer {
-    return new TileLayer(dataSource, context);
+  private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
+    return new TileLayer(layerOptions);
   }
 
-  private createVectorLayer(
-    dataSource: DataSource,
-    context: VectorLayerContext
-  ): VectorLayer {
+  private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
     let style;
-    if (context.style !== undefined) {
-      style = this.styleService.createStyle(context.style);
+    if (layerOptions.style !== undefined) {
+      style = this.styleService.createStyle(layerOptions.style);
     }
 
-    const layerOptions = Object.assign({}, context, {
+    const layerOptionsOl = Object.assign({}, layerOptions, {
       style: style
     });
 
-    return new VectorLayer(dataSource, layerOptions);
+    return new VectorLayer(layerOptionsOl);
   }
 }

@@ -42,20 +42,28 @@ export class AppQueryComponent {
   ) {
     this.dataSourceService
       .createAsyncDataSource({
-        type: 'osm',
-        title: 'OSM'
+        type: 'osm'
       })
       .subscribe(dataSource => {
-        this.map.addLayer(this.layerService.createLayer(dataSource, {}));
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'OSM',
+            source: dataSource
+          })
+        );
       });
 
     this.dataSourceService
       .createAsyncDataSource({
-        type: 'vector',
-        title: 'Vector Layer'
+        type: 'vector'
       })
       .subscribe(dataSource => {
-        this.map.addLayer(this.layerService.createLayer(dataSource, {}));
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Vector Layer',
+            source: dataSource
+          })
+        );
         this.addFeatures(dataSource as FeatureDataSource);
       });
 

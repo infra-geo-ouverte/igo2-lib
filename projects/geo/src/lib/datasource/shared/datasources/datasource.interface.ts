@@ -3,15 +3,13 @@ import * as ol from 'openlayers';
 import { DataSource } from './datasource';
 
 export interface DataSourceOptions {
-  title: string;
-  alias?: string;
+  type?: string;
   legend?: DataSourceLegendOptions;
-  view?: ol.olx.layer.ImageOptions;
-  displayField?: string;
-}
+  // title: string;
+  // alias?: string;
 
-export interface DataSourceContext extends DataSourceOptions {
-  type: string;
+  // view?: ol.olx.layer.ImageOptions;
+  // displayField?: string;
 }
 
 export interface DataSourceLegendOptions {

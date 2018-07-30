@@ -2,16 +2,15 @@ import * as ol from 'openlayers';
 
 export interface LayerOptions extends ol.olx.layer.BaseOptions {
   title?: string;
-  zIndex?: number;
-  visible?: boolean;
-  view?: ol.olx.layer.BaseOptions;
-  baseLayer?: boolean;
   id?: string;
-  minScaleDenom?: number;
-  maxScaleDenom?: number;
+  baseLayer?: boolean;
+  source: any;
+  // zIndex?: number;
+  // visible?: boolean;
+  // view?: ol.olx.layer.BaseOptions;
+  // minScaleDenom?: number;
+  // maxScaleDenom?: number;
 }
-
-export interface LayerContext extends LayerOptions {}
 
 export interface LayerCatalog {
   title: string;

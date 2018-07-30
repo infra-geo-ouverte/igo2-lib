@@ -9,16 +9,8 @@ export abstract class DataSource {
   public id: string;
   public ol: ol.source.Source;
 
-  get title(): string {
-    return this.options.alias ? this.options.alias : this.options.title;
-  }
-
-  set title(title: string) {
-    this.options.title = title;
-  }
-
   constructor(
-    public options: DataSourceOptions,
+    public options: DataSourceOptions = {},
     protected dataSourceService?: DataService
   ) {
     this.options = options;

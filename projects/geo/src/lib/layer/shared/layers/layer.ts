@@ -19,7 +19,7 @@ export abstract class Layer {
   }
 
   get title(): string {
-    return this.options.title ? this.options.title : this.dataSource.title;
+    return this.options.title;
   }
 
   set title(title: string) {
@@ -34,12 +34,12 @@ export abstract class Layer {
     this.ol.setZIndex(zIndex);
   }
 
-  set baseLayer(baseLayer: boolean) {
-    this.options.baseLayer = baseLayer;
-  }
-
   get baseLayer(): boolean {
     return this.options.baseLayer;
+  }
+
+  set baseLayer(baseLayer: boolean) {
+    this.options.baseLayer = baseLayer;
   }
 
   get visible(): boolean {
@@ -70,21 +70,16 @@ export abstract class Layer {
     return resolution >= minResolution && resolution <= maxResolution;
   }
 
-  constructor(dataSource: DataSource, options?: LayerOptions) {
-    this.dataSource = dataSource;
-    this.options = options || {};
-    this.options.view = Object.assign(
-      {},
-      dataSource.options.view,
-      this.options.view
-    );
+  constructor(options: LayerOptions) {
+    this.options = options;
+    this.dataSource = this.options.source;
 
     this.ol = this.createOlLayer();
     if (this.options.zIndex !== undefined) {
       this.zIndex = this.options.zIndex;
     }
 
-    const legend = dataSource.options.legend || {};
+    // const legend = dataSource.options.legend || {};
     if (this.options.baseLayer && this.options.visible === undefined) {
       this.options.visible = false;
     }
@@ -92,7 +87,7 @@ export abstract class Layer {
       this.options.visible === undefined ? true : this.options.visible;
     this.opacity =
       this.options.opacity === undefined ? 1 : this.options.opacity;
-    this.collapsed = legend.collapsed === undefined ? true : !this.visible;
+    // this.collapsed = legend.collapsed === undefined ? true : !this.visible;
   }
 
   protected abstract createOlLayer(): ol.layer.Layer;

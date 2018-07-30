@@ -9,12 +9,13 @@ import { Layer } from '../shared/layers';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerLegendComponent {
-
   @Input()
-  get layer(): Layer { return this._layer; }
+  get layer(): Layer {
+    return this._layer;
+  }
   set layer(value: Layer) {
     this._layer = value;
-    this._legend = value.dataSource.getLegend();
+    // this._legend = value.dataSource.getLegend();
   }
   private _layer: Layer;
 
@@ -27,5 +28,4 @@ export class LayerLegendComponent {
   private _legend;
 
   constructor() {}
-
 }

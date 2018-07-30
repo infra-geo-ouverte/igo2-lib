@@ -1,10 +1,16 @@
 import * as ol from 'openlayers';
-import { LayerOptions, LayerContext } from './layer.interface';
+import { LayerOptions } from './layer.interface';
 
-export interface TileLayerOptions extends LayerOptions {
-  view?: ol.olx.layer.TileOptions;
-}
+import { OSMDataSourceOptions } from '../../../datasource/shared/datasources/osm-datasource.interface';
+import { WMTSDataSourceOptions } from '../../../datasource/shared/datasources/wmts-datasource.interface';
+import { XYZDataSourceOptions } from '../../../datasource/shared/datasources/xyz-datasource.interface';
 
-export interface TileLayerContext extends LayerContext {
-  view?: ol.olx.layer.TileOptions;
+export interface TileLayerOptions
+  extends LayerOptions,
+    ol.olx.layer.TileOptions {
+  source:
+    | OSMDataSourceOptions
+    | WMTSDataSourceOptions
+    | XYZDataSourceOptions
+    | any;
 }

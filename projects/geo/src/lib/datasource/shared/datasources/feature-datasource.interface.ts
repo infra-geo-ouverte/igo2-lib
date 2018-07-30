@@ -1,5 +1,5 @@
 import * as ol from 'openlayers';
-import { DataSourceOptions, DataSourceContext } from './datasource.interface';
+import { DataSourceOptions } from './datasource.interface';
 
 export interface FeatureDataSourceOptions
   extends DataSourceOptions,
@@ -7,7 +7,3 @@ export interface FeatureDataSourceOptions
   formatType?: string;
   formatOptions?: any;
 }
-
-export interface FeatureDataSourceContext
-  extends DataSourceContext,
-    FeatureDataSourceOptions {}

@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
-import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
+import {
+  IgoMap,
+  DataSourceService,
+  LayerService,
+  WMSDataSourceOptions,
+  MetadataDataSourceOptions
+} from '@igo2/geo';
 
 @Component({
   selector: 'app-layer',
@@ -29,17 +35,20 @@ export class AppLayerComponent {
   ) {
     this.dataSourceService
       .createAsyncDataSource({
-        type: 'osm',
-        title: 'OSM'
+        type: 'osm'
       })
       .subscribe(dataSource => {
-        this.map.addLayer(this.layerService.createLayer(dataSource, {}));
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'OSM',
+            source: dataSource
+          })
+        );
       });
 
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        title: 'School board',
         url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
         params: {
           layers: 'MELS_CS_ANGLO_S',
@@ -47,21 +56,39 @@ export class AppLayerComponent {
         }
       })
       .subscribe(dataSource => {
-        this.map.addLayer(this.layerService.createLayer(dataSource, {}));
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'School board',
+            source: dataSource
+          })
+        );
       });
 
+    interface options extends WMSDataSourceOptions, MetadataDataSourceOptions {}
+
+    const datasource: options = {
+      type: 'wms',
+      projection: 'EPSG:4326',
+      params: {
+        layers: 'vg_observation_v_inondation_embacle_wmst',
+        version: '1.3.0'
+      },
+      metadata: {
+        url:
+          'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
+        extern: true
+      }
+    };
+
     this.dataSourceService
-      .createAsyncDataSource({
-        type: 'wms',
-        title: 'Enclave',
-        url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
-        params: {
-          layers: 'MTQ_511_P',
-          version: '1.3.0'
-        }
-      })
+      .createAsyncDataSource(datasource)
       .subscribe(dataSource => {
-        this.map.addLayer(this.layerService.createLayer(dataSource, {}));
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle',
+            source: dataSource
+          })
+        );
       });
   }
 }

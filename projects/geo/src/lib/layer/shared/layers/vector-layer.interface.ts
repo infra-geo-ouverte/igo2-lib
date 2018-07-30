@@ -1,12 +1,12 @@
 import * as ol from 'openlayers';
-import { LayerOptions, LayerContext } from './layer.interface';
+import { LayerOptions } from './layer.interface';
 
-export interface VectorLayerOptions extends LayerOptions {
-  view?: ol.olx.layer.VectorOptions;
-  style?: ol.style.Style;
-}
+import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
+import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
 
-export interface VectorLayerContext extends LayerContext {
-  view?: ol.olx.layer.VectorOptions;
-  style?: {[key: string]: any};
+export interface VectorLayerOptions
+  extends LayerOptions,
+    ol.olx.layer.VectorOptions {
+  source: FeatureDataSourceOptions | WFSDataSourceOptions | any;
+  style?: { [key: string]: any } | any;
 }

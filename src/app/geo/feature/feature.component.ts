@@ -39,11 +39,15 @@ export class AppFeatureComponent {
   ) {
     this.dataSourceService
       .createAsyncDataSource({
-        type: 'osm',
-        title: 'OSM'
+        type: 'osm'
       })
       .subscribe(dataSource => {
-        this.map.addLayer(this.layerService.createLayer(dataSource, {}));
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'OSM',
+            source: dataSource
+          })
+        );
       });
 
     const feature1: Feature = {

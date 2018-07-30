@@ -15,7 +15,7 @@ import {
 } from '../../layer/shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import {
-  AnyDataSourceContext,
+  AnyDataSourceOptions,
   DataSourceService
 } from '../../datasource/shared/datasource.service';
 
@@ -43,12 +43,9 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
     const dataSourceContext = Object.assign({}, layerContext, sourceContext);
 
     this.dataSourceService
-      .createAsyncDataSource(dataSourceContext as AnyDataSourceContext)
+      .createAsyncDataSource(dataSourceContext as AnyDataSourceOptions)
       .subscribe(dataSource => {
-        const layerInstance = this.layerService.createLayer(
-          dataSource,
-          layerContext
-        );
+        const layerInstance = this.layerService.createLayer(layerContext);
         map.addLayer(layerInstance);
       });
   }

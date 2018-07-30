@@ -114,8 +114,8 @@ export class LayerItemComponent implements OnDestroy {
     let i = 0;
     const features = featuresGeoJSON.features.map(f =>
       Object.assign({}, f, {
-        source: layer.dataSource.title,
-        id: layer.dataSource.title + String(i++)
+        source: layer.title,
+        id: layer.title + String(i++)
       })
     );
 

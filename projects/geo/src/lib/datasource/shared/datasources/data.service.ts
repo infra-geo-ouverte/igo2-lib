@@ -1,3 +1,1 @@
-export abstract class DataService {
-    abstract getData(): string;
-}
+export abstract class DataService {}

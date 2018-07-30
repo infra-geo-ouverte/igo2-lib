@@ -102,9 +102,7 @@ export class IgoMap {
         })
       });
 
-      this.overlayDataSource = new FeatureDataSource({
-        title: 'Overlay'
-      });
+      this.overlayDataSource = new FeatureDataSource();
 
       const stroke = new ol.style.Stroke({
         color: [0, 161, 222, 1],
@@ -125,9 +123,11 @@ export class IgoMap {
         })
       });
 
-      const layer = new VectorLayer(this.overlayDataSource, {
+      const layer = new VectorLayer({
+        title: 'Overlay',
         zIndex: 999,
-        style: this.overlayStyle
+        style: this.overlayStyle,
+        source: this.overlayDataSource
       });
       this.addLayer(layer, false);
     }

@@ -1,12 +1,11 @@
 import * as ol from 'openlayers';
-import { LayerOptions, LayerContext } from './layer.interface';
+import { LayerOptions } from './layer.interface';
 
-export interface ImageLayerOptions extends LayerOptions {
-  view?: ol.olx.layer.ImageOptions;
-  token?: string;
-}
+import { WMSDataSourceOptions } from '../../../datasource/shared/datasources/wms-datasource.interface';
 
-export interface ImageLayerContext extends LayerContext {
-  view?: ol.olx.layer.ImageOptions;
+export interface ImageLayerOptions
+  extends LayerOptions,
+    ol.olx.layer.ImageOptions {
   token?: string;
+  source: WMSDataSourceOptions | any;
 }
