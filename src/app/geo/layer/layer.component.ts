@@ -64,11 +64,13 @@ export class AppLayerComponent {
         );
       });
 
-    // interface options extends WMSDataSourceOptions, MetadataDataSourceOptions {}
+    interface WMSoptions
+      extends WMSDataSourceOptions,
+        MetadataDataSourceOptions {}
 
-    const datasource: any = {
+    const datasource: WMSoptions = {
       type: 'wms',
-      projection: 'EPSG:4326',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
         version: '1.3.0'
