@@ -40,7 +40,7 @@ export class AppOverlayComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource: any) => {
+      .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',

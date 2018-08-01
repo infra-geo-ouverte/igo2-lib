@@ -54,7 +54,7 @@ export class OgcFilterWriter {
     proj?,
     fieldNameGeometry?: string
   ): string {
-    let bboxFilter;
+    let ourBboxFilter;
     let enableBbox: boolean;
     if (/intersects|contains|within/gi.test(JSON.stringify(filters))) {
       enableBbox = false;
@@ -68,13 +68,13 @@ export class OgcFilterWriter {
           : fieldNameGeometry;
     }
     if (extent && filters) {
-      bboxFilter = bboxFilter(fieldNameGeometry, extent, proj.getCode());
+      ourBboxFilter = bboxFilter(fieldNameGeometry, extent, proj.getCode());
     }
     let filterAssembly: OgcFilter;
     if (filters) {
       filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry);
       if (extent && enableBbox) {
-        filterAssembly = andFilter(bboxFilter, this.bundleFilter(filters));
+        filterAssembly = andFilter(ourBboxFilter, this.bundleFilter(filters));
       } else {
         filterAssembly = this.bundleFilter(filters);
       }

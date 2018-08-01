@@ -1,10 +1,10 @@
 import LayerOL from 'ol/layer/Layer';
 
-import { AnyDataSource } from '../../../datasource/shared/datasources/any-datasource';
+import { DataSource } from '../../../datasource/shared/datasources/datasource';
 // import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
 
 export interface LayerOptions {
-  source?: AnyDataSource;
+  source?: DataSource;
   // sourceOptions?: AnyDataSourceOptions;
   title?: string;
   id?: string;

@@ -28,9 +28,9 @@ export class WMSDataSource extends DataSource {
   }
 
   constructor(
+    // protected dataSourceService: WFSDataSourceService
     public options: WMSDataSourceOptions
-  ) // protected dataSourceService: WFSDataSourceService
-  {
+  ) {
     super(options);
 
     // Important: To use wms versions smaller than 1.3.0, SRS

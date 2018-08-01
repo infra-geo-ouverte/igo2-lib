@@ -37,7 +37,7 @@ export class AppLayerComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe((dataSource: any) => {
+      .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -55,7 +55,7 @@ export class AppLayerComponent {
           version: '1.3.0'
         }
       })
-      .subscribe((dataSource: any) => {
+      .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'School board',
@@ -82,7 +82,7 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe((dataSource: any) => {
+      .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle',

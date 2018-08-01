@@ -32,7 +32,7 @@ export class WFSDataSourceService extends DataService {
   }
 
   public checkWfsOptions(wfsDataSourceOptions: WFSDataSourceOptions) {
-    //: WFSDataSourceOptions {
+    // : WFSDataSourceOptions {
     // const mandatoryParamMissing: any[] = [];
     //
     // ['url', 'featureTypes', 'fieldNameGeometry'].forEach(element => {

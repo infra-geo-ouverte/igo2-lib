@@ -19,7 +19,6 @@ import {
   TileLayerOptions,
   VectorLayer,
   VectorLayerOptions,
-  AnyLayer,
   AnyLayerOptions
 } from './layers';
 

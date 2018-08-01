@@ -19,7 +19,6 @@ import {
   WMTSDataSourceOptions,
   WMSDataSource,
   WMSDataSourceOptions,
-  AnyDataSource,
   AnyDataSourceOptions
 } from './datasources';
 
