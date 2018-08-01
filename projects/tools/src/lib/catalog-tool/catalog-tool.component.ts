@@ -1,8 +1,6 @@
-import { Component ,
-CUSTOM_ELEMENTS_SCHEMA
-} from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { Register, ToolService } from '@igo2/geo';
+import { Register, ToolService } from '@igo2/geo-context';
 
 @Register({
   name: 'catalog',

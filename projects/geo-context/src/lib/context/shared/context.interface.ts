@@ -1,4 +1,4 @@
-import { MapViewOptions, LayerContext, DataSourceContext } from '@igo2/geo';
+import { MapViewOptions, LayerOptions, DataSourceOptions } from '@igo2/geo';
 
 import { Tool } from '../../tool/shared/tool.interface';
 import { TypePermission } from './context.enum';
@@ -27,9 +27,7 @@ export interface DetailedContext extends Context {
   toolbar?: string[];
 }
 
-export interface ContextLayer extends LayerContext {
-  source: DataSourceContext;
-}
+export interface ContextLayer extends LayerOptions {}
 
 export interface ContextMapView extends MapViewOptions {
   keepCurrentView?: boolean;

@@ -5,7 +5,7 @@
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
     "@igo2/geo": "^0.21.1",
-    "@igo2/context": "^0.21.1",
+    "@igo2/geo-context": "^0.21.1",
     "rxjs": "^6.1.0"
   }
 }

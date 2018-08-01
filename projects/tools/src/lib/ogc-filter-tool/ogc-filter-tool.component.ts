@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { Register } from '@igo2/context';
+import { Register } from '@igo2/geo-context';
 
 @Register({
   name: 'ogcFilter',

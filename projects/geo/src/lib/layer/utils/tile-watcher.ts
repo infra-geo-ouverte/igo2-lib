@@ -1,25 +1,31 @@
+import TileSource from 'ol/source/Tile';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
+
+import { TileLayer } from '../shared/layers/tile-layer';
 
 export class TileWatcher extends Watcher {
   private id: string;
   private loaded = 0;
   private loading = 0;
 
-  constructor(private source: ol.source.Tile) {
+  private source: TileSource;
+
+  constructor(layer: TileLayer) {
     super();
+    this.source = layer.options.source.ol;
     this.id = uuid();
   }
 
   protected watch() {
-    this.source.on(`tileloadstart`, this.handleLoadStart, this);
-    this.source.on(`tileloadend`, this.handleLoadEnd, this);
-    this.source.on(`tileloaderror`, this.handleLoadEnd, this);
+    this.source.on(`tileloadstart`, e => this.handleLoadStart(e));
+    this.source.on(`tileloadend`, e => this.handleLoadEnd(e));
+    this.source.on(`tileloaderror`, e => this.handleLoadEnd(e));
   }
 
   protected unwatch() {
-    this.source.un(`tileloadstart`, this.handleLoadStart, this);
-    this.source.un(`tileloadend`, this.handleLoadEnd, this);
-    this.source.un(`tileloaderror`, this.handleLoadEnd, this);
+    this.source.un(`tileloadstart`, e => this.handleLoadStart(e));
+    this.source.un(`tileloadend`, e => this.handleLoadEnd(e));
+    this.source.un(`tileloaderror`, e => this.handleLoadEnd(e));
   }
 
   private handleLoadStart(event: any) {

@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { Register } from '@igo2/context';
+import { Register } from '@igo2/geo-context';
 
 import {
   MapService,
@@ -8,7 +8,7 @@ import {
   OverlayService,
   Feature,
   FeatureType,
-  AnyDataSourceContext,
+  AnyDataSourceOptions,
   DataSourceService
 } from '@igo2/geo';
 
@@ -43,11 +43,10 @@ export class SearchResultsToolComponent {
 
       if (map !== undefined) {
         this.dataSourceService
-          .createAsyncDataSource(feature.layer as AnyDataSourceContext)
+          .createAsyncDataSource(feature.layer as AnyDataSourceOptions)
           .subscribe(dataSource => {
-            map.addLayer(
-              this.layerService.createLayer(dataSource, feature.layer)
-            );
+            (feature.layer as any).source = dataSource;
+            map.addLayer(this.layerService.createLayer(feature.layer));
           });
       }
     }

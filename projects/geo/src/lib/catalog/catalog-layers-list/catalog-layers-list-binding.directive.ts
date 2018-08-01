@@ -14,10 +14,8 @@ import {
   GroupLayers
 } from '../../layer/shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import {
-  AnyDataSourceOptions,
-  DataSourceService
-} from '../../datasource/shared/datasource.service';
+import { AnyDataSourceOptions } from '../../datasource/shared/datasources/any-datasource.interface';
+import { DataSourceService } from '../../datasource/shared/datasource.service';
 
 import { CatalogService } from '../shared/catalog.service';
 import { Catalog } from '../shared/catalog.interface';

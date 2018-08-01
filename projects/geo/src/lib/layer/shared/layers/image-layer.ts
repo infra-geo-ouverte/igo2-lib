@@ -1,15 +1,16 @@
 import ImageLayerOL from 'ol/layer/Image';
 import ImageSource from 'ol/source/Image';
 
-import { DataSource } from '../../../datasource';
-
 import { ImageWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
+
+import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
 
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 
 export class ImageLayer extends Layer {
+  public dataSource: WMSDataSource;
   public options: ImageLayerOptions;
   public ol: ImageLayerOL;
 
@@ -18,7 +19,7 @@ export class ImageLayer extends Layer {
   constructor(options: ImageLayerOptions) {
     super(options);
 
-    this.watcher = new ImageWatcher(this.options.source.ol as ImageSource);
+    this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }
 

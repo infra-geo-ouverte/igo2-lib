@@ -48,7 +48,7 @@ export class AppQueryComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource: any) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -61,7 +61,7 @@ export class AppQueryComponent {
       .createAsyncDataSource({
         type: 'vector'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource: any) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Vector Layer',

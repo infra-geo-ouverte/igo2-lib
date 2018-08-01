@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+// import { HttpClient } from '@angular/common/http';
 
 import VectorSource from 'ol/source/Vector';
 import { bbox } from 'ol/loadingstrategy.js';
@@ -7,17 +7,16 @@ import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WFSDataSourceService } from './wfs-datasource.service';
+// import { WFSDataSourceService } from './wfs-datasource.service';
 
 export class WFSDataSource extends DataSource {
   public ol: VectorSource;
-  public httpClient: HttpClient;
+  // public httpClient: HttpClient;
 
   constructor(
-    public options: WFSDataSourceOptions,
-    protected dataSourceService: WFSDataSourceService
+    public options: WFSDataSourceOptions // protected dataSourceService: WFSDataSourceService
   ) {
-    super(options, dataSourceService);
+    super(options);
     // this.ogcFilterWriter = new OgcFilterWriter;
 
     // this.dataSourceService.checkWfsOptions(options);
@@ -73,7 +72,7 @@ export class WFSDataSource extends DataSource {
   protected createOlSource(): VectorSource {
     const wfsOptions: WFSDataSourceOptions = this.options;
 
-    this.dataSourceService.checkWfsOptions(wfsOptions);
+    // this.dataSourceService.checkWfsOptions(wfsOptions);
 
     return new VectorSource({
       // format: this.dataSourceService.getFormatFromOptions(wfsOptions),

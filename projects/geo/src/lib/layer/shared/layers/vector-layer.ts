@@ -1,12 +1,14 @@
 import VectorLayerOL from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
-import { DataSource } from '../../../datasource';
+import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
+import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
+  public dataSource: FeatureDataSource | WFSDataSource;
   public options: VectorLayerOptions;
   public ol: VectorLayerOL;
 

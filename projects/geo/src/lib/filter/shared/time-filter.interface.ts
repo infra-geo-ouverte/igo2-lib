@@ -1,5 +1,5 @@
-import { DataSource } from '../../datasource/shared/datasources/datasource';
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
 
 export interface TimeFilterOptions {
   min?: string;
@@ -14,14 +14,12 @@ export interface TimeFilterOptions {
   timeInterval?: number;
 }
 
-export interface TimeFilterableDataSourceOptions
-  extends DataSourceOptions,
-    ol.olx.source.ImageWMSOptions {
+export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {
   timeFilterable?: boolean;
   timeFilter?: TimeFilterOptions;
 }
 
-export interface TimeFilterableDataSource extends DataSource {
+export interface TimeFilterableDataSource extends WMSDataSource {
   options: TimeFilterableDataSourceOptions;
   filterByDate(date: Date | [Date, Date]);
   filterByYear(year: string | [string, string]);

@@ -16,7 +16,7 @@ export interface Feature {
 
   projection?: string;
   geometry?: FeatureGeometry;
-  extent?: ol.Extent;
+  extent?: [number, number, number, number];
   properties?: { [key: string]: any };
   layer?: AnyDataSourceOptions;
 }

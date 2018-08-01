@@ -10,7 +10,7 @@ import Geolocation from 'ol/Geolocation';
 import { easeOut } from 'ol/easing.js';
 import Attribution from 'ol/control/Attribution';
 import ScaleLine from 'ol/control/ScaleLine';
-import Interaction from 'ol/interaction/Interaction';
+import { defaults as defaultsInteraction } from 'ol/interaction.js';
 import { Stroke, Fill, Style, Circle, Icon } from 'ol/style';
 
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -21,7 +21,12 @@ import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 import { LayerWatcher } from '../utils';
-import { MapViewOptions, MapOptions } from './map.interface';
+import {
+  MapViewOptions,
+  MapOptions,
+  AttributionOptions,
+  ScaleLineOptions
+} from './map.interface';
 
 export class IgoMap {
   public ol: Map;
@@ -70,14 +75,13 @@ export class IgoMap {
       if (this.options.controls.attribution) {
         const attributionOpt = (this.options.controls.attribution === true
           ? {}
-          : this.options.controls
-              .attribution) as ol.olx.control.AttributionOptions;
+          : this.options.controls.attribution) as AttributionOptions;
         controls.push(new Attribution(attributionOpt));
       }
       if (this.options.controls.scaleLine) {
         const scaleLineOpt = (this.options.controls.scaleLine === true
           ? {}
-          : this.options.controls.scaleLine) as ol.olx.control.ScaleLineOptions;
+          : this.options.controls.scaleLine) as ScaleLineOptions;
         controls.push(new ScaleLine(scaleLineOpt));
       }
     }
@@ -96,7 +100,7 @@ export class IgoMap {
     }
 
     this.ol = new Map({
-      interactions: Interaction.defaults(interactions),
+      interactions: defaultsInteraction(interactions),
       controls: controls
     });
 

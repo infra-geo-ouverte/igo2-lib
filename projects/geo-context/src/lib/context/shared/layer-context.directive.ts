@@ -70,16 +70,16 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   private addLayerToMap(contextLayer: ContextLayer) {
-    if (contextLayer.maxScaleDenom) {
-      contextLayer.maxResolution = this.getResolutionFromScale(
-        contextLayer.maxScaleDenom
-      );
-    }
-    if (contextLayer.minScaleDenom) {
-      contextLayer.minResolution = this.getResolutionFromScale(
-        contextLayer.minScaleDenom
-      );
-    }
+    // if (contextLayer.maxScaleDenom) {
+    //   contextLayer.maxResolution = this.getResolutionFromScale(
+    //     contextLayer.maxScaleDenom
+    //   );
+    // }
+    // if (contextLayer.minScaleDenom) {
+    //   contextLayer.minResolution = this.getResolutionFromScale(
+    //     contextLayer.minScaleDenom
+    //   );
+    // }
     const sourceContext = contextLayer.source;
     const layerContext: any = Object.assign({}, contextLayer);
     delete layerContext.source;
@@ -93,9 +93,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           dataSource.options['id'] ? dataSource.options['id'] : dataSource.id,
           layerContext
         );
-        this.map.addLayer(
-          this.layerService.createLayer(dataSource, layerContext)
-        );
+
+        layerContext.source = dataSource;
+        this.map.addLayer(this.layerService.createLayer(layerContext));
       });
   }
 

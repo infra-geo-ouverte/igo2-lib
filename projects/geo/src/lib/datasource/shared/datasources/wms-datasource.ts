@@ -4,7 +4,7 @@ import ImageWMS from 'ol/source/ImageWMS';
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
-import { WFSDataSourceService } from './wfs-datasource.service';
+// import { WFSDataSourceService } from './wfs-datasource.service';
 
 export class WMSDataSource extends DataSource {
   public ol: ImageWMS;
@@ -28,10 +28,10 @@ export class WMSDataSource extends DataSource {
   }
 
   constructor(
-    public options: WMSDataSourceOptions,
-    protected dataSourceService: WFSDataSourceService
-  ) {
-    super(options, dataSourceService);
+    public options: WMSDataSourceOptions
+  ) // protected dataSourceService: WFSDataSourceService
+  {
+    super(options);
 
     // Important: To use wms versions smaller than 1.3.0, SRS
     // needs to be supplied in the source "params"

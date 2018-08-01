@@ -37,7 +37,7 @@ export class AppLayerComponent {
       .createAsyncDataSource({
         type: 'osm'
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource: any) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
@@ -55,7 +55,7 @@ export class AppLayerComponent {
           version: '1.3.0'
         }
       })
-      .subscribe(dataSource => {
+      .subscribe((dataSource: any) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'School board',
@@ -64,9 +64,9 @@ export class AppLayerComponent {
         );
       });
 
-    interface options extends WMSDataSourceOptions, MetadataDataSourceOptions {}
+    // interface options extends WMSDataSourceOptions, MetadataDataSourceOptions {}
 
-    const datasource: options = {
+    const datasource: any = {
       type: 'wms',
       projection: 'EPSG:4326',
       params: {
@@ -82,7 +82,7 @@ export class AppLayerComponent {
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
-      .subscribe(dataSource => {
+      .subscribe((dataSource: any) => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle',

@@ -1,25 +1,31 @@
+import ImageSource from 'ol/source/Image';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
+
+import { ImageLayer } from '../shared/layers/image-layer';
 
 export class ImageWatcher extends Watcher {
   protected id: string;
   protected loaded = 0;
   protected loading = 0;
 
-  constructor(private source: ol.source.Image) {
+  private source: ImageSource;
+
+  constructor(layer: ImageLayer) {
     super();
+    this.source = layer.options.source.ol;
     this.id = uuid();
   }
 
   protected watch() {
-    this.source.on(`imageloadstart`, this.handleLoadStart, this);
-    this.source.on(`imageloadend`, this.handleLoadEnd, this);
-    this.source.on(`imageloaderror`, this.handleLoadEnd, this);
+    this.source.on(`imageloadstart`, e => this.handleLoadStart(e));
+    this.source.on(`imageloadend`, e => this.handleLoadEnd(e));
+    this.source.on(`imageloaderror`, e => this.handleLoadEnd(e));
   }
 
   protected unwatch() {
-    this.source.un(`imageloadstart`, this.handleLoadStart, this);
-    this.source.un(`imageloadend`, this.handleLoadEnd, this);
-    this.source.un(`imageloaderror`, this.handleLoadEnd, this);
+    this.source.un(`imageloadstart`, e => this.handleLoadStart(e));
+    this.source.un(`imageloadend`, e => this.handleLoadEnd(e));
+    this.source.un(`imageloaderror`, e => this.handleLoadEnd(e));
   }
 
   private handleLoadStart(event: any) {

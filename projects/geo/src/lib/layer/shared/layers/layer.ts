@@ -92,7 +92,7 @@ export abstract class Layer {
     // this.collapsed = legend.collapsed === undefined ? true : !this.visible;
   }
 
-  protected abstract createOlLayer(): ol.layer.Layer;
+  protected abstract createOlLayer(): LayerOL;
 
   add(map: IgoMap) {
     this.map = map;

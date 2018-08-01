@@ -6,9 +6,22 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
 
 export interface OgcFilter extends Filter {}
 
-export interface WFSWriteGetFeatureOptions
-  extends ol.olx.format.WFSWriteGetFeatureOptions {
-  filter: any;
+export interface WFSWriteGetFeatureOptions {
+  filter?: Filter;
+
+  featureNS: string;
+  featurePrefix: string;
+  featureTypes: string[];
+  srsName?: string;
+  handle?: string;
+  outputFormat?: string;
+  maxFeatures?: number;
+  geometryName?: string;
+  propertyNames?: string[];
+  startIndex?: number;
+  count?: number;
+  bbox?: [number, number, number, number];
+  resultType?: string;
 }
 
 export type AnyBaseOgcFilterOptions =

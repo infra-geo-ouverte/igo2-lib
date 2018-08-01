@@ -18,15 +18,12 @@ import {
   TileLayer,
   TileLayerOptions,
   VectorLayer,
-  VectorLayerOptions
+  VectorLayerOptions,
+  AnyLayer,
+  AnyLayerOptions
 } from './layers';
 
 import { StyleService } from './style.service';
-
-export type AnyLayerOptions =
-  | ImageLayerOptions
-  | TileLayerOptions
-  | VectorLayerOptions;
 
 @Injectable({
   providedIn: 'root'

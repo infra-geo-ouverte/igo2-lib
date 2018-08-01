@@ -4,7 +4,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 
-import { IgoContextModule } from '@igo2/geo';
+import { IgoContextModule } from '@igo2/geo-context';
 import { PermissionsContextManagerToolComponent } from './permissions-context-manager-tool.component';
 
 @NgModule({

@@ -56,12 +56,12 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   constructor(private layerService: LayerService) {}
 
   ngAfterViewInit() {
-    this.map.ol.on('moveend', this.handleMoveEnd, this);
+    this.map.ol.on('moveend', () => this.handleMoveEnd());
     this.handleMoveEnd();
   }
 
   ngOnDestroy() {
-    this.map.ol.un('moveend', this.handleMoveEnd, this);
+    this.map.ol.un('moveend', () => this.handleMoveEnd());
   }
 
   changeBaseLayer(baseLayer: Layer) {

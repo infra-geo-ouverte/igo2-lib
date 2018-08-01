@@ -1,5 +1,9 @@
+import XYZSource from 'ol/source/XYZ';
 import { DataSourceOptions } from './datasource.interface';
 
-export interface XYZDataSourceOptions
-  extends DataSourceOptions,
-    ol.olx.source.XYZOptions {}
+export interface XYZDataSourceOptions extends DataSourceOptions {
+  projection?: string;
+  url?: string;
+  urls?: string[];
+  ol?: XYZSource;
+}

@@ -69,18 +69,18 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       (layers: Layer[]) => this.handleLayersChange(layers)
     );
 
-    this.map.ol.on('singleclick', this.handleMapClick, this);
+    this.map.ol.on('singleclick', e => this.handleMapClick(e));
     this.dragBox = new DragBox({
       condition: this.platformModifierKeyOnly
     });
     this.map.ol.addInteraction(this.dragBox);
-    this.dragBox.on('boxend', this.handleMapClick, this);
+    this.dragBox.on('boxend', e => this.handleMapClick(e));
   }
 
   ngOnDestroy() {
     this.queryLayers$$.unsubscribe();
     this.unsubscribeQueries();
-    this.map.ol.un('singleclick', this.handleMapClick, this);
+    this.map.ol.un('singleclick', e => this.handleMapClick(e));
   }
 
   private handleLayersChange(layers: Layer[]) {

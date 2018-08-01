@@ -30,6 +30,9 @@ export class FeatureDataSource extends DataSource {
   }
 
   private getSourceFormatFromOptions(options: FeatureDataSourceOptions) {
+    if (options.format) {
+      return options.format;
+    }
     let olFormatCls;
     const formatType = options.formatType;
     if (!formatType) {

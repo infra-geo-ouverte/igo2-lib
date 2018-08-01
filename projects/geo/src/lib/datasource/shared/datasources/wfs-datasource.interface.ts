@@ -1,8 +1,9 @@
 import { DataSourceOptions } from './datasource.interface';
+import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export interface WFSDataSourceOptions
   extends DataSourceOptions,
-    ol.olx.source.VectorOptions {
+    FeatureDataSourceOptions {
   // version?: string;
   // url: string;
   // featureTypes: string;
