@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, catchError, debounceTime } from 'rxjs/operators';
 
-import Point from 'ol/geom/Point';
+import olPoint from 'ol/geom/Point';
 
 import { uuid } from '@igo2/utils';
 import {
@@ -328,7 +328,7 @@ export class ContextService {
   getContextFromMap(igoMap: IgoMap): DetailedContext {
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
-    const center: any = new Point(view.getCenter()).transform(
+    const center: any = new olPoint(view.getCenter()).transform(
       proj,
       'EPSG:4326'
     );

@@ -1,24 +1,24 @@
-import andFilter from 'ol/format/filter/And';
-import bboxFilter from 'ol/format/filter/Bbox';
-import betweenFilter from 'ol/format/filter/IsBetween';
-import containsFilter from 'ol/format/filter/Contains';
-import duringFilter from 'ol/format/filter/During';
-import equalToFilter from 'ol/format/filter/EqualTo';
-import greaterThanFilter from 'ol/format/filter/GreaterThan';
-import greaterThanOrEqualToFilter from 'ol/format/filter/GreaterThanOrEqualTo';
-import intersectsFilter from 'ol/format/filter/Intersects';
-import isNullFilter from 'ol/format/filter/IsNull';
-import lessThanFilter from 'ol/format/filter/LessThan';
-import lessThanOrEqualToFilter from 'ol/format/filter/LessThanOrEqualTo';
-import likeFilter from 'ol/format/filter/IsLike';
-import notEqualToFilter from 'ol/format/filter/NotEqualTo';
-import withinFilter from 'ol/format/filter/Within';
-import notFilter from 'ol/format/filter/Not';
-import orFilter from 'ol/format/filter/Or';
+import olFilterAnd from 'ol/format/filter/And';
+import olFilterBbox from 'ol/format/filter/Bbox';
+import olFilterBetween from 'ol/format/filter/IsBetween';
+import olFilterContains from 'ol/format/filter/Contains';
+import olFilterDuring from 'ol/format/filter/During';
+import olFilterEqualTo from 'ol/format/filter/EqualTo';
+import olFilterGreaterThan from 'ol/format/filter/GreaterThan';
+import olFilterGreaterThanOrEqualTo from 'ol/format/filter/GreaterThanOrEqualTo';
+import olFilterIntersects from 'ol/format/filter/Intersects';
+import olFilterIsNull from 'ol/format/filter/IsNull';
+import olFilterLessThan from 'ol/format/filter/LessThan';
+import olFilterLessThanOrEqualTo from 'ol/format/filter/LessThanOrEqualTo';
+import olFilterLike from 'ol/format/filter/IsLike';
+import olFilterNotEqualTo from 'ol/format/filter/NotEqualTo';
+import olFilterWithin from 'ol/format/filter/Within';
+import olFilterNot from 'ol/format/filter/Not';
+import olFilterOr from 'ol/format/filter/Or';
 
-import WKT from 'ol/format/WKT';
-import WFS from 'ol/format/WFS';
-import Geometry from 'ol/geom/Geometry';
+import olFormatWKT from 'ol/format/WKT';
+import olFormatWFS from 'ol/format/WFS';
+import olGeometry from 'ol/geom/Geometry';
 
 import { uuid } from '@igo2/utils';
 
@@ -68,13 +68,13 @@ export class OgcFilterWriter {
           : fieldNameGeometry;
     }
     if (extent && filters) {
-      ourBboxFilter = bboxFilter(fieldNameGeometry, extent, proj.getCode());
+      ourBboxFilter = olFilterBbox(fieldNameGeometry, extent, proj.getCode());
     }
     let filterAssembly: OgcFilter;
     if (filters) {
       filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry);
       if (extent && enableBbox) {
-        filterAssembly = andFilter(ourBboxFilter, this.bundleFilter(filters));
+        filterAssembly = olFilterAnd(ourBboxFilter, this.bundleFilter(filters));
       } else {
         filterAssembly = this.bundleFilter(filters);
       }
@@ -92,7 +92,7 @@ export class OgcFilterWriter {
       geometryName: fieldNameGeometry
     };
 
-    const query = new WFS().writeGetFeature(wfsOptions);
+    const query = new olFormatWFS().writeGetFeature(wfsOptions);
     const str = new XMLSerializer().serializeToString(query);
     const regexp1 = /typenames *=|typename *=\"featureTypes\" *>/gi;
     const regexp2 = /<\/Query><\/GetFeature>/gi;
@@ -151,9 +151,9 @@ export class OgcFilterWriter {
 
     const wfs_expression = filterOptions.expression;
 
-    let geometry: Geometry;
+    let geometry: olGeometry;
     if (wfs_wkt_geometry) {
-      const wkt = new WKT();
+      const wkt = new olFormatWKT();
       geometry = wkt.readGeometry(wfs_wkt_geometry, {
         dataProjection: wfs_srsName,
         featureProjection: 'EPSG:3857'
@@ -162,33 +162,33 @@ export class OgcFilterWriter {
 
     switch (operator) {
       case 'BBOX':
-        return bboxFilter(wfs_geometryName, wfs_extent, wfs_srsName);
+        return olFilterBbox(wfs_geometryName, wfs_extent, wfs_srsName);
       case 'PropertyIsBetween':
-        return betweenFilter(
+        return olFilterBetween(
           wfs_propertyName,
           wfs_lowerBoundary,
           wfs_upperBoundary
         );
       case 'Contains':
-        return containsFilter(wfs_geometryName, geometry, wfs_srsName);
+        return olFilterContains(wfs_geometryName, geometry, wfs_srsName);
       case 'During':
-        return duringFilter(wfs_propertyName, wfs_begin, wfs_end);
+        return olFilterDuring(wfs_propertyName, wfs_begin, wfs_end);
       case 'PropertyIsEqualTo':
-        return equalToFilter(wfs_propertyName, wfs_expression, wfs_matchCase);
+        return olFilterEqualTo(wfs_propertyName, wfs_expression, wfs_matchCase);
       case 'PropertyIsGreaterThan':
-        return greaterThanFilter(wfs_propertyName, wfs_expression);
+        return olFilterGreaterThan(wfs_propertyName, wfs_expression);
       case 'PropertyIsGreaterThanOrEqualTo':
-        return greaterThanOrEqualToFilter(wfs_propertyName, wfs_expression);
+        return olFilterGreaterThanOrEqualTo(wfs_propertyName, wfs_expression);
       case 'Intersects':
-        return intersectsFilter(wfs_geometryName, geometry, wfs_srsName);
+        return olFilterIntersects(wfs_geometryName, geometry, wfs_srsName);
       case 'PropertyIsNull':
-        return isNullFilter(wfs_propertyName);
+        return olFilterIsNull(wfs_propertyName);
       case 'PropertyIsLessThan':
-        return lessThanFilter(wfs_propertyName, wfs_expression);
+        return olFilterLessThan(wfs_propertyName, wfs_expression);
       case 'PropertyIsLessThanOrEqualTo':
-        return lessThanOrEqualToFilter(wfs_propertyName, wfs_expression);
+        return olFilterLessThanOrEqualTo(wfs_propertyName, wfs_expression);
       case 'PropertyIsLike':
-        return likeFilter(
+        return olFilterLike(
           wfs_propertyName,
           wfs_pattern.replace(/[()_]/gi, wfs_singleChar),
           wfs_wildCard,
@@ -197,20 +197,20 @@ export class OgcFilterWriter {
           wfs_matchCase
         );
       case 'PropertyIsNotEqualTo':
-        return notEqualToFilter(
+        return olFilterNotEqualTo(
           wfs_propertyName,
           wfs_expression,
           wfs_matchCase
         );
       case 'Within':
-        return withinFilter(wfs_geometryName, geometry, wfs_srsName);
+        return olFilterWithin(wfs_geometryName, geometry, wfs_srsName);
       // LOGICAL
       case 'And':
-        return andFilter.apply(null, logical_array);
+        return olFilterAnd.apply(null, logical_array);
       case 'Or':
-        return orFilter.apply(null, logical_array);
+        return olFilterOr.apply(null, logical_array);
       case 'Not':
-        return notFilter.apply(null, logical_array);
+        return olFilterNot.apply(null, logical_array);
 
       default:
         return undefined;

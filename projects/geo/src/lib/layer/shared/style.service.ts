@@ -1,36 +1,18 @@
 import { Injectable } from '@angular/core';
 
-import {
-  Circle,
-  Stroke,
-  Fill,
-  Style,
-  Image,
-  Icon,
-  RegularShape
-} from 'ol/style';
+import * as olstyle from 'ol/style';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StyleService {
-  static style = {
-    Regularshape: RegularShape,
-    Icon: Icon,
-    Circle: Circle,
-    Stroke: Stroke,
-    Fill: Fill,
-    Style: Style,
-    Image: Image
-  };
-
   constructor() {}
 
   createStyle(options: { [key: string]: any }) {
     return this.parseStyle('style', options);
   }
 
-  private parseStyle(key: string, value: any): Style {
+  private parseStyle(key: string, value: any): olstyle {
     const styleOptions = {};
     const olCls = this.getOlCls(key);
 
@@ -61,8 +43,11 @@ export class StyleService {
   }
 
   private getOlCls(key: any) {
-    const olCls =
-      StyleService.style[key.charAt(0).toUpperCase() + key.slice(1)];
+    let olCls = olstyle[key.charAt(0).toUpperCase() + key.slice(1)];
+    if (key === 'regularshape') {
+      olCls = olstyle.RegularShape;
+    }
+
     return olCls;
   }
 }

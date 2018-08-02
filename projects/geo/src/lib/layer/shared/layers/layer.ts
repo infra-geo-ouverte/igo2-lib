@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 
-import LayerOL from 'ol/layer/Layer';
+import olLayer from 'ol/layer/Layer';
 
 import { DataSource } from '../../../datasource';
 import { IgoMap } from '../../../map';
@@ -12,7 +12,7 @@ export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
   public map: IgoMap;
-  public ol: LayerOL;
+  public ol: olLayer;
   public options: LayerOptions;
   public status$: Subject<SubjectStatus>;
 
@@ -92,7 +92,7 @@ export abstract class Layer {
     // this.collapsed = legend.collapsed === undefined ? true : !this.visible;
   }
 
-  protected abstract createOlLayer(): LayerOL;
+  protected abstract createOlLayer(): olLayer;
 
   add(map: IgoMap) {
     this.map = map;

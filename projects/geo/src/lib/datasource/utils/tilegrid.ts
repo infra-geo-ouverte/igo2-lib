@@ -1,12 +1,12 @@
-import WMTSTileGrid from 'ol/tilegrid/WMTS';
-import { get as getProj } from 'ol/proj.js';
+import olTileGridWMTS from 'ol/tilegrid/WMTS';
+import * as olproj from 'ol/proj';
 import {
   getTopLeft as extentGetTopLeft,
   getWidth as extentGetWidth
 } from 'ol/extent.js';
 
-export function createDefaultTileGrid(epsg?: string): WMTSTileGrid {
-  const projection = epsg ? getProj(epsg) : getProj('EPSG:3857');
+export function createDefaultTileGrid(epsg?: string): olTileGridWMTS {
+  const projection = epsg ? olproj.get(epsg) : olproj.get('EPSG:3857');
   const projectionExtent = projection.getExtent();
   const size = extentGetWidth(projectionExtent) / 256;
   const resolutions = new Array(20);
@@ -16,7 +16,7 @@ export function createDefaultTileGrid(epsg?: string): WMTSTileGrid {
     matrixIds[z] = z;
   }
 
-  return new WMTSTileGrid({
+  return new olTileGridWMTS({
     origin: extentGetTopLeft(projectionExtent),
     resolutions: resolutions,
     matrixIds: matrixIds

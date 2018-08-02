@@ -2,9 +2,9 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 
-import { fromLonLat as projFromLonLat } from 'ol/proj.js';
-import { easeOut } from 'ol/easing.js';
-import Point from 'ol/geom/Point';
+import * as olproj from 'ol/proj';
+import * as oleasing from 'ol/easing';
+import olPoint from 'ol/geom/Point';
 
 import { MessageService, LanguageService } from '@igo2/core';
 import { ConfirmDialogService } from '@igo2/common';
@@ -109,7 +109,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   createPoi() {
     const view = this.map.ol.getView();
     const proj = view.getProjection().getCode();
-    const center: any = new Point(view.getCenter()).transform(
+    const center: any = new olPoint(view.getCenter()).transform(
       proj,
       'EPSG:4326'
     );
@@ -155,7 +155,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   zoomOnPoi(id) {
     const poi = this.pois.find(p => p.id === id);
 
-    const center = projFromLonLat(
+    const center = olproj.fromLonLat(
       [Number(poi.x), Number(poi.y)],
       this.map.projection
     );
@@ -164,7 +164,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
       center: center,
       zoom: poi.zoom,
       duration: 500,
-      easing: easeOut
+      easing: oleasing.easeOut
     });
   }
 }

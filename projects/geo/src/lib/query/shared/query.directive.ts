@@ -10,12 +10,12 @@ import {
 
 import { Subscription, Observable, forkJoin } from 'rxjs';
 
-import MapBrowserEvent from 'ol/MapBrowserEvent';
-import DragBox from 'ol/interaction/DragBox';
+import olMapBrowserEvent from 'ol/MapBrowserEvent';
+import olInterfactionDragBox from 'ol/interaction/DragBox';
+import olFormatGeoJSON from 'ol/format/GeoJSON';
+import olFeature from 'ol/Feature';
+import olLayer from 'ol/layer/Layer';
 import { MAC } from 'ol/has';
-import GeoJSON from 'ol/format/GeoJSON';
-import FeatureOL from 'ol/Feature';
-import LayerOL from 'ol/layer/Layer';
 
 import { LanguageService } from '@igo2/core';
 import { IgoMap } from '../../map/shared/map';
@@ -35,7 +35,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
-  public dragBox = new DragBox({
+  public dragBox = new olInterfactionDragBox({
     condition: this.platformModifierKeyOnly
   });
 
@@ -55,7 +55,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   @Output()
   query = new EventEmitter<{
     features: Feature[] | Feature[][];
-    event: MapBrowserEvent;
+    event: olMapBrowserEvent;
   }>();
 
   constructor(
@@ -70,7 +70,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     );
 
     this.map.ol.on('singleclick', e => this.handleMapClick(e));
-    this.dragBox = new DragBox({
+    this.dragBox = new olInterfactionDragBox({
       condition: this.platformModifierKeyOnly
     });
     this.map.ol.addInteraction(this.dragBox);
@@ -95,8 +95,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   private manageFeatureByClick(
-    featureOL: FeatureOL,
-    layerOL: LayerOL
+    featureOL: olFeature,
+    layerOL: olLayer
   ): Feature {
     if (layerOL.getZIndex() !== 999) {
       let title;
@@ -120,15 +120,15 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     }
   }
 
-  private handleMapClick(event: MapBrowserEvent) {
+  private handleMapClick(event: olMapBrowserEvent) {
     this.unsubscribeQueries();
-    const clickedFeatures: FeatureOL[] = [];
-    const format = new GeoJSON();
+    const clickedFeatures: olFeature[] = [];
+    const format = new olFormatGeoJSON();
     const mapProjection = this.map.projection;
     if (event.type === 'singleclick') {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
-        (featureOL: FeatureOL, layerOL: LayerOL) => {
+        (featureOL: olFeature, layerOL: olLayer) => {
           clickedFeatures.push(this.manageFeatureByClick(featureOL, layerOL));
         },
         { hitTolerance: 5 }

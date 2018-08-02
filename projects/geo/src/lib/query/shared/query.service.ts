@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { WKT, WMSGetFeatureInfo } from 'ol/format';
-import GML2 from 'ol/format/GML2';
-import GML3 from 'ol/format/GML3';
-import FeatureOL from 'ol/Feature';
+import * as olformat from 'ol/format';
+import olFormatGML2 from 'ol/format/GML2';
+import olFormatGML3 from 'ol/format/GML3';
+import olFeature from 'ol/Feature';
 
 import { uuid } from '@igo2/utils';
 import { Feature } from '../../feature/shared/feature.interface';
@@ -104,12 +104,12 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex) {
-    let parser = new GML2();
+    let parser = new olFormatGML2();
     let features = parser.readFeatures(res);
 
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
-      parser = new WMSGetFeatureInfo();
+      parser = new olformat.WMSGetFeatureInfo();
       features = parser.readFeatures(res);
     }
 
@@ -117,7 +117,7 @@ export class QueryService {
   }
 
   private extractGML3Data(res, zIndex) {
-    const parser = new GML3();
+    const parser = new olFormatGML3();
     const features = parser.readFeatures(res);
 
     return features.map(feature => this.featureToResult(feature, zIndex));
@@ -201,7 +201,7 @@ export class QueryService {
       clicky +
       '))';
 
-    const format = new WKT();
+    const format = new olformat.WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
 
@@ -261,7 +261,7 @@ export class QueryService {
     return result;
   }
 
-  private featureToResult(featureOL: FeatureOL, zIndex: number): Feature {
+  private featureToResult(featureOL: olFeature, zIndex: number): Feature {
     const featureGeometry = featureOL.getGeometry() as any;
     const properties = Object.assign({}, featureOL.getProperties());
     delete properties['geometry'];

@@ -1,7 +1,7 @@
 // import { HttpClient } from '@angular/common/http';
 
-import VectorSource from 'ol/source/Vector';
-import { bbox } from 'ol/loadingstrategy.js';
+import olSourceVector from 'ol/source/Vector';
+import * as olloadingstrategy from 'ol/loadingstrategy';
 
 import { uuid } from '@igo2/utils';
 
@@ -10,7 +10,7 @@ import { WFSDataSourceOptions } from './wfs-datasource.interface';
 // import { WFSDataSourceService } from './wfs-datasource.service';
 
 export class WFSDataSource extends DataSource {
-  public ol: VectorSource;
+  public ol: olSourceVector;
   // public httpClient: HttpClient;
 
   constructor(
@@ -69,12 +69,12 @@ export class WFSDataSource extends DataSource {
     return uuid();
   }
 
-  protected createOlSource(): VectorSource {
+  protected createOlSource(): olSourceVector {
     const wfsOptions: WFSDataSourceOptions = this.options;
 
     // this.dataSourceService.checkWfsOptions(wfsOptions);
 
-    return new VectorSource({
+    return new olSourceVector({
       // format: this.dataSourceService.getFormatFromOptions(wfsOptions),
       // overlaps: false,
       // url: function(extent: ol.Extent, resolution, proj) {
@@ -126,7 +126,7 @@ export class WFSDataSource extends DataSource {
       //   });
       //   return baseUrl;
       // }.bind(this),
-      strategy: bbox
+      strategy: olloadingstrategy.bbox
     });
   }
 }

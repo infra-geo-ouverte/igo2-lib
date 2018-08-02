@@ -1,5 +1,5 @@
-import ImageLayerOL from 'ol/layer/Image';
-import ImageSource from 'ol/source/Image';
+import olLayerImage from 'ol/layer/Image';
+import olSourceImage from 'ol/source/Image';
 
 import { ImageWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
@@ -12,7 +12,7 @@ import { ImageLayerOptions } from './image-layer.interface';
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource;
   public options: ImageLayerOptions;
-  public ol: ImageLayerOL;
+  public ol: olLayerImage;
 
   private watcher: ImageWatcher;
 
@@ -23,12 +23,12 @@ export class ImageLayer extends Layer {
     this.status$ = this.watcher.status$;
   }
 
-  protected createOlLayer(): ImageLayerOL {
+  protected createOlLayer(): olLayerImage {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as ImageSource
+      source: this.options.source.ol as olSourceImage
     });
 
-    const image = new ImageLayerOL(olOptions);
+    const image = new olLayerImage(olOptions);
     const token = this.options.token;
     if (token) {
       const self = this;

@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Catalog</mat-card-title>
+  <mat-card-content>
+    <p>* Dependencies: LanguageService</p>
+
+  </mat-card-content>
+
+  <igo-map-browser [map]="map" [view]="view">
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+  </igo-map-browser>
+
+  <igo-panel title="Catalog">
+    <!-- <igo-layer-list [layers]="map.layers">
+
+      <ng-template #igoLayerItemToolbar let-layer="layer">
+        <igo-metadata-button [layer]="layer"></igo-metadata-button>
+        <igo-download-button [layer]="layer"></igo-download-button>
+      </ng-template>
+
+    </igo-layer-list> -->
+  </igo-panel>
+
+</mat-card>

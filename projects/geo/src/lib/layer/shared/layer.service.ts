@@ -1,4 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
 
@@ -10,6 +12,8 @@ import {
   WMTSDataSource,
   WMSDataSource
 } from '../../datasource';
+
+import { DataSourceService } from '../../datasource/shared/datasource.service';
 
 import {
   Layer,
@@ -32,6 +36,7 @@ export class LayerService {
 
   constructor(
     private styleService: StyleService,
+    private dataSourceService: DataSourceService,
     @Optional() private config: ConfigService
   ) {
     if (this.config) {
@@ -40,6 +45,10 @@ export class LayerService {
   }
 
   createLayer(layerOptions: AnyLayerOptions): Layer {
+    if (!layerOptions.source) {
+      return;
+    }
+
     let layer;
     switch (layerOptions.source.constructor) {
       case OSMDataSource:
@@ -59,6 +68,22 @@ export class LayerService {
     }
 
     return layer;
+  }
+
+  createAsyncLayer(layerOptions: AnyLayerOptions): Observable<Layer> {
+    if (layerOptions.source) {
+      return new Observable(d => d.next(this.createLayer(layerOptions)));
+    }
+
+    return this.dataSourceService
+      .createAsyncDataSource(layerOptions.sourceOptions)
+      .pipe(
+        map(source => {
+          layerOptions.source = source;
+          delete layerOptions.sourceOptions;
+          return this.createLayer(layerOptions);
+        })
+      );
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {

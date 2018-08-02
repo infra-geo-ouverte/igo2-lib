@@ -1,4 +1,4 @@
-import ImageSource from 'ol/source/Image';
+import olSourceImage from 'ol/source/Image';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 
 import { ImageLayer } from '../shared/layers/image-layer';
@@ -8,7 +8,7 @@ export class ImageWatcher extends Watcher {
   protected loaded = 0;
   protected loading = 0;
 
-  private source: ImageSource;
+  private source: olSourceImage;
 
   constructor(layer: ImageLayer) {
     super();

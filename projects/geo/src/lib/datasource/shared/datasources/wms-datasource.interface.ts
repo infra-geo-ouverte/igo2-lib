@@ -1,4 +1,4 @@
-import WMSSource from 'ol/source/ImageWMS';
+import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -14,5 +14,5 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   resolutions?: number[];
   serverType?: string;
   ratio?: number;
-  ol?: WMSSource;
+  ol?: olSourceImageWMS;
 }

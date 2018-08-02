@@ -1,13 +1,13 @@
-import ImageLayerOL from 'ol/layer/Image';
+import olLayerImage from 'ol/layer/Image';
 
 import { LayerOptions } from './layer.interface';
 
 import { WMSDataSource } from '../../../datasource/shared/datasources/wms-datasource';
-// import { WMSDataSourceOptions } from '../../../datasource/shared/datasources/wms-datasource.interface';
+import { WMSDataSourceOptions } from '../../../datasource/shared/datasources/wms-datasource.interface';
 
 export interface ImageLayerOptions extends LayerOptions {
   source?: WMSDataSource;
-  // sourceOptions?: WMSDataSourceOptions;
+  sourceOptions?: WMSDataSourceOptions;
   token?: string;
-  ol?: ImageLayerOL;
+  ol?: olLayerImage;
 }

@@ -1,13 +1,13 @@
-import Geometry from 'ol/geom/Geometry';
-import Filter from 'ol/format/filter/Filter';
+import olGeometry from 'ol/geom/Geometry';
+import olFormatFilter from 'ol/format/filter/Filter';
 
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
-export interface OgcFilter extends Filter {}
+export interface OgcFilter extends olFormatFilter {}
 
 export interface WFSWriteGetFeatureOptions {
-  filter?: Filter;
+  filter?: olFormatFilter;
 
   featureNS: string;
   featurePrefix: string;
@@ -63,7 +63,7 @@ export interface OgcFilterCondionsArrayOptions {
 
 export interface OgcFilterSpatialOptions {
   geometryName: string;
-  geometry?: Geometry;
+  geometry?: olGeometry;
   wkt_geometry?: string;
   extent?: [number, number, number, number];
   srsName?: string;
@@ -118,7 +118,7 @@ export interface OgcInterfaceFilterOptions {
   escapeChar?: string;
   matchCase?: boolean;
   geometryName?: string;
-  geometry?: Geometry;
+  geometry?: olGeometry;
   extent?: [number, number, number, number];
   srsName?: string;
   parentLogical?: string;

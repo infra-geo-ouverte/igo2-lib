@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import FeatureOL from 'ol/Feature';
+import olFeature from 'ol/Feature';
 
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { DataService } from './data.service';
@@ -270,7 +270,7 @@ export class WFSDataSourceService extends DataService {
     // return sourceFields;
   }
 
-  private built_properties_value(features: FeatureOL[]) {
+  private built_properties_value(features: olFeature[]) {
     // const kv = Object.assign({}, features[0].getProperties());
     // delete kv[features[0].getGeometryName()];
     // delete kv['boundedBy'];

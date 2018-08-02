@@ -1,5 +1,5 @@
-import TileLayerOl from 'ol/layer/Tile';
-import TileSource from 'ol/source/Tile';
+import olLayerTile from 'ol/layer/Tile';
+import olSourceTile from 'ol/source/Tile';
 
 import { TileWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
@@ -14,7 +14,7 @@ import { TileLayerOptions } from './tile-layer.interface';
 export class TileLayer extends Layer {
   public dataSource: OSMDataSource | WMTSDataSource | XYZDataSource;
   public options: TileLayerOptions;
-  public ol: TileLayerOl;
+  public ol: olLayerTile;
 
   private watcher: TileWatcher;
 
@@ -25,12 +25,12 @@ export class TileLayer extends Layer {
     this.status$ = this.watcher.status$;
   }
 
-  protected createOlLayer(): TileLayerOl {
+  protected createOlLayer(): olLayerTile {
     const olOptions = Object.assign({}, this.options, {
-      source: this.options.source.ol as TileSource
+      source: this.options.source.ol as olSourceTile
     });
 
-    return new TileLayerOl(olOptions);
+    return new olLayerTile(olOptions);
   }
 
   public add(map: IgoMap) {

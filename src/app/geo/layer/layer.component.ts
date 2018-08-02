@@ -46,23 +46,19 @@ export class AppLayerComponent {
         );
       });
 
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'wms',
-        url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
-        params: {
-          layers: 'MELS_CS_ANGLO_S',
-          version: '1.3.0'
+    this.layerService
+      .createAsyncLayer({
+        title: 'School board',
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+          params: {
+            layers: 'MELS_CS_ANGLO_S',
+            version: '1.3.0'
+          }
         }
       })
-      .subscribe(dataSource => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'School board',
-            source: dataSource
-          })
-        );
-      });
+      .subscribe(l => this.map.addLayer(l));
 
     interface WMSoptions
       extends WMSDataSourceOptions,

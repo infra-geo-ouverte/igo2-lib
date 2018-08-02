@@ -1,11 +1,11 @@
-import LayerOL from 'ol/layer/Layer';
+import olLayer from 'ol/layer/Layer';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
-// import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
+import { DataSourceOptions } from '../../../datasource/shared/datasources/datasource.interface';
 
 export interface LayerOptions {
   source?: DataSource;
-  // sourceOptions?: AnyDataSourceOptions;
+  sourceOptions?: DataSourceOptions;
   title?: string;
   id?: string;
   baseLayer?: boolean;
@@ -15,7 +15,7 @@ export interface LayerOptions {
   zIndex?: number;
   minResolution?: number;
   maxResolution?: number;
-  ol?: LayerOL;
+  ol?: olLayer;
 }
 
 export interface LayerCatalog {

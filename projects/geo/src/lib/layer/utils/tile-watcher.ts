@@ -1,4 +1,4 @@
-import TileSource from 'ol/source/Tile';
+import olSourceTile from 'ol/source/Tile';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 
 import { TileLayer } from '../shared/layers/tile-layer';
@@ -8,7 +8,7 @@ export class TileWatcher extends Watcher {
   private loaded = 0;
   private loading = 0;
 
-  private source: TileSource;
+  private source: olSourceTile;
 
   constructor(layer: TileLayer) {
     super();

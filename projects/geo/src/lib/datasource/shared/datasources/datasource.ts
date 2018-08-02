@@ -1,4 +1,4 @@
-import SourceOL from 'ol/source/Source';
+import olSource from 'ol/source/Source';
 
 import {
   DataSourceOptions,
@@ -9,7 +9,7 @@ import {
 
 export abstract class DataSource {
   public id: string;
-  public ol: SourceOL;
+  public ol: olSource;
 
   constructor(
     public options: DataSourceOptions = {} // protected dataSourceService?: DataService
@@ -19,7 +19,7 @@ export abstract class DataSource {
     this.ol = this.createOlSource();
   }
 
-  protected abstract createOlSource(): SourceOL;
+  protected abstract createOlSource(): olSource;
 
   protected abstract generateId(): string;
 

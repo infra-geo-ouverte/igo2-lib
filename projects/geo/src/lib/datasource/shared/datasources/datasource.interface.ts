@@ -1,4 +1,4 @@
-import SourceOL from 'ol/source/Source';
+import olSource from 'ol/source/Source';
 
 import { DataSource } from './datasource';
 
@@ -10,7 +10,7 @@ export interface DataSourceOptions {
 
   // view?: ol.olx.layer.ImageOptions;
   // displayField?: string;
-  ol?: SourceOL;
+  ol?: olSource;
 }
 
 export interface DataSourceLegendOptions {

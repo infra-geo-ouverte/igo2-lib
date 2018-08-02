@@ -1,6 +1,6 @@
-import VectorSource from 'ol/source/Vector';
-import FeatureOL from 'ol/Feature';
-import FeatureFormat from 'ol/format/Feature';
+import olSourceVector from 'ol/source/Vector';
+import olFeature from 'ol/Feature';
+import olFormatFeature from 'ol/format/Feature';
 
 import { DataSourceOptions } from './datasource.interface';
 
@@ -8,9 +8,9 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   formatType?: string;
   formatOptions?: any;
 
-  features?: FeatureOL[];
-  format?: FeatureFormat;
+  features?: olFeature[];
+  format?: olFormatFeature;
   url?: string;
 
-  ol?: VectorSource;
+  ol?: olSourceVector;
 }

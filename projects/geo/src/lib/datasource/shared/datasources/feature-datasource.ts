@@ -1,5 +1,5 @@
-import VectorSource from 'ol/source/Vector';
-import { GeoJSON, KML, WKT, GPX, GML } from 'ol/format';
+import olSourceVector from 'ol/source/Vector';
+import * as olformat from 'ol/format';
 
 import { Md5 } from 'ts-md5';
 
@@ -8,17 +8,15 @@ import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
 export class FeatureDataSource extends DataSource {
-  static formats = { GeoJSON: GeoJSON, KML: KML, WKT: WKT, GPX: GPX, GML: GML };
-
   public options: FeatureDataSourceOptions;
-  public ol: VectorSource;
+  public ol: olSourceVector;
 
-  protected createOlSource(): VectorSource {
+  protected createOlSource(): olSourceVector {
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)
     };
 
-    return new VectorSource(Object.assign(sourceOptions, this.options));
+    return new olSourceVector(Object.assign(sourceOptions, this.options));
   }
 
   protected generateId() {
@@ -36,9 +34,9 @@ export class FeatureDataSource extends DataSource {
     let olFormatCls;
     const formatType = options.formatType;
     if (!formatType) {
-      olFormatCls = GeoJSON;
+      olFormatCls = olformat.GeoJSON;
     } else {
-      olFormatCls = FeatureDataSource.formats[formatType];
+      olFormatCls = olformat[formatType];
       if (olFormatCls === undefined) {
         throw new Error('Invalid vector source format ${formatType}.');
       }

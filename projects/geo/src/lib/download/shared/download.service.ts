@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import Projection from 'ol/proj/Projection';
+import olProjection from 'ol/proj/Projection';
 
 import { MessageService, LanguageService } from '@igo2/core';
 
@@ -59,7 +59,7 @@ export class DownloadService {
         const rebuildFilter = this.ogcFilterWriter.buildFilter(
           layer.dataSource.options['ogcFilters']['filters'],
           layer.map.getExtent(),
-          new Projection({ code: layer.map.projection }),
+          new olProjection({ code: layer.map.projection }),
           wfsOptions['fieldNameGeometry']
         );
         window.open(
