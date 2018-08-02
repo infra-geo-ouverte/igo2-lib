@@ -1,4 +1,3 @@
-//import { Md5 } from "ts-md5/dist/md5";
 import * as ol from 'openlayers';
 
 import { QueryableDataSource } from './datasource.interface';
@@ -15,6 +14,7 @@ export class TileArcGISRestDataSource extends DataSource
   public ol: ol.source.TileArcGISRest;
 
   private legendInfo: any;
+  private layerId: string;
 
   get params(): any {
     return this.options.params as any;
@@ -46,7 +46,11 @@ export class TileArcGISRestDataSource extends DataSource
     this.dataSourceService
       .getDataFromUrl(legendUrl)
       .subscribe(res => (this.legendInfo = res));
-
+      
+    this.layerId = this.options.params.layers
+      ? this.options.params.layers.substr(-1, 1)
+      : '0';
+      
     this.options.metadata = this.options.metadata
       ? this.options.metadata
       : {
@@ -68,11 +72,7 @@ export class TileArcGISRestDataSource extends DataSource
     if (this.options.queryPrecision) {
       extent = ol.extent.buffer(extent, this.options.queryPrecision);
     }
-
-    const id = this.options.params.layers
-      ? this.options.params.layers.substr(-1, 1)
-      : '0';
-    const baseUrl = this.options.url + '/' + id + '/query/';
+    const baseUrl = this.options.url + '/' + this.layerId + '/query/';
     const geometry = encodeURIComponent(
       '{"xmin":' +
         extent[0] +
@@ -100,23 +100,17 @@ export class TileArcGISRestDataSource extends DataSource
   }
 
   getLegend(): DataSourceLegendOptions[] {
-    const params = this.options.params.layers ? this.options.params.layers : '';
     let htmlString = '<table>';
     for (let i = 0; i < this.legendInfo.layers.length; i++) {
       const lyr = this.legendInfo.layers[i];
 
-      if (
-        (params.includes('show') && !params.includes(lyr.layerId)) ||
-        (params.includes('hide') && params.includes(lyr.layerId)) ||
-        (params.includes('exclude') && params.includes(lyr.layerId))
-      ) {
-      } else {
+      if (this.layerId == lyr.layerId) {
         htmlString += '<tr><td>' + lyr.layerName + '</td></tr>';
+        
         for (let j = 0; j < lyr.legend.length; j++) {
           const src = `${this.options.url}/${lyr.layerId}/images/${
             lyr.legend[j].url
           }`;
-
           const label = lyr.legend[j].label.replace('<Null>', 'Null');
           htmlString +=
             "<tr><td align='left'><img src=\"" +
