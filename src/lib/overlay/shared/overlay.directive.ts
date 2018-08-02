@@ -9,12 +9,10 @@ import { Feature, SourceFeatureType } from '../../feature';
 import { OverlayService } from '../shared/overlay.service';
 import { OverlayAction } from '../shared/overlay.interface';
 
-
 @Directive({
   selector: '[igoOverlay]'
 })
 export class OverlayDirective implements OnInit, OnDestroy {
-
   private features$$: Subscription;
   private format = new ol.format.GeoJSON();
 
@@ -22,12 +20,15 @@ export class OverlayDirective implements OnInit, OnDestroy {
     return this.component.map;
   }
 
-  constructor(@Self() private component: MapBrowserComponent,
-              private overlayService: OverlayService) {}
+  constructor(
+    @Self() private component: MapBrowserComponent,
+    private overlayService: OverlayService
+  ) {}
 
   ngOnInit() {
-    this.features$$ = this.overlayService.features$
-      .subscribe(res => this.handleFeatures(res[0], res[1]));
+    this.features$$ = this.overlayService.features$.subscribe(res =>
+      this.handleFeatures(res[0], res[1])
+    );
   }
 
   ngOnDestroy() {
@@ -44,11 +45,20 @@ export class OverlayDirective implements OnInit, OnDestroy {
     const extent = ol.extent.createEmpty();
 
     let featureExtent, geometry;
+
     features.forEach((feature: Feature) => {
-      const olFeature = this.format.readFeature(feature, {
-        dataProjection: feature.projection,
-        featureProjection: this.map.projection
-      });
+      let olFeature;
+      if (feature.properties['cartodb_id']) {
+        olFeature = this.format.readFeature(feature, {
+          dataProjection: 'EPSG:4326',
+          featureProjection: this.map.projection
+        });
+      } else {
+        olFeature = this.format.readFeature(feature, {
+          dataProjection: feature.projection,
+          featureProjection: this.map.projection
+        });
+      }
 
       geometry = olFeature.getGeometry();
       featureExtent = this.getFeatureExtent(feature);
@@ -82,7 +92,10 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     if (feature.extent && feature.projection) {
       extent = ol.proj.transformExtent(
-        feature.extent, feature.projection, this.map.projection);
+        feature.extent,
+        feature.projection,
+        this.map.projection
+      );
     }
 
     return extent;

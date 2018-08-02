@@ -1,0 +1,96 @@
+{
+  "uri": "tilearcgisrest",
+  "title": "ArcGIS Rest Tuiles",
+  "map": {
+    "view": {
+      "projection": "EPSG:3857",
+      "center": [-10997148, 4569099],
+      "zoom": 4,
+      "geolocate": false
+    }
+  },
+  "layers": [
+    {
+      "title": "OSM",
+      "type": "osm"
+    },
+    {
+      "type": "tilearcgisrest",
+      "title": "State City Highway: counties",
+      "source": {
+        "url":
+          "/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer",
+        "params": { "layers": "show: 2" }
+      }
+    },
+
+    {
+      "type": "tilearcgisrest",
+      "title": "State City Highway: states",
+      "source": {
+        "url":
+          "/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer",
+        "params": { "layers": "show: 1" }
+      }
+    },
+    {
+      "type": "tilearcgisrest",
+      "title": "State City Highway: ushigh",
+      "queryPrecision": 1000,
+      "source": {
+        "url":
+          "/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer",
+        "params": { "layers": "show: 0" }
+      }
+    },
+
+    {
+      "type": "tilearcgisrest",
+      "title": "Super Tuesday : STCounties",
+      "source": {
+        "url": "/ArcGIS/rest/services/Specialty/SuperTuesdaySample/MapServer",
+        "params": { "layers": "show: 0" }
+      }
+    },
+    {
+      "type": "tilearcgisrest",
+      "title": "Super Tuesday : STStates",
+      "source": {
+        "url": "/ArcGIS/rest/services/Specialty/SuperTuesdaySample/MapServer",
+        "params": { "layers": "show: 1" }
+      }
+    }
+  ],
+  "toolbar": [
+    "searchResults",
+    "mapDetails",
+    "timeAnalysis",
+    "ogcFilter",
+    "contextManager",
+    "print"
+  ],
+  "tools": [
+    {
+      "name": "searchResults"
+    },
+    {
+      "name": "mapDetails",
+      "options": {
+        "toggleLegendOnVisibilityChange": true,
+        "ogcFiltersInLayers": true
+      }
+    },
+    {
+      "name": "timeAnalysis"
+    },
+    {
+      "name": "ogcFilter"
+    },
+    {
+      "name": "contextManager"
+    },
+    {
+      "name": "print"
+    }
+  ]
+}

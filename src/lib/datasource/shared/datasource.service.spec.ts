@@ -7,7 +7,7 @@ import { IgoAuthModule } from '../../auth';
 import { CapabilitiesService } from './capabilities.service';
 import { DataSourceService } from './datasource.service';
 import { WFSDataSourceService } from './datasources/wfs-datasource.service';
-
+import { ArcGISRestDataSourceService } from './datasources/arcgisrest-datasource.service';
 
 describe('DataSourceService', () => {
   beforeEach(() => {
@@ -20,7 +20,8 @@ describe('DataSourceService', () => {
       providers: [
         CapabilitiesService,
         DataSourceService,
-        WFSDataSourceService
+        WFSDataSourceService,
+        ArcGISRestDataSourceService
       ]
     });
   });
@@ -28,5 +29,4 @@ describe('DataSourceService', () => {
   it('should ...', inject([DataSourceService], (service: DataSourceService) => {
     expect(service).toBeTruthy();
   }));
-
 });
