@@ -1,0 +1,18 @@
+{
+  "/icherche/": {
+    "target": "http://spssogl97d.sso.msp.gouv.qc.ca/icherche/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/icherche/": ""
+    }
+  },
+  "/ws/": {
+    "target": "http://spssogl97d.sso.msp.gouv.qc.ca/ws/",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/ws/": ""
+    }
+  }
+}

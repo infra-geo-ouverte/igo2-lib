@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { LayerCatalog } from '../../layer';
+import { LayerOptions } from '../../layer';
 
 @Component({
   selector: 'igo-catalog-layer-item',
@@ -9,13 +9,13 @@ import { LayerCatalog } from '../../layer';
 })
 export class CatalogLayerItemComponent {
   @Input()
-  get layer(): LayerCatalog {
+  get layer(): LayerOptions {
     return this._layer;
   }
-  set layer(value: LayerCatalog) {
+  set layer(value: LayerOptions) {
     this._layer = value;
   }
-  private _layer: LayerCatalog;
+  private _layer: LayerOptions;
 
   @Input()
   get color() {

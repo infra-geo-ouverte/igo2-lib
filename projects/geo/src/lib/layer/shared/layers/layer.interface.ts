@@ -18,17 +18,8 @@ export interface LayerOptions {
   ol?: olLayer;
 }
 
-export interface LayerCatalog {
-  title: string;
-  type: string;
-  url: string;
-  params: {
-    layers: string;
-  };
-}
-
 export interface GroupLayers {
   title: string;
-  layers?: LayerCatalog;
+  layers?: LayerOptions;
   collapsed?: boolean;
 }

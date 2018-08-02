@@ -1,5 +1,10 @@
 import { NgModule } from '@angular/core';
-import { MatCardModule, MatButtonModule } from '@angular/material';
+import { CommonModule } from '@angular/common';
+import {
+  MatCardModule,
+  MatButtonModule,
+  MatIconModule
+} from '@angular/material';
 
 import { IgoPanelModule } from '@igo2/common';
 import { IgoMapModule, IgoCatalogModule } from '@igo2/geo';
@@ -10,9 +15,11 @@ import { AppCatalogRoutingModule } from './catalog-routing.module';
 @NgModule({
   declarations: [AppCatalogComponent],
   imports: [
+    CommonModule,
     AppCatalogRoutingModule,
     MatCardModule,
     MatButtonModule,
+    MatIconModule,
     IgoPanelModule,
     IgoMapModule,
     IgoCatalogModule

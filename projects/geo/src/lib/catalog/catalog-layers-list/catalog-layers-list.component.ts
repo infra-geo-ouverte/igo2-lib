@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { LayerCatalog, GroupLayers } from '../../layer';
+import { LayerOptions, GroupLayers } from '../../layer';
 
 @Component({
   selector: 'igo-catalog-layers-list',
@@ -16,8 +16,8 @@ export class CatalogLayersListComponent {
   }
   private _groupsLayers: GroupLayers[];
 
-  @Output() select = new EventEmitter<LayerCatalog>();
-  @Output() unselect = new EventEmitter<LayerCatalog>();
+  @Output() select = new EventEmitter<LayerOptions>();
+  @Output() unselect = new EventEmitter<LayerOptions>();
 
   constructor() {}
 }

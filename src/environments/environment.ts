@@ -19,6 +19,14 @@ export const environment: Environment = {
     },
     language: {
       prefix: './locale/'
+    },
+    catalog: {
+      sources: [
+        {
+          title: 'Gouvouvert',
+          url: '/ws/igo_gouvouvert.fcgi'
+        }
+      ]
     }
   }
 };

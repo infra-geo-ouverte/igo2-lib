@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
-import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
+import { IgoMap, LayerService, Catalog, MapService, Layer } from '@igo2/geo';
 
 @Component({
   selector: 'app-catalog',
@@ -19,25 +19,42 @@ export class AppCatalogComponent {
 
   public view = {
     center: [-73, 47.2],
-    zoom: 6
+    zoom: 7
   };
 
+  public catalogSelected: Catalog;
+  public osmLayer: Layer;
+
   constructor(
+    private mapService: MapService,
     private languageService: LanguageService,
-    private dataSourceService: DataSourceService,
     private layerService: LayerService
   ) {
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
+    this.mapService.setMap(this.map);
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'OSM',
+        sourceOptions: {
+          type: 'osm'
+        }
       })
-      .subscribe(dataSource => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'OSM',
-            source: dataSource
-          })
-        );
+      .subscribe(layer => {
+        this.osmLayer = layer;
+        this.map.addLayer(layer);
       });
+  }
+
+  selectCatalog(catalog) {
+    this.catalogSelected = catalog;
+  }
+
+  unselectCatalog() {
+    this.catalogSelected = undefined;
+  }
+
+  resetMap() {
+    this.map.removeLayers();
+    this.map.addLayer(this.osmLayer);
   }
 }

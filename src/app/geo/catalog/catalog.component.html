@@ -11,14 +11,29 @@
   </igo-map-browser>
 
   <igo-panel title="Catalog">
-    <!-- <igo-layer-list [layers]="map.layers">
 
-      <ng-template #igoLayerItemToolbar let-layer="layer">
-        <igo-metadata-button [layer]="layer"></igo-metadata-button>
-        <igo-download-button [layer]="layer"></igo-download-button>
-      </ng-template>
+    <button *ngIf="catalogSelected"
+      mat-icon-button
+      panelLeftButton
+      (click)="unselectCatalog()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
 
-    </igo-layer-list> -->
+    <igo-catalog-list igoCatalogListBinding
+      *ngIf="!catalogSelected"
+      (select)="selectCatalog($event)">
+    </igo-catalog-list>
+
+    <igo-catalog-layers-list igoCatalogLayersListBinding
+      *ngIf="catalogSelected">
+    </igo-catalog-layers-list>
+
+    <button
+      mat-icon-button
+      panelRightButton
+      (click)="resetMap()">
+      <mat-icon>settings_backup_restore</mat-icon>
+    </button>
   </igo-panel>
 
 </mat-card>

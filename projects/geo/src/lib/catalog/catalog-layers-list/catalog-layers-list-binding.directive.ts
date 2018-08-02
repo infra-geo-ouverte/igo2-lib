@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { MapService } from '../../map/shared/map.service';
 import { LayerService } from '../../layer/shared/layer.service';
 import {
-  LayerCatalog,
+  LayerOptions,
   GroupLayers
 } from '../../layer/shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
@@ -29,23 +29,12 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
   private selectedCatalog$$: Subscription;
 
   @HostListener('select', ['$event'])
-  onSelect(layer: LayerCatalog) {
+  onSelect(layer: LayerOptions) {
     const map = this.mapService.getMap();
-    const contextLayer: any = layer as any;
-
-    const sourceContext = contextLayer.source;
-    const layerContext = Object.assign({}, contextLayer);
-    layerContext.visible = true;
-    delete layerContext.source;
-
-    const dataSourceContext = Object.assign({}, layerContext, sourceContext);
-
-    this.dataSourceService
-      .createAsyncDataSource(dataSourceContext as AnyDataSourceOptions)
-      .subscribe(dataSource => {
-        const layerInstance = this.layerService.createLayer(layerContext);
-        map.addLayer(layerInstance);
-      });
+    layer.visible = true;
+    this.layerService.createAsyncLayer(layer).subscribe(layerCreated => {
+      map.addLayer(layerCreated);
+    });
   }
 
   constructor(
@@ -108,10 +97,12 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
             if (boolRegFilter === true) {
               arrLayer.push({
                 title: layer.Title,
-                type: 'wms',
-                url: catalog.url,
-                params: {
-                  layers: layer.Name
+                sourceOptions: {
+                  type: 'wms',
+                  url: catalog.url,
+                  params: {
+                    layers: layer.Name
+                  }
                 }
               });
             }
