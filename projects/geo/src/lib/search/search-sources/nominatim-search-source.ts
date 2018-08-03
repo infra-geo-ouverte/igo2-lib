@@ -61,7 +61,7 @@ export class NominatimSearchSource extends SearchSource {
     if (response[0] && response[0].error) {
       return [];
     }
-    return response.map(this.formatResult, resultType);
+    return response.map(res => this.formatResult(res, resultType));
   }
 
   private getSearchParams(term: string): HttpParams {

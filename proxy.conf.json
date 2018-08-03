@@ -1,18 +1,17 @@
 {
   "/icherche/": {
-    "target": "http://spssogl97d.sso.msp.gouv.qc.ca/icherche/",
-    "secure": false,
+    "target": "https://spssogl97d.sso.msp.gouv.qc.ca",
     "changeOrigin": true,
-    "pathRewrite": {
-      "^/icherche/": ""
-    }
+    "secure": false
   },
   "/ws/": {
-    "target": "http://spssogl97d.sso.msp.gouv.qc.ca/ws/",
+    "target": "https://spssogl97d.sso.msp.gouv.qc.ca",
     "secure": false,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/ws/": ""
-    }
+    "changeOrigin": true
+  },
+  "/igo2/api/": {
+    "target": "https://spssogl97d.sso.msp.gouv.qc.ca",
+    "secure": false,
+    "changeOrigin": true
   }
 }

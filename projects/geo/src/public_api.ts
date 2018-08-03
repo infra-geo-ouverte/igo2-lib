@@ -19,6 +19,9 @@ export * from './lib/query/query.module';
 export * from './lib/search/search.module';
 export * from './lib/wkt/wkt.module';
 
+export * from './lib/search/search-sources/search-source.provider';
+export * from './lib/search/shared/search-source.service';
+
 export * from './lib/catalog';
 export * from './lib/datasource';
 export * from './lib/download';

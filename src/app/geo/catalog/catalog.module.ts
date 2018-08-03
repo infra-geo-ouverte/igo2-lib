@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import {
   MatCardModule,
   MatButtonModule,
-  MatIconModule
+  MatIconModule,
+  MatTooltipModule
 } from '@angular/material';
 
 import { IgoPanelModule } from '@igo2/common';
@@ -20,6 +21,7 @@ import { AppCatalogRoutingModule } from './catalog-routing.module';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule,
     IgoPanelModule,
     IgoMapModule,
     IgoCatalogModule

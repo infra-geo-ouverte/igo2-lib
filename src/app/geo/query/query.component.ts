@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
-import FeatureOL from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import Polygon from 'ol/geom/Polygon';
-import LineString from 'ol/geom/LineString';
-import { transform as transformProj } from 'ol/proj.js';
+import olFeature from 'ol/Feature';
+import olPoint from 'ol/geom/Point';
+import olPolygon from 'ol/geom/Polygon';
+import olLineString from 'ol/geom/LineString';
+import * as olproj from 'ol/proj';
 
 import { LanguageService } from '@igo2/core';
 import {
@@ -76,27 +76,29 @@ export class AppQueryComponent {
   }
 
   addFeatures(dataSource: FeatureDataSource) {
-    const feature1 = new FeatureOL({
+    const feature1 = new olFeature({
       name: 'feature1',
-      geometry: new LineString([
-        transformProj([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
-        transformProj([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
-        transformProj([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
+      geometry: new olLineString([
+        olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
+        olproj.transform([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
+        olproj.transform([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
       ])
     });
 
-    const feature2 = new FeatureOL({
+    const feature2 = new olFeature({
       name: 'feature2',
-      geometry: new Point(transformProj([-73, 46.6], 'EPSG:4326', 'EPSG:3857'))
+      geometry: new olPoint(
+        olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
+      )
     });
 
-    const feature3 = new FeatureOL({
+    const feature3 = new olFeature({
       name: 'feature3',
-      geometry: new Polygon([
+      geometry: new olPolygon([
         [
-          transformProj([-71, 46.8], 'EPSG:4326', 'EPSG:3857'),
-          transformProj([-73, 47], 'EPSG:4326', 'EPSG:3857'),
-          transformProj([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
+          olproj.transform([-71, 46.8], 'EPSG:4326', 'EPSG:3857'),
+          olproj.transform([-73, 47], 'EPSG:4326', 'EPSG:3857'),
+          olproj.transform([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
         ]
       ])
     });

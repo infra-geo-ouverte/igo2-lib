@@ -81,13 +81,16 @@ export class DataSourceSearchSource extends SearchSource {
     properties[t.instant(prefix + 'type')] = result.source.format;
     properties[t.instant(prefix + 'url')] = result.source.url;
 
-    const layer = Object.assign({}, result.source, {
-      type: result.source.format,
-      properties: properties,
-      params: {
-        layers: result.source.name
+    const layer = {
+      title: result.source.title,
+      sourceOptions: {
+        type: result.source.format,
+        url: result.source.url,
+        params: {
+          layers: result.source.name
+        }
       }
-    });
+    };
 
     return {
       id: result.id,

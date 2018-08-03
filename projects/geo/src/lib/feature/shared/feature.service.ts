@@ -25,7 +25,6 @@ export class FeatureService {
     const features_ = this.features$.value
       .filter(feature => {
         return (
-          source &&
           feature.source !== source &&
           (!sourcesToKeep || sourcesToKeep.indexOf(feature.source) !== -1)
         );

@@ -80,7 +80,6 @@ export class LayerService {
       .pipe(
         map(source => {
           layerOptions.source = source;
-          delete layerOptions.sourceOptions;
           return this.createLayer(layerOptions);
         })
       );

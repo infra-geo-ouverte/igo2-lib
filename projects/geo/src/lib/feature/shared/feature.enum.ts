@@ -1,17 +1,17 @@
 export enum FeatureType {
-  DataSource = <any> 'DataSource',
-  Feature = <any> 'Feature',
-  Record = <any> 'Record'
+  DataSource = 'DataSource',
+  Feature = 'Feature',
+  Record = 'Record'
 }
 
 export enum FeatureFormat {
-  GeoJSON,
-  JSON
+  GeoJSON = 'GeoJSON',
+  JSON = 'JSON'
 }
 
 export enum SourceFeatureType {
-  Query = <any> 'Query',
-  Search = <any> 'Search',
-  Click = <any> 'Click',
-  LocateXY = <any> 'LocateXY'
+  Query = 'Query',
+  Search = 'Search',
+  Click = 'Click',
+  LocateXY = 'LocateXY'
 }

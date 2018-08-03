@@ -9,7 +9,9 @@ import { FeatureService } from '../../feature/shared/feature.service';
 import { SearchSourceService } from './search-source.service';
 import { SearchSource } from '../search-sources/search-source';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SearchService {
   constructor(
     private searchSourceService: SearchSourceService,

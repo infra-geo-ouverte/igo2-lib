@@ -1,5 +1,5 @@
 import { GeoJsonGeometryTypes } from 'geojson';
-import { AnyDataSourceOptions } from '../../datasource';
+import { AnyLayerOptions } from '../../layer';
 
 import { FeatureType, FeatureFormat, SourceFeatureType } from './feature.enum';
 
@@ -18,7 +18,7 @@ export interface Feature {
   geometry?: FeatureGeometry;
   extent?: [number, number, number, number];
   properties?: { [key: string]: any };
-  layer?: AnyDataSourceOptions;
+  layer?: AnyLayerOptions;
 }
 
 export interface FeatureGeometry {

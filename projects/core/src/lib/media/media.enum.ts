@@ -1,10 +1,10 @@
 export enum Media {
-  Mobile = <any>'mobile',
-  Tablet = <any>'tablet',
-  Desktop = <any>'desktop'
+  Mobile = 'mobile',
+  Tablet = 'tablet',
+  Desktop = 'desktop'
 }
 
 export enum MediaOrientation {
-  Portrait = <any>'portrait',
-  Landscape = <any>'landscape'
+  Portrait = 'portrait',
+  Landscape = 'landscape'
 }
