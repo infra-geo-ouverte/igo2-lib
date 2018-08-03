@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatSlider } from '@angular/material';
 import { TimeFilterOptions } from '../shared';
+import * as moment from 'moment';
 
 @Component({
   selector: 'igo-time-filter-form',
@@ -95,7 +96,7 @@ export class TimeFilterFormComponent implements OnInit {
           step = 10800000;
       }
     } else {
-      step = this.options.step;
+      step = this.getStepDefinition(this.options.step);
     }
 
     return step;
@@ -164,7 +165,12 @@ export class TimeFilterFormComponent implements OnInit {
   handleDateChange(event: any) {
     this.setupDateOutput();
     this.applyTypeChange();
-    this.change.emit([this.startDate, this.endDate]);
+    // Only if is range, use 2 dates to make the range
+    if (this.isRange) {
+      this.change.emit([this.startDate, this.endDate]);
+    } else {
+        this.change.emit(this.startDate);
+    }
   }
 
   handleYearChange(event: any) {
@@ -270,6 +276,10 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   handleSliderValue(): number {
+    if (this.options.current === true) {
+      const currentDate = new Date();
+      this.date = this.getRoundedDate(currentDate);
+    }
     return this.date === undefined ? this.min.getTime() : this.date.getTime();
   }
 
@@ -353,7 +363,8 @@ export class TimeFilterFormComponent implements OnInit {
           }
         }
 
-        if (!this.isRange) {
+        // Minutes and second not important for step more than 1hour
+        if (!this.isRange && this.step > (60 * 60 * 1000) ) {
           this.startDate.setMinutes(0);
           this.startDate.setSeconds(0);
           this.endDate.setMinutes(59);
@@ -372,5 +383,26 @@ export class TimeFilterFormComponent implements OnInit {
 
   getRangeMaxDate(): Date {
     return this.endDate === undefined ? this.max : this.endDate;
+  }
+
+  /**
+  Round date at a certain time, 10 minutes by Default
+  @param date - Date to Round
+  @param atMinute - round to closest 'atMinute' minute, rounded 10 by default
+  @return the rounded date
+  */
+  getRoundedDate(date, atMinute = 10) {
+    const coeff = 1000 * 60 * atMinute;
+    return new Date(Math.round(date.getTime() / coeff) * coeff)
+  }
+
+  /**
+  Get the step (period) definition from the layer dimension tag
+  @param step The step as ISO 8601 example: PT10M for 10 Minutes
+  @return the duration in milliseconds
+  */
+  getStepDefinition(step) {
+    return moment.duration(step).asMilliseconds();
+
   }
 }

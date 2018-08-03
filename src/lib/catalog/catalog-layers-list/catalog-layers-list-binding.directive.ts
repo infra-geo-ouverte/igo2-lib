@@ -15,7 +15,6 @@ import {
 import { Catalog, CatalogService } from '../shared';
 import { CatalogLayersListComponent } from './catalog-layers-list.component';
 
-
 @Directive({
   selector: '[igoCatalogLayersListBinding]'
 })
@@ -71,6 +70,7 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
     let currentRegFilter;
     let boolRegFilter = true;
     let objGroupLayers;
+    let timeFilter;
     // Dig all levels until last level (layer object are not defined on last level)
     for (const group of layerList.Layer) {
       if (group.queryable === false && typeof group.Layer !== 'undefined') {
@@ -98,13 +98,16 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
             }
             // If layer regex is okay (or not define), add the layer to the group
             if (boolRegFilter === true) {
+             timeFilter =  this.capabilitiesService.getTimeFilter(layer);
               arrLayer.push({
                 title: layer.Title,
                 type: 'wms',
                 url: catalog.url,
                 params: {
                   layers: layer.Name
-                }
+                },
+                 // Merge catalog time filter in layer timeFilter
+                timeFilter: {...timeFilter, ...catalog.timeFilter}
               });
             }
             return arrLayer;
