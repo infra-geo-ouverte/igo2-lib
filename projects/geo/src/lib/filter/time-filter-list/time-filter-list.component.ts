@@ -5,7 +5,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 
-import { DataSource } from '../../datasource/shared/datasources/datasource';
+import { Layer } from '../../layer/shared/layers/layer';
 
 @Component({
   selector: 'igo-time-filter-list',
@@ -14,14 +14,14 @@ import { DataSource } from '../../datasource/shared/datasources/datasource';
 })
 export class TimeFilterListComponent {
   @Input()
-  get datasources(): DataSource[] {
-    return this._dataSources;
+  get layers(): Layer[] {
+    return this._layers;
   }
-  set datasources(value: DataSource[]) {
-    this._dataSources = value;
+  set layers(value: Layer[]) {
+    this._layers = value;
     this.cdRef.detectChanges();
   }
-  private _dataSources: DataSource[] = [];
+  private _layers: Layer[] = [];
 
   constructor(private cdRef: ChangeDetectorRef) {}
 }

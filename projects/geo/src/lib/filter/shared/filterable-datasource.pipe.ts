@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+import { Layer } from '../../layer/shared/layers/layer';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 
 import { OgcFilterableDataSource } from './ogc-filter.interface';
@@ -9,37 +10,37 @@ import { TimeFilterableDataSource } from './time-filter.interface';
   name: 'filterableDataSource'
 })
 export class FilterableDataSourcePipe implements PipeTransform {
-  transform(value: DataSource[], arg: string): any {
-    let dataSources;
+  transform(value: Layer[], arg: string): Layer[] {
+    let layers;
 
     if (arg === 'time') {
-      dataSources = (value.filter((dataSource: any) => {
+      layers = value.filter((layer: Layer) => {
+        const datasource = layer.dataSource as TimeFilterableDataSource;
         return (
-          this.isTimeFilterable(dataSource) &&
-          dataSource.options.timeFilter !== undefined &&
-          Object.keys(dataSource.options.timeFilter).length
+          this.isTimeFilterable(datasource) &&
+          datasource.options.timeFilter !== undefined &&
+          Object.keys(datasource.options.timeFilter).length
         );
-      }) as any[]) as TimeFilterableDataSource[];
+      });
     }
     if (arg === 'ogc') {
-      dataSources = (value.filter((dataSource: any) => {
-        return this.isOgcFilterable(dataSource);
-      }) as any[]) as OgcFilterableDataSource[];
+      layers = value.filter((layer: Layer) => {
+        const datasource = layer.dataSource as OgcFilterableDataSource;
+        return this.isOgcFilterable(datasource);
+      });
     }
-    return dataSources;
+    return layers;
   }
 
   private isTimeFilterable(dataSource: TimeFilterableDataSource) {
-    if (
-      typeof dataSource.filterByDate === 'function' ||
-      typeof dataSource.filterByYear === 'function'
-    ) {
-      return dataSource.options.timeFilterable !== undefined
-        ? dataSource.options.timeFilterable
-        : true;
-    }
+    // if (
+    //   typeof dataSource.filterByDate === 'function' ||
+    //   typeof dataSource.filterByYear === 'function'
+    // ) {
+    return dataSource.options.timeFilterable;
+    // }
 
-    return false;
+    // return false;
   }
 
   private isOgcFilterable(dataSource: OgcFilterableDataSource) {

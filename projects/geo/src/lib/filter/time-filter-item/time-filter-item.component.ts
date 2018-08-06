@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 
+import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterableDataSource } from '../shared/time-filter.interface';
+import { TimeFilterService } from '../shared/time-filter.service';
 
 @Component({
   selector: 'igo-time-filter-item',
@@ -9,21 +11,24 @@ import { TimeFilterableDataSource } from '../shared/time-filter.interface';
 })
 export class TimeFilterItemComponent {
   @Input()
-  get datasource(): TimeFilterableDataSource {
-    return this._dataSource;
+  get layer(): Layer {
+    return this._layer;
   }
-  set datasource(value: TimeFilterableDataSource) {
-    this._dataSource = value;
+  set layer(value: Layer) {
+    this._layer = value;
   }
-  private _dataSource: TimeFilterableDataSource;
+  private _layer: Layer;
 
-  constructor() {}
+  get datasource(): TimeFilterableDataSource {
+    return this.layer.dataSource as TimeFilterableDataSource;
+  }
+  constructor(private timeFilterService: TimeFilterService) {}
 
   handleYearChange(year: string | [string, string]) {
-    this.datasource.filterByYear(year);
+    this.timeFilterService.filterByYear(this.datasource, year);
   }
 
   handleDateChange(date: Date | [Date, Date]) {
-    this.datasource.filterByDate(date);
+    this.timeFilterService.filterByDate(this.datasource, date);
   }
 }

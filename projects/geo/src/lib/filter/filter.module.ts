@@ -8,6 +8,7 @@ import {
   MatSliderModule,
   MatSlideToggleModule,
   MatFormFieldModule,
+  MatInputModule,
   MatOptionModule,
   MatSelectModule,
   MatListModule,
@@ -34,6 +35,8 @@ import { TimeFilterFormComponent } from './time-filter-form/time-filter-form.com
 import { TimeFilterItemComponent } from './time-filter-item/time-filter-item.component';
 import { TimeFilterListBindingDirective } from './time-filter-list/time-filter-list-binding.directive';
 import { TimeFilterListComponent } from './time-filter-list/time-filter-list.component';
+import { TimeFilterService } from './shared/time-filter.service';
+
 import { OgcFilterFormComponent } from './ogc-filter-form/ogc-filter-form.component';
 import { OgcFilterableFormComponent } from './ogc-filterable-form/ogc-filterable-form.component';
 import { OgcFilterableItemComponent } from './ogc-filterable-item/ogc-filterable-item.component';
@@ -52,6 +55,7 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
     MatSliderModule,
     MatSlideToggleModule,
     MatFormFieldModule,
+    MatInputModule,
     MatOptionModule,
     MatSelectModule,
     MatListModule,
@@ -90,7 +94,8 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
     OgcFilterableListBindingDirective
-  ]
+  ],
+  providers: [TimeFilterService]
 })
 export class IgoFilterModule {
   static forRoot(): ModuleWithProviders {

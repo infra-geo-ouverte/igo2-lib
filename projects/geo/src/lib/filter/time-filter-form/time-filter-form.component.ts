@@ -265,8 +265,6 @@ export class TimeFilterFormComponent implements OnInit {
   handleSliderDateChange(event: any) {
     this.date = new Date(event.value);
     this.setSliderThumbLabel(this.handleSliderTooltip());
-    event.source.value = this.date;
-    event.source.date = this.date;
     this.handleDateChange(event);
   }
 
@@ -298,6 +296,7 @@ export class TimeFilterFormComponent implements OnInit {
             : this.date.toUTCString();
         break;
     }
+
     return label;
   }
 

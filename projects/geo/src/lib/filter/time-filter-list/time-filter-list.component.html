@@ -1,5 +1,5 @@
 <igo-list [navigation]="false" [selection]="false">
-  <ng-template ngFor let-datasource [ngForOf]="datasources | filterableDataSource: 'time'">
-    <igo-time-filter-item igoListItem [datasource]="datasource"></igo-time-filter-item>
+  <ng-template ngFor let-layer [ngForOf]="layers | filterableDataSource: 'time'">
+    <igo-time-filter-item igoListItem [layer]="layer"></igo-time-filter-item>
   </ng-template>
 </igo-list>
