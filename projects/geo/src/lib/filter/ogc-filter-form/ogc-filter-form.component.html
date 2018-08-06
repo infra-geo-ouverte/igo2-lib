@@ -9,14 +9,14 @@
   </div>
   <!-- NON SPATIAL -->
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
-    <span *ngIf="fields.length > 0 && fields[0].name !== ''">
+    <span *ngIf="fields && fields.length > 0 && fields[0].name !== ''">
       <mat-select [disabled]="!currentFilter.active" *ngIf="['Contains','Intersects','Within'].indexOf(currentFilter.operator) === -1"
         [(ngModel)]="currentFilter.propertyName" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
         (change)="updateField(false)">
         <mat-option *ngFor="let field of fields" [value]="field.name">{{field.alias}}</mat-option>
       </mat-select>
     </span>
-    <span *ngIf="fields.length === 1 && fields[0].name === ''">
+    <span *ngIf="fields && fields.length === 1 && fields[0].name === ''">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput #fieldPerUser (change)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)"
           (blur)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)" [(ngModel)]="currentFilter.propertyName">

@@ -68,24 +68,27 @@ export class OgcFilterFormComponent {
     for (const property in this.operators) {
       if (this.operators.hasOwnProperty(property)) {
         this.operators[property] = Object.assign({}, this.operators[property], {
-          alias: this.languageService.translate.instant(
-            'igo.geo.operators.' + property
-          )
+          alias: property
+          // alias: this.languageService.translate.instant(
+          //   'igo.geo.operators.' + property
+          // )
         });
       }
     }
     this.igoSpatialSelectors = [
       {
         type: 'fixedExtent',
-        alias: this.languageService.translate.instant(
-          'igo.geo.spatialSelector.fixedExtent'
-        )
+        alias: 'fixedExtent'
+        // alias: this.languageService.translate.instant(
+        //   'igo.geo.spatialSelector.fixedExtent'
+        // )
       },
       {
         type: 'snrc',
-        alias: this.languageService.translate.instant(
-          'igo.geo.spatialSelector.snrc'
-        )
+        alias: 'snrc'
+        // alias: this.languageService.translate.instant(
+        //   'igo.geo.spatialSelector.snrc'
+        // )
       }
     ];
     // TODO: selectFeature & drawFeature
@@ -98,6 +101,9 @@ export class OgcFilterFormComponent {
   updateField(init = true) {
     if (!init) {
       this.disableRefreshFilter();
+    }
+    if (!this.datasource.options['sourceFields']) {
+      return;
     }
     this.fields = this.datasource.options['sourceFields'].sort((a, b) => {
       if (a.name < b.name) {

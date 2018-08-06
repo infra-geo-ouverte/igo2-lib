@@ -102,54 +102,55 @@ export class OgcFilterableItemComponent implements OnInit {
   }
 
   refreshFilters() {
-    // const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
-    // const activeFilters = ogcFilters.interfaceOgcFilters.filter(
-    //   f => f.active === true
-    // );
-    // if (activeFilters.length > 1) {
-    //   activeFilters[0].parentLogical = activeFilters[1].parentLogical;
-    // }
-    // if (
-    //   !(JSON.stringify(this.lastRunOgcFilter) === JSON.stringify(activeFilters))
-    // ) {
-    //   if (this.layer.dataSource.options.type === 'wfs') {
-    //     const ogcDataSource: any = this.layer.dataSource;
-    //     const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
-    //     const writer = ogcDataSource.ogcFilterWriter;
-    //     ogcLayer.filters = writer.rebuiltIgoOgcFilterObjectFromSequence(
-    //       activeFilters
-    //     );
-    //     this.layer.dataSource.ol.clear();
-    //   } else if (
-    //     this.layer.dataSource.options.type === 'wms' &&
-    //     this.layer.dataSource.options.isOgcFilterable
-    //   ) {
-    //     let rebuildFilter = '';
-    //     if (activeFilters.length >= 1) {
-    //       const ogcDataSource: any = this.layer.dataSource;
-    //       const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
-    //       const writer = ogcDataSource.ogcFilterWriter;
-    //       ogcLayer.filters = writer.rebuiltIgoOgcFilterObjectFromSequence(
-    //         activeFilters
-    //       );
-    //       rebuildFilter = this.layer.dataSource.ogcFilterWriter.buildFilter(
-    //         this.layer.dataSource.options.ogcFilters.filters,
-    //         undefined,
-    //         undefined,
-    //         this.layer.dataSource.options['fieldNameGeometry']
-    //       );
-    //     }
-    //     this.layer.dataSource.filterByOgc(rebuildFilter);
-    //     this.datasource.options['ogcFiltered'] =
-    //       activeFilters.length === 0 ? false : true;
-    //   }
-    //
-    //   this.lastRunOgcFilter = JSON.parse(JSON.stringify(activeFilters));
-    //   this.datasource.options['disableRefreshFilter'] = true;
-    // } else {
-    //   // identical filter. Nothing triggered
-    //   this.datasource.options['disableRefreshFilter'] = true;
-    // }
+    const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
+    const activeFilters = ogcFilters.interfaceOgcFilters.filter(
+      f => f.active === true
+    );
+    if (activeFilters.length > 1) {
+      activeFilters[0].parentLogical = activeFilters[1].parentLogical;
+    }
+    if (
+      !(JSON.stringify(this.lastRunOgcFilter) === JSON.stringify(activeFilters))
+    ) {
+      if (this.layer.dataSource.options.type === 'wfs') {
+        const ogcDataSource: any = this.layer.dataSource;
+        const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
+        const writer = ogcDataSource.ogcFilterWriter;
+        ogcLayer.filters = writer.rebuiltIgoOgcFilterObjectFromSequence(
+          activeFilters
+        );
+        this.layer.dataSource.ol.clear();
+      } else if (
+        this.layer.dataSource.options.type === 'wms' &&
+        (this.layer.dataSource.options as any).isOgcFilterable
+      ) {
+        let rebuildFilter = '';
+        if (activeFilters.length >= 1) {
+          const ogcDataSource: any = this.layer.dataSource;
+          const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
+          const writer = ogcDataSource.ogcFilterWriter;
+          ogcLayer.filters = writer.rebuiltIgoOgcFilterObjectFromSequence(
+            activeFilters
+          );
+          rebuildFilter = (this.layer
+            .dataSource as any).ogcFilterWriter.buildFilter(
+            ogcLayer.filters,
+            undefined,
+            undefined,
+            this.layer.dataSource.options['fieldNameGeometry']
+          );
+        }
+        (this.layer.dataSource as any).filterByOgc(rebuildFilter);
+        this.datasource.options['ogcFiltered'] =
+          activeFilters.length === 0 ? false : true;
+      }
+
+      this.lastRunOgcFilter = JSON.parse(JSON.stringify(activeFilters));
+      this.datasource.options['disableRefreshFilter'] = true;
+    } else {
+      // identical filter. Nothing triggered
+      this.datasource.options['disableRefreshFilter'] = true;
+    }
   }
 
   get downloadable() {

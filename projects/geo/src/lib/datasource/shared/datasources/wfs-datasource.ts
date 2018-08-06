@@ -1,4 +1,4 @@
-// import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import olSourceVector from 'ol/source/Vector';
 import * as olloadingstrategy from 'ol/loadingstrategy';
@@ -8,63 +8,78 @@ import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
-// import { WFSDataSourceService } from './wfs-datasource.service';
+import { WFSDataSourceService } from './wfs-datasource.service';
+
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
-  // public httpClient: HttpClient;
+  public httpClient: HttpClient;
+  public ogcFilterWriter: OgcFilterWriter;
 
   constructor(
-    public options: WFSDataSourceOptions // protected dataSourceService: WFSDataSourceService
+    public options: WFSDataSourceOptions | any,
+    protected dataSourceService: WFSDataSourceService
   ) {
     super(options);
-    // this.ogcFilterWriter = new OgcFilterWriter;
+    this.ogcFilterWriter = new OgcFilterWriter();
 
     this.options = this.checkWfsOptions(options);
 
-    // if (
-    //   options['sourceFields'] === undefined ||
-    //   Object.keys(options['sourceFields']).length === 0
-    // ) {
-    //   options['sourceFields'] = [];
-    // this.dataSourceService.wfsGetCapabilities(options)
-    //   .map(wfsCapabilities => options['wfsCapabilities'] = {
-    //     'xml': wfsCapabilities.body,
-    //     'GetPropertyValue': /GetPropertyValue/gi.test(wfsCapabilities.body) ? true : false
-    //   })
-    //   .subscribe(val => options['sourceFields'] =
-    //     this.dataSourceService.defineFieldAndValuefromWFS(options));
-    // } else {
-    //   options['sourceFields']
-    //     .filter(
-    //       field => field.values === undefined || field.values.length === 0
-    //     )
-    //     .forEach(f => {
-    //       f.values = this.dataSourceService.getValueFromWfsGetPropertyValues(
-    //         options,
-    //         f.name,
-    //         200,
-    //         0,
-    //         0
-    //       );
-    //     });
-    // }
+    if (
+      options['sourceFields'] === undefined ||
+      Object.keys(options['sourceFields']).length === 0
+    ) {
+      options['sourceFields'] = [];
+      this.dataSourceService
+        .wfsGetCapabilities(options)
+        .subscribe(wfsCapabilities => {
+          options['wfsCapabilities'] = {
+            xml: wfsCapabilities.body,
+            GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
+              ? true
+              : false
+          };
 
-    // if (options.ogcFilters.filters) {
-    //   options.ogcFilters.filters = this.ogcFilterWriter.checkIgoFiltersProperties(
-    //     options.ogcFilters.filters, options.fieldNameGeometry, true);
-    //   options.ogcFilters.interfaceOgcFilters = this.ogcFilterWriter.defineInterfaceFilterSequence(
-    //     options.ogcFilters.filters, options.fieldNameGeometry);
-    //
-    // } else {
-    //   options.ogcFilters.filters = undefined;
-    //   options.ogcFilters.interfaceOgcFilters = [];
-    // }
-    //
-    // options.isOgcFilterable = options.isOgcFilterable === undefined ?
-    //   true : options.isOgcFilterable;
-    // options.ogcFilters.filtersAreEditable = options.ogcFilters.filtersAreEditable === undefined ?
-    //   true : options.ogcFilters.filtersAreEditable;
+          this.dataSourceService.defineFieldAndValuefromWFS(this.options);
+        });
+    } else {
+      options['sourceFields']
+        .filter(
+          field => field.values === undefined || field.values.length === 0
+        )
+        .forEach(f => {
+          f.values = this.dataSourceService.getValueFromWfsGetPropertyValues(
+            options,
+            f.name,
+            200,
+            0,
+            0
+          );
+        });
+    }
+
+    if (options.ogcFilters.filters) {
+      options.ogcFilters.filters = this.ogcFilterWriter.checkIgoFiltersProperties(
+        options.ogcFilters.filters,
+        options.params.fieldNameGeometry,
+        true
+      );
+      options.ogcFilters.interfaceOgcFilters = this.ogcFilterWriter.defineInterfaceFilterSequence(
+        options.ogcFilters.filters,
+        options.params.fieldNameGeometry
+      );
+    } else {
+      options.ogcFilters.filters = undefined;
+      options.ogcFilters.interfaceOgcFilters = [];
+    }
+
+    options.isOgcFilterable =
+      options.isOgcFilterable === undefined ? true : options.isOgcFilterable;
+    options.ogcFilters.filtersAreEditable =
+      options.ogcFilters.filtersAreEditable === undefined
+        ? true
+        : options.ogcFilters.filtersAreEditable;
   }
 
   protected generateId() {
@@ -108,27 +123,26 @@ export class WFSDataSource extends DataSource {
         const srsname = wfsOptions.params.srsname
           ? 'srsname=' + wfsOptions.params.srsname
           : 'srsname=' + proj.getCode();
-        // const filterXML = this.ogcFilterWriter.buildFilter(
-        //   wfsOptions.ogcFilters.filters,
-        //   extent,
-        //   proj,
-        //   wfsOptions.params.fieldNameGeometry
-        // );
 
-        // const patternFilter = /filter=.*/gi;
-        // if (patternFilter.test(filterXML)) {
-        //   this.options['ogcFiltered'] = true;
-        // } else {
-        //   this.options['ogcFiltered'] = false;
-        // }
+        wfsOptions.params.xmlFilter = this.ogcFilterWriter.buildFilter(
+          wfsOptions.ogcFilters.filters,
+          extent,
+          proj,
+          wfsOptions.params.fieldNameGeometry
+        );
 
         let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
-        // ajouté ceci: &${filterXML}
 
-        // this.options['download'] = Object.assign({}, this.options['download'], {
-        //   dynamicUrl: baseUrl
-        // });
+        const patternFilter = /filter=.*/gi;
+        if (patternFilter.test(wfsOptions.params.xmlFilter)) {
+          baseUrl += `&${wfsOptions.params.xmlFilter}`;
+        }
+
+        this.options['download'] = Object.assign({}, this.options['download'], {
+          dynamicUrl: baseUrl
+        });
+
         return baseUrl;
       },
       strategy: olloadingstrategy.bbox
@@ -180,14 +194,6 @@ export class WFSDataSource extends DataSource {
     if (patternGml.test(wfsDataSourceOptions.params.outputFormat)) {
       wfsDataSourceOptions.params.version = '1.1.0';
     }
-
-    // wfsDataSourceOptions.ogcFilters =
-    //   wfsDataSourceOptions.ogcFilters === undefined
-    //     ? ({
-    //         filtersAreEditable: true,
-    //         filters: undefined
-    //       } as OgcFiltersOptions)
-    //     : wfsDataSourceOptions.ogcFilters;
 
     return Object.assign({}, wfsDataSourceOptions, {
       wfsCapabilities: { xml: '', GetPropertyValue: false }

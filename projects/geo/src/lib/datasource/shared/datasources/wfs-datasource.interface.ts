@@ -7,13 +7,12 @@ export interface WFSDataSourceOptions
   params: WFSDataSourceOptionsParams;
 }
 
-export interface WFSDataSourceOptionsParams
-  extends DataSourceOptions,
-    FeatureDataSourceOptions {
+export interface WFSDataSourceOptionsParams {
   version?: string;
   featureTypes: string;
   fieldNameGeometry: string;
   maxFeatures?: Number;
   outputFormat?: string;
   srsname?: string;
+  xmlFilter?: string;
 }

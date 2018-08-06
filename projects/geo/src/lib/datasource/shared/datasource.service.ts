@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { CapabilitiesService } from './capabilities.service';
 
-// import { WFSDataSourceService } from './datasources/wfs-datasource.service';
+import { WFSDataSourceService } from './datasources/wfs-datasource.service';
 import {
   DataSource,
   OSMDataSource,
@@ -29,7 +29,8 @@ export class DataSourceService {
   public datasources$ = new BehaviorSubject<DataSource[]>([]);
 
   constructor(
-    private capabilitiesService: CapabilitiesService // private wfsDataSourceService: WFSDataSourceService
+    private capabilitiesService: CapabilitiesService,
+    private wfsDataSourceService: WFSDataSourceService
   ) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
@@ -44,7 +45,10 @@ export class DataSourceService {
         );
         break;
       case 'wfs':
-        dataSource = this.createWFSDataSource(context as WFSDataSourceOptions);
+        dataSource = this.createWFSDataSource(
+          context as WFSDataSourceOptions,
+          this.wfsDataSourceService
+        );
         break;
       case 'wms':
         dataSource = this.createWMSDataSource(context as WMSDataSourceOptions);
@@ -79,9 +83,10 @@ export class DataSourceService {
   }
 
   private createWFSDataSource(
-    context: WFSDataSourceOptions
+    context: WFSDataSourceOptions,
+    service: WFSDataSourceService
   ): Observable<WFSDataSource> {
-    return new Observable(d => d.next(new WFSDataSource(context)));
+    return new Observable(d => d.next(new WFSDataSource(context, service)));
   }
 
   private createWMSDataSource(
