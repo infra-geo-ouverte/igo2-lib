@@ -4,6 +4,7 @@ import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
+  type?: 'wms';
   optionsFromCapabilities?: boolean;
   wfsSource?: WFSDataSourceOptions;
 

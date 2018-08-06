@@ -5,6 +5,7 @@ import olFormatFeature from 'ol/format/Feature';
 import { DataSourceOptions } from './datasource.interface';
 
 export interface FeatureDataSourceOptions extends DataSourceOptions {
+  type?: 'feature' | 'wfs';
   formatType?: string;
   formatOptions?: any;
 

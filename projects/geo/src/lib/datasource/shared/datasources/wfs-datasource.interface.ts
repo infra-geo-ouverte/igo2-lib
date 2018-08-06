@@ -4,6 +4,7 @@ import { FeatureDataSourceOptions } from './feature-datasource.interface';
 export interface WFSDataSourceOptions
   extends DataSourceOptions,
     FeatureDataSourceOptions {
+  type?: 'wfs';
   params: WFSDataSourceOptionsParams;
 }
 
