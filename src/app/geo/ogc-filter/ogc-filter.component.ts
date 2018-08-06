@@ -65,8 +65,8 @@ export class AppOgcFilterComponent {
         filtersAreEditable: true,
         filters: {
           operator: 'PropertyIsEqualTo',
-          propertyName: 'certitude',
-          expression: 'Observé'
+          propertyName: 'code_municipalite',
+          expression: '10043'
         }
       }
     };
