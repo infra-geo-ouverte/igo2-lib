@@ -5,7 +5,7 @@
     "secure": false
   },
   "/ws/": {
-    "target": "https://spssogl97d.sso.msp.gouv.qc.ca",
+    "target": "https://geoegl.msp.gouv.qc.ca",
     "secure": false,
     "changeOrigin": true
   },

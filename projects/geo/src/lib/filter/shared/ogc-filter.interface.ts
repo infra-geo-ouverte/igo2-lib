@@ -41,7 +41,7 @@ export type IgoOgcFilterObject =
 export interface OgcFiltersOptions {
   filtersAreEditable: boolean;
   filters: IgoLogicalArrayOptions[] | AnyBaseOgcFilterOptions;
-  interfaceOgcFilters: any[];
+  interfaceOgcFilters?: any[];
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
@@ -72,8 +72,9 @@ export interface OgcFilterSpatialOptions {
 }
 export interface OgcFilterAttributeOptions {
   propertyName: string;
-  active: boolean;
-  id: string;
+  operator: string;
+  active?: boolean;
+  id?: string;
 }
 
 export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
@@ -86,7 +87,7 @@ export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
 }
 export interface OgcFilterEqualToOptions extends OgcFilterAttributeOptions {
   expression: string | number;
-  matchCase: boolean;
+  matchCase?: boolean;
 }
 export interface OgcFilterGreaterLessOptions extends OgcFilterAttributeOptions {
   expression: number;

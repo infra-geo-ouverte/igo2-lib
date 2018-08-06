@@ -33,14 +33,10 @@ export class FilterableDataSourcePipe implements PipeTransform {
   }
 
   private isTimeFilterable(dataSource: TimeFilterableDataSource) {
-    // if (
-    //   typeof dataSource.filterByDate === 'function' ||
-    //   typeof dataSource.filterByYear === 'function'
-    // ) {
+    if (dataSource.options.type !== 'wms') {
+      return false;
+    }
     return dataSource.options.timeFilterable;
-    // }
-
-    // return false;
   }
 
   private isOgcFilterable(dataSource: OgcFilterableDataSource) {

@@ -10,7 +10,6 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   url: string;
   params: { [k: string]: any };
   projection?: string;
-  version?: string;
   resolutions?: number[];
   serverType?: string;
   ratio?: number;

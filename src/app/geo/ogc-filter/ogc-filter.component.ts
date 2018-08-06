@@ -5,15 +5,16 @@ import {
   IgoMap,
   DataSourceService,
   LayerService,
-  TimeFilterableDataSourceOptions
+  WFSDataSourceOptions,
+  OgcFilterableDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
-  selector: 'app-time-filter',
-  templateUrl: './time-filter.component.html',
-  styleUrls: ['./time-filter.component.scss']
+  selector: 'app-ogc-filter',
+  templateUrl: './ogc-filter.component.html',
+  styleUrls: ['./ogc-filter.component.scss']
 })
-export class AppTimeFilterComponent {
+export class AppOgcFilterComponent {
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -45,22 +46,28 @@ export class AppTimeFilterComponent {
         );
       });
 
-    const datasource: TimeFilterableDataSourceOptions = {
-      type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+    interface WFSoptions
+      extends WFSDataSourceOptions,
+        OgcFilterableDataSourceOptions {}
+
+    const datasource: WFSoptions = {
+      type: 'wfs',
+      url: '/ws/igo_gouvouvert.fcgi',
       params: {
-        layers: 'vg_observation_v_inondation_embacle_wmst',
-        version: '1.3.0'
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: 'geojson'
       },
-      timeFilterable: true,
-      timeFilter: {
-        min: '2017-01-01',
-        max: '2018-01-01',
-        range: true,
-        type: 'datetime',
-        style: 'slider',
-        step: 86400000,
-        timeInterval: 2000
+      isOgcFilterable: true,
+      ogcFilters: {
+        filtersAreEditable: true,
+        filters: {
+          operator: 'PropertyIsEqualTo',
+          propertyName: 'certitude',
+          expression: 'Observé'
+        }
       }
     };
 

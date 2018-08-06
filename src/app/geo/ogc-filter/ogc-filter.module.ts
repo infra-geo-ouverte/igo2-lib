@@ -8,13 +8,13 @@ import {
 import { IgoPanelModule } from '@igo2/common';
 import { IgoMapModule, IgoFilterModule } from '@igo2/geo';
 
-import { AppTimeFilterComponent } from './time-filter.component';
-import { AppTimeFilterRoutingModule } from './time-filter-routing.module';
+import { AppOgcFilterComponent } from './ogc-filter.component';
+import { AppOgcFilterRoutingModule } from './ogc-filter-routing.module';
 
 @NgModule({
-  declarations: [AppTimeFilterComponent],
+  declarations: [AppOgcFilterComponent],
   imports: [
-    AppTimeFilterRoutingModule,
+    AppOgcFilterRoutingModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -22,6 +22,6 @@ import { AppTimeFilterRoutingModule } from './time-filter-routing.module';
     IgoMapModule,
     IgoFilterModule
   ],
-  exports: [AppTimeFilterComponent]
+  exports: [AppOgcFilterComponent]
 })
-export class AppTimeFilterModule {}
+export class AppOgcFilterModule {}

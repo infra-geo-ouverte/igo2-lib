@@ -26,6 +26,7 @@ import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppSearchModule } from './geo/search/search.module';
 import { AppTimeFilterModule } from './geo/time-filter/time-filter.module';
+import { AppOgcFilterModule } from './geo/ogc-filter/ogc-filter.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -58,6 +59,7 @@ import { AppComponent } from './app.component';
     AppCatalogModule,
     AppSearchModule,
     AppTimeFilterModule,
+    AppOgcFilterModule,
 
     AppRoutingModule
   ],
