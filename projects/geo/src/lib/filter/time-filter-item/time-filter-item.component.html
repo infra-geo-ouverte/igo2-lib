@@ -1,0 +1,19 @@
+<mat-list-item>
+  <mat-icon
+    class="igo-chevron"
+    mat-list-avatar
+    igoCollapse
+    [target]="filters"
+    [collapsed]="false">
+  </mat-icon>
+  <h4 matLine>{{layer.title}}</h4>
+</mat-list-item>
+
+<div #filters class="igo-datasource-filters-container">
+  <igo-time-filter-form
+    [options]="datasource.options.timeFilter"
+    [currentValue]="datasource.options.params.time"
+    (change)="handleDateChange($event)"
+    (yearChange)="handleYearChange($event)">
+  </igo-time-filter-form>
+</div>

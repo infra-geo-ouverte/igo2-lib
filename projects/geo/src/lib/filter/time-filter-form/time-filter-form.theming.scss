@@ -1,0 +1,8 @@
+@mixin igo-time-filter-form-theming($theme) {
+  $primary: map-get($theme, primary);
+
+  mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-header {
+    color: mat-color($primary);
+  }
+
+}

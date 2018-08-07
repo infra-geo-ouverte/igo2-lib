@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Query</mat-card-title>
+  <mat-card-content>
+    <p>* Dependencies: LanguageService</p>
+  </mat-card-content>
+
+  <igo-map-browser
+    [map]="map"
+    [view]="view"
+    igoOverlay
+    igoQuery
+    (query)="handleQueryResults($event)">
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+  </igo-map-browser>
+
+  <igo-panel title="Features list">
+    <igo-feature-list
+      igoFeatureListBinding
+      [focusFirst]="true"
+      (focus)="handleFeatureFocus($event)"
+      (select)="handleFeatureSelect($event)">
+    </igo-feature-list>
+    <button
+      mat-icon-button
+      panelRightButton
+      (click)="clearFeature()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </igo-panel>
+
+  <igo-panel title="Details">
+    <igo-feature-details igoFeatureDetailsBinding></igo-feature-details>
+  </igo-panel>
+
+</mat-card>

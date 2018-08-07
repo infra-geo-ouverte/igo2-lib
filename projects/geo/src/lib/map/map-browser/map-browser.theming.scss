@@ -1,0 +1,10 @@
+@mixin igo-map-browser-theming($theme) {
+  $primary: map-get($theme, primary);
+  $is-dark: map-get($theme, is-dark);
+
+  igo-map-browser div.ol-attribution button {
+    color: mat-color($primary, if($is-dark, default-contrast, default));
+    background-color: mat-color($primary, if($is-dark, default, default-contrast));
+  }
+
+}

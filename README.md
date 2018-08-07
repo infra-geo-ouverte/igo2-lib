@@ -1,41 +1,27 @@
-# IGO2 Library
+# Igo2Lib
 
-This repository is home to the IGO2 Library on which IGO2 is built. IGO2 and this library are is open source projects using Angular, Angular Material and OpenLayers 4. While IGO2 is mapping oriented, this library can easily serve other purposes as it contains many components and services that may benefit any web application.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.1.
 
-### Quick links
+## Development server
 
-### Installation
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Install developer instance
-If you want to develop in IGO2 Library, it can be installed by:
-1. Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
-2. Deploy in `cd igo2-lib/` and install from npm `npm install`
-3. Start form npm `npm start`
-4. Open your browser at http://localhost:4200/
+## Code scaffolding
 
-## Install user instance
-The latest release of IGO2 Library can be used and installed from npm `npm install --save @igo2/igo2`
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-### Getting started
+## Build
 
-See our [Getting Started Guide](https://github.com/infra-geo-ouverte/igo2-lib/blob/master/guides/getting-started.md)
-if you're building your first project with IGO2 Library.
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-### Demo
+## Running unit tests
 
-- [Demo IGO2 for Open Data Quebec](https://geoegl.msp.gouv.qc.ca/igo2/apercu-qc/)
-- [Demo IGO2 on GitHub](https://github.com/infra-geo-ouverte/igo2#table-of-content-english)
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-### Project status
+## Running end-to-end tests
 
-IGO2 Library is under active development and new features will be regularly added. If you'd like to contribute, you must follow our [contributing guidelines](https://github.com/infra-geo-ouverte/igo2-lib/blob/master/CONTRIBUTING.md).
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-Items developed and planned:
-- Better documentation
-- Better support of non-spatial data sources
-- PDF Print
-- Time slider (wms-time for filtering)
-- WMS Catalog
-- Import & export (GeoJSON, KML)
-- Sharing map
-- Tests
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

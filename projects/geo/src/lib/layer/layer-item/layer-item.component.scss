@@ -1,0 +1,42 @@
+@import '../../../../../core/src/style/partial/media';
+@import '../../../../../common/src/style/partial/common.variables';
+
+:host {
+  overflow: hidden;
+}
+
+.igo-layer-actions-container {
+  width: 100%;
+  display: inline-block;
+}
+
+.igo-layer-actions-container > div {
+  text-align: center;
+}
+
+.igo-layer-legend-container {
+  padding-left: 18px;
+  width: calc(100% - 18px);
+  display: inline-block;
+}
+
+#opacity-slider {
+  width: 100%;
+
+  @include mobile {
+    width: 70%;
+  }
+}
+
+.igo-layer-button-group {
+  float: right;
+  padding: 0 $igo-list-item-padding;
+
+  @include mobile {
+    float: none;
+  }
+}
+
+mat-icon.disabled {
+  color: rgba(0, 0, 0, 0.38);
+}

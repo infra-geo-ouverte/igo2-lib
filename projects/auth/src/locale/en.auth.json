@@ -1,0 +1,13 @@
+{
+  "igo": {
+    "auth": {
+      "accessAnonymous": "Access as anonymous",
+      "connection": "Connection",
+      "login": "Login",
+      "password": "Password",
+      "signOut": "Sign out",
+      "user": "User",
+      "welcome": "Welcome {{name}}!"
+    }
+  }
+}

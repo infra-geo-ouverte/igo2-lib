@@ -1,0 +1,30 @@
+mat-form-field {
+  width: 100%;
+}
+
+#uriInput {
+  .fieldWrapper {
+    display: block;
+    overflow: hidden;
+  }
+  .prefix {
+    float: left;
+  }
+}
+
+.linkToShare  {
+  padding: 25px 5px 5px;
+  textarea {
+    resize: none;
+    width: calc(100% - 60px);
+    line-height: 1.3;
+    height: 40px;
+    overflow-y: hidden;
+    word-wrap: normal;
+    word-break: break-all;
+  }
+  mat-form-field > button {
+    float: right;
+    margin: -10px 0;
+  }
+}

@@ -1,0 +1,5 @@
+@import './time-filter-form/time-filter-form.theming';
+
+@mixin igo-filter-theming($theme) {
+  @include igo-time-filter-form-theming($theme);
+}

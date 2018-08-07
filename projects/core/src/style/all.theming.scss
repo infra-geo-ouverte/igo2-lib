@@ -1,0 +1,9 @@
+@import './theming';
+@import '../../../common/src/style/common.theming';
+@import '../../../geo/src/style/geo.theming';
+
+@mixin igo-all-theming($theme) {
+  @include igo-theming($theme);
+  @include igo-common-theming($theme);
+  @include igo-geo-theming($theme);
+}

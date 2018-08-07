@@ -2,14 +2,8 @@
 
 # compiled output
 /dist
-/bundle
 /tmp
 /out-tsc
-*.metadata.json
-*.ngsummary.json
-*.ngfactory.ts
-*.ngstyle.ts
-*.tgz
 
 # dependencies
 /node_modules
@@ -33,24 +27,13 @@
 # misc
 /.sass-cache
 /connect.lock
-/coverage/*
+/coverage
 /libpeerconnection.log
 npm-debug.log
+yarn-error.log
 testem.log
 /typings
-
-# e2e
-/e2e/*.js
-/e2e/*.map
 
 # System Files
 .DS_Store
 Thumbs.db
-
-#Compodoc
-/documentation
-
-# Ada Library Information
-*.ali
-# Object file
-*.o

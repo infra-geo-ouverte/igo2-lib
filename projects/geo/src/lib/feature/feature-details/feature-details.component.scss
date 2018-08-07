@@ -1,0 +1,16 @@
+@import '../../../../../core/src/style/partial/core.variables';
+
+table {
+  width: 100%;
+  white-space: nowrap;
+}
+
+table td {
+  padding: $igo-padding;
+}
+
+iframe {
+  height: calc(100% - 4px);
+  width: 100%;
+  border: 0;
+}
