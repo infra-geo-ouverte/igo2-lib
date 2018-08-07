@@ -1,0 +1,36 @@
+@import '../../../../../core/src/style/partial/core.variables';
+
+.igo-baselayers-switcher-container {
+  height: auto;
+  position: relative;
+}
+
+.container-expand {
+  overflow: hidden;
+  border-width: 0;
+}
+
+.more-baselayers {
+  width: 80px;
+  height: 20px;
+  background-color: white;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #efefef;
+  }
+}
+
+.igo-baselayers-switcher-button-container {
+  width: $igo-icon-size;
+  background-color: #fff;
+  &:hover {
+    background-color: #efefef;
+  }
+}
+
+button,
+:host >>> button .mat-button-ripple-round {
+  border-radius: 0;
+}

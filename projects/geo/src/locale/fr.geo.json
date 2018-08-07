@@ -1,0 +1,148 @@
+{
+  "igo": {
+    "geo": {
+      "catalogTool": {
+        "baseLayers": "Fonds de carte"
+      },
+      "clickOnMap": {
+        "clickedFeature": "Entités cliquées"
+      },
+      "dropGeoFile": {
+        "invalid": {
+          "text": "Le fichier '{{value}}' est invalide",
+          "title": "Fichier invalide ({{i}}/{{count}})"
+        },
+        "success": {
+          "text": "La couche '{{value}}' a été ajoutée à la carte",
+          "title": "Fichier importé ({{i}}/{{count}})"
+        },
+        "unreadable": {
+          "text": "Le fichier '{{value}}' est impossible à lire",
+          "title": "Fichier illisible"
+        }
+      },
+      "importExportForm": {
+        "exportButton": "Exporter",
+        "exportFormatPlaceholder": "Format",
+        "exportLayerPlaceholder": "Couche",
+        "exportTabTitle": "Exporter",
+        "importButton": "Importer",
+        "importProjPlaceholder": "Projection de l'intrant (EPSG:4326)",
+        "importTabTitle": "Importer"
+      },
+      "operators": {
+        "And": "Et",
+        "Or": "Ou",
+        "PropertyIsEqualTo": "=",
+        "PropertyIsNotEqualTo": "!=",
+        "PropertyIsLike": "≈",
+        "PropertyIsGreaterThan": ">",
+        "PropertyIsGreaterThanOrEqualTo": ">=",
+        "PropertyIsLessThan": "<",
+        "PropertyIsLessThanOrEqualTo": "<=",
+        "PropertyIsBetween": "entre",
+        "During": "durant",
+        "PropertyIsNull": "est nul",
+        "Intersects": "intersecte",
+        "Within": "contenu dans",
+        "Contains": "contient"
+      },
+      "sourceFields": {
+        "selectField": "Choisir un champ"
+      },
+      "filter": {
+        "addFilter": "Ajouter un filtre vidre à la liste courante",
+        "removeFilter": "Supprimer le présent filtre à la liste des filtres",
+        "toggleFilterState": "Activer/désactiver le présent filtre",
+        "refreshFilters":
+          "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
+        "layerFiltered": "Cette couche d'information est présentement filtrée.",
+        "layerFilterable": "Cette couche d'information est filtrable",
+        "filterBy": "Filtrer par"
+      },
+      "spatialSelector": {
+        "fixedExtent": "Étendue fixe",
+        "btnSetExtent":
+          "Définir l'étendue du filtre selon l'étendue courante de la carte",
+        "snrc": "SNRC (ex:21L14)",
+        "selectFeature": "",
+        "drawFeature": ""
+      },
+      "layer": {
+        "hideLayer": "Masquer la couche",
+        "lowerLayer": "Descendre la couche",
+        "loadingLegendText": "Chargement de la légende",
+        "noLegendText": "Aucune légende disponible pour cette couche",
+        "opacity": "Opacité",
+        "raiseLayer": "Monter la couche",
+        "removeLayer": "Retirer la couche de la carte",
+        "showFeaturesList": "Afficher la liste des entités",
+        "showLayer": "Afficher la couche"
+      },
+      "download": {
+        "action": "Télécharger les données associées",
+        "title": "Téléchargement des données",
+        "start":
+          "Vérifiez la progression du téléchargement dans votre navigateur",
+        "end": "Terminé"
+      },
+      "mapButtons": {
+        "baselayerSwitcher": "Changer le fond de carte",
+        "geolocate": "Positionnement GPS",
+        "zoomIn": "Zoomer ({{zoom}})",
+        "zoomOut": "Dézoomer ({{zoom}})"
+      },
+      "metadata": {
+        "show": "Montrer les métadonnées"
+      },
+      "permission": {
+        "addBtn": "Ajouter",
+        "delete": "Retirer la permission",
+        "dialog": {
+          "addMsg": "La permission '{{value}}' a été ajoutée",
+          "addTitle": "Permission ajoutée",
+          "deleteMsg": "La permission '{{value}}' a été supprimée",
+          "deleteTitle": "Permission retirée",
+          "scopeChangedMsg":
+            "La portée du contexte a été changée pour {{value}}",
+          "scopeChangedTitle": "Changement de la portée"
+        },
+        "profil": "Profil",
+        "profilRequired": "Le profil est obligatoire",
+        "read": "Lecture seule",
+        "scope": {
+          "private": "Privé",
+          "protected": "Protégé",
+          "public": "Public"
+        },
+        "write": "Lecture et écriture"
+      },
+      "printForm": {
+        "format": "Format",
+        "landscape": "Paysage",
+        "portrait": "Portrait",
+        "printBtn": "Imprimer",
+        "resolution": "Résolution",
+        "title": "Titre"
+      },
+      "search": {
+        "dataSources": {
+          "name": "Couches",
+          "properties": {
+            "abstract": "Description",
+            "group": "Groupe",
+            "title": "Titre",
+            "type": "Type",
+            "url": "URL"
+          }
+        }
+      },
+      "targetHtmlUrl": "Ouvrir le lien externe",
+      "timeFilter": {
+        "date": "Date",
+        "endDate": "Date de fin",
+        "startDate": "Date de début"
+      }
+    }
+  }
+}

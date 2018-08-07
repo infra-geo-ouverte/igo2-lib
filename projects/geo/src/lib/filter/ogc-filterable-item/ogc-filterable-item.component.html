@@ -1,0 +1,33 @@
+<mat-list-item>
+
+  <mat-icon *ngIf="ogcFiltersHeaderShown" class="igo-chevron" mat-list-avatar igoCollapse [target]="ogcFilters" [collapsed]="false">
+  </mat-icon>
+  <h4 *ngIf="ogcFiltersHeaderShown" matLine [matTooltip]="layer.title" matTooltipShowDelay="500">{{layer.title}}</h4>
+  <h4 *ngIf="!ogcFiltersHeaderShown" matLine></h4>
+
+  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.refreshFilters' | translate"
+  [disabled]="!layer.visible || datasource.options['disableRefreshFilter'] || !layer.isInResolutionsRange"
+  [color]="color" (click)="refreshFilters()">
+    <mat-icon>
+      refresh
+    </mat-icon>
+  </button>
+
+  <span *ngIf="downloadable && ogcFiltersHeaderShown">
+    <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.download.action' | translate"
+      [color]="color" (click)="openDownload()">
+      <mat-icon>file_download</mat-icon>
+    </button>
+  </span>
+  <button [disabled]="!datasource.options['sourceFields'] || datasource.options['sourceFields'].length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
+    <mat-icon>
+      add
+    </mat-icon>
+  </button>
+</mat-list-item>
+
+<div #ogcFilters class="igo-datasource-filters-container">
+  <igo-ogc-filterable-form [datasource]="datasource">
+  </igo-ogc-filterable-form>
+</div>

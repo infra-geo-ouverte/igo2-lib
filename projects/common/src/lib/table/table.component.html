@@ -1,0 +1,40 @@
+<div class='table-container'>
+  <div class='table-header'>
+    <mat-form-field floatPlaceholder='never'>
+      <input matInput #filter [placeholder]="'igo.common.table.filter' | translate">
+    </mat-form-field>
+  </div>
+
+  <mat-table #table [dataSource]='dataSource' matSort>
+
+    <ng-container [cdkColumnDef]='column.name' *ngFor='let column of model.columns'>
+      <ng-container *ngIf='column.sortable'>
+        <mat-header-cell *cdkHeaderCellDef mat-sort-header> {{column.title}} </mat-header-cell>
+      </ng-container>
+
+      <ng-container *ngIf='!column.sortable'>
+        <mat-header-cell *cdkHeaderCellDef> {{column.title}} </mat-header-cell>
+      </ng-container>
+
+      <mat-cell *cdkCellDef='let row' class="mat-cell-text"> {{getValue(row, column.name)}} </mat-cell>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container cdkColumnDef='action'>
+      <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+      <mat-cell *cdkCellDef='let row'>
+        <button *ngFor='let action of model.actions'
+        mat-mini-fab
+        [color]='getActionColor(action.color)'
+        (click)='action.click(row)'>
+          <mat-icon>{{action.icon}}</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *cdkHeaderRowDef='displayedColumns'></mat-header-row>
+    <mat-row *cdkRowDef='let row; columns: displayedColumns;'></mat-row>
+
+  </mat-table>
+
+</div>

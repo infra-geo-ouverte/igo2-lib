@@ -1,0 +1,98 @@
+@import '../../../../../core/src/style/partial/media';
+@import '../../../../../core/src/style/partial/core.variables';
+
+:host {
+  position: relative;
+  display: block;
+}
+
+:host,
+.igo-map-browser-target {
+  width: 100%;
+  height: 100%;
+}
+
+:host >>> igo-zoom-button {
+  position: absolute;
+  bottom: $igo-margin;
+  right: $igo-margin;
+  @include mobile {
+    display: none;
+  }
+}
+
+:host >>> igo-geolocate-button {
+  position: absolute;
+  bottom: 95px;
+  right: $igo-margin;
+  @include mobile {
+    bottom: $igo-margin;
+  }
+}
+
+:host >>> igo-user-button {
+  position: absolute;
+  bottom: $igo-margin;
+  right: calc(#{$igo-margin} + 50px);
+  +media(mobile) {
+    right: calc(#{$igo-margin} + 90px);
+  }
+}
+
+:host >>> igo-baselayers-switcher {
+  position: absolute;
+  bottom: $igo-margin;
+  left: $igo-margin;
+}
+
+:host.igo-attribution-offset >>> .ol-attribution {
+  left: 90px;
+  width: calc(100% - 200px);
+  @include mobile {
+    left: 50px;
+  }
+}
+
+:host >>> .ol-attribution {
+  left: $igo-margin;
+  bottom: $igo-margin;
+  text-align: left;
+  padding: 0;
+  margin-right: 90px;
+  background-color: rgba(255, 255, 255, 0);
+  width: calc(100% - 100px);
+
+  &.ol-logo-only {
+    height: inherit;
+  }
+  &.ol-collapsed {
+    background: none;
+    button {
+      transform: none;
+    }
+  }
+  button {
+    transform: rotate(180deg);
+    background-color: white;
+    cursor: pointer;
+  }
+}
+
+:host >>> .ol-scale-line-inner {
+  font-size: 11px;
+  text-align: center;
+  margin: 1px;
+}
+
+:host >>> .ol-scale-line {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 4px;
+  bottom: 4px;
+  left: $igo-margin;
+  padding: 4px;
+  position: absolute;
+}
+
+:host >>> canvas {
+  display: block;
+}

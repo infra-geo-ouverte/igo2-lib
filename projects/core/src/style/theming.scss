@@ -1,0 +1,11 @@
+@import '~@angular/material/theming'; // include only in core
+
+@import './material.font';
+@import './core.theming';
+
+@mixin igo-theming($theme) {
+  @include mat-core();
+  @include angular-material-theme($theme);
+
+  @include igo-core-theming($theme);
+}

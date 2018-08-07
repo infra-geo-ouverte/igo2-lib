@@ -1,0 +1,23 @@
+:host {
+  overflow: hidden;
+}
+
+.igo-actions-container {
+  flex-shrink: 0;
+}
+
+.igo-actions-expand-container {
+  display: inline-flex;
+}
+
+mat-list-item >>> .mat-list-item-content .mat-list-text {
+  padding: 0;
+}
+
+mat-list-item >>> .mat-list-item-content .mat-list-text > h4 {
+  padding: 0 16px;
+}
+
+mat-icon.disabled {
+  color: rgba(0, 0, 0, 0.38);
+}

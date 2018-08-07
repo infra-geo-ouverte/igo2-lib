@@ -1,0 +1,62 @@
+@import '../../style/partial/common.variables';
+
+// This is to make the list scrollable
+:host {
+  display: block;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+mat-list {
+  padding-top: 0;
+}
+
+// We need to make sure the firs ancestor with a
+// position other than static is the host itself
+// to properly scroll to the focused list item
+:host {
+  position: static;
+}
+
+:host >>> .mat-list .mat-list-item .mat-list-text > * {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  max-height: 36px;
+  line-height: 18px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+:host >>> .mat-list .mat-list-item.mat-list-item-avatar .mat-list-item-content {
+  display: -webkit-flex;
+  height: $igo-list-item-height;
+  padding: $igo-list-item-padding;
+}
+
+:host >>> .mat-list .mat-list-item.mat-list-item-avatar {
+  height: $igo-list-item-height;
+}
+
+:host
+  >>> .mat-list
+  .mat-list-item.mat-list-item-avatar
+  .mat-list-item-content
+  > mat-icon {
+  padding: $igo-list-item-icon-padding;
+}
+
+:host >>> [igolistitem] mat-list-item [mat-list-avatar] {
+  height: auto;
+  width: 40px;
+}
+
+:host mat-list.selectable >>> [igolistitem] mat-list-item:hover {
+  cursor: pointer;
+}
+
+:host >>> [igolistitem]:focus {
+  outline: none;
+}

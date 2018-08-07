@@ -1,0 +1,6 @@
+<h1 mat-dialog-title>{{'igo.common.confirmDialog.title' | translate}}</h1>
+<div mat-dialog-content>{{confirmMessage}}</div>
+<div mat-dialog-actions>
+  <button mat-button color="primary" (click)="dialogRef.close(true)">{{'igo.common.confirmDialog.confirmBtn' | translate}}</button>
+  <button mat-button (click)="dialogRef.close(false)">{{'igo.common.confirmDialog.cancelBtn' | translate}}</button>
+</div>

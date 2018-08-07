@@ -1,0 +1,33 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Feature</mat-card-title>
+  <mat-card-content>
+    <p>* Dependencies: LanguageService</p>
+  </mat-card-content>
+
+  <igo-map-browser
+    [map]="map"
+    [view]="view"
+    igoOverlay>
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+  </igo-map-browser>
+
+  <igo-panel title="Features list">
+    <igo-feature-list
+      igoFeatureListBinding
+      [focusFirst]="false"
+      (select)="handleFeatureSelect($event)">
+    </igo-feature-list>
+  </igo-panel>
+
+  <igo-panel title="Details">
+    <igo-feature-details igoFeatureDetailsBinding></igo-feature-details>
+    <button
+      mat-icon-button
+      panelRightButton
+      (click)="clearFeatureSelected()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </igo-panel>
+
+</mat-card>

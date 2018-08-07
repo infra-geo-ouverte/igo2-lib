@@ -1,0 +1,28 @@
+@mixin igo-collapsible-theming($theme) {
+  mat-icon[mat-list-avatar][igocollapse] {
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.igo-chevron {
+      width: auto !important;
+      height: auto;
+      transform: rotateZ(0deg);
+      transition: 300ms ease-in-out;
+
+      &:after {
+        content: 'expand_less';
+      }
+
+      &.collapsed {
+        transform: rotateZ(180deg);
+        transition: 300ms ease-in-out;
+      }
+    }
+  }
+
+  div.igo-collapsed {
+    display: none !important;
+  }
+
+}

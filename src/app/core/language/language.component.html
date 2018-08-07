@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-subtitle>Core</mat-card-subtitle>
+  <mat-card-title>language</mat-card-title>
+  <mat-card-content>
+    <p>Translate your angular application</p>
+    <p>* Import <code>IgoLanguageModule</code> only once</p>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-raised-button (click)="changeLanguage('en')">English</button>
+    <button mat-raised-button (click)="changeLanguage('fr')">Français</button>
+  </mat-card-actions>
+
+  <p>{{'welcome' | translate: app}}<p>
+</mat-card>

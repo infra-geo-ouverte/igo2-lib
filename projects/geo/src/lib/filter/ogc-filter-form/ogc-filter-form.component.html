@@ -1,0 +1,210 @@
+<mat-list-item>
+
+  <div class="igo-col igo-col-90 igo-col-100-m">
+    <mat-select class="logical" [disabled]="!currentFilter.active" (change)="disableRefreshFilter()" [(ngModel)]="currentFilter.parentLogical"
+      *ngIf="activeFilters.indexOf(currentFilter) !== 0 && currentFilter.active===true">
+      <mat-option value="And">{{'igo.geo.operators.And' | translate}}</mat-option>
+      <mat-option value="Or">{{'igo.geo.operators.Or' | translate}}</mat-option>
+    </mat-select>
+  </div>
+  <!-- NON SPATIAL -->
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
+    <span *ngIf="fields && fields.length > 0 && fields[0].name !== ''">
+      <mat-select [disabled]="!currentFilter.active" *ngIf="['Contains','Intersects','Within'].indexOf(currentFilter.operator) === -1"
+        [(ngModel)]="currentFilter.propertyName" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
+        (change)="updateField(false)">
+        <mat-option *ngFor="let field of fields" [value]="field.name">{{field.alias}}</mat-option>
+      </mat-select>
+    </span>
+    <span *ngIf="fields && fields.length === 1 && fields[0].name === ''">
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput #fieldPerUser (change)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)"
+          (blur)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)" [(ngModel)]="currentFilter.propertyName">
+
+        <button mat-button *ngIf="currentFilter.propertyName" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.propertyName=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+    </span>
+  </div>
+
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
+    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (change)="disableRefreshFilter()">
+      <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{operator.value.alias}}</mat-option>
+    </mat-select>
+  </div>
+
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
+
+    <!-- PropertyIsEqualTo -->
+    <span *ngIf="currentFilter.operator === 'PropertyIsEqualTo' || currentFilter.operator === 'PropertyIsNotEqualTo'">
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionequalto (change)="changeProperty(currentFilter,'expression',expressionequalto.value)"
+          (blur)="changeProperty(currentFilter,'expression',expressionequalto.value)" [(ngModel)]="currentFilter.expression">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values" [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.expression" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.expression=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+    </span>
+    <!-- PropertyIsEqualTo  -->
+
+
+    <!-- PropertyIsLike  -->
+    <span *ngIf="currentFilter.operator === 'PropertyIsLike'">
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #pattern (change)="changeProperty(currentFilter,'pattern',pattern.value)"
+          (blur)="changeProperty(currentFilter,'pattern',pattern.value)" [(ngModel)]="currentFilter.pattern">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values" [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.pattern" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.pattern=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+    </span>
+    <!-- PropertyIsLike  -->
+
+    <!-- PropertyIsNull  -->
+    <span *ngIf="currentFilter.operator === 'PropertyIsNull'"></span>
+    <!-- PropertyIsNull  -->
+
+    <!-- PropertyIs_Than  -->
+    <span *ngIf="currentFilter.operator === 'PropertyIsGreaterThan' || currentFilter.operator === 'PropertyIsGreaterThanOrEqualTo' || currentFilter.operator === 'PropertyIsLessThan' || currentFilter.operator === 'PropertyIsLessThanOrEqualTo'">
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionthan type="number" (change)="changeNumericProperty(currentFilter,'expression',expressionthan.value)"
+          (blur)="changeNumericProperty(currentFilter,'expression',expressionthan.value)" [(ngModel)]="currentFilter.expression">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values" [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.expression" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.expression=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </span>
+    <!-- PropertyIs_Than  -->
+
+
+    <!-- PropertyIsBetween -->
+    <span *ngIf="currentFilter.operator === 'PropertyIsBetween'">
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #lowerBoundary type="number" (change)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)"
+          (blur)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)" [(ngModel)]="currentFilter.lowerBoundary">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values" [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.lowerBoundary" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.lowerBoundary=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #upperBoundary type="number" (change)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)"
+          (blur)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)" [(ngModel)]="currentFilter.upperBoundary">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values" [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.upperBoundary" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.upperBoundary=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+    </span>
+    <!-- PropertyIsBetween  -->
+
+
+    <!-- During -->
+    <span *ngIf="currentFilter.operator === 'During'">
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #begin (change)="changeProperty(currentFilter,'begin',begin.value)"
+          (blur)="changeProperty(currentFilter,'begin',begin.value)" [(ngModel)]="currentFilter.begin">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values " [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.begin" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.begin=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #end (change)="changeProperty(currentFilter,'end',end.value)"
+          (blur)="changeProperty(currentFilter,'end',end.value)" [(ngModel)]="currentFilter.end">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let value of values" [value]="value">
+            <span>{{ value }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-button *ngIf="currentFilter.end" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.end=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+
+    </span>
+    <!-- During  -->
+  </div>
+  <!-- NON SPATIAL -->
+
+
+  <!-- PropertySpatial  -->
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
+    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (change)="disableRefreshFilter()">
+      <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{operator.value.alias}}</mat-option>
+    </mat-select>
+  </div>
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
+    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.igoSpatialSelector" (change)="changeGeometry(currentFilter,value)">
+      <mat-option *ngFor="let igoSpatialSelector of igoSpatialSelectors" [value]="igoSpatialSelector.type">{{igoSpatialSelector.alias}}</mat-option>
+    </mat-select>
+  </div>
+
+  <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
+    <button mat-button [disabled]="!currentFilter.active" *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
+      matSuffix mat-icon-button aria-label="Clear" (click)="changeGeometry(currentFilter,value)" tooltip-position="below" matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.spatialSelector.btnSetExtent' | translate">
+      <mat-icon>
+        zoom_out_map
+      </mat-icon>
+    </button>
+
+
+    <mat-form-field *ngIf="currentFilter.igoSpatialSelector === 'snrc'">
+      <input matInput #htmlSnrc (change)="changeGeometry(currentFilter,htmlSnrc.value)" (blur)="changeGeometry(currentFilter,htmlSnrc.value)"
+        [(ngModel)]="snrc">
+      <button mat-button *ngIf="snrc" matSuffix mat-icon-button aria-label="Clear" (click)="snrc=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+  <!-- PropertySpatial  -->
+
+  <div class="igo-col igo-col-100 igo-col-100-m">
+    <div class="igo-layer-button-group">
+      <mat-slide-toggle class="example-margin" (change)="toggleFilterState($event,currentFilter,'active')" tooltip-position="below"
+        matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="currentFilter.active"
+        [disabled]="disabled">
+      </mat-slide-toggle>
+      <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.removeFilter' | translate"
+        color="warn" (click)="deleteFilter(currentFilter)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+</mat-list-item>

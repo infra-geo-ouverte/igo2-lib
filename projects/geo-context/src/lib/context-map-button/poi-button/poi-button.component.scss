@@ -1,0 +1,49 @@
+mat-select {
+  width: 150px;
+  background-color: white;
+  height: 40px;
+  padding-top: 0;
+  & >>> {
+    .mat-select-trigger {
+      height: 40px;
+    }
+
+    .mat-select-value-text,
+    .mat-select-placeholder {
+      padding: 5px;
+      top: 12px;
+      position: relative;
+    }
+  }
+}
+
+.mat-option {
+  text-overflow: inherit;
+}
+
+.titlePoi {
+  max-width: 135px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  float: left;
+}
+
+.buttonPoi {
+  float: right;
+  margin: 4px -10px 4px 0;
+  & >>> .mat-icon {
+    margin: 0 8px;
+  }
+}
+
+.deletePoi {
+  span::before {
+    content: 'delete';
+  }
+}
+
+.addPoi {
+  span::before {
+    content: 'add_circle';
+  }
+}

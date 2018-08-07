@@ -1,0 +1,146 @@
+{
+  "igo": {
+    "geo": {
+      "catalogTool": {
+        "baseLayers": "Base Layers"
+      },
+      "clickOnMap": {
+        "clickedFeature": "Clicked Feature"
+      },
+      "dropGeoFile": {
+        "invalid": {
+          "text": "Invalid file ({{i}}/{{count}})",
+          "title": "The file '{{value}}' is invalid"
+        },
+        "success": {
+          "text": "Imported file ({{i}}/{{count}})",
+          "title": "The layer '{{value}}' was added to the map"
+        },
+        "unreadable": {
+          "text": "Unreadable file",
+          "title": "The file '{{value}}' is unreadable"
+        }
+      },
+      "importExportForm": {
+        "exportButton": "Export",
+        "exportFormatPlaceholder": "Format",
+        "exportLayerPlaceholder": "Layer",
+        "exportTabTitle": "Export",
+        "importButton": "Import",
+        "importProjPlaceholder": "Source projection (EPSG:4326)",
+        "importTabTitle": "Import"
+      },
+      "operators": {
+        "And": "And",
+        "Or": "Or",
+        "PropertyIsEqualTo": "=",
+        "PropertyIsNotEqualTo": "!=",
+        "PropertyIsLike": "≈",
+        "PropertyIsGreaterThan": ">",
+        "PropertyIsGreaterThanOrEqualTo": ">=",
+        "PropertyIsLessThan": "<",
+        "PropertyIsLessThanOrEqualTo": "<=",
+        "PropertyIsBetween": "between",
+        "During": "during",
+        "PropertyIsNull": "is null",
+        "Intersects": "intersects",
+        "Within": "within",
+        "Contains": "contains"
+      },
+      "sourceFields": {
+        "selectField": "Choose a field"
+      },
+      "filter": {
+        "addFilter": "Add an empty filter to the current list",
+        "removeFilter": "Remove the current filter from the filters's list",
+        "toggleFilterState": "Enable/disable the current filter",
+        "refreshFilters":
+          "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
+        "layerFiltered": "This layer is currently filtered",
+        "layerFilterable": "This layer is filterable",
+        "filterBy": "Filter by"
+      },
+      "spatialSelector": {
+        "fixedExtent": "Fixed extent",
+        "btnSetExtent":
+          "Define the extent of the spatial filter to the current view",
+        "snrc": "SNRC (ex:21L14)",
+        "selectFeature": "",
+        "drawFeature": ""
+      },
+      "layer": {
+        "hideLayer": "Hide Layer",
+        "lowerLayer": "Bring layer backward",
+        "loadingLegendText": "Loading legend",
+        "noLegendText": "No legend available for this layer",
+        "opacity": "Opacity",
+        "raiseLayer": "Bring layer forward",
+        "removeLayer": "Remove this layer from the map",
+        "showFeaturesList": "Show features list",
+        "showLayer": "Show Layer"
+      },
+      "download": {
+        "action": "Download data",
+        "title": "Downloading file",
+        "start": "Started. Check the download progression in your browser",
+        "end": "Completed"
+      },
+      "mapButtons": {
+        "baselayerSwitcher": "Change base layer",
+        "geolocate": "Geolocate",
+        "zoomIn": "Zoom in ({{zoom}})",
+        "zoomOut": "Zoom out ({{zoom}})"
+      },
+      "metadata": {
+        "show": "Show metadata"
+      },
+      "permission": {
+        "addBtn": "Add",
+        "delete": "Remove permission",
+        "dialog": {
+          "addMsg": "The permission '{{value}}' was added",
+          "addTitle": "Permission added",
+          "deleteMsg": "The permission '{{value}}' was removed",
+          "deleteTitle": "Permission removed",
+          "scopeChangedMsg": "The scope was changed to {{value}}",
+          "scopeChangedTitle": "Scope changed"
+        },
+        "profil": "Profil",
+        "profilRequired": "Profil required",
+        "read": "Read only",
+        "scope": {
+          "private": "Private",
+          "protected": "Protected",
+          "public": "Public"
+        },
+        "write": "Read and Write"
+      },
+      "printForm": {
+        "format": "Format",
+        "landscape": "Landscape",
+        "portrait": "Portrait",
+        "printBtn": "Print",
+        "resolution": "Resolution",
+        "title": "Title"
+      },
+      "search": {
+        "dataSources": {
+          "name": "Layers",
+          "properties": {
+            "abstract": "Abstract",
+            "group": "Group",
+            "title": "Title",
+            "type": "Type",
+            "url": "URL"
+          }
+        }
+      },
+      "targetHtmlUrl": "Open the external link",
+      "timeFilter": {
+        "date": "Date",
+        "endDate": "End Date",
+        "startDate": "Start Date"
+      }
+    }
+  }
+}

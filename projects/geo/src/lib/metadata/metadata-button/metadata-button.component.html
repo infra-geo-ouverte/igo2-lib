@@ -1,0 +1,10 @@
+<button
+  *ngIf="options && options.metadata && options.metadata.url"
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.geo.metadata.show' | translate"
+  [color]="color"
+  (click)="openMetadata(options.metadata)">
+  <mat-icon>info_outline</mat-icon>
+</button>

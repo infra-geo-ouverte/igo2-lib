@@ -1,0 +1,34 @@
+@import '~dist/core/style/theming'; // replace ~dist by ~igo2
+@import '~dist/common/style/common.theming'; // replace ~dist by ~igo2
+@import '~dist/geo/style/geo.theming'; // replace ~dist by ~igo2
+
+@mixin igo-all-theming($theme) {
+  @include igo-theming($theme);
+  @include igo-common-theming($theme);
+  @include igo-geo-theming($theme);
+}
+
+.indigo-theme {
+  @import '~dist/core/style/themes/indigo.theme';
+  @include igo-all-theming($theme);
+}
+
+.deeppurple-theme {
+  @import '~dist/core/style/themes/deeppurple.theme';
+  @include igo-all-theming($theme);
+}
+
+.orange-theme {
+  @import '~dist/core/style/themes/orange.theme';
+  @include igo-all-theming($theme);
+}
+
+.bluegrey-theme {
+  @import '~dist/core/style/themes/bluegrey.theme';
+  @include igo-all-theming($theme);
+}
+
+.dark-theme {
+  @import '~dist/core/style/themes/dark.theme';
+  @include igo-all-theming($theme);
+}

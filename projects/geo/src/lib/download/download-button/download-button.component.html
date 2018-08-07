@@ -1,0 +1,10 @@
+<button
+  *ngIf="options && options.download && (options.download['dynamicUrl'] || options.download['url']) "
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.geo.download.action' | translate"
+  [color]="color"
+  (click)="openDownload(layer)">
+  <mat-icon>file_download</mat-icon>
+</button>

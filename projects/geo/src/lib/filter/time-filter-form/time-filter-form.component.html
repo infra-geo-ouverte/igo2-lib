@@ -1,0 +1,102 @@
+<div *ngIf="style === 'calendar' && type !=='year'">
+  <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
+    <mat-form-field>
+      <mat-datetimepicker-toggle [for]="datetimePicker" matSuffix></mat-datetimepicker-toggle>
+      <mat-datetimepicker #datetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+      <input matInput autocomplete="false"
+        placeholder="{{'igo.geo.timeFilter.date' | translate}}"
+        [matDatetimepicker]="datetimePicker"
+        [(ngModel)]="date"
+        [min]="min"
+        [max]="max"
+        readonly="readonly"
+        (dateChange)="handleDateChange($event)">
+    </mat-form-field>
+
+  </div>
+
+  <div *ngIf="isRange">
+    <div class="igo-col igo-col-100">
+      <mat-form-field>
+        <mat-datetimepicker-toggle [for]="minDatetimePicker" matSuffix></mat-datetimepicker-toggle>
+        <mat-datetimepicker #minDatetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+        <input matInput autocomplete="false"
+          placeholder="{{'igo.geo.timeFilter.startDate' | translate}}"
+          [matDatetimepicker]="minDatetimePicker"
+          [(ngModel)]="startDate"
+          [min]="min"
+          [max]="getRangeMaxDate()"
+          readonly="readonly"
+          (input)="startDate"
+          (dateChange)="handleDateChange($event)">
+      </mat-form-field>
+    </div>
+
+    <div class="igo-col igo-col-100">
+      <mat-form-field>
+        <mat-datetimepicker-toggle [for]="maxDatetimePicker" matSuffix></mat-datetimepicker-toggle>
+        <mat-datetimepicker #maxDatetimePicker type="{{type}}" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
+        <input matInput autocomplete="false"
+          placeholder="{{'igo.geo.timeFilter.endDate' | translate}}"
+          [matDatetimepicker]="maxDatetimePicker"
+          [(ngModel)]="endDate"
+          [min]="getRangeMinDate()"
+          [max]="max"
+          readonly="readonly"
+          (dateChange)="handleDateChange($event)">
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="style === 'calendar' && type ==='year'">
+
+  <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
+        <mat-form-field>
+            <mat-select placeholder="{{'igo.geo.timeFilter.date' | translate}}" [(ngModel)]="year" (change)="handleYearChange($event)">
+                  <mat-option [value]="year" *ngFor="let year of listYears">{{year}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+  </div>
+
+  <div *ngIf="isRange">
+    <div class="igo-col igo-col-100">
+        <mat-form-field>
+            <mat-select placeholder="{{'igo.geo.timeFilter.startDate' | translate}}" [(ngModel)]="startYear" (change)="handleYearChange($event)">
+              <mat-option [value]="startYear" *ngFor="let startYear of startListYears">{{startYear}}</mat-option>
+            </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="igo-col igo-col-100">
+    <mat-form-field>
+        <mat-select placeholder="{{'igo.geo.timeFilter.endDate' | translate}}" [(ngModel)]="endYear" (change)="handleYearChange($event)">
+              <mat-option [value]="endYear" *ngFor="let endYear of endListYears">{{endYear}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+</div>
+
+
+  <br>
+
+
+<div *ngIf="style === 'slider'" class="igo-col igo-col-100 igo-col-100-m">
+  <mat-slider
+      id="time-slider"
+      tickInterval="auto"
+      step="{{step}}"
+      [min]="dateToNumber(min)"
+      [max]="dateToNumber(max)"
+      [value]="handleSliderValue()"
+      thumbLabel
+      (input)="handleSliderDateChange($event)"
+      (change)="handleSliderDateChange($event)">
+  </mat-slider>
+  <p class="date-below">{{handleSliderTooltip()}}</p>
+  <button mat-icon-button color="primary" (click)="playFilter($event)">
+   <mat-icon>{{playIcon}}</mat-icon>
+  </button>
+</div>

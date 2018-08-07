@@ -1,0 +1,16 @@
+<igo-list [navigation]="false" [selection]="false">
+  <ng-template ngFor let-layer [ngForOf]="layers">
+    <igo-layer-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
+        igoListItem
+        [color]="color"
+        [layer]="layer"
+        [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange">
+
+        <ng-container igoLayerItemToolbar
+          [ngTemplateOutlet]="templateLayerToolbar"
+          [ngTemplateOutletContext]="{layer: layer}">
+        </ng-container>
+
+    </igo-layer-item>
+  </ng-template>
+</igo-list>

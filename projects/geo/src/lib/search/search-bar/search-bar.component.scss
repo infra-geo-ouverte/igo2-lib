@@ -1,0 +1,34 @@
+@import '../../../../../core/src/style/partial/core.variables';
+
+:host {
+  position: relative;
+  display: block;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+input {
+  padding-right: $igo-icon-size;
+  width: calc(100% - #{$igo-icon-size});
+}
+
+input.hasSearchIcon {
+  padding-right: calc(#{$igo-icon-size} * 2);
+  width: calc(100% - (#{$igo-icon-size} * 2));
+}
+
+.searchButtonDiv {
+  position: absolute;
+  right: 0;
+  top: 0;
+  & > button:nth-child(2)::before {
+    content: '';
+    position: absolute;
+    left: 0px;
+    top: 5px;
+    border-right: 1px solid #ddd;
+    height: 28px;
+  }
+}
