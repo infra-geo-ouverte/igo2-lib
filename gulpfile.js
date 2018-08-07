@@ -4,6 +4,10 @@ const del = require('del');
 const exec = require('gulp-exec');
 const merge = require('gulp-merge-json');
 const gulpSequence = require('gulp-sequence');
+const jeditor = require('gulp-json-editor');
+
+const package = require('./package.json');
+const version = package.version;
 
 gulp.task('core:clean', () => {
   return del([
@@ -154,7 +158,7 @@ gulp.task('geo:copyLocale', () => {
 
 gulp.task('geoContext:copyLocale', () => {
   gulp
-    .src('./projects/geoContext/src/locale/*')
+    .src('./projects/geo-context/src/locale/*')
     .pipe(gulp.dest('./dist/core/locale'));
 });
 
@@ -190,6 +194,138 @@ gulp.task('core:bundleLocale', [
   'core:bundleLocale.fr',
   'core:bundleLocale.en'
 ]);
+
+// ==========================================================
+
+gulp.task('utils:bumpVersion', () => {
+  gulp
+    .src('./projects/utils/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/utils': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/utils/.'));
+});
+
+gulp.task('core:bumpVersion', () => {
+  gulp
+    .src('./projects/core/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/utils': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/core/.'));
+});
+
+gulp.task('common:bumpVersion', () => {
+  gulp
+    .src('./projects/common/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/core': version,
+          '@igo2/utils': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/common/.'));
+});
+
+gulp.task('auth:bumpVersion', () => {
+  gulp
+    .src('./projects/auth/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/core': version,
+          '@igo2/utils': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/auth/.'));
+});
+
+gulp.task('geo:bumpVersion', () => {
+  gulp
+    .src('./projects/geo/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/common': version,
+          '@igo2/core': version,
+          '@igo2/utils': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/geo/.'));
+});
+
+gulp.task('geoContext:bumpVersion', () => {
+  gulp
+    .src('./projects/geo-context/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/auth': version,
+          '@igo2/common': version,
+          '@igo2/core': version,
+          '@igo2/geo': version,
+          '@igo2/utils': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/geo-context/.'));
+});
+
+gulp.task('tools:bumpVersion', () => {
+  gulp
+    .src('./projects/tools/package.json')
+    .pipe(
+      jeditor({
+        version: version,
+        peerDependencies: {
+          '@igo2/geo': version,
+          '@igo2/geo-context': version
+        }
+      })
+    )
+    .pipe(gulp.dest('./projects/tools/.'));
+});
+
+gulp.task('commitVersion', () => {
+  return gulp
+    .src('.')
+    .pipe(exec('git commit -a -m ' + version))
+    .pipe(exec.reporter());
+});
+
+gulp.task(
+  'bumpVersion',
+  gulpSequence(
+    [
+      'utils:bumpVersion',
+      'core:bumpVersion',
+      'common:bumpVersion',
+      'auth:bumpVersion',
+      'geo:bumpVersion',
+      'geoContext:bumpVersion',
+      'tools:bumpVersion'
+    ],
+    'commitVersion'
+  )
+);
 
 // ==========================================================
 

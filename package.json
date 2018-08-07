@@ -3,9 +3,6 @@
   "version": "0.21.2",
   "description": "IGO Library",
   "author": "MSP",
-  "keywords": [
-    "igo"
-  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -37,7 +34,10 @@
     "test.geoContext": "ng test geoContext --watch=false --code-coverage",
     "test.demo": "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
     "prepublish2": "npm run test.libs && npm run build.libs",
-    "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/geo-context && npm publish ./dist/tools"
+    "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/geo-context && npm publish ./dist/tools",
+    "postversion": "gulp bumpVersion && git push && git push --tags",
+    "postversion2": "cd ./projects/utils && npm version",
+    "version3": "gulp bumpVersion"
   },
   "private": true,
   "dependencies": {
@@ -78,6 +78,7 @@
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-exec": "^3.0.2",
+    "gulp-json-editor": "^2.4.2",
     "gulp-merge-json": "^1.3.1",
     "gulp-sequence": "^1.0.0",
     "jasmine-core": "~2.99.1",
