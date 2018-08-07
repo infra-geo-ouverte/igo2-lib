@@ -1,5 +1,3 @@
-import { HttpClient } from '@angular/common/http';
-
 import olSourceVector from 'ol/source/Vector';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 import * as olformat from 'ol/format';
@@ -8,78 +6,17 @@ import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
-import { WFSDataSourceService } from './wfs-datasource.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
-  public httpClient: HttpClient;
   public ogcFilterWriter: OgcFilterWriter;
 
-  constructor(
-    public options: WFSDataSourceOptions | any,
-    protected dataSourceService: WFSDataSourceService
-  ) {
+  constructor(public options: WFSDataSourceOptions) {
     super(options);
-    this.ogcFilterWriter = new OgcFilterWriter();
-
     this.options = this.checkWfsOptions(options);
-
-    if (
-      options['sourceFields'] === undefined ||
-      Object.keys(options['sourceFields']).length === 0
-    ) {
-      options['sourceFields'] = [];
-      this.dataSourceService
-        .wfsGetCapabilities(options)
-        .subscribe(wfsCapabilities => {
-          options['wfsCapabilities'] = {
-            xml: wfsCapabilities.body,
-            GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
-              ? true
-              : false
-          };
-
-          this.dataSourceService.defineFieldAndValuefromWFS(this.options);
-        });
-    } else {
-      options['sourceFields']
-        .filter(
-          field => field.values === undefined || field.values.length === 0
-        )
-        .forEach(f => {
-          f.values = this.dataSourceService.getValueFromWfsGetPropertyValues(
-            options,
-            f.name,
-            200,
-            0,
-            0
-          );
-        });
-    }
-
-    if (options.ogcFilters.filters) {
-      options.ogcFilters.filters = this.ogcFilterWriter.checkIgoFiltersProperties(
-        options.ogcFilters.filters,
-        options.params.fieldNameGeometry,
-        true
-      );
-      options.ogcFilters.interfaceOgcFilters = this.ogcFilterWriter.defineInterfaceFilterSequence(
-        options.ogcFilters.filters,
-        options.params.fieldNameGeometry
-      );
-    } else {
-      options.ogcFilters.filters = undefined;
-      options.ogcFilters.interfaceOgcFilters = [];
-    }
-
-    options.isOgcFilterable =
-      options.isOgcFilterable === undefined ? true : options.isOgcFilterable;
-    options.ogcFilters.filtersAreEditable =
-      options.ogcFilters.filtersAreEditable === undefined
-        ? true
-        : options.ogcFilters.filtersAreEditable;
+    this.ogcFilterWriter = new OgcFilterWriter();
   }
 
   protected generateId() {
@@ -125,7 +62,7 @@ export class WFSDataSource extends DataSource {
           : 'srsname=' + proj.getCode();
 
         wfsOptions.params.xmlFilter = this.ogcFilterWriter.buildFilter(
-          wfsOptions.ogcFilters.filters,
+          (wfsOptions as any).ogcFilters.filters,
           extent,
           proj,
           wfsOptions.params.fieldNameGeometry

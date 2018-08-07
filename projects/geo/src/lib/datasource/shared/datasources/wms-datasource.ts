@@ -4,7 +4,6 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
-// import { WFSDataSourceService } from './wfs-datasource.service';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
@@ -27,10 +26,7 @@ export class WMSDataSource extends DataSource {
       : 'newtab';
   }
 
-  constructor(
-    // protected dataSourceService: WFSDataSourceService
-    public options: WMSDataSourceOptions
-  ) {
+  constructor(public options: WMSDataSourceOptions) {
     super(options);
 
     // Important: To use wms versions smaller than 1.3.0, SRS
@@ -42,121 +38,6 @@ export class WMSDataSource extends DataSource {
     if (sourceParams && sourceParams.version) {
       sourceParams.VERSION = sourceParams.version;
     }
-
-    //   if (
-    //     options['sourceFields'] === undefined ||
-    //     Object.keys(options['sourceFields']).length === 0
-    //   ) {
-    //     options['sourceFields'] = [{ name: '', alias: '' }];
-    //   }
-    //   // WMS With linked wfs
-    //   if (options.wfsSource && Object.keys(options.wfsSource).length > 0) {
-    //     options.wfsSource = this.dataSourceService.checkWfsOptions(
-    //       options.wfsSource
-    //     );
-    //     delete options.wfsSource.ogcFilters;
-    //     options['fieldNameGeometry'] = options.wfsSource['fieldNameGeometry'];
-    //     if (
-    //       options['sourceFields'].length === 1 &&
-    //       options['sourceFields'][0].name === ''
-    //     ) {
-    //       options['sourceFields'] = [];
-    //       this.dataSourceService
-    //         .wfsGetCapabilities(options)
-    //         .map(
-    //           wfsCapabilities =>
-    //             (options.wfsSource['wfsCapabilities'] = {
-    //               xml: wfsCapabilities.body,
-    //               GetPropertyValue: /GetPropertyValue/gi.test(
-    //                 wfsCapabilities.body
-    //               )
-    //                 ? true
-    //                 : false
-    //             })
-    //         )
-    //       .subscribe(
-    //         val =>
-    //           (options[
-    //             'sourceFields'
-    //           ] = this.dataSourceService.defineFieldAndValuefromWFS(
-    //             options.wfsSource
-    //           ))
-    //       );
-    //     } else {
-    //       options['sourceFields']
-    //         .filter(
-    //           field => field.values === undefined || field.values.length === 0
-    //         )
-    //         .forEach(f => {
-    //           f.values = this.dataSourceService.getValueFromWfsGetPropertyValues(
-    //             options.wfsSource,
-    //             f.name,
-    //             200,
-    //             0,
-    //             0
-    //           );
-    //         });
-    //     }
-    //
-    //     const outputFormat =
-    //       options.wfsSource.outputFormat !== undefined
-    //         ? 'outputFormat=' + options.wfsSource.outputFormat
-    //         : '';
-    //
-    //     let paramMaxFeatures = 'maxFeatures';
-    //     if (options.wfsSource.version === '2.0.0' || !options.wfsSource.version) {
-    //       paramMaxFeatures = 'count';
-    //     }
-    //     const maxFeatures = options.wfsSource.maxFeatures
-    //       ? paramMaxFeatures + '=' + options.wfsSource.maxFeatures
-    //       : paramMaxFeatures + '=5000';
-    //     const srsname = options.wfsSource.srsname
-    //       ? 'srsname=' + options.wfsSource.srsname
-    //       : 'srsname=EPSG:3857';
-    //     const baseWfsQuery = this.dataSourceService.buildBaseWfsUrl(
-    //       options.wfsSource,
-    //       'GetFeature'
-    //     );
-    //     this.options.download = Object.assign({}, this.options.download, {
-    //       dynamicUrl: `${baseWfsQuery}&${outputFormat}&${srsname}&${maxFeatures}`
-    //     });
-    //   }
-    //
-    //   WMS with filter AND fiterable by OGC
-    //   options.isOgcFilterable =
-    //     options.isOgcFilterable === undefined ? false : options.isOgcFilterable;
-    //   options.ogcFilters =
-    //     options.ogcFilters === undefined
-    //       ? ({
-    //           filtersAreEditable: true,
-    //           filters: undefined
-    //         } as OgcFiltersOptions)
-    //       : options.ogcFilters;
-    //
-    //   if (options.isOgcFilterable) {
-    //     this.ogcFilterWriter = new OgcFilterWriter();
-    //     if (options.ogcFilters && options.ogcFilters.filters) {
-    //       options.ogcFilters.filters = this.ogcFilterWriter.checkIgoFiltersProperties(
-    //         options.ogcFilters.filters,
-    //         options['fieldNameGeometry'],
-    //         true
-    //       );
-    //       options.ogcFilters.interfaceOgcFilters = this.ogcFilterWriter.defineInterfaceFilterSequence(
-    //         // With some wms server, this param must be set to make spatials call.
-    //         options.ogcFilters.filters,
-    //         options['fieldNameGeometry']
-    //       );
-    //       this.filterByOgc(
-    //         this.ogcFilterWriter.buildFilter(options.ogcFilters
-    //           .filters as IgoOgcFilterObject)
-    //       );
-    //       options['ogcFiltered'] = true;
-    //     } else {
-    //       options.ogcFilters.filters = undefined;
-    //       options.ogcFilters.interfaceOgcFilters = [];
-    //       options['ogcFiltered'] = false;
-    //     }
-    //   }
   }
 
   protected createOlSource(): olSourceImageWMS {
@@ -201,12 +82,4 @@ export class WMSDataSource extends DataSource {
 
     return legend;
   }
-
-  // public filterByOgc(filterString: string) {
-  //   const wmsFilterValue =
-  //     filterString.length > 0
-  //       ? filterString.substr(7, filterString.length + 1)
-  //       : undefined;
-  //   this.ol.updateParams({ filter: wmsFilterValue });
-  // }
 }

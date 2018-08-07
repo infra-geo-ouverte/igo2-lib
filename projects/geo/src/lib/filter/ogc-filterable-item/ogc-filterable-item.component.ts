@@ -1,13 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
+import { Layer } from '../../layer/shared/layers/layer';
+import { MapService } from '../../map/shared/map.service';
+import { DownloadService } from '../../download/shared/download.service';
+
 import {
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../shared/ogc-filter.interface';
-import { Layer } from '../../layer/shared/layers/layer';
-import { MapService } from '../../map/shared/map.service';
-import { DownloadService } from '../../download/shared/download.service';
+import { OGCFilterService } from '../shared/ogc-filter.service';
 
 @Component({
   selector: 'igo-ogc-filterable-item',
@@ -42,11 +44,15 @@ export class OgcFilterableItemComponent implements OnInit {
   private _ogcFiltersHeaderShown: boolean;
 
   constructor(
+    private ogcFilterService: OGCFilterService,
     private mapService: MapService,
     private downloadService: DownloadService
   ) {}
 
   ngOnInit() {
+    this.ogcFilterService.getSourceFields(this.datasource);
+    this.ogcFilterService.setOgcFiltersOptions(this.datasource);
+
     if (
       this.datasource.options.ogcFilters &&
       this.datasource.options.ogcFilters.interfaceOgcFilters

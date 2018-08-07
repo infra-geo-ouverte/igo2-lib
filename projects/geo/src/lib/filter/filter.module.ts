@@ -43,6 +43,7 @@ import { OgcFilterableItemComponent } from './ogc-filterable-item/ogc-filterable
 import { OgcFilterableListBindingDirective } from './ogc-filterable-list/ogc-filterable-list-binding.directive';
 import { OgcFilterableListComponent } from './ogc-filterable-list/ogc-filterable-list.component';
 import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.component';
+import { OGCFilterService } from './shared/ogc-filter.service';
 
 @NgModule({
   imports: [
@@ -95,7 +96,7 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
     OgcFilterableListComponent,
     OgcFilterableListBindingDirective
   ],
-  providers: [TimeFilterService]
+  providers: [TimeFilterService, OGCFilterService]
 })
 export class IgoFilterModule {
   static forRoot(): ModuleWithProviders {
