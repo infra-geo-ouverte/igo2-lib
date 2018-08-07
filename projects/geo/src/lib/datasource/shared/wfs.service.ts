@@ -87,7 +87,7 @@ export class WFSService {
   ): Observable<any> {
     return new Observable(d => {
       const nb_retry = 2;
-      let valueList = [];
+      const valueList = [];
 
       this.wfsGetPropertyValue(
         wfsDataSourceOptions,
@@ -186,7 +186,7 @@ export class WFSService {
               typeof features[0].get(element) === 'object'
                 ? undefined
                 : typeof features[0].get(element);
-            const valueList = this.getValueFromWfsGetPropertyValues(
+            this.getValueFromWfsGetPropertyValues(
               wfsDataSourceOptions,
               element,
               200

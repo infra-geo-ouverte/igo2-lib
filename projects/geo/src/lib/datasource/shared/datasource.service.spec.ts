@@ -3,13 +3,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { CapabilitiesService } from './capabilities.service';
 import { DataSourceService } from './datasource.service';
-import { WFSDataSourceService } from './datasources/wfs-datasource.service';
+import { WFSService } from './wfs.service';
 
 describe('DataSourceService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [CapabilitiesService, DataSourceService, WFSDataSourceService]
+      providers: [CapabilitiesService, DataSourceService, WFSService]
     });
   });
 

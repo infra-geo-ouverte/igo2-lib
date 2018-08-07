@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
-import { RouteService } from '.';
+import { RouteService } from './route.service';
 
 describe('RouteService', () => {
   beforeEach(() => {
@@ -20,10 +20,7 @@ describe('RouteService', () => {
     });
   });
 
-  it(
-    'should ...',
-    inject([RouteService], (service: RouteService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([RouteService], (service: RouteService) => {
+    expect(service).toBeTruthy();
+  }));
 });

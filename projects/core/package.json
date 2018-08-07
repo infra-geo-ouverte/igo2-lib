@@ -1,6 +1,20 @@
 {
   "name": "@igo2/core",
   "version": "0.21.1",
+  "description": "IGO Library",
+  "author": "MSP",
+  "keywords": [
+    "igo"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
+  },
   "dependencies": {
     "@ngx-translate/core": "^10.0.0",
     "angular2-notifications": "^1.0.2"

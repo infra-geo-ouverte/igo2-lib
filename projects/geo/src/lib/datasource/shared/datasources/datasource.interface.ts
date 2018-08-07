@@ -3,7 +3,7 @@ import olSource from 'ol/source/Source';
 import { DataSource } from './datasource';
 
 export interface DataSourceOptions {
-  type?: string;
+  type?: 'wms' | 'wfs' | 'vector' | 'wmts' | 'xyz' | 'osm';
   legend?: DataSourceLegendOptions;
   // title: string;
   // alias?: string;

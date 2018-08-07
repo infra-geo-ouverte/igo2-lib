@@ -1,12 +1,26 @@
 {
   "name": "@igo/demo",
   "version": "0.21.1",
+  "description": "IGO Library",
+  "author": "MSP",
+  "keywords": [
+    "igo"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infra-geo-ouverte/igo2-lib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
-    "test": "ng test",
     "lint": "ng lint",
+    "test": "ng test",
     "e2e": "ng e2e",
     "build.libs": "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.geoContext && npm run build.tools",
     "build.utils": "ng build utils --prod",
@@ -15,7 +29,15 @@
     "build.auth": "ng build auth --prod && gulp auth",
     "build.geo": "ng build geo --prod && gulp geo",
     "build.geoContext": "ng build geoContext --prod && gulp geoContext",
-    "build.tools": "ng build tools --prod && gulp tools"
+    "build.tools": "ng build tools --prod && gulp tools",
+    "test.libs": "npm run lint && npm run test.core && npm run test.common && npm run test.geo && npm run test.geoContext && npm run test.demo",
+    "test.core": "ng test core --watch=false --code-coverage",
+    "test.common": "ng test common --watch=false --code-coverage",
+    "test.geo": "ng test geo --watch=false --code-coverage",
+    "test.geoContext": "ng test geoContext --watch=false --code-coverage",
+    "test.demo": "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
+    "prepublish2": "npm run test.libs && npm run build.libs",
+    "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/geo-context && npm publish ./dist/tools"
   },
   "private": true,
   "dependencies": {
