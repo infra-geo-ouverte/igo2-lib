@@ -37,7 +37,7 @@
     "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/geo-context && npm publish ./dist/tools",
     "postversion": "gulp bumpVersion && git push && git push --tags",
     "postversion2": "cd ./projects/utils && npm version",
-    "version": "gulp bumpVersion"
+    "version": "gulp bumpVersion && git add ."
   },
   "private": true,
   "dependencies": {
