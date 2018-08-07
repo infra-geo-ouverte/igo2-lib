@@ -322,8 +322,8 @@ gulp.task(
       'geo:bumpVersion',
       'geoContext:bumpVersion',
       'tools:bumpVersion'
-    ],
-    'commitVersion'
+    ]
+    // 'commitVersion'
   )
 );
 
