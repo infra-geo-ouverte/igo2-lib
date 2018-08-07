@@ -3,7 +3,9 @@
   "version": "0.21.6",
   "description": "IGO Library",
   "author": "MSP",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -18,7 +20,6 @@
   },
   "peerDependencies": {
     "@angular/common": "^6.0.0",
-    "@angular/core": "^6.0.0",
-    "@igo2/utils": "0.21.6"
+    "@angular/core": "^6.0.0"
   }
 }

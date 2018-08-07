@@ -202,10 +202,7 @@ gulp.task('utils:bumpVersion', () => {
     .src('./projects/utils/package.json')
     .pipe(
       jeditor({
-        version: version,
-        peerDependencies: {
-          '@igo2/utils': version
-        }
+        version: version
       })
     )
     .pipe(gulp.dest('./projects/utils/.'));
@@ -218,7 +215,7 @@ gulp.task('core:bumpVersion', () => {
       jeditor({
         version: version,
         peerDependencies: {
-          '@igo2/utils': version
+          '@igo2/utils': `^${version}`
         }
       })
     )
@@ -232,8 +229,8 @@ gulp.task('common:bumpVersion', () => {
       jeditor({
         version: version,
         peerDependencies: {
-          '@igo2/core': version,
-          '@igo2/utils': version
+          '@igo2/core': `^${version}`,
+          '@igo2/utils': `^${version}`
         }
       })
     )
@@ -247,8 +244,8 @@ gulp.task('auth:bumpVersion', () => {
       jeditor({
         version: version,
         peerDependencies: {
-          '@igo2/core': version,
-          '@igo2/utils': version
+          '@igo2/core': `^${version}`,
+          '@igo2/utils': `^${version}`
         }
       })
     )
@@ -262,9 +259,9 @@ gulp.task('geo:bumpVersion', () => {
       jeditor({
         version: version,
         peerDependencies: {
-          '@igo2/common': version,
-          '@igo2/core': version,
-          '@igo2/utils': version
+          '@igo2/common': `^${version}`,
+          '@igo2/core': `^${version}`,
+          '@igo2/utils': `^${version}`
         }
       })
     )
@@ -278,11 +275,11 @@ gulp.task('geoContext:bumpVersion', () => {
       jeditor({
         version: version,
         peerDependencies: {
-          '@igo2/auth': version,
-          '@igo2/common': version,
-          '@igo2/core': version,
-          '@igo2/geo': version,
-          '@igo2/utils': version
+          '@igo2/auth': `^${version}`,
+          '@igo2/common': `^${version}`,
+          '@igo2/core': `^${version}`,
+          '@igo2/geo': `^${version}`,
+          '@igo2/utils': `^${version}`
         }
       })
     )
@@ -304,28 +301,15 @@ gulp.task('tools:bumpVersion', () => {
     .pipe(gulp.dest('./projects/tools/.'));
 });
 
-gulp.task('commitVersion', () => {
-  return gulp
-    .src('.')
-    .pipe(exec('git commit -a -m ' + version))
-    .pipe(exec.reporter());
-});
-
-gulp.task(
-  'bumpVersion',
-  gulpSequence(
-    [
-      'utils:bumpVersion',
-      'core:bumpVersion',
-      'common:bumpVersion',
-      'auth:bumpVersion',
-      'geo:bumpVersion',
-      'geoContext:bumpVersion',
-      'tools:bumpVersion'
-    ]
-    // 'commitVersion'
-  )
-);
+gulp.task('bumpVersion', [
+  'utils:bumpVersion',
+  'core:bumpVersion',
+  'common:bumpVersion',
+  'auth:bumpVersion',
+  'geo:bumpVersion',
+  'geoContext:bumpVersion',
+  'tools:bumpVersion'
+]);
 
 // ==========================================================
 

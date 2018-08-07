@@ -33,11 +33,10 @@
     "test.geo": "ng test geo --watch=false --code-coverage",
     "test.geoContext": "ng test geoContext --watch=false --code-coverage",
     "test.demo": "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
-    "prepublish2": "npm run test.libs && npm run build.libs",
     "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/geo-context && npm publish ./dist/tools",
-    "postversion": "gulp bumpVersion && git push && git push --tags",
-    "postversion2": "cd ./projects/utils && npm version",
-    "version": "gulp bumpVersion && git add ."
+    "preversion": "npm run test.libs && npm run build.libs",
+    "version": "gulp bumpVersion && git add .",
+    "postversion": "gulp bumpVersion && git push && git push --tags && npm run publish"
   },
   "private": true,
   "dependencies": {
