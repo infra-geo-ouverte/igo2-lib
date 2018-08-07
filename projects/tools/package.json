@@ -1,11 +1,9 @@
 {
   "name": "@igo2/tools",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "description": "IGO Library",
   "author": "MSP",
-  "keywords": [
-    "igo"
-  ],
+  "keywords": ["igo"],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -18,8 +16,8 @@
   "peerDependencies": {
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
-    "@igo2/geo": "^0.21.1",
-    "@igo2/geo-context": "^0.21.1",
+    "@igo2/geo": "0.21.2",
+    "@igo2/geo-context": "0.21.2",
     "rxjs": "^6.1.0"
   }
 }
