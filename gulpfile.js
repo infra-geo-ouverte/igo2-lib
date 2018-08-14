@@ -94,17 +94,17 @@ gulp.task('core:bundleStyles', () => {
     .src('.')
     .pipe(
       exec(
-        './node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/core/src/style/core.theming.scss -d ./dist/core/style/core.theming.scss'
+        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/core/src/style/core.theming.scss -d ./dist/core/style/core.theming.scss'
       )
     )
     .pipe(
       exec(
-        './node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/core/src/style/theming.scss -d ./dist/core/style/theming.scss'
+        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/core/src/style/theming.scss -d ./dist/core/style/theming.scss'
       )
     )
     .pipe(
       exec(
-        './node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/core/src/style/all.theming.scss -d ./dist/core/style/all.theming.scss'
+        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/core/src/style/all.theming.scss -d ./dist/core/style/all.theming.scss'
       )
     )
     .pipe(exec.reporter());
@@ -115,7 +115,7 @@ gulp.task('common:bundleStyles', () => {
     .src('.')
     .pipe(
       exec(
-        './node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/common/src/style/common.theming.scss -d ./dist/common/style/common.theming.scss'
+        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/common/src/style/common.theming.scss -d ./dist/common/style/common.theming.scss'
       )
     )
     .pipe(exec.reporter());
@@ -126,7 +126,7 @@ gulp.task('geo:bundleStyles', () => {
     .src('.')
     .pipe(
       exec(
-        './node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/geo/src/style/geo.theming.scss -d ./dist/geo/style/geo.theming.scss'
+        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./projects/geo/src/style/geo.theming.scss -d ./dist/geo/style/geo.theming.scss'
       )
     )
     .pipe(exec.reporter());
