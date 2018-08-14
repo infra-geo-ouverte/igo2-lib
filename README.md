@@ -1,27 +1,61 @@
-# Igo2Lib
+# IGO2 Library
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.1.
+This repository is home to the IGO2 Library on which IGO2 is built. IGO2 and this library are open source projects using Angular, Angular Material and OpenLayers. While IGO2 is mapping oriented, this library can easily serve other purposes as it contains many components and services that may benefit any web application.
 
-## Development server
+## Description
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Igo2 library is divided into several elements:
 
-## Code scaffolding
+- @igo2/utils : Basic utilies without dependency (ex: base64, clipboard, uuid)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- @igo2/core : Element affecting the core of the application (ex: config, language, message, media, request)
 
-## Build
+- @igo2/common : Library containing reusable components (ex: clickout, drag-drop, list, panel, spinner, table)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+- @igo2/auth : Library grouping the authentication and security module
 
-## Running unit tests
+- @igo2/geo : Library containing the geomatic components. Depends on Openlayers.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- @igo2/geo-context : Library of components uniting @igo2/geo and @igo2/auth
 
-## Running end-to-end tests
+- @igo2/tools : Library simplifying component use as tools
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Demo
 
-## Further help
+- [Demo IGO2 Library](https://infra-geo-ouverte.github.io/igo2-lib/home)
+- [Demo IGO2 for Open Data Quebec](https://geoegl.msp.gouv.qc.ca/igo2/apercu-qc/)
+- [Demo IGO2 on GitHub](https://github.com/infra-geo-ouverte/igo2#table-of-content-english)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## User Installation
+
+The latest release of IGO2 Library can be used and installed from npm.
+
+Example:
+`npm install --save @igo2/core`
+`npm install --save @igo2/common`
+
+- See the demo code for examples of simple use.
+
+## For developers
+
+### Developer Installation
+
+If you want to develop in IGO2 Library, it can be installed by:
+
+1.  Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
+2.  Deploy in `cd igo2-lib/` and install from npm `npm install`
+3.  Build librairies: `npm run build.libs`
+4.  Start form npm `npm start`
+5.  Open your browser at http://localhost:4200/
+
+### Development server
+
+Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+### Build
+
+Run `npm run build.libs` to build the project. The build artifacts will be stored in the `dist/` directory.
+
+### Running tests
+
+Run `npm run test.libs` to execute the tests
