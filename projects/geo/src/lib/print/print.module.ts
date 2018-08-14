@@ -6,6 +6,7 @@ import {
   MatButtonModule,
   MatSelectModule,
   MatOptionModule,
+  MatInputModule,
   MatFormFieldModule,
   MatRadioModule
 } from '@angular/material';
@@ -27,6 +28,7 @@ import { PrintService } from './shared/print.service';
     MatButtonModule,
     MatSelectModule,
     MatOptionModule,
+    MatInputModule,
     MatFormFieldModule,
     MatRadioModule,
     IgoLanguageModule,

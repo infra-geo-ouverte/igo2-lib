@@ -103,9 +103,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       if (layerOL.get('title') !== undefined) {
         title = layerOL.get('title');
       } else {
-        title = this.map.layers.filter(
-          f => f['zIndex'] === layerOL.getZIndex()
-        )[0].dataSource['options']['title'];
+        title = this.map.layers.filter(f => f.zIndex === layerOL.getZIndex())[0]
+          .options.title;
       }
       let displayFieldValue = '';
       if (

@@ -81,7 +81,6 @@ export abstract class Layer {
       this.zIndex = this.options.zIndex;
     }
 
-    // const legend = dataSource.options.legend || {};
     if (this.options.baseLayer && this.options.visible === undefined) {
       this.options.visible = false;
     }
@@ -89,7 +88,6 @@ export abstract class Layer {
       this.options.visible === undefined ? true : this.options.visible;
     this.opacity =
       this.options.opacity === undefined ? 1 : this.options.opacity;
-    // this.collapsed = legend.collapsed === undefined ? true : !this.visible;
   }
 
   protected abstract createOlLayer(): olLayer;

@@ -51,7 +51,7 @@ export class AppLayerComponent {
         title: 'School board',
         sourceOptions: {
           type: 'wms',
-          url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
           params: {
             layers: 'MELS_CS_ANGLO_S',
             version: '1.3.0'
@@ -66,7 +66,7 @@ export class AppLayerComponent {
 
     const datasource: WMSoptions = {
       type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
         version: '1.3.0'

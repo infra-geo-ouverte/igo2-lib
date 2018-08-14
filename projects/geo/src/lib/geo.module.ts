@@ -12,7 +12,9 @@ import { IgoMapModule } from './map/map.module';
 import { IgoMetadataModule } from './metadata/metadata.module';
 import { IgoOverlayModule } from './overlay/overlay.module';
 import { IgoPrintModule } from './print/print.module';
+import { IgoQueryModule } from './query/query.module';
 import { IgoSearchModule } from './search/search.module';
+import { IgoToastModule } from './toast/toast.module';
 import { IgoWktModule } from './wkt/wkt.module';
 
 @NgModule({
@@ -31,7 +33,9 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoMetadataModule,
     IgoOverlayModule,
     IgoPrintModule,
+    IgoQueryModule,
     IgoSearchModule,
+    IgoToastModule,
     IgoWktModule
   ]
 })

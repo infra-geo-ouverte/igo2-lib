@@ -4,7 +4,7 @@
     mat-list-avatar
     igoCollapse
     [target]="legend"
-    [collapsed]="layer.collapsed"
+    [collapsed]="legendCollapsed"
     (toggle)="toggleLegend($event)">
   </mat-icon>
   <h4 matLine [matTooltip]="layer.title +' ('+ id +') '" matTooltipShowDelay="500">{{layer.title}}</h4>
@@ -107,5 +107,5 @@
 </div>
 
 <div #legend class="igo-layer-legend-container">
-  <igo-layer-legend *ngIf="legendLoaded" [layer]="layer"></igo-layer-legend>
+  <igo-layer-legend *ngIf="legendCollapsed === false" [layer]="layer"></igo-layer-legend>
 </div>

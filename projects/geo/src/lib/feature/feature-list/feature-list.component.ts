@@ -7,7 +7,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { Feature } from '../shared';
+import { Feature } from '../shared/feature.interface';
 
 @Component({
   selector: 'igo-feature-list',

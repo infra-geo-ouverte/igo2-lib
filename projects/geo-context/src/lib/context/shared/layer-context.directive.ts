@@ -80,14 +80,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     //     contextLayer.minScaleDenom
     //   );
     // }
-    const sourceContext = contextLayer.source;
+    const sourceContext = contextLayer.sourceOptions;
     const layerContext: any = Object.assign({}, contextLayer);
-    delete layerContext.source;
-
-    const dataSourceContext = Object.assign({}, layerContext, sourceContext);
+    delete layerContext.sourceOptions;
 
     this.dataSourceService
-      .createAsyncDataSource(dataSourceContext)
+      .createAsyncDataSource(sourceContext)
       .subscribe(dataSource => {
         this.getLayerParamVisibilityUrl(
           dataSource.options['id'] ? dataSource.options['id'] : dataSource.id,

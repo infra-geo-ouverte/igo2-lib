@@ -35,39 +35,30 @@ export class QueryService {
   query(layers: Layer[], options: QueryOptions): Observable<Feature[]>[] {
     return layers
       .filter((layer: Layer) => layer.visible && layer.isInResolutionsRange)
-      .map((layer: Layer) =>
-        this.queryDataSource(layer.dataSource, options, layer.zIndex)
-      );
+      .map((layer: Layer) => this.queryLayer(layer, options));
   }
 
-  queryDataSource(
-    dataSource: DataSource,
-    options: QueryOptions,
-    zIndex: number
-  ): Observable<Feature[]> {
-    const url = this.getQueryUrl(dataSource, options);
+  queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> {
+    const url = this.getQueryUrl(layer.dataSource, options);
     const request = this.http.get(url, { responseType: 'text' });
 
     this.featureService.clear();
 
-    return request.pipe(
-      map(res => this.extractData(res, dataSource, options, url, zIndex))
-    );
+    return request.pipe(map(res => this.extractData(res, layer, options, url)));
   }
 
   private extractData(
     res,
-    dataSource: DataSource,
+    layer: Layer,
     options: QueryOptions,
-    url: string,
-    zIndex: number
+    url: string
   ): Feature[] {
-    const queryDataSource = (dataSource as any) as QueryableDataSource;
+    const queryDataSource = layer.dataSource as QueryableDataSource;
 
     let features = [];
     switch (queryDataSource.options.queryFormat) {
       case QueryFormat.GML3:
-        features = this.extractGML3Data(res, zIndex);
+        features = this.extractGML3Data(res, layer.zIndex);
         break;
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
@@ -85,7 +76,7 @@ export class QueryService {
         break;
       case QueryFormat.GML2:
       default:
-        features = this.extractGML2Data(res, zIndex);
+        features = this.extractGML2Data(res, layer.zIndex);
         break;
     }
 
@@ -94,10 +85,10 @@ export class QueryService {
 
       return Object.assign(feature, {
         id: uuid(),
-        source: 'title', // dataSource.title,
+        source: layer.title,
         sourceType: SourceFeatureType.Query,
-        order: 1000 - zIndex,
-        title: 'title', // title ? title : `${dataSource.title} (${index + 1})`,
+        order: 1000 - layer.zIndex,
+        title: title ? title : `${layer.title} (${index + 1})`,
         projection: options.projection
       });
     });

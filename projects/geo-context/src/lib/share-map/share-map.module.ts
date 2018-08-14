@@ -5,7 +5,8 @@ import {
   MatIconModule,
   MatTooltipModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatButtonModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -22,6 +23,7 @@ import { ShareMapBindingDirective } from './share-map/share-map-binding.directiv
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
+    MatButtonModule,
     IgoLanguageModule
   ],
   exports: [ShareMapComponent, ShareMapBindingDirective],

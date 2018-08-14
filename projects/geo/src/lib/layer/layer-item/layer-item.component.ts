@@ -27,6 +27,10 @@ export class LayerItemComponent implements OnDestroy {
   set layer(value: Layer) {
     this._layer = value;
     this.subscribeResolutionObserver();
+    const legend = this.layer.dataSource.options.legend;
+    if (legend && legend.collapsed) {
+      this.legendCollapsed = legend.collapsed;
+    }
   }
   private _layer: Layer;
 
@@ -71,7 +75,7 @@ export class LayerItemComponent implements OnDestroy {
       : this.layer.id;
   }
 
-  public legendLoaded = false;
+  public legendCollapsed = true;
   private resolution$$: Subscription;
 
   constructor(
@@ -85,8 +89,10 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   toggleLegend(collapsed: boolean) {
-    this.layer.collapsed = collapsed;
-    this.legendLoaded = collapsed ? this.legendLoaded : true;
+    if (collapsed === undefined) {
+      return;
+    }
+    this.legendCollapsed = collapsed;
   }
 
   toggleVisibility() {

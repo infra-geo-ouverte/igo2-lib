@@ -15,7 +15,7 @@ export class LayerLegendComponent {
   }
   set layer(value: Layer) {
     this._layer = value;
-    // this._legend = value.dataSource.getLegend();
+    this._legend = value.dataSource.getLegend();
   }
   private _layer: Layer;
 

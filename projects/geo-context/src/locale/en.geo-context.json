@@ -65,6 +65,10 @@
         },
         "placeholder": "Zones of interest"
       },
+      "sidenav": {
+        "goBack": "Go Back",
+        "mainMenu": "Main Menu"
+      },
       "shareMap": {
         "button": "Share map",
         "copy": "Copy to clipboard",
