@@ -21,7 +21,7 @@ export class FlexibleComponent implements OnInit {
   set initial(value: string) {
     this._initial = value;
   }
-  private _initial: string = '0';
+  private _initial = '0';
 
   @Input()
   get collapsed(): string {
@@ -30,7 +30,7 @@ export class FlexibleComponent implements OnInit {
   set collapsed(value: string) {
     this._collapsed = value;
   }
-  private _collapsed: string = '0';
+  private _collapsed = '0';
 
   @Input()
   get expanded(): string {
@@ -39,7 +39,7 @@ export class FlexibleComponent implements OnInit {
   set expanded(value: string) {
     this._expanded = value;
   }
-  private _expanded: string = '100%';
+  private _expanded = '100%';
 
   @Input()
   get initialMobile(): string {
