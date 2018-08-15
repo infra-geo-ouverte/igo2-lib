@@ -15,14 +15,14 @@ export class ToastComponent {
   };
 
   @Input()
-  get opened(): boolean {
-    return this._opened;
+  get expanded(): boolean {
+    return this._expanded;
   }
-  set opened(value: boolean) {
+  set expanded(value: boolean) {
     this.state = value ? 'expanded' : 'collapsed';
-    this._opened = value;
+    this._expanded = value;
   }
-  private _opened: boolean;
+  private _expanded: boolean;
 
   @Input()
   get feature(): Feature {
@@ -33,24 +33,24 @@ export class ToastComponent {
   }
   private _feature: Feature;
 
-  @Output() onOpened = new EventEmitter<boolean>();
+  @Output() opened = new EventEmitter<boolean>();
 
   public state: FlexibleState;
 
   constructor() {}
 
   toggle() {
-    this.opened = !this.opened;
-    this.onOpened.emit(this.opened);
+    this.expanded = !this.expanded;
+    this.opened.emit(this.expanded);
   }
 
   swipe(action: string) {
     if (action === ToastComponent.SWIPE_ACTION.UP) {
-      if (!this.opened) {
+      if (!this.expanded) {
         this.toggle();
       }
     } else if (action === ToastComponent.SWIPE_ACTION.DOWN) {
-      if (this.opened) {
+      if (this.expanded) {
         this.toggle();
       }
     }
