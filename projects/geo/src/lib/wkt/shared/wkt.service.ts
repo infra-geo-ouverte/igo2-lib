@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import {
-  get as getProj,
-  transform as transformProj,
-  transformExtent
-} from 'ol/proj.js';
-import WKT from 'ol/format/WKT';
-import Polygon from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
+import olWKT from 'ol/format/WKT';
+import olPolygon from 'ol/geom/Polygon';
 
 import { MapService } from '../../map/shared/map.service';
 
@@ -17,18 +13,18 @@ export class WktService {
   constructor(private mapService: MapService) {}
 
   public mapExtentToWKT(epsgTO = this.mapService.getMap().projection) {
-    let extent = transformExtent(
+    let extent = olproj.transformExtent(
       this.mapService.getMap().getExtent(),
       this.mapService.getMap().projection,
       epsgTO
     );
     extent = this.roundCoordinateArray(extent, epsgTO, 0);
-    const wkt = new WKT().writeGeometry(Polygon.fromExtent(extent));
+    const wkt = new olWKT().writeGeometry(olPolygon.fromExtent(extent));
     return wkt;
   }
 
   private roundCoordinateArray(coordinateArray, projection, decimal = 0) {
-    const lproj = getProj(projection);
+    const lproj = olproj.get(projection);
     const units = lproj.getUnits();
     const olUnits = ['ft', 'm', 'us-ft'];
     if (olUnits.indexOf(units) !== -1) {
@@ -181,18 +177,22 @@ export class WktService {
       coord['ur'] = [coord['ul'][0], coord['ul'][1] - unitPerType_SN];
       coord['ll'] = [coord['ul'][0] + unitPerType_EW, coord['ul'][1]];
 
-      coord.ul = transformProj([coord.ul[0], coord.ul[1]], 'EPSG:4326', epsgTO);
-      coord['lr'] = transformProj(
+      coord.ul = olproj.transform(
+        [coord.ul[0], coord.ul[1]],
+        'EPSG:4326',
+        epsgTO
+      );
+      coord['lr'] = olproj.transform(
         [coord['lr'][0], coord['lr'][1]],
         'EPSG:4326',
         epsgTO
       );
-      coord['ur'] = transformProj(
+      coord['ur'] = olproj.transform(
         [coord['ur'][0], coord['ur'][1]],
         'EPSG:4326',
         epsgTO
       );
-      coord['ll'] = transformProj(
+      coord['ll'] = olproj.transform(
         [coord['ll'][0], coord['ll'][1]],
         'EPSG:4326',
         epsgTO

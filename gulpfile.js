@@ -5,6 +5,7 @@ const exec = require('gulp-exec');
 const merge = require('gulp-merge-json');
 const gulpSequence = require('gulp-sequence');
 const jeditor = require('gulp-json-editor');
+const replace = require('gulp-replace');
 
 const package = require('./package.json');
 const version = package.version;
@@ -313,6 +314,15 @@ gulp.task('bumpVersion', [
 
 // ==========================================================
 
+gulp.task('geo:fixOL', () => {
+  gulp
+    .src(['./node_modules/ol/proj.js'])
+    .pipe(replace('@typedef {module:ol/proj/Projection', '@typedef {'))
+    .pipe(gulp.dest('./node_modules/ol/'));
+});
+
+// ==========================================================
+
 gulp.task(
   'core',
   gulpSequence(
@@ -346,6 +356,7 @@ gulp.task(
   'geo',
   gulpSequence(
     'geo:clean',
+    'geo:fixOL',
     ['geo:copyAssets', 'geo:copyStyles', 'geo:copyLocale'],
     ['geo:bundleStyles'],
     'core:bundleLocale'
