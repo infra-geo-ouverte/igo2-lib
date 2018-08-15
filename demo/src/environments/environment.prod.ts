@@ -18,7 +18,7 @@ export const environment: Environment = {
       sources: [
         {
           title: 'Gouvouvert',
-          url: '/ws/igo_gouvouvert.fcgi'
+          url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi'
         }
       ]
     },
@@ -27,10 +27,10 @@ export const environment: Environment = {
         enabled: false
       },
       icherche: {
-        url: '/icherche/geocode'
+        url: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode'
       },
       datasource: {
-        url: '/igo2/api/layers/search'
+        url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
       }
     }
   }
