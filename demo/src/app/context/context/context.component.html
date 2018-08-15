@@ -1,0 +1,17 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Context</mat-card-title>
+  <mat-card-content>
+    <p>* Dependencies: LanguageService</p>
+
+  </mat-card-content>
+
+  <igo-map-browser
+    igoMapContext
+    igoLayerContext
+    [map]="map">
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+    <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
+  </igo-map-browser>
+
+</mat-card>

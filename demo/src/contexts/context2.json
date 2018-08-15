@@ -1,0 +1,19 @@
+{
+  "uri": "context2",
+  "title": "Context 2",
+  "map": {
+    "view": {
+      "projection": "EPSG:3857",
+      "center": [-72, 50],
+      "zoom": 5,
+      "geolocate": true
+    }
+  },
+  "layers": [{
+      "title": "OSM",
+      "sourceOptions": {
+        "type": "osm"
+      }
+    }
+  ]
+}

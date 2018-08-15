@@ -26,6 +26,7 @@
             "assets": [
               "demo/src/favicon.ico",
               "demo/src/assets",
+              "demo/src/contexts",
               "demo/src/locale",
               {
                 "glob": "**/*",

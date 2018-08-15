@@ -1,0 +1,30 @@
+{
+  "uri": "_default",
+  "title": "Default Context",
+  "map": {
+    "view": {
+      "projection": "EPSG:3857",
+      "center": [-72, 50],
+      "zoom": 5,
+      "geolocate": true
+    }
+  },
+  "layers": [{
+      "title": "OSM",
+      "sourceOptions": {
+        "type": "osm"
+      }
+    },
+    {
+      "optionsFromCapabilities": true,
+      "sourceOptions": {
+        "type": "wms",
+        "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+        "params": {
+          "layers": "MELS_CS_ANGLO_S",
+          "version": "1.3.0"
+        }
+      }
+    }
+  ]
+}
