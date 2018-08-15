@@ -336,9 +336,9 @@
         }
       }
     },
-    "geoContext": {
-      "root": "projects/geo-context",
-      "sourceRoot": "projects/geo-context/src",
+    "context": {
+      "root": "projects/context",
+      "sourceRoot": "projects/context/src",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
@@ -351,29 +351,29 @@
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/geo-context/tsconfig.lib.json",
-            "project": "projects/geo-context/ng-package.json"
+            "tsConfig": "projects/context/tsconfig.lib.json",
+            "project": "projects/context/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "projects/geo-context/ng-package.prod.json"
+              "project": "projects/context/ng-package.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/geo-context/src/test.ts",
-            "tsConfig": "projects/geo-context/tsconfig.spec.json",
-            "karmaConfig": "projects/geo-context/karma.conf.js"
+            "main": "projects/context/src/test.ts",
+            "tsConfig": "projects/context/tsconfig.spec.json",
+            "karmaConfig": "projects/context/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/geo-context/tsconfig.lib.json",
-              "projects/geo-context/tsconfig.spec.json"
+              "projects/context/tsconfig.lib.json",
+              "projects/context/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**"]
           }

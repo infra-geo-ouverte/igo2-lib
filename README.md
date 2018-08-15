@@ -16,7 +16,7 @@ Igo2 library is divided into several elements:
 
 - @igo2/geo : Library containing the geomatic components. Depends on Openlayers.
 
-- @igo2/geo-context : Library of components uniting @igo2/geo and @igo2/auth
+- @igo2/context : Library of components uniting @igo2/geo and @igo2/auth
 
 - @igo2/tools : Library simplifying component use as tools
 

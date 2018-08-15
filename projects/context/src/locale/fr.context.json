@@ -1,0 +1,93 @@
+{
+  "igo": {
+    "context": {
+      "bookmarkButton": {
+        "create": "Créer un contexte",
+        "dialog": {
+          "createMsg": "Le contexte '{{value}}' a été créé",
+          "createTitle": "Contexte créé",
+          "placeholder": "Titre",
+          "title": "Nouveau contexte"
+        }
+      },
+      "contextManager": {
+        "clone": "Cloner ce contexte",
+        "delete": "Supprimer ce contexte",
+        "dialog": {
+          "cloneMsg": "Le contexte '{{value}}' a été cloné",
+          "cloneTitle": "Contexte cloné",
+          "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce context ?",
+          "deleteMsg": "Le contexte '{{value}}' a été supprimé",
+          "deleteTitle": "Contexte supprimé",
+          "favoriteMsg": "Le contexte '{{value}}' a été défini comme favori",
+          "favoriteTitle": "Favori sauvegardé",
+          "saveMsg": "Le contexte '{{value}}' a été sauvegardé",
+          "saveTitle": "Contexte sauvegardé"
+        },
+        "edit": "Éditer ce contexte",
+        "favorite": "Favori",
+        "form": {
+          "edit": "Éditer",
+          "title": "Titre",
+          "titleRequired": "Le titre est obligatoire",
+          "uri": "URI",
+          "uriRequired": "Le URI est obligatoire"
+        },
+        "invalid": {
+          "text": "Le contexte \"{{value}}\" est invalide",
+          "title": "Contexte invalide"
+        },
+        "managePermissions": "Gérer les permissions du contexte",
+        "manageTools": "Gérer les outils du contexte",
+        "ourContexts": "Vos contextes",
+        "publicContexts": "Contextes publics",
+        "save": "Sauvegarder ce contexte",
+        "sharedContexts": "Contextes partagés"
+      },
+      "poiButton": {
+        "create": "Créer une zone d'intérêt",
+        "dialog": {
+          "confirmDelete":
+            "Êtes-vous sûr de vouloir supprimer cette zone d'intérêt ?",
+          "createMsg": "La zone d'intérêt '{{value}}' a été créée",
+          "createTitle": "Zone d'intérêt créée",
+          "deleteMsg": "La zone d'intérêt '{{value}}' a été supprimée",
+          "deleteTitle": "Zone d'intérêt supprimée",
+          "placeholder": "Titre",
+          "title": "Nouvelle zone d'intérêt"
+        },
+        "placeholder": "Zones d'intérêt"
+      },
+      "sidenav": {
+        "goBack": "Revenir",
+        "mainMenu": "Revenir au menu principal"
+      },
+      "shareMap": {
+        "button": "Partager la carte",
+        "copy": "Copier le lien",
+        "dialog": {
+          "copyMsg": "Lien copié",
+          "copyTitle": "Lien"
+        },
+        "placeholderLink": "Lien"
+      },
+      "tool": {
+        "dialog": {
+          "addMsg": "L'outil a été ajouté",
+          "addTitle": "Outil ajouté",
+          "deleteMsg": "L'outil a été supprimé",
+          "deleteTitle": "Outil retiré"
+        }
+      },
+      "userButton": {
+        "dialog": {
+          "email": "Courriel",
+          "expiration": "Expiration",
+          "user": "Utilisateur"
+        },
+        "infoTitle": "Info sur l'utilisateur",
+        "logout": "Se déconnecter"
+      }
+    }
+  }
+}

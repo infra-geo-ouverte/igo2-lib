@@ -157,9 +157,9 @@ gulp.task('geo:copyLocale', () => {
   gulp.src('./projects/geo/src/locale/*').pipe(gulp.dest('./dist/core/locale'));
 });
 
-gulp.task('geoContext:copyLocale', () => {
+gulp.task('context:copyLocale', () => {
   gulp
-    .src('./projects/geo-context/src/locale/*')
+    .src('./projects/context/src/locale/*')
     .pipe(gulp.dest('./dist/core/locale'));
 });
 
@@ -269,9 +269,9 @@ gulp.task('geo:bumpVersion', () => {
     .pipe(gulp.dest('./projects/geo/.'));
 });
 
-gulp.task('geoContext:bumpVersion', () => {
+gulp.task('context:bumpVersion', () => {
   gulp
-    .src('./projects/geo-context/package.json')
+    .src('./projects/context/package.json')
     .pipe(
       jeditor({
         version: version,
@@ -284,7 +284,7 @@ gulp.task('geoContext:bumpVersion', () => {
         }
       })
     )
-    .pipe(gulp.dest('./projects/geo-context/.'));
+    .pipe(gulp.dest('./projects/context/.'));
 });
 
 gulp.task('tools:bumpVersion', () => {
@@ -295,7 +295,7 @@ gulp.task('tools:bumpVersion', () => {
         version: version,
         peerDependencies: {
           '@igo2/geo': version,
-          '@igo2/geo-context': version
+          '@igo2/context': version
         }
       })
     )
@@ -308,7 +308,7 @@ gulp.task('bumpVersion', [
   'common:bumpVersion',
   'auth:bumpVersion',
   'geo:bumpVersion',
-  'geoContext:bumpVersion',
+  'context:bumpVersion',
   'tools:bumpVersion'
 ]);
 
@@ -363,11 +363,8 @@ gulp.task(
   )
 );
 
-gulp.task(
-  'geoContext',
-  gulpSequence(['geoContext:copyLocale'], 'core:bundleLocale')
-);
+gulp.task('context', gulpSequence(['context:copyLocale'], 'core:bundleLocale'));
 
 gulp.task('tools', gulpSequence(['tools:copyLocale'], 'core:bundleLocale'));
 
-gulp.task('default', ['core', 'common', 'auth', 'geo', 'geoContext', 'tools']);
+gulp.task('default', ['core', 'common', 'auth', 'geo', 'context', 'tools']);
