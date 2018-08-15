@@ -1,24 +1,33 @@
-<a name="0.22.0"></a>
-# [0.22.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.19.10...0.22.0) (2018-08-07)
+<a name="0.22.1"></a>
+## [0.22.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.19.10...0.22.1) (2018-08-15)
 
 
 ### Bug Fixes
 
+* Correct various bugs due to the passage of the new version ([e3a81e0](https://github.com/infra-geo-ouverte/igo2-lib/commit/e3a81e0))
+* **demo:** fix polyfills for ie ([566de5c](https://github.com/infra-geo-ouverte/igo2-lib/commit/566de5c))
 * **download:** Fix for indefined value ([#158](https://github.com/infra-geo-ouverte/igo2-lib/issues/158)) ([f6c412a](https://github.com/infra-geo-ouverte/igo2-lib/commit/f6c412a))
 * **feature zoom:** add click SourceFeatureType ([#154](https://github.com/infra-geo-ouverte/igo2-lib/issues/154)) ([a7f7dcb](https://github.com/infra-geo-ouverte/igo2-lib/commit/a7f7dcb))
 * **filter:** year list ([#151](https://github.com/infra-geo-ouverte/igo2-lib/issues/151)) ([5745a3f](https://github.com/infra-geo-ouverte/igo2-lib/commit/5745a3f))
 * **layer-item:** Undefined download url ([#160](https://github.com/infra-geo-ouverte/igo2-lib/issues/160)) ([525a419](https://github.com/infra-geo-ouverte/igo2-lib/commit/525a419))
+* **ol:** add gulp command to fix openlayers ([34d16fd](https://github.com/infra-geo-ouverte/igo2-lib/commit/34d16fd))
 * **query.directive:** Fixing undefined clicked or dragged features ([#159](https://github.com/infra-geo-ouverte/igo2-lib/issues/159)) ([b6394a8](https://github.com/infra-geo-ouverte/igo2-lib/commit/b6394a8))
+* **toast:** rename onOpened to opened output ([a16fe24](https://github.com/infra-geo-ouverte/igo2-lib/commit/a16fe24))
 
 
 ### Features
 
 * cut into small lib and upgrade to ol5 ([#173](https://github.com/infra-geo-ouverte/igo2-lib/issues/173)) ([3293ac8](https://github.com/infra-geo-ouverte/igo2-lib/commit/3293ac8))
+* **backdrop:** add backdrop component ([40f6d7e](https://github.com/infra-geo-ouverte/igo2-lib/commit/40f6d7e))
+* **demo:** correct links for github.io ([0edc80d](https://github.com/infra-geo-ouverte/igo2-lib/commit/0edc80d))
 * **feature:** Make features clickable ([#149](https://github.com/infra-geo-ouverte/igo2-lib/issues/149)) ([f668d78](https://github.com/infra-geo-ouverte/igo2-lib/commit/f668d78))
 * **feature:** Manage drag box on feature select ([#157](https://github.com/infra-geo-ouverte/igo2-lib/issues/157)) ([e22e006](https://github.com/infra-geo-ouverte/igo2-lib/commit/e22e006))
+* **flexible:** add flexible component ([101f973](https://github.com/infra-geo-ouverte/igo2-lib/commit/101f973))
 * **reverse search:** Adding XY search by location on search-bar ([#155](https://github.com/infra-geo-ouverte/igo2-lib/issues/155)) ([2cd2bfa](https://github.com/infra-geo-ouverte/igo2-lib/commit/2cd2bfa))
 * **search:** reverse geocode ([#153](https://github.com/infra-geo-ouverte/igo2-lib/issues/153)) ([67346b8](https://github.com/infra-geo-ouverte/igo2-lib/commit/67346b8))
+* **sidenav:** add sidenav component ([1b91d38](https://github.com/infra-geo-ouverte/igo2-lib/commit/1b91d38))
 * **time-filter:** year support ([#148](https://github.com/infra-geo-ouverte/igo2-lib/issues/148)) ([4918ee6](https://github.com/infra-geo-ouverte/igo2-lib/commit/4918ee6))
+* **toast:** add toast component ([ad2245d](https://github.com/infra-geo-ouverte/igo2-lib/commit/ad2245d))
 
 
 

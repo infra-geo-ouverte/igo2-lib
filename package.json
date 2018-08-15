@@ -1,6 +1,6 @@
 {
   "name": "@igo/demo",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "description": "IGO Library",
   "author": "MSP",
   "license": "MIT",
@@ -19,8 +19,7 @@
     "lint": "ng lint",
     "test": "ng test",
     "e2e": "ng e2e",
-    "build.libs":
-      "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.tools && npm run build.demo",
+    "build.libs": "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.tools && npm run build.demo",
     "build.utils": "ng build utils --prod",
     "build.core": "ng build core --prod && gulp core",
     "build.common": "ng build common --prod && gulp common",
@@ -29,29 +28,22 @@
     "build.context": "ng build context --prod && gulp context",
     "build.tools": "ng build tools --prod && gulp tools",
     "build.demo": "ng build demo --prod",
-    "test.libs":
-      "npm run lint && npm run test.core && npm run test.common && npm run test.geo && npm run test.context && npm run test.demo",
+    "test.libs": "npm run lint && npm run test.core && npm run test.common && npm run test.geo && npm run test.context && npm run test.demo",
     "test.core": "ng test core --watch=false --code-coverage",
     "test.common": "ng test common --watch=false --code-coverage",
     "test.geo": "ng test geo --watch=false --code-coverage",
     "test.context": "ng test context --watch=false --code-coverage",
-    "test.demo":
-      "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
+    "test.demo": "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog-current": "conventional-changelog -p angular -r 2",
-    "publish":
-      "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/context && npm publish ./dist/tools",
+    "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/context && npm publish ./dist/tools",
     "preversion": "npm run test.libs && npm run build.libs",
     "version": "gulp bumpVersion && npm run changelog && git add .",
-    "postversion":
-      "gulp bumpVersion && git push && git push --tags && npm run publish && npm run ghpages && npm run ghrelease",
-    "preghpages":
-      "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/",
-    "ghpages":
-      "VERSION=$(node -p -e \"require('./package.json').version\") && ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
+    "postversion": "gulp bumpVersion && git push && git push --tags && npm run publish && npm run ghpages && npm run ghrelease",
+    "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/",
+    "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
-    "ghrelease":
-      "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\""
+    "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\""
   },
   "private": true,
   "dependencies": {
