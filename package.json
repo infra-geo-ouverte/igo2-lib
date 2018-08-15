@@ -37,9 +37,9 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog-current": "conventional-changelog -p angular -r 2",
     "publish": "npm publish ./dist/utils && npm publish ./dist/core && npm publish ./dist/common && npm publish ./dist/auth && npm publish ./dist/geo && npm publish ./dist/context && npm publish ./dist/tools",
-    "preversion": "npm run test.libs && npm run build.libs",
-    "version": "gulp bumpVersion && npm run changelog && git add .",
-    "postversion": "gulp bumpVersion && git push && git push --tags && npm run publish && npm run ghpages && npm run ghrelease",
+    "preversion": "npm run test.libs",
+    "version": "gulp bumpVersion && npm run build.libs && npm run changelog && git add .",
+    "postversion": "git push && git push --tags && npm run publish && npm run ghpages && npm run ghrelease",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
     "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\""
