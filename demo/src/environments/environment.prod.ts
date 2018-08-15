@@ -24,10 +24,11 @@ export const environment: Environment = {
     },
     searchSources: {
       nominatim: {
-        enabled: false
+        enabled: true
       },
       icherche: {
-        url: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode'
+        url: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
+        enabled: false
       },
       datasource: {
         url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
