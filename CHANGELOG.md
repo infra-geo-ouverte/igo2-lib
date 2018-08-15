@@ -1,3 +1,13 @@
+<a name="0.22.2"></a>
+## [0.22.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.22.1...0.22.2) (2018-08-15)
+
+
+### Bug Fixes
+
+* **demo:** environment prod ([fb6e047](https://github.com/infra-geo-ouverte/igo2-lib/commit/fb6e047))
+
+
+
 <a name="0.22.1"></a>
 ## [0.22.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.19.10...0.22.1) (2018-08-15)
 
