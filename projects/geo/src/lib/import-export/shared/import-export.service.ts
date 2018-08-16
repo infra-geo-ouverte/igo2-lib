@@ -38,8 +38,12 @@ export class ImportExportService {
         'application/vnd.google-earth.kml+xml',
         'application/json'
       ];
-      if (ext === 'geojson' || mimeTypeAllowed.indexOf(mimeType) !== -1) {
-        this.readFile(file, sourceSrs, i++, count);
+      const extensionAllowed = ['geojson', 'kml', 'json'];
+      if (
+        mimeTypeAllowed.includes(mimeType) ||
+        extensionAllowed.includes(ext.toLowerCase())
+      ) {
+        this.readFile(file, sourceSrs, ext, i++, count);
       } else if (mimeType === 'application/zip') {
         this.callImportService(file, sourceSrs);
       } else {
@@ -111,7 +115,7 @@ export class ImportExportService {
     document.body.removeChild(element);
   }
 
-  private readFile(file: File, sourceSrs, i = 1, count = 1) {
+  private readFile(file: File, sourceSrs, ext, i = 1, count = 1) {
     const translate = this.languageService.translate;
     const reader = new FileReader();
 
@@ -121,6 +125,7 @@ export class ImportExportService {
         evt.target.result,
         layerTitle,
         sourceSrs,
+        ext,
         file.type
       );
       const title = translate.instant('igo.geo.dropGeoFile.success.title', {
@@ -144,17 +149,27 @@ export class ImportExportService {
     reader.readAsText(file, 'UTF-8');
   }
 
-  private addFeaturesLayer(text, title, sourceSrs, mimeType?) {
+  private addFeaturesLayer(text, title, sourceSrs, ext, mimeType?) {
     const map = this.mapService.getMap();
-    const overlayDataSource = new FeatureDataSource({
-      // title: title
-    });
+    const overlayDataSource = new FeatureDataSource();
 
     let format: any = new olformat.GeoJSON();
     if (mimeType === 'application/vnd.google-earth.kml+xml') {
       format = new olformat.KML();
     } else if (mimeType === 'application/gml+xml') {
       format = new olformat.GML();
+    } else if (ext) {
+      ext = ext.toLowerCase();
+      switch (ext) {
+        case 'kml':
+          format = new olformat.KML();
+          break;
+        case 'gml':
+          format = new olformat.GML();
+          break;
+        default:
+          break;
+      }
     }
 
     const olFeature = format.readFeatures(text, {
@@ -176,6 +191,7 @@ export class ImportExportService {
     });
 
     const layer = new VectorLayer({
+      title: title,
       source: overlayDataSource,
       style: new olstyle.Style({
         stroke: stroke,
