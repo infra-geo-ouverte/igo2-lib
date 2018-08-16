@@ -31,7 +31,8 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     MapBrowserBindingDirective,
     ZoomButtonComponent,
     GeolocateButtonComponent,
-    BaseLayersSwitcherComponent
+    BaseLayersSwitcherComponent,
+    MiniBaseMapComponent
   ],
   declarations: [
     MapBrowserComponent,

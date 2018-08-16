@@ -164,7 +164,7 @@ export class CapabilitiesService {
     return scale / (39.37 * dpi);
   }
 
-  private getTimeFilter(layer) {
+  getTimeFilter(layer) {
     let dimension;
 
     if (layer.Dimension) {
