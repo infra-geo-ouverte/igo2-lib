@@ -16,6 +16,12 @@ import { FloatLabelType } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
+import olFeature from 'ol/Feature';
+import olPoint from 'ol/geom/Point';
+import * as olproj from 'ol/proj';
+
+import { IgoMap } from '../../map/shared/map';
+import { MapService } from '../../map/shared/map.service';
 import { FeatureService } from '../../feature/shared/feature.service';
 import {
   SourceFeatureType,
@@ -105,6 +111,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private _searchIcon = false;
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
+  private locateID: string = 'locateXY';
   private stream$ = new Subject<string>();
   private stream$$: Subscription;
   private selectedFeature$$: Subscription;
@@ -113,8 +120,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   @ViewChild('input') input: ElementRef;
 
+  get map(): IgoMap {
+    return this.mapService.getMap();
+  }
+
   constructor(
     private searchService: SearchService,
+    private mapService: MapService,
     private featureService: FeatureService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
@@ -172,12 +184,29 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.input.nativeElement.focus();
   }
 
+  private addOverlay(coordinates: [number, number]) {
+    const geometry = new olPoint(
+      olproj.transform(coordinates, 'EPSG:4326', this.map.projection)
+    );
+    const extent = geometry.getExtent();
+    const feature = new olFeature({ geometry: geometry });
+    feature.setId(this.locateID);
+    // TODO: SETTING A NEW COLOR AND TEXT BASED ON PR 166
+    // feature.setStyle([this.map.setPointOverlayStyleWithParams('yellow', coordinates)]);
+    // https://github.com/infra-geo-ouverte/igo2-lib/
+    // blob/6d0e9a2a5d3fd2290339c123b674aca7ca9e7102/src/lib/map/shared/map.ts#L135
+    this.map.removeOverlayByID(this.locateID);
+    this.map.moveToExtent(extent);
+    this.map.addOverlay(feature);
+  }
+
   private keyIsValid(key: string) {
     return this.invalidKeys.indexOf(key) === -1;
   }
 
   private handleTermChanged(term: string) {
     if (term !== undefined || term !== '') {
+      this.map.removeOverlayByID(this.locateID);
       this.featureService.clear();
       this.search.emit(term);
       // tslint:disable-next-line:max-line-length
@@ -197,7 +226,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
           }
           xy = JSON.parse('[' + term + ']');
         }
-        const r = this.searchService.locate(xy);
+        this.addOverlay(xy);
+        const r = this.searchService.locate(xy, this.map.getZoom());
         if (r) {
           r.filter(res => res !== undefined).map(res =>
             res.subscribe(features =>
