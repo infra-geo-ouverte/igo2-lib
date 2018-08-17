@@ -5,6 +5,9 @@ import { WMSDataSource } from './wms-datasource';
 import { WMTSDataSource } from './wmts-datasource';
 import { WFSDataSource } from './wfs-datasource';
 import { FeatureDataSource } from './feature-datasource';
+import { CartoDataSource } from './carto-datasource';
+import { ArcGISRestDataSource } from './arcgisrest-datasource';
+import { TileArcGISRestDataSource } from './tilearcgisrest-datasource';
 
 export type AnyDataSource =
   | DataSource
@@ -13,4 +16,7 @@ export type AnyDataSource =
   | WFSDataSource
   | XYZDataSource
   | WMTSDataSource
-  | WMSDataSource;
+  | WMSDataSource
+  | CartoDataSource
+  | ArcGISRestDataSource
+  | TileArcGISRestDataSource;

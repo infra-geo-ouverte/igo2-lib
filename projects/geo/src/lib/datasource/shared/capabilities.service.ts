@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
 import olSourceWMTS from 'ol/source/WMTS';
+import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
+import { StyleGenerator } from '@igo2/utils';
 
-import { WMTSDataSourceOptions, WMSDataSourceOptions } from './datasources';
+import {
+  WMTSDataSourceOptions,
+  WMSDataSourceOptions,
+  ArcGISRestDataSourceOptions,
+  TileArcGISRestDataSourceOptions
+} from './datasources';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +55,35 @@ export class CapabilitiesService {
     );
 
     return options;
+  }
+
+  getArcgisOptions(
+    baseOptions: ArcGISRestDataSourceOptions
+  ): Observable<ArcGISRestDataSourceOptions> {
+    const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
+
+    return this.http
+      .get(baseUrl)
+      .pipe(
+        map((arcgisOptions: any) =>
+          this.parseArcgisOptions(baseOptions, arcgisOptions)
+        )
+      );
+  }
+
+  getTileArcgisOptions(
+    baseOptions: TileArcGISRestDataSourceOptions
+  ): Observable<TileArcGISRestDataSourceOptions> {
+    const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
+    const legendUrl = baseOptions.url + '/legend?f=json';
+    const tileArcgisOptions = this.http.get(baseUrl);
+    const legendInfo = this.http.get(legendUrl);
+
+    return forkJoin([tileArcgisOptions, legendInfo]).pipe(
+      map((res: any) =>
+        this.parseTileArcgisOptions(baseOptions, res[0], res[1])
+      )
+    );
   }
 
   getCapabilities(
@@ -131,6 +167,87 @@ export class CapabilitiesService {
     );
 
     return Object.assign(options, baseOptions);
+  }
+
+  private parseArcgisOptions(
+    baseOptions: ArcGISRestDataSourceOptions,
+    arcgisOptions: any
+  ): ArcGISRestDataSourceOptions {
+    const styleGenerator = new StyleGenerator();
+    const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
+    const style = styleGenerator.generateStyle(arcgisOptions, units);
+    const attributions = new olAttribution({
+      html: arcgisOptions.copyrightText
+    });
+    let timeExtent, timeFilter;
+    if (arcgisOptions.timeInfo) {
+      const time = arcgisOptions.timeInfo.timeExtent;
+      timeExtent = time[0] + ',' + time[1];
+      const min = new Date();
+      min.setTime(time[0]);
+      const max = new Date();
+      max.setTime(time[1]);
+      timeFilter = {
+        min: min.toUTCString(),
+        max: max.toUTCString(),
+        range: true,
+        type: 'datetime',
+        style: 'calendar'
+      };
+    }
+    const params = Object.assign(
+      {},
+      {
+        style: style,
+        timeFilter: timeFilter,
+        timeExtent: timeExtent,
+        attributions: attributions
+      }
+    );
+    const options = ObjectUtils.removeUndefined({
+      params: params
+    });
+    return ObjectUtils.mergeDeep(options, baseOptions);
+  }
+
+  private parseTileArcgisOptions(
+    baseOptions: TileArcGISRestDataSourceOptions,
+    tileArcgisOptions: any,
+    legendInfo: any
+  ): TileArcGISRestDataSourceOptions {
+    const attributions = new olAttribution({
+      html: tileArcgisOptions.copyrightText
+    });
+    let timeExtent, timeFilter;
+    if (tileArcgisOptions.timeInfo) {
+      const time = tileArcgisOptions.timeInfo.timeExtent;
+      timeExtent = time[0] + ',' + time[1];
+      const min = new Date();
+      min.setTime(time[0]);
+      const max = new Date();
+      max.setTime(time[1]);
+      timeFilter = {
+        min: min.toUTCString(),
+        max: max.toUTCString(),
+        range: true,
+        type: 'datetime',
+        style: 'calendar'
+      };
+    }
+    const params = Object.assign(
+      {},
+      {
+        layers: 'show:' + baseOptions.layer,
+        time: timeExtent
+      }
+    );
+    const options = ObjectUtils.removeUndefined({
+      params: params,
+      legendInfo: legendInfo,
+      timeFilter: timeFilter,
+      attributions: attributions
+    });
+    return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
   private findDataSourceInCapabilities(layerArray, name): any {

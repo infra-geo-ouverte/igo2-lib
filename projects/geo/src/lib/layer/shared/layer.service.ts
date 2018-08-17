@@ -10,7 +10,10 @@ import {
   XYZDataSource,
   WFSDataSource,
   WMTSDataSource,
-  WMSDataSource
+  WMSDataSource,
+  CartoDataSource,
+  ArcGISRestDataSource,
+  TileArcGISRestDataSource
 } from '../../datasource';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -54,10 +57,13 @@ export class LayerService {
       case OSMDataSource:
       case WMTSDataSource:
       case XYZDataSource:
+      case CartoDataSource:
+      case TileArcGISRestDataSource:
         layer = this.createTileLayer(layerOptions as TileLayerOptions);
         break;
       case FeatureDataSource:
       case WFSDataSource:
+      case ArcGISRestDataSource:
         layer = this.createVectorLayer(layerOptions as VectorLayerOptions);
         break;
       case WMSDataSource:
@@ -101,6 +107,11 @@ export class LayerService {
     let style;
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
+    }
+
+    if (layerOptions.source instanceof ArcGISRestDataSource) {
+      const source = layerOptions.source as ArcGISRestDataSource;
+      style = source.options.params.style;
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {

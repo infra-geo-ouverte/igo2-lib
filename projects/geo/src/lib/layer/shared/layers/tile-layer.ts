@@ -7,12 +7,19 @@ import { IgoMap } from '../../../map';
 import { OSMDataSource } from '../../../datasource/shared/datasources/osm-datasource';
 import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-datasource';
 import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
+import { CartoDataSource } from '../../../datasource/shared/datasources/carto-datasource';
+import { TileArcGISRestDataSource } from '../../../datasource/shared/datasources/tilearcgisrest-datasource';
 
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 
 export class TileLayer extends Layer {
-  public dataSource: OSMDataSource | WMTSDataSource | XYZDataSource;
+  public dataSource:
+    | OSMDataSource
+    | WMTSDataSource
+    | XYZDataSource
+    | CartoDataSource
+    | TileArcGISRestDataSource;
   public options: TileLayerOptions;
   public ol: olLayerTile;
 
