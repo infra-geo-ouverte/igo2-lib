@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { MatCardModule, MatButtonModule } from '@angular/material';
 
 import { IgoMapModule } from '@igo2/geo';
-import { IgoContextModule } from '@igo2/context';
+import { IgoContextManagerModule } from '@igo2/context';
 
 import { AppContextComponent } from './context.component';
 import { AppContextRoutingModule } from './context-routing.module';
@@ -14,7 +14,7 @@ import { AppContextRoutingModule } from './context-routing.module';
     MatCardModule,
     MatButtonModule,
     IgoMapModule,
-    IgoContextModule
+    IgoContextManagerModule
   ],
   exports: [AppContextComponent]
 })

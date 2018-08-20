@@ -356,7 +356,6 @@ gulp.task(
   'geo',
   gulpSequence(
     'geo:clean',
-    'geo:fixOL',
     ['geo:copyAssets', 'geo:copyStyles', 'geo:copyLocale'],
     ['geo:bundleStyles'],
     'core:bundleLocale'

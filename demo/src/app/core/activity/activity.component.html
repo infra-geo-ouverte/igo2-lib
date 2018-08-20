@@ -3,12 +3,19 @@
   <mat-card-title>Activity</mat-card-title>
   <mat-card-content>
     <p>Register activities in service. Use to display a loading icon</p>
-    <p>* Import <code>IgoActivityModule</code> only if you want register http calls</p>
-    <p>* Import <code>IgoActivityModule</code> only once</p>
+
+    <li>Import <code>IgoActivityModule</code> only if you want register http calls</li>
+    <li>Import <code>IgoActivityModule</code> only once</li>
+
+    <br>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/core/activity"> code of this example</a>
+    <hr>
   </mat-card-content>
+
   <mat-card-actions>
     <button mat-raised-button (click)="register()">Register</button>
     <button mat-raised-button (click)="unregister()">Unregister</button>
   </mat-card-actions>
   <p>Counter: {{counter}}</p>
+
 </mat-card>

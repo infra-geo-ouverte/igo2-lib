@@ -4,7 +4,7 @@ This repository is home to the IGO2 Library on which IGO2 is built. IGO2 and thi
 
 ## Description
 
-Igo2 library is divided into several elements:
+IGO2 library is divided into several elements:
 
 - @igo2/utils : Basic utilies without dependency (ex: base64, clipboard, uuid)
 

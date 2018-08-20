@@ -19,6 +19,7 @@
     "lint": "ng lint",
     "test": "ng test",
     "e2e": "ng e2e",
+    "postinstall": "gulp geo:fixOL",
     "build.libs": "npm run build.utils && npm run build.core && npm run build.common && npm run build.auth && npm run build.geo && npm run build.context && npm run build.tools && npm run build.demo",
     "build.utils": "ng build utils --prod",
     "build.core": "ng build core --prod && gulp core",
