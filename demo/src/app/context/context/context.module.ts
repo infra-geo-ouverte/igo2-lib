@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatCardModule, MatButtonModule } from '@angular/material';
 
+import { IgoPanelModule } from '@igo2/common';
 import { IgoMapModule } from '@igo2/geo';
 import { IgoContextManagerModule } from '@igo2/context';
 
@@ -13,6 +14,7 @@ import { AppContextRoutingModule } from './context-routing.module';
     AppContextRoutingModule,
     MatCardModule,
     MatButtonModule,
+    IgoPanelModule,
     IgoMapModule,
     IgoContextManagerModule
   ],

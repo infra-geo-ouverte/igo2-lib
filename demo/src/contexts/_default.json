@@ -5,11 +5,11 @@
     "view": {
       "projection": "EPSG:3857",
       "center": [-72, 50],
-      "zoom": 5,
-      "geolocate": true
+      "zoom": 8
     }
   },
-  "layers": [{
+  "layers": [
+    {
       "title": "OSM",
       "sourceOptions": {
         "type": "osm"

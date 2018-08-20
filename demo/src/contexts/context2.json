@@ -4,15 +4,20 @@
   "map": {
     "view": {
       "projection": "EPSG:3857",
-      "center": [-72, 50],
-      "zoom": 5,
+      "center": [-73, 48],
+      "zoom": 10,
       "geolocate": true
     }
   },
-  "layers": [{
-      "title": "OSM",
+  "layers": [
+    {
+      "title": "Quebec Base Map",
       "sourceOptions": {
-        "type": "osm"
+        "type": "wmts",
+        "url": "https://geoegl.msp.gouv.qc.ca/carto/wmts/1.0.0/wmts",
+        "layer": "carte_gouv_qc_ro",
+        "matrixSet": "EPSG_3857",
+        "version": "1.3.0"
       }
     }
   ]
