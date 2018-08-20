@@ -62,7 +62,7 @@ export class OGCFilterService {
     }
   }
 
-  public setOgcFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
+  public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
     const options: any = wfsDatasource.options;
     const ogcFilterWriter = new OgcFilterWriter();
     if (options.ogcFilters.filters) {
@@ -88,8 +88,8 @@ export class OGCFilterService {
         : options.ogcFilters.filtersAreEditable;
   }
 
-  public asfasfas(datasource: WMSDataSource) {
-    const options: any = datasource.options;
+  public setOgcWMSFiltersOptions(wmsDatasource: WMSDataSource) {
+    const options: any = wmsDatasource.options;
     if (
       options['sourceFields'] === undefined ||
       Object.keys(options['sourceFields']).length === 0
@@ -177,7 +177,7 @@ export class OGCFilterService {
           options['fieldNameGeometry']
         );
         this.filterByOgc(
-          datasource,
+          wmsDatasource,
           ogcFilterWriter.buildFilter(options.ogcFilters.filters)
         );
         options['ogcFiltered'] = true;

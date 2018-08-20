@@ -51,7 +51,7 @@ export class OgcFilterableItemComponent implements OnInit {
 
   ngOnInit() {
     this.ogcFilterService.getSourceFields(this.datasource);
-    this.ogcFilterService.setOgcFiltersOptions(this.datasource);
+    this.ogcFilterService.setOgcWFSFiltersOptions(this.datasource);
 
     if (
       this.datasource.options.ogcFilters &&
