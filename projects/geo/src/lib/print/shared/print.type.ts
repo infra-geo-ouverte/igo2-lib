@@ -8,7 +8,8 @@ export const PrintFormat = strEnum([
   'A4',
   'A5',
   'Letter',
-  'Legal'
+  'Legal',
+  'Image'
 ]);
 export type PrintFormat = keyof typeof PrintFormat;
 
@@ -19,12 +20,15 @@ export const PrintResolution = strEnum(['72', '96', '150', '300']);
 export type PrintResolution = keyof typeof PrintResolution;
 
 export const PrintDimension = {
-  A0: [1189, 841],
-  A1: [841, 594],
-  A2: [594, 420],
-  A3: [420, 297],
-  A4: [297, 210],
-  A5: [210, 148],
+  A0: [841, 1189],
+  A1: [594, 841],
+  A2: [420, 594],
+  A3: [297, 420],
+  A4: [210, 297],
+  A5: [148, 210],
   Letter: [216, 279],
   Legal: [216, 356]
 };
+
+export const PrintSaveImageFormat = strEnum(['Jpeg', 'Png', 'Bmp', 'Gif']);
+export type PrintSaveImageFormat = keyof typeof PrintSaveImageFormat;

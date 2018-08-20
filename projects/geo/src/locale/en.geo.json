@@ -116,11 +116,19 @@
         "write": "Read and Write"
       },
       "printForm": {
+        "comment": "Comment",
         "format": "Format",
+        "imageFormat": "Image format",
         "landscape": "Landscape",
         "portrait": "Portrait",
+        "projection": "Projection",
         "printBtn": "Print",
         "resolution": "Resolution",
+        "saveBtn": "Save",
+        "scale": "Scale",
+        "showLegend": "Show legend",
+        "showProjection": "Show projection",
+        "showScale": "Show scale",
         "title": "Title"
       },
       "search": {

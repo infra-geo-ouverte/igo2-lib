@@ -1,3 +1,16 @@
+@import '../../../../../core/src/style/partial/media';
+
 mat-form-field {
   width: 100%;
+}
+
+mat-checkbox.horizontal-left {
+  text-align: left;
+   @include mobile {
+    text-align: inherit;
+  }
+}
+
+ mat-checkbox.horizontal-left span {
+  padding: 0 8px;
 }

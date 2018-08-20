@@ -28,11 +28,13 @@
     "@igo2/core": "^0.22.2",
     "@igo2/utils": "^0.22.2",
     "ol": "^5.1.3",
-    "moment": "^2.22.2",
     "proj4": "^2.4.4",
     "rxjs": "^6.1.0"
   },
   "optionalDependencies": {
-    "@mat-datetimepicker/core": "^2.0.1"
+    "@mat-datetimepicker/core": "^2.0.1",
+    "moment": "^2.22.2",
+    "html2canvas": "^1.0.0-alpha.12",
+    "jspdf": "^1.4.1"
   }
 }

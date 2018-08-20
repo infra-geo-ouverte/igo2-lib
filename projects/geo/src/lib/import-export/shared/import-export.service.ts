@@ -31,7 +31,9 @@ export class ImportExportService {
     const count = fileList.length;
     let i = 1;
     for (const file of fileList) {
-      const ext = file.name.split('.')[file.name.split('.').length - 1];
+      const ext = file.name
+        .split('.')
+        [file.name.split('.').length - 1].toLowerCase();
       const mimeType = file.type;
       const mimeTypeAllowed = [
         'application/gml+xml',
@@ -40,8 +42,8 @@ export class ImportExportService {
       ];
       const extensionAllowed = ['geojson', 'kml', 'json'];
       if (
-        mimeTypeAllowed.includes(mimeType) ||
-        extensionAllowed.includes(ext.toLowerCase())
+        mimeTypeAllowed.indexOf(mimeType) !== -1 ||
+        extensionAllowed.indexOf(ext.toLowerCase()) !== -1
       ) {
         this.readFile(file, sourceSrs, ext, i++, count);
       } else if (mimeType === 'application/zip') {
@@ -149,7 +151,7 @@ export class ImportExportService {
     reader.readAsText(file, 'UTF-8');
   }
 
-  private addFeaturesLayer(text, title, sourceSrs, ext, mimeType?) {
+  private addFeaturesLayer(text, title, sourceSrs, ext?, mimeType?) {
     const map = this.mapService.getMap();
     const overlayDataSource = new FeatureDataSource();
 

@@ -11,7 +11,8 @@ import { PrintOptions } from '../shared/print.interface';
 import {
   PrintFormat,
   PrintOrientation,
-  PrintResolution
+  PrintResolution,
+  PrintSaveImageFormat
 } from '../shared/print.type';
 
 @Component({
@@ -26,6 +27,8 @@ export class PrintFormComponent {
   public formats = PrintFormat;
   public orientations = PrintOrientation;
   public resolutions = PrintResolution;
+  public imageFormats = PrintSaveImageFormat;
+  public isPrintService = true;
 
   @Input()
   get disabled(): boolean {
@@ -35,6 +38,16 @@ export class PrintFormComponent {
     this._disabled = value;
   }
   private _disabled = false;
+
+  @Input()
+  get imageFormat(): PrintSaveImageFormat {
+    return this.imageFormatField.value;
+  }
+  set imageFormat(value: PrintSaveImageFormat) {
+    this.imageFormatField.setValue(value || PrintSaveImageFormat.Jpeg, {
+      onlySelf: true
+    });
+  }
 
   @Input()
   get format(): PrintFormat {
@@ -74,8 +87,41 @@ export class PrintFormComponent {
     this.titleField.setValue(value, { onlySelf: true });
   }
 
+  @Input()
+  get comment(): string {
+    return this.commentField.value;
+  }
+  set comment(value: string) {
+    this.commentField.setValue(value, { onlySelf: true });
+  }
+  @Input()
+  get showProjection(): boolean {
+    return this.showProjectionField.value;
+  }
+  set showProjection(value: boolean) {
+    this.showProjectionField.setValue(value, { onlySelf: true });
+  }
+  @Input()
+  get showScale(): boolean {
+    return this.showScaleField.value;
+  }
+  set showScale(value: boolean) {
+    this.showScaleField.setValue(value, { onlySelf: true });
+  }
+  @Input()
+  get showLegend(): boolean {
+    return this.showLegendField.value;
+  }
+  set showLegend(value: boolean) {
+    this.showLegendField.setValue(value, { onlySelf: true });
+  }
+
   get formatField() {
     return <FormControl>this.form.controls['format'];
+  }
+
+  get imageFormatField() {
+    return <FormControl>this.form.controls['imageFormat'];
   }
 
   get orientationField() {
@@ -84,6 +130,19 @@ export class PrintFormComponent {
 
   get resolutionField() {
     return <FormControl>this.form.controls['resolution'];
+  }
+
+  get commentField() {
+    return <FormControl>this.form.controls['comment'];
+  }
+  get showProjectionField() {
+    return <FormControl>this.form.controls['showProjection'];
+  }
+  get showScaleField() {
+    return <FormControl>this.form.controls['showScale'];
+  }
+  get showLegendField() {
+    return <FormControl>this.form.controls['showLegend'];
   }
 
   get titleField() {
@@ -95,16 +154,37 @@ export class PrintFormComponent {
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
       title: ['', []],
+      comment: ['', []],
       format: ['', [Validators.required]],
+      imageFormat: [
+        { value: '', disabled: this.isPrintService },
+        [Validators.required]
+      ],
       resolution: ['', [Validators.required]],
-      orientation: ['', [Validators.required]]
+      orientation: ['', [Validators.required]],
+      showProjection: false,
+      showScale: false,
+      showLegend: false
     });
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {
     this.submitted = true;
+    data['isPrintService'] = this.isPrintService;
     if (isValid) {
       this.submit.emit(data);
+    }
+  }
+
+  toggleImageSaveProp() {
+    if (this.formatField.value === 'Image') {
+      this.imageFormatField.enable();
+      this.isPrintService = false;
+      this.form.controls.imageFormat.enable();
+    } else {
+      this.imageFormatField.disable();
+      this.isPrintService = true;
+      this.form.controls.imageFormat.disable();
     }
   }
 }

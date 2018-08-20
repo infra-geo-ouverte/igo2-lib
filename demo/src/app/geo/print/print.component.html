@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Simple Map</mat-card-title>
+  <mat-card-content>
+    <li>npm install --save html2canvas@1.0.0-alpha.12</li>
+    <li>npm install --save jspdf@1.4.1</li>
+    <li>Dependencies: LanguageService</li>
+
+    <br>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/print">code of this example</a>
+    <hr>
+  </mat-card-content>
+
+  <igo-map-browser [map]="map" [view]="view">
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+    <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
+  </igo-map-browser>
+
+  <igo-print [map]="map"></igo-print>
+
+</mat-card>
+
+<igo-message-center></igo-message-center>

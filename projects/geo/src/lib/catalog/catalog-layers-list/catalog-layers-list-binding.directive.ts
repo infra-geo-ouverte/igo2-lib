@@ -71,7 +71,7 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
     let timeFilter;
     // Dig all levels until last level (layer object are not defined on last level)
     for (const group of layerList.Layer) {
-      if (group.queryable === false && typeof group.Layer !== 'undefined') {
+      if (typeof group.Layer !== 'undefined') {
         // recursive, check next level
         this.includeRecursiveLayer(catalog, group, groupsLayers);
       } else {

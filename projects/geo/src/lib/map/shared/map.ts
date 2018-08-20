@@ -373,6 +373,94 @@ export class IgoMap {
     }
   }
 
+  /**
+  Get Scale of the map
+  @return Scale of the map
+  */
+  getMapScale(approximative, resolution) {
+    if (approximative) {
+      let scale = this.getScale(resolution);
+      scale = Math.round(scale);
+      if (scale < 10000) {
+        return scale;
+      }
+      scale = Math.round(scale / 1000);
+      if (scale < 1000) {
+        return scale + 'K';
+      }
+      scale = Math.round(scale / 1000);
+      return scale + 'M';
+    }
+    return this.getScale(resolution);
+  }
+
+  getScale(dpi = 96) {
+    const unit = this.ol
+      .getView()
+      .getProjection()
+      .getUnits();
+    const resolution = this.ol.getView().getResolution();
+    const inchesPerMetre = 39.37;
+    return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
+  }
+
+  /**
+  Get all layers activate in the map
+  @return Array of layers
+  */
+  getLayers() {
+    return this.layers;
+  }
+
+  /**
+  Get all the layers legend
+  @return Array of legend
+  */
+  getLayersLegend() {
+    // Get layers list
+    const layers = this.getLayers();
+    const listLegend = [];
+    let title, legendUrls, legendImage;
+    let heightPos = 0;
+    const newCanvas = document.createElement('canvas');
+    const newContext = newCanvas.getContext('2d');
+    newContext.font = '20px Calibri';
+    // For each layers in the map
+    layers.forEach(function(layer) {
+      // Add legend for only visible layer
+      if (layer.visible === true) {
+        // Get the list of legend
+        legendUrls = layer.dataSource.getLegend();
+        // If legend(s) are defined
+        if (legendUrls.length > 0) {
+          title = layer.title;
+          // For each legend
+          legendUrls.forEach(function(legendUrl) {
+            // If the legend really exist
+            if (legendUrl.url !== undefined) {
+              // Create an image for the legend
+              legendImage = new Image();
+              legendImage.crossOrigin = 'Anonymous';
+              legendImage.src = legendUrl.url;
+              legendImage.onload = function() {
+                newContext.fillText(title, 0, heightPos);
+                newContext.drawImage(legendImage, 0, heightPos + 20);
+                heightPos += legendImage.height + 5;
+              };
+              // Add legend info to the list
+              listLegend.push({
+                title: title,
+                url: legendUrl.url,
+                image: legendImage
+              });
+            }
+          });
+        }
+      }
+    });
+    return listLegend;
+  }
+
   geolocate(track = false) {
     let first = true;
     if (this.geolocation$$) {

@@ -118,11 +118,19 @@
         "write": "Lecture et écriture"
       },
       "printForm": {
+        "comment": "Commentaire",
         "format": "Format",
+        "imageFormat": "Format de l'image",
         "landscape": "Paysage",
         "portrait": "Portrait",
         "printBtn": "Imprimer",
+        "projection": "Projection",
         "resolution": "Résolution",
+        "saveBtn": "Sauvergarder",
+        "scale": "Échelle",
+        "showLegend": "Afficher la légende",
+        "showProjection": "Afficher la projection",
+        "showScale": "Afficher l'échelle",
         "title": "Titre"
       },
       "search": {

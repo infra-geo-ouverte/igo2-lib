@@ -9,7 +9,8 @@ import { PrintOptions } from '../shared/print.interface';
 import {
   PrintFormat,
   PrintOrientation,
-  PrintResolution
+  PrintResolution,
+  PrintSaveImageFormat
 } from '../shared/print.type';
 
 import { PrintService } from '../shared/print.service';
@@ -49,6 +50,15 @@ export class PrintComponent {
   private _orientation: PrintOrientation;
 
   @Input()
+  get imageFormat(): PrintSaveImageFormat {
+    return this._imageFormat;
+  }
+  set imageFormat(value: PrintSaveImageFormat) {
+    this._imageFormat = value;
+  }
+  private _imageFormat: PrintSaveImageFormat;
+
+  @Input()
   get resolution(): PrintResolution {
     return this._resolution;
   }
@@ -61,10 +71,25 @@ export class PrintComponent {
 
   handleFormSubmit(data: PrintOptions) {
     this.disabled = true;
-    this.printService
-      .print(this.map, data)
-      .subscribe((status: SubjectStatus) => {
-        this.disabled = false;
-      });
+
+    if (data.isPrintService === true) {
+      this.printService
+        .print(this.map, data)
+        .subscribe((status: SubjectStatus) => {});
+    } else {
+      this.printService.downloadMapImage(
+        this.map,
+        data.imageFormat,
+        data.showProjection,
+        data.showScale,
+        data.showLegend,
+        data.title,
+        data.comment
+      );
+      if (data.showLegend) {
+        this.printService.getLayersLegendImage(this.map, data.imageFormat);
+      }
+    }
+    this.disabled = false;
   }
 }
