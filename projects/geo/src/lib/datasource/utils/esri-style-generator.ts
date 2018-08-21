@@ -1,17 +1,17 @@
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
 
-export class StyleGenerator {
+export class EsriStyleGenerator {
   public _converters: any;
   public _renderers: any;
 
   constructor() {
     this._converters = {};
-    this._converters.esriPMS = StyleGenerator._convertEsriPMS;
-    this._converters.esriSFS = StyleGenerator._convertEsriSFS;
-    this._converters.esriSLS = StyleGenerator._convertEsriSLS;
-    this._converters.esriSMS = StyleGenerator._convertEsriSMS;
-    this._converters.esriTS = StyleGenerator._convertEsriTS;
+    this._converters.esriPMS = EsriStyleGenerator._convertEsriPMS;
+    this._converters.esriSFS = EsriStyleGenerator._convertEsriSFS;
+    this._converters.esriSLS = EsriStyleGenerator._convertEsriSLS;
+    this._converters.esriSMS = EsriStyleGenerator._convertEsriSMS;
+    this._converters.esriTS = EsriStyleGenerator._convertEsriTS;
     this._renderers = {};
     this._renderers.uniqueValue = this._renderUniqueValue;
     this._renderers.simple = this._renderSimple;
@@ -46,14 +46,14 @@ export class StyleGenerator {
       var minScale = labelingInfo[i].minScale;
       var minResolution = null;
       if (maxScale !== 0) {
-        minResolution = StyleGenerator._getResolutionForScale(
+        minResolution = EsriStyleGenerator._getResolutionForScale(
           maxScale,
           mapUnits
         );
       }
       var maxResolution = null;
       if (minScale !== 0) {
-        maxResolution = StyleGenerator._getResolutionForScale(
+        maxResolution = EsriStyleGenerator._getResolutionForScale(
           minScale,
           mapUnits
         );
@@ -90,12 +90,12 @@ export class StyleGenerator {
   }
   /* convert an Esri Text Symbol */
   static _convertEsriTS(symbol) {
-    var rotation = StyleGenerator._transformAngle(symbol.angle);
+    var rotation = EsriStyleGenerator._transformAngle(symbol.angle);
     var text = symbol.text !== undefined ? symbol.text : undefined;
     return new olstyle.Style({
       text: new olstyle.Text({
         fill: new olstyle.Fill({
-          color: StyleGenerator._transformColor(symbol.color)
+          color: EsriStyleGenerator._transformColor(symbol.color)
         }),
         font:
           symbol.font.style +
@@ -107,8 +107,8 @@ export class StyleGenerator {
           symbol.font.family,
         textBaseline: symbol.verticalAlignment,
         textAlign: symbol.horizontalAlignment,
-        offsetX: StyleGenerator._convertPointToPixel(symbol.xoffset),
-        offsetY: StyleGenerator._convertPointToPixel(symbol.yoffset),
+        offsetX: EsriStyleGenerator._convertPointToPixel(symbol.xoffset),
+        offsetY: EsriStyleGenerator._convertPointToPixel(symbol.yoffset),
         rotation: rotation,
         text: text
       })
@@ -117,7 +117,7 @@ export class StyleGenerator {
   /* convert an Esri Picture Marker Symbol */
   static _convertEsriPMS(symbol) {
     var src = 'data:' + symbol.contentType + ';base64, ' + symbol.imageData;
-    var rotation = StyleGenerator._transformAngle(symbol.angle);
+    var rotation = EsriStyleGenerator._transformAngle(symbol.angle);
 
     return new olstyle.Style({
       image: new olstyle.Icon({
@@ -130,10 +130,10 @@ export class StyleGenerator {
   static _convertEsriSFS(symbol) {
     // there is no support in openlayers currently for fill patterns, so style is not interpreted
     var fill = new olstyle.Fill({
-      color: StyleGenerator._transformColor(symbol.color)
+      color: EsriStyleGenerator._transformColor(symbol.color)
     });
     var stroke = symbol.outline
-      ? StyleGenerator._convertOutline(symbol.outline)
+      ? EsriStyleGenerator._convertOutline(symbol.outline)
       : undefined;
     return new olstyle.Style({
       fill: fill,
@@ -142,7 +142,7 @@ export class StyleGenerator {
   }
   static _convertOutline(outline) {
     var lineDash;
-    var color = StyleGenerator._transformColor(outline.color);
+    var color = EsriStyleGenerator._transformColor(outline.color);
     if (outline.style === 'esriSLSDash') {
       lineDash = [5];
     } else if (outline.style === 'esriSLSDashDot') {
@@ -158,13 +158,13 @@ export class StyleGenerator {
     return new olstyle.Stroke({
       color: color,
       lineDash: lineDash,
-      width: StyleGenerator._convertPointToPixel(outline.width)
+      width: EsriStyleGenerator._convertPointToPixel(outline.width)
     });
   }
   /* convert an Esri Simple Line Symbol */
   static _convertEsriSLS(symbol) {
     return new olstyle.Style({
-      stroke: StyleGenerator._convertOutline(symbol)
+      stroke: EsriStyleGenerator._convertOutline(symbol)
     });
   }
   static _transformAngle(angle) {
@@ -182,13 +182,13 @@ export class StyleGenerator {
   /* convert an Esri Simple Marker Symbol */
   static _convertEsriSMS(symbol) {
     var fill = new olstyle.Fill({
-      color: StyleGenerator._transformColor(symbol.color)
+      color: EsriStyleGenerator._transformColor(symbol.color)
     });
     var stroke = symbol.outline
-      ? StyleGenerator._convertOutline(symbol.outline)
+      ? EsriStyleGenerator._convertOutline(symbol.outline)
       : undefined;
-    var radius = StyleGenerator._convertPointToPixel(symbol.size) / 2;
-    var rotation = StyleGenerator._transformAngle(symbol.angle);
+    var radius = EsriStyleGenerator._convertPointToPixel(symbol.size) / 2;
+    var rotation = EsriStyleGenerator._transformAngle(symbol.angle);
     if (symbol.style === 'esriSMSCircle') {
       return new olstyle.Style({
         image: new olstyle.Circle({

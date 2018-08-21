@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin, throwError } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
@@ -8,7 +8,7 @@ import olSourceWMTS from 'ol/source/WMTS';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
-import { StyleGenerator } from '@igo2/utils';
+import { EsriStyleGenerator } from '../utils/esri-style-generator';
 
 import {
   WMTSDataSourceOptions,
@@ -173,7 +173,7 @@ export class CapabilitiesService {
     baseOptions: ArcGISRestDataSourceOptions,
     arcgisOptions: any
   ): ArcGISRestDataSourceOptions {
-    const styleGenerator = new StyleGenerator();
+    const styleGenerator = new EsriStyleGenerator();
     const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
     const style = styleGenerator.generateStyle(arcgisOptions, units);
     const attributions = new olAttribution({
