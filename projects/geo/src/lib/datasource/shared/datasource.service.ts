@@ -18,6 +18,12 @@ import {
   WMTSDataSourceOptions,
   WMSDataSource,
   WMSDataSourceOptions,
+  CartoDataSource,
+  CartoDataSourceOptions,
+  ArcGISRestDataSource,
+  ArcGISRestDataSourceOptions,
+  TileArcGISRestDataSource,
+  TileArcGISRestDataSourceOptions,
   AnyDataSourceOptions
 } from './datasources';
 
@@ -53,6 +59,21 @@ export class DataSourceService {
         break;
       case 'xyz':
         dataSource = this.createXYZDataSource(context as XYZDataSourceOptions);
+        break;
+      case 'carto':
+        dataSource = this.createCartoDataSource(
+          context as CartoDataSourceOptions
+        );
+        break;
+      case 'arcgisrest':
+        dataSource = this.createArcGISRestDataSource(
+          context as ArcGISRestDataSourceOptions
+        );
+        break;
+      case 'tilearcgisrest':
+        dataSource = this.createTileArcGISRestDataSource(
+          context as TileArcGISRestDataSourceOptions
+        );
         break;
       default:
         break;
@@ -113,5 +134,37 @@ export class DataSourceService {
     context: XYZDataSourceOptions
   ): Observable<XYZDataSource> {
     return new Observable(d => d.next(new XYZDataSource(context)));
+  }
+
+  private createCartoDataSource(
+    context: CartoDataSourceOptions
+  ): Observable<CartoDataSource> {
+    return new Observable(d => d.next(new CartoDataSource(context)));
+  }
+
+  private createArcGISRestDataSource(
+    context: ArcGISRestDataSourceOptions
+  ): Observable<ArcGISRestDataSource> {
+    return this.capabilitiesService
+      .getArcgisOptions(context)
+      .pipe(
+        map(
+          (options: ArcGISRestDataSourceOptions) =>
+            new ArcGISRestDataSource(options)
+        )
+      );
+  }
+
+  private createTileArcGISRestDataSource(
+    context: TileArcGISRestDataSourceOptions
+  ): Observable<TileArcGISRestDataSource> {
+    return this.capabilitiesService
+      .getTileArcgisOptions(context)
+      .pipe(
+        map(
+          (options: TileArcGISRestDataSourceOptions) =>
+            new TileArcGISRestDataSource(options)
+        )
+      );
   }
 }

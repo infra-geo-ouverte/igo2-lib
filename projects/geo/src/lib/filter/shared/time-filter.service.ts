@@ -2,12 +2,16 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { TileArcGISRestDataSource } from '../../datasource/shared/datasources/tilearcgisrest-datasource';
 
 @Injectable()
 export class TimeFilterService {
   constructor() {}
 
-  filterByDate(datasource: WMSDataSource, date: Date | [Date, Date]) {
+  filterByDate(
+    datasource: WMSDataSource | TileArcGISRestDataSource,
+    date: Date | [Date, Date]
+  ) {
     let time;
     let newdateform;
     let newdateform_start;
@@ -24,7 +28,11 @@ export class TimeFilterService {
         dates.push(date[1]);
       }
       if (dates.length === 2 && newdateform_start !== newdateform_end) {
-        time = newdateform_start + '/' + newdateform_end;
+        if (datasource instanceof TileArcGISRestDataSource) {
+          time = newdateform_start + ',' + newdateform_end;
+        } else {
+          time = newdateform_start + '/' + newdateform_end;
+        }
       }
       if (newdateform_start === newdateform_end) {
         time = newdateform_start;
@@ -38,7 +46,10 @@ export class TimeFilterService {
     datasource.ol.updateParams(params);
   }
 
-  filterByYear(datasource: WMSDataSource, year: string | [string, string]) {
+  filterByYear(
+    datasource: WMSDataSource | TileArcGISRestDataSource,
+    year: string | [string, string]
+  ) {
     let time;
     let newdateform_start;
     let newdateform_end;
@@ -54,7 +65,11 @@ export class TimeFilterService {
         years.push(year[1]);
       }
       if (years.length === 2 && newdateform_start !== newdateform_end) {
-        time = newdateform_start + '/' + newdateform_end;
+        if (datasource instanceof TileArcGISRestDataSource) {
+          time = newdateform_start + ',' + newdateform_end;
+        } else {
+          time = newdateform_start + '/' + newdateform_end;
+        }
       }
       if (newdateform_start === newdateform_end) {
         time = newdateform_start;

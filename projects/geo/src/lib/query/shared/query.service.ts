@@ -4,8 +4,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import * as olformat from 'ol/format';
+import * as olextent from 'ol/extent';
 import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
+import olFormatEsriJSON from 'ol/format/EsriJSON';
 import olFeature from 'ol/Feature';
 
 import { uuid } from '@igo2/utils';
@@ -18,7 +20,11 @@ import {
 } from '../../feature/shared/feature.enum';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { Layer } from '../../layer/shared/layers/layer';
-import { WMSDataSource } from '../../datasource';
+import {
+  WMSDataSource,
+  CartoDataSource,
+  TileArcGISRestDataSource
+} from '../../datasource';
 
 import { QueryFormat } from './query.enum';
 import { QueryOptions, QueryableDataSource } from './query.interface';
@@ -64,6 +70,9 @@ export class QueryService {
       case QueryFormat.GEOJSON:
         features = this.extractGeoJSONData(res);
         break;
+      case QueryFormat.ESRIJSON:
+        features = this.extractEsriJSONData(res, layer.zIndex);
+        break;
       case QueryFormat.TEXT:
         features = this.extractTextData(res);
         break;
@@ -89,7 +98,10 @@ export class QueryService {
         sourceType: SourceFeatureType.Query,
         order: 1000 - layer.zIndex,
         title: title ? title : `${layer.title} (${index + 1})`,
-        projection: options.projection
+        projection:
+          queryDataSource.options.type === 'carto'
+            ? 'EPSG:4326'
+            : options.projection
       });
     });
   }
@@ -122,6 +134,13 @@ export class QueryService {
       console.warn('query.service: Unable to parse geojson', '\n', res);
     }
     return features;
+  }
+
+  private extractEsriJSONData(res, zIndex) {
+    const parser = new olFormatEsriJSON();
+    const features = parser.readFeatures(res);
+
+    return features.map(feature => this.featureToResult(feature, zIndex));
   }
 
   private extractTextData(res) {
@@ -299,6 +318,67 @@ export class QueryService {
             FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
           }
         );
+        break;
+      case CartoDataSource:
+        const cartoDatasource = datasource as CartoDataSource;
+        const baseUrl =
+          'https://' +
+          cartoDatasource.options.account +
+          '.carto.com/api/v2/sql?';
+        const format = 'format=GeoJSON';
+        const sql =
+          '&q=' + cartoDatasource.options.config.layers[0].options.sql;
+        const clause =
+          ' WHERE ST_Intersects(the_geom_webmercator,ST_BUFFER(ST_SetSRID(ST_POINT(';
+        const metres = cartoDatasource.options.queryPrecision
+          ? cartoDatasource.options.queryPrecision
+          : '1000';
+        const coordinates =
+          options.coordinates[0] +
+          ',' +
+          options.coordinates[1] +
+          '),3857),' +
+          metres +
+          '))';
+
+        url = `${baseUrl}${format}${sql}${clause}${coordinates}`;
+        break;
+      case TileArcGISRestDataSource:
+        const tileArcGISRestDatasource = datasource as TileArcGISRestDataSource;
+        let extent = olextent.boundingExtent([options.coordinates]);
+        if (tileArcGISRestDatasource.options.queryPrecision) {
+          extent = olextent.buffer(
+            extent,
+            tileArcGISRestDatasource.options.queryPrecision
+          );
+        }
+        const serviceUrl =
+          tileArcGISRestDatasource.options.url +
+          '/' +
+          tileArcGISRestDatasource.options.layer +
+          '/query/';
+        const geometry = encodeURIComponent(
+          '{"xmin":' +
+            extent[0] +
+            ',"ymin":' +
+            extent[1] +
+            ',"xmax":' +
+            extent[2] +
+            ',"ymax":' +
+            extent[3] +
+            ',"spatialReference":{"wkid":102100}}'
+        );
+        const params = [
+          'f=json',
+          `geometry=${geometry}`,
+          'geometryType=esriGeometryEnvelope',
+          'inSR=102100',
+          'spatialRel=esriSpatialRelIntersects',
+          'outFields=*',
+          'returnGeometry=true',
+          'outSR=102100'
+        ];
+        url = `${serviceUrl}?${params.join('&')}`;
         break;
       default:
         break;
