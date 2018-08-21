@@ -13,6 +13,7 @@ import { IgoMetadataModule } from './metadata/metadata.module';
 import { IgoOverlayModule } from './overlay/overlay.module';
 import { IgoPrintModule } from './print/print.module';
 import { IgoQueryModule } from './query/query.module';
+import { IgoRoutingModule } from './routing/routing.module';
 import { IgoSearchModule } from './search/search.module';
 import { IgoToastModule } from './toast/toast.module';
 import { IgoWktModule } from './wkt/wkt.module';
@@ -34,6 +35,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoOverlayModule,
     IgoPrintModule,
     IgoQueryModule,
+    IgoRoutingModule,
     IgoSearchModule,
     IgoToastModule,
     IgoWktModule

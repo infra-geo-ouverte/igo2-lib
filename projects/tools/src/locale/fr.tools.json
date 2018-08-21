@@ -3,6 +3,7 @@
     "tools": {
       "catalog": "Catalogue",
       "contexts": "Contextes",
+      "directions": "Itinéraire",
       "importExport": "Importation et exportation",
       "ogcFilter": "Filtrer par",
       "map": "Carte",

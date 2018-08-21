@@ -1,6 +1,6 @@
 {
   "/icherche/": {
-    "target": "https://spssogl97d.sso.msp.gouv.qc.ca",
+    "target": "https://geoegl.msp.gouv.qc.ca",
     "changeOrigin": true,
     "secure": false
   },
@@ -15,7 +15,7 @@
     "changeOrigin": true
   },
   "/igo2/api/": {
-    "target": "https://spssogl97d.sso.msp.gouv.qc.ca",
+    "target": "https://geoegl.msp.gouv.qc.ca",
     "secure": false,
     "changeOrigin": true
   }

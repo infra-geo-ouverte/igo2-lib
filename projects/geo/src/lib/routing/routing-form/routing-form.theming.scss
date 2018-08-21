@@ -1,0 +1,7 @@
+@mixin igo-routing-form-theming($theme) {
+  $accent: map-get($theme, accent);
+
+  igo-routing-form > mat-list-item:hover {
+    background-color: mat-color($accent, lighter);
+  }
+}

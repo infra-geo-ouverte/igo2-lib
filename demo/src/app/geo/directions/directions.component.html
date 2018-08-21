@@ -1,13 +1,11 @@
 <mat-card>
   <mat-card-subtitle>Geo</mat-card-subtitle>
-  <mat-card-title>Print</mat-card-title>
+  <mat-card-title>Directions</mat-card-title>
   <mat-card-content>
-    <li>npm install --save html2canvas@1.0.0-alpha.12</li>
-    <li>npm install --save jspdf@1.4.1</li>
     <li>Dependencies: LanguageService</li>
 
     <br>
-    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/print">code of this example</a>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/directions">code of this example</a>
     <hr>
   </mat-card-content>
 
@@ -16,8 +14,6 @@
     <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
   </igo-map-browser>
 
-  <igo-print [map]="map"></igo-print>
+  <igo-routing-form [map]="map"></igo-routing-form>
 
 </mat-card>
-
-<igo-message-center></igo-message-center>

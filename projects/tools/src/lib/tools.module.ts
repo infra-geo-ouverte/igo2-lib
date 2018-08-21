@@ -4,6 +4,7 @@ import { IgoContextManagerToolModule } from './context-manager-tool/context-mana
 import { IgoContextEditorToolModule } from './context-editor-tool/context-editor-tool.module';
 import { IgoCatalogToolModule } from './catalog-tool/catalog-tool.module';
 import { IgoCatalogLayersToolModule } from './catalog-layers-tool/catalog-layers-tool.module';
+import { IgoDirectionsToolModule } from './directions-tool/directions-tool.module';
 import { IgoImportExportToolModule } from './import-export-tool/import-export-tool.module';
 import { IgoToolsContextManagerToolModule } from './tools-context-manager-tool/tools-context-manager-tool.module';
 import { IgoPermissionsContextManagerToolModule } from './permissions-context-manager-tool/permissions-context-manager-tool.module';
@@ -22,6 +23,7 @@ import { IgoOgcFilterToolModule } from './ogc-filter-tool/ogc-filter-tool.module
     IgoContextEditorToolModule,
     IgoCatalogToolModule,
     IgoCatalogLayersToolModule,
+    IgoDirectionsToolModule,
     IgoImportExportToolModule,
     IgoToolsContextManagerToolModule,
     IgoPermissionsContextManagerToolModule,

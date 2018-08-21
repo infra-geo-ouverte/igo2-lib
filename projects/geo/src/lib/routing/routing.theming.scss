@@ -1,0 +1,5 @@
+@import './routing-form/routing-form.theming';
+
+@mixin igo-routing-theming($theme) {
+  @include igo-routing-form-theming($theme);
+}

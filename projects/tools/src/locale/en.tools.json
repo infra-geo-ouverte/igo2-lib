@@ -3,6 +3,7 @@
     "tools": {
       "catalog": "Catalog",
       "contexts": "Contexts",
+      "directions": "Directions",
       "importExport": "Import & export",
       "ogcFilter": "Filter by",
       "map": "Map",

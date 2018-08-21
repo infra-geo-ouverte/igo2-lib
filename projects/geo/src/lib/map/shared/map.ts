@@ -33,6 +33,7 @@ export class IgoMap {
   public status$: Subject<SubjectStatus>;
   public resolution$ = new BehaviorSubject<Number>(undefined);
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
+  public geolocationFeature: olFeature;
 
   public overlayMarkerStyle: olstyle.Style;
   public overlayStyle: olstyle.Style;
@@ -41,7 +42,6 @@ export class IgoMap {
   private layerWatcher: LayerWatcher;
   private geolocation: olGeolocation;
   private geolocation$$: Subscription;
-  private geolocationFeature: olFeature;
 
   private options: MapOptions = {
     controls: { attribution: true },
@@ -112,13 +112,7 @@ export class IgoMap {
     });
 
     if (this.options.overlay) {
-      this.overlayMarkerStyle = new olstyle.Style({
-        image: new olstyle.Icon({
-          src: './assets/igo2/geo/icons/place_blue_36px.svg',
-          imgSize: [36, 36], // for ie
-          anchor: [0.5, 1]
-        })
-      });
+      this.overlayMarkerStyle = this.setOverlayMarkerStyle();
 
       this.overlayDataSource = new FeatureDataSource();
 
@@ -459,6 +453,40 @@ export class IgoMap {
       }
     });
     return listLegend;
+  }
+
+  setOverlayMarkerStyle(color = 'blue', text = undefined): olstyle.Style {
+    let iconColor;
+    switch (color) {
+      case 'blue':
+        iconColor = 'blue';
+        break;
+      case 'red':
+        iconColor = 'red';
+        break;
+      case 'yellow':
+        iconColor = 'yellow';
+        break;
+      case 'green':
+        iconColor = 'green';
+        break;
+      default:
+        iconColor = 'blue';
+        break;
+    }
+    return new olstyle.Style({
+      image: new olstyle.Icon({
+        src: './assets/igo2/geo/icons/place_' + iconColor + '_36px.svg',
+        imgSize: [36, 36], // for ie
+        anchor: [0.5, 1]
+      }),
+      text: new olstyle.Text({
+        font: '12px Calibri,sans-serif',
+        text: text,
+        fill: new olstyle.Fill({ color: '#000' }),
+        stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
+      })
+    });
   }
 
   geolocate(track = false) {

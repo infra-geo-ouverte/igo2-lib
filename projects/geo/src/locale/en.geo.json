@@ -131,6 +131,51 @@
         "showScale": "Show scale",
         "title": "Title"
       },
+      "routingForm": {
+        "start": "Start",
+        "intermediate": "Intermediate",
+        "end": "End",
+        "routingBtn": "Get route",
+        "resetRoutingBtn": "Reset",
+        "zoomRoute": "Zoom on route",
+        "null": "",
+        "directions": "Directions",
+        "raiseStop": "Raise stop's priority",
+        "lowerStop": "Lower stop's priority",
+        "addStop": "Add a stop",
+        "removeStop": "Remove this stop",
+        "drivingOptions": "Options",
+        "summary": "Direction's summary",
+        "stopsList": "Stops's list",
+        "instructions": "Instructions",
+        "copy": "Copy directions",
+        "geolocate": "Use current localisation as stop",
+        "link": "Link",
+        "dialog": {
+          "copyMsg": "Directions copied to clipboard",
+          "copyTitle": "Directions"
+        }
+      },
+      "routing": {
+        "uturn": "demi-tour",
+        "sharp right": "fortement à droite",
+        "right": "right",
+        "slight right": "slightly on right",
+        "sharp left": "fortement à gauche",
+        "left": "left",
+        "slight left": "slightly on left",
+        "straight": "forward"
+      },
+      "cardinalPoints": {
+        "n": "north",
+        "ne": "northeast",
+        "e": "east",
+        "se": "Southeast",
+        "s": "south",
+        "sw": "southwest",
+        "w": "west",
+        "nw": "northwest"
+      },
       "search": {
         "dataSources": {
           "name": "Layers",
