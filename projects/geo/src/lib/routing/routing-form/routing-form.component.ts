@@ -223,7 +223,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(val => this.onFormChange());
 
     translateStop.on('translateend', evt => {
-      const translatedID = evt.target.f.getId();
+      const translatedID = evt.features.getArray()[0].getId();
       const translatedPos = translatedID.split('_');
       let p;
       switch (translatedPos[1]) {
@@ -238,7 +238,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
       }
       const translationEndCoordinates = olproj.transform(
-        evt.target.f.getGeometry().getCoordinates(),
+        evt.features
+          .getArray()[0]
+          .getGeometry()
+          .getCoordinates(),
         this.map.projection,
         this.projection
       );
