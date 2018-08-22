@@ -1,4 +1,4 @@
-import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Directive, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class ToolContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
 
   constructor(
-    @Self() component: ToolbarComponent,
+    component: ToolbarComponent,
     private toolService: ToolService,
     private contextService: ContextService
   ) {

@@ -1,4 +1,4 @@
-import { Directive, Self, OnInit, OnDestroy, Optional } from '@angular/core';
+import { Directive, OnInit, OnDestroy, Optional } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 import { skip, filter } from 'rxjs/operators';
@@ -26,7 +26,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Self() private component: MapBrowserComponent,
+    private component: MapBrowserComponent,
     private contextService: ContextService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
