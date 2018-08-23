@@ -36,7 +36,7 @@ export class DataSourceSearchSource extends SearchSource {
     super();
 
     this.options = this.config.getConfig('searchSources.datasource') || {};
-    this.searchUrl = this.options.url || this.searchUrl;
+    this.searchUrl = this.options.searchUrl || this.searchUrl;
   }
 
   getName(): string {

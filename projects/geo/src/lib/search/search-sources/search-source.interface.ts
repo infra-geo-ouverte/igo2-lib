@@ -1,5 +1,5 @@
 export interface SearchSourceOptions {
-  url?: string;
+  searchUrl?: string;
   locateUrl?: string;
   limit?: number;
   enabled?: boolean;
