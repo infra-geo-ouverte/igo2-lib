@@ -40,8 +40,8 @@ export const environment: Environment = {
         enabled: true
       },
       icherche: {
-        searchUrl: '/icherche/geocode',
-        locateUrl: '/icherche/xy',
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
+        locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
         enabled: true
       },
       datasource: {

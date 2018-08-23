@@ -53,18 +53,15 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     return s;
 }
 
-
   search(term?: string): Observable<Feature[]> {
     term = term.replace(/auto|routes|route|km| |high|ways|way|roads|road|#|a-|-/gi, '');
     let chainage = '';
-
 
     if (term.search(/\+/gi ) !== -1) {
       const split_term = term.split(/\+/gi);
       term = split_term[0];
       chainage = split_term[1];
     }
-
 
     let nb_char = term.length;
     let searchTerm: any = term;
@@ -117,7 +114,6 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       filterParams =   `rtss=${searchTerm}&chainage=${Number(chainage)}`;
     }
 
-
     const params = [
       'REQUEST=GetFeature',
       'SERVICE=WFS',
@@ -165,7 +161,6 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     .pipe(map(res => this.extractSearchData(res)));
 }
 
-
   private extractSearchData(response): Feature[] {
     return response.features.map(this.formatSearchResult);
   }
@@ -194,7 +189,6 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     }
 
     const id = properties.id;
-
     delete properties.id;
     delete properties.recherche;
     delete properties.type;
