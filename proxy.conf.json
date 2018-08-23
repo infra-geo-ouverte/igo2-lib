@@ -22,7 +22,6 @@
   "/swtq": {
     "target": "https://ws.mapserver.transports.gouv.qc.ca",
     "changeOrigin": true,
-    "secure": false,
-    "logLevel": "debug"
+    "secure": false
     }
 }
