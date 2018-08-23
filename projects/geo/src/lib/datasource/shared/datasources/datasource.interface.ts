@@ -3,7 +3,7 @@ import olSource from 'ol/source/Source';
 import { DataSource } from './datasource';
 
 export interface DataSourceOptions {
-  type?: 
+  type?:
     | 'wms'
     | 'wfs'
     | 'vector'
@@ -20,6 +20,7 @@ export interface DataSourceOptions {
   // view?: ol.olx.layer.ImageOptions;
   // displayField?: string;
   ol?: olSource;
+  refreshIntervalSec?: number;
 }
 
 export interface DataSourceLegendOptions {
