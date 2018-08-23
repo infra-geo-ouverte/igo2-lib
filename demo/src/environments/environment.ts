@@ -32,6 +32,11 @@ export const environment: Environment = {
       nominatim: {
         enabled: false
       },
+      reseautq: {
+        searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        enabled: true
+      },
       icherche: {
         searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
         locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
