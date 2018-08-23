@@ -99,7 +99,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   set length(value: number) {
     this._length = value;
   }
-  private _length = 3;
+  private _length = 2;
 
   @Input()
   get searchIcon() {
