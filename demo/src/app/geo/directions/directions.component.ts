@@ -19,7 +19,8 @@ export class AppDirectionsComponent {
 
   public view = {
     center: [-73, 47.2],
-    zoom: 9
+    zoom: 9,
+    geolocate: true
   };
 
   constructor(

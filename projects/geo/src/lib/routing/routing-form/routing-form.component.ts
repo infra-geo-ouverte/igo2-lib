@@ -39,8 +39,6 @@ import { RoutingFormService } from './routing-form.service';
 export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
-  public form: FormGroup;
-
   public stopsForm: FormGroup;
   public projection = 'EPSG:4326';
   public currentStopIndex: number;
@@ -69,7 +67,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   set term(value: string) {
     this._term = value;
   }
-  private _term: string = '';
+  private _term = '';
 
   get debounce() {
     return this._debounce;
@@ -77,7 +75,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   set debounce(value: number) {
     this._debounce = value;
   }
-  private _debounce: number = 300;
+  private _debounce = 300;
 
   @Input()
   get length() {
@@ -86,7 +84,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   set length(value: number) {
     this._length = value;
   }
-  private _length: number = 3;
+  private _length = 3;
 
   @Input()
   get map(): IgoMap {
@@ -534,10 +532,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       image = 'arrow_forward';
       cssClass = 'rotate-270';
     } else if (type === 'on ramp') {
-      directiveFr = "Prendre l'entrée d'autoroute " + frAggregatedDirection;
+      directiveFr = 'Prendre l\'entrée d\'autoroute ' + frAggregatedDirection;
       directiveEn = 'Take the ramp ' + enAggregatedDirection;
     } else if (type === 'off ramp') {
-      directiveFr = "Prendre la sortie d'autoroute " + frAggregatedDirection;
+      directiveFr = 'Prendre la sortie d\'autoroute ' + frAggregatedDirection;
       directiveEn = 'Take exit ' + enAggregatedDirection;
     } else if (type === 'fork') {
       if (modifier.search('left') >= 0) {
@@ -930,7 +928,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   chooseProposal(proposal, i) {
     if (proposal !== undefined) {
-      let geomCoord = undefined;
+      let geomCoord;
       const geom = (proposal as any).geometry;
       if (geom.type === 'Point') {
         geomCoord = geom.coordinates;
@@ -978,7 +976,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private handleMapClick(event: olcondition, indexPos = undefined) {
+  private handleMapClick(event: olcondition, indexPos?) {
     this.stops.at(indexPos).patchValue({ stopProposals: [] });
     if (this.currentStopIndex === undefined) {
       this.addStop();
