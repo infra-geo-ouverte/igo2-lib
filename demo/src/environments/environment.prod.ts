@@ -34,7 +34,7 @@ export const environment: Environment = {
       icherche: {
         searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
         locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
-        enabled: false
+        enabled: true
       },
       datasource: {
         searchUrl: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
