@@ -67,6 +67,7 @@ export class AppLayerComponent {
     const datasource: WMSoptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
+      refreshIntervalSec: 15,
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
         version: '1.3.0'
