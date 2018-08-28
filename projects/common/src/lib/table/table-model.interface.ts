@@ -6,7 +6,21 @@ export interface TableColumn {
   sortable?: boolean;
   filterable?: boolean;
   displayed?: boolean;
+  html?: boolean;
 }
+
+export type RowClassFunc = (
+  row: any
+) => {
+  [key: string]: string;
+};
+
+export type CellClassFunc = (
+  row: any,
+  column: TableColumn
+) => {
+  [key: string]: string;
+};
 
 export type ClickAction = (item: any) => void;
 
@@ -19,4 +33,7 @@ export interface TableAction {
 export interface TableModel {
   columns: TableColumn[];
   actions?: TableAction[];
+  selectionCheckbox?: boolean;
+  rowClassFunc?: RowClassFunc;
+  cellClassFunc?: CellClassFunc;
 }

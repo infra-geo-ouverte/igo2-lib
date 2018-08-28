@@ -4,6 +4,8 @@ import { MatSort } from '@angular/material';
 import { Observable, BehaviorSubject, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { ObjectUtils } from '@igo2/utils';
+
 import { TableDatabase, TableModel } from './index';
 
 export class TableDataSource extends DataSource<any> {
@@ -54,7 +56,7 @@ export class TableDataSource extends DataSource<any> {
     return data.slice().filter((item: any) => {
       const searchStr: string = this._model.columns
         .filter(c => c.filterable)
-        .map(c => item[c.name])
+        .map(c => ObjectUtils.resolve(item, c.name))
         .join(' ')
         .toLowerCase();
 
@@ -68,14 +70,19 @@ export class TableDataSource extends DataSource<any> {
     }
 
     return data.sort((a, b) => {
-      const propertyA: number | string = a[this._sort.active];
-      const propertyB: number | string = b[this._sort.active];
+      const propertyA: number | string = ObjectUtils.resolve(
+        a,
+        this._sort.active
+      );
+      const propertyB: number | string = ObjectUtils.resolve(
+        b,
+        this._sort.active
+      );
 
-      const valueA = isNaN(+propertyA) ? propertyA : +propertyA;
-      const valueB = isNaN(+propertyB) ? propertyB : +propertyB;
-
-      return (
-        (valueA < valueB ? -1 : 1) * (this._sort.direction === 'asc' ? 1 : -1)
+      return ObjectUtils.naturalCompare(
+        propertyB,
+        propertyA,
+        this._sort.direction
       );
     });
   }

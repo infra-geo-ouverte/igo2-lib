@@ -3,10 +3,14 @@ import {
   ElementRef,
   ViewChild,
   Input,
+  Output,
   OnChanges,
-  OnInit
+  OnInit,
+  AfterViewInit,
+  EventEmitter
 } from '@angular/core';
 import { MatSort } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
@@ -23,7 +27,7 @@ import { TableActionColor } from './table-action-color.enum';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent implements OnChanges, OnInit {
+export class TableComponent implements OnChanges, OnInit, AfterViewInit {
   @Input()
   get database(): TableDatabase {
     return this._database;
@@ -42,8 +46,25 @@ export class TableComponent implements OnChanges, OnInit {
   }
   private _model: TableModel;
 
+  @Input()
+  get hasFilterInput(): boolean {
+    return this._hasFIlterInput;
+  }
+  set hasFilterInput(value: boolean) {
+    this._hasFIlterInput = value;
+  }
+  private _hasFIlterInput = true;
+
   public displayedColumns;
   public dataSource: TableDataSource | null;
+  public selection = new SelectionModel<any>(true, []);
+
+  @Output()
+  select = new EventEmitter<{
+    added: any[];
+    removed: any[];
+    source: SelectionModel<any>;
+  }>();
 
   @ViewChild('filter') filter: ElementRef;
   @ViewChild(MatSort) sort: MatSort;
@@ -56,19 +77,31 @@ export class TableComponent implements OnChanges, OnInit {
         .filter(c => c.displayed !== false)
         .map(c => c.name);
 
+      if (this.model.selectionCheckbox) {
+        this.displayedColumns.unshift('selectionCheckbox');
+      }
       if (this.model.actions && this.model.actions.length) {
         this.displayedColumns.push('action');
       }
     }
 
-    fromEvent(this.filter.nativeElement, 'keyup')
-      .pipe(debounceTime(150), distinctUntilChanged())
-      .subscribe(() => {
-        if (!this.dataSource) {
-          return;
-        }
-        this.dataSource.filter = this.filter.nativeElement.value;
-      });
+    this.selection.onChange.subscribe(e => this.select.emit(e));
+  }
+
+  ngAfterViewInit() {
+    if (this.filter) {
+      fromEvent(this.filter.nativeElement, 'keyup')
+        .pipe(
+          debounceTime(150),
+          distinctUntilChanged()
+        )
+        .subscribe(() => {
+          if (!this.dataSource) {
+            return;
+          }
+          this.dataSource.filter = this.filter.nativeElement.value;
+        });
+    }
   }
 
   ngOnChanges(change) {
@@ -87,5 +120,24 @@ export class TableComponent implements OnChanges, OnInit {
 
   getValue(row, key) {
     return ObjectUtils.resolve(row, key);
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.database.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.database.data.forEach(row => this.selection.select(row));
+  }
+
+  handleClickAction(event, action, row) {
+    event.stopPropagation();
+    action.click(row);
   }
 }
