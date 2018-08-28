@@ -14,6 +14,7 @@
     </igo-auth-facebook>
     <igo-auth-intern
       *ngIf="!options.intern || options.intern.enabled !== false"
+      [allowAnonymous]="options.allowAnonymous"
       (login)="login()">
     </igo-auth-intern>
   </div>

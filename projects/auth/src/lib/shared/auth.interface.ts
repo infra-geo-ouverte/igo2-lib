@@ -16,6 +16,7 @@ export interface AuthGoogleOptions {
 export interface AuthOptions {
   url: string;
   tokenKey: string;
+  allowAnonymous?: boolean;
   loginRoute?: string;
   logoutRoute?: string;
   intern?: AuthInternOptions;

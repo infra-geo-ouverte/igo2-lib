@@ -1,6 +1,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  Input,
   Output,
   EventEmitter
 } from '@angular/core';
@@ -14,6 +15,15 @@ import { AuthService } from '../shared/auth.service';
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class AuthInternComponent {
+  @Input()
+  get allowAnonymous(): boolean {
+    return this._allowAnonymous;
+  }
+  set allowAnonymous(value: boolean) {
+    this._allowAnonymous = value;
+  }
+  private _allowAnonymous = true;
+
   public error = '';
   public form: FormGroup;
 
