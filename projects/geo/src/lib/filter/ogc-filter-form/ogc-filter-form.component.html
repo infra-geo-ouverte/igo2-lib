@@ -1,7 +1,7 @@
 <mat-list-item>
 
   <div class="igo-col igo-col-90 igo-col-100-m">
-    <mat-select class="logical" [disabled]="!currentFilter.active" (change)="disableRefreshFilter()" [(ngModel)]="currentFilter.parentLogical"
+    <mat-select class="logical" [disabled]="!currentFilter.active" (selectionChange)="disableRefreshFilter()" [(ngModel)]="currentFilter.parentLogical"
       *ngIf="activeFilters.indexOf(currentFilter) !== 0 && currentFilter.active===true">
       <mat-option value="And">{{'igo.geo.operators.And' | translate}}</mat-option>
       <mat-option value="Or">{{'igo.geo.operators.Or' | translate}}</mat-option>
@@ -12,7 +12,7 @@
     <span *ngIf="fields && fields.length > 0 && fields[0].name !== ''">
       <mat-select [disabled]="!currentFilter.active" *ngIf="['Contains','Intersects','Within'].indexOf(currentFilter.operator) === -1"
         [(ngModel)]="currentFilter.propertyName" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
-        (change)="updateField(false)">
+        (selectionChange)="updateField(false)">
         <mat-option *ngFor="let field of fields" [value]="field.name">{{field.alias}}</mat-option>
       </mat-select>
     </span>
@@ -30,7 +30,7 @@
   </div>
 
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (change)="disableRefreshFilter()">
+    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="disableRefreshFilter()">
       <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{operator.value.alias}}</mat-option>
     </mat-select>
   </div>
@@ -164,12 +164,12 @@
 
   <!-- PropertySpatial  -->
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (change)="disableRefreshFilter()">
+    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="disableRefreshFilter()">
       <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{operator.value.alias}}</mat-option>
     </mat-select>
   </div>
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.igoSpatialSelector" (change)="changeGeometry(currentFilter,value)">
+    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.igoSpatialSelector" (selectionChange)="changeGeometry(currentFilter,value)">
       <mat-option *ngFor="let igoSpatialSelector of igoSpatialSelectors" [value]="igoSpatialSelector.type">{{igoSpatialSelector.alias}}</mat-option>
     </mat-select>
   </div>

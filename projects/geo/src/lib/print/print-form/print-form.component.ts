@@ -194,7 +194,6 @@ export class PrintFormComponent {
   }
 
   toggleImageSaveProp() {
-    alert("TEST");
     if (this.outputFormatField.value === 'Image') {
       this.isPrintService = false;
 

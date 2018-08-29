@@ -32,7 +32,7 @@
 
   <div class="igo-input-container">
     <mat-form-field>
-      <mat-select (change)="toggleImageSaveProp()"
+      <mat-select (selectionChange)="toggleImageSaveProp()"
         formControlName="outputFormat"
         placeholder="{{'igo.geo.printForm.outputFormat' | translate}}">
         <mat-option *ngFor="let outputFormat of outputFormats | keyvalue " [value]="outputFormat.key">
