@@ -27,13 +27,14 @@ export class PrintService {
   print(map: IgoMap, options: PrintOptions): Subject<any> {
     const status$ = new Subject();
 
-    const format = options.format;
+    const outputFormat = options.outputFormat;
+    const paperFormat = options.paperFormat;
     const resolution = +options.resolution;
     const orientation = options.orientation;
     const dimensions =
       orientation === PrintOrientation.portrait
-        ? PrintDimension[format]
-        : PrintDimension[format].slice().reverse();
+        ? PrintDimension[paperFormat]
+        : PrintDimension[paperFormat].slice().reverse();
 
     const margins = [20, 10, 20, 10];
     const width = dimensions[0] - margins[3] - margins[1];
@@ -41,7 +42,7 @@ export class PrintService {
     const size = [width, height];
 
     const activityId = this.activityService.register();
-    const doc = new jsPDF(options.orientation, undefined, format);
+    const doc = new jsPDF(options.orientation, undefined, paperFormat);
 
     if (options.title !== undefined) {
       this.addTitle(doc, options.title, dimensions[0]);

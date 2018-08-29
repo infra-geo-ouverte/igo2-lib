@@ -7,7 +7,8 @@ import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
 
 import {
-  PrintFormat,
+  PrintOutputFormat,
+  PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
   PrintSaveImageFormat
@@ -32,13 +33,22 @@ export class PrintComponent {
   private _map: IgoMap;
 
   @Input()
-  get format(): PrintFormat {
-    return this._format;
+  get outputFormat(): PrintOutputFormat {
+    return this._outputFormat;
   }
-  set format(value: PrintFormat) {
-    this._format = value;
+  set outputFormat(value: PrintOutputFormat) {
+    this._outputFormat = value;
   }
-  private _format: PrintFormat;
+  private _outputFormat: PrintOutputFormat;
+
+  @Input()
+  get paperFormat(): PrintPaperFormat {
+    return this._paperFormat;
+  }
+  set paperFormat(value: PrintPaperFormat) {
+    this._paperFormat = value;
+  }
+  private _paperFormat: PrintPaperFormat;
 
   @Input()
   get orientation(): PrintOrientation {

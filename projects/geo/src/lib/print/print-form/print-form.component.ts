@@ -9,7 +9,8 @@ import {
 import { PrintOptions } from '../shared/print.interface';
 
 import {
-  PrintFormat,
+  PrintOutputFormat,
+  PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
   PrintSaveImageFormat
@@ -24,7 +25,8 @@ export class PrintFormComponent {
   public form: FormGroup;
   public submitted: boolean;
 
-  public formats = PrintFormat;
+  public outputFormats = PrintOutputFormat;
+  public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
   public resolutions = PrintResolution;
   public imageFormats = PrintSaveImageFormat;
@@ -50,11 +52,21 @@ export class PrintFormComponent {
   }
 
   @Input()
-  get format(): PrintFormat {
-    return this.formatField.value;
+  get outputFormat(): PrintOutputFormat {
+    return this.outputFormatField.value;
   }
-  set format(value: PrintFormat) {
-    this.formatField.setValue(value || PrintFormat.Letter, {
+  set outputFormat(value: PrintOutputFormat) {
+    this.outputFormatField.setValue(value || PrintOutputFormat.Pdf, {
+      onlySelf: true
+    });
+  }
+
+  @Input()
+  get paperFormat(): PrintPaperFormat {
+    return this.paperFormatField.value;
+  }
+  set paperFormat(value: PrintPaperFormat) {
+    this.paperFormatField.setValue(value || PrintPaperFormat.Letter, {
       onlySelf: true
     });
   }
@@ -116,8 +128,12 @@ export class PrintFormComponent {
     this.showLegendField.setValue(value, { onlySelf: true });
   }
 
-  get formatField() {
-    return <FormControl>this.form.controls['format'];
+  get outputFormatField() {
+    return <FormControl>this.form.controls['outputFormat'];
+  }
+
+  get paperFormatField() {
+    return <FormControl>this.form.controls['paperFormat'];
   }
 
   get imageFormatField() {
@@ -155,7 +171,8 @@ export class PrintFormComponent {
     this.form = this.formBuilder.group({
       title: ['', []],
       comment: ['', []],
-      format: ['', [Validators.required]],
+      outputFormat: ['', [Validators.required]],
+      paperFormat: ['', [Validators.required]],
       imageFormat: [
         { value: '', disabled: this.isPrintService },
         [Validators.required]
@@ -177,14 +194,31 @@ export class PrintFormComponent {
   }
 
   toggleImageSaveProp() {
-    if (this.formatField.value === 'Image') {
-      this.imageFormatField.enable();
+    alert("TEST");
+    if (this.outputFormatField.value === 'Image') {
       this.isPrintService = false;
+
+      this.imageFormatField.enable();
+      this.paperFormatField.disable();
+      this.resolutionField.disable();
+      this.orientationField.disable();
+
       this.form.controls.imageFormat.enable();
+      this.form.controls.paperFormat.disable();
+      this.form.controls.resolutionField.disable();
+      this.form.controls.orientationField.disable();
     } else {
-      this.imageFormatField.disable();
       this.isPrintService = true;
+
+      this.imageFormatField.disable();
+      this.paperFormatField.enable();
+      this.resolutionField.enable();
+      this.orientationField.enable();
+
       this.form.controls.imageFormat.disable();
+      this.form.controls.paperFormat.enable();
+      this.form.controls.resolutionField.enable();
+      this.form.controls.orientationField.enable();
     }
   }
 }
