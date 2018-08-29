@@ -6,8 +6,6 @@ export enum ModifType {
 
 export interface Modif {
   type: ModifType;
-  oldValue?: any;
-  newValue?: any;
   keysChanged?: {
     key: string;
     newValue: any;
@@ -24,4 +22,6 @@ export interface ModifRegroupement {
 export interface ModifItem {
   modif: Modif;
   value: any;
+  oldValue?: any;
+  newValue?: any;
 }

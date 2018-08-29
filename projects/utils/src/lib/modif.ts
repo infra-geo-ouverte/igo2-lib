@@ -24,8 +24,8 @@ export class ModifUtils {
       const index = obj2Clone.findIndex(s => s.id === fromItem.id);
 
       if (index === -1) {
-        items.added.push({
-          modif: { type: ModifType.ADDED },
+        items.deleted.push({
+          modif: { type: ModifType.DELETED },
           value: fromItem
         });
         continue;
@@ -46,19 +46,19 @@ export class ModifUtils {
         items.modified.push({
           modif: {
             type: ModifType.MODIFIED,
-            keysChanged: keysChanged,
-            oldValue: fromItemClone,
-            newValue: toItemClone
+            keysChanged: keysChanged
           },
-          value: fromItem
+          value: fromItem,
+          oldValue: fromItemClone,
+          newValue: toItemClone
         });
       }
     }
 
-    items.deleted = obj2Clone.map(itemDeleted => {
+    items.added = obj2Clone.map(itemAdded => {
       return {
-        modif: { type: ModifType.DELETED },
-        value: itemDeleted
+        modif: { type: ModifType.ADDED },
+        value: itemAdded
       };
     });
 
