@@ -19,6 +19,7 @@ export interface AuthOptions {
   allowAnonymous?: boolean;
   loginRoute?: string;
   logoutRoute?: string;
+  homeRoute?: string;
   intern?: AuthInternOptions;
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;
