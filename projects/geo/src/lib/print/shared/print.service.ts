@@ -240,20 +240,12 @@ export class PrintService {
     html2canvas(div, { useCORS: true }).then(canvas => {
       let imgData;
       const position = 10;
-      // Define variable to calculate best legend size to fit in one page
-      const pageHeight = doc.internal.pageSize.height - 20; // -20 to let margin work great
-      const pageWidth = doc.internal.pageSize.width - 20; // -20 to let margin work great
-      const canHeight = canvas.height;
-      const canWidth = canvas.width;
-      const heightRatio = canHeight / pageHeight;
-      const widthRatio = canWidth / pageWidth;
-      const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
-      const imgHeigh = maxRatio > 1 ? canHeight / maxRatio : canHeight;
-      const imgWidth = maxRatio > 1 ? canWidth / maxRatio : canWidth;
+
       try {
         imgData = canvas.toDataURL('image/png');
         doc.addPage();
-        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeigh);
+        const imageSize = this.calculImageSizeToFitPdf(doc, canvas);
+        doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
         winTempCanva.close(); // close temp window
       } catch (err) {
         winTempCanva.close(); // close temp window
@@ -294,11 +286,13 @@ export class PrintService {
     }
 
     if (image !== undefined) {
-      doc.addImage(image, 'JPEG', margins[3], margins[0], size[0], size[1]);
-      doc.rect(margins[3], margins[0], size[0], size[1]);
+      const imageSize = this.calculImageSizeToFitPdf(doc, canvas);
+      doc.addImage(image, 'JPEG', margins[3], margins[0], imageSize[0], imageSize[1]);
+      doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
     }
   }
 
+  //TODO fix printing with image resolution
   private addMap(
     doc: jsPDF,
     map: IgoMap,
@@ -508,8 +502,9 @@ export class PrintService {
 
   private renderMap(map, size, extent) {
     // setTimeout(() => {
-    map.ol.setSize(size);
-    map.ol.getView().fit(extent);
+  //TODO fix bug for zoom change and map position. Resolution need to zoom in not to zoom out
+  //  map.ol.setSize(size);
+  //  map.ol.getView().fit(extent);
     map.ol.renderSync();
     // }, 1);
   }
@@ -520,5 +515,23 @@ export class PrintService {
   */
   private saveDoc(doc: jsPDF) {
     doc.save('map.pdf');
+  }
+
+  /**
+  Calculate the best Image size to fit in pdf
+  */
+  private calculImageSizeToFitPdf(doc, canvas) {
+    // Define variable to calculate best size to fit in one page
+    const pageHeight = doc.internal.pageSize.height - 20; // -20 to let margin work great
+    const pageWidth = doc.internal.pageSize.width - 20; // -20 to let margin work great
+    const canHeight = canvas.height;
+    const canWidth = canvas.width;
+    const heightRatio = canHeight / pageHeight;
+    const widthRatio = canWidth / pageWidth;
+    const maxRatio = heightRatio > widthRatio ? heightRatio : widthRatio;
+    const imgHeigh = maxRatio > 1 ? canHeight / maxRatio : canHeight;
+    const imgWidth = maxRatio > 1 ? canWidth / maxRatio : canWidth;
+
+    return [imgWidth, imgHeigh];
   }
 }
