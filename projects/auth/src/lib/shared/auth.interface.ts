@@ -23,11 +23,16 @@ export interface AuthOptions {
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;
   trustHosts?: string[];
+  profilsGuard?: string[];
 }
 
 export interface User {
   source?: string;
   sourceId?: string;
   email?: string;
+  firstName?: string;
+  lastName?: string;
+  locale?: string;
+  admin?: boolean;
   defaultContextId?: string;
 }

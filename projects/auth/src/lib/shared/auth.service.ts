@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService, LanguageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
 import { AuthOptions, User } from './auth.interface';
@@ -24,6 +24,7 @@ export class AuthService {
     private http: HttpClient,
     private tokenService: TokenService,
     private config: ConfigService,
+    private languageService: LanguageService,
     @Optional() private router: Router
   ) {
     this.options = this.config.getConfig('auth') || {};
@@ -39,14 +40,7 @@ export class AuthService {
       password: this.encodePassword(password)
     });
 
-    return this.http
-      .post(`${this.options.url}/login`, body, { headers: myHeader })
-      .pipe(
-        tap((data: any) => {
-          this.tokenService.set(data.token);
-          this.authenticate$.next(true);
-        })
-      );
+    return this.loginCall(body, myHeader);
   }
 
   loginWithToken(token: string, type: string): any {
@@ -58,14 +52,7 @@ export class AuthService {
       typeConnection: type
     });
 
-    return this.http
-      .post(`${this.options.url}/login`, body, { headers: myHeader })
-      .pipe(
-        tap((data: any) => {
-          this.tokenService.set(data.token);
-          this.authenticate$.next(true);
-        })
-      );
+    return this.loginCall(body, myHeader);
   }
 
   loginAnonymous() {
@@ -113,6 +100,10 @@ export class AuthService {
     return this.http.get<User>(url);
   }
 
+  getProfils() {
+    return this.http.get(`${this.options.url}/profils`);
+  }
+
   updateUser(user: User): Observable<User> {
     const url = this.options.url;
     return this.http.patch<User>(url, JSON.stringify(user));
@@ -122,6 +113,7 @@ export class AuthService {
     return Base64.encode(password);
   }
 
+  // authenticated or anonymous
   get logged(): boolean {
     return this.authenticated || this.isAnonymous;
   }
@@ -132,5 +124,20 @@ export class AuthService {
 
   get authenticated(): boolean {
     return this.isAuthenticated();
+  }
+
+  private loginCall(body, headers) {
+    return this.http
+      .post(`${this.options.url}/login`, body, { headers: headers })
+      .pipe(
+        tap((data: any) => {
+          this.tokenService.set(data.token);
+          const tokenDecoded = this.decodeToken();
+          if (tokenDecoded && tokenDecoded.user && tokenDecoded.user.locale) {
+            this.languageService.setLanguage(tokenDecoded.user.locale);
+          }
+          this.authenticate$.next(true);
+        })
+      );
   }
 }
