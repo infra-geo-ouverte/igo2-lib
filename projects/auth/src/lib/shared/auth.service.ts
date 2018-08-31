@@ -89,7 +89,8 @@ export class AuthService {
     const redirectUrl = this.redirectUrl || this.router.url;
 
     if (redirectUrl === this.options.loginRoute) {
-      this.router.navigateByUrl('/');
+      const homeRoute = this.options.homeRoute || '/';
+      this.router.navigateByUrl(homeRoute);
     } else if (redirectUrl) {
       this.router.navigateByUrl(redirectUrl);
     }

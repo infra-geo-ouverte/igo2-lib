@@ -20,16 +20,10 @@ import { AuthService } from '../shared/auth.service';
 })
 export class AuthFormComponent implements OnInit {
   @Input()
-  get alreadyConnectedDiv(): boolean {
-    return this._alreadyConnectedDiv;
-  }
-  set alreadyConnectedDiv(value: boolean) {
-    this._alreadyConnectedDiv = value.toString() === 'true';
-  }
-  private _alreadyConnectedDiv = false;
-
-  @Input()
   get backgroundDisable(): boolean {
+    if (this.isLogoutRoute || this.isLogoutRoute) {
+      return false;
+    }
     return this._backgroundDisable;
   }
   set backgroundDisable(value: boolean) {
@@ -37,11 +31,61 @@ export class AuthFormComponent implements OnInit {
   }
   private _backgroundDisable = true;
 
+  @Input()
+  get hasAlreadyConnectedDiv(): boolean {
+    return this._hasAlreadyConnectedDiv;
+  }
+  set hasAlreadyConnectedDiv(value: boolean) {
+    this._hasAlreadyConnectedDiv = value.toString() === 'true';
+  }
+  private _hasAlreadyConnectedDiv = true;
+
+  @Input()
+  get hasLogoutDiv(): boolean {
+    return this._hasLogoutDiv;
+  }
+  set hasLogoutDiv(value: boolean) {
+    this._hasLogoutDiv = value.toString() === 'true';
+  }
+  private _hasLogoutDiv = true;
+
+  @Input()
+  get showAlreadyConnectedDiv(): boolean {
+    if (this.isLogoutRoute) {
+      return this.hasAlreadyConnectedDiv;
+    }
+    return this._showAlreadyConnectedDiv;
+  }
+  set showAlreadyConnectedDiv(value: boolean) {
+    this._showAlreadyConnectedDiv = value.toString() === 'true';
+  }
+  private _showAlreadyConnectedDiv = false;
+
+  @Input()
+  get showLogoutDiv(): boolean {
+    if (this.isLogoutRoute) {
+      return this.hasLogoutDiv;
+    }
+    return this._showLogoutDiv;
+  }
+  set showLogoutDiv(value: boolean) {
+    this._showLogoutDiv = value.toString() === 'true';
+  }
+  private _showLogoutDiv = false;
+
+  get showLoginDiv(): boolean {
+    if (!this.isLogoutRoute) {
+      return true;
+    }
+  }
+
   public options: AuthOptions;
   public user;
 
   public visible = true;
-  public logoutDiv = false;
+
+  private isLoginRoute: boolean;
+  private isLogoutRoute: boolean;
 
   constructor(
     public auth: AuthService,
@@ -103,19 +147,11 @@ export class AuthFormComponent implements OnInit {
           const logoutRoute = this.options.logoutRoute;
           const loginRoute = this.options.loginRoute;
 
-          const isLogoutRoute: boolean = currentRoute === logoutRoute;
-          const isLoginRoute: boolean = currentRoute === loginRoute;
+          this.isLogoutRoute = currentRoute === logoutRoute;
+          this.isLoginRoute = currentRoute === loginRoute;
 
-          this.backgroundDisable = true;
-          this.logoutDiv = false;
-
-          if (isLogoutRoute) {
+          if (this.isLogoutRoute) {
             this.auth.logout();
-            this.backgroundDisable = false;
-            this.logoutDiv = true;
-          } else if (isLoginRoute) {
-            this.backgroundDisable = false;
-            this.alreadyConnectedDiv = true;
           }
         }
       });
