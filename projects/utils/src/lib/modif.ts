@@ -32,12 +32,12 @@ export class ModifUtils {
       }
 
       const toItem = obj2Clone.splice(index, 1)[0];
-      const fromItemClone = Object.assign({}, fromItem);
-      const toItemClone = Object.assign({}, toItem);
+      const fromItemClone = JSON.parse(JSON.stringify(fromItem));
+      const toItemClone = JSON.parse(JSON.stringify(toItem));
 
       const keysChanged = ModifUtils.compareObject(
-        fromItem,
-        toItem,
+        fromItemClone,
+        toItemClone,
         undefined,
         ignoreKeys
       );
@@ -48,9 +48,9 @@ export class ModifUtils {
             type: ModifType.MODIFIED,
             keysChanged: keysChanged
           },
-          value: fromItem,
-          oldValue: fromItemClone,
-          newValue: toItemClone
+          value: fromItemClone,
+          oldValue: fromItem,
+          newValue: toItem
         });
       }
     }
@@ -66,8 +66,8 @@ export class ModifUtils {
   }
 
   private static compareObject(fromItem, toItem, baseKey?, ignoreKeys = []) {
-    const fromItemClone = Object.assign({}, fromItem);
-    const toItemClone = Object.assign({}, toItem);
+    const fromItemClone = JSON.parse(JSON.stringify(fromItem));
+    const toItemClone = JSON.parse(JSON.stringify(toItem));
 
     const keys: any = new Set([
       ...Object.keys(fromItem),
