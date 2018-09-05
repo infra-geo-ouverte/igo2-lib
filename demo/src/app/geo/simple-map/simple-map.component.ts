@@ -13,7 +13,8 @@ export class AppSimpleMapComponent {
     controls: {
       attribution: {
         collapsed: true
-      }
+      },
+      scaleLine: true
     }
   });
 
