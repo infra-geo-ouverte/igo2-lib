@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
 import * as _html2canvas from 'html2canvas';
+import {proj} from 'proj4';
 
 import { SubjectStatus } from '@igo2/utils';
 import { MessageService, ActivityService, LanguageService } from '@igo2/core';
@@ -129,25 +130,26 @@ export class PrintService {
       html = '<font size="12" face="Courier New" >';
       html += '<div align="center"><b>NO LEGEND</b></div>';
     }
-    // Create new temporary window to define html code to generate canvas image
-    const winTempCanva = window.open('', 'legend', 'width=10, height=10');
     // Create div to contain html code for legend
-    const div = winTempCanva.document.createElement('div');
-    // Define event to execute after all images are loaded to create the canvas
-    html2canvas(div, { useCORS: true }).then(canvas => {
-      if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(canvas.msToBlob(), 'legendImage.' + format);
-      } else {
-        canvas.toBlob(function(blob) {
-          // download image
-          saveAs(blob, 'legendImage.' + format);
-        }, blobFormat);
-      }
-      winTempCanva.close(); // close temp window
-    });
+    let div = window.document.createElement('div');
+
     // Add html code to convert in the new window
-    winTempCanva.document.body.appendChild(div);
+    window.document.body.appendChild(div);
     div.innerHTML = html;
+    // Define event to execute after all images are loaded to create the canvas
+    setTimeout(function() {
+      html2canvas(div, { useCORS: true }).then(canvas => {
+        if (navigator.msSaveBlob) {
+          navigator.msSaveBlob(canvas.msToBlob(), 'legendImage.' + format);
+        } else {
+          canvas.toBlob(function(blob) {
+            // download image
+            saveAs(blob, 'legendImage.' + format);
+          }, blobFormat);
+        }
+        div.remove(); //remove div use for legend image
+      });
+    }, 500);
   }
 
   private addTitle(doc: jsPDF, title: string, pageWidth: number) {
@@ -244,7 +246,7 @@ export class PrintService {
       try {
         imgData = canvas.toDataURL('image/png');
         doc.addPage();
-        const imageSize = this.calculImageSizeToFitPdf(doc, canvas);
+        const imageSize = this.getImageSizeToFitPdf(doc, canvas);
         doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
         winTempCanva.close(); // close temp window
       } catch (err) {
@@ -286,7 +288,7 @@ export class PrintService {
     }
 
     if (image !== undefined) {
-      const imageSize = this.calculImageSizeToFitPdf(doc, canvas);
+      const imageSize = this.getImageSizeToFitPdf(doc, canvas);
       doc.addImage(image, 'JPEG', margins[3], margins[0], imageSize[0], imageSize[1]);
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
     }
@@ -496,6 +498,12 @@ export class PrintService {
           saveAs(blob, 'map.' + format);
         }, blobFormat);
       }
+      if(format.toLowerCase() === "tiff") {
+        const tiwContent = this.getWorldFileInformation(map);
+        var blob = new Blob([tiwContent], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, "map" + map.projection  + ".tfw");
+      }
+
     });
     map.ol.renderSync();
   }
@@ -520,7 +528,7 @@ export class PrintService {
   /**
   Calculate the best Image size to fit in pdf
   */
-  private calculImageSizeToFitPdf(doc, canvas) {
+  private getImageSizeToFitPdf(doc, canvas) {
     // Define variable to calculate best size to fit in one page
     const pageHeight = doc.internal.pageSize.height - 20; // -20 to let margin work great
     const pageWidth = doc.internal.pageSize.width - 20; // -20 to let margin work great
@@ -534,4 +542,18 @@ export class PrintService {
 
     return [imgWidth, imgHeigh];
   }
+
+  private getWorldFileInformation(map) {
+    const currentResolution = map.resolution$.value;
+    const currentExtent = map.getExtent(); // Return [minx, miny, maxx, maxy]
+    return [
+      currentResolution,
+      0,
+      0,
+      -currentResolution,
+      currentExtent[0] + currentResolution / 0.5,
+      currentExtent[3] - currentResolution / 0.5
+    ].join('\n');
+  }
+
 }

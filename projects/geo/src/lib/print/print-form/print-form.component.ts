@@ -199,25 +199,23 @@ export class PrintFormComponent {
 
       this.imageFormatField.enable();
       this.paperFormatField.disable();
-      this.resolutionField.disable();
+      //this.resolutionField.disable(); //TODO with print resolution fix
       this.orientationField.disable();
 
       this.form.controls.imageFormat.enable();
       this.form.controls.paperFormat.disable();
-      this.form.controls.resolutionField.disable();
-      this.form.controls.orientationField.disable();
+      //this.form.controls.resolutionField.disable(); //TODO with print resolution fix
     } else {
       this.isPrintService = true;
 
       this.imageFormatField.disable();
       this.paperFormatField.enable();
-      this.resolutionField.enable();
+      //this.resolutionField.enable();  //TODO with print resolution fix
       this.orientationField.enable();
 
       this.form.controls.imageFormat.disable();
       this.form.controls.paperFormat.enable();
-      this.form.controls.resolutionField.enable();
-      this.form.controls.orientationField.enable();
+      //this.form.controls.resolutionField.enable(); //TODO with print resolution fix
     }
   }
 }
