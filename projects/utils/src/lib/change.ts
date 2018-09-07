@@ -1,13 +1,13 @@
 import { StringUtils } from './string-utils';
-import { ModifRegroupement, ModifItem, ModifType } from './modif.interface';
+import { GroupingChanges, ChangeItem, ChangeType } from './change.interface';
 
-export class ModifUtils {
-  static findModifs(
+export class ChangeUtils {
+  static findChanges(
     obj1: any[],
     obj2: any[],
     ignoreKeys: string[] = []
-  ): ModifRegroupement {
-    const items: ModifRegroupement = {
+  ): GroupingChanges {
+    const items: GroupingChanges = {
       added: [],
       deleted: [],
       modified: []
@@ -25,7 +25,7 @@ export class ModifUtils {
 
       if (index === -1) {
         items.deleted.push({
-          modif: { type: ModifType.DELETED },
+          change: { type: ChangeType.DELETED },
           value: fromItem
         });
         continue;
@@ -35,7 +35,7 @@ export class ModifUtils {
       const fromItemClone = JSON.parse(JSON.stringify(fromItem));
       const toItemClone = JSON.parse(JSON.stringify(toItem));
 
-      const keysChanged = ModifUtils.compareObject(
+      const keysChanged = ChangeUtils.compareObject(
         fromItemClone,
         toItemClone,
         undefined,
@@ -44,8 +44,8 @@ export class ModifUtils {
 
       if (keysChanged.length) {
         items.modified.push({
-          modif: {
-            type: ModifType.MODIFIED,
+          change: {
+            type: ChangeType.MODIFIED,
             keysChanged: keysChanged
           },
           value: fromItemClone,
@@ -57,7 +57,7 @@ export class ModifUtils {
 
     items.added = obj2Clone.map(itemAdded => {
       return {
-        modif: { type: ModifType.ADDED },
+        change: { type: ChangeType.ADDED },
         value: itemAdded
       };
     });
