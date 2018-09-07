@@ -121,7 +121,7 @@
         "comment": "Commentaire",
         "outputFormat": "Format de sortie",
         "paperFormat": "Format du papier",
-				"imageFormat": "Format de l'image",
+        "imageFormat": "Format de l'image",
         "landscape": "Paysage",
         "portrait": "Portrait",
         "printBtn": "Imprimer",
