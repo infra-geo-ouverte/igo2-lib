@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
 import * as _html2canvas from 'html2canvas';
-import {proj} from 'proj4';
+import { proj } from 'proj4';
 import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
