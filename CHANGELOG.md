@@ -1,3 +1,13 @@
+<a name="0.23.1"></a>
+## [0.23.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.23.0...0.23.1) (2018-09-07)
+
+
+### Bug Fixes
+
+* **tool:** export directly tool.service ([6e7dd01](https://github.com/infra-geo-ouverte/igo2-lib/commit/6e7dd01))
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.22.2...0.23.0) (2018-09-07)
 
