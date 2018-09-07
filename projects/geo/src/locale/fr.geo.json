@@ -119,6 +119,7 @@
       },
       "printForm": {
         "comment": "Commentaire",
+        "doZipFile": "Compresser les fichiers",
         "outputFormat": "Format de sortie",
         "paperFormat": "Format du papier",
 				"imageFormat": "Format de l'image",

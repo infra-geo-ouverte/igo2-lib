@@ -18,4 +18,5 @@ export interface PrintOptions {
   showProjection?: boolean;
   showScale?: boolean;
   isPrintService: boolean;
+  doZipFile: boolean;
 }

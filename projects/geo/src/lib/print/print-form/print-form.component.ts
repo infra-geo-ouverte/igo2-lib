@@ -128,6 +128,15 @@ export class PrintFormComponent {
     this.showLegendField.setValue(value, { onlySelf: true });
   }
 
+  @Input()
+  get doZipFile(): boolean {
+    return this.doZipFileField.value;
+  }
+  set doZipFile(value: boolean) {
+    this.doZipFileField.setValue(value, { onlySelf: true });
+  }
+
+
   get outputFormatField() {
     return <FormControl>this.form.controls['outputFormat'];
   }
@@ -161,6 +170,10 @@ export class PrintFormComponent {
     return <FormControl>this.form.controls['showLegend'];
   }
 
+  get doZipFileField() {
+    return <FormControl>this.form.controls['doZipFile'];
+  }
+
   get titleField() {
     return <FormControl>this.form.controls['title'];
   }
@@ -181,7 +194,8 @@ export class PrintFormComponent {
       orientation: ['', [Validators.required]],
       showProjection: false,
       showScale: false,
-      showLegend: false
+      showLegend: false,
+      doZipFile: [ {value: true, disabled: this.isPrintService } ]
     });
   }
 
@@ -199,23 +213,25 @@ export class PrintFormComponent {
 
       this.imageFormatField.enable();
       this.paperFormatField.disable();
-      //this.resolutionField.disable(); //TODO with print resolution fix
+      // this.resolutionField.disable(); // TODO with print resolution fix
       this.orientationField.disable();
 
       this.form.controls.imageFormat.enable();
       this.form.controls.paperFormat.disable();
-      //this.form.controls.resolutionField.disable(); //TODO with print resolution fix
+      this.form.controls.doZipFile.enable();
+      // this.form.controls.resolutionField.disable(); // TODO with print resolution fix
     } else {
       this.isPrintService = true;
 
       this.imageFormatField.disable();
       this.paperFormatField.enable();
-      //this.resolutionField.enable();  //TODO with print resolution fix
+      // this.resolutionField.enable();  // TODO with print resolution fix
       this.orientationField.enable();
 
       this.form.controls.imageFormat.disable();
       this.form.controls.paperFormat.enable();
-      //this.form.controls.resolutionField.enable(); //TODO with print resolution fix
+      this.form.controls.doZipFile.disable();
+      // this.form.controls.resolutionField.enable(); // TODO with print resolution fix
     }
   }
 }

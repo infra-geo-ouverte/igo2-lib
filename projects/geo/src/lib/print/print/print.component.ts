@@ -87,6 +87,17 @@ export class PrintComponent {
         .print(this.map, data)
         .subscribe((status: SubjectStatus) => {});
     } else {
+      let nbFileToProcess = 1;
+
+      if (data.showLegend) {
+        nbFileToProcess++;
+      }
+      if (data.imageFormat.toLowerCase() === 'tiff') {
+        nbFileToProcess++;
+      }
+
+      this.printService.defineNbFileToProcess(nbFileToProcess);
+
       this.printService.downloadMapImage(
         this.map,
         data.imageFormat,
@@ -94,10 +105,11 @@ export class PrintComponent {
         data.showScale,
         data.showLegend,
         data.title,
-        data.comment
+        data.comment,
+        data.doZipFile
       );
       if (data.showLegend) {
-        this.printService.getLayersLegendImage(this.map, data.imageFormat);
+        this.printService.getLayersLegendImage(this.map, data.imageFormat, data.doZipFile);
       }
     }
     this.disabled = false;

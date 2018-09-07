@@ -117,6 +117,7 @@
       },
       "printForm": {
         "comment": "Comment",
+        "doZipFile": "Zip files",
         "outputFormat": "Output format",
         "paperFormat": "Paper format",
         "imageFormat": "Image format",
