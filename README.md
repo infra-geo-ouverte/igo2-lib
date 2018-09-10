@@ -22,7 +22,7 @@ IGO2 library is divided into several elements:
 
 ## Demo
 
-- [Demo IGO2 Library](https://infra-geo-ouverte.github.io/igo2-lib/home)
+- [Demo IGO2 Library](https://infra-geo-ouverte.github.io/igo2-lib/)
 - [Demo IGO2 for Open Data Quebec](https://geoegl.msp.gouv.qc.ca/igo2/apercu-qc/)
 - [Demo IGO2 on GitHub](https://github.com/infra-geo-ouverte/igo2#table-of-content-english)
 
