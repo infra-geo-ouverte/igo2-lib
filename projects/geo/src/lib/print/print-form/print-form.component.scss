@@ -14,3 +14,11 @@ mat-checkbox.horizontal-left {
  mat-checkbox.horizontal-left span {
   padding: 0 8px;
 }
+
+mat-checkbox, mat-radio-button {
+  padding-right: 20px;
+}
+
+.print-button-top-padding {
+  padding-top: 10px;
+}
