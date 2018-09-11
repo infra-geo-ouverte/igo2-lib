@@ -2,25 +2,44 @@ import { Injectable } from '@angular/core';
 
 import * as olproj from 'ol/proj';
 import olWKT from 'ol/format/WKT';
-import olPolygon from 'ol/geom/Polygon';
-
-import { MapService } from '../../map/shared/map.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WktService {
-  constructor(private mapService: MapService) {}
+  constructor() {}
 
-  public mapExtentToWKT(epsgTO = this.mapService.getMap().projection) {
-    let extent = olproj.transformExtent(
-      this.mapService.getMap().getExtent(),
-      this.mapService.getMap().projection,
+  public wktToFeature(wkt, wktProj, featureProj= 'EPSG:3857') {
+    return new olWKT().readFeature(wkt, {
+      dataProjection: wktProj,
+      featureProjection: featureProj
+    });
+  }
+  public extentToWkt(epsgTO, extent, extentProj) {
+    let currentExtent = olproj.transformExtent(
+      extent,
+      extentProj,
       epsgTO
     );
-    extent = this.roundCoordinateArray(extent, epsgTO, 0);
-    const wkt = new olWKT().writeGeometry(olPolygon.fromExtent(extent));
-    return wkt;
+    currentExtent = this.roundCoordinateArray(currentExtent, epsgTO, 0);
+    const wktPoly = `POLYGON((
+      ${extent[0]} ${extent[1]},
+      ${extent[0]} ${extent[3]},
+      ${extent[2]} ${extent[3]},
+      ${extent[2]} ${extent[1]},
+      ${extent[0]} ${extent[1]}))`;
+    const wktLine = `LINESTRING(
+      ${extent[0]} ${extent[1]},
+      ${extent[0]} ${extent[3]},
+      ${extent[2]} ${extent[3]},
+      ${extent[2]} ${extent[1]},
+      ${extent[0]} ${extent[1]})`;
+    const wktMultiPoints = `MULTIPOINT(
+        ${extent[0]} ${extent[1]},
+        ${extent[0]} ${extent[3]},
+        ${extent[2]} ${extent[3]},
+        ${extent[2]} ${extent[1]})`;
+      return {wktPoly : wktPoly, wktLine : wktLine, wktMultiPoints: wktMultiPoints };
   }
 
   private roundCoordinateArray(coordinateArray, projection, decimal = 0) {
@@ -28,7 +47,7 @@ export class WktService {
     const units = lproj.getUnits();
     const olUnits = ['ft', 'm', 'us-ft'];
     if (olUnits.indexOf(units) !== -1) {
-      coordinateArray = this.roundArray(coordinateArray);
+      coordinateArray = this.roundArray(coordinateArray, decimal);
     }
     return coordinateArray;
   }
@@ -42,7 +61,7 @@ export class WktService {
     return array;
   }
 
-  public snrcWKT(snrc, epsgTO = 'EPSG:3857') {
+  public snrcToWkt(snrc, epsgTO = 'EPSG:3857') {
     snrc = snrc.toLowerCase();
     let wktPoly;
     const ew = {
@@ -214,8 +233,27 @@ export class WktService {
           coord.ul.join(' ')
         ].join(',') +
         '))';
+        const wktLine =
+        'LINESTRING(' +
+        [
+          coord.ul.join(' '),
+          coord['ur'].join(' '),
+          coord['lr'].join(' '),
+          coord['ll'].join(' '),
+          coord.ul.join(' ')
+        ].join(',') +
+        ')';
 
-      return wktPoly;
+        const wktMultiPoints =
+        'MULTIPOINT(' +
+        [
+          coord.ul.join(' '),
+          coord['ur'].join(' '),
+          coord['lr'].join(' '),
+          coord['ll'].join(' ')
+        ].join(',') +
+        ')';
+        return {wktPoly : wktPoly, wktLine : wktLine, wktMultiPoints: wktMultiPoints };
     }
   }
 }
