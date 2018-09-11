@@ -6,7 +6,8 @@ import {
   DataSourceService,
   LayerService,
   WFSDataSourceOptions,
-  OgcFilterableDataSourceOptions
+  OgcFilterableDataSourceOptions,
+  AnyBaseOgcFilterOptions
 } from '@igo2/geo';
 
 @Component({
@@ -58,15 +59,45 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: 'geojson'
+        outputFormat: 'geojson',
+        outputFormatDownload: 'SHP' // based on service capabilities
       },
       isOgcFilterable: true,
+      // TODO: sourceFields: [{'name': 'code_municipalite', 'alias': '# de la municipalitée'}],
       ogcFilters: {
         filtersAreEditable: true,
         filters: {
-          operator: 'PropertyIsEqualTo',
-          propertyName: 'code_municipalite',
-          expression: '10043'
+          logical: 'Or',
+          filters: [{
+                      operator: 'PropertyIsEqualTo',
+                      propertyName: 'code_municipalite',
+                      expression: '10043'
+                      },
+                      {
+                        operator: 'Intersects',
+                        geometryName: 'the_geom',
+                        wkt_geometry: `
+                        MULTIPOLYGON(((
+                          -8379441.158019895 5844447.897707146,-8379441.158019895 5936172.331649357,
+                          -8134842.66750733 5936172.331649357,-8134842.66750733 5844447.897707146,
+                          -8379441.158019895 5844447.897707146),
+                          (-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074)))
+                        `}
+                        /*
+                        //
+                        OR
+                        POLYGON((
+                          -8015003 5942074,-8015003 5780349,
+                          -7792364 5780349,-7792364 5942074,-8015003 5942074
+                        ))
+                        OR
+                        MULTIPOLYGON(((
+                        -8379441.158019895 5844447.897707146,-8379441.158019895 5936172.331649357,
+                        -8134842.66750733 5936172.331649357,-8134842.66750733 5844447.897707146,
+                        -8379441.158019895 5844447.897707146),
+                        (-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074)))
+                    */
+          ] as AnyBaseOgcFilterOptions[]
         }
       }
     };
