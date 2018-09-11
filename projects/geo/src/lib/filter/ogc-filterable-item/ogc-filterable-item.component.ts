@@ -10,6 +10,7 @@ import {
   OgcFiltersOptions
 } from '../shared/ogc-filter.interface';
 import { OGCFilterService } from '../shared/ogc-filter.service';
+import { IgoMap } from '../../map';
 
 @Component({
   selector: 'igo-ogc-filterable-item',
@@ -28,6 +29,16 @@ export class OgcFilterableItemComponent implements OnInit {
   set layer(value: Layer) {
     this._layer = value;
   }
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+
+  private _map: IgoMap;
   private _layer: Layer;
 
   get datasource(): OgcFilterableDataSource {
@@ -63,7 +74,7 @@ export class OgcFilterableItemComponent implements OnInit {
     }
 
     this.datasource.options['disableRefreshFilter'] = true;
-  }
+    }
 
   addFilterToSequence() {
     const arr = this.datasource.options.ogcFilters.interfaceOgcFilters;
