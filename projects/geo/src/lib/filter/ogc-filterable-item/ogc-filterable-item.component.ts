@@ -38,6 +38,18 @@ export class OgcFilterableItemComponent implements OnInit {
     this._map = value;
   }
 
+  get refreshFunc() {
+    return this.refreshFilters.bind(this);
+  }
+  @Input()
+  get showFeatureOnMap(): boolean {
+    return this._showFeatureOnMap;
+  }
+  set showFeatureOnMap(value: boolean) {
+    this._showFeatureOnMap = value;
+  }
+
+  public _showFeatureOnMap = false;
   private _map: IgoMap;
   private _layer: Layer;
 
@@ -73,8 +85,34 @@ export class OgcFilterableItemComponent implements OnInit {
       );
     }
 
-    this.datasource.options['disableRefreshFilter'] = true;
-    }
+    // this.datasource.options['diskableRefreshFilter'] = true;
+  }
+
+  toggleShowFeatureOnMap() {
+    this.showFeatureOnMap = !this.showFeatureOnMap;
+    this.datasource.options.ogcFilters.interfaceOgcFilters.forEach(filter => {
+      let drawnFeature;
+      let drawnStrokeColor = [125, 136, 140, 0] as [number, number, number, number];
+      let drawStrokeWidth = 2;
+      let drawnFillColor = [125, 136, 140, 0]as [number, number, number, number];
+
+      if (this.showFeatureOnMap === false) {
+        drawnFeature = this.map.getOverlayByID('ogcFilterOverlay_' + filter.filterid);
+      } else {
+        drawnFeature = this.map.getOverlayByID('ogcFilterOverlay_' + filter.filterid);
+        drawnStrokeColor = [125, 136, 140, 0.5];
+        drawStrokeWidth = 2;
+        drawnFillColor = [125, 136, 140, 0];
+      }
+      if (drawnFeature) {
+        drawnFeature.setStyle(this.map.setOverlayDataSourceStyle(drawnStrokeColor, drawStrokeWidth, drawnFillColor));
+      }
+    });
+
+
+
+
+  }
 
   addFilterToSequence() {
     const arr = this.datasource.options.ogcFilters.interfaceOgcFilters;
@@ -163,10 +201,10 @@ export class OgcFilterableItemComponent implements OnInit {
       }
 
       this.lastRunOgcFilter = JSON.parse(JSON.stringify(activeFilters));
-      this.datasource.options['disableRefreshFilter'] = true;
+      // this.datasource.options['dislableRefreshFilter'] = true;
     } else {
       // identical filter. Nothing triggered
-      this.datasource.options['disableRefreshFilter'] = true;
+      // this.datasource.options['disableRefrkeshFilter'] = true;
     }
   }
 
