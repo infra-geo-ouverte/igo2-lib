@@ -16,19 +16,19 @@ import {
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {
-    PropertyIsEqualTo: { fieldRestrict: [] },
-    PropertyIsNotEqualTo: { fieldRestrict: [] },
-    PropertyIsLike: { fieldRestrict: ['string'] },
-    PropertyIsGreaterThan: { fieldRestrict: ['number'] },
-    PropertyIsGreaterThanOrEqualTo: { fieldRestrict: ['number'] },
-    PropertyIsLessThan: { fieldRestrict: ['number'] },
-    PropertyIsLessThanOrEqualTo: { fieldRestrict: ['number'] },
-    PropertyIsBetween: { fieldRestrict: ['number'] },
-    During: { fieldRestrict: [] },
-    PropertyIsNull: { fieldRestrict: [] },
-    Intersects: { fieldRestrict: [] },
-    Within: { fieldRestrict: [] },
-    Contains: { fieldRestrict: [] }
+    PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+    PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+    PropertyIsLike: { spatial: false, fieldRestrict: ['string'] },
+    PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsBetween: { spatial: false, fieldRestrict: ['number'] },
+    During: { spatial: false, fieldRestrict: [] },
+    PropertyIsNull: { spatial: false, fieldRestrict: [] },
+    Intersects: { spatial: true, fieldRestrict: [] },
+    Within: { spatial: true, fieldRestrict: [] },
+    Contains: { spatial: true, fieldRestrict: [] }
   };
 
   public buildFilter(
@@ -268,6 +268,7 @@ export class OgcFilterWriter {
       igoSpatialSelector: '',
       geometryName: '',
       geometry: '',
+      wkt_geometry: '',
       extent: '',
       srsName: '',
       parentLogical: '',

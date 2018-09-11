@@ -40,7 +40,7 @@ export type IgoOgcFilterObject =
 
 export interface OgcFiltersOptions {
   filtersAreEditable: boolean;
-  filters: IgoLogicalArrayOptions[] | AnyBaseOgcFilterOptions;
+  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
   interfaceOgcFilters?: any[];
 }
 
@@ -54,7 +54,7 @@ export interface OgcFilterableDataSource extends DataSource {
 
 export interface IgoLogicalArrayOptions {
   logical: string;
-  filters: IgoLogicalArrayOptions[] | AnyBaseOgcFilterOptions;
+  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions[];
 }
 
 export interface OgcFilterCondionsArrayOptions {
@@ -120,6 +120,7 @@ export interface OgcInterfaceFilterOptions {
   matchCase?: boolean;
   geometryName?: string;
   geometry?: olGeometry;
+  wkt_geometry?: string;
   extent?: [number, number, number, number];
   srsName?: string;
   parentLogical?: string;
