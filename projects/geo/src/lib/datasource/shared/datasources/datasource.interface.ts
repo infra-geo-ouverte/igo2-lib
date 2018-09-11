@@ -20,7 +20,6 @@ export interface DataSourceOptions {
   // view?: ol.olx.layer.ImageOptions;
   // displayField?: string;
   ol?: olSource;
-  refreshIntervalSec?: number;
 }
 
 export interface DataSourceLegendOptions {
