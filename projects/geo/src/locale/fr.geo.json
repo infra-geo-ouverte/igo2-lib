@@ -58,7 +58,9 @@
           "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
         "layerFiltered": "Cette couche d'information est présentement filtrée.",
         "layerFilterable": "Cette couche d'information est filtrable",
-        "filterBy": "Filtrer par"
+        "filterBy": "Filtrer par",
+        "showFeatureExtent": "Montrer l'empreinte des étendues",
+        "hideFeatureExtent": "Cacher l'empreinte des étendues"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",

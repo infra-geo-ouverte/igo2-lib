@@ -58,7 +58,9 @@
           "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
-        "filterBy": "Filter by"
+        "filterBy": "Filter by",
+        "showFeatureExtent": "Show feature used as spatial extent",
+        "hideFeatureExtent": "Hide feature used as spatial extent "
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
