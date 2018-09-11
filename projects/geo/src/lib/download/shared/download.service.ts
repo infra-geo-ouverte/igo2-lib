@@ -43,13 +43,13 @@ export class DownloadService {
         ) {
           wfsOptions = layer.dataSource.options['wfsSource'];
         } else {
-          wfsOptions = layer.dataSource.options;
+          wfsOptions = layer.dataSource.options['params'];
         }
 
         const outputFormatDownload =
-          wfsOptions['outputFormatDownload'] === undefined
-            ? 'outputformat=' + wfsOptions['outputFormat']
-            : 'outputformat=' + wfsOptions['outputFormatDownload'];
+          wfsOptions.outputFormatDownload === undefined
+            ? 'outputformat=' + wfsOptions.outputFormat
+            : 'outputformat=' + wfsOptions.outputFormatDownload;
 
         const baseurl = DSOptions.download['dynamicUrl']
           .replace(/&?outputformat=[^&]*/gi, '')
