@@ -38,6 +38,12 @@ export class WMSDataSource extends DataSource {
     if (sourceParams && sourceParams.version) {
       sourceParams.VERSION = sourceParams.version;
     }
+
+    if (options.sourceFields === undefined ||
+    Object.keys(options.sourceFields).length === 0) {
+      options.sourceFields = [{ name: '', alias: '' }];
+    }
+    // END
   }
 
   protected createOlSource(): olSourceImageWMS {
