@@ -61,12 +61,14 @@ export class WFSDataSource extends DataSource {
           ? 'srsname=' + wfsOptions.params.srsname
           : 'srsname=' + proj.getCode();
 
-        wfsOptions.params.xmlFilter = this.ogcFilterWriter.buildFilter(
-          (wfsOptions as any).ogcFilters.filters,
-          extent,
-          proj,
-          wfsOptions.params.fieldNameGeometry
-        );
+        if ((wfsOptions as any).ogcFilters.enabled) {
+          wfsOptions.params.xmlFilter = this.ogcFilterWriter.buildFilter(
+            (wfsOptions as any).ogcFilters.filters,
+            extent,
+            proj,
+            wfsOptions.params.fieldNameGeometry
+          );
+        }
 
         let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
