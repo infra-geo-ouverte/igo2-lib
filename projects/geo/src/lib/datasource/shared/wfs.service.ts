@@ -194,7 +194,6 @@ export class WFSService {
               sourceFields.push({
                 name: element,
                 alias: element,
-                type: fieldType,
                 values: valueList
               });
               d.next(sourceFields);

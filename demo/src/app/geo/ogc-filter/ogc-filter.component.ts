@@ -63,7 +63,11 @@ export class AppOgcFilterComponent {
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       isOgcFilterable: true,
-      // TODO: sourceFields: [{'name': 'code_municipalite', 'alias': '# de la municipalitée'}],
+      sourceFields: [
+        {name: 'code_municipalite', 'alias': '# de la municipalitée'},
+        {name: 'date_observation'},
+        {name: 'urgence', values: ['immédiate', 'inconnue']}
+        ],
       ogcFilters: {
         filtersAreEditable: true,
         filters: {

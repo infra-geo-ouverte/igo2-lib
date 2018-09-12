@@ -118,11 +118,11 @@ export class OgcFilterableItemComponent implements OnInit {
     const arr = this.datasource.options.ogcFilters.interfaceOgcFilters;
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
-    if (this.datasource.options['sourceFields'].length > 0) {
+    if (this.datasource.options.sourceFields.length > 0) {
       firstFieldName =
-        this.datasource.options['sourceFields'][0].name === undefined
+        this.datasource.options.sourceFields[0].name === undefined
           ? ''
-          : this.datasource.options['sourceFields'][0].name;
+          : this.datasource.options.sourceFields[0].name;
     }
     let fieldNameGeometry;
     if (this.datasource.options['fieldNameGeometry']) {

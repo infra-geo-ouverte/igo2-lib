@@ -21,10 +21,10 @@ export class OGCFilterService {
 
   public getSourceFields(wfsDatasource: OgcFilterableDataSource) {
     if (
-      wfsDatasource.options['sourceFields'] === undefined ||
-      Object.keys(wfsDatasource.options['sourceFields']).length === 0
+      wfsDatasource.options.sourceFields === undefined ||
+      Object.keys(wfsDatasource.options.sourceFields).length === 0
     ) {
-      wfsDatasource.options['sourceFields'] = [];
+      wfsDatasource.options.sourceFields = [];
       this.wfsService
         .wfsGetCapabilities(wfsDatasource.options)
         .subscribe(wfsCapabilities => {
@@ -40,11 +40,18 @@ export class OGCFilterService {
               wfsDatasource.options as WFSDataSourceOptions
             )
             .subscribe(sourceFields => {
-              wfsDatasource.options['sourceFields'] = sourceFields;
+              wfsDatasource.options.sourceFields = sourceFields;
             });
         });
     } else {
-      wfsDatasource.options['sourceFields']
+
+      wfsDatasource.options.sourceFields.forEach(sourcefield => {
+        if (sourcefield.alias === undefined) {
+          sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
+        }
+      });
+
+      wfsDatasource.options.sourceFields
         .filter(
           field => field.values === undefined || field.values.length === 0
         )
@@ -91,10 +98,10 @@ export class OGCFilterService {
   public setOgcWMSFiltersOptions(wmsDatasource: WMSDataSource) {
     const options: any = wmsDatasource.options;
     if (
-      options['sourceFields'] === undefined ||
-      Object.keys(options['sourceFields']).length === 0
+      options.sourceFields === undefined ||
+      Object.keys(options.sourceFields).length === 0
     ) {
-      options['sourceFields'] = [{ name: '', alias: '' }];
+      options.sourceFields = [{ name: '', alias: '' }];
     }
     // WMS With linked wfs
     if (options.wfsSource && Object.keys(options.wfsSource).length > 0) {
@@ -102,10 +109,10 @@ export class OGCFilterService {
       delete options.wfsSource.ogcFilters;
       options['fieldNameGeometry'] = options.wfsSource['fieldNameGeometry'];
       if (
-        options['sourceFields'].length === 1 &&
-        options['sourceFields'][0].name === ''
+        options.sourceFields.length === 1 &&
+        options.sourceFields[0].name === ''
       ) {
-        options['sourceFields'] = [];
+        options.sourceFields = [];
         this.wfsService
           .wfsGetCapabilities(options)
           .subscribe(wfsCapabilities => {
@@ -118,11 +125,11 @@ export class OGCFilterService {
             this.wfsService
               .defineFieldAndValuefromWFS(options.wfsSource)
               .subscribe(sourceFields => {
-                options.wfsSource['sourceFields'] = sourceFields;
+                options.wfsSource.sourceFields = sourceFields;
               });
           });
       } else {
-        options['sourceFields']
+        options.sourceFields
           .filter(
             field => field.values === undefined || field.values.length === 0
           )

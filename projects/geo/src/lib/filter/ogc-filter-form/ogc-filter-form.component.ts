@@ -98,10 +98,10 @@ export class OgcFilterFormComponent {
   }
 
   updateField(init = true) {
-    if (!this.datasource.options['sourceFields']) {
+    if (!this.datasource.options.sourceFields) {
       return;
     }
-    this.fields = this.datasource.options['sourceFields'].sort((a, b) => {
+    this.fields = this.datasource.options.sourceFields.sort((a, b) => {
       if (a.name < b.name) {
         return -1;
       } else if (a.name > b.name) {
@@ -110,7 +110,7 @@ export class OgcFilterFormComponent {
         return 0;
       }
     });
-    this.datasource.options['sourceFields']
+    this.datasource.options.sourceFields
       .filter(f => f.name === this.currentFilter.propertyName)
       .forEach(element => {
         this.values = element.values !== undefined ? element.values.sort() : [];

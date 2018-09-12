@@ -39,7 +39,7 @@
       <mat-icon>file_download</mat-icon>
     </button>
   </span>
-  <button [disabled]="!datasource.options['sourceFields'] || datasource.options['sourceFields'].length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+  <button [disabled]="!datasource.options.sourceFields || datasource.options.sourceFields.length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon>
       add
