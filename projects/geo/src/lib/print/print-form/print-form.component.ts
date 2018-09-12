@@ -9,7 +9,8 @@ import {
 import { PrintOptions } from '../shared/print.interface';
 
 import {
-  PrintFormat,
+  PrintOutputFormat,
+  PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
   PrintSaveImageFormat
@@ -24,7 +25,8 @@ export class PrintFormComponent {
   public form: FormGroup;
   public submitted: boolean;
 
-  public formats = PrintFormat;
+  public outputFormats = PrintOutputFormat;
+  public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
   public resolutions = PrintResolution;
   public imageFormats = PrintSaveImageFormat;
@@ -50,11 +52,21 @@ export class PrintFormComponent {
   }
 
   @Input()
-  get format(): PrintFormat {
-    return this.formatField.value;
+  get outputFormat(): PrintOutputFormat {
+    return this.outputFormatField.value;
   }
-  set format(value: PrintFormat) {
-    this.formatField.setValue(value || PrintFormat.Letter, {
+  set outputFormat(value: PrintOutputFormat) {
+    this.outputFormatField.setValue(value || PrintOutputFormat.Pdf, {
+      onlySelf: true
+    });
+  }
+
+  @Input()
+  get paperFormat(): PrintPaperFormat {
+    return this.paperFormatField.value;
+  }
+  set paperFormat(value: PrintPaperFormat) {
+    this.paperFormatField.setValue(value || PrintPaperFormat.Letter, {
       onlySelf: true
     });
   }
@@ -116,8 +128,21 @@ export class PrintFormComponent {
     this.showLegendField.setValue(value, { onlySelf: true });
   }
 
-  get formatField() {
-    return <FormControl>this.form.controls['format'];
+  @Input()
+  get doZipFile(): boolean {
+    return this.doZipFileField.value;
+  }
+  set doZipFile(value: boolean) {
+    this.doZipFileField.setValue(value, { onlySelf: true });
+  }
+
+
+  get outputFormatField() {
+    return <FormControl>this.form.controls['outputFormat'];
+  }
+
+  get paperFormatField() {
+    return <FormControl>this.form.controls['paperFormat'];
   }
 
   get imageFormatField() {
@@ -145,6 +170,10 @@ export class PrintFormComponent {
     return <FormControl>this.form.controls['showLegend'];
   }
 
+  get doZipFileField() {
+    return <FormControl>this.form.controls['doZipFile'];
+  }
+
   get titleField() {
     return <FormControl>this.form.controls['title'];
   }
@@ -155,16 +184,15 @@ export class PrintFormComponent {
     this.form = this.formBuilder.group({
       title: ['', []],
       comment: ['', []],
-      format: ['', [Validators.required]],
-      imageFormat: [
-        { value: '', disabled: this.isPrintService },
-        [Validators.required]
-      ],
+      outputFormat: ['', [Validators.required]],
+      paperFormat: ['', [Validators.required]],
+      imageFormat: [ '', [Validators.required]],
       resolution: ['', [Validators.required]],
       orientation: ['', [Validators.required]],
       showProjection: false,
       showScale: false,
-      showLegend: false
+      showLegend: false,
+      doZipFile: [ {value: true, hidden: this.isPrintService } ]
     });
   }
 
@@ -177,14 +205,10 @@ export class PrintFormComponent {
   }
 
   toggleImageSaveProp() {
-    if (this.formatField.value === 'Image') {
-      this.imageFormatField.enable();
+    if (this.outputFormatField.value === 'Image') {
       this.isPrintService = false;
-      this.form.controls.imageFormat.enable();
     } else {
-      this.imageFormatField.disable();
       this.isPrintService = true;
-      this.form.controls.imageFormat.disable();
     }
   }
 }

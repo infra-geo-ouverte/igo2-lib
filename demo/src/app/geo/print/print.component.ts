@@ -52,5 +52,19 @@ export class AppPrintComponent {
         }
       })
       .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Embacle',
+        sourceOptions: {
+          type: 'wms',
+          url: '/ws/igo_gouvouvert.fcgi',
+          params: {
+            layers: 'vg_observation_v_inondation_embacle_wmst',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
   }
 }

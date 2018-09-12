@@ -53,7 +53,7 @@
 
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
         <mat-form-field>
-            <mat-select placeholder="{{'igo.geo.timeFilter.date' | translate}}" [(ngModel)]="year" (change)="handleYearChange($event)">
+            <mat-select placeholder="{{'igo.geo.timeFilter.date' | translate}}" [(ngModel)]="year" (selectionChange)="handleYearChange($event)">
                   <mat-option [value]="year" *ngFor="let year of listYears">{{year}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -62,7 +62,7 @@
   <div *ngIf="isRange">
     <div class="igo-col igo-col-100">
         <mat-form-field>
-            <mat-select placeholder="{{'igo.geo.timeFilter.startDate' | translate}}" [(ngModel)]="startYear" (change)="handleYearChange($event)">
+            <mat-select placeholder="{{'igo.geo.timeFilter.startDate' | translate}}" [(ngModel)]="startYear" (selectionChange)="handleYearChange($event)">
               <mat-option [value]="startYear" *ngFor="let startYear of startListYears">{{startYear}}</mat-option>
             </mat-select>
       </mat-form-field>
@@ -70,7 +70,7 @@
 
     <div class="igo-col igo-col-100">
     <mat-form-field>
-        <mat-select placeholder="{{'igo.geo.timeFilter.endDate' | translate}}" [(ngModel)]="endYear" (change)="handleYearChange($event)">
+        <mat-select placeholder="{{'igo.geo.timeFilter.endDate' | translate}}" [(ngModel)]="endYear" (selectionChange)="handleYearChange($event)">
               <mat-option [value]="endYear" *ngFor="let endYear of endListYears">{{endYear}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -93,7 +93,7 @@
       [value]="handleSliderValue()"
       thumbLabel
       (input)="handleSliderDateChange($event)"
-      (change)="handleSliderDateChange($event)">
+      (selectionChange)="handleSliderDateChange($event)">
   </mat-slider>
   <p class="date-below">{{handleSliderTooltip()}}</p>
   <button mat-icon-button color="primary" (click)="playFilter($event)">

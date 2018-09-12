@@ -1,6 +1,10 @@
 import { strEnum } from '@igo2/utils';
 
-export const PrintFormat = strEnum([
+export const PrintOutputFormat = strEnum(['Pdf', 'Image']);
+
+export type PrintOutputFormat = keyof typeof PrintOutputFormat;
+
+export const PrintPaperFormat = strEnum([
   'A0',
   'A1',
   'A2',
@@ -8,10 +12,9 @@ export const PrintFormat = strEnum([
   'A4',
   'A5',
   'Letter',
-  'Legal',
-  'Image'
+  'Legal'
 ]);
-export type PrintFormat = keyof typeof PrintFormat;
+export type PrintPaperFormat = keyof typeof PrintPaperFormat;
 
 export const PrintOrientation = strEnum(['landscape', 'portrait']);
 export type PrintOrientation = keyof typeof PrintOrientation;
@@ -30,5 +33,5 @@ export const PrintDimension = {
   Legal: [216, 356]
 };
 
-export const PrintSaveImageFormat = strEnum(['Jpeg', 'Png', 'Bmp', 'Gif']);
+export const PrintSaveImageFormat = strEnum(['Jpeg', 'Png', 'Bmp', 'Gif', 'Tiff']);
 export type PrintSaveImageFormat = keyof typeof PrintSaveImageFormat;
