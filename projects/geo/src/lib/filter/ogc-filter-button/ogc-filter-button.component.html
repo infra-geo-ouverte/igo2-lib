@@ -1,5 +1,5 @@
-<button *ngIf="options.isOgcFilterable
-&& options.ogcFilters.filtersAreEditable"
+<button *ngIf="options.ogcFilters.enabled
+&& options.ogcFilters.editable"
   mat-icon-button
   collapsibleButton
   tooltip-position="below"
@@ -15,7 +15,7 @@
 
 <div #ogcFilter class="igo-layer-actions-container">
   <igo-ogc-filterable-item
-    *ngIf="ogcFilterCollapse && options.isOgcFilterable"
+    *ngIf="ogcFilterCollapse && options.ogcFilters.enabled"
     igoListItem
     [ogcFiltersHeaderShown]="false"
     [layer]="layer">

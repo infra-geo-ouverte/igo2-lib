@@ -177,7 +177,7 @@ export class OgcFilterableItemComponent implements OnInit {
         this.layer.dataSource.ol.clear();
       } else if (
         this.layer.dataSource.options.type === 'wms' &&
-        (this.layer.dataSource.options as any).isOgcFilterable
+        (this.layer.dataSource.options['ogcFilters'] as any).enabled
       ) {
         let rebuildFilter = '';
         if (activeFilters.length >= 1) {

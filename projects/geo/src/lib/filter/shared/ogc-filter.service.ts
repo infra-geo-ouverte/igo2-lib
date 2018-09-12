@@ -72,7 +72,11 @@ export class OGCFilterService {
   public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
     const options: any = wfsDatasource.options;
     const ogcFilterWriter = new OgcFilterWriter();
-    if (options.ogcFilters.filters) {
+
+    options.ogcFilters.enabled = options.ogcFilters.enabled === undefined ? true : options.ogcFilters.enabled;
+    options.ogcFilters.editable = options.ogcFilters.editable === undefined ? true : options.ogcFilters.editable;
+
+    if (options.ogcFilters.enabled && options.ogcFilters.filters) {
       options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
         options.ogcFilters.filters,
         options.params.fieldNameGeometry,
@@ -83,16 +87,8 @@ export class OGCFilterService {
         options.params.fieldNameGeometry
       );
     } else {
-      options.ogcFilters.filters = undefined;
       options.ogcFilters.interfaceOgcFilters = [];
     }
-
-    options.isOgcFilterable =
-      options.isOgcFilterable === undefined ? true : options.isOgcFilterable;
-    options.ogcFilters.filtersAreEditable =
-      options.ogcFilters.filtersAreEditable === undefined
-        ? true
-        : options.ogcFilters.filtersAreEditable;
   }
 
   public setOgcWMSFiltersOptions(wmsDatasource: WMSDataSource) {
@@ -170,7 +166,7 @@ export class OGCFilterService {
       });
     }
 
-    if (options.isOgcFilterable) {
+    if (options.ogcFilters && options.ogcFilters.enabled) {
       const ogcFilterWriter = new OgcFilterWriter();
       if (options.ogcFilters && options.ogcFilters.filters) {
         options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(

@@ -39,13 +39,13 @@ export type IgoOgcFilterObject =
   | AnyBaseOgcFilterOptions;
 
 export interface OgcFiltersOptions {
-  filtersAreEditable: boolean;
+  enabled: boolean;
+  editable: boolean;
   filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
   interfaceOgcFilters?: any[];
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
-  isOgcFilterable?: boolean;
   ogcFilters?: OgcFiltersOptions;
 }
 export interface OgcFilterableDataSource extends DataSource {
