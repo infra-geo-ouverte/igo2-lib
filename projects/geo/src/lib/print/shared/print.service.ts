@@ -596,7 +596,7 @@ export class PrintService {
     const that = this;
 
     try {
-      canvas.toDataURL(); //Just to make the catch trigger wihtout toBlob Error throw not catched
+      canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
       // If navigator is Internet Explorer
       if (navigator.msSaveBlob) {
         navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
@@ -608,7 +608,7 @@ export class PrintService {
           that.saveFileProcessing();
         }, blobFormat);
       }
-    } catch(err) {
+    } catch (err) {
       this.messageService.error(
         this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
         this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
@@ -630,7 +630,7 @@ export class PrintService {
     }
 
     try {
-      canvas.toDataURL(); //Just to make the catch trigger wihtout toBlob Error throw not catched
+      canvas.toDataURL(); // Just to make the catch trigger wihtout toBlob Error throw not catched
       if (navigator.msSaveBlob) {
         this.addFileToZip(name, canvas.msToBlob());
       } else {
@@ -638,7 +638,7 @@ export class PrintService {
           that.addFileToZip(name, blob);
         }, blobFormat);
       }
-    } catch(err) {
+    } catch (err) {
       this.messageService.error(
         this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
         this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
@@ -692,9 +692,9 @@ export class PrintService {
 
   private isCanvasTainted(ctx) {
     try {
-        var pixel = ctx.getImageData(0, 0, 1, 1);
+        const pixel = ctx.getImageData(0, 0, 1, 1);
         return false;
-    } catch(err) {
+    } catch (err) {
       this.messageService.error(
         this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
         this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
