@@ -118,6 +118,8 @@
         "write": "Lecture et écriture"
       },
       "printForm": {
+        "corsErrorMessageBody": "Impossible d'imprimer dû à des droits d'accès non détenus",
+        "corsErrorMessageHeader": "Impression",
         "comment": "Commentaire",
         "doZipFile": "Compresser les fichiers",
         "outputFormat": "Format de sortie",

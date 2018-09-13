@@ -124,6 +124,7 @@ export class PrintService {
   @return The image of the legend
   */
   getLayersLegendImage(map, format = 'png', doZipFile) {
+    const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
     let html = this.getLayersLegendHtml(map, width);
@@ -143,16 +144,22 @@ export class PrintService {
     div.innerHTML = html;
     // Define event to execute after all images are loaded to create the canvas
     setTimeout(function() {
-      html2canvas(div, { useCORS: true }).then(canvas => {
+      html2canvas(div, { useCORS: true}).then(canvas => {
 
-        if (!doZipFile) {
-          // Save the canvas as file
-          that.saveCanvasImageAsFile(canvas, 'legendImage', format);
-        } else {
-          // Add the canvas to zip
-          that.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
-        }
-        div.parentNode.removeChild(div); // remove temp div (IE)
+        let status = SubjectStatus.Done;
+        try {
+          if (!doZipFile) {
+            // Save the canvas as file
+            that.saveCanvasImageAsFile(canvas, 'legendImage', format);
+          } else {
+            // Add the canvas to zip
+            that.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
+          }
+          div.parentNode.removeChild(div); // remove temp div (IE)
+        } catch (err) {
+          status = SubjectStatus.Error;
+      }
+      status$.next(status);
       });
     }, 500);
   }
@@ -243,26 +250,17 @@ export class PrintService {
 
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
-    html2canvas(div, { useCORS: true }).then(canvas => {
+    html2canvas(div, { useCORS: true}).then(canvas => {
       let imgData;
       const position = 10;
 
-      try {
-        imgData = canvas.toDataURL('image/png');
-        doc.addPage();
-        const imageSize = this.getImageSizeToFitPdf(doc, canvas);
-        doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-        that.saveDoc(doc);
-        div.parentNode.removeChild(div); // remove temp div (IE)
-      } catch (err) {
-        div.parentNode.removeChild(div); // remove temp div (IE)
-        this.messageService.error(
-          'Security error: The legend cannot be printed.',
-          'Print',
-          'print'
-        );
-        throw new Error(err);
-      }
+      imgData = canvas.toDataURL('image/png');
+      doc.addPage();
+      const imageSize = this.getImageSizeToFitPdf(doc, canvas);
+      doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
+      that.saveDoc(doc);
+      div.parentNode.removeChild(div); // remove temp div (IE style)
+
     });
 
     // Add html code to convert in the new window
@@ -277,17 +275,9 @@ export class PrintService {
     margins: Array<number>
   ) {
     let image;
-    try {
-      image = canvas.toDataURL('image/jpeg');
-    } catch (err) {
-      this.messageService.error(
-        'Security error: This map cannot be printed.',
-        'Print',
-        'print'
-      );
 
-      throw new Error(err);
-    }
+    image = canvas.toDataURL('image/jpeg');
+
 
     if (image !== undefined) {
       const imageSize = this.getImageSizeToFitPdf(doc, canvas);
@@ -330,6 +320,11 @@ export class PrintService {
           this.addCanvas(doc, canvas, size, margins);
         } catch (err) {
           status = SubjectStatus.Error;
+          this.messageService.error(
+            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
+            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+            'print'
+          );
         }
 
         this.renderMap(map, mapSize, extent);
@@ -346,6 +341,11 @@ export class PrintService {
           this.addCanvas(doc, canvas, size, margins);
         } catch (err) {
           status = SubjectStatus.Error;
+          this.messageService.error(
+            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
+            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+            'print'
+          );
         }
 
         this.renderMap(map, mapSize, extent);
@@ -384,6 +384,7 @@ export class PrintService {
     comment = '',
     doZipFile = true
   ) {
+    const status$ = new Subject();
     const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
@@ -498,13 +499,20 @@ export class PrintService {
       // Add map to new canvas
       newContext.drawImage(context.canvas, 0, positionHCanvas);
 
-      // Save the canvas as file
-      if (!doZipFile) {
-        this.saveCanvasImageAsFile(newCanvas, 'map', format);
-      } else {
-        // Add the canvas to zip
-        this.generateCanvaFileToZip(newCanvas, 'map' + '.' + format);
+      let status = SubjectStatus.Done;
+      try {
+        // Save the canvas as file
+        if (!doZipFile) {
+          this.saveCanvasImageAsFile(newCanvas, 'map', format);
+        } else {
+          // Add the canvas to zip
+          this.generateCanvaFileToZip(newCanvas, 'map' + '.' + format);
+        }
+      } catch (err) {
+        status = SubjectStatus.Error;
       }
+
+      status$.next(status);
 
       if (format.toLowerCase() === 'tiff') {
         const tiwContent = this.getWorldFileInformation(map);
@@ -586,16 +594,26 @@ export class PrintService {
   private saveCanvasImageAsFile(canvas, name, format) {
     const blobFormat = 'image/' + format;
     const that = this;
-    // If navigator is Internet Explorer
-    if (navigator.msSaveBlob) {
-      navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
-      this.saveFileProcessing();
-    } else {
-      canvas.toBlob(function(blob) {
-        // download image
-        saveAs(blob, name + '.' + format);
-        that.saveFileProcessing();
-      }, blobFormat);
+
+    try {
+      canvas.toDataURL(); //Just to make the catch trigger wihtout toBlob Error throw not catched
+      // If navigator is Internet Explorer
+      if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
+        this.saveFileProcessing();
+      } else {
+        canvas.toBlob(function(blob) {
+          // download image
+          saveAs(blob, name + '.' + format);
+          that.saveFileProcessing();
+        }, blobFormat);
+      }
+    } catch(err) {
+      this.messageService.error(
+        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
+        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+        'print'
+      );
     }
   }
 
@@ -610,13 +628,24 @@ export class PrintService {
     if (!this.hasOwnProperty('zipFile') || typeof this.zipFile === 'undefined') {
       this.zipFile = new JSZip();
     }
-    if (navigator.msSaveBlob) {
-      this.addFileToZip(name, canvas.msToBlob());
-    } else {
-      canvas.toBlob(function(blob) {
-        that.addFileToZip(name, blob);
-      }, blobFormat);
+
+    try {
+      canvas.toDataURL(); //Just to make the catch trigger wihtout toBlob Error throw not catched
+      if (navigator.msSaveBlob) {
+        this.addFileToZip(name, canvas.msToBlob());
+      } else {
+        canvas.toBlob(function(blob) {
+          that.addFileToZip(name, blob);
+        }, blobFormat);
+      }
+    } catch(err) {
+      this.messageService.error(
+        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
+        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+        'print'
+      );
     }
+
   }
 
   /**
@@ -659,5 +688,18 @@ export class PrintService {
       saveAs(blob, 'map.zip');
       delete that.zipFile;
     });
+  }
+
+  private isCanvasTainted(ctx) {
+    try {
+        var pixel = ctx.getImageData(0, 0, 1, 1);
+        return false;
+    } catch(err) {
+      this.messageService.error(
+        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
+        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+        'print'
+      );
+    }
   }
 }
