@@ -40,7 +40,7 @@ export class TileArcGISRestDataSource extends DataSource {
   }
 
   getLegend(): DataSourceLegendOptions[] {
-    const id = parseInt(this.options.layer);
+    const id = parseInt(this.options.layer, 10);
     const lyr = this.options.legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
 
@@ -50,9 +50,9 @@ export class TileArcGISRestDataSource extends DataSource {
       }`;
       const label = lyr.legend[i].label.replace('<Null>', 'Null');
       htmlString +=
-        "<tr><td align='left'><img src=\"" +
+        `<tr><td align='left'><img src="` +
         src +
-        "\" alt ='' /></td><td>" +
+        `" alt ='' /></td><td>` +
         label +
         '</td></tr>';
     }

@@ -38,6 +38,11 @@ export class WMSDataSource extends DataSource {
     if (sourceParams && sourceParams.version) {
       sourceParams.VERSION = sourceParams.version;
     }
+    if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
+      setInterval(() => {
+        this.ol.updateParams({'igoRefresh': Math.random()});
+      }, options.refreshIntervalSec * 1000); // Convert seconds to MS
+    }
   }
 
   protected createOlSource(): olSourceImageWMS {

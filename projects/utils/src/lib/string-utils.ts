@@ -17,10 +17,12 @@ export class StringUtils {
       changeData.mtc.length + changeData.del.length + changeData.sbs.length
     ); // remaining part of "this"
     let result = ''; // the glorious result
-    changeData.del.length > 0 &&
-      (changeData.del = '<span class="deleted">' + changeData.del + '</span>');
-    changeData.ins.length > 0 &&
-      (changeData.ins = '<span class="inserted">' + changeData.ins + '</span>');
+    if (changeData.del.length > 0) {
+      changeData.del = '<span class="deleted">' + changeData.del + '</span>';
+    }
+    if (changeData.ins.length > 0) {
+      changeData.ins = '<span class="inserted">' + changeData.ins + '</span>';
+    }
     result = changeData.mtc + changeData.del + changeData.ins + changeData.sbs;
     result +=
       nextThis !== '' || nextS !== ''
@@ -41,7 +43,9 @@ export class StringUtils {
         ? match
           ? (o.sbs += s[i]) // o.sbs holds the matching substring itsef
           : ((match = true), (o.fis = i), (o.sbs = s[i]))
-        : match && (i = slen); // stop after the first found substring
+        : match
+          ? (i = slen) // stop after the first found substring
+          : (i = i);
       ++i;
     }
     return o;
@@ -52,7 +56,9 @@ export class StringUtils {
     let [longer, shorter] = isThisLonger ? [s1, s2] : [s2, s1]; // assignment of longer and shorter by es6 destructuring
     let bi = 0; // base index designating the index of first mismacthing character in both strings
 
-    while (shorter[bi] === longer[bi] && bi < shorter.length) ++bi; // make bi the index of first mismatching character
+    while (shorter[bi] === longer[bi] && bi < shorter.length) {
+      ++bi;
+    } // make bi the index of first mismatching character
     longer = longer.split('').slice(bi); // as the longer string will be rotated it is converted into array
     shorter = shorter.slice(bi); // shorter and longer now starts from the first mismatching character
 
@@ -77,15 +83,17 @@ export class StringUtils {
           rc < len - sub.fis
             ? sub.fis + rc // mismatch is longer than the mismatch in short
             : sub.fis - len + rc; // mismatch is shorter than the mismatch in short
-        sub.sbs.length > cd.sbs.length && (cd = sub); // only keep the one with the longest substring.
+        if (sub.sbs.length > cd.sbs.length) {
+          cd = sub; // only keep the one with the longest substring.
+        }
       }
     }
     // insert the mismatching delete subsrt and insert substr to the cd object and attach the previous substring
     [cd.del, cd.ins] = isThisLonger
       ? [longer.slice(0, cd.fil).join(''), shorter.slice(0, cd.fis)]
       : [shorter.slice(0, cd.fis), longer.slice(0, cd.fil).join('')];
-    return cd.del.indexOf(' ') == -1 ||
-      cd.ins.indexOf(' ') == -1 ||
+    return cd.del.indexOf(' ') === -1 ||
+      cd.ins.indexOf(' ') === -1 ||
       cd.del === '' ||
       cd.ins === '' ||
       cd.sbs === ''
@@ -96,10 +104,13 @@ export class StringUtils {
   private static rotateArray(array, n) {
     const len = array.length;
     const res = new Array(array.length);
-    if (n % len === 0) return array.slice();
-    else
-      for (var i = 0; i < len; i++)
+    if (n % len === 0) {
+      return array.slice();
+    } else {
+      for (let i = 0; i < len; i++) {
         res[i] = array[(i + (len + (n % len))) % len];
+      }
+    }
     return res;
   }
 }

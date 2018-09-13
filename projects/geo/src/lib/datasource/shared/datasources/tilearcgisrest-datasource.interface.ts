@@ -4,7 +4,7 @@ import olAttribution from 'ol/control/Attribution';
 import { DataSourceOptions } from './datasource.interface';
 
 export interface TileArcGISRestDataSourceOptions extends DataSourceOptions {
-  //type?: 'tilearcgisrest';
+  // type?: 'tilearcgisrest';
   queryPrecision?: number;
   layer: string;
   legendInfo?: any;

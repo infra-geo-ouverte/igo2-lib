@@ -15,6 +15,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   serverType?: string;
   ratio?: number;
   ol?: olSourceImageWMS;
+  refreshIntervalSec?: number;
 }
 
 export interface WMSDataSourceOptionsParams {

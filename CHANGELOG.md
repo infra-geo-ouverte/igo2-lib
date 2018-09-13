@@ -1,3 +1,52 @@
+<a name="0.23.1"></a>
+## [0.23.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.23.0...0.23.1) (2018-09-07)
+
+
+### Bug Fixes
+
+* **tool:** export directly tool.service ([6e7dd01](https://github.com/infra-geo-ouverte/igo2-lib/commit/6e7dd01))
+
+
+
+<a name="0.23.0"></a>
+# [0.23.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.22.2...0.23.0) (2018-09-07)
+
+
+### Bug Fixes
+
+* **auth:** fix and improve login/logout route ([cf3d1a2](https://github.com/infra-geo-ouverte/igo2-lib/commit/cf3d1a2))
+* **auth:** fix login/logout/alreadyLogin div ([55fdc2a](https://github.com/infra-geo-ouverte/igo2-lib/commit/55fdc2a))
+* **build prod:** fix path destination ([c0de9e1](https://github.com/infra-geo-ouverte/igo2-lib/commit/c0de9e1))
+* **change:** rename modif to change ([4e79fb3](https://github.com/infra-geo-ouverte/igo2-lib/commit/4e79fb3))
+* **context directive:** fix No provider for MapBrowserComponent ([329363e](https://github.com/infra-geo-ouverte/igo2-lib/commit/329363e))
+* **directions:** Directions minor fixes ([#175](https://github.com/infra-geo-ouverte/igo2-lib/issues/175)) ([19c4b4c](https://github.com/infra-geo-ouverte/igo2-lib/commit/19c4b4c))
+* **filter:** fix topo function ([b25d9ed](https://github.com/infra-geo-ouverte/igo2-lib/commit/b25d9ed))
+* **json dialog:** rename component app-json-dialog to igo-json-dialog ([c4cbf29](https://github.com/infra-geo-ouverte/igo2-lib/commit/c4cbf29))
+* **modif:** immuable object ([6c3ae40](https://github.com/infra-geo-ouverte/igo2-lib/commit/6c3ae40))
+* **modif:** inverse added and deleted ([2fb09b1](https://github.com/infra-geo-ouverte/igo2-lib/commit/2fb09b1))
+* **routing:** fix move pin ([388d808](https://github.com/infra-geo-ouverte/igo2-lib/commit/388d808))
+* **search-bar:** Adding a pinpoint on locate XY by searchbar ([#167](https://github.com/infra-geo-ouverte/igo2-lib/issues/167)) ([3380ccf](https://github.com/infra-geo-ouverte/igo2-lib/commit/3380ccf))
+* **table:** reset selection when database changed ([7b5ef33](https://github.com/infra-geo-ouverte/igo2-lib/commit/7b5ef33))
+
+
+### Features
+
+* **auth:** add guards ([49c6bc9](https://github.com/infra-geo-ouverte/igo2-lib/commit/49c6bc9))
+* **auth:** options allowAnonymous ([945664f](https://github.com/infra-geo-ouverte/igo2-lib/commit/945664f))
+* **datasource:** add layer source connection to CARTO and ArcGIS Rest services ([#174](https://github.com/infra-geo-ouverte/igo2-lib/issues/174)) ([3976c45](https://github.com/infra-geo-ouverte/igo2-lib/commit/3976c45))
+* **demo:** add context demo ([b3261a1](https://github.com/infra-geo-ouverte/igo2-lib/commit/b3261a1))
+* **import service:** more flexible and permissibe way to import files ([#162](https://github.com/infra-geo-ouverte/igo2-lib/issues/162)) ([af66dae](https://github.com/infra-geo-ouverte/igo2-lib/commit/af66dae))
+* **json-dialog:** add json dialog component ([81a7aff](https://github.com/infra-geo-ouverte/igo2-lib/commit/81a7aff))
+* **modif:** add utils to find difference between arrays ([65cb301](https://github.com/infra-geo-ouverte/igo2-lib/commit/65cb301))
+* **object-utils:** add natural sort util ([88e1b74](https://github.com/infra-geo-ouverte/igo2-lib/commit/88e1b74))
+* **print:** add comment, legend, scale and projection in pdf. New possibility to download image of map. ([#171](https://github.com/infra-geo-ouverte/igo2-lib/issues/171)) ([7d45a9d](https://github.com/infra-geo-ouverte/igo2-lib/commit/7d45a9d))
+* **routing:** add routing on osrm ([#166](https://github.com/infra-geo-ouverte/igo2-lib/issues/166)) ([664f42a](https://github.com/infra-geo-ouverte/igo2-lib/commit/664f42a))
+* **string-utils:** add utils to find difference between 2 strings ([0685845](https://github.com/infra-geo-ouverte/igo2-lib/commit/0685845))
+* **table:** improve table component (selection, filter) ([560308b](https://github.com/infra-geo-ouverte/igo2-lib/commit/560308b))
+* **time-filter:** add time filter in catalog, possibility to have time filter on minute ([#172](https://github.com/infra-geo-ouverte/igo2-lib/issues/172)) ([b74b910](https://github.com/infra-geo-ouverte/igo2-lib/commit/b74b910))
+
+
+
 <a name="0.22.2"></a>
 ## [0.22.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.22.1...0.22.2) (2018-08-15)
 

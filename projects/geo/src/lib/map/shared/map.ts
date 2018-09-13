@@ -455,20 +455,14 @@ export class IgoMap {
     return listLegend;
   }
 
-  setOverlayMarkerStyle(color = 'blue', text = undefined): olstyle.Style {
+  setOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
     let iconColor;
     switch (color) {
       case 'blue':
-        iconColor = 'blue';
-        break;
       case 'red':
-        iconColor = 'red';
-        break;
       case 'yellow':
-        iconColor = 'yellow';
-        break;
       case 'green':
-        iconColor = 'green';
+        iconColor = color;
         break;
       default:
         iconColor = 'blue';

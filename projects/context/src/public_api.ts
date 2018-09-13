@@ -13,4 +13,5 @@ export * from './lib/context-manager';
 export * from './lib/context-map-button';
 export * from './lib/share-map';
 export * from './lib/sidenav';
+export * from './lib/tool/shared/tool.service';
 export * from './lib/tool';

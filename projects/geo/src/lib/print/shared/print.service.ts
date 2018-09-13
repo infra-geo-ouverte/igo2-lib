@@ -689,17 +689,4 @@ export class PrintService {
       delete that.zipFile;
     });
   }
-
-  private isCanvasTainted(ctx) {
-    try {
-        const pixel = ctx.getImageData(0, 0, 1, 1);
-        return false;
-    } catch (err) {
-      this.messageService.error(
-        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
-        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
-        'print'
-      );
-    }
-  }
 }

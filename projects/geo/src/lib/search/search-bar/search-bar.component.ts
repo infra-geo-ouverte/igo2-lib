@@ -111,7 +111,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private _searchIcon = false;
 
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
-  private locateID: string = 'locateXY';
+  private locateID = 'locateXY';
   private stream$ = new Subject<string>();
   private stream$$: Subscription;
   private selectedFeature$$: Subscription;

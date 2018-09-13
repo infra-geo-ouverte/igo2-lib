@@ -66,8 +66,7 @@ export class AppPrintComponent {
         }
       })
       .subscribe(l => this.map.addLayer(l));
-/*
-      //CORS error if activate
+
       this.layerService
         .createAsyncLayer({
           title: 'Geomet',
@@ -81,8 +80,9 @@ export class AppPrintComponent {
           }
         })
         .subscribe(l => this.map.addLayer(l));
-*/
 
+        /*
+        //CORS error if activate
         this.layerService
           .createAsyncLayer({
             title: 'Geomet',
@@ -97,5 +97,6 @@ export class AppPrintComponent {
             }
           })
           .subscribe(l => this.map.addLayer(l));
+    */
   }
 }
