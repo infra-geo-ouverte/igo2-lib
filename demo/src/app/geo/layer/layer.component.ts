@@ -62,6 +62,39 @@ export class AppLayerComponent {
       })
       .subscribe(l => this.map.addLayer(l));
 
+
+      this.layerService
+      .createAsyncLayer({
+        title: 'Réseau routier',
+        visible: false,
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          params: {
+            layers: 'bgr_v_sous_route_res_sup_act',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+      this.layerService
+      .createAsyncLayer({
+        title: 'Avertissements routier',
+        visible: false,
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          params: {
+            layers: 'evenements',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+
+
     interface WMSoptions
       extends WMSDataSourceOptions,
         MetadataDataSourceOptions {}

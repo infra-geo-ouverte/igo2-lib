@@ -1,5 +1,5 @@
 <igo-list [navigation]="false" [selection]="false">    
-  <ng-container *ngIf="layers">
+  <ng-container *ngIf="layers.length>=5 || keyword || onlyInRange || onlyVisible ">
     <mat-form-field>
           <input matInput 
           [placeholder]="'igo.geo.layer.subsetLayersListKeywordPlaceholder' | translate"
