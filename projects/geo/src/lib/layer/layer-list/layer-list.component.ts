@@ -21,6 +21,7 @@ export class LayerListComponent {
   public hasLayerNotVisible = false;
   public hasLayerOutOfRange = false;
   public onlyInRange = false;
+  public disableReorderLayers = false;
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
 
@@ -37,7 +38,7 @@ export class LayerListComponent {
       this.hasLayerOutOfRange = false;
     }
 
-    // https://stackoverflow.com/questions/17099029/how-to-filter-a-javascript-object-array-with-variable-parameters
+    this.defineIfReorderLayers();
     if (this.keyword || this.onlyInRange || this.onlyVisible) {
       const layerIDToKeep = [];
       this._layers.forEach(layer => {
@@ -147,4 +148,11 @@ export class LayerListComponent {
     this.onlyInRange = !this.onlyInRange;
   }
 
+  private defineIfReorderLayers() {
+    if (this.onlyInRange || this.onlyVisible || this.sortedAlpha || this.keyword) {
+      this.disableReorderLayers = true;
+    } else {
+      this.disableReorderLayers = false;
+    }
+  }
 }
