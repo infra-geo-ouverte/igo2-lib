@@ -2,6 +2,8 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
+  MatInputModule,
+  MatFormFieldModule,
   MatIconModule,
   MatButtonModule,
   MatTooltipModule,
@@ -25,6 +27,8 @@ import { LayerListBindingDirective } from './layer-list/layer-list-binding.direc
 
 @NgModule({
   imports: [
+    MatInputModule,
+    MatFormFieldModule,
     CommonModule,
     FormsModule,
     MatIconModule,

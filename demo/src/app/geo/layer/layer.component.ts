@@ -49,6 +49,8 @@ export class AppLayerComponent {
     this.layerService
       .createAsyncLayer({
         title: 'School board',
+        visible: false,
+        maxResolution: 12,
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
