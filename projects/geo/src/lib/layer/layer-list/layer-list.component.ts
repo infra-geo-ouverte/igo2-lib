@@ -6,6 +6,7 @@ import {
   TemplateRef,
   ContentChild
 } from '@angular/core';
+import { FloatLabelType } from '@angular/material';
 
 import { Layer } from '../shared';
 
@@ -22,6 +23,7 @@ export class LayerListComponent {
   public hasLayerOutOfRange = false;
   public onlyInRange = false;
   public disableReorderLayers = false;
+  public thresholdToFilterAndSort = 5;
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
 
@@ -46,6 +48,25 @@ export class LayerListComponent {
     this.cdRef.detectChanges();
   }
   private _layers: Layer[] = [];
+
+  @Input()
+  get placeholder() {
+    return this._placeholder;
+  }
+  set placeholder(value: string) {
+    this._placeholder = value;
+  }
+  private _placeholder = '';
+
+  @Input()
+  get floatLabel() {
+    return this._floatLabel;
+  }
+  set floatLabel(value: FloatLabelType) {
+    this._floatLabel = value;
+  }
+  private _floatLabel: FloatLabelType = 'auto';
+
 
   @Input()
   get color() {

@@ -85,7 +85,7 @@
         "subsetLayersListOnlyInRange": "Conserver que les couches qui sont dans la plage de résolution active",
         "sortAlphabetically": "Trier la liste des couches alphabétiquement.",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique.",
-        "resetLayersList": "Réinitialiser la liste des couches à l'état initial."
+        "resetLayersList": "Supprimer le filtre appliqué à la liste"
       },
       "download": {
         "action": "Télécharger les données associées",

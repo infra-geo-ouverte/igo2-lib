@@ -85,7 +85,7 @@
         "subsetLayersListOnlyInRange": "Subset the layers's list by resolution range",
         "sortAlphabetically": "Sort the layers's list alphabetically",
         "sortMapOrder": "Sort the layers's list based on layer's order on the map",
-        "resetLayersList": "Reset the layers's list to the initial state"
+        "resetLayersList": "Remove the current applied filter to layers's list"
       },
       "download": {
         "action": "Download data",

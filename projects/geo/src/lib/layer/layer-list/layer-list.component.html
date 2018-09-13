@@ -1,17 +1,22 @@
 <igo-list [navigation]="false" [selection]="false">    
   <mat-list-item>
-    <ng-container *ngIf="layers.length>=5 || keyword || onlyInRange || onlyVisible ">
-    
-    <mat-form-field>
-          <input matInput 
-          [placeholder]="'igo.geo.layer.subsetLayersListKeywordPlaceholder' | translate"
-          [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate" matTooltipShowDelay="500"
+    <ng-container *ngIf="layers.length>=thresholdToFilterAndSort || keyword || onlyInRange || onlyVisible ">
+    <mat-form-field [floatLabel]="floatLabel">
+          <input 
+          matInput 
+          [placeholder]="placeholder"
+          [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
+           matTooltipShowDelay="500"
           type="text" [(ngModel)]="keyword">
-          <button mat-button *ngIf="keyword" matSuffix mat-icon-button 
+          <button 
+          mat-button 
+          *ngIf="keyword" 
+          matSuffix
+          mat-icon-button 
           aria-label="Clear" 
           color="warn"
           (click)="keyword = undefined">
-            <mat-icon>close</mat-icon>
+          <mat-icon>close</mat-icon>
           </button>
     </mat-form-field>
     <button 
