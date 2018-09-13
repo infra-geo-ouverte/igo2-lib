@@ -76,13 +76,14 @@ export class AppPrintComponent {
             params: {
               layers: 'RADAR_1KM_RDBR',
               version: '1.3.0',
-            }
+            },
+            crossOrigin: 'anonymous'
           }
         })
         .subscribe(l => this.map.addLayer(l));
 
         /*
-        //CORS error if activate
+        //CORS error if activate (for test)
         this.layerService
           .createAsyncLayer({
             title: 'Geomet',
@@ -92,8 +93,7 @@ export class AppPrintComponent {
               params: {
                 layers: 'swtq',
                 version: '1.3.0',
-              },
-              crossOrigin: '*'
+              }
             }
           })
           .subscribe(l => this.map.addLayer(l));
