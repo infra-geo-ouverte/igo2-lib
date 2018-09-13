@@ -13,19 +13,19 @@
           </button>
     </mat-form-field>
     <button 
-      *ngIf="!sortedAlpha && !keyword"
+      *ngIf="!sortedAlpha"
       mat-icon-button  
       [matTooltip]="'igo.geo.layer.sortAlphabetically' | translate"
       matTooltipShowDelay="500"
-      (click)="sortLayers('title')">
+      (click)="sortedAlpha = true">
       <mat-icon color="primary">sort_by_alpha</mat-icon>
     </button>
     <button 
-      *ngIf="sortedAlpha && !keyword"
+      *ngIf="sortedAlpha"
       mat-icon-button
       [matTooltip]="'igo.geo.layer.sortMapOrder' | translate"
       matTooltipShowDelay="500"
-      (click)="sortLayers('id')">
+      (click)="sortedAlpha = false">
       <mat-icon color="warn">warning</mat-icon>
     </button>
     <button 
@@ -70,7 +70,7 @@
 
   </ng-container>
   
-  <ng-template ngFor let-layer [ngForOf]="layers">
+  <ng-template ngFor let-layer [ngForOf]="getSortedOrFilteredLayers()">
     <igo-layer-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
         igoListItem
         [color]="color"

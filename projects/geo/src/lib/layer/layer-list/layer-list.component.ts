@@ -38,47 +38,8 @@ export class LayerListComponent {
       this.hasLayerOutOfRange = false;
     }
 
-    this.defineIfReorderLayers();
-    if (this.keyword || this.onlyInRange || this.onlyVisible) {
-      const layerIDToKeep = [];
-      this._layers.forEach(layer => {
-        layerIDToKeep.push(layer.id);
-      });
-
-      this._layers.forEach(layer => {
-        if (this.keyword) {
-          const localKeyword = this.keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const localLayerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          if (
-            !new RegExp(localKeyword, 'gi').test(localLayerTitle) &&
-            !(this.keyword.toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) ) {
-            const index = layerIDToKeep.indexOf(layer.id);
-            if (index > -1) {
-              layerIDToKeep.splice(index, 1);
-            }
-          }
-        }
-        if (this.onlyVisible && layer.visible === false) {
-          const index = layerIDToKeep.indexOf(layer.id);
-            if (index > -1) {
-              layerIDToKeep.splice(index, 1);
-            }
-        }
-        if (this.onlyInRange && layer.isInResolutionsRange === false) {
-          const index = layerIDToKeep.indexOf(layer.id);
-            if (index > -1) {
-              layerIDToKeep.splice(index, 1);
-            }
-        }
-      });
-      return this._layers
-      .filter(layer =>
-        layerIDToKeep.indexOf(layer.id) !== -1
-      );
-
-    } else {
-      return this._layers;
-    }
+    this.defineReorderLayersStatus();
+    return this._layers;
   }
   set layers(value: Layer[]) {
     this._layers = value;
@@ -115,32 +76,87 @@ export class LayerListComponent {
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
-  sortLayers(type: 'id'|'title') {
+  getSortedOrFilteredLayers(): Layer[] {
+    const localLayers = this.filterLayersList(this.layers);
+    let alphaFilteredLayers;
+    if (this.sortedAlpha) {
+      alphaFilteredLayers = this.sortLayers(localLayers, 'title');
+    } else {
+      alphaFilteredLayers = this.sortLayers(localLayers, 'id');
+    }
+    return alphaFilteredLayers;
+  }
+
+  filterLayersList(localLayers: Layer[]): Layer[] {
+    if (this.keyword || this.onlyInRange || this.onlyVisible) {
+      const layerIDToKeep = [];
+      localLayers.forEach(layer => {
+        layerIDToKeep.push(layer.id);
+      });
+
+      localLayers.forEach(layer => {
+        if (this.keyword) {
+          const localKeyword = this.keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const localLayerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          if (
+            !new RegExp(localKeyword, 'gi').test(localLayerTitle) &&
+            !(this.keyword.toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) ) {
+            const index = layerIDToKeep.indexOf(layer.id);
+            if (index > -1) {
+              layerIDToKeep.splice(index, 1);
+            }
+          }
+        }
+        if (this.onlyVisible && layer.visible === false) {
+          const index = layerIDToKeep.indexOf(layer.id);
+            if (index > -1) {
+              layerIDToKeep.splice(index, 1);
+            }
+        }
+        if (this.onlyInRange && layer.isInResolutionsRange === false) {
+          const index = layerIDToKeep.indexOf(layer.id);
+            if (index > -1) {
+              layerIDToKeep.splice(index, 1);
+            }
+        }
+      });
+      return localLayers
+      .filter(layer =>
+        layerIDToKeep.indexOf(layer.id) !== -1
+      );
+
+    } else {
+      return this._layers;
+    }
+
+  }
+
+
+  private sortLayers(layers: Layer[], type: 'id'|'title') {
     if (type === 'id') {
-    this.sortLayersByZindex();
-    this.sortedAlpha = false;
+    return this.sortLayersByZindex(layers);
     }
     if (type === 'title') {
-    this.sortLayersByTitle();
-    this.sortedAlpha = true;
+    return this.sortLayersByTitle(layers);
     }
+
   }
 
-  private sortLayersByZindex() {
-    this.layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
+  private sortLayersByZindex(layers: Layer[]) {
+    return layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
   }
 
-  private sortLayersByTitle() {
-    this.layers.sort(function(a, b) {
-    if (a.title < b.title) {
-    return -1;
-    }
-    if (a.title > b.title) {
-    return 1;
-    }
-    return 0;
+  private sortLayersByTitle(layers: Layer[]) {
+    return layers.sort(function (a, b) {
+      if (a.title < b.title) {
+        return -1;
+      }
+      if (a.title > b.title) {
+        return 1;
+      }
+      return 0;
     });
-    }
+  }
   toggleOnlyVisible() {
     this.onlyVisible = !this.onlyVisible;
   }
@@ -148,7 +164,7 @@ export class LayerListComponent {
     this.onlyInRange = !this.onlyInRange;
   }
 
-  private defineIfReorderLayers() {
+  private defineReorderLayersStatus() {
     if (this.onlyInRange || this.onlyVisible || this.sortedAlpha || this.keyword) {
       this.disableReorderLayers = true;
     } else {

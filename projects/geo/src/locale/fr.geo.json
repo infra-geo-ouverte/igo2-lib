@@ -79,11 +79,12 @@
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
-        "subsetLayersListKeywordPlaceholder": "Ex: OSM",        
+        "deleteKeyword": "Supprimer le mot-clé",
+        "subsetLayersListKeywordPlaceholder": "Filtre",        
         "subsetLayersListOnlyVisible": "Conserver que les couches qui sont visible",
         "subsetLayersListOnlyInRange": "Conserver que les couches qui sont dans la plage de résolution active",
         "sortAlphabetically": "Trier la liste des couches alphabétiquement.",
-        "sortMapOrder": "Trier la liste des couches selon l'ordre ces couches sur la carte.",
+        "sortMapOrder": "Replacer les couches selon l'ordre cartographique.",
         "resetLayersList": "Réinitialiser la liste des couches à l'état initial."
       },
       "download": {
