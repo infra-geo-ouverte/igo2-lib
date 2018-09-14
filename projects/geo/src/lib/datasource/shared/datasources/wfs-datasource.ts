@@ -61,7 +61,7 @@ export class WFSDataSource extends DataSource {
           ? 'srsname=' + wfsOptions.params.srsname
           : 'srsname=' + proj.getCode();
 
-        if ((wfsOptions as any).ogcFilters.enabled) {
+        if ((wfsOptions as any).ogcFilters && (wfsOptions as any).ogcFilters.enabled) {
           wfsOptions.params.xmlFilter = this.ogcFilterWriter.buildFilter(
             (wfsOptions as any).ogcFilters.filters,
             extent,
@@ -109,6 +109,10 @@ export class WFSDataSource extends DataSource {
     wfsDataSourceOptions: WFSDataSourceOptions
   ): WFSDataSourceOptions {
     const mandatoryParamMissing: any[] = [];
+
+    if (!(wfsDataSourceOptions as any).ogcFilters) {
+      (wfsDataSourceOptions as any).ogcFilters = {'enabled': true, editable: true}; // default values for wfs.
+    }
 
     if (!wfsDataSourceOptions.url) {
       mandatoryParamMissing.push('url');
