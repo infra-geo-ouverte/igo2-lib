@@ -62,14 +62,14 @@ export class AppOgcFilterComponent {
         outputFormat: 'geojson',
         outputFormatDownload: 'SHP' // based on service capabilities
       },
-      isOgcFilterable: true,
       sourceFields: [
         {name: 'code_municipalite', 'alias': '# de la municipalitée'},
         {name: 'date_observation'},
         {name: 'urgence', values: ['immédiate', 'inconnue']}
         ],
       ogcFilters: {
-        filtersAreEditable: true,
+        enabled: true,
+        editable: true,
         filters: {
           logical: 'Or',
           filters: [{

@@ -39,9 +39,9 @@ export type IgoOgcFilterObject =
   | AnyBaseOgcFilterOptions;
 
 export interface OgcFiltersOptions {
-  enabled: boolean;
-  editable: boolean;
-  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
+  enabled?: boolean;
+  editable?: boolean;
+  filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
   interfaceOgcFilters?: any[];
 }
 
