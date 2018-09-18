@@ -8,11 +8,12 @@ import {
   IgoMap,
   MapBrowserComponent,
   DataSourceService,
-  LayerService
+  LayerService,
+  LayerOptions
 } from '@igo2/geo';
 
 import { ContextService } from './context.service';
-import { DetailedContext, ContextLayer } from './context.interface';
+import { DetailedContext } from './context.interface';
 
 @Directive({
   selector: '[igoLayerContext]'
@@ -69,7 +70,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     });
   }
 
-  private addLayerToMap(contextLayer: ContextLayer) {
+  private addLayerToMap(contextLayer: LayerOptions) {
     // if (contextLayer.maxScaleDenom) {
     //   contextLayer.maxResolution = this.getResolutionFromScale(
     //     contextLayer.maxScaleDenom

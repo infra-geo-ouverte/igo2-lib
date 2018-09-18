@@ -356,13 +356,13 @@ export class ContextService {
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
         title: layer.options.title,
-        type: layer.options.type,
-        source: {
+        order: order--,
+        visible: layer.visible,
+        sourceOptions: {
+          type: layer.options.type,
           params: layer.dataSource.options.params,
           url: layer.dataSource.options.url
-        },
-        order: order--,
-        visible: layer.visible
+        }
       };
       context.layers.push(opts);
     }
