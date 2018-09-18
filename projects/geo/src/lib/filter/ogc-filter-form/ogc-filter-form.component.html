@@ -41,7 +41,7 @@
     <span *ngIf="currentFilter.operator === 'PropertyIsEqualTo' || currentFilter.operator === 'PropertyIsNotEqualTo'">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionequalto (keyup)="changeProperty(currentFilter,'expression',expressionequalto.value)"
-          (blur)="changeProperty(currentFilter,'expression',expressionequalto.value)" [(ngModel)]="currentFilter.expression">
+          (ngModelChange)="changeProperty(currentFilter,'expression',expressionequalto.value)" [ngModel]="currentFilter.expression">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
             <span>{{ value }}</span>
@@ -60,7 +60,7 @@
     <span *ngIf="currentFilter.operator === 'PropertyIsLike'">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #pattern (keyup)="changeProperty(currentFilter,'pattern',pattern.value)"
-          (blur)="changeProperty(currentFilter,'pattern',pattern.value)" [(ngModel)]="currentFilter.pattern">
+          (ngModelChange)="changeProperty(currentFilter,'pattern',pattern.value)" [ngModel]="currentFilter.pattern">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
             <span>{{ value }}</span>
@@ -82,7 +82,7 @@
     <span *ngIf="currentFilter.operator === 'PropertyIsGreaterThan' || currentFilter.operator === 'PropertyIsGreaterThanOrEqualTo' || currentFilter.operator === 'PropertyIsLessThan' || currentFilter.operator === 'PropertyIsLessThanOrEqualTo'">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionthan type="number" (keyup)="changeNumericProperty(currentFilter,'expression',expressionthan.value)"
-          (blur)="changeNumericProperty(currentFilter,'expression',expressionthan.value)" [(ngModel)]="currentFilter.expression">
+          (ngModelChange)="changeNumericProperty(currentFilter,'expression',expressionthan.value)" [ngModel]="currentFilter.expression">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
             <span>{{ value }}</span>
@@ -100,7 +100,7 @@
     <span *ngIf="currentFilter.operator === 'PropertyIsBetween'">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #lowerBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)"
-          (blur)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)" [(ngModel)]="currentFilter.lowerBoundary">
+          (ngModelChange)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)" [ngModel]="currentFilter.lowerBoundary">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
             <span>{{ value }}</span>
@@ -112,7 +112,7 @@
       </mat-form-field>
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #upperBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)"
-          (blur)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)" [(ngModel)]="currentFilter.upperBoundary">
+          (ngModelChange)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)" [ngModel]="currentFilter.upperBoundary">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
             <span>{{ value }}</span>
@@ -131,7 +131,7 @@
     <span *ngIf="currentFilter.operator === 'During'">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #begin (keyup)="changeProperty(currentFilter,'begin',begin.value)"
-          (blur)="changeProperty(currentFilter,'begin',begin.value)" [(ngModel)]="currentFilter.begin">
+          (ngModelChange)="changeProperty(currentFilter,'begin',begin.value)" [ngModel]="currentFilter.begin">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values " [value]="value">
             <span>{{ value }}</span>
@@ -144,7 +144,7 @@
 
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #end (keyup)="changeProperty(currentFilter,'end',end.value)"
-          (blur)="changeProperty(currentFilter,'end',end.value)" [(ngModel)]="currentFilter.end">
+          (ngModelChange)="changeProperty(currentFilter,'end',end.value)" [ngModel]="currentFilter.end">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
             <span>{{ value }}</span>
