@@ -501,6 +501,12 @@ export class PrintService {
       // Save the canvas as file
       if (!doZipFile) {
         this.saveCanvasImageAsFile(newCanvas, 'map', format);
+      } else if (format.toLowerCase() === 'tiff') {
+        // Add the canvas to zip
+        this.generateCanvaFileToZip(
+          newCanvas,
+          'map' + map.projection.replace(':', '_') + '.' + format
+        );
       } else {
         // Add the canvas to zip
         this.generateCanvaFileToZip(newCanvas, 'map' + '.' + format);
