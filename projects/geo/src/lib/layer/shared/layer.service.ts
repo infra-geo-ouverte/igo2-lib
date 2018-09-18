@@ -52,6 +52,15 @@ export class LayerService {
       return;
     }
 
+    if (
+      layerOptions.sourceOptions &&
+      layerOptions.sourceOptions.optionsFromCapabilities
+    ) {
+      layerOptions = Object.assign(
+        layerOptions,
+        (layerOptions.source.options as any)._layerOptionsFromCapabilities
+      );
+    }
     let layer;
     switch (layerOptions.source.constructor) {
       case OSMDataSource:
