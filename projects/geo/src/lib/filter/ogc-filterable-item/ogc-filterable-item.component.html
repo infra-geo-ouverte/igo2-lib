@@ -25,13 +25,13 @@
     </mat-icon>
   </button>
 
-  <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.refreshFilters' | translate"
+  <!-- <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.refreshFilters' | translate"
   [disabled]="!layer.visible || !layer.isInResolutionsRange"
   [color]="color" (click)="refreshFilters()">
     <mat-icon>
       refresh
     </mat-icon>
-  </button>
+  </button> -->
 
   <span *ngIf="downloadable && ogcFiltersHeaderShown">
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.download.action' | translate"
