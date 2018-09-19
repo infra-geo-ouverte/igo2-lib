@@ -3,3 +3,4 @@ export * from './search-source.interface';
 export * from './nominatim-search-source';
 export * from './icherche-search-source';
 export * from './datasource-search-source';
+export * from './reseau-transport-quebec-search-source';
