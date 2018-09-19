@@ -124,6 +124,8 @@
         "write": "Read and Write"
       },
       "printForm": {
+        "corsErrorMessageBody": "Unable to print due to non-owned access rights",
+        "corsErrorMessageHeader": "Print",
         "comment": "Comment",
         "doZipFile": "Zip files",
         "outputFormat": "Output format",
