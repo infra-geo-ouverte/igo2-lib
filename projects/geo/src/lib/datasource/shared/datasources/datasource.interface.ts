@@ -14,6 +14,7 @@ export interface DataSourceOptions {
     | 'arcgisrest'
     | 'tilearcgisrest';
   legend?: DataSourceLegendOptions;
+  optionsFromCapabilities?: boolean;
   // title: string;
   // alias?: string;
 

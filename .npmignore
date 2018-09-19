@@ -1,0 +1,8 @@
+# Ignore all
+*
+
+# Except
+!dist/
+!dist/**/*
+
+

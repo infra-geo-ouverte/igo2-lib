@@ -24,7 +24,6 @@ export interface RoutingGeometry {
   coordinates: [any];
 }
 export interface OsrmLeg {
-  annotation?: { [key: string]: any };
   distance?: number;
   duration?: number;
   steps?: OsrmStep[];

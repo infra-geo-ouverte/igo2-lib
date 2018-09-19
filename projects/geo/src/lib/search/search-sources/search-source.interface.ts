@@ -1,7 +1,8 @@
 export interface SearchSourceOptions {
-  url?: string;
+  searchUrl?: string;
   locateUrl?: string;
   limit?: number;
+  locateLimit?: number;
   enabled?: boolean;
   type?: string;
   distance?: number;

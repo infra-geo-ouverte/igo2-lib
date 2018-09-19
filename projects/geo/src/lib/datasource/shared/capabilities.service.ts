@@ -136,22 +136,18 @@ export class CapabilitiesService {
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
-      // Save title under "alias" because we want to overwrite
-      // the default, mandatory title. If the title defined
-      // in the context is to be used along with the
-      // "optionsFromCapabilities" option, then it should be
-      // defined under "alias" in the context
-      alias: layer.Title,
-      view: {
+      _layerOptionsFromCapabilities: {
+        title: layer.Title,
         maxResolution:
           this.getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
         minResolution:
-          this.getResolutionFromScale(layer.MinScaleDenominator) || 0
-      },
-      metadata: {
-        url: metadata ? metadata.OnlineResource : undefined
-      },
-      timeFilter: this.getTimeFilter(layer)
+          this.getResolutionFromScale(layer.MinScaleDenominator) || 0,
+
+        metadata: {
+          url: metadata ? metadata.OnlineResource : undefined
+        },
+        timeFilter: this.getTimeFilter(layer)
+      }
     });
 
     return ObjectUtils.mergeDeep(options, baseOptions);

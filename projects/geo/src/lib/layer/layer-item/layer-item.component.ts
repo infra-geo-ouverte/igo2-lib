@@ -61,6 +61,15 @@ export class LayerItemComponent implements OnDestroy {
   }
   private _toggleLegendOnVisibilityChange = false;
 
+  @Input()
+  get disableReorderLayers() {
+    return this._disableReorderLayers;
+  }
+  set disableReorderLayers(value: boolean) {
+    this._disableReorderLayers = value;
+  }
+  private _disableReorderLayers = false;
+
   get opacity() {
     return this.layer.opacity * 100;
   }

@@ -26,12 +26,18 @@ export const environment: Environment = {
       nominatim: {
         enabled: true
       },
+      reseautq: {
+        searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        enabled: true
+      },
       icherche: {
-        url: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
-        enabled: false
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
+        locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
+        enabled: true
       },
       datasource: {
-        url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
       }
     }
   }
