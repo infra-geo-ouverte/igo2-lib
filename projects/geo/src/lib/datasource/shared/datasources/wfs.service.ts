@@ -5,13 +5,82 @@ import { Observable } from 'rxjs';
 import olFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 
-import { WFSDataSourceOptions } from './datasources/wfs-datasource.interface';
+import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WFSService {
-  constructor(private http: HttpClient) {}
+export class WFSService extends DataService {
+  constructor(private http: HttpClient) {
+    super();
+  }
+
+  getData() {
+    console.log('This is defining a data service.');
+    return 'This is defining a data service.';
+  }
+
+  public getSourceFieldsFromWFS(wfsDatasource: WFSDataSourceOptions) {
+    if (
+      wfsDatasource.sourceFields === undefined ||
+      Object.keys(wfsDatasource.sourceFields).length === 0
+    ) {
+      wfsDatasource.sourceFields = [];
+      this.wfsGetCapabilities(wfsDatasource)
+        .subscribe(wfsCapabilities => {
+          wfsDatasource.wfsCapabilities = {
+            xmlBody: wfsCapabilities.body,
+            GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
+              ? true
+              : false
+          };
+
+          this.defineFieldAndValuefromWFS(
+              wfsDatasource
+            )
+            .subscribe(sourceFields => {
+              wfsDatasource.sourceFields = sourceFields;
+            });
+        });
+    } else {
+
+      wfsDatasource.sourceFields.forEach(sourcefield => {
+        if (sourcefield.alias === undefined) {
+          sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
+        }
+      });
+
+      wfsDatasource.sourceFields
+        .filter(
+          field => field.values === undefined || field.values.length === 0
+        )
+        .forEach(f => {
+          this.getValueFromWfsGetPropertyValues(
+              wfsDatasource,
+              f.name,
+              200,
+              0,
+              0
+            )
+            .subscribe(rep => (f.values = rep));
+        });
+    }
+  }
+
+  public checkWfsOptions(
+    wfsDataSourceOptions: WFSDataSourceOptions
+  ): WFSDataSourceOptions {
+    // Look at https://github.com/openlayers/openlayers/pull/6400
+    const patternGml = new RegExp(/.*?gml.*?/gi);
+
+    if (patternGml.test(wfsDataSourceOptions.params.outputFormat)) {
+      wfsDataSourceOptions.params.version = '1.1.0';
+    }
+    return Object.assign({}, wfsDataSourceOptions, {
+      wfsCapabilities: { xml: '', GetPropertyValue: false }
+    });
+  }
 
   public buildBaseWfsUrl(
     wfsDataSourceOptions: WFSDataSourceOptions,

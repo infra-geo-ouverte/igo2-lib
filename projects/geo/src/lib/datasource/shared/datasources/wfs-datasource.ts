@@ -6,17 +6,28 @@ import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import {  OgcFilterableDataSource } from '../../../filter/shared/ogc-filter.interface';
+
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
   public ogcFilterWriter: OgcFilterWriter;
 
-  constructor(public options: WFSDataSourceOptions) {
+  constructor(
+    public options: WFSDataSourceOptions,
+    protected wfsService: WFSService) {
     super(options);
-    this.options = this.checkWfsOptions(options);
+    this.options = this.wfsService.checkWfsOptions(options);
     this.ogcFilterWriter = new OgcFilterWriter();
+    this.wfsService.getSourceFieldsFromWFS(this.options);
+
+    if (!(options as any).ogcFilters) {
+      (options as any).ogcFilters = { enabled: true, editable: true }; // default values for wfs.
+    }
+
   }
 
   protected generateId() {
@@ -103,43 +114,5 @@ export class WFSDataSource extends DataSource {
     }
 
     return new olFormatCls();
-  }
-
-  private checkWfsOptions(
-    wfsDataSourceOptions: WFSDataSourceOptions
-  ): WFSDataSourceOptions {
-    const mandatoryParamMissing: any[] = [];
-
-    if (!(wfsDataSourceOptions as any).ogcFilters) {
-      (wfsDataSourceOptions as any).ogcFilters = {'enabled': true, editable: true}; // default values for wfs.
-    }
-
-    if (!wfsDataSourceOptions.url) {
-      mandatoryParamMissing.push('url');
-    }
-    ['featureTypes', 'fieldNameGeometry', 'outputFormat'].forEach(element => {
-      if (wfsDataSourceOptions.params[element] === undefined) {
-        mandatoryParamMissing.push(element);
-      }
-    });
-
-    if (mandatoryParamMissing.length > 0) {
-      throw new Error(
-        `A mandatory parameter is missing
-          for your WFS datasource source.
-          (Mandatory parameter(s) missing :` + mandatoryParamMissing
-      );
-    }
-
-    // Look at https://github.com/openlayers/openlayers/pull/6400
-    const patternGml = new RegExp('.*?gml.*?');
-
-    if (patternGml.test(wfsDataSourceOptions.params.outputFormat)) {
-      wfsDataSourceOptions.params.version = '1.1.0';
-    }
-
-    return Object.assign({}, wfsDataSourceOptions, {
-      wfsCapabilities: { xml: '', GetPropertyValue: false }
-    });
   }
 }

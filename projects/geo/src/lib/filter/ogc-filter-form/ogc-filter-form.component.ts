@@ -198,7 +198,7 @@ export class OgcFilterFormComponent {
       .forEach(element => {
         let wktPoly;
         if (filter.igoSpatialSelector === 'snrc') {
-          console.log(value, this.snrc);
+          // console.log(value, this.snrc);
           if (value === '' && this.snrc !== '') {
             wktPoly = this.wktService.snrcToWkt(this.snrc).wktPoly;
             element.wkt_geometry = wktPoly;

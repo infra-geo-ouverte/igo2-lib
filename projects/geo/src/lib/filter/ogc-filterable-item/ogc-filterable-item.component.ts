@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { MapService } from '../../map/shared/map.service';
@@ -73,7 +72,6 @@ export class OgcFilterableItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.ogcFilterService.getSourceFields(this.datasource);
     this.ogcFilterService.setOgcWFSFiltersOptions(this.datasource);
 
     if (

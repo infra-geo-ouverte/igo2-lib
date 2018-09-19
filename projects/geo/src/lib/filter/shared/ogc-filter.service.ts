@@ -3,13 +3,13 @@ import { BehaviorSubject } from 'rxjs';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
-import { WFSService } from '../../datasource/shared/wfs.service';
+// import { WFSService } from '../../datasource/shared/wfs.service';
 import { OgcFilterWriter } from './ogc-filter';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 
 @Injectable()
 export class OGCFilterService {
-  constructor(private wfsService: WFSService) {}
+  constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
     const wmsFilterValue =
@@ -19,55 +19,6 @@ export class OGCFilterService {
     wmsDatasource.ol.updateParams({ filter: wmsFilterValue });
   }
 
-  public getSourceFields(wfsDatasource: OgcFilterableDataSource) {
-    if (
-      wfsDatasource.options.sourceFields === undefined ||
-      Object.keys(wfsDatasource.options.sourceFields).length === 0
-    ) {
-      wfsDatasource.options.sourceFields = [];
-      this.wfsService
-        .wfsGetCapabilities(wfsDatasource.options)
-        .subscribe(wfsCapabilities => {
-          wfsDatasource.options['wfsCapabilities'] = {
-            xml: wfsCapabilities.body,
-            GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
-              ? true
-              : false
-          };
-
-          this.wfsService
-            .defineFieldAndValuefromWFS(
-              wfsDatasource.options as WFSDataSourceOptions
-            )
-            .subscribe(sourceFields => {
-              wfsDatasource.options.sourceFields = sourceFields;
-            });
-        });
-    } else {
-
-      wfsDatasource.options.sourceFields.forEach(sourcefield => {
-        if (sourcefield.alias === undefined) {
-          sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
-        }
-      });
-
-      wfsDatasource.options.sourceFields
-        .filter(
-          field => field.values === undefined || field.values.length === 0
-        )
-        .forEach(f => {
-          this.wfsService
-            .getValueFromWfsGetPropertyValues(
-              wfsDatasource.options as WFSDataSourceOptions,
-              f.name,
-              200,
-              0,
-              0
-            )
-            .subscribe(rep => (f.values = rep));
-        });
-    }
-  }
 
   public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
     const options: any = wfsDatasource.options;
@@ -92,7 +43,7 @@ export class OGCFilterService {
   }
 
   public setOgcWMSFiltersOptions(wmsDatasource: WMSDataSource) {
-    const options: any = wmsDatasource.options;
+ /*   const options: any = wmsDatasource.options;
     if (
       options.sourceFields === undefined ||
       Object.keys(options.sourceFields).length === 0
@@ -189,7 +140,7 @@ export class OGCFilterService {
         options.ogcFilters.interfaceOgcFilters = [];
         options['ogcFiltered'] = false;
       }
-    }
+    }*/
   }
 
   private checkWfsOptions(
