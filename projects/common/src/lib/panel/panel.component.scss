@@ -18,6 +18,7 @@
 
 .igo-panel-header >>> [panelleftbutton] {
   float: left;
+  margin-right: -40px;
 }
 
 .igo-panel-header >>> [panelrightbutton] {
@@ -32,6 +33,7 @@
 .igo-panel-title {
   display: block;
   width: calc(100% - 80px);
+  margin-left: 40px;
   height: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import {
   MatSidenavModule,
   MatToolbarModule,
+  MatButtonModule,
   MatIconModule,
   MatListModule
 } from '@angular/material';
@@ -42,6 +43,7 @@ import { AppComponent } from './app.component';
     BrowserAnimationsModule,
     MatSidenavModule,
     MatToolbarModule,
+    MatButtonModule,
     MatIconModule,
     MatListModule,
 
