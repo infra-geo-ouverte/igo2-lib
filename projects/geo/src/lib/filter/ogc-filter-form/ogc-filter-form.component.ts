@@ -189,7 +189,7 @@ export class OgcFilterFormComponent {
   changeGeometry(filter, value?) {
 
     const checkSNRC50k = /\d{2,3}[a-l][0,1][0-9]/gi;
-    const checkSNRC250k = /\d{2,3}[a-l]/gi;
+    const checkSNRC250k = /\d{2,3}[a-p]/gi;
     const checkSNRC1m = /\d{2,3}/gi;
     const mapProjection = this.map.projection;
     this.removeOverlayByID(filter.filterid);

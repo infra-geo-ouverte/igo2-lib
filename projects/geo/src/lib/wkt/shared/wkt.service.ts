@@ -100,8 +100,8 @@ export class WktService {
       ['05', '06', '07', '08'],
       ['04', '03', '02', '01']
     ];
-    const checkSNRC50k = /\d{2,3}[a-l][0,1][0-9]/gi;
-    const checkSNRC250k = /\d{2,3}[a-l]/gi;
+    const checkSNRC50k = /\d{2,3}[a-p][0,1][0-9]/gi;
+    const checkSNRC250k = /\d{2,3}[a-p]/gi;
     const checkSNRC1m = /\d{2,3}/gi;
 
     let snrc1m = false;
@@ -125,8 +125,8 @@ export class WktService {
     } else if (snrc250k) {
       snrc += '01';
     }
-    if (/\d{2,3}[a-l][0,1][0-9]/gi.test(snrc)) {
-      const regex_1m = /(?=[a-l])/gi;
+    if (/\d{2,3}[a-p][0,1][0-9]/gi.test(snrc)) {
+      const regex_1m = /(?=[a-p])/gi;
       const ar1m = snrc.split(regex_1m);
       const part1m = ar1m[0];
       const part250k = ar1m[1][0];
