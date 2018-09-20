@@ -11,6 +11,7 @@
   </mat-card-content>
 
   <igo-map-browser
+    igoMapBrowserBinding
     igoMapContext
     igoLayerContext
     [map]="map">
@@ -21,4 +22,10 @@
   <igo-panel title="Contexts list">
     <igo-context-list igoContextListBinding></igo-context-list>
   </igo-panel>
+
+  <igo-panel title="Layers">
+    <igo-layer-list igoLayerListBinding>
+    </igo-layer-list>
+  </igo-panel>
+
 </mat-card>

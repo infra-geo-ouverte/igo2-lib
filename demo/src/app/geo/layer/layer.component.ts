@@ -48,12 +48,10 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
-        title: 'School board',
-        visible: false,
-        maxResolution: 12,
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
+          optionsFromCapabilities: true,
           params: {
             layers: 'MELS_CS_ANGLO_S',
             version: '1.3.0'
@@ -62,8 +60,7 @@ export class AppLayerComponent {
       })
       .subscribe(l => this.map.addLayer(l));
 
-
-      this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'Réseau routier',
         visible: false,
@@ -78,7 +75,7 @@ export class AppLayerComponent {
       })
       .subscribe(l => this.map.addLayer(l));
 
-      this.layerService
+    this.layerService
       .createAsyncLayer({
         title: 'Avertissements routier',
         visible: false,
@@ -92,8 +89,6 @@ export class AppLayerComponent {
         }
       })
       .subscribe(l => this.map.addLayer(l));
-
-
 
     interface WMSoptions
       extends WMSDataSourceOptions,
