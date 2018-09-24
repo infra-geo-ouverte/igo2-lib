@@ -1,3 +1,4 @@
+<span *ngIf="filtersAreEditable">
 <mat-list-item>
 
   <mat-icon *ngIf="ogcFiltersHeaderShown" class="igo-chevron" mat-list-avatar igoCollapse [target]="ogcFilters" [collapsed]="false">
@@ -17,7 +18,7 @@
 
   <button mat-icon-button *ngIf="!showFeatureOnMap" tooltip-position="below" matTooltipShowDelay="500" 
   [matTooltip]="'igo.geo.filter.showFeatureExtent' | translate"
-  [disabled]="!layer.visible || !layer.isInResolutionsRange"
+  [disabled]="!layer.visible || !layer.isInResolutionsRange || !hasActiveSpatialFilter"
   [color]="color"
   (click)="toggleShowFeatureOnMap()">
     <mat-icon>
@@ -51,3 +52,4 @@
   <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc" [showFeatureOnMap]="showFeatureOnMap">
   </igo-ogc-filterable-form>
 </div>
+</span>

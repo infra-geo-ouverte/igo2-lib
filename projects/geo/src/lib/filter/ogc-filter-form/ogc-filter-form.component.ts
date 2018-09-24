@@ -1,6 +1,5 @@
-import { Component, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
 
 import {
   OgcInterfaceFilterOptions,
@@ -16,7 +15,7 @@ import { IgoMap } from '../../map';
   templateUrl: './ogc-filter-form.component.html',
   styleUrls: ['./ogc-filter-form.component.scss']
 })
-export class OgcFilterFormComponent {
+export class OgcFilterFormComponent implements AfterContentChecked {
   private ogcFilterWriter: OgcFilterWriter;
   private _dataSource: OgcFilterableDataSource;
   private _currentFilter: any = {};
@@ -77,8 +76,7 @@ export class OgcFilterFormComponent {
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private wktService: WktService,
-    private languageService: LanguageService
+    private wktService: WktService
   ) {
     this.ogcFilterWriter = new OgcFilterWriter();
     // TODO: Filter permitted operator based on wfscapabilities
@@ -95,6 +93,18 @@ export class OgcFilterFormComponent {
       }
     ];
     // TODO: selectFeature & drawFeature
+  }
+
+  ngAfterContentChecked() {
+    if (this.map) {
+      this.activeFilters
+        .filter(af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1).forEach(activeFilterSpatial => {
+          if (activeFilterSpatial.wkt_geometry) {
+            this.addWktAsOverlay(activeFilterSpatial.wkt_geometry, activeFilterSpatial.filterid, this.map.projection);
+
+          }
+        });
+    }
   }
 
   updateField(init = true) {
@@ -198,7 +208,6 @@ export class OgcFilterFormComponent {
       .forEach(element => {
         let wktPoly;
         if (filter.igoSpatialSelector === 'snrc') {
-          // console.log(value, this.snrc);
           if (value === '' && this.snrc !== '') {
             wktPoly = this.wktService.snrcToWkt(this.snrc).wktPoly;
             element.wkt_geometry = wktPoly;
