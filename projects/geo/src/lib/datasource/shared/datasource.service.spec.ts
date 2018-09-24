@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { CapabilitiesService } from './capabilities.service';
 import { DataSourceService } from './datasource.service';
-import { WFSService } from './wfs.service';
+import { WFSService } from './datasources/wfs.service';
 
 describe('DataSourceService', () => {
   beforeEach(() => {

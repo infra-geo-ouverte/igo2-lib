@@ -112,11 +112,11 @@ export class DataSourceService {
       return this.capabilitiesService
         .getWMSOptions(context)
         .pipe(
-          map((options: WMSDataSourceOptions) => new WMSDataSource(options))
+          map((options: WMSDataSourceOptions) => new WMSDataSource(options, this.wfsDataSourceService))
         );
     }
 
-    return new Observable(d => d.next(new WMSDataSource(context)));
+    return new Observable(d => d.next(new WMSDataSource(context, this.wfsDataSourceService)));
   }
 
   private createWMTSDataSource(
