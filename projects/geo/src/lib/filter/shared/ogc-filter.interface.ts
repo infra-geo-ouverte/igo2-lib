@@ -43,6 +43,7 @@ export interface OgcFiltersOptions {
   editable?: boolean;
   filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
   interfaceOgcFilters?: any[];
+  filtered?: boolean;
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
