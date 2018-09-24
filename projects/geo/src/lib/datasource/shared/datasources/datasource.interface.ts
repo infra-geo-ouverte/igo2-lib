@@ -1,6 +1,7 @@
 import olSource from 'ol/source/Source';
 
 import { DataSource } from './datasource';
+import { DownloadOptions } from '../../../download/shared/download.interface';
 
 export interface DataSourceOptions {
   type?:
@@ -21,6 +22,7 @@ export interface DataSourceOptions {
   // displayField?: string;
   ol?: olSource;
   sourceFields?: SourceFieldsOptionsParams[];
+  download?: DownloadOptions;
 }
 
 export interface DataSourceLegendOptions {
