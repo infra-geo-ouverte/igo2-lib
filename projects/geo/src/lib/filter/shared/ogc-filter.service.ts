@@ -24,156 +24,48 @@ export class OGCFilterService {
     const options: any = wfsDatasource.options;
     const ogcFilterWriter = new OgcFilterWriter();
 
-    options.ogcFilters.enabled = options.ogcFilters.enabled === undefined ? true : options.ogcFilters.enabled;
-    options.ogcFilters.editable = options.ogcFilters.editable === undefined ? true : options.ogcFilters.editable;
-
     if (options.ogcFilters.enabled && options.ogcFilters.filters) {
       options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
         options.ogcFilters.filters,
-        options.params.fieldNameGeometry,
+        options.paramsWFS.fieldNameGeometry,
         true
       );
       options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
         options.ogcFilters.filters,
-        options.params.fieldNameGeometry
+        options.paramsWFS.fieldNameGeometry
       );
     } else {
       options.ogcFilters.interfaceOgcFilters = [];
     }
   }
 
-  public setOgcWMSFiltersOptions(wmsDatasource: WMSDataSource) {
- /*   const options: any = wmsDatasource.options;
-    if (
-      options.sourceFields === undefined ||
-      Object.keys(options.sourceFields).length === 0
-    ) {
-      options.sourceFields = [{ name: '', alias: '' }];
-    }
-    // WMS With linked wfs
-    if (options.wfsSource && Object.keys(options.wfsSource).length > 0) {
-      options.wfsSource = this.checkWfsOptions(options.wfsSource);
-      delete options.wfsSource.ogcFilters;
-      options['fieldNameGeometry'] = options.wfsSource['fieldNameGeometry'];
-      if (
-        options.sourceFields.length === 1 &&
-        options.sourceFields[0].name === ''
-      ) {
-        options.sourceFields = [];
-        this.wfsService
-          .wfsGetCapabilities(options)
-          .subscribe(wfsCapabilities => {
-            options.wfsSource['wfsCapabilities'] = {
-              xml: wfsCapabilities.body,
-              GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
-                ? true
-                : false
-            };
-            this.wfsService
-              .defineFieldAndValuefromWFS(options.wfsSource)
-              .subscribe(sourceFields => {
-                options.wfsSource.sourceFields = sourceFields;
-              });
-          });
-      } else {
-        options.sourceFields
-          .filter(
-            field => field.values === undefined || field.values.length === 0
-          )
-          .forEach(f => {
-            this.wfsService
-              .getValueFromWfsGetPropertyValues(
-                options.wfsSource,
-                f.name,
-                200,
-                0,
-                0
-              )
-              .subscribe(rep => (f.values = rep));
-          });
-      }
+  public setOgcWMSFiltersOptions(wmsDatasource: OgcFilterableDataSource) {
+    const options: any = wmsDatasource.options;
+    const ogcFilterWriter = new OgcFilterWriter();
 
-      const outputFormat =
-        options.wfsSource.outputFormat !== undefined
-          ? 'outputFormat=' + options.wfsSource.outputFormat
-          : '';
 
-      let paramMaxFeatures = 'maxFeatures';
-      if (options.wfsSource.version === '2.0.0' || !options.wfsSource.version) {
-        paramMaxFeatures = 'count';
-      }
-      const maxFeatures = options.wfsSource.maxFeatures
-        ? paramMaxFeatures + '=' + options.wfsSource.maxFeatures
-        : paramMaxFeatures + '=5000';
-      const srsname = options.wfsSource.srsname
-        ? 'srsname=' + options.wfsSource.srsname
-        : 'srsname=EPSG:3857';
-      const baseWfsQuery = this.wfsService.buildBaseWfsUrl(
-        options.wfsSource,
-        'GetFeature'
+
+    if (options.ogcFilters.enabled && options.ogcFilters.filters) {
+      options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
+        options.ogcFilters.filters,
+        options.fieldNameGeometry,
+        true
       );
-      options.download = Object.assign({}, options.download, {
-        dynamicUrl: `${baseWfsQuery}&${outputFormat}&${srsname}&${maxFeatures}`
-      });
-    }
-
-    if (options.ogcFilters && options.ogcFilters.enabled) {
-      const ogcFilterWriter = new OgcFilterWriter();
-      if (options.ogcFilters && options.ogcFilters.filters) {
-        options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
-          options.ogcFilters.filters,
-          options['fieldNameGeometry'],
-          true
-        );
-        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-          // With some wms server, this param must be set to make spatials call.
-          options.ogcFilters.filters,
-          options['fieldNameGeometry']
-        );
-        this.filterByOgc(
-          wmsDatasource,
-          ogcFilterWriter.buildFilter(options.ogcFilters.filters)
-        );
-        options['ogcFiltered'] = true;
-      } else {
-        options.ogcFilters.filters = undefined;
-        options.ogcFilters.interfaceOgcFilters = [];
-        options['ogcFiltered'] = false;
-      }
-    }*/
-  }
-
-  private checkWfsOptions(
-    wfsDataSourceOptions: WFSDataSourceOptions
-  ): WFSDataSourceOptions {
-    const mandatoryParamMissing: any[] = [];
-
-    if (!wfsDataSourceOptions.url) {
-      mandatoryParamMissing.push('url');
-    }
-    ['featureTypes', 'fieldNameGeometry', 'outputFormat'].forEach(element => {
-      if (wfsDataSourceOptions.params[element] === undefined) {
-        mandatoryParamMissing.push(element);
-      }
-    });
-
-    if (mandatoryParamMissing.length > 0) {
-      throw new Error(
-        `A mandatory parameter is missing
-          for your WFS datasource source.
-          (Mandatory parameter(s) missing :` + mandatoryParamMissing
+      options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
+        // With some wms server, this param must be set to make spatials call.
+        options.ogcFilters.filters,
+        options.fieldNameGeometry
       );
+      this.filterByOgc(
+        wmsDatasource as WMSDataSource,
+        ogcFilterWriter.buildFilter(options.ogcFilters.filters)
+      );
+      options.filtered = true;
+    } else {
+      options.ogcFilters.filters = undefined;
+      options.ogcFilters.interfaceOgcFilters = [];
+      options.filtered = false;
     }
 
-    // Look at https://github.com/openlayers/openlayers/pull/6400
-    const patternGml = new RegExp('.*?gml.*?');
-
-    if (patternGml.test(wfsDataSourceOptions.params.outputFormat)) {
-      wfsDataSourceOptions.params.version = '1.1.0';
-    }
-
-    return Object.assign({}, wfsDataSourceOptions, {
-      wfsCapabilities: { xml: '', GetPropertyValue: false }
-    });
   }
 }

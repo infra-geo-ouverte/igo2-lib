@@ -5,7 +5,9 @@ import {
   IgoMap,
   DataSourceService,
   LayerService,
+  WMSDataSourceOptions,
   WFSDataSourceOptions,
+  WFSDataSourceOptionsParams,
   OgcFilterableDataSourceOptions,
   AnyBaseOgcFilterOptions
 } from '@igo2/geo';
@@ -110,6 +112,51 @@ export class AppOgcFilterComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle',
+            source: dataSource
+          })
+        );
+      });
+
+      interface WMSoptions
+      extends WMSDataSourceOptions, OgcFilterableDataSourceOptions {}
+
+    const datasourceWms: WMSoptions = {
+      type: 'wms',
+      url: '/geoserver/wms',
+      urlWfs: '/geoserver/wfs',
+      params: {
+        layers: 'water_areas',
+        version: '1.3.0'
+      },
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        filters: {
+          operator: 'PropertyIsEqualTo',
+          propertyName: 'waterway',
+          expression: 'riverbank'}
+      },
+      sourceFields: [
+        {name: 'waterway', 'alias': 'Chemin d eau'},
+        {name: 'osm_id'},
+        {name: 'landuse', values: ['yes', 'no']}
+        ],
+      paramsWFS: {
+        featureTypes: 'water_areas',
+        fieldNameGeometry: 'the_geom',
+        maxFeatures: 10000,
+        version: '1.1.0',
+        outputFormat: 'application/json',
+        outputFormatDownload: 'application/vnd.google-earth.kml+xml'
+      } as WFSDataSourceOptionsParams,
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(datasourceWms)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Geoserver water_areas',
             source: dataSource
           })
         );
