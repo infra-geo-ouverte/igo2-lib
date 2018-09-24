@@ -5,8 +5,9 @@ export interface WFSDataSourceOptions
   extends DataSourceOptions,
     FeatureDataSourceOptions {
   // type?: 'wfs';
-  params: WFSDataSourceOptionsParams;
-  wfsCapabilities?: WFSCapabilitiesParams;
+  params: WFSDataSourceOptionsParams; // Used by user
+  paramsWFS?: WFSDataSourceOptionsParams; // Used by code
+  urlWfs?: string; // Used by code
 }
 
 export interface WFSDataSourceOptionsParams {
@@ -18,6 +19,7 @@ export interface WFSDataSourceOptionsParams {
   outputFormatDownload?: string;
   srsname?: string;
   xmlFilter?: string;
+  wfsCapabilities?: WFSCapabilitiesParams;
 }
 
 export interface WFSCapabilitiesParams {
