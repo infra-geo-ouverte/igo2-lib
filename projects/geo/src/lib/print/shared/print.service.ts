@@ -561,8 +561,8 @@ export class PrintService {
   */
   private getImageSizeToFitPdf(doc, canvas) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight = doc.internal.pageSize.height - 20; // -20 to let margin work great
-    const pageWidth = doc.internal.pageSize.width - 20; // -20 to let margin work great
+    const pageHeight = doc.internal.pageSize.getHeight() - 20; // -20 to let margin work great
+    const pageWidth = doc.internal.pageSize.getWidth() - 20; // -20 to let margin work great
     const canHeight = canvas.height;
     const canWidth = canvas.width;
     const heightRatio = canHeight / pageHeight;
