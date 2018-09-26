@@ -2,10 +2,12 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
+  MatButtonModule,
   MatTabsModule,
   MatSelectModule,
   MatOptionModule,
-  MatFormFieldModule
+  MatFormFieldModule,
+  MatInputModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -19,10 +21,12 @@ import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    MatButtonModule,
     MatTabsModule,
     MatSelectModule,
     MatOptionModule,
     MatFormFieldModule,
+    MatInputModule,
     IgoLanguageModule,
     IgoKeyValueModule
   ],
