@@ -7,7 +7,9 @@
       "password": "Mot de passe",
       "signOut": "Se déconnecter",
       "user": "Utilisateur",
-      "welcome": "Bienvenue {{name}}!"
+      "welcome": "Bienvenue {{name}}!",
+      "deconnection": "Vous êtes déconnecté",
+      "home": "Retourner à la page d'accueil"
     }
   }
 }

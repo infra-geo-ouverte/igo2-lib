@@ -34,7 +34,7 @@ export class NominatimSearchSource extends SearchSource {
     super();
 
     this.options = this.config.getConfig('searchSources.nominatim') || {};
-    this.searchUrl = this.options.url || this.searchUrl;
+    this.searchUrl = this.options.searchUrl || this.searchUrl;
     this.locateUrl = this.options.locateUrl || this.locateUrl;
   }
 

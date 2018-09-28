@@ -475,16 +475,10 @@ export class IgoMap {
     let iconColor;
     switch (color) {
       case 'blue':
-        iconColor = 'blue';
-        break;
       case 'red':
-        iconColor = 'red';
-        break;
       case 'yellow':
-        iconColor = 'yellow';
-        break;
       case 'green':
-        iconColor = 'green';
+        iconColor = color;
         break;
       default:
         iconColor = 'blue';

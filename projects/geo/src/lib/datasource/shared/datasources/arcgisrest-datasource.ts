@@ -41,7 +41,7 @@ export class ArcGISRestDataSource extends DataSource {
           'outSR=102100'
         ];
         if (this.options.params.timeFilter) {
-          let time = `time=${this.options.params.timeExtent}`;
+          const time = `time=${this.options.params.timeExtent}`;
           params.push(time);
         }
         return `${baseUrl}?${params.join('&')}`;

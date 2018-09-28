@@ -111,6 +111,7 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
         this.model,
         this.sort
       );
+      this.selection.clear();
     }
   }
 

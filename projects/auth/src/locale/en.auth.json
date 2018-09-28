@@ -7,7 +7,9 @@
       "password": "Password",
       "signOut": "Sign out",
       "user": "User",
-      "welcome": "Welcome {{name}}!"
+      "welcome": "Welcome {{name}}!",
+      "deconnection": "You are logged out.",
+      "home": "Return to the home page"
     }
   }
 }

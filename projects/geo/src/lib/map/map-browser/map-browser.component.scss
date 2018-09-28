@@ -34,7 +34,7 @@
   position: absolute;
   bottom: $igo-margin;
   right: calc(#{$igo-margin} + 50px);
-  +media(mobile) {
+  @include mobile {
     right: calc(#{$igo-margin} + 90px);
   }
 }
@@ -79,16 +79,24 @@
 }
 
 :host >>> .ol-scale-line-inner {
+  color: rgba(black, 1);
   font-size: 11px;
   text-align: center;
-  margin: 1px;
+  margin-left: 55%;
+  @include mobile {
+    margin-left: 90px;
+  }
+  border-color: black;
 }
 
 :host >>> .ol-scale-line {
-  background: rgba(255, 255, 255, 0);
+  background-color: rgba(255, 255, 255, 0);
   border-radius: 4px;
   bottom: 4px;
-  left: $igo-margin;
+  margin-left: 55%;
+  @include mobile {
+    margin-left: 90px;
+  }
   padding: 4px;
   position: absolute;
 }

@@ -56,7 +56,6 @@ export class OsrmRoutingSource extends RoutingSource {
     return new HttpParams({
       fromObject: {
         overview: 'full',
-        annotations: 'true',
         steps: 'true',
         geometries: 'geojson',
         alternatives: 'true'

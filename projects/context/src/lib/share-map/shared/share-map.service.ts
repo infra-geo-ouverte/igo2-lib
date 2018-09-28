@@ -68,7 +68,7 @@ export class ShareMapService {
         stopsCoordinates.push(coord);
       });
     }
-    let routingUrl: string = '';
+    let routingUrl = '';
     if (stopsCoordinates.length >= 2) {
       routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
     }

@@ -52,5 +52,51 @@ export class AppPrintComponent {
         }
       })
       .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Embacle',
+        sourceOptions: {
+          type: 'wms',
+          url: '/ws/igo_gouvouvert.fcgi',
+          params: {
+            layers: 'vg_observation_v_inondation_embacle_wmst',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+      this.layerService
+        .createAsyncLayer({
+          title: 'Geomet',
+          sourceOptions: {
+            type: 'wms',
+            url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
+            params: {
+              layers: 'RADAR_1KM_RDBR',
+              version: '1.3.0',
+            },
+            crossOrigin: 'anonymous'
+          }
+        })
+        .subscribe(l => this.map.addLayer(l));
+
+        /*
+        //CORS error if activate (for test)
+        this.layerService
+          .createAsyncLayer({
+            title: 'Geomet',
+            sourceOptions: {
+              type: 'wms',
+              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wms',
+              params: {
+                layers: 'swtq',
+                version: '1.3.0',
+              }
+            }
+          })
+          .subscribe(l => this.map.addLayer(l));
+    */
   }
 }

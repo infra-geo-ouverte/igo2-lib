@@ -7,7 +7,8 @@ import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
 
 import {
-  PrintFormat,
+  PrintOutputFormat,
+  PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
   PrintSaveImageFormat
@@ -32,13 +33,22 @@ export class PrintComponent {
   private _map: IgoMap;
 
   @Input()
-  get format(): PrintFormat {
-    return this._format;
+  get outputFormat(): PrintOutputFormat {
+    return this._outputFormat;
   }
-  set format(value: PrintFormat) {
-    this._format = value;
+  set outputFormat(value: PrintOutputFormat) {
+    this._outputFormat = value;
   }
-  private _format: PrintFormat;
+  private _outputFormat: PrintOutputFormat;
+
+  @Input()
+  get paperFormat(): PrintPaperFormat {
+    return this._paperFormat;
+  }
+  set paperFormat(value: PrintPaperFormat) {
+    this._paperFormat = value;
+  }
+  private _paperFormat: PrintPaperFormat;
 
   @Input()
   get orientation(): PrintOrientation {
@@ -77,6 +87,17 @@ export class PrintComponent {
         .print(this.map, data)
         .subscribe((status: SubjectStatus) => {});
     } else {
+      let nbFileToProcess = 1;
+
+      if (data.showLegend) {
+        nbFileToProcess++;
+      }
+      if (data.imageFormat.toLowerCase() === 'tiff') {
+        nbFileToProcess++;
+      }
+
+      this.printService.defineNbFileToProcess(nbFileToProcess);
+
       this.printService.downloadMapImage(
         this.map,
         data.imageFormat,
@@ -84,10 +105,11 @@ export class PrintComponent {
         data.showScale,
         data.showLegend,
         data.title,
-        data.comment
+        data.comment,
+        data.doZipFile
       );
       if (data.showLegend) {
-        this.printService.getLayersLegendImage(this.map, data.imageFormat);
+        this.printService.getLayersLegendImage(this.map, data.imageFormat, data.doZipFile);
       }
     }
     this.disabled = false;

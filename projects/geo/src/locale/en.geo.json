@@ -79,7 +79,15 @@
         "raiseLayer": "Bring layer forward",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
-        "showLayer": "Show Layer"
+        "showLayer": "Show Layer",
+        "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
+        "deleteKeyword": "Delete the keyword",
+        "subsetLayersListKeywordPlaceholder": "Filter",
+        "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",
+        "subsetLayersListOnlyInRange": "Subset the layers's list by resolution range",
+        "sortAlphabetically": "Sort the layers's list alphabetically",
+        "sortMapOrder": "Sort the layers's list based on layer's order on the map",
+        "resetLayersList": "Remove the current applied filter to layers's list"
       },
       "download": {
         "action": "Download data",
@@ -118,8 +126,12 @@
         "write": "Read and Write"
       },
       "printForm": {
+        "corsErrorMessageBody": "Unable to print due to non-owned access rights",
+        "corsErrorMessageHeader": "Print",
         "comment": "Comment",
-        "format": "Format",
+        "doZipFile": "Zip files",
+        "outputFormat": "Output format",
+        "paperFormat": "Paper format",
         "imageFormat": "Image format",
         "landscape": "Landscape",
         "portrait": "Portrait",

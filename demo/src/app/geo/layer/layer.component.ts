@@ -48,12 +48,42 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
-        title: 'School board',
         sourceOptions: {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
+          optionsFromCapabilities: true,
           params: {
             layers: 'MELS_CS_ANGLO_S',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Réseau routier',
+        visible: false,
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          params: {
+            layers: 'bgr_v_sous_route_res_sup_act',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Avertissements routier',
+        visible: false,
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          params: {
+            layers: 'evenements',
             version: '1.3.0'
           }
         }
@@ -67,6 +97,7 @@ export class AppLayerComponent {
     const datasource: WMSoptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
+      refreshIntervalSec: 15,
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
         version: '1.3.0'

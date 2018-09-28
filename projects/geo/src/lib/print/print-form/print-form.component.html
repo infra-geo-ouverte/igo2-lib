@@ -19,30 +19,45 @@
   </div>
 
   <div class="igo-input-container">
-    <mat-checkbox class="horizontal-left" formControlName="showProjection">
+    <mat-checkbox class="horizontal-left right-padding" formControlName="showProjection">
         {{'igo.geo.printForm.showProjection' | translate}}
     </mat-checkbox>
-     <mat-checkbox class="horizontal-left" formControlName="showScale">
+     <mat-checkbox class="horizontal-left right-padding" formControlName="showScale">
         {{'igo.geo.printForm.showScale' | translate}}
     </mat-checkbox>
-     <mat-checkbox class="horizontal-left" formControlName="showLegend">
+     <mat-checkbox class="horizontal-left right-padding" formControlName="showLegend">
         {{'igo.geo.printForm.showLegend' | translate}}
     </mat-checkbox>
+    <mat-checkbox class="horizontal-left right-padding" formControlName="doZipFile" [style.display]="isPrintService ? 'none' : 'inline'" >
+       {{'igo.geo.printForm.doZipFile' | translate}}
+   </mat-checkbox>
   </div>
 
   <div class="igo-input-container">
     <mat-form-field>
-      <mat-select (change)="toggleImageSaveProp()"
-        formControlName="format"
-        placeholder="{{'igo.geo.printForm.format' | translate}}">
-        <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
-          {{format.value}}
+      <mat-select (selectionChange)="toggleImageSaveProp()"
+        formControlName="outputFormat"
+        placeholder="{{'igo.geo.printForm.outputFormat' | translate}}">
+        <mat-option *ngFor="let outputFormat of outputFormats | keyvalue " [value]="outputFormat.key">
+          {{outputFormat.value}}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container">
+  <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
+    <mat-form-field>
+      <mat-select
+        formControlName="paperFormat"
+        placeholder="{{'igo.geo.printForm.paperFormat' | translate}}">
+        <mat-option *ngFor="let paperFormat of paperFormats | keyvalue " [value]="paperFormat.key">
+          {{paperFormat.value}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="igo-input-container" [style.display]="isPrintService ? 'none' : 'block'">
     <mat-form-field>
       <mat-select
         formControlName="imageFormat"
@@ -54,7 +69,7 @@
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container">
+  <div class="igo-input-container" style="display: none;">
     <mat-form-field>
       <mat-select
         formControlName="resolution"
@@ -66,7 +81,7 @@
     </mat-form-field>
   </div>
 
-  <div class="igo-input-container">
+  <div class="igo-input-container" [style.display]="isPrintService ? 'block' : 'none'">
     <mat-radio-group formControlName="orientation" class="horizontal">
       <mat-radio-button *ngFor="let orientation of orientations | keyvalue " [value]="orientation.key">
         {{('igo.geo.printForm.' + orientation.value) | translate}}
@@ -74,7 +89,7 @@
     </mat-radio-group>
   </div>
 
-  <div class="igo-form-button-group">
+  <div class="igo-form-button-group print-button-top-padding">
     <button
       mat-raised-button
       type="button"

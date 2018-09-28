@@ -40,6 +40,8 @@ import { AppSearchRoutingModule } from './search-routing.module';
     IgoOverlayModule
   ],
   exports: [AppSearchComponent],
-  providers: [provideIChercheSearchSource(), provideDataSourceSearchSource()]
+  providers: [
+    provideIChercheSearchSource(),
+    provideDataSourceSearchSource()]
 })
 export class AppSearchModule {}

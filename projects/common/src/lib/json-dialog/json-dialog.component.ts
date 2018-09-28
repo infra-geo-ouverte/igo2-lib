@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 @Component({
-  selector: 'app-json-dialog',
+  selector: 'igo-json-dialog',
   templateUrl: './json-dialog.component.html'
 })
 export class JsonDialogComponent {

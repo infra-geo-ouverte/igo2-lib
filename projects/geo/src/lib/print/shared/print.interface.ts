@@ -1,12 +1,14 @@
 import {
-  PrintFormat,
+  PrintOutputFormat,
+  PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
   PrintSaveImageFormat
 } from './print.type';
 
 export interface PrintOptions {
-  format: PrintFormat;
+  outputFormat: PrintOutputFormat;
+  paperFormat: PrintPaperFormat;
   orientation: PrintOrientation;
   resolution: PrintResolution;
   title?: string;
@@ -16,4 +18,5 @@ export interface PrintOptions {
   showProjection?: boolean;
   showScale?: boolean;
   isPrintService: boolean;
+  doZipFile: boolean;
 }

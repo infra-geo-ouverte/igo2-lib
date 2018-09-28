@@ -1,13 +1,13 @@
 import { StringUtils } from './string-utils';
-import { ModifRegroupement, ModifItem, ModifType } from './modif.interface';
+import { GroupingChanges, ChangeItem, ChangeType } from './change.interface';
 
-export class ModifUtils {
-  static findModifs(
+export class ChangeUtils {
+  static findChanges(
     obj1: any[],
     obj2: any[],
     ignoreKeys: string[] = []
-  ): ModifRegroupement {
-    const items: ModifRegroupement = {
+  ): GroupingChanges {
+    const items: GroupingChanges = {
       added: [],
       deleted: [],
       modified: []
@@ -25,39 +25,39 @@ export class ModifUtils {
 
       if (index === -1) {
         items.deleted.push({
-          modif: { type: ModifType.DELETED },
+          change: { type: ChangeType.DELETED },
           value: fromItem
         });
         continue;
       }
 
       const toItem = obj2Clone.splice(index, 1)[0];
-      const fromItemClone = Object.assign({}, fromItem);
-      const toItemClone = Object.assign({}, toItem);
+      const fromItemClone = JSON.parse(JSON.stringify(fromItem));
+      const toItemClone = JSON.parse(JSON.stringify(toItem));
 
-      const keysChanged = ModifUtils.compareObject(
-        fromItem,
-        toItem,
+      const keysChanged = ChangeUtils.compareObject(
+        fromItemClone,
+        toItemClone,
         undefined,
         ignoreKeys
       );
 
       if (keysChanged.length) {
         items.modified.push({
-          modif: {
-            type: ModifType.MODIFIED,
+          change: {
+            type: ChangeType.MODIFIED,
             keysChanged: keysChanged
           },
-          value: fromItem,
-          oldValue: fromItemClone,
-          newValue: toItemClone
+          value: fromItemClone,
+          oldValue: fromItem,
+          newValue: toItem
         });
       }
     }
 
     items.added = obj2Clone.map(itemAdded => {
       return {
-        modif: { type: ModifType.ADDED },
+        change: { type: ChangeType.ADDED },
         value: itemAdded
       };
     });
@@ -66,8 +66,8 @@ export class ModifUtils {
   }
 
   private static compareObject(fromItem, toItem, baseKey?, ignoreKeys = []) {
-    const fromItemClone = Object.assign({}, fromItem);
-    const toItemClone = Object.assign({}, toItem);
+    const fromItemClone = JSON.parse(JSON.stringify(fromItem));
+    const toItemClone = JSON.parse(JSON.stringify(toItem));
 
     const keys: any = new Set([
       ...Object.keys(fromItem),
