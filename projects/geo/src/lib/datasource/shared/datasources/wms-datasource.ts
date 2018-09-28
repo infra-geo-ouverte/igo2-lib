@@ -45,6 +45,12 @@ export class WMSDataSource extends DataSource {
       sourceParams.VERSION = sourceParams.version;
     }
 
+    if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
+      setInterval(() => {
+        this.ol.updateParams({'igoRefresh': Math.random()});
+      }, options.refreshIntervalSec * 1000); // Convert seconds to MS
+    }
+
     // ####   START if paramsWFS
     if (options.paramsWFS) {
       const wfsCheckup = this.wfsService.checkWfsOptions(options);
@@ -85,12 +91,6 @@ export class WMSDataSource extends DataSource {
       'GetFeature'
     );
     return `${baseWfsQuery}&${outputFormat}&${srsname}&${maxFeatures}`;
-
-    if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
-      setInterval(() => {
-        this.ol.updateParams({'igoRefresh': Math.random()});
-      }, options.refreshIntervalSec * 1000); // Convert seconds to MS
-    }
 
   }
 
