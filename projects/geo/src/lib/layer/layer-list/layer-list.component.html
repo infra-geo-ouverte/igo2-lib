@@ -1,6 +1,6 @@
 <igo-list [navigation]="false" [selection]="false">    
-  <mat-list-item>
-    <ng-container *ngIf="layers.length>=thresholdToFilterAndSort || keyword || onlyInRange || onlyVisible ">
+  <mat-list-item *ngIf="layers.length>=thresholdToFilterAndSort || keyword || onlyInRange || onlyVisible ">
+    <ng-container>
     <mat-form-field [floatLabel]="floatLabel">
           <input 
           matInput 
