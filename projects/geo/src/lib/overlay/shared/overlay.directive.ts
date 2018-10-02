@@ -78,6 +78,10 @@ export class OverlayDirective implements OnInit, OnDestroy {
         this.map.zoomToExtent(extent);
       } else if (action === 'move') {
         this.map.moveToExtent(extent);
+      } else if (action === 'zoomif') {
+        if (!extent.intersects(featureExtent, this.map.getExtent())) {
+          this.map.zoomToExtent(extent);
+        }
       }
     }
   }

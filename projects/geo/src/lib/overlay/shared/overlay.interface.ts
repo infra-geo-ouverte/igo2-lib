@@ -1,1 +1,1 @@
-export type OverlayAction = 'none' | 'move' | 'zoom';
+export type OverlayAction = 'none' | 'move' | 'zoom' | 'zoomif' ;

@@ -37,7 +37,7 @@ export class SearchResultsToolComponent {
 
   handleFeatureSelect(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], 'zoom');
+      this.overlayService.setFeatures([feature], 'zoomif');
     } else if (feature.type === FeatureType.DataSource) {
       const map = this.mapService.getMap();
 

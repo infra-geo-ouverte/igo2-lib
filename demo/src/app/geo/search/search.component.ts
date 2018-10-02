@@ -70,7 +70,7 @@ export class AppSearchComponent {
 
   handleFeatureSelect(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], 'zoom');
+      this.overlayService.setFeatures([feature], 'zoomif');
     } else if (feature.type === FeatureType.DataSource) {
       this.layerService.createAsyncLayer(feature.layer).subscribe(layer => {
         this.map.addLayer(layer);
