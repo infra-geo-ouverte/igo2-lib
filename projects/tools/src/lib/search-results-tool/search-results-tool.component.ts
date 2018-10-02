@@ -6,6 +6,7 @@ import {
   MapService,
   LayerService,
   OverlayService,
+  OverlayAction,
   Feature,
   FeatureType,
   AnyDataSourceOptions,
@@ -31,13 +32,13 @@ export class SearchResultsToolComponent {
 
   handleFeatureFocus(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], 'move');
+      this.overlayService.setFeatures([feature], OverlayAction.move);
     }
   }
 
   handleFeatureSelect(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], 'zoomif');
+      this.overlayService.setFeatures([feature], OverlayAction.zoomIfOutMapExtent);
     } else if (feature.type === FeatureType.DataSource) {
       const map = this.mapService.getMap();
 
