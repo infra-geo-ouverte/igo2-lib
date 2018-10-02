@@ -10,7 +10,7 @@
           "title": "New context"
         }
       },
-      "context": {
+      "contextManager": {
         "clone": "Clone this context",
         "delete": "Delete this context",
         "dialog": {
