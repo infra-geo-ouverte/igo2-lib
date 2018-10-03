@@ -36,8 +36,11 @@ export class DataSourceService {
   constructor(private capabilitiesService: CapabilitiesService) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
+    if (!context.type) {
+      console.warn('Datasource needs a type');
+    }
     let dataSource;
-    switch (context.type) {
+    switch (context.type.toLowerCase()) {
       case 'osm':
         dataSource = this.createOSMDataSource(context as OSMDataSourceOptions);
         break;
@@ -76,6 +79,7 @@ export class DataSourceService {
         );
         break;
       default:
+        console.warn('Invalid datasource type');
         break;
     }
 
