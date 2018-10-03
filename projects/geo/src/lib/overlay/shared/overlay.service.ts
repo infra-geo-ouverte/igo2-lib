@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { Feature } from '../../feature/shared/feature.interface';
 
-import { OverlayAction } from './overlay.interface';
+import { OverlayAction } from './overlay.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +16,11 @@ export class OverlayService {
 
   constructor() {}
 
-  setFeatures(features: Feature[], action: OverlayAction = 'none') {
+  setFeatures(features: Feature[], action: OverlayAction = OverlayAction.None) {
     this.features$.next([features, action]);
   }
 
   clear() {
-    this.features$.next([[], 'none']);
+    this.features$.next([[], OverlayAction.None]);
   }
 }

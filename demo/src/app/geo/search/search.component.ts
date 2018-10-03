@@ -9,6 +9,7 @@ import {
   SearchService,
   Feature,
   FeatureType,
+  OverlayAction,
   OverlayService
 } from '@igo2/geo';
 
@@ -70,7 +71,7 @@ export class AppSearchComponent {
 
   handleFeatureSelect(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], 'zoom');
+      this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
     } else if (feature.type === FeatureType.DataSource) {
       this.layerService.createAsyncLayer(feature.layer).subscribe(layer => {
         this.map.addLayer(layer);

@@ -37,7 +37,7 @@ export const environment: Environment = {
         locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         limit: 5,
         locateLimit: 15,
-        enabled: true
+        enabled: false
       },
       icherche: {
         searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
