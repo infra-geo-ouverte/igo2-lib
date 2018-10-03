@@ -8,9 +8,7 @@ import {
   OverlayService,
   OverlayAction,
   Feature,
-  FeatureType,
-  AnyDataSourceOptions,
-  DataSourceService
+  FeatureType
 } from '@igo2/geo';
 
 @Register({
@@ -26,8 +24,7 @@ export class SearchResultsToolComponent {
   constructor(
     private overlayService: OverlayService,
     private mapService: MapService,
-    private layerService: LayerService,
-    private dataSourceService: DataSourceService
+    private layerService: LayerService
   ) {}
 
   handleFeatureFocus(feature: Feature) {
@@ -41,13 +38,11 @@ export class SearchResultsToolComponent {
       this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
     } else if (feature.type === FeatureType.DataSource) {
       const map = this.mapService.getMap();
-
       if (map !== undefined) {
-        this.dataSourceService
-          .createAsyncDataSource(feature.layer as AnyDataSourceOptions)
-          .subscribe(dataSource => {
-            (feature.layer as any).source = dataSource;
-            map.addLayer(this.layerService.createLayer(feature.layer));
+        this.layerService
+          .createAsyncLayer(feature.layer)
+          .subscribe(layer => {
+            map.addLayer(layer);
           });
       }
     }
