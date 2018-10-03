@@ -106,6 +106,6 @@ export class AppFeatureComponent {
   }
 
   handleFeatureSelect(feature: Feature) {
-    this.overlayService.setFeatures([feature], OverlayAction.zoomIfOutMapExtent);
+    this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
   }
 }
