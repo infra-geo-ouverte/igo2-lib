@@ -16,11 +16,11 @@ export class OverlayService {
 
   constructor() {}
 
-  setFeatures(features: Feature[], action: OverlayAction = OverlayAction.none) {
+  setFeatures(features: Feature[], action: OverlayAction = OverlayAction.None) {
     this.features$.next([features, action]);
   }
 
   clear() {
-    this.features$.next([[], OverlayAction.none]);
+    this.features$.next([[], OverlayAction.None]);
   }
 }
