@@ -32,13 +32,13 @@ export class SearchResultsToolComponent {
 
   handleFeatureFocus(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], OverlayAction.move);
+      this.overlayService.setFeatures([feature], OverlayAction.Move);
     }
   }
 
   handleFeatureSelect(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], OverlayAction.zoomIfOutMapExtent);
+      this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
     } else if (feature.type === FeatureType.DataSource) {
       const map = this.mapService.getMap();
 
