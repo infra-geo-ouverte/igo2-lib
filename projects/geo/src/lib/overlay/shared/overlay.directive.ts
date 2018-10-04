@@ -69,8 +69,9 @@ export class OverlayDirective implements OnInit, OnDestroy {
     }, this);
     const mapExtent = this.map.getExtent();
     const mapExtentHeight = olextent.getHeight(mapExtent);
+    const mapExtentWithInnerBuffer = olextent.buffer(mapExtent, mapExtentHeight * 0.05 * -1);
     if (features[0].sourceType === SourceFeatureType.Click) {
-      if (olextent.containsCoordinate(mapExtent, featureFlatCoordinates)) {
+      if (olextent.intersects(featureExtent, mapExtentWithInnerBuffer)) {
         action = OverlayAction.None;
       } else {
         action = OverlayAction.Move;
@@ -83,7 +84,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     let cntOverlapExtent = 0;
     for (let i = 0; i < featureFlatCoordinates.length; i += 2) {
-      if (olextent.containsCoordinate(olextent.buffer(mapExtent, mapExtentHeight * 0.05 * -1),
+      if (olextent.containsCoordinate(mapExtentWithInnerBuffer,
        [featureFlatCoordinates[i], featureFlatCoordinates[i + 1]])) {
         cntOverlapExtent += 1;
       }
