@@ -48,13 +48,13 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     const extent = olextent.createEmpty();
 
-    let featureExtent, geometry, featureFlatCoordinates;
+    let featureExtent, geometry, featureFlatCoordinates, featureZoomLevelTrigger;
     features.forEach((feature: Feature) => {
       const olFeature = this.format.readFeature(feature, {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-
+      featureZoomLevelTrigger = feature.zoomLevelTriggerFeatureZoom;
       geometry = olFeature.getGeometry();
       featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
       featureExtent = this.getFeatureExtent(feature);
@@ -67,16 +67,23 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
       this.map.addOverlay(olFeature);
     }, this);
+    const mapExtent = this.map.getExtent();
+    const mapExtentHeight = olextent.getHeight(mapExtent);
     if (features[0].sourceType === SourceFeatureType.Click) {
-      if (olextent.containsCoordinate(this.map.getExtent(), featureFlatCoordinates)) {
+      if (olextent.containsCoordinate(mapExtent, featureFlatCoordinates)) {
         action = OverlayAction.None;
       } else {
         action = OverlayAction.Move;
       }
     }
+    // Enabling a configurable parameter to overide the default behavior
+    if (featureZoomLevelTrigger && this.map.getZoom() < featureZoomLevelTrigger) {
+      action = OverlayAction.Zoom;
+    }
+
     let cntOverlapExtent = 0;
     for (let i = 0; i < featureFlatCoordinates.length; i += 2) {
-      if (olextent.containsCoordinate(this.map.getExtent(),
+      if (olextent.containsCoordinate(olextent.buffer(mapExtent, mapExtentHeight * 0.05 * -1),
        [featureFlatCoordinates[i], featureFlatCoordinates[i + 1]])) {
         cntOverlapExtent += 1;
       }
@@ -89,7 +96,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       } else if (action === OverlayAction.ZoomIfOutMapExtent) {
         if (cntOverlapExtent === 0) {
           this.map.zoomToExtent(extent);
-        } else if (cntOverlapExtent / (featureFlatCoordinates.length / 2) <= 0.1) {
+        } else if (cntOverlapExtent / (featureFlatCoordinates.length / 2) <= 0.05) {
             this.map.zoomOut();
         }
       }
