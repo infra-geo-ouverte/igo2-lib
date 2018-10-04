@@ -28,6 +28,7 @@ export class NominatimSearchSource extends SearchSource {
 
   private searchUrl = 'https://nominatim.openstreetmap.org/search';
   private locateUrl = 'https://nominatim.openstreetmap.org/reverse';
+  private zoomLevelTriggerFeatureZoom;
   private options: SearchSourceOptions;
 
   constructor(private http: HttpClient, private config: ConfigService) {
@@ -36,6 +37,7 @@ export class NominatimSearchSource extends SearchSource {
     this.options = this.config.getConfig('searchSources.nominatim') || {};
     this.searchUrl = this.options.searchUrl || this.searchUrl;
     this.locateUrl = this.options.locateUrl || this.locateUrl;
+    this.zoomLevelTriggerFeatureZoom = this.options.zoomLevelTriggerFeatureZoom || this.zoomLevelTriggerFeatureZoom;
   }
 
   getName(): string {
@@ -61,7 +63,7 @@ export class NominatimSearchSource extends SearchSource {
     if (response[0] && response[0].error) {
       return [];
     }
-    return response.map(res => this.formatResult(res, resultType));
+    return response.map(res => this.formatResult(res, resultType, this.zoomLevelTriggerFeatureZoom));
   }
 
   private getSearchParams(term: string): HttpParams {
@@ -91,12 +93,13 @@ export class NominatimSearchSource extends SearchSource {
     });
   }
 
-  private formatResult(result: any, resultType): Feature {
+  private formatResult(result: any, resultType, zoomLevelTriggerFeatureZoom: number): Feature {
     return {
       id: result.place_id,
       source: NominatimSearchSource._name,
       sourceType: resultType,
       order: 0,
+      zoomLevelTriggerFeatureZoom: zoomLevelTriggerFeatureZoom,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.display_name,

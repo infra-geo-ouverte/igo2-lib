@@ -27,6 +27,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
 
   private searchUrl = 'https://ws.mapserver.transports.gouv.qc.ca/swtq';
   private locateUrl = 'https://ws.mapserver.transports.gouv.qc.ca/swtq';
+  private zoomLevelTriggerFeatureZoom;
   private searchlimit = 5;
   private locatelimit = this.searchlimit * 2;
   private options: SearchSourceOptions;
@@ -39,6 +40,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     this.locateUrl = this.options.locateUrl || this.locateUrl;
     this.searchlimit = this.options.limit || this.searchlimit;
     this.locatelimit = this.options.locateLimit || this.locatelimit;
+    this.zoomLevelTriggerFeatureZoom = this.options.zoomLevelTriggerFeatureZoom || this.zoomLevelTriggerFeatureZoom;
   }
 
   getName(): string {
@@ -162,10 +164,11 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
 }
 
   private extractSearchData(response): Feature[] {
-    return response.features.map(this.formatSearchResult);
+    // return response.features.map(this.formatSearchResult);
+    return response.features.map(res => this.formatSearchResult(res, this.zoomLevelTriggerFeatureZoom));
   }
 
-  private formatSearchResult(result: any): Feature {
+  private formatSearchResult(result: any, zoomLevelTriggerFeatureZoom: number): Feature {
     const properties = Object.assign(
       {
         type: result.type
@@ -200,6 +203,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       source: ReseauTransportsQuebecSearchSource._name,
       sourceType: SourceFeatureType.Search,
       order: 1,
+      zoomLevelTriggerFeatureZoom: zoomLevelTriggerFeatureZoom,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: properties.title,

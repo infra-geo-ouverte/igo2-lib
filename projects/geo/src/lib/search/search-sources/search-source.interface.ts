@@ -6,6 +6,7 @@ export interface SearchSourceOptions {
   enabled?: boolean;
   type?: string;
   distance?: number;
+  zoomLevelTriggerFeatureZoom?: number;
 }
 
 export interface SearchSourcesOptions {
