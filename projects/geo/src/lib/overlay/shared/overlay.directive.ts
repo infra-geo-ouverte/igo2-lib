@@ -56,7 +56,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       });
 
       geometry = olFeature.getGeometry();
-      featureFlatCoordinates = geometry.getFlatCoordinates();
+      featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
       featureExtent = this.getFeatureExtent(feature);
       if (olextent.isEmpty(featureExtent)) {
         if (geometry !== null) {
@@ -74,14 +74,23 @@ export class OverlayDirective implements OnInit, OnDestroy {
         action = OverlayAction.Move;
       }
     }
+    let cntOverlapExtent = 0;
+    for (let i = 0; i < featureFlatCoordinates.length; i += 2) {
+      if (olextent.containsCoordinate(this.map.getExtent(),
+       [featureFlatCoordinates[i], featureFlatCoordinates[i + 1]])) {
+        cntOverlapExtent += 1;
+      }
+    }
     if (!olextent.isEmpty(featureExtent)) {
       if (action === OverlayAction.Zoom) {
         this.map.zoomToExtent(extent);
       } else if (action === OverlayAction.Move) {
         this.map.moveToExtent(extent);
       } else if (action === OverlayAction.ZoomIfOutMapExtent) {
-        if (!olextent.containsCoordinate(this.map.getExtent(), featureFlatCoordinates)) {
-                    this.map.zoomToExtent(extent);
+        if (cntOverlapExtent === 0) {
+          this.map.zoomToExtent(extent);
+        } else if (cntOverlapExtent / (featureFlatCoordinates.length / 2) <= 0.1) {
+            this.map.zoomOut();
         }
       }
     }
