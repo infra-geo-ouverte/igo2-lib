@@ -48,7 +48,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     const extent = olextent.createEmpty();
 
-    let featureExtent, geometry;
+    let featureExtent, geometry, featureFlatCoordinates;
     features.forEach((feature: Feature) => {
       const olFeature = this.format.readFeature(feature, {
         dataProjection: feature.projection,
@@ -56,6 +56,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       });
 
       geometry = olFeature.getGeometry();
+      featureFlatCoordinates = geometry.getFlatCoordinates();
       featureExtent = this.getFeatureExtent(feature);
       if (olextent.isEmpty(featureExtent)) {
         if (geometry !== null) {
@@ -67,7 +68,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
       this.map.addOverlay(olFeature);
     }, this);
     if (features[0].sourceType === SourceFeatureType.Click) {
-      if (olextent.intersects(featureExtent, this.map.getExtent())) {
+      if (olextent.containsCoordinate(this.map.getExtent(), featureFlatCoordinates)) {
         action = OverlayAction.None;
       } else {
         action = OverlayAction.Move;
@@ -79,8 +80,8 @@ export class OverlayDirective implements OnInit, OnDestroy {
       } else if (action === OverlayAction.Move) {
         this.map.moveToExtent(extent);
       } else if (action === OverlayAction.ZoomIfOutMapExtent) {
-        if (!olextent.intersects(featureExtent, this.map.getExtent())) {
-          this.map.zoomToExtent(extent);
+        if (!olextent.containsCoordinate(this.map.getExtent(), featureFlatCoordinates)) {
+                    this.map.zoomToExtent(extent);
         }
       }
     }
