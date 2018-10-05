@@ -409,6 +409,7 @@ export class QueryService {
         mime = 'text/html';
         break;
       default:
+        mime = 'application/vnd.ogc.gml';
         break;
     }
 
