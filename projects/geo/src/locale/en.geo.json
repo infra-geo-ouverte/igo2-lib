@@ -78,13 +78,16 @@
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
-        "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
+        "subsetLayersListKeyword":
+          "Subset the layers's list by title or type (wms, wfs,...)",
         "deleteKeyword": "Delete the keyword",
         "subsetLayersListKeywordPlaceholder": "Filter",
         "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",
-        "subsetLayersListOnlyInRange": "Subset the layers's list by resolution range",
+        "subsetLayersListOnlyInRange":
+          "Subset the layers's list by resolution range",
         "sortAlphabetically": "Sort the layers's list alphabetically",
-        "sortMapOrder": "Sort the layers's list based on layer's order on the map",
+        "sortMapOrder":
+          "Sort the layers's list based on layer's order on the map",
         "resetLayersList": "Remove the current applied filter to layers's list"
       },
       "download": {
@@ -102,29 +105,9 @@
       "metadata": {
         "show": "Show metadata"
       },
-      "permission": {
-        "addBtn": "Add",
-        "delete": "Remove permission",
-        "dialog": {
-          "addMsg": "The permission '{{value}}' was added",
-          "addTitle": "Permission added",
-          "deleteMsg": "The permission '{{value}}' was removed",
-          "deleteTitle": "Permission removed",
-          "scopeChangedMsg": "The scope was changed to {{value}}",
-          "scopeChangedTitle": "Scope changed"
-        },
-        "profil": "Profil",
-        "profilRequired": "Profil required",
-        "read": "Read only",
-        "scope": {
-          "private": "Private",
-          "protected": "Protected",
-          "public": "Public"
-        },
-        "write": "Read and Write"
-      },
       "printForm": {
-        "corsErrorMessageBody": "Unable to print due to non-owned access rights",
+        "corsErrorMessageBody":
+          "Unable to print due to non-owned access rights",
         "corsErrorMessageHeader": "Print",
         "comment": "Comment",
         "doZipFile": "Zip files",

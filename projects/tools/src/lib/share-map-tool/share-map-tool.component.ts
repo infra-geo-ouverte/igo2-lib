@@ -24,7 +24,7 @@ export class ShareMapToolComponent {
 
   get hasShareMapButton(): boolean {
     return this.options.hasShareMapButton === undefined
-      ? false
+      ? true
       : this.options.hasShareMapButton;
   }
 
