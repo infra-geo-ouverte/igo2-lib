@@ -4,7 +4,7 @@ import { Layer } from '../../layer/shared/layers/layer';
 
 import {
   MetadataOptions,
-  MetadataDataSourceOptions
+  MetadataLayerOptions
 } from '../shared/metadata.interface';
 import { MetadataService } from '../shared/metadata.service';
 
@@ -39,10 +39,10 @@ export class MetadataButtonComponent {
     this.metadataService.open(metadata);
   }
 
-  get options(): MetadataDataSourceOptions {
+  get options(): MetadataLayerOptions {
     if (!this.layer) {
       return;
     }
-    return this.layer.dataSource.options;
+    return this.layer.options;
   }
 }

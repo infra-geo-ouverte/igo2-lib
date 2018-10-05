@@ -6,7 +6,8 @@ import {
   DataSourceService,
   LayerService,
   WMSDataSourceOptions,
-  MetadataDataSourceOptions
+  LayerOptions,
+  MetadataLayerOptions
 } from '@igo2/geo';
 
 @Component({
@@ -90,34 +91,33 @@ export class AppLayerComponent {
       })
       .subscribe(l => this.map.addLayer(l));
 
-    interface WMSoptions
-      extends WMSDataSourceOptions,
-        MetadataDataSourceOptions {}
-
-    const datasource: WMSoptions = {
+    const datasource: WMSDataSourceOptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
       refreshIntervalSec: 15,
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
         version: '1.3.0'
-      },
-      metadata: {
-        url:
-          'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
-        extern: true
       }
     };
+
+    interface LayerOptionsWithMetadata
+      extends LayerOptions,
+        MetadataLayerOptions {}
 
     this.dataSourceService
       .createAsyncDataSource(datasource)
       .subscribe(dataSource => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'Embâcle',
-            source: dataSource
-          })
-        );
+        const layer: LayerOptionsWithMetadata = {
+          title: 'Embâcle',
+          source: dataSource,
+          metadata: {
+            url:
+              'https://www.donneesquebec.ca/recherche/fr/dataset/historique-publique-d-embacles-repertories-au-msp',
+            extern: true
+          }
+        };
+        this.map.addLayer(this.layerService.createLayer(layer));
       });
   }
 }

@@ -1,10 +1,10 @@
-import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 
 export interface MetadataOptions {
   url: string;
   extern?: boolean;
 }
 
-export interface MetadataDataSourceOptions extends DataSourceOptions {
+export interface MetadataLayerOptions extends LayerOptions {
   metadata?: MetadataOptions;
 }
