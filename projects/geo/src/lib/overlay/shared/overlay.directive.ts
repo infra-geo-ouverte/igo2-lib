@@ -56,11 +56,11 @@ export class OverlayDirective implements OnInit, OnDestroy {
       });
       featureZoomLevelTrigger = feature.zoomLevelTriggerFeatureZoom;
       geometry = olFeature.getGeometry();
-      featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
       featureExtent = this.getFeatureExtent(feature);
       if (olextent.isEmpty(featureExtent)) {
         if (geometry !== null) {
           featureExtent = geometry.getExtent();
+          featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
         }
       }
       olextent.extend(extent, featureExtent);
@@ -83,10 +83,12 @@ export class OverlayDirective implements OnInit, OnDestroy {
     }
 
     let cntOverlapExtent = 0;
-    for (let i = 0; i < featureFlatCoordinates.length; i += 2) {
-      if (olextent.containsCoordinate(mapExtentWithInnerBuffer,
-       [featureFlatCoordinates[i], featureFlatCoordinates[i + 1]])) {
-        cntOverlapExtent += 1;
+    if (featureFlatCoordinates) {
+      for (let i = 0; i < featureFlatCoordinates.length; i += 2) {
+        if (olextent.containsCoordinate(mapExtentWithInnerBuffer,
+          [featureFlatCoordinates[i], featureFlatCoordinates[i + 1]])) {
+          cntOverlapExtent += 1;
+        }
       }
     }
     if (!olextent.isEmpty(featureExtent)) {
