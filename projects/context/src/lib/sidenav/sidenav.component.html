@@ -72,7 +72,7 @@
             panelRightButton
             class="igo-icon-button"
             (click)="zoomToFeatureExtent()"
-            *ngIf="media !== 'mobile'">
+            *ngIf="feature.geometry">
             <mat-icon>zoom_in</mat-icon>
           </button>
 

@@ -64,11 +64,13 @@ export class SidenavComponent {
   constructor(public toolService: ToolService) {}
 
   zoomToFeatureExtent() {
-    const olFeature = this.format.readFeature(this.feature, {
-      dataProjection: this.feature.projection,
-      featureProjection: this.map.projection
-    });
-    this.map.zoomToFeature(olFeature);
+    if (this.feature.geometry) {
+      const olFeature = this.format.readFeature(this.feature, {
+        dataProjection: this.feature.projection,
+        featureProjection: this.map.projection
+      });
+      this.map.zoomToFeature(olFeature);
+    }
   }
 
   toggleTopPanel() {
