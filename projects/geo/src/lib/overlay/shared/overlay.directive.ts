@@ -60,11 +60,13 @@ export class OverlayDirective implements OnInit, OnDestroy {
       if (olextent.isEmpty(featureExtent)) {
         if (geometry !== null) {
           featureExtent = geometry.getExtent();
-          featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
         }
       }
       olextent.extend(extent, featureExtent);
 
+      if (geometry !== null) {
+        featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
+      }
       this.map.addOverlay(olFeature);
     }, this);
     const mapExtent = this.map.getExtent();
