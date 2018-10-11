@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-
+import { IgoMap } from '../../map';
 import { OgcFilterableDataSourceOptions } from '../shared/ogc-filter.interface';
 
 @Component({
@@ -19,6 +19,15 @@ export class OgcFilterButtonComponent {
     this._layer = value;
   }
   private _layer: Layer;
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
 
   @Input()
   get color() {
