@@ -34,7 +34,7 @@
     </mat-icon>
   </button> -->
 
-  <span *ngIf="downloadable && ogcFiltersHeaderShown">
+  <span *ngIf="downloadable">
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.download.action' | translate"
       [color]="color" (click)="openDownload()">
       <mat-icon>file_download</mat-icon>
