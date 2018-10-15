@@ -6,7 +6,6 @@ import {
   DataSourceService,
   LayerService,
   WMSDataSourceOptions,
-
   MetadataDataSourceOptions,
   LayerOptions,
   WFSDataSourceOptions,
@@ -65,16 +64,16 @@ export class AppLayerComponent {
             version: '2.0.0',
             outputFormat: 'geojson_utf8',
             outputFormatDownload: 'shp'
-            },
-            ogcFilters: {
-              enabled: true,
-              editable: true,
-              filters: {
-                            operator: 'PropertyIsEqualTo',
-                            propertyName: 'code_municipalite',
-                            expression: '10043'
-                        }
+          },
+          ogcFilters: {
+            enabled: true,
+            editable: true,
+            filters: {
+              operator: 'PropertyIsEqualTo',
+              propertyName: 'code_municipalite',
+              expression: '10043'
             }
+          }
         };
 
 
