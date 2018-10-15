@@ -68,40 +68,33 @@ export class AppOgcFilterComponent {
         {name: 'code_municipalite', 'alias': '# de la municipalitée'},
         {name: 'date_observation'},
         {name: 'urgence', values: ['immédiate', 'inconnue']}
-        ],
+      ],
       ogcFilters: {
         enabled: true,
         editable: true,
         filters: {
           logical: 'Or',
           filters: [{
-                      operator: 'PropertyIsEqualTo',
-                      propertyName: 'code_municipalite',
-                      expression: '10043'
-                      },
-                      {
-                        operator: 'Intersects',
-                        geometryName: 'the_geom',
-                        wkt_geometry: `
-                        MULTIPOLYGON(((
-                          -8379441.158019895 5844447.897707146,-8379441.158019895 5936172.331649357,
-                          -8134842.66750733 5936172.331649357,-8134842.66750733 5844447.897707146,
-                          -8379441.158019895 5844447.897707146),
-                          (-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074)))
-                        `}
-                        // OR
-                        // POLYGON((
-                        //   -8015003 5942074,-8015003 5780349,
-                        //   -7792364 5780349,-7792364 5942074,-8015003 5942074
-                        // ))
-                        // OR
-                        // MULTIPOLYGON(((
-                        // -8379441.158019895 5844447.897707146,-8379441.158019895 5936172.331649357,
-                        // -8134842.66750733 5936172.331649357,-8134842.66750733 5844447.897707146,
-                        // -8379441.158019895 5844447.897707146),
-                        // (-8015003 5942074,-8015003 5780349,-7792364 5780349,-7792364 5942074,-8015003 5942074)))
-
-          ] as AnyBaseOgcFilterOptions[]
+            operator: 'PropertyIsEqualTo',
+            propertyName: 'code_municipalite',
+            expression: '10043'
+          }, {
+            operator: 'Intersects',
+            geometryName: 'the_geom',
+            wkt_geometry: `MULTIPOLYGON(((
+              -8379441.158019895 5844447.897707146,
+              -8379441.158019895 5936172.331649357,
+              -8134842.66750733 5936172.331649357,
+              -8134842.66750733 5844447.897707146,
+              -8379441.158019895 5844447.897707146
+            ), (
+              -8015003 5942074,
+              -8015003 5780349,
+              -7792364 5780349,
+              -7792364 5942074,
+              -8015003 5942074
+            )))`
+          }] as AnyBaseOgcFilterOptions[]
         }
       }
     };
@@ -117,7 +110,7 @@ export class AppOgcFilterComponent {
         );
       });
 
-      interface WMSoptions
+    interface WMSoptions
       extends WMSDataSourceOptions, OgcFilterableDataSourceOptions {}
 
     const datasourceWms: WMSoptions = {
