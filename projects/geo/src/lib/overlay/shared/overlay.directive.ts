@@ -11,7 +11,7 @@ import { SourceFeatureType } from '../../feature/shared/feature.enum';
 import { Feature } from '../../feature/shared/feature.interface';
 
 import { OverlayService } from '../shared/overlay.service';
-import { OverlayAction } from '../shared/overlay.interface';
+import { OverlayAction } from '../shared/overlay.enum';
 
 @Directive({
   selector: '[igoOverlay]'
@@ -68,16 +68,20 @@ export class OverlayDirective implements OnInit, OnDestroy {
     }, this);
     if (features[0].sourceType === SourceFeatureType.Click) {
       if (olextent.intersects(featureExtent, this.map.getExtent())) {
-        action = 'none';
+        action = OverlayAction.None;
       } else {
-        action = 'move';
+        action = OverlayAction.Move;
       }
     }
     if (!olextent.isEmpty(featureExtent)) {
-      if (action === 'zoom') {
+      if (action === OverlayAction.Zoom) {
         this.map.zoomToExtent(extent);
-      } else if (action === 'move') {
+      } else if (action === OverlayAction.Move) {
         this.map.moveToExtent(extent);
+      } else if (action === OverlayAction.ZoomIfOutMapExtent) {
+        if (!olextent.intersects(featureExtent, this.map.getExtent())) {
+          this.map.zoomToExtent(extent);
+        }
       }
     }
   }

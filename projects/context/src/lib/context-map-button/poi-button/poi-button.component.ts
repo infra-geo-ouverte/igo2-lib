@@ -67,16 +67,16 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
     if (poi && poi.id) {
       const translate = this.languageService.translate;
       this.confirmDialogService
-        .open(translate.instant('igo.geo.poiButton.dialog.confirmDelete'))
+        .open(translate.instant('igo.context.poiButton.dialog.confirmDelete'))
         .subscribe(confirm => {
           if (confirm) {
             this.poiService.delete(poi.id).subscribe(
               () => {
                 const title = translate.instant(
-                  'igo.geo.poiButton.dialog.deleteTitle'
+                  'igo.context.poiButton.dialog.deleteTitle'
                 );
                 const message = translate.instant(
-                  'igo.geo.poiButton.dialog.deleteMsg',
+                  'igo.context.poiButton.dialog.deleteMsg',
                   {
                     value: poi.title
                   }
@@ -131,10 +131,10 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
             newPoi => {
               const translate = this.languageService.translate;
               const titleD = translate.instant(
-                'igo.geo.poiButton.dialog.createTitle'
+                'igo.context.poiButton.dialog.createTitle'
               );
               const message = translate.instant(
-                'igo.geo.poiButton.dialog.createMsg',
+                'igo.context.poiButton.dialog.createMsg',
                 {
                   value: poi.title
                 }

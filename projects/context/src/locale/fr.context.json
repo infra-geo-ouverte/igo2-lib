@@ -25,6 +25,13 @@
           "saveTitle": "Contexte sauvegardé"
         },
         "edit": "Éditer ce contexte",
+        "errors": {
+          "uncaught": {
+            "message":
+              "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
+            "title": "Erreur de serveur"
+          }
+        },
         "favorite": "Favori",
         "form": {
           "edit": "Éditer",
@@ -43,6 +50,28 @@
         "publicContexts": "Contextes publics",
         "save": "Sauvegarder ce contexte",
         "sharedContexts": "Contextes partagés"
+      },
+      "permission": {
+        "addBtn": "Ajouter",
+        "delete": "Retirer la permission",
+        "dialog": {
+          "addMsg": "La permission '{{value}}' a été ajoutée",
+          "addTitle": "Permission ajoutée",
+          "deleteMsg": "La permission '{{value}}' a été supprimée",
+          "deleteTitle": "Permission retirée",
+          "scopeChangedMsg":
+            "La portée du contexte a été changée pour {{value}}",
+          "scopeChangedTitle": "Changement de la portée"
+        },
+        "profil": "Profil",
+        "profilRequired": "Le profil est obligatoire",
+        "read": "Lecture seule",
+        "scope": {
+          "private": "Privé",
+          "protected": "Protégé",
+          "public": "Public"
+        },
+        "write": "Lecture et écriture"
       },
       "poiButton": {
         "create": "Créer une zone d'intérêt",

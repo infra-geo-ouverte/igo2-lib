@@ -10,7 +10,7 @@
           "title": "New context"
         }
       },
-      "context": {
+      "contextManager": {
         "clone": "Clone this context",
         "delete": "Delete this context",
         "dialog": {
@@ -50,6 +50,27 @@
         "publicContexts": "Public contexts",
         "save": "Save this context",
         "sharedContexts": "Shared contexts"
+      },
+      "permission": {
+        "addBtn": "Add",
+        "delete": "Remove permission",
+        "dialog": {
+          "addMsg": "The permission '{{value}}' was added",
+          "addTitle": "Permission added",
+          "deleteMsg": "The permission '{{value}}' was removed",
+          "deleteTitle": "Permission removed",
+          "scopeChangedMsg": "The scope was changed to {{value}}",
+          "scopeChangedTitle": "Scope changed"
+        },
+        "profil": "Profil",
+        "profilRequired": "Profil required",
+        "read": "Read only",
+        "scope": {
+          "private": "Private",
+          "protected": "Protected",
+          "public": "Public"
+        },
+        "write": "Read and Write"
       },
       "poiButton": {
         "create": "Create a new zone of interest",

@@ -2,6 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { ObjectUtils } from '@igo2/utils';
 import { ConfigService } from '@igo2/core';
 
 import {
@@ -56,7 +57,7 @@ export class LayerService {
       layerOptions.source.options &&
       layerOptions.source.options.optionsFromCapabilities
     ) {
-      layerOptions = Object.assign(
+      layerOptions = ObjectUtils.mergeDeep(
         layerOptions,
         (layerOptions.source.options as any)._layerOptionsFromCapabilities
       );

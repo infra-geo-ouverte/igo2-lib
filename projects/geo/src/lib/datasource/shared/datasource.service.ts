@@ -39,8 +39,12 @@ export class DataSourceService {
     private wfsDataSourceService: WFSService) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
+    if (!context.type) {
+      console.error(context);
+      throw new Error('Datasource needs a type');
+    }
     let dataSource;
-    switch (context.type) {
+    switch (context.type.toLowerCase()) {
       case 'osm':
         dataSource = this.createOSMDataSource(context as OSMDataSourceOptions);
         break;
@@ -79,7 +83,8 @@ export class DataSourceService {
         );
         break;
       default:
-        break;
+        console.error(context);
+        throw new Error('Invalid datasource type');
     }
 
     this.datasources$.next(this.datasources$.value.concat([dataSource]));

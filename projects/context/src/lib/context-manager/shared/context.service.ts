@@ -103,6 +103,11 @@ export class ContextService {
     );
   }
 
+  setDefault(id: string): Observable<any> {
+    const url = this.baseUrl + '/contexts/default';
+    return this.http.post(url, { defaultContextId: id });
+  }
+
   delete(id: string): Observable<void> {
     const url = this.baseUrl + '/contexts/' + id;
     return this.http.delete<void>(url).pipe(

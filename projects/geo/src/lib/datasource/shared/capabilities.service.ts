@@ -142,7 +142,6 @@ export class CapabilitiesService {
           this.getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
         minResolution:
           this.getResolutionFromScale(layer.MinScaleDenominator) || 0,
-
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined
         },

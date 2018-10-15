@@ -10,7 +10,6 @@ import { debounceTime } from 'rxjs/operators';
 
 import { MessageService, LanguageService } from '@igo2/core';
 import { ConfirmDialogService } from '@igo2/common';
-import { AuthService } from '@igo2/auth';
 import { MapService } from '@igo2/geo';
 
 import {
@@ -69,24 +68,20 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('favorite', ['$event'])
   onFavorite(context: Context) {
-    this.authService
-      .updateUser({
-        defaultContextId: String(context.id)
-      })
-      .subscribe(() => {
-        this.contextService.defaultContextId$.next(context.id);
-        const translate = this.languageService.translate;
-        const message = translate.instant(
-          'igo.context.contextManager.dialog.favoriteMsg',
-          {
-            value: context.title
-          }
-        );
-        const title = translate.instant(
-          'igo.context.contextManager.dialog.favoriteTitle'
-        );
-        this.messageService.success(message, title);
-      });
+    this.contextService.setDefault(context.id).subscribe(() => {
+      this.contextService.defaultContextId$.next(context.id);
+      const translate = this.languageService.translate;
+      const message = translate.instant(
+        'igo.context.contextManager.dialog.favoriteMsg',
+        {
+          value: context.title
+        }
+      );
+      const title = translate.instant(
+        'igo.context.contextManager.dialog.favoriteTitle'
+      );
+      this.messageService.success(message, title);
+    });
   }
 
   @HostListener('manageTools', ['$event'])
@@ -103,7 +98,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   onDelete(context: Context) {
     const translate = this.languageService.translate;
     this.confirmDialogService
-      .open(translate.instant('igo.context.contextManager.dialog.confirmDelete'))
+      .open(
+        translate.instant('igo.context.contextManager.dialog.confirmDelete')
+      )
       .subscribe(confirm => {
         if (confirm) {
           this.contextService.delete(context.id).subscribe(() => {
@@ -146,7 +143,6 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   constructor(
     @Self() component: ContextListComponent,
     private contextService: ContextService,
-    private authService: AuthService,
     private mapService: MapService,
     private languageService: LanguageService,
     private confirmDialogService: ConfirmDialogService,

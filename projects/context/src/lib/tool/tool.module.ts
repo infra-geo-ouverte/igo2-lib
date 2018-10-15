@@ -7,7 +7,7 @@ import {
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoListModule } from '@igo2/common';
+import { IgoListModule, IgoStopPropagationModule } from '@igo2/common';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { ToolbarBindingDirective } from './toolbar/toolbar-binding.directive';
@@ -19,6 +19,7 @@ import { ToolboxComponent } from './toolbox/toolbox.component';
     CommonModule,
     IgoLanguageModule,
     IgoListModule,
+    IgoStopPropagationModule,
     MatIconModule,
     MatListModule,
     MatTooltipModule
