@@ -12,4 +12,5 @@ export interface SearchSourcesOptions {
   icherche?: SearchSourceOptions;
   nominatim?: SearchSourceOptions;
   datasource?: SearchSourceOptions;
+  reseautq?: SearchSourceOptions;
 }
