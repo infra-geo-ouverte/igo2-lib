@@ -29,13 +29,13 @@ export const environment: Environment = {
       reseautq: {
         searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        zoomLevelTriggerFeatureZoom: 8,
+        zoomMaxOnSelect: 8,
         enabled: true
       },
       icherche: {
         searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
         locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
-        zoomLevelTriggerFeatureZoom: 10,
+        zoomMaxOnSelect: 10,
         enabled: true
       },
       datasource: {
