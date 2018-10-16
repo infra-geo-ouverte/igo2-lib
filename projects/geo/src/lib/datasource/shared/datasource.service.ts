@@ -36,7 +36,8 @@ export class DataSourceService {
 
   constructor(
     private capabilitiesService: CapabilitiesService,
-    private wfsDataSourceService: WFSService) {}
+    private wfsDataSourceService: WFSService
+  ) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
     if (!context.type) {
@@ -107,7 +108,9 @@ export class DataSourceService {
   private createWFSDataSource(
     context: WFSDataSourceOptions
   ): Observable<WFSDataSource> {
-    return new Observable(d => d.next(new WFSDataSource(context, this.wfsDataSourceService)));
+    return new Observable(d =>
+      d.next(new WFSDataSource(context, this.wfsDataSourceService))
+    );
   }
 
   private createWMSDataSource(
@@ -117,11 +120,16 @@ export class DataSourceService {
       return this.capabilitiesService
         .getWMSOptions(context)
         .pipe(
-          map((options: WMSDataSourceOptions) => new WMSDataSource(options, this.wfsDataSourceService))
+          map(
+            (options: WMSDataSourceOptions) =>
+              new WMSDataSource(options, this.wfsDataSourceService)
+          )
         );
     }
 
-    return new Observable(d => d.next(new WMSDataSource(context, this.wfsDataSourceService)));
+    return new Observable(d =>
+      d.next(new WMSDataSource(context, this.wfsDataSourceService))
+    );
   }
 
   private createWMTSDataSource(

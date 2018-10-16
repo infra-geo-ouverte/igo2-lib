@@ -17,7 +17,8 @@ export class WFSDataSource extends DataSource {
 
   constructor(
     public options: WFSDataSourceOptions,
-    protected wfsService: WFSService) {
+    protected wfsService: WFSService
+  ) {
     super(options);
     this.options = this.wfsService.checkWfsOptions(options);
     this.ogcFilterWriter = new OgcFilterWriter();
@@ -33,17 +34,24 @@ export class WFSDataSource extends DataSource {
     this.options.paramsWFS = this.options.params;
     this.options.urlWfs = this.options.url;
     // default wfs version
-    this.options.paramsWFS.version = this.options.paramsWFS.version ? this.options.paramsWFS.version : '2.0.0';
+    this.options.paramsWFS.version = this.options.paramsWFS.version
+      ? this.options.paramsWFS.version
+      : '2.0.0';
     const ogcFiltersDefaultValue = true; // default values for wfs.
     (this.options as OgcFilterableDataSourceOptions).ogcFilters =
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined ?
-    {} : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined
+        ? {}
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled =
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled === undefined ?
-    ogcFiltersDefaultValue : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled ===
+      undefined
+        ? ogcFiltersDefaultValue
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
     (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable =
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable === undefined ?
-    ogcFiltersDefaultValue : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable ===
+      undefined
+        ? ogcFiltersDefaultValue
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
 
     return new olSourceVector({
       format: this.getFormatFromOptions(),
@@ -82,10 +90,13 @@ export class WFSDataSource extends DataSource {
 
         if (
           (this.options as OgcFilterableDataSourceOptions).ogcFilters &&
-          (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled) {
-            this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
-              (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters,
-              extent, proj, this.options.paramsWFS.fieldNameGeometry
+          (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
+        ) {
+          this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
+            (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters,
+            extent,
+            proj,
+            this.options.paramsWFS.fieldNameGeometry
           );
         }
 

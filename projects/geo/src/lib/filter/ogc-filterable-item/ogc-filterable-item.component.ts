@@ -13,7 +13,6 @@ import {
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
 
-
 @Component({
   selector: 'igo-ogc-filterable-item',
   templateUrl: './ogc-filterable-item.component.html',
@@ -88,50 +87,65 @@ export class OgcFilterableItemComponent implements OnInit {
     }
 
     if (this.datasource.options.ogcFilters) {
-      if (
-        this.datasource.options.ogcFilters.interfaceOgcFilters
-      ) {
+      if (this.datasource.options.ogcFilters.interfaceOgcFilters) {
         this.lastRunOgcFilter = JSON.parse(
           JSON.stringify(this.datasource.options.ogcFilters.interfaceOgcFilters)
         );
-        if (this.datasource.options.ogcFilters.interfaceOgcFilters.filter(f => f.wkt_geometry).length >= 1) {
+        if (
+          this.datasource.options.ogcFilters.interfaceOgcFilters.filter(
+            f => f.wkt_geometry
+          ).length >= 1
+        ) {
           this.hasActiveSpatialFilter = true;
         }
       }
 
-      this.filtersAreEditable = this.datasource.options.ogcFilters.editable ?
-        this.datasource.options.ogcFilters.editable : false;
-
+      this.filtersAreEditable = this.datasource.options.ogcFilters.editable
+        ? this.datasource.options.ogcFilters.editable
+        : false;
     }
-
-
-    // this.datasource.options['diskableRefreshFilter'] = true;
   }
 
   toggleShowFeatureOnMap() {
     this.showFeatureOnMap = !this.showFeatureOnMap;
     this.datasource.options.ogcFilters.interfaceOgcFilters.forEach(filter => {
       let drawnFeature;
-      let drawnStrokeColor = [125, 136, 140, 0] as [number, number, number, number];
+      let drawnStrokeColor = [125, 136, 140, 0] as [
+        number,
+        number,
+        number,
+        number
+      ];
       let drawStrokeWidth = 2;
-      let drawnFillColor = [125, 136, 140, 0]as [number, number, number, number];
+      let drawnFillColor = [125, 136, 140, 0] as [
+        number,
+        number,
+        number,
+        number
+      ];
 
       if (this.showFeatureOnMap === false) {
-        drawnFeature = this.map.getOverlayByID('ogcFilterOverlay_' + filter.filterid);
+        drawnFeature = this.map.getOverlayByID(
+          'ogcFilterOverlay_' + filter.filterid
+        );
       } else {
-        drawnFeature = this.map.getOverlayByID('ogcFilterOverlay_' + filter.filterid);
+        drawnFeature = this.map.getOverlayByID(
+          'ogcFilterOverlay_' + filter.filterid
+        );
         drawnStrokeColor = [125, 136, 140, 0.5];
         drawStrokeWidth = 2;
         drawnFillColor = [125, 136, 140, 0];
       }
       if (drawnFeature) {
-        drawnFeature.setStyle(this.map.setOverlayDataSourceStyle(drawnStrokeColor, drawStrokeWidth, drawnFillColor));
+        drawnFeature.setStyle(
+          this.map.setOverlayDataSourceStyle(
+            drawnStrokeColor,
+            drawStrokeWidth,
+            drawnFillColor
+          )
+        );
       }
     });
-
-
-
-
   }
 
   addFilterToSequence() {
@@ -145,7 +159,8 @@ export class OgcFilterableItemComponent implements OnInit {
           : this.datasource.options.sourceFields[0].name;
     }
     let fieldNameGeometry;
-    const datasourceOptions  = this.datasource.options as WFSDataSourceOptionsParams;
+    const datasourceOptions = this.datasource
+      .options as WFSDataSourceOptionsParams;
     if (datasourceOptions.fieldNameGeometry) {
       fieldNameGeometry = datasourceOptions.fieldNameGeometry;
     } else if (
@@ -183,7 +198,11 @@ export class OgcFilterableItemComponent implements OnInit {
     if (activeFilters.length > 1) {
       activeFilters[0].parentLogical = activeFilters[1].parentLogical;
     }
-    if (activeFilters.filter(af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1).length === 0)  {
+    if (
+      activeFilters.filter(
+        af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
+      ).length === 0
+    ) {
       this.hasActiveSpatialFilter = false;
     } else {
       this.hasActiveSpatialFilter = true;
@@ -220,7 +239,10 @@ export class OgcFilterableItemComponent implements OnInit {
             this.layer.dataSource.options['fieldNameGeometry']
           );
         }
-        this.ogcFilterService.filterByOgc(this.datasource as WMSDataSource , rebuildFilter);
+        this.ogcFilterService.filterByOgc(
+          this.datasource as WMSDataSource,
+          rebuildFilter
+        );
         this.datasource.options.ogcFilters.filtered =
           activeFilters.length === 0 ? false : true;
       }

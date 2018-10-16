@@ -71,6 +71,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       const translate = this.injector.get(LanguageService).translate;
       const message = translate.instant('igo.core.errors.uncaught.message');
       const title = translate.instant('igo.core.errors.uncaught.title');
+      this.httpError.error.caught = true;
       this.messageService.error(message, title);
     }
   }

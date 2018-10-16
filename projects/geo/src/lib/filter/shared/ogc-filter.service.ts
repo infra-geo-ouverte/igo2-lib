@@ -3,7 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
-// import { WFSService } from '../../datasource/shared/wfs.service';
 import { OgcFilterWriter } from './ogc-filter';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 
@@ -18,7 +17,6 @@ export class OGCFilterService {
         : undefined;
     wmsDatasource.ol.updateParams({ filter: wmsFilterValue });
   }
-
 
   public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {
     const options: any = wfsDatasource.options;
@@ -43,8 +41,6 @@ export class OGCFilterService {
     const options: any = wmsDatasource.options;
     const ogcFilterWriter = new OgcFilterWriter();
 
-
-
     if (options.ogcFilters.enabled && options.ogcFilters.filters) {
       options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
         options.ogcFilters.filters,
@@ -66,6 +62,5 @@ export class OGCFilterService {
       options.ogcFilters.interfaceOgcFilters = [];
       options.filtered = false;
     }
-
   }
 }

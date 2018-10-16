@@ -1,5 +1,9 @@
-import { Component, Input, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
-
+import {
+  Component,
+  Input,
+  ChangeDetectorRef,
+  AfterContentChecked
+} from '@angular/core';
 
 import {
   OgcInterfaceFilterOptions,
@@ -98,10 +102,16 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   ngAfterContentChecked() {
     if (this.map) {
       this.activeFilters
-        .filter(af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1).forEach(activeFilterSpatial => {
+        .filter(
+          af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
+        )
+        .forEach(activeFilterSpatial => {
           if (activeFilterSpatial.wkt_geometry) {
-            this.addWktAsOverlay(activeFilterSpatial.wkt_geometry, activeFilterSpatial.filterid, this.map.projection);
-
+            this.addWktAsOverlay(
+              activeFilterSpatial.wkt_geometry,
+              activeFilterSpatial.filterid,
+              this.map.projection
+            );
           }
         });
     }
@@ -134,7 +144,14 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     if (this.showFeatureOnMap) {
       opacity = 0.5;
     }
-    wktAsFeature.setStyle(this.map.setOverlayDataSourceStyle([125, 136, 140, opacity], 2, [125, 136, 140, 0]));
+    wktAsFeature.setStyle(
+      this.map.setOverlayDataSourceStyle([125, 136, 140, opacity], 2, [
+        125,
+        136,
+        140,
+        0
+      ])
+    );
     this.map.addOverlay(wktAsFeature);
   }
 
@@ -143,7 +160,11 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     const mapProjection = this.map.projection;
     if (event.checked) {
       if (filter.wkt_geometry !== '') {
-        this.addWktAsOverlay(filter.wkt_geometry, filter.filterid, mapProjection);
+        this.addWktAsOverlay(
+          filter.wkt_geometry,
+          filter.filterid,
+          mapProjection
+        );
       }
       this.datasource.options.ogcFilters.interfaceOgcFilters
         .filter(f => f.filterid === filter.filterid)
@@ -197,7 +218,6 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   }
 
   changeGeometry(filter, value?) {
-
     const checkSNRC50k = /\d{2,3}[a-l][0,1][0-9]/gi;
     const checkSNRC250k = /\d{2,3}[a-p]/gi;
     const checkSNRC1m = /\d{2,3}/gi;
@@ -213,16 +233,19 @@ export class OgcFilterFormComponent implements AfterContentChecked {
             element.wkt_geometry = wktPoly;
           } else if (
             value !== '' &&
-            (checkSNRC1m.test(value) || checkSNRC250k.test(value) || checkSNRC50k.test(value) )) {
+            (checkSNRC1m.test(value) ||
+              checkSNRC250k.test(value) ||
+              checkSNRC50k.test(value))
+          ) {
             wktPoly = this.wktService.snrcToWkt(value).wktPoly;
             element.wkt_geometry = wktPoly;
           }
-
         } else if (filter.igoSpatialSelector === 'fixedExtent') {
           wktPoly = this.wktService.extentToWkt(
-              mapProjection,
-              this.map.getExtent(),
-              mapProjection).wktPoly;
+            mapProjection,
+            this.map.getExtent(),
+            mapProjection
+          ).wktPoly;
           element.wkt_geometry = wktPoly;
         }
         if (wktPoly) {

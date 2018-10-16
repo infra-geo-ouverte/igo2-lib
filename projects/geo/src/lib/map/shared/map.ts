@@ -447,9 +447,8 @@ export class IgoMap {
     strokeRGBA: [number, number, number, number] = [0, 161, 222, 1],
     strokeWidth: number = 2,
     fillRGBA: [number, number, number, number] = [0, 161, 222, 0.15],
-    text?): olstyle.Style {
-
-
+    text?
+  ): olstyle.Style {
     const stroke = new olstyle.Stroke({
       color: strokeRGBA,
       width: strokeWidth
@@ -468,8 +467,7 @@ export class IgoMap {
         fill: fill
       })
     });
-
-}
+  }
 
   setOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
     let iconColor;

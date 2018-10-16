@@ -36,7 +36,6 @@ export class OgcFilterableFormComponent {
     this._showFeatureOnMap = value;
   }
 
-
   private _showFeatureOnMap: Boolean;
   private _map: IgoMap;
   private _dataSource: OgcFilterableDataSource;

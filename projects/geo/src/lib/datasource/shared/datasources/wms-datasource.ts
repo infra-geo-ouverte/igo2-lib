@@ -32,8 +32,10 @@ export class WMSDataSource extends DataSource {
       : 'newtab';
   }
 
-  constructor(public options: WMSDataSourceOptions,
-    protected wfsService: WFSService) {
+  constructor(
+    public options: WMSDataSourceOptions,
+    protected wfsService: WFSService
+  ) {
     super(options);
     // Important: To use wms versions smaller than 1.3.0, SRS
     // needs to be supplied in the source "params"
@@ -47,7 +49,7 @@ export class WMSDataSource extends DataSource {
 
     if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
       setInterval(() => {
-        this.ol.updateParams({'igoRefresh': Math.random()});
+        this.ol.updateParams({ igoRefresh: Math.random() });
       }, options.refreshIntervalSec * 1000); // Convert seconds to MS
     }
 
@@ -57,7 +59,6 @@ export class WMSDataSource extends DataSource {
       options.paramsWFS.version = wfsCheckup.paramsWFS.version;
       options.paramsWFS.wfsCapabilities = wfsCheckup.params.wfsCapabilities;
 
-
       this.wfsService.getSourceFieldsFromWFS(options);
 
       this.options.download = Object.assign({}, this.options.download, {
@@ -65,7 +66,7 @@ export class WMSDataSource extends DataSource {
       });
     } //  ####   END  if paramsWFS
     this.ogcFilterWriter = new OgcFilterWriter();
-    if (!options.sourceFields || options.sourceFields.length === 0 ) {
+    if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     }
   }
@@ -77,7 +78,10 @@ export class WMSDataSource extends DataSource {
         : '';
 
     let paramMaxFeatures = 'maxFeatures';
-    if (asWFSDataSourceOptions.paramsWFS.version === '2.0.0' || !asWFSDataSourceOptions.paramsWFS.version) {
+    if (
+      asWFSDataSourceOptions.paramsWFS.version === '2.0.0' ||
+      !asWFSDataSourceOptions.paramsWFS.version
+    ) {
       paramMaxFeatures = 'count';
     }
     const maxFeatures = asWFSDataSourceOptions.paramsWFS.maxFeatures
@@ -91,24 +95,32 @@ export class WMSDataSource extends DataSource {
       'GetFeature'
     );
     return `${baseWfsQuery}&${outputFormat}&${srsname}&${maxFeatures}`;
-
   }
 
   protected createOlSource(): olSourceImageWMS {
     if (this.options.paramsWFS) {
-      this.options.urlWfs = this.options.urlWfs ? this.options.urlWfs : this.options.url;
-      this.options.paramsWFS.version = this.options.paramsWFS.version ? this.options.paramsWFS.version : '2.0.0';
+      this.options.urlWfs = this.options.urlWfs
+        ? this.options.urlWfs
+        : this.options.url;
+      this.options.paramsWFS.version = this.options.paramsWFS.version
+        ? this.options.paramsWFS.version
+        : '2.0.0';
     }
     const ogcFiltersDefaultValue = false; // default values for wms.
     (this.options as OgcFilterableDataSourceOptions).ogcFilters =
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined ?
-    {} : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined
+        ? {}
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled =
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled === undefined ?
-    ogcFiltersDefaultValue : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled ===
+      undefined
+        ? ogcFiltersDefaultValue
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
     (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable =
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable === undefined ?
-    ogcFiltersDefaultValue : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable ===
+      undefined
+        ? ogcFiltersDefaultValue
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
     return new olSourceImageWMS(this.options);
   }
 

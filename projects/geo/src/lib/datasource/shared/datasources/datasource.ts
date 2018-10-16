@@ -12,7 +12,8 @@ export abstract class DataSource {
   public ol: olSource;
 
   constructor(
-    public options: DataSourceOptions = {}, protected dataService?: DataService
+    public options: DataSourceOptions = {},
+    protected dataService?: DataService
   ) {
     this.options = options;
     this.id = this.generateId();

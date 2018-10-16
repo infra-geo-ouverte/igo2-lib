@@ -27,24 +27,19 @@ export class WFSService extends DataService {
       Object.keys(datasource.sourceFields).length === 0
     ) {
       datasource.sourceFields = [];
-      this.wfsGetCapabilities(datasource)
-        .subscribe(wfsCapabilities => {
-          datasource.paramsWFS.wfsCapabilities = {
-            xmlBody: wfsCapabilities.body,
-            GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
-              ? true
-              : false
-          };
+      this.wfsGetCapabilities(datasource).subscribe(wfsCapabilities => {
+        datasource.paramsWFS.wfsCapabilities = {
+          xmlBody: wfsCapabilities.body,
+          GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
+            ? true
+            : false
+        };
 
-          this.defineFieldAndValuefromWFS(
-            datasource
-            )
-            .subscribe(sourceFields => {
-              datasource.sourceFields = sourceFields;
-            });
+        this.defineFieldAndValuefromWFS(datasource).subscribe(sourceFields => {
+          datasource.sourceFields = sourceFields;
         });
+      });
     } else {
-
       datasource.sourceFields.forEach(sourcefield => {
         if (sourcefield.alias === undefined) {
           sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
@@ -58,12 +53,11 @@ export class WFSService extends DataService {
         .forEach(f => {
           this.getValueFromWfsGetPropertyValues(
             datasource,
-              f.name,
-              200,
-              0,
-              0
-            )
-            .subscribe(rep => (f.values = rep));
+            f.name,
+            200,
+            0,
+            0
+          ).subscribe(rep => (f.values = rep));
         });
     }
   }

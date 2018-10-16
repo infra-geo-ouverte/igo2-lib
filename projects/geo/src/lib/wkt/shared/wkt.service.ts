@@ -9,18 +9,14 @@ import olWKT from 'ol/format/WKT';
 export class WktService {
   constructor() {}
 
-  public wktToFeature(wkt, wktProj, featureProj= 'EPSG:3857') {
+  public wktToFeature(wkt, wktProj, featureProj = 'EPSG:3857') {
     return new olWKT().readFeature(wkt, {
       dataProjection: wktProj,
       featureProjection: featureProj
     });
   }
   public extentToWkt(epsgTO, extent, extentProj) {
-    let currentExtent = olproj.transformExtent(
-      extent,
-      extentProj,
-      epsgTO
-    );
+    let currentExtent = olproj.transformExtent(extent, extentProj, epsgTO);
     currentExtent = this.roundCoordinateArray(currentExtent, epsgTO, 0);
     const wktPoly = `POLYGON((
       ${extent[0]} ${extent[1]},
@@ -39,7 +35,11 @@ export class WktService {
         ${extent[0]} ${extent[3]},
         ${extent[2]} ${extent[3]},
         ${extent[2]} ${extent[1]})`;
-      return {wktPoly : wktPoly, wktLine : wktLine, wktMultiPoints: wktMultiPoints };
+    return {
+      wktPoly: wktPoly,
+      wktLine: wktLine,
+      wktMultiPoints: wktMultiPoints
+    };
   }
 
   private roundCoordinateArray(coordinateArray, projection, decimal = 0) {
@@ -233,7 +233,7 @@ export class WktService {
           coord.ul.join(' ')
         ].join(',') +
         '))';
-        const wktLine =
+      const wktLine =
         'LINESTRING(' +
         [
           coord.ul.join(' '),
@@ -244,7 +244,7 @@ export class WktService {
         ].join(',') +
         ')';
 
-        const wktMultiPoints =
+      const wktMultiPoints =
         'MULTIPOINT(' +
         [
           coord.ul.join(' '),
@@ -253,7 +253,11 @@ export class WktService {
           coord['ll'].join(' ')
         ].join(',') +
         ')';
-        return {wktPoly : wktPoly, wktLine : wktLine, wktMultiPoints: wktMultiPoints };
+      return {
+        wktPoly: wktPoly,
+        wktLine: wktLine,
+        wktMultiPoints: wktMultiPoints
+      };
     }
   }
 }
