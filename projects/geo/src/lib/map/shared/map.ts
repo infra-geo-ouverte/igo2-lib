@@ -465,6 +465,12 @@ export class IgoMap {
         radius: 5,
         stroke: stroke,
         fill: fill
+      }),
+      text: new olstyle.Text({
+        font: '12px Calibri,sans-serif',
+        text: text,
+        fill: new olstyle.Fill({ color: '#000' }),
+        stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
       })
     });
   }
