@@ -6,12 +6,10 @@ import {
   DataSourceService,
   LayerService,
   WMSDataSourceOptions,
-  MetadataDataSourceOptions,
   LayerOptions,
   WFSDataSourceOptions,
   OgcFilterableDataSourceOptions,
   MetadataLayerOptions
-
 } from '@igo2/geo';
 
 @Component({
@@ -51,43 +49,42 @@ export class AppLayerComponent {
         );
       });
 
-      interface WFSoptions
-      extends WFSDataSourceOptions, OgcFilterableDataSourceOptions { }
+    interface WFSoptions
+      extends WFSDataSourceOptions,
+        OgcFilterableDataSourceOptions {}
 
-        const wfsDatasource: WFSoptions = {
-          type: 'wfs',
-          url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
-          params: {
-            featureTypes: 'vg_observation_v_autre_wmst',
-            fieldNameGeometry: 'geometry',
-            maxFeatures: 10000,
-            version: '2.0.0',
-            outputFormat: 'geojson_utf8',
-            outputFormatDownload: 'shp'
-          },
-          ogcFilters: {
-            enabled: true,
-            editable: true,
-            filters: {
-              operator: 'PropertyIsEqualTo',
-              propertyName: 'code_municipalite',
-              expression: '10043'
-            }
-          }
+    const wfsDatasource: WFSoptions = {
+      type: 'wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi',
+      params: {
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: 'geojson_utf8',
+        outputFormatDownload: 'shp'
+      },
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        filters: {
+          operator: 'PropertyIsEqualTo',
+          propertyName: 'code_municipalite',
+          expression: '10043'
+        }
+      }
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(wfsDatasource)
+      .subscribe(dataSource => {
+        const layer: LayerOptions = {
+          title: 'WFS ',
+          visible: true,
+          source: dataSource
         };
-
-
-        this.dataSourceService
-        .createAsyncDataSource(wfsDatasource)
-        .subscribe(dataSource => {
-          const layer: LayerOptions = {
-            title: 'WFS ',
-            visible: true,
-            source: dataSource
-          };
-          this.map.addLayer(this.layerService.createLayer(layer));
-        });
-
+        this.map.addLayer(this.layerService.createLayer(layer));
+      });
 
     this.layerService
       .createAsyncLayer({
