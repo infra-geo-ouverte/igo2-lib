@@ -48,13 +48,13 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     const extent = olextent.createEmpty();
 
-    let featureExtent, geometry;
+    let featureExtent, geometry, featureFlatCoordinates, featureZoomLevelTrigger;
     features.forEach((feature: Feature) => {
       const olFeature = this.format.readFeature(feature, {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-
+      featureZoomLevelTrigger = feature.zoomMaxOnSelect;
       geometry = olFeature.getGeometry();
       featureExtent = this.getFeatureExtent(feature);
       if (olextent.isEmpty(featureExtent)) {
@@ -64,13 +64,33 @@ export class OverlayDirective implements OnInit, OnDestroy {
       }
       olextent.extend(extent, featureExtent);
 
+      if (geometry !== null) {
+        featureFlatCoordinates = geometry.simplify(100).getFlatCoordinates();
+      }
       this.map.addOverlay(olFeature);
     }, this);
+    const mapExtent = this.map.getExtent();
+    const mapExtentHeight = olextent.getHeight(mapExtent);
+    const mapExtentWithInnerBuffer = olextent.buffer(mapExtent, mapExtentHeight * 0.05 * -1);
     if (features[0].sourceType === SourceFeatureType.Click) {
-      if (olextent.intersects(featureExtent, this.map.getExtent())) {
+      if (olextent.intersects(featureExtent, mapExtentWithInnerBuffer)) {
         action = OverlayAction.None;
       } else {
         action = OverlayAction.Move;
+      }
+    }
+    // Enabling a configurable parameter to overide the default behavior
+    if (featureZoomLevelTrigger && this.map.getZoom() < featureZoomLevelTrigger) {
+      action = OverlayAction.Zoom;
+    }
+
+    let cntOverlapExtent = 0;
+    if (featureFlatCoordinates) {
+      for (let i = 0; i < featureFlatCoordinates.length; i += 2) {
+        if (olextent.containsCoordinate(mapExtentWithInnerBuffer,
+          [featureFlatCoordinates[i], featureFlatCoordinates[i + 1]])) {
+          cntOverlapExtent += 1;
+        }
       }
     }
     if (!olextent.isEmpty(featureExtent)) {
@@ -79,8 +99,10 @@ export class OverlayDirective implements OnInit, OnDestroy {
       } else if (action === OverlayAction.Move) {
         this.map.moveToExtent(extent);
       } else if (action === OverlayAction.ZoomIfOutMapExtent) {
-        if (!olextent.intersects(featureExtent, this.map.getExtent())) {
+        if (cntOverlapExtent === 0) {
           this.map.zoomToExtent(extent);
+        } else if (cntOverlapExtent / (featureFlatCoordinates.length / 2) <= 0.05) {
+            this.map.zoomOut();
         }
       }
     }

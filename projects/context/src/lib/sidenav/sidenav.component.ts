@@ -2,9 +2,11 @@ import { Component, Input } from '@angular/core';
 
 import { Media } from '@igo2/core';
 import { FlexibleState } from '@igo2/common';
-import { Feature } from '@igo2/geo';
+import { Feature, IgoMap } from '@igo2/geo';
 import { Tool } from '../tool/shared/tool.interface';
 import { ToolService } from '../tool/shared/tool.service';
+
+import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 @Component({
   selector: 'igo-sidenav',
@@ -12,6 +14,15 @@ import { ToolService } from '../tool/shared/tool.service';
   styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
+  private format = new olFormatGeoJSON();
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
   @Input()
   get opened(): boolean {
     return this._opened;
@@ -51,6 +62,16 @@ export class SidenavComponent {
   public topPanelState: FlexibleState = 'initial';
 
   constructor(public toolService: ToolService) {}
+
+  zoomToFeatureExtent() {
+    if (this.feature.geometry) {
+      const olFeature = this.format.readFeature(this.feature, {
+        dataProjection: this.feature.projection,
+        featureProjection: this.map.projection
+      });
+      this.map.zoomToFeature(olFeature);
+    }
+  }
 
   toggleTopPanel() {
     if (this.topPanelState === 'initial') {
