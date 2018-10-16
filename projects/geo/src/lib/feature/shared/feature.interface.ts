@@ -12,7 +12,7 @@ export interface Feature {
   title: string;
   format?: FeatureFormat;
   title_html?: string;
-  zoomLevelTriggerFeatureZoom?: number;
+  zoomMaxOnSelect?: number;
   icon?: string;
 
   projection?: string;

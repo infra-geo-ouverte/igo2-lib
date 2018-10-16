@@ -54,7 +54,7 @@ export class OverlayDirective implements OnInit, OnDestroy {
         dataProjection: feature.projection,
         featureProjection: this.map.projection
       });
-      featureZoomLevelTrigger = feature.zoomLevelTriggerFeatureZoom;
+      featureZoomLevelTrigger = feature.zoomMaxOnSelect;
       geometry = olFeature.getGeometry();
       featureExtent = this.getFeatureExtent(feature);
       if (olextent.isEmpty(featureExtent)) {

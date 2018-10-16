@@ -28,7 +28,7 @@ export class IChercheSearchSource extends SearchSource {
 
   private searchUrl = 'https://geoegl.msp.gouv.qc.ca/icherche/geocode';
   private locateUrl = 'https://geoegl.msp.gouv.qc.ca/icherche/xy';
-  private zoomLevelTriggerFeatureZoom;
+  private zoomMaxOnSelect;
   private options: SearchSourceOptions;
 
   constructor(private http: HttpClient, private config: ConfigService) {
@@ -37,7 +37,7 @@ export class IChercheSearchSource extends SearchSource {
     this.options = this.config.getConfig('searchSources.icherche') || {};
     this.searchUrl = this.options.searchUrl || this.searchUrl;
     this.locateUrl = this.options.locateUrl || this.locateUrl;
-    this.zoomLevelTriggerFeatureZoom = this.options.zoomLevelTriggerFeatureZoom || this.zoomLevelTriggerFeatureZoom;
+    this.zoomMaxOnSelect = this.options.zoomMaxOnSelect || this.zoomMaxOnSelect;
   }
 
   getName(): string {
@@ -73,11 +73,11 @@ export class IChercheSearchSource extends SearchSource {
   }
 
   private extractSearchData(response): Feature[] {
-    return response.features.map(res => this.formatSearchResult(res, this.zoomLevelTriggerFeatureZoom));
+    return response.features.map(res => this.formatSearchResult(res, this.zoomMaxOnSelect));
   }
 
   private extractLocateData(response): Feature[] {
-    return response.features.map(res => this.formatLocateResult(res, this.zoomLevelTriggerFeatureZoom));
+    return response.features.map(res => this.formatLocateResult(res, this.zoomMaxOnSelect));
   }
 
   private getSearchParams(term: string): HttpParams {
@@ -118,7 +118,7 @@ export class IChercheSearchSource extends SearchSource {
     });
   }
 
-  private formatSearchResult(result: any, zoomLevelTriggerFeatureZoom: number): Feature {
+  private formatSearchResult(result: any, zoomMaxOnSelect: number): Feature {
     const properties = Object.assign(
       {
         type: result.doc_type
@@ -136,7 +136,7 @@ export class IChercheSearchSource extends SearchSource {
       source: IChercheSearchSource._name,
       sourceType: SourceFeatureType.Search,
       order: 1,
-      zoomLevelTriggerFeatureZoom: zoomLevelTriggerFeatureZoom,
+      zoomMaxOnSelect: zoomMaxOnSelect,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.recherche,
@@ -149,7 +149,7 @@ export class IChercheSearchSource extends SearchSource {
     };
   }
 
-  private formatLocateResult(result: any, zoomLevelTriggerFeatureZoom: number): Feature {
+  private formatLocateResult(result: any, zoomMaxOnSelect: number): Feature {
     const properties = Object.assign(
       {
         type: result.properties.doc_type
@@ -162,7 +162,7 @@ export class IChercheSearchSource extends SearchSource {
       source: IChercheSearchSource._name,
       sourceType: SourceFeatureType.LocateXY,
       order: 1,
-      zoomLevelTriggerFeatureZoom: zoomLevelTriggerFeatureZoom,
+      zoomMaxOnSelect: zoomMaxOnSelect,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.nom,
