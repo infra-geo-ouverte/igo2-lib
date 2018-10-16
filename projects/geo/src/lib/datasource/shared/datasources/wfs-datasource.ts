@@ -6,17 +6,23 @@ import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
   public ogcFilterWriter: OgcFilterWriter;
 
-  constructor(public options: WFSDataSourceOptions) {
+  constructor(
+    public options: WFSDataSourceOptions,
+    protected wfsService: WFSService
+  ) {
     super(options);
-    this.options = this.checkWfsOptions(options);
+    this.options = this.wfsService.checkWfsOptions(options);
     this.ogcFilterWriter = new OgcFilterWriter();
+    this.wfsService.getSourceFieldsFromWFS(this.options);
   }
 
   protected generateId() {
@@ -24,7 +30,28 @@ export class WFSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceVector {
-    const wfsOptions = this.options;
+    // reassignation of params to paramsWFS and url to urlWFS to have a common interface with wms-wfs datasources
+    this.options.paramsWFS = this.options.params;
+    this.options.urlWfs = this.options.url;
+    // default wfs version
+    this.options.paramsWFS.version = this.options.paramsWFS.version
+      ? this.options.paramsWFS.version
+      : '2.0.0';
+    const ogcFiltersDefaultValue = true; // default values for wfs.
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters =
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined
+        ? {}
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled =
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled ===
+      undefined
+        ? ogcFiltersDefaultValue
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable =
+      (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable ===
+      undefined
+        ? ogcFiltersDefaultValue
+        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
 
     return new olSourceVector({
       format: this.getFormatFromOptions(),
@@ -32,51 +59,56 @@ export class WFSDataSource extends DataSource {
       url: (extent, resolution, proj) => {
         const baseWfsQuery = 'service=WFS&request=GetFeature';
         // Mandatory
-        const url = wfsOptions.url;
+        const url = this.options.urlWfs;
         // Optional
-        const outputFormat = wfsOptions.params.outputFormat
-          ? 'outputFormat=' + wfsOptions.params.outputFormat
+        const outputFormat = this.options.paramsWFS.outputFormat
+          ? 'outputFormat=' + this.options.paramsWFS.outputFormat
           : '';
-        const wfsVersion = wfsOptions.params.version
-          ? 'version=' + wfsOptions.params.version
+        const wfsVersion = this.options.paramsWFS.version
+          ? 'version=' + this.options.paramsWFS.version
           : 'version=' + '2.0.0';
 
         let paramTypename = 'typename';
         let paramMaxFeatures = 'maxFeatures';
         if (
-          wfsOptions.params.version === '2.0.0' ||
-          !wfsOptions.params.version
+          this.options.paramsWFS.version === '2.0.0' ||
+          !this.options.paramsWFS.version
         ) {
           paramTypename = 'typenames';
           paramMaxFeatures = 'count';
         }
 
         const featureTypes =
-          paramTypename + '=' + wfsOptions.params.featureTypes;
+          paramTypename + '=' + this.options.paramsWFS.featureTypes;
 
-        const maxFeatures = wfsOptions.params.maxFeatures
-          ? paramMaxFeatures + '=' + wfsOptions.params.maxFeatures
+        const maxFeatures = this.options.paramsWFS.maxFeatures
+          ? paramMaxFeatures + '=' + this.options.paramsWFS.maxFeatures
           : paramMaxFeatures + '=5000';
-        const srsname = wfsOptions.params.srsname
-          ? 'srsname=' + wfsOptions.params.srsname
+        const srsname = this.options.paramsWFS.srsname
+          ? 'srsname=' + this.options.paramsWFS.srsname
           : 'srsname=' + proj.getCode();
 
-        wfsOptions.params.xmlFilter = this.ogcFilterWriter.buildFilter(
-          (wfsOptions as any).ogcFilters.filters,
-          extent,
-          proj,
-          wfsOptions.params.fieldNameGeometry
-        );
+        if (
+          (this.options as OgcFilterableDataSourceOptions).ogcFilters &&
+          (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
+        ) {
+          this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
+            (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters,
+            extent,
+            proj,
+            this.options.paramsWFS.fieldNameGeometry
+          );
+        }
 
         let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
 
         const patternFilter = /filter=.*/gi;
-        if (patternFilter.test(wfsOptions.params.xmlFilter)) {
-          baseUrl += `&${wfsOptions.params.xmlFilter}`;
+        if (patternFilter.test(this.options.paramsWFS.xmlFilter)) {
+          baseUrl += `&${this.options.paramsWFS.xmlFilter}`;
         }
 
-        this.options['download'] = Object.assign({}, this.options['download'], {
+        this.options.download = Object.assign({}, this.options.download, {
           dynamicUrl: baseUrl
         });
 
@@ -89,7 +121,7 @@ export class WFSDataSource extends DataSource {
   private getFormatFromOptions() {
     let olFormatCls;
 
-    const outputFormat = this.options.params.outputFormat.toLowerCase();
+    const outputFormat = this.options.paramsWFS.outputFormat.toLowerCase();
     const patternGml3 = new RegExp('.*?gml.*?');
     const patternGeojson = new RegExp('.*?json.*?');
 
@@ -101,39 +133,5 @@ export class WFSDataSource extends DataSource {
     }
 
     return new olFormatCls();
-  }
-
-  private checkWfsOptions(
-    wfsDataSourceOptions: WFSDataSourceOptions
-  ): WFSDataSourceOptions {
-    const mandatoryParamMissing: any[] = [];
-
-    if (!wfsDataSourceOptions.url) {
-      mandatoryParamMissing.push('url');
-    }
-    ['featureTypes', 'fieldNameGeometry', 'outputFormat'].forEach(element => {
-      if (wfsDataSourceOptions.params[element] === undefined) {
-        mandatoryParamMissing.push(element);
-      }
-    });
-
-    if (mandatoryParamMissing.length > 0) {
-      throw new Error(
-        `A mandatory parameter is missing
-          for your WFS datasource source.
-          (Mandatory parameter(s) missing :` + mandatoryParamMissing
-      );
-    }
-
-    // Look at https://github.com/openlayers/openlayers/pull/6400
-    const patternGml = new RegExp('.*?gml.*?');
-
-    if (patternGml.test(wfsDataSourceOptions.params.outputFormat)) {
-      wfsDataSourceOptions.params.version = '1.1.0';
-    }
-
-    return Object.assign({}, wfsDataSourceOptions, {
-      wfsCapabilities: { xml: '', GetPropertyValue: false }
-    });
   }
 }

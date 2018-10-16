@@ -115,25 +115,7 @@ export class IgoMap {
       this.overlayMarkerStyle = this.setOverlayMarkerStyle();
 
       this.overlayDataSource = new FeatureDataSource();
-
-      const stroke = new olstyle.Stroke({
-        color: [0, 161, 222, 1],
-        width: 2
-      });
-
-      const fill = new olstyle.Fill({
-        color: [0, 161, 222, 0.15]
-      });
-
-      this.overlayStyle = new olstyle.Style({
-        stroke: stroke,
-        fill: fill,
-        image: new olstyle.Circle({
-          radius: 5,
-          stroke: stroke,
-          fill: fill
-        })
-      });
+      this.overlayStyle = this.setOverlayDataSourceStyle();
 
       const layer = new VectorLayer({
         title: 'Overlay',
@@ -352,6 +334,12 @@ export class IgoMap {
 
     this.overlayDataSource.ol.addFeature(feature);
   }
+  getOverlayByID(id): olFeature {
+    if (this.overlayDataSource.ol.getFeatureById(id)) {
+      return this.overlayDataSource.ol.getFeatureById(id);
+    }
+    return;
+  }
 
   removeOverlayByID(id) {
     if (this.overlayDataSource.ol.getFeatureById(id)) {
@@ -453,6 +441,38 @@ export class IgoMap {
       }
     });
     return listLegend;
+  }
+
+  setOverlayDataSourceStyle(
+    strokeRGBA: [number, number, number, number] = [0, 161, 222, 1],
+    strokeWidth: number = 2,
+    fillRGBA: [number, number, number, number] = [0, 161, 222, 0.15],
+    text?
+  ): olstyle.Style {
+    const stroke = new olstyle.Stroke({
+      color: strokeRGBA,
+      width: strokeWidth
+    });
+
+    const fill = new olstyle.Fill({
+      color: fillRGBA
+    });
+
+    return new olstyle.Style({
+      stroke: stroke,
+      fill: fill,
+      image: new olstyle.Circle({
+        radius: 5,
+        stroke: stroke,
+        fill: fill
+      }),
+      text: new olstyle.Text({
+        font: '12px Calibri,sans-serif',
+        text: text,
+        fill: new olstyle.Fill({ color: '#000' }),
+        stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
+      })
+    });
   }
 
   setOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {

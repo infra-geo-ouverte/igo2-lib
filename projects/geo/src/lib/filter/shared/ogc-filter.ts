@@ -16,19 +16,22 @@ import {
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {
-    PropertyIsEqualTo: { fieldRestrict: [] },
-    PropertyIsNotEqualTo: { fieldRestrict: [] },
-    PropertyIsLike: { fieldRestrict: ['string'] },
-    PropertyIsGreaterThan: { fieldRestrict: ['number'] },
-    PropertyIsGreaterThanOrEqualTo: { fieldRestrict: ['number'] },
-    PropertyIsLessThan: { fieldRestrict: ['number'] },
-    PropertyIsLessThanOrEqualTo: { fieldRestrict: ['number'] },
-    PropertyIsBetween: { fieldRestrict: ['number'] },
-    During: { fieldRestrict: [] },
-    PropertyIsNull: { fieldRestrict: [] },
-    Intersects: { fieldRestrict: [] },
-    Within: { fieldRestrict: [] },
-    Contains: { fieldRestrict: [] }
+    PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+    PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+    PropertyIsLike: { spatial: false, fieldRestrict: ['string'] },
+    PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsGreaterThanOrEqualTo: {
+      spatial: false,
+      fieldRestrict: ['number']
+    },
+    PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+    PropertyIsBetween: { spatial: false, fieldRestrict: ['number'] },
+    During: { spatial: false, fieldRestrict: [] },
+    PropertyIsNull: { spatial: false, fieldRestrict: [] },
+    Intersects: { spatial: true, fieldRestrict: [] },
+    Within: { spatial: true, fieldRestrict: [] },
+    Contains: { spatial: true, fieldRestrict: [] }
   };
 
   public buildFilter(
@@ -229,9 +232,9 @@ export class OgcFilterWriter {
         level = level + 1;
         this.filterSequence.concat(
           this.defineInterfaceFilterSequence(
-            filterObject['filters'],
+            filterObject.filters,
             geometryName,
-            filterObject['logical'],
+            filterObject.logical,
             level
           )
         );
@@ -268,6 +271,7 @@ export class OgcFilterWriter {
       igoSpatialSelector: '',
       geometryName: '',
       geometry: '',
+      wkt_geometry: '',
       extent: '',
       srsName: '',
       parentLogical: '',
@@ -303,9 +307,9 @@ export class OgcFilterWriter {
         return Object.assign(
           {},
           {
-            logical: filterObject['logical'],
+            logical: filterObject.logical,
             filters: this.checkIgoFiltersProperties(
-              filterObject['filters'],
+              filterObject.filters,
               fieldNameGeometry,
               active
             )
@@ -313,7 +317,7 @@ export class OgcFilterWriter {
         );
       } else if (filterObject.hasOwnProperty('operator')) {
         return this.addFilterProperties(
-          filterObject as AnyBaseOgcFilterOptions,
+          filterObject as OgcInterfaceFilterOptions,
           fieldNameGeometry,
           active
         );
@@ -322,15 +326,15 @@ export class OgcFilterWriter {
   }
 
   private addFilterProperties(
-    igoOgcFilterObject: AnyBaseOgcFilterOptions,
+    igoOgcFilterObject: OgcInterfaceFilterOptions,
     fieldNameGeometry,
     active = false
   ) {
     const filterid = igoOgcFilterObject.hasOwnProperty('filterid')
-      ? igoOgcFilterObject['filterid']
+      ? igoOgcFilterObject.filterid
       : uuid();
     const status = igoOgcFilterObject.hasOwnProperty('active')
-      ? igoOgcFilterObject['active']
+      ? igoOgcFilterObject.active
       : active;
 
     return Object.assign(
@@ -350,7 +354,7 @@ export class OgcFilterWriter {
   ): IgoOgcFilterObject {
     if (sequence instanceof Array) {
       if (sequence.length >= 1) {
-        let lastParentLogical = sequence[0]['parentLogical'];
+        let lastParentLogical = sequence[0].parentLogical;
         let nextElement: any;
         let logicalArray = [];
         let lastProcessedFilter;
@@ -362,14 +366,14 @@ export class OgcFilterWriter {
           } else {
             nextElement = element;
           }
-          delete element['active'];
-          delete element['filterid'];
-          delete element['parentLogical'];
+          delete element.active;
+          delete element.filterid;
+          delete element.parentLogical;
           logicalArray.push(element);
 
           if (sequence.length === 1) {
             lastProcessedFilter = element;
-          } else if (lastParentLogical !== nextElement['parentLogical']) {
+          } else if (lastParentLogical !== nextElement.parentLogical) {
             if (logicalArray.length === 1) {
               console.log(
                 'You must set at ' +
@@ -383,7 +387,7 @@ export class OgcFilterWriter {
                 { logical: lastParentLogical, filters: logicalArray }
               );
               logicalArray = [lastProcessedFilter];
-              lastParentLogical = nextElement['parentLogical'];
+              lastParentLogical = nextElement.parentLogical;
             }
           }
         });

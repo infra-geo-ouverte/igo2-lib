@@ -1,3 +1,4 @@
+export * from './data.service';
 export * from './datasource';
 export * from './datasource.interface';
 export * from './feature-datasource';
@@ -8,6 +9,7 @@ export * from './xyz-datasource';
 export * from './xyz-datasource.interface';
 export * from './wfs-datasource';
 export * from './wfs-datasource.interface';
+export * from './wfs.service';
 export * from './wms-datasource';
 export * from './wms-datasource.interface';
 export * from './wmts-datasource';

@@ -5,14 +5,15 @@ import {
   DataSourceLegendOptions
 } from './datasource.interface';
 
-// import { DataService } from './data.service';
+import { DataService } from './data.service';
 
 export abstract class DataSource {
   public id: string;
   public ol: olSource;
 
   constructor(
-    public options: DataSourceOptions = {} // protected dataSourceService?: DataService
+    public options: DataSourceOptions = {},
+    protected dataService?: DataService
   ) {
     this.options = options;
     this.id = this.generateId();

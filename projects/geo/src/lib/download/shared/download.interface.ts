@@ -2,9 +2,10 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
 
 export interface DownloadOptions {
   url: string;
+  dynamicUrl?: string;
   extern?: boolean;
 }
 
-export interface DownloadDataSourceOptions extends DataSourceOptions {
+export interface DownloadDataSourceOptions {
   download?: DownloadOptions;
 }

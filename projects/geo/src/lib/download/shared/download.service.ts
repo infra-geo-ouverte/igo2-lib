@@ -7,7 +7,7 @@ import { MessageService, LanguageService } from '@igo2/core';
 import { Layer } from '../../layer/shared';
 import { OgcFilterWriter } from '../../filter/shared';
 
-import { DownloadDataSourceOptions } from './download.interface';
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,28 +30,28 @@ export class DownloadService {
       title
     );
 
-    const DSOptions: DownloadDataSourceOptions = layer.dataSource.options;
+    const DSOptions: DataSourceOptions = layer.dataSource.options;
     if (Object.keys(DSOptions.download).length > 0) {
       if (
-        DSOptions.download['dynamicUrl'] &&
+        DSOptions.download.dynamicUrl &&
         DSOptions.download.url === undefined
       ) {
         let wfsOptions;
         if (
-          layer.dataSource.options['wfsSource'] &&
-          Object.keys(layer.dataSource.options['wfsSource']).length > 0
+          layer.dataSource.options['paramsWFS'] &&
+          Object.keys(layer.dataSource.options['paramsWFS']).length > 0
         ) {
-          wfsOptions = layer.dataSource.options['wfsSource'];
+          wfsOptions = layer.dataSource.options['paramsWFS'];
         } else {
-          wfsOptions = layer.dataSource.options;
+          wfsOptions = layer.dataSource.options['params'];
         }
 
         const outputFormatDownload =
-          wfsOptions['outputFormatDownload'] === undefined
-            ? 'outputformat=' + wfsOptions['outputFormat']
-            : 'outputformat=' + wfsOptions['outputFormatDownload'];
+          wfsOptions.outputFormatDownload === undefined
+            ? 'outputformat=' + wfsOptions.outputFormat
+            : 'outputformat=' + wfsOptions.outputFormatDownload;
 
-        const baseurl = DSOptions.download['dynamicUrl']
+        const baseurl = DSOptions.download.dynamicUrl
           .replace(/&?outputformat=[^&]*/gi, '')
           .replace(/&?filter=[^&]*/gi, '')
           .replace(/&?bbox=[^&]*/gi, '');
@@ -60,7 +60,7 @@ export class DownloadService {
           layer.dataSource.options['ogcFilters']['filters'],
           layer.map.getExtent(),
           new olProjection({ code: layer.map.projection }),
-          wfsOptions['fieldNameGeometry']
+          wfsOptions.fieldNameGeometry
         );
         window.open(
           `${baseurl}&${rebuildFilter}&${outputFormatDownload}`,

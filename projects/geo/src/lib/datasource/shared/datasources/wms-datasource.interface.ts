@@ -1,13 +1,13 @@
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSourceOptions } from './datasource.interface';
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
   // type?: 'wms';
   optionsFromCapabilities?: boolean;
-  wfsSource?: WFSDataSourceOptions;
-
+  paramsWFS?: WFSDataSourceOptionsParams; // for wms linked with wfs
+  urlWfs?: string; // if url for linked wfs differ from the url for wms.
   url: string;
   params: WMSDataSourceOptionsParams;
   projection?: string;

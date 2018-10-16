@@ -9,6 +9,7 @@ import { IgoPanelModule } from '@igo2/common';
 import {
   IgoMapModule,
   IgoLayerModule,
+  IgoFilterModule,
   IgoMetadataModule,
   IgoDownloadModule
 } from '@igo2/geo';
@@ -26,6 +27,7 @@ import { AppLayerRoutingModule } from './layer-routing.module';
     IgoPanelModule,
     IgoMapModule,
     IgoLayerModule,
+    IgoFilterModule,
     IgoMetadataModule,
     IgoDownloadModule
   ],

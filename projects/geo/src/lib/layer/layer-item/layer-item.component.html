@@ -57,10 +57,7 @@
   </div>
 
   <div class="igo-col igo-col-100 igo-col-100-m">
-    <div class="igo-layer-button-group">
-
-      <ng-content select="[igoLayerItemToolbar]"></ng-content>
-
+      <div class="igo-layer-button-group">
       <button
         *ngIf="isVectorLayer(layer)"
         mat-icon-button
@@ -103,6 +100,7 @@
         (click)="layer.map.removeLayer(layer)">
         <mat-icon>delete</mat-icon>
       </button>
+      <ng-content select="[igoLayerItemToolbar]"></ng-content>
 
     </div>
   </div>

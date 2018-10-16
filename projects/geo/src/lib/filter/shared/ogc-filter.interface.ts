@@ -39,13 +39,14 @@ export type IgoOgcFilterObject =
   | AnyBaseOgcFilterOptions;
 
 export interface OgcFiltersOptions {
-  filtersAreEditable: boolean;
-  filters: IgoLogicalArrayOptions[] | AnyBaseOgcFilterOptions;
+  enabled?: boolean;
+  editable?: boolean;
+  filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
   interfaceOgcFilters?: any[];
+  filtered?: boolean;
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
-  isOgcFilterable?: boolean;
   ogcFilters?: OgcFiltersOptions;
 }
 export interface OgcFilterableDataSource extends DataSource {
@@ -54,7 +55,7 @@ export interface OgcFilterableDataSource extends DataSource {
 
 export interface IgoLogicalArrayOptions {
   logical: string;
-  filters: IgoLogicalArrayOptions[] | AnyBaseOgcFilterOptions;
+  filters: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions[];
 }
 
 export interface OgcFilterCondionsArrayOptions {
@@ -120,6 +121,7 @@ export interface OgcInterfaceFilterOptions {
   matchCase?: boolean;
   geometryName?: string;
   geometry?: olGeometry;
+  wkt_geometry?: string;
   extent?: [number, number, number, number];
   srsName?: string;
   parentLogical?: string;

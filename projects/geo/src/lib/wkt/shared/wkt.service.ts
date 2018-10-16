@@ -2,25 +2,44 @@ import { Injectable } from '@angular/core';
 
 import * as olproj from 'ol/proj';
 import olWKT from 'ol/format/WKT';
-import olPolygon from 'ol/geom/Polygon';
-
-import { MapService } from '../../map/shared/map.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WktService {
-  constructor(private mapService: MapService) {}
+  constructor() {}
 
-  public mapExtentToWKT(epsgTO = this.mapService.getMap().projection) {
-    let extent = olproj.transformExtent(
-      this.mapService.getMap().getExtent(),
-      this.mapService.getMap().projection,
-      epsgTO
-    );
-    extent = this.roundCoordinateArray(extent, epsgTO, 0);
-    const wkt = new olWKT().writeGeometry(olPolygon.fromExtent(extent));
-    return wkt;
+  public wktToFeature(wkt, wktProj, featureProj = 'EPSG:3857') {
+    return new olWKT().readFeature(wkt, {
+      dataProjection: wktProj,
+      featureProjection: featureProj
+    });
+  }
+  public extentToWkt(epsgTO, extent, extentProj) {
+    let currentExtent = olproj.transformExtent(extent, extentProj, epsgTO);
+    currentExtent = this.roundCoordinateArray(currentExtent, epsgTO, 0);
+    const wktPoly = `POLYGON((
+      ${extent[0]} ${extent[1]},
+      ${extent[0]} ${extent[3]},
+      ${extent[2]} ${extent[3]},
+      ${extent[2]} ${extent[1]},
+      ${extent[0]} ${extent[1]}))`;
+    const wktLine = `LINESTRING(
+      ${extent[0]} ${extent[1]},
+      ${extent[0]} ${extent[3]},
+      ${extent[2]} ${extent[3]},
+      ${extent[2]} ${extent[1]},
+      ${extent[0]} ${extent[1]})`;
+    const wktMultiPoints = `MULTIPOINT(
+        ${extent[0]} ${extent[1]},
+        ${extent[0]} ${extent[3]},
+        ${extent[2]} ${extent[3]},
+        ${extent[2]} ${extent[1]})`;
+    return {
+      wktPoly: wktPoly,
+      wktLine: wktLine,
+      wktMultiPoints: wktMultiPoints
+    };
   }
 
   private roundCoordinateArray(coordinateArray, projection, decimal = 0) {
@@ -28,7 +47,7 @@ export class WktService {
     const units = lproj.getUnits();
     const olUnits = ['ft', 'm', 'us-ft'];
     if (olUnits.indexOf(units) !== -1) {
-      coordinateArray = this.roundArray(coordinateArray);
+      coordinateArray = this.roundArray(coordinateArray, decimal);
     }
     return coordinateArray;
   }
@@ -42,7 +61,7 @@ export class WktService {
     return array;
   }
 
-  public snrcWKT(snrc, epsgTO = 'EPSG:3857') {
+  public snrcToWkt(snrc, epsgTO = 'EPSG:3857') {
     snrc = snrc.toLowerCase();
     let wktPoly;
     const ew = {
@@ -81,8 +100,8 @@ export class WktService {
       ['05', '06', '07', '08'],
       ['04', '03', '02', '01']
     ];
-    const checkSNRC50k = /\d{2,3}[a-l][0,1][0-9]/gi;
-    const checkSNRC250k = /\d{2,3}[a-l]/gi;
+    const checkSNRC50k = /\d{2,3}[a-p][0,1][0-9]/gi;
+    const checkSNRC250k = /\d{2,3}[a-p]/gi;
     const checkSNRC1m = /\d{2,3}/gi;
 
     let snrc1m = false;
@@ -106,8 +125,8 @@ export class WktService {
     } else if (snrc250k) {
       snrc += '01';
     }
-    if (/\d{2,3}[a-l][0,1][0-9]/gi.test(snrc)) {
-      const regex_1m = /(?=[a-l])/gi;
+    if (/\d{2,3}[a-p][0,1][0-9]/gi.test(snrc)) {
+      const regex_1m = /(?=[a-p])/gi;
       const ar1m = snrc.split(regex_1m);
       const part1m = ar1m[0];
       const part250k = ar1m[1][0];
@@ -214,8 +233,31 @@ export class WktService {
           coord.ul.join(' ')
         ].join(',') +
         '))';
+      const wktLine =
+        'LINESTRING(' +
+        [
+          coord.ul.join(' '),
+          coord['ur'].join(' '),
+          coord['lr'].join(' '),
+          coord['ll'].join(' '),
+          coord.ul.join(' ')
+        ].join(',') +
+        ')';
 
-      return wktPoly;
+      const wktMultiPoints =
+        'MULTIPOINT(' +
+        [
+          coord.ul.join(' '),
+          coord['ur'].join(' '),
+          coord['lr'].join(' '),
+          coord['ll'].join(' ')
+        ].join(',') +
+        ')';
+      return {
+        wktPoly: wktPoly,
+        wktLine: wktLine,
+        wktMultiPoints: wktMultiPoints
+      };
     }
   }
 }
