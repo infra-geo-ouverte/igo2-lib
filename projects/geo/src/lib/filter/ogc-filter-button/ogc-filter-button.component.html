@@ -12,7 +12,10 @@
     filter_list
   </mat-icon>
 </button>
-<div #ogcFilter class="igo-layer-actions-container">
+
+<div #ogcFilter class="igo-layer-actions-container"
+*ngIf="options.ogcFilters && (options.ogcFilters.enabled
+&& options.ogcFilters.editable)">
   <igo-ogc-filterable-item
     *ngIf="ogcFilterCollapse && options.ogcFilters.enabled"
     igoListItem
