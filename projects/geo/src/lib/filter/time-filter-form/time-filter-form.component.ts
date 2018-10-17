@@ -276,7 +276,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   handleSliderValue(): number {
-    if (this.options.current === true) {
+    if (this.options.current === true || !this.min) {
       const currentDate = new Date();
       this.date = this.getRoundedDate(currentDate);
     }
