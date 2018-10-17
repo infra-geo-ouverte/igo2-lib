@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { FlexibleState } from '@igo2/common';
+import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { Feature } from '../feature/shared/feature.interface';
+import { IgoMap } from '../map/shared/map';
 
 @Component({
   selector: 'igo-toast',
@@ -13,6 +15,7 @@ export class ToastComponent {
     UP: 'swipeup',
     DOWN: 'swipedown'
   };
+  private format = new olFormatGeoJSON();
 
   @Input()
   get expanded(): boolean {
@@ -23,6 +26,15 @@ export class ToastComponent {
     this._expanded = value;
   }
   private _expanded: boolean;
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
 
   @Input()
   get feature(): Feature {
@@ -42,6 +54,16 @@ export class ToastComponent {
   toggle() {
     this.expanded = !this.expanded;
     this.opened.emit(this.expanded);
+  }
+
+  zoomToFeatureExtent() {
+    if (this.feature.geometry) {
+      const olFeature = this.format.readFeature(this.feature, {
+        dataProjection: this.feature.projection,
+        featureProjection: this.map.projection
+      });
+      this.map.zoomToFeature(olFeature);
+    }
   }
 
   swipe(action: string) {
