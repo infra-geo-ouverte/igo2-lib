@@ -29,7 +29,7 @@ export class SearchResultsToolComponent {
 
   handleFeatureFocus(feature: Feature) {
     if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], OverlayAction.Move);
+      this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
     }
   }
 
