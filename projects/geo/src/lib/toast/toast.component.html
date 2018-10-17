@@ -20,6 +20,10 @@
       </mat-icon>
     </button>
 
+    <button mat-icon-button panelRightButton class="igo-icon-button" (click)="zoomToFeatureExtent()" *ngIf="feature.geometry">
+      <mat-icon>zoom_in</mat-icon>
+    </button>
+
     <igo-feature-details [feature]="feature"></igo-feature-details>
   </igo-panel>
 
