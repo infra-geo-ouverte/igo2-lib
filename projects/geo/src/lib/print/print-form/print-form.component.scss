@@ -17,6 +17,7 @@ mat-checkbox.horizontal-left {
 
 mat-checkbox, mat-radio-button {
   padding-right: 20px;
+  padding-bottom: 10px;
 }
 
 .print-button-top-padding {
@@ -31,6 +32,6 @@ mat-checkbox, mat-radio-button {
   text-align: center;
 }
 
-label.mat-checkbox-layout {
+mat-checkbox ::ng-deep label.mat-checkbox-layout {
     padding-bottom: 10px;
 }
