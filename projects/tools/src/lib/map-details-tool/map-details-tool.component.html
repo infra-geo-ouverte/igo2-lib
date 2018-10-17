@@ -5,9 +5,9 @@
   [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange">
 
   <ng-template #igoLayerItemToolbar let-layer="layer">
-    <igo-ogc-filter-button [layer]="layer"></igo-ogc-filter-button>
     <igo-download-button [layer]="layer"></igo-download-button>
     <igo-metadata-button [layer]="layer"></igo-metadata-button>
+    <igo-ogc-filter-button [layer]="layer"></igo-ogc-filter-button>
   </ng-template>
 
 </igo-layer-list>

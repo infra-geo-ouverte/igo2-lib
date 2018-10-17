@@ -20,9 +20,9 @@
     floatLabel="never">
 
       <ng-template #igoLayerItemToolbar let-layer="layer">
-        <igo-ogc-filter-button [map]="map" [layer]="layer"></igo-ogc-filter-button>
         <igo-metadata-button [layer]="layer"></igo-metadata-button>
         <igo-download-button [layer]="layer"></igo-download-button>
+        <igo-ogc-filter-button [layer]="layer"></igo-ogc-filter-button>
       </ng-template>
 
     </igo-layer-list>
