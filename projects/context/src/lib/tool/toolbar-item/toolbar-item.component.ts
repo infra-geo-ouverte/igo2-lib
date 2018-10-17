@@ -43,6 +43,7 @@ export class ToolbarItemComponent {
   }
   private _tooltip: string;
 
+  @Output() click: EventEmitter<Tool> = new EventEmitter();
   @Output() select: EventEmitter<Tool> = new EventEmitter();
 
   constructor() {}
