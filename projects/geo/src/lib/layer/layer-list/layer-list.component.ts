@@ -13,6 +13,7 @@ import { Layer } from '../shared';
 @Component({
   selector: 'igo-layer-list',
   templateUrl: './layer-list.component.html',
+  styleUrls: ['./layer-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerListComponent {
