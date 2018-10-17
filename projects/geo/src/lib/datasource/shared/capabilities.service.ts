@@ -144,9 +144,9 @@ export class CapabilitiesService {
           this.getResolutionFromScale(layer.MinScaleDenominator) || 0,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined
-        },
-        timeFilter: this.getTimeFilter(layer)
-      }
+        }
+      },
+      timeFilter: this.getTimeFilter(layer)
     });
 
     return ObjectUtils.mergeDeep(options, baseOptions);
