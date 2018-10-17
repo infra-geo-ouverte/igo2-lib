@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
-import { Notification, NotificationsService } from 'angular2-notifications';
+import { Notification, NotificationsService, NotificationType} from 'angular2-notifications';
 
 import { ConfigService } from '../../config/config.service';
 
@@ -38,7 +38,7 @@ export class MessageService {
       notification = this.notificationService.create(
         message.title,
         message.text,
-        (message.type as any) as string,
+        (message.type as any) as NotificationType,
         message.options
       );
     } else if (message.html) {
@@ -50,7 +50,7 @@ export class MessageService {
 
       notification = this.notificationService.html(
         message.html,
-        (message.type as any) as string,
+        (message.type as any) as NotificationType,
         message.options
       );
     } else {
