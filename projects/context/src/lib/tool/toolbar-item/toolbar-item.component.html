@@ -2,7 +2,7 @@
   tooltip-position="below"
   matTooltipShowDelay="500"
   [matTooltip]="tool.tooltip | translate"
-  (click)="click.emit(tool)"
+  (click)="trigger.emit(tool)"
   (select)="select.emit(tool)">
 
   <mat-icon *ngIf="withIcon && !tool.iconImage"
