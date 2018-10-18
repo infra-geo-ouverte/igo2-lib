@@ -11,7 +11,7 @@ import {
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoKeyValueModule } from '@igo2/common';
+import { IgoKeyValueModule, IgoDrapDropModule } from '@igo2/common';
 
 import { ImportExportComponent } from './import-export/import-export.component';
 import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
@@ -28,7 +28,8 @@ import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
     MatFormFieldModule,
     MatInputModule,
     IgoLanguageModule,
-    IgoKeyValueModule
+    IgoKeyValueModule,
+    IgoDrapDropModule
   ],
   exports: [ImportExportComponent, DropGeoFileDirective],
   declarations: [ImportExportComponent, DropGeoFileDirective]
