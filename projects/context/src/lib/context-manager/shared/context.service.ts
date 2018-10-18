@@ -308,7 +308,7 @@ export class ContextService {
 
     // Update the tools options with those found in the context
     if (context.tools !== undefined) {
-      // this.toolService.setTools(context.tools);
+      this.toolService.setTools(context.tools);
     }
 
     if (!context.map) {
