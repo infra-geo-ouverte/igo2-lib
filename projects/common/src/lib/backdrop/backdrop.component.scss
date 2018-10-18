@@ -12,9 +12,5 @@
 }
 
 :host > div.igo-backdrop-shown {
-  display: none;
-
-  @include mobile {
-    display: block;
-  }
+  display: block;
 }
