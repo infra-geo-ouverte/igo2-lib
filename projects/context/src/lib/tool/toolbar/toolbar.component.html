@@ -7,7 +7,7 @@
       [withIcon]="withIcon"
       [tool]=tool
       [selected]="selectedTool && selectedTool.name === tool.name"
-      (click)="click.emit(tool)"
+      (trigger)="trigger.emit(tool)"
       (select)="select.emit(tool)"
       (unselect)="unselect.emit(tool)">
     </igo-toolbar-item>

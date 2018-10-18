@@ -64,7 +64,7 @@ export class ToolbarComponent {
   }
   private _selectedTool: Tool;
 
-  @Output() click = new EventEmitter<Tool>();
+  @Output() trigger = new EventEmitter<Tool>();
   @Output() select = new EventEmitter<Tool>();
   @Output() unselect = new EventEmitter<Tool>();
 
