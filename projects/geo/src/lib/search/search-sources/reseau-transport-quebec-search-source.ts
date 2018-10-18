@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, empty } from 'rxjs';
 import { ConfigService } from '@igo2/core';
 import { map } from 'rxjs/operators';
 import {
@@ -58,7 +58,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
   search(term?: string): Observable<Feature[]> {
     term = term.replace(/auto|routes|route|km| |high|ways|way|roads|road|#|a-|-/gi, '');
     let chainage = '';
-
+    if (term.length === 0) { return empty(); }
     if (term.search(/\+/gi ) !== -1) {
       const split_term = term.split(/\+/gi);
       term = split_term[0];
@@ -130,7 +130,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
         ];
 
     if (typename === '') {
-      return;
+      return empty();
     }
 
     return this.http
