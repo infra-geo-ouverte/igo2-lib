@@ -4,7 +4,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
-import olSourceWMTS from 'ol/source/WMTS';
+import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
@@ -156,7 +156,7 @@ export class CapabilitiesService {
     baseOptions: WMTSDataSourceOptions,
     capabilities: any
   ): WMTSDataSourceOptions {
-    const options = olSourceWMTS.optionsFromCapabilities(
+    const options = optionsFromCapabilities(
       capabilities,
       baseOptions
     );
