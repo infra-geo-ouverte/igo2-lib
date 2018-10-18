@@ -10,6 +10,7 @@ import {
   Feature,
   FeatureType
 } from '@igo2/geo';
+import { SearchResultsToolOptions } from './search-results-tool.interface';
 
 @Register({
   name: 'searchResults',
@@ -21,6 +22,14 @@ import {
   templateUrl: './search-results-tool.component.html'
 })
 export class SearchResultsToolComponent {
+  public options: SearchResultsToolOptions = {};
+
+  get focusFirst(): boolean {
+    return this.options.focusFirst === undefined
+      ? true
+      : this.options.focusFirst;
+  }
+
   constructor(
     private overlayService: OverlayService,
     private mapService: MapService,
