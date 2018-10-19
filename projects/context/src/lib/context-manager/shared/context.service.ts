@@ -364,7 +364,7 @@ export class ContextService {
         order: order--,
         visible: layer.visible,
         sourceOptions: {
-          type: layer.options.type,
+          type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
           url: layer.dataSource.options.url
         }
