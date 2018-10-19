@@ -355,13 +355,12 @@ export class ContextService {
 
     const layers = igoMap.layers$.getValue();
 
-    let order = layers.length;
     for (const l of layers) {
       const layer: any = l;
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
         title: layer.options.title,
-        order: order--,
+        zIndex: layer.zIndex,
         visible: layer.visible,
         sourceOptions: {
           type: layer.dataSource.options.type,
