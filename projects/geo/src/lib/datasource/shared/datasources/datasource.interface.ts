@@ -20,7 +20,6 @@ export interface DataSourceOptions {
   // alias?: string;
 
   // view?: ol.olx.layer.ImageOptions;
-  displayField?: string;
   ol?: olSource;
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
