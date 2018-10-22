@@ -107,14 +107,13 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           .options.title;
       }
       let queryTitleValue = '';
-      console.log('featureOL', featureOL);
-      console.log('layerOL', layerOL);
       if (
         layerOL.get('sourceOptions').queryTitle &&
         featureOL.getProperties().hasOwnProperty(layerOL.get('sourceOptions').queryTitle)
       ) {
+        title = '';
         queryTitleValue =
-          ' (' + featureOL.getProperties()[layerOL.get('sourceOptions').queryTitle] + ')';
+          featureOL.getProperties()[layerOL.get('sourceOptions').queryTitle];
       }
       featureOL.set('clickedTitle', title + queryTitleValue);
       return featureOL;
