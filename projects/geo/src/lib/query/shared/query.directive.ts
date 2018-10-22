@@ -106,15 +106,17 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         title = this.map.layers.filter(f => f.zIndex === layerOL.getZIndex())[0]
           .options.title;
       }
-      let displayFieldValue = '';
+      let queryTitleValue = '';
+      console.log('featureOL', featureOL);
+      console.log('layerOL', layerOL);
       if (
-        layerOL.get('displayField') &&
-        featureOL.getProperties().hasOwnProperty(layerOL.get('displayField'))
+        layerOL.get('sourceOptions').queryTitle &&
+        featureOL.getProperties().hasOwnProperty(layerOL.get('sourceOptions').queryTitle)
       ) {
-        displayFieldValue =
-          ' (' + featureOL.getProperties()[layerOL.get('displayField')] + ')';
+        queryTitleValue =
+          ' (' + featureOL.getProperties()[layerOL.get('sourceOptions').queryTitle] + ')';
       }
-      featureOL.set('clickedTitle', title + displayFieldValue);
+      featureOL.set('clickedTitle', title + queryTitleValue);
       return featureOL;
     }
   }
