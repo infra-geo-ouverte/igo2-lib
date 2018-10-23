@@ -1,14 +1,11 @@
 import { Component, Input } from '@angular/core';
 
-
 @Component({
   selector: 'igo-custom-html',
   templateUrl: './custom-html.component.html',
-  styles: ['./custom-html.component.html']
+  styleUrls: ['./custom-html.component.scss']
 })
 export class CustomHtmlComponent {
-
-
   @Input()
   get html(): string {
     return this._html;
@@ -19,5 +16,4 @@ export class CustomHtmlComponent {
   private _html = '';
 
   constructor() {}
-
 }
