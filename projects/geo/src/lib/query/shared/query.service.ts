@@ -313,7 +313,7 @@ export class QueryService {
           options.resolution,
           options.projection,
           {
-            INFO_FORMAT: this.getMimeInfoFormat(datasource.options.queryFormat),
+            INFO_FORMAT: wmsDatasource.params.info_format || this.getMimeInfoFormat(datasource.options.queryFormat),
             QUERY_LAYERS: wmsDatasource.params.layers,
             FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
           }
