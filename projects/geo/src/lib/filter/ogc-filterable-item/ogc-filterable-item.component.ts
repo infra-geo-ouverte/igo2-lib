@@ -167,7 +167,7 @@ export class OgcFilterableItemComponent implements OnInit {
       this.datasource.options['paramsWFS'] &&
       this.datasource.options['paramsWFS'].fieldNameGeometry
     ) {
-      fieldNameGeometry = datasourceOptions.fieldNameGeometry;
+      fieldNameGeometry = this.datasource.options['paramsWFS'].fieldNameGeometry;
     }
     const status = arr.length === 0 ? true : false;
     arr.push(
