@@ -47,6 +47,10 @@ export class WMSDataSource extends DataSource {
       sourceParams.VERSION = sourceParams.version;
     }
 
+    if (sourceParams && sourceParams.INFO_FORMAT) {
+      sourceParams.info_format = sourceParams.INFO_FORMAT;
+    }
+
     if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
       setInterval(() => {
         this.ol.updateParams({ igoRefresh: Math.random() });
