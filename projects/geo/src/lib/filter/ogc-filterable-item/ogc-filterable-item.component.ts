@@ -165,7 +165,7 @@ export class OgcFilterableItemComponent implements OnInit {
       fieldNameGeometry = datasourceOptions.fieldNameGeometry;
     } else if (
       this.datasource.options['paramsWFS'] &&
-      datasourceOptions.fieldNameGeometry
+      this.datasource.options['paramsWFS'].fieldNameGeometry
     ) {
       fieldNameGeometry = datasourceOptions.fieldNameGeometry;
     }
