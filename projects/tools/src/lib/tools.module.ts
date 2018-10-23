@@ -14,6 +14,7 @@ import { IgoSearchResultsToolModule } from './search-results-tool/search-results
 import { IgoShareMapToolModule } from './share-map-tool/share-map-tool.module';
 import { IgoTimeAnalysisToolModule } from './time-analysis-tool/time-analysis-tool.module';
 import { IgoOgcFilterToolModule } from './ogc-filter-tool/ogc-filter-tool.module';
+import { IgoAboutToolModule } from './about-tool/about-tool.module';
 
 @NgModule({
   imports: [],
@@ -32,7 +33,8 @@ import { IgoOgcFilterToolModule } from './ogc-filter-tool/ogc-filter-tool.module
     IgoSearchResultsToolModule,
     IgoShareMapToolModule,
     IgoTimeAnalysisToolModule,
-    IgoOgcFilterToolModule
+    IgoOgcFilterToolModule,
+    IgoAboutToolModule
   ]
 })
 export class IgoToolsModule {
