@@ -5,6 +5,7 @@ import * as olloadingstrategy from 'ol/loadingstrategy';
 import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
+import { DataSourceLegendOptions } from './datasource.interface';
 import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
@@ -44,6 +45,11 @@ export class ArcGISRestDataSource extends DataSource {
           const time = `time=${this.options.params.timeExtent}`;
           params.push(time);
         }
+        if (this.options.params.customParams) {
+          this.options.params.customParams.forEach(element => {
+            params.push(element);
+          });
+        }
         return `${baseUrl}?${params.join('&')}`;
       }.bind(this),
       strategy: olloadingstrategy.bbox
@@ -52,5 +58,33 @@ export class ArcGISRestDataSource extends DataSource {
 
   protected generateId() {
     return uuid();
+  }
+
+  getLegend(): DataSourceLegendOptions[] {
+    const legendInfo = this.options.params.legendInfo;
+    const legend = super.getLegend();
+    if (legendInfo === undefined || legend.length > 0) {
+      return legend;
+    }
+    const id = parseInt(this.options.layer, 10);
+    const lyr = legendInfo.layers[id];
+    let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
+
+    for (let i = 0; i < lyr.legend.length; i++) {
+      const modifiedUrl = this.options.url.replace(
+        'FeatureServer',
+        'MapServer'
+      );
+      const src = `${modifiedUrl}/${lyr.layerId}/images/${lyr.legend[i].url}`;
+      const label = lyr.legend[i].label.replace('<Null>', 'Null');
+      htmlString +=
+        `<tr><td align='left'><img src="` +
+        src +
+        `" alt ='' /></td><td>` +
+        label +
+        '</td></tr>';
+    }
+    htmlString += '</table>';
+    return [{ html: htmlString }];
   }
 }

@@ -12,6 +12,7 @@ export interface ArcGISRestDataSourceOptions
 }
 
 export interface ArcGISRestDataSourceOptionsParams {
+  customParams?: string[]; // any ArcGIS Rest query parameters for feature service layer resource
   legendInfo?: any;
   style?: any;
   timefilter?: any;
