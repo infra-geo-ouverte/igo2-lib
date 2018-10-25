@@ -155,6 +155,13 @@ export class DataSourceService {
   private createCartoDataSource(
     context: CartoDataSourceOptions
   ): Observable<CartoDataSource> {
+    if (context.mapId) {
+      return this.capabilitiesService
+        .getCartoOptions(context)
+        .pipe(
+          map((options: CartoDataSourceOptions) => new CartoDataSource(options))
+        );
+    }
     return new Observable(d => d.next(new CartoDataSource(context)));
   }
 
