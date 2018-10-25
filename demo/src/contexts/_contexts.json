@@ -1,9 +1,18 @@
-[{
+[
+  {
     "uri": "_default",
     "title": "Default Context"
   },
   {
     "uri": "context2",
     "title": "Context 2"
+  },
+  {
+    "uri": "context3",
+    "title": "CARTO examples"
+  },
+  {
+    "uri": "context4",
+    "title": "Tile ArcGIS Rest examples"
   }
 ]

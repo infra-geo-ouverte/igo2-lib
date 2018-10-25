@@ -1,4 +1,7 @@
 import { NgModule } from '@angular/core';
+
+import { HttpClientJsonpModule } from '@angular/common/http';
+
 import {
   MatCardModule,
   MatButtonModule,
@@ -22,6 +25,7 @@ import { AppContextRoutingModule } from './context-routing.module';
 @NgModule({
   declarations: [AppContextComponent],
   imports: [
+    HttpClientJsonpModule,
     AppContextRoutingModule,
     MatCardModule,
     MatButtonModule,
