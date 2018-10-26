@@ -111,9 +111,9 @@ export class WFSDataSource extends DataSource {
         let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
 
-        const patternFilter = /filter=.*/gi;
+        const patternFilter = /(filter|bbox)=.*/gi;
         if (patternFilter.test(this.options.paramsWFS.xmlFilter)) {
-          baseUrl += `&${this.options.paramsWFS.xmlFilter}`;
+            baseUrl += `&${this.options.paramsWFS.xmlFilter}`;
         }
 
         this.options.download = Object.assign({}, this.options.download, {
