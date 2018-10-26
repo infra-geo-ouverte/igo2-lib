@@ -92,8 +92,8 @@ export class WFSDataSource extends DataSource {
       format: this.getFormatFromOptions(),
       overlaps: false,
       url: (extent, resolution, proj) => {
-          const srsname = this.options.paramsWFS.srsname
-          ? 'srsname=' + this.options.paramsWFS.srsname
+          const srsname = this.options.paramsWFS.srsName
+          ? 'srsname=' + this.options.paramsWFS.srsName
           : 'srsname=' + proj.getCode();
 
         if (

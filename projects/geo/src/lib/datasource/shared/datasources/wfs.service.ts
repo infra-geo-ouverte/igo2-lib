@@ -107,8 +107,8 @@ export class WFSService extends DataService {
     const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat
       ? 'outputFormat=' + wfsDataSourceOptions.paramsWFS.outputFormat
       : '';
-    const srsname = wfsDataSourceOptions.paramsWFS.srsname
-      ? 'srsname=' + wfsDataSourceOptions.paramsWFS.srsname
+    const srsname = wfsDataSourceOptions.paramsWFS.srsName
+      ? 'srsname=' + wfsDataSourceOptions.paramsWFS.srsName
       : 'srsname=EPSG:' + epsgCode;
     const wfspropertyname =
       propertyname === '' ? propertyname : '&propertyname=' + propertyname;

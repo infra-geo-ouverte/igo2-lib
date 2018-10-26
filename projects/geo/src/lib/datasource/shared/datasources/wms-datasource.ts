@@ -91,8 +91,8 @@ export class WMSDataSource extends DataSource {
     const maxFeatures = asWFSDataSourceOptions.paramsWFS.maxFeatures
       ? paramMaxFeatures + '=' + asWFSDataSourceOptions.paramsWFS.maxFeatures
       : paramMaxFeatures + '=5000';
-    const srsname = asWFSDataSourceOptions.paramsWFS.srsname
-      ? 'srsname=' + asWFSDataSourceOptions.paramsWFS.srsname
+    const srsname = asWFSDataSourceOptions.paramsWFS.srsName
+      ? 'srsname=' + asWFSDataSourceOptions.paramsWFS.srsName
       : 'srsname=EPSG:3857';
     const baseWfsQuery = this.wfsService.buildBaseWfsUrl(
       asWFSDataSourceOptions,
