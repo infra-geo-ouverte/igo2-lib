@@ -28,7 +28,7 @@ export class MapDetailsToolComponent {
       : this.options.excludeBaseLayers;
   }
 
-  get ogcFilterInLayerItem(): boolean {
+  get ogcFiltersInLayers(): boolean {
     return this.options.ogcFiltersInLayers === undefined
       ? true
       : this.options.ogcFiltersInLayers;
