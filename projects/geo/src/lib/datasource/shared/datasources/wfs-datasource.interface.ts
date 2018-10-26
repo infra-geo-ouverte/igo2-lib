@@ -17,7 +17,7 @@ export interface WFSDataSourceOptionsParams {
   maxFeatures?: Number;
   outputFormat: string;
   outputFormatDownload?: string;
-  srsname?: string;
+  srsName?: string;
   xmlFilter?: string;
   wfsCapabilities?: WFSCapabilitiesParams;
 }
