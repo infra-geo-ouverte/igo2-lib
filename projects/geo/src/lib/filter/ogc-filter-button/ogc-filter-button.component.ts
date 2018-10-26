@@ -40,6 +40,15 @@ export class OgcFilterButtonComponent {
 
   public ogcFilterCollapse = false;
 
+  @Input()
+  get ogcFiltersInLayers(): boolean {
+    return this._ogcFiltersInLayers;
+  }
+  set ogcFiltersInLayers(value: boolean) {
+    this._ogcFiltersInLayers = value;
+  }
+  private _ogcFiltersInLayers = false;
+
   constructor() {}
 
   toggleOgcFilter() {
