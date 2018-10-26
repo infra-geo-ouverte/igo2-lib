@@ -68,7 +68,7 @@ export class OgcFilterWriter {
         filterAssembly = this.bundleFilter(filters);
       }
     } else {
-      return 'bbox=' + extent.join(',') + ',EPSG:3857';
+      return 'bbox=' + extent.join(',') + ',' + proj.getCode();
     }
 
     const wfsOptions: WFSWriteGetFeatureOptions = {
