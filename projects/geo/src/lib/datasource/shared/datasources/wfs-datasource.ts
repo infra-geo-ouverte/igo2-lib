@@ -96,17 +96,19 @@ export class WFSDataSource extends DataSource {
           ? 'srsname=' + this.options.paramsWFS.srsName
           : 'srsname=' + proj.getCode();
 
+        let filters;
         if (
           (this.options as OgcFilterableDataSourceOptions).ogcFilters &&
           (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
         ) {
+          filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
+        }
           this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
-            (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters,
+            filters,
             extent,
             proj,
             this.options.paramsWFS.fieldNameGeometry
           );
-        }
 
         let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
