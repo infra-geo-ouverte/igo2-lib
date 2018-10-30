@@ -1,6 +1,6 @@
 {
   "name": "@igo2/geo",
-  "version": "0.23.1",
+  "version": "0.24.0",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -22,9 +22,9 @@
     "@angular/core": "^6.0.0",
     "@angular/forms": "^6.0.0",
     "@angular/material": "^6.0.0",
-    "@igo2/common": "^0.23.1",
-    "@igo2/core": "^0.23.1",
-    "@igo2/utils": "^0.23.1",
+    "@igo2/common": "^0.24.0",
+    "@igo2/core": "^0.24.0",
+    "@igo2/utils": "^0.24.0",
     "ol": "^5.1.3",
     "proj4": "^2.4.4",
     "rxjs": "^6.1.0"

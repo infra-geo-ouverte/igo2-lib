@@ -1,3 +1,58 @@
+<a name="0.24.0"></a>
+# [0.24.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.23.1...0.24.0) (2018-10-30)
+
+
+### Bug Fixes
+
+* **context:** api layer options ([85b5c66](https://github.com/infra-geo-ouverte/igo2-lib/commit/85b5c66))
+* **context:** fix default context ([a632017](https://github.com/infra-geo-ouverte/igo2-lib/commit/a632017))
+* **context:** locale do not contains common keys ([b8113c9](https://github.com/infra-geo-ouverte/igo2-lib/commit/b8113c9))
+* **context:** locale do not contains common keys ([#192](https://github.com/infra-geo-ouverte/igo2-lib/issues/192)) ([f9f116a](https://github.com/infra-geo-ouverte/igo2-lib/commit/f9f116a))
+* **context:** rename order to zIndex ([3c7f958](https://github.com/infra-geo-ouverte/igo2-lib/commit/3c7f958))
+* **context:** send type layer to api ([81436c8](https://github.com/infra-geo-ouverte/igo2-lib/commit/81436c8))
+* **context:** stop propagation on button ([a923548](https://github.com/infra-geo-ouverte/igo2-lib/commit/a923548))
+* **css:** add padding to forms ([5c33716](https://github.com/infra-geo-ouverte/igo2-lib/commit/5c33716))
+* **css:** add padding to forms ([3d27dee](https://github.com/infra-geo-ouverte/igo2-lib/commit/3d27dee))
+* **custom-html:** add padding ([f3bced5](https://github.com/infra-geo-ouverte/igo2-lib/commit/f3bced5))
+* **datasource:** always lowercase type ([98aee36](https://github.com/infra-geo-ouverte/igo2-lib/commit/98aee36))
+* **demo:** ajust size map (responsible) ([84a6794](https://github.com/infra-geo-ouverte/igo2-lib/commit/84a6794))
+* **dropGeoFile:** directive not working (build prod - aot) ([402d21c](https://github.com/infra-geo-ouverte/igo2-lib/commit/402d21c))
+* **getCapabilities:** fix options from getCapatibilities ([e6efe73](https://github.com/infra-geo-ouverte/igo2-lib/commit/e6efe73))
+* **getCapabilities:** merge getCapabilities and json options ([445757c](https://github.com/infra-geo-ouverte/igo2-lib/commit/445757c))
+* **import-export:** add missing imports ([04af7df](https://github.com/infra-geo-ouverte/igo2-lib/commit/04af7df))
+* **import-export:** fix drop file on map ([e6f7c58](https://github.com/infra-geo-ouverte/igo2-lib/commit/e6f7c58))
+* **layer:** fix optionsFromCapabilities ([4bfb4ce](https://github.com/infra-geo-ouverte/igo2-lib/commit/4bfb4ce))
+* **layer-list:** fix css of the sorting button and filter on mobile ([497f15e](https://github.com/infra-geo-ouverte/igo2-lib/commit/497f15e))
+* **layer-list:** remove empty space above the list - fix issue [#187](https://github.com/infra-geo-ouverte/igo2-lib/issues/187) ([#190](https://github.com/infra-geo-ouverte/igo2-lib/issues/190)) ([34449dc](https://github.com/infra-geo-ouverte/igo2-lib/commit/34449dc))
+* **map:** offset baselayer in prod build ([f0cb14a](https://github.com/infra-geo-ouverte/igo2-lib/commit/f0cb14a))
+* **metadata:** define metadata in layerOptions ([de7baed](https://github.com/infra-geo-ouverte/igo2-lib/commit/de7baed))
+* **ogc-filter:** Fix for Angular 6 and adjustements for minilib ([#186](https://github.com/infra-geo-ouverte/igo2-lib/issues/186)) ([cb77a93](https://github.com/infra-geo-ouverte/igo2-lib/commit/cb77a93))
+* **panel:** title is now centred ([d2d41a9](https://github.com/infra-geo-ouverte/igo2-lib/commit/d2d41a9))
+* **print:** geotiff filename ([d1f3ff7](https://github.com/infra-geo-ouverte/igo2-lib/commit/d1f3ff7))
+* **print:** pdf height-width undefined ([8a46749](https://github.com/infra-geo-ouverte/igo2-lib/commit/8a46749))
+* **search-layer:** fix search layer type ([0ea77fa](https://github.com/infra-geo-ouverte/igo2-lib/commit/0ea77fa))
+* **time-filter:** get options from capabilities ([aa359de](https://github.com/infra-geo-ouverte/igo2-lib/commit/aa359de))
+* **time-filter:** take current date if min is not defined ([edee6f2](https://github.com/infra-geo-ouverte/igo2-lib/commit/edee6f2))
+* **toolbar:** rename toolbar click event to trigger to avoid overriding the default click event ([#206](https://github.com/infra-geo-ouverte/igo2-lib/issues/206)) ([5a040fa](https://github.com/infra-geo-ouverte/igo2-lib/commit/5a040fa))
+* **WMTS:** GetCapbilities import error ([#205](https://github.com/infra-geo-ouverte/igo2-lib/issues/205)) ([1e13fdb](https://github.com/infra-geo-ouverte/igo2-lib/commit/1e13fdb))
+
+
+### Features
+
+* **backdrop:** let the backdrop be shown on any media instead of on mobiles only ([#202](https://github.com/infra-geo-ouverte/igo2-lib/issues/202)) ([d8cea17](https://github.com/infra-geo-ouverte/igo2-lib/commit/d8cea17))
+* **map:** Prevent zooming on result if already contained in map extent ([#193](https://github.com/infra-geo-ouverte/igo2-lib/issues/193)) ([d917886](https://github.com/infra-geo-ouverte/igo2-lib/commit/d917886))
+* **map-details-tool:** add filter/download/metadata button on layer item ([0d43226](https://github.com/infra-geo-ouverte/igo2-lib/commit/0d43226))
+* **notifications:** upgrade angular-notifications ([45c626e](https://github.com/infra-geo-ouverte/igo2-lib/commit/45c626e))
+* **overlay:** Feature zoom if not in extent based on feature geometry.  ([#198](https://github.com/infra-geo-ouverte/igo2-lib/issues/198)) ([dd92fc8](https://github.com/infra-geo-ouverte/igo2-lib/commit/dd92fc8))
+* **print:** Add test layers for CORS in print ([#183](https://github.com/infra-geo-ouverte/igo2-lib/issues/183)) ([63dfc9e](https://github.com/infra-geo-ouverte/igo2-lib/commit/63dfc9e))
+* **print:** Improve Print module ([#179](https://github.com/infra-geo-ouverte/igo2-lib/issues/179)) ([d066e64](https://github.com/infra-geo-ouverte/igo2-lib/commit/d066e64))
+* **search-source:** Provide interface for reseautq ([#199](https://github.com/infra-geo-ouverte/igo2-lib/issues/199)) ([043c168](https://github.com/infra-geo-ouverte/igo2-lib/commit/043c168))
+* **search-source:** Reseau transport quebec ([#176](https://github.com/infra-geo-ouverte/igo2-lib/issues/176)) ([21086e1](https://github.com/infra-geo-ouverte/igo2-lib/commit/21086e1))
+* **toolbar:** toolbar emit a click event as well as the usual select event ([#201](https://github.com/infra-geo-ouverte/igo2-lib/issues/201)) ([931175d](https://github.com/infra-geo-ouverte/igo2-lib/commit/931175d))
+* **wms:** Refresh interval on WMS ([#177](https://github.com/infra-geo-ouverte/igo2-lib/issues/177)) ([f8c40ea](https://github.com/infra-geo-ouverte/igo2-lib/commit/f8c40ea))
+
+
+
 <a name="0.23.1"></a>
 ## [0.23.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.23.0...0.23.1) (2018-09-07)
 
