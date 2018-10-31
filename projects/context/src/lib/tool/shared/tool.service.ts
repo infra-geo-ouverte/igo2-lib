@@ -1,8 +1,8 @@
-import { Injectable, Component } from '@angular/core';
+import { Injectable, Component, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService, RouteService } from '@igo2/core';
 import { Tool } from './tool.interface';
 
 @Injectable({
@@ -25,7 +25,9 @@ export class ToolService {
     ToolService.toolDefs[tool.name] = [Object.assign({}, tool), cls];
   }
 
-  constructor(private http: HttpClient, private config: ConfigService) {
+  constructor(private http: HttpClient,
+    private config: ConfigService,
+    @Optional() private route: RouteService) {
     this.baseUrl = this.config.getConfig('context.url');
 
     this.tools$.subscribe(rep => this.handleToolsChange());
@@ -34,6 +36,22 @@ export class ToolService {
       return { name: name };
     });
     this.setTools(tools);
+
+    const allowedToolName = [];
+    tools.forEach(tool => {
+      allowedToolName.push(tool.name);
+    });
+    if (this.route) {
+      this.route.queryParams.subscribe(params => {
+        const toolNameToOpen = params[this.route.options.toolKey as string];
+        if (toolNameToOpen && allowedToolName.indexOf(toolNameToOpen) !== -1) {
+          setTimeout(() => {
+            this.selectTool(this.getTool(toolNameToOpen), false);
+          }, 500);
+        }
+      });
+    }
+
   }
 
   get(): Observable<Tool[]> {
