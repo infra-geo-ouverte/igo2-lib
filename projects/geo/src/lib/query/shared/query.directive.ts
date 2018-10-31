@@ -31,7 +31,7 @@ import { QueryService } from './query.service';
   selector: '[igoQuery]'
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
-  private queryLayers: Layer[];
+  // private queryLayers: Layer[];
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
@@ -91,7 +91,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       }
     });
 
-    this.queryLayers = queryLayers;
+    this.queryService.queryLayers = queryLayers;
   }
 
   private manageFeatureByClick(
@@ -171,7 +171,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       delete element.properties['clickedTitle'];
     });
     const view = this.map.ol.getView();
-    const queries$ = this.queryService.query(this.queryLayers, {
+    const queries$ = this.queryService.query(this.queryService.queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
       resolution: view.getResolution()
