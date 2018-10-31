@@ -117,7 +117,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('ngOnDestroy', this.queryLayersOnInit);
     this.queryService.queryLayers = this.queryLayersOnInit;
     const stopCoordinates = [];
     let emptyCoord = false;

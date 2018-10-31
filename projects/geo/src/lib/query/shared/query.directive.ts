@@ -31,7 +31,6 @@ import { QueryService } from './query.service';
   selector: '[igoQuery]'
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
-  // private queryLayers: Layer[];
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
