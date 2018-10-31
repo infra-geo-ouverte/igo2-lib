@@ -7,4 +7,5 @@ export interface RouteServiceOptions {
   visibleOnLayersKey?: boolean | string;
   visibleOffLayersKey?: boolean | string;
   routingCoordKey?: boolean | string;
+  toolKey?: boolean | string;
 }
