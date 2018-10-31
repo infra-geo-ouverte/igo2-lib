@@ -1107,6 +1107,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     return `${location.origin}${
       location.pathname
-    }?${routingUrl}`;
+    }?tool=directions&${routingUrl}`;
   }
 }
