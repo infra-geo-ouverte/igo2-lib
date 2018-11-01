@@ -150,6 +150,7 @@
         "link": "Link",
         "dialog": {
           "copyMsg": "Directions copied to clipboard",
+          "copyMsgLink": "Link for directions copied to clipboard",
           "copyTitle": "Directions"
         }
       },
