@@ -20,6 +20,7 @@ export class ToolService {
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
   public selectedTool$ = new BehaviorSubject<Tool>(undefined);
   private baseUrl: string;
+  public allowedToolName = [];
 
   static register(tool: Tool, cls?: Component) {
     ToolService.toolDefs[tool.name] = [Object.assign({}, tool), cls];
@@ -31,6 +32,7 @@ export class ToolService {
     this.tools$.subscribe(rep => this.handleToolsChange());
 
     const tools = Object.keys(ToolService.toolDefs).map(name => {
+      this.allowedToolName.push(name);
       return { name: name };
     });
     this.setTools(tools);
