@@ -32,6 +32,8 @@ import { Routing } from '../shared/routing.interface';
 import { RoutingService } from '../shared/routing.service';
 import { RoutingFormService } from './routing-form.service';
 
+import { QueryService } from '../../query/shared/query.service';
+
 @Component({
   selector: 'igo-routing-form',
   templateUrl: './routing-form.component.html',
@@ -58,6 +60,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private focusOnStop = false;
   public initialStopsCoords;
   private browserLanguage;
+
+  private queryLayersOnInit;
 
   // https://stackoverflow.com/questions/46364852/create-input-fields-dynamically-in-angular-2
 
@@ -104,6 +108,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private languageService: LanguageService,
     private messageService: MessageService,
     private searchService: SearchService,
+    private queryService: QueryService,
     private routingFormService: RoutingFormService,
     @Optional() private route: RouteService
   ) {}
@@ -113,6 +118,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.queryService.queryLayers = this.queryLayersOnInit;
     const stopCoordinates = [];
 
     this.stops.value.forEach(stop => {
@@ -141,6 +147,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.queryLayersOnInit = this.queryService.queryLayers;
+    this.queryService.queryLayers = [];
     this.focusOnStop = false;
     const stopsLayer = new VectorLayer({
       title: 'routingStopOverlay',

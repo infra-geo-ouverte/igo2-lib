@@ -33,6 +33,7 @@ import { QueryOptions, QueryableDataSource } from './query.interface';
   providedIn: 'root'
 })
 export class QueryService {
+  public queryLayers: Layer[];
   constructor(
     private http: HttpClient,
     private featureService: FeatureService
