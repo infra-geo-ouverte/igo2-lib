@@ -1,3 +1,22 @@
+<a name="0.24.1"></a>
+## [0.24.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.0...0.24.1) (2018-11-01)
+
+
+### Bug Fixes
+
+* **context:** change url context ([c864845](https://github.com/infra-geo-ouverte/igo2-lib/commit/c864845))
+* **datasource-search-source:** change default url ([46eaf49](https://github.com/infra-geo-ouverte/igo2-lib/commit/46eaf49))
+* **directions:**  Clear directions and stops on destroy ([#216](https://github.com/infra-geo-ouverte/igo2-lib/issues/216)) ([ce6fa35](https://github.com/infra-geo-ouverte/igo2-lib/commit/ce6fa35))
+* **routing:** Disable queryLayers on routing and reactivate on destroy ([#217](https://github.com/infra-geo-ouverte/igo2-lib/issues/217)) ([f7f3989](https://github.com/infra-geo-ouverte/igo2-lib/commit/f7f3989))
+
+
+### Features
+
+* **query:** queryable is true by default ([d13e6fd](https://github.com/infra-geo-ouverte/igo2-lib/commit/d13e6fd))
+* **route:** provide new key to control which tool to open by default ([#222](https://github.com/infra-geo-ouverte/igo2-lib/issues/222)) ([9a2abf9](https://github.com/infra-geo-ouverte/igo2-lib/commit/9a2abf9))
+
+
+
 <a name="0.24.0"></a>
 # [0.24.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.23.1...0.24.0) (2018-10-30)
 
