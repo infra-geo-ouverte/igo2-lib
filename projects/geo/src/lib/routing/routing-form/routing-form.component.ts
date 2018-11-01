@@ -5,7 +5,8 @@ import {
   EventEmitter,
   OnInit,
   AfterViewInit,
-  OnDestroy
+  OnDestroy,
+  Optional
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -20,7 +21,7 @@ import * as olinteraction from 'ol/interaction';
 import * as olextent from 'ol/extent';
 
 import { Clipboard } from '@igo2/utils';
-import { Message, LanguageService, MessageService } from '@igo2/core';
+import { Message, LanguageService, MessageService, RouteService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { SearchService } from '../../search/shared/search.service';
@@ -107,9 +108,9 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private languageService: LanguageService,
     private messageService: MessageService,
     private searchService: SearchService,
-    // private shareMapService: ShareMapService
-    private routingFormService: RoutingFormService,
     private queryService: QueryService,
+    private routingFormService: RoutingFormService,
+    @Optional() private route: RouteService
   ) {}
 
   changeRoute(selectedRoute: Routing) {
@@ -119,16 +120,12 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.queryService.queryLayers = this.queryLayersOnInit;
     const stopCoordinates = [];
-    let emptyCoord = false;
+
     this.stops.value.forEach(stop => {
       stopCoordinates.push(stop.stopCoordinates);
-      if (!(stop.stopCoordinates instanceof Array)) {
-        emptyCoord = true;
-      }
     });
-    if (emptyCoord) {
-      this.routingRoutesOverlayDataSource.ol.clear();
-    }
+    this.routingRoutesOverlayDataSource.ol.clear();
+    this.routingStopsOverlayDataSource.ol.clear();
     this.routingFormService.setStopsCoordinates(stopCoordinates);
   }
 
@@ -792,6 +789,16 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  copyLinkToClipboard() {
+    const successful = Clipboard.copy(this.getUrl());
+    if (successful) {
+      const translate = this.languageService.translate;
+      const title = translate.instant('igo.geo.routingForm.dialog.copyTitle');
+      const msg = translate.instant('igo.geo.routingForm.dialog.copyMsgLink');
+      this.messageService.success(msg, title);
+    }
+  }
+
   copyDirectionsToClipboard() {
     const indent = '\t';
     let activeRouteDirective =
@@ -814,11 +821,11 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.languageService.translate.instant('igo.geo.routingForm.stopsList') +
       ':\n';
 
-    // const url =
-    //   this.languageService.translate.instant('igo.geo.routingForm.link') +
-    //   ':\n' +
-    //   indent +
-    //   this.shareMapService.getUrlWithoutApi(this.map);
+    const url =
+      this.languageService.translate.instant('igo.geo.routingForm.link') +
+      ':\n' +
+      indent +
+      this.getUrl();
 
     let wayPointsCnt = 1;
     this.stops.value.forEach(stop => {
@@ -867,7 +874,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     const directionsBody =
-      summary + wayPointList + '\n' + 'url' + '\n\n' + activeRouteDirective;
+      summary + wayPointList + '\n' + url + '\n\n' + activeRouteDirective;
 
     const successful = Clipboard.copy(directionsBody);
     if (successful) {
@@ -1081,5 +1088,33 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         this.routingRoutesOverlayDataSource.ol.getFeatureById(id)
       );
     }
+  }
+
+  private getUrl() {
+    if (
+      !this.route
+    ) {
+      return;
+    }
+
+    const routingKey = this.route.options.routingCoordKey;
+    const stopsCoordinates = [];
+    if (
+      this.routingFormService &&
+      this.routingFormService.getStopsCoordinates() &&
+      this.routingFormService.getStopsCoordinates().length !== 0
+    ) {
+      this.routingFormService.getStopsCoordinates().forEach(coord => {
+        stopsCoordinates.push(coord);
+      });
+    }
+    let routingUrl = '';
+    if (stopsCoordinates.length >= 2) {
+      routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
+    }
+
+    return `${location.origin}${
+      location.pathname
+    }?tool=directions&${routingUrl}`;
   }
 }

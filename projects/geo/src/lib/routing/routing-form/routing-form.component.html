@@ -64,6 +64,10 @@
       color="primary" (click)="copyDirectionsToClipboard()">
       <mat-icon>content_copy</mat-icon>
     </button>
+    <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.link' | translate"
+    color="primary" (click)="copyLinkToClipboard()">
+    <mat-icon>link</mat-icon>
+  </button>
   </div>
 
 </form>
