@@ -1,8 +1,8 @@
-import { Injectable, Component, Optional } from '@angular/core';
+import { Injectable, Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { ConfigService, RouteService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 import { Tool } from './tool.interface';
 
 @Injectable({
@@ -20,38 +20,22 @@ export class ToolService {
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
   public selectedTool$ = new BehaviorSubject<Tool>(undefined);
   private baseUrl: string;
+  public allowedToolName = [];
 
   static register(tool: Tool, cls?: Component) {
     ToolService.toolDefs[tool.name] = [Object.assign({}, tool), cls];
   }
 
-  constructor(private http: HttpClient,
-    private config: ConfigService,
-    @Optional() private route: RouteService) {
+  constructor(private http: HttpClient, private config: ConfigService) {
     this.baseUrl = this.config.getConfig('context.url');
 
     this.tools$.subscribe(rep => this.handleToolsChange());
 
     const tools = Object.keys(ToolService.toolDefs).map(name => {
+      this.allowedToolName.push(name);
       return { name: name };
     });
     this.setTools(tools);
-
-    const allowedToolName = [];
-    tools.forEach(tool => {
-      allowedToolName.push(tool.name);
-    });
-    if (this.route) {
-      this.route.queryParams.subscribe(params => {
-        const toolNameToOpen = params[this.route.options.toolKey as string];
-        if (toolNameToOpen && allowedToolName.indexOf(toolNameToOpen) !== -1) {
-          setTimeout(() => {
-            this.selectTool(this.getTool(toolNameToOpen), false);
-          }, 500);
-        }
-      });
-    }
-
   }
 
   get(): Observable<Tool[]> {
