@@ -98,9 +98,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     featureOL: olFeature,
     layerOL: olLayer
   ): Feature {
-    if (!this.queryService.allowQueryExecution) {
-      return;
-    }
     if (layerOL.getZIndex() !== 999) {
       let title;
       if (layerOL.get('title') !== undefined) {
@@ -128,7 +125,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   private handleMapClick(event: olMapBrowserEvent) {
     this.unsubscribeQueries();
-    if (!this.queryService.allowQueryExecution) {
+    if (!this.queryService.queryEnabled) {
       return;
     }
     const clickedFeatures: olFeature[] = [];

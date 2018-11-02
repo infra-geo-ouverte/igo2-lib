@@ -33,7 +33,7 @@ import { QueryOptions, QueryableDataSource } from './query.interface';
   providedIn: 'root'
 })
 export class QueryService {
-  public allowQueryExecution = true;
+  public queryEnabled = true;
   constructor(
     private http: HttpClient,
     private featureService: FeatureService

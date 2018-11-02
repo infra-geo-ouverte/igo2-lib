@@ -117,7 +117,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.queryService.allowQueryExecution = true;
+    this.queryService.queryEnabled = true;
     const stopCoordinates = [];
 
     this.stops.value.forEach(stop => {
@@ -146,7 +146,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.queryService.allowQueryExecution = false;
+    this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     const stopsLayer = new VectorLayer({
       title: 'routingStopOverlay',
