@@ -9,8 +9,8 @@
       },
       "dropGeoFile": {
         "invalid": {
-          "text": "Invalid file ({{i}}/{{count}})",
-          "title": "The file '{{value}}' is invalid"
+          "text": "The file '{{value}}' is invalid ({{mimeType}})",
+          "title": "Invalid file"
         },
         "success": {
           "text": "Imported file ({{i}}/{{count}})",

@@ -40,34 +40,34 @@ export class ImportExportService {
         'application/vnd.google-earth.kml+xml',
         'application/json'
       ];
+      const zipMimeType = [
+        'application/zip',
+        'application/x-zip-compressed',
+        'application/x-zip'
+      ];
       const extensionAllowed = ['geojson', 'kml', 'json'];
       if (
         mimeTypeAllowed.indexOf(mimeType) !== -1 ||
         extensionAllowed.indexOf(ext.toLowerCase()) !== -1
       ) {
         this.readFile(file, sourceSrs, ext, i++, count);
-      } else if (mimeType === 'application/zip') {
+      } else if (zipMimeType.indexOf(mimeType) !== -1) {
         this.callImportService(file, sourceSrs);
       } else {
-        this.onFilesInvalid([file]);
+        this.onFilesInvalid(file);
       }
     }
   }
 
-  public onFilesInvalid(fileList: Array<File>) {
+  public onFilesInvalid(file: File) {
     const translate = this.languageService.translate;
-    const count = fileList.length;
     let i = 1;
-    for (const file of fileList) {
-      const title = translate.instant('igo.geo.dropGeoFile.invalid.title', {
-        i: i++,
-        count: count
-      });
-      const message = translate.instant('igo.geo.dropGeoFile.invalid.text', {
-        value: file.name
-      });
-      this.messageService.error(message, title);
-    }
+    const title = translate.instant('igo.geo.dropGeoFile.invalid.title');
+    const message = translate.instant('igo.geo.dropGeoFile.invalid.text', {
+      value: file.name,
+      mimeType: file.type
+    });
+    this.messageService.error(message, title);
   }
 
   public export(data: ExportOptions) {

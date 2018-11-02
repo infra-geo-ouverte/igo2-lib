@@ -9,8 +9,8 @@
       },
       "dropGeoFile": {
         "invalid": {
-          "text": "Le fichier '{{value}}' est invalide",
-          "title": "Fichier invalide ({{i}}/{{count}})"
+          "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
+          "title": "Fichier invalide"
         },
         "success": {
           "text": "La couche '{{value}}' a été ajoutée à la carte",
@@ -151,7 +151,8 @@
         "link": "Lien",
         "dialog": {
           "copyMsg": "Itinéraire copié dans le presse-papier",
-          "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
+          "copyMsgLink":
+            "Le lien de l'itinéraire est copié dans le presse-papier",
           "copyTitle": "Itinéraire"
         }
       },
