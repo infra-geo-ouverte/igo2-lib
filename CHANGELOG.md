@@ -1,3 +1,14 @@
+<a name="0.24.2"></a>
+## [0.24.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.1...0.24.2) (2018-11-02)
+
+
+### Bug Fixes
+
+* **import:** add mimetype for zip file ([6dc9cce](https://github.com/infra-geo-ouverte/igo2-lib/commit/6dc9cce))
+* **layer:** options defined in context take precedence over getCapabilities ([e6bc48f](https://github.com/infra-geo-ouverte/igo2-lib/commit/e6bc48f))
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.0...0.24.1) (2018-11-01)
 
