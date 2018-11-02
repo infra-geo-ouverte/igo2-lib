@@ -61,7 +61,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public initialStopsCoords;
   private browserLanguage;
 
-  private queryLayersOnInit;
 
   // https://stackoverflow.com/questions/46364852/create-input-fields-dynamically-in-angular-2
 
@@ -118,7 +117,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.queryService.queryLayers = this.queryLayersOnInit;
+    this.queryService.queryEnabled = true;
     const stopCoordinates = [];
 
     this.stops.value.forEach(stop => {
@@ -147,8 +146,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.queryLayersOnInit = this.queryService.queryLayers;
-    this.queryService.queryLayers = [];
+    this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     const stopsLayer = new VectorLayer({
       title: 'routingStopOverlay',
