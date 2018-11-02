@@ -61,7 +61,6 @@ export class ImportExportService {
 
   public onFilesInvalid(file: File) {
     const translate = this.languageService.translate;
-    let i = 1;
     const title = translate.instant('igo.geo.dropGeoFile.invalid.title');
     const message = translate.instant('igo.geo.dropGeoFile.invalid.text', {
       value: file.name,
