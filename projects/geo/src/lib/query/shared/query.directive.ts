@@ -31,6 +31,7 @@ import { QueryService } from './query.service';
   selector: '[igoQuery]'
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
+  private queryLayers: Layer[];
   private queryLayers$$: Subscription;
   private queries$$: Subscription[] = [];
 
@@ -90,13 +91,16 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       }
     });
 
-    this.queryService.queryLayers = queryLayers;
+    this.queryLayers = queryLayers;
   }
 
   private manageFeatureByClick(
     featureOL: olFeature,
     layerOL: olLayer
   ): Feature {
+    if (!this.queryService.allowQueryExecution) {
+      return;
+    }
     if (layerOL.getZIndex() !== 999) {
       let title;
       if (layerOL.get('title') !== undefined) {
@@ -124,6 +128,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
   private handleMapClick(event: olMapBrowserEvent) {
     this.unsubscribeQueries();
+    if (!this.queryService.allowQueryExecution) {
+      return;
+    }
     const clickedFeatures: olFeature[] = [];
     const format = new olFormatGeoJSON();
     const mapProjection = this.map.projection;
@@ -173,7 +180,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       delete element.properties['clickedTitle'];
     });
     const view = this.map.ol.getView();
-    const queries$ = this.queryService.query(this.queryService.queryLayers, {
+    const queries$ = this.queryService.query(this.queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
       resolution: view.getResolution()
