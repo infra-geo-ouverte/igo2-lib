@@ -903,7 +903,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         searchResponse.map(res =>
           this.routesQueries$$.push(
           res.subscribe(features => {
-            (features as any).forEach(element => {
+            (features as any).filter(f => f.geometry).forEach(element => {
               if (
                 searchProposals.filter(f => f.source === element.source)
                   .length === 0
