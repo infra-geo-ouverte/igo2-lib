@@ -9,7 +9,7 @@ import {
   Optional
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
@@ -45,6 +45,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public stopsForm: FormGroup;
   public projection = 'EPSG:4326';
   public currentStopIndex: number;
+  private routesQueries$$: Subscription[] = [];
 
   private stream$ = new Subject<string>();
 
@@ -117,6 +118,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.unsubscribeRoutesQueries();
     this.queryService.queryEnabled = true;
     const stopCoordinates = [];
 
@@ -219,9 +221,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectRoute.getFeatures().clear();
     });
 
+    this.routesQueries$$.push(
     this.stopsForm.statusChanges
       .pipe(debounceTime(this._debounce))
-      .subscribe(val => this.onFormChange());
+      .subscribe(val => this.onFormChange()));
 
     translateStop.on('translateend', evt => {
       const translatedID = evt.features.getArray()[0].getId();
@@ -258,12 +261,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.map.ol.addInteraction(this.selectRoute);
     this.map.ol.addInteraction(translateStop);
 
+    this.routesQueries$$.push(
     this.stream$
       .pipe(
         debounceTime(this._debounce),
         distinctUntilChanged()
       )
-      .subscribe((term: string) => this.handleTermChanged(term));
+      .subscribe((term: string) => this.handleTermChanged(term)));
   }
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
@@ -272,6 +276,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       .locate(coordinates, this.map.getZoom())
       .filter(searchRes => searchRes !== undefined)
       .map(res =>
+        this.routesQueries$$.push(
         res.pipe(map(f => f)).subscribe(features => {
           (features as any).forEach(element => {
             if (
@@ -314,7 +319,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
             this.stops.at(stopIndex).patchValue({ stopProposals: [] });
           }
-        })
+        }))
       );
   }
 
@@ -778,14 +783,21 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const routeResponse = this.routingService.route(stopsArrayCoordinates);
     if (routeResponse) {
       routeResponse.map(res =>
+        this.routesQueries$$.push(
         res.subscribe(route => {
           this.routesResults = route;
           this.activeRoute = this.routesResults[0] as Routing;
           this.showRouteGeometry(moveToExtent);
-        })
+        }))
       );
     }
   }
+
+  private unsubscribeRoutesQueries() {
+    this.routesQueries$$.forEach((sub: Subscription) => sub.unsubscribe());
+    this.routesQueries$$ = [];
+  }
+
 
   copyLinkToClipboard() {
     const successful = Clipboard.copy(this.getUrl());
@@ -889,8 +901,9 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       const searchResponse = this.searchService.search(term);
       if (searchResponse) {
         searchResponse.map(res =>
+          this.routesQueries$$.push(
           res.subscribe(features => {
-            (features as any).forEach(element => {
+            (features as any).filter(f => f.geometry).forEach(element => {
               if (
                 searchProposals.filter(f => f.source === element.source)
                   .length === 0
@@ -904,7 +917,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this.stops
               .at(this.currentStopIndex)
               .patchValue({ stopProposals: searchProposals });
-          })
+          }))
         );
       }
     }
