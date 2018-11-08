@@ -19,6 +19,7 @@ import * as olstyle from 'ol/style';
 import * as olcondition from 'ol/events/condition';
 import * as olinteraction from 'ol/interaction';
 import * as olextent from 'ol/extent';
+import * as olobservable from 'ol/Observable';
 
 import { Clipboard } from '@igo2/utils';
 import { Message, LanguageService, MessageService, RouteService } from '@igo2/core';
@@ -59,6 +60,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private selectRoute;
 
   private focusOnStop = false;
+  private focusKey = [];
   public initialStopsCoords;
   private browserLanguage;
 
@@ -119,6 +121,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.unsubscribeRoutesQueries();
+    this.unlistenSingleClick();
     this.queryService.queryEnabled = true;
     const stopCoordinates = [];
 
@@ -184,7 +187,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const selectRouteHover = new olinteraction.Select({
       layers: [routesLayer.ol],
       condition: olcondition.pointerMove,
-      hitTolerance: 7
+      hitTolerance: 10
     });
 
     this.selectRoute = new olinteraction.Select({
@@ -793,6 +796,14 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private unlistenSingleClick() {
+    if (this.focusKey.length !== 0) {
+      this.focusKey.forEach(key => {
+        olobservable.unByKey(key);
+      });
+    }
+  }
+
   private unsubscribeRoutesQueries() {
     this.routesQueries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.routesQueries$$ = [];
@@ -994,12 +1005,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   focus(i) {
+    this.unlistenSingleClick();
     this.currentStopIndex = i;
     this.focusOnStop = true;
     this.routingFormService.setMapWaitingForRoutingClick();
-    this.map.ol.once('singleclick', evt => {
+    this.focusKey.push(this.map.ol.once('singleclick', evt => {
       this.handleMapClick(evt, i);
-    });
+    }));
   }
 
   private handleMapClick(event: olcondition, indexPos?) {
