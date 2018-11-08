@@ -187,11 +187,12 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const selectRouteHover = new olinteraction.Select({
       layers: [routesLayer.ol],
       condition: olcondition.pointerMove,
-      hitTolerance: 10
+      hitTolerance: 7
     });
 
     this.selectRoute = new olinteraction.Select({
-      layers: [routesLayer.ol]
+      layers: [routesLayer.ol],
+      hitTolerance: 7
     });
 
     this.map.ol.on('pointermove', evt => {
