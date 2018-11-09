@@ -8,7 +8,7 @@ import {
   AfterViewInit
 } from '@angular/core';
 
-import { Subscription, Observable, forkJoin } from 'rxjs';
+import { Subscription, Observable, zip } from 'rxjs';
 
 import olMapBrowserEvent from 'ol/MapBrowserEvent';
 import olInterfactionDragBox from 'ol/interaction/DragBox';
@@ -187,7 +187,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     } else {
       if (this.waitForAllQueries) {
         this.queries$$.push(
-          forkJoin(...queries$).subscribe((features: Feature[][]) =>
+          zip(...queries$).subscribe((features: Feature[][]) =>
             this.query.emit({
               features: features
                 .filter(f => f.length > 0)
