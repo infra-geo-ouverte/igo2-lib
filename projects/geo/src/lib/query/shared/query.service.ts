@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, EMPTY } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import * as olformat from 'ol/format';
@@ -48,7 +48,7 @@ export class QueryService {
   queryLayer(layer: Layer, options: QueryOptions): Observable<Feature[]> {
     const url = this.getQueryUrl(layer.dataSource, options);
     if (!url) {
-      return EMPTY;
+      return of([]);
     }
     const request = this.http.get(url, { responseType: 'text' });
 
