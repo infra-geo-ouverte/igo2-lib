@@ -108,7 +108,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       }
       let queryTitleValue = '';
       if (
-        layerOL.get('sourceOptions').queryTitle &&
+        layerOL.get('sourceOptions') && layerOL.get('sourceOptions').queryTitle &&
         featureOL
           .getProperties()
           .hasOwnProperty(layerOL.get('sourceOptions').queryTitle)
