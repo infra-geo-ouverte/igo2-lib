@@ -15,7 +15,10 @@ import {
   OverlayService,
   Feature,
   FeatureType,
-  FeatureService
+  FeatureService,
+  LayerOptions,
+  OgcFilterableDataSourceOptions,
+  WFSDataSourceOptions
 } from '@igo2/geo';
 
 @Component({
@@ -56,6 +59,59 @@ export class AppQueryComponent {
           })
         );
       });
+
+      interface WFSoptions
+      extends WFSDataSourceOptions,
+        OgcFilterableDataSourceOptions {}
+
+    const wfsDatasource: WFSoptions = {
+      type: 'wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+      params: {
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: 'geojson_utf8',
+        outputFormatDownload: 'shp'
+      },
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        filters: {
+          operator: 'PropertyIsEqualTo',
+          propertyName: 'code_municipalite',
+          expression: '10043'
+        }
+      }
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(wfsDatasource)
+      .subscribe(dataSource => {
+        const layer: LayerOptions = {
+          title: 'WFS ',
+          visible: true,
+          source: dataSource
+        };
+        this.map.addLayer(this.layerService.createLayer(layer));
+      });
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'Réseau routier',
+        visible: true,
+        sourceOptions: {
+          queryable: true,
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          params: {
+            layers: 'bgr_v_sous_route_res_sup_act',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
 
     this.dataSourceService
       .createAsyncDataSource({
