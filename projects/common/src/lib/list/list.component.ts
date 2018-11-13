@@ -19,6 +19,7 @@ import { ListItemDirective } from './list-item.directive';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
+
   @Input()
   get navigation() {
     return this._navigation;
@@ -122,22 +123,40 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   focusNext() {
+    const items = this.listItems.toArray();
+    let item;
+    let disabled = true;
     let index = this.getFocusedIndex();
     if (index === undefined) {
       index = -1;
     }
 
-    const items = this.listItems.toArray();
-    if (index !== items.length - 1) {
-      this.focus(items[index + 1]);
+    while (disabled && index < items.length) {
+      index += 1;
+      item = items[index];
+      disabled = item.disabled;
     }
+
+    if (item !== undefined) {
+      this.focus(item);
+    }
+
   }
 
   focusPrevious() {
-    const index = this.getFocusedIndex();
     const items = this.listItems.toArray();
-    if (index !== 0) {
-      this.focus(items[index - 1]);
+    let item;
+    let disabled = true;
+    let index = this.getFocusedIndex();
+
+    while (disabled && index > 0) {
+      index -= 1;
+      item = items[index];
+      disabled = item.disabled;
+    }
+
+    if (item !== undefined) {
+      this.focus(item);
     }
   }
 

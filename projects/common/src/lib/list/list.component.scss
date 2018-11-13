@@ -53,7 +53,7 @@ mat-list {
   width: 40px;
 }
 
-:host mat-list.selectable >>> [igolistitem] mat-list-item:hover {
+:host mat-list.selectable >>> [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {
   cursor: pointer;
 }
 
