@@ -134,6 +134,8 @@ export class CapabilitiesService {
     }
 
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
+    const timeFilter = this.getTimeFilter(layer);
+    const timeFilterable = Object.keys(timeFilter).length === 0 ? false : true;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromCapabilities: {
@@ -143,10 +145,12 @@ export class CapabilitiesService {
         minResolution:
           this.getResolutionFromScale(layer.MinScaleDenominator) || 0,
         metadata: {
-          url: metadata ? metadata.OnlineResource : undefined
+          url: metadata ? metadata.OnlineResource : undefined,
+          extern: metadata ? true : undefined
         }
       },
-      timeFilter: this.getTimeFilter(layer)
+      timeFilter: timeFilterable ? timeFilter : undefined,
+      timeFilterable: timeFilterable ? true : undefined
     });
 
     return ObjectUtils.mergeDeep(options, baseOptions);
