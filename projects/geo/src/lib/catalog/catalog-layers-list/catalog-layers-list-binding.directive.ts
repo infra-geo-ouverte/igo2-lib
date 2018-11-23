@@ -97,8 +97,14 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
             // If layer regex is okay (or not define), add the layer to the group
             if (boolRegFilter === true) {
               timeFilter = this.capabilitiesService.getTimeFilter(layer);
+              const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
+              const timeFilterable =  timeFilter && Object.keys(timeFilter).length === 0 ? false : true;
               arrLayer.push({
                 title: layer.Title,
+                metadata: {
+                  url: metadata ? metadata.OnlineResource : undefined,
+                  extern: metadata ? true : undefined
+                },
                 sourceOptions: {
                   type: 'wms',
                   url: catalog.url,
@@ -106,7 +112,8 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
                     layers: layer.Name
                   },
                   // Merge catalog time filter in layer timeFilter
-                  timeFilter: { ...timeFilter, ...catalog.timeFilter }
+                  timeFilter: { ...timeFilter, ...catalog.timeFilter },
+                  timeFilterable: timeFilterable ? true : false
                 }
               });
             }
