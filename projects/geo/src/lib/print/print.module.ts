@@ -9,7 +9,8 @@ import {
   MatInputModule,
   MatFormFieldModule,
   MatRadioModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatSlideToggleModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -33,6 +34,7 @@ import { PrintService } from './shared/print.service';
     MatFormFieldModule,
     MatRadioModule,
     MatCheckboxModule,
+    MatSlideToggleModule,
     IgoLanguageModule,
     IgoKeyValueModule
   ],

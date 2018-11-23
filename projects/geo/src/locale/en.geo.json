@@ -116,6 +116,7 @@
         "outputFormat": "Output format",
         "paperFormat": "Paper format",
         "imageFormat": "Image format",
+        "orientation" : "Orientation",
         "landscape": "Landscape",
         "portrait": "Portrait",
         "projection": "Projection",
