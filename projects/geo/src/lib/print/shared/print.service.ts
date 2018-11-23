@@ -342,8 +342,6 @@ export class PrintService {
         try {
           this.addCanvas(doc, canvas, size, margins);
         } catch (err) {
-          alert('2' + err.toString());
-          console.log(err);
           status = SubjectStatus.Error;
           this.messageService.error(
             this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
