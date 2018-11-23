@@ -98,7 +98,7 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
             if (boolRegFilter === true) {
               timeFilter = this.capabilitiesService.getTimeFilter(layer);
               const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
-              const timeFilterable =  timeFilter && Object.keys(timeFilter).length === 0 ? false : true;
+              const timeFilterable = timeFilter && Object.keys(timeFilter).length === 0 ? false : true;
               arrLayer.push({
                 title: layer.Title,
                 metadata: {
