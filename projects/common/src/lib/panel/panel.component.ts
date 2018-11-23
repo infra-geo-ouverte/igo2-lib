@@ -1,4 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  HostBinding
+} from '@angular/core';
 
 @Component({
   selector: 'igo-panel',
@@ -7,6 +12,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PanelComponent {
+
   @Input()
   get title() {
     return this._title;
@@ -15,6 +21,16 @@ export class PanelComponent {
     this._title = value;
   }
   private _title: string;
+
+  @Input()
+  @HostBinding('class.igo-panel-with-header')
+  get withHeader(): boolean {
+    return this._withHeader;
+  }
+  set withHeader(value: boolean) {
+    this._withHeader = value;
+  }
+  private _withHeader = true;
 
   constructor() {}
 }
