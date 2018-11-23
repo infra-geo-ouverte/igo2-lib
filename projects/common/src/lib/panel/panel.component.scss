@@ -26,8 +26,19 @@
 }
 
 .igo-panel-content {
-  height: calc(100% - #{$igo-panel-header-height});
   overflow: auto;
+}
+
+:host.igo-panel-with-header {
+  .igo-panel-content {
+    height: calc(100% - #{$igo-panel-header-height});
+  }
+}
+
+:host:not(.igo-panel-with-header) {
+  .igo-panel-content {
+    height: 100%;
+  }
 }
 
 .igo-panel-title {

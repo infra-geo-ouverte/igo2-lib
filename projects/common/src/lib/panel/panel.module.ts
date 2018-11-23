@@ -1,16 +1,16 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PanelComponent } from './panel.component';
 
 @NgModule({
-  imports: [],
-  declarations: [PanelComponent],
-  exports: [PanelComponent]
+  imports: [
+    CommonModule
+  ],
+  exports: [
+    PanelComponent
+  ],
+  declarations: [
+    PanelComponent
+  ]
 })
-export class IgoPanelModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoPanelModule,
-      providers: []
-    };
-  }
-}
+export class IgoPanelModule {}
