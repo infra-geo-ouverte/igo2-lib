@@ -132,8 +132,9 @@ export class CapabilitiesService {
     if (!layer) {
       return baseOptions;
     }
-
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
+    const abstract = layer.Abstract ? layer.Abstract : undefined;
+    const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length === 0 ? false : true;
 
@@ -146,7 +147,9 @@ export class CapabilitiesService {
           this.getResolutionFromScale(layer.MinScaleDenominator) || 0,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
-          extern: metadata ? true : undefined
+          extern: metadata ? true : undefined,
+          abstract: abstract,
+          keywordList: keywordList
         }
       },
       timeFilter: timeFilterable ? timeFilter : undefined,
