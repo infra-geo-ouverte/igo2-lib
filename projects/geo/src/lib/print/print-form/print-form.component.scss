@@ -11,18 +11,14 @@ mat-slide-toggle.horizontal-left {
   }
 }
 
-mat-slide-toggle {
-  padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 20px;
-}
-
 mat-slide-toggle ::ng-deep span {
   font-size: 100% !important;
 }
 
 .print-option {
   display: block;
+  margin-right: 10px;
+  margin-bottom: 15px;
 }
 
 .print-button-top-padding {
