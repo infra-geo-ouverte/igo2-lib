@@ -136,7 +136,7 @@ export class CapabilitiesService {
     const abstract = layer.Abstract ? layer.Abstract : undefined;
     const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
     const timeFilter = this.getTimeFilter(layer);
-    const timeFilterable = timeFilter && Object.keys(timeFilter).length >  0 ? true : false;
+    const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromCapabilities: {

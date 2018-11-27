@@ -100,7 +100,7 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
               const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
               const abstract = layer.Abstract ? layer.Abstract : undefined;
               const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
-              const timeFilterable = timeFilter && Object.keys(timeFilter).length >  0 ? true : false;
+              const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
               arrLayer.push({
                 title: layer.Title,
                 metadata: {
