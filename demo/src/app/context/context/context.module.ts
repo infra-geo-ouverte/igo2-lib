@@ -4,7 +4,7 @@ import {
   MatButtonModule,
   MatIconModule
 } from '@angular/material';
-
+import { HttpClientJsonpModule } from '@angular/common/http';
 import { IgoPanelModule } from '@igo2/common';
 import {
   IgoMapModule,
@@ -22,6 +22,7 @@ import { AppContextRoutingModule } from './context-routing.module';
 @NgModule({
   declarations: [AppContextComponent],
   imports: [
+    HttpClientJsonpModule,
     AppContextRoutingModule,
     MatCardModule,
     MatButtonModule,
