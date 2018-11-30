@@ -6,12 +6,13 @@ import { FeatureDataSourceOptions } from './feature-datasource.interface';
 export interface ArcGISRestDataSourceOptions
   extends DataSourceOptions,
     FeatureDataSourceOptions {
-  // type?: 'arcgisrest';
+  // type?: 'arcgisrest'
   layer: string;
   params?: ArcGISRestDataSourceOptionsParams;
 }
 
 export interface ArcGISRestDataSourceOptionsParams {
+  customParams?: string[]; // any ArcGIS Rest query parameters for feature service layer resource
   legendInfo?: any;
   style?: any;
   timefilter?: any;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';
@@ -13,6 +13,7 @@ import { EsriStyleGenerator } from '../utils/esri-style-generator';
 import {
   WMTSDataSourceOptions,
   WMSDataSourceOptions,
+  CartoDataSourceOptions,
   ArcGISRestDataSourceOptions,
   TileArcGISRestDataSourceOptions
 } from './datasources';
@@ -57,18 +58,44 @@ export class CapabilitiesService {
     return options;
   }
 
+  getCartoOptions(
+    baseOptions: CartoDataSourceOptions
+  ): Observable<CartoDataSourceOptions> {
+    const baseUrl =
+      'https://' +
+      baseOptions.account +
+      '.carto.com/api/v2/viz/' +
+      baseOptions.mapId +
+      '/viz.json';
+
+    return this.http
+      .jsonp(baseUrl, 'callback')
+      .pipe(
+        map((cartoOptions: any) =>
+          this.parseCartoOptions(baseOptions, cartoOptions)
+        )
+      );
+  }
+
   getArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions
   ): Observable<ArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
-
-    return this.http
-      .get(baseUrl)
-      .pipe(
-        map((arcgisOptions: any) =>
-          this.parseArcgisOptions(baseOptions, arcgisOptions)
-        )
-      );
+    const modifiedUrl = baseOptions.url.replace('FeatureServer', 'MapServer');
+    const legendUrl = modifiedUrl + '/legend?f=json';
+    const arcgisOptions = this.http.get(baseUrl);
+    const legend = this.http.get(legendUrl).pipe(
+      map((res: any) => res),
+      catchError(err => {
+        console.log('No legend associated with this Feature Service');
+        return of(err);
+      })
+    );
+    return forkJoin([arcgisOptions, legend]).pipe(
+      map((res: any) => {
+        return this.parseArcgisOptions(baseOptions, res[0], res[1]);
+      })
+    );
   }
 
   getTileArcgisOptions(
@@ -76,10 +103,10 @@ export class CapabilitiesService {
   ): Observable<TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
-    const tileArcgisOptions = this.http.get(baseUrl);
+    const arcgisOptions = this.http.get(baseUrl);
     const legendInfo = this.http.get(legendUrl);
 
-    return forkJoin([tileArcgisOptions, legendInfo]).pipe(
+    return forkJoin([arcgisOptions, legendInfo]).pipe(
       map((res: any) =>
         this.parseTileArcgisOptions(baseOptions, res[0], res[1])
       )
@@ -136,7 +163,8 @@ export class CapabilitiesService {
     const abstract = layer.Abstract ? layer.Abstract : undefined;
     const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
     const timeFilter = this.getTimeFilter(layer);
-    const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
+    const timeFilterable =
+      timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromCapabilities: {
@@ -163,18 +191,39 @@ export class CapabilitiesService {
     baseOptions: WMTSDataSourceOptions,
     capabilities: any
   ): WMTSDataSourceOptions {
-    const options = optionsFromCapabilities(
-      capabilities,
-      baseOptions
-    );
+    const options = optionsFromCapabilities(capabilities, baseOptions);
 
     return Object.assign(options, baseOptions);
   }
 
+  private parseCartoOptions(
+    baseOptions: CartoDataSourceOptions,
+    cartoOptions: any
+  ): CartoDataSourceOptions {
+    const layers = [];
+    const params = cartoOptions.layers[1].options.layer_definition;
+    params.layers.forEach(element => {
+      layers.push({
+        type: element.type.toLowerCase(),
+        options: element.options,
+        legend: element.legend
+      });
+    });
+    const options = ObjectUtils.removeUndefined({
+      config: {
+        version: params.version,
+        layers: layers
+      }
+    });
+    return ObjectUtils.mergeDeep(options, baseOptions);
+  }
+
   private parseArcgisOptions(
     baseOptions: ArcGISRestDataSourceOptions,
-    arcgisOptions: any
+    arcgisOptions: any,
+    legend?: any
   ): ArcGISRestDataSourceOptions {
+    const legendInfo = legend.layers ? legend : undefined;
     const styleGenerator = new EsriStyleGenerator();
     const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
     const style = styleGenerator.generateStyle(arcgisOptions, units);
@@ -200,6 +249,7 @@ export class CapabilitiesService {
     const params = Object.assign(
       {},
       {
+        legendInfo: legendInfo,
         style: style,
         timeFilter: timeFilter,
         timeExtent: timeExtent,
@@ -214,15 +264,16 @@ export class CapabilitiesService {
 
   private parseTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions,
-    tileArcgisOptions: any,
-    legendInfo: any
+    arcgisOptions: any,
+    legend: any
   ): TileArcGISRestDataSourceOptions {
+    const legendInfo = legend.layers ? legend : undefined;
     const attributions = new olAttribution({
-      html: tileArcgisOptions.copyrightText
+      html: arcgisOptions.copyrightText
     });
     let timeExtent, timeFilter;
-    if (tileArcgisOptions.timeInfo) {
-      const time = tileArcgisOptions.timeInfo.timeExtent;
+    if (arcgisOptions.timeInfo) {
+      const time = arcgisOptions.timeInfo.timeExtent;
       timeExtent = time[0] + ',' + time[1];
       const min = new Date();
       min.setTime(time[0]);
