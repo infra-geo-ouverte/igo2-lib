@@ -1,19 +1,14 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
-import * as olextent from 'ol/extent';
 
 import { uuid } from '@igo2/utils';
+
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 
-import { QueryFormat } from '../../../query/shared/query.enum';
-
 export class TileArcGISRestDataSource extends DataSource {
   public ol: olSourceTileArcGISRest;
-
-  constructor(public options: TileArcGISRestDataSourceOptions) {
-    super(options);
-  }
+  public options: TileArcGISRestDataSourceOptions;
 
   get params(): any {
     return this.options.params as any;
@@ -40,6 +35,10 @@ export class TileArcGISRestDataSource extends DataSource {
   }
 
   getLegend(): DataSourceLegendOptions[] {
+    const legend = super.getLegend();
+    if (this.options.legendInfo === undefined || legend.length > 0) {
+      return legend;
+    }
     const id = parseInt(this.options.layer, 10);
     const lyr = this.options.legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
