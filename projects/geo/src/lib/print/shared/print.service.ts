@@ -239,7 +239,7 @@ export class PrintService {
   @param  map - Map of the app
   @param  margins - Page margins
   */
-  private addLegend(doc: jsPDF, map: IgoMap, margins) {
+  private addLegend(doc: jsPDF, map: IgoMap, margins: Array<number>) {
     const that = this;
     // Get html code for the legend
     const width = doc.internal.pageSize.width;

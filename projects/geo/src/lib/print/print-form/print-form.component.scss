@@ -11,8 +11,8 @@ mat-slide-toggle.horizontal-left {
   }
 }
 
-mat-slide-toggle ::ng-deep span {
-  font-size: 100% !important;
+mat-slide-toggle ::ng-deep .mat-slide-toggle-content {
+  font-size: 100%;
 }
 
 .print-option {
