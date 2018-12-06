@@ -1,3 +1,22 @@
+<a name="0.24.3"></a>
+## [0.24.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.2...0.24.3) (2018-12-06)
+
+
+### Bug Fixes
+
+* **print:** Print options fix Issue [#189](https://github.com/infra-geo-ouverte/igo2-lib/issues/189) ([#238](https://github.com/infra-geo-ouverte/igo2-lib/issues/238)) ([6f8921e](https://github.com/infra-geo-ouverte/igo2-lib/commit/6f8921e))
+* **query:** remove shape propertie after getFeatureInfo ([a79637c](https://github.com/infra-geo-ouverte/igo2-lib/commit/a79637c))
+
+
+### Features
+
+* **datasource:** add Carto capabilities from mapId, add legends for Carto and ArcGIS Rest ([d908484](https://github.com/infra-geo-ouverte/igo2-lib/commit/d908484))
+* **demo:** add ArcGIS Rest, Tile ArcGIS Rest and Carto examples ([d095cd6](https://github.com/infra-geo-ouverte/igo2-lib/commit/d095cd6))
+* **list:** igo-list-items can now be disabled ([#233](https://github.com/infra-geo-ouverte/igo2-lib/issues/233)) ([ebdc466](https://github.com/infra-geo-ouverte/igo2-lib/commit/ebdc466))
+* **panel:** make it possible to create a igo-panel without a header ([dc9783e](https://github.com/infra-geo-ouverte/igo2-lib/commit/dc9783e))
+
+
+
 <a name="0.24.2"></a>
 ## [0.24.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.1...0.24.2) (2018-11-02)
 
