@@ -8,4 +8,8 @@ export interface RouteServiceOptions {
   visibleOffLayersKey?: boolean | string;
   routingCoordKey?: boolean | string;
   toolKey?: boolean | string;
+  llcKKey?: boolean | string;
+  llcAKey?: boolean | string;
+  llcVKey?: boolean | string;
+  llcRKey?: boolean | string;
 }
