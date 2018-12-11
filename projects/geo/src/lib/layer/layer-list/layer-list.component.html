@@ -1,5 +1,5 @@
 <igo-list [navigation]="false" [selection]="false">
-  <mat-list-item *ngIf="layers.length>=thresholdToFilterAndSort || keyword || onlyInRange || onlyVisible ">
+  <mat-list-item *ngIf="showFilterSortToolbar()">
     <ng-container>
     <mat-form-field class="inputFilter" [floatLabel]="floatLabel">
           <input
@@ -7,48 +7,48 @@
           [placeholder]="placeholder"
           [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
            matTooltipShowDelay="500"
-          type="text" [(ngModel)]="keyword">
+          type="text" [(ngModel)]="layerListService.keyword">
           <button
           mat-button
-          *ngIf="keyword"
+          *ngIf="layerListService.keyword"
           matSuffix
           mat-icon-button
           aria-label="Clear"
           color="warn"
-          (click)="keyword = undefined">
+          (click)="layerListService.keyword = undefined">
           <mat-icon>close</mat-icon>
           </button>
     </mat-form-field>
     <button
-      *ngIf="!sortedAlpha"
+      *ngIf="!layerListService.sortedAlpha"
       mat-icon-button
       [matTooltip]="'igo.geo.layer.sortAlphabetically' | translate"
       matTooltipShowDelay="500"
-      (click)="sortedAlpha = true">
+      (click)="layerListService.sortedAlpha = true">
       <mat-icon color="primary">sort_by_alpha</mat-icon>
     </button>
     <button
-      *ngIf="sortedAlpha"
+      *ngIf="layerListService.sortedAlpha"
       mat-icon-button
       [matTooltip]="'igo.geo.layer.sortMapOrder' | translate"
       matTooltipShowDelay="500"
-      (click)="sortedAlpha = false">
+      (click)="layerListService.sortedAlpha = false">
       <mat-icon color="warn">warning</mat-icon>
     </button>
     <button
       mat-icon-button
       [disabled]="!hasLayerNotVisible"
-      [matTooltip]="onlyVisible ?
+      [matTooltip]="layerListService.onlyVisible ?
       ('igo.geo.layer.resetLayersList' | translate) :
       ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)"
       matTooltipShowDelay="500"
-      [color]="onlyVisible ? 'warn' : 'primary'"
+      [color]="layerListService.onlyVisible ? 'warn' : 'primary'"
       (click)="toggleOnlyVisible()">
       <mat-icon>
-        <ng-container *ngIf="!onlyVisible">
+        <ng-container *ngIf="!layerListService.onlyVisible">
           visibility
         </ng-container>
-        <ng-container *ngIf="onlyVisible">
+        <ng-container *ngIf="layerListService.onlyVisible">
             warning
         </ng-container>
       </mat-icon>
@@ -56,17 +56,17 @@
     <button
       mat-icon-button
       [disabled]="!hasLayerOutOfRange"
-      [matTooltip]="onlyInRange ?
+      [matTooltip]="layerListService.onlyInRange ?
       ('igo.geo.layer.resetLayersList' | translate) :
       ('igo.geo.layer.subsetLayersListOnlyInRange' | translate)"
       matTooltipShowDelay="500"
-      [color]="onlyInRange ? 'warn' : 'primary'"
+      [color]="layerListService.onlyInRange ? 'warn' : 'primary'"
       (click)="toggleOnlyInRange()">
       <mat-icon>
-        <ng-container *ngIf="!onlyInRange">
+        <ng-container *ngIf="!layerListService.onlyInRange">
             playlist_add_check
         </ng-container>
-        <ng-container *ngIf="onlyInRange">
+        <ng-container *ngIf="layerListService.onlyInRange">
             warning
         </ng-container>
       </mat-icon>

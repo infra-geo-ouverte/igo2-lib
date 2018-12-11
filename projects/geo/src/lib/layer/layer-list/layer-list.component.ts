@@ -4,11 +4,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   TemplateRef,
-  ContentChild
+  ContentChild,
+  AfterViewInit
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
 import { Layer } from '../shared';
+import { LayerListControlsEnum } from './layer-list.enum';
+import { LayerListService } from './layer-list.service';
 
 @Component({
   selector: 'igo-layer-list',
@@ -16,13 +19,9 @@ import { Layer } from '../shared';
   styleUrls: ['./layer-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayerListComponent {
-  public keyword;
-  public sortedAlpha = false;
-  public onlyVisible = false;
+export class LayerListComponent implements AfterViewInit {
   public hasLayerNotVisible = false;
   public hasLayerOutOfRange = false;
-  public onlyInRange = false;
   public disableReorderLayers = false;
   public thresholdToFilterAndSort = 5;
 
@@ -79,6 +78,15 @@ export class LayerListComponent {
   private _color = 'primary';
 
   @Input()
+  get layerFilterAndSortOptions() {
+    return this._layerFilterAndSortOptions;
+  }
+  set layerFilterAndSortOptions(value: any) {
+    this._layerFilterAndSortOptions = value;
+  }
+  private _layerFilterAndSortOptions = '';
+
+  @Input()
   get excludeBaseLayers() {
     return this._excludeBaseLayers;
   }
@@ -96,12 +104,37 @@ export class LayerListComponent {
   }
   private _toggleLegendOnVisibilityChange = false;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private cdRef: ChangeDetectorRef,
+    public layerListService: LayerListService) {}
+
+  ngAfterViewInit(): void {
+    if (this.layerFilterAndSortOptions.toolbarThreshold) {
+      this.thresholdToFilterAndSort = this.layerFilterAndSortOptions.toolbarThreshold;
+    }
+
+    if (this.layerFilterAndSortOptions.keyword && !this.layerListService.keywordInitializated) {
+      this.layerListService.keyword = this.layerFilterAndSortOptions.keyword;
+      this.layerListService.keywordInitializated = true;
+    }
+    if (this.layerFilterAndSortOptions.sortedAlpha && !this.layerListService.sortedAlphaInitializated) {
+      this.layerListService.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
+      this.layerListService.sortedAlphaInitializated = true;
+    }
+    if (this.layerFilterAndSortOptions.onlyVisible && !this.layerListService.onlyVisibleInitializated) {
+      this.layerListService.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
+      this.layerListService.onlyVisibleInitializated = true;
+    }
+    if (this.layerFilterAndSortOptions.onlyInRange && !this.layerListService.onlyInRangeInitializated) {
+      this.layerListService.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
+      this.layerListService.onlyInRangeInitializated = true;
+    }
+  }
 
   getSortedOrFilteredLayers(): Layer[] {
     const localLayers = this.filterLayersList(this.layers);
     let alphaFilteredLayers;
-    if (this.sortedAlpha) {
+    if (this.layerListService.sortedAlpha) {
       alphaFilteredLayers = this.sortLayers(localLayers, 'title');
     } else {
       alphaFilteredLayers = this.sortLayers(localLayers, 'id');
@@ -109,33 +142,51 @@ export class LayerListComponent {
     return alphaFilteredLayers;
   }
 
+  showFilterSortToolbar(): boolean {
+    switch (this.layerFilterAndSortOptions.showToolbar) {
+      case LayerListControlsEnum.always:
+        return true;
+      case LayerListControlsEnum.never:
+        return false;
+      default:
+        if (this.layers.length >= this.thresholdToFilterAndSort ||
+          this.layerListService.getKeyword() ||
+          this.layerListService.onlyInRange || this.layerListService.onlyVisible) {
+          return true;
+        } else {
+          return false;
+        }
+    }
+  }
+
   filterLayersList(localLayers: Layer[]): Layer[] {
-    if (this.keyword || this.onlyInRange || this.onlyVisible) {
+    if (this.layerListService.getKeyword() || this.layerListService.onlyInRange || this.layerListService.onlyVisible) {
       const layerIDToKeep = [];
       localLayers.forEach(layer => {
         layerIDToKeep.push(layer.id);
       });
 
       localLayers.forEach(layer => {
-        if (this.keyword) {
-          const localKeyword = this.keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (this.layerListService.getKeyword()) {
+          const localKeyword = this.layerListService.getKeyword().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const localLayerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           if (
             !new RegExp(localKeyword, 'gi').test(localLayerTitle) &&
-            !(this.keyword.toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) ) {
+            !(this.layerListService.getKeyword().toLowerCase() ===
+            layer.dataSource.options.type.toString().toLowerCase()) ) {
             const index = layerIDToKeep.indexOf(layer.id);
             if (index > -1) {
               layerIDToKeep.splice(index, 1);
             }
           }
         }
-        if (this.onlyVisible && layer.visible === false) {
+        if (this.layerListService.onlyVisible && layer.visible === false) {
           const index = layerIDToKeep.indexOf(layer.id);
             if (index > -1) {
               layerIDToKeep.splice(index, 1);
             }
         }
-        if (this.onlyInRange && layer.isInResolutionsRange === false) {
+        if (this.layerListService.onlyInRange && layer.isInResolutionsRange === false) {
           const index = layerIDToKeep.indexOf(layer.id);
             if (index > -1) {
               layerIDToKeep.splice(index, 1);
@@ -180,14 +231,15 @@ export class LayerListComponent {
     });
   }
   toggleOnlyVisible() {
-    this.onlyVisible = !this.onlyVisible;
+    this.layerListService.onlyVisible = !this.layerListService.onlyVisible;
   }
   toggleOnlyInRange() {
-    this.onlyInRange = !this.onlyInRange;
+    this.layerListService.onlyInRange = !this.layerListService.onlyInRange;
   }
 
   private defineReorderLayersStatus() {
-    if (this.onlyInRange || this.onlyVisible || this.sortedAlpha || this.keyword) {
+    if (this.layerListService.onlyInRange || this.layerListService.onlyVisible ||
+      this.layerListService.sortedAlpha || this.layerListService.getKeyword()) {
       this.disableReorderLayers = true;
     } else {
       this.disableReorderLayers = false;
