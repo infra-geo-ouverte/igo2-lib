@@ -36,7 +36,11 @@ export class RouteService {
       visibleOnLayersKey: 'visiblelayers',
       visibleOffLayersKey: 'invisiblelayers',
       routingCoordKey: 'routing',
-      toolKey: 'tool'
+      toolKey: 'tool',
+      llcKKey: 'llck',
+      llcAKey: 'llca',
+      llcVKey: 'llcv',
+      llcRKey: 'llcr'
     };
     this.options = Object.assign({}, defaultOptions, options);
   }
