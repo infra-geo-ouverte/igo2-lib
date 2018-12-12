@@ -280,6 +280,7 @@ export class QueryService {
     const properties = Object.assign({}, featureOL.getProperties());
     delete properties['geometry'];
     delete properties['boundedBy'];
+    delete properties['shape'];
 
     let geometry;
     if (featureGeometry !== undefined) {

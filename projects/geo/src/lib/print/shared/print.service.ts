@@ -71,7 +71,7 @@ export class PrintService {
       (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           if (options.showLegend === true) {
-            this.addLegend(doc, map);
+            this.addLegend(doc, map, margins);
           } else {
             this.saveDoc(doc);
           }
@@ -236,8 +236,10 @@ export class PrintService {
   /**
   Add the legend to the document
   @param  doc - Pdf document where legend will be added
+  @param  map - Map of the app
+  @param  margins - Page margins
   */
-  private addLegend(doc: jsPDF, map: IgoMap) {
+  private addLegend(doc: jsPDF, map: IgoMap, margins: Array<number>) {
     const that = this;
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
@@ -256,7 +258,7 @@ export class PrintService {
 
       imgData = canvas.toDataURL('image/png');
       doc.addPage();
-      const imageSize = this.getImageSizeToFitPdf(doc, canvas);
+      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
       doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
       that.saveDoc(doc);
       div.parentNode.removeChild(div); // remove temp div (IE style)
@@ -280,7 +282,7 @@ export class PrintService {
 
 
     if (image !== undefined) {
-      const imageSize = this.getImageSizeToFitPdf(doc, canvas);
+      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
       doc.addImage(image, 'JPEG', margins[3], margins[0], imageSize[0], imageSize[1]);
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
     }
@@ -558,11 +560,12 @@ export class PrintService {
   Calculate the best Image size to fit in pdf
   @param doc - Pdf Document
   @param canvas - Canvas of image
+  @param margins - Page margins
   */
-  private getImageSizeToFitPdf(doc, canvas) {
+  private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight = doc.internal.pageSize.getHeight() - 20; // -20 to let margin work great
-    const pageWidth = doc.internal.pageSize.getWidth() - 20; // -20 to let margin work great
+    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+    const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
     const canHeight = canvas.height;
     const canWidth = canvas.width;
     const heightRatio = canHeight / pageHeight;

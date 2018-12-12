@@ -117,6 +117,7 @@
         "outputFormat": "Format de sortie",
         "paperFormat": "Format du papier",
         "imageFormat": "Format de l'image",
+        "orientation" : "Orientation",
         "landscape": "Paysage",
         "portrait": "Portrait",
         "printBtn": "Imprimer",

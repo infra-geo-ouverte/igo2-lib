@@ -4,20 +4,21 @@ mat-form-field {
   width: 100%;
 }
 
-mat-checkbox.horizontal-left {
+mat-slide-toggle.horizontal-left {
   text-align: left;
    @include mobile {
     text-align: inherit;
   }
 }
 
- mat-checkbox.horizontal-left span {
-  padding: 0 8px;
+mat-slide-toggle ::ng-deep .mat-slide-toggle-content {
+  font-size: 100%;
 }
 
-mat-checkbox, mat-radio-button {
-  padding-right: 20px;
-  padding-bottom: 10px;
+.print-option {
+  display: block;
+  margin-right: 10px;
+  margin-bottom: 15px;
 }
 
 .print-button-top-padding {
@@ -30,8 +31,4 @@ mat-checkbox, mat-radio-button {
 
 .igo-form-button-group {
   text-align: center;
-}
-
-mat-checkbox ::ng-deep label.mat-checkbox-layout {
-    padding-bottom: 10px;
 }
