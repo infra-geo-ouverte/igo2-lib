@@ -21,11 +21,11 @@ export class ShareMapService {
     this.urlApi = this.config.getConfig('context.url');
   }
 
-  getUrl(map: IgoMap, formValues) {
+  getUrl(map: IgoMap, formValues, publicShareOption) {
     if (this.urlApi) {
       return this.getUrlWithApi(map, formValues);
     }
-    return this.getUrlWithoutApi(map);
+    return this.getUrlWithoutApi(map, publicShareOption);
   }
 
   getUrlWithApi(map: IgoMap, formValues) {
@@ -43,7 +43,7 @@ export class ShareMapService {
     return `${location.origin + location.pathname}?context=${formValues.uri}`;
   }
 
-  getUrlWithoutApi(map: IgoMap) {
+  getUrlWithoutApi(map: IgoMap, publicShareOption) {
     if (
       !this.route ||
       !this.route.options.visibleOnLayersKey ||
@@ -52,6 +52,7 @@ export class ShareMapService {
     ) {
       return;
     }
+    const llc = publicShareOption.layerlistControls.querystring;
 
     const visibleKey = this.route.options.visibleOnLayersKey;
     const invisibleKey = this.route.options.visibleOffLayersKey;
@@ -103,6 +104,6 @@ export class ShareMapService {
 
     return `${location.origin}${
       location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${routingUrl}`;
+    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`.replace(/&&/g, '&');
   }
 }
