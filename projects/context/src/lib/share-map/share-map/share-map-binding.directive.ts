@@ -1,4 +1,4 @@
-import { Directive, Self, OnInit/*, AfterViewInit*/, Optional } from '@angular/core';
+import { Directive, Self, OnInit, Optional } from '@angular/core';
 
 import { MapService, LayerListService } from '@igo2/geo';
 import { ShareMapComponent } from './share-map.component';
@@ -7,7 +7,7 @@ import { RouteService } from '@igo2/core';
 @Directive({
   selector: '[igoShareMapBinding]'
 })
-export class ShareMapBindingDirective implements OnInit/*, AfterViewInit*/ {
+export class ShareMapBindingDirective implements OnInit {
   private component: ShareMapComponent;
 
   constructor(
@@ -21,9 +21,6 @@ export class ShareMapBindingDirective implements OnInit/*, AfterViewInit*/ {
 
   ngOnInit() {
     this.component.map = this.mapService.getMap();
- /* }
-
-  ngAfterViewInit(): void {*/
     if (
       this.route &&
       (this.route.options.llcKKey || this.route.options.llcAKey ||
