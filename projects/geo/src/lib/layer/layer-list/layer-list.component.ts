@@ -154,12 +154,19 @@ export class LayerListComponent implements AfterViewInit {
           this.layerListService.onlyInRange || this.layerListService.onlyVisible) {
           return true;
         } else {
+          this.layerListService.keyword = '';
+          this.layerListService.sortedAlpha = false;
+          this.layerListService.onlyVisible = false;
+          this.layerListService.onlyInRange = false;
           return false;
         }
     }
   }
 
   filterLayersList(localLayers: Layer[]): Layer[] {
+    if (this.layerFilterAndSortOptions.showToolbar === LayerListControlsEnum.never) {
+      return localLayers;
+    }
     if (this.layerListService.getKeyword() || this.layerListService.onlyInRange || this.layerListService.onlyVisible) {
       const layerIDToKeep = [];
       localLayers.forEach(layer => {
