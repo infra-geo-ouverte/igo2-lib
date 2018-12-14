@@ -54,11 +54,15 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
           this.layerListService.sortedAlpha = sortedAplhaFromUrl === '1' ? true : false;
           this.layerListService.sortedAlphaInitializated = true;
         }
-        if (onlyVisibleFromUrl && !this.layerListService.onlyVisibleInitializated && this.layersVisibilityStatus) {
+        if (onlyVisibleFromUrl &&
+          !this.layerListService.onlyVisibleInitializated &&
+          this.component.hasLayerNotVisible) {
           this.layerListService.onlyVisible = onlyVisibleFromUrl === '1' ? true : false;
           this.layerListService.onlyVisibleInitializated = true;
         }
-        if (onlyInRangeFromUrl && !this.layerListService.onlyInRangeInitializated && this.layersRangeStatus) {
+        if (onlyInRangeFromUrl &&
+          !this.layerListService.onlyInRangeInitializated &&
+          this.component.hasLayerOutOfRange) {
           this.layerListService.onlyInRange = onlyInRangeFromUrl === '1' ? true : false;
           this.layerListService.onlyInRangeInitializated = true;
         }
@@ -68,21 +72,6 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
-  }
-
-  private layersVisibilityStatus(): boolean  {
-    if (this.component.layers.filter(f => f.visible === false).length >= 1) {
-      return true;
-    } else {
-      return true;
-    }
-  }
-  private layersRangeStatus(): boolean {
-    if (this.component.layers.filter(f => f.isInResolutionsRange === false).length >= 1) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
 }
