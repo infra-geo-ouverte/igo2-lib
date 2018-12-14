@@ -32,6 +32,10 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit(): void {
+    this.initRoutes();
+  }
+
+  private initRoutes() {
     if (
       this.route &&
       (this.route.options.llcKKey || this.route.options.llcAKey ||

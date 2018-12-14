@@ -109,6 +109,10 @@ export class LayerListComponent implements AfterViewInit {
     public layerListService: LayerListService) {}
 
   ngAfterViewInit(): void {
+    this.initLayerFilterAndSortOptions();
+  }
+
+  private initLayerFilterAndSortOptions() {
     if (this.layerFilterAndSortOptions.toolbarThreshold) {
       this.thresholdToFilterAndSort = this.layerFilterAndSortOptions.toolbarThreshold;
     }

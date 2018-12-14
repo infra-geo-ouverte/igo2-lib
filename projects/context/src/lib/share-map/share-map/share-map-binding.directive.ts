@@ -21,6 +21,10 @@ export class ShareMapBindingDirective implements OnInit {
 
   ngOnInit() {
     this.component.map = this.mapService.getMap();
+    this.initRoutes();
+  }
+
+  private initRoutes() {
     if (
       this.route &&
       (this.route.options.llcKKey || this.route.options.llcAKey ||
