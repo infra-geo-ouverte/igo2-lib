@@ -29,17 +29,30 @@ export class LayerListComponent implements AfterViewInit {
 
   @Input()
   get layers(): Layer[] {
-    if (this._layers.filter(f => f.visible === false).length >= 1 ) {
-      this.hasLayerNotVisible = true;
+    if (this.excludeBaseLayers) {
+      if (this._layers.filter(f => f.visible === false && !f.baseLayer).length >= 1) {
+        this.hasLayerNotVisible = true;
+      } else {
+        this.hasLayerNotVisible = false;
+      }
+      if (this._layers
+        .filter(f => f.isInResolutionsRange === false && !f.baseLayer).length >= 1) {
+        this.hasLayerOutOfRange = true;
+      } else {
+        this.hasLayerOutOfRange = false;
+      }
     } else {
-      this.hasLayerNotVisible = false;
+      if (this._layers.filter(f => f.visible === false).length >= 1) {
+        this.hasLayerNotVisible = true;
+      } else {
+        this.hasLayerNotVisible = false;
+      }
+      if (this._layers.filter(f => f.isInResolutionsRange === false).length >= 1) {
+        this.hasLayerOutOfRange = true;
+      } else {
+        this.hasLayerOutOfRange = false;
+      }
     }
-    if (this._layers.filter(f => f.isInResolutionsRange === false).length >= 1 ) {
-      this.hasLayerOutOfRange = true;
-    } else {
-      this.hasLayerOutOfRange = false;
-    }
-
     this.defineReorderLayersStatus();
     return this._layers;
   }
@@ -125,11 +138,13 @@ export class LayerListComponent implements AfterViewInit {
       this.layerListService.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
       this.layerListService.sortedAlphaInitializated = true;
     }
-    if (this.layerFilterAndSortOptions.onlyVisible && !this.layerListService.onlyVisibleInitializated) {
+    if (this.layerFilterAndSortOptions.onlyVisible && !this.layerListService.onlyVisibleInitializated &&
+      this.hasLayerNotVisible) {
       this.layerListService.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
       this.layerListService.onlyVisibleInitializated = true;
     }
-    if (this.layerFilterAndSortOptions.onlyInRange && !this.layerListService.onlyInRangeInitializated) {
+    if (this.layerFilterAndSortOptions.onlyInRange && !this.layerListService.onlyInRangeInitializated &&
+      this.hasLayerOutOfRange) {
       this.layerListService.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
       this.layerListService.onlyInRangeInitializated = true;
     }
