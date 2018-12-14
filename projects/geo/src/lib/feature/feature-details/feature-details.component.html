@@ -1,6 +1,6 @@
 <table class="igo-striped" *ngIf="feature && isObject(feature.properties) && feature.properties.target !== 'innerhtml'">
   <tbody>
-    <tr *ngFor="let property of feature.properties | keyvalue">
+    <tr *ngFor="let property of filterFeatureProperties(feature) | keyvalue">
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
         <mat-icon mat-list-avatar>{{feature.icon}}</mat-icon>
