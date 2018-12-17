@@ -108,6 +108,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       }
       let queryTitleValue = '';
       if (
+        layerOL.get('sourceOptions') &&
         layerOL.get('sourceOptions').queryTitle &&
         featureOL
           .getProperties()
@@ -121,6 +122,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       featureOL.set('clickedTitle', title + queryTitleValue);
       let allowedFieldsAndAlias;
       if (
+        layerOL.get('sourceOptions') &&
         layerOL.get('sourceOptions').sourceFields &&
         layerOL.get('sourceOptions').sourceFields.length >= 1) {
           allowedFieldsAndAlias = {};
@@ -130,10 +132,13 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           });
         }
           featureOL.set('igoAliasList', allowedFieldsAndAlias);
+        let groupTitle = this.languageService.translate.instant(
+          'igo.geo.clickOnMap.clickedFeature');
         if (
           layerOL.get('title')) {
-            featureOL.set('igoLayerTitle', layerOL.get('title'));
+            groupTitle = layerOL.get('title');
           }
+          featureOL.set('igoLayerTitle', groupTitle);
       return featureOL;
     }
   }
