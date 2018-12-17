@@ -119,6 +119,21 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         ];
       }
       featureOL.set('clickedTitle', title + queryTitleValue);
+      let allowedFieldsAndAlias;
+      if (
+        layerOL.get('sourceOptions').sourceFields &&
+        layerOL.get('sourceOptions').sourceFields.length >= 1) {
+          allowedFieldsAndAlias = {};
+          layerOL.get('sourceOptions').sourceFields.forEach(sourceField => {
+            const alias = sourceField.alias ? sourceField.alias : sourceField.name;
+            allowedFieldsAndAlias[sourceField.name] = alias;
+          });
+        }
+          featureOL.set('igoAliasList', allowedFieldsAndAlias);
+        if (
+          layerOL.get('title')) {
+            featureOL.set('igoLayerTitle', layerOL.get('title'));
+          }
       return featureOL;
     }
   }
@@ -165,16 +180,17 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     parsedClickedFeatures = featuresGeoJSON.features.map(f =>
       Object.assign({}, f, {
         sourceType: SourceFeatureType.Click,
-        source: this.languageService.translate.instant(
-          'igo.geo.clickOnMap.clickedFeature'
-        ),
+        source: f.properties.igoLayerTitle,
         id: f.properties.clickedTitle + ' ' + String(i++),
-        icon: 'mouse',
-        title: f.properties.clickedTitle
+        icon: 'place',
+        title: f.properties.clickedTitle,
+        alias: f.properties.igoAliasList
       })
     );
     parsedClickedFeatures.forEach(element => {
       delete element.properties['clickedTitle'];
+      delete element.properties['igoAliasList'];
+      delete element.properties['igoLayerTitle'];
     });
     const view = this.map.ol.getView();
     const queries$ = this.queryService.query(this.queryLayers, {
