@@ -57,6 +57,25 @@ export class AppQueryComponent {
         );
       });
 
+      this.dataSourceService
+      .createAsyncDataSource({
+        type: 'wms',
+        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        params: {
+          layers: 'bgr_v_sous_route_res_sup_act',
+          version: '1.3.0'
+        }
+
+      })
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'WMS',
+            source: dataSource
+          })
+        );
+      });
+
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector'
