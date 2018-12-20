@@ -193,13 +193,19 @@ export class LayerListComponent implements AfterViewInit {
       });
 
       localLayers.forEach(layer => {
-        if (this.layerListService.getKeyword()) {
-          const localKeyword = this.layerListService.getKeyword().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const localLayerKeywords = [];
+        if (layer.options && layer.options['metadata'] && layer.options['metadata'].keywordList ) {
+          layer.options['metadata'].keywordList.forEach(kw => {
+            localLayerKeywords.push(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+          });
+        }
+        if (this.keyword) {
+          const localKeyword = this.keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const localLayerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           if (
             !new RegExp(localKeyword, 'gi').test(localLayerTitle) &&
-            !(this.layerListService.getKeyword().toLowerCase() ===
-            layer.dataSource.options.type.toString().toLowerCase()) ) {
+            !(this.keyword.toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) &&
+            localLayerKeywords.filter(kw => new RegExp(localKeyword, 'gi').test(kw)).length === 0) {
             const index = layerIDToKeep.indexOf(layer.id);
             if (index > -1) {
               layerIDToKeep.splice(index, 1);
