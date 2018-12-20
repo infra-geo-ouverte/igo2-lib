@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { uuid, Clipboard } from '@igo2/utils';
 import { ConfigService, MessageService, LanguageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
-import { IgoMap } from '@igo2/geo';
+import { IgoMap, LayerListService } from '@igo2/geo';
 
 import { ShareMapService } from '../shared/share-map.service';
 
@@ -46,6 +46,9 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
   public url: string;
   public hasApi = false;
   public userId;
+  public publicShareOption = {
+    layerlistControls: { querystring: '' }
+  };
 
   constructor(
     private config: ConfigService,
@@ -53,7 +56,8 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
     private messageService: MessageService,
     private auth: AuthService,
     private shareMapService: ShareMapService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private layerListService: LayerListService
   ) {
     this.hasApi = this.config.getConfig('context.url') ? true : false;
   }
@@ -73,10 +77,32 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
     }
   }
 
+  public hasLayerListControls(): boolean {
+    if (this.layerListService.keyword || this.layerListService.sortedAlpha  ||
+      this.layerListService.onlyVisible || this.layerListService.onlyInRange ) {
+        this.publicShareOption.layerlistControls.querystring = '';
+        if (this.layerListService.keyword) {
+          this.publicShareOption.layerlistControls.querystring += '&llck=' + this.layerListService.keyword;
+        }
+        if (this.layerListService.sortedAlpha) {
+          this.publicShareOption.layerlistControls.querystring += '&llca=1';
+        }
+        if (this.layerListService.onlyVisible) {
+          this.publicShareOption.layerlistControls.querystring += '&llcv=1';
+        }
+        if (this.layerListService.onlyInRange) {
+          this.publicShareOption.layerlistControls.querystring += '&llcr=1';
+        }
+      return true;
+    }
+    return false;
+  }
+
   resetUrl(values: any = {}) {
+    this.hasLayerListControls();
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
-    this.url = this.shareMapService.getUrl(this.map, inputs);
+    this.url = this.shareMapService.getUrl(this.map, inputs, this.publicShareOption);
   }
 
   copyTextToClipboard(textArea) {

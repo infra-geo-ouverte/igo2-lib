@@ -20,6 +20,7 @@ import {
 
 import { LayerService } from './shared/layer.service';
 import { StyleService } from './shared/style.service';
+import { LayerListService } from './layer-list/layer-list.service';
 import { LayerItemComponent } from './layer-item/layer-item.component';
 import { LayerLegendComponent } from './layer-legend/layer-legend.component';
 import { LayerListComponent } from './layer-list/layer-list.component';
@@ -58,7 +59,7 @@ export class IgoLayerModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoLayerModule,
-      providers: [LayerService, StyleService]
+      providers: [LayerService, StyleService, LayerListService]
     };
   }
 }

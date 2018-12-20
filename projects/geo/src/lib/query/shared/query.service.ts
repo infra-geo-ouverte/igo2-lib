@@ -65,10 +65,20 @@ export class QueryService {
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
+    let allowedFieldsAndAlias;
+    if (layer.options &&
+      layer.options.sourceOptions &&
+      layer.options.sourceOptions.sourceFields && layer.options.sourceOptions.sourceFields.length >= 1) {
+        allowedFieldsAndAlias = {};
+      layer.options.sourceOptions.sourceFields.forEach(sourceField => {
+        const alias = sourceField.alias ? sourceField.alias : sourceField.name;
+        allowedFieldsAndAlias[sourceField.name] = alias;
+      });
+    }
     let features = [];
     switch (queryDataSource.options.queryFormat) {
       case QueryFormat.GML3:
-        features = this.extractGML3Data(res, layer.zIndex);
+        features = this.extractGML3Data(res, layer.zIndex, allowedFieldsAndAlias);
         break;
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
@@ -89,7 +99,7 @@ export class QueryService {
         break;
       case QueryFormat.GML2:
       default:
-        features = this.extractGML2Data(res, layer.zIndex);
+        features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
         break;
     }
 
@@ -110,7 +120,7 @@ export class QueryService {
     });
   }
 
-  private extractGML2Data(res, zIndex) {
+  private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
     let parser = new olFormatGML2();
     let features = parser.readFeatures(res);
 
@@ -120,14 +130,14 @@ export class QueryService {
       features = parser.readFeatures(res);
     }
 
-    return features.map(feature => this.featureToResult(feature, zIndex));
+    return features.map(feature => this.featureToResult(feature, zIndex, allowedFieldsAndAlias));
   }
 
-  private extractGML3Data(res, zIndex) {
+  private extractGML3Data(res, zIndex, allowedFieldsAndAlias?) {
     const parser = new olFormatGML3();
     const features = parser.readFeatures(res);
 
-    return features.map(feature => this.featureToResult(feature, zIndex));
+    return features.map(feature => this.featureToResult(feature, zIndex, allowedFieldsAndAlias));
   }
 
   private extractGeoJSONData(res) {
@@ -275,7 +285,7 @@ export class QueryService {
     return result;
   }
 
-  private featureToResult(featureOL: olFeature, zIndex: number): Feature {
+  private featureToResult(featureOL: olFeature, zIndex: number, allowedFieldsAndAlias?): Feature {
     const featureGeometry = featureOL.getGeometry() as any;
     const properties = Object.assign({}, featureOL.getProperties());
     delete properties['geometry'];
@@ -301,7 +311,8 @@ export class QueryService {
       icon: 'place',
       projection: undefined,
       properties: properties,
-      geometry: geometry
+      geometry: geometry,
+      alias: allowedFieldsAndAlias
     };
   }
 

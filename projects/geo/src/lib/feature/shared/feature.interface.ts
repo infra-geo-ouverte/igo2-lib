@@ -20,6 +20,7 @@ export interface Feature {
   extent?: [number, number, number, number];
   properties?: { [key: string]: any };
   layer?: AnyLayerOptions;
+  alias?: { [key: string]: any };
 }
 
 export interface FeatureGeometry {

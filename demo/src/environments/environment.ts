@@ -24,7 +24,7 @@ export const environment: Environment = {
       sources: [
         {
           title: 'Gouvouvert',
-          url: 'https://geoegl.msp.gouv.qc.ca/igo2/api/ws/igo_gouvouvert.fcgi'
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi'
         }
       ]
     },
