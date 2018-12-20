@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { Cacheable } from 'ngx-cacheable';
 
 import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';
@@ -113,6 +114,7 @@ export class CapabilitiesService {
     );
   }
 
+  @Cacheable()
   getCapabilities(
     service: 'wms' | 'wmts',
     baseUrl: string,
@@ -126,12 +128,6 @@ export class CapabilitiesService {
       }
     });
 
-    const url = baseUrl + '?' + params.toString();
-    const cached = this.capabilitiesStore.find(value => value.url === url);
-    if (cached !== undefined) {
-      return new Observable(c => c.next(cached.capabilities));
-    }
-
     const request = this.http.get(baseUrl, {
       params: params,
       responseType: 'text'
@@ -140,7 +136,6 @@ export class CapabilitiesService {
     return request.pipe(
       map(res => {
         const capabilities = this.parsers[service].read(res);
-        this.cache(url, capabilities);
         return capabilities;
       })
     );
