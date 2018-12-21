@@ -58,11 +58,11 @@ export class LayerService {
       layerOptions.source.options.optionsFromCapabilities
     ) {
       layerOptions = ObjectUtils.mergeDeep(
-        (layerOptions.source.options as any)._layerOptionsFromCapabilities,
-        layerOptions
+        layerOptions,
+        (layerOptions.source.options as any)._layerOptionsFromCapabilities
       );
     }
-
+    
     let layer;
     switch (layerOptions.source.constructor) {
       case OSMDataSource:

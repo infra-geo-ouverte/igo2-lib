@@ -104,13 +104,13 @@ export class ObjectUtils {
       b = [a, (a = b)][0];
     }
 
-    if (typeof a === 'undefined' || a === '') {
+    if (a === undefined || a === null || a === '') {
       if (direction === 'desc') {
         return nullFirst ? -1 : 1;
       }
       return nullFirst ? 1 : -1;
     }
-    if (typeof b === 'undefined' || b === '') {
+    if (b === undefined || b === null || b === '') {
       if (direction === 'desc') {
         return nullFirst ? 1 : -1;
       }
@@ -119,6 +119,8 @@ export class ObjectUtils {
 
     const ax = [];
     const bx = [];
+    a = '' + a;
+    b = '' + b;
 
     a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
       ax.push([$1 || Infinity, $2 || '']);
