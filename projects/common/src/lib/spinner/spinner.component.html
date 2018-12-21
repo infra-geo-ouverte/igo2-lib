@@ -1,4 +1,6 @@
-<div *ngIf="shown">
-  <div class="igo-spinner-background"></div>
-  <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
-</div>
+<ng-container *ngIf="shown$ | async">
+  <div>
+    <div class="igo-spinner-background"></div>
+    <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+  </div>
+</ng-container>

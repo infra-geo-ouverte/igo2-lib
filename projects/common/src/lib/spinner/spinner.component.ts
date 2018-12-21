@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'igo-spinner',
@@ -6,14 +7,21 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./spinner.component.scss']
 })
 export class SpinnerComponent {
+
+  public shown$ = new Subject<boolean>();
+
   @Input()
-  get shown() {
-    return this._shown;
-  }
   set shown(value: boolean) {
-    this._shown = value;
+    this.shown$.next(value);
   }
-  private _shown = false;
 
   constructor() {}
+
+  show() {
+    this.shown = true;
+  }
+
+  hide() {
+    this.shown = false;
+  }
 }
