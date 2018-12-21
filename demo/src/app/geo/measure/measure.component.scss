@@ -1,0 +1,52 @@
+igo-map-browser {
+  width: 900px;
+  height: 1000px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.igo-form {
+  padding: 10px 5px 5px;
+}
+
+/deep/.tooltip {
+  position: relative;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+/deep/.tooltip-measure {
+  opacity: 1;
+  font-weight: bold;
+}
+/deep/.tooltip.tooltip-static {
+  background-color: #673ab7;
+  color: white;
+  border: 1px solid white;
+}
+
+/deep/.tooltip-measure:before,
+/deep/.tooltip-static:before {
+  border-top: 6px solid rgba(0, 0, 0, 0.5);
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  margin-left: -7px;
+  left: 50%;
+}
+
+/deep/.tooltip-static:before {
+  border-top-color: #673ab7;
+}
+
+/deep/.hidden {
+  display: none !important;
+}

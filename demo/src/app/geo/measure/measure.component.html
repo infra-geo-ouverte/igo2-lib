@@ -1,0 +1,43 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Measure</mat-card-title>
+  <mat-card-content>
+    <li>npm install --save html2canvas@1.0.0-alpha.12</li>
+    <li>npm install --save jspdf@1.4.1</li>
+    <li>npm install --save file-saver@1.3.8</li>
+    <li>npm install --save jszip@3.1.5</li>
+    <li>npm install --save stream@0.0.2</li>
+
+    <li>Dependencies: LanguageService</li>
+
+    <br>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/measure">code of this example</a>
+    <hr>
+  </mat-card-content>
+
+  <igo-map-browser [map]="map" [view]="view" igoMeasure>
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+    <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
+  </igo-map-browser>
+</mat-card>
+
+<form class="igo-form">
+  <div class="igo-input-container">
+    <mat-form-field>
+      <mat-select placeholder = "Measurement type" [value]="0" (selectionChange)="setMesurementType($event)">
+        <mat-option [value]="0">Length (LineString)</mat-option>
+        <mat-option [value]="1">Area (Polygon)</mat-option>
+        <mat-option [value]="2">Area (Circle)</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="igo-input-container">
+    <mat-form-field>
+      <mat-select placeholder = "Measurement units" [value]="0" (selectionChange)="setUnits($event)">
+        <mat-option [value]="0">Kilometers</mat-option>
+        <mat-option [value]="1">Miles</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</form>
