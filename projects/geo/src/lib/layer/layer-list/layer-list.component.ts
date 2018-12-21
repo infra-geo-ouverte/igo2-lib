@@ -199,12 +199,13 @@ export class LayerListComponent implements AfterViewInit {
             localLayerKeywords.push(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
           });
         }
-        if (this.keyword) {
-          const localKeyword = this.keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (this.layerListService.getKeyword()) {
+          const localKeyword = this.layerListService.getKeyword().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const localLayerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           if (
             !new RegExp(localKeyword, 'gi').test(localLayerTitle) &&
-            !(this.keyword.toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) &&
+            !(this.layerListService.getKeyword()
+            .toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) &&
             localLayerKeywords.filter(kw => new RegExp(localKeyword, 'gi').test(kw)).length === 0) {
             const index = layerIDToKeep.indexOf(layer.id);
             if (index > -1) {
