@@ -44,7 +44,7 @@ gulp.task('core:copyAssets', done => {
 gulp.task('common:copyAssets', done => {
   gulp
     .src('./projects/common/src/assets', {
-      base: './projects/common/src/assets/'
+      base: './projects/common/src/assets/', allowEmpty: true
     })
     .pipe(gulp.dest('./dist/common/assets'));
 
@@ -54,7 +54,7 @@ gulp.task('common:copyAssets', done => {
 gulp.task('auth:copyAssets', done => {
   gulp
     .src('./projects/auth/src/assets', {
-      base: './projects/auth/src/assets/'
+      base: './projects/auth/src/assets/', allowEmpty: true
     })
     .pipe(gulp.dest('./dist/auth/assets'));
 
