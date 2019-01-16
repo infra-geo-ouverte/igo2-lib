@@ -24,6 +24,7 @@ export class OgcFilterableItemComponent implements OnInit {
   private defaultLogicalParent = 'And';
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
+  public filtersCollapsed = true;
 
   @Input()
   get layer(): Layer {
@@ -149,6 +150,7 @@ export class OgcFilterableItemComponent implements OnInit {
   }
 
   addFilterToSequence() {
+    this.filtersCollapsed = false;
     const arr = this.datasource.options.ogcFilters.interfaceOgcFilters;
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
