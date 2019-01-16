@@ -76,6 +76,7 @@ export class WMSDataSource extends DataSource {
 
     if (this.options
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters
+      && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters) {
         const filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
         this.ol.updateParams({ filter: this.ogcFilterWriter.buildFilter(filters) });
