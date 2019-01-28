@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 import { Media } from '@igo2/core';
 import { FlexibleState } from '@igo2/common';
@@ -59,9 +60,20 @@ export class SidenavComponent {
   }
   private _media: Media;
 
+  @Input()
+  get title(): string {
+    return this._title;
+  }
+  set title(value: string) {
+    if (value) {
+      this._title = value;
+    }
+  }
+  private _title: string = this.titleService.getTitle();
+
   public topPanelState: FlexibleState = 'initial';
 
-  constructor(public toolService: ToolService) {}
+  constructor(public toolService: ToolService, public titleService: Title) {}
 
   zoomToFeatureExtent() {
     if (this.feature.geometry) {
