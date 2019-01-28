@@ -116,7 +116,7 @@ export class OgcFilterWriter {
     const wfs_pattern = filterOptions.pattern;
     const wfs_matchCase = filterOptions.matchCase
       ? filterOptions.matchCase
-      : false;
+      : true;
     const wfs_wildCard = filterOptions.wildCard ? filterOptions.wildCard : '*';
     const wfs_singleChar = filterOptions.singleChar
       ? filterOptions.singleChar
@@ -267,7 +267,7 @@ export class OgcFilterWriter {
       wildCard: '*',
       singleChar: '.',
       escapeChar: '!',
-      matchCase: false,
+      matchCase: true,
       igoSpatialSelector: '',
       geometryName: '',
       geometry: '',
