@@ -8,6 +8,11 @@
   @include igo-geo-theming($theme);
 }
 
+.blue-theme {
+  @import '~dist/core/style/themes/blue.theme';
+  @include igo-all-theming($theme);
+}
+
 .indigo-theme {
   @import '~dist/core/style/themes/indigo.theme';
   @include igo-all-theming($theme);
