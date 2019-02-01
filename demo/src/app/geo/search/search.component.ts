@@ -35,6 +35,8 @@ export class AppSearchComponent {
 
   public osmLayer: Layer;
 
+  public selectedFeature: Feature;
+
   constructor(
     private mapService: MapService,
     private languageService: LanguageService,
@@ -66,10 +68,12 @@ export class AppSearchComponent {
   }
 
   clearFeature() {
+    this.selectedFeature = undefined;
     this.overlayService.clear();
   }
 
   handleFeatureSelect(feature: Feature) {
+    this.selectedFeature = feature;
     if (feature.type === FeatureType.Feature) {
       this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
     } else if (feature.type === FeatureType.DataSource) {
