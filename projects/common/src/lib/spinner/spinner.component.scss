@@ -2,8 +2,13 @@ $igo-spinner-size: 40px;
 $igo-spinner-border-width: 4px;
 $igo-spinner-top-left: 2px;
 
-:host {
+.igo-spinner-container {
+  display: none;
   pointer-events: none;
+}
+
+.igo-spinner-container.igo-spinner-shown {
+  display: block;
 }
 
 mat-progress-spinner {

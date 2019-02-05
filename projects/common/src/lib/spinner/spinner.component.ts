@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Subject } from 'rxjs';
+
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-spinner',
@@ -8,12 +9,11 @@ import { Subject } from 'rxjs';
 })
 export class SpinnerComponent {
 
-  public shown$ = new Subject<boolean>();
+  public shown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input()
-  set shown(value: boolean) {
-    this.shown$.next(value);
-  }
+  set shown(value: boolean) { this.shown$.next(value); }
+  get shown(): boolean { return this.shown$.value; }
 
   constructor() {}
 

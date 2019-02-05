@@ -6,15 +6,17 @@ import { SpinnerBindingDirective } from './spinner-binding.directive';
 import { SpinnerComponent } from './spinner.component';
 
 @NgModule({
-  imports: [CommonModule, MatProgressSpinnerModule],
-  declarations: [SpinnerBindingDirective, SpinnerComponent],
-  exports: [SpinnerBindingDirective, SpinnerComponent]
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule
+  ],
+  declarations: [
+    SpinnerBindingDirective,
+    SpinnerComponent
+  ],
+  exports: [
+    SpinnerBindingDirective,
+    SpinnerComponent
+  ]
 })
-export class IgoSpinnerModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoSpinnerModule,
-      providers: []
-    };
-  }
-}
+export class IgoSpinnerModule {}
