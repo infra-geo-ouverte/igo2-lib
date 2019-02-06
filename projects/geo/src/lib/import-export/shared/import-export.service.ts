@@ -38,6 +38,7 @@ export class ImportExportService {
       const mimeTypeAllowed = [
         'application/gml+xml',
         'application/vnd.google-earth.kml+xml',
+        'application/gpx+xml',
         'application/json'
       ];
       const zipMimeType = [
@@ -45,7 +46,7 @@ export class ImportExportService {
         'application/x-zip-compressed',
         'application/x-zip'
       ];
-      const extensionAllowed = ['geojson', 'kml', 'json'];
+      const extensionAllowed = ['geojson', 'kml', 'gpx', 'json'];
       if (
         mimeTypeAllowed.indexOf(mimeType) !== -1 ||
         extensionAllowed.indexOf(ext.toLowerCase()) !== -1
@@ -159,11 +160,16 @@ export class ImportExportService {
       format = new olformat.KML();
     } else if (mimeType === 'application/gml+xml') {
       format = new olformat.GML();
+    } else if (mimeType === 'application/gpx+xml') {
+      format = new olformat.GPX();
     } else if (ext) {
       ext = ext.toLowerCase();
       switch (ext) {
         case 'kml':
           format = new olformat.KML();
+          break;
+       case 'gpx':
+          format = new olformat.GPX();
           break;
         case 'gml':
           format = new olformat.GML();

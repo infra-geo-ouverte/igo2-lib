@@ -13,7 +13,7 @@ export class DropGeoFileDirective extends DragAndDropDirective {
 
   constructor(importExportService: ImportExportService) {
     super();
-    this.allowed_extensions = ['zip', 'geojson', 'kml', 'gml', 'json'];
+    this.allowed_extensions = ['zip', 'geojson', 'kml', 'gpx', 'gml', 'json'];
     this.filesDropped.subscribe(f => importExportService.import(f));
     this.filesInvalid.subscribe(f => importExportService.onFilesInvalid(f));
   }
