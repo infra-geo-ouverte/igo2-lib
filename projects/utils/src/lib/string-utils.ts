@@ -9,6 +9,8 @@ export class StringUtils {
     if (!s2) {
       return '<span class="inserted">' + s1 + '</span>';
     }
+    s1 = s1.toString();
+    s2 = s2.toString();
     const changeData = StringUtils.getChanges(s1, s2, '', p);
     const nextS = s2.slice(
       changeData.mtc.length + changeData.ins.length + changeData.sbs.length
