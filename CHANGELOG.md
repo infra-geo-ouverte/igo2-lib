@@ -1,3 +1,28 @@
+<a name="0.25.0"></a>
+# [0.25.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.3...0.25.0) (2019-02-07)
+
+
+### Bug Fixes
+
+* **gulpfile:** Empty directory ([#252](https://github.com/infra-geo-ouverte/igo2-lib/issues/252)) ([6bf6bd6](https://github.com/infra-geo-ouverte/igo2-lib/commit/6bf6bd6))
+* **layer-list:** wrong keyword was used. ([#253](https://github.com/infra-geo-ouverte/igo2-lib/issues/253)) ([12785d4](https://github.com/infra-geo-ouverte/igo2-lib/commit/12785d4))
+* **ogc-filter:** OGC Filters from contexts now interpreted ([#257](https://github.com/infra-geo-ouverte/igo2-lib/issues/257)) ([f209332](https://github.com/infra-geo-ouverte/igo2-lib/commit/f209332))
+* **string-utils:** cast to string ([e12feb2](https://github.com/infra-geo-ouverte/igo2-lib/commit/e12feb2))
+
+
+### Features
+
+* **cache:** add metadata tag to cache calls ([793d1ff](https://github.com/infra-geo-ouverte/igo2-lib/commit/793d1ff))
+* **gulp:** upgrade gulp to 4.0 ([b051df8](https://github.com/infra-geo-ouverte/igo2-lib/commit/b051df8))
+* **layer-list:** Allow search with layer keyword (capabilities or context) ([#250](https://github.com/infra-geo-ouverte/igo2-lib/issues/250)) ([9c7ee86](https://github.com/infra-geo-ouverte/igo2-lib/commit/9c7ee86))
+* **layer-list:** control layerlist by url ([#248](https://github.com/infra-geo-ouverte/igo2-lib/issues/248)) ([7e609af](https://github.com/infra-geo-ouverte/igo2-lib/commit/7e609af))
+* **package:** update package-lock ([33dec7c](https://github.com/infra-geo-ouverte/igo2-lib/commit/33dec7c))
+* **query:** Provide ALIAS to wms getfeatureinfo(gml), wfs and vector datasources ([#249](https://github.com/infra-geo-ouverte/igo2-lib/issues/249)) ([871be03](https://github.com/infra-geo-ouverte/igo2-lib/commit/871be03))
+* **sidenav:** put the same title as the tab ([eaece1c](https://github.com/infra-geo-ouverte/igo2-lib/commit/eaece1c))
+* **theme:** add blue theme ([0652936](https://github.com/infra-geo-ouverte/igo2-lib/commit/0652936))
+
+
+
 <a name="0.24.3"></a>
 ## [0.24.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.2...0.24.3) (2018-12-06)
 
