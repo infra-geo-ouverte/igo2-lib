@@ -1,3 +1,13 @@
+<a name="0.26.0"></a>
+# [0.26.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.25.0...0.26.0) (2019-02-07)
+
+
+### Bug Fixes
+
+* **package:** add angular-cli-ghpages dependencies ([f138029](https://github.com/infra-geo-ouverte/igo2-lib/commit/f138029))
+
+
+
 <a name="0.25.0"></a>
 # [0.25.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.24.3...0.25.0) (2019-02-07)
 
