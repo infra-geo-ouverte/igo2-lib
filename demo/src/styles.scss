@@ -37,3 +37,8 @@
   @import '~dist/core/style/themes/dark.theme';
   @include igo-all-theming($theme);
 }
+
+.teal-theme {
+  @import '~dist/core/style/themes/teal.theme';
+  @include igo-all-theming($theme);
+}
