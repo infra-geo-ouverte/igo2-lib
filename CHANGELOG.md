@@ -1,3 +1,13 @@
+<a name="0.26.1"></a>
+## [0.26.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.0...0.26.1) (2019-02-08)
+
+
+### Features
+
+* **theme:** add teal theme ([9cbc2d7](https://github.com/infra-geo-ouverte/igo2-lib/commit/9cbc2d7))
+
+
+
 <a name="0.26.0"></a>
 # [0.26.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.25.0...0.26.0) (2019-02-07)
 
