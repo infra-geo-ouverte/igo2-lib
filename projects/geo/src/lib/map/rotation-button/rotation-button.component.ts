@@ -27,8 +27,4 @@ export class RotationButtonComponent {
   private _color: string;
 
   constructor() {}
-
-  getViewRotation() {
-    return this.map.getRotation();
-  }
 }
