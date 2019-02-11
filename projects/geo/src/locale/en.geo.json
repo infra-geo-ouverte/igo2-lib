@@ -102,7 +102,8 @@
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
         "zoomIn": "Zoom in ({{zoom}})",
-        "zoomOut": "Zoom out ({{zoom}})"
+        "zoomOut": "Zoom out ({{zoom}})",
+        "resetRotation": "Set map to north"
       },
       "metadata": {
         "show": "Show metadata"
