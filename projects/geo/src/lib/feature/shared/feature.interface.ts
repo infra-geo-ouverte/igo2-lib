@@ -18,7 +18,7 @@ export interface Feature {
   projection?: string;
   geometry?: FeatureGeometry;
   extent?: [number, number, number, number];
-  properties?: { [key: string]: any };
+  properties?: { [key: string]: any};
   layer?: AnyLayerOptions;
   alias?: { [key: string]: any };
 }

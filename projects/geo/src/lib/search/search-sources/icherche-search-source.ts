@@ -15,6 +15,8 @@ import {
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
+import { BaseObject} from 'node_modules/ol/object.js';
+
 @Injectable()
 export class IChercheSearchSource extends SearchSource {
   get enabled(): boolean {
@@ -130,7 +132,8 @@ export class IChercheSearchSource extends SearchSource {
     delete properties.recherche;
     delete properties.id;
     delete properties.cote;
-
+    properties.lien_googleMap = 'https://www.google.com/maps';
+    console.log(result.properties);
     return {
       id: result._id,
       source: IChercheSearchSource._name,
