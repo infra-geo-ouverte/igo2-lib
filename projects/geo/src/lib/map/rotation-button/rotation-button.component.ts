@@ -29,12 +29,7 @@ export class RotationButtonComponent {
   constructor() {}
 
   rotationStyle(radians): {} {
-    let degree = Math.round(radians * 180 / Math.PI);
-    if (degree < 0) {
-      degree = 360 - degree;
-    }
-    const rotation = 'rotate(' + degree + 'deg)';
-
+    const rotation = 'rotate(' + radians + 'rad)';
     return {
       '-webkit-transform': rotation,
       '-moz-transform': rotation,
