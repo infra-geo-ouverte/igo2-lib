@@ -32,10 +32,10 @@
 
 :host >>> igo-rotation-button {
   position: absolute;
-  bottom: calc(#{$igo-icon-size} + 5px + 95px);
+  top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
   right: $igo-margin;
   @include mobile {
-    bottom: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+    top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
   }
 }
 
