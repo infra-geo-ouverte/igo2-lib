@@ -27,4 +27,20 @@ export class RotationButtonComponent {
   private _color: string;
 
   constructor() {}
+
+  rotationClass(radians): {} {
+    let degree = Math.round(radians * 180 / Math.PI);
+    if (degree < 0) {
+      degree = 360 - degree;
+    }
+    const rotation = 'rotate(' + degree + 'deg)';
+
+    return {
+      '-webkit-transform': rotation,
+      '-moz-transform': rotation,
+      '-ms-transform': rotation,
+      '-o-transform': rotation,
+      'transform': rotation
+    };
+  }
 }
