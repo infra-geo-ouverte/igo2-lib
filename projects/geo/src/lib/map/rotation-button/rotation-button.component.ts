@@ -28,7 +28,7 @@ export class RotationButtonComponent {
 
   constructor() {}
 
-  rotationClass(radians): {} {
+  rotationStyle(radians): {} {
     let degree = Math.round(radians * 180 / Math.PI);
     if (degree < 0) {
       degree = 360 - degree;

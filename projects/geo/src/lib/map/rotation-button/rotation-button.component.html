@@ -6,7 +6,7 @@
     matTooltipPosition="left" 
     [color]="color" 
     (click)="map.resetRotation()">
-    <mat-icon [ngStyle]="rotationClass(map.getRotation())">
+    <mat-icon [ngStyle]="rotationStyle(map.getRotation())">
       navigation
     </mat-icon>
   </button>
