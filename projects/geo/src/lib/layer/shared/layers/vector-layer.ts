@@ -4,12 +4,13 @@ import olSourceVector from 'ol/source/Vector';
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
+import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
 
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
-  public dataSource: FeatureDataSource | WFSDataSource | ArcGISRestDataSource;
+  public dataSource: FeatureDataSource | WFSDataSource | ArcGISRestDataSource | WebSocketDataSource;
   public options: VectorLayerOptions;
   public ol: olLayerVector;
 
