@@ -59,7 +59,10 @@ export interface EntityOperationState {
 export interface EntityTableTemplate {
   columns: EntityTableColumn[];
   selection?: boolean;
+<<<<<<< HEAD
   selectMany?: boolean;
+=======
+>>>>>>> feat(entity): merge entity module and add an entity-table demo
   sort?: boolean;
   valueAccessor?: (entity: object, property: string) => any;
   rowClassFunc?: (entity: object) => {
