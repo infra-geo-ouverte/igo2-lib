@@ -18,6 +18,7 @@
     "@angular/core": "^6.0.0",
     "@angular/material": "^6.0.0",
     "@igo2/core": "^0.26.2",
-    "@igo2/utils": "^0.26.2"
+    "@igo2/utils": "^0.26.2",
+    "typy": "^2.0.1"
   }
 }

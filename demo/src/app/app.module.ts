@@ -17,6 +17,8 @@ import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
 import { AppRequestModule } from './core/request/request.module';
 
+import { AppEntityTableModule } from './common/entity-table/entity-table.module';
+
 import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 
 import { AppSimpleMapModule } from './geo/simple-map/simple-map.module';
@@ -54,6 +56,8 @@ import { AppComponent } from './app.component';
     AppMediaModule,
     AppMessageModule,
     AppRequestModule,
+
+    AppEntityTableModule,
 
     AppAuthFormModule,
 
