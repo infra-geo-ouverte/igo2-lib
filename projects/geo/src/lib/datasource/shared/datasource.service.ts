@@ -25,6 +25,7 @@ import {
   ArcGISRestDataSourceOptions,
   TileArcGISRestDataSource,
   TileArcGISRestDataSourceOptions,
+  WebSocketDataSource,
   AnyDataSourceOptions
 } from './datasources';
 
@@ -78,6 +79,11 @@ export class DataSourceService {
           context as ArcGISRestDataSourceOptions
         );
         break;
+      case 'websocket':
+        dataSource = this.createWebSocketDataSource(
+          context as FeatureDataSourceOptions
+        );
+        break;
       case 'tilearcgisrest':
         dataSource = this.createTileArcGISRestDataSource(
           context as TileArcGISRestDataSourceOptions
@@ -103,6 +109,12 @@ export class DataSourceService {
     context: FeatureDataSourceOptions
   ): Observable<FeatureDataSource> {
     return new Observable(d => d.next(new FeatureDataSource(context)));
+  }
+
+  private createWebSocketDataSource(
+    context: FeatureDataSourceOptions
+  ): Observable<WebSocketDataSource> {
+    return new Observable(d => d.next(new WebSocketDataSource(context)));
   }
 
   private createWFSDataSource(

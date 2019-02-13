@@ -20,5 +20,6 @@ export * from './arcgisrest-datasource';
 export * from './arcgisrest-datasource.interface';
 export * from './tilearcgisrest-datasource';
 export * from './tilearcgisrest-datasource.interface';
+export * from './websocket-datasource';
 export * from './any-datasource';
 export * from './any-datasource.interface';
