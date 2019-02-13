@@ -6,11 +6,9 @@
   </mat-card-content>
 </mat-card>
 
-<div>
-  <igo-dynamic-outlet
-    [component]="component"
-    [inputs]="inputs">
-  </igo-dynamic-outlet>
+<igo-dynamic-outlet
+  [component]="component"
+  [inputs]="inputs">
+</igo-dynamic-outlet>
 
-  <button mat-flat-button color="primary" (click)="toggleComponent()">Toggle Component</button>
-</div>
+<button mat-flat-button color="primary" (click)="toggleComponent()">Toggle Component</button>
