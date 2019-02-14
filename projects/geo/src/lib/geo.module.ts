@@ -6,6 +6,7 @@ import { IgoDownloadModule } from './download/download.module';
 import { IgoFeatureModule } from './feature/feature.module';
 import { IgoFilterModule } from './filter/filter.module';
 import { IgoFormModule } from './form/form.module';
+import { IgoGeometryModule } from './geometry/geometry.module';
 import { IgoImportExportModule } from './import-export/import-export.module';
 import { IgoLayerModule } from './layer/layer.module';
 import { IgoMapModule } from './map/map.module';
@@ -28,6 +29,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoFeatureModule,
     IgoFilterModule,
     IgoFormModule,
+    IgoGeometryModule,
     IgoImportExportModule,
     IgoLayerModule,
     IgoMapModule,

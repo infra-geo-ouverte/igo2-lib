@@ -188,6 +188,12 @@
           }
         }
       },
+      "geometry": {
+        "geometry": "Geometry",
+        "point": "Point",
+        "line": "Line",
+        "polygon": "Polygon"
+      },
       "targetHtmlUrl": "Open the external link",
       "timeFilter": {
         "date": "Date",

@@ -190,6 +190,12 @@
           }
         }
       },
+      "geometry": {
+        "geometry": "Geometrie",
+        "point": "Point",
+        "line": "Ligne",
+        "polygon": "Polygone"
+      },
       "targetHtmlUrl": "Ouvrir le lien externe",
       "timeFilter": {
         "date": "Date",
