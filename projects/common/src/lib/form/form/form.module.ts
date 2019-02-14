@@ -22,4 +22,4 @@ import { FormComponent } from './form.component';
     FormComponent
   ]
 })
-export class IgoLibFormFormModule {}
+export class IgoFormFormModule {}

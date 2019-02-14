@@ -77,6 +77,10 @@ export class AppFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  clearForm() {
+    this.form$.value.control.reset();
+  }
+
   onSubmit(data: {[key: string]: any}) {
     alert(JSON.stringify(data));
   }

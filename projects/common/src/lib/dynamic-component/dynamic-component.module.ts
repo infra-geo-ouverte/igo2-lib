@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { IgoLibDynamicOutletModule } from './dynamic-outlet/dynamic-outlet.module';
+import { IgoDynamicOutletModule } from './dynamic-outlet/dynamic-outlet.module';
 import { DynamicComponentService } from './shared/dynamic-component.service';
 
 @NgModule({
   imports: [
     CommonModule,
-    IgoLibDynamicOutletModule
+    IgoDynamicOutletModule
   ],
   exports: [
-    IgoLibDynamicOutletModule
+    IgoDynamicOutletModule
   ],
   providers: [
     DynamicComponentService
   ]
 })
-export class IgoLibDynamicComponentModule {}
+export class IgoDynamicComponentModule {}

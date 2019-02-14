@@ -17,4 +17,4 @@ import { DynamicOutletComponent } from './dynamic-outlet.component';
     DynamicOutletComponent
   ]
 })
-export class IgoLibDynamicOutletModule {}
+export class IgoDynamicOutletModule {}

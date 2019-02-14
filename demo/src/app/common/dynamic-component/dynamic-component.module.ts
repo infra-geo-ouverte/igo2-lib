@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatButtonModule, MatCardModule } from '@angular/material';
 
-import { IgoLibDynamicComponentModule } from '@igo2/common';
+import { IgoDynamicComponentModule } from '@igo2/common';
 
 import {
   AppSalutationComponent,
@@ -20,7 +20,7 @@ import { AppDynamicComponentRoutingModule } from './dynamic-component-routing.mo
     AppDynamicComponentRoutingModule,
     MatButtonModule,
     MatCardModule,
-    IgoLibDynamicComponentModule
+    IgoDynamicComponentModule
   ],
   exports: [AppDynamicComponentComponent],
   entryComponents: [
