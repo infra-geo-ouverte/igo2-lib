@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material';
 
-import { IgoLibFormFieldModule } from '../form-field/form-field.module';
+import { IgoFormFieldModule } from '../form-field/form-field.module';
 import { FormGroupComponent } from './form-group.component';
 
 /**
@@ -12,7 +12,7 @@ import { FormGroupComponent } from './form-group.component';
   imports: [
     CommonModule,
     MatFormFieldModule,
-    IgoLibFormFieldModule
+    IgoFormFieldModule
   ],
   exports: [
     FormGroupComponent
@@ -21,4 +21,4 @@ import { FormGroupComponent } from './form-group.component';
     FormGroupComponent
   ]
 })
-export class IgoLibFormGroupModule {}
+export class IgoFormGroupModule {}

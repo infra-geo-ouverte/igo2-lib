@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule, MatCardModule } from '@angular/material';
 
-import { IgoLibFormModule } from '@igo2/common';
+import { IgoFormModule } from '@igo2/common';
 
 import { AppFormComponent } from './form.component';
 import { AppFormRoutingModule } from './form-routing.module';
@@ -14,7 +14,7 @@ import { AppFormRoutingModule } from './form-routing.module';
     AppFormRoutingModule,
     MatButtonModule,
     MatCardModule,
-    IgoLibFormModule
+    IgoFormModule
   ],
   exports: [AppFormComponent]
 })

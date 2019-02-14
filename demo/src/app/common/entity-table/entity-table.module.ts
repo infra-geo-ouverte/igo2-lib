@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatCardModule } from '@angular/material';
 
-import { IgoLibEntityTableModule } from '@igo2/common';
+import { IgoEntityTableModule } from '@igo2/common';
 
 import { AppEntityTableComponent } from './entity-table.component';
 import { AppEntityTableRoutingModule } from './entity-table-routing.module';
@@ -11,7 +11,7 @@ import { AppEntityTableRoutingModule } from './entity-table-routing.module';
   imports: [
     AppEntityTableRoutingModule,
     MatCardModule,
-    IgoLibEntityTableModule
+    IgoEntityTableModule
   ],
   exports: [AppEntityTableComponent]
 })

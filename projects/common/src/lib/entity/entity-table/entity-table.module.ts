@@ -27,4 +27,4 @@ import { EntityTableComponent } from './entity-table.component';
     EntityTableRowDirective
   ]
 })
-export class IgoLibEntityTableModule {}
+export class IgoEntityTableModule {}

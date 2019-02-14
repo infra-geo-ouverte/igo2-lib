@@ -8,7 +8,7 @@ import {
   MatSelectModule
 } from '@angular/material';
 
-import { IgoLibDynamicOutletModule } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.module';
+import { IgoDynamicOutletModule } from '../../dynamic-component/dynamic-outlet/dynamic-outlet.module';
 
 import { FormFieldComponent } from './form-field.component';
 import { FormFieldSelectComponent } from './form-field-select.component';
@@ -26,7 +26,7 @@ import { FormFieldTextComponent } from './form-field-text.component';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    IgoLibDynamicOutletModule
+    IgoDynamicOutletModule
   ],
   exports: [
     FormFieldComponent,
@@ -39,4 +39,4 @@ import { FormFieldTextComponent } from './form-field-text.component';
     FormFieldTextComponent
   ]
 })
-export class IgoLibFormFieldModule {}
+export class IgoFormFieldModule {}
