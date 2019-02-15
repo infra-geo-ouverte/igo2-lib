@@ -7,7 +7,7 @@ export interface SearchSourceOptions {
   type?: string;
   distance?: number;
   zoomMaxOnSelect?: number;
-  allowedPropertiesAlias?: AllowedPropertiesAlias[];
+  propertiesAlias?: PropertiesAlias[];
 }
 
 export interface SearchSourcesOptions {
@@ -17,7 +17,7 @@ export interface SearchSourcesOptions {
   reseautq?: SearchSourceOptions;
 }
 
-export interface AllowedPropertiesAlias {
+export interface PropertiesAlias {
   name: any;
   alias: any;
 }

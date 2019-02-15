@@ -12,7 +12,7 @@ import {
 } from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SearchSourceOptions, AllowedPropertiesAlias } from './search-source.interface';
+import { SearchSourceOptions, PropertiesAlias } from './search-source.interface';
 
 
 @Injectable()
@@ -33,16 +33,16 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
   private locatelimit = this.searchlimit * 2;
   private options: SearchSourceOptions;
   private allowedProperties;
-  public allowedPropertiesAlias =
+  public propertiesAlias =
     [
-      { name: 'title', alias: 'Titre' } as AllowedPropertiesAlias,
-      { name: 'etiquette', alias: 'Informations' } as AllowedPropertiesAlias,
-      { name: 'nommun', alias: 'Municipalité' } as AllowedPropertiesAlias,
-      { name: 'messagpan', alias: 'Message' } as AllowedPropertiesAlias,
-      { name: 'noroute', alias: '# de route' } as AllowedPropertiesAlias,
-      { name: 'nosortie', alias: '# de sortie' } as AllowedPropertiesAlias,
-      { name: 'direction', alias: 'Direction' } as AllowedPropertiesAlias,
-      { name: 'typesort', alias: 'Type de sortie' } as AllowedPropertiesAlias
+      { name: 'title', alias: 'Titre' } as PropertiesAlias,
+      { name: 'etiquette', alias: 'Informations' } as PropertiesAlias,
+      { name: 'nommun', alias: 'Municipalité' } as PropertiesAlias,
+      { name: 'messagpan', alias: 'Message' } as PropertiesAlias,
+      { name: 'noroute', alias: '# de route' } as PropertiesAlias,
+      { name: 'nosortie', alias: '# de sortie' } as PropertiesAlias,
+      { name: 'direction', alias: 'Direction' } as PropertiesAlias,
+      { name: 'typesort', alias: 'Type de sortie' } as PropertiesAlias
     ];
 
   private distance = 0.5; // In kilometers
@@ -55,10 +55,10 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     this.searchlimit = this.options.limit || this.searchlimit;
     this.locatelimit = this.options.locateLimit || this.locatelimit;
     this.zoomMaxOnSelect = this.options.zoomMaxOnSelect || this.zoomMaxOnSelect;
-    this.allowedPropertiesAlias = this.options.allowedPropertiesAlias || this.allowedPropertiesAlias;
+    this.propertiesAlias = this.options.propertiesAlias || this.propertiesAlias;
     this.distance = this.options.distance || this.distance; // In kilometers
     this.allowedProperties = [];
-    this.allowedPropertiesAlias.forEach(allowedProperty => {
+    this.propertiesAlias.forEach(allowedProperty => {
       this.allowedProperties.push(allowedProperty.name);
     });
   }
@@ -260,7 +260,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     const shownProperties = {};
     this.allowedProperties.forEach(key => {
       if (properties.hasOwnProperty(key)) {
-        const aliasProperty = this.allowedPropertiesAlias.filter(f => f.name === key)[0];
+        const aliasProperty = this.propertiesAlias.filter(f => f.name === key)[0];
         shownProperties[aliasProperty.alias] = properties[key];
       }
     });
