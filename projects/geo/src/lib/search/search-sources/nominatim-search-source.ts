@@ -94,6 +94,13 @@ export class NominatimSearchSource extends SearchSource {
   }
 
   private formatResult(result: any, resultType, zoomMaxOnSelect: number): Feature {
+    const properties = Object.assign(
+      {
+        type: result.doc_type
+      },
+      result.properties
+    );
+    properties.lien_googleMap = 'https://www.google.com/maps';
     return {
       id: result.place_id,
       source: NominatimSearchSource._name,

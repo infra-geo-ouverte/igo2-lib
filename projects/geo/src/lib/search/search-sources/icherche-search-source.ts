@@ -132,8 +132,7 @@ export class IChercheSearchSource extends SearchSource {
     delete properties.recherche;
     delete properties.id;
     delete properties.cote;
-    properties.lien_googleMap = 'https://www.google.com/maps';
-    // console.log(result.properties);
+    properties.lien_googleMap = 'https://www.google.com/maps?q=' + result.properties.recherche;
     return {
       id: result._id,
       source: IChercheSearchSource._name,
