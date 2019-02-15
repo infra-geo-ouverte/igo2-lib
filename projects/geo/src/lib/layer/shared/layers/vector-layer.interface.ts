@@ -21,4 +21,5 @@ export interface VectorLayerOptions extends LayerOptions {
     | ArcGISRestDataSourceOptions;
   style?: { [key: string]: any } | olStyle | olStyle[];
   ol?: olLayerVector;
+  animation?: boolean;
 }
