@@ -49,7 +49,7 @@ export class WMSDataSource extends DataSource {
 
     if (sourceParams && sourceParams.VERSION) {
       if (sourceParams.version !== '1.3.0') {
-        if (!sourceParams.srs) {
+        if (!sourceParams.SRS && !sourceParams.srs) {
           throw new Error(`You must set a SRS (or srs) param for your WMS
            (layer =  ` + sourceParams.layers + `) because your want to use a WMS version under 1.3.0
         Ex: "srs": "EPSG:3857" `);
