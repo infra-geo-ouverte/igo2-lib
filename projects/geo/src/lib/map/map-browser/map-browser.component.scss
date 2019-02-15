@@ -30,6 +30,15 @@
   }
 }
 
+:host >>> igo-rotation-button {
+  position: absolute;
+  top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  right: $igo-margin;
+  @include mobile {
+    top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
+  }
+}
+
 :host >>> igo-user-button {
   position: absolute;
   bottom: $igo-margin;

@@ -181,6 +181,14 @@ export class IgoMap {
     return ext;
   }
 
+  resetRotation() {
+    this.ol.getView().setRotation(0);
+  }
+
+  getRotation() {
+    return this.ol.getView().getRotation();
+  }
+
   getZoom(): number {
     return Math.round(this.ol.getView().getZoom());
   }

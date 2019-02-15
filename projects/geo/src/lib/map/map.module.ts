@@ -14,6 +14,7 @@ import { MapBrowserBindingDirective } from './map-browser/map-browser-binding.di
 import { MapBrowserComponent } from './map-browser/map-browser.component';
 import { ZoomButtonComponent } from './zoom-button/zoom-button.component';
 import { GeolocateButtonComponent } from './geolocate-button/geolocate-button.component';
+import { RotationButtonComponent } from './rotation-button/rotation-button.component';
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
 
@@ -31,6 +32,7 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     MapBrowserBindingDirective,
     ZoomButtonComponent,
     GeolocateButtonComponent,
+    RotationButtonComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent
   ],
@@ -39,6 +41,7 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     MapBrowserBindingDirective,
     ZoomButtonComponent,
     GeolocateButtonComponent,
+    RotationButtonComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent
   ]

@@ -20,7 +20,8 @@ export class AppSimpleMapComponent {
 
   public view = {
     center: [-73, 47.2],
-    zoom: 6
+    zoom: 6,
+    rotation: 0.75
   };
 
   constructor(
