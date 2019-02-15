@@ -31,10 +31,6 @@ export class RotationButtonComponent {
   rotationStyle(radians): {} {
     const rotation = 'rotate(' + radians + 'rad)';
     return {
-      '-webkit-transform': rotation,
-      '-moz-transform': rotation,
-      '-ms-transform': rotation,
-      '-o-transform': rotation,
       'transform': rotation
     };
   }
