@@ -10,6 +10,7 @@ import {
 import { IgoLanguageModule } from '@igo2/core';
 
 import { CustomHtmlComponent } from './custom-html.component';
+import { SanitizeHtmlPipe } from './custom-html.pipe';
 
 @NgModule({
   imports: [
@@ -20,8 +21,8 @@ import { CustomHtmlComponent } from './custom-html.component';
     MatButtonModule,
     IgoLanguageModule
   ],
-  exports: [CustomHtmlComponent],
-  declarations: [CustomHtmlComponent]
+  exports: [SanitizeHtmlPipe, CustomHtmlComponent],
+  declarations: [SanitizeHtmlPipe, CustomHtmlComponent]
 })
 export class IgoCustomHtmlModule {
   static forRoot(): ModuleWithProviders {
