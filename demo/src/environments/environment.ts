@@ -38,7 +38,19 @@ export const environment: Environment = {
         limit: 5,
         locateLimit: 15,
         zoomMaxOnSelect: 8,
-        enabled: false
+        enabled: false,
+        allowedPropertiesAlias:
+        [
+          {name: 'title', alias: 'Titre'},
+          {name: 'etiquette', alias: 'Informations'},
+          {name: 'nommun', alias: 'Municipalité'},
+          {name: 'messagpan', alias: 'Message'},
+          {name: 'noroute', alias: '# de route'},
+          {name: 'nosortie', alias: '# de sortie'},
+          {name: 'direction', alias: 'Direction'},
+          {name: 'typesort', alias: 'Type de sortie'}
+        ],
+        distance : 0.5
       },
       icherche: {
         searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',

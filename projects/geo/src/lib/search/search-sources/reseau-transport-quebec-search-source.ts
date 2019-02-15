@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, forkJoin } from 'rxjs';
 import { ConfigService } from '@igo2/core';
+import { uuid } from '@igo2/utils';
 import { map } from 'rxjs/operators';
 import {
   Feature,
@@ -11,7 +12,7 @@ import {
 } from '../../feature';
 
 import { SearchSource } from './search-source';
-import { SearchSourceOptions } from './search-source.interface';
+import { SearchSourceOptions, AllowedPropertiesAlias } from './search-source.interface';
 
 
 @Injectable()
@@ -23,7 +24,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     this.options.enabled = value;
   }
 
-  static _name = 'Réseau routier Transport Québec ';
+  static _name = 'Réseau routier Transports Québec ';
 
   private searchUrl = 'https://ws.mapserver.transports.gouv.qc.ca/swtq';
   private locateUrl = 'https://ws.mapserver.transports.gouv.qc.ca/swtq';
@@ -31,7 +32,20 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
   private searchlimit = 5;
   private locatelimit = this.searchlimit * 2;
   private options: SearchSourceOptions;
+  private allowedProperties;
+  public allowedPropertiesAlias =
+    [
+      { name: 'title', alias: 'Titre' } as AllowedPropertiesAlias,
+      { name: 'etiquette', alias: 'Informations' } as AllowedPropertiesAlias,
+      { name: 'nommun', alias: 'Municipalité' } as AllowedPropertiesAlias,
+      { name: 'messagpan', alias: 'Message' } as AllowedPropertiesAlias,
+      { name: 'noroute', alias: '# de route' } as AllowedPropertiesAlias,
+      { name: 'nosortie', alias: '# de sortie' } as AllowedPropertiesAlias,
+      { name: 'direction', alias: 'Direction' } as AllowedPropertiesAlias,
+      { name: 'typesort', alias: 'Type de sortie' } as AllowedPropertiesAlias
+    ];
 
+  private distance = 0.5; // In kilometers
   constructor(private http: HttpClient, private config: ConfigService) {
     super();
 
@@ -41,6 +55,12 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     this.searchlimit = this.options.limit || this.searchlimit;
     this.locatelimit = this.options.locateLimit || this.locatelimit;
     this.zoomMaxOnSelect = this.options.zoomMaxOnSelect || this.zoomMaxOnSelect;
+    this.allowedPropertiesAlias = this.options.allowedPropertiesAlias || this.allowedPropertiesAlias;
+    this.distance = this.options.distance || this.distance; // In kilometers
+    this.allowedProperties = [];
+    this.allowedPropertiesAlias.forEach(allowedProperty => {
+      this.allowedProperties.push(allowedProperty.name);
+    });
   }
 
   getName(): string {
@@ -53,118 +73,140 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       s = '0' + s;
     }
     return s;
-}
+  }
 
   search(term?: string): Observable<Feature[]> {
-    term = term.replace(/auto|routes|route|km| |high|ways|way|roads|road|#|a-|-/gi, '');
+    term = term
+      .replace(/sortie|repère|kilométrique|auto|routes|route|km| |high|ways|way|roads|road|#|a-|-/gi, '');
     let chainage = '';
     if (term.length === 0) { return of([]); }
-    if (term.search(/\+/gi ) !== -1) {
+    if (term.search(/\+/gi) !== -1) {
       const split_term = term.split(/\+/gi);
       term = split_term[0];
       chainage = split_term[1];
     }
 
-    let nb_char = term.length;
     let searchTerm: any = term;
     if (!isNaN(Number(term))) {
       searchTerm = parseInt(term, 10);
-      nb_char = String(searchTerm).length;
     }
 
-    let typename = '';
-    let filterParams;
+    let repere_filterParams;
+    // tslint:disable-next-line:max-line-length
+    const simple_filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
+    // tslint:disable-next-line:max-line-length
+    const rtss_filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + this.leftPad0(searchTerm, 14) + '</Literal></PropertyIsEqualTo></Filter>'}`;
+    // tslint:disable-next-line:max-line-length
+    const chainage_filterParams = `rtss=${this.leftPad0(searchTerm, 14).toUpperCase()}&chainage=${Number(chainage)}`;
+    // tslint:disable-next-line:max-line-length
+    repere_filterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><And><PropertyIsEqualTo matchCase="false"><PropertyName>norte</PropertyName><Literal>' + this.leftPad0(searchTerm, 5) + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>affichkm</PropertyName><Literal>km ' + chainage.replace('.', ',') + '</Literal></PropertyIsLike></And></Filter>'}`;
+    // tslint:disable-next-line:max-line-length
+    const sorties_filterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><Or><PropertyIsEqualTo matchCase="false"><PropertyName>rtssbret</PropertyName><Literal>' + this.leftPad0(searchTerm, 14).toUpperCase() + '</Literal></PropertyIsEqualTo><PropertyIsEqualTo matchCase="false"><PropertyName>rtssrte</PropertyName><Literal>' + this.leftPad0(searchTerm, 14).toUpperCase() + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>nosortie</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsLike></Or></Filter>'}`;
 
-    if (searchTerm === 0) {
-      typename = 'a_num_route';
-      // tslint:disable-next-line:max-line-length
-      filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
-    }
+    const callParams = ['REQUEST=GetFeature',
+      'SERVICE=WFS',
+      'FORMAT=image/png',
+      'SLD_VERSION=1.1.0',
+      'VERSION=2.0.0',
+      'SRSNAME=EPSG:4326',
+      'OUTPUTFORMAT=geojson'].join('&');
 
-    if (((nb_char >= 2 && nb_char <= 5) || searchTerm === 5) && chainage === '') {
-      typename = 'a_num_route';
-      // tslint:disable-next-line:max-line-length
-      filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
-    }
-    if (((nb_char >= 2 && nb_char <= 5) || searchTerm === 5) && chainage !== '') {
-      typename = 'repere_km';
-      searchTerm = this.leftPad0(searchTerm, 5);
-      // tslint:disable-next-line:max-line-length
-      filterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><And><PropertyIsEqualTo matchCase="false"><PropertyName>norte</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>affichkm</PropertyName><Literal>km ' + chainage.replace('.', ',') + '</Literal></PropertyIsLike></And></Filter>'}`;
-          }
-    if (nb_char >= 4 && nb_char <= 7 && chainage === '') {
-      typename = 'b_num_tronc';
-      // tslint:disable-next-line:max-line-length
-      filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
-    }
-    if (nb_char >= 7 && nb_char <= 10 && chainage === '') {
-      typename = 'c_num_sectn';
-      // tslint:disable-next-line:max-line-length
-      filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
+    const emptyCall = of({ features: [] });
 
-    }
-    if (nb_char >= 11 && nb_char <= 14 && chainage === '') {
-      typename = 'd_num_rts';
-      searchTerm =  this.leftPad0(searchTerm, 14).toUpperCase();
-      // tslint:disable-next-line:max-line-length
-      filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
-      }
+    let a_num_route_call;
+    let b_num_tronc_call;
+    let c_num_sectn_call;
+    let d_num_rts_call;
+    let e_rtss_c_call;
+    let repere_km_call;
+    let sorties_call;
 
-  if (nb_char >= 11 && nb_char <= 25 && chainage !== '') {
-      typename = 'e_rtss_c';
-      searchTerm =  this.leftPad0(searchTerm, 14).toUpperCase();
-      filterParams =   `rtss=${searchTerm}&chainage=${Number(chainage)}`;
-    }
+    if (chainage === '') {
 
-    const params = [
-      'REQUEST=GetFeature',
+      a_num_route_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=a_num_route&${simple_filterParams}`);
+      b_num_tronc_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=b_num_tronc&${simple_filterParams}`);
+      c_num_sectn_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=c_num_sectn&${simple_filterParams}`);
+      d_num_rts_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=d_num_rts&${rtss_filterParams}`);
+      e_rtss_c_call = emptyCall;
+      repere_km_call = emptyCall;
+      sorties_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit * 3}&TYPENAMES=sortie_aut&${sorties_filterParams}`);
+    } else {
+      a_num_route_call = emptyCall;
+      b_num_tronc_call = emptyCall;
+      c_num_sectn_call = emptyCall;
+      d_num_rts_call = emptyCall;
+      e_rtss_c_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=e_rtss_c&${chainage_filterParams}`);
+      repere_km_call = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit * 3}&TYPENAMES=repere_km&${repere_filterParams}`);
+      sorties_call = emptyCall;
+    }
+    let call_array;
+    call_array = [
+      a_num_route_call, b_num_tronc_call,
+      c_num_sectn_call, d_num_rts_call,
+      sorties_call, e_rtss_c_call, repere_km_call];
+
+    const source = forkJoin(call_array)
+      .pipe(map(responses => {
+        return this.extractSearchData(responses[0])
+          .concat(this.extractSearchData(responses[1]))
+          .concat(this.extractSearchData(responses[2]))
+          .concat(this.extractSearchData(responses[3]))
+          .concat(this.extractSearchData(responses[4]))
+          .concat(this.extractSearchData(responses[5]))
+          .concat(this.extractSearchData(responses[6]))
+          ;
+      }));
+    return source;
+  }
+
+
+  locate(coordinate?: [number, number]): Observable<Feature[]> {
+
+    const threshold = (1 / (111.320 * Math.cos(coordinate[1]))) * this.distance * -1;
+    const lat1 = coordinate[1] - threshold;
+    const long1 = coordinate[0] - threshold;
+    const lat2 = coordinate[1] + threshold;
+    const long2 = coordinate[0] + threshold;
+
+    const callParams = ['REQUEST=GetFeature',
       'SERVICE=WFS',
       'FORMAT=image/png',
       'SLD_VERSION=1.1.0',
       'VERSION=2.0.0',
       'SRSNAME=EPSG:4326',
       'OUTPUTFORMAT=geojson',
-      `COUNT=${this.searchlimit}`,
-      `TYPENAMES=${typename}`,
-      filterParams
-        ];
+      `COUNT=${this.locatelimit}`,
+      'bbox=' + lat1 + ',' + long1 + ',' + lat2 + ',' + long2 + ',EPSG:4326',
+      `TYPENAMES=`].join('&');
 
-    if (typename === '') {
-      return of([]);
-    }
+    const a_num_route_call = this.http.get(
+      `${this.locateUrl}?${callParams}a_num_route`);
+    const repere_km_call = this.http.get(
+      `${this.searchUrl}?${callParams}repere_km`);
+    const sorties_call = this.http.get(
+      `${this.searchUrl}?${callParams}sortie_aut`);
 
-    return this.http
-      .get(`${this.searchUrl}?${params.join('&')}`)
-      .pipe(map(res => this.extractSearchData(res)));
+
+    const call_array = [a_num_route_call, sorties_call, repere_km_call];
+    const locateSource = forkJoin(call_array)
+      .pipe(map(responses => {
+        return this.extractSearchData(responses[0])
+          .concat(this.extractSearchData(responses[1]))
+          .concat(this.extractSearchData(responses[2]))
+          ;
+      }));
+
+    return locateSource;
   }
 
-  locate(coordinate?: [number, number]): Observable<Feature[]>  {
-    const threshold = 0.008333333 / 2;
-    const lat1 = coordinate[1] - threshold;
-    const long1 = coordinate[0] - threshold;
-    const lat2 = coordinate[1] + threshold;
-    const long2 = coordinate[0] + threshold;
-
-    const params = [
-      'REQUEST=GetFeature',
-      'SERVICE=WFS',
-      'FORMAT=image/png',
-      'VERSION=2.0.0',
-      'SRSNAME=EPSG:4326',
-      'OUTPUTFORMAT=geojson',
-      `COUNT=${this.locatelimit}`,
-      `TYPENAMES=a_num_route`,
-      'bbox=' + lat1 + ',' + long1 + ',' + lat2 + ',' + long2 + ',EPSG:4326'
-
-        ];
-
-    return this.http
-    .get(`${this.locateUrl}?${params.join('&')}`)
-    .pipe(map(res => this.extractSearchData(res)));
-}
-
   private extractSearchData(response): Feature[] {
-    // return response.features.map(this.formatSearchResult);
     return response.features.map(res => this.formatSearchResult(res, this.zoomMaxOnSelect));
   }
 
@@ -176,20 +218,52 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       result.properties
     );
 
-    const allowedProperties = ['title', 'etiquette', 'nommun'];
+    let icon = 'timeline';
+    let title_html;
+
+    if (properties.hasOwnProperty('title')) {
+      title_html = properties.title;
+    }
+    if (properties.hasOwnProperty('etiquette')) {
+      title_html = properties.etiquette;
+    }
 
     if (properties.hasOwnProperty('norte') && properties.hasOwnProperty('affichkm')) {
-      properties.title = '# ' + Number(properties.norte) + '+' + properties.affichkm;
+      properties.title = '# ' + Number(properties.norte) + '+ ' + properties.affichkm;
+      title_html = '# ' + Number(properties.norte) + '+ ' + properties.affichkm;
 
     }
+    if (properties.hasOwnProperty('messagpan') && properties.hasOwnProperty('nosortie')) {
+      properties.title = `Sortie #${properties.nosortie}`;
+      title_html =
+        `Sortie #${properties.nosortie} ${properties.direction}`;
+      properties.noroute = Number(properties.noroute);
+    }
 
-   for (const key in properties) {
-        if (properties.hasOwnProperty(key)) {
-            if (allowedProperties.indexOf(key) === -1) {
-              delete properties[key];
-            }
+    if (properties.hasOwnProperty('affichkm')
+      || properties.hasOwnProperty('nosortie')
+      || properties.hasOwnProperty('chainage')) {
+      icon = 'place';
+    }
+    if (properties.hasOwnProperty('nosortie')) {
+      icon = 'reply';
+    }
+
+    for (const key in properties) {
+      if (properties.hasOwnProperty(key)) {
+        if (this.allowedProperties.indexOf(key) === -1) {
+          delete properties[key];
         }
+      }
     }
+
+    const shownProperties = {};
+    this.allowedProperties.forEach(key => {
+      if (properties.hasOwnProperty(key)) {
+        const aliasProperty = this.allowedPropertiesAlias.filter(f => f.name === key)[0];
+        shownProperties[aliasProperty.alias] = properties[key];
+      }
+    });
 
     const id = properties.id;
     delete properties.id;
@@ -199,7 +273,7 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     delete properties.coord_y;
     delete properties.cote;
     return {
-      id: id,
+      id: uuid(),
       source: ReseauTransportsQuebecSearchSource._name,
       sourceType: SourceFeatureType.Search,
       order: 1,
@@ -207,10 +281,10 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: properties.title,
-      title_html: properties.etiquette,
-      icon: 'timeline',
+      title_html: title_html,
+      icon: icon,
       projection: 'EPSG:4326',
-      properties: properties,
+      properties: shownProperties,
       geometry: result.geometry,
       extent: result.bbox
     };
