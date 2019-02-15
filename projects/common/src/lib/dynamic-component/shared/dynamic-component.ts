@@ -1,8 +1,7 @@
 import {
   ComponentFactory,
   ComponentRef,
-  ViewContainerRef,
-  SimpleChange
+  ViewContainerRef
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';

@@ -18,6 +18,7 @@ import { AppMessageModule } from './core/message/message.module';
 import { AppRequestModule } from './core/request/request.module';
 
 import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-component.module';
+import { AppWidgetModule } from './common/widget/widget.module';
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
 import { AppFormModule } from './common/form/form.module';
 
@@ -61,6 +62,7 @@ import { AppComponent } from './app.component';
     AppRequestModule,
 
     AppDynamicComponentModule,
+    AppWidgetModule,
     AppEntityTableModule,
     AppFormModule,
 
