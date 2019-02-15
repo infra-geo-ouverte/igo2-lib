@@ -14,12 +14,15 @@
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && property.key !== 'lien_googleMap'" [innerHTML]=property.value>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) &&
+       property.key.includes('lien_google') === false" [innerHTML]=property.value>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && property.key === 'lien_googleMap'" >
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) &&
+       property.key.includes('lien_google') === true" >
         <a href="{{property.value}}" target='_blank'> Cliquez ici </a>
       </td>
+
 
       <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
       </td>
@@ -28,6 +31,5 @@
   </tbody>
 </table>
 <iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'" [src]='isUrl(feature.properties.url)'></iframe>
-
 
 
