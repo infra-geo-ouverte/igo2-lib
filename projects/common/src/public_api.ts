@@ -27,6 +27,8 @@ export * from './lib/sidenav/sidenav.module';
 export * from './lib/spinner/spinner.module';
 export * from './lib/stop-propagation/stop-propagation.module';
 export * from './lib/table/table.module';
+export * from './lib/widget/widget.module';
+export * from './lib/widget/widget-outlet/widget-outlet.module';
 
 export * from './lib/backdrop';
 export * from './lib/clickout';
@@ -48,3 +50,4 @@ export * from './lib/sidenav';
 export * from './lib/spinner';
 export * from './lib/stop-propagation';
 export * from './lib/table';
+export * from './lib/widget';
