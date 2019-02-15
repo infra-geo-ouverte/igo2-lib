@@ -291,6 +291,8 @@ export class QueryService {
     delete properties['geometry'];
     delete properties['boundedBy'];
     delete properties['shape'];
+    delete properties['SHAPE'];
+    delete properties['the_geom'];
 
     let geometry;
     if (featureGeometry !== undefined) {
