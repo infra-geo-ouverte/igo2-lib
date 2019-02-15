@@ -1,3 +1,16 @@
+<a name="0.26.2"></a>
+## [0.26.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.1...0.26.2) (2019-02-15)
+
+
+### Bug Fixes
+
+* various minor fix ([#262](https://github.com/infra-geo-ouverte/igo2-lib/issues/262)) ([3f3f054](https://github.com/infra-geo-ouverte/igo2-lib/commit/3f3f054))
+* **custom-html:** ByPassTrustHtml to string declared as html ([#256](https://github.com/infra-geo-ouverte/igo2-lib/issues/256)) ([7a9b71d](https://github.com/infra-geo-ouverte/igo2-lib/commit/7a9b71d))
+* **rotation:** add rotation button ([#261](https://github.com/infra-geo-ouverte/igo2-lib/issues/261)) ([039ae62](https://github.com/infra-geo-ouverte/igo2-lib/commit/039ae62))
+* **string:** inverse inserted and deleted class when string is empty ([e486b4c](https://github.com/infra-geo-ouverte/igo2-lib/commit/e486b4c))
+
+
+
 <a name="0.26.1"></a>
 ## [0.26.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.0...0.26.1) (2019-02-08)
 
