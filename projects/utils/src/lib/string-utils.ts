@@ -4,10 +4,10 @@ export class StringUtils {
       return '';
     }
     if (!s1) {
-      return '<span class="deleted">' + s2 + '</span>';
+      return '<span class="inserted">' + s2 + '</span>';
     }
     if (!s2) {
-      return '<span class="inserted">' + s1 + '</span>';
+      return '<span class="deleted">' + s1 + '</span>';
     }
     s1 = s1.toString();
     s2 = s2.toString();
