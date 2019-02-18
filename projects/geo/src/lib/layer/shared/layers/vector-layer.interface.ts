@@ -26,5 +26,4 @@ export interface VectorLayerOptions extends LayerOptions {
 
 export interface VectorAnimation {
   duration?: number,
-  animationStyle?: 'fill'|'stroke';
 }
