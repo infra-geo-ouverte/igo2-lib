@@ -47,6 +47,9 @@ import 'core-js/es6/reflect';
 // If you use AOT (and only Angular decorators), you can remove.
 import 'core-js/es7/reflect';
 
+/** IE10 and IE11 requires the following for string normalization */
+import 'unorm/lib/unorm.js';
+
 /**
  * Web Animations `@angular/platform-browser/animations`
  * Only required if AnimationBuilder is used within the application and
