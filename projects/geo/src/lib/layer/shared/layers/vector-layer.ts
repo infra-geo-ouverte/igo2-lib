@@ -3,6 +3,7 @@ import olSourceVector from 'ol/source/Vector';
 import {unByKey} from 'ol/Observable';
 import {easeOut} from 'ol/easing';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+import {asArray as ColorToArray} from 'ol/color';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -52,15 +53,21 @@ export class VectorLayer extends Layer {
       let radius = easeOut(elapsedRatio) * 25 + 5;
       let opacity = easeOut(1 - elapsedRatio);
 
-      let style = this.ol.getStyle()(feature)[0];
+      let style = this.ol.getStyleFunction().call(this, feature)[0];
       let styleClone = style.clone();
 
-      styleClone.getImage().setRadius(radius);
-      styleClone.getImage().setOpacity(opacity);
-      styleClone.setStroke(new Stroke({
-        color: styleClone.getStroke().getColor(),
-        width: 0.25 + opacity
-      }));
+      switch(feature.getGeometry().getType()){
+        case 'Point' :
+          styleClone.getImage().setRadius(radius);
+          styleClone.getImage().setOpacity(opacity);
+        break;
+        case 'Line':
+          // TODO
+          break;
+        case 'Polygon':
+          // TODO
+          break;
+      }
 
       vectorContext.setStyle(styleClone);
       vectorContext.drawGeometry(flashGeom);
