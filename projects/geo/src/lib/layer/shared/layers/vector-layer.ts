@@ -16,7 +16,6 @@ export class VectorLayer extends Layer {
   public dataSource: FeatureDataSource | WFSDataSource | ArcGISRestDataSource | WebSocketDataSource;
   public options: VectorLayerOptions;
   public ol: olLayerVector;
-  public duration: 2000;
 
   constructor(options: VectorLayerOptions) {
     super(options);
@@ -48,7 +47,7 @@ export class VectorLayer extends Layer {
       let frameState = event.frameState;
       let flashGeom = feature.getGeometry().clone();
       let elapsed = frameState.time - start;
-      let elapsedRatio = elapsed / 2000;
+      let elapsedRatio = elapsed / this.options.animation.duration;
       // radius will be 5 at start and 30 at end.
       let radius = easeOut(elapsedRatio) * 25 + 5;
       let opacity = easeOut(1 - elapsedRatio);
@@ -66,9 +65,10 @@ export class VectorLayer extends Layer {
       vectorContext.setStyle(styleClone);
       vectorContext.drawGeometry(flashGeom);
 
-      if (elapsed > 2000) {
+      if (elapsed > this.options.animation.duration) {
         unByKey(listenerKey);
-        // remove last geometry, better solution ? 
+        // remove last geometry
+        // there is a little flash before feature disappear, better solution ?
         this.map.ol.render();
         return;
       }
