@@ -14,40 +14,34 @@ export class WebSocketDataSource extends FeatureDataSource {
   public ws: WebSocket;
   public options: WebSocketDataSourceOptions;
 
-
   protected createOlSource(): olSourceVector {
      this.createWebSocket();
      this.options.format = this.getSourceFormatFromOptions(this.options);
-     let olSource = super.createOlSource();
-
-
-
-     return olSource;
+     return super.createOlSource();
   }
 
   private createWebSocket() {
     this.ws = new WebSocket(this.options.url);
     this.ws.onmessage = this.onMessage.bind(this);
 
-    if(this.options.onclose){
+    if (this.options.onclose) {
       this.ws.onclose = this.onClose.bind(this);
     }
 
-    if(this.options.onclose){
+    if (this.options.onclose) {
       this.ws.onerror = this.onError.bind(this);
     }
 
-    if(this.options.onclose){
+    if (this.options.onclose) {
       this.ws.onopen = this.onOpen.bind(this);
     }
-
   }
 
   onMessage(event) {
 
-    let featureAdded = this.options.format.readFeature(event.data);
+    const featureAdded = this.options.format.readFeature(event.data);
 
-    switch(this.options.onmessage){
+    switch (this.options.onmessage) {
       case 'update':
         // ol don't add if same ID
         this.ol.removeFeature(this.ol.getFeatureById(featureAdded.id));
@@ -61,7 +55,6 @@ export class WebSocketDataSource extends FeatureDataSource {
       default:
         this.ol.addFeature(featureAdded);
     }
-
   }
 
   onClose(event) {
@@ -75,6 +68,5 @@ export class WebSocketDataSource extends FeatureDataSource {
   onOpen(event) {
     // thrown message to user ?
   }
-
 
 }

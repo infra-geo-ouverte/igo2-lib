@@ -1,5 +1,6 @@
 import olStyle from 'ol/style/Style';
 import olLayerVector from 'ol/layer/Vector';
+import olColor from 'ol/color';
 
 import { LayerOptions } from './layer.interface';
 
@@ -25,5 +26,6 @@ export interface VectorLayerOptions extends LayerOptions {
 }
 
 export interface VectorAnimation {
-  duration?: number,
+  duration?: number;
+  color: olColor;
 }
