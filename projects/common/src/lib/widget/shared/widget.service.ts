@@ -2,7 +2,8 @@ import {
   Injectable
 } from '@angular/core';
 
-import { DynamicComponent, DynamicComponentService } from '../../dynamic-component';
+import { DynamicComponent } from '../../dynamic-component/shared/dynamic-component';
+import { DynamicComponentService } from '../../dynamic-component/shared/dynamic-component.service';
 
 import { WidgetComponent } from './widget.interfaces';
 
