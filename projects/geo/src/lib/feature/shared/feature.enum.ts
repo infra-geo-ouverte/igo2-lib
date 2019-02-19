@@ -1,17 +1,8 @@
-export enum FeatureType {
-  DataSource = 'DataSource',
-  Feature = 'Feature',
-  Record = 'Record'
-}
+export const FEATURE = 'Feature';
 
-export enum FeatureFormat {
-  GeoJSON = 'GeoJSON',
-  JSON = 'JSON'
-}
-
-export enum SourceFeatureType {
-  Query = 'Query',
-  Search = 'Search',
-  Click = 'Click',
-  LocateXY = 'LocateXY'
+export enum FeatureMotion {
+  None,
+  Move,
+  Zoom,
+  Default
 }
