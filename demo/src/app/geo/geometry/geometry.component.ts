@@ -59,7 +59,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
     const fieldConfigs = [
       {
         name: 'geometry',
-        title: 'Géometrie',
+        title: 'Geometry',
         options:  {
           validator: Validators.required
         },
