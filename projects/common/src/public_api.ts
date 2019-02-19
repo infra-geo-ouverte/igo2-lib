@@ -2,6 +2,8 @@
  * Public API Surface of common
  */
 
+export * from './lib/action/action.module';
+export * from './lib/action/actionbar/actionbar.module';
 export * from './lib/backdrop/backdrop.module';
 export * from './lib/clickout/clickout.module';
 export * from './lib/clone/clone.module';
@@ -30,6 +32,7 @@ export * from './lib/table/table.module';
 export * from './lib/widget/widget.module';
 export * from './lib/widget/widget-outlet/widget-outlet.module';
 
+export * from './lib/action';
 export * from './lib/backdrop';
 export * from './lib/clickout';
 export * from './lib/clone';

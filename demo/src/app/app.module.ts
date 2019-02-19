@@ -17,6 +17,7 @@ import { AppMediaModule } from './core/media/media.module';
 import { AppMessageModule } from './core/message/message.module';
 import { AppRequestModule } from './core/request/request.module';
 
+import { AppActionModule } from './common/action/action.module';
 import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-component.module';
 import { AppWidgetModule } from './common/widget/widget.module';
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
@@ -61,6 +62,7 @@ import { AppComponent } from './app.component';
     AppMessageModule,
     AppRequestModule,
 
+    AppActionModule,
     AppDynamicComponentModule,
     AppWidgetModule,
     AppEntityTableModule,
