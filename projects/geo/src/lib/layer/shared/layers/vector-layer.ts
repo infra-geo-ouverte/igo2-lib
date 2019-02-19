@@ -2,8 +2,7 @@ import olLayerVector from 'ol/layer/Vector';
 import olSourceVector from 'ol/source/Vector';
 import {unByKey} from 'ol/Observable';
 import {easeOut} from 'ol/easing';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
-import {asArray as ColorToArray} from 'ol/color';
+import {asArray as ColorAsArray} from 'ol/color';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -23,49 +22,65 @@ export class VectorLayer extends Layer {
   }
 
   protected createOlLayer(): olLayerVector {
+
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVector
     });
 
-    let olLayer = new olLayerVector(olOptions);
-
-    if(this.options.animation){
+    if (this.options.animation) {
       this.dataSource.ol.on('addfeature', function(e) {
          this.flash(e.feature);
        }.bind(this));
     }
 
-    return olLayer;
+    return new olLayerVector(olOptions);
   }
 
-  public flash(feature) {
-    let start = new Date().getTime();
-    let listenerKey = this.map.ol.on('postcompose', animate.bind(this));
+  protected flash(feature) {
+
+    const start = new Date().getTime();
+    const listenerKey = this.map.ol.on('postcompose', animate.bind(this));
 
     function animate(event) {
 
-      let vectorContext = event.vectorContext;
-      let frameState = event.frameState;
-      let flashGeom = feature.getGeometry().clone();
-      let elapsed = frameState.time - start;
-      let elapsedRatio = elapsed / this.options.animation.duration;
-      // radius will be 5 at start and 30 at end.
-      let radius = easeOut(elapsedRatio) * 25 + 5;
-      let opacity = easeOut(1 - elapsedRatio);
+      const vectorContext = event.vectorContext;
+      const frameState = event.frameState;
+      const flashGeom = feature.getGeometry().clone();
+      const elapsed = frameState.time - start;
+      const elapsedRatio = elapsed / this.options.animation.duration;
+      const opacity = easeOut(1 - elapsedRatio);
+      const newColor = ColorAsArray(this.options.animation.color || 'red');
+      newColor[3] = opacity;
+      const style = this.ol.getStyleFunction().call(this, feature)[0];
+      const styleClone = style.clone();
 
-      let style = this.ol.getStyleFunction().call(this, feature)[0];
-      let styleClone = style.clone();
-
-      switch(feature.getGeometry().getType()){
+      switch (feature.getGeometry().getType()) {
         case 'Point' :
+          const radius = easeOut(elapsedRatio) * (styleClone.getImage().getRadius() * 3);
           styleClone.getImage().setRadius(radius);
           styleClone.getImage().setOpacity(opacity);
         break;
-        case 'Line':
+        case 'LineString':
           // TODO
+          if (styleClone.getImage().getStroke()) {
+            styleClone.getImage().getStroke().setColor(newColor);
+            styleClone.getImage().getStroke().setWidth(
+              easeOut(elapsedRatio) * (styleClone.getImage().getStroke().getWidth() * 3));
+          }
+          if (styleClone.getStroke()) {
+            styleClone.getStroke().setColor(newColor);
+            styleClone.getStroke().setWidth(
+              easeOut(elapsedRatio) * (styleClone.getStroke().getWidth() * 3));
+          }
           break;
         case 'Polygon':
           // TODO
+          if (styleClone.getImage().getFill()) {
+            styleClone.getImage().getFill().setColor(newColor);
+          }
+          if (styleClone.getFill()) {
+            styleClone.getFill().setColor(newColor);
+          }
           break;
       }
 
