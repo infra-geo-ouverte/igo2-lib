@@ -9,7 +9,6 @@ import {
 
 import { DynamicComponent, OnUpdateInputs, WidgetComponent, WidgetService } from '@igo2/common';
 
-
 @Component({
   selector: 'app-salutation-widget',
   template: `
