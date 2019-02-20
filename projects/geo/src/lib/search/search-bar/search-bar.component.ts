@@ -1,256 +1,271 @@
 import {
   Component,
   OnInit,
+  OnDestroy,
   Input,
   Output,
   EventEmitter,
   ViewChild,
   ElementRef,
-  ChangeDetectorRef,
-  OnDestroy,
+  HostBinding,
   ChangeDetectionStrategy
-} from '@angular/core';
+} from "@angular/core";
+import { FloatLabelType } from "@angular/material";
 
-import { FloatLabelType } from '@angular/material';
+import { Subject, Subscription, EMPTY, timer } from "rxjs";
+import { debounce, distinctUntilChanged } from "rxjs/operators";
 
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { EntityStore } from "@igo2/common";
 
-import olFeature from 'ol/Feature';
-import olPoint from 'ol/geom/Point';
-import * as olproj from 'ol/proj';
+import { SearchResult, Research } from "../shared/search.interfaces";
+import { SearchService } from "../shared/search.service";
 
-import { IgoMap } from '../../map/shared/map';
-import { MapService } from '../../map/shared/map.service';
-import { FeatureService } from '../../feature/shared/feature.service';
-import {
-  SourceFeatureType,
-  FeatureType
-} from '../../feature/shared/feature.enum';
-import { Feature } from '../../feature/shared/feature.interface';
-
-import { SearchService } from '../shared/search.service';
-
+/**
+ * Searchbar that triggers a research in all search sources enabled.
+ * If the store input is defined, the search results will be loaded
+ * into that store. An event is always emitted when a research is completed.
+ */
 @Component({
-  selector: 'igo-search-bar',
-  templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.scss'],
+  selector: "igo-search-bar",
+  templateUrl: "./search-bar.component.html",
+  styleUrls: ["./search-bar.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
-  @Input()
-  get term() {
-    return this._term;
-  }
-  set term(value: string) {
-    this._term = value;
-  }
-  private _term = '';
+  /**
+   * Invalid keys
+   */
+  private readonly invalidKeys = ["Control", "Shift", "Alt"];
 
-  @Input()
-  get placeholder() {
-    return this._placeholder;
+  /**
+   * Search term stream
+   */
+  private stream$ = new Subject<string>();
+
+  /**
+   * Subscription to the search term stream
+   */
+  private stream$$: Subscription;
+
+  /**
+   * Search term
+   */
+  @Input() term: string = "";
+
+  /**
+   * Whether a float label should be displayed
+   */
+  @Input() floatLabel: FloatLabelType = "never";
+
+  /**
+   * Whether this component is disabled
+   */
+  @Input() disabled: boolean = false;
+
+  /**
+   * Icons color (search and clear)
+   */
+  @Input() color: string = "primary";
+
+  /**
+   * Debounce time between each keystroke
+   */
+  @Input() debounce: number = 300;
+
+  /**
+   * Minimum term length required to trigger a research
+   */
+  @Input() minLength: number = 2;
+
+  /**
+   * Search icon
+   */
+  @Input() searchIcon: string;
+
+  /**
+   * Search results store
+   */
+  @Input() store: EntityStore<SearchResult>;
+
+  /**
+   * Event emitted when the search term changes
+   */
+  @Output() change = new EventEmitter<string>();
+
+  /**
+   * Event emitted when a research is completed
+   */
+  @Output() search = new EventEmitter<{
+    research: Research;
+    results: SearchResult[];
+  }>();
+
+  /**
+   * Input element
+   * @internal
+   */
+  @ViewChild("input") input: ElementRef;
+
+  /**
+   * Host's empty class
+   * @internal
+   */
+  @HostBinding("class.empty")
+  get emptyClass() {
+    return this.empty;
   }
+
+  /**
+   * Whether the search bar is empty
+   * @internal
+   */
+  get empty(): boolean {
+    return this.term.length === 0;
+  }
+
+  /**
+   * Search bar palceholder
+   * @internal
+   */
   set placeholder(value: string) {
     this._placeholder = value;
   }
-  private _placeholder = '';
+  get placeholder(): string {
+    return this.empty ? this._placeholder : "";
+  }
+  private _placeholder = "";
 
-  @Input()
-  get floatLabel() {
-    return this._floatLabel;
-  }
-  set floatLabel(value: FloatLabelType) {
-    this._floatLabel = value;
-  }
-  private _floatLabel: FloatLabelType = 'auto';
+  constructor(private searchService: SearchService) {}
 
-  @Input()
-  get disabled() {
-    return this._disabled;
-  }
-  set disabled(value: boolean) {
-    this._disabled = value;
-  }
-  private _disabled = false;
-
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
-
-  @Input()
-  get debounce() {
-    return this._debounce;
-  }
-  set debounce(value: number) {
-    this._debounce = value;
-  }
-  private _debounce = 300;
-
-  @Input()
-  get length() {
-    return this._length;
-  }
-  set length(value: number) {
-    this._length = value;
-  }
-  private _length = 2;
-
-  @Input()
-  get searchIcon() {
-    return this._searchIcon;
-  }
-  set searchIcon(value: boolean) {
-    this._searchIcon = value;
-  }
-  private _searchIcon = false;
-
-  private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
-  private locateID = 'locateXY';
-  private stream$ = new Subject<string>();
-  private stream$$: Subscription;
-  private selectedFeature$$: Subscription;
-
-  @Output() search = new EventEmitter<string>();
-
-  @ViewChild('input') input: ElementRef;
-
-  get map(): IgoMap {
-    return this.mapService.getMap();
-  }
-
-  constructor(
-    private searchService: SearchService,
-    private mapService: MapService,
-    private featureService: FeatureService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
-
+  /**
+   * Subscribe to the search term stream and trigger researches
+   * @internal
+   */
   ngOnInit(): void {
     this.stream$$ = this.stream$
       .pipe(
-        debounceTime(this._debounce),
+        debounce((term: string) => {
+          return term === "" ? EMPTY : timer(300);
+        }),
         distinctUntilChanged()
       )
-      .subscribe((term: string) => this.handleTermChanged(term));
-
-    this.selectedFeature$$ = this.featureService.selectedFeature$.subscribe(
-      feature => {
-        if (
-          feature &&
-          feature.type === FeatureType.Feature &&
-          feature.sourceType === SourceFeatureType.Search
-        ) {
-          this.term = feature.title;
-          this.changeDetectorRef.markForCheck();
-        }
-      }
-    );
+      .subscribe((term: string) => this.onTermChange(term));
   }
 
+  /**
+   * Unsubscribe to the search term stream
+   * @internal
+   */
   ngOnDestroy() {
     this.stream$$.unsubscribe();
-    this.selectedFeature$$.unsubscribe();
   }
 
-  keyup(event: KeyboardEvent) {
-    const term = (event.target as HTMLInputElement).value;
-    this.setTerm(term);
+  /**
+   * When a user types, validates the key and send it into the
+   * stream if it's valid
+   * @param event Keyboard event
+   * @internal
+   */
+  onKeyup(event: KeyboardEvent) {
+    const key = (event.target as HTMLInputElement).value;
+    if (!this.keyIsValid(key)) {
+      return;
+    }
+    this.setTerm(key);
   }
 
+  /**
+   * Clear the stream and the input
+   * @internal
+   */
+  onClearButtonClick() {
+    this.clear();
+  }
+
+  /**
+   * Update the placeholder with the enabled search type. The placeholder
+   * for all availables search typers needs to be defined in the locale
+   * files or an error will be thrown.
+   * @param searchType Enabled search type
+   * @internal
+   */
+  onSearchTypeChange(searchType: string) {
+    this.placeholder = `search.${searchType.toLowerCase()}.placeholder`;
+    this.onTermChange(this.term);
+  }
+
+  /**
+   * Send the term into the stream only if this component is not disabled
+   * @param term Search term
+   */
   setTerm(term: string) {
     if (this.disabled) {
       return;
     }
 
     this.term = term;
-
-    if (
-      this.keyIsValid(term) &&
-      (term.length >= this.length || term.length === 0)
-    ) {
+    if (term.length >= this.minLength || term.length === 0) {
       this.stream$.next(term);
     }
   }
 
-  clear() {
-    this.term = '';
+  /**
+   * Clear the stream and the input
+   */
+  private clear() {
+    this.term = "";
     this.stream$.next(this.term);
     this.input.nativeElement.focus();
   }
 
-  private addOverlay(coordinates: [number, number]) {
-    const geometry = new olPoint(
-      olproj.transform(coordinates, 'EPSG:4326', this.map.projection)
-    );
-    const extent = geometry.getExtent();
-    const feature = new olFeature({ geometry });
-    feature.setId(this.locateID);
-    // TODO: SETTING A NEW COLOR AND TEXT BASED ON PR 166
-    // feature.setStyle([this.map.setPointOverlayStyleWithParams('yellow', coordinates)]);
-    // https://github.com/infra-geo-ouverte/igo2-lib/
-    // blob/6d0e9a2a5d3fd2290339c123b674aca7ca9e7102/src/lib/map/shared/map.ts#L135
-    this.map.removeOverlayByID(this.locateID);
-    this.map.moveToExtent(extent);
-    this.map.addOverlay(feature);
-  }
-
+  /**
+   * Validate if a given key stroke is a valid input
+   */
   private keyIsValid(key: string) {
     return this.invalidKeys.indexOf(key) === -1;
   }
 
-  private handleTermChanged(term: string) {
-    if (term !== undefined || term !== '') {
-      this.map.removeOverlayByID(this.locateID);
-      this.featureService.clear();
-      this.search.emit(term);
-      // tslint:disable-next-line:max-line-length
-      if (
-        /^([-+]?)([\d]{1,15})(((\.)?(\d+)?(,)))(\s*)(([-+]?)([\d]{1,15})((\.)?(\d+)?(;[\d]{4,5})?))$/g.test(
-          term
-        )
-      ) {
-        let xy;
-        if (/(;[\d]{4,5})$/g.test(term)) {
-          const xyTerm = term.split(';');
-          // TODO Reproject coordinates
-          xy = JSON.parse('[' + xyTerm[0] + ']');
-        } else {
-          if (term.lastIndexOf('.') === term.length - 1) {
-            term += '0';
-          }
-          xy = JSON.parse('[' + term + ']');
-        }
-        this.addOverlay(xy);
-        const r = this.searchService.locate(xy, this.map.getZoom());
-        if (r) {
-          r.filter(res => res !== undefined).map(res =>
-            res.subscribe(features =>
-              this.featureService.updateFeatures(
-                features as Feature[],
-                undefined
-              )
-            )
-          );
-        }
-      } else {
-        const r = this.searchService.search(term);
-        if (r) {
-          r.map(res =>
-            res.subscribe(features =>
-              this.featureService.updateFeatures(
-                features as Feature[],
-                undefined
-              )
-            )
-          );
-        }
+  /**
+   * When the search term changes, emit an event and trigger a
+   * research in every enabled search sources.
+   * @param term Search term
+   */
+  private onTermChange(term: string | undefined) {
+    this.change.emit(term);
+
+    if (term === undefined || term === "") {
+      if (this.store !== undefined) {
+        this.store.clear();
       }
+      return;
+    }
+
+    if (this.store !== undefined) {
+      this.store.softClear();
+    }
+
+    const researches = this.searchService.search(term);
+    researches.map(research => {
+      research.request.subscribe((results: SearchResult[]) => {
+        this.onResearchCompleted(research, results);
+      });
+    });
+  }
+
+  /**
+   * When a research  is completed, emit an event and update
+   * the store's items.
+   * @param research Research
+   * @param results Research results
+   */
+  private onResearchCompleted(research: Research, results: SearchResult[]) {
+    this.search.emit({ research, results });
+
+    if (this.store !== undefined) {
+      const newResults = this.store.entities$.value
+        .filter(result => result.source !== research.source)
+        .concat(results);
+      this.store.load(newResults);
     }
   }
 }

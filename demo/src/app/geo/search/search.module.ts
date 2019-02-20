@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http';
 
 import {
   MatCardModule,
@@ -9,13 +9,10 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
-import { ConfigService, LanguageService } from '@igo2/core';
 import { IgoPanelModule } from '@igo2/common';
 import {
   IgoMapModule,
   IgoSearchModule,
-  IgoFeatureModule,
-  IgoOverlayModule,
   provideIChercheSearchSource,
   provideDataSourceSearchSource,
   provideNominatimSearchSource
@@ -28,7 +25,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
   declarations: [AppSearchComponent],
   imports: [
     CommonModule,
-    HttpClientModule,
+    // HttpClientModule,
     AppSearchRoutingModule,
     MatCardModule,
     MatButtonModule,
@@ -36,9 +33,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
     MatTooltipModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoSearchModule,
-    IgoFeatureModule,
-    IgoOverlayModule
+    IgoSearchModule
   ],
   exports: [AppSearchComponent],
   providers: [

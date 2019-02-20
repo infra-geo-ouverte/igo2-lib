@@ -5,12 +5,12 @@ import {
   IgoMap,
   LayerService,
   MapService,
+  LAYER,
   Layer,
-  SearchService,
+  LayerOptions,
+  FEATURE,
   Feature,
-  FeatureType,
-  OverlayAction,
-  OverlayService
+  SearchResult
 } from '@igo2/geo';
 
 @Component({
@@ -36,11 +36,9 @@ export class AppSearchComponent {
   public osmLayer: Layer;
 
   constructor(
-    private mapService: MapService,
     private languageService: LanguageService,
-    private layerService: LayerService,
-    private searchService: SearchService,
-    private overlayService: OverlayService
+    private mapService: MapService,
+    private layerService: LayerService
   ) {
     this.mapService.setMap(this.map);
 
@@ -55,27 +53,61 @@ export class AppSearchComponent {
         this.osmLayer = layer;
         this.map.addLayer(layer);
       });
-
-    this.clearFeature();
   }
 
   resetMap() {
     this.map.removeLayers();
     this.map.addLayer(this.osmLayer);
-    this.clearFeature();
+    // this.map.overlay.clear();
   }
 
-  clearFeature() {
-    this.overlayService.clear();
+  /**
+   * Try to add a feature to the map when it's being focused
+   * @internal
+   * @param result A search result that could be a feature
+   */
+  onResultFocus(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
   }
 
-  handleFeatureSelect(feature: Feature) {
-    if (feature.type === FeatureType.Feature) {
-      this.overlayService.setFeatures([feature], OverlayAction.ZoomIfOutMapExtent);
-    } else if (feature.type === FeatureType.DataSource) {
-      this.layerService.createAsyncLayer(feature.layer).subscribe(layer => {
-        this.map.addLayer(layer);
-      });
+  /**
+   * Try to add a feature or a layer to the map when it's being selected
+   * @internal
+   * @param result A search result that could be a feature or some layer options
+   */
+  onResultSelect(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
+    this.tryAddLayerToMap(result);
+  }
+
+  /**
+   * Try to add a feature to the map overlay
+   * @param result A search result that could be a feature
+   */
+  private tryAddFeatureToMap(result: SearchResult) {
+    if (result.meta.dataType !== FEATURE) {
+      return undefined;
     }
+    const feature = (result as SearchResult<Feature>).data;
+
+    // Somethimes features have no geometry. It happens with some GetFeatureInfo
+    if (feature.geometry === undefined) {
+      return;
+    }
+    // this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+  }
+
+  /**
+   * Try to add a layer to the map
+   * @param result A search result that could be some layer options
+   */
+  private tryAddLayerToMap(result: SearchResult) {
+    if (result.meta.dataType !== LAYER) {
+      return undefined;
+    }
+    const layerOptions = (result as SearchResult<LayerOptions>).data;
+    this.layerService
+      .createAsyncLayer(layerOptions)
+      .subscribe(layer => this.map.addLayer(layer));
   }
 }

@@ -1,0 +1,14 @@
+@import './search-selector.variables';
+
+.igo-search-selector-button ::ng-deep div.mat-button-ripple-round  {
+  border-radius: 0;
+}
+
+.igo-search-selector-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.igo-search-selector-radio-group mat-radio-button {
+  margin: $igo-margin;
+}

@@ -1,27 +1,43 @@
-@import '../../../../../core/src/style/partial/core.variables';
+@import '../../../../../common/src/style/partial/common.variables';
 
-:host {
-  position: relative;
-  display: block;
+:host ::ng-deep .mat-form-field {
+  padding: 0 $igo-padding;
 }
 
-mat-form-field {
+:host ::ng-deep .mat-form-field-wrapper {
+    margin-bottom: -1.50em;
+}
+
+:host ::ng-deep span.mat-form-field-label-wrapper {
+  top: -20px;
+}
+
+:host ::ng-deep div.mat-form-field-infix {
+  left: $igo-padding;
+  right: $igo-padding;
+  padding: 0 0 12px 0;
+}
+
+:host ::ng-deep div.mat-form-field-underline {
+  display: none;
+}
+
+.igo-search-bar-container {
+  position: relative;
   width: 100%;
 }
 
-input {
-  padding-right: $igo-icon-size;
+.igo-search-bar-container > mat-form-field {
+  width: calc(100% - (2 * #{$igo-icon-size}));
+}
+
+:host.empty .igo-search-bar-container > mat-form-field {
   width: calc(100% - #{$igo-icon-size});
 }
 
-input.hasSearchIcon {
-  padding-right: calc(#{$igo-icon-size} * 2);
-  width: calc(100% - (#{$igo-icon-size} * 2));
-}
-
-.searchButtonDiv {
+.search-bar-buttons {
   position: absolute;
-  right: 0;
+  right: 40px;
   top: 0;
   & > button:nth-child(2)::before {
     content: '';
@@ -31,4 +47,13 @@ input.hasSearchIcon {
     border-right: 1px solid #ddd;
     height: 28px;
   }
+}
+
+igo-search-selector {
+  display: inline-block;
+  background-color: #fff;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-radius: 0;
 }
