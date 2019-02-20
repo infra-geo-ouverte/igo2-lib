@@ -7,6 +7,8 @@ export * from './lib/catalog/catalog.module';
 export * from './lib/datasource/datasource.module';
 export * from './lib/download/download.module';
 export * from './lib/feature/feature.module';
+export * from './lib/feature/feature-form/feature-form.module';
+export * from './lib/feature/feature-details/feature-details.module';
 export * from './lib/filter/filter.module';
 export * from './lib/form/form.module';
 export * from './lib/geometry/geometry.module';
@@ -20,12 +22,13 @@ export * from './lib/print/print.module';
 export * from './lib/query/query.module';
 export * from './lib/routing/routing.module';
 export * from './lib/search/search.module';
+export * from './lib/search/search-bar/search-bar.module';
+export * from './lib/search/search-results/search-results.module';
 export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
 
 export * from './lib/routing/routing-sources/routing-source.provider';
 export * from './lib/routing/shared/routing-source.service';
-export * from './lib/search/search-sources/search-source.provider';
 export * from './lib/search/shared/search-source.service';
 
 export * from './lib/catalog';

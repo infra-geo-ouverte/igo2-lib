@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import { MapService } from '../../map/shared/map.service';
-import { FeatureService } from '../../feature/shared/feature.service';
+// import { FeatureService } from '../../feature/shared/feature.service';
 import { Layer, VectorLayer } from '../shared/layers';
 
 @Component({
@@ -88,7 +88,7 @@ export class LayerItemComponent implements OnDestroy {
   private resolution$$: Subscription;
 
   constructor(
-    private featureService: FeatureService,
+    // private featureService: FeatureService,
     private cdRef: ChangeDetectorRef,
     private mapService: MapService
   ) {}
@@ -112,8 +112,8 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   showFeaturesList(layer: Layer) {
-    this.featureService.unfocusFeature();
-    this.featureService.unselectFeature();
+    // this.featureService.unfocusFeature();
+    // this.featureService.unselectFeature();
 
     const map = this.mapService.getMap();
     const featuresOL = (layer.dataSource.ol as any).getFeatures();
@@ -134,7 +134,8 @@ export class LayerItemComponent implements OnDestroy {
       })
     );
 
-    this.featureService.setFeatures(features);
+    // TODO: Restore that functionnality without using a global feature service
+    // this.featureService.setFeatures(features);
   }
 
   isVectorLayer(val) {

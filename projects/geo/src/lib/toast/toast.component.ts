@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { FlexibleState } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { Feature } from '../feature/shared/feature.interface';
+import { Feature } from '../feature/shared/feature.interfaces';
 import { IgoMap } from '../map/shared/map';
 
 @Component({

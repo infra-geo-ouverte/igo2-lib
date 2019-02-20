@@ -169,4 +169,21 @@ export class ObjectUtils {
 
     return true;
   }
+
+  /**
+   * Return a new object with an array of keys removed
+   * @param obj Source object
+   * @param keys Keys to remove
+   * @returns A new object
+   */
+  static removeKeys(obj: Object, keys: string[]): Object {
+    const newObj = Object.keys(obj)
+      .filter(key => keys.indexOf(key) < 0)
+      .reduce((_obj, key) => {
+        _obj[key] = obj[key];
+        return _obj;
+      }, {});
+
+      return newObj;
+  }
 }

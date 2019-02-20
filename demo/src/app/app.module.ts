@@ -29,7 +29,6 @@ import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 import { AppSimpleMapModule } from './geo/simple-map/simple-map.module';
 import { AppLayerModule } from './geo/layer/layer.module';
 import { AppOverlayModule } from './geo/overlay/overlay.module';
-import { AppFeatureModule } from './geo/feature/feature.module';
 import { AppGeometryModule } from './geo/geometry/geometry.module';
 import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
@@ -75,7 +74,6 @@ import { AppComponent } from './app.component';
     AppSimpleMapModule,
     AppLayerModule,
     AppOverlayModule,
-    AppFeatureModule,
     AppGeometryModule,
     AppQueryModule,
     AppCatalogModule,
