@@ -1,4 +1,4 @@
-export * from './query.directive';
 export * from './query.service';
-export * from './query.enum';
-export * from './query.interface';
+export * from './query.directive';
+export * from './query.enums';
+export * from './query.interfaces';

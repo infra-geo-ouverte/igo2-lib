@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { Media } from '@igo2/core';
-import { FlexibleState } from '@igo2/common';
+import { FlexibleState, getEntityTitle } from '@igo2/common';
 import { Feature, IgoMap } from '@igo2/geo';
 import { Tool } from '../tool/shared/tool.interface';
 import { ToolService } from '../tool/shared/tool.service';
@@ -73,6 +73,10 @@ export class SidenavComponent {
 
   public topPanelState: FlexibleState = 'initial';
 
+  get featureTitle(): string {
+    return this.feature ? getEntityTitle(this.feature) : undefined;
+  }
+
   constructor(public toolService: ToolService, public titleService: Title) {}
 
   zoomToFeatureExtent() {
@@ -92,4 +96,5 @@ export class SidenavComponent {
       this.topPanelState = 'initial';
     }
   }
+
 }

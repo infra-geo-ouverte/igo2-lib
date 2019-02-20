@@ -2,7 +2,6 @@
  * Public API Surface of geo
  */
 
-export * from './lib/geo.module';
 export * from './lib/catalog/catalog.module';
 export * from './lib/datasource/datasource.module';
 export * from './lib/download/download.module';
@@ -29,7 +28,6 @@ export * from './lib/wkt/wkt.module';
 
 export * from './lib/routing/routing-sources/routing-source.provider';
 export * from './lib/routing/shared/routing-source.service';
-export * from './lib/search/shared/search-source.service';
 
 export * from './lib/catalog';
 export * from './lib/datasource';

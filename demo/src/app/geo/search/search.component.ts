@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
+import { EntityStore } from '@igo2/common';
 import {
   IgoMap,
   LayerService,
@@ -10,6 +11,7 @@ import {
   LayerOptions,
   FEATURE,
   Feature,
+  Research,
   SearchResult
 } from '@igo2/geo';
 
@@ -19,6 +21,9 @@ import {
   styleUrls: ['./search.component.scss']
 })
 export class AppSearchComponent {
+
+  public searchStore = new EntityStore<SearchResult>([]);
+
   public map = new IgoMap({
     overlay: true,
     controls: {
@@ -55,10 +60,20 @@ export class AppSearchComponent {
       });
   }
 
-  resetMap() {
-    this.map.removeLayers();
-    this.map.addLayer(this.osmLayer);
-    // this.map.overlay.clear();
+  onSearchTermChange(term?: string) {
+    if (term === undefined || term === '') {
+      this.searchStore.clear();
+    }
+  }
+
+  onSearch(event: {research: Research, results: SearchResult[]}) {
+    const results = event.results;
+    this.searchStore.state.updateAll({focused: false, selected: false});
+    const newResults = this.searchStore.entities$.value
+      .filter((result: SearchResult) => result.source !== event.research.source)
+      .concat(results);
+    this.searchStore.load(newResults);
+
   }
 
   /**

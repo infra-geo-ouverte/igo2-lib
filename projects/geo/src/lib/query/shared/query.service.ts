@@ -20,8 +20,8 @@ import {
   TileArcGISRestDataSource
 } from "../../datasource";
 
-import { QueryFormat } from "./query.enum";
-import { QueryOptions, QueryableDataSource } from "./query.interface";
+import { QueryFormat } from "./query.enums";
+import { QueryOptions, QueryableDataSource } from "./query.interfaces";
 
 @Injectable({
   providedIn: "root"

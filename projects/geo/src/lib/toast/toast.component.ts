@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { FlexibleState } from '@igo2/common';
+import { FlexibleState, getEntityTitle } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { IgoMap } from '../map/shared/map';
@@ -48,6 +48,11 @@ export class ToastComponent {
   @Output() opened = new EventEmitter<boolean>();
 
   public state: FlexibleState;
+
+  /**
+   * @internal
+   */
+  get title(): string { return getEntityTitle(this.feature); }
 
   constructor() {}
 

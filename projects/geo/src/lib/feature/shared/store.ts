@@ -1,8 +1,9 @@
 import OlFeature from 'ol/Feature';
 
 import { EntityStore } from '@igo2/common';
-import { FeatureDataSource, VectorLayer } from '@igo2/geo';
 
+import { FeatureDataSource } from '../../datasource';
+import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 
 import { FeatureMotion } from './feature.enums';

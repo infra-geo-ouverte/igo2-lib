@@ -186,7 +186,8 @@
             "type": "Type",
             "url": "URL"
           }
-        }
+        },
+        "menu.tooltip": "Search Options"
       },
       "geometry": {
         "geometry": "Geometry",
@@ -201,5 +202,11 @@
         "startDate": "Start Date"
       }
     }
+  },
+  "search": {
+    "feature.title": "Localisation",
+    "feature.placeholder": "Search for a place localisation",
+    "layer.title": "Layer",
+    "layer.placeholder": "Search for a layer"
   }
 }

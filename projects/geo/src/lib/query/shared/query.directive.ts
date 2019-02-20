@@ -4,7 +4,8 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-  AfterViewInit
+  AfterViewInit,
+  Self
 } from "@angular/core";
 
 import { Subscription, Observable, zip } from "rxjs";
@@ -15,9 +16,10 @@ import { ListenerFunction } from "ol/events";
 import { unByKey } from "ol/Observable";
 import { MAC } from "ol/has";
 
-import { Feature } from "../../feature";
-import { AnyLayer } from "../../layer";
-import { IgoMap, MapBrowserComponent } from "../../map";
+import { AnyLayer } from "../../layer/shared/layers/any-layer";
+import { IgoMap } from "../../map/shared/map";
+import { MapBrowserComponent } from "../../map/map-browser/map-browser.component";
+import { Feature } from "../../feature/shared/feature.interfaces";
 import { QueryableDataSource } from "./query.interfaces";
 import { QueryService } from "./query.service";
 
@@ -30,11 +32,6 @@ import { QueryService } from "./query.service";
   selector: "[igoQuery]"
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
-  /**
-   * Map browser component
-   */
-  private component: MapBrowserComponent;
-
   /**
    * Subscriptions to ongoing queries
    */
@@ -77,11 +74,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   constructor(
-    component: MapBrowserComponent,
+    @Self() private component: MapBrowserComponent,
     private queryService: QueryService
-  ) {
-    this.component = component;
-  }
+  ) {}
 
   /**
    * Start listening to click and drag box events

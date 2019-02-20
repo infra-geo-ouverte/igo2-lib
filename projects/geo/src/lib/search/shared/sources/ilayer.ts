@@ -42,7 +42,7 @@ export class ILayerSearchSource
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'igo.geo.search.dataSources.name',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search'
     };
   }
 

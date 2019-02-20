@@ -6,8 +6,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, skip } from 'rxjs/operators';
 
 import { EntityRecord } from '@igo2/common';
-import { FeatureDataSource, VectorLayer, Layer } from '@igo2/geo';
 
+import { FeatureDataSource } from '../../../datasource';
+import { VectorLayer } from '../../../layer';
 import { IgoMap } from '../../../map';
 
 import { Feature, FeatureStoreSelectionStrategyOptions } from '../feature.interfaces';

@@ -14,7 +14,7 @@ import {
   IgoMapModule,
   IgoSearchModule,
   provideIChercheSearchSource,
-  provideDataSourceSearchSource,
+  provideILayerSearchSource,
   provideNominatimSearchSource
 } from '@igo2/geo';
 
@@ -33,12 +33,12 @@ import { AppSearchRoutingModule } from './search-routing.module';
     MatTooltipModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoSearchModule
+    IgoSearchModule.forRoot()
   ],
   exports: [AppSearchComponent],
   providers: [
     provideIChercheSearchSource(),
-    provideDataSourceSearchSource(),
+    provideILayerSearchSource(),
     provideNominatimSearchSource()]
 })
 export class AppSearchModule {}

@@ -12,7 +12,6 @@ import {
   MatInputModule
 } from '@angular/material';
 
-import { IgoGeoModule } from '@igo2/geo';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { IgoSearchSelectorModule } from '../search-selector/search-selector.module';
@@ -33,7 +32,6 @@ import { SearchUrlParamDirective } from './search-url-param.directive';
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,
-    IgoGeoModule,
     IgoLanguageModule,
     IgoSearchSelectorModule
   ],

@@ -6,8 +6,8 @@ import {
   DataSourceService,
   LayerService,
   OverlayService,
-  Feature,
-  FeatureType
+  FEATURE,
+  Feature
 } from '@igo2/geo';
 
 @Component({
@@ -50,11 +50,12 @@ export class AppOverlayComponent {
       });
 
     const feature1: Feature = {
-      id: '1',
-      source: 'testSource',
-      title: 'testTitle',
-      type: FeatureType.Feature,
+      type: FEATURE,
       projection: 'EPSG:4326',
+      meta: {
+        id: 1
+      },
+      properties: {},
       geometry: {
         type: 'Point',
         coordinates: [-73, 46.6]
@@ -62,11 +63,12 @@ export class AppOverlayComponent {
     };
 
     const feature2: Feature = {
-      id: '2',
-      source: 'testSource',
-      title: 'testTitle2',
-      type: FeatureType.Feature,
+      type: FEATURE,
       projection: 'EPSG:4326',
+      meta: {
+        id: 2
+      },
+      properties: {},
       geometry: {
         type: 'LineString',
         coordinates: [[-72, 47.8], [-73.5, 47.4], [-72.4, 48.6]]
@@ -74,11 +76,12 @@ export class AppOverlayComponent {
     };
 
     const feature3: Feature = {
-      id: '3',
-      source: 'testSource',
-      title: 'testTitle3',
-      type: FeatureType.Feature,
+      type: FEATURE,
       projection: 'EPSG:4326',
+      meta: {
+        id: 3
+      },
+      properties: {},
       geometry: {
         type: 'Polygon',
         coordinates: [[[-71, 46.8], [-73, 47], [-71.2, 46.6]]]

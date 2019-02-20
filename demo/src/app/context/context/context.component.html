@@ -14,10 +14,7 @@
     igoMapBrowserBinding
     igoMapContext
     igoLayerContext
-    igoOverlay
-    igoQuery
-    [map]="map"
-    (query)="handleQueryResults($event)">
+    [map]="map">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
     <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
     <igo-rotation-button [map]="map" color="primary"></igo-rotation-button>
@@ -33,25 +30,6 @@
         <igo-metadata-button [layer]="layer"></igo-metadata-button>
       </ng-template>
     </igo-layer-list>
-  </igo-panel>
-
-  <igo-panel title="Features list">
-    <igo-feature-list
-      igoFeatureListBinding
-      [focusFirst]="true"
-      (focus)="handleFeatureFocus($event)"
-      (select)="handleFeatureSelect($event)">
-    </igo-feature-list>
-    <button
-      mat-icon-button
-      panelRightButton
-      (click)="clearFeature()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </igo-panel>
-
-  <igo-panel title="Details">
-    <igo-feature-details igoFeatureDetailsBinding></igo-feature-details>
   </igo-panel>
 
 </mat-card>

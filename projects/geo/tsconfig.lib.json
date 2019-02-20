@@ -12,7 +12,11 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "types": [],
-    "lib": ["dom", "es2015"]
+    "lib": [
+      "dom",
+      "es2015",
+      "es2017.object"
+    ]
   },
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,

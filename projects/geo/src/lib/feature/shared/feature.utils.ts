@@ -6,8 +6,8 @@ import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 
 import { getEntityId, getEntityRevision, getEntityProperty } from '@igo2/common';
-import { IgoMap } from '../../map';
 
+import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
 import { Feature } from './feature.interfaces';
 

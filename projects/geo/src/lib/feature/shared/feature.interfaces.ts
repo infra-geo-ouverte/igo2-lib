@@ -5,6 +5,7 @@ import * as olstyle from 'ol/style';
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { EntityKey, EntityStoreOptions } from '@igo2/common';
+
 import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
 
@@ -22,7 +23,7 @@ export interface FeatureMeta {
   title?: string;
   mapTitle?: string;
   order?: number;
-  alias: {[key: string]: string};
+  alias?: {[key: string]: string};
 }
 
 export interface FeatureGeometry {

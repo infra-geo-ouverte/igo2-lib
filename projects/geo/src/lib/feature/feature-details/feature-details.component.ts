@@ -5,6 +5,9 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { getEntityTitle, getEntityIcon } from '@igo2/common';
+
 import { Feature } from '../shared';
 
 @Component({
@@ -23,6 +26,16 @@ export class FeatureDetailsComponent {
     this.cdRef.detectChanges();
   }
   private _feature: Feature;
+
+  /**
+   * @internal
+   */
+  get title(): string { return getEntityTitle(this.feature); }
+
+  /**
+   * @internal
+   */
+  get icon(): string { return getEntityIcon(this.feature) || 'link'; }
 
   constructor(
     private cdRef: ChangeDetectorRef,
