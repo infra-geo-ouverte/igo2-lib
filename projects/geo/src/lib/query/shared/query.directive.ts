@@ -1,248 +1,215 @@
 import {
   Directive,
-  Self,
   Input,
   Output,
   EventEmitter,
   OnDestroy,
   AfterViewInit
-} from '@angular/core';
+} from "@angular/core";
 
-import { Subscription, Observable, forkJoin } from 'rxjs';
+import { Subscription, Observable, zip } from "rxjs";
 
-import olMapBrowserEvent from 'ol/MapBrowserEvent';
-import olInterfactionDragBox from 'ol/interaction/DragBox';
-import olFormatGeoJSON from 'ol/format/GeoJSON';
-import olFeature from 'ol/Feature';
-import olLayer from 'ol/layer/Layer';
-import { MAC } from 'ol/has';
+import OlDragBoxInteraction from "ol/interaction/DragBox";
+import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from "ol/MapBrowserEvent";
+import { ListenerFunction } from "ol/events";
+import { unByKey } from "ol/Observable";
+import { MAC } from "ol/has";
 
-import { LanguageService } from '@igo2/core';
-import { IgoMap } from '../../map/shared/map';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
-import { Layer } from '../../layer/shared/layers/layer';
-import { Feature } from '../../feature/shared/feature.interface';
-import { SourceFeatureType } from '../../feature/shared/feature.enum';
+import { Feature } from "../../feature";
+import { AnyLayer } from "../../layer";
+import { IgoMap, MapBrowserComponent } from "../../map";
+import { QueryableDataSource } from "./query.interfaces";
+import { QueryService } from "./query.service";
 
-import { QueryableDataSource } from './query.interface';
-import { QueryService } from './query.service';
-
+/**
+ * This directive makes a map queryable with a click of with a drag box.
+ * By default, all layers are queryable but this cna ben controlled at
+ * the layer level.
+ */
 @Directive({
-  selector: '[igoQuery]'
+  selector: "[igoQuery]"
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
-  private queryLayers: Layer[];
-  private queryLayers$$: Subscription;
+  /**
+   * Map browser component
+   */
+  private component: MapBrowserComponent;
+
+  /**
+   * Subscriptions to ongoing queries
+   */
   private queries$$: Subscription[] = [];
 
-  public dragBox = new olInterfactionDragBox({
-    condition: this.platformModifierKeyOnly
-  });
+  /**
+   * Listener to the map click event
+   */
+  private mapClickListener: ListenerFunction;
 
-  get map(): IgoMap {
-    return this.component.map;
-  }
+  /**
+   * OL drag box interaction
+   */
+  private olDragBoxInteraction: OlDragBoxInteraction;
 
-  @Input()
-  get waitForAllQueries(): boolean {
-    return this._waitForAllQueries;
-  }
-  set waitForAllQueries(value: boolean) {
-    this._waitForAllQueries = value;
-  }
-  private _waitForAllQueries = false;
+  /**
+   * Ol drag box "end" event key
+   */
+  private olDragBoxInteractionEndKey: string;
 
-  @Output()
-  query = new EventEmitter<{
+  /**
+   * Whether all query should complete before emitting an event
+   */
+  @Input() waitForAllQueries: boolean = false;
+
+  /**
+   * Event emitted when a query (or all queries) complete
+   */
+  @Output() query = new EventEmitter<{
     features: Feature[] | Feature[][];
-    event: olMapBrowserEvent;
+    event: OlMapBrowserPointerEvent;
   }>();
 
+  /**
+   * IGO map
+   * @internal
+   */
+  get map(): IgoMap {
+    return (this.component.map as any) as IgoMap;
+  }
+
   constructor(
-    @Self() private component: MapBrowserComponent,
-    private queryService: QueryService,
-    private languageService: LanguageService
-  ) {}
+    component: MapBrowserComponent,
+    private queryService: QueryService
+  ) {
+    this.component = component;
+  }
 
+  /**
+   * Start listening to click and drag box events
+   * @internal
+   */
   ngAfterViewInit() {
-    this.queryLayers$$ = this.component.map.layers$.subscribe(
-      (layers: Layer[]) => this.handleLayersChange(layers)
-    );
+    this.listenToMapClick();
+    this.addDragBoxInteraction();
+  }
 
-    this.map.ol.on('singleclick', e => this.handleMapClick(e));
-    this.dragBox = new olInterfactionDragBox({
+  /**
+   * Stop listening to click and drag box events and cancel ongoind requests
+   * @internal
+   */
+  ngOnDestroy() {
+    this.cancelOngoingQueries();
+    this.unlistenToMapClick();
+    this.removeDragBoxInteraction();
+  }
+
+  /**
+   * On map click, issue queries
+   */
+  private listenToMapClick() {
+    this.mapClickListener = this.map.ol.on(
+      "singleclick",
+      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+    );
+  }
+
+  /**
+   * Stop listenig for map clicks
+   */
+  private unlistenToMapClick() {
+    this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);
+    this.mapClickListener = undefined;
+  }
+
+  /**
+   * Add a drag box interaction and, on drag box end, issue queries
+   */
+  private addDragBoxInteraction() {
+    this.olDragBoxInteraction = new OlDragBoxInteraction({
       condition: this.platformModifierKeyOnly
     });
-    this.map.ol.addInteraction(this.dragBox);
-    this.dragBox.on('boxend', e => this.handleMapClick(e));
+    this.olDragBoxInteractionEndKey = this.olDragBoxInteraction.on(
+      "boxend",
+      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+    );
+    this.map.ol.addInteraction(this.olDragBoxInteraction);
   }
 
-  ngOnDestroy() {
-    this.queryLayers$$.unsubscribe();
-    this.unsubscribeQueries();
-    this.map.ol.un('singleclick', e => this.handleMapClick(e));
+  /**
+   * Remove drag box interaction
+   */
+  private removeDragBoxInteraction() {
+    unByKey(this.olDragBoxInteractionEndKey);
+    this.map.ol.removeInteraction(this.olDragBoxInteraction);
+    this.olDragBoxInteraction = undefined;
   }
 
-  private handleLayersChange(layers: Layer[]) {
-    const queryLayers = [];
-    layers.forEach(layer => {
-      if (this.isQueryable(layer.dataSource as QueryableDataSource)) {
-        queryLayers.push(layer);
-      }
-    });
-
-    this.queryLayers = queryLayers;
-  }
-
-  private manageFeatureByClick(
-    featureOL: olFeature,
-    layerOL: olLayer
-  ): Feature {
-    if (layerOL.getZIndex() !== 999) {
-      let title;
-      if (layerOL.get('title') !== undefined) {
-        title = layerOL.get('title');
-      } else {
-        title = this.map.layers.filter(f => f.zIndex === layerOL.getZIndex())[0]
-          .options.title;
-      }
-      let queryTitleValue = '';
-      if (
-        layerOL.get('sourceOptions') &&
-        layerOL.get('sourceOptions').queryTitle &&
-        featureOL
-          .getProperties()
-          .hasOwnProperty(layerOL.get('sourceOptions').queryTitle)
-      ) {
-        title = '';
-        queryTitleValue = featureOL.getProperties()[
-          layerOL.get('sourceOptions').queryTitle
-        ];
-      }
-      featureOL.set('clickedTitle', title + queryTitleValue);
-      let allowedFieldsAndAlias;
-      if (
-        layerOL.get('sourceOptions') &&
-        layerOL.get('sourceOptions').sourceFields &&
-        layerOL.get('sourceOptions').sourceFields.length >= 1) {
-          allowedFieldsAndAlias = {};
-          layerOL.get('sourceOptions').sourceFields.forEach(sourceField => {
-            const alias = sourceField.alias ? sourceField.alias : sourceField.name;
-            allowedFieldsAndAlias[sourceField.name] = alias;
-          });
-      }
-      featureOL.set('igoAliasList', allowedFieldsAndAlias);
-      let groupTitle = this.languageService.translate.instant(
-      'igo.geo.clickOnMap.clickedFeature');
-      if (
-      layerOL.get('title')) {
-        groupTitle = layerOL.get('title');
-      }
-      featureOL.set('igoLayerTitle', groupTitle);
-      return featureOL;
-    }
-  }
-
-  private handleMapClick(event: olMapBrowserEvent) {
-    this.unsubscribeQueries();
+  /**
+   * Issue queries from a map event and emit events with the results
+   * @param event OL map browser pointer event
+   */
+  private onMapEvent(event: OlMapBrowserPointerEvent) {
+    this.cancelOngoingQueries();
     if (!this.queryService.queryEnabled) {
       return;
     }
-    const clickedFeatures: olFeature[] = [];
-    const format = new olFormatGeoJSON();
-    const mapProjection = this.map.projection;
-    if (event.type === 'singleclick') {
-      this.map.ol.forEachFeatureAtPixel(
-        event.pixel,
-        (featureOL: olFeature, layerOL: olLayer) => {
-          clickedFeatures.push(this.manageFeatureByClick(featureOL, layerOL));
-        },
-        { hitTolerance: 5 }
-      );
-    } else if (event.type === 'boxend') {
-      const dragExtent = this.dragBox.getGeometry().getExtent();
-      this.map.layers.forEach(layer => {
-        if (
-          layer.ol.type === 'VECTOR' &&
-          layer.visible &&
-          layer.zIndex !== 999
-        ) {
-          const featuresOL = layer.dataSource.ol as any;
-          featuresOL.forEachFeatureIntersectingExtent(dragExtent, feature => {
-            clickedFeatures.push(this.manageFeatureByClick(feature, layer.ol));
-          });
-        }
-      });
-    }
-    const featuresGeoJSON = JSON.parse(
-      format.writeFeatures(clickedFeatures.filter(f => f !== undefined), {
-        dataProjection: 'EPSG:4326',
-        featureProjection: mapProjection
-      })
+
+    const resolution = this.map.ol.getView().getResolution();
+    const queryLayers = this.map.layers.filter((layer: AnyLayer) =>
+      this.layerIsQueryable(layer)
     );
-    let i = 0;
-    let parsedClickedFeatures: Feature[] = [];
-    parsedClickedFeatures = featuresGeoJSON.features.map(f =>
-      Object.assign({}, f, {
-        sourceType: SourceFeatureType.Click,
-        source: f.properties.igoLayerTitle,
-        id: f.properties.clickedTitle + ' ' + String(i++),
-        icon: 'place',
-        title: f.properties.clickedTitle,
-        alias: f.properties.igoAliasList
-      })
-    );
-    parsedClickedFeatures.forEach(element => {
-      delete element.properties.clickedTitle;
-      delete element.properties.igoAliasList;
-      delete element.properties.igoLayerTitle;
-    });
-    const view = this.map.ol.getView();
-    const queries$ = this.queryService.query(this.queryLayers, {
+    const queries$ = this.queryService.query(queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
-      resolution: view.getResolution()
+      resolution: resolution
     });
+
     if (queries$.length === 0) {
-      this.query.emit({ features: parsedClickedFeatures, event });
+      return;
+    }
+
+    if (this.waitForAllQueries) {
+      this.queries$$.push(
+        zip(...queries$).subscribe((results: Feature[][]) => {
+          const features = [].concat(...results);
+          this.query.emit({ features, event });
+        })
+      );
     } else {
-      if (this.waitForAllQueries) {
-        this.queries$$.push(
-          forkJoin(...queries$).subscribe((features: Feature[][]) =>
-            this.query.emit({
-              features: features
-                .filter(f => f.length > 0)
-                .concat(parsedClickedFeatures),
-              event
-            })
-          )
-        );
-      } else {
-        this.queries$$ = queries$.map((query$: Observable<Feature[]>) => {
-          return query$.subscribe((features: Feature[]) =>
-            this.query.emit({
-              features: parsedClickedFeatures.concat(features),
-              event
-            })
-          );
+      this.queries$$ = queries$.map((query$: Observable<Feature[]>) => {
+        return query$.subscribe((features: Feature[]) => {
+          this.query.emit({ features, event });
         });
-      }
+      });
     }
   }
 
-  private unsubscribeQueries() {
+  /**
+   * Cancel ongoing requests, if any
+   */
+  private cancelOngoingQueries() {
     this.queries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.queries$$ = [];
   }
 
-  private isQueryable(dataSource: QueryableDataSource) {
+  /**
+   * Whether a layer is queryable
+   * @param layer Layer
+   * @returns True if the layer si queryable
+   */
+  private layerIsQueryable(layer: AnyLayer): boolean {
+    const dataSource = layer.dataSource as QueryableDataSource;
     return dataSource.options.queryable !== undefined
       ? dataSource.options.queryable
       : true;
   }
 
-  private platformModifierKeyOnly(mapBrowserEvent) {
-    const originalEvent = mapBrowserEvent.originalEvent;
+  /**
+   * Whether a drag box event should issue a query
+   * @param event OL map browser pointer event
+   * @returns True if a certain key is pressed when dragging
+   */
+  private platformModifierKeyOnly(event: OlMapBrowserPointerEvent): boolean {
+    const originalEvent = event.originalEvent;
     return (
       !originalEvent.altKey &&
       (MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&

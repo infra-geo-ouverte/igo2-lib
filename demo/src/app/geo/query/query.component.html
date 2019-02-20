@@ -18,23 +18,10 @@
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
-  <igo-panel title="Features list">
-    <igo-feature-list
-      igoFeatureListBinding
-      [focusFirst]="true"
-      (focus)="handleFeatureFocus($event)"
-      (select)="handleFeatureSelect($event)">
-    </igo-feature-list>
-    <button
-      mat-icon-button
-      panelRightButton
-      (click)="clearFeature()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </igo-panel>
-
   <igo-panel title="Details">
-    <igo-feature-details igoFeatureDetailsBinding></igo-feature-details>
+    <ng-container *ngIf="features$ | async as feature">
+      <igo-feature-details [feature]="feature"></igo-feature-details>
+    </ng-container>
   </igo-panel>
 
 </mat-card>
