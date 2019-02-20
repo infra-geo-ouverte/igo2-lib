@@ -5,7 +5,7 @@ import { FeatureDataSource, VectorLayer } from '@igo2/geo';
 
 import { IgoMap } from '../../map';
 
-import { FeatureMotion } from './feature.enum';
+import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
 import { featureToOl, moveToFeatures } from './feature.utils';
 import { FeatureStoreStrategy } from './strategies/strategy';

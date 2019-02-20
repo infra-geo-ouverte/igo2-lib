@@ -16,7 +16,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Form, getEntityRevision } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
-import { FEATURE } from '../shared/feature.enum';
+import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';
 import { FeatureStore } from '../shared/store';
 import { FeatureStoreSelectionStrategy } from '../shared/strategies/selection';

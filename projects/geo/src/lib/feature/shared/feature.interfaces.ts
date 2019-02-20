@@ -6,7 +6,7 @@ import { GeoJsonGeometryTypes } from 'geojson';
 
 import { EntityKey, EntityStoreOptions } from '@igo2/common';
 import { IgoMap } from '../../map';
-import { FeatureMotion } from './feature.enum';
+import { FeatureMotion } from './feature.enums';
 
 export interface Feature<P = {[key: string]: any}> {
   type: string;
@@ -21,6 +21,7 @@ export interface FeatureMeta {
   id: EntityKey;
   title?: string;
   mapTitle?: string;
+  order?: number;
 }
 
 export interface FeatureGeometry {

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FeatureDetailsComponent } from './feature-Details.component';
+import { FeatureDetailsComponent } from './feature-details.component';
 
 /**
  * @ignore
@@ -10,11 +10,7 @@ import { FeatureDetailsComponent } from './feature-Details.component';
   imports: [
     CommonModule
   ],
-  exports: [
-    FeatureDetailsComponent
-  ],
-  declarations: [
-    FeatureDetailsComponent
-  ]
+  exports: [FeatureDetailsComponent],
+  declarations: [FeatureDetailsComponent]
 })
 export class IgoFeatureDetailsModule {}

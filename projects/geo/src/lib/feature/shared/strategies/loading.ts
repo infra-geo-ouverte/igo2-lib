@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 
-import { FeatureMotion } from '../feature.enum';
+import { FeatureMotion } from '../feature.enums';
 import { Feature } from '../feature.interfaces';
 import { FeatureStore } from '../store';
 import { FeatureStoreStrategy } from './strategy';
