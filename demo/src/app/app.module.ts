@@ -19,9 +19,10 @@ import { AppRequestModule } from './core/request/request.module';
 
 import { AppActionModule } from './common/action/action.module';
 import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-component.module';
-import { AppWidgetModule } from './common/widget/widget.module';
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
 import { AppFormModule } from './common/form/form.module';
+import { AppTableModule } from './common/table/table.module';
+import { AppWidgetModule } from './common/widget/widget.module';
 
 import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 
@@ -64,9 +65,10 @@ import { AppComponent } from './app.component';
 
     AppActionModule,
     AppDynamicComponentModule,
-    AppWidgetModule,
     AppEntityTableModule,
     AppFormModule,
+    AppTableModule,
+    AppWidgetModule,
 
     AppAuthFormModule,
 

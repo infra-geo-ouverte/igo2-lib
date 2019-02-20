@@ -62,7 +62,7 @@ export class LayerService {
         (layerOptions.source.options as any)._layerOptionsFromCapabilities
       );
     }
-    
+
     let layer;
     switch (layerOptions.source.constructor) {
       case OSMDataSource:
