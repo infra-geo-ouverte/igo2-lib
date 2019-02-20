@@ -39,7 +39,7 @@ export const environment: Environment = {
         locateLimit: 15,
         zoomMaxOnSelect: 8,
         enabled: false,
-        allowedPropertiesAlias:
+        propertiesAlias:
         [
           {name: 'title', alias: 'Titre'},
           {name: 'etiquette', alias: 'Informations'},
