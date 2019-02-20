@@ -23,13 +23,5 @@
     "target": "https://ws.mapserver.transports.gouv.qc.ca",
     "changeOrigin": true,
     "secure": false
-  },
-  "/apis/gps": {
-    "target": "wss://testgeoegl.msp.gouv.qc.ca",
-    "changeOrigin": true,
-    "logLevel": "debug",
-    "secure": false,
-    "ws":true
-    }
-
+  }
 }
