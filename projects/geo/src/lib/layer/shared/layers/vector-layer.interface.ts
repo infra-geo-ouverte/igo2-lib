@@ -12,6 +12,7 @@ import { WebSocketDataSource } from '../../../datasource/shared/datasources/webs
 import { FeatureDataSourceOptions } from '../../../datasource/shared/datasources/feature-datasource.interface';
 import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs-datasource.interface';
 import { ArcGISRestDataSourceOptions } from '../../../datasource/shared/datasources/arcgisrest-datasource.interface';
+import { WebSocketDataSourceOptions } from '../../../datasource/shared/datasources/websocket-datasource.interface';
 
 
 export interface VectorLayerOptions extends LayerOptions {
@@ -19,7 +20,8 @@ export interface VectorLayerOptions extends LayerOptions {
   sourceOptions?:
     | FeatureDataSourceOptions
     | WFSDataSourceOptions
-    | ArcGISRestDataSourceOptions;
+    | ArcGISRestDataSourceOptions
+    | WebSocketDataSourceOptions;
   style?: { [key: string]: any } | olStyle | olStyle[];
   ol?: olLayerVector;
   animation?: VectorAnimation;

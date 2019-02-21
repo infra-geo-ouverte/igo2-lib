@@ -28,11 +28,11 @@ export class WebSocketDataSource extends FeatureDataSource {
       this.ws.onclose = this.onClose.bind(this);
     }
 
-    if (this.options.onclose) {
+    if (this.options.onerror) {
       this.ws.onerror = this.onError.bind(this);
     }
 
-    if (this.options.onclose) {
+    if (this.options.onopen) {
       this.ws.onopen = this.onOpen.bind(this);
     }
   }
