@@ -124,10 +124,12 @@ export class MapFieldComponent
     this.map.ol.un('singleclick', e => this.handleMapClick(e));
   }
 
+  // tslint:disable-next-line:ban-types
   registerOnChange(fn: Function) {
     this.onChange = fn;
   }
 
+  // tslint:disable-next-line:ban-types
   registerOnTouched(fn: Function) {
     this.onTouched = fn;
   }
@@ -168,7 +170,7 @@ export class MapFieldComponent
       olproj.transform(coordinates, this.projection, this.map.projection)
     );
     const extent = geometry.getExtent();
-    const feature = new olFeature({ geometry: geometry });
+    const feature = new olFeature({ geometry });
 
     this.map.moveToExtent(extent);
     this.map.addOverlay(feature);

@@ -18,7 +18,7 @@ export function createDefaultTileGrid(epsg?: string): olTileGridWMTS {
 
   return new olTileGridWMTS({
     origin: extentGetTopLeft(projectionExtent),
-    resolutions: resolutions,
-    matrixIds: matrixIds
+    resolutions,
+    matrixIds
   });
 }

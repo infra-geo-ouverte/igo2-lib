@@ -1,9 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { SubjectStatus } from '@igo2/utils';
-
 import { IgoMap } from '../../map/shared/map';
-
 import { PrintOptions } from '../shared/print.interface';
 
 import {
@@ -85,7 +82,7 @@ export class PrintComponent {
     if (data.isPrintService === true) {
       this.printService
         .print(this.map, data)
-        .subscribe((status: SubjectStatus) => {});
+        .subscribe();
     } else {
       let nbFileToProcess = 1;
 

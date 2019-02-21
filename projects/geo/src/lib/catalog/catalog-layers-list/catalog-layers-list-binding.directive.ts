@@ -60,10 +60,10 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
 
   /**
    * Dig in the layerList for each layer definition
-   @param catalog: object of config.json parameter
-   @param layerList: object of current level of layers
-   @param groupsLayers: object of group of layers to show in the app
-  */
+   * @param catalog: object of config.json parameter
+   * @param layerList: object of current level of layers
+   * @param groupsLayers: object of group of layers to show in the app
+   */
   includeRecursiveLayer(catalog, layerList, groupsLayers) {
     let currentRegFilter;
     let boolRegFilter = true;
@@ -106,8 +106,8 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
                 metadata: {
                   url: metadata ? metadata.OnlineResource : undefined,
                   extern: metadata ? true : undefined,
-                  abstract: abstract,
-                  keywordList: keywordList
+                  abstract,
+                  keywordList
                 },
                 sourceOptions: {
                   type: 'wms',

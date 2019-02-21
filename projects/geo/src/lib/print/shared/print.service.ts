@@ -88,10 +88,10 @@ export class PrintService {
   }
 
   /**
-  Get html code for all layers legend
-  @param  width - The width that the legend need to be
-  @return Html code for the legend
-  */
+   * Get html code for all layers legend
+   * * @param  width - The width that the legend need to be
+   * @return Html code for the legend
+   */
   getLayersLegendHtml(map, width) {
     // Get html code for the legend
     const listLegend = map.getLayersLegend();
@@ -106,7 +106,7 @@ export class PrintService {
       html += '<font size="2" face="Courier New" >';
       html += '<div style="display:inline-block;max-width:' + width + 'mm">';
       // For each legend, define an html table cell
-      listLegend.forEach(function(legend) {
+      listLegend.forEach((legend) => {
         html +=
           '<table border=1 style="display:inline-block;vertical-align:top">';
         html += '<tr><th width="170px">' + legend.title + '</th>';
@@ -119,10 +119,10 @@ export class PrintService {
   }
 
   /**
-  Get all the legend in a single image
-  @param  format - Image format. default value to "png"
-  @return The image of the legend
-  */
+   * Get all the legend in a single image
+   * * @param  format - Image format. default value to "png"
+   * @return The image of the legend
+   */
   getLayersLegendImage(map, format = 'png', doZipFile) {
     const status$ = new Subject();
     // Get html code for the legend
@@ -143,7 +143,7 @@ export class PrintService {
     window.document.body.appendChild(div);
     div.innerHTML = html;
     // Define event to execute after all images are loaded to create the canvas
-    setTimeout(function() {
+    setTimeout(() => {
       html2canvas(div, { useCORS: true}).then(canvas => {
 
         let status = SubjectStatus.Done;
@@ -159,7 +159,7 @@ export class PrintService {
         } catch (err) {
           status = SubjectStatus.Error;
       }
-      status$.next(status);
+        status$.next(status);
       });
     }, 500);
   }
@@ -182,11 +182,11 @@ export class PrintService {
   }
 
   /**
-    Add comment to the document
-    @param  doc - pdf document
-    @param  comment - Comment to add in the document
-    @param  size - Size of the document
-    */
+   * Add comment to the document
+   * * @param  doc - pdf document
+   * * @param  comment - Comment to add in the document
+   * * @param  size - Size of the document
+   */
   private addComment(doc: jsPDF, comment: string, size: Array<number>) {
     const commentSize = 16;
     const commentMarginLeft = 20;
@@ -196,14 +196,14 @@ export class PrintService {
     doc.text(commentMarginLeft, heightPixels, comment);
   }
   /**
-    Add projection and/or scale to the document
-    @param  doc - pdf document
-    @param  map - Map of the app
-    @param  resolution - DPI resolution of the document
-    @param  size - Size of the document
-    @param  projection - Bool to indicate if projection need to be added
-    @param  scale - Bool to indicate if scale need to be added
-    */
+   * Add projection and/or scale to the document
+   * @param  doc - pdf document
+   * @param  map - Map of the app
+   * @param  resolution - DPI resolution of the document
+   * @param  size - Size of the document
+   * @param  projection - Bool to indicate if projection need to be added
+   * @param  scale - Bool to indicate if scale need to be added
+   */
   private addProjScale(
     doc: jsPDF,
     map: IgoMap,
@@ -234,11 +234,11 @@ export class PrintService {
   }
 
   /**
-  Add the legend to the document
-  @param  doc - Pdf document where legend will be added
-  @param  map - Map of the app
-  @param  margins - Page margins
-  */
+   * Add the legend to the document
+   * @param  doc - Pdf document where legend will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
   private addLegend(doc: jsPDF, map: IgoMap, margins: Array<number>) {
     const that = this;
     // Get html code for the legend
@@ -279,7 +279,6 @@ export class PrintService {
     let image;
 
     image = canvas.toDataURL('image/jpeg');
-
 
     if (image !== undefined) {
       const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
@@ -365,17 +364,17 @@ export class PrintService {
   }
 
   /**
-  Download an image of the map with addition of informations
-  @param  map - Map of the app
-  @param  format - Image format. default value to "png"
-  @param  projection - Indicate if projection need to be add. Default to false
-  @param  scale - Indicate if scale need to be add. Default to false
-  @param  legend - Indicate if the legend of layers need to be download. Default to false
-  @param  title - Title to add for the map - Default to blank
-  @param  comment - Comment to add for the map - Default to blank
-  @param  doZipFile - Indicate if we do a zip with the file
-  @return Image file of the map with extension format given as parameter
-  */
+   * Download an image of the map with addition of informations
+   * @param  map - Map of the app
+   * @param  format - Image format. default value to "png"
+   * @param  projection - Indicate if projection need to be add. Default to false
+   * @param  scale - Indicate if scale need to be add. Default to false
+   * @param  legend - Indicate if the legend of layers need to be download. Default to false
+   * @param  title - Title to add for the map - Default to blank
+   * @param  comment - Comment to add for the map - Default to blank
+   * @param  doZipFile - Indicate if we do a zip with the file
+   * @return Image file of the map with extension format given as parameter
+   */
   downloadMapImage(
     map: IgoMap,
     format = 'png',
@@ -549,19 +548,19 @@ export class PrintService {
   }
 
   /**
-  Save document
-  @param  doc - Document to save
-  */
+   * Save document
+   * @param  doc - Document to save
+   */
   private saveDoc(doc: jsPDF) {
     doc.save('map.pdf');
   }
 
   /**
-  Calculate the best Image size to fit in pdf
-  @param doc - Pdf Document
-  @param canvas - Canvas of image
-  @param margins - Page margins
-  */
+   * Calculate the best Image size to fit in pdf
+   * @param doc - Pdf Document
+   * @param canvas - Canvas of image
+   * @param margins - Page margins
+   */
   private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
     const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
@@ -578,9 +577,9 @@ export class PrintService {
   }
 
   /**
-  Get a world file information for tiff
-    @param  map - Map of the app
-  */
+   * Get a world file information for tiff
+   * @param  map - Map of the app
+   */
   private getWorldFileInformation(map) {
     const currentResolution = map.resolution$.value;
     const currentExtent = map.getExtent(); // Return [minx, miny, maxx, maxy]
@@ -595,11 +594,11 @@ export class PrintService {
   }
 
   /**
-  Save canvas image as file
-  @param canvas - Canvas to save
-  @param name - Name of the file
-  @param format - file format
-  */
+   * Save canvas image as file
+   * @param canvas - Canvas to save
+   * @param name - Name of the file
+   * @param format - file format
+   */
   private saveCanvasImageAsFile(canvas, name, format) {
     const blobFormat = 'image/' + format;
     const that = this;
@@ -611,7 +610,7 @@ export class PrintService {
         navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
         this.saveFileProcessing();
       } else {
-        canvas.toBlob(function(blob) {
+        canvas.toBlob((blob) => {
           // download image
           saveAs(blob, name + '.' + format);
           that.saveFileProcessing();
@@ -627,10 +626,10 @@ export class PrintService {
   }
 
   /**
-  Add file to a zip
-    @param canvas - File to add to the zip
-    @param  name -Name of the fileoverview
-  */
+   * Add file to a zip
+   * @param canvas - File to add to the zip
+   * @param  name -Name of the fileoverview
+   */
   private generateCanvaFileToZip(canvas, name) {
     const blobFormat = 'image/' + 'jpeg';
     const that = this;
@@ -643,7 +642,7 @@ export class PrintService {
       if (navigator.msSaveBlob) {
         this.addFileToZip(name, canvas.msToBlob());
       } else {
-        canvas.toBlob(function(blob) {
+        canvas.toBlob((blob) => {
           that.addFileToZip(name, blob);
         }, blobFormat);
       }
@@ -658,10 +657,10 @@ export class PrintService {
   }
 
   /**
-  Add file to zip, if all file are zipped, download
-  @param name - Name of the files
-  @param blob - Contain of file
-  */
+   * Add file to zip, if all file are zipped, download
+   * @param name - Name of the files
+   * @param blob - Contain of file
+   */
   private addFileToZip(name, blob) {
 
       // add file to zip
@@ -688,12 +687,12 @@ export class PrintService {
   }
 
   /**
-  Get the zipped file
-  @return Retun a zip file
-  */
+   * Get the zipped file
+   * @return Retun a zip file
+   */
   private getZipFile() {
     const that = this;
-    this.zipFile.generateAsync({ type: 'blob' }).then(function (blob) { // 1) generate the zip file
+    this.zipFile.generateAsync({ type: 'blob' }).then((blob) => { // 1) generate the zip file
       saveAs(blob, 'map.zip');
       delete that.zipFile;
     });

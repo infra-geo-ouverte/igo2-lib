@@ -41,9 +41,9 @@ export class ToolContextDirective implements OnInit, OnDestroy {
     }
 
     const tools: Tool[] = [];
-    (context.tools || []).forEach((tool_: Tool) => {
-      const tool = this.toolService.getTool(tool_.name);
-      if (tool !== undefined && context.toolbar.indexOf(tool_.name) >= 0) {
+    (context.tools || []).forEach((_tool: Tool) => {
+      const tool = this.toolService.getTool(_tool.name);
+      if (tool !== undefined && context.toolbar.indexOf(_tool.name) >= 0) {
         tools.push(tool);
       }
     });

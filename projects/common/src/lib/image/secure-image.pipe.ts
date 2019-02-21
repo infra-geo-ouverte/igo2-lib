@@ -20,7 +20,7 @@ export class SecureImagePipe implements PipeTransform {
       })
       .pipe(
         switchMap(blob => {
-          return Observable.create(observer => {
+          return new Observable(observer => {
             const reader = new FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => {

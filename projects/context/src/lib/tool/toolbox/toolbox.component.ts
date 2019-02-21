@@ -93,6 +93,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
     this.animating$.next(false);
   }
 
+  // tslint:disable-next-line:ban-types
   private subscribeToAnimation(callback: Function) {
     this.unsubscribeToAnimation();
     this.animating$$ = this.animating$.subscribe(animating => {
@@ -150,7 +151,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.destroyComponent();
 
-    const factory = this.resolver.resolveComponentFactory(<any>toolCls);
+    const factory = this.resolver.resolveComponentFactory(toolCls as any);
     const component = this.target.createComponent(factory);
 
     this.component = component as ComponentRef<Component>;
@@ -170,7 +171,7 @@ export class ToolboxComponent implements AfterViewInit, OnInit, OnDestroy {
       this.component !== undefined &&
       this.component.instance.hasOwnProperty('options')
     ) {
-      this.component.instance['options'] = options || {};
+      (this.component.instance as any).options = options || {};
     }
   }
 }

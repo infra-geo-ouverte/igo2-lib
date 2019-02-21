@@ -43,11 +43,11 @@ export class TileArcGISRestDataSource extends DataSource {
     const lyr = this.options.legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
 
-    for (let i = 0; i < lyr.legend.length; i++) {
+    for (const lyrLegend of lyr.legend) {
       const src = `${this.options.url}/${lyr.layerId}/images/${
-        lyr.legend[i].url
+        lyrLegend.url
       }`;
-      const label = lyr.legend[i].label.replace('<Null>', 'Null');
+      const label = lyrLegend.label.replace('<Null>', 'Null');
       htmlString +=
         `<tr><td align='left'><img src="` +
         src +

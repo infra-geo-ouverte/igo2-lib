@@ -45,7 +45,7 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
   /**
    * Method to get an entity's named property
    */
-  readonly getProperty: (E, string) => any;
+  readonly getProperty: (E, prop: string) => any;
 
   /**
    * Store index

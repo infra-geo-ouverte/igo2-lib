@@ -130,15 +130,15 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
             const alias = sourceField.alias ? sourceField.alias : sourceField.name;
             allowedFieldsAndAlias[sourceField.name] = alias;
           });
-        }
-          featureOL.set('igoAliasList', allowedFieldsAndAlias);
-        let groupTitle = this.languageService.translate.instant(
-          'igo.geo.clickOnMap.clickedFeature');
-        if (
-          layerOL.get('title')) {
-            groupTitle = layerOL.get('title');
-          }
-          featureOL.set('igoLayerTitle', groupTitle);
+      }
+      featureOL.set('igoAliasList', allowedFieldsAndAlias);
+      let groupTitle = this.languageService.translate.instant(
+      'igo.geo.clickOnMap.clickedFeature');
+      if (
+      layerOL.get('title')) {
+        groupTitle = layerOL.get('title');
+      }
+      featureOL.set('igoLayerTitle', groupTitle);
       return featureOL;
     }
   }
@@ -163,7 +163,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       const dragExtent = this.dragBox.getGeometry().getExtent();
       this.map.layers.forEach(layer => {
         if (
-          layer.ol['type'] === 'VECTOR' &&
+          layer.ol.type === 'VECTOR' &&
           layer.visible &&
           layer.zIndex !== 999
         ) {
@@ -193,9 +193,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       })
     );
     parsedClickedFeatures.forEach(element => {
-      delete element.properties['clickedTitle'];
-      delete element.properties['igoAliasList'];
-      delete element.properties['igoLayerTitle'];
+      delete element.properties.clickedTitle;
+      delete element.properties.igoAliasList;
+      delete element.properties.igoLayerTitle;
     });
     const view = this.map.ol.getView();
     const queries$ = this.queryService.query(this.queryLayers, {
@@ -204,7 +204,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       resolution: view.getResolution()
     });
     if (queries$.length === 0) {
-      this.query.emit({ features: parsedClickedFeatures, event: event });
+      this.query.emit({ features: parsedClickedFeatures, event });
     } else {
       if (this.waitForAllQueries) {
         this.queries$$.push(
@@ -213,7 +213,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
               features: features
                 .filter(f => f.length > 0)
                 .concat(parsedClickedFeatures),
-              event: event
+              event
             })
           )
         );
@@ -222,7 +222,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           return query$.subscribe((features: Feature[]) =>
             this.query.emit({
               features: parsedClickedFeatures.concat(features),
-              event: event
+              event
             })
           );
         });

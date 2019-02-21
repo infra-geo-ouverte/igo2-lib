@@ -93,7 +93,7 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
         if (this.layerListService.onlyInRange) {
           this.publicShareOption.layerlistControls.querystring += '&llcr=1';
         }
-      return true;
+        return true;
     }
     return false;
   }

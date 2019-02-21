@@ -31,7 +31,7 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
 
   data$ = new BehaviorSubject<{[key: string]: any}>(undefined);
 
-  submitDisabled: boolean = true;
+  submitDisabled = true;
 
   private valueChanges$$: Subscription;
 

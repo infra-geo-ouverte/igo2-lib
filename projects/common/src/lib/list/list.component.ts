@@ -206,26 +206,26 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.listItems.toArray().forEach(item => {
       this.subscriptions.push(
-        item.beforeSelect.subscribe((item_: ListItemDirective) =>
-          this.handleItemBeforeSelect(item_)
+        item.beforeSelect.subscribe((item2: ListItemDirective) =>
+          this.handleItemBeforeSelect(item2)
         )
       );
 
       this.subscriptions.push(
-        item.select.subscribe((item_: ListItemDirective) =>
-          this.handleItemSelect(item_)
+        item.select.subscribe((item2: ListItemDirective) =>
+          this.handleItemSelect(item2)
         )
       );
 
       this.subscriptions.push(
-        item.beforeFocus.subscribe((item_: ListItemDirective) =>
-          this.handleItemBeforeFocus(item_)
+        item.beforeFocus.subscribe((item2: ListItemDirective) =>
+          this.handleItemBeforeFocus(item2)
         )
       );
 
       this.subscriptions.push(
-        item.focus.subscribe((item_: ListItemDirective) =>
-          this.handleItemFocus(item_)
+        item.focus.subscribe((item2: ListItemDirective) =>
+          this.handleItemFocus(item2)
         )
       );
     }, this);

@@ -166,10 +166,10 @@ export class OgcFilterableItemComponent implements OnInit {
     if (datasourceOptions.fieldNameGeometry) {
       fieldNameGeometry = datasourceOptions.fieldNameGeometry;
     } else if (
-      this.datasource.options['paramsWFS'] &&
-      this.datasource.options['paramsWFS'].fieldNameGeometry
+      (this.datasource.options as any).paramsWFS &&
+      (this.datasource.options as any).paramsWFS.fieldNameGeometry
     ) {
-      fieldNameGeometry = this.datasource.options['paramsWFS'].fieldNameGeometry;
+      fieldNameGeometry = (this.datasource.options as any).paramsWFS.fieldNameGeometry;
     }
     const status = arr.length === 0 ? true : false;
     arr.push(
@@ -238,7 +238,7 @@ export class OgcFilterableItemComponent implements OnInit {
             ogcLayer.filters,
             undefined,
             undefined,
-            this.layer.dataSource.options['fieldNameGeometry']
+            (this.layer.dataSource.options as any).fieldNameGeometry
           );
         }
         this.ogcFilterService.filterByOgc(

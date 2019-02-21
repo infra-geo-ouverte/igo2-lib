@@ -7,7 +7,7 @@ export class KeyValuePipe implements PipeTransform {
   transform(value: any, args?: any): any {
     const keyValues = [];
     Object.getOwnPropertyNames(value).forEach((key: string) =>
-      keyValues.push({ key: key, value: value[key] })
+      keyValues.push({ key, value: value[key] })
     );
 
     return keyValues;

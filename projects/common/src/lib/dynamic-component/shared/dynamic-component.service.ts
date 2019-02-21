@@ -21,7 +21,7 @@ export class DynamicComponentService {
    * @returns DynamicComponent instance
    */
   create(componentCls: any): DynamicComponent<any> {
-    const factory = this.resolver.resolveComponentFactory(<any>componentCls);
+    const factory = this.resolver.resolveComponentFactory(componentCls as any);
     return new DynamicComponent<typeof componentCls>(factory);
   }
 }

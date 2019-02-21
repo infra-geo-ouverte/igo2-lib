@@ -90,7 +90,6 @@ export class ListItemDirective {
   }
   private _disabled = false;
 
-
   @Output() beforeSelect = new EventEmitter<ListItemDirective>();
   @Output() beforeFocus = new EventEmitter<ListItemDirective>();
   @Output() beforeUnselect = new EventEmitter<ListItemDirective>();

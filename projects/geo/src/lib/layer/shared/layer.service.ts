@@ -126,7 +126,7 @@ export class LayerService {
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
-      style: style
+      style
     });
 
     return new VectorLayer(layerOptionsOl);

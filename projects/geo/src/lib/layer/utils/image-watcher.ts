@@ -29,26 +29,26 @@ export class ImageWatcher extends Watcher {
   }
 
   private handleLoadStart(event: any) {
-    if (!event.image['__watchers__']) {
-      event.image['__watchers__'] = [];
+    if (!event.image.__watchers__) {
+      event.image.__watchers__ = [];
     }
-    event.image['__watchers__'].push(this.id);
+    event.image.__watchers__.push(this.id);
 
     this.loading += 1;
     this.status = SubjectStatus.Working;
   }
 
   private handleLoadEnd(event) {
-    if (!event.image['__watchers__']) {
+    if (!event.image.__watchers__) {
       return;
     }
 
-    const watcherIndex = event.image['__watchers__'].indexOf(this.id);
+    const watcherIndex = event.image.__watchers__.indexOf(this.id);
     if (watcherIndex < 0) {
       return;
     }
 
-    event.image['__watchers__'].splice(watcherIndex, 1);
+    event.image.__watchers__.splice(watcherIndex, 1);
 
     this.loaded += 1;
 

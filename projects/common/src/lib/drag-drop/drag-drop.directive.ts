@@ -13,12 +13,12 @@ import {
 export class DragAndDropDirective {
   @Input()
   get allowed_extensions() {
-    return this._allowed_extensions;
+    return this._allowedExtensions;
   }
   set allowed_extensions(value: Array<string>) {
-    this._allowed_extensions = value;
+    this._allowedExtensions = value;
   }
-  protected _allowed_extensions: Array<string> = [];
+  protected _allowedExtensions: Array<string> = [];
 
   @Output() protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   @Output() protected filesInvalid: EventEmitter<File[]> = new EventEmitter();

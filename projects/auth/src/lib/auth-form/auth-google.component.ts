@@ -35,19 +35,19 @@ export class AuthGoogleComponent {
   }
 
   public handleSignInClick() {
-    window['gapi'].auth2.getAuthInstance().signIn();
+    (window as any).gapi.auth2.getAuthInstance().signIn();
   }
 
   public handleSignOutClick() {
-    window['gapi'].auth2.getAuthInstance().signOut();
+    (window as any).gapi.auth2.getAuthInstance().signOut();
   }
 
   private handleClientLoad() {
-    window['gapi'].load('client:auth2', () => this.initClient());
+    (window as any).gapi.load('client:auth2', () => this.initClient());
   }
 
   private initClient() {
-    window['gapi'].client
+    (window as any).gapi.client
       .init({
         apiKey: this.options.apiKey,
         clientId: this.options.clientId,
@@ -58,7 +58,7 @@ export class AuthGoogleComponent {
       })
       .then(() => {
         this.handleSignOutClick();
-        window['gapi'].auth2.getAuthInstance().isSignedIn.listen(rep => {
+        (window as any).gapi.auth2.getAuthInstance().isSignedIn.listen(rep => {
           this.updateSigninStatus(rep);
         });
       });
@@ -66,7 +66,7 @@ export class AuthGoogleComponent {
 
   private updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
-      this.loginGoogle(window['gapi'].client.getToken().access_token);
+      this.loginGoogle((window as any).gapi.client.getToken().access_token);
     }
   }
 

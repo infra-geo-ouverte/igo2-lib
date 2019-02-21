@@ -64,7 +64,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public initialStopsCoords;
   private browserLanguage;
 
-
   // https://stackoverflow.com/questions/46364852/create-input-fields-dynamically-in-angular-2
 
   @Input()
@@ -211,7 +210,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectRoute.on('select', evt => {
       if (this.focusOnStop === false) {
         const selectCoordinates = olproj.transform(
-          evt['mapBrowserEvent'].coordinate,
+          (evt as any).mapBrowserEvent.coordinate,
           this.map.projection,
           this.projection
         );
@@ -302,7 +301,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
               // prefer address type.
               let featurePos = 0;
               for (let i = 0; i < features.length; i++) {
-                if (features[i]['properties']['type'] === 'adresse') {
+                if ((features[i] as any).properties.type === 'adresse') {
                   featurePos = i;
                   break;
                 }
@@ -629,7 +628,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       directive = directiveEn;
     }
 
-    return { instruction: directive, image: image, cssClass: cssClass };
+    return { instruction: directive, image, cssClass };
   }
 
   translateModifier(modifier) {
@@ -736,7 +735,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const lastPoint = routeSegmentCoordinates[0];
 
     const geometry = new olgeom.Point(lastPoint);
-    const feature = new olFeature({ geometry: geometry });
+    const feature = new olFeature({ geometry });
     feature.setId('endSegment');
 
     if (geometry === null) {
@@ -745,7 +744,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (geometry.getType() === 'Point') {
       feature.setStyle([
         new olstyle.Style({
-          geometry: geometry,
+          geometry,
           image: new olstyle.Circle({
             radius: 7,
             stroke: new olstyle.Stroke({ color: '#FF0000', width: 3 })
@@ -809,7 +808,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.routesQueries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.routesQueries$$ = [];
   }
-
 
   copyLinkToClipboard() {
     const successful = Clipboard.copy(this.getUrl());
@@ -1074,7 +1072,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const geometry = new olgeom.Point(
       olproj.transform(coordinates, this.projection, this.map.projection)
     );
-    const feature = new olFeature({ geometry: geometry });
+    const feature = new olFeature({ geometry });
 
     const stopID = this.getStopOverlayID(index);
     this.deleteRoutingOverlaybyID(stopID);

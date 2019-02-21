@@ -49,8 +49,8 @@ export class OgcFilterWriter {
     }
     if (filters) {
       fieldNameGeometry =
-        filters['geometryName'] !== undefined
-          ? filters['geometryName']
+        (filters as any).geometryName !== undefined
+          ? (filters as any).geometryName
           : fieldNameGeometry;
     }
     if (extent && filters) {
@@ -91,16 +91,16 @@ export class OgcFilterWriter {
 
   private bundleFilter(filterObject: any) {
     if (filterObject instanceof Array) {
-      const logical_array = [];
+      const logicalArray = [];
       filterObject.forEach(element => {
-        logical_array.push(this.bundleFilter(element));
+        logicalArray.push(this.bundleFilter(element));
       });
-      return logical_array;
+      return logicalArray;
     } else {
       if (filterObject.hasOwnProperty('logical')) {
         return this.createFilter({
           operator: filterObject.logical,
-          logical_array: this.bundleFilter(filterObject.filters)
+          logicalArray: this.bundleFilter(filterObject.filters)
         });
       } else if (filterObject.hasOwnProperty('operator')) {
         return this.createFilter(filterObject as AnyBaseOgcFilterOptions);
@@ -110,100 +110,100 @@ export class OgcFilterWriter {
 
   private createFilter(filterOptions): OgcFilter {
     const operator = filterOptions.operator;
-    const logical_array = filterOptions.logical_array;
+    const logicalArray = filterOptions.logicalArray;
 
-    const wfs_propertyName = filterOptions.propertyName;
-    const wfs_pattern = filterOptions.pattern;
-    const wfs_matchCase = filterOptions.matchCase
+    const wfsPropertyName = filterOptions.propertyName;
+    const wfsPattern = filterOptions.pattern;
+    const wfsMatchCase = filterOptions.matchCase
       ? filterOptions.matchCase
       : true;
-    const wfs_wildCard = filterOptions.wildCard ? filterOptions.wildCard : '*';
-    const wfs_singleChar = filterOptions.singleChar
+    const wfsWildCard = filterOptions.wildCard ? filterOptions.wildCard : '*';
+    const wfsSingleChar = filterOptions.singleChar
       ? filterOptions.singleChar
       : '.';
-    const wfs_escapeChar = filterOptions.escapeChar
+    const wfsEscapeChar = filterOptions.escapeChar
       ? filterOptions.escapeChar
       : '!';
 
-    const wfs_lowerBoundary = filterOptions.lowerBoundary;
-    const wfs_upperBoundary = filterOptions.upperBoundary;
+    const wfsLowerBoundary = filterOptions.lowerBoundary;
+    const wfsUpperBoundary = filterOptions.upperBoundary;
 
-    const wfs_geometryName = filterOptions.geometryName;
-    const wfs_extent = filterOptions.extent;
-    const wfs_wkt_geometry = filterOptions.wkt_geometry;
-    const wfs_srsName = filterOptions.srsName
+    const wfsGeometryName = filterOptions.geometryName;
+    const wfsExtent = filterOptions.extent;
+    const wfsWktGeometry = filterOptions.wkt_geometry;
+    const wfsSrsName = filterOptions.srsName
       ? filterOptions.srsName
       : 'EPSG:3857';
 
-    const wfs_begin = filterOptions.begin;
-    const wfs_end = filterOptions.end;
+    const wfsBegin = filterOptions.begin;
+    const wfsEnd = filterOptions.end;
 
-    const wfs_expression = filterOptions.expression;
+    const wfsExpression = filterOptions.expression;
 
     let geometry: olGeometry;
-    if (wfs_wkt_geometry) {
+    if (wfsWktGeometry) {
       const wkt = new olFormatWKT();
-      geometry = wkt.readGeometry(wfs_wkt_geometry, {
-        dataProjection: wfs_srsName,
+      geometry = wkt.readGeometry(wfsWktGeometry, {
+        dataProjection: wfsSrsName,
         featureProjection: 'EPSG:3857'
       });
     }
 
     switch (operator) {
       case 'BBOX':
-        return olfilter.bbox(wfs_geometryName, wfs_extent, wfs_srsName);
+        return olfilter.bbox(wfsGeometryName, wfsExtent, wfsSrsName);
       case 'PropertyIsBetween':
         return olfilter.between(
-          wfs_propertyName,
-          wfs_lowerBoundary,
-          wfs_upperBoundary
+          wfsPropertyName,
+          wfsLowerBoundary,
+          wfsUpperBoundary
         );
       case 'Contains':
-        return olfilter.contains(wfs_geometryName, geometry, wfs_srsName);
+        return olfilter.contains(wfsGeometryName, geometry, wfsSrsName);
       case 'During':
-        return olfilter.during(wfs_propertyName, wfs_begin, wfs_end);
+        return olfilter.during(wfsPropertyName, wfsBegin, wfsEnd);
       case 'PropertyIsEqualTo':
         return olfilter.equalTo(
-          wfs_propertyName,
-          wfs_expression,
-          wfs_matchCase
+          wfsPropertyName,
+          wfsExpression,
+          wfsMatchCase
         );
       case 'PropertyIsGreaterThan':
-        return olfilter.greaterThan(wfs_propertyName, wfs_expression);
+        return olfilter.greaterThan(wfsPropertyName, wfsExpression);
       case 'PropertyIsGreaterThanOrEqualTo':
-        return olfilter.greaterThanOrEqualTo(wfs_propertyName, wfs_expression);
+        return olfilter.greaterThanOrEqualTo(wfsPropertyName, wfsExpression);
       case 'Intersects':
-        return olfilter.intersects(wfs_geometryName, geometry, wfs_srsName);
+        return olfilter.intersects(wfsGeometryName, geometry, wfsSrsName);
       case 'PropertyIsNull':
-        return olfilter.isNull(wfs_propertyName);
+        return olfilter.isNull(wfsPropertyName);
       case 'PropertyIsLessThan':
-        return olfilter.lessThan(wfs_propertyName, wfs_expression);
+        return olfilter.lessThan(wfsPropertyName, wfsExpression);
       case 'PropertyIsLessThanOrEqualTo':
-        return olfilter.lessThanOrEqualTo(wfs_propertyName, wfs_expression);
+        return olfilter.lessThanOrEqualTo(wfsPropertyName, wfsExpression);
       case 'PropertyIsLike':
         return olfilter.like(
-          wfs_propertyName,
-          wfs_pattern.replace(/[()_]/gi, wfs_singleChar),
-          wfs_wildCard,
-          wfs_singleChar,
-          wfs_escapeChar,
-          wfs_matchCase
+          wfsPropertyName,
+          wfsPattern.replace(/[()_]/gi, wfsSingleChar),
+          wfsWildCard,
+          wfsSingleChar,
+          wfsEscapeChar,
+          wfsMatchCase
         );
       case 'PropertyIsNotEqualTo':
         return olfilter.notEqualTo(
-          wfs_propertyName,
-          wfs_expression,
-          wfs_matchCase
+          wfsPropertyName,
+          wfsExpression,
+          wfsMatchCase
         );
       case 'Within':
-        return olfilter.within(wfs_geometryName, geometry, wfs_srsName);
+        return olfilter.within(wfsGeometryName, geometry, wfsSrsName);
       // LOGICAL
       case 'And':
-        return olfilter.and.apply(null, logical_array);
+        return olfilter.and.apply(null, logicalArray);
       case 'Or':
-        return olfilter.or.apply(null, logical_array);
+        return olfilter.or.apply(null, logicalArray);
       case 'Not':
-        return olfilter.not.apply(null, logical_array);
+        return olfilter.not.apply(null, logicalArray);
 
       default:
         return undefined;
@@ -281,9 +281,9 @@ export class OgcFilterWriter {
     return Object.assign(
       f,
       {
-        parentLogical: parentLogical,
-        level: level,
-        geometryName: geometryName
+        parentLogical,
+        level,
+        geometryName
       },
       igoOgcFilterObject
     );
@@ -294,14 +294,14 @@ export class OgcFilterWriter {
     fieldNameGeometry,
     active = false
   ) {
-    const filter_array = [];
+    const filterArray = [];
     if (filterObject instanceof Array) {
       filterObject.forEach(element => {
-        filter_array.push(
+        filterArray.push(
           this.checkIgoFiltersProperties(element, fieldNameGeometry, active)
         );
       });
-      return filter_array;
+      return filterArray;
     } else {
       if (filterObject.hasOwnProperty('logical')) {
         return Object.assign(
@@ -340,7 +340,7 @@ export class OgcFilterWriter {
     return Object.assign(
       {},
       {
-        filterid: filterid,
+        filterid,
         active: status,
         igoSpatialSelector: 'fixedExtent'
       },

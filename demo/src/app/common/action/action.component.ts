@@ -16,7 +16,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
 
   public store = new ActionStore([]);
 
-  private added: boolean = false;
+  private added = false;
 
   get actionbarMode(): ActionbarMode {
     const media = this.mediaService.media$.value;

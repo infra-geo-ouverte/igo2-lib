@@ -80,7 +80,6 @@ export class LayerListComponent implements AfterViewInit {
   }
   private _floatLabel: FloatLabelType = 'auto';
 
-
   @Input()
   get color() {
     return this._color;
@@ -194,8 +193,8 @@ export class LayerListComponent implements AfterViewInit {
 
       localLayers.forEach(layer => {
         const localLayerKeywords = [];
-        if (layer.options && layer.options['metadata'] && layer.options['metadata'].keywordList ) {
-          layer.options['metadata'].keywordList.forEach(kw => {
+        if (layer.options && (layer.options as any).metadata && (layer.options as any).metadata.keywordList ) {
+          (layer.options as any).metadata.keywordList.forEach(kw => {
             localLayerKeywords.push(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
           });
         }
@@ -215,15 +214,15 @@ export class LayerListComponent implements AfterViewInit {
         }
         if (this.layerListService.onlyVisible && layer.visible === false) {
           const index = layerIDToKeep.indexOf(layer.id);
-            if (index > -1) {
-              layerIDToKeep.splice(index, 1);
-            }
+          if (index > -1) {
+            layerIDToKeep.splice(index, 1);
+          }
         }
         if (this.layerListService.onlyInRange && layer.isInResolutionsRange === false) {
           const index = layerIDToKeep.indexOf(layer.id);
-            if (index > -1) {
-              layerIDToKeep.splice(index, 1);
-            }
+          if (index > -1) {
+            layerIDToKeep.splice(index, 1);
+          }
         }
       });
       return localLayers
@@ -236,7 +235,6 @@ export class LayerListComponent implements AfterViewInit {
     }
 
   }
-
 
   private sortLayers(layers: Layer[], type: 'id'|'title') {
     if (type === 'id') {
@@ -253,7 +251,7 @@ export class LayerListComponent implements AfterViewInit {
   }
 
   private sortLayersByTitle(layers: Layer[]) {
-    return layers.sort(function (a, b) {
+    return layers.sort((a, b) => {
       if (a.title < b.title) {
         return -1;
       }

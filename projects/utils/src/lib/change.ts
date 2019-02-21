@@ -46,7 +46,7 @@ export class ChangeUtils {
         items.modified.push({
           change: {
             type: ChangeType.MODIFIED,
-            keysChanged: keysChanged
+            keysChanged
           },
           value: fromItemClone,
           oldValue: fromItem,

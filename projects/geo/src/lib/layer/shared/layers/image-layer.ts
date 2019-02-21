@@ -31,9 +31,8 @@ export class ImageLayer extends Layer {
     const image = new olLayerImage(olOptions);
     const token = this.options.token;
     if (token) {
-      const self = this;
-      (image.getSource() as any).setImageLoadFunction(function(tile, src) {
-        self.customLoader(tile, src, token);
+      (image.getSource() as any).setImageLoadFunction((tile, src) => {
+        this.customLoader(tile, src, token);
       });
     }
 

@@ -48,7 +48,10 @@ export class OverlayDirective implements OnInit, OnDestroy {
 
     const extent = olextent.createEmpty();
 
-    let featureExtent, geometry, featureFlatCoordinates, featureZoomLevelTrigger;
+    let featureExtent;
+    let geometry;
+    let featureFlatCoordinates;
+    let featureZoomLevelTrigger;
     features.forEach((feature: Feature) => {
       const olFeature = this.format.readFeature(feature, {
         dataProjection: feature.projection,

@@ -7,7 +7,6 @@ import { RouteService } from '@igo2/core';
 import {
   IgoMap,
   MapBrowserComponent,
-  DataSourceService,
   LayerService,
   LayerOptions
 } from '@igo2/geo';
@@ -100,15 +99,15 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private getLayerParamVisibilityUrl(id, layer) {
     const params = this.queryParams;
-    const current_context = this.contextService.context$.value['uri'];
-    const current_layerid: string = id;
+    const currentContext = this.contextService.context$.value.uri;
+    const currentLayerid: string = id;
 
-    if (!params || !current_layerid) {
+    if (!params || !currentLayerid) {
       return;
     }
 
     const contextParams = params[this.route.options.contextKey as string];
-    if (contextParams === current_context || !contextParams) {
+    if (contextParams === currentContext || !contextParams) {
       let visibleOnLayersParams = '';
       let visibleOffLayersParams = '';
       let visiblelayers: string[] = [];
@@ -141,10 +140,10 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       // After, managing named layer by id (context.json OR id from datasource)
       visiblelayers = visibleOnLayersParams.split(',');
       invisiblelayers = visibleOffLayersParams.split(',');
-      if (visiblelayers.indexOf(current_layerid) > -1) {
+      if (visiblelayers.indexOf(currentLayerid) > -1) {
         layer.visible = true;
       }
-      if (invisiblelayers.indexOf(current_layerid) > -1) {
+      if (invisiblelayers.indexOf(currentLayerid) > -1) {
         layer.visible = false;
       }
     }

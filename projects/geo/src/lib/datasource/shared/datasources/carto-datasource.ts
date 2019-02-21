@@ -32,7 +32,7 @@ export class CartoDataSource extends DataSource {
       : 'Anonymous';
     const sourceOptions = Object.assign(
       {
-        crossOrigin: crossOrigin
+        crossOrigin
       },
       this.options
     );
@@ -51,14 +51,14 @@ export class CartoDataSource extends DataSource {
     let htmlString = '<table>';
     if (this.options.config.layers[0].legend != null) {
       this.options.config.layers[0].legend.items.forEach(f => {
-        if (f['visible'] === true) {
+        if (f.visible === true) {
           htmlString +=
             '<tr><td>' +
             '<p><font size="5" color="' +
-            f['value'] +
+            f.value +
             '"> &#9679</font></p></td>' +
             '<td>' +
-            f['name'] +
+            f.name +
             '</td></tr>';
         }
       });
@@ -75,9 +75,9 @@ export class CartoDataSource extends DataSource {
         'building-fill:',
         'line-color:'
       ];
-      for (let i = 0; i < types.length; i++) {
-        if (layerOptions.cartocss.includes(types[i])) {
-          const type = layerOptions.cartocss.split(types[i]).pop();
+      for (const oneType of types) {
+        if (layerOptions.cartocss.includes(oneType)) {
+          const type = layerOptions.cartocss.split(oneType).pop();
           const color = type.substr(0, type.indexOf(';'));
           if (color.includes('ramp')) {
             const colors = color.split(', (')[1].split(',');

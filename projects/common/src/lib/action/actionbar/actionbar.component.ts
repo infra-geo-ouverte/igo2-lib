@@ -67,37 +67,37 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Whether a toggle button should be displayed (Dock mode)
    */
-  @Input() withToggleButton: boolean = false;
+  @Input() withToggleButton = false;
 
   /**
    * Whether a the actionbar should display buttons horizontally
    */
-  @Input() horizontal: boolean = false;
+  @Input() horizontal = false;
 
   /**
    * Color
    */
-  @Input() color: string = 'default';
+  @Input() color = 'default';
 
   /**
    * Whether action titles are displayed
    */
-  @Input() withTitle: boolean = true;
+  @Input() withTitle = true;
 
   /**
    * Whether action icons are displayed
    */
-  @Input() withIcon: boolean = true;
+  @Input() withIcon = true;
 
   /**
    * Overlay X position
    */
-  @Input() xPosition: string = 'before';
+  @Input() xPosition = 'before';
 
   /**
    * Overlay X position
    */
-  @Input() yPosition: string = 'above';
+  @Input() yPosition = 'above';
 
   /**
    * Class to add to the actionbar overlay

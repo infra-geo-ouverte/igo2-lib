@@ -24,7 +24,7 @@ export class AppSalutationWidgetComponent implements OnUpdateInputs, WidgetCompo
 
   @Output() complete = new EventEmitter<string>();
 
-  @Output() cancel = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<string>();
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

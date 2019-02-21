@@ -14,7 +14,6 @@ import {
 import { SearchSource } from './search-source';
 import { SearchSourceOptions, PropertiesAlias } from './search-source.interface';
 
-
 @Injectable()
 export class ReseauTransportsQuebecSearchSource extends SearchSource {
   get enabled(): boolean {
@@ -81,9 +80,9 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     let chainage = '';
     if (term.length === 0) { return of([]); }
     if (term.search(/\+/gi) !== -1) {
-      const split_term = term.split(/\+/gi);
-      term = split_term[0];
-      chainage = split_term[1];
+      const splitTerm = term.split(/\+/gi);
+      term = splitTerm[0];
+      chainage = splitTerm[1];
     }
 
     let searchTerm: any = term;
@@ -91,17 +90,17 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       searchTerm = parseInt(term, 10);
     }
 
-    let repere_filterParams;
+    let repereFilterParams;
     // tslint:disable-next-line:max-line-length
-    const simple_filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
+    const simpleFilterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsEqualTo></Filter>'}`;
     // tslint:disable-next-line:max-line-length
-    const rtss_filterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + this.leftPad0(searchTerm, 14) + '</Literal></PropertyIsEqualTo></Filter>'}`;
+    const rtssFilterParams = `FILTER=${'FILTER=<Filter xmlns="http://www.opengis.net/ogc"><PropertyIsEqualTo matchCase="false"><PropertyName>recherche</PropertyName><Literal>' + this.leftPad0(searchTerm, 14) + '</Literal></PropertyIsEqualTo></Filter>'}`;
     // tslint:disable-next-line:max-line-length
-    const chainage_filterParams = `rtss=${this.leftPad0(searchTerm, 14).toUpperCase()}&chainage=${Number(chainage)}`;
+    const chainageFilterParams = `rtss=${this.leftPad0(searchTerm, 14).toUpperCase()}&chainage=${Number(chainage)}`;
     // tslint:disable-next-line:max-line-length
-    repere_filterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><And><PropertyIsEqualTo matchCase="false"><PropertyName>norte</PropertyName><Literal>' + this.leftPad0(searchTerm, 5) + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>affichkm</PropertyName><Literal>km ' + chainage.replace('.', ',') + '</Literal></PropertyIsLike></And></Filter>'}`;
+    repereFilterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><And><PropertyIsEqualTo matchCase="false"><PropertyName>norte</PropertyName><Literal>' + this.leftPad0(searchTerm, 5) + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>affichkm</PropertyName><Literal>km ' + chainage.replace('.', ',') + '</Literal></PropertyIsLike></And></Filter>'}`;
     // tslint:disable-next-line:max-line-length
-    const sorties_filterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><Or><PropertyIsEqualTo matchCase="false"><PropertyName>rtssbret</PropertyName><Literal>' + this.leftPad0(searchTerm, 14).toUpperCase() + '</Literal></PropertyIsEqualTo><PropertyIsEqualTo matchCase="false"><PropertyName>rtssrte</PropertyName><Literal>' + this.leftPad0(searchTerm, 14).toUpperCase() + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>nosortie</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsLike></Or></Filter>'}`;
+    const sortiesFilterParams = `FILTER=${'<Filter xmlns="http://www.opengis.net/ogc"><Or><PropertyIsEqualTo matchCase="false"><PropertyName>rtssbret</PropertyName><Literal>' + this.leftPad0(searchTerm, 14).toUpperCase() + '</Literal></PropertyIsEqualTo><PropertyIsEqualTo matchCase="false"><PropertyName>rtssrte</PropertyName><Literal>' + this.leftPad0(searchTerm, 14).toUpperCase() + '</Literal></PropertyIsEqualTo><PropertyIsLike wildCard="*" singleChar="." escapeChar="!" matchCase="false"><PropertyName>nosortie</PropertyName><Literal>' + searchTerm + '</Literal></PropertyIsLike></Or></Filter>'}`;
 
     const callParams = ['REQUEST=GetFeature',
       'SERVICE=WFS',
@@ -113,46 +112,46 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
 
     const emptyCall = of({ features: [] });
 
-    let a_num_route_call;
-    let b_num_tronc_call;
-    let c_num_sectn_call;
-    let d_num_rts_call;
-    let e_rtss_c_call;
-    let repere_km_call;
-    let sorties_call;
+    let aNumRouteCall;
+    let bNumTroncCall;
+    let cNumSectnCall;
+    let dNumRtsCall;
+    let eRtssCCall;
+    let repereKmCall;
+    let sortiesCall;
 
     if (chainage === '') {
 
-      a_num_route_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=a_num_route&${simple_filterParams}`);
-      b_num_tronc_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=b_num_tronc&${simple_filterParams}`);
-      c_num_sectn_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=c_num_sectn&${simple_filterParams}`);
-      d_num_rts_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=d_num_rts&${rtss_filterParams}`);
-      e_rtss_c_call = emptyCall;
-      repere_km_call = emptyCall;
-      sorties_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit * 3}&TYPENAMES=sortie_aut&${sorties_filterParams}`);
+      aNumRouteCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=a_num_route&${simpleFilterParams}`);
+      bNumTroncCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=b_num_tronc&${simpleFilterParams}`);
+      cNumSectnCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=c_num_sectn&${simpleFilterParams}`);
+      dNumRtsCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=d_num_rts&${rtssFilterParams}`);
+      eRtssCCall = emptyCall;
+      repereKmCall = emptyCall;
+      sortiesCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit * 3}&TYPENAMES=sortie_aut&${sortiesFilterParams}`);
     } else {
-      a_num_route_call = emptyCall;
-      b_num_tronc_call = emptyCall;
-      c_num_sectn_call = emptyCall;
-      d_num_rts_call = emptyCall;
-      e_rtss_c_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=e_rtss_c&${chainage_filterParams}`);
-      repere_km_call = this.http.get(
-        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit * 3}&TYPENAMES=repere_km&${repere_filterParams}`);
-      sorties_call = emptyCall;
+      aNumRouteCall = emptyCall;
+      bNumTroncCall = emptyCall;
+      cNumSectnCall = emptyCall;
+      dNumRtsCall = emptyCall;
+      eRtssCCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit}&TYPENAMES=e_rtss_c&${chainageFilterParams}`);
+      repereKmCall = this.http.get(
+        `${this.searchUrl}?${callParams}&COUNT=${this.searchlimit * 3}&TYPENAMES=repere_km&${repereFilterParams}`);
+      sortiesCall = emptyCall;
     }
-    let call_array;
-    call_array = [
-      a_num_route_call, b_num_tronc_call,
-      c_num_sectn_call, d_num_rts_call,
-      sorties_call, e_rtss_c_call, repere_km_call];
+    let callArray;
+    callArray = [
+      aNumRouteCall, bNumTroncCall,
+      cNumSectnCall, dNumRtsCall,
+      sortiesCall, eRtssCCall, repereKmCall];
 
-    const source = forkJoin(call_array)
+    const source = forkJoin(callArray)
       .pipe(map(responses => {
         return this.extractSearchData(responses[0])
           .concat(this.extractSearchData(responses[1]))
@@ -165,7 +164,6 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       }));
     return source;
   }
-
 
   locate(coordinate?: [number, number]): Observable<Feature[]> {
 
@@ -186,16 +184,15 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       'bbox=' + lat1 + ',' + long1 + ',' + lat2 + ',' + long2 + ',EPSG:4326',
       `TYPENAMES=`].join('&');
 
-    const a_num_route_call = this.http.get(
+    const aNumRouteCall = this.http.get(
       `${this.locateUrl}?${callParams}a_num_route`);
-    const repere_km_call = this.http.get(
+    const repereKmCall = this.http.get(
       `${this.searchUrl}?${callParams}repere_km`);
-    const sorties_call = this.http.get(
+    const sortiesCall = this.http.get(
       `${this.searchUrl}?${callParams}sortie_aut`);
 
-
-    const call_array = [a_num_route_call, sorties_call, repere_km_call];
-    const locateSource = forkJoin(call_array)
+    const callArray = [aNumRouteCall, sortiesCall, repereKmCall];
+    const locateSource = forkJoin(callArray)
       .pipe(map(responses => {
         return this.extractSearchData(responses[0])
           .concat(this.extractSearchData(responses[1]))
@@ -219,23 +216,23 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
     );
 
     let icon = 'timeline';
-    let title_html;
+    let titleHtml;
 
     if (properties.hasOwnProperty('title')) {
-      title_html = properties.title;
+      titleHtml = properties.title;
     }
     if (properties.hasOwnProperty('etiquette')) {
-      title_html = properties.etiquette;
+      titleHtml = properties.etiquette;
     }
 
     if (properties.hasOwnProperty('norte') && properties.hasOwnProperty('affichkm')) {
       properties.title = '# ' + Number(properties.norte) + '+ ' + properties.affichkm;
-      title_html = '# ' + Number(properties.norte) + '+ ' + properties.affichkm;
+      titleHtml = '# ' + Number(properties.norte) + '+ ' + properties.affichkm;
 
     }
     if (properties.hasOwnProperty('messagpan') && properties.hasOwnProperty('nosortie')) {
       properties.title = `Sortie #${properties.nosortie}`;
-      title_html =
+      titleHtml =
         `Sortie #${properties.nosortie} ${properties.direction}`;
       properties.noroute = Number(properties.noroute);
     }
@@ -265,7 +262,6 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       }
     });
 
-    const id = properties.id;
     delete properties.id;
     delete properties.recherche;
     delete properties.type;
@@ -277,12 +273,12 @@ export class ReseauTransportsQuebecSearchSource extends SearchSource {
       source: ReseauTransportsQuebecSearchSource._name,
       sourceType: SourceFeatureType.Search,
       order: 1,
-      zoomMaxOnSelect: zoomMaxOnSelect,
+      zoomMaxOnSelect,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: properties.title,
-      title_html: title_html,
-      icon: icon,
+      titleHtml,
+      icon,
       projection: 'EPSG:4326',
       properties: shownProperties,
       geometry: result.geometry,

@@ -23,7 +23,7 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Whether this view has been lifted
    */
-  private lifted: boolean = false;
+  private lifted = false;
 
   /**
    * Join clauses

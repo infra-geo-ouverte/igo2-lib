@@ -29,13 +29,13 @@ export class FeatureListComponent {
   private _features: Feature[] = [];
 
   @Input()
-  get groupFeatures(): Boolean {
+  get groupFeatures(): boolean {
     return this._groupFeatures;
   }
-  set groupFeatures(value: Boolean) {
+  set groupFeatures(value: boolean) {
     this._groupFeatures = value;
   }
-  private _groupFeatures: Boolean = true;
+  private _groupFeatures = true;
 
   @Input()
   get display() {

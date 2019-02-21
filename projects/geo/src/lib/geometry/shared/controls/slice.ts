@@ -161,7 +161,7 @@ export class SliceControl {
    * Clear the draw source and track the geometry being draw
    * @param olGeometry Ol linestring or polygon
    */
-  private onDrawLineEnd(olLine:  OlLineString) {
+  private onDrawLineEnd(olLine: OlLineString) {
     const olFeatures = this.olOverlaySource.getFeatures();
     if (olFeatures.length === 0) {
       return;

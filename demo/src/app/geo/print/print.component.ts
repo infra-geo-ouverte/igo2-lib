@@ -67,7 +67,7 @@ export class AppPrintComponent {
       })
       .subscribe(l => this.map.addLayer(l));
 
-      this.layerService
+    this.layerService
         .createAsyncLayer({
           title: 'Geomet',
           sourceOptions: {

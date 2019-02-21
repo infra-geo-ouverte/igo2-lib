@@ -160,7 +160,7 @@ export class ContextService {
   addToolAssociation(contextId: string, toolId: string): Observable<void> {
     const url = `${this.baseUrl}/contexts/${contextId}/tools`;
     const association = {
-      toolId: toolId
+      toolId
     };
     return this.http.post<void>(url, JSON.stringify(association));
   }
@@ -182,7 +182,7 @@ export class ContextService {
   ): Observable<ContextPermission[]> {
     const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
     const association = {
-      profil: profil,
+      profil,
       typePermission: type
     };
     return this.http.post<ContextPermission[]>(

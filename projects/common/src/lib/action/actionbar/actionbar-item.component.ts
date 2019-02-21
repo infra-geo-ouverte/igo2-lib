@@ -27,22 +27,22 @@ export class ActionbarItemComponent {
   /**
    * Color
    */
-  @Input() color: string = 'default';
+  @Input() color = 'default';
 
   /**
    * Whether the action title is displayed
    */
-  @Input() withTitle: boolean = true;
+  @Input() withTitle = true;
 
   /**
    * Whether the action icon is displayed
    */
-  @Input() withIcon: boolean = true;
+  @Input() withIcon = true;
 
   /**
    * Whether the action is disabled
    */
-  @Input() disabled: boolean = false;
+  @Input() disabled = false;
 
   /**
    * Event emitted when the action button is clicked

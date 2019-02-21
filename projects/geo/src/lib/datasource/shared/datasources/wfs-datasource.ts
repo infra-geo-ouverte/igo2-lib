@@ -92,7 +92,7 @@ export class WFSDataSource extends DataSource {
       format: this.getFormatFromOptions(),
       overlaps: false,
       url: (extent, resolution, proj) => {
-          const srsname = this.options.paramsWFS.srsName
+        const srsname = this.options.paramsWFS.srsName
           ? 'srsname=' + this.options.paramsWFS.srsName
           : 'srsname=' + proj.getCode();
 
@@ -103,12 +103,12 @@ export class WFSDataSource extends DataSource {
         ) {
           filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
         }
-          this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
-            filters,
-            extent,
-            proj,
-            this.options.paramsWFS.fieldNameGeometry
-          );
+        this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
+          filters,
+          extent,
+          proj,
+          this.options.paramsWFS.fieldNameGeometry
+        );
 
         let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;

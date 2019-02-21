@@ -17,7 +17,6 @@ import { IgoKeyValueModule } from '@igo2/common';
 import { PrintComponent } from './print/print.component';
 import { PrintBindingDirective } from './print/print-binding.directive';
 import { PrintFormComponent } from './print-form/print-form.component';
-import { PrintService } from './shared/print.service';
 
 @NgModule({
   imports: [

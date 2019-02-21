@@ -79,7 +79,7 @@ export class OsrmRoutingSource extends RoutingSource {
       format: RoutingFormat.GeoJSON,
       icon: 'directions',
       projection: 'EPSG:4326',
-      waypoints: waypoints,
+      waypoints,
       distance: roadNetworkRoute.distance,
       duration: roadNetworkRoute.duration,
       geometry: roadNetworkRoute.geometry,

@@ -99,7 +99,7 @@ export class NominatimSearchSource extends SearchSource {
       source: NominatimSearchSource._name,
       sourceType: resultType,
       order: 0,
-      zoomMaxOnSelect: zoomMaxOnSelect,
+      zoomMaxOnSelect,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.display_name,

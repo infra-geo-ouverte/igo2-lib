@@ -26,7 +26,7 @@ export class EntityTableRowDirective {
   /**
    * Whether a row supports selection
    */
-  @Input() selection: boolean = false;
+  @Input() selection = false;
 
   /**
    * Whether a row is selected

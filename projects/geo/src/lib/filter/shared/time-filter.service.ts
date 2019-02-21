@@ -14,35 +14,35 @@ export class TimeFilterService {
   ) {
     let time;
     let newdateform;
-    let newdateform_start;
-    let newdateform_end;
+    let newdateformStart;
+    let newdateformEnd;
 
     if (Array.isArray(date)) {
       const dates = [];
       if (date[0]) {
-        newdateform_start = this.reformatDateTime(date[0]);
+        newdateformStart = this.reformatDateTime(date[0]);
         dates.push(date[0]);
       }
       if (date[1]) {
-        newdateform_end = this.reformatDateTime(date[1]);
+        newdateformEnd = this.reformatDateTime(date[1]);
         dates.push(date[1]);
       }
-      if (dates.length === 2 && newdateform_start !== newdateform_end) {
+      if (dates.length === 2 && newdateformStart !== newdateformEnd) {
         if (datasource instanceof TileArcGISRestDataSource) {
-          time = newdateform_start + ',' + newdateform_end;
+          time = newdateformStart + ',' + newdateformEnd;
         } else {
-          time = newdateform_start + '/' + newdateform_end;
+          time = newdateformStart + '/' + newdateformEnd;
         }
       }
-      if (newdateform_start === newdateform_end) {
-        time = newdateform_start;
+      if (newdateformStart === newdateformEnd) {
+        time = newdateformStart;
       }
     } else if (date) {
       newdateform = this.reformatDateTime(date);
       time = newdateform;
     }
 
-    const params = { time: time };
+    const params = { time };
     datasource.ol.updateParams(params);
   }
 
@@ -51,34 +51,34 @@ export class TimeFilterService {
     year: string | [string, string]
   ) {
     let time;
-    let newdateform_start;
-    let newdateform_end;
+    let newdateformStart;
+    let newdateformEnd;
 
     if (Array.isArray(year)) {
       const years = [];
       if (year[0]) {
-        newdateform_start = year[0];
+        newdateformStart = year[0];
         years.push(year[0]);
       }
       if (year[1]) {
-        newdateform_end = year[1];
+        newdateformEnd = year[1];
         years.push(year[1]);
       }
-      if (years.length === 2 && newdateform_start !== newdateform_end) {
+      if (years.length === 2 && newdateformStart !== newdateformEnd) {
         if (datasource instanceof TileArcGISRestDataSource) {
-          time = newdateform_start + ',' + newdateform_end;
+          time = newdateformStart + ',' + newdateformEnd;
         } else {
-          time = newdateform_start + '/' + newdateform_end;
+          time = newdateformStart + '/' + newdateformEnd;
         }
       }
-      if (newdateform_start === newdateform_end) {
-        time = newdateform_start;
+      if (newdateformStart === newdateformEnd) {
+        time = newdateformStart;
       }
     } else if (year) {
       time = year;
     }
 
-    const params = { time: time };
+    const params = { time };
     datasource.ol.updateParams(params);
   }
 

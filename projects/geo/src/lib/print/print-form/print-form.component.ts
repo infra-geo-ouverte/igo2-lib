@@ -136,46 +136,45 @@ export class PrintFormComponent {
     this.doZipFileField.setValue(value, { onlySelf: true });
   }
 
-
   get outputFormatField() {
-    return <FormControl>this.form.controls['outputFormat'];
+    return (this.form.controls as any).outputFormat as FormControl;
   }
 
   get paperFormatField() {
-    return <FormControl>this.form.controls['paperFormat'];
+    return (this.form.controls as any).paperFormat as FormControl;
   }
 
   get imageFormatField() {
-    return <FormControl>this.form.controls['imageFormat'];
+    return (this.form.controls as any).imageFormat as FormControl;
   }
 
   get orientationField() {
-    return <FormControl>this.form.controls['orientation'];
+    return (this.form.controls as any).orientation as FormControl;
   }
 
   get resolutionField() {
-    return <FormControl>this.form.controls['resolution'];
+    return (this.form.controls as any).resolution as FormControl;
   }
 
   get commentField() {
-    return <FormControl>this.form.controls['comment'];
+    return (this.form.controls as any).comment as FormControl;
   }
   get showProjectionField() {
-    return <FormControl>this.form.controls['showProjection'];
+    return (this.form.controls as any).showProjection as FormControl;
   }
   get showScaleField() {
-    return <FormControl>this.form.controls['showScale'];
+    return (this.form.controls as any).showScale as FormControl;
   }
   get showLegendField() {
-    return <FormControl>this.form.controls['showLegend'];
+    return (this.form.controls as any).showLegend as FormControl;
   }
 
   get doZipFileField() {
-    return <FormControl>this.form.controls['doZipFile'];
+    return (this.form.controls as any).doZipFile as FormControl;
   }
 
   get titleField() {
-    return <FormControl>this.form.controls['title'];
+    return (this.form.controls as any).title as FormControl;
   }
 
   @Output() submit: EventEmitter<PrintOptions> = new EventEmitter();
@@ -198,7 +197,7 @@ export class PrintFormComponent {
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {
     this.submitted = true;
-    data['isPrintService'] = this.isPrintService;
+    data.isPrintService = this.isPrintService;
     if (isValid) {
       this.submit.emit(data);
     }

@@ -38,12 +38,12 @@ export class DownloadService {
       ) {
         let wfsOptions;
         if (
-          layer.dataSource.options['paramsWFS'] &&
-          Object.keys(layer.dataSource.options['paramsWFS']).length > 0
+          (layer.dataSource.options as any).paramsWFS &&
+          Object.keys((layer.dataSource.options as any).paramsWFS).length > 0
         ) {
-          wfsOptions = layer.dataSource.options['paramsWFS'];
+          wfsOptions = (layer.dataSource.options as any).paramsWFS;
         } else {
-          wfsOptions = layer.dataSource.options['params'];
+          wfsOptions = (layer.dataSource.options as any).params;
         }
 
         const outputFormatDownload =
@@ -57,7 +57,7 @@ export class DownloadService {
           .replace(/&?bbox=[^&]*/gi, '');
 
         const rebuildFilter = this.ogcFilterWriter.buildFilter(
-          layer.dataSource.options['ogcFilters']['filters'],
+          (layer.dataSource.options as any).ogcFilters.filters,
           layer.map.getExtent(),
           new olProjection({ code: layer.map.projection }),
           wfsOptions.fieldNameGeometry

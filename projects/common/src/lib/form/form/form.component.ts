@@ -50,7 +50,6 @@ export class FormComponent implements OnChanges {
 
   /**
    * Is the entity or the template change, recreate the form or repopulate it.
-   * @param changes
    * @internal
    */
   ngOnChanges(changes: SimpleChanges) {

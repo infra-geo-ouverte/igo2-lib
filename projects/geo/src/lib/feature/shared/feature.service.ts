@@ -22,7 +22,7 @@ export class FeatureService {
     source?: string,
     sourcesToKeep?: string[]
   ) {
-    const features_ = this.features$.value
+    const _features = this.features$.value
       .filter(feature => {
         return (
           feature.source !== source &&
@@ -32,7 +32,7 @@ export class FeatureService {
       .concat(features)
       .sort(this.sortFeatures);
 
-    this.features$.next(features_);
+    this.features$.next(_features);
   }
 
   clear() {

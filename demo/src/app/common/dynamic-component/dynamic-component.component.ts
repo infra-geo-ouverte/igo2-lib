@@ -2,7 +2,6 @@ import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@a
 
 import { OnUpdateInputs } from '@igo2/common';
 
-
 @Component({
   selector: 'app-salutation-component',
   template: '<p>Hello, my name is {{name}}.</p>',

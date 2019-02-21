@@ -33,7 +33,7 @@ export class MessageService {
     message.options = message.options || {};
     message = this.handleTemplate(message);
 
-    let notification;
+    let notification: Notification;
     if (message.text) {
       notification = this.notificationService.create(
         message.title,
@@ -66,45 +66,45 @@ export class MessageService {
 
   success(text: string, title?: string, options: any = {}) {
     return this.message({
-      text: text,
-      title: title,
+      text,
+      title,
       icon: options.icon || 'check',
-      options: options,
+      options,
       type: MessageType.SUCCESS
     });
   }
 
   error(text: string, title?: string, options: any = {}) {
     return this.message({
-      text: text,
-      title: title,
+      text,
+      title,
       icon: options.icon || 'error_outline',
-      options: options,
+      options,
       type: MessageType.ERROR
     });
   }
 
   info(text: string, title?: string, options: any = {}) {
     return this.message({
-      text: text,
-      title: title,
+      text,
+      title,
       icon: options.icon || 'info_outline',
-      options: options,
+      options,
       type: MessageType.INFO
     });
   }
 
   alert(text: string, title?: string, options: any = {}) {
     return this.message({
-      text: text,
-      title: title,
+      text,
+      title,
       icon: options.icon || 'access_alarm',
-      options: options,
+      options,
       type: MessageType.ALERT
     });
   }
 
-  remove(id?) {
+  remove(id?: string) {
     this.notificationService.remove(id);
   }
 

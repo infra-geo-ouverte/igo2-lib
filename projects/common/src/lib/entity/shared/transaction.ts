@@ -42,7 +42,7 @@ export class EntityTransaction {
    * Whether thise store is in commit phase
    */
   get inCommitPhase(): boolean { return this._inCommitPhase; }
-  private _inCommitPhase: boolean = false;
+  private _inCommitPhase = false;
 
   constructor(options: EntityTransactionOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;

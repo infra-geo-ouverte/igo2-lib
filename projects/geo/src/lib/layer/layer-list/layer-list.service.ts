@@ -15,7 +15,6 @@ export class LayerListService {
 
   constructor() {}
 
-
   getKeyword() {
     return this.keyword;
   }

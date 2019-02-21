@@ -70,10 +70,10 @@ export class QueryService {
       layer.options.sourceOptions &&
       layer.options.sourceOptions.sourceFields && layer.options.sourceOptions.sourceFields.length >= 1) {
         allowedFieldsAndAlias = {};
-      layer.options.sourceOptions.sourceFields.forEach(sourceField => {
-        const alias = sourceField.alias ? sourceField.alias : sourceField.name;
-        allowedFieldsAndAlias[sourceField.name] = alias;
-      });
+        layer.options.sourceOptions.sourceFields.forEach(sourceField => {
+          const alias = sourceField.alias ? sourceField.alias : sourceField.name;
+          allowedFieldsAndAlias[sourceField.name] = alias;
+        });
     }
     let features = [];
     switch (queryDataSource.options.queryFormat) {
@@ -164,13 +164,13 @@ export class QueryService {
 
   private extractHtmlData(res, htmlTarget, url) {
     // _blank , modal , innerhtml or undefined
-    const searchParams = this.getQueryParams(url.toLowerCase());
-    const bboxRaw = searchParams['bbox'];
-    const width = parseInt(searchParams['width'], 10);
-    const height = parseInt(searchParams['height'], 10);
-    const xPosition = parseInt(searchParams['i'] || searchParams['x'], 10);
-    const yPosition = parseInt(searchParams['j'] || searchParams['y'], 10);
-    const projection = searchParams['crs'] || searchParams['srs'] || 'EPSG:3857';
+    const searchParams: any = this.getQueryParams(url.toLowerCase());
+    const bboxRaw = searchParams.bbox;
+    const width = parseInt(searchParams.width, 10);
+    const height = parseInt(searchParams.height, 10);
+    const xPosition = parseInt(searchParams.i || searchParams.x, 10);
+    const yPosition = parseInt(searchParams.j || searchParams.y, 10);
+    const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
 
     const bbox = bboxRaw.split(',');
     let threshold =
@@ -255,8 +255,8 @@ export class QueryService {
         format: FeatureFormat.GeoJSON,
         title: undefined,
         icon: iconHtml,
-        projection: projection,
-        properties: { target: targetIgo2, body: res, url: url },
+        projection,
+        properties: { target: targetIgo2, body: res, url },
         geometry: { type: f.getType(), coordinates: f.getCoordinates() }
       }
     ];
@@ -270,7 +270,7 @@ export class QueryService {
     const pairs = queryString[1].split('&');
 
     const result = {};
-    pairs.forEach(function(pair) {
+    pairs.forEach((pair) => {
       pair = pair.split('=');
       result[pair[0]] = decodeURIComponent(pair[1] || '');
     });
@@ -279,12 +279,12 @@ export class QueryService {
 
   private featureToResult(featureOL: olFeature, zIndex: number, allowedFieldsAndAlias?): Feature {
     const featureGeometry = featureOL.getGeometry() as any;
-    const properties = Object.assign({}, featureOL.getProperties());
-    delete properties['geometry'];
-    delete properties['boundedBy'];
-    delete properties['shape'];
-    delete properties['SHAPE'];
-    delete properties['the_geom'];
+    const properties: any = Object.assign({}, featureOL.getProperties());
+    delete properties.geometry;
+    delete properties.boundedBy;
+    delete properties.shape;
+    delete properties.SHAPE;
+    delete properties.the_geom;
 
     let geometry;
     if (featureGeometry !== undefined) {
@@ -304,8 +304,8 @@ export class QueryService {
       title: undefined,
       icon: 'place',
       projection: undefined,
-      properties: properties,
-      geometry: geometry,
+      properties,
+      geometry,
       alias: allowedFieldsAndAlias
     };
   }

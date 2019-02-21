@@ -53,8 +53,8 @@ export class EsriStyleGenerator {
         textAlign: symbol.horizontalAlignment,
         offsetX: EsriStyleGenerator._convertPointToPixel(symbol.xoffset),
         offsetY: EsriStyleGenerator._convertPointToPixel(symbol.yoffset),
-        rotation: rotation,
-        text: text
+        rotation,
+        text
       })
     });
   }
@@ -65,8 +65,8 @@ export class EsriStyleGenerator {
 
     return new olstyle.Style({
       image: new olstyle.Icon({
-        src: src,
-        rotation: rotation
+        src,
+        rotation
       })
     });
   }
@@ -80,8 +80,8 @@ export class EsriStyleGenerator {
       ? EsriStyleGenerator._convertOutline(symbol.outline)
       : undefined;
     return new olstyle.Style({
-      fill: fill,
-      stroke: stroke
+      fill,
+      stroke
     });
   }
   static _convertOutline(outline) {
@@ -100,8 +100,8 @@ export class EsriStyleGenerator {
       color[3] = 0;
     }
     return new olstyle.Stroke({
-      color: color,
-      lineDash: lineDash,
+      color,
+      lineDash,
       width: EsriStyleGenerator._convertPointToPixel(outline.width)
     });
   }
@@ -136,65 +136,65 @@ export class EsriStyleGenerator {
     if (symbol.style === 'esriSMSCircle') {
       return new olstyle.Style({
         image: new olstyle.Circle({
-          radius: radius,
-          fill: fill,
-          stroke: stroke
+          radius,
+          fill,
+          stroke
         })
       });
     } else if (symbol.style === 'esriSMSCross') {
       return new olstyle.Style({
         image: new olstyle.RegularShape({
-          fill: fill,
-          stroke: stroke,
+          fill,
+          stroke,
           points: 4,
-          radius: radius,
+          radius,
           radius2: 0,
           angle: 0,
-          rotation: rotation
+          rotation
         })
       });
     } else if (symbol.style === 'esriSMSDiamond') {
       return new olstyle.Style({
         image: new olstyle.RegularShape({
-          fill: fill,
-          stroke: stroke,
+          fill,
+          stroke,
           points: 4,
-          radius: radius,
-          rotation: rotation
+          radius,
+          rotation
         })
       });
     } else if (symbol.style === 'esriSMSSquare') {
       return new olstyle.Style({
         image: new olstyle.RegularShape({
-          fill: fill,
-          stroke: stroke,
+          fill,
+          stroke,
           points: 4,
-          radius: radius,
+          radius,
           angle: Math.PI / 4,
-          rotation: rotation
+          rotation
         })
       });
     } else if (symbol.style === 'esriSMSX') {
       return new olstyle.Style({
         image: new olstyle.RegularShape({
-          fill: fill,
-          stroke: stroke,
+          fill,
+          stroke,
           points: 4,
-          radius: radius,
+          radius,
           radius2: 0,
           angle: Math.PI / 4,
-          rotation: rotation
+          rotation
         })
       });
     } else if (symbol.style === 'esriSMSTriangle') {
       return new olstyle.Style({
         image: new olstyle.RegularShape({
-          fill: fill,
-          stroke: stroke,
+          fill,
+          stroke,
           points: 3,
-          radius: radius,
+          radius,
           angle: 0,
-          rotation: rotation
+          rotation
         })
       });
     }
@@ -228,7 +228,7 @@ export class EsriStyleGenerator {
       }
       const style = this._converters[symbol.type].call(this, symbol);
       styles.push(
-        (function() {
+        (() => {
           return function(feature, resolution) {
             let visible = true;
             if (this.minResolution !== null && this.maxResolution !== null) {
@@ -247,10 +247,10 @@ export class EsriStyleGenerator {
             }
           };
         })().bind({
-          minResolution: minResolution,
-          maxResolution: maxResolution,
-          field: field,
-          style: style
+          minResolution,
+          maxResolution,
+          field,
+          style
         })
       );
     }
@@ -262,8 +262,8 @@ export class EsriStyleGenerator {
       this,
       renderer.symbol
     );
-    return (function() {
-      return function() {
+    return (() => {
+      return () => {
         return [style];
       };
     })();
@@ -294,10 +294,10 @@ export class EsriStyleGenerator {
       const max = classBreakInfo.classMaxValue;
       const symbol = classBreakInfo.symbol;
       const style = this._converters[symbol.type].call(this, symbol);
-      classes.push({ min: min, max: max, style: style });
+      classes.push({ min, max, style });
     }
-    return (function() {
-      return function(feature) {
+    return (() => {
+      return (feature) => {
         const value = feature.get(field);
         for (let i = 0, ii = classes.length; i < ii; ++i) {
           let condition;
@@ -325,15 +325,15 @@ export class EsriStyleGenerator {
     const field = renderer.field1;
     const infos = renderer.uniqueValueInfos;
     const me = this;
-    return (function() {
+    return (() => {
       const hash = {};
       for (let i = 0, ii = infos.length; i < ii; ++i) {
-        const info = infos[i],
-          symbol = info.symbol;
+        const info = infos[i];
+        const symbol = info.symbol;
         hash[info.value] = [me._converters[symbol.type].call(me, symbol)];
       }
 
-      return function(feature) {
+      return (feature) => {
         const style = hash[feature.get(field)];
         return style ? style : defaultStyle;
       };
@@ -359,8 +359,8 @@ export class EsriStyleGenerator {
     if (styleFunctions.length === 1) {
       return styleFunctions[0];
     } else {
-      return (function() {
-        return function(feature, resolution) {
+      return (() => {
+        return (feature, resolution) => {
           let styles = [];
           for (let i = 0, ii = styleFunctions.length; i < ii; ++i) {
             const result = styleFunctions[i].call(null, feature, resolution);

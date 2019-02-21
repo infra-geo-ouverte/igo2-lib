@@ -18,10 +18,10 @@ import {
   MAT_DATE_LOCALE
 } from '@angular/material';
 
-import {
-  MatDatetimepickerModule,
-  MatNativeDatetimeModule
-} from '@mat-datetimepicker/core';
+// import {
+//   MatDatetimepickerModule,
+//   MatNativeDatetimeModule
+// } from '@mat-datetimepicker/core';
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
@@ -63,8 +63,8 @@ import { OGCFilterService } from './shared/ogc-filter.service';
     MatTooltipModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatDatetimepickerModule,
-    MatNativeDatetimeModule,
+    // MatDatetimepickerModule,
+    // MatNativeDatetimeModule,
     IgoLanguageModule,
     IgoCollapsibleModule,
     IgoListModule,

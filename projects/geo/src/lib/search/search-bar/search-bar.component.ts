@@ -189,7 +189,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       olproj.transform(coordinates, 'EPSG:4326', this.map.projection)
     );
     const extent = geometry.getExtent();
-    const feature = new olFeature({ geometry: geometry });
+    const feature = new olFeature({ geometry });
     feature.setId(this.locateID);
     // TODO: SETTING A NEW COLOR AND TEXT BASED ON PR 166
     // feature.setStyle([this.map.setPointOverlayStyleWithParams('yellow', coordinates)]);

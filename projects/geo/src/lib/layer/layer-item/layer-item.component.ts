@@ -79,8 +79,8 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   get id(): string {
-    return this.layer.dataSource.options['id']
-      ? this.layer.dataSource.options['id']
+    return (this.layer.dataSource.options as any).id
+      ? (this.layer.dataSource.options as any).id
       : this.layer.id;
   }
 

@@ -23,20 +23,21 @@ export class OgcFilterableFormComponent {
     this._map = value;
   }
 
+  // tslint:disable-next-line:ban-types
   @Input() refreshFilters: Function;
 
   get refreshFunc() {
     return this.refreshFilters;
   }
   @Input()
-  get showFeatureOnMap(): Boolean {
+  get showFeatureOnMap(): boolean {
     return this._showFeatureOnMap;
   }
-  set showFeatureOnMap(value: Boolean) {
+  set showFeatureOnMap(value: boolean) {
     this._showFeatureOnMap = value;
   }
 
-  private _showFeatureOnMap: Boolean;
+  private _showFeatureOnMap: boolean;
   private _map: IgoMap;
   private _dataSource: OgcFilterableDataSource;
 

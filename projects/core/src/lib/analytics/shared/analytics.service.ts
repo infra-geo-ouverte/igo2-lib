@@ -23,12 +23,13 @@ export class AnalyticsService {
       return;
     }
 
-    window['_paq'] = window['_paq'] || [];
-    window['_paq'].push(['trackPageView']);
-    window['_paq'].push(['enableLinkTracking']);
+    (window as any)._paq = (window as any)._paq || [];
+    const paq: any = (window as any)._paq;
+    paq.push(['trackPageView']);
+    paq.push(['enableLinkTracking']);
     (() => {
-      window['_paq'].push(['setTrackerUrl', this.options.url + 'matomo.php']);
-      window['_paq'].push(['setSiteId', this.options.id]);
+      paq.push(['setTrackerUrl', this.options.url + 'matomo.php']);
+      paq.push(['setSiteId', this.options.id]);
       const g = document.createElement('script');
       const s = document.getElementsByTagName('script')[0];
       g.type = 'text/javascript';

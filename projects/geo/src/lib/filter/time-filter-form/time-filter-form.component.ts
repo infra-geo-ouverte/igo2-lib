@@ -240,7 +240,7 @@ export class TimeFilterFormComponent implements OnInit {
     } else {
       this.playIcon = 'pause_circle_filled';
       this.interval = setInterval(
-        function(that) {
+        (that) => {
           let newMinDateNumber;
           const maxDateNumber = new Date(that.max);
 
@@ -386,21 +386,21 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   /**
-  Round date at a certain time, 10 minutes by Default
-  @param date - Date to Round
-  @param atMinute - round to closest 'atMinute' minute, rounded 10 by default
-  @return the rounded date
-  */
+   * Round date at a certain time, 10 minutes by Default
+   * @param date - Date to Round
+   * @param atMinute - round to closest 'atMinute' minute, rounded 10 by default
+   * @return the rounded date
+   */
   getRoundedDate(date, atMinute = 10) {
     const coeff = 1000 * 60 * atMinute;
     return new Date(Math.round(date.getTime() / coeff) * coeff);
   }
 
   /**
-  Get the step (period) definition from the layer dimension tag
-  @param step The step as ISO 8601 example: PT10M for 10 Minutes
-  @return the duration in milliseconds
-  */
+   * Get the step (period) definition from the layer dimension tag
+   * @param step The step as ISO 8601 example: PT10M for 10 Minutes
+   * @return the duration in milliseconds
+   */
   getStepDefinition(step) {
     return moment.duration(step).asMilliseconds();
   }

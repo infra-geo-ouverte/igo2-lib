@@ -123,13 +123,13 @@ export class CapabilitiesService {
     const params = new HttpParams({
       fromObject: {
         request: 'GetCapabilities',
-        service: service,
+        service,
         version: version || '1.3.0'
       }
     });
 
     const request = this.http.get(baseUrl, {
-      params: params,
+      params,
       responseType: 'text'
     });
 
@@ -171,8 +171,8 @@ export class CapabilitiesService {
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
-          abstract: abstract,
-          keywordList: keywordList
+          abstract,
+          keywordList
         }
       },
       timeFilter: timeFilterable ? timeFilter : undefined,
@@ -207,7 +207,7 @@ export class CapabilitiesService {
     const options = ObjectUtils.removeUndefined({
       config: {
         version: params.version,
-        layers: layers
+        layers
       }
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
@@ -225,7 +225,8 @@ export class CapabilitiesService {
     const attributions = new olAttribution({
       html: arcgisOptions.copyrightText
     });
-    let timeExtent, timeFilter;
+    let timeExtent;
+    let timeFilter;
     if (arcgisOptions.timeInfo) {
       const time = arcgisOptions.timeInfo.timeExtent;
       timeExtent = time[0] + ',' + time[1];
@@ -244,15 +245,15 @@ export class CapabilitiesService {
     const params = Object.assign(
       {},
       {
-        legendInfo: legendInfo,
-        style: style,
-        timeFilter: timeFilter,
-        timeExtent: timeExtent,
-        attributions: attributions
+        legendInfo,
+        style,
+        timeFilter,
+        timeExtent,
+        attributions
       }
     );
     const options = ObjectUtils.removeUndefined({
-      params: params
+      params
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
@@ -266,7 +267,8 @@ export class CapabilitiesService {
     const attributions = new olAttribution({
       html: arcgisOptions.copyrightText
     });
-    let timeExtent, timeFilter;
+    let timeExtent;
+    let timeFilter;
     if (arcgisOptions.timeInfo) {
       const time = arcgisOptions.timeInfo.timeExtent;
       timeExtent = time[0] + ',' + time[1];
@@ -290,10 +292,10 @@ export class CapabilitiesService {
       }
     );
     const options = ObjectUtils.removeUndefined({
-      params: params,
-      legendInfo: legendInfo,
-      timeFilter: timeFilter,
-      attributions: attributions
+      params,
+      legendInfo,
+      timeFilter,
+      attributions
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
@@ -319,8 +321,8 @@ export class CapabilitiesService {
 
   private cache(url: string, capabilities: any) {
     this.capabilitiesStore.push({
-      url: url,
-      capabilities: capabilities
+      url,
+      capabilities
     });
   }
 

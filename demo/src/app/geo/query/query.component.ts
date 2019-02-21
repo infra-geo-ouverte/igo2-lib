@@ -14,7 +14,6 @@ import {
   LayerService,
   OverlayService,
   Feature,
-  FeatureType,
   FeatureService
 } from '@igo2/geo';
 
@@ -57,7 +56,7 @@ export class AppQueryComponent {
         );
       });
 
-      this.dataSourceService
+    this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
         url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',

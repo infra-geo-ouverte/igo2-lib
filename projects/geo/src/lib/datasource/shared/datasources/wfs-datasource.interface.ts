@@ -14,7 +14,7 @@ export interface WFSDataSourceOptionsParams {
   version?: string;
   featureTypes: string;
   fieldNameGeometry: string;
-  maxFeatures?: Number;
+  maxFeatures?: number;
   outputFormat: string;
   outputFormatDownload?: string;
   srsName?: string;

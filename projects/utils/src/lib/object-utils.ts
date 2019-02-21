@@ -1,5 +1,5 @@
 export class ObjectUtils {
-  static resolve(obj: Object, key: string): any {
+  static resolve(obj: object, key: string): any {
     const keysArray = key
       .replace(/\[/g, '.')
       .replace(/\]/g, '')
@@ -15,7 +15,7 @@ export class ObjectUtils {
     return current;
   }
 
-  static isObject(item: Object) {
+  static isObject(item: object) {
     return (
       item &&
       typeof item === 'object' &&
@@ -26,8 +26,8 @@ export class ObjectUtils {
   }
 
   static mergeDeep(
-    target: Object,
-    source: Object,
+    target: object,
+    source: object,
     ignoreUndefined = false
   ): any {
     const output = Object.assign({}, target);
@@ -53,7 +53,7 @@ export class ObjectUtils {
     return output;
   }
 
-  static removeUndefined(obj: Object): any {
+  static removeUndefined(obj: object): any {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
       Object.keys(obj)
@@ -76,7 +76,7 @@ export class ObjectUtils {
     return obj;
   }
 
-  static removeNull(obj: Object): any {
+  static removeNull(obj: object): any {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
       Object.keys(obj)
@@ -161,8 +161,7 @@ export class ObjectUtils {
         return false;
     }
 
-    for (let i = 0; i < obj1Props.length; i++) {
-      const prop = obj1Props[i];
+    for (const prop of obj1Props) {
       if (obj1[prop] !== obj2[prop]) {
         return false;
       }

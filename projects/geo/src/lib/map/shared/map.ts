@@ -18,7 +18,7 @@ import { SubjectStatus } from '@igo2/utils';
 import { Layer, VectorLayer } from '../../layer/shared/layers';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
-import { LayerWatcher } from '../utils';
+import { LayerWatcher } from '../utils/layer-watcher';
 import {
   MapViewOptions,
   MapOptions,
@@ -31,7 +31,7 @@ export class IgoMap {
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
-  public resolution$ = new BehaviorSubject<Number>(undefined);
+  public resolution$ = new BehaviorSubject<number>(undefined);
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
 
@@ -102,7 +102,7 @@ export class IgoMap {
 
     this.ol = new olMap({
       interactions: olinteraction.defaults(interactions),
-      controls: controls
+      controls
     });
 
     this.ol.on('moveend', e => {
@@ -203,7 +203,7 @@ export class IgoMap {
 
   zoomTo(zoom: number) {
     this.ol.getView().animate({
-      zoom: zoom,
+      zoom,
       duration: 250,
       easing: oleasing.easeOut
     });
@@ -364,9 +364,9 @@ export class IgoMap {
   }
 
   /**
-  Get Scale of the map
-  @return Scale of the map
-  */
+   * Get Scale of the map
+   * @return Scale of the map
+   */
   getMapScale(approximative, resolution) {
     if (approximative) {
       let scale = this.getScale(resolution);
@@ -395,28 +395,30 @@ export class IgoMap {
   }
 
   /**
-  Get all layers activate in the map
-  @return Array of layers
-  */
+   * Get all layers activate in the map
+   * @return Array of layers
+   */
   getLayers() {
     return this.layers;
   }
 
   /**
-  Get all the layers legend
-  @return Array of legend
-  */
+   * Get all the layers legend
+   * @return Array of legend
+   */
   getLayersLegend() {
     // Get layers list
     const layers = this.getLayers();
     const listLegend = [];
-    let title, legendUrls, legendImage;
+    let title;
+    let legendUrls;
+    let legendImage;
     let heightPos = 0;
     const newCanvas = document.createElement('canvas');
     const newContext = newCanvas.getContext('2d');
     newContext.font = '20px Calibri';
     // For each layers in the map
-    layers.forEach(function(layer) {
+    layers.forEach((layer) => {
       // Add legend for only visible layer
       if (layer.visible === true) {
         // Get the list of legend
@@ -425,21 +427,21 @@ export class IgoMap {
         if (legendUrls.length > 0) {
           title = layer.title;
           // For each legend
-          legendUrls.forEach(function(legendUrl) {
+          legendUrls.forEach((legendUrl) => {
             // If the legend really exist
             if (legendUrl.url !== undefined) {
               // Create an image for the legend
               legendImage = new Image();
               legendImage.crossOrigin = 'Anonymous';
               legendImage.src = legendUrl.url;
-              legendImage.onload = function() {
+              legendImage.onload = () => {
                 newContext.fillText(title, 0, heightPos);
                 newContext.drawImage(legendImage, 0, heightPos + 20);
                 heightPos += legendImage.height + 5;
               };
               // Add legend info to the list
               listLegend.push({
-                title: title,
+                title,
                 url: legendUrl.url,
                 image: legendImage
               });
@@ -467,16 +469,16 @@ export class IgoMap {
     });
 
     return new olstyle.Style({
-      stroke: stroke,
-      fill: fill,
+      stroke,
+      fill,
       image: new olstyle.Circle({
         radius: 5,
-        stroke: stroke,
-        fill: fill
+        stroke,
+        fill
       }),
       text: new olstyle.Text({
         font: '12px Calibri,sans-serif',
-        text: text,
+        text,
         fill: new olstyle.Fill({ color: '#000' }),
         stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
       })
@@ -504,7 +506,7 @@ export class IgoMap {
       }),
       text: new olstyle.Text({
         font: '12px Calibri,sans-serif',
-        text: text,
+        text,
         fill: new olstyle.Fill({ color: '#000' }),
         stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
       })
@@ -535,7 +537,7 @@ export class IgoMap {
         ) {
           this.overlayDataSource.ol.removeFeature(this.geolocationFeature);
         }
-        this.geolocationFeature = new olFeature({ geometry: geometry });
+        this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
         this.addOverlay(this.geolocationFeature);
         if (first) {
@@ -589,6 +591,6 @@ export class IgoMap {
   }
 
   private getLayerIndex(layer: Layer) {
-    return this.layers.findIndex(layer_ => layer_ === layer);
+    return this.layers.findIndex(layer2 => layer2 === layer);
   }
 }

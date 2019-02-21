@@ -7,13 +7,13 @@ import { ImportExportService } from './import-export.service';
   selector: '[igoDropGeoFile]'
 })
 export class DropGeoFileDirective extends DragAndDropDirective {
-  protected _allowed_extensions: Array<string> = [];
+  protected allowedExtensions: Array<string> = [];
   protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
 
   constructor(importExportService: ImportExportService) {
     super();
-    this.allowed_extensions = ['zip', 'geojson', 'kml', 'gpx', 'gml', 'json'];
+    this.allowedExtensions = ['zip', 'geojson', 'kml', 'gpx', 'gml', 'json'];
     this.filesDropped.subscribe(f => importExportService.import(f));
     this.filesInvalid.subscribe(f => importExportService.onFilesInvalid(f));
   }

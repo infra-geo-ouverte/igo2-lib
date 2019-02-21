@@ -34,7 +34,7 @@ export class AuthFacebookComponent {
   }
 
   private subscribeEvents() {
-    window['FB'].Event.subscribe('auth.statusChange', rep => {
+    (window as any).FB.Event.subscribe('auth.statusChange', rep => {
       this.statusChangeCallback(rep);
     });
   }

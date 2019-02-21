@@ -79,7 +79,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * The buffer around the mouse pointer to help drawing
    */
-  @Input() buffer: number = 0;
+  @Input() buffer = 0;
 
   /**
    * The geometry value (GeoJSON)
@@ -155,6 +155,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Implemented as part of ControlValueAccessor.
    */
+  // tslint:disable-next-line:ban-types
   registerOnChange(fn: Function) {
     this.onChange = fn;
   }
@@ -163,6 +164,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * Implemented as part of ControlValueAccessor.
    */
+  // tslint:disable-next-line:ban-types
   registerOnTouched(fn: Function) {
     this.onTouched = fn;
   }

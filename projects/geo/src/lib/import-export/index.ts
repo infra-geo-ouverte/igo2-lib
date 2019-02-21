@@ -1,2 +1,2 @@
 export * from './shared';
-export * from './import-export';
+export * from './import-export/import-export.component';

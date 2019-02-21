@@ -135,8 +135,7 @@ export class EntityStoreController<E extends object> {
     }
 
     const storeKeys = Array.from(storeIndex.keys());
-    for (let i = 0; i < storeKeys.length; i++) {
-      const key = storeKeys[i];
+    for (const key of storeKeys) {
       const storeValue = storeIndex.get(key);
       const innerValue = innerIndex.get(key);
       if (changesDetected === false) {

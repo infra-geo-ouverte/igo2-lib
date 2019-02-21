@@ -86,7 +86,7 @@ export class WFSService extends DataService {
       paramTypename = 'typenames';
     }
     const baseWfsQuery = 'service=wfs&request=' + wfsQuery;
-    const wfs_typeName =
+    const wfsTypeName =
       paramTypename + '=' + wfsDataSourceOptions.paramsWFS.featureTypes;
     const wfsVersion = wfsDataSourceOptions.paramsWFS.version
       ? 'version=' + wfsDataSourceOptions.paramsWFS.version
@@ -94,7 +94,7 @@ export class WFSService extends DataService {
 
     return `${
       wfsDataSourceOptions.urlWfs
-    }?${baseWfsQuery}&${wfsVersion}&${wfs_typeName}`;
+    }?${baseWfsQuery}&${wfsVersion}&${wfsTypeName}`;
   }
 
   public wfsGetFeature(
@@ -103,7 +103,7 @@ export class WFSService extends DataService {
     epsgCode = 3857,
     propertyname = ''
   ): Observable<any> {
-    const base_url = this.buildBaseWfsUrl(wfsDataSourceOptions, 'GetFeature');
+    const baseUrl = this.buildBaseWfsUrl(wfsDataSourceOptions, 'GetFeature');
     const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat
       ? 'outputFormat=' + wfsDataSourceOptions.paramsWFS.outputFormat
       : '';
@@ -128,7 +128,7 @@ export class WFSService extends DataService {
         ? paramMaxFeatures + '=' + wfsDataSourceOptions.paramsWFS.maxFeatures
         : paramMaxFeatures + '=' + nb;
     }
-    const urlWfs = `${base_url}&${outputFormat}&${srsname}&${maxFeatures}${wfspropertyname}`;
+    const urlWfs = `${baseUrl}&${outputFormat}&${srsname}&${maxFeatures}${wfspropertyname}`;
     const patternGml = new RegExp('.*?gml.*?');
     if (
       patternGml.test(wfsDataSourceOptions.paramsWFS.outputFormat.toLowerCase())
@@ -147,7 +147,7 @@ export class WFSService extends DataService {
     retry = 0
   ): Observable<any> {
     return new Observable(d => {
-      const nb_retry = 2;
+      const nbRetry = 2;
       const valueList = [];
 
       this.wfsGetPropertyValue(
@@ -158,10 +158,10 @@ export class WFSService extends DataService {
       ).subscribe(
         str => {
           str = str.replace(/&#39;/gi, "'"); // tslint:disable-line
-          const regex_excp = /exception/gi;
-          if (regex_excp.test(str)) {
+          const regexExcp = /exception/gi;
+          if (regexExcp.test(str)) {
             retry++;
-            if (retry < nb_retry) {
+            if (retry < nbRetry) {
               this.getValueFromWfsGetPropertyValues(
                 wfsDataSourceOptions,
                 field,
@@ -171,25 +171,26 @@ export class WFSService extends DataService {
               ).subscribe(rep => d.next(rep));
             }
           } else {
-            const valueReference_regex = new RegExp(
+            const valueReferenceRegex = new RegExp(
               '<(.+?)' + field + '>(.+?)</(.+?)' + field + '>',
               'gi'
             );
-            let n;
-            while ((n = valueReference_regex.exec(str)) !== null) {
-              if (n.index === valueReference_regex.lastIndex) {
-                valueReference_regex.lastIndex++;
+            let n = valueReferenceRegex.exec(str);
+            while (n !== null) {
+              if (n.index === valueReferenceRegex.lastIndex) {
+                valueReferenceRegex.lastIndex++;
               }
               if (valueList.indexOf(n[2]) === -1) {
                 valueList.push(n[2]);
               }
+              n = valueReferenceRegex.exec(str);
             }
             d.next(valueList);
             d.complete();
           }
         },
         err => {
-          if (retry < nb_retry) {
+          if (retry < nbRetry) {
             retry++;
             this.getValueFromWfsGetPropertyValues(
               wfsDataSourceOptions,
@@ -209,8 +210,8 @@ export class WFSService extends DataService {
     const wfsVersion = options.version
       ? 'version=' + options.version
       : 'version=' + '2.0.0';
-    const wfs_gc_url = `${options.urlWfs}?${baseWfsQuery}&${wfsVersion}`;
-    return this.http.get(wfs_gc_url, {
+    const wfsGcUrl = `${options.urlWfs}?${baseWfsQuery}&${wfsVersion}`;
+    return this.http.get(wfsGcUrl, {
       observe: 'response',
       responseType: 'text'
     });
@@ -297,20 +298,20 @@ export class WFSService extends DataService {
   ): Observable<any> {
     const baseWfsQuery =
       'service=wfs&request=GetPropertyValue&count=' + maxFeatures;
-    const wfs_typeName =
+    const wfsTypeName =
       'typenames=' + wfsDataSourceOptions.paramsWFS.featureTypes;
     const wfsValueReference = 'valueReference=' + field;
     const wfsVersion = 'version=' + '2.0.0';
-    const gfv_url = `${
+    const gfvUrl = `${
       wfsDataSourceOptions.urlWfs
-    }?${baseWfsQuery}&${wfsVersion}&${wfs_typeName}&${wfsValueReference}`;
-    return this.http.get(gfv_url, { responseType: 'text' });
+    }?${baseWfsQuery}&${wfsVersion}&${wfsTypeName}&${wfsValueReference}`;
+    return this.http.get(gfvUrl, { responseType: 'text' });
   }
 
   private built_properties_value(features: olFeature[]): string[] {
     const kv = Object.assign({}, features[0].getProperties());
     delete kv[features[0].getGeometryName()];
-    delete kv['boundedBy'];
+    delete kv.boundedBy;
     const sourceFields = [];
     for (const property in kv) {
       if (kv.hasOwnProperty(property)) {
@@ -326,13 +327,13 @@ export class WFSService extends DataService {
         });
       }
     }
-    features.every(function(element) {
-      const feature_properties = element.getProperties();
-      for (const key in feature_properties) {
-        if (feature_properties.hasOwnProperty(key) && key in kv) {
+    features.every((element) => {
+      const featureProperties = element.getProperties();
+      for (const key in featureProperties) {
+        if (featureProperties.hasOwnProperty(key) && key in kv) {
           sourceFields.filter(f => f.name === key).forEach(v => {
-            if (v.values.indexOf(feature_properties[key]) === -1) {
-              v.values.push(feature_properties[key]);
+            if (v.values.indexOf(featureProperties[key]) === -1) {
+              v.values.push(featureProperties[key]);
             }
           });
         }

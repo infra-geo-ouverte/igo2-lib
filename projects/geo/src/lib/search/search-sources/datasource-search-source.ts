@@ -99,10 +99,10 @@ export class DataSourceSearchSource extends SearchSource {
       order: 2,
       type: FeatureType.DataSource,
       title: result.source.title,
-      title_html: result.highlight.title,
+      titleHtml: result.highlight.title,
       icon: result.source.type === 'Layer' ? 'layers' : 'map',
-      properties: properties,
-      layer: layer
+      properties,
+      layer
     };
   }
 }

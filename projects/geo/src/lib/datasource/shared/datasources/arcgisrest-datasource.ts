@@ -70,13 +70,13 @@ export class ArcGISRestDataSource extends DataSource {
     const lyr = legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
 
-    for (let i = 0; i < lyr.legend.length; i++) {
+    for (const lyrLegend of lyr.legend) {
       const modifiedUrl = this.options.url.replace(
         'FeatureServer',
         'MapServer'
       );
-      const src = `${modifiedUrl}/${lyr.layerId}/images/${lyr.legend[i].url}`;
-      const label = lyr.legend[i].label.replace('<Null>', 'Null');
+      const src = `${modifiedUrl}/${lyr.layerId}/images/${lyrLegend.url}`;
+      const label = lyrLegend.label.replace('<Null>', 'Null');
       htmlString +=
         `<tr><td align='left'><img src="` +
         src +

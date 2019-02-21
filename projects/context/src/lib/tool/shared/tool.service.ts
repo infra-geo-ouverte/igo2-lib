@@ -11,10 +11,8 @@ import { Tool } from './tool.interface';
 export class ToolService {
   // TODO: Find a way to not use global variables
   // Currently, once compiled, the class is split and custom tools are not available.
-  static toolDefs: { [key: string]: [Tool, Component] } = (window[
-    'igoToolDefs'
-  ] =
-    window['igoToolDefs'] === undefined ? {} : window['igoToolDefs']);
+  static toolDefs: { [key: string]: [Tool, Component] } = ((window as any).igoToolDefs =
+    (window as any).igoToolDefs === undefined ? {} : (window as any).igoToolDefs);
 
   public tools$ = new BehaviorSubject<{ [key: string]: Tool }>({});
   public toolHistory$ = new BehaviorSubject<Tool[]>([]);
@@ -33,7 +31,7 @@ export class ToolService {
 
     const tools = Object.keys(ToolService.toolDefs).map(name => {
       this.allowedToolName.push(name);
-      return { name: name };
+      return { name };
     });
     this.setTools(tools);
   }
@@ -109,7 +107,7 @@ export class ToolService {
 }
 
 export function Register(toolDef: Tool) {
-  return function(cls) {
+  return (cls) => {
     ToolService.register(toolDef, cls);
   };
 }

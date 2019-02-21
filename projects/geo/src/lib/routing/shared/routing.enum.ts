@@ -3,6 +3,6 @@ export enum RoutingFormat {
   JSON
 }
 export enum SourceRoutingType {
-  Route = <any>'Route',
-  Trip = <any>'Trip'
+  Route = 'Route',
+  Trip = 'Trip'
 }

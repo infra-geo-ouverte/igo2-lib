@@ -15,7 +15,7 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthService {
-  public authenticate$ = new BehaviorSubject<Boolean>(undefined);
+  public authenticate$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   private options: AuthOptions;
   private anonymous = false;
@@ -36,7 +36,7 @@ export class AuthService {
     myHeader.append('Content-Type', 'application/json');
 
     const body = JSON.stringify({
-      username: username,
+      username,
       password: this.encodePassword(password)
     });
 
@@ -48,7 +48,7 @@ export class AuthService {
     myHeader.append('Content-Type', 'application/json');
 
     const body = JSON.stringify({
-      token: token,
+      token,
       typeConnection: type
     });
 
@@ -129,7 +129,7 @@ export class AuthService {
 
   private loginCall(body, headers) {
     return this.http
-      .post(`${this.options.url}/login`, body, { headers: headers })
+      .post(`${this.options.url}/login`, body, { headers })
       .pipe(
         tap((data: any) => {
           this.tokenService.set(data.token);

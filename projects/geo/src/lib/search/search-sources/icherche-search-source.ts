@@ -89,7 +89,7 @@ export class IChercheSearchSource extends SearchSource {
     return new HttpParams({
       fromObject: {
         q: term,
-        type: type,
+        type,
         limit: String(limit),
         geometries: 'geom'
       }
@@ -111,7 +111,7 @@ export class IChercheSearchSource extends SearchSource {
     return new HttpParams({
       fromObject: {
         loc: coordinate.join(','),
-        type: type,
+        type,
         distance: String(distance),
         geometries: 'geom'
       }
@@ -136,14 +136,14 @@ export class IChercheSearchSource extends SearchSource {
       source: IChercheSearchSource._name,
       sourceType: SourceFeatureType.Search,
       order: 1,
-      zoomMaxOnSelect: zoomMaxOnSelect,
+      zoomMaxOnSelect,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.recherche,
-      title_html: result.highlight,
+      titleHtml: result.highlight,
       icon: 'place',
       projection: 'EPSG:4326',
-      properties: properties,
+      properties,
       geometry: result.geometry,
       extent: result.bbox
     };
@@ -162,14 +162,14 @@ export class IChercheSearchSource extends SearchSource {
       source: IChercheSearchSource._name,
       sourceType: SourceFeatureType.LocateXY,
       order: 1,
-      zoomMaxOnSelect: zoomMaxOnSelect,
+      zoomMaxOnSelect,
       type: FeatureType.Feature,
       format: FeatureFormat.GeoJSON,
       title: result.properties.nom,
-      title_html: result.properties.nom,
+      titleHtml: result.properties.nom,
       icon: 'place',
       projection: 'EPSG:4326',
-      properties: properties,
+      properties,
       geometry: result.geometry,
       extent: [
         parseFloat(result.bbox[0]),

@@ -93,7 +93,6 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
 
   /**
    * When the store change, create a new controller
-   * @param changes
    * @internal
    */
   ngOnChanges(changes: SimpleChanges) {

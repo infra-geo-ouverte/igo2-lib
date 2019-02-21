@@ -85,7 +85,7 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
       }
     }
 
-    this.selection.onChange.subscribe(e => this.select.emit(e));
+    this.selection.changed.subscribe(e => this.select.emit(e));
   }
 
   ngAfterViewInit() {

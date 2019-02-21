@@ -16,8 +16,8 @@ import { ImportExportService } from '../shared/import-export.service';
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
   public formats = ExportFormat;
-  public layers;
-  public inputProj;
+  public layers: VectorLayer[];
+  public inputProj: string;
   private layers$$: Subscription;
 
   constructor(
@@ -42,7 +42,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
-      this.layers = layers.filter(layer => layer instanceof VectorLayer);
+      this.layers = (layers
+        .filter(layer => layer instanceof VectorLayer)) as VectorLayer[];
     });
   }
 

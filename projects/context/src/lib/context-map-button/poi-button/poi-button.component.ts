@@ -161,7 +161,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
     );
 
     this.map.ol.getView().animate({
-      center: center,
+      center,
       zoom: poi.zoom,
       duration: 500,
       easing: oleasing.easeOut

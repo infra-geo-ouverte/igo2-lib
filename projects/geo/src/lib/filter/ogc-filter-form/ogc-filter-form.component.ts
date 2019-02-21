@@ -34,8 +34,9 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   public disabled;
   private _map: IgoMap;
   public baseOverlayName = 'ogcFilterOverlay_';
-  private _showFeatureOnMap: Boolean;
+  private _showFeatureOnMap: boolean;
 
+  // tslint:disable-next-line:ban-types
   @Input() refreshFilters: Function;
 
   @Input()
@@ -48,10 +49,10 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   }
 
   @Input()
-  get showFeatureOnMap(): Boolean {
+  get showFeatureOnMap(): boolean {
     return this._showFeatureOnMap;
   }
-  set showFeatureOnMap(value: Boolean) {
+  set showFeatureOnMap(value: boolean) {
     this._showFeatureOnMap = value;
   }
 

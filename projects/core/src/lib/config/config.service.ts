@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { ObjectUtils } from '@igo2/utils';
@@ -11,7 +11,7 @@ import { ConfigOptions } from './config.interface';
   providedIn: 'root'
 })
 export class ConfigService {
-  private config: Object = {};
+  private config: object = {};
 
   constructor(private injector: Injector) {}
 

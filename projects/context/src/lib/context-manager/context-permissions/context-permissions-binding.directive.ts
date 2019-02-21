@@ -73,7 +73,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
   @HostListener('scopeChanged', ['$event'])
   onScopeChanged(context: Context) {
     const scope = context.scope;
-    this.contextService.update(context.id, { scope: scope }).subscribe(() => {
+    this.contextService.update(context.id, { scope }).subscribe(() => {
       const translate = this.languageService.translate;
       const message = translate.instant(
         'igo.context.permission.dialog.scopeChangedMsg',

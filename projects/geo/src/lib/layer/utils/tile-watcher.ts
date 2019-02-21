@@ -32,26 +32,26 @@ export class TileWatcher extends Watcher {
     // This is to avoid increasing
     // the number of loaded tiles if a tile was loading
     // before subscribing to this watcher
-    if (!event.tile['__watchers__']) {
-      event.tile['__watchers__'] = [];
+    if (!event.tile.__watchers__) {
+      event.tile.__watchers__ = [];
     }
-    event.tile['__watchers__'].push(this.id);
+    event.tile.__watchers__.push(this.id);
 
     this.loading += 1;
     this.status = SubjectStatus.Working;
   }
 
   private handleLoadEnd(event) {
-    if (!event.tile['__watchers__']) {
+    if (!event.tile.__watchers__) {
       return;
     }
 
-    const watcherIndex = event.tile['__watchers__'].indexOf(this.id);
+    const watcherIndex = event.tile.__watchers__.indexOf(this.id);
     if (watcherIndex < 0) {
       return;
     }
 
-    event.tile['__watchers__'].splice(watcherIndex, 1);
+    event.tile.__watchers__.splice(watcherIndex, 1);
 
     this.loaded += 1;
 

@@ -131,8 +131,8 @@ export class ImportExportService {
         file.type
       );
       const title = translate.instant('igo.geo.dropGeoFile.success.title', {
-        i: i,
-        count: count
+        i,
+        count
       });
       const message = translate.instant('igo.geo.dropGeoFile.success.text', {
         value: layerTitle
@@ -198,15 +198,15 @@ export class ImportExportService {
     });
 
     const layer = new VectorLayer({
-      title: title,
+      title,
       source: overlayDataSource,
       style: new olstyle.Style({
-        stroke: stroke,
-        fill: fill,
+        stroke,
+        fill,
         image: new olstyle.Circle({
           radius: 5,
-          stroke: stroke,
-          fill: fill
+          stroke,
+          fill
         })
       })
     });

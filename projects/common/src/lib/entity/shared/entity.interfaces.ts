@@ -39,7 +39,7 @@ export interface EntitySortClause<E = object> {
 
 export interface EntityJoinClause {
   source: Observable<any | void>;
-  reduce: (object, any) => object;
+  reduce: (param1: object, param2: any) => object;
 }
 
 export interface EntityOperation {
