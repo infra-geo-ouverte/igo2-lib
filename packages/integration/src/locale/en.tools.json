@@ -1,6 +1,6 @@
 {
   "igo": {
-    "integration":
+    "integration": {
       "tools": {
         "catalog": "Catalog",
         "contexts": "Contexts",

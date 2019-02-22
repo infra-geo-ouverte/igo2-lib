@@ -34,6 +34,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+sendToIgo.sh
 
 # System Files
 .DS_Store
