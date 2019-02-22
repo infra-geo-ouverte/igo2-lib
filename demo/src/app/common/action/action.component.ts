@@ -49,8 +49,11 @@ export class AppActionComponent implements OnInit, OnDestroy {
         title: 'Edit',
         icon: 'edit',
         tooltip: 'Edit Tooltip',
-        handler: () => alert('Edit!'),
-        conditions: [added]
+        handler: (item: string) => {
+          alert(`Edit item ${item}!`);
+        },
+        conditions: [added],
+        args: ['1']
       },
       {
         id: 'delete',

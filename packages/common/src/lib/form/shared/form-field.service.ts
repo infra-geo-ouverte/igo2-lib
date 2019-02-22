@@ -1,6 +1,11 @@
+import { Injectable } from '@angular/core';
+
 /**
  * Service where all available form fields are registered.
  */
+@Injectable({
+  providedIn: 'root'
+})
 export class FormFieldService {
 
   static fields: {[key: string]: any} = {};

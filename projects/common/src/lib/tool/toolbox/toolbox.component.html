@@ -1,0 +1,20 @@
+<igo-actionbar
+  [store]="actionStore"
+  [withIcon]="true"
+  [withTitle]="actionbarWithTitle"
+  [horizontal]="false">
+</igo-actionbar>
+
+<div
+  *ngIf="activeTool$ | async as tool"
+  class="igo-tool-container"
+  [@toolSlideInOut]="animation$ | async"
+  (@toolSlideInOut.start)="onAnimationStart()"
+  (@toolSlideInOut.done)="onAnimationComplete()">
+
+  <igo-dynamic-outlet
+    [component]="tool.component"
+    [inputs]="getToolInputs(tool)">
+  </igo-dynamic-outlet>
+
+</div>
