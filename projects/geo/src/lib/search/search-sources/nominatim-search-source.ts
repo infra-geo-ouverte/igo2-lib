@@ -94,6 +94,22 @@ export class NominatimSearchSource extends SearchSource {
   }
 
   private formatResult(result: any, resultType, zoomMaxOnSelect: number): Feature {
+    const properties = Object.assign(
+      {
+        type: result.doc_type
+      },
+      result.properties
+    );
+    properties.name = result.display_name;
+    properties.place_id = result.place_id;
+    properties.osm_type = result.osm_type;
+    properties.class = result.class;
+    properties.type = result.type;
+    properties.lien_google_map = 'https://www.google.com/maps?q=' + result.display_name;
+    if (result.osm_type === 'node') {
+      properties.lien_google_streetview = 'https://www.google.com/maps?q=&layer=c&cbll=' +
+        result.lat + ',' + result.lon + '&layer=c';
+    } else { delete properties.lien_google_streetview; }
     return {
       id: result.place_id,
       source: NominatimSearchSource._name,
@@ -105,16 +121,7 @@ export class NominatimSearchSource extends SearchSource {
       title: result.display_name,
       icon: 'place',
       projection: 'EPSG:4326',
-      properties: {
-        name: result.display_name,
-        place_id: result.place_id,
-        osm_type: result.osm_type,
-        class: result.class,
-        type: result.type,
-        lien_google_map: 'https://www.google.com/maps?q=' + result.display_name,
-        lien_google_streetview: 'https://www.google.com/maps?cbll=' +
-          result.lat + ',' + result.lon + '&layer=c'
-      },
+      properties: properties,
       geometry: {
         type: 'Point',
         coordinates: [parseFloat(result.lon), parseFloat(result.lat)]

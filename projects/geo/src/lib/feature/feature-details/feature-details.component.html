@@ -14,15 +14,12 @@
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) &&
-       property.key.includes('lien_google') === false" [innerHTML]=property.value>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]=property.value>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) &&
-       property.key.includes('lien_google') === true" >
-        <a href="{{property.value}}" target='_blank'> Cliquez ici </a>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
+        <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
       </td>
-
 
       <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
       </td>
@@ -30,6 +27,6 @@
     </tr>
   </tbody>
 </table>
-<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'" [src]='isUrl(feature.properties.url)'></iframe>
+<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'" [src]='htmlSanitizer(feature.properties.url)'></iframe>
 
 

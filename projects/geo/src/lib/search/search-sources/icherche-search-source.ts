@@ -16,7 +16,7 @@ import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
 import { BaseObject} from 'node_modules/ol/object.js';
-import {SwitchCase} from "estree";
+import {SwitchCase} from 'estree';
 
 @Injectable()
 export class IChercheSearchSource extends SearchSource {
@@ -134,18 +134,11 @@ export class IChercheSearchSource extends SearchSource {
     delete properties.id;
     delete properties.cote;
     properties.lien_google_map = 'https://www.google.com/maps?q=' + result.properties.recherche;
-    switch (result.geometry.coordinates[0].length) {
-      case undefined: {
-        properties.lien_google_streetview = 'https://www.google.com/maps?q=&layer=c&cbll=' +
-          result.geometry.coordinates[1] + ',' +
-          result.geometry.coordinates[0];
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-    console.log(result.geometry.coordinates[0].length);
+    if (result.geometry.coordinates[0].length === undefined) {
+      properties.lien_google_streetview = 'https://www.google.com/maps?q=&layer=c&cbll=' +
+        result.geometry.coordinates[1] + ',' +
+        result.geometry.coordinates[0];
+    } else {}
     return {
       id: result._id,
       source: IChercheSearchSource._name,

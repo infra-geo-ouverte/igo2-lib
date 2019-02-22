@@ -18,24 +18,33 @@ export class FeatureDetailsComponent {
   get feature(): Feature {
     return this._feature;
   }
+
   set feature(value: Feature) {
     this._feature = value;
     this.cdRef.detectChanges();
   }
+
   private _feature: Feature;
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {
+  }
 
-  isUrl(value): SafeResourceUrl {
+  htmlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
   isObject(value) {
     return typeof value === 'object';
   }
+
+  isUrl(value) {
+      if (typeof (value) === 'string') {
+        return ((value.slice(0, 8) === 'https://') || (value.slice(0, 7) === 'http://')) ;
+      } else {return false; }
+    }
 
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.alias;
