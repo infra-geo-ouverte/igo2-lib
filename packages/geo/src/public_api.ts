@@ -26,6 +26,9 @@ export * from './lib/search/search-results/search-results.module';
 export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
 
+export * from './lib/search/shared/sources/icherche.providers';
+export * from './lib/search/shared/sources/ilayer.providers';
+export * from './lib/search/shared/sources/nominatim.providers';
 export * from './lib/routing/routing-sources/routing-source.provider';
 export * from './lib/routing/shared/routing-source.service';
 

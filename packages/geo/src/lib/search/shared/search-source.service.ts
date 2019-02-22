@@ -1,10 +1,9 @@
-import { SearchSource } from './sources';
+import { SearchSource } from './sources/source';
 
 /**
  * Service where all available search sources are registered.
  */
 export class SearchSourceService {
-
   constructor(private sources: SearchSource[]) {}
 
   /**
@@ -20,7 +19,9 @@ export class SearchSourceService {
    * @returns Search sources
    */
   getEnabledSources(): SearchSource[] {
-    return this.getSources().filter((source: SearchSource) => source.enabled === true);
+    return this.getSources().filter(
+      (source: SearchSource) => source.enabled === true
+    );
   }
 
   /**
@@ -38,7 +39,6 @@ export class SearchSourceService {
       }
     });
   }
-
 }
 
 /**

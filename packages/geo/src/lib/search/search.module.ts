@@ -2,9 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { provideSearchSourceService } from './shared/search-source.service';
-import {
-  provideDefaultIChercheSearchResultFormatter
-} from './shared/sources/icherche.providers';
+import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/icherche.providers';
 
 import { IgoSearchBarModule } from './search-bar/search-bar.module';
 import { IgoSearchSelectorModule } from './search-selector/search-selector.module';
@@ -28,7 +26,7 @@ export class IgoSearchModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoSearchModule,
-      providers:  [
+      providers: [
         provideSearchSourceService(),
         provideDefaultIChercheSearchResultFormatter()
       ]

@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CapabilitiesService } from './capabilities.service';
-
+import { WFSService } from './datasources/wfs.service';
 import {
   DataSource,
   OSMDataSource,
@@ -14,7 +14,6 @@ import {
   XYZDataSourceOptions,
   WFSDataSource,
   WFSDataSourceOptions,
-  WFSService,
   WMTSDataSource,
   WMTSDataSourceOptions,
   WMSDataSource,

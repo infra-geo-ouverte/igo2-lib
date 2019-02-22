@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// import { HttpClientModule } from '@angular/common/http';
 
 import {
   MatCardModule,
@@ -25,7 +24,6 @@ import { AppSearchRoutingModule } from './search-routing.module';
   declarations: [AppSearchComponent],
   imports: [
     CommonModule,
-    // HttpClientModule,
     AppSearchRoutingModule,
     MatCardModule,
     MatButtonModule,
@@ -39,6 +37,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
   providers: [
     provideIChercheSearchSource(),
     provideILayerSearchSource(),
-    provideNominatimSearchSource()]
+    provideNominatimSearchSource()
+  ]
 })
 export class AppSearchModule {}
