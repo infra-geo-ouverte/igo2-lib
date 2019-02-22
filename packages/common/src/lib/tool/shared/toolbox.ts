@@ -1,5 +1,5 @@
 import { EntityRecord, EntityStore } from '../../entity';
-import { Tool } from './tool.interface';
+import { Tool, ToolboxOptions } from './tool.interface';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 /**
@@ -7,20 +7,41 @@ import { BehaviorSubject, Subscription } from 'rxjs';
  */
 export class Toolbox {
 
+  /**
+   * Observable of the active tool
+   */
   activeTool$: BehaviorSubject<Tool> = new BehaviorSubject(undefined);
 
-  activeToolHistory: string[] = [];
+  /**
+   * Ordered list of tool names to display in a toolbar
+   */
+  toolbar: string[];
 
+  /**
+   * Observable of the active tool
+   */
   private activeTool$$: Subscription;
 
+  /**
+   * Active tool history. Useful for activating the previous tool.
+   */
+  private activeToolHistory: string[] = [];
+
+  /**
+   * Tool store
+   */
   private store = new EntityStore<Tool>([], {
     getKey: (tool: Tool) => tool.name
   });
 
-  constructor() {
+  constructor(private options: ToolboxOptions = {}) {
+    this.toolbar = options.toolbar ? options.toolbar : [];
     this.initStore();
   }
 
+  /**
+   * Destroy the toolbox
+   */
   destroy() {
     this.activeTool$$.unsubscribe();
     this.store.destroy();
@@ -43,10 +64,6 @@ export class Toolbox {
     return this.store.all();
   }
 
-  addTool(tool: Tool) {
-    this.store.update(tool);
-  }
-
   /**
    * Set tool configurations
    * @param tools Tools
@@ -55,11 +72,31 @@ export class Toolbox {
     this.store.load(tools);
   }
 
+  /**
+   * Set toolbar
+   * @param toolbar A list of tool names
+   */
+  setToolbar(toolbar: string[]) {
+    this.toolbar = toolbar || [];
+  }
+
+  /**
+   * Activate a tool (and deactivate other tools)
+   * @param name Tool name
+   * @param options Tool options
+   */
   activateTool(name: string, options: {[key: string]: any} = {}) {
     const tool = this.getTool(name);
+    if (tool === undefined) {
+      return;
+    }
+
     this.store.state.update(tool, {active: true, options}, true);
   }
 
+  /**
+   * Activate the previous tool, if any
+   */
   activatePreviousTool() {
     if (this.activeToolHistory.length <= 1) {
       this.deactivateTool();
@@ -69,11 +106,17 @@ export class Toolbox {
     this.activateTool(previous);
   }
 
+  /**
+   * Deactivate the active tool
+   */
   deactivateTool() {
     this.clearActiveToolHistory();
     this.store.state.updateAll({active: false});
   }
 
+  /**
+   * Initialize the tool store and start observing the active tool
+   */
   private initStore() {
     this.store = new EntityStore<Tool>([], {
       getKey: (entity: Tool) => entity.name
@@ -97,6 +140,10 @@ export class Toolbox {
       });
   }
 
+  /**
+   * Set the active tool and update the tool history
+   * @param tool Tool
+   */
   private setActiveTool(tool: Tool | undefined) {
     this.activeTool$.next(tool);
     if (tool === undefined) {
@@ -108,6 +155,9 @@ export class Toolbox {
     }
   }
 
+  /**
+   * Clear the tool history
+   */
   private clearActiveToolHistory() {
     this.activeToolHistory = [];
   }

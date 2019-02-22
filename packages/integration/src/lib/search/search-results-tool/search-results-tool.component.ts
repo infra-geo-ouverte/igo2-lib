@@ -1,7 +1,6 @@
-import {Component, ChangeDetectionStrategy} from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-import {EntityStore} from '@igo2/common';
-import {Register} from '@igo2/context';
+import { EntityStore, ToolComponent} from '@igo2/common';
 import {
   LayerService,
   LayerOptions,
@@ -13,14 +12,14 @@ import {
   IgoMap
 } from '@igo2/geo';
 
-import {MapState} from '../../map/map.state';
+import { MapState } from '../../map/map.state';
 
-import {SearchState} from '../search.state';
+import { SearchState } from '../search.state';
 
 /**
  * Tool to browse the search results
  */
-@Register({
+@ToolComponent({
   name: 'searchResults',
   title: 'igo.integration.tools.searchResults',
   icon: 'search'

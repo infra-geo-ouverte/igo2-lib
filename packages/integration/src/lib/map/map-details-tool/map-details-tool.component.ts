@@ -1,11 +1,11 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { Register } from '@igo2/context';
+import { ToolComponent } from '@igo2/common';
 
 import { MapDetailsToolOptions } from './map-details-tool.interface';
 import { LayerListControlsEnum } from '@igo2/geo';
 
-@Register({
+@ToolComponent({
   name: 'mapDetails',
   title: 'igo.integration.tools.map',
   icon: 'map'

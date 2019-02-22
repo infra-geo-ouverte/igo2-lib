@@ -8,4 +8,4 @@ export interface Action {
   args?: any[];
 }
 
-export type ActionHandler = (...any) => void;
+export type ActionHandler = (...args: any[]) => void;

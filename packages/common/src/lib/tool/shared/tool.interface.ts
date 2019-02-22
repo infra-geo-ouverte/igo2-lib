@@ -7,3 +7,7 @@ export interface Tool {
   tooltip?: string;
   options?: { [key: string]: any };
 }
+
+export interface ToolboxOptions {
+  toolbar?: string[];
+}

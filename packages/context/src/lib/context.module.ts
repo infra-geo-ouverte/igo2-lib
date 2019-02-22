@@ -4,7 +4,6 @@ import { IgoContextManagerModule } from './context-manager/context-manager.modul
 import { IgoContextMapButtonModule } from './context-map-button/context-map-button.module';
 import { IgoShareMapModule } from './share-map/share-map.module';
 import { IgoSidenavModule } from './sidenav/sidenav.module';
-import { IgoToolModule } from './tool/tool.module';
 
 @NgModule({
   imports: [],
@@ -13,8 +12,7 @@ import { IgoToolModule } from './tool/tool.module';
     IgoContextManagerModule,
     IgoContextMapButtonModule,
     IgoShareMapModule,
-    IgoSidenavModule,
-    IgoToolModule
+    IgoSidenavModule
   ]
 })
 export class IgoContextModule {

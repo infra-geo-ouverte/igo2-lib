@@ -2,6 +2,7 @@
  * Public API Surface of geo
  */
 
+export * from './lib/geo.module';
 export * from './lib/catalog/catalog.module';
 export * from './lib/datasource/datasource.module';
 export * from './lib/download/download.module';

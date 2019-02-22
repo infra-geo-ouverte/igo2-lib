@@ -46,7 +46,7 @@ export class EntityView<E extends object, V extends object = E> {
   private values$$: Subscription;
 
   /**
-   * Whether there are pending operations
+   * Whether there are entities in the view
    */
   get empty(): boolean { return this.values$.value.length === 0; }
 

@@ -12,13 +12,13 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 51px;
+  left: 0;
   right: 0;
   transform: translate3d(100%, 0, 0);
 }
 
-.igo-tool-container-empty {
-  width: 0;
+.igo-tool-container-with-toolbar {
+  left: 51px;
 }
 
 igo-actionbar {

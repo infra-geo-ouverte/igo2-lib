@@ -23,7 +23,6 @@ import {
 
 import { MapContextDirective } from './shared/map-context.directive';
 import { LayerContextDirective } from './shared/layer-context.directive';
-import { ToolContextDirective } from './shared/tool-context.directive';
 import { ContextListComponent } from './context-list/context-list.component';
 import { ContextListBindingDirective } from './context-list/context-list-binding.directive';
 import { ContextItemComponent } from './context-item/context-item.component';
@@ -35,8 +34,7 @@ import { ContextPermissionsBindingDirective } from './context-permissions/contex
 
 const CONTEXT_DIRECTIVES = [
   MapContextDirective,
-  LayerContextDirective,
-  ToolContextDirective
+  LayerContextDirective
 ];
 
 @NgModule({

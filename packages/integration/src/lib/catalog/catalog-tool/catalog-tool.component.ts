@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 
-import { Register, ToolService } from '@igo2/context';
+import { ToolComponent } from '@igo2/common';
 
-@Register({
+import { ToolState } from '../../tool/tool.state';
+
+@ToolComponent({
   name: 'catalog',
   title: 'igo.integration.tools.catalog',
   icon: 'photo_library'
@@ -12,12 +14,10 @@ import { Register, ToolService } from '@igo2/context';
   templateUrl: './catalog-tool.component.html'
 })
 export class CatalogToolComponent {
-  constructor(private toolService: ToolService) {}
 
-  handleFeatureSelect() {
-    const tool = this.toolService.getTool('catalogLayers');
-    if (tool) {
-      this.toolService.selectTool(tool);
-    }
+  constructor(private toolState: ToolState) {}
+
+  onFeatureSelect() {
+    this.toolState.toolbox.activateTool('catalogLayers');
   }
 }

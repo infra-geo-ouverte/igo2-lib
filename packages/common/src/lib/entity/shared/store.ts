@@ -48,6 +48,11 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
   get index(): Map<EntityKey, E> { return this._index; }
   private _index: Map<EntityKey, E>;
 
+  /**
+   * Whether there are entities in the store
+   */
+  get empty(): boolean { return this.entities$.value.length === 0; }
+
   constructor(entities: E[], options: EntityStoreOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.getProperty = options.getProperty ? options.getProperty : getEntityProperty;

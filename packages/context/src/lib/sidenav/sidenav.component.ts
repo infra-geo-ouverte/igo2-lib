@@ -2,10 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { Media } from '@igo2/core';
-import { FlexibleState, getEntityTitle } from '@igo2/common';
+import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
 import { Feature, IgoMap } from '@igo2/geo';
-import { Tool } from '../tool/shared/tool.interface';
-import { ToolService } from '../tool/shared/tool.service';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
@@ -77,7 +75,7 @@ export class SidenavComponent {
     return this.feature ? getEntityTitle(this.feature) : undefined;
   }
 
-  constructor(public toolService: ToolService, public titleService: Title) {}
+  constructor(public titleService: Title) {}
 
   zoomToFeatureExtent() {
     if (this.feature.geometry) {

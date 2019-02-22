@@ -137,7 +137,9 @@ export class ToolboxComponent implements OnInit, OnDestroy {
       this.actionStore.state.updateAll({active: false});
     } else {
       const action = this.actionStore.get(tool.name);
-      this.actionStore.state.update(action, {active: true}, true);
+      if (action !== undefined) {
+        this.actionStore.state.update(action, {active: true}, true);
+      }
     }
 
     this.activeTool$.next(tool);
@@ -150,18 +152,22 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Initialize the toolbar
    */
   private initToolbar() {
-    const actions = this.toolbox.getTools().map((tool: Tool) => {
-      return {
-        id: tool.name,
-        title: tool.title,
-        icon: tool.icon,
-        iconImage: tool.iconImage,
-        tooltip: tool.tooltip,
-        args: [tool, this.toolbox],
-        handler: (_tool: Tool, _toolbox: Toolbox) => {
-          _toolbox.activateTool(_tool.name);
-        }
-      };
+    const actions = [];
+    this.toolbox.toolbar.forEach((toolName: string) => {
+      const tool = this.toolbox.getTool(toolName);
+      if (tool !== undefined) {
+        actions.push({
+          id: tool.name,
+          title: tool.title,
+          icon: tool.icon,
+          iconImage: tool.iconImage,
+          tooltip: tool.tooltip,
+          args: [tool, this.toolbox],
+          handler: (_tool: Tool, _toolbox: Toolbox) => {
+            _toolbox.activateTool(_tool.name);
+          }
+        });
+      }
     });
     this.actionStore.load(actions);
   }

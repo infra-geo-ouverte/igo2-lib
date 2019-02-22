@@ -1,8 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { Register } from '@igo2/context';
+import { ToolComponent } from '@igo2/common';
 
-@Register({
+@ToolComponent({
   name: 'toolsContextManager',
   title: 'igo.integration.tools.contexts',
   icon: 'settings'

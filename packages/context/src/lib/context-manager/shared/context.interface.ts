@@ -1,6 +1,6 @@
 import { MapViewOptions, LayerOptions } from '@igo2/geo';
 
-import { Tool } from '../../tool/shared/tool.interface';
+import { Tool } from '@igo2/common';
 import { TypePermission } from './context.enum';
 
 export interface Context {

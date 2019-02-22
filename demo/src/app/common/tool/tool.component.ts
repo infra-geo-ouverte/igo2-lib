@@ -76,6 +76,7 @@ export class AppToolComponent implements OnInit, OnDestroy {
   constructor(private toolService: ToolService) {}
 
   ngOnInit() {
+    this.toolbox.setToolbar(['salutation', 'about']);
     this.toolbox.setTools(this.toolService.getTools());
   }
 

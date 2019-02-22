@@ -17,8 +17,6 @@ import {
 import { AuthService } from '@igo2/auth';
 import { IgoMap } from '@igo2/geo';
 
-import { ToolService } from '../../tool/shared/tool.service';
-
 import { TypePermission } from './context.enum';
 import {
   ContextsList,
@@ -45,7 +43,6 @@ export class ContextService {
     private http: HttpClient,
     private authService: AuthService,
     private languageService: LanguageService,
-    private toolService: ToolService,
     private config: ConfigService,
     @Optional() private route: RouteService
   ) {
@@ -307,9 +304,10 @@ export class ContextService {
     }
 
     // Update the tools options with those found in the context
-    if (context.tools !== undefined) {
-      this.toolService.setTools(context.tools);
-    }
+    // TODO
+    // if (context.tools !== undefined) {
+    //   this.toolService.setTools(context.tools);
+    // }
 
     if (!context.map) {
       context.map = { view: {} };
@@ -371,14 +369,15 @@ export class ContextService {
       context.layers.push(opts);
     }
 
-    const tools = this.toolService.tools$.value;
-    for (const key in tools) {
-      if (tools.hasOwnProperty(key)) {
-        context.tools.push({
-          id: String(tools[key].id)
-        });
-      }
-    }
+    // TODO
+    // const tools = this.toolService.tools$.value;
+    // for (const key in tools) {
+    //   if (tools.hasOwnProperty(key)) {
+    //     context.tools.push({
+    //       id: String(tools[key].id)
+    //     });
+    //   }
+    // }
 
     return context;
   }

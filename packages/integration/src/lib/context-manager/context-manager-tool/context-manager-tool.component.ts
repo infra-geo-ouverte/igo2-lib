@@ -1,8 +1,10 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-import { Register, ToolService } from '@igo2/context';
+import { ToolComponent } from '@igo2/common';
 
-@Register({
+import { ToolState } from '../../tool/tool.state';
+
+@ToolComponent({
   name: 'contextManager',
   title: 'igo.integration.tools.contexts',
   icon: 'bookmark'
@@ -12,26 +14,14 @@ import { Register, ToolService } from '@igo2/context';
   templateUrl: './context-manager-tool.component.html'
 })
 export class ContextManagerToolComponent {
-  constructor(private toolService: ToolService) {}
+
+  constructor(private toolState: ToolState) {}
 
   editContext() {
-    const tool = this.toolService.getTool('contextEditor');
-    if (tool) {
-      this.toolService.selectTool(tool);
-    }
-  }
-
-  manageTools() {
-    const tool = this.toolService.getTool('toolsContextManager');
-    if (tool) {
-      this.toolService.selectTool(tool);
-    }
+    this.toolState.toolbox.activateTool('contextEditor');
   }
 
   managePermissions() {
-    const tool = this.toolService.getTool('permissionsContextManager');
-    if (tool) {
-      this.toolService.selectTool(tool);
-    }
+    this.toolState.toolbox.activateTool('permissionsContextManager');
   }
 }
