@@ -1,3 +1,3 @@
 export interface SearchResultsToolOptions {
-    focusFirst?: boolean;
-  }
+  focusFirst?: boolean;
+}

@@ -17,6 +17,8 @@ import {
   provideNominatimSearchSource
 } from '@igo2/geo';
 
+import { IgoAppSearchModule } from '@igo2/integration';
+
 import { AppSearchComponent } from './search.component';
 import { AppSearchRoutingModule } from './search-routing.module';
 
@@ -31,7 +33,8 @@ import { AppSearchRoutingModule } from './search-routing.module';
     MatTooltipModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoSearchModule.forRoot()
+    IgoSearchModule.forRoot(),
+    IgoAppSearchModule
   ],
   exports: [AppSearchComponent],
   providers: [

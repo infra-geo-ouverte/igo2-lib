@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import { IgoAppContextManagerModule } from './context-manager/context-manager.module';
 import { IgoAppCatalogModule } from './catalog/catalog.module';
@@ -27,11 +27,4 @@ import { IgoAppAboutModule } from './about/about.module';
     IgoAppAboutModule
   ]
 })
-export class IgoIntegrationModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoIntegrationModule,
-      providers: []
-    };
-  }
-}
+export class IgoIntegrationModule {}

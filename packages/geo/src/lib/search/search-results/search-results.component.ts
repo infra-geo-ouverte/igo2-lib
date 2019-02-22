@@ -9,13 +9,13 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { Observable, EMPTY, timer } from 'rxjs';
-import { debounce, map } from 'rxjs/operators';
+import {Observable, EMPTY, timer} from 'rxjs';
+import {debounce, map} from 'rxjs/operators';
 
-import { EntityStore, EntityStoreController } from '@igo2/common';
+import {EntityStore, EntityStoreController} from '@igo2/common';
 
-import { SearchResult } from '../shared/search.interfaces';
-import { SearchSource } from '../shared/sources/source';
+import {SearchResult} from '../shared/search.interfaces';
+import {SearchSource} from '../shared/sources/source';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -64,7 +64,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Output() resultSelect = new EventEmitter<SearchResult>();
 
   get results$(): Observable<
-    { source: SearchSource; results: SearchResult[] }[]
+    {source: SearchSource; results: SearchResult[]}[]
   > {
     if (this._results$ === undefined) {
       this._results$ = this.liftResults();
@@ -72,7 +72,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     return this._results$;
   }
   private _results$: Observable<
-    { source: SearchSource; results: SearchResult[] }[]
+    {source: SearchSource; results: SearchResult[]}[]
   >;
 
   constructor(private cdRef: ChangeDetectorRef) {}
@@ -100,7 +100,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultFocus(result: SearchResult) {
-    this.store.state.update(result, { focused: true }, true);
+    this.store.state.update(result, {focused: true}, true);
     this.resultFocus.emit(result);
   }
 
@@ -128,7 +128,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   private liftResults(): Observable<
-    { source: SearchSource; results: SearchResult[] }[]
+    {source: SearchSource; results: SearchResult[]}[]
   > {
     return this.store.view.all$().pipe(
       debounce((results: SearchResult[]) => {
@@ -156,7 +156,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   private groupResults(
     results: SearchResult[]
-  ): { source: SearchSource; results: SearchResult[] }[] {
+  ): {source: SearchSource; results: SearchResult[]}[] {
     const grouped = new Map<SearchSource, SearchResult[]>();
     results.forEach((result: SearchResult) => {
       const source = result.source;
@@ -169,7 +169,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     });
 
     return Array.from(grouped.keys()).map((source: SearchSource) => {
-      return { source, results: grouped.get(source) };
+      return {source, results: grouped.get(source)};
     });
   }
 }
