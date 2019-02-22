@@ -9,16 +9,16 @@ import {
   ElementRef,
   HostBinding,
   ChangeDetectionStrategy
-} from "@angular/core";
-import { FloatLabelType } from "@angular/material";
+} from '@angular/core';
+import { FloatLabelType } from '@angular/material';
 
-import { Subject, Subscription, EMPTY, timer } from "rxjs";
-import { debounce, distinctUntilChanged } from "rxjs/operators";
+import { Subject, Subscription, EMPTY, timer } from 'rxjs';
+import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
-import { EntityStore } from "@igo2/common";
+import { EntityStore } from '@igo2/common';
 
-import { SearchResult, Research } from "../shared/search.interfaces";
-import { SearchService } from "../shared/search.service";
+import { SearchResult, Research } from '../shared/search.interfaces';
+import { SearchService } from '../shared/search.service';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -26,16 +26,16 @@ import { SearchService } from "../shared/search.service";
  * into that store. An event is always emitted when a research is completed.
  */
 @Component({
-  selector: "igo-search-bar",
-  templateUrl: "./search-bar.component.html",
-  styleUrls: ["./search-bar.component.scss"],
+  selector: 'igo-search-bar',
+  templateUrl: './search-bar.component.html',
+  styleUrls: ['./search-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Invalid keys
    */
-  private readonly invalidKeys = ["Control", "Shift", "Alt"];
+  private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
   /**
    * Search term stream
@@ -50,32 +50,32 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Search term
    */
-  @Input() term: string = "";
+  @Input() term = '';
 
   /**
    * Whether a float label should be displayed
    */
-  @Input() floatLabel: FloatLabelType = "never";
+  @Input() floatLabel: FloatLabelType = 'never';
 
   /**
    * Whether this component is disabled
    */
-  @Input() disabled: boolean = false;
+  @Input() disabled = false;
 
   /**
    * Icons color (search and clear)
    */
-  @Input() color: string = "primary";
+  @Input() color = 'primary';
 
   /**
    * Debounce time between each keystroke
    */
-  @Input() debounce: number = 300;
+  @Input() debounce = 300;
 
   /**
    * Minimum term length required to trigger a research
    */
-  @Input() minLength: number = 2;
+  @Input() minLength = 2;
 
   /**
    * Search icon
@@ -104,13 +104,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Input element
    * @internal
    */
-  @ViewChild("input") input: ElementRef;
+  @ViewChild('input') input: ElementRef;
 
   /**
    * Host's empty class
    * @internal
    */
-  @HostBinding("class.empty")
+  @HostBinding('class.empty')
   get emptyClass() {
     return this.empty;
   }
@@ -131,9 +131,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this._placeholder = value;
   }
   get placeholder(): string {
-    return this.empty ? this._placeholder : "";
+    return this.empty ? this._placeholder : '';
   }
-  private _placeholder = "";
+  private _placeholder = '';
 
   constructor(private searchService: SearchService) {}
 
@@ -145,7 +145,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.stream$$ = this.stream$
       .pipe(
         debounce((term: string) => {
-          return term === "" ? EMPTY : timer(300);
+          return term === '' ? EMPTY : timer(300);
         }),
         distinctUntilChanged()
       )
@@ -213,7 +213,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Clear the stream and the input
    */
   private clear() {
-    this.term = "";
+    this.term = '';
     this.stream$.next(this.term);
     this.input.nativeElement.focus();
   }
@@ -233,7 +233,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private onTermChange(term: string | undefined) {
     this.change.emit(term);
 
-    if (term === undefined || term === "") {
+    if (term === undefined || term === '') {
       if (this.store !== undefined) {
         this.store.clear();
       }

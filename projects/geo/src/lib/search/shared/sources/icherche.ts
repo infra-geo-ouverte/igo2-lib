@@ -12,7 +12,11 @@ import { FEATURE, Feature } from '../../../feature';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch, ReverseSearch } from './source';
-import { SearchSourceOptions, TextSearchOptions, ReverseSearchOptions } from './source.interfaces';
+import {
+  SearchSourceOptions,
+  TextSearchOptions,
+  ReverseSearchOptions
+} from './source.interfaces';
 import {
   IChercheData,
   IChercheResponse,
@@ -22,7 +26,6 @@ import {
 
 @Injectable()
 export class IChercheSearchResultFormatter {
-
   constructor(private languageService: LanguageService) {}
 
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
@@ -35,7 +38,6 @@ export class IChercheSearchResultFormatter {
  */
 @Injectable()
 export class IChercheSearchSource extends SearchSource implements TextSearch {
-
   static id = 'icherche';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [
@@ -52,7 +54,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     @Inject('options') options: SearchSourceOptions,
-    @Inject(IChercheSearchResultFormatter) private formatter: IChercheSearchResultFormatter,
+    @Inject(IChercheSearchResultFormatter)
+    private formatter: IChercheSearchResultFormatter
   ) {
     super(options);
   }
@@ -73,22 +76,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Location name or keyword
    * @returns Observable of <SearchResult<Feature>[]
    */
-  search(term: string, options: TextSearchOptions): Observable<SearchResult<Feature>[]> {
+  search(
+    term: string,
+    options: TextSearchOptions
+  ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(term);
     return this.http
       .get(this.searchUrl, { params })
-      .pipe(
-        map((response: IChercheResponse) => this.extractResults(response))
-      );
+      .pipe(map((response: IChercheResponse) => this.extractResults(response)));
   }
 
   private computeRequestParams(term: string): HttpParams {
     return new HttpParams({
-      fromObject: Object.assign({
-        q: term,
-        geometries: 'geom',
-        type: 'adresse,code_postal,route,municipalite,mrc,region_administrative'
-      }, this.params)
+      fromObject: Object.assign(
+        {
+          q: term,
+          geometries: 'geom',
+          type:
+            'adresse,code_postal,route,municipalite,mrc,region_administrative'
+        },
+        this.params
+      )
     });
   }
 
@@ -108,15 +116,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         projection: 'EPSG:4326',
         geometry: data.geometry,
         extent: data.bbox,
-        properties: properties,
+        properties,
         meta: {
-          id: id,
+          id,
           title: data.properties.recherche
         }
       },
       meta: {
         dataType: FEATURE,
-        id: id,
+        id,
         title: data.properties.recherche,
         titleHtml: data.highlight,
         icon: 'place'
@@ -129,7 +137,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       data.properties,
       IChercheSearchSource.propertiesBlacklist
     );
-    return Object.assign(properties, {type: data.doc_type});
+    return Object.assign(properties, { type: data.doc_type });
   }
 }
 
@@ -137,8 +145,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
  * IChercheReverse search source
  */
 @Injectable()
-export class IChercheReverseSearchSource extends SearchSource implements ReverseSearch {
-
+export class IChercheReverseSearchSource extends SearchSource
+  implements ReverseSearch {
   static id = 'icherchereverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = ['doc_type'];
@@ -167,29 +175,38 @@ export class IChercheReverseSearchSource extends SearchSource implements Reverse
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
    */
-  reverseSearch(lonLat: [number, number], options: ReverseSearchOptions): Observable<SearchResult<Feature>[]> {
+  reverseSearch(
+    lonLat: [number, number],
+    options: ReverseSearchOptions
+  ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options.distance);
-    return this.http
-      .get(this.searchUrl, { params })
-      .pipe(
-        map((response: IChercheReverseResponse) => {
-          return this.extractResults(response);
-        })
-      );
+    return this.http.get(this.searchUrl, { params }).pipe(
+      map((response: IChercheReverseResponse) => {
+        return this.extractResults(response);
+      })
+    );
   }
 
-  private computeRequestParams(lonLat: [number, number], distance?: number): HttpParams {
+  private computeRequestParams(
+    lonLat: [number, number],
+    distance?: number
+  ): HttpParams {
     return new HttpParams({
-      fromObject: Object.assign({
-        loc: lonLat.join(','),
-        distance: distance ? String(distance) : '',
-        geometries: 'geom',
-        type: 'adresse,municipalite,mrc,regadmin'
-      }, this.params)
+      fromObject: Object.assign(
+        {
+          loc: lonLat.join(','),
+          distance: distance ? String(distance) : '',
+          geometries: 'geom',
+          type: 'adresse,municipalite,mrc,regadmin'
+        },
+        this.params
+      )
     });
   }
 
-  private extractResults(response: IChercheReverseResponse): SearchResult<Feature>[] {
+  private extractResults(
+    response: IChercheReverseResponse
+  ): SearchResult<Feature>[] {
     return response.features.map((data: IChercheReverseData) => {
       return this.dataToResult(data);
     });
@@ -206,16 +223,16 @@ export class IChercheReverseSearchSource extends SearchSource implements Reverse
         type: FEATURE,
         projection: 'EPSG:4326',
         geometry: data.geometry,
-        extent: extent,
-        properties: properties,
+        extent,
+        properties,
         meta: {
-          id: id,
+          id,
           title: data.properties.nom
         }
       },
       meta: {
         dataType: FEATURE,
-        id: id,
+        id,
         title: data.properties.nom,
         icon: 'place'
       }
@@ -227,10 +244,12 @@ export class IChercheReverseSearchSource extends SearchSource implements Reverse
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist
     );
-    return Object.assign(properties, {type: data.properties.doc_type});
+    return Object.assign(properties, { type: data.properties.doc_type });
   }
 
-  private computeExtent(data: IChercheReverseData): [number, number, number, number] {
+  private computeExtent(
+    data: IChercheReverseData
+  ): [number, number, number, number] {
     return [data.bbox[0], data.bbox[2], data.bbox[1], data.bbox[3]];
   }
 }

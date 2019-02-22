@@ -35,7 +35,6 @@ import { FeatureStoreSelectionStrategy } from '../shared/strategies/selection';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureFormComponent implements OnChanges, OnDestroy {
-
   public feature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
 
   /**
@@ -64,7 +63,7 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
-     this.setStore(store.currentValue);
+      this.setStore(store.currentValue);
     }
 
     const feature = changes.feature;
@@ -86,7 +85,7 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
    * @param event Form submit event
    * @internal
    */
-  onSubmit(data: {[key: string]: any}) {
+  onSubmit(data: { [key: string]: any }) {
     const feature = this.formDataToFeature(data);
     this.submitForm.emit(feature);
   }
@@ -100,7 +99,7 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
     const properties = {};
     const meta = {};
     if (this.feature === undefined) {
-      meta['id'] = uuid();
+      (meta as any).id = uuid();
     } else {
       Object.assign(properties, this.feature.properties);
       Object.assign(meta, this.feature.meta, {
@@ -125,7 +124,7 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
     return {
       meta: meta as FeatureMeta,
       type: FEATURE,
-      geometry: geometry,
+      geometry,
       projection: 'EPSG:4326',
       properties
     };
@@ -145,7 +144,9 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
    * Deactivate feature selection from the store and from the map
    */
   private deactivateStoreSelection(store: FeatureStore) {
-    const selectionStrategy = store.getStrategyOfType(FeatureStoreSelectionStrategy);
+    const selectionStrategy = store.getStrategyOfType(
+      FeatureStoreSelectionStrategy
+    );
     if (selectionStrategy !== undefined) {
       selectionStrategy.deactivate();
       (selectionStrategy as FeatureStoreSelectionStrategy).unselectAll();
@@ -160,5 +161,4 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
     // were active in the first place
     store.activateStrategyOfType(FeatureStoreSelectionStrategy);
   }
-
 }

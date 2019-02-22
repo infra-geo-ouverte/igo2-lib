@@ -15,7 +15,7 @@ import { debounce, map } from 'rxjs/operators';
 import { EntityStore, EntityStoreController } from '@igo2/common';
 
 import { SearchResult } from '../shared/search.interfaces';
-import { SearchSource } from '../shared/sources/source'
+import { SearchSource } from '../shared/sources/source';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -32,7 +32,6 @@ export enum SearchResultMode {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
-
   /**
    * Reference to the SearchResultMode enum
    * @internal
@@ -64,11 +63,17 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
 
-  get results$(): Observable<{source: SearchSource, results: SearchResult[]}[]> {
-    if (this._results$ === undefined) { this._results$ = this.liftResults(); }
+  get results$(): Observable<
+    { source: SearchSource; results: SearchResult[] }[]
+  > {
+    if (this._results$ === undefined) {
+      this._results$ = this.liftResults();
+    }
     return this._results$;
   }
-  private _results$: Observable<{source: SearchSource, results: SearchResult[]}[]>;
+  private _results$: Observable<
+    { source: SearchSource; results: SearchResult[] }[]
+  >;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
@@ -95,7 +100,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultFocus(result: SearchResult) {
-    this.store.state.update(result, {focused: true}, true);
+    this.store.state.update(result, { focused: true }, true);
     this.resultFocus.emit(result);
   }
 
@@ -106,10 +111,14 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultSelect(result: SearchResult) {
-    this.store.state.update(result, {
-      focused: true,
-      selected: true
-    }, true);
+    this.store.state.update(
+      result,
+      {
+        focused: true,
+        selected: true
+      },
+      true
+    );
     this.resultSelect.emit(result);
   }
 
@@ -118,16 +127,17 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Observable of grouped search results
    * @internal
    */
-  private liftResults(): Observable<{source: SearchSource, results: SearchResult[]}[]> {
-    return this.store.view.all$()
-      .pipe(
-        debounce((results: SearchResult[]) => {
-          return results.length === 0 ? EMPTY : timer(200);
-        }),
-        map((results: SearchResult[]) => {
-          return this.groupResults(results.sort(this.sortByOrder));
-        })
-      );
+  private liftResults(): Observable<
+    { source: SearchSource; results: SearchResult[] }[]
+  > {
+    return this.store.view.all$().pipe(
+      debounce((results: SearchResult[]) => {
+        return results.length === 0 ? EMPTY : timer(200);
+      }),
+      map((results: SearchResult[]) => {
+        return this.groupResults(results.sort(this.sortByOrder));
+      })
+    );
   }
 
   /**
@@ -136,7 +146,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param r2 Second result
    */
   private sortByOrder(r1: SearchResult, r2: SearchResult) {
-    return (r1.source.displayOrder - r2.source.displayOrder);
+    return r1.source.displayOrder - r2.source.displayOrder;
   }
 
   /**
@@ -144,7 +154,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param results Search results from all sources
    * @returns Search results grouped by source
    */
-  private groupResults(results:  SearchResult[]): {source: SearchSource, results: SearchResult[]}[] {
+  private groupResults(
+    results: SearchResult[]
+  ): { source: SearchSource; results: SearchResult[] }[] {
     const grouped = new Map<SearchSource, SearchResult[]>();
     results.forEach((result: SearchResult) => {
       const source = result.source;
@@ -157,7 +169,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     });
 
     return Array.from(grouped.keys()).map((source: SearchSource) => {
-      return {source, results: grouped.get(source)};
+      return { source, results: grouped.get(source) };
     });
   }
 }

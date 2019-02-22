@@ -6,22 +6,22 @@ import {
   OnDestroy,
   AfterViewInit,
   Self
-} from "@angular/core";
+} from '@angular/core';
 
-import { Subscription, Observable, zip } from "rxjs";
+import { Subscription, Observable, zip } from 'rxjs';
 
-import OlDragBoxInteraction from "ol/interaction/DragBox";
-import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from "ol/MapBrowserEvent";
-import { ListenerFunction } from "ol/events";
-import { unByKey } from "ol/Observable";
-import { MAC } from "ol/has";
+import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
+import { ListenerFunction } from 'ol/events';
+import { unByKey } from 'ol/Observable';
+import { MAC } from 'ol/has';
 
-import { AnyLayer } from "../../layer/shared/layers/any-layer";
-import { IgoMap } from "../../map/shared/map";
-import { MapBrowserComponent } from "../../map/map-browser/map-browser.component";
-import { Feature } from "../../feature/shared/feature.interfaces";
-import { QueryableDataSource } from "./query.interfaces";
-import { QueryService } from "./query.service";
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { IgoMap } from '../../map/shared/map';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { QueryableDataSource } from './query.interfaces';
+import { QueryService } from './query.service';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -29,7 +29,7 @@ import { QueryService } from "./query.service";
  * the layer level.
  */
 @Directive({
-  selector: "[igoQuery]"
+  selector: '[igoQuery]'
 })
 export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
@@ -55,7 +55,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whether all query should complete before emitting an event
    */
-  @Input() waitForAllQueries: boolean = false;
+  @Input() waitForAllQueries = false;
 
   /**
    * Event emitted when a query (or all queries) complete
@@ -102,7 +102,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    */
   private listenToMapClick() {
     this.mapClickListener = this.map.ol.on(
-      "singleclick",
+      'singleclick',
       (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
     );
   }
@@ -123,7 +123,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       condition: this.platformModifierKeyOnly
     });
     this.olDragBoxInteractionEndKey = this.olDragBoxInteraction.on(
-      "boxend",
+      'boxend',
       (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
     );
     this.map.ol.addInteraction(this.olDragBoxInteraction);
@@ -155,7 +155,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     const queries$ = this.queryService.query(queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
-      resolution: resolution
+      resolution
     });
 
     if (queries$.length === 0) {

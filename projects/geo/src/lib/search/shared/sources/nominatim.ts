@@ -16,7 +16,6 @@ import { NominatimData } from './nominatim.interfaces';
  */
 @Injectable()
 export class NominatimSearchSource extends SearchSource implements TextSearch {
-
   static id = 'nominatim';
   static type = FEATURE;
 
@@ -43,21 +42,25 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Place name
    * @returns Observable of <SearchResult<Feature>[]
    */
-  search(term: string | undefined, options: TextSearchOptions): Observable<SearchResult<Feature>[]> {
+  search(
+    term: string | undefined,
+    options: TextSearchOptions
+  ): Observable<SearchResult<Feature>[]> {
     const params = this.computeSearchRequestParams(term);
     return this.http
       .get(this.searchUrl, { params })
-      .pipe(
-        map((response: NominatimData[]) => this.extractResults(response))
-      );
+      .pipe(map((response: NominatimData[]) => this.extractResults(response)));
   }
 
   private computeSearchRequestParams(term: string): HttpParams {
     return new HttpParams({
-      fromObject: Object.assign({
-        q: term,
-        format: 'json'
-      }, this.params)
+      fromObject: Object.assign(
+        {
+          q: term,
+          format: 'json'
+        },
+        this.params
+      )
     });
   }
 
@@ -75,18 +78,18 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
       source: this,
       meta: {
         dataType: FEATURE,
-        id: id,
+        id,
         title: data.display_name,
         icon: 'place'
       },
       data: {
         type: FEATURE,
         projection: 'EPSG:4326',
-        geometry: geometry,
-        extent: extent,
-        properties: properties,
+        geometry,
+        extent,
+        properties,
         meta: {
-          id: id,
+          id,
           title: data.display_name
         }
       }
@@ -105,7 +108,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
 
   private computeGeometry(data: NominatimData): FeatureGeometry {
     return {
-      type:  'Point',
+      type: 'Point',
       coordinates: [parseFloat(data.lon), parseFloat(data.lat)]
     };
   }

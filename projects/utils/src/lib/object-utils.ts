@@ -158,7 +158,7 @@ export class ObjectUtils {
     const obj1Props = Object.getOwnPropertyNames(obj1);
     const obj2Props = Object.getOwnPropertyNames(obj2);
     if (obj1Props.length !== obj2Props.length) {
-        return false;
+      return false;
     }
 
     for (const prop of obj1Props) {
@@ -176,7 +176,7 @@ export class ObjectUtils {
    * @param keys Keys to remove
    * @returns A new object
    */
-  static removeKeys(obj: Object, keys: string[]): Object {
+  static removeKeys(obj: object, keys: string[]): object {
     const newObj = Object.keys(obj)
       .filter(key => keys.indexOf(key) < 0)
       .reduce((_obj, key) => {
@@ -184,6 +184,6 @@ export class ObjectUtils {
         return _obj;
       }, {});
 
-      return newObj;
+    return newObj;
   }
 }

@@ -1,30 +1,30 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import * as olformat from "ol/format";
-import * as olextent from "ol/extent";
-import olFormatGML2 from "ol/format/GML2";
-import olFormatGML3 from "ol/format/GML3";
-import olFormatEsriJSON from "ol/format/EsriJSON";
-import olFeature from "ol/Feature";
+import * as olformat from 'ol/format';
+import * as olextent from 'ol/extent';
+import olFormatGML2 from 'ol/format/GML2';
+import olFormatGML3 from 'ol/format/GML3';
+import olFormatEsriJSON from 'ol/format/EsriJSON';
+import olFeature from 'ol/Feature';
 
-import { uuid } from "@igo2/utils";
-import { Feature } from "../../feature/shared/feature.interfaces";
-import { FEATURE } from "../../feature/shared/feature.enums";
-import { Layer } from "../../layer/shared/layers/layer";
+import { uuid } from '@igo2/utils';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { FEATURE } from '../../feature/shared/feature.enums';
+import { Layer } from '../../layer/shared/layers/layer';
 import {
   WMSDataSource,
   CartoDataSource,
   TileArcGISRestDataSource
-} from "../../datasource";
+} from '../../datasource';
 
-import { QueryFormat } from "./query.enums";
-import { QueryOptions, QueryableDataSource } from "./query.interfaces";
+import { QueryFormat } from './query.enums';
+import { QueryOptions, QueryableDataSource } from './query.interfaces';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class QueryService {
   public queryEnabled = true;
@@ -43,7 +43,7 @@ export class QueryService {
       return of([]);
     }
 
-    const request = this.http.get(url, { responseType: "text" });
+    const request = this.http.get(url, { responseType: 'text' });
     return request.pipe(map(res => this.extractData(res, layer, options, url)));
   }
 
@@ -105,16 +105,16 @@ export class QueryService {
       title = title ? title : `${layer.title} (${index + 1})`;
       const meta = Object.assign({}, feature.meta || {}, {
         id: uuid(),
-        title: title,
+        title,
         mapTitle: title,
         order: 1000 - layer.zIndex
       });
 
       return Object.assign(feature, {
-        meta: meta,
+        meta,
         projection:
-          queryDataSource.options.type === "carto"
-            ? "EPSG:4326"
+          queryDataSource.options.type === 'carto'
+            ? 'EPSG:4326'
             : options.projection
       });
     });
@@ -149,7 +149,7 @@ export class QueryService {
     try {
       features = JSON.parse(res).features;
     } catch (e) {
-      console.warn("query.service: Unable to parse geojson", "\n", res);
+      console.warn('query.service: Unable to parse geojson', '\n', res);
     }
     return features;
   }
@@ -174,9 +174,9 @@ export class QueryService {
     const height = parseInt(searchParams.height, 10);
     const xPosition = parseInt(searchParams.i || searchParams.x, 10);
     const yPosition = parseInt(searchParams.j || searchParams.y, 10);
-    const projection = searchParams.crs || searchParams.srs || "EPSG:3857";
+    const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
 
-    const bbox = bboxRaw.split(",");
+    const bbox = bboxRaw.split(',');
     let threshold =
       (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.1;
 
@@ -199,53 +199,53 @@ export class QueryService {
     const clicky1 = clicky + threshold * 2;
 
     const wktPoly =
-      "POLYGON((" +
+      'POLYGON((' +
       clickx +
-      " " +
+      ' ' +
       clicky +
-      ", " +
+      ', ' +
       clickx +
-      " " +
+      ' ' +
       clicky1 +
-      ", " +
+      ', ' +
       clickx1 +
-      " " +
+      ' ' +
       clicky1 +
-      ", " +
+      ', ' +
       clickx1 +
-      " " +
+      ' ' +
       clicky +
-      ", " +
+      ', ' +
       clickx +
-      " " +
+      ' ' +
       clicky +
-      "))";
+      '))';
 
     const format = new olformat.WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
 
-    let targetIgo2 = "_blank";
-    let iconHtml = "link";
+    let targetIgo2 = '_blank';
+    let iconHtml = 'link';
 
     switch (htmlTarget) {
-      case "newtab":
-        targetIgo2 = "_blank";
+      case 'newtab':
+        targetIgo2 = '_blank';
         break;
-      case "modal":
-        targetIgo2 = "modal";
-        iconHtml = "place";
+      case 'modal':
+        targetIgo2 = 'modal';
+        iconHtml = 'place';
         break;
-      case "innerhtml":
-        targetIgo2 = "innerhtml";
-        iconHtml = "place";
-        const bodyTagStart = res.toLowerCase().indexOf("<body>");
-        const bodyTagEnd = res.toLowerCase().lastIndexOf("</body>") + 7;
+      case 'innerhtml':
+        targetIgo2 = 'innerhtml';
+        iconHtml = 'place';
+        const bodyTagStart = res.toLowerCase().indexOf('<body>');
+        const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
         // replace \r \n  and ' ' with '' to validate if the body is really empty.
         const body = res
           .slice(bodyTagStart, bodyTagEnd)
-          .replace(/(\r|\n|\s)/g, "");
-        if (body === "<body></body>" || res === "") {
+          .replace(/(\r|\n|\s)/g, '');
+        if (body === '<body></body>' || res === '') {
           return [];
         }
         break;
@@ -254,24 +254,24 @@ export class QueryService {
     return [
       {
         type: FEATURE,
-        projection: projection,
-        properties: { target: targetIgo2, body: res, url: url },
+        projection,
+        properties: { target: targetIgo2, body: res, url },
         geometry: { type: f.getType(), coordinates: f.getCoordinates() }
       }
     ];
   }
 
   private getQueryParams(url) {
-    const queryString = url.split("?");
+    const queryString = url.split('?');
     if (!queryString[1]) {
       return;
     }
-    const pairs = queryString[1].split("&");
+    const pairs = queryString[1].split('&');
 
     const result = {};
     pairs.forEach(pair => {
-      pair = pair.split("=");
-      result[pair[0]] = decodeURIComponent(pair[1] || "");
+      pair = pair.split('=');
+      result[pair[0]] = decodeURIComponent(pair[1] || '');
     });
     return result;
   }
@@ -300,8 +300,8 @@ export class QueryService {
     return {
       type: FEATURE,
       projection: undefined,
-      properties: properties,
-      geometry: geometry,
+      properties,
+      geometry,
       meta: {
         id: uuid(),
         order: 1000 - zIndex,
@@ -327,31 +327,31 @@ export class QueryService {
               wmsDatasource.params.info_format ||
               this.getMimeInfoFormat(datasource.options.queryFormat),
             QUERY_LAYERS: wmsDatasource.params.layers,
-            FEATURE_COUNT: wmsDatasource.params.feature_count || "5"
+            FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
           }
         );
         break;
       case CartoDataSource:
         const cartoDatasource = datasource as CartoDataSource;
         const baseUrl =
-          "https://" +
+          'https://' +
           cartoDatasource.options.account +
-          ".carto.com/api/v2/sql?";
-        const format = "format=GeoJSON";
+          '.carto.com/api/v2/sql?';
+        const format = 'format=GeoJSON';
         const sql =
-          "&q=" + cartoDatasource.options.config.layers[0].options.sql;
+          '&q=' + cartoDatasource.options.config.layers[0].options.sql;
         const clause =
-          " WHERE ST_Intersects(the_geom_webmercator,ST_BUFFER(ST_SetSRID(ST_POINT(";
+          ' WHERE ST_Intersects(the_geom_webmercator,ST_BUFFER(ST_SetSRID(ST_POINT(';
         const metres = cartoDatasource.options.queryPrecision
           ? cartoDatasource.options.queryPrecision
-          : "1000";
+          : '1000';
         const coordinates =
           options.coordinates[0] +
-          "," +
+          ',' +
           options.coordinates[1] +
-          "),3857)," +
+          '),3857),' +
           metres +
-          "))";
+          '))';
 
         url = `${baseUrl}${format}${sql}${clause}${coordinates}`;
         break;
@@ -366,9 +366,9 @@ export class QueryService {
         }
         const serviceUrl =
           tileArcGISRestDatasource.options.url +
-          "/" +
+          '/' +
           tileArcGISRestDatasource.options.layer +
-          "/query/";
+          '/query/';
         const geometry = encodeURIComponent(
           '{"xmin":' +
             extent[0] +
@@ -381,16 +381,16 @@ export class QueryService {
             ',"spatialReference":{"wkid":102100}}'
         );
         const params = [
-          "f=json",
+          'f=json',
           `geometry=${geometry}`,
-          "geometryType=esriGeometryEnvelope",
-          "inSR=102100",
-          "spatialRel=esriSpatialRelIntersects",
-          "outFields=*",
-          "returnGeometry=true",
-          "outSR=102100"
+          'geometryType=esriGeometryEnvelope',
+          'inSR=102100',
+          'spatialRel=esriSpatialRelIntersects',
+          'outFields=*',
+          'returnGeometry=true',
+          'outSR=102100'
         ];
-        url = `${serviceUrl}?${params.join("&")}`;
+        url = `${serviceUrl}?${params.join('&')}`;
         break;
       default:
         break;
@@ -403,25 +403,25 @@ export class QueryService {
     let mime;
     switch (queryFormat) {
       case QueryFormat.GML2:
-        mime = "application/vnd.ogc.gml";
+        mime = 'application/vnd.ogc.gml';
         break;
       case QueryFormat.GML3:
-        mime = "application/vnd.ogc.gml/3.1.1";
+        mime = 'application/vnd.ogc.gml/3.1.1';
         break;
       case QueryFormat.JSON:
-        mime = "application/json";
+        mime = 'application/json';
         break;
       case QueryFormat.GEOJSON:
-        mime = "application/geojson";
+        mime = 'application/geojson';
         break;
       case QueryFormat.TEXT:
-        mime = "text/plain";
+        mime = 'text/plain';
         break;
       case QueryFormat.HTML:
-        mime = "text/html";
+        mime = 'text/html';
         break;
       default:
-        mime = "application/vnd.ogc.gml";
+        mime = 'application/vnd.ogc.gml';
         break;
     }
 

@@ -419,7 +419,7 @@ export class IgoBaseMap {
     const newContext = newCanvas.getContext('2d');
     newContext.font = '20px Calibri';
     // For each layers in the map
-    layers.forEach((layer) => {
+    layers.forEach(layer => {
       // Add legend for only visible layer
       if (layer.visible === true) {
         // Get the list of legend
@@ -428,7 +428,7 @@ export class IgoBaseMap {
         if (legendUrls.length > 0) {
           title = layer.title;
           // For each legend
-          legendUrls.forEach((legendUrl) => {
+          legendUrls.forEach(legendUrl => {
             // If the legend really exist
             if (legendUrl.url !== undefined) {
               // Create an image for the legend
@@ -596,7 +596,6 @@ export class IgoBaseMap {
   }
 }
 
-
 // TODO: move that to a better place
 export interface MapMovement {
   extent: [number, number, number, number];
@@ -609,7 +608,6 @@ export interface MapMovement {
  * @todo Bakcport this to the library
  */
 export class IgoMap extends IgoBaseMap {
-
   /**
    * Overlay layer
    */
@@ -646,7 +644,7 @@ export class IgoMap extends IgoBaseMap {
    * @param extent Extent to move to
    */
   delayedMoveToExtent(extent: [number, number, number, number]) {
-    this.movement$.next({extent, action: 'move'});
+    this.movement$.next({ extent, action: 'move' });
   }
 
   /**
@@ -655,7 +653,7 @@ export class IgoMap extends IgoBaseMap {
    * @param extent Extent to zoom to
    */
   delayedZoomToExtent(extent: [number, number, number, number]) {
-    this.movement$.next({extent, action: 'zoom'});
+    this.movement$.next({ extent, action: 'zoom' });
   }
 
   /**
@@ -663,10 +661,12 @@ export class IgoMap extends IgoBaseMap {
    * when many are registered in a interval or 100ms or less.
    */
   private subscribeToMovement() {
-    this.movement$$ = this.movement$.pipe(
-      debounceTime(100),
-      distinctUntilChanged()
-    ).subscribe((movement: MapMovement) => this.doMovement(movement));
+    this.movement$$ = this.movement$
+      .pipe(
+        debounceTime(100),
+        distinctUntilChanged()
+      )
+      .subscribe((movement: MapMovement) => this.doMovement(movement));
   }
 
   /**

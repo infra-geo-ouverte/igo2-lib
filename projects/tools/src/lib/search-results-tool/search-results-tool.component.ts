@@ -13,6 +13,4 @@ import { SearchResultsToolOptions } from './search-results-tool.interface';
   selector: 'igo-search-results-tool',
   templateUrl: './search-results-tool.component.html'
 })
-export class SearchResultsToolComponent {
-  
-}
+export class SearchResultsToolComponent {}

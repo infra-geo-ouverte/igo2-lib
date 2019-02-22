@@ -1,19 +1,19 @@
-import { Directive, Self, OnInit, OnDestroy } from "@angular/core";
-import { Subscription } from "rxjs";
+import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
-import olFormatGeoJSON from "ol/format/GeoJSON";
-import * as olextent from "ol/extent";
-import * as olproj from "ol/proj";
+import olFormatGeoJSON from 'ol/format/GeoJSON';
+import * as olextent from 'ol/extent';
+import * as olproj from 'ol/proj';
 
-import { IgoMap } from "../../map/shared/map";
-import { MapBrowserComponent } from "../../map/map-browser/map-browser.component";
-import { Feature } from "../../feature/shared/feature.interfaces";
+import { IgoMap } from '../../map/shared/map';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { Feature } from '../../feature/shared/feature.interfaces';
 
-import { OverlayService } from "../shared/overlay.service";
-import { OverlayAction } from "../shared/overlay.enum";
+import { OverlayService } from '../shared/overlay.service';
+import { OverlayAction } from '../shared/overlay.enum';
 
 @Directive({
-  selector: "[igoOverlay]"
+  selector: '[igoOverlay]'
 })
 export class OverlayDirective implements OnInit, OnDestroy {
   private features$$: Subscription;
