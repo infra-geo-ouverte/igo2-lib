@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 
 import { Register } from '@igo2/context';
 
-import { SearchResultsToolOptions } from './search-results-tool.interface';
-
 @Register({
   name: 'searchResults',
   title: 'igo.integration.tools.searchResults',
