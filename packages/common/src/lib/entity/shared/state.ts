@@ -100,7 +100,7 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
     }
 
     entities.forEach((entity: E) => {
-      const state = Object.assign(this.get(entity), changes);
+      const state = Object.assign({}, this.get(entity), changes);
       this.index.set(this.getKey(entity), state);
     });
     this.next();
@@ -113,7 +113,7 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
    */
   updateAll(changes: Partial<S>) {
     Array.from(this.index.keys()).forEach((key: EntityKey) => {
-      const state = Object.assign(this.index.get(key), changes);
+      const state = Object.assign({}, this.index.get(key), changes);
       this.index.set(key, state);
     });
     this.next();
@@ -134,9 +134,9 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
     allKeys.forEach((key: EntityKey) => {
       const state = this.index.get(key) || {} as S;
       if (keys.indexOf(key) >= 0) {
-        this.index.set(key, Object.assign(state, changes));
+        this.index.set(key, Object.assign({}, state, changes));
       } else {
-        this.index.set(key, Object.assign(state, reverseChanges));
+        this.index.set(key, Object.assign({}, state, reverseChanges));
       }
     });
 

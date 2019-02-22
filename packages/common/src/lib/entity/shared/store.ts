@@ -13,29 +13,24 @@ import { getEntityId, getEntityProperty } from './entity.utils';
 export class EntityStore<E extends object, S extends EntityState = EntityState> {
 
   /**
-   * Entity store state
-   */
-  readonly state = new EntityStateManager<E, S>();
-
-  /**
    * Observable of the raw entities
    */
   readonly entities$ = new BehaviorSubject<E[]>([]);
 
   /**
+   * Entity store state
+   */
+  readonly state: EntityStateManager<E, S>;
+
+  /**
    * View of all the entities
    */
-  readonly view = new EntityView<E>(this.entities$);
+  readonly view: EntityView<E>;
 
   /**
    * View of all the entities and their state
    */
-  readonly stateView = new EntityView<E, EntityRecord<E, S>>(this.view.all$()).join({
-    source: this.state.change$,
-    reduce: (entity: E): EntityRecord<E, S> => {
-      return {entity, state: this.state.get(entity)};
-    }
-  });
+  readonly stateView: EntityView<E, EntityRecord<E, S>>;
 
   /**
    * Method to get an entity's id
@@ -56,8 +51,19 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
   constructor(entities: E[], options: EntityStoreOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.getProperty = options.getProperty ? options.getProperty : getEntityProperty;
+
+    this.state = new EntityStateManager<E, S>({getKey: this.getKey});
+    this.view = new EntityView<E>(this.entities$);
+    this.stateView = new EntityView<E, EntityRecord<E, S>>(this.view.all$()).join({
+      source: this.state.change$,
+      reduce: (entity: E): EntityRecord<E, S> => {
+        return {entity, state: this.state.get(entity)};
+      }
+    });
+
     this.view.lift();
     this.stateView.lift();
+
     if (entities.length > 0) {
       this.load(entities);
     } else {
@@ -72,6 +78,14 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
    */
   get(key: EntityKey): E {
     return this.index.get(key);
+  }
+
+  /**
+   * Get all entities in the store
+   * @returns Array of entities
+   */
+  all(): E[] {
+    return this.entities$.value;
   }
 
   /**
