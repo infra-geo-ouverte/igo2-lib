@@ -30,8 +30,6 @@ import { ContextItemComponent } from './context-item/context-item.component';
 import { ContextFormComponent } from './context-form/context-form.component';
 import { ContextEditComponent } from './context-edit/context-edit.component';
 import { ContextEditBindingDirective } from './context-edit/context-edit-binding.directive';
-import { ContextToolsComponent } from './context-tools/context-tools.component';
-import { ContextToolsBindingDirective } from './context-tools/context-tools-binding.directive';
 import { ContextPermissionsComponent } from './context-permissions/context-permissions.component';
 import { ContextPermissionsBindingDirective } from './context-permissions/context-permissions-binding.directive';
 
@@ -68,8 +66,6 @@ const CONTEXT_DIRECTIVES = [
     ContextFormComponent,
     ContextEditComponent,
     ContextEditBindingDirective,
-    ContextToolsComponent,
-    ContextToolsBindingDirective,
     ContextPermissionsComponent,
     ContextPermissionsBindingDirective,
 
@@ -82,8 +78,6 @@ const CONTEXT_DIRECTIVES = [
     ContextFormComponent,
     ContextEditComponent,
     ContextEditBindingDirective,
-    ContextToolsComponent,
-    ContextToolsBindingDirective,
     ContextPermissionsComponent,
     ContextPermissionsBindingDirective,
 

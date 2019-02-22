@@ -1,9 +1,0 @@
-<div *ngIf="context">
-  <div *ngFor="let tool of tools" class="toolSection">
-    <mat-checkbox
-      [ngModel]="verifyIfContextToolExist(tool.id)"
-      (change)="handleToolChange($event, tool)">
-      {{tool.title || tool.name}}
-    </mat-checkbox>
-  </div>
-</div>
