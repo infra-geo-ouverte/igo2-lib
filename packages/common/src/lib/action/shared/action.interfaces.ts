@@ -5,6 +5,7 @@ export interface Action {
   icon?: string;
   tooltip?: string;
   conditions?: Array<() => boolean>;
+  args?: any[];
 }
 
-export type ActionHandler = () => void;
+export type ActionHandler = (...any) => void;

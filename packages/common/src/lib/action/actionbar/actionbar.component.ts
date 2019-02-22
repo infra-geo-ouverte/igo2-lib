@@ -154,6 +154,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * @internal
    */
   onTriggerAction(action: Action) {
-    action.handler();
+    const args = action.args || [];
+    action.handler(...args);
   }
 }
