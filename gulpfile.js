@@ -185,9 +185,9 @@ gulp.task("context:copyLocale", done => {
   done();
 });
 
-gulp.task("tools:copyLocale", done => {
+gulp.task("integration:copyLocale", done => {
   gulp
-    .src("./packages/tools/src/locale/*")
+    .src("./packages/integration/src/locale/*")
     .pipe(gulp.dest("./dist/core/locale"));
 
   done();
@@ -327,9 +327,9 @@ gulp.task("context:bumpVersion", done => {
   done();
 });
 
-gulp.task("tools:bumpVersion", done => {
+gulp.task("integration:bumpVersion", done => {
   gulp
-    .src("./packages/tools/package.json")
+    .src("./packages/integration/package.json")
     .pipe(
       jeditor({
         version: version,
@@ -339,7 +339,7 @@ gulp.task("tools:bumpVersion", done => {
         }
       })
     )
-    .pipe(gulp.dest("./packages/tools/."));
+    .pipe(gulp.dest("./packages/integration/."));
 
   done();
 });
@@ -353,7 +353,7 @@ gulp.task(
     "auth:bumpVersion",
     "geo:bumpVersion",
     "context:bumpVersion",
-    "tools:bumpVersion"
+    "integration:bumpVersion"
   ])
 );
 
@@ -419,9 +419,9 @@ gulp.task(
 
 gulp.task("context", gulp.series("context:copyLocale", "core:bundleLocale"));
 
-gulp.task("tools", gulp.series("tools:copyLocale", "core:bundleLocale"));
+gulp.task("integration", gulp.series("integration:copyLocale", "core:bundleLocale"));
 
 gulp.task(
   "default",
-  gulp.series(["core", "common", "auth", "geo", "context", "tools"])
+  gulp.series(["core", "common", "auth", "geo", "context", "integration"])
 );

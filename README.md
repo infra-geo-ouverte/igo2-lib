@@ -18,7 +18,7 @@ IGO2 library is divided into several elements:
 
 - @igo2/context : Library of components uniting @igo2/geo and @igo2/auth
 
-- @igo2/tools : Library simplifying component use as tools
+- @igo2/tools : Library integrate basic components
 
 ## Demo
 
@@ -50,10 +50,10 @@ If you want to develop in IGO2 Library, it can be installed by:
 
 ### Development server
 
-Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the demo's source files. 
+Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the demo's source files.
 If you modify files from the lib (../project/*) you must run:
 1. npm run build.libs to rebuild all the libs
-2. OR 
+2. OR
 3. npm run build.geo if you have only modifyed the geo project or whatever part of the lib...
 
 ### Build

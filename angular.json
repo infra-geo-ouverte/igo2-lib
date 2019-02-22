@@ -389,9 +389,9 @@
         }
       }
     },
-    "tools": {
-      "root": "packages/tools",
-      "sourceRoot": "packages/tools/src",
+    "integration": {
+      "root": "packages/integration",
+      "sourceRoot": "packages/integration/src",
       "projectType": "library",
       "prefix": "igo",
       "schematics": {
@@ -404,29 +404,29 @@
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "packages/tools/tsconfig.lib.json",
-            "project": "packages/tools/ng-package.json"
+            "tsConfig": "packages/integration/tsconfig.lib.json",
+            "project": "packages/integration/ng-package.json"
           },
           "configurations": {
             "production": {
-              "project": "packages/tools/ng-package.prod.json"
+              "project": "packages/integration/ng-package.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "packages/tools/src/test.ts",
-            "tsConfig": "packages/tools/tsconfig.spec.json",
-            "karmaConfig": "packages/tools/karma.conf.js"
+            "main": "packages/integration/src/test.ts",
+            "tsConfig": "packages/integration/tsconfig.spec.json",
+            "karmaConfig": "packages/integration/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "packages/tools/tsconfig.lib.json",
-              "packages/tools/tsconfig.spec.json"
+              "packages/integration/tsconfig.lib.json",
+              "packages/integration/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**"]
           }
