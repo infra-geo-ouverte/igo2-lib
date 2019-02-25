@@ -6,6 +6,9 @@ export interface Tool {
   iconImage?: string;
   tooltip?: string;
   options?: { [key: string]: any };
+
+  // This is still used with the API but should be removed ultimately
+  id?: string;
 }
 
 export interface ToolboxOptions {

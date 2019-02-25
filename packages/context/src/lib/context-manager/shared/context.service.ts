@@ -6,6 +6,7 @@ import { map, tap, catchError, debounceTime } from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
 
+import { Tool } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 import {
   ConfigService,
@@ -38,6 +39,10 @@ export class ContextService {
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
+
+  // Until the ContextService is completely refactored, this is needed
+  // to track the current tools
+  private tools: Tool[];
 
   constructor(
     private http: HttpClient,
@@ -303,12 +308,6 @@ export class ContextService {
       return;
     }
 
-    // Update the tools options with those found in the context
-    // TODO
-    // if (context.tools !== undefined) {
-    //   this.toolService.setTools(context.tools);
-    // }
-
     if (!context.map) {
       context.map = { view: {} };
     }
@@ -369,17 +368,13 @@ export class ContextService {
       context.layers.push(opts);
     }
 
-    // TODO
-    // const tools = this.toolService.tools$.value;
-    // for (const key in tools) {
-    //   if (tools.hasOwnProperty(key)) {
-    //     context.tools.push({
-    //       id: String(tools[key].id)
-    //     });
-    //   }
-    // }
+    context.tools = this.tools.map(tool => String(tool.id));
 
     return context;
+  }
+
+  setTools(tools: Tool[]) {
+    this.tools = tools;
   }
 
   private getContextByUri(uri: string): Observable<DetailedContext> {

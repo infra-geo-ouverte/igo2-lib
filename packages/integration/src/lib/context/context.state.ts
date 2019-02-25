@@ -1,0 +1,80 @@
+import { Injectable } from '@angular/core';
+
+import { BehaviorSubject } from 'rxjs';
+
+import { Tool } from '@igo2/common';
+import { ContextService, DetailedContext } from '@igo2/context';
+
+import { ToolState } from '../tool/tool.state';
+
+/**
+ * Service that holds the state of the context module
+ */
+@Injectable({
+  providedIn: 'root'
+})
+export class ContextState {
+
+  /**
+   * Observable of the active context
+   */
+  context$: BehaviorSubject<DetailedContext> = new BehaviorSubject(undefined);
+
+  constructor(
+    private contextService: ContextService,
+    private toolState: ToolState
+  ) {
+    this.contextService.context$.subscribe((context: DetailedContext) => {
+      this.onContextChange(context);
+    });
+  }
+
+  /**
+   * Set the active context
+   * @param context Detailed context
+   */
+  private setContext(context: DetailedContext) {
+    this.updateTools(context);
+    this.context$.next(context);
+  }
+
+  /**
+   * Update the tool state with the context's tools
+   * @param context Detailed context
+   */
+  private updateTools(context: DetailedContext) {
+    const toolbox = this.toolState.toolbox;
+
+    const tools = [];
+    const contextTools = context.tools || [];
+    contextTools.forEach((contextTool: Tool) => {
+      const baseTool = toolbox.getTool(contextTool.name);
+      if (baseTool === undefined) { return; }
+
+      const options = Object.assign(
+        {},
+        baseTool.options || {},
+        contextTool.options || {}
+      );
+      const tool = Object.assign({}, baseTool, contextTool, {options});
+      tools.push(tool);
+    });
+
+    toolbox.setTools(tools);
+    toolbox.setToolbar(context.toolbar || []);
+
+    // TODO: This is a patch so the context service can work without
+    // injecting the ToolState or without being completely refactored
+    this.contextService.setTools(tools);
+  }
+
+  /**
+   * Set a new context and update the tool state
+   * @param context Detailed context
+   */
+  private onContextChange(context: DetailedContext) {
+    if (context === undefined) { return; }
+    this.setContext(context);
+    this.updateTools(context);
+  }
+}
