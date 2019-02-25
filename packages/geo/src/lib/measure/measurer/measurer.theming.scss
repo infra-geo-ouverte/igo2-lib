@@ -1,0 +1,16 @@
+@mixin igo-measurer-theming($theme) {
+  .igo-map-tooltip {
+    position: relative;
+    border-radius: 4px;
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+  
+  .igo-map-tooltip-measure {
+    background-color: rgba(255, 204, 51, 0.7);
+    border: 1px solid rgb(255, 205, 51);
+    color: black;
+    font-weight: bold;
+    font-size: 14px;
+  }
+}

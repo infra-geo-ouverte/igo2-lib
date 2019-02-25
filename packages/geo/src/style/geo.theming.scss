@@ -3,11 +3,13 @@
 @import '../lib/feature/feature.theming';
 @import '../lib/filter/filter.theming';
 @import '../lib/map/map.theming';
+@import '../lib/measure/measure.theming';
 @import '../lib/routing/routing.theming';
 
 @mixin igo-geo-theming($theme) {
   @include igo-feature-theming($theme);
   @include igo-filter-theming($theme);
   @include igo-map-theming($theme);
+  @include igo-measure-theming($theme);
   @include igo-routing-theming($theme);
 }

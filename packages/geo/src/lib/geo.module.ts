@@ -10,6 +10,7 @@ import { IgoGeometryModule } from './geometry/geometry.module';
 import { IgoImportExportModule } from './import-export/import-export.module';
 import { IgoLayerModule } from './layer/layer.module';
 import { IgoMapModule } from './map/map.module';
+import { IgoMeasureModule } from './measure/measure.module';
 import { IgoMetadataModule } from './metadata/metadata.module';
 import { IgoOverlayModule } from './overlay/overlay.module';
 import { IgoPrintModule } from './print/print.module';
@@ -33,6 +34,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoImportExportModule,
     IgoLayerModule,
     IgoMapModule,
+    IgoMeasureModule,
     IgoMetadataModule,
     IgoOverlayModule,
     IgoPrintModule,

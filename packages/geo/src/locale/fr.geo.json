@@ -202,6 +202,30 @@
         "date": "Date",
         "endDate": "Date de fin",
         "startDate": "Date de début"
+      },
+      "measure": {
+        "area": "Superficie",
+        "length": "Distance",
+        "perimeter": "Périmètre",
+        "meters": "Mètres",
+        "kilometers": "Kilomètres",
+        "miles": "Miles",
+        "feet": "Pieds",
+        "squareMeters": "Mètres²",
+        "squareKilometers": "Kilomètres²",
+        "squareMiles": "Miles²",
+        "squareFeet": "Pieds²",
+        "hectares": "Hectares",
+        "acres": "Acres",
+        "toggleMeasure": "Mesurage",
+        "toggleMapTooltips": "Mesures sur la carte",
+        "toggleAutoUnits": "Unités automatiques",
+        "actionbar": {
+          "calculate.title": "Calculer",
+          "calculate.tooltip": "Calculer",
+          "delete.title": "Supprimer",
+          "delete.tooltip": "Supprimer"
+        }
       }
     }
   },
