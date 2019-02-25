@@ -15,9 +15,6 @@ import {
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
-import { BaseObject} from 'node_modules/ol/object.js';
-import {SwitchCase} from 'estree';
-
 @Injectable()
 export class IChercheSearchSource extends SearchSource {
   get enabled(): boolean {

@@ -109,7 +109,9 @@ export class NominatimSearchSource extends SearchSource {
     if (result.osm_type === 'node') {
       properties.lien_google_streetview = 'https://www.google.com/maps?q=&layer=c&cbll=' +
         result.lat + ',' + result.lon + '&layer=c';
-    } else { delete properties.lien_google_streetview; }
+    } else {
+      delete properties.lien_google_streetview;
+    }
     return {
       id: result.place_id,
       source: NominatimSearchSource._name,
