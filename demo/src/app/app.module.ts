@@ -31,6 +31,7 @@ import { AppSimpleMapModule } from './geo/simple-map/simple-map.module';
 import { AppLayerModule } from './geo/layer/layer.module';
 import { AppOverlayModule } from './geo/overlay/overlay.module';
 import { AppGeometryModule } from './geo/geometry/geometry.module';
+import { AppMeasureModule } from './geo/measure/measure.module';
 import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppSearchModule } from './geo/search/search.module';
@@ -77,6 +78,7 @@ import { AppComponent } from './app.component';
     AppLayerModule,
     AppOverlayModule,
     AppGeometryModule,
+    AppMeasureModule,
     AppQueryModule,
     AppCatalogModule,
     AppSearchModule,

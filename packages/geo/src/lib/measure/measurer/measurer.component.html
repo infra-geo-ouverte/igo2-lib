@@ -1,0 +1,82 @@
+<div>
+  <div class="measure-type-toggle">
+    <mat-button-toggle-group
+      [value]="activeMeasureType"
+      (change)="onMeasureTypeChange($event.value)">
+      <mat-button-toggle [value]="measureType.Length">
+        {{('igo.geo.measure.' + measureType.Length) | translate}}
+      </mat-button-toggle>
+      <mat-button-toggle [value]="measureType.Area">
+        {{('igo.geo.measure.' + measureType.Area) | translate}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="measure-options">
+    <mat-slide-toggle
+      [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
+      (change)="onToggleDrawControl($event.checked)">
+      {{'igo.geo.measure.toggleMeasure' | translate}}
+    </mat-slide-toggle>
+
+    <mat-slide-toggle
+      [checked]="showTooltips"
+      [labelPosition]="'before'"
+      (change)="onToggleTooltips($event.checked)">
+      {{'igo.geo.measure.toggleMapTooltips' | translate}}
+    </mat-slide-toggle>
+
+    <mat-slide-toggle
+      [checked]="measureUnitsAuto"
+      [labelPosition]="'before'"
+      (change)="onToggleMeasureUnitsAuto($event.checked)">
+      {{'igo.geo.measure.toggleAutoUnits' | translate}}
+    </mat-slide-toggle>
+  </div>
+
+  <ng-container *ngIf="measure$ | async as measure">
+    <igo-measurer-item
+      [measureType]="measureType.Length"
+      [measureUnit]="measureLengthUnit.Meters"
+      [measure]="measure.length"
+      [auto]="measureUnitsAuto"
+      [placeholder]="(activeMeasureType === measureType.Area ? 'igo.geo.measure.perimeter' : 'igo.geo.measure.length') | translate"
+      (measureUnitChange)="onLengthUnitChange($event)">
+    </igo-measurer-item>
+
+    <igo-measurer-item
+      [measureType]="measureType.Area"
+      [measureUnit]="measureAreaUnit.SquareMeters"
+      [measure]="measure.area"
+      [auto]="measureUnitsAuto"
+      [placeholder]="'igo.geo.measure.area' | translate"
+      (measureUnitChange)="onAreaUnitChange($event)">
+    </igo-measurer-item>
+  </ng-container>
+
+  <mat-divider></mat-divider>
+
+  <button
+    mat-icon-button
+    [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
+    [disabled]="(selectedFeatures$ | async).length === 0"
+    (click)="onCalculateClick()">
+    <mat-icon>playlist_add</mat-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
+    [disabled]="(selectedFeatures$ | async).length === 0"
+    (click)="onDeleteClick()">
+    <mat-icon>delete</mat-icon>
+  </button>
+
+  <igo-entity-table
+    #table
+    class="table-compact"
+    [store]="store"
+    [template]="tableTemplate">
+  </igo-entity-table>
+</div>

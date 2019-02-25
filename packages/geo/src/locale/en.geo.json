@@ -200,6 +200,28 @@
         "date": "Date",
         "endDate": "End Date",
         "startDate": "Start Date"
+      },
+      "measure": {
+        "area": "Area",
+        "length": "Length",
+        "perimeter": "Perimeter",
+        "meters": "Meters",
+        "kilometers": "Kilometers",
+        "miles": "Miles",
+        "feet": "Feet",
+        "squareMeters": "Meters²",
+        "squareKilometers": "Kilometers²",
+        "squareMiles": "Miles²",
+        "squareFeet": "Feet²",
+        "hectares": "Hectares",
+        "acres": "Acres",
+        "toggleMeasure": "Measure",
+        "toggleMapTooltips": "Show map tooltips",
+        "toggleAutoUnits": "Auto Units",
+        "actionbar": {
+          "calculate.tooltip": "Calculate",
+          "delete.tooltip": "Delete"
+        }
       }
     }
   },
