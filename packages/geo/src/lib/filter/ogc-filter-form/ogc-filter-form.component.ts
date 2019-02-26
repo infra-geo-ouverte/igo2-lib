@@ -5,6 +5,8 @@ import {
   AfterContentChecked
 } from '@angular/core';
 
+import * as olstyle from 'ol/style';
+
 import {
   OgcInterfaceFilterOptions,
   OgcFilterableDataSource,
@@ -145,15 +147,21 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     if (this.showFeatureOnMap) {
       opacity = 0.5;
     }
-    wktAsFeature.setStyle(
-      this.map.setOverlayDataSourceStyle([125, 136, 140, opacity], 2, [
-        125,
-        136,
-        140,
-        0
-      ])
-    );
-    this.map.addOverlay(wktAsFeature);
+
+    const stroke = new olstyle.Stroke({
+      width: 2,
+      color: [125, 136, 140, opacity]
+    });
+
+    return new olstyle.Style({
+      stroke,
+      image: new olstyle.Circle({
+        radius: 5,
+        stroke
+      })
+    });
+
+    this.map.overlay.addOlFeature(wktAsFeature);
   }
 
   toggleFilterState(event, filter: OgcInterfaceFilterOptions, property) {
@@ -199,7 +207,12 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   }
 
   private removeOverlayByID(id) {
-    this.map.removeOverlayByID(this.baseOverlayName + id);
+    const overlayId = this.baseOverlayName + id;
+    if (this.map.overlay.dataSource.ol.getFeatureById(overlayId)) {
+      this.map.overlay.dataSource.ol.removeFeature(
+        this.map.overlay.dataSource.ol.getFeatureById(overlayId)
+      );
+    }
   }
 
   changeOperator(filter) {

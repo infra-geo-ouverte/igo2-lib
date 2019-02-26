@@ -1,11 +1,14 @@
-
 import * as olextent from 'ol/extent';
 import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 
-import { getEntityId, getEntityRevision, getEntityProperty } from '@igo2/common';
+import {
+  getEntityId,
+  getEntityRevision,
+  getEntityProperty
+} from '@igo2/common';
 
 import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
@@ -18,7 +21,10 @@ import { Feature } from './feature.interfaces';
  * @param projectionOut Feature object projection
  * @returns OpenLayers feature object
  */
-export function featureToOl(feature: Feature, projectionOut: string): OlFeature {
+export function featureToOl(
+  feature: Feature,
+  projectionOut: string
+): OlFeature {
   const olFormat = new OlFormatGeoJSON();
   const olFeature = olFormat.readFeature(feature, {
     dataProjection: feature.projection,
@@ -52,7 +58,8 @@ export function featureToOl(feature: Feature, projectionOut: string): OlFeature 
  * @returns Extent in the map projection
  */
 export function computeOlFeatureExtent(
-  map: IgoMap, olFeature: OlFeature
+  map: IgoMap,
+  olFeature: OlFeature
 ): [number, number, number, number] {
   let extent = olextent.createEmpty();
 
@@ -120,7 +127,10 @@ export function scaleExtent(
  * @param featuresExtent The features's extent
  * @returns Return true if features are out of view
  */
-export function featuresAreOutOfView(map: IgoMap, featuresExtent: [number, number, number, number]) {
+export function featuresAreOutOfView(
+  map: IgoMap,
+  featuresExtent: [number, number, number, number]
+) {
   const mapExtent = map.getExtent();
   const edgeRatio = 0.05;
   const viewExtent = scaleExtent(mapExtent, edgeRatio * -1);
@@ -137,13 +147,16 @@ export function featuresAreOutOfView(map: IgoMap, featuresExtent: [number, numbe
  * @param featuresExtent The features's extent
  * @returns Return true if features are too deep in the view
  */
-export function featuresAreTooDeepInView(map: IgoMap, featuresExtent: [number, number, number, number]) {
+export function featuresAreTooDeepInView(
+  map: IgoMap,
+  featuresExtent: [number, number, number, number]
+) {
   const mapExtent = map.getExtent();
   const mapExtentArea = olextent.getArea(mapExtent);
   const featuresExtentArea = olextent.getArea(featuresExtent);
   const areaRatio = 0.01;
 
-  return (featuresExtentArea / mapExtentArea) < areaRatio;
+  return featuresExtentArea / mapExtentArea < areaRatio;
 }
 
 /**
@@ -169,7 +182,10 @@ export function moveToFeatures(
   } else if (motion === FeatureMotion.Move) {
     map.delayedMoveToExtent(viewExtent);
   } else if (motion === FeatureMotion.Default) {
-    if (featuresAreOutOfView(map, featuresExtent) || featuresAreTooDeepInView(map, featuresExtent)) {
+    if (
+      featuresAreOutOfView(map, featuresExtent) ||
+      featuresAreTooDeepInView(map, featuresExtent)
+    ) {
       map.delayedZoomToExtent(viewExtent);
     }
   }

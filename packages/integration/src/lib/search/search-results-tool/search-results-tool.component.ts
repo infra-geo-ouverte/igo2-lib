@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-import { EntityStore, ToolComponent} from '@igo2/common';
+import { EntityStore, ToolComponent } from '@igo2/common';
 import {
   LayerService,
   LayerOptions,
@@ -86,8 +86,7 @@ export class SearchResultsToolComponent {
       return;
     }
 
-    console.log('TODO: add feature:', feature);
-    // this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+    this.map.overlay.setFeatures([feature], FeatureMotion.Default);
   }
 
   /**
@@ -95,8 +94,7 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be some layer options
    */
   private tryAddLayerToMap(result: SearchResult) {
-    const map = this.mapState.map;
-    if (map === undefined) {
+    if (this.map === undefined) {
       return;
     }
 
@@ -106,6 +104,6 @@ export class SearchResultsToolComponent {
     const layerOptions = (result as SearchResult<LayerOptions>).data;
     this.layerService
       .createAsyncLayer(layerOptions)
-      .subscribe(layer => map.addLayer(layer));
+      .subscribe(layer => this.map.addLayer(layer));
   }
 }

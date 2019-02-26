@@ -5,7 +5,6 @@ import {
   IgoMap,
   DataSourceService,
   LayerService,
-  OverlayService,
   FEATURE,
   Feature
 } from '@igo2/geo';
@@ -33,8 +32,7 @@ export class AppOverlayComponent {
   constructor(
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService,
-    private overlayService: OverlayService
+    private layerService: LayerService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
@@ -88,6 +86,6 @@ export class AppOverlayComponent {
       }
     };
 
-    this.overlayService.setFeatures([feature1, feature2, feature3]);
+    this.map.overlay.setFeatures([feature1, feature2, feature3]);
   }
 }

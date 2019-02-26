@@ -14,17 +14,18 @@
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
-  <igo-search-bar
-    (change)="onSearchTermChange($event)"
-    (search)="onSearch($event)">
-  </igo-search-bar>
+  <igo-panel title="Search">
+    <igo-search-bar
+      (change)="onSearchTermChange($event)"
+      (search)="onSearch($event)">
+    </igo-search-bar>
 
-  <igo-search-results-tool></igo-search-results-tool>
-
-  <!-- <igo-search-results
-    [store]="searchStore"
-    (resultFocus)="onResultFocus($event)"
-    (resultSelect)="onResultSelect($event)">
-  </igo-search-results> -->
+    <igo-search-results
+      [store]="searchStore"
+      placeholder="false"
+      (resultFocus)="onResultFocus($event)"
+      (resultSelect)="onResultSelect($event)">
+    </igo-search-results>
+  </igo-panel>
 
 </mat-card>

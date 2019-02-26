@@ -1,17 +1,19 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {LanguageService} from '@igo2/core';
-import {EntityStore} from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { EntityStore } from '@igo2/common';
 import {
+  FEATURE,
+  Feature,
+  FeatureMotion,
   IgoMap,
   LayerService,
-  MapService,
   Layer,
+  LAYER,
+  LayerOptions,
   Research,
   SearchResult
 } from '@igo2/geo';
-
-import {SearchState} from '@igo2/integration';
 
 @Component({
   selector: 'app-search',
@@ -19,7 +21,7 @@ import {SearchState} from '@igo2/integration';
   styleUrls: ['./search.component.scss']
 })
 export class AppSearchComponent {
-  public map = new IgoMap({
+  map = new IgoMap({
     overlay: true,
     controls: {
       attribution: {
@@ -28,25 +30,19 @@ export class AppSearchComponent {
     }
   });
 
-  public view = {
+  view = {
     center: [-73, 47.2],
     zoom: 7
   };
 
-  public osmLayer: Layer;
+  searchStore: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
 
-  get searchStore(): EntityStore<SearchResult> {
-    return this.searchState.store;
-  }
+  osmLayer: Layer;
 
   constructor(
     private languageService: LanguageService,
-    private mapService: MapService,
-    private layerService: LayerService,
-    private searchState: SearchState
+    private layerService: LayerService
   ) {
-    this.mapService.setMap(this.map);
-
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
@@ -66,12 +62,67 @@ export class AppSearchComponent {
     }
   }
 
-  onSearch(event: {research: Research; results: SearchResult[]}) {
+  onSearch(event: { research: Research; results: SearchResult[] }) {
     const results = event.results;
-    this.searchStore.state.updateAll({focused: false, selected: false});
+    this.searchStore.state.updateAll({ focused: false, selected: false });
     const newResults = this.searchStore.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
     this.searchStore.load(newResults);
+  }
+
+  /**
+   * Try to add a feature to the map when it's being focused
+   * @internal
+   * @param result A search result that could be a feature
+   */
+  onResultFocus(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
+  }
+
+  /**
+   * Try to add a feature or a layer to the map when it's being selected
+   * @internal
+   * @param result A search result that could be a feature or some layer options
+   */
+  onResultSelect(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
+    this.tryAddLayerToMap(result);
+  }
+
+  /**
+   * Try to add a feature to the map overlay
+   * @param result A search result that could be a feature
+   */
+  private tryAddFeatureToMap(result: SearchResult) {
+    if (result.meta.dataType !== FEATURE) {
+      return undefined;
+    }
+    const feature = (result as SearchResult<Feature>).data;
+
+    // Somethimes features have no geometry. It happens with some GetFeatureInfo
+    if (feature.geometry === undefined) {
+      return;
+    }
+
+    this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+  }
+
+  /**
+   * Try to add a layer to the map
+   * @param result A search result that could be some layer options
+   */
+  private tryAddLayerToMap(result: SearchResult) {
+    if (this.map === undefined) {
+      return;
+    }
+
+    if (result.meta.dataType !== LAYER) {
+      return undefined;
+    }
+    const layerOptions = (result as SearchResult<LayerOptions>).data;
+    this.layerService
+      .createAsyncLayer(layerOptions)
+      .subscribe(layer => this.map.addLayer(layer));
   }
 }
