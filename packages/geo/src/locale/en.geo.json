@@ -1,8 +1,12 @@
 {
   "igo": {
     "geo": {
-      "catalogTool": {
-        "baseLayers": "Base Layers"
+      "catalog": {
+        "baseLayers": "Base Layers",
+        "layer.addToMap": "Add to map",
+        "layer.removeFromMap": "Remove from map",
+        "group.addToMap": "Add all layers from this group to map",
+        "group.removeFromMap": "Remove all layers from this group to map"
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"

@@ -47,7 +47,7 @@ export function stringToLonLat(str: string): [number, number] | undefined {
  * @param options Data source options
  * @returns A layer id
  */
-export function generateLayerIdFromSourceOptions(options: DataSourceOptions) {
+export function generateLayerIdFromSourceOptions(options: DataSourceOptions): string {
   let id;
   if (options.type === 'wms') {
     id = generateWMSLayerIdFromSourceOptions(options as WMSDataSourceOptions);

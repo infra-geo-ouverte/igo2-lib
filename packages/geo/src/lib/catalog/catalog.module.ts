@@ -8,12 +8,8 @@ import {
 
 import { IgoListModule, IgoCollapsibleModule } from '@igo2/common';
 
-import { CatalogItemComponent } from './catalog-item/catalog-item.component';
-import { CatalogLayersListComponent } from './catalog-layers-list/catalog-layers-list.component';
-import { CatalogListComponent } from './catalog-list/catalog-list.component';
-import { CatalogLayersListBindingDirective } from './catalog-layers-list/catalog-layers-list-binding.directive';
-import { CatalogListBindingDirective } from './catalog-list/catalog-list-binding.directive';
-import { CatalogLayerItemComponent } from './catalog-layer-item/catalog-layer-item.component';
+import { IgoCatalogBrowserModule } from './catalog-browser/catalog-browser.module';
+import { IgoCatalogLibraryModule } from './catalog-library/catalog-library.module';
 
 @NgModule({
   imports: [
@@ -25,26 +21,9 @@ import { CatalogLayerItemComponent } from './catalog-layer-item/catalog-layer-it
     IgoCollapsibleModule
   ],
   exports: [
-    CatalogListComponent,
-    CatalogListBindingDirective,
-    CatalogItemComponent,
-    CatalogLayersListComponent,
-    CatalogLayersListBindingDirective,
-    CatalogLayerItemComponent
+    IgoCatalogBrowserModule,
+    IgoCatalogLibraryModule
   ],
-  declarations: [
-    CatalogListComponent,
-    CatalogListBindingDirective,
-    CatalogItemComponent,
-    CatalogLayersListComponent,
-    CatalogLayersListBindingDirective,
-    CatalogLayerItemComponent
-  ]
+  declarations: []
 })
-export class IgoCatalogModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoCatalogModule
-    };
-  }
-}
+export class IgoCatalogModule {}

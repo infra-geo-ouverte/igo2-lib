@@ -23,6 +23,7 @@ export const environment: Environment = {
     catalog: {
       sources: [
         {
+          id: 'Gououvert',
           title: 'Gouvouvert',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi'
         }

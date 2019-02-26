@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
-import { IgoMap, LayerService, Catalog, MapService, Layer } from '@igo2/geo';
+import { LanguageService, ConfigService } from '@igo2/core';
+import { IgoMap, LayerService, Catalog, CatalogItem, CatalogService } from '@igo2/geo';
+import { EntityStore } from '@igo2/common';
 
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['./catalog.component.scss']
 })
-export class AppCatalogComponent {
+export class AppCatalogComponent implements OnInit {
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -22,16 +23,21 @@ export class AppCatalogComponent {
     zoom: 7
   };
 
-  public catalogSelected: Catalog;
-  public osmLayer: Layer;
+  public catalogStore = new EntityStore<Catalog>([]);
+
+  public catalogItemStore = new EntityStore<CatalogItem>([]);
 
   constructor(
-    private mapService: MapService,
+    private configService: ConfigService,
     private languageService: LanguageService,
-    private layerService: LayerService
-  ) {
-    this.mapService.setMap(this.map);
+    private layerService: LayerService,
+    private catalogService: CatalogService
+  ) {}
 
+  /**
+   * @internal
+   */
+  ngOnInit() {
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
@@ -39,22 +45,42 @@ export class AppCatalogComponent {
           type: 'osm'
         }
       })
-      .subscribe(layer => {
-        this.osmLayer = layer;
-        this.map.addLayer(layer);
+      .subscribe(layer => this.map.addLayer(layer));
+
+    this.loadCatalogs();
+  }
+
+  /**
+   * When the selected catalog changes, toggle the the CatalogBrowser tool.
+   * @internal
+   * @param event Select event
+   */
+  onCatalogSelectChange(event: {selected: boolean; catalog: Catalog}) {
+    this.loadCatalogItems(event.catalog);
+  }
+
+  /**
+   * Get all the available catalogs from the CatalogService and
+   * load them into the store.
+   */
+  private loadCatalogs() {
+    this.catalogService.loadCatalogs()
+      .subscribe((catalogs: Catalog[]) => {
+        this.catalogStore.clear();
+        this.catalogStore.load(catalogs);
       });
   }
 
-  selectCatalog(catalog) {
-    this.catalogSelected = catalog;
-  }
-
-  unselectCatalog() {
-    this.catalogSelected = undefined;
-  }
-
-  resetMap() {
-    this.map.removeLayers();
-    this.map.addLayer(this.osmLayer);
+  /**
+   * Get the selected catalog's items from the CatalogService and
+   * load them into the store.
+   * @param catalog Selected catalog
+   */
+  private loadCatalogItems(catalog: Catalog) {
+    this.catalogService.loadCatalogItems(catalog)
+      .subscribe((items: CatalogItem[]) => {
+        this.catalogItemStore.clear();
+        this.catalogItemStore.load(items);
+      });
   }
 }

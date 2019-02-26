@@ -14,31 +14,18 @@
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
-  <igo-panel title="Catalog">
+  <igo-panel title="Catalog Library">
+    <igo-catalog-library
+      [store]="catalogStore"
+      (catalogSelectChange)="onCatalogSelectChange($event)">
+    </igo-catalog-library>
+  </igo-panel>
 
-    <button *ngIf="catalogSelected"
-      mat-icon-button
-      panelLeftButton
-      (click)="unselectCatalog()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-
-    <igo-catalog-list igoCatalogListBinding
-      *ngIf="!catalogSelected"
-      (select)="selectCatalog($event)">
-    </igo-catalog-list>
-
-    <igo-catalog-layers-list igoCatalogLayersListBinding
-      *ngIf="catalogSelected">
-    </igo-catalog-layers-list>
-
-    <button
-      mat-icon-button
-      panelRightButton
-      matTooltip="Reset map"
-      (click)="resetMap()">
-      <mat-icon>settings_backup_restore</mat-icon>
-    </button>
+  <igo-panel title="Catalog Browser">
+    <igo-catalog-browser
+      [store]="catalogItemStore"
+      [map]="map">
+    </igo-catalog-browser>
   </igo-panel>
 
 </mat-card>

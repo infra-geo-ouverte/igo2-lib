@@ -1,0 +1,11 @@
+<igo-list [navigation]="false">
+  <ng-template ngFor let-catalog [ngForOf]="store.view.all$() | async">
+    <igo-catalog-library-item
+      igoListItem
+      color="accent"
+      [map]="map"
+      [catalog]="catalog"
+      (select)="onCatalogSelect(catalog)">
+    </igo-catalog-library-item>
+  </ng-template>
+</igo-list>
