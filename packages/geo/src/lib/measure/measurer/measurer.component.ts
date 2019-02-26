@@ -83,7 +83,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
           const measure = metersToUnit(feature.properties.measure.length, unit);
           return formatMeasure(measure, {
             decimal: 1,
-            unit: unit,
+            unit,
             unitAbbr: false,
             locale: 'fr'
           });
@@ -97,7 +97,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
           const measure = squareMetersToUnit(feature.properties.measure.area, unit);
           return measure ? formatMeasure(measure, {
             decimal: 1,
-            unit: unit,
+            unit,
             unitAbbr: false,
             locale: 'fr'
           }) : '';
@@ -369,10 +369,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   private openDialog(data: MeasurerDialogData): void {
-    this.dialog.open(MeasurerDialogComponent, {
-      width: '250px',
-      data: data
-    });
+    this.dialog.open(MeasurerDialogComponent, {width: '250px', data});
   }
 
   /**
@@ -533,7 +530,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Clear the draw source and track the geometry being draw
    * @param olGeometry Ol linestring or polygon
    */
-  private onDrawEnd(olGeometry:  OlLineString | OlPolygon) {
+  private onDrawEnd(olGeometry: OlLineString | OlPolygon) {
     this.activeOlGeometry = undefined;
     const measure = measureOlGeometry(olGeometry, this.projection);
     this.updateMeasureOfOlGeometry(olGeometry, measure);
@@ -546,7 +543,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Update measures observables and map tooltips
    * @param olGeometry Ol linestring or polygon
    */
-  private onDrawChanges(olGeometry:  OlLineString | OlPolygon) {
+  private onDrawChanges(olGeometry: OlLineString | OlPolygon) {
     const measure = measureOlGeometry(olGeometry, this.projection);
     this.updateMeasureOfOlGeometry(olGeometry, Object.assign({}, measure, {
       area: undefined  // We don't want to display an area tooltip while drawing.
@@ -559,7 +556,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @param olGeometry Ol linestring or polygon
    * @param measure Measure
    */
-  private updateMeasureOfOlGeometry(olGeometry:  OlLineString | OlPolygon, measure: Measure) {
+  private updateMeasureOfOlGeometry(olGeometry: OlLineString | OlPolygon, measure: Measure) {
     olGeometry.setProperties({_measure: measure}, true);
     this.updateTooltipsOfOlGeometry(olGeometry);
   }
@@ -576,7 +573,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry:  OlLineString | OlPolygon) {
+  private addFeatureToStore(olGeometry: OlLineString | OlPolygon) {
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
@@ -584,7 +581,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     });
     const feature = {
       type: FEATURE,
-      geometry: geometry,
+      geometry,
       projection: projection.getCode(),
       properties: {
         measure: olGeometry.get('_measure')
@@ -710,10 +707,10 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @returns Inner HTML
    */
   private computeTooltipInnerHTML(olTooltip: OlOverlay): string {
-    const properties = olTooltip.getProperties();
-    return formatMeasure(properties['_measure'], {
+    const properties = olTooltip.getProperties() as any;
+    return formatMeasure(properties._measure, {
       decimal: 1,
-      unit: properties['_unit'],
+      unit: properties._unit,
       unitAbbr: true,
       locale: 'fr'
     });
@@ -730,10 +727,10 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    const properties = olTooltip.getProperties();
-    if (properties['_unit'] === MeasureType.Length) {
-      const measure = properties['_measure'];
-      const minSegmentLength = metersToUnit(this.minSegmentLength, properties['_unit']) || 0;
+    const properties = olTooltip.getProperties() as any;
+    if (properties._unit === MeasureType.Length) {
+      const measure = properties._measure;
+      const minSegmentLength = metersToUnit(this.minSegmentLength, properties._unit) || 0;
       return measure >  Math.max(minSegmentLength, 0);
     }
 

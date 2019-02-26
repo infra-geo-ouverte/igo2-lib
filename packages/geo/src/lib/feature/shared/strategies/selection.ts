@@ -49,10 +49,10 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   private stores$$: Subscription;
 
-  constructor(private options?: FeatureStoreSelectionStrategyOptions) {
+  constructor(private options: FeatureStoreSelectionStrategyOptions) {
     super();
-    this.overlayStore = this.createOverlayStore();
     this.map = options.map;
+    this.overlayStore = this.createOverlayStore();
   }
 
   /**
@@ -236,7 +236,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     }
 
     olFeatures.forEach((olFeature: OlFeature) => {
-      const store = olFeature.get('featureStore');
+      const store = olFeature.get('_featureStore');
 
       let features = groupedFeatures.get(store);
       if (features === undefined) {

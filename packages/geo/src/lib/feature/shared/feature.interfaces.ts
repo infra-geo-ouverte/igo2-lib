@@ -35,7 +35,9 @@ export interface FeatureStoreOptions extends EntityStoreOptions {
   map: IgoMap;
 }
 
-export interface FeatureStoreSelectionStrategyOptions {
+export interface FeatureStoreStrategyOptions {}
+
+export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrategyOptions {
   map: IgoMap;
   motion?: FeatureMotion;
   style?: olstyle.Style;
