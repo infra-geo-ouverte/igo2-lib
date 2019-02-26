@@ -28,19 +28,19 @@ export function featureToOl(feature: Feature, projectionOut: string): OlFeature 
   olFeature.setId(getEntityId(feature));
 
   if (feature.projection !== undefined) {
-    olFeature.set('projection', feature.projection);
+    olFeature.set('_projection', feature.projection);
   }
 
   if (feature.extent !== undefined) {
-    olFeature.set('extent', feature.extent);
+    olFeature.set('_extent', feature.extent);
   }
 
   const mapTitle = getEntityProperty(feature, 'meta.mapTitle');
   if (mapTitle !== undefined) {
-    olFeature.set('mapTitle', mapTitle);
+    olFeature.set('_mapTitle', mapTitle);
   }
 
-  olFeature.set('entityRevision', getEntityRevision(feature));
+  olFeature.set('_entityRevision', getEntityRevision(feature));
 
   return olFeature;
 }
@@ -56,8 +56,8 @@ export function computeOlFeatureExtent(
 ): [number, number, number, number] {
   let extent = olextent.createEmpty();
 
-  const olFeatureExtent = olFeature.get('extent');
-  const olFeatureProjection = olFeature.get('projection');
+  const olFeatureExtent = olFeature.get('_extent');
+  const olFeatureProjection = olFeature.get('_projection');
   if (olFeatureExtent !== undefined && olFeatureProjection !== undefined) {
     extent = olproj.transformExtent(
       olFeatureExtent,

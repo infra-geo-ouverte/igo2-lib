@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MeasurerDialogData } from '../shared/measure.interfaces';
 
 @Component({
-  selector: 'measurer-dialog',
+  selector: 'igo-measurer-dialog',
   templateUrl: 'measurer-dialog.component.html',
   styleUrls: ['./measurer-dialog.component.scss']
 })

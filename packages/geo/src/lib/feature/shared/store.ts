@@ -163,7 +163,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
       const newOlFeature = olFeaturesMap.get(olFeature.getId());
       if (newOlFeature === undefined) {
         olFeaturesToRemove.push(olFeature);
-      } else if (newOlFeature.get('entityRevision') !== olFeature.get('entityRevision')) {
+      } else if (newOlFeature.get('_entityRevision') !== olFeature.get('_entityRevision')) {
         olFeaturesToRemove.push(olFeature);
       } else {
         olFeaturesMap.delete(newOlFeature.getId());
@@ -198,7 +198,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    */
   private addOlFeaturesToLayer(olFeatures: OlFeature[]) {
     olFeatures.forEach((olFeature: OlFeature) => {
-      olFeature.set('featureStore', this);
+      olFeature.set('_featureStore', this);
     });
     this.source.ol.addFeatures(olFeatures);
   }

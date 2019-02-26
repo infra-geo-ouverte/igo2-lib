@@ -29,8 +29,8 @@ export class MeasureFormatPipe implements PipeTransform {
 
     return out ? formatMeasure(out, {
       decimal: 1,
-      unit: unit,
-      unitAbbr: unitAbbr,
+      unit,
+      unitAbbr,
       locale: 'fr'
     }) : out;
   }
