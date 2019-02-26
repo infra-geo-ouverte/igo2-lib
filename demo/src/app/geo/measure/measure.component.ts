@@ -27,7 +27,8 @@ export class AppMeasureComponent {
 
   public view = {
     center: [-73, 47.2],
-    zoom: 6
+    zoom: 6,
+    projection: 'EPSG:3857'
   };
 
   public store = new FeatureStore<FeatureWithMeasure>([], {map: this.map});
