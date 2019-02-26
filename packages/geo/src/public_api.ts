@@ -4,6 +4,8 @@
 
 export * from './lib/geo.module';
 export * from './lib/catalog/catalog.module';
+export * from './lib/catalog/catalog-browser/catalog-browser.module';
+export * from './lib/catalog/catalog-library/catalog-library.module';
 export * from './lib/datasource/datasource.module';
 export * from './lib/download/download.module';
 export * from './lib/feature/feature.module';

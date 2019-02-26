@@ -6,6 +6,8 @@ export * from './lib/integration.module';
 export * from './lib/about/about.module';
 export * from './lib/context/context.module';
 export * from './lib/catalog/catalog.module';
+export * from './lib/catalog/catalog-browser-tool/catalog-browser-tool.module';
+export * from './lib/catalog/catalog-library-tool/catalog-library-tool.module';
 export * from './lib/directions/directions.module';
 export * from './lib/filter/filter.module';
 export * from './lib/import-export/import-export.module';

@@ -1,25 +1,14 @@
-import {
-  NgModule,
-  ModuleWithProviders,
-  CUSTOM_ELEMENTS_SCHEMA
-} from '@angular/core';
+import { NgModule } from '@angular/core';
 
-import { IgoCatalogModule } from '@igo2/geo';
-import { CatalogToolComponent } from './catalog-tool/catalog-tool.component';
-import { CatalogLayersToolComponent } from './catalog-layers-tool/catalog-layers-tool.component';
+import { IgoAppCatalogLibraryToolModule } from './catalog-library-tool/catalog-library-tool.module';
+import { IgoAppCatalogBrowserToolModule } from './catalog-browser-tool/catalog-browser-tool.module';
 
 @NgModule({
-  imports: [IgoCatalogModule],
-  declarations: [CatalogToolComponent, CatalogLayersToolComponent],
-  exports: [CatalogToolComponent, CatalogLayersToolComponent],
-  entryComponents: [CatalogToolComponent, CatalogLayersToolComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [],
+  exports: [
+    IgoAppCatalogLibraryToolModule,
+    IgoAppCatalogBrowserToolModule
+  ],
+  declarations: []
 })
-export class IgoAppCatalogModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoCatalogModule,
-      providers: []
-    };
-  }
-}
+export class IgoAppCatalogModule {}
