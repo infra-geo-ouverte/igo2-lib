@@ -14,8 +14,8 @@ import { AppRequestRoutingModule } from './request-routing.module';
     MatCardModule,
     MatButtonModule,
     HttpClientModule,
-    IgoErrorModule.forRoot(), // Only if you want register errors from http call in console
-    IgoLoggingModule.forRoot() // Only if you want register http calls in console
+    IgoErrorModule.forRoot() // Only if you want register errors from http call in console
+    // IgoLoggingModule.forRoot() // Only if you want register http calls in console
   ],
   exports: [AppRequestComponent]
 })

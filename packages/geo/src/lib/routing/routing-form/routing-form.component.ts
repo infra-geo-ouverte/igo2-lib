@@ -34,6 +34,7 @@ import { IgoMap } from '../../map/shared/map';
 import { SearchService } from '../../search/shared/search.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { createOverlayMarkerStyle } from '../../overlay/shared/overlay.utils';
 
 import { Routing } from '../shared/routing.interface';
 import { RoutingService } from '../shared/routing.service';
@@ -552,7 +553,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       image = 'arrow_forward';
       cssClass = 'rotate-270';
     } else if (type === 'on ramp') {
-      directiveFr = 'Prendre l\'entrée d\'autoroute ' + frAggregatedDirection;
+      directiveFr = "Prendre l'entrée d'autoroute " + frAggregatedDirection;
       directiveEn = 'Take the ramp ' + enAggregatedDirection;
     } else if (type === 'off ramp') {
       directiveFr = "Prendre la sortie d'autoroute " + frAggregatedDirection;
@@ -1095,7 +1096,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     if (geometry.getType() === 'Point') {
-      feature.setStyle([this.map.setOverlayMarkerStyle(stopColor, stopText)]);
+      const olStyle = createOverlayMarkerStyle(stopColor);
+      console.log(olStyle);
+      // stopText
+      feature.setStyle(olStyle);
     }
     this.routingStopsOverlayDataSource.ol.addFeature(feature);
   }

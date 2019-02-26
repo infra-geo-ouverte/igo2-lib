@@ -8,7 +8,6 @@ import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 import * as oleasing from 'ol/easing';
 import * as olinteraction from 'ol/interaction';
-import * as olstyle from 'ol/style';
 
 import proj4 from 'proj4';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -16,8 +15,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SubjectStatus } from '@igo2/utils';
 
-import { Layer, VectorLayer } from '../../layer/shared/layers';
-import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { Layer } from '../../layer/shared/layers';
+import { Overlay } from '../../overlay/shared/overlay';
 
 import { LayerWatcher } from '../utils/layer-watcher';
 import {
@@ -27,7 +26,7 @@ import {
   ScaleLineOptions
 } from './map.interface';
 
-export class IgoBaseMap {
+export class IgoMap {
   public ol: olMap;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
@@ -35,19 +34,25 @@ export class IgoBaseMap {
   public resolution$ = new BehaviorSubject<number>(undefined);
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
-
-  public overlayMarkerStyle: olstyle.Style;
-  public overlayStyle: olstyle.Style;
-  private overlayDataSource: FeatureDataSource;
+  public overlay: Overlay;
 
   private layerWatcher: LayerWatcher;
   private geolocation: olGeolocation;
   private geolocation$$: Subscription;
 
   private options: MapOptions = {
-    controls: { attribution: true },
-    overlay: true
+    controls: { attribution: false }
   };
+
+  /**
+   * Movement stream
+   */
+  private movement$ = new Subject<MapMovement>();
+
+  /**
+   * Subscription to the movement stream
+   */
+  private movement$$: Subscription;
 
   get projection(): string {
     const p = this.ol
@@ -66,7 +71,6 @@ export class IgoBaseMap {
     Object.assign(this.options, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
-
     olproj4.register(proj4);
     this.init();
   }
@@ -112,20 +116,7 @@ export class IgoBaseMap {
       }
     });
 
-    if (this.options.overlay) {
-      this.overlayMarkerStyle = this.setOverlayMarkerStyle();
-
-      this.overlayDataSource = new FeatureDataSource();
-      this.overlayStyle = this.setOverlayDataSourceStyle();
-
-      const layer = new VectorLayer({
-        title: 'Overlay',
-        zIndex: 999,
-        style: this.overlayStyle,
-        source: this.overlayDataSource
-      });
-      this.addLayer(layer, false);
-    }
+    this.overlay = new Overlay(this);
   }
 
   setTarget(id: string) {
@@ -149,7 +140,12 @@ export class IgoBaseMap {
     this.setView(Object.assign(viewOptions, options));
   }
 
+  /**
+   * Set the map view and subscribe to the movement stream
+   * @param options Map view options
+   */
   setView(options: MapViewOptions) {
+    this.unsubscribeToMovement();
     const view = new olView(options);
     this.ol.setView(view);
 
@@ -164,6 +160,7 @@ export class IgoBaseMap {
         this.geolocate(true);
       }
     }
+    this.subscribeToMovement();
   }
 
   getCenter(projection?): [number, number] {
@@ -331,39 +328,6 @@ export class IgoBaseMap {
     this.zoomToExtent(feature.getGeometry().getExtent());
   }
 
-  addOverlay(feature: olFeature) {
-    const geometry = feature.getGeometry();
-    if (geometry === null) {
-      return;
-    }
-
-    if (geometry.getType() === 'Point') {
-      feature.setStyle([this.overlayMarkerStyle]);
-    }
-
-    this.overlayDataSource.ol.addFeature(feature);
-  }
-  getOverlayByID(id): olFeature {
-    if (this.overlayDataSource.ol.getFeatureById(id)) {
-      return this.overlayDataSource.ol.getFeatureById(id);
-    }
-    return;
-  }
-
-  removeOverlayByID(id) {
-    if (this.overlayDataSource.ol.getFeatureById(id)) {
-      this.overlayDataSource.ol.removeFeature(
-        this.overlayDataSource.ol.getFeatureById(id)
-      );
-    }
-  }
-
-  clearOverlay() {
-    if (this.overlayDataSource && this.overlayDataSource.ol) {
-      this.overlayDataSource.ol.clear();
-    }
-  }
-
   /**
    * Get Scale of the map
    * @return Scale of the map
@@ -454,66 +418,6 @@ export class IgoBaseMap {
     return listLegend;
   }
 
-  setOverlayDataSourceStyle(
-    strokeRGBA: [number, number, number, number] = [0, 161, 222, 1],
-    strokeWidth: number = 2,
-    fillRGBA: [number, number, number, number] = [0, 161, 222, 0.15],
-    text?
-  ): olstyle.Style {
-    const stroke = new olstyle.Stroke({
-      color: strokeRGBA,
-      width: strokeWidth
-    });
-
-    const fill = new olstyle.Fill({
-      color: fillRGBA
-    });
-
-    return new olstyle.Style({
-      stroke,
-      fill,
-      image: new olstyle.Circle({
-        radius: 5,
-        stroke,
-        fill
-      }),
-      text: new olstyle.Text({
-        font: '12px Calibri,sans-serif',
-        text,
-        fill: new olstyle.Fill({ color: '#000' }),
-        stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
-      })
-    });
-  }
-
-  setOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
-    let iconColor;
-    switch (color) {
-      case 'blue':
-      case 'red':
-      case 'yellow':
-      case 'green':
-        iconColor = color;
-        break;
-      default:
-        iconColor = 'blue';
-        break;
-    }
-    return new olstyle.Style({
-      image: new olstyle.Icon({
-        src: './assets/igo2/geo/icons/place_' + iconColor + '_36px.svg',
-        imgSize: [36, 36], // for ie
-        anchor: [0.5, 1]
-      }),
-      text: new olstyle.Text({
-        font: '12px Calibri,sans-serif',
-        text,
-        fill: new olstyle.Fill({ color: '#000' }),
-        stroke: new olstyle.Stroke({ color: '#fff', width: 3 })
-      })
-    });
-  }
-
   geolocate(track = false) {
     let first = true;
     if (this.geolocation$$) {
@@ -532,15 +436,15 @@ export class IgoBaseMap {
         const extent = geometry.getExtent();
         if (
           this.geolocationFeature &&
-          this.overlayDataSource.ol.getFeatureById(
+          this.overlay.dataSource.ol.getFeatureById(
             this.geolocationFeature.getId()
           )
         ) {
-          this.overlayDataSource.ol.removeFeature(this.geolocationFeature);
+          this.overlay.dataSource.ol.removeFeature(this.geolocationFeature);
         }
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
-        this.addOverlay(this.geolocationFeature);
+        this.overlay.addFeature(this.geolocationFeature);
         if (first) {
           this.zoomToExtent(extent);
         }
@@ -593,49 +497,6 @@ export class IgoBaseMap {
 
   private getLayerIndex(layer: Layer) {
     return this.layers.findIndex(layer2 => layer2 === layer);
-  }
-}
-
-// TODO: move that to a better place
-export interface MapMovement {
-  extent: [number, number, number, number];
-  action: string;
-}
-
-/**
- * This class extends the base IgoMap and adds a few functionnalities.
- * @todo Move "view" stuff elsewhere
- * @todo Bakcport this to the library
- */
-export class IgoMap extends IgoBaseMap {
-  /**
-   * Overlay layer
-   */
-  // public overlay: Overlay;
-
-  /**
-   * Movement stream
-   */
-  private movement$ = new Subject<MapMovement>();
-
-  /**
-   * Subscription to the movement stream
-   */
-  private movement$$: Subscription;
-
-  constructor(options?: MapOptions) {
-    super(options);
-    // this.overlay = new Overlay(this);
-  }
-
-  /**
-   * Set the map view and subscribe to the movement stream
-   * @param options Map view options
-   */
-  setView(options: MapViewOptions) {
-    this.unsubscribeToMovement();
-    super.setView(options);
-    this.subscribeToMovement();
   }
 
   /**
@@ -690,4 +551,10 @@ export class IgoMap extends IgoBaseMap {
       this.zoomToExtent(movement.extent);
     }
   }
+}
+
+// TODO: move that to a better place
+export interface MapMovement {
+  extent: [number, number, number, number];
+  action: string;
 }

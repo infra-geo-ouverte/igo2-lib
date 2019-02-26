@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import * as olstyle from 'ol/style';
+
 import { Layer } from '../../layer/shared/layers/layer';
 import { MapService } from '../../map/shared/map.service';
 import { DownloadService } from '../../download/shared/download.service';
@@ -107,6 +109,10 @@ export class OgcFilterableItemComponent implements OnInit {
     }
   }
 
+  private getOverlayByID(id) {
+    this.map.overlay.dataSource.ol.getFeatureById(id);
+  }
+
   toggleShowFeatureOnMap() {
     this.showFeatureOnMap = !this.showFeatureOnMap;
     this.datasource.options.ogcFilters.interfaceOgcFilters.forEach(filter => {
@@ -125,26 +131,34 @@ export class OgcFilterableItemComponent implements OnInit {
         number
       ];
 
-      if (this.showFeatureOnMap === false) {
-        drawnFeature = this.map.getOverlayByID(
-          'ogcFilterOverlay_' + filter.filterid
-        );
-      } else {
-        drawnFeature = this.map.getOverlayByID(
-          'ogcFilterOverlay_' + filter.filterid
-        );
+      drawnFeature = this.getOverlayByID('ogcFilterOverlay_' + filter.filterid);
+      if (this.showFeatureOnMap !== false) {
         drawnStrokeColor = [125, 136, 140, 0.5];
         drawStrokeWidth = 2;
         drawnFillColor = [125, 136, 140, 0];
       }
+
+      const stroke = new olstyle.Stroke({
+        width: drawStrokeWidth,
+        color: drawnStrokeColor
+      });
+
+      const fill = new olstyle.Stroke({
+        color: drawnFillColor
+      });
+
+      const olStyle = new olstyle.Style({
+        stroke,
+        fill,
+        image: new olstyle.Circle({
+          radius: 5,
+          stroke,
+          fill
+        })
+      });
+
       if (drawnFeature) {
-        drawnFeature.setStyle(
-          this.map.setOverlayDataSourceStyle(
-            drawnStrokeColor,
-            drawStrokeWidth,
-            drawnFillColor
-          )
-        );
+        drawnFeature.setStyle(olStyle);
       }
     });
   }
@@ -169,7 +183,8 @@ export class OgcFilterableItemComponent implements OnInit {
       (this.datasource.options as any).paramsWFS &&
       (this.datasource.options as any).paramsWFS.fieldNameGeometry
     ) {
-      fieldNameGeometry = (this.datasource.options as any).paramsWFS.fieldNameGeometry;
+      fieldNameGeometry = (this.datasource.options as any).paramsWFS
+        .fieldNameGeometry;
     }
     const status = arr.length === 0 ? true : false;
     arr.push(
