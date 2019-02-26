@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { EntityStore, getEntityProperty } from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { EntityStore, getEntityProperty, EntityTableColumnRenderer } from '@igo2/common';
 
 @Component({
   selector: 'app-entity-table',
@@ -22,8 +23,9 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         name: 'selected',
         title: 'Selected',
         valueAccessor: (entity: object) => {
-          return this.store.state.get(entity).selected ? 'Yes' : 'No';
-        }
+          return this.store.state.get(entity).selected ? 'radio_button_checked' : 'radio_button_unchecked';
+        },
+        renderer: EntityTableColumnRenderer.Icon
       },
       {
         name: 'id',
@@ -36,18 +38,18 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
       {
         name: 'description',
         title: 'Description',
-        renderer: 'HTML'
+        renderer: EntityTableColumnRenderer.HTML
       }
     ]
   };
 
-  constructor() {}
+  constructor(private languageService: LanguageService) {}
 
   ngOnInit() {
     this.store.load([
-      {id: '2', name: 'Name 2', description: 'Description 2'},
-      {id: '1', name: 'Name 1', description: 'Description 1'},
-      {id: '3', name: 'Name 3', description: 'Description 3'}
+      {id: '2', name: 'Name 2', description: '<b>Description 2</b>'},
+      {id: '1', name: 'Name 1', description: '<b>Description 1</b>'},
+      {id: '3', name: 'Name 3', description: '<b>Description 3</b>'}
     ]);
   }
 
