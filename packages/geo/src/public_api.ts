@@ -30,6 +30,7 @@ export * from './lib/search/search-results/search-results.module';
 export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
 
+export * from './lib/query/shared/query-search-source.providers';
 export * from './lib/search/shared/sources/icherche.providers';
 export * from './lib/search/shared/sources/ilayer.providers';
 export * from './lib/search/shared/sources/nominatim.providers';

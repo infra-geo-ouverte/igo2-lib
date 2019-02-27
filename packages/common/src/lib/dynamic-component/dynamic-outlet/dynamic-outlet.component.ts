@@ -22,7 +22,6 @@ import { DynamicComponentService } from '../shared/dynamic-component.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicOutletComponent implements OnChanges, OnDestroy {
-
   /**
    * The dynamic component base class or the dynamic component itself
    */
@@ -31,12 +30,12 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
   /**
    * The dynamic component inputs
    */
-  @Input() inputs: {[key: string]: any} = {};
+  @Input() inputs: { [key: string]: any } = {};
 
   /**
    * The subscribers to the dynamic component outputs
    */
-  @Input() subscribers: {[key: string]: (event: any) => void} = {};
+  @Input() subscribers: { [key: string]: (event: any) => void } = {};
 
   /**
    * The dynamic component
@@ -65,16 +64,22 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
     const component = changes.component;
     const inputs = changes.inputs;
     const subscribers = changes.subscribers;
-    const objectsAreEquivalent = ObjectUtils.objectsAreEquivalent;
+    const eq = ObjectUtils.objectsAreEquivalent;
 
     if (component && component.currentValue !== component.previousValue) {
       this.createComponent(component.currentValue);
     } else {
-      if (inputs && objectsAreEquivalent(inputs.currentValue, inputs.previousValue) === false) {
+      const inputsAreEquivalents =
+        inputs && eq(inputs.currentValue || {}, inputs.previousValue || {});
+      const subscribersAreEquivalents =
+        subscribers &&
+        eq(subscribers.currentValue || {}, subscribers.previousValue || {});
+
+      if (inputsAreEquivalents === false) {
         this.updateInputs();
       }
 
-      if (subscribers && objectsAreEquivalent(subscribers.currentValue, subscribers.previousValue) === false) {
+      if (subscribersAreEquivalents === false) {
         this.updateSubscribers();
       }
     }
@@ -86,7 +91,9 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    this.dynamicComponent.destroy();
+    if (this.dynamicComponent) {
+      this.dynamicComponent.destroy();
+    }
   }
 
   /**
@@ -97,8 +104,10 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
     if (this.dynamicComponent !== undefined) {
       this.dynamicComponent.destroy();
     }
-    this.dynamicComponent = component instanceof DynamicComponent ?
-      component : this.dynamicComponentService.create(component);
+    this.dynamicComponent =
+      component instanceof DynamicComponent
+        ? component
+        : this.dynamicComponentService.create(component);
     this.renderComponent();
   }
 

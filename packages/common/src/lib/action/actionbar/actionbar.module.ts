@@ -9,6 +9,8 @@ import {
   MatMenuModule
 } from '@angular/material';
 
+import { IgoLanguageModule } from '@igo2/core';
+
 import { ActionbarComponent } from './actionbar.component';
 import { ActionbarItemComponent } from './actionbar-item.component';
 
@@ -18,18 +20,14 @@ import { ActionbarItemComponent } from './actionbar-item.component';
 @NgModule({
   imports: [
     CommonModule,
+    IgoLanguageModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
     MatMenuModule,
     MatListModule
   ],
-  exports: [
-    ActionbarComponent
-  ],
-  declarations: [
-    ActionbarComponent,
-    ActionbarItemComponent
-  ]
+  exports: [ActionbarComponent],
+  declarations: [ActionbarComponent, ActionbarItemComponent]
 })
 export class IgoActionbarModule {}

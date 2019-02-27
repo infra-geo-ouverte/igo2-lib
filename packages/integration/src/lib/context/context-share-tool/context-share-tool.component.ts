@@ -11,8 +11,7 @@ import { ToolComponent } from '@igo2/common';
   selector: 'igo-context-share-tool',
   templateUrl: './context-share-tool.component.html'
 })
-export class ShareMapToolComponent {
-
+export class ContextShareToolComponent {
   @Input() hasCopyLinkButton: boolean = false;
 
   @Input() hasShareMapButton: boolean = true;

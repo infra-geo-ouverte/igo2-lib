@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { provideSearchSourceService } from './shared/search-source.service';
+import { provideSearchSourceService } from './shared/search-source-service.providers';
 import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/icherche.providers';
 
 import { IgoSearchBarModule } from './search-bar/search-bar.module';

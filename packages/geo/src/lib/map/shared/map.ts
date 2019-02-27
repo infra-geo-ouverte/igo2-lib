@@ -123,8 +123,10 @@ export class IgoMap {
     this.ol.setTarget(id);
     if (id !== undefined) {
       this.layerWatcher.subscribe(() => {}, null);
+      this.subscribeToMovement();
     } else {
       this.layerWatcher.unsubscribe();
+      this.unsubscribeToMovement();
     }
   }
 
@@ -145,7 +147,6 @@ export class IgoMap {
    * @param options Map view options
    */
   setView(options: MapViewOptions) {
-    this.unsubscribeToMovement();
     const view = new olView(options);
     this.ol.setView(view);
 
@@ -160,7 +161,6 @@ export class IgoMap {
         this.geolocate(true);
       }
     }
-    this.subscribeToMovement();
   }
 
   getCenter(projection?): [number, number] {

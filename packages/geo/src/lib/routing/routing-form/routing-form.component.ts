@@ -1097,7 +1097,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (geometry.getType() === 'Point') {
       const olStyle = createOverlayMarkerStyle(stopColor);
-      console.log(olStyle);
       // stopText
       feature.setStyle(olStyle);
     }

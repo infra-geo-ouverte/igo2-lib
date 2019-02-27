@@ -121,13 +121,15 @@ export class QueryService {
   }
 
   private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
+    console.log('GML2');
     let parser = new olFormatGML2();
     let features = parser.readFeatures(res);
-
+    console.log(features);
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
       parser = new olformat.WMSGetFeatureInfo();
       features = parser.readFeatures(res);
+      console.log(features);
     }
 
     return features.map(feature =>
@@ -138,7 +140,6 @@ export class QueryService {
   private extractGML3Data(res, zIndex, allowedFieldsAndAlias?) {
     const parser = new olFormatGML3();
     const features = parser.readFeatures(res);
-
     return features.map(feature =>
       this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
     );

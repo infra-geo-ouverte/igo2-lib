@@ -2,6 +2,10 @@ $mobile: 'only screen and (max-width: 450px), only screen and (max-height: 450px
 $tablet: 'only screen and (min-width: 451px) and (min-height: 451px) and (max-width: 800px)';
 $desktop: 'only screen and (min-width: 801px)';
 
+$small-screen: 'only screen and (min-width: 801px) and (max-width: 1279px)';
+$medium-screen: 'only screen and (min-width: 1280px) and (max-width: 1919px)';
+$large-screen: 'only screen and (min-width: 1920px)';
+
 @mixin mobile {
   @media #{$mobile} {
     @content;
@@ -18,4 +22,22 @@ $desktop: 'only screen and (min-width: 801px)';
   @media #{$desktop} {
     @content;
   }
+}
+
+@mixin small-screen {
+    @media #{$small-screen} {
+      @content;
+    }
+}
+
+@mixin medium-screen {
+  @media #{$medium-screen} {
+    @content;
+  }
+}
+
+@mixin large-screen {
+    @media #{$large-screen} {
+      @content;
+    }
 }

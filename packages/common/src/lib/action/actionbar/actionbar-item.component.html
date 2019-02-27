@@ -1,7 +1,7 @@
 <mat-list-item
   matTooltipClass="actionbarItemTooltip"
   matTooltipShowDelay="500"
-  [matTooltip]="tooltip"
+  [matTooltip]="tooltip | translate"
   [ngClass]="{'igo-actionbar-item-disabled': disabled}"
   (click)="onClick()">
   <button
@@ -11,5 +11,5 @@
     [disabled]="disabled">
     <mat-icon *ngIf="withIcon">{{icon}}</mat-icon>
   </button>
-  <h4 *ngIf="withTitle" matLine>{{title}}</h4>
+  <h4 *ngIf="withTitle" matLine>{{title | translate}}</h4>
 </mat-list-item>
