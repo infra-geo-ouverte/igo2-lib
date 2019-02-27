@@ -12,8 +12,8 @@ import { CatalogState } from '../catalog.state';
  * Tool to browse the list of available catalogs.
  */
 @ToolComponent({
-  name: 'catalogIgo',
-  title: 'igo.tools.catalog',
+  name: 'catalog',
+  title: 'igo.integration.tools.catalog',
   icon: 'photo_library'
 })
 @Component({
@@ -22,12 +22,13 @@ import { CatalogState } from '../catalog.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogLibraryToolComponent implements OnInit {
-
   /**
    * Store that contains the catalogs
    * @internal
    */
-  get store(): EntityStore<Catalog> { return this.catalogState.catalogStore; }
+  get store(): EntityStore<Catalog> {
+    return this.catalogState.catalogStore;
+  }
 
   constructor(
     private catalogService: CatalogService,
@@ -49,7 +50,7 @@ export class CatalogLibraryToolComponent implements OnInit {
    * @internal
    * @param event Select event
    */
-  onCatalogSelectChange(event: {selected: boolean; catalog: Catalog}) {
+  onCatalogSelectChange(event: { selected: boolean; catalog: Catalog }) {
     if (event.selected === false) {
       return;
     }
@@ -61,11 +62,9 @@ export class CatalogLibraryToolComponent implements OnInit {
    * load them into the store.
    */
   private loadCatalogs() {
-    this.catalogService.loadCatalogs()
-      .subscribe((catalogs: Catalog[]) => {
-        this.store.clear();
-        this.store.load(catalogs);
-      });
+    this.catalogService.loadCatalogs().subscribe((catalogs: Catalog[]) => {
+      this.store.clear();
+      this.store.load(catalogs);
+    });
   }
-
 }

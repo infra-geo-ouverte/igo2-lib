@@ -90,7 +90,7 @@ export class ContextService {
   }
 
   getDetails(id: string): Observable<DetailedContext> {
-    const url = this.baseUrl + '/contexts/' + id + '/details';
+    const url = `${this.baseUrl}/contexts/${id}/details`;
     return this.http
       .get<DetailedContext>(url)
       .pipe(catchError(res => this.handleError(res, id)));

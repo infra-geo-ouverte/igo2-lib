@@ -9,7 +9,6 @@ import { Toolbox, ToolService } from '@igo2/common';
   providedIn: 'root'
 })
 export class ToolState {
-
   /**
    * Toolbox that holds main tools
    */
@@ -18,5 +17,4 @@ export class ToolState {
   constructor(private toolService: ToolService) {
     this.toolbox.setTools(this.toolService.getTools());
   }
-
 }

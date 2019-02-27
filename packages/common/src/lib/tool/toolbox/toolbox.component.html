@@ -1,5 +1,5 @@
 <igo-actionbar
-  *ngIf="!actionStore.empty"
+  *ngIf="(toolbar$ | async).length > 0"
   [store]="actionStore"
   [withIcon]="true"
   [withTitle]="toolbarWithTitle"
@@ -9,7 +9,7 @@
 <div
   *ngIf="activeTool$ | async as tool"
   class="igo-tool-container"
-  [ngClass]="{'igo-tool-container-with-toolbar': !actionStore.empty}"
+  [ngClass]="{'igo-tool-container-with-toolbar': !actionStore.empty, 'igo-tool-container-with-animation': animate}"
   [@toolSlideInOut]="animation$ | async"
   (@toolSlideInOut.start)="onAnimationStart()"
   (@toolSlideInOut.done)="onAnimationComplete()">

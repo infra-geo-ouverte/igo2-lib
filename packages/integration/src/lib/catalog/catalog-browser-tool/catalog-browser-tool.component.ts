@@ -9,7 +9,13 @@ import { Subject, Subscription } from 'rxjs';
 
 import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
 
-import { IgoMap, Catalog, CatalogItem, CatalogItemState, CatalogService } from '@igo2/geo';
+import {
+  IgoMap,
+  Catalog,
+  CatalogItem,
+  CatalogItemState,
+  CatalogService
+} from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { CatalogState } from '../catalog.state';
@@ -19,7 +25,7 @@ import { CatalogState } from '../catalog.state';
  */
 @ToolComponent({
   name: 'catalogBrowser',
-  title: 'igo.tools.catalog',
+  title: 'igo.integration.tools.catalog',
   icon: 'photo_browser'
 })
 @Component({
@@ -28,7 +34,6 @@ import { CatalogState } from '../catalog.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
-
   /**
    * Store that contains the catalog items
    * @internal
@@ -44,7 +49,9 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    * Map to add layers to
    * @internal
    */
-  get map(): IgoMap { return this.mapState.map; }
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
 
   constructor(
     private catalogService: CatalogService,
@@ -58,7 +65,9 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const catalogStore = this.catalogState.catalogStore;
     this.catalog$$ = catalogStore.stateView
-      .firstBy$((record: EntityRecord<Catalog>) => record.state.selected === true)
+      .firstBy$(
+        (record: EntityRecord<Catalog>) => record.state.selected === true
+      )
       .subscribe((record: EntityRecord<Catalog>) => {
         if (record && record.entity) {
           this.loadCatalogItems(record.entity);
@@ -87,11 +96,11 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
 
     store = new EntityStore<CatalogItem>([]);
     this.catalogState.setCatalogItemsStore(catalog, store);
-    this.catalogService.loadCatalogItems(catalog)
+    this.catalogService
+      .loadCatalogItems(catalog)
       .subscribe((items: CatalogItem[]) => {
         store.load(items);
         this.store$.next(store);
       });
   }
-
 }

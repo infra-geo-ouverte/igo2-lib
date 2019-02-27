@@ -6,7 +6,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
  * Service where all available tools and their component are registered.
  */
 export class Toolbox {
-
   /**
    * Observable of the active tool
    */
@@ -15,7 +14,7 @@ export class Toolbox {
   /**
    * Ordered list of tool names to display in a toolbar
    */
-  toolbar: string[];
+  toolbar$: BehaviorSubject<string[]> = new BehaviorSubject([]);
 
   /**
    * Observable of the active tool
@@ -34,8 +33,12 @@ export class Toolbox {
     getKey: (tool: Tool) => tool.name
   });
 
+  get tools$(): BehaviorSubject<Tool[]> {
+    return this.store.entities$;
+  }
+
   constructor(private options: ToolboxOptions = {}) {
-    this.toolbar = options.toolbar ? options.toolbar : [];
+    this.setToolbar(options.toolbar);
     this.initStore();
   }
 
@@ -77,7 +80,7 @@ export class Toolbox {
    * @param toolbar A list of tool names
    */
   setToolbar(toolbar: string[]) {
-    this.toolbar = toolbar || [];
+    this.toolbar$.next(toolbar || []);
   }
 
   /**
@@ -85,13 +88,13 @@ export class Toolbox {
    * @param name Tool name
    * @param options Tool options
    */
-  activateTool(name: string, options: {[key: string]: any} = {}) {
+  activateTool(name: string, options: { [key: string]: any } = {}) {
     const tool = this.getTool(name);
     if (tool === undefined) {
       return;
     }
 
-    this.store.state.update(tool, {active: true, options}, true);
+    this.store.state.update(tool, { active: true, options }, true);
   }
 
   /**
@@ -111,7 +114,7 @@ export class Toolbox {
    */
   deactivateTool() {
     this.clearActiveToolHistory();
-    this.store.state.updateAll({active: false});
+    this.store.state.updateAll({ active: false });
   }
 
   /**
@@ -136,7 +139,7 @@ export class Toolbox {
           tool.options || {},
           record.state.options || {}
         );
-        this.setActiveTool(Object.assign({}, tool, {options}));
+        this.setActiveTool(Object.assign({}, tool, { options }));
       });
   }
 

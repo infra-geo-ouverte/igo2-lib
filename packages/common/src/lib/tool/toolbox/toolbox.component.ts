@@ -8,7 +8,7 @@ import {
 
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { ActionStore } from '../../action';
+import { Action, ActionStore } from '../../action';
 import { Tool } from '../shared/tool.interface';
 import { Toolbox } from '../shared/toolbox';
 import { toolSlideInOut } from './toolbox.animation';
@@ -21,7 +21,6 @@ import { toolSlideInOut } from './toolbox.animation';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
-
   /**
    * Observable of the active tool
    */
@@ -38,9 +37,19 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   animation$: BehaviorSubject<string> = new BehaviorSubject('none');
 
   /**
+   * Observable of the toolbar
+   */
+  toolbar$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+
+  /**
    * Subscription to the active tool
    */
   private activeTool$$: Subscription;
+
+  /**
+   * Subscription to the toolbar
+   */
+  private toolbar$$: Subscription;
 
   /**
    * Observable of the ongoing animation. This is useful when
@@ -76,9 +85,12 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.initToolbar();
-    this.activeTool$$ = this.toolbox.activeTool$
-      .subscribe((tool: Tool) => this.onActiveToolChange(tool));
+    this.toolbar$$ = this.toolbox.toolbar$.subscribe((toolbar: string[]) =>
+      this.onToolbarChange(toolbar)
+    );
+    this.activeTool$$ = this.toolbox.activeTool$.subscribe((tool: Tool) =>
+      this.onActiveToolChange(tool)
+    );
   }
 
   /**
@@ -86,6 +98,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
+    this.toolbar$$.unsubscribe();
     this.activeTool$$.unsubscribe();
     this.actionStore.destroy();
   }
@@ -112,8 +125,16 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * @returns Tool inputs
    * @internal
    */
-  getToolInputs(tool: Tool): {[key: string]: any} {
+  getToolInputs(tool: Tool): { [key: string]: any } {
     return tool.options || {};
+  }
+
+  /**
+   * Initialize an action store
+   * @param toolbar Toolbar
+   */
+  private onToolbarChange(toolbar: string[]) {
+    this.setToolbar(toolbar);
   }
 
   /**
@@ -134,11 +155,11 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   private setActiveTool(tool: Tool | undefined) {
     if (tool === undefined) {
-      this.actionStore.state.updateAll({active: false});
+      this.actionStore.state.updateAll({ active: false });
     } else {
       const action = this.actionStore.get(tool.name);
       if (action !== undefined) {
-        this.actionStore.state.update(action, {active: true}, true);
+        this.actionStore.state.update(action, { active: true }, true);
       }
     }
 
@@ -151,25 +172,28 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   /**
    * Initialize the toolbar
    */
-  private initToolbar() {
-    const actions = [];
-    this.toolbox.toolbar.forEach((toolName: string) => {
+  private setToolbar(toolbar: string[]) {
+    const actions = toolbar.reduce((acc: Action[], toolName: string) => {
       const tool = this.toolbox.getTool(toolName);
-      if (tool !== undefined) {
-        actions.push({
-          id: tool.name,
-          title: tool.title,
-          icon: tool.icon,
-          iconImage: tool.iconImage,
-          tooltip: tool.tooltip,
-          args: [tool, this.toolbox],
-          handler: (_tool: Tool, _toolbox: Toolbox) => {
-            _toolbox.activateTool(_tool.name);
-          }
-        });
+      if (tool === undefined) {
+        return acc;
       }
-    });
+
+      acc.push({
+        id: tool.name,
+        title: tool.title,
+        icon: tool.icon,
+        // iconImage: tool.iconImage,
+        tooltip: tool.tooltip,
+        args: [tool, this.toolbox],
+        handler: (_tool: Tool, _toolbox: Toolbox) => {
+          _toolbox.activateTool(_tool.name);
+        }
+      });
+      return acc;
+    }, []);
     this.actionStore.load(actions);
+    this.toolbar$.next(toolbar);
   }
 
   /**
@@ -195,5 +219,4 @@ export class ToolboxComponent implements OnInit, OnDestroy {
       this.animating$$.unsubscribe();
     }
   }
-
 }
