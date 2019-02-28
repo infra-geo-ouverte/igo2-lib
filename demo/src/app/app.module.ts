@@ -22,7 +22,7 @@ import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-co
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
 import { AppFormModule } from './common/form/form.module';
 import { AppTableModule } from './common/table/table.module';
-import { AppWidgetModule } from './common/widget/widget.module';
+// import { AppWidgetModule } from './common/widget/widget.module';
 
 import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 
@@ -68,7 +68,7 @@ import { AppComponent } from './app.component';
     AppEntityTableModule,
     AppFormModule,
     AppTableModule,
-    AppWidgetModule,
+    // AppWidgetModule,
 
     AppAuthFormModule,
 
