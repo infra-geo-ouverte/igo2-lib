@@ -44,6 +44,10 @@ export class CatalogService {
     }
   }
 
+  getCatalogSources() {
+    return this.config.getConfig('catalog').sources;
+  }
+
   load() {
     const catalogConfig = this.config.getConfig('catalog') || {};
 
