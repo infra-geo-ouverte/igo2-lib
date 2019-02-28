@@ -14,7 +14,8 @@ import {
   WMSDataSource,
   CartoDataSource,
   ArcGISRestDataSource,
-  TileArcGISRestDataSource
+  TileArcGISRestDataSource,
+  WebSocketDataSource
 } from '../../datasource';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -75,6 +76,7 @@ export class LayerService {
       case FeatureDataSource:
       case WFSDataSource:
       case ArcGISRestDataSource:
+      case WebSocketDataSource:
         layer = this.createVectorLayer(layerOptions as VectorLayerOptions);
         break;
       case WMSDataSource:

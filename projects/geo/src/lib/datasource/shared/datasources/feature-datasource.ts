@@ -10,8 +10,8 @@ import { FeatureDataSourceOptions } from './feature-datasource.interface';
 export class FeatureDataSource extends DataSource {
   public options: FeatureDataSourceOptions;
   public ol: olSourceVector;
-
   protected createOlSource(): olSourceVector {
+
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)
     };
@@ -27,7 +27,7 @@ export class FeatureDataSource extends DataSource {
     return Md5.hashStr(chain) as string;
   }
 
-  private getSourceFormatFromOptions(options: FeatureDataSourceOptions) {
+  protected getSourceFormatFromOptions(options: FeatureDataSourceOptions) {
     if (options.format) {
       return options.format;
     }

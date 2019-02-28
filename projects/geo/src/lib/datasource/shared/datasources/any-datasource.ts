@@ -8,6 +8,7 @@ import { FeatureDataSource } from './feature-datasource';
 import { CartoDataSource } from './carto-datasource';
 import { ArcGISRestDataSource } from './arcgisrest-datasource';
 import { TileArcGISRestDataSource } from './tilearcgisrest-datasource';
+import { WebSocketDataSource } from './websocket-datasource';
 
 export type AnyDataSource =
   | DataSource
@@ -19,4 +20,5 @@ export type AnyDataSource =
   | WMSDataSource
   | CartoDataSource
   | ArcGISRestDataSource
-  | TileArcGISRestDataSource;
+  | TileArcGISRestDataSource
+  | WebSocketDataSource;
