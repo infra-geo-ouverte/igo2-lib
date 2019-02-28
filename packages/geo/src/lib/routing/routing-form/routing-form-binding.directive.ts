@@ -1,35 +1,25 @@
 import {
   Directive,
   Self,
-  OnInit,
   AfterViewInit,
   Optional
 } from '@angular/core';
 
 import { RouteService } from '@igo2/core';
 
-import { MapService } from '../../map/shared/map.service';
 import { RoutingFormComponent } from './routing-form.component';
 import { RoutingFormService } from './routing-form.service';
 
 @Directive({
   selector: '[igoRoutingFormBinding]'
 })
-export class RoutingFormBindingDirective implements OnInit, AfterViewInit {
-  private component: RoutingFormComponent;
+export class RoutingFormBindingDirective implements AfterViewInit {
 
   constructor(
-    @Self() component: RoutingFormComponent,
-    private mapService: MapService,
+    @Self() private component: RoutingFormComponent,
     private routingFormService: RoutingFormService,
     @Optional() private route: RouteService
-  ) {
-    this.component = component;
-  }
-
-  ngOnInit() {
-    this.component.map = this.mapService.getMap();
-  }
+  ) {}
 
   ngAfterViewInit(): void {
     const storedStopsCoordinates = this.routingFormService.getStopsCoordinates();

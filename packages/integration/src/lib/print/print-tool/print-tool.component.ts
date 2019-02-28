@@ -1,6 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
+import { IgoMap } from '@igo2/geo';
+
+import { MapState } from '../../map/map.state';
 
 @ToolComponent({
   name: 'print',
@@ -12,5 +15,9 @@ import { ToolComponent } from '@igo2/common';
   templateUrl: './print-tool.component.html'
 })
 export class PrintToolComponent {
-  constructor() {}
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
+
+  constructor(private mapState: MapState) {}
 }

@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -15,7 +15,6 @@ import { IgoLanguageModule } from '@igo2/core';
 import { IgoKeyValueModule } from '@igo2/common';
 
 import { PrintComponent } from './print/print.component';
-import { PrintBindingDirective } from './print/print-binding.directive';
 import { PrintFormComponent } from './print-form/print-form.component';
 
 @NgModule({
@@ -33,13 +32,7 @@ import { PrintFormComponent } from './print-form/print-form.component';
     IgoLanguageModule,
     IgoKeyValueModule
   ],
-  exports: [PrintComponent, PrintBindingDirective, PrintFormComponent],
-  declarations: [PrintComponent, PrintBindingDirective, PrintFormComponent]
+  exports: [PrintComponent, PrintFormComponent],
+  declarations: [PrintComponent, PrintFormComponent]
 })
-export class IgoPrintModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoPrintModule
-    };
-  }
-}
+export class IgoPrintModule {}

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
+import { IgoMap } from '@igo2/geo';
+
+import { MapState } from '../../map/map.state';
 
 @ToolComponent({
   name: 'directions',
@@ -12,5 +15,9 @@ import { ToolComponent } from '@igo2/common';
   templateUrl: './directions-tool.component.html'
 })
 export class DirectionsToolComponent {
-  constructor() {}
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
+
+  constructor(private mapState: MapState) {}
 }
