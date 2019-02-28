@@ -1,3 +1,34 @@
+<a name="0.27.0"></a>
+# [0.27.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.2...0.27.0) (2019-02-28)
+
+
+### Bug Fixes
+
+* **analytics:** change piwik to matomo ([8d73e28](https://github.com/infra-geo-ouverte/igo2-lib/commit/8d73e28))
+* **build:** fix build error caused by a bad import in the widget service ([02b52b3](https://github.com/infra-geo-ouverte/igo2-lib/commit/02b52b3))
+* **catalog:** fix import ([e98aefd](https://github.com/infra-geo-ouverte/igo2-lib/commit/e98aefd))
+* **demo:** fix widget ([874ee7d](https://github.com/infra-geo-ouverte/igo2-lib/commit/874ee7d))
+* **demo:** temporarily remove the widget demo ([50952f7](https://github.com/infra-geo-ouverte/igo2-lib/commit/50952f7))
+* **polyfills:** Allow string normalization on IE ([#263](https://github.com/infra-geo-ouverte/igo2-lib/issues/263)) ([0d1154e](https://github.com/infra-geo-ouverte/igo2-lib/commit/0d1154e))
+* **query:** wms version support in query service ([df82157](https://github.com/infra-geo-ouverte/igo2-lib/commit/df82157))
+
+
+### Features
+
+* **action:** action module and actionbar component ([017d97e](https://github.com/infra-geo-ouverte/igo2-lib/commit/017d97e))
+* **catalog:** Catalog enhancement (info_format, count) ([#272](https://github.com/infra-geo-ouverte/igo2-lib/issues/272)) ([98868eb](https://github.com/infra-geo-ouverte/igo2-lib/commit/98868eb))
+* **demo:** add table demo ([3ef98db](https://github.com/infra-geo-ouverte/igo2-lib/commit/3ef98db))
+* **dynamic-component:** dynamic component class and dynamic outlet component ([7b4e90c](https://github.com/infra-geo-ouverte/igo2-lib/commit/7b4e90c))
+* **entity:** merge entity module and add an entity-table demo ([757e45b](https://github.com/infra-geo-ouverte/igo2-lib/commit/757e45b))
+* **entity table:** allow multiple selections ([3b4f1d9](https://github.com/infra-geo-ouverte/igo2-lib/commit/3b4f1d9))
+* **form:** configurable forms ([abad9ab](https://github.com/infra-geo-ouverte/igo2-lib/commit/abad9ab))
+* **geometry:** geometry module and geometry form field ([9f4d86d](https://github.com/infra-geo-ouverte/igo2-lib/commit/9f4d86d))
+* **spinner:** improve spinner behavior ([e360f60](https://github.com/infra-geo-ouverte/igo2-lib/commit/e360f60))
+* **websocket:** Websocket support ([#264](https://github.com/infra-geo-ouverte/igo2-lib/issues/264)) ([8007089](https://github.com/infra-geo-ouverte/igo2-lib/commit/8007089))
+* **widget:** widget module. A widget is a specialez version of a dynamic component ([3da3e34](https://github.com/infra-geo-ouverte/igo2-lib/commit/3da3e34))
+
+
+
 <a name="0.26.2"></a>
 ## [0.26.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.1...0.26.2) (2019-02-15)
 
