@@ -7,7 +7,6 @@ import { FeatureDataSourceOptions } from './feature-datasource.interface';
 export class FeatureDataSource extends DataSource {
   public options: FeatureDataSourceOptions;
   public ol: olSourceVector;
-
   protected createOlSource(): olSourceVector {
     const sourceOptions = {
       format: this.getSourceFormatFromOptions(this.options)
@@ -16,7 +15,7 @@ export class FeatureDataSource extends DataSource {
     return new olSourceVector(Object.assign(sourceOptions, this.options));
   }
 
-  private getSourceFormatFromOptions(options: FeatureDataSourceOptions) {
+  protected getSourceFormatFromOptions(options: FeatureDataSourceOptions) {
     if (options.format) {
       return options.format;
     }
