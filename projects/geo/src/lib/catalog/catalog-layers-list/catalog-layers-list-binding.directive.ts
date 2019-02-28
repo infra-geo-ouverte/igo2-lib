@@ -20,7 +20,7 @@ import { DataSourceService } from '../../datasource/shared/datasource.service';
 import { CatalogService } from '../shared/catalog.service';
 import { Catalog } from '../shared/catalog.interface';
 import { CatalogLayersListComponent } from './catalog-layers-list.component';
-import { QueryFormat } from '../../query/shared/query.enums';
+import { QueryFormat } from '../../query/shared/query.enum';
 
 @Directive({
   selector: '[igoCatalogLayersListBinding]'
