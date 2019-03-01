@@ -29,7 +29,7 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
   return (olFeature: OlFeature) => {
     const geometryType = olFeature.getGeometry().getType();
     const style = geometryType === 'Point' ? markerStyle : defaultStyle;
-    style.getText().setText(olFeature.get('mapTitle'));
+    style.getText().setText(olFeature.get('_mapTitle'));
     return style;
   };
 }
