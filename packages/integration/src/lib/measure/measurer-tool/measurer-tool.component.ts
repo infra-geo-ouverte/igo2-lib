@@ -13,7 +13,7 @@ import { MeasureState } from '../measure.state';
  */
 @ToolComponent({
   name: 'measurer',
-  title: 'tools.measurer',
+  title: 'igo.integration.tools.measurer',
   icon: 'straighten'
 })
 @Component({
