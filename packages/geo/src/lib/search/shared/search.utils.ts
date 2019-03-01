@@ -33,7 +33,7 @@ export function featureToSearchResult(
   source: SearchSource
 ): SearchResult<Feature> {
   return {
-    source: source,
+    source,
     data: feature,
     meta: {
       dataType: FEATURE,

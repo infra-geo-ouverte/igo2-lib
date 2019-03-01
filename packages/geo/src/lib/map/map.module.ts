@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -46,10 +46,4 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     MiniBaseMapComponent
   ]
 })
-export class IgoMapModule {
-  static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: IgoMapModule
-    };
-  }
-}
+export class IgoMapModule {}
