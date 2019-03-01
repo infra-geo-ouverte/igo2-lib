@@ -1,3 +1,13 @@
+<a name="0.27.1"></a>
+## [0.27.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.0...0.27.1) (2019-03-01)
+
+
+### Features
+
+* **search:** datasource search source can define query format ([4d7d6c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/4d7d6c6))
+
+
+
 <a name="0.27.0"></a>
 # [0.27.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.2...0.27.0) (2019-02-28)
 
