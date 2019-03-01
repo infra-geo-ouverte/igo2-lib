@@ -15,7 +15,7 @@
 :host ::ng-deep div.mat-form-field-infix {
   left: $igo-padding;
   right: $igo-padding;
-  padding: 0 0 12px 0;
+  padding: 0 0 12px 0 !important; 
 }
 
 :host ::ng-deep div.mat-form-field-underline {
