@@ -1,6 +1,6 @@
 import { Directive, Self, OnInit, Optional } from '@angular/core';
 
-import { MapService, LayerListService } from '@igo2/geo';
+import { LayerListService } from '@igo2/geo';
 import { ShareMapComponent } from './share-map.component';
 import { RouteService } from '@igo2/core';
 
@@ -12,7 +12,6 @@ export class ShareMapBindingDirective implements OnInit {
 
   constructor(
     @Self() component: ShareMapComponent,
-    private mapService: MapService,
     private layerListService: LayerListService,
     @Optional() private route: RouteService
   ) {
@@ -20,7 +19,6 @@ export class ShareMapBindingDirective implements OnInit {
   }
 
   ngOnInit() {
-    this.component.map = this.mapService.getMap();
     this.initRoutes();
   }
 

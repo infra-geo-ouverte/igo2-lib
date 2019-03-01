@@ -1,6 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
+import { IgoMap } from '@igo2/geo';
+
+import { MapState } from '../../map/map.state';
 
 @ToolComponent({
   name: 'shareMap',
@@ -16,5 +19,9 @@ export class ContextShareToolComponent {
 
   @Input() hasShareMapButton: boolean = true;
 
-  constructor() {}
+  get map(): IgoMap { return this.mapState.map; }
+
+  constructor(
+    private mapState: MapState
+  ) {}
 }

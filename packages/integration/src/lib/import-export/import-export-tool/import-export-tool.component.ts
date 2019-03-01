@@ -1,6 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
+import { IgoMap } from '@igo2/geo';
+
+import { MapState } from '../../map/map.state';
 
 @ToolComponent({
   name: 'importExport',
@@ -9,8 +12,18 @@ import { ToolComponent } from '@igo2/common';
 })
 @Component({
   selector: 'igo-import-export-tool',
-  templateUrl: './import-export-tool.component.html'
+  templateUrl: './import-export-tool.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportExportToolComponent {
-  constructor() {}
+  /**
+   * Map to measure on
+   * @internal
+   */
+  get map(): IgoMap { return this.mapState.map; }
+
+  constructor(
+    private mapState: MapState
+  ) {}
+
 }

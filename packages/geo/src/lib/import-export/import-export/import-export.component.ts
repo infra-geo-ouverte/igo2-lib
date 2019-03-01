@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { MapService } from '../../map/shared/map.service';
+import { IgoMap } from '../../map/shared/map';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { ExportOptions } from '../shared/import-export.interface';
 import { ExportFormat } from '../shared/import-export.type';
@@ -20,9 +20,17 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public inputProj: string;
   private layers$$: Subscription;
 
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
+
   constructor(
     private importExportService: ImportExportService,
-    private mapService: MapService,
     private formBuilder: FormBuilder
   ) {
     this.buildForm();
@@ -41,7 +49,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
+    this.layers$$ = this.map.layers$.subscribe(layers => {
       this.layers = (layers
         .filter(layer => layer instanceof VectorLayer)) as VectorLayer[];
     });
