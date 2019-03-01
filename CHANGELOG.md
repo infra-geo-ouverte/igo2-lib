@@ -1,3 +1,13 @@
+<a name="0.27.2"></a>
+## [0.27.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.1...0.27.2) (2019-03-01)
+
+
+### Bug Fixes
+
+* **search:** datasource set target to innerhtml if html ([749d1d6](https://github.com/infra-geo-ouverte/igo2-lib/commit/749d1d6))
+
+
+
 <a name="0.27.1"></a>
 ## [0.27.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.0...0.27.1) (2019-03-01)
 
