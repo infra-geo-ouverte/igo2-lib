@@ -17,6 +17,7 @@ import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
 import { EntityStore } from '@igo2/common';
 
+import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
 
@@ -86,6 +87,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Search results store
    */
   @Input() store: EntityStore<SearchResult>;
+
+  /**
+   * List of available search types
+   */
+  @Input() searchTypes: string[] = SEARCH_TYPES;
 
   /**
    * Event emitted when the search term changes

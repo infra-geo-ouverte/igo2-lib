@@ -29,5 +29,8 @@
     </button>
   </div>
 
-  <igo-search-selector (change)="onSearchTypeChange($event)"></igo-search-selector>
+  <igo-search-selector
+    [searchTypes]="searchTypes"
+    (change)="onSearchTypeChange($event)">
+  </igo-search-selector>
 </div>
