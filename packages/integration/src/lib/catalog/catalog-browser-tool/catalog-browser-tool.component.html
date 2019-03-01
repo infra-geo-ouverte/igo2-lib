@@ -1,6 +1,5 @@
-<ng-container *ngIf="store$ | async as store">
-  <igo-catalog-browser
-    [store]="store"
-    [map]="map">
-  </igo-catalog-browser>
-</ng-container>
+<igo-catalog-browser
+  *ngIf="store$ | async as store"
+  [store]="store"
+  [map]="map">
+</igo-catalog-browser>

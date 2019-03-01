@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
 
@@ -38,7 +38,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    * Store that contains the catalog items
    * @internal
    */
-  public store$ = new Subject<EntityStore<CatalogItem, CatalogItemState>>();
+  public store$ = new BehaviorSubject<EntityStore<CatalogItem, CatalogItemState>>(undefined);
 
   /**
    * Subscription to the selected catalog
