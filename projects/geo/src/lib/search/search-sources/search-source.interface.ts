@@ -8,6 +8,7 @@ export interface SearchSourceOptions {
   distance?: number;
   zoomMaxOnSelect?: number;
   propertiesAlias?: PropertiesAlias[];
+  queryFormat?: any;
 }
 
 export interface SearchSourcesOptions {

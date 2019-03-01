@@ -10,6 +10,7 @@ import {
   SourceFeatureType
 } from '../../feature/shared/feature.enum';
 import { Feature } from '../../feature/shared/feature.interface';
+import { QueryFormat } from '../../query/shared/query.enum';
 
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
@@ -71,6 +72,31 @@ export class DataSourceSearchSource extends SearchSource {
     });
   }
 
+  private getQueryFormat(url) {
+    let queryFormat = QueryFormat.GML2;
+    const formatOpt = this.options.queryFormat;
+    if (formatOpt) {
+      for (const key in formatOpt) {
+        if (formatOpt.hasOwnProperty(key)) {
+          const value = formatOpt[key];
+          if (value === '*') {
+            queryFormat = QueryFormat[key.toUpperCase()];
+            break;
+          } else if (Array.isArray(value.urls)) {
+            value.urls.forEach((urlOpt) => {
+              if (url.indexOf(urlOpt) !== -1) {
+                queryFormat = QueryFormat[key.toUpperCase()];
+              }
+            });
+            break;
+          }
+        }
+      }
+    }
+
+    return queryFormat;
+  }
+
   private formatResult(result: any): Feature {
     const t = this.languageService.translate;
     const properties = {};
@@ -86,6 +112,7 @@ export class DataSourceSearchSource extends SearchSource {
       sourceOptions: {
         type: result.source.format,
         url: result.source.url,
+        queryFormat: this.getQueryFormat(result.source.url),
         params: {
           layers: result.source.name
         }
