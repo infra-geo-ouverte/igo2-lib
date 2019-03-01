@@ -15,8 +15,6 @@ import {
 import { SearchSource } from './search-source';
 import { SearchSourceOptions } from './search-source.interface';
 
-import { BaseObject} from 'node_modules/ol/object.js';
-import {SwitchCase} from 'estree';
 
 @Injectable()
 export class IChercheSearchSource extends SearchSource {
@@ -138,7 +136,8 @@ export class IChercheSearchSource extends SearchSource {
       properties.lien_google_streetview = 'https://www.google.com/maps?q=&layer=c&cbll=' +
         result.geometry.coordinates[1] + ',' +
         result.geometry.coordinates[0];
-    } else {}
+    } else {
+    }
     return {
       id: result._id,
       source: IChercheSearchSource._name,
