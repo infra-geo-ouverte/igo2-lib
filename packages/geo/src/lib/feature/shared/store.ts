@@ -182,12 +182,11 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
       this.addOlFeaturesToLayer(olFeaturesToAdd);
     }
 
-    // Determine the move action to take
     if (olFeaturesToAdd.length > 0) {
+      // If features are added, do a motion toward the newly added features
       moveToFeatures(this.map, olFeaturesToAdd, motion);
-    } else if (olFeaturesToRemove.length > 0) {
-      // Do nothing
     } else if (olFeatures.length > 0) {
+      // Else, do a motion toward all the features
       moveToFeatures(this.map, olFeatures, motion);
     }
   }
