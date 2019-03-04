@@ -51,8 +51,11 @@ export class ILayerSearchSource
    * @param term Layer name or keyword
    * @returns Observable of <SearchResult<LayerOptions>[]
    */
-  search(term: string | undefined, options: TextSearchOptions): Observable<SearchResult<LayerOptions>[]> {
-    const params = this.computeSearchRequestParams(term);
+  search(
+    term: string | undefined,
+    options?: TextSearchOptions
+  ): Observable<SearchResult<LayerOptions>[]> {
+    const params = this.computeSearchRequestParams(term, options || {});
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
@@ -60,11 +63,11 @@ export class ILayerSearchSource
       );
   }
 
-  private computeSearchRequestParams(term: string): HttpParams {
+  private computeSearchRequestParams(term: string, options: TextSearchOptions): HttpParams {
     return new HttpParams({
       fromObject: Object.assign({
         q: term
-      }, this.params)
+      }, this.params, options.params || {})
     });
   }
 

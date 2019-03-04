@@ -109,7 +109,7 @@ export interface TextSearch {
    */
   search(
     term: string | undefined,
-    options: TextSearchOptions
+    options?: TextSearchOptions
   ): Observable<SearchResult[]>;
 }
 
@@ -125,6 +125,6 @@ export interface ReverseSearch {
    */
   reverseSearch(
     lonLat: [number, number],
-    options: ReverseSearchOptions
+    options?: ReverseSearchOptions
   ): Observable<SearchResult[]>;
 }

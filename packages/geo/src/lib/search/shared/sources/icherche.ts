@@ -78,15 +78,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    */
   search(
     term: string,
-    options: TextSearchOptions
+    options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
-    const params = this.computeRequestParams(term);
+    const params = this.computeRequestParams(term, options || {});
     return this.http
       .get(this.searchUrl, { params })
       .pipe(map((response: IChercheResponse) => this.extractResults(response)));
   }
 
-  private computeRequestParams(term: string): HttpParams {
+  private computeRequestParams(term: string, options: TextSearchOptions): HttpParams {
     return new HttpParams({
       fromObject: Object.assign(
         {
@@ -95,7 +95,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           type:
             'adresse,code_postal,route,municipalite,mrc,region_administrative'
         },
-        this.params
+        this.params,
+        options.params || {}
       )
     });
   }
@@ -177,9 +178,9 @@ export class IChercheReverseSearchSource extends SearchSource
    */
   reverseSearch(
     lonLat: [number, number],
-    options: ReverseSearchOptions
+    options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
-    const params = this.computeRequestParams(lonLat, options.distance);
+    const params = this.computeRequestParams(lonLat, options || {});
     return this.http.get(this.searchUrl, { params }).pipe(
       map((response: IChercheReverseResponse) => {
         return this.extractResults(response);
@@ -189,8 +190,9 @@ export class IChercheReverseSearchSource extends SearchSource
 
   private computeRequestParams(
     lonLat: [number, number],
-    distance?: number
+    options?: ReverseSearchOptions
   ): HttpParams {
+    const distance = options.distance;
     return new HttpParams({
       fromObject: Object.assign(
         {
@@ -199,7 +201,8 @@ export class IChercheReverseSearchSource extends SearchSource
           geometries: 'geom',
           type: 'adresse,municipalite,mrc,regadmin'
         },
-        this.params
+        this.params,
+        options.params || {}
       )
     });
   }

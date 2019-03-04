@@ -9,9 +9,12 @@ export interface SearchSourceOptions {
   params?: { [key: string]: string };
 }
 
-export interface TextSearchOptions {}
+export interface TextSearchOptions {
+  params?: { [key: string]: string };
+}
 
 export interface ReverseSearchOptions {
   distance?: number;
   zoom?: number;
+  params?: { [key: string]: string };
 }

@@ -44,22 +44,26 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    */
   search(
     term: string | undefined,
-    options: TextSearchOptions
+    options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
-    const params = this.computeSearchRequestParams(term);
+    const params = this.computeSearchRequestParams(term, options || {});
     return this.http
       .get(this.searchUrl, { params })
       .pipe(map((response: NominatimData[]) => this.extractResults(response)));
   }
 
-  private computeSearchRequestParams(term: string): HttpParams {
+  private computeSearchRequestParams(
+    term: string,
+    options: TextSearchOptions
+  ): HttpParams {
     return new HttpParams({
       fromObject: Object.assign(
         {
           q: term,
           format: 'json'
         },
-        this.params
+        this.params,
+        options.params || {}
       )
     });
   }
