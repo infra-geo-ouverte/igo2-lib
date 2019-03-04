@@ -46,9 +46,14 @@ export class EntityView<E extends object, V extends object = E> {
   private values$$: Subscription;
 
   /**
+   * Number of entities
+   */
+  get count(): number { return this.values$.value.length; }
+
+  /**
    * Whether there are entities in the view
    */
-  get empty(): boolean { return this.values$.value.length === 0; }
+  get empty(): boolean { return this.count === 0; }
 
   constructor(private source$: BehaviorSubject<E[]>) {}
 

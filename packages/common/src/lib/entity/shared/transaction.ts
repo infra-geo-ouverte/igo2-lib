@@ -47,7 +47,7 @@ export class EntityTransaction {
   constructor(options: EntityTransactionOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.operations = new EntityStore<EntityOperation, EntityOperationState>([], {
-      getKey: this.getKey
+      getKey: (operation: EntityOperation) => operation.key
     });
   }
 
