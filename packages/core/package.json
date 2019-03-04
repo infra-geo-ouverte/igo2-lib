@@ -3,7 +3,9 @@
   "version": "0.26.2",
   "description": "IGO Library",
   "author": "MSP",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -14,14 +16,14 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "dependencies": {
-    "@ngx-translate/core": "^10.0.0",
-    "angular2-notifications": "^1.0.2"
+    "@ngx-translate/core": "^10.0.1",
+    "angular2-notifications": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": "^6.0.0",
-    "@angular/core": "^6.0.0",
-    "@angular/cdk": "^6.0.0",
+    "@angular/common": "^7.2.6",
+    "@angular/core": "^7.2.6",
+    "@angular/cdk": "^7.3.3",
     "@igo2/utils": "^0.26.2",
-    "rxjs": "^6.1.0"
+    "rxjs": "^6.4.0"
   }
 }
