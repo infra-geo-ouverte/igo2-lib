@@ -10,6 +10,7 @@ import { SubjectStatus } from '@igo2/utils';
 import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
+import { formatScale } from '../../map/shared/map.utils';
 
 import { PrintOptions } from './print.interface';
 import { PrintDimension, PrintOrientation } from './print.type';
@@ -226,7 +227,8 @@ export class PrintService {
         textProjScale += '   ';
       }
       const scaleText = translate.instant('igo.geo.printForm.scale');
-      textProjScale += scaleText + ' ~ 1 ' + map.getMapScale(true, resolution);
+      const mapScale = map.viewController.getScale(resolution);
+      textProjScale += scaleText + ' ~ 1 ' + formatScale(mapScale);
     }
     doc.setFont('courier');
     doc.setFontSize(projScaleSize);
@@ -447,9 +449,10 @@ export class PrintService {
       // If scale need to be added to canvas
       if (scale !== false) {
         const scaleText = translate.instant('igo.geo.printForm.scale');
+        const mapScale = map.viewController.getScale(resolution);
         newContext.textAlign = 'start';
         newContext.fillText(
-          scaleText + ' ~ 1 : ' + map.getMapScale(true, resolution),
+          scaleText + ' ~ 1 : ' + formatScale(mapScale),
           positionWProjScale,
           positionHProjScale
         );
@@ -581,7 +584,7 @@ export class PrintService {
    * @param  map - Map of the app
    */
   private getWorldFileInformation(map) {
-    const currentResolution = map.resolution$.value;
+    const currentResolution = map.viewController.getResolution();
     const currentExtent = map.getExtent(); // Return [minx, miny, maxx, maxy]
     return [
       currentResolution,

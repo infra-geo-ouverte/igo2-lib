@@ -63,7 +63,7 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
   }
 
   get baseLayers(): Layer[] {
-    const mapResolution = this.map.resolution$.value;
+    const mapResolution = this.map.viewController.getResolution();
 
     const bl = this._baseLayers.filter(l => {
       return (

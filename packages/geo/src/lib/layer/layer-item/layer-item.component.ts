@@ -146,7 +146,8 @@ export class LayerItemComponent implements OnDestroy {
     if (!this.layer || !this.layer.map) {
       return;
     }
-    this.resolution$$ = this.layer.map.resolution$.subscribe(resolution => {
+    const resolution$ =  this.layer.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe(resolution => {
       this.cdRef.detectChanges();
     });
   }

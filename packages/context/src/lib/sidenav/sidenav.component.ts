@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 
 import { Media } from '@igo2/core';
 import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
-import { Feature, IgoMap } from '@igo2/geo';
+import { Feature, FeatureMotion, IgoMap, moveToFeatures } from '@igo2/geo';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
@@ -83,7 +83,7 @@ export class SidenavComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
-      this.map.zoomToFeature(olFeature);
+      moveToFeatures(this.map, [olFeature], FeatureMotion.Zoom);
     }
   }
 

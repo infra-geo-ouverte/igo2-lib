@@ -8,6 +8,8 @@ import {
   WMTSDataSourceOptions
 } from '../../datasource';
 
+import { MapViewState } from './map.interface';
+
 /**
  * This method extracts a [lon, lat] tuple from a string.
  * @param str Any string
@@ -80,4 +82,37 @@ export function generateWMTSLayerIdFromSourceOptions(options: WMTSDataSourceOpti
   const layer = options.layer;
   const chain = 'wmts' + options.url + layer;
   return Md5.hashStr(chain) as string;
+}
+
+/**
+ * Return true of two view states are equal.
+ * @param state1 View state
+ * @param state2 View state
+ * @returns True if the view states are equal
+ */
+export function viewStatesAreEqual(state1: MapViewState, state2: MapViewState): boolean {
+  if (state1 === undefined || state2 === undefined) {
+    return false;
+  }
+
+  const tolerance = 1 / 10000;
+  return state1.zoom === state2.zoom &&
+    Math.trunc(state1.center[0] / tolerance) === Math.trunc(state2.center[0] / tolerance) &&
+    Math.trunc(state1.center[1] / tolerance) === Math.trunc(state2.center[1] / tolerance);
+}
+
+/**
+ * Format the scale to a human readable text
+ * @param Scale of the map
+ * @returns Human readable scale text
+ */
+export function formatScale(scale) {
+  scale = Math.round(scale);
+  if (scale < 10000) { return scale + ''; }
+
+  scale = Math.round(scale / 1000);
+  if (scale < 1000) { return scale + 'K'; }
+
+  scale = Math.round(scale / 1000);
+  return scale + 'M';
 }

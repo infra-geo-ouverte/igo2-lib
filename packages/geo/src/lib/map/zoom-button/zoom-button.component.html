@@ -4,7 +4,7 @@
     [matTooltip]="'igo.geo.mapButtons.zoomIn' | translate: {zoom: map.getZoom()+1}"
     matTooltipPosition="left"
     [color]="color"
-    (click)="map.zoomIn()">
+    (click)="map.viewController.zoomIn()">
     <mat-icon>
       add
     </mat-icon>
@@ -15,7 +15,7 @@
     [matTooltip]="'igo.geo.mapButtons.zoomOut' | translate: {zoom: map.getZoom()-1}"
     matTooltipPosition="left"
     [color]="color"
-    (click)="map.zoomOut()">
+    (click)="map.viewController.zoomOut()">
     <mat-icon>
       remove
     </mat-icon>
