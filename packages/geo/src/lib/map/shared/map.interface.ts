@@ -1,3 +1,5 @@
+export type MapExtent = [number, number, number, number];
+
 export interface MapViewOptions {
   projection?: string;
   center?: [number, number];
@@ -5,7 +7,7 @@ export interface MapViewOptions {
 
   constrainRotation?: boolean | number;
   enableRotation?: boolean;
-  extent?: [number, number, number, number];
+  extent?: MapExtent;
   maxResolution?: number;
   minResolution?: number;
   maxZoom?: number;
@@ -17,25 +19,29 @@ export interface MapViewOptions {
   zoomFactor?: number;
 }
 
-export interface ControlsMapOptions {
-  attribution?: boolean | AttributionOptions;
-  scaleLine?: boolean | ScaleLineOptions;
+export interface MapViewState {
+  resolution: number;
+  center: [number, number];
+  zoom: number;
 }
 
 export interface MapOptions {
-  controls?: ControlsMapOptions;
+  controls?: {
+    attribution?: boolean | MapAttributionOptions;
+    scaleLine?: boolean | MapScaleLineOptions;
+  };
   overlay?: boolean;
   interactions?: boolean;
 }
 
-export interface ScaleLineOptions {
+export interface MapScaleLineOptions {
   className?: string;
   minWidth?: number;
   target?: Element;
   units?: string;
 }
 
-export interface AttributionOptions {
+export interface MapAttributionOptions {
   html?: string;
   collapsed: boolean;
 }

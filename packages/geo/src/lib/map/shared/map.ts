@@ -6,12 +6,11 @@ import olControlAttribution from 'ol/control/Attribution';
 import olControlScaleLine from 'ol/control/ScaleLine';
 import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
-import * as oleasing from 'ol/easing';
+import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
 
 import proj4 from 'proj4';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SubjectStatus } from '@igo2/utils';
 
@@ -22,19 +21,21 @@ import { LayerWatcher } from '../utils/layer-watcher';
 import {
   MapViewOptions,
   MapOptions,
-  AttributionOptions,
-  ScaleLineOptions
+  MapAttributionOptions,
+  MapScaleLineOptions,
+  MapExtent
 } from './map.interface';
+import { MapViewController } from './controllers/view';
 
 export class IgoMap {
   public ol: olMap;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public layers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
-  public resolution$ = new BehaviorSubject<number>(undefined);
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
   public overlay: Overlay;
+  public viewController: MapViewController;
 
   private layerWatcher: LayerWatcher;
   private geolocation: olGeolocation;
@@ -44,27 +45,8 @@ export class IgoMap {
     controls: { attribution: false }
   };
 
-  /**
-   * Movement stream
-   */
-  private movement$ = new Subject<MapMovement>();
-
-  /**
-   * Subscription to the movement stream
-   */
-  private movement$$: Subscription;
-
   get projection(): string {
-    const p = this.ol
-      .getView()
-      .getProjection()
-      .getCode();
-
-    return p;
-  }
-
-  get resolution(): number {
-    return this.ol.getView().getResolution();
+    return this.viewController.getOlProjection().getCode();
   }
 
   constructor(options?: MapOptions) {
@@ -81,13 +63,13 @@ export class IgoMap {
       if (this.options.controls.attribution) {
         const attributionOpt = (this.options.controls.attribution === true
           ? {}
-          : this.options.controls.attribution) as AttributionOptions;
+          : this.options.controls.attribution) as MapAttributionOptions;
         controls.push(new olControlAttribution(attributionOpt));
       }
       if (this.options.controls.scaleLine) {
         const scaleLineOpt = (this.options.controls.scaleLine === true
           ? {}
-          : this.options.controls.scaleLine) as ScaleLineOptions;
+          : this.options.controls.scaleLine) as MapScaleLineOptions;
         controls.push(new olControlScaleLine(scaleLineOpt));
       }
     }
@@ -110,23 +92,20 @@ export class IgoMap {
       controls
     });
 
-    this.ol.on('moveend', e => {
-      if (this.resolution$.value !== this.resolution) {
-        this.resolution$.next(this.resolution);
-      }
+    this.viewController = new MapViewController({
+      stateHistory: true
     });
-
     this.overlay = new Overlay(this);
   }
 
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
+      this.viewController.setOlMap(this.ol);
       this.layerWatcher.subscribe(() => {}, null);
-      this.subscribeToMovement();
     } else {
+      this.viewController.setOlMap(undefined);
       this.layerWatcher.unsubscribe();
-      this.unsubscribeToMovement();
     }
   }
 
@@ -143,7 +122,7 @@ export class IgoMap {
   }
 
   /**
-   * Set the map view and subscribe to the movement stream
+   * Set the map view
    * @param options Map view options
    */
   setView(options: MapViewOptions) {
@@ -163,48 +142,19 @@ export class IgoMap {
     }
   }
 
-  getCenter(projection?): [number, number] {
-    let center = this.ol.getView().getCenter();
-    if (projection && center) {
-      center = olproj.transform(center, this.projection, projection);
-    }
-    return center;
+  // TODO: Move to ViewController and update every place it's used
+  getCenter(projection?: string | OlProjection): [number, number] {
+    return this.viewController.getCenter();
   }
 
-  getExtent(projection?): [number, number, number, number] {
-    let ext = this.ol.getView().calculateExtent(this.ol.getSize());
-    if (projection && ext) {
-      ext = olproj.transformExtent(ext, this.projection, projection);
-    }
-    return ext;
+  // TODO: Move to ViewController and update every place it's used
+  getExtent(projection?: string | OlProjection): MapExtent {
+    return this.viewController.getExtent();
   }
 
-  resetRotation() {
-    this.ol.getView().setRotation(0);
-  }
-
-  getRotation() {
-    return this.ol.getView().getRotation();
-  }
-
+  // TODO: Move to ViewController and update every place it's used
   getZoom(): number {
-    return Math.round(this.ol.getView().getZoom());
-  }
-
-  zoomIn() {
-    this.zoomTo(this.ol.getView().getZoom() + 1);
-  }
-
-  zoomOut() {
-    this.zoomTo(this.ol.getView().getZoom() - 1);
-  }
-
-  zoomTo(zoom: number) {
-    this.ol.getView().animate({
-      zoom,
-      duration: 250,
-      easing: oleasing.easeOut
-    });
+    return this.viewController.getZoom();
   }
 
   addLayer(layer: Layer, push = true) {
@@ -306,59 +256,6 @@ export class IgoMap {
     this.layers$.next(this.layers.slice(0));
   }
 
-  moveToExtent(extent: [number, number, number, number]) {
-    const view = this.ol.getView();
-    view.fit(extent, {
-      maxZoom: view.getZoom()
-    });
-  }
-
-  moveToFeature(feature: olFeature) {
-    this.moveToExtent(feature.getGeometry().getExtent());
-  }
-
-  zoomToExtent(extent: [number, number, number, number]) {
-    const view = this.ol.getView();
-    view.fit(extent, {
-      maxZoom: 17
-    });
-  }
-
-  zoomToFeature(feature: olFeature) {
-    this.zoomToExtent(feature.getGeometry().getExtent());
-  }
-
-  /**
-   * Get Scale of the map
-   * @return Scale of the map
-   */
-  getMapScale(approximative, resolution) {
-    if (approximative) {
-      let scale = this.getScale(resolution);
-      scale = Math.round(scale);
-      if (scale < 10000) {
-        return scale;
-      }
-      scale = Math.round(scale / 1000);
-      if (scale < 1000) {
-        return scale + 'K';
-      }
-      scale = Math.round(scale / 1000);
-      return scale + 'M';
-    }
-    return this.getScale(resolution);
-  }
-
-  getScale(dpi = 96) {
-    const unit = this.ol
-      .getView()
-      .getProjection()
-      .getUnits();
-    const resolution = this.ol.getView().getResolution();
-    const inchesPerMetre = 39.37;
-    return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
-  }
-
   /**
    * Get all layers activate in the map
    * @return Array of layers
@@ -418,6 +315,7 @@ export class IgoMap {
     return listLegend;
   }
 
+  // TODO: Create a GeolocationController
   geolocate(track = false) {
     let first = true;
     if (this.geolocation$$) {
@@ -446,7 +344,7 @@ export class IgoMap {
         this.geolocationFeature.setId('geolocationFeature');
         this.overlay.addFeature(this.geolocationFeature);
         if (first) {
-          this.zoomToExtent(extent);
+          this.viewController.zoomToExtent(extent);
         }
       } else if (first) {
         const view = this.ol.getView();
@@ -499,62 +397,4 @@ export class IgoMap {
     return this.layers.findIndex(layer2 => layer2 === layer);
   }
 
-  /**
-   * Move to extent after a short delay (100ms) unless
-   * a new movement gets registered in the meantime.
-   * @param extent Extent to move to
-   */
-  delayedMoveToExtent(extent: [number, number, number, number]) {
-    this.movement$.next({ extent, action: 'move' });
-  }
-
-  /**
-   * Zoom to extent after a short delay (100ms) unless
-   * a new movement gets registered in the meantime.
-   * @param extent Extent to zoom to
-   */
-  delayedZoomToExtent(extent: [number, number, number, number]) {
-    this.movement$.next({ extent, action: 'zoom' });
-  }
-
-  /**
-   * Subscribe to the movement stream and apply only the latest
-   * when many are registered in a interval or 100ms or less.
-   */
-  private subscribeToMovement() {
-    this.movement$$ = this.movement$
-      .pipe(
-        debounceTime(100),
-        distinctUntilChanged()
-      )
-      .subscribe((movement: MapMovement) => this.doMovement(movement));
-  }
-
-  /**
-   * Unsubscribe to the movement stream
-   */
-  private unsubscribeToMovement() {
-    if (this.movement$$ !== undefined) {
-      this.movement$$.unsubscribe();
-      this.movement$$ = undefined;
-    }
-  }
-
-  /**
-   * Do the given movement retrieved from the stream
-   * @param movement Map movement
-   */
-  private doMovement(movement: MapMovement) {
-    if (movement.action === 'move') {
-      this.moveToExtent(movement.extent);
-    } else if (movement.action === 'zoom') {
-      this.zoomToExtent(movement.extent);
-    }
-  }
-}
-
-// TODO: move that to a better place
-export interface MapMovement {
-  extent: [number, number, number, number];
-  action: string;
 }

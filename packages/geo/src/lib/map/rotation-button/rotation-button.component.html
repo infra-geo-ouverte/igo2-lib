@@ -1,12 +1,12 @@
 <div class="igo-rotation-button-container">
   <button
-    *ngIf="map.getRotation() !== 0" 
+    *ngIf="map.viewController.getRotation() !== 0" 
     mat-icon-button 
     [matTooltip]="'igo.geo.mapButtons.resetRotation' | translate"
     matTooltipPosition="left" 
     [color]="color" 
-    (click)="map.resetRotation()">
-    <mat-icon [ngStyle]="rotationStyle(map.getRotation())">
+    (click)="map.viewController.resetRotation()">
+    <mat-icon [ngStyle]="rotationStyle(map.viewController.getRotation())">
       navigation
     </mat-icon>
   </button>

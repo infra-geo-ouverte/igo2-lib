@@ -65,7 +65,7 @@ export abstract class Layer {
       return false;
     }
 
-    const resolution = this.map.resolution;
+    const resolution = this.map.viewController.getResolution();
     const minResolution = this.ol.getMinResolution();
     const maxResolution = this.ol.getMaxResolution();
 

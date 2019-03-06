@@ -35,6 +35,8 @@ import { SearchService } from '../../search/shared/search.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay.utils';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
+import { moveToFeatures } from '../../feature/shared/feature.utils';
 
 import { Routing } from '../shared/routing.interface';
 import { RoutingService } from '../shared/routing.service';
@@ -763,13 +765,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       ]);
     }
     if (zoomToExtent) {
-      this.map.zoomToExtent(feature.getGeometry().getExtent());
+      this.map.viewController.zoomToExtent(feature.getGeometry().getExtent());
     }
     this.routingRoutesOverlayDataSource.ol.addFeature(feature);
   }
 
   zoomRoute() {
-    this.map.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
+    this.map.viewController.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
   }
 
   showRouteGeometry(moveToExtent = false) {
@@ -788,7 +790,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     ]);
     this.routingRoutesOverlayDataSource.ol.addFeature(routingFeature);
     if (moveToExtent) {
-      this.map.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
+      this.map.viewController.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
     }
   }
 
@@ -1009,7 +1011,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
           .getExtent();
 
         if (!olextent.intersects(proposalExtent, this.map.getExtent())) {
-          this.map.moveToExtent(proposalExtent);
+          this.map.viewController.moveToExtent(proposalExtent);
         }
       }
     }
@@ -1052,7 +1054,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   geolocateStop(index: number) {
-    this.map.moveToFeature(this.map.geolocationFeature);
+    moveToFeatures(this.map, [this.map.geolocationFeature], FeatureMotion.Move);
     const geolocateCoordinates = this.map.getCenter(this.projection);
     this.stops.at(index).patchValue({ stopCoordinates: geolocateCoordinates });
     this.addStopOverlay(geolocateCoordinates, index);
