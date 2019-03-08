@@ -8,6 +8,7 @@ import OlLineString from 'ol/geom/LineString';
 
 import { Subject, Subscription } from 'rxjs';
 
+import { GeometrySliceError } from '../geometry.errors';
 import { sliceOlGeometry } from '../geometry.utils';
 import { DrawControl } from './draw';
 
@@ -28,6 +29,11 @@ export class SliceControl {
    */
   public end$: Subject<OlGeometry[]> = new Subject();
 
+  /**
+   * Slice error, if any
+   */
+  public error$: Subject<GeometrySliceError> = new Subject();
+
   private olMap: OlMap;
   private olOverlayLayer: OlVectorLayer;
 
@@ -35,6 +41,11 @@ export class SliceControl {
    * Draw line control
    */
   private drawLineControl: DrawControl;
+
+  /**
+   * Subscription to draw start
+   */
+  private drawLineStart$$: Subscription;
 
   /**
    * Subscription to draw end
@@ -136,11 +147,13 @@ export class SliceControl {
   private addDrawLineControl() {
     this.drawLineControl = new DrawControl({
       geometryType: 'LineString',
-      layer: this.olOverlayLayer,
-      drawStyle: this.options.drawStyle
+      drawStyle: this.options.drawStyle,
+      maxPoints: 2
     });
+    this.drawLineStart$$ = this.drawLineControl.start$
+      .subscribe((olLine: OlLineString) => this.onDrawLineStart(olLine));
     this.drawLineEnd$$ = this.drawLineControl.end$
-      .subscribe((olGeometry: OlLineString) => this.onDrawLineEnd(olGeometry));
+      .subscribe((olLine: OlLineString) => this.onDrawLineEnd(olLine));
     this.drawLineControl.setOlMap(this.olMap);
   }
 
@@ -152,6 +165,7 @@ export class SliceControl {
       return;
     }
 
+    this.drawLineStart$$.unsubscribe();
     this.drawLineEnd$$.unsubscribe();
     this.drawLineControl.getSource().clear();
     this.drawLineControl.setOlMap(undefined);
@@ -159,16 +173,49 @@ export class SliceControl {
 
   /**
    * Clear the draw source and track the geometry being draw
-   * @param olGeometry Ol linestring or polygon
+   * @param olLine Ol linestring or polygon
+   */
+  private onDrawLineStart(olLine: OlLineString) {
+    this.drawLineControl.getSource().clear();
+  }
+
+  /**
+   * Slice the first geometry encountered with the drawn line
+   * @param olLine Ol linestring
    */
   private onDrawLineEnd(olLine: OlLineString) {
-    const olFeatures = this.olOverlaySource.getFeatures();
-    if (olFeatures.length === 0) {
-      return;
+    const olSlicedGeometries = [];
+    const lineExtent = olLine.getExtent();
+
+    const olFeaturesToRemove = [];
+    try {
+      this.olOverlaySource.forEachFeatureInExtent(lineExtent, (olFeature: OlFeature) => {
+        const olGeometry = olFeature.getGeometry();
+        const olParts = sliceOlGeometry(olGeometry, olLine);
+        if (olParts.length > 0) {
+          olSlicedGeometries.push(...olParts);
+          olFeaturesToRemove.push(olFeature);
+        }
+      });
+    } catch (e) {
+      if (e instanceof GeometrySliceError) {
+        this.error$.next(e);
+        return;
+      } else {
+        throw e;
+      }
     }
 
-    const olGeometry = olFeatures[0].getGeometry();
-    const olGeometries = sliceOlGeometry(olGeometry, olLine);
-    this.end$.next(olGeometries);
+    this.drawLineControl.getSource().clear();
+
+    this.olOverlaySource.addFeatures(
+      olSlicedGeometries.map((olGeometry: OlGeometry) => new OlFeature(olGeometry))
+    );
+    olFeaturesToRemove.forEach((olFeature: OlFeature) => {
+      this.olOverlaySource.removeFeature(olFeature);
+    });
+
+    this.error$.next(undefined);
+    this.end$.next(olSlicedGeometries);
   }
 }

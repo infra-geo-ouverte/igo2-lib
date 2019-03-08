@@ -20,6 +20,7 @@ export interface DrawControlOptions {
   layer?: OlVectorLayer;
   layerStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
   drawStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
+  maxPoints?: number;
 }
 
 /**
@@ -144,7 +145,8 @@ export class DrawControl {
       type: this.geometryType,
       source: this.getSource(),
       stopClick: true,
-      style: this.options.drawStyle
+      style: this.options.drawStyle,
+      maxPoints: this.options.maxPoints
     });
 
     this.onDrawStartKey = olDrawInteraction
