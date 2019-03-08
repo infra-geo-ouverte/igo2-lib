@@ -61,19 +61,24 @@ export function computeOlFeatureExtent(
   map: IgoMap,
   olFeature: OlFeature
 ): [number, number, number, number] {
-  let extent = olextent.createEmpty();
+  let olExtent = olextent.createEmpty();
 
   const olFeatureExtent = olFeature.get('_extent');
   const olFeatureProjection = olFeature.get('_projection');
   if (olFeatureExtent !== undefined && olFeatureProjection !== undefined) {
-    extent = olproj.transformExtent(
+    olExtent = olproj.transformExtent(
       olFeatureExtent,
       olFeatureProjection,
       map.projection
     );
+  } else {
+    const olGeometry = olFeature.getGeometry();
+    if (olGeometry !== null) {
+      olExtent = olGeometry.getExtent();
+    }
   }
 
-  return extent;
+  return olExtent;
 }
 
 /**
@@ -89,11 +94,7 @@ export function computeOlFeaturesExtent(
   const extent = olextent.createEmpty();
 
   olFeatures.forEach((olFeature: OlFeature) => {
-    const olGeometry = olFeature.getGeometry();
     const featureExtent = computeOlFeatureExtent(map, olFeature);
-    if (olextent.isEmpty(featureExtent) && olGeometry !== null) {
-      olextent.extend(featureExtent, olGeometry.getExtent());
-    }
     olextent.extend(extent, featureExtent);
   });
 
