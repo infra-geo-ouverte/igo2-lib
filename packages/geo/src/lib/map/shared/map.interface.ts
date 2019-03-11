@@ -26,6 +26,7 @@ export interface MapViewState {
 }
 
 export interface MapOptions {
+  view?: MapViewOptions;
   controls?: {
     attribution?: boolean | MapAttributionOptions;
     scaleLine?: boolean | MapScaleLineOptions;

@@ -18,26 +18,18 @@ import { IgoMap, MapViewOptions } from '../shared';
   styleUrls: ['./map-browser.component.scss']
 })
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
+
   private activityId: string;
   private status$$: Subscription;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap = new IgoMap();
+  @Input() map: IgoMap;
 
   @Input()
-  get view(): MapViewOptions {
-    return this._view;
-  }
+  get view(): MapViewOptions { return this._view; }
   set view(value: MapViewOptions) {
     this._view = value;
     if (this.map !== undefined) {
-      this.map.setView(value);
+      this.map.updateView(value);
     }
   }
   private _view: MapViewOptions;

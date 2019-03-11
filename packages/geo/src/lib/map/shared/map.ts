@@ -41,7 +41,8 @@ export class IgoMap {
   private geolocation: olGeolocation;
   private geolocation$$: Subscription;
 
-  private options: MapOptions = {
+  private options: MapOptions;
+  private defaultOptions: Partial<MapOptions> = {
     controls: { attribution: false }
   };
 
@@ -50,7 +51,7 @@ export class IgoMap {
   }
 
   constructor(options?: MapOptions) {
-    Object.assign(this.options, options);
+    this.options = Object.assign({}, this.defaultOptions, options);
     this.layerWatcher = new LayerWatcher();
     this.status$ = this.layerWatcher.status$;
     olproj4.register(proj4);
@@ -92,19 +93,19 @@ export class IgoMap {
       controls
     });
 
+    this.setView(this.options.view || {});
     this.viewController = new MapViewController({
       stateHistory: true
     });
+    this.viewController.setOlMap(this.ol);
     this.overlay = new Overlay(this);
   }
 
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
-      this.viewController.setOlMap(this.ol);
       this.layerWatcher.subscribe(() => {}, null);
     } else {
-      this.viewController.setOlMap(undefined);
       this.layerWatcher.unsubscribe();
     }
   }
@@ -132,7 +133,8 @@ export class IgoMap {
     this.unsubscribeGeolocate();
     if (options) {
       if (options.center) {
-        const center = olproj.fromLonLat(options.center, this.projection);
+        const projection = view.getProjection().getCode();
+        const center = olproj.fromLonLat(options.center, projection);
         view.setCenter(center);
       }
 
