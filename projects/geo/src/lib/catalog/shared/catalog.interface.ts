@@ -7,6 +7,7 @@ export interface Catalog {
   queryFormat?: any;
   queryHtmlTarget?: string;
   count?: number;
+  crossOrigin?: boolean;
 }
 
 export interface CatalogServiceOptions {

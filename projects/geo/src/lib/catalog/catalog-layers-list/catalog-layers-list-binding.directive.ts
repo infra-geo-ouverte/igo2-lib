@@ -204,6 +204,7 @@ export class CatalogLayersListBindingDirective implements OnInit, OnDestroy {
                   queryable: layer.queryable,
                   queryFormat: this.retriveLayerInfoFormat(catalog, layer),
                   queryHtmlTarget: queryHtmlTarget,
+                  crossOrigin: catalog.crossOrigin ? 'Anonymous' : undefined,
                   params: {
                     layers: layer.Name,
                     feature_count: count

@@ -23,4 +23,7 @@
     </tr>
   </tbody>
 </table>
-<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'" [src]='isUrl(feature.properties.url)'></iframe>
+<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'"
+  [src]='isUrl(feature.properties.url)'
+  sandbox="allow-same-origin allow-popups">
+</iframe>

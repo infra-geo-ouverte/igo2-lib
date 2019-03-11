@@ -119,6 +119,7 @@ export class DataSourceSearchSource extends SearchSource {
     const layer = {
       title: result.source.title,
       sourceOptions: {
+        crossOrigin: 'anonymous',
         type: result.source.format,
         url: result.source.url,
         queryFormat: queryParams.format,
