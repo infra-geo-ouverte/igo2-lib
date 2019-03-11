@@ -233,7 +233,8 @@ export class QueryService {
         iconHtml = 'place';
         break;
       case 'innerhtml':
-        targetIgo2 = 'innerhtml';
+      case 'innerhtml2':
+        targetIgo2 = htmlTarget;
         iconHtml = 'place';
         const bodyTagStart = res.toLowerCase().indexOf('<body>');
         const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;

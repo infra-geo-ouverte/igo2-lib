@@ -29,12 +29,18 @@ export class FeatureDetailsComponent {
     private sanitizer: DomSanitizer
   ) { }
 
-  isUrl(value): SafeResourceUrl {
+  isObject(value) {
+    return typeof value === 'object';
+  }
+
+  getFrameUrl(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
-  isObject(value) {
-    return typeof value === 'object';
+  getHtmlData(html, charset = 'utf-8'): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `data:text/html;charset=${charset},` + encodeURIComponent(html)
+    );
   }
 
   filterFeatureProperties(feature) {

@@ -1,4 +1,4 @@
-<table class="igo-striped" *ngIf="feature && isObject(feature.properties) && feature.properties.target !== 'innerhtml'">
+<table class="igo-striped" *ngIf="feature && isObject(feature.properties) && feature.properties.target !== 'innerhtml' && feature.properties.target !== 'innerhtml2'">
   <tbody>
     <tr *ngFor="let property of filterFeatureProperties(feature) | keyvalue">
 
@@ -24,6 +24,11 @@
   </tbody>
 </table>
 <iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml'"
-  [src]='isUrl(feature.properties.url)'
+  [src]='getFrameUrl(feature.properties.url)'
   sandbox="allow-same-origin allow-popups">
+</iframe>
+
+<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'innerhtml2'"
+  [src]='getHtmlData(feature.properties.body)'
+  sandbox="allow-scripts allow-popups">
 </iframe>
