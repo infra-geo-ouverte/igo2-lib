@@ -66,8 +66,11 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
         type: 'geometry',
         inputs: {
           map: this.map,
+          geometryTypeField: true,
           geometryType: 'Polygon',
-          buffer: 50
+          drawGuideField: true,
+          drawGuide: 50,
+          drawGuidePlaceholder: 'Draw Guide'
         }
       },
       {

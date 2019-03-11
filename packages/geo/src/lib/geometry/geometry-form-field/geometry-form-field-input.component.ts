@@ -77,9 +77,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private _geometryType: OlGeometryType;
 
   /**
-   * The buffer around the mouse pointer to help drawing
+   * The drawGuide around the mouse pointer to help drawing
    */
-  @Input() buffer = 0;
+  @Input() drawGuide = 0;
 
   /**
    * The geometry value (GeoJSON)
@@ -197,9 +197,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       layer: this.olOverlayLayer,
       drawStyle: (olFeature: OlFeature, resolution: number) => {
         const style = this.drawInteractionStyle;
-        const buffer = this.buffer;
-        if (buffer > 0) {
-          style.getImage().setRadius(buffer / resolution);
+        const drawGuide = this.drawGuide;
+        if (drawGuide > 0) {
+          style.getImage().setRadius(drawGuide / resolution);
         }
         return style;
       }
@@ -214,9 +214,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       layer: this.olOverlayLayer,
       drawStyle: (olFeature: OlFeature, resolution: number) => {
         const style = this.drawInteractionStyle;
-        const buffer = this.buffer;
-        if (buffer > 0) {
-          style.getImage().setRadius(buffer / resolution);
+        const drawGuide = this.drawGuide;
+        if (drawGuide > 0) {
+          style.getImage().setRadius(drawGuide / resolution);
         }
         return style;
       }

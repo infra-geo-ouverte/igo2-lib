@@ -30,7 +30,7 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
 
   public geometryType$: BehaviorSubject<OlGeometryType> = new BehaviorSubject(undefined);
-  public buffer$: BehaviorSubject<number> = new BehaviorSubject(0);
+  public drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
   public value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
@@ -53,6 +53,28 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   get geometryType(): OlGeometryType { return this.geometryType$.value; }
 
   /**
+   * Whether a geometry type toggle should be displayed
+   */
+  @Input() geometryTypeField: boolean = false;
+
+  /**
+   * Whether a draw guide field should be displayed
+   */
+  @Input() drawGuideField: boolean = false;
+
+  /**
+   * The drawGuide around the mouse pointer to help drawing
+   */
+  @Input()
+  set drawGuide(value: number) { this.drawGuide$.next(value); }
+  get drawGuide(): number { return this.drawGuide$.value; }
+
+  /**
+   * Draw guide placeholder
+   */
+  @Input() drawGuidePlaceholder: string = '';
+
+  /**
    * Set up a value stream
    * @internal
    */
@@ -71,13 +93,6 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
     this.value$$.unsubscribe();
   }
 
-  /**
-   * The buffer around the mouse pointer to help drawing
-   */
-  @Input()
-  set buffer(value: number) { this.buffer$.next(value); }
-  get buffer(): number { return this.buffer$.value; }
-
   onGeometryTypeChange(geometryType: OlGeometryType) {
     if (this.value$.value !== undefined) {
       return;
@@ -85,8 +100,8 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
     this.geometryType = geometryType;
   }
 
-  onBufferChange(buffer: number) {
-    this.buffer = buffer;
+  onDrawGuideChange(value: number) {
+    this.drawGuide = value;
   }
 
 }
