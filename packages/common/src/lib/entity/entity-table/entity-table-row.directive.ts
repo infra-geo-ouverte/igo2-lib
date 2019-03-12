@@ -24,21 +24,33 @@ export class EntityTableRowDirective {
   static selectedCls = 'igo-entity-table-row-selected';
 
   /**
+   * Class added to a highlighted row
+   */
+  static highlightedCls = 'igo-entity-table-row-highlighted';
+
+  /**
    * Whether a row supports selection
    */
   @Input() selection = false;
+
+  /**
+   * Whether clicking a row should select it (if selection is true)
+   */
+  @Input() selectOnClick: boolean = true;
+
+  /**
+   * Whether the selected row should be highlighted
+   */
+  @Input()
+  highlightSelection: boolean = true;
 
   /**
    * Whether a row is selected
    */
   @Input()
   set selected(value: boolean) {
-    if (this.selection === false) {
-      return;
-    }
-    if (value === this._selected) {
-      return;
-    }
+    if (this.selection === false) { return; }
+    if (value === this._selected) { return; }
 
     this.toggleSelected(value);
     this.scroll();
@@ -65,7 +77,7 @@ export class EntityTableRowDirective {
    */
   @HostListener('click')
   onClick() {
-    if (this.selection === false) {
+    if (this.selection === false || this.selectOnClick === false) {
       return;
     }
 
@@ -81,10 +93,14 @@ export class EntityTableRowDirective {
    */
   private toggleSelected(selected: boolean) {
     this._selected = selected;
-    if (selected) {
+    if (selected === true) {
       this.addCls(EntityTableRowDirective.selectedCls);
+      if (this.highlightSelection === true) {
+        this.addCls(EntityTableRowDirective.highlightedCls);
+      }
     } else {
       this.removeCls(EntityTableRowDirective.selectedCls);
+      this.removeCls(EntityTableRowDirective.highlightedCls);
     }
   }
 

@@ -14,6 +14,8 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
 
   public template = {
     selection: true,
+    selectionCheckbox: true,
+    selectMany: true,
     sort: true,
     valueAccessor: (entity: object, name: string) => {
       return getEntityProperty(entity, name);

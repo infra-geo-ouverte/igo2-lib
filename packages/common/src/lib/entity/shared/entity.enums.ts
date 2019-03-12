@@ -15,3 +15,9 @@ export enum EntityTableScrollBehavior {
   Instant = 'instant',
   Smooth = 'smooth'
 }
+
+export enum EntityTableSelectionState {
+  None = 'None',
+  All = 'All',
+  Some = 'Some'
+}

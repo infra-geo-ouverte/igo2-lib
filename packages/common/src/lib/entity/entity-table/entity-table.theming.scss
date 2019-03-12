@@ -2,7 +2,7 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
 
-  igo-entity-table table.igo-entity-table-with-selection tr.igo-entity-table-row-selected {
+  igo-entity-table table.igo-entity-table-with-selection tr.igo-entity-table-row-highlighted {
     background-color: mat-color($primary, A100);
     color: mat-color($primary, default-contrast);
   }

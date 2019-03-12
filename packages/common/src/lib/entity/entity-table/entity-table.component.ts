@@ -11,14 +11,16 @@ import {
   OnChanges
 } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
+  EntityRecord,
   EntityStore,
   EntityStoreController,
   EntityTableTemplate,
   EntityTableColumn,
-  EntityTableColumnRenderer
+  EntityTableColumnRenderer,
+  EntityTableSelectionState
 } from '../shared';
 
 @Component({
@@ -36,9 +38,26 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   entityTableColumnRenderer = EntityTableColumnRenderer;
 
   /**
+   * Reference to the selection states
+   * @internal
+   */
+  entityTableSelectionState = EntityTableSelectionState;
+
+  /**
+   * Observable of the selection,s state
+   * @internal
+   */
+  selectionState$: BehaviorSubject<EntityTableSelectionState> = new BehaviorSubject(undefined);
+
+  /**
    * Entity store controller
    */
   private controller: EntityStoreController<object>;
+
+  /**
+   * Subscription to the store's selection
+   */
+  private selection$$: Subscription;
 
   /**
    * Entity store
@@ -59,8 +78,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * Event emitted when an entity (row) is selected
    */
   @Output() entitySelectChange = new EventEmitter<{
-    selected: boolean;
-    entity: object;
+    added: object[];
   }>();
 
   /**
@@ -68,9 +86,15 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * @internal
    */
   get headers(): string[] {
-    return this.template.columns
+    let columns = this.template.columns
       .filter((column: EntityTableColumn) => column.visible !== false)
       .map((column: EntityTableColumn) => column.name);
+
+    if (this.selectionCheckbox === true) {
+      columns = ['selectionCheckbox'].concat(columns);
+    }
+
+    return columns;
   }
 
   /**
@@ -85,10 +109,30 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    */
   get selection(): boolean { return this.template.selection || false; }
 
+  /**
+   * Whether a selection checkbox should be displayed
+   * @internal
+   */
+  get selectionCheckbox(): boolean { return this.template.selectionCheckbox || false; }
+
+  /**
+   * Whether selection many entities should eb supported
+   * @internal
+   */
+  get selectMany(): boolean { return this.template.selectMany || false; }
+
   constructor(private cdRef: ChangeDetectorRef) {}
 
+  /**
+   * Track the selection state to properly display the selection checkboxes
+   * @internal
+   */
   ngOnInit() {
-    // TODO: clear sort order display
+    this.selection$$ = this.store.stateView
+      .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
+      .subscribe((records: EntityRecord<object>[]) => {
+        this.selectionState$.next(this.computeSelectionState(records));
+      });
   }
 
   /**
@@ -113,6 +157,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
     if (this.controller !== undefined) {
       this.controller.destroy();
     }
+    this.selection$$.unsubscribe();
   }
 
   /**
@@ -162,9 +207,53 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   onRowSelect(entity: object) {
     if (this.selection === false) { return; }
 
-    const many = this.template.selectMany ? this.template.selectMany : false;
-    this.store.state.update(entity, {selected: true}, !many);
-    this.entitySelectChange.emit({selected: true, entity});
+    const exclusive = !this.selectMany;
+    this.store.state.update(entity, {selected: true}, exclusive);
+    this.entitySelectChange.emit({added: [entity]});
+  }
+
+  /**
+   * Select or unselect all rows at once. On select, emit an event.
+   * @param toggle Select or unselect
+   * @internal
+   */
+  onToggleRows(toggle: boolean) {
+    if (this.selection === false) { return; }
+
+    this.store.state.updateAll({selected: toggle});
+    if (toggle === true) {
+      this.entitySelectChange.emit({added: [this.store.view.all()]});
+    }
+  }
+
+  /**
+   * When an entity is toggled, select or unselect it in the store. On select,
+   * emit an event.
+   * @param toggle Select or unselect
+   * @param entity Entity
+   * @internal
+   */
+  onToggleRow(toggle: boolean, entity: object) {
+    if (this.selection === false) { return; }
+
+    const exclusive = toggle === true && !this.selectMany;
+    this.store.state.update(entity, {selected: toggle}, exclusive);
+    if (toggle === true) {
+      this.entitySelectChange.emit({added: [entity]});
+    }
+  }
+
+  /**
+   * Compute the selection state
+   * @returns Whether all, some or no rows are selected
+   * @internal
+   */
+  private computeSelectionState(selectedRecords: EntityRecord<object>[]): EntityTableSelectionState {
+    const states = EntityTableSelectionState;
+    const selectionCount = selectedRecords.length;
+    return selectionCount === 0 ?
+      states.None :
+      (selectionCount === this.store.view.count ? states.All : states.Some);
   }
 
   /**

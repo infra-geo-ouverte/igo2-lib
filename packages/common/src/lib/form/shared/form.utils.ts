@@ -9,9 +9,10 @@ export function formControlIsRequired(control: AbstractControl): boolean {
   }
 
   if ((control as any).controls) {
-    Object.keys((control as any).controls).find((key: string) => {
+    const requiredControl = Object.keys((control as any).controls).find((key: string) => {
       return formControlIsRequired((control as any).controls[key]);
     });
+    return requiredControl !== undefined;
   }
 
   return false;

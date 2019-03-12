@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import {
   MatTableModule,
   MatSortModule,
-  MatIconModule
+  MatIconModule,
+  MatCheckboxModule
 } from '@angular/material';
 
 import { EntityTableRowDirective } from './entity-table-row.directive';
@@ -17,7 +18,8 @@ import { EntityTableComponent } from './entity-table.component';
     CommonModule,
     MatTableModule,
     MatSortModule,
-    MatIconModule
+    MatIconModule,
+    MatCheckboxModule
   ],
   exports: [
     EntityTableComponent
