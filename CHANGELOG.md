@@ -1,3 +1,15 @@
+<a name="0.27.3"></a>
+## [0.27.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.2...0.27.3) (2019-03-12)
+
+
+### Bug Fixes
+
+* **cors:** add crossOrigin anonymous ([301529c](https://github.com/infra-geo-ouverte/igo2-lib/commit/301529c))
+* **feature-details:** rename innerhtml ([916ee78](https://github.com/infra-geo-ouverte/igo2-lib/commit/916ee78))
+* **iframe:** use cors parameters ([35461da](https://github.com/infra-geo-ouverte/igo2-lib/commit/35461da))
+
+
+
 <a name="0.27.2"></a>
 ## [0.27.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.1...0.27.2) (2019-03-01)
 
