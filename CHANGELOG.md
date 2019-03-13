@@ -1,3 +1,13 @@
+<a name="0.27.5"></a>
+## [0.27.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.4...0.27.5) (2019-03-13)
+
+
+### Bug Fixes
+
+* **datasource-search-source:** queryable option ([61ecb8e](https://github.com/infra-geo-ouverte/igo2-lib/commit/61ecb8e))
+
+
+
 <a name="0.27.4"></a>
 ## [0.27.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.3...0.27.4) (2019-03-13)
 
