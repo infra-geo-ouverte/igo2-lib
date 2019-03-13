@@ -122,7 +122,7 @@ export class DataSourceSearchSource extends SearchSource {
         crossOrigin: 'anonymous',
         type: result.source.format,
         url: result.source.url,
-        queryable: result.source.queryable || true,
+        queryable: result.source.queryable,
         queryFormat: queryParams.format,
         queryHtmlTarget: queryParams.htmlTarget,
         params: {
