@@ -122,6 +122,7 @@ export class DataSourceSearchSource extends SearchSource {
         crossOrigin: 'anonymous',
         type: result.source.format,
         url: result.source.url,
+        queryable: result.source.queryable || true,
         queryFormat: queryParams.format,
         queryHtmlTarget: queryParams.htmlTarget,
         params: {
@@ -131,7 +132,7 @@ export class DataSourceSearchSource extends SearchSource {
     };
 
     return {
-      id: result.id,
+      id: result.source.id,
       source: this.getName(),
       sourceType: SourceFeatureType.Search,
       order: 2,
