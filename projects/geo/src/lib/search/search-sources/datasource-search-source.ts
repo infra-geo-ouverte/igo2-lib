@@ -96,7 +96,7 @@ export class DataSourceSearchSource extends SearchSource {
     }
 
     if (queryFormat === QueryFormat.HTML) {
-      htmlTarget = 'innerhtml';
+      htmlTarget = 'iframe';
     }
 
     return {
