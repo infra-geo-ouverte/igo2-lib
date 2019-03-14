@@ -45,3 +45,7 @@ igo-actionbar:not(.with-title) {
 igo-actionbar ::ng-deep igo-list {
   overflow: inherit;
 }
+
+igo-dynamic-outlet {
+  overflow: auto;
+}

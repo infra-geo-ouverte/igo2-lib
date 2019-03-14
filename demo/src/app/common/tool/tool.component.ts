@@ -9,6 +9,7 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
+import { LanguageService } from '@igo2/core';
 import {
   OnUpdateInputs,
   Tool,
@@ -18,7 +19,7 @@ import {
 } from '@igo2/common';
 
 @ToolComponent({
-  name: 'salutation',
+  name: 'demo-salutation',
   title: 'Salutation',
   icon: 'person',
   options: {name: 'Jack'}
@@ -43,7 +44,7 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 }
 
 @ToolComponent({
-  name: 'about',
+  name: 'demo-about',
   title: 'About',
   icon: 'info'
 })
@@ -73,10 +74,13 @@ export class AppToolComponent implements OnInit, OnDestroy {
     return this.activeTool$.value ? this.activeTool$.value.title : 'Toolbox';
   }
 
-  constructor(private toolService: ToolService) {}
+  constructor(
+    private toolService: ToolService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
-    this.toolbox.setToolbar(['salutation', 'about']);
+    this.toolbox.setToolbar(['demo-salutation', 'demo-about']);
     this.toolbox.setTools(this.toolService.getTools());
   }
 
@@ -85,7 +89,7 @@ export class AppToolComponent implements OnInit, OnDestroy {
   }
 
   activateSalutationTool() {
-    this.toolbox.activateTool('salutation', {name: 'Bob'});
+    this.toolbox.activateTool('demo-salutation', {name: 'Bob'});
   }
 
 }
