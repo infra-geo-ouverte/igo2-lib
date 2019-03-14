@@ -23,8 +23,12 @@ $slide-toggle-width: 60px;
   }
 }
 
-mat-divider {
-  width: 160px;
-  text-align: center;
-  margin: 10px auto;
+.measure-store-buttons {
+  width: 100%;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.measure-store-buttons button:first-of-type {
+  margin-left: 14px; 
 }

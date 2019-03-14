@@ -73,6 +73,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   public tableTemplate: EntityTableTemplate = {
     selection: true,
     selectMany: true,
+    selectionCheckbox: true,
     sort: true,
     columns: [
       {

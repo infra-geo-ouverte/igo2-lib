@@ -55,23 +55,23 @@
     </igo-measurer-item>
   </ng-container>
 
-  <mat-divider></mat-divider>
+  <div class="measure-store-buttons">
+    <button
+      mat-icon-button
+      [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
+      [disabled]="(selectedFeatures$ | async).length === 0"
+      (click)="onCalculateClick()">
+      <mat-icon>playlist_add</mat-icon>
+    </button>
 
-  <button
-    mat-icon-button
-    [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
-    [disabled]="(selectedFeatures$ | async).length === 0"
-    (click)="onCalculateClick()">
-    <mat-icon>playlist_add</mat-icon>
-  </button>
-
-  <button
-    mat-icon-button
-    [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
-    [disabled]="(selectedFeatures$ | async).length === 0"
-    (click)="onDeleteClick()">
-    <mat-icon>delete</mat-icon>
-  </button>
+    <button
+      mat-icon-button
+      [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
+      [disabled]="(selectedFeatures$ | async).length === 0"
+      (click)="onDeleteClick()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
 
   <igo-entity-table
     #table
