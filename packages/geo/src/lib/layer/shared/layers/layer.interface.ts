@@ -15,6 +15,8 @@ export interface LayerOptions {
   zIndex?: number;
   minResolution?: number;
   maxResolution?: number;
+  showInLayerList?: boolean;
+  removable?: boolean;
   ol?: olLayer;
 }
 

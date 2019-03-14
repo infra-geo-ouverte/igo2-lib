@@ -11,7 +11,7 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import { MapService } from '../../map/shared/map.service';
 // import { FeatureService } from '../../feature/shared/feature.service';
-import { Layer, VectorLayer } from '../shared/layers';
+import { Layer, VectorLayer, VectorLayerOptions } from '../shared/layers';
 
 @Component({
   selector: 'igo-layer-item',
@@ -20,10 +20,12 @@ import { Layer, VectorLayer } from '../shared/layers';
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class LayerItemComponent implements OnDestroy {
+
+  legendCollapsed = true;
+
+  private resolution$$: Subscription;
+
   @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
   set layer(value: Layer) {
     this._layer = value;
     this.subscribeResolutionObserver();
@@ -32,60 +34,31 @@ export class LayerItemComponent implements OnDestroy {
       this.legendCollapsed = legend.collapsed;
     }
   }
+  get layer(): Layer { return this._layer; }
   private _layer: Layer;
 
-  @Input()
-  get edition() {
-    return this._edition;
-  }
-  set edition(value: boolean) {
-    this._edition = value;
-  }
-  private _edition = false;
+  @Input() edition: boolean = false;
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
+  @Input() color: string = 'primary';
 
-  @Input()
-  get toggleLegendOnVisibilityChange() {
-    return this._toggleLegendOnVisibilityChange;
-  }
-  set toggleLegendOnVisibilityChange(value: boolean) {
-    this._toggleLegendOnVisibilityChange = value;
-  }
-  private _toggleLegendOnVisibilityChange = false;
+  @Input() toggleLegendOnVisibilityChange: boolean = false;
 
-  @Input()
-  get disableReorderLayers() {
-    return this._disableReorderLayers;
-  }
-  set disableReorderLayers(value: boolean) {
-    this._disableReorderLayers = value;
-  }
-  private _disableReorderLayers = false;
-
-  get opacity() {
-    return this.layer.opacity * 100;
-  }
-
-  set opacity(opacity: number) {
-    this.layer.opacity = opacity / 100;
-  }
+  @Input() disableReorderLayers: boolean = false;
 
   get id(): string {
-    return (this.layer.dataSource.options as any).id
-      ? (this.layer.dataSource.options as any).id
-      : this.layer.id;
+    const dataSourceOptions = this.layer.dataSource.options as any;
+    return dataSourceOptions.id ? dataSourceOptions.id : this.layer.id;
   }
 
-  public legendCollapsed = true;
-  private resolution$$: Subscription;
+  get removable(): boolean { return this.layer.options.removable !== false; }
+
+  get browsable(): boolean {
+    const options = this.layer.options as any as VectorLayerOptions;
+    return options.browsable !== false;
+  }
+
+  get opacity() { return this.layer.opacity * 100; }
+  set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
 
   constructor(
     // private featureService: FeatureService,
@@ -112,6 +85,8 @@ export class LayerItemComponent implements OnDestroy {
   }
 
   showFeaturesList(layer: Layer) {
+    return;
+
     // this.featureService.unfocusFeature();
     // this.featureService.unselectFeature();
 

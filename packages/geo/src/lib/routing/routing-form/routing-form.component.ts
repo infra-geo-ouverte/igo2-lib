@@ -165,18 +165,20 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       title: 'routingStopOverlay',
       zIndex: 999,
       id: 'routingStops',
-      source: this.routingStopsOverlayDataSource
+      source: this.routingStopsOverlayDataSource,
+      showInLayerList: false
     });
     const routesLayer = new VectorLayer({
       title: 'routingRoutesOverlay',
       zIndex: 999,
       id: 'routingRoutes',
       opacity: 0.75,
-      source: this.routingRoutesOverlayDataSource
+      source: this.routingRoutesOverlayDataSource,
+      showInLayerList: false
     });
 
-    this.map.addLayer(routesLayer, false);
-    this.map.addLayer(stopsLayer, false);
+    this.map.addLayer(routesLayer);
+    this.map.addLayer(stopsLayer);
 
     let selectedStopFeature;
 

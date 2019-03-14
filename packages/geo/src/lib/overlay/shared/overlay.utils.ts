@@ -11,6 +11,7 @@ import { VectorLayer } from '../../layer';
 export function createOverlayLayer(): VectorLayer {
   const overlayDataSource = new FeatureDataSource();
   return new VectorLayer({
+    title: 'Overlay',
     zIndex: 300,
     source: overlayDataSource,
     style: createOverlayLayerStyle()

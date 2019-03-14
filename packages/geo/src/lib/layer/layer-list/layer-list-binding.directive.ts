@@ -5,6 +5,7 @@ import { RouteService } from '@igo2/core';
 import { MapService } from '../../map/shared/map.service';
 import { LayerListComponent } from './layer-list.component';
 import { LayerListService } from './layer-list.service';
+import { Layer } from '../shared/layers/layer';
 
 @Directive({
   selector: '[igoLayerListBinding]'
@@ -28,7 +29,11 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
 
     this.layers$$ = this.mapService
       .getMap()
-      .layers$.subscribe(layers => (this.component.layers = layers));
+      .layers$.subscribe((layers: Layer[]) => {
+        this.component.layers = layers.filter((layer: Layer) => {
+          return layer.options.showInLayerList !== false;
+        });
+      });
   }
 
   ngAfterViewInit(): void {
