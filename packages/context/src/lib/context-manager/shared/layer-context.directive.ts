@@ -23,7 +23,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
   private queryParams: any;
 
-  private contextLayers: Layer[];
+  private contextLayers: Layer[] = [];
 
   get map(): IgoMap {
     return this.component.map;
