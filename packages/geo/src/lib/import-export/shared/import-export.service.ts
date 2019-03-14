@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import * as olformat from 'ol/format';
 import * as olstyle from 'ol/style';
+import OlFeature from 'ol/Feature';
 
 import { ConfigService, MessageService, LanguageService } from '@igo2/core';
 import { MapService } from '../../map/shared/map.service';
@@ -73,15 +74,24 @@ export class ImportExportService {
   public export(data: ExportOptions) {
     const map = this.mapService.getMap();
     const layer = map.getLayerById(data.layer);
-    const source: any = layer.ol.getSource();
+    const olSource = layer.ol.getSource();
 
-    const formatStr: any = data.format;
+    const formatStr = data.format;
     const format =
       data.format === 'shapefile'
         ? new olformat.GeoJSON()
         : new olformat[formatStr]();
 
-    const featuresText = format.writeFeatures(source.getFeatures(), {
+    const olFeatures = olSource.getFeatures().map((olFeature: OlFeature) => {
+      const keys = olFeature.getKeys().filter((key: string) => !key.startsWith('_'));
+      const properties = keys.reduce((acc: object, key: string) => {
+        acc[key] = olFeature.get(key);
+        return acc;
+      }, {geometry: olFeature.getGeometry()});
+      return new OlFeature(properties);
+    });
+
+    const featuresText = format.writeFeatures(olFeatures, {
       dataProjection: 'EPSG:4326',
       featureProjection: map.projection,
       featureType: 'feature',
