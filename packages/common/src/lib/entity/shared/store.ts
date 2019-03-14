@@ -68,7 +68,7 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.getProperty = options.getProperty ? options.getProperty : getEntityProperty;
 
-    this.state = new EntityStateManager<E, S>({getKey: this.getKey});
+    this.state = new EntityStateManager<E, S>({store: this});
     this.view = new EntityView<E>(this.entities$);
     this.stateView = new EntityView<E, EntityRecord<E, S>>(this.view.all$()).join({
       source: this.state.change$,

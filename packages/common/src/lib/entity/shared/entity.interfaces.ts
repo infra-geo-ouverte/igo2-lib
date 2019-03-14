@@ -24,6 +24,7 @@ export interface EntityStoreOptions {
 
 export interface EntityStateManagerOptions {
   getKey?: (entity: object) => EntityKey;
+  store?: EntityStore<object>;
 }
 
 export interface EntityTransactionOptions {

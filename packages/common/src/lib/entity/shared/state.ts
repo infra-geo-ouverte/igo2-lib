@@ -2,6 +2,7 @@ import { ReplaySubject } from 'rxjs';
 
 import { EntityKey, EntityState, EntityStateManagerOptions } from './entity.interfaces';
 import { getEntityId } from './entity.utils';
+import { EntityStore } from './store';
 
 /**
  * This class is used to track a store's entities state
@@ -23,8 +24,13 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
    */
   readonly getKey: (E) => EntityKey;
 
+  private store: EntityStore<object> | undefined;
+
   constructor(options: EntityStateManagerOptions = {}) {
-    this.getKey = options.getKey ? options.getKey : getEntityId;
+    this.store = options.store ? options.store : undefined;
+    this.getKey = options.getKey
+      ? options.getKey
+      : (this.store ? this.store.getKey : getEntityId);
     this.next();
   }
 
@@ -112,7 +118,8 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
    * @param changes State
    */
   updateAll(changes: Partial<S>) {
-    Array.from(this.index.keys()).forEach((key: EntityKey) => {
+    const allKeys = this.getAllKeys();
+    Array.from(allKeys).forEach((key: EntityKey) => {
       const state = Object.assign({}, this.index.get(key), changes);
       this.index.set(key, state);
     });
@@ -130,7 +137,7 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
     const reverseChanges = this.reverseChanges(changes);
 
     const keys = entities.map((entity: E) => this.getKey(entity));
-    const allKeys = new Set(keys.concat(Array.from(this.index.keys())));
+    const allKeys = new Set(keys.concat(Array.from(this.getAllKeys())));
     allKeys.forEach((key: EntityKey) => {
       const state = this.index.get(key) || {} as S;
       if (keys.indexOf(key) >= 0) {
@@ -160,9 +167,19 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
   }
 
   /**
+   * Return all the keys in that state and in the store it's bound to, if any.
+   * @returns Set of keys
+   */
+  private getAllKeys(): Set<EntityKey> {
+    const storeKeys = this.store ? Array.from(this.store.index.keys()) : [];
+    return new Set(Array.from(this.index.keys()).concat(storeKeys));
+  }
+
+  /**
    * Emit 'change' event
    */
   private next() {
     this.change$.next();
   }
+
 }
