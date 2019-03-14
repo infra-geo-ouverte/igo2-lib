@@ -92,15 +92,7 @@ export abstract class Layer {
 
   protected abstract createOlLayer(): olLayer;
 
-  add(map: IgoMap) {
+  setMap(map: IgoMap | undefined) {
     this.map = map;
-    map.ol.addLayer(this.ol);
-  }
-
-  remove() {
-    if (this.map) {
-      this.map.ol.removeLayer(this.ol);
-      this.map = undefined;
-    }
   }
 }

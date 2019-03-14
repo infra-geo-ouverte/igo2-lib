@@ -76,7 +76,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleBaseLayerChanged(baselayer) {
-    this.basemap.removeLayers();
+    this.basemap.removeAllLayers();
 
     const options: any = Object.assign(
       Object.create(baselayer.options),

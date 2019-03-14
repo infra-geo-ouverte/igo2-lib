@@ -27,10 +27,11 @@ import {
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 
+// TODO: This class is messy. Clearly define it's scope and the map browser's.
+// Move some stuff into controllers.
 export class IgoMap {
   public ol: olMap;
   public layers$ = new BehaviorSubject<Layer[]>([]);
-  public layers: Layer[] = [];
   public status$: Subject<SubjectStatus>;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
@@ -45,6 +46,10 @@ export class IgoMap {
   private defaultOptions: Partial<MapOptions> = {
     controls: { attribution: false }
   };
+
+  get layers(): Layer[] {
+    return this.layers$.value;
+  }
 
   get projection(): string {
     return this.viewController.getOlProjection().getCode();
@@ -127,6 +132,10 @@ export class IgoMap {
    * @param options Map view options
    */
   setView(options: MapViewOptions) {
+    if (this.viewController !== undefined) {
+      this.viewController.clearStateHistory();
+    }
+
     const view = new olView(options);
     this.ol.setView(view);
 
@@ -159,37 +168,6 @@ export class IgoMap {
     return this.viewController.getZoom();
   }
 
-  addLayer(layer: Layer, push = true) {
-    if (layer.baseLayer && layer.visible) {
-      this.changeBaseLayer(layer);
-    }
-
-    const existingLayer = this.getLayerById(layer.id);
-    if (existingLayer !== undefined) {
-      existingLayer.visible = true;
-      return;
-    }
-
-    if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const offset = layer.baseLayer ? 1 : 10;
-      layer.zIndex = this.layers.length + offset;
-    }
-
-    layer.add(this);
-
-    this.layerWatcher.watchLayer(layer);
-
-    if (push) {
-      this.layers.splice(0, 0, layer);
-      this.sortLayers();
-      this.layers$.next(this.layers.slice(0));
-    }
-  }
-
-  addLayers(layers: Layer[], push = true) {
-    layers.forEach(layer => this.addLayer(layer, push));
-  }
-
   changeBaseLayer(baseLayer: Layer) {
     if (!baseLayer) {
       return;
@@ -203,31 +181,64 @@ export class IgoMap {
   }
 
   getBaseLayers(): Layer[] {
-    return this.layers.filter(layer => layer.baseLayer);
+    return this.layers.filter((layer: Layer) => layer.baseLayer === true);
   }
 
   getLayerById(id: string): Layer {
-    return this.layers.find(layer => layer.id && layer.id === id);
+    return this.layers.find((layer: Layer) => layer.id && layer.id === id);
   }
 
+  /**
+   * Add a single layer
+   * @param layer Layer to add
+   * @param push DEPRECATED
+   */
+  addLayer(layer: Layer, push = true) {
+    this.addLayers([layer]);
+  }
+
+  /**
+   * Add many layers
+   * @param layers Layers to add
+   * @param push DEPRECATED
+   */
+  addLayers(layers: Layer[], push = true) {
+    const addedLayers = layers
+      .map((layer: Layer) => this.doAddLayer(layer))
+      .filter((layer: Layer | undefined) => layer !== undefined);
+    this.setLayers([].concat(this.layers, addedLayers));
+  }
+
+  /**
+   * Remove a single layer
+   * @param layer Layer to remove
+   */
   removeLayer(layer: Layer) {
-    const index = this.getLayerIndex(layer);
-
-    if (index >= 0) {
-      this.layerWatcher.unwatchLayer(layer);
-      layer.remove();
-      this.layers.splice(index, 1);
-      this.layers$.next(this.layers.slice(0));
-    }
+    this.removeLayers([layer]);
   }
 
-  removeLayers() {
-    this.layers.forEach(layer => {
-      this.layerWatcher.unwatchLayer(layer);
-      layer.remove();
-    }, this);
+  /**
+   * Remove many layers
+   * @param layers Layers to remove
+   */
+  removeLayers(layers: Layer[]) {
+    const newLayers = this.layers$.value.slice(0);
+    layers.forEach((layer: Layer) => {
+      const index = this.getLayerIndex(layer);
+      if (index >= 0) {
+        this.doRemoveLayer(layer);
+        newLayers.splice(index, 1);
+      }
+    });
 
-    this.layers = [];
+    this.setLayers(newLayers);
+  }
+
+  /**
+   * Remove all layers
+   */
+  removeAllLayers() {
+    this.layers.forEach((layer: Layer) => this.doRemoveLayer(layer));
     this.layers$.next([]);
   }
 
@@ -259,65 +270,72 @@ export class IgoMap {
   }
 
   /**
-   * Get all layers activate in the map
-   * @return Array of layers
+   * Add a layer to the OL map and start watching. If the layer is already
+   * added to this map, make it visible but don't add it one again.
+   * @param layer Layer
+   * @returns The layer added, if any
    */
-  getLayers() {
-    return this.layers;
+  private doAddLayer(layer: Layer) {
+    if (layer.baseLayer && layer.visible) {
+      this.changeBaseLayer(layer);
+    }
+
+    const existingLayer = this.getLayerById(layer.id);
+    if (existingLayer !== undefined) {
+      existingLayer.visible = true;
+      return;
+    }
+
+    if (layer.zIndex === undefined || layer.zIndex === 0) {
+      const offset = layer.baseLayer ? 1 : 10;
+      layer.zIndex = this.layers.length + offset;
+    }
+
+    layer.setMap(this);
+    this.layerWatcher.watchLayer(layer);
+    this.ol.addLayer(layer.ol);
+
+    return layer;
   }
 
   /**
-   * Get all the layers legend
-   * @return Array of legend
+   * Remove a layer from the OL map and stop watching
+   * @param layer Layer
    */
-  getLayersLegend() {
-    // Get layers list
-    const layers = this.getLayers();
-    const listLegend = [];
-    let title;
-    let legendUrls;
-    let legendImage;
-    let heightPos = 0;
-    const newCanvas = document.createElement('canvas');
-    const newContext = newCanvas.getContext('2d');
-    newContext.font = '20px Calibri';
-    // For each layers in the map
-    layers.forEach(layer => {
-      // Add legend for only visible layer
-      if (layer.visible === true) {
-        // Get the list of legend
-        legendUrls = layer.dataSource.getLegend();
-        // If legend(s) are defined
-        if (legendUrls.length > 0) {
-          title = layer.title;
-          // For each legend
-          legendUrls.forEach(legendUrl => {
-            // If the legend really exist
-            if (legendUrl.url !== undefined) {
-              // Create an image for the legend
-              legendImage = new Image();
-              legendImage.crossOrigin = 'Anonymous';
-              legendImage.src = legendUrl.url;
-              legendImage.onload = () => {
-                newContext.fillText(title, 0, heightPos);
-                newContext.drawImage(legendImage, 0, heightPos + 20);
-                heightPos += legendImage.height + 5;
-              };
-              // Add legend info to the list
-              listLegend.push({
-                title,
-                url: legendUrl.url,
-                image: legendImage
-              });
-            }
-          });
-        }
-      }
-    });
-    return listLegend;
+  private doRemoveLayer(layer: Layer) {
+    this.layerWatcher.unwatchLayer(layer);
+    this.ol.removeLayer(layer.ol);
+    layer.setMap(undefined);
   }
 
-  // TODO: Create a GeolocationController
+  /**
+   * Update the layers observable
+   * @param layers Layers
+   */
+  private setLayers(layers: Layer[]) {
+    this.layers$.next(this.sortLayersByZIndex(layers).slice(0));
+  }
+
+  /**
+   * Sort layers by descending zIndex
+   * @param layers Array of layers
+   * @returns The original array, sorted by zIndex
+   */
+  private sortLayersByZIndex(layers: Layer[]) {
+    // Sort by descending zIndex
+    return layers.sort((layer1: Layer, layer2: Layer) => layer2.zIndex - layer1.zIndex);
+  }
+
+  /**
+   * Get layer index in the map's inenr array of layers
+   * @param layer Layer
+   * @returns The layer index
+   */
+  private getLayerIndex(layer: Layer) {
+    return this.layers.findIndex((_layer: Layer) => _layer === layer);
+  }
+
+  // TODO: Create a GeolocationController with everything below
   geolocate(track = false) {
     let first = true;
     if (this.geolocation$$) {
@@ -388,15 +406,6 @@ export class IgoMap {
     if (this.geolocation) {
       this.geolocation.setTracking(false);
     }
-  }
-
-  private sortLayers() {
-    // Sort by descending zIndex
-    this.layers.sort((layer1, layer2) => layer2.zIndex - layer1.zIndex);
-  }
-
-  private getLayerIndex(layer: Layer) {
-    return this.layers.findIndex(layer2 => layer2 === layer);
   }
 
 }

@@ -40,13 +40,12 @@ export class TileLayer extends Layer {
     return new olLayerTile(olOptions);
   }
 
-  public add(map: IgoMap) {
-    this.watcher.subscribe(() => {});
-    super.add(map);
-  }
-
-  public remove() {
-    this.watcher.unsubscribe();
-    super.remove();
+  public setMap(map: IgoMap | undefined) {
+    if (map === undefined) {
+      this.watcher.unsubscribe();
+    } else {
+      this.watcher.subscribe(() => {});
+    }
+    super.setMap(map);
   }
 }

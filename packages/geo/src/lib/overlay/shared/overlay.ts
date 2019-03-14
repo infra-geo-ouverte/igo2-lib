@@ -38,18 +38,22 @@ export class Overlay {
 
   constructor(map?: IgoMap) {
     this.layer = createOverlayLayer();
-    if (map !== undefined) {
-      this.bind(map);
-    }
+    this.setMap(map);
   }
 
   /**
    * Bind this to a map and add the overlay layer to that map
    * @param map Map
    */
-  bind(map: IgoMap) {
+  setMap(map: IgoMap) {
+    if (map === undefined) {
+      if (this.map !== undefined) {
+        this.map.ol.removeLayer(this.layer.ol);
+      }
+    } else {
+      map.ol.addLayer(this.layer.ol);
+    }
     this.map = map;
-    this.map.addLayer(this.layer, false);
   }
 
   /**

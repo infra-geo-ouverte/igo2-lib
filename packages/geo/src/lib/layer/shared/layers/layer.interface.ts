@@ -23,3 +23,9 @@ export interface GroupLayers {
   layers?: LayerOptions;
   collapsed?: boolean;
 }
+
+export interface LayerLegend {
+  title: string;
+  url: string;
+  image: string;
+}
