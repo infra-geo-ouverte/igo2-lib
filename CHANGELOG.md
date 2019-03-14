@@ -1,3 +1,13 @@
+<a name="0.27.7"></a>
+## [0.27.7](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.6...0.27.7) (2019-03-14)
+
+
+### Bug Fixes
+
+* **iframe:** remove sandbox ([c13712e](https://github.com/infra-geo-ouverte/igo2-lib/commit/c13712e))
+
+
+
 <a name="0.27.6"></a>
 ## [0.27.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.5...0.27.6) (2019-03-14)
 
