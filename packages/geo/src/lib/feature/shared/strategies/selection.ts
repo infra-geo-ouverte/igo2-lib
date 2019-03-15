@@ -261,7 +261,8 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     const overlayLayer = new VectorLayer({
       zIndex: 200,
       source: new FeatureDataSource(),
-      style: this.options ? this.options.style : undefined
+      style: this.options ? this.options.style : undefined,
+      showInLayerList: false
     });
 
     return new FeatureStore([], {map: this.map}).bindLayer(overlayLayer);
@@ -272,8 +273,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * features.
    */
   private addOverlayLayer() {
-    // TODO: why do we need to cast as any?
-    this.map.addLayer(this.overlayStore.layer as any, false);
+    this.map.ol.addLayer(this.overlayStore.layer.ol);
   }
 
   /**
@@ -281,8 +281,6 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   private removeOverlayLayer() {
     this.overlayStore.source.ol.clear();
-    // Remove directly from the olMap because, for some reason,
-    // removing from the IgoMap doesn't remove the layer
     this.map.ol.removeLayer(this.overlayStore.layer.ol);
   }
 }

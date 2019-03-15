@@ -262,6 +262,23 @@ export class MapViewController extends MapController {
   }
 
   /**
+   * Clear the state history
+   */
+  clearStateHistory() {
+    this.states = [];
+    this.stateIndex = 0;
+  }
+
+  /**
+   * Update the the view to it's intial state
+   */
+  setInitialState() {
+    if (this.states.length > 0) {
+      this.setStateIndex(0);
+    }
+  }
+
+  /**
    * Move to the extent retrieved from the stream
    * @param extent Extent
    * @param action Either zoom or move

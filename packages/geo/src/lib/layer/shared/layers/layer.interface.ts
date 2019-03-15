@@ -15,6 +15,8 @@ export interface LayerOptions {
   zIndex?: number;
   minResolution?: number;
   maxResolution?: number;
+  showInLayerList?: boolean;
+  removable?: boolean;
   ol?: olLayer;
 }
 
@@ -22,4 +24,10 @@ export interface GroupLayers {
   title: string;
   layers?: LayerOptions;
   collapsed?: boolean;
+}
+
+export interface LayerLegend {
+  title: string;
+  url: string;
+  image: string;
 }

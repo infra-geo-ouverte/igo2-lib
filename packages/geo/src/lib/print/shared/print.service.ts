@@ -11,6 +11,8 @@ import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
+import { LayerLegend } from '../../layer/shared/layers/layer.interface';
+import { getLayersLegends } from '../../layer/utils/legend';
 
 import { PrintOptions } from './print.interface';
 import { PrintDimension, PrintOrientation } from './print.type';
@@ -90,32 +92,33 @@ export class PrintService {
 
   /**
    * Get html code for all layers legend
-   * * @param  width - The width that the legend need to be
+   * @param  map IgoMap
+   * @param  width The width that the legend need to be
    * @return Html code for the legend
    */
-  getLayersLegendHtml(map, width) {
-    // Get html code for the legend
-    const listLegend = map.getLayersLegend();
+  getLayersLegendHtml(map: IgoMap, width: number): string {
     let html = '';
-    if (listLegend.length > 0) {
-      // Define important style to be sure that all container is convert
-      // to image not just visible part
-      html += '<style media="screen" type="text/css">';
-      html += '.html2canvas-container { width: ' + width;
-      html += 'mm !important; height: 2000px !important; }';
-      html += '</style>';
-      html += '<font size="2" face="Courier New" >';
-      html += '<div style="display:inline-block;max-width:' + width + 'mm">';
-      // For each legend, define an html table cell
-      listLegend.forEach((legend) => {
-        html +=
-          '<table border=1 style="display:inline-block;vertical-align:top">';
-        html += '<tr><th width="170px">' + legend.title + '</th>';
-        html += '<td><img class="printImageLegend" src="' + legend.url + '">';
-        html += '</td></tr></table>';
-      });
-      html += '</div>';
-    }
+    const legends = getLayersLegends(map.layers);
+    if (legends.length === 0) { return html; }
+
+    // Define important style to be sure that all container is convert
+    // to image not just visible part
+    html += '<style media="screen" type="text/css">';
+    html += '.html2canvas-container { width: ' + width;
+    html += 'mm !important; height: 2000px !important; }';
+    html += '</style>';
+    html += '<font size="2" face="Courier New" >';
+    html += '<div style="display:inline-block;max-width:' + width + 'mm">';
+    // For each legend, define an html table cell
+    legends.forEach((legend: LayerLegend) => {
+      html +=
+        '<table border=1 style="display:inline-block;vertical-align:top">';
+      html += '<tr><th width="170px">' + legend.title + '</th>';
+      html += '<td><img class="printImageLegend" src="' + legend.url + '">';
+      html += '</td></tr></table>';
+    });
+    html += '</div>';
+
     return html;
   }
 

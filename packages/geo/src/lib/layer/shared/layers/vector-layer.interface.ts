@@ -18,5 +18,6 @@ export interface VectorLayerOptions extends LayerOptions {
     | WFSDataSourceOptions
     | ArcGISRestDataSourceOptions;
   style?: { [key: string]: any } | olStyle | olStyle[];
+  browsable?: boolean;
   ol?: olLayerVector;
 }

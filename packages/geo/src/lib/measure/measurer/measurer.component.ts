@@ -382,9 +382,11 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     if (store.layer === undefined) {
       const layer = new VectorLayer({
+        title: 'Measures',
         zIndex: 200,
         source: new FeatureDataSource(),
-        style: createMeasureLayerStyle()
+        style: createMeasureLayerStyle(),
+        showInLayerList: false
       });
       store.bindLayer(layer);
     }

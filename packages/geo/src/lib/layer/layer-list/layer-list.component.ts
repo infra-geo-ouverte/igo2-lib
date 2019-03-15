@@ -29,6 +29,7 @@ export class LayerListComponent implements AfterViewInit {
 
   @Input()
   get layers(): Layer[] {
+    // Should all of this be in the getter??
     if (this.excludeBaseLayers) {
       if (this._layers.filter(f => f.visible === false && !f.baseLayer).length >= 1) {
         this.hasLayerNotVisible = true;

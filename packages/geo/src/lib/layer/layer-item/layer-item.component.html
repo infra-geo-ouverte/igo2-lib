@@ -57,9 +57,9 @@
   </div>
 
   <div class="igo-col igo-col-100 igo-col-100-m">
-      <div class="igo-layer-button-group">
+    <div class="igo-layer-button-group">
       <button
-        *ngIf="isVectorLayer(layer)"
+        *ngIf="isVectorLayer(layer) && browsable === true"
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
@@ -92,6 +92,7 @@
       </button>
 
       <button
+        *ngIf="removable === true"
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"

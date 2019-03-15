@@ -7,6 +7,7 @@ import { RouteService } from '@igo2/core';
 import {
   IgoMap,
   MapBrowserComponent,
+  Layer,
   LayerService,
   LayerOptions
 } from '@igo2/geo';
@@ -18,8 +19,11 @@ import { DetailedContext } from './context.interface';
   selector: '[igoLayerContext]'
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
+
   private context$$: Subscription;
   private queryParams: any;
+
+  private contextLayers: Layer[] = [];
 
   get map(): IgoMap {
     return this.component.map;
@@ -57,14 +61,13 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   private handleContextChange(context: DetailedContext) {
-    if (context.layers === undefined) {
-      return;
-    }
+    if (context.layers === undefined) { return; }
 
-    this.map.removeLayers();
+    this.map.removeLayers(this.contextLayers);
+    this.contextLayers = [];
 
-    context.layers.forEach(contextLayer => {
-      this.addLayerToMap(contextLayer);
+    context.layers.forEach((layerOptions: LayerOptions) => {
+      this.addLayerToMap(layerOptions);
     });
   }
 
@@ -87,7 +90,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           layer.id,
           layer
         );
-
+        this.contextLayers.push(layer);
         this.map.addLayer(layer);
       });
   }

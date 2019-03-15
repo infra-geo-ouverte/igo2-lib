@@ -39,14 +39,13 @@ export class ImageLayer extends Layer {
     return image;
   }
 
-  public add(map: IgoMap) {
-    this.watcher.subscribe(() => {});
-    super.add(map);
-  }
-
-  public remove() {
-    this.watcher.unsubscribe();
-    super.remove();
+  public setMap(map: IgoMap | undefined) {
+    if (map === undefined) {
+      this.watcher.unsubscribe();
+    } else {
+      this.watcher.subscribe(() => {});
+    }
+    super.setMap(map);
   }
 
   private customLoader(tile, src, token?) {
