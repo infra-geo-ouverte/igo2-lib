@@ -145,11 +145,47 @@ export class EntityTransaction {
   }
 
   /**
-   * Abort this transaction
-   * @todo Raise event and synchronize stores?
+   * Rollback this transaction
    */
-  abort() {
-    this._inCommitPhase = false;
+  rollback() {
+    this.checkInCommitPhase();
+
+    const operationsFactory = () => new Map([
+      [EntityOperationType.Delete, []],
+      [EntityOperationType.Update, []],
+      [EntityOperationType.Insert, []]
+    ]);
+    const storesOperations = new Map();
+
+    // Group operations by store and by operation type.
+    // Grouping operations allows us to revert them in bacth, thus, triggering
+    // observables only one per operation type.
+    for (const operation of this.operations.all()) {
+      const store = operation.store;
+      if (operation.store === undefined) { continue; }
+
+      let storeOperations = storesOperations.get(store);
+      if (storeOperations === undefined) {
+        storeOperations = operationsFactory();
+        storesOperations.set(store, storeOperations);
+      }
+      storeOperations.get(operation.type).push(operation);
+    }
+
+    Array.from(storesOperations.keys()).forEach((store: EntityStore<object>) => {
+      const operations = storesOperations.get(store);
+
+      const deletes = operations.get(EntityOperationType.Delete);
+      store.insertMany(deletes.map((_delete: EntityOperation) => _delete.previous));
+
+      const updates = operations.get(EntityOperationType.Update);
+      store.updateMany(updates.map((_update: EntityOperation) => _update.previous));
+
+      const inserts = operations.get(EntityOperationType.Insert);
+      store.deleteMany(inserts.map((_insert: EntityOperation) => _insert.current));
+    });
+
+    this.clear();
   }
 
   /**
@@ -178,7 +214,7 @@ export class EntityTransaction {
     });
 
     if (store !== undefined) {
-      store.update(current);
+      store.insert(current);
     }
   }
 
@@ -248,7 +284,7 @@ export class EntityTransaction {
    * @param operations Commited operations
    */
   private onCommitError(operations: EntityOperation[]) {
-    this.abort();
+    this._inCommitPhase = false;
   }
 
   /**
@@ -256,9 +292,7 @@ export class EntityTransaction {
    * @param operation Operation to add
    */
   private addOperation(operation: EntityOperation) {
-    if (this.inCommitPhase === true) {
-      throw new Error('This transaction is in the commit phase. Abort or clear the transaction to proceed.');
-    }
+    this.checkInCommitPhase();
 
     this.operations.insert(operation);
     this.operations.state.update(operation, {added: true});
@@ -269,9 +303,7 @@ export class EntityTransaction {
    * @param operation Operation to remove
    */
   private removeOperation(operation: EntityOperation) {
-    if (this.inCommitPhase === true) {
-      throw new Error('This transaction is in the commit phase. Abort or clear the transaction to proceed.');
-    }
+    this.checkInCommitPhase();
 
     this.operations.delete(operation);
     this.operations.state.update(operation, {added: false});
@@ -296,5 +328,14 @@ export class EntityTransaction {
         return value.state.added === true;
       })
       .map((value: {entity: EntityOperation, state: EntityOperationState}) => value.entity);
+  }
+
+  /**
+   * Check if the transaction is in the commit phase and throw an error if it is
+   */
+  private checkInCommitPhase() {
+    if (this.inCommitPhase === true) {
+      throw new Error('This transaction is in the commit phase. Cannot complete this operation.');
+    }
   }
 }
