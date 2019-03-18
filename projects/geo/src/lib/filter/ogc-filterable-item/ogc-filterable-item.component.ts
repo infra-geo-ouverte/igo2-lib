@@ -197,6 +197,10 @@ export class OgcFilterableItemComponent implements OnInit {
     const activeFilters = ogcFilters.interfaceOgcFilters.filter(
       f => f.active === true
     );
+   if (activeFilters.length === 0) {
+      ogcFilters.filters = undefined;
+      ogcFilters.filtered = false;
+    }
     if (activeFilters.length > 1) {
       activeFilters[0].parentLogical = activeFilters[1].parentLogical;
     }
