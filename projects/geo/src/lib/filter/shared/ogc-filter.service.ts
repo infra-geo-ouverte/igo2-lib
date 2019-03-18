@@ -28,12 +28,12 @@ export class OGCFilterService {
         options.paramsWFS.fieldNameGeometry,
         true
       );
-      options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-        options.ogcFilters.filters,
-        options.paramsWFS.fieldNameGeometry
-      );
-    } else {
-      options.ogcFilters.interfaceOgcFilters = [];
+      if (!options.ogcFilters.interfaceOgcFilters) {
+        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
+          options.ogcFilters.filters,
+          options.paramsWFS.fieldNameGeometry
+        );
+      }
     }
   }
 
@@ -47,11 +47,13 @@ export class OGCFilterService {
         options.fieldNameGeometry,
         true
       );
-      options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-        // With some wms server, this param must be set to make spatials call.
-        options.ogcFilters.filters,
-        options.fieldNameGeometry
-      );
+      if (!options.ogcFilters.interfaceOgcFilters) {
+        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
+          // With some wms server, this param must be set to make spatials call.
+          options.ogcFilters.filters,
+          options.fieldNameGeometry
+        );
+      }
       this.filterByOgc(
         wmsDatasource as WMSDataSource,
         ogcFilterWriter.buildFilter(options.ogcFilters.filters)
@@ -59,7 +61,6 @@ export class OGCFilterService {
       options.filtered = true;
     } else {
       options.ogcFilters.filters = undefined;
-      options.ogcFilters.interfaceOgcFilters = [];
       options.filtered = false;
     }
   }

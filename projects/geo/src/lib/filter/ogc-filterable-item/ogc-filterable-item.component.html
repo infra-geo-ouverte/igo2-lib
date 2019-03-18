@@ -38,6 +38,11 @@
       add
     </mat-icon>
   </button>
+
+  <button *ngIf="!layer.visible && ogcFiltersHeaderShown" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.layer.showLayer' | translate"
+    color="warn" (click)="setVisible($event)">
+    <mat-icon>error_outline</mat-icon>
+  </button>
 </mat-list-item>
 
 <div #ogcFilters class="igo-datasource-filters-container">
