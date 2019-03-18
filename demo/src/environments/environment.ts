@@ -30,36 +30,15 @@ export const environment: Environment = {
     },
     searchSources: {
       nominatim: {
-        enabled: false
+        enabled: true
       },
       reseautq: {
-        searchUrl: '/tqu/dev/pelord/swtq',
-        locateUrl: '/tqu/swtq',
-        limit: 100,
-        locateLimit: 15,
-        zoomMaxOnSelect: 8,
-        enabled: true,
-        propertiesAlias:
-        [
-          {name: 'title', alias: 'Titre'},
-          {name: 'etiquette', alias: 'Informations'},
-          {name: 'nommun', alias: 'Municipalité'},
-          {name: 'messagpan', alias: 'Message'},
-          {name: 'noroute', alias: '# de route'},
-          {name: 'nosortie', alias: '# de sortie'},
-          {name: 'direction', alias: 'Direction'},
-          {name: 'typesort', alias: 'Type de sortie'}
-        ],
-        distance : 0.5
-      },
-
-      storedqueries: {
-        searchUrl: '/tqu/limites_territoriales',
-        locateUrl: '/tqu/limites_territoriales',
+        searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         limit: 5,
         locateLimit: 15,
         zoomMaxOnSelect: 8,
-        enabled: true,
+        enabled: false,
         propertiesAlias:
         [
           {name: 'title', alias: 'Titre'},
@@ -74,8 +53,8 @@ export const environment: Environment = {
         distance : 0.5
       },
       icherche: {
-        searchUrl: '/icherche/geocode',
-        locateUrl: '/icherche/xy',
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
+        locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
         zoomMaxOnSelect: 10,
         enabled: true
       },

@@ -7,8 +7,7 @@
 
 # dependencies
 /node_modules
-/documentation
-release.bat
+
 # IDEs and editors
 /.idea
 .project
