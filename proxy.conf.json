@@ -23,5 +23,25 @@
     "target": "https://ws.mapserver.transports.gouv.qc.ca",
     "changeOrigin": true,
     "secure": false
-  }
+    },
+    "/tqp": {
+      "target": "http://localhost:8000",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/tqu": {
+      "target": "http://localhost:8000",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/tqa": {
+      "target": "http://localhost:8000",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/tqf": {
+      "target": "http://localhost:8000",
+      "secure": false,
+      "changeOrigin": true
+    }
 }

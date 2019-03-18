@@ -34,8 +34,6 @@ export class OGCFilterService {
           options.paramsWFS.fieldNameGeometry
         );
       }
-    } else {
-      options.ogcFilters.interfaceOgcFilters = [];
     }
   }
 
@@ -63,7 +61,6 @@ export class OGCFilterService {
       options.filtered = true;
     } else {
       options.ogcFilters.filters = undefined;
-      options.ogcFilters.interfaceOgcFilters = [];
       options.filtered = false;
     }
   }
