@@ -264,4 +264,8 @@ export class OgcFilterableItemComponent implements OnInit {
   get downloadable() {
     return (this.datasource.options as any).download;
   }
+
+  public setVisible(event: any) {
+    this.layer.visible = true;
+  }
 }
