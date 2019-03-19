@@ -301,7 +301,9 @@ export class ContextService {
   setContext(context: DetailedContext) {
     const currentContext = this.context$.value;
     if (currentContext && context && context.id === currentContext.id) {
-      context.map.view.keepCurrentView = true;
+      if (context.map.view.keepCurrentView === undefined) {
+        context.map.view.keepCurrentView = true;
+      }
       this.context$.next(context);
       return;
     }
@@ -461,7 +463,9 @@ export class ContextService {
     if (!keepCurrentContext || !this.findContext(context)) {
       this.loadDefaultContext();
     } else {
-      context.map.view.keepCurrentView = true;
+      if (context.map.view.keepCurrentView === undefined) {
+        context.map.view.keepCurrentView = true;
+      }
       this.context$.next(context);
       this.getDefault().subscribe(() => {});
     }
