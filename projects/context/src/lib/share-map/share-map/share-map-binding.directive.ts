@@ -51,7 +51,9 @@ export class ShareMapBindingDirective implements OnInit {
           this.layerListService.onlyInRange = onlyInRangeFromUrl === '1' ? true : false;
           this.layerListService.onlyInRangeInitializated = true;
         }
-        this.component.resetUrl();
+        if (!this.component.hasApi) {
+          this.component.resetUrl();
+        }
       });
     }
   }
