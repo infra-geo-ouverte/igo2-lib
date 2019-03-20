@@ -10,13 +10,19 @@
     [value]="geometryType$ | async"
     [disabled]="(value$ | async) !== undefined"
     (change)="onGeometryTypeChange($event.value)">
-    <mat-button-toggle [value]="'Point'">
+    <mat-button-toggle
+      [value]="'Point'"
+      [disabled]="geometryTypes.indexOf('Point') < 0">
       {{'igo.geo.geometry.point' | translate}}
     </mat-button-toggle>
-    <mat-button-toggle [value]="'LineString'">
+    <mat-button-toggle
+      [value]="'LineString'"
+      [disabled]="geometryTypes.indexOf('LineString') < 0">
       {{'igo.geo.geometry.line' | translate}}
     </mat-button-toggle>
-    <mat-button-toggle [value]="'Polygon'">
+    <mat-button-toggle
+      [value]="'Polygon'"
+      [disabled]="geometryTypes.indexOf('Polygon') < 0">
       {{'igo.geo.geometry.polygon' | translate}}
     </mat-button-toggle>
   </mat-button-toggle-group>

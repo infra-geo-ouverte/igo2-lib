@@ -58,6 +58,11 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() geometryTypeField: boolean = false;
 
   /**
+   * Available geometry types
+   */
+  @Input() geometryTypes: string[] = ['Point', 'LineString', 'Polygon'];
+
+  /**
    * Whether a draw guide field should be displayed
    */
   @Input() drawGuideField: boolean = false;
