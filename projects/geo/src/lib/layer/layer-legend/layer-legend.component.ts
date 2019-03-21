@@ -30,7 +30,7 @@ export class LayerLegendComponent {
 
   constructor(private capabilitiesService: CapabilitiesService) {}
 
-  validateItemTitle(item): string {
+  computeItemTitle(item): string {
     const layerOptions = this.layer.dataSource.options as any;
     if (layerOptions.type === 'wms' && layerOptions.optionsFromCapabilities) {
       let localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
