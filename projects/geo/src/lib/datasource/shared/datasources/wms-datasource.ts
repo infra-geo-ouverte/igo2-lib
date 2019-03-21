@@ -89,7 +89,16 @@ export class WMSDataSource extends DataSource {
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters) {
         const filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
-        this.ol.updateParams({ filter: this.ogcFilterWriter.buildFilter(filters) });
+        const rebuildFilter = this.ogcFilterWriter.buildFilter(filters);
+        let appliedFilter = '';
+        if (rebuildFilter.length > 0 && sourceParams.layers.indexOf(',') !== -1) {
+          sourceParams.layers.split(',').forEach(element => {
+            appliedFilter = appliedFilter + '(' + rebuildFilter.replace('filter=', '') + ')';
+          });
+        } else {
+          appliedFilter = rebuildFilter;
+        }
+        this.ol.updateParams({ filter: appliedFilter });
       }
 
   }
