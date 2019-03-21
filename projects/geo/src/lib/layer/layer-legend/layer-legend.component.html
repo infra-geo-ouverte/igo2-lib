@@ -12,7 +12,7 @@
       [target]="legend"
       [collapsed]="false">
     </mat-icon>
-    <h4 matLine>{{item.title}}</h4>
+    <h4 matLine>{{validateItemTitle(item)}}</h4>
   </mat-list-item>
 
   <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
