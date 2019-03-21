@@ -40,7 +40,7 @@ export class LayerLegendComponent {
           this.capabilitiesService.getWMSOptions(localLayerOptions).subscribe(r => localLayerOptions = r);
         }
       });
-      if (localLayerOptions._layerOptionsFromCapabilities && localLayerOptions._layerOptionsFromCapabilities) {
+      if (localLayerOptions && localLayerOptions._layerOptionsFromCapabilities) {
         return localLayerOptions._layerOptionsFromCapabilities.title;
       } else {
         return item.title;
