@@ -88,7 +88,7 @@ export class WMSDataSource extends DataSource {
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled) {
         console.log('*******************************');
-        console.log('BE CAREFULL, YOUR LAYERS ('
+        console.log('BE CAREFULL, YOUR WMS LAYERS ('
         + sourceParams.layers
         + ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! ');
         console.log('*******************************');
