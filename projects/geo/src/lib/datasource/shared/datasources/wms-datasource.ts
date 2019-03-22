@@ -84,6 +84,12 @@ export class WMSDataSource extends DataSource {
       options.sourceFields = [];
     }
 
+    if (sourceParams.layers.split(',').lenght > 1 && this.options
+      && (this.options as OgcFilterableDataSourceOptions).ogcFilters
+      && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled) {
+        console.log('BE CAREFULL, YOUR LAYERS MUST SHARE THE SAME FIELDS TO ALLOW TO FILTER TO WORK !! ');
+    }
+
     if (this.options
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
