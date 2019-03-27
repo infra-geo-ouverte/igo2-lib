@@ -13,13 +13,18 @@ $slide-toggle-width: 60px;
   }
 }
 
-.measure-options mat-slide-toggle {
-  width: 100%;
-  margin: 10px;
 
-  ::ng-deep .mat-slide-toggle-content {
-    width: calc(100% - #{$slide-toggle-width});
-    font-size: 16px;
+.measure-options {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+      font-size: 16px;
+    }
   }
 }
 
