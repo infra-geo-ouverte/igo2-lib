@@ -63,9 +63,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
 
-  get results$(): Observable<
-    {source: SearchSource; results: SearchResult[]}[]
-  > {
+  get results$(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
     if (this._results$ === undefined) {
       this._results$ = this.liftResults();
     }
@@ -127,9 +125,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Observable of grouped search results
    * @internal
    */
-  private liftResults(): Observable<
-    {source: SearchSource; results: SearchResult[]}[]
-  > {
+  private liftResults(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
     return this.store.view.all$().pipe(
       debounce((results: SearchResult[]) => {
         return results.length === 0 ? EMPTY : timer(200);
@@ -154,9 +150,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param results Search results from all sources
    * @returns Search results grouped by source
    */
-  private groupResults(
-    results: SearchResult[]
-  ): {source: SearchSource; results: SearchResult[]}[] {
+  private groupResults(results: SearchResult[]): {source: SearchSource; results: SearchResult[]}[] {
     const grouped = new Map<SearchSource, SearchResult[]>();
     results.forEach((result: SearchResult) => {
       const source = result.source;
