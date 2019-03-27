@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { LanguageService } from '@igo2/core';
-import { Tool } from '@igo2/common';
+import { Tool, ToolService } from '@igo2/common';
 import { ContextService, DetailedContext } from '@igo2/context';
 
 import { ToolState } from '../tool/tool.state';
@@ -22,6 +22,7 @@ export class ContextState {
 
   constructor(
     private contextService: ContextService,
+    private toolService: ToolService,
     private toolState: ToolState,
     private languageService: LanguageService
   ) {
@@ -49,7 +50,7 @@ export class ContextState {
     const tools = [];
     const contextTools = context.tools || [];
     contextTools.forEach((contextTool: Tool) => {
-      const baseTool = toolbox.getTool(contextTool.name);
+      const baseTool = this.toolService.getTool(contextTool.name);
       if (baseTool === undefined) {
         return;
       }
