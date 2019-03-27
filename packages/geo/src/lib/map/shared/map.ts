@@ -223,14 +223,16 @@ export class IgoMap {
    */
   removeLayers(layers: Layer[]) {
     const newLayers = this.layers$.value.slice(0);
+    const layersToRemove = [];
     layers.forEach((layer: Layer) => {
       const index = this.getLayerIndex(layer);
       if (index >= 0) {
-        this.doRemoveLayer(layer);
+        layersToRemove.push(layer);
         newLayers.splice(index, 1);
       }
     });
 
+    layersToRemove.forEach((layer: Layer) => this.doRemoveLayer(layer));
     this.setLayers(newLayers);
   }
 
