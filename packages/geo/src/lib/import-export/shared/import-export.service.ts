@@ -110,12 +110,12 @@ export class ImportExportService {
   private download(
     text: string,
     fileName: string,
-    mineType = 'text/plain;charset=utf-8'
+    mimeType = 'text/plain;charset=utf-8'
   ) {
     const element = document.createElement('a');
     element.setAttribute(
       'href',
-      `data:${mineType},${encodeURIComponent(text)}`
+      `data:${mimeType},${encodeURIComponent(text)}`
     );
     element.setAttribute('download', fileName);
 
