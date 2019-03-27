@@ -28,6 +28,7 @@ export class LayerItemComponent implements OnDestroy {
   @Input()
   set layer(value: Layer) {
     this._layer = value;
+    // TODO: This stuff should probably be in ngOnInit
     this.subscribeResolutionObserver();
     const legend = this.layer.dataSource.options.legend;
     if (legend && legend.collapsed) {
@@ -66,8 +67,19 @@ export class LayerItemComponent implements OnDestroy {
     private mapService: MapService
   ) {}
 
+  ngOnInit() {
+    // TODO: This stuff should probably be in ngOnInit
+    this.subscribeResolutionObserver();
+    const legend = this.layer.dataSource.options.legend;
+    if (legend && legend.collapsed) {
+      this.legendCollapsed = legend.collapsed;
+    }  
+  }
+
   ngOnDestroy() {
-    this.resolution$$.unsubscribe();
+    if (this.resolution$$ !== undefined) {
+      this.resolution$$.unsubscribe();
+    }
   }
 
   toggleLegend(collapsed: boolean) {
