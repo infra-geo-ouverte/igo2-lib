@@ -55,9 +55,6 @@ export class SearchSource {
   /**
    * Whether the search source is available
    */
-  set available(value: boolean) {
-    this.options.available = value;
-  }
   get available(): boolean {
     return this.options.available !== false;
   }
@@ -94,7 +91,7 @@ export class SearchSource {
   }
 
   constructor(options: SearchSourceOptions) {
-    this.options = Object.assign(this.getDefaultOptions(), options);
+    this.options = Object.assign({}, this.getDefaultOptions(), options);
   }
 }
 
