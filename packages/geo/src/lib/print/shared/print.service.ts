@@ -3,7 +3,6 @@ import { Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
 import * as _html2canvas from 'html2canvas';
-import { proj } from 'proj4';
 import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
@@ -15,7 +14,6 @@ import { LayerLegend } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/legend';
 
 import { PrintOptions } from './print.interface';
-import { PrintDimension, PrintOrientation } from './print.type';
 
 const html2canvas = _html2canvas;
 
@@ -35,22 +33,25 @@ export class PrintService {
   print(map: IgoMap, options: PrintOptions): Subject<any> {
     const status$ = new Subject();
 
-    const outputFormat = options.outputFormat;
-    const paperFormat = options.paperFormat;
+    const paperFormat: string = options.paperFormat;
     const resolution = +options.resolution;
     const orientation = options.orientation;
-    const dimensions =
-      orientation === PrintOrientation.portrait
-        ? PrintDimension[paperFormat]
-        : PrintDimension[paperFormat].slice().reverse();
+
+    this.activityId = this.activityService.register();
+    const doc = new jsPDF({
+      orientation,
+      format: paperFormat.toLowerCase()
+    });
+
+    const dimensions = [
+      doc.internal.pageSize.width,
+      doc.internal.pageSize.height
+    ];
 
     const margins = [20, 10, 20, 10];
     const width = dimensions[0] - margins[3] - margins[1];
     const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
-
-    this.activityId = this.activityService.register();
-    const doc = new jsPDF(options.orientation, undefined, paperFormat);
 
     if (options.title !== undefined) {
       this.addTitle(doc, options.title, dimensions[0]);
@@ -61,13 +62,12 @@ export class PrintService {
         doc,
         map,
         resolution,
-        size,
         options.showProjection,
         options.showScale
       );
     }
     if (options.comment !== '') {
-      this.addComment(doc, options.comment, size);
+      this.addComment(doc, options.comment);
     }
 
     this.addMap(doc, map, resolution, size, margins).subscribe(
@@ -99,7 +99,9 @@ export class PrintService {
   getLayersLegendHtml(map: IgoMap, width: number): string {
     let html = '';
     const legends = getLayersLegends(map.layers);
-    if (legends.length === 0) { return html; }
+    if (legends.length === 0) {
+      return html;
+    }
 
     // Define important style to be sure that all container is convert
     // to image not just visible part
@@ -148,8 +150,7 @@ export class PrintService {
     div.innerHTML = html;
     // Define event to execute after all images are loaded to create the canvas
     setTimeout(() => {
-      html2canvas(div, { useCORS: true}).then(canvas => {
-
+      html2canvas(div, { useCORS: true }).then(canvas => {
         let status = SubjectStatus.Done;
         try {
           if (!doZipFile) {
@@ -162,7 +163,7 @@ export class PrintService {
           div.parentNode.removeChild(div); // remove temp div (IE)
         } catch (err) {
           status = SubjectStatus.Error;
-      }
+        }
         status$.next(status);
       });
     }, 500);
@@ -182,7 +183,7 @@ export class PrintService {
 
     doc.setFont('courier');
     doc.setFontSize(32);
-    doc.text(titleMarginLeft, 15, title);
+    doc.text(title, titleMarginLeft, 15);
   }
 
   /**
@@ -191,20 +192,21 @@ export class PrintService {
    * * @param  comment - Comment to add in the document
    * * @param  size - Size of the document
    */
-  private addComment(doc: jsPDF, comment: string, size: Array<number>) {
+  private addComment(doc: jsPDF, comment: string) {
     const commentSize = 16;
     const commentMarginLeft = 20;
-    const heightPixels = size[1] + 35;
+    const marginBottom = 5;
+    const heightPixels = doc.internal.pageSize.height - marginBottom;
+
     doc.setFont('courier');
     doc.setFontSize(commentSize);
-    doc.text(commentMarginLeft, heightPixels, comment);
+    doc.text(comment, commentMarginLeft, heightPixels);
   }
   /**
    * Add projection and/or scale to the document
    * @param  doc - pdf document
    * @param  map - Map of the app
    * @param  resolution - DPI resolution of the document
-   * @param  size - Size of the document
    * @param  projection - Bool to indicate if projection need to be added
    * @param  scale - Bool to indicate if scale need to be added
    */
@@ -212,15 +214,16 @@ export class PrintService {
     doc: jsPDF,
     map: IgoMap,
     resolution: number,
-    size: Array<number>,
     projection: boolean,
     scale: boolean
   ) {
     const translate = this.languageService.translate;
     const projScaleSize = 16;
-    let textProjScale;
     const projScaleMarginLeft = 20;
-    const heightPixels = size[1] + 25;
+    const marginBottom = 15;
+    const heightPixels = doc.internal.pageSize.height - marginBottom;
+
+    let textProjScale: string;
     if (projection === true) {
       const projText = translate.instant('igo.geo.printForm.projection');
       textProjScale = projText + ': ' + map.projection;
@@ -235,7 +238,7 @@ export class PrintService {
     }
     doc.setFont('courier');
     doc.setFontSize(projScaleSize);
-    doc.text(projScaleMarginLeft, heightPixels, textProjScale);
+    doc.text(textProjScale, projScaleMarginLeft, heightPixels);
   }
 
   /**
@@ -257,7 +260,7 @@ export class PrintService {
 
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
-    html2canvas(div, { useCORS: true}).then(canvas => {
+    html2canvas(div, { useCORS: true }).then(canvas => {
       let imgData;
       const position = 10;
 
@@ -267,7 +270,6 @@ export class PrintService {
       doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
       that.saveDoc(doc);
       div.parentNode.removeChild(div); // remove temp div (IE style)
-
     });
 
     // Add html code to convert in the new window
@@ -278,7 +280,6 @@ export class PrintService {
   private addCanvas(
     doc: jsPDF,
     canvas: HTMLCanvasElement,
-    size: Array<number>,
     margins: Array<number>
   ) {
     let image;
@@ -287,7 +288,14 @@ export class PrintService {
 
     if (image !== undefined) {
       const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-      doc.addImage(image, 'JPEG', margins[3], margins[0], imageSize[0], imageSize[1]);
+      doc.addImage(
+        image,
+        'JPEG',
+        margins[3],
+        margins[0],
+        imageSize[0],
+        imageSize[1]
+      );
       doc.rect(margins[3], margins[0], imageSize[0], imageSize[1]);
     }
   }
@@ -323,12 +331,16 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          this.addCanvas(doc, canvas, size, margins);
+          this.addCanvas(doc, canvas, margins);
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error(
-            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
-            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+            this.languageService.translate.instant(
+              'igo.geo.printForm.corsErrorMessageBody'
+            ),
+            this.languageService.translate.instant(
+              'igo.geo.printForm.corsErrorMessageHeader'
+            ),
             'print'
           );
         }
@@ -344,12 +356,16 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          this.addCanvas(doc, canvas, size, margins);
+          this.addCanvas(doc, canvas, margins);
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error(
-            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
-            this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+            this.languageService.translate.instant(
+              'igo.geo.printForm.corsErrorMessageBody'
+            ),
+            this.languageService.translate.instant(
+              'igo.geo.printForm.corsErrorMessageHeader'
+            ),
             'print'
           );
         }
@@ -417,7 +433,7 @@ export class PrintService {
       // Define number of line depending of the comment length
       const commentNbLine = Math.ceil(commentWidth / width);
       // Add height for multiline comment if defined
-      height = comment !== '' ? height + commentNbLine * 20 : height;
+      height = comment !== '' ? height + commentNbLine * 30 : height;
       let positionHComment = height - commentNbLine * 20 + 5;
       // Set the new canvas with the new calculated size
       newCanvas.width = width;
@@ -529,28 +545,27 @@ export class PrintService {
 
       if (format.toLowerCase() === 'tiff') {
         const tiwContent = this.getWorldFileInformation(map);
-        const blob = new Blob([tiwContent], {type: 'text/plain;charset=utf-8'});
+        const blob = new Blob([tiwContent], {
+          type: 'text/plain;charset=utf-8'
+        });
         if (!doZipFile) {
-            // saveAs automaticly replace ':' for '_'
-          saveAs(blob, 'map' + map.projection  + '.tfw');
+          // saveAs automaticly replace ':' for '_'
+          saveAs(blob, 'map' + map.projection + '.tfw');
           this.saveFileProcessing();
         } else {
           // Add the canvas to zip
-          this.addFileToZip('map' + map.projection.replace(':', '_')  + '.tfw', blob);
+          this.addFileToZip(
+            'map' + map.projection.replace(':', '_') + '.tfw',
+            blob
+          );
         }
       }
-
     });
     map.ol.renderSync();
   }
 
   private renderMap(map, size, extent) {
-    // setTimeout(() => {
-  // TODO fix bug for zoom change and map position. Resolution need to zoom in not to zoom out
-  //  map.ol.setSize(size);
-  //  map.ol.getView().fit(extent);
     map.ol.renderSync();
-    // }, 1);
   }
 
   /**
@@ -569,8 +584,10 @@ export class PrintService {
    */
   private getImageSizeToFitPdf(doc, canvas, margins) {
     // Define variable to calculate best size to fit in one page
-    const pageHeight = doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
-    const pageWidth = doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
+    const pageHeight =
+      doc.internal.pageSize.getHeight() - (margins[0] + margins[2]);
+    const pageWidth =
+      doc.internal.pageSize.getWidth() - (margins[1] + margins[3]);
     const canHeight = canvas.height;
     const canWidth = canvas.width;
     const heightRatio = canHeight / pageHeight;
@@ -616,7 +633,7 @@ export class PrintService {
         navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
         this.saveFileProcessing();
       } else {
-        canvas.toBlob((blob) => {
+        canvas.toBlob(blob => {
           // download image
           saveAs(blob, name + '.' + format);
           that.saveFileProcessing();
@@ -624,8 +641,12 @@ export class PrintService {
       }
     } catch (err) {
       this.messageService.error(
-        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
-        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+        this.languageService.translate.instant(
+          'igo.geo.printForm.corsErrorMessageBody'
+        ),
+        this.languageService.translate.instant(
+          'igo.geo.printForm.corsErrorMessageHeader'
+        ),
         'print'
       );
     }
@@ -639,7 +660,10 @@ export class PrintService {
   private generateCanvaFileToZip(canvas, name) {
     const blobFormat = 'image/' + 'jpeg';
     const that = this;
-    if (!this.hasOwnProperty('zipFile') || typeof this.zipFile === 'undefined') {
+    if (
+      !this.hasOwnProperty('zipFile') ||
+      typeof this.zipFile === 'undefined'
+    ) {
       this.zipFile = new JSZip();
     }
 
@@ -648,18 +672,21 @@ export class PrintService {
       if (navigator.msSaveBlob) {
         this.addFileToZip(name, canvas.msToBlob());
       } else {
-        canvas.toBlob((blob) => {
+        canvas.toBlob(blob => {
           that.addFileToZip(name, blob);
         }, blobFormat);
       }
     } catch (err) {
       this.messageService.error(
-        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageBody'),
-        this.languageService.translate.instant('igo.geo.printForm.corsErrorMessageHeader'),
+        this.languageService.translate.instant(
+          'igo.geo.printForm.corsErrorMessageBody'
+        ),
+        this.languageService.translate.instant(
+          'igo.geo.printForm.corsErrorMessageHeader'
+        ),
         'print'
       );
     }
-
   }
 
   /**
@@ -668,18 +695,17 @@ export class PrintService {
    * @param blob - Contain of file
    */
   private addFileToZip(name, blob) {
+    // add file to zip
+    this.zipFile.file(name, blob);
+    this.nbFileToProcess--;
 
-      // add file to zip
-      this.zipFile.file(name, blob);
-      this.nbFileToProcess--;
-
-      // If all files are proccessed
-      if (this.nbFileToProcess === 0) {
-        // Download zip file
-        this.getZipFile();
-        // Stop loading
-        this.activityService.unregister(this.activityId);
-      }
+    // If all files are proccessed
+    if (this.nbFileToProcess === 0) {
+      // Download zip file
+      this.getZipFile();
+      // Stop loading
+      this.activityService.unregister(this.activityId);
+    }
   }
 
   private saveFileProcessing() {
@@ -698,7 +724,8 @@ export class PrintService {
    */
   private getZipFile() {
     const that = this;
-    this.zipFile.generateAsync({ type: 'blob' }).then((blob) => { // 1) generate the zip file
+    this.zipFile.generateAsync({ type: 'blob' }).then(blob => {
+      // 1) generate the zip file
       saveAs(blob, 'map.zip');
       delete that.zipFile;
     });
