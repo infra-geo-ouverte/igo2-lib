@@ -107,6 +107,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }>();
 
   /**
+   * Event emitted when the search type changes
+   */
+  @Output() searchTypeChange = new EventEmitter<string>();
+
+  /**
    * Input element
    * @internal
    */
@@ -196,6 +201,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @internal
    */
   onSearchTypeChange(searchType: string) {
+    this.searchTypeChange.emit(searchType);
     this.placeholder = `search.${searchType.toLowerCase()}.placeholder`;
     this.onTermChange(this.term);
   }
