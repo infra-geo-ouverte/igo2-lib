@@ -203,7 +203,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onSearchTypeChange(searchType: string) {
     this.searchTypeChange.emit(searchType);
     this.placeholder = `search.${searchType.toLowerCase()}.placeholder`;
-    this.onTermChange(this.term);
+    this.doSearch(this.term);
   }
 
   /**
@@ -244,7 +244,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   private onTermChange(term: string | undefined) {
     this.change.emit(term);
+    this.doSearch(term);
+  }
 
+  /**
+   * Execute the search
+   * @param term Search term
+   */
+  private doSearch(term: string | undefined) {
     if (term === undefined || term === '') {
       if (this.store !== undefined) {
         this.store.clear();
