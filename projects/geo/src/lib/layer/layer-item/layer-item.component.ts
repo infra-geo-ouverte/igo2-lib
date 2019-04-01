@@ -1,6 +1,7 @@
 import {
   Component,
   Input,
+  OnInit,
   OnDestroy,
   ChangeDetectorRef,
   ChangeDetectionStrategy
@@ -19,7 +20,7 @@ import { Layer, VectorLayer } from '../shared/layers';
   styleUrls: ['./layer-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class LayerItemComponent implements OnDestroy {
+export class LayerItemComponent implements OnInit, OnDestroy {
   @Input()
   get layer(): Layer {
     return this._layer;
@@ -92,6 +93,12 @@ export class LayerItemComponent implements OnDestroy {
     private cdRef: ChangeDetectorRef,
     private mapService: MapService
   ) {}
+
+  ngOnInit(): void {
+    if (this.layer.visible && this.toggleLegendOnVisibilityChange) {
+      this.legendCollapsed = false;
+    }
+  }
 
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
