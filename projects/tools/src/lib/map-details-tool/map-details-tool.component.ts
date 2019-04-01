@@ -23,6 +23,12 @@ export class MapDetailsToolComponent {
       : this.options.toggleLegendOnVisibilityChange;
   }
 
+  get expandLegendVisibleLayers(): boolean {
+    return this.options.expandLegendVisibleLayers === undefined
+      ? false
+      : this.options.expandLegendVisibleLayers;
+  }
+
   get excludeBaseLayers(): boolean {
 
     if (this.options && this.options.layerListControls) {

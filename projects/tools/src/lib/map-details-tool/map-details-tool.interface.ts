@@ -1,6 +1,7 @@
 import { LayerListControlsEnum } from '@igo2/geo';
 
 export interface MapDetailsToolOptions {
+  expandLegendVisibleLayers?: boolean;
   toggleLegendOnVisibilityChange?: boolean;
   ogcFiltersInLayers?: boolean;
   layerListControls?: LayerListControlsOptions;

@@ -117,6 +117,15 @@ export class LayerListComponent implements AfterViewInit {
   }
   private _toggleLegendOnVisibilityChange = false;
 
+  @Input()
+  get expandLegendVisibleLayers() {
+    return this._expandLegendVisibleLayers;
+  }
+  set expandLegendVisibleLayers(value: boolean) {
+    this._expandLegendVisibleLayers = value;
+  }
+  private _expandLegendVisibleLayers = false;
+
   constructor(
     private cdRef: ChangeDetectorRef,
     public layerListService: LayerListService) {}

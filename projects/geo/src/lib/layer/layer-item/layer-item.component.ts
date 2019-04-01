@@ -63,6 +63,16 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   private _toggleLegendOnVisibilityChange = false;
 
   @Input()
+  get expandLegendVisibleLayers() {
+    return this._expandLegendVisibleLayers;
+  }
+  set expandLegendVisibleLayers(value: boolean) {
+    this._expandLegendVisibleLayers = value;
+  }
+  private _expandLegendVisibleLayers = false;
+
+
+  @Input()
   get disableReorderLayers() {
     return this._disableReorderLayers;
   }
@@ -95,7 +105,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.layer.visible && this.toggleLegendOnVisibilityChange) {
+    if (this.layer.visible && this.expandLegendVisibleLayers) {
       this.legendCollapsed = false;
     }
   }
