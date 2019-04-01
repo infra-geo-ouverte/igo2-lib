@@ -84,8 +84,8 @@ export class WfsEditorService {
       {
         id: 'wfsOgcFilter',
         icon: 'filter_list',
-        title: 'menu',
-        tooltip: 'menu',
+        title: 'igo.geo.wfs.ogcFilter.title',
+        tooltip: 'igo.geo.wfs.ogcFilter.tooltip',
         handler: () => editor.activateWidget(this.wfsOgcFilterWidget, {
           layer: layer,
           map: layer.map,
