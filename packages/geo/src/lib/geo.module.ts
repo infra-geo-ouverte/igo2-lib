@@ -17,6 +17,7 @@ import { IgoQueryModule } from './query/query.module';
 import { IgoRoutingModule } from './routing/routing.module';
 import { IgoSearchModule } from './search/search.module';
 import { IgoToastModule } from './toast/toast.module';
+import { IgoWfsModule } from './wfs/wfs.module';
 import { IgoWktModule } from './wkt/wkt.module';
 
 @NgModule({
@@ -40,6 +41,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoRoutingModule,
     IgoSearchModule,
     IgoToastModule,
+    IgoWfsModule,
     IgoWktModule
   ]
 })

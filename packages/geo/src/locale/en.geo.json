@@ -226,6 +226,10 @@
           "calculate.tooltip": "Calculate",
           "delete.tooltip": "Delete"
         }
+      },
+      "wfs": {
+        "ogcFilter.title": "Filters",
+        "ogcFilter.tooltip": "Apply filters"
       }
     }
   },

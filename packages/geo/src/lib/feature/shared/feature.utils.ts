@@ -52,6 +52,36 @@ export function featureToOl(
 }
 
 /**
+ * Create a feature object out of an OL feature
+ * The output object has a reference to the feature id.
+ * @param olFeature OL Feature
+ * @param projectionIn OL feature projection
+ * @param projectionOut Feature projection
+ * @returns Feature
+ */
+export function featureFromOl(
+  olFeature: OlFeature,
+  projectionIn: string,
+  projectionOut = 'EPSG:4326'
+): OlFeature {
+  const olFormat = new OlFormatGeoJSON();
+  const feature = olFormat.writeFeatureObject(olFeature, {
+    dataProjection: projectionOut,
+    featureProjection: projectionIn
+  });
+
+  return Object.assign({}, feature, {
+    projection: projectionOut,
+    extent: olFeature.get('_extent'),
+    meta: {
+      id: olFeature.getId(),
+      revision: olFeature.getRevision(),
+      mapTitle: olFeature.get('_mapTitle')
+    }
+  });
+}
+
+/**
  * Compute an OL feature extent in it's map projection
  * @param map Map
  * @param olFeature OL feature

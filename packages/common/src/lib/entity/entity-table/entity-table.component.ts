@@ -20,7 +20,8 @@ import {
   EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
-  EntityTableSelectionState
+  EntityTableSelectionState,
+  EntityTableScrollBehavior
 } from '../shared';
 
 @Component({
@@ -68,6 +69,12 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * Table template
    */
   @Input() template: EntityTableTemplate;
+
+  /**
+   * Scroll behavior on selection
+   */
+  @Input()
+  scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Smooth;
 
   /**
    * Event emitted when an entity (row) is clicked

@@ -41,6 +41,7 @@ import { AppPrintModule } from './geo/print/print.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppTimeFilterModule } from './geo/time-filter/time-filter.module';
 import { AppOgcFilterModule } from './geo/ogc-filter/ogc-filter.module';
+import { AppWfsBrowserModule } from './geo/wfs-browser/wfs-browser.module';
 
 import { AppContextModule } from './context/context/context.module';
 
@@ -90,6 +91,7 @@ import { AppComponent } from './app.component';
     AppDirectionsModule,
     AppTimeFilterModule,
     AppOgcFilterModule,
+    AppWfsBrowserModule,
 
     AppContextModule,
 

@@ -28,6 +28,9 @@ export * from './lib/search/search.module';
 export * from './lib/search/search-bar/search-bar.module';
 export * from './lib/search/search-results/search-results.module';
 export * from './lib/toast/toast.module';
+export * from './lib/wfs/wfs.module';
+export * from './lib/wfs/wfs-editor-selector/wfs-editor-selector.module';
+export * from './lib/wfs/wfs-ogc-filter/wfs-ogc-filter.module';
 export * from './lib/wkt/wkt.module';
 
 export * from './lib/query/shared/query-search-source.providers';

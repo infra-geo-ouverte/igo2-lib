@@ -65,6 +65,7 @@
       mat-row
       igoEntityTableRow
       *matRowDef="let entity; columns: headers;"
+      [scrollBehavior]="scrollBehavior"
       [ngClass]="getRowClass(entity)"
       [selection]="selection"
       [selected]="rowIsSelected(entity)"

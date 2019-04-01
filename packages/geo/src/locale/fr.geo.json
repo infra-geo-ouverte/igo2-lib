@@ -229,6 +229,10 @@
           "delete.title": "Supprimer",
           "delete.tooltip": "Supprimer"
         }
+      },
+      "wfs": {
+        "ogcFilter.title": "Filtres",
+        "ogcFilter.tooltip": "Appliquer des filtres sur la couche"
       }
     }
   },

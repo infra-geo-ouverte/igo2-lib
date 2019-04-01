@@ -237,6 +237,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
 
     olFeatures.forEach((olFeature: OlFeature) => {
       const store = olFeature.get('_featureStore');
+      if (store === undefined) { return; }
 
       let features = groupedFeatures.get(store);
       if (features === undefined) {
