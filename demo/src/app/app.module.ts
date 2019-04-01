@@ -20,6 +20,7 @@ import { AppRequestModule } from './core/request/request.module';
 import { AppActionModule } from './common/action/action.module';
 import { AppDynamicComponentModule } from './common/dynamic-component/dynamic-component.module';
 import { AppEntityTableModule } from './common/entity-table/entity-table.module';
+import { AppEntitySelectorModule } from './common/entity-selector/entity-selector.module';
 import { AppFormModule } from './common/form/form.module';
 import { AppTableModule } from './common/table/table.module';
 import { AppToolModule } from './common/tool/tool.module';
@@ -68,6 +69,7 @@ import { AppComponent } from './app.component';
     AppActionModule,
     AppDynamicComponentModule,
     AppEntityTableModule,
+    AppEntitySelectorModule,
     AppFormModule,
     AppTableModule,
     AppToolModule,

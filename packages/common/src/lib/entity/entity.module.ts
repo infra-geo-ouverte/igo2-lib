@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { IgoEntitySelectorModule } from './entity-selector/entity-selector.module';
 import { IgoEntityTableModule } from './entity-table/entity-table.module';
 
 @NgModule({
@@ -8,6 +9,7 @@ import { IgoEntityTableModule } from './entity-table/entity-table.module';
     CommonModule
   ],
   exports: [
+    IgoEntitySelectorModule,
     IgoEntityTableModule
   ],
   declarations: []
