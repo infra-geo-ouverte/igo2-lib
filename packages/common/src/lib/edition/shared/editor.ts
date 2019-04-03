@@ -111,8 +111,8 @@ export class Editor {
       .firstBy$((record: EntityRecord<object>) => record.state.selected === true)
       .pipe(distinctUntilChanged())
       .subscribe((record: EntityRecord<object>) => {
-        const editor = record ? record.entity : undefined;
-        this.onSelectEntity(editor);
+        const entity = record ? record.entity : undefined;
+        this.onSelectEntity(entity);
       });
 
     this.changes$$ = this.changes$

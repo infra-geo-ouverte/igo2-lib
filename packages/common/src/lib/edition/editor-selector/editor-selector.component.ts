@@ -47,8 +47,8 @@ export class EditorSelectorComponent {
    * @internal
    * @param event The selection change event
    */
-  onSelectedChange(event: {value: Editor}) {
-    const editor = event.value;
+  onSelectedChange(event: {entity: Editor}) {
+    const editor = event.entity;
     this.store.activateEditor(editor);
     this.selectedChange.emit({selected: true, entity: editor});
   }

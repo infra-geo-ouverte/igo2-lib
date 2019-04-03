@@ -13,13 +13,12 @@ export class EditorStore extends EntityStore<Editor> {
    */
   activateEditor(editor: Editor) {
     const active = this.view.firstBy((_editor: Editor) => _editor.isActive() === true);
-
     if (active !== undefined) {
       active.deactivate();
     }
     if (editor !== undefined) {
-      editor.activate();
       this.state.update(editor, {active: true, selected: true}, true);
+      editor.activate();
     }
   }
 
