@@ -84,18 +84,8 @@ export class WfsEditorService {
       {
         id: 'wfsOgcFilter',
         icon: 'filter_list',
-<<<<<<< HEAD:packages/geo/src/lib/wfs/shared/wfs-editor.service.ts
-<<<<<<< HEAD
-        title: 'igo.geo.wfs.ogcFilter.title',
-        tooltip: 'igo.geo.wfs.ogcFilter.tooltip',
-=======
-        title: 'menu',
-        tooltip: 'menu',
->>>>>>> wip(wfs): wfs editor with table and widgets
-=======
         title: 'igo.geo.edition.wfsOgcFilter.title',
         tooltip: 'igo.geo.edition.wfsOgcFilter.tooltip',
->>>>>>> feat(wfs-editor): fix a few issues with the wfs editor and rename the wfs module:packages/geo/src/lib/edition/shared/wfs-editor.service.ts
         handler: () => editor.activateWidget(this.wfsOgcFilterWidget, {
           layer,
           map: layer.map,
