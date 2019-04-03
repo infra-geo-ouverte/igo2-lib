@@ -61,7 +61,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const loadingStrategy = new FeatureStoreLoadingStrategy();
+    const loadingStrategy = new FeatureStoreLoadingStrategy({});
     this.store.addStrategy(loadingStrategy);
 
     const selectionStrategy = new FeatureStoreSelectionStrategy({

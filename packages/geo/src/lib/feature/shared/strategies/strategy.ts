@@ -23,7 +23,9 @@ export class FeatureStoreStrategy {
    */
   protected active = false;
 
-  constructor(options: FeatureStoreStrategyOptions = {}) {}
+  constructor(protected options: FeatureStoreStrategyOptions = {}) {
+    this.options = options;
+  }
 
   /**
    * Whether this strategy is active

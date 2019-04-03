@@ -20,8 +20,8 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, Subscription>();
 
-  constructor(private options?: FeatureStoreLoadingStrategyOptions) {
-    super();
+  constructor(protected options: FeatureStoreLoadingStrategyOptions) {
+    super(options);
   }
 
   /**

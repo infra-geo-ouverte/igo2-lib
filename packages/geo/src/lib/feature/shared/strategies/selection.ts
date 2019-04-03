@@ -50,8 +50,8 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   get map(): IgoMap { return this.options.map; }
 
-  constructor(private options: FeatureStoreSelectionStrategyOptions) {
-    super();
+  constructor(protected options: FeatureStoreSelectionStrategyOptions) {
+    super(options);
     this.overlayStore = this.createOverlayStore();
   }
 

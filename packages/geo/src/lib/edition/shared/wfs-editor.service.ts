@@ -48,7 +48,7 @@ export class WfsEditorService {
     const store = new FeatureStore([], {map});
     store.bindLayer(layer);
 
-    const loadingStrategy = new FeatureStoreLoadingLayerStrategy();
+    const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       map,
       hitTolerance: 5

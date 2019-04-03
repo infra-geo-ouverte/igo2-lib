@@ -396,7 +396,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
 
     if (store.getStrategyOfType(FeatureStoreLoadingStrategy) === undefined) {
-      store.addStrategy(new FeatureStoreLoadingStrategy());
+      store.addStrategy(new FeatureStoreLoadingStrategy({}));
     }
     store.activateStrategyOfType(FeatureStoreLoadingStrategy);
 
