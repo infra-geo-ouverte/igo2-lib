@@ -1,11 +1,5 @@
-<mat-form-field class="igo-editor-selector">
-  <mat-select
-    [value]="current$ | async"
-    (selectionChange)="onSelectionChange($event)">
-    <ng-template ngFor let-editor [ngForOf]="store.view.all$() | async">
-      <mat-option [value]="editor">
-        {{getEditorTitle(editor)}}
-      </mat-option>
-    </ng-template>
-  </mat-select>
-</mat-form-field>
+<igo-entity-selector
+  [store]="store"
+  [titleAccessor]="getEditorTitle"
+  (selectedChange)="onSelectedChange($event)">
+</igo-entity-selector>

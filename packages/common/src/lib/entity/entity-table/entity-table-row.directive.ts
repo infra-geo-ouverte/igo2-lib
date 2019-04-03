@@ -64,7 +64,7 @@ export class EntityTableRowDirective {
    * Scroll behavior on selection
    */
   @Input()
-  scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Smooth;
+  scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Auto;
 
   /**
    * Event emitted when a row is selected
@@ -109,7 +109,7 @@ export class EntityTableRowDirective {
    */
   private scroll() {
     if (this._selected === true) {
-      this.el.nativeElement.scrollIntoView({behavior: this.scrollBehavior});
+      this.el.nativeElement.scrollIntoView({behavior: this.scrollBehavior, block: 'nearest'});
     }
   }
 

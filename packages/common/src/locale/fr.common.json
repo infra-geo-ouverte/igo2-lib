@@ -8,6 +8,11 @@
       },
       "table": {
         "filter": "Filtre"
+      },
+      "form": {
+        "errors": {
+          "required": "Ce champ est requis"
+        }
       }
     }
   }

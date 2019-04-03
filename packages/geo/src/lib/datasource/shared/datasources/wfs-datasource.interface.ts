@@ -10,6 +10,7 @@ export interface WFSDataSourceOptions
   urlWfs?: string; // Used by code
 }
 
+// TODO: Are those WFS protocol params or something else? This is not clear
 export interface WFSDataSourceOptionsParams {
   version?: string;
   featureTypes: string;

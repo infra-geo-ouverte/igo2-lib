@@ -4,4 +4,5 @@
     [required]="required"
     [placeholder]="placeholder"
     [formControl]="formControl">
+  <mat-error *ngIf="formControl.errors">{{getErrorMessage() | translate}}</mat-error>
 </mat-form-field>

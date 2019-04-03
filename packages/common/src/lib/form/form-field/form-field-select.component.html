@@ -7,4 +7,5 @@
       {{choice.title}}
     </mat-option>
   </mat-select>
+  <mat-error *ngIf="formControl.errors">{{getErrorMessage() | translate}}</mat-error>
 </mat-form-field>

@@ -35,6 +35,7 @@ export interface FormFieldOptions {
   disabled?: boolean;
   visible?: boolean;
   cols?: number;
+  errors?: {[key: string]: string};
 }
 
 export interface FormFieldInputs {}

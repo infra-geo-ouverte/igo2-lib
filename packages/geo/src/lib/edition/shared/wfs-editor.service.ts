@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 
+import { OlFeature } from 'ol/Feature';
+
 import {
   Action,
   ActionStore,
@@ -17,13 +19,12 @@ import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams } from '../../datasource';
 
-import { WfsOgcFilterWidget } from '../wfs-ogc-filter/wfs-ogc-filter.widget'
+import { WfsOgcFilterWidget } from './wfs.widgets';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsEditorService {
-
 
   constructor(
     @Inject(WfsOgcFilterWidget) private wfsOgcFilterWidget: Widget
@@ -36,41 +37,40 @@ export class WfsEditorService {
       title: layer.title,
       tableTemplate: this.createTableTemplate(layer),
       entityStore: this.createFeatureStore(layer, map),
-      actionStore: actionStore  
+      actionStore
     });
     actionStore.load(this.buildActions(editor));
-  
+
     return editor;
   }
-  
+
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
-    const store = new FeatureStore([], {
-      map: map
-    });
+    const store = new FeatureStore([], {map});
     store.bindLayer(layer);
-    
+
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy();
     const selectionStrategy = new FeatureStoreSelectionStrategy({
-      map: map
+      map,
+      hitTolerance: 5
     });
     store.addStrategy(loadingStrategy);
     store.addStrategy(selectionStrategy);
-  
+
     loadingStrategy.activate();
     selectionStrategy.activate();
-  
+
     return store;
   }
-  
+
   private createTableTemplate(layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
     const columns = fields.map((field: SourceFieldsOptionsParams) => {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name
-      }
+      };
     });
-  
+
     return {
       selection: true,
       sort: true,
@@ -84,6 +84,7 @@ export class WfsEditorService {
       {
         id: 'wfsOgcFilter',
         icon: 'filter_list',
+<<<<<<< HEAD:packages/geo/src/lib/wfs/shared/wfs-editor.service.ts
 <<<<<<< HEAD
         title: 'igo.geo.wfs.ogcFilter.title',
         tooltip: 'igo.geo.wfs.ogcFilter.tooltip',
@@ -91,8 +92,12 @@ export class WfsEditorService {
         title: 'menu',
         tooltip: 'menu',
 >>>>>>> wip(wfs): wfs editor with table and widgets
+=======
+        title: 'igo.geo.edition.wfsOgcFilter.title',
+        tooltip: 'igo.geo.edition.wfsOgcFilter.tooltip',
+>>>>>>> feat(wfs-editor): fix a few issues with the wfs editor and rename the wfs module:packages/geo/src/lib/edition/shared/wfs-editor.service.ts
         handler: () => editor.activateWidget(this.wfsOgcFilterWidget, {
-          layer: layer,
+          layer,
           map: layer.map,
         }),
         conditions: []

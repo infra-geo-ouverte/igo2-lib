@@ -1,6 +1,10 @@
 import OlFeature from 'ol/Feature';
 
-import { EntityStore } from '@igo2/common';
+import {
+  getEntityId,
+  EntityKey,
+  EntityStore
+} from '@igo2/common';
 
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer';
@@ -127,11 +131,16 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * @param features Features
    * @param motion Optional: The type of motion to perform
    */
-  setLayerFeatures(features: Feature[], motion: FeatureMotion = FeatureMotion.Default) {
+  setLayerFeatures(
+    features: Feature[],
+    motion: FeatureMotion = FeatureMotion.Default,
+    getId?: (Feature) => EntityKey
+  ) {
+    getId = getId ? getId : getEntityId;
     this.checkLayer();
 
     const olFeatures = features
-      .map((feature: Feature) => featureToOl(feature, this.map.projection));
+      .map((feature: Feature) => featureToOl(feature, this.map.projection, getId));
     this.setLayerOlFeatures(olFeatures, motion);
   }
 
@@ -139,7 +148,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * Set the store's features from an array of OL features.
    * @param olFeatures Ol features
    */
-  setOlFeatures(olFeatures: OlFeature[]) {
+  setStoreOlFeatures(olFeatures: OlFeature[]) {
     this.checkLayer();
 
     const features = olFeatures.map((olFeature: OlFeature) => {
@@ -163,7 +172,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   private checkLayer() {
     if (this.layer === undefined) {
       throw new Error('This FeatureStore is not bound to a layer.');
-    }  
+    }
   }
 
   /**
@@ -216,7 +225,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    */
   private addOlFeaturesToLayer(olFeatures: OlFeature[]) {
     olFeatures.forEach((olFeature: OlFeature) => {
-      olFeature.set('_featureStore', this);
+      olFeature.set('_featureStore', this, true);
     });
     this.source.ol.addFeatures(olFeatures);
   }

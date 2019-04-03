@@ -9,7 +9,7 @@ import { ContextService } from '../../context-manager/shared/context.service';
   providedIn: 'root'
 })
 export class ShareMapService {
-  private urlApi: string;
+  private apiUrl: string;
 
   constructor(
     private config: ConfigService,
@@ -18,11 +18,11 @@ export class ShareMapService {
     @Optional() private routingFormService: RoutingFormService,
     @Optional() private route: RouteService
   ) {
-    this.urlApi = this.config.getConfig('context.url');
+    this.apiUrl = this.config.getConfig('context.url');
   }
 
   getUrl(map: IgoMap, formValues, publicShareOption) {
-    if (this.urlApi) {
+    if (this.apiUrl) {
       return this.getUrlWithApi(map, formValues);
     }
     return this.getUrlWithoutApi(map, publicShareOption);

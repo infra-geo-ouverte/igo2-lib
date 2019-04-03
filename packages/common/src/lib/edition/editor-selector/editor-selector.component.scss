@@ -1,11 +1,9 @@
-mat-form-field {
-  width: 100%;
-}
+igo-entity-selector ::ng-deep mat-form-field {
+  .mat-form-field-infix {
+    padding: 0;
+  }
 
-mat-form-field ::ng-deep .mat-form-field-infix {
-  padding: 0;
-}
-
-mat-form-field ::ng-deep .mat-form-field-wrapper {
-  padding-bottom: 1.75em;
+  .mat-form-field-wrapper {
+    padding-bottom: 1.75em;
+  }
 }

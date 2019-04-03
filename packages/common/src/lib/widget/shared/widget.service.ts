@@ -1,10 +1,8 @@
-import {
-  Injectable
-} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { DynamicComponent } from '../../dynamic-component/shared/dynamic-component';
 import { DynamicComponentService } from '../../dynamic-component/shared/dynamic-component.service';
 
+import { Widget } from './widget';
 import { WidgetComponent } from './widget.interfaces';
 
 @Injectable({
@@ -14,7 +12,7 @@ export class WidgetService {
 
   constructor(private dynamicComponentService: DynamicComponentService) {}
 
-  create(widgetCls: any): DynamicComponent<WidgetComponent> {
+  create(widgetCls: any): Widget {
     return this.dynamicComponentService.create(widgetCls as WidgetComponent);
   }
 }

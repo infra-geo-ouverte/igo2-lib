@@ -230,9 +230,10 @@
           "delete.tooltip": "Supprimer"
         }
       },
-      "wfs": {
-        "ogcFilter.title": "Filtres",
-        "ogcFilter.tooltip": "Appliquer des filtres sur la couche"
+      "edition": {
+        "wfsOgcFilter.close": "Fermer",
+        "wfsOgcFilter.title": "Filtres",
+        "wfsOgcFilter.tooltip": "Appliquer des filtres sur la couche"
       }
     }
   },

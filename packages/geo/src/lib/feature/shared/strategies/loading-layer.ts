@@ -1,8 +1,8 @@
 import { unByKey } from 'ol/Observable';
 import { OlEvent } from 'ol/events/Event';
-import { OlFeature } from 'ol/Feature';
 
 import { FeatureStore } from '../store';
+import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
 import { FeatureStoreStrategy } from './strategy';
 
 /**
@@ -19,6 +19,10 @@ export class FeatureStoreLoadingLayerStrategy extends FeatureStoreStrategy {
    * Subscription to the store's OL source changes
    */
   private stores$$ = new Map<FeatureStore, string>();
+
+  constructor(private options?: FeatureStoreLoadingLayerStrategyOptions) {
+    super();
+  }
 
   /**
    * Bind this strategy to a store and start watching for Ol source changes
@@ -81,7 +85,7 @@ export class FeatureStoreLoadingLayerStrategy extends FeatureStoreStrategy {
   private unwatchStore(store: FeatureStore) {
     const key = this.stores$$.get(store);
     if (key !== undefined) {
-      unByKey(key)
+      unByKey(key);
       this.stores$$.delete(store);
     }
   }
@@ -106,7 +110,7 @@ export class FeatureStoreLoadingLayerStrategy extends FeatureStoreStrategy {
     if (olFeatures.length === 0) {
       store.clear();
     } else {
-      store.setOlFeatures(olFeatures);
+      store.setStoreOlFeatures(olFeatures);
     }
   }
 }

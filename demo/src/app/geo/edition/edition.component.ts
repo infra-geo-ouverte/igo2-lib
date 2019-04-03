@@ -7,9 +7,9 @@ import { LanguageService } from '@igo2/core';
 import {
   ActionbarMode,
   EntityRecord,
-  EntityStore,
   EntityTableScrollBehavior,
-  Editor
+  Editor,
+  EditorStore
 } from '@igo2/common';
 import {
   IgoMap,
@@ -20,11 +20,11 @@ import {
 } from '@igo2/geo';
 
 @Component({
-  selector: 'app-wfs-browser',
-  templateUrl: './wfs-browser.component.html',
-  styleUrls: ['./wfs-browser.component.scss']
+  selector: 'app-edition',
+  templateUrl: './edition.component.html',
+  styleUrls: ['./edition.component.scss']
 })
-export class AppWfsBrowserComponent implements OnInit {
+export class AppEditionComponent implements OnInit {
 
   public map = new IgoMap({
     controls: {
@@ -35,13 +35,13 @@ export class AppWfsBrowserComponent implements OnInit {
   });
 
   public view = {
-    center: [-0, 47.2],
+    center: [-72, 47.2],
     zoom: 5
   };
 
-  public editorStore = new EntityStore<Editor>([]);
+  public editorStore = new EditorStore([]);
 
-  public activeEditor$: Observable<Editor>;
+  public selectedEditor$: Observable<Editor>;
 
   public actionbarMode = ActionbarMode.Dock;
 
@@ -54,12 +54,11 @@ export class AppWfsBrowserComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activeEditor$ = this.editorStore.stateView
+    this.selectedEditor$ = this.editorStore.stateView
       .firstBy$((record: EntityRecord<Editor>) => record.state.selected === true)
       .pipe(
         map((record: EntityRecord<Editor>) => {
-          console.log(record);
-          return record ? record.entity : undefined;
+          return record === undefined ? undefined : record.entity;
         })
       );
 
@@ -78,16 +77,17 @@ export class AppWfsBrowserComponent implements OnInit {
 
     const wfsDatasource: WFSDataSourceOptions = {
       type: 'wfs',
-      url: 'https://ahocevar.com/geoserver/wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
       params: {
-        featureTypes: 'ne:ne_10m_admin_0_countries',
-        fieldNameGeometry: 'the_geom',
-        version: '1.1.0',
-        outputFormat: 'application/json'
+        featureTypes: 'etablissement_mtq',
+        fieldNameGeometry: 'geometry',
+        version: '2.0.0',
+        outputFormat: 'geojson'
       },
       sourceFields: [
-        {name: 'name', alias: 'Name'},
-        {name: 'type', alias: 'Type'}
+        {name: 'idetablis', alias: 'ID'},
+        {name: 'nometablis', alias: 'Name'},
+        {name: 'typetablis', alias: 'Type'}
       ]
     };
 
@@ -95,7 +95,7 @@ export class AppWfsBrowserComponent implements OnInit {
       .createAsyncDataSource(wfsDatasource)
       .subscribe(dataSource => {
         const layer: LayerOptions = {
-          title: 'WFS ',
+          title: 'Simple WFS ',
           visible: true,
           source: dataSource
         };

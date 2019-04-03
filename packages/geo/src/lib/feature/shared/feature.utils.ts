@@ -5,6 +5,7 @@ import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 
 import {
+  EntityKey,
   getEntityId,
   getEntityRevision,
   getEntityProperty
@@ -23,30 +24,33 @@ import { Feature } from './feature.interfaces';
  */
 export function featureToOl(
   feature: Feature,
-  projectionOut: string
+  projectionOut: string,
+  getId?: (Feature) => EntityKey
 ): OlFeature {
+  getId = getId ? getId : getEntityId;
+
   const olFormat = new OlFormatGeoJSON();
   const olFeature = olFormat.readFeature(feature, {
     dataProjection: feature.projection,
     featureProjection: projectionOut
   });
 
-  olFeature.setId(getEntityId(feature));
+  olFeature.setId(getId(feature));
 
   if (feature.projection !== undefined) {
-    olFeature.set('_projection', feature.projection);
+    olFeature.set('_projection', feature.projection, true);
   }
 
   if (feature.extent !== undefined) {
-    olFeature.set('_extent', feature.extent);
+    olFeature.set('_extent', feature.extent, true);
   }
 
   const mapTitle = getEntityProperty(feature, 'meta.mapTitle');
   if (mapTitle !== undefined) {
-    olFeature.set('_mapTitle', mapTitle);
+    olFeature.set('_mapTitle', mapTitle, true);
   }
 
-  olFeature.set('_entityRevision', getEntityRevision(feature));
+  olFeature.set('_entityRevision', getEntityRevision(feature), true);
 
   return olFeature;
 }

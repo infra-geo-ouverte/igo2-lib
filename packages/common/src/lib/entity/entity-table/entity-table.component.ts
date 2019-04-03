@@ -74,7 +74,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * Scroll behavior on selection
    */
   @Input()
-  scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Smooth;
+  scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Auto;
 
   /**
    * Event emitted when an entity (row) is clicked

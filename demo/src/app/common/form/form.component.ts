@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
+import { LanguageService } from '@igo2/core';
 import { Form, FormService } from '@igo2/common';
 
 @Component({
@@ -19,7 +20,10 @@ export class AppFormComponent implements OnInit, OnDestroy {
 
   private valueChanges$$: Subscription;
 
-  constructor(private formService: FormService) {}
+  constructor(
+    private formService: FormService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
     const fieldConfigs = [

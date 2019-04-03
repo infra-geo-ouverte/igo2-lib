@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 
 import {
   Editor,
-  EditorSelectorComponent,
-  EntityStore
+  EditorStore,
+  EditorSelectorComponent
 } from '@igo2/common';
 
 import { Layer, VectorLayer } from '../../layer';
@@ -23,9 +23,7 @@ export class WfsEditorSelectorDirective implements OnInit, OnDestroy {
 
   @Input() map: IgoMap;
 
-  get editorStore(): EntityStore<Editor> {
-    return this.component.store;
-  }
+  get editorStore(): EditorStore { return this.component.store; }
 
   constructor(
     private component: EditorSelectorComponent,
@@ -53,7 +51,7 @@ export class WfsEditorSelectorDirective implements OnInit, OnDestroy {
   }
 
   private getOrCreateEditor(layer: VectorLayer): Editor {
-    let editor = this.editorStore.get(layer.id);
+    const editor = this.editorStore.get(layer.id);
     if (editor !== undefined) {
       return editor;
     }

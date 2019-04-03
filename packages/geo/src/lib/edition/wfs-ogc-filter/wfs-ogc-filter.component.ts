@@ -38,11 +38,18 @@ export class WfsOgcFilterComponent implements OnUpdateInputs, WidgetComponent {
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
-   /**
+  /**
    * Implemented as part of OnUpdateInputs
    */
   onUpdateInputs() {
     this.cdRef.detectChanges();
   }
-  
+
+  /**
+   * On close, emit the cancel event
+   */
+  onClose() {
+    this.cancel.emit();
+  }
+
 }

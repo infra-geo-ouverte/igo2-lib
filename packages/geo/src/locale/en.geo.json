@@ -227,7 +227,8 @@
           "delete.tooltip": "Delete"
         }
       },
-      "wfs": {
+      "edition": {
+        "ogcFilter.close": "Close",
         "ogcFilter.title": "Filters",
         "ogcFilter.tooltip": "Apply filters"
       }

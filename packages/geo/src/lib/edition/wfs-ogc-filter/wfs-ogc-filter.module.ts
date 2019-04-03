@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material';
 
+import { IgoLanguageModule } from '@igo2/core';
 import { IgoFilterModule } from '../../filter/filter.module';
-
-import { provideWfsOgcFilterWidget } from './wfs-ogc-filter.widget';
 import { WfsOgcFilterComponent } from './wfs-ogc-filter.component';
 
 /**
@@ -12,13 +12,12 @@ import { WfsOgcFilterComponent } from './wfs-ogc-filter.component';
 @NgModule({
   imports: [
     CommonModule,
+    MatButtonModule,
+    IgoLanguageModule,
     IgoFilterModule
   ],
   exports: [WfsOgcFilterComponent],
   declarations: [WfsOgcFilterComponent],
-  entryComponents: [WfsOgcFilterComponent],
-  providers: [
-    provideWfsOgcFilterWidget()
-  ]
+  entryComponents: [WfsOgcFilterComponent]
 })
 export class IgoWfsOgcFilterModule {}

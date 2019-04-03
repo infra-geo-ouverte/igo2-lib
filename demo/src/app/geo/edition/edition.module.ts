@@ -14,17 +14,17 @@ import {
 } from '@igo2/common';
 import {
   IgoMapModule,
-  IgoWfsModule
+  IgoGeoEditionModule
 } from '@igo2/geo';
 
-import { AppWfsBrowserComponent } from './wfs-browser.component';
-import { AppWfsBrowserRoutingModule } from './wfs-browser-routing.module';
+import { AppEditionComponent } from './edition.component';
+import { AppEditionRoutingModule } from './edition-routing.module';
 
 @NgModule({
-  declarations: [AppWfsBrowserComponent],
+  declarations: [AppEditionComponent],
   imports: [
     CommonModule,
-    AppWfsBrowserRoutingModule,
+    AppEditionRoutingModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -33,8 +33,8 @@ import { AppWfsBrowserRoutingModule } from './wfs-browser-routing.module';
     IgoEditionModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoWfsModule
+    IgoGeoEditionModule
   ],
-  exports: [AppWfsBrowserComponent]
+  exports: [AppEditionComponent]
 })
-export class AppWfsBrowserModule {}
+export class AppEditionModule {}

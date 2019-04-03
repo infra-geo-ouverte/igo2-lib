@@ -16,7 +16,7 @@ import { ExportOptions } from './import-export.interface';
   providedIn: 'root'
 })
 export class ImportExportService {
-  private urlApi: string;
+  private exportUrl: string;
 
   constructor(
     private http: HttpClient,
@@ -25,7 +25,7 @@ export class ImportExportService {
     private messageService: MessageService,
     private languageService: LanguageService
   ) {
-    this.urlApi = this.config.getConfig('importExport.url');
+    this.exportUrl = this.config.getConfig('importExport.url');
   }
 
   public import(fileList: Array<File>, sourceSrs = 'EPSG:4326') {
@@ -227,7 +227,7 @@ export class ImportExportService {
     const translate = this.languageService.translate;
     const layerTitle = file.name.substr(0, file.name.lastIndexOf('.'));
     const map = this.mapService.getMap();
-    const url = this.urlApi + '/convert';
+    const url = this.exportUrl + '/convert';
 
     const formData = new FormData();
     formData.append('upload', file);
@@ -263,7 +263,7 @@ export class ImportExportService {
   }
 
   private callExportService(geojson, title) {
-    const url = this.urlApi + '/convertJson';
+    const url = this.exportUrl + '/convertJson';
 
     const form = document.createElement('form');
     form.setAttribute('method', 'post');
