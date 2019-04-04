@@ -6,6 +6,7 @@ import {
 
 import { FormField, FormFieldInputs } from '../shared/form.interfaces';
 import { FormFieldService } from '../shared/form-field.service';
+import { getDefaultErrorMessages } from '../shared';
 
 /**
  * This component renders the proper form input based on
@@ -31,10 +32,16 @@ export class FormFieldComponent {
   }
 
   getFieldInputs(): FormFieldInputs {
+    const errors = this.field.options.errors || {};
     return Object.assign(
-      {placeholder: this.field.title},
+      {
+        placeholder: this.field.title
+      },
       Object.assign({}, this.field.inputs || {}),
-      {formControl: this.field.control}
+      {
+        formControl: this.field.control,
+        errors: Object.assign({}, getDefaultErrorMessages(), errors)
+      }
     );
   }
 

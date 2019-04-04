@@ -58,7 +58,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   /**
    * Field placeholder
    */
-  @Input() placeholder: string = '';
+  @Input() placeholder: string;
 
   /**
    * Event emitted when the selection changes

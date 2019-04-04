@@ -226,6 +226,11 @@
           "calculate.tooltip": "Calculate",
           "delete.tooltip": "Delete"
         }
+      },
+      "edition": {
+        "ogcFilter.close": "Close",
+        "ogcFilter.title": "Filters",
+        "ogcFilter.tooltip": "Apply filters"
       }
     }
   },

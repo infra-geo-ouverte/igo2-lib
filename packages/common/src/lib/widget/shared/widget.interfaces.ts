@@ -1,7 +1,5 @@
 import { EventEmitter } from '@angular/core';
 
-import { DynamicComponent } from '../../dynamic-component/shared/dynamic-component';
-
 /**
  * This is the interface a widget component needs to implement. A widget
  * component is component that can be created dynamically. It needs
@@ -13,5 +11,3 @@ export interface WidgetComponent {
   complete: EventEmitter<any>;
   cancel: EventEmitter<any>;
 }
-
-export type Widget = DynamicComponent<WidgetComponent>;

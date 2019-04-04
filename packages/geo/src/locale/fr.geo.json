@@ -229,6 +229,11 @@
           "delete.title": "Supprimer",
           "delete.tooltip": "Supprimer"
         }
+      },
+      "edition": {
+        "ogcFilter.close": "Fermer",
+        "ogcFilter.title": "Filtres",
+        "ogcFilter.tooltip": "Appliquer des filtres sur la couche"
       }
     }
   },

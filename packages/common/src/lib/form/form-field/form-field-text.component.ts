@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { formControlIsRequired } from '../shared/form.utils';
+import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
 import { FormFieldComponent } from '../shared/form-field-component';
 
 /**
@@ -30,10 +30,22 @@ export class FormFieldTextComponent {
   @Input() placeholder: string;
 
   /**
+   * Field placeholder
+   */
+  @Input() errors: {[key: string]: string};
+
+  /**
    * Whether the field is required
    */
   get required(): boolean {
     return formControlIsRequired(this.formControl);
+  }
+
+  /**
+   * Get error message
+   */
+  getErrorMessage(): string {
+    return getControlErrorMessage(this.formControl, this.errors);
   }
 
 }

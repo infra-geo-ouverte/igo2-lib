@@ -1,6 +1,6 @@
 import olSourceVector from 'ol/source/Vector';
-import * as olloadingstrategy from 'ol/loadingstrategy';
-import * as olformat from 'ol/format';
+import * as OlLoadingStrategy from 'ol/loadingstrategy';
+import * as OlFormat from 'ol/format';
 
 import { uuid } from '@igo2/utils';
 
@@ -124,7 +124,7 @@ export class WFSDataSource extends DataSource {
 
         return baseUrl;
       },
-      strategy: olloadingstrategy.bbox
+      strategy: OlLoadingStrategy.bbox
     });
   }
 
@@ -136,10 +136,10 @@ export class WFSDataSource extends DataSource {
     const patternGeojson = new RegExp('.*?json.*?');
 
     if (patternGeojson.test(outputFormat)) {
-      olFormatCls = olformat.GeoJSON;
+      olFormatCls = OlFormat.GeoJSON;
     }
     if (patternGml3.test(outputFormat)) {
-      olFormatCls = olformat.WFS;
+      olFormatCls = OlFormat.WFS;
     }
 
     return new olFormatCls();

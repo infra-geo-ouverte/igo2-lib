@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Edition</mat-card-title>
+  <mat-card-content>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/edition">code of this example</a>
+  </mat-card-content>
+
+  <igo-map-browser [map]="map" [view]="view">
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+  </igo-map-browser>
+
+  <igo-editor-selector
+    igoWfsEditorSelector
+    [store]="editorStore"
+    [map]="map">
+  </igo-editor-selector>
+  <ng-container *ngIf="selectedEditor$ | async as editor">
+    <igo-actionbar
+      [store]="editor.actionStore"
+      [horizontal]="true"
+      [withToggleButton]="true"
+      [withTitle]="false"
+      [mode]="actionbarMode">
+    </igo-actionbar>
+
+    <igo-editor-outlet [editor]="editor"></igo-editor-outlet>
+
+    <igo-entity-table
+      class="table-compact table-centered"
+      [scrollBehavior]="scrollBehavior"
+      [store]="editor.entityStore"
+      [template]="editor.tableTemplate">
+    </igo-entity-table>
+  </ng-container>
+
+</mat-card>

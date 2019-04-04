@@ -21,6 +21,7 @@ export interface DataSourceOptions {
 
   // view?: ol.olx.layer.ImageOptions;
   ol?: olSource;
+  // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
 }

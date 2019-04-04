@@ -8,6 +8,11 @@
       },
       "table": {
         "filter": "Filter"
+      },
+      "form": {
+        "errors": {
+          "required": "This field is required"
+        }
       }
     }
   }
