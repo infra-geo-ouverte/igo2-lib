@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
+import { IgoMap, MapService } from '@igo2/geo';
 
 /**
  * Service that holds the state of the map module
@@ -18,8 +18,7 @@ export class MapState {
   private _map: IgoMap;
 
   constructor(
-    private mapService: MapService,
-    private projectionService: ProjectionService
+    private mapService: MapService
   ) {
     this._map = new IgoMap({
       controls: {

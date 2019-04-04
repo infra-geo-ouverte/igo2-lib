@@ -2,11 +2,7 @@ import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
-import {
-  Editor,
-  EditorStore,
-  EditorSelectorComponent
-} from '@igo2/common';
+import { Editor, EditorStore, EditorSelectorComponent } from '@igo2/common';
 
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
@@ -20,12 +16,13 @@ import { WmsEditorService } from '../shared/wms-editor.service';
   selector: '[igoEditorSelector]'
 })
 export class EditorSelectorDirective implements OnInit, OnDestroy {
-
   private layers$$: Subscription;
 
   @Input() map: IgoMap;
 
-  get editorStore(): EditorStore { return this.component.store; }
+  get editorStore(): EditorStore {
+    return this.component.store;
+  }
 
   constructor(
     private component: EditorSelectorComponent,
@@ -34,8 +31,9 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$
-      .subscribe((layers: Layer[]) => this.onLayersChange(layers));
+    this.layers$$ = this.map.layers$.subscribe((layers: Layer[]) =>
+      this.onLayersChange(layers)
+    );
   }
 
   ngOnDestroy() {
@@ -43,12 +41,14 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
   }
 
   private onLayersChange(layers: Layer[]) {
-    const editableLayers = layers.filter((layer: Layer) => this.layerIsEditable(layer));
+    const editableLayers = layers.filter((layer: Layer) =>
+      this.layerIsEditable(layer)
+    );
 
     const editors = editableLayers.map((layer: VectorLayer) => {
       return this.getOrCreateEditor(layer);
     });
-    this.editorStore.updateMany(editors);
+    this.editorStore.load(editors);
   }
 
   private getOrCreateEditor(layer: VectorLayer | ImageLayer): Editor {
@@ -57,15 +57,9 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
       return editor;
     }
     if (layer.dataSource instanceof WFSDataSource) {
-      return this.wfsEditorService.createEditor(
-        layer as VectorLayer,
-        this.map
-        );
+      return this.wfsEditorService.createEditor(layer as VectorLayer, this.map);
     } else if (layer.dataSource instanceof WMSDataSource) {
-      return this.wmsEditorService.createEditor(
-        layer as ImageLayer,
-        this.map
-      );
+      return this.wmsEditorService.createEditor(layer as ImageLayer, this.map);
     }
 
     return;
@@ -78,12 +72,13 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
     }
 
     if (dataSource instanceof WMSDataSource) {
-      const dataSourceOptions = (dataSource.options || {}) as OgcFilterableDataSourceOptions;
-      return dataSourceOptions.ogcFilters && dataSourceOptions.ogcFilters.enabled;
+      const dataSourceOptions = (dataSource.options ||
+        {}) as OgcFilterableDataSourceOptions;
+      return (
+        dataSourceOptions.ogcFilters && dataSourceOptions.ogcFilters.enabled
+      );
     }
 
     return false;
-
   }
-
 }

@@ -1,20 +1,24 @@
-import { Component, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { LayerListControlsEnum } from '@igo2/geo';
 
 import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
-
+/**
+ * Tool to browse a map's layers or to choose a different map
+ */
 @ToolComponent({
-  name: 'mapDetails',
+  name: 'map',
   title: 'igo.integration.tools.map',
   icon: 'map'
 })
 @Component({
-  selector: 'igo-map-details-tool',
-  templateUrl: './map-details-tool.component.html'
+  selector: 'igo-map-tool',
+  templateUrl: './map-tool.component.html',
+  styleUrls: ['./map-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapDetailsToolComponent {
+export class MapToolComponent {
   @Input() toggleLegendOnVisibilityChange: boolean = false;
   @Input() ogcFiltersInLayers: boolean = true;
 
@@ -43,4 +47,5 @@ export class MapDetailsToolComponent {
     }
     return filterSortOptions;
   }
+
 }
