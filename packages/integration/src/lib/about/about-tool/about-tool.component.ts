@@ -1,8 +1,6 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-
-import { AboutToolOptions } from './about-tool.interface';
 
 @ToolComponent({
   name: 'about',
@@ -14,8 +12,7 @@ import { AboutToolOptions } from './about-tool.interface';
   templateUrl: './about-tool.component.html'
 })
 export class AboutToolComponent {
-  public options: AboutToolOptions = {};
-  private defaultAboutText = `
+  @Input() html: string = `
     <h1>About IGO</h1>
     <p>IGO (for Open GIS Infrastructure) is a Free Open Source Software
     for Geospatial (FOSS4G) developed by organisations in the government
@@ -28,12 +25,6 @@ export class AboutToolComponent {
     <a href='mailto:info@igouverte.org' target='_top'>info[@]igouverte.org</a>
     </br>
     <a href='http://www.igouverte.org' target='_blank'>www.igouverte.org</A>`;
-
-  get html(): string {
-    return this.options.html === undefined
-      ? this.defaultAboutText
-      : this.options.html;
-  }
 
   constructor() {}
 }
