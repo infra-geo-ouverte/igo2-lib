@@ -2,24 +2,25 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IgoWidgetModule } from '@igo2/common';
 
-import { provideWfsOgcFilterWidget } from './shared/wfs.widgets';
-import { IgoWfsEditorSelectorModule } from './wfs-editor-selector/wfs-editor-selector.module';
-import { IgoWfsOgcFilterModule } from './wfs-ogc-filter/wfs-ogc-filter.module';
+import { provideOgcFilterWidget } from './shared/widgets';
+
+import { IgoEditorSelectorModule } from './editor-selector/editor-selector.module';
+import { IgoOgcFilterModule } from './ogc-filter/ogc-filter.module';
 
 @NgModule({
   imports: [
     CommonModule,
     IgoWidgetModule,
-    IgoWfsEditorSelectorModule,
-    IgoWfsOgcFilterModule
+    IgoEditorSelectorModule,
+    IgoOgcFilterModule
   ],
   exports: [
-    IgoWfsEditorSelectorModule,
-    IgoWfsOgcFilterModule
+    IgoEditorSelectorModule,
+    IgoOgcFilterModule
   ],
   declarations: [],
   providers: [
-    provideWfsOgcFilterWidget()
+    provideOgcFilterWidget()
   ]
 })
 export class IgoGeoEditionModule {}

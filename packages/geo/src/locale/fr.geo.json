@@ -233,7 +233,9 @@
       "edition": {
         "ogcFilter.close": "Fermer",
         "ogcFilter.title": "Filtres",
-        "ogcFilter.tooltip": "Appliquer des filtres sur la couche"
+        "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
+        "wfsDownload.title": "Télécharger les données associées",
+        "wfsDownload.tooltip": "Télécharger les données associées"
       }
     }
   },

@@ -5,7 +5,7 @@ import { ActionStore } from '../../action';
 import { EntityRecord, EntityStore, EntityTableTemplate } from '../../entity';
 import { Widget } from '../../widget';
 
-import { EditorConfig } from './edition.interfaces';
+import { EditorOptions } from './edition.interfaces';
 
 /**
  * This class is responsible of managing the relations between
@@ -52,27 +52,27 @@ export class Editor {
   /**
    * Editor id
    */
-  get id(): string { return this.config.id; }
+  get id(): string { return this.options.id; }
 
   /**
    * Editor title
    */
-  get title(): string { return this.config.title; }
+  get title(): string { return this.options.title; }
 
   /**
    * Entity table template
    */
-  get tableTemplate(): EntityTableTemplate { return this.config.tableTemplate; }
+  get tableTemplate(): EntityTableTemplate { return this.options.tableTemplate; }
 
   /**
    * Entities store
    */
-  get entityStore(): EntityStore<object> { return this.config.entityStore; }
+  get entityStore(): EntityStore<object> { return this.options.entityStore; }
 
   /**
    * Actions store (some actions activate a widget)
    */
-  get actionStore(): ActionStore { return this.config.actionStore; }
+  get actionStore(): ActionStore { return this.options.actionStore; }
 
   /**
    * Selected entity
@@ -89,7 +89,7 @@ export class Editor {
    */
   get hasWidget(): boolean { return this.widget !== undefined; }
 
-  constructor(private config: EditorConfig) {}
+  constructor(private options: EditorOptions) {}
 
   /**
    * Whether this editor is active
@@ -107,17 +107,22 @@ export class Editor {
     }
     this.active = true;
 
-    this.entity$$ = this.entityStore.stateView
+    if (this.entityStore !== undefined) {
+      this.entity$$ = this.entityStore.stateView
       .firstBy$((record: EntityRecord<object>) => record.state.selected === true)
       .pipe(distinctUntilChanged())
       .subscribe((record: EntityRecord<object>) => {
         const entity = record ? record.entity : undefined;
         this.onSelectEntity(entity);
       });
+    }
 
-    this.changes$$ = this.changes$
+    if (this.actionStore !== undefined) {
+      this.changes$$ = this.changes$
       .pipe(debounceTime(50))
       .subscribe(() => this.actionStore.updateActionsAvailability());
+    }
+
     this.changes$.next();
   }
 

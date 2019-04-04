@@ -15,9 +15,9 @@ import {
   IgoMap,
   DataSourceService,
   LayerService,
-  LayerOptions,
   WFSDataSourceOptions
 } from '@igo2/geo';
+import { OgcFilterableDataSourceOptions } from 'packages/geo/src/public_api';
 
 @Component({
   selector: 'app-edition',
@@ -75,7 +75,47 @@ export class AppEditionComponent implements OnInit {
         );
       });
 
-    const wfsDatasource: WFSDataSourceOptions = {
+    const wmsDataSourceOptions = {
+      type: 'wms',
+      url: 'https://ahocevar.com/geoserver/wms',
+      urlWfs: 'https://ahocevar.com/geoserver/wfs',
+      params: {
+        layers: 'water_areas',
+        version: '1.3.0'
+      },
+      paramsWFS: {
+        featureTypes: 'water_areas',
+        fieldNameGeometry: 'the_geom',
+        maxFeatures: 10000,
+        version: '1.1.0',
+        outputFormat: 'application/json',
+        outputFormatDownload: 'application/vnd.google-earth.kml+xml'
+      },
+      sourceFields: [
+        {name: 'waterway', alias: 'Chemin d eau'},
+        {name: 'osm_id'},
+        {name: 'landuse'}
+      ],
+      ogcFilters: {
+        enabled: true,
+        editable: true
+      },
+      serverType: 'geoserver'
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(wmsDataSourceOptions as OgcFilterableDataSourceOptions)
+      .subscribe(dataSource => {
+        const layer = {
+          optionsFromCapabilities: true,
+          title: 'WMS Geoserver filterable ',
+          visible: true,
+          source: dataSource
+        };
+        this.map.addLayer(this.layerService.createLayer(layer));
+      });
+
+    const wfsDataSourceOptions: WFSDataSourceOptions = {
       type: 'wfs',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
       params: {
@@ -92,9 +132,9 @@ export class AppEditionComponent implements OnInit {
     };
 
     this.dataSourceService
-      .createAsyncDataSource(wfsDatasource)
+      .createAsyncDataSource(wfsDataSourceOptions)
       .subscribe(dataSource => {
-        const layer: LayerOptions = {
+        const layer = {
           title: 'Simple WFS ',
           visible: true,
           source: dataSource

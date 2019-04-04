@@ -3,9 +3,7 @@ import olAttribution from 'ol/control/Attribution';
 import { DataSourceOptions } from './datasource.interface';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
-export interface ArcGISRestDataSourceOptions
-  extends DataSourceOptions,
-    FeatureDataSourceOptions {
+export interface ArcGISRestDataSourceOptions extends FeatureDataSourceOptions {
   // type?: 'arcgisrest'
   layer: string;
   params?: ArcGISRestDataSourceOptionsParams;

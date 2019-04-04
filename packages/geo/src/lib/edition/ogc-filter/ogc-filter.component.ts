@@ -13,12 +13,12 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map/shared/map';
 
 @Component({
-  selector: 'igo-wfs-ogc-filter',
-  templateUrl: './wfs-ogc-filter.component.html',
-  styleUrls: ['./wfs-ogc-filter.component.scss'],
+  selector: 'igo-ogc-filter',
+  templateUrl: './ogc-filter.component.html',
+  styleUrls: ['./ogc-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WfsOgcFilterComponent implements OnUpdateInputs, WidgetComponent {
+export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
 
   @Input() layer: Layer;
 

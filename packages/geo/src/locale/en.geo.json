@@ -230,7 +230,9 @@
       "edition": {
         "ogcFilter.close": "Close",
         "ogcFilter.title": "Filters",
-        "ogcFilter.tooltip": "Apply filters"
+        "ogcFilter.tooltip": "Apply filters",
+        "wfsDownload.title": "Download",
+        "wfsDownload.tooltip": "Download"
       }
     }
   },

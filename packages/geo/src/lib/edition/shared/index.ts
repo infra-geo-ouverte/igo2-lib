@@ -1,2 +1,3 @@
 export * from './wfs-editor.service';
-export * from './wfs.widgets';
+export * from './wms-editor.service';
+export * from './widgets';

@@ -38,7 +38,7 @@ export class EditionState {
 
   /**
    * ToolComponent an editor and make it available
-   * @param editor
+   * @param editor Editor
    */
   register(editor: Editor) {
     this.store.insert(editor);
@@ -46,7 +46,7 @@ export class EditionState {
 
   /**
    * Unregister an editor and make it unavailable
-   * @param editor
+   * @param editor Editor
    */
   unregister(editor: Editor) {
     this.store.delete(editor);
@@ -54,7 +54,7 @@ export class EditionState {
 
   /**
    * Set the active editor
-   * @param editor
+   * @param editor Editor
    */
   setEditor(editor: Editor | undefined) {
     if (editor === undefined) {

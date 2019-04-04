@@ -10,12 +10,13 @@
   </igo-map-browser>
 
   <igo-editor-selector
-    igoWfsEditorSelector
+    igoEditorSelector
     [store]="editorStore"
     [map]="map">
   </igo-editor-selector>
   <ng-container *ngIf="selectedEditor$ | async as editor">
     <igo-actionbar
+      *ngIf="editor.actionStore"
       [store]="editor.actionStore"
       [horizontal]="true"
       [withToggleButton]="true"
@@ -26,6 +27,7 @@
     <igo-editor-outlet [editor]="editor"></igo-editor-outlet>
 
     <igo-entity-table
+      *ngIf="editor.entityStore && editor.tableTemplate"
       class="table-compact table-centered"
       [scrollBehavior]="scrollBehavior"
       [store]="editor.entityStore"

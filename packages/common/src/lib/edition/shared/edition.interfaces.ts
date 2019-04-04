@@ -1,7 +1,7 @@
 import { ActionStore } from '../../action';
 import { EntityStore, EntityTableTemplate } from '../../entity';
 
-export interface EditorConfig {
+export interface EditorOptions {
   id: string;
   title: string;
   tableTemplate?: EntityTableTemplate;

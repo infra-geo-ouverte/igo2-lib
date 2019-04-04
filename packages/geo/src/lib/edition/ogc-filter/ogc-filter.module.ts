@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoFilterModule } from '../../filter/filter.module';
-import { WfsOgcFilterComponent } from './wfs-ogc-filter.component';
+import { OgcFilterComponent } from './ogc-filter.component';
 
 /**
  * @ignore
@@ -16,8 +16,8 @@ import { WfsOgcFilterComponent } from './wfs-ogc-filter.component';
     IgoLanguageModule,
     IgoFilterModule
   ],
-  exports: [WfsOgcFilterComponent],
-  declarations: [WfsOgcFilterComponent],
-  entryComponents: [WfsOgcFilterComponent]
+  exports: [OgcFilterComponent],
+  declarations: [OgcFilterComponent],
+  entryComponents: [OgcFilterComponent]
 })
-export class IgoWfsOgcFilterModule {}
+export class IgoOgcFilterModule {}

@@ -10,6 +10,7 @@ import {
   Widget
 } from '@igo2/common';
 
+import { DownloadService } from '../../download';
 import {
   FeatureStore,
   FeatureStoreLoadingLayerStrategy,
@@ -19,7 +20,7 @@ import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams } from '../../datasource';
 
-import { WfsOgcFilterWidget } from './wfs.widgets';
+import { OgcFilterWidget } from './widgets';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,8 @@ import { WfsOgcFilterWidget } from './wfs.widgets';
 export class WfsEditorService {
 
   constructor(
-    @Inject(WfsOgcFilterWidget) private wfsOgcFilterWidget: Widget
+    @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
+    private downloadService: DownloadService
   ) {}
 
   createEditor(layer: VectorLayer, map: IgoMap): Editor {
@@ -39,7 +41,7 @@ export class WfsEditorService {
       entityStore: this.createFeatureStore(layer, map),
       actionStore
     });
-    actionStore.load(this.buildActions(editor));
+    actionStore.load(this.buildActions(editor, layer, map));
 
     return editor;
   }
@@ -78,18 +80,25 @@ export class WfsEditorService {
     };
   }
 
-  private buildActions(editor: Editor): Action[] {
-    const layer = (editor.entityStore as FeatureStore).layer;
+  private buildActions(editor: Editor, layer: VectorLayer, map: IgoMap): Action[] {
     return [
       {
         id: 'ogcFilter',
         icon: 'filter_list',
         title: 'igo.geo.edition.ogcFilter.title',
         tooltip: 'igo.geo.edition.ogcFilter.tooltip',
-        handler: () => editor.activateWidget(this.wfsOgcFilterWidget, {
+        handler: () => editor.activateWidget(this.ogcFilterWidget, {
           layer,
-          map: layer.map,
+          map,
         }),
+        conditions: []
+      },
+      {
+        id: 'wfsDownload',
+        icon: 'file_download',
+        title: 'igo.geo.edition.wfsDownload.title',
+        tooltip: 'igo.geo.edition.wfsDownload.tooltip',
+        handler: () => this.downloadService.open(layer),
         conditions: []
       }
     ];
