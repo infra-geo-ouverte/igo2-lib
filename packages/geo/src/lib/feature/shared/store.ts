@@ -155,7 +155,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
       olFeature.set('_featureStore', this, true);
       return featureFromOl(olFeature, this.layer.map.projection);
     });
-    this.load(features);
+    this.load(features as T[]);
   }
 
   /**

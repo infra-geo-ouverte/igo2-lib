@@ -67,7 +67,7 @@ export function featureFromOl(
   olFeature: OlFeature,
   projectionIn: string,
   projectionOut = 'EPSG:4326'
-): OlFeature {
+): Feature {
   const olFormat = new OlFormatGeoJSON();
   const feature = olFormat.writeFeatureObject(olFeature, {
     dataProjection: projectionOut,

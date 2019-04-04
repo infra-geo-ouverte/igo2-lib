@@ -82,10 +82,10 @@ export class WfsEditorService {
     const layer = (editor.entityStore as FeatureStore).layer;
     return [
       {
-        id: 'wfsOgcFilter',
+        id: 'ogcFilter',
         icon: 'filter_list',
-        title: 'igo.geo.edition.wfsOgcFilter.title',
-        tooltip: 'igo.geo.edition.wfsOgcFilter.tooltip',
+        title: 'igo.geo.edition.ogcFilter.title',
+        tooltip: 'igo.geo.edition.ogcFilter.tooltip',
         handler: () => editor.activateWidget(this.wfsOgcFilterWidget, {
           layer,
           map: layer.map,
