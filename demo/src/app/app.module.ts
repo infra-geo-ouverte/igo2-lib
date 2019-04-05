@@ -95,7 +95,7 @@ import { AppComponent } from './app.component';
 
     AppContextModule,
 
-    AppRoutingModule
+    AppRoutingModule,
   ],
   bootstrap: [AppComponent]
 })

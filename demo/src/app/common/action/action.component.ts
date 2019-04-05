@@ -6,6 +6,7 @@ import {
 
 import { Media, MediaOrientation, MediaService } from '@igo2/core';
 import { ActionStore, ActionbarMode } from '@igo2/common';
+import {Overlay} from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-action',
@@ -27,7 +28,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
     return ActionbarMode.Overlay;
   }
 
-  constructor(private mediaService: MediaService) {}
+  constructor(private mediaService: MediaService, public overlay: Overlay) {}
 
   ngOnInit() {
     const added = () => this.added === true;
@@ -74,5 +75,4 @@ export class AppActionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.store.destroy();
   }
-
 }
