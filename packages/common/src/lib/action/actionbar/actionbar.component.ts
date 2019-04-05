@@ -26,8 +26,9 @@ import { Overlay } from '@angular/cdk/overlay';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
-
-  static defaultItemClassFunc(action: Action) { return {}; }
+  static defaultItemClassFunc(action: Action) {
+    return {};
+  }
 
   /**
    * Reference to the ActionbarMode enum for use in the template
@@ -48,13 +49,9 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   toggleCollapseAction = {
     id: 'actionbar_toggle',
     icon: 'more_vert',
-<<<<<<< HEAD
     handler: () => {
       this.collapsed = !this.collapsed;
     }
-=======
-    handler: () => {this.collapsed = !this.collapsed; }
->>>>>>> Added an action bar mode for context menu
   };
 
   /**
@@ -123,7 +120,8 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Function to add class to item actionbar
    */
-  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } = ActionbarComponent.defaultItemClassFunc;
+  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } =
+    ActionbarComponent.defaultItemClassFunc;
 
   /**
    * @ignore
