@@ -13,6 +13,7 @@ import { EntityStoreController } from '../../entity';
 import { Action } from '../shared/action.interfaces';
 import { ActionbarMode } from '../shared/action.enums';
 import { ActionStore } from '../shared/store';
+import { Overlay } from '@angular/cdk/overlay';
 
 /**
  * A list of action buttons.
@@ -45,7 +46,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   toggleCollapseAction = {
     id: 'actionbar_toggle',
     icon: 'more_vert',
-    handler: () => { this.collapsed = !this.collapsed; }
+    handler: () => {this.collapsed = !this.collapsed; }
   };
 
   /**
@@ -127,7 +128,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @HostBinding('class.horizontal')
   get horizontalClass() { return this.horizontal; }
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef, public overlay: Overlay) {}
 
   /**
    * @internal

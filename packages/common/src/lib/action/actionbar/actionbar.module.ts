@@ -6,7 +6,8 @@ import {
   MatIconModule,
   MatTooltipModule,
   MatListModule,
-  MatMenuModule
+  MatMenuModule,
+  MatCardModule
 } from '@angular/material';
 
 import { ActionbarComponent } from './actionbar.component';
@@ -22,7 +23,8 @@ import { ActionbarItemComponent } from './actionbar-item.component';
     MatIconModule,
     MatTooltipModule,
     MatMenuModule,
-    MatListModule
+    MatListModule,
+    MatCardModule
   ],
   exports: [
     ActionbarComponent

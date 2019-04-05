@@ -1,4 +1,5 @@
 export enum ActionbarMode {
   Dock = 'dock',
-  Overlay = 'overlay'
+  Overlay = 'overlay',
+  Context = 'context'
 }
