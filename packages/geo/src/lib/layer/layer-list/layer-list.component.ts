@@ -5,246 +5,206 @@ import {
   ChangeDetectorRef,
   TemplateRef,
   ContentChild,
-  AfterViewInit
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
 import { LayerListService } from './layer-list.service';
+import { BehaviorSubject, ReplaySubject, Subscription, EMPTY, timer } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 
+// TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
   selector: 'igo-layer-list',
   templateUrl: './layer-list.component.html',
   styleUrls: ['./layer-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayerListComponent implements AfterViewInit {
-  public hasLayerNotVisible = false;
-  public hasLayerOutOfRange = false;
-  public disableReorderLayers = false;
-  public thresholdToFilterAndSort = 5;
+export class LayerListComponent implements OnInit, OnDestroy {
+
+  hasLayerNotVisible = false;
+  hasLayerOutOfRange = false;
+  orderable = true;
+  thresholdToFilterAndSort = 5;
+
+  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
+
+  change$ = new ReplaySubject<void>(1);
+
+  showToolbar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  private change$$: Subscription;
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
 
   @Input()
-  get layers(): Layer[] {
-    // Should all of this be in the getter??
-    if (this.excludeBaseLayers) {
-      if (this._layers.filter(f => f.visible === false && !f.baseLayer).length >= 1) {
-        this.hasLayerNotVisible = true;
-      } else {
-        this.hasLayerNotVisible = false;
-      }
-      if (this._layers
-        .filter(f => f.isInResolutionsRange === false && !f.baseLayer).length >= 1) {
-        this.hasLayerOutOfRange = true;
-      } else {
-        this.hasLayerOutOfRange = false;
-      }
-    } else {
-      if (this._layers.filter(f => f.visible === false).length >= 1) {
-        this.hasLayerNotVisible = true;
-      } else {
-        this.hasLayerNotVisible = false;
-      }
-      if (this._layers.filter(f => f.isInResolutionsRange === false).length >= 1) {
-        this.hasLayerOutOfRange = true;
-      } else {
-        this.hasLayerOutOfRange = false;
-      }
-    }
-    this.defineReorderLayersStatus();
-    return this._layers;
-  }
   set layers(value: Layer[]) {
-    this._layers = value;
-    this.cdRef.detectChanges();
+    this.setLayers(value);
+    this.next();
   }
-  private _layers: Layer[] = [];
+  get layers(): Layer[] { return this._layers; }
+  private _layers: Layer[];
 
-  @Input()
-  get placeholder() {
-    return this._placeholder;
-  }
-  set placeholder(value: string) {
-    this._placeholder = value;
-  }
-  private _placeholder = '';
+  @Input() placeholder: string = '';
 
-  @Input()
-  get floatLabel() {
-    return this._floatLabel;
-  }
-  set floatLabel(value: FloatLabelType) {
-    this._floatLabel = value;
-  }
-  private _floatLabel: FloatLabelType = 'auto';
+  @Input() floatLabel: FloatLabelType = 'auto';
 
-  @Input()
-  get color() {
-    return this._color;
-  }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
+  @Input() layerFilterAndSortOptions: any = {};
 
-  @Input()
-  get layerFilterAndSortOptions() {
-    return this._layerFilterAndSortOptions;
-  }
-  set layerFilterAndSortOptions(value: any) {
-    this._layerFilterAndSortOptions = value;
-  }
-  private _layerFilterAndSortOptions = '';
+  @Input() excludeBaseLayers: boolean = false;
 
-  @Input()
-  get excludeBaseLayers() {
-    return this._excludeBaseLayers;
-  }
-  set excludeBaseLayers(value: boolean) {
-    this._excludeBaseLayers = value;
-  }
-  private _excludeBaseLayers = false;
+  @Input() toggleLegendOnVisibilityChange: boolean = false;
 
-  @Input()
-  get toggleLegendOnVisibilityChange() {
-    return this._toggleLegendOnVisibilityChange;
+  get keyword(): string { return this.layerListService.keyword; }
+  set keyword(value: string) {
+    this.layerListService.keyword = value;
+    this.next();
   }
-  set toggleLegendOnVisibilityChange(value: boolean) {
-    this._toggleLegendOnVisibilityChange = value;
+
+  get keywordInitialized(): boolean { return this.layerListService.keywordInitialized; }
+  set keywordInitialized(value: boolean) { this.layerListService.keywordInitialized = value; }
+
+  get onlyVisible(): boolean { return this.layerListService.onlyVisible; }
+  set onlyVisible(value: boolean) {
+    this.layerListService.onlyVisible = value;
+    this.next();
   }
-  private _toggleLegendOnVisibilityChange = false;
+
+  get onlyVisibleInitialized(): boolean { return this.layerListService.onlyVisibleInitialized; }
+  set onlyVisibleInitialized(value: boolean) { this.layerListService.onlyVisibleInitialized = value; }
+
+  get onlyInRange(): boolean { return this.layerListService.onlyInRange; }
+  set onlyInRange(value: boolean) {
+    this.layerListService.onlyInRange = value;
+    this.next();
+  }
+
+  get onlyInRangeInitialized(): boolean { return this.layerListService.onlyInRangeInitialized; }
+  set onlyInRangeInitialized(value: boolean) { this.layerListService.onlyInRangeInitialized = value; }
+
+  get sortedAlpha(): boolean { return this.layerListService.sortedAlpha; }
+  set sortedAlpha(value: boolean) {
+    this.layerListService.sortedAlpha = value;
+    this.next();
+  }
+
+  get sortedAlphaInitialized(): boolean { return this.layerListService.sortedAlphaInitialized; }
+  set sortedAlphaInitialized(value: boolean) { this.layerListService.sortedAlphaInitialized = value; }
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    public layerListService: LayerListService) {}
+    private layerListService: LayerListService
+  ) {}
 
-  ngAfterViewInit(): void {
+  /**
+   * Subscribe to the search term stream and trigger researches
+   * @internal
+   */
+  ngOnInit(): void {
+    this.change$$ = this.change$
+      .pipe(
+        debounce(() => {
+          return this.layers.length === 0 ? EMPTY : timer(50);
+        })
+      ).subscribe(() => {
+        this.showToolbar$.next(this.computeShowToolbar());
+        this.layers$.next(this.computeLayers(this.layers.slice(0)));
+      });
+
     this.initLayerFilterAndSortOptions();
   }
 
-  private initLayerFilterAndSortOptions() {
-    if (this.layerFilterAndSortOptions.toolbarThreshold) {
-      this.thresholdToFilterAndSort = this.layerFilterAndSortOptions.toolbarThreshold;
-    }
-
-    if (this.layerFilterAndSortOptions.keyword && !this.layerListService.keywordInitializated) {
-      this.layerListService.keyword = this.layerFilterAndSortOptions.keyword;
-      this.layerListService.keywordInitializated = true;
-    }
-    if (this.layerFilterAndSortOptions.sortedAlpha && !this.layerListService.sortedAlphaInitializated) {
-      this.layerListService.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
-      this.layerListService.sortedAlphaInitializated = true;
-    }
-    if (this.layerFilterAndSortOptions.onlyVisible && !this.layerListService.onlyVisibleInitializated &&
-      this.hasLayerNotVisible) {
-      this.layerListService.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
-      this.layerListService.onlyVisibleInitializated = true;
-    }
-    if (this.layerFilterAndSortOptions.onlyInRange && !this.layerListService.onlyInRangeInitializated &&
-      this.hasLayerOutOfRange) {
-      this.layerListService.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
-      this.layerListService.onlyInRangeInitializated = true;
-    }
+  ngOnDestroy() {
+    this.change$$.unsubscribe();
   }
 
-  getSortedOrFilteredLayers(): Layer[] {
-    const localLayers = this.filterLayersList(this.layers);
-    let alphaFilteredLayers;
-    if (this.layerListService.sortedAlpha) {
-      alphaFilteredLayers = this.sortLayers(localLayers, 'title');
+  toggleOnlyVisible() {
+    this.onlyVisible = !this.onlyVisible;
+  }
+
+  toggleOnlyInRange() {
+    this.onlyInRange = !this.onlyInRange;
+  }
+
+  toggleSort(sortAlpha: boolean) {
+    this.sortedAlpha = sortAlpha;
+  }
+
+  clearKeyword() {
+    this.keyword = undefined;
+  }
+
+  private next() {
+    this.change$.next();
+  }
+
+  private computeLayers(layers: Layer[]): Layer[] {
+    let layersOut = this.filterLayers(layers);
+    if (this.sortedAlpha) {
+      layersOut = this.sortLayersByTitle(layersOut);
     } else {
-      alphaFilteredLayers = this.sortLayers(localLayers, 'id');
+      layersOut = this.sortLayersByZindex(layersOut);
     }
-    return alphaFilteredLayers;
+    return layersOut;
   }
 
-  showFilterSortToolbar(): boolean {
-    switch (this.layerFilterAndSortOptions.showToolbar) {
-      case LayerListControlsEnum.always:
-        return true;
-      case LayerListControlsEnum.never:
-        return false;
-      default:
-        if (this.layers.length >= this.thresholdToFilterAndSort ||
-          this.layerListService.getKeyword() ||
-          this.layerListService.onlyInRange || this.layerListService.onlyVisible) {
-          return true;
-        } else {
-          this.layerListService.keyword = '';
-          this.layerListService.sortedAlpha = false;
-          this.layerListService.onlyVisible = false;
-          this.layerListService.onlyInRange = false;
-          return false;
-        }
-    }
-  }
-
-  filterLayersList(localLayers: Layer[]): Layer[] {
+  private filterLayers(layers: Layer[]): Layer[] {
+    const keyword = this.keyword;
     if (this.layerFilterAndSortOptions.showToolbar === LayerListControlsEnum.never) {
-      return localLayers;
+      return layers;
     }
-    if (this.layerListService.getKeyword() || this.layerListService.onlyInRange || this.layerListService.onlyVisible) {
-      const layerIDToKeep = [];
-      localLayers.forEach(layer => {
-        layerIDToKeep.push(layer.id);
+    if (!keyword && !this.onlyInRange && !this.onlyVisible) {
+      return layers;
+    }
+
+    const keepLayerIds = layers.map((layer: Layer) => layer.id);
+
+    layers.forEach((layer: Layer) => {
+      const layerOptions = layer.options || {};
+      const dataSourceOptions = layer.dataSource.options || {};
+      const metadata = (layerOptions as any).metadata || {};
+      const keywords = metadata.keywordList || [] ;
+      const layerKeywords = keywords.map((kw: string) => {
+        return kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       });
 
-      localLayers.forEach(layer => {
-        const localLayerKeywords = [];
-        if (layer.options && (layer.options as any).metadata && (layer.options as any).metadata.keywordList ) {
-          (layer.options as any).metadata.keywordList.forEach(kw => {
-            localLayerKeywords.push(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-          });
-        }
-        if (this.layerListService.getKeyword()) {
-          const localKeyword = this.layerListService.getKeyword().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const localLayerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          if (
-            !new RegExp(localKeyword, 'gi').test(localLayerTitle) &&
-            !(this.layerListService.getKeyword()
-            .toLowerCase() === layer.dataSource.options.type.toString().toLowerCase()) &&
-            localLayerKeywords.filter(kw => new RegExp(localKeyword, 'gi').test(kw)).length === 0) {
-            const index = layerIDToKeep.indexOf(layer.id);
-            if (index > -1) {
-              layerIDToKeep.splice(index, 1);
-            }
-          }
-        }
-        if (this.layerListService.onlyVisible && layer.visible === false) {
-          const index = layerIDToKeep.indexOf(layer.id);
+      if (keyword) {
+        const localKeyword = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const layerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const dataSourceType = dataSourceOptions.type || '';
+        const keywordRegex = new RegExp(localKeyword, 'gi');
+        const keywordInList = layerKeywords.find((kw: string) => keywordRegex.test(kw)) !== undefined;
+        if (
+          !keywordRegex.test(layerTitle) &&
+          !(keyword.toLowerCase() === dataSourceType.toLowerCase()) &&
+          !keywordInList
+        ) {
+          const index = keepLayerIds.indexOf(layer.id);
           if (index > -1) {
-            layerIDToKeep.splice(index, 1);
+            keepLayerIds.splice(index, 1);
           }
         }
-        if (this.layerListService.onlyInRange && layer.isInResolutionsRange === false) {
-          const index = layerIDToKeep.indexOf(layer.id);
-          if (index > -1) {
-            layerIDToKeep.splice(index, 1);
-          }
+      }
+
+      if (this.onlyVisible && layer.visible === false) {
+        const index = keepLayerIds.indexOf(layer.id);
+        if (index > -1) {
+          keepLayerIds.splice(index, 1);
         }
-      });
-      return localLayers
-      .filter(layer =>
-        layerIDToKeep.indexOf(layer.id) !== -1
-      );
+      }
 
-    } else {
-      return this._layers;
-    }
+      if (this.onlyInRange && layer.isInResolutionsRange === false) {
+        const index = keepLayerIds.indexOf(layer.id);
+        if (index > -1) {
+          keepLayerIds.splice(index, 1);
+        }
+      }
+    });
 
-  }
-
-  private sortLayers(layers: Layer[], type: 'id'|'title') {
-    if (type === 'id') {
-    return this.sortLayersByZindex(layers);
-    }
-    if (type === 'title') {
-    return this.sortLayersByTitle(layers);
-    }
-
+    return layers.filter((layer: Layer) => keepLayerIds.indexOf(layer.id) !== -1);
   }
 
   private sortLayersByZindex(layers: Layer[]) {
@@ -262,19 +222,68 @@ export class LayerListComponent implements AfterViewInit {
       return 0;
     });
   }
-  toggleOnlyVisible() {
-    this.layerListService.onlyVisible = !this.layerListService.onlyVisible;
-  }
-  toggleOnlyInRange() {
-    this.layerListService.onlyInRange = !this.layerListService.onlyInRange;
+
+  private computeOrderable(): boolean {
+    if (this.onlyInRange || this.onlyVisible ||
+      this.sortedAlpha || this.keyword) {
+      return false;
+    }
+    return true;
   }
 
-  private defineReorderLayersStatus() {
-    if (this.layerListService.onlyInRange || this.layerListService.onlyVisible ||
-      this.layerListService.sortedAlpha || this.layerListService.getKeyword()) {
-      this.disableReorderLayers = true;
+  private computeShowToolbar(): boolean {
+    switch (this.layerFilterAndSortOptions.showToolbar) {
+      case LayerListControlsEnum.always:
+        return true;
+      case LayerListControlsEnum.never:
+        return false;
+      default:
+        if (this.layers.length >= this.thresholdToFilterAndSort ||
+          this.keyword ||
+          this.onlyInRange ||
+          this.onlyVisible) {
+          return true;
+        }
+        return false;
+    }
+  }
+
+  private initLayerFilterAndSortOptions() {
+    if (this.layerFilterAndSortOptions.toolbarThreshold) {
+      this.thresholdToFilterAndSort = this.layerFilterAndSortOptions.toolbarThreshold;
+    }
+
+    if (this.layerFilterAndSortOptions.keyword && !this.keywordInitialized) {
+      this.keyword = this.layerFilterAndSortOptions.keyword;
+      this.keywordInitialized = true;
+    }
+    if (this.layerFilterAndSortOptions.sortedAlpha && !this.sortedAlphaInitialized) {
+      this.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
+      this.sortedAlphaInitialized = true;
+    }
+    if (this.layerFilterAndSortOptions.onlyVisible && !this.onlyVisibleInitialized &&
+      this.hasLayerNotVisible) {
+      this.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
+      this.onlyVisibleInitialized = true;
+    }
+    if (this.layerFilterAndSortOptions.onlyInRange && !this.onlyInRangeInitialized &&
+      this.hasLayerOutOfRange) {
+      this.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
+      this.onlyInRangeInitialized = true;
+    }
+  }
+
+  private setLayers(layers: Layer[]) {
+    this._layers = layers;
+
+    this.orderable = this.computeOrderable();
+
+    if (this.excludeBaseLayers) {
+      this.hasLayerNotVisible = layers.find(l => l.visible === false && !l.baseLayer) !== undefined;
+      this.hasLayerOutOfRange = layers.find(l => l.isInResolutionsRange === false && !l.baseLayer) !== undefined;
     } else {
-      this.disableReorderLayers = false;
+      this.hasLayerNotVisible = layers.find(l => l.visible === false) !== undefined;
+      this.hasLayerOutOfRange = layers.find(l => l.isInResolutionsRange === false) !== undefined;
     }
   }
 }
