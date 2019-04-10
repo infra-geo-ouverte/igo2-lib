@@ -3,7 +3,6 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  HostBinding,
   Optional,
   Self,
   ChangeDetectorRef,
@@ -68,7 +67,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (this.ready === false) {
       return;
     }
-
     this.deactivateControl();
     this.createDrawControl();
     this.toggleControl();

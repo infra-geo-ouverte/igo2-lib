@@ -7,35 +7,33 @@
 
 <div *ngIf="geometryTypeField" class="geometry-type-toggle">
   <mat-button-toggle-group
-    [value]="geometryType$ | async"
     [disabled]="(value$ | async) !== undefined"
-    (change)="onGeometryTypeChange($event.value)">
+    [ngModel]="geometryTypeModel"
+    (ngModelChange)="onGeometryTypeChange($event)">
     <mat-button-toggle
-      [value]="'Point'"
+      value="Point"
       [disabled]="geometryTypes.indexOf('Point') < 0">
       {{'igo.geo.geometry.point' | translate}}
     </mat-button-toggle>
     <mat-button-toggle
-      [value]="'LineString'"
+      value="LineString"
       [disabled]="geometryTypes.indexOf('LineString') < 0">
       {{'igo.geo.geometry.line' | translate}}
     </mat-button-toggle>
     <mat-button-toggle
-      [value]="'Polygon'"
+      value="Polygon"
       [disabled]="geometryTypes.indexOf('Polygon') < 0">
       {{'igo.geo.geometry.polygon' | translate}}
     </mat-button-toggle>
   </mat-button-toggle-group>
 </div>
 
-<mat-form-field
-  *ngIf="drawGuideField"
-  class="draw-guide-field">
+<mat-form-field *ngIf="drawGuideField" class="draw-guide-field">
   <input
     matInput
     type="number"
     [placeholder]="drawGuidePlaceholder"
-    [ngModel]="drawGuide"
+    [ngModel]="drawGuideModel"
     (ngModelChange)="onDrawGuideChange($event)">
   <mat-icon
     matPrefix

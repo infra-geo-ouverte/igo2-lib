@@ -1,8 +1,6 @@
 import {
   Component,
   Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -25,11 +23,6 @@ export class FormGroupComponent {
    * Form field group
    */
   @Input() group: FormFieldGroup;
-
-  /**
-   * Event emitted when the form control changes
-   */
-  @Output() formControlChanges = new EventEmitter<void>();
 
   constructor() {}
 
