@@ -8,15 +8,11 @@ export class LayerListService {
   public sortedAlpha = false;
   public onlyVisible = false;
   public onlyInRange = false;
-  public keywordInitializated = false;
-  public sortedAlphaInitializated = false;
-  public onlyVisibleInitializated = false;
-  public onlyInRangeInitializated = false;
+  public keywordInitialized = false;
+  public sortedAlphaInitialized = false;
+  public onlyVisibleInitialized = false;
+  public onlyInRangeInitialized = false;
 
   constructor() {}
-
-  getKeyword() {
-    return this.keyword;
-  }
 
 }
