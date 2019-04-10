@@ -11,6 +11,7 @@ import { ConfigOptions } from './config.interface';
   providedIn: 'root'
 })
 export class ConfigService {
+
   private config: object = {};
 
   constructor(private injector: Injector) {}
@@ -26,11 +27,9 @@ export class ConfigService {
    * This method loads "[path]" to get all config's variables
    */
   public load(options: ConfigOptions) {
-    if (options.default) {
-      this.config = options.default;
-    }
-
+    const baseConfig = options.default || {};
     if (!options.path) {
+      this.config = baseConfig;
       return true;
     }
 
@@ -51,7 +50,7 @@ export class ConfigService {
           )
         )
         .subscribe(configResponse => {
-          Object.assign(this.config, configResponse);
+          this.config = ObjectUtils.mergeDeep(baseConfig, configResponse);
           resolve(true);
         });
     });
