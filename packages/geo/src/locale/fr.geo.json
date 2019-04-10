@@ -75,11 +75,11 @@
       },
       "layer": {
         "hideLayer": "Masquer la couche",
-        "lowerLayer": "Descendre la couche",
+        "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
         "noLegendText": "Aucune légende disponible pour cette couche",
         "opacity": "Opacité",
-        "raiseLayer": "Monter la couche",
+        "raiseLayer": "Mettre en avant",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
