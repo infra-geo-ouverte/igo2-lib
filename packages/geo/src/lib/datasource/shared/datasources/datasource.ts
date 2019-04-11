@@ -6,6 +6,7 @@ import {
 } from './datasource.interface';
 
 import { DataService } from './data.service';
+import { generateIdFromSourceOptions } from '../../utils/id-generator';
 
 export abstract class DataSource {
   public id: string;
@@ -22,7 +23,9 @@ export abstract class DataSource {
 
   protected abstract createOlSource(): olSource;
 
-  protected abstract generateId(): string;
+  protected generateId(): string {
+    return generateIdFromSourceOptions(this.options);
+  }
 
   getLegend(): DataSourceLegendOptions[] {
     return this.options.legend ? [this.options.legend] : [];

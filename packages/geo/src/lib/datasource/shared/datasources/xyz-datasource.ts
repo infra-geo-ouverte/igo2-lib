@@ -1,4 +1,3 @@
-import { Md5 } from 'ts-md5';
 import olSourceXYZ from 'ol/source/XYZ';
 
 import { DataSource } from './datasource';
@@ -12,9 +11,4 @@ export class XYZDataSource extends DataSource {
     return new olSourceXYZ(this.options);
   }
 
-  protected generateId() {
-    const chain = 'xyz' + this.options.url;
-
-    return Md5.hashStr(chain) as string;
-  }
 }

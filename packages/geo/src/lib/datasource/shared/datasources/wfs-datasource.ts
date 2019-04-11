@@ -25,10 +25,6 @@ export class WFSDataSource extends DataSource {
     this.wfsService.getSourceFieldsFromWFS(this.options);
   }
 
-  protected generateId() {
-    return uuid();
-  }
-
   protected createOlSource(): olSourceVector {
     // reassignation of params to paramsWFS and url to urlWFS to have a common interface with wms-wfs datasources
     this.options.paramsWFS = this.options.params;

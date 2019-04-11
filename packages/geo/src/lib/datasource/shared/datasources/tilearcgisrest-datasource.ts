@@ -30,10 +30,6 @@ export class TileArcGISRestDataSource extends DataSource {
     return new olSourceTileArcGISRest(this.options);
   }
 
-  protected generateId() {
-    return uuid();
-  }
-
   getLegend(): DataSourceLegendOptions[] {
     const legend = super.getLegend();
     if (this.options.legendInfo === undefined || legend.length > 0) {

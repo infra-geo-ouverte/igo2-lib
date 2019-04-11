@@ -1,13 +1,3 @@
-import { Md5 } from 'ts-md5';
-
-import { uuid } from '@igo2/utils';
-
-import {
-  DataSourceOptions,
-  WMSDataSourceOptions,
-  WMTSDataSourceOptions
-} from '../../datasource';
-
 import { MapViewState } from './map.interface';
 
 /**
@@ -45,46 +35,6 @@ export function stringToLonLat(str: string): [number, number] | undefined {
 }
 
 /**
- * Generate a layer id from it's datasource options.
- * @param options Data source options
- * @returns A layer id
- */
-export function generateLayerIdFromSourceOptions(options: DataSourceOptions): string {
-  let id;
-  if (options.type === 'wms') {
-    id = generateWMSLayerIdFromSourceOptions(options as WMSDataSourceOptions);
-  } else if (options.type === 'wmts') {
-    id = generateWMTSLayerIdFromSourceOptions(options as WMTSDataSourceOptions);
-  } else {
-    id = uuid();
-  }
-
-  return id;
-}
-
-/**
- * Generate a layer id from WMS data source options
- * @param options WMS data source options
- * @returns A md5 hash of the the url and layers
- */
-export function generateWMSLayerIdFromSourceOptions(options: WMSDataSourceOptions) {
-  const layers = options.params.layers;
-  const chain = 'wms' + options.url + layers;
-  return Md5.hashStr(chain) as string;
-}
-
-/**
- * Generate a layer id from WMTS data source options
- * @param options WMTS data source options
- * @returns A md5 hash of the the url and layer
- */
-export function generateWMTSLayerIdFromSourceOptions(options: WMTSDataSourceOptions) {
-  const layer = options.layer;
-  const chain = 'wmts' + options.url + layer;
-  return Md5.hashStr(chain) as string;
-}
-
-/**
  * Return true of two view states are equal.
  * @param state1 View state
  * @param state2 View state
@@ -115,4 +65,14 @@ export function formatScale(scale) {
 
   scale = Math.round(scale / 1000);
   return scale + 'M';
+}
+
+/**
+ * Return the resolution from a scale denom
+ * @param Scale denom
+ * @returns Resolution
+ */
+export function getResolutionFromScale(scale: number): number {
+  const dpi = 25.4 / 0.28;
+  return scale / (39.37 * dpi);
 }

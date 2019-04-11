@@ -1,4 +1,3 @@
-import { Md5 } from 'ts-md5';
 import olSourceWMTS from 'ol/source/WMTS';
 
 import { createDefaultTileGrid } from '../../utils/tilegrid';
@@ -24,10 +23,4 @@ export class WMTSDataSource extends DataSource {
     return new olSourceWMTS(sourceOptions);
   }
 
-  protected generateId() {
-    const layer = this.options.layer;
-    const chain = 'wmts' + this.options.url + layer;
-
-    return Md5.hashStr(chain) as string;
-  }
 }

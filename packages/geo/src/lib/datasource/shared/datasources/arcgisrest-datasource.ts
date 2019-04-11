@@ -2,8 +2,6 @@ import olSourceVector from 'ol/source/Vector';
 import olFormatEsriJSON from 'ol/format/EsriJSON';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 
-import { uuid } from '@igo2/utils';
-
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
@@ -54,10 +52,6 @@ export class ArcGISRestDataSource extends DataSource {
       }.bind(this),
       strategy: olloadingstrategy.bbox
     });
-  }
-
-  protected generateId() {
-    return uuid();
   }
 
   getLegend(): DataSourceLegendOptions[] {
