@@ -39,6 +39,8 @@ export class AppSearchComponent {
 
   osmLayer: Layer;
 
+  selectedFeature: Feature;
+
   constructor(
     private languageService: LanguageService,
     private layerService: LayerService
@@ -59,6 +61,7 @@ export class AppSearchComponent {
   onSearchTermChange(term?: string) {
     if (term === undefined || term === '') {
       this.searchStore.clear();
+      this.selectedFeature = undefined;
     }
   }
 
@@ -98,14 +101,14 @@ export class AppSearchComponent {
     if (result.meta.dataType !== FEATURE) {
       return undefined;
     }
-    const feature = (result as SearchResult<Feature>).data;
+    this.selectedFeature = (result as SearchResult<Feature>).data;
 
     // Somethimes features have no geometry. It happens with some GetFeatureInfo
-    if (feature.geometry === undefined) {
+    if (this.selectedFeature.geometry === undefined) {
       return;
     }
 
-    this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+    this.map.overlay.setFeatures([this.selectedFeature], FeatureMotion.Default);
   }
 
   /**

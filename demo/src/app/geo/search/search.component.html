@@ -26,6 +26,11 @@
       (resultFocus)="onResultFocus($event)"
       (resultSelect)="onResultSelect($event)">
     </igo-search-results>
+
+  </igo-panel>
+
+  <igo-panel *ngIf="selectedFeature" title="Details">
+    <igo-feature-details [feature]="selectedFeature"></igo-feature-details>
   </igo-panel>
 
 </mat-card>
