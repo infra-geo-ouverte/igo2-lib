@@ -16,11 +16,13 @@
 </mat-card>
 <p></p>
 
-<mat-card [igoContextMenu] = actionbarMenu>
+<mat-card [igoContextMenu]= actionbarMenu>
   <mat-card-subtitle>Common</mat-card-subtitle>
   <mat-card-title>Action context-menu</mat-card-title>
   <div></div>
 </mat-card>
+
+
 
 <ng-template #actionbarMenu>
   <igo-actionbar
@@ -30,6 +32,3 @@
     [mode]="'context'">
   </igo-actionbar>
 </ng-template>
-
-
-

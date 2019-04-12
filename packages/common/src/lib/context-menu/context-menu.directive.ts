@@ -1,7 +1,7 @@
 import {
-  Directive, ElementRef,
+  Directive, ElementRef, EventEmitter,
   HostListener,
-  Input, TemplateRef,
+  Input, Output, TemplateRef,
   ViewContainerRef
 } from '@angular/core';
 
@@ -18,6 +18,7 @@ export class ContextMenuDirective {
   sub: Subscription;
 
   @Input('igoContextMenu') menuContext: TemplateRef<any>;
+  @Output() menuPosition = new EventEmitter<{x: number, y: number}>();
 
   constructor(public overlay: Overlay,
               public viewContainerRef: ViewContainerRef,
@@ -27,6 +28,7 @@ export class ContextMenuDirective {
    public onContextMenu({x, y}: MouseEvent): void {
     this.close();
     event.preventDefault();
+    this.menuPosition.emit({x, y});
     this.overlayRef = null;
     const positionStrategy = this.overlay.position()
       .flexibleConnectedTo({x, y})

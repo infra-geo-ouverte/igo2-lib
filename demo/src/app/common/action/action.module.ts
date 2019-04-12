@@ -5,18 +5,17 @@ import { IgoActionModule } from '@igo2/common';
 
 import { AppActionComponent } from './action.component';
 import { AppActionRoutingModule } from './action-routing.module';
-import {ContextMenuDirective} from '../../../../../packages/common/src/lib/context-menu';
+import {IgoContextMenuModule} from '../../../../../packages/common/src/lib/context-menu/context-menu.module';
 
 @NgModule({
   declarations: [
-    AppActionComponent,
-    ContextMenuDirective
-  ],
+    AppActionComponent],
   imports: [
     AppActionRoutingModule,
     MatButtonModule,
     MatCardModule,
-    IgoActionModule
+    IgoActionModule,
+    IgoContextMenuModule
   ],
   exports: [AppActionComponent]
 })
