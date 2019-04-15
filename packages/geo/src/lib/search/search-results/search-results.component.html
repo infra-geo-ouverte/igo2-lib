@@ -5,8 +5,8 @@
     [ngForOf]="results$ | async">
 
     <igo-collapsible
-      title="{{group.source.title}} ({{group.results.length}})"
-      *ngIf="mode === searchResultMode.Grouped; else flatTemplate">
+      *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
+      [title]="computeGroupTitle(group)">
       <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
     </igo-collapsible>
 
