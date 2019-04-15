@@ -29,10 +29,12 @@ export class FormService {
   }
 
   group(config: FormFieldGroupConfig, fields: FormField[]): FormFieldGroup {
+    const options = config.options || {};
     const control = this.formBuilder.group({});
     fields.forEach((field: FormField) => {
       control.addControl(field.name, field.control);
     });
+    control.setValidators(options.validator);
 
     return Object.assign({}, config, {fields, control}) as FormFieldGroup;
   }

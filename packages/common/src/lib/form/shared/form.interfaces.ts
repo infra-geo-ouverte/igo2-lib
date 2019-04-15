@@ -9,11 +9,17 @@ export interface Form {
 
 export interface FormFieldGroupConfig {
   name: string;
+  options?: FormFieldGroupOptions;
 }
 
 export interface FormFieldGroup extends FormFieldGroupConfig {
   fields: FormField[];
   control: FormGroup;
+}
+
+export interface FormFieldGroupOptions {
+  validator?: ValidatorFn;
+  errors?: {[key: string]: string};
 }
 
 export interface FormFieldConfig<T extends FormFieldInputs = FormFieldInputs> {
