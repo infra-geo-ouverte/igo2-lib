@@ -198,7 +198,7 @@
         "geometry": "Geometrie",
         "point": "Point",
         "line": "Ligne",
-        "polygon": "Polygone"
+        "polygon": "Surface"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
       "timeFilter": {
