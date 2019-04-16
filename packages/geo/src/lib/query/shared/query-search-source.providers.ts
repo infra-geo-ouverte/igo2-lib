@@ -10,7 +10,7 @@ import { QuerySearchSource } from './query-search-source';
  */
 export function querySearchSourceFactory(config: ConfigService) {
   return new QuerySearchSource(
-    config.getConfig(`searchSources.${QuerySearchSource.id}`)
+    config.getConfig(`searchSources.${QuerySearchSource.id}`) || {}
   );
 }
 

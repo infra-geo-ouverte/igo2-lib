@@ -12,3 +12,5 @@
 <div class="igo-form-group-extra-content">
   <ng-content></ng-content>
 </div>
+
+<mat-error *ngIf="formControl.errors">{{getErrorMessage() | translate}}</mat-error>

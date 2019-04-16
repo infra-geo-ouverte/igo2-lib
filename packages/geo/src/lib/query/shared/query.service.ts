@@ -102,7 +102,11 @@ export class QueryService {
 
     return features.map((feature: Feature, index: number) => {
       let title = feature.properties[queryDataSource.queryTitle];
-      title = title ? title : `${layer.title} (${index + 1})`;
+      if (!title && features.length > 1) {
+        title = `${layer.title} (${index + 1})`;
+      } else if (!title) {
+        title = layer.title;
+      }
       const meta = Object.assign({}, feature.meta || {}, {
         id: uuid(),
         title,

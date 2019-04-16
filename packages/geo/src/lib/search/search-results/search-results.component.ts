@@ -103,6 +103,21 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Compute a group title
+   * @param group Search results group
+   * @returns Group title
+   * @internal
+   */
+  computeGroupTitle(group: {source: SearchSource; results: SearchResult[]}): string {
+    const parts = [group.source.title];
+    const count = group.results.length;
+    if (count > 1) {
+      parts.push(`(${count})`);
+    }
+    return parts.join(' ');
+  }
+
+  /**
    * When a result is selected, update it's state in the store and emit
    * an event. A selected result is also considered focused
    * @param result Search result

@@ -4,16 +4,15 @@ import { EMPTY, Observable, of, concat } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { LanguageService, ConfigService } from '@igo2/core';
-import { CapabilitiesService, WMSDataSourceOptions } from '../../datasource';
-import { LayerOptions } from '../../layer';
-import { generateLayerIdFromSourceOptions } from '../../map';
+import { CapabilitiesService, WMSDataSourceOptions, generateIdFromSourceOptions } from '../../datasource';
+import { LayerOptions, ImageLayerOptions } from '../../layer';
+import { getResolutionFromScale } from '../../map';
 
 import {
   Catalog,
   CatalogItem,
   CatalogItemLayer,
-  CatalogItemGroup,
-  CatalogServiceOptions
+  CatalogItemGroup
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
 
@@ -84,7 +83,7 @@ export class CatalogService {
         map((layersOptions: LayerOptions[]) => {
           const items = layersOptions.map((layerOptions: LayerOptions) => {
             return {
-              id: generateLayerIdFromSourceOptions(layerOptions.sourceOptions),
+              id: generateIdFromSourceOptions(layerOptions.sourceOptions),
               title: layerOptions.title,
               type: CatalogItemType.Layer,
               options: layerOptions
@@ -134,56 +133,60 @@ export class CatalogService {
         id: `catalog.group.${layerList.Name}`,
         type: CatalogItemType.Group,
         title: layerList.Title,
-        // Add only layers with regFilter condition respected
-        items: layerList.Layer.reduce((arrLayer, layer) => {
-          let boolRegFilter = true;
-          // Check for regex validation on layer's name
+        items: layerList.Layer.reduce((layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
+          let regFiltersPassed = true;
           if (catalog.regFilters !== undefined) {
             // Test layer.Name for each regex define in config.json
-            for (const regFilter of catalog.regFilters) {
-              boolRegFilter = new RegExp(regFilter).test(layer.Name);
-              // If regex is respected, stop the for loop
-              if (boolRegFilter === true) {
-                break;
-              }
-            }
+            regFiltersPassed = catalog.regFilters.find((regFilter: string) => {
+              return new RegExp(regFilter).test(layer.Name);
+            }) !== undefined;
           }
 
-          // If layer regex is okay (or not define), add the layer to the group
-          if (boolRegFilter === true) {
-            const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
-            const abstract = layer.Abstract ? layer.Abstract : undefined;
-            const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
-            const timeFilter = this.capabilitiesService.getTimeFilter(layer);
-            const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
+          if (regFiltersPassed === false) {
+            return layers;
+          }
 
-            const sourceOptions = {
-              type: 'wms',
-              url: catalog.url,
-              params: {
-                layers: layer.Name
-              },
-              timeFilter: { ...timeFilter, ...catalog.timeFilter },
-              timeFilterable: timeFilterable ? true : false
-            } as WMSDataSourceOptions;
+          const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
+          const abstract = layer.Abstract ? layer.Abstract : undefined;
+          const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
+          const timeFilter = this.capabilitiesService.getTimeFilter(layer);
+          const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
 
-            arrLayer.push({
-              id: generateLayerIdFromSourceOptions(sourceOptions),
-              type: CatalogItemType.Layer,
+          const sourceOptions = {
+            type: 'wms',
+            url: catalog.url,
+            params: {
+              layers: layer.Name,
+              feature_count:  catalog.count
+            },
+            timeFilter: { ...timeFilter, ...catalog.timeFilter },
+            timeFilterable: timeFilterable ? true : false,
+            queryable: layer.queryable,
+            queryFormat: catalog.queryFormat,
+            queryHtmlTarget: catalog.queryHtmlTarget || 'innerhtml'
+          } as WMSDataSourceOptions;
+
+          layers.push({
+            id: generateIdFromSourceOptions(sourceOptions),
+            type: CatalogItemType.Layer,
+            title: layer.Title,
+            options: {
               title: layer.Title,
-              options: {
-                title: layer.Title,
-                metadata: {
-                  url: metadata ? metadata.OnlineResource : undefined,
-                  extern: metadata ? true : undefined,
-                  abstract,
-                  keywordList
-                },
-                sourceOptions
-              }
-            });
-          }
-          return arrLayer;
+              maxResolution:
+                getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
+              minResolution:
+                getResolutionFromScale(layer.MinScaleDenominator) || 0,
+              metadata: {
+                url: metadata ? metadata.OnlineResource : undefined,
+                extern: metadata ? true : undefined,
+                abstract,
+                keywordList
+              },
+              sourceOptions
+            }
+          });
+          return layers;
+
         }, [])
 
       };

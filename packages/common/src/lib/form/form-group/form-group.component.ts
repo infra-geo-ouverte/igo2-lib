@@ -3,7 +3,9 @@ import {
   Input,
   ChangeDetectionStrategy
 } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
+import { getControlErrorMessage } from '../shared/form.utils';
 import { FormField, FormFieldGroup } from '../shared/form.interfaces';
 
 /**
@@ -23,6 +25,16 @@ export class FormGroupComponent {
    * Form field group
    */
   @Input() group: FormFieldGroup;
+
+  /**
+   * Field placeholder
+   */
+  @Input() errors: {[key: string]: string};
+
+  /**
+   * Form group control
+   */
+  get formControl(): FormGroup { return this.group.control; }
 
   constructor() {}
 
@@ -53,6 +65,14 @@ export class FormGroupComponent {
   getFieldNgClass(field: FormField): {[key: string]: boolean} {
     const colspan = this.getFieldColSpan(field);
     return {[`igo-form-field-colspan-${colspan}`]: true};
+  }
+
+  /**
+   * Get error message
+   */
+  getErrorMessage(): string {
+    const options = this.group.options || {};
+    return getControlErrorMessage(this.formControl, options.errors || {});
   }
 
 }

@@ -10,4 +10,10 @@ export interface ImageLayerOptions extends LayerOptions {
   sourceOptions?: WMSDataSourceOptions;
   token?: string;
   ol?: olLayerImage;
+  metadata?: {
+    url?: string;
+    extern?: boolean;
+    abstract?: string;
+    keywordList?: string[];
+  };
 }

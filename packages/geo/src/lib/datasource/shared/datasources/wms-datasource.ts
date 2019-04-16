@@ -1,11 +1,9 @@
-import { Md5 } from 'ts-md5';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
-import { WFSDataSourceOptions } from './wfs-datasource.interface';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
@@ -145,13 +143,6 @@ export class WMSDataSource extends DataSource {
         ? ogcFiltersDefaultValue
         : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
     return new olSourceImageWMS(this.options);
-  }
-
-  protected generateId() {
-    const layers = this.params.layers;
-    const chain = 'wms' + this.options.url + layers;
-
-    return Md5.hashStr(chain) as string;
   }
 
   getLegend(): DataSourceLegendOptions[] {

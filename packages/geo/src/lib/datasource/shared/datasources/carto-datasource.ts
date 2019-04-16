@@ -1,7 +1,5 @@
 import olSourceCarto from 'ol/source/CartoDB';
 
-import { uuid } from '@igo2/utils';
-
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { CartoDataSourceOptions } from './carto-datasource.interface';
@@ -37,10 +35,6 @@ export class CartoDataSource extends DataSource {
       this.options
     );
     return new olSourceCarto(sourceOptions);
-  }
-
-  protected generateId() {
-    return uuid();
   }
 
   getLegend(): DataSourceLegendOptions[] {

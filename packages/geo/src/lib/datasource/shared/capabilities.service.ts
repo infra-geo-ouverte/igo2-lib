@@ -9,6 +9,7 @@ import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
+import { getResolutionFromScale } from '../../map';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
 
 import {
@@ -165,9 +166,9 @@ export class CapabilitiesService {
       _layerOptionsFromCapabilities: {
         title: layer.Title,
         maxResolution:
-          this.getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
+          getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
         minResolution:
-          this.getResolutionFromScale(layer.MinScaleDenominator) || 0,
+          getResolutionFromScale(layer.MinScaleDenominator) || 0,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
@@ -317,18 +318,6 @@ export class CapabilitiesService {
       }
       return undefined;
     }
-  }
-
-  private cache(url: string, capabilities: any) {
-    this.capabilitiesStore.push({
-      url,
-      capabilities
-    });
-  }
-
-  private getResolutionFromScale(scale: number): number {
-    const dpi = 25.4 / 0.28;
-    return scale / (39.37 * dpi);
   }
 
   getTimeFilter(layer) {
