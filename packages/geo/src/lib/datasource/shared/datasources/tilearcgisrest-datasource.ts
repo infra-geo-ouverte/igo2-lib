@@ -5,6 +5,7 @@ import { uuid } from '@igo2/utils';
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class TileArcGISRestDataSource extends DataSource {
   public ol: olSourceTileArcGISRest;
@@ -23,7 +24,7 @@ export class TileArcGISRestDataSource extends DataSource {
   get queryHtmlTarget(): string {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
-      : 'newtab';
+      : QueryHtmlTarget.BLANK;
   }
 
   protected createOlSource(): olSourceTileArcGISRest {

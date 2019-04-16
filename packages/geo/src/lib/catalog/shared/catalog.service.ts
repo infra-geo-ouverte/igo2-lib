@@ -15,6 +15,7 @@ import {
   CatalogItemGroup
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
+import { QueryHtmlTarget } from '../../query';
 
 @Injectable({
   providedIn: 'root'
@@ -164,7 +165,7 @@ export class CatalogService {
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
             queryFormat: configuredQueryFormat,
-            queryHtmlTarget: catalog.queryHtmlTarget || 'innerhtml'
+            queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
           } as WMSDataSourceOptions;
 
           layers.push({
