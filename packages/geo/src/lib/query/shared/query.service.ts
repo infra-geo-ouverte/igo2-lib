@@ -20,7 +20,7 @@ import {
   TileArcGISRestDataSource
 } from '../../datasource';
 
-import { QueryFormat } from './query.enums';
+import { QueryFormat, QueryHtmlTarget } from './query.enums';
 import { QueryOptions, QueryableDataSource } from './query.interfaces';
 
 @Injectable({
@@ -168,7 +168,7 @@ export class QueryService {
     return [];
   }
 
-  private extractHtmlData(res, htmlTarget, url) {
+  private extractHtmlData(res, htmlTarget: QueryHtmlTarget, url) {
     // _blank , iframe or undefined
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
@@ -226,6 +226,10 @@ export class QueryService {
     const format = new olformat.WKT();
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
+
+    if (htmlTarget !== QueryHtmlTarget.BLANK && htmlTarget !== QueryHtmlTarget.IFRAME ) {
+      htmlTarget = QueryHtmlTarget.IFRAME;
+    }
 
     const bodyTagStart = res.toLowerCase().indexOf('<body>');
     const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
