@@ -126,7 +126,7 @@ export class CatalogService {
         this.includeRecursiveItems(catalog, group, items);
         continue;
       }
-
+      const layersQueryFormat = this.findCatalogInfoFormat(catalog);
       // TODO: Slice that into multiple methods
       // Define object of group layer
       const groupItem = {
@@ -134,6 +134,7 @@ export class CatalogService {
         type: CatalogItemType.Group,
         title: layerList.Title,
         items: layerList.Layer.reduce((layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
+          const configuredQueryFormat = this.retriveLayerInfoFormat(layer, layersQueryFormat);
           let regFiltersPassed = true;
           if (catalog.regFilters !== undefined) {
             // Test layer.Name for each regex define in config.json
@@ -162,7 +163,7 @@ export class CatalogService {
             timeFilter: { ...timeFilter, ...catalog.timeFilter },
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
-            queryFormat: catalog.queryFormat,
+            queryFormat: configuredQueryFormat,
             queryHtmlTarget: catalog.queryHtmlTarget || 'innerhtml'
           } as WMSDataSourceOptions;
 
@@ -198,6 +199,38 @@ export class CatalogService {
       // Break the group (don't add a group of layer for each of their layer!)
       break;
     }
+  }
+
+  private retriveLayerInfoFormat(catalogLayer: any, layersQueryFormat: {}[]) {
+    const currentLayerInfoFormat = layersQueryFormat.filter((f) => (f as any).layer === catalogLayer.Name)[0];
+    const baseInfoFormat = layersQueryFormat.filter((f) => (f as any).layer === '*')[0];
+    let queryFormat;
+    if (currentLayerInfoFormat) {
+      queryFormat = (currentLayerInfoFormat as any).queryFormat;
+    } else if (baseInfoFormat) {
+      queryFormat = (baseInfoFormat as any).queryFormat;
+    }
+    return queryFormat;
+  }
+
+  private findCatalogInfoFormat(catalog: Catalog): {}[] {
+    const layersQueryFormat = [];
+    if (catalog.queryFormat) {
+      Object.keys(catalog.queryFormat).forEach(infoF => {
+        if (catalog.queryFormat[infoF] instanceof Array) {
+          catalog.queryFormat[infoF].forEach(element => {
+            if (layersQueryFormat.filter(specific => specific.layer === element).length === 0) {
+              layersQueryFormat.push({ layer: element, queryFormat: infoF });
+            }
+          });
+        } else {
+          if (layersQueryFormat.filter(specific => specific.layer === catalog.queryFormat[infoF]).length === 0) {
+            layersQueryFormat.push({ layer: catalog.queryFormat[infoF], queryFormat: infoF });
+          }
+        }
+      });
+    }
+    return layersQueryFormat;
   }
 
 }
