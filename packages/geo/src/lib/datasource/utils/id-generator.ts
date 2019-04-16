@@ -52,7 +52,7 @@ export function generateWMTSIdFromSourceOptions(options: WMTSDataSourceOptions) 
  * @returns A md5 hash of the the url and layer
  */
 export function generateXYZIdFromSourceOptions(options: WMTSDataSourceOptions) {
-  const chain = 'xyz' + this.options.url;
+  const chain = 'xyz' + options.url;
   return Md5.hashStr(chain) as string;
 }
 
@@ -63,7 +63,7 @@ export function generateXYZIdFromSourceOptions(options: WMTSDataSourceOptions) {
  */
 export function generateFeatureIdFromSourceOptions(options: WMTSDataSourceOptions) {
   if (! options.url) { return generateId(options); }
-  const chain = 'feature' + this.options.url;
+  const chain = 'feature' + options.url;
   return Md5.hashStr(chain) as string;
 }
 
