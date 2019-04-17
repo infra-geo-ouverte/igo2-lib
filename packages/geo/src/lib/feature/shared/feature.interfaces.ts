@@ -39,6 +39,7 @@ export interface FeatureStoreStrategyOptions {}
 
 export interface FeatureStoreLoadingStrategyOptions extends FeatureStoreStrategyOptions {
   getFeatureId?: (Feature) => EntityKey;
+  motion?: FeatureMotion;
 }
 
 export interface FeatureStoreLoadingLayerStrategyOptions extends FeatureStoreStrategyOptions {}
