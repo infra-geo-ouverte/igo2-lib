@@ -82,12 +82,30 @@ export class WMSDataSource extends DataSource {
       options.sourceFields = [];
     }
 
+    if (sourceParams.layers.split(',').length > 1 && this.options
+    && (this.options as OgcFilterableDataSourceOptions).ogcFilters
+    && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled) {
+      console.log('*******************************');
+      console.log('BE CAREFULL, YOUR WMS LAYERS (' + sourceParams.layers
+      + ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! ');
+      console.log('*******************************');
+  }
+
     if (this.options
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
       && (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters) {
         const filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
-        this.ol.updateParams({ filter: this.ogcFilterWriter.buildFilter(filters) });
+        const rebuildFilter = this.ogcFilterWriter.buildFilter(filters);
+        let appliedFilter = '';
+        if (rebuildFilter.length > 0 && sourceParams.layers.indexOf(',') !== -1) {
+          sourceParams.layers.split(',').forEach(element => {
+            appliedFilter = appliedFilter + '(' + rebuildFilter.replace('filter=', '') + ')';
+          });
+        } else {
+          appliedFilter = rebuildFilter;
+        }
+        this.ol.updateParams({ filter: appliedFilter });
       }
 
   }
