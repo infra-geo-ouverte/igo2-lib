@@ -30,7 +30,10 @@ import {
   FEATURE,
   FeatureStore,
   FeatureStoreLoadingStrategy,
-  FeatureStoreSelectionStrategy
+  FeatureStoreSelectionStrategy,
+  tryBindStoreLayer,
+  tryAddLoadingStrategy,
+  tryAddSelectionStrategy
 } from '../../feature';
 import { DrawControl } from '../../geometry';
 import { VectorLayer } from '../../layer';
@@ -380,33 +383,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private initStore() {
     const store = this.store;
 
-    if (store.layer === undefined) {
-      const layer = new VectorLayer({
-        title: 'Measures',
-        zIndex: 200,
-        source: new FeatureDataSource(),
-        style: createMeasureLayerStyle(),
-        showInLayerList: false
-      });
-      store.bindLayer(layer);
-    }
-
-    if (store.layer.map === undefined) {
-      this.map.addLayer(store.layer);
-    }
-
-    if (store.getStrategyOfType(FeatureStoreLoadingStrategy) === undefined) {
-      store.addStrategy(new FeatureStoreLoadingStrategy({}));
-    }
-    store.activateStrategyOfType(FeatureStoreLoadingStrategy);
-
-    if (store.getStrategyOfType(FeatureStoreSelectionStrategy) === undefined) {
-      store.addStrategy(new FeatureStoreSelectionStrategy({
-        map: this.map,
-        many: true
-      }));
-    }
-    store.activateStrategyOfType(FeatureStoreSelectionStrategy);
+    tryBindStoreLayer(store);
+    tryAddLoadingStrategy(store);
+    tryAddSelectionStrategy(store);
 
     this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent) => {
       const feature = event.feature;

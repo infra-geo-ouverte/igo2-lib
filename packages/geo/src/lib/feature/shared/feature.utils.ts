@@ -12,8 +12,15 @@ import {
 } from '@igo2/common';
 
 import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer';
+import { FeatureDataSource } from '../../datasource';
 import { FeatureMotion } from './feature.enums';
 import { Feature } from './feature.interfaces';
+import { FeatureStore } from './store';
+import {
+  FeatureStoreLoadingStrategy,
+   FeatureStoreSelectionStrategy
+} from './strategies';
 
 /**
  * Create an Openlayers feature object out of a feature definition.
@@ -232,4 +239,55 @@ export function moveToFeatures(
  */
 export function hideOlFeature(olFeature: OlFeature) {
   olFeature.setStyle(new olstyle.Style({}));
+}
+
+/**
+ * Trys bind store layer
+ * @param store The store to bind the layer
+ * @param layer An optional VectorLayer
+ */
+export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
+  if (store.layer !== undefined) {
+    if (store.layer.map === undefined) {
+      store.map.addLayer(store.layer);
+    }
+    return;
+  }
+
+  layer = layer ? layer : new VectorLayer({
+    zIndex: 200,
+    source: new FeatureDataSource()
+  });
+  store.bindLayer(layer);
+  if (store.layer.map === undefined) {
+    store.map.addLayer(store.layer);
+  }
+}
+
+/**
+ * Trys add loading strategy
+ * @param store The store to bind the loading strategy
+ * @param strategy An optional loading strategy
+ */
+export function tryAddLoadingStrategy(store: FeatureStore, strategy?: FeatureStoreLoadingStrategy) {
+  if (store.getStrategyOfType(FeatureStoreLoadingStrategy) !== undefined) {
+    store.activateStrategyOfType(FeatureStoreLoadingStrategy);
+    return;
+  }
+
+  strategy = strategy ? strategy : new FeatureStoreLoadingStrategy({});
+  store.addStrategy(strategy);
+  strategy.activate();
+}
+
+/**
+ * Trys add selection strategy
+ * @param store The store to bind the selection strategy
+ * @param [strategy] An optional selection strategy
+ */
+export function tryAddSelectionStrategy(store: FeatureStore, strategy?: FeatureStoreSelectionStrategy) {
+  if (store.getStrategyOfType(FeatureStoreSelectionStrategy) !== undefined) {
+    store.activateStrategyOfType(FeatureStoreSelectionStrategy);
+    return;
+  }
 }
