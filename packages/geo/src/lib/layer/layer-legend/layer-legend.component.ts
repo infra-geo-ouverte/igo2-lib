@@ -1,6 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../shared/layers';
+import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -27,5 +28,25 @@ export class LayerLegendComponent {
   }
   private _legend;
 
-  constructor() {}
+  constructor(private capabilitiesService: CapabilitiesService) {}
+
+   computeItemTitle(item): string {
+    const layerOptions = this.layer.dataSource.options as any;
+    if (layerOptions.type === 'wms' && layerOptions.optionsFromCapabilities) {
+      let localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
+      layerOptions.params.layers.split(',').forEach(layer => {
+        if (layer === item.title) {
+          localLayerOptions.params.layers = layer;
+          this.capabilitiesService.getWMSOptions(localLayerOptions).subscribe(r => localLayerOptions = r);
+        }
+      });
+      if (localLayerOptions && localLayerOptions._layerOptionsFromCapabilities) {
+        return localLayerOptions._layerOptionsFromCapabilities.title;
+      } else {
+        return item.title;
+      }
+    } else {
+      return item.title;
+    }
+  }
 }
