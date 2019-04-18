@@ -19,7 +19,7 @@ import { Feature } from './feature.interfaces';
 import { FeatureStore } from './store';
 import {
   FeatureStoreLoadingStrategy,
-   FeatureStoreSelectionStrategy
+  FeatureStoreSelectionStrategy
 } from './strategies';
 
 /**
@@ -242,7 +242,9 @@ export function hideOlFeature(olFeature: OlFeature) {
 }
 
 /**
- * Trys bind store layer
+ * Try to bind a layer to a store if none is bound already.
+ * The layer will also be added to the store's map.
+ * If no layer is given to that function, a basic one will be created.
  * @param store The store to bind the layer
  * @param layer An optional VectorLayer
  */
@@ -255,7 +257,6 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
   }
 
   layer = layer ? layer : new VectorLayer({
-    zIndex: 200,
     source: new FeatureDataSource()
   });
   store.bindLayer(layer);
@@ -265,7 +266,8 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
 }
 
 /**
- * Trys add loading strategy
+ * Try to add a loading strategy to a store and activate it.
+ * If no strategy is given to that function, a basic one will be created.
  * @param store The store to bind the loading strategy
  * @param strategy An optional loading strategy
  */
@@ -281,7 +283,8 @@ export function tryAddLoadingStrategy(store: FeatureStore, strategy?: FeatureSto
 }
 
 /**
- * Trys add selection strategy
+ * Try to add a selection strategy to a store and activate it.
+ * If no strategy is given to that function, a basic one will be created.
  * @param store The store to bind the selection strategy
  * @param [strategy] An optional selection strategy
  */
@@ -290,4 +293,9 @@ export function tryAddSelectionStrategy(store: FeatureStore, strategy?: FeatureS
     store.activateStrategyOfType(FeatureStoreSelectionStrategy);
     return;
   }
+  strategy = strategy ? strategy : new FeatureStoreSelectionStrategy({
+    map: store.map
+  });
+  store.addStrategy(strategy);
+  strategy.activate();
 }

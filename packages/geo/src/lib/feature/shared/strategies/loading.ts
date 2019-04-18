@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 
 import { FeatureMotion } from '../feature.enums';
-import { Feature, FeatureStoreLoadingStrategyOptions, FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import { Feature, FeatureStoreLoadingStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
 import { FeatureStoreStrategy } from './strategy';
 
@@ -22,7 +22,6 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
 
   constructor(protected options: FeatureStoreLoadingStrategyOptions) {
     super(options);
-    this.options = options;
   }
 
   /**
@@ -121,7 +120,7 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
    * @returns The motion selected
    */
   private selectMotion(store: FeatureStore) {
-    if (this.options.motion !== undefined) {return this.options.motion; }
+    if (this.options.motion !== undefined) { return this.options.motion; }
 
     if (store.pristine === true) {
       // If features have just been loaded into the store, move/zoom on them
