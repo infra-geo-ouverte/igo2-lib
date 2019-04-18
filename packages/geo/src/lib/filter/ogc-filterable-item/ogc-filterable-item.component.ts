@@ -10,7 +10,8 @@ import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/
 
 import {
   OgcFilterableDataSource,
-  OgcFiltersOptions
+  OgcFiltersOptions,
+  OgcInterfaceFilterOptions
 } from '../shared/ogc-filter.interface';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
@@ -165,8 +166,8 @@ export class OgcFilterableItemComponent implements OnInit {
 
   addFilterToSequence() {
     this.filtersCollapsed = false;
-    const interfaceOgcFilters = this.datasource.options.ogcFilters.interfaceOgcFilters;
-    const arr = interfaceOgcFilters ? interfaceOgcFilters : [];
+    const interfaceOgcFilters: OgcInterfaceFilterOptions[] = this.datasource.options.ogcFilters.interfaceOgcFilters;
+    const arr = interfaceOgcFilters || [];
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
     if (this.datasource.options.sourceFields.length > 0) {

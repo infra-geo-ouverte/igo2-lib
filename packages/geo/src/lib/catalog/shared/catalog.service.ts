@@ -206,8 +206,8 @@ export class CatalogService {
     layerNameFromCatalog: string,
     layersQueryFormat: { layer: string, queryFormat: QueryFormat }[]): QueryFormat {
 
-    const currentLayerInfoFormat = layersQueryFormat.filter(f => f.layer === layerNameFromCatalog)[0];
-    const baseInfoFormat = layersQueryFormat.filter(f => f.layer === '*')[0];
+    const currentLayerInfoFormat = layersQueryFormat.find(f => f.layer === layerNameFromCatalog);
+    const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
     let queryFormat: QueryFormat;
     if (currentLayerInfoFormat) {
       queryFormat = currentLayerInfoFormat.queryFormat;
@@ -218,25 +218,23 @@ export class CatalogService {
   }
 
   private findCatalogInfoFormat(catalog: Catalog): {layer: string, queryFormat: QueryFormat}[] {
-    const layersQueryFormat = [];
+    const layersQueryFormat: {layer: string, queryFormat: QueryFormat}[] = [];
     if (!catalog.queryFormat) {
       return layersQueryFormat;
-    } else {
-      Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
-        if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
-          catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
-            if (layersQueryFormat.filter(specific => specific.layer === layerName).length === 0) {
-              layersQueryFormat.push({ layer: layerName, queryFormat: configuredInfoFormat });
-            }
-          });
-        } else {
-          if (layersQueryFormat.filter(specific => specific.layer === catalog.queryFormat[configuredInfoFormat]).length === 0) {
-            layersQueryFormat.push({ layer: catalog.queryFormat[configuredInfoFormat], queryFormat: configuredInfoFormat });
-          }
-        }
-      });
-      return layersQueryFormat;
     }
+    Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
+      if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
+        catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
+          if (!layersQueryFormat.find(specific => specific.layer === layerName)) {
+            layersQueryFormat.push({ layer: layerName, queryFormat: configuredInfoFormat as QueryFormat });
+          }
+        });
+      } else {
+        if (!layersQueryFormat.find(specific => specific.layer === catalog.queryFormat[configuredInfoFormat])) {
+          layersQueryFormat.push({ layer: catalog.queryFormat[configuredInfoFormat], queryFormat: configuredInfoFormat as QueryFormat });
+        }
+      }
+    });
+    return layersQueryFormat;
   }
-
 }
