@@ -11,18 +11,9 @@ export class OGCFilterService {
   constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
-    let appliedFilter = '';
-    const wmsDatasourceLayers = wmsDatasource.options.params.layers;
-    if (filterString.length > 0 && wmsDatasourceLayers.indexOf(',') !== -1) {
-      wmsDatasourceLayers.split(',').forEach(element => {
-        appliedFilter = appliedFilter + '(' + filterString.replace('filter=', '') + ')';
-      });
-      appliedFilter = 'filter=' + appliedFilter;
-    } else {
-      appliedFilter = filterString;
-    }
+    const appliedFilter = wmsDatasource.formatProcessedOgcFilter(filterString, wmsDatasource.options.params.layers);
     const wmsFilterValue = appliedFilter.length > 0
-        ? appliedFilter.substr(7, appliedFilter.length + 1)
+        ? appliedFilter.replace('filter=', '')
         : undefined;
     wmsDatasource.ol.updateParams({ filter: wmsFilterValue });
   }
