@@ -15,7 +15,7 @@ import {
   CatalogItemGroup
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
-import { QueryHtmlTarget } from '../../query';
+import { QueryHtmlTarget, QueryFormat } from '../../query';
 
 @Injectable({
   providedIn: 'root'
@@ -135,7 +135,7 @@ export class CatalogService {
         type: CatalogItemType.Group,
         title: layerList.Title,
         items: layerList.Layer.reduce((layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
-          const configuredQueryFormat = this.retriveLayerInfoFormat(layer, layersQueryFormat);
+          const configuredQueryFormat = this.retriveLayerInfoFormat(layer.Name, layersQueryFormat);
           let regFiltersPassed = true;
           if (catalog.regFilters !== undefined) {
             // Test layer.Name for each regex define in config.json
@@ -202,36 +202,41 @@ export class CatalogService {
     }
   }
 
-  private retriveLayerInfoFormat(catalogLayer: any, layersQueryFormat: {}[]) {
-    const currentLayerInfoFormat = layersQueryFormat.filter((f) => (f as any).layer === catalogLayer.Name)[0];
-    const baseInfoFormat = layersQueryFormat.filter((f) => (f as any).layer === '*')[0];
-    let queryFormat;
+  private retriveLayerInfoFormat(
+    layerNameFromCatalog: string,
+    layersQueryFormat: { layer: string, queryFormat: QueryFormat }[]): QueryFormat {
+
+    const currentLayerInfoFormat = layersQueryFormat.filter(f => f.layer === layerNameFromCatalog)[0];
+    const baseInfoFormat = layersQueryFormat.filter(f => f.layer === '*')[0];
+    let queryFormat: QueryFormat;
     if (currentLayerInfoFormat) {
-      queryFormat = (currentLayerInfoFormat as any).queryFormat;
+      queryFormat = currentLayerInfoFormat.queryFormat;
     } else if (baseInfoFormat) {
-      queryFormat = (baseInfoFormat as any).queryFormat;
+      queryFormat = baseInfoFormat.queryFormat;
     }
     return queryFormat;
   }
 
-  private findCatalogInfoFormat(catalog: Catalog): {}[] {
+  private findCatalogInfoFormat(catalog: Catalog): {layer: string, queryFormat: QueryFormat}[] {
     const layersQueryFormat = [];
-    if (catalog.queryFormat) {
-      Object.keys(catalog.queryFormat).forEach(infoF => {
-        if (catalog.queryFormat[infoF] instanceof Array) {
-          catalog.queryFormat[infoF].forEach(element => {
-            if (layersQueryFormat.filter(specific => specific.layer === element).length === 0) {
-              layersQueryFormat.push({ layer: element, queryFormat: infoF });
+    if (!catalog.queryFormat) {
+      return layersQueryFormat;
+    } else {
+      Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
+        if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
+          catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
+            if (layersQueryFormat.filter(specific => specific.layer === layerName).length === 0) {
+              layersQueryFormat.push({ layer: layerName, queryFormat: configuredInfoFormat });
             }
           });
         } else {
-          if (layersQueryFormat.filter(specific => specific.layer === catalog.queryFormat[infoF]).length === 0) {
-            layersQueryFormat.push({ layer: catalog.queryFormat[infoF], queryFormat: infoF });
+          if (layersQueryFormat.filter(specific => specific.layer === catalog.queryFormat[configuredInfoFormat]).length === 0) {
+            layersQueryFormat.push({ layer: catalog.queryFormat[configuredInfoFormat], queryFormat: configuredInfoFormat });
           }
         }
       });
+      return layersQueryFormat;
     }
-    return layersQueryFormat;
   }
 
 }
