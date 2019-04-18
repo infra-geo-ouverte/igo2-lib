@@ -81,21 +81,16 @@ export class WMSDataSource extends DataSource {
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     }
-    const ogcFilterableDataSourceOptions: OgcFilterableDataSourceOptions = this.options;
-    if (sourceParams.layers.split(',').length > 1 && this.options
-    && ogcFilterableDataSourceOptions.ogcFilters
-    && ogcFilterableDataSourceOptions.ogcFilters.enabled) {
+    const initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+    if (sourceParams.layers.split(',').length > 1 && this.options && initOgcFilters && initOgcFilters.enabled) {
       console.log('*******************************');
       console.log('BE CAREFULL, YOUR WMS LAYERS (' + sourceParams.layers
       + ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! ');
       console.log('*******************************');
   }
 
-    if (this.options
-      && ogcFilterableDataSourceOptions.ogcFilters
-      && ogcFilterableDataSourceOptions.ogcFilters.enabled
-      && ogcFilterableDataSourceOptions.ogcFilters.filters) {
-        const filters = ogcFilterableDataSourceOptions.ogcFilters.filters;
+    if (this.options && initOgcFilters && initOgcFilters.enabled && initOgcFilters.filters) {
+        const filters = initOgcFilters.filters;
         const rebuildFilter = this.ogcFilterWriter.buildFilter(filters);
         const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
         const wmsFilterValue = appliedFilter.length > 0
@@ -153,22 +148,11 @@ export class WMSDataSource extends DataSource {
         ? this.options.paramsWFS.version
         : '2.0.0';
     }
-    const ogcFilterableDataSourceOptions: OgcFilterableDataSourceOptions = this.options;
+    let initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     const ogcFiltersDefaultValue = false; // default values for wms.
-    ogcFilterableDataSourceOptions.ogcFilters =
-    ogcFilterableDataSourceOptions.ogcFilters === undefined
-        ? {}
-        : ogcFilterableDataSourceOptions.ogcFilters;
-    ogcFilterableDataSourceOptions.ogcFilters.enabled =
-    ogcFilterableDataSourceOptions.ogcFilters.enabled ===
-      undefined
-        ? ogcFiltersDefaultValue
-        : ogcFilterableDataSourceOptions.ogcFilters.enabled;
-    ogcFilterableDataSourceOptions.ogcFilters.editable =
-    ogcFilterableDataSourceOptions.ogcFilters.editable ===
-      undefined
-        ? ogcFiltersDefaultValue
-        : ogcFilterableDataSourceOptions.ogcFilters.editable;
+    initOgcFilters = initOgcFilters === undefined ? {} : initOgcFilters;
+    initOgcFilters.enabled = initOgcFilters.enabled === undefined ? ogcFiltersDefaultValue : initOgcFilters.enabled;
+    initOgcFilters.editable = initOgcFilters.editable === undefined ? ogcFiltersDefaultValue : initOgcFilters.editable;
     return new olSourceImageWMS(this.options);
   }
 
