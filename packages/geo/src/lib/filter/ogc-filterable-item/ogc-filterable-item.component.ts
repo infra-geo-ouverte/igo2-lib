@@ -165,7 +165,8 @@ export class OgcFilterableItemComponent implements OnInit {
 
   addFilterToSequence() {
     this.filtersCollapsed = false;
-    const arr = this.datasource.options.ogcFilters.interfaceOgcFilters ? this.datasource.options.ogcFilters.interfaceOgcFilters : [];
+    const interfaceOgcFilters = this.datasource.options.ogcFilters.interfaceOgcFilters;
+    const arr = interfaceOgcFilters ? interfaceOgcFilters : [];
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
     if (this.datasource.options.sourceFields.length > 0) {
