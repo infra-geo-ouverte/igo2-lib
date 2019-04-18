@@ -20,6 +20,23 @@ export const environment: Environment = {
           id: 'Gououvert',
           title: 'Gouvouvert',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi'
+        },
+        {
+          id: 'DefiningInfoFormat',
+          title: 'Defining info_format',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          queryFormat: {
+            html: '*',
+            'application/json':  ['stations_meteoroutieres', 'histo_stations_meteoroutieres']
+          },
+          queryHtmlTarget: 'iframe',
+          count: 30
+        },
+        {
+          id: 'catalogwithregex',
+          title: 'Filtered catalog by regex',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          regFilters: ['zpegt']
         }
       ]
     },
