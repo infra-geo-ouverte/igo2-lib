@@ -2,6 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { Layer } from '../shared/layers';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -30,9 +31,11 @@ export class LayerLegendComponent {
 
   constructor(private capabilitiesService: CapabilitiesService) {}
 
-   computeItemTitle(item): string {
+   computeItemTitle(item): Observable<string> {
     const layerOptions = this.layer.dataSource.options as any;
-    if (layerOptions.type === 'wms' && layerOptions.optionsFromCapabilities) {
+    if (layerOptions.type !== 'wms' && !layerOptions.optionsFromCapabilities) {
+      return item.title;
+    } else {
       let localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
       layerOptions.params.layers.split(',').forEach(layer => {
         if (layer === item.title) {
@@ -45,8 +48,6 @@ export class LayerLegendComponent {
       } else {
         return item.title;
       }
-    } else {
-      return item.title;
     }
   }
 }
