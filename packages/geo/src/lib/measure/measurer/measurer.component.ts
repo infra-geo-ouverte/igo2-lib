@@ -36,7 +36,7 @@ import {
   tryAddSelectionStrategy
 } from '../../feature';
 import { DrawControl } from '../../geometry';
-import { VectorLayer, Layer } from '../../layer';
+import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 
 import { Measure, MeasurerDialogData, FeatureWithMeasure } from '../shared/measure.interfaces';
@@ -383,16 +383,14 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   private initStore() {
     const store = this.store;
 
-    if (store.layer === undefined) {
-      const layer = new VectorLayer({
-        title: 'Measures',
-        zIndex: 200,
-        source: new FeatureDataSource(),
-        style: createMeasureLayerStyle(),
-        showInLayerList: false
-      });
-      tryBindStoreLayer(store, layer);
-    }
+    const layer = new VectorLayer({
+      title: 'Measures',
+      zIndex: 200,
+      source: new FeatureDataSource(),
+      style: createMeasureLayerStyle(),
+      showInLayerList: false
+    });
+    tryBindStoreLayer(store, layer);
 
     tryAddLoadingStrategy(store);
 
