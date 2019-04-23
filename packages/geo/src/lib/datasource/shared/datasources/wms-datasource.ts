@@ -80,15 +80,36 @@ export class WMSDataSource extends DataSource {
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     }
+    const initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+    if (sourceParams.layers.split(',').length > 1 && this.options && initOgcFilters && initOgcFilters.enabled) {
+      console.log('*******************************');
+      console.log('BE CAREFULL, YOUR WMS LAYERS (' + sourceParams.layers
+      + ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! ');
+      console.log('*******************************');
+  }
 
-    if (this.options
-      && (this.options as OgcFilterableDataSourceOptions).ogcFilters
-      && (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
-      && (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters) {
-        const filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
-        this.ol.updateParams({ filter: this.ogcFilterWriter.buildFilter(filters) });
+    if (this.options && initOgcFilters && initOgcFilters.enabled && initOgcFilters.filters) {
+        const filters = initOgcFilters.filters;
+        const rebuildFilter = this.ogcFilterWriter.buildFilter(filters);
+        const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
+        const wmsFilterValue = appliedFilter.length > 0
+        ? appliedFilter.replace('filter=', '')
+        : undefined;
+        this.ol.updateParams({ filter: wmsFilterValue });
       }
 
+  }
+
+  public formatProcessedOgcFilter(processedFilter, layers): string {
+    let appliedFilter = '';
+    if (processedFilter.length === 0 && layers.indexOf(',') === -1) {
+      appliedFilter = processedFilter;
+    } else {
+      layers.split(',').forEach(layerName => {
+        appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
+      });
+    }
+    return `filter=${appliedFilter}`;
   }
 
   private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
@@ -126,21 +147,11 @@ export class WMSDataSource extends DataSource {
         ? this.options.paramsWFS.version
         : '2.0.0';
     }
+    let initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     const ogcFiltersDefaultValue = false; // default values for wms.
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters =
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined
-        ? {}
-        : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled =
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled ===
-      undefined
-        ? ogcFiltersDefaultValue
-        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable =
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable ===
-      undefined
-        ? ogcFiltersDefaultValue
-        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
+    initOgcFilters = initOgcFilters === undefined ? {} : initOgcFilters;
+    initOgcFilters.enabled = initOgcFilters.enabled === undefined ? ogcFiltersDefaultValue : initOgcFilters.enabled;
+    initOgcFilters.editable = initOgcFilters.editable === undefined ? ogcFiltersDefaultValue : initOgcFilters.editable;
     return new olSourceImageWMS(this.options);
   }
 

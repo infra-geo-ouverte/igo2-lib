@@ -11,9 +11,9 @@ export class OGCFilterService {
   constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
-    const wmsFilterValue =
-      filterString.length > 0
-        ? filterString.substr(7, filterString.length + 1)
+    const appliedFilter = wmsDatasource.formatProcessedOgcFilter(filterString, wmsDatasource.options.params.layers);
+    const wmsFilterValue = appliedFilter.length > 0
+        ? appliedFilter.replace('filter=', '')
         : undefined;
     wmsDatasource.ol.updateParams({ filter: wmsFilterValue });
   }

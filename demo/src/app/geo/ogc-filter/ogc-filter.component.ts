@@ -117,6 +117,39 @@ export class AppOgcFilterComponent {
       extends WMSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
+    const datasourceWmsWith2Layers: WMSoptions = {
+      type: 'wms',
+      url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+      urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+      params: {
+        layers: 'stations_meteoroutieres,histo_stations_meteoroutieres',
+        version: '1.3.0'
+      },
+      ogcFilters: {
+        enabled: true,
+        editable: true
+      },
+      paramsWFS: {
+        featureTypes: 'histo_stations_meteoroutieres',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '1.1.0',
+        outputFormat: 'geojson',
+        outputFormatDownload: 'shp'
+      } as WFSDataSourceOptionsParams
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(datasourceWmsWith2Layers)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Layer build from 2 WMS layers',
+            source: dataSource
+          })
+        );
+      });
+
     const datasourceWms: WMSoptions = {
       type: 'wms',
       url: '/geoserver/wms',
