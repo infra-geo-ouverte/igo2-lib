@@ -1,3 +1,5 @@
+import * as olproj from 'ol/proj';
+
 import { MapViewState } from './map.interface';
 
 /**
@@ -72,7 +74,15 @@ export function formatScale(scale) {
  * @param Scale denom
  * @returns Resolution
  */
-export function getResolutionFromScale(scale: number): number {
-  const dpi = 25.4 / 0.28;
+export function getResolutionFromScale(scale: number, dpi: number = 72): number {
   return scale / (39.37 * dpi);
+}
+
+/**
+ * Return the resolution from a scale denom
+ * @param Scale denom
+ * @returns Resolution
+ */
+export function getScaleFromResolution(resolution: number, unit: string = 'm', dpi: number = 72): number {
+  return resolution * olproj.METERS_PER_UNIT[unit] * 39.37 * dpi;
 }
