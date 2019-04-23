@@ -20,6 +20,7 @@ import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 })
 export class MapToolComponent {
   @Input() toggleLegendOnVisibilityChange: boolean = false;
+  @Input() expandLegendOfVisibleLayers: boolean = false;
   @Input() ogcFiltersInLayers: boolean = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
