@@ -145,7 +145,7 @@ export class WMSDataSource extends DataSource {
     return new olSourceImageWMS(this.options);
   }
 
-  getLegend(): DataSourceLegendOptions[] {
+  getLegend(scale?: number): DataSourceLegendOptions[] {
     let legend = super.getLegend();
     if (legend.length > 0) {
       return legend;
@@ -164,6 +164,7 @@ export class WMSDataSource extends DataSource {
       'SERVICE=wms',
       'FORMAT=image/png',
       'SLD_VERSION=1.1.0',
+      `SCALE=${scale}`,
       `VERSION=${sourceParams.version || '1.3.0'}`
     ];
 

@@ -34,7 +34,7 @@ export class PrintService {
     const status$ = new Subject();
 
     const paperFormat: string = options.paperFormat;
-    const resolution = +options.resolution;
+    const resolution = +options.resolution;  // Default is 96
     const orientation = options.orientation;
 
     this.activityId = this.activityService.register();
@@ -206,14 +206,14 @@ export class PrintService {
    * Add projection and/or scale to the document
    * @param  doc - pdf document
    * @param  map - Map of the app
-   * @param  resolution - DPI resolution of the document
+   * @param  dpi - DPI resolution of the document
    * @param  projection - Bool to indicate if projection need to be added
    * @param  scale - Bool to indicate if scale need to be added
    */
   private addProjScale(
     doc: jsPDF,
     map: IgoMap,
-    resolution: number,
+    dpi: number,
     projection: boolean,
     scale: boolean
   ) {
@@ -233,7 +233,7 @@ export class PrintService {
         textProjScale += '   ';
       }
       const scaleText = translate.instant('igo.geo.printForm.scale');
-      const mapScale = map.viewController.getScale(resolution);
+      const mapScale = map.viewController.getScale(dpi);
       textProjScale += scaleText + ' ~ 1 ' + formatScale(mapScale);
     }
     doc.setFont('courier');
@@ -398,6 +398,7 @@ export class PrintService {
    */
   downloadMapImage(
     map: IgoMap,
+    resolution: number,
     format = 'png',
     projection = false,
     scale = false,
@@ -407,7 +408,7 @@ export class PrintService {
     doZipFile = true
   ) {
     const status$ = new Subject();
-    const resolution = map.ol.getView().getResolution();
+    // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
     map.ol.once('postcompose', (event: any) => {
