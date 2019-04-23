@@ -77,6 +77,11 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() drawGuidePlaceholder: string = '';
 
   /**
+   * Whether a measure tooltip should be displayed
+   */
+  @Input() measure: boolean = false;
+
+  /**
    * The geometry type model
    */
   set geometryTypeModel(value: OlGeometryType) {this.geometryType$.next(value); }
