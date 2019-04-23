@@ -12,8 +12,15 @@ import {
 } from '@igo2/common';
 
 import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer';
+import { FeatureDataSource } from '../../datasource';
 import { FeatureMotion } from './feature.enums';
 import { Feature } from './feature.interfaces';
+import { FeatureStore } from './store';
+import {
+  FeatureStoreLoadingStrategy,
+  FeatureStoreSelectionStrategy
+} from './strategies';
 
 /**
  * Create an Openlayers feature object out of a feature definition.
@@ -232,4 +239,63 @@ export function moveToFeatures(
  */
 export function hideOlFeature(olFeature: OlFeature) {
   olFeature.setStyle(new olstyle.Style({}));
+}
+
+/**
+ * Try to bind a layer to a store if none is bound already.
+ * The layer will also be added to the store's map.
+ * If no layer is given to that function, a basic one will be created.
+ * @param store The store to bind the layer
+ * @param layer An optional VectorLayer
+ */
+export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
+  if (store.layer !== undefined) {
+    if (store.layer.map === undefined) {
+      store.map.addLayer(store.layer);
+    }
+    return;
+  }
+
+  layer = layer ? layer : new VectorLayer({
+    source: new FeatureDataSource()
+  });
+  store.bindLayer(layer);
+  if (store.layer.map === undefined) {
+    store.map.addLayer(store.layer);
+  }
+}
+
+/**
+ * Try to add a loading strategy to a store and activate it.
+ * If no strategy is given to that function, a basic one will be created.
+ * @param store The store to bind the loading strategy
+ * @param strategy An optional loading strategy
+ */
+export function tryAddLoadingStrategy(store: FeatureStore, strategy?: FeatureStoreLoadingStrategy) {
+  if (store.getStrategyOfType(FeatureStoreLoadingStrategy) !== undefined) {
+    store.activateStrategyOfType(FeatureStoreLoadingStrategy);
+    return;
+  }
+
+  strategy = strategy ? strategy : new FeatureStoreLoadingStrategy({});
+  store.addStrategy(strategy);
+  strategy.activate();
+}
+
+/**
+ * Try to add a selection strategy to a store and activate it.
+ * If no strategy is given to that function, a basic one will be created.
+ * @param store The store to bind the selection strategy
+ * @param [strategy] An optional selection strategy
+ */
+export function tryAddSelectionStrategy(store: FeatureStore, strategy?: FeatureStoreSelectionStrategy) {
+  if (store.getStrategyOfType(FeatureStoreSelectionStrategy) !== undefined) {
+    store.activateStrategyOfType(FeatureStoreSelectionStrategy);
+    return;
+  }
+  strategy = strategy ? strategy : new FeatureStoreSelectionStrategy({
+    map: store.map
+  });
+  store.addStrategy(strategy);
+  strategy.activate();
 }
