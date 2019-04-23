@@ -7,12 +7,11 @@ import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
   public ogcFilterWriter: OgcFilterWriter;
-
-  private queryInfoFormat: string;
 
   get params(): any {
     return this.options.params as any;
@@ -27,7 +26,7 @@ export class WMSDataSource extends DataSource {
   get queryHtmlTarget(): string {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
-      : 'newtab';
+      : QueryHtmlTarget.BLANK;
   }
 
   constructor(

@@ -20,7 +20,7 @@ import {
   TileArcGISRestDataSource
 } from '../../datasource';
 
-import { QueryFormat } from './query.enums';
+import { QueryFormat, QueryHtmlTarget } from './query.enums';
 import { QueryOptions, QueryableDataSource } from './query.interfaces';
 
 @Injectable({
@@ -168,8 +168,8 @@ export class QueryService {
     return [];
   }
 
-  private extractHtmlData(res, htmlTarget, url) {
-    // _blank , modal , innerhtml or undefined
+  private extractHtmlData(res, htmlTarget: QueryHtmlTarget, url) {
+    // _blank , iframe or undefined
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
     const width = parseInt(searchParams.width, 10);
@@ -180,7 +180,7 @@ export class QueryService {
 
     const bbox = bboxRaw.split(',');
     let threshold =
-      (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.1;
+      (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.05;
 
     // for context in degree (EPSG:4326,4269...)
     if (Math.abs(parseFloat(bbox[0])) < 180) {
@@ -227,37 +227,23 @@ export class QueryService {
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
 
-    let targetIgo2 = '_blank';
-    let iconHtml = 'link';
+    if (htmlTarget !== QueryHtmlTarget.BLANK && htmlTarget !== QueryHtmlTarget.IFRAME ) {
+      htmlTarget = QueryHtmlTarget.IFRAME;
+    }
 
-    switch (htmlTarget) {
-      case 'newtab':
-        targetIgo2 = '_blank';
-        break;
-      case 'modal':
-        targetIgo2 = 'modal';
-        iconHtml = 'place';
-        break;
-      case 'innerhtml':
-        targetIgo2 = 'innerhtml';
-        iconHtml = 'place';
-        const bodyTagStart = res.toLowerCase().indexOf('<body>');
-        const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
-        // replace \r \n  and ' ' with '' to validate if the body is really empty.
-        const body = res
-          .slice(bodyTagStart, bodyTagEnd)
-          .replace(/(\r|\n|\s)/g, '');
-        if (body === '<body></body>' || res === '') {
-          return [];
-        }
-        break;
+    const bodyTagStart = res.toLowerCase().indexOf('<body>');
+    const bodyTagEnd = res.toLowerCase().lastIndexOf('</body>') + 7;
+    // replace \r \n  and ' ' with '' to validate if the body is really empty.
+    const body = res.slice(bodyTagStart, bodyTagEnd).replace(/(\r|\n|\s)/g, '');
+    if (body === '<body></body>' || res === '') {
+      return [];
     }
 
     return [
       {
         type: FEATURE,
         projection,
-        properties: { target: targetIgo2, body: res, url },
+        properties: { target: htmlTarget, body: res, url },
         geometry: { type: f.getType(), coordinates: f.getCoordinates() }
       }
     ];

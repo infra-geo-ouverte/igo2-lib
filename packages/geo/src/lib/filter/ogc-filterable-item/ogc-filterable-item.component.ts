@@ -10,7 +10,8 @@ import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/
 
 import {
   OgcFilterableDataSource,
-  OgcFiltersOptions
+  OgcFiltersOptions,
+  OgcInterfaceFilterOptions
 } from '../shared/ogc-filter.interface';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
@@ -165,7 +166,8 @@ export class OgcFilterableItemComponent implements OnInit {
 
   addFilterToSequence() {
     this.filtersCollapsed = false;
-    const arr = this.datasource.options.ogcFilters.interfaceOgcFilters;
+    const interfaceOgcFilters: OgcInterfaceFilterOptions[] = this.datasource.options.ogcFilters.interfaceOgcFilters;
+    const arr = interfaceOgcFilters || [];
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
     if (this.datasource.options.sourceFields.length > 0) {
@@ -212,6 +214,10 @@ export class OgcFilterableItemComponent implements OnInit {
     const activeFilters = ogcFilters.interfaceOgcFilters.filter(
       f => f.active === true
     );
+    if (activeFilters.length === 0) {
+      ogcFilters.filters = undefined;
+      ogcFilters.filtered = false;
+    }
     if (activeFilters.length > 1) {
       activeFilters[0].parentLogical = activeFilters[1].parentLogical;
     }
@@ -272,5 +278,9 @@ export class OgcFilterableItemComponent implements OnInit {
 
   get downloadable() {
     return (this.datasource.options as any).download;
+  }
+
+  public setVisible() {
+    this.layer.visible = true;
   }
 }
