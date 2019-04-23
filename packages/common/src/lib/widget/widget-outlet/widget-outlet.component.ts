@@ -28,7 +28,7 @@ export class WidgetOutletComponent implements OnDestroy {
    * Widget subscribers to 'cancel' and 'complete'
    * @internal
    */
-  readonly subscribers = {
+  private baseSubscribers = {
     cancel: (event: any) => this.onCancel(event),
     complete: (event: any) => this.onComplete(event)
   };
@@ -42,6 +42,11 @@ export class WidgetOutletComponent implements OnDestroy {
    * Widget inputs
    */
   @Input() inputs: {[key: string]: any};
+
+  /**
+   * Widget subscribers
+   */
+  @Input() subscribers: {[key: string]: (event: any) => void} = {};
 
   /**
    * Event emitted when the widget emits 'complete'
@@ -61,6 +66,32 @@ export class WidgetOutletComponent implements OnDestroy {
    */
   ngOnDestroy() {
     this.destroyWidget();
+  }
+
+  /**
+   * Get the effective subscribers. That means a combination of the base
+   * subscribers and any subscriber given as input.
+   * @returns Combined subscribers
+   * @internal
+   */
+  getEffectiveSubscribers(): {[key: string]: (event: any) => void} {
+    const subscribers = Object.assign({}, this.subscribers);
+
+    // Base subscribers
+    Object.keys(this.baseSubscribers).forEach((key: string) => {
+      const subscriber = subscribers[key];
+      const baseSubscriber = this.baseSubscribers[key];
+      if (subscriber !== undefined) {
+        subscribers[key] = (event: any) => {
+          subscriber(event);
+          baseSubscriber(event);
+        };
+      } else {
+        subscribers[key] = baseSubscriber;
+      }
+    });
+
+    return subscribers;
   }
 
   /**
