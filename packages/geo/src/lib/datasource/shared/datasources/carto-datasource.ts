@@ -3,6 +3,7 @@ import olSourceCarto from 'ol/source/CartoDB';
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { CartoDataSourceOptions } from './carto-datasource.interface';
+import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class CartoDataSource extends DataSource {
   public ol: olSourceCarto;
@@ -21,7 +22,7 @@ export class CartoDataSource extends DataSource {
   get queryHtmlTarget(): string {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
-      : 'newtab';
+      : QueryHtmlTarget.BLANK;
   }
 
   protected createOlSource(): olSourceCarto {

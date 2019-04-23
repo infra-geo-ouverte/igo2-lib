@@ -1,7 +1,7 @@
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
-import { QueryFormat } from './query.enums';
+import { QueryFormat, QueryHtmlTarget } from './query.enums';
 
 export interface QueryOptions {
   coordinates: [number, number];
@@ -13,11 +13,11 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryable?: boolean;
   queryFormat?: QueryFormat;
   queryTitle?: string;
-  queryHtmlTarget?: string;
+  queryHtmlTarget?: QueryHtmlTarget;
 }
 
 export interface QueryableDataSource extends DataSource {
   queryTitle?: string;
-  queryHtmlTarget?: string;
+  queryHtmlTarget?: QueryHtmlTarget;
   options: QueryableDataSourceOptions;
 }

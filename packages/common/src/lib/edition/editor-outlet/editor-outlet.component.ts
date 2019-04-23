@@ -45,8 +45,16 @@ export class EditorOutletComponent {
    * Observable of the editor's widget inputs
    * @internal
    */
-  get widgetInputs$(): BehaviorSubject<{ [key: string]: any }> {
+  get widgetInputs$(): BehaviorSubject<{[key: string]: any}> {
     return this.editor.widgetInputs$;
+  }
+
+  /**
+   * Observable of the editor's widget inputs
+   * @internal
+   */
+  get widgetSubscribers$(): BehaviorSubject<{[key: string]: (event: any) => void}> {
+    return this.editor.widgetSubscribers$;
   }
 
   constructor() {}

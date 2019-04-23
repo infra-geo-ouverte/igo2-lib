@@ -11,9 +11,9 @@ export class OGCFilterService {
   constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
-    const wmsFilterValue =
-      filterString.length > 0
-        ? filterString.substr(7, filterString.length + 1)
+    const appliedFilter = wmsDatasource.formatProcessedOgcFilter(filterString, wmsDatasource.options.params.layers);
+    const wmsFilterValue = appliedFilter.length > 0
+        ? appliedFilter.replace('filter=', '')
         : undefined;
     wmsDatasource.ol.updateParams({ filter: wmsFilterValue });
   }
@@ -28,12 +28,12 @@ export class OGCFilterService {
         options.paramsWFS.fieldNameGeometry,
         true
       );
-      options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-        options.ogcFilters.filters,
-        options.paramsWFS.fieldNameGeometry
-      );
-    } else {
-      options.ogcFilters.interfaceOgcFilters = [];
+      if (!options.ogcFilters.interfaceOgcFilters) {
+        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
+          options.ogcFilters.filters,
+          options.paramsWFS.fieldNameGeometry
+        );
+      }
     }
   }
 
@@ -47,11 +47,13 @@ export class OGCFilterService {
         options.fieldNameGeometry,
         true
       );
-      options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
-        // With some wms server, this param must be set to make spatials call.
-        options.ogcFilters.filters,
-        options.fieldNameGeometry
-      );
+      if (!options.ogcFilters.interfaceOgcFilters) {
+        options.ogcFilters.interfaceOgcFilters = ogcFilterWriter.defineInterfaceFilterSequence(
+          // With some wms server, this param must be set to make spatials call.
+          options.ogcFilters.filters,
+          options.fieldNameGeometry
+        );
+      }
       this.filterByOgc(
         wmsDatasource as WMSDataSource,
         ogcFilterWriter.buildFilter(options.ogcFilters.filters)

@@ -27,7 +27,7 @@ export abstract class DataSource {
     return generateIdFromSourceOptions(this.options);
   }
 
-  getLegend(): DataSourceLegendOptions[] {
+  getLegend(scale?: number): DataSourceLegendOptions[] {
     return this.options.legend ? [this.options.legend] : [];
   }
 }

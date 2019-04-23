@@ -329,7 +329,7 @@ export function updateOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon):
  * @param olGeometry OL Geometry
  * @returns OL points
  */
-export function getOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon): OlPoint[] {
+function getOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon): OlPoint[] {
   const expectedNumber = (olGeometry.flatCoordinates.length / 2) - 1;
 
   // TODO: This works but it's quite messy. If time permits,

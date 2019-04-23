@@ -27,7 +27,12 @@ export class Editor {
   /**
    * Observable of the selected widget's inputs
    */
-  public widgetInputs$ = new BehaviorSubject<{ [key: string]: any }>({});
+  public widgetInputs$ = new BehaviorSubject<{[key: string]: any}>({});
+
+  /**
+   * Observable of the selected widget's subscribers
+   */
+  public widgetSubscribers$ = new BehaviorSubject<{[key: string]: (event: any) => void}>({});
 
   /**
    * Subscription to the selected entity
@@ -148,9 +153,14 @@ export class Editor {
    * @param widget Widget
    * @param inputs Inputs the widget will receive
    */
-  activateWidget(widget: Widget, inputs: {[key: string]: any} = {}) {
+  activateWidget(
+    widget: Widget,
+    inputs: {[key: string]: any} = {},
+    subscribers: {[key: string]: (event: any) => void} = {}
+  ) {
     this.widget$.next(widget);
     this.widgetInputs$.next(inputs);
+    this.widgetSubscribers$.next(subscribers);
   }
 
   /**

@@ -1,29 +1,36 @@
-<small *ngIf="legend.length === 0">
-  {{'igo.geo.layer.noLegendText' | translate}}
-</small>
+<ng-container *ngIf="legendItems$ | async as items">
+  <ng-container *ngIf="items.length; else noItems">
+    <ng-container *ngFor="let item of items">
+      <mat-list-item *ngIf="item.title">
+        <mat-icon
+          id="legend-toggle"
+          class="igo-chevron"
+          mat-list-avatar
+          igoCollapse
+          [target]="legend"
+          [collapsed]="false">
+        </mat-icon>
+        <h4 matLine>{{computeItemTitle(item)}}</h4>
+      </mat-list-item>
+    
+      <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
+        <img
+          *ngIf="item.url"
+          src="{{(item.url | secureImage) | async}}"
+          alt="{{'igo.geo.layer.loadingLegendText' | translate}}">
+        <div
+          [ngStyle]="item.style"
+          [innerHTML]="item.html"
+          *ngIf="item.html">
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
 
-<ng-template ngFor let-item [ngForOf]="legend">
-  <mat-list-item *ngIf="item.title">
-    <mat-icon
-      id="legend-toggle"
-      class="igo-chevron"
-      mat-list-avatar
-      igoCollapse
-      [target]="legend"
-      [collapsed]="false">
-    </mat-icon>
-    <h4 matLine>{{computeItemTitle(item)}}</h4>
-  </mat-list-item>
+  <ng-template #noItems>
+    <small>
+      {{'igo.geo.layer.noLegendText' | translate}}
+    </small>
+  </ng-template>
 
-  <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
-    <img
-      *ngIf="item.url"
-      src="{{(item.url | secureImage) | async}}"
-      alt="{{'igo.geo.layer.loadingLegendText' | translate}}">
-    <div
-      [ngStyle]="item.style"
-      [innerHTML]="item.html"
-      *ngIf="item.html">
-    </div>
-  </div>
-</ng-template>
+</ng-container>

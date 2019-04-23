@@ -2,5 +2,5 @@
   *ngIf="widget"
   [component]="widget"
   [inputs]="inputs"
-  [subscribers]="subscribers">
+  [subscribers]="getEffectiveSubscribers()">
 </igo-dynamic-outlet>

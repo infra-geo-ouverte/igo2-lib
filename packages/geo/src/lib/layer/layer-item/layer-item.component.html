@@ -11,7 +11,7 @@
 
   <button
     mat-icon-button
-    color="primary"
+    [color]="layer.visible ? 'primary' : 'default'"
     collapsibleButton
     tooltip-position="below"
     matTooltipShowDelay="500"
@@ -97,5 +97,8 @@
 </div>
 
 <div #legend class="igo-layer-legend-container">
-  <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer"></igo-layer-legend>
+  <igo-layer-legend
+    *ngIf="showLegend$ | async"
+    [layer]="layer">
+  </igo-layer-legend>
 </div>

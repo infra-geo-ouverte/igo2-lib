@@ -110,18 +110,27 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
     if (features.length === 0) {
       store.clearLayer();
     } else {
-      let motion;
-      if (store.pristine === true) {
-        // If features have just been loaded into the store, move/zoom on them
-        motion = FeatureMotion.Default;
-      } else if (store.count > store.view.count) {
-        // If features have been filtered, move/zoom on the remaining ones
-        motion = FeatureMotion.Default;
-      } else {
-        // On insert, update or delete, do nothing
-        motion = FeatureMotion.None;
-      }
-      store.setLayerFeatures(features, motion, this.options.getFeatureId);
+      store.setLayerFeatures(features, this.selectMotion(store), this.options.getFeatureId);
+    }
+  }
+
+  /**
+   * Selects the best motion
+   * @param store A FeatureStore to apply the motion
+   * @returns The motion selected
+   */
+  private selectMotion(store: FeatureStore) {
+    if (this.options.motion !== undefined) { return this.options.motion; }
+
+    if (store.pristine === true) {
+      // If features have just been loaded into the store, move/zoom on them
+      return FeatureMotion.Default;
+    } else if (store.count > store.view.count) {
+      // If features have been filtered, move/zoom on the remaining ones
+      return FeatureMotion.Default;
+    } else {
+      // On insert, update or delete, do nothing
+      return FeatureMotion.None;
     }
   }
 }

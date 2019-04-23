@@ -2,7 +2,7 @@ import { EntityState } from '@igo2/common';
 
 import { LayerOptions } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
-import { QueryFormat } from '../../query';
+import { QueryFormat, QueryHtmlTarget  } from '../../query';
 
 import { CatalogItemType } from './catalog.enum';
 
@@ -15,7 +15,7 @@ export interface Catalog {
   regFilters?: string[];
   timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
-  queryHtmlTarget?: string;
+  queryHtmlTarget?: QueryHtmlTarget;
   count?: number;
 }
 

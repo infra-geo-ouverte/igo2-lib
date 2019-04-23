@@ -1,5 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
+import { Subscription, BehaviorSubject } from 'rxjs';
+
+import { DataSourceLegendOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer } from '../shared/layers';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { Observable } from 'rxjs';
@@ -10,26 +13,54 @@ import { Observable } from 'rxjs';
   styleUrls: ['./layer-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayerLegendComponent {
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-    this._legend = value.dataSource.getLegend();
-  }
-  private _layer: Layer;
+export class LayerLegendComponent implements OnInit, OnDestroy {
 
-  get legend() {
-    if (this._legend && this._legend.display === false) {
-      return [];
-    }
-    return this._legend;
-  }
-  private _legend;
+  /**
+   * Observable of the legend items
+   */
+  legendItems$: BehaviorSubject<DataSourceLegendOptions[]> = new BehaviorSubject([]);
+
+  /**
+   * Subscription to the map's resolution
+   */
+  private resolution$$: Subscription;
+
+  /**
+   * Layer
+   */
+  @Input() layer: Layer;
 
   constructor(private capabilitiesService: CapabilitiesService) {}
+
+  /**
+   * On init, subscribe to the map's resolution and update the legend accordingly
+   */
+  ngOnInit() {
+    const resolution$ = this.layer.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe((resolution: number) => {
+      this.onResolutionChange(resolution);
+    });
+  }
+
+  /**
+   * On destroy, unsubscribe to the map,s resolution
+   */
+  ngOnDestroy() {
+    this.resolution$$.unsubscribe();
+  }
+
+  /**
+   * On resolution change, compute the effective scale level and update the
+   * legend accordingly.
+   */
+  private onResolutionChange(resolution: number) {
+    const scale = this.layer.map.viewController.getScale();
+    const legendItems = this.layer.dataSource.getLegend(scale);
+    if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
+      return;
+    }
+    this.legendItems$.next(legendItems);
+  }
 
    computeItemTitle(item): Observable<string> {
     const layerOptions = this.layer.dataSource.options as any;

@@ -118,19 +118,19 @@ export class EntityTransaction {
   }
 
   /**
-   * Commit the transaction. This method doesn't do much
+   * Commit operations the transaction. This method doesn't do much
    * in itself. The handler it receives does the hard work and it's
    * implementation is left to the caller. This method simply wraps
    * the handler into an error catching mechanism to update
    * the transaction afterward. The caller needs to subscribe to this
    * method's output (observable) for the commit to be performed.
+   * @param operations Operations to commit
    * @param handler Function that handles the commit operation
    * @returns The handler output (observable)
    */
-  commit(handler: EntityTransactionCommitHandler): Observable<any> {
+  commit(operations: EntityOperation[], handler: EntityTransactionCommitHandler): Observable<any> {
     this._inCommitPhase = true;
 
-    const operations = this.getOperationsInCommit();
     return handler(this, operations)
       .pipe(
         catchError(() => of(new Error())),
@@ -142,6 +142,16 @@ export class EntityTransaction {
           }
         })
       );
+  }
+
+  /**
+   * Commit all the operations of the transaction.
+   * @param handler Function that handles the commit operation
+   * @returns The handler output (observable)
+   */
+  commitAll(handler: EntityTransactionCommitHandler): Observable<any> {
+    const operations = this.getOperationsInCommit();
+    return this.commit(operations, handler);
   }
 
   /**

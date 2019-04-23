@@ -28,6 +28,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
+  @Input() expandLegendIfVisible: boolean = false;
+
   @Input() orderable: boolean = true;
 
   get removable(): boolean { return this.layer.options.removable !== false; }
@@ -39,7 +41,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const legend = this.layer.dataSource.options.legend || {};
-    const legendCollapsed = legend.collapsed === false ? false : true;
+    let legendCollapsed = legend.collapsed === false ? false : true;
+    if (this.layer.visible && this.expandLegendIfVisible) {
+      legendCollapsed = false;
+    }
     this.showLegend$.next(!legendCollapsed);
 
     const resolution$ = this.layer.map.viewController.resolution$;

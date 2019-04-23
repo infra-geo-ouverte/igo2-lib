@@ -12,15 +12,22 @@ import { NgControl, ControlValueAccessor } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
 
-import { OlStyle } from 'ol/style';
+import { Style as OlStyle } from 'ol/style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlGeometry from 'ol/geom/Geometry';
 import OlGeometryType from 'ol/geom/GeometryType';
 import OlFeature from 'ol/Feature';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
+import OlOverlay from 'ol/Overlay';
 
 import { IgoMap } from '../../map';
+import {
+  MeasureLengthUnit,
+  updateOlGeometryMidpoints,
+  formatMeasure,
+  measureOlGeometry
+} from '../../measure';
 import { DrawControl, ModifyControl } from '../shared/controls';
 import { createDrawInteractionStyle } from '../shared/geometry.utils';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
@@ -45,7 +52,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private drawControl: DrawControl;
   private modifyControl: ModifyControl;
   private drawInteractionStyle: OlStyle;
-  private olGeometry$: Subscription;
+  private olGeometryEnds$$: Subscription;
+  private olGeometryChanges$$: Subscription;
+
+  private olTooltip = OlOverlay;
 
   /**
    * Active control
@@ -78,6 +88,11 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * The drawGuide around the mouse pointer to help drawing
    */
   @Input() drawGuide = 0;
+
+  /**
+   * Whether a measure tooltip should be displayed
+   */
+  @Input() measure: boolean = false;
 
   /**
    * The geometry value (GeoJSON)
@@ -130,6 +145,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   ngOnInit() {
     this.addOlOverlayLayer();
+    this.createMeasureTooltip();
     this.drawInteractionStyle = createDrawInteractionStyle();
     this.createDrawControl();
     this.createModifyControl();
@@ -239,8 +255,12 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   private activateControl(control: DrawControl | ModifyControl) {
     this.activeControl = control;
-    this.olGeometry$ = control.end$
-      .subscribe((olGeometry: OlGeometry) => this.setOlGeometry(olGeometry));
+    this.olGeometryEnds$$ = control.end$
+      .subscribe((olGeometry: OlGeometry) => this.onOlGeometryEnds(olGeometry));
+    if (this.measure === true && control === this.drawControl) {
+      this.olGeometryChanges$$ = control.changes$
+        .subscribe((olGeometry: OlGeometry) => this.onOlGeometryChanges(olGeometry));
+    }
     control.setOlMap(this.map.ol);
   }
 
@@ -248,13 +268,36 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Deactivate the active control
    */
   private deactivateControl() {
+    this.removeMeasureTooltip();
     if (this.activeControl !== undefined) {
       this.activeControl.setOlMap(undefined);
     }
-    if (this.olGeometry$ !== undefined) {
-      this.olGeometry$.unsubscribe();
+    if (this.olGeometryEnds$$ !== undefined) {
+      this.olGeometryEnds$$.unsubscribe();
+    }
+    if (this.olGeometryChanges$$ !== undefined) {
+      this.olGeometryChanges$$.unsubscribe();
     }
     this.activeControl = undefined;
+  }
+
+  /**
+   * Update measures observables and map tooltips
+   * @param olGeometry Ol linestring or polygon
+   */
+  private onOlGeometryEnds(olGeometry: OlGeometry | undefined) {
+    this.removeMeasureTooltip();
+    this.setOlGeometry(olGeometry);
+  }
+
+  /**
+   * Update measures observables and map tooltips
+   * @param olGeometry Ol linestring or polygon
+   */
+  private onOlGeometryChanges(olGeometry: OlGeometry) {
+    if (olGeometry.getType() !== 'Point') {
+      this.updateMeasureTooltip(olGeometry);
+    }
   }
 
   /**
@@ -286,4 +329,56 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.olOverlaySource.clear();
     this.olOverlaySource.addFeature(olFeature);
   }
+
+  /**
+   * Create the measure tooltip
+   */
+  private createMeasureTooltip(): OlOverlay {
+    this.olTooltip = new OlOverlay({
+      element: document.createElement('div'),
+      offset: [-30, -10],
+      className: [
+        'igo-map-tooltip',
+        'igo-map-tooltip-measure'
+      ].join(' '),
+      stopEvent: false
+    });
+  }
+
+  /**
+   * Update the measure tooltip of an OL geometry
+   * @param olGeometry OL Geometry
+   */
+  private updateMeasureTooltip(olGeometry: OlGeometry) {
+    const measure = measureOlGeometry(olGeometry, this.map.projection);
+    const lengths = measure.lengths;
+    const lastLength = lengths[lengths.length - 1];
+
+    const olMidpoints = updateOlGeometryMidpoints(olGeometry);
+    const lastIndex = olGeometry.getType() === 'Polygon' ? olMidpoints.length - 2 : olMidpoints.length - 1;
+    const olLastMidpoint = olMidpoints[lastIndex];
+
+    this.olTooltip.setPosition(olLastMidpoint.flatCoordinates);
+
+    const innerHtml = formatMeasure(lastLength, {
+      decimal: 1,
+      unit: MeasureLengthUnit.Meters,
+      unitAbbr: true,
+      locale: 'fr'
+    });
+    this.olTooltip.getElement().innerHTML = innerHtml;
+    if (this.olTooltip.getMap() === undefined) {
+      this.map.ol.addOverlay(this.olTooltip);
+    }
+  }
+
+  /**
+   * Remove the measure tooltip from the map
+   */
+  private removeMeasureTooltip() {
+    if (this.olTooltip.getMap() !== undefined) {
+      this.map.ol.removeOverlay(this.olTooltip);
+    }
+  }
+
 }

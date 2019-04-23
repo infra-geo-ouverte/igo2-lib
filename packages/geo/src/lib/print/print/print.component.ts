@@ -97,6 +97,7 @@ export class PrintComponent {
 
       this.printService.downloadMapImage(
         this.map,
+        +data.resolution,
         data.imageFormat,
         data.showProjection,
         data.showScale,

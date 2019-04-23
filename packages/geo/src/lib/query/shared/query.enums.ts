@@ -7,3 +7,8 @@ export enum QueryFormat {
   TEXT = 'text',
   HTML = 'html'
 }
+
+export enum QueryHtmlTarget {
+  IFRAME = 'iframe',
+  BLANK = '_blank'
+}

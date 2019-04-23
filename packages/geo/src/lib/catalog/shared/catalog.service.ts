@@ -15,6 +15,7 @@ import {
   CatalogItemGroup
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
+import { QueryHtmlTarget, QueryFormat } from '../../query';
 
 @Injectable({
   providedIn: 'root'
@@ -126,7 +127,7 @@ export class CatalogService {
         this.includeRecursiveItems(catalog, group, items);
         continue;
       }
-
+      const layersQueryFormat = this.findCatalogInfoFormat(catalog);
       // TODO: Slice that into multiple methods
       // Define object of group layer
       const groupItem = {
@@ -134,6 +135,7 @@ export class CatalogService {
         type: CatalogItemType.Group,
         title: layerList.Title,
         items: layerList.Layer.reduce((layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
+          const configuredQueryFormat = this.retriveLayerInfoFormat(layer.Name, layersQueryFormat);
           let regFiltersPassed = true;
           if (catalog.regFilters !== undefined) {
             // Test layer.Name for each regex define in config.json
@@ -162,8 +164,8 @@ export class CatalogService {
             timeFilter: { ...timeFilter, ...catalog.timeFilter },
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
-            queryFormat: catalog.queryFormat,
-            queryHtmlTarget: catalog.queryHtmlTarget || 'innerhtml'
+            queryFormat: configuredQueryFormat,
+            queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
           } as WMSDataSourceOptions;
 
           layers.push({
@@ -200,4 +202,39 @@ export class CatalogService {
     }
   }
 
+  private retriveLayerInfoFormat(
+    layerNameFromCatalog: string,
+    layersQueryFormat: { layer: string, queryFormat: QueryFormat }[]): QueryFormat {
+
+    const currentLayerInfoFormat = layersQueryFormat.find(f => f.layer === layerNameFromCatalog);
+    const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
+    let queryFormat: QueryFormat;
+    if (currentLayerInfoFormat) {
+      queryFormat = currentLayerInfoFormat.queryFormat;
+    } else if (baseInfoFormat) {
+      queryFormat = baseInfoFormat.queryFormat;
+    }
+    return queryFormat;
+  }
+
+  private findCatalogInfoFormat(catalog: Catalog): {layer: string, queryFormat: QueryFormat}[] {
+    const layersQueryFormat: {layer: string, queryFormat: QueryFormat}[] = [];
+    if (!catalog.queryFormat) {
+      return layersQueryFormat;
+    }
+    Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
+      if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
+        catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
+          if (!layersQueryFormat.find(specific => specific.layer === layerName)) {
+            layersQueryFormat.push({ layer: layerName, queryFormat: configuredInfoFormat as QueryFormat });
+          }
+        });
+      } else {
+        if (!layersQueryFormat.find(specific => specific.layer === catalog.queryFormat[configuredInfoFormat])) {
+          layersQueryFormat.push({ layer: catalog.queryFormat[configuredInfoFormat], queryFormat: configuredInfoFormat as QueryFormat });
+        }
+      }
+    });
+    return layersQueryFormat;
+  }
 }

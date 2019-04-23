@@ -42,7 +42,7 @@ export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
   filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
-  interfaceOgcFilters?: any[];
+  interfaceOgcFilters?: OgcInterfaceFilterOptions[];
   filtered?: boolean;
 }
 
@@ -103,27 +103,29 @@ export interface OgcFilterIsLikeOptions extends OgcFilterAttributeOptions {
 export interface OgcFilterIsNullOptions extends OgcFilterAttributeOptions {}
 
 export interface OgcInterfaceFilterOptions {
-  filterid?: any;
-  propertyName?: string;
-  igoSpatialSelector?: string;
-  operator?: string;
   active?: boolean;
-  id?: string;
   begin?: string;
   end?: string;
-  lowerBoundary?: number;
-  upperBoundary?: number;
-  expression?: string | number;
-  pattern?: string;
-  wildCard?: string;
-  singleChar?: string;
   escapeChar?: string;
-  matchCase?: boolean;
-  geometryName?: string;
-  geometry?: olGeometry;
-  wkt_geometry?: string;
+  expression?: string | number;
   extent?: [number, number, number, number];
-  srsName?: string;
+  filterid?: any;
+  geometry?: olGeometry;
+  geometryName?: string;
+  igoSpatialSelector?: string;
+  level?: number;
+  lowerBoundary?: number;
+  matchCase?: boolean;
+  operator?: string;
   parentLogical?: string;
-  abbrev?: string;
+  pattern?: string;
+  propertyName?: string;
+  singleChar?: string;
+  srsName?: string;
+  upperBoundary?: number;
+  wildCard?: string;
+  wkt_geometry?: string;
+  // id?: string;
+  // abbrev?: string;
+
 }
