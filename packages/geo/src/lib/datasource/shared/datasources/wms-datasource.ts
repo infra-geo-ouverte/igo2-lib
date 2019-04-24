@@ -174,9 +174,11 @@ export class WMSDataSource extends DataSource {
       'SERVICE=wms',
       'FORMAT=image/png',
       'SLD_VERSION=1.1.0',
-      `SCALE=${scale}`,
       `VERSION=${sourceParams.version || '1.3.0'}`
     ];
+    if (scale !== undefined) {
+      params.push(`SCALE=${scale}`);
+    }
 
     legend = layers.map((layer: string) => {
       return {

@@ -74,7 +74,7 @@ export class PrintService {
       (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           if (options.showLegend === true) {
-            this.addLegend(doc, map, margins);
+            this.addLegend(doc, map, margins, resolution);
           } else {
             this.saveDoc(doc);
           }
@@ -96,9 +96,9 @@ export class PrintService {
    * @param  width The width that the legend need to be
    * @return Html code for the legend
    */
-  getLayersLegendHtml(map: IgoMap, width: number): string {
+  getLayersLegendHtml(map: IgoMap, width: number, resolution: number): string {
     let html = '';
-    const legends = getLayersLegends(map.layers);
+    const legends = getLayersLegends(map.layers, map.viewController.getScale(resolution));
     if (legends.length === 0) {
       return html;
     }
@@ -129,11 +129,11 @@ export class PrintService {
    * * @param  format - Image format. default value to "png"
    * @return The image of the legend
    */
-  getLayersLegendImage(map, format = 'png', doZipFile) {
+  getLayersLegendImage(map, format: string = 'png', doZipFile: boolean, resolution: number) {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = this.getLayersLegendHtml(map, width);
+    let html = this.getLayersLegendHtml(map, width, resolution);
     const that = this;
     format = format.toLowerCase();
 
@@ -247,11 +247,11 @@ export class PrintService {
    * @param  map - Map of the app
    * @param  margins - Page margins
    */
-  private addLegend(doc: jsPDF, map: IgoMap, margins: Array<number>) {
+  private addLegend(doc: jsPDF, map: IgoMap, margins: Array<number>, resolution: number) {
     const that = this;
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = this.getLayersLegendHtml(map, width);
+    const html = this.getLayersLegendHtml(map, width, resolution);
     // If no legend, save the map directly
     if (html === '') {
       this.saveDoc(doc);

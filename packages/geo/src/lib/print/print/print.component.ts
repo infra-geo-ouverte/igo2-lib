@@ -95,9 +95,10 @@ export class PrintComponent {
 
       this.printService.defineNbFileToProcess(nbFileToProcess);
 
+      const resolution = +data.resolution;
       this.printService.downloadMapImage(
         this.map,
-        +data.resolution,
+        resolution,
         data.imageFormat,
         data.showProjection,
         data.showScale,
@@ -107,7 +108,12 @@ export class PrintComponent {
         data.doZipFile
       );
       if (data.showLegend) {
-        this.printService.getLayersLegendImage(this.map, data.imageFormat, data.doZipFile);
+        this.printService.getLayersLegendImage(
+          this.map,
+          data.imageFormat,
+          data.doZipFile,
+          +resolution
+        );
       }
     }
     this.disabled = false;
