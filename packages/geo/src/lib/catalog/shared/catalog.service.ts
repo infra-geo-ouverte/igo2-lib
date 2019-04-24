@@ -5,7 +5,7 @@ import { map, catchError } from 'rxjs/operators';
 
 import { LanguageService, ConfigService } from '@igo2/core';
 import { CapabilitiesService, WMSDataSourceOptions, generateIdFromSourceOptions } from '../../datasource';
-import { LayerOptions, ImageLayerOptions } from '../../layer';
+import { LayerOptions, ImageLayerOptions, TooltipContent, TooltipType } from '../../layer';
 import { getResolutionFromScale } from '../../map';
 
 import {
@@ -127,6 +127,7 @@ export class CatalogService {
         this.includeRecursiveItems(catalog, group, items);
         continue;
       }
+      const catalogToolTipType = this.retrieveTooltipType(catalog);
       const layersQueryFormat = this.findCatalogInfoFormat(catalog);
       // TODO: Slice that into multiple methods
       // Define object of group layer
@@ -153,6 +154,11 @@ export class CatalogService {
           const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
           const timeFilter = this.capabilitiesService.getTimeFilter(layer);
           const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
+
+          let tooltipContent;
+          if (abstract) {
+            tooltipContent = { type: catalogToolTipType } as TooltipContent ;
+          }
 
           const sourceOptions = {
             type: 'wms',
@@ -184,6 +190,7 @@ export class CatalogService {
                 abstract,
                 keywordList
               },
+              tooltip: tooltipContent,
               sourceOptions
             }
           });
@@ -215,6 +222,13 @@ export class CatalogService {
       queryFormat = baseInfoFormat.queryFormat;
     }
     return queryFormat;
+  }
+
+  private retrieveTooltipType(catalog: Catalog): TooltipType {
+    if (!catalog.tooltipType) {
+      return TooltipType.TITLE;
+    }
+    return catalog.tooltipType;
   }
 
   private findCatalogInfoFormat(catalog: Catalog): {layer: string, queryFormat: QueryFormat}[] {
