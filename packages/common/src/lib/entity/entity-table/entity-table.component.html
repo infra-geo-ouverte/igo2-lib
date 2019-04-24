@@ -60,7 +60,11 @@
       </ng-container>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="headers;"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="headers;"
+      [ngClass]="getHeaderClass()">
+    </tr>
     <tr
       mat-row
       igoEntityTableRow

@@ -28,12 +28,6 @@
   word-wrap: break-word;
 }
 
-// Allow headers with sort to be centered
-th ::ng-deep .mat-sort-header-container {
-  display: flex;
-  justify-content: center;
-}
-
 entity-table table.igo-entity-table-with-selection tr:hover {
   -moz-box-shadow: 2px 0px 2px 0px #dddddd;
   -webkit-box-shadow: 2px 0px 2px 0px #dddddd;

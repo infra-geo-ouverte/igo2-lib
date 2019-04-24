@@ -330,6 +330,19 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   }
 
   /**
+   * Return a header ngClass
+   * @returns ngClass
+   * @internal
+   */
+  getHeaderClass(): {[key: string]: boolean} {
+    const func = this.template.headerClassFunc;
+    if (func instanceof Function) {
+      return func();
+    }
+    return {};
+  }
+
+  /**
    * Return a row ngClass
    * @param entity Entity
    * @returns ngClass

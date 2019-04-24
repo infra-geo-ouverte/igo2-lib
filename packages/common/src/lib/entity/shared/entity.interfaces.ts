@@ -64,6 +64,9 @@ export interface EntityTableTemplate {
   selectMany?: boolean;
   sort?: boolean;
   valueAccessor?: (entity: object, property: string) => any;
+  headerClassFunc?: () => {
+    [key: string]: boolean;
+  };
   rowClassFunc?: (entity: object) => {
     [key: string]: boolean;
   };
