@@ -1,6 +1,6 @@
 import { EntityState } from '@igo2/common';
 
-import { LayerOptions } from '../../layer';
+import { LayerOptions, TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
 import { QueryFormat, QueryHtmlTarget  } from '../../query';
 
@@ -17,6 +17,7 @@ export interface Catalog {
   queryFormat?: QueryFormat;
   queryHtmlTarget?: QueryHtmlTarget;
   count?: number;
+  tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE ;
 }
 
 export interface CatalogItem {

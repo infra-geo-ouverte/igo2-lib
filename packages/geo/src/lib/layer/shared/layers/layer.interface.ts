@@ -18,6 +18,7 @@ export interface LayerOptions {
   showInLayerList?: boolean;
   removable?: boolean;
   ol?: olLayer;
+  tooltip?: TooltipContent;
 }
 
 export interface GroupLayers {
@@ -30,4 +31,14 @@ export interface LayerLegend {
   title: string;
   url: string;
   image: string;
+}
+
+export interface TooltipContent {
+  type?: TooltipType;
+  text?: string;
+}
+export enum TooltipType {
+  TITLE = 'title',
+  ABSTRACT = 'abstract',
+  CUSTOM = 'custom'
 }

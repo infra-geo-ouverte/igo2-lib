@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { Layer } from '../shared/layers';
+import { Layer, TooltipType } from '../shared/layers';
+import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 
 @Component({
   selector: 'igo-layer-item',
@@ -36,6 +37,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
+  public tooltipText;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
@@ -51,6 +53,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.resolution$$ = resolution$.subscribe((resolution: number) => {
       this.onResolutionChange(resolution);
     });
+    this.tooltipText = this.computeTooltip();
   }
 
   ngOnDestroy() {
@@ -65,6 +68,33 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.layer.visible = !this.layer.visible;
     if (this.toggleLegendOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
+    }
+  }
+
+  computeTooltip(): string {
+    const layerOptions = this.layer.options;
+    if (!layerOptions.tooltip) {
+      return this.layer.title;
+    }
+    const layerTooltip = layerOptions.tooltip;
+    const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
+    switch (layerOptions.tooltip.type) {
+      case TooltipType.TITLE:
+        return this.layer.title;
+      case TooltipType.ABSTRACT:
+        if (layerMetadata && layerMetadata.abstract) {
+          return layerMetadata.abstract;
+        } else {
+          return this.layer.title;
+        }
+      case TooltipType.CUSTOM:
+        if (layerTooltip && layerTooltip.text) {
+          return layerTooltip.text;
+        } else {
+          return this.layer.title;
+        }
+      default:
+        return this.layer.title;
     }
   }
 
