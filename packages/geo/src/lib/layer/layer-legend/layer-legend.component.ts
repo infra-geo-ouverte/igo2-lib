@@ -1,11 +1,10 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
-import { Subscription, BehaviorSubject, of } from 'rxjs';
+import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
 import { DataSourceLegendOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer } from '../shared/layers';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -20,13 +19,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Observable of the legend items
    */
   legendItems$: BehaviorSubject<DataSourceLegendOptions[]> = new BehaviorSubject([]);
-  legendItemTitle$ = new BehaviorSubject<string>(undefined);
 
   /**
    * Subscription to the map's resolution
    */
   private resolution$$: Subscription;
-  private legendItemTitle$$: Subscription;
   /**
    * Layer
    */
