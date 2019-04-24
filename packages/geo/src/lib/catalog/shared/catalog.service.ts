@@ -127,7 +127,7 @@ export class CatalogService {
         this.includeRecursiveItems(catalog, group, items);
         continue;
       }
-      const catalogToolTipType = this.retrieveTooltipType(catalog);
+      const catalogTooltipType = this.retrieveTooltipType(catalog);
       const layersQueryFormat = this.findCatalogInfoFormat(catalog);
       // TODO: Slice that into multiple methods
       // Define object of group layer
@@ -185,7 +185,7 @@ export class CatalogService {
                 abstract,
                 keywordList
               },
-              tooltip: { type: catalogToolTipType } as TooltipContent,
+              tooltip: { type: catalogTooltipType } as TooltipContent,
               sourceOptions
             }
           });

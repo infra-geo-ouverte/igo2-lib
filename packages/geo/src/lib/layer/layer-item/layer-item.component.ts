@@ -37,7 +37,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
-  public toolTipText;
+  public tooltipText;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
@@ -53,7 +53,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.resolution$$ = resolution$.subscribe((resolution: number) => {
       this.onResolutionChange(resolution);
     });
-    this.toolTipText = this.computeToolTip();
+    this.tooltipText = this.computeToolTip();
   }
 
   ngOnDestroy() {

@@ -7,7 +7,7 @@
     [collapsed]="!(showLegend$ | async)"
     (toggle)="toggleLegend($event)">
   </mat-icon>
-  <h4 matLine [matTooltip]="toolTipText" matTooltipShowDelay="500">{{layer.title}}</h4>
+  <h4 matLine [matTooltip]="tooltipText" matTooltipShowDelay="500">{{layer.title}}</h4>
 
   <button
     mat-icon-button
