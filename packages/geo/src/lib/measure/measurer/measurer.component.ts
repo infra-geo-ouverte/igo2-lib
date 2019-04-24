@@ -526,7 +526,12 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   private onDrawEnd(olGeometry: OlLineString | OlPolygon) {
     this.activeOlGeometry = undefined;
-    const measure = measureOlGeometry(olGeometry, this.projection);
+    let measure = measureOlGeometry(olGeometry, this.projection);
+    if (olGeometry instanceof OlPolygon) {
+      measure = Object.assign({}, measure, {
+        lengths: []  // We don't want to display an area tooltip while drawing.
+      });
+    }
     this.updateMeasureOfOlGeometry(olGeometry, measure);
     this.addFeatureToStore(olGeometry);
     this.clearTooltipsOfOlGeometry(olGeometry);
