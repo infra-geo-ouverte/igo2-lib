@@ -155,11 +155,6 @@ export class CatalogService {
           const timeFilter = this.capabilitiesService.getTimeFilter(layer);
           const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
 
-          let tooltipContent;
-          if (abstract) {
-            tooltipContent = { type: catalogToolTipType } as TooltipContent ;
-          }
-
           const sourceOptions = {
             type: 'wms',
             url: catalog.url,
@@ -190,7 +185,7 @@ export class CatalogService {
                 abstract,
                 keywordList
               },
-              tooltip: tooltipContent,
+              tooltip: { type: catalogToolTipType } as TooltipContent,
               sourceOptions
             }
           });
