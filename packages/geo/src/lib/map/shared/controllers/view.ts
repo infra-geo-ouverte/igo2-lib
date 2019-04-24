@@ -11,7 +11,7 @@ import OlView from 'ol/View';
 
 import { MapViewAction } from '../map.enums';
 import { MapExtent, MapViewState } from '../map.interface';
-import { viewStatesAreEqual } from '../map.utils';
+import { getScaleFromResolution, viewStatesAreEqual } from '../map.utils';
 import { MapController } from './controller';
 
 export interface MapViewControllerOptions {
@@ -89,7 +89,7 @@ export class MapViewController extends MapController {
     }
 
     this.extent$$ = this.extent$
-      .pipe(debounceTime(100))
+      .pipe(debounceTime(50))
       .subscribe((value: {extent: MapExtent, action: MapViewAction}) => {
         this.setExtent(value.extent, value.action);
       });
@@ -145,11 +145,12 @@ export class MapViewController extends MapController {
    * @param dpi Dot per inches
    * @returns View scale
    */
-  getScale(dpi = 96) {
-    const unit = this.getOlProjection().getUnits();
-    const resolution = this.getResolution();
-    const inchesPerMetre = 39.37;
-    return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMetre * dpi;
+  getScale(dpi = 72) {
+    return getScaleFromResolution(
+      this.getResolution(),
+      this.getOlProjection().getUnits(),
+      dpi
+    );
   }
 
   /**
@@ -286,7 +287,7 @@ export class MapViewController extends MapController {
   private setExtent(extent: MapExtent, action: MapViewAction) {
     const olView = this.olView;
     if (action === MapViewAction.Zoom) {
-      olView.fit(extent, {maxZoom: 17});
+      olView.fit(extent, {maxZoom: 17, minResolution: 0.5});
     } else if (action === MapViewAction.Move) {
       olView.fit(extent, {maxZoom: olView.getZoom()});
     }
