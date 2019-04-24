@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, of } from 'rxjs';
 
 import { DataSourceLegendOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer } from '../shared/layers';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -19,12 +20,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Observable of the legend items
    */
   legendItems$: BehaviorSubject<DataSourceLegendOptions[]> = new BehaviorSubject([]);
+  legendItemTitle$ = new BehaviorSubject<string>(undefined);
 
   /**
    * Subscription to the map's resolution
    */
   private resolution$$: Subscription;
-
+  private legendItemTitle$$: Subscription;
   /**
    * Layer
    */
@@ -62,23 +64,21 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     this.legendItems$.next(legendItems);
   }
 
-   computeItemTitle(item): Observable<string> {
+  computeItemTitle(layerLegend): Observable<string> {
     const layerOptions = this.layer.dataSource.options as any;
-    if (layerOptions.type !== 'wms' && !layerOptions.optionsFromCapabilities) {
-      return item.title;
+    if (layerOptions.type !== 'wms') {
+      return of(layerLegend.title);
+    /*} else if (!layerOptions.optionsFromCapabilities) {
+      return of(layerLegend.title);*/
     } else {
-      let localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
-      layerOptions.params.layers.split(',').forEach(layer => {
-        if (layer === item.title) {
-          localLayerOptions.params.layers = layer;
-          this.capabilitiesService.getWMSOptions(localLayerOptions).subscribe(r => localLayerOptions = r);
-        }
-      });
-      if (localLayerOptions && localLayerOptions._layerOptionsFromCapabilities) {
-        return localLayerOptions._layerOptionsFromCapabilities.title;
-      } else {
-        return item.title;
-      }
+      const layers = layerOptions.params.layers.split(',');
+      const localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
+      localLayerOptions.params.layers = layers.find(layer => layer === layerLegend.title);
+      return this.capabilitiesService
+        .getWMSOptions(localLayerOptions)
+        .pipe(map(wmsDataSourceOptions => {
+          return (wmsDataSourceOptions as any)._layerOptionsFromCapabilities.title;
+        }));
     }
   }
 }
