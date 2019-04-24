@@ -59,8 +59,8 @@ export class LayerService {
       layerOptions.source.options.optionsFromCapabilities
     ) {
       layerOptions = ObjectUtils.mergeDeep(
-        layerOptions,
-        (layerOptions.source.options as any)._layerOptionsFromCapabilities
+        (layerOptions.source.options as any)._layerOptionsFromCapabilities || {},
+        layerOptions || {}
       );
     }
 
