@@ -53,7 +53,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.resolution$$ = resolution$.subscribe((resolution: number) => {
       this.onResolutionChange(resolution);
     });
-    this.tooltipText = this.computeToolTip();
+    this.tooltipText = this.computeTooltip();
   }
 
   ngOnDestroy() {
@@ -71,12 +71,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  computeToolTip(): string {
+  computeTooltip(): string {
     const layerOptions = this.layer.options;
     if (!layerOptions.tooltip) {
       return this.layer.title;
     }
-    const layerToolTip = layerOptions.tooltip;
+    const layerTooltip = layerOptions.tooltip;
     const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
     switch (layerOptions.tooltip.type) {
       case TooltipType.TITLE:
@@ -88,8 +88,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
           return this.layer.title;
         }
       case TooltipType.CUSTOM:
-        if (layerToolTip && layerToolTip.text) {
-          return layerToolTip.text;
+        if (layerTooltip && layerTooltip.text) {
+          return layerTooltip.text;
         } else {
           return this.layer.title;
         }
