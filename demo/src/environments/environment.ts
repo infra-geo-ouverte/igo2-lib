@@ -44,6 +44,12 @@ export const environment: Environment = {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           regFilters: ['zpegt']
 
+        },
+        {
+          id: 'catalogwithtooltipcontrol',
+          title: 'Controling tooltip format',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          tooltipType: 'abstract' // or title
         }
       ]
     },
