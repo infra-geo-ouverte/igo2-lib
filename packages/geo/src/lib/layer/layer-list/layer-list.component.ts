@@ -15,6 +15,7 @@ import { LayerListControlsEnum } from './layer-list.enum';
 import { LayerListService } from './layer-list.service';
 import { BehaviorSubject, ReplaySubject, Subscription, EMPTY, timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
+import { MetadataOptions, MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -165,9 +166,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
     const keepLayerIds = layers.map((layer: Layer) => layer.id);
 
     layers.forEach((layer: Layer) => {
-      const layerOptions = layer.options || {};
+      const layerOptions = layer.options as MetadataLayerOptions || {};
       const dataSourceOptions = layer.dataSource.options || {};
-      const metadata = (layerOptions as any).metadata || {};
+      const metadata = layerOptions.metadata || {} as MetadataOptions;
       const keywords = metadata.keywordList || [] ;
       const layerKeywords = keywords.map((kw: string) => {
         return kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
