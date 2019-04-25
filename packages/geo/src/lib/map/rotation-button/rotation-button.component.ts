@@ -26,6 +26,10 @@ export class RotationButtonComponent {
   }
   private _color: string;
 
+  get rotated(): boolean {
+    return this.map.viewController.getRotation() !== 0;
+  }
+
   constructor() {}
 
   rotationStyle(radians): {} {

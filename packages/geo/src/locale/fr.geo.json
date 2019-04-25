@@ -107,7 +107,8 @@
         "geolocate": "Positionnement GPS",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
-        "resetRotation": "Réinitialiser la carte vers le nord"
+        "resetRotation": "Réinitialiser la carte vers le nord",
+        "tipRotation": "Maintenez les touches ALT et Majuscule (shift) tout en cliquant sur la carte pour faire ivoter la carte"
       },
       "metadata": {
         "show": "Montrer les métadonnées"
