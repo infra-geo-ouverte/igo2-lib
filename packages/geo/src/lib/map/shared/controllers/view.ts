@@ -225,7 +225,7 @@ export class MapViewController extends MapController {
    * Reset the view rotation to 0
    */
   resetRotation() {
-    this.olView.setRotation(0);
+    this.olView.animate({rotation: 0});
   }
 
   /**
