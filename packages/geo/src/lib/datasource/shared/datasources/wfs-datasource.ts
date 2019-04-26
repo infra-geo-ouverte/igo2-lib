@@ -47,8 +47,17 @@ export class WFSDataSource extends DataSource {
     const featureTypes = `${paramTypename}=${paramsWFS.featureTypes}`;
     const maxFeatures = paramsWFS.maxFeatures ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}` : `${paramMaxFeatures}=5000`;
 
+    let propertyName;
+    if (this.options.sourceFields) {
+      const fieldsNames = [];
+      this.options.sourceFields.forEach(sourcefield => {
+        fieldsNames.push(sourcefield.name);
+      });
+      propertyName = `propertyName=${fieldsNames.join(',')}`;
+    }
+
     let downloadBaseUrl = `${url}?service=WFS&request=GetFeature&${wfsVersion}&${featureTypes}&`;
-    downloadBaseUrl += `${outputFormat}&${maxFeatures}`;
+    downloadBaseUrl += `${outputFormat}&${maxFeatures}&${propertyName}`.replace(/&&/g, '&');
 
     this.options.download = Object.assign({}, this.options.download, {
       dynamicUrl: downloadBaseUrl
@@ -72,7 +81,7 @@ export class WFSDataSource extends DataSource {
         );
 
         let baseUrl = `${url}?service=WFS&request=GetFeature&${wfsVersion}&${featureTypes}&`;
-        baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
+        baseUrl += `${outputFormat}&${srsname}&${maxFeatures}&${propertyName}`;
 
         const patternFilter = /(filter|bbox)=.*/gi;
         baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
@@ -81,7 +90,7 @@ export class WFSDataSource extends DataSource {
           dynamicUrl: baseUrl
         });
 
-        return baseUrl;
+        return baseUrl.replace(/&&/g, '&');
       },
       strategy: OlLoadingStrategy.bbox
     });
