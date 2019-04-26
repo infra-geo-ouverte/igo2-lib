@@ -87,8 +87,8 @@ export class WMSDataSource extends DataSource {
   }
 
     if (this.options && initOgcFilters && initOgcFilters.enabled && initOgcFilters.filters) {
-        const filters = initOgcFilters.filters;
-        const rebuildFilter = new OgcFilterWriter().buildFilter(filters);
+        const igoFilters = initOgcFilters.filters;
+        const rebuildFilter = new OgcFilterWriter().buildFilter(igoFilters);
         const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
         const wmsFilterValue = appliedFilter.length > 0
         ? appliedFilter.replace('filter=', '')

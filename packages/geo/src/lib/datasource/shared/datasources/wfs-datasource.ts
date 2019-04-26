@@ -68,13 +68,13 @@ export class WFSDataSource extends DataSource {
       overlaps: false,
       url: (extent, resolution, proj) => {
         const srsname = paramsWFS.srsName ? `srsname=${paramsWFS.srsName}` : `srsname=${proj.getCode()}`;
-        let filters;
+        let igoFilters;
         const ogcfilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
         if (ogcfilters && ogcfilters.enabled) {
-          filters = ogcFilters.filters;
+          igoFilters = ogcFilters.filters;
         }
         paramsWFS.xmlFilter = new OgcFilterWriter().buildFilter(
-          filters,
+          igoFilters,
           extent,
           proj,
           ogcFilters.geometryName
