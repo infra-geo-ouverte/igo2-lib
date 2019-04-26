@@ -22,10 +22,9 @@ import { IgoMap } from '../../map';
   styleUrls: ['./ogc-filter-form.component.scss']
 })
 export class OgcFilterFormComponent implements AfterContentChecked {
-  private ogcFilterWriter: OgcFilterWriter;
   private _dataSource: OgcFilterableDataSource;
   private _currentFilter: any = {};
-  public operators;
+  public ogcFilterOperators;
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
@@ -85,12 +84,11 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     private cdRef: ChangeDetectorRef,
     private wktService: WktService
   ) {
-    this.ogcFilterWriter = new OgcFilterWriter();
     // TODO: Filter permitted operator based on wfscapabilities
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...
     // Ex: IsNull vs PropertyIsNull vs IsNil ...
-    this.operators = this.ogcFilterWriter.operators;
+    this.ogcFilterOperators = new OgcFilterWriter().operators;
     this.igoSpatialSelectors = [
       {
         type: 'fixedExtent'
@@ -216,7 +214,7 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   }
 
   changeOperator(filter) {
-    if (this.operators[filter.operator].spatial === false) {
+    if (this.ogcFilterOperators[filter.operator].spatial === false) {
       this.removeOverlayByID(filter.filterid);
     }
     this.refreshFilters();

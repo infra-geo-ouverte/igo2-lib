@@ -13,14 +13,11 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
   providedIn: 'root'
 })
 export class DownloadService {
-  private ogcFilterWriter: OgcFilterWriter;
 
   constructor(
     private messageService: MessageService,
     private languageService: LanguageService
-  ) {
-    this.ogcFilterWriter = new OgcFilterWriter();
-  }
+  ) {}
 
   open(layer: Layer) {
     const translate = this.languageService.translate;
@@ -56,7 +53,7 @@ export class DownloadService {
           .replace(/&?filter=[^&]*/gi, '')
           .replace(/&?bbox=[^&]*/gi, '');
 
-        const rebuildFilter = this.ogcFilterWriter.buildFilter(
+        const rebuildFilter = new OgcFilterWriter().buildFilter(
           (layer.dataSource.options as any).ogcFilters.filters,
           layer.map.getExtent(),
           new olProjection({ code: layer.map.projection }),

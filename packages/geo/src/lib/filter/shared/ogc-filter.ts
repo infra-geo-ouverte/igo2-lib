@@ -20,10 +20,7 @@ export class OgcFilterWriter {
     PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
     PropertyIsLike: { spatial: false, fieldRestrict: ['string'] },
     PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
-    PropertyIsGreaterThanOrEqualTo: {
-      spatial: false,
-      fieldRestrict: ['number']
-    },
+    PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
     PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
     PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
     PropertyIsBetween: { spatial: false, fieldRestrict: ['number'] },
@@ -248,11 +245,14 @@ export class OgcFilterWriter {
   }
 
   public addInterfaceFilter(
-    igoOgcFilterObject = { operator: 'PropertyIsEqualTo' },
+    igoOgcFilterObject?,
     geometryName?,
     level = 0,
     parentLogical = 'Or'
   ): OgcInterfaceFilterOptions {
+    if (!igoOgcFilterObject) {
+      igoOgcFilterObject = { operator: 'PropertyIsEqualTo' };
+    }
     const f = {
       propertyName: '',
       operator: '',

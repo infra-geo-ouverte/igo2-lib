@@ -13,7 +13,6 @@ import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filte
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
-  public ogcFilterWriter: OgcFilterWriter;
 
   constructor(
     public options: WFSDataSourceOptions,
@@ -21,7 +20,6 @@ export class WFSDataSource extends DataSource {
   ) {
     super(options);
     this.options = this.wfsService.checkWfsOptions(options);
-    this.ogcFilterWriter = new OgcFilterWriter();
     this.wfsService.getSourceFieldsFromWFS(this.options);
   }
 
@@ -99,7 +97,7 @@ export class WFSDataSource extends DataSource {
         ) {
           filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
         }
-        this.options.paramsWFS.xmlFilter = this.ogcFilterWriter.buildFilter(
+        this.options.paramsWFS.xmlFilter = new OgcFilterWriter().buildFilter(
           filters,
           extent,
           proj,

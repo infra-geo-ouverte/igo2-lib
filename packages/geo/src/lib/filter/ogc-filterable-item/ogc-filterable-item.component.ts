@@ -3,7 +3,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import * as olstyle from 'ol/style';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { MapService } from '../../map/shared/map.service';
 import { DownloadService } from '../../download/shared/download.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
@@ -15,6 +14,7 @@ import {
 } from '../shared/ogc-filter.interface';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
+import { OgcFilterWriter } from '../shared/ogc-filter';
 
 @Component({
   selector: 'igo-ogc-filterable-item',
@@ -190,13 +190,13 @@ export class OgcFilterableItemComponent implements OnInit {
     }
     const status = arr.length === 0 ? true : false;
     arr.push(
-      (this.datasource as any).ogcFilterWriter.addInterfaceFilter(
+      new OgcFilterWriter().addInterfaceFilter(
         {
           propertyName: firstFieldName,
           operator: 'PropertyIsEqualTo',
           active: status,
           igoSpatialSelector: 'fixedExtent'
-        },
+        } as OgcInterfaceFilterOptions,
         fieldNameGeometry,
         lastLevel,
         this.defaultLogicalParent
@@ -211,6 +211,7 @@ export class OgcFilterableItemComponent implements OnInit {
 
   refreshFilters() {
     const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
+    const ogcFilterWriter = new OgcFilterWriter();
     const activeFilters = ogcFilters.interfaceOgcFilters.filter(
       f => f.active === true
     );
@@ -237,8 +238,7 @@ export class OgcFilterableItemComponent implements OnInit {
       if (this.layer.dataSource.options.type === 'wfs') {
         const ogcDataSource: any = this.layer.dataSource;
         const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
-        const writer = ogcDataSource.ogcFilterWriter;
-        ogcLayer.filters = writer.rebuiltIgoOgcFilterObjectFromSequence(
+        ogcLayer.filters = ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
           activeFilters
         );
         this.layer.dataSource.ol.clear();
@@ -250,12 +250,10 @@ export class OgcFilterableItemComponent implements OnInit {
         if (activeFilters.length >= 1) {
           const ogcDataSource: any = this.layer.dataSource;
           const ogcLayer: OgcFiltersOptions = ogcDataSource.options.ogcFilters;
-          const writer = ogcDataSource.ogcFilterWriter;
-          ogcLayer.filters = writer.rebuiltIgoOgcFilterObjectFromSequence(
+          ogcLayer.filters = ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
             activeFilters
           );
-          rebuildFilter = (this.layer
-            .dataSource as any).ogcFilterWriter.buildFilter(
+          rebuildFilter = ogcFilterWriter.buildFilter(
             ogcLayer.filters,
             undefined,
             undefined,

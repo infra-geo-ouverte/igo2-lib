@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { OgcFilterWriter } from './ogc-filter';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 

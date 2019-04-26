@@ -11,7 +11,6 @@ import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
-  public ogcFilterWriter: OgcFilterWriter;
 
   get params(): any {
     return this.options.params as any;
@@ -76,7 +75,6 @@ export class WMSDataSource extends DataSource {
         dynamicUrl: this.buildDynamicDownloadUrlFromParamsWFS(this.options)
       });
     } //  ####   END  if paramsWFS
-    this.ogcFilterWriter = new OgcFilterWriter();
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     }
@@ -90,7 +88,7 @@ export class WMSDataSource extends DataSource {
 
     if (this.options && initOgcFilters && initOgcFilters.enabled && initOgcFilters.filters) {
         const filters = initOgcFilters.filters;
-        const rebuildFilter = this.ogcFilterWriter.buildFilter(filters);
+        const rebuildFilter = new OgcFilterWriter().buildFilter(filters);
         const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
         const wmsFilterValue = appliedFilter.length > 0
         ? appliedFilter.replace('filter=', '')
