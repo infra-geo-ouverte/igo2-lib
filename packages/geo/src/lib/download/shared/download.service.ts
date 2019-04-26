@@ -5,7 +5,7 @@ import olProjection from 'ol/proj/Projection';
 import { MessageService, LanguageService } from '@igo2/core';
 
 import { Layer } from '../../layer/shared';
-import { OgcFilterWriter } from '../../filter/shared';
+import { OgcFilterWriter, OgcFilterableDataSourceOptions } from '../../filter/shared';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
@@ -53,11 +53,12 @@ export class DownloadService {
           .replace(/&?filter=[^&]*/gi, '')
           .replace(/&?bbox=[^&]*/gi, '');
 
+        const ogcFilters = (layer.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters;
         const rebuildFilter = new OgcFilterWriter().buildFilter(
-          (layer.dataSource.options as any).ogcFilters.filters,
+          ogcFilters.filters,
           layer.map.getExtent(),
           new olProjection({ code: layer.map.projection }),
-          wfsOptions.fieldNameGeometry
+          ogcFilters.geometryName
         );
         window.open(
           `${baseurl}&${rebuildFilter}&${outputFormatDownload}`,

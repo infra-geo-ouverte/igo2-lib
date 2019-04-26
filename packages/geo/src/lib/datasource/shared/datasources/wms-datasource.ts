@@ -63,11 +63,17 @@ export class WMSDataSource extends DataSource {
       }, options.refreshIntervalSec * 1000); // Convert seconds to MS
     }
 
+    let fieldNameGeometry = 'geometry';
+
     // ####   START if paramsWFS
     if (options.paramsWFS) {
       const wfsCheckup = this.wfsService.checkWfsOptions(options);
       options.paramsWFS.version = wfsCheckup.paramsWFS.version;
       options.paramsWFS.wfsCapabilities = wfsCheckup.params.wfsCapabilities;
+
+      if (options.paramsWFS.fieldNameGeometry) {
+        fieldNameGeometry = options.paramsWFS.fieldNameGeometry;
+      }
 
       this.wfsService.getSourceFieldsFromWFS(options);
 
@@ -87,14 +93,15 @@ export class WMSDataSource extends DataSource {
   }
 
     if (this.options && initOgcFilters && initOgcFilters.enabled && initOgcFilters.filters) {
-        const igoFilters = initOgcFilters.filters;
-        const rebuildFilter = new OgcFilterWriter().buildFilter(igoFilters);
-        const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
-        const wmsFilterValue = appliedFilter.length > 0
+      initOgcFilters.geometryName = initOgcFilters.geometryName || fieldNameGeometry;
+      const igoFilters = initOgcFilters.filters;
+      const rebuildFilter = new OgcFilterWriter().buildFilter(igoFilters);
+      const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
+      const wmsFilterValue = appliedFilter.length > 0
         ? appliedFilter.replace('filter=', '')
         : undefined;
-        this.ol.updateParams({ filter: wmsFilterValue });
-      }
+      this.ol.updateParams({ filter: wmsFilterValue });
+    }
 
   }
 
