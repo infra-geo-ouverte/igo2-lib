@@ -24,58 +24,30 @@ export class WFSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceVector {
+
+    const ogcFiltersDefaultValue = true; // default values for wfs.
+    let ogcFilters  = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     // reassignation of params to paramsWFS and url to urlWFS to have a common interface with wms-wfs datasources
     this.options.paramsWFS = this.options.params;
+    const paramsWFS = this.options.paramsWFS;
     this.options.urlWfs = this.options.url;
-    // default wfs version
-    this.options.paramsWFS.version = this.options.paramsWFS.version
-      ? this.options.paramsWFS.version
-      : '2.0.0';
-    const ogcFiltersDefaultValue = true; // default values for wfs.
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters =
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters === undefined
-        ? {}
-        : (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled =
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled ===
-      undefined
-        ? ogcFiltersDefaultValue
-        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled;
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable =
-      (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable ===
-      undefined
-        ? ogcFiltersDefaultValue
-        : (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable;
+    paramsWFS.version = paramsWFS.version || '2.0.0';
 
-    const baseWfsQuery = 'service=WFS&request=GetFeature';
-    // Mandatory
+    ogcFilters = ogcFilters || {} ;
+    ogcFilters.enabled = ogcFilters.enabled || ogcFiltersDefaultValue;
+    ogcFilters.editable =   ogcFilters.editable || ogcFiltersDefaultValue;
+    ogcFilters.geometryName = paramsWFS.fieldNameGeometry || 'geometry';
+
     const url = this.options.urlWfs;
-    // Optional
-    const outputFormat = this.options.paramsWFS.outputFormat
-      ? 'outputFormat=' + this.options.paramsWFS.outputFormat
-      : '';
-    const wfsVersion = this.options.paramsWFS.version
-      ? 'version=' + this.options.paramsWFS.version
-      : 'version=' + '2.0.0';
+    const outputFormat = paramsWFS.outputFormat ? `outputFormat=${paramsWFS.outputFormat}` : '';
+    const wfsVersion = paramsWFS.version  ?  `version=${paramsWFS.version}` : 'version=2.0.0';
 
-    let paramTypename = 'typename';
-    let paramMaxFeatures = 'maxFeatures';
-    if (
-      this.options.paramsWFS.version === '2.0.0' ||
-      !this.options.paramsWFS.version
-    ) {
-      paramTypename = 'typenames';
-      paramMaxFeatures = 'count';
-    }
+    const paramTypename = paramsWFS.version === '2.0.0' ? 'typenames' : 'typename';
+    const paramMaxFeatures = paramsWFS.version === '2.0.0' ? 'count' : 'maxFeatures';
+    const featureTypes = `${paramTypename}=${paramsWFS.featureTypes}`;
+    const maxFeatures = paramsWFS.maxFeatures ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}` : `${paramMaxFeatures}=5000`;
 
-    const featureTypes =
-      paramTypename + '=' + this.options.paramsWFS.featureTypes;
-
-    const maxFeatures = this.options.paramsWFS.maxFeatures
-      ? paramMaxFeatures + '=' + this.options.paramsWFS.maxFeatures
-      : paramMaxFeatures + '=5000';
-
-    let downloadBaseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
+    let downloadBaseUrl = `${url}?service=WFS&request=GetFeature&${wfsVersion}&${featureTypes}&`;
     downloadBaseUrl += `${outputFormat}&${maxFeatures}`;
 
     this.options.download = Object.assign({}, this.options.download, {
@@ -86,31 +58,24 @@ export class WFSDataSource extends DataSource {
       format: this.getFormatFromOptions(),
       overlaps: false,
       url: (extent, resolution, proj) => {
-        const srsname = this.options.paramsWFS.srsName
-          ? 'srsname=' + this.options.paramsWFS.srsName
-          : 'srsname=' + proj.getCode();
-
+        const srsname = paramsWFS.srsName ? `srsname=${paramsWFS.srsName}` : `srsname=${proj.getCode()}`;
         let filters;
-        if (
-          (this.options as OgcFilterableDataSourceOptions).ogcFilters &&
-          (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled
-        ) {
-          filters = (this.options as OgcFilterableDataSourceOptions).ogcFilters.filters;
+        const ogcfilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+        if (ogcfilters && ogcfilters.enabled) {
+          filters = ogcFilters.filters;
         }
-        this.options.paramsWFS.xmlFilter = new OgcFilterWriter().buildFilter(
+        paramsWFS.xmlFilter = new OgcFilterWriter().buildFilter(
           filters,
           extent,
           proj,
-          this.options.paramsWFS.fieldNameGeometry
+          ogcFilters.geometryName
         );
 
-        let baseUrl = `${url}?${baseWfsQuery}&${wfsVersion}&${featureTypes}&`;
+        let baseUrl = `${url}?service=WFS&request=GetFeature&${wfsVersion}&${featureTypes}&`;
         baseUrl += `${outputFormat}&${srsname}&${maxFeatures}`;
 
         const patternFilter = /(filter|bbox)=.*/gi;
-        if (patternFilter.test(this.options.paramsWFS.xmlFilter)) {
-          baseUrl += `&${this.options.paramsWFS.xmlFilter}`;
-        }
+        baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
 
         this.options.download = Object.assign({}, this.options.download, {
           dynamicUrl: baseUrl
