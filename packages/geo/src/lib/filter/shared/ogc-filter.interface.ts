@@ -7,10 +7,8 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
 export interface OgcFilter extends olFormatFilter {}
 
 export interface WFSWriteGetFeatureOptions {
-  filter?: olFormatFilter;
-
-  featureNS: string;
-  featurePrefix: string;
+  featureNS?: string;
+  featurePrefix?: string;
   featureTypes: string[];
   srsName?: string;
   handle?: string;
@@ -21,6 +19,7 @@ export interface WFSWriteGetFeatureOptions {
   startIndex?: number;
   count?: number;
   bbox?: [number, number, number, number];
+  filter?: olFormatFilter;
   resultType?: string;
 }
 
@@ -44,6 +43,7 @@ export interface OgcFiltersOptions {
   filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
   interfaceOgcFilters?: OgcInterfaceFilterOptions[];
   filtered?: boolean;
+  geometryName?: string;
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
