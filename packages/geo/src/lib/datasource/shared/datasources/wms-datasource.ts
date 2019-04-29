@@ -8,6 +8,7 @@ import { WFSService } from './wfs.service';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
+import { formatWFSQueryString, defaultWfsVersion, checkWfsParams, defaultFieldNameGeometry } from './wms-wfs.utils';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
@@ -63,11 +64,11 @@ export class WMSDataSource extends DataSource {
       }, options.refreshIntervalSec * 1000); // Convert seconds to MS
     }
 
-    let fieldNameGeometry = 'geometry';
+    let fieldNameGeometry = defaultFieldNameGeometry;
 
     // ####   START if paramsWFS
     if (options.paramsWFS) {
-      const wfsCheckup = this.wfsService.checkWfsOptions(options);
+      const wfsCheckup = checkWfsParams(options);
       options.paramsWFS.version = wfsCheckup.paramsWFS.version;
       options.paramsWFS.wfsCapabilities = wfsCheckup.params.wfsCapabilities;
 
@@ -118,39 +119,15 @@ export class WMSDataSource extends DataSource {
   }
 
   private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {
-    const outputFormat =
-      asWFSDataSourceOptions.paramsWFS.outputFormat !== undefined
-        ? 'outputFormat=' + asWFSDataSourceOptions.paramsWFS.outputFormat
-        : '';
-
-    let paramMaxFeatures = 'maxFeatures';
-    if (
-      asWFSDataSourceOptions.paramsWFS.version === '2.0.0' ||
-      !asWFSDataSourceOptions.paramsWFS.version
-    ) {
-      paramMaxFeatures = 'count';
-    }
-    const maxFeatures = asWFSDataSourceOptions.paramsWFS.maxFeatures
-      ? paramMaxFeatures + '=' + asWFSDataSourceOptions.paramsWFS.maxFeatures
-      : paramMaxFeatures + '=5000';
-    const srsname = asWFSDataSourceOptions.paramsWFS.srsName
-      ? 'srsname=' + asWFSDataSourceOptions.paramsWFS.srsName
-      : 'srsname=EPSG:3857';
-    const baseWfsQuery = this.wfsService.buildBaseWfsUrl(
-      asWFSDataSourceOptions,
-      'GetFeature'
-    );
-    return `${baseWfsQuery}&${outputFormat}&${srsname}&${maxFeatures}`;
+    const queryStringValues = formatWFSQueryString(asWFSDataSourceOptions);
+    const downloadUrl = queryStringValues.find(f => f.name === 'getfeature').value;
+    return downloadUrl;
   }
 
   protected createOlSource(): olSourceImageWMS {
     if (this.options.paramsWFS) {
-      this.options.urlWfs = this.options.urlWfs
-        ? this.options.urlWfs
-        : this.options.url;
-      this.options.paramsWFS.version = this.options.paramsWFS.version
-        ? this.options.paramsWFS.version
-        : '2.0.0';
+      this.options.urlWfs = this.options.urlWfs || this.options.url;
+      this.options.paramsWFS.version = this.options.paramsWFS.version || defaultWfsVersion;
     }
     let initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     const ogcFiltersDefaultValue = false; // default values for wms.

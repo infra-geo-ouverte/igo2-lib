@@ -7,6 +7,7 @@ import * as olformat from 'ol/format';
 
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { DataService } from './data.service';
+import { formatWFSQueryString, gmlRegex, defaultEpsg, defaultMaxFeatures} from './wms-wfs.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -54,96 +55,31 @@ export class WFSService extends DataService {
           this.getValueFromWfsGetPropertyValues(
             datasource,
             f.name,
-            200,
-            0,
             0
           ).subscribe(rep => (f.values = rep));
         });
     }
   }
 
-  public checkWfsOptions(wfsDataSourceOptions) {
-    // Look at https://github.com/openlayers/openlayers/pull/6400
-    const patternGml = new RegExp(/.*?gml.*?/gi);
-
-    if (patternGml.test(wfsDataSourceOptions.paramsWFS.outputFormat)) {
-      wfsDataSourceOptions.paramsWFS.version = '1.1.0';
-    }
-    return Object.assign({}, wfsDataSourceOptions, {
-      wfsCapabilities: { xmlBody: '', GetPropertyValue: false }
-    });
-  }
-
-  public buildBaseWfsUrl(
-    wfsDataSourceOptions: WFSDataSourceOptions,
-    wfsQuery: string
-  ): string {
-    let paramTypename = 'typename';
-    if (
-      wfsDataSourceOptions.paramsWFS.version === '2.0.0' ||
-      !wfsDataSourceOptions.paramsWFS.version
-    ) {
-      paramTypename = 'typenames';
-    }
-    const baseWfsQuery = 'service=wfs&request=' + wfsQuery;
-    const wfsTypeName =
-      paramTypename + '=' + wfsDataSourceOptions.paramsWFS.featureTypes;
-    const wfsVersion = wfsDataSourceOptions.paramsWFS.version
-      ? 'version=' + wfsDataSourceOptions.paramsWFS.version
-      : 'version=' + '2.0.0';
-
-    return `${
-      wfsDataSourceOptions.urlWfs
-    }?${baseWfsQuery}&${wfsVersion}&${wfsTypeName}`;
-  }
-
   public wfsGetFeature(
     wfsDataSourceOptions: WFSDataSourceOptions,
-    nb = 5000,
-    epsgCode = 3857,
-    propertyname = ''
+    nb = defaultMaxFeatures,
+    epsgCode = defaultEpsg,
+    propertyname?
   ): Observable<any> {
-    const baseUrl = this.buildBaseWfsUrl(wfsDataSourceOptions, 'GetFeature');
-    const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat
-      ? 'outputFormat=' + wfsDataSourceOptions.paramsWFS.outputFormat
-      : '';
-    const srsname = wfsDataSourceOptions.paramsWFS.srsName
-      ? 'srsname=' + wfsDataSourceOptions.paramsWFS.srsName
-      : 'srsname=EPSG:' + epsgCode;
-    const wfspropertyname =
-      propertyname === '' ? propertyname : '&propertyname=' + propertyname;
-    let paramMaxFeatures = 'maxFeatures';
-    if (
-      wfsDataSourceOptions.paramsWFS.version === '2.0.0' ||
-      !wfsDataSourceOptions.paramsWFS.version
-    ) {
-      paramMaxFeatures = 'count';
-    }
-
-    let maxFeatures;
-    if (nb !== 5000) {
-      maxFeatures = paramMaxFeatures + '=' + nb;
+    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, nb, epsgCode, propertyname);
+    const baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
+    const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
+    if (gmlRegex.test(outputFormat) || !outputFormat) {
+      return this.http.get(baseUrl, { responseType: 'text' });
     } else {
-      maxFeatures = wfsDataSourceOptions.paramsWFS.maxFeatures
-        ? paramMaxFeatures + '=' + wfsDataSourceOptions.paramsWFS.maxFeatures
-        : paramMaxFeatures + '=' + nb;
-    }
-    const urlWfs = `${baseUrl}&${outputFormat}&${srsname}&${maxFeatures}${wfspropertyname}`;
-    const patternGml = new RegExp('.*?gml.*?');
-    if (
-      patternGml.test(wfsDataSourceOptions.paramsWFS.outputFormat.toLowerCase())
-    ) {
-      return this.http.get(urlWfs, { responseType: 'text' });
-    } else {
-      return this.http.get(urlWfs);
+      return this.http.get(baseUrl);
     }
   }
 
   public getValueFromWfsGetPropertyValues(
     wfsDataSourceOptions: WFSDataSourceOptions,
     field,
-    maxFeatures = 30,
-    startIndex = 0,
     retry = 0
   ): Observable<any> {
     return new Observable(d => {
@@ -152,12 +88,10 @@ export class WFSService extends DataService {
 
       this.wfsGetPropertyValue(
         wfsDataSourceOptions,
-        field,
-        maxFeatures,
-        startIndex
+        field
       ).subscribe(
         str => {
-          str = str.replace(/&#39;/gi, "'"); // tslint:disable-line
+          str = str.replace(/&#39;/gi, "'");
           const regexExcp = /exception/gi;
           if (regexExcp.test(str)) {
             retry++;
@@ -165,8 +99,6 @@ export class WFSService extends DataService {
               this.getValueFromWfsGetPropertyValues(
                 wfsDataSourceOptions,
                 field,
-                maxFeatures,
-                startIndex,
                 retry
               ).subscribe(rep => d.next(rep));
             }
@@ -195,8 +127,6 @@ export class WFSService extends DataService {
             this.getValueFromWfsGetPropertyValues(
               wfsDataSourceOptions,
               field,
-              maxFeatures,
-              startIndex,
               retry
             ).subscribe(rep => d.next(rep));
           }
@@ -206,11 +136,8 @@ export class WFSService extends DataService {
   }
 
   wfsGetCapabilities(options): Observable<any> {
-    const baseWfsQuery = 'service=wfs&request=GetCapabilities';
-    const wfsVersion = options.version
-      ? 'version=' + options.version
-      : 'version=' + '2.0.0';
-    const wfsGcUrl = `${options.urlWfs}?${baseWfsQuery}&${wfsVersion}`;
+    const queryStringValues = formatWFSQueryString(options);
+    const wfsGcUrl = queryStringValues.find(f => f.name === 'getcapabilities').value;
     return this.http.get(wfsGcUrl, {
       observe: 'response',
       responseType: 'text'
@@ -226,10 +153,11 @@ export class WFSService extends DataService {
       let fieldListWoGeom;
       let fieldListWoGeomStr;
       let olFormats;
-      const patternGml3 = /gml/gi;
-      if (wfsDataSourceOptions.paramsWFS.outputFormat.match(patternGml3)) {
+      const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
+
+      if (gmlRegex.test(outputFormat) || !outputFormat) {
         olFormats = olformat.WFS;
-      } else {
+     } else {
         olFormats = olformat.GeoJSON;
       }
 
@@ -251,7 +179,7 @@ export class WFSService extends DataService {
             this.getValueFromWfsGetPropertyValues(
               wfsDataSourceOptions,
               element,
-              200
+              wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures
             ).subscribe(valueList => {
               sourceFields.push({
                 name: element,
@@ -274,8 +202,8 @@ export class WFSService extends DataService {
           fieldListWoGeomStr = fieldListWoGeom.join(',');
           this.wfsGetFeature(
             wfsDataSourceOptions,
-            200,
-            3857,
+            undefined,
+            undefined,
             fieldListWoGeomStr
           ).subscribe(manyFeatures => {
             const mfeatures = new olFormats().readFeatures(manyFeatures);
@@ -292,20 +220,11 @@ export class WFSService extends DataService {
 
   public wfsGetPropertyValue(
     wfsDataSourceOptions: WFSDataSourceOptions,
-    field,
-    maxFeatures = 30,
-    startIndex = 0
+    field
   ): Observable<any> {
-    const baseWfsQuery =
-      'service=wfs&request=GetPropertyValue&count=' + maxFeatures;
-    const wfsTypeName =
-      'typenames=' + wfsDataSourceOptions.paramsWFS.featureTypes;
-    const wfsValueReference = 'valueReference=' + field;
-    const wfsVersion = 'version=' + '2.0.0';
-    const gfvUrl = `${
-      wfsDataSourceOptions.urlWfs
-    }?${baseWfsQuery}&${wfsVersion}&${wfsTypeName}&${wfsValueReference}`;
-    return this.http.get(gfvUrl, { responseType: 'text' });
+    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, undefined, undefined, field);
+    const baseUrl = queryStringValues.find(f => f.name === 'getpropertyvalue').value;
+    return this.http.get(baseUrl, { responseType: 'text' });
   }
 
   private built_properties_value(features: olFeature[]): string[] {
