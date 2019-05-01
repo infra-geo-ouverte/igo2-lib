@@ -73,8 +73,6 @@
       [ngClass]="getRowClass(entity)"
       [selection]="selection"
       [selected]="rowIsSelected(entity)"
-      [selectOnClick]="!selectionCheckbox"
-      [highlightSelection]="!selectionCheckbox"
       (select)="onRowSelect(entity)"
       (click)="onRowClick(entity)">
     </tr>
