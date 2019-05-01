@@ -1,5 +1,5 @@
 import { Subscription, BehaviorSubject, Subject } from 'rxjs';
-import { distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 import { ActionStore } from '../../action';
 import { EntityRecord, EntityStore, EntityTableTemplate } from '../../entity';
@@ -37,7 +37,7 @@ export class Editor {
   /**
    * Subscription to the selected entity
    */
-  private entity$$: Subscription;
+  private entities$$: Subscription;
 
   /**
    * Whether this editor is active
@@ -113,19 +113,19 @@ export class Editor {
     this.active = true;
 
     if (this.entityStore !== undefined) {
-      this.entity$$ = this.entityStore.stateView
-      .firstBy$((record: EntityRecord<object>) => record.state.selected === true)
-      .pipe(distinctUntilChanged())
-      .subscribe((record: EntityRecord<object>) => {
-        const entity = record ? record.entity : undefined;
-        this.onSelectEntity(entity);
-      });
+      this.entities$$ = this.entityStore.stateView
+        .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
+        .subscribe((records: EntityRecord<object>[]) => {
+          // If more than one entity is selected, consider that no entity at all is selected.
+          const entity = (records.length === 0 || records.length > 1) ? undefined : records[0].entity;
+          this.onSelectEntity(entity);
+        });
     }
 
     if (this.actionStore !== undefined) {
       this.changes$$ = this.changes$
-      .pipe(debounceTime(50))
-      .subscribe(() => this.actionStore.updateActionsAvailability());
+        .pipe(debounceTime(50))
+        .subscribe(() => this.actionStore.updateActionsAvailability());
     }
 
     this.changes$.next();
@@ -138,8 +138,8 @@ export class Editor {
     this.active = false;
     this.deactivateWidget();
 
-    if (this.entity$$ !== undefined) {
-      this.entity$$.unsubscribe();
+    if (this.entities$$ !== undefined) {
+      this.entities$$.unsubscribe();
     }
     if (this.changes$$ !== undefined) {
       this.changes$$.unsubscribe();
@@ -177,6 +177,9 @@ export class Editor {
    * @param entity Entity
    */
   private onSelectEntity(entity: object) {
+    if (entity === this.entity$.value) {
+      return;
+    }
     this.entity$.next(entity);
     this.changes$.next();
   }
