@@ -8,8 +8,13 @@ import {
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
+<<<<<<< Updated upstream
 import { Layer, TooltipType } from '../shared/layers';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
+=======
+import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { Layer } from '../shared/layers';
+>>>>>>> Stashed changes
 
 @Component({
   selector: 'igo-layer-item',
@@ -23,6 +28,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
+  queryBadgeHidden$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
   private resolution$$: Subscription;
 
   @Input() layer: Layer;
@@ -32,6 +39,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   @Input() expandLegendIfVisible: boolean = false;
 
   @Input() orderable: boolean = true;
+
+  @Input() queryBadge: boolean = false;
 
   get removable(): boolean { return this.layer.options.removable !== false; }
 
@@ -47,7 +56,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     if (this.layer.visible && this.expandLegendIfVisible) {
       legendCollapsed = false;
     }
-    this.showLegend$.next(!legendCollapsed);
+    this.toggleLegend(legendCollapsed);
+    this.updateQueryBadge();
 
     const resolution$ = this.layer.map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe((resolution: number) => {
@@ -69,6 +79,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     if (this.toggleLegendOnVisibilityChange) {
       this.toggleLegend(!this.layer.visible);
     }
+    this.updateQueryBadge();
   }
 
   computeTooltip(): string {
@@ -100,5 +111,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   private onResolutionChange(resolution: number) {
     this.inResolutionRange$.next(this.layer.isInResolutionsRange);
+  }
+
+  private updateQueryBadge() {
+    const hidden = this.queryBadge === false ||
+      this.layer.visible === false ||
+      (this.layer.dataSource.options as QueryableDataSourceOptions).queryable !== true;
+    this.queryBadgeHidden$.next(hidden);
   }
 }
