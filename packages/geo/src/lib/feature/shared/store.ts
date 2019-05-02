@@ -12,7 +12,7 @@ import { IgoMap } from '../../map';
 
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
-import { featureFromOl, featureToOl, moveToFeatures } from './feature.utils';
+import { featureFromOl, featureToOl, moveToOlFeatures } from './feature.utils';
 import { FeatureStoreStrategy } from './strategies/strategy';
 
 /**
@@ -65,7 +65,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * @param strategy Feature store strategy
    * @returns Feature store
    */
-  addStrategy(strategy: FeatureStoreStrategy): FeatureStore {
+  addStrategy(strategy: FeatureStoreStrategy, activate: boolean = false): FeatureStore {
     const existingStrategy = this.strategies.find((_strategy: FeatureStoreStrategy) => {
       return strategy.constructor === _strategy.constructor;
     });
@@ -75,6 +75,11 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     this.strategies.push(strategy);
     strategy.bindStore(this);
+
+    if (activate === true) {
+      strategy.activate();
+    }
+
     return this;
   }
 
@@ -134,6 +139,8 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   setLayerFeatures(
     features: Feature[],
     motion: FeatureMotion = FeatureMotion.Default,
+    viewScale?: [number, number, number, number],
+    areaRatio?: number,
     getId?: (Feature) => EntityKey
   ) {
     getId = getId ? getId : getEntityId;
@@ -141,7 +148,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     const olFeatures = features
       .map((feature: Feature) => featureToOl(feature, this.map.projection, getId));
-    this.setLayerOlFeatures(olFeatures, motion);
+    this.setLayerOlFeatures(olFeatures, motion, viewScale, areaRatio);
   }
 
   /**
@@ -180,7 +187,12 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * @param features Openlayers feature objects
    * @param motion Optional: The type of motion to perform
    */
-  private setLayerOlFeatures(olFeatures: OlFeature[], motion: FeatureMotion = FeatureMotion.Default) {
+  private setLayerOlFeatures(
+    olFeatures: OlFeature[],
+    motion: FeatureMotion = FeatureMotion.Default,
+    viewScale?: [number, number, number, number],
+    areaRatio?: number
+  ) {
     const olFeaturesMap = new Map();
     olFeatures.forEach((olFeature: OlFeature) => {
       olFeaturesMap.set(olFeature.getId(), olFeature);
@@ -212,10 +224,10 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
 
     if (olFeaturesToAdd.length > 0) {
       // If features are added, do a motion toward the newly added features
-      moveToFeatures(this.map, olFeaturesToAdd, motion);
+      moveToOlFeatures(this.map, olFeaturesToAdd, motion, viewScale, areaRatio);
     } else if (olFeatures.length > 0) {
       // Else, do a motion toward all the features
-      moveToFeatures(this.map, olFeatures, motion);
+      moveToOlFeatures(this.map, olFeatures, motion, viewScale, areaRatio);
     }
   }
 
