@@ -388,7 +388,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       zIndex: 200,
       source: new FeatureDataSource(),
       style: createMeasureLayerStyle(),
-      showInLayerList: false
+      showInLayerList: false,
+      exportable: false,
+      browsable: false
     });
     tryBindStoreLayer(store, layer);
 
@@ -728,10 +730,14 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
 
     const properties = olTooltip.getProperties() as any;
+    const measure = properties._measure;
+    if (measure === undefined) {
+      return false;
+    }
+
     if (properties._unit === MeasureType.Length) {
-      const measure = properties._measure;
       const minSegmentLength = metersToUnit(this.minSegmentLength, properties._unit) || 0;
-      return measure >  Math.max(minSegmentLength, 0);
+      return measure > Math.max(minSegmentLength, 0);
     }
 
     return true;
