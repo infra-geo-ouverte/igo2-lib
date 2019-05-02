@@ -17,7 +17,7 @@
           "title": "Invalid file"
         },
         "success": {
-          "text": "Imported file ({{i}}/{{count}})",
+          "text": "Imported file",
           "title": "The layer '{{value}}' was added to the map"
         },
         "unreadable": {
@@ -31,7 +31,7 @@
         "exportLayerPlaceholder": "Layer",
         "exportTabTitle": "Export",
         "importButton": "Import",
-        "importProjPlaceholder": "Source projection (EPSG:4326)",
+        "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import"
       },
       "operators": {
@@ -117,15 +117,24 @@
           "Unable to print due to non-owned access rights",
         "corsErrorMessageHeader": "Print",
         "comment": "Comment",
-        "doZipFile": "Zip files",
+        "doZipFile": "Zip file",
         "outputFormat": "Output format",
         "paperFormat": "Paper format",
+        "paperFormats": {
+          "A0": "A0",
+          "A1": "A1",
+          "A2": "A2",
+          "A3": "A3",
+          "A4": "A4",
+          "A5": "A5",
+          "Letter": "Letter",
+          "Legal": "Legal"  
+        },
         "imageFormat": "Image format",
         "orientation" : "Orientation",
         "landscape": "Landscape",
         "portrait": "Portrait",
         "projection": "Projection",
-        "printBtn": "Print",
         "resolution": "Resolution",
         "saveBtn": "Save",
         "scale": "Scale",
@@ -207,7 +216,9 @@
       },
       "measure": {
         "area": "Area",
+        "areaHeader": "Area",
         "length": "Length",
+        "lengthHeader": "Length / Perimeter",
         "perimeter": "Perimeter",
         "meters": "Meters",
         "kilometers": "Kilometers",
