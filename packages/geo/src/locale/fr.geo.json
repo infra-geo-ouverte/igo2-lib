@@ -17,7 +17,7 @@
         },
         "success": {
           "text": "La couche '{{value}}' a été ajoutée à la carte",
-          "title": "Fichier importé ({{i}}/{{count}})"
+          "title": "Fichier importé"
         },
         "unreadable": {
           "text": "Le fichier '{{value}}' est impossible à lire",
@@ -27,10 +27,10 @@
       "importExportForm": {
         "exportButton": "Exporter",
         "exportFormatPlaceholder": "Format",
-        "exportLayerPlaceholder": "Couche",
+        "exportLayerPlaceholder": "Données géospatiales",
         "exportTabTitle": "Exporter",
         "importButton": "Importer",
-        "importProjPlaceholder": "Projection de l'intrant (EPSG:4326)",
+        "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer"
       },
       "operators": {
@@ -117,14 +117,23 @@
           "Impossible d'imprimer dû à des droits d'accès non détenus",
         "corsErrorMessageHeader": "Impression",
         "comment": "Commentaire",
-        "doZipFile": "Compresser les fichiers",
+        "doZipFile": "Compresser le fichier",
         "outputFormat": "Format de sortie",
         "paperFormat": "Format du papier",
+        "paperFormats": {
+          "A0": "A0",
+          "A1": "A1",
+          "A2": "A2",
+          "A3": "A3",
+          "A4": "A4",
+          "A5": "A5",
+          "Letter": "Lettre",
+          "Legal": "Légal"  
+        },
         "imageFormat": "Format de l'image",
         "orientation" : "Orientation",
         "landscape": "Paysage",
         "portrait": "Portrait",
-        "printBtn": "Imprimer",
         "projection": "Projection",
         "resolution": "Résolution",
         "saveBtn": "Sauvergarder",
@@ -208,7 +217,9 @@
       },
       "measure": {
         "area": "Superficie",
+        "areaHeader": "Superficie",
         "length": "Distance",
+        "lengthHeader": "Distance / Périmètre",
         "perimeter": "Périmètre",
         "meters": "Mètres",
         "kilometers": "Kilomètres",

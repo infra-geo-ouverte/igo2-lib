@@ -23,10 +23,10 @@ export const PrintResolution = strEnum(['72', '96', '150', '300']);
 export type PrintResolution = keyof typeof PrintResolution;
 
 export const PrintSaveImageFormat = strEnum([
-  'Jpeg',
-  'Png',
   'Bmp',
   'Gif',
+  'Jpeg',
+  'Png',
   'Tiff'
 ]);
 export type PrintSaveImageFormat = keyof typeof PrintSaveImageFormat;

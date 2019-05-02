@@ -1,18 +1,23 @@
 @import '../../../../../core/src/style/partial/media';
 
+$slide-toggle-width: 60px;
+
 mat-form-field {
   width: 100%;
 }
 
-mat-slide-toggle.horizontal-left {
-  text-align: left;
-   @include mobile {
-    text-align: inherit;
-  }
-}
+.print-slide-toggle-container {
+  overflow-x: hidden;
 
-mat-slide-toggle ::ng-deep .mat-slide-toggle-content {
-  font-size: 100%;
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+      font-size: 16px;
+    }
+  }
 }
 
 .print-option {
