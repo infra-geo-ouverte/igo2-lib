@@ -8,13 +8,10 @@ import {
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-<<<<<<< Updated upstream
-import { Layer, TooltipType } from '../shared/layers';
+
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
-=======
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
-import { Layer } from '../shared/layers';
->>>>>>> Stashed changes
+import { Layer, TooltipType } from '../shared/layers';
 
 @Component({
   selector: 'igo-layer-item',
@@ -29,6 +26,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   queryBadgeHidden$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  tooltipText: string;
 
   private resolution$$: Subscription;
 
@@ -46,7 +45,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
-  public tooltipText;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
