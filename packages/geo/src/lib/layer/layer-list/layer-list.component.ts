@@ -61,6 +61,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input() expandLegendOfVisibleLayers: boolean = false;
 
+  @Input() updateLegendOnResolutionChange: boolean = false;
+
+  @Input() queryBadge: boolean = false;
+
   get keyword(): string { return this.layerListService.keyword; }
   set keyword(value: string) {
     this.layerListService.keyword = value;

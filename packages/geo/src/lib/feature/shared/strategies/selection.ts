@@ -130,7 +130,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     });
     this.stores$$ = combineLatest(...stores$)
       .pipe(
-        debounceTime(50),
+        debounceTime(25),
         skip(1), // Skip intial selection
         map((features: Array<Feature[]>) => features.reduce((a, b) => a.concat(b)))
       ).subscribe((features: Feature[]) => this.onSelectFromStore(features));
@@ -193,6 +193,8 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     this.overlayStore.setLayerFeatures(
       features,
       doMotion ? motion : FeatureMotion.None,
+      this.options.viewScale,
+      this.options.areaRatio,
       this.options.getFeatureId
     );
   }
@@ -210,7 +212,11 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
       if (features === undefined) {
         this.unselectAllFeaturesFromStore(store);
       } else {
-        this.selectFeaturesFromStore(store, features);
+        // TODO: ATM, selecting a feature from the map will exclusively select
+        // the features that were clicked, instead of adding to the current selection.
+        // The "many" option doesn't change that behavior, for now. Ultimately, it should
+        // allow selecting many features with a drag box and/or by holding CTRL + click
+        this.selectFeaturesFromStore(store, features, true);
       }
     });
   }
@@ -220,9 +226,10 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * @param store: Feature store
    * @param features Features
    */
-  private selectFeaturesFromStore(store: FeatureStore, features: Feature[]) {
-    const many = this.options ? this.options.many : false;
-    store.state.updateMany(features, {selected: true}, !many);
+  private selectFeaturesFromStore(store: FeatureStore, features: Feature[], exclusive: boolean) {
+    // const many = this.options ? this.options.many : false;
+    // const exclusive = !many;
+    store.state.updateMany(features, {selected: true}, exclusive);
   }
 
   /**
@@ -269,15 +276,26 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * Create an overlay store that'll contain the selected features.
    * @returns Overlay store
    */
-  private createOverlayStore() {
-    const overlayLayer = new VectorLayer({
-      zIndex: 200,
-      source: new FeatureDataSource(),
-      style: this.options ? this.options.style : undefined,
-      showInLayerList: false
-    });
-
+  private createOverlayStore(): FeatureStore {
+    const overlayLayer = this.options.layer
+      ? this.options.layer
+      : this.createOverlayLayer();
     return new FeatureStore([], {map: this.map}).bindLayer(overlayLayer);
+  }
+
+  /**
+   * Create an overlay store that'll contain the selected features.
+   * @returns Overlay layer
+   */
+  private createOverlayLayer(): VectorLayer {
+    return new VectorLayer({
+      zIndex: 300,
+      source: new FeatureDataSource(),
+      style: undefined,
+      showInLayerList: false,
+      exportable: false,
+      browsable: false
+    });
   }
 
   /**
@@ -285,7 +303,9 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * features.
    */
   private addOverlayLayer() {
-    this.map.ol.addLayer(this.overlayStore.layer.ol);
+    if (this.overlayStore.layer.map === undefined) {
+      this.map.addLayer(this.overlayStore.layer);
+    }
   }
 
   /**
@@ -293,6 +313,6 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   private removeOverlayLayer() {
     this.overlayStore.source.ol.clear();
-    this.map.ol.removeLayer(this.overlayStore.layer.ol);
+    this.map.removeLayer(this.overlayStore.layer);
   }
 }

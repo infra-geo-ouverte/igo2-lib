@@ -53,6 +53,13 @@ export class SliceControl {
   private drawLineEnd$$: Subscription;
 
   /**
+   * Wheter the control is active
+   */
+  get active(): boolean {
+    return this.olMap !== undefined;
+  }
+
+  /**
    * OL overlay source
    * @internal
    */

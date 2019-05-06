@@ -11,6 +11,7 @@ import {
 import { EntityStateManager, EntityStore } from '@igo2/common';
 
 import {
+  Catalog,
   CatalogItem,
   CatalogItemGroup,
   CatalogItemLayer,
@@ -33,6 +34,11 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    */
   store = new EntityStore<CatalogItem, CatalogItemState>([]);
+
+  /**
+   * Catalog
+   */
+  @Input() catalog: Catalog;
 
   /**
    * Catalog group
@@ -79,6 +85,12 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.store.load(this.group.items);
+    if (this.catalog.sortDirection !== undefined) {
+      this.store.view.sort({
+        direction: this.catalog.sortDirection,
+        valueAccessor: (item: CatalogItem) => item.title
+      });
+    }
   }
 
   ngOnDestroy() {

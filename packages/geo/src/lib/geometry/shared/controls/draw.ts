@@ -51,6 +51,13 @@ export class DrawControl {
   private onChangesKey: string;
 
   /**
+   * Wheter the control is active
+   */
+  get active(): boolean {
+    return this.olMap !== undefined;
+  }
+
+  /**
    * Geometry type
    * @internal
    */

@@ -15,6 +15,7 @@ import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../../map';
 
 import {
+  Catalog,
   CatalogItem,
   CatalogItemLayer,
   CatalogItemGroup,
@@ -36,6 +37,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * Catalog items store controller
    */
   private controller: EntityStoreController<CatalogItem>;
+
+  /**
+   * Catalog
+   */
+  @Input() catalog: Catalog;
 
   /**
    * Store holding the catalog's items
@@ -64,6 +70,12 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       };
     });
     this.store.state.setMany(currentItems, {added: true});
+    if (this.catalog.sortDirection !== undefined) {
+      this.store.view.sort({
+        direction: this.catalog.sortDirection,
+        valueAccessor: (item: CatalogItem) => item.title
+      });
+    }
     this.controller = new EntityStoreController(this.store, this.cdRef);
   }
 

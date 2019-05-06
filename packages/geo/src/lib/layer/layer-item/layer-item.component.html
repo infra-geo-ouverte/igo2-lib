@@ -20,6 +20,11 @@
                   ('igo.geo.layer.showLayer' | translate)"
     (click)="toggleVisibility()">
     <mat-icon
+      matBadge="?"
+      matBadgeColor="accent"
+      matBadgeSize="small"
+      matBadgePosition="after"
+      [matBadgeHidden]="queryBadgeHidden$ | async"
       [ngClass]="{disabled: !(inResolutionRange$ | async)}">
       <ng-container *ngIf="layer.visible">
         visibility
@@ -99,6 +104,7 @@
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend
     *ngIf="showLegend$ | async"
-    [layer]="layer">
+    [layer]="layer"
+    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
   </igo-layer-legend>
 </div>

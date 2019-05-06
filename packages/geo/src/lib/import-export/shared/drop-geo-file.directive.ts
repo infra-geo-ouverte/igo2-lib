@@ -1,21 +1,47 @@
-import { Directive, EventEmitter, HostListener } from '@angular/core';
+import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
+import { Subscription } from 'rxjs';
+
+import { MessageService, LanguageService } from '@igo2/core';
 import { DragAndDropDirective } from '@igo2/common';
-import { ImportExportService } from './import-export.service';
+
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { IgoMap } from '../../map/shared/map';
+import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
+import { ImportService } from './import.service';
+import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
 
 @Directive({
   selector: '[igoDropGeoFile]'
 })
-export class DropGeoFileDirective extends DragAndDropDirective {
-  protected allowedExtensions: Array<string> = [];
+export class DropGeoFileDirective extends DragAndDropDirective implements OnInit, OnDestroy {
+
   protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
 
-  constructor(importExportService: ImportExportService) {
+  private filesDropped$$: Subscription;
+
+  get map(): IgoMap {
+    return this.component.map;
+  }
+
+  constructor(
+    private component: MapBrowserComponent,
+    private importService: ImportService,
+    private languageService: LanguageService,
+    private messageService: MessageService
+  ) {
     super();
-    this.allowedExtensions = ['zip', 'geojson', 'kml', 'gpx', 'gml', 'json'];
-    this.filesDropped.subscribe(f => importExportService.import(f));
-    this.filesInvalid.subscribe(f => importExportService.onFilesInvalid(f));
+  }
+
+  ngOnInit() {
+    this.filesDropped$$ = this.filesDropped.subscribe((files: File[]) => {
+      this.onFilesDropped(files);
+    });
+  }
+
+  ngOnDestroy() {
+    this.filesDropped$$.unsubscribe();
   }
 
   @HostListener('dragover', ['$event'])
@@ -31,5 +57,24 @@ export class DropGeoFileDirective extends DragAndDropDirective {
   @HostListener('drop', ['$event'])
   public onDrop(evt) {
     super.onDrop(evt);
+  }
+
+  private onFilesDropped(files: File[]) {
+    for (const file of files) {
+      this.importService
+        .import(file)
+        .subscribe(
+          (features: Feature[]) => this.onFileImportSuccess(file, features),
+          (error: Error) => this.onFileImportError(file, error)
+        );
+    }
+  }
+
+  private onFileImportSuccess(file: File, features: Feature[]) {
+    handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService);
+  }
+
+  private onFileImportError(file: File, error: Error) {
+    handleFileImportError(file, error, this.messageService, this.languageService);
   }
 }
