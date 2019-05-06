@@ -4,7 +4,7 @@ import {
   Feature,
   FeatureMotion,
   featureToOl,
-  moveToFeatures
+  moveToOlFeatures
 } from '../../feature';
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer';
@@ -122,7 +122,7 @@ export class Overlay {
     motion: FeatureMotion = FeatureMotion.Default
   ) {
     this.dataSource.ol.addFeatures(olFeatures);
-    moveToFeatures(this.map, olFeatures, motion);
+    moveToOlFeatures(this.map, olFeatures, motion);
   }
 
   /**

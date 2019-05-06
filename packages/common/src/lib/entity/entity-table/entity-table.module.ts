@@ -7,6 +7,7 @@ import {
   MatCheckboxModule
 } from '@angular/material';
 
+import { IgoCustomHtmlModule } from '../../custom-html/custom-html.module';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 import { EntityTableComponent } from './entity-table.component';
 
@@ -19,7 +20,8 @@ import { EntityTableComponent } from './entity-table.component';
     MatTableModule,
     MatSortModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    IgoCustomHtmlModule
   ],
   exports: [
     EntityTableComponent

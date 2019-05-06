@@ -19,8 +19,13 @@ import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolComponent {
+
   @Input() toggleLegendOnVisibilityChange: boolean = false;
+
   @Input() expandLegendOfVisibleLayers: boolean = false;
+
+  @Input() updateLegendOnResolutionChange: boolean = false;
+
   @Input() ogcFiltersInLayers: boolean = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};

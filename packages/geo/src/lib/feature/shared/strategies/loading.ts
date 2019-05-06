@@ -110,7 +110,13 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
     if (features.length === 0) {
       store.clearLayer();
     } else {
-      store.setLayerFeatures(features, this.selectMotion(store), this.options.getFeatureId);
+      store.setLayerFeatures(
+        features,
+        this.selectMotion(store),
+        this.options.viewScale,
+        this.options.areaRatio,
+        this.options.getFeatureId
+      );
     }
   }
 

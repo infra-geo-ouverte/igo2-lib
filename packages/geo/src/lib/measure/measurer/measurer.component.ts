@@ -81,7 +81,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     columns: [
       {
         name: 'length',
-        title: this.languageService.translate.instant('igo.geo.measure.length'),
+        title: this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
         valueAccessor: (feature: FeatureWithMeasure) => {
           const unit = this.activeLengthUnit;
           const measure = metersToUnit(feature.properties.measure.length, unit);
@@ -95,7 +95,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       },
       {
         name: 'area',
-        title: this.languageService.translate.instant('igo.geo.measure.area'),
+        title: this.languageService.translate.instant('igo.geo.measure.areaHeader'),
         valueAccessor: (feature: FeatureWithMeasure) => {
           const unit = this.activeAreaUnit;
           const measure = squareMetersToUnit(feature.properties.measure.area, unit);
@@ -388,7 +388,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       zIndex: 200,
       source: new FeatureDataSource(),
       style: createMeasureLayerStyle(),
-      showInLayerList: false
+      showInLayerList: false,
+      exportable: false,
+      browsable: false
     });
     tryBindStoreLayer(store, layer);
 
@@ -606,15 +608,16 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     const olMidpointsTooltips = updateOlTooltipsAtMidpoints(olGeometry);
     if (lengths.length === olMidpointsTooltips.length) {
       for (let i = 0; i < olMidpointsTooltips.length; i++) {
-        this.updateOlTooltip(
-          olMidpointsTooltips[i],
-          metersToUnit(lengths[i],  this.activeLengthUnit),
-          this.activeLengthUnit,
-          MeasureType.Length
-        );
+        const length = lengths[i];
+        if (length !== undefined) {
+          this.updateOlTooltip(
+            olMidpointsTooltips[i],
+            metersToUnit(length, this.activeLengthUnit),
+            this.activeLengthUnit,
+            MeasureType.Length
+          );
+        }
       }
-    } else {
-      console.warn('Failed to update measure tooltips.');
     }
 
     if (area !== undefined) {
@@ -727,10 +730,14 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
 
     const properties = olTooltip.getProperties() as any;
+    const measure = properties._measure;
+    if (measure === undefined) {
+      return false;
+    }
+
     if (properties._unit === MeasureType.Length) {
-      const measure = properties._measure;
       const minSegmentLength = metersToUnit(this.minSegmentLength, properties._unit) || 0;
-      return measure >  Math.max(minSegmentLength, 0);
+      return measure > Math.max(minSegmentLength, 0);
     }
 
     return true;

@@ -352,10 +352,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private updateMeasureTooltip(olGeometry: OlGeometry) {
     const measure = measureOlGeometry(olGeometry, this.map.projection);
     const lengths = measure.lengths;
-    const lastLength = lengths[lengths.length - 1];
+    const lastIndex = olGeometry.getType() === 'Polygon' ? lengths.length - 2 : lengths.length - 1;
+    const lastLength = lengths[lastIndex];
 
     const olMidpoints = updateOlGeometryMidpoints(olGeometry);
-    const lastIndex = olGeometry.getType() === 'Polygon' ? olMidpoints.length - 2 : olMidpoints.length - 1;
     const olLastMidpoint = olMidpoints[lastIndex];
 
     this.olTooltip.setPosition(olLastMidpoint.flatCoordinates);

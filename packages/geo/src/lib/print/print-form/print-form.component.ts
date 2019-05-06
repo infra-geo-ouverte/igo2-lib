@@ -159,12 +159,15 @@ export class PrintFormComponent {
   get commentField() {
     return (this.form.controls as any).comment as FormControl;
   }
+
   get showProjectionField() {
     return (this.form.controls as any).showProjection as FormControl;
   }
+
   get showScaleField() {
     return (this.form.controls as any).showScale as FormControl;
   }
+
   get showLegendField() {
     return (this.form.controls as any).showLegend as FormControl;
   }
@@ -191,7 +194,7 @@ export class PrintFormComponent {
       showProjection: false,
       showScale: false,
       showLegend: false,
-      doZipFile: [ {value: true, hidden: this.isPrintService } ]
+      doZipFile: [ {hidden: this.isPrintService } ]
     });
   }
 

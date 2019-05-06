@@ -11,20 +11,14 @@ import {
   selector: '[igoDragAndDrop]'
 })
 export class DragAndDropDirective {
-  @Input()
-  get allowed_extensions() {
-    return this._allowedExtensions;
-  }
-  set allowed_extensions(value: Array<string>) {
-    this._allowedExtensions = value;
-  }
-  protected _allowedExtensions: Array<string> = [];
+
+  @Input() allowedExtensions: Array<string> = [];
 
   @Output() protected filesDropped: EventEmitter<File[]> = new EventEmitter();
-  @Output() protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
-  @HostBinding('style.background') private background = 'inherit';
 
-  constructor() {}
+  @Output() protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
+
+  @HostBinding('style.background') private background = 'inherit';
 
   @HostListener('dragover', ['$event'])
   public onDragOver(evt) {
@@ -64,8 +58,11 @@ export class DragAndDropDirective {
       for (const file of files) {
         const ext = file.name.split('.')[file.name.split('.').length - 1];
         if (
-          this.allowed_extensions.lastIndexOf(ext) !== -1 &&
-          file.size !== 0
+          this.allowedExtensions.length === 0 ||
+          (
+            this.allowedExtensions.lastIndexOf(ext) !== -1 &&
+            file.size !== 0
+          )
         ) {
           filesObj.valid.push(file);
         } else {

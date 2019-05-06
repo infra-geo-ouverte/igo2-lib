@@ -36,7 +36,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { createOverlayMarkerStyle } from '../../overlay/shared/overlay.utils';
 import { FeatureMotion } from '../../feature/shared/feature.enums';
-import { moveToFeatures } from '../../feature/shared/feature.utils';
+import { moveToOlFeatures } from '../../feature/shared/feature.utils';
 
 import { Routing } from '../shared/routing.interface';
 import { RoutingService } from '../shared/routing.service';
@@ -1056,7 +1056,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   geolocateStop(index: number) {
-    moveToFeatures(this.map, [this.map.geolocationFeature], FeatureMotion.Move);
+    moveToOlFeatures(this.map, [this.map.geolocationFeature], FeatureMotion.Move);
     const geolocateCoordinates = this.map.getCenter(this.projection);
     this.stops.at(index).patchValue({ stopCoordinates: geolocateCoordinates });
     this.addStopOverlay(geolocateCoordinates, index);
