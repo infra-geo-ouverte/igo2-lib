@@ -72,6 +72,8 @@ export abstract class Layer {
     return resolution >= minResolution && resolution <= maxResolution;
   }
 
+  get showInLayerList(): boolean { return this.options.showInLayerList !== false; }
+
   constructor(options: LayerOptions) {
     this.options = options;
     this.dataSource = this.options.source;

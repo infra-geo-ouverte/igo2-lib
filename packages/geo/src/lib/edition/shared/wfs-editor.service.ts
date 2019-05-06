@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
 
-import { OlFeature } from 'ol/Feature';
-
 import {
   Action,
   ActionStore,

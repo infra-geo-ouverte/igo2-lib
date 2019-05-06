@@ -13,6 +13,10 @@ export class VectorLayer extends Layer {
   public options: VectorLayerOptions;
   public ol: olLayerVector;
 
+  get browsable(): boolean { return this.options.browsable !== false; }
+
+  get exportable(): boolean { return this.options.exportable !== false; }
+
   constructor(options: VectorLayerOptions) {
     super(options);
   }

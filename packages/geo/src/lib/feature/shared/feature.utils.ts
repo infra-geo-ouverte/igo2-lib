@@ -145,19 +145,19 @@ export function computeOlFeaturesExtent(
 /**
  * Scale an extent.
  * @param extent Extent
- * @param Scaling factor
+ * @param Scaling factors for top, right, bottom and left directions, in that order
  * @returns Scaled extent
  */
 export function scaleExtent(
   extent: [number, number, number, number],
-  scale: number
+  scale: [number, number, number, number]
 ): [number, number, number, number] {
   const [width, height] = olextent.getSize(extent);
   return [
-    extent[0] - width * scale * 0.5,
-    extent[1] - height * scale * 0.5,
-    extent[2] + width * scale * 0.5,
-    extent[3] + height * scale * 0.5
+    scale[3] ? extent[0] - width * scale[3] : extent[0],
+    scale[2] ? extent[1] - height * scale[2] : extent[1],
+    scale[1] ? extent[2] + width * scale[1] : extent[2],
+    scale[0] ? extent[3] + height * scale[0] : extent[3]
   ];
 }
 
@@ -175,7 +175,8 @@ export function featuresAreOutOfView(
 ) {
   const mapExtent = map.getExtent();
   const edgeRatio = 0.05;
-  const viewExtent = scaleExtent(mapExtent, edgeRatio * -1);
+  const scale = [-1, -1, -1, -1].map(x => x * edgeRatio);
+  const viewExtent = scaleExtent(mapExtent, scale as [number, number, number, number]);
 
   return !olextent.containsExtent(viewExtent, featuresExtent);
 }
@@ -187,16 +188,20 @@ export function featuresAreOutOfView(
  * 1% of the map extent.
  * @param map Map
  * @param featuresExtent The features's extent
+ * @param areaRatio The features extent to view extent acceptable ratio
  * @returns Return true if features are too deep in the view
  */
 export function featuresAreTooDeepInView(
   map: IgoMap,
-  featuresExtent: [number, number, number, number]
+  featuresExtent: [number, number, number, number],
+  areaRatio?: number
 ) {
+  // An area ratio of 0.004 means that the feature extent's width and height
+  // should be about 1/16 of the map extent's width and height
+  areaRatio = areaRatio ? areaRatio : 0.004;
   const mapExtent = map.getExtent();
   const mapExtentArea = olextent.getArea(mapExtent);
   const featuresExtentArea = olextent.getArea(featuresExtent);
-  const areaRatio = 0.01;
 
   return featuresExtentArea / mapExtentArea < areaRatio;
 }
@@ -210,14 +215,18 @@ export function featuresAreTooDeepInView(
  * @param scale If this is defined, the original view will be scaled
  *  by that factor before any logic is applied.
  */
-export function moveToFeatures(
+export function moveToOlFeatures(
   map: IgoMap,
   olFeatures: OlFeature[],
-  motion = FeatureMotion.Default,
-  scale = 1
+  motion: FeatureMotion = FeatureMotion.Default,
+  scale?: [number, number, number, number],
+  areaRatio?: number
 ) {
   const featuresExtent = computeOlFeaturesExtent(map, olFeatures);
-  const viewExtent = scaleExtent(featuresExtent, scale);
+  let viewExtent = featuresExtent;
+  if (scale !== undefined) {
+    viewExtent = scaleExtent(viewExtent, scale);
+  }
 
   if (motion === FeatureMotion.Zoom) {
     map.viewController.zoomToExtent(viewExtent);
@@ -226,7 +235,7 @@ export function moveToFeatures(
   } else if (motion === FeatureMotion.Default) {
     if (
       featuresAreOutOfView(map, featuresExtent) ||
-      featuresAreTooDeepInView(map, featuresExtent)
+      featuresAreTooDeepInView(map, featuresExtent, areaRatio)
     ) {
       map.viewController.zoomToExtent(viewExtent);
     }

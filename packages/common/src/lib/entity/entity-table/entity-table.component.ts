@@ -207,15 +207,17 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   }
 
   /**
-   * When an entity is selected, select it in the store and emit an event
+   * When an entity is selected, select it in the store and emit an event. Even if
+   * "many" is set to true, this method always select a single, exclusive row. Selecting
+   * multiple rows should be achieved by using the checkboxes.
    * @param entity Entity
    * @internal
    */
   onRowSelect(entity: object) {
     if (this.selection === false) { return; }
 
-    const exclusive = !this.selectMany;
-    this.store.state.update(entity, {selected: true}, exclusive);
+    // Selecting a
+    this.store.state.update(entity, {selected: true}, true);
     this.entitySelectChange.emit({added: [entity]});
   }
 

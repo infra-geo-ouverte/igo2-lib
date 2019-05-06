@@ -4,7 +4,7 @@ import { FlexibleState, getEntityTitle } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { FeatureMotion } from '../feature/shared/feature.enums';
-import { moveToFeatures } from '../feature/shared/feature.utils';
+import { moveToOlFeatures } from '../feature/shared/feature.utils';
 import { IgoMap } from '../map/shared/map';
 
 @Component({
@@ -69,7 +69,7 @@ export class ToastComponent {
         dataProjection: this.feature.projection,
         featureProjection: this.map.projection
       });
-      moveToFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
     }
   }
 

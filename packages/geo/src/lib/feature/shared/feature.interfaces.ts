@@ -1,11 +1,10 @@
 import { FormGroup } from '@angular/forms';
 
-import * as olstyle from 'ol/style';
-
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { EntityKey, EntityStoreOptions } from '@igo2/common';
 
+import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
 
@@ -33,9 +32,19 @@ export interface FeatureGeometry {
 
 export interface FeatureStoreOptions extends EntityStoreOptions {
   map: IgoMap;
+  layer?: VectorLayer;
 }
 
-export interface FeatureStoreStrategyOptions {}
+export interface FeatureStoreStrategyOptions {
+  // When the store moves features into view, the view extent, which is also the features extent,
+  // is scaled by those factors, effectively resulting in a decentered view or a more zoomed in/out view.
+  // These factors are applied to the top, right, bottom and left directions, in that order.
+  // A factor of 1 means the distance from the center, in that direction, is doubled.
+  viewScale?: [number, number, number, number];
+  // Features extent to view extent ratio used to determine if the store should trigger
+  // a map zoom when features are added to it.
+  areaRatio?: number;
+}
 
 export interface FeatureStoreLoadingStrategyOptions extends FeatureStoreStrategyOptions {
   getFeatureId?: (Feature) => EntityKey;
@@ -48,7 +57,7 @@ export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrate
   map: IgoMap;
   getFeatureId?: (Feature) => EntityKey;
   motion?: FeatureMotion;
-  style?: olstyle.Style;
+  layer?: VectorLayer;
   many?: boolean;
   hitTolerance?: number;
 }

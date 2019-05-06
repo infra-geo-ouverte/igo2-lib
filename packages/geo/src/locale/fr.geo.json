@@ -15,22 +15,36 @@
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
           "title": "Fichier invalide"
         },
+        "empty": {
+          "text": "Le fichier '{{value}}' ne contenait rien qui a pu être importé.",
+          "title": "Rien à importer"
+        },
         "success": {
           "text": "La couche '{{value}}' a été ajoutée à la carte",
-          "title": "Fichier importé ({{i}}/{{count}})"
+          "title": "Fichier importé"
         },
         "unreadable": {
           "text": "Le fichier '{{value}}' est impossible à lire",
           "title": "Fichier illisible"
         }
       },
+      "export": {
+        "nothing": {
+          "text": "Aucune donnée valide à exporter",
+          "title": "Rien à exporter"
+        },
+        "failed": {
+          "text": "Échec de l'export",
+          "title": "L'export a échoué"
+        }
+      },
       "importExportForm": {
         "exportButton": "Exporter",
         "exportFormatPlaceholder": "Format",
-        "exportLayerPlaceholder": "Couche",
+        "exportLayerPlaceholder": "Données géospatiales",
         "exportTabTitle": "Exporter",
         "importButton": "Importer",
-        "importProjPlaceholder": "Projection de l'intrant (EPSG:4326)",
+        "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer"
       },
       "operators": {
@@ -118,14 +132,23 @@
           "Impossible d'imprimer dû à des droits d'accès non détenus",
         "corsErrorMessageHeader": "Impression",
         "comment": "Commentaire",
-        "doZipFile": "Compresser les fichiers",
+        "doZipFile": "Compresser le fichier",
         "outputFormat": "Format de sortie",
         "paperFormat": "Format du papier",
+        "paperFormats": {
+          "A0": "A0",
+          "A1": "A1",
+          "A2": "A2",
+          "A3": "A3",
+          "A4": "A4",
+          "A5": "A5",
+          "Letter": "Lettre",
+          "Legal": "Légal"  
+        },
         "imageFormat": "Format de l'image",
         "orientation" : "Orientation",
         "landscape": "Paysage",
         "portrait": "Portrait",
-        "printBtn": "Imprimer",
         "projection": "Projection",
         "resolution": "Résolution",
         "saveBtn": "Sauvergarder",
@@ -209,7 +232,9 @@
       },
       "measure": {
         "area": "Superficie",
+        "areaHeader": "Superficie",
         "length": "Distance",
+        "lengthHeader": "Distance / Périmètre",
         "perimeter": "Périmètre",
         "meters": "Mètres",
         "kilometers": "Kilomètres",
@@ -225,10 +250,9 @@
         "toggleMapTooltips": "Mesures sur la carte",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
-          "calculate.title": "Calculer",
           "calculate.tooltip": "Calculer",
-          "delete.title": "Supprimer",
-          "delete.tooltip": "Supprimer"
+          "delete.tooltip": "Supprimer",
+          "modify.tooltip": "Modifier"
         }
       },
       "edition": {

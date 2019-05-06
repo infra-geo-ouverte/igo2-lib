@@ -1,5 +1,6 @@
 import * as olstyle from 'ol/style';
 import OlLineString from 'ol/geom/LineString';
+import OlLinearRing from 'ol/geom/LinearRing';
 import OlPolygon from 'ol/geom/Polygon';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import lineIntersect from '@turf/line-intersect';
@@ -37,7 +38,20 @@ export function createDrawInteractionStyle(): olstyle.Style {
 }
 
 /**
- * Splice geometry into two parts
+ * Create a default style for drawing a hole
+ * @returns OL style
+ */
+export function createDrawHoleInteractionStyle(): olstyle.Style {
+  return new olstyle.Style({
+    stroke: new olstyle.Stroke({
+      color:  [0, 153, 255, 1],
+      width: 2
+    })
+  });
+}
+
+/**
+ * Slice geometry into two parts
  * @param olGeometry OL geometry
  * @param olSlicer Slicing line
  * @returns New OL geometries
@@ -113,4 +127,15 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
   parts[1].push(parts[1][0]);
 
   return [new OlPolygon([parts[0]]), new OlPolygon([parts[1]])];
+}
+
+/**
+ * Splice geometry into two parts
+ * @param olGeometry OL geometry
+ * @param olSlicer Slicing line
+ * @returns New OL geometries
+ */
+export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ): OlPolygon {
+  // TODO: make some validation and support updating an existing linear ring
+  olPolygon.appendLinearRing(olLinearRing);
 }

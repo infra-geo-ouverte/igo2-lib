@@ -13,10 +13,15 @@
       </div>
 
       <div class="igo-form-button-group">
-        <button mat-raised-button type="button" (click)="inputFile.click()">
+        <button mat-raised-button type="button" (click)="fileInput.click()">
           {{'igo.geo.importExportForm.importButton' | translate}}
         </button>
-        <input #inputFile type="file" [style.display]="'none'" (change)="loadFile($event.target.files)">
+        <input
+          #fileInput
+          type="file"
+          [style.display]="'none'"
+          (click)="fileInput.value = null"
+          (change)="importFiles($event.target.files)">
       </div>
     </form>
   </mat-tab>
@@ -53,7 +58,7 @@
           mat-raised-button
           type="button"
           [disabled]="!form.valid"
-          (click)="handleFormSubmit(form.value)">
+          (click)="handleExportFormSubmit(form.value)">
           {{'igo.geo.importExportForm.exportButton' | translate}}
         </button>
       </div>

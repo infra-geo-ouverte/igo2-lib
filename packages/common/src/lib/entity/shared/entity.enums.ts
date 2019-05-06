@@ -7,6 +7,7 @@ export enum EntityOperationType {
 export enum EntityTableColumnRenderer {
   Default = 'Default',
   HTML = 'HTML',
+  UnsanitizedHTML = 'UnsanitizedHTML',
   Icon = 'Icon'
 }
 

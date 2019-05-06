@@ -31,7 +31,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
       .getMap()
       .layers$.subscribe((layers: Layer[]) => {
         this.component.layers = layers.filter((layer: Layer) => {
-          return layer.options.showInLayerList !== false;
+          return layer.showInLayerList === true;
         });
       });
   }

@@ -89,7 +89,7 @@ export class MapViewController extends MapController {
     }
 
     this.extent$$ = this.extent$
-      .pipe(debounceTime(50))
+      .pipe(debounceTime(25))
       .subscribe((value: {extent: MapExtent, action: MapViewAction}) => {
         this.setExtent(value.extent, value.action);
       });

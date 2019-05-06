@@ -5,16 +5,24 @@ import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlModify from 'ol/interaction/Modify';
 import OlTranslate from 'ol/interaction/Translate';
+import OlDraw from 'ol/interaction/Draw';
+import OlPolygon from 'ol/geom/Polygon';
+import OlLinearRing from 'ol/geom/LinearRing';
+import OlInteraction from 'ol/interaction/Interaction';
+import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import { MapBrowserEvent as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
 import {
   Geometry as OlGeometry,
   GeometryEvent as OlGeometryEvent
 } from 'ol/geom/Geometry';
 import { ModifyEvent as OlModifyEvent } from 'ol/interaction/Modify';
 import { TranslateEvent as OlTranslateEvent } from 'ol/interaction/Translate';
-import { MapBrowserPointerEvent } from 'ol/MapBrowserPointerEvent';
+import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { unByKey } from 'ol/Observable';
 
-import { Subject } from 'rxjs';
+import { Subject, Subscription, fromEvent } from 'rxjs';
+
+import { addLinearRingToOlPolygon, createDrawHoleInteractionStyle } from '../geometry.utils';
 
 export interface ModifyControlOptions {
   source?: OlVectorSource;
@@ -49,10 +57,30 @@ export class ModifyControl {
   private onModifyStartKey: string;
   private onModifyEndKey: string;
   private onModifyKey: string;
+  private olModifyInteractionIsActive: boolean = false;
   private olTranslateInteraction: OlTranslate;
   private onTranslateStartKey: string;
   private onTranslateEndKey: string;
   private onTranslateKey: string;
+  private olTranslateInteractionIsActive: boolean = false;
+  private olDrawInteraction: OlTranslate;
+  private onDrawStartKey: string;
+  private onDrawEndKey: string;
+  private onDrawKey: string;
+  private olDrawInteractionIsActive: boolean = false;
+
+  private keyUp$$: Subscription;
+  private keyDown$$: Subscription;
+
+  private removedOlInteractions: OlInteraction[] = [];
+  private olLinearRingsLayer: OlVectorLayer;
+
+  /**
+   * Wheter the control is active
+   */
+  get active(): boolean {
+    return this.olMap !== undefined;
+  }
 
   /**
    * OL overlay source
@@ -62,12 +90,21 @@ export class ModifyControl {
     return this.olOverlayLayer.getSource();
   }
 
+  /**
+   * OL linear rings source
+   * @internal
+   */
+  get olLinearRingsSource(): OlVectorSource {
+    return this.olLinearRingsLayer.getSource();
+  }
+
   constructor(private options: ModifyControlOptions) {
     if (options.layer !== undefined) {
       this.olOverlayLayer = options.layer;
     } else {
       this.olOverlayLayer = this.createOlInnerOverlayLayer();
     }
+    this.olLinearRingsLayer = this.createOlLinearRingsLayer();
   }
 
   /**
@@ -80,14 +117,18 @@ export class ModifyControl {
       this.removeOlInnerOverlayLayer();
       this.removeOlModifyInteraction();
       this.removeOlTranslateInteraction();
+      this.removeOlDrawInteraction();
       this.olMap = olMap;
       return;
     }
 
     this.olMap = olMap;
     this.addOlInnerOverlayLayer();
+    this.addOlDrawInteraction();
     this.addOlTranslateInteraction();
+    this.activateTranslateInteraction();
     this.addOlModifyInteraction();
+    this.activateModifyInteraction();
   }
 
   /**
@@ -119,20 +160,20 @@ export class ModifyControl {
   }
 
   /**
-   * Clear the overlay layer if it wasn't defined in the options
-   */
-  private removeOlInnerOverlayLayer() {
-    if (this.options.layer === undefined && this.olMap !== undefined) {
-      this.olMap.removeLayer(this.olOverlayLayer);
-    }
-  }
-
-  /**
    * Add the overlay layer if it wasn't defined in the options
    */
   private addOlInnerOverlayLayer(): OlVectorLayer {
     if (this.options.layer === undefined) {
       this.olMap.addLayer(this.olOverlayLayer);
+    }
+  }
+
+  /**
+   * Clear the overlay layer if it wasn't defined in the options
+   */
+  private removeOlInnerOverlayLayer() {
+    if (this.options.layer === undefined && this.olMap !== undefined) {
+      this.olMap.removeLayer(this.olOverlayLayer);
     }
   }
 
@@ -145,6 +186,35 @@ export class ModifyControl {
     }
   }
 
+  private createOlLinearRingsLayer(): OlVectorLayer {
+    return new OlVectorLayer({
+      source: new OlVectorSource(),
+      style: createDrawHoleInteractionStyle(),
+      zIndex: 500
+    });
+  }
+
+  /**
+   * Add the linear rings layer
+   */
+  private addOlLinearRingsLayer() {
+    this.olMap.addLayer(this.olLinearRingsLayer);
+  }
+
+  /**
+   * Clear the linear rings layer
+   */
+  private removeOlLinearRingsLayer() {
+    this.olMap.removeLayer(this.olLinearRingsLayer);
+  }
+
+  /**
+   * Clear the linear rings source
+   */
+  private clearOlLinearRingsSource() {
+    this.olLinearRingsSource.clear(true);
+  }
+
   /**
    * Add a modify interaction to the map an set up some listeners
    */
@@ -153,12 +223,6 @@ export class ModifyControl {
       source: this.olOverlaySource,
       style: this.options.drawStyle
     });
-
-    this.onModifyStartKey = olModifyInteraction
-      .on('modifystart', (event: OlModifyEvent) => this.onModifyStart(event));
-    this.onModifyEndKey = olModifyInteraction
-      .on('modifyend', (event: OlModifyEvent) => this.onModifyEnd(event));
-    this.olMap.addInteraction(olModifyInteraction);
     this.olModifyInteraction = olModifyInteraction;
   }
 
@@ -170,12 +234,34 @@ export class ModifyControl {
       return;
     }
 
+    this.deactivateModifyInteraction();
+    this.olModifyInteraction = undefined;
+  }
+
+  private activateModifyInteraction() {
+    if (this.olModifyInteractionIsActive === true) {
+      return;
+    }
+
+    this.olModifyInteractionIsActive = true;
+    this.onModifyStartKey = this.olModifyInteraction
+      .on('modifystart', (event: OlModifyEvent) => this.onModifyStart(event));
+    this.onModifyEndKey = this.olModifyInteraction
+      .on('modifyend', (event: OlModifyEvent) => this.onModifyEnd(event));
+    this.olMap.addInteraction(this.olModifyInteraction);
+  }
+
+  private deactivateModifyInteraction() {
+    if (this.olModifyInteractionIsActive === false) {
+      return;
+    }
+
+    this.olModifyInteractionIsActive = false;
     unByKey(this.onModifyStartKey);
     unByKey(this.onModifyEndKey);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olModifyInteraction);
     }
-    this.olModifyInteraction = undefined;
   }
 
   /**
@@ -206,23 +292,8 @@ export class ModifyControl {
    */
   private addOlTranslateInteraction() {
     const olTranslateInteraction = new OlTranslate({
-      layers: [this.olOverlayLayer],
-      handleDownEvent: (event: MapBrowserPointerEvent) => {
-        // TODO: First check if the pointer is inside the geometry by a certain
-        // distance to avoid modify/translate mixup
-        const couldTranslate = OlTranslate.prototype.handleDownEvent.call(
-          olTranslateInteraction,
-          event
-        );
-        return couldTranslate;
-      }
+      layers: [this.olOverlayLayer]
     });
-
-    this.onTranslateStartKey = olTranslateInteraction
-      .on('translatestart', (event: OlTranslateEvent) => this.onTranslateStart(event));
-    this.onTranslateEndKey = olTranslateInteraction
-      .on('translateend', (event: OlTranslateEvent) => this.onTranslateEnd(event));
-    this.olMap.addInteraction(olTranslateInteraction);
     this.olTranslateInteraction = olTranslateInteraction;
   }
 
@@ -234,12 +305,34 @@ export class ModifyControl {
       return;
     }
 
+    this.deactivateTranslateInteraction();
+    this.olTranslateInteraction = undefined;
+  }
+
+  private activateTranslateInteraction() {
+    if (this.olTranslateInteractionIsActive === true) {
+      return;
+    }
+
+    this.olTranslateInteractionIsActive = true;
+    this.onTranslateStartKey = this.olTranslateInteraction
+      .on('translatestart', (event: OlTranslateEvent) => this.onTranslateStart(event));
+    this.onTranslateEndKey = this.olTranslateInteraction
+      .on('translateend', (event: OlTranslateEvent) => this.onTranslateEnd(event));
+    this.olMap.addInteraction(this.olTranslateInteraction);
+  }
+
+  private deactivateTranslateInteraction() {
+    if (this.olTranslateInteractionIsActive === false) {
+      return;
+    }
+
+    this.olTranslateInteractionIsActive = false;
     unByKey(this.onTranslateStartKey);
     unByKey(this.onTranslateEndKey);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olTranslateInteraction);
     }
-    this.olTranslateInteraction = undefined;
   }
 
   /**
@@ -263,6 +356,190 @@ export class ModifyControl {
       unByKey(this.onTranslateKey);
     }
     this.end$.next(event.features.item(0).getGeometry());
+  }
+
+  /**
+   * Add a draw interaction to the map an set up some listeners
+   */
+  private addOlDrawInteraction() {
+    const olDrawInteraction = new OlDraw({
+      type: 'Polygon',
+      source: this.olLinearRingsSource,
+      stopClick: true,
+      style: createDrawHoleInteractionStyle(),
+      condition: (event: OlMapBrowserEvent) => {
+        return this.getOlGeometry().intersectsCoordinate(event.coordinate);
+      }
+    });
+
+    this.olDrawInteraction = olDrawInteraction;
+    this.subscribeToKeyDown();
+  }
+
+  /**
+   * Subscribe to CTRL key down to activate the draw control
+   */
+  private subscribeToKeyDown() {
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+      if (event.keyCode !== 17) { return; }
+
+      this.keyDown$$.unsubscribe();
+
+      const olGeometry = this.getOlGeometry();
+      if (!olGeometry || !(olGeometry instanceof OlPolygon)) { return; }
+
+      this.subscribeToKeyUp();
+
+      this.deactivateModifyInteraction();
+      this.deactivateTranslateInteraction();
+      this.activateDrawInteraction();
+    });
+  }
+
+  /**
+   * Subscribe to CTRL key up to deactivate the draw control
+   */
+  private subscribeToKeyUp() {
+    this.keyUp$$ = fromEvent(document, 'keyup').subscribe((event: KeyboardEvent) => {
+      if (event.keyCode !== 17) { return; }
+
+      this.keyUp$$.unsubscribe();
+      this.subscribeToKeyDown();
+
+      this.deactivateDrawInteraction();
+      this.activateModifyInteraction();
+      this.activateTranslateInteraction();
+    });
+  }
+
+  /**
+   * Remove the draw interaction
+   */
+  private removeOlDrawInteraction() {
+    if (this.olDrawInteraction === undefined) {
+      return;
+    }
+
+    if (this.keyUp$$ !== undefined) {
+      this.keyUp$$.unsubscribe();
+    }
+    if (this.keyDown$$ !== undefined) {
+      this.keyDown$$.unsubscribe();
+    }
+    this.deactivateDrawInteraction();
+    this.olDrawInteraction = undefined;
+  }
+
+  /**
+   * Activate the draw interaction
+   */
+  private activateDrawInteraction() {
+    if (this.olDrawInteractionIsActive === true) {
+      return;
+    }
+
+    this.addOlLinearRingsLayer();
+
+    this.olMap.getInteractions().forEach((olInteraction: OlInteraction) => {
+      if (olInteraction instanceof OlDragBoxInteraction) {
+        this.olMap.removeInteraction(olInteraction);
+        this.removedOlInteractions.push(olInteraction);
+      }
+    });
+
+    this.olDrawInteractionIsActive = true;
+    this.onDrawStartKey = this.olDrawInteraction
+      .on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
+    this.onDrawEndKey = this.olDrawInteraction
+      .on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
+    this.olMap.addInteraction(this.olDrawInteraction);
+  }
+
+  /**
+   * Deactivate the draw interaction
+   */
+  private deactivateDrawInteraction() {
+    if (this.olDrawInteractionIsActive === false) {
+      return;
+    }
+
+    this.removeOlLinearRingsLayer();
+
+    this.removedOlInteractions.forEach((olInteraction: OlInteraction) => {
+      this.olMap.addInteraction(olInteraction);
+    });
+
+    this.olDrawInteractionIsActive = false;
+    unByKey(this.onDrawStartKey);
+    unByKey(this.onDrawEndKey);
+    if (this.olMap !== undefined) {
+      this.olMap.removeInteraction(this.olDrawInteraction);
+    }
+  }
+
+  /**
+   * When draw start, add a new linerar ring to the geometrty and start watching for changes
+   * @param event Draw start event
+   */
+  private onDrawStart(event: OlDrawEvent) {
+    const olGeometry = event.feature.getGeometry();
+    const linearRingCoordinates = olGeometry.getLinearRing().getCoordinates();
+    this.addLinearRingToOlGeometry(linearRingCoordinates);
+    this.start$.next(this.getOlGeometry());
+
+    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
+      const _linearRingCoordinates = olGeometryEvent.target.getLinearRing().getCoordinates();
+      this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
+      this.changes$.next(this.getOlGeometry());
+    });
+  }
+
+  /**
+   * When translation ends, update the geometry observable and stop watchign for changes
+   * @param event Draw end event
+   */
+  private onDrawEnd(event: OlDrawEvent) {
+    if (this.onDrawKey !== undefined) {
+      unByKey(this.onDrawKey);
+    }
+    const linearRingCoordinates = event.feature.getGeometry().getLinearRing().getCoordinates();
+    this.updateLinearRingOfOlGeometry(linearRingCoordinates);
+    this.clearOlLinearRingsSource();
+    this.end$.next(this.getOlGeometry());
+  }
+
+  /**
+   * Add a linear ring to the geometry being modified
+   * @param coordinates Linear ring coordinates
+   */
+  private addLinearRingToOlGeometry(coordinates: number[]) {
+    const olGeometry = this.getOlGeometry();
+    const olLinearRing = new OlLinearRing(coordinates);
+    addLinearRingToOlPolygon(olGeometry, olLinearRing);
+  }
+
+  /**
+   * Update the last linear ring of the geometry being modified
+   * @param coordinates Linear ring coordinates
+   */
+  private updateLinearRingOfOlGeometry(coordinates: number[]) {
+    const olGeometry = this.getOlGeometry();
+    // Remove the last linear ring (the one we are updating)
+    const olLinearRings = olGeometry.getLinearRings().slice(0, -1);
+    const newCoordinates = olLinearRings.map((olLinearRing: OlLinearRing) => {
+      return olLinearRing.getCoordinates();
+    });
+    newCoordinates.push(coordinates);
+    olGeometry.setCoordinates(newCoordinates);
+  }
+
+  /**
+   * Get the geometry being modified
+   * @returns OL Geometry
+   */
+  private getOlGeometry(): OlGeometry {
+    const olFeatures = this.olOverlaySource.getFeatures();
+    return olFeatures.length > 0 ? olFeatures[0].getGeometry() : undefined;
   }
 
 }

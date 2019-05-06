@@ -4,7 +4,12 @@ import { EMPTY, Observable, of, concat } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { LanguageService, ConfigService } from '@igo2/core';
-import { CapabilitiesService, WMSDataSourceOptions, generateIdFromSourceOptions } from '../../datasource';
+import {
+  CapabilitiesService,
+  WMSDataSourceOptions,
+  WMTSDataSourceOptions,
+  generateIdFromSourceOptions
+} from '../../datasource';
 import { LayerOptions, ImageLayerOptions, TooltipContent, TooltipType } from '../../layer';
 import { getResolutionFromScale } from '../../map';
 
@@ -73,6 +78,8 @@ export class CatalogService {
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
     if (catalog.type === 'baselayers') {
       return this.loadCatalogBaseLayerItems(catalog);
+    } else if (catalog.type === 'wmts') {
+      return this.loadCatalogWMTSLayerItems(catalog);
     }
     return this.loadCatalogWMSLayerItems(catalog);
   }
@@ -115,8 +122,19 @@ export class CatalogService {
       );
   }
 
+  private loadCatalogWMTSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
+    return this.getCatalogWMTSCapabilities(catalog)
+      .pipe(
+        map((capabilities: any) => this.getWMTSItems(catalog, capabilities))
+      );
+  }
+
   private getCatalogWMSCapabilities(catalog: Catalog): Observable<any> {
-    return this.capabilitiesService.getCapabilities('wms', catalog.url);
+    return this.capabilitiesService.getCapabilities('wms', catalog.url, catalog.version);
+  }
+
+  private getCatalogWMTSCapabilities(catalog: Catalog): Observable<any> {
+    return this.capabilitiesService.getCapabilities('wmts', catalog.url, catalog.version);
   }
 
   private includeRecursiveItems(catalog: Catalog, layerList: any, items: CatalogItem[]) {
@@ -204,9 +222,38 @@ export class CatalogService {
     }
   }
 
+  private getWMTSItems(catalog: Catalog, capabilities: {[key: string]: any}): CatalogItemLayer[] {
+    const layers = capabilities.Contents.Layer;
+    return layers.map((layer: any) => {
+      const sourceOptions = {
+        type: 'wmts',
+        url: catalog.url,
+        layer: layer.Identifier,
+        matrixSet: catalog.matrixSet,
+        optionsFromCapabilities: true,
+        requestEncoding: catalog.requestEncoding || 'KVP',
+        style: 'default',
+        params: {
+          version: '1.0.0'
+        }
+      } as WMTSDataSourceOptions;
+
+      return {
+        id: generateIdFromSourceOptions(sourceOptions),
+        type: CatalogItemType.Layer,
+        title: layer.Title,
+        options: {
+          title: layer.Title,
+          sourceOptions
+        }
+      };
+    });
+  }
+
   private retriveLayerInfoFormat(
     layerNameFromCatalog: string,
-    layersQueryFormat: { layer: string, queryFormat: QueryFormat }[]): QueryFormat {
+    layersQueryFormat: { layer: string, queryFormat: QueryFormat }[]
+  ): QueryFormat {
 
     const currentLayerInfoFormat = layersQueryFormat.find(f => f.layer === layerNameFromCatalog);
     const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
