@@ -250,9 +250,9 @@ export class IChercheReverseSearchSource extends SearchSource
     return Object.assign(properties, { type: data.properties.doc_type });
   }
 
-  private computeExtent(
-    data: IChercheReverseData
-  ): [number, number, number, number] {
-    return [data.bbox[0], data.bbox[2], data.bbox[1], data.bbox[3]];
+  private computeExtent(data: IChercheReverseData): [number, number, number, number] | undefined {
+    return data.bbox
+      ? [data.bbox[0], data.bbox[2], data.bbox[1], data.bbox[3]]
+      : undefined;
   }
 }
