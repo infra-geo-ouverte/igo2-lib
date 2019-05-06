@@ -76,6 +76,13 @@ export class ModifyControl {
   private olLinearRingsLayer: OlVectorLayer;
 
   /**
+   * Wheter the control is active
+   */
+  get active(): boolean {
+    return this.olMap !== undefined;
+  }
+
+  /**
    * OL overlay source
    * @internal
    */
