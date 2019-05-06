@@ -1,8 +1,12 @@
+import { MessageService, LanguageService } from '@igo2/core';
+
 import {
   getEntityProperty,
   EntityTableColumn,
   EntityTableColumnRenderer
 } from '@igo2/common';
+
+import { ExportNothingToExportError } from './export.errors';
 
 /**
  * Export array to CSV
@@ -55,4 +59,29 @@ export function downloadContent(content: string, mimeType: string, fileName: str
   element.click();
 
   document.body.removeChild(element);
+}
+
+export function handleFileExportError(
+  error: Error,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  if (error instanceof ExportNothingToExportError) {
+    handleNothingToExportError(messageService, languageService);
+    return;
+  }
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.export.failed.title');
+  const message = translate.instant('igo.geo.export.failed.text');
+  messageService.error(message, title);
+}
+
+export function handleNothingToExportError(
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.export.nothing.title');
+  const message = translate.instant('igo.geo.export.nothing.text');
+  messageService.error(message, title);
 }

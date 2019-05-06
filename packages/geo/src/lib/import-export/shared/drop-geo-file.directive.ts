@@ -65,7 +65,7 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
         .import(file)
         .subscribe(
           (features: Feature[]) => this.onFileImportSuccess(file, features),
-          (error: Error) => this.onFileImportError(file)
+          (error: Error) => this.onFileImportError(file, error)
         );
     }
   }
@@ -74,7 +74,7 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
     handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService);
   }
 
-  private onFileImportError(file: File) {
-    handleFileImportError(file, this.messageService, this.languageService);
+  private onFileImportError(file: File, error: Error) {
+    handleFileImportError(file, error, this.messageService, this.languageService);
   }
 }

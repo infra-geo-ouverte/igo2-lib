@@ -15,6 +15,10 @@
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
           "title": "Fichier invalide"
         },
+        "empty": {
+          "text": "Le fichier '{{value}}' ne contenait rien qui a pu être importé.",
+          "title": "Rien à importer"
+        },
         "success": {
           "text": "La couche '{{value}}' a été ajoutée à la carte",
           "title": "Fichier importé"
@@ -22,6 +26,16 @@
         "unreadable": {
           "text": "Le fichier '{{value}}' est impossible à lire",
           "title": "Fichier illisible"
+        }
+      },
+      "export": {
+        "nothing": {
+          "text": "Aucune donnée valide à exporter",
+          "title": "Rien à exporter"
+        },
+        "failed": {
+          "text": "Échec de l'export",
+          "title": "L'export a échoué"
         }
       },
       "importExportForm": {
@@ -235,10 +249,9 @@
         "toggleMapTooltips": "Mesures sur la carte",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
-          "calculate.title": "Calculer",
           "calculate.tooltip": "Calculer",
-          "delete.title": "Supprimer",
-          "delete.tooltip": "Supprimer"
+          "delete.tooltip": "Supprimer",
+          "modify.tooltip": "Modifier"
         }
       },
       "edition": {

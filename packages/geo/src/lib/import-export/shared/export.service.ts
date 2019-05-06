@@ -9,7 +9,7 @@ import OlFeature from 'ol/Feature';
 
 import { downloadContent } from './export.utils';
 import { ExportFormat } from './export.type';
-import { ExportInvalidFileError } from './export.errors';
+import { ExportInvalidFileError, ExportNothingToExportError } from './export.errors';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,13 @@ import { ExportInvalidFileError } from './export.errors';
 export class ExportService {
 
   static ogreFormats = {
+    GML: 'gml',
+    GPX: 'gpx',
+    KML: 'kml',
     Shapefile: 'ESRI Shapefile'
   };
+
+  static noOgreFallbacks = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
 
@@ -53,9 +58,20 @@ export class ExportService {
     projectionOut: string
   ): Observable<void> {
     const doExport = (observer: Observer<void>) => {
-      if (Object.keys(ExportService.ogreFormats).indexOf(format) >= 0) {
+      const nothingToExport = this.nothingToExport(olFeatures, format);
+      if (nothingToExport === true) {
+        observer.error(new ExportNothingToExportError());
+        return;
+      }
+
+      const ogreFormats = Object.keys(ExportService.ogreFormats);
+      if (ogreFormats.indexOf(format) >= 0) {
         if (this.ogreUrl === undefined) {
-          observer.error(new ExportInvalidFileError());
+          if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
+            this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
+          } else {
+            observer.error(new ExportInvalidFileError());
+          }
           return;
         }
         this.exportWithOgre(olFeatures, observer, format, title, projectionIn, projectionOut);
@@ -116,9 +132,10 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
+    const outputName = format === 'Shapefile' ? `${title}.zip` : title;
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
-    outputNameField.setAttribute('value', title + '.zip');
+    outputNameField.setAttribute('value', outputName);
     form.appendChild(outputNameField);
 
     const ogreFormat = ExportService.ogreFormats[format];
@@ -133,5 +150,16 @@ export class ExportService {
     document.body.removeChild(form);
 
     observer.complete();
+  }
+
+  private nothingToExport(olFeatures: OlFeature[], format: string): boolean {
+    if (olFeatures.length === 0) { return true; }
+    if (format === 'GPX') {
+      const pointOrLine = olFeatures.find((olFeature) => {
+        return ['Point', 'LineString'].indexOf(olFeature.getGeometry().getType()) >= 0;
+      });
+      return pointOrLine === undefined;
+    }
+    return false;
   }
 }

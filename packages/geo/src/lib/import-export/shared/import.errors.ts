@@ -13,3 +13,10 @@ export class ImportUnreadableFileError extends ImportError {
       Object.setPrototypeOf(this, ImportUnreadableFileError.prototype);
   }
 }
+
+export class ImportNothingToImportError extends ImportError {
+  constructor() {
+      super('Nothing to import.');
+      Object.setPrototypeOf(this, ImportNothingToImportError.prototype);
+  }
+}

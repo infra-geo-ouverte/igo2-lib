@@ -16,6 +16,10 @@
           "text": "The file '{{value}}' is invalid ({{mimeType}})",
           "title": "Invalid file"
         },
+        "empty": {
+          "text": "The file '{{value}}' contained nothing that could be imported.",
+          "title": "Nothing to import"
+        },
         "success": {
           "text": "Imported file",
           "title": "The layer '{{value}}' was added to the map"
@@ -23,6 +27,16 @@
         "unreadable": {
           "text": "Unreadable file",
           "title": "The file '{{value}}' is unreadable"
+        }
+      },
+      "export": {
+        "nothing": {
+          "text": "No feature could be exported.",
+          "title": "Nothing to export"
+        },
+        "failed": {
+          "text": "Failed to export",
+          "title": "Failed to export features"
         }
       },
       "importExportForm": {
@@ -235,7 +249,8 @@
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",
-          "delete.tooltip": "Delete"
+          "delete.tooltip": "Delete",
+          "modify.tooltip": "Modify"
         }
       },
       "edition": {

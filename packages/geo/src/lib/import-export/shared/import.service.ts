@@ -10,6 +10,7 @@ import OlFeature from 'ol/Feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { ImportInvalidFileError, ImportUnreadableFileError } from './import.errors';
+import { getFileExtension } from './import.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,7 @@ export class ImportService {
   }
 
   private getFileImporter(file: File): (file: File, observer: Observer<Feature[]>, projectionIn: string, projectionOut: string) => void {
-    const extension = file.name.split('.').pop().toLowerCase();
+    const extension = getFileExtension(file);
     const mimeType = file.type;
     const allowedMimeTypes = [...ImportService.allowedMimeTypes, ...ImportService.allowedZipMimeTypes];
     const allowedExtensions = ImportService.allowedExtensions;
@@ -119,7 +120,12 @@ export class ImportService {
     this.http
       .post(url, formData, {headers: new HttpHeaders()})
       .subscribe(
-        (response: {errors?: string[]} | object) => {
+        (response: {errors?: string[]} | object | null) => {
+          if (response === null) {
+            observer.error(new ImportUnreadableFileError());
+            return;
+          }
+
           const errors = (response as any).errors || [];
           if (errors.length > 0) {
             observer.error(new ImportUnreadableFileError());
@@ -136,7 +142,7 @@ export class ImportService {
   }
 
   private parseFeaturesFromFile(file: File, data: string, projectionIn: string, projectionOut: string): Feature[] {
-    const extension = file.name.split('.').pop().toLowerCase();
+    const extension = getFileExtension(file);
     const mimeType = file.type;
 
     const GeoJSON = new olformat.GeoJSON();

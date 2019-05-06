@@ -6,3 +6,10 @@ export class ExportInvalidFileError extends ExportError {
     Object.setPrototypeOf(this, ExportInvalidFileError.prototype);
   }
 }
+
+export class ExportNothingToExportError extends ExportError {
+  constructor() {
+    super('Nothing to export.');
+    Object.setPrototypeOf(this, ExportNothingToExportError.prototype);
+  }
+}

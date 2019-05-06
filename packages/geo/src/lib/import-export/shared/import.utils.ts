@@ -50,6 +50,11 @@ export function handleFileImportSuccess(
   messageService: MessageService,
   languageService: LanguageService
 ) {
+  if (features.length === 0) {
+    this.handleNothingToImportError(file, messageService, languageService);
+    return;
+  }
+
   const layerTitle = file.name.substr(0, file.name.lastIndexOf('.'));
   addLayerAndFeaturesToMap(features, map, layerTitle);
 
@@ -63,6 +68,7 @@ export function handleFileImportSuccess(
 
 export function handleFileImportError(
   file: File,
+  error: Error,
   messageService: MessageService,
   languageService: LanguageService
 ) {
@@ -73,4 +79,22 @@ export function handleFileImportError(
       mimeType: file.type
   });
   messageService.error(message, title);
+}
+
+export function handleNothingToImportError(
+  file: File,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.dropGeoFile.empty.title');
+  const message = translate.instant('igo.geo.dropGeoFile.empty.text', {
+      value: file.name,
+      mimeType: file.type
+  });
+  messageService.error(message, title);
+}
+
+export function getFileExtension(file: File): string {
+  return file.name.split('.').pop().toLowerCase();
 }
