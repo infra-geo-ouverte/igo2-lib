@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { Layer, TooltipType } from '../shared/layers';
@@ -36,6 +35,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
   @Input() expandLegendIfVisible: boolean = false;
+
+  @Input() updateLegendOnResolutionChange: boolean = false;
 
   @Input() orderable: boolean = true;
 
@@ -108,7 +109,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   private onResolutionChange(resolution: number) {
-    this.inResolutionRange$.next(this.layer.isInResolutionsRange);
+    const inResolutionRange = this.layer.isInResolutionsRange;
+    if (inResolutionRange === false && this.updateLegendOnResolutionChange === true) {
+      this.toggleLegend(true);
+    }
+    this.inResolutionRange$.next(inResolutionRange);
   }
 
   private updateQueryBadge() {

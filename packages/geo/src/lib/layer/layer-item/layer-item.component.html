@@ -104,6 +104,7 @@
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend
     *ngIf="showLegend$ | async"
-    [layer]="layer">
+    [layer]="layer"
+    [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
   </igo-layer-legend>
 </div>
