@@ -34,11 +34,14 @@ import { CatalogState } from '../catalog.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
+
+  catalog: Catalog;
+
   /**
    * Store that contains the catalog items
    * @internal
    */
-  public store$ = new BehaviorSubject<EntityStore<CatalogItem, CatalogItemState>>(undefined);
+  store$ = new BehaviorSubject<EntityStore<CatalogItem, CatalogItemState>>(undefined);
 
   /**
    * Subscription to the selected catalog
@@ -70,7 +73,9 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
       )
       .subscribe((record: EntityRecord<Catalog>) => {
         if (record && record.entity) {
-          this.loadCatalogItems(record.entity);
+          const catalog = record.entity;
+          this.catalog = catalog;
+          this.loadCatalogItems(catalog);
         }
       });
   }

@@ -12,12 +12,16 @@ export interface Catalog {
   url: string;
   items?: CatalogItem[];
   type?: string;
+  version?: string;
+  matrixSet?: string;
+  requestEncoding?: string;
   regFilters?: string[];
   timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
   queryHtmlTarget?: QueryHtmlTarget;
   count?: number;
-  tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE ;
+  tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
+  sortDirection?: 'asc' | 'desc';
 }
 
 export interface CatalogItem {

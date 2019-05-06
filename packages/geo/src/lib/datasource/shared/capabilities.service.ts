@@ -189,7 +189,6 @@ export class CapabilitiesService {
     capabilities: any
   ): WMTSDataSourceOptions {
     const options = optionsFromCapabilities(capabilities, baseOptions);
-
     return Object.assign(options, baseOptions);
   }
 

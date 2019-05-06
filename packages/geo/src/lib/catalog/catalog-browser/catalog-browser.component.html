@@ -2,6 +2,7 @@
   <ng-template ngFor let-item [ngForOf]="store.view.all$() | async">
     <ng-container *ngIf="isGroup(item)">
       <igo-catalog-browser-group
+        [catalog]="catalog"
         [group]="item"
         [state]="store.state"
         [added]="store.state.get(item).added"
