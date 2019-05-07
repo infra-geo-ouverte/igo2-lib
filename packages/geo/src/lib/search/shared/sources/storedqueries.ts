@@ -142,15 +142,12 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     });
     const regex = new RegExp(`${strRegex}(.*)`, 'gm');
     const m = regex.exec(term);
-    if (!m) {
-      splittedTerm[fields[0].name] = term;
-    } else {
+    if (m) {
       m.shift();
       fields.forEach((field, index) => {
         splittedTerm[field.name] = m[index] !== '' ? m[index] : field.defaultValue;
       });
     }
-    console.log(splittedTerm);
     return splittedTerm;
   }
 
