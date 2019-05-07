@@ -6,6 +6,7 @@ export interface StoredQueriesSearchSourceOptions extends SearchSourceOptions {
   fields: StoredQueriesFields[];
   srsname?: string;
   outputformat?: string;
+  resultTitle?: string;
 }
 
 export interface StoredQueriesFields {
@@ -16,11 +17,7 @@ export interface StoredQueriesFields {
 
 export interface StoredQueriesData {
   id: string;
-  // doc_type: string;
-  // recherche: string;
-  // highlight: string;
   geometry: FeatureGeometry;
-  // bbox: [number, number, number, number];
   properties: { [key: string]: any };
 }
 
@@ -34,15 +31,12 @@ export interface StoredQueriesReverseSearchSourceOptions extends SearchSourceOpt
   latField: string;
   srsname?: string;
   outputformat?: string;
+  resultTitle?: string;
 }
 
 export interface StoredQueriesReverseData {
   id: string;
-  // doc_type: string;
-  // recherche: string;
-  // highlight: string;
   geometry: FeatureGeometry;
-  // bbox: [number, number, number, number];
   properties: { [key: string]: any };
 }
 

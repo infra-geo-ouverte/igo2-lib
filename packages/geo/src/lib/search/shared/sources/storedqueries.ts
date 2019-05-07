@@ -36,16 +36,8 @@ import * as olformat from 'ol/format';
 export class StoredQueriesSearchSource extends SearchSource implements TextSearch {
   static id = 'storedqueries';
   static type = FEATURE;
-  static propertiesBlacklist: string[] = [
-    '@timestamp',
-    '@version',
-    'recherche',
-    'id',
-    'idrte',
-    'cote',
-    'geometry',
-    'bbox'
-  ];
+  static propertiesBlacklist: string[] = [];
+  public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
   public multipleFieldsQuery: boolean;
 
@@ -91,6 +83,8 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
         throw new Error('Stored Queries :You must set a field default value into your field definition');
       }
     });
+
+    this.storedQueriesOptions.resultTitle = this.storedQueriesOptions.resultTitle || this.resultTitle;
   }
 
   getId(): string {
@@ -226,6 +220,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   private dataToResult(data: StoredQueriesData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
+    const title = data.properties[this.storedQueriesOptions.resultTitle] ? this.storedQueriesOptions.resultTitle : this.resultTitle;
     return {
       source: this,
       data: {
@@ -236,14 +231,14 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
         properties,
         meta: {
           id,
-          title: data.properties.title
+          title: data.properties[title]
         }
       },
       meta: {
         dataType: FEATURE,
         id,
         title: data.properties.title,
-        titleHtml: data.properties.title,
+        titleHtml: data.properties[title],
         icon: 'place'
       }
     };
@@ -262,12 +257,18 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
  * StoredQueriesReverse search source
  */
 
+ // EXAMPLE CALLS
+ // tslint:disable-next-line:max-line-length
+ // https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
+ //
+
 @Injectable()
 export class StoredQueriesReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'storedqueriesreverse';
   static type = FEATURE;
-  static propertiesBlacklist: string[] = ['doc_type'];
+  static propertiesBlacklist: string[] = [];
+  public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
   public multipleFieldsQuery: boolean;
 
@@ -290,7 +291,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
     this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
     this.storedQueriesOptions.srsname = this.storedQueriesOptions.srsname || 'EPSG:4326';
-    // this.storedQueriesOptions.resultTitle = this.storedQueriesOptions.resultTitle || 'title';
+    this.storedQueriesOptions.resultTitle = this.storedQueriesOptions.resultTitle || this.resultTitle;
   }
 
   getId(): string {
@@ -361,8 +362,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    const distance = options.distance;
-    const longLatParams =  {}; //
+    const longLatParams =  {};
     longLatParams[this.storedQueriesOptions.longField] = lonLat[0];
     longLatParams[this.storedQueriesOptions.latField] = lonLat[1];
 
@@ -393,14 +393,8 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
   private dataToResult(data: StoredQueriesReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
-   // const extent = this.computeExtent(data);
     const id = [this.getId(), properties.type, data.id].join('.');
-
-    console.log(properties);
-    /* let title = 'title';
-    /*if (properties[this.storedQueriesOptions.resultTitle]) {
-      title = this.storedQueriesOptions.resultTitle;
-    }*/
+    const title = data.properties[this.storedQueriesOptions.resultTitle] ? this.storedQueriesOptions.resultTitle : this.resultTitle;
 
     return {
       source: this,
@@ -408,17 +402,16 @@ export class StoredQueriesReverseSearchSource extends SearchSource
         type: FEATURE,
         projection: 'EPSG:4326',
         geometry: data.geometry,
-       // extent,
         properties,
         meta: {
           id,
-          title: data.properties.title
+          title: data.properties[title]
         }
       },
       meta: {
         dataType: FEATURE,
         id,
-        title: data.properties.title,
+        title: data.properties[title],
         icon: 'place'
       }
     };
@@ -431,10 +424,4 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     );
     return Object.assign(properties, { type: data.properties.doc_type });
   }
-
- /* private computeExtent(
-    data: StoredQueriesReverseData
-  ): [number, number, number, number] {
-    return [data.bbox[0], data.bbox[2], data.bbox[1], data.bbox[3]];
-  }*/
 }
