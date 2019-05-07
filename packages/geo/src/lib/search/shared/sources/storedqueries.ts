@@ -63,7 +63,6 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     }
 
     this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
-   // this.storedQueriesOptions.fields.querySplitter = this.storedQueriesOptions.querySplitter || ['@'];
     this.storedQueriesOptions.srsname = this.storedQueriesOptions.srsname || 'EPSG:4326';
 
     if (!this.storedQueriesOptions.fields) {
@@ -76,15 +75,15 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
 
     this.multipleFieldQuery  = this.storedQueriesOptions.fields.length > 1 ? true : false;
 
-    const lastField = this.storedQueriesOptions.fields[this.storedQueriesOptions.fields.length - 1];
+    const firstField = this.storedQueriesOptions.fields[0];
 
     this.storedQueriesOptions.fields.forEach(field => {
-      if (field === lastField) {
-        field.lastField = true;
+      if (field === firstField) {
+        field.firstField = true;
       } else {
-        field.lastField = false;
+        field.firstField = false;
       }
-      if (this.multipleFieldQuery && !field.splitSuffix && !field.lastField) {
+      if (this.multipleFieldQuery && !field.splitPrefix && !field.firstField) {
         throw new Error('Stored Queries :You must set a field spliter into your field definition (except for the last one!)');
       }
       if (!field.defaultValue) {
@@ -133,43 +132,25 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
 
   private termSplitter(term: string, fields: StoredQueriesFields[]): {} {
     const splittedTerm = {};
-    let remainingTerm = term;
-    let cnt = 0;
-
+    let strRegex = '';
     // Used to build the default values
     fields.forEach(field => {
       splittedTerm[field.name] = field.defaultValue;
-      const splitterRegex = new RegExp(field.splitSuffix + '(.+)', 'i');
-      // cnt = (field.splitSuffix && splitterRegex.test(remainingTerm)) ? cnt += 1 : cnt;
-      // remainingTerm = remainingTerm.split(splitterRegex)[1];
-      if (splitterRegex.test(remainingTerm)) {
-        cnt = field.splitSuffix ? cnt += 1 : cnt;
-        remainingTerm = remainingTerm.split(splitterRegex)[1];
+      if (!field.firstField) {
+        strRegex += `(.*)${field.splitPrefix}`;
       }
-
     });
-    if (cnt === 0) {
+    const regex = new RegExp(`${strRegex}(.*)`, 'gm');
+    const m = regex.exec(term);
+    if (!m) {
       splittedTerm[fields[0].name] = term;
-      return splittedTerm;
+    } else {
+      m.shift();
+      fields.forEach((field, index) => {
+        splittedTerm[field.name] = m[index] !== '' ? m[index] : field.defaultValue;
+      });
     }
-
-    remainingTerm = term;
-    fields.forEach(field => {
-      const splitterRegex = new RegExp(field.splitSuffix + '(.+)', 'i');
-      if (remainingTerm) {
-        if (!splitterRegex.test(remainingTerm)) {
-          splittedTerm[field.name] = remainingTerm;
-          remainingTerm = undefined;
-          return splittedTerm;
-        }
-        if (!field.lastField) {
-          splittedTerm[field.name] = `${remainingTerm.split(splitterRegex)[0]}`;
-          remainingTerm = remainingTerm.split(splitterRegex)[1];
-        } else {
-          splittedTerm[field.name] = `${remainingTerm}`;
-        }
-      }
-    });
+    console.log(splittedTerm);
     return splittedTerm;
   }
 
@@ -228,7 +209,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
       data.properties,
       StoredQueriesSearchSource.propertiesBlacklist
     );
-    return properties; // Object.assign(properties, { type: data.doc_type });
+    return properties;
   }
 }
 
