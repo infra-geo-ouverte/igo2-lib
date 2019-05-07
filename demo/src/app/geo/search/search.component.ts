@@ -1,7 +1,8 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import * as proj from 'ol/proj';
 
-import {LanguageService} from '@igo2/core';
-import {EntityStore} from '@igo2/common';
+import { LanguageService } from '@igo2/core';
+import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
   Feature,
@@ -13,18 +14,20 @@ import {
   LAYER,
   LayerOptions,
   Research,
-  SearchResult
+  SearchResult,
+  SearchService
 } from '@igo2/geo';
 
-import {SearchState} from '@igo2/integration';
-import {ActionStore} from '../../../../../packages/common/src/lib/action/shared';
+import { SearchState } from '@igo2/integration';
+import { GoogleLinks} from '../../../../../packages/geo/src/lib/utils/googleLinks';
+import {QueryService} from '../../../../../packages/geo/src/lib/query/shared';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class AppSearchComponent implements OnInit, OnDestroy, AfterViewInit  {
+export class AppSearchComponent implements OnInit, OnDestroy {
 
   public store = new ActionStore([]);
 
@@ -45,19 +48,23 @@ export class AppSearchComponent implements OnInit, OnDestroy, AfterViewInit  {
   public osmLayer: Layer;
 
   @ViewChild('mapBrowser', {read: ElementRef}) mapBrowser: ElementRef;
-  public contextmenuPoint: {x: number, y: number};
-  public mapPoint: {x: number, y: number};
+  public contextmenuPoint: { x: number, y: number };
+  public lonlat;
+  public mapProjection: string;
 
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
   }
 
   selectedFeature: Feature;
+
   constructor(
     private languageService: LanguageService,
     private mapService: MapService,
     private layerService: LayerService,
-    private searchState: SearchState
+    private searchState: SearchState,
+    private searchService: SearchService,
+    private queryService: QueryService
   ) {
     this.mapService.setMap(this.map);
 
@@ -81,7 +88,7 @@ export class AppSearchComponent implements OnInit, OnDestroy, AfterViewInit  {
     }
   }
 
-  onSearch(event: {research: Research; results: SearchResult[]}) {
+  onSearch(event: { research: Research; results: SearchResult[] }) {
     const results = event.results;
     this.searchStore.state.updateAll({focused: false, selected: false});
     const newResults = this.searchStore.entities$.value
@@ -149,45 +156,51 @@ export class AppSearchComponent implements OnInit, OnDestroy, AfterViewInit  {
 
     this.store.load([
       {
-        id: 'add',
+        id: 'coordinates',
         title: 'coordinates',
-        icon: 'add',
         handler: this.onSearchCoordinate.bind(this),
       },
       {
-        id: 'edit',
+        id: 'googleMaps',
         title: 'googleMap',
-        icon: 'edit',
-        handler: this.onSearchCoordinate.bind(this),
+        handler: this.onOpenGoogleMaps.bind(this),
         args: ['1']
       },
       {
-        id: 'delete',
+        id: 'googleStreetView',
         title: 'googleStreetView',
-        icon: 'delete',
-        handler: this.onSearchCoordinate.bind(this)
+        handler: this.onOpenGoogleStreetView.bind(this)
       }
     ]);
-  }
-
-  ngAfterViewInit() {
-    console.log(this.mapBrowser);
   }
 
   ngOnDestroy() {
     this.store.destroy();
   }
 
-  onContextMenuOpen(event: {x: number, y: number}) {
+  onContextMenuOpen(event: { x: number, y: number }) {
     this.contextmenuPoint = event;
-    console.log(this.contextmenuPoint);
-    console.log(this.mapBrowser.nativeElement.getBoundingClientRect().top + window.scrollY);
     this.contextmenuPoint.y = this.contextmenuPoint.y - this.mapBrowser.nativeElement.getBoundingClientRect().top + window.scrollY;
     this.contextmenuPoint.x = this.contextmenuPoint.x - this.mapBrowser.nativeElement.getBoundingClientRect().left + window.scrollX;
-    console.log(this.contextmenuPoint);
+    const position = [this.contextmenuPoint.x, this.contextmenuPoint.y];
+    const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
+    this.mapProjection = this.mapService.getMap().projection;
+    console.log(this.mapProjection);
+    this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
+
+    console.log(this.lonlat);
   }
 
   onSearchCoordinate() {
-    console.log(this.contextmenuPoint);
+    console.log(this.lonlat);
+    this.searchService.reverseSearch(this.lonlat);
+  }
+
+  onOpenGoogleMaps() {
+    window.open(GoogleLinks.getGoogleMapsLink(this.lonlat[0], this.lonlat[1]));
+  }
+
+  onOpenGoogleStreetView() {
+    window.open(GoogleLinks.getGoogleStreetViewLink(this.lonlat[0], this.lonlat[1]));
   }
 }

@@ -12,3 +12,6 @@ export * from './nominatim.providers';
 export * from './storedqueries';
 export * from './storedqueries.interfaces';
 export * from './storedqueries.providers';
+export * from './coordinates';
+export * from './coordinates.interfaces';
+export * from './coordinates.providers';

@@ -14,7 +14,9 @@ import {
   IgoSearchModule,
   provideIChercheSearchSource,
   provideILayerSearchSource,
-  provideNominatimSearchSource
+  provideNominatimSearchSource,
+  provideIChercheReverseSearchSource,
+  provideCoordinatesReverseSearchSource
 } from '@igo2/geo';
 
 import { IgoAppSearchModule } from '@igo2/integration';
@@ -44,9 +46,11 @@ import {IgoFeatureModule} from '../../../../../packages/geo/src/lib/feature/feat
   ],
   exports: [AppSearchComponent],
   providers: [
+    provideCoordinatesReverseSearchSource(),
     provideIChercheSearchSource(),
     provideILayerSearchSource(),
-    provideNominatimSearchSource()
+    provideNominatimSearchSource(),
+    provideIChercheReverseSearchSource()
   ]
 })
 export class AppSearchModule {}
