@@ -11,7 +11,6 @@ export interface StoredQueriesSearchSourceOptions extends SearchSourceOptions {
 export interface StoredQueriesFields {
   name: string;
   defaultValue: any;
-  firstField: boolean;
   splitPrefix?: string;
 }
 

@@ -46,7 +46,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     'bbox'
   ];
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
-  public multipleFieldQuery: boolean;
+  public multipleFieldsQuery: boolean;
 
   constructor(
     private http: HttpClient,
@@ -65,6 +65,13 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
     this.storedQueriesOptions.srsname = this.storedQueriesOptions.srsname || 'EPSG:4326';
 
+    const storedQueryId = this.storedQueriesOptions.storedquery_id.toLowerCase();
+    if (storedQueryId.includes('getfeaturebyid') && this.storedQueriesOptions.outputformat.toLowerCase().includes('getfeaturebyid') ) {
+      let err = 'You must set a geojson format for your stored query. This is due to an openlayers issue)';
+      err += ' (wfs 1.1.0 & gml 3.1.1 limitation)';
+      throw new Error(err);
+    }
+
     if (!this.storedQueriesOptions.fields) {
       throw new Error('Stored Queries :You must set a fields definition for your stored query');
     }
@@ -73,23 +80,15 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
       this.storedQueriesOptions.fields = [this.storedQueriesOptions.fields];
     }
 
-    this.multipleFieldQuery  = this.storedQueriesOptions.fields.length > 1 ? true : false;
+    this.multipleFieldsQuery  = this.storedQueriesOptions.fields.length > 1 ? true : false;
 
-    const firstField = this.storedQueriesOptions.fields[0];
-
-    this.storedQueriesOptions.fields.forEach(field => {
-      if (field === firstField) {
-        field.firstField = true;
-      } else {
-        field.firstField = false;
-      }
-      if (this.multipleFieldQuery && !field.splitPrefix && !field.firstField) {
-        throw new Error('Stored Queries :You must set a field spliter into your field definition (except for the last one!)');
+    this.storedQueriesOptions.fields.forEach((field, index) => {
+      if (this.multipleFieldsQuery && !field.splitPrefix && index !== 0) {
+        throw new Error('Stored Queries :You must set a field spliter into your field definition (optional for the first one!)');
       }
       if (!field.defaultValue) {
         throw new Error('Stored Queries :You must set a field default value into your field definition');
       }
-
     });
   }
 
@@ -100,9 +99,17 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
-      searchUrl: '/tqu/dev/pelord/swtq'
+      searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
     };
   }
+
+  // URL CALL EXAMPLES:
+  //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
+  //  tslint:disable-next-line:max-line-length
+  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
+  //  Custom StoredQuery
+  //  tslint:disable-next-line:max-line-length
+  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
    * Search a location by name or keyword
@@ -115,48 +122,91 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   ): Observable<SearchResult<Feature>[]> {
     const storedqueriesParams = this.termSplitter(term, this.storedQueriesOptions.fields );
     const params = this.computeRequestParams(options || {}, storedqueriesParams);
-    return this.http
+
+    if (
+      new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
+    ) {
+      return this.http
       .get(this.searchUrl, { params, responseType: 'text' })
       .pipe(map((response) => {
         return this.extractResults(this.extractWFSData(response));
       }));
+    } else {
+      return this.http
+      .get(this.searchUrl, { params })
+      .pipe(map((response) => {
+        return this.extractResults(this.extractWFSData(response));
+      }));
+    }
+  }
+
+  private getFormatFromOptions() {
+    let olFormatCls;
+
+    const outputFormat = this.storedQueriesOptions.outputformat;
+    const patternGml3 = new RegExp('.*?gml.*?', 'i');
+    const patternGeojson = new RegExp('.*?json.*?', 'i');
+
+    if (patternGeojson.test(outputFormat)) {
+      olFormatCls = olformat.GeoJSON;
+    }
+    if (patternGml3.test(outputFormat)) {
+      olFormatCls = olformat.WFS;
+    }
+
+    return new olFormatCls();
   }
 
   private extractWFSData(res) {
+    const olFormat = this.getFormatFromOptions();
     const wfs = olformat.WFS;
     const geojson = olformat.GeoJSON;
-    const wfsfeatures = new wfs().readFeatures(res);
+    const wfsfeatures = olFormat.readFeatures(res);
     const features = JSON.parse(new geojson().writeFeatures(wfsfeatures));
     return features;
   }
 
   private termSplitter(term: string, fields: StoredQueriesFields[]): {} {
     const splittedTerm = {};
-    let strRegex = '';
+    let remainingTerm = term;
+    let cnt = 0;
+
     // Used to build the default values
     fields.forEach(field => {
       splittedTerm[field.name] = field.defaultValue;
-      if (!field.firstField) {
-        strRegex += `(.*)${field.splitPrefix}`;
+      const splitterRegex = new RegExp(field.splitPrefix + '(.+)', 'i');
+      if (splitterRegex.test(remainingTerm)) {
+        cnt = field.splitPrefix ? cnt += 1 : cnt;
+        remainingTerm = remainingTerm.split(splitterRegex)[1];
+      }
+
+    });
+    if (cnt === 0) {
+      splittedTerm[fields[0].name] = term;
+      return splittedTerm;
+    }
+    remainingTerm = term;
+    const localFields = [...fields].reverse();
+    localFields.forEach((field) => {
+      const splitterRegex = new RegExp(field.splitPrefix || '' + '(.+)', 'i');
+      if (remainingTerm || remainingTerm !== '') {
+        const values = remainingTerm.split(splitterRegex);
+        remainingTerm = values[0];
+        if (values[1]) {
+          splittedTerm[field.name] = values[1].trim();
+        }
       }
     });
-    const regex = new RegExp(`${strRegex}(.*)`, 'gm');
-    const m = regex.exec(term);
-    if (m) {
-      m.shift();
-      fields.forEach((field, index) => {
-        splittedTerm[field.name] = m[index] !== '' ? m[index] : field.defaultValue;
-      });
-    }
     return splittedTerm;
   }
 
   private computeRequestParams(options: TextSearchOptions, queryParams): HttpParams {
+    const wfsversion = this.storedQueriesOptions.storedquery_id.toLowerCase().includes('getfeaturebyid') ? '2.0.0' : '1.1.0';
     return new HttpParams({
       fromObject: Object.assign(
         {
           service: 'wfs',
-          version: '1.1.0',
+          version: wfsversion,
           request: 'GetFeature',
           storedquery_id: this.storedQueriesOptions.storedquery_id,
           srsname: this.storedQueriesOptions.srsname,
@@ -188,14 +238,14 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
         properties,
         meta: {
           id,
-          title: data.properties.recherche
+          title: data.properties.title
         }
       },
       meta: {
         dataType: FEATURE,
         id,
-        title: data.properties.recherche,
-        titleHtml: data.properties.title || data.properties.messagpan,
+        title: data.properties.title,
+        titleHtml: data.properties.title,
         icon: 'place'
       }
     };
