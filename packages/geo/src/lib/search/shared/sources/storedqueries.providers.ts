@@ -5,7 +5,7 @@ import { ConfigService, LanguageService } from '@igo2/core';
 import { SearchSource } from './source';
 import {
   StoredQueriesSearchSource,
-  // StoredQueriesReverseSearchSource
+  StoredQueriesReverseSearchSource
 } from './storedqueries';
 
 /**
@@ -38,7 +38,7 @@ export function provideStoredQueriesSearchSource() {
  * StoredQueriesReverse search source factory
  * @ignore
  */
-/*
+
 export function storedqueriesReverseSearchSourceFactory(
   http: HttpClient,
   config: ConfigService
@@ -47,11 +47,11 @@ export function storedqueriesReverseSearchSourceFactory(
     http,
     config.getConfig(`searchSources.${StoredQueriesReverseSearchSource.id}`)
   );
-}*/
+}
 
 /**
  * Function that returns a provider for the StoredQueriesReverse search source
- *//*
+ */
 export function provideStoredQueriesReverseSearchSource() {
   return {
     provide: SearchSource,
@@ -59,4 +59,4 @@ export function provideStoredQueriesReverseSearchSource() {
     multi: true,
     deps: [HttpClient, ConfigService]
   };
-}*/
+}

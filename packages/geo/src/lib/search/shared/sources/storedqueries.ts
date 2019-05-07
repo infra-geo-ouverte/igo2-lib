@@ -23,7 +23,8 @@ import {
   StoredQueriesReverseData,
   StoredQueriesReverseResponse,
   StoredQueriesSearchSourceOptions,
-  StoredQueriesFields
+  StoredQueriesFields,
+  StoredQueriesReverseSearchSourceOptions
 } from './storedqueries.interfaces';
 
 import * as olformat from 'ol/format';
@@ -59,7 +60,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
       throw new Error(err);
     }
     if (!this.storedQueriesOptions.fields) {
-      throw new Error('Stored Queries :You have to set "fields" into StoredQueries options. ex: fields: ["a","b"]');
+      throw new Error('Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}');
     }
 
     this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
@@ -123,9 +124,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     const storedqueriesParams = this.termSplitter(term, this.storedQueriesOptions.fields );
     const params = this.computeRequestParams(options || {}, storedqueriesParams);
 
-    if (
-      new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
-    ) {
+    if (new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)) {
       return this.http
       .get(this.searchUrl, { params, responseType: 'text' })
       .pipe(map((response) => {
@@ -159,7 +158,6 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
 
   private extractWFSData(res) {
     const olFormat = this.getFormatFromOptions();
-    const wfs = olformat.WFS;
     const geojson = olformat.GeoJSON;
     const wfsfeatures = olFormat.readFeatures(res);
     const features = JSON.parse(new geojson().writeFeatures(wfsfeatures));
@@ -263,19 +261,36 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
 /**
  * StoredQueriesReverse search source
  */
-/*
+
 @Injectable()
 export class StoredQueriesReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'storedqueriesreverse';
   static type = FEATURE;
   static propertiesBlacklist: string[] = ['doc_type'];
+  public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
+  public multipleFieldsQuery: boolean;
 
   constructor(
     private http: HttpClient,
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options);
+    this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions ;
+    if (!this.storedQueriesOptions.storedquery_id) {
+      const err = 'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';
+      throw new Error(err);
+    }
+    if (!this.storedQueriesOptions.longField) {
+      throw new Error('Stored Queries :You have to set "longField" to map the longitude coordinate to the query params.');
+    }
+    if (!this.storedQueriesOptions.latField) {
+      throw new Error('Stored Queries :You have to set "latField" to map the latitude coordinate to the query params.');
+    }
+
+    this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
+    this.storedQueriesOptions.srsname = this.storedQueriesOptions.srsname || 'EPSG:4326';
+    // this.storedQueriesOptions.resultTitle = this.storedQueriesOptions.resultTitle || 'title';
   }
 
   getId(): string {
@@ -284,27 +299,62 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'Stored Queries',
-      searchUrl: '/tqu/dev/pelord/swtq'
+      title: 'Stored Queries (reverse)',
+      searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
     };
   }
-*/
+
   /**
    * Search a location by coordinates
    * @param lonLat Location coordinates
    * @param distance Search raidus around lonLat
    * @returns Observable of <SearchResult<Feature>[]
-   *//*
+   */
   reverseSearch(
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
-    return this.http.get(this.searchUrl, { params }).pipe(
-      map((response: StoredQueriesReverseResponse) => {
-        return this.extractResults(response);
-      })
-    );
+
+    if (new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)) {
+      return this.http
+      .get(this.searchUrl, { params, responseType: 'text' })
+      .pipe(map((response) => {
+        return this.extractResults(this.extractWFSData(response));
+      }));
+    } else {
+      return this.http
+      .get(this.searchUrl, { params })
+      .pipe(map((response) => {
+        return this.extractResults(this.extractWFSData(response));
+      }));
+    }
+
+  }
+
+  private getFormatFromOptions() {
+    let olFormatCls;
+
+    const outputFormat = this.storedQueriesOptions.outputformat;
+    const patternGml3 = new RegExp('.*?gml.*?', 'i');
+    const patternGeojson = new RegExp('.*?json.*?', 'i');
+
+    if (patternGeojson.test(outputFormat)) {
+      olFormatCls = olformat.GeoJSON;
+    }
+    if (patternGml3.test(outputFormat)) {
+      olFormatCls = olformat.WFS;
+    }
+
+    return new olFormatCls();
+  }
+
+  private extractWFSData(res) {
+    const olFormat = this.getFormatFromOptions();
+    const geojson = olformat.GeoJSON;
+    const wfsfeatures = olFormat.readFeatures(res);
+    const features = JSON.parse(new geojson().writeFeatures(wfsfeatures));
+    return features;
   }
 
   private computeRequestParams(
@@ -312,16 +362,21 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     options?: ReverseSearchOptions
   ): HttpParams {
     const distance = options.distance;
+    const longLatParams =  {}; //
+    longLatParams[this.storedQueriesOptions.longField] = lonLat[0];
+    longLatParams[this.storedQueriesOptions.latField] = lonLat[1];
+
     return new HttpParams({
       fromObject: Object.assign(
         {
           service: 'wfs',
-          version: '2.0.0',
+          version: '1.1.0',
           request: 'GetFeature',
-
-           // &STOREDQUERY_ID=rtss&SRSNAME=epsg:4326&rtss=0002004080000D&chainage=0
-           // END
+          storedquery_id: this.storedQueriesOptions.storedquery_id,
+          srsname: this.storedQueriesOptions.srsname,
+          outputformat: this.storedQueriesOptions.outputformat,
         },
+        longLatParams,
         this.params,
         options.params || {}
       )
@@ -338,8 +393,14 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
   private dataToResult(data: StoredQueriesReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
-    const extent = this.computeExtent(data);
-    const id = [this.getId(), properties.type, data._id].join('.');
+   // const extent = this.computeExtent(data);
+    const id = [this.getId(), properties.type, data.id].join('.');
+
+    console.log(properties);
+    /* let title = 'title';
+    /*if (properties[this.storedQueriesOptions.resultTitle]) {
+      title = this.storedQueriesOptions.resultTitle;
+    }*/
 
     return {
       source: this,
@@ -347,17 +408,17 @@ export class StoredQueriesReverseSearchSource extends SearchSource
         type: FEATURE,
         projection: 'EPSG:4326',
         geometry: data.geometry,
-        extent,
+       // extent,
         properties,
         meta: {
           id,
-          title: data.properties.nom
+          title: data.properties.title
         }
       },
       meta: {
         dataType: FEATURE,
         id,
-        title: data.properties.nom,
+        title: data.properties.title,
         icon: 'place'
       }
     };
@@ -371,10 +432,9 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     return Object.assign(properties, { type: data.properties.doc_type });
   }
 
-  private computeExtent(
+ /* private computeExtent(
     data: StoredQueriesReverseData
   ): [number, number, number, number] {
     return [data.bbox[0], data.bbox[2], data.bbox[1], data.bbox[3]];
-  }
+  }*/
 }
-*/

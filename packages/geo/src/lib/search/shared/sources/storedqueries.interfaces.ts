@@ -28,13 +28,21 @@ export interface StoredQueriesResponse {
   features: StoredQueriesData[];
 }
 
+export interface StoredQueriesReverseSearchSourceOptions extends SearchSourceOptions {
+  storedquery_id: string;
+  longField: string;
+  latField: string;
+  srsname?: string;
+  outputformat?: string;
+}
+
 export interface StoredQueriesReverseData {
-  _id: string;
-  doc_type: string;
-  recherche: string;
-  highlight: string;
+  id: string;
+  // doc_type: string;
+  // recherche: string;
+  // highlight: string;
   geometry: FeatureGeometry;
-  bbox: [number, number, number, number];
+  // bbox: [number, number, number, number];
   properties: { [key: string]: any };
 }
 
