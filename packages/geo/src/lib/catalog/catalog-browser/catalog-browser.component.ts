@@ -69,7 +69,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         type: CatalogItemType.Layer
       };
     });
-    this.store.state.setMany(currentItems, {added: true});
+    this.store.state.updateMany(currentItems, {added: true}, true);
     if (this.catalog.sortDirection !== undefined) {
       this.store.view.sort({
         direction: this.catalog.sortDirection,

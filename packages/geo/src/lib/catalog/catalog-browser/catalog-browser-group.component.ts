@@ -8,6 +8,8 @@ import {
   OnDestroy
 } from '@angular/core';
 
+import { BehaviorSubject } from 'rxjs';
+
 import { EntityStateManager, EntityStore } from '@igo2/common';
 
 import {
@@ -36,6 +38,12 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   store = new EntityStore<CatalogItem, CatalogItemState>([]);
 
   /**
+   * Whether all the layers of the group are added
+   * @internal
+   */
+  added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  /**
    * Catalog
    */
   @Input() catalog: Catalog;
@@ -53,11 +61,6 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * This could be useful to display some layer info before adding it, for example.
    */
   @Input() state: EntityStateManager<CatalogItem, CatalogItemState>;
-
-  /**
-   * Whether the group is already added to the map
-   */
-  @Input() added: boolean;
 
   /**
    * Event emitted when the add/remove button of the group is clicked
@@ -85,6 +88,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.store.load(this.group.items);
+    this.evaluateAdded();
     if (this.catalog.sortDirection !== undefined) {
       this.store.view.sort({
         direction: this.catalog.sortDirection,
@@ -116,7 +120,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    */
   onToggleClick() {
-    this.added ? this.remove() : this.add();
+    this.added$.value ? this.remove() : this.add();
   }
 
   /**
@@ -135,7 +139,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Emit added change event with added = true
    */
   private add() {
-    this.added = true;
+    this.added$.next(true);
     this.addedChange.emit({
       added: true,
       group: this.group
@@ -146,7 +150,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Emit added change event with added = true
    */
   private remove() {
-    this.added = false;
+    this.added$.next(false);
     this.addedChange.emit({
       added: false,
       group: this.group
@@ -167,7 +171,16 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
 
     if (layersAdded.every((value) => value === added)) {
       added ? this.add() : this.remove();
+    } else if (this.added$.value === true) {
+      this.added$.next(false);
     }
+  }
+
+  private evaluateAdded() {
+    const added = this.store.all().every((item: CatalogItem) => {
+      return (this.state.get(item).added || false) === true;
+    });
+    this.added$.next(added);
   }
 
 }
