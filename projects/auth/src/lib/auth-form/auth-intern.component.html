@@ -1,13 +1,13 @@
 <form [formGroup]="form" role="form">
   <div>
     <mat-form-field class="full-width">
-      <input matInput required placeholder="{{'igo.auth.user' | translate}}" formControlName="username">
+      <input matInput required placeholder="{{'igo.auth.user' | translate}}" (keyup.enter)="loginUser(form.value)" formControlName="username">
     </mat-form-field>
   </div>
 
   <div>
     <mat-form-field class="full-width">
-      <input matInput required type="password" placeholder="{{'igo.auth.password' | translate}}" formControlName="password">
+      <input matInput required type="password" placeholder="{{'igo.auth.password' | translate}}" (keyup.enter)="loginUser(form.value)" formControlName="password">
     </mat-form-field>
   </div>
 
