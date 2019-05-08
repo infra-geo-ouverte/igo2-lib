@@ -45,6 +45,7 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
     const editableLayers = layers.filter((layer: Layer) =>
       this.layerIsEditable(layer)
     );
+    const editableLayersIds = editableLayers.map((layer: Layer) => layer.id);
 
     const editorsToAdd = editableLayers
       .map((layer: VectorLayer) => this.getOrCreateEditor(layer))
@@ -52,8 +53,7 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
 
     const editorsToRemove = this.editorStore.all()
       .filter((editor: Editor) => {
-        const store = editor.entityStore as FeatureStore;
-        return editableLayers.indexOf(store.layer) < 0;
+        return editableLayersIds.indexOf(editor.id) < 0;
       });
 
     if (editorsToRemove.length > 0) {
