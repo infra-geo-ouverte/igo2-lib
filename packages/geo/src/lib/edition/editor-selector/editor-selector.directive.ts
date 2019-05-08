@@ -1,13 +1,13 @@
 import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import { Editor, EditorStore, EditorSelectorComponent } from '@igo2/common';
 
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { WFSDataSource, WMSDataSource } from '../../datasource';
-import { FeatureStore } from '../../feature';
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsEditorService } from '../shared/wfs-editor.service';
@@ -32,7 +32,9 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$.subscribe((layers: Layer[]) =>
+    this.layers$$ = this.map.layers$
+    .pipe(debounceTime(50))
+    .subscribe((layers: Layer[]) =>
       this.onLayersChange(layers)
     );
   }
@@ -57,6 +59,10 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
       });
 
     if (editorsToRemove.length > 0) {
+      editorsToRemove.forEach((editor: Editor) => {
+        editor.deactivate();
+      });
+      this.editorStore.state.updateMany(editorsToRemove, {active: false, selected: false});
       this.editorStore.deleteMany(editorsToRemove);
     }
 
