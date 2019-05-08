@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-import { ConfigService, LanguageService } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 
 import { SearchSource } from './source';
 import {

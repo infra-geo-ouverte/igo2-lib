@@ -4,10 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { LanguageService } from '@igo2/core';
-
 import { ObjectUtils } from '@igo2/utils';
-
 import { FEATURE, Feature } from '../../../feature';
 
 import { SearchResult } from '../search.interfaces';
