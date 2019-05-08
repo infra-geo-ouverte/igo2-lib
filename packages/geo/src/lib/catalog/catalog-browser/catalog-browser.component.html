@@ -5,7 +5,6 @@
         [catalog]="catalog"
         [group]="item"
         [state]="store.state"
-        [added]="store.state.get(item).added"
         (addedChange)="onGroupAddedChange($event)"
         (layerAddedChange)="onLayerAddedChange($event)">
       </igo-catalog-browser-group>

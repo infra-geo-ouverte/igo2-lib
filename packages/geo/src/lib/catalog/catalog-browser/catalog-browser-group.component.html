@@ -9,18 +9,28 @@
 
   <h4 matLine>{{title}}</h4>
 
-  <button
-    mat-icon-button
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="(added ? 'igo.geo.catalog.group.removeFromMap'  : 'igo.geo.catalog.group.addToMap') | translate"
-    [color]="added ? 'warn' : ''"
-    (click)="onToggleClick()">
-    <mat-icon>
-      <ng-container *ngIf="added">delete</ng-container>
-      <ng-container *ngIf="!added">add</ng-container>
-    </mat-icon>
-  </button>
+  <ng-container *ngIf="added$ | async; else notadded">
+    <button
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.catalog.group.removeFromMap' | translate"
+      color="warn"
+      (click)="onToggleClick()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </ng-container>
+
+  <ng-template #notadded>
+    <button
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.catalog.group.addToMap' | translate"
+      (click)="onToggleClick()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </ng-template>
 </mat-list-item>
 
 <div #items>
