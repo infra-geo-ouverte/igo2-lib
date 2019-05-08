@@ -14,7 +14,11 @@
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value)" [innerHTML]=property.value>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]=property.value>
+      </td>
+
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
+        <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
@@ -23,4 +27,4 @@
     </tr>
   </tbody>
 </table>
-<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]='isUrl(feature.properties.url)'></iframe>
+<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]='htmlSanitizer(feature.properties.url)'></iframe>

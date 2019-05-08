@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as proj from 'ol/proj';
 
 import { LanguageService } from '@igo2/core';
@@ -20,7 +20,6 @@ import {
 
 import { SearchState } from '@igo2/integration';
 import { GoogleLinks} from '../../../../../packages/geo/src/lib/utils/googleLinks';
-import {QueryService} from '../../../../../packages/geo/src/lib/query/shared';
 
 @Component({
   selector: 'app-search',
@@ -48,7 +47,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public osmLayer: Layer;
 
   @ViewChild('mapBrowser', {read: ElementRef}) mapBrowser: ElementRef;
-  public contextmenuPoint: { x: number, y: number };
+
   public lonlat;
   public mapProjection: string;
 
@@ -63,8 +62,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
-    private searchService: SearchService,
-    private queryService: QueryService
+    private searchService: SearchService
   ) {
     this.mapService.setMap(this.map);
 
@@ -179,21 +177,35 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   onContextMenuOpen(event: { x: number, y: number }) {
-    this.contextmenuPoint = event;
-    this.contextmenuPoint.y = this.contextmenuPoint.y - this.mapBrowser.nativeElement.getBoundingClientRect().top + window.scrollY;
-    this.contextmenuPoint.x = this.contextmenuPoint.x - this.mapBrowser.nativeElement.getBoundingClientRect().left + window.scrollX;
-    const position = [this.contextmenuPoint.x, this.contextmenuPoint.y];
+    const position = this.mapPosition(event);
     const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
     this.mapProjection = this.mapService.getMap().projection;
-    console.log(this.mapProjection);
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
+  }
 
-    console.log(this.lonlat);
+  mapPosition(event: { x: number, y: number }) {
+    const contextmenuPoint = event;
+    contextmenuPoint.y = contextmenuPoint.y - this.mapBrowser.nativeElement.getBoundingClientRect().top + window.scrollY;
+    contextmenuPoint.x = contextmenuPoint.x - this.mapBrowser.nativeElement.getBoundingClientRect().left + window.scrollX;
+    const position = [contextmenuPoint.x, contextmenuPoint.y];
+    return position;
   }
 
   onSearchCoordinate() {
-    console.log(this.lonlat);
-    this.searchService.reverseSearch(this.lonlat);
+    this.searchStore.clear();
+    const results = this.searchService.reverseSearch(this.lonlat);
+
+    for (const i in results) {
+      if (results.length > 0) {
+        results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
+          this.onSearch({research: results[i], results: _results});
+          /*if (_results[i].source.options.title === 'Coordinates') {
+            this.onResultSelect(_results[0]);
+          }*/
+          console.log(_results[0]);
+        });
+      }
+    }
   }
 
   onOpenGoogleMaps() {

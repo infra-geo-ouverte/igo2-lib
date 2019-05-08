@@ -30,7 +30,6 @@ export class CoordinatesSearchResultFormatter {
 export class CoordinatesReverseSearchSource extends SearchSource implements ReverseSearch {
   static id = 'coordinatesreverse';
   static type = FEATURE;
-  static propertiesBlacklist: string[] = ['doc_type'];
 
   constructor(
     private http: HttpClient,
@@ -76,9 +75,10 @@ export class CoordinatesReverseSearchSource extends SearchSource implements Reve
         properties: {
           type: 'point',
           coordonnees: String(data[0]) + ', ' + String(data[1]),
+          format: 'degrés decimaux',
           systemeCoordonnees: 'WGS84',
-          GoogleMaps: GoogleLinks.getGoogleMapsLink(data[1], data[0]),
-          GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(data[1], data[0])
+          GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
+          GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(data[0], data[1])
         }
       },
       meta: {
