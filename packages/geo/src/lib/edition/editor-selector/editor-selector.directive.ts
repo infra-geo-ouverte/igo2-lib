@@ -7,6 +7,7 @@ import { Editor, EditorStore, EditorSelectorComponent } from '@igo2/common';
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { WFSDataSource, WMSDataSource } from '../../datasource';
+import { FeatureStore } from '../../feature';
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsEditorService } from '../shared/wfs-editor.service';
@@ -45,16 +46,29 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
       this.layerIsEditable(layer)
     );
 
-    const editors = editableLayers.map((layer: VectorLayer) => {
-      return this.getOrCreateEditor(layer);
-    });
-    this.editorStore.load(editors);
+    const editorsToAdd = editableLayers
+      .map((layer: VectorLayer) => this.getOrCreateEditor(layer))
+      .filter((editor: Editor | undefined) => editor !== undefined);
+
+    const editorsToRemove = this.editorStore.all()
+      .filter((editor: Editor) => {
+        const store = editor.entityStore as FeatureStore;
+        return editableLayers.indexOf(store.layer) < 0;
+      });
+
+    if (editorsToRemove.length > 0) {
+      this.editorStore.deleteMany(editorsToRemove);
+    }
+
+    if (editorsToAdd.length > 0) {
+      this.editorStore.insertMany(editorsToAdd);
+    }
   }
 
-  private getOrCreateEditor(layer: VectorLayer | ImageLayer): Editor {
+  private getOrCreateEditor(layer: VectorLayer | ImageLayer): Editor | undefined {
     const editor = this.editorStore.get(layer.id);
     if (editor !== undefined) {
-      return editor;
+      return;
     }
     if (layer.dataSource instanceof WFSDataSource) {
       return this.wfsEditorService.createEditor(layer as VectorLayer, this.map);
