@@ -1,7 +1,13 @@
-table {
-  padding: 10px;
+h3 {
+  text-align: center;
+  margin: 0;
 }
 
-table tbody tr td:last-child {
-  padding-left: 10px;
+table {
+  width:100%;
+  padding: 10px;
+
+  tbody tr td:last-child {
+    padding-left: 10px;
+  }
 }

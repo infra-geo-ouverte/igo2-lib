@@ -380,13 +380,13 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       return sum + feature.properties.measure.area || 0;
     }, 0);
     const length = features.reduce((sum: number, feature: FeatureWithMeasure) => {
-      if (feature.type === 'Polygon') {
+      if (feature.geometry.type === 'Polygon') {
         return sum;
       }
       return sum + feature.properties.measure.length || 0;
     }, 0);
     const perimeter = features.reduce((sum: number, feature: FeatureWithMeasure) => {
-      if (feature.type === 'LineString') {
+      if (feature.geometry.type === 'LineString') {
         return sum;
       }
       return sum + feature.properties.measure.length || 0;
