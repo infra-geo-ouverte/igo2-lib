@@ -108,9 +108,9 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
    * Set this store's entities
    * @param entities Entities
    */
-  load(entities: E[]) {
+  load(entities: E[], pristine: boolean = true) {
     this._index = this.generateIndex(entities);
-    this._pristine = true;
+    this._pristine = pristine;
     this.next();
   }
 
