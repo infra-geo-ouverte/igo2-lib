@@ -90,6 +90,11 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     });
   }
 
+  clear() {
+    this.overlayStore.source.ol.clear();
+    this.overlayStore.clear();
+  }
+
   /**
    * Add the overlay layer, setup the map click lsitener and
    * start watching for stores selection
