@@ -229,6 +229,21 @@
         "startDate": "Start Date"
       },
       "measure": {
+        "dialog": {
+          "title": "Sum of the selection",
+          "length.title": "Length",
+          "area.title": "Area",
+          "lengthInMeters": "Length in meters",
+          "lengthInKilometers": "Length in kilometers",
+          "lengthInMiles": "Length in miles",
+          "lengthInFeet": "Length in en feet",
+          "areaInSquareMeters": "Area in meters²",
+          "areaInSquareKilometers": "Area in kilometers²",
+          "areaInSquareMiles": "Area in miles²",
+          "areaInHectares": "Area in hectares",
+          "areaInAcres": "Area in acres",
+          "perimeterInMeters": "Perimeter in meters"
+        },
         "area": "Area",
         "areaHeader": "Area",
         "length": "Length",
