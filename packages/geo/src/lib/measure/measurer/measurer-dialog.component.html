@@ -1,17 +1,62 @@
 <div mat-dialog-content>
-  <table class="igo-striped">
+  <h4>{{'igo.geo.measure.dialog.title' | translate}}</h4>
+
+  <table>
+    <thead>
+      <tr>
+        <th colspan="2">{{'igo.geo.measure.dialog.length.title' | translate}}</th>
+      </tr>
+    </thead>
     <tbody>
       <tr>
-        <td>{{'igo.geo.measure.length' | translate}}</td>
+        <td>{{'igo.geo.measure.dialog.lengthInMeters' | translate}}</td>
+        <td>{{data.length | measureFormat: measureLengthUnit.Meters}}</td>
       </tr>
       <tr>
-        <td>{{data.length | measureFormat: data.lengthUnit: true}}</td>
+        <td>{{'igo.geo.measure.dialog.lengthInKilometers' | translate}}</td>
+        <td>{{data.length | measureFormat: measureLengthUnit.Kilometers}}</td>
       </tr>
       <tr>
-        <td>{{'igo.geo.measure.area' | translate}}</td>
+        <td>{{'igo.geo.measure.dialog.lengthInMiles' | translate}}</td>
+        <td>{{data.length | measureFormat: measureLengthUnit.Miles}}</td>
       </tr>
       <tr>
-        <td>{{data.area | measureFormat: data.areaUnit: true}}</td>
+        <td>{{'igo.geo.measure.dialog.lengthInFeet' | translate}}</td>
+        <td>{{data.length | measureFormat: measureLengthUnit.Feet}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th colspan="2">{{'igo.geo.measure.dialog.area.title' | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{'igo.geo.measure.dialog.areaInSquareMeters' | translate}}</td>
+        <td>{{data.area | measureFormat: measureAreaUnit.SquareMeters}}</td>
+      </tr>
+      <tr>
+        <td>{{'igo.geo.measure.dialog.areaInSquareKilometers' | translate}}</td>
+        <td>{{data.area | measureFormat:measureAreaUnit.SquareKilometers}}</td>
+      </tr>
+      <tr>
+        <td>{{'igo.geo.measure.dialog.areaInSquareMiles' | translate}}</td>
+        <td>{{data.area | measureFormat: measureAreaUnit.SquareMiles}}</td>
+      </tr>
+      <tr>
+        <td>{{'igo.geo.measure.dialog.areaInAcres' | translate}}</td>
+        <td>{{data.area | measureFormat: measureAreaUnit.Acres}}</td>
+      </tr>
+      <tr>
+        <td>{{'igo.geo.measure.dialog.areaInHectares' | translate}}</td>
+        <td>{{data.area | measureFormat: measureAreaUnit.Hectares}}</td>
+      </tr>
+      <tr>
+        <td>{{'igo.geo.measure.dialog.perimeterInMeters' | translate}}</td>
+        <td>{{data.perimeter | measureFormat: measureLengthUnit.Meters}}</td>
       </tr>
     </tbody>
   </table>
