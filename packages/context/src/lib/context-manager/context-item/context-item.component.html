@@ -5,7 +5,7 @@
     [matTooltip]="'igo.context.contextManager.favorite' | translate"
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
-    (click)="favorite.emit(context)">
+    (click)="favoriteClick(context)">
     <mat-icon *ngIf="!context.iconImage">
       {{context.icon ? context.icon : context.scope === 'public' ? 'public' : 'star'}}
     </mat-icon>
