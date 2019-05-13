@@ -7,4 +7,5 @@ export interface EditorOptions {
   tableTemplate?: EntityTableTemplate;
   entityStore?: EntityStore<object>;
   actionStore?: ActionStore;
+  meta?: {[key: string]: any};
 }
