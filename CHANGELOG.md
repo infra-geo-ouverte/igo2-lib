@@ -1,3 +1,14 @@
+<a name="0.27.10"></a>
+## [0.27.10](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.9...0.27.10) (2019-05-13)
+
+
+### Bug Fixes
+
+* **context-favorite:** api was called even if we were not authenticated ([95d60f6](https://github.com/infra-geo-ouverte/igo2-lib/commit/95d60f6))
+* **layer:** fix layer issue with capabilities options ([404c0c3](https://github.com/infra-geo-ouverte/igo2-lib/commit/404c0c3))
+
+
+
 <a name="0.27.9"></a>
 ## [0.27.9](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.8...0.27.9) (2019-03-19)
 
