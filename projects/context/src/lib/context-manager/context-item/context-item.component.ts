@@ -41,4 +41,10 @@ export class ContextItemComponent {
   @Output() manageTools = new EventEmitter<DetailedContext>();
 
   constructor(public auth: AuthService) {}
+
+  favoriteClick(context) {
+    if (this.auth.authenticated) {
+      this.favorite.emit(context);
+    }
+  }
 }
