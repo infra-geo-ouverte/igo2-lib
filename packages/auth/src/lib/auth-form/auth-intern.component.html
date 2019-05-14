@@ -1,4 +1,4 @@
-<form [formGroup]="form" role="form">
+<form [formGroup]="form" role="form" (ngSubmit)="loginUser(form.value)">
   <div>
     <mat-form-field class="full-width">
       <input matInput required placeholder="{{'igo.auth.user' | translate}}" formControlName="username">
@@ -11,7 +11,7 @@
     </mat-form-field>
   </div>
 
-  <button mat-raised-button type="button" (click)="loginUser(form.value)" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
+  <button mat-raised-button type="submit" [disabled]="!form.valid">{{'igo.auth.login' | translate}}</button>
   <button *ngIf="allowAnonymous" mat-raised-button type="button" (click)="loginAnonymous()">{{'igo.auth.accessAnonymous' | translate }}</button>
   <div *ngIf="error">
     <br/>
