@@ -67,7 +67,7 @@ export class Editor<E extends object = object> {
   /**
    * Editor title
    */
-  get meta(): {[key: string]: any} { return this.options.meta || {} }
+  get meta(): {[key: string]: any} { return this.options.meta || {}; }
 
   /**
    * Entity table template
