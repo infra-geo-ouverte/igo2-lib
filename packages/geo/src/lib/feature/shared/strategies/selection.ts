@@ -196,6 +196,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   private onMapClick(event: OlMapBrowserPointerEvent) {
     const exclusive = !ctrlKeyDown(event);
+    const reverse = !exclusive;
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
       hitTolerance: this.options.hitTolerance || 0,
       layerFilter: (olLayer) => {
@@ -205,7 +206,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
         return storeOlLayer !== undefined;
       }
     });
-    this.onSelectFromMap(olFeatures, exclusive);
+    this.onSelectFromMap(olFeatures, exclusive, reverse);
   }
 
   /**
@@ -264,7 +265,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
       acc.push(...olSource.getFeaturesInExtent(extent));
       return acc;
     }, []);
-    this.onSelectFromMap(olFeatures, exclusive);
+    this.onSelectFromMap(olFeatures, exclusive, false);
   }
 
   /**
@@ -294,7 +295,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * in their store.
    * @param olFeatures OL feature objects
    */
-  private onSelectFromMap(olFeatures?: OlFeature[], exclusive: boolean = true) {
+  private onSelectFromMap(olFeatures: OlFeature[], exclusive: boolean, reverse: boolean) {
     const groupedFeatures = this.groupFeaturesByStore(olFeatures);
 
     this.stores.forEach((store: FeatureStore) => {
@@ -304,7 +305,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
       } else if (features === undefined && exclusive === false) {
         // Do nothing
       } else {
-        this.selectFeaturesFromStore(store, features, exclusive);
+        this.selectFeaturesFromStore(store, features, exclusive, reverse);
       }
     });
   }
@@ -314,10 +315,12 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * @param store: Feature store
    * @param features Features
    */
-  private selectFeaturesFromStore(store: FeatureStore, features: Feature[], exclusive: boolean) {
-    // const many = this.options ? this.options.many : false;
-    // const exclusive = !many;
-    store.state.updateMany(features, {selected: true}, exclusive);
+  private selectFeaturesFromStore(store: FeatureStore, features: Feature[], exclusive: boolean, reverse: boolean) {
+    if (reverse === true) {
+      store.state.reverseMany(features, ['selected']);
+    } else {
+      store.state.updateMany(features, {selected: true}, exclusive);
+    }
   }
 
   /**
