@@ -113,6 +113,34 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
   }
 
   /**
+   * Reversee an entity's state
+   * @param entity Entity
+   * @param keys State keys to reverse
+   */
+  reverse(entity: E, keys: string[]) {
+    this.reverseMany([entity], keys);
+  }
+
+  /**
+   * Reverse many entitie's state
+   * @param entitie Entities
+   * @param keys State keys to reverse
+   */
+  reverseMany(entities: E[], keys: string[]) {
+    entities.forEach((entity: E) => {
+      const currentState = this.get(entity);
+      const changes = keys.reduce((acc: {[key: string]: boolean}, key: string) => {
+        acc[key] = currentState[key] || false;
+        return acc;
+      }, {});
+      const reversedChanges = this.reverseChanges(changes);
+      const state = Object.assign({}, currentState, reversedChanges);
+      this.index.set(this.getKey(entity), state);
+    });
+    this.next();
+  }
+
+  /**
    * Update state of all entities that already have a state. This is not
    * the same as updating the state of all the store's entities.
    * @param changes State
