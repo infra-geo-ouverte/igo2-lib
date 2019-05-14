@@ -1,6 +1,9 @@
 import OlFeature from 'ol/Feature';
-
+import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
 import { ListenerFunction } from 'ol/events';
+import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
+import { unByKey } from 'ol/Observable';
 
 import { Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, skip } from 'rxjs/operators';
@@ -9,12 +12,18 @@ import { EntityKey, EntityRecord } from '@igo2/common';
 
 import { FeatureDataSource } from '../../../datasource';
 import { VectorLayer } from '../../../layer';
-import { IgoMap } from '../../../map';
+import { IgoMap, ctrlKeyDown } from '../../../map';
 
 import { Feature, FeatureStoreSelectionStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
 import { FeatureStoreStrategy } from './strategy';
 import { FeatureMotion } from '../feature.enums';
+
+class OlDragSelectInteraction extends OlDragBoxInteraction {
+  constructor(options) {
+    super(options);
+  }
+}
 
 /**
  * This strategy synchronizes a store and a layer selected entities.
@@ -33,6 +42,10 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * by clicking on the map
    */
   private mapClickListener: ListenerFunction;
+
+  private olDragSelectInteraction: OlDragSelectInteraction;
+
+  private olDragSelectInteractionEndKey: string;
 
   /**
    * A feature store that'll contain the selected features. It has it's own
@@ -103,6 +116,9 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
   protected doActivate() {
     this.addOverlayLayer();
     this.listenToMapClick();
+    if (this.options.dragBox === true) {
+      this.addDragBoxInteraction();
+    }
     this.watchAll();
   }
 
@@ -113,6 +129,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   protected doDeactivate() {
     this.unlistenToMapClick();
+    this.removeDragBoxInteraction();
     this.unwatchAll();
     this.removeOverlayLayer();
   }
@@ -156,17 +173,8 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * only on the layers bound to this strategy.
    */
   private listenToMapClick() {
-    this.mapClickListener = this.map.ol.on('singleclick', (event) => {
-      const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
-        hitTolerance: this.options.hitTolerance || 0,
-        layerFilter: (olLayer) => {
-          const storeOlLayer = this.stores.find((store: FeatureStore) => {
-            return store.layer.ol === olLayer;
-          });
-          return storeOlLayer !== undefined;
-        }
-      });
-      this.onSelectFromMap(olFeatures);
+    this.mapClickListener = this.map.ol.on('singleclick', (event: OlMapBrowserPointerEvent) => {
+      this.onMapClick(event);
     });
   }
 
@@ -180,6 +188,83 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
         this.mapClickListener.listener
       );
     }
+  }
+
+  /**
+   * On map click, select feature at pixel
+   * @param event OL MapBrowserPointerEvent
+   */
+  private onMapClick(event: OlMapBrowserPointerEvent) {
+    const exclusive = !ctrlKeyDown(event);
+    const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
+      hitTolerance: this.options.hitTolerance || 0,
+      layerFilter: (olLayer) => {
+        const storeOlLayer = this.stores.find((store: FeatureStore) => {
+          return store.layer.ol === olLayer;
+        });
+        return storeOlLayer !== undefined;
+      }
+    });
+    this.onSelectFromMap(olFeatures, exclusive);
+  }
+
+  /**
+   * Add a drag box interaction and, on drag box end, select features
+   */
+  private addDragBoxInteraction() {
+    let olDragSelectInteraction;
+    const olInteractions = this.map.ol.getInteractions().getArray();
+
+    // There can only be one dragbox interaction, so find the current one, if any
+    // Don't keep a reference to the current dragbox because we don't want
+    // to remove it when this startegy is deactivated
+    for (const olInteraction of olInteractions) {
+      if (olInteraction instanceof OlDragSelectInteraction) {
+        olDragSelectInteraction = olInteraction;
+        break;
+      }
+    }
+    // If no drag box interaction is found, create a new one and add it to the map
+    if (olDragSelectInteraction === undefined) {
+      olDragSelectInteraction = new OlDragSelectInteraction({
+        condition: ctrlKeyDown
+      });
+      this.map.ol.addInteraction(olDragSelectInteraction);
+      this.olDragSelectInteraction = olDragSelectInteraction;
+    }
+
+    this.olDragSelectInteractionEndKey = olDragSelectInteraction.on(
+      'boxend',
+      (event: OlMapBrowserPointerEvent) => this.onDragBoxEnd(event)
+    );
+  }
+
+  /**
+   * Remove drag box interaction
+   */
+  private removeDragBoxInteraction() {
+    if (this.olDragSelectInteractionEndKey !== undefined) {
+      unByKey(this.olDragSelectInteractionEndKey);
+    }
+    if (this.olDragSelectInteraction !== undefined) {
+      this.map.ol.removeInteraction(this.olDragSelectInteraction);
+    }
+    this.olDragSelectInteraction = undefined;
+  }
+
+  /**
+   * On dragbox end, select features in drag box
+   * @param event OL MapBrowserPointerEvent
+   */
+  private onDragBoxEnd(event: OlDragBoxEvent) {
+    const exclusive = !ctrlKeyDown(event.mapBrowserEvent);
+    const extent = event.target.getGeometry().getExtent();
+    const olFeatures = this.stores.reduce((acc: OlFeature[], store: FeatureStore) => {
+      const olSource = store.layer.ol.getSource();
+      acc.push(...olSource.getFeaturesInExtent(extent));
+      return acc;
+    }, []);
+    this.onSelectFromMap(olFeatures, exclusive);
   }
 
   /**
@@ -209,19 +294,17 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    * in their store.
    * @param olFeatures OL feature objects
    */
-  private onSelectFromMap(olFeatures?: OlFeature[]) {
+  private onSelectFromMap(olFeatures?: OlFeature[], exclusive: boolean = true) {
     const groupedFeatures = this.groupFeaturesByStore(olFeatures);
 
     this.stores.forEach((store: FeatureStore) => {
       const features = groupedFeatures.get(store);
-      if (features === undefined) {
+      if (features === undefined && exclusive === true) {
         this.unselectAllFeaturesFromStore(store);
+      } else if (features === undefined && exclusive === false) {
+        // Do nothing
       } else {
-        // TODO: ATM, selecting a feature from the map will exclusively select
-        // the features that were clicked, instead of adding to the current selection.
-        // The "many" option doesn't change that behavior, for now. Ultimately, it should
-        // allow selecting many features with a drag box and/or by holding CTRL + click
-        this.selectFeaturesFromStore(store, features, true);
+        this.selectFeaturesFromStore(store, features, exclusive);
       }
     });
   }

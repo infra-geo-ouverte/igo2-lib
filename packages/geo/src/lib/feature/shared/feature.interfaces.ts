@@ -60,6 +60,7 @@ export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrate
   layer?: VectorLayer;
   many?: boolean;
   hitTolerance?: number;
+  dragBox?: boolean;
 }
 
 export interface FeatureFormSubmitEvent {
