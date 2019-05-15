@@ -139,6 +139,8 @@ export class CatalogService {
 
   private includeRecursiveItems(catalog: Catalog, layerList: any, items: CatalogItem[]) {
     // Dig all levels until last level (layer object are not defined on last level)
+    const regexes = (catalog.regFilters || []).map((pattern: string) => new RegExp(pattern));
+
     for (const group of layerList.Layer) {
       if (group.Layer !== undefined) {
         // recursive, check next level
@@ -155,15 +157,8 @@ export class CatalogService {
         title: layerList.Title,
         items: layerList.Layer.reduce((layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
           const configuredQueryFormat = this.retriveLayerInfoFormat(layer.Name, layersQueryFormat);
-          let regFiltersPassed = true;
-          if (catalog.regFilters !== undefined) {
-            // Test layer.Name for each regex define in config.json
-            regFiltersPassed = catalog.regFilters.find((regFilter: string) => {
-              return new RegExp(regFilter).test(layer.Name);
-            }) !== undefined;
-          }
 
-          if (regFiltersPassed === false) {
+          if (this.testLayerRegexes(layer.Name, regexes) === false) {
             return layers;
           }
 
@@ -212,11 +207,11 @@ export class CatalogService {
         }, [])
 
       };
-      /* If object contain layers (when regFilters is define, the condition
-      in Layer.map can define group with no layer) */
+
       if (groupItem.items.length !== 0) {
         items.push(groupItem);
       }
+
       // Break the group (don't add a group of layer for each of their layer!)
       break;
     }
@@ -224,7 +219,13 @@ export class CatalogService {
 
   private getWMTSItems(catalog: Catalog, capabilities: {[key: string]: any}): CatalogItemLayer[] {
     const layers = capabilities.Contents.Layer;
+    const regexes = (catalog.regFilters || []).map((pattern: string) => new RegExp(pattern));
+
     return layers.map((layer: any) => {
+      if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
+        return undefined;
+      }
+
       const sourceOptions = {
         type: 'wmts',
         url: catalog.url,
@@ -247,7 +248,15 @@ export class CatalogService {
           sourceOptions
         }
       };
-    });
+    })
+    .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+  }
+
+  private testLayerRegexes(layerName, regexes): boolean {
+    if (regexes.length === 0) {
+      return true;
+    }
+    return regexes.find((regex: RegExp) => regex.test(layerName)) !== undefined;
   }
 
   private retriveLayerInfoFormat(

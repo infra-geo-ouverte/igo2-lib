@@ -1,6 +1,7 @@
 import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 import { Editor, EditorStore, EditorSelectorComponent } from '@igo2/common';
 
@@ -31,7 +32,9 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$.subscribe((layers: Layer[]) =>
+    this.layers$$ = this.map.layers$
+    .pipe(debounceTime(50))
+    .subscribe((layers: Layer[]) =>
       this.onLayersChange(layers)
     );
   }
@@ -44,17 +47,34 @@ export class EditorSelectorDirective implements OnInit, OnDestroy {
     const editableLayers = layers.filter((layer: Layer) =>
       this.layerIsEditable(layer)
     );
+    const editableLayersIds = editableLayers.map((layer: Layer) => layer.id);
 
-    const editors = editableLayers.map((layer: VectorLayer) => {
-      return this.getOrCreateEditor(layer);
-    });
-    this.editorStore.load(editors);
+    const editorsToAdd = editableLayers
+      .map((layer: VectorLayer) => this.getOrCreateEditor(layer))
+      .filter((editor: Editor | undefined) => editor !== undefined);
+
+    const editorsToRemove = this.editorStore.all()
+      .filter((editor: Editor) => {
+        return editableLayersIds.indexOf(editor.id) < 0;
+      });
+
+    if (editorsToRemove.length > 0) {
+      editorsToRemove.forEach((editor: Editor) => {
+        editor.deactivate();
+      });
+      this.editorStore.state.updateMany(editorsToRemove, {active: false, selected: false});
+      this.editorStore.deleteMany(editorsToRemove);
+    }
+
+    if (editorsToAdd.length > 0) {
+      this.editorStore.insertMany(editorsToAdd);
+    }
   }
 
-  private getOrCreateEditor(layer: VectorLayer | ImageLayer): Editor {
+  private getOrCreateEditor(layer: VectorLayer | ImageLayer): Editor | undefined {
     const editor = this.editorStore.get(layer.id);
     if (editor !== undefined) {
-      return editor;
+      return;
     }
     if (layer.dataSource instanceof WFSDataSource) {
       return this.wfsEditorService.createEditor(layer as VectorLayer, this.map);

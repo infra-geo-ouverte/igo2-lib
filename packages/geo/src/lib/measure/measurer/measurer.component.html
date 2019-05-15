@@ -71,6 +71,14 @@
       (click)="onDeleteClick()">
       <mat-icon>delete</mat-icon>
     </button>
+
+    <!--button
+      mat-icon-button
+      [matTooltip]="'igo.geo.measure.actionbar.modify.tooltip' | translate"
+      [disabled]="(selectedFeatures$ | async).length !== 1"
+      (click)="onModifyClick()">
+      <mat-icon>edit</mat-icon>
+    </button-->
   </div>
 
   <igo-entity-table

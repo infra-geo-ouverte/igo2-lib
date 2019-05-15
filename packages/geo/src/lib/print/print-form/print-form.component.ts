@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
@@ -21,7 +21,7 @@ import {
   templateUrl: './print-form.component.html',
   styleUrls: ['./print-form.component.scss']
 })
-export class PrintFormComponent {
+export class PrintFormComponent implements OnInit {
   public form: FormGroup;
   public submitted: boolean;
 
@@ -194,8 +194,12 @@ export class PrintFormComponent {
       showProjection: false,
       showScale: false,
       showLegend: false,
-      doZipFile: [ {hidden: this.isPrintService } ]
+      doZipFile: [{hidden: this.isPrintService }]
     });
+  }
+
+  ngOnInit() {
+    this.doZipFileField.setValue(false);
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {
