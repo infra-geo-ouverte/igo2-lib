@@ -2,7 +2,7 @@ import olSourceVector from 'ol/source/Vector';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 import * as olformat from 'ol/format';
 
-import { uuid } from '@igo2/utils';
+import { uuid, SubjectStatus} from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -143,5 +143,18 @@ export class WFSDataSource extends DataSource {
     }
 
     return new olFormatCls();
+  }
+
+  onLayerStatusChange(status: SubjectStatus): void{
+    switch(status) {
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        // nothing to do
+        break;
+      default:
+        break;
+    }
   }
 }

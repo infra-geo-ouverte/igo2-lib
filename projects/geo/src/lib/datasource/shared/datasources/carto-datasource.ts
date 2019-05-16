@@ -1,6 +1,6 @@
 import olSourceCarto from 'ol/source/CartoDB';
 
-import { uuid } from '@igo2/utils';
+import { uuid, SubjectStatus } from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
@@ -116,6 +116,19 @@ export class CartoDataSource extends DataSource {
       }
       htmlString += '</table>';
       return [{ html: htmlString }];
+    }
+  }
+
+  onLayerStatusChange(status: SubjectStatus): void{
+    switch(status) {
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        // nothing to do
+        break;
+      default:
+        break;
     }
   }
 }

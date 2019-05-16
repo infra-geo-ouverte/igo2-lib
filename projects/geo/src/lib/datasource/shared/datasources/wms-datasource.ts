@@ -1,6 +1,7 @@
 import { Md5 } from 'ts-md5';
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
+import { SubjectStatus} from '@igo2/utils';
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
@@ -184,5 +185,18 @@ export class WMSDataSource extends DataSource {
     });
 
     return legend;
+  }
+
+  onLayerStatusChange(status: SubjectStatus): void{
+    switch(status) {
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        // nothing to do
+        break;
+      default:
+        break;
+    }
   }
 }
