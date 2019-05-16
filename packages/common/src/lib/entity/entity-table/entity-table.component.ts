@@ -381,4 +381,16 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
     return cls;
   }
 
+  /**
+   * When a button is clicked
+   * @param func Function
+   * @param entity Entity
+   * @internal
+   */
+  onButtonClick(clickFunc: Function, entity: object) {
+    if (clickFunc instanceof Function) {
+      clickFunc(entity);
+    }
+  }
+
 }

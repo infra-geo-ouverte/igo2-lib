@@ -1,7 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
-import { EntityStore, getEntityProperty, EntityTableColumnRenderer } from '@igo2/common';
+import {
+  EntityStore,
+  EntityTableButton,
+  getEntityProperty,
+  EntityTableColumnRenderer
+} from '@igo2/common';
 
 @Component({
   selector: 'app-entity-table',
@@ -9,7 +14,6 @@ import { EntityStore, getEntityProperty, EntityTableColumnRenderer } from '@igo2
   styleUrls: ['./entity-table.component.scss']
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
-
   public store = new EntityStore([]);
 
   public template = {
@@ -25,7 +29,9 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         name: 'selected',
         title: 'Selected',
         valueAccessor: (entity: object) => {
-          return this.store.state.get(entity).selected ? 'radio_button_checked' : 'radio_button_unchecked';
+          return this.store.state.get(entity).selected
+            ? 'radio_button_checked'
+            : 'radio_button_unchecked';
         },
         renderer: EntityTableColumnRenderer.Icon
       },
@@ -41,6 +47,18 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         name: 'description',
         title: 'Description',
         renderer: EntityTableColumnRenderer.HTML
+      },
+      {
+        name: 'action',
+        title: '',
+        valueAccessor: (entity: object) => {
+          return [{
+            icon: 'home',
+            color: 'warn',
+            click: (row) => {console.log(row);}
+          }] as EntityTableButton[];
+        },
+        renderer: EntityTableColumnRenderer.ButtonGroup
       }
     ]
   };
@@ -49,9 +67,9 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.load([
-      {id: '2', name: 'Name 2', description: '<b>Description 2</b>'},
-      {id: '1', name: 'Name 1', description: '<b>Description 1</b>'},
-      {id: '3', name: 'Name 3', description: '<b>Description 3</b>'}
+      { id: '2', name: 'Name 2', description: '<b>Description 2</b>' },
+      { id: '1', name: 'Name 1', description: '<b>Description 1</b>' },
+      { id: '3', name: 'Name 3', description: '<b>Description 3</b>' }
     ]);
   }
 

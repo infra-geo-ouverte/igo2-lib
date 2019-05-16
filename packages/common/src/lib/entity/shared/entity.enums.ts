@@ -8,7 +8,8 @@ export enum EntityTableColumnRenderer {
   Default = 'Default',
   HTML = 'HTML',
   UnsanitizedHTML = 'UnsanitizedHTML',
-  Icon = 'Icon'
+  Icon = 'Icon',
+  ButtonGroup = 'ButtonGroup'
 }
 
 export enum EntityTableScrollBehavior {
