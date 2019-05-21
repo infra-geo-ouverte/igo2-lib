@@ -89,6 +89,6 @@ export interface EntityTableColumn {
 
 export interface EntityTableButton {
   icon: string;
-  click: Function;
-  color?: 'primary' | 'accent' | 'warn'
+  click: (entity: object) => void;
+  color?: 'primary' | 'accent' | 'warn';
 }

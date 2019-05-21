@@ -55,7 +55,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
           return [{
             icon: 'home',
             color: 'warn',
-            click: (row) => {console.log(row);}
+            click: (row) => { console.log(row); }
           }] as EntityTableButton[];
         },
         renderer: EntityTableColumnRenderer.ButtonGroup
