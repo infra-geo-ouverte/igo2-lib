@@ -16,17 +16,6 @@ export class OSMDataSource extends DataSource {
     return 'OSM';
   }
 
-  onLayerStatusChange(status: SubjectStatus): void{
-    switch(status) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-        // nothing to do
-        break;
-      default:
-        break;
-    }
-  }
-  
+  onLayerStatusChange(status: SubjectStatus): void {}
+
 }

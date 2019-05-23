@@ -16,13 +16,12 @@ export class WebSocketDataSource extends FeatureDataSource {
   public options: WebSocketDataSourceOptions;
 
   constructor(options: WebSocketDataSourceOptions) {
-    super(options);  
+    super(options);
   }
 
   protected createOlSource(): olSourceVector {
      this.createWebSocket();
-     this.options.format = this.getSourceFormatFromOptions(this.options); 
-       
+     this.options.format = this.getSourceFormatFromOptions(this.options);
      return super.createOlSource();
   }
 
@@ -75,8 +74,8 @@ export class WebSocketDataSource extends FeatureDataSource {
     // thrown message to user ?
   }
 
-  onLayerStatusChange(status: SubjectStatus): void{
-    switch(status) {
+  onLayerStatusChange(status: SubjectStatus): void {
+    switch (status) {
       case 1:
       case 2:
       case 3:
@@ -84,6 +83,7 @@ export class WebSocketDataSource extends FeatureDataSource {
         break;
       case 4:
         this.ws.close();
+        break;
     }
   }
 }

@@ -21,7 +21,7 @@ export abstract class DataSource {
     this.layerStatus$ = new Subject();
     this.layerStatus$.subscribe(status => {
       this.onLayerStatusChange(status);
-    });  
+    });
     this.options = options;
     this.id = this.generateId();
     this.ol = this.createOlSource();

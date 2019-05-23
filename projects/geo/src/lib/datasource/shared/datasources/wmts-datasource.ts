@@ -32,16 +32,5 @@ export class WMTSDataSource extends DataSource {
     return Md5.hashStr(chain) as string;
   }
 
-  onLayerStatusChange(status: SubjectStatus): void{
-    switch(status) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-        // nothing to do
-        break;
-      default:
-        break;
-    }
-  }
+  onLayerStatusChange(status: SubjectStatus): void {}
 }
