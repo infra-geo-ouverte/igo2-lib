@@ -249,6 +249,9 @@ export function measureOlGeometryLength(olGeometry: OlGeometry, projection: stri
   if (olGeometry instanceof OlPoint) {
     return undefined;
   }
+  if (olGeometry.getFlatCoordinates().length === 0) {
+    return undefined;
+  }
   return olGetLength(olGeometry, {projection});
 }
 
@@ -260,6 +263,9 @@ export function measureOlGeometryLength(olGeometry: OlGeometry, projection: stri
  */
 export function measureOlGeometryArea(olGeometry: OlGeometry, projection: string): number | undefined {
   if (olGeometry instanceof OlPoint || olGeometry instanceof OlLineString) {
+    return undefined;
+  }
+  if (olGeometry.getFlatCoordinates().length === 0) {
     return undefined;
   }
   return olGetArea(olGeometry, {projection});
@@ -325,12 +331,33 @@ export function updateOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon):
 }
 
 /**
+ * Clear an OL geometry midpoints and return an array of those points
+ * @param olGeometry OL Geometry
+ */
+export function clearOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon) {
+  const olMidpoints = olGeometry.get('_midpoints') || [];
+  const midpointsLength = olMidpoints.length;
+  for (let i = 0; i < midpointsLength; i++) {
+    const olMidpoint = olMidpoints[i];
+    if (olMidpoint !== undefined) {
+      if (olMidpoint !== undefined) {
+        clearOlMidpointTooltip(olMidpoint);
+      }
+    }
+  }
+
+  olGeometry.set('_midpoints', undefined, true);
+
+  return olMidpoints;
+}
+
+/**
  * Return an array of  OL geometry midpoints, if any
  * @param olGeometry OL Geometry
  * @returns OL points
  */
 function getOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon): OlPoint[] {
-  const expectedNumber = (olGeometry.flatCoordinates.length / 2) - 1;
+  const expectedNumber = Math.max((olGeometry.flatCoordinates.length / 2) - 1, 0);
 
   // TODO: This works but it's quite messy. If time permits,
   // clean this. Maybe a Tooltip class could handle that
@@ -353,18 +380,26 @@ function getOlGeometryMidpoints(olGeometry: OlLineString | OlPolygon): OlPoint[]
   for (let i = expectedNumber; i < olMidpoints.length; i++) {
     const olMidpoint = olMidpoints[expectedNumber];
     if (olMidpoint !== undefined) {
-      const olTooltip = olMidpoint.get('_tooltip');
-      if (olTooltip !== undefined) {
-        const olMap = olTooltip.getMap();
-        if (olMap !== undefined) {
-          olMap.removeOverlay(olTooltip);
-        }
-      }
+      clearOlMidpointTooltip(olMidpoint);
     }
   }
   olMidpoints.splice(expectedNumber);
 
   return olMidpoints;
+}
+
+/**
+ * Remove an OL midpoint's tooltip from the map
+ * @param olMidpoint OL Point
+ */
+function clearOlMidpointTooltip(olMidpoint: OlPoint) {
+  const olTooltip = olMidpoint.get('_tooltip');
+  if (olTooltip !== undefined) {
+    const olMap = olTooltip.getMap();
+    if (olMap !== undefined) {
+      olMap.removeOverlay(olTooltip);
+    }
+  } 
 }
 
 /**

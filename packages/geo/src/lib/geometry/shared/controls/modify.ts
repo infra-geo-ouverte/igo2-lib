@@ -69,8 +69,9 @@ export class ModifyControl {
   private onDrawKey: string;
   private olDrawInteractionIsActive: boolean = false;
 
-  private keyUp$$: Subscription;
   private keyDown$$: Subscription;
+  private drawKeyUp$$: Subscription;
+  private drawKeyDown$$: Subscription;
 
   private removedOlInteractions: OlInteraction[] = [];
   private olLinearRingsLayer: OlVectorLayer;
@@ -288,6 +289,31 @@ export class ModifyControl {
   }
 
   /**
+   * Subscribe to CTRL key down to activate the draw control
+   */
+  private subscribeToKeyDown() {
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+      // On ESC key down, remove the last vertex
+      if (event.keyCode === 27) {
+        if (this.olModifyInteractionIsActive === true) {
+          this.olModifyInteraction.removeLastPoint();
+        } else if (this.olDrawInteractionIsActive === true) {
+          this.olDrawInteraction.removeLastPoint();  
+        }
+      }
+    });
+  }
+
+  /**
+   * Unsubscribe to key down
+   */
+  private unsubscribeToKeyDown() {
+    if (this.keyDown$$ !== undefined) {
+      this.keyDown$$.unsubscribe();
+    }
+  }
+
+  /**
    * Add a translate interaction to the map an set up some listeners
    */
   private addOlTranslateInteraction() {
@@ -373,22 +399,22 @@ export class ModifyControl {
     });
 
     this.olDrawInteraction = olDrawInteraction;
-    this.subscribeToKeyDown();
+    this.subscribeToDrawKeyDown();
   }
 
   /**
    * Subscribe to CTRL key down to activate the draw control
    */
-  private subscribeToKeyDown() {
-    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+  private subscribeToDrawKeyDown() {
+    this.drawKeyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       if (event.keyCode !== 17) { return; }
 
-      this.keyDown$$.unsubscribe();
+      this.unsubscribeToDrawKeyDown();
 
       const olGeometry = this.getOlGeometry();
       if (!olGeometry || !(olGeometry instanceof OlPolygon)) { return; }
 
-      this.subscribeToKeyUp();
+      this.subscribeToDrawKeyUp();
 
       this.deactivateModifyInteraction();
       this.deactivateTranslateInteraction();
@@ -399,17 +425,35 @@ export class ModifyControl {
   /**
    * Subscribe to CTRL key up to deactivate the draw control
    */
-  private subscribeToKeyUp() {
-    this.keyUp$$ = fromEvent(document, 'keyup').subscribe((event: KeyboardEvent) => {
+  private subscribeToDrawKeyUp() {
+    this.drawKeyUp$$ = fromEvent(document, 'keyup').subscribe((event: KeyboardEvent) => {
       if (event.keyCode !== 17) { return; }
 
-      this.keyUp$$.unsubscribe();
-      this.subscribeToKeyDown();
+      this.unsubscribeToDrawKeyUp();
+      this.subscribeToDrawKeyDown();
 
       this.deactivateDrawInteraction();
       this.activateModifyInteraction();
       this.activateTranslateInteraction();
     });
+  }
+
+  /**
+   * Unsubscribe to draw key down
+   */
+  private unsubscribeToDrawKeyDown() {
+    if (this.drawKeyDown$$ !== undefined) {
+      this.drawKeyDown$$.unsubscribe();
+    }
+  }
+
+  /**
+   * Unsubscribe to key up
+   */
+  private unsubscribeToDrawKeyUp() {
+    if (this.drawKeyUp$$ !== undefined) {
+      this.drawKeyUp$$.unsubscribe();
+    }
   }
 
   /**
@@ -420,12 +464,9 @@ export class ModifyControl {
       return;
     }
 
-    if (this.keyUp$$ !== undefined) {
-      this.keyUp$$.unsubscribe();
-    }
-    if (this.keyDown$$ !== undefined) {
-      this.keyDown$$.unsubscribe();
-    }
+    this.unsubscribeToKeyDown();
+    this.unsubscribeToDrawKeyUp();
+    this.unsubscribeToDrawKeyDown();
     this.deactivateDrawInteraction();
     this.olDrawInteraction = undefined;
   }
@@ -493,6 +534,7 @@ export class ModifyControl {
       this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
       this.changes$.next(this.getOlGeometry());
     });
+    this.subscribeToKeyDown();
   }
 
   /**
@@ -507,6 +549,7 @@ export class ModifyControl {
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();
     this.end$.next(this.getOlGeometry());
+    this.unsubscribeToKeyDown();
   }
 
   /**

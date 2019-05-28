@@ -11,8 +11,10 @@ import {
 } from 'ol/geom/Geometry';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { unByKey } from 'ol/Observable';
+import { MapBrowserEvent as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
+import { shiftKeyOnly } from 'ol/events/condition';
 
-import { Subject } from 'rxjs';
+import { Subject, Subscription, fromEvent } from 'rxjs';
 
 export interface DrawControlOptions {
   geometryType: OlGeometryType;
@@ -49,6 +51,8 @@ export class DrawControl {
   private onDrawStartKey: string;
   private onDrawEndKey: string;
   private onChangesKey: string;
+
+  private keyDown$$: Subscription;
 
   /**
    * Wheter the control is active
@@ -153,7 +157,9 @@ export class DrawControl {
       source: this.getSource(),
       stopClick: true,
       style: this.options.drawStyle,
-      maxPoints: this.options.maxPoints
+      maxPoints: this.options.maxPoints,
+      freehand: false,
+      freehandCondition: function() { return false; }
     });
 
     this.onDrawStartKey = olDrawInteraction
@@ -172,6 +178,7 @@ export class DrawControl {
       return;
     }
 
+    this.unsubscribeToKeyDown();
     unByKey(this.onDrawStartKey);
     unByKey(this.onDrawEndKey);
     if (this.olMap !== undefined) {
@@ -191,6 +198,7 @@ export class DrawControl {
     this.onChangesKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
       this.changes$.next(olGeometryEvent.target);
     });
+    this.subscribeToKeyDown();
   }
 
   /**
@@ -198,10 +206,33 @@ export class DrawControl {
    * @param event Draw end event
    */
   private onDrawEnd(event: OlDrawEvent) {
+    this.unsubscribeToKeyDown();
     if (this.onChangesKey !== undefined) {
       unByKey(this.onChangesKey);
     }
     this.end$.next(event.feature.getGeometry());
   }
 
+  /**
+   * Subscribe to CTRL key down to activate the draw control
+   */
+  private subscribeToKeyDown() {
+    this.unsubscribeToKeyDown();
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+      // On ESC key down, remove the last vertex
+      if (event.keyCode === 27) {
+        this.olDrawInteraction.removeLastPoint();
+      }
+    });
+  }
+
+  /**
+   * Unsubscribe to key down
+   */
+  private unsubscribeToKeyDown() {
+    if (this.keyDown$$ !== undefined) {
+      this.keyDown$$.unsubscribe();
+      this.keyDown$$ = undefined;
+    }
+  }
 }
