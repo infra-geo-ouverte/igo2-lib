@@ -4,9 +4,11 @@ import {
   MatTableModule,
   MatSortModule,
   MatIconModule,
+  MatButtonModule,
   MatCheckboxModule
 } from '@angular/material';
 
+import { IgoStopPropagationModule } from '../../stop-propagation/stop-propagation.module';
 import { IgoCustomHtmlModule } from '../../custom-html/custom-html.module';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 import { EntityTableComponent } from './entity-table.component';
@@ -20,7 +22,9 @@ import { EntityTableComponent } from './entity-table.component';
     MatTableModule,
     MatSortModule,
     MatIconModule,
+    MatButtonModule,
     MatCheckboxModule,
+    IgoStopPropagationModule,
     IgoCustomHtmlModule
   ],
   exports: [

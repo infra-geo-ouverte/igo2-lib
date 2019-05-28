@@ -1,3 +1,25 @@
+# [1.0.0-alpha.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.0...1.0.0-alpha.1) (2019-05-21)
+
+
+### Bug Fixes
+
+* **measure:** fix remaining issues with the measure dialog ([2bfd165](https://github.com/infra-geo-ouverte/igo2-lib/commit/2bfd165))
+* **modify:** clear draw source when activating the draw hole control ([4dc8696](https://github.com/infra-geo-ouverte/igo2-lib/commit/4dc8696))
+* **print:** doZipFile wasn't properly set ([5682e5a](https://github.com/infra-geo-ouverte/igo2-lib/commit/5682e5a))
+
+
+### Features
+
+* **editor:** allow defining metadata on editors ([cc48de5](https://github.com/infra-geo-ouverte/igo2-lib/commit/cc48de5))
+* **entity-table:** add button renderer ([ffa0611](https://github.com/infra-geo-ouverte/igo2-lib/commit/ffa0611))
+* **measure:** improve the measure dialog interface ([403e748](https://github.com/infra-geo-ouverte/igo2-lib/commit/403e748))
+* **selection:** allow feature deselection by holding the CTRL key ([01b910b](https://github.com/infra-geo-ouverte/igo2-lib/commit/01b910b))
+* **selection:** drag box selection ([08b3d7c](https://github.com/infra-geo-ouverte/igo2-lib/commit/08b3d7c))
+* **state:** allow state reversing ([2ddf6bd](https://github.com/infra-geo-ouverte/igo2-lib/commit/2ddf6bd))
+* **store:** add a clear method to the selection startegy ([79607c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/79607c6))
+
+
+
 # [1.0.0-alpha.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.26.2...1.0.0-alpha.0) (2019-05-08)
 
 
