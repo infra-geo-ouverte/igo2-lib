@@ -102,7 +102,7 @@
     "angular-cli-ghpages": "^0.5.3",
     "codelyzer": "~4.2.1",
     "conventional-changelog-cli": "^2.0.1",
-    "del": "^3.0.0",
+    "del": "^4.1.1",
     "gulp": "^4.0.0",
     "gulp-exec": "^3.0.2",
     "gulp-json-editor": "^2.4.2",
