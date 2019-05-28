@@ -15,7 +15,8 @@ import {
   CartoDataSource,
   ArcGISRestDataSource,
   TileArcGISRestDataSource,
-  WebSocketDataSource
+  WebSocketDataSource,
+  MVTDataSource
 } from '../../datasource';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -28,7 +29,9 @@ import {
   TileLayerOptions,
   VectorLayer,
   VectorLayerOptions,
-  AnyLayerOptions
+  AnyLayerOptions,
+  VectorTileLayer,
+  VectorTileLayerOptions
 } from './layers';
 
 import { StyleService } from './style.service';
@@ -82,6 +85,9 @@ export class LayerService {
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
+      case MVTDataSource:
+        layer = this.createVectorTileLayer(layerOptions as VectorTileLayerOptions);
+        break;
       default:
         break;
     }
@@ -110,6 +116,19 @@ export class LayerService {
     }
 
     return new ImageLayer(layerOptions);
+  }
+
+  private createVectorTileLayer(layerOptions: VectorTileLayerOptions): VectorTileLayer {
+    let style;
+    if (layerOptions.style !== undefined) {
+      style = this.styleService.createStyle(layerOptions.style);
+    }
+
+    const layerOptionsOl = Object.assign({}, layerOptions, {
+      style: style
+    });
+    
+    return new VectorTileLayer(layerOptionsOl);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {

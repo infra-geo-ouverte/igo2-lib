@@ -1,6 +1,6 @@
 {
   "uri": "context3",
-  "title": "CARTO examples",
+  "title": "Examples MVT and Carto.com",
   "map": {
     "view": {
       "projection": "EPSG:3857",
@@ -17,12 +17,19 @@
       }
     },
     {
-      "title": "California Protected Areas",
+      "title": "Countries",
+      "opacity": 0.4,
+      "style": {
+        "stroke": {
+          "color": "red"
+        },
+        "fill": {
+          "color": "green"
+        }
+      },
       "sourceOptions": {
-        "type": "carto",
-        "account": "common-data",
-        "mapId": "dbd9d89a-bf8a-11e5-b333-0e98b61680bf",
-        "queryFormat": "geojson"
+        "type": "mvt",
+        "url": "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
       }
     },
     {
