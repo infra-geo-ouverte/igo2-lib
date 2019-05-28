@@ -128,6 +128,12 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    */
   get selectMany(): boolean { return this.template.selectMany || false; }
 
+  /**
+   * Whether selection many entities should eb supported
+   * @internal
+   */
+  get fixedHeader(): boolean { return this.template.fixedHeader === undefined ? true : this.template.fixedHeader; }
+
   constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
