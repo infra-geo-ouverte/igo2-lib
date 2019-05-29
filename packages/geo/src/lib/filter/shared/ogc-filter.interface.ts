@@ -41,9 +41,24 @@ export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
   filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
+  pushButtons?: OgcPushButtonBundle[];
   interfaceOgcFilters?: OgcInterfaceFilterOptions[];
   filtered?: boolean;
+  advancedOgcFilters?: boolean;
   geometryName?: string;
+}
+
+export interface OgcPushButtonBundle  {
+  logical?: string;
+  vertical?: boolean;
+  ogcPushButtons: OgcPushButton[];
+}
+export interface OgcPushButton {
+  title: string;
+  tooltip?: string;
+  enabled: boolean;
+  filters: IgoOgcFilterObject;
+  color?: string;
 }
 
 export interface OgcFilterableDataSourceOptions extends DataSourceOptions {

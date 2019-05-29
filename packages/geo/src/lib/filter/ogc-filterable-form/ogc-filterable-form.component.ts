@@ -23,8 +23,7 @@ export class OgcFilterableFormComponent {
     this._map = value;
   }
 
-  // tslint:disable-next-line:ban-types
-  @Input() refreshFilters: Function;
+  @Input() refreshFilters: () => void;
 
   get refreshFunc() {
     return this.refreshFilters;
@@ -35,6 +34,13 @@ export class OgcFilterableFormComponent {
   }
   set showFeatureOnMap(value: boolean) {
     this._showFeatureOnMap = value;
+  }
+
+  get advancedOgcFilters(): boolean {
+    if (this.datasource.options.ogcFilters) {
+      return this.datasource.options.ogcFilters.advancedOgcFilters;
+    }
+    return;
   }
 
   private _showFeatureOnMap: boolean;

@@ -28,6 +28,7 @@ export class OgcFilterableItemComponent implements OnInit {
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;
+  public hasPushButton: boolean = false;
 
   @Input()
   get layer(): Layer {
@@ -79,6 +80,13 @@ export class OgcFilterableItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (
+      this.datasource.options.ogcFilters.pushButtons &&
+      this.datasource.options.ogcFilters.pushButtons.length > 0) {
+        this.datasource.options.ogcFilters.advancedOgcFilters = false;
+        this.hasPushButton = true;
+      }
+
     switch (this.datasource.options.type) {
       case 'wms':
         this.ogcFilterService.setOgcWMSFiltersOptions(this.datasource);
@@ -209,7 +217,10 @@ export class OgcFilterableItemComponent implements OnInit {
     this.downloadService.open(this.layer);
   }
 
-  refreshFilters() {
+  refreshFilters(force?: boolean) {
+    if (force === true) {
+      this.lastRunOgcFilter = undefined;
+    }
     const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
     const ogcFilterWriter = new OgcFilterWriter();
     const activeFilters = ogcFilters.interfaceOgcFilters.filter(
@@ -280,5 +291,12 @@ export class OgcFilterableItemComponent implements OnInit {
 
   public setVisible() {
     this.layer.visible = true;
+  }
+
+  changeOgcFilterType(isAdvancedOgcFilters) {
+    this.datasource.options.ogcFilters.advancedOgcFilters = isAdvancedOgcFilters.checked;
+    if (isAdvancedOgcFilters.checked) {
+      this.refreshFilters(true);
+    }
   }
 }

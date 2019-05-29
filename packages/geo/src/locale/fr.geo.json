@@ -77,7 +77,8 @@
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
         "showFeatureExtent": "Montrer l'empreinte des étendues",
-        "hideFeatureExtent": "Cacher l'empreinte des étendues"
+        "hideFeatureExtent": "Cacher l'empreinte des étendues",
+        "advancedOgcFilters": "Filtres avancés"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
