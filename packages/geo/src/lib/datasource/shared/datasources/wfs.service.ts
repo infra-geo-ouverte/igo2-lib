@@ -61,7 +61,7 @@ export class WFSService extends DataService {
     }
   }
 
-  public wfsGetFeature(
+  private wfsGetFeature(
     wfsDataSourceOptions: WFSDataSourceOptions,
     nb = defaultMaxFeatures,
     epsgCode = defaultEpsg,
@@ -202,7 +202,7 @@ export class WFSService extends DataService {
           fieldListWoGeomStr = fieldListWoGeom.join(',');
           this.wfsGetFeature(
             wfsDataSourceOptions,
-            undefined,
+            wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
             undefined,
             fieldListWoGeomStr
           ).subscribe(manyFeatures => {

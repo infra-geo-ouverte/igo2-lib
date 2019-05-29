@@ -37,8 +37,7 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   public baseOverlayName = 'ogcFilterOverlay_';
   private _showFeatureOnMap: boolean;
 
-  // tslint:disable-next-line:ban-types
-  @Input() refreshFilters: Function;
+  @Input() refreshFilters: () => void;
 
   @Input()
   get datasource(): OgcFilterableDataSource {
