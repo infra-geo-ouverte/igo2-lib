@@ -34,9 +34,14 @@ export class WFSDataSource extends DataSource {
     paramsWFS.maxFeatures = paramsWFS.maxFeatures || defaultMaxFeatures;
 
     ogcFilters = ogcFilters || {} ;
+    ogcFilters.advancedOgcFilters = true;
     ogcFilters.enabled = ogcFilters.enabled || ogcFiltersDefaultValue;
     ogcFilters.editable =   ogcFilters.editable || ogcFiltersDefaultValue;
     ogcFilters.geometryName = paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
+
+    if (ogcFilters.enabled && ogcFilters.pushButtons) {
+      ogcFilters.advancedOgcFilters = false;
+    }
 
     const queryStringValuesDownload = formatWFSQueryString(this.options);
     const downloadBaseUrl = queryStringValuesDownload.find(f => f.name === 'getfeature').value;

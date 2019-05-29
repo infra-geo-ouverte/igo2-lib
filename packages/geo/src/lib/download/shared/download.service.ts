@@ -54,14 +54,23 @@ export class DownloadService {
           .replace(/&?bbox=[^&]*/gi, '');
 
         const ogcFilters = (layer.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters;
-        const rebuildFilter = new OgcFilterWriter().buildFilter(
-          ogcFilters.filters,
-          layer.map.getExtent(),
-          new olProjection({ code: layer.map.projection }),
-          ogcFilters.geometryName
-        );
+
+        let filterQueryString;
+        filterQueryString = new OgcFilterWriter()
+        .handleOgcFiltersAppliedValue(layer.dataSource.options, ogcFilters.geometryName);
+        if (!filterQueryString) {
+          // Prevent getting all the features for empty features
+            filterQueryString = new OgcFilterWriter().buildFilter(
+            undefined,
+            layer.map.getExtent(),
+            new olProjection({ code: layer.map.projection }),
+            ogcFilters.geometryName
+          );
+        } else {
+          filterQueryString = 'filter=' + filterQueryString;
+        }
         window.open(
-          `${baseurl}&${rebuildFilter}&${outputFormatDownload}`,
+          `${baseurl}&${filterQueryString}&${outputFormatDownload}`,
           '_blank'
         );
       } else if (DSOptions.download) {

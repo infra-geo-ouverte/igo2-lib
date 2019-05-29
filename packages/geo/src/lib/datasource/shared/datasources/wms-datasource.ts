@@ -93,33 +93,21 @@ export class WMSDataSource extends DataSource {
       console.log('*******************************');
   }
 
-    if (this.options && initOgcFilters && initOgcFilters.enabled && initOgcFilters.filters) {
-      initOgcFilters.geometryName = initOgcFilters.geometryName || fieldNameGeometry;
-      const igoFilters = initOgcFilters.filters;
-      const rebuildFilter = new OgcFilterWriter().buildFilter(igoFilters);
-      const appliedFilter = this.formatProcessedOgcFilter(rebuildFilter, sourceParams.layers);
-      const wmsFilterValue = appliedFilter.length > 0
-        ? appliedFilter.replace('filter=', '')
-        : undefined;
-      this.ol.updateParams({ filter: wmsFilterValue });
+    if (initOgcFilters) {
+      initOgcFilters.advancedOgcFilters = true;
+      if (initOgcFilters.enabled && initOgcFilters.pushButtons) {
+        initOgcFilters.advancedOgcFilters = false;
+      }
     }
 
+    console.log('TODO: WFS PUSH BUTTONS');
+    const ogcFilterWriter = new OgcFilterWriter();
+    const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, fieldNameGeometry);
+    this.ol.updateParams({ filter: filterQueryString });
   }
 
   refresh() {
     this.ol.updateParams({ igoRefresh: Math.random() });
-  }
-
-  public formatProcessedOgcFilter(processedFilter, layers): string {
-    let appliedFilter = '';
-    if (processedFilter.length === 0 && layers.indexOf(',') === -1) {
-      appliedFilter = processedFilter;
-    } else {
-      layers.split(',').forEach(layerName => {
-        appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
-      });
-    }
-    return `filter=${appliedFilter}`;
   }
 
   private buildDynamicDownloadUrlFromParamsWFS(asWFSDataSourceOptions) {

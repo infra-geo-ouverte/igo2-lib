@@ -10,7 +10,8 @@ import {
   IgoOgcFilterObject,
   WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions,
-  OgcInterfaceFilterOptions
+  OgcInterfaceFilterOptions,
+  OgcFilterableDataSourceOptions
 } from './ogc-filter.interface';
 
 export class OgcFilterWriter {
@@ -32,7 +33,7 @@ export class OgcFilterWriter {
   };
 
   public buildFilter(
-    filters: IgoOgcFilterObject,
+    filters?: IgoOgcFilterObject,
     extent?: [number, number, number, number],
     proj?,
     fieldNameGeometry?: string
@@ -398,5 +399,67 @@ export class OgcFilterWriter {
     } else {
       return undefined;
     }
+  }
+
+  public handleOgcFiltersAppliedValue(options: OgcFilterableDataSourceOptions, fieldNameGeometry: string) {
+    const ogcFilters = options.ogcFilters;
+    if (!ogcFilters) {
+      return;
+    }
+    let filterQueryStringPushButton = '';
+    let filterQueryStringAdvancedFilters = '';
+    if (ogcFilters.enabled && ogcFilters.pushButtons) {
+      const pushButtonBundle = ogcFilters.pushButtons;
+      const conditions = [];
+      pushButtonBundle.map(buttonBundle => {
+        const bundleCondition = [];
+        buttonBundle.ogcPushButtons
+          .filter(ogcpb => ogcpb.enabled === true)
+          .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
+        if (bundleCondition.length >= 1) {
+          if (bundleCondition.length === 1) {
+            conditions.push(bundleCondition[0]);
+          } else {
+            conditions.push({ logical: buttonBundle.logical, filters: bundleCondition });
+          }
+        }
+      });
+      if (conditions.length >= 1) {
+        filterQueryStringPushButton = new OgcFilterWriter()
+          .buildFilter(
+            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions }
+          );
+      }
+    }
+
+    if (ogcFilters.enabled && ogcFilters.filters) {
+      ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
+      const igoFilters = ogcFilters.filters;
+      filterQueryStringAdvancedFilters = new OgcFilterWriter().buildFilter(igoFilters);
+    }
+
+    let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
+    if (options.type === 'wms') {
+      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.layers);
+    }
+    if (options.type === 'wfs') {
+      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.featureTypes);
+    }
+
+    return filterQueryString;
+
+  }
+
+  public formatProcessedOgcFilter(processedFilter, layersOrTypenames): string {
+    let appliedFilter = '';
+    if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
+      appliedFilter = processedFilter;
+    } else {
+      layersOrTypenames.split(',').forEach(layerOrTypenames => {
+        appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
+      });
+    }
+    const filterValue = appliedFilter.length > 0 ? appliedFilter.replace('filter=', '') : undefined;
+    return filterValue;
   }
 }
