@@ -23,6 +23,7 @@ export interface FeatureMeta {
   mapTitle?: string;
   order?: number;
   alias?: {[key: string]: string};
+  revision?: number;
 }
 
 export interface FeatureGeometry {

@@ -94,6 +94,8 @@ export abstract class Layer {
       this.options.visible === undefined ? true : this.options.visible;
     this.opacity =
       this.options.opacity === undefined ? 1 : this.options.opacity;
+
+    this.ol.set('_layer', this, true);
   }
 
   protected abstract createOlLayer(): olLayer;
