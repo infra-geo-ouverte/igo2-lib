@@ -57,6 +57,7 @@ export class WFSDataSource extends DataSource {
         if (ogcfilters && ogcfilters.enabled) {
           igoFilters = ogcFilters.filters;
         }
+        console.log('TODO: WFS PUSH BUTTONS');
         paramsWFS.xmlFilter = new OgcFilterWriter().buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
         let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
         const patternFilter = /(filter|bbox)=.*/gi;

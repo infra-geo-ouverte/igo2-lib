@@ -38,6 +38,7 @@ export class OgcFilterWriter {
     proj?,
     fieldNameGeometry?: string
   ): string {
+    console.log('TODO: CONFIGURE OPERATOR BY LAYER ?');
     let ourBboxFilter;
     let enableBbox: boolean;
     if (/intersects|contains|within/gi.test(JSON.stringify(filters))) {
