@@ -159,7 +159,7 @@ export class DrawControl {
       style: this.options.drawStyle,
       maxPoints: this.options.maxPoints,
       freehand: false,
-      freehandCondition: function() { return false; }
+      freehandCondition: () => false
     });
 
     this.onDrawStartKey = olDrawInteraction

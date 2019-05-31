@@ -294,12 +294,8 @@ export class ModifyControl {
   private subscribeToKeyDown() {
     this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       // On ESC key down, remove the last vertex
-      if (event.keyCode === 27) {
-        if (this.olModifyInteractionIsActive === true) {
-          this.olModifyInteraction.removeLastPoint();
-        } else if (this.olDrawInteractionIsActive === true) {
-          this.olDrawInteraction.removeLastPoint();  
-        }
+      if (event.keyCode === 27 && this.olDrawInteractionIsActive === true) {
+        this.olDrawInteraction.removeLastPoint();
       }
     });
   }
