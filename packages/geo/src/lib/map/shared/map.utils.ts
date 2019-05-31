@@ -1,4 +1,6 @@
 import * as olproj from 'ol/proj';
+import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
+import { MAC } from 'ol/has';
 
 import { MapViewState } from './map.interface';
 
@@ -71,7 +73,8 @@ export function formatScale(scale) {
 
 /**
  * Return the resolution from a scale denom
- * @param Scale denom
+ * @param scale Scale denom
+ * @param dpi DPI
  * @returns Resolution
  */
 export function getResolutionFromScale(scale: number, dpi: number = 72): number {
@@ -85,4 +88,18 @@ export function getResolutionFromScale(scale: number, dpi: number = 72): number 
  */
 export function getScaleFromResolution(resolution: number, unit: string = 'm', dpi: number = 72): number {
   return resolution * olproj.METERS_PER_UNIT[unit] * 39.37 * dpi;
+}
+
+/**
+ * Returns true if the CTRL key is pushed during an Ol MapBrowserPointerEvent
+ * @param event OL MapBrowserPointerEvent
+ * @returns Whether the CTRL key is pushed
+ */
+export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
+  const originalEvent = event.originalEvent;
+  return (
+    !originalEvent.altKey &&
+    (MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
+    !originalEvent.shiftKey
+  );
 }

@@ -60,7 +60,7 @@ export class WMSDataSource extends DataSource {
 
     if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
       setInterval(() => {
-        this.ol.updateParams({ igoRefresh: Math.random() });
+        this.refresh();
       }, options.refreshIntervalSec * 1000); // Convert seconds to MS
     }
 
@@ -98,6 +98,10 @@ export class WMSDataSource extends DataSource {
         this.ol.updateParams({ filter: wmsFilterValue });
       }
 
+  }
+
+  refresh() {
+    this.ol.updateParams({ igoRefresh: Math.random() });
   }
 
   public formatProcessedOgcFilter(processedFilter, layers): string {

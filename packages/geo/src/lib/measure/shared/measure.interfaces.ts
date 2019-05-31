@@ -10,14 +10,14 @@ export interface Measure {
 
 export interface MeasurerDialogData {
   area: number;
-  areaUnit: MeasureAreaUnit;
   length: number;
-  lengthUnit: MeasureLengthUnit;
+  perimeter: number;
 }
 
 export interface FeatureWithMeasure extends Feature<FeatureWithMeasureProperties> {}
 
 export interface FeatureWithMeasureProperties {
+  id: string;
   measure: Measure;
 }
 

@@ -9,7 +9,7 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
 export class ConfirmDialogService {
   constructor(private dialog: MatDialog) {}
 
-  public open(message): Observable<any> {
+  public open(message: string): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       disableClose: false
     });

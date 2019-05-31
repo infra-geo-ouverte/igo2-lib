@@ -82,8 +82,13 @@ export interface EntityTableColumn {
   valueAccessor?: (entity: object) => any;
   visible?: boolean;
   sort?: boolean;
-  filterable?: boolean;
   cellClassFunc?: (entity: object) => {
     [key: string]: boolean;
   };
+}
+
+export interface EntityTableButton {
+  icon: string;
+  click: (entity: object) => void;
+  color?: 'primary' | 'accent' | 'warn';
 }

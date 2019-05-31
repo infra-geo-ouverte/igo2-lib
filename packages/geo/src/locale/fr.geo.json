@@ -16,8 +16,8 @@
           "title": "Fichier invalide"
         },
         "empty": {
-          "text": "Le fichier '{{value}}' ne contenait rien qui a pu être importé.",
-          "title": "Rien à importer"
+          "text": "Le fichier '{{value}}' est vide, impossible d'importer.",
+          "title": "Fichier vide"
         },
         "success": {
           "text": "La couche '{{value}}' a été ajoutée à la carte",
@@ -30,12 +30,12 @@
       },
       "export": {
         "nothing": {
-          "text": "Aucune donnée valide à exporter",
-          "title": "Rien à exporter"
+          "text": "Impossible d’exporter, donnée non valide ou aucune donnée sélectionnée.",
+          "title": "Donnée non valide ou non présente"
         },
         "failed": {
-          "text": "Échec de l'export",
-          "title": "L'export a échoué"
+          "text": "Impossible d’exporter, problème de donnée rencontré.",
+          "title": "Problème d’exportation"
         }
       },
       "importExportForm": {
@@ -151,7 +151,7 @@
         "portrait": "Portrait",
         "projection": "Projection",
         "resolution": "Résolution",
-        "saveBtn": "Sauvergarder",
+        "saveBtn": "Sauvegarder",
         "scale": "Échelle",
         "showLegend": "Afficher la légende",
         "showProjection": "Afficher la projection",
@@ -231,6 +231,21 @@
         "startDate": "Date de début"
       },
       "measure": {
+        "dialog": {
+          "title": "Sommes de la sélection",
+          "length.title": "Longueur",
+          "area.title": "Superficie",
+          "lengthInMeters": "Longueur en mètres",
+          "lengthInKilometers": "Longueur en kilomètres",
+          "lengthInMiles": "Longueur en miles",
+          "lengthInFeet": "Longueur en pieds",
+          "areaInSquareMeters": "Superficie en mètres²",
+          "areaInSquareKilometers": "Superficie en kilomètres²",
+          "areaInSquareMiles": "Superficie en miles²",
+          "areaInHectares": "Superficie en hectares",
+          "areaInAcres": "Superficie en acres",
+          "perimeterInMeters": "Périmètre en mètres"
+        },
         "area": "Superficie",
         "areaHeader": "Superficie",
         "length": "Distance",
