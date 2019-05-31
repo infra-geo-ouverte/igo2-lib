@@ -13,6 +13,7 @@
 
   <ng-template *ngIf="!collapsed" ngFor let-action [ngForOf]="store.view.all$() | async">
     <igo-actionbar-item
+      [ngClass]="itemClassFunc(action)"
       color="accent"
       [withTitle]="withTitle"
       [withIcon]="withIcon"

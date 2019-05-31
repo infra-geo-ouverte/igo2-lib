@@ -25,7 +25,6 @@ import { ActionStore } from '../shared/store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
-
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -45,7 +44,9 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   toggleCollapseAction = {
     id: 'actionbar_toggle',
     icon: 'more_vert',
-    handler: () => { this.collapsed = !this.collapsed; }
+    handler: () => {
+      this.collapsed = !this.collapsed;
+    }
   };
 
   /**
@@ -103,29 +104,42 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * Class to add to the actionbar overlay
    */
   @Input()
-  set overlayClass(value: string) { this._overlayClass = value; }
+  set overlayClass(value: string) {
+    this._overlayClass = value;
+  }
   get overlayClass(): string {
     return [this._overlayClass, 'igo-actionbar-overlay'].join(' ');
   }
   private _overlayClass = '';
 
   /**
+   * Function to add class to item actionbar
+   */
+  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean };
+
+  /**
    * @ignore
    */
   @HostBinding('class.with-title')
-  get withTitleClass() { return this.withTitle; }
+  get withTitleClass() {
+    return this.withTitle;
+  }
 
   /**
    * @ignore
    */
   @HostBinding('class.with-icon')
-  get withIconClass() { return this.withIcon; }
+  get withIconClass() {
+    return this.withIcon;
+  }
 
   /**
    * @ignore
    */
   @HostBinding('class.horizontal')
-  get horizontalClass() { return this.horizontal; }
+  get horizontalClass() {
+    return this.horizontal;
+  }
 
   constructor(private cdRef: ChangeDetectorRef) {}
 

@@ -1,3 +1,5 @@
 {
-  "welcome": "Bienvenue à {{title}}"
+  "welcome": "Bienvenue à {{title}}",
+  "About": "À propos",
+  "Salutation": "Salutation"
 }

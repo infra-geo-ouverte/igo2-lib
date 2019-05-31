@@ -1,3 +1,5 @@
 {
-  "welcome": "Welcome to {{title}}"
+  "welcome": "Welcome to {{title}}",
+  "About": "About",
+  "Salutation": "Salutation"
 }
