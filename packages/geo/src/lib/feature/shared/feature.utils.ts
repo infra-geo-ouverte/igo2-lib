@@ -7,6 +7,7 @@ import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import {
   EntityKey,
   getEntityId,
+  getEntityTitle,
   getEntityRevision,
   getEntityProperty
 } from '@igo2/common';
@@ -14,7 +15,7 @@ import {
 import { IgoMap } from '../../map';
 import { VectorLayer } from '../../layer';
 import { FeatureDataSource } from '../../datasource';
-import { FeatureMotion } from './feature.enums';
+import { FEATURE, FeatureMotion } from './feature.enums';
 import { Feature } from './feature.interfaces';
 import { FeatureStore } from './store';
 import {
@@ -43,6 +44,15 @@ export function featureToOl(
   });
 
   olFeature.setId(getId(feature));
+
+  const title = getEntityTitle(feature);
+  if (title !== undefined) {
+    olFeature.set('_title', title, true);
+  }
+
+  if (feature.extent !== undefined) {
+    olFeature.set('_extent', feature.extent, true);
+  }
 
   if (feature.projection !== undefined) {
     olFeature.set('_projection', feature.projection, true);
@@ -76,20 +86,37 @@ export function featureFromOl(
   projectionOut = 'EPSG:4326'
 ): Feature {
   const olFormat = new OlFormatGeoJSON();
-  const feature = olFormat.writeFeatureObject(olFeature, {
+
+  const keys = olFeature.getKeys().filter((key: string) => {
+    return !key.startsWith('_') && key !== 'geometry';
+  });
+  const properties = keys.reduce((acc: object, key: string) => {
+    acc[key] = olFeature.get(key);
+    return acc;
+  }, {});
+
+  const geometry = olFormat.writeGeometryObject(olFeature.getGeometry(), {
     dataProjection: projectionOut,
     featureProjection: projectionIn
   });
 
-  return Object.assign({}, feature, {
+  const title = olFeature.get('_title');
+  const mapTitle = olFeature.get('_mapTitle');
+  const id = olFeature.getId();
+
+  return {
+    type: FEATURE,
     projection: projectionOut,
     extent: olFeature.get('_extent'),
     meta: {
-      id: olFeature.getId(),
-      revision: olFeature.getRevision(),
-      mapTitle: olFeature.get('_mapTitle')
-    }
-  });
+      id,
+      title: title ? title : (mapTitle ? mapTitle : id),
+      mapTitle,
+      revision: olFeature.getRevision()
+    },
+    properties,
+    geometry
+  };
 }
 
 /**

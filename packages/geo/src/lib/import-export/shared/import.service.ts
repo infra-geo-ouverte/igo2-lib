@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { ConfigService } from '@igo2/core';
+import { uuid } from '@igo2/utils';
 
 import { Observable, Observer } from 'rxjs';
 
@@ -10,7 +11,7 @@ import OlFeature from 'ol/Feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { ImportInvalidFileError, ImportUnreadableFileError } from './import.errors';
-import { getFileExtension } from './import.utils';
+import { computeLayerTitleFromFile, getFileExtension } from './import.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -130,7 +131,7 @@ export class ImportService {
           if (errors.length > 0) {
             observer.error(new ImportUnreadableFileError());
           } else {
-            const features = this.parseFeaturesFromGeoJSON(response, projectionOut);
+            const features = this.parseFeaturesFromGeoJSON(file, response, projectionOut);
             observer.next(features);
             observer.complete();
           }
@@ -177,19 +178,27 @@ export class ImportService {
     });
     const features = olFeatures.map((olFeature: OlFeature) => {
       return Object.assign(GeoJSON.writeFeatureObject(olFeature), {
-        projection: projectionOut
+        projection: projectionOut,
+        meta: {
+          id: uuid(),
+          title: computeLayerTitleFromFile(file)
+        }
       });
     });
 
     return features;
   }
 
-  private parseFeaturesFromGeoJSON(data: object, projectionOut: string): Feature[] {
+  private parseFeaturesFromGeoJSON(file: File, data: object, projectionOut: string): Feature[] {
     const olFormat = new olformat.GeoJSON();
     const olFeatures = olFormat.readFeatures(data);
     const features = olFeatures.map((olFeature: OlFeature) => {
       return Object.assign(olFormat.writeFeatureObject(olFeature), {
-        projection: projectionOut
+        projection: projectionOut,
+        meta: {
+          id: uuid(),
+          title: computeLayerTitleFromFile(file)
+        }
       });
     });
 

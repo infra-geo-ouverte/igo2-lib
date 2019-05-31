@@ -3,10 +3,12 @@ import * as olStyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { featureToOl, moveToOlFeatures } from '../../feature/shared/feature.utils';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
+import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 
 export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layerTitle: string): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
@@ -22,7 +24,10 @@ export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layer
   const fill = new olStyle.Fill({
     color: [r, g, b, 0.4]
   });
-  const source = new FeatureDataSource();
+  const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    queryable: true
+  };
+  const source = new FeatureDataSource(sourceOptions);
   source.ol.addFeatures(olFeatures);
   const layer = new VectorLayer({
     title: layerTitle,
@@ -55,7 +60,7 @@ export function handleFileImportSuccess(
     return;
   }
 
-  const layerTitle = file.name.substr(0, file.name.lastIndexOf('.'));
+  const layerTitle = computeLayerTitleFromFile(file);
   addLayerAndFeaturesToMap(features, map, layerTitle);
 
   const translate = languageService.translate;
@@ -97,4 +102,8 @@ export function handleNothingToImportError(
 
 export function getFileExtension(file: File): string {
   return file.name.split('.').pop().toLowerCase();
+}
+
+export function computeLayerTitleFromFile(file: File): string {
+  return file.name.substr(0, file.name.lastIndexOf('.'));
 }
