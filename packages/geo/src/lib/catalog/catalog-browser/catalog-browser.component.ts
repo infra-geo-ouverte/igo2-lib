@@ -9,7 +9,7 @@ import {
 
 import { zip } from 'rxjs';
 
-import { EntityStore, EntityStoreController } from '@igo2/common';
+import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { Layer } from '../../layer/shared/layers/layer';
 import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../../map';
@@ -34,9 +34,9 @@ import {
 export class CatalogBrowserComponent implements OnInit, OnDestroy {
 
   /**
-   * Catalog items store controller
+   * Catalog items store watcher
    */
-  private controller: EntityStoreController<CatalogItem>;
+  private watcher: EntityStoreWatcher<CatalogItem>;
 
   /**
    * Catalog
@@ -76,11 +76,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         valueAccessor: (item: CatalogItem) => item.title
       });
     }
-    this.controller = new EntityStoreController(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
   }
 
   ngOnDestroy() {
-    this.controller.destroy();
+    this.watcher.destroy();
   }
 
   /**

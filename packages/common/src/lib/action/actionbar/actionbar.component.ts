@@ -9,7 +9,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 
-import { EntityStoreController } from '../../entity';
+import { EntityStoreWatcher } from '../../entity';
 import { Action } from '../shared/action.interfaces';
 import { ActionbarMode } from '../shared/action.enums';
 import { ActionStore } from '../shared/store';
@@ -49,10 +49,10 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   };
 
   /**
-   * Action store controller
+   * Action store watcher
    * @internal
    */
-  private controller: EntityStoreController<Action>;
+  private watcher: EntityStoreWatcher<Action>;
 
   /**
    * Action store
@@ -135,10 +135,10 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
-      if (this.controller !== undefined) {
-        this.controller.destroy();
+      if (this.watcher !== undefined) {
+        this.watcher.destroy();
       }
-      this.controller = new EntityStoreController(this.store, this.cdRef);
+      this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
     }
   }
 
@@ -146,7 +146,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * @internal
    */
   ngOnDestroy() {
-    this.controller.destroy();
+    this.watcher.destroy();
   }
 
   /**

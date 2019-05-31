@@ -16,7 +16,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   EntityRecord,
   EntityStore,
-  EntityStoreController,
+  EntityStoreWatcher,
   EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
@@ -51,9 +51,9 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   selectionState$: BehaviorSubject<EntityTableSelectionState> = new BehaviorSubject(undefined);
 
   /**
-   * Entity store controller
+   * Entity store watcher
    */
-  private controller: EntityStoreController<object>;
+  private watcher: EntityStoreWatcher<object>;
 
   /**
    * Subscription to the store's selection
@@ -149,26 +149,26 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   }
 
   /**
-   * When the store change, create a new controller
+   * When the store change, create a new watcher
    * @internal
    */
   ngOnChanges(changes: SimpleChanges) {
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
-      if (this.controller !== undefined) {
-        this.controller.destroy();
+      if (this.watcher !== undefined) {
+        this.watcher.destroy();
       }
-      this.controller = new EntityStoreController(this.store, this.cdRef);
+      this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
     }
   }
 
   /**
-   * Unbind the store controller
+   * Unbind the store watcher
    * @internal
    */
   ngOnDestroy() {
-    if (this.controller !== undefined) {
-      this.controller.destroy();
+    if (this.watcher !== undefined) {
+      this.watcher.destroy();
     }
     this.selection$$.unsubscribe();
   }

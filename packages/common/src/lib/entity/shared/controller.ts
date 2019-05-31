@@ -1,163 +1,192 @@
-import { ChangeDetectorRef } from '@angular/core';
+import { Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
-import { Subscription } from 'rxjs';
-import { skip } from 'rxjs/operators';
+import { ActionStore } from '../../action';
+import { EntityRecord, EntityStore, EntityTableTemplate } from '../../entity';
+import { Widget } from '../../widget';
 
-import { ObjectUtils } from '@igo2/utils';
-import { EntityKey } from './entity.interfaces';
-
-import { EntityStore } from './store';
+import { EditorOptions } from './edition.interfaces';
 
 /**
- * This class is used to synchronize a component's changes
- * detection with an EntityStore changes. For example, it is frequent
- * to have a component subscribe to a store's selected entity and, at the same time,
- * this component provides a way to select an entity with, let's say, a click.
- *
- * This class automatically handles those case and triggers the compoent's
- * change detection when needed.
- *
- * Note: If the component observes the store's stateView, a controller is
- * probably not required because the stateView catches any changes to the
- * entities and their state.
+ * This class is responsible of managing the relations between
+ * entities and the actions that consume them. It also defines an
+ * entity table template that may be used by an entity table component.
  */
-export class EntityStoreController<E extends object> {
+export class Editor<E extends object = object> {
 
   /**
-   * Component change detector
+   * Observable of the selected entity
    */
-  private cdRef: ChangeDetectorRef;
+  public entity$ = new BehaviorSubject<E>(undefined);
 
   /**
-   * Entity store
+   * Observable of the selected widget
    */
-  private store: EntityStore<E>;
+  public widget$ = new BehaviorSubject<Widget>(undefined);
 
   /**
-   * Component inner state
+   * Observable of the selected widget's inputs
    */
-  private innerStateIndex = new Map<EntityKey, {[key: string]: any}>();
+  public widgetInputs$ = new BehaviorSubject<{[key: string]: any}>({});
 
   /**
-   * Subscription to the store's entities
+   * Observable of the selected widget's subscribers
+   */
+  public widgetSubscribers$ = new BehaviorSubject<{[key: string]: (event: any) => void}>({});
+
+  /**
+   * Subscription to the selected entity
    */
   private entities$$: Subscription;
 
   /**
-   * Subscription to the store's state
+   * Whether this editor is active
    */
-  private state$$: Subscription;
-
-  constructor(store?: EntityStore<E>, cdRef?: ChangeDetectorRef) {
-    this.setChangeDetector(cdRef);
-    this.setStore(store);
-  }
-
-  destroy() {
-    this.setChangeDetector(undefined);
-    this.setStore(undefined);
-  }
+  private active: boolean = false;
 
   /**
-   * Bind this controller to a store and start watching for changes
-   * @param store Entity store
+   * State change that trigger an update of the actions availability
    */
-  setStore(store?: EntityStore<E>) {
-    if (store === undefined) {
-      this.teardownObservers();
-      this.innerStateIndex.clear();
-      this.store = undefined;
-      return;
+  private changes$: Subject<void> = new Subject();
+
+  /**
+   * Subscription to state changes
+   */
+  private changes$$: Subscription;
+
+  /**
+   * Editor id
+   */
+  get id(): string { return this.options.id; }
+
+  /**
+   * Editor title
+   */
+  get title(): string { return this.options.title; }
+
+  /**
+   * Editor title
+   */
+  get meta(): {[key: string]: any} { return this.options.meta || {}; }
+
+  /**
+   * Entity table template
+   */
+  get tableTemplate(): EntityTableTemplate { return this.options.tableTemplate; }
+
+  /**
+   * Entities store
+   */
+  get entityStore(): EntityStore<E> { return this.options.entityStore as EntityStore<E>; }
+
+  /**
+   * Actions store (some actions activate a widget)
+   */
+  get actionStore(): ActionStore { return this.options.actionStore; }
+
+  /**
+   * Selected entity
+   */
+  get entity(): E { return this.entity$.value; }
+
+  /**
+   * Selected widget
+   */
+  get widget(): Widget { return this.widget$.value; }
+
+  /**
+   * Whether a widget is selected
+   */
+  get hasWidget(): boolean { return this.widget !== undefined; }
+
+  constructor(private options: EditorOptions) {}
+
+  /**
+   * Whether this editor is active
+   */
+  isActive(): boolean { return this.active; }
+
+  /**
+   * Activate the editor. By doing that, the editor will observe
+   * the selected entity (from the store) and update the actions availability.
+   * For example, some actions require an entity to be selected.
+   */
+  activate() {
+    if (this.active === true) {
+      this.deactivate();
+    }
+    this.active = true;
+
+    if (this.entityStore !== undefined) {
+      this.entities$$ = this.entityStore.stateView
+        .manyBy$((record: EntityRecord<E>) => record.state.selected === true)
+        .subscribe((records: EntityRecord<E>[]) => {
+          // If more than one entity is selected, consider that no entity at all is selected.
+          const entity = (records.length === 0 || records.length > 1) ? undefined : records[0].entity;
+          this.onSelectEntity(entity);
+        });
     }
 
-    this.setStore(undefined);
-    this.store = store;
-    this.setupObservers();
-    this.detectChanges();
+    if (this.actionStore !== undefined) {
+      this.changes$$ = this.changes$
+        .pipe(debounceTime(50))
+        .subscribe(() => this.actionStore.updateActionsAvailability());
+    }
+
+    this.changes$.next();
   }
 
   /**
-   * Bind this controller to a component's change detector
-   * @param cdRef Change detector
+   * Deactivate the editor. Unsubcribe to the selected entity.
    */
-  setChangeDetector(cdRef?: ChangeDetectorRef) {
-    this.cdRef = cdRef;
-  }
+  deactivate() {
+    this.active = false;
+    this.deactivateWidget();
 
-  /**
-   * Set up observers on a store's entities and their state
-   * @param store Entity store
-   */
-  private setupObservers() {
-    this.teardownObservers();
-
-    this.entities$$ = this.store.entities$
-      .subscribe((entities: E[]) => this.onEntitiesChange(entities));
-
-    this.state$$ = this.store.state.change$
-      .pipe(skip(1))
-      .subscribe(() => this.onStateChange());
-  }
-
-  /**
-   * Teardown store observers
-   */
-  private teardownObservers() {
     if (this.entities$$ !== undefined) {
       this.entities$$.unsubscribe();
     }
-    if (this.state$$ !== undefined) {
-      this.state$$.unsubscribe();
-    }
-    this.entities$$ = undefined;
-    this.state$$ = undefined;
-  }
-
-  /**
-   * When the entities change, always trigger the changes detection
-   */
-  private onEntitiesChange(entities: E[]) {
-    this.detectChanges();
-  }
-
-  /**
-   * When the entities state change, trigger the change detection
-   * only if the component has not handled these changes yet. For example,
-   * the component might have initiated thoses changes itself.
-   */
-  private onStateChange() {
-    let changesDetected = false;
-    const storeIndex = this.store.state.index;
-    const innerIndex = this.innerStateIndex;
-
-    if (storeIndex.size !== innerIndex.size) {
-      changesDetected = this.detectChanges();
-    }
-
-    const storeKeys = Array.from(storeIndex.keys());
-    for (const key of storeKeys) {
-      const storeValue = storeIndex.get(key);
-      const innerValue = innerIndex.get(key);
-      if (changesDetected === false) {
-        if (innerValue === undefined) {
-          changesDetected = this.detectChanges();
-        } else if (!ObjectUtils.objectsAreEquivalent(storeValue, innerValue)) {
-          changesDetected = this.detectChanges();
-        }
-      }
-
-      this.innerStateIndex.set(key, Object.assign({}, storeValue));
+    if (this.changes$$ !== undefined) {
+      this.changes$$.unsubscribe();
     }
   }
 
   /**
-   * Trigger the change detection of the controller is bound to a change detector
+   * Activate a widget. In itself, activating a widget doesn't render it but,
+   * if an EditorOutlet component is bound to this editor, the widget will
+   * show up.
+   * @param widget Widget
+   * @param inputs Inputs the widget will receive
    */
-  private detectChanges() {
-    if (this.cdRef !== undefined) {
-      this.cdRef.detectChanges();
+  activateWidget(
+    widget: Widget,
+    inputs: {[key: string]: any} = {},
+    subscribers: {[key: string]: (event: any) => void} = {}
+  ) {
+    this.widget$.next(widget);
+    this.widgetInputs$.next(inputs);
+    this.widgetSubscribers$.next(subscribers);
+  }
+
+  /**
+   * Deactivate a widget.
+   */
+  deactivateWidget() {
+    this.widget$.next(undefined);
+    this.changes$.next();
+  }
+
+  /**
+   * When an entity is selected, keep a reference to that
+   * entity and update the actions availability.
+   * @param entity Entity
+   */
+  private onSelectEntity(entity: E) {
+    if (entity === this.entity$.value) {
+      return;
     }
-    return true;
+    this.entity$.next(entity);
+    this.changes$.next();
   }
 
 }
