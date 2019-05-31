@@ -13,8 +13,6 @@ import { Subscription, Observable, zip } from 'rxjs';
 import OlDragBoxInteraction from 'ol/interaction/DragBox';
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
-import { unByKey } from 'ol/Observable';
-import { MAC } from 'ol/has';
 
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { IgoMap } from '../../map/shared/map';
@@ -55,7 +53,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whether all query should complete before emitting an event
    */
-  @Input() waitForAllQueries = false;
+  @Input() waitForAllQueries: boolean = true;
 
   /**
    * Event emitted when a query (or all queries) complete
@@ -84,7 +82,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit() {
     this.listenToMapClick();
-    this.addDragBoxInteraction();
   }
 
   /**
@@ -94,7 +91,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.cancelOngoingQueries();
     this.unlistenToMapClick();
-    this.removeDragBoxInteraction();
   }
 
   /**
@@ -113,29 +109,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private unlistenToMapClick() {
     this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);
     this.mapClickListener = undefined;
-  }
-
-  /**
-   * Add a drag box interaction and, on drag box end, issue queries
-   */
-  private addDragBoxInteraction() {
-    this.olDragBoxInteraction = new OlDragBoxInteraction({
-      condition: this.platformModifierKeyOnly
-    });
-    this.olDragBoxInteractionEndKey = this.olDragBoxInteraction.on(
-      'boxend',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
-    );
-    this.map.ol.addInteraction(this.olDragBoxInteraction);
-  }
-
-  /**
-   * Remove drag box interaction
-   */
-  private removeDragBoxInteraction() {
-    unByKey(this.olDragBoxInteractionEndKey);
-    this.map.ol.removeInteraction(this.olDragBoxInteraction);
-    this.olDragBoxInteraction = undefined;
   }
 
   /**
@@ -196,19 +169,5 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     return dataSource.options.queryable !== undefined
       ? dataSource.options.queryable
       : true;
-  }
-
-  /**
-   * Whether a drag box event should issue a query
-   * @param event OL map browser pointer event
-   * @returns True if a certain key is pressed when dragging
-   */
-  private platformModifierKeyOnly(event: OlMapBrowserPointerEvent): boolean {
-    const originalEvent = event.originalEvent;
-    return (
-      !originalEvent.altKey &&
-      (MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
-      !originalEvent.shiftKey
-    );
   }
 }

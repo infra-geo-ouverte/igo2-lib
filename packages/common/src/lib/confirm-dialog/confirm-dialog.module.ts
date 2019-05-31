@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule, MatDialogModule } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -7,7 +7,7 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { ConfirmDialogService } from './confirm-dialog.service';
 
 @NgModule({
-  imports: [MatButtonModule, IgoLanguageModule],
+  imports: [MatButtonModule, MatDialogModule, IgoLanguageModule],
   declarations: [ConfirmDialogComponent],
   exports: [ConfirmDialogComponent],
   providers: [ConfirmDialogService],

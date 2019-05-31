@@ -438,6 +438,7 @@ export class ModifyControl {
       return;
     }
 
+    this.clearOlLinearRingsSource();
     this.addOlLinearRingsLayer();
 
     this.olMap.getInteractions().forEach((olInteraction: OlInteraction) => {

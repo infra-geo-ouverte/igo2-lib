@@ -17,7 +17,10 @@ export class ActionStore extends EntityStore<Action> {
 
     this.entities$.value.forEach((action: Action) => {
       const conditions = action.conditions || [];
-      const available = conditions.every((condition: () => boolean) => condition());
+      const args = action.conditionArgs || [];
+      const available = conditions.every((condition: (...args: any[]) => boolean) => {
+        return condition(...args);
+      });
       available ? availables.push(action) : unavailables.push(action);
     });
 

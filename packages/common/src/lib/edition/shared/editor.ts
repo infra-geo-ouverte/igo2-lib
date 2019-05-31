@@ -12,12 +12,12 @@ import { EditorOptions } from './edition.interfaces';
  * entities and the actions that consume them. It also defines an
  * entity table template that may be used by an entity table component.
  */
-export class Editor {
+export class Editor<E extends object = object> {
 
   /**
    * Observable of the selected entity
    */
-  public entity$ = new BehaviorSubject<object>(undefined);
+  public entity$ = new BehaviorSubject<E>(undefined);
 
   /**
    * Observable of the selected widget
@@ -65,6 +65,11 @@ export class Editor {
   get title(): string { return this.options.title; }
 
   /**
+   * Editor title
+   */
+  get meta(): {[key: string]: any} { return this.options.meta || {}; }
+
+  /**
    * Entity table template
    */
   get tableTemplate(): EntityTableTemplate { return this.options.tableTemplate; }
@@ -72,7 +77,7 @@ export class Editor {
   /**
    * Entities store
    */
-  get entityStore(): EntityStore<object> { return this.options.entityStore; }
+  get entityStore(): EntityStore<E> { return this.options.entityStore as EntityStore<E>; }
 
   /**
    * Actions store (some actions activate a widget)
@@ -82,7 +87,7 @@ export class Editor {
   /**
    * Selected entity
    */
-  get entity(): object { return this.entity$.value; }
+  get entity(): E { return this.entity$.value; }
 
   /**
    * Selected widget
@@ -114,8 +119,8 @@ export class Editor {
 
     if (this.entityStore !== undefined) {
       this.entities$$ = this.entityStore.stateView
-        .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
-        .subscribe((records: EntityRecord<object>[]) => {
+        .manyBy$((record: EntityRecord<E>) => record.state.selected === true)
+        .subscribe((records: EntityRecord<E>[]) => {
           // If more than one entity is selected, consider that no entity at all is selected.
           const entity = (records.length === 0 || records.length > 1) ? undefined : records[0].entity;
           this.onSelectEntity(entity);
@@ -176,7 +181,7 @@ export class Editor {
    * entity and update the actions availability.
    * @param entity Entity
    */
-  private onSelectEntity(entity: object) {
+  private onSelectEntity(entity: E) {
     if (entity === this.entity$.value) {
       return;
     }
