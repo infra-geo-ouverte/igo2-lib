@@ -17,7 +17,7 @@ import { EntityStore } from './store';
  * This class automatically handles those case and triggers the compoent's
  * change detection when needed.
  *
- * Note: If the component observes the store's stateView, a controller is
+ * Note: If the component observes the store's stateView, a workspace is
  * probably not required because the stateView catches any changes to the
  * entities and their state.
  */
@@ -59,7 +59,7 @@ export class EntityStoreWatcher<E extends object> {
   }
 
   /**
-   * Bind this controller to a store and start watching for changes
+   * Bind this workspace to a store and start watching for changes
    * @param store Entity store
    */
   setStore(store?: EntityStore<E>) {
@@ -77,7 +77,7 @@ export class EntityStoreWatcher<E extends object> {
   }
 
   /**
-   * Bind this controller to a component's change detector
+   * Bind this workspace to a component's change detector
    * @param cdRef Change detector
    */
   setChangeDetector(cdRef?: ChangeDetectorRef) {
@@ -151,7 +151,7 @@ export class EntityStoreWatcher<E extends object> {
   }
 
   /**
-   * Trigger the change detection of the controller is bound to a change detector
+   * Trigger the change detection of the workspace is bound to a change detector
    */
   private detectChanges() {
     if (this.cdRef !== undefined) {
