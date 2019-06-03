@@ -25,6 +25,9 @@ import { ActionStore } from '../shared/store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
+
+  static defaultItemClassFunc(action: Action) { return {}; }
+
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -115,7 +118,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Function to add class to item actionbar
    */
-  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean };
+  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } = ActionbarComponent.defaultItemClassFunc;
 
   /**
    * @ignore
