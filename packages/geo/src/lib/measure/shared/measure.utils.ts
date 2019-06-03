@@ -399,7 +399,7 @@ function clearOlMidpointTooltip(olMidpoint: OlPoint) {
     if (olMap !== undefined) {
       olMap.removeOverlay(olTooltip);
     }
-  } 
+  }
 }
 
 /**

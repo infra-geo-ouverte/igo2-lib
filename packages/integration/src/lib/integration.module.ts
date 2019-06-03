@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { IgoAppContextModule } from './context/context.module';
 import { IgoAppCatalogModule } from './catalog/catalog.module';
 import { IgoAppDirectionsModule } from './directions/directions.module';
-import { IgoAppEditionModule } from './edition/edition.module';
+import { IgoAppWorkspaceModule } from './workspace/workspace.module';
 import { IgoAppImportExportModule } from './import-export/import-export.module';
 import { IgoAppMapModule } from './map/map.module';
 import { IgoAppMeasureModule } from './measure/measure.module';
@@ -19,7 +19,7 @@ import { IgoAppAboutModule } from './about/about.module';
     IgoAppContextModule,
     IgoAppCatalogModule,
     IgoAppDirectionsModule,
-    IgoAppEditionModule,
+    IgoAppWorkspaceModule,
     IgoAppImportExportModule,
     IgoAppMapModule,
     IgoAppMeasureModule,
