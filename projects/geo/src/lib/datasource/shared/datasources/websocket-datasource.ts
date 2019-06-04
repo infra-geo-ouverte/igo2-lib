@@ -44,7 +44,10 @@ export class WebSocketDataSource extends FeatureDataSource {
     switch (this.options.onmessage) {
       case 'update':
         // ol don't add if same ID
-        this.ol.removeFeature(this.ol.getFeatureById(featureAdded.id));
+        const featureToRemove = this.ol.getFeatureById(featureAdded.getId());
+        if (featureToRemove) {
+          this.ol.removeFeature(featureToRemove);
+        }
         this.ol.addFeature(featureAdded);
         break;
       case 'delete':
