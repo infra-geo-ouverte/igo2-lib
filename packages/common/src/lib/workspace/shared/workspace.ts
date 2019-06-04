@@ -7,7 +7,6 @@ import { EntityRecord, EntityStore } from '../../entity';
 
 import { WorkspaceOptions } from './workspace.interfaces';
 
-
 /**
  * This class is responsible of managing the relations between
  * entities and the actions that consume them. It also defines an

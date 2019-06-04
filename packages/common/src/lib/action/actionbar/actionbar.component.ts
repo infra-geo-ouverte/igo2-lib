@@ -26,10 +26,6 @@ import { Overlay } from '@angular/cdk/overlay';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
-  static defaultItemClassFunc(action: Action) {
-    return {};
-  }
-
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -145,6 +141,10 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @HostBinding('class.horizontal')
   get horizontalClass() {
     return this.horizontal;
+  }
+
+  static defaultItemClassFunc(action: Action) {
+    return {};
   }
 
   constructor(private cdRef: ChangeDetectorRef, public overlay: Overlay) {}
