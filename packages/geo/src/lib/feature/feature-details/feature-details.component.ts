@@ -65,7 +65,7 @@ export class FeatureDetailsComponent {
   }
 
   filterFeatureProperties(feature) {
-    const allowedFieldsAndAlias = feature.meta.alias;
+    const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = Object.assign({}, feature.properties);
 
     if (allowedFieldsAndAlias) {
