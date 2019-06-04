@@ -1,6 +1,7 @@
 import { Md5 } from 'ts-md5';
 import olSourceWMTS from 'ol/source/WMTS';
 
+import { SubjectStatus} from '@igo2/utils';
 import { createDefaultTileGrid } from '../../utils/tilegrid';
 import { DataSource } from './datasource';
 import { WMTSDataSourceOptions } from './wmts-datasource.interface';
@@ -30,4 +31,6 @@ export class WMTSDataSource extends DataSource {
 
     return Md5.hashStr(chain) as string;
   }
+
+  onLayerStatusChange(status: SubjectStatus): void {}
 }

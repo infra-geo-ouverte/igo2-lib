@@ -1,6 +1,6 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
 
-import { uuid } from '@igo2/utils';
+import { uuid, SubjectStatus} from '@igo2/utils';
 
 import { DataSource } from './datasource';
 import { DataSourceLegendOptions } from './datasource.interface';
@@ -58,4 +58,6 @@ export class TileArcGISRestDataSource extends DataSource {
     htmlString += '</table>';
     return [{ html: htmlString }];
   }
+
+  onLayerStatusChange(status: SubjectStatus): void {}
 }

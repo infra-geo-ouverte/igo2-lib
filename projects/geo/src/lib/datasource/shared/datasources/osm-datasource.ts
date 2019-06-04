@@ -1,5 +1,5 @@
 import olSourceOSM from 'ol/source/OSM';
-
+import { SubjectStatus } from '@igo2/utils';
 import { DataSource } from './datasource';
 import { OSMDataSourceOptions } from './osm-datasource.interface';
 
@@ -15,4 +15,7 @@ export class OSMDataSource extends DataSource {
   protected generateId() {
     return 'OSM';
   }
+
+  onLayerStatusChange(status: SubjectStatus): void {}
+
 }

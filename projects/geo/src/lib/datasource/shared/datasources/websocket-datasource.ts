@@ -6,6 +6,7 @@ import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
 
 import { Md5 } from 'ts-md5';
 
+import { SubjectStatus } from '@igo2/utils';
 import { uuid } from '@igo2/utils';
 import { FeatureDataSource } from './feature-datasource';
 import { WebSocketDataSourceOptions } from './websocket-datasource.interface';
@@ -13,6 +14,10 @@ import { WebSocketDataSourceOptions } from './websocket-datasource.interface';
 export class WebSocketDataSource extends FeatureDataSource {
   public ws: WebSocket;
   public options: WebSocketDataSourceOptions;
+
+  constructor(options: WebSocketDataSourceOptions) {
+    super(options);
+  }
 
   protected createOlSource(): olSourceVector {
      this.createWebSocket();
@@ -69,4 +74,16 @@ export class WebSocketDataSource extends FeatureDataSource {
     // thrown message to user ?
   }
 
+  onLayerStatusChange(status: SubjectStatus): void {
+    switch (status) {
+      case 1:
+      case 2:
+      case 3:
+        // nothing to do
+        break;
+      case 4:
+        this.ws.close();
+        break;
+    }
+  }
 }

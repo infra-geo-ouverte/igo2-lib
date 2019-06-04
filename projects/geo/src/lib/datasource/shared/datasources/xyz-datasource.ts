@@ -1,6 +1,8 @@
 import { Md5 } from 'ts-md5';
 import olSourceXYZ from 'ol/source/XYZ';
 
+
+import { SubjectStatus} from '@igo2/utils';
 import { DataSource } from './datasource';
 import { XYZDataSourceOptions } from './xyz-datasource.interface';
 
@@ -17,4 +19,6 @@ export class XYZDataSource extends DataSource {
 
     return Md5.hashStr(chain) as string;
   }
+
+  onLayerStatusChange(status: SubjectStatus): void {}
 }
