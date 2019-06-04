@@ -26,5 +26,4 @@ export class MapService {
   setMap(map: IgoMap) {
     this.map = map;
   }
-
 }

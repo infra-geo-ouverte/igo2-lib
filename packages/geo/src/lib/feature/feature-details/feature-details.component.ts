@@ -30,17 +30,21 @@ export class FeatureDetailsComponent {
   /**
    * @internal
    */
-  get title(): string { return getEntityTitle(this.feature); }
+  get title(): string {
+    return getEntityTitle(this.feature);
+  }
 
   /**
    * @internal
    */
-  get icon(): string { return getEntityIcon(this.feature) || 'link'; }
+  get icon(): string {
+    return getEntityIcon(this.feature) || 'link';
+  }
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   htmlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
@@ -51,9 +55,13 @@ export class FeatureDetailsComponent {
   }
 
   isUrl(value) {
-    if (typeof (value) === 'string') {
-      return ((value.slice(0, 8) === 'https://') || (value.slice(0, 7) === 'http://')) ;
-    } else {return false; }
+    if (typeof value === 'string') {
+      return (
+        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
+      );
+    } else {
+      return false;
+    }
   }
 
   filterFeatureProperties(feature) {

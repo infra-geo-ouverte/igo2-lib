@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import * as proj from 'ol/proj';
 
 import { LanguageService } from '@igo2/core';
@@ -7,6 +13,7 @@ import {
   FEATURE,
   Feature,
   FeatureMotion,
+  GoogleLinks,
   IgoMap,
   LayerService,
   MapService,
@@ -19,7 +26,6 @@ import {
 } from '@igo2/geo';
 
 import { SearchState } from '@igo2/integration';
-import { GoogleLinks} from '../../../../../packages/geo/src/lib/utils/googleLinks';
 
 @Component({
   selector: 'app-search',
@@ -27,7 +33,6 @@ import { GoogleLinks} from '../../../../../packages/geo/src/lib/utils/googleLink
   styleUrls: ['./search.component.scss']
 })
 export class AppSearchComponent implements OnInit, OnDestroy {
-
   public store = new ActionStore([]);
 
   public map = new IgoMap({
@@ -46,7 +51,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public osmLayer: Layer;
 
-  @ViewChild('mapBrowser', {read: ElementRef}) mapBrowser: ElementRef;
+  @ViewChild('mapBrowser', { read: ElementRef }) mapBrowser: ElementRef;
 
   public lonlat;
   public mapProjection: string;
@@ -88,7 +93,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   onSearch(event: { research: Research; results: SearchResult[] }) {
     const results = event.results;
-    this.searchStore.state.updateAll({focused: false, selected: false});
+    this.searchStore.state.updateAll({ focused: false, selected: false });
     const newResults = this.searchStore.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
@@ -151,12 +156,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.store.load([
       {
         id: 'coordinates',
         title: 'coordinates',
-        handler: this.onSearchCoordinate.bind(this),
+        handler: this.onSearchCoordinate.bind(this)
       },
       {
         id: 'googleMaps',
@@ -176,17 +180,23 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.store.destroy();
   }
 
-  onContextMenuOpen(event: { x: number, y: number }) {
+  onContextMenuOpen(event: { x: number; y: number }) {
     const position = this.mapPosition(event);
     const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
     this.mapProjection = this.mapService.getMap().projection;
     this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
   }
 
-  mapPosition(event: { x: number, y: number }) {
+  mapPosition(event: { x: number; y: number }) {
     const contextmenuPoint = event;
-    contextmenuPoint.y = contextmenuPoint.y - this.mapBrowser.nativeElement.getBoundingClientRect().top + window.scrollY;
-    contextmenuPoint.x = contextmenuPoint.x - this.mapBrowser.nativeElement.getBoundingClientRect().left + window.scrollX;
+    contextmenuPoint.y =
+      contextmenuPoint.y -
+      this.mapBrowser.nativeElement.getBoundingClientRect().top +
+      window.scrollY;
+    contextmenuPoint.x =
+      contextmenuPoint.x -
+      this.mapBrowser.nativeElement.getBoundingClientRect().left +
+      window.scrollX;
     const position = [contextmenuPoint.x, contextmenuPoint.y];
     return position;
   }
@@ -198,7 +208,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     for (const i in results) {
       if (results.length > 0) {
         results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
-          this.onSearch({research: results[i], results: _results});
+          this.onSearch({ research: results[i], results: _results });
           /*if (_results[i].source.options.title === 'Coordinates') {
             this.onResultSelect(_results[0]);
           }*/
@@ -213,6 +223,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   onOpenGoogleStreetView() {
-    window.open(GoogleLinks.getGoogleStreetViewLink(this.lonlat[0], this.lonlat[1]));
+    window.open(
+      GoogleLinks.getGoogleStreetViewLink(this.lonlat[0], this.lonlat[1])
+    );
   }
 }

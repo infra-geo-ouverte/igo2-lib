@@ -7,13 +7,10 @@ import { FEATURE, Feature } from '../../../feature';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, ReverseSearch } from './source';
-import {
-  SearchSourceOptions,
-  TextSearchOptions
-} from './source.interfaces';
+import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
-import {LanguageService} from '@igo2/core';
-import {GoogleLinks} from '../../../utils/googleLinks';
+import { LanguageService } from '@igo2/core';
+import { GoogleLinks } from '../../../utils/googleLinks';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -27,7 +24,8 @@ export class CoordinatesSearchResultFormatter {
  * CoordinatesReverse search source
  */
 @Injectable()
-export class CoordinatesReverseSearchSource extends SearchSource implements ReverseSearch {
+export class CoordinatesReverseSearchSource extends SearchSource
+  implements ReverseSearch {
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
@@ -58,7 +56,7 @@ export class CoordinatesReverseSearchSource extends SearchSource implements Reve
     lonLat: [number, number],
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
-    return of( [this.dataToResult(lonLat)]);
+    return of([this.dataToResult(lonLat)]);
   }
 
   private dataToResult(data: [number, number]): SearchResult<Feature> {
@@ -78,7 +76,10 @@ export class CoordinatesReverseSearchSource extends SearchSource implements Reve
           format: 'degrés decimaux',
           systemeCoordonnees: 'WGS84',
           GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
-          GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(data[0], data[1])
+          GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
+            data[0],
+            data[1]
+          )
         }
       },
       meta: {

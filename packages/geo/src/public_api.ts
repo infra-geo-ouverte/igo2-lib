@@ -59,4 +59,5 @@ export * from './lib/query';
 export * from './lib/routing';
 export * from './lib/search';
 export * from './lib/toast';
+export * from './lib/utils';
 export * from './lib/wkt';
