@@ -6,7 +6,7 @@ export enum SubjectStatus {
   Done = 1,
   Working = 2,
   Waiting = 3,
-  Remove = 4
+  Removed = 4
 }
 
 export abstract class Watcher {
