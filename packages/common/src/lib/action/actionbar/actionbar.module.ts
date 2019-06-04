@@ -6,7 +6,8 @@ import {
   MatIconModule,
   MatTooltipModule,
   MatListModule,
-  MatMenuModule
+  MatMenuModule,
+  MatCardModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -25,7 +26,8 @@ import { ActionbarItemComponent } from './actionbar-item.component';
     MatIconModule,
     MatTooltipModule,
     MatMenuModule,
-    MatListModule
+    MatListModule,
+    MatCardModule
   ],
   exports: [ActionbarComponent],
   declarations: [ActionbarComponent, ActionbarItemComponent]

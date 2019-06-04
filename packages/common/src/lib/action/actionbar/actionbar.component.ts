@@ -13,6 +13,7 @@ import { EntityStoreWatcher } from '../../entity';
 import { Action } from '../shared/action.interfaces';
 import { ActionbarMode } from '../shared/action.enums';
 import { ActionStore } from '../shared/store';
+import { Overlay } from '@angular/cdk/overlay';
 
 /**
  * A list of action buttons.
@@ -25,8 +26,9 @@ import { ActionStore } from '../shared/store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
-
-  static defaultItemClassFunc(action: Action) { return {}; }
+  static defaultItemClassFunc(action: Action) {
+    return {};
+  }
 
   /**
    * Reference to the ActionbarMode enum for use in the template
@@ -118,7 +120,8 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   /**
    * Function to add class to item actionbar
    */
-  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } = ActionbarComponent.defaultItemClassFunc;
+  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } =
+    ActionbarComponent.defaultItemClassFunc;
 
   /**
    * @ignore
@@ -144,7 +147,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
     return this.horizontal;
   }
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef, public overlay: Overlay) {}
 
   /**
    * @internal

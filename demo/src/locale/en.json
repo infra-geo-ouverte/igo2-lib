@@ -1,5 +1,8 @@
 {
   "welcome": "Welcome to {{title}}",
   "About": "About",
-  "Salutation": "Salutation"
+  "Salutation": "Salutation",
+  "coordinates": "Show coordinates,",
+  "googleMap": "Show in Google maps",
+  "googleStreetView": "Show in Google Street view"
 }

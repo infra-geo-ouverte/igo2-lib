@@ -8,13 +8,20 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
-import { IgoPanelModule } from '@igo2/common';
 import {
+  IgoPanelModule,
+  IgoActionbarModule,
+  IgoContextMenuModule
+} from '@igo2/common';
+import {
+  IgoFeatureModule,
   IgoMapModule,
   IgoSearchModule,
   provideIChercheSearchSource,
   provideILayerSearchSource,
-  provideNominatimSearchSource
+  provideNominatimSearchSource,
+  provideIChercheReverseSearchSource,
+  provideCoordinatesReverseSearchSource
 } from '@igo2/geo';
 
 import { IgoAppSearchModule } from '@igo2/integration';
@@ -34,13 +41,18 @@ import { AppSearchRoutingModule } from './search-routing.module';
     IgoPanelModule,
     IgoMapModule,
     IgoSearchModule.forRoot(),
-    IgoAppSearchModule
+    IgoAppSearchModule,
+    IgoActionbarModule,
+    IgoContextMenuModule,
+    IgoFeatureModule
   ],
   exports: [AppSearchComponent],
   providers: [
+    provideCoordinatesReverseSearchSource(),
     provideIChercheSearchSource(),
     provideILayerSearchSource(),
-    provideNominatimSearchSource()
+    provideNominatimSearchSource(),
+    provideIChercheReverseSearchSource()
   ]
 })
 export class AppSearchModule {}

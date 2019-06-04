@@ -1,11 +1,8 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy
-} from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Media, MediaOrientation, MediaService } from '@igo2/core';
 import { ActionStore, ActionbarMode } from '@igo2/common';
+import { Overlay } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-action',
@@ -13,7 +10,6 @@ import { ActionStore, ActionbarMode } from '@igo2/common';
   styleUrls: ['./action.component.scss']
 })
 export class AppActionComponent implements OnInit, OnDestroy {
-
   public store = new ActionStore([]);
 
   private added = false;
@@ -27,7 +23,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
     return ActionbarMode.Overlay;
   }
 
-  constructor(private mediaService: MediaService) {}
+  constructor(private mediaService: MediaService, public overlay: Overlay) {}
 
   ngOnInit() {
     const added = () => this.added === true;
@@ -42,7 +38,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
           alert('Add!');
           this.added = true;
           this.store.updateActionsAvailability();
-        },
+        }
       },
       {
         id: 'edit',
@@ -74,5 +70,4 @@ export class AppActionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.store.destroy();
   }
-
 }

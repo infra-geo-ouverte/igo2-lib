@@ -4,7 +4,7 @@
   [matTooltip]="tooltip | translate"
   [ngClass]="{'igo-actionbar-item-disabled': disabled}"
   (click)="onClick()">
-  <button
+  <button *ngIf="withIcon"
     mat-list-avatar
     mat-icon-button
     [color]="color"
