@@ -9,6 +9,7 @@ export interface Form {
 
 export interface FormFieldGroupConfig {
   name: string;
+  title?: string;
   options?: FormFieldGroupOptions;
 }
 

@@ -63,3 +63,8 @@ igo-actionbar-item ::ng-deep mat-list-item [mat-list-avatar] {
 igo-actionbar-item ::ng-deep mat-list-item:hover {
   cursor: pointer;
 }
+
+.context-menu-card {
+  padding: 8px 3px;
+  margin: 10px;
+}

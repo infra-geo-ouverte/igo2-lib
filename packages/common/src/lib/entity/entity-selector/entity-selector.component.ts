@@ -13,7 +13,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord } from '../shared/entity.interfaces';
 import { EntityStore } from '../shared/store';
-import { EntityStoreController } from '../shared/controller';
+import { EntityStoreWatcher } from '../shared/watcher';
 import { getEntityTitle } from '../shared/entity.utils';
 
 @Component({
@@ -36,9 +36,9 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   private selected$$: Subscription;
 
   /**
-   * Store controller
+   * Store watcher
    */
-  private controller: EntityStoreController<object>;
+  private watcher: EntityStoreWatcher<object>;
 
   /**
    * Entity store
@@ -71,11 +71,11 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
-   * Create a store controller and subscribe to the selected entity
+   * Create a store watcher and subscribe to the selected entity
    * @internal
    */
   ngOnInit() {
-    this.controller = new EntityStoreController(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
     this.selected$$ = this.store.stateView
       .firstBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((record: EntityRecord<object>) => {
@@ -84,11 +84,11 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Unsubscribe to the selected entity and destroy the store controller
+   * Unsubscribe to the selected entity and destroy the store watcher
    * @internal
    */
   ngOnDestroy() {
-    this.controller.destroy();
+    this.watcher.destroy();
     this.selected$$.unsubscribe();
   }
 

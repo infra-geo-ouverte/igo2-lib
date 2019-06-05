@@ -24,6 +24,7 @@ import OlOverlay from 'ol/Overlay';
 import { IgoMap } from '../../map';
 import {
   MeasureLengthUnit,
+  clearOlGeometryMidpoints,
   updateOlGeometryMidpoints,
   formatMeasure,
   measureOlGeometry
@@ -357,6 +358,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
 
     const olMidpoints = updateOlGeometryMidpoints(olGeometry);
     const olLastMidpoint = olMidpoints[lastIndex];
+    if (olMidpoints.length === 0 || olLastMidpoint === undefined) {
+      this.removeMeasureTooltip();
+      return;
+    }
 
     this.olTooltip.setPosition(olLastMidpoint.flatCoordinates);
 
@@ -378,6 +383,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private removeMeasureTooltip() {
     if (this.olTooltip.getMap() !== undefined) {
       this.map.ol.removeOverlay(this.olTooltip);
+      this.olTooltip.setMap(undefined);
     }
   }
 

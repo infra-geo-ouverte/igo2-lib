@@ -1,3 +1,9 @@
+import { SearchSourceOptions } from './source.interfaces';
+
+export interface ILayerSearchSourceOptions extends SearchSourceOptions {
+  queryFormat?: {[key: string]: string | {urls: string[]}};
+}
+
 export interface ILayerData {
   id: string;
   source: ILayerDataSource;

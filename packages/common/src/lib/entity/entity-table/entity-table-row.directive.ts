@@ -109,7 +109,11 @@ export class EntityTableRowDirective {
    */
   private scroll() {
     if (this._selected === true) {
-      this.el.nativeElement.scrollIntoView({behavior: this.scrollBehavior, block: 'nearest'});
+      this.el.nativeElement.scrollIntoView({
+        behavior: this.scrollBehavior,
+        block: 'center',
+        inline: 'center'
+      });
     }
   }
 

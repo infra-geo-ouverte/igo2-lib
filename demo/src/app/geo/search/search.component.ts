@@ -1,27 +1,41 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import * as proj from 'ol/proj';
 
 import { LanguageService } from '@igo2/core';
-import { EntityStore } from '@igo2/common';
+import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
   Feature,
   FeatureMotion,
+  GoogleLinks,
   IgoMap,
   LayerService,
+  MapService,
   Layer,
   LAYER,
   LayerOptions,
   Research,
-  SearchResult
+  SearchResult,
+  SearchService
 } from '@igo2/geo';
+
+import { SearchState } from '@igo2/integration';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class AppSearchComponent {
-  map = new IgoMap({
+export class AppSearchComponent implements OnInit, OnDestroy {
+  public store = new ActionStore([]);
+
+  public map = new IgoMap({
     overlay: true,
     controls: {
       attribution: {
@@ -30,19 +44,33 @@ export class AppSearchComponent {
     }
   });
 
-  view = {
+  public view = {
     center: [-73, 47.2],
     zoom: 7
   };
 
-  searchStore: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
+  public osmLayer: Layer;
 
-  osmLayer: Layer;
+  @ViewChild('mapBrowser', { read: ElementRef }) mapBrowser: ElementRef;
+
+  public lonlat;
+  public mapProjection: string;
+
+  get searchStore(): EntityStore<SearchResult> {
+    return this.searchState.store;
+  }
+
+  selectedFeature: Feature;
 
   constructor(
     private languageService: LanguageService,
-    private layerService: LayerService
+    private mapService: MapService,
+    private layerService: LayerService,
+    private searchState: SearchState,
+    private searchService: SearchService
   ) {
+    this.mapService.setMap(this.map);
+
     this.layerService
       .createAsyncLayer({
         title: 'OSM',
@@ -59,6 +87,7 @@ export class AppSearchComponent {
   onSearchTermChange(term?: string) {
     if (term === undefined || term === '') {
       this.searchStore.clear();
+      this.selectedFeature = undefined;
     }
   }
 
@@ -98,14 +127,14 @@ export class AppSearchComponent {
     if (result.meta.dataType !== FEATURE) {
       return undefined;
     }
-    const feature = (result as SearchResult<Feature>).data;
+    this.selectedFeature = (result as SearchResult<Feature>).data;
 
     // Somethimes features have no geometry. It happens with some GetFeatureInfo
-    if (feature.geometry === undefined) {
+    if (this.selectedFeature.geometry === undefined) {
       return;
     }
 
-    this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+    this.map.overlay.setFeatures([this.selectedFeature], FeatureMotion.Default);
   }
 
   /**
@@ -124,5 +153,78 @@ export class AppSearchComponent {
     this.layerService
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
+  }
+
+  ngOnInit() {
+    this.store.load([
+      {
+        id: 'coordinates',
+        title: 'coordinates',
+        handler: this.onSearchCoordinate.bind(this)
+      },
+      {
+        id: 'googleMaps',
+        title: 'googleMap',
+        handler: this.onOpenGoogleMaps.bind(this),
+        args: ['1']
+      },
+      {
+        id: 'googleStreetView',
+        title: 'googleStreetView',
+        handler: this.onOpenGoogleStreetView.bind(this)
+      }
+    ]);
+  }
+
+  ngOnDestroy() {
+    this.store.destroy();
+  }
+
+  onContextMenuOpen(event: { x: number; y: number }) {
+    const position = this.mapPosition(event);
+    const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
+    this.mapProjection = this.mapService.getMap().projection;
+    this.lonlat = proj.transform(coord, this.mapProjection, 'EPSG:4326');
+  }
+
+  mapPosition(event: { x: number; y: number }) {
+    const contextmenuPoint = event;
+    contextmenuPoint.y =
+      contextmenuPoint.y -
+      this.mapBrowser.nativeElement.getBoundingClientRect().top +
+      window.scrollY;
+    contextmenuPoint.x =
+      contextmenuPoint.x -
+      this.mapBrowser.nativeElement.getBoundingClientRect().left +
+      window.scrollX;
+    const position = [contextmenuPoint.x, contextmenuPoint.y];
+    return position;
+  }
+
+  onSearchCoordinate() {
+    this.searchStore.clear();
+    const results = this.searchService.reverseSearch(this.lonlat);
+
+    for (const i in results) {
+      if (results.length > 0) {
+        results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
+          this.onSearch({ research: results[i], results: _results });
+          /*if (_results[i].source.options.title === 'Coordinates') {
+            this.onResultSelect(_results[0]);
+          }*/
+          console.log(_results[0]);
+        });
+      }
+    }
+  }
+
+  onOpenGoogleMaps() {
+    window.open(GoogleLinks.getGoogleMapsLink(this.lonlat[0], this.lonlat[1]));
+  }
+
+  onOpenGoogleStreetView() {
+    window.open(
+      GoogleLinks.getGoogleStreetViewLink(this.lonlat[0], this.lonlat[1])
+    );
   }
 }

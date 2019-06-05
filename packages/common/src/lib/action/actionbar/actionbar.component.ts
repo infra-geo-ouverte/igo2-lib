@@ -9,10 +9,11 @@ import {
   SimpleChanges
 } from '@angular/core';
 
-import { EntityStoreController } from '../../entity';
+import { EntityStoreWatcher } from '../../entity';
 import { Action } from '../shared/action.interfaces';
 import { ActionbarMode } from '../shared/action.enums';
 import { ActionStore } from '../shared/store';
+import { Overlay } from '@angular/cdk/overlay';
 
 /**
  * A list of action buttons.
@@ -25,7 +26,6 @@ import { ActionStore } from '../shared/store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
-
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -45,14 +45,16 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   toggleCollapseAction = {
     id: 'actionbar_toggle',
     icon: 'more_vert',
-    handler: () => { this.collapsed = !this.collapsed; }
+    handler: () => {
+      this.collapsed = !this.collapsed;
+    }
   };
 
   /**
-   * Action store controller
+   * Action store watcher
    * @internal
    */
-  private controller: EntityStoreController<Action>;
+  private watcher: EntityStoreWatcher<Action>;
 
   /**
    * Action store
@@ -103,31 +105,49 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * Class to add to the actionbar overlay
    */
   @Input()
-  set overlayClass(value: string) { this._overlayClass = value; }
+  set overlayClass(value: string) {
+    this._overlayClass = value;
+  }
   get overlayClass(): string {
     return [this._overlayClass, 'igo-actionbar-overlay'].join(' ');
   }
   private _overlayClass = '';
 
   /**
+   * Function to add class to item actionbar
+   */
+  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } =
+    ActionbarComponent.defaultItemClassFunc;
+
+  /**
    * @ignore
    */
   @HostBinding('class.with-title')
-  get withTitleClass() { return this.withTitle; }
+  get withTitleClass() {
+    return this.withTitle;
+  }
 
   /**
    * @ignore
    */
   @HostBinding('class.with-icon')
-  get withIconClass() { return this.withIcon; }
+  get withIconClass() {
+    return this.withIcon;
+  }
 
   /**
    * @ignore
    */
   @HostBinding('class.horizontal')
-  get horizontalClass() { return this.horizontal; }
+  get horizontalClass() {
+    return this.horizontal;
+  }
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  static defaultItemClassFunc(action: Action) {
+    return {};
+  }
+
+  constructor(private cdRef: ChangeDetectorRef, public overlay: Overlay) {}
 
   /**
    * @internal
@@ -135,10 +155,10 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
-      if (this.controller !== undefined) {
-        this.controller.destroy();
+      if (this.watcher !== undefined) {
+        this.watcher.destroy();
       }
-      this.controller = new EntityStoreController(this.store, this.cdRef);
+      this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
     }
   }
 
@@ -146,7 +166,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * @internal
    */
   ngOnDestroy() {
-    this.controller.destroy();
+    this.watcher.destroy();
   }
 
   /**

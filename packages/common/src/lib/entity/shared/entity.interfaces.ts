@@ -63,6 +63,7 @@ export interface EntityTableTemplate {
   selectionCheckbox?: boolean;
   selectMany?: boolean;
   sort?: boolean;
+  fixedHeader?: boolean;
   valueAccessor?: (entity: object, property: string) => any;
   headerClassFunc?: () => {
     [key: string]: boolean;

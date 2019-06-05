@@ -9,7 +9,7 @@ import {
 
 import { zip } from 'rxjs';
 
-import { EntityStore, EntityStoreController } from '@igo2/common';
+import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { Layer } from '../../layer/shared/layers/layer';
 import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../../map';
@@ -32,11 +32,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserComponent implements OnInit, OnDestroy {
-
   /**
-   * Catalog items store controller
+   * Catalog items store watcher
    */
-  private controller: EntityStoreController<CatalogItem>;
+  private watcher: EntityStoreWatcher<CatalogItem>;
 
   /**
    * Catalog
@@ -69,18 +68,18 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         type: CatalogItemType.Layer
       };
     });
-    this.store.state.updateMany(currentItems, {added: true}, true);
-    if (this.catalog.sortDirection !== undefined) {
+    this.store.state.updateMany(currentItems, { added: true }, true);
+    if (this.catalog && this.catalog.sortDirection !== undefined) {
       this.store.view.sort({
         direction: this.catalog.sortDirection,
         valueAccessor: (item: CatalogItem) => item.title
       });
     }
-    this.controller = new EntityStoreController(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
   }
 
   ngOnDestroy() {
-    this.controller.destroy();
+    this.watcher.destroy();
   }
 
   /**
@@ -102,9 +101,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added event
    */
-  onLayerAddedChange(event: {added: boolean, layer: CatalogItemLayer}) {
+  onLayerAddedChange(event: { added: boolean; layer: CatalogItemLayer }) {
     const layer = event.layer;
-    this.store.state.update(layer, {added: event.added}, false);
+    this.store.state.update(layer, { added: event.added }, false);
     event.added ? this.addLayerToMap(layer) : this.removeLayerFromMap(layer);
   }
 
@@ -113,9 +112,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Group added event
    */
-  onGroupAddedChange(event: {added: boolean, group: CatalogItemGroup}) {
+  onGroupAddedChange(event: { added: boolean; group: CatalogItemGroup }) {
     const group = event.group;
-    this.store.state.update(group, {added: event.added}, false);
+    this.store.state.update(group, { added: event.added }, false);
     event.added ? this.addGroupToMap(group) : this.removeGroupFromMap(group);
   }
 
@@ -145,7 +144,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     });
 
     zip(...layers$).subscribe((oLayers: Layer[]) => {
-      this.store.state.updateMany(layers, {added: true});
+      this.store.state.updateMany(layers, { added: true });
       this.map.addLayers(oLayers);
     });
   }
@@ -156,7 +155,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private removeLayersFromMap(layers: CatalogItemLayer[]) {
     layers.forEach((layer: CatalogItemLayer) => {
-      this.store.state.update(layer, {added: false});
+      this.store.state.update(layer, { added: false });
       const oLayer = this.map.getLayerById(layer.id);
       if (oLayer !== undefined) {
         this.map.removeLayer(oLayer);

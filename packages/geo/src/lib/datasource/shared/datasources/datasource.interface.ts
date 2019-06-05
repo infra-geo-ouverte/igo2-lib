@@ -13,7 +13,8 @@ export interface DataSourceOptions {
     | 'osm'
     | 'carto'
     | 'arcgisrest'
-    | 'tilearcgisrest';
+    | 'tilearcgisrest'
+    | 'websocket';
   legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
   // title: string;

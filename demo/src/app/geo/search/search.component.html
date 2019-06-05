@@ -10,7 +10,7 @@
     <hr>
   </mat-card-content>
 
-  <igo-map-browser [map]="map" [view]="view" igoOverlay>
+  <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu (menuPosition)="onContextMenuOpen($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
@@ -26,6 +26,20 @@
       (resultFocus)="onResultFocus($event)"
       (resultSelect)="onResultSelect($event)">
     </igo-search-results>
+
+  </igo-panel>
+
+  <igo-panel *ngIf="selectedFeature" title="Details">
+    <igo-feature-details [feature]="selectedFeature"></igo-feature-details>
   </igo-panel>
 
 </mat-card>
+
+<ng-template #actionbarMenu>
+  <igo-actionbar
+    [store]="store"
+    [withIcon]="false"
+    [horizontal]="true"
+    [mode]="'context'">
+  </igo-actionbar>
+</ng-template>
