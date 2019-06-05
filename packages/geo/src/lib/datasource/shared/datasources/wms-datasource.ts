@@ -99,8 +99,6 @@ export class WMSDataSource extends DataSource {
         initOgcFilters.advancedOgcFilters = false;
       }
     }
-
-    console.log('TODO: WFS PUSH BUTTONS');
     const ogcFilterWriter = new OgcFilterWriter();
     const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, fieldNameGeometry);
     this.ol.updateParams({ filter: filterQueryString });

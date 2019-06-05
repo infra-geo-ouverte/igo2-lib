@@ -114,9 +114,12 @@ export class OgcFilterToggleButtonComponent implements OnInit {
         .buildFilter(conditions.length === 1 ?
           conditions[0] : {logical: 'And', filters: conditions } as IgoOgcFilterObject);
     }
-    this.ogcFilterService.filterByOgc(
-      this.datasource as WMSDataSource,
-      filterQueryString
-    );
+    if (this.datasource.options.type === 'wms') {
+      this.ogcFilterService.filterByOgc(this.datasource as WMSDataSource, filterQueryString );
+    }
+    if (this.datasource.options.type === 'wfs') {
+      // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
+      this.datasource.ol.clear();
+    }
   }
 }

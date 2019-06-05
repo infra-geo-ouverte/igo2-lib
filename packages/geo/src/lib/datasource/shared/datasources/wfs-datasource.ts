@@ -50,23 +50,28 @@ export class WFSDataSource extends DataSource {
     return new olSourceVector({
       format: this.getFormatFromOptions(),
       overlaps: false,
-      url: (extent, resolution, proj) => {
-        const queryStringValues = formatWFSQueryString(this.options, undefined, proj.getCode());
-        let igoFilters;
-        const ogcfilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-        if (ogcfilters && ogcfilters.enabled) {
-          igoFilters = ogcFilters.filters;
-        }
-        console.log('TODO: WFS PUSH BUTTONS');
-        paramsWFS.xmlFilter = new OgcFilterWriter().buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
-        let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
-        const patternFilter = /(filter|bbox)=.*/gi;
-        baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
-        this.options.download = Object.assign({}, this.options.download, { dynamicUrl: baseUrl });
-        return baseUrl.replace(/&&/g, '&');
+      url: (extent, resolution, proj) => { return this.buildUrl(extent, proj, ogcFilters);
       },
       strategy: OlLoadingStrategy.bbox
     });
+  }
+
+  private buildUrl(extent, proj, ogcFilters): string {
+    const paramsWFS = this.options.paramsWFS;
+    const queryStringValues = formatWFSQueryString(this.options, undefined, proj.getCode());
+    let igoFilters;
+    if (ogcFilters && ogcFilters.enabled) {
+      igoFilters = ogcFilters.filters;
+    }
+    const ogcFilterWriter = new OgcFilterWriter();
+    const filterOrBox = ogcFilterWriter.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
+    const filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, ogcFilters.geometryName);
+    paramsWFS.xmlFilter = filterOrPush ? `filter=${filterOrPush}` : filterOrBox;
+    let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
+    const patternFilter = /(filter|bbox)=.*/gi;
+    baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
+    this.options.download = Object.assign({}, this.options.download, { dynamicUrl: baseUrl });
+    return baseUrl.replace(/&&/g, '&');
   }
 
   private getFormatFromOptions() {
