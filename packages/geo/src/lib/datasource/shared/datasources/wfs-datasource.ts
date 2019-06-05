@@ -65,8 +65,15 @@ export class WFSDataSource extends DataSource {
     }
     const ogcFilterWriter = new OgcFilterWriter();
     const filterOrBox = ogcFilterWriter.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
-    const filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, ogcFilters.geometryName);
-    paramsWFS.xmlFilter = filterOrPush ? `filter=${filterOrPush}` : filterOrBox;
+    let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, ogcFilters.geometryName);
+
+    let prefix = 'filter';
+    if (!filterOrPush) {
+      prefix = 'bbox';
+      filterOrPush = extent.join(',') + ',' + proj.getCode();
+    }
+
+    paramsWFS.xmlFilter = ogcFilters.advancedOgcFilters ? filterOrBox : `${prefix}=${filterOrPush}`;
     let baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
     const patternFilter = /(filter|bbox)=.*/gi;
     baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
