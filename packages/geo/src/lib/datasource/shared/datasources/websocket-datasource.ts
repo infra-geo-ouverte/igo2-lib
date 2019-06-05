@@ -1,8 +1,8 @@
 import olSourceVector from 'ol/source/Vector';
 import * as olformat from 'ol/format';
-import {unByKey} from 'ol/Observable';
-import {easeOut} from 'ol/easing';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+import { unByKey } from 'ol/Observable';
+import { easeOut } from 'ol/easing';
+import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
 
 import { Md5 } from 'ts-md5';
 
@@ -15,9 +15,9 @@ export class WebSocketDataSource extends FeatureDataSource {
   public options: WebSocketDataSourceOptions;
 
   protected createOlSource(): olSourceVector {
-     this.createWebSocket();
-     this.options.format = this.getSourceFormatFromOptions(this.options);
-     return super.createOlSource();
+    this.createWebSocket();
+    this.options.format = this.getSourceFormatFromOptions(this.options);
+    return super.createOlSource();
   }
 
   private createWebSocket() {
@@ -38,13 +38,15 @@ export class WebSocketDataSource extends FeatureDataSource {
   }
 
   onMessage(event) {
-
     const featureAdded = this.options.format.readFeature(event.data);
 
     switch (this.options.onmessage) {
       case 'update':
         // ol don't add if same ID
-        this.ol.removeFeature(this.ol.getFeatureById(featureAdded.id));
+        const featureToRemove = this.ol.getFeatureById(featureAdded.getId());
+        if (featureToRemove) {
+          this.ol.removeFeature(featureToRemove);
+        }
         this.ol.addFeature(featureAdded);
         break;
       case 'delete':
@@ -68,5 +70,4 @@ export class WebSocketDataSource extends FeatureDataSource {
   onOpen(event) {
     // thrown message to user ?
   }
-
 }
