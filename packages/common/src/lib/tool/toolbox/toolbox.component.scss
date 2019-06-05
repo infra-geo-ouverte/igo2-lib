@@ -42,8 +42,8 @@ igo-actionbar:not(.with-title) {
   box-shadow: 2px 0px 2px 0px #dddddd;
 }
 
-igo-actionbar ::ng-deep igo-list {
-  overflow: inherit;
+igo-actionbar ::ng-deep igo-actionbar-item.tool-actived ::ng-deep mat-list-item {
+  background-color: #e0e0e0;
 }
 
 igo-dynamic-outlet {

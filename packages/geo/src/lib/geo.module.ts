@@ -17,7 +17,7 @@ import { IgoQueryModule } from './query/query.module';
 import { IgoRoutingModule } from './routing/routing.module';
 import { IgoSearchModule } from './search/search.module';
 import { IgoToastModule } from './toast/toast.module';
-import { IgoGeoEditionModule } from './edition/edition.module';
+import { IgoGeoWorkspaceModule } from './workspace/workspace.module';
 import { IgoWktModule } from './wkt/wkt.module';
 
 @NgModule({
@@ -41,7 +41,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoRoutingModule,
     IgoSearchModule,
     IgoToastModule,
-    IgoGeoEditionModule,
+    IgoGeoWorkspaceModule,
     IgoWktModule
   ]
 })

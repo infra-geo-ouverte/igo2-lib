@@ -7,18 +7,18 @@ import { map } from 'rxjs/operators';
 import { LanguageService } from '@igo2/core';
 
 import { LAYER, AnyLayerOptions, LayerOptions } from '../../../layer';
+import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
-import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
-import { ILayerData, ILayerResponse } from './ilayer.interfaces';
+import { TextSearchOptions } from './source.interfaces';
+import { ILayerSearchSourceOptions, ILayerData, ILayerResponse } from './ilayer.interfaces';
 
 /**
  * ILayer search source
  */
 @Injectable()
-export class ILayerSearchSource
-    extends SearchSource implements TextSearch {
+export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   static id = 'ilayer';
   static type = LAYER;
@@ -30,7 +30,7 @@ export class ILayerSearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
-    @Inject('options') options: SearchSourceOptions
+    @Inject('options') options: ILayerSearchSourceOptions
   ) {
     super(options);
   }
@@ -39,7 +39,7 @@ export class ILayerSearchSource
     return ILayerSearchSource.id;
   }
 
-  protected getDefaultOptions(): SearchSourceOptions {
+  protected getDefaultOptions(): ILayerSearchSourceOptions {
     return {
       title: 'igo.geo.search.dataSources.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search'
@@ -92,15 +92,55 @@ export class ILayerSearchSource
   }
 
   private computeLayerOptions(data: ILayerData): AnyLayerOptions {
+    const url = data.source.url;
+    const queryParams: any = this.extractQueryParamsFromSourceUrl(url);
     return {
       title: data.source.title,
       sourceOptions: {
+        crossOrigin: 'anonymous',
         type: data.source.format,
-        url: data.source.url,
+        url,
+        queryable: (data.source as QueryableDataSourceOptions).queryable,
+        queryFormat: queryParams.format,
+        queryHtmlTarget: queryParams.htmlTarget,
         params: {
           layers: data.source.name
         }
       }
+    };
+  }
+
+  private extractQueryParamsFromSourceUrl(url: string): {format: QueryFormat; htmlTarget: string; } {
+    let queryFormat = QueryFormat.GML2;
+    let htmlTarget;
+    const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
+    if (formatOpt) {
+      for (const key of Object.keys(formatOpt)) {
+        const value = formatOpt[key];
+        if (value === '*') {
+          queryFormat = QueryFormat[key.toUpperCase()];
+          break;
+        }
+
+        const urls = (value as any as {urls: string[]}).urls;
+        if (Array.isArray(urls)) {
+          urls.forEach((urlOpt) => {
+            if (url.indexOf(urlOpt) !== -1) {
+              queryFormat = QueryFormat[key.toUpperCase()];
+            }
+          });
+          break;
+        }
+      }
+    }
+
+    if (queryFormat === QueryFormat.HTML) {
+      htmlTarget = 'iframe';
+    }
+
+    return {
+      format: queryFormat,
+      htmlTarget
     };
   }
 }

@@ -12,7 +12,7 @@ import {
 import {Observable, EMPTY, timer} from 'rxjs';
 import {debounce, map} from 'rxjs/operators';
 
-import {EntityStore, EntityStoreController} from '@igo2/common';
+import {EntityStore, EntityStoreWatcher} from '@igo2/common';
 
 import {SearchResult} from '../shared/search.interfaces';
 import {SearchSource} from '../shared/sources/source';
@@ -39,9 +39,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   public searchResultMode = SearchResultMode;
 
   /**
-   * Search results store controller
+   * Search results store watcher
    */
-  private controller: EntityStoreController<SearchResult>;
+  private watcher: EntityStoreWatcher<SearchResult>;
 
   /**
    * Search results store
@@ -76,19 +76,19 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
-   * Bind the search results store to the controller
+   * Bind the search results store to the watcher
    * @internal
    */
   ngOnInit() {
-    this.controller = new EntityStoreController(this.store, this.cdRef);
+    this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
   }
 
   /**
-   * Unbind the search results store from the controller
+   * Unbind the search results store from the watcher
    * @internal
    */
   ngOnDestroy() {
-    this.controller.destroy();
+    this.watcher.destroy();
   }
 
   /**

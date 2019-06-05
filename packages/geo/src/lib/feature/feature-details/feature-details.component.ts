@@ -30,19 +30,23 @@ export class FeatureDetailsComponent {
   /**
    * @internal
    */
-  get title(): string { return getEntityTitle(this.feature); }
+  get title(): string {
+    return getEntityTitle(this.feature);
+  }
 
   /**
    * @internal
    */
-  get icon(): string { return getEntityIcon(this.feature) || 'link'; }
+  get icon(): string {
+    return getEntityIcon(this.feature) || 'link';
+  }
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
-  isUrl(value): SafeResourceUrl {
+  htmlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
@@ -50,8 +54,18 @@ export class FeatureDetailsComponent {
     return typeof value === 'object';
   }
 
+  isUrl(value) {
+    if (typeof value === 'string') {
+      return (
+        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
+      );
+    } else {
+      return false;
+    }
+  }
+
   filterFeatureProperties(feature) {
-    const allowedFieldsAndAlias = feature.meta.alias;
+    const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = Object.assign({}, feature.properties);
 
     if (allowedFieldsAndAlias) {

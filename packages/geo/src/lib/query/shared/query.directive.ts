@@ -8,18 +8,21 @@ import {
   Self
 } from '@angular/core';
 
-import { Subscription, Observable, zip } from 'rxjs';
+import { Subscription, Observable, of, zip } from 'rxjs';
+
+import OlFeature from 'ol/Feature';
+import OlLayer from 'ol/layer/Layer';
 
 import OlDragBoxInteraction from 'ol/interaction/DragBox';
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
-import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { QueryableDataSource } from './query.interfaces';
+import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
+import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -49,6 +52,21 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * Ol drag box "end" event key
    */
   private olDragBoxInteractionEndKey: string;
+
+  /**
+   * Whter to query features or not
+   */
+  @Input() queryFeatures: boolean = false;
+
+  /**
+   * Feature query hit tolerance
+   */
+  @Input() queryFeaturesHitTolerance: number = 0;
+
+  /**
+   * Feature query hit tolerance
+   */
+  @Input() queryFeaturesCondition: (olLayer: OlLayer) => boolean;
 
   /**
    * Whether all query should complete before emitting an event
@@ -121,15 +139,18 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       return;
     }
 
+    const queries$ = [];
+    if (this.queryFeatures) {
+      queries$.push(this.doQueryFeatures(event));
+    }
+
     const resolution = this.map.ol.getView().getResolution();
-    const queryLayers = this.map.layers.filter((layer: AnyLayer) =>
-      this.layerIsQueryable(layer)
-    );
-    const queries$ = this.queryService.query(queryLayers, {
+    const queryLayers = this.map.layers.filter(layerIsQueryable);
+    queries$.push(...this.queryService.query(queryLayers, {
       coordinates: event.coordinate,
       projection: this.map.projection,
       resolution
-    });
+    }));
 
     if (queries$.length === 0) {
       return;
@@ -152,22 +173,25 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   /**
+   * Query features already present on the map
+   * @param event OL map browser pointer event
+   */
+  private doQueryFeatures(event: OlMapBrowserPointerEvent): Observable<Feature[]> {
+    const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
+      hitTolerance: this.queryFeaturesHitTolerance || 0,
+      layerFilter: this.queryFeaturesCondition ? this.queryFeaturesCondition : olLayerIsQueryable
+    });
+    const features = (olFeatures || []).map((olFeature: OlFeature) => {
+      return featureFromOl(olFeature, this.map.projection);
+    });
+    return of(features);
+  }
+
+  /**
    * Cancel ongoing requests, if any
    */
   private cancelOngoingQueries() {
     this.queries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.queries$$ = [];
-  }
-
-  /**
-   * Whether a layer is queryable
-   * @param layer Layer
-   * @returns True if the layer si queryable
-   */
-  private layerIsQueryable(layer: AnyLayer): boolean {
-    const dataSource = layer.dataSource as QueryableDataSource;
-    return dataSource.options.queryable !== undefined
-      ? dataSource.options.queryable
-      : true;
   }
 }

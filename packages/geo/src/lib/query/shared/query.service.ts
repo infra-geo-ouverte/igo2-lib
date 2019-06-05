@@ -227,7 +227,10 @@ export class QueryService {
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
 
-    if (htmlTarget !== QueryHtmlTarget.BLANK && htmlTarget !== QueryHtmlTarget.IFRAME ) {
+    if (
+      htmlTarget !== QueryHtmlTarget.BLANK &&
+      htmlTarget !== QueryHtmlTarget.IFRAME
+    ) {
       htmlTarget = QueryHtmlTarget.IFRAME;
     }
 
@@ -318,6 +321,10 @@ export class QueryService {
             FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
           }
         );
+        if (wmsDatasource.params.version !== '1.3.0') {
+          url = url.replace('&I=', '&X=');
+          url = url.replace('&J=', '&Y=');
+        }
         break;
       case CartoDataSource:
         const cartoDatasource = datasource as CartoDataSource;

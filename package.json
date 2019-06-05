@@ -15,6 +15,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
+    "start.watch": "run-p watch.libs \"_start.watch -- -- {@}\" --",
     "build": "ng build",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -41,6 +42,16 @@
     "test.geo": "ng test geo --watch=false --code-coverage",
     "test.context": "ng test context --watch=false --code-coverage",
     "test.demo": "ng test demo --watch=false --code-coverage && ng e2e --port 4300",
+    "watch.libs": "rimraf ./dist && run-p _watch.*",
+    "_watch.utils": "ng build utils --watch",
+    "_watch.core": "wait-on dist/utils/package.json && ng build core --watch",
+    "_watch.common": "wait-on dist/core/package.json && ng build common --watch",
+    "_watch.auth": "wait-on dist/common/package.json && ng build auth --watch",
+    "_watch.geo": "wait-on dist/common/package.json && ng build geo --watch",
+    "_watch.context": "wait-on dist/geo/package.json && ng build context --watch",
+    "_watch.integration": "wait-on dist/context/package.json && ng build integration --watch",
+    "_watch.gulp": "wait-on dist/integration/package.json && gulp core && gulp common && gulp auth && gulp geo && gulp context && gulp integration && gulp core:bundleLocale",
+    "_start.watch": "wait-on dist/core/locale/fr.json && npm start",
     "clean": "rimraf ./dist && rimraf ./node_modules && npm cache clean --force && git checkout -- package.json && git checkout -- package-lock.json",
     "compodoc": "npx compodoc -p tsconfig.json",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
@@ -122,12 +133,14 @@
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "ng-packagr": "^4.7.1",
+    "npm-run-all": "^4.1.5",
     "protractor": "~5.4.2",
     "publish-release": "^1.6.0",
     "scss-bundle": "^2.5.0",
     "ts-node": "~8.0.2",
     "tsickle": "0.34.2",
     "tslint": "^5.12.1",
-    "typescript": "~3.2.4"
+    "typescript": "~3.2.4",
+    "wait-on": "^3.2.0"
   }
 }

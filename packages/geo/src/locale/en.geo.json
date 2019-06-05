@@ -269,7 +269,7 @@
           "modify.tooltip": "Modify"
         }
       },
-      "edition": {
+      "workspace": {
         "ogcFilter.close": "Close",
         "ogcFilter.title": "Filters",
         "ogcFilter.tooltip": "Apply filters",

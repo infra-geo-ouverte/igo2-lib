@@ -30,7 +30,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
-
   /**
    * Group's items store
    * @internal
@@ -81,7 +80,9 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   /**
    * @internal
    */
-  get title(): string { return this.group.title; }
+  get title(): string {
+    return this.group.title;
+  }
 
   /**
    * @internal
@@ -89,7 +90,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.load(this.group.items);
     this.evaluateAdded();
-    if (this.catalog.sortDirection !== undefined) {
+    if (this.catalog && this.catalog.sortDirection !== undefined) {
       this.store.view.sort({
         direction: this.catalog.sortDirection,
         valueAccessor: (item: CatalogItem) => item.title
@@ -130,7 +131,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    * @param event Layer added change event
    */
-  onLayerAddedChange(event: {added: boolean, layer: CatalogItemLayer}) {
+  onLayerAddedChange(event: { added: boolean; layer: CatalogItemLayer }) {
     this.layerAddedChange.emit(event);
     this.tryToggleGroup(event);
   }
@@ -161,15 +162,16 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * If all the layers of the group added or removed, add or remove the group itself.
    * @param event The last layer added change event to occur
    */
-  private tryToggleGroup(event: {added: boolean, layer: CatalogItemLayer}) {
+  private tryToggleGroup(event: { added: boolean; layer: CatalogItemLayer }) {
     const added = event.added;
     const layer = event.layer;
 
-    const layersAdded = this.store.view.all()
+    const layersAdded = this.store.view
+      .all()
       .filter((item: CatalogItem) => item.id !== layer.id)
       .map((item: CatalogItem) => this.state.get(item).added || false);
 
-    if (layersAdded.every((value) => value === added)) {
+    if (layersAdded.every(value => value === added)) {
       added ? this.add() : this.remove();
     } else if (this.added$.value === true) {
       this.added$.next(false);
@@ -182,5 +184,4 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
     });
     this.added$.next(added);
   }
-
 }

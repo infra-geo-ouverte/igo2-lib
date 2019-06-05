@@ -130,6 +130,19 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get Action bar item class function
+   * @internal
+   */
+  get actionBarItemClassFunc() {
+    return (tool: Tool) => {
+      if (!this.toolbox.activeTool$.value) {
+        return;
+      }
+      return { 'tool-actived': tool.id === this.toolbox.activeTool$.value.name };
+    };
+  }
+
+  /**
    * Initialize an action store
    * @param toolbar Toolbar
    */

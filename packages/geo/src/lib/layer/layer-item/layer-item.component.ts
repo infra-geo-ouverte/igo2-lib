@@ -9,7 +9,7 @@ import {
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
-import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer, TooltipType } from '../shared/layers';
 
 @Component({
@@ -119,7 +119,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   private updateQueryBadge() {
     const hidden = this.queryBadge === false ||
       this.layer.visible === false ||
-      (this.layer.dataSource.options as QueryableDataSourceOptions).queryable !== true;
+      !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);
   }
 }
