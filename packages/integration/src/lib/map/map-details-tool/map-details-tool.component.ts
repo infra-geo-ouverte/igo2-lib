@@ -16,8 +16,13 @@ import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 })
 export class MapDetailsToolComponent {
   @Input() toggleLegendOnVisibilityChange: boolean = false;
-  @Input() ogcFiltersInLayers: boolean = true;
+
   @Input() expandLegendOfVisibleLayers: boolean = false;
+
+  @Input() updateLegendOnResolutionChange: boolean = false;
+
+  @Input() ogcFiltersInLayers: boolean = true;
+
   @Input() layerListControls: LayerListControlsOptions = {};
 
   get excludeBaseLayers(): boolean {
