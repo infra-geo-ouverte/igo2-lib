@@ -5,7 +5,8 @@
     igoCollapse
     [target]="legend"
     [collapsed]="!(showLegend$ | async)"
-    (toggle)="toggleLegend($event)">
+    (toggle)="toggleLegend($event)"
+    svgIcon="chevron-up" >
   </mat-icon>
   <h4 matLine [matTooltip]="tooltipText" matTooltipShowDelay="500">{{layer.title}}</h4>
 
@@ -25,13 +26,8 @@
       matBadgeSize="small"
       matBadgePosition="after"
       [matBadgeHidden]="queryBadgeHidden$ | async"
-      [ngClass]="{disabled: !(inResolutionRange$ | async)}">
-      <ng-container *ngIf="layer.visible">
-        visibility
-      </ng-container>
-      <ng-container *ngIf="!layer.visible">
-        visibility_off
-      </ng-container>
+      [ngClass]="{disabled: !(inResolutionRange$ | async)}"
+      [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
     </mat-icon>
   </button>
 
@@ -41,7 +37,7 @@
     igoCollapse
     [target]="actions"
     [collapsed]="true">
-    <mat-icon>more_horiz</mat-icon>
+    <mat-icon svgIcon="dots-horizontal"></mat-icon>
   </button>
 </mat-list-item>
 
@@ -71,7 +67,7 @@
         [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
         [disabled]="!orderable"
         (click)="layer.map.raiseLayer(layer)">
-        <mat-icon>arrow_upward</mat-icon>
+        <mat-icon svgIcon="arrow-up"></mat-icon>
       </button>
 
       <button
@@ -82,7 +78,7 @@
         [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
         [disabled]="!orderable"
         (click)="layer.map.lowerLayer(layer)">
-        <mat-icon>arrow_downward</mat-icon>
+        <mat-icon svgIcon="arrow-down"></mat-icon>
       </button>
 
       <button
@@ -93,7 +89,7 @@
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.removeLayer' | translate"
         (click)="layer.map.removeLayer(layer)">
-        <mat-icon>delete</mat-icon>
+        <mat-icon svgIcon="delete"></mat-icon>
       </button>
       <ng-content select="[igoLayerItemToolbar]"></ng-content>
 

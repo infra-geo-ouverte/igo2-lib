@@ -7,7 +7,7 @@
 
       <div class="igo-input-container">
         <button *ngIf="map.geolocationFeature" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.geolocate' | translate" (click)="geolocateStop(i)">
-          <mat-icon>my_location</mat-icon>
+          <mat-icon svgIcon="crosshairs-gps"></mat-icon>
         </button>
         <mat-form-field>
           <input matInput formControlName="stopPoint" [matAutocomplete]="auto" placeholder="{{'igo.geo.routingForm.'+stop.value.routingText | translate}}"
@@ -23,23 +23,23 @@
         </mat-form-field>
         <button mat-button *ngIf="stop.value && (stop.value.stopPoint.length>0 || stop.value.stopProposals.length>0)" matSuffix mat-icon-button
           aria-label="Clear" (click)="clearStop(i)">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
         <!-- <div class="igo-form-button-group"> -->
 
 
           <!-- <button *ngIf="i !== 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.raiseStop' | translate"
             [color]="color" (click)="raiseStop(i)">
-            <mat-icon>arrow_upward</mat-icon>
+            <mat-icon svgIcon="arrow-upward"></mat-icon>
           </button>
           <button *ngIf="i !== stops.length - 1" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.lowerStop' | translate"
             [color]="color" (click)="lowerStop(i)">
-            <mat-icon>arrow_downward</mat-icon>
+            <mat-icon svgIcon="arrow-downward"></mat-icon>
           </button> -->
 
           <button *ngIf="i !== 0 && i !== stops.length - 1" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.removeStop' | translate"
             color="warn" (click)="removeStop(i)">
-            <mat-icon>delete</mat-icon>
+            <mat-icon svgIcon="delete"></mat-icon>
           </button>
         <!-- </div> -->
       </div>
@@ -50,23 +50,23 @@
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.routingForm.zoomRoute' | translate"
       *ngIf="routesResults" color="primary" (click)="zoomRoute()">
-      <mat-icon>zoom_in</mat-icon>
+      <mat-icon svgIcon="zoom-in"></mat-icon>
     </button>
       <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.addStop' | translate"
       color="primary" (click)="addStop()">
-      <mat-icon>add_location</mat-icon>
+      <mat-icon svgIcon="map-marker-plus"></mat-icon>
     </button>
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.resetRoutingBtn' | translate"
       *ngIf="routesResults" color="warn" (click)="resetForm()">
-      <mat-icon>restore_page</mat-icon>
+      <mat-icon svgIcon="restore-page"></mat-icon>
     </button>
     <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.copy' | translate"
       color="primary" (click)="copyDirectionsToClipboard()">
-      <mat-icon>content_copy</mat-icon>
+      <mat-icon svgIcon="content-copy"></mat-icon>
     </button>
     <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.link' | translate"
     color="primary" (click)="copyLinkToClipboard()">
-    <mat-icon>link</mat-icon>
+    <mat-icon svgIcon="link"></mat-icon>
   </button>
   </div>
 
@@ -89,7 +89,7 @@
 
     <mat-list-item (mouseenter)="showSegment(step)" (click)="showSegment(step,true)" *ngFor="let step of activeRoute.steps; let cnt = index;"
       igoListItem>
-      <mat-icon [ngClass]="this.formatStep(step,cnt).cssClass" mat-list-icon>{{this.formatStep(step,cnt).image}}</mat-icon>
+      <mat-icon [ngClass]="this.formatStep(step,cnt).cssClass" mat-list-icon svgIcon="{{this.formatStep(step,cnt).image}}"></mat-icon>
 
       <h4 mat-line (click)="showSegment(step,true)">{{cnt +1}}. {{this.formatStep(step,cnt).instruction}}</h4>
       <h4 mat-line class="right">{{this.formatDistance(step.distance)}}</h4>

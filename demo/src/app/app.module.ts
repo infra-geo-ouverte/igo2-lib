@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import {
@@ -9,7 +9,6 @@ import {
   MatListModule,
   MatIconRegistry
 } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
 import { AppHomeModule } from './core/home/home.module';
 import { AppActivityModule } from './core/activity/activity.module';
 import { AppConfigModule } from './core/config/config.module';

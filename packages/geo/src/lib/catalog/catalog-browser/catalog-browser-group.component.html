@@ -4,7 +4,8 @@
     igoCollapse
     class="igo-chevron"
     [target]="items"
-    [collapsed]="true">
+    [collapsed]="true"
+    svgIcon="chevron-up">
   </mat-icon>
 
   <h4 matLine>{{title}}</h4>
@@ -17,7 +18,7 @@
       [matTooltip]="'igo.geo.catalog.group.removeFromMap' | translate"
       color="warn"
       (click)="onToggleClick()">
-      <mat-icon>delete</mat-icon>
+      <mat-icon svgIcon="delete"></mat-icon>
     </button>
   </ng-container>
 
@@ -28,7 +29,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.catalog.group.addToMap' | translate"
       (click)="onToggleClick()">
-      <mat-icon>add</mat-icon>
+      <mat-icon svgIcon="plus"></mat-icon>
     </button>
   </ng-template>
 </mat-list-item>

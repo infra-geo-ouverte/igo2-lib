@@ -57,7 +57,7 @@
 
         <ng-template ngFor let-permission [ngForOf]="groupPermissions.value">
           <mat-list-item>
-            <mat-icon mat-list-avatar>perm_identity</mat-icon>
+            <mat-icon mat-list-avatar svgIcon="perm-identity"></mat-icon>
             <h4 mat-line>{{permission.profil}}</h4>
 
             <div igoStopPropagation
@@ -69,7 +69,7 @@
                  matTooltipShowDelay="500"
                  color="warn"
                  (click)="removePermission.emit(permission)">
-                 <mat-icon>delete</mat-icon>
+                 <mat-icon svgIcon="delete"></mat-icon>
                </button>
             </div>
 

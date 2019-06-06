@@ -26,7 +26,7 @@ import { CatalogState } from '../catalog.state';
 @ToolComponent({
   name: 'catalogBrowser',
   title: 'igo.integration.tools.catalog',
-  icon: 'photo_browser'
+  icon: 'photo-browser'
 })
 @Component({
   selector: 'igo-catalog-browser-tool',

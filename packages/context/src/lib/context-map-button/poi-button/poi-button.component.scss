@@ -35,15 +35,3 @@ mat-select {
     margin: 0 8px;
   }
 }
-
-.deletePoi {
-  span::before {
-    content: 'delete';
-  }
-}
-
-.addPoi {
-  span::before {
-    content: 'add_circle';
-  }
-}
