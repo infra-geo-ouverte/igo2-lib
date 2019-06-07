@@ -28,9 +28,9 @@ mat-list {
   igo-actionbar-item {
     display: inline-block;
   }
-};
+}
 
-::ng-deep .mat-list .mat-list-item .mat-list-text > * {
+:host ::ng-deep .mat-list .mat-list-item .mat-list-text > * {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -41,7 +41,7 @@ mat-list {
   -webkit-line-clamp: 2;
 }
 
-::ng-deep .mat-list-base .mat-list-item.mat-list-item-with-avatar {
+:host ::ng-deep .mat-list-base .mat-list-item.mat-list-item-with-avatar {
   height: $igo-actionbar-item-height;
 
   .mat-list-item-content {
