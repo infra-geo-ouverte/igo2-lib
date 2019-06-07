@@ -8,7 +8,7 @@
             </mat-button-toggle>
         </mat-button-toggle-group>
     </ng-container>
-    <!-- This duplicate is there because I'm not able to bind a value to vertical="false" or true -->
+    <!-- This duplicate is there because I'm not able to bind a value to vertical= "false" or "true" -->
     <ng-container *ngIf="!bundleIsVertical(bundle)">
         <mat-button-toggle-group  multiple="true">
             <mat-button-toggle [ngStyle]="setColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
