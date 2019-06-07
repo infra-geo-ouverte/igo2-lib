@@ -1,5 +1,5 @@
 <mat-list-item>
-  <mat-icon mat-list-avatar>{{icon}}</mat-icon>
+  <mat-icon mat-list-avatar svgIcon="{{icon}}"></mat-icon>
   <h4 mat-line>{{title}}</h4>
   
   <button
@@ -9,9 +9,6 @@
     [matTooltip]="(added ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.addToMap') | translate"
     [color]="added ? 'warn' : ''"
     (click)="onToggleClick()">
-    <mat-icon>
-      <ng-container *ngIf="added">delete</ng-container>
-      <ng-container *ngIf="!added">add</ng-container>
-    </mat-icon>
+    <mat-icon [svgIcon]="added ? 'delete' : 'add'"></mat-icon>
   </button>
 </mat-list-item>

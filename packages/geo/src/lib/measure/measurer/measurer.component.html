@@ -61,7 +61,7 @@
       [matTooltip]="'igo.geo.measure.actionbar.calculate.tooltip' | translate"
       [disabled]="(selectedFeatures$ | async).length === 0"
       (click)="onCalculateClick()">
-      <mat-icon>playlist_add</mat-icon>
+      <mat-icon svgIcon="playlist-plus"></mat-icon>
     </button>
 
     <button
@@ -69,7 +69,7 @@
       [matTooltip]="'igo.geo.measure.actionbar.delete.tooltip' | translate"
       [disabled]="(selectedFeatures$ | async).length === 0"
       (click)="onDeleteClick()">
-      <mat-icon>delete</mat-icon>
+      <mat-icon svgIcon="delete"></mat-icon>
     </button>
 
     <!--button
@@ -77,7 +77,7 @@
       [matTooltip]="'igo.geo.measure.actionbar.modify.tooltip' | translate"
       [disabled]="(selectedFeatures$ | async).length !== 1"
       (click)="onModifyClick()">
-      <mat-icon>edit</mat-icon>
+      <mat-icon svgIcon="edit"></mat-icon>
     </button-->
   </div>
 

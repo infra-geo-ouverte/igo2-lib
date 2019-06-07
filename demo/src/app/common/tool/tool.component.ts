@@ -21,7 +21,7 @@ import {
 @ToolComponent({
   name: 'demo-salutation',
   title: 'Salutation',
-  icon: 'person',
+  icon: 'account',
   options: {name: 'Jack'}
 })
 @Component({
@@ -46,7 +46,7 @@ export class AppSalutationToolComponent implements OnUpdateInputs {
 @ToolComponent({
   name: 'demo-about',
   title: 'About',
-  icon: 'info'
+  icon: 'information'
 })
 @Component({
   selector: 'app-about-tool',

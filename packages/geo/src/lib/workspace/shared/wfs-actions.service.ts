@@ -20,7 +20,7 @@ export class WfsActionsService {
     return [
       {
         id: 'ogcFilter',
-        icon: 'filter_list',
+        icon: 'filter-list',
         title: 'igo.geo.workspace.ogcFilter.title',
         tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
         handler: (widget: Widget, ws: WfsWorkspace) => {
@@ -35,7 +35,7 @@ export class WfsActionsService {
       },
       {
         id: 'wfsDownload',
-        icon: 'file_download',
+        icon: 'download',
         title: 'igo.geo.workspace.wfsDownload.title',
         tooltip: 'igo.geo.workspace.wfsDownload.tooltip',
         handler: (ws: WfsWorkspace) => this.downloadService.open(ws.layer),

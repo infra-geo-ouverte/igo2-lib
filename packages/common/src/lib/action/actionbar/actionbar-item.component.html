@@ -9,7 +9,7 @@
     mat-icon-button
     [color]="color"
     [disabled]="disabled">
-    <mat-icon *ngIf="withIcon">{{icon}}</mat-icon>
+    <mat-icon *ngIf="withIcon" svgIcon="{{icon}}"></mat-icon>
   </button>
   <h4 *ngIf="withTitle" matLine>{{title | translate}}</h4>
 </mat-list-item>
