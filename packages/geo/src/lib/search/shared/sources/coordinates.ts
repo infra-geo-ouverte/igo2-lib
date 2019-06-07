@@ -82,7 +82,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
         dataType: FEATURE,
         id: '1',
         title: String(data[0]) + ', ' + String(data[1]),
-        icon: 'place'
+        icon: 'map-marker'
       }
     };
   }

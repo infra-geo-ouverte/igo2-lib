@@ -236,7 +236,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
         id,
         title: data.properties.title,
         titleHtml: data.properties[title],
-        icon: 'place'
+        icon: 'map-marker'
       }
     };
   }
@@ -409,7 +409,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
         dataType: FEATURE,
         id,
         title: data.properties[title],
-        icon: 'place'
+        icon: 'map-marker'
       }
     };
   }
