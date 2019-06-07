@@ -1,7 +1,7 @@
 import olLayerVectorTile from 'ol/layer/VectorTile';
 import olSourceVectorTile from 'ol/source/VectorTile';
 
-import { MVTDataSource } from  '../../../datasource/shared/datasources/mvt-datasource';
+import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-datasource';
 
 import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';

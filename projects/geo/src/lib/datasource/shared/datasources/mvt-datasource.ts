@@ -15,17 +15,16 @@ export class MVTDataSource extends DataSource {
   protected createOlSource(): olSourceVectorTile {
     const mvtFormat = new olFormatMVT({featureClass: feature});
     this.options.format = mvtFormat;
-    
     return new olSourceVectorTile(this.options);
   }
 
   protected generateId() {
-    if(!this.options.url){
+    if (!this.options.url) {
         return uuid();
     }
     const chain = 'mvt' + this.options.url;
-    return Md5.hashStr(chain) as string; 
+    return Md5.hashStr(chain) as string;
   }
-  
+
   onLayerStatusChange(status: SubjectStatus): void {}
 }

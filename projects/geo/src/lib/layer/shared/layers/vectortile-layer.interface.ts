@@ -10,14 +10,12 @@ import { MVTDataSourceOptions } from '../../../datasource/shared/datasources/mvt
 
 export interface VectorTileLayerOptions extends LayerOptions {
   style?: { [key: string]: any } | olStyle | olStyle[];
-  source?: 
+  source?:
     | MVTDataSource;
-  sourceOptions?: 
+  sourceOptions?:
     | MVTDataSourceOptions;
   ol?: olLayerVectorTile;
-  declutter?: boolean; 
-  
-  
+  declutter?: boolean;
 }
 
 

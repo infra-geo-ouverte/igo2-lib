@@ -127,7 +127,6 @@ export class LayerService {
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style: style
     });
-    
     return new VectorTileLayer(layerOptionsOl);
   }
 
