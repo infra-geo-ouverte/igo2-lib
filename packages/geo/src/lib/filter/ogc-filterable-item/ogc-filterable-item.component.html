@@ -1,7 +1,7 @@
 <span *ngIf="filtersAreEditable">
 <mat-list-item>
 
-  <mat-icon *ngIf="ogcFiltersHeaderShown" class="igo-chevron" mat-list-avatar igoCollapse [target]="ogcFilters" [collapsed]="filtersCollapsed">
+  <mat-icon *ngIf="ogcFiltersHeaderShown" class="igo-chevron" mat-list-avatar igoCollapse [target]="ogcFilters" [collapsed]="filtersCollapsed" svgIcon="chevron-up">
   </mat-icon>
   <h4 *ngIf="ogcFiltersHeaderShown" matLine [matTooltip]="layer.title" matTooltipShowDelay="500">{{layer.title}}</h4>
   <h4 *ngIf="!ogcFiltersHeaderShown" matLine></h4>
@@ -11,9 +11,7 @@
   [disabled]="!layer.visible || !layer.isInResolutionsRange"
   [color]="color"
   (click)="toggleShowFeatureOnMap()">
-    <mat-icon>
-      border_outer
-    </mat-icon>
+  <mat-icon svgIcon="border-outer"></mat-icon>
   </button>
 
   <button mat-icon-button *ngIf="hasActiveSpatialFilter && !showFeatureOnMap" tooltip-position="below" matTooltipShowDelay="500"
@@ -21,28 +19,24 @@
   [disabled]="!layer.visible || !layer.isInResolutionsRange"
   [color]="color"
   (click)="toggleShowFeatureOnMap()">
-    <mat-icon>
-      border_clear
-    </mat-icon>
+    <mat-icon svgIcon="border-none"></mat-icon>
   </button>
 
   <span *ngIf="downloadable && ogcFiltersHeaderShown">
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.download.action' | translate"
       [color]="color" (click)="openDownload()">
-      <mat-icon>file_download</mat-icon>
+      <mat-icon svgIcon="download"></mat-icon>
     </button>
   </span>
   <button [disabled]="!datasource.options.sourceFields || datasource.options.sourceFields.length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
-    <mat-icon>
-      add
-    </mat-icon>
+    <mat-icon svgIcon="plus"></mat-icon>
   </button>
 </mat-list-item>
 
 <button *ngIf="!layer.visible && ogcFiltersHeaderShown" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.layer.showLayer' | translate"
 color="warn" (click)="setVisible()">
-<mat-icon>error_outline</mat-icon>
+<mat-icon svgIcon="error-outline"></mat-icon>
 </button>
 
 <div #ogcFilters class="igo-datasource-filters-container">

@@ -10,18 +10,11 @@
       mat-icon-button
       panelLeftButton
       (click)="toggle()">
-      <mat-icon>
-        <ng-container *ngIf="['collapsed', 'initial'].indexOf(flex.state) >= 0">
-          arrow_upward
-        </ng-container>
-        <ng-container *ngIf="flex.state === 'expanded'">
-          arrow_downward
-        </ng-container>
-      </mat-icon>
+      <mat-icon [svgIcon]="['collapsed', 'initial'].indexOf(flex.state) >= 0 ? 'arrow_upward' : 'arrow_downward'"></mat-icon>
     </button>
 
     <button mat-icon-button panelRightButton class="igo-icon-button" (click)="zoomToFeatureExtent()" *ngIf="feature.geometry">
-      <mat-icon>zoom_in</mat-icon>
+      <mat-icon svgIcon="zoom-in"></mat-icon>
     </button>
 
     <igo-feature-details [feature]="feature"></igo-feature-details>

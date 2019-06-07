@@ -8,7 +8,7 @@ import { MapState } from '../../map/map.state';
 @ToolComponent({
   name: 'print',
   title: 'igo.integration.tools.print',
-  icon: 'print'
+  icon: 'printer'
 })
 @Component({
   selector: 'igo-print-tool',

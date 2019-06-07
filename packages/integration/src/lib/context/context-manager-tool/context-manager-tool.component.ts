@@ -7,7 +7,7 @@ import { ToolState } from '../../tool/tool.state';
 @ToolComponent({
   name: 'contextManager',
   title: 'igo.integration.tools.contexts',
-  icon: 'bookmark'
+  icon: 'tune'
 })
 @Component({
   selector: 'igo-context-manager-tool',

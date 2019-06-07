@@ -10,10 +10,6 @@
       transform: rotateZ(0deg);
       transition: 300ms ease-in-out;
 
-      &:after {
-        content: 'expand_less';
-      }
-
       &.collapsed {
         transform: rotateZ(180deg);
         transition: 300ms ease-in-out;

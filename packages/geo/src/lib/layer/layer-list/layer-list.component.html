@@ -16,7 +16,7 @@
           aria-label="Clear"
           color="warn"
           (click)="clearKeyword()">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
       <button
@@ -25,7 +25,7 @@
         [matTooltip]="'igo.geo.layer.sortAlphabetically' | translate"
         matTooltipShowDelay="500"
         (click)="toggleSort(true)">
-        <mat-icon color="primary">sort_by_alpha</mat-icon>
+        <mat-icon color="primary" svgIcon="sort-alphabetical"></mat-icon>
       </button>
       <button
         *ngIf="sortedAlpha"
@@ -33,7 +33,7 @@
         [matTooltip]="'igo.geo.layer.sortMapOrder' | translate"
         matTooltipShowDelay="500"
         (click)="toggleSort(false)">
-        <mat-icon color="warn">warning</mat-icon>
+        <mat-icon color="warn" svgIcon="alert"></mat-icon>
       </button>
       <button
         mat-icon-button
@@ -44,14 +44,7 @@
         matTooltipShowDelay="500"
         [color]="onlyVisible ? 'warn' : 'primary'"
         (click)="toggleOnlyVisible()">
-        <mat-icon>
-          <ng-container *ngIf="!onlyVisible">
-            visibility
-          </ng-container>
-          <ng-container *ngIf="onlyVisible">
-              warning
-          </ng-container>
-        </mat-icon>
+        <mat-icon [svgIcon]="!onlyVisible ? 'eye' : 'alert'"></mat-icon>
       </button>
       <button
         mat-icon-button
@@ -62,14 +55,7 @@
         matTooltipShowDelay="500"
         [color]="onlyInRange ? 'warn' : 'primary'"
         (click)="toggleOnlyInRange()">
-        <mat-icon>
-          <ng-container *ngIf="!onlyInRange">
-              playlist_add_check
-          </ng-container>
-          <ng-container *ngIf="onlyInRange">
-              warning
-          </ng-container>
-        </mat-icon>
+        <mat-icon [svgIcon]="!onlyInRange ? 'playlist-check' : 'alert'"></mat-icon>
       </button>
     </ng-container>
   </mat-list-item>

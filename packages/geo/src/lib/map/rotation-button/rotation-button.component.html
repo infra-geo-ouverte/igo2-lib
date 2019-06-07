@@ -3,8 +3,7 @@
   matTooltipPosition="left">
   <button mat-icon-button matTooltipPosition="left" [color]="color" [disabled]="!rotated"
     (click)="map.viewController.resetRotation()">
-    <mat-icon [ngStyle]="rotationStyle(map.viewController.getRotation())">
-      navigation
+    <mat-icon [ngStyle]="rotationStyle(map.viewController.getRotation())" svgIcon="navigation">
     </mat-icon>
   </button>
 </div>

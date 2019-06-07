@@ -22,7 +22,7 @@
           (blur)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)" [(ngModel)]="currentFilter.propertyName">
 
         <button mat-button *ngIf="currentFilter.propertyName" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.propertyName=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
 
@@ -48,7 +48,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.expression" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.expression=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
 
@@ -67,7 +67,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.pattern" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.pattern=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
 
@@ -89,7 +89,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.expression" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.expression=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
     </span>
@@ -107,7 +107,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.lowerBoundary" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.lowerBoundary=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
       <mat-form-field>
@@ -119,7 +119,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.upperBoundary" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.upperBoundary=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
 
@@ -138,7 +138,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.begin" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.begin=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
 
@@ -151,7 +151,7 @@
           </mat-option>
         </mat-autocomplete>
         <button mat-button *ngIf="currentFilter.end" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.end=''">
-          <mat-icon>close</mat-icon>
+          <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
 
@@ -178,9 +178,7 @@
     <button mat-button [disabled]="!currentFilter.active" *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
       matSuffix mat-icon-button aria-label="Clear" (click)="changeGeometry(currentFilter,value)" tooltip-position="below" matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.spatialSelector.btnSetExtent' | translate">
-      <mat-icon>
-        zoom_out_map
-      </mat-icon>
+      <mat-icon svgIcon="zoom-out_map"></mat-icon>
     </button>
 
 
@@ -188,7 +186,7 @@
       <input matInput #htmlSnrc (keyup)="changeGeometry(currentFilter,htmlSnrc.value)" (blur)="changeGeometry(currentFilter,htmlSnrc.value)"
         [(ngModel)]="snrc">
       <button mat-button *ngIf="snrc" matSuffix mat-icon-button aria-label="Clear" (click)="snrc=''">
-        <mat-icon>close</mat-icon>
+        <mat-icon svgIcon="close"></mat-icon>
       </button>
     </mat-form-field>
   </div>
@@ -202,7 +200,7 @@
       </mat-slide-toggle>
       <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.removeFilter' | translate"
         color="warn" (click)="deleteFilter(currentFilter)">
-        <mat-icon>delete</mat-icon>
+        <mat-icon svgIcon="delete"></mat-icon>
       </button>
     </div>
   </div>

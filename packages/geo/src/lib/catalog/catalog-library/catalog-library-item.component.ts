@@ -33,5 +33,5 @@ export class CatalogLibaryItemComponent {
   /**
    * @internal
    */
-  get icon(): string { return getEntityIcon(this.catalog) || 'photo_library'; }
+  get icon(): string { return getEntityIcon(this.catalog) || 'image-multiple'; }
 }

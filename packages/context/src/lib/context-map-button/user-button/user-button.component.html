@@ -10,9 +10,7 @@
       matTooltipPosition="above"
       [color]="color"
       (click)="infoUser()">
-      <mat-icon>
-        info_outline
-      </mat-icon>
+      <mat-icon svgIcon="information-outline"></mat-icon>
     </button>
 
     <button
@@ -21,9 +19,7 @@
       matTooltipPosition="above"
       [color]="color"
       (click)="logout()">
-      <mat-icon>
-        power_settings_new
-      </mat-icon>
+      <mat-icon svgIcon="power"></mat-icon>
     </button>
 
   </div>
@@ -32,8 +28,6 @@
     mat-icon-button
     [color]="auth.authenticated ? color : 'warn'"
     (click)="accountClick()">
-    <mat-icon>
-      account_box
-    </mat-icon>
+    <mat-icon svgIcon="account-box"></mat-icon>
   </button>
 </div>

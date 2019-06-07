@@ -5,9 +5,7 @@
     matTooltipPosition="left"
     [color]="color"
     (click)="map.viewController.zoomIn()">
-    <mat-icon>
-      add
-    </mat-icon>
+    <mat-icon svgIcon="plus"></mat-icon>
   </button>
 
   <button
@@ -16,8 +14,6 @@
     matTooltipPosition="left"
     [color]="color"
     (click)="map.viewController.zoomOut()">
-    <mat-icon>
-      remove
-    </mat-icon>
+    <mat-icon svgIcon="minus"></mat-icon>
   </button>
 </div>

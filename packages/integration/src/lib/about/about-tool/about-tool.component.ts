@@ -5,7 +5,7 @@ import { ToolComponent } from '@igo2/common';
 @ToolComponent({
   name: 'about',
   title: 'igo.integration.tools.about',
-  icon: 'help'
+  icon: 'help-circle'
 })
 @Component({
   selector: 'igo-about-tool',
