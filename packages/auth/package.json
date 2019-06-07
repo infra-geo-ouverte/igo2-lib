@@ -3,7 +3,9 @@
   "version": "1.0.0-alpha.1",
   "description": "IGO Library",
   "author": "MSP",
-  "keywords": ["igo"],
+  "keywords": [
+    "igo"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
@@ -13,6 +15,9 @@
   "bugs": {
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
+  "dependencies": {
+    "jwt-decode": "^2.2.0"
+  },
   "peerDependencies": {
     "@angular/cdk": "^7.3.3",
     "@angular/common": "^7.2.6",
@@ -21,7 +26,6 @@
     "@angular/material": "^7.3.3",
     "@igo2/core": "^1.0.0-alpha.1",
     "@igo2/utils": "^1.0.0-alpha.1",
-    "jwt-decode": "^2.2.0",
     "rxjs": "^6.4.0"
   }
 }

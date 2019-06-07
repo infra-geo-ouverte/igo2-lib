@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 
@@ -29,10 +28,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor(@Inject('options') options: SearchSourceOptions) {
     super(options);
   }
 

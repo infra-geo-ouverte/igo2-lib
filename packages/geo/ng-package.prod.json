@@ -4,5 +4,9 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "whitelistedNonPeerDependencies": ["ts-md5"]
+  "whitelistedNonPeerDependencies": [
+    "ts-md5",
+    "@turf/helpers",
+    "@turf/line-intersect"
+  ]
 }

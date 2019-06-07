@@ -386,13 +386,8 @@ gulp.task(
   'core',
   gulp.series(
     'core:clean',
-    gulp.parallel([
-      'core:copyAssets',
-      'core:copyIcons',
-      'core:copyStyles',
-      'core:copyLocale'
-    ]),
-    gulp.parallel(['core:bundleStyles']),
+    gulp.parallel(['core:copyAssets', 'core:copyStyles', 'core:copyLocale']),
+    gulp.parallel(['core:copyIcons', 'core:bundleStyles']),
     'core:bundleLocale'
   )
 );
