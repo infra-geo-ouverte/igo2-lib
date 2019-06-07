@@ -2,8 +2,7 @@ import olSourceVector from 'ol/source/Vector';
 import * as olformat from 'ol/format';
 
 import { Md5 } from 'ts-md5';
-
-import { uuid } from '@igo2/utils';
+import { uuid, SubjectStatus} from '@igo2/utils';
 import { DataSource } from './datasource';
 import { FeatureDataSourceOptions } from './feature-datasource.interface';
 
@@ -52,4 +51,6 @@ export class FeatureDataSource extends DataSource {
 
     return format;
   }
+
+  onLayerStatusChange(status: SubjectStatus): void {}
 }

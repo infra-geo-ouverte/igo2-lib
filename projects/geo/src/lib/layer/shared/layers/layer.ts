@@ -102,5 +102,6 @@ export abstract class Layer {
       this.map.ol.removeLayer(this.ol);
       this.map = undefined;
     }
+    this.dataSource.layerStatus$.next(4);
   }
 }
