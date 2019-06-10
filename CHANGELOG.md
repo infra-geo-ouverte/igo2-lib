@@ -1,3 +1,34 @@
+# [1.0.0-alpha.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.1...1.0.0-alpha.2) (2019-06-07)
+
+
+### Bug Fixes
+
+* **action:** fix undefined itemClassFunc ([0e30af3](https://github.com/infra-geo-ouverte/igo2-lib/commit/0e30af3))
+* **context-favorite:** api was called even if we were not authenticated ([0d23cc2](https://github.com/infra-geo-ouverte/igo2-lib/commit/0d23cc2))
+* **coordinates.providers:** remove http dependency ([b6964bd](https://github.com/infra-geo-ouverte/igo2-lib/commit/b6964bd))
+* **demo:** minors fix ([c743add](https://github.com/infra-geo-ouverte/igo2-lib/commit/c743add))
+* **map:** map details' legend was, by default, updated on each resolution change ([0ac6765](https://github.com/infra-geo-ouverte/igo2-lib/commit/0ac6765))
+* **share-map:** getUrl must not be executed on component initialization if using the context api ([2f3caeb](https://github.com/infra-geo-ouverte/igo2-lib/commit/2f3caeb))
+* **view:** keepCurrentView ([d83f7aa](https://github.com/infra-geo-ouverte/igo2-lib/commit/d83f7aa))
+* **websocket:** update onmessage ([187d4dc](https://github.com/infra-geo-ouverte/igo2-lib/commit/187d4dc))
+* **wms:** fix xy wms < 1.3.0 ([02abb68](https://github.com/infra-geo-ouverte/igo2-lib/commit/02abb68))
+
+
+### Features
+
+* Change material icons for material design icons ([#346](https://github.com/infra-geo-ouverte/igo2-lib/issues/346)) ([dc7bb9d](https://github.com/infra-geo-ouverte/igo2-lib/commit/dc7bb9d))
+* **actionbar:** add support a item class function ([86e164b](https://github.com/infra-geo-ouverte/igo2-lib/commit/86e164b))
+* **context-menu:** add context-meny and reverse geolocate ([#323](https://github.com/infra-geo-ouverte/igo2-lib/issues/323)) ([9d27dc9](https://github.com/infra-geo-ouverte/igo2-lib/commit/9d27dc9))
+* **draw:** ability to delete the last vertex when drawing by pushing the ESC key ([7876328](https://github.com/infra-geo-ouverte/igo2-lib/commit/7876328))
+* **draw:** last point can be remved by pushing the ESC key ([e24fd82](https://github.com/infra-geo-ouverte/igo2-lib/commit/e24fd82))
+* **entity table:** header can now be fixed (default) ([39bb60f](https://github.com/infra-geo-ouverte/igo2-lib/commit/39bb60f))
+* **form:** form groups can now have a title ([11e078d](https://github.com/infra-geo-ouverte/igo2-lib/commit/11e078d))
+* **icon:** include mdi.svg in core module ([861a9e1](https://github.com/infra-geo-ouverte/igo2-lib/commit/861a9e1))
+* **query:** the query directive now allows querying vector features, which incluses imported and ilayer datasources ([581062c](https://github.com/infra-geo-ouverte/igo2-lib/commit/581062c))
+* **websocket:** Websocket support ([#264](https://github.com/infra-geo-ouverte/igo2-lib/issues/264)) ([56e611d](https://github.com/infra-geo-ouverte/igo2-lib/commit/56e611d))
+
+
+
 # [1.0.0-alpha.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.0...1.0.0-alpha.1) (2019-05-21)
 
 

@@ -22,7 +22,7 @@ import { SearchState } from '../search.state';
 @ToolComponent({
   name: 'searchResults',
   title: 'igo.integration.tools.searchResults',
-  icon: 'search'
+  icon: 'magnify'
 })
 @Component({
   selector: 'igo-search-results-tool',

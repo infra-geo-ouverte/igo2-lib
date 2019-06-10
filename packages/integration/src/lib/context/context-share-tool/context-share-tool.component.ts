@@ -8,7 +8,7 @@ import { MapState } from '../../map/map.state';
 @ToolComponent({
   name: 'shareMap',
   title: 'igo.integration.tools.shareMap',
-  icon: 'share'
+  icon: 'share-variant'
 })
 @Component({
   selector: 'igo-context-share-tool',

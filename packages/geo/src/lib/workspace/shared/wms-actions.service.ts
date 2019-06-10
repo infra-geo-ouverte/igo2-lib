@@ -18,7 +18,7 @@ export class WmsActionsService {
     return [
       {
         id: 'ogcFilter',
-        icon: 'filter_list',
+        icon: 'filter-list',
         title: 'igo.geo.workspace.ogcFilter.title',
         tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
         handler: (widget: Widget, ws: WmsWorkspace) => {

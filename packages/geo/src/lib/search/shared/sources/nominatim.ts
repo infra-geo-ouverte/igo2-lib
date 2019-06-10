@@ -84,7 +84,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.display_name,
-        icon: 'place'
+        icon: 'map-marker'
       },
       data: {
         type: FEATURE,

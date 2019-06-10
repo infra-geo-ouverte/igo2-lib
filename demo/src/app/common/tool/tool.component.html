@@ -11,7 +11,7 @@
       panelLeftButton
       (click)="toolbox.activatePreviousTool()"
       *ngIf="activeTool$ | async">
-      <mat-icon>arrow_back</mat-icon>
+      <mat-icon svgIcon="arrow-back"></mat-icon>
     </button>
 
     <button
@@ -19,7 +19,7 @@
       panelRightButton
       (click)="toolbox.deactivateTool()"
       *ngIf="activeTool$ | async">
-      <mat-icon>menu</mat-icon>
+      <mat-icon svgIcon="menu"></mat-icon>
     </button>
 
     <igo-toolbox [toolbox]="toolbox" [animate]="true"></igo-toolbox>

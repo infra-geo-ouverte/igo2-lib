@@ -7,9 +7,7 @@
       mat-icon-button
       color="primary"
       (click)="createPoi()">
-      <mat-icon>
-        <span></span>
-      </mat-icon>
+      <mat-icon svgIcon="plus-circle"></mat-icon>
     </button>
   </mat-option>
   <mat-option *ngFor="let poi of pois" [value]="poi.id" (click)="zoomOnPoi(poi.id)">
@@ -18,9 +16,7 @@
       mat-icon-button
       color="warn"
       (click)="deletePoi(poi)">
-      <mat-icon>
-        <span></span>
-      </mat-icon>
+      <mat-icon svgIcon="delete"></mat-icon>
     </button>
   </mat-option>
 </mat-select>

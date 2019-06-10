@@ -8,7 +8,7 @@ import { MapState } from '../../map/map.state';
 @ToolComponent({
   name: 'importExport',
   title: 'igo.integration.tools.importExport',
-  icon: 'import_export'
+  icon: 'file-move'
 })
 @Component({
   selector: 'igo-import-export-tool',

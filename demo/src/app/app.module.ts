@@ -8,7 +8,6 @@ import {
   MatIconModule,
   MatListModule
 } from '@angular/material';
-
 import { AppHomeModule } from './core/home/home.module';
 import { AppActivityModule } from './core/activity/activity.module';
 import { AppConfigModule } from './core/config/config.module';
