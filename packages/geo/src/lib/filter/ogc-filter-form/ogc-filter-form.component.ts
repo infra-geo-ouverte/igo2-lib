@@ -1,11 +1,8 @@
 import {
   Component,
   Input,
-  ChangeDetectorRef,
-  AfterContentChecked
+  ChangeDetectorRef
 } from '@angular/core';
-
-import * as olstyle from 'ol/style';
 
 import {
   OgcInterfaceFilterOptions,
@@ -21,7 +18,7 @@ import { IgoMap } from '../../map';
   templateUrl: './ogc-filter-form.component.html',
   styleUrls: ['./ogc-filter-form.component.scss']
 })
-export class OgcFilterFormComponent implements AfterContentChecked {
+export class OgcFilterFormComponent {
   private _dataSource: OgcFilterableDataSource;
   private _currentFilter: any = {};
   public ogcFilterOperators;
@@ -99,25 +96,7 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     // TODO: selectFeature & drawFeature
   }
 
-  ngAfterContentChecked() {
-    if (this.map) {
-      this.activeFilters
-        .filter(
-          af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
-        )
-        .forEach(activeFilterSpatial => {
-          if (activeFilterSpatial.wkt_geometry) {
-            this.addWktAsOverlay(
-              activeFilterSpatial.wkt_geometry,
-              activeFilterSpatial.filterid,
-              this.map.projection
-            );
-          }
-        });
-    }
-  }
-
-  updateField(init = true) {
+  updateField() {
     if (!this.datasource.options.sourceFields) {
       return;
     }
@@ -129,41 +108,9 @@ export class OgcFilterFormComponent implements AfterContentChecked {
       });
   }
 
-  private addWktAsOverlay(wkt, filterid, projection) {
-    const wktAsFeature = this.wktService.wktToFeature(wkt, projection);
-    wktAsFeature.setId(this.baseOverlayName + filterid);
-    let opacity = 0;
-    if (this.showFeatureOnMap) {
-      opacity = 0.5;
-    }
-
-    const stroke = new olstyle.Stroke({
-      width: 2,
-      color: [125, 136, 140, opacity]
-    });
-
-    return new olstyle.Style({
-      stroke,
-      image: new olstyle.Circle({
-        radius: 5,
-        stroke
-      })
-    });
-
-    this.map.overlay.addOlFeature(wktAsFeature);
-  }
-
   toggleFilterState(event, filter: OgcInterfaceFilterOptions, property) {
     this.updateField();
-    const mapProjection = this.map.projection;
     if (event.checked) {
-      if (filter.wkt_geometry !== '') {
-        this.addWktAsOverlay(
-          filter.wkt_geometry,
-          filter.filterid,
-          mapProjection
-        );
-      }
       this.datasource.options.ogcFilters.interfaceOgcFilters
         .filter(f => f.filterid === filter.filterid)
         .forEach(element => {
@@ -250,9 +197,6 @@ export class OgcFilterFormComponent implements AfterContentChecked {
             mapProjection
           ).wktPoly;
           element.wkt_geometry = wktPoly;
-        }
-        if (wktPoly) {
-          this.addWktAsOverlay(wktPoly, filter.filterid, mapProjection);
         }
       });
     this.refreshFilters();
