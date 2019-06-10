@@ -121,17 +121,9 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     if (!this.datasource.options.sourceFields) {
       return;
     }
-    this.fields = this.datasource.options.sourceFields.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      } else if (a.name > b.name) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-    this.datasource.options.sourceFields
-      .filter(f => f.name === this.currentFilter.propertyName)
+    this.fields = this.datasource.options.sourceFields
+    .filter(sf => (sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters));
+    this.fields.filter(f => f.name === this.currentFilter.propertyName)
       .forEach(element => {
         this.values = element.values !== undefined ? element.values.sort() : [];
       });
