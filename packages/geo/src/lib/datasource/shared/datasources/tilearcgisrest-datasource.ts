@@ -3,7 +3,7 @@ import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
 import { uuid } from '@igo2/utils';
 
 import { DataSource } from './datasource';
-import { DataSourceLegendOptions } from './datasource.interface';
+import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
@@ -31,7 +31,7 @@ export class TileArcGISRestDataSource extends DataSource {
     return new olSourceTileArcGISRest(this.options);
   }
 
-  getLegend(): DataSourceLegendOptions[] {
+  getLegend(): Legend[] {
     const legend = super.getLegend();
     if (this.options.legendInfo === undefined || legend.length > 0) {
       return legend;

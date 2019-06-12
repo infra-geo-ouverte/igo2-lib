@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@a
 
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
-import { DataSourceLegendOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { Legend, DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer } from '../shared/layers';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { map } from 'rxjs/operators';
@@ -20,12 +20,18 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * Observable of the legend items
    */
-  legendItems$: BehaviorSubject<DataSourceLegendOptions[]> = new BehaviorSubject([]);
+  legendItems$: BehaviorSubject<Legend[]> = new BehaviorSubject([]);
 
   /**
    * Subscription to the map's resolution
    */
   private resolution$$: Subscription;
+
+  // hb? public, $$
+  public currentStyle = '';
+
+  private scale: number;
+
   /**
    * Layer
    */
@@ -41,7 +47,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       const resolution$ = this.layer.map.viewController.resolution$;
       this.resolution$$ = resolution$.subscribe((resolution: number) => this.onResolutionChange(resolution));
     } else {
-      this.updateLegend(undefined);
+      this.updateLegend();
+    }
+    if (this.listStyles().length > 1) {
+      this.currentStyle = this.legendItems$.value[0].currentStyle;
     }
   }
 
@@ -73,22 +82,40 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * On resolution change, compute the effective scale level and update the
    * legend accordingly.
-   * @param resolutione Map resolution
+   * @param resolution Map resolution
    */
   private onResolutionChange(resolution: number) {
-    const scale = this.layer.map.viewController.getScale();
-    this.updateLegend(scale);
+    this.scale = this.layer.map.viewController.getScale();
+    this.updateLegend();
   }
 
   /**
    * Update the legend according the scale level
    * @param scale Map scale level
    */
-  private updateLegend(scale: number | undefined) {
-    const legendItems = this.layer.dataSource.getLegend(scale);
+  private updateLegend() {
+    const legendItems = this.layer.dataSource.setLegend(this.currentStyle, this.scale);
     if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
       return;
     }
     this.legendItems$.next(legendItems);
+  }
+
+  listStyles() {
+    const sourceOptions = this.layer.options.sourceOptions as DataSourceOptions;
+    if (sourceOptions !== undefined || sourceOptions) {
+      if (sourceOptions.legendOptions !== undefined || sourceOptions.legendOptions) {
+        return sourceOptions.legendOptions.stylesAvailable;
+      }
+    }
+    return ;
+  }
+
+  onChangeStyle() {
+    // hb?
+    // this.legendItems$.next(this.layer.dataSource.setLegend(this.currentStyle, this.scale));
+    this.updateLegend();
+    this.layer.dataSource.ol.updateParams({STYLES: this.currentStyle});
+    // hb? updateParams ... scale 
   }
 }

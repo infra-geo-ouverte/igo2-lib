@@ -1,7 +1,7 @@
 import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSource } from './datasource';
-import { DataSourceLegendOptions } from './datasource.interface';
+import { Legend } from './datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
 
@@ -159,9 +159,9 @@ export class WMSDataSource extends DataSource {
     return new olSourceImageWMS(this.options);
   }
 
-  getLegend(scale?: number): DataSourceLegendOptions[] {
+  getLegend(style?: string, scale?: number): Legend[] {
     let legend = super.getLegend();
-    if (legend.length > 0) {
+    if (legend.length > 0 && !style) {
       return legend;
     }
 
@@ -180,6 +180,9 @@ export class WMSDataSource extends DataSource {
       'SLD_VERSION=1.1.0',
       `VERSION=${sourceParams.version || '1.3.0'}`
     ];
+    if (style !== undefined) {
+      params.push(`STYLE=${style}`);
+    }
     if (scale !== undefined) {
       params.push(`SCALE=${scale}`);
     }
@@ -187,7 +190,8 @@ export class WMSDataSource extends DataSource {
     legend = layers.map((layer: string) => {
       return {
         url: `${baseUrl}?${params.join('&')}&LAYER=${layer}`,
-        title: layers.length > 1 ? layer : undefined
+        title: layers.length > 1 ? layer : undefined,
+        currentStyle: !style ? undefined : style as string
       };
     });
 

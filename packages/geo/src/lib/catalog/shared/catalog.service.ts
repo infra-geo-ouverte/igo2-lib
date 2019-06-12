@@ -179,7 +179,8 @@ export class CatalogService {
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
             queryFormat: configuredQueryFormat,
-            queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
+            queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME,
+            legendOptions: layer.Style ? this.capabilitiesService.getStyle(layer.Style) : undefined
           } as WMSDataSourceOptions;
 
           layers.push({

@@ -1,7 +1,7 @@
 import olSourceCarto from 'ol/source/CartoDB';
 
 import { DataSource } from './datasource';
-import { DataSourceLegendOptions } from './datasource.interface';
+import { Legend } from './datasource.interface';
 import { CartoDataSourceOptions } from './carto-datasource.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
@@ -38,7 +38,7 @@ export class CartoDataSource extends DataSource {
     return new olSourceCarto(sourceOptions);
   }
 
-  getLegend(): DataSourceLegendOptions[] {
+  getLegend(): Legend[] {
     const legend = super.getLegend();
     if (legend.length > 0) {
       return legend;

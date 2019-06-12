@@ -17,7 +17,9 @@ import {
   WMSDataSourceOptions,
   CartoDataSourceOptions,
   ArcGISRestDataSourceOptions,
-  TileArcGISRestDataSourceOptions
+  TileArcGISRestDataSourceOptions,
+  LegendOptions,
+  ItemStyleOptions
 } from './datasources';
 
 @Injectable({
@@ -161,6 +163,7 @@ export class CapabilitiesService {
     const queryable = layer.queryable;
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
+    const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromCapabilities: {
@@ -174,6 +177,9 @@ export class CapabilitiesService {
           extern: metadata ? true : undefined,
           abstract,
           keywordList
+        },
+        sourceOptions: {
+          legendOptions: legendOptions,
         }
       },
       queryable,
@@ -339,5 +345,19 @@ export class CapabilitiesService {
       }
       return timeFilter;
     }
+  }
+
+  getStyle(Style): LegendOptions {
+
+    const styleOptions: ItemStyleOptions[] = Style.map((style) => {
+      return {
+        name: style.Name,
+        title: style.Title
+      };
+    });
+
+    const legendOptions: LegendOptions = <LegendOptions>{ stylesAvailable: styleOptions };
+
+    return legendOptions;
   }
 }

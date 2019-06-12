@@ -15,8 +15,8 @@ export interface DataSourceOptions {
     | 'arcgisrest'
     | 'tilearcgisrest'
     | 'websocket';
-  legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
+  legendOptions?: LegendOptions;
   // title: string;
   // alias?: string;
 
@@ -27,17 +27,30 @@ export interface DataSourceOptions {
   download?: DownloadOptions;
 }
 
-export interface DataSourceLegendOptions {
+export interface SourceFieldsOptionsParams {
+  name: any;
+  alias?: any;
+  values?: any;
+}
+
+export interface ItemStyleOptions {
+  name: string;
+  title?: string;
+  }
+
+export interface LegendOptions {
+  collapsed?: boolean;
+  display?: boolean;
+  url?: string;
+  stylesAvailable?: ItemStyleOptions[];
+}
+
+export interface Legend {
   collapsed?: boolean;
   display?: boolean;
   url?: string;
   html?: string;
   style?: { [key: string]: string | number };
   title?: string;
-}
-
-export interface SourceFieldsOptionsParams {
-  name: any;
-  alias?: any;
-  values?: any;
+  currentStyle?: string;
 }

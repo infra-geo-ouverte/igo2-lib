@@ -15,7 +15,7 @@ export function getLayersLegends(layers: Layer[], scale?: number): LayerLegend[]
   for (const layer of layers) {
     if (layer.visible === false) { continue; }
 
-    const legendUrls = layer.dataSource.getLegend(scale) || [];
+    const legendUrls = layer.dataSource.getLegend(undefined, scale) || [];
     for (const legendUrl of legendUrls) {
       if (legendUrl.url === undefined) { continue; }
 
