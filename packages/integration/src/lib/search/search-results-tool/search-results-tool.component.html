@@ -1,5 +1,43 @@
-<igo-search-results
-  [store]="store"
-  (resultFocus)="onResultFocus($event)"
-  (resultSelect)="onResultSelect($event)">
-</igo-search-results>
+<igo-flexible
+  #topPanel
+  initial="100%"
+  initialMobile="100%"
+  collapsed="60%"
+  expanded="calc(100% - 58px)"
+  [state]="topPanelState">
+
+  <div class="igo-content">
+    <igo-search-results
+      [store]="store"
+      (resultFocus)="onResultFocus($event)"
+      (resultSelect)="onResultSelect($event)">
+    </igo-search-results>
+  </div>
+
+  <div igoFlexibleFill class="igo-content">
+    <igo-panel [title]="featureTitle" *ngIf="feature$ | async">
+
+      <button
+        mat-icon-button
+        panelLeftButton
+        class="igo-icon-button"
+        (click)="toggleTopPanel()">
+        <mat-icon [svgIcon]="topPanel.state === 'collapsed'? 'arrow-down' : 'arrow-up'"></mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        panelRightButton
+        class="igo-icon-button"
+        (click)="zoomToFeatureExtent()"
+        *ngIf="feature.geometry">
+        <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
+      </button>
+
+      <igo-feature-details
+        [feature]="feature$ | async">
+      </igo-feature-details>
+    </igo-panel>
+  </div>
+
+</igo-flexible>
