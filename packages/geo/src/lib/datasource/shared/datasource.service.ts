@@ -25,6 +25,8 @@ import {
   TileArcGISRestDataSource,
   TileArcGISRestDataSourceOptions,
   WebSocketDataSource,
+  MVTDataSource,
+  MVTDataSourceOptions,
   AnyDataSourceOptions
 } from './datasources';
 
@@ -86,6 +88,11 @@ export class DataSourceService {
       case 'tilearcgisrest':
         dataSource = this.createTileArcGISRestDataSource(
           context as TileArcGISRestDataSourceOptions
+        );
+        break;
+      case 'mvt':
+        dataSource = this.createMVTDataSource(
+          context as MVTDataSourceOptions
         );
         break;
       default:
@@ -200,5 +207,10 @@ export class DataSourceService {
             new TileArcGISRestDataSource(options)
         )
       );
+  }
+  private createMVTDataSource(
+    context: MVTDataSourceOptions
+  ): Observable<MVTDataSource> {
+    return new Observable(d => d.next(new MVTDataSource(context)));
   }
 }
