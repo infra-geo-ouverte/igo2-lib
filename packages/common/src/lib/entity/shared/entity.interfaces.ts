@@ -43,12 +43,12 @@ export interface EntityJoinClause {
   reduce: (param1: object, param2: any) => object;
 }
 
-export interface EntityOperation {
+export interface EntityOperation<E extends object = object> {
   key: EntityKey;
   type: EntityOperationType;
-  previous: object | undefined;
-  current: object | undefined;
-  store?: EntityStore<object>;
+  previous: E | undefined;
+  current: E | undefined;
+  store?: EntityStore<E>;
   meta?: {[key: string]: any};
 }
 
