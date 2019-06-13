@@ -287,7 +287,7 @@ export class MapViewController extends MapController {
   private setExtent(extent: MapExtent, action: MapViewAction) {
     const olView = this.olView;
     if (action === MapViewAction.Zoom) {
-      olView.fit(extent, {maxZoom: 17, minResolution: 0.5});
+      olView.fit(extent, {maxZoom: 17});
     } else if (action === MapViewAction.Move) {
       olView.fit(extent, {maxZoom: olView.getZoom()});
     }

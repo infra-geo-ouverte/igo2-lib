@@ -1,6 +1,19 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy
+  // ChangeDetectorRef
+} from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import olFormatGeoJSON from 'ol/format/GeoJSON';
 
-import { EntityStore, ToolComponent } from '@igo2/common';
+import {
+  EntityStore,
+  ToolComponent,
+  FlexibleState,
+  getEntityTitle
+} from '@igo2/common';
+
 import {
   LayerService,
   LayerOptions,
@@ -9,7 +22,8 @@ import {
   FeatureMotion,
   LAYER,
   SearchResult,
-  IgoMap
+  IgoMap,
+  moveToOlFeatures
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -46,10 +60,30 @@ export class SearchResultsToolComponent {
     return this.mapState.map;
   }
 
+  get featureTitle(): string {
+    return this.feature ? getEntityTitle(this.feature) : undefined;
+  }
+
+  get feature$(): Observable<Feature> {
+    return this.store.stateView
+      .firstBy$(e => e.state.focused)
+      .pipe(
+        map(element => {
+          this.feature = element ? (element.entity.data as Feature) : undefined;
+          return this.feature;
+        })
+      );
+  }
+
+  public feature: Feature;
+
+  public topPanelState: FlexibleState = 'initial';
+  private format = new olFormatGeoJSON();
+
   constructor(
     private mapState: MapState,
     private layerService: LayerService,
-    private searchState: SearchState
+    private searchState: SearchState // private cdRef: ChangeDetectorRef
   ) {}
 
   /**
@@ -58,6 +92,9 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
+    if (this.topPanelState === 'initial') {
+      this.toggleTopPanel();
+    }
     this.tryAddFeatureToMap(result);
   }
 
@@ -67,8 +104,29 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
+    if (this.topPanelState === 'initial') {
+      this.toggleTopPanel();
+    }
     this.tryAddFeatureToMap(result);
     this.tryAddLayerToMap(result);
+  }
+
+  toggleTopPanel() {
+    if (this.topPanelState === 'collapsed') {
+      this.topPanelState = 'expanded';
+    } else {
+      this.topPanelState = 'collapsed';
+    }
+  }
+
+  zoomToFeatureExtent() {
+    if (this.feature.geometry) {
+      const olFeature = this.format.readFeature(this.feature, {
+        dataProjection: this.feature.projection,
+        featureProjection: this.map.projection
+      });
+      moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+    }
   }
 
   /**
