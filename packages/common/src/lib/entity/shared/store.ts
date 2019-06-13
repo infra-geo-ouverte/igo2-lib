@@ -18,6 +18,18 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
   readonly entities$ = new BehaviorSubject<E[]>([]);
 
   /**
+   * Number of entities
+   */
+  readonly count$ = new BehaviorSubject<number>(0);
+  get count(): number { return this.count$.value; }
+
+  /**
+   * Whether the store is empty
+   */
+  readonly empty$ = new BehaviorSubject<boolean>(true);
+  get empty(): boolean { return this.empty$.value; }
+
+  /**
    * Entity store state
    */
   readonly state: EntityStateManager<E, S>;
@@ -53,16 +65,6 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
    */
   get pristine(): boolean { return this._pristine; }
   private _pristine: boolean = true;
-
-  /**
-   * Number of entities
-   */
-  get count(): number { return this.entities$.value.length; }
-
-  /**
-   * Whether there are entities in the store
-   */
-  get empty(): boolean { return this.count === 0; }
 
   constructor(entities: E[], options: EntityStoreOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
@@ -124,6 +126,8 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
       this.index.clear();
       this._pristine = true;
       this.next();
+    } else if (this.index) {
+      this.updateCount();
     }
   }
 
@@ -212,6 +216,17 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
    */
   private next() {
     this.entities$.next(Array.from(this.index.values()));
+    this.updateCount();
+  }
+
+  /**
+   * Update the store's count and empty
+   */
+  private updateCount() {
+    const count = this.index.size;
+    const empty = count === 0;
+    this.count$.next(count);
+    this.empty$.next(empty);
   }
 
 }
