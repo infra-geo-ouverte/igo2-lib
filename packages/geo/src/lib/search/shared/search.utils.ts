@@ -39,7 +39,7 @@ export function featureToSearchResult(
       dataType: FEATURE,
       id: feature.meta.id as string,
       title: feature.meta.title,
-      icon: 'place'
+      icon: 'map-marker'
     }
   };
 }

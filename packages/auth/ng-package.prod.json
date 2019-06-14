@@ -3,5 +3,6 @@
   "dest": "../../dist/auth",
   "lib": {
     "entryFile": "src/public_api.ts"
-  }
+  },
+  "whitelistedNonPeerDependencies": ["jwt-decode"]
 }

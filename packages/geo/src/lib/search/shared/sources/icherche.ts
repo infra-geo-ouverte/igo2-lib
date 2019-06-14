@@ -128,7 +128,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.properties.recherche,
         titleHtml: data.highlight,
-        icon: 'place'
+        icon: 'map-marker'
       }
     };
   }
@@ -237,7 +237,7 @@ export class IChercheReverseSearchSource extends SearchSource
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        icon: 'place'
+        icon: 'map-marker'
       }
     };
   }

@@ -14,9 +14,12 @@ import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs
 import { ArcGISRestDataSourceOptions } from '../../../datasource/shared/datasources/arcgisrest-datasource.interface';
 import { WebSocketDataSourceOptions } from '../../../datasource/shared/datasources/websocket-datasource.interface';
 
-
 export interface VectorLayerOptions extends LayerOptions {
-  source?: FeatureDataSource | WFSDataSource | ArcGISRestDataSource | WebSocketDataSource;
+  source?:
+    | FeatureDataSource
+    | WFSDataSource
+    | ArcGISRestDataSource
+    | WebSocketDataSource;
   sourceOptions?:
     | FeatureDataSourceOptions
     | WFSDataSourceOptions

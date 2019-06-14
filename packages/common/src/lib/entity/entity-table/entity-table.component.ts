@@ -394,7 +394,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * @internal
    */
   onButtonClick(clickFunc: (entity: object) => void, entity: object) {
-    if (clickFunc instanceof Function) {
+    if (typeof clickFunc === 'function') {
       clickFunc(entity);
     }
   }
