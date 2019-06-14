@@ -83,7 +83,9 @@ export class OgcFilterableItemComponent implements OnInit {
     if (
       this.datasource.options.ogcFilters.pushButtons &&
       this.datasource.options.ogcFilters.pushButtons.length > 0) {
-        this.datasource.options.ogcFilters.advancedOgcFilters = false;
+        if (this.datasource.options.ogcFilters.advancedOgcFilters === undefined) {
+          this.datasource.options.ogcFilters.advancedOgcFilters = false;
+        }
         this.hasPushButton = true;
       }
 

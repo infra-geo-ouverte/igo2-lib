@@ -426,8 +426,7 @@ export class OgcFilterWriter {
         }
       });
       if (conditions.length >= 1) {
-        filterQueryStringPushButton = new OgcFilterWriter()
-          .buildFilter(
+        filterQueryStringPushButton = this.buildFilter(
             conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions }
           );
       }
@@ -436,7 +435,7 @@ export class OgcFilterWriter {
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
-      filterQueryStringAdvancedFilters = new OgcFilterWriter().buildFilter(igoFilters);
+      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters);
     }
 
     let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
