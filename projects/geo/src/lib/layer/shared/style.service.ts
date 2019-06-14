@@ -50,4 +50,63 @@ export class StyleService {
 
     return olCls;
   }
+
+  createStyleByAttribute(feature, attribute: string, data: Array<any>,
+    fill?: Array<string>, stroke?: Array<string>, radius?: Array<number>, icon?: Array<string>,
+    scale?: Array<number>, type?: string) {
+   let style;
+   const size = data.length;
+   if (type === 'circle') {
+     for (let i = 0; i < size; i++) {
+       if (feature.get(attribute) === data[i]) {
+         if (icon) {
+          style = [new olstyle.Style({
+            image: new olstyle.Icon({
+              src: icon[i],
+              scale: scale ? scale[i] : 1
+            })
+          })];
+          return style;
+         }
+         style = [new olstyle.Style({
+           image: new olstyle.Circle({
+             radius: radius ? radius[i] : 4,
+             stroke: new olstyle.Stroke({
+               color: stroke ? stroke[i] : 'black'
+             }),
+             fill: new olstyle.Fill({
+               color: fill ? fill[i] : 'black'
+             })
+           })
+         })];
+       return style;
+       }
+     }
+    } else if (type === 'regular') {
+       for (let i = 0; i < size; i++) {
+         if (feature.get(attribute) === data[i]) {
+           style = [new olstyle.Style({
+             stroke: new olstyle.Stroke({
+               color: stroke ? stroke[i] : 'black'
+             }),
+             fill: new olstyle.Fill({
+               color: fill ? fill[i] : 'rgba(255,255,255,0.4)'
+             })
+           })];
+           return style;
+          }
+        }
+        if (!feature.getStyle()) {
+          style = [new olstyle.Style({
+            stroke: new olstyle.Stroke({
+              color: 'black'
+            }),
+            fill: new olstyle.Fill({
+              color: '#bbbbf2'
+            })
+          })];
+          return style;
+        }
+      }
+  }
 }

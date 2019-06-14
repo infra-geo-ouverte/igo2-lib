@@ -7,7 +7,7 @@ export * from './tile-layer.interface';
 export * from './vector-layer';
 export * from './vector-layer.interface';
 export * from './vectortile-layer';
-export * from './vectortile-layer.interface'
+export * from './vectortile-layer.interface';
 export * from './any-layer';
 export * from './any-layer.interface';
 

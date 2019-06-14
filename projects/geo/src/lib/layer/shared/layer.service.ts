@@ -123,6 +123,17 @@ export class LayerService {
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
     }
+    if (layerOptions.styleByAttribute) {
+      const serviceStyle = this.styleService;
+      layerOptions.style = function(feature) {
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute.attribute,
+           layerOptions.styleByAttribute.data, layerOptions.styleByAttribute.fill,
+            layerOptions.styleByAttribute.stroke, layerOptions.styleByAttribute.radius,
+            layerOptions.styleByAttribute.icon, layerOptions.styleByAttribute.scale,
+            layerOptions.styleByAttribute.type);
+      };
+      return new VectorTileLayer(layerOptions);
+    }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style: style
@@ -143,6 +154,18 @@ export class LayerService {
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
+    }
+
+    if (layerOptions.styleByAttribute) {
+      const serviceStyle = this.styleService;
+      layerOptions.style = function(feature) {
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute.attribute,
+           layerOptions.styleByAttribute.data, layerOptions.styleByAttribute.fill,
+            layerOptions.styleByAttribute.stroke, layerOptions.styleByAttribute.radius,
+            layerOptions.styleByAttribute.icon, layerOptions.styleByAttribute.scale,
+            layerOptions.styleByAttribute.type);
+      };
+      return new VectorLayer(layerOptions);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
