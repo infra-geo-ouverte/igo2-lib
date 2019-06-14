@@ -1,3 +1,20 @@
+<a name="0.27.11"></a>
+## [0.27.11](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.10...0.27.11) (2019-06-14)
+
+
+### Bug Fixes
+
+* **layer:** fix lint ([7d4f560](https://github.com/infra-geo-ouverte/igo2-lib/commit/7d4f560))
+* **mvt:** add onLayerStatusChange ([#347](https://github.com/infra-geo-ouverte/igo2-lib/issues/347)) ([1787f02](https://github.com/infra-geo-ouverte/igo2-lib/commit/1787f02))
+
+
+### Features
+
+* **datasource:** datasource do something when layer's status change ([#326](https://github.com/infra-geo-ouverte/igo2-lib/issues/326)) ([7a67052](https://github.com/infra-geo-ouverte/igo2-lib/commit/7a67052))
+* **datasource,layer:** add MVT(MapBox Vector Tile) and Vector Tile layer supported as new datasource ([#327](https://github.com/infra-geo-ouverte/igo2-lib/issues/327)) ([a24e219](https://github.com/infra-geo-ouverte/igo2-lib/commit/a24e219))
+
+
+
 <a name="0.27.10"></a>
 ## [0.27.10](https://github.com/infra-geo-ouverte/igo2-lib/compare/0.27.9...0.27.10) (2019-05-13)
 
