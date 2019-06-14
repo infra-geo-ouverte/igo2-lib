@@ -111,6 +111,7 @@ export class QueryService {
         id: uuid(),
         title,
         mapTitle: title,
+        sourceTitle: layer.title,
         order: 1000 - layer.zIndex
       });
 

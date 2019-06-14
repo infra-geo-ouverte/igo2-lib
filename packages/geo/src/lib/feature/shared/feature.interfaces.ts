@@ -21,6 +21,7 @@ export interface FeatureMeta {
   id: EntityKey;
   title?: string;
   mapTitle?: string;
+  sourceTitle?: string;
   order?: number;
   alias?: {[key: string]: string};
   revision?: number;

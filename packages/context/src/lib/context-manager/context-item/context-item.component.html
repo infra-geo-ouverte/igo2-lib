@@ -6,7 +6,7 @@
     matTooltipShowDelay="500"
     [color]="default ? 'primary' : 'default'"
     (click)="favoriteClick(context)">
-    <mat-icon *ngIf="!context.iconImage" svgIcon="{{context.icon ? context.icon : context.scope === 'public' ? 'public' : 'star'}}"></mat-icon>
+    <mat-icon *ngIf="!context.iconImage" svgIcon="{{context.icon ? context.icon : context.scope === 'public' ? 'earth' : 'star'}}"></mat-icon>
     <img *ngIf="context.iconImage" [src]="context.iconImage">
   </button>
   <h4 matLine>{{context.title}}</h4>
@@ -36,7 +36,7 @@
        matTooltipShowDelay="500"
        [color]="color"
        (click)="save.emit(context)">
-       <mat-icon svgIcon="save"></mat-icon>
+       <mat-icon svgIcon="content-save"></mat-icon>
      </button>
 
     <div #actions class="igo-actions-expand-container">
@@ -47,7 +47,7 @@
         matTooltipShowDelay="500"
         [color]="color"
         (click)="managePermissions.emit(context)">
-        <mat-icon svgIcon="perm-identity"></mat-icon>
+        <mat-icon svgIcon="account-outline"></mat-icon>
       </button>
 
       <!--button
@@ -73,7 +73,7 @@
         [matTooltip]="'igo.context.contextManager.edit' | translate"
         matTooltipShowDelay="500"
         (click)="edit.emit(context)">
-        <mat-icon svgIcon="edit"></mat-icon>
+        <mat-icon svgIcon="pencil"></mat-icon>
       </button>
 
       <button
