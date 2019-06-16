@@ -5,7 +5,12 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
+import { BehaviorSubject } from 'rxjs';
+
+import {
+  formControlIsRequired,
+  getControlErrorMessage
+} from '../shared/form.utils';
 import { FormFieldComponent } from '../shared/form-field-component';
 
 /**
@@ -18,6 +23,8 @@ import { FormFieldComponent } from '../shared/form-field-component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldTextComponent {
+
+  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * The field's form control
@@ -35,10 +42,19 @@ export class FormFieldTextComponent {
   @Input() errors: {[key: string]: string};
 
   /**
+   * Wheter a disable switch should be available
+   */
+  @Input() disableSwitch: boolean = false;
+
+  /**
    * Whether the field is required
    */
   get required(): boolean {
     return formControlIsRequired(this.formControl);
+  }
+
+  ngOnInit() {
+    this.disabled$.next(this.formControl.disabled);
   }
 
   /**
@@ -46,6 +62,20 @@ export class FormFieldTextComponent {
    */
   getErrorMessage(): string {
     return getControlErrorMessage(this.formControl, this.errors);
+  }
+
+  onDisableSwitchClick() {
+    this.toggleDisabled();
+  }
+
+  private toggleDisabled() {
+    const disabled = !this.disabled$.value;
+    if (disabled === true) {
+      this.formControl.disable();
+    } else {
+      this.formControl.enable();
+    }
+    this.disabled$.next(disabled);  
   }
 
 }
