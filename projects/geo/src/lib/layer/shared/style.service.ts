@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as olstyle from 'ol/style';
+import { StyleByAttribute } from './stylebyattribute';
 
 @Injectable({
   providedIn: 'root'
@@ -51,11 +52,18 @@ export class StyleService {
     return olCls;
   }
 
-  createStyleByAttribute(feature, attribute: string, data: Array<any>,
-    fill?: Array<string>, stroke?: Array<string>, radius?: Array<number>, icon?: Array<string>,
-    scale?: Array<number>, type?: string) {
+  createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
    let style;
+   const type = styleByAttribute.type;
+   const attribute = styleByAttribute.attribute;
+   const data = styleByAttribute.data;
+   const stroke = styleByAttribute.stroke;
+   const fill = styleByAttribute.fill;
+   const radius = styleByAttribute.radius;
+   const icon = styleByAttribute.icon;
+   const scale = styleByAttribute.scale;
    const size = data.length;
+   const label = styleByAttribute.label;
    if (type === 'circle') {
      for (let i = 0; i < size; i++) {
        if (feature.get(attribute) === data[i]) {
@@ -82,6 +90,20 @@ export class StyleService {
        return style;
        }
      }
+     if (!feature.getStyle()) {
+      style = [new olstyle.Style({
+        image: new olstyle.Circle({
+          radius: 4,
+          stroke: new olstyle.Stroke({
+            color: 'black'
+          }),
+          fill: new olstyle.Fill({
+            color: '#bbbbf2'
+          })
+        })
+      })];
+      return style;
+    }
     } else if (type === 'regular') {
        for (let i = 0; i < size; i++) {
          if (feature.get(attribute) === data[i]) {
@@ -91,6 +113,12 @@ export class StyleService {
              }),
              fill: new olstyle.Fill({
                color: fill ? fill[i] : 'rgba(255,255,255,0.4)'
+             }),
+             text: new olstyle.Text({
+               text: feature.get(label),
+               stroke: new olstyle.Stroke({
+                 color: 'black'
+               })
              })
            })];
            return style;

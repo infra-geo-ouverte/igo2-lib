@@ -18,17 +18,34 @@
     },
     {
       "title": "Countries",
+      "visible": false,
       "opacity": 0.7,
       "styleByAttribute": {
         "type": "regular",
         "attribute": "abbrev",
         "data": ["Can."],
         "fill": ["white"],
-        "stroke": ["red"]
+        "stroke": ["red"],
+        "label": "geounit"
       },
       "sourceOptions": {
         "type": "mvt",
         "url": "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
+      }
+    },
+    {
+      "title": "Zone",
+      "opacity": 0.7,
+      "styleByAttribute": {
+        "type": "regular",
+        "attribute": "ZPB_VAL_NM_ARPEN",
+        "data": ["Henri Morneau", "Pierre Bernier"],
+        "fill": ["green", "orange"],
+        "label": "ZPB_NO_ZONE"
+      },
+      "sourceOptions": {
+        "type": "mvt",
+        "url": "http://polo:8080/geoserver/gwc/service/tms/1.0.0/SmartFaune:IGT_ME_ZONE_PECHE_BAGQ_VUS@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
       }
     },
     {

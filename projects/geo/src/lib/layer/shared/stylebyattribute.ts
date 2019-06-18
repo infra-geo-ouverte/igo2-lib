@@ -7,4 +7,5 @@ export interface StyleByAttribute {
     radius?: Array<number>;
     icon?: Array<string>;
     scale?: Array<number>;
+    label?: string;
 }

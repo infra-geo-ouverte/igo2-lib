@@ -126,11 +126,7 @@ export class LayerService {
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = function(feature) {
-        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute.attribute,
-           layerOptions.styleByAttribute.data, layerOptions.styleByAttribute.fill,
-            layerOptions.styleByAttribute.stroke, layerOptions.styleByAttribute.radius,
-            layerOptions.styleByAttribute.icon, layerOptions.styleByAttribute.scale,
-            layerOptions.styleByAttribute.type);
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
       };
       return new VectorTileLayer(layerOptions);
     }
@@ -159,11 +155,7 @@ export class LayerService {
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = function(feature) {
-        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute.attribute,
-           layerOptions.styleByAttribute.data, layerOptions.styleByAttribute.fill,
-            layerOptions.styleByAttribute.stroke, layerOptions.styleByAttribute.radius,
-            layerOptions.styleByAttribute.icon, layerOptions.styleByAttribute.scale,
-            layerOptions.styleByAttribute.type);
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
       };
       return new VectorLayer(layerOptions);
     }
