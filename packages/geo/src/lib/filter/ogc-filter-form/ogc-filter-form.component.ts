@@ -1,7 +1,8 @@
 import {
   Component,
   Input,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnInit
 } from '@angular/core';
 
 import {
@@ -12,13 +13,14 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
+import { OgcFilterOperatorType } from '../../filter/shared/ogc-filter.enum';
 
 @Component({
   selector: 'igo-ogc-filter-form',
   templateUrl: './ogc-filter-form.component.html',
   styleUrls: ['./ogc-filter-form.component.scss']
 })
-export class OgcFilterFormComponent {
+export class OgcFilterFormComponent implements OnInit {
   private _dataSource: OgcFilterableDataSource;
   private _currentFilter: any = {};
   public ogcFilterOperators;
@@ -94,6 +96,64 @@ export class OgcFilterFormComponent {
       }
     ];
     // TODO: selectFeature & drawFeature
+  }
+
+  ngOnInit() {
+    this.computeAllowedOperators();
+  }
+
+  computeAllowedOperators() {
+    let allowedOperators = this.datasource.options.ogcFilters.allowedOperatorsType;
+    let effectiveOperators: {} = {};
+
+    if (!allowedOperators)  {
+      allowedOperators = OgcFilterOperatorType.BasicAndSpatial;
+    }
+
+    switch (allowedOperators.toLowerCase()) {
+      case 'all':
+        effectiveOperators = this.ogcFilterOperators;
+        break;
+      case 'spatial':
+        effectiveOperators = {
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+        break;
+      case 'basicandspatial':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+        break;
+      case 'basic':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] }
+        };
+        break;
+      case 'basicnumeric':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+        };
+        break;
+      default:
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+    }
+
+    this.ogcFilterOperators = effectiveOperators;
   }
 
   updateField() {

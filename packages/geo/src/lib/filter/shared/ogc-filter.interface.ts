@@ -3,6 +3,7 @@ import olFormatFilter from 'ol/format/filter/Filter';
 
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
+import { OgcFilterOperatorType } from './ogc-filter.enum';
 
 export interface OgcFilter extends olFormatFilter {}
 
@@ -46,6 +47,7 @@ export interface OgcFiltersOptions {
   filtered?: boolean;
   advancedOgcFilters?: boolean;
   geometryName?: string;
+  allowedOperatorsType?: OgcFilterOperatorType;
 }
 
 export interface OgcPushButtonBundle  {
