@@ -1,11 +1,11 @@
 import { Layer } from '../shared/layers/layer';
-import { LayerLegend } from '../shared/layers/layer.interface';
+import { OutputLayerLegend } from '../shared/layers/layer.interface';
 
 /**
  * Get all the layers legend
  * @return Array of legend
  */
-export function getLayersLegends(layers: Layer[], scale?: number): LayerLegend[] {
+export function getLayersLegends(layers: Layer[], scale?: number): OutputLayerLegend[] {
   const legends = [];
   const newCanvas = document.createElement('canvas');
   const newContext = newCanvas.getContext('2d');

@@ -30,7 +30,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   // hb? public, $$
   public currentStyle = '';
 
-  private scale: number;
+  private scale: number = undefined;
 
   /**
    * Layer
@@ -43,14 +43,25 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * On init, subscribe to the map's resolution and update the legend accordingly
    */
   ngOnInit() {
+    // hb-note on recupére la dernière légende et son style. La légende doit être refait car la résolution peut avoir bouger depuis.
+    let lastlLegend = this.layer.legend;
+
+    if (this.layer.legend) {
+      if (this.listStyles().length > 1) {
+        this.currentStyle = lastlLegend[0].currentStyle;
+      }
+    } else {
+      if (this.listStyles().length > 1) {
+        this.currentStyle = this.layer.options.legendOptions.stylesAvailable[0].name;
+      }
+      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    }
+
     if (this.updateLegendOnResolutionChange === true) {
       const resolution$ = this.layer.map.viewController.resolution$;
       this.resolution$$ = resolution$.subscribe((resolution: number) => this.onResolutionChange(resolution));
-    } else {
-      this.updateLegend();
-    }
-    if (this.listStyles().length > 1) {
-      this.currentStyle = this.legendItems$.value[0].currentStyle;
+    } else if (lastlLegend.length !== 0) {
+        this.legendItems$.next(lastlLegend);
     }
   }
 
@@ -90,11 +101,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Update the legend according the scale level
-   * @param scale Map scale level
+   * Update the legend with scale level and style define
    */
   private updateLegend() {
-    const legendItems = this.layer.dataSource.setLegend(this.currentStyle, this.scale);
+    const legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    this.layer.legend = legendItems;
     if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
       return;
     }
@@ -102,20 +113,17 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   listStyles() {
-    const sourceOptions = this.layer.options.sourceOptions as DataSourceOptions;
-    if (sourceOptions !== undefined || sourceOptions) {
-      if (sourceOptions.legendOptions !== undefined || sourceOptions.legendOptions) {
-        return sourceOptions.legendOptions.stylesAvailable;
+    const layerOptions = this.layer.options;
+    if (layerOptions !== undefined || layerOptions) {
+      if (layerOptions.legendOptions !== undefined || layerOptions.legendOptions) {
+        return layerOptions.legendOptions.stylesAvailable;
       }
     }
     return ;
   }
 
   onChangeStyle() {
-    // hb?
-    // this.legendItems$.next(this.layer.dataSource.setLegend(this.currentStyle, this.scale));
     this.updateLegend();
     this.layer.dataSource.ol.updateParams({STYLES: this.currentStyle});
-    // hb? updateParams ... scale 
   }
 }

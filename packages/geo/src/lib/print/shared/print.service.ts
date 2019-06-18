@@ -10,8 +10,8 @@ import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { LayerLegend } from '../../layer/shared/layers/layer.interface';
-import { getLayersLegends } from '../../layer/utils/legend';
+import { OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
+import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
 
@@ -112,7 +112,7 @@ export class PrintService {
     html += '<font size="2" face="Courier New" >';
     html += '<div style="display:inline-block;max-width:' + width + 'mm">';
     // For each legend, define an html table cell
-    legends.forEach((legend: LayerLegend) => {
+    legends.forEach((legend: OutputLayerLegend) => {
       html +=
         '<table border=1 style="display:inline-block;vertical-align:top">';
       html += '<tr><th width="170px">' + legend.title + '</th>';

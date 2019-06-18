@@ -1,11 +1,13 @@
 import olLayer from 'ol/layer/Layer';
 
-import { DataSource } from '../../../datasource/shared/datasources/datasource';
-import { DataSourceOptions } from '../../../datasource/shared/datasources/datasource.interface';
+import { DataSource, } from '../../../datasource/shared/datasources/datasource';
+import { DataSourceOptions, Legend } from '../../../datasource/shared/datasources/datasource.interface';
 
 export interface LayerOptions {
   source?: DataSource;
   sourceOptions?: DataSourceOptions;
+  legend?: Legend[];
+  legendOptions?: LegendOptions;
   title?: string;
   id?: string;
   alias?: string;
@@ -28,12 +30,6 @@ export interface GroupLayers {
   collapsed?: boolean;
 }
 
-export interface LayerLegend {
-  title: string;
-  url: string;
-  image: string;
-}
-
 export interface TooltipContent {
   type?: TooltipType;
   text?: string;
@@ -42,4 +38,22 @@ export enum TooltipType {
   TITLE = 'title',
   ABSTRACT = 'abstract',
   CUSTOM = 'custom'
+}
+
+export interface LegendOptions {
+  collapsed?: boolean;
+  display?: boolean;
+  url?: string;
+  stylesAvailable?: ItemStyleOptions[];
+}
+
+export interface ItemStyleOptions {
+  name: string;
+  title?: string;
+  }
+
+export interface OutputLayerLegend {
+  title: string;
+  url: string;
+  image: string;
 }

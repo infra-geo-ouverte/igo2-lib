@@ -32,10 +32,15 @@ export class TileArcGISRestDataSource extends DataSource {
   }
 
   getLegend(): Legend[] {
-    const legend = super.getLegend();
-    if (this.options.legendInfo === undefined || legend.length > 0) {
-      return legend;
+    // hb-
+    // const legend = super.getLegend();
+    // if (this.options.legendInfo === undefined || legend.length > 0) {
+    //   return legend;
+    // }
+    if (this.options.legendInfo === undefined) {
+      return;
     }
+
     const id = parseInt(this.options.layer, 10);
     const lyr = this.options.legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';

@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 
 import olLayer from 'ol/layer/Layer';
 
-import { DataSource } from '../../../datasource';
+import { DataSource, Legend } from '../../../datasource';
 import { IgoMap } from '../../../map';
 
 import { SubjectStatus } from '@igo2/utils';
@@ -11,6 +11,7 @@ import { LayerOptions } from './layer.interface';
 export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
+  public legend: Legend[];
   public map: IgoMap;
   public ol: olLayer;
   public options: LayerOptions;

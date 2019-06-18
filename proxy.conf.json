@@ -22,11 +22,17 @@
   "/swtq": {
     "target": "https://ws.mapserver.transports.gouv.qc.ca",
     "changeOrigin": true,
-    "secure": false
+    "secure": false,
+    "logLevel": "debug"
   },
   "/geoserver": {
-  "target": "https://demo.geo-solutions.it",
-  "changeOrigin": true,
-  "secure": false
+    "target": "https://demo.geo-solutions.it",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/cgi-bin": {
+    "target": "https://carto.cptaq.gouv.qc.ca",
+    "changeOrigin": true,
+    "secure": false
   }
 }

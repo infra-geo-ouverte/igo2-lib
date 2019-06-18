@@ -140,4 +140,6 @@ export class WFSDataSource extends DataSource {
 
     return new olFormatCls();
   }
+
+  getLegend(): [] { return; }
 }

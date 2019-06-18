@@ -56,10 +56,15 @@ export class ArcGISRestDataSource extends DataSource {
 
   getLegend(): Legend[] {
     const legendInfo = this.options.params.legendInfo;
-    const legend = super.getLegend();
-    if (legendInfo === undefined || legend.length > 0) {
-      return legend;
+    // hb-
+    // const legend = super.getLegend();
+    // if (legendInfo === undefined || legend.length > 0) {
+    //   return legend;
+    // }
+    if (legendInfo === undefined) {
+      return;
     }
+
     const id = parseInt(this.options.layer, 10);
     const lyr = legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';

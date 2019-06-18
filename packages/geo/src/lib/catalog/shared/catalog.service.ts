@@ -167,6 +167,7 @@ export class CatalogService {
           const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
           const timeFilter = this.capabilitiesService.getTimeFilter(layer);
           const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
+          const legendOptions = layer.Style ? this.capabilitiesService.getStyle(layer.Style) : undefined;
 
           const sourceOptions = {
             type: 'wms',
@@ -179,8 +180,7 @@ export class CatalogService {
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
             queryFormat: configuredQueryFormat,
-            queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME,
-            legendOptions: layer.Style ? this.capabilitiesService.getStyle(layer.Style) : undefined
+            queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
           } as WMSDataSourceOptions;
 
           layers.push({
@@ -199,6 +199,7 @@ export class CatalogService {
                 abstract,
                 keywordList
               },
+              legendOptions,
               tooltip: { type: catalogTooltipType } as TooltipContent,
               sourceOptions
             }

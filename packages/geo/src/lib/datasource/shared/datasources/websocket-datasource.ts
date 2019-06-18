@@ -70,4 +70,7 @@ export class WebSocketDataSource extends FeatureDataSource {
   onOpen(event) {
     // thrown message to user ?
   }
+
+  getLegend(): [] { return; }
+  
 }

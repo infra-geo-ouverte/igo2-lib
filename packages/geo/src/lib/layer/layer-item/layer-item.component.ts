@@ -51,7 +51,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // hb+ a finir
-    const legend = this.layer.dataSource.options.legendOptions || {};
+    const legend = this.layer.options.legendOptions || {};
     let legendCollapsed = legend.collapsed === false ? false : true;
     if (this.layer.visible && this.expandLegendIfVisible) {
       legendCollapsed = false;

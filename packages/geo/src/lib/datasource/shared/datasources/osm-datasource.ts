@@ -11,4 +11,6 @@ export class OSMDataSource extends DataSource {
     this.options.url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     return new olSourceOSM(this.options);
   }
+
+  getLegend(): [] { return; }
 }
