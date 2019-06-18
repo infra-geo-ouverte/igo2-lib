@@ -9,7 +9,8 @@ import {
   WFSDataSourceOptions,
   WFSDataSourceOptionsParams,
   OgcFilterableDataSourceOptions,
-  AnyBaseOgcFilterOptions
+  AnyBaseOgcFilterOptions,
+  OgcFilterOperatorType
 } from '@igo2/geo';
 
 @Component({
@@ -66,12 +67,13 @@ export class AppOgcFilterComponent {
       },
       sourceFields: [
         { name: 'code_municipalite', alias: '# de la municipalitée' },
-        { name: 'date_observation' },
+        { name: 'date_observation', excludeFromOgcFilters: true },
         { name: 'urgence', values: ['immédiate', 'inconnue'] }
       ],
       ogcFilters: {
         enabled: true,
         editable: true,
+        allowedOperatorsType: OgcFilterOperatorType.All,
         filters: {
           logical: 'Or',
           filters: [
@@ -116,6 +118,116 @@ export class AppOgcFilterComponent {
     interface WMSoptions
       extends WMSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
+
+    const filterableWMSwithPushButtons: WMSoptions = {
+      type: 'wms',
+      url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+      urlWfs: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+      params: {
+        layers: 'radars_photos',
+        version: '1.3.0'
+      },
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        pushButtons: [{
+          logical: 'Or',
+          ogcPushButtons: [{
+            title: 'Radar photo fixe',
+            enabled: true,
+            color: '0,0,255',
+            tooltip: 'Here a tooltip explaning ...',
+            filters: {
+              operator: 'PropertyIsEqualTo',
+              propertyName: 'typeAppareil',
+              expression: 'Radar photo fixe'
+            }
+          },
+          {
+            title: 'Radar photo mobile',
+            enabled: false,
+            color: '255,200,0',
+            tooltip: 'Here a tooltip explaning ...',
+            filters: {
+              operator: 'PropertyIsEqualTo',
+              propertyName: 'typeAppareil',
+              expression: 'Radar photo mobile'
+            }
+          },
+          {
+            title: 'Radar photo fixe + feu rouge',
+            enabled: false,
+            color: '0,200,0',
+            tooltip: 'Here a tooltip explaning ...',
+            filters: {
+              operator: 'PropertyIsEqualTo',
+              propertyName: 'typeAppareil',
+              expression: 'Radar photo fixe et surveillance au feu rouge'
+            }
+          },
+          {
+            title: 'Radar feu rouge',
+            enabled: false,
+            color: '255,0,0',
+            tooltip: 'Here a tooltip explaning ...',
+            filters: {
+              operator: 'PropertyIsEqualTo',
+              propertyName: 'typeAppareil',
+              expression: 'Appareil de surveillance au feu rouge'
+            }
+          }
+        ]
+        },
+        {
+          logical: 'Or',
+          vertical: true,
+          ogcPushButtons: [{
+            title: 'Montréal & Laval',
+            enabled: false,
+            tooltip: 'Here a tooltip explaning ...',
+            filters: {
+              logical: 'Or',
+              filters: [
+                { operator: 'PropertyIsEqualTo', propertyName: 'region', expression: 'Montréal'},
+                { operator: 'PropertyIsEqualTo', propertyName: 'region', expression: 'Laval'}]
+            }
+          },
+          {
+            title: 'Outside Montréal & Laval',
+            enabled: false,
+            tooltip: 'Here a tooltip explaning ...',
+            filters: {
+              logical: 'And',
+              filters: [
+                { operator: 'PropertyIsNotEqualTo', propertyName: 'region', expression: 'Montréal'},
+                { operator: 'PropertyIsNotEqualTo', propertyName: 'region', expression: 'Laval'}]
+            }
+          }
+        ]
+        }
+      ],
+      allowedOperatorsType: OgcFilterOperatorType.Basic,
+      },
+      paramsWFS: {
+        featureTypes: 'radars_photos',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '1.1.0',
+        outputFormat: 'geojson',
+        outputFormatDownload: 'shp'
+      } as WFSDataSourceOptionsParams
+    };
+
+    this.dataSourceService
+    .createAsyncDataSource(filterableWMSwithPushButtons)
+    .subscribe(dataSource => {
+      this.map.addLayer(
+        this.layerService.createLayer({
+          title: 'Filterable WMS layers with predefined filters (buttons)',
+          source: dataSource
+        })
+      );
+    });
 
     const datasourceWmsWith2Layers: WMSoptions = {
       type: 'wms',
