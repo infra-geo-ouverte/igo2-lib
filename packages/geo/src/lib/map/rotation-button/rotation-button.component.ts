@@ -18,6 +18,15 @@ export class RotationButtonComponent {
   private _map: IgoMap;
 
   @Input()
+  get showIfNoRotation(): boolean {
+    return this._showIfNoRotation;
+  }
+  set showIfNoRotation(value: boolean) {
+    this._showIfNoRotation = value;
+  }
+  private _showIfNoRotation: boolean;
+
+  @Input()
   get color(): string {
     return this._color;
   }
