@@ -35,7 +35,8 @@ export class FormFieldComponent {
     const errors = this.field.options.errors || {};
     return Object.assign(
       {
-        placeholder: this.field.title
+        placeholder: this.field.title,
+        disableSwitch: this.field.options.disableSwitch || false
       },
       Object.assign({}, this.field.inputs || {}),
       {

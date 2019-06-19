@@ -86,14 +86,20 @@ export class FormComponent implements OnChanges {
 
   private getData(): { [key: string]: any} {
     const data = {};
-    this.form.fields.forEach((field: FormField) => {
-      data[field.name] = field.control.value;
+
+    this.form.fields.forEach((field: FormField) => this.updateDataWithFormField(data, field));
+    this.form.groups.forEach((group: FormFieldGroup) => {
+      group.fields.forEach((field: FormField) => this.updateDataWithFormField(data, field));
     });
 
-    this.form.groups.forEach((group: FormFieldGroup) => {
-      Object.assign(data, group.control.value);
-    });
     return data;
+  }
+
+  private updateDataWithFormField(data: { [key: string]: any}, field: FormField) {
+    const control = field.control;
+    if (!control.disabled) {
+      data[field.name] = control.value;
+    }
   }
 
   /**
