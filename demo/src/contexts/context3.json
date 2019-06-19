@@ -18,18 +18,34 @@
     },
     {
       "title": "Countries",
-      "opacity": 0.4,
-      "style": {
-        "stroke": {
-          "color": "red"
-        },
-        "fill": {
-          "color": "green"
-        }
+      "visible": true,
+      "opacity": 0.7,
+      "styleByAttribute": {
+        "type": "regular",
+        "attribute": "abbrev",
+        "data": ["Can."],
+        "fill": ["white"],
+        "stroke": ["red"],
+        "label": "geounit"
       },
       "sourceOptions": {
         "type": "mvt",
         "url": "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
+      }
+    },
+    {
+      "title": "bureaux",
+      "styleByAttribute": {
+        "type": "circle",
+        "attribute": "type",
+        "data": ["local", "regional"],
+        "fill": ["blue", "red"],
+        "icon": ["./assets/bureau_local.png", "./assets/bureaux.png"],
+        "scale": [0.04, 0.01]
+      },
+      "sourceOptions": {
+        "type": "vector",
+        "url": "http://10.202.76.35/fichier/bureaux_locaux3857.geojson"
       }
     },
     {

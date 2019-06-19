@@ -132,6 +132,14 @@ export class LayerService {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
     }
+    if (layerOptions.styleByAttribute) {
+      const serviceStyle = this.styleService;
+      // tslint:disable-next-line:only-arrow-functions
+      layerOptions.style = function(feature) {
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
+      };
+      return new VectorLayer(layerOptions);
+    }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
@@ -144,6 +152,14 @@ export class LayerService {
     let style;
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
+    }
+    if (layerOptions.styleByAttribute) {
+      const serviceStyle = this.styleService;
+      // tslint:disable-next-line:only-arrow-functions
+      layerOptions.style = function(feature) {
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
+      };
+      return new VectorTileLayer(layerOptions);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
