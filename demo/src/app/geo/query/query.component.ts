@@ -64,8 +64,7 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        // url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        url: '/swtq',
+        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         queryable: true,
         params: {
           layers: 'bgr_v_sous_route_res_sup_act',
@@ -84,8 +83,7 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        // url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        url: '/swtq',
+        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
         queryable: true,
         queryFormat: QueryFormat.HTMLGML2,
         queryHtmlTarget: QueryHtmlTarget.IFRAME,
