@@ -31,7 +31,7 @@ export class WorkspaceSelectorComponent {
    */
   @Output() selectedChange = new EventEmitter<{
     selected: boolean;
-    entity: Workspace;
+    value: Workspace;
   }>();
 
   /**
@@ -47,10 +47,10 @@ export class WorkspaceSelectorComponent {
    * @internal
    * @param event The selection change event
    */
-  onSelectedChange(event: {entity: Workspace}) {
-    const workspace = event.entity;
+  onSelectedChange(event: {value: Workspace}) {
+    const workspace = event.value;
     this.store.activateWorkspace(workspace);
-    this.selectedChange.emit({selected: true, entity: workspace});
+    this.selectedChange.emit({selected: true, value: workspace});
   }
 
 }

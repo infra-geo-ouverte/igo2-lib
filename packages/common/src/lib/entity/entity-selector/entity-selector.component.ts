@@ -46,6 +46,11 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   @Input() store: EntityStore<object>;
 
   /**
+   * Wheter selecting many entities is allowed
+   */
+  @Input() many: boolean = false;
+
+  /**
    * Title accessor
    */
   @Input() titleAccessor: (object) => string = getEntityTitle;
@@ -65,7 +70,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    */
   @Output() selectedChange = new EventEmitter<{
     selected: boolean;
-    entity: object;
+    value: object | object[];
   }>();
 
   constructor(private cdRef: ChangeDetectorRef) {}
@@ -77,9 +82,15 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
     this.selected$$ = this.store.stateView
-      .firstBy$((record: EntityRecord<object>) => record.state.selected === true)
-      .subscribe((record: EntityRecord<object>) => {
-        this.selected$.next(record ? record.entity : undefined);
+      .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
+      .subscribe((records: EntityRecord<object>[]) => {
+        const entities = records.map((record: EntityRecord<object>) => record.entity);
+        if (this.many === true) {
+          this.selected$.next(entities);
+        } else {
+          const entity = entities.length > 0 ? entities[0] : undefined;
+          this.selected$.next(entity);
+        }
       });
   }
 
@@ -97,14 +108,14 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * @internal
    */
   onSelectionChange(event: {value: object | undefined}) {
-    const entity = event.value;
-    if (entity === undefined) {
+    const entities = event.value instanceof Array ? event.value : [event.value];
+    if (entities.length === 0) {
       this.store.state.updateAll({selected: false});
     } else {
-      this.store.state.update(entity, {selected: true}, true);
+      this.store.state.updateMany(entities, {selected: true}, true);
     }
 
-    this.selectedChange.emit({selected: true, entity});
+    this.selectedChange.emit({selected: true, value: event.value});
   }
 
 }

@@ -1,6 +1,7 @@
 <mat-form-field class="igo-entity-selector">
   <mat-select
     [value]="selected$ | async"
+    [multiple]="many"
     [placeholder]="placeholder"
     (selectionChange)="onSelectionChange($event)">
     <mat-option *ngIf="emptyText !== undefined">{{emptyText}}</mat-option>
