@@ -38,7 +38,6 @@ export class OgcFilterWriter {
     proj?,
     fieldNameGeometry?: string
   ): string {
-    console.log('TODO: CONFIGURE OPERATOR BY LAYER ?');
     let ourBboxFilter;
     let enableBbox: boolean;
     if (/intersects|contains|within/gi.test(JSON.stringify(filters))) {
@@ -417,12 +416,10 @@ export class OgcFilterWriter {
         buttonBundle.ogcPushButtons
           .filter(ogcpb => ogcpb.enabled === true)
           .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
-        if (bundleCondition.length >= 1) {
-          if (bundleCondition.length === 1) {
-            conditions.push(bundleCondition[0]);
-          } else {
-            conditions.push({ logical: buttonBundle.logical, filters: bundleCondition });
-          }
+        if (bundleCondition.length === 1) {
+          conditions.push(bundleCondition[0]);
+        } else if (bundleCondition.length > 1) {
+          conditions.push({ logical: buttonBundle.logical, filters: bundleCondition });
         }
       });
       if (conditions.length >= 1) {
@@ -450,7 +447,9 @@ export class OgcFilterWriter {
 
   }
 
-  public formatProcessedOgcFilter(processedFilter, layersOrTypenames): string {
+  public formatProcessedOgcFilter(
+    processedFilter: string,
+    layersOrTypenames: string): string {
     let appliedFilter = '';
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;

@@ -63,11 +63,11 @@ export class WFSService extends DataService {
 
   private wfsGetFeature(
     wfsDataSourceOptions: WFSDataSourceOptions,
-    nb = defaultMaxFeatures,
-    epsgCode = defaultEpsg,
-    propertyname?
+    nb: number = defaultMaxFeatures,
+    epsgCode: string = defaultEpsg,
+    propertyName?: string
   ): Observable<any> {
-    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, nb, epsgCode, propertyname);
+    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, nb, epsgCode, propertyName);
     const baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
     const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
     if (gmlRegex.test(outputFormat) || !outputFormat) {

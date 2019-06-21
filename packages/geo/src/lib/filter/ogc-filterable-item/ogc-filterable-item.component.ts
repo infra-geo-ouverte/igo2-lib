@@ -80,11 +80,12 @@ export class OgcFilterableItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    const ogcFilters = this.datasource.options.ogcFilters;
     if (
-      this.datasource.options.ogcFilters.pushButtons &&
-      this.datasource.options.ogcFilters.pushButtons.length > 0) {
-        if (this.datasource.options.ogcFilters.advancedOgcFilters === undefined) {
-          this.datasource.options.ogcFilters.advancedOgcFilters = false;
+      ogcFilters.pushButtons &&
+      ogcFilters.pushButtons.length > 0) {
+        if (ogcFilters.advancedOgcFilters === undefined) {
+          ogcFilters.advancedOgcFilters = false;
         }
         this.hasPushButton = true;
       }
@@ -100,13 +101,13 @@ export class OgcFilterableItemComponent implements OnInit {
         break;
     }
 
-    if (this.datasource.options.ogcFilters) {
-      if (this.datasource.options.ogcFilters.interfaceOgcFilters) {
+    if (ogcFilters) {
+      if (ogcFilters.interfaceOgcFilters) {
         this.lastRunOgcFilter = JSON.parse(
-          JSON.stringify(this.datasource.options.ogcFilters.interfaceOgcFilters)
+          JSON.stringify(ogcFilters.interfaceOgcFilters)
         );
         if (
-          this.datasource.options.ogcFilters.interfaceOgcFilters.filter(
+          ogcFilters.interfaceOgcFilters.filter(
             f => f.wkt_geometry
           ).length >= 1
         ) {
@@ -114,64 +115,10 @@ export class OgcFilterableItemComponent implements OnInit {
         }
       }
 
-      this.filtersAreEditable = this.datasource.options.ogcFilters.editable
-        ? this.datasource.options.ogcFilters.editable
+      this.filtersAreEditable = ogcFilters.editable
+        ? ogcFilters.editable
         : false;
     }
-  }
-
-  private getOverlayByID(id) {
-    this.map.overlay.dataSource.ol.getFeatureById(id);
-  }
-
-  toggleShowFeatureOnMap() {
-    this.showFeatureOnMap = !this.showFeatureOnMap;
-    this.datasource.options.ogcFilters.interfaceOgcFilters.forEach(filter => {
-      let drawnFeature;
-      let drawnStrokeColor = [125, 136, 140, 0] as [
-        number,
-        number,
-        number,
-        number
-      ];
-      let drawStrokeWidth = 2;
-      let drawnFillColor = [125, 136, 140, 0] as [
-        number,
-        number,
-        number,
-        number
-      ];
-
-      drawnFeature = this.getOverlayByID('ogcFilterOverlay_' + filter.filterid);
-      if (this.showFeatureOnMap !== false) {
-        drawnStrokeColor = [125, 136, 140, 0.5];
-        drawStrokeWidth = 2;
-        drawnFillColor = [125, 136, 140, 0];
-      }
-
-      const stroke = new olstyle.Stroke({
-        width: drawStrokeWidth,
-        color: drawnStrokeColor
-      });
-
-      const fill = new olstyle.Stroke({
-        color: drawnFillColor
-      });
-
-      const olStyle = new olstyle.Style({
-        stroke,
-        fill,
-        image: new olstyle.Circle({
-          radius: 5,
-          stroke,
-          fill
-        })
-      });
-
-      if (drawnFeature) {
-        drawnFeature.setStyle(olStyle);
-      }
-    });
   }
 
   addFilterToSequence() {

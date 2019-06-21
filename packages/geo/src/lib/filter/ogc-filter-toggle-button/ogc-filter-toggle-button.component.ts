@@ -66,15 +66,15 @@ export class OgcFilterToggleButtonComponent implements OnInit {
 
   }
 
-  getToolTip(pb: OgcPushButton) {
+  getToolTip(pb: OgcPushButton): string  {
     let tt;
     if (pb.tooltip) {
       tt = pb.tooltip;
     }
-    return tt;
+    return tt || '';
   }
 
-  setColor(pb: OgcPushButton) {
+  getButtonColor(pb: OgcPushButton): {} {
 
     let styles;
     if (pb.color) {

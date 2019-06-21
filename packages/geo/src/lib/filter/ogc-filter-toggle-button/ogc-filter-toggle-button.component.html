@@ -1,7 +1,7 @@
 <ng-container *ngFor="let bundle of pushButtonBundle">
     <ng-container *ngIf="bundleIsVertical(bundle)">
         <mat-button-toggle-group vertical multiple="true">
-            <mat-button-toggle [ngStyle]="setColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
+            <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
                 (change)="applyFilters(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
                 [matTooltip]="getToolTip(ogcPushButton)" *ngFor="let ogcPushButton of bundle.ogcPushButtons"
                 [value]="ogcPushButton">{{ogcPushButton.title}}
@@ -11,7 +11,7 @@
     <!-- This duplicate is there because I'm not able to bind a value to vertical= "false" or "true" -->
     <ng-container *ngIf="!bundleIsVertical(bundle)">
         <mat-button-toggle-group  multiple="true">
-            <mat-button-toggle [ngStyle]="setColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
+            <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
                 (change)="applyFilters(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
                 [matTooltip]="getToolTip(ogcPushButton)" *ngFor="let ogcPushButton of bundle.ogcPushButtons"
                 [value]="ogcPushButton">{{ogcPushButton.title}}

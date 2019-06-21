@@ -50,9 +50,9 @@ export function formatWFSQueryString(
         propertyName = `propertyName=${fieldsNames.join(',')},${paramsWFS.fieldNameGeometry}`;
     }
 
-    const getcapabilities = `${url}?service=wfs&request=GetCapabilities&${version}`;
-    let getfeature = `${url}?service=wfs&request=GetFeature&${version}&${featureTypes}&`;
-    getfeature += `${outputFormat}&${srs}&${cnt}&${propertyName}`;
+    const getCapabilities = `${url}?service=wfs&request=GetCapabilities&${version}`;
+    let getFeature = `${url}?service=wfs&request=GetFeature&${version}&${featureTypes}&`;
+    getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}`;
 
     let getpropertyvalue = `${url}?service=wfs&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
     getpropertyvalue += `&${cnt}&${valueReference}`;
@@ -65,8 +65,8 @@ export function formatWFSQueryString(
         { name: 'srsname', value: srs },
         { name: 'propertyname', value: propertyName },
         { name: 'valuereference', value: valueReference },
-        { name: 'getcapabilities', value: getcapabilities.replace(/&&/g, '&') },
-        { name: 'getfeature', value: getfeature.replace(/&&/g, '&') },
+        { name: 'getcapabilities', value: getCapabilities.replace(/&&/g, '&') },
+        { name: 'getfeature', value: getFeature.replace(/&&/g, '&') },
         { name: 'getpropertyvalue', value: getpropertyvalue.replace(/&&/g, '&') }
     ];
 }
