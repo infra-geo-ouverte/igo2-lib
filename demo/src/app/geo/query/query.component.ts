@@ -95,7 +95,7 @@ export class AppQueryComponent {
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'WMS html',
+            title: 'WMS html with a pre call in GML',
             source: dataSource
           })
         );
