@@ -24,7 +24,7 @@ color="warn" (click)="setVisible()">
 </button>
 
 <div #ogcFilters class="igo-datasource-filters-container">
-  <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc" [showFeatureOnMap]="showFeatureOnMap">
+  <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
   </igo-ogc-filterable-form>
 
   <mat-checkbox labelPosition='before' *ngIf="hasPushButton" (change)="changeOgcFilterType($event)"

@@ -31,15 +31,6 @@ export class OgcFilterableFormComponent {
     return this.refreshFilters;
   }
 
-  set showFeatureOnMap(value: boolean) {
-    this._showFeatureOnMap = value;
-  }
-
-  @Input()
-  get showFeatureOnMap(): boolean {
-    return this._showFeatureOnMap;
-  }
-
   get advancedOgcFilters(): boolean {
     if (this.datasource.options.ogcFilters) {
       return this.datasource.options.ogcFilters.advancedOgcFilters;
@@ -47,7 +38,6 @@ export class OgcFilterableFormComponent {
     return;
   }
 
-  private _showFeatureOnMap: boolean;
   private _map: IgoMap;
   private _dataSource: OgcFilterableDataSource;
 

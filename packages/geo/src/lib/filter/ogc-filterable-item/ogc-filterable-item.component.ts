@@ -51,15 +51,6 @@ export class OgcFilterableItemComponent implements OnInit {
     return this.refreshFilters.bind(this);
   }
 
-  set showFeatureOnMap(value: boolean) {
-    this._showFeatureOnMap = value;
-  }
-
-  @Input()
-  get showFeatureOnMap(): boolean {
-    return this._showFeatureOnMap;
-  }
-
   get datasource(): OgcFilterableDataSource {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
@@ -77,7 +68,6 @@ export class OgcFilterableItemComponent implements OnInit {
     return (this.datasource.options as any).download;
   }
 
-  public _showFeatureOnMap = false;
   private _map: IgoMap;
   private _layer: Layer;
   private _ogcFiltersHeaderShown: boolean;

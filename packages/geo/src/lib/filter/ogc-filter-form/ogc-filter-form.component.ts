@@ -34,7 +34,6 @@ export class OgcFilterFormComponent implements OnInit {
   public disabled;
   private _map: IgoMap;
   public baseOverlayName = 'ogcFilterOverlay_';
-  private _showFeatureOnMap: boolean;
 
   @Input() refreshFilters: () => void;
 
@@ -46,15 +45,6 @@ export class OgcFilterFormComponent implements OnInit {
   @Input()
   get datasource(): OgcFilterableDataSource {
     return this._dataSource;
-  }
-
-  set showFeatureOnMap(value: boolean) {
-    this._showFeatureOnMap = value;
-  }
-
-  @Input()
-  get showFeatureOnMap(): boolean {
-    return this._showFeatureOnMap;
   }
 
   set map(value: IgoMap) {
