@@ -38,37 +38,41 @@ export class OgcFilterFormComponent implements OnInit {
 
   @Input() refreshFilters: () => void;
 
-  @Input()
-  get datasource(): OgcFilterableDataSource {
-    return this._dataSource;
-  }
   set datasource(value: OgcFilterableDataSource) {
     this._dataSource = value;
     this.cdRef.detectChanges();
   }
 
   @Input()
+  get datasource(): OgcFilterableDataSource {
+    return this._dataSource;
+  }
+
+  set showFeatureOnMap(value: boolean) {
+    this._showFeatureOnMap = value;
+  }
+
+  @Input()
   get showFeatureOnMap(): boolean {
     return this._showFeatureOnMap;
   }
-  set showFeatureOnMap(value: boolean) {
-    this._showFeatureOnMap = value;
+
+  set map(value: IgoMap) {
+    this._map = value;
   }
 
   @Input()
   get map(): IgoMap {
     return this._map;
   }
-  set map(value: IgoMap) {
-    this._map = value;
+
+  set currentFilter(value: any) {
+    this._currentFilter = value;
   }
 
   @Input()
   get currentFilter(): any {
     return this._currentFilter;
-  }
-  set currentFilter(value: any) {
-    this._currentFilter = value;
   }
 
   get activeFilters() {

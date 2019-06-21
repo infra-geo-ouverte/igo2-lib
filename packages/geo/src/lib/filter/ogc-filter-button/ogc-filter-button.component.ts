@@ -11,50 +11,41 @@ import { OgcFilterableDataSourceOptions } from '../shared/ogc-filter.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterButtonComponent {
+
+  set layer(value: Layer) {
+    this._layer = value;
+  }
+
   @Input()
   get layer(): Layer {
     return this._layer;
   }
-  set layer(value: Layer) {
-    this._layer = value;
+
+  set map(value: IgoMap) {
+    this._map = value;
   }
-  private _layer: Layer;
 
   @Input()
   get map(): IgoMap {
     return this._map;
   }
-  set map(value: IgoMap) {
-    this._map = value;
+
+  set color(value: string) {
+    this._color = value;
   }
-  private _map: IgoMap;
 
   @Input()
   get color() {
     return this._color;
   }
-  set color(value: string) {
-    this._color = value;
-  }
-  private _color = 'primary';
 
-  public ogcFilterCollapse = false;
+  set ogcFiltersInLayers(value: boolean) {
+    this._ogcFiltersInLayers = value;
+  }
 
   @Input()
   get ogcFiltersInLayers(): boolean {
     return this._ogcFiltersInLayers;
-  }
-  set ogcFiltersInLayers(value: boolean) {
-    this._ogcFiltersInLayers = value;
-  }
-  private _ogcFiltersInLayers = false;
-
-  constructor() {}
-
-  toggleOgcFilter() {
-    if (this.layer.isInResolutionsRange) {
-      this.ogcFilterCollapse = !this.ogcFilterCollapse;
-    }
   }
 
   get options(): OgcFilterableDataSourceOptions {
@@ -62,5 +53,20 @@ export class OgcFilterButtonComponent {
       return;
     }
     return this.layer.dataSource.options;
+  }
+
+  private _ogcFiltersInLayers = false;
+  private _layer: Layer;
+  private _map: IgoMap;
+  private _color = 'primary';
+
+  public ogcFilterCollapse = false;
+
+  constructor() {}
+
+  toggleOgcFilter() {
+    if (this.layer.isInResolutionsRange) {
+      this.ogcFilterCollapse = !this.ogcFilterCollapse;
+    }
   }
 }

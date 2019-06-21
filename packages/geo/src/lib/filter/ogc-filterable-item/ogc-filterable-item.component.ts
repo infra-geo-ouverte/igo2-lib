@@ -30,48 +30,56 @@ export class OgcFilterableItemComponent implements OnInit {
   public filtersCollapsed = true;
   public hasPushButton: boolean = false;
 
+  set layer(value: Layer) {
+    this._layer = value;
+  }
   @Input()
   get layer(): Layer {
     return this._layer;
   }
-  set layer(value: Layer) {
-    this._layer = value;
+
+  set map(value: IgoMap) {
+    this._map = value;
   }
 
   @Input()
   get map(): IgoMap {
     return this._map;
   }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
 
   get refreshFunc() {
     return this.refreshFilters.bind(this);
   }
-  @Input()
-  get showFeatureOnMap(): boolean {
-    return this._showFeatureOnMap;
-  }
+
   set showFeatureOnMap(value: boolean) {
     this._showFeatureOnMap = value;
   }
 
-  public _showFeatureOnMap = false;
-  private _map: IgoMap;
-  private _layer: Layer;
+  @Input()
+  get showFeatureOnMap(): boolean {
+    return this._showFeatureOnMap;
+  }
 
   get datasource(): OgcFilterableDataSource {
     return this.layer.dataSource as OgcFilterableDataSource;
+  }
+
+  set ogcFiltersHeaderShown(value: boolean) {
+    this._ogcFiltersHeaderShown = value;
   }
 
   @Input()
   get ogcFiltersHeaderShown(): boolean {
     return this._ogcFiltersHeaderShown;
   }
-  set ogcFiltersHeaderShown(value: boolean) {
-    this._ogcFiltersHeaderShown = value;
+
+  get downloadable() {
+    return (this.datasource.options as any).download;
   }
+
+  public _showFeatureOnMap = false;
+  private _map: IgoMap;
+  private _layer: Layer;
   private _ogcFiltersHeaderShown: boolean;
 
   constructor(
@@ -232,10 +240,6 @@ export class OgcFilterableItemComponent implements OnInit {
     } else {
       // identical filter. Nothing triggered
     }
-  }
-
-  get downloadable() {
-    return (this.datasource.options as any).download;
   }
 
   public setVisible() {

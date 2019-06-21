@@ -14,20 +14,23 @@ import { IgoMap } from '../../map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OgcFilterableListComponent {
-  @Input()
-  get layers(): Layer[] {
-    return this._layers;
-  }
+
   set layers(value: Layer[]) {
     this._layers = value;
     this.cdRef.detectChanges();
   }
   @Input()
-  get map(): IgoMap {
-    return this._map;
+  get layers(): Layer[] {
+    return this._layers;
   }
+
   set map(value: IgoMap) {
     this._map = value;
+  }
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
   }
 
   private _map: IgoMap;

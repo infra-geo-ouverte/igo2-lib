@@ -23,30 +23,31 @@ import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasourc
   styleUrls: ['./ogc-filter-toggle-button.component.scss']
 })
 export class OgcFilterToggleButtonComponent implements OnInit {
-  private ogcFilterWriter: OgcFilterWriter;
-  private _dataSource: OgcFilterableDataSource;
-  public color = 'primary';
-  private _map: IgoMap;
 
   @Input() refreshFilters: () => void;
 
+  set datasource(value: OgcFilterableDataSource) {
+    this._dataSource = value;
+    this.cdRef.detectChanges();
+  }
   @Input()
   get datasource(): OgcFilterableDataSource {
     return this._dataSource;
   }
-  set datasource(value: OgcFilterableDataSource) {
-    this._dataSource = value;
-    this.cdRef.detectChanges();
+
+  set map(value: IgoMap) {
+    this._map = value;
   }
 
   @Input()
   get map(): IgoMap {
     return this._map;
   }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
 
+  private _dataSource: OgcFilterableDataSource;
+  private _map: IgoMap;
+  private ogcFilterWriter: OgcFilterWriter;
+  public color = 'primary';
   public pushButtonBundle: OgcPushButtonBundle[] = [];
 
   constructor(
