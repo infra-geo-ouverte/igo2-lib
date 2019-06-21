@@ -12,41 +12,13 @@ import { OgcFilterableDataSourceOptions } from '../shared/ogc-filter.interface';
 })
 export class OgcFilterButtonComponent {
 
-  set layer(value: Layer) {
-    this._layer = value;
-  }
+  @Input() layer: Layer;
 
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
+  @Input() map: IgoMap;
 
-  set map(value: IgoMap) {
-    this._map = value;
-  }
+  @Input() color: string = 'primary';
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-
-  set color(value: string) {
-    this._color = value;
-  }
-
-  @Input()
-  get color() {
-    return this._color;
-  }
-
-  set ogcFiltersInLayers(value: boolean) {
-    this._ogcFiltersInLayers = value;
-  }
-
-  @Input()
-  get ogcFiltersInLayers(): boolean {
-    return this._ogcFiltersInLayers;
-  }
+  @Input() ogcFiltersInLayers: boolean;
 
   get options(): OgcFilterableDataSourceOptions {
     if (!this.layer) {
@@ -54,11 +26,6 @@ export class OgcFilterButtonComponent {
     }
     return this.layer.dataSource.options;
   }
-
-  private _ogcFiltersInLayers = false;
-  private _layer: Layer;
-  private _map: IgoMap;
-  private _color = 'primary';
 
   public ogcFilterCollapse = false;
 

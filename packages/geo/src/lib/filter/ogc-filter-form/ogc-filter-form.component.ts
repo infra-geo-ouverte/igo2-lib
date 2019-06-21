@@ -1,7 +1,6 @@
 import {
   Component,
   Input,
-  ChangeDetectorRef,
   OnInit
 } from '@angular/core';
 
@@ -21,8 +20,6 @@ import { OgcFilterOperatorType } from '../../filter/shared/ogc-filter.enum';
   styleUrls: ['./ogc-filter-form.component.scss']
 })
 export class OgcFilterFormComponent implements OnInit {
-  private _dataSource: OgcFilterableDataSource;
-  private _currentFilter: any = {};
   public ogcFilterOperators;
   public igoSpatialSelectors;
   public value = '';
@@ -32,38 +29,15 @@ export class OgcFilterFormComponent implements OnInit {
   public color = 'primary';
   public snrc = '';
   public disabled;
-  private _map: IgoMap;
   public baseOverlayName = 'ogcFilterOverlay_';
 
   @Input() refreshFilters: () => void;
 
-  set datasource(value: OgcFilterableDataSource) {
-    this._dataSource = value;
-    this.cdRef.detectChanges();
-  }
+  @Input() datasource: OgcFilterableDataSource;
 
-  @Input()
-  get datasource(): OgcFilterableDataSource {
-    return this._dataSource;
-  }
+  @Input() map: IgoMap;
 
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-
-  set currentFilter(value: any) {
-    this._currentFilter = value;
-  }
-
-  @Input()
-  get currentFilter(): any {
-    return this._currentFilter;
-  }
+  @Input() currentFilter: any;
 
   get activeFilters() {
     this.updateField();
@@ -73,7 +47,6 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   constructor(
-    private cdRef: ChangeDetectorRef,
     private wktService: WktService
   ) {
     // TODO: Filter permitted operator based on wfscapabilities

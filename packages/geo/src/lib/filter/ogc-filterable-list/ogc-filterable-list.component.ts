@@ -1,8 +1,7 @@
 import {
   Component,
   Input,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectionStrategy
 } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
@@ -15,26 +14,9 @@ import { IgoMap } from '../../map';
 })
 export class OgcFilterableListComponent {
 
-  set layers(value: Layer[]) {
-    this._layers = value;
-    this.cdRef.detectChanges();
-  }
-  @Input()
-  get layers(): Layer[] {
-    return this._layers;
-  }
+  @Input() layers: Layer[];
 
-  set map(value: IgoMap) {
-    this._map = value;
-  }
+  @Input() map: IgoMap;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-
-  private _map: IgoMap;
-  private _layers: Layer[] = [];
-
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor() {}
 }

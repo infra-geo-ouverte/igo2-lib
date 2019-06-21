@@ -7,23 +7,10 @@ import { IgoMap } from '../../map';
   templateUrl: './ogc-filterable-form.component.html'
 })
 export class OgcFilterableFormComponent {
-  set datasource(value: OgcFilterableDataSource) {
-    this._dataSource = value;
-  }
 
-  @Input()
-  get datasource(): OgcFilterableDataSource {
-    return this._dataSource;
-  }
+  @Input() datasource: OgcFilterableDataSource;
 
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
+  @Input() map: IgoMap;
 
   @Input() refreshFilters: () => void;
 
@@ -37,9 +24,6 @@ export class OgcFilterableFormComponent {
     }
     return;
   }
-
-  private _map: IgoMap;
-  private _dataSource: OgcFilterableDataSource;
 
   public color = 'primary';
 

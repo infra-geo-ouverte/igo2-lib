@@ -30,22 +30,9 @@ export class OgcFilterableItemComponent implements OnInit {
   public filtersCollapsed = true;
   public hasPushButton: boolean = false;
 
-  set layer(value: Layer) {
-    this._layer = value;
-  }
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
+  @Input() layer: Layer;
 
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
+  @Input() map: IgoMap;
 
   get refreshFunc() {
     return this.refreshFilters.bind(this);
@@ -55,22 +42,11 @@ export class OgcFilterableItemComponent implements OnInit {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
 
-  set ogcFiltersHeaderShown(value: boolean) {
-    this._ogcFiltersHeaderShown = value;
-  }
-
-  @Input()
-  get ogcFiltersHeaderShown(): boolean {
-    return this._ogcFiltersHeaderShown;
-  }
+  @Input() ogcFiltersHeaderShown: boolean;
 
   get downloadable() {
     return (this.datasource.options as any).download;
   }
-
-  private _map: IgoMap;
-  private _layer: Layer;
-  private _ogcFiltersHeaderShown: boolean;
 
   constructor(
     private ogcFilterService: OGCFilterService,
@@ -236,8 +212,20 @@ export class OgcFilterableItemComponent implements OnInit {
     this.layer.visible = true;
   }
 
+  public isAdvancedOgcFilters(): boolean {
+    return this.datasource.options.ogcFilters.advancedOgcFilters;
+  }
+
+  public addFilterDisabled(): boolean {
+    return (!this.datasource.options.sourceFields || this.datasource.options.sourceFields.length === 0);
+  }
+
+  private changeOgcFiltersAdvancedOgcFilters(value: boolean) {
+    this.datasource.options.ogcFilters.advancedOgcFilters = value;
+  }
+
   changeOgcFilterType(isAdvancedOgcFilters) {
-    this.datasource.options.ogcFilters.advancedOgcFilters = isAdvancedOgcFilters.checked;
+    this.changeOgcFiltersAdvancedOgcFilters(isAdvancedOgcFilters.checked);
     if (isAdvancedOgcFilters.checked) {
       this.refreshFilters(true);
     }

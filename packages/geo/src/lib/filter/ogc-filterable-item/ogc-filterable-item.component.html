@@ -12,7 +12,7 @@
       <mat-icon svgIcon="download"></mat-icon>
     </button>
   </span>
-  <button *ngIf="datasource.options.ogcFilters.advancedOgcFilters" [disabled]="!datasource.options.sourceFields || datasource.options.sourceFields.length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+  <button *ngIf="isAdvancedOgcFilters()" [disabled]="addFilterDisabled()" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon svgIcon="plus"></mat-icon>
   </button>

@@ -1,7 +1,6 @@
 import {
   Component,
   Input,
-  ChangeDetectorRef,
   OnInit
 } from '@angular/core';
 
@@ -26,33 +25,16 @@ export class OgcFilterToggleButtonComponent implements OnInit {
 
   @Input() refreshFilters: () => void;
 
-  set datasource(value: OgcFilterableDataSource) {
-    this._dataSource = value;
-    this.cdRef.detectChanges();
-  }
-  @Input()
-  get datasource(): OgcFilterableDataSource {
-    return this._dataSource;
-  }
+  @Input() datasource: OgcFilterableDataSource;
 
-  set map(value: IgoMap) {
-    this._map = value;
-  }
+  @Input() map: IgoMap;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-
-  private _dataSource: OgcFilterableDataSource;
-  private _map: IgoMap;
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
   public pushButtonBundle: OgcPushButtonBundle[] = [];
 
   constructor(
-    private ogcFilterService: OGCFilterService,
-    private cdRef: ChangeDetectorRef
+    private ogcFilterService: OGCFilterService
   ) {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
