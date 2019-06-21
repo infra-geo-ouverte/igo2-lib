@@ -125,13 +125,13 @@ export class CapabilitiesService {
     const params = new HttpParams({
       fromObject: {
         request: 'GetCapabilities',
-        service: service,
+        service,
         version: version || '1.3.0'
       }
     });
 
     const request = this.http.get(baseUrl, {
-      params: params,
+      params,
       responseType: 'text'
     });
 
@@ -174,12 +174,12 @@ export class CapabilitiesService {
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
-          abstract: abstract,
-          keywordList: keywordList
+          abstract,
+          keywordList
         },
-        legendOptions: legendOptions,
+        legendOptions,
       },
-      queryable: queryable,
+      queryable,
       timeFilter: timeFilterable ? timeFilter : undefined,
       timeFilterable: timeFilterable ? true : undefined
     });
@@ -212,7 +212,7 @@ export class CapabilitiesService {
     const options = ObjectUtils.removeUndefined({
       config: {
         version: params.version,
-        layers: layers
+        layers
       }
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
@@ -250,15 +250,15 @@ export class CapabilitiesService {
     const params = Object.assign(
       {},
       {
-        legendInfo: legendInfo,
-        style: style,
-        timeFilter: timeFilter,
-        timeExtent: timeExtent,
-        attributions: attributions
+        legendInfo,
+        style,
+        timeFilter,
+        timeExtent,
+        attributions
       }
     );
     const options = ObjectUtils.removeUndefined({
-      params: params
+      params
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
@@ -296,10 +296,10 @@ export class CapabilitiesService {
       }
     );
     const options = ObjectUtils.removeUndefined({
-      params: params,
-      legendInfo: legendInfo,
-      timeFilter: timeFilter,
-      attributions: attributions
+      params,
+      legendInfo,
+      timeFilter,
+      attributions
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
@@ -353,10 +353,8 @@ export class CapabilitiesService {
         title: style.Title
       };
     })
-    // .filter((name, index, self) => self.indexOf(name) === index);
-
     // Handle repeat the style "default" in output  (MapServer or OpenLayer)
-    // const uniqueStyleOptions = new Set[(styleOptions.map((item: ItemStyleOptions) => item.name))] as ItemStyleOptions[];
+    .filter((item, index, self) => self.findIndex((i: ItemStyleOptions) => i.name === item.name) === index);
 
     const legendOptions: LegendOptions = { stylesAvailable: styleOptions } as LegendOptions;
 

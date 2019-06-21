@@ -6,8 +6,6 @@ import { DataSourceOptions, Legend } from '../../../datasource/shared/datasource
 export interface LayerOptions {
   source?: DataSource;
   sourceOptions?: DataSourceOptions;
-  legend?: Legend[];
-  legendOptions?: LegendOptions;
   title?: string;
   id?: string;
   alias?: string;
@@ -20,6 +18,7 @@ export interface LayerOptions {
   maxResolution?: number;
   showInLayerList?: boolean;
   removable?: boolean;
+  legendOptions?: LegendOptions;
   ol?: olLayer;
   tooltip?: TooltipContent;
 }
@@ -44,6 +43,7 @@ export interface LegendOptions {
   collapsed?: boolean;
   display?: boolean;
   url?: string;
+  html?: string;
   stylesAvailable?: ItemStyleOptions[];
 }
 

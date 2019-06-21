@@ -12,5 +12,4 @@ export class OSMDataSource extends DataSource {
     return new olSourceOSM(this.options);
   }
 
-  getLegend(): [] { return; }
 }

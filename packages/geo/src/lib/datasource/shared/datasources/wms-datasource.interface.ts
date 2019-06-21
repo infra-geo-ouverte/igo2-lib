@@ -6,7 +6,6 @@ import { MetadataOptions } from '../../../metadata/shared/metadata.interface';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
   // type?: 'wms';
-  optionsFromCapabilities?: boolean;
   paramsWFS?: WFSDataSourceOptionsParams; // for wms linked with wfs
   urlWfs?: string; // if url for linked wfs differ from the url for wms.
   url: string;

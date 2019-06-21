@@ -40,5 +40,4 @@ export class FeatureDataSource extends DataSource {
 
     return format;
   }
-  getLegend(): [] { return; }
 }

@@ -96,6 +96,10 @@ export abstract class Layer {
     this.opacity =
       this.options.opacity === undefined ? 1 : this.options.opacity;
 
+    if (this.options.legendOptions && (this.options.legendOptions.url || this.options.legendOptions.html)) {
+      this.legend = this.dataSource.setLegend(this.options.legendOptions);
+    }
+
     this.ol.set('_layer', this, true);
   }
 

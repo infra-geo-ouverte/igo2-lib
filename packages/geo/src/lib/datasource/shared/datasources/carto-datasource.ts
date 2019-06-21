@@ -39,10 +39,10 @@ export class CartoDataSource extends DataSource {
   }
 
   getLegend(): Legend[] {
-    // const legend = super.getLegend();
-    // if (legend.length > 0) {
-    //   return legend;
-    // }
+    const legend = super.getLegend();
+    if (legend.length > 0) {
+      return legend;
+    }
 
     let htmlString = '<table>';
     if (this.options.config.layers[0].legend != null) {

@@ -45,16 +45,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // hb-note on recupére la dernière légende et son style. La légende doit être refait car la résolution peut avoir bouger depuis.
     let lastlLegend = this.layer.legend;
+    const listStyles = this.listStyles();
 
-    if (this.layer.legend) {
-      if (this.listStyles().length > 1) {
-        this.currentStyle = lastlLegend[0].currentStyle;
-      }
-    } else {
-      if (this.listStyles().length > 1) {
+    if (!this.layer.legend) {
+      if (listStyles && listStyles.length > 1) {
         this.currentStyle = this.layer.options.legendOptions.stylesAvailable[0].name;
       }
       lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    } else if (listStyles && listStyles.length > 1) {
+        this.currentStyle = lastlLegend[0].currentStyle;
     }
 
     if (this.updateLegendOnResolutionChange === true) {

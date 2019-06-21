@@ -160,11 +160,10 @@ export class WMSDataSource extends DataSource {
   }
 
   getLegend(style?: string, scale?: number): Legend[] {
-    // hb-
-    // let legend = super.getLegend();
-    // if (legend.length > 0 && (!style && !scale)) {
-    //   return legend;
-    // }
+    let legend = super.getLegend();
+    if (legend.length > 0 && (!style && !scale)) {
+      return legend;
+    }
 
     const sourceParams = this.params;
 
@@ -188,7 +187,7 @@ export class WMSDataSource extends DataSource {
       params.push(`SCALE=${scale}`);
     }
 
-    const legend = layers.map((layer: string) => {
+    legend = layers.map((layer: string) => {
       return {
         url: `${baseUrl}?${params.join('&')}&LAYER=${layer}`,
         title: layers.length > 1 ? layer : undefined,

@@ -23,5 +23,4 @@ export class WMTSDataSource extends DataSource {
     return new olSourceWMTS(sourceOptions);
   }
 
-  getLegend(): [] { return; }
 }
