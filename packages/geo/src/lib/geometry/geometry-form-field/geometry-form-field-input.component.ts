@@ -53,6 +53,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private drawControl: DrawControl;
   private modifyControl: ModifyControl;
   private drawInteractionStyle: OlStyle;
+  private defaultDrawStyleRadius: number;
   private olGeometryEnds$$: Subscription;
   private olGeometryChanges$$: Subscription;
 
@@ -148,6 +149,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.addOlOverlayLayer();
     this.createMeasureTooltip();
     this.drawInteractionStyle = createDrawInteractionStyle();
+    this.defaultDrawStyleRadius = this.drawInteractionStyle.getImage().getRadius();
     this.createDrawControl();
     this.createModifyControl();
     if (this.value) {
@@ -212,10 +214,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       layer: this.olOverlayLayer,
       drawStyle: (olFeature: OlFeature, resolution: number) => {
         const style = this.drawInteractionStyle;
-        const drawGuide = this.drawGuide;
-        if (drawGuide > 0) {
-          style.getImage().setRadius(drawGuide / resolution);
-        }
+        this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
       }
     });
@@ -229,10 +228,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       layer: this.olOverlayLayer,
       drawStyle: (olFeature: OlFeature, resolution: number) => {
         const style = this.drawInteractionStyle;
-        const drawGuide = this.drawGuide;
-        if (drawGuide > 0) {
-          style.getImage().setRadius(drawGuide / resolution);
-        }
+        this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
       }
     });
@@ -385,6 +381,17 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.map.ol.removeOverlay(this.olTooltip);
       this.olTooltip.setMap(undefined);
     }
+  }
+
+  private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
+    const drawGuide = this.drawGuide;
+    let radius;
+    if (drawGuide === undefined || drawGuide < 0) {
+      radius = this.defaultDrawStyleRadius;
+    } else {
+      radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
+    }
+    olStyle.getImage().setRadius(radius);
   }
 
 }
