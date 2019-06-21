@@ -15,7 +15,10 @@ import {
   DataSourceService,
   LayerService,
   OverlayService,
-  Feature
+  Feature,
+  QueryableDataSourceOptions,
+  QueryFormat,
+  QueryHtmlTarget
 } from '@igo2/geo';
 
 @Component({
@@ -61,12 +64,14 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        // url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        url: '/swtq',
+        queryable: true,
         params: {
           layers: 'bgr_v_sous_route_res_sup_act',
           version: '1.3.0'
         }
-      })
+      } as QueryableDataSourceOptions )
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -78,8 +83,31 @@ export class AppQueryComponent {
 
     this.dataSourceService
       .createAsyncDataSource({
-        type: 'vector'
-      })
+        type: 'wms',
+        // url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        url: '/swtq',
+        queryable: true,
+        queryFormat: QueryFormat.HTMLGML2,
+        queryHtmlTarget: QueryHtmlTarget.IFRAME,
+        params: {
+          layers: 'bgr_v_sous_route_res_sup_act',
+          version: '1.3.0'
+        }
+      } as QueryableDataSourceOptions)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'WMS html',
+            source: dataSource
+          })
+        );
+      });
+
+    this.dataSourceService
+      .createAsyncDataSource({
+        type: 'vector',
+        queryable: true
+      } as QueryableDataSourceOptions )
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
