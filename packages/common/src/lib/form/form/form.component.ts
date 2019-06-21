@@ -13,6 +13,7 @@ import {
 import t from 'typy';
 
 import { Form, FormField, FormFieldGroup } from '../shared/form.interfaces';
+import { getAllFormFields } from '../shared/form.utils';
 
 /**
  * A configurable form
@@ -86,12 +87,9 @@ export class FormComponent implements OnChanges {
 
   private getData(): { [key: string]: any} {
     const data = {};
-
-    this.form.fields.forEach((field: FormField) => this.updateDataWithFormField(data, field));
-    this.form.groups.forEach((group: FormFieldGroup) => {
-      group.fields.forEach((field: FormField) => this.updateDataWithFormField(data, field));
+    getAllFormFields(this.form).forEach((field: FormField) => {
+      this.updateDataWithFormField(data, field);
     });
-
     return data;
   }
 
