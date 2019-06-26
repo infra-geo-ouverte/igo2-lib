@@ -7,11 +7,11 @@
           class="igo-chevron"
           mat-list-avatar
           igoCollapse
-          [target]="item"
+          [target]="legend"
           [collapsed]="false"
           svgIcon="chevron-up">
         </mat-icon>
-        <h4 matLine>{{computeItemTitle(item) | async}}</h4>
+        <h4 matLine>{{item.title}}</h4>
       </mat-list-item>  
       <mat-list-item *ngIf="currentStyle">
         <mat-select tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
@@ -20,10 +20,14 @@
         </mat-select>
       </mat-list-item>
       <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
-        <img
+        <img #logo (load)="onLoadImage()"
           *ngIf="item.url"
           src="{{(item.url | secureImage) | async}}"
-          alt="{{'igo.geo.layer.loadingLegendText' | translate}}">
+          alt="{{'igo.geo.layer.loadingLegendText' | translate}}"
+        >
+        <small *ngIf="item.url && imgHeight<16">
+            {{'igo.geo.layer.noLegendScale' | translate}}
+        </small>
         <div
           [ngStyle]="item.style"
           [innerHTML]="item.html"

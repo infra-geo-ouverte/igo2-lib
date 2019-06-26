@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
 
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
@@ -31,6 +31,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   public currentStyle = '';
 
   private scale: number = undefined;
+
+  @ViewChild('logo') logo: ElementRef;
+  public imgHeight: number;
 
   /**
    * Layer
@@ -124,5 +127,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   onChangeStyle() {
     this.updateLegend();
     this.layer.dataSource.ol.updateParams({STYLES: this.currentStyle});
+  }
+
+  onLoadImage() {
+    this.imgHeight = (this.logo.nativeElement as HTMLImageElement).height;
+    // console.log(this.imgHeight);
   }
 }

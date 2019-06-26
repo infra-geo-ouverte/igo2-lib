@@ -92,6 +92,7 @@
         "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
         "noLegendText": "Aucune légende disponible pour cette couche",
+        "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "removeLayer": "Retirer la couche de la carte",
