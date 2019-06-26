@@ -10,9 +10,7 @@ import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 import {
   formatWFSQueryString,
-  defaultWfsVersion,
   defaultFieldNameGeometry,
-  defaultMaxFeatures,
   gmlRegex,
   jsonRegex,
   checkWfsParams
@@ -25,36 +23,27 @@ export class WFSDataSource extends DataSource {
     public options: WFSDataSourceOptions,
     protected wfsService: WFSService
   ) {
-    super(options);
-    this.options = checkWfsParams(options);
-    this.wfsService.getSourceFieldsFromWFS(this.options);
+    super(checkWfsParams(options, 'wfs'));
+
+    const ogcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+    const fieldNameGeometry = this.options.paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
+    const ogcFilterWriter = new OgcFilterWriter();
+    ogcFilterWriter.defineOgcFiltersDefaultOptions(ogcFilters, fieldNameGeometry);
+    if (ogcFilters.enabled) {
+      this.wfsService.getSourceFieldsFromWFS(this.options);
+    }
   }
 
   protected createOlSource(): olSourceVector {
-    const ogcFiltersDefaultValue = true; // default values for wfs.
-    let ogcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    // reassignation of params to paramsWFS and url to urlWFS to have a common interface with wms-wfs datasources
-    this.options.paramsWFS = this.options.params;
-    const paramsWFS = this.options.paramsWFS;
-    this.options.urlWfs = this.options.url;
-    paramsWFS.version = paramsWFS.version || defaultWfsVersion;
-    paramsWFS.fieldNameGeometry = paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
-    paramsWFS.maxFeatures = paramsWFS.maxFeatures || defaultMaxFeatures;
-
-    ogcFilters = ogcFilters || {} ;
-    ogcFilters.advancedOgcFilters = true;
-    ogcFilters.enabled = ogcFilters.enabled || ogcFiltersDefaultValue;
-    ogcFilters.editable = ogcFilters.editable || ogcFiltersDefaultValue;
-    ogcFilters.geometryName = paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
-
-    if (ogcFilters.enabled && ogcFilters.pushButtons) {
-      ogcFilters.advancedOgcFilters = false;
-    }
 
     return new olSourceVector({
       format: this.getFormatFromOptions(),
       overlaps: false,
-      url: (extent, resolution, proj) => { return this.buildUrl(extent, proj, ogcFilters);
+      url: (extent, resolution, proj) => {
+        return this.buildUrl(
+          extent,
+          proj,
+          (this.options as OgcFilterableDataSourceOptions).ogcFilters);
       },
       strategy: OlLoadingStrategy.bbox
     });

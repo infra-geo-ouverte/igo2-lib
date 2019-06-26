@@ -1,4 +1,6 @@
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
@@ -72,21 +74,36 @@ export function formatWFSQueryString(
 }
 
 /**
- * Validate/Modify layer's wfs options based on an Openlayers's issue with GML provided from WFS. Refer to
+ * Validate/Modify layer's wfs options based on :
+ * 1- an Openlayers's issue with GML provided from WFS. Refer to
  * https://github.com/openlayers/openlayers/pull/6400
+ * 2- Set default values for optionals parameters.
  * @param wfsDataSourceOptions  WFSDataSourceOptions The common wfs datasource options interface
  * @returns An array array of {name: '', value: ''} of predefined query params.
  */
-export function checkWfsParams(wfsDataSourceOptions) {
-    let outputFormat;
-    if (wfsDataSourceOptions.paramsWFS.outputFormat) {
-      outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
-    }
+export function checkWfsParams(wfsDataSourceOptions, srcType?: string) {
 
-    if (gmlRegex.test(outputFormat) || !outputFormat) {
-      wfsDataSourceOptions.paramsWFS.version = '1.1.0';
-    }
-    return Object.assign({}, wfsDataSourceOptions, {
-      wfsCapabilities: { xmlBody: '', GetPropertyValue: false }
-    });
+  if (srcType && srcType === 'wfs') {
+    // reassignation of params to paramsWFS and url to urlWFS to have a common interface with wms-wfs datasources
+    wfsDataSourceOptions.paramsWFS = wfsDataSourceOptions.params;
   }
+
+  const paramsWFS = wfsDataSourceOptions.paramsWFS;
+  wfsDataSourceOptions.urlWfs = wfsDataSourceOptions.urlWfs || wfsDataSourceOptions.url;
+
+  paramsWFS.version = paramsWFS.version || defaultWfsVersion;
+  paramsWFS.fieldNameGeometry = paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
+  paramsWFS.maxFeatures = paramsWFS.maxFeatures || defaultMaxFeatures;
+
+  let outputFormat;
+  if (paramsWFS.outputFormat) {
+    outputFormat = paramsWFS.outputFormat;
+  }
+
+  if (gmlRegex.test(outputFormat) || !outputFormat) {
+    paramsWFS.version = '1.1.0';
+  }
+  return Object.assign({}, wfsDataSourceOptions, {
+    wfsCapabilities: { xmlBody: '', GetPropertyValue: false }
+  });
+}

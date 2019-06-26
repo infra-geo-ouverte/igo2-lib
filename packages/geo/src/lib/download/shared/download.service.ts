@@ -59,7 +59,7 @@ export class DownloadService {
         filterQueryString = new OgcFilterWriter()
         .handleOgcFiltersAppliedValue(layer.dataSource.options, ogcFilters.geometryName);
         if (!filterQueryString) {
-          // Prevent getting all the features for empty features
+          // Prevent getting all the features for empty filter
             filterQueryString = new OgcFilterWriter().buildFilter(
             undefined,
             layer.map.getExtent(),

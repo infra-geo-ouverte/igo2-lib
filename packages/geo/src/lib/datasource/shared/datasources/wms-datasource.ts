@@ -10,6 +10,8 @@ import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filte
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import { formatWFSQueryString, defaultWfsVersion, checkWfsParams, defaultFieldNameGeometry } from './wms-wfs.utils';
 
+import { ObjectUtils } from '@igo2/utils';
+
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
 
@@ -68,39 +70,38 @@ export class WMSDataSource extends DataSource {
 
     // ####   START if paramsWFS
     if (options.paramsWFS) {
-      const wfsCheckup = checkWfsParams(options);
-      options.paramsWFS.version = wfsCheckup.paramsWFS.version;
-      options.paramsWFS.wfsCapabilities = wfsCheckup.params.wfsCapabilities;
+      const wfsCheckup = checkWfsParams(options, 'wms');
+      ObjectUtils.mergeDeep(options.paramsWFS, wfsCheckup.paramsWFS);
+      options.paramsWFS.wfsCapabilities = wfsCheckup.wfsCapabilities;
 
-      if (options.paramsWFS.fieldNameGeometry) {
-        fieldNameGeometry = options.paramsWFS.fieldNameGeometry;
-      }
+      fieldNameGeometry = options.paramsWFS.fieldNameGeometry || fieldNameGeometry;
 
-      this.wfsService.getSourceFieldsFromWFS(options);
-
-      this.options.download = Object.assign({}, this.options.download, {
-        dynamicUrl: this.buildDynamicDownloadUrlFromParamsWFS(this.options)
+      options.download = Object.assign({}, options.download, {
+        dynamicUrl: this.buildDynamicDownloadUrlFromParamsWFS(options)
       });
     } //  ####   END  if paramsWFS
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     }
-    const initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    if (sourceParams.layers.split(',').length > 1 && this.options && initOgcFilters && initOgcFilters.enabled) {
+    const initOgcFilters = (options as OgcFilterableDataSourceOptions).ogcFilters;
+    const ogcFilterWriter = new OgcFilterWriter();
+
+    if (!initOgcFilters) {
+      (options as OgcFilterableDataSourceOptions).ogcFilters =
+        ogcFilterWriter.defineOgcFiltersDefaultOptions(initOgcFilters, fieldNameGeometry, 'wms');
+    }
+    if (sourceParams.layers.split(',').length > 1 && options && initOgcFilters.enabled) {
       console.log('*******************************');
       console.log('BE CAREFULL, YOUR WMS LAYERS (' + sourceParams.layers
       + ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! ');
       console.log('*******************************');
   }
 
-    if (initOgcFilters) {
-      initOgcFilters.advancedOgcFilters = true;
-      if (initOgcFilters.enabled && initOgcFilters.pushButtons) {
-        initOgcFilters.advancedOgcFilters = false;
-      }
+    if (options.paramsWFS && initOgcFilters.enabled) {
+      this.wfsService.getSourceFieldsFromWFS(options);
     }
-    const ogcFilterWriter = new OgcFilterWriter();
-    const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, fieldNameGeometry);
+
+    const filterQueryString = ogcFilterWriter.handleOgcFiltersAppliedValue(options, fieldNameGeometry);
     this.ol.updateParams({ filter: filterQueryString });
   }
 
@@ -115,15 +116,6 @@ export class WMSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceImageWMS {
-    if (this.options.paramsWFS) {
-      this.options.urlWfs = this.options.urlWfs || this.options.url;
-      this.options.paramsWFS.version = this.options.paramsWFS.version || defaultWfsVersion;
-    }
-    let initOgcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    const ogcFiltersDefaultValue = false; // default values for wms.
-    initOgcFilters = initOgcFilters === undefined ? {} : initOgcFilters;
-    initOgcFilters.enabled = initOgcFilters.enabled === undefined ? ogcFiltersDefaultValue : initOgcFilters.enabled;
-    initOgcFilters.editable = initOgcFilters.editable === undefined ? ogcFiltersDefaultValue : initOgcFilters.editable;
     return new olSourceImageWMS(this.options);
   }
 

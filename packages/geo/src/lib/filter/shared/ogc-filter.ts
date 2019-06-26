@@ -11,7 +11,8 @@ import {
   WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions,
   OgcInterfaceFilterOptions,
-  OgcFilterableDataSourceOptions
+  OgcFilterableDataSourceOptions,
+  OgcFiltersOptions
 } from './ogc-filter.interface';
 
 export class OgcFilterWriter {
@@ -31,6 +32,27 @@ export class OgcFilterWriter {
     Within: { spatial: true, fieldRestrict: [] },
     Contains: { spatial: true, fieldRestrict: [] }
   };
+
+  defineOgcFiltersDefaultOptions(
+    ogcFiltersOptions: OgcFiltersOptions,
+    fieldNameGeometry: string,
+    srcType?: string): OgcFiltersOptions  {
+    let ogcFiltersDefaultValue = true; // default values for wfs.
+    if (srcType && srcType === 'wms') {
+      ogcFiltersDefaultValue = false;
+    }
+
+    ogcFiltersOptions = ogcFiltersOptions || {};
+    ogcFiltersOptions.enabled = ogcFiltersOptions.enabled === undefined ? ogcFiltersDefaultValue : ogcFiltersOptions.enabled;
+    ogcFiltersOptions.editable = ogcFiltersOptions.editable === undefined ? ogcFiltersDefaultValue : ogcFiltersOptions.editable;
+    ogcFiltersOptions.geometryName = fieldNameGeometry;
+
+    ogcFiltersOptions.advancedOgcFilters = true;
+    if (ogcFiltersOptions.enabled && ogcFiltersOptions.pushButtons) {
+      ogcFiltersOptions.advancedOgcFilters = false;
+    }
+    return ogcFiltersOptions;
+  }
 
   public buildFilter(
     filters?: IgoOgcFilterObject,
