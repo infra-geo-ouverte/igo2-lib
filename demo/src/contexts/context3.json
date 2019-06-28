@@ -26,6 +26,22 @@
       }
     },
     {
+      "title": "Zone",
+      "opacity":0.7,
+      "style": {
+        "stroke": {
+          "color": "red"
+        },
+        "fill": {
+          "color": "blue"
+        }
+      },
+      "sourceOptions": {
+        "type": "mvt",
+        "url": "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
+      }
+    },
+    {
       "title": "Tornado",
       "sourceOptions": {
         "type": "carto",
