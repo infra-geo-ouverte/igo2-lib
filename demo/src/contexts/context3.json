@@ -48,6 +48,17 @@
           ]
         }
       }
+    },
+    {
+      "title": "cluster",
+      "clusterParam": {
+        "clusterRange": [8, 16]
+      },
+      "sourceOptions": {
+        "type": "cluster",
+        "url": "http://10.202.76.35/fichier/bureaux_locaux3857.geojson",
+        "distance": 70
+      }
     }
   ]
 }

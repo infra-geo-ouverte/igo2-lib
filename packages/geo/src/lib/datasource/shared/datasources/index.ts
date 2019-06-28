@@ -22,5 +22,7 @@ export * from './tilearcgisrest-datasource';
 export * from './tilearcgisrest-datasource.interface';
 export * from './websocket-datasource';
 export * from './websocket-datasource.interface';
+export * from './cluster-datasource';
+export * from './cluster-datasource.interface';
 export * from './any-datasource';
 export * from './any-datasource.interface';

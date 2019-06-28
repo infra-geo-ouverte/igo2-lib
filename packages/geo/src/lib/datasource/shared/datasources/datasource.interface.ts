@@ -14,7 +14,8 @@ export interface DataSourceOptions {
     | 'carto'
     | 'arcgisrest'
     | 'tilearcgisrest'
-    | 'websocket';
+    | 'websocket'
+    | 'cluster';
   legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
   // title: string;

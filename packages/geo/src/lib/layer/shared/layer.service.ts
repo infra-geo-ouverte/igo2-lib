@@ -15,7 +15,8 @@ import {
   CartoDataSource,
   ArcGISRestDataSource,
   TileArcGISRestDataSource,
-  WebSocketDataSource
+  WebSocketDataSource,
+  ClusterDataSource
 } from '../../datasource';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -77,6 +78,7 @@ export class LayerService {
       case WFSDataSource:
       case ArcGISRestDataSource:
       case WebSocketDataSource:
+      case ClusterDataSource:
         layer = this.createVectorLayer(layerOptions as VectorLayerOptions);
         break;
       case WMSDataSource:
@@ -125,6 +127,14 @@ export class LayerService {
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
+    }
+
+    if (layerOptions.source instanceof ClusterDataSource) {
+      const serviceStyle = this.styleService;
+      layerOptions.style = function(feature) {
+        return serviceStyle.createClusterStyle(feature, layerOptions.clusterParam);
+      };
+      return new VectorLayer(layerOptions);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {

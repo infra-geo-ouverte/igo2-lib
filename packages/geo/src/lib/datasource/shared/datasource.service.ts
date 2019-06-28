@@ -25,7 +25,9 @@ import {
   TileArcGISRestDataSource,
   TileArcGISRestDataSourceOptions,
   WebSocketDataSource,
-  AnyDataSourceOptions
+  AnyDataSourceOptions,
+  ClusterDataSource,
+  ClusterDataSourceOptions
 } from './datasources';
 
 @Injectable({
@@ -86,6 +88,11 @@ export class DataSourceService {
       case 'tilearcgisrest':
         dataSource = this.createTileArcGISRestDataSource(
           context as TileArcGISRestDataSourceOptions
+        );
+        break;
+      case 'cluster':
+        dataSource = this.createClusterDataSource(
+          context as ClusterDataSourceOptions
         );
         break;
       default:
@@ -200,5 +207,11 @@ export class DataSourceService {
             new TileArcGISRestDataSource(options)
         )
       );
+  }
+
+  private createClusterDataSource(
+    context: ClusterDataSourceOptions
+  ): Observable<ClusterDataSource> {
+    return new Observable(d => d.next(new ClusterDataSource(context)));
   }
 }
