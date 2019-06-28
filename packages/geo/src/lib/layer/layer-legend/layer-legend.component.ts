@@ -32,7 +32,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   private scale: number = undefined;
 
-  @ViewChild('logo') logo: ElementRef;
+  @ViewChild('renderedLegend') renderedLegend: ElementRef;
   public imgHeight: number;
 
   /**
@@ -130,7 +130,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   onLoadImage() {
-    this.imgHeight = (this.logo.nativeElement as HTMLImageElement).height;
+    this.imgHeight = (this.renderedLegend.nativeElement as HTMLImageElement).height;
     // console.log(this.imgHeight);
   }
 }

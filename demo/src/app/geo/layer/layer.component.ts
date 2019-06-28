@@ -186,7 +186,7 @@ export class AppLayerComponent {
           //   stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //  
           // },
           params: {
-            layers: 'nurc:Arc_Sample', // , test:Linea_costa
+            layers: 'test:Linea_costa, nurc:Arc_Sample', // , test:Linea_costa
             version: '1.3.0'
           }
         }

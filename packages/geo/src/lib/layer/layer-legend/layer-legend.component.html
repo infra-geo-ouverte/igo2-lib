@@ -20,7 +20,7 @@
         </mat-select>
       </mat-list-item>
       <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
-        <img #logo (load)="onLoadImage()"
+        <img #renderedLegend (load)="onLoadImage()"
           *ngIf="item.url"
           src="{{(item.url | secureImage) | async}}"
           alt="{{'igo.geo.layer.loadingLegendText' | translate}}"
