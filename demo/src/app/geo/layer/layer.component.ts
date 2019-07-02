@@ -163,28 +163,20 @@ export class AppLayerComponent {
       })
       .subscribe(l => this.map.addLayer(l));
 
-    // wmsStyleChanger ... nurc:Arc_Sample
     this.layerService
       .createAsyncLayer({
         title: 'nurc:Arc_Sample_Parent',
         visible: true,
         legendOptions: {
           collapsed: false,
-          display: true
-          // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',  // + conserver ou empêcher build switch
-          // stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //
+          display: true,
+          // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
+          stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //
         },
         sourceOptions: {
           type: 'wms',
           url: '/geoserver/ows',
-          optionsFromCapabilities: false,
-          // hb- legend: { url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg' },
-          // legendOptions: {
-          //   collapsed: false,
-          //   display: true,
-          //   // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',  // + conserver ou empêcher build switch
-          //   stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //  
-          // },
+          optionsFromCapabilities: true,
           params: {
             layers: 'test:Linea_costa, nurc:Arc_Sample', // , test:Linea_costa
             version: '1.3.0'

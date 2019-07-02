@@ -62,9 +62,6 @@ export class LayerService {
         (layerOptions.source.options as any)._layerOptionsFromCapabilities || {},
         layerOptions || {}
       );
-      // // hb!- Resynchronize DataSource.Options
-      // layerOptions.source.options = ObjectUtils.mergeDeep(
-      //   layerOptions.sourceOptions || {}, layerOptions.source.options || {});
     }
 
     let layer;

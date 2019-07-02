@@ -27,9 +27,14 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   private resolution$$: Subscription;
 
-  // hb? public, $$
+  /**
+   * The style used to make the legend
+   */
   public currentStyle = '';
 
+  /**
+   * The scale used to make the legend
+   */
   private scale: number = undefined;
 
   @ViewChild('renderedLegend') renderedLegend: ElementRef;
@@ -46,7 +51,6 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * On init, subscribe to the map's resolution and update the legend accordingly
    */
   ngOnInit() {
-    // hb-note on recupére la dernière légende et son style. La légende doit être refait car la résolution peut avoir bouger depuis.
     let lastlLegend = this.layer.legend;
     const listStyles = this.listStyles();
 

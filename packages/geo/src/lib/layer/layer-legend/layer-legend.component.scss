@@ -6,37 +6,8 @@ img:before {
   display: block;
   position: absolute;
   height: 16px;
-  width: 16px;
-  background-position: left top;       
-  background-image: url('./assets/loading.png'); //fork_hugbe8\igo2-lib\demo\src\assets\
+  width: 16px;      
+  //background-image: url('./assets/loading.png'); //fork_hugbe8\igo2-lib\demo\src\assets\
   background-repeat: no-repeat;
   background-color: white;
 }
-// img:before {
-//   // z-index:1;
-//   // background-position: left top;
-//   // border: 2px solid #f3f3f3;
-//   // border-top-color:white;
-//   // border-radius: 50%;
-//   // border-top: 2px solid blue;
-//   // -webkit-animation: spin 2s linear infinite; /* Safari */
-//   // animation: spin 2s linear infinite;
-//   // border: 2px solid #CECECE; 
-//   // border-top-color: #14B48C; 
-//   // width: 16px; 
-//   // height: 16px; 
-//   // border-radius: 50%; 
-//   // animation: spin 1s infinite;
-//   // z-index:2;
-// }
-
-// /* Safari */
-// @-webkit-keyframes spin {
-//   0% { -webkit-transform: rotate(0deg); }
-//   100% { -webkit-transform: rotate(360deg); }
-// }
-
-// @keyframes spin {
-//   0% { transform: rotate(0deg); }
-//   100% { transform: rotate(360deg); }
-// }
