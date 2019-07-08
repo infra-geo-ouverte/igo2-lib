@@ -96,14 +96,14 @@ export class ShareMapService {
 
     const zoom = 'zoom=' + map.getZoom();
     const arrayCenter = map.getCenter('EPSG:4326') || [];
-    const center = 'center=' + arrayCenter.toString();
+    const center = `center=${arrayCenter[0].toFixed(5)},${arrayCenter[1].toFixed(5)}`;
     let context = '';
-    if (this.contextService.context$.value) {
+    if (this.contextService.context$.value  && this.contextService.context$.value.uri !== '_default') {
       context = 'context=' + this.contextService.context$.value.uri;
     }
 
     return `${location.origin}${
       location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`.replace(/&&/g, '&');
+    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`.replace(/&&/g, '&').replace('?&', '?');
   }
 }
