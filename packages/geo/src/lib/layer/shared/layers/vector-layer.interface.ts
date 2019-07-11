@@ -14,6 +14,8 @@ import { WFSDataSourceOptions } from '../../../datasource/shared/datasources/wfs
 import { ArcGISRestDataSourceOptions } from '../../../datasource/shared/datasources/arcgisrest-datasource.interface';
 import { WebSocketDataSourceOptions } from '../../../datasource/shared/datasources/websocket-datasource.interface';
 
+import { StyleByAttribute } from '../stylebyattribute';
+
 export interface VectorLayerOptions extends LayerOptions {
   source?:
     | FeatureDataSource
@@ -30,6 +32,7 @@ export interface VectorLayerOptions extends LayerOptions {
   exportable?: boolean;
   ol?: olLayerVector;
   animation?: VectorAnimation;
+  styleByAttribute?: StyleByAttribute;
 }
 
 export interface VectorAnimation {
