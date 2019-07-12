@@ -4,7 +4,8 @@ import { SearchResult } from '../search.interfaces';
 import {
   SearchSourceOptions,
   TextSearchOptions,
-  ReverseSearchOptions
+  ReverseSearchOptions,
+  SearchSourceSettings
 } from './source.interfaces';
 
 /**
@@ -82,6 +83,16 @@ export class SearchSource {
   get params(): { [key: string]: string } {
     return this.options.params === undefined ? {} : this.options.params;
   }
+
+  /**
+   * Search settings
+   */
+  get settings(): SearchSourceSettings[] {
+    return this.options.settings === undefined ? [] : this.options.settings;
+  }
+  /*set settings(newSetting){
+    this.options.settings.find = newSetting;
+  }*/
 
   /**
    * Search results display order

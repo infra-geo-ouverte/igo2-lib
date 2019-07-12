@@ -67,7 +67,71 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'ICherche Québec',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode'
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
+      settings: [
+        {
+            type: 'checkbox',
+            title: 'Type de résultat',
+            name: 'type',
+            values: [
+              {
+                title: 'Adresse',
+                value: 'adresse',
+                enabled: true
+              },{
+                title: 'Ancienne adresse',
+                value: 'ancienne_adresse',
+                enabled: true
+              },{
+                title: 'Code Postal',
+                value: 'code_postal',
+                enabled: true
+              },{
+                title: 'Route',
+                value: 'route',
+                enabled: true
+              },{
+                title: 'Municipalité',
+                value: 'municipalite',
+                enabled: true
+              },{
+                title: 'Ancienne municipalité',
+                value: 'ancienne_municipalite',
+                enabled: true
+              },{
+                title: 'mrc',
+                value: 'mrc',
+                enabled: true
+              },{
+                title: 'Région administrative',
+                value: 'region_administrative',
+                enabled: true
+              }
+            ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'Maximum de résultat',
+          name: 'limit',
+          values: [
+            {
+              title: '1',
+              value: 1,
+              enabled: false
+            },
+            {
+              title: '5',
+              value: 5,
+              enabled: true
+            },
+            {
+              title: '10',
+              value: 10,
+              enabled: false
+            }
+          ]
+        }
+      ]
     };
   }
 

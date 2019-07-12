@@ -1,3 +1,5 @@
+import {MatDialog} from '@angular/material';
+
 import {
   Component,
   Input,
@@ -9,6 +11,7 @@ import {
 
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchSourceService } from '../shared/search-source.service';
+import { SearchSource } from '../shared/sources/source';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -41,7 +44,8 @@ export class SearchSelectorComponent implements OnInit {
    */
   @Output() change = new EventEmitter<string>();
 
-  constructor(private searchSourceService: SearchSourceService) {}
+  constructor(private searchSourceService: SearchSourceService,
+              public dialog: MatDialog) {}
 
   /**
    * Enable the first search type if the enabled input is not defined
@@ -82,4 +86,27 @@ export class SearchSelectorComponent implements OnInit {
     this.change.emit(searchType);
   }
 
+  /**
+  * Get all search sources
+  * @internal
+  */
+  getSearchSources(): SearchSource[]{
+    return this.searchSourceService.getSources();
+  }
+
+  /**
+  * Trigger when a setting is checked (checkbox style)
+  * @internal
+  */
+  settingsValueCheckedCheckbox(event, setting, settingValue) {
+    settingValue.enabled = event.checked;
+  }
+
+  /**
+  * Trigger when a setting is checked (radiobutton style)
+  * @internal
+  */
+  settingsValueCheckedRadioButton(event, setting, settingValue) {
+    settingValue.enabled = event.source.checked;
+  }
 }

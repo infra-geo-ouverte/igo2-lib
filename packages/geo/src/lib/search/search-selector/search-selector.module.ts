@@ -6,12 +6,15 @@ import {
   MatIconModule,
   MatButtonModule,
   MatMenuModule,
-  MatRadioModule
+  MatRadioModule,
+  MatTabsModule,
+  MatCheckboxModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
 
 import { SearchSelectorComponent } from './search-selector.component';
+import { SearchConfigModule } from '../search-config/search-config.module';
 
 /**
  * @ignore
@@ -24,6 +27,9 @@ import { SearchSelectorComponent } from './search-selector.component';
     MatButtonModule,
     MatMenuModule,
     MatRadioModule,
+    MatTabsModule,
+    MatCheckboxModule,
+    SearchConfigModule,
     IgoLanguageModule
   ],
   exports: [SearchSelectorComponent],

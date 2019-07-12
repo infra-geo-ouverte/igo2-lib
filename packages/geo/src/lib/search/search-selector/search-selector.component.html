@@ -13,7 +13,6 @@
   <mat-menu
     #searchSelectorMenu="matMenu"
     class="no-border-radius"
-    overlapTrigger="false"
     xPosition="before"
     yPosition="above">
     <mat-radio-group
@@ -24,5 +23,59 @@
         {{getSearchTypeTitle(searchType) | translate}}
       </mat-radio-button>
     </mat-radio-group>
+    <button
+      mat-menu-item
+      [matMenuTriggerFor]="setting">
+      configuration
+    </button>
   </mat-menu>
+
+  <mat-menu
+    #setting="matMenu"
+    class="no-border-radius">
+      <ng-container *ngFor="let source of getSearchSources()">
+        <button *ngIf="source.settings.length > 0"
+          [matMenuTriggerFor]="sub_menu"
+          mat-menu-item>{{source.title}}
+        </button>
+          <mat-menu #sub_menu="matMenu">
+
+            <ng-container *ngFor="let setting of source.settings">
+              <button
+                  mat-menu-item
+                  [matMenuTriggerFor]="test_sub_menu">
+                {{setting.title}}
+              </button>
+              <mat-menu #test_sub_menu="matMenu"
+                [ngSwitch]="setting.type">
+                <span *ngSwitchCase="'radiobutton'">
+                  <mat-radio-group
+                    class="igo-search-selector-radio-group"
+                    [value]="setting">
+                    <mat-radio-button *ngFor="let settingValue of setting.values"
+                      [value]="settingValue"
+                      [checked]="settingValue.enabled"
+                      (change)="settingsValueCheckedRadioButton($event, setting, settingValue)">
+                      {{settingValue.title}}
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </span>
+                <span *ngSwitchCase="'checkbox'">
+                  <mat-checkbox class="igo-search-selector-radio-group"
+                    class="mat-menu-item"
+                    [checked]="settingValue.enabled"
+                    [value]="setting"
+                    (change)="settingsValueCheckedCheckbox($event, setting, settingValue)"
+                    *ngFor="let settingValue of setting.values">{{settingValue.title}}
+                  </mat-checkbox>
+                </span>
+              </mat-menu>
+            </ng-container>
+          </mat-menu>
+      </ng-container>
+  </mat-menu>
+
+
+
+
 </div>
