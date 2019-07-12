@@ -80,6 +80,19 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleLegendItem(collapsed: boolean, item: Legend) {
+    item.collapsed = collapsed;
+  }
+
+  private transfertToggleLegendItem(newLegends: Legend[]): Legend[] {
+    const outLegends: Legend[] = newLegends;
+    const lastLegends = this.layer.legend;
+    for (let i = 0; i < lastLegends.length; i++) {
+      outLegends[i].collapsed = lastLegends[i].collapsed;
+   }
+    return outLegends;
+  }
+
   computeItemTitle(layerLegend): Observable<string> {
     const layerOptions = this.layer.dataSource.options as any;
     if (layerOptions.type !== 'wms') {
@@ -110,8 +123,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    const legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    let legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    if (this.layer.legend && this.layer.legend.length > 1) { legendItems = this.transfertToggleLegendItem(legendItems); }
     this.layer.legend = legendItems;
+
     if (legendItems.length === 0 && this.legendItems$.value.length === 0) {
       return;
     }
@@ -135,6 +150,5 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   onLoadImage() {
     this.imgHeight = (this.renderedLegend.nativeElement as HTMLImageElement).height;
-    // console.log(this.imgHeight);
   }
 }

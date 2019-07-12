@@ -12,6 +12,7 @@ export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
   public legend: Legend[];
+  public legendCollapsed: boolean;
   public map: IgoMap;
   public ol: olLayer;
   public options: LayerOptions;
@@ -99,6 +100,10 @@ export abstract class Layer {
     if (this.options.legendOptions && (this.options.legendOptions.url || this.options.legendOptions.html)) {
       this.legend = this.dataSource.setLegend(this.options.legendOptions);
     }
+
+    this.legendCollapsed = this.options.legendOptions ?
+                            this.options.legendOptions.collapsed ? this.options.legendOptions.collapsed : true :
+                            true;
 
     this.ol.set('_layer', this, true);
   }
