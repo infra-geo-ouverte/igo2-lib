@@ -48,7 +48,7 @@ export class ShareMapService {
       !this.route ||
       !this.route.options.visibleOnLayersKey ||
       !this.route.options.visibleOffLayersKey ||
-      !map.getZoom()
+      !map.viewController.getZoom()
     ) {
       return;
     }
@@ -94,8 +94,8 @@ export class ShareMapService {
     }
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
-    const zoom = 'zoom=' + map.getZoom();
-    const arrayCenter = map.getCenter('EPSG:4326') || [];
+    const zoom = 'zoom=' + map.viewController.getZoom();
+    const arrayCenter = map.viewController.getCenter('EPSG:4326') || [];
     const center = `center=${arrayCenter[0].toFixed(5)},${arrayCenter[1].toFixed(5)}`;
     let context = '';
     if (this.contextService.context$.value  && this.contextService.context$.value.uri !== '_default') {
