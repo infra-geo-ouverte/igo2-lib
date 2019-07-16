@@ -90,9 +90,30 @@ export class SearchSource {
   get settings(): SearchSourceSettings[] {
     return this.options.settings === undefined ? [] : this.options.settings;
   }
-  /*set settings(newSetting){
-    this.options.settings.find = newSetting;
-  }*/
+
+  private setParamFromSetting(setting) {
+      switch (setting.type) {
+        case 'radiobutton':
+          setting.values.forEach( conf => {
+            if (conf.enabled) {
+              this.options.params = Object.assign( (this.options.params || {}),
+                                                    { [setting.name] : conf.value } );
+            }
+          });
+          break;
+        case 'checkbox':
+          let confValue = '';
+          setting.values.forEach( conf => {
+            if (conf.enabled) {
+              confValue += conf.value + ',';
+            }
+          });
+          confValue = confValue.slice(0, -1);
+          this.options.params = Object.assign( (this.options.params || {}),
+                                                { [setting.name] : confValue } );
+          break;
+      }
+  }
 
   /**
    * Search results display order
@@ -103,6 +124,11 @@ export class SearchSource {
 
   constructor(options: SearchSourceOptions) {
     this.options = Object.assign({}, this.getDefaultOptions(), options);
+
+    // Set Default Params from Settings
+    this.settings.forEach( setting => {
+      this.setParamFromSetting(setting);
+    });
   }
 }
 

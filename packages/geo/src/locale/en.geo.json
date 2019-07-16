@@ -142,7 +142,7 @@
           "A4": "A4",
           "A5": "A5",
           "Letter": "Letter",
-          "Legal": "Legal"  
+          "Legal": "Legal"
         },
         "imageFormat": "Image format",
         "orientation" : "Orientation",
@@ -214,7 +214,8 @@
             "url": "URL"
           }
         },
-        "menu.tooltip": "Search Options"
+        "menu.tooltip": "Search Options",
+        "settings": "Settings"
       },
       "geometry": {
         "geometry": "Geometry",

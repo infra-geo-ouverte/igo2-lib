@@ -34,7 +34,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     return {
       title: 'Nominatim (OSM)',
       searchUrl: 'https://nominatim.openstreetmap.org/search',
-      settings:[
+      settings: [
         {
           type: 'radiobutton',
           title: 'Maximum de résultat',
@@ -47,29 +47,46 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
             },
             {
               title: '20',
-              value: 10,
+              value: 20,
               enabled: false
             },
             {
               title: '50',
-              value: 10,
+              value: 50,
               enabled: false
             }
           ]
         },
         {
           type: 'radiobutton',
-          title: 'Extra info',
-          name: 'extratags',
+          title: 'Limitation (Pays)',
+          name: 'countrycode',
+          values: [
+            {
+              title: 'Canada',
+              value: 'CA',
+              enabled: true
+            },
+            {
+              title: 'Le monde',
+              value: null,
+              enabled: false
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'Object multiple',
+          name: 'dedupe',
           values: [
             {
               title: 'Oui',
-              value: 1,
+              value: 0,
               enabled: false
             },
             {
               title: 'Non',
-              value: 0,
+              value: 1,
               enabled: true
             }
           ]

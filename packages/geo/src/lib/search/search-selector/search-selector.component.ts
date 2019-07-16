@@ -87,26 +87,43 @@ export class SearchSelectorComponent implements OnInit {
   }
 
   /**
-  * Get all search sources
-  * @internal
-  */
-  getSearchSources(): SearchSource[]{
+   * Get all search sources
+   * @internal
+   */
+  getSearchSources(): SearchSource[] {
     return this.searchSourceService.getSources();
   }
 
   /**
-  * Trigger when a setting is checked (checkbox style)
-  * @internal
-  */
-  settingsValueCheckedCheckbox(event, setting, settingValue) {
+   * Triggered when a setting is checked (checkbox style)
+   * @internal
+   */
+  settingsValueCheckedCheckbox(event, source, setting, settingValue) {
     settingValue.enabled = event.checked;
+    source.setParamFromSetting(setting);
   }
 
   /**
-  * Trigger when a setting is checked (radiobutton style)
-  * @internal
-  */
-  settingsValueCheckedRadioButton(event, setting, settingValue) {
-    settingValue.enabled = event.source.checked;
+   * Triggered when a setting is checked (radiobutton style)
+   * @internal
+   */
+  settingsValueCheckedRadioButton(event, source, setting, settingValue) {
+    setting.values.forEach( conf => {
+      if (conf.value !== settingValue.value) {
+        conf.enabled = !event.source.checked;
+      } else {
+        conf.enabled = event.source.checked;
+      }
+    });
+    source.setParamFromSetting(setting);
+  }
+
+  /**
+   * Stop propagation click (settings radiobutton and checkbox)
+   * @param event Event
+   * @internal
+   */
+  stopHere(event: Event) {
+    event.stopPropagation();
   }
 }

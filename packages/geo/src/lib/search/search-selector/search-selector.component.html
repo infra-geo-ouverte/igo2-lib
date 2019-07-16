@@ -26,7 +26,7 @@
     <button
       mat-menu-item
       [matMenuTriggerFor]="setting">
-      {{'configuration' | translate}}
+      {{ 'igo.geo.search.settings' | translate}}
     </button>
   </mat-menu>
 
@@ -38,8 +38,10 @@
           [matMenuTriggerFor]="sub_menu"
           mat-menu-item>{{source.title}}
         </button>
-          <mat-menu #sub_menu="matMenu">
-
+          <mat-menu #sub_menu="matMenu"
+            xPosition="before"
+            yPosition="above"
+          >
             <ng-container *ngFor="let setting of source.settings">
               <button
                   mat-menu-item
@@ -47,7 +49,9 @@
                 {{setting.title}}
               </button>
               <mat-menu #test_sub_menu="matMenu"
-                [ngSwitch]="setting.type">
+                [ngSwitch]="setting.type"
+                xPosition="before"
+                yPosition="above">
                 <span *ngSwitchCase="'radiobutton'">
                   <mat-radio-group
                     class="igo-search-selector-radio-group"
@@ -55,7 +59,8 @@
                     <mat-radio-button *ngFor="let settingValue of setting.values"
                       [value]="settingValue"
                       [checked]="settingValue.enabled"
-                      (change)="settingsValueCheckedRadioButton($event, setting, settingValue)">
+                      (click)="stopHere($event)"
+                      (change)="settingsValueCheckedRadioButton($event, source, setting, settingValue)">
                       {{settingValue.title}}
                     </mat-radio-button>
                   </mat-radio-group>
@@ -65,7 +70,8 @@
                     class="mat-menu-item"
                     [checked]="settingValue.enabled"
                     [value]="setting"
-                    (change)="settingsValueCheckedCheckbox($event, setting, settingValue)"
+                    (click)="stopHere($event)"
+                    (change)="settingsValueCheckedCheckbox($event, source, setting, settingValue)"
                     *ngFor="let settingValue of setting.values">{{settingValue.title}}
                   </mat-checkbox>
                 </span>

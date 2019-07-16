@@ -40,5 +40,7 @@ export class SearchSourceService {
     });
   }
 
-
+  setParamFromSetting(source, setting) {
+    source.setParamFromSetting(setting);
+  }
 }

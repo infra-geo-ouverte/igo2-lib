@@ -11,10 +11,10 @@ export interface SearchSourceOptions {
 }
 
 export interface SearchSourceSettings {
-  type: 'radiobutton'|'checkbox',
-  values: SettingOptions[],
-  title: String,
-  name: String;
+  type: 'radiobutton'|'checkbox';
+  values: SettingOptions[];
+  title: string;
+  name: string;
 }
 
 export interface SettingOptions {
