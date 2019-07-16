@@ -12,7 +12,7 @@ export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
   public legend: Legend[];
-  public legendCollapsed: boolean;
+  public legendCollapsed: boolean = true;
   public map: IgoMap;
   public ol: olLayer;
   public options: LayerOptions;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef, QueryList } from '@angular/core';
 
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
@@ -37,8 +37,15 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   private scale: number = undefined;
 
-  @ViewChild('renderedLegend') renderedLegend: ElementRef;
-  public imgHeight: number;
+  /**
+   * Get list of images display
+   */
+  @ViewChildren('renderedLegend') renderedLegends: QueryList<ElementRef>;
+
+  /**
+   * List of size of images displayed
+   */
+  public imagesHeight: { [srcKey: string]: number } = {};
 
   /**
    * Layer
@@ -148,7 +155,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     this.layer.dataSource.ol.updateParams({STYLES: this.currentStyle});
   }
 
-  onLoadImage() {
-    this.imgHeight = (this.renderedLegend.nativeElement as HTMLImageElement).height;
+  onLoadImage(id: string) {
+    let elemRef: HTMLImageElement;
+    if (this.renderedLegends.length === 1) {
+      elemRef = this.renderedLegends.first.nativeElement as HTMLImageElement;
+    } else {
+      elemRef = this.renderedLegends.find(renderedLegend => renderedLegend.nativeElement.id === id).nativeElement as HTMLImageElement;
+    }
+    this.imagesHeight[id] = elemRef.height;
   }
 }

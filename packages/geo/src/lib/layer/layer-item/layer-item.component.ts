@@ -20,7 +20,7 @@ import { Layer, TooltipType } from '../shared/layers';
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
 
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -50,7 +50,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
-    if (this.layer.visible && this.expandLegendIfVisible) {
+    // Apply expandLegendIfVisible only when first load, at this moment legengCollapsed = showLegend to true.
+    if (this.layer.visible && this.expandLegendIfVisible && (this.layer.legendCollapsed === this.showLegend$.value)) {
       this.layer.legendCollapsed = false;
     }
     this.toggleLegend(this.layer.legendCollapsed);
