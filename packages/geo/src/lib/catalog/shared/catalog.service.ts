@@ -140,6 +140,8 @@ export class CatalogService {
   private includeRecursiveItems(catalog: Catalog, layerList: any, items: CatalogItem[]) {
     // Dig all levels until last level (layer object are not defined on last level)
     const regexes = (catalog.regFilters || []).map((pattern: string) => new RegExp(pattern));
+    const catalogQueryParams = catalog.queryParams || {};
+    const catalogSourceOptions = catalog.sourceOptions || {};
 
     for (const group of layerList.Layer) {
       if (group.Layer !== undefined) {
@@ -168,19 +170,25 @@ export class CatalogService {
           const timeFilter = this.capabilitiesService.getTimeFilter(layer);
           const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
 
-          const sourceOptions = {
+          const params = Object.assign({}, catalogQueryParams, {
+            layers: layer.Name,
+            feature_count:  catalog.count
+          });
+          const baseSourceOptions = {
             type: 'wms',
             url: catalog.url,
-            params: {
-              layers: layer.Name,
-              feature_count:  catalog.count
-            },
             timeFilter: { ...timeFilter, ...catalog.timeFilter },
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
             queryFormat: configuredQueryFormat,
             queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
-          } as WMSDataSourceOptions;
+          };
+          const sourceOptions = Object.assign(
+            {},
+            baseSourceOptions,
+            catalogSourceOptions,
+            {params}
+          ) as WMSDataSourceOptions;
 
           layers.push({
             id: generateIdFromSourceOptions(sourceOptions),
@@ -220,24 +228,31 @@ export class CatalogService {
   private getWMTSItems(catalog: Catalog, capabilities: {[key: string]: any}): CatalogItemLayer[] {
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map((pattern: string) => new RegExp(pattern));
+    const catalogQueryParams = catalog.queryParams || {};
+    const catalogSourceOptions = catalog.sourceOptions || {};
 
     return layers.map((layer: any) => {
       if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
         return undefined;
       }
-
-      const sourceOptions = {
+      const params = Object.assign({}, catalogQueryParams, {
+        version: '1.0.0'
+      });
+      const baseSourceOptions = {
         type: 'wmts',
         url: catalog.url,
         layer: layer.Identifier,
         matrixSet: catalog.matrixSet,
         optionsFromCapabilities: true,
         requestEncoding: catalog.requestEncoding || 'KVP',
-        style: 'default',
-        params: {
-          version: '1.0.0'
-        }
+        style: 'default'
       } as WMTSDataSourceOptions;
+      const sourceOptions = Object.assign(
+        {},
+        baseSourceOptions,
+        catalogSourceOptions,
+        {params}
+      ) as WMTSDataSourceOptions;
 
       return {
         id: generateIdFromSourceOptions(sourceOptions),

@@ -19,6 +19,8 @@ export interface Catalog {
   timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
   queryHtmlTarget?: QueryHtmlTarget;
+  queryParams?: { [key: string]: string };
+  sourceOptions?: { [key: string]: any };
   count?: number;
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
