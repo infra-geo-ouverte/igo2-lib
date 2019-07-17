@@ -1,11 +1,12 @@
 <mat-list-item>
   <mat-icon
     mat-list-avatar
+    svgIcon="chevron-up"
     igoCollapse
     class="igo-chevron"
     [target]="items"
-    [collapsed]="true"
-    svgIcon="chevron-up">
+    [collapsed]="collapsed"
+    (toggle)="onToggleCollapsed($event)">
   </mat-icon>
 
   <h4 matLine>{{title}}</h4>
@@ -17,6 +18,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.catalog.group.removeFromMap' | translate"
       color="warn"
+      [disabled]="disabled$ | async"
       (click)="onToggleClick()">
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
@@ -28,6 +30,7 @@
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.catalog.group.addToMap' | translate"
+      [disabled]="disabled$ | async"
       (click)="onToggleClick()">
       <mat-icon svgIcon="plus"></mat-icon>
     </button>
