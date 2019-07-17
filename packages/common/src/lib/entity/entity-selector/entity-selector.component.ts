@@ -31,6 +31,14 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   selected$ = new BehaviorSubject<object>(undefined);
 
   /**
+   * The current multi select option text
+   * @internal
+   */
+  multiText$ = new BehaviorSubject<string>(undefined);
+
+  readonly multiSelectValue = {id: 'IGO_MULTI_SELECT'};
+
+  /**
    * Subscription to the selected entity
    */
   private selected$$: Subscription;
@@ -46,11 +54,6 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   @Input() store: EntityStore<object>;
 
   /**
-   * Wheter selecting many entities is allowed
-   */
-  @Input() many: boolean = false;
-
-  /**
    * Title accessor
    */
   @Input() titleAccessor: (object) => string = getEntityTitle;
@@ -59,6 +62,21 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * Text to display when nothing is selected
    */
   @Input() emptyText: string = undefined;
+
+  /**
+   * Wheter selecting many entities is allowed
+   */
+  @Input() multi: boolean = false;
+
+  /**
+   * Text to display for the select all option
+   */
+  @Input() multiAllText: string = 'All';
+
+  /**
+   * Text to display for the select none option
+   */
+  @Input() multiNoneText: string = 'None';
 
   /**
    * Field placeholder
@@ -81,16 +99,12 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+
     this.selected$$ = this.store.stateView
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
         const entities = records.map((record: EntityRecord<object>) => record.entity);
-        if (this.many === true) {
-          this.selected$.next(entities);
-        } else {
-          const entity = entities.length > 0 ? entities[0] : undefined;
-          this.selected$.next(entity);
-        }
+        this.onSelectFromStore(entities);
       });
   }
 
@@ -108,14 +122,45 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * @internal
    */
   onSelectionChange(event: {value: object | undefined}) {
-    const entities = event.value instanceof Array ? event.value : [event.value];
+    const values = event.value instanceof Array ? event.value : [event.value];
+
+    const multiSelect = values.find((_value: object) => _value === this.multiSelectValue);
+    let entities = values.filter((_value: object) => _value !== this.multiSelectValue);
+    if (multiSelect !== undefined) {
+      if (entities.length === this.store.count) {
+        entities = [];
+      } else if (entities.length < this.store.count) {
+        entities = this.store.all();
+      }
+    }
+
     if (entities.length === 0) {
       this.store.state.updateAll({selected: false});
     } else {
       this.store.state.updateMany(entities, {selected: true}, true);
     }
 
-    this.selectedChange.emit({selected: true, value: event.value});
+    const value = this.multi ? entities : event.value;
+    this.selectedChange.emit({selected: true, value});
+  }
+
+  private onSelectFromStore(entities: object[]) {
+    if (this.multi === true) {
+      this.selected$.next(entities);
+    } else {
+      const entity = entities.length > 0 ? entities[0] : undefined;
+      this.selected$.next(entity);
+    }
+
+    this.updateMultiToggleWithEntities(entities);
+  }
+
+  private updateMultiToggleWithEntities(entities: object[]) {
+    if (entities.length === this.store.count && this.multiText$.value !== this.multiNoneText) {
+      this.multiText$.next(this.multiNoneText);
+    } else if (entities.length < this.store.count && this.multiText$.value !== this.multiAllText) {
+      this.multiText$.next(this.multiAllText);
+    }
   }
 
 }
