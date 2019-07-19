@@ -26,7 +26,7 @@
     <button
       mat-menu-item
       [matMenuTriggerFor]="setting">
-      {{ 'igo.geo.search.settings' | translate}}
+      <mat-icon svgIcon="settings"></mat-icon>{{ 'igo.geo.search.settings' | translate}}
     </button>
   </mat-menu>
 
@@ -46,7 +46,7 @@
               <button
                   mat-menu-item
                   [matMenuTriggerFor]="test_sub_menu">
-                {{setting.title}}
+                {{'igo.geo.search.searchSources.settings.'+ setting.title | translate}}
               </button>
               <mat-menu #test_sub_menu="matMenu"
                 [ngSwitch]="setting.type"

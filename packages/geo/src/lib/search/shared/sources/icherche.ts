@@ -71,7 +71,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       settings: [
         {
             type: 'checkbox',
-            title: 'Type de résultat',
+            title: 'results type',
             name: 'type',
             values: [
               {
@@ -118,7 +118,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'Maximum de résultat',
+          title: 'results limit',
           name: 'limit',
           values: [
             {
@@ -140,7 +140,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'Niveau de confiance',
+          title: 'trust level',
           name: 'ecmax',
           values: [
             {
@@ -272,7 +272,7 @@ export class IChercheReverseSearchSource extends SearchSource
       settings: [
         {
             type: 'checkbox',
-            title: 'Type de résultat',
+            title: 'results type',
             name: 'type',
             values: [
               {

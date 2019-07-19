@@ -37,7 +37,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
       settings: [
         {
           type: 'radiobutton',
-          title: 'Maximum de résultat',
+          title: 'results limit',
           name: 'limit',
           values: [
             {
@@ -59,7 +59,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'Limitation (Pays)',
+          title: 'country limitation',
           name: 'countrycode',
           values: [
             {
@@ -76,7 +76,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'Object multiple',
+          title: 'multiple object',
           name: 'dedupe',
           values: [
             {

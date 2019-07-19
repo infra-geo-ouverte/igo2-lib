@@ -216,7 +216,16 @@
           }
         },
         "menu.tooltip": "Options de recherche",
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "searchSources": {
+          "settings": {
+            "results type": "Type de résultat",
+            "trust level": "Niveau de confiance",
+            "results limit": "Limite",
+            "multiple object": "Objet multiple",
+            "country limitation": "Limitation (pays)"
+          }
+        }
       },
       "geometry": {
         "geometry": "Geometrie",
