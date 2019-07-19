@@ -91,7 +91,7 @@ export class SearchSource {
     return this.options.settings === undefined ? [] : this.options.settings;
   }
 
-  private setParamFromSetting(setting) {
+  setParamFromSetting(setting) {
       switch (setting.type) {
         case 'radiobutton':
           setting.values.forEach( conf => {

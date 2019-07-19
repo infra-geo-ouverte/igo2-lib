@@ -14,7 +14,6 @@ import {
 import { IgoLanguageModule } from '@igo2/core';
 
 import { SearchSelectorComponent } from './search-selector.component';
-import { SearchConfigModule } from '../search-config/search-config.module';
 
 /**
  * @ignore
@@ -29,7 +28,6 @@ import { SearchConfigModule } from '../search-config/search-config.module';
     MatRadioModule,
     MatTabsModule,
     MatCheckboxModule,
-    SearchConfigModule,
     IgoLanguageModule
   ],
   exports: [SearchSelectorComponent],
