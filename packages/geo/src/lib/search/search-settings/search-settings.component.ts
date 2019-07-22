@@ -9,7 +9,6 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchSourceService } from '../shared/search-source.service';
 import { SearchSource } from '../shared/sources/source';
 import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.interfaces';
@@ -23,22 +22,12 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
  * more than one search source enabled.
  */
 @Component({
-  selector: 'igo-search-selector',
-  templateUrl: './search-selector.component.html',
-  styleUrls: ['./search-selector.component.scss'],
+  selector: 'igo-search-settings',
+  templateUrl: './search-settings.component.html',
+  styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchSelectorComponent implements OnInit {
-
-  /**
-   * List of available search types
-   */
-  @Input() searchTypes: string[] = SEARCH_TYPES;
-
-  /**
-   * The search type enabled
-   */
-  @Input() enabled: string;
+export class SearchSettingsComponent implements OnInit {
 
   /**
    * Event emitted when the enabled search type changes
@@ -52,38 +41,6 @@ export class SearchSelectorComponent implements OnInit {
    * @internal
    */
   ngOnInit() {
-    const initial = this.enabled || this.searchTypes[0];
-    this.enableSearchType(initial);
-  }
-
-  /**
-   * Enable the selected search type
-   * @param searchType Search type
-   * @internal
-   */
-  onSearchTypeChange(searchType: string) {
-    this.enableSearchType(searchType);
-  }
-
-  /**
-   * Get a search type's title. The title
-   * for all availables search typers needs to be defined in the locale
-   * files or an error will be thrown.
-   * @param searchType Search type
-   * @internal
-   */
-  getSearchTypeTitle(searchType: string) {
-    return `search.${searchType.toLowerCase()}.title`;
-  }
-
-  /**
-   * Emit an event and enable the search sources of the given type.
-   * @param searchType Search type
-   */
-  private enableSearchType(searchType: string) {
-    this.enabled = searchType;
-    this.searchSourceService.enableSourcesByType(searchType);
-    this.change.emit(searchType);
   }
 
   /**
@@ -127,5 +84,5 @@ export class SearchSelectorComponent implements OnInit {
     });
     source.setParamFromSetting(setting);
   }
-  
+
 }

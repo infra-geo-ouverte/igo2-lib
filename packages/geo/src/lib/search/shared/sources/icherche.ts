@@ -135,6 +135,16 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               title: '10',
               value: 10,
               enabled: false
+            },
+            {
+              title: '25',
+              value: 25,
+              enabled: false
+            },
+            {
+              title: '50',
+              value: 50,
+              enabled: false
             }
           ]
         },

@@ -215,7 +215,9 @@
           }
         },
         "menu.tooltip": "Search Options",
-        "settings": "Settings",
+        "settings": {
+          "title": "Settings"
+        },
         "searchSources": {
           "settings": {
             "results type": "Results type",

@@ -216,7 +216,9 @@
           }
         },
         "menu.tooltip": "Options de recherche",
-        "settings": "Paramètres",
+        "settings": {
+          "title": "Paramètres"
+        },
         "searchSources": {
           "settings": {
             "results type": "Type de résultat",
