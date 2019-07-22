@@ -127,5 +127,5 @@ export class SearchSelectorComponent implements OnInit {
     });
     source.setParamFromSetting(setting);
   }
-  
+
 }
