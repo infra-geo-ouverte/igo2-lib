@@ -218,21 +218,23 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   private computeTerm(term: string): string {
     term = this.computeTermTags(term);
     return term;
-  };
+  }
 
   /**
    * Add hashtag from query in Nominatim's format (+[])
    * @param term Query with hashtag
-  */
+   */
   private computeTermTags(term: string): string {
     const tags = term.match(/(#[^\s]+)/g);
 
     let addTagsFromSettings = true;
     if ( tags ) {
       tags.forEach( value => {
-        term = term.replace(value,'');
-        term += '+[' + value.substring(1) + ']';
-        addTagsFromSettings = false;
+        term = term.replace(value, '');
+        if ( super.hashtagValid(super.getSettingsValues('amenity'), value) ) {
+          term += '+[' + value.substring(1) + ']';
+          addTagsFromSettings = false;
+        }
       });
       addTagsFromSettings = false;
     }
@@ -241,12 +243,12 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
       term = this.computeTermSettings(term);
     }
     return term;
-  };
+  }
 
   /**
    * Add hashtag from settings in Nominatim's format (+[])
    * @param term Query
-  */
+   */
   private computeTermSettings(term: string): string {
     this.options.settings.forEach( settings => {
       if (settings.name === 'amenity') {
@@ -254,15 +256,12 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
           if (conf.enabled && typeof conf.value === 'string') {
             const splitted = conf.value.split(',');
             splitted.forEach( value => {
-              term += '+['+value+']';
-            })
+              term += '+[' + value + ']';
+            });
           }
         });
       }
     });
     return term;
   }
-
-  private
-
 }

@@ -261,7 +261,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     if ( tags ) {
       tags.forEach( value => {
-        term = term.replace(value,'');
+        term = term.replace(value, '');
       });
     }
     return term;
@@ -274,16 +274,19 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    */
   private computeOptionsParam(term: string, options: TextSearchOptions): TextSearchOptions {
     const tags = term.match(/(#[^\s]+)/g);
-
     if ( tags ) {
       let typeValue = '';
+      let hashtagToAdd = false;
       tags.forEach( value => {
-        if (super.hashtagValid(value)) {
-          typeValue += value.substring(1)+',';
+        if (super.hashtagValid(super.getSettingsValues('type'), value, true)) {
+          typeValue += value.substring(1) + ',';
+          hashtagToAdd = true;
         }
       });
-      options.params = Object.assign( (options.params || {}),
-                                            { type : typeValue.slice(0,-1) } );
+      if (hashtagToAdd) {
+        options.params = Object.assign( (options.params || {}),
+                                              { type : typeValue.slice(0, -1) } );
+      }
     }
     return options;
   }

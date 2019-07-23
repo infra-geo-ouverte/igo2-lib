@@ -134,22 +134,31 @@ export class SearchSource {
     });
   }
 
-
   /**
    * Check if hashtag is valid
    * @param hashtag hashtag from query
+   * @param completeMatch boolean
    */
-  hashtagValid(hashtag: string): boolean {
+  hashtagValid(searchSourceSetting: SearchSourceSettings, hashtag: string, completeMatch = false): boolean {
     let hashtagIsValid = false;
-    this.getDefaultOptions().settings.forEach( setting => {
-        setting.values.forEach( setting => {
-          if ( setting.value === hashtag.substring(1)) {
-            hashtagIsValid = true;
-          }
-        });
+    searchSourceSetting.values.forEach( conf => {
+      const re = new RegExp('' + hashtag.substring(1) + '', 'g');
+      if ( typeof conf.value === 'string') {
+        if ( (completeMatch && conf.value === hashtag.substring(1)) ||
+              ( !completeMatch && conf.value.match(re)) ) {
+          hashtagIsValid = true;
+        }
+      }
     });
     return hashtagIsValid;
   }
+
+  getSettingsValues(search: string): SearchSourceSettings {
+    return this.getDefaultOptions().settings.find( (value: SearchSourceSettings) => {
+      return value.name === search;
+    });
+  }
+
 }
 
 /**
