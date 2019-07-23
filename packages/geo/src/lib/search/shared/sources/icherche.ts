@@ -257,14 +257,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    */
   private computeTerm(term: string): string {
-    const tags = term.match(/(#[^\s]*)/g);
-
-    if ( tags ) {
-      tags.forEach( value => {
-        term = term.replace(value, '');
-      });
-    }
-    return term;
+    return term.replace(/(#[^\s]*)/g, '');
   }
 
   /**
