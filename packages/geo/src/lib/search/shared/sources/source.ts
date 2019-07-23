@@ -91,7 +91,10 @@ export class SearchSource {
     return this.options.settings === undefined ? [] : this.options.settings;
   }
 
-  setParamFromSetting(setting) {
+  /**
+   * Set params from selected settings
+   */
+  setParamFromSetting(setting: SearchSourceSettings) {
       switch (setting.type) {
         case 'radiobutton':
           setting.values.forEach( conf => {
@@ -129,6 +132,23 @@ export class SearchSource {
     this.settings.forEach( setting => {
       this.setParamFromSetting(setting);
     });
+  }
+
+
+  /**
+   * Check if hashtag is valid
+   * @param hashtag hashtag from query
+   */
+  hashtagValid(hashtag: string): boolean {
+    let hashtagIsValid = false;
+    this.getDefaultOptions().settings.forEach( setting => {
+        setting.values.forEach( setting => {
+          if ( setting.value === hashtag.substring(1)) {
+            hashtagIsValid = true;
+          }
+        });
+    });
+    return hashtagIsValid;
   }
 }
 

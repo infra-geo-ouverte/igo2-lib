@@ -203,11 +203,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return new HttpParams({
       fromObject: Object.assign(
         {
-          q: term,
+          q: this.computeTerm(term),
           geometries: 'geom'
         },
         this.params,
-        options.params || {}
+        this.computeOptionsParam(term, options || {}).params
       )
     });
   }
@@ -250,6 +250,42 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       IChercheSearchSource.propertiesBlacklist
     );
     return Object.assign(properties, { type: data.doc_type });
+  }
+
+  /**
+   * Remove hashtag from query
+   * @param term Query with hashtag
+   */
+  private computeTerm(term: string): string {
+    const tags = term.match(/(#[^\s]*)/g);
+
+    if ( tags ) {
+      tags.forEach( value => {
+        term = term.replace(value,'');
+      });
+    }
+    return term;
+  }
+
+  /**
+   * Add hashtag to param if valid
+   * @param term Query with hashtag
+   * @param options TextSearchOptions
+   */
+  private computeOptionsParam(term: string, options: TextSearchOptions): TextSearchOptions {
+    const tags = term.match(/(#[^\s]+)/g);
+
+    if ( tags ) {
+      let typeValue = '';
+      tags.forEach( value => {
+        if (super.hashtagValid(value)) {
+          typeValue += value.substring(1)+',';
+        }
+      });
+      options.params = Object.assign( (options.params || {}),
+                                            { type : typeValue.slice(0,-1) } );
+    }
+    return options;
   }
 }
 
