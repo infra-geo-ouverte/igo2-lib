@@ -216,7 +216,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     this.term = term;
-    if (term.length >= this.minLength || term.length === 0) {
+    if (term.replace(/(#[^\s]*)/g, '').trim().length >= this.minLength) {
+            console.log(term.replace(/(#[^\s]*)/g, '').trim().length);
       this.stream$.next(term);
     }
   }
