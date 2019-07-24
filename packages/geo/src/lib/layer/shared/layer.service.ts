@@ -15,7 +15,8 @@ import {
   CartoDataSource,
   ArcGISRestDataSource,
   TileArcGISRestDataSource,
-  WebSocketDataSource
+  WebSocketDataSource,
+  MVTDataSource
 } from '../../datasource';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
@@ -28,7 +29,9 @@ import {
   TileLayerOptions,
   VectorLayer,
   VectorLayerOptions,
-  AnyLayerOptions
+  AnyLayerOptions,
+  VectorTileLayer,
+  VectorTileLayerOptions
 } from './layers';
 
 import { StyleService } from './style.service';
@@ -82,6 +85,9 @@ export class LayerService {
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
+      case MVTDataSource:
+        layer = this.createVectorTileLayer(layerOptions as VectorTileLayerOptions);
+        break;
       default:
         break;
     }
@@ -125,6 +131,13 @@ export class LayerService {
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
+
+    } else if (layerOptions.styleByAttribute) {
+      const serviceStyle = this.styleService;
+      layerOptions.style = (feature) => {
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
+      };
+      return new VectorLayer(layerOptions);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -132,5 +145,25 @@ export class LayerService {
     });
 
     return new VectorLayer(layerOptionsOl);
+  }
+
+  private createVectorTileLayer(layerOptions: VectorTileLayerOptions): VectorTileLayer {
+    let style;
+    if (layerOptions.style !== undefined) {
+      style = this.styleService.createStyle(layerOptions.style);
+    }
+
+    if (layerOptions.styleByAttribute) {
+      const serviceStyle = this.styleService;
+      layerOptions.style = (feature) => {
+        return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
+      };
+      return new VectorTileLayer(layerOptions);
+    }
+
+    const layerOptionsOl = Object.assign({}, layerOptions, {
+      style
+    });
+    return new VectorTileLayer(layerOptionsOl);
   }
 }
