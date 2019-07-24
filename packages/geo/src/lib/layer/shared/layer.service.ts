@@ -131,9 +131,8 @@ export class LayerService {
     if (layerOptions.source instanceof ArcGISRestDataSource) {
       const source = layerOptions.source as ArcGISRestDataSource;
       style = source.options.params.style;
-    }
 
-    if (layerOptions.styleByAttribute) {
+    } else if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
       layerOptions.style = (feature) => {
         return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
