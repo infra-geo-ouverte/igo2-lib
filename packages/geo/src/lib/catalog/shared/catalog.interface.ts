@@ -24,6 +24,7 @@ export interface Catalog {
   count?: number;
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
+  setCrossOriginAnonymous?: boolean;
 }
 
 export interface CatalogItem {
