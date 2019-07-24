@@ -22,7 +22,6 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
 
   let lonLat: [number, number];
   let coordStr: string;
-  let fullCoord: string;
   let negativeLon: string;
   let degreesLon: string;
   let minutesLon: string;
@@ -84,23 +83,22 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   }
 
   if (lonLatRegex.test(coordStr)) {
-    let temp1: string;
-    let temp2: string;
-    [fullCoord,
+
+    [,
      negativeLon,
      lon,
-     temp1,
+     ,
      decimalLon,
      negativeLat,
      lat,
-     temp2,
+     ,
      decimalLat] = coordStr.match(lonLatPattern);
 
     lon = parseFloat((negativeLon ? negativeLon : '') + lon + '.' + decimalLon);
     lat = parseFloat((negativeLat ? negativeLat : '') + lat + '.' + decimalLat);
 
   } else if (dmsRegex.test(coordStr)) {
-      [fullCoord,
+      [,
        degreesLon,
        minutesLon,
        secondsLon,
@@ -110,17 +108,17 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
        secondsLat,
        directionLat] = coordStr.match(dmsCoordPattern);
 
-      lon = ConvertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
-      lat = ConvertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+      lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+      lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
 
   } else if (utmMtmRegex.test(coordStr)) {
-      [fullCoord, pattern, timeZone, lon, lat] = coordStr.match(patternUtmMtm);
+      [, pattern, timeZone, lon, lat] = coordStr.match(patternUtmMtm);
       const utm = '+proj=' + pattern + ' +zone=' + timeZone;
       const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
       [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
 
   } else if (dmdRegex.test(coordStr)) {
-    [fullCoord,
+    [,
       negativeLon,
       degreesLon,
       minutesLon,
@@ -132,11 +130,11 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
       secondsLat,
       decimalLat] = coordStr.match(patternDmd);
 
-    lon = ConvertDMSToDD(parseFloat((negativeLon ? negativeLon : '') + degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
-    lat = ConvertDMSToDD(parseFloat((negativeLat ? negativeLat : '') + degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+    lon = convertDMSToDD(parseFloat((negativeLon ? negativeLon : '') + degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+    lat = convertDMSToDD(parseFloat((negativeLat ? negativeLat : '') + degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
 
   } else if (ddRegex.test(coordStr)) {
-      [fullCoord,
+      [,
         negativeLon,
         degreesLon,
         decimalLon,
@@ -144,25 +142,22 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
         degreesLat,
         decimalLat] = coordStr.match(patternDd);
 
-      lon = ConvertDMSToDD(parseFloat((negativeLon ? negativeLon : '') + degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
-      lat = ConvertDMSToDD(parseFloat((negativeLat ? negativeLat : '') + degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+      lon = convertDMSToDD(parseFloat((negativeLon ? negativeLon : '') + degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+      lat = convertDMSToDD(parseFloat((negativeLat ? negativeLat : '') + degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
 
   } else if (bellRegex.test(coordStr)) {
-    let temp1: string;
-    let temp2: string;
-
-    [fullCoord,
+    [,
       negativeLat,
       degreesLat,
       minutesLat,
       secondsLat,
-      temp2,
+      ,
       directionLat,
       negativeLon,
       degreesLon,
       minutesLon,
       secondsLon,
-      temp1,
+      ,
       directionLon,
       radius,
       conf] = coordStr.match(patternBELL);
@@ -176,17 +171,17 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
     if (minutesLon && minutesLon.length > 2) {
       lon = parseFloat((negativeLon ? negativeLon : '') + degreesLon + '.' + minutesLon);
     } else {
-      lon = ConvertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+      lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
     }
 
     if (minutesLat && minutesLat.length > 2) {
       lat = parseFloat((negativeLat ? negativeLat : '') + degreesLat + '.' + minutesLat);
     } else {
-      lat = ConvertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+      lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
     }
 
   } else if (mmRegex.test(coordStr)) {
-      [fullCoord, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern);
+      [, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern);
 
       if (decimalLon) {
         lon = parseFloat(lon + '.' + decimalLon);
@@ -239,7 +234,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
  * @param seconds Seconds
  * @param direction Direction
  */
-function ConvertDMSToDD(degrees: number, minutes: number, seconds: number, direction: string) {
+function convertDMSToDD(degrees: number, minutes: number, seconds: number, direction: string) {
   minutes = minutes || 0;
   seconds = seconds || 0;
   let dd = degrees + (minutes / 60) + (seconds / 3600);
