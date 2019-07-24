@@ -3,7 +3,9 @@
   [map]="map"
   [geometryType]="geometryType$ | async"
   [drawGuide]="drawGuide$ | async"
-  [measure]="measure">
+  [measure]="measure"
+  [symbolColor]="symbolColor"
+  [pointIcon]="pointIcon">
 </igo-geometry-form-field-input>
 
 <div *ngIf="geometryTypeField" class="geometry-type-toggle">

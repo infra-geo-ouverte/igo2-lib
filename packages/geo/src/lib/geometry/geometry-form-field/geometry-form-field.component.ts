@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import OlGeometryType from 'ol/geom/GeometryType';
+import { Style as OlStyle } from 'ol/style';
 
 import { FormFieldComponent } from '@igo2/common';
 
@@ -69,7 +70,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * The drawGuide around the mouse pointer to help drawing
    */
-  @Input() drawGuide: number = 0;
+  @Input() drawGuide: number = null;
 
   /**
    * Draw guide placeholder
@@ -80,6 +81,16 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    * Whether a measure tooltip should be displayed
    */
   @Input() measure: boolean = false;
+
+  /**
+   * Color (R, G, B) for features drawn on the map
+   */
+  @Input() symbolColor: [number, number, number];
+
+  /**
+   * Icon for point geometries drawn on the map
+   */
+  @Input() pointIcon: OlStyle.Icon;
 
   /**
    * The geometry type model
@@ -126,5 +137,4 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   onDrawGuideChange(value: number) {
     this.drawGuide$.next(value);
   }
-
 }

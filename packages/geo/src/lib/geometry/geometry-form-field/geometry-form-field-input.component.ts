@@ -12,7 +12,7 @@ import { NgControl, ControlValueAccessor } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
 
-import { Style as OlStyle } from 'ol/style';
+import * as OlStyle from 'ol/style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlGeometry from 'ol/geom/Geometry';
 import OlGeometryType from 'ol/geom/GeometryType';
@@ -24,7 +24,6 @@ import OlOverlay from 'ol/Overlay';
 import { IgoMap } from '../../map';
 import {
   MeasureLengthUnit,
-  clearOlGeometryMidpoints,
   updateOlGeometryMidpoints,
   formatMeasure,
   measureOlGeometry
@@ -52,11 +51,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
 
   private drawControl: DrawControl;
   private modifyControl: ModifyControl;
-  private drawInteractionStyle: OlStyle;
   private defaultDrawStyleRadius: number;
   private olGeometryEnds$$: Subscription;
   private olGeometryChanges$$: Subscription;
-
+  private drawInteractionStyle: OlStyle;
   private olTooltip = OlOverlay;
 
   /**
@@ -89,12 +87,28 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   /**
    * The drawGuide around the mouse pointer to help drawing
    */
-  @Input() drawGuide = 0;
+  @Input() drawGuide: number = null;
 
   /**
    * Whether a measure tooltip should be displayed
    */
   @Input() measure: boolean = false;
+
+  /**
+   * Color (R, G, B) for features drawn on the map
+   */
+  @Input()
+  set symbolColor(value: [number, number, number]) {
+    this._symbolColor = value;
+    this.updateDrawStyleWithColor(value);
+  }
+  get symbolColor(): [number, number, number] { return this._symbolColor; }
+  private _symbolColor: [number, number, number];
+
+  /**
+   * Icon for point geometries drawn on the map
+   */
+  @Input() pointIcon: OlStyle.Icon;
 
   /**
    * The geometry value (GeoJSON)
@@ -148,7 +162,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   ngOnInit() {
     this.addOlOverlayLayer();
     this.createMeasureTooltip();
-    this.drawInteractionStyle = createDrawInteractionStyle();
+    this.drawInteractionStyle = createDrawInteractionStyle(this.symbolColor);
     this.defaultDrawStyleRadius = this.drawInteractionStyle.getImage().getRadius();
     this.createDrawControl();
     this.createModifyControl();
@@ -200,7 +214,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private addOlOverlayLayer(): OlVectorLayer {
     this.olOverlayLayer = new OlVectorLayer({
       source: new OlVectorSource(),
-      zIndex: 500
+      zIndex: 500,
+      style: null
     });
     this.map.ol.addLayer(this.olOverlayLayer);
   }
@@ -209,15 +224,22 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Create a draw control and subscribe to it's geometry
    */
   private createDrawControl() {
-    this.drawControl = new DrawControl({
-      geometryType: this.geometryType,
-      layer: this.olOverlayLayer,
-      drawStyle: (olFeature: OlFeature, resolution: number) => {
-        const style = this.drawInteractionStyle;
-        this.updateDrawStyleWithDrawGuide(style, resolution);
-        return style;
-      }
-    });
+    if (this.geometryType) {
+      this.drawControl = new DrawControl({
+        geometryType: this.geometryType,
+        layer: this.olOverlayLayer,
+        drawStyle: (olFeature: OlFeature, resolution: number) => {
+          const style = this.drawInteractionStyle;
+          if (this.pointIcon && this.geometryType === 'Point' && !this.drawGuide) {
+            this.drawInteractionStyle.setImage(this.pointIcon);
+          } else {
+            this.drawInteractionStyle.setImage(createDrawInteractionStyle(this.symbolColor).getImage());
+          }
+          this.updateDrawStyleWithDrawGuide(style, resolution);
+          return style;
+        }
+      });
+    }
   }
 
   /**
@@ -239,7 +261,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   private toggleControl() {
     this.deactivateControl();
-    if (!this.value) {
+    if (!this.value && this.geometryType) {
       this.activateControl(this.drawControl);
     } else {
       this.activateControl(this.modifyControl);
@@ -323,6 +345,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       featureProjection: this.map.projection
     });
     const olFeature = new OlFeature({geometry: olGeometry});
+    olFeature.setStyle(createDrawInteractionStyle(this.symbolColor));
+    if (this.pointIcon && olFeature.getGeometry().getType() === 'Point') {
+      olFeature.getStyle().setImage(this.pointIcon);
+    }
     this.olOverlaySource.clear();
     this.olOverlaySource.addFeature(olFeature);
   }
@@ -384,14 +410,29 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   }
 
   private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
-    const drawGuide = this.drawGuide;
-    let radius;
-    if (drawGuide === undefined || drawGuide < 0) {
-      radius = this.defaultDrawStyleRadius;
-    } else {
-      radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
+    if (olStyle.getImage().setRadius) {
+      const drawGuide = this.drawGuide;
+      let radius;
+      if (drawGuide === null || drawGuide < 0) {
+        radius = this.defaultDrawStyleRadius;
+      } else {
+        radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
+      }
+      olStyle.getImage().setRadius(radius);
     }
-    olStyle.getImage().setRadius(radius);
   }
 
+  /**
+   * Updates draw style color
+   * @param color New style color (R, G, B)
+   */
+  private updateDrawStyleWithColor(color: [number, number, number]) {
+    if (this.drawInteractionStyle) {
+      const radius = this.drawInteractionStyle.getImage().getRadius ? this.drawInteractionStyle.getImage().getRadius() : null;
+      this.drawInteractionStyle = createDrawInteractionStyle(color);
+      if (this.drawInteractionStyle.getImage().setRadius) {
+        this.drawInteractionStyle.getImage().setRadius(radius);
+      }
+    }
+  }
 }
