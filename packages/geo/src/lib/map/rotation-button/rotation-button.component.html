@@ -1,10 +1,17 @@
-<div class="igo-rotation-button-container">
-  <button
-    *ngIf="map.viewController.getRotation() !== 0" 
-    mat-icon-button 
-    [matTooltip]="'igo.geo.mapButtons.resetRotation' | translate"
-    matTooltipPosition="left" 
-    [color]="color" 
+<div *ngIf="rotated && !showIfNoRotation" class="igo-rotation-button-container"
+  [matTooltip]="rotated ? ('igo.geo.mapButtons.resetRotation' | translate): ('igo.geo.mapButtons.tipRotation' | translate)"
+  matTooltipPosition="left">
+  <button mat-icon-button matTooltipPosition="left" [color]="color" [disabled]="!rotated"
+    (click)="map.viewController.resetRotation()">
+    <mat-icon [ngStyle]="rotationStyle(map.viewController.getRotation())" svgIcon="navigation">
+    </mat-icon>
+  </button>
+</div>
+
+<div *ngIf="showIfNoRotation" class="igo-rotation-button-container"
+  [matTooltip]="rotated ? ('igo.geo.mapButtons.resetRotation' | translate): ('igo.geo.mapButtons.tipRotation' | translate)"
+  matTooltipPosition="left">
+  <button mat-icon-button matTooltipPosition="left" [color]="color" [disabled]="!rotated"
     (click)="map.viewController.resetRotation()">
     <mat-icon [ngStyle]="rotationStyle(map.viewController.getRotation())" svgIcon="navigation">
     </mat-icon>

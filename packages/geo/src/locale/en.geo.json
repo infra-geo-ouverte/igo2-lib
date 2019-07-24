@@ -121,7 +121,8 @@
         "geolocate": "Geolocate",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
-        "resetRotation": "Set map to north"
+        "resetRotation": "Set map to north",
+        "tipRotation": "Hold Alt and SHIFT while dragging on map to rotate the map."
       },
       "metadata": {
         "show": "Show metadata"
