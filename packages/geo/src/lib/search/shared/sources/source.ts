@@ -91,7 +91,7 @@ export class SearchSource {
     return this.options.settings === undefined ? [] : this.options.settings;
   }
 
-  setParamFromSetting(setting) {
+  setParamFromSetting(setting: SearchSourceSettings) {
       switch (setting.type) {
         case 'radiobutton':
           setting.values.forEach( conf => {
@@ -102,13 +102,11 @@ export class SearchSource {
           });
           break;
         case 'checkbox':
-          let confValue = '';
-          setting.values.forEach( conf => {
-            if (conf.enabled) {
-              confValue += conf.value + ',';
-            }
-          });
-          confValue = confValue.slice(0, -1);
+          const confValue = setting.values
+            .filter((conf) => conf.enabled)
+            .map((conf) => conf.value)
+            .join(',');
+
           this.options.params = Object.assign( (this.options.params || {}),
                                                 { [setting.name] : confValue } );
           break;

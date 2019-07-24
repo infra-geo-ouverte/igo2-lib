@@ -1,4 +1,5 @@
 import { SearchSource } from './sources/source';
+import { SearchSourceSettings } from './sources/source.interfaces';
 
 /**
  * Service where all available search sources are registered.
@@ -40,7 +41,7 @@ export class SearchSourceService {
     });
   }
 
-  setParamFromSetting(source, setting) {
+  setParamFromSetting(source: SearchSource, setting: SearchSourceSettings) {
     source.setParamFromSetting(setting);
   }
 }
