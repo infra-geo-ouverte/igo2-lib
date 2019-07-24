@@ -17,53 +17,12 @@
       }
     },
     {
-      "title": "Countries",
-      "opacity": 0.7,
-      "styleByAttribute": {
-        "type": "regular",
-        "attribute": "abbrev",
-        "data": ["Can."],
-        "stroke": ["red"],
-        "width" : [5],
-        "label": "geounit",
-        "baseStyle": {
-          "stroke": {
-            "color": "green"
-          },
-          "fill": {
-            "color": "black"
-          }
-        }
-      },
-      "sourceOptions": {
-        "type": "mvt",
-        "url": "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
-      }
-    },
-    {
       "title": "California Protected Areas",
       "sourceOptions": {
         "type": "carto",
         "account": "common-data",
         "mapId": "dbd9d89a-bf8a-11e5-b333-0e98b61680bf",
         "queryFormat": "geojson"
-      }
-    },
-    {
-      "title": "Zone",
-      "visible": false,
-      "opacity":0.7,
-      "style": {
-        "stroke": {
-          "color": "red"
-        },
-        "fill": {
-          "color": "blue"
-        }
-      },
-      "sourceOptions": {
-        "type": "mvt",
-        "url": "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf"
       }
     },
     {

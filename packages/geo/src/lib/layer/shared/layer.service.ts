@@ -135,8 +135,7 @@ export class LayerService {
 
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      // tslint:disable-next-line:only-arrow-functions
-      layerOptions.style = function(feature) {
+      layerOptions.style = (feature) => {
         return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
       };
       return new VectorLayer(layerOptions);
@@ -157,8 +156,7 @@ export class LayerService {
 
     if (layerOptions.styleByAttribute) {
       const serviceStyle = this.styleService;
-      // tslint:disable-next-line:only-arrow-functions
-      layerOptions.style = function(feature) {
+      layerOptions.style = (feature) => {
         return serviceStyle.createStyleByAttribute(feature, layerOptions.styleByAttribute);
       };
       return new VectorTileLayer(layerOptions);
