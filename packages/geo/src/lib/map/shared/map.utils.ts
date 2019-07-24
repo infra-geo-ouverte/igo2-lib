@@ -3,39 +3,246 @@ import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowse
 import { MAC } from 'ol/has';
 
 import { MapViewState } from './map.interface';
+import proj4 from 'proj4';
 
 /**
- * This method extracts a [lon, lat] tuple from a string.
+ * This method extracts a coordinate tuple from a string.
  * @param str Any string
- * @returns A [lon, lat] tuple if one is found in the string
- * @todo Reproject coordinates
+ * @param mapProjection string Map Projection
+ * @returns object:
+ *             lonLat: Coordinate,
+ *             message: Message of error,
+ *             radius: radius of the confience of coordinate,
+ *             conf: confidence of the coordinate}
  */
-export function stringToLonLat(str: string): [number, number] | undefined {
-  const coordPattern =  '[-+]?[\\d]{1,8}(\\.)?(\\d+)?';
-  const projectionPattern = '(;[\\d]{4,5})';
-  const lonLatPattern = `^${coordPattern},(\\s)*${coordPattern}${projectionPattern}?`;
-  const lonLatRegex = new RegExp(lonLatPattern, 'g');
+export function stringToLonLat(str: string, mapProjection: string): {lonLat: [number, number] | undefined,
+                                                                     message: string,
+                                                                     radius: number | undefined,
+                                                                     conf: number | undefined} {
 
-  if (!lonLatRegex.test(str)) {
-    return undefined;
-  }
+  let lonLat: [number, number];
+  let coordStr: string;
+  let negativeLon: string;
+  let degreesLon: string;
+  let minutesLon: string;
+  let secondsLon: string;
+  let directionLon: string;
+  let decimalLon: string;
+  let negativeLat: string;
+  let degreesLat: string;
+  let minutesLat: string;
+  let secondsLat: string;
+  let directionLat: string;
+  let decimalLat: string;
+  let pattern: string;
+  let timeZone: string;
+  let radius: string;
+  let conf: string;
+  let lon: any;
+  let lat: any;
 
-  let lonLatStr = str;
-  let projectionStr;
-
+  const projectionPattern = '(;[\\d]{4,6})';
+  const toProjection = '4326';
+  let projectionStr: string;
   const projectionRegex = new RegExp(projectionPattern, 'g');
+
+  const lonlatCoord =  '([-+])?([\\d]{1,3})([,.](\\d+))?';
+  const lonLatPattern = `${lonlatCoord}[\\s,.]\\s*${lonlatCoord}`;
+  const lonLatRegex = new RegExp(`^${lonLatPattern}$`, 'g');
+
+  const dmsCoord = '([0-9]{1,2})[:|°]?\\s*([0-9]{1,2})?[:|\'|′|’]?\\s*([0-9]{1,2}(?:\.[0-9]+){0,1})?\\s*["|″|”]?\\s*';
+  const dmsCoordPattern = `${dmsCoord}([N|S]),?\\s*${dmsCoord}([E|W])`;
+  const dmsRegex = new RegExp(`^${dmsCoordPattern}`, 'gi');
+
+  const patternUtmMtm = '(UTM|MTM)\-?(\\d{1,2})[\\s,.]*(\\d+[\\s.,]?\\d+)[\\s,.]+(\\d+[\\s.,]?\\d+)';
+  const utmMtmRegex =  new RegExp(`^${patternUtmMtm}`, 'gi');
+
+  const ddCoord = '([-+])?(\\d{1,3})[,.](\\d+)';
+  const patternDd = `${ddCoord}[,.]?\\s*${ddCoord}`;
+  const ddRegex =  new RegExp(`^${patternDd}`, 'g');
+
+  const dmdCoord = '([-+])?(\\d{1,3})[\\s,.]{1}(\\d{1,2})[\\s,.]{1}(\\d{1,2})[.,]?(\\d{1,5})?';
+  const patternDmd = `${dmdCoord}[,.]?\\s*${dmdCoord}`;
+  const dmdRegex =  new RegExp(`^${patternDmd}`, 'g');
+
+  // tslint:disable:max-line-length
+  const patternBELL = 'LAT\\s*[\\s:]*\\s*([-+])?(\\d{1,2})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*LONG\\s*[\\s:]*\\s*([-+])?(\\d{1,3})[\\s.,]?(\\d+)?[\\s.,]?\\s*(\\d{1,2}([.,]\\d+)?)?\\s*(N|S|E|W)?\\s*UNC\\s*[\\s:]?\\s*(\\d+)\\s*CONF\\s*[\\s:]?\\s*(\\d{1,3})';
+  const bellRegex =  new RegExp(`^${patternBELL}?`, 'gi');
+
+  const mmCoord = '([-+]?\\d+)[,.]?(\\d+)?';
+  const mmPattern = `${mmCoord}[\\s,.]\\s*${mmCoord}`;
+  const mmRegex =  new RegExp(`^${mmPattern}$`, 'g');
+
+  str = str.toLocaleUpperCase();
+
+  // Extract projection
   if (projectionRegex.test(str)) {
-    [lonLatStr, projectionStr] = str.split(';');
+    [coordStr, projectionStr] = str.split(';');
+  } else {
+    coordStr = str;
   }
 
-  const [lonStr, latStr] = lonLatStr.split(',');
-  const lonLat = [parseFloat(lonStr), parseFloat(latStr)] as [number, number];
+  if (lonLatRegex.test(coordStr)) {
 
-  if (projectionStr !== undefined) {
-    // TODO Reproject coordinates
+    [,
+     negativeLon,
+     lon,
+     ,
+     decimalLon,
+     negativeLat,
+     lat,
+     ,
+     decimalLat] = coordStr.match(lonLatPattern);
+
+    lon = parseFloat((negativeLon ? negativeLon : '') + lon + '.' + decimalLon);
+    lat = parseFloat((negativeLat ? negativeLat : '') + lat + '.' + decimalLat);
+
+  } else if (dmsRegex.test(coordStr)) {
+      [,
+       degreesLon,
+       minutesLon,
+       secondsLon,
+       directionLon,
+       degreesLat,
+       minutesLat,
+       secondsLat,
+       directionLat] = coordStr.match(dmsCoordPattern);
+
+      lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+      lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+
+  } else if (utmMtmRegex.test(coordStr)) {
+      [, pattern, timeZone, lon, lat] = coordStr.match(patternUtmMtm);
+      const utm = '+proj=' + pattern + ' +zone=' + timeZone;
+      const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+      [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+
+  } else if (dmdRegex.test(coordStr)) {
+    [,
+      negativeLon,
+      degreesLon,
+      minutesLon,
+      secondsLon,
+      decimalLon,
+      negativeLat,
+      degreesLat,
+      minutesLat,
+      secondsLat,
+      decimalLat] = coordStr.match(patternDmd);
+
+    lon = convertDMSToDD(parseFloat((negativeLon ? negativeLon : '') + degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+    lat = convertDMSToDD(parseFloat((negativeLat ? negativeLat : '') + degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+
+  } else if (ddRegex.test(coordStr)) {
+      [,
+        negativeLon,
+        degreesLon,
+        decimalLon,
+        negativeLat,
+        degreesLat,
+        decimalLat] = coordStr.match(patternDd);
+
+      lon = convertDMSToDD(parseFloat((negativeLon ? negativeLon : '') + degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+      lat = convertDMSToDD(parseFloat((negativeLat ? negativeLat : '') + degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+
+  } else if (bellRegex.test(coordStr)) {
+    [,
+      negativeLat,
+      degreesLat,
+      minutesLat,
+      secondsLat,
+      ,
+      directionLat,
+      negativeLon,
+      degreesLon,
+      minutesLon,
+      secondsLon,
+      ,
+      directionLon,
+      radius,
+      conf] = coordStr.match(patternBELL);
+
+    // Set default value for North America
+    if (!directionLon) {
+      directionLon = 'W';
+    }
+
+    // Check if real minutes or decimals
+    if (minutesLon && minutesLon.length > 2) {
+      lon = parseFloat((negativeLon ? negativeLon : '') + degreesLon + '.' + minutesLon);
+    } else {
+      lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
+    }
+
+    if (minutesLat && minutesLat.length > 2) {
+      lat = parseFloat((negativeLat ? negativeLat : '') + degreesLat + '.' + minutesLat);
+    } else {
+      lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
+    }
+
+  } else if (mmRegex.test(coordStr)) {
+      [, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern);
+
+      if (decimalLon) {
+        lon = parseFloat(lon + '.' + decimalLon);
+      }
+
+      if (decimalLat) {
+        lat = parseFloat(lat + '.' + decimalLat);
+      }
+
+  } else {
+    return {lonLat: undefined, message: '', radius: undefined, conf: undefined};
   }
 
-  return lonLat;
+  // Set a negative coordinate for North America zone
+  if (lon > 0 && lat > 0) {
+    if (lon > lat) {
+      lon = -lon;
+    } else {
+      lat = -lat;
+    }
+  }
+
+  // Reverse coordinate to respect lonLat convention
+  if (lon < lat) {
+    lonLat = [lon, lat] as [number, number];
+  } else {
+    lonLat = [lat, lon] as [number, number];
+  }
+
+  // Reproject the coordinate if projection parameter have been set and coord is not 4326
+  if ((projectionStr !== undefined && projectionStr !== toProjection) || (lonLat[0] > 180 || lonLat[0] < -180)) {
+
+    const source = projectionStr ? 'EPSG:' + projectionStr : mapProjection;
+    const dest = 'EPSG:' + toProjection;
+
+    try {
+      lonLat = olproj.transform(lonLat, source, dest);
+    } catch (e) {
+      return {lonLat: undefined, message: 'Projection ' + source + ' not supported', radius: undefined, conf: undefined};
+    }
+  }
+
+  return {lonLat, message: '', radius: radius ? parseInt(radius, 10) : undefined, conf: conf ? parseInt(conf, 10) : undefined};
+}
+
+/**
+ * Convert degrees minutes seconds to dd
+ * @param degrees Degrees
+ * @param minutes Minutes
+ * @param seconds Seconds
+ * @param direction Direction
+ */
+function convertDMSToDD(degrees: number, minutes: number, seconds: number, direction: string) {
+  minutes = minutes || 0;
+  seconds = seconds || 0;
+  let dd = degrees + (minutes / 60) + (seconds / 3600);
+
+  if (direction === 'S' || direction === 'W') {
+      dd = -dd;
+  } // Don't do anything for N or E
+  return dd;
 }
 
 /**

@@ -20,6 +20,7 @@ import {
   Layer,
   LAYER,
   LayerOptions,
+  ProjectionService,
   Research,
   SearchResult,
   SearchService
@@ -64,6 +65,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
+    private projectionService: ProjectionService,
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
