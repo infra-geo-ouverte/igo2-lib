@@ -177,6 +177,7 @@ export class CatalogService {
           const baseSourceOptions = {
             type: 'wms',
             url: catalog.url,
+            crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
             timeFilter: { ...timeFilter, ...catalog.timeFilter },
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
@@ -241,6 +242,7 @@ export class CatalogService {
       const baseSourceOptions = {
         type: 'wmts',
         url: catalog.url,
+        crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
         layer: layer.Identifier,
         matrixSet: catalog.matrixSet,
         optionsFromCapabilities: true,
