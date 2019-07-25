@@ -24,5 +24,7 @@ export * from './websocket-datasource';
 export * from './websocket-datasource.interface';
 export * from './mvt-datasource';
 export * from './mvt-datasource.interface';
+export * from './cluster-datasource';
+export * from './cluster-datasource.interface';
 export * from './any-datasource';
 export * from './any-datasource.interface';

@@ -27,7 +27,9 @@ import {
   WebSocketDataSource,
   AnyDataSourceOptions,
   MVTDataSource,
-  MVTDataSourceOptions
+  MVTDataSourceOptions,
+  ClusterDataSource,
+  ClusterDataSourceOptions
 } from './datasources';
 
 @Injectable({
@@ -86,13 +88,16 @@ export class DataSourceService {
         );
         break;
       case 'mvt':
-        dataSource = this.createMVTDataSource(
-          context as MVTDataSourceOptions
-        );
+        dataSource = this.createMVTDataSource(context as MVTDataSourceOptions);
         break;
       case 'tilearcgisrest':
         dataSource = this.createTileArcGISRestDataSource(
           context as TileArcGISRestDataSourceOptions
+        );
+        break;
+      case 'cluster':
+        dataSource = this.createClusterDataSource(
+          context as ClusterDataSourceOptions
         );
         break;
       default:
@@ -208,9 +213,16 @@ export class DataSourceService {
         )
       );
   }
+
   private createMVTDataSource(
     context: MVTDataSourceOptions
   ): Observable<MVTDataSource> {
     return new Observable(d => d.next(new MVTDataSource(context)));
+  }
+
+  private createClusterDataSource(
+    context: ClusterDataSourceOptions
+  ): Observable<ClusterDataSource> {
+    return new Observable(d => d.next(new ClusterDataSource(context)));
   }
 }

@@ -7,8 +7,7 @@ import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 
 export class VectorTileLayer extends Layer {
-  public dataSource:
-    | MVTDataSource;
+  public dataSource: MVTDataSource;
   public options: VectorTileLayerOptions;
   public ol: olLayerVectorTile;
 
@@ -19,11 +18,8 @@ export class VectorTileLayer extends Layer {
   protected createOlLayer(): olLayerVectorTile {
     const olOptions = Object.assign({}, this.options, {
       source: this.options.source.ol as olSourceVectorTile
-
     });
 
     return new olLayerVectorTile(olOptions);
   }
 }
-
-

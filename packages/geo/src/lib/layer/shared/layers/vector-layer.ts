@@ -8,16 +8,13 @@ import { FeatureDataSource } from '../../../datasource/shared/datasources/featur
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
 import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
+import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
-  public dataSource:
-    | FeatureDataSource
-    | WFSDataSource
-    | ArcGISRestDataSource
-    | WebSocketDataSource;
+  public dataSource: FeatureDataSource | WFSDataSource | ArcGISRestDataSource | WebSocketDataSource | ClusterDataSource;
   public options: VectorLayerOptions;
   public ol: olLayerVector;
 
