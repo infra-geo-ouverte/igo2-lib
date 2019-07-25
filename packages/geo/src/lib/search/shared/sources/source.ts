@@ -91,6 +91,9 @@ export class SearchSource {
     return this.options.settings === undefined ? [] : this.options.settings;
   }
 
+  /**
+   * Set params from selected settings
+   */
   setParamFromSetting(setting: SearchSourceSettings) {
       switch (setting.type) {
         case 'radiobutton':
@@ -102,11 +105,13 @@ export class SearchSource {
           });
           break;
         case 'checkbox':
-          const confValue = setting.values
-            .filter((conf) => conf.enabled)
-            .map((conf) => conf.value)
-            .join(',');
-
+          let confValue = '';
+          setting.values.forEach( conf => {
+            if (conf.enabled) {
+              confValue += conf.value + ',';
+            }
+          });
+          confValue = confValue.slice(0, -1);
           this.options.params = Object.assign( (this.options.params || {}),
                                                 { [setting.name] : confValue } );
           break;
@@ -128,6 +133,32 @@ export class SearchSource {
       this.setParamFromSetting(setting);
     });
   }
+
+  /**
+   * Check if hashtag is valid
+   * @param hashtag hashtag from query
+   * @param completeMatch boolean
+   */
+  hashtagValid(searchSourceSetting: SearchSourceSettings, hashtag: string, completeMatch = false): boolean {
+    let hashtagIsValid = false;
+    searchSourceSetting.values.forEach( conf => {
+      const re = new RegExp('' + hashtag.substring(1) + '', 'g');
+      if ( typeof conf.value === 'string') {
+        if ( (completeMatch && conf.value === hashtag.substring(1)) ||
+              ( !completeMatch && conf.value.match(re)) ) {
+          hashtagIsValid = true;
+        }
+      }
+    });
+    return hashtagIsValid;
+  }
+
+  getSettingsValues(search: string): SearchSourceSettings {
+    return this.getDefaultOptions().settings.find( (value: SearchSourceSettings) => {
+      return value.name === search;
+    });
+  }
+
 }
 
 /**

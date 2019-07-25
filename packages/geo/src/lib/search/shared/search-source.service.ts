@@ -41,6 +41,11 @@ export class SearchSourceService {
     });
   }
 
+  /**
+   * Set Param from the selected settings
+   * @param source search-source
+   * @param setting settings
+   */
   setParamFromSetting(source: SearchSource, setting: SearchSourceSettings) {
     source.setParamFromSetting(setting);
   }

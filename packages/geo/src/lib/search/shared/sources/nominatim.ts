@@ -8,7 +8,7 @@ import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
-import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
+import { SearchSourceOptions, TextSearchOptions, SearchSourceSettings } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
 
 /**
@@ -30,11 +30,42 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     return NominatimSearchSource.id;
   }
 
+  /*
+   * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
+  */
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Nominatim (OSM)',
       searchUrl: 'https://nominatim.openstreetmap.org/search',
       settings: [
+        {
+            type: 'checkbox',
+            title: 'results type',
+            name: 'amenity',
+            values: [
+              {
+                title: 'Restauration',
+                value: 'bar,bbq,biergaten,cafe,drinking_water,fast_food,food_court,ice_cream,pub,restaurant',
+                enabled: false
+              },
+              {
+                title: 'Santé',
+                value: 'baby_hatch,clinic,dentist,doctors,hospital,nursing_home,pharmacy,social_facility,veterinary',
+                enabled: false
+              },
+              {
+                title: 'Divertissement',
+                value: 'arts_centre,brothel,casino,cinema,community_center_fountain,gambling,nightclub,planetarium \
+                          ,public_bookcase,social_centre,stripclub,studio,swingerclub,theatre,internet_cafe',
+                enabled: false
+              },
+              {
+                title: 'Finance',
+                value: 'atm,bank,bureau_de_change',
+                enabled: false
+              }
+            ]
+        },
         {
           type: 'radiobutton',
           title: 'results limit',
@@ -60,7 +91,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         {
           type: 'radiobutton',
           title: 'country limitation',
-          name: 'countrycode',
+          name: 'countrycodes',
           values: [
             {
               title: 'Canada',
@@ -117,7 +148,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     return new HttpParams({
       fromObject: Object.assign(
         {
-          q: term,
+          q: this.computeTerm(term),
           format: 'json'
         },
         this.params,
@@ -182,5 +213,55 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
       parseFloat(data.boundingbox[3]),
       parseFloat(data.boundingbox[1])
     ];
+  }
+
+  private computeTerm(term: string): string {
+    term = this.computeTermTags(term);
+    return term;
+  }
+
+  /**
+   * Add hashtag from query in Nominatim's format (+[])
+   * @param term Query with hashtag
+   */
+  private computeTermTags(term: string): string {
+    const tags = term.match(/(#[^\s]+)/g);
+
+    let addTagsFromSettings = true;
+    if ( tags ) {
+      tags.forEach( value => {
+        term = term.replace(value, '');
+        if ( super.hashtagValid(super.getSettingsValues('amenity'), value) ) {
+          term += '+[' + value.substring(1) + ']';
+          addTagsFromSettings = false;
+        }
+      });
+      addTagsFromSettings = false;
+    }
+
+    if (addTagsFromSettings) {
+      term = this.computeTermSettings(term);
+    }
+    return term;
+  }
+
+  /**
+   * Add hashtag from settings in Nominatim's format (+[])
+   * @param term Query
+   */
+  private computeTermSettings(term: string): string {
+    this.options.settings.forEach( settings => {
+      if (settings.name === 'amenity') {
+        settings.values.forEach( conf => {
+          if (conf.enabled && typeof conf.value === 'string') {
+            const splitted = conf.value.split(',');
+            splitted.forEach( value => {
+              term += '+[' + value + ']';
+            });
+          }
+        });
+      }
+    });
+    return term;
   }
 }

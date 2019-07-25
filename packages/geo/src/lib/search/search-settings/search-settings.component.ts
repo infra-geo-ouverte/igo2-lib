@@ -5,7 +5,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnInit,
   ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -27,6 +26,7 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class SearchSettingsComponent {
 
   /**
