@@ -40,16 +40,7 @@ export class IChercheSearchResultFormatter {
 export class IChercheSearchSource extends SearchSource implements TextSearch {
   static id = 'icherche';
   static type = FEATURE;
-  static propertiesBlacklist: string[] = [
-    '@timestamp',
-    '@version',
-    'recherche',
-    'id',
-    'idrte',
-    'cote',
-    'geometry',
-    'bbox'
-  ];
+  static propertiesBlacklist: string[] = [];
 
   constructor(
     private http: HttpClient,
@@ -67,54 +58,69 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'ICherche Québec',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche/geocode',
       settings: [
         {
-            type: 'checkbox',
-            title: 'results type',
-            name: 'type',
-            values: [
-              {
-                title: 'Adresse',
-                value: 'adresse',
-                enabled: true
-              },
-              {
-                title: 'Ancienne adresse',
-                value: 'ancienne_adresse',
-                enabled: true
-              },
-              {
-                title: 'Code Postal',
-                value: 'code_postal',
-                enabled: true
-              },
-              {
-                title: 'Route',
-                value: 'route',
-                enabled: true
-              },
-              {
-                title: 'Municipalité',
-                value: 'municipalite',
-                enabled: true
-              },
-              {
-                title: 'Ancienne municipalité',
-                value: 'ancienne_municipalite',
-                enabled: true
-              },
-              {
-                title: 'mrc',
-                value: 'mrc',
-                enabled: true
-              },
-              {
-                title: 'Région administrative',
-                value: 'region_administrative',
-                enabled: true
-              }
-            ]
+          type: 'checkbox',
+          title: 'results type',
+          name: 'type',
+          values: [
+            {
+              title: 'Adresse',
+              value: 'adresses',
+              enabled: true
+            },
+            // {
+            //   title: 'Ancienne adresse',
+            //   value: 'ancienne_adresse',
+            //   enabled: true
+            // },
+            {
+              title: 'Code Postal',
+              value: 'codes-postaux',
+              enabled: true
+            },
+            {
+              title: 'Route',
+              value: 'routes',
+              enabled: false
+            },
+            {
+              title: 'Municipalité',
+              value: 'municipalites',
+              enabled: true
+            },
+            // {
+            //   title: 'Ancienne municipalité',
+            //   value: 'ancienne_municipalite',
+            //   enabled: true
+            // },
+            {
+              title: 'mrc',
+              value: 'mrc',
+              enabled: true
+            },
+            {
+              title: 'Région administrative',
+              value: 'regadmin',
+              enabled: true
+            },
+            {
+              title: 'Lieu',
+              value: 'lieux',
+              enabled: true
+            },
+            {
+              title: 'Borne',
+              value: 'bornes',
+              enabled: false
+            },
+            {
+              title: 'Entreprise',
+              value: 'entreprises',
+              enabled: false
+            }
+          ]
         },
         {
           type: 'radiobutton',
@@ -154,13 +160,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           name: 'ecmax',
           values: [
             {
-              title: '1',
-              value: 1,
+              title: '10',
+              value: 10,
               enabled: false
             },
             {
-              title: '15',
-              value: 15,
+              title: '30',
+              value: 30,
               enabled: true
             },
             {
@@ -199,15 +205,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       .pipe(map((response: IChercheResponse) => this.extractResults(response)));
   }
 
-  private computeRequestParams(term: string, options: TextSearchOptions): HttpParams {
+  private computeRequestParams(
+    term: string,
+    options: TextSearchOptions
+  ): HttpParams {
     return new HttpParams({
       fromObject: Object.assign(
         {
           q: this.computeTerm(term),
-          geometries: 'geom'
+          geometry: true,
+          type:
+            'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
         },
         this.params,
-        this.computeOptionsParam(term, options || {}).params
+        this.computeOptionsParam(term, options || {}).params
       )
     });
   }
@@ -220,7 +231,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
   private dataToResult(data: IChercheData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
-    const id = [this.getId(), properties.type, data._id].join('.');
+    const id = [this.getId(), properties.type, properties.code].join('.');
+
+    const subtitleHtml = data.highlight.title2
+      ? ' <small> ' + data.highlight.title2 + '</small>'
+      : '';
+
     return {
       source: this,
       data: {
@@ -231,14 +247,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         properties,
         meta: {
           id,
-          title: data.properties.recherche
+          title: data.properties.nom
         }
       },
       meta: {
         dataType: FEATURE,
         id,
-        title: data.properties.recherche,
-        titleHtml: data.highlight,
+        title: data.properties.nom,
+        titleHtml: data.highlight.title + subtitleHtml,
         icon: 'map-marker'
       }
     };
@@ -249,7 +265,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       data.properties,
       IChercheSearchSource.propertiesBlacklist
     );
-    return Object.assign(properties, { type: data.doc_type });
+    return Object.assign(properties, { type: data.index });
   }
 
   /**
@@ -265,20 +281,24 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    * @param options TextSearchOptions
    */
-  private computeOptionsParam(term: string, options: TextSearchOptions): TextSearchOptions {
+  private computeOptionsParam(
+    term: string,
+    options: TextSearchOptions
+  ): TextSearchOptions {
     const tags = term.match(/(#[^\s]+)/g);
-    if ( tags ) {
+    if (tags) {
       let typeValue = '';
       let hashtagToAdd = false;
-      tags.forEach( value => {
+      tags.forEach(value => {
         if (super.hashtagValid(super.getSettingsValues('type'), value, true)) {
           typeValue += value.substring(1) + ',';
           hashtagToAdd = true;
         }
       });
       if (hashtagToAdd) {
-        options.params = Object.assign( (options.params || {}),
-                                              { type : typeValue.slice(0, -1) } );
+        options.params = Object.assign(options.params || {}, {
+          type: typeValue.slice(0, -1)
+        });
       }
     }
     return options;
@@ -308,46 +328,46 @@ export class IChercheReverseSearchSource extends SearchSource
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'ICherche Québec (Géocodage inversé)',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
+      title: 'Territoire (Géocodage inversé)',
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/territoires/locate',
 
       settings: [
         {
-            type: 'checkbox',
-            title: 'results type',
-            name: 'type',
-            values: [
-              {
-                title: 'Adresse',
-                value: 'adresse',
-                enabled: true
-              },
-              {
-                title: 'Route',
-                value: 'route',
-                enabled: false
-              },
-              {
-                title: 'Arrondissement',
-                value: 'arrondissement',
-                enabled: false
-              },
-              {
-                title: 'Municipalité',
-                value: 'municipalite',
-                enabled: true
-              },
-              {
-                title: 'mrc',
-                value: 'mrc',
-                enabled: true
-              },
-              {
-                title: 'Région administrative',
-                value: 'regadmin',
-                enabled: true
-              }
-            ]
+          type: 'checkbox',
+          title: 'results type',
+          name: 'type',
+          values: [
+            {
+              title: 'Adresse',
+              value: 'adresses',
+              enabled: true
+            },
+            {
+              title: 'Route',
+              value: 'routes',
+              enabled: false
+            },
+            {
+              title: 'Arrondissement',
+              value: 'arrondissements',
+              enabled: false
+            },
+            {
+              title: 'Municipalité',
+              value: 'municipalites',
+              enabled: true
+            },
+            {
+              title: 'mrc',
+              value: 'mrc',
+              enabled: true
+            },
+            {
+              title: 'Région administrative',
+              value: 'regadmin',
+              enabled: true
+            }
+          ]
         }
       ]
     };
@@ -380,8 +400,8 @@ export class IChercheReverseSearchSource extends SearchSource
       fromObject: Object.assign(
         {
           loc: lonLat.join(','),
-          distance: distance ? String(distance) : '100',
-          geometries: 'geom'
+          buffer: distance ? String(distance) : '100',
+          geometry: true
         },
         this.params,
         options.params || {}
@@ -400,7 +420,7 @@ export class IChercheReverseSearchSource extends SearchSource
   private dataToResult(data: IChercheReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const extent = this.computeExtent(data);
-    const id = [this.getId(), properties.type, data._id].join('.');
+    const id = [this.getId(), properties.type, properties.code].join('.');
 
     return {
       source: this,
@@ -429,10 +449,12 @@ export class IChercheReverseSearchSource extends SearchSource
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist
     );
-    return Object.assign(properties, { type: data.properties.doc_type });
+    return properties;
   }
 
-  private computeExtent(data: IChercheReverseData): [number, number, number, number] | undefined {
+  private computeExtent(
+    data: IChercheReverseData
+  ): [number, number, number, number] | undefined {
     return data.bbox
       ? [data.bbox[0], data.bbox[2], data.bbox[1], data.bbox[3]]
       : undefined;
