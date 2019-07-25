@@ -7,10 +7,10 @@ export interface IChercheData {
   properties: { [key: string]: any };
   highlight: {
     title: string;
-    title1?: string;
     title2?: string;
     title3?: string;
     title4?: string;
+    title5?: string;
   };
 }
 
@@ -19,10 +19,6 @@ export interface IChercheResponse {
 }
 
 export interface IChercheReverseData {
-  _id: string;
-  doc_type: string;
-  recherche: string;
-  highlight: string;
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
   properties: { [key: string]: any };
