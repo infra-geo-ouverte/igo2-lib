@@ -5,7 +5,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnInit,
   ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -27,7 +26,8 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchSettingsComponent implements OnInit {
+
+export class SearchSettingsComponent {
 
   /**
    * Event emitted when the enabled search type changes
@@ -35,13 +35,6 @@ export class SearchSettingsComponent implements OnInit {
   @Output() change = new EventEmitter<string>();
 
   constructor(private searchSourceService: SearchSourceService) {}
-
-  /**
-   * Enable the first search type if the enabled input is not defined
-   * @internal
-   */
-  ngOnInit() {
-  }
 
   /**
    * Get all search sources

@@ -2,6 +2,7 @@ import {
   Input,
   Component,
   ChangeDetectionStrategy,
+  OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
@@ -19,7 +20,7 @@ import { FormFieldComponent } from '../shared/form-field-component';
   templateUrl: './form-field-textarea.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormFieldTextareaComponent {
+export class FormFieldTextareaComponent implements OnInit {
 
   disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -72,7 +73,7 @@ export class FormFieldTextareaComponent {
     } else {
       this.formControl.enable();
     }
-    this.disabled$.next(disabled);  
+    this.disabled$.next(disabled);
   }
 
 }

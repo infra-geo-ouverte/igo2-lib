@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { FormField, FormFieldInputs } from '../shared/form.interfaces';
+import { FormField, FormFieldInputs, FormFieldOptions } from '../shared/form.interfaces';
 import { FormFieldService } from '../shared/form-field.service';
 import { getDefaultErrorMessages } from '../shared';
 
@@ -25,6 +25,10 @@ export class FormFieldComponent {
    */
   @Input() field: FormField;
 
+  get fieldOptions(): FormFieldOptions {
+    return this.field.options || {};
+  }
+
   constructor(private formFieldService: FormFieldService) {}
 
   getFieldComponent(): any {
@@ -32,11 +36,11 @@ export class FormFieldComponent {
   }
 
   getFieldInputs(): FormFieldInputs {
-    const errors = this.field.options.errors || {};
+    const errors = this.fieldOptions.errors || {};
     return Object.assign(
       {
         placeholder: this.field.title,
-        disableSwitch: this.field.options.disableSwitch || false
+        disableSwitch: this.fieldOptions.disableSwitch || false
       },
       Object.assign({}, this.field.inputs || {}),
       {
