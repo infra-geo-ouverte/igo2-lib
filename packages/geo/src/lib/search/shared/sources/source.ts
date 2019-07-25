@@ -4,7 +4,8 @@ import { SearchResult } from '../search.interfaces';
 import {
   SearchSourceOptions,
   TextSearchOptions,
-  ReverseSearchOptions
+  ReverseSearchOptions,
+  SearchSourceSettings
 } from './source.interfaces';
 
 /**
@@ -84,6 +85,35 @@ export class SearchSource {
   }
 
   /**
+   * Search settings
+   */
+  get settings(): SearchSourceSettings[] {
+    return this.options.settings === undefined ? [] : this.options.settings;
+  }
+
+  setParamFromSetting(setting: SearchSourceSettings) {
+      switch (setting.type) {
+        case 'radiobutton':
+          setting.values.forEach( conf => {
+            if (conf.enabled) {
+              this.options.params = Object.assign( (this.options.params || {}),
+                                                    { [setting.name] : conf.value } );
+            }
+          });
+          break;
+        case 'checkbox':
+          const confValue = setting.values
+            .filter((conf) => conf.enabled)
+            .map((conf) => conf.value)
+            .join(',');
+
+          this.options.params = Object.assign( (this.options.params || {}),
+                                                { [setting.name] : confValue } );
+          break;
+      }
+  }
+
+  /**
    * Search results display order
    */
   get displayOrder(): number {
@@ -92,6 +122,11 @@ export class SearchSource {
 
   constructor(options: SearchSourceOptions) {
     this.options = Object.assign({}, this.getDefaultOptions(), options);
+
+    // Set Default Params from Settings
+    this.settings.forEach( setting => {
+      this.setParamFromSetting(setting);
+    });
   }
 }
 

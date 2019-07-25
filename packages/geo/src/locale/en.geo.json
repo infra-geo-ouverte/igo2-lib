@@ -143,7 +143,7 @@
           "A4": "A4",
           "A5": "A5",
           "Letter": "Letter",
-          "Legal": "Legal"  
+          "Legal": "Legal"
         },
         "imageFormat": "Image format",
         "orientation" : "Orientation",
@@ -215,7 +215,19 @@
             "url": "URL"
           }
         },
-        "menu.tooltip": "Search Options"
+        "menu.tooltip": "Search Options",
+        "settings": {
+          "title": "Settings"
+        },
+        "searchSources": {
+          "settings": {
+            "results type": "Results type",
+            "trust level": "Trust level",
+            "results limit": "Limit",
+            "multiple object": "Multiple object",
+            "country limitation": "Limitation (country)"
+          }
+        }
       },
       "geometry": {
         "geometry": "Geometry",

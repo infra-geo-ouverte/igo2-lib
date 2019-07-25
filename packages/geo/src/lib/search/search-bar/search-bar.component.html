@@ -27,10 +27,14 @@
       *ngIf="!empty">
       <mat-icon svgIcon="close"></mat-icon>
     </button>
+
+    <igo-search-selector
+      [searchTypes]="searchTypes"
+      (change)="onSearchTypeChange($event)">
+    </igo-search-selector>
+
+    <igo-search-settings></igo-search-settings>
   </div>
 
-  <igo-search-selector
-    [searchTypes]="searchTypes"
-    (change)="onSearchTypeChange($event)">
-  </igo-search-selector>
+
 </div>

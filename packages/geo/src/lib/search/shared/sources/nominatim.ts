@@ -33,7 +33,65 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Nominatim (OSM)',
-      searchUrl: 'https://nominatim.openstreetmap.org/search'
+      searchUrl: 'https://nominatim.openstreetmap.org/search',
+      settings: [
+        {
+          type: 'radiobutton',
+          title: 'results limit',
+          name: 'limit',
+          values: [
+            {
+              title: '10',
+              value: 10,
+              enabled: true
+            },
+            {
+              title: '20',
+              value: 20,
+              enabled: false
+            },
+            {
+              title: '50',
+              value: 50,
+              enabled: false
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'country limitation',
+          name: 'countrycode',
+          values: [
+            {
+              title: 'Canada',
+              value: 'CA',
+              enabled: true
+            },
+            {
+              title: 'Le monde',
+              value: null,
+              enabled: false
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'multiple object',
+          name: 'dedupe',
+          values: [
+            {
+              title: 'Oui',
+              value: 0,
+              enabled: false
+            },
+            {
+              title: 'Non',
+              value: 1,
+              enabled: true
+            }
+          ]
+        }
+      ]
     };
   }
 

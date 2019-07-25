@@ -9,6 +9,7 @@ import {
 
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchSourceService } from '../shared/search-source.service';
+import { SearchSource } from '../shared/sources/source';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
