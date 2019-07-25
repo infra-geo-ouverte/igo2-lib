@@ -54,7 +54,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private defaultDrawStyleRadius: number;
   private olGeometryEnds$$: Subscription;
   private olGeometryChanges$$: Subscription;
-  private drawInteractionStyle: OlStyle;
   private olTooltip = OlOverlay;
 
   /**
@@ -95,20 +94,32 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   @Input() measure: boolean = false;
 
   /**
-   * Color (R, G, B) for features drawn on the map
+   * Style for the draw control (applies while the geometry is being drawn)
    */
   @Input()
-  set symbolColor(value: [number, number, number]) {
-    this._symbolColor = value;
-    this.updateDrawStyleWithColor(value);
+  set drawStyle(value: OlStyle) {
+    this._drawStyle = value || createDrawInteractionStyle();
+    if (this.isStyleWithRadius(this.drawStyle)) {
+      this.defaultDrawStyleRadius = this.drawStyle.getImage().getRadius();
+    } else {
+      this.defaultDrawStyleRadius = null;
+    }
   }
-  get symbolColor(): [number, number, number] { return this._symbolColor; }
-  private _symbolColor: [number, number, number];
+  get drawStyle(): OlStyle { return this._drawStyle; }
+  private _drawStyle: OlStyle;
 
   /**
-   * Icon for point geometries drawn on the map
+   * Style for the overlay layer (applies once the geometry is added to the map)
+   * If not specified, drawStyle applies
    */
-  @Input() pointIcon: OlStyle.Icon;
+  @Input()
+  set overlayStyle(value: OlStyle) {
+    this._overlayStyle = value;
+  }
+  get overlayStyle(): OlStyle {
+    return this._overlayStyle || this.drawStyle;
+  }
+  private _overlayStyle: OlStyle;
 
   /**
    * The geometry value (GeoJSON)
@@ -162,8 +173,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   ngOnInit() {
     this.addOlOverlayLayer();
     this.createMeasureTooltip();
-    this.drawInteractionStyle = createDrawInteractionStyle(this.symbolColor);
-    this.defaultDrawStyleRadius = this.drawInteractionStyle.getImage().getRadius();
     this.createDrawControl();
     this.createModifyControl();
     if (this.value) {
@@ -224,22 +233,15 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Create a draw control and subscribe to it's geometry
    */
   private createDrawControl() {
-    if (this.geometryType) {
-      this.drawControl = new DrawControl({
-        geometryType: this.geometryType,
-        layer: this.olOverlayLayer,
-        drawStyle: (olFeature: OlFeature, resolution: number) => {
-          const style = this.drawInteractionStyle;
-          if (this.pointIcon && this.geometryType === 'Point' && !this.drawGuide) {
-            this.drawInteractionStyle.setImage(this.pointIcon);
-          } else {
-            this.drawInteractionStyle.setImage(createDrawInteractionStyle(this.symbolColor).getImage());
-          }
-          this.updateDrawStyleWithDrawGuide(style, resolution);
-          return style;
-        }
-      });
-    }
+    this.drawControl = new DrawControl({
+      geometryType: this.geometryType || 'Point',
+      layer: this.olOverlayLayer,
+      drawStyle: (olFeature: OlFeature, resolution: number) => {
+        const style = this.drawStyle;
+        this.updateDrawStyleWithDrawGuide(style, resolution);
+        return style;
+      }
+    });
   }
 
   /**
@@ -249,7 +251,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.modifyControl = new ModifyControl({
       layer: this.olOverlayLayer,
       drawStyle: (olFeature: OlFeature, resolution: number) => {
-        const style = this.drawInteractionStyle;
+        const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
       }
@@ -344,11 +346,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       dataProjection: 'EPSG:4326',
       featureProjection: this.map.projection
     });
-    const olFeature = new OlFeature({geometry: olGeometry});
-    olFeature.setStyle(createDrawInteractionStyle(this.symbolColor));
-    if (this.pointIcon && olFeature.getGeometry().getType() === 'Point') {
-      olFeature.getStyle().setImage(this.pointIcon);
-    }
+    const olFeature = new OlFeature({
+      geometry: olGeometry
+    });
+    olFeature.setStyle(this.overlayStyle);
     this.olOverlaySource.clear();
     this.olOverlaySource.addFeature(olFeature);
   }
@@ -403,14 +404,19 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Remove the measure tooltip from the map
    */
   private removeMeasureTooltip() {
-    if (this.olTooltip.getMap() !== undefined) {
+    if (this.olTooltip.getMap && this.olTooltip.getMap() !== undefined) {
       this.map.ol.removeOverlay(this.olTooltip);
       this.olTooltip.setMap(undefined);
     }
   }
 
+  /**
+   * Adjust the draw style with the specified draw guide distance, if possible
+   * @param olStyle Draw style to update
+   * @param resolution Resolution (to make the screen size of symbol fit the drawGuide value)
+   */
   private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
-    if (olStyle.getImage().setRadius) {
+    if (this.isStyleWithRadius(olStyle)) {
       const drawGuide = this.drawGuide;
       let radius;
       if (drawGuide === null || drawGuide < 0) {
@@ -423,16 +429,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   }
 
   /**
-   * Updates draw style color
-   * @param color New style color (R, G, B)
+   * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
+   * @param olStyle The style on which to perform the check
    */
-  private updateDrawStyleWithColor(color: [number, number, number]) {
-    if (this.drawInteractionStyle) {
-      const radius = this.drawInteractionStyle.getImage().getRadius ? this.drawInteractionStyle.getImage().getRadius() : null;
-      this.drawInteractionStyle = createDrawInteractionStyle(color);
-      if (this.drawInteractionStyle.getImage().setRadius) {
-        this.drawInteractionStyle.getImage().setRadius(radius);
-      }
-    }
+  private isStyleWithRadius(olStyle: OlStyle): boolean {
+    return olStyle.getImage && olStyle.getImage().setRadius;
   }
 }

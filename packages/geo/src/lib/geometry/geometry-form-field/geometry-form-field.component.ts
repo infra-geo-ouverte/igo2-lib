@@ -83,14 +83,15 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() measure: boolean = false;
 
   /**
-   * Color (R, G, B) for features drawn on the map
+   * Style for the draw control (applies while the geometry is being drawn)
    */
-  @Input() symbolColor: [number, number, number];
+  @Input() drawStyle: OlStyle;
 
   /**
-   * Icon for point geometries drawn on the map
+   * Style for the overlay layer (applies once the geometry is added to the map)
+   * If not specified, drawStyle applies
    */
-  @Input() pointIcon: OlStyle.Icon;
+  @Input() overlayStyle: OlStyle;
 
   /**
    * The geometry type model
