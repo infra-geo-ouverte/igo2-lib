@@ -103,8 +103,8 @@ export class ShareMapService {
 
     let zoom = 'zoom=' + map.viewController.getZoom();
     const arrayCenter = map.viewController.getCenter('EPSG:4326') || [];
-    const long = arrayCenter[0].toFixed(5).replace(/\.([^0]+)0+$/,".$1")
-    const lat = arrayCenter[1].toFixed(5).replace(/\.([^0]+)0+$/,".$1")
+    const long = arrayCenter[0].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
+    const lat = arrayCenter[1].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
     const center = `center=${long},${lat}`.replace(/.00000/g, '');
     let context = '';
     if (this.contextService.context$.value) {
@@ -112,22 +112,25 @@ export class ShareMapService {
         context = 'context=' + this.contextService.context$.value.uri;
       }
       if (this.contextService.context$.value.map.view.zoom) {
-        zoom = this.contextService.context$.value.map.view.zoom === map.viewController.getZoom() ? '' : 'zoom=' + map.viewController.getZoom();
+        zoom =
+          this.contextService.context$.value.map.view.zoom ===
+          map.viewController.getZoom()
+            ? ''
+            : 'zoom=' + map.viewController.getZoom();
       }
     }
 
     let url = `${location.origin}${
       location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`
+    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
       url = url.endsWith('&') ? url.slice(0, -1) : url;
     }
     url = url.endsWith('&') ? url.slice(0, -1) : url;
-    url = url.replace('?&', '?')
+    url = url.replace('?&', '?');
 
     return url;
   }
-
 }

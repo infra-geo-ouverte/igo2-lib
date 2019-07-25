@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import * as olstyle from 'ol/style';
 import { StyleByAttribute } from './stylebyattribute';
 
+import { ClusterParam } from './clusterParam';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -51,7 +53,6 @@ export class StyleService {
 
     return olCls;
   }
-
   createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
     let style;
     const type = styleByAttribute.type;
@@ -70,46 +71,53 @@ export class StyleService {
       for (let i = 0; i < size; i++) {
         if (feature.get(attribute) === data[i]) {
           if (icon) {
-           style = [new olstyle.Style({
-             image: new olstyle.Icon({
-               src: icon[i],
-               scale: scale ? scale[i] : 1
-             })
-           })];
-           return style;
+            style = [
+              new olstyle.Style({
+                image: new olstyle.Icon({
+                  src: icon[i],
+                  scale: scale ? scale[i] : 1
+                })
+              })
+            ];
+            return style;
           }
-          style = [new olstyle.Style({
-            image: new olstyle.Circle({
-              radius: radius ? radius[i] : 4,
-              stroke: new olstyle.Stroke({
-                color: stroke ? stroke[i] : 'black'
-              }),
-              fill: new olstyle.Fill({
-                color: fill ? fill[i] : 'black'
+          style = [
+            new olstyle.Style({
+              image: new olstyle.Circle({
+                radius: radius ? radius[i] : 4,
+                stroke: new olstyle.Stroke({
+                  color: stroke ? stroke[i] : 'black'
+                }),
+                fill: new olstyle.Fill({
+                  color: fill ? fill[i] : 'black'
+                })
               })
             })
-          })];
+          ];
           return style;
         }
       }
       if (!feature.getStyle()) {
-       style = [new olstyle.Style({
-         image: new olstyle.Circle({
-           radius: 4,
-           stroke: new olstyle.Stroke({
-             color: 'black'
-           }),
-           fill: new olstyle.Fill({
-             color: '#bbbbf2'
-           })
-         })
-       })];
-       return style;
-     }
-     } else if (type === 'regular') {
-        for (let i = 0; i < size; i++) {
-          if (feature.get(attribute) === data[i]) {
-            style = [new olstyle.Style({
+        style = [
+          new olstyle.Style({
+            image: new olstyle.Circle({
+              radius: 4,
+              stroke: new olstyle.Stroke({
+                color: 'black'
+              }),
+              fill: new olstyle.Fill({
+                color: '#bbbbf2'
+              })
+            })
+          })
+        ];
+        return style;
+      }
+    } else if (type === 'regular') {
+      for (let i = 0; i < size; i++) {
+        if (feature.get(attribute) === data[i]) {
+          style = [
+            new olstyle.Style({
               stroke: new olstyle.Stroke({
                 color: stroke ? stroke[i] : 'black',
                 width: width ? width[i] : 1
@@ -123,25 +131,93 @@ export class StyleService {
                   color: 'black'
                 })
               })
-            })];
-            return style;
-           }
-         }
-        if (!feature.getStyle()) {
-          if (baseStyle) {
-            style = this.createStyle(baseStyle);
-            return style;
-          }
-          style = [new olstyle.Style({
+            })
+          ];
+          return style;
+        }
+      }
+      if (!feature.getStyle()) {
+        if (baseStyle) {
+          style = this.createStyle(baseStyle);
+          return style;
+        }
+        style = [
+          new olstyle.Style({
             stroke: new olstyle.Stroke({
               color: 'black'
             }),
             fill: new olstyle.Fill({
               color: '#bbbbf2'
             })
-          })];
-          return style;
+          })
+        ];
+        return style;
+      }
+    }
+  }
+
+  createClusterStyle(feature, clusterParam: ClusterParam) {
+    let style;
+    const range = clusterParam.clusterRange;
+    const icon = clusterParam.clusterIcon;
+    const scale = clusterParam.clusterScale;
+    const size = feature.get('features').length;
+    let color;
+    if (size !== 1) {
+      if (range) {
+        if (size >= range[1]) {
+          color = 'red';
+        } else if (size < range[1] && size >= range[0]) {
+          color = 'orange';
+        } else if (size < range[0]) {
+          color = 'green';
         }
-       }
-   }
+      }
+      style = [
+        new olstyle.Style({
+          image: new olstyle.Circle({
+            radius: 2 * size + 3.4,
+            stroke: new olstyle.Stroke({
+              color: 'black'
+            }),
+            fill: new olstyle.Fill({
+              color: range ? color : 'blue'
+            })
+          }),
+          text: new olstyle.Text({
+            text: size.toString(),
+            fill: new olstyle.Fill({
+              color: '#fff'
+            })
+          })
+        })
+      ];
+    } else {
+      if (icon) {
+        style = [
+          new olstyle.Style({
+            image: new olstyle.Icon({
+              src: icon,
+              scale
+            })
+          })
+        ];
+      } else {
+        style = [
+          new olstyle.Style({
+            image: new olstyle.Circle({
+              radius: 2 * size + 3.4,
+              stroke: new olstyle.Stroke({
+                color: 'black'
+              }),
+              fill: new olstyle.Fill({
+                color: 'blue'
+              })
+            })
+          })
+        ];
+      }
+    }
+    return style;
+  }
 }

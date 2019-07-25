@@ -1,6 +1,4 @@
 import olSource from 'ol/source/Source';
-
-import { DataSource } from './datasource';
 import { DownloadOptions } from '../../../download/shared/download.interface';
 
 export interface DataSourceOptions {
@@ -15,7 +13,8 @@ export interface DataSourceOptions {
     | 'arcgisrest'
     | 'tilearcgisrest'
     | 'websocket'
-    | 'mvt';
+    | 'mvt'
+    | 'cluster';
   legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
   // title: string;
