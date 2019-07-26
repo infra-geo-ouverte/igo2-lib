@@ -142,15 +142,19 @@ export class ShareMapService {
 
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
-    let zoom = 'zoom=' + map.viewController.getZoom();
+    let zoomKey = this.route.options.zoomKey;
+    let centerKey = this.route.options.centerKey;
+    let contextKey = this.route.options.contextKey;
+
+    let zoom = `${zoomKey}=${map.viewController.getZoom()}`;
     const arrayCenter = map.viewController.getCenter('EPSG:4326') || [];
     const long = arrayCenter[0].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
     const lat = arrayCenter[1].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
-    const center = `center=${long},${lat}`.replace(/.00000/g, '');
+    const center = `${centerKey}=${long},${lat}`.replace(/.00000/g, '');
     let context = '';
     if (this.contextService.context$.value) {
       if (this.contextService.context$.value.uri !== '_default') {
-        context = 'context=' + this.contextService.context$.value.uri;
+        context = `${contextKey}=${this.contextService.context$.value.uri}`;
       }
     }
 
