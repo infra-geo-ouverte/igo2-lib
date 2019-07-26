@@ -152,13 +152,6 @@ export class ShareMapService {
       if (this.contextService.context$.value.uri !== '_default') {
         context = 'context=' + this.contextService.context$.value.uri;
       }
-      if (this.contextService.context$.value.map.view.zoom) {
-        zoom =
-          this.contextService.context$.value.map.view.zoom ===
-          map.viewController.getZoom()
-            ? ''
-            : 'zoom=' + map.viewController.getZoom();
-      }
     }
 
     let url = `${location.origin}${
