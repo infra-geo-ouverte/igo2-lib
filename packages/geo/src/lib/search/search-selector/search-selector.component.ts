@@ -86,46 +86,4 @@ export class SearchSelectorComponent implements OnInit {
     this.change.emit(searchType);
   }
 
-  /**
-   * Get all search sources
-   * @internal
-   */
-  getSearchSources(): SearchSource[] {
-    return this.searchSourceService.getSources();
-  }
-
-  /**
-   * Triggered when a setting is checked (checkbox style)
-   * @internal
-   */
-  settingsValueCheckedCheckbox(
-    event: MatCheckboxChange,
-    source: SearchSource,
-    setting: SearchSourceSettings,
-    settingValue: SettingOptions
-  ) {
-    settingValue.enabled = event.checked;
-    source.setParamFromSetting(setting);
-  }
-
-  /**
-   * Triggered when a setting is checked (radiobutton style)
-   * @internal
-   */
-  settingsValueCheckedRadioButton(
-    event: MatRadioChange,
-    source: SearchSource,
-    setting: SearchSourceSettings,
-    settingValue: SettingOptions
-  ) {
-    setting.values.forEach( conf => {
-      if (conf.value !== settingValue.value) {
-        conf.enabled = !event.source.checked;
-      } else {
-        conf.enabled = event.source.checked;
-      }
-    });
-    source.setParamFromSetting(setting);
-  }
-
 }
