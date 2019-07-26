@@ -14,14 +14,26 @@
     #searchSettingsMenu="matMenu"
     class="no-border-radius">
       <ng-container *ngFor="let source of getSearchSources()">
-        <button *ngIf="source.settings.length > 0"
-          [matMenuTriggerFor]="sub_menu"
-          mat-menu-item>{{source.title}}
-        </button>
+        <span class="igo-search-settings-search-source">
+          <mat-checkbox
+            class="igo-search-settings-checkbox"
+            [checked]="source.enabled"
+            [value]="source"
+            (click)="$event.stopPropagation()"
+            (change)="onCheckSearchSource($event, source)">
+          </mat-checkbox>
+          <button *ngIf="source.settings.length > 0"
+            [matMenuTriggerFor]="sub_menu"
+            mat-menu-item>{{source.title}}
+          </button>
+          <button
+            mat-menu-item
+            *ngIf="source.settings.length === 0">
+            {{source.title}}
+          </button>
+        </span>
           <mat-menu #sub_menu="matMenu"
-            xPosition="before"
-            yPosition="above"
-          >
+            xPosition="after">
             <ng-container *ngFor="let setting of source.settings">
               <button
                   mat-menu-item

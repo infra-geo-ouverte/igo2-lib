@@ -12,3 +12,18 @@
 .igo-search-settings-radio-group mat-radio-button {
   margin: $igo-margin;
 }
+
+.igo-search-settings-checkbox mat-radio-button {
+  display: inline-flex;
+}
+
+.igo-search-settings-search-source {
+  display: inline-flex;
+  width: 100%;
+}
+
+.igo-search-settings-search-source mat-checkbox{
+  display: inline-flex;
+  margin-left: $igo-margin;
+  margin-right: $igo-margin;
+}
