@@ -40,7 +40,9 @@ export class RouteService {
       llcKKey: 'llck',
       llcAKey: 'llca',
       llcVKey: 'llcv',
-      llcRKey: 'llcr'
+      llcRKey: 'llcr',
+      wmsUrlKey: 'wmsUrl',
+      layersKey:  'layers'
     };
     this.options = Object.assign({}, defaultOptions, options);
   }

@@ -99,6 +99,47 @@ export class ShareMapService {
         layersUrl += layer.id + ',';
       }
     }
+    const contextLayersID = [];
+    const contextLayers = this.contextService.context$.value.layers
+    for (const contextLayer of contextLayers) {
+      contextLayersID.push(contextLayer.id || contextLayer.source.id);
+    }
+    const addedLayersByService = [];
+    for (const layer of layers) {
+      if (contextLayersID.indexOf(layer.id) === -1) {
+        const wmsUrl = (layer.dataSource.options as any).url
+        const addedLayer = (layer.dataSource.options as any).params.layers
+        const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`
+
+        if (!addedLayersByService.find(definedUrl => definedUrl.url === wmsUrl)) {
+          addedLayersByService.push({ url: wmsUrl, layers: [addedLayerPosition] })
+        } else {
+          addedLayersByService.forEach(service => {
+            if (service.url === wmsUrl) {
+              service.layers.push(addedLayerPosition);
+            }
+          });
+        }
+      }
+    }
+    let addedLayersQueryParams = ''
+    
+    if (addedLayersByService.length >= 1) {
+      const wmsUrlKey = this.route.options.wmsUrlKey;
+      const layersKey = this.route.options.layersKey;
+
+      let wmsUrlQueryParams = '';
+      let layersQueryParams = '';
+      addedLayersByService.forEach(service => {
+        wmsUrlQueryParams += `${service.url},`
+        layersQueryParams += `(${service.layers.join(',')}),`
+      });
+      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',') ? wmsUrlQueryParams.slice(0, -1): wmsUrlQueryParams
+      layersQueryParams = layersQueryParams.endsWith(',') ? layersQueryParams.slice(0, -1): layersQueryParams
+      addedLayersQueryParams = `${wmsUrlKey}=${wmsUrlQueryParams}&${layersKey}=${layersQueryParams}`
+    }
+
+
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
     let zoom = 'zoom=' + map.viewController.getZoom();
@@ -122,7 +163,7 @@ export class ShareMapService {
 
     let url = `${location.origin}${
       location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`;
+    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}&${addedLayersQueryParams}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');

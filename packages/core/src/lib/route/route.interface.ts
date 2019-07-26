@@ -12,4 +12,6 @@ export interface RouteServiceOptions {
   llcAKey?: boolean | string;
   llcVKey?: boolean | string;
   llcRKey?: boolean | string;
+  wmsUrlKey?: boolean | string;
+  layersKey?: boolean | string;
 }
