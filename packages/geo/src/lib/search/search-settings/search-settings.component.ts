@@ -78,4 +78,8 @@ export class SearchSettingsComponent {
     source.setParamFromSetting(setting);
   }
 
+  onCheckSearchSource(event: MatCheckboxChange, source: SearchSource) {
+    source.enabled = event.checked;
+  }
+
 }
