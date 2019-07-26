@@ -30,8 +30,8 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         title: 'Selected',
         valueAccessor: (entity: object) => {
           return this.store.state.get(entity).selected
-            ? 'radio_button_checked'
-            : 'radio_button_unchecked';
+            ? 'radiobox-marked'
+            : 'radiobox-blank';
         },
         renderer: EntityTableColumnRenderer.Icon
       },

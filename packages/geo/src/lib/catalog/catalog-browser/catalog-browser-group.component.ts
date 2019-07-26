@@ -30,6 +30,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
+
   /**
    * Group's items store
    * @internal
@@ -43,6 +44,12 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
+   * Whether the toggle button is disabled
+   * @internal
+   */
+  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  /**
    * Catalog
    */
   @Input() catalog: Catalog;
@@ -51,6 +58,16 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Catalog group
    */
   @Input() group: CatalogItemGroup;
+
+  /**
+   * Whether the group is collapsed
+   */
+  @Input() collapsed: boolean = true;
+
+  /**
+   * Whether the group can be toggled when it's collapsed
+   */
+  @Input() toggleCollapsed: boolean = true;
 
   /**
    * Parent catalog's items store state. Groups share a unique
@@ -90,6 +107,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.load(this.group.items);
     this.evaluateAdded();
+    this.evaluateDisabled(this.collapsed);
     if (this.catalog && this.catalog.sortDirection !== undefined) {
       this.store.view.sort({
         direction: this.catalog.sortDirection,
@@ -122,6 +140,14 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    */
   onToggleClick() {
     this.added$.value ? this.remove() : this.add();
+  }
+
+  /**
+   * On toggle button click, emit the added change event
+   * @internal
+   */
+  onToggleCollapsed(collapsed: boolean) {
+    this.evaluateDisabled(collapsed);
   }
 
   /**
@@ -183,5 +209,13 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       return (this.state.get(item).added || false) === true;
     });
     this.added$.next(added);
+  }
+
+  private evaluateDisabled(collapsed: boolean) {
+    let disabled = false;
+    if (this.toggleCollapsed === false) {
+      disabled = collapsed;
+    }
+    this.disabled$.next(disabled);
   }
 }

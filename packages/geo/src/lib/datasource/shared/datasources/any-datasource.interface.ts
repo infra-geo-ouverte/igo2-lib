@@ -8,6 +8,8 @@ import { FeatureDataSourceOptions } from './feature-datasource.interface';
 import { CartoDataSourceOptions } from './carto-datasource.interface';
 import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
+import { MVTDataSourceOptions } from './mvt-datasource.interface';
+import { ClusterDataSourceOptions } from './cluster-datasource.interface';
 
 export type AnyDataSourceOptions =
   | DataSourceOptions
@@ -19,4 +21,6 @@ export type AnyDataSourceOptions =
   | WMSDataSourceOptions
   | CartoDataSourceOptions
   | ArcGISRestDataSourceOptions
-  | TileArcGISRestDataSourceOptions;
+  | TileArcGISRestDataSourceOptions
+  | MVTDataSourceOptions
+  | ClusterDataSourceOptions;

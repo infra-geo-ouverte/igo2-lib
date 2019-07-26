@@ -20,6 +20,7 @@ import {
   Layer,
   LAYER,
   LayerOptions,
+  ProjectionService,
   Research,
   SearchResult,
   SearchService
@@ -64,6 +65,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
+    private projectionService: ProjectionService,
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
@@ -203,7 +205,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   onSearchCoordinate() {
     this.searchStore.clear();
-    const results = this.searchService.reverseSearch(this.lonlat);
+    const results = this.searchService.reverseSearch(this.lonlat, {distance: 100});
 
     for (const i in results) {
       if (results.length > 0) {

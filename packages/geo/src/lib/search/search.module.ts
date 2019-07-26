@@ -8,18 +8,21 @@ import { provideDefaultCoordinatesSearchResultFormatter } from './shared/sources
 import { IgoSearchBarModule } from './search-bar/search-bar.module';
 import { IgoSearchSelectorModule } from './search-selector/search-selector.module';
 import { IgoSearchResultsModule } from './search-results/search-results.module';
+import { IgoSearchSettingsModule } from './search-settings/search-settings.module';
 
 @NgModule({
   imports: [
     CommonModule,
     IgoSearchBarModule,
     IgoSearchSelectorModule,
-    IgoSearchResultsModule
+    IgoSearchResultsModule,
+    IgoSearchSettingsModule
   ],
   exports: [
     IgoSearchBarModule,
     IgoSearchSelectorModule,
-    IgoSearchResultsModule
+    IgoSearchResultsModule,
+    IgoSearchSettingsModule
   ],
   declarations: []
 })

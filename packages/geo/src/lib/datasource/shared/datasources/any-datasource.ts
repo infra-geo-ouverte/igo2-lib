@@ -9,6 +9,8 @@ import { CartoDataSource } from './carto-datasource';
 import { ArcGISRestDataSource } from './arcgisrest-datasource';
 import { TileArcGISRestDataSource } from './tilearcgisrest-datasource';
 import { WebSocketDataSource } from './websocket-datasource';
+import { MVTDataSource } from './mvt-datasource';
+import { ClusterDataSource } from './cluster-datasource';
 
 export type AnyDataSource =
   | DataSource
@@ -21,4 +23,6 @@ export type AnyDataSource =
   | CartoDataSource
   | ArcGISRestDataSource
   | TileArcGISRestDataSource
-  | WebSocketDataSource;
+  | WebSocketDataSource
+  | MVTDataSource
+  | ClusterDataSource;

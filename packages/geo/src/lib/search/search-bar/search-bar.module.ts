@@ -15,6 +15,7 @@ import {
 import { IgoLanguageModule } from '@igo2/core';
 
 import { IgoSearchSelectorModule } from '../search-selector/search-selector.module';
+import { IgoSearchSettingsModule } from '../search-settings/search-settings.module';
 import { SearchBarComponent } from './search-bar.component';
 import { SearchUrlParamDirective } from './search-url-param.directive';
 
@@ -33,11 +34,11 @@ import { SearchUrlParamDirective } from './search-url-param.directive';
     MatFormFieldModule,
     MatInputModule,
     IgoLanguageModule,
-    IgoSearchSelectorModule
+    IgoSearchSelectorModule,
+    IgoSearchSettingsModule
   ],
   exports: [
     SearchBarComponent,
-    SearchBarComponent
   ],
   declarations: [
     SearchBarComponent,

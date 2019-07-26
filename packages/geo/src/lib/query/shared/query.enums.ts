@@ -5,7 +5,8 @@ export enum QueryFormat {
   GEOJSON = 'geojson',
   ESRIJSON = 'esrijson',
   TEXT = 'text',
-  HTML = 'html'
+  HTML = 'html',
+  HTMLGML2 = 'htmlgml2'
 }
 
 export enum QueryHtmlTarget {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { stringToLonLat } from '../../map';
+import { MapService } from '../../map/shared/map.service';
 
 import { SearchSource, TextSearch, ReverseSearch } from './sources/source';
 import { TextSearchOptions, ReverseSearchOptions } from './sources/source.interfaces';
@@ -20,7 +21,7 @@ import { sourceCanSearch, sourceCanReverseSearch } from './search.utils';
 })
 export class SearchService {
 
-  constructor(private searchSourceService: SearchSourceService) {}
+  constructor(private searchSourceService: SearchSourceService, private mapService: MapService) {}
 
   /**
    * Perform a research by text
@@ -32,9 +33,11 @@ export class SearchService {
       return [];
     }
 
-    const lonLat = stringToLonLat(term);
-    if (lonLat !== undefined) {
-      return this.reverseSearch(lonLat);
+    const response = stringToLonLat(term, this.mapService.getMap().projection);
+    if (response.lonLat) {
+      return this.reverseSearch(response.lonLat);
+    } else {
+      console.log(response.message);
     }
 
     const sources = this.searchSourceService.getEnabledSources()

@@ -2,6 +2,7 @@ import {
   Input,
   Component,
   ChangeDetectionStrategy,
+  OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
@@ -20,7 +21,7 @@ import { FormFieldComponent } from '../shared/form-field-component';
   templateUrl: './form-field-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormFieldSelectComponent {
+export class FormFieldSelectComponent implements OnInit {
 
   choices$: Observable<FormFieldSelectChoice[]>;
 
@@ -87,7 +88,7 @@ export class FormFieldSelectComponent {
     } else {
       this.formControl.enable();
     }
-    this.disabled$.next(disabled);  
+    this.disabled$.next(disabled);
   }
 
 }

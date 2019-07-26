@@ -14,24 +14,26 @@ import {
 
 /**
  * Create a default style for draw and modify interactions
+ * @param color Style color (R, G, B)
  * @returns OL style
  */
-export function createDrawInteractionStyle(): olstyle.Style {
+export function createDrawInteractionStyle(color?: [number, number, number]): olstyle.Style {
+  color = color || [0, 153, 255];
   return new olstyle.Style({
     stroke: new olstyle.Stroke({
-      color:  [0, 153, 255, 1],
+      color: color.concat([1]),
       width: 2
     }),
     fill:  new olstyle.Fill({
-      color:  [0, 153, 255, 0.2]
+      color: color.concat([0.2])
     }),
     image: new olstyle.Circle({
-      radius: 5,
+      radius: 8,
       stroke: new olstyle.Stroke({
-        color: [0, 153, 255, 1],
+        color: color.concat([1])
       }),
       fill: new olstyle.Fill({
-        color:  [0, 153, 255, 0.2]
+        color: color.concat([0.2])
       })
     })
   });
