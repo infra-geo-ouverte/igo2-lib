@@ -100,19 +100,19 @@ export class ShareMapService {
       }
     }
     const contextLayersID = [];
-    const contextLayers = this.contextService.context$.value.layers
+    const contextLayers = this.contextService.context$.value.layers;
     for (const contextLayer of contextLayers) {
       contextLayersID.push(contextLayer.id || contextLayer.source.id);
     }
     const addedLayersByService = [];
     for (const layer of layers) {
       if (contextLayersID.indexOf(layer.id) === -1) {
-        const wmsUrl = (layer.dataSource.options as any).url
-        const addedLayer = (layer.dataSource.options as any).params.layers
-        const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`
+        const wmsUrl = (layer.dataSource.options as any).url;
+        const addedLayer = (layer.dataSource.options as any).params.layers;
+        const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
         if (!addedLayersByService.find(definedUrl => definedUrl.url === wmsUrl)) {
-          addedLayersByService.push({ url: wmsUrl, layers: [addedLayerPosition] })
+          addedLayersByService.push({ url: wmsUrl, layers: [addedLayerPosition] });
         } else {
           addedLayersByService.forEach(service => {
             if (service.url === wmsUrl) {
@@ -122,8 +122,7 @@ export class ShareMapService {
         }
       }
     }
-    let addedLayersQueryParams = ''
-    
+    let addedLayersQueryParams = '';
     if (addedLayersByService.length >= 1) {
       const wmsUrlKey = this.route.options.wmsUrlKey;
       const layersKey = this.route.options.layersKey;
@@ -131,22 +130,21 @@ export class ShareMapService {
       let wmsUrlQueryParams = '';
       let layersQueryParams = '';
       addedLayersByService.forEach(service => {
-        wmsUrlQueryParams += `${service.url},`
-        layersQueryParams += `(${service.layers.join(',')}),`
+        wmsUrlQueryParams += `${service.url},`;
+        layersQueryParams += `(${service.layers.join(',')}),`;
       });
-      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',') ? wmsUrlQueryParams.slice(0, -1): wmsUrlQueryParams
-      layersQueryParams = layersQueryParams.endsWith(',') ? layersQueryParams.slice(0, -1): layersQueryParams
-      addedLayersQueryParams = `${wmsUrlKey}=${wmsUrlQueryParams}&${layersKey}=${layersQueryParams}`
+      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',') ? wmsUrlQueryParams.slice(0, -1) : wmsUrlQueryParams;
+      layersQueryParams = layersQueryParams.endsWith(',') ? layersQueryParams.slice(0, -1) : layersQueryParams;
+      addedLayersQueryParams = `${wmsUrlKey}=${wmsUrlQueryParams}&${layersKey}=${layersQueryParams}`;
     }
-
 
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
-    let zoomKey = this.route.options.zoomKey;
-    let centerKey = this.route.options.centerKey;
-    let contextKey = this.route.options.contextKey;
+    const zoomKey = this.route.options.zoomKey;
+    const centerKey = this.route.options.centerKey;
+    const contextKey = this.route.options.contextKey;
 
-    let zoom = `${zoomKey}=${map.viewController.getZoom()}`;
+    const zoom = `${zoomKey}=${map.viewController.getZoom()}`;
     const arrayCenter = map.viewController.getCenter('EPSG:4326') || [];
     const long = arrayCenter[0].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
     const lat = arrayCenter[1].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
