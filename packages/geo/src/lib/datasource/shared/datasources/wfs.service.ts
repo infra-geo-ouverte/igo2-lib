@@ -23,41 +23,23 @@ export class WFSService extends DataService {
   }
 
   public getSourceFieldsFromWFS(datasource) {
-    if (
-      datasource.sourceFields === undefined ||
-      Object.keys(datasource.sourceFields).length === 0
-    ) {
+    if (!datasource.sourceFields || datasource.sourceFields.length === 0 ) {
       datasource.sourceFields = [];
-      this.wfsGetCapabilities(datasource).subscribe(wfsCapabilities => {
-        datasource.paramsWFS.wfsCapabilities = {
-          xmlBody: wfsCapabilities.body,
-          GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
-            ? true
-            : false
-        };
-
-        this.defineFieldAndValuefromWFS(datasource).subscribe(sourceFields => {
-          datasource.sourceFields = sourceFields;
-        });
+      this.defineFieldAndValuefromWFS(datasource).subscribe(getfeatureSourceField => {
+        datasource.sourceFields = getfeatureSourceField;
       });
+
     } else {
-      datasource.sourceFields.forEach(sourcefield => {
-        if (sourcefield.alias === undefined) {
-          sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
-        }
-      });
-
-      datasource.sourceFields
-        .filter(
-          field => field.values === undefined || field.values.length === 0
-        )
-        .forEach(f => {
-          this.getValueFromWfsGetPropertyValues(
-            datasource,
-            f.name,
-            0
-          ).subscribe(rep => (f.values = rep));
+      this.defineFieldAndValuefromWFS(datasource).subscribe(getfeatureSourceField => {
+        datasource.sourceFields.forEach(sourcefield => {
+          if (sourcefield.alias === undefined) {
+            sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
+          }
+          if (sourcefield.values === undefined || sourcefield.values.length === 0) {
+            sourcefield.values = getfeatureSourceField.find(sf => sf.name === sourcefield.name).values
+          }
         });
+      });
     }
   }
 
@@ -77,73 +59,6 @@ export class WFSService extends DataService {
     }
   }
 
-  public getValueFromWfsGetPropertyValues(
-    wfsDataSourceOptions: WFSDataSourceOptions,
-    field,
-    retry = 0
-  ): Observable<any> {
-    return new Observable(d => {
-      const nbRetry = 2;
-      const valueList = [];
-
-      this.wfsGetPropertyValue(
-        wfsDataSourceOptions,
-        field
-      ).subscribe(
-        str => {
-          str = str.replace(/&#39;/gi, "'");
-          const regexExcp = /exception/gi;
-          if (regexExcp.test(str)) {
-            retry++;
-            if (retry < nbRetry) {
-              this.getValueFromWfsGetPropertyValues(
-                wfsDataSourceOptions,
-                field,
-                retry
-              ).subscribe(rep => d.next(rep));
-            }
-          } else {
-            const valueReferenceRegex = new RegExp(
-              '<(.+?)' + field + '>(.+?)</(.+?)' + field + '>',
-              'gi'
-            );
-            let n = valueReferenceRegex.exec(str);
-            while (n !== null) {
-              if (n.index === valueReferenceRegex.lastIndex) {
-                valueReferenceRegex.lastIndex++;
-              }
-              if (valueList.indexOf(n[2]) === -1) {
-                valueList.push(n[2]);
-              }
-              n = valueReferenceRegex.exec(str);
-            }
-            d.next(valueList);
-            d.complete();
-          }
-        },
-        err => {
-          if (retry < nbRetry) {
-            retry++;
-            this.getValueFromWfsGetPropertyValues(
-              wfsDataSourceOptions,
-              field,
-              retry
-            ).subscribe(rep => d.next(rep));
-          }
-        }
-      );
-    });
-  }
-
-  wfsGetCapabilities(options): Observable<any> {
-    const queryStringValues = formatWFSQueryString(options);
-    const wfsGcUrl = queryStringValues.find(f => f.name === 'getcapabilities').value;
-    return this.http.get(wfsGcUrl, {
-      observe: 'response',
-      responseType: 'text'
-    });
-  }
-
   defineFieldAndValuefromWFS(
     wfsDataSourceOptions: WFSDataSourceOptions
   ): Observable<any> {
@@ -161,71 +76,34 @@ export class WFSService extends DataService {
         olFormats = olformat.GeoJSON;
       }
 
-      if (wfsDataSourceOptions.paramsWFS.wfsCapabilities.GetPropertyValue) {
-        this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
-          const features = new olFormats().readFeatures(oneFeature);
-          fieldList = features[0].getKeys();
-          fieldListWoGeom = fieldList.filter(
-            field =>
-              field !== features[0].getGeometryName() &&
-              !field.match(/boundedby/gi)
-          );
-          fieldListWoGeomStr = fieldListWoGeom.join(',');
-          fieldListWoGeom.forEach(element => {
-            const fieldType =
-              typeof features[0].get(element) === 'object'
-                ? undefined
-                : typeof features[0].get(element);
-            this.getValueFromWfsGetPropertyValues(
-              wfsDataSourceOptions,
-              element,
-              wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures
-            ).subscribe(valueList => {
-              sourceFields.push({
-                name: element,
-                alias: element,
-                values: valueList
-              });
-              d.next(sourceFields);
-            });
+
+      this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
+        const features = new olFormats().readFeatures(oneFeature);
+        fieldList = features[0].getKeys();
+        fieldListWoGeom = fieldList.filter(
+          field =>
+            field !== features[0].getGeometryName() &&
+            !field.match(/boundedby/gi)
+        );
+        fieldListWoGeomStr = fieldListWoGeom.join(',');
+        this.wfsGetFeature(
+          wfsDataSourceOptions,
+          wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
+          undefined,
+          fieldListWoGeomStr
+        ).subscribe(manyFeatures => {
+          const mfeatures = new olFormats().readFeatures(manyFeatures);
+          this.built_properties_value(mfeatures).forEach(element => {
+            sourceFields.push(element);
           });
+          d.next(sourceFields);
+          d.complete();
         });
-      } else {
-        this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
-          const features = new olFormats().readFeatures(oneFeature);
-          fieldList = features[0].getKeys();
-          fieldListWoGeom = fieldList.filter(
-            field =>
-              field !== features[0].getGeometryName() &&
-              !field.match(/boundedby/gi)
-          );
-          fieldListWoGeomStr = fieldListWoGeom.join(',');
-          this.wfsGetFeature(
-            wfsDataSourceOptions,
-            wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
-            undefined,
-            fieldListWoGeomStr
-          ).subscribe(manyFeatures => {
-            const mfeatures = new olFormats().readFeatures(manyFeatures);
-            this.built_properties_value(mfeatures).forEach(element => {
-              sourceFields.push(element);
-            });
-            d.next(sourceFields);
-            d.complete();
-          });
-        });
-      }
+      });
+
     });
   }
 
-  public wfsGetPropertyValue(
-    wfsDataSourceOptions: WFSDataSourceOptions,
-    field
-  ): Observable<any> {
-    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, undefined, undefined, field);
-    const baseUrl = queryStringValues.find(f => f.name === 'getpropertyvalue').value;
-    return this.http.get(baseUrl, { responseType: 'text' });
-  }
 
   private built_properties_value(features: olFeature[]): string[] {
     const kv = Object.assign({}, features[0].getProperties());
