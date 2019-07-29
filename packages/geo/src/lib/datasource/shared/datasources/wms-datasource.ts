@@ -81,6 +81,11 @@ export class WMSDataSource extends DataSource {
     } //  ####   END  if paramsWFS
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
+    } else {
+      options.sourceFields.forEach(sourceField => {
+        sourceField.alias = sourceField.alias ? sourceField.alias : sourceField.name  
+        // to allow only a list of sourcefield with names
+      });
     }
     const initOgcFilters = (options as OgcFilterableDataSourceOptions).ogcFilters;
     const ogcFilterWriter = new OgcFilterWriter();
@@ -88,6 +93,8 @@ export class WMSDataSource extends DataSource {
     if (!initOgcFilters) {
       (options as OgcFilterableDataSourceOptions).ogcFilters =
         ogcFilterWriter.defineOgcFiltersDefaultOptions(initOgcFilters, fieldNameGeometry, 'wms');
+    } else {
+      initOgcFilters.advancedOgcFilters = initOgcFilters.pushButtons ? false : true;
     }
     if (sourceParams.layers.split(',').length > 1 && options && initOgcFilters.enabled) {
       console.log('*******************************');
