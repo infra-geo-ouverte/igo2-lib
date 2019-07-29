@@ -22,6 +22,6 @@ export class ContextManagerToolComponent {
   }
 
   managePermissions() {
-    this.toolState.toolbox.activateTool('permissionsContextManager');
+    this.toolState.toolbox.activateTool('contextPermissionManager');
   }
 }

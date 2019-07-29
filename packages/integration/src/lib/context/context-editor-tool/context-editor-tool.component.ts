@@ -11,6 +11,4 @@ import { ToolComponent } from '@igo2/common';
   selector: 'igo-context-editor-tool',
   templateUrl: './context-editor-tool.component.html'
 })
-export class ContextEditorToolComponent {
-  constructor() {}
-}
+export class ContextEditorToolComponent {}
