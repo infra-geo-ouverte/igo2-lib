@@ -103,7 +103,5 @@ export function checkWfsParams(wfsDataSourceOptions, srcType?: string) {
   if (gmlRegex.test(outputFormat) || !outputFormat) {
     paramsWFS.version = '1.1.0';
   }
-  return Object.assign({}, wfsDataSourceOptions, {
-    wfsCapabilities: { xmlBody: '', GetPropertyValue: false }
-  });
+  return Object.assign({}, wfsDataSourceOptions );
 }

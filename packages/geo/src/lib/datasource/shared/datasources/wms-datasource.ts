@@ -72,7 +72,6 @@ export class WMSDataSource extends DataSource {
     if (options.paramsWFS) {
       const wfsCheckup = checkWfsParams(options, 'wms');
       ObjectUtils.mergeDeep(options.paramsWFS, wfsCheckup.paramsWFS);
-      options.paramsWFS.wfsCapabilities = wfsCheckup.wfsCapabilities;
 
       fieldNameGeometry = options.paramsWFS.fieldNameGeometry || fieldNameGeometry;
 

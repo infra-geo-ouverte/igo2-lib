@@ -18,10 +18,4 @@ export interface WFSDataSourceOptionsParams {
   outputFormatDownload?: string;
   srsName?: string;
   xmlFilter?: string;
-  wfsCapabilities?: WFSCapabilitiesParams;
-}
-
-export interface WFSCapabilitiesParams {
-  xmlBody?: string;
-  GetPropertyValue?: boolean;
 }
