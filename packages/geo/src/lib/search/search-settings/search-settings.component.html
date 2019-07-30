@@ -32,8 +32,7 @@
             {{source.title}}
           </button>
         </span>
-          <mat-menu #sub_menu="matMenu"
-            xPosition="after">
+          <mat-menu #sub_menu="matMenu">
             <ng-container *ngFor="let setting of source.settings">
               <button
                   mat-menu-item
@@ -42,7 +41,6 @@
               </button>
               <mat-menu #test_sub_menu="matMenu"
                 [ngSwitch]="setting.type"
-                xPosition="before"
                 yPosition="above">
                 <span *ngSwitchCase="'radiobutton'">
                   <mat-radio-group
