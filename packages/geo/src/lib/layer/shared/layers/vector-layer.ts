@@ -140,4 +140,18 @@ export class VectorLayer extends Layer {
     }
     super.setMap(map);
   }
+
+  public onUnwatch() {
+    this.dataSource.onUnwatch();
+    this.stopAnimation();
+  }
+
+  public stopAnimation() {
+    this.dataSource.ol.un(
+      'addfeature',
+      function(e) {
+        this.flash(e.feature);
+      }.bind(this)
+    );
+  }
 }

@@ -11,4 +11,6 @@ export class XYZDataSource extends DataSource {
     return new olSourceXYZ(this.options);
   }
 
+  public onUnwatch() {}
+
 }

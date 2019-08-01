@@ -8,11 +8,11 @@ export class VectorWatcher extends Watcher {
   private loaded = 0;
   private loading = 0;
 
-  private source: olSourceVector;
+  private layer: VectorLayer;
 
   constructor(layer: VectorLayer) {
     super();
-    this.source = layer.options.source.ol;
+    this.layer = layer;
     this.id = uuid();
   }
 
@@ -20,6 +20,6 @@ export class VectorWatcher extends Watcher {
   }
 
   protected unwatch() {
-    this.source.un(`addfeature`, e => {});
+    this.layer.onUnwatch();
   }
 }

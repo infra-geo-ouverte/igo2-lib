@@ -193,4 +193,6 @@ export class WMSDataSource extends DataSource {
 
     return legend;
   }
+
+  public onUnwatch() {}
 }
