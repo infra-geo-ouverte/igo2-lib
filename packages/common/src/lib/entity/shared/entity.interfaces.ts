@@ -92,4 +92,5 @@ export interface EntityTableButton {
   icon: string;
   click: (entity: object) => void;
   color?: 'primary' | 'accent' | 'warn';
+  style?: 'mat-mini-fab' | 'mat-icon-button';
 }
