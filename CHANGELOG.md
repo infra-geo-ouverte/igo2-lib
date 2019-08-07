@@ -1,3 +1,20 @@
+# [1.0.0-alpha.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.3...1.0.0-alpha.4) (2019-08-07)
+
+
+### Bug Fixes
+
+* **context:** fix minors issues context module ([7771fb9](https://github.com/infra-geo-ouverte/igo2-lib/commit/7771fb9))
+
+
+### Features
+
+* **catalog:** add metadata button ([#377](https://github.com/infra-geo-ouverte/igo2-lib/issues/377)) ([b1083e8](https://github.com/infra-geo-ouverte/igo2-lib/commit/b1083e8))
+* **entity-table:** add option to choose button style ([d0d4aae](https://github.com/infra-geo-ouverte/igo2-lib/commit/d0d4aae))
+* **ogcFilters:** OgcFilters simplification, PushButtons and fields & operator control  ([#361](https://github.com/infra-geo-ouverte/igo2-lib/issues/361)) ([1466996](https://github.com/infra-geo-ouverte/igo2-lib/commit/1466996))
+* **search:** Search setting upgrade ([#375](https://github.com/infra-geo-ouverte/igo2-lib/issues/375)) ([67074c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/67074c6))
+
+
+
 # [1.0.0-alpha.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.2...1.0.0-alpha.3) (2019-07-26)
 
 
