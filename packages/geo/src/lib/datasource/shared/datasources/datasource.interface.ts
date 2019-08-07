@@ -40,4 +40,5 @@ export interface SourceFieldsOptionsParams {
   name: any;
   alias?: any;
   values?: any;
+  excludeFromOgcFilters?: boolean;
 }

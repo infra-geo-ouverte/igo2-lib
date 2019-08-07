@@ -77,8 +77,7 @@
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
-        "showFeatureExtent": "Show feature used as spatial extent",
-        "hideFeatureExtent": "Hide feature used as spatial extent "
+        "advancedOgcFilters": "Advanced filters"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
