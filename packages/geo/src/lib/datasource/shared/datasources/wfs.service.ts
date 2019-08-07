@@ -36,7 +36,7 @@ export class WFSService extends DataService {
             sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
           }
           if (sourcefield.values === undefined || sourcefield.values.length === 0) {
-            sourcefield.values = getfeatureSourceField.find(sf => sf.name === sourcefield.name).values
+            sourcefield.values = getfeatureSourceField.find(sf => sf.name === sourcefield.name).values;
           }
         });
       });
@@ -76,7 +76,6 @@ export class WFSService extends DataService {
         olFormats = olformat.GeoJSON;
       }
 
-
       this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
         const features = new olFormats().readFeatures(oneFeature);
         fieldList = features[0].getKeys();
@@ -103,7 +102,6 @@ export class WFSService extends DataService {
 
     });
   }
-
 
   private built_properties_value(features: olFeature[]): string[] {
     const kv = Object.assign({}, features[0].getProperties());

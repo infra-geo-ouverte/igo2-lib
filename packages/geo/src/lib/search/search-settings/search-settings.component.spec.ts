@@ -14,11 +14,10 @@ import {
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';
 import { provideDefaultCoordinatesSearchResultFormatter } from '../shared/sources/coordinates.providers';
-import { SearchSource } from '../shared/sources/source';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {

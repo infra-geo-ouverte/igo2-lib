@@ -83,7 +83,7 @@ export class WMSDataSource extends DataSource {
       options.sourceFields = [];
     } else {
       options.sourceFields.forEach(sourceField => {
-        sourceField.alias = sourceField.alias ? sourceField.alias : sourceField.name  
+        sourceField.alias = sourceField.alias ? sourceField.alias : sourceField.name;
         // to allow only a list of sourcefield with names
       });
     }

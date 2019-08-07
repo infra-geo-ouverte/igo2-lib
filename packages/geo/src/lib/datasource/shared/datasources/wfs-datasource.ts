@@ -28,7 +28,8 @@ export class WFSDataSource extends DataSource {
     const ogcFilters = (this.options as OgcFilterableDataSourceOptions).ogcFilters;
     const fieldNameGeometry = this.options.paramsWFS.fieldNameGeometry || defaultFieldNameGeometry;
     const ogcFilterWriter = new OgcFilterWriter();
-    (this.options as OgcFilterableDataSourceOptions).ogcFilters = ogcFilterWriter.defineOgcFiltersDefaultOptions(ogcFilters, fieldNameGeometry);
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters =
+      ogcFilterWriter.defineOgcFiltersDefaultOptions(ogcFilters, fieldNameGeometry);
     if ((this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled) {
       this.wfsService.getSourceFieldsFromWFS(this.options);
     }
