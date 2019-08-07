@@ -44,5 +44,5 @@ export interface VectorLayerOptions extends LayerOptions {
 
 export interface VectorAnimation {
   duration?: number;
-  color: olColor;
+  color?: olColor;
 }

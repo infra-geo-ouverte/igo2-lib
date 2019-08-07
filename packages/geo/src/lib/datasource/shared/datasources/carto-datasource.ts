@@ -113,4 +113,6 @@ export class CartoDataSource extends DataSource {
       return [{ html: htmlString }];
     }
   }
+
+  public onUnwatch() {}
 }
