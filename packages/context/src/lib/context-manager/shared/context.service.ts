@@ -372,9 +372,9 @@ export class ContextService {
       context.layers.push(opts);
     }
 
-    context.tools = this.tools.map(
-      tool => { String(tool.id); }
-    );
+    context.tools = this.tools.map(tool => {
+      return { id: String(tool.id) };
+    });
 
     return context;
   }
