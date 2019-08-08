@@ -6,7 +6,8 @@
         "layer.addToMap": "Add to map",
         "layer.removeFromMap": "Remove from map",
         "group.addToMap": "Add all layers from this group to map",
-        "group.removeFromMap": "Remove all layers from this group to map"
+        "group.removeFromMap": "Remove all layers from this group to map",
+        "baseLayers": "Baselayers"
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
@@ -72,8 +73,7 @@
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
-        "refreshFilters":
-          "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
+        "refreshFilters": "Update this datasource with the active filter(s). To enable this button, the layer must be visible (or in the defined scale ranges) or you must modify the current filter.",
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
@@ -81,8 +81,7 @@
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
-        "btnSetExtent":
-          "Define the extent of the spatial filter to the current view",
+        "btnSetExtent": "Define the extent of the spatial filter to the current view",
         "snrc": "SNRC (ex:21L14)",
         "selectFeature": "",
         "drawFeature": ""
@@ -97,16 +96,13 @@
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
-        "subsetLayersListKeyword":
-          "Subset the layers's list by title or type (wms, wfs,...)",
+        "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
         "deleteKeyword": "Delete the keyword",
         "subsetLayersListKeywordPlaceholder": "Filter",
         "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",
-        "subsetLayersListOnlyInRange":
-          "Subset the layers's list by resolution range",
+        "subsetLayersListOnlyInRange": "Subset the layers's list by resolution range",
         "sortAlphabetically": "Sort the layers's list alphabetically",
-        "sortMapOrder":
-          "Sort the layers's list based on layer's order on the map",
+        "sortMapOrder": "Sort the layers's list based on layer's order on the map",
         "resetLayersList": "Remove the current applied filter to layers's list"
       },
       "download": {
@@ -127,8 +123,7 @@
         "show": "Show metadata"
       },
       "printForm": {
-        "corsErrorMessageBody":
-          "Unable to print due to non-owned access rights",
+        "corsErrorMessageBody": "Unable to print due to non-owned access rights",
         "corsErrorMessageHeader": "Print",
         "comment": "Comment",
         "doZipFile": "Zip file",
@@ -145,7 +140,7 @@
           "Legal": "Legal"
         },
         "imageFormat": "Image format",
-        "orientation" : "Orientation",
+        "orientation": "Orientation",
         "landscape": "Landscape",
         "portrait": "Portrait",
         "projection": "Projection",
