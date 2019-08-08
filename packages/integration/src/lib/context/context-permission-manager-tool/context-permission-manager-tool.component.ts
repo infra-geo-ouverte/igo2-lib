@@ -5,7 +5,7 @@ import { ToolComponent } from '@igo2/common';
 @ToolComponent({
   name: 'contextPermissionManager',
   title: 'igo.integration.tools.contexts',
-  icon: 'settings'
+  icon: 'star'
 })
 @Component({
   selector: 'igo-context-permission-manager-tool',
