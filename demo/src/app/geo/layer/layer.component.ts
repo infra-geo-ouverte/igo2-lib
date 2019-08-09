@@ -44,6 +44,7 @@ export class AppLayerComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
+            baseLayer: true,
             source: dataSource
           })
         );

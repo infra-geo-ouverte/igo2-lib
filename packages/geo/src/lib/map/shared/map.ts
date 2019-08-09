@@ -267,6 +267,10 @@ export class IgoMap {
     const zIndexTo = layerTo.zIndex;
     const zIndexFrom = layer.zIndex;
 
+    if (zIndexTo < 10) {
+      return;
+    }
+
     layer.zIndex = zIndexTo;
     layerTo.zIndex = zIndexFrom;
 

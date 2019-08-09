@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   TemplateRef,
   ContentChild,
   OnInit,
@@ -102,7 +101,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
   set sortedAlphaInitialized(value: boolean) { this.layerListService.sortedAlphaInitialized = value; }
 
   constructor(
-    private cdRef: ChangeDetectorRef,
     private layerListService: LayerListService
   ) {}
 
@@ -142,6 +140,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   clearKeyword() {
     this.keyword = undefined;
+  }
+
+  getLowerLayer() {
+    return this.layers.filter(l => !l.baseLayer).reduce((prev, current) => {
+      return (prev.zIndex < current.zIndex) ? prev : current;
+    });
+  }
+
+  getUpperLayer() {
+    return this.layers.filter(l => !l.baseLayer).reduce((prev, current) => {
+      return (prev.zIndex > current.zIndex) ? prev : current;
+    });
   }
 
   private next() {
@@ -230,14 +240,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private computeOrderable(): boolean {
-    if (this.onlyInRange || this.onlyVisible ||
-      this.sortedAlpha || this.keyword) {
-      return false;
-    }
-    return true;
-  }
-
   private computeShowToolbar(): boolean {
     switch (this.layerFilterAndSortOptions.showToolbar) {
       case LayerListControlsEnum.always:
@@ -282,8 +284,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private setLayers(layers: Layer[]) {
     this._layers = layers;
-
-    this.orderable = this.computeOrderable();
 
     if (this.excludeBaseLayers) {
       this.hasLayerNotVisible = layers.find(l => l.visible === false && !l.baseLayer) !== undefined;
