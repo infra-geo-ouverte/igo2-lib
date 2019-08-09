@@ -1,18 +1,42 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 
 import { LAYER, AnyLayerOptions, LayerOptions } from '../../../layer';
-import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
+import { QueryableDataSourceOptions, QueryFormat, QueryableDataSource } from '../../../query';
+import { QueryHtmlTarget } from './../../../query/shared/query.enums';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { TextSearchOptions } from './source.interfaces';
-import { ILayerSearchSourceOptions, ILayerData, ILayerResponse } from './ilayer.interfaces';
+import { ILayerSearchSourceOptions, ILayerData, ILayerResponse, ILayerDataSource } from './ilayer.interfaces';
+
+@Injectable()
+export class ILayerSearchResultFormatter {
+  constructor(private languageService: LanguageService) {}
+
+  formatResult(data: ILayerData): ILayerData {
+    const property = Object.entries(data.properties).reduce((out: {[key: string]: any}, entries: [string, any]) => {
+      const [key, value] = entries;
+      let newKey;
+      try {
+        newKey = this.languageService.translate.instant('igo.geo.search.ilayer.properties.' + key);
+      } catch (e) {
+        newKey = key;
+      }
+      out[newKey] = value ? value : '';
+      return out;
+    }, {});
+
+    data.properties = property as ILayerDataSource;
+
+    return data;
+  }
+}
 
 /**
  * ILayer search source
@@ -23,19 +47,18 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   static id = 'ilayer';
   static type = LAYER;
 
-  title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
   get title(): string {
-    return this.title$.getValue();
+    return this.languageService.translate.instant(this.options.title);
   }
 
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
-    @Inject('options') options: ILayerSearchSourceOptions
+    @Inject('options') options: ILayerSearchSourceOptions,
+    @Inject(ILayerSearchResultFormatter)
+    private formatter: ILayerSearchResultFormatter
   ) {
     super(options);
-    this.languageService.translate.get(this.options.title).subscribe(title => this.title$.next(title));
   }
 
   getId(): string {
@@ -44,7 +67,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   protected getDefaultOptions(): ILayerSearchSourceOptions {
     return {
-      title: 'igo.geo.search.dataSources.name',
+      title: 'igo.geo.search.ilayer.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search'
     };
   }
@@ -86,36 +109,38 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       meta: {
         dataType: LAYER,
         id: [this.getId(), data.id].join('.'),
-        title: data.source.title,
+        title: data.properties.title,
         titleHtml: data.highlight.title,
-        icon: data.source.type === 'Layer' ? 'layers' : 'map'
+        icon: data.properties.type === 'Layer' ? 'layers' : 'map'
       },
       data: layerOptions
     };
   }
 
   private computeLayerOptions(data: ILayerData): AnyLayerOptions {
-    const url = data.source.url;
-    const queryParams: any = this.extractQueryParamsFromSourceUrl(url);
+    const url = data.properties.url;
+    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(url);
+    const dataFormat: ILayerData = this.formatter.formatResult(data);
     return {
-      title: data.source.title,
       sourceOptions: {
         crossOrigin: 'anonymous',
-        type: data.source.format,
+        type: dataFormat.properties.format,
         url,
-        queryable: (data.source as QueryableDataSourceOptions).queryable,
-        queryFormat: queryParams.format,
-        queryHtmlTarget: queryParams.htmlTarget,
+        queryFormat: queryParams.queryFormat,
+        queryHtmlTarget: queryParams.queryHtmlTarget,
+        queryable: dataFormat.properties.queryable,
         params: {
-          layers: data.source.name
+          layers: dataFormat.properties.name
         }
-      }
+      },
+      title: dataFormat.properties.title,
+      properties: dataFormat.properties
     };
   }
 
-  private extractQueryParamsFromSourceUrl(url: string): {format: QueryFormat; htmlTarget: string; } {
+  private extractQueryParamsFromSourceUrl(url: string): {queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget; } {
     let queryFormat = QueryFormat.GML2;
-    let htmlTarget;
+    let queryHtmlTarget;
     const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
     if (formatOpt) {
       for (const key of Object.keys(formatOpt)) {
@@ -138,12 +163,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     }
 
     if (queryFormat === QueryFormat.HTML) {
-      htmlTarget = 'iframe';
+      queryHtmlTarget = 'iframe';
     }
 
     return {
-      format: queryFormat,
-      htmlTarget
+      queryFormat,
+      queryHtmlTarget
     };
   }
 }

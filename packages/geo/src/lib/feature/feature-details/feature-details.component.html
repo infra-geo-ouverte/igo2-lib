@@ -10,21 +10,25 @@
         <a href="{{property.value}}" target='_blank'> {{ 'igo.geo.targetHtmlUrl' | translate }} {{title}}</a>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined">
+      <td *ngIf="feature.properties.target === undefined && property.key === 'nom' || property.key === 'Description' ||
+      property.key === 'Titre' || property.key === 'Métadonnées' || property.key === 'Groupe'" >
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]=property.value>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value) &&
+      property.key === 'nom' || property.key === 'Description' || property.key === 'Titre' || property.key === 'Groupe'"
+        [innerHTML]=property.value>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && property.key === 'Métadonnées'">
         <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
-      </td>
+      <!-- <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
+      </td> -->
 
     </tr>
   </tbody>
 </table>
+
 <iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]='htmlSanitizer(feature.properties.url)'></iframe>

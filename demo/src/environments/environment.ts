@@ -81,7 +81,7 @@ export const environment: Environment = {
           { name: 'nommun', alias: 'Municipalité' },
           { name: 'messagpan', alias: 'Message' },
           { name: 'noroute', alias: '# de route' },
-          { name: 'nosortie', alias: '# de sortie' },
+        { name: 'nosortie', alias: '# de sortie' },
           { name: 'direction', alias: 'Direction' },
           { name: 'typesort', alias: 'Type de sortie' }
         ],
@@ -96,9 +96,9 @@ export const environment: Environment = {
         searchUrl: '/apis/territoires/locate',
         enabled: true
       },
-      datasource: {
-        searchUrl: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search',
-        enabled: false
+      ilayer: {
+        searchUrl: '/apis/layers/search',
+        enabled: true
       }
     }
   }

@@ -6,7 +6,7 @@ export interface ILayerSearchSourceOptions extends SearchSourceOptions {
 
 export interface ILayerData {
   id: string;
-  source: ILayerDataSource;
+  properties: ILayerDataSource;
   highlight: ILayerDataHighlight;
 }
 
@@ -18,6 +18,7 @@ export interface ILayerDataSource {
   url: string;
   type: string;
   name: string;
+  queryable: boolean;
 }
 
 export interface ILayerDataHighlight {

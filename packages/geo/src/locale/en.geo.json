@@ -199,11 +199,11 @@
         "nw": "northwest"
       },
       "search": {
-        "dataSources": {
+        "ilayer": {
           "name": "Layers",
           "properties": {
             "abstract": "Abstract",
-            "group": "Group",
+            "groupTitle": "Group",
             "title": "Title",
             "type": "Type",
             "url": "URL"

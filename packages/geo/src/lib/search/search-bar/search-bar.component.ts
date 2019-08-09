@@ -18,8 +18,9 @@ import { debounce, distinctUntilChanged } from 'rxjs/operators';
 import { EntityStore } from '@igo2/common';
 
 import { SEARCH_TYPES } from '../shared/search.enums';
-import { SearchResult, Research } from '../shared/search.interfaces';
+import { SearchResult, Research, SearchResultItem } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
+import { IgoMap } from '../../map';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -112,6 +113,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() searchTypeChange = new EventEmitter<string>();
 
   /**
+   * Event emitted when the search type changes
+   */
+  @Output() clearFeature = new EventEmitter();
+
+  /**
    * Input element
    * @internal
    */
@@ -191,6 +197,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   onClearButtonClick() {
     this.clear();
+    this.clearFeature.emit();
   }
 
   /**

@@ -2,10 +2,12 @@ import olLayer from 'ol/layer/Layer';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../../datasource/shared/datasources/datasource.interface';
+import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
+import { ILayerDataSource } from './../../../search/shared/sources/ilayer.interfaces';
 
 export interface LayerOptions {
   source?: DataSource;
-  sourceOptions?: DataSourceOptions;
+  sourceOptions?: AnyDataSourceOptions;
   title?: string;
   id?: string;
   alias?: string;
@@ -20,6 +22,7 @@ export interface LayerOptions {
   removable?: boolean;
   ol?: olLayer;
   tooltip?: TooltipContent;
+  properties?: ILayerDataSource;
 }
 
 export interface GroupLayers {

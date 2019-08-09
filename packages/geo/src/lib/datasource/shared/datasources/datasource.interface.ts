@@ -15,6 +15,7 @@ export interface DataSourceOptions {
     | 'websocket'
     | 'mvt'
     | 'cluster';
+
   legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
   // title: string;

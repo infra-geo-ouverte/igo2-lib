@@ -3,19 +3,22 @@ import {
   Input,
   Output,
   EventEmitter,
+  ContentChild,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
+  TemplateRef,
   OnDestroy
 } from '@angular/core';
 
-import {Observable, EMPTY, timer} from 'rxjs';
+import {Observable, EMPTY, timer, zip} from 'rxjs';
 import {debounce, map} from 'rxjs/operators';
 
 import {EntityStore, EntityStoreWatcher} from '@igo2/common';
 
-import {SearchResult} from '../shared/search.interfaces';
-import {SearchSource} from '../shared/sources/source';
+import { SearchResult } from '../shared/search.interfaces';
+import { SearchSource } from '../shared/sources/source';
+import { SearchResultItem } from '../shared/search.interfaces';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -59,9 +62,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Output() resultFocus = new EventEmitter<SearchResult>();
 
   /**
-   * Event emitted when a result is selected
+   * Event emitted when a result is clicked
    */
-  @Output() resultSelect = new EventEmitter<SearchResult>();
+  @Output() resultClick = new EventEmitter<SearchResult>();
+
+  @ContentChild('igoSearchItemToolbar') templateSearchToolbar: TemplateRef<any>;
 
   get results$(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
     if (this._results$ === undefined) {
@@ -73,7 +78,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     {source: SearchSource; results: SearchResult[]}[]
   >;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private cdRef: ChangeDetectorRef) {}
 
   /**
    * Bind the search results store to the watcher
@@ -97,9 +103,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param result Search result
    * @internal
    */
-  onResultFocus(result: SearchResult) {
-    this.store.state.update(result, {focused: true}, true);
-    this.resultFocus.emit(result);
+  onResultFocus(result) {
+     this.store.state.update(result, {focused: true}, true);
+     this.resultFocus.emit(result);
+     this.resultClick.emit(result);
   }
 
   /**
@@ -123,17 +130,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param result Search result
    * @internal
    */
-  onResultSelect(result: SearchResult) {
-    this.store.state.update(
-      result,
-      {
-        focused: true,
-        selected: true
-      },
-      true
-    );
+/*   onResultSelect(result: SearchResult) {
+    this.store.state.update(result,{focused: true, selected: true}, true);
     this.resultSelect.emit(result);
-  }
+  } */
 
   /**
    * Return an observable of the search results, grouped by search source
@@ -181,4 +181,5 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       return {source, results: grouped.get(source)};
     });
   }
+
 }

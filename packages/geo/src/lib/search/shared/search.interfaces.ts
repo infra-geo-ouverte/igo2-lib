@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 
+import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { SearchSource } from './sources/source';
 
 export interface Research {
@@ -18,4 +19,8 @@ export interface SearchResult<T = { [key: string]: any }> {
     titleHtml?: string;
     icon: string;
   };
+}
+
+export interface SearchResultItem<L = MetadataLayerOptions> extends SearchResult {
+  options: L;
 }

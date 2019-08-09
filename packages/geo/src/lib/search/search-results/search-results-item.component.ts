@@ -1,12 +1,13 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, ChangeDetectionStrategy, EventEmitter } from '@angular/core';
 
 import {
   getEntityTitle,
   getEntityTitleHtml,
-  getEntityIcon
+  getEntityIcon,
+  EntityStore
 } from '@igo2/common';
 
-import { SearchResult } from '../shared/search.interfaces';
+import { SearchResult, SearchResultItem } from '../shared/search.interfaces';
 
 /**
  * Search results list item
@@ -18,17 +19,23 @@ import { SearchResult } from '../shared/search.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsItemComponent {
+
   /**
-   * Search result
+   * Search result item
    */
-  @Input() result: SearchResult;
+  @Input() layer: SearchResultItem;
+
+  /**
+   * Search results store
+   */
+  @Input() store: EntityStore<SearchResult>;
 
   /**
    * Search result title
    * @internal
    */
   get title(): string {
-    return getEntityTitle(this.result);
+    return getEntityTitle(this.layer);
   }
 
   /**
@@ -36,7 +43,7 @@ export class SearchResultsItemComponent {
    * @internal
    */
   get titleHtml(): string {
-    return getEntityTitleHtml(this.result);
+    return getEntityTitleHtml(this.layer);
   }
 
   /**
@@ -44,8 +51,9 @@ export class SearchResultsItemComponent {
    * @internal
    */
   get icon(): string {
-    return getEntityIcon(this.result);
+    return getEntityIcon(this.layer);
   }
 
   constructor() {}
+
 }
