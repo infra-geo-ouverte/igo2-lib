@@ -1,5 +1,6 @@
 import olSource from 'ol/source/Source';
 
+import { SubjectStatus } from '@igo2/utils';
 import {
   DataSourceOptions,
   DataSourceLegendOptions
@@ -9,6 +10,7 @@ import { DataService } from './data.service';
 import { generateIdFromSourceOptions } from '../../utils/id-generator';
 
 export abstract class DataSource {
+
   public id: string;
   public ol: olSource;
 
@@ -31,5 +33,5 @@ export abstract class DataSource {
     return this.options.legend ? [this.options.legend] : [];
   }
 
-  protected abstract onUnwatch();
+  onLayerStatusChange(status: SubjectStatus): void {}
 }

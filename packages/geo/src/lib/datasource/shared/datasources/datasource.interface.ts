@@ -25,6 +25,8 @@ export interface DataSourceOptions {
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
+  url?: string;
+  pathOffline?: string;
 }
 
 export interface DataSourceLegendOptions {
