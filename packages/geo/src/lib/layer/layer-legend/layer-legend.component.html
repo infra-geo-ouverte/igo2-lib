@@ -1,6 +1,6 @@
 <ng-container *ngIf="legendItems$ | async as items">
   <ng-container *ngIf="items.length; else noItems">
-    <ng-container *ngFor="let item of items" #renderedLegends >
+    <ng-container *ngFor="let item of items.slice().reverse()" #renderedLegends >
       <mat-list-item *ngIf="item.title">
         <mat-icon
           id="legend-toggle"
@@ -12,7 +12,7 @@
           (toggle)="toggleLegendItem($event, item)"
           svgIcon="chevron-up">
         </mat-icon>
-        <h4 matLine>{{item.title}}</h4>
+        <h4 matLine>{{computeItemTitle(item) | async}}</h4>
       </mat-list-item>  
       <mat-list-item *ngIf="currentStyle">
         <mat-select tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"

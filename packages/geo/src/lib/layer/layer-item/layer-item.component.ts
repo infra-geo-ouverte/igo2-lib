@@ -50,8 +50,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
-    // Apply expandLegendIfVisible only when first load, at this moment legengCollapsed = showLegend to true.
-    if (this.layer.visible && this.expandLegendIfVisible && (this.layer.legendCollapsed === this.showLegend$.value)) {
+    if (this.layer.visible && this.expandLegendIfVisible && (this.layer.firstLoadComponent === true)) {
+      this.layer.firstLoadComponent = false;
       this.layer.legendCollapsed = false;
     }
     this.toggleLegend(this.layer.legendCollapsed);

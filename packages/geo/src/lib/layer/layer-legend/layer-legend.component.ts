@@ -142,10 +142,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   listStyles() {
     const layerOptions = this.layer.options;
-    if (layerOptions !== undefined || layerOptions) {
-      if (layerOptions.legendOptions !== undefined || layerOptions.legendOptions) {
+    if (layerOptions && layerOptions.legendOptions) {
         return layerOptions.legendOptions.stylesAvailable;
-      }
     }
     return ;
   }

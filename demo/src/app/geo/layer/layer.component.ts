@@ -149,36 +149,20 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
-        title: 'zone_agricole',
-        visible: false,
-        sourceOptions: {
-          type: 'wms',
-          url: '/cgi-bin/cptaq',
-          optionsFromCapabilities: true,
-          params: {
-            layers: 'zone_agricole',
-            version: '1.3.0'
-          }
-        }
-      })
-      .subscribe(l => this.map.addLayer(l));
-
-    this.layerService
-      .createAsyncLayer({
         title: 'nurc:Arc_Sample_Parent',
         visible: true,
         legendOptions: {
-          //collapsed: false,
+          // collapsed: false,
           display: true,
           // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
-          // stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //
+          stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //
         },
         sourceOptions: {
           type: 'wms',
           url: '/geoserver/ows',
           optionsFromCapabilities: true,
           params: {
-            layers: 'nurc:Arc_Sample,test:Linea_costa', // , test:Linea_costa
+            layers: 'nurc:Arc_Sample', // , test:Linea_costa
             version: '1.3.0'
           }
         }

@@ -25,6 +25,7 @@ import 'classlist.js'; // Run `npm install --save classlist.js`.
 
 /** IE10 and IE11 requires the following for string normalization */
 import 'unorm/lib/unorm.js';
+import 'core-js/es7/object';
 
 /**
  * Web Animations `@angular/platform-browser/animations`

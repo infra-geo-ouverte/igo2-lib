@@ -13,6 +13,7 @@ export abstract class Layer {
   public dataSource: DataSource;
   public legend: Legend[];
   public legendCollapsed: boolean = true;
+  public firstLoadComponent: boolean = true;
   public map: IgoMap;
   public ol: olLayer;
   public options: LayerOptions;

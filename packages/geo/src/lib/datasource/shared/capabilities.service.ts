@@ -177,7 +177,7 @@ export class CapabilitiesService {
           abstract,
           keywordList
         },
-        legendOptions,
+        legendOptions
       },
       queryable,
       timeFilter: timeFilterable ? timeFilter : undefined,
@@ -272,7 +272,8 @@ export class CapabilitiesService {
     const attributions = new olAttribution({
       html: arcgisOptions.copyrightText
     });
-    let timeExtent, timeFilter;
+    let timeExtent;
+    let timeFilter;
     if (arcgisOptions.timeInfo) {
       const time = arcgisOptions.timeInfo.timeExtent;
       timeExtent = time[0] + ',' + time[1];
