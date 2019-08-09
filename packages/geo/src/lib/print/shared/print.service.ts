@@ -223,10 +223,10 @@ export class PrintService {
     const marginBottom = 15;
     const heightPixels = doc.internal.pageSize.height - marginBottom;
 
-    let textProjScale: string;
+    let textProjScale: string = '';
     if (projection === true) {
       const projText = translate.instant('igo.geo.printForm.projection');
-      textProjScale = projText + ': ' + map.projection;
+      textProjScale += projText + ': ' + map.projection;
     }
     if (scale === true) {
       if (projection === true) {

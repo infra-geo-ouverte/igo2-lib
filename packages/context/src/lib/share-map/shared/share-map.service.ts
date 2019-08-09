@@ -48,14 +48,14 @@ export class ShareMapService {
       !this.route ||
       !this.route.options.visibleOnLayersKey ||
       !this.route.options.visibleOffLayersKey ||
-      !map.getZoom()
+      !map.viewController.getZoom()
     ) {
       return;
     }
     const llc = publicShareOption.layerlistControls.querystring;
 
-    const visibleKey = this.route.options.visibleOnLayersKey;
-    const invisibleKey = this.route.options.visibleOffLayersKey;
+    let visibleKey = this.route.options.visibleOnLayersKey;
+    let invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
 
     const routingKey = this.route.options.routingCoordKey;
@@ -77,6 +77,13 @@ export class ShareMapService {
     const visibleLayers = layers.filter(lay => lay.visible);
     const invisibleLayers = layers.filter(lay => !lay.visible);
 
+    if (visibleLayers.length === 0) {
+      visibleKey = '';
+    }
+    if (invisibleLayers.length === 0) {
+      invisibleKey = '';
+    }
+
     let layersUrl = '';
     let layersToLoop = [];
     if (visibleLayers.length > invisibleLayers.length) {
@@ -94,16 +101,36 @@ export class ShareMapService {
     }
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
-    const zoom = 'zoom=' + map.getZoom();
-    const arrayCenter = map.getCenter('EPSG:4326') || [];
-    const center = 'center=' + arrayCenter.toString();
+    let zoom = 'zoom=' + map.viewController.getZoom();
+    const arrayCenter = map.viewController.getCenter('EPSG:4326') || [];
+    const long = arrayCenter[0].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
+    const lat = arrayCenter[1].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
+    const center = `center=${long},${lat}`.replace(/.00000/g, '');
     let context = '';
     if (this.contextService.context$.value) {
-      context = 'context=' + this.contextService.context$.value.uri;
+      if (this.contextService.context$.value.uri !== '_default') {
+        context = 'context=' + this.contextService.context$.value.uri;
+      }
+      if (this.contextService.context$.value.map.view.zoom) {
+        zoom =
+          this.contextService.context$.value.map.view.zoom ===
+          map.viewController.getZoom()
+            ? ''
+            : 'zoom=' + map.viewController.getZoom();
+      }
     }
 
-    return `${location.origin}${
+    let url = `${location.origin}${
       location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`.replace(/&&/g, '&');
+    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`;
+
+    for (let i = 0; i < 5; i++) {
+      url = url.replace(/&&/g, '&');
+      url = url.endsWith('&') ? url.slice(0, -1) : url;
+    }
+    url = url.endsWith('&') ? url.slice(0, -1) : url;
+    url = url.replace('?&', '?');
+
+    return url;
   }
 }

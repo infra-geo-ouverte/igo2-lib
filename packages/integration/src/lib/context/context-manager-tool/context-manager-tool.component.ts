@@ -7,14 +7,13 @@ import { ToolState } from '../../tool/tool.state';
 @ToolComponent({
   name: 'contextManager',
   title: 'igo.integration.tools.contexts',
-  icon: 'tune'
+  icon: 'star'
 })
 @Component({
   selector: 'igo-context-manager-tool',
   templateUrl: './context-manager-tool.component.html'
 })
 export class ContextManagerToolComponent {
-
   constructor(private toolState: ToolState) {}
 
   editContext() {
@@ -22,6 +21,6 @@ export class ContextManagerToolComponent {
   }
 
   managePermissions() {
-    this.toolState.toolbox.activateTool('permissionsContextManager');
+    this.toolState.toolbox.activateTool('contextPermissionManager');
   }
 }

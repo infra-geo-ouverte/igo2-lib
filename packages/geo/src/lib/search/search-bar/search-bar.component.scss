@@ -15,7 +15,7 @@
 :host ::ng-deep div.mat-form-field-infix {
   left: $igo-padding;
   right: $igo-padding;
-  padding: 0 0 12px 0 !important; 
+  padding: 0 0 12px 0 !important;
 }
 
 :host ::ng-deep div.mat-form-field-underline {
@@ -25,6 +25,8 @@
 .igo-search-bar-container {
   position: relative;
   width: 100%;
+  display: inline-flex;
+  overflow: hidden;
 }
 
 .igo-search-bar-container > mat-form-field {
@@ -36,12 +38,12 @@
 }
 
 .search-bar-buttons {
-  position: absolute;
-  right: 40px;
+  position: relative;
+  right: 0px;
+  display: inline-flex;
   top: 0;
   & > button:nth-child(2)::before {
     content: '';
-    position: absolute;
     left: 0px;
     top: 5px;
     border-right: 1px solid #ddd;
@@ -50,10 +52,13 @@
 }
 
 igo-search-selector {
-  display: inline-block;
   background-color: #fff;
-  position: absolute;
-  right: 0;
+  top: 0;
+  border-radius: 0;
+}
+
+igo-search-settings {
+  background-color: #fff;
   top: 0;
   border-radius: 0;
 }

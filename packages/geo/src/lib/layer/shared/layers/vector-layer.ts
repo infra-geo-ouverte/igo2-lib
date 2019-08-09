@@ -8,18 +8,18 @@ import { FeatureDataSource } from '../../../datasource/shared/datasources/featur
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
 import { ArcGISRestDataSource } from '../../../datasource/shared/datasources/arcgisrest-datasource';
 import { WebSocketDataSource } from '../../../datasource/shared/datasources/websocket-datasource';
+import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
+import { VectorWatcher } from '../../utils';
+import { IgoMap } from '../../../map';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
-  public dataSource:
-    | FeatureDataSource
-    | WFSDataSource
-    | ArcGISRestDataSource
-    | WebSocketDataSource;
+  public dataSource: FeatureDataSource | WFSDataSource | ArcGISRestDataSource | WebSocketDataSource | ClusterDataSource;
   public options: VectorLayerOptions;
   public ol: olLayerVector;
+  private watcher: VectorWatcher;
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -31,6 +31,8 @@ export class VectorLayer extends Layer {
 
   constructor(options: VectorLayerOptions) {
     super(options);
+    this.watcher = new VectorWatcher(this);
+    this.status$ = this.watcher.status$;
   }
 
   protected createOlLayer(): olLayerVector {
@@ -128,5 +130,28 @@ export class VectorLayer extends Layer {
       // tell OpenLayers to continue postcompose animation
       this.map.ol.render();
     }
+  }
+
+  public setMap(map: IgoMap | undefined) {
+    if (map === undefined) {
+      this.watcher.unsubscribe();
+    } else {
+      this.watcher.subscribe(() => {});
+    }
+    super.setMap(map);
+  }
+
+  public onUnwatch() {
+    this.dataSource.onUnwatch();
+    this.stopAnimation();
+  }
+
+  public stopAnimation() {
+    this.dataSource.ol.un(
+      'addfeature',
+      function(e) {
+        this.flash(e.feature);
+      }.bind(this)
+    );
   }
 }

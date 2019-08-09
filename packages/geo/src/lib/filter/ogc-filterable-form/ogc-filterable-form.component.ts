@@ -7,39 +7,23 @@ import { IgoMap } from '../../map';
   templateUrl: './ogc-filterable-form.component.html'
 })
 export class OgcFilterableFormComponent {
-  @Input()
-  get datasource(): OgcFilterableDataSource {
-    return this._dataSource;
-  }
-  set datasource(value: OgcFilterableDataSource) {
-    this._dataSource = value;
-  }
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
+  @Input() datasource: OgcFilterableDataSource;
 
-  // tslint:disable-next-line:ban-types
-  @Input() refreshFilters: Function;
+  @Input() map: IgoMap;
+
+  @Input() refreshFilters: () => void;
 
   get refreshFunc() {
     return this.refreshFilters;
   }
-  @Input()
-  get showFeatureOnMap(): boolean {
-    return this._showFeatureOnMap;
-  }
-  set showFeatureOnMap(value: boolean) {
-    this._showFeatureOnMap = value;
-  }
 
-  private _showFeatureOnMap: boolean;
-  private _map: IgoMap;
-  private _dataSource: OgcFilterableDataSource;
+  get advancedOgcFilters(): boolean {
+    if (this.datasource.options.ogcFilters) {
+      return this.datasource.options.ogcFilters.advancedOgcFilters;
+    }
+    return;
+  }
 
   public color = 'primary';
 

@@ -8,9 +8,7 @@
   [color]="color"
   (click)="toggleOgcFilter()">
   <mat-icon
-    [ngClass]='{disabled: !layer.isInResolutionsRange}'>
-    filter_list
-  </mat-icon>
+    [ngClass]='{disabled: !layer.isInResolutionsRange}'svgIcon="filter"></mat-icon>
 </button>
 
 <div #ogcFilter class="igo-layer-actions-container"

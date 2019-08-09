@@ -358,9 +358,11 @@ export class ContextService {
       const layer: any = l;
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        title: layer.options.title,
-        zIndex: layer.zIndex,
-        visible: layer.visible,
+        layerOptions: {
+          title: layer.options.title,
+          zIndex: layer.zIndex,
+          visible: layer.visible
+        },
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
@@ -370,7 +372,9 @@ export class ContextService {
       context.layers.push(opts);
     }
 
-    context.tools = this.tools.map(tool => String(tool.id));
+    context.tools = this.tools.map(tool => {
+      return { id: String(tool.id) };
+    });
 
     return context;
   }

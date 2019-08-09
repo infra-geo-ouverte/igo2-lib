@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
@@ -23,8 +23,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   static id = 'ilayer';
   static type = LAYER;
 
+  title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
   get title(): string {
-    return this.languageService.translate.instant(this.options.title);
+    return this.title$.getValue();
   }
 
   constructor(
@@ -33,6 +35,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     @Inject('options') options: ILayerSearchSourceOptions
   ) {
     super(options);
+    this.languageService.translate.get(this.options.title).subscribe(title => this.title$.next(title));
   }
 
   getId(): string {

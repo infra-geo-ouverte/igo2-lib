@@ -216,7 +216,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     this.term = term;
-    if (term.length >= this.minLength || term.length === 0) {
+    if (term.replace(/(#[^\s]*)/g, '').trim().length >= this.minLength ||
+      term.replace(/(#[^\s]*)/g, '').trim().length === 0) {
       this.stream$.next(term);
     }
   }
@@ -252,7 +253,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @param term Search term
    */
   private doSearch(term: string | undefined) {
-    if (term === undefined || term === '') {
+    if (term === undefined || term.replace(/(#[^\s]*)/g, '').trim() === '') {
       if (this.store !== undefined) {
         this.store.clear();
       }
