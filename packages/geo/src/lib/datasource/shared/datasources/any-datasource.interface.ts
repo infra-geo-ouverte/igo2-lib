@@ -10,7 +10,6 @@ import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';
 import { MVTDataSourceOptions } from './mvt-datasource.interface';
 import { ClusterDataSourceOptions } from './cluster-datasource.interface';
-import { QueryableDataSourceOptions } from './../../../query/shared/query.interfaces';
 
 export type AnyDataSourceOptions =
   | DataSourceOptions
