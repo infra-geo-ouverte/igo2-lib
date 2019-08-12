@@ -56,7 +56,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Whter to query features or not
    */
-  @Input() queryFeatures: boolean = true;
+  @Input() queryFeatures: boolean = false;
 
   /**
    * Feature query hit tolerance
@@ -66,7 +66,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * Feature query hit tolerance
    */
-  @Input() queryFeaturesCondition: (olLayer: OlLayer) => true;
+  @Input() queryFeaturesCondition: (olLayer: OlLayer) => boolean;
 
   /**
    * Whether all query should complete before emitting an event

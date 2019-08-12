@@ -1,6 +1,5 @@
 import olSource from 'ol/source/Source';
 
-import { SubjectStatus } from '@igo2/utils';
 import {
   DataSourceOptions,
   DataSourceLegendOptions
@@ -32,6 +31,5 @@ export abstract class DataSource {
   getLegend(scale?: number): DataSourceLegendOptions[] {
     return this.options.legend ? [this.options.legend] : [];
   }
-
-  onLayerStatusChange(status: SubjectStatus): void {}
+  protected abstract onUnwatch();
 }

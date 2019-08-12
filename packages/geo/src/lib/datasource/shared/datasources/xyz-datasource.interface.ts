@@ -4,7 +4,11 @@ import { DataSourceOptions } from './datasource.interface';
 export interface XYZDataSourceOptions extends DataSourceOptions {
   // type?: 'xyz';
   projection?: string;
+  ol?: olSourceXYZ;
   url?: string;
   urls?: string[];
-  ol?: olSourceXYZ;
+  pathOffline?: string;
+  excludeAttribute?: Array<string>;
+  excludeAttributeOffline?: Array<string>;
+  excludeAttributeBackUp?: Array<string>;
 }
