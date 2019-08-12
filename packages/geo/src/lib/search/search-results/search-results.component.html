@@ -24,6 +24,12 @@
           [selected]="store.state.get(result).selected"
           (focus)="onResultFocus(result)"
           (select)="onResultSelect(result)">
+
+          <ng-container igoSearchItemToolbar
+            [ngTemplateOutlet]="templateSearchToolbar"
+            [ngTemplateOutletContext]="{result: result}">
+          </ng-container>
+
         </igo-search-results-item>
       </ng-template>
     </ng-template>

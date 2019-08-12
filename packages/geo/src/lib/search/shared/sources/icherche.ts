@@ -9,6 +9,7 @@ import { LanguageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import { FEATURE, Feature } from '../../../feature';
+import { GoogleLinks } from './../../../utils/googleLinks';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch, ReverseSearch } from './source';
@@ -265,7 +266,17 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       data.properties,
       IChercheSearchSource.propertiesBlacklist
     );
-    return Object.assign(properties, { type: data.index });
+
+    const googleLinksProperties: { GoogleMaps: string, GoogleStreetView?: string } = {
+      GoogleMaps: GoogleLinks.getGoogleMapsLink(data.geometry.coordinates[0], data.geometry.coordinates[1])
+    };
+    if (data.geometry.type === 'Point') {
+      googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
+        data.geometry.coordinates[0], data.geometry.coordinates[1]
+      );
+    }
+
+    return Object.assign(properties, { type: data.index }, googleLinksProperties);
   }
 
   /**

@@ -1,18 +1,47 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject  } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 
-import { LAYER, AnyLayerOptions, LayerOptions } from '../../../layer';
+import { LAYER } from '../../../layer';
 import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
+import { QueryHtmlTarget } from './../../../query/shared/query.enums';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { TextSearchOptions } from './source.interfaces';
-import { ILayerSearchSourceOptions, ILayerData, ILayerResponse } from './ilayer.interfaces';
+import { ILayerSearchSourceOptions, ILayerData, ILayerItemResponse, ILayerServiceResponse, ILayerDataSource } from './ilayer.interfaces';
+
+@Injectable()
+export class ILayerSearchResultFormatter {
+  constructor(private languageService: LanguageService) {}
+
+  formatResult(data: ILayerData): ILayerData {
+    const allowedKey = ['title', 'abstract', 'groupTitle', 'metadataUrl'];
+
+    const property = Object.entries(data.properties)
+      .filter(([key]) => allowedKey.indexOf(key) !== -1)
+      .reduce((out: {[key: string]: any}, entries: [string, any]) => {
+        const [key, value] = entries;
+        let newKey;
+        try {
+          newKey = this.languageService.translate.instant('igo.geo.search.ilayer.properties.' + key);
+        } catch (e) {
+          newKey = key;
+        }
+        out[newKey] = value ? value : '';
+        return out;
+      }, {});
+
+    const dataR = Object.assign({}, data);
+    dataR.properties = property as ILayerDataSource;
+
+    return dataR;
+  }
+}
 
 /**
  * ILayer search source
@@ -32,7 +61,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
-    @Inject('options') options: ILayerSearchSourceOptions
+    @Inject('options') options: ILayerSearchSourceOptions,
+    @Inject(ILayerSearchResultFormatter)
+    private formatter: ILayerSearchResultFormatter
   ) {
     super(options);
     this.languageService.translate.get(this.options.title).subscribe(title => this.title$.next(title));
@@ -44,7 +75,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   protected getDefaultOptions(): ILayerSearchSourceOptions {
     return {
-      title: 'igo.geo.search.dataSources.name',
+      title: 'igo.geo.search.ilayer.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search'
     };
   }
@@ -57,12 +88,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   search(
     term: string | undefined,
     options?: TextSearchOptions
-  ): Observable<SearchResult<LayerOptions>[]> {
+  ): Observable<SearchResult<ILayerItemResponse>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
-        map((response: ILayerResponse) => this.extractResults(response))
+        map((response: ILayerServiceResponse) => this.extractResults(response))
       );
   }
 
@@ -74,48 +105,50 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: ILayerResponse): SearchResult<LayerOptions>[] {
+  private extractResults(response: ILayerServiceResponse): SearchResult<ILayerItemResponse>[] {
     return response.items.map((data: ILayerData) => this.dataToResult(data));
   }
 
-  private dataToResult(data: ILayerData): SearchResult<LayerOptions> {
+  private dataToResult(data: ILayerData): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
 
     return {
       source: this,
       meta: {
         dataType: LAYER,
-        id: [this.getId(), data.id].join('.'),
-        title: data.source.title,
+        id: [this.getId(), data.properties.id].join('.'),
+        title: data.properties.title,
         titleHtml: data.highlight.title,
-        icon: data.source.type === 'Layer' ? 'layers' : 'map'
+        icon: data.properties.type === 'Layer' ? 'layers' : 'map'
       },
       data: layerOptions
     };
   }
 
-  private computeLayerOptions(data: ILayerData): AnyLayerOptions {
-    const url = data.source.url;
-    const queryParams: any = this.extractQueryParamsFromSourceUrl(url);
+  private computeLayerOptions(data: ILayerData): ILayerItemResponse {
+    const url = data.properties.url;
+    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(url);
     return {
-      title: data.source.title,
       sourceOptions: {
+        id: data.properties.id,
         crossOrigin: 'anonymous',
-        type: data.source.format,
+        type: data.properties.format,
         url,
-        queryable: (data.source as QueryableDataSourceOptions).queryable,
-        queryFormat: queryParams.format,
-        queryHtmlTarget: queryParams.htmlTarget,
+        queryFormat: queryParams.queryFormat,
+        queryHtmlTarget: queryParams.queryHtmlTarget,
+        queryable: data.properties.queryable,
         params: {
-          layers: data.source.name
+          layers: data.properties.name
         }
-      }
+      },
+      title: data.properties.title,
+      properties: this.formatter.formatResult(data).properties
     };
   }
 
-  private extractQueryParamsFromSourceUrl(url: string): {format: QueryFormat; htmlTarget: string; } {
+  private extractQueryParamsFromSourceUrl(url: string): {queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget; } {
     let queryFormat = QueryFormat.GML2;
-    let htmlTarget;
+    let queryHtmlTarget;
     const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
     if (formatOpt) {
       for (const key of Object.keys(formatOpt)) {
@@ -138,12 +171,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     }
 
     if (queryFormat === QueryFormat.HTML) {
-      htmlTarget = 'iframe';
+      queryHtmlTarget = 'iframe';
     }
 
     return {
-      format: queryFormat,
-      htmlTarget
+      queryFormat,
+      queryHtmlTarget
     };
   }
 }

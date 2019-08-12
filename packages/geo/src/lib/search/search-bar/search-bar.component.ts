@@ -112,6 +112,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() searchTypeChange = new EventEmitter<string>();
 
   /**
+   * Event emitted when the search type changes
+   */
+  @Output() clearFeature = new EventEmitter();
+
+  /**
    * Input element
    * @internal
    */
@@ -191,6 +196,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   onClearButtonClick() {
     this.clear();
+    this.clearFeature.emit();
   }
 
   /**
