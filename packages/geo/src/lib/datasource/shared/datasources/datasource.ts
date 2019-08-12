@@ -31,5 +31,6 @@ export abstract class DataSource {
   getLegend(scale?: number): DataSourceLegendOptions[] {
     return this.options.legend ? [this.options.legend] : [];
   }
+  
   protected abstract onUnwatch();
 }
