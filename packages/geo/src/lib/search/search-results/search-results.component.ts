@@ -11,10 +11,10 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import {Observable, EMPTY, timer, zip} from 'rxjs';
-import {debounce, map} from 'rxjs/operators';
+import { Observable, EMPTY, timer } from 'rxjs';
+import { debounce, map } from 'rxjs/operators';
 
-import {EntityStore, EntityStoreWatcher} from '@igo2/common';
+import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
 import { SearchResult } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
@@ -60,7 +60,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   @Output() resultFocus = new EventEmitter<SearchResult>();
 
-    /**
+  /**
    * Event emitted when a result is selected
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
@@ -77,8 +77,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     {source: SearchSource; results: SearchResult[]}[]
   >;
 
-  constructor(
-    private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
    * Bind the search results store to the watcher
@@ -102,9 +101,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param result Search result
    * @internal
    */
-  onResultFocus(result) {
-     this.store.state.update(result, {focused: true}, true);
-     this.resultFocus.emit(result);
+  onResultFocus(result: SearchResult) {
+    this.store.state.update(result, {focused: true}, true);
+    this.resultFocus.emit(result);
   }
 
   /**
@@ -179,5 +178,4 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       return {source, results: grouped.get(source)};
     });
   }
-
 }
