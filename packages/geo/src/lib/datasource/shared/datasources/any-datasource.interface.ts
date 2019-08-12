@@ -24,5 +24,4 @@ export type AnyDataSourceOptions =
   | ArcGISRestDataSourceOptions
   | TileArcGISRestDataSourceOptions
   | MVTDataSourceOptions
-  | ClusterDataSourceOptions
-  | QueryableDataSourceOptions;
+  | ClusterDataSourceOptions;

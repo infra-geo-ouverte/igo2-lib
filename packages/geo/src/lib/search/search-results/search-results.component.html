@@ -19,10 +19,10 @@
         <igo-search-results-item
           igoListItem
           color="accent"
-          [layer]="result"
+          [result]="result"
           [focused]="store.state.get(result).focused"
           (focus)="onResultFocus(result)"
-          (click)="onResultFocus(result)">
+          (select)="onResultSelect(result)">
 
           <ng-container igoSearchItemToolbar
             [ngTemplateOutlet]="templateSearchToolbar"

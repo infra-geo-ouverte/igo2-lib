@@ -10,17 +10,15 @@
         <a href="{{property.value}}" target='_blank'> {{ 'igo.geo.targetHtmlUrl' | translate }} {{title}}</a>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && property.key === 'nom' || property.key === 'Description' ||
-      property.key === 'Titre' || property.key === 'Métadonnées' || property.key === 'Groupe'" >
+      <td *ngIf="feature.properties.target === undefined" >
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value) &&
-      property.key === 'nom' || property.key === 'Description' || property.key === 'Titre' || property.key === 'Groupe'"
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)"
         [innerHTML]=property.value>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && property.key === 'Métadonnées'">
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
         <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
       </td>
 

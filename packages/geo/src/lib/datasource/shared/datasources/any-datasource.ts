@@ -11,7 +11,6 @@ import { TileArcGISRestDataSource } from './tilearcgisrest-datasource';
 import { WebSocketDataSource } from './websocket-datasource';
 import { MVTDataSource } from './mvt-datasource';
 import { ClusterDataSource } from './cluster-datasource';
-import { QueryableDataSource } from './../../../query/shared/query.interfaces';
 
 export type AnyDataSource =
   | DataSource
@@ -26,5 +25,4 @@ export type AnyDataSource =
   | TileArcGISRestDataSource
   | WebSocketDataSource
   | MVTDataSource
-  | ClusterDataSource
-  | QueryableDataSource;
+  | ClusterDataSource;

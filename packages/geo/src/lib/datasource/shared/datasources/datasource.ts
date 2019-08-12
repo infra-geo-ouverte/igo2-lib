@@ -17,7 +17,7 @@ export abstract class DataSource {
     protected dataService?: DataService
   ) {
     this.options = options;
-    this.id = this.generateId();
+    this.id = this.options.id || this.generateId();
     this.ol = this.createOlSource();
   }
 

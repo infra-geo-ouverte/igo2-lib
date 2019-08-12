@@ -131,13 +131,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.map.overlay.setFeatures([layer.data] as Feature[], FeatureMotion.Default);
   }
 
-  /**
-   * Remove a feature to the map overlay
-   */
-  private removeFeatureFromMap() {
-    this.map.overlay.clear();
-  }
-
   ngOnInit() {
     this.store.load([
       {
@@ -161,6 +154,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.destroy();
+  }
+
+  /*
+   * Remove a feature to the map overlay
+   */
+  removeFeatureFromMap() {
+    this.map.overlay.clear();
   }
 
   onContextMenuOpen(event: { x: number; y: number }) {

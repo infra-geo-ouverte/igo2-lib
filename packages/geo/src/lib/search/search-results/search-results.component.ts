@@ -18,7 +18,6 @@ import {EntityStore, EntityStoreWatcher} from '@igo2/common';
 
 import { SearchResult } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
-import { SearchResultItem } from '../shared/search.interfaces';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -61,10 +60,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   @Output() resultFocus = new EventEmitter<SearchResult>();
 
-  /**
-   * Event emitted when a result is clicked
+    /**
+   * Event emitted when a result is selected
    */
-  @Output() resultClick = new EventEmitter<SearchResult>();
+  @Output() resultSelect = new EventEmitter<SearchResult>();
 
   @ContentChild('igoSearchItemToolbar') templateSearchToolbar: TemplateRef<any>;
 
@@ -106,7 +105,6 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   onResultFocus(result) {
      this.store.state.update(result, {focused: true}, true);
      this.resultFocus.emit(result);
-     this.resultClick.emit(result);
   }
 
   /**
@@ -130,10 +128,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @param result Search result
    * @internal
    */
-/*   onResultSelect(result: SearchResult) {
-    this.store.state.update(result,{focused: true, selected: true}, true);
+  onResultSelect(result: SearchResult) {
+    this.store.state.update(result, {focused: true, selected: true}, true);
     this.resultSelect.emit(result);
-  } */
+  }
 
   /**
    * Return an observable of the search results, grouped by search source

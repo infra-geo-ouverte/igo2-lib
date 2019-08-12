@@ -206,7 +206,8 @@
             "groupTitle": "Group",
             "title": "Title",
             "type": "Type",
-            "url": "URL"
+            "url": "URL",
+            "metadataUrl": "Metadata"
           }
         },
         "menu.tooltip": "Search Options",

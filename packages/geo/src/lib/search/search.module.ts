@@ -23,7 +23,7 @@ import { IgoSearchSettingsModule } from './search-settings/search-settings.modul
     IgoSearchBarModule,
     IgoSearchSelectorModule,
     IgoSearchResultsModule,
-    IgoSearchSettingsModule,
+    IgoSearchSettingsModule
   ],
   declarations: []
 })

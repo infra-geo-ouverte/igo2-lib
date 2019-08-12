@@ -25,7 +25,7 @@
       [store]="searchStore"
       placeholder="false"
       (resultFocus)="onResultFocus($event)"
-      (resultClick)="onResultFocus($event)">
+      (resultSelect)="onResultFocus($event)">
         <ng-template #igoSearchItemToolbar let-result="result">
           <igo-search-add-button
             [map]="map"

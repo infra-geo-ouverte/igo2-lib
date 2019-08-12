@@ -5,7 +5,6 @@ import { IgoMap } from '../../map/shared/map';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
-import { Feature } from '../../feature/shared/feature.interfaces';
 
 @Component({
   selector: 'igo-search-add-button',
@@ -35,17 +34,15 @@ export class SearchResultAddButtonComponent implements OnInit {
   }
   private _color = 'primary';
 
-  selectedFeature: Feature;
-
   constructor(private layerService: LayerService) {}
 
   /**
    * @internal
    */
   ngOnInit(): void {
-
-    this.added = this.map.layers.findIndex((lay) => lay.title === this.layer.meta.title) !== -1;
-
+    if (this.layer.meta.dataType === 'Layer') {
+      this.added = this.map.layers.findIndex((lay) => lay.id === this.layer.data.sourceOptions.id) !== -1;
+    }
   }
 
   /**
@@ -82,9 +79,6 @@ export class SearchResultAddButtonComponent implements OnInit {
     this.layerService
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
-
-    const result = (this.layer as SearchResult);
-    this.selectedFeature = (result as SearchResult<Feature>).data;
   }
 
   /**
@@ -99,12 +93,7 @@ export class SearchResultAddButtonComponent implements OnInit {
       return undefined;
     }
 
-    const layerOptions = (this.layer as SearchResult<LayerOptions>).data;
-    this.layerService.
-       createAsyncLayer(layerOptions).
-       subscribe(layer => this.map.addLayer(layer));
-
-    const oLayer = this.map.getLayerById(this.layer.data.source.id);
+    const oLayer = this.map.getLayerById(this.layer.data.sourceOptions.id);
     this.map.removeLayer(oLayer);
   }
 

@@ -15,13 +15,13 @@ export interface DataSourceOptions {
     | 'websocket'
     | 'mvt'
     | 'cluster';
-
   legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
   // title: string;
   // alias?: string;
 
   // view?: ol.olx.layer.ImageOptions;
+  id?: string
   ol?: olSource;
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
