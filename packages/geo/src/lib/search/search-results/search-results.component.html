@@ -21,6 +21,7 @@
           color="accent"
           [result]="result"
           [focused]="store.state.get(result).focused"
+          [selected]="store.state.get(result).selected"
           (focus)="onResultFocus(result)"
           (select)="onResultSelect(result)">
 
