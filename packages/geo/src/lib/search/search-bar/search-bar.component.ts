@@ -18,9 +18,8 @@ import { debounce, distinctUntilChanged } from 'rxjs/operators';
 import { EntityStore } from '@igo2/common';
 
 import { SEARCH_TYPES } from '../shared/search.enums';
-import { SearchResult, Research, SearchResultItem } from '../shared/search.interfaces';
+import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
-import { IgoMap } from '../../map';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
