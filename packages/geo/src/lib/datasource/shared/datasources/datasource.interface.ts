@@ -21,7 +21,7 @@ export interface DataSourceOptions {
   // alias?: string;
 
   // view?: ol.olx.layer.ImageOptions;
-  id?: string
+  id?: string;
   ol?: olSource;
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];

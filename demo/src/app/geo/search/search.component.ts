@@ -18,12 +18,9 @@ import {
   LayerService,
   MapService,
   Layer,
-  LAYER,
-  LayerOptions,
   ProjectionService,
   Research,
   SearchResult,
-  SearchResultItem,
   SearchService
 } from '@igo2/geo';
 
@@ -106,11 +103,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   /**
    * Try to add a feature to the map when it's being focused
    * @internal
-   * @param layer A search result that could be a feature
+   * @param result A search result that could be a feature
    */
-  onResultFocus(layer: SearchResultItem) {
-    this.tryAddFeatureToMap(layer);
-    const result = (layer as SearchResult);
+  onResultFocus(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
     this.selectedFeature = (result as SearchResult<Feature>).data;
   }
 
@@ -118,7 +114,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Try to add a feature to the map overlay
    * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(layer: SearchResultItem) {
+  private tryAddFeatureToMap(layer: SearchResult) {
     if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
@@ -192,10 +188,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       if (results.length > 0) {
         results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
           this.onSearch({ research: results[i], results: _results });
-          /*if (_results[i].source.options.title === 'Coordinates') {
-            this.onResultSelect(_results[0]);
-          }*/
-          console.log(_results[0]);
         });
       }
     }

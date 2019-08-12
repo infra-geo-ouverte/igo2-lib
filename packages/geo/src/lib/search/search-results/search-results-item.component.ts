@@ -6,7 +6,7 @@ import {
   getEntityIcon
 } from '@igo2/common';
 
-import { SearchResultItem } from '../shared/search.interfaces';
+import { SearchResult } from '../shared/search.interfaces';
 
 /**
  * Search results list item
@@ -22,7 +22,7 @@ export class SearchResultsItemComponent {
   /**
    * Search result item
    */
-  @Input() result: SearchResultItem;
+  @Input() result: SearchResult;
 
   /**
    * Search result title

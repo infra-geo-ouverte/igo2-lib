@@ -266,14 +266,17 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       data.properties,
       IChercheSearchSource.propertiesBlacklist
     );
+
+    const googleLinksProperties: { GoogleMaps: string, GoogleStreetView?: string } = {
+      GoogleMaps: GoogleLinks.getGoogleMapsLink(data.geometry.coordinates[0], data.geometry.coordinates[1])
+    };
     if (data.geometry.type === 'Point') {
-      return Object.assign(properties, { type: data.index },
-        { GoogleMaps: GoogleLinks.getGoogleMapsLink(data.geometry.coordinates[0],data.geometry.coordinates[1])},
-        { GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(data.geometry.coordinates[0],data.geometry.coordinates[1])});
+      googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
+        data.geometry.coordinates[0], data.geometry.coordinates[1]
+      );
     }
-    else {
-      return Object.assign(properties, { type: data.index });
-    }
+
+    return Object.assign(properties, { type: data.index }, googleLinksProperties);
   }
 
   /**

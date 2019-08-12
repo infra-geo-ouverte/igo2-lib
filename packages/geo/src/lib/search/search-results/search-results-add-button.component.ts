@@ -1,6 +1,6 @@
-import { Component, Input, Output, ChangeDetectionStrategy, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
-import { SearchResult, SearchResultItem } from '../shared/search.interfaces';
+import { SearchResult } from '../shared/search.interfaces';
 import { IgoMap } from '../../map/shared/map';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
@@ -13,7 +13,7 @@ import { LAYER } from '../../layer/shared/layer.enums';
 })
 export class SearchResultAddButtonComponent implements OnInit {
 
-  @Input() layer: SearchResultItem;
+  @Input() layer: SearchResult;
 
   /**
    * Whether the layer is already added to the map

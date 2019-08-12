@@ -20,7 +20,3 @@ export interface SearchResult<T = { [key: string]: any }> {
     icon: string;
   };
 }
-
-export interface SearchResultItem<L = MetadataLayerOptions> extends SearchResult {
-  options: L;
-}
