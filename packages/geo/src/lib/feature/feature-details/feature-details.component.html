@@ -14,8 +14,7 @@
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)"
-        [innerHTML]=property.value>
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]=property.value>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
