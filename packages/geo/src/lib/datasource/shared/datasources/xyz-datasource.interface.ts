@@ -8,7 +8,4 @@ export interface XYZDataSourceOptions extends DataSourceOptions {
   url?: string;
   urls?: string[];
   pathOffline?: string;
-  excludeAttribute?: Array<string>;
-  excludeAttributeOffline?: Array<string>;
-  excludeAttributeBackUp?: Array<string>;
 }
