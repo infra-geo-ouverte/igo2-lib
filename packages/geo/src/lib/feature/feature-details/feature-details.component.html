@@ -22,8 +22,8 @@
         <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
       </td>
 
-      <!-- <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
-      </td> -->
+      <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
+      </td>
 
     </tr>
   </tbody>
