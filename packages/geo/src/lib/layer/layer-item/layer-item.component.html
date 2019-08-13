@@ -65,7 +65,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
-        [disabled]="!orderable"
+        [disabled]="!orderable || raiseDisabled"
         (click)="layer.map.raiseLayer(layer)">
         <mat-icon svgIcon="arrow-up"></mat-icon>
       </button>
@@ -76,7 +76,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
-        [disabled]="!orderable"
+        [disabled]="!orderable || lowerDisabled"
         (click)="layer.map.lowerLayer(layer)">
         <mat-icon svgIcon="arrow-down"></mat-icon>
       </button>

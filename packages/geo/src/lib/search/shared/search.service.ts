@@ -36,7 +36,7 @@ export class SearchService {
     const response = stringToLonLat(term, this.mapService.getMap().projection);
     if (response.lonLat) {
       return this.reverseSearch(response.lonLat);
-    } else {
+    } else if (response.message) {
       console.log(response.message);
     }
 

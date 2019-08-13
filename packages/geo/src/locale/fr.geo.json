@@ -198,14 +198,15 @@
         "nw": "nord-ouest"
       },
       "search": {
-        "dataSources": {
+        "ilayer": {
           "name": "Couches",
           "properties": {
             "abstract": "Description",
-            "group": "Groupe",
+            "groupTitle": "Groupe",
             "title": "Titre",
             "type": "Type",
-            "url": "URL"
+            "url": "URL",
+            "metadataUrl": "Métadonnées"
           }
         },
         "menu.tooltip": "Options de recherche",

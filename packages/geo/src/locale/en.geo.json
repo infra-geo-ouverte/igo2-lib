@@ -199,14 +199,15 @@
         "nw": "northwest"
       },
       "search": {
-        "dataSources": {
+        "ilayer": {
           "name": "Layers",
           "properties": {
             "abstract": "Abstract",
-            "group": "Group",
+            "groupTitle": "Group",
             "title": "Title",
             "type": "Type",
-            "url": "URL"
+            "url": "URL",
+            "metadataUrl": "Metadata"
           }
         },
         "menu.tooltip": "Search Options",

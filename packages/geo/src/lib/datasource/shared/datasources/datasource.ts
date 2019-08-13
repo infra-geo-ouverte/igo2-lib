@@ -9,6 +9,7 @@ import { DataService } from './data.service';
 import { generateIdFromSourceOptions } from '../../utils/id-generator';
 
 export abstract class DataSource {
+
   public id: string;
   public ol: olSource;
 
@@ -17,7 +18,7 @@ export abstract class DataSource {
     protected dataService?: DataService
   ) {
     this.options = options;
-    this.id = this.generateId();
+    this.id = this.options.id || this.generateId();
     this.ol = this.createOlSource();
   }
 

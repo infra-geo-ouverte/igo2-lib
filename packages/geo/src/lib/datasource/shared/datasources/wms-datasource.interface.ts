@@ -11,6 +11,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   urlWfs?: string; // if url for linked wfs differ from the url for wms.
   url: string;
   params: WMSDataSourceOptionsParams;
+  crossOrigin?: string;
   projection?: string;
   resolutions?: number[];
   serverType?: string;

@@ -3,19 +3,21 @@ import {
   Input,
   Output,
   EventEmitter,
+  ContentChild,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
+  TemplateRef,
   OnDestroy
 } from '@angular/core';
 
-import {Observable, EMPTY, timer} from 'rxjs';
-import {debounce, map} from 'rxjs/operators';
+import { Observable, EMPTY, timer } from 'rxjs';
+import { debounce, map } from 'rxjs/operators';
 
-import {EntityStore, EntityStoreWatcher} from '@igo2/common';
+import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
-import {SearchResult} from '../shared/search.interfaces';
-import {SearchSource} from '../shared/sources/source';
+import { SearchResult } from '../shared/search.interfaces';
+import { SearchSource } from '../shared/sources/source';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -62,6 +64,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * Event emitted when a result is selected
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
+
+  @ContentChild('igoSearchItemToolbar') templateSearchToolbar: TemplateRef<any>;
 
   get results$(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
     if (this._results$ === undefined) {
@@ -124,14 +128,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultSelect(result: SearchResult) {
-    this.store.state.update(
-      result,
-      {
-        focused: true,
-        selected: true
-      },
-      true
-    );
+    this.store.state.update(result, {focused: true, selected: true}, true);
     this.resultSelect.emit(result);
   }
 

@@ -27,4 +27,5 @@
     </tr>
   </tbody>
 </table>
+
 <iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]='htmlSanitizer(feature.properties.url)'></iframe>
