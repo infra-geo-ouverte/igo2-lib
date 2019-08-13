@@ -1,3 +1,23 @@
+# [1.0.0-alpha.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.4...1.0.0-alpha.5) (2019-08-13)
+
+
+### Bug Fixes
+
+* remove autoscroll list and minors fix ([8455d51](https://github.com/infra-geo-ouverte/igo2-lib/commit/8455d51))
+* **context:** create context with tools ([2624053](https://github.com/infra-geo-ouverte/igo2-lib/commit/2624053))
+* **geo-layer-list:** raise/lower layer ([4fbe5c4](https://github.com/infra-geo-ouverte/igo2-lib/commit/4fbe5c4))
+* **geo-translate:** add missing translate ([a9177f7](https://github.com/infra-geo-ouverte/igo2-lib/commit/a9177f7))
+* **integration-directions:** fix module import ([489a09c](https://github.com/infra-geo-ouverte/igo2-lib/commit/489a09c))
+
+
+### Features
+
+* **geo:search:** add buttons, ajust Metadata, links to Google Maps ([#381](https://github.com/infra-geo-ouverte/igo2-lib/issues/381)) ([60dde1a](https://github.com/infra-geo-ouverte/igo2-lib/commit/60dde1a))
+* **map:** add a directive that change url to path depending on the network status  ([#384](https://github.com/infra-geo-ouverte/igo2-lib/issues/384)) ([ad5b5de](https://github.com/infra-geo-ouverte/igo2-lib/commit/ad5b5de))
+* **network:** new network service that return the network status ([#380](https://github.com/infra-geo-ouverte/igo2-lib/issues/380)) ([b31254e](https://github.com/infra-geo-ouverte/igo2-lib/commit/b31254e))
+
+
+
 # [1.0.0-alpha.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.3...1.0.0-alpha.4) (2019-08-07)
 
 
