@@ -1,9 +1,9 @@
 import {
   Component,
-  ChangeDetectionStrategy
-  // ChangeDetectorRef
+  ChangeDetectionStrategy,
+  Input
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
@@ -77,13 +77,22 @@ export class SearchResultsToolComponent {
 
   public feature: Feature;
 
-  public topPanelState: FlexibleState = 'initial';
+  public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
+
+  @Input()
+  set topPanelState(value: FlexibleState) {
+    this.topPanelState$.next(value);
+  }
+  get topPanelState(): FlexibleState {
+    return this.topPanelState$.value;
+  }
+
   private format = new olFormatGeoJSON();
 
   constructor(
     private mapState: MapState,
     private layerService: LayerService,
-    private searchState: SearchState // private cdRef: ChangeDetectorRef
+    private searchState: SearchState
   ) {}
 
   /**
@@ -99,7 +108,7 @@ export class SearchResultsToolComponent {
   }
 
   /**
-   * Try to add a feature or a layer to the map when it's being selected
+   * Try to add a feature to the map when it's being selected
    * @internal
    * @param result A search result that could be a feature or some layer options
    */
@@ -164,4 +173,5 @@ export class SearchResultsToolComponent {
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
   }
+
 }
