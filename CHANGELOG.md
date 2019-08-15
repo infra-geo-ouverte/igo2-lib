@@ -1,3 +1,14 @@
+# [1.0.0-alpha.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.5...1.0.0-alpha.6) (2019-08-15)
+
+
+### Bug Fixes
+
+* minors bugs ([f79de3d](https://github.com/infra-geo-ouverte/igo2-lib/commit/f79de3d))
+* **context-list:** dectect change ([ecf80c8](https://github.com/infra-geo-ouverte/igo2-lib/commit/ecf80c8))
+* **layer-list:** id missing ([7c801fe](https://github.com/infra-geo-ouverte/igo2-lib/commit/7c801fe))
+
+
+
 # [1.0.0-alpha.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.4...1.0.0-alpha.5) (2019-08-13)
 
 
