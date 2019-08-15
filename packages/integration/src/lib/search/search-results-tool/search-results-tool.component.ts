@@ -1,7 +1,7 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  Input,
+  Input
 } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
