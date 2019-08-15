@@ -92,7 +92,7 @@ export class SearchResultsToolComponent {
   constructor(
     private mapState: MapState,
     private layerService: LayerService,
-    private searchState: SearchState,
+    private searchState: SearchState
   ) {}
 
   /**
