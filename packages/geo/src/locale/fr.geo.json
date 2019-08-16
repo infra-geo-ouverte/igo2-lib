@@ -285,6 +285,7 @@
     }
   },
   "search": {
+    "placeholder": "Rechercher une localisation ou une couche de données",
     "feature.title": "Localisation",
     "feature.placeholder": "Rechercher une localisation",
     "layer.title": "Couche de données",

@@ -84,6 +84,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() searchIcon: string;
 
   /**
+   * Search Selector
+   */
+  @Input() searchSelector = false;
+
+  /**
+   * Search Settings
+   */
+  @Input() searchSettings = false;
+
+  /**
    * Search results store
    */
   @Input() store: EntityStore<SearchResult>;
@@ -149,7 +159,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   get placeholder(): string {
     return this.empty ? this._placeholder : '';
   }
-  private _placeholder = '';
+  private _placeholder = 'search.placeholder';
 
   constructor(private searchService: SearchService) {}
 
@@ -209,6 +219,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onSearchTypeChange(searchType: string) {
     this.searchTypeChange.emit(searchType);
     this.placeholder = `search.${searchType.toLowerCase()}.placeholder`;
+    this.doSearch(this.term);
+  }
+
+  onSearchSettingsChange() {
     this.doSearch(this.term);
   }
 

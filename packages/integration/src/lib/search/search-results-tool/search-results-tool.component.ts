@@ -70,6 +70,9 @@ export class SearchResultsToolComponent {
       .pipe(
         map(element => {
           this.feature = element ? (element.entity.data as Feature) : undefined;
+          if (!this.feature) {
+            this.topPanelState = 'initial';
+          }
           return this.feature;
         })
       );

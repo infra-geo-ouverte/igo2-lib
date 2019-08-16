@@ -276,7 +276,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       );
     }
 
-    return Object.assign(properties, { type: data.index }, googleLinksProperties);
+    return Object.assign({ type: data.index }, properties, googleLinksProperties);
   }
 
   /**

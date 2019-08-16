@@ -38,7 +38,8 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'Coordinates'
+      title: 'Coordinates',
+      order: 1
     };
   }
 
@@ -76,6 +77,10 @@ export class CoordinatesReverseSearchSource extends SearchSource
             data[0],
             data[1]
           )
+        },
+        meta: {
+          id: '1',
+          title: String(data[0]) + ', ' + String(data[1])
         }
       },
       meta: {
