@@ -6,6 +6,18 @@ mat-form-field {
   height: auto;
 }
 
+form {
+  padding-top:  10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom:  10px;
+}
+
+h3 {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .mat-line {
   word-wrap: break-word !important;
   white-space: pre-wrap !important;

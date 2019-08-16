@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { LanguageService } from '@igo2/core';
-import { IgoMap, LayerService } from '@igo2/geo';
+import { IgoMap, LayerService, MapService } from '@igo2/geo';
 
 @Component({
   selector: 'app-directions',
@@ -25,8 +25,10 @@ export class AppDirectionsComponent {
 
   constructor(
     private languageService: LanguageService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    private mapService: MapService
   ) {
+    this.mapService.setMap(this.map);
     this.layerService
       .createAsyncLayer({
         title: 'Quebec Base Map',
