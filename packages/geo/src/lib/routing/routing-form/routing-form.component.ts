@@ -472,7 +472,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     let directiveFr;
     let directiveEn;
-    let image = 'arrow_forward';
+    let image = 'forward';
     let cssClass = 'rotate-270';
     const translatedDirection = this.translateBearing(direction);
     const translatedModifier = this.translateModifier(modifier);
@@ -487,27 +487,27 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (modifier === 'uturn') {
-      image = 'fast_forward';
+      image = 'forward';
       cssClass = 'rotate-90';
     } else if (modifier === 'sharp right') {
-      image = 'subdirectory_arrow_right';
+      image = 'subdirectory-arrow-right';
       cssClass = 'icon-flipped';
     } else if (modifier === 'right') {
-      image = 'subdirectory_arrow_right';
+      image = 'subdirectory-arrow-right';
       cssClass = 'icon-flipped';
     } else if (modifier === 'slight right') {
-      image = 'arrow_forward';
+      image = 'forward';
       cssClass = 'rotate-290';
     } else if (modifier === 'straight') {
-      image = 'arrow_forward';
+      image = 'forward';
     } else if (modifier === 'slight left') {
-      image = 'arrow_forward';
+      image = 'forward';
       cssClass = 'rotate-250';
     } else if (modifier === 'left') {
-      image = 'subdirectory_arrow_left';
+      image = 'subdirectory-arrow-left';
       cssClass = 'icon-flipped';
     } else if (modifier === 'sharp left') {
-      image = 'subdirectory_arrow_left';
+      image = 'subdirectory-arrow-left';
       cssClass = 'icon-flipped';
     }
 
@@ -526,13 +526,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       directiveFr =
         'Continuer en direction ' + translatedDirection + ' sur ' + route;
       directiveEn = 'Head ' + translatedDirection + ' on ' + route;
-      image = 'explore';
+      image = 'compass';
       cssClass = '';
     } else if (type === 'depart') {
       directiveFr =
         'Aller en direction ' + translatedDirection + ' sur ' + route;
       directiveEn = 'Head ' + translatedDirection + ' on ' + route;
-      image = 'explore';
+      image = 'compass';
       cssClass = '';
     } else if (type === 'arrive') {
       if (lastStep) {
@@ -548,13 +548,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         directiveFr = 'Vous atteignez le point intermédiare sur ' + route;
         directiveEn = 'You have reached the intermediate stop onto ' + route;
-        image = 'location_on';
+        image = 'map-marker';
         cssClass = '';
       }
     } else if (type === 'merge') {
       directiveFr = 'Continuer sur ' + route;
       directiveEn = 'Continue on ' + route;
-      image = 'arrow_forward';
+      image = 'forward';
       cssClass = 'rotate-270';
     } else if (type === 'on ramp') {
       directiveFr = "Prendre l'entrée d'autoroute " + frAggregatedDirection;
@@ -584,7 +584,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if (type === 'continue' && modifier !== 'uturn') {
       directiveFr = 'Continuer sur ' + route;
       directiveEn = 'Continue on ' + route;
-      image = 'arrow_forward';
+      image = 'forward';
       cssClass = 'rotate-270';
     } else if (type === 'roundabout') {
       directiveFr = 'Au rond-point, prendre la ' + exit;
@@ -593,22 +593,22 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       directiveEn = 'At the roundabout, take the ' + exit;
       directiveEn += exit === 1 ? 'st' : 'rd';
       directiveEn += ' exit towards ' + route;
-      image = 'donut_large';
+      image = 'chart-donut';
       cssClass = '';
     } else if (type === 'rotary') {
       directiveFr = 'Rond-point rotary....';
       directiveEn = 'Roundabout rotary....';
-      image = 'donut_large';
+      image = 'chart-donut';
       cssClass = '';
     } else if (type === 'roundabout turn') {
       directiveFr = 'Rond-point, prendre la ...';
       directiveEn = 'Roundabout, take the ...';
-      image = 'donut_large';
+      image = 'chart-donut';
       cssClass = '';
     } else if (type === 'exit roundabout') {
       directiveFr = 'Poursuivre vers ' + route;
       directiveEn = 'Continue to ' + route;
-      image = 'arrow_forward';
+      image = 'forward';
       cssClass = 'rotate-270';
     } else if (type === 'notification') {
       directiveFr = 'notification ....';
@@ -627,11 +627,11 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (lastStep) {
-      image = 'flag';
+      image = 'flag-variant';
       cssClass = '';
     }
     if (stepPosition === 0) {
-      image = 'explore';
+      image = 'compass';
       cssClass = '';
     }
 
@@ -936,6 +936,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 ) {
                   searchProposals.push({
                     source: element.source,
+                    meta: element.meta,
                     results: results.map(r => r.data)
                   });
                 }
@@ -1100,8 +1101,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     if (geometry.getType() === 'Point') {
-      const olStyle = createOverlayMarkerStyle(stopColor);
-      // stopText
+      const olStyle = createOverlayMarkerStyle(stopColor, stopText);
       feature.setStyle(olStyle);
     }
     this.routingStopsOverlayDataSource.ol.addFeature(feature);
