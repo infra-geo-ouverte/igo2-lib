@@ -1,6 +1,5 @@
 {
   "uri": "context3",
-  "title": "CARTO examples",
   "map": {
     "view": {
       "projection": "EPSG:3857",
