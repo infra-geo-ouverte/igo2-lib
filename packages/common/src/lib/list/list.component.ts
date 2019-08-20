@@ -51,9 +51,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   set focusedItem(value: ListItemDirective) {
     this._focusedItem = value;
-    if (value !== undefined) {
-      this.scrollToItem(value);
-    }
   }
   private _focusedItem: ListItemDirective;
 
@@ -190,6 +187,10 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.navigationEnabled = false;
   }
 
+  scrollToItem(item: ListItemDirective) {
+    this.el.nativeElement.scrollTop = item.getOffsetTop();
+  }
+
   private init() {
     this.subscribe();
 
@@ -279,9 +280,5 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
       default:
         break;
     }
-  }
-
-  private scrollToItem(item: ListItemDirective) {
-    this.el.nativeElement.scrollTop = item.getOffsetTop();
   }
 }

@@ -60,11 +60,13 @@
     </ng-container>
   </mat-list-item>
 
-  <ng-template ngFor let-layer [ngForOf]="layers$ | async">
+  <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
     <igo-layer-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
         igoListItem
         [layer]="layer"
-        [orderable]="orderable"
+        [orderable]="orderable && !layer.baseLayer"
+        [lowerDisabled]="getLowerLayer().id === layer.id"
+        [raiseDisabled]="getUpperLayer().id === layer.id"
         [queryBadge]="queryBadge"
         [expandLegendIfVisible]="expandLegendOfVisibleLayers"
         [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"

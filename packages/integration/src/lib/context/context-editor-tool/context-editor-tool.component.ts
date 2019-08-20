@@ -5,12 +5,10 @@ import { ToolComponent } from '@igo2/common';
 @ToolComponent({
   name: 'contextEditor',
   title: 'igo.integration.tools.contexts',
-  icon: 'settings'
+  icon: 'star'
 })
 @Component({
   selector: 'igo-context-editor-tool',
   templateUrl: './context-editor-tool.component.html'
 })
-export class ContextEditorToolComponent {
-  constructor() {}
-}
+export class ContextEditorToolComponent {}

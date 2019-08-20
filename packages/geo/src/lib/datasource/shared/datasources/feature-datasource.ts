@@ -40,4 +40,6 @@ export class FeatureDataSource extends DataSource {
 
     return format;
   }
+
+  public onUnwatch() {}
 }

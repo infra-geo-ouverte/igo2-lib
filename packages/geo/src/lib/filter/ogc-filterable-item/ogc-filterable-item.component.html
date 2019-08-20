@@ -6,29 +6,13 @@
   <h4 *ngIf="ogcFiltersHeaderShown" matLine [matTooltip]="layer.title" matTooltipShowDelay="500">{{layer.title}}</h4>
   <h4 *ngIf="!ogcFiltersHeaderShown" matLine></h4>
 
-  <button mat-icon-button *ngIf="hasActiveSpatialFilter && showFeatureOnMap" tooltip-position="below" matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.filter.hideFeatureExtent' | translate"
-  [disabled]="!layer.visible || !layer.isInResolutionsRange"
-  [color]="color"
-  (click)="toggleShowFeatureOnMap()">
-  <mat-icon svgIcon="border-outer"></mat-icon>
-  </button>
-
-  <button mat-icon-button *ngIf="hasActiveSpatialFilter && !showFeatureOnMap" tooltip-position="below" matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.filter.showFeatureExtent' | translate"
-  [disabled]="!layer.visible || !layer.isInResolutionsRange"
-  [color]="color"
-  (click)="toggleShowFeatureOnMap()">
-    <mat-icon svgIcon="border-none"></mat-icon>
-  </button>
-
   <span *ngIf="downloadable && ogcFiltersHeaderShown">
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.download.action' | translate"
       [color]="color" (click)="openDownload()">
       <mat-icon svgIcon="download"></mat-icon>
     </button>
   </span>
-  <button [disabled]="!datasource.options.sourceFields || datasource.options.sourceFields.length === 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+  <button *ngIf="isAdvancedOgcFilters()" [disabled]="addFilterDisabled()" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon svgIcon="plus"></mat-icon>
   </button>
@@ -40,7 +24,12 @@ color="warn" (click)="setVisible()">
 </button>
 
 <div #ogcFilters class="igo-datasource-filters-container">
-  <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc" [showFeatureOnMap]="showFeatureOnMap">
+  <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
   </igo-ogc-filterable-form>
+
+  <mat-checkbox labelPosition='before' *ngIf="hasPushButton" (change)="changeOgcFilterType($event)"
+    [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">
+    {{'igo.geo.filter.advancedOgcFilters' | translate}}
+  </mat-checkbox>
 </div>
 </span>

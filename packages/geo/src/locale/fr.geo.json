@@ -5,7 +5,8 @@
         "layer.addToMap": "Ajouter à la carte",
         "layer.removeFromMap": "Retirer de la carte",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
-        "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte"
+        "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
+        "baseLayers": "Fonds de carte"
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
@@ -71,18 +72,15 @@
         "addFilter": "Ajouter un filtre vide à la liste courante",
         "removeFilter": "Supprimer le présent filtre à la liste des filtres",
         "toggleFilterState": "Activer/désactiver le présent filtre",
-        "refreshFilters":
-          "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
+        "refreshFilters": "Mettre à jour la source de donnée avec les filtres actifs de la liste. Pour activer ce boutton, la couche doit etre visible (et dans les échelles permises) ou veillez modifier le présent filtre.",
         "layerFiltered": "Cette couche d'information est présentement filtrée.",
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
-        "showFeatureExtent": "Montrer l'empreinte des étendues",
-        "hideFeatureExtent": "Cacher l'empreinte des étendues"
+        "advancedOgcFilters": "Filtres avancés"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
-        "btnSetExtent":
-          "Définir l'étendue du filtre selon l'étendue courante de la carte",
+        "btnSetExtent": "Définir l'étendue du filtre selon l'étendue courante de la carte",
         "snrc": "SNRC (ex:21L14)",
         "selectFeature": "",
         "drawFeature": ""
@@ -97,14 +95,11 @@
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
-        "subsetLayersListKeyword":
-          "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
+        "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
         "subsetLayersListKeywordPlaceholder": "Filtre",
-        "subsetLayersListOnlyVisible":
-          "Conserver que les couches qui sont visible",
-        "subsetLayersListOnlyInRange":
-          "Conserver que les couches qui sont dans la plage de résolution active",
+        "subsetLayersListOnlyVisible": "Conserver que les couches qui sont visible",
+        "subsetLayersListOnlyInRange": "Conserver que les couches qui sont dans la plage de résolution active",
         "sortAlphabetically": "Trier la liste des couches alphabétiquement.",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique.",
         "resetLayersList": "Supprimer le filtre appliqué à la liste"
@@ -112,8 +107,7 @@
       "download": {
         "action": "Télécharger les données associées",
         "title": "Téléchargement des données",
-        "start":
-          "Vérifiez la progression du téléchargement dans votre navigateur",
+        "start": "Vérifiez la progression du téléchargement dans votre navigateur",
         "end": "Terminé"
       },
       "mapButtons": {
@@ -128,8 +122,7 @@
         "show": "Montrer les métadonnées"
       },
       "printForm": {
-        "corsErrorMessageBody":
-          "Impossible d'imprimer dû à des droits d'accès non détenus",
+        "corsErrorMessageBody": "Impossible d'imprimer dû à des droits d'accès non détenus",
         "corsErrorMessageHeader": "Impression",
         "comment": "Commentaire",
         "doZipFile": "Compresser le fichier",
@@ -146,7 +139,7 @@
           "Legal": "Légal"
         },
         "imageFormat": "Format de l'image",
-        "orientation" : "Orientation",
+        "orientation": "Orientation",
         "landscape": "Paysage",
         "portrait": "Portrait",
         "projection": "Projection",
@@ -180,8 +173,7 @@
         "link": "Lien",
         "dialog": {
           "copyMsg": "Itinéraire copié dans le presse-papier",
-          "copyMsgLink":
-            "Le lien de l'itinéraire est copié dans le presse-papier",
+          "copyMsgLink": "Le lien de l'itinéraire est copié dans le presse-papier",
           "copyTitle": "Itinéraire"
         }
       },
@@ -206,14 +198,15 @@
         "nw": "nord-ouest"
       },
       "search": {
-        "dataSources": {
+        "ilayer": {
           "name": "Couches",
           "properties": {
             "abstract": "Description",
-            "group": "Groupe",
+            "groupTitle": "Groupe",
             "title": "Titre",
             "type": "Type",
-            "url": "URL"
+            "url": "URL",
+            "metadataUrl": "Métadonnées"
           }
         },
         "menu.tooltip": "Options de recherche",
@@ -292,6 +285,7 @@
     }
   },
   "search": {
+    "placeholder": "Rechercher une localisation ou une couche de données",
     "feature.title": "Localisation",
     "feature.placeholder": "Rechercher une localisation",
     "layer.title": "Couche de données",

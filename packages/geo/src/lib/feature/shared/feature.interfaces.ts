@@ -10,8 +10,8 @@ import { FeatureMotion } from './feature.enums';
 
 export interface Feature<P = {[key: string]: any}> {
   type: string;
-  projection: string;
-  geometry: FeatureGeometry;
+  projection?: string;
+  geometry?: FeatureGeometry;
   properties: P;
   extent?: [number, number, number, number];
   meta?: FeatureMeta;

@@ -2,15 +2,24 @@
   #topPanel
   initial="100%"
   initialMobile="100%"
-  collapsed="60%"
-  expanded="calc(100% - 58px)"
+  collapsed="calc(100% - 58px)"
+  collapsedMobile="calc(100% - 58px)"
+  expanded="60%"
+  expandedMobile="60%"
   [state]="topPanelState">
 
   <div class="igo-content">
     <igo-search-results
       [store]="store"
+      placeholder="false"
       (resultFocus)="onResultFocus($event)"
-      (resultSelect)="onResultSelect($event)">
+      (resultSelect)="onResultFocus($event)">
+      <ng-template #igoSearchItemToolbar let-result="result">
+        <igo-search-add-button
+          [map]="map"
+          [layer]="result">
+        </igo-search-add-button>
+      </ng-template>
     </igo-search-results>
   </div>
 
@@ -22,7 +31,7 @@
         panelLeftButton
         class="igo-icon-button"
         (click)="toggleTopPanel()">
-        <mat-icon [svgIcon]="topPanel.state === 'collapsed'? 'arrow-down' : 'arrow-up'"></mat-icon>
+        <mat-icon [svgIcon]="(topPanelState$ | async) === 'collapsed' ? 'arrow-up' : 'arrow-down'"></mat-icon>
       </button>
 
       <button

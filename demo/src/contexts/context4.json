@@ -1,6 +1,5 @@
 {
   "uri": "context4",
-  "title": "ArcGIS / TileArcGIS Rest examples ",
   "map": {
     "view": {
       "projection": "EPSG:3857",

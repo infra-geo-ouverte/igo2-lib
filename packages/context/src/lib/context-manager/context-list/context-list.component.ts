@@ -19,6 +19,7 @@ export class ContextListComponent {
   }
   set contexts(value: ContextsList) {
     this._contexts = value;
+    this.cdRef.detectChanges();
   }
   private _contexts: ContextsList = { ours: [] };
 

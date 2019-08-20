@@ -59,6 +59,7 @@ export class LayerWatcher extends Watcher {
       this.subscriptions[index].unsubscribe();
       this.subscriptions.splice(index, 1);
       this.layers.splice(index, 1);
+      (layer as any).watcher.unwatch();
     }
   }
 }

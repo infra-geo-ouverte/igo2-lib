@@ -10,7 +10,9 @@ import {
   IgoOgcFilterObject,
   WFSWriteGetFeatureOptions,
   AnyBaseOgcFilterOptions,
-  OgcInterfaceFilterOptions
+  OgcInterfaceFilterOptions,
+  OgcFilterableDataSourceOptions,
+  OgcFiltersOptions
 } from './ogc-filter.interface';
 
 export class OgcFilterWriter {
@@ -20,10 +22,7 @@ export class OgcFilterWriter {
     PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
     PropertyIsLike: { spatial: false, fieldRestrict: ['string'] },
     PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
-    PropertyIsGreaterThanOrEqualTo: {
-      spatial: false,
-      fieldRestrict: ['number']
-    },
+    PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
     PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
     PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
     PropertyIsBetween: { spatial: false, fieldRestrict: ['number'] },
@@ -34,8 +33,29 @@ export class OgcFilterWriter {
     Contains: { spatial: true, fieldRestrict: [] }
   };
 
+  defineOgcFiltersDefaultOptions(
+    ogcFiltersOptions: OgcFiltersOptions,
+    fieldNameGeometry: string,
+    srcType?: string): OgcFiltersOptions  {
+    let ogcFiltersDefaultValue = true; // default values for wfs.
+    if (srcType && srcType === 'wms') {
+      ogcFiltersDefaultValue = false;
+    }
+
+    ogcFiltersOptions = ogcFiltersOptions || {};
+    ogcFiltersOptions.enabled = ogcFiltersOptions.enabled === undefined ? ogcFiltersDefaultValue : ogcFiltersOptions.enabled;
+    ogcFiltersOptions.editable = ogcFiltersOptions.editable === undefined ? ogcFiltersDefaultValue : ogcFiltersOptions.editable;
+    ogcFiltersOptions.geometryName = fieldNameGeometry;
+
+    ogcFiltersOptions.advancedOgcFilters = true;
+    if (ogcFiltersOptions.enabled && ogcFiltersOptions.pushButtons) {
+      ogcFiltersOptions.advancedOgcFilters = false;
+    }
+    return ogcFiltersOptions;
+  }
+
   public buildFilter(
-    filters: IgoOgcFilterObject,
+    filters?: IgoOgcFilterObject,
     extent?: [number, number, number, number],
     proj?,
     fieldNameGeometry?: string
@@ -248,11 +268,14 @@ export class OgcFilterWriter {
   }
 
   public addInterfaceFilter(
-    igoOgcFilterObject = { operator: 'PropertyIsEqualTo' },
+    igoOgcFilterObject?,
     geometryName?,
     level = 0,
     parentLogical = 'Or'
   ): OgcInterfaceFilterOptions {
+    if (!igoOgcFilterObject) {
+      igoOgcFilterObject = { operator: 'PropertyIsEqualTo' };
+    }
     const f = {
       propertyName: '',
       operator: '',
@@ -398,5 +421,66 @@ export class OgcFilterWriter {
     } else {
       return undefined;
     }
+  }
+
+  public handleOgcFiltersAppliedValue(options: OgcFilterableDataSourceOptions, fieldNameGeometry: string) {
+    const ogcFilters = options.ogcFilters;
+    if (!ogcFilters) {
+      return;
+    }
+    let filterQueryStringPushButton = '';
+    let filterQueryStringAdvancedFilters = '';
+    if (ogcFilters.enabled && ogcFilters.pushButtons) {
+      const pushButtonBundle = ogcFilters.pushButtons;
+      const conditions = [];
+      pushButtonBundle.map(buttonBundle => {
+        const bundleCondition = [];
+        buttonBundle.ogcPushButtons
+          .filter(ogcpb => ogcpb.enabled === true)
+          .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
+        if (bundleCondition.length === 1) {
+          conditions.push(bundleCondition[0]);
+        } else if (bundleCondition.length > 1) {
+          conditions.push({ logical: buttonBundle.logical, filters: bundleCondition });
+        }
+      });
+      if (conditions.length >= 1) {
+        filterQueryStringPushButton = this.buildFilter(
+            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions }
+          );
+      }
+    }
+
+    if (ogcFilters.enabled && ogcFilters.filters) {
+      ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
+      const igoFilters = ogcFilters.filters;
+      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters);
+    }
+
+    let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
+    if (options.type === 'wms') {
+      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.layers);
+    }
+    if (options.type === 'wfs') {
+      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.featureTypes);
+    }
+
+    return filterQueryString;
+
+  }
+
+  public formatProcessedOgcFilter(
+    processedFilter: string,
+    layersOrTypenames: string): string {
+    let appliedFilter = '';
+    if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
+      appliedFilter = processedFilter;
+    } else {
+      layersOrTypenames.split(',').forEach(layerOrTypenames => {
+        appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
+      });
+    }
+    const filterValue = appliedFilter.length > 0 ? appliedFilter.replace('filter=', '') : undefined;
+    return filterValue;
   }
 }

@@ -24,8 +24,6 @@ export class OgcFilterComponent implements OnUpdateInputs, WidgetComponent {
 
   @Input() map: IgoMap;
 
-  @Input() showFeatureOnMap: boolean = true;
-
   /**
    * Event emitted on complete
    */

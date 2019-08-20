@@ -18,8 +18,9 @@ import { SearchResult } from '../shared/search.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsItemComponent {
+
   /**
-   * Search result
+   * Search result item
    */
   @Input() result: SearchResult;
 
@@ -48,4 +49,5 @@ export class SearchResultsItemComponent {
   }
 
   constructor() {}
+
 }

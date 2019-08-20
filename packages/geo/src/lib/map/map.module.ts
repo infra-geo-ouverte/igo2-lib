@@ -16,6 +16,7 @@ import { GeolocateButtonComponent } from './geolocate-button/geolocate-button.co
 import { RotationButtonComponent } from './rotation-button/rotation-button.component';
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
+import { MapOfflineDirective } from './shared/mapOffline.directive';
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     GeolocateButtonComponent,
     RotationButtonComponent,
     BaseLayersSwitcherComponent,
-    MiniBaseMapComponent
+    MiniBaseMapComponent,
+    MapOfflineDirective
   ],
   declarations: [
     MapBrowserComponent,
@@ -40,7 +42,8 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
     GeolocateButtonComponent,
     RotationButtonComponent,
     BaseLayersSwitcherComponent,
-    MiniBaseMapComponent
+    MiniBaseMapComponent,
+    MapOfflineDirective
   ]
 })
 export class IgoMapModule {}

@@ -25,4 +25,6 @@ export class MVTDataSource extends DataSource {
     const chain = 'mvt' + this.options.url;
     return Md5.hashStr(chain) as string;
   }
+
+  public onUnwatch() {}
 }

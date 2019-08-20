@@ -8,7 +8,7 @@ import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
-import { SearchSourceOptions, TextSearchOptions, SearchSourceSettings } from './source.interfaces';
+import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
 
 /**

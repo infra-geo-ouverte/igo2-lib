@@ -12,6 +12,7 @@ export * from './wfs-datasource.interface';
 export * from './wfs.service';
 export * from './wms-datasource';
 export * from './wms-datasource.interface';
+export * from './wms-wfs.utils';
 export * from './wmts-datasource';
 export * from './wmts-datasource.interface';
 export * from './carto-datasource';

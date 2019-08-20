@@ -1,5 +1,3 @@
-import {MatCheckboxChange, MatRadioChange } from '@angular/material';
-
 import {
   Component,
   Input,
@@ -11,8 +9,6 @@ import {
 
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchSourceService } from '../shared/search-source.service';
-import { SearchSource } from '../shared/sources/source';
-import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.interfaces';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -84,48 +80,6 @@ export class SearchSelectorComponent implements OnInit {
     this.enabled = searchType;
     this.searchSourceService.enableSourcesByType(searchType);
     this.change.emit(searchType);
-  }
-
-  /**
-   * Get all search sources
-   * @internal
-   */
-  getSearchSources(): SearchSource[] {
-    return this.searchSourceService.getSources();
-  }
-
-  /**
-   * Triggered when a setting is checked (checkbox style)
-   * @internal
-   */
-  settingsValueCheckedCheckbox(
-    event: MatCheckboxChange,
-    source: SearchSource,
-    setting: SearchSourceSettings,
-    settingValue: SettingOptions
-  ) {
-    settingValue.enabled = event.checked;
-    source.setParamFromSetting(setting);
-  }
-
-  /**
-   * Triggered when a setting is checked (radiobutton style)
-   * @internal
-   */
-  settingsValueCheckedRadioButton(
-    event: MatRadioChange,
-    source: SearchSource,
-    setting: SearchSourceSettings,
-    settingValue: SettingOptions
-  ) {
-    setting.values.forEach( conf => {
-      if (conf.value !== settingValue.value) {
-        conf.enabled = !event.source.checked;
-      } else {
-        conf.enabled = event.source.checked;
-      }
-    });
-    source.setParamFromSetting(setting);
   }
 
 }

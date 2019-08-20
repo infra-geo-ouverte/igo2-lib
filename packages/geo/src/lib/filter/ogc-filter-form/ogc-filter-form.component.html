@@ -12,7 +12,7 @@
     <span *ngIf="fields && fields.length > 0 && fields[0].name !== ''">
       <mat-select [disabled]="!currentFilter.active" *ngIf="['Contains','Intersects','Within'].indexOf(currentFilter.operator) === -1"
         [(ngModel)]="currentFilter.propertyName" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
-        (selectionChange)="updateField(false)">
+        (selectionChange)="updateField()">
         <mat-option *ngFor="let field of fields" [value]="field.name">{{field.alias}}</mat-option>
       </mat-select>
     </span>
@@ -31,7 +31,7 @@
 
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
     <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
-      <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
+      <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
 
@@ -165,7 +165,7 @@
   <!-- PropertySpatial  -->
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
     <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
-      <mat-option *ngFor="let operator of operators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
+      <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
@@ -178,7 +178,7 @@
     <button mat-button [disabled]="!currentFilter.active" *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
       matSuffix mat-icon-button aria-label="Clear" (click)="changeGeometry(currentFilter,value)" tooltip-position="below" matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.spatialSelector.btnSetExtent' | translate">
-      <mat-icon svgIcon="zoom-out_map"></mat-icon>
+      <mat-icon svgIcon="arrow-expand-all"></mat-icon>
     </button>
 
 
