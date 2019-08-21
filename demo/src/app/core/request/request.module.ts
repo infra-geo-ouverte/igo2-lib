@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule, MatButtonModule } from '@angular/material';
 
-import { IgoLoggingModule, IgoErrorModule } from '@igo2/core';
+import { IgoErrorModule } from '@igo2/core';
 
 import { AppRequestComponent } from './request.component';
 import { AppRequestRoutingModule } from './request-routing.module';

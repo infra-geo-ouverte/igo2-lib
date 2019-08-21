@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 
@@ -201,9 +201,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(term, options || {});
-    return this.http
-      .get(this.searchUrl, { params })
-      .pipe(map((response: IChercheResponse) => this.extractResults(response)));
+    return this.http.get(this.searchUrl, { params }).pipe(
+      map((response: IChercheResponse) => this.extractResults(response)),
+      catchError(err => {
+        err.error.toDisplay = true;
+        err.error.title = this.getDefaultOptions().title;
+        throw err;
+      })
+    );
   }
 
   private computeRequestParams(
@@ -234,6 +239,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, properties.code].join('.');
 
+    const titleHtml = data.highlight.title || data.properties.nom;
     const subtitleHtml = data.highlight.title2
       ? ' <small> ' + data.highlight.title2 + '</small>'
       : '';
@@ -255,7 +261,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        titleHtml: data.highlight.title + subtitleHtml,
+        titleHtml: titleHtml + subtitleHtml,
         icon: 'map-marker'
       }
     };
@@ -267,16 +273,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       IChercheSearchSource.propertiesBlacklist
     );
 
-    const googleLinksProperties: { GoogleMaps: string, GoogleStreetView?: string } = {
-      GoogleMaps: GoogleLinks.getGoogleMapsLink(data.geometry.coordinates[0], data.geometry.coordinates[1])
+    const googleLinksProperties: {
+      GoogleMaps: string;
+      GoogleStreetView?: string;
+    } = {
+      GoogleMaps: GoogleLinks.getGoogleMapsLink(
+        data.geometry.coordinates[0],
+        data.geometry.coordinates[1]
+      )
     };
     if (data.geometry.type === 'Point') {
       googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
-        data.geometry.coordinates[0], data.geometry.coordinates[1]
+        data.geometry.coordinates[0],
+        data.geometry.coordinates[1]
       );
     }
 
-    return Object.assign({ type: data.index }, properties, googleLinksProperties);
+    return Object.assign(
+      { type: data.index },
+      properties,
+      googleLinksProperties
+    );
   }
 
   /**
