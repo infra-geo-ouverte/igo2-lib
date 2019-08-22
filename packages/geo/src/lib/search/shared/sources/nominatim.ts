@@ -32,39 +32,42 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
 
   /*
    * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
-  */
+   */
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Nominatim (OSM)',
       searchUrl: 'https://nominatim.openstreetmap.org/search',
       settings: [
         {
-            type: 'checkbox',
-            title: 'results type',
-            name: 'amenity',
-            values: [
-              {
-                title: 'Restauration',
-                value: 'bar,bbq,biergaten,cafe,drinking_water,fast_food,food_court,ice_cream,pub,restaurant',
-                enabled: false
-              },
-              {
-                title: 'Santé',
-                value: 'baby_hatch,clinic,dentist,doctors,hospital,nursing_home,pharmacy,social_facility,veterinary',
-                enabled: false
-              },
-              {
-                title: 'Divertissement',
-                value: 'arts_centre,brothel,casino,cinema,community_center_fountain,gambling,nightclub,planetarium \
+          type: 'checkbox',
+          title: 'results type',
+          name: 'amenity',
+          values: [
+            {
+              title: 'Restauration',
+              value:
+                'bar,bbq,biergaten,cafe,drinking_water,fast_food,food_court,ice_cream,pub,restaurant',
+              enabled: false
+            },
+            {
+              title: 'Santé',
+              value:
+                'baby_hatch,clinic,dentist,doctors,hospital,nursing_home,pharmacy,social_facility,veterinary',
+              enabled: false
+            },
+            {
+              title: 'Divertissement',
+              value:
+                'arts_centre,brothel,casino,cinema,community_center_fountain,gambling,nightclub,planetarium \
                           ,public_bookcase,social_centre,stripclub,studio,swingerclub,theatre,internet_cafe',
-                enabled: false
-              },
-              {
-                title: 'Finance',
-                value: 'atm,bank,bureau_de_change',
-                enabled: false
-              }
-            ]
+              enabled: false
+            },
+            {
+              title: 'Finance',
+              value: 'atm,bank,bureau_de_change',
+              enabled: false
+            }
+          ]
         },
         {
           type: 'radiobutton',
@@ -225,23 +228,16 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    */
   private computeTermTags(term: string): string {
-    const tags = term.match(/(#[^\s]+)/g);
-
-    let addTagsFromSettings = true;
-    if ( tags ) {
-      tags.forEach( value => {
-        term = term.replace(value, '');
-        if ( super.hashtagValid(super.getSettingsValues('amenity'), value) ) {
-          term += '+[' + value.substring(1) + ']';
-          addTagsFromSettings = false;
-        }
-      });
-      addTagsFromSettings = false;
+    const hashtags = super.getHashtagsValid(term, 'amenity');
+    if (!hashtags) {
+      return this.computeTermSettings(term);
     }
 
-    if (addTagsFromSettings) {
-      term = this.computeTermSettings(term);
-    }
+    term = term.replace(/(#[^\s]*)/g, '');
+    hashtags.forEach(tag => {
+      term += '+[' + tag + ']';
+    });
+
     return term;
   }
 
@@ -250,12 +246,12 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
    * @param term Query
    */
   private computeTermSettings(term: string): string {
-    this.options.settings.forEach( settings => {
-      if (settings.name === 'amenity') {
-        settings.values.forEach( conf => {
+    this.options.settings.forEach(settings => {
+      if (settings.name === 'amenity') {
+        settings.values.forEach(conf => {
           if (conf.enabled && typeof conf.value === 'string') {
             const splitted = conf.value.split(',');
-            splitted.forEach( value => {
+            splitted.forEach(value => {
               term += '+[' + value + ']';
             });
           }
