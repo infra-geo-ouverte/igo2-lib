@@ -13,10 +13,10 @@ import { catchError, finalize } from 'rxjs/operators';
 import { MessageService } from '../message/shared/message.service';
 import { LanguageService } from '../language/shared/language.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ErrorInterceptor implements HttpInterceptor {
-  private httpError: HttpErrorResponse;
-
   constructor(
     private messageService: MessageService,
     private injector: Injector
@@ -26,23 +26,26 @@ export class ErrorInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const errorContainer = { httpError: undefined };
     return next.handle(req).pipe(
-      catchError(error => this.handleError(error, req)),
-      finalize(() => this.handleCaughtError()),
-      finalize(() => this.handleUncaughtError())
+      catchError(error => this.handleError(error, errorContainer)),
+      finalize(() => {
+        this.handleCaughtError(errorContainer);
+        this.handleUncaughtError(errorContainer);
+      })
     );
   }
 
-  private handleError(httpError: HttpErrorResponse, req: HttpRequest<any>) {
-    const msg = `${req.method} ${req.urlWithParams} ${httpError.status} (${httpError.statusText})`;
-
+  private handleError(
+    httpError: HttpErrorResponse,
+    errorContainer: { httpError: HttpErrorResponse }
+  ) {
     if (httpError instanceof HttpErrorResponse) {
       const errorObj = httpError.error === 'object' ? httpError.error : {};
       errorObj.message = httpError.error.message || httpError.statusText;
       errorObj.caught = false;
-      console.error(msg, '\n', errorObj.message, '\n\n', httpError);
 
-      this.httpError = new HttpErrorResponse({
+      httpError = new HttpErrorResponse({
         error: errorObj,
         headers: httpError.headers,
         status: httpError.status,
@@ -51,25 +54,27 @@ export class ErrorInterceptor implements HttpInterceptor {
       });
     }
 
-    return throwError(this.httpError);
+    errorContainer.httpError = httpError;
+    return throwError(httpError);
   }
 
-  private handleCaughtError() {
-    if (this.httpError && this.httpError.error.toDisplay) {
-      this.httpError.error.caught = true;
-      this.messageService.error(
-        this.httpError.error.message,
-        this.httpError.error.title
-      );
+  private handleCaughtError(errorContainer: { httpError: HttpErrorResponse }) {
+    const httpError = errorContainer.httpError;
+    if (httpError && httpError.error.toDisplay) {
+      httpError.error.caught = true;
+      this.messageService.error(httpError.error.message, httpError.error.title);
     }
   }
 
-  private handleUncaughtError() {
-    if (this.httpError && !this.httpError.error.caught) {
+  private handleUncaughtError(errorContainer: {
+    httpError: HttpErrorResponse;
+  }) {
+    const httpError = errorContainer.httpError;
+    if (httpError && !httpError.error.caught) {
       const translate = this.injector.get(LanguageService).translate;
       const message = translate.instant('igo.core.errors.uncaught.message');
       const title = translate.instant('igo.core.errors.uncaught.title');
-      this.httpError.error.caught = true;
+      httpError.error.caught = true;
       this.messageService.error(message, title);
     }
   }
