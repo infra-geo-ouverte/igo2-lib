@@ -171,7 +171,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.stream$$ = this.stream$
       .pipe(
         debounce((term: string) => {
-          return term === '' ? EMPTY : timer(300);
+          return term === '' ? EMPTY : timer(200);
         }),
         distinctUntilChanged()
       )
@@ -236,8 +236,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     this.term = term;
-    if (term.replace(/(#[^\s]*)/g, '').trim().length >= this.minLength ||
-      term.replace(/(#[^\s]*)/g, '').trim().length === 0) {
+    if (
+      term.replace(/(#[^\s]*)/g, '').trim().length >= this.minLength ||
+      term.replace(/(#[^\s]*)/g, '').trim().length === 0
+    ) {
       this.stream$.next(term);
     }
   }
