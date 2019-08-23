@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
@@ -13,7 +13,13 @@ import { QueryHtmlTarget } from './../../../query/shared/query.enums';
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { TextSearchOptions } from './source.interfaces';
-import { ILayerSearchSourceOptions, ILayerData, ILayerItemResponse, ILayerServiceResponse, ILayerDataSource } from './ilayer.interfaces';
+import {
+  ILayerSearchSourceOptions,
+  ILayerData,
+  ILayerItemResponse,
+  ILayerServiceResponse,
+  ILayerDataSource
+} from './ilayer.interfaces';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -24,11 +30,13 @@ export class ILayerSearchResultFormatter {
 
     const property = Object.entries(data.properties)
       .filter(([key]) => allowedKey.indexOf(key) !== -1)
-      .reduce((out: {[key: string]: any}, entries: [string, any]) => {
+      .reduce((out: { [key: string]: any }, entries: [string, any]) => {
         const [key, value] = entries;
         let newKey;
         try {
-          newKey = this.languageService.translate.instant('igo.geo.search.ilayer.properties.' + key);
+          newKey = this.languageService.translate.instant(
+            'igo.geo.search.ilayer.properties.' + key
+          );
         } catch (e) {
           newKey = key;
         }
@@ -48,7 +56,6 @@ export class ILayerSearchResultFormatter {
  */
 @Injectable()
 export class ILayerSearchSource extends SearchSource implements TextSearch {
-
   static id = 'ilayer';
   static type = LAYER;
 
@@ -66,7 +73,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     private formatter: ILayerSearchResultFormatter
   ) {
     super(options);
-    this.languageService.translate.get(this.options.title).subscribe(title => this.title$.next(title));
+    this.languageService.translate
+      .get(this.options.title)
+      .subscribe(title => this.title$.next(title));
   }
 
   getId(): string {
@@ -90,6 +99,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
+    if (!params.get('q')) {
+      return of([]);
+    }
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
@@ -97,15 +109,42 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       );
   }
 
-  private computeSearchRequestParams(term: string, options: TextSearchOptions): HttpParams {
+  private computeSearchRequestParams(
+    term: string,
+    options: TextSearchOptions
+  ): HttpParams {
     return new HttpParams({
-      fromObject: Object.assign({
-        q: term
-      }, this.params, options.params || {})
+      fromObject: Object.assign(
+        {
+          q: this.computeTerm(term)
+        },
+        this.params,
+        options.params || {}
+      )
     });
   }
 
-  private extractResults(response: ILayerServiceResponse): SearchResult<ILayerItemResponse>[] {
+  /**
+   * Remove hashtag from query
+   * @param term Query with hashtag
+   */
+  private computeTerm(term: string): string {
+    const hashtags = term.match(/(#[^\s]+)/g);
+    if (hashtags) {
+      const validHashtags = ['layer', 'layers', 'couche', 'couches'];
+      const valid = hashtags.filter(h =>
+        validHashtags.some(v => h === '#' + v)
+      );
+      if (!valid.length) {
+        return null;
+      }
+    }
+    return term.replace(/(#[^\s]*)/g, '');
+  }
+
+  private extractResults(
+    response: ILayerServiceResponse
+  ): SearchResult<ILayerItemResponse>[] {
     return response.items.map((data: ILayerData) => this.dataToResult(data));
   }
 
@@ -127,7 +166,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   private computeLayerOptions(data: ILayerData): ILayerItemResponse {
     const url = data.properties.url;
-    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(url);
+    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(
+      url
+    );
     return {
       sourceOptions: {
         id: data.properties.id,
@@ -146,7 +187,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     };
   }
 
-  private extractQueryParamsFromSourceUrl(url: string): {queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget; } {
+  private extractQueryParamsFromSourceUrl(
+    url: string
+  ): { queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget } {
     let queryFormat = QueryFormat.GML2;
     let queryHtmlTarget;
     const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
@@ -158,9 +201,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
           break;
         }
 
-        const urls = (value as any as {urls: string[]}).urls;
+        const urls = ((value as any) as { urls: string[] }).urls;
         if (Array.isArray(urls)) {
-          urls.forEach((urlOpt) => {
+          urls.forEach(urlOpt => {
             if (url.indexOf(urlOpt) !== -1) {
               queryFormat = QueryFormat[key.toUpperCase()];
             }

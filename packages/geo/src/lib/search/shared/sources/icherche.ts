@@ -210,7 +210,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(term, options || {});
     if (!params.get('type').length) {
-      return of();
+      return of([]);
     }
     return this.http.get(this.searchUrl, { params }).pipe(
       map((response: IChercheResponse) => this.extractResults(response)),
@@ -360,7 +360,6 @@ export class IChercheReverseSearchSource extends SearchSource
     return {
       title: 'Territoire (Géocodage inversé)',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/territoires/locate',
-
       settings: [
         {
           type: 'checkbox',

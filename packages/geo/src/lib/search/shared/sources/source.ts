@@ -147,7 +147,7 @@ export class SearchSource {
     }
 
     const searchSourceSetting = this.getSettingsValues(settingsName);
-    let hashtagsValid = [];
+    const hashtagsValid = [];
     hashtags.forEach(hashtag => {
       searchSourceSetting.values.forEach(conf => {
         const hashtagKey = hashtag.substring(1);

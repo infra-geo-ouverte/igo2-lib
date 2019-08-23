@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
@@ -139,6 +139,9 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
+    if (!params.get('q')) {
+      return of([]);
+    }
     return this.http
       .get(this.searchUrl, { params })
       .pipe(map((response: NominatimData[]) => this.extractResults(response)));
@@ -219,8 +222,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   }
 
   private computeTerm(term: string): string {
-    term = this.computeTermTags(term);
-    return term;
+    return this.computeTermTags(term);
   }
 
   /**
@@ -231,6 +233,10 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     const hashtags = super.getHashtagsValid(term, 'amenity');
     if (!hashtags) {
       return this.computeTermSettings(term);
+    }
+
+    if (!hashtags.length) {
+      return null;
     }
 
     term = term.replace(/(#[^\s]*)/g, '');
