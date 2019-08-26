@@ -49,7 +49,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
-  
+
   constructor() {}
 
   ngOnInit() {
