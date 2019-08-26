@@ -12,9 +12,10 @@ import {
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
-import { Subject, Subscription, EMPTY, timer } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, EMPTY, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
+import { LanguageService } from '@igo2/core';
 import { EntityStore } from '@igo2/common';
 
 import { SEARCH_TYPES } from '../shared/search.enums';
@@ -33,15 +34,25 @@ import { SearchService } from '../shared/search.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
+
   /**
    * Invalid keys
    */
-  private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
+  static invalidKeys = ['Control', 'Shift', 'Alt'];
+
+  readonly placeholder$: BehaviorSubject<string> = new BehaviorSubject('search.placeholder');
+
+  readonly empty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  /**
+   * Subscription to the ssearch bar term
+   */
+  private term$$: Subscription;
 
   /**
    * Search term stream
    */
-  private stream$ = new Subject<string>();
+  private stream$: BehaviorSubject<string> = new BehaviorSubject('');
 
   /**
    * Subscription to the search term stream
@@ -49,19 +60,43 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private stream$$: Subscription;
 
   /**
+   * Subscription to the search type
+   */
+  private searchType$$: Subscription;
+
+  /**
+   * List of available search types
+   */
+  @Input() searchTypes: string[] = SEARCH_TYPES;
+
+  /**
    * Search term
    */
-  @Input() term = '';
+  @Input()
+  set searchType(value: string) { this.setSearchType(value); }
+  get searchType(): string { return this.searchType$.value; }
+  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+  /**
+   * Search term
+   */
+  @Input()
+  set term(value: string) { this.setTerm(value); }
+  get term(): string { return this.term$.value; }
+  readonly term$: BehaviorSubject<string> = new BehaviorSubject('');
+
+  /**
+   * Whether this component is disabled
+   */
+  @Input()
+  set disabled(value: boolean) { this.disabled$.next(value); }
+  get disabled(): boolean { return this.disabled$.value; }
+  readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Whether a float label should be displayed
    */
   @Input() floatLabel: FloatLabelType = 'never';
-
-  /**
-   * Whether this component is disabled
-   */
-  @Input() disabled = false;
 
   /**
    * Icons color (search and clear)
@@ -71,7 +106,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Debounce time between each keystroke
    */
-  @Input() debounce = 300;
+  @Input() debounce = 200;
 
   /**
    * Minimum term length required to trigger a research
@@ -99,14 +134,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() store: EntityStore<SearchResult>;
 
   /**
-   * List of available search types
-   */
-  @Input() searchTypes: string[] = SEARCH_TYPES;
-
-  /**
    * Event emitted when the search term changes
    */
-  @Output() change = new EventEmitter<string>();
+  @Output() searchTermChange = new EventEmitter<string>();
 
   /**
    * Event emitted when a research is completed
@@ -133,15 +163,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @ViewChild('input') input: ElementRef;
 
   /**
-   * Host's empty class
-   * @internal
-   */
-  @HostBinding('class.empty')
-  get emptyClass() {
-    return this.empty;
-  }
-
-  /**
    * Whether the search bar is empty
    * @internal
    */
@@ -149,33 +170,29 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     return this.term.length === 0;
   }
 
-  /**
-   * Search bar palceholder
-   * @internal
-   */
-  set placeholder(value: string) {
-    this._placeholder = value;
-  }
-  get placeholder(): string {
-    return this.empty ? this._placeholder : '';
-  }
-  private _placeholder = 'search.placeholder';
-
-  constructor(private searchService: SearchService) {}
+  constructor(
+    private languageService: LanguageService,
+    private searchService: SearchService
+  ) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
    * @internal
    */
   ngOnInit(): void {
+    this.term$$ = this.term$.subscribe((term: string) => {
+      this.empty$.next(term === undefined || term.length === 0);
+    });
+
     this.stream$$ = this.stream$
       .pipe(
-        debounce((term: string) => {
-          return term === '' ? EMPTY : timer(200);
-        }),
-        distinctUntilChanged()
+        debounce((term: string) => term === '' ? EMPTY : timer(this.debounce))
       )
-      .subscribe((term: string) => this.onTermChange(term));
+      .subscribe((term: string) => this.onSetTerm(term));
+
+    this.searchType$$ = this.searchType$
+      .pipe(distinctUntilChanged())
+      .subscribe((searchType: string) => this.onSetSearchType(searchType));
   }
 
   /**
@@ -183,7 +200,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
+    this.term$$.unsubscribe();
     this.stream$$.unsubscribe();
+    this.searchType$$.unsubscribe();
   }
 
   /**
@@ -210,16 +229,23 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Update search type
+   * @param searchType Enabled search type
+   * @internal
+   */
+  onSearchTypeChange(searchType: string) {
+    this.setSearchType(searchType);
+  }
+
+  /**
    * Update the placeholder with the enabled search type. The placeholder
    * for all availables search typers needs to be defined in the locale
    * files or an error will be thrown.
    * @param searchType Enabled search type
    * @internal
    */
-  onSearchTypeChange(searchType: string) {
-    this.searchTypeChange.emit(searchType);
-    this.placeholder = `search.${searchType.toLowerCase()}.placeholder`;
-    this.doSearch(this.term);
+  setSearchType(searchType: string) {
+    this.searchType$.next(searchType);
   }
 
   onSearchSettingsChange() {
@@ -235,11 +261,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.term = term;
-    if (
-      term.replace(/(#[^\s]*)/g, '').trim().length >= this.minLength ||
-      term.replace(/(#[^\s]*)/g, '').trim().length === 0
-    ) {
+    term = term || '';
+
+    if (term !== this.term) {
+      this.term$.next(term);
+    }
+
+    const slug = term.replace(/(#[^\s]*)/g, '').trim();
+    if (slug.length >= this.minLength || slug.length === 0) {
       this.stream$.next(term);
     }
   }
@@ -248,8 +277,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Clear the stream and the input
    */
   private clear() {
-    this.term = '';
-    this.stream$.next(this.term);
+    this.term$.next('');
+    this.stream$.next('');
     this.input.nativeElement.focus();
   }
 
@@ -257,7 +286,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Validate if a given key stroke is a valid input
    */
   private keyIsValid(key: string) {
-    return this.invalidKeys.indexOf(key) === -1;
+    return SearchBarComponent.invalidKeys.indexOf(key) === -1;
   }
 
   /**
@@ -265,9 +294,22 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * research in every enabled search sources.
    * @param term Search term
    */
-  private onTermChange(term: string | undefined) {
-    this.change.emit(term);
+  private onSetTerm(term: string | undefined) {
+    this.searchTermChange.emit(term);
     this.doSearch(term);
+  }
+
+  private onSetSearchType(searchType: string) {
+    if (searchType === undefined || searchType === null) {
+      return;
+    }
+
+    this.searchTypeChange.emit(searchType);
+
+    const placeholder = `search.${searchType.toLowerCase()}.placeholder`;
+    this.placeholder$.next(placeholder);
+
+    this.setTerm(this.term);
   }
 
   /**
@@ -275,7 +317,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @param term Search term
    */
   private doSearch(term: string | undefined) {
-    if (term === undefined || term.replace(/(#[^\s]*)/g, '').trim() === '') {
+    const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
+    if (slug === '') {
       if (this.store !== undefined) {
         this.store.clear();
       }

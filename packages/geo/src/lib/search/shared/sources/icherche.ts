@@ -284,6 +284,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       IChercheSearchSource.propertiesBlacklist
     );
 
+    if (data.geometry === undefined) {
+      return Object.assign(
+        { type: data.index },
+        properties
+      );
+    }
+
     const googleLinksProperties: {
       GoogleMaps: string;
       GoogleStreetView?: string;

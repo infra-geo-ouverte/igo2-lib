@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { EntityStore } from '@igo2/common';
 import { SearchResult, SearchSourceService, SearchSource } from '@igo2/geo';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Service that holds the state of the search module
@@ -10,10 +11,17 @@ import { SearchResult, SearchSourceService, SearchSource } from '@igo2/geo';
   providedIn: 'root'
 })
 export class SearchState {
+
+  readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+  readonly searchDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   /**
    * Store that holds the search results
    */
-  public store: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
+  readonly store: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
 
   /**
    * Search types currently enabled in the search source service
@@ -25,4 +33,21 @@ export class SearchState {
   }
 
   constructor(private searchSourceService: SearchSourceService) {}
+
+  enableSearch() {
+    this.searchDisabled$.next(false);
+  }
+
+  disableSearch() {
+    this.searchDisabled$.next(true);
+  }
+
+  setSearchTerm(searchTerm: string) {
+    this.searchTerm$.next(searchTerm);
+  }
+
+  setSearchType(searchType: string) {
+    this.searchSourceService.enableSourcesByType(searchType);
+    this.searchType$.next(searchType);
+  }
 }
