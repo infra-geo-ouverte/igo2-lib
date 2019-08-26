@@ -49,7 +49,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
-
+  
   constructor() {}
 
   ngOnInit() {
@@ -74,6 +74,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   toggleLegend(collapsed: boolean) {
     this.showLegend$.next(!collapsed);
+  }
+
+  toggleLegendOnClick() {
+    this.toggleLegend(this.showLegend$.value);
   }
 
   toggleVisibility() {
