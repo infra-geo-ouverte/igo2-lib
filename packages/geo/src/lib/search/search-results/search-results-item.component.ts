@@ -30,7 +30,7 @@ export class SearchResultsItemComponent {
    */
 
   /**
-   * to show hide results icons 
+   * to show hide results icons
    */
   @Input() showIcons: boolean;
 

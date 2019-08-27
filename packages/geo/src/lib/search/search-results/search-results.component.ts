@@ -51,7 +51,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Input() store: EntityStore<SearchResult>;
 
   /**
-   * to show hide results icons 
+   * to show hide results icons
    */
   @Input() showIcons: boolean;
 
