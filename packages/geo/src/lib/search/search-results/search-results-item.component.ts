@@ -28,6 +28,12 @@ export class SearchResultsItemComponent {
    * Search result title
    * @internal
    */
+
+  /**
+   * to show hide results icons 
+   */
+  @Input() showIcons: boolean;
+
   get title(): string {
     return getEntityTitle(this.result);
   }

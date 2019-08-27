@@ -45,6 +45,11 @@ import { SearchState } from '../search.state';
 })
 export class SearchResultsToolComponent {
   /**
+   * to show hide results icons 
+   */
+  @Input() showIcons: boolean = false;
+
+  /**
    * Store holding the search results
    * @internal
    */
