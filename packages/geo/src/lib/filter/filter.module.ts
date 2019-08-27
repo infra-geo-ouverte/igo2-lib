@@ -5,6 +5,7 @@ import {
   MatAutocompleteModule,
   MatIconModule,
   MatButtonModule,
+  MatButtonToggleModule,
   MatSliderModule,
   MatSlideToggleModule,
   MatFormFieldModule,
@@ -15,7 +16,8 @@ import {
   MatTooltipModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MAT_DATE_LOCALE
+  MAT_DATE_LOCALE,
+  MatCheckboxModule
 } from '@angular/material';
 
 // import {
@@ -44,6 +46,7 @@ import { OgcFilterableListBindingDirective } from './ogc-filterable-list/ogc-fil
 import { OgcFilterableListComponent } from './ogc-filterable-list/ogc-filterable-list.component';
 import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.component';
 import { OGCFilterService } from './shared/ogc-filter.service';
+import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-filter-toggle-button.component';
 
 @NgModule({
   imports: [
@@ -53,6 +56,8 @@ import { OGCFilterService } from './shared/ogc-filter.service';
     MatAutocompleteModule,
     MatIconModule,
     MatButtonModule,
+    MatButtonToggleModule,
+    MatCheckboxModule,
     MatSliderModule,
     MatSlideToggleModule,
     MatFormFieldModule,
@@ -78,6 +83,7 @@ import { OGCFilterService } from './shared/ogc-filter.service';
     TimeFilterListBindingDirective,
     OgcFilterFormComponent,
     OgcFilterButtonComponent,
+    OgcFilterToggleButtonComponent,
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
@@ -91,6 +97,7 @@ import { OGCFilterService } from './shared/ogc-filter.service';
     TimeFilterListBindingDirective,
     OgcFilterFormComponent,
     OgcFilterButtonComponent,
+    OgcFilterToggleButtonComponent,
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,

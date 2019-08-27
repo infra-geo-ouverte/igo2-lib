@@ -1,6 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Media, MediaOrientation, MediaService } from '@igo2/core';
+import {
+  Media,
+  MediaOrientation,
+  MediaService,
+  LanguageService
+} from '@igo2/core';
 import { ActionStore, ActionbarMode } from '@igo2/common';
 import { Overlay } from '@angular/cdk/overlay';
 
@@ -23,7 +28,11 @@ export class AppActionComponent implements OnInit, OnDestroy {
     return ActionbarMode.Overlay;
   }
 
-  constructor(private mediaService: MediaService, public overlay: Overlay) {}
+  constructor(
+    public overlay: Overlay,
+    private mediaService: MediaService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
     const added = () => this.added === true;
@@ -32,7 +41,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
       {
         id: 'add',
         title: 'Add',
-        icon: 'add',
+        icon: 'plus',
         tooltip: 'Add Tooltip',
         handler: () => {
           alert('Add!');
@@ -43,7 +52,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
       {
         id: 'edit',
         title: 'Edit',
-        icon: 'edit',
+        icon: 'pencil',
         tooltip: 'Edit Tooltip',
         handler: (item: string) => {
           alert(`Edit item ${item}!`);

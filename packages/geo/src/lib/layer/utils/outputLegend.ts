@@ -22,7 +22,7 @@ export function getLayersLegends(layers: Layer[], scale?: number): OutputLayerLe
       const title = layer.title;
       // Create an image for the legend
       const legendImage = new Image();
-      legendImage.crossOrigin = 'Anonymous';
+      legendImage.crossOrigin = 'anonymous';
       legendImage.src = legendUrl.url;
       legendImage.onload = () => {
         newContext.fillText(title, 0, heightPos);

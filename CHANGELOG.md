@@ -1,3 +1,128 @@
+# [1.0.0-alpha.6](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.5...1.0.0-alpha.6) (2019-08-15)
+
+
+### Bug Fixes
+
+* minors bugs ([f79de3d](https://github.com/infra-geo-ouverte/igo2-lib/commit/f79de3d))
+* **context-list:** dectect change ([ecf80c8](https://github.com/infra-geo-ouverte/igo2-lib/commit/ecf80c8))
+* **layer-list:** id missing ([7c801fe](https://github.com/infra-geo-ouverte/igo2-lib/commit/7c801fe))
+
+
+
+# [1.0.0-alpha.5](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.4...1.0.0-alpha.5) (2019-08-13)
+
+
+### Bug Fixes
+
+* remove autoscroll list and minors fix ([8455d51](https://github.com/infra-geo-ouverte/igo2-lib/commit/8455d51))
+* **context:** create context with tools ([2624053](https://github.com/infra-geo-ouverte/igo2-lib/commit/2624053))
+* **geo-layer-list:** raise/lower layer ([4fbe5c4](https://github.com/infra-geo-ouverte/igo2-lib/commit/4fbe5c4))
+* **geo-translate:** add missing translate ([a9177f7](https://github.com/infra-geo-ouverte/igo2-lib/commit/a9177f7))
+* **integration-directions:** fix module import ([489a09c](https://github.com/infra-geo-ouverte/igo2-lib/commit/489a09c))
+
+
+### Features
+
+* **geo:search:** add buttons, ajust Metadata, links to Google Maps ([#381](https://github.com/infra-geo-ouverte/igo2-lib/issues/381)) ([60dde1a](https://github.com/infra-geo-ouverte/igo2-lib/commit/60dde1a))
+* **map:** add a directive that change url to path depending on the network status  ([#384](https://github.com/infra-geo-ouverte/igo2-lib/issues/384)) ([ad5b5de](https://github.com/infra-geo-ouverte/igo2-lib/commit/ad5b5de))
+* **network:** new network service that return the network status ([#380](https://github.com/infra-geo-ouverte/igo2-lib/issues/380)) ([b31254e](https://github.com/infra-geo-ouverte/igo2-lib/commit/b31254e))
+
+
+
+# [1.0.0-alpha.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.3...1.0.0-alpha.4) (2019-08-07)
+
+
+### Bug Fixes
+
+* **context:** fix minors issues context module ([7771fb9](https://github.com/infra-geo-ouverte/igo2-lib/commit/7771fb9))
+
+
+### Features
+
+* **catalog:** add metadata button ([#377](https://github.com/infra-geo-ouverte/igo2-lib/issues/377)) ([b1083e8](https://github.com/infra-geo-ouverte/igo2-lib/commit/b1083e8))
+* **entity-table:** add option to choose button style ([d0d4aae](https://github.com/infra-geo-ouverte/igo2-lib/commit/d0d4aae))
+* **ogcFilters:** OgcFilters simplification, PushButtons and fields & operator control  ([#361](https://github.com/infra-geo-ouverte/igo2-lib/issues/361)) ([1466996](https://github.com/infra-geo-ouverte/igo2-lib/commit/1466996))
+* **search:** Search setting upgrade ([#375](https://github.com/infra-geo-ouverte/igo2-lib/issues/375)) ([67074c6](https://github.com/infra-geo-ouverte/igo2-lib/commit/67074c6))
+
+
+
+# [1.0.0-alpha.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.2...1.0.0-alpha.3) (2019-07-26)
+
+
+### Bug Fixes
+
+* fix icon, harmonizing crossOrigin syntax and  Allow IE 11 to manage some object properly ([#372](https://github.com/infra-geo-ouverte/igo2-lib/issues/372)) ([e9d9f31](https://github.com/infra-geo-ouverte/igo2-lib/commit/e9d9f31))
+* **catalog:** fix add layer icon ([0a4e591](https://github.com/infra-geo-ouverte/igo2-lib/commit/0a4e591))
+* **context:** fix create layerOptions when create context ([7054b02](https://github.com/infra-geo-ouverte/igo2-lib/commit/7054b02))
+* **demo:** fix action demo ([bcd2a11](https://github.com/infra-geo-ouverte/igo2-lib/commit/bcd2a11))
+* **entity-table:** fix check for button click functions ([af7b60b](https://github.com/infra-geo-ouverte/igo2-lib/commit/af7b60b))
+* **form:** fix disabled form fields ([43d88a2](https://github.com/infra-geo-ouverte/igo2-lib/commit/43d88a2))
+* **geometry input:** fix buffer of size 0 behavior ([71fac4b](https://github.com/infra-geo-ouverte/igo2-lib/commit/71fac4b))
+* **icons:** fix a few missing icons (post font upgrade) ([308bac4](https://github.com/infra-geo-ouverte/igo2-lib/commit/308bac4))
+* **icons:** fix icons ([4d98eb7](https://github.com/infra-geo-ouverte/igo2-lib/commit/4d98eb7))
+* **print:** fix print undefined comment ([f537a95](https://github.com/infra-geo-ouverte/igo2-lib/commit/f537a95))
+* **sharemap:** Limit sharemap url length,  Coord precision & skip default context ([#367](https://github.com/infra-geo-ouverte/igo2-lib/issues/367)) ([4c4fb3c](https://github.com/infra-geo-ouverte/igo2-lib/commit/4c4fb3c))
+* **workspace-selector:** change many attr to multi ([4564e91](https://github.com/infra-geo-ouverte/igo2-lib/commit/4564e91))
+* **zoom:** remove minResolution ([758fb0b](https://github.com/infra-geo-ouverte/igo2-lib/commit/758fb0b))
+
+
+### Features
+
+* **catalog:** allow ctalogs to define query params and source options ([83d61ce](https://github.com/infra-geo-ouverte/igo2-lib/commit/83d61ce))
+* **catalog:** optionnally force a user to expand a group of layers before adding it to the map ([e502a52](https://github.com/infra-geo-ouverte/igo2-lib/commit/e502a52))
+* **catalog tool:** allow catalog tool to define the toggle group input ([b5bc01a](https://github.com/infra-geo-ouverte/igo2-lib/commit/b5bc01a))
+* **datasource:** add Cluster datasource ([#374](https://github.com/infra-geo-ouverte/igo2-lib/issues/374)) ([d22d3c2](https://github.com/infra-geo-ouverte/igo2-lib/commit/d22d3c2))
+* **datasource,layer:** add MVT datasource, vectortile layer and style by attribute ([#368](https://github.com/infra-geo-ouverte/igo2-lib/issues/368)) ([5ff9239](https://github.com/infra-geo-ouverte/igo2-lib/commit/5ff9239))
+* **entity selector:** support multiple selections ([3d30520](https://github.com/infra-geo-ouverte/igo2-lib/commit/3d30520))
+* **entity-selector:** support multiple selections ([fc89dd7](https://github.com/infra-geo-ouverte/igo2-lib/commit/fc89dd7))
+* **form:** add utility method to retrieve a form's fields ([1329282](https://github.com/infra-geo-ouverte/igo2-lib/commit/1329282))
+* **form:** dynamic form fields can now have a disable switch, useful for batch editing, for example ([d7d7fb4](https://github.com/infra-geo-ouverte/igo2-lib/commit/d7d7fb4))
+* **form:** dynamic forms now support textareas ([bf8d081](https://github.com/infra-geo-ouverte/igo2-lib/commit/bf8d081))
+* **geometry-form-field:** allow to set symbol ([#373](https://github.com/infra-geo-ouverte/igo2-lib/issues/373)) ([87cf1cd](https://github.com/infra-geo-ouverte/igo2-lib/commit/87cf1cd))
+* **icherche:** icherche v2 / territoire ([e0e0a0a](https://github.com/infra-geo-ouverte/igo2-lib/commit/e0e0a0a))
+* **query:** Force a geometry to html getfeatureinfo ([#363](https://github.com/infra-geo-ouverte/igo2-lib/issues/363)) ([d2e33ae](https://github.com/infra-geo-ouverte/igo2-lib/commit/d2e33ae))
+* **query:** keep wms title ([9575f30](https://github.com/infra-geo-ouverte/igo2-lib/commit/9575f30))
+* **rotation-button:** Set option to always show even if no rotation ([#312](https://github.com/infra-geo-ouverte/igo2-lib/issues/312)) ([58dd071](https://github.com/infra-geo-ouverte/igo2-lib/commit/58dd071))
+* **search:** add Searchsource settings ([#370](https://github.com/infra-geo-ouverte/igo2-lib/issues/370)) ([0a01898](https://github.com/infra-geo-ouverte/igo2-lib/commit/0a01898)), closes [#349](https://github.com/infra-geo-ouverte/igo2-lib/issues/349)
+* **search:** rainbow of possibilities for searching coordinate ([#365](https://github.com/infra-geo-ouverte/igo2-lib/issues/365)) ([e8c2147](https://github.com/infra-geo-ouverte/igo2-lib/commit/e8c2147)), closes [#288](https://github.com/infra-geo-ouverte/igo2-lib/issues/288)
+* **search:** Searchsource hashtag ([#371](https://github.com/infra-geo-ouverte/igo2-lib/issues/371)) ([e69276e](https://github.com/infra-geo-ouverte/igo2-lib/commit/e69276e)), closes [#349](https://github.com/infra-geo-ouverte/igo2-lib/issues/349)
+* **search-results-tool:** add feature details in tool ([753cb23](https://github.com/infra-geo-ouverte/igo2-lib/commit/753cb23))
+* **store:** add an empty$ and count$ observables ([f0de496](https://github.com/infra-geo-ouverte/igo2-lib/commit/f0de496))
+* **view:** add a count and empty observables to entity views ([4a0444c](https://github.com/infra-geo-ouverte/igo2-lib/commit/4a0444c))
+
+
+
+# [1.0.0-alpha.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.1...1.0.0-alpha.2) (2019-06-07)
+
+
+### Bug Fixes
+
+* **action:** fix undefined itemClassFunc ([0e30af3](https://github.com/infra-geo-ouverte/igo2-lib/commit/0e30af3))
+* **context-favorite:** api was called even if we were not authenticated ([0d23cc2](https://github.com/infra-geo-ouverte/igo2-lib/commit/0d23cc2))
+* **coordinates.providers:** remove http dependency ([b6964bd](https://github.com/infra-geo-ouverte/igo2-lib/commit/b6964bd))
+* **demo:** minors fix ([c743add](https://github.com/infra-geo-ouverte/igo2-lib/commit/c743add))
+* **map:** map details' legend was, by default, updated on each resolution change ([0ac6765](https://github.com/infra-geo-ouverte/igo2-lib/commit/0ac6765))
+* **share-map:** getUrl must not be executed on component initialization if using the context api ([2f3caeb](https://github.com/infra-geo-ouverte/igo2-lib/commit/2f3caeb))
+* **view:** keepCurrentView ([d83f7aa](https://github.com/infra-geo-ouverte/igo2-lib/commit/d83f7aa))
+* **websocket:** update onmessage ([187d4dc](https://github.com/infra-geo-ouverte/igo2-lib/commit/187d4dc))
+* **wms:** fix xy wms < 1.3.0 ([02abb68](https://github.com/infra-geo-ouverte/igo2-lib/commit/02abb68))
+
+
+### Features
+
+* Change material icons for material design icons ([#346](https://github.com/infra-geo-ouverte/igo2-lib/issues/346)) ([dc7bb9d](https://github.com/infra-geo-ouverte/igo2-lib/commit/dc7bb9d))
+* **actionbar:** add support a item class function ([86e164b](https://github.com/infra-geo-ouverte/igo2-lib/commit/86e164b))
+* **context-menu:** add context-meny and reverse geolocate ([#323](https://github.com/infra-geo-ouverte/igo2-lib/issues/323)) ([9d27dc9](https://github.com/infra-geo-ouverte/igo2-lib/commit/9d27dc9))
+* **draw:** ability to delete the last vertex when drawing by pushing the ESC key ([7876328](https://github.com/infra-geo-ouverte/igo2-lib/commit/7876328))
+* **draw:** last point can be remved by pushing the ESC key ([e24fd82](https://github.com/infra-geo-ouverte/igo2-lib/commit/e24fd82))
+* **entity table:** header can now be fixed (default) ([39bb60f](https://github.com/infra-geo-ouverte/igo2-lib/commit/39bb60f))
+* **form:** form groups can now have a title ([11e078d](https://github.com/infra-geo-ouverte/igo2-lib/commit/11e078d))
+* **icon:** include mdi.svg in core module ([861a9e1](https://github.com/infra-geo-ouverte/igo2-lib/commit/861a9e1))
+* **query:** the query directive now allows querying vector features, which incluses imported and ilayer datasources ([581062c](https://github.com/infra-geo-ouverte/igo2-lib/commit/581062c))
+* **websocket:** Websocket support ([#264](https://github.com/infra-geo-ouverte/igo2-lib/issues/264)) ([56e611d](https://github.com/infra-geo-ouverte/igo2-lib/commit/56e611d))
+
+
+
 # [1.0.0-alpha.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.0.0-alpha.0...1.0.0-alpha.1) (2019-05-21)
 
 

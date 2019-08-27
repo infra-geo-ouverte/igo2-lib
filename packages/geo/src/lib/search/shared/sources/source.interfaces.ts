@@ -7,6 +7,21 @@ export interface SearchSourceOptions {
   distance?: number;
   zoomMaxOnSelect?: number;
   params?: { [key: string]: string };
+  settings?: SearchSourceSettings[];
+}
+
+export interface SearchSourceSettings {
+  type: 'radiobutton' | 'checkbox';
+  values: SettingOptions[];
+  title: string;
+  name: string;
+}
+
+export interface SettingOptions {
+  value: string | number;
+  enabled: boolean;
+  title: string;
+  hashtags?: string[];
 }
 
 export interface TextSearchOptions {

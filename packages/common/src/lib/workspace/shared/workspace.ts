@@ -3,7 +3,7 @@ import { debounceTime } from 'rxjs/operators';
 
 import { ActionStore } from '../../action';
 import { Widget } from '../../widget';
-import { EntityRecord, EntityStore } from '../../entity';
+import { EntityStore } from '../../entity';
 
 import { WorkspaceOptions } from './workspace.interfaces';
 
@@ -15,24 +15,19 @@ import { WorkspaceOptions } from './workspace.interfaces';
 export class Workspace<E extends object = object> {
 
   /**
-   * Observable of the selected entity
-   */
-  public entity$ = new BehaviorSubject<E>(undefined);
-
-  /**
    * Observable of the selected widget
    */
-  public widget$ = new BehaviorSubject<Widget>(undefined);
+  readonly widget$ = new BehaviorSubject<Widget>(undefined);
 
   /**
    * Observable of the selected widget's inputs
    */
-  public widgetInputs$ = new BehaviorSubject<{[key: string]: any}>({});
+  readonly widgetInputs$ = new BehaviorSubject<{[key: string]: any}>({});
 
   /**
    * Observable of the selected widget's subscribers
    */
-  public widgetSubscribers$ = new BehaviorSubject<{[key: string]: (event: any) => void}>({});
+  readonly widgetSubscribers$ = new BehaviorSubject<{[key: string]: (event: any) => void}>({});
 
   /**
    * Subscription to the selected entity
@@ -47,12 +42,12 @@ export class Workspace<E extends object = object> {
   /**
    * State change that trigger an update of the actions availability
    */
-  private changes$: Subject<void> = new Subject();
+  private change: Subject<void> = new Subject();
 
   /**
    * Subscription to state changes
    */
-  private changes$$: Subscription;
+  private change$: Subscription;
 
   /**
    * Workspace id
@@ -78,11 +73,6 @@ export class Workspace<E extends object = object> {
    * Actions store (some actions activate a widget)
    */
   get actionStore(): ActionStore { return this.options.actionStore; }
-
-  /**
-   * Selected entity
-   */
-  get entity(): E { return this.entity$.value; }
 
   /**
    * Selected widget
@@ -113,22 +103,17 @@ export class Workspace<E extends object = object> {
     this.active = true;
 
     if (this.entityStore !== undefined) {
-      this.entities$$ = this.entityStore.stateView
-        .manyBy$((record: EntityRecord<E>) => record.state.selected === true)
-        .subscribe((records: EntityRecord<E>[]) => {
-          // If more than one entity is selected, consider that no entity at all is selected.
-          const entity = (records.length === 0 || records.length > 1) ? undefined : records[0].entity;
-          this.onSelectEntity(entity);
-        });
+      this.entities$$ = this.entityStore.stateView.all$()
+        .subscribe(() => this.onStateChange());
     }
 
     if (this.actionStore !== undefined) {
-      this.changes$$ = this.changes$
-        .pipe(debounceTime(50))
-        .subscribe(() => this.actionStore.updateActionsAvailability());
+      this.change$ = this.change
+        .pipe(debounceTime(35))
+        .subscribe(() => this.updateActionsAvailability());
     }
 
-    this.changes$.next();
+    this.change.next();
   }
 
   /**
@@ -141,8 +126,8 @@ export class Workspace<E extends object = object> {
     if (this.entities$$ !== undefined) {
       this.entities$$.unsubscribe();
     }
-    if (this.changes$$ !== undefined) {
-      this.changes$$.unsubscribe();
+    if (this.change$ !== undefined) {
+      this.change$.unsubscribe();
     }
   }
 
@@ -161,6 +146,7 @@ export class Workspace<E extends object = object> {
     this.widget$.next(widget);
     this.widgetInputs$.next(inputs);
     this.widgetSubscribers$.next(subscribers);
+    this.change.next();
   }
 
   /**
@@ -168,20 +154,20 @@ export class Workspace<E extends object = object> {
    */
   deactivateWidget() {
     this.widget$.next(undefined);
-    this.changes$.next();
+    this.change.next();
+  }
+
+  updateActionsAvailability() {
+    if (this.actionStore !== undefined) {
+      this.actionStore.updateActionsAvailability();
+    }
   }
 
   /**
-   * When an entity is selected, keep a reference to that
-   * entity and update the actions availability.
-   * @param entity Entity
+   * When the state changes, update the actions availability.
    */
-  private onSelectEntity(entity: E) {
-    if (entity === this.entity$.value) {
-      return;
-    }
-    this.entity$.next(entity);
-    this.changes$.next();
+  private onStateChange() {
+    this.change.next();
   }
 
 }

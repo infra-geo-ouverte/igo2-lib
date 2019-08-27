@@ -14,6 +14,7 @@ import { IgoDynamicOutletModule } from '../../dynamic-component/dynamic-outlet/d
 import { FormFieldComponent } from './form-field.component';
 import { FormFieldSelectComponent } from './form-field-select.component';
 import { FormFieldTextComponent } from './form-field-text.component';
+import { FormFieldTextareaComponent } from './form-field-textarea.component';
 
 /**
  * @ignore
@@ -33,12 +34,14 @@ import { FormFieldTextComponent } from './form-field-text.component';
   exports: [
     FormFieldComponent,
     FormFieldSelectComponent,
-    FormFieldTextComponent
+    FormFieldTextComponent,
+    FormFieldTextareaComponent
   ],
   declarations: [
     FormFieldComponent,
     FormFieldSelectComponent,
-    FormFieldTextComponent
+    FormFieldTextComponent,
+    FormFieldTextareaComponent
   ]
 })
 export class IgoFormFieldModule {}

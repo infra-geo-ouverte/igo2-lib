@@ -4,7 +4,8 @@ import { SearchResult } from '../search.interfaces';
 import {
   SearchSourceOptions,
   TextSearchOptions,
-  ReverseSearchOptions
+  ReverseSearchOptions,
+  SearchSourceSettings
 } from './source.interfaces';
 
 /**
@@ -84,6 +85,42 @@ export class SearchSource {
   }
 
   /**
+   * Search settings
+   */
+  get settings(): SearchSourceSettings[] {
+    return this.options.settings === undefined ? [] : this.options.settings;
+  }
+
+  /**
+   * Set params from selected settings
+   */
+  setParamFromSetting(setting: SearchSourceSettings) {
+    switch (setting.type) {
+      case 'radiobutton':
+        setting.values.forEach(conf => {
+          if (conf.enabled) {
+            this.options.params = Object.assign(this.options.params || {}, {
+              [setting.name]: conf.value
+            });
+          }
+        });
+        break;
+      case 'checkbox':
+        let confValue = '';
+        setting.values.forEach(conf => {
+          if (conf.enabled) {
+            confValue += conf.value + ',';
+          }
+        });
+        confValue = confValue.slice(0, -1);
+        this.options.params = Object.assign(this.options.params || {}, {
+          [setting.name]: confValue
+        });
+        break;
+    }
+  }
+
+  /**
    * Search results display order
    */
   get displayOrder(): number {
@@ -92,6 +129,50 @@ export class SearchSource {
 
   constructor(options: SearchSourceOptions) {
     this.options = Object.assign({}, this.getDefaultOptions(), options);
+
+    // Set Default Params from Settings
+    this.settings.forEach(setting => {
+      this.setParamFromSetting(setting);
+    });
+  }
+
+  /**
+   * Get hashtags valid
+   * @param hashtag hashtag from query
+   */
+  getHashtagsValid(term: string, settingsName: string): string[] {
+    const hashtags = term.match(/(#[^\s]+)/g);
+    if (!hashtags) {
+      return undefined;
+    }
+
+    const searchSourceSetting = this.getSettingsValues(settingsName);
+    const hashtagsValid = [];
+    hashtags.forEach(hashtag => {
+      searchSourceSetting.values.forEach(conf => {
+        const hashtagKey = hashtag.substring(1);
+        if (typeof conf.value === 'string') {
+          const types = conf.value.split(',');
+          const index = types.indexOf(hashtagKey);
+          if (index !== -1) {
+            hashtagsValid.push(types[index]);
+          }
+        }
+        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey) !== -1) {
+          hashtagsValid.push(conf.value);
+        }
+      });
+    });
+
+    return hashtagsValid;
+  }
+
+  getSettingsValues(search: string): SearchSourceSettings {
+    return this.getDefaultOptions().settings.find(
+      (value: SearchSourceSettings) => {
+        return value.name === search;
+      }
+    );
   }
 }
 

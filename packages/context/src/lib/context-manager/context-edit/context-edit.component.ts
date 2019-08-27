@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 
 import { Context } from '../shared/context.interface';
 
@@ -13,10 +13,15 @@ export class ContextEditComponent {
   }
   set context(value: Context) {
     this._context = value;
+    this.refresh();
   }
   private _context: Context;
 
   @Output() submitForm: EventEmitter<any> = new EventEmitter();
 
-  constructor() {}
+  constructor(private cd: ChangeDetectorRef) {}
+
+  refresh() {
+    this.cd.detectChanges();
+  }
 }

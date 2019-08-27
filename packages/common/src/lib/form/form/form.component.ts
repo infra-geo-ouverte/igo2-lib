@@ -13,6 +13,7 @@ import {
 import t from 'typy';
 
 import { Form, FormField, FormFieldGroup } from '../shared/form.interfaces';
+import { getAllFormFields } from '../shared/form.utils';
 
 /**
  * A configurable form
@@ -34,6 +35,11 @@ export class FormComponent implements OnChanges {
    * Input data
    */
   @Input() formData: { [key: string]: any};
+
+  /**
+   * Form autocomplete
+   */
+  @Input() autocomplete: string = 'off';
 
   /**
    * Event emitted when the form is submitted
@@ -86,14 +92,17 @@ export class FormComponent implements OnChanges {
 
   private getData(): { [key: string]: any} {
     const data = {};
-    this.form.fields.forEach((field: FormField) => {
-      data[field.name] = field.control.value;
-    });
-
-    this.form.groups.forEach((group: FormFieldGroup) => {
-      Object.assign(data, group.control.value);
+    getAllFormFields(this.form).forEach((field: FormField) => {
+      this.updateDataWithFormField(data, field);
     });
     return data;
+  }
+
+  private updateDataWithFormField(data: { [key: string]: any}, field: FormField) {
+    const control = field.control;
+    if (!control.disabled) {
+      data[field.name] = control.value;
+    }
   }
 
   /**

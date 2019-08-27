@@ -158,6 +158,13 @@ export class EntityTransaction {
    * Rollback this transaction
    */
   rollback() {
+    this.rollbackOperations(this.operations.all());
+  }
+
+  /**
+   * Rollback specific operations
+   */
+  rollbackOperations(operations: EntityOperation[]) {
     this.checkInCommitPhase();
 
     const operationsFactory = () => new Map([
@@ -170,7 +177,7 @@ export class EntityTransaction {
     // Group operations by store and by operation type.
     // Grouping operations allows us to revert them in bacth, thus, triggering
     // observables only one per operation type.
-    for (const operation of this.operations.all()) {
+    for (const operation of operations) {
       const store = operation.store;
       if (operation.store === undefined) { continue; }
 
@@ -183,19 +190,20 @@ export class EntityTransaction {
     }
 
     Array.from(storesOperations.keys()).forEach((store: EntityStore<object>) => {
-      const operations = storesOperations.get(store);
+      const storeOperations = storesOperations.get(store);
 
-      const deletes = operations.get(EntityOperationType.Delete);
+      const deletes = storeOperations.get(EntityOperationType.Delete);
       store.insertMany(deletes.map((_delete: EntityOperation) => _delete.previous));
 
-      const updates = operations.get(EntityOperationType.Update);
+      const updates = storeOperations.get(EntityOperationType.Update);
       store.updateMany(updates.map((_update: EntityOperation) => _update.previous));
 
-      const inserts = operations.get(EntityOperationType.Insert);
+      const inserts = storeOperations.get(EntityOperationType.Insert);
       store.deleteMany(inserts.map((_insert: EntityOperation) => _insert.current));
     });
 
-    this.clear();
+    this.operations.deleteMany(operations);
+    this._inCommitPhase = false;
   }
 
   /**
@@ -205,6 +213,19 @@ export class EntityTransaction {
   clear() {
     this.operations.clear();
     this._inCommitPhase = false;
+  }
+
+  /**
+   * Merge another transaction in this one
+   * @param transaction Another transaction
+   */
+  mergeTransaction(transaction: EntityTransaction) {
+    this.checkInCommitPhase();
+
+    const operations = transaction.operations.all();
+    operations.forEach((operation: EntityOperation) => {
+      this.addOperation(operation);
+    });
   }
 
   /**

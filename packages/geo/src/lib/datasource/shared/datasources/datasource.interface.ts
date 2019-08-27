@@ -1,5 +1,4 @@
 import olSource from 'ol/source/Source';
-
 import { DownloadOptions } from '../../../download/shared/download.interface';
 
 export interface DataSourceOptions {
@@ -13,12 +12,15 @@ export interface DataSourceOptions {
     | 'carto'
     | 'arcgisrest'
     | 'tilearcgisrest'
-    | 'websocket';
+    | 'websocket'
+    | 'mvt'
+    | 'cluster';
   optionsFromCapabilities?: boolean;
   // title: string;
   // alias?: string;
 
   // view?: ol.olx.layer.ImageOptions;
+  id?: string;
   ol?: olSource;
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
@@ -29,6 +31,7 @@ export interface SourceFieldsOptionsParams {
   name: any;
   alias?: any;
   values?: any;
+  excludeFromOgcFilters?: boolean;
 }
 
 export interface Legend {

@@ -44,7 +44,7 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    */
   toggleCollapseAction = {
     id: 'actionbar_toggle',
-    icon: 'more-vert',
+    icon: 'dots-vertical',
     handler: () => {
       this.collapsed = !this.collapsed;
     }

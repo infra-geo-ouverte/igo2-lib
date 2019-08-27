@@ -25,6 +25,8 @@ export class MapDetailsToolComponent {
 
   @Input() layerListControls: LayerListControlsOptions = {};
 
+  @Input() queryBadge: boolean = false;
+
   get excludeBaseLayers(): boolean {
     return this.layerListControls.excludeBaseLayers || false;
   }

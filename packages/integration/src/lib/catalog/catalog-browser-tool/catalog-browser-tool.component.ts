@@ -1,5 +1,6 @@
 import {
   Component,
+  Input,
   OnInit,
   OnDestroy,
   ChangeDetectionStrategy
@@ -47,6 +48,11 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    * Subscription to the selected catalog
    */
   private catalog$$: Subscription;
+
+  /**
+   * Whether a group can be toggled when it's collapsed
+   */
+  @Input() toggleCollapsedGroup: boolean = true;
 
   /**
    * Map to add layers to

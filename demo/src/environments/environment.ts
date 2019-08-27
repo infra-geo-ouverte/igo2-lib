@@ -12,6 +12,14 @@ interface Environment {
 export const environment: Environment = {
   production: false,
   igo: {
+    projections: [
+      {
+        code: 'EPSG:32198',
+        def:
+          '+proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
+        extent: [-886251.0296, 180252.9126, 897177.3418, 2106143.8139]
+      }
+    ],
     auth: {
       intern: {
         enabled: true
@@ -33,7 +41,10 @@ export const environment: Environment = {
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           queryFormat: {
             html: '*',
-            'application/json':  ['stations_meteoroutieres', 'histo_stations_meteoroutieres']
+            'application/json': [
+              'stations_meteoroutieres',
+              'histo_stations_meteoroutieres'
+            ]
           },
           queryHtmlTarget: 'iframe',
           count: 30
@@ -43,7 +54,6 @@ export const environment: Environment = {
           title: 'Filtered catalog by regex',
           url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           regFilters: ['zpegt']
-
         },
         {
           id: 'catalogwithtooltipcontrol',
@@ -55,40 +65,28 @@ export const environment: Environment = {
     },
     searchSources: {
       nominatim: {
-        enabled: false
-      },
-      reseautq: {
-        searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        limit: 5,
-        locateLimit: 15,
-        zoomMaxOnSelect: 8,
-        enabled: false,
-        propertiesAlias:
-        [
-          {name: 'title', alias: 'Titre'},
-          {name: 'etiquette', alias: 'Informations'},
-          {name: 'nommun', alias: 'Municipalité'},
-          {name: 'messagpan', alias: 'Message'},
-          {name: 'noroute', alias: '# de route'},
-          {name: 'nosortie', alias: '# de sortie'},
-          {name: 'direction', alias: 'Direction'},
-          {name: 'typesort', alias: 'Type de sortie'}
-        ],
-        distance : 0.5
+        enabled: true
       },
       icherche: {
-        searchUrl: '/icherche/geocode',
-        zoomMaxOnSelect: 10,
-        enabled: true
+        searchUrl: '/apis/icherche/geocode',
+        order: 2,
+        enabled: true,
+        params: {
+          limit: '8'
+        }
       },
       icherchereverse: {
-        searchUrl: '/icherche/xy',
+        searchUrl: '/apis/territoires/locate',
+        order: 3,
         enabled: true
       },
-      datasource: {
-        searchUrl: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search',
-        enabled: false
+      ilayer: {
+        searchUrl: '/apis/layers/search',
+        order: 4,
+        enabled: true,
+        params: {
+          limit: '5'
+        }
       }
     }
   }

@@ -7,6 +7,7 @@ import * as olformat from 'ol/format';
 
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { DataService } from './data.service';
+import { formatWFSQueryString, gmlRegex, defaultEpsg, defaultMaxFeatures} from './wms-wfs.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -22,199 +23,40 @@ export class WFSService extends DataService {
   }
 
   public getSourceFieldsFromWFS(datasource) {
-    if (
-      datasource.sourceFields === undefined ||
-      Object.keys(datasource.sourceFields).length === 0
-    ) {
+    if (!datasource.sourceFields || datasource.sourceFields.length === 0 ) {
       datasource.sourceFields = [];
-      this.wfsGetCapabilities(datasource).subscribe(wfsCapabilities => {
-        datasource.paramsWFS.wfsCapabilities = {
-          xmlBody: wfsCapabilities.body,
-          GetPropertyValue: /GetPropertyValue/gi.test(wfsCapabilities.body)
-            ? true
-            : false
-        };
-
-        this.defineFieldAndValuefromWFS(datasource).subscribe(sourceFields => {
-          datasource.sourceFields = sourceFields;
-        });
-      });
-    } else {
-      datasource.sourceFields.forEach(sourcefield => {
-        if (sourcefield.alias === undefined) {
-          sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
-        }
+      this.defineFieldAndValuefromWFS(datasource).subscribe(getfeatureSourceField => {
+        datasource.sourceFields = getfeatureSourceField;
       });
 
-      datasource.sourceFields
-        .filter(
-          field => field.values === undefined || field.values.length === 0
-        )
-        .forEach(f => {
-          this.getValueFromWfsGetPropertyValues(
-            datasource,
-            f.name,
-            200,
-            0,
-            0
-          ).subscribe(rep => (f.values = rep));
+    } else {
+      this.defineFieldAndValuefromWFS(datasource).subscribe(getfeatureSourceField => {
+        datasource.sourceFields.forEach(sourcefield => {
+          if (sourcefield.alias === undefined) {
+            sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
+          }
+          if (sourcefield.values === undefined || sourcefield.values.length === 0) {
+            sourcefield.values = getfeatureSourceField.find(sf => sf.name === sourcefield.name).values;
+          }
         });
+      });
     }
   }
 
-  public checkWfsOptions(wfsDataSourceOptions) {
-    // Look at https://github.com/openlayers/openlayers/pull/6400
-    const patternGml = new RegExp(/.*?gml.*?/gi);
-
-    if (patternGml.test(wfsDataSourceOptions.paramsWFS.outputFormat)) {
-      wfsDataSourceOptions.paramsWFS.version = '1.1.0';
-    }
-    return Object.assign({}, wfsDataSourceOptions, {
-      wfsCapabilities: { xmlBody: '', GetPropertyValue: false }
-    });
-  }
-
-  public buildBaseWfsUrl(
+  private wfsGetFeature(
     wfsDataSourceOptions: WFSDataSourceOptions,
-    wfsQuery: string
-  ): string {
-    let paramTypename = 'typename';
-    if (
-      wfsDataSourceOptions.paramsWFS.version === '2.0.0' ||
-      !wfsDataSourceOptions.paramsWFS.version
-    ) {
-      paramTypename = 'typenames';
-    }
-    const baseWfsQuery = 'service=wfs&request=' + wfsQuery;
-    const wfsTypeName =
-      paramTypename + '=' + wfsDataSourceOptions.paramsWFS.featureTypes;
-    const wfsVersion = wfsDataSourceOptions.paramsWFS.version
-      ? 'version=' + wfsDataSourceOptions.paramsWFS.version
-      : 'version=' + '2.0.0';
-
-    return `${
-      wfsDataSourceOptions.urlWfs
-    }?${baseWfsQuery}&${wfsVersion}&${wfsTypeName}`;
-  }
-
-  public wfsGetFeature(
-    wfsDataSourceOptions: WFSDataSourceOptions,
-    nb = 5000,
-    epsgCode = 3857,
-    propertyname = ''
+    nb: number = defaultMaxFeatures,
+    epsgCode: string = defaultEpsg,
+    propertyName?: string
   ): Observable<any> {
-    const baseUrl = this.buildBaseWfsUrl(wfsDataSourceOptions, 'GetFeature');
-    const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat
-      ? 'outputFormat=' + wfsDataSourceOptions.paramsWFS.outputFormat
-      : '';
-    const srsname = wfsDataSourceOptions.paramsWFS.srsName
-      ? 'srsname=' + wfsDataSourceOptions.paramsWFS.srsName
-      : 'srsname=EPSG:' + epsgCode;
-    const wfspropertyname =
-      propertyname === '' ? propertyname : '&propertyname=' + propertyname;
-    let paramMaxFeatures = 'maxFeatures';
-    if (
-      wfsDataSourceOptions.paramsWFS.version === '2.0.0' ||
-      !wfsDataSourceOptions.paramsWFS.version
-    ) {
-      paramMaxFeatures = 'count';
-    }
-
-    let maxFeatures;
-    if (nb !== 5000) {
-      maxFeatures = paramMaxFeatures + '=' + nb;
+    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, nb, epsgCode, propertyName);
+    const baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
+    const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
+    if (gmlRegex.test(outputFormat) || !outputFormat) {
+      return this.http.get(baseUrl, { responseType: 'text' });
     } else {
-      maxFeatures = wfsDataSourceOptions.paramsWFS.maxFeatures
-        ? paramMaxFeatures + '=' + wfsDataSourceOptions.paramsWFS.maxFeatures
-        : paramMaxFeatures + '=' + nb;
+      return this.http.get(baseUrl);
     }
-    const urlWfs = `${baseUrl}&${outputFormat}&${srsname}&${maxFeatures}${wfspropertyname}`;
-    const patternGml = new RegExp('.*?gml.*?');
-    if (
-      patternGml.test(wfsDataSourceOptions.paramsWFS.outputFormat.toLowerCase())
-    ) {
-      return this.http.get(urlWfs, { responseType: 'text' });
-    } else {
-      return this.http.get(urlWfs);
-    }
-  }
-
-  public getValueFromWfsGetPropertyValues(
-    wfsDataSourceOptions: WFSDataSourceOptions,
-    field,
-    maxFeatures = 30,
-    startIndex = 0,
-    retry = 0
-  ): Observable<any> {
-    return new Observable(d => {
-      const nbRetry = 2;
-      const valueList = [];
-
-      this.wfsGetPropertyValue(
-        wfsDataSourceOptions,
-        field,
-        maxFeatures,
-        startIndex
-      ).subscribe(
-        str => {
-          str = str.replace(/&#39;/gi, "'"); // tslint:disable-line
-          const regexExcp = /exception/gi;
-          if (regexExcp.test(str)) {
-            retry++;
-            if (retry < nbRetry) {
-              this.getValueFromWfsGetPropertyValues(
-                wfsDataSourceOptions,
-                field,
-                maxFeatures,
-                startIndex,
-                retry
-              ).subscribe(rep => d.next(rep));
-            }
-          } else {
-            const valueReferenceRegex = new RegExp(
-              '<(.+?)' + field + '>(.+?)</(.+?)' + field + '>',
-              'gi'
-            );
-            let n = valueReferenceRegex.exec(str);
-            while (n !== null) {
-              if (n.index === valueReferenceRegex.lastIndex) {
-                valueReferenceRegex.lastIndex++;
-              }
-              if (valueList.indexOf(n[2]) === -1) {
-                valueList.push(n[2]);
-              }
-              n = valueReferenceRegex.exec(str);
-            }
-            d.next(valueList);
-            d.complete();
-          }
-        },
-        err => {
-          if (retry < nbRetry) {
-            retry++;
-            this.getValueFromWfsGetPropertyValues(
-              wfsDataSourceOptions,
-              field,
-              maxFeatures,
-              startIndex,
-              retry
-            ).subscribe(rep => d.next(rep));
-          }
-        }
-      );
-    });
-  }
-
-  wfsGetCapabilities(options): Observable<any> {
-    const baseWfsQuery = 'service=wfs&request=GetCapabilities';
-    const wfsVersion = options.version
-      ? 'version=' + options.version
-      : 'version=' + '2.0.0';
-    const wfsGcUrl = `${options.urlWfs}?${baseWfsQuery}&${wfsVersion}`;
-    return this.http.get(wfsGcUrl, {
-      observe: 'response',
-      responseType: 'text'
-    });
   }
 
   defineFieldAndValuefromWFS(
@@ -226,86 +68,39 @@ export class WFSService extends DataService {
       let fieldListWoGeom;
       let fieldListWoGeomStr;
       let olFormats;
-      const patternGml3 = /gml/gi;
-      if (wfsDataSourceOptions.paramsWFS.outputFormat.match(patternGml3)) {
+      const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
+
+      if (gmlRegex.test(outputFormat) || !outputFormat) {
         olFormats = olformat.WFS;
-      } else {
+     } else {
         olFormats = olformat.GeoJSON;
       }
 
-      if (wfsDataSourceOptions.paramsWFS.wfsCapabilities.GetPropertyValue) {
-        this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
-          const features = new olFormats().readFeatures(oneFeature);
-          fieldList = features[0].getKeys();
-          fieldListWoGeom = fieldList.filter(
-            field =>
-              field !== features[0].getGeometryName() &&
-              !field.match(/boundedby/gi)
-          );
-          fieldListWoGeomStr = fieldListWoGeom.join(',');
-          fieldListWoGeom.forEach(element => {
-            const fieldType =
-              typeof features[0].get(element) === 'object'
-                ? undefined
-                : typeof features[0].get(element);
-            this.getValueFromWfsGetPropertyValues(
-              wfsDataSourceOptions,
-              element,
-              200
-            ).subscribe(valueList => {
-              sourceFields.push({
-                name: element,
-                alias: element,
-                values: valueList
-              });
-              d.next(sourceFields);
-            });
+      this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
+        const features = new olFormats().readFeatures(oneFeature);
+        fieldList = features[0].getKeys();
+        fieldListWoGeom = fieldList.filter(
+          field =>
+            field !== features[0].getGeometryName() &&
+            !field.match(/boundedby/gi)
+        );
+        fieldListWoGeomStr = fieldListWoGeom.join(',');
+        this.wfsGetFeature(
+          wfsDataSourceOptions,
+          wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
+          undefined,
+          fieldListWoGeomStr
+        ).subscribe(manyFeatures => {
+          const mfeatures = new olFormats().readFeatures(manyFeatures);
+          this.built_properties_value(mfeatures).forEach(element => {
+            sourceFields.push(element);
           });
+          d.next(sourceFields);
+          d.complete();
         });
-      } else {
-        this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
-          const features = new olFormats().readFeatures(oneFeature);
-          fieldList = features[0].getKeys();
-          fieldListWoGeom = fieldList.filter(
-            field =>
-              field !== features[0].getGeometryName() &&
-              !field.match(/boundedby/gi)
-          );
-          fieldListWoGeomStr = fieldListWoGeom.join(',');
-          this.wfsGetFeature(
-            wfsDataSourceOptions,
-            200,
-            3857,
-            fieldListWoGeomStr
-          ).subscribe(manyFeatures => {
-            const mfeatures = new olFormats().readFeatures(manyFeatures);
-            this.built_properties_value(mfeatures).forEach(element => {
-              sourceFields.push(element);
-            });
-            d.next(sourceFields);
-            d.complete();
-          });
-        });
-      }
-    });
-  }
+      });
 
-  public wfsGetPropertyValue(
-    wfsDataSourceOptions: WFSDataSourceOptions,
-    field,
-    maxFeatures = 30,
-    startIndex = 0
-  ): Observable<any> {
-    const baseWfsQuery =
-      'service=wfs&request=GetPropertyValue&count=' + maxFeatures;
-    const wfsTypeName =
-      'typenames=' + wfsDataSourceOptions.paramsWFS.featureTypes;
-    const wfsValueReference = 'valueReference=' + field;
-    const wfsVersion = 'version=' + '2.0.0';
-    const gfvUrl = `${
-      wfsDataSourceOptions.urlWfs
-    }?${baseWfsQuery}&${wfsVersion}&${wfsTypeName}&${wfsValueReference}`;
-    return this.http.get(gfvUrl, { responseType: 'text' });
+    });
   }
 
   private built_properties_value(features: olFeature[]): string[] {

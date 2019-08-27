@@ -6,7 +6,6 @@ import {
   MatIconModule
 } from '@angular/material';
 
-import { IgoCoreModule } from '@igo2/core';
 import { IgoPanelModule, IgoEntityTableModule } from '@igo2/common';
 import { IgoMapModule, IgoFeatureModule } from '@igo2/geo';
 
@@ -21,7 +20,6 @@ import { AppFeatureRoutingModule } from './feature-routing.module';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    IgoCoreModule,
     IgoPanelModule,
     IgoEntityTableModule,
     IgoMapModule,

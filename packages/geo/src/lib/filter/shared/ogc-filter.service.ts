@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WFSDataSourceOptions } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { OgcFilterWriter } from './ogc-filter';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
 
@@ -11,11 +9,8 @@ export class OGCFilterService {
   constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
-    const appliedFilter = wmsDatasource.formatProcessedOgcFilter(filterString, wmsDatasource.options.params.layers);
-    const wmsFilterValue = appliedFilter.length > 0
-        ? appliedFilter.replace('filter=', '')
-        : undefined;
-    wmsDatasource.ol.updateParams({ filter: wmsFilterValue });
+    const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(filterString, wmsDatasource.options.params.layers);
+    wmsDatasource.ol.updateParams({ filter: appliedFilter });
   }
 
   public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {

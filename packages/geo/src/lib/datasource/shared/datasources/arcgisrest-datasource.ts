@@ -82,4 +82,6 @@ export class ArcGISRestDataSource extends DataSource {
     htmlString += '</table>';
     return [{ html: htmlString }];
   }
+
+  public onUnwatch() {}
 }

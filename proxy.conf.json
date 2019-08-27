@@ -14,8 +14,8 @@
     "secure": false,
     "changeOrigin": true
   },
-  "/igo2/api/": {
-    "target": "https://geoegl.msp.gouv.qc.ca",
+  "/apis/": {
+    "target": "https://testgeoegl.msp.gouv.qc.ca",
     "secure": false,
     "changeOrigin": true
   },

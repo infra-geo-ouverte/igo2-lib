@@ -25,12 +25,20 @@
       [color]="color"
       (click)="onClearButtonClick()"
       *ngIf="!empty">
-      <mat-icon svgIcon="clear"></mat-icon>
+      <mat-icon svgIcon="close"></mat-icon>
     </button>
+
+    <igo-search-selector
+      *ngIf="searchSelector"
+      [searchTypes]="searchTypes"
+      (change)="onSearchTypeChange($event)">
+    </igo-search-selector>
+
+    <igo-search-settings
+      *ngIf="searchSettings"
+      (change)="onSearchSettingsChange()"
+    ></igo-search-settings>
   </div>
 
-  <igo-search-selector
-    [searchTypes]="searchTypes"
-    (change)="onSearchTypeChange($event)">
-  </igo-search-selector>
+
 </div>

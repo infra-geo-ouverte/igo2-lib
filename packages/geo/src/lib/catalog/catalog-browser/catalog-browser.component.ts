@@ -52,6 +52,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   @Input() map: IgoMap;
 
+  /**
+   * Whether a group can be toggled when it's collapsed
+   */
+  @Input() toggleCollapsedGroup: boolean = true;
+
   constructor(
     private layerService: LayerService,
     private cdRef: ChangeDetectorRef

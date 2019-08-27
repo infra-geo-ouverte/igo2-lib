@@ -18,8 +18,7 @@ import {
   LayerService,
   MapService,
   Layer,
-  LAYER,
-  LayerOptions,
+  ProjectionService,
   Research,
   SearchResult,
   SearchService
@@ -60,10 +59,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.searchState.store;
   }
 
-  selectedFeature: Feature;
+  public selectedFeature: Feature;
 
   constructor(
     private languageService: LanguageService,
+    private projectionService: ProjectionService,
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
@@ -107,52 +107,24 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    */
   onResultFocus(result: SearchResult) {
     this.tryAddFeatureToMap(result);
-  }
-
-  /**
-   * Try to add a feature or a layer to the map when it's being selected
-   * @internal
-   * @param result A search result that could be a feature or some layer options
-   */
-  onResultSelect(result: SearchResult) {
-    this.tryAddFeatureToMap(result);
-    this.tryAddLayerToMap(result);
+    this.selectedFeature = (result as SearchResult<Feature>).data;
   }
 
   /**
    * Try to add a feature to the map overlay
-   * @param result A search result that could be a feature
+   * @param layer A search result that could be a feature
    */
-  private tryAddFeatureToMap(result: SearchResult) {
-    if (result.meta.dataType !== FEATURE) {
+  private tryAddFeatureToMap(layer: SearchResult) {
+    if (layer.meta.dataType !== FEATURE) {
       return undefined;
     }
-    this.selectedFeature = (result as SearchResult<Feature>).data;
 
     // Somethimes features have no geometry. It happens with some GetFeatureInfo
-    if (this.selectedFeature.geometry === undefined) {
+    if (layer.data.geometry === undefined) {
       return;
     }
 
-    this.map.overlay.setFeatures([this.selectedFeature], FeatureMotion.Default);
-  }
-
-  /**
-   * Try to add a layer to the map
-   * @param result A search result that could be some layer options
-   */
-  private tryAddLayerToMap(result: SearchResult) {
-    if (this.map === undefined) {
-      return;
-    }
-
-    if (result.meta.dataType !== LAYER) {
-      return undefined;
-    }
-    const layerOptions = (result as SearchResult<LayerOptions>).data;
-    this.layerService
-      .createAsyncLayer(layerOptions)
-      .subscribe(layer => this.map.addLayer(layer));
+    this.map.overlay.setFeatures([layer.data] as Feature[], FeatureMotion.Default);
   }
 
   ngOnInit() {
@@ -180,6 +152,13 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     this.store.destroy();
   }
 
+  /*
+   * Remove a feature to the map overlay
+   */
+  removeFeatureFromMap() {
+    this.map.overlay.clear();
+  }
+
   onContextMenuOpen(event: { x: number; y: number }) {
     const position = this.mapPosition(event);
     const coord = this.mapService.getMap().ol.getCoordinateFromPixel(position);
@@ -203,16 +182,12 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   onSearchCoordinate() {
     this.searchStore.clear();
-    const results = this.searchService.reverseSearch(this.lonlat);
+    const results = this.searchService.reverseSearch(this.lonlat, {distance: 100});
 
     for (const i in results) {
       if (results.length > 0) {
         results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
           this.onSearch({ research: results[i], results: _results });
-          /*if (_results[i].source.options.title === 'Coordinates') {
-            this.onResultSelect(_results[0]);
-          }*/
-          console.log(_results[0]);
         });
       }
     }

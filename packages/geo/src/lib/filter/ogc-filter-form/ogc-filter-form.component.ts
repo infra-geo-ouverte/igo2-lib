@@ -1,11 +1,8 @@
 import {
   Component,
   Input,
-  ChangeDetectorRef,
-  AfterContentChecked
+  OnInit
 } from '@angular/core';
-
-import * as olstyle from 'ol/style';
 
 import {
   OgcInterfaceFilterOptions,
@@ -15,17 +12,15 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
+import { OgcFilterOperatorType } from '../../filter/shared/ogc-filter.enum';
 
 @Component({
   selector: 'igo-ogc-filter-form',
   templateUrl: './ogc-filter-form.component.html',
   styleUrls: ['./ogc-filter-form.component.scss']
 })
-export class OgcFilterFormComponent implements AfterContentChecked {
-  private ogcFilterWriter: OgcFilterWriter;
-  private _dataSource: OgcFilterableDataSource;
-  private _currentFilter: any = {};
-  public operators;
+export class OgcFilterFormComponent implements OnInit {
+  public ogcFilterOperators;
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
@@ -34,45 +29,15 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   public color = 'primary';
   public snrc = '';
   public disabled;
-  private _map: IgoMap;
   public baseOverlayName = 'ogcFilterOverlay_';
-  private _showFeatureOnMap: boolean;
 
-  // tslint:disable-next-line:ban-types
-  @Input() refreshFilters: Function;
+  @Input() refreshFilters: () => void;
 
-  @Input()
-  get datasource(): OgcFilterableDataSource {
-    return this._dataSource;
-  }
-  set datasource(value: OgcFilterableDataSource) {
-    this._dataSource = value;
-    this.cdRef.detectChanges();
-  }
+  @Input() datasource: OgcFilterableDataSource;
 
-  @Input()
-  get showFeatureOnMap(): boolean {
-    return this._showFeatureOnMap;
-  }
-  set showFeatureOnMap(value: boolean) {
-    this._showFeatureOnMap = value;
-  }
+  @Input() map: IgoMap;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-
-  @Input()
-  get currentFilter(): any {
-    return this._currentFilter;
-  }
-  set currentFilter(value: any) {
-    this._currentFilter = value;
-  }
+  @Input() currentFilter: any;
 
   get activeFilters() {
     this.updateField();
@@ -82,15 +47,13 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   }
 
   constructor(
-    private cdRef: ChangeDetectorRef,
     private wktService: WktService
   ) {
-    this.ogcFilterWriter = new OgcFilterWriter();
     // TODO: Filter permitted operator based on wfscapabilities
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...
     // Ex: IsNull vs PropertyIsNull vs IsNil ...
-    this.operators = this.ogcFilterWriter.operators;
+    this.ogcFilterOperators = new OgcFilterWriter().operators;
     this.igoSpatialSelectors = [
       {
         type: 'fixedExtent'
@@ -102,79 +65,79 @@ export class OgcFilterFormComponent implements AfterContentChecked {
     // TODO: selectFeature & drawFeature
   }
 
-  ngAfterContentChecked() {
-    if (this.map) {
-      this.activeFilters
-        .filter(
-          af => ['Contains', 'Intersects', 'Within'].indexOf(af.operator) !== -1
-        )
-        .forEach(activeFilterSpatial => {
-          if (activeFilterSpatial.wkt_geometry) {
-            this.addWktAsOverlay(
-              activeFilterSpatial.wkt_geometry,
-              activeFilterSpatial.filterid,
-              this.map.projection
-            );
-          }
-        });
-    }
+  ngOnInit() {
+    this.computeAllowedOperators();
   }
 
-  updateField(init = true) {
+  computeAllowedOperators() {
+    let allowedOperators = this.datasource.options.ogcFilters.allowedOperatorsType;
+    let effectiveOperators: {} = {};
+
+    if (!allowedOperators)  {
+      allowedOperators = OgcFilterOperatorType.BasicAndSpatial;
+    }
+
+    switch (allowedOperators.toLowerCase()) {
+      case 'all':
+        effectiveOperators = this.ogcFilterOperators;
+        break;
+      case 'spatial':
+        effectiveOperators = {
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+        break;
+      case 'basicandspatial':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+        break;
+      case 'basic':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] }
+        };
+        break;
+      case 'basicnumeric':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+        };
+        break;
+      default:
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+    }
+
+    this.ogcFilterOperators = effectiveOperators;
+  }
+
+  updateField() {
     if (!this.datasource.options.sourceFields) {
       return;
     }
-    this.fields = this.datasource.options.sourceFields.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      } else if (a.name > b.name) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-    this.datasource.options.sourceFields
-      .filter(f => f.name === this.currentFilter.propertyName)
+    this.fields = this.datasource.options.sourceFields
+    .filter(sf => (sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters));
+    this.fields.filter(f => f.name === this.currentFilter.propertyName)
       .forEach(element => {
         this.values = element.values !== undefined ? element.values.sort() : [];
       });
   }
 
-  private addWktAsOverlay(wkt, filterid, projection) {
-    const wktAsFeature = this.wktService.wktToFeature(wkt, projection);
-    wktAsFeature.setId(this.baseOverlayName + filterid);
-    let opacity = 0;
-    if (this.showFeatureOnMap) {
-      opacity = 0.5;
-    }
-
-    const stroke = new olstyle.Stroke({
-      width: 2,
-      color: [125, 136, 140, opacity]
-    });
-
-    return new olstyle.Style({
-      stroke,
-      image: new olstyle.Circle({
-        radius: 5,
-        stroke
-      })
-    });
-
-    this.map.overlay.addOlFeature(wktAsFeature);
-  }
-
   toggleFilterState(event, filter: OgcInterfaceFilterOptions, property) {
     this.updateField();
-    const mapProjection = this.map.projection;
     if (event.checked) {
-      if (filter.wkt_geometry !== '') {
-        this.addWktAsOverlay(
-          filter.wkt_geometry,
-          filter.filterid,
-          mapProjection
-        );
-      }
       this.datasource.options.ogcFilters.interfaceOgcFilters
         .filter(f => f.filterid === filter.filterid)
         .forEach(element => {
@@ -216,7 +179,7 @@ export class OgcFilterFormComponent implements AfterContentChecked {
   }
 
   changeOperator(filter) {
-    if (this.operators[filter.operator].spatial === false) {
+    if (this.ogcFilterOperators[filter.operator].spatial === false) {
       this.removeOverlayByID(filter.filterid);
     }
     this.refreshFilters();
@@ -261,9 +224,6 @@ export class OgcFilterFormComponent implements AfterContentChecked {
             mapProjection
           ).wktPoly;
           element.wkt_geometry = wktPoly;
-        }
-        if (wktPoly) {
-          this.addWktAsOverlay(wktPoly, filter.filterid, mapProjection);
         }
       });
     this.refreshFilters();

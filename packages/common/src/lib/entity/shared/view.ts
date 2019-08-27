@@ -48,12 +48,14 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Number of entities
    */
-  get count(): number { return this.values$.value.length; }
+  readonly count$ = new BehaviorSubject<number>(0);
+  get count(): number { return this.count$.value; }
 
   /**
-   * Whether there are entities in the view
+   * Whether the store is empty
    */
-  get empty(): boolean { return this.count === 0; }
+  readonly empty$ = new BehaviorSubject<boolean>(true);
+  get empty(): boolean { return this.empty$.value; }
 
   constructor(private source$: BehaviorSubject<E[]>) {}
 
@@ -161,10 +163,11 @@ export class EntityView<E extends object, V extends object = E> {
     this.lifted = true;
     const source$ = this.joins.length > 0 ? this.liftJoinedSource() : this.liftSource();
     this.values$$ = combineLatest(source$, this.filter$, this.sort$)
-      .pipe(skip(1), debounceTime(50))
+      .pipe(skip(1), debounceTime(25))
       .subscribe((bunch: [V[], EntityFilterClause, EntitySortClause]) => {
-        const [values, filter, sort] = bunch;
-        this.values$.next(this.processValues(values, filter, sort));
+        const [_values, filter, sort] = bunch;
+        const values = this.processValues(_values, filter, sort);
+        this.setValues(values);
       });
   }
 
@@ -254,5 +257,13 @@ export class EntityView<E extends object, V extends object = E> {
         clause.direction
       );
     });
+  }
+
+  private setValues(values: V[]) {
+    this.values$.next(values);
+    const count = values.length;
+    const empty = count === 0;
+    this.count$.next(count);
+    this.empty$.next(empty);
   }
 }

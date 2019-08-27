@@ -3,7 +3,6 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  ChangeDetectorRef,
   ChangeDetectionStrategy
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
@@ -40,6 +39,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() orderable: boolean = true;
 
+  @Input() lowerDisabled: boolean = false;
+
+  @Input() raiseDisabled: boolean = false;
+
   @Input() queryBadge: boolean = false;
 
   get removable(): boolean { return this.layer.options.removable !== false; }
@@ -47,7 +50,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor() {}
 
   ngOnInit() {
     if (this.layer.visible && this.expandLegendIfVisible && (this.layer.firstLoadComponent === true)) {
@@ -58,8 +61,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.updateQueryBadge();
 
     const resolution$ = this.layer.map.viewController.resolution$;
-    this.resolution$$ = resolution$.subscribe((resolution: number) => {
-      this.onResolutionChange(resolution);
+    this.resolution$$ = resolution$.subscribe(() => {
+      this.onResolutionChange();
     });
     this.tooltipText = this.computeTooltip();
   }
@@ -108,7 +111,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onResolutionChange(resolution: number) {
+  private onResolutionChange() {
     const inResolutionRange = this.layer.isInResolutionsRange;
     if (inResolutionRange === false && this.updateLegendOnResolutionChange === true) {
       this.toggleLegend(true);

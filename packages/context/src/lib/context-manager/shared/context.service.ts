@@ -1,13 +1,13 @@
 import { Injectable, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, catchError, debounceTime } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, tap, catchError, debounceTime, flatMap } from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
 
 import { Tool } from '@igo2/common';
-import { uuid } from '@igo2/utils';
+import { uuid, ObjectUtils } from '@igo2/utils';
 import {
   ConfigService,
   RouteService,
@@ -214,9 +214,33 @@ export class ContextService {
     );
   }
 
-  getLocalContext(uri): Observable<DetailedContext> {
+  getLocalContext(uri: string): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.http.get<DetailedContext>(url).pipe(
+      flatMap((res) => {
+        if (!res.base) {
+          return of(res);
+        }
+        const urlBase = this.getPath(`${res.base}.json`);
+        return this.http.get<DetailedContext>(urlBase).pipe(
+          map((resBase: DetailedContext) => {
+            const resMerge = res;
+            resMerge.map = ObjectUtils.mergeDeep(resBase.map, res.map);
+            resMerge.layers = (resBase.layers || []).concat((res.layers || [])).reverse()
+              .filter((l, index, self) => !l.id || self.findIndex((l2) => l2.id === l.id) === index)
+              .reverse();
+            resMerge.toolbar = [...new Set(
+              (resBase.toolbar || []).concat((res.toolbar || [])).reverse()) as any
+            ].reverse();
+            resMerge.tools = (res.tools || []).concat((resBase.tools || []))
+              .filter((t, index, self) => self.findIndex((t2) => t2.name === t.name) === index);
+            return resMerge;
+          }),
+          catchError(res => {
+            return this.handleError(res, uri);
+          })
+        );
+      }),
       catchError(res => {
         return this.handleError(res, uri);
       })
@@ -358,9 +382,11 @@ export class ContextService {
       const layer: any = l;
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
-        title: layer.options.title,
-        zIndex: layer.zIndex,
-        visible: layer.visible,
+        layerOptions: {
+          title: layer.options.title,
+          zIndex: layer.zIndex,
+          visible: layer.visible
+        },
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
@@ -370,7 +396,9 @@ export class ContextService {
       context.layers.push(opts);
     }
 
-    context.tools = this.tools.map(tool => String(tool.id));
+    context.tools = this.tools.map(tool => {
+      return { id: String(tool.id) };
+    });
 
     return context;
   }

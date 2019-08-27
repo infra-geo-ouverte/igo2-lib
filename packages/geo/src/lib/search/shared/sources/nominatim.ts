@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
@@ -30,10 +30,102 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     return NominatimSearchSource.id;
   }
 
+  /*
+   * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
+   */
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Nominatim (OSM)',
-      searchUrl: 'https://nominatim.openstreetmap.org/search'
+      searchUrl: 'https://nominatim.openstreetmap.org/search',
+      settings: [
+        {
+          type: 'checkbox',
+          title: 'results type',
+          name: 'amenity',
+          values: [
+            {
+              title: 'Restauration',
+              value:
+                'bar,bbq,biergaten,cafe,drinking_water,fast_food,food_court,ice_cream,pub,restaurant',
+              enabled: false
+            },
+            {
+              title: 'Santé',
+              value:
+                'baby_hatch,clinic,dentist,doctors,hospital,nursing_home,pharmacy,social_facility,veterinary',
+              enabled: false
+            },
+            {
+              title: 'Divertissement',
+              value:
+                'arts_centre,brothel,casino,cinema,community_center_fountain,gambling,nightclub,planetarium \
+                          ,public_bookcase,social_centre,stripclub,studio,swingerclub,theatre,internet_cafe',
+              enabled: false
+            },
+            {
+              title: 'Finance',
+              value: 'atm,bank,bureau_de_change',
+              enabled: false
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'results limit',
+          name: 'limit',
+          values: [
+            {
+              title: '10',
+              value: 10,
+              enabled: true
+            },
+            {
+              title: '20',
+              value: 20,
+              enabled: false
+            },
+            {
+              title: '50',
+              value: 50,
+              enabled: false
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'country limitation',
+          name: 'countrycodes',
+          values: [
+            {
+              title: 'Canada',
+              value: 'CA',
+              enabled: true
+            },
+            {
+              title: 'Le monde',
+              value: null,
+              enabled: false
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'multiple object',
+          name: 'dedupe',
+          values: [
+            {
+              title: 'Oui',
+              value: 0,
+              enabled: false
+            },
+            {
+              title: 'Non',
+              value: 1,
+              enabled: true
+            }
+          ]
+        }
+      ]
     };
   }
 
@@ -47,6 +139,9 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
+    if (!params.get('q')) {
+      return of([]);
+    }
     return this.http
       .get(this.searchUrl, { params })
       .pipe(map((response: NominatimData[]) => this.extractResults(response)));
@@ -59,7 +154,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     return new HttpParams({
       fromObject: Object.assign(
         {
-          q: term,
+          q: this.computeTerm(term),
           format: 'json'
         },
         this.params,
@@ -84,7 +179,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.display_name,
-        icon: 'place'
+        icon: 'map-marker'
       },
       data: {
         type: FEATURE,
@@ -124,5 +219,51 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
       parseFloat(data.boundingbox[3]),
       parseFloat(data.boundingbox[1])
     ];
+  }
+
+  private computeTerm(term: string): string {
+    return this.computeTermTags(term);
+  }
+
+  /**
+   * Add hashtag from query in Nominatim's format (+[])
+   * @param term Query with hashtag
+   */
+  private computeTermTags(term: string): string {
+    const hashtags = super.getHashtagsValid(term, 'amenity');
+    if (!hashtags) {
+      return this.computeTermSettings(term);
+    }
+
+    if (!hashtags.length) {
+      return null;
+    }
+
+    term = term.replace(/(#[^\s]*)/g, '');
+    hashtags.forEach(tag => {
+      term += '+[' + tag + ']';
+    });
+
+    return term;
+  }
+
+  /**
+   * Add hashtag from settings in Nominatim's format (+[])
+   * @param term Query
+   */
+  private computeTermSettings(term: string): string {
+    this.options.settings.forEach(settings => {
+      if (settings.name === 'amenity') {
+        settings.values.forEach(conf => {
+          if (conf.enabled && typeof conf.value === 'string') {
+            const splitted = conf.value.split(',');
+            splitted.forEach(value => {
+              term += '+[' + value + ']';
+            });
+          }
+        });
+      }
+    });
+    return term;
   }
 }

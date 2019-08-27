@@ -14,11 +14,12 @@
   </igo-map-browser>
 
   <igo-panel title="Layers">
-    <igo-layer-list 
+    <igo-layer-list
     [layers]="map.layers"
     [expandLegendOfVisibleLayers]="false"
     placeholder="Filter"
-    floatLabel="never">
+    floatLabel="never"
+    [queryBadge]="true">
 
       <ng-template #igoLayerItemToolbar let-layer="layer">
         <igo-metadata-button [layer]="layer"></igo-metadata-button>

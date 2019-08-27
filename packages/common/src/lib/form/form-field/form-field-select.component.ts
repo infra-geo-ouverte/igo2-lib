@@ -2,10 +2,11 @@ import {
   Input,
   Component,
   ChangeDetectionStrategy,
+  OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
 import { FormFieldSelectChoice } from '../shared/form.interfaces';
@@ -20,9 +21,11 @@ import { FormFieldComponent } from '../shared/form-field-component';
   templateUrl: './form-field-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormFieldSelectComponent {
+export class FormFieldSelectComponent implements OnInit {
 
-  public choices$: Observable<FormFieldSelectChoice[]>;
+  choices$: Observable<FormFieldSelectChoice[]>;
+
+  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * The field's form control
@@ -52,10 +55,19 @@ export class FormFieldSelectComponent {
   @Input() errors: {[key: string]: string};
 
   /**
+   * Wheter a disable switch should be available
+   */
+  @Input() disableSwitch: boolean = false;
+
+  /**
    * Whether the field is required
    */
   get required(): boolean {
     return formControlIsRequired(this.formControl);
+  }
+
+  ngOnInit() {
+    this.disabled$.next(this.formControl.disabled);
   }
 
   /**
@@ -63,6 +75,20 @@ export class FormFieldSelectComponent {
    */
   getErrorMessage(): string {
     return getControlErrorMessage(this.formControl, this.errors);
+  }
+
+  onDisableSwitchClick() {
+    this.toggleDisabled();
+  }
+
+  private toggleDisabled() {
+    const disabled = !this.disabled$.value;
+    if (disabled === true) {
+      this.formControl.disable();
+    } else {
+      this.formControl.enable();
+    }
+    this.disabled$.next(disabled);
   }
 
 }

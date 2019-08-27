@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import * as olstyle from 'ol/style';
 
 import { LanguageService } from '@igo2/core';
 import { Form, FormService } from '@igo2/common';
@@ -70,7 +71,25 @@ export class AppGeometryComponent implements OnInit, OnDestroy {
           geometryType: 'Polygon',
           drawGuideField: true,
           drawGuide: 50,
-          drawGuidePlaceholder: 'Draw Guide'
+          drawGuidePlaceholder: 'Draw Guide',
+          drawStyle: new olstyle.Style({
+            stroke: new olstyle.Stroke({
+              color: [255, 0, 0, 1],
+              width: 2
+            }),
+            fill:  new olstyle.Fill({
+              color: [255, 0, 0, 0.2]
+            }),
+            image: new olstyle.Circle({
+              radius: 8,
+              stroke: new olstyle.Stroke({
+                color: [255, 0, 0, 1]
+              }),
+              fill: new olstyle.Fill({
+                color: [255, 0, 0, 0.2]
+              })
+            })
+          })
         }
       },
       {

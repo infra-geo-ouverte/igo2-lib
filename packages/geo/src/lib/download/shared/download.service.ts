@@ -5,7 +5,7 @@ import olProjection from 'ol/proj/Projection';
 import { MessageService, LanguageService } from '@igo2/core';
 
 import { Layer } from '../../layer/shared';
-import { OgcFilterWriter } from '../../filter/shared';
+import { OgcFilterWriter, OgcFilterableDataSourceOptions } from '../../filter/shared';
 
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
@@ -13,14 +13,11 @@ import { DataSourceOptions } from '../../datasource/shared/datasources/datasourc
   providedIn: 'root'
 })
 export class DownloadService {
-  private ogcFilterWriter: OgcFilterWriter;
 
   constructor(
     private messageService: MessageService,
     private languageService: LanguageService
-  ) {
-    this.ogcFilterWriter = new OgcFilterWriter();
-  }
+  ) {}
 
   open(layer: Layer) {
     const translate = this.languageService.translate;
@@ -56,14 +53,24 @@ export class DownloadService {
           .replace(/&?filter=[^&]*/gi, '')
           .replace(/&?bbox=[^&]*/gi, '');
 
-        const rebuildFilter = this.ogcFilterWriter.buildFilter(
-          (layer.dataSource.options as any).ogcFilters.filters,
-          layer.map.getExtent(),
-          new olProjection({ code: layer.map.projection }),
-          wfsOptions.fieldNameGeometry
-        );
+        const ogcFilters = (layer.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters;
+
+        let filterQueryString;
+        filterQueryString = new OgcFilterWriter()
+        .handleOgcFiltersAppliedValue(layer.dataSource.options, ogcFilters.geometryName);
+        if (!filterQueryString) {
+          // Prevent getting all the features for empty filter
+            filterQueryString = new OgcFilterWriter().buildFilter(
+            undefined,
+            layer.map.getExtent(),
+            new olProjection({ code: layer.map.projection }),
+            ogcFilters.geometryName
+          );
+        } else {
+          filterQueryString = 'filter=' + filterQueryString;
+        }
         window.open(
-          `${baseurl}&${rebuildFilter}&${outputFormatDownload}`,
+          `${baseurl}&${filterQueryString}&${outputFormatDownload}`,
           '_blank'
         );
       } else if (DSOptions.download) {

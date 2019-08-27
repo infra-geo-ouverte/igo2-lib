@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 
@@ -29,10 +28,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
-  constructor(
-    private http: HttpClient,
-    @Inject('options') options: SearchSourceOptions
-  ) {
+  constructor(@Inject('options') options: SearchSourceOptions) {
     super(options);
   }
 
@@ -42,7 +38,8 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'Coordinates'
+      title: 'Coordinates',
+      order: 1
     };
   }
 
@@ -80,13 +77,17 @@ export class CoordinatesReverseSearchSource extends SearchSource
             data[0],
             data[1]
           )
+        },
+        meta: {
+          id: '1',
+          title: String(data[0]) + ', ' + String(data[1])
         }
       },
       meta: {
         dataType: FEATURE,
         id: '1',
         title: String(data[0]) + ', ' + String(data[1]),
-        icon: 'place'
+        icon: 'map-marker'
       }
     };
   }

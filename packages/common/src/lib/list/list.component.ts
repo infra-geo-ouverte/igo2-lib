@@ -19,7 +19,6 @@ import { ListItemDirective } from './list-item.directive';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
-
   @Input()
   get navigation() {
     return this._navigation;
@@ -52,9 +51,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   set focusedItem(value: ListItemDirective) {
     this._focusedItem = value;
-    if (value !== undefined) {
-      this.scrollToItem(value);
-    }
   }
   private _focusedItem: ListItemDirective;
 
@@ -131,7 +127,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
       index = -1;
     }
 
-    while (disabled && index < items.length) {
+    while (disabled && index < items.length - 1) {
       index += 1;
       item = items[index];
       disabled = item.disabled;
@@ -140,7 +136,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     if (item !== undefined) {
       this.focus(item);
     }
-
   }
 
   focusPrevious() {
@@ -190,6 +185,10 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   disableNavigation() {
     this.navigationEnabled = false;
+  }
+
+  scrollToItem(item: ListItemDirective) {
+    this.el.nativeElement.scrollTop = item.getOffsetTop();
   }
 
   private init() {
@@ -281,9 +280,5 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
       default:
         break;
     }
-  }
-
-  private scrollToItem(item: ListItemDirective) {
-    this.el.nativeElement.scrollTop = item.getOffsetTop();
   }
 }

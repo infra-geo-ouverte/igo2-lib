@@ -1,6 +1,5 @@
 {
   "uri": "context2",
-  "title": "Context 2",
   "map": {
     "view": {
       "projection": "EPSG:3857",

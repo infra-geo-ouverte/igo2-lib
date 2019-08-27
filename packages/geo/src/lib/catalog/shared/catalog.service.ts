@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, of, concat } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
+import { uuid } from '@igo2/utils';
 import { LanguageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
@@ -40,36 +41,41 @@ export class CatalogService {
     const apiUrl = catalogConfig.url || contextConfig.url;
     const catalogsFromConfig = catalogConfig.sources || [];
 
-    if (apiUrl === undefined) {
-      return of(catalogsFromConfig);
-    }
-
     const observables$ = [];
 
-    // Base layers catalog
-    if (catalogConfig.baseLayers) {
-      const translate = this.languageService.translate;
-      const title = translate.instant('igo.geo.catalog.baseLayers');
-      const baseLayersCatalog = {
-        id: 'catalog.baselayers',
-        title,
-        url: `${apiUrl}/baselayers`,
-        type: 'baselayers'
-      };
-      observables$.push(of(baseLayersCatalog));
-    }
+    if (apiUrl) {
+      // Base layers catalog
+      if (catalogConfig.baseLayers) {
+        const translate = this.languageService.translate;
+        const title = translate.instant('igo.geo.catalog.baseLayers');
+        const baseLayersCatalog = {
+          id: 'catalog.baselayers',
+          title,
+          url: `${apiUrl}/baselayers`,
+          type: 'baselayers'
+        };
+        observables$.push(of(baseLayersCatalog));
+      }
 
-    // Catalogs from API
-    const catalogsFromApi$ = this.http
-      .get<Catalog[]>(`${apiUrl}/catalogs`)
-      .pipe(
-        catchError((response: HttpErrorResponse) => EMPTY)
-      );
-    observables$.push(catalogsFromApi$);
+      // Catalogs from API
+      const catalogsFromApi$ = this.http
+        .get<Catalog[]>(`${apiUrl}/catalogs`)
+        .pipe(
+          catchError((response: HttpErrorResponse) => EMPTY)
+        );
+      observables$.push(catalogsFromApi$);
+    }
 
     // Catalogs from config
     if (catalogsFromConfig.length > 0) {
-      observables$.push(of(catalogsFromConfig));
+      observables$.push(of(catalogsFromConfig).pipe(
+        map((catalogs: Catalog[]) => catalogs.map((c) => {
+           if (!c.id) {
+             c.id = uuid();
+           }
+           return c;
+         }))
+      ));
     }
 
     return concat(...observables$) as Observable<Catalog[]>;
@@ -140,6 +146,8 @@ export class CatalogService {
   private includeRecursiveItems(catalog: Catalog, layerList: any, items: CatalogItem[]) {
     // Dig all levels until last level (layer object are not defined on last level)
     const regexes = (catalog.regFilters || []).map((pattern: string) => new RegExp(pattern));
+    const catalogQueryParams = catalog.queryParams || {};
+    const catalogSourceOptions = catalog.sourceOptions || {};
 
     for (const group of layerList.Layer) {
       if (group.Layer !== undefined) {
@@ -169,19 +177,26 @@ export class CatalogService {
           const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
           const legendOptions = layer.Style ? this.capabilitiesService.getStyle(layer.Style) : undefined;
 
-          const sourceOptions = {
+          const params = Object.assign({}, catalogQueryParams, {
+            layers: layer.Name,
+            feature_count:  catalog.count
+          });
+          const baseSourceOptions = {
             type: 'wms',
             url: catalog.url,
-            params: {
-              layers: layer.Name,
-              feature_count:  catalog.count
-            },
+            crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
             timeFilter: { ...timeFilter, ...catalog.timeFilter },
             timeFilterable: timeFilterable ? true : false,
             queryable: layer.queryable,
             queryFormat: configuredQueryFormat,
             queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
-          } as WMSDataSourceOptions;
+          };
+          const sourceOptions = Object.assign(
+            {},
+            baseSourceOptions,
+            catalogSourceOptions,
+            {params}
+          ) as WMSDataSourceOptions;
 
           layers.push({
             id: generateIdFromSourceOptions(sourceOptions),
@@ -222,24 +237,32 @@ export class CatalogService {
   private getWMTSItems(catalog: Catalog, capabilities: {[key: string]: any}): CatalogItemLayer[] {
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map((pattern: string) => new RegExp(pattern));
+    const catalogQueryParams = catalog.queryParams || {};
+    const catalogSourceOptions = catalog.sourceOptions || {};
 
     return layers.map((layer: any) => {
       if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
         return undefined;
       }
-
-      const sourceOptions = {
+      const params = Object.assign({}, catalogQueryParams, {
+        version: '1.0.0'
+      });
+      const baseSourceOptions = {
         type: 'wmts',
         url: catalog.url,
+        crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
         layer: layer.Identifier,
         matrixSet: catalog.matrixSet,
         optionsFromCapabilities: true,
         requestEncoding: catalog.requestEncoding || 'KVP',
-        style: 'default',
-        params: {
-          version: '1.0.0'
-        }
+        style: 'default'
       } as WMTSDataSourceOptions;
+      const sourceOptions = Object.assign(
+        {},
+        baseSourceOptions,
+        catalogSourceOptions,
+        {params}
+      ) as WMTSDataSourceOptions;
 
       return {
         id: generateIdFromSourceOptions(sourceOptions),

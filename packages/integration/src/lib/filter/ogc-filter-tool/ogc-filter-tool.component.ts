@@ -5,7 +5,7 @@ import { ToolComponent } from '@igo2/common';
 @ToolComponent({
   name: 'ogcFilter',
   title: 'igo.integration.tools.ogcFilter',
-  icon: 'filter-list'
+  icon: 'filter'
 })
 @Component({
   selector: 'igo-ogc-filter-tool',

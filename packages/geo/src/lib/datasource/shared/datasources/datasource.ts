@@ -10,6 +10,7 @@ import { generateIdFromSourceOptions } from '../../utils/id-generator';
 import { LegendOptions } from '../../../layer';
 
 export abstract class DataSource {
+
   public id: string;
   public ol: olSource;
   private legend: Legend[];
@@ -19,7 +20,7 @@ export abstract class DataSource {
     protected dataService?: DataService
   ) {
     this.options = options;
-    this.id = this.generateId();
+    this.id = this.options.id || this.generateId();
     this.ol = this.createOlSource();
   }
 
@@ -44,4 +45,6 @@ export abstract class DataSource {
 
     return this.legend;
   }
+
+  protected abstract onUnwatch();
 }

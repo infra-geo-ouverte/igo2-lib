@@ -14,6 +14,7 @@ import {
   IgoListModule
 } from '@igo2/common';
 
+import { IgoMetadataModule } from './../../metadata/metadata.module';
 import { CatalogBrowserComponent } from './catalog-browser.component';
 import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component';
 import { CatalogBrowserGroupComponent } from './catalog-browser-group.component';
@@ -30,7 +31,8 @@ import { CatalogBrowserGroupComponent } from './catalog-browser-group.component'
     MatTooltipModule,
     IgoLanguageModule,
     IgoListModule,
-    IgoCollapsibleModule
+    IgoCollapsibleModule,
+    IgoMetadataModule
   ],
   exports: [
     CatalogBrowserComponent

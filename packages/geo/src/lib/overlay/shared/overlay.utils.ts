@@ -70,7 +70,7 @@ function createOverlayDefaultStyle(): olstyle.Style {
  * Create a marker style for points
  * @returns Style
  */
-export function createOverlayMarkerStyle(color = 'blue'): olstyle.Style {
+export function createOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
   let iconColor;
   switch (color) {
     case 'blue':
@@ -90,6 +90,7 @@ export function createOverlayMarkerStyle(color = 'blue'): olstyle.Style {
       anchor: [0.5, 1]
     }),
     text: new olstyle.Text({
+      text,
       font: '12px Calibri,sans-serif',
       fill: new olstyle.Fill({ color: '#000' }),
       stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 
 import * as olformat from 'ol/format';
 import * as olextent from 'ol/extent';
@@ -9,6 +9,7 @@ import olFormatGML2 from 'ol/format/GML2';
 import olFormatGML3 from 'ol/format/GML3';
 import olFormatEsriJSON from 'ol/format/EsriJSON';
 import olFeature from 'ol/Feature';
+import * as olgeom from 'ol/geom';
 
 import { uuid } from '@igo2/utils';
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -43,15 +44,159 @@ export class QueryService {
       return of([]);
     }
 
+    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+      const urlGml = this.getQueryUrl(layer.dataSource, options, true);
+      return this.http.get(urlGml, { responseType: 'text' })
+      .pipe(mergeMap(gmlRes => {
+        const imposedGeom = this.mergeGML(gmlRes, url);
+        return this.http.get(url, { responseType: 'text' })
+          .pipe(map((res => this.extractData(res, layer, options, url, imposedGeom))));
+      }
+      ));
+    }
+
     const request = this.http.get(url, { responseType: 'text' });
     return request.pipe(map(res => this.extractData(res, layer, options, url)));
+  }
+
+  private mergeGML(gmlRes, url) {
+    let parser = new olFormatGML2();
+    let features = parser.readFeatures(gmlRes);
+    // Handle non standard GML output (MapServer)
+    if (features.length === 0) {
+      parser = new olformat.WMSGetFeatureInfo();
+      features = parser.readFeatures(gmlRes);
+    }
+    const olmline = new olgeom.MultiLineString([]);
+    let pts;
+    const ptsArray = [];
+    let olmpoly = new olgeom.MultiPolygon([]);
+    let firstFeatureType;
+    const nbFeatures = features.length;
+
+    // Check if geometry intersect bbox
+    // for geoserver getfeatureinfo response in data projection, not call projection
+    const searchParams: any = this.getQueryParams(url.toLowerCase());
+    const bboxRaw = searchParams.bbox;
+    const bbox = bboxRaw.split(',');
+    const bboxExtent = olextent.createEmpty();
+    olextent.extend(bboxExtent, bbox);
+    const outBboxExtent = false;
+    features.map(feature => {
+
+    /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
+        outBboxExtent = true;
+        // TODO: Check to project the geometry?
+      }*/
+      const featureGeometryCoordinates = feature.getGeometry().getCoordinates();
+      const featureGeometryType = feature.getGeometry().getType();
+
+      if (!firstFeatureType && !outBboxExtent) {
+        firstFeatureType = featureGeometryType;
+      }
+      if (!outBboxExtent) {
+        switch (featureGeometryType) {
+          case 'Point':
+            if (nbFeatures === 1) {
+              pts = new olgeom.Point(featureGeometryCoordinates, 'XY');
+            } else {
+              ptsArray.push(featureGeometryCoordinates);
+            }
+            break;
+          case 'LineString':
+            olmline.appendLineString(
+              new olgeom.LineString(featureGeometryCoordinates, 'XY'));
+            break;
+          case 'Polygon':
+            olmpoly.appendPolygon(
+              new olgeom.Polygon(featureGeometryCoordinates, 'XY'));
+            break;
+          case 'MultiPolygon':
+            olmpoly = new olgeom.MultiPolygon(featureGeometryCoordinates, 'XY');
+            break;
+          default:
+            return;
+        }
+      }
+    });
+
+    let olmpts;
+    if (ptsArray.length === 0 && pts) {
+      olmpts = {
+        type: pts.getType(),
+        coordinates: pts.getCoordinates()
+      };
+    } else {
+      olmpts = {
+        type: 'Polygon',
+        coordinates: [this.convexHull(ptsArray)]
+      };
+    }
+
+    switch (firstFeatureType) {
+      case 'LineString':
+        return {
+          type: olmline.getType(),
+          coordinates: olmline.getCoordinates()
+        };
+      case 'Point':
+        return olmpts;
+      case 'Polygon':
+        return {
+          type: olmpoly.getType(),
+          coordinates: olmpoly.getCoordinates()
+        };
+      case 'MultiPolygon':
+        return {
+            type: olmpoly.getType(),
+            coordinates: olmpoly.getCoordinates()
+        };
+      default:
+        return;
+    }
+  }
+
+  cross(a, b, o) {
+    return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  }
+
+  /**
+   * @param points An array of [X, Y] coordinates
+   * This method is use instead of turf.js convexHull because Turf needs at least 3 point to make a hull.
+   * https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#JavaScript
+   */
+  convexHull(points) {
+    points.sort((a, b) => {
+      return a[0] === b[0] ? a[1] - b[1] : a[0] - b[0];
+    });
+
+    const lower = [];
+    for (const point of points) {
+      while (lower.length >= 2 && this.cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) {
+        lower.pop();
+      }
+      lower.push(point);
+    }
+
+    const upper = [];
+    for (let i = points.length - 1; i >= 0; i--) {
+      while (upper.length >= 2 && this.cross(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
+        upper.pop();
+      }
+      upper.push(points[i]);
+    }
+
+    upper.pop();
+    lower.pop();
+    return lower.concat(upper);
   }
 
   private extractData(
     res,
     layer: Layer,
     options: QueryOptions,
-    url: string
+    url: string,
+    imposedGeometry?
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
@@ -94,6 +239,14 @@ export class QueryService {
           url
         );
         break;
+      case QueryFormat.HTMLGML2:
+        features = this.extractHtmlData(
+          res,
+          queryDataSource.queryHtmlTarget,
+          url,
+          imposedGeometry
+        );
+        break;
       case QueryFormat.GML2:
       default:
         features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
@@ -111,6 +264,7 @@ export class QueryService {
         id: uuid(),
         title,
         mapTitle: title,
+        sourceTitle: layer.title,
         order: 1000 - layer.zIndex
       });
 
@@ -168,7 +322,7 @@ export class QueryService {
     return [];
   }
 
-  private extractHtmlData(res, htmlTarget: QueryHtmlTarget, url) {
+  private extractHtmlData(res, htmlTarget: QueryHtmlTarget, url, imposedGeometry?) {
     // _blank , iframe or undefined
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
@@ -247,7 +401,7 @@ export class QueryService {
         type: FEATURE,
         projection,
         properties: { target: htmlTarget, body: res, url },
-        geometry: { type: f.getType(), coordinates: f.getCoordinates() }
+        geometry: imposedGeometry || { type: f.getType(), coordinates: f.getCoordinates() }
       }
     ];
   }
@@ -303,23 +457,31 @@ export class QueryService {
 
   private getQueryUrl(
     datasource: QueryableDataSource,
-    options: QueryOptions
+    options: QueryOptions,
+    forceGML2 = false
   ): string {
     let url;
     switch (datasource.constructor) {
       case WMSDataSource:
         const wmsDatasource = datasource as WMSDataSource;
+
+        const WMSGetFeatureInfoOptions = {
+          INFO_FORMAT: wmsDatasource.params.info_format ||
+            this.getMimeInfoFormat(datasource.options.queryFormat),
+          QUERY_LAYERS: wmsDatasource.params.layers,
+          FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
+        };
+
+        if (forceGML2) {
+          WMSGetFeatureInfoOptions.INFO_FORMAT =
+            this.getMimeInfoFormat(QueryFormat.GML2);
+        }
+
         url = wmsDatasource.ol.getGetFeatureInfoUrl(
           options.coordinates,
           options.resolution,
           options.projection,
-          {
-            INFO_FORMAT:
-              wmsDatasource.params.info_format ||
-              this.getMimeInfoFormat(datasource.options.queryFormat),
-            QUERY_LAYERS: wmsDatasource.params.layers,
-            FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
-          }
+          WMSGetFeatureInfoOptions
         );
         if (wmsDatasource.params.version !== '1.3.0') {
           url = url.replace('&I=', '&X=');
@@ -337,7 +499,7 @@ export class QueryService {
           '&q=' + cartoDatasource.options.config.layers[0].options.sql;
         const clause =
           ' WHERE ST_Intersects(the_geom_webmercator,ST_BUFFER(ST_SetSRID(ST_POINT(';
-        const metres = cartoDatasource.options.queryPrecision
+        const meters = cartoDatasource.options.queryPrecision
           ? cartoDatasource.options.queryPrecision
           : '1000';
         const coordinates =
@@ -345,7 +507,7 @@ export class QueryService {
           ',' +
           options.coordinates[1] +
           '),3857),' +
-          metres +
+          meters +
           '))';
 
         url = `${baseUrl}${format}${sql}${clause}${coordinates}`;
@@ -413,6 +575,9 @@ export class QueryService {
         mime = 'text/plain';
         break;
       case QueryFormat.HTML:
+        mime = 'text/html';
+        break;
+      case QueryFormat.HTMLGML2:
         mime = 'text/html';
         break;
       default:

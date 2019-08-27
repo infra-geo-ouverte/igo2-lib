@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Input, AfterViewInit, OnDestroy, ApplicationRef } from '@angular/core';
 
 import { Layer } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
@@ -53,7 +53,7 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     interactions: false
   });
 
-  constructor(private layerService: LayerService) {}
+  constructor(private layerService: LayerService, private appRef: ApplicationRef) {}
 
   ngAfterViewInit() {
     this.map.ol.on('moveend', () => this.handleMoveEnd());
@@ -69,13 +69,14 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.map.changeBaseLayer(baseLayer);
+    this.appRef.tick();
   }
 
   private handleMoveEnd() {
     this.basemap.ol.setView(this.map.ol.getView());
   }
 
-  private handleBaseLayerChanged(baselayer) {
+  private handleBaseLayerChanged(baselayer: Layer) {
     this.basemap.removeAllLayers();
 
     const options: any = Object.assign(

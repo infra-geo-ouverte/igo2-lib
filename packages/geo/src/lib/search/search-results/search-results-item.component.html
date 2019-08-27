@@ -2,4 +2,9 @@
   <mat-icon *ngIf="icon" mat-list-avatar svgIcon="{{icon}}"></mat-icon>
   <h4 matLine *ngIf="titleHtml" [innerHtml]="titleHtml"></h4>
   <h4 matLine *ngIf="!titleHtml">{{title}}</h4>
+
+  <ng-content
+    select=[igoSearchItemToolbar]>
+  </ng-content>
+
 </mat-list-item>

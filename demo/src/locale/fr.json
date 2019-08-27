@@ -4,5 +4,11 @@
   "Salutation": "Salutation",
   "coordinates": "Afficher les coordonnées",
   "googleMap": "Afficher sur Google maps",
-  "googleStreetView": "Afficher sur Google Street view"
+  "googleStreetView": "Afficher sur Google Street view",
+  "Add Tooltip": "Ajouter Tooltip",
+  "Edit Tooltip": "Éditer Tooltip",
+  "Delete Tooltip": "Supprimer Tooltip",
+  "Add": "Ajouter",
+  "Edit": "Éditer",
+  "Delete": "Supprimer"
 }

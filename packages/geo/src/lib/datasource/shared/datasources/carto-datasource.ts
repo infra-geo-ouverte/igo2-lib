@@ -28,7 +28,7 @@ export class CartoDataSource extends DataSource {
   protected createOlSource(): olSourceCarto {
     const crossOrigin = this.options.crossOrigin
       ? this.options.crossOrigin
-      : 'Anonymous';
+      : 'anonymous';
     const sourceOptions = Object.assign(
       {
         crossOrigin
@@ -114,4 +114,6 @@ export class CartoDataSource extends DataSource {
       return [{ html: htmlString }];
     }
   }
+
+  public onUnwatch() {}
 }
