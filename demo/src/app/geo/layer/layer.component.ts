@@ -56,7 +56,7 @@ export class AppLayerComponent {
 
     const wfsDatasource: WFSoptions = {
       type: 'wfs',
-      url: '/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'vg_observation_v_autre_wmst',
         fieldNameGeometry: 'geometry',
@@ -91,7 +91,7 @@ export class AppLayerComponent {
       .createAsyncLayer({
         sourceOptions: {
           type: 'wms',
-          url: '/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
           optionsFromCapabilities: true,
           params: {
             layers: 'MELS_CS_ANGLO_S',
@@ -107,7 +107,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: '/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           params: {
             layers: 'bgr_v_sous_route_res_sup_act',
             version: '1.3.0'
@@ -122,7 +122,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: '/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           optionsFromCapabilities: true,
           params: {
             layers: 'lieuhabite',
@@ -138,7 +138,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: '/ws/mffpecofor.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/ws/mffpecofor.fcgi',
           optionsFromCapabilities: true,
           params: {
             layers: 'sh_dis_eco',
@@ -160,7 +160,7 @@ export class AppLayerComponent {
         },
         sourceOptions: {
           type: 'wms',
-          url: '/geoserver/ows',
+          url: 'https://demo.geo-solutions.it/geoserver/ows',
           optionsFromCapabilities: true,
           params: {
             layers: 'nurc:Arc_Sample', // , test:Linea_costa
@@ -176,7 +176,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: '/swtq',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
           params: {
             layers: 'evenements',
             version: '1.3.0'
@@ -187,7 +187,7 @@ export class AppLayerComponent {
 
     const datasource: WMSDataSourceOptions = {
       type: 'wms',
-      url: '/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       refreshIntervalSec: 15,
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
