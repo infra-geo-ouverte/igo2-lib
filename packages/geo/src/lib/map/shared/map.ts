@@ -8,6 +8,7 @@ import * as olproj from 'ol/proj';
 import * as olproj4 from 'ol/proj/proj4';
 import OlProjection from 'ol/proj/Projection';
 import * as olinteraction from 'ol/interaction';
+import olCircle from 'ol/geom/Circle';
 
 import proj4 from 'proj4';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -26,6 +27,7 @@ import {
   MapExtent
 } from './map.interface';
 import { MapViewController } from './controllers/view';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -35,8 +37,13 @@ export class IgoMap {
   public status$: Subject<SubjectStatus>;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
+  public bufferGeom: olCircle;
+  public bufferFeature: olFeature;
+  public buffer: Overlay;
   public overlay: Overlay;
   public viewController: MapViewController;
+
+  public bufferDataSource: FeatureDataSource;
 
   private layerWatcher: LayerWatcher;
   private geolocation: olGeolocation;
@@ -104,6 +111,7 @@ export class IgoMap {
     });
     this.viewController.setOlMap(this.ol);
     this.overlay = new Overlay(this);
+    this.buffer = new Overlay(this);
   }
 
   setTarget(id: string) {
@@ -372,7 +380,29 @@ export class IgoMap {
         }
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
-        this.overlay.addFeature(this.geolocationFeature);
+        this.overlay.addOlFeature(this.geolocationFeature);
+
+        if (this.ol.getView().options_.buffer) {
+          const bufferRadius = this.ol.getView().options_.buffer.bufferRadius;
+          const coordinates = geolocation.getPosition();
+          this.bufferGeom = new olCircle(coordinates, bufferRadius);
+          const bufferStroke = this.ol.getView().options_.buffer.bufferStroke;
+          const bufferFill = this.ol.getView().options_.buffer.bufferFill;
+
+          let bufferText;
+          if (this.ol.getView().options_.buffer.showBufferRadius) {
+            bufferText = bufferRadius.toString() + 'm';
+          } else {
+            bufferText = '';
+          }
+
+          this.bufferFeature = new olFeature(this.bufferGeom);
+          this.bufferFeature.setId('bufferFeature');
+          this.bufferFeature.set('bufferStroke', bufferStroke);
+          this.bufferFeature.set('bufferFill', bufferFill);
+          this.bufferFeature.set('bufferText', bufferText);
+          this.buffer.addOlFeature(this.bufferFeature);
+        }
         if (first) {
           this.viewController.zoomToExtent(extent);
         }
@@ -400,6 +430,9 @@ export class IgoMap {
   private startGeolocation() {
     if (!this.geolocation) {
       this.geolocation = new olGeolocation({
+        trackingOptions: {
+          enableHighAccuracy: true
+        },
         projection: this.projection,
         tracking: true
       });
