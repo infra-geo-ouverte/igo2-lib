@@ -95,27 +95,29 @@ export class SearchSource {
    * Set params from selected settings
    */
   setParamFromSetting(setting: SearchSourceSettings) {
-      switch (setting.type) {
-        case 'radiobutton':
-          setting.values.forEach( conf => {
-            if (conf.enabled) {
-              this.options.params = Object.assign( (this.options.params || {}),
-                                                    { [setting.name] : conf.value } );
-            }
-          });
-          break;
-        case 'checkbox':
-          let confValue = '';
-          setting.values.forEach( conf => {
-            if (conf.enabled) {
-              confValue += conf.value + ',';
-            }
-          });
-          confValue = confValue.slice(0, -1);
-          this.options.params = Object.assign( (this.options.params || {}),
-                                                { [setting.name] : confValue } );
-          break;
-      }
+    switch (setting.type) {
+      case 'radiobutton':
+        setting.values.forEach(conf => {
+          if (conf.enabled) {
+            this.options.params = Object.assign(this.options.params || {}, {
+              [setting.name]: conf.value
+            });
+          }
+        });
+        break;
+      case 'checkbox':
+        let confValue = '';
+        setting.values.forEach(conf => {
+          if (conf.enabled) {
+            confValue += conf.value + ',';
+          }
+        });
+        confValue = confValue.slice(0, -1);
+        this.options.params = Object.assign(this.options.params || {}, {
+          [setting.name]: confValue
+        });
+        break;
+    }
   }
 
   /**
@@ -129,36 +131,49 @@ export class SearchSource {
     this.options = Object.assign({}, this.getDefaultOptions(), options);
 
     // Set Default Params from Settings
-    this.settings.forEach( setting => {
+    this.settings.forEach(setting => {
       this.setParamFromSetting(setting);
     });
   }
 
   /**
-   * Check if hashtag is valid
+   * Get hashtags valid
    * @param hashtag hashtag from query
-   * @param completeMatch boolean
    */
-  hashtagValid(searchSourceSetting: SearchSourceSettings, hashtag: string, completeMatch = false): boolean {
-    let hashtagIsValid = false;
-    searchSourceSetting.values.forEach( conf => {
-      const re = new RegExp('' + hashtag.substring(1) + '', 'g');
-      if ( typeof conf.value === 'string') {
-        if ( (completeMatch && conf.value === hashtag.substring(1)) ||
-              ( !completeMatch && conf.value.match(re)) ) {
-          hashtagIsValid = true;
+  getHashtagsValid(term: string, settingsName: string): string[] {
+    const hashtags = term.match(/(#[^\s]+)/g);
+    if (!hashtags) {
+      return undefined;
+    }
+
+    const searchSourceSetting = this.getSettingsValues(settingsName);
+    const hashtagsValid = [];
+    hashtags.forEach(hashtag => {
+      searchSourceSetting.values.forEach(conf => {
+        const hashtagKey = hashtag.substring(1);
+        if (typeof conf.value === 'string') {
+          const types = conf.value.split(',');
+          const index = types.indexOf(hashtagKey);
+          if (index !== -1) {
+            hashtagsValid.push(types[index]);
+          }
         }
-      }
+        if (conf.hashtags && conf.hashtags.indexOf(hashtagKey) !== -1) {
+          hashtagsValid.push(conf.value);
+        }
+      });
     });
-    return hashtagIsValid;
+
+    return hashtagsValid;
   }
 
   getSettingsValues(search: string): SearchSourceSettings {
-    return this.getDefaultOptions().settings.find( (value: SearchSourceSettings) => {
-      return value.name === search;
-    });
+    return this.getDefaultOptions().settings.find(
+      (value: SearchSourceSettings) => {
+        return value.name === search;
+      }
+    );
   }
-
 }
 
 /**

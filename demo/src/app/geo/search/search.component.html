@@ -16,6 +16,7 @@
 
   <igo-panel title="Search">
     <igo-search-bar
+      [searchSettings]="true"
       (change)="onSearchTermChange($event)"
       (search)="onSearch($event)"
       (clearFeature)="removeFeatureFromMap()">
@@ -50,3 +51,5 @@
     [mode]="'context'">
   </igo-actionbar>
 </ng-template>
+
+<igo-message-center></igo-message-center>

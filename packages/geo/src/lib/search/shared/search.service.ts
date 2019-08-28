@@ -4,7 +4,10 @@ import { stringToLonLat } from '../../map';
 import { MapService } from '../../map/shared/map.service';
 
 import { SearchSource, TextSearch, ReverseSearch } from './sources/source';
-import { TextSearchOptions, ReverseSearchOptions } from './sources/source.interfaces';
+import {
+  TextSearchOptions,
+  ReverseSearchOptions
+} from './sources/source.interfaces';
 import { SearchSourceService } from './search-source.service';
 import { Research } from './search.interfaces';
 import { sourceCanSearch, sourceCanReverseSearch } from './search.utils';
@@ -20,8 +23,10 @@ import { sourceCanSearch, sourceCanReverseSearch } from './search.utils';
   providedIn: 'root'
 })
 export class SearchService {
-
-  constructor(private searchSourceService: SearchSourceService, private mapService: MapService) {}
+  constructor(
+    private searchSourceService: SearchSourceService,
+    private mapService: MapService
+  ) {}
 
   /**
    * Perform a research by text
@@ -40,8 +45,10 @@ export class SearchService {
       console.log(response.message);
     }
 
-    const sources = this.searchSourceService.getEnabledSources()
+    const sources = this.searchSourceService
+      .getEnabledSources()
       .filter(sourceCanSearch);
+
     return this.searchSources(sources, term, options || {});
   }
 
@@ -51,7 +58,8 @@ export class SearchService {
    * @returns Researches
    */
   reverseSearch(lonLat: [number, number], options?: ReverseSearchOptions) {
-    const sources = this.searchSourceService.getEnabledSources()
+    const sources = this.searchSourceService
+      .getEnabledSources()
       .filter(sourceCanReverseSearch);
     return this.reverseSearchSources(sources, lonLat, options || {});
   }
@@ -62,10 +70,14 @@ export class SearchService {
    * @param term Search term
    * @returns Observable of Researches
    */
-  private searchSources(sources: SearchSource[], term: string, options: TextSearchOptions): Research[] {
+  private searchSources(
+    sources: SearchSource[],
+    term: string,
+    options: TextSearchOptions
+  ): Research[] {
     return sources.map((source: SearchSource) => {
       return {
-        request: (source as any as TextSearch).search(term, options),
+        request: ((source as any) as TextSearch).search(term, options),
         reverse: false,
         source
       };
@@ -85,7 +97,10 @@ export class SearchService {
   ): Research[] {
     return sources.map((source: SearchSource) => {
       return {
-        request: (source as any as ReverseSearch).reverseSearch(lonLat, options),
+        request: ((source as any) as ReverseSearch).reverseSearch(
+          lonLat,
+          options
+        ),
         reverse: true,
         source
       };

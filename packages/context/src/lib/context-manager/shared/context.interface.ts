@@ -21,6 +21,7 @@ export interface ContextsList {
 }
 
 export interface DetailedContext extends Context {
+  base?: string;
   map?: ContextMap;
   layers?: LayerOptions[];
   tools?: Tool[];

@@ -29,11 +29,15 @@
     </button>
 
     <igo-search-selector
+      *ngIf="searchSelector"
       [searchTypes]="searchTypes"
       (change)="onSearchTypeChange($event)">
     </igo-search-selector>
 
-    <igo-search-settings></igo-search-settings>
+    <igo-search-settings
+      *ngIf="searchSettings"
+      (change)="onSearchSettingsChange()"
+    ></igo-search-settings>
   </div>
 
 

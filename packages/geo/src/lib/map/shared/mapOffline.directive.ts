@@ -1,17 +1,17 @@
 import { Directive, AfterViewInit } from '@angular/core';
+import { NetworkService, ConnectionState } from '@igo2/core';
+
 import { IgoMap } from './map';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
-import { NetworkService, ConnectionState } from '@igo2/core';
-import { Subscription } from 'rxjs';
-import { Layer } from '../../layer/shared/layers/layer';
-import { MVTDataSourceOptions, XYZDataSourceOptions, FeatureDataSourceOptions } from '../../datasource';
+import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
+import { XYZDataSourceOptions } from '../../datasource/shared/datasources/xyz-datasource.interface';
+import { MVTDataSourceOptions } from '../../datasource/shared/datasources/mvt-datasource.interface';
 
 @Directive({
     selector: '[igoMapOffline]'
   })
 export class MapOfflineDirective implements AfterViewInit {
 
-  private context$$: Subscription;
   private state: ConnectionState;
   private component: MapBrowserComponent;
 
@@ -28,12 +28,11 @@ export class MapOfflineDirective implements AfterViewInit {
 
   ngAfterViewInit() {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
-      console.log(state);
       this.state = state;
       this.changeLayer();
     });
 
-    this.map.layers$.subscribe((layers: Layer[]) => {
+    this.map.layers$.subscribe(() => {
       this.changeLayer();
     });
   }

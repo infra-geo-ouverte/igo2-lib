@@ -145,13 +145,13 @@ export class LayerListComponent implements OnInit, OnDestroy {
   getLowerLayer() {
     return this.layers.filter(l => !l.baseLayer).reduce((prev, current) => {
       return (prev.zIndex < current.zIndex) ? prev : current;
-    });
+    }, { zIndex: undefined, id: undefined });
   }
 
   getUpperLayer() {
     return this.layers.filter(l => !l.baseLayer).reduce((prev, current) => {
       return (prev.zIndex > current.zIndex) ? prev : current;
-    });
+    }, { zIndex: undefined, id: undefined });
   }
 
   private next() {

@@ -1,7 +1,9 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+import {} from '@angular/platform-browser';
 import {
+  MatIconRegistry,
   MatSidenavModule,
   MatToolbarModule,
   MatButtonModule,
@@ -98,4 +100,12 @@ import { AppComponent } from './app.component';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
+    matIconRegistry.addSvgIconSet(
+      domSanitizer.bypassSecurityTrustResourceUrl(
+        './assets/igo2/core/icons/mdi.svg'
+      )
+    );
+  }
+}

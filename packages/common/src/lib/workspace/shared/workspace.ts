@@ -3,7 +3,7 @@ import { debounceTime } from 'rxjs/operators';
 
 import { ActionStore } from '../../action';
 import { Widget } from '../../widget';
-import { EntityRecord, EntityStore } from '../../entity';
+import { EntityStore } from '../../entity';
 
 import { WorkspaceOptions } from './workspace.interfaces';
 
@@ -110,7 +110,7 @@ export class Workspace<E extends object = object> {
     if (this.actionStore !== undefined) {
       this.change$ = this.change
         .pipe(debounceTime(35))
-        .subscribe(() => this.actionStore.updateActionsAvailability());
+        .subscribe(() => this.updateActionsAvailability());
     }
 
     this.change.next();
@@ -155,6 +155,12 @@ export class Workspace<E extends object = object> {
   deactivateWidget() {
     this.widget$.next(undefined);
     this.change.next();
+  }
+
+  updateActionsAvailability() {
+    if (this.actionStore !== undefined) {
+      this.actionStore.updateActionsAvailability();
+    }
   }
 
   /**

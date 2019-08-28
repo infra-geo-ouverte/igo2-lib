@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { provideSearchSourceService } from './shared/search-source-service.providers';
 import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/icherche.providers';
 import { provideDefaultCoordinatesSearchResultFormatter } from './shared/sources/coordinates.providers';
-import { provideILayerSearchResultFormatter } from './shared';
+import { provideILayerSearchResultFormatter } from './shared/sources/ilayer.providers';
 
 import { IgoSearchBarModule } from './search-bar/search-bar.module';
 import { IgoSearchSelectorModule } from './search-selector/search-selector.module';

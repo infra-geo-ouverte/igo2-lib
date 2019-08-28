@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, of, concat } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
+import { uuid } from '@igo2/utils';
 import { LanguageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
@@ -40,36 +41,41 @@ export class CatalogService {
     const apiUrl = catalogConfig.url || contextConfig.url;
     const catalogsFromConfig = catalogConfig.sources || [];
 
-    if (apiUrl === undefined) {
-      return of(catalogsFromConfig);
-    }
-
     const observables$ = [];
 
-    // Base layers catalog
-    if (catalogConfig.baseLayers) {
-      const translate = this.languageService.translate;
-      const title = translate.instant('igo.geo.catalog.baseLayers');
-      const baseLayersCatalog = {
-        id: 'catalog.baselayers',
-        title,
-        url: `${apiUrl}/baselayers`,
-        type: 'baselayers'
-      };
-      observables$.push(of(baseLayersCatalog));
-    }
+    if (apiUrl) {
+      // Base layers catalog
+      if (catalogConfig.baseLayers) {
+        const translate = this.languageService.translate;
+        const title = translate.instant('igo.geo.catalog.baseLayers');
+        const baseLayersCatalog = {
+          id: 'catalog.baselayers',
+          title,
+          url: `${apiUrl}/baselayers`,
+          type: 'baselayers'
+        };
+        observables$.push(of(baseLayersCatalog));
+      }
 
-    // Catalogs from API
-    const catalogsFromApi$ = this.http
-      .get<Catalog[]>(`${apiUrl}/catalogs`)
-      .pipe(
-        catchError((response: HttpErrorResponse) => EMPTY)
-      );
-    observables$.push(catalogsFromApi$);
+      // Catalogs from API
+      const catalogsFromApi$ = this.http
+        .get<Catalog[]>(`${apiUrl}/catalogs`)
+        .pipe(
+          catchError((response: HttpErrorResponse) => EMPTY)
+        );
+      observables$.push(catalogsFromApi$);
+    }
 
     // Catalogs from config
     if (catalogsFromConfig.length > 0) {
-      observables$.push(of(catalogsFromConfig));
+      observables$.push(of(catalogsFromConfig).pipe(
+        map((catalogs: Catalog[]) => catalogs.map((c) => {
+           if (!c.id) {
+             c.id = uuid();
+           }
+           return c;
+         }))
+      ));
     }
 
     return concat(...observables$) as Observable<Catalog[]>;

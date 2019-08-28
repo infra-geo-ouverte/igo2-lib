@@ -2,7 +2,6 @@ import {MatCheckboxChange, MatRadioChange } from '@angular/material';
 
 import {
   Component,
-  Input,
   Output,
   EventEmitter,
   ChangeDetectionStrategy
@@ -32,7 +31,7 @@ export class SearchSettingsComponent {
   /**
    * Event emitted when the enabled search type changes
    */
-  @Output() change = new EventEmitter<string>();
+  @Output() change = new EventEmitter<SearchSource>();
 
   constructor(private searchSourceService: SearchSourceService) {}
 
@@ -41,7 +40,7 @@ export class SearchSettingsComponent {
    * @internal
    */
   getSearchSources(): SearchSource[] {
-    return this.searchSourceService.getSources();
+    return this.searchSourceService.getSources().filter(s => s.available && s.getId() !== 'map');
   }
 
   /**
@@ -56,6 +55,7 @@ export class SearchSettingsComponent {
   ) {
     settingValue.enabled = event.checked;
     source.setParamFromSetting(setting);
+    this.change.emit(source);
   }
 
   /**
@@ -76,10 +76,12 @@ export class SearchSettingsComponent {
       }
     });
     source.setParamFromSetting(setting);
+    this.change.emit(source);
   }
 
   onCheckSearchSource(event: MatCheckboxChange, source: SearchSource) {
     source.enabled = event.checked;
+    this.change.emit(source);
   }
 
 }

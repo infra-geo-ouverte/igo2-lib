@@ -11,17 +11,19 @@ export interface SearchSourceOptions {
 }
 
 export interface SearchSourceSettings {
-  type: 'radiobutton'|'checkbox';
+  type: 'radiobutton' | 'checkbox';
   values: SettingOptions[];
   title: string;
   name: string;
 }
 
 export interface SettingOptions {
-  value: string|number;
+  value: string | number;
   enabled: boolean;
   title: string;
+  hashtags?: string[];
 }
+
 export interface TextSearchOptions {
   params?: { [key: string]: string };
 }

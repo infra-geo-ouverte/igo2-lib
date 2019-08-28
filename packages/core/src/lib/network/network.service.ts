@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, OnDestroy, Injector } from '@angular/core';
 import { Observable, Subscription, fromEvent } from 'rxjs';
 import { debounceTime, startWith } from 'rxjs/operators';
 
-import { MessageService } from '../message';
+import { MessageService } from '../message/shared/message.service';
 import { LanguageService } from '../language/shared/language.service';
 
 export interface ConnectionState {
