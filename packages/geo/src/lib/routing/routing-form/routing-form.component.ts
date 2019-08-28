@@ -209,14 +209,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       hitTolerance: 7
     });
 
-    this.map.ol.on('pointermove', evt => {
-      const selectRouteCnt = selectRouteHover.getFeatures().getLength();
-      if (selectRouteCnt === 0) {
-        this.routingFormService.unsetMapWaitingForRoutingClick();
-      } else {
-        this.routingFormService.setMapWaitingForRoutingClick();
-      }
-    });
 
     selectStops.on('select', evt => {
       selectedStopFeature = evt.target.getFeatures()[0];
@@ -1028,7 +1020,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.unlistenSingleClick();
     this.currentStopIndex = i;
     this.focusOnStop = true;
-    this.routingFormService.setMapWaitingForRoutingClick();
     this.focusKey.push(
       this.map.ol.once('singleclick', evt => {
         this.handleMapClick(evt, i);
@@ -1057,7 +1048,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.focusOnStop = false; // prevent to trigger map click and Select on routes at same time.
     }, 500);
-    this.routingFormService.unsetMapWaitingForRoutingClick();
   }
 
   geolocateStop(index: number) {
