@@ -127,6 +127,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showRouteGeometry();
   }
 
+  prevent(event){
+    event.preventDefault();
+   }
+
   ngOnDestroy(): void {
     this.unsubscribeRoutesQueries();
     this.unlistenSingleClick();

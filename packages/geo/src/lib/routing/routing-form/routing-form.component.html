@@ -11,7 +11,7 @@
         </button>
         <mat-form-field>
           <input matInput formControlName="stopPoint" [matAutocomplete]="auto" placeholder="{{'igo.geo.routingForm.'+stop.value.routingText | translate}}"
-            (focus)="focus(i)" (keyup)="keyup(i,$event)">
+            (focus)="focus(i)" (keyup)="keyup(i,$event)" (keydown.enter)="prevent($event)">
 
           <mat-autocomplete #auto="matAutocomplete">
             <mat-optgroup *ngFor="let source of stop.value.stopProposals" [label]="source.source.title" [disabled]="source.source.enabled === false">
