@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { MatIconModule, MatButtonModule } from '@angular/material';
 
+import { IgoLanguageModule } from '@igo2/core';
 import { IgoFlexibleModule, IgoPanelModule } from '@igo2/common';
 import {
   IgoFeatureModule,
@@ -20,6 +21,7 @@ import { SearchResultsToolComponent } from './search-results-tool.component';
     CommonModule,
     MatIconModule,
     MatButtonModule,
+    IgoLanguageModule,
     IgoFeatureModule,
     IgoSearchModule,
     IgoFlexibleModule,

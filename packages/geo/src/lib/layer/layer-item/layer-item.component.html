@@ -43,8 +43,10 @@
 
 <div #actions class="igo-layer-actions-container">
   <div class="igo-col igo-col-100 igo-col-100-m">
+    <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <mat-slider
       id="opacity-slider"
+      color="primary"
       thumbLabel
       tickInterval="5"
       step="5"
@@ -55,9 +57,7 @@
       matTooltipShowDelay="500"
       tooltip-position="below">
     </mat-slider>
-  </div>
 
-  <div class="igo-col igo-col-100 igo-col-100-m">
     <div class="igo-layer-button-group">
       <button
         color="primary"

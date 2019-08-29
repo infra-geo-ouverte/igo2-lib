@@ -77,6 +77,7 @@ export class ContextState {
    * @param context Detailed context
    */
   private onContextChange(context: DetailedContext) {
+    console.log(context);
     if (context === undefined) {
       return;
     }

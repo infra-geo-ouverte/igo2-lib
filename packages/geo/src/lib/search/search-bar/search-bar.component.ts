@@ -2,17 +2,16 @@ import {
   Component,
   OnInit,
   OnDestroy,
+  ChangeDetectionStrategy,
   Input,
   Output,
   EventEmitter,
   ViewChild,
-  ElementRef,
-  HostBinding,
-  ChangeDetectionStrategy
+  ElementRef
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
-import { BehaviorSubject, Subject, Subscription, EMPTY, timer } from 'rxjs';
+import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
