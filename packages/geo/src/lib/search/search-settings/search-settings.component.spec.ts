@@ -30,7 +30,8 @@ describe('SearchSettingsComponent', () => {
 
   beforeEach(async(() => {
 
-    const spy = jasmine.createSpyObj('SearchSourceService', ['getSources']);
+    let spy = jasmine.createSpyObj('SearchSourceService', ['getSources']);
+    spy.getSources = jasmine.createSpy().and.returnValue([]);
 
     TestBed.configureTestingModule({
       imports: [
