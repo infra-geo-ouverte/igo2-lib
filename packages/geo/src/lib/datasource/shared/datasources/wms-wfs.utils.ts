@@ -1,13 +1,15 @@
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import * as OlFormat from 'ol/format';
 
 export const defaultEpsg = 'EPSG:3857';
 export const defaultMaxFeatures = 5000;
 export const defaultWfsVersion = '2.0.0';
 export const defaultFieldNameGeometry = 'geometry';
-export const gmlRegex = new RegExp(/.*?gml.*?/gi);
-export const jsonRegex = new RegExp(/.*?json.*?/gi);
+export const gmlRegex = new RegExp(/(.*)?gml(.*)?/gi);
+export const jsonRegex = new RegExp(/(.*)?json(.*)?/gi);
 
 /**
  * This method build/standardize WFS call query params based on the layer property.
@@ -18,14 +20,14 @@ export const jsonRegex = new RegExp(/.*?json.*?/gi);
  * @returns An array array of {name: '', value: ''} of predefined query params.
  */
 export function formatWFSQueryString(
-    wfsDataSourceOptions: WFSDataSourceOptions,
+    dataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions,
     count?: number,
     epsg?: string,
     properties?: string): { name: string, value: string }[] {
 
     const versionWfs200 = '2.0.0'; // not the same usage as defaultWfsVersion.
-    const url = wfsDataSourceOptions.urlWfs;
-    const paramsWFS = wfsDataSourceOptions.paramsWFS;
+    const url = dataSourceOptions.urlWfs;
+    const paramsWFS = dataSourceOptions.paramsWFS;
     const effectiveCount = count || defaultMaxFeatures;
     const epsgCode = epsg || defaultEpsg;
     const outputFormat = paramsWFS.outputFormat ? `outputFormat=${paramsWFS.outputFormat}` : '';
@@ -43,10 +45,10 @@ export function formatWFSQueryString(
         propertyName = `propertyName=${properties}`;
         valueReference = `valueReference=${properties}`;
     }
-    const sourceFields = wfsDataSourceOptions.sourceFields;
+    const sourceFields = dataSourceOptions.sourceFields;
     if (!propertyName && sourceFields && sourceFields.length > 0) {
         const fieldsNames = [];
-        wfsDataSourceOptions.sourceFields.forEach(sourcefield => {
+        dataSourceOptions.sourceFields.forEach(sourcefield => {
             fieldsNames.push(sourcefield.name);
         });
         propertyName = `propertyName=${fieldsNames.join(',')},${paramsWFS.fieldNameGeometry}`;
@@ -105,3 +107,51 @@ export function checkWfsParams(wfsDataSourceOptions, srcType?: string) {
   }
   return Object.assign({}, wfsDataSourceOptions );
 }
+
+export function getFormatFromOptions(options: WFSDataSourceOptions | WMSDataSourceOptions) {
+
+    let olFormatCls = OlFormat.WFS;
+    const outputFormat = options.paramsWFS.outputFormat ? options.paramsWFS.outputFormat : undefined;
+
+    if (!outputFormat) {
+      return new olFormatCls();
+    }
+
+    if (OlFormat[outputFormat]) {
+      olFormatCls = OlFormat[outputFormat];
+      return new olFormatCls();
+    } else if (outputFormat.toLowerCase().match('gml2')) {
+      olFormatCls = OlFormat.WFS;
+      return new olFormatCls({gmlFormat: OlFormat.GML2});
+    } else if ( outputFormat.toLowerCase().match('gml32') ) {
+      olFormatCls = OlFormat.WFS;
+      return new olFormatCls({gmlFormat: OlFormat.GML32});
+    } else if ( outputFormat.toLowerCase().match('gml3') ) {
+      olFormatCls = OlFormat.WFS;
+      return new olFormatCls({gmlFormat: OlFormat.GML3});
+    } else if ( outputFormat.toLowerCase().match('topojson') ) {
+      olFormatCls = OlFormat.TopoJSON;
+      return new olFormatCls();
+    } else if ( outputFormat.toLowerCase().match('geojson') ) {
+      olFormatCls = OlFormat.GeoJSON;
+      return new olFormatCls();
+    } else if ( outputFormat.toLowerCase().match('esrijson') ) {
+      olFormatCls = OlFormat.EsriJSON;
+      return new olFormatCls();
+    } else if ( outputFormat.toLowerCase().match('gpx') ) {
+      olFormatCls = OlFormat.GPX;
+      return new olFormatCls();
+    } else if ( outputFormat.toLowerCase().match('WKT') ) {
+      olFormatCls = OlFormat.WKT;
+      return new olFormatCls();
+    } else if ( outputFormat.toLowerCase().match('osmxml') ) {
+      olFormatCls = OlFormat.OSMXML;
+      return new olFormatCls();
+    } else if ( outputFormat.toLowerCase().match('kml') ) {
+      olFormatCls = OlFormat.KML;
+      return new olFormatCls();
+    }
+
+    return new olFormatCls();
+
+  }
