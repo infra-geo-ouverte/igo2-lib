@@ -5,6 +5,14 @@
   overflow: hidden;
 }
 
+.igo-layer-list-item{
+  height: $igo-list-item-height;
+}
+
+.igo-layer-title  {
+  cursor: pointer;
+}
+
 .igo-layer-actions-container {
   width: 100%;
   display: inline-block;
@@ -17,7 +25,6 @@
 .igo-layer-legend-container {
   padding-left: 18px;
   width: calc(100% - 18px);
-  display: inline-block;
 }
 
 // #opacity-slider {
