@@ -90,7 +90,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   set debounce(value: number) {
     this._debounce = value;
   }
-  private _debounce = 300;
+  private _debounce = 200;
 
   @Input()
   get length() {
@@ -973,6 +973,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stops.removeAt(stopIndex);
     this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex)));
     this.routingRoutesOverlayDataSource.ol.clear();
+    this.routesResults = undefined;
   }
 
   chooseProposal(proposal, i) {
