@@ -156,11 +156,9 @@ export class StyleService {
     }
   }
 
-  createClusterStyle(feature, clusterParam: ClusterParam) {
+  createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
     let style;
     const range = clusterParam.clusterRange;
-    const icon = clusterParam.clusterIcon;
-    const scale = clusterParam.clusterScale;
     const size = feature.get('features').length;
     let color;
     if (size !== 1) {
@@ -193,30 +191,7 @@ export class StyleService {
         })
       ];
     } else {
-      if (icon) {
-        style = [
-          new olstyle.Style({
-            image: new olstyle.Icon({
-              src: icon,
-              scale
-            })
-          })
-        ];
-      } else {
-        style = [
-          new olstyle.Style({
-            image: new olstyle.Circle({
-              radius: 2 * size + 3.4,
-              stroke: new olstyle.Stroke({
-                color: 'black'
-              }),
-              fill: new olstyle.Fill({
-                color: 'blue'
-              })
-            })
-          })
-        ];
-      }
+      style = this.createStyle(layerStyle);
     }
     return style;
   }
