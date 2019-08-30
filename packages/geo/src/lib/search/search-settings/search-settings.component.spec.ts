@@ -29,20 +29,19 @@ describe('SearchSettingsComponent', () => {
   let fixture: ComponentFixture<SearchSettingsComponent>;
 
   beforeEach(async(() => {
-
-    let spy = jasmine.createSpyObj('SearchSourceService', ['getSources']);
+    const spy = jasmine.createSpyObj('SearchSourceService', ['getSources']);
     spy.getSources = jasmine.createSpy().and.returnValue([]);
 
     TestBed.configureTestingModule({
       imports: [
         HttpClientModule,
         TranslateModule.forRoot({
-                    loader: {
-                        provide: TranslateLoader,
-                        useFactory: HttpLoaderFactory,
-                        deps: [HttpClient]
-                    }
-                }),
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+          }
+        }),
         IgoLanguageModule,
         CommonModule,
         MatTooltipModule,
@@ -50,15 +49,15 @@ describe('SearchSettingsComponent', () => {
         MatButtonModule,
         MatMenuModule,
         MatRadioModule,
-        MatCheckboxModule],
-      declarations: [ SearchSettingsComponent ],
+        MatCheckboxModule
+      ],
+      declarations: [SearchSettingsComponent],
       providers: [
         { provide: SearchSourceService, useValue: spy },
         provideDefaultIChercheSearchResultFormatter(),
         provideDefaultCoordinatesSearchResultFormatter()
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
