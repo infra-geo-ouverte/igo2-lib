@@ -31,8 +31,8 @@ export class StyleService {
   }
 
   private getOlKey(key: any) {
-    let olKey = key.toLowerCase();
-    switch (olKey) {
+    let olKey;
+    switch (key.toLowerCase()) {
       case 'circle':
       case 'regularshape':
       case 'icon':
@@ -42,13 +42,19 @@ export class StyleService {
         break;
     }
 
-    return olKey;
+    return olKey || key;
   }
 
   private getOlCls(key: any) {
     let olCls = olstyle[key.charAt(0).toUpperCase() + key.slice(1)];
     if (key === 'regularshape') {
       olCls = olstyle.RegularShape;
+    }
+    if (key === 'backgroundFill') {
+      olCls = olstyle.Fill;
+    }
+    if (key === 'backgroundStroke') {
+      olCls = olstyle.Stroke;
     }
 
     return olCls;
@@ -65,11 +71,13 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data.length;
-    const label = styleByAttribute.label;
+    const label = styleByAttribute.label.attribute || styleByAttribute.label;
+    const labelStyle = this.parseStyle('text',styleByAttribute.label.style) || new olstyle.Text();
     const baseStyle = styleByAttribute.baseStyle;
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
-        if (feature.get(attribute) === data[i]) {
+        const val = feature.get(attribute);
+        if (val && (val === data[i] || val.match(data[i])) ) {
           if (icon) {
             style = [
               new olstyle.Style({
@@ -91,7 +99,8 @@ export class StyleService {
                 fill: new olstyle.Fill({
                   color: fill ? fill[i] : 'black'
                 })
-              })
+              }),
+              text: labelStyle.setText(feature.get(label))
             })
           ];
           return style;
