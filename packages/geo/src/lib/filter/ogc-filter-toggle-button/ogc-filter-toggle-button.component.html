@@ -2,8 +2,8 @@
         <mat-button-toggle-group appearance="legacy" vertical={{bundleIsVertical(bundle)}} multiple="true">
             <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
                 (change)="applyFilters(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
-                [matTooltip]="getToolTip(ogcPushButton)" *ngFor="let ogcPushButton of bundle.ogcPushButtons"
-                [value]="ogcPushButton">{{ogcPushButton.title}}
+                [matTooltip]="getToolTip(ogcPushButton)" matTooltipClass="material-tooltip" 
+                *ngFor="let ogcPushButton of bundle.ogcPushButtons" [value]="ogcPushButton">{{ogcPushButton.title}}
             </mat-button-toggle>
         </mat-button-toggle-group>
 </ng-container>
