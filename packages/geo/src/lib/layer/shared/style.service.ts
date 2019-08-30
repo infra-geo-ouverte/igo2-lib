@@ -73,6 +73,7 @@ export class StyleService {
     const size = data.length;
     const label = styleByAttribute.label.attribute || styleByAttribute.label;
     const labelStyle = this.parseStyle('text',styleByAttribute.label.style) || new olstyle.Text();
+    labelStyle.setText(feature.get(label));
     const baseStyle = styleByAttribute.baseStyle;
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
@@ -100,7 +101,7 @@ export class StyleService {
                   color: fill ? fill[i] : 'black'
                 })
               }),
-              text: labelStyle.setText(feature.get(label))
+              text: labelStyle
             })
           ];
           return style;
