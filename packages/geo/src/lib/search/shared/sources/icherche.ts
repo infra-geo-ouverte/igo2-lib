@@ -101,7 +101,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             //   enabled: true
             // },
             {
-              title: 'mrc',
+              title: 'MRC',
               value: 'mrc',
               enabled: true
             },
@@ -165,7 +165,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'trust level',
+          title: 'ecmax',
           name: 'ecmax',
           values: [
             {
@@ -283,6 +283,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       data.properties,
       IChercheSearchSource.propertiesBlacklist
     );
+
+    if (data.geometry === undefined) {
+      return Object.assign({ type: data.index }, properties);
+    }
 
     const googleLinksProperties: {
       GoogleMaps: string;

@@ -8,7 +8,7 @@
           color="accent"
           [selected]="selectedContext && selectedContext.uri === context.uri"
           [context]="context"
-          [default]="this.defaultContextId === context.id"
+          [default]="context.id && this.defaultContextId && this.defaultContextId === context.id"
           (edit)="edit.emit(context)"
           (delete)="delete.emit(context)"
           (clone)="clone.emit(context)"

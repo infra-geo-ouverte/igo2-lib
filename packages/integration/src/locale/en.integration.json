@@ -14,6 +14,10 @@
         "shareMap": "Share",
         "timeAnalysis": "Time Analysis",
         "about": "About"
+      },
+      "searchResultsTool": {
+        "noResults": "No results",
+        "doSearch": "Do a search in the search bar"
       }
     }
   }

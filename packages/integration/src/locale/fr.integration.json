@@ -14,6 +14,10 @@
         "shareMap": "Partager",
         "timeAnalysis": "Analyse Temporelle",
         "about": "À propos"
+      },
+      "searchResultsTool": {
+        "noResults": "Aucun résultat",
+        "doSearch": "Veuillez effectuer une recherche"
       }
     }
   }

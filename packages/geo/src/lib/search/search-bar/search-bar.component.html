@@ -1,13 +1,13 @@
-<div class="igo-search-bar-container">
+<div class="igo-search-bar-container" [ngClass]="{empty: empty$ | async}">
   <mat-form-field [floatLabel]="floatLabel">
     <input
       #input
       matInput
       autocomplete="off"
       [ngClass]="{'hasSearchIcon': searchIcon}"
-      [disabled]="disabled"
-      [placeholder]="placeholder | translate"
-      [ngModel]="term"
+      [disabled]="disabled$ | async"
+      [placeholder]="(placeholder$ | async) ? (placeholder$.value | translate) : undefined"
+      [value]="term$ | async"
       (keyup)="onKeyup($event)"
       (touchend)="onKeyup($event)">
   </mat-form-field>
@@ -21,24 +21,23 @@
     </button>
 
     <button
+      *ngIf="!(empty$ | async)"
       mat-icon-button
       [color]="color"
-      (click)="onClearButtonClick()"
-      *ngIf="!empty">
+      (click)="onClearButtonClick()">
       <mat-icon svgIcon="close"></mat-icon>
     </button>
 
     <igo-search-selector
       *ngIf="searchSelector"
       [searchTypes]="searchTypes"
-      (change)="onSearchTypeChange($event)">
+      [searchType]="searchType$ | async"
+      (searchTypeChange)="onSearchTypeChange($event)">
     </igo-search-selector>
 
     <igo-search-settings
       *ngIf="searchSettings"
-      (change)="onSearchSettingsChange()"
-    ></igo-search-settings>
+      (searchSourceChange)="onSearchSettingsChange()">
+    </igo-search-settings>
   </div>
-
-
 </div>

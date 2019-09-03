@@ -1,4 +1,10 @@
+<div *ngIf="!store || store.empty" style="margin: 10px;">
+  <h4>{{ 'igo.integration.searchResultsTool.noResults' | translate }}</h4>
+  <p>{{ 'igo.integration.searchResultsTool.doSearch' | translate }}</p>
+</div>
+
 <igo-flexible
+  *ngIf="store && !(store.empty$ | async)"
   #topPanel
   initial="100%"
   initialMobile="100%"

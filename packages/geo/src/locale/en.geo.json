@@ -90,6 +90,7 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "loadingLegendText": "Loading legend",
+        "filterPlaceholder": "Filter",
         "noLegendText": "No legend available for this layer",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
@@ -210,6 +211,9 @@
             "metadataUrl": "Metadata"
           }
         },
+        "coordinates": {
+          "name": "Coordinates"
+        },
         "menu.tooltip": "Search Options",
         "settings": {
           "title": "Settings"
@@ -217,8 +221,8 @@
         "searchSources": {
           "settings": {
             "results type": "Results type",
-            "trust level": "Trust level",
-            "results limit": "Limit",
+            "ecmax": "Maximum deviation",
+            "results limit": "Number of results",
             "multiple object": "Multiple object",
             "country limitation": "Limitation (country)"
           }

@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
 import olFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
-
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
+import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { DataService } from './data.service';
-import { formatWFSQueryString, gmlRegex, defaultEpsg, defaultMaxFeatures} from './wms-wfs.utils';
+import { formatWFSQueryString,
+          gmlRegex,
+          defaultEpsg,
+          defaultMaxFeatures,
+          getFormatFromOptions} from './wms-wfs.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -22,16 +25,16 @@ export class WFSService extends DataService {
     return 'This is defining a data service.';
   }
 
-  public getSourceFieldsFromWFS(datasource) {
-    if (!datasource.sourceFields || datasource.sourceFields.length === 0 ) {
-      datasource.sourceFields = [];
-      this.defineFieldAndValuefromWFS(datasource).subscribe(getfeatureSourceField => {
-        datasource.sourceFields = getfeatureSourceField;
+  public getSourceFieldsFromWFS(dataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions) {
+    if (!dataSourceOptions.sourceFields || dataSourceOptions.sourceFields.length === 0 ) {
+      dataSourceOptions.sourceFields = [];
+      this.defineFieldAndValuefromWFS(dataSourceOptions).subscribe(getfeatureSourceField => {
+        dataSourceOptions.sourceFields = getfeatureSourceField;
       });
 
     } else {
-      this.defineFieldAndValuefromWFS(datasource).subscribe(getfeatureSourceField => {
-        datasource.sourceFields.forEach(sourcefield => {
+      this.defineFieldAndValuefromWFS(dataSourceOptions).subscribe(getfeatureSourceField => {
+        dataSourceOptions.sourceFields.forEach(sourcefield => {
           if (sourcefield.alias === undefined) {
             sourcefield.alias = sourcefield.name; // to allow only a list of sourcefield with names
           }
@@ -44,14 +47,14 @@ export class WFSService extends DataService {
   }
 
   private wfsGetFeature(
-    wfsDataSourceOptions: WFSDataSourceOptions,
+    dataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions,
     nb: number = defaultMaxFeatures,
     epsgCode: string = defaultEpsg,
     propertyName?: string
   ): Observable<any> {
-    const queryStringValues = formatWFSQueryString(wfsDataSourceOptions, nb, epsgCode, propertyName);
+    const queryStringValues = formatWFSQueryString(dataSourceOptions, nb, epsgCode, propertyName);
     const baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
-    const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
+    const outputFormat = dataSourceOptions.paramsWFS.outputFormat;
     if (gmlRegex.test(outputFormat) || !outputFormat) {
       return this.http.get(baseUrl, { responseType: 'text' });
     } else {
@@ -60,7 +63,7 @@ export class WFSService extends DataService {
   }
 
   defineFieldAndValuefromWFS(
-    wfsDataSourceOptions: WFSDataSourceOptions
+    dataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions
   ): Observable<any> {
     return new Observable(d => {
       const sourceFields = [];
@@ -68,16 +71,11 @@ export class WFSService extends DataService {
       let fieldListWoGeom;
       let fieldListWoGeomStr;
       let olFormats;
-      const outputFormat = wfsDataSourceOptions.paramsWFS.outputFormat;
 
-      if (gmlRegex.test(outputFormat) || !outputFormat) {
-        olFormats = olformat.WFS;
-     } else {
-        olFormats = olformat.GeoJSON;
-      }
+      olFormats = getFormatFromOptions(dataSourceOptions);
 
-      this.wfsGetFeature(wfsDataSourceOptions, 1).subscribe(oneFeature => {
-        const features = new olFormats().readFeatures(oneFeature);
+      this.wfsGetFeature(dataSourceOptions, 1).subscribe(oneFeature => {
+        const features = olFormats.readFeatures(oneFeature);
         fieldList = features[0].getKeys();
         fieldListWoGeom = fieldList.filter(
           field =>
@@ -86,12 +84,12 @@ export class WFSService extends DataService {
         );
         fieldListWoGeomStr = fieldListWoGeom.join(',');
         this.wfsGetFeature(
-          wfsDataSourceOptions,
-          wfsDataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
+          dataSourceOptions,
+          dataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
           undefined,
           fieldListWoGeomStr
         ).subscribe(manyFeatures => {
-          const mfeatures = new olFormats().readFeatures(manyFeatures);
+          const mfeatures = olFormats.readFeatures(manyFeatures);
           this.built_properties_value(mfeatures).forEach(element => {
             sourceFields.push(element);
           });
