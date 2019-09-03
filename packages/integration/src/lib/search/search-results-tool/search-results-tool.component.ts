@@ -70,7 +70,7 @@ export class SearchResultsToolComponent {
       .pipe(
         map(element => {
           this.feature = element ? (element.entity.data as Feature) : undefined;
-          if (!this.feature) {
+          if (!this.feature && this.store.stateView.empty) {
             this.topPanelState = 'initial';
           }
           return this.feature;
@@ -96,7 +96,8 @@ export class SearchResultsToolComponent {
     private mapState: MapState,
     private layerService: LayerService,
     private searchState: SearchState
-  ) {}
+  ) {
+  }
 
   /**
    * Try to add a feature to the map when it's being focused
@@ -104,10 +105,10 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
-    this.tryAddFeatureToMap(result);
   }
 
   /**
@@ -116,11 +117,11 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
+    this.tryAddLayerToMap(result);
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
-    this.tryAddFeatureToMap(result);
-    this.tryAddLayerToMap(result);
   }
 
   toggleTopPanel() {

@@ -29,9 +29,9 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
 export class SearchSettingsComponent {
 
   /**
-   * Event emitted when the enabled search type changes
+   * Event emitted when the enabled search source changes
    */
-  @Output() change = new EventEmitter<SearchSource>();
+  @Output() searchSourceChange = new EventEmitter<SearchSource>();
 
   constructor(private searchSourceService: SearchSourceService) {}
 
@@ -55,7 +55,7 @@ export class SearchSettingsComponent {
   ) {
     settingValue.enabled = event.checked;
     source.setParamFromSetting(setting);
-    this.change.emit(source);
+    this.searchSourceChange.emit(source);
   }
 
   /**
@@ -76,12 +76,12 @@ export class SearchSettingsComponent {
       }
     });
     source.setParamFromSetting(setting);
-    this.change.emit(source);
+    this.searchSourceChange.emit(source);
   }
 
   onCheckSearchSource(event: MatCheckboxChange, source: SearchSource) {
     source.enabled = event.checked;
-    this.change.emit(source);
+    this.searchSourceChange.emit(source);
   }
 
 }

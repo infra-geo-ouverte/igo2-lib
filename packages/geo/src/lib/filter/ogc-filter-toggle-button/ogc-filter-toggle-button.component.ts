@@ -52,7 +52,11 @@ export class OgcFilterToggleButtonComponent implements OnInit {
   getToolTip(pb: OgcPushButton): string  {
     let tt;
     if (pb.tooltip) {
-      tt = pb.tooltip;
+      if (Array.isArray(pb.tooltip)) {
+        tt = pb.tooltip.join('\n');
+      } else {
+        tt = pb.tooltip;
+      }
     }
     return tt || '';
   }

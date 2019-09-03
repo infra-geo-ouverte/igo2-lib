@@ -17,7 +17,7 @@
     yPosition="above">
     <mat-radio-group
       class="igo-search-selector-radio-group"
-      [value]="enabled"
+      [value]="searchType$ | async"
       (change)="onSearchTypeChange($event.value)">
       <mat-radio-button *ngFor="let searchType of searchTypes" [value]="searchType">
         {{getSearchTypeTitle(searchType) | translate}}

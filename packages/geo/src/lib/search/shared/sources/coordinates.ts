@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 
-import { Observable, of } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 
 import { FEATURE, Feature } from '../../../feature';
 
@@ -28,8 +28,20 @@ export class CoordinatesReverseSearchSource extends SearchSource
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
-  constructor(@Inject('options') options: SearchSourceOptions) {
+  title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  get title(): string {
+    return this.title$.getValue();
+  }
+
+  constructor(
+    @Inject('options') options: SearchSourceOptions,
+    private languageService: LanguageService
+  ) {
     super(options);
+    this.languageService.translate
+      .get(this.options.title)
+      .subscribe(title => this.title$.next(title));
   }
 
   getId(): string {
@@ -38,7 +50,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'Coordinates',
+      title: 'igo.geo.search.coordinates.name',
       order: 1
     };
   }
