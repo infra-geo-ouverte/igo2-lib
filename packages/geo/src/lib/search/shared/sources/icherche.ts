@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 
@@ -69,7 +69,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'Adresse',
               value: 'adresses',
-              enabled: true
+              enabled: true,
+              hashtags: ['adresse']
             },
             // {
             //   title: 'Ancienne adresse',
@@ -79,17 +80,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'Code Postal',
               value: 'codes-postaux',
-              enabled: true
+              enabled: true,
+              hashtags: ['code-postal']
             },
             {
               title: 'Route',
               value: 'routes',
-              enabled: false
+              enabled: false,
+              hashtags: ['route']
             },
             {
               title: 'Municipalité',
               value: 'municipalites',
-              enabled: true
+              enabled: true,
+              hashtags: ['municipalité']
             },
             // {
             //   title: 'Ancienne municipalité',
@@ -97,29 +101,33 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             //   enabled: true
             // },
             {
-              title: 'mrc',
+              title: 'MRC',
               value: 'mrc',
               enabled: true
             },
             {
               title: 'Région administrative',
               value: 'regadmin',
-              enabled: true
+              enabled: true,
+              hashtags: ['région-administrative']
             },
             {
               title: 'Lieu',
               value: 'lieux',
-              enabled: true
+              enabled: true,
+              hashtags: ['lieu']
             },
             {
               title: 'Borne',
               value: 'bornes',
-              enabled: false
+              enabled: false,
+              hashtags: ['borne']
             },
             {
               title: 'Entreprise',
               value: 'entreprises',
-              enabled: false
+              enabled: false,
+              hashtags: ['entreprise']
             }
           ]
         },
@@ -157,7 +165,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'trust level',
+          title: 'ecmax',
           name: 'ecmax',
           values: [
             {
@@ -201,9 +209,17 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(term, options || {});
-    return this.http
-      .get(this.searchUrl, { params })
-      .pipe(map((response: IChercheResponse) => this.extractResults(response)));
+    if (!params.get('type').length) {
+      return of([]);
+    }
+    return this.http.get(this.searchUrl, { params }).pipe(
+      map((response: IChercheResponse) => this.extractResults(response)),
+      catchError(err => {
+        err.error.toDisplay = true;
+        err.error.title = this.getDefaultOptions().title;
+        throw err;
+      })
+    );
   }
 
   private computeRequestParams(
@@ -234,6 +250,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, properties.code].join('.');
 
+    const titleHtml = data.highlight.title || data.properties.nom;
     const subtitleHtml = data.highlight.title2
       ? ' <small> ' + data.highlight.title2 + '</small>'
       : '';
@@ -255,7 +272,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        titleHtml: data.highlight.title + subtitleHtml,
+        titleHtml: titleHtml + subtitleHtml,
         icon: 'map-marker'
       }
     };
@@ -267,16 +284,31 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       IChercheSearchSource.propertiesBlacklist
     );
 
-    const googleLinksProperties: { GoogleMaps: string, GoogleStreetView?: string } = {
-      GoogleMaps: GoogleLinks.getGoogleMapsLink(data.geometry.coordinates[0], data.geometry.coordinates[1])
+    if (data.geometry === undefined) {
+      return Object.assign({ type: data.index }, properties);
+    }
+
+    const googleLinksProperties: {
+      GoogleMaps: string;
+      GoogleStreetView?: string;
+    } = {
+      GoogleMaps: GoogleLinks.getGoogleMapsLink(
+        data.geometry.coordinates[0],
+        data.geometry.coordinates[1]
+      )
     };
     if (data.geometry.type === 'Point') {
       googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
-        data.geometry.coordinates[0], data.geometry.coordinates[1]
+        data.geometry.coordinates[0],
+        data.geometry.coordinates[1]
       );
     }
 
-    return Object.assign({ type: data.index }, properties, googleLinksProperties);
+    return Object.assign(
+      { type: data.index },
+      properties,
+      googleLinksProperties
+    );
   }
 
   /**
@@ -296,22 +328,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     term: string,
     options: TextSearchOptions
   ): TextSearchOptions {
-    const tags = term.match(/(#[^\s]+)/g);
-    if (tags) {
-      let typeValue = '';
-      let hashtagToAdd = false;
-      tags.forEach(value => {
-        if (super.hashtagValid(super.getSettingsValues('type'), value, true)) {
-          typeValue += value.substring(1) + ',';
-          hashtagToAdd = true;
-        }
+    const hashtags = super.getHashtagsValid(term, 'type');
+    if (hashtags) {
+      options.params = Object.assign(options.params || {}, {
+        type: hashtags.join(',')
       });
-      if (hashtagToAdd) {
-        options.params = Object.assign(options.params || {}, {
-          type: typeValue.slice(0, -1)
-        });
-      }
     }
+
     return options;
   }
 }
@@ -341,7 +364,6 @@ export class IChercheReverseSearchSource extends SearchSource
     return {
       title: 'Territoire (Géocodage inversé)',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/territoires/locate',
-
       settings: [
         {
           type: 'checkbox',

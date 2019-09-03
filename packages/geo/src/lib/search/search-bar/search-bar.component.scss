@@ -33,7 +33,7 @@
   width: calc(100% - (2 * #{$igo-icon-size}));
 }
 
-:host.empty .igo-search-bar-container > mat-form-field {
+.igo-search-bar-container.empty > mat-form-field {
   width: calc(100% - #{$igo-icon-size});
 }
 

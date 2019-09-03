@@ -33,9 +33,13 @@ export function provideDefaultCoordinatesSearchResultFormatter() {
  * CoordinatesReverse search source factory
  * @ignore
  */
-export function CoordinatesReverseSearchSourceFactory(config: ConfigService) {
+export function CoordinatesReverseSearchSourceFactory(
+  config: ConfigService,
+  languageService: LanguageService
+) {
   return new CoordinatesReverseSearchSource(
-    config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`)
+    config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`),
+    languageService
   );
 }
 
@@ -47,6 +51,6 @@ export function provideCoordinatesReverseSearchSource() {
     provide: SearchSource,
     useFactory: CoordinatesReverseSearchSourceFactory,
     multi: true,
-    deps: [ConfigService]
+    deps: [ConfigService, LanguageService]
   };
 }

@@ -189,7 +189,9 @@ export class IgoMap {
   }
 
   getLayerByAlias(alias: string): Layer {
-    return this.layers.find((layer: Layer) => layer.alias && layer.alias === alias);
+    return this.layers.find(
+      (layer: Layer) => layer.alias && layer.alias === alias
+    );
   }
 
   /**
@@ -267,7 +269,7 @@ export class IgoMap {
     const zIndexTo = layerTo.zIndex;
     const zIndexFrom = layer.zIndex;
 
-    if (zIndexTo < 10) {
+    if (layerTo.baseLayer) {
       return;
     }
 
@@ -333,7 +335,9 @@ export class IgoMap {
    */
   private sortLayersByZIndex(layers: Layer[]) {
     // Sort by descending zIndex
-    return layers.sort((layer1: Layer, layer2: Layer) => layer2.zIndex - layer1.zIndex);
+    return layers.sort(
+      (layer1: Layer, layer2: Layer) => layer2.zIndex - layer1.zIndex
+    );
   }
 
   /**

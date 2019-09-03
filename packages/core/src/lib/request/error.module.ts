@@ -1,4 +1,9 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import {
+  NgModule,
+  ModuleWithProviders,
+  Optional,
+  SkipSelf
+} from '@angular/core';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ErrorInterceptor } from './error.interceptor';
@@ -20,5 +25,13 @@ export class IgoErrorModule {
         }
       ]
     };
+  }
+
+  constructor(@Optional() @SkipSelf() parentModule: IgoErrorModule) {
+    if (parentModule) {
+      throw new Error(
+        'IgoErrorModule is already loaded. Import it in the AppModule only'
+      );
+    }
   }
 }

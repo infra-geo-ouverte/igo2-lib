@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule, MatButtonModule } from '@angular/material';
 
-import { IgoLoggingModule, IgoErrorModule } from '@igo2/core';
+import { IgoErrorModule, IgoLanguageModule } from '@igo2/core';
 
 import { AppRequestComponent } from './request.component';
 import { AppRequestRoutingModule } from './request-routing.module';
@@ -14,6 +14,7 @@ import { AppRequestRoutingModule } from './request-routing.module';
     MatCardModule,
     MatButtonModule,
     HttpClientModule,
+    IgoLanguageModule.forRoot(),
     IgoErrorModule.forRoot() // Only if you want register errors from http call in console
     // IgoLoggingModule.forRoot() // Only if you want register http calls in console
   ],
