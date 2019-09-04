@@ -130,7 +130,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showRouteGeometry();
   }
 
-  prevent(event){
+  prevent(event) {
     event.preventDefault();
    }
 
@@ -211,7 +211,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       layers: [routesLayer.ol],
       hitTolerance: 7
     });
-
 
     selectStops.on('select', evt => {
       selectedStopFeature = evt.target.getFeatures()[0];
@@ -334,7 +333,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
               this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
               this.stops.at(stopIndex).patchValue({ stopProposals: [] });
             }
-          this.changeDetectorRefs.detectChanges();
+            this.changeDetectorRefs.detectChanges();
           })
         )
       );
@@ -1007,9 +1006,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
           polygonExtent[1] + (polygonExtent[3] - polygonExtent[1]) / 2;
         geomCoord = [long, lat];
       } else if (geom.type.search('Polygon') >= 0 && !proposal.extent) {
-        const poly = (new OlGeoJSON()).readFeatures(geom)
-        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates() || poly.getGeometry().getInteriorPoints().getCoordinates()
-        geomCoord=  [geomCoord[0][0],geomCoord[0][1]]
+        const poly = (new OlGeoJSON()).readFeatures(geom);
+        // get the first feature of a multipolygon OR from the single feature of polygon.
+        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates() || poly.getGeometry().getInteriorPoints().getCoordinates();
+        geomCoord = [geomCoord[0][0], geomCoord[0][1]];
       }
 
       if (geomCoord !== undefined) {
