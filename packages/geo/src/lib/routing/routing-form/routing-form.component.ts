@@ -14,6 +14,7 @@ import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
+import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olgeom from 'ol/geom';
 import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
@@ -998,13 +999,17 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         // middle point of coords
         geomCoord = coordArray[Math.floor(coordArray.length / 2)];
-      } else if (geom.type.search('Polygon') >= 0) {
+      } else if (geom.type.search('Polygon') >= 0 && proposal.extent) {
         const polygonExtent = proposal.extent;
         const long =
           polygonExtent[0] + (polygonExtent[2] - polygonExtent[0]) / 2;
         const lat =
           polygonExtent[1] + (polygonExtent[3] - polygonExtent[1]) / 2;
         geomCoord = [long, lat];
+      } else if (geom.type.search('Polygon') >= 0 && !proposal.extent) {
+        const poly = (new OlGeoJSON()).readFeatures(geom)
+        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates() || poly.getGeometry().getInteriorPoints().getCoordinates()
+        geomCoord=  [geomCoord[0][0],geomCoord[0][1]]
       }
 
       if (geomCoord !== undefined) {
