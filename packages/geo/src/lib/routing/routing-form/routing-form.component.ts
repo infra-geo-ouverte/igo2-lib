@@ -6,7 +6,8 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
-  Optional
+  Optional,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
@@ -120,6 +121,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private searchService: SearchService,
     private queryService: QueryService,
     private routingFormService: RoutingFormService,
+    private changeDetectorRefs: ChangeDetectorRef,
     @Optional() private route: RouteService
   ) {}
 
@@ -331,6 +333,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
               this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
               this.stops.at(stopIndex).patchValue({ stopProposals: [] });
             }
+          this.changeDetectorRefs.detectChanges();
           })
         )
       );
@@ -801,6 +804,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this.routesResults = route;
             this.activeRoute = this.routesResults[0] as Routing;
             this.showRouteGeometry(moveToExtent);
+            this.changeDetectorRefs.detectChanges();
           })
         )
       );
@@ -940,6 +944,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this.stops
               .at(this.currentStopIndex)
               .patchValue({ stopProposals: searchProposals });
+            this.changeDetectorRefs.detectChanges();
           })
         )
       );
