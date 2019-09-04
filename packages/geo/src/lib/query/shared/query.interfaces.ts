@@ -13,11 +13,13 @@ export interface QueryableDataSourceOptions extends DataSourceOptions {
   queryable?: boolean;
   queryFormat?: QueryFormat;
   queryTitle?: string;
+  mapTitle?: string;
   queryHtmlTarget?: QueryHtmlTarget;
 }
 
 export interface QueryableDataSource extends DataSource {
   queryTitle?: string;
+  mapTitle?: string;
   queryHtmlTarget?: QueryHtmlTarget;
   options: QueryableDataSourceOptions;
 }

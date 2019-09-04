@@ -21,6 +21,10 @@ export class TileArcGISRestDataSource extends DataSource {
       : 'title';
   }
 
+  get mapTitle(): string {
+    return (this.options as any).mapTitle;
+  }
+
   get queryHtmlTarget(): string {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
