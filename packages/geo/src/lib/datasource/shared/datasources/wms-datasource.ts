@@ -30,8 +30,8 @@ export class WMSDataSource extends DataSource {
       : 'title';
   }
 
-  get mapTitle(): string {
-    return (this.options as any).mapTitle;
+  get mapLabel(): string {
+    return (this.options as any).mapLabel;
   }
 
   get queryHtmlTarget(): string {

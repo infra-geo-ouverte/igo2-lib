@@ -254,7 +254,7 @@ export class QueryService {
     }
 
     return features.map((feature: Feature, index: number) => {
-      let mapTitle = feature.properties[queryDataSource.mapTitle];
+      let mapLabel = feature.properties[queryDataSource.mapLabel];
       let title = feature.properties[queryDataSource.queryTitle];
       if (!title && features.length > 1) {
         title = `${layer.title} (${index + 1})`;
@@ -264,7 +264,7 @@ export class QueryService {
       const meta = Object.assign({}, feature.meta || {}, {
         id: uuid(),
         title,
-        mapTitle: mapTitle,
+        mapTitle: mapLabel,
         sourceTitle: layer.title,
         order: 1000 - layer.zIndex
       });
