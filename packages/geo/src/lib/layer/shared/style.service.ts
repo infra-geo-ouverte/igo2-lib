@@ -73,7 +73,7 @@ export class StyleService {
     const size = data.length;
     const label = styleByAttribute.label.attribute || styleByAttribute.label;
     const labelStyle = this.parseStyle('text',styleByAttribute.label.style) || new olstyle.Text();
-    labelStyle.setText(feature.get(label));
+    labelStyle.setText(this.getLabel(feature, label));
     const baseStyle = styleByAttribute.baseStyle;
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
@@ -229,5 +229,22 @@ export class StyleService {
       }
     }
     return style;
+  }
+
+  getLabel(feature, labelMatch): string {
+    let label = labelMatch;
+    const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g))
+
+    labelToGet.forEach(v => {
+      label = label.replace(v[0], feature.get(v[1]));
+    });
+
+    // Nothing done? check feature's attribute
+    if (labelToGet.length === 0 && label === labelMatch) {
+      label = feature.get(labelMatch) || labelMatch;
+    }
+
+    return label;
+
   }
 }
