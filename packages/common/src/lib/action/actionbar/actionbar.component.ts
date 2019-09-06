@@ -6,14 +6,17 @@ import {
   ChangeDetectionStrategy,
   OnChanges,
   OnDestroy,
-  SimpleChanges
+  SimpleChanges,
+  ElementRef
 } from '@angular/core';
 
+import { MediaService, Media } from '@igo2/core';
 import { EntityStoreWatcher } from '../../entity';
 import { Action } from '../shared/action.interfaces';
 import { ActionbarMode } from '../shared/action.enums';
 import { ActionStore } from '../shared/store';
 import { Overlay } from '@angular/cdk/overlay';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * A list of action buttons.
@@ -26,6 +29,7 @@ import { Overlay } from '@angular/cdk/overlay';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
+
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -55,6 +59,21 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * @internal
    */
   private watcher: EntityStoreWatcher<Action>;
+
+  /**
+   * Height Condition for scroll button
+   */
+  heightCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  /**
+   * Position Condition for top scroll button
+   */
+  positionConditionTop$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+
+  /**
+   * Position Condition for low scroll button
+   */
+  positionConditionLow$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   /**
    * Action store
@@ -143,11 +162,43 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
     return this.horizontal;
   }
 
+  get heightCondition(): boolean {
+    if (this.withTitle === false) {
+      if ((this.store.count * 46) + 184 > document.documentElement.clientHeight) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  get positionConditionTop(): boolean {
+    if (this.elRef.nativeElement.scrollTop === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  get positionConditionLow(): boolean {
+    const el = this.elRef.nativeElement;
+    if (el.scrollTop >= (el.scrollHeight - el.clientHeight)) {
+      return false;
+    }
+    return true;
+  }
+
+  get isDesktop(): boolean {
+    return this.mediaService.getMedia() === Media.Desktop;
+  }
+
   static defaultItemClassFunc(action: Action) {
     return {};
   }
 
-  constructor(private cdRef: ChangeDetectorRef, public overlay: Overlay) {}
+  constructor(
+    public overlay: Overlay,
+    private elRef: ElementRef,
+    private cdRef: ChangeDetectorRef,
+    public mediaService: MediaService) {}
 
   /**
    * @internal
@@ -177,4 +228,14 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
     const args = action.args || [];
     action.handler(...args);
   }
+
+  scrollDown() {
+    console.log(this.mediaService.getMedia());
+    this.elRef.nativeElement.scrollBy(0, 52);
+  }
+
+  scrollUp() {
+    this.elRef.nativeElement.scrollBy(0, -52);
+  }
+
 }
