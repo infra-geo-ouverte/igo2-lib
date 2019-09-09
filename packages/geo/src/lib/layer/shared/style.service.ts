@@ -77,8 +77,8 @@ export class StyleService {
     const baseStyle = styleByAttribute.baseStyle;
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
-        const val = feature.get(attribute);
-        if (val && (val === data[i] || val.match(data[i])) ) {
+        const val = feature.get(attribute) || "";
+        if (val === data[i] || val.toString().match(data[i])) {
           if (icon) {
             style = [
               new olstyle.Style({
@@ -125,7 +125,8 @@ export class StyleService {
       }
     } else if (type === 'regular') {
       for (let i = 0; i < size; i++) {
-        if (feature.get(attribute) === data[i]) {
+        const val = feature.get(attribute) || "";
+        if (val === data[i] || val.toString().match(data[i])) {
           style = [
             new olstyle.Style({
               stroke: new olstyle.Stroke({
@@ -135,12 +136,7 @@ export class StyleService {
               fill: new olstyle.Fill({
                 color: fill ? fill[i] : 'rgba(255,255,255,0.4)'
               }),
-              text: new olstyle.Text({
-                text: feature.get(label),
-                stroke: new olstyle.Stroke({
-                  color: 'black'
-                })
-              })
+              text: labelStyle
             })
           ];
           return style;
