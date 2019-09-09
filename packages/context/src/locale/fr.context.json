@@ -89,9 +89,7 @@
       },
       "sidenav": {
         "goBack": "Revenir",
-        "mainMenu": "Revenir au menu principal",
-        "scrollDown": "Défiler vers le bas",
-        "scrollUp": "Défiler vers le haut"
+        "mainMenu": "Revenir au menu principal"
       },
       "shareMap": {
         "button": "Partager la carte",

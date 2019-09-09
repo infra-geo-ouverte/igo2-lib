@@ -88,9 +88,7 @@
       },
       "sidenav": {
         "goBack": "Go Back",
-        "mainMenu": "Main Menu",
-        "scrollDown": "Scroll Down",
-        "scrollUp": "Scroll Up"
+        "mainMenu": "Main Menu"
       },
       "shareMap": {
         "button": "Share map",

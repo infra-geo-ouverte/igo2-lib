@@ -120,7 +120,7 @@ export class Toolbox {
   /**
    * Activate the tool below, if any
    */
-  activateBelowTool() {
+  /* activateBelowTool() {
     const arrayTools = this.getToolbar();
     const index = arrayTools.findIndex(t => t === this.activeTool$.getValue().name);
     if (arrayTools[index + 1] !== undefined) {
@@ -132,12 +132,12 @@ export class Toolbox {
       const below = arrayTools[0];
       this.activateTool(below);
     }
-  }
+  } */
 
   /**
    * Activate the tool above, if any
    */
-  activateAboveTool() {
+  /* activateAboveTool() {
     const arrayTools = this.getToolbar();
     const index = arrayTools.findIndex(t => t === this.activeTool$.getValue().name);
     if (arrayTools[index - 1] !== undefined) {
@@ -149,7 +149,7 @@ export class Toolbox {
       const above = arrayTools[arrayTools.length - 1];
       this.activateTool(above);
     }
-  }
+  } */
 
   /**
    * Deactivate the active tool

@@ -13,6 +13,10 @@
         "errors": {
           "required": "This field is required"
         }
+      },
+      "actionbar": {
+        "scrollUp": "Scroll up",
+        "scrollDown": "Scroll down"
       }
     }
   }

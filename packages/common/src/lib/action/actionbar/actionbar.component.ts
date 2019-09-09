@@ -106,6 +106,11 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @Input() withTitle = true;
 
   /**
+   * Whether action titles are displayed (condition for scroll button)
+   */
+  @Input() scrollActive = true;
+
+  /**
    * Whether action icons are displayed
    */
   @Input() withIcon = true;
@@ -163,8 +168,9 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   }
 
   get heightCondition(): boolean {
-    if (this.withTitle === false) {
-      if ((this.store.count * 46) + 184 > document.documentElement.clientHeight) {
+    const el = this.elRef.nativeElement;
+    if (this.scrollActive === false) {
+      if (el.clientHeight < el.scrollHeight) {
         return true;
       }
     }
@@ -230,7 +236,6 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   }
 
   scrollDown() {
-    console.log(this.mediaService.getMedia());
     this.elRef.nativeElement.scrollBy(0, 52);
   }
 
