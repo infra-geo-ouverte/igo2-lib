@@ -138,8 +138,12 @@ export class ToolboxComponent implements OnInit, OnDestroy {
     return (tool: Tool) => {
       if (!this.toolbox.activeTool$.value) {
         return;
+      } else {
+        if (this.toolbox.activeTool$.value.parent) {
+          return { 'children-tool-actived': tool.id === this.toolbox.activeTool$.value.parent };
+        }
+        return { 'tool-actived': tool.id === this.toolbox.activeTool$.value.name };
       }
-      return { 'tool-actived': tool.id === this.toolbox.activeTool$.value.name };
     };
   }
 

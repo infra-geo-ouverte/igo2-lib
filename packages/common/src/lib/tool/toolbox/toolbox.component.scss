@@ -53,6 +53,10 @@ igo-actionbar ::ng-deep igo-actionbar-item.tool-actived ::ng-deep mat-list-item 
   background-color: #e0e0e0;
 }
 
+igo-actionbar ::ng-deep igo-actionbar-item.children-tool-actived ::ng-deep mat-list-item {
+  background-color: #e0e0e0;
+}
+
 igo-dynamic-outlet {
   overflow: auto;
 }
