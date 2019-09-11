@@ -3,8 +3,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ChangeDetectionStrategy,
-  Output
+  ChangeDetectionStrategy
 } from '@angular/core';
 
 import { Subscription, BehaviorSubject } from 'rxjs';
