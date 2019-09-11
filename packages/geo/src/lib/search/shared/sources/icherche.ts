@@ -231,6 +231,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         {
           q: this.computeTerm(term),
           geometry: true,
+          bbox: true,
           type:
             'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
         },
