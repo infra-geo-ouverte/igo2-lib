@@ -1,5 +1,6 @@
 <mat-list-item>
   <button mat-list-avatar
+    *ngIf="auth.authenticated"
     mat-icon-button
     igoStopPropagation
     [matTooltip]="auth.authenticated ? ('igo.context.contextManager.favorite' | translate) : ''"
