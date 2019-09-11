@@ -118,6 +118,40 @@ export class Toolbox {
   }
 
   /**
+   * Activate the tool below, if any
+   */
+  /* activateBelowTool() {
+    const arrayTools = this.getToolbar();
+    const index = arrayTools.findIndex(t => t === this.activeTool$.getValue().name);
+    if (arrayTools[index + 1] !== undefined) {
+      this.deactivateTool();
+      const below = arrayTools[index + 1];
+      this.activateTool(below);
+    } else {
+      this.deactivateTool();
+      const below = arrayTools[0];
+      this.activateTool(below);
+    }
+  } */
+
+  /**
+   * Activate the tool above, if any
+   */
+  /* activateAboveTool() {
+    const arrayTools = this.getToolbar();
+    const index = arrayTools.findIndex(t => t === this.activeTool$.getValue().name);
+    if (arrayTools[index - 1] !== undefined) {
+      this.deactivateTool();
+      const above = arrayTools[index - 1];
+      this.activateTool(above);
+    } else {
+      this.deactivateTool();
+      const above = arrayTools[arrayTools.length - 1];
+      this.activateTool(above);
+    }
+  } */
+
+  /**
    * Deactivate the active tool
    */
   deactivateTool() {

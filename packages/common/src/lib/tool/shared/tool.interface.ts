@@ -7,6 +7,9 @@ export interface Tool {
   tooltip?: string;
   options?: { [key: string]: any };
 
+  parent?: string;
+  children?: string[];
+
   // This is still used with the API but should be removed ultimately
   id?: string;
 }

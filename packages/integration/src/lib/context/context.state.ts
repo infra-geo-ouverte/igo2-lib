@@ -64,6 +64,14 @@ export class ContextState {
       tools.push(tool);
     });
 
+    tools.forEach(tool => {
+      if (tool.parent) {
+        const parentIndex = tools.findIndex(el => el.name === tool.parent);
+        tools[parentIndex].children = [];
+        tools[parentIndex].children.push(tool.name);
+      }
+    });
+
     toolbox.setTools(tools);
     toolbox.setToolbar(context.toolbar || []);
 
