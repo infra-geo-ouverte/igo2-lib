@@ -18,6 +18,7 @@ export interface LayerOptions {
   maxResolution?: number;
   showInLayerList?: boolean;
   removable?: boolean;
+  legendOptions?: LegendOptions;
   ol?: olLayer;
   tooltip?: TooltipContent;
 }
@@ -28,12 +29,6 @@ export interface GroupLayers {
   collapsed?: boolean;
 }
 
-export interface LayerLegend {
-  title: string;
-  url: string;
-  image: string;
-}
-
 export interface TooltipContent {
   type?: TooltipType;
   text?: string;
@@ -42,4 +37,23 @@ export enum TooltipType {
   TITLE = 'title',
   ABSTRACT = 'abstract',
   CUSTOM = 'custom'
+}
+
+export interface LegendOptions {
+  collapsed?: boolean;
+  display?: boolean;
+  url?: string;
+  html?: string;
+  stylesAvailable?: ItemStyleOptions[];
+}
+
+export interface ItemStyleOptions {
+  name: string;
+  title?: string;
+  }
+
+export interface OutputLayerLegend {
+  title: string;
+  url: string;
+  image: string;
 }

@@ -175,6 +175,7 @@ export class CatalogService {
           const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
           const timeFilter = this.capabilitiesService.getTimeFilter(layer);
           const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
+          const legendOptions = layer.Style ? this.capabilitiesService.getStyle(layer.Style) : undefined;
 
           const params = Object.assign({}, catalogQueryParams, {
             layers: layer.Name,
@@ -213,6 +214,7 @@ export class CatalogService {
                 abstract,
                 keywordList
               },
+              legendOptions,
               tooltip: { type: catalogTooltipType } as TooltipContent,
               sourceOptions
             }
