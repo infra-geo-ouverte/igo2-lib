@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 
 import olLayer from 'ol/layer/Layer';
 
-import { DataSource } from '../../../datasource';
+import { DataSource, Legend } from '../../../datasource';
 import { IgoMap } from '../../../map';
 
 import { SubjectStatus } from '@igo2/utils';
@@ -11,6 +11,9 @@ import { LayerOptions } from './layer.interface';
 export abstract class Layer {
   public collapsed: boolean;
   public dataSource: DataSource;
+  public legend: Legend[];
+  public legendCollapsed: boolean = true;
+  public firstLoadComponent: boolean = true;
   public map: IgoMap;
   public ol: olLayer;
   public options: LayerOptions;
@@ -94,6 +97,14 @@ export abstract class Layer {
       this.options.visible === undefined ? true : this.options.visible;
     this.opacity =
       this.options.opacity === undefined ? 1 : this.options.opacity;
+
+    if (this.options.legendOptions && (this.options.legendOptions.url || this.options.legendOptions.html)) {
+      this.legend = this.dataSource.setLegend(this.options.legendOptions);
+    }
+
+    this.legendCollapsed = this.options.legendOptions ?
+                            this.options.legendOptions.collapsed ? this.options.legendOptions.collapsed : true :
+                            true;
 
     this.ol.set('_layer', this, true);
   }

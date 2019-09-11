@@ -92,6 +92,7 @@
         "loadingLegendText": "Loading legend",
         "filterPlaceholder": "Filter",
         "noLegendText": "No legend available for this layer",
+        "noLegendScale": "No legend available for this scale",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "removeLayer": "Remove this layer from the map",

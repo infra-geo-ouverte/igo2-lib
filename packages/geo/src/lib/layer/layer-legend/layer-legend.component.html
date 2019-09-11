@@ -1,6 +1,6 @@
 <ng-container *ngIf="legendItems$ | async as items">
   <ng-container *ngIf="items.length; else noItems">
-    <ng-container *ngFor="let item of items">
+    <ng-container *ngFor="let item of items.slice().reverse()" #renderedLegends >
       <mat-list-item *ngIf="item.title">
         <mat-icon
           id="legend-toggle"
@@ -8,21 +8,34 @@
           mat-list-avatar
           igoCollapse
           [target]="legend"
-          [collapsed]="false"
+          [collapsed]="(item.collapsed)"
+          (toggle)="toggleLegendItem($event, item)"
           svgIcon="chevron-up">
         </mat-icon>
         <h4 matLine>{{computeItemTitle(item) | async}}</h4>
+      </mat-list-item>  
+      <mat-list-item *ngIf="currentStyle">
+        <mat-select tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
+          [(ngModel)]="currentStyle" (selectionChange)="onChangeStyle()">
+          <mat-option *ngFor="let style of listStyles()" [value]="style.name">{{style.title}}</mat-option>
+        </mat-select>
       </mat-list-item>
-    
       <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
-        <img
-          *ngIf="item.url"
-          src="{{(item.url | secureImage) | async}}"
-          alt="{{'igo.geo.layer.loadingLegendText' | translate}}">
-        <div
-          [ngStyle]="item.style"
-          [innerHTML]="item.html"
-          *ngIf="item.html">
+        <div *ngIf="!(item.collapsed)">
+          <div *ngIf="item.url">
+            <img #renderedLegend id="{{item.title}}" (load)="onLoadImage(item.title)"
+              src="{{(item.url | secureImage) | async}}"
+              alt="{{'igo.geo.layer.loadingLegendText' | translate}}"
+            >
+            <small *ngIf="imagesHeight[item.title]<16">
+                {{'igo.geo.layer.noLegendScale' | translate}}
+            </small>
+          </div>
+          <div
+            [ngStyle]="item.style"
+            [innerHTML]="item.html"
+            *ngIf="item.html">
+          </div>
         </div>
       </div>
     </ng-container>
