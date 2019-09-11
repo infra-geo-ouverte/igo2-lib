@@ -88,14 +88,21 @@ export class ShareMapService {
       contextLayersID.push(contextLayer.id || contextLayer.source.id);
     }
     const addedLayersByService = [];
-    for (const layer of layers) {
+    for (const layer of layers.filter(
+      l => l.dataSource.options && l.dataSource.options.type === 'wms'
+    )) {
       if (contextLayersID.indexOf(layer.id) === -1) {
         const wmsUrl = (layer.dataSource.options as any).url;
         const addedLayer = (layer.dataSource.options as any).params.layers;
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
-        if (!addedLayersByService.find(definedUrl => definedUrl.url === wmsUrl)) {
-          addedLayersByService.push({ url: wmsUrl, layers: [addedLayerPosition] });
+        if (
+          !addedLayersByService.find(definedUrl => definedUrl.url === wmsUrl)
+        ) {
+          addedLayersByService.push({
+            url: wmsUrl,
+            layers: [addedLayerPosition]
+          });
         } else {
           addedLayersByService.forEach(service => {
             if (service.url === wmsUrl) {
@@ -116,8 +123,12 @@ export class ShareMapService {
         wmsUrlQueryParams += `${service.url},`;
         layersQueryParams += `(${service.layers.join(',')}),`;
       });
-      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',') ? wmsUrlQueryParams.slice(0, -1) : wmsUrlQueryParams;
-      layersQueryParams = layersQueryParams.endsWith(',') ? layersQueryParams.slice(0, -1) : layersQueryParams;
+      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',')
+        ? wmsUrlQueryParams.slice(0, -1)
+        : wmsUrlQueryParams;
+      layersQueryParams = layersQueryParams.endsWith(',')
+        ? layersQueryParams.slice(0, -1)
+        : layersQueryParams;
       addedLayersQueryParams = `${wmsUrlKey}=${wmsUrlQueryParams}&${layersKey}=${layersQueryParams}`;
     }
 
@@ -139,9 +150,7 @@ export class ShareMapService {
       }
     }
 
-    let url = `${location.origin}${
-      location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParams}`;
+    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParams}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
