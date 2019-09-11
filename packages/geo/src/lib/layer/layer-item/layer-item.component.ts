@@ -19,7 +19,7 @@ import { Layer, TooltipType } from '../shared/layers';
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
 
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -53,12 +53,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit() {
-    const legend = this.layer.dataSource.options.legend || {};
-    let legendCollapsed = legend.collapsed === false ? false : true;
-    if (this.layer.visible && this.expandLegendIfVisible) {
-      legendCollapsed = false;
+    if (this.layer.visible && this.expandLegendIfVisible && (this.layer.firstLoadComponent === true)) {
+      this.layer.firstLoadComponent = false;
+      this.layer.legendCollapsed = false;
     }
-    this.toggleLegend(legendCollapsed);
+    this.toggleLegend(this.layer.legendCollapsed);
     this.updateQueryBadge();
 
     const resolution$ = this.layer.map.viewController.resolution$;
@@ -73,6 +72,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   toggleLegend(collapsed: boolean) {
+    this.layer.legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
   }
 

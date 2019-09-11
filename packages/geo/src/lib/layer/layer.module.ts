@@ -9,7 +9,8 @@ import {
   MatTooltipModule,
   MatListModule,
   MatSliderModule,
-  MatBadgeModule
+  MatBadgeModule,
+  MatSelectModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -35,6 +36,7 @@ import { LayerListBindingDirective } from './layer-list/layer-list-binding.direc
     FormsModule,
     MatIconModule,
     MatButtonModule,
+    MatSelectModule,
     MatTooltipModule,
     MatListModule,
     MatSliderModule,

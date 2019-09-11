@@ -96,8 +96,7 @@ export class SearchResultsToolComponent {
     private mapState: MapState,
     private layerService: LayerService,
     private searchState: SearchState
-  ) {
-  }
+  ) {}
 
   /**
    * Try to add a feature to the map when it's being focused

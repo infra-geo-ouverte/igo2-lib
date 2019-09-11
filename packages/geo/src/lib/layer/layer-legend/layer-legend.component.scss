@@ -1,3 +1,13 @@
 .igo-layer-legend.with-title {
   padding-left: 18px;
 }
+img:before {
+  content: ' ';
+  display: block;
+  position: absolute;
+  height: 16px;
+  width: 16px;      
+  background-image: url('./assets/igo2/geo/images/loading.png');
+  background-repeat: no-repeat;
+  background-color: white;
+}

@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 
 import { RouteService, ConfigService, MessageService } from '@igo2/core';
-import { IgoMap, RoutingFormService } from '@igo2/geo';
+import { IgoMap } from '@igo2/geo';
 
 import { ContextService } from '../../context-manager/shared/context.service';
 
@@ -15,7 +15,6 @@ export class ShareMapService {
     private config: ConfigService,
     private contextService: ContextService,
     private messageService: MessageService,
-    @Optional() private routingFormService: RoutingFormService,
     @Optional() private route: RouteService
   ) {
     this.apiUrl = this.config.getConfig('context.url');
@@ -57,22 +56,6 @@ export class ShareMapService {
     let visibleKey = this.route.options.visibleOnLayersKey;
     let invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
-
-    const routingKey = this.route.options.routingCoordKey;
-    const stopsCoordinates = [];
-    if (
-      this.routingFormService &&
-      this.routingFormService.getStopsCoordinates() &&
-      this.routingFormService.getStopsCoordinates().length !== 0
-    ) {
-      this.routingFormService.getStopsCoordinates().forEach(coord => {
-        stopsCoordinates.push(coord);
-      });
-    }
-    let routingUrl = '';
-    if (stopsCoordinates.length >= 2) {
-      routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
-    }
 
     const visibleLayers = layers.filter(lay => lay.visible);
     const invisibleLayers = layers.filter(lay => !lay.visible);
@@ -158,7 +141,7 @@ export class ShareMapService {
 
     let url = `${location.origin}${
       location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}&${addedLayersQueryParams}`;
+    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParams}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
