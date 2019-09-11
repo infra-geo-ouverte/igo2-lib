@@ -89,6 +89,7 @@
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
+        "filterPlaceholder": "Filtre",
         "noLegendText": "Aucune légende disponible pour cette couche",
         "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
@@ -99,10 +100,10 @@
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
         "subsetLayersListKeywordPlaceholder": "Filtre",
-        "subsetLayersListOnlyVisible": "Conserver que les couches qui sont visible",
-        "subsetLayersListOnlyInRange": "Conserver que les couches qui sont dans la plage de résolution active",
-        "sortAlphabetically": "Trier la liste des couches alphabétiquement.",
-        "sortMapOrder": "Replacer les couches selon l'ordre cartographique.",
+        "subsetLayersListOnlyVisible": "Conserver les couches visibles",
+        "subsetLayersListOnlyInRange": "Conserver les couches qui sont dans la plage de résolution active",
+        "sortAlphabetically": "Trier la liste des couches alphabétiquement",
+        "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Supprimer le filtre appliqué à la liste"
       },
       "download": {
@@ -210,6 +211,9 @@
             "metadataUrl": "Métadonnées"
           }
         },
+        "coordinates": {
+          "name": "Coordonnées"
+        },
         "menu.tooltip": "Options de recherche",
         "settings": {
           "title": "Paramètres"
@@ -217,8 +221,8 @@
         "searchSources": {
           "settings": {
             "results type": "Type de résultat",
-            "trust level": "Niveau de confiance",
-            "results limit": "Limite",
+            "ecmax": "Écart maximal",
+            "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
             "country limitation": "Limitation (pays)"
           }

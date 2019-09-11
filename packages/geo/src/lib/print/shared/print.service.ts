@@ -34,7 +34,7 @@ export class PrintService {
     const status$ = new Subject();
 
     const paperFormat: string = options.paperFormat;
-    const resolution = +options.resolution;  // Default is 96
+    const resolution = +options.resolution; // Default is 96
     const orientation = options.orientation;
 
     this.activityId = this.activityService.register();
@@ -98,7 +98,10 @@ export class PrintService {
    */
   getLayersLegendHtml(map: IgoMap, width: number, resolution: number): string {
     let html = '';
-    const legends = getLayersLegends(map.layers, map.viewController.getScale(resolution));
+    const legends = getLayersLegends(
+      map.layers,
+      map.viewController.getScale(resolution)
+    );
     if (legends.length === 0) {
       return html;
     }
@@ -129,7 +132,12 @@ export class PrintService {
    * * @param  format - Image format. default value to "png"
    * @return The image of the legend
    */
-  getLayersLegendImage(map, format: string = 'png', doZipFile: boolean, resolution: number) {
+  getLayersLegendImage(
+    map,
+    format: string = 'png',
+    doZipFile: boolean,
+    resolution: number
+  ) {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
@@ -150,22 +158,26 @@ export class PrintService {
     div.innerHTML = html;
     // Define event to execute after all images are loaded to create the canvas
     setTimeout(() => {
-      html2canvas(div, { useCORS: true }).then(canvas => {
-        let status = SubjectStatus.Done;
-        try {
-          if (!doZipFile) {
-            // Save the canvas as file
-            that.saveCanvasImageAsFile(canvas, 'legendImage', format);
-          } else {
-            // Add the canvas to zip
-            that.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
+      html2canvas(div, { useCORS: true })
+        .then(canvas => {
+          let status = SubjectStatus.Done;
+          try {
+            if (!doZipFile) {
+              // Save the canvas as file
+              that.saveCanvasImageAsFile(canvas, 'legendImage', format);
+            } else {
+              // Add the canvas to zip
+              that.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
+            }
+            div.parentNode.removeChild(div); // remove temp div (IE)
+          } catch (err) {
+            status = SubjectStatus.Error;
           }
-          div.parentNode.removeChild(div); // remove temp div (IE)
-        } catch (err) {
-          status = SubjectStatus.Error;
-        }
-        status$.next(status);
-      });
+          status$.next(status);
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }, 500);
   }
 
@@ -247,7 +259,12 @@ export class PrintService {
    * @param  map - Map of the app
    * @param  margins - Page margins
    */
-  private addLegend(doc: jsPDF, map: IgoMap, margins: Array<number>, resolution: number) {
+  private addLegend(
+    doc: jsPDF,
+    map: IgoMap,
+    margins: Array<number>,
+    resolution: number
+  ) {
     const that = this;
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
@@ -260,17 +277,21 @@ export class PrintService {
 
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
-    html2canvas(div, { useCORS: true }).then(canvas => {
-      let imgData;
-      const position = 10;
+    html2canvas(div, { useCORS: true })
+      .then(canvas => {
+        let imgData;
+        const position = 10;
 
-      imgData = canvas.toDataURL('image/png');
-      doc.addPage();
-      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-      doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-      that.saveDoc(doc);
-      div.parentNode.removeChild(div); // remove temp div (IE style)
-    });
+        imgData = canvas.toDataURL('image/png');
+        doc.addPage();
+        const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
+        doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
+        that.saveDoc(doc);
+        div.parentNode.removeChild(div); // remove temp div (IE style)
+      })
+      .catch(e => {
+        console.log(e);
+      });
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);

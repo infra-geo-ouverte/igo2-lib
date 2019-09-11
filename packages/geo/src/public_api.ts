@@ -29,6 +29,7 @@ export * from './lib/query/query.module';
 export * from './lib/routing/routing.module';
 export * from './lib/search/search.module';
 export * from './lib/search/search-bar/search-bar.module';
+export * from './lib/search/search-bar/search-bar.component';
 export * from './lib/search/search-results/search-results.module';
 export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
