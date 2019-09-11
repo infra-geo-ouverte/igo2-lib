@@ -317,7 +317,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    */
   private computeTerm(term: string): string {
-    return term.replace(/(#[^\s]*)/g, '');
+    return term.replace(/(#[^\s]*)/g, '').replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
   }
 
   /**
