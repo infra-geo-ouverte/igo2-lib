@@ -19,6 +19,10 @@ export class CartoDataSource extends DataSource {
       : 'title';
   }
 
+  get mapLabel(): string {
+    return (this.options as any).mapLabel;
+  }
+
   get queryHtmlTarget(): string {
     return (this.options as any).queryHtmlTarget
       ? (this.options as any).queryHtmlTarget
