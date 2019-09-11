@@ -1,4 +1,4 @@
-import { Directive, OnInit, OnDestroy, Optional } from '@angular/core';
+import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
 import { Subscription, of, zip } from 'rxjs';
 import { withLatestFrom, skip, filter } from 'rxjs/operators';
@@ -24,6 +24,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private queryParams: any;
 
   private contextLayers: Layer[] = [];
+
+  @Input() removeLayersOnContextChange: boolean = true;
 
   get map(): IgoMap {
     return this.component.map;
@@ -62,8 +64,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private handleContextChange(context: DetailedContext) {
     if (context.layers === undefined) { return; }
-
-    this.map.removeLayers(this.contextLayers);
+    if (this.removeLayersOnContextChange === true) {
+      this.map.removeAllLayers();
+    } else {
+      this.map.removeLayers(this.contextLayers);
+    }
     this.contextLayers = [];
 
     const layersAndIndex$ = zip(...context.layers.map((layerOptions: LayerOptions, index: number) => {
