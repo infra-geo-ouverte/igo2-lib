@@ -26,6 +26,7 @@ export interface DetailedContext extends Context {
   layers?: LayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
+  removeLayersOnContextChange?: boolean;
 }
 
 export interface ContextMapView extends MapViewOptions {
