@@ -47,7 +47,7 @@ export class SearchResultsToolComponent {
   /**
    * to show hide results icons
    */
-  @Input() showIcons: boolean = false;
+  @Input() showIcons: boolean = true;
 
   /**
    * Store holding the search results
