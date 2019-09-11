@@ -103,7 +103,7 @@ export function featureFromOl(
 
   const title = olFeature.get('_title');
   const mapTitle = olFeature.get('_mapTitle');
-  const id = olFeature.getId()?olFeature.getId():uuid();
+  const id = olFeature.getId() ? olFeature.getId() : uuid();
 
   return {
     type: FEATURE,
