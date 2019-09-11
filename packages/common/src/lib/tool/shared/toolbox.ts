@@ -76,6 +76,14 @@ export class Toolbox {
   }
 
   /**
+   * Get toolbar
+   * @returns Toolbar value
+   */
+  getToolbar(): string[] {
+    return this.toolbar$.getValue();
+  }
+
+  /**
    * Set toolbar
    * @param toolbar A list of tool names
    */
