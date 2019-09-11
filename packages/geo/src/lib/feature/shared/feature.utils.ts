@@ -3,6 +3,7 @@ import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
+import { uuid } from '@igo2/utils';
 
 import {
   EntityKey,
@@ -102,7 +103,7 @@ export function featureFromOl(
 
   const title = olFeature.get('_title');
   const mapTitle = olFeature.get('_mapTitle');
-  const id = olFeature.getId();
+  const id = olFeature.getId() ? olFeature.getId() : uuid();
 
   return {
     type: FEATURE,
