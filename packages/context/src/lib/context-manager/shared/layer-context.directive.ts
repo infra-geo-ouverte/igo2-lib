@@ -1,6 +1,6 @@
 import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
-import { Subscription, of, zip, BehaviorSubject } from 'rxjs';
+import { Subscription, of, zip } from 'rxjs';
 import { withLatestFrom, skip, filter } from 'rxjs/operators';
 
 import { RouteService } from '@igo2/core';
