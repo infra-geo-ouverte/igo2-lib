@@ -42,7 +42,7 @@ export class StyleService {
         break;
     }
 
-    return olKey || key;
+    return olKey || key;
   }
 
   private getOlCls(key: any) {
@@ -71,14 +71,16 @@ export class StyleService {
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
     const size = data.length;
-    const label = styleByAttribute.label.attribute || styleByAttribute.label;
-    const labelStyle = this.parseStyle('text',styleByAttribute.label.style) || new olstyle.Text();
+    const label = styleByAttribute.label.attribute || styleByAttribute.label;
+    const labelStyle =
+      this.parseStyle('text', styleByAttribute.label.style) ||
+      new olstyle.Text();
     labelStyle.setText(this.getLabel(feature, label));
     const baseStyle = styleByAttribute.baseStyle;
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
-        const val = feature.get(attribute) || "";
-        if (val === data[i] || val.toString().match(data[i])) {
+        const val = feature.get(attribute) || '';
+        if (val === data[i] || val.toString().match(data[i])) {
           if (icon) {
             style = [
               new olstyle.Style({
@@ -125,8 +127,8 @@ export class StyleService {
       }
     } else if (type === 'regular') {
       for (let i = 0; i < size; i++) {
-        const val = feature.get(attribute) || "";
-        if (val === data[i] || val.toString().match(data[i])) {
+        const val = feature.get(attribute) || '';
+        if (val === data[i] || val.toString().match(data[i])) {
           style = [
             new olstyle.Style({
               stroke: new olstyle.Stroke({
@@ -202,9 +204,9 @@ export class StyleService {
     return style;
   }
 
-  getLabel(feature, labelMatch): string {
+  getLabel(feature, labelMatch): string {
     let label = labelMatch;
-    const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g))
+    const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
 
     labelToGet.forEach(v => {
       label = label.replace(v[0], feature.get(v[1]));
@@ -212,10 +214,9 @@ export class StyleService {
 
     // Nothing done? check feature's attribute
     if (labelToGet.length === 0 && label === labelMatch) {
-      label = feature.get(labelMatch) || labelMatch;
+      label = feature.get(labelMatch) || labelMatch;
     }
 
     return label;
-
   }
 }

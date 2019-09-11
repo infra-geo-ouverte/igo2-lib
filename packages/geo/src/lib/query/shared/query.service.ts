@@ -44,15 +44,23 @@ export class QueryService {
       return of([]);
     }
 
-    if ((layer.dataSource as QueryableDataSource).options.queryFormat === QueryFormat.HTMLGML2) {
+    if (
+      (layer.dataSource as QueryableDataSource).options.queryFormat ===
+      QueryFormat.HTMLGML2
+    ) {
       const urlGml = this.getQueryUrl(layer.dataSource, options, true);
-      return this.http.get(urlGml, { responseType: 'text' })
-      .pipe(mergeMap(gmlRes => {
-        const imposedGeom = this.mergeGML(gmlRes, url);
-        return this.http.get(url, { responseType: 'text' })
-          .pipe(map((res => this.extractData(res, layer, options, url, imposedGeom))));
-      }
-      ));
+      return this.http.get(urlGml, { responseType: 'text' }).pipe(
+        mergeMap(gmlRes => {
+          const imposedGeom = this.mergeGML(gmlRes, url);
+          return this.http
+            .get(url, { responseType: 'text' })
+            .pipe(
+              map(res =>
+                this.extractData(res, layer, options, url, imposedGeom)
+              )
+            );
+        })
+      );
     }
 
     const request = this.http.get(url, { responseType: 'text' });
@@ -83,8 +91,7 @@ export class QueryService {
     olextent.extend(bboxExtent, bbox);
     const outBboxExtent = false;
     features.map(feature => {
-
-    /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
+      /*  if (!feature.getGeometry().simplify(100).intersectsExtent(bboxExtent)) {
         outBboxExtent = true;
         // TODO: Check to project the geometry?
       }*/
@@ -105,11 +112,13 @@ export class QueryService {
             break;
           case 'LineString':
             olmline.appendLineString(
-              new olgeom.LineString(featureGeometryCoordinates, 'XY'));
+              new olgeom.LineString(featureGeometryCoordinates, 'XY')
+            );
             break;
           case 'Polygon':
             olmpoly.appendPolygon(
-              new olgeom.Polygon(featureGeometryCoordinates, 'XY'));
+              new olgeom.Polygon(featureGeometryCoordinates, 'XY')
+            );
             break;
           case 'MultiPolygon':
             olmpoly = new olgeom.MultiPolygon(featureGeometryCoordinates, 'XY');
@@ -148,8 +157,8 @@ export class QueryService {
         };
       case 'MultiPolygon':
         return {
-            type: olmpoly.getType(),
-            coordinates: olmpoly.getCoordinates()
+          type: olmpoly.getType(),
+          coordinates: olmpoly.getCoordinates()
         };
       default:
         return;
@@ -172,7 +181,10 @@ export class QueryService {
 
     const lower = [];
     for (const point of points) {
-      while (lower.length >= 2 && this.cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) {
+      while (
+        lower.length >= 2 &&
+        this.cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0
+      ) {
         lower.pop();
       }
       lower.push(point);
@@ -180,7 +192,14 @@ export class QueryService {
 
     const upper = [];
     for (let i = points.length - 1; i >= 0; i--) {
-      while (upper.length >= 2 && this.cross(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
+      while (
+        upper.length >= 2 &&
+        this.cross(
+          upper[upper.length - 2],
+          upper[upper.length - 1],
+          points[i]
+        ) <= 0
+      ) {
         upper.pop();
       }
       upper.push(points[i]);
@@ -254,7 +273,7 @@ export class QueryService {
     }
 
     return features.map((feature: Feature, index: number) => {
-      let mapLabel = feature.properties[queryDataSource.mapLabel];
+      const mapLabel = feature.properties[queryDataSource.mapLabel];
       let title = feature.properties[queryDataSource.queryTitle];
       if (!title && features.length > 1) {
         title = `${layer.title} (${index + 1})`;
@@ -323,7 +342,12 @@ export class QueryService {
     return [];
   }
 
-  private extractHtmlData(res, htmlTarget: QueryHtmlTarget, url, imposedGeometry?) {
+  private extractHtmlData(
+    res,
+    htmlTarget: QueryHtmlTarget,
+    url,
+    imposedGeometry?
+  ) {
     // _blank , iframe or undefined
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
@@ -402,7 +426,10 @@ export class QueryService {
         type: FEATURE,
         projection,
         properties: { target: htmlTarget, body: res, url },
-        geometry: imposedGeometry || { type: f.getType(), coordinates: f.getCoordinates() }
+        geometry: imposedGeometry || {
+          type: f.getType(),
+          coordinates: f.getCoordinates()
+        }
       }
     ];
   }
@@ -467,15 +494,17 @@ export class QueryService {
         const wmsDatasource = datasource as WMSDataSource;
 
         const WMSGetFeatureInfoOptions = {
-          INFO_FORMAT: wmsDatasource.params.info_format ||
+          INFO_FORMAT:
+            wmsDatasource.params.info_format ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
           QUERY_LAYERS: wmsDatasource.params.layers,
           FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
         };
 
         if (forceGML2) {
-          WMSGetFeatureInfoOptions.INFO_FORMAT =
-            this.getMimeInfoFormat(QueryFormat.GML2);
+          WMSGetFeatureInfoOptions.INFO_FORMAT = this.getMimeInfoFormat(
+            QueryFormat.GML2
+          );
         }
 
         url = wmsDatasource.ol.getGetFeatureInfoUrl(
