@@ -59,6 +59,42 @@ export class SearchSettingsComponent {
   }
 
   /**
+   * Defining the action to do for check/uncheck checkboxes
+   * return true if all checkbox must be checked
+   * return false if all checkbox must be unchecked
+   * @internal
+   */
+  computeCheckAllBehavior(setting: SearchSourceSettings) {
+    if (setting.allEnabled === undefined) {
+      if (setting.values.find(settingValue => settingValue.enabled)) {
+        setting.allEnabled = false;
+      } else {
+        setting.allEnabled = true;
+      }
+    } else {
+      setting.allEnabled = !setting.allEnabled;
+    }
+  }
+
+  /**
+   * Triggered when the check all / uncheck all type is clicked,
+   * @internal
+   */
+  checkUncheckAll(
+    event,
+    source: SearchSource,
+    setting: SearchSourceSettings
+  ) {
+    event.stopPropagation();
+    this.computeCheckAllBehavior(setting);
+    setting.values.forEach(settingValue => {
+      settingValue.enabled = setting.allEnabled;
+    });
+    source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
+  }
+
+  /**
    * Triggered when a setting is checked (radiobutton style)
    * @internal
    */

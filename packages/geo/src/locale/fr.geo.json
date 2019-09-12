@@ -224,7 +224,9 @@
             "ecmax": "Écart maximal",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "country limitation": "Limitation (pays)"
+            "country limitation": "Limitation (pays)",
+            "selectAll": "Tout sélectionner",
+            "unselectAll": "Tout désélectionner"
           }
         }
       },

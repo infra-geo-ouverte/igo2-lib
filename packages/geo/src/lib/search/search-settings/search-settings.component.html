@@ -56,6 +56,10 @@
                   </mat-radio-group>
                 </span>
                 <span *ngSwitchCase="'checkbox'">
+                  <div class="checkAllButton" *ngIf="setting.values.length > 3">
+                    <button mat-raised-button
+                      (click)="checkUncheckAll($event, source, setting)">{{setting.allEnabled || setting.allEnabled === undefined  ? ('igo.geo.search.searchSources.settings.unselectAll' | translate): ('igo.geo.search.searchSources.settings.selectAll' | translate)}}</button>
+                  </div>
                   <mat-checkbox class="igo-search-settings-radio-group"
                     class="mat-menu-item"
                     [checked]="settingValue.enabled"

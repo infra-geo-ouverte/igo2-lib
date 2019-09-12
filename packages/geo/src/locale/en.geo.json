@@ -2,7 +2,6 @@
   "igo": {
     "geo": {
       "catalog": {
-        "baseLayers": "Base Layers",
         "layer.addToMap": "Add to map",
         "layer.removeFromMap": "Remove from map",
         "group.addToMap": "Add all layers from this group to map",
@@ -225,7 +224,9 @@
             "ecmax": "Maximum deviation",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
-            "country limitation": "Limitation (country)"
+            "country limitation": "Limitation (country)",
+            "selectAll": "Select All",
+            "unselectAll": "Unselect All"
           }
         }
       },
