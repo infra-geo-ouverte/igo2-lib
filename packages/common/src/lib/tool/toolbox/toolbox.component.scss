@@ -46,15 +46,6 @@ igo-actionbar:not(.with-title) {
   @include mobile {
     overflow: auto;
   }
-
-}
-
-igo-actionbar ::ng-deep igo-actionbar-item.tool-actived ::ng-deep mat-list-item {
-  background-color: #e0e0e0;
-}
-
-igo-actionbar ::ng-deep igo-actionbar-item.children-tool-actived ::ng-deep mat-list-item {
-  background-color: #e0e0e0;
 }
 
 igo-dynamic-outlet {
