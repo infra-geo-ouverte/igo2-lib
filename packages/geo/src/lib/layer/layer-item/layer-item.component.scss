@@ -27,13 +27,9 @@
   width: calc(100% - 18px);
 }
 
-// #opacity-slider {
-//   width: 100%;
-//
-//   @include mobile {
-//     width: 70%;
-//   }
-// }
+#opacity-slider {
+  float: left;
+}
 
 .igo-layer-button-group {
   float: right;
