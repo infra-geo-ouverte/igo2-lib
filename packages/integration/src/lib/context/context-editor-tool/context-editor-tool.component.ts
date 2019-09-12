@@ -5,7 +5,8 @@ import { ToolComponent } from '@igo2/common';
 @ToolComponent({
   name: 'contextEditor',
   title: 'igo.integration.tools.contexts',
-  icon: 'star'
+  icon: 'star',
+  parent: 'contextManager'
 })
 @Component({
   selector: 'igo-context-editor-tool',
