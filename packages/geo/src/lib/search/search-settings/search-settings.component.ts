@@ -58,6 +58,18 @@ export class SearchSettingsComponent {
     this.searchSourceChange.emit(source);
   }
 
+  checkUncheckAll(
+    event: MatCheckboxChange,
+    source: SearchSource,
+    setting: SearchSourceSettings
+  ) {
+    setting.values.forEach(settingValue => {
+      settingValue.enabled = event.checked;
+    });
+    source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
+  }
+
   /**
    * Triggered when a setting is checked (radiobutton style)
    * @internal

@@ -57,6 +57,12 @@
                 </span>
                 <span *ngSwitchCase="'checkbox'">
                   <mat-checkbox class="igo-search-settings-radio-group"
+                    *ngIf="setting.values.length > 3"
+                    class="mat-menu-item"
+                    (click)="$event.stopPropagation()"
+                    (change)="checkUncheckAll($event, source, setting)">Select/Unselect All
+                  </mat-checkbox>
+                  <mat-checkbox class="igo-search-settings-radio-group"
                     class="mat-menu-item"
                     [checked]="settingValue.enabled"
                     [value]="setting"
