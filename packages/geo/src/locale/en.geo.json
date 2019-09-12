@@ -2,7 +2,6 @@
   "igo": {
     "geo": {
       "catalog": {
-        "baseLayers": "Base Layers",
         "layer.addToMap": "Add to map",
         "layer.removeFromMap": "Remove from map",
         "group.addToMap": "Add all layers from this group to map",
