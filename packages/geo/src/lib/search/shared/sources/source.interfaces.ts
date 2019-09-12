@@ -15,6 +15,7 @@ export interface SearchSourceSettings {
   values: SettingOptions[];
   title: string;
   name: string;
+  allEnabled?: boolean;
 }
 
 export interface SettingOptions {
