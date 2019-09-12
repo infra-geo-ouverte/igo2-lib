@@ -1,5 +1,9 @@
 @import '../../../../../core/src/style/partial/core.variables';
 
+.checkAllButton{
+  text-align: center;
+}
+
 .igo-search-settings-button ::ng-deep div.mat-button-ripple-round  {
   border-radius: 0;
 }
