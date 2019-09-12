@@ -37,7 +37,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Invalid keys
    */
-  static invalidKeys = ['Control', 'Shift', 'Alt'];
+  static invalidKeys = ['Control', 'Shift', 'Alt', 'ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'];
 
   readonly placeholder$: BehaviorSubject<string> = new BehaviorSubject('search.placeholder');
 
@@ -211,11 +211,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @internal
    */
   onKeyup(event: KeyboardEvent) {
-    const key = (event.target as HTMLInputElement).value;
+    const key = event.key;
     if (!this.keyIsValid(key)) {
       return;
     }
-    this.setTerm(key);
+    const term = (event.target as HTMLInputElement).value;
+    this.setTerm(term);
   }
 
   /**
