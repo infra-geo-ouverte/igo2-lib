@@ -9,6 +9,7 @@ import {
 import { MatSlider } from '@angular/material';
 import * as moment from 'moment';
 
+import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterOptions } from '../shared/time-filter.interface';
 
 @Component({
@@ -17,6 +18,8 @@ import { TimeFilterOptions } from '../shared/time-filter.interface';
   styleUrls: ['./time-filter-form.component.scss']
 })
 export class TimeFilterFormComponent implements OnInit {
+  @Input() layer: Layer;
+
   @Input()
   get options(): TimeFilterOptions {
     return this._options;

@@ -10,14 +10,7 @@ import { TimeFilterService } from '../shared/time-filter.service';
   styleUrls: ['./time-filter-item.component.scss']
 })
 export class TimeFilterItemComponent {
-  @Input()
-  get layer(): Layer {
-    return this._layer;
-  }
-  set layer(value: Layer) {
-    this._layer = value;
-  }
-  private _layer: Layer;
+  @Input() layer: Layer;
 
   get datasource(): TimeFilterableDataSource {
     return this.layer.dataSource as TimeFilterableDataSource;
