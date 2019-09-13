@@ -14,6 +14,7 @@ export interface TimeFilterOptions {
   step?: number;
   timeInterval?: number;
   current?: boolean;
+  enabled?: boolean;
 }
 
 export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {
