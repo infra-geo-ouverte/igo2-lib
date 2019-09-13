@@ -117,6 +117,7 @@ export class VectorLayer extends Layer {
           break;
       }
 
+      styleClone.setText('');
       vectorContext.setStyle(styleClone);
       vectorContext.drawGeometry(flashGeom);
 
@@ -150,7 +151,10 @@ export class VectorLayer extends Layer {
     this.dataSource.ol.un(
       'addfeature',
       function(e) {
-        this.flash(e.feature);
+        if (this.visible) {
+          this.flash(e.feature);
+        }
+
       }.bind(this)
     );
   }
