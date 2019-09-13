@@ -5,7 +5,8 @@ import {
   IgoMap,
   DataSourceService,
   LayerService,
-  TimeFilterableDataSourceOptions
+  TimeFilterableDataSourceOptions,
+  TimeFilterType, TimeFilterStyle
 } from '@igo2/geo';
 
 @Component({
@@ -57,8 +58,8 @@ export class AppTimeFilterComponent {
         min: '2017-01-01',
         max: '2018-01-01',
         range: true,
-        type: 'datetime',
-        style: 'slider',
+        type: TimeFilterType.DATETIME,
+        style: TimeFilterStyle.SLIDER,
         step: 86400000,
         timeInterval: 2000
       }
