@@ -53,6 +53,10 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     interactions: false
   });
 
+  @Input() expand: boolean;
+
+  @Input() withTitle: boolean;
+
   constructor(private layerService: LayerService, private appRef: ApplicationRef) {}
 
   ngAfterViewInit() {
