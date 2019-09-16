@@ -11,7 +11,7 @@
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
       },
-      "miniBaseMap": {
+      "baselayersSwitcher": {
         "title": "Fonds de carte"
       },
       "dropGeoFile": {

@@ -11,7 +11,7 @@
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
       },
-      "miniBaseMap": {
+      "baselayersSwitcher": {
         "title": "Basemaps"
       },
       "dropGeoFile": {
