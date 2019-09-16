@@ -20,6 +20,7 @@ import {
   TileArcGISRestDataSourceOptions
 } from './datasources';
 import { LegendOptions, ItemStyleOptions } from '../../layer/shared/layers/layer.interface';
+import { TimeFilterType, TimeFilterStyle } from '../../filter/shared/time-filter.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -243,8 +244,8 @@ export class CapabilitiesService {
         min: min.toUTCString(),
         max: max.toUTCString(),
         range: true,
-        type: 'datetime',
-        style: 'calendar'
+        type: TimeFilterType.DATETIME,
+        style: TimeFilterStyle.CALENDAR
       };
     }
     const params = Object.assign(
@@ -285,8 +286,8 @@ export class CapabilitiesService {
         min: min.toUTCString(),
         max: max.toUTCString(),
         range: true,
-        type: 'datetime',
-        style: 'calendar'
+        type: TimeFilterType.DATETIME,
+        style: TimeFilterStyle.CALENDAR
       };
     }
     const params = Object.assign(
