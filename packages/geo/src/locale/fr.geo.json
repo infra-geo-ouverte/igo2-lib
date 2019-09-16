@@ -11,6 +11,9 @@
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
       },
+      "baselayersSwitcher": {
+        "title": "Fonds de carte"
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",

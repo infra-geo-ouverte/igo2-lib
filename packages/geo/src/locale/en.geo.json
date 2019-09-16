@@ -11,6 +11,9 @@
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
       },
+      "baselayersSwitcher": {
+        "title": "Basemaps"
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "The file '{{value}}' is invalid ({{mimeType}})",
