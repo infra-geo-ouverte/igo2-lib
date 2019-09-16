@@ -184,6 +184,10 @@ export class CatalogService {
     const catalogQueryParams = catalog.queryParams || {};
     const catalogSourceOptions = catalog.sourceOptions || {};
 
+    if (!layerList.Layer) {
+      return;
+    }
+
     for (const group of layerList.Layer) {
       if (group.Layer !== undefined) {
         // recursive, check next level
