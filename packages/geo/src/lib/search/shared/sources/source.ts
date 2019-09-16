@@ -152,8 +152,8 @@ export class SearchSource {
       searchSourceSetting.values.forEach(conf => {
         const hashtagKey = hashtag.substring(1);
         if (typeof conf.value === 'string') {
-          const types = conf.value.split(',');
-          const index = types.indexOf(hashtagKey);
+          const types = conf.value.toLowerCase().split(',');
+          const index = types.indexOf(hashtagKey.toLowerCase());
           if (index !== -1) {
             hashtagsValid.push(types[index]);
           }
