@@ -36,14 +36,15 @@ import { CatalogState } from '../catalog.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
-
   catalog: Catalog;
 
   /**
    * Store that contains the catalog items
    * @internal
    */
-  store$ = new BehaviorSubject<EntityStore<CatalogItem, CatalogItemState>>(undefined);
+  store$ = new BehaviorSubject<EntityStore<CatalogItem, CatalogItemState>>(
+    undefined
+  );
 
   /**
    * Subscription to the selected catalog

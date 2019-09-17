@@ -103,7 +103,6 @@ export class CatalogService {
   private loadCatalogBaseLayerItems(
     catalog: Catalog
   ): Observable<CatalogItemGroup[]> {
-    // TODO: I'm not sure this works
     return this.getCatalogBaseLayersOptions(catalog).pipe(
       map((layersOptions: LayerOptions[]) => {
         const items = layersOptions.map((layerOptions: LayerOptions) => {
