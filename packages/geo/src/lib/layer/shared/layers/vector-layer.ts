@@ -49,6 +49,10 @@ export class VectorLayer extends Layer {
       );
     }
 
+    if (this.options.trackFeature) {
+      this.trackFeature(this.options.trackFeature);
+    }
+
     return new olLayerVector(olOptions);
   }
 
@@ -155,6 +159,35 @@ export class VectorLayer extends Layer {
           this.flash(e.feature);
         }
 
+      }.bind(this)
+    );
+  }
+
+  public trackFeature(id: string | number) {
+    this.dataSource.ol.on(
+      'addfeature',
+      function(feat) {
+        if ( feat.feature.getId() === id && this.visible) {
+          this.centerMapOnFeature(id);
+        }
+      }.bind(this)
+    );
+  } 
+
+  public centerMapOnFeature(id: string | number) {
+    const feat = this.dataSource.ol.getFeatureById(id);
+    if ( feat ) {
+      this.map.ol.getView().setCenter(feat.getGeometry().getCoordinates());
+    }
+  }
+
+  public unTrackFeature(id?: string | number) {
+    this.dataSource.ol.un(
+      'addfeature',
+      function(feat) {
+        if ( feat.feature.getId() === id && this.visible) {
+          this.centerMapOnFeature(id);
+        }
       }.bind(this)
     );
   }
