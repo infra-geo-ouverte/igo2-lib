@@ -70,7 +70,7 @@ export class DownloadService {
           filterQueryString = 'filter=' + filterQueryString;
         }
         window.open(
-          `${baseurl}&${filterQueryString}&${outputFormatDownload}`,
+          `${baseurl}&${encodeURIComponent(filterQueryString)}&${outputFormatDownload}`,
           '_blank'
         );
       } else if (DSOptions.download) {
