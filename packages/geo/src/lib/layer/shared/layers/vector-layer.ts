@@ -20,6 +20,7 @@ export class VectorLayer extends Layer {
   public options: VectorLayerOptions;
   public ol: olLayerVector;
   private watcher: VectorWatcher;
+  private trackFeatureListenerId;
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -50,7 +51,7 @@ export class VectorLayer extends Layer {
     }
 
     if (this.options.trackFeature) {
-      this.trackFeature(this.options.trackFeature);
+      this.enableTrackFeature(this.options.trackFeature);
     }
 
     return new olLayerVector(olOptions);
@@ -163,14 +164,10 @@ export class VectorLayer extends Layer {
     );
   }
 
-  public trackFeature(id: string | number) {
-    this.dataSource.ol.on(
+  public enableTrackFeature(id: string | number) {
+    this.trackFeatureListenerId = this.dataSource.ol.on(
       'addfeature',
-      function(feat) {
-        if ( feat.feature.getId() === id && this.visible) {
-          this.centerMapOnFeature(id);
-        }
-      }.bind(this)
+      this.trackFeature.bind(this, id)
     );
   } 
 
@@ -181,14 +178,13 @@ export class VectorLayer extends Layer {
     }
   }
 
-  public unTrackFeature(id?: string | number) {
-    this.dataSource.ol.un(
-      'addfeature',
-      function(feat) {
-        if ( feat.feature.getId() === id && this.visible) {
-          this.centerMapOnFeature(id);
-        }
-      }.bind(this)
-    );
+  public trackFeature(id, feat) {
+    if ( feat.feature.getId() === id && this.visible) {
+      this.centerMapOnFeature(id);
+    }
+  }
+
+  public disableTrackFeature(id?: string | number) {
+    unByKey(this.trackFeatureListenerId);
   }
 }
