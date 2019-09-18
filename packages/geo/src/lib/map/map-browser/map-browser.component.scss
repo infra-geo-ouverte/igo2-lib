@@ -54,39 +54,6 @@
   left: $igo-margin;
 }
 
-:host.igo-attribution-offset >>> .ol-attribution {
-  left: 90px;
-  width: calc(100% - 200px);
-  @include mobile {
-    left: 50px;
-  }
-}
-
-:host >>> .ol-attribution {
-  left: $igo-margin;
-  bottom: $igo-margin;
-  text-align: left;
-  padding: 0;
-  margin-right: 90px;
-  background-color: rgba(255, 255, 255, 0);
-  width: calc(100% - 100px);
-
-  &.ol-logo-only {
-    height: inherit;
-  }
-  &.ol-collapsed {
-    background: none;
-    button {
-      transform: none;
-    }
-  }
-  button {
-    transform: rotate(180deg);
-    background-color: white;
-    cursor: pointer;
-  }
-}
-
 :host >>> .ol-scale-line-inner {
   color: rgba(black, 1);
   border-color: black;
