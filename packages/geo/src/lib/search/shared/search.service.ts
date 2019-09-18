@@ -45,10 +45,13 @@ export class SearchService {
       console.log(response.message);
     }
 
-    const sources = this.searchSourceService
+    let sources = this.searchSourceService
       .getEnabledSources()
-      .filter(sourceCanSearch);
+      .filter(sourceCanSearch)
 
+    if (options && options.searchType) {
+      sources = sources.filter(source => source.getType() === options.searchType )
+    }
     return this.searchSources(sources, term, options || {});
   }
 
