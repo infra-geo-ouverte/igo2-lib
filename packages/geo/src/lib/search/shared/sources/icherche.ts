@@ -66,6 +66,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     return IChercheSearchSource.id;
   }
 
+  getType(): string {
+    return IChercheSearchSource.type;
+  }
+
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'iCherche',
@@ -394,6 +398,10 @@ export class IChercheReverseSearchSource extends SearchSource
     return IChercheReverseSearchSource.id;
   }
 
+  getType(): string {
+    return IChercheReverseSearchSource.type;
+  }
+  
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Territoire (Géocodage inversé)',
