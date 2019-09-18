@@ -79,7 +79,8 @@
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
-        "advancedOgcFilters": "Advanced filters"
+        "advancedOgcFilters": "Advanced filters",
+        "trackFeature": "Track the feature"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",

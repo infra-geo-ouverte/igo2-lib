@@ -79,7 +79,8 @@
         "layerFiltered": "Cette couche d'information est présentement filtrée.",
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
-        "advancedOgcFilters": "Filtres avancés"
+        "advancedOgcFilters": "Filtres avancés",
+        "trackFeature": "Suivre l'entité"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
