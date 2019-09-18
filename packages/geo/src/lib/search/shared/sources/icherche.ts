@@ -401,7 +401,7 @@ export class IChercheReverseSearchSource extends SearchSource
   getType(): string {
     return IChercheReverseSearchSource.type;
   }
-  
+
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Territoire (Géocodage inversé)',

@@ -46,12 +46,19 @@ export class SearchService {
     }
 
     let sources = this.searchSourceService
-      .getEnabledSources()
-      .filter(sourceCanSearch)
+      .getEnabledSources();
 
-    if (options && options.searchType) {
-      sources = sources.filter(source => source.getType() === options.searchType )
+    if (options) {
+      if (options.getEnabledOnly || options.getEnabledOnly === undefined) {
+        sources = this.searchSourceService.getEnabledSources();
+      } else {
+        sources = this.searchSourceService.getSources();
+      }
+      if (options.searchType) {
+        sources = sources.filter(source => source.getType() === options.searchType);
+      }
     }
+    sources = sources.filter(sourceCanSearch);
     return this.searchSources(sources, term, options || {});
   }
 
