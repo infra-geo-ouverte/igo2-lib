@@ -1,9 +1,4 @@
 {
-  "/icherche/": {
-    "target": "https://geoegl.msp.gouv.qc.ca",
-    "changeOrigin": true,
-    "secure": false
-  },
   "/ws/": {
     "target": "https://geoegl.msp.gouv.qc.ca",
     "secure": false,

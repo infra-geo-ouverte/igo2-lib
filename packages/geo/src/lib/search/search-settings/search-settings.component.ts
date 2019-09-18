@@ -1,4 +1,4 @@
-import {MatCheckboxChange, MatRadioChange } from '@angular/material';
+import { MatCheckboxChange, MatRadioChange } from '@angular/material';
 
 import {
   Component,
@@ -9,7 +9,10 @@ import {
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { SearchSource } from '../shared/sources/source';
-import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.interfaces';
+import {
+  SearchSourceSettings,
+  SettingOptions
+} from '../shared/sources/source.interfaces';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -25,9 +28,7 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class SearchSettingsComponent {
-
   /**
    * Event emitted when the enabled search source changes
    */
@@ -40,7 +41,9 @@ export class SearchSettingsComponent {
    * @internal
    */
   getSearchSources(): SearchSource[] {
-    return this.searchSourceService.getSources().filter(s => s.available && s.getId() !== 'map');
+    return this.searchSourceService
+      .getSources()
+      .filter(s => s.available && s.getId() !== 'map');
   }
 
   /**
@@ -80,11 +83,7 @@ export class SearchSettingsComponent {
    * Triggered when the check all / uncheck all type is clicked,
    * @internal
    */
-  checkUncheckAll(
-    event,
-    source: SearchSource,
-    setting: SearchSourceSettings
-  ) {
+  checkUncheckAll(event, source: SearchSource, setting: SearchSourceSettings) {
     event.stopPropagation();
     this.computeCheckAllBehavior(setting);
     setting.values.forEach(settingValue => {
@@ -104,7 +103,7 @@ export class SearchSettingsComponent {
     setting: SearchSourceSettings,
     settingValue: SettingOptions
   ) {
-    setting.values.forEach( conf => {
+    setting.values.forEach(conf => {
       if (conf.value !== settingValue.value) {
         conf.enabled = !event.source.checked;
       } else {
@@ -120,4 +119,7 @@ export class SearchSettingsComponent {
     this.searchSourceChange.emit(source);
   }
 
+  getAvailableValues(setting: SearchSourceSettings) {
+    return setting.values.filter(s => s.available !== false);
+  }
 }

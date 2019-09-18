@@ -23,6 +23,7 @@ export interface SettingOptions {
   enabled: boolean;
   title: string;
   hashtags?: string[];
+  available?: boolean;
 }
 
 export interface TextSearchOptions {
