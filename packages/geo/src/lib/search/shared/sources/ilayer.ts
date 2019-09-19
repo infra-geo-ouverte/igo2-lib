@@ -82,6 +82,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return ILayerSearchSource.id;
   }
 
+  getType(): string {
+    return ILayerSearchSource.type;
+  }
+
   protected getDefaultOptions(): ILayerSearchSourceOptions {
     return {
       title: 'igo.geo.search.ilayer.name',

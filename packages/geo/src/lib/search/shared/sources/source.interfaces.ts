@@ -28,6 +28,8 @@ export interface SettingOptions {
 
 export interface TextSearchOptions {
   params?: { [key: string]: string };
+  searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
+  getEnabledOnly?: boolean;
 }
 
 export interface ReverseSearchOptions {

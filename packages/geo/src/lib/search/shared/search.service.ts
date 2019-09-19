@@ -45,10 +45,20 @@ export class SearchService {
       console.log(response.message);
     }
 
-    const sources = this.searchSourceService
-      .getEnabledSources()
-      .filter(sourceCanSearch);
+    let sources = this.searchSourceService
+      .getEnabledSources();
 
+    if (options) {
+      if (options.getEnabledOnly || options.getEnabledOnly === undefined) {
+        sources = this.searchSourceService.getEnabledSources();
+      } else {
+        sources = this.searchSourceService.getSources();
+      }
+      if (options.searchType) {
+        sources = sources.filter(source => source.getType() === options.searchType);
+      }
+    }
+    sources = sources.filter(sourceCanSearch);
     return this.searchSources(sources, term, options || {});
   }
 

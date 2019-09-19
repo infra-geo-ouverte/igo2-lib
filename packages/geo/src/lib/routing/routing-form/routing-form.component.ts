@@ -923,7 +923,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleTermChanged(term: string) {
     if (term !== undefined || term.length !== 0) {
       const searchProposals = [];
-      const researches = this.searchService.search(term);
+      const researches = this.searchService.search(term, {searchType: 'Feature'});
       researches.map(res =>
         this.routesQueries$$.push(
           res.request.subscribe(results => {

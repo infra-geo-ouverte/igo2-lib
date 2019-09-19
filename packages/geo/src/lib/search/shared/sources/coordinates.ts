@@ -48,6 +48,10 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return CoordinatesReverseSearchSource.id;
   }
 
+  getType(): string {
+    return CoordinatesReverseSearchSource.type;
+  }
+
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'igo.geo.search.coordinates.name',

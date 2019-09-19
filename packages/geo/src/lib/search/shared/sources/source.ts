@@ -37,6 +37,13 @@ export class SearchSource {
   getId(): string {
     throw new Error('You have to implement the method "getId".');
   }
+  /**
+   * Get search source's type
+   * @returns Search source's type
+   */
+  getType(): string {
+    throw new Error('You have to implement the method "getType".');
+  }
 
   /**
    * Get search source's default options
