@@ -1,8 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Input
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -129,10 +125,10 @@ export class SearchResultsToolComponent {
   }
 
   toggleTopPanel() {
-    if (this.topPanelState === 'collapsed') {
-      this.topPanelState = 'expanded';
-    } else {
+    if (this.topPanelState === 'expanded') {
       this.topPanelState = 'collapsed';
+    } else {
+      this.topPanelState = 'expanded';
     }
   }
 
@@ -181,5 +177,4 @@ export class SearchResultsToolComponent {
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
   }
-
 }
