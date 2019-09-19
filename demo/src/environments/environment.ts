@@ -28,6 +28,9 @@ export const environment: Environment = {
     language: {
       prefix: './locale/'
     },
+    importExport: {
+      url: 'https://testgeoegl.msp.gouv.qc.ca/apis/ogre'
+    },
     catalog: {
       sources: [
         {

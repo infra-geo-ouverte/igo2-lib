@@ -30,6 +30,14 @@
         "unreadable": {
           "text": "Unreadable file",
           "title": "The file '{{value}}' is unreadable"
+        },
+        "tooLarge": {
+          "text": "The file '{{value}}' is too large (Max: 30 mb)",
+          "title": "File too large"
+        },
+        "invalidSRS": {
+          "text": "The projection is valid. It must start with EPSG:",
+          "title": "Invalid projection"
         }
       },
       "export": {
@@ -49,7 +57,10 @@
         "exportTabTitle": "Export",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
-        "importTabTitle": "Import"
+        "importTabTitle": "Import",
+        "importClarifications": "Clarifications",
+        "importSizeMax": "The file size limit is 30 mb.",
+        "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
         "And": "And",

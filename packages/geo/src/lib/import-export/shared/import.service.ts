@@ -10,7 +10,7 @@ import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
-import { ImportInvalidFileError, ImportUnreadableFileError } from './import.errors';
+import { ImportInvalidFileError, ImportUnreadableFileError, ImportSizeError, ImportSRSError } from './import.errors';
 import { computeLayerTitleFromFile, getFileExtension } from './import.utils';
 
 @Injectable({
@@ -71,6 +71,10 @@ export class ImportService {
 
   private importAsync(file: File, projectionIn: string, projectionOut: string): Observable<Feature[]> {
     const doImport = (observer: Observer<Feature[]>) => {
+      if (file.size >= 30000000) {
+        observer.error(new ImportSizeError());
+        return;
+      }
       const importer = this.getFileImporter(file);
       if (importer === undefined) {
         observer.error(new ImportInvalidFileError());
@@ -136,8 +140,16 @@ export class ImportService {
             observer.complete();
           }
         },
-        (error: Error) => {
-          observer.error(new ImportUnreadableFileError());
+        (error: any) => {
+          error.error.caught = true;
+          const errMsg = error.error.msg;
+          if (errMsg === 'No valid files found') {
+            observer.error(new ImportInvalidFileError());
+          } else if (errMsg.startWith("ERROR 1: Failed to process SRS definition")) {
+            observer.error(new ImportSRSError());
+          } else {
+            observer.error(new ImportUnreadableFileError());
+          }
         }
       );
   }

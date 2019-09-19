@@ -20,7 +20,7 @@
           "title": "Fichier invalide"
         },
         "empty": {
-          "text": "Le fichier '{{value}}' est vide, impossible d'importer.",
+          "text": "Le fichier '{{value}}' est vide, impossible d'importer",
           "title": "Fichier vide"
         },
         "success": {
@@ -30,6 +30,14 @@
         "unreadable": {
           "text": "Le fichier '{{value}}' est impossible à lire",
           "title": "Fichier illisible"
+        },
+        "tooLarge": {
+          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 mb)",
+          "title": "Fichier trop volumineux"
+        },
+        "invalidSRS": {
+          "text": "La projection est valide. Elle doit commencer par EPSG:",
+          "title": "Projection invalid"
         }
       },
       "export": {
@@ -49,7 +57,10 @@
         "exportTabTitle": "Exporter",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
-        "importTabTitle": "Importer"
+        "importTabTitle": "Importer",
+        "importClarifications": "Précisions",
+        "importSizeMax": "La taille limite du fichier est de 30 mb.",
+        "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
         "And": "Et",
