@@ -13,10 +13,10 @@
       </div>
 
       <div class="igo-form-button-group">
-        <button mat-raised-button type="button" (click)="fileInput.click()" [disabled]="loading">
+        <button mat-raised-button type="button" (click)="fileInput.click()" [disabled]="loading$ | async">
           {{'igo.geo.importExportForm.importButton' | translate}}
         </button>
-        <igo-spinner [shown]="loading"></igo-spinner>
+        <igo-spinner [shown]="loading$ | async"></igo-spinner>
         <input
           #fileInput
           type="file"
@@ -64,11 +64,11 @@
         <button
           mat-raised-button
           type="button"
-          [disabled]="!form.valid || loading"
+          [disabled]="!form.valid || (loading$ | async)"
           (click)="handleExportFormSubmit(form.value)">
           {{'igo.geo.importExportForm.exportButton' | translate}}
         </button>
-        <igo-spinner [shown]="loading"></igo-spinner>
+        <igo-spinner [shown]="loading$ | async"></igo-spinner>
       </div>
 
     </form>

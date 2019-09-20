@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subscription, throwError } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { MessageService, LanguageService } from '@igo2/core';
 
@@ -29,7 +29,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public formats = ExportFormat;
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
-  public loading = false;
+  public loading$ = new BehaviorSubject(false);
 
   private layers$$: Subscription;
 
@@ -58,26 +58,30 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   importFiles(files: File[]) {
-    this.loading = true;
+    this.loading$.next(true);
     for (const file of files) {
-      this.importService
-        .import(file, this.inputProj)
-        .subscribe(
-          (features: Feature[]) => this.onFileImportSuccess(file, features),
-          (error: Error) => this.onFileImportError(file, error)
-        );
+      this.importService.import(file, this.inputProj).subscribe(
+        (features: Feature[]) => this.onFileImportSuccess(file, features),
+        (error: Error) => this.onFileImportError(file, error),
+        () => {
+          this.loading$.next(false);
+        }
+      );
     }
   }
 
   handleExportFormSubmit(data: ExportOptions) {
-    this.loading = true;
+    this.loading$.next(true);
     const layer = this.map.getLayerById(data.layer);
     const olFeatures = layer.dataSource.ol.getFeatures();
     this.exportService
       .export(olFeatures, data.format, layer.title, this.map.projection)
       .subscribe(
-        () => { this.loading = false;},
-        (error: Error) => this.onFileExportError(error)
+        () => {},
+        (error: Error) => this.onFileExportError(error),
+        () => {
+          this.loading$.next(false);
+        }
       );
   }
 
@@ -89,7 +93,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    this.loading = false;
     handleFileImportSuccess(
       file,
       features,
@@ -100,7 +103,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileImportError(file: File, error: Error) {
-    this.loading = false;
+    this.loading$.next(false);
     handleFileImportError(
       file,
       error,
@@ -110,7 +113,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileExportError(error: Error) {
-    this.loading = false;
+    this.loading$.next(false);
     handleFileExportError(error, this.messageService, this.languageService);
   }
 }

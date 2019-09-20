@@ -9,13 +9,15 @@ import OlFeature from 'ol/Feature';
 
 import { downloadContent } from './export.utils';
 import { ExportFormat } from './export.type';
-import { ExportInvalidFileError, ExportNothingToExportError } from './export.errors';
+import {
+  ExportInvalidFileError,
+  ExportNothingToExportError
+} from './export.errors';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportService {
-
   static ogreFormats = {
     GML: 'gml',
     GPX: 'gpx',
@@ -39,15 +41,26 @@ export class ExportService {
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
     const exportOlFeatures = olFeatures.map((olFeature: OlFeature) => {
-      const keys = olFeature.getKeys().filter((key: string) => !key.startsWith('_'));
-      const properties = keys.reduce((acc: object, key: string) => {
-        acc[key] = olFeature.get(key);
-        return acc;
-      }, {geometry: olFeature.getGeometry()});
+      const keys = olFeature
+        .getKeys()
+        .filter((key: string) => !key.startsWith('_'));
+      const properties = keys.reduce(
+        (acc: object, key: string) => {
+          acc[key] = olFeature.get(key);
+          return acc;
+        },
+        { geometry: olFeature.getGeometry() }
+      );
       return new OlFeature(properties);
     });
 
-    return this.exportAsync(exportOlFeatures, format, title, projectionIn, projectionOut);
+    return this.exportAsync(
+      exportOlFeatures,
+      format,
+      title,
+      projectionIn,
+      projectionOut
+    );
   }
 
   private exportAsync(
@@ -68,15 +81,36 @@ export class ExportService {
       if (ogreFormats.indexOf(format) >= 0) {
         if (this.ogreUrl === undefined) {
           if (ExportService.noOgreFallbacks.indexOf(format) >= 0) {
-            this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
+            this.exportToFile(
+              olFeatures,
+              observer,
+              format,
+              title,
+              projectionIn,
+              projectionOut
+            );
           } else {
             observer.error(new ExportInvalidFileError());
           }
           return;
         }
-        this.exportWithOgre(olFeatures, observer, format, title, projectionIn, projectionOut);
+        this.exportWithOgre(
+          olFeatures,
+          observer,
+          format,
+          title,
+          projectionIn,
+          projectionOut
+        );
       } else {
-        this.exportToFile(olFeatures, observer, format, title, projectionIn, projectionOut);
+        this.exportToFile(
+          olFeatures,
+          observer,
+          format,
+          title,
+          projectionIn,
+          projectionOut
+        );
       }
     };
 
@@ -120,9 +154,10 @@ export class ExportService {
       featureNS: 'http://example.com/feature'
     });
 
-    const url = `${this.ogreUrl}/convert`;
+    const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
     form.setAttribute('method', 'post');
+    form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
 
     const geojsonField = document.createElement('input');
@@ -132,7 +167,10 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
-    const outputName = format === 'Shapefile' ? `${title}.zip` : title;
+    const outputName =
+      format === 'Shapefile'
+        ? `${title}.zip`
+        : `${title}.${format.toLowerCase()}`;
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
     outputNameField.setAttribute('value', outputName);
@@ -141,7 +179,7 @@ export class ExportService {
     const ogreFormat = ExportService.ogreFormats[format];
     const outputFormatField = document.createElement('input');
     outputFormatField.setAttribute('type', 'hidden');
-    outputFormatField.setAttribute('name', 'formatOutput');
+    outputFormatField.setAttribute('name', 'format');
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
 
@@ -153,10 +191,15 @@ export class ExportService {
   }
 
   private nothingToExport(olFeatures: OlFeature[], format: string): boolean {
-    if (olFeatures.length === 0) { return true; }
+    if (olFeatures.length === 0) {
+      return true;
+    }
     if (format === 'GPX') {
-      const pointOrLine = olFeatures.find((olFeature) => {
-        return ['Point', 'LineString'].indexOf(olFeature.getGeometry().getType()) >= 0;
+      const pointOrLine = olFeatures.find(olFeature => {
+        return (
+          ['Point', 'LineString'].indexOf(olFeature.getGeometry().getType()) >=
+          0
+        );
       });
       return pointOrLine === undefined;
     }
