@@ -23,7 +23,7 @@
 
 :host >>> igo-geolocate-button {
   position: absolute;
-  bottom: 95px;
+  bottom: 5px;
   right: $igo-margin;
   @include mobile {
     bottom: $igo-margin;
