@@ -4,6 +4,7 @@ export interface MapViewOptions {
   projection?: string;
   center?: [number, number];
   geolocate?: boolean;
+  buffer?: Buffer;
 
   constrainRotation?: boolean | number;
   enableRotation?: boolean;
@@ -45,4 +46,11 @@ export interface MapScaleLineOptions {
 export interface MapAttributionOptions {
   html?: string;
   collapsed: boolean;
+}
+
+export interface Buffer {
+  bufferRadius?: number;
+  bufferStroke?: [number, number, number, number];
+  bufferFill?: [number, number, number, number];
+  showBufferRadius?: boolean;
 }
