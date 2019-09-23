@@ -19,7 +19,6 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
-
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -28,9 +27,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   tooltipText: string;
 
-  private resolution$$: Subscription;
+  state: ConnectionState;
 
-  private state: ConnectionState;
+  private resolution$$: Subscription;
 
   @Input() layer: Layer;
 
@@ -48,17 +47,25 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
-  get removable(): boolean { return this.layer.options.removable !== false; }
+  get removable(): boolean {
+    return this.layer.options.removable !== false;
+  }
 
-  get opacity() { return this.layer.opacity * 100; }
-  set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
+  get opacity() {
+    return this.layer.opacity * 100;
+  }
+  set opacity(opacity: number) {
+    this.layer.opacity = opacity / 100;
+  }
 
-  constructor(
-    private networkService: NetworkService
-    ) {}
+  constructor(private networkService: NetworkService) {}
 
   ngOnInit() {
-    if (this.layer.visible && this.expandLegendIfVisible && (this.layer.firstLoadComponent === true)) {
+    if (
+      this.layer.visible &&
+      this.expandLegendIfVisible &&
+      this.layer.firstLoadComponent === true
+    ) {
       this.layer.firstLoadComponent = false;
       this.layer.legendCollapsed = false;
     }
@@ -127,14 +134,18 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   private onResolutionChange() {
     const inResolutionRange = this.layer.isInResolutionsRange;
-    if (inResolutionRange === false && this.updateLegendOnResolutionChange === true) {
+    if (
+      inResolutionRange === false &&
+      this.updateLegendOnResolutionChange === true
+    ) {
       this.toggleLegend(true);
     }
     this.inResolutionRange$.next(inResolutionRange);
   }
 
   private updateQueryBadge() {
-    const hidden = this.queryBadge === false ||
+    const hidden =
+      this.queryBadge === false ||
       this.layer.visible === false ||
       !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);

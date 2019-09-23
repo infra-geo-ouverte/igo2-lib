@@ -3,7 +3,7 @@ import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
-import OlLayer from 'ol/Layer';
+import OlLayer from 'ol/layer/Layer';
 import { uuid } from '@igo2/utils';
 
 import {
@@ -119,7 +119,7 @@ export function featureFromOl(
     extent: olFeature.get('_extent'),
     meta: {
       id,
-      title: title ? title : (mapTitle ? mapTitle : id),
+      title: title ? title : mapTitle ? mapTitle : id,
       mapTitle,
       revision: olFeature.getRevision()
     },
@@ -212,7 +212,12 @@ export function featuresAreOutOfView(
   const mapExtent = map.getExtent();
   const edgeRatio = 0.05;
   const scale = [-1, -1, -1, -1].map(x => x * edgeRatio);
-  const viewExtent = scaleExtent(mapExtent, scale as [number, number, number, number]);
+  const viewExtent = scaleExtent(mapExtent, scale as [
+    number,
+    number,
+    number,
+    number
+  ]);
 
   return !olextent.containsExtent(viewExtent, featuresExtent);
 }
@@ -301,9 +306,11 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
     return;
   }
 
-  layer = layer ? layer : new VectorLayer({
-    source: new FeatureDataSource()
-  });
+  layer = layer
+    ? layer
+    : new VectorLayer({
+        source: new FeatureDataSource()
+      });
   store.bindLayer(layer);
   if (store.layer.map === undefined) {
     store.map.addLayer(store.layer);
@@ -316,7 +323,10 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
  * @param store The store to bind the loading strategy
  * @param strategy An optional loading strategy
  */
-export function tryAddLoadingStrategy(store: FeatureStore, strategy?: FeatureStoreLoadingStrategy) {
+export function tryAddLoadingStrategy(
+  store: FeatureStore,
+  strategy?: FeatureStoreLoadingStrategy
+) {
   if (store.getStrategyOfType(FeatureStoreLoadingStrategy) !== undefined) {
     store.activateStrategyOfType(FeatureStoreLoadingStrategy);
     return;
@@ -333,14 +343,19 @@ export function tryAddLoadingStrategy(store: FeatureStore, strategy?: FeatureSto
  * @param store The store to bind the selection strategy
  * @param [strategy] An optional selection strategy
  */
-export function tryAddSelectionStrategy(store: FeatureStore, strategy?: FeatureStoreSelectionStrategy) {
+export function tryAddSelectionStrategy(
+  store: FeatureStore,
+  strategy?: FeatureStoreSelectionStrategy
+) {
   if (store.getStrategyOfType(FeatureStoreSelectionStrategy) !== undefined) {
     store.activateStrategyOfType(FeatureStoreSelectionStrategy);
     return;
   }
-  strategy = strategy ? strategy : new FeatureStoreSelectionStrategy({
-    map: store.map
-  });
+  strategy = strategy
+    ? strategy
+    : new FeatureStoreSelectionStrategy({
+        map: store.map
+      });
   store.addStrategy(strategy);
   strategy.activate();
 }

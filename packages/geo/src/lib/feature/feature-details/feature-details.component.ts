@@ -10,7 +10,11 @@ import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { NetworkService, ConnectionState } from '@igo2/core';
-import { MVTDataSourceOptions, XYZDataSourceOptions, FeatureDataSourceOptions } from '../../datasource';
+import {
+  MVTDataSourceOptions,
+  XYZDataSourceOptions,
+  FeatureDataSourceOptions
+} from '../../datasource';
 import { MapService } from '../../map/shared/map.service';
 
 @Component({
@@ -20,7 +24,6 @@ import { MapService } from '../../map/shared/map.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureDetailsComponent {
-
   private state: ConnectionState;
 
   @Input()
@@ -93,11 +96,11 @@ export class FeatureDetailsComponent {
     } else {
       layers.forEach(layer => {
         if (layer.dataSource.options.type === 'mvt') {
-          sourceOptions = (layer.dataSource.options as MVTDataSourceOptions);
+          sourceOptions = layer.dataSource.options as MVTDataSourceOptions;
         } else if (layer.dataSource.options.type === 'xyz') {
-          sourceOptions = (layer.dataSource.options as XYZDataSourceOptions);
+          sourceOptions = layer.dataSource.options as XYZDataSourceOptions;
         } else if (layer.dataSource.options.type === 'vector') {
-          sourceOptions = (layer.dataSource.options as FeatureDataSourceOptions);
+          sourceOptions = layer.dataSource.options as FeatureDataSourceOptions;
         } else {
           return;
         }
@@ -105,14 +108,17 @@ export class FeatureDetailsComponent {
           const exclude = sourceOptions.excludeAttribute;
           exclude.forEach(attribute => {
             if (layerName === layer.title) {
-                delete feature.properties[attribute];
+              delete feature.properties[attribute];
             }
           });
-        } else if (!this.state.connection && sourceOptions.excludeAttributeOffline) {
+        } else if (
+          !this.state.connection &&
+          sourceOptions.excludeAttributeOffline
+        ) {
           const excludeAttributeOffline = sourceOptions.excludeAttributeOffline;
           excludeAttributeOffline.forEach(attribute => {
             if (layerName === layer.title) {
-                delete feature.properties[attribute];
+              delete feature.properties[attribute];
             }
           });
         }
