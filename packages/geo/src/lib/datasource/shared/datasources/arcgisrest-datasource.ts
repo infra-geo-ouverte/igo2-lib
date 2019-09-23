@@ -3,7 +3,7 @@ import olFormatEsriJSON from 'ol/format/EsriJSON';
 import * as olloadingstrategy from 'ol/loadingstrategy';
 
 import { DataSource } from './datasource';
-import { DataSourceLegendOptions } from './datasource.interface';
+import { Legend } from './datasource.interface';
 import { ArcGISRestDataSourceOptions } from './arcgisrest-datasource.interface';
 
 export class ArcGISRestDataSource extends DataSource {
@@ -54,12 +54,13 @@ export class ArcGISRestDataSource extends DataSource {
     });
   }
 
-  getLegend(): DataSourceLegendOptions[] {
+  getLegend(): Legend[] {
     const legendInfo = this.options.params.legendInfo;
     const legend = super.getLegend();
     if (legendInfo === undefined || legend.length > 0) {
       return legend;
     }
+
     const id = parseInt(this.options.layer, 10);
     const lyr = legendInfo.layers[id];
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';

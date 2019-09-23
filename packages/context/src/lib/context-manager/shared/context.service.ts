@@ -236,13 +236,13 @@ export class ContextService {
               .filter((t, index, self) => self.findIndex((t2) => t2.name === t.name) === index);
             return resMerge;
           }),
-          catchError(res => {
-            return this.handleError(res, uri);
+          catchError(err => {
+            return this.handleError(err, uri);
           })
         );
       }),
-      catchError(res => {
-        return this.handleError(res, uri);
+      catchError(err2 => {
+        return this.handleError(err2, uri);
       })
     );
   }

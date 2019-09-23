@@ -1,6 +1,5 @@
 import olSourceVector from 'ol/source/Vector';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
-import * as OlFormat from 'ol/format';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -13,7 +12,8 @@ import {
   defaultFieldNameGeometry,
   gmlRegex,
   jsonRegex,
-  checkWfsParams
+  checkWfsParams,
+  getFormatFromOptions
 } from './wms-wfs.utils';
 
 export class WFSDataSource extends DataSource {
@@ -38,7 +38,7 @@ export class WFSDataSource extends DataSource {
   protected createOlSource(): olSourceVector {
 
     return new olSourceVector({
-      format: this.getFormatFromOptions(),
+      format: getFormatFromOptions(this.options),
       overlaps: false,
       url: (extent, resolution, proj) => {
         return this.buildUrl(
@@ -73,24 +73,6 @@ export class WFSDataSource extends DataSource {
     baseUrl = patternFilter.test(paramsWFS.xmlFilter) ? `${baseUrl}&${paramsWFS.xmlFilter}` : baseUrl;
     this.options.download = Object.assign({}, this.options.download, { dynamicUrl: baseUrl });
     return baseUrl.replace(/&&/g, '&');
-  }
-
-  private getFormatFromOptions() {
-    let olFormatCls;
-
-    let outputFormat;
-    if (this.options.paramsWFS.outputFormat) {
-      outputFormat = this.options.paramsWFS.outputFormat.toLowerCase();
-    }
-
-    if (jsonRegex.test(outputFormat)) {
-      olFormatCls = OlFormat.GeoJSON;
-    }
-    if (gmlRegex.test(outputFormat) || !outputFormat) {
-      olFormatCls = OlFormat.WFS;
-    }
-
-    return new olFormatCls();
   }
 
   public onUnwatch() {}

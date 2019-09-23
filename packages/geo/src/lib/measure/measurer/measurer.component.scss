@@ -35,5 +35,9 @@ $slide-toggle-width: 60px;
 }
 
 .measure-store-buttons button:first-of-type {
-  margin-left: 14px; 
+  margin-left: 14px;
+}
+
+.table-compact ::ng-deep .mat-header-cell.mat-column-selectionCheckbox {
+  width: 52px;
 }

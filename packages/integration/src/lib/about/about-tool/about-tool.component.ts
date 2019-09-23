@@ -12,7 +12,17 @@ import { ToolComponent } from '@igo2/common';
   templateUrl: './about-tool.component.html'
 })
 export class AboutToolComponent {
-  @Input() html: string = `
+
+  @Input()
+  get html() {
+    return this._html;
+  }
+  set html(value: string) {
+    this._html = Array.isArray(value)
+      ? value.join('\n')
+      : value;
+    }
+  private _html: string = `
     <h1>About IGO</h1>
     <p>IGO (for Open GIS Infrastructure) is a Free Open Source Software
     for Geospatial (FOSS4G) developed by organisations in the government

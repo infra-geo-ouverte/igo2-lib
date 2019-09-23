@@ -5,6 +5,7 @@ import { SearchSourceSettings } from './sources/source.interfaces';
  * Service where all available search sources are registered.
  */
 export class SearchSourceService {
+
   constructor(private sources: SearchSource[]) {}
 
   /**

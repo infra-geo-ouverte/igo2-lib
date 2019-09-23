@@ -37,6 +37,13 @@ export class SearchSource {
   getId(): string {
     throw new Error('You have to implement the method "getId".');
   }
+  /**
+   * Get search source's type
+   * @returns Search source's type
+   */
+  getType(): string {
+    throw new Error('You have to implement the method "getType".');
+  }
 
   /**
    * Get search source's default options
@@ -107,11 +114,13 @@ export class SearchSource {
         break;
       case 'checkbox':
         let confValue = '';
-        setting.values.forEach(conf => {
-          if (conf.enabled) {
-            confValue += conf.value + ',';
-          }
-        });
+        setting.values
+          .filter(s => s.available !== false)
+          .forEach(conf => {
+            if (conf.enabled) {
+              confValue += conf.value + ',';
+            }
+          });
         confValue = confValue.slice(0, -1);
         this.options.params = Object.assign(this.options.params || {}, {
           [setting.name]: confValue
@@ -152,8 +161,17 @@ export class SearchSource {
       searchSourceSetting.values.forEach(conf => {
         const hashtagKey = hashtag.substring(1);
         if (typeof conf.value === 'string') {
-          const types = conf.value.split(',');
-          const index = types.indexOf(hashtagKey);
+          const types = conf.value
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .split(',');
+          const index = types.indexOf(
+            hashtagKey
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+          );
           if (index !== -1) {
             hashtagsValid.push(types[index]);
           }

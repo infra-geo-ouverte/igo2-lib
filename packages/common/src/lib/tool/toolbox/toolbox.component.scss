@@ -1,3 +1,5 @@
+@import '../../../../../core/src/style/partial/media';
+
 :host {
   display: block;
   position: relative;
@@ -40,10 +42,10 @@ igo-actionbar:not(.with-title) {
   -webkit-box-shadow: 2px 0px 2px 0px #dddddd;
   -o-box-shadow: 2px 0px 2px 0px #dddddd;
   box-shadow: 2px 0px 2px 0px #dddddd;
-}
 
-igo-actionbar ::ng-deep igo-actionbar-item.tool-actived ::ng-deep mat-list-item {
-  background-color: #e0e0e0;
+  @include mobile {
+    overflow: auto;
+  }
 }
 
 igo-dynamic-outlet {

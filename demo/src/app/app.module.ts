@@ -39,6 +39,7 @@ import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppSearchModule } from './geo/search/search.module';
 import { AppPrintModule } from './geo/print/print.module';
+import { AppImportExport } from './geo/import-export/import-export.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppTimeFilterModule } from './geo/time-filter/time-filter.module';
 import { AppOgcFilterModule } from './geo/ogc-filter/ogc-filter.module';
@@ -89,6 +90,7 @@ import { AppComponent } from './app.component';
     AppCatalogModule,
     AppSearchModule,
     AppPrintModule,
+    AppImportExport,
     AppDirectionsModule,
     AppTimeFilterModule,
     AppOgcFilterModule,

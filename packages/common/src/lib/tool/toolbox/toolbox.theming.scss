@@ -1,0 +1,13 @@
+@mixin igo-toolbox-theming($theme) {
+  $accent: map-get($theme, accent);
+
+
+  igo-toolbox > igo-actionbar igo-actionbar-item.tool-actived > mat-list-item {
+    background-color: mat-color($accent);
+  }
+
+  igo-toolbox > igo-actionbar igo-actionbar-item.children-tool-actived > mat-list-item {
+    background-color: mat-color($accent);
+  }
+  
+}

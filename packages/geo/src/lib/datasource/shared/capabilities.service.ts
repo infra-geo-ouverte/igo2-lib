@@ -19,6 +19,8 @@ import {
   ArcGISRestDataSourceOptions,
   TileArcGISRestDataSourceOptions
 } from './datasources';
+import { LegendOptions, ItemStyleOptions } from '../../layer/shared/layers/layer.interface';
+import { TimeFilterType, TimeFilterStyle } from '../../filter/shared/time-filter.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -161,6 +163,7 @@ export class CapabilitiesService {
     const queryable = layer.queryable;
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
+    const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromCapabilities: {
@@ -174,7 +177,8 @@ export class CapabilitiesService {
           extern: metadata ? true : undefined,
           abstract,
           keywordList
-        }
+        },
+        legendOptions
       },
       queryable,
       timeFilter: timeFilterable ? timeFilter : undefined,
@@ -189,6 +193,7 @@ export class CapabilitiesService {
     capabilities: any
   ): WMTSDataSourceOptions {
     const options = optionsFromCapabilities(capabilities, baseOptions);
+
     return Object.assign(options, baseOptions);
   }
 
@@ -239,8 +244,8 @@ export class CapabilitiesService {
         min: min.toUTCString(),
         max: max.toUTCString(),
         range: true,
-        type: 'datetime',
-        style: 'calendar'
+        type: TimeFilterType.DATETIME,
+        style: TimeFilterStyle.CALENDAR
       };
     }
     const params = Object.assign(
@@ -281,8 +286,8 @@ export class CapabilitiesService {
         min: min.toUTCString(),
         max: max.toUTCString(),
         range: true,
-        type: 'datetime',
-        style: 'calendar'
+        type: TimeFilterType.DATETIME,
+        style: TimeFilterStyle.CALENDAR
       };
     }
     const params = Object.assign(
@@ -339,5 +344,22 @@ export class CapabilitiesService {
       }
       return timeFilter;
     }
+  }
+
+  getStyle(Style): LegendOptions {
+
+    const styleOptions: ItemStyleOptions[] = Style
+    .map((style) => {
+      return {
+        name: style.Name,
+        title: style.Title
+      };
+    })
+    // Handle repeat the style "default" in output  (MapServer or OpenLayer)
+    .filter((item, index, self) => self.findIndex((i: ItemStyleOptions) => i.name === item.name) === index);
+
+    const legendOptions: LegendOptions = { stylesAvailable: styleOptions } as LegendOptions;
+
+    return legendOptions;
   }
 }

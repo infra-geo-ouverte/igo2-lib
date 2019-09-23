@@ -1,8 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Input
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -45,6 +41,11 @@ import { SearchState } from '../search.state';
 })
 export class SearchResultsToolComponent {
   /**
+   * to show hide results icons
+   */
+  @Input() showIcons: boolean = true;
+
+  /**
    * Store holding the search results
    * @internal
    */
@@ -70,7 +71,7 @@ export class SearchResultsToolComponent {
       .pipe(
         map(element => {
           this.feature = element ? (element.entity.data as Feature) : undefined;
-          if (!this.feature) {
+          if (!this.feature && this.store.stateView.empty) {
             this.topPanelState = 'initial';
           }
           return this.feature;
@@ -104,10 +105,10 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
-    this.tryAddFeatureToMap(result);
   }
 
   /**
@@ -116,18 +117,18 @@ export class SearchResultsToolComponent {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
+    this.tryAddFeatureToMap(result);
+    this.tryAddLayerToMap(result);
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
-    this.tryAddFeatureToMap(result);
-    this.tryAddLayerToMap(result);
   }
 
   toggleTopPanel() {
-    if (this.topPanelState === 'collapsed') {
-      this.topPanelState = 'expanded';
-    } else {
+    if (this.topPanelState === 'expanded') {
       this.topPanelState = 'collapsed';
+    } else {
+      this.topPanelState = 'expanded';
     }
   }
 
@@ -176,5 +177,4 @@ export class SearchResultsToolComponent {
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
   }
-
 }

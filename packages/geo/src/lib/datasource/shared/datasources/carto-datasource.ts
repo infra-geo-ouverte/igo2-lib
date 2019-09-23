@@ -1,7 +1,7 @@
 import olSourceCarto from 'ol/source/CartoDB';
 
 import { DataSource } from './datasource';
-import { DataSourceLegendOptions } from './datasource.interface';
+import { Legend } from './datasource.interface';
 import { CartoDataSourceOptions } from './carto-datasource.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 
@@ -17,6 +17,10 @@ export class CartoDataSource extends DataSource {
     return (this.options as any).queryTitle
       ? (this.options as any).queryTitle
       : 'title';
+  }
+
+  get mapLabel(): string {
+    return (this.options as any).mapLabel;
   }
 
   get queryHtmlTarget(): string {
@@ -38,11 +42,12 @@ export class CartoDataSource extends DataSource {
     return new olSourceCarto(sourceOptions);
   }
 
-  getLegend(): DataSourceLegendOptions[] {
+  getLegend(): Legend[] {
     const legend = super.getLegend();
     if (legend.length > 0) {
       return legend;
     }
+
     let htmlString = '<table>';
     if (this.options.config.layers[0].legend != null) {
       this.options.config.layers[0].legend.items.forEach(f => {
