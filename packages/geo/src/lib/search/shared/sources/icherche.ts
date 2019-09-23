@@ -244,7 +244,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find(s => s.name === 'type');
         typeSetting.values.forEach(v => {
-          v.available = types.indexOf(v.value as string) > -1;
+          const regex = new RegExp(`^${v.value}(\.*)?`);
+          v.available = types.findIndex(value => regex.test(value)) > -1;
         });
       });
   }
