@@ -1,17 +1,18 @@
 import { Directive, AfterViewInit } from '@angular/core';
+import { NetworkService, ConnectionState } from '@igo2/core';
+
 import { IgoMap } from './map';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
-import { NetworkService, ConnectionState } from '@igo2/core';
-import { Subscription } from 'rxjs';
-import { Layer } from '../../layer/shared/layers/layer';
-import { MVTDataSourceOptions, XYZDataSourceOptions, FeatureDataSourceOptions } from '../../datasource';
+import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
+import { XYZDataSourceOptions } from '../../datasource/shared/datasources/xyz-datasource.interface';
+import { MVTDataSourceOptions } from '../../datasource/shared/datasources/mvt-datasource.interface';
+import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 
 @Directive({
     selector: '[igoMapOffline]'
   })
 export class MapOfflineDirective implements AfterViewInit {
 
-  private context$$: Subscription;
   private state: ConnectionState;
   private component: MapBrowserComponent;
 
@@ -32,7 +33,7 @@ export class MapOfflineDirective implements AfterViewInit {
       this.changeLayer();
     });
 
-    this.map.layers$.subscribe((layers: Layer[]) => {
+    this.map.layers$.subscribe(() => {
       this.changeLayer();
     });
   }
@@ -48,15 +49,36 @@ export class MapOfflineDirective implements AfterViewInit {
         sourceOptions = (layer.options.sourceOptions as XYZDataSourceOptions);
       } else if (layer.options.sourceOptions.type === 'vector') {
         sourceOptions = (layer.options.sourceOptions as FeatureDataSourceOptions);
+      } else if (layer.options.sourceOptions.type === 'cluster') {
+        sourceOptions = (layer.options.sourceOptions as ClusterDataSourceOptions);
       } else {
-        return;
+        if (this.state.connection === false) {
+          layer.ol.setMaxResolution(0);
+          return;
+        } else if (this.state.connection === true) {
+          layer.ol.setMaxResolution(Infinity);
+          return;
+        }
       }
+
       if (sourceOptions.pathOffline  &&
         this.state.connection === false) {
+          if (sourceOptions.type === 'vector' || 'cluster') {
+            return;
+          }
           layer.ol.getSource().setUrl(sourceOptions.pathOffline);
       } else if (sourceOptions.pathOffline &&
         this.state.connection === true) {
+          if (sourceOptions.type === 'vector' || 'cluster') {
+            return;
+          }
           layer.ol.getSource().setUrl(sourceOptions.url);
+      } else {
+        if (this.state.connection === false) {
+          layer.ol.setMaxResolution(0);
+        } else if (this.state.connection === true) {
+          layer.ol.setMaxResolution(Infinity);
+        }
       }
     });
   }

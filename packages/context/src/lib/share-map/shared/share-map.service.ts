@@ -1,7 +1,7 @@
 import { Injectable, Optional } from '@angular/core';
 
 import { RouteService, ConfigService, MessageService } from '@igo2/core';
-import { IgoMap, RoutingFormService } from '@igo2/geo';
+import { IgoMap } from '@igo2/geo';
 
 import { ContextService } from '../../context-manager/shared/context.service';
 
@@ -15,7 +15,6 @@ export class ShareMapService {
     private config: ConfigService,
     private contextService: ContextService,
     private messageService: MessageService,
-    @Optional() private routingFormService: RoutingFormService,
     @Optional() private route: RouteService
   ) {
     this.apiUrl = this.config.getConfig('context.url');
@@ -58,22 +57,6 @@ export class ShareMapService {
     let invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
 
-    const routingKey = this.route.options.routingCoordKey;
-    const stopsCoordinates = [];
-    if (
-      this.routingFormService &&
-      this.routingFormService.getStopsCoordinates() &&
-      this.routingFormService.getStopsCoordinates().length !== 0
-    ) {
-      this.routingFormService.getStopsCoordinates().forEach(coord => {
-        stopsCoordinates.push(coord);
-      });
-    }
-    let routingUrl = '';
-    if (stopsCoordinates.length >= 2) {
-      routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
-    }
-
     const visibleLayers = layers.filter(lay => lay.visible);
     const invisibleLayers = layers.filter(lay => !lay.visible);
 
@@ -99,30 +82,75 @@ export class ShareMapService {
         layersUrl += layer.id + ',';
       }
     }
+    const contextLayersID = [];
+    const contextLayers = this.contextService.context$.value.layers;
+    for (const contextLayer of contextLayers) {
+      contextLayersID.push(contextLayer.id || contextLayer.source.id);
+    }
+    const addedLayersByService = [];
+    for (const layer of layers.filter(
+      l => l.dataSource.options && l.dataSource.options.type === 'wms'
+    )) {
+      if (contextLayersID.indexOf(layer.id) === -1) {
+        const wmsUrl = (layer.dataSource.options as any).url;
+        const addedLayer = (layer.dataSource.options as any).params.layers;
+        const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
+
+        if (
+          !addedLayersByService.find(definedUrl => definedUrl.url === wmsUrl)
+        ) {
+          addedLayersByService.push({
+            url: wmsUrl,
+            layers: [addedLayerPosition]
+          });
+        } else {
+          addedLayersByService.forEach(service => {
+            if (service.url === wmsUrl) {
+              service.layers.push(addedLayerPosition);
+            }
+          });
+        }
+      }
+    }
+    let addedLayersQueryParams = '';
+    if (addedLayersByService.length >= 1) {
+      const wmsUrlKey = this.route.options.wmsUrlKey;
+      const layersKey = this.route.options.layersKey;
+
+      let wmsUrlQueryParams = '';
+      let layersQueryParams = '';
+      addedLayersByService.forEach(service => {
+        wmsUrlQueryParams += `${service.url},`;
+        layersQueryParams += `(${service.layers.join(',')}),`;
+      });
+      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',')
+        ? wmsUrlQueryParams.slice(0, -1)
+        : wmsUrlQueryParams;
+      layersQueryParams = layersQueryParams.endsWith(',')
+        ? layersQueryParams.slice(0, -1)
+        : layersQueryParams;
+      addedLayersQueryParams = `${wmsUrlKey}=${wmsUrlQueryParams}&${layersKey}=${layersQueryParams}`;
+    }
+
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
-    let zoom = 'zoom=' + map.viewController.getZoom();
+    const zoomKey = this.route.options.zoomKey;
+    const centerKey = this.route.options.centerKey;
+    const contextKey = this.route.options.contextKey;
+
+    const zoom = `${zoomKey}=${map.viewController.getZoom()}`;
     const arrayCenter = map.viewController.getCenter('EPSG:4326') || [];
     const long = arrayCenter[0].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
     const lat = arrayCenter[1].toFixed(5).replace(/\.([^0]+)0+$/, '.$1');
-    const center = `center=${long},${lat}`.replace(/.00000/g, '');
+    const center = `${centerKey}=${long},${lat}`.replace(/.00000/g, '');
     let context = '';
     if (this.contextService.context$.value) {
       if (this.contextService.context$.value.uri !== '_default') {
-        context = 'context=' + this.contextService.context$.value.uri;
-      }
-      if (this.contextService.context$.value.map.view.zoom) {
-        zoom =
-          this.contextService.context$.value.map.view.zoom ===
-          map.viewController.getZoom()
-            ? ''
-            : 'zoom=' + map.viewController.getZoom();
+        context = `${contextKey}=${this.contextService.context$.value.uri}`;
       }
     }
 
-    let url = `${location.origin}${
-      location.pathname
-    }?${context}&${zoom}&${center}&${layersUrl}&${llc}&${routingUrl}`;
+    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParams}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');

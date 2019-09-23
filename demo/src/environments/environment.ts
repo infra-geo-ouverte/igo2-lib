@@ -28,6 +28,9 @@ export const environment: Environment = {
     language: {
       prefix: './locale/'
     },
+    importExport: {
+      url: 'https://testgeoegl.msp.gouv.qc.ca/apis/ogre'
+    },
     catalog: {
       sources: [
         {
@@ -65,40 +68,28 @@ export const environment: Environment = {
     },
     searchSources: {
       nominatim: {
-        enabled: false,
-        disabled: true
-      },
-      reseautq: {
-        searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        limit: 5,
-        locateLimit: 15,
-        zoomMaxOnSelect: 8,
-        enabled: false,
-        propertiesAlias: [
-          { name: 'title', alias: 'Titre' },
-          { name: 'etiquette', alias: 'Informations' },
-          { name: 'nommun', alias: 'Municipalité' },
-          { name: 'messagpan', alias: 'Message' },
-          { name: 'noroute', alias: '# de route' },
-        { name: 'nosortie', alias: '# de sortie' },
-          { name: 'direction', alias: 'Direction' },
-          { name: 'typesort', alias: 'Type de sortie' }
-        ],
-        distance: 0.5
-      },
-      icherche: {
-        searchUrl: '/apis/icherche/geocode',
-        zoomMaxOnSelect: 10,
         enabled: true
       },
+      icherche: {
+        searchUrl: '/apis/icherche',
+        order: 2,
+        enabled: true,
+        params: {
+          limit: '8'
+        }
+      },
       icherchereverse: {
-        searchUrl: '/apis/territoires/locate',
+        searchUrl: '/apis/territoires',
+        order: 3,
         enabled: true
       },
       ilayer: {
         searchUrl: '/apis/layers/search',
-        enabled: true
+        order: 4,
+        enabled: true,
+        params: {
+          limit: '5'
+        }
       }
     }
   }

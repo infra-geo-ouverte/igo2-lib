@@ -6,6 +6,8 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 
+import { AuthService } from '@igo2/auth';
+
 import { DetailedContext, ContextsList } from '../shared/context.interface';
 
 @Component({
@@ -19,6 +21,7 @@ export class ContextListComponent {
   }
   set contexts(value: ContextsList) {
     this._contexts = value;
+    this.cdRef.detectChanges();
   }
   private _contexts: ContextsList = { ours: [] };
 
@@ -57,5 +60,5 @@ export class ContextListComponent {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef, public auth: AuthService) {}
 }

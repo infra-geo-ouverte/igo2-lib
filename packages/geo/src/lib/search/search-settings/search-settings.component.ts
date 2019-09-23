@@ -1,8 +1,7 @@
-import {MatCheckboxChange, MatRadioChange } from '@angular/material';
+import { MatCheckboxChange, MatRadioChange } from '@angular/material';
 
 import {
   Component,
-  Input,
   Output,
   EventEmitter,
   ChangeDetectionStrategy
@@ -10,7 +9,10 @@ import {
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { SearchSource } from '../shared/sources/source';
-import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.interfaces';
+import {
+  SearchSourceSettings,
+  SettingOptions
+} from '../shared/sources/source.interfaces';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -26,13 +28,11 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class SearchSettingsComponent {
-
   /**
-   * Event emitted when the enabled search type changes
+   * Event emitted when the enabled search source changes
    */
-  @Output() change = new EventEmitter<string>();
+  @Output() searchSourceChange = new EventEmitter<SearchSource>();
 
   constructor(private searchSourceService: SearchSourceService) {}
 
@@ -41,7 +41,9 @@ export class SearchSettingsComponent {
    * @internal
    */
   getSearchSources(): SearchSource[] {
-    return this.searchSourceService.getSources();
+    return this.searchSourceService
+      .getSources()
+      .filter(s => s.available && s.getId() !== 'map');
   }
 
   /**
@@ -56,6 +58,39 @@ export class SearchSettingsComponent {
   ) {
     settingValue.enabled = event.checked;
     source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
+  }
+
+  /**
+   * Defining the action to do for check/uncheck checkboxes
+   * return true if all checkbox must be checked
+   * return false if all checkbox must be unchecked
+   * @internal
+   */
+  computeCheckAllBehavior(setting: SearchSourceSettings) {
+    if (setting.allEnabled === undefined) {
+      if (setting.values.find(settingValue => settingValue.enabled)) {
+        setting.allEnabled = false;
+      } else {
+        setting.allEnabled = true;
+      }
+    } else {
+      setting.allEnabled = !setting.allEnabled;
+    }
+  }
+
+  /**
+   * Triggered when the check all / uncheck all type is clicked,
+   * @internal
+   */
+  checkUncheckAll(event, source: SearchSource, setting: SearchSourceSettings) {
+    event.stopPropagation();
+    this.computeCheckAllBehavior(setting);
+    setting.values.forEach(settingValue => {
+      settingValue.enabled = setting.allEnabled;
+    });
+    source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
   }
 
   /**
@@ -68,7 +103,7 @@ export class SearchSettingsComponent {
     setting: SearchSourceSettings,
     settingValue: SettingOptions
   ) {
-    setting.values.forEach( conf => {
+    setting.values.forEach(conf => {
       if (conf.value !== settingValue.value) {
         conf.enabled = !event.source.checked;
       } else {
@@ -76,10 +111,15 @@ export class SearchSettingsComponent {
       }
     });
     source.setParamFromSetting(setting);
+    this.searchSourceChange.emit(source);
   }
 
   onCheckSearchSource(event: MatCheckboxChange, source: SearchSource) {
     source.enabled = event.checked;
+    this.searchSourceChange.emit(source);
   }
 
+  getAvailableValues(setting: SearchSourceSettings) {
+    return setting.values.filter(s => s.available !== false);
+  }
 }

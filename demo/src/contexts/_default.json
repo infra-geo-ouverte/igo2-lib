@@ -1,20 +1,7 @@
 {
   "uri": "_default",
-  "title": "Default Context",
-  "map": {
-    "view": {
-      "projection": "EPSG:3857",
-      "center": [-72, 50],
-      "zoom": 8
-    }
-  },
+  "base": "_base",
   "layers": [
-    {
-      "title": "OSM",
-      "sourceOptions": {
-        "type": "osm"
-      }
-    },
     {
       "sourceOptions": {
         "type": "wms",

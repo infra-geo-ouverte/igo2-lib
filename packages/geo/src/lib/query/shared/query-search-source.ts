@@ -20,6 +20,10 @@ export class QuerySearchSource extends SearchSource {
     return QuerySearchSource.id;
   }
 
+  getType(): string {
+    return QuerySearchSource.type;
+  }
+
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Carte'

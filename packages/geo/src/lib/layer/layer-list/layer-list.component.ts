@@ -12,9 +12,18 @@ import { FloatLabelType } from '@angular/material';
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
 import { LayerListService } from './layer-list.service';
-import { BehaviorSubject, ReplaySubject, Subscription, EMPTY, timer } from 'rxjs';
+import {
+  BehaviorSubject,
+  ReplaySubject,
+  Subscription,
+  EMPTY,
+  timer
+} from 'rxjs';
 import { debounce } from 'rxjs/operators';
-import { MetadataOptions, MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
+import {
+  MetadataOptions,
+  MetadataLayerOptions
+} from '../../metadata/shared/metadata.interface';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -24,7 +33,6 @@ import { MetadataOptions, MetadataLayerOptions } from '../../metadata/shared/met
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerListComponent implements OnInit, OnDestroy {
-
   hasLayerNotVisible = false;
   hasLayerOutOfRange = false;
   orderable = true;
@@ -45,10 +53,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.setLayers(value);
     this.next();
   }
-  get layers(): Layer[] { return this._layers; }
+  get layers(): Layer[] {
+    return this._layers;
+  }
   private _layers: Layer[];
-
-  @Input() placeholder: string = '';
 
   @Input() floatLabel: FloatLabelType = 'auto';
 
@@ -64,45 +72,67 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
-  get keyword(): string { return this.layerListService.keyword; }
+  get keyword(): string {
+    return this.layerListService.keyword;
+  }
   set keyword(value: string) {
     this.layerListService.keyword = value;
     this.next();
   }
 
-  get keywordInitialized(): boolean { return this.layerListService.keywordInitialized; }
-  set keywordInitialized(value: boolean) { this.layerListService.keywordInitialized = value; }
+  get keywordInitialized(): boolean {
+    return this.layerListService.keywordInitialized;
+  }
+  set keywordInitialized(value: boolean) {
+    this.layerListService.keywordInitialized = value;
+  }
 
-  get onlyVisible(): boolean { return this.layerListService.onlyVisible; }
+  get onlyVisible(): boolean {
+    return this.layerListService.onlyVisible;
+  }
   set onlyVisible(value: boolean) {
     this.layerListService.onlyVisible = value;
     this.next();
   }
 
-  get onlyVisibleInitialized(): boolean { return this.layerListService.onlyVisibleInitialized; }
-  set onlyVisibleInitialized(value: boolean) { this.layerListService.onlyVisibleInitialized = value; }
+  get onlyVisibleInitialized(): boolean {
+    return this.layerListService.onlyVisibleInitialized;
+  }
+  set onlyVisibleInitialized(value: boolean) {
+    this.layerListService.onlyVisibleInitialized = value;
+  }
 
-  get onlyInRange(): boolean { return this.layerListService.onlyInRange; }
+  get onlyInRange(): boolean {
+    return this.layerListService.onlyInRange;
+  }
   set onlyInRange(value: boolean) {
     this.layerListService.onlyInRange = value;
     this.next();
   }
 
-  get onlyInRangeInitialized(): boolean { return this.layerListService.onlyInRangeInitialized; }
-  set onlyInRangeInitialized(value: boolean) { this.layerListService.onlyInRangeInitialized = value; }
+  get onlyInRangeInitialized(): boolean {
+    return this.layerListService.onlyInRangeInitialized;
+  }
+  set onlyInRangeInitialized(value: boolean) {
+    this.layerListService.onlyInRangeInitialized = value;
+  }
 
-  get sortedAlpha(): boolean { return this.layerListService.sortedAlpha; }
+  get sortedAlpha(): boolean {
+    return this.layerListService.sortedAlpha;
+  }
   set sortedAlpha(value: boolean) {
     this.layerListService.sortedAlpha = value;
     this.next();
   }
 
-  get sortedAlphaInitialized(): boolean { return this.layerListService.sortedAlphaInitialized; }
-  set sortedAlphaInitialized(value: boolean) { this.layerListService.sortedAlphaInitialized = value; }
+  get sortedAlphaInitialized(): boolean {
+    return this.layerListService.sortedAlphaInitialized;
+  }
+  set sortedAlphaInitialized(value: boolean) {
+    this.layerListService.sortedAlphaInitialized = value;
+  }
 
-  constructor(
-    private layerListService: LayerListService
-  ) {}
+  constructor(private layerListService: LayerListService) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -114,7 +144,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
         debounce(() => {
           return this.layers.length === 0 ? EMPTY : timer(50);
         })
-      ).subscribe(() => {
+      )
+      .subscribe(() => {
         this.showToolbar$.next(this.computeShowToolbar());
         this.layers$.next(this.computeLayers(this.layers.slice(0)));
       });
@@ -143,15 +174,25 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   getLowerLayer() {
-    return this.layers.filter(l => !l.baseLayer).reduce((prev, current) => {
-      return (prev.zIndex < current.zIndex) ? prev : current;
-    });
+    return this.layers
+      .filter(l => !l.baseLayer)
+      .reduce(
+        (prev, current) => {
+          return prev.zIndex < current.zIndex ? prev : current;
+        },
+        { zIndex: undefined, id: undefined }
+      );
   }
 
   getUpperLayer() {
-    return this.layers.filter(l => !l.baseLayer).reduce((prev, current) => {
-      return (prev.zIndex > current.zIndex) ? prev : current;
-    });
+    return this.layers
+      .filter(l => !l.baseLayer)
+      .reduce(
+        (prev, current) => {
+          return prev.zIndex > current.zIndex ? prev : current;
+        },
+        { zIndex: undefined, id: undefined }
+      );
   }
 
   private next() {
@@ -170,7 +211,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private filterLayers(layers: Layer[]): Layer[] {
     const keyword = this.keyword;
-    if (this.layerFilterAndSortOptions.showToolbar === LayerListControlsEnum.never) {
+    if (
+      this.layerFilterAndSortOptions.showToolbar === LayerListControlsEnum.never
+    ) {
       return layers;
     }
     if (!keyword && !this.onlyInRange && !this.onlyVisible) {
@@ -180,20 +223,26 @@ export class LayerListComponent implements OnInit, OnDestroy {
     const keepLayerIds = layers.map((layer: Layer) => layer.id);
 
     layers.forEach((layer: Layer) => {
-      const layerOptions = layer.options as MetadataLayerOptions || {};
+      const layerOptions = (layer.options as MetadataLayerOptions) || {};
       const dataSourceOptions = layer.dataSource.options || {};
-      const metadata = layerOptions.metadata || {} as MetadataOptions;
-      const keywords = metadata.keywordList || [] ;
+      const metadata = layerOptions.metadata || ({} as MetadataOptions);
+      const keywords = metadata.keywordList || [];
       const layerKeywords = keywords.map((kw: string) => {
         return kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       });
 
       if (keyword) {
-        const localKeyword = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const layerTitle = layer.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const localKeyword = keyword
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        const layerTitle = layer.title
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
         const dataSourceType = dataSourceOptions.type || '';
         const keywordRegex = new RegExp(localKeyword, 'gi');
-        const keywordInList = layerKeywords.find((kw: string) => keywordRegex.test(kw)) !== undefined;
+        const keywordInList =
+          layerKeywords.find((kw: string) => keywordRegex.test(kw)) !==
+          undefined;
         if (
           !keywordRegex.test(layerTitle) &&
           !(keyword.toLowerCase() === dataSourceType.toLowerCase()) &&
@@ -221,7 +270,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     });
 
-    return layers.filter((layer: Layer) => keepLayerIds.indexOf(layer.id) !== -1);
+    return layers.filter(
+      (layer: Layer) => keepLayerIds.indexOf(layer.id) !== -1
+    );
   }
 
   private sortLayersByZindex(layers: Layer[]) {
@@ -247,10 +298,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
       case LayerListControlsEnum.never:
         return false;
       default:
-        if (this.layers.length >= this.thresholdToFilterAndSort ||
+        if (
+          this.layers.length >= this.thresholdToFilterAndSort ||
           this.keyword ||
           this.onlyInRange ||
-          this.onlyVisible) {
+          this.onlyVisible
+        ) {
           return true;
         }
         return false;
@@ -266,17 +319,26 @@ export class LayerListComponent implements OnInit, OnDestroy {
       this.keyword = this.layerFilterAndSortOptions.keyword;
       this.keywordInitialized = true;
     }
-    if (this.layerFilterAndSortOptions.sortedAlpha && !this.sortedAlphaInitialized) {
+    if (
+      this.layerFilterAndSortOptions.sortedAlpha &&
+      !this.sortedAlphaInitialized
+    ) {
       this.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
       this.sortedAlphaInitialized = true;
     }
-    if (this.layerFilterAndSortOptions.onlyVisible && !this.onlyVisibleInitialized &&
-      this.hasLayerNotVisible) {
+    if (
+      this.layerFilterAndSortOptions.onlyVisible &&
+      !this.onlyVisibleInitialized &&
+      this.hasLayerNotVisible
+    ) {
       this.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
       this.onlyVisibleInitialized = true;
     }
-    if (this.layerFilterAndSortOptions.onlyInRange && !this.onlyInRangeInitialized &&
-      this.hasLayerOutOfRange) {
+    if (
+      this.layerFilterAndSortOptions.onlyInRange &&
+      !this.onlyInRangeInitialized &&
+      this.hasLayerOutOfRange
+    ) {
       this.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
       this.onlyInRangeInitialized = true;
     }
@@ -286,11 +348,16 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this._layers = layers;
 
     if (this.excludeBaseLayers) {
-      this.hasLayerNotVisible = layers.find(l => l.visible === false && !l.baseLayer) !== undefined;
-      this.hasLayerOutOfRange = layers.find(l => l.isInResolutionsRange === false && !l.baseLayer) !== undefined;
+      this.hasLayerNotVisible =
+        layers.find(l => l.visible === false && !l.baseLayer) !== undefined;
+      this.hasLayerOutOfRange =
+        layers.find(l => l.isInResolutionsRange === false && !l.baseLayer) !==
+        undefined;
     } else {
-      this.hasLayerNotVisible = layers.find(l => l.visible === false) !== undefined;
-      this.hasLayerOutOfRange = layers.find(l => l.isInResolutionsRange === false) !== undefined;
+      this.hasLayerNotVisible =
+        layers.find(l => l.visible === false) !== undefined;
+      this.hasLayerOutOfRange =
+        layers.find(l => l.isInResolutionsRange === false) !== undefined;
     }
   }
 }

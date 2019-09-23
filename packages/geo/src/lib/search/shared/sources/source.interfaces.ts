@@ -11,19 +11,25 @@ export interface SearchSourceOptions {
 }
 
 export interface SearchSourceSettings {
-  type: 'radiobutton'|'checkbox';
+  type: 'radiobutton' | 'checkbox';
   values: SettingOptions[];
   title: string;
   name: string;
+  allEnabled?: boolean;
 }
 
 export interface SettingOptions {
-  value: string|number;
+  value: string | number;
   enabled: boolean;
   title: string;
+  hashtags?: string[];
+  available?: boolean;
 }
+
 export interface TextSearchOptions {
   params?: { [key: string]: string };
+  searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
+  getEnabledOnly?: boolean;
 }
 
 export interface ReverseSearchOptions {

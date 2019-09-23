@@ -5,7 +5,8 @@ import {
   IgoMap,
   DataSourceService,
   LayerService,
-  TimeFilterableDataSourceOptions
+  TimeFilterableDataSourceOptions,
+  TimeFilterType, TimeFilterStyle
 } from '@igo2/geo';
 
 @Component({
@@ -57,8 +58,8 @@ export class AppTimeFilterComponent {
         min: '2017-01-01',
         max: '2018-01-01',
         range: true,
-        type: 'datetime',
-        style: 'slider',
+        type: TimeFilterType.DATETIME,
+        style: TimeFilterStyle.SLIDER,
         step: 86400000,
         timeInterval: 2000
       }
@@ -74,5 +75,37 @@ export class AppTimeFilterComponent {
           })
         );
       });
+
+    const datasourceYear: TimeFilterableDataSourceOptions = {
+      type: 'wms',
+      url: '/ws/igo_gouvouvert.fcgi',
+      params: {
+        layers: 'vg_observation_v_inondation_embacle_wmst',
+        version: '1.3.0'
+      },
+      timeFilterable: true,
+      timeFilter: {
+        min: '2013',
+        max: '2019',
+        range: false,
+        type: TimeFilterType.YEAR,
+        style: TimeFilterStyle.SLIDER,
+        step: 1,
+        timeInterval: 2000
+      }
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(datasourceYear)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle YEAR',
+            visible: false,
+            source: dataSource
+          })
+        );
+      });
+
   }
 }

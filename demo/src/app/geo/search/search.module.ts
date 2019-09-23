@@ -8,11 +8,14 @@ import {
   MatTooltipModule
 } from '@angular/material';
 
+import { IgoMessageModule } from '@igo2/core';
+
 import {
   IgoPanelModule,
   IgoActionbarModule,
   IgoContextMenuModule
 } from '@igo2/common';
+
 import {
   IgoFeatureModule,
   IgoMapModule,
@@ -38,6 +41,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    IgoMessageModule.forRoot(),
     IgoPanelModule,
     IgoMapModule,
     IgoSearchModule.forRoot(),

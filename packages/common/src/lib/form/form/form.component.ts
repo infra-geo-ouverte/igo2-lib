@@ -37,6 +37,11 @@ export class FormComponent implements OnChanges {
   @Input() formData: { [key: string]: any};
 
   /**
+   * Form autocomplete
+   */
+  @Input() autocomplete: string = 'off';
+
+  /**
    * Event emitted when the form is submitted
    */
   @Output() submitForm = new EventEmitter<{[key: string]: any}>();

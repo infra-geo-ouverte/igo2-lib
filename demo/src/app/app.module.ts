@@ -1,7 +1,9 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+import {} from '@angular/platform-browser';
 import {
+  MatIconRegistry,
   MatSidenavModule,
   MatToolbarModule,
   MatButtonModule,
@@ -37,6 +39,7 @@ import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppSearchModule } from './geo/search/search.module';
 import { AppPrintModule } from './geo/print/print.module';
+import { AppImportExport } from './geo/import-export/import-export.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppTimeFilterModule } from './geo/time-filter/time-filter.module';
 import { AppOgcFilterModule } from './geo/ogc-filter/ogc-filter.module';
@@ -87,6 +90,7 @@ import { AppComponent } from './app.component';
     AppCatalogModule,
     AppSearchModule,
     AppPrintModule,
+    AppImportExport,
     AppDirectionsModule,
     AppTimeFilterModule,
     AppOgcFilterModule,
@@ -98,4 +102,12 @@ import { AppComponent } from './app.component';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
+    matIconRegistry.addSvgIconSet(
+      domSanitizer.bypassSecurityTrustResourceUrl(
+        './assets/igo2/core/icons/mdi.svg'
+      )
+    );
+  }
+}

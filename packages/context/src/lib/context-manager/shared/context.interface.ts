@@ -21,10 +21,12 @@ export interface ContextsList {
 }
 
 export interface DetailedContext extends Context {
+  base?: string;
   map?: ContextMap;
   layers?: LayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
+  removeLayersOnContextChange?: boolean;
 }
 
 export interface ContextMapView extends MapViewOptions {

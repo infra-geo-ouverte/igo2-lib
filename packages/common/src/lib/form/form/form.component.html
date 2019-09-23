@@ -1,5 +1,6 @@
 
 <form
+  [autocomplete]="autocomplete"
   [formGroup]="form.control"
   (ngSubmit)="onSubmit()">
   <div class="igo-form-body" [ngClass]="{'igo-form-body-with-buttons': hasButtons}">

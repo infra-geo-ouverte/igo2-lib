@@ -10,21 +10,25 @@
           <mat-icon svgIcon="crosshairs-gps"></mat-icon>
         </button>
         <mat-form-field>
-          <input matInput formControlName="stopPoint" [matAutocomplete]="auto" placeholder="{{'igo.geo.routingForm.'+stop.value.routingText | translate}}"
-            (focus)="focus(i)" (keyup)="keyup(i,$event)">
+          <input matInput formControlName="stopPoint" [matAutocomplete]="auto"
+            placeholder="{{'igo.geo.routingForm.'+stop.value.routingText | translate}}" (focus)="focus(i)"
+            (keyup)="keyup(i,$event)" (keydown.enter)="prevent($event)">
+            <button 
+              mat-button 
+              *ngIf="stop.value && (stop.value.stopPoint.length > 0 || stop.value.stopProposals.length > 0)"
+              matSuffix mat-icon-button color="warn" aria-label="Clear" (click)="clearStop(i)">
+              <mat-icon svgIcon="close"></mat-icon>
+            </button>
 
           <mat-autocomplete #auto="matAutocomplete">
-            <mat-optgroup *ngFor="let source of stop.value.stopProposals" [label]="source.source" [disabled]="source.disabled">
-              <mat-option *ngFor="let result of source.results" [value]="result.title" (onSelectionChange)="chooseProposal(result,i)">
-                {{ result.title }}
+            <mat-optgroup *ngFor="let source of stop.value.stopProposals" [label]="source.source.title" [disabled]="source.source.enabled === false">
+              <mat-option *ngFor="let result of source.results" [value]="result.meta ? result.meta.title : ''" (onSelectionChange)="chooseProposal(result,i)">
+                {{ result.meta ? result.meta.title : '' }}
               </mat-option>
             </mat-optgroup>
           </mat-autocomplete>
         </mat-form-field>
-        <button mat-button *ngIf="stop.value && (stop.value.stopPoint.length>0 || stop.value.stopProposals.length>0)" matSuffix mat-icon-button
-          aria-label="Clear" (click)="clearStop(i)">
-          <mat-icon svgIcon="close"></mat-icon>
-        </button>
+
         <!-- <div class="igo-form-button-group"> -->
 
 
@@ -50,7 +54,7 @@
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.routingForm.zoomRoute' | translate"
       *ngIf="routesResults" color="primary" (click)="zoomRoute()">
-      <mat-icon svgIcon="zoom-in"></mat-icon>
+      <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
     </button>
       <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.addStop' | translate"
       color="primary" (click)="addStop()">
@@ -58,7 +62,7 @@
     </button>
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.resetRoutingBtn' | translate"
       *ngIf="routesResults" color="warn" (click)="resetForm()">
-      <mat-icon svgIcon="restore-page"></mat-icon>
+      <mat-icon svgIcon="file-restore"></mat-icon>
     </button>
     <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.copy' | translate"
       color="primary" (click)="copyDirectionsToClipboard()">
@@ -76,7 +80,7 @@
   <mat-form-field *ngIf="routesResults && routesResults.length > 1">
     <mat-select placeholder="{{'igo.geo.routingForm.drivingOptions' | translate}}" (selectionChange)="changeRoute($event)" [(ngModel)]="activeRoute">
       <mat-option *ngFor="let pathRouting of routesResults; let cnt = index;" [value]="pathRouting">
-        Option {{cnt + 1}} : {{this.formatDistance(pathRouting.distance)}} ({{this.formatDuration(pathRouting.duration)}})
+        Option {{cnt + 1}} : {{formatDistance(pathRouting.distance)}} ({{formatDuration(pathRouting.duration)}})
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -85,14 +89,14 @@
 
   <mat-list>
     <h3 mat-header>{{activeRoute.title}}</h3>
-    <h3 mat-subheader>{{this.formatDistance(activeRoute.distance)}}, {{this.formatDuration(activeRoute.duration)}}</h3>
+    <h3 mat-subheader>{{formatDistance(activeRoute.distance)}}, {{formatDuration(activeRoute.duration)}}</h3>
 
     <mat-list-item (mouseenter)="showSegment(step)" (click)="showSegment(step,true)" *ngFor="let step of activeRoute.steps; let cnt = index;"
       igoListItem>
-      <mat-icon [ngClass]="this.formatStep(step,cnt).cssClass" mat-list-icon svgIcon="{{this.formatStep(step,cnt).image}}"></mat-icon>
+      <mat-icon [ngClass]="formatStep(step,cnt).cssClass" mat-list-icon svgIcon="{{formatStep(step,cnt).image}}"></mat-icon>
 
-      <h4 mat-line (click)="showSegment(step,true)">{{cnt +1}}. {{this.formatStep(step,cnt).instruction}}</h4>
-      <h4 mat-line class="right">{{this.formatDistance(step.distance)}}</h4>
+      <h4 mat-line (click)="showSegment(step,true)">{{cnt +1}}. {{formatStep(step,cnt).instruction}}</h4>
+      <h4 mat-line class="right">{{formatDistance(step.distance)}}</h4>
     </mat-list-item>
 
     <mat-divider></mat-divider>

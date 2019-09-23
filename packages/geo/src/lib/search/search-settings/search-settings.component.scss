@@ -1,11 +1,16 @@
 @import '../../../../../core/src/style/partial/core.variables';
 
+.checkAllButton{
+  text-align: center;
+  padding: 0 5px;
+}
+
 .igo-search-settings-button ::ng-deep div.mat-button-ripple-round  {
   border-radius: 0;
 }
 
 .igo-search-settings-radio-group {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
 }
 
@@ -14,16 +19,16 @@
 }
 
 .igo-search-settings-checkbox mat-radio-button {
-  display: inline-flex;
+  display: flex;
 }
 
 .igo-search-settings-search-source {
-  display: inline-flex;
+  display: flex;
   width: 100%;
 }
 
 .igo-search-settings-search-source mat-checkbox{
-  display: inline-flex;
+  display: flex;
   margin-left: $igo-margin;
   margin-right: $igo-margin;
 }

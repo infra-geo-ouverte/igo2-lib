@@ -1,3 +1,5 @@
+@import '../../../../../core/src/style/partial/media';
+
 $igo-actionbar-item-height: 46px;
 $igo-actionbar-item-padding: 3px;
 $igo-actionbar-item-icon-padding: 8px;
@@ -67,4 +69,17 @@ igo-actionbar-item ::ng-deep mat-list-item:hover {
 .context-menu-card {
   padding: 8px 3px;
   margin: 10px;
+}
+
+#topChevron {
+  position: fixed;
+  background-color: white;
+  z-index: 3;
+}
+
+#lowChevron {
+  position: fixed;
+  bottom: 0;
+  background-color: white;
+  z-index: 3;
 }

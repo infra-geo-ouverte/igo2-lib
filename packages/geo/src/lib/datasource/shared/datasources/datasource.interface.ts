@@ -15,7 +15,6 @@ export interface DataSourceOptions {
     | 'websocket'
     | 'mvt'
     | 'cluster';
-  legend?: DataSourceLegendOptions;
   optionsFromCapabilities?: boolean;
   // title: string;
   // alias?: string;
@@ -28,18 +27,19 @@ export interface DataSourceOptions {
   download?: DownloadOptions;
 }
 
-export interface DataSourceLegendOptions {
+export interface SourceFieldsOptionsParams {
+  name: any;
+  alias?: any;
+  values?: any;
+  excludeFromOgcFilters?: boolean;
+}
+
+export interface Legend {
   collapsed?: boolean;
   display?: boolean;
   url?: string;
   html?: string;
   style?: { [key: string]: string | number };
   title?: string;
-}
-
-export interface SourceFieldsOptionsParams {
-  name: any;
-  alias?: any;
-  values?: any;
-  excludeFromOgcFilters?: boolean;
+  currentStyle?: string;
 }

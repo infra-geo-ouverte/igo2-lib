@@ -4,6 +4,7 @@ import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlLayer from 'ol/Layer';
+import { uuid } from '@igo2/utils';
 
 import {
   EntityKey,
@@ -110,7 +111,7 @@ export function featureFromOl(
     title = olFeature.get('_title');
   }
   const mapTitle = olFeature.get('_mapTitle');
-  const id = olFeature.getId();
+  const id = olFeature.getId() ? olFeature.getId() : uuid();
 
   return {
     type: FEATURE,

@@ -109,7 +109,7 @@ export class Overlay {
     olFeature: OlFeature,
     motion: FeatureMotion = FeatureMotion.Default
   ) {
-    this.addOlFeature([olFeature], motion);
+    this.addOlFeatures([olFeature], motion);
   }
 
   /**

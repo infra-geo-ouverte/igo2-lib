@@ -1,4 +1,10 @@
-import { Component, Input, AfterViewInit, OnDestroy, ApplicationRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  AfterViewInit,
+  OnDestroy,
+  ApplicationRef
+} from '@angular/core';
 
 import { Layer } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
@@ -53,7 +59,12 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
     interactions: false
   });
 
-  constructor(private layerService: LayerService, private appRef: ApplicationRef) {}
+  @Input() title: string;
+
+  constructor(
+    private layerService: LayerService,
+    private appRef: ApplicationRef
+  ) {}
 
   ngAfterViewInit() {
     this.map.ol.on('moveend', () => this.handleMoveEnd());

@@ -2,7 +2,6 @@
   "igo": {
     "geo": {
       "catalog": {
-        "baseLayers": "Base Layers",
         "layer.addToMap": "Add to map",
         "layer.removeFromMap": "Remove from map",
         "group.addToMap": "Add all layers from this group to map",
@@ -11,6 +10,9 @@
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
+      },
+      "baselayersSwitcher": {
+        "title": "Basemaps"
       },
       "dropGeoFile": {
         "invalid": {
@@ -28,6 +30,14 @@
         "unreadable": {
           "text": "Unreadable file",
           "title": "The file '{{value}}' is unreadable"
+        },
+        "tooLarge": {
+          "text": "The file '{{value}}' is too large (Max: 30 mb)",
+          "title": "File too large"
+        },
+        "invalidSRS": {
+          "text": "The projection is valid. It must start with EPSG:",
+          "title": "Invalid projection"
         }
       },
       "export": {
@@ -47,7 +57,10 @@
         "exportTabTitle": "Export",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
-        "importTabTitle": "Import"
+        "importTabTitle": "Import",
+        "importClarifications": "Clarifications",
+        "importSizeMax": "The file size limit is 30 mb.",
+        "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
         "And": "And",
@@ -90,7 +103,9 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "loadingLegendText": "Loading legend",
+        "filterPlaceholder": "Filter",
         "noLegendText": "No legend available for this layer",
+        "noLegendScale": "No legend available for this scale",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "removeLayer": "Remove this layer from the map",
@@ -98,7 +113,6 @@
         "showLayer": "Show Layer",
         "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
         "deleteKeyword": "Delete the keyword",
-        "subsetLayersListKeywordPlaceholder": "Filter",
         "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",
         "subsetLayersListOnlyInRange": "Subset the layers's list by resolution range",
         "sortAlphabetically": "Sort the layers's list alphabetically",
@@ -210,6 +224,9 @@
             "metadataUrl": "Metadata"
           }
         },
+        "coordinates": {
+          "name": "Coordinates"
+        },
         "menu.tooltip": "Search Options",
         "settings": {
           "title": "Settings"
@@ -217,10 +234,12 @@
         "searchSources": {
           "settings": {
             "results type": "Results type",
-            "trust level": "Trust level",
-            "results limit": "Limit",
+            "ecmax": "Maximum deviation",
+            "results limit": "Number of results",
             "multiple object": "Multiple object",
-            "country limitation": "Limitation (country)"
+            "country limitation": "Limitation (country)",
+            "selectAll": "Select All",
+            "unselectAll": "Unselect All"
           }
         }
       },
@@ -241,15 +260,15 @@
           "title": "Sum of the selection",
           "length.title": "Length",
           "area.title": "Area",
-          "lengthInMeters": "Length in meters",
-          "lengthInKilometers": "Length in kilometers",
-          "lengthInMiles": "Length in miles",
-          "lengthInFeet": "Length in en feet",
-          "areaInSquareMeters": "Area in meters²",
-          "areaInSquareKilometers": "Area in kilometers²",
-          "areaInSquareMiles": "Area in miles²",
-          "areaInHectares": "Area in hectares",
-          "areaInAcres": "Area in acres",
+          "lengthInMeters": "Meters",
+          "lengthInKilometers": "Kilometers",
+          "lengthInMiles": "Miles",
+          "lengthInFeet": "Feet",
+          "areaInSquareMeters": "Meters²",
+          "areaInSquareKilometers": "Kilometers²",
+          "areaInSquareMiles": "Miles²",
+          "areaInHectares": "Hectares",
+          "areaInAcres": "Acres",
           "perimeterInMeters": "Perimeter in meters"
         },
         "area": "Area",
@@ -267,7 +286,7 @@
         "squareFeet": "Feet²",
         "hectares": "Hectares",
         "acres": "Acres",
-        "toggleMeasure": "Measure",
+        "toggleActive": "Activate measures",
         "toggleMapTooltips": "Show map tooltips",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
@@ -286,6 +305,7 @@
     }
   },
   "search": {
+    "placeholder": "Search for a localisation or a layer",
     "feature.title": "Localisation",
     "feature.placeholder": "Search for a place localisation",
     "layer.title": "Layer",

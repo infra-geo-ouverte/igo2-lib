@@ -88,6 +88,10 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     return StoredQueriesSearchSource.id;
   }
 
+  getType(): string {
+    return StoredQueriesSearchSource.type;
+  }
+
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
@@ -293,6 +297,10 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
   getId(): string {
     return StoredQueriesReverseSearchSource.id;
+  }
+
+  getType(): string {
+    return StoredQueriesReverseSearchSource.type;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

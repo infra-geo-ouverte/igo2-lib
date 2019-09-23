@@ -11,13 +11,16 @@
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
       },
+      "baselayersSwitcher": {
+        "title": "Fonds de carte"
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
           "title": "Fichier invalide"
         },
         "empty": {
-          "text": "Le fichier '{{value}}' est vide, impossible d'importer.",
+          "text": "Le fichier '{{value}}' est vide, impossible d'importer",
           "title": "Fichier vide"
         },
         "success": {
@@ -27,6 +30,14 @@
         "unreadable": {
           "text": "Le fichier '{{value}}' est impossible à lire",
           "title": "Fichier illisible"
+        },
+        "tooLarge": {
+          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 mb)",
+          "title": "Fichier trop volumineux"
+        },
+        "invalidSRS": {
+          "text": "La projection est valide. Elle doit commencer par EPSG:",
+          "title": "Projection invalid"
         }
       },
       "export": {
@@ -46,7 +57,10 @@
         "exportTabTitle": "Exporter",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
-        "importTabTitle": "Importer"
+        "importTabTitle": "Importer",
+        "importClarifications": "Précisions",
+        "importSizeMax": "La taille limite du fichier est de 30 mb.",
+        "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
         "And": "Et",
@@ -89,7 +103,9 @@
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
+        "filterPlaceholder": "Filtre",
         "noLegendText": "Aucune légende disponible pour cette couche",
+        "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "removeLayer": "Retirer la couche de la carte",
@@ -97,11 +113,10 @@
         "showLayer": "Afficher la couche",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
-        "subsetLayersListKeywordPlaceholder": "Filtre",
-        "subsetLayersListOnlyVisible": "Conserver que les couches qui sont visible",
-        "subsetLayersListOnlyInRange": "Conserver que les couches qui sont dans la plage de résolution active",
-        "sortAlphabetically": "Trier la liste des couches alphabétiquement.",
-        "sortMapOrder": "Replacer les couches selon l'ordre cartographique.",
+        "subsetLayersListOnlyVisible": "Conserver les couches visibles",
+        "subsetLayersListOnlyInRange": "Conserver les couches qui sont dans la plage de résolution active",
+        "sortAlphabetically": "Trier la liste des couches alphabétiquement",
+        "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Supprimer le filtre appliqué à la liste"
       },
       "download": {
@@ -209,6 +224,9 @@
             "metadataUrl": "Métadonnées"
           }
         },
+        "coordinates": {
+          "name": "Coordonnées"
+        },
         "menu.tooltip": "Options de recherche",
         "settings": {
           "title": "Paramètres"
@@ -216,10 +234,12 @@
         "searchSources": {
           "settings": {
             "results type": "Type de résultat",
-            "trust level": "Niveau de confiance",
-            "results limit": "Limite",
+            "ecmax": "Écart maximal",
+            "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "country limitation": "Limitation (pays)"
+            "country limitation": "Limitation (pays)",
+            "selectAll": "Tout sélectionner",
+            "unselectAll": "Tout désélectionner"
           }
         }
       },
@@ -238,17 +258,17 @@
       "measure": {
         "dialog": {
           "title": "Sommes de la sélection",
-          "length.title": "Longueur",
+          "length.title": "Distance",
           "area.title": "Superficie",
-          "lengthInMeters": "Longueur en mètres",
-          "lengthInKilometers": "Longueur en kilomètres",
-          "lengthInMiles": "Longueur en miles",
-          "lengthInFeet": "Longueur en pieds",
-          "areaInSquareMeters": "Superficie en mètres²",
-          "areaInSquareKilometers": "Superficie en kilomètres²",
-          "areaInSquareMiles": "Superficie en miles²",
-          "areaInHectares": "Superficie en hectares",
-          "areaInAcres": "Superficie en acres",
+          "lengthInMeters": "Mètres",
+          "lengthInKilometers": "Kilomètres",
+          "lengthInMiles": "Miles",
+          "lengthInFeet": "Pieds",
+          "areaInSquareMeters": "Mètres²",
+          "areaInSquareKilometers": "Kilomètres²",
+          "areaInSquareMiles": "Miles²",
+          "areaInHectares": "Hectares",
+          "areaInAcres": "Acres",
           "perimeterInMeters": "Périmètre en mètres"
         },
         "area": "Superficie",
@@ -266,7 +286,7 @@
         "squareFeet": "Pieds²",
         "hectares": "Hectares",
         "acres": "Acres",
-        "toggleMeasure": "Mesurage",
+        "toggleActive": "Activer le contrôle de mesure",
         "toggleMapTooltips": "Mesures sur la carte",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
@@ -285,6 +305,7 @@
     }
   },
   "search": {
+    "placeholder": "Rechercher une localisation ou une couche de données",
     "feature.title": "Localisation",
     "feature.placeholder": "Rechercher une localisation",
     "layer.title": "Couche de données",

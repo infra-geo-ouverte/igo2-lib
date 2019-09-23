@@ -1,4 +1,4 @@
-<!-- <div *ngIf="style === 'calendar' && type !=='year'">
+<div *ngIf="style === 'calendar' && type !=='year'">
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
     <mat-form-field>
       <mat-datetimepicker-toggle [for]="datetimePicker" matSuffix></mat-datetimepicker-toggle>
@@ -81,9 +81,42 @@
 
 
   <br>
+  <div *ngIf="!isRange && style === 'slider' && type === 'year'" class="igo-col igo-col-100 igo-col-100-m">
+    <span>{{startYear}}</span>
+    <mat-slider
+        id="time-slider"
+        tickInterval="auto"
+        step="{{step}}"
+        [min]="startYear"
+        [max]="endYear"
+        [value]="handleSliderValue()"
+        [color]="color"
+        thumbLabel
+        (input)="handleSliderYearChange($event)"
+        (change)="handleSliderYearChange($event)"
+        [disabled]= "!options.enabled || !layer.visible">
+    </mat-slider>
+    <span>{{endYear}}</span>
+    <p *ngIf= "options.enabled" class="date-below">{{year}}</p>
+    <div #actions class="igo-layer-actions-container">
+      <button *ngIf="!layer.visible" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.layer.showLayer' | translate" color="warn" (click)="setVisible($event)">
+        <mat-icon svgIcon="alert-circle"></mat-icon>
+      </button>
+      <mat-slide-toggle (change)="toggleFilterState()" tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="options.enabled"
+        [disabled]="!layer.visible">
+      </mat-slide-toggle>
+      <button [disabled]= "!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="playYear($event)">
+        <mat-icon svgIcon="{{playIcon}}"></mat-icon>
+       </button>
+      <button [disabled]="!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="resetFilter($event)">
+        <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+      </button>
+    </div>
+  </div>
 
-
-<div *ngIf="style === 'slider'" class="igo-col igo-col-100 igo-col-100-m">
+<div *ngIf="style === 'slider' && type !== 'year'" class="igo-col igo-col-100 igo-col-100-m">
   <mat-slider
       id="time-slider"
       tickInterval="auto"
@@ -99,4 +132,4 @@
   <button mat-icon-button color="primary" (click)="playFilter($event)">
    <mat-icon svgIcon="{{playIcon}}"></mat-icon>
   </button>
-</div> -->
+</div>

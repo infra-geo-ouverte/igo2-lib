@@ -84,14 +84,9 @@ export class FeatureDetailsComponent {
     const layers = this.mapService.getMap().layers$.value;
 
     if (allowedFieldsAndAlias) {
-      Object.keys(properties).forEach(property => {
-        if (Object.keys(allowedFieldsAndAlias).indexOf(property) === -1) {
-          delete properties[property];
-        } else {
-          properties[allowedFieldsAndAlias[property]] = properties[property];
-          if (allowedFieldsAndAlias[property] !== property) {
-            delete properties[property];
-          }
+      Object.keys(allowedFieldsAndAlias).forEach(field => {
+        if (feature.properties[field]) {
+          properties[allowedFieldsAndAlias[field]] = feature.properties[field];
         }
       });
       return properties;

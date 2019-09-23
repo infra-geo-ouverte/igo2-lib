@@ -69,41 +69,6 @@ mat-sidenav {
   @extend %border-box;
 }
 
-/*** Toolbar and toolbox ***/
-
-igo-toolbar {
-  position: absolute;
-  top: 51px;
-  left: 0;
-  bottom: 0;
-}
-
-igo-toolbar.with-title {
-  right: 0;
-  overflow: auto;
-}
-
-igo-toolbar:not(.with-title) {
-  @extend %box-shadowed;
-  overflow: hidden;
-}
-
-igo-toolbar ::ng-deep igo-list {
-  overflow: inherit;
-}
-
-.igo-toolbox-container {
-  position: absolute;
-  top: 51px;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
-}
-
-.igo-toolbox-container.shown {
-  left: 48px;
-}
-
 /*** Feature details ***/
 
 :host ::ng-deep .igo-flexible-fill .igo-container {

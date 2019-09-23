@@ -1,18 +1,18 @@
-import {MatCheckboxChange, MatRadioChange } from '@angular/material';
-
 import {
   Component,
   Input,
   Output,
   EventEmitter,
+  ChangeDetectionStrategy,
   OnInit,
-  ChangeDetectionStrategy
+  OnDestroy
 } from '@angular/core';
+
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchSourceService } from '../shared/search-source.service';
-import { SearchSource } from '../shared/sources/source';
-import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.interfaces';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -28,7 +28,14 @@ import { SearchSourceSettings, SettingOptions } from '../shared/sources/source.i
   styleUrls: ['./search-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchSelectorComponent implements OnInit {
+export class SearchSelectorComponent implements OnInit, OnDestroy {
+
+  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+  /**
+   * Subscription to the search type
+   */
+  private searchType$$: Subscription;
 
   /**
    * List of available search types
@@ -38,22 +45,25 @@ export class SearchSelectorComponent implements OnInit {
   /**
    * The search type enabled
    */
-  @Input() enabled: string;
+  @Input()
+  set searchType(value: string) { this.setSearchType(value); }
+  get searchType(): string { return this.searchType$.value; }
 
   /**
    * Event emitted when the enabled search type changes
    */
-  @Output() change = new EventEmitter<string>();
+  @Output() searchTypeChange = new EventEmitter<string>();
 
   constructor(private searchSourceService: SearchSourceService) {}
 
-  /**
-   * Enable the first search type if the enabled input is not defined
-   * @internal
-   */
   ngOnInit() {
-    const initial = this.enabled || this.searchTypes[0];
-    this.enableSearchType(initial);
+    this.searchType$$ = this.searchType$
+      .pipe(distinctUntilChanged())
+      .subscribe((searchType: string) => this.onSetSearchType(searchType));
+  }
+
+  ngOnDestroy() {
+    this.searchType$$.unsubscribe();
   }
 
   /**
@@ -62,7 +72,7 @@ export class SearchSelectorComponent implements OnInit {
    * @internal
    */
   onSearchTypeChange(searchType: string) {
-    this.enableSearchType(searchType);
+    this.setSearchType(searchType);
   }
 
   /**
@@ -80,10 +90,17 @@ export class SearchSelectorComponent implements OnInit {
    * Emit an event and enable the search sources of the given type.
    * @param searchType Search type
    */
-  private enableSearchType(searchType: string) {
-    this.enabled = searchType;
+  private setSearchType(searchType: string | undefined) {
+    this.searchType$.next(searchType);
+  }
+
+  private onSetSearchType(searchType: string) {
+    if (searchType === undefined || searchType === null) {
+      return;
+    }
+
     this.searchSourceService.enableSourcesByType(searchType);
-    this.change.emit(searchType);
+    this.searchTypeChange.emit(searchType);
   }
 
 }

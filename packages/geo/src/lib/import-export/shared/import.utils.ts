@@ -56,7 +56,7 @@ export function handleFileImportSuccess(
   languageService: LanguageService
 ) {
   if (features.length === 0) {
-    this.handleNothingToImportError(file, messageService, languageService);
+    handleNothingToImportError(file, messageService, languageService);
     return;
   }
 
@@ -77,11 +77,54 @@ export function handleFileImportError(
   messageService: MessageService,
   languageService: LanguageService
 ) {
+  const errMapping = {
+    'Invalid file': handleInvalidFileImportError,
+    'File is too large': handleSizeFileImportError,
+    'Failed to read file': handleUnreadbleFileImportError,
+    'Invalid SRS definition': handleSRSImportError
+  };
+  errMapping[error.message](file, error, messageService, languageService);
+}
+
+export function handleInvalidFileImportError(
+  file: File,
+  error: Error,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
   const translate = languageService.translate;
   const title = translate.instant('igo.geo.dropGeoFile.invalid.title');
   const message = translate.instant('igo.geo.dropGeoFile.invalid.text', {
       value: file.name,
       mimeType: file.type
+  });
+  messageService.error(message, title);
+}
+
+export function handleUnreadbleFileImportError(
+  file: File,
+  error: Error,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.dropGeoFile.unreadable.title');
+  const message = translate.instant('igo.geo.dropGeoFile.unreadable.text', {
+      value: file.name
+  });
+  messageService.error(message, title);
+}
+
+export function handleSizeFileImportError(
+  file: File,
+  error: Error,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.dropGeoFile.tooLarge.title');
+  const message = translate.instant('igo.geo.dropGeoFile.tooLarge.text', {
+      value: file.name
   });
   messageService.error(message, title);
 }
@@ -94,6 +137,20 @@ export function handleNothingToImportError(
   const translate = languageService.translate;
   const title = translate.instant('igo.geo.dropGeoFile.empty.title');
   const message = translate.instant('igo.geo.dropGeoFile.empty.text', {
+      value: file.name,
+      mimeType: file.type
+  });
+  messageService.error(message, title);
+}
+
+export function handleSRSImportError(
+  file: File,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.dropGeoFile.invalidSRS.title');
+  const message = translate.instant('igo.geo.dropGeoFile.invalidSRS.text', {
       value: file.name,
       mimeType: file.type
   });
