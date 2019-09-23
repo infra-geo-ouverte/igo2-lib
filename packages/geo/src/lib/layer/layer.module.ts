@@ -27,6 +27,7 @@ import { LayerItemComponent } from './layer-item/layer-item.component';
 import { LayerLegendComponent } from './layer-legend/layer-legend.component';
 import { LayerListComponent } from './layer-list/layer-list.component';
 import { LayerListBindingDirective } from './layer-list/layer-list-binding.directive';
+import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 
 @NgModule({
   imports: [
@@ -50,13 +51,15 @@ import { LayerListBindingDirective } from './layer-list/layer-list-binding.direc
     LayerItemComponent,
     LayerLegendComponent,
     LayerListComponent,
-    LayerListBindingDirective
+    LayerListBindingDirective,
+    TrackFeatureButtonComponent
   ],
   declarations: [
     LayerItemComponent,
     LayerLegendComponent,
     LayerListComponent,
-    LayerListBindingDirective
+    LayerListBindingDirective,
+    TrackFeatureButtonComponent
   ]
 })
 export class IgoLayerModule {

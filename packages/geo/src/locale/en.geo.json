@@ -79,8 +79,7 @@
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
-        "advancedOgcFilters": "Advanced filters",
-        "trackFeature": "Track the feature"
+        "advancedOgcFilters": "Advanced filters"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -108,7 +107,8 @@
         "subsetLayersListOnlyInRange": "Subset the layers's list by resolution range",
         "sortAlphabetically": "Sort the layers's list alphabetically",
         "sortMapOrder": "Sort the layers's list based on layer's order on the map",
-        "resetLayersList": "Remove the current applied filter to layers's list"
+        "resetLayersList": "Remove the current applied filter to layers's list",
+        "trackFeature": "Track the feature"
       },
       "download": {
         "action": "Download data",

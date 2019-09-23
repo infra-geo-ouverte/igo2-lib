@@ -30,6 +30,7 @@
     [collapsed]="true">
     <mat-icon svgIcon="dots-horizontal"></mat-icon>
   </button>
+
 </mat-list-item>
 
 <div #actions class="igo-layer-actions-container">
@@ -71,6 +72,8 @@
         (click)="layer.map.lowerLayer(layer)">
         <mat-icon svgIcon="arrow-down"></mat-icon>
       </button>
+
+      <igo-track-feature-button [layer]="layer" [trackFeature]="true" ></igo-track-feature-button>
 
       <button
         *ngIf="removable === true"

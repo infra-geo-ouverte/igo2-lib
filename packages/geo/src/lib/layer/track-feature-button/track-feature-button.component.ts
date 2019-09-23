@@ -1,8 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
-import { Layer, VectorLayer } from '../../layer/shared/layers';
-import { IgoMap } from '../../map';
-import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.interface';
+import { Layer, VectorLayer } from '../shared/layers';
+import { VectorLayerOptions } from '../shared/layers/vector-layer.interface';
 
 @Component({
   selector: 'igo-track-feature-button',
@@ -13,8 +12,6 @@ import { VectorLayerOptions } from '../../layer/shared/layers/vector-layer.inter
 export class TrackFeatureButtonComponent implements OnInit {
 
   @Input() layer: VectorLayer;
-
-  @Input() map: IgoMap;
 
   @Input() trackFeature = false;
 

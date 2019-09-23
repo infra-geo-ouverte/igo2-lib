@@ -48,7 +48,6 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
 import { OGCFilterService } from './shared/ogc-filter.service';
 import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-filter-toggle-button.component';
 
-import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 
 @NgModule({
   imports: [
@@ -89,8 +88,7 @@ import { TrackFeatureButtonComponent } from './track-feature-button/track-featur
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
-    OgcFilterableListBindingDirective,
-    TrackFeatureButtonComponent
+    OgcFilterableListBindingDirective
   ],
   declarations: [
     FilterableDataSourcePipe,
@@ -104,8 +102,7 @@ import { TrackFeatureButtonComponent } from './track-feature-button/track-featur
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
-    OgcFilterableListBindingDirective,
-    TrackFeatureButtonComponent
+    OgcFilterableListBindingDirective
   ],
   providers: [TimeFilterService, OGCFilterService]
 })

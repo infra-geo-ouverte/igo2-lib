@@ -8,4 +8,3 @@ export * from './ogc-filterable-list';
 export * from './ogc-filter-form';
 export * from './ogc-filter-toggle-button';
 export * from './ogc-filter-button';
-export * from './track-feature-button';
