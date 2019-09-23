@@ -10,6 +10,7 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer, TooltipType } from '../shared/layers';
+import { NetworkService, ConnectionState } from '@igo2/core';
 
 @Component({
   selector: 'igo-layer-item',
@@ -28,6 +29,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   tooltipText: string;
 
   private resolution$$: Subscription;
+
+  private state: ConnectionState;
 
   @Input() layer: Layer;
 
@@ -50,7 +53,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   get opacity() { return this.layer.opacity * 100; }
   set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
 
-  constructor() {}
+  constructor(
+    private networkService: NetworkService
+    ) {}
 
   ngOnInit() {
     if (this.layer.visible && this.expandLegendIfVisible && (this.layer.firstLoadComponent === true)) {
@@ -65,6 +70,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.onResolutionChange();
     });
     this.tooltipText = this.computeTooltip();
+
+    this.networkService.currentState().subscribe((state: ConnectionState) => {
+      this.state = state;
+      this.onResolutionChange();
+    });
   }
 
   ngOnDestroy() {
