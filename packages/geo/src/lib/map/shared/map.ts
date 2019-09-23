@@ -209,8 +209,9 @@ export class IgoMap {
    * @param push DEPRECATED
    */
   addLayers(layers: Layer[], push = true) {
+    let incrementArray = 0;
     const addedLayers = layers
-      .map((layer: Layer) => this.doAddLayer(layer))
+      .map((layer: Layer) => this.doAddLayer(layer, incrementArray++))
       .filter((layer: Layer | undefined) => layer !== undefined);
     this.setLayers([].concat(this.layers, addedLayers));
   }
@@ -287,7 +288,7 @@ export class IgoMap {
    * @param layer Layer
    * @returns The layer added, if any
    */
-  private doAddLayer(layer: Layer) {
+  private doAddLayer(layer: Layer, length: number) {
     if (layer.baseLayer && layer.visible) {
       this.changeBaseLayer(layer);
     }
@@ -300,7 +301,7 @@ export class IgoMap {
 
     if (layer.zIndex === undefined || layer.zIndex === 0) {
       const offset = layer.baseLayer ? 1 : 10;
-      layer.zIndex = this.layers.length + offset;
+      layer.zIndex = this.layers.length + offset + length;
     }
 
     layer.setMap(this);

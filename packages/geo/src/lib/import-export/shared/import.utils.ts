@@ -78,11 +78,11 @@ export function handleFileImportError(
   languageService: LanguageService
 ) {
   const errMapping = {
-    "Invalid file": handleInvalidFileImportError,
-    "File is too large": handleSizeFileImportError,
-    "Failed to read file": handleUnreadbleFileImportError,
-    "Invalid SRS definition": handleSRSImportError
-  }
+    'Invalid file': handleInvalidFileImportError,
+    'File is too large': handleSizeFileImportError,
+    'Failed to read file': handleUnreadbleFileImportError,
+    'Invalid SRS definition': handleSRSImportError
+  };
   errMapping[error.message](file, error, messageService, languageService);
 }
 
