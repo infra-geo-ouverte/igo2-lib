@@ -78,6 +78,14 @@ export class FormComponent implements OnChanges {
     this.submitForm.emit(this.getData());
   }
 
+  getData(): { [key: string]: any} {
+    const data = {};
+    getAllFormFields(this.form).forEach((field: FormField) => {
+      this.updateDataWithFormField(data, field);
+    });
+    return data;
+  }
+
   private setData(data: {[key: string]: any}) {
     this.form.fields.forEach((field: FormField) => {
       field.control.setValue(t(data, field.name).safeObject);
@@ -88,14 +96,6 @@ export class FormComponent implements OnChanges {
         field.control.setValue(t(data, field.name).safeObject);
       });
     });
-  }
-
-  private getData(): { [key: string]: any} {
-    const data = {};
-    getAllFormFields(this.form).forEach((field: FormField) => {
-      this.updateDataWithFormField(data, field);
-    });
-    return data;
   }
 
   private updateDataWithFormField(data: { [key: string]: any}, field: FormField) {
