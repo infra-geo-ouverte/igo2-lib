@@ -184,7 +184,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       const added = this.store.state.get(item).added || false;
       return this.isLayer(item) && added === false;
     });
-    this.addLayersToMap(layers as CatalogItemLayer[]);
+    this.addLayersToMap(layers.reverse() as CatalogItemLayer[]);
   }
 
   /**

@@ -187,7 +187,7 @@ export class CatalogService {
       return;
     }
 
-    for (const group of layerList.Layer.reverse()) {
+    for (const group of layerList.Layer) {
       if (group.Layer !== undefined) {
         // recursive, check next level
         this.includeRecursiveItems(catalog, group, items);
