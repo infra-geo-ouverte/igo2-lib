@@ -159,6 +159,9 @@ export function getFormatFromOptions(
   } else if (outputFormat.toLowerCase().match('esrijson')) {
     olFormatCls = OlFormat.EsriJSON;
     return new olFormatCls();
+  } else if (outputFormat.toLowerCase().match('json')) {
+    olFormatCls = OlFormat.GeoJSON;
+    return new olFormatCls();
   } else if (outputFormat.toLowerCase().match('gpx')) {
     olFormatCls = OlFormat.GPX;
     return new olFormatCls();
