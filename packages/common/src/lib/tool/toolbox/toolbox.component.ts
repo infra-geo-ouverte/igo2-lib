@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 
 import { Subscription, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
 import { Tool } from '../shared/tool.interface';
@@ -131,23 +132,6 @@ export class ToolboxComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Get Action bar item class function
-   * @internal
-   */
-  get actionBarItemClassFunc() {
-    return (tool: Tool) => {
-      if (!this.toolbox.activeTool$.value) {
-        return;
-      } else {
-        if (this.toolbox.activeTool$.value.parent) {
-          return { 'children-tool-actived': tool.id === this.toolbox.activeTool$.value.parent };
-        }
-        return { 'tool-actived': tool.id === this.toolbox.activeTool$.value.name };
-      }
-    };
-  }
-
-  /**
    * Initialize an action store
    * @param toolbar Toolbar
    */
@@ -206,6 +190,26 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         args: [tool, this.toolbox],
         handler: (_tool: Tool, _toolbox: Toolbox) => {
           _toolbox.activateTool(_tool.name);
+        },
+        ngClass: (_tool: Tool, _toolbox: Toolbox) => {
+          return this.toolbox.activeTool$.pipe(
+            map((activeTool: Tool) => {
+              let toolActivated = false;
+              if (activeTool !== undefined && _tool.name === activeTool.name) {
+                toolActivated = true;
+              }
+
+              let childrenToolActivated = false;
+              if (activeTool !== undefined && _tool.name === activeTool.parent) {
+               childrenToolActivated = true;
+              }
+
+              return {
+                'tool-activated': toolActivated,
+                'children-tool-activated': childrenToolActivated
+              };
+            })
+          );
         }
       });
       return acc;

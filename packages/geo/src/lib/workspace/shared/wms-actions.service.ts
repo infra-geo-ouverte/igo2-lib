@@ -27,9 +27,7 @@ export class WmsActionsService {
             layer: ws.layer
           });
         },
-        args: [this.ogcFilterWidget, workspace],
-        conditions: [],
-        conditionArgs: []
+        args: [this.ogcFilterWidget, workspace]
       }
     ];
   }

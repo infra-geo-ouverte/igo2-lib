@@ -29,9 +29,7 @@ export class WfsActionsService {
             layer: ws.layer
           });
         },
-        args: [this.ogcFilterWidget, workspace],
-        conditions: [],
-        conditionArgs: []
+        args: [this.ogcFilterWidget, workspace]
       },
       {
         id: 'wfsDownload',
@@ -39,9 +37,7 @@ export class WfsActionsService {
         title: 'igo.geo.workspace.wfsDownload.title',
         tooltip: 'igo.geo.workspace.wfsDownload.tooltip',
         handler: (ws: WfsWorkspace) => this.downloadService.open(ws.layer),
-        args: [workspace],
-        conditions: [],
-        conditionArgs: []
+        args: [workspace]
       }
     ];
   }
