@@ -21,7 +21,7 @@ import { Action } from '../shared/action.interfaces';
   styleUrls: ['./actionbar-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ActionbarItemComponent implements OnInit, Ondestroy {
+export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
