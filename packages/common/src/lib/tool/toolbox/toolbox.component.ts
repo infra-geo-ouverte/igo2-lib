@@ -200,7 +200,7 @@ export class ToolboxComponent implements OnInit, OnDestroy {
               }
 
               let childrenToolActivated = false;
-              if (activeTool !== undefined && activeTool.parent) {
+              if (activeTool !== undefined && _tool.name === activeTool.parent) {
                childrenToolActivated = true;
               }
 
