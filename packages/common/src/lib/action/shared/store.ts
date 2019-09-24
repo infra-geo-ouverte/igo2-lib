@@ -7,35 +7,4 @@ import { Action } from './action.interfaces';
  */
 export class ActionStore extends EntityStore<Action> {
 
-  /**
-   * Update actions availability. That means disabling or enabling some
-   * actions based on the conditions they define.
-   */
-  updateActionsAvailability() {
-    const availables = [];
-    const unavailables = [];
-
-    this.entities$.value.forEach((action: Action) => {
-      const conditions = action.conditions || [];
-      const args = action.conditionArgs || [];
-      const available = conditions.every((condition: (...args: any[]) => boolean) => {
-        return condition(...args);
-      });
-      available ? availables.push(action) : unavailables.push(action);
-    });
-
-    if (unavailables.length > 0) {
-      this.state.updateMany(unavailables, {
-        disabled: true,
-        active: false
-      });
-    }
-
-    if (availables.length > 0) {
-      this.state.updateMany(availables, {
-        disabled: false
-      });
-    }
-  }
-
 }

@@ -138,12 +138,6 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   private _overlayClass = '';
 
   /**
-   * Function to add class to item actionbar
-   */
-  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } =
-    ActionbarComponent.defaultItemClassFunc;
-
-  /**
    * @ignore
    */
   @HostBinding('class.with-title')
@@ -194,10 +188,6 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
 
   get isDesktop(): boolean {
     return this.mediaService.getMedia() === Media.Desktop;
-  }
-
-  static defaultItemClassFunc(action: Action) {
-    return {};
   }
 
   constructor(
