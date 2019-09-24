@@ -1,0 +1,30 @@
+<mat-card>
+  <mat-card-subtitle>Geo</mat-card-subtitle>
+  <mat-card-title>Spatial filter</mat-card-title>
+  <mat-card-content>
+    <li>npm install --save moment@2.22.2</li>
+    <li>npm install --save @mat-datetimepicker/core@3.0.0-beta.0</li>
+    <li>Dependencies: LanguageService</li>
+
+    <br>
+    See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/spatial-filter">code of this example</a>
+    <hr>
+  </mat-card-content>
+
+  <igo-map-browser [map]="map" [view]="view">
+    <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
+  </igo-map-browser>
+
+  <igo-panel title="Filter Type">
+    <igo-spatial-filter-type></igo-spatial-filter-type>
+  </igo-panel>
+
+  <igo-panel title="TerrAPI">
+    <igo-spatial-filter-list></igo-spatial-filter-list>
+  </igo-panel>
+
+  <igo-panel title="Entity">
+    <igo-spatial-filter-item></igo-spatial-filter-item>
+  </igo-panel>
+
+</mat-card>
