@@ -9,3 +9,6 @@ export * from './ogc-filter-form';
 export * from './ogc-filter-toggle-button';
 export * from './ogc-filter-button';
 export * from './time-filter-button';
+export * from './spatial-filter/spatial-filter-type';
+export * from './spatial-filter/spatial-filter-list';
+export * from './spatial-filter/spatial-filter-item';

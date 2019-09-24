@@ -50,6 +50,11 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
 import { OGCFilterService } from './shared/ogc-filter.service';
 import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-filter-toggle-button.component';
 
+import { SpatialFilterTypeComponent } from './spatial-filter/spatial-filter-type/spatial-filter-type.component';
+import { SpatialFilterListComponent } from './spatial-filter/spatial-filter-list/spatial-filter-list.component';
+import { SpatialFilterItemComponent } from './spatial-filter/spatial-filter-item/spatial-filter-item.component';
+import { SpatialFilterService } from './shared/spatial-filter.service';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -91,7 +96,10 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
-    OgcFilterableListBindingDirective
+    OgcFilterableListBindingDirective,
+    SpatialFilterTypeComponent,
+    SpatialFilterListComponent,
+    SpatialFilterItemComponent
   ],
   declarations: [
     FilterableDataSourcePipe,
@@ -106,9 +114,12 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
-    OgcFilterableListBindingDirective
+    OgcFilterableListBindingDirective,
+    SpatialFilterTypeComponent,
+    SpatialFilterListComponent,
+    SpatialFilterItemComponent
   ],
-  providers: [TimeFilterService, OGCFilterService]
+  providers: [TimeFilterService, OGCFilterService, SpatialFilterService]
 })
 export class IgoFilterModule {
   static forRoot(): ModuleWithProviders {
