@@ -1,25 +1,19 @@
-import * as olstyle from 'ol/style';
-
 import {
   Component,
   Input,
   Output,
   EventEmitter,
-  OnChanges,
-  OnDestroy,
   ChangeDetectionStrategy,
-  SimpleChanges
+  ViewChild
 } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { Form, getEntityRevision } from '@igo2/common';
+import { Form, FormComponent, getEntityRevision } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { FEATURE } from '../shared/feature.enums';
 import { Feature, FeatureMeta } from '../shared/feature.interfaces';
-import { FeatureStore } from '../shared/store';
-import { FeatureStoreSelectionStrategy } from '../shared/strategies/selection';
 
 /**
  * A configurable form, optionnally bound to a feature.
@@ -34,8 +28,7 @@ import { FeatureStoreSelectionStrategy } from '../shared/strategies/selection';
   styleUrls: ['./feature-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FeatureFormComponent implements OnChanges, OnDestroy {
-  public feature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
+export class FeatureFormComponent {
 
   /**
    * Form
@@ -45,40 +38,19 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
   /**
    * Feature to update
    */
-  @Input() feature: Feature | undefined;
-
-  /**
-   * The store the feature belongs to. Required to manage the
-   * visiblity and selection.
-   */
-  @Input() store: FeatureStore | undefined;
+  @Input()
+  set feature(value: Feature | undefined) { this.feature$.next(value); }
+  get feature(): Feature | undefined { return this.feature$.value; }
+  readonly feature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
 
   /**
    * Event emitted when the form is submitted
    */
   @Output() submitForm = new EventEmitter<Feature>();
 
+  @ViewChild('igoForm') igoForm: FormComponent;
+
   constructor() {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    const store = changes.store;
-    if (store && store.currentValue !== store.previousValue) {
-      this.setStore(store.currentValue);
-    }
-
-    const feature = changes.feature;
-    if (feature && feature.currentValue !== feature.previousValue) {
-      this.feature$.next(feature.currentValue);
-    }
-  }
-
-  /**
-   * Show the original feature and reactivate the selection
-   * @internal
-   */
-  ngOnDestroy() {
-    this.setStore(undefined);
-  }
 
   /**
    * Transform the form data to a feature and emit an event
@@ -88,6 +60,10 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
   onSubmit(data: { [key: string]: any }) {
     const feature = this.formDataToFeature(data);
     this.submitForm.emit(feature);
+  }
+
+  getData(): Feature {
+    return this.formDataToFeature(this.igoForm.getData());
   }
 
   /**
@@ -128,37 +104,5 @@ export class FeatureFormComponent implements OnChanges, OnDestroy {
       projection: 'EPSG:4326',
       properties
     };
-  }
-
-  private setStore(store: FeatureStore) {
-    if (this.store !== undefined) {
-      this.activateStoreSelection(this.store);
-    }
-    if (store !== undefined) {
-      this.deactivateStoreSelection(store);
-    }
-    this.store = store;
-  }
-
-  /**
-   * Deactivate feature selection from the store and from the map
-   */
-  private deactivateStoreSelection(store: FeatureStore) {
-    const selectionStrategy = store.getStrategyOfType(
-      FeatureStoreSelectionStrategy
-    );
-    if (selectionStrategy !== undefined) {
-      selectionStrategy.deactivate();
-      (selectionStrategy as FeatureStoreSelectionStrategy).unselectAll();
-    }
-  }
-
-  /**
-   * Reactivate feature selection from the store and from the map
-   */
-  private activateStoreSelection(store: FeatureStore) {
-    // TODO: maybe we should recativate the strategies only if they
-    // were active in the first place
-    store.activateStrategyOfType(FeatureStoreSelectionStrategy);
   }
 }
