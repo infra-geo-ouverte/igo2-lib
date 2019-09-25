@@ -2,6 +2,7 @@ import * as olstyle from 'ol/style';
 import OlLineString from 'ol/geom/LineString';
 import OlLinearRing from 'ol/geom/LinearRing';
 import OlPolygon from 'ol/geom/Polygon';
+import { GeometryEvent as OlGeometryEvent } from 'ol/geom/Geometry';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import lineIntersect from '@turf/line-intersect';
 import { lineString } from '@turf/helpers';
@@ -140,4 +141,14 @@ export function sliceOlPolygon(olPolygon: OlPolygon, olSlicer: OlLineString): Ol
 export function addLinearRingToOlPolygon(olPolygon: OlPolygon, olLinearRing: OlLinearRing ): OlPolygon {
   // TODO: make some validation and support updating an existing linear ring
   olPolygon.appendLinearRing(olLinearRing);
+}
+
+export function getMousePositionFromOlGeometryEvent(
+  olEvent: OlGeometryEvent
+): [number, number] {
+  const olGeometry = olEvent.target;
+  if (olGeometry instanceof OlPolygon) {
+    return olGeometry.flatCoordinates.slice(-4, -2);
+  }
+  return olGeometry.flatCoordinates.slice(-2);
 }
