@@ -1,5 +1,6 @@
 <mat-form-field class="igo-entity-selector">
   <mat-select
+    [disabled]="disabled"
     [value]="selected$ | async"
     [multiple]="multi"
     [placeholder]="placeholder"
