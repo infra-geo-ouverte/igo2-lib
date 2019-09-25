@@ -48,7 +48,6 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
 import { OGCFilterService } from './shared/ogc-filter.service';
 import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-filter-toggle-button.component';
 
-
 @NgModule({
   imports: [
     CommonModule,
