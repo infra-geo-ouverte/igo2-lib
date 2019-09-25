@@ -109,8 +109,10 @@ export class LayerService {
       .createAsyncDataSource(layerOptions.sourceOptions)
       .pipe(
         map(source => {
-          layerOptions.source = source;
-          return this.createLayer(layerOptions);
+          if (source === undefined) {
+            return undefined;
+          }
+          return this.createLayer( Object.assign(layerOptions, {source}));
         })
       );
   }

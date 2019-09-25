@@ -41,9 +41,9 @@ export class CapabilitiesService {
     const version = (baseOptions.params as any).version;
 
     return this.getCapabilities('wms', url, version).pipe(
-      map((capabilities: any) =>
-        this.parseWMSOptions(baseOptions, capabilities)
-      )
+      map((capabilities: any) => {
+        return capabilities ? this.parseWMSOptions(baseOptions, capabilities) : undefined;
+      })
     );
   }
 
@@ -54,9 +54,9 @@ export class CapabilitiesService {
     const version = baseOptions.version;
 
     const options = this.getCapabilities('wmts', url, version).pipe(
-      map((capabilities: any) =>
-        this.parseWMTSOptions(baseOptions, capabilities)
-      )
+      map((capabilities: any) => {
+        return capabilities ? this.parseWMTSOptions(baseOptions, capabilities) : undefined;
+      })
     );
 
     return options;
@@ -138,8 +138,11 @@ export class CapabilitiesService {
 
     return request.pipe(
       map(res => {
-        const capabilities = this.parsers[service].read(res);
-        return capabilities;
+        try {
+          return this.parsers[service].read(res);
+        } catch (e) {
+          return undefined;
+        }
       })
     );
   }

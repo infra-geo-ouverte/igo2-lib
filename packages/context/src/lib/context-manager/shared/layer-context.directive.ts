@@ -78,13 +78,20 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }));
 
     layersAndIndex$.subscribe((layersAndIndex: [Layer, number][]) => {
-      const layers = layersAndIndex.reduce((acc: Layer[], bunch: [Layer, number]) => {
-        const [layer, index] = bunch;
-        layer.visible = this.computeLayerVisibilityFromUrl(layer);
-        layer.zIndex = layer.zIndex || index + 1;  // Map indexes start at 1
-        acc[index] = layer;
-        return acc;
-      }, new Array(layersAndIndex.length));
+      const layers = layersAndIndex
+        .reduce((acc: Layer[], bunch: [Layer, number]) => {
+          const [layer, index] = bunch;
+          // A layer may be undefined when it's badly configured
+          if (layer !== undefined) {
+            layer.visible = this.computeLayerVisibilityFromUrl(layer);
+            layer.zIndex = layer.zIndex || index + 1;  // Map indexes start at 1
+          }
+
+          acc[index] = layer;
+          return acc;
+        }, new Array(layersAndIndex.length))
+        .filter((layer: Layer) => layer !== undefined);
+
       this.contextLayers = layers;
       this.map.addLayers(layers);
     });
