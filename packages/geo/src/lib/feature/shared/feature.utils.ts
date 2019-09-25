@@ -359,3 +359,41 @@ export function tryAddSelectionStrategy(
   store.addStrategy(strategy);
   strategy.activate();
 }
+
+/**
+ * Compute a diff between a source array of Ol features and a target array
+ * @param source Source array of OL features
+ * @param starget Target array of OL features
+ * @returns Features to add and remove
+ */
+export function computeOlFeaturesDiff(source: OlFeature[], target: OlFeature[]): {
+  add: OlFeature[];
+  remove: OlFeature;
+} {
+  const olFeaturesMap = new Map();
+  target.forEach((olFeature: OlFeature) => {
+    olFeaturesMap.set(olFeature.getId(), olFeature);
+  });
+
+  const olFeaturesToRemove = [];
+  source.forEach((olFeature: OlFeature) => {
+    const newOlFeature = olFeaturesMap.get(olFeature.getId());
+    if (newOlFeature === undefined) {
+      olFeaturesToRemove.push(olFeature);
+    } else if (newOlFeature.get('_entityRevision') !== olFeature.get('_entityRevision')) {
+      olFeaturesToRemove.push(olFeature);
+    } else {
+      olFeaturesMap.delete(newOlFeature.getId());
+    }
+  });
+
+  const olFeaturesToAddIds = Array.from(olFeaturesMap.keys());
+  const olFeaturesToAdd = target.filter((olFeature: OlFeature) => {
+    return olFeaturesToAddIds.indexOf(olFeature.getId()) >= 0;
+  });
+
+  return {
+    add: olFeaturesToAdd,
+    remove: olFeaturesToRemove
+  };
+}

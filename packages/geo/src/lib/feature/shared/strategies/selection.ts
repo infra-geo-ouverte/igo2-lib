@@ -48,12 +48,6 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
   private olDragSelectInteractionEndKey: string;
 
   /**
-   * A feature store that'll contain the selected features. It has it's own
-   * layer, shared by all the stores this staretgy is bound to.
-   */
-  private overlayStore: FeatureStore;
-
-  /**
    * Subscription to all stores selected entities
    */
   private stores$$: Subscription;
@@ -63,9 +57,16 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   get map(): IgoMap { return this.options.map; }
 
+  /**
+   * A feature store that'll contain the selected features. It has it's own
+   * layer, shared by all the stores this staretgy is bound to.
+   */
+  get overlayStore(): FeatureStore { return this._overlayStore; }
+  private _overlayStore: FeatureStore;
+
   constructor(protected options: FeatureStoreSelectionStrategyOptions) {
     super(options);
-    this.overlayStore = this.createOverlayStore();
+    this._overlayStore = this.createOverlayStore();
   }
 
   /**
@@ -278,8 +279,14 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     const olOverlayFeatures = this.overlayStore.layer.ol.getSource().getFeatures();
     const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature) => olFeature.getId());
     const featuresKeys = features.map(this.overlayStore.getKey);
-    const doMotion = overlayFeaturesKeys.length !== featuresKeys.length ||
-      !overlayFeaturesKeys.every((key: EntityKey) => featuresKeys.indexOf(key) >= 0);
+
+    let doMotion;
+    if (features.length === 0) {
+      doMotion = false;
+    } else {
+      doMotion = overlayFeaturesKeys.length !== featuresKeys.length ||
+        !overlayFeaturesKeys.every((key: EntityKey) => featuresKeys.indexOf(key) >= 0);
+    }
 
     this.overlayStore.setLayerFeatures(
       features,
