@@ -4,7 +4,7 @@ import {
   ViewContainerRef
 } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 /**
  * This class is used in the DynamicComponentOutlet component. It holds
@@ -34,6 +34,11 @@ export class DynamicComponent<C> {
    * Component inputs
    */
   private inputs: {[key: string]: any} = {};
+
+  /**
+   * Subscriptions to the component's async inputs
+   */
+  private inputs$$: {[key: string]: Subscription} = {};
 
   /**
    * Subscribers to the component's outputs
@@ -66,6 +71,7 @@ export class DynamicComponent<C> {
       this.componentRef.destroy();
       this.componentRef = undefined;
     }
+    this.unobserveAllInputs();
     this.unsubscribeAll();
   }
 
@@ -83,13 +89,42 @@ export class DynamicComponent<C> {
     const allowedInputs = this.componentFactory.inputs;
     allowedInputs.forEach((value: {propName: string; templateName: string; }) => {
       const key = value.propName;
+
+      this.unobserveInput(key);
+
+      const inputValue = inputs[key];
       if (inputs.hasOwnProperty(key)) {
-        instance[key] = inputs[key];
+        if (inputValue instanceof Observable) {
+          this.observeInput(key, inputValue);
+        } else {
+          this.setInputValue(instance, key, inputValue);
+        }
       }
     });
 
     if (typeof (instance as any).onUpdateInputs === 'function') {
       (instance as any).onUpdateInputs();
+    }
+  }
+
+  /**
+   * Set an instance's input value
+   * @param instance Component instance
+   * @param key Input key
+   * @param value Input value
+   */
+  private setInputValue(instance: C, key: string, value: any) {
+    const currentValue = instance[key];
+    if (value === currentValue) {
+      return;
+    }
+
+    const prototype = Object.getPrototypeOf(instance);
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, key);
+    if (descriptor !== undefined && descriptor.set !== undefined) {
+      descriptor.set.call(instance, value);
+    } else {
+      instance[key] = value;
     }
   }
 
@@ -119,6 +154,46 @@ export class DynamicComponent<C> {
         }
       }
     });
+  }
+
+  /**
+   * Subscribe to an observable input and update the component's input value
+   * accordingly
+   * @param key Input key
+   * @param observable Observable
+   */
+  private observeInput(key: string, observable: Observable<any>) {
+    this.inputs$$[key] = observable.subscribe((value: any) => {
+      const instance = this.componentRef.instance;
+      this.setInputValue(instance, key, value);
+
+      if (typeof (instance as any).onUpdateInputs === 'function') {
+        (instance as any).onUpdateInputs();
+      }
+    });
+  }
+
+  /**
+   * Unsubscribe to an observable input
+   * @param key Input key
+   */
+  private unobserveInput(key: string) {
+    if (this.inputs$$[key] !== undefined) {
+      this.inputs$$[key].unsubscribe();
+      this.inputs$$[key] = undefined;
+    }
+  }
+
+  /**
+   * Unsubscribe to all outputs.
+   */
+  private unobserveAllInputs() {
+    Object.values(this.inputs$$).forEach((s: Subscription | undefined) => {
+      if (s !== undefined) {
+        s.unsubscribe();
+      }
+    });
+    this.inputs$$ = {};
   }
 
   /**

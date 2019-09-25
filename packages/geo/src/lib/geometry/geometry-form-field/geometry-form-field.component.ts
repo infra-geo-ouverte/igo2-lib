@@ -31,9 +31,7 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
 })
 export class GeometryFormFieldComponent implements OnInit, OnDestroy {
 
-  geometryType$: BehaviorSubject<OlGeometryType> = new BehaviorSubject(undefined);
-  drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
-  value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
+  readonly value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
 
@@ -47,10 +45,10 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    */
   @Input() map: IgoMap;
 
-  /**
-   * The geometry type
-   */
-  @Input() geometryType: OlGeometryType;
+  @Input()
+  set geometryType(value: OlGeometryType) { this.geometryType$.next(value); }
+  get geometryType(): OlGeometryType { return this.geometryType$.value; }
+  readonly geometryType$: BehaviorSubject<OlGeometryType> = new BehaviorSubject(undefined);
 
   /**
    * Whether a geometry type toggle should be displayed
@@ -70,8 +68,11 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   /**
    * The drawGuide around the mouse pointer to help drawing
    */
-  @Input() drawGuide: number = null;
-
+  @Input()
+  set drawGuide(value: number) { this.drawGuide$.next(value); }
+  get drawGuide(): number { return this.drawGuide$.value; }
+  readonly drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
+  
   /**
    * Draw guide placeholder
    */
@@ -93,18 +94,6 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    */
   @Input() overlayStyle: OlStyle;
 
-  /**
-   * The geometry type model
-   */
-  set geometryTypeModel(value: OlGeometryType) {this.geometryType$.next(value); }
-  get geometryTypeModel(): OlGeometryType { return this.geometryType$.value; }
-
-  /**
-   * The draw guide model
-   */
-  set drawGuideModel(value: number) {this.drawGuide$.next(value); }
-  get drawGuideModel(): number { return this.drawGuide$.value; }
-
   constructor(private cdRef: ChangeDetectorRef) {}
 
   /**
@@ -112,8 +101,6 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    * @internal
    */
   ngOnInit() {
-    this.geometryType$.next(this.geometryType);
-    this.drawGuide$.next(this.drawGuide);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
       this.value$.next(value ? value : undefined);
@@ -126,16 +113,5 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.value$$.unsubscribe();
-  }
-
-  onGeometryTypeChange(geometryType: OlGeometryType) {
-    if (this.value$.value !== undefined) {
-      return;
-    }
-    this.geometryType$.next(geometryType);
-  }
-
-  onDrawGuideChange(value: number) {
-    this.drawGuide$.next(value);
   }
 }
