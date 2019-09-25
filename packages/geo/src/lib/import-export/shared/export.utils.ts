@@ -1,12 +1,37 @@
-import { MessageService, LanguageService } from '@igo2/core';
-
 import {
   getEntityProperty,
   EntityTableColumn,
   EntityTableColumnRenderer
 } from '@igo2/common';
+import { MessageService, LanguageService } from '@igo2/core';
+import { downloadContent } from '@igo2/utils';
 
 import { ExportNothingToExportError } from './export.errors';
+
+export function handleFileExportError(
+  error: Error,
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  if (error instanceof ExportNothingToExportError) {
+    handleNothingToExportError(messageService, languageService);
+    return;
+  }
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.export.failed.title');
+  const message = translate.instant('igo.geo.export.failed.text');
+  messageService.error(message, title);
+}
+
+export function handleNothingToExportError(
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.export.nothing.title');
+  const message = translate.instant('igo.geo.export.nothing.text');
+  messageService.error(message, title);
+}
 
 /**
  * Export array to CSV
@@ -37,51 +62,4 @@ export function entitiesToRowData(entities: object[], columns: EntityTableColumn
       return valueAccessor(entity, column.name);
     });
   });
-}
-
-/**
- * Trigger download of a file
- *
- * @param content File content
- * @param mimeType File mime type
- * @param fileName File name
- */
-export function downloadContent(content: string, mimeType: string, fileName: string) {
-  const element = document.createElement('a');
-  element.setAttribute(
-    'href',
-    `data:${mimeType},${encodeURIComponent(content)}`
-  );
-  element.setAttribute('download', fileName);
-  element.style.display = 'none';
-  document.body.appendChild(element);
-
-  element.click();
-
-  document.body.removeChild(element);
-}
-
-export function handleFileExportError(
-  error: Error,
-  messageService: MessageService,
-  languageService: LanguageService
-) {
-  if (error instanceof ExportNothingToExportError) {
-    handleNothingToExportError(messageService, languageService);
-    return;
-  }
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.export.failed.title');
-  const message = translate.instant('igo.geo.export.failed.text');
-  messageService.error(message, title);
-}
-
-export function handleNothingToExportError(
-  messageService: MessageService,
-  languageService: LanguageService
-) {
-  const translate = languageService.translate;
-  const title = translate.instant('igo.geo.export.nothing.title');
-  const message = translate.instant('igo.geo.export.nothing.text');
-  messageService.error(message, title);
 }
