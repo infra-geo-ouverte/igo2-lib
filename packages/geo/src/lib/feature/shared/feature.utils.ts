@@ -3,7 +3,6 @@ import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
-import OlLayer from 'ol/layer/Layer';
 import { uuid } from '@igo2/utils';
 
 import {
@@ -79,17 +78,14 @@ export function featureToOl(
  * The output object has a reference to the feature id.
  * @param olFeature OL Feature
  * @param projectionIn OL feature projection
- * @param olLayer OL Layer
  * @param projectionOut Feature projection
  * @returns Feature
  */
 export function featureFromOl(
   olFeature: OlFeature,
   projectionIn: string,
-  olLayer?: OlLayer,
   projectionOut = 'EPSG:4326'
 ): Feature {
-  let title;
   const olFormat = new OlFormatGeoJSON();
 
   const keys = olFeature.getKeys().filter((key: string) => {
@@ -105,11 +101,7 @@ export function featureFromOl(
     featureProjection: projectionIn
   });
 
-  if (olLayer) {
-    title = olLayer.get('title');
-  } else {
-    title = olFeature.get('_title');
-  }
+  const title = olFeature.get('_title');
   const mapTitle = olFeature.get('_mapTitle');
   const id = olFeature.getId() ? olFeature.getId() : uuid();
 
@@ -366,7 +358,10 @@ export function tryAddSelectionStrategy(
  * @param starget Target array of OL features
  * @returns Features to add and remove
  */
-export function computeOlFeaturesDiff(source: OlFeature[], target: OlFeature[]): {
+export function computeOlFeaturesDiff(
+  source: OlFeature[],
+  target: OlFeature[]
+): {
   add: OlFeature[];
   remove: OlFeature;
 } {
@@ -380,7 +375,9 @@ export function computeOlFeaturesDiff(source: OlFeature[], target: OlFeature[]):
     const newOlFeature = olFeaturesMap.get(olFeature.getId());
     if (newOlFeature === undefined) {
       olFeaturesToRemove.push(olFeature);
-    } else if (newOlFeature.get('_entityRevision') !== olFeature.get('_entityRevision')) {
+    } else if (
+      newOlFeature.get('_entityRevision') !== olFeature.get('_entityRevision')
+    ) {
       olFeaturesToRemove.push(olFeature);
     } else {
       olFeaturesMap.delete(newOlFeature.getId());

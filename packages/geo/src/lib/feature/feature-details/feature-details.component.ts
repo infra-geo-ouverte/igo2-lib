@@ -9,13 +9,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { Feature } from '../shared';
-import { NetworkService, ConnectionState } from '@igo2/core';
-import {
-  MVTDataSourceOptions,
-  XYZDataSourceOptions,
-  FeatureDataSourceOptions
-} from '../../datasource';
-import { MapService } from '../../map/shared/map.service';
 
 @Component({
   selector: 'igo-feature-details',
@@ -24,8 +17,6 @@ import { MapService } from '../../map/shared/map.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureDetailsComponent {
-  private state: ConnectionState;
-
   @Input()
   get feature(): Feature {
     return this._feature;
@@ -52,14 +43,8 @@ export class FeatureDetailsComponent {
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private sanitizer: DomSanitizer,
-    private networkService: NetworkService,
-    private mapService: MapService
-  ) {
-    this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.state = state;
-    });
-  }
+    private sanitizer: DomSanitizer
+  ) {}
 
   htmlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
@@ -80,12 +65,9 @@ export class FeatureDetailsComponent {
   }
 
   filterFeatureProperties(feature) {
-    let sourceOptions;
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
-    const properties = Object.assign({}, feature.properties);
-    const layerName = feature.meta.title;
-    const layers = this.mapService.getMap().layers$.value;
 
+    const properties = {};
     if (allowedFieldsAndAlias) {
       Object.keys(allowedFieldsAndAlias).forEach(field => {
         if (feature.properties[field]) {
@@ -94,35 +76,6 @@ export class FeatureDetailsComponent {
       });
       return properties;
     } else {
-      layers.forEach(layer => {
-        if (layer.dataSource.options.type === 'mvt') {
-          sourceOptions = layer.dataSource.options as MVTDataSourceOptions;
-        } else if (layer.dataSource.options.type === 'xyz') {
-          sourceOptions = layer.dataSource.options as XYZDataSourceOptions;
-        } else if (layer.dataSource.options.type === 'vector') {
-          sourceOptions = layer.dataSource.options as FeatureDataSourceOptions;
-        } else {
-          return;
-        }
-        if (this.state.connection && sourceOptions.excludeAttribute) {
-          const exclude = sourceOptions.excludeAttribute;
-          exclude.forEach(attribute => {
-            if (layerName === layer.title) {
-              delete feature.properties[attribute];
-            }
-          });
-        } else if (
-          !this.state.connection &&
-          sourceOptions.excludeAttributeOffline
-        ) {
-          const excludeAttributeOffline = sourceOptions.excludeAttributeOffline;
-          excludeAttributeOffline.forEach(attribute => {
-            if (layerName === layer.title) {
-              delete feature.properties[attribute];
-            }
-          });
-        }
-      });
       return feature.properties;
     }
   }
