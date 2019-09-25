@@ -67,8 +67,10 @@ export class ContextState {
     tools.forEach(tool => {
       if (tool.parent) {
         const parentIndex = tools.findIndex(el => el.name === tool.parent);
-        tools[parentIndex].children = [];
-        tools[parentIndex].children.push(tool.name);
+        if (parentIndex !== -1) {
+          tools[parentIndex].children = [];
+          tools[parentIndex].children.push(tool.name);
+        }
       }
     });
 
