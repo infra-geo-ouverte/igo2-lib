@@ -435,7 +435,7 @@ export class IChercheReverseSearchSource extends SearchSource
               enabled: true
             },
             {
-              title: 'mrc',
+              title: 'MRC',
               value: 'mrc',
               enabled: true
             },

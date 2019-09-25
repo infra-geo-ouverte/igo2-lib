@@ -246,7 +246,7 @@ export class PrintService {
       }
       const scaleText = translate.instant('igo.geo.printForm.scale');
       const mapScale = map.viewController.getScale(dpi);
-      textProjScale += scaleText + ': ~ 1 ' + formatScale(mapScale);
+      textProjScale += scaleText + ': ~ 1 / ' + formatScale(mapScale);
     }
     doc.setFont('courier');
     doc.setFontSize(projScaleSize);
@@ -493,7 +493,7 @@ export class PrintService {
         const mapScale = map.viewController.getScale(resolution);
         newContext.textAlign = 'start';
         newContext.fillText(
-          scaleText + ': ~ 1 : ' + formatScale(mapScale),
+          scaleText + ': ~ 1 / ' + formatScale(mapScale),
           positionWProjScale,
           positionHProjScale
         );
