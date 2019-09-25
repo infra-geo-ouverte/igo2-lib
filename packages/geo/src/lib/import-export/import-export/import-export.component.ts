@@ -33,6 +33,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private layers$$: Subscription;
 
+  private espgCodeRegex = new RegExp('^\\d{4,6}');
+
   @Input() map: IgoMap;
 
   constructor(
@@ -58,9 +60,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   importFiles(files: File[]) {
+    let inputProj = this.inputProj;
+    if (this.espgCodeRegex.test(inputProj)) {
+      inputProj =`EPSG:${inputProj}`;
+    }
+
     this.loading$.next(true);
     for (const file of files) {
-      this.importService.import(file, this.inputProj).subscribe(
+      this.importService.import(file, inputProj).subscribe(
         (features: Feature[]) => this.onFileImportSuccess(file, features),
         (error: Error) => this.onFileImportError(file, error),
         () => {

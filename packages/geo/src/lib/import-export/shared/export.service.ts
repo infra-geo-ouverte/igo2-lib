@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
+import { downloadContent } from '@igo2/utils';
 
 import { Observable, Observer } from 'rxjs';
 
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 
-import { downloadContent } from './export.utils';
 import { ExportFormat } from './export.type';
 import {
   ExportInvalidFileError,
@@ -159,6 +159,8 @@ export class ExportService {
     form.setAttribute('method', 'post');
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
+    form.acceptCharset = 'UTF-8';
+    form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
 
     const geojsonField = document.createElement('input');
     geojsonField.setAttribute('type', 'hidden');

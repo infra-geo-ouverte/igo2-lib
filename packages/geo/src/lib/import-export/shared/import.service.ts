@@ -74,7 +74,7 @@ export class ImportService {
       return undefined;
     } else if (
       mimeType === 'application/json' ||
-      ['json', 'geojson', 'kml'].indexOf(extension) >= 0
+      ['json', 'geojson', 'kml', 'gpx'].indexOf(extension) >= 0
     ) {
       return this.importFile;
     } else if (this.ogreUrl !== undefined) {
