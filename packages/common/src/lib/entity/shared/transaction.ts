@@ -1,6 +1,8 @@
 import { Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
+import { BehaviorSubject } from 'rxjs';
+
 import {
   EntityKey,
   EntityTransactionOptions,
@@ -36,13 +38,18 @@ export class EntityTransaction {
   /**
    * Whether there are pending operations
    */
-  get empty(): boolean { return this.operations.entities$.value.length === 0; }
+  get empty$(): BehaviorSubject<boolean> { return this.operations.empty$; }
+
+  /**
+   * Whether there are pending operations
+   */
+  get empty(): boolean { return this.empty$.value; }
 
   /**
    * Whether thise store is in commit phase
    */
-  get inCommitPhase(): boolean { return this._inCommitPhase; }
-  private _inCommitPhase = false;
+  get inCommitPhase(): boolean { return this.inCommitPhase$.value; }
+  readonly inCommitPhase$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(options: EntityTransactionOptions = {}) {
     this.getKey = options.getKey ? options.getKey : getEntityId;
@@ -129,7 +136,7 @@ export class EntityTransaction {
    * @returns The handler output (observable)
    */
   commit(operations: EntityOperation[], handler: EntityTransactionCommitHandler): Observable<any> {
-    this._inCommitPhase = true;
+    this.inCommitPhase$.next(true);
 
     return handler(this, operations)
       .pipe(
@@ -203,7 +210,7 @@ export class EntityTransaction {
     });
 
     this.operations.deleteMany(operations);
-    this._inCommitPhase = false;
+    this.inCommitPhase$.next(false);
   }
 
   /**
@@ -212,7 +219,16 @@ export class EntityTransaction {
    */
   clear() {
     this.operations.clear();
-    this._inCommitPhase = false;
+    this.inCommitPhase$.next(false);
+  }
+
+  /**
+   * Get any existing operation on an entity
+   * @param entity Entity
+   * @returns Either an insert, update or delete operation
+   */
+  getOperationByEntity(entity: object): EntityOperation {
+    return this.operations.get(this.getKey(entity));
   }
 
   /**
@@ -307,7 +323,7 @@ export class EntityTransaction {
    */
   private onCommitSuccess(operations: EntityOperation[]) {
     this.resolveOperations(operations);
-    this._inCommitPhase = false;
+    this.inCommitPhase$.next(false);
   }
 
   /**
@@ -315,7 +331,7 @@ export class EntityTransaction {
    * @param operations Commited operations
    */
   private onCommitError(operations: EntityOperation[]) {
-    this._inCommitPhase = false;
+    this.inCommitPhase$.next(false);
   }
 
   /**
@@ -338,15 +354,6 @@ export class EntityTransaction {
 
     this.operations.delete(operation);
     this.operations.state.update(operation, {added: false});
-  }
-
-  /**
-   * Get the any existing operation an entity
-   * @param entity Entity
-   * @returns Either an insert, update or delete operation
-   */
-  private getOperationByEntity(entity: object): EntityOperation {
-    return this.operations.get(this.getKey(entity));
   }
 
   /**
