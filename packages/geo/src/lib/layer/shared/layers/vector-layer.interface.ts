@@ -41,7 +41,6 @@ export interface VectorLayerOptions extends LayerOptions {
   styleByAttribute?: StyleByAttribute;
   clusterParam?: ClusterParam;
   trackFeature?: string | number;
-
 }
 
 export interface VectorAnimation {
