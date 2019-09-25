@@ -16,10 +16,16 @@ import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 
 export class VectorLayer extends Layer {
-  public dataSource: FeatureDataSource | WFSDataSource | ArcGISRestDataSource | WebSocketDataSource | ClusterDataSource;
+  public dataSource:
+    | FeatureDataSource
+    | WFSDataSource
+    | ArcGISRestDataSource
+    | WebSocketDataSource
+    | ClusterDataSource;
   public options: VectorLayerOptions;
   public ol: olLayerVector;
   private watcher: VectorWatcher;
+  private trackFeatureListenerId;
 
   get browsable(): boolean {
     return this.options.browsable !== false;
@@ -47,6 +53,10 @@ export class VectorLayer extends Layer {
           this.flash(e.feature);
         }.bind(this)
       );
+    }
+
+    if (this.options.trackFeature) {
+      this.enableTrackFeature(this.options.trackFeature);
     }
 
     return new olLayerVector(olOptions);
@@ -154,8 +164,30 @@ export class VectorLayer extends Layer {
         if (this.visible) {
           this.flash(e.feature);
         }
-
       }.bind(this)
     );
+  }
+
+  public enableTrackFeature(id: string | number) {
+    this.trackFeatureListenerId = this.dataSource.ol.on(
+      'addfeature',
+      this.trackFeature.bind(this, id)
+    );
+  }
+  public centerMapOnFeature(id: string | number) {
+    const feat = this.dataSource.ol.getFeatureById(id);
+    if (feat) {
+      this.map.ol.getView().setCenter(feat.getGeometry().getCoordinates());
+    }
+  }
+
+  public trackFeature(id, feat) {
+    if (feat.feature.getId() === id && this.visible) {
+      this.centerMapOnFeature(id);
+    }
+  }
+
+  public disableTrackFeature(id?: string | number) {
+    unByKey(this.trackFeatureListenerId);
   }
 }
