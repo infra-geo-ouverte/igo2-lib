@@ -15,7 +15,7 @@ mat-form-field {
 
     ::ng-deep .mat-slide-toggle-content {
       width: calc(100% - #{$slide-toggle-width});
-      font-size: 16px;
+      font-size: 1em;
     }
   }
 }
