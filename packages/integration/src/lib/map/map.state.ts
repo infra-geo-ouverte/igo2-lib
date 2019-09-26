@@ -24,7 +24,7 @@ export class MapState {
       controls: {
         scaleLine: true,
         attribution: {
-          collapsed: false
+          collapsed: true
         }
       }
     });
