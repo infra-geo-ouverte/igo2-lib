@@ -9,7 +9,7 @@
 }
 
 :host ::ng-deep span.mat-form-field-label-wrapper {
-  top: -20px;
+  top: -1.25em;
 }
 
 :host ::ng-deep div.mat-form-field-infix {
@@ -25,7 +25,6 @@
 .igo-search-bar-container {
   position: relative;
   width: 100%;
-  display: inline-flex;
   overflow: hidden;
 }
 
