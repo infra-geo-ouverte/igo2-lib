@@ -106,6 +106,11 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @Input() withTitle = true;
 
   /**
+   * Whether action tooltips are displayed
+   */
+  @Input() withTooltip = true;
+
+  /**
    * Whether action titles are displayed (condition for scroll button)
    */
   @Input() scrollActive = true;

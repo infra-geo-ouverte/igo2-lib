@@ -1,7 +1,7 @@
 <mat-list-item
   matTooltipClass="actionbarItemTooltip"
   matTooltipShowDelay="500"
-  [matTooltip]="tooltip | translate"
+  [matTooltip]="withTooltip ? (tooltip | translate) : ''"
   [ngClass]="ngClass$ | async"
   (click)="onClick()">
   <button *ngIf="withIcon"

@@ -54,6 +54,11 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   @Input() withIcon = true;
 
   /**
+   * Whether a tooltip should be shown
+   */
+  @Input() withTooltip = true;
+
+  /**
    * Whether the action is disabled
    */
   @Input()
