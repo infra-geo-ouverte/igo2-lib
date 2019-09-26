@@ -53,12 +53,14 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     super(options);
 
     const authService = injector.get(AuthService);
-    if (!authService) {
-      this.getAllowedTypes();
-    } else {
-      authService.authenticate$.subscribe(() => {
+    if (this.settings.length) {
+      if (!authService) {
         this.getAllowedTypes();
-      });
+      } else {
+        authService.authenticate$.subscribe(() => {
+          this.getAllowedTypes();
+        });
+      }
     }
   }
 
@@ -386,12 +388,14 @@ export class IChercheReverseSearchSource extends SearchSource
     super(options);
 
     const authService = injector.get(AuthService);
-    if (!authService) {
-      this.getAllowedTypes();
-    } else {
-      authService.authenticate$.subscribe(() => {
+    if (this.settings.length) {
+      if (!authService) {
         this.getAllowedTypes();
-      });
+      } else {
+        authService.authenticate$.subscribe(() => {
+          this.getAllowedTypes();
+        });
+      }
     }
   }
 
