@@ -435,16 +435,22 @@ export class ModifyControl {
    * Subscribe to CTRL key up to deactivate the draw control
    */
   private subscribeToDrawKeyUp() {
-    this.drawKeyUp$$ = fromEvent(document, 'keyup').subscribe((event: KeyboardEvent) => {
-      if (event.keyCode !== 17) { return; }
+    this.drawKeyUp$$ = fromEvent(document, 'keyup')
+      .subscribe((event: KeyboardEvent) => {
+        if (event.keyCode !== 17) {
+          return;
+        }
 
-      this.unsubscribeToDrawKeyUp();
-      this.subscribeToDrawKeyDown();
+        this.unsubscribeToDrawKeyUp();
+        this.unsubscribeToKeyDown();
+        this.deactivateDrawInteraction();
 
-      this.deactivateDrawInteraction();
-      this.activateModifyInteraction();
-      this.activateTranslateInteraction();
-    });
+        this.activateModifyInteraction();
+        this.activateTranslateInteraction();
+        this.subscribeToDrawKeyDown();
+
+        this.end$.next(this.getOlGeometry());
+      });
   }
 
   /**
