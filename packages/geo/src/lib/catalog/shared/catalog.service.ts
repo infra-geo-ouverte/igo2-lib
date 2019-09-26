@@ -8,8 +8,7 @@ import { LanguageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
   WMSDataSourceOptions,
-  WMTSDataSourceOptions,
-  generateIdFromSourceOptions
+  WMTSDataSourceOptions
 } from '../../datasource';
 import {
   LayerOptions,
@@ -27,6 +26,7 @@ import {
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
 import { QueryHtmlTarget, QueryFormat } from '../../query';
+import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
