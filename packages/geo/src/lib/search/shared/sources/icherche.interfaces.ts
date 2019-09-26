@@ -5,12 +5,11 @@ export interface IChercheData {
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
   properties: { [key: string]: any };
+  icon?: string
   highlight: {
     title: string;
     title2?: string;
     title3?: string;
-    title4?: string;
-    title5?: string;
   };
 }
 

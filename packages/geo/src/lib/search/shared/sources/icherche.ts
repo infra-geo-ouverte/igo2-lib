@@ -262,6 +262,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           q: this.computeTerm(term),
           geometry: true,
           bbox: true,
+          icon: true,
           type:
             'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
         },
@@ -283,7 +284,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const titleHtml = data.highlight.title || data.properties.nom;
     const subtitleHtml = data.highlight.title2
-      ? ' <small> ' + data.highlight.title2 + '</small>'
+      ? ' <small style="color: #6f6969"> ' + data.highlight.title2 + '</small>'
+      : '';
+    const subtitleHtml2 = data.highlight.title3
+      ? '<br><small style="color: #6f6969"> ' + data.highlight.title3 + '</small>'
       : '';
 
     return {
@@ -303,8 +307,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        titleHtml: titleHtml + subtitleHtml,
-        icon: 'map-marker'
+        titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
+        icon: data.icon || 'map-marker'
       }
     };
   }
