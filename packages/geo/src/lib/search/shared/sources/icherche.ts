@@ -284,10 +284,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const titleHtml = data.highlight.title || data.properties.nom;
     const subtitleHtml = data.highlight.title2
-      ? ' <small style="color: #6f6969"> ' + data.highlight.title2 + '</small>'
+      ? ' <small> ' + data.highlight.title2 + '</small>'
       : '';
     const subtitleHtml2 = data.highlight.title3
-      ? '<br><small style="color: #6f6969"> ' + data.highlight.title3 + '</small>'
+      ? '<br><small> ' + data.highlight.title3 + '</small>'
       : '';
 
     return {
@@ -539,7 +539,7 @@ export class IChercheReverseSearchSource extends SearchSource
     const id = [this.getId(), properties.type, properties.code].join('.');
 
     const titleHtml = data.properties.nom;
-    const subtitleHtml = ' <small style="color: #6f6969"> ' + this.getSubtitle(data) + '</small>';
+    const subtitleHtml = ' <small> ' + this.getSubtitle(data) + '</small>';
 
     return {
       source: this,
