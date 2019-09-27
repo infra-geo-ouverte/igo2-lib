@@ -20,6 +20,7 @@ export interface IChercheResponse {
 export interface IChercheReverseData {
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
+  icon?: string
   properties: { [key: string]: any };
 }
 

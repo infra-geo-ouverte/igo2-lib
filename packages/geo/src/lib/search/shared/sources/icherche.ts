@@ -497,7 +497,8 @@ export class IChercheReverseSearchSource extends SearchSource
         {
           loc: lonLat.join(','),
           buffer: distance ? String(distance) : '100',
-          geometry: true
+          geometry: true,
+          icon: true
         },
         this.params,
         options.params || {}
@@ -513,10 +514,32 @@ export class IChercheReverseSearchSource extends SearchSource
     });
   }
 
+  private getSubtitle(data: IChercheReverseData) {
+    if (!this.settings.length) {
+      return '';
+    }
+    let subtitle = '';
+    switch(data.properties.type) {
+      case 'arrondissements':
+        subtitle = data.properties.municipalite + ' (Arrondissement)';
+        break;
+      default:
+        const typeSetting = this.settings.find(s => s.name === 'type');
+        const type = typeSetting.values.find(t => t.value === data.properties.type);
+        if (type) {
+          subtitle = type.title;
+        }
+      }
+      return subtitle;
+  }
+
   private dataToResult(data: IChercheReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const extent = this.computeExtent(data);
     const id = [this.getId(), properties.type, properties.code].join('.');
+
+    const titleHtml = data.properties.nom;
+    const subtitleHtml = ' <small style="color: #6f6969"> ' + this.getSubtitle(data) + '</small>';
 
     return {
       source: this,
@@ -535,7 +558,8 @@ export class IChercheReverseSearchSource extends SearchSource
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        icon: 'map-marker'
+        titleHtml: titleHtml + subtitleHtml,
+        icon: data.icon || 'map-marker'
       }
     };
   }
