@@ -86,17 +86,12 @@ export class FeatureDetailsComponent {
 
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
-    const properties = Object.assign({}, feature.properties);
+    const properties = {};
 
     if (allowedFieldsAndAlias) {
-      Object.keys(properties).forEach(property => {
-        if (Object.keys(allowedFieldsAndAlias).indexOf(property) === -1) {
-          delete properties[property];
-        } else {
-          properties[allowedFieldsAndAlias[property]] = properties[property];
-          if (allowedFieldsAndAlias[property] !== property) {
-            delete properties[property];
-          }
+      Object.keys(allowedFieldsAndAlias).forEach(field => {
+        if (feature.properties[field]) {
+          properties[allowedFieldsAndAlias[field]] = feature.properties[field];
         }
       });
       return properties;
