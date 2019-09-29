@@ -9,4 +9,6 @@ export interface ClusterDataSourceOptions extends FeatureDataSourceOptions {
   source?: FeatureDataSource;
   ol?: olSourceVector;
   pathOffline?: string;
+  excludeAttribute?: Array<string>;
+  excludeAttributeOffline?: Array<string>;
 }

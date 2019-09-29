@@ -177,14 +177,30 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private doQueryFeatures(event: OlMapBrowserPointerEvent): Observable<Feature[]> {
-    const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
+    let feature;
+    const clickedFeatures = [];
+
+    this.map.ol.forEachFeatureAtPixel(
+      event.pixel,
+      (featureOL: OlFeature, layerOL: OlLayer) => {
+        if (featureOL) {
+          if (featureOL.get('features')) {
+            featureOL = featureOL.get('features')[0];
+          }
+          feature = featureFromOl(featureOL, this.map.projection, layerOL);
+          clickedFeatures.push(feature);
+
+        } else {
+          feature = featureFromOl(featureOL, this.map.projection, layerOL);
+          clickedFeatures.push(feature);
+        }
+      },
+    {
       hitTolerance: this.queryFeaturesHitTolerance || 0,
       layerFilter: this.queryFeaturesCondition ? this.queryFeaturesCondition : olLayerIsQueryable
     });
-    const features = (olFeatures || []).map((olFeature: OlFeature) => {
-      return featureFromOl(olFeature, this.map.projection);
-    });
-    return of(features);
+
+    return of(clickedFeatures);
   }
 
   /**

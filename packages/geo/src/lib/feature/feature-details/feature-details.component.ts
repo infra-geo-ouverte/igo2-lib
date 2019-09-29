@@ -5,10 +5,12 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { NetworkService, ConnectionState } from '@igo2/core';
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { Feature } from '../shared';
+import { SearchSource } from '../../search/shared/sources/source';
 
 @Component({
   selector: 'igo-feature-details',
@@ -17,6 +19,17 @@ import { Feature } from '../shared';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureDetailsComponent {
+  private state: ConnectionState;
+
+  @Input()
+  get source(): SearchSource {
+    return this._source;
+  }
+  set source(value: SearchSource ) {
+    this._source = value;
+    this.cdRef.detectChanges();
+  }
+
   @Input()
   get feature(): Feature {
     return this._feature;
@@ -25,7 +38,9 @@ export class FeatureDetailsComponent {
     this._feature = value;
     this.cdRef.detectChanges();
   }
+
   private _feature: Feature;
+  private _source: SearchSource;
 
   /**
    * @internal
@@ -43,8 +58,13 @@ export class FeatureDetailsComponent {
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
-  ) {}
+    private sanitizer: DomSanitizer,
+    private networkService: NetworkService
+  ) {
+    this.networkService.currentState().subscribe((state: ConnectionState) => {
+      this.state = state;
+    });
+  }
 
   htmlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
@@ -66,17 +86,33 @@ export class FeatureDetailsComponent {
 
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
+    const properties = Object.assign({}, feature.properties);
 
-    const properties = {};
     if (allowedFieldsAndAlias) {
-      Object.keys(allowedFieldsAndAlias).forEach(field => {
-        if (feature.properties[field]) {
-          properties[allowedFieldsAndAlias[field]] = feature.properties[field];
+      Object.keys(properties).forEach(property => {
+        if (Object.keys(allowedFieldsAndAlias).indexOf(property) === -1) {
+          delete properties[property];
+        } else {
+          properties[allowedFieldsAndAlias[property]] = properties[property];
+          if (allowedFieldsAndAlias[property] !== property) {
+            delete properties[property];
+          }
         }
       });
       return properties;
     } else {
-      return feature.properties;
+        if (this.state.connection && feature.meta.excludeAttribute) {
+          const excludeAttribute = feature.meta.excludeAttribute;
+          excludeAttribute.forEach(attribute => {
+            delete feature.properties[attribute];
+          });
+        } else if (!this.state.connection && feature.meta.excludeAttributeOffline) {
+          const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
+          excludeAttributeOffline.forEach(attribute => {
+            delete feature.properties[attribute];
+          });
+        }
+        return feature.properties;
     }
   }
 }
