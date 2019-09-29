@@ -115,7 +115,7 @@ export function featureFromOl(
     title = olFeature.get('_title');
   }
   const mapTitle = olFeature.get('_mapTitle');
-  const id = olFeature.getId();
+  const id = olFeature.getId() ? olFeature.getId() : uuid();
 
   return {
     type: FEATURE,
@@ -123,7 +123,7 @@ export function featureFromOl(
     extent: olFeature.get('_extent'),
     meta: {
       id,
-      title: title ? title : (mapTitle ? mapTitle : id),
+      title: title ? title : mapTitle ? mapTitle : id,
       mapTitle,
       revision: olFeature.getRevision(),
       excludeAttribute: exclude,
