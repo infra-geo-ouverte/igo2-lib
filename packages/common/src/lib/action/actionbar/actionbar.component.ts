@@ -6,14 +6,17 @@ import {
   ChangeDetectionStrategy,
   OnChanges,
   OnDestroy,
-  SimpleChanges
+  SimpleChanges,
+  ElementRef
 } from '@angular/core';
 
+import { MediaService, Media } from '@igo2/core';
 import { EntityStoreWatcher } from '../../entity';
 import { Action } from '../shared/action.interfaces';
 import { ActionbarMode } from '../shared/action.enums';
 import { ActionStore } from '../shared/store';
 import { Overlay } from '@angular/cdk/overlay';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * A list of action buttons.
@@ -26,6 +29,7 @@ import { Overlay } from '@angular/cdk/overlay';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionbarComponent implements OnDestroy, OnChanges {
+
   /**
    * Reference to the ActionbarMode enum for use in the template
    * @internal
@@ -55,6 +59,21 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
    * @internal
    */
   private watcher: EntityStoreWatcher<Action>;
+
+  /**
+   * Height Condition for scroll button
+   */
+  heightCondition$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  /**
+   * Position Condition for top scroll button
+   */
+  positionConditionTop$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+
+  /**
+   * Position Condition for low scroll button
+   */
+  positionConditionLow$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   /**
    * Action store
@@ -87,6 +106,16 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @Input() withTitle = true;
 
   /**
+   * Whether action tooltips are displayed
+   */
+  @Input() withTooltip = true;
+
+  /**
+   * Whether action titles are displayed (condition for scroll button)
+   */
+  @Input() scrollActive = true;
+
+  /**
    * Whether action icons are displayed
    */
   @Input() withIcon = true;
@@ -114,12 +143,6 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   private _overlayClass = '';
 
   /**
-   * Function to add class to item actionbar
-   */
-  @Input() itemClassFunc: (action: Action) => { [key: string]: boolean } =
-    ActionbarComponent.defaultItemClassFunc;
-
-  /**
    * @ignore
    */
   @HostBinding('class.with-title')
@@ -143,11 +166,40 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
     return this.horizontal;
   }
 
-  static defaultItemClassFunc(action: Action) {
-    return {};
+  get heightCondition(): boolean {
+    const el = this.elRef.nativeElement;
+    if (this.scrollActive === false) {
+      if (el.clientHeight < el.scrollHeight) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  constructor(private cdRef: ChangeDetectorRef, public overlay: Overlay) {}
+  get positionConditionTop(): boolean {
+    if (this.elRef.nativeElement.scrollTop === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  get positionConditionLow(): boolean {
+    const el = this.elRef.nativeElement;
+    if (el.scrollTop >= (el.scrollHeight - el.clientHeight)) {
+      return false;
+    }
+    return true;
+  }
+
+  get isDesktop(): boolean {
+    return this.mediaService.getMedia() === Media.Desktop;
+  }
+
+  constructor(
+    public overlay: Overlay,
+    private elRef: ElementRef,
+    private cdRef: ChangeDetectorRef,
+    public mediaService: MediaService) {}
 
   /**
    * @internal
@@ -177,4 +229,13 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
     const args = action.args || [];
     action.handler(...args);
   }
+
+  scrollDown() {
+    this.elRef.nativeElement.scrollBy(0, 52);
+  }
+
+  scrollUp() {
+    this.elRef.nativeElement.scrollBy(0, -52);
+  }
+
 }

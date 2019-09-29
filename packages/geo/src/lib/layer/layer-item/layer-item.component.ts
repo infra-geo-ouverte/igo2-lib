@@ -10,6 +10,7 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer, TooltipType } from '../shared/layers';
+import { NetworkService, ConnectionState } from '@igo2/core';
 
 @Component({
   selector: 'igo-layer-item',
@@ -18,14 +19,15 @@ import { Layer, TooltipType } from '../shared/layers';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
-
-  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   queryBadgeHidden$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   tooltipText: string;
+
+  state: ConnectionState;
 
   private resolution$$: Subscription;
 
@@ -45,20 +47,29 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
-  get removable(): boolean { return this.layer.options.removable !== false; }
+  get removable(): boolean {
+    return this.layer.options.removable !== false;
+  }
 
-  get opacity() { return this.layer.opacity * 100; }
-  set opacity(opacity: number) { this.layer.opacity = opacity / 100; }
+  get opacity() {
+    return this.layer.opacity * 100;
+  }
+  set opacity(opacity: number) {
+    this.layer.opacity = opacity / 100;
+  }
 
-  constructor() {}
+  constructor(private networkService: NetworkService) {}
 
   ngOnInit() {
-    const legend = this.layer.dataSource.options.legend || {};
-    let legendCollapsed = legend.collapsed === false ? false : true;
-    if (this.layer.visible && this.expandLegendIfVisible) {
-      legendCollapsed = false;
+    if (
+      this.layer.visible &&
+      this.expandLegendIfVisible &&
+      this.layer.firstLoadComponent === true
+    ) {
+      this.layer.firstLoadComponent = false;
+      this.layer.legendCollapsed = false;
     }
-    this.toggleLegend(legendCollapsed);
+    this.toggleLegend(this.layer.legendCollapsed);
     this.updateQueryBadge();
 
     const resolution$ = this.layer.map.viewController.resolution$;
@@ -66,6 +77,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.onResolutionChange();
     });
     this.tooltipText = this.computeTooltip();
+
+    this.networkService.currentState().subscribe((state: ConnectionState) => {
+      this.state = state;
+      this.onResolutionChange();
+    });
   }
 
   ngOnDestroy() {
@@ -73,7 +89,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   toggleLegend(collapsed: boolean) {
+    this.layer.legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
+  }
+
+  toggleLegendOnClick() {
+    this.toggleLegend(this.showLegend$.value);
   }
 
   toggleVisibility() {
@@ -113,14 +134,18 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   private onResolutionChange() {
     const inResolutionRange = this.layer.isInResolutionsRange;
-    if (inResolutionRange === false && this.updateLegendOnResolutionChange === true) {
+    if (
+      inResolutionRange === false &&
+      this.updateLegendOnResolutionChange === true
+    ) {
       this.toggleLegend(true);
     }
     this.inResolutionRange$.next(inResolutionRange);
   }
 
   private updateQueryBadge() {
-    const hidden = this.queryBadge === false ||
+    const hidden =
+      this.queryBadge === false ||
       this.layer.visible === false ||
       !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);

@@ -143,10 +143,9 @@ export class DataSourceService {
       return this.capabilitiesService
         .getWMSOptions(context)
         .pipe(
-          map(
-            (options: WMSDataSourceOptions) =>
-              new WMSDataSource(options, this.wfsDataSourceService)
-          )
+          map((options: WMSDataSourceOptions) => {
+            return options ? new WMSDataSource(options, this.wfsDataSourceService) : undefined;
+          })
         );
     }
 
@@ -162,7 +161,9 @@ export class DataSourceService {
       return this.capabilitiesService
         .getWMTSOptions(context)
         .pipe(
-          map((options: WMTSDataSourceOptions) => new WMTSDataSource(options))
+          map((options: WMTSDataSourceOptions) => {
+            return options ? new WMTSDataSource(options) : undefined;
+          })
         );
     }
 

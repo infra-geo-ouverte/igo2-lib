@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-import { getEntityTitle, getEntityIcon } from '@igo2/common';
+import { getEntityTitle } from '@igo2/common';
 import { IgoMap } from '../../map';
 
 import { Catalog } from '../shared/catalog.interface';
@@ -30,8 +30,4 @@ export class CatalogLibaryItemComponent {
    */
   get title(): string { return getEntityTitle(this.catalog); }
 
-  /**
-   * @internal
-   */
-  get icon(): string { return getEntityIcon(this.catalog) || 'image-multiple'; }
 }

@@ -30,6 +30,10 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
     return NominatimSearchSource.id;
   }
 
+  getType(): string {
+    return NominatimSearchSource.type;
+  }
+
   /*
    * Source : https://wiki.openstreetmap.org/wiki/Key:amenity
    */

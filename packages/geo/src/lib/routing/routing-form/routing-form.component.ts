@@ -6,13 +6,15 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
-  Optional
+  Optional,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
+import OlGeoJSON from 'ol/format/GeoJSON';
 import * as olgeom from 'ol/geom';
 import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
@@ -90,7 +92,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   set debounce(value: number) {
     this._debounce = value;
   }
-  private _debounce = 300;
+  private _debounce = 200;
 
   @Input()
   get length() {
@@ -120,12 +122,17 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private searchService: SearchService,
     private queryService: QueryService,
     private routingFormService: RoutingFormService,
+    private changeDetectorRefs: ChangeDetectorRef,
     @Optional() private route: RouteService
   ) {}
 
   changeRoute(selectedRoute: Routing) {
     this.showRouteGeometry();
   }
+
+  prevent(event) {
+    event.preventDefault();
+   }
 
   ngOnDestroy(): void {
     this.unsubscribeRoutesQueries();
@@ -203,15 +210,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectRoute = new olinteraction.Select({
       layers: [routesLayer.ol],
       hitTolerance: 7
-    });
-
-    this.map.ol.on('pointermove', evt => {
-      const selectRouteCnt = selectRouteHover.getFeatures().getLength();
-      if (selectRouteCnt === 0) {
-        this.routingFormService.unsetMapWaitingForRoutingClick();
-      } else {
-        this.routingFormService.setMapWaitingForRoutingClick();
-      }
     });
 
     selectStops.on('select', evt => {
@@ -335,6 +333,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
               this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
               this.stops.at(stopIndex).patchValue({ stopProposals: [] });
             }
+            this.changeDetectorRefs.detectChanges();
           })
         )
       );
@@ -805,6 +804,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this.routesResults = route;
             this.activeRoute = this.routesResults[0] as Routing;
             this.showRouteGeometry(moveToExtent);
+            this.changeDetectorRefs.detectChanges();
           })
         )
       );
@@ -923,7 +923,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleTermChanged(term: string) {
     if (term !== undefined || term.length !== 0) {
       const searchProposals = [];
-      const researches = this.searchService.search(term);
+      const researches = this.searchService.search(term, {searchType: 'Feature'});
       researches.map(res =>
         this.routesQueries$$.push(
           res.request.subscribe(results => {
@@ -944,6 +944,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this.stops
               .at(this.currentStopIndex)
               .patchValue({ stopProposals: searchProposals });
+            this.changeDetectorRefs.detectChanges();
           })
         )
       );
@@ -977,6 +978,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stops.removeAt(stopIndex);
     this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex)));
     this.routingRoutesOverlayDataSource.ol.clear();
+    this.routesResults = undefined;
   }
 
   chooseProposal(proposal, i) {
@@ -996,13 +998,18 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         // middle point of coords
         geomCoord = coordArray[Math.floor(coordArray.length / 2)];
-      } else if (geom.type.search('Polygon') >= 0) {
+      } else if (geom.type.search('Polygon') >= 0 && proposal.extent) {
         const polygonExtent = proposal.extent;
         const long =
           polygonExtent[0] + (polygonExtent[2] - polygonExtent[0]) / 2;
         const lat =
           polygonExtent[1] + (polygonExtent[3] - polygonExtent[1]) / 2;
         geomCoord = [long, lat];
+      } else if (geom.type.search('Polygon') >= 0 && !proposal.extent) {
+        const poly = (new OlGeoJSON()).readFeatures(geom);
+        // get the first feature of a multipolygon OR from the single feature of polygon.
+        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates() || poly.getGeometry().getInteriorPoints().getCoordinates();
+        geomCoord = [geomCoord[0][0], geomCoord[0][1]];
       }
 
       if (geomCoord !== undefined) {
@@ -1024,7 +1031,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.unlistenSingleClick();
     this.currentStopIndex = i;
     this.focusOnStop = true;
-    this.routingFormService.setMapWaitingForRoutingClick();
     this.focusKey.push(
       this.map.ol.once('singleclick', evt => {
         this.handleMapClick(evt, i);
@@ -1053,7 +1059,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.focusOnStop = false; // prevent to trigger map click and Select on routes at same time.
     }, 500);
-    this.routingFormService.unsetMapWaitingForRoutingClick();
   }
 
   geolocateStop(index: number) {

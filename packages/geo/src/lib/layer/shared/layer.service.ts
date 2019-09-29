@@ -109,8 +109,10 @@ export class LayerService {
       .createAsyncDataSource(layerOptions.sourceOptions)
       .pipe(
         map(source => {
-          layerOptions.source = source;
-          return this.createLayer(layerOptions);
+          if (source === undefined) {
+            return undefined;
+          }
+          return this.createLayer( Object.assign(layerOptions, {source}));
         })
       );
   }
@@ -149,10 +151,12 @@ export class LayerService {
 
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
+      const baseStyle = layerOptions.style;
       layerOptions.style = feature => {
         return serviceStyle.createClusterStyle(
           feature,
-          layerOptions.clusterParam
+          layerOptions.clusterParam,
+          baseStyle
         );
       };
       return new VectorLayer(layerOptions);

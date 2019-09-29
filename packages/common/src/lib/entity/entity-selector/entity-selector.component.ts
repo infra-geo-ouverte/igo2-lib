@@ -84,6 +84,11 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
   @Input() placeholder: string;
 
   /**
+   * Wheter the selector is disabled or not
+   */
+  @Input() disabled: boolean = false;
+
+  /**
    * Event emitted when the selection changes
    */
   @Output() selectedChange = new EventEmitter<{

@@ -25,6 +25,16 @@ export class FormFieldComponent {
    */
   @Input() field: FormField;
 
+  /**
+   * Field inputs cache
+   */
+  private fieldInputs: FormFieldInputs = undefined;
+
+  /**
+   * Field subscribers cache
+   */
+  private fieldSubscribers: {[key: string]: ({field: FormField, control: FormControl}) => void } = undefined;
+
   get fieldOptions(): FormFieldOptions {
     return this.field.options || {};
   }
@@ -36,8 +46,12 @@ export class FormFieldComponent {
   }
 
   getFieldInputs(): FormFieldInputs {
+    if (this.fieldInputs !== undefined) {
+      return this.fieldInputs;
+    }
+
     const errors = this.fieldOptions.errors || {};
-    return Object.assign(
+    this.fieldInputs = Object.assign(
       {
         placeholder: this.field.title,
         disableSwitch: this.fieldOptions.disableSwitch || false
@@ -48,9 +62,15 @@ export class FormFieldComponent {
         errors: Object.assign({}, getDefaultErrorMessages(), errors)
       }
     );
+    return this.fieldInputs;
   }
 
   getFieldSubscribers(): {[key: string]: ({field: FormField, control: FormControl}) => void } {
-    return Object.assign({}, this.field.subscribers || {});
+    if (this.fieldSubscribers !== undefined) {
+      return this.fieldSubscribers;
+    }
+
+    this.fieldSubscribers = Object.assign({}, this.field.subscribers || {});
+    return this.fieldSubscribers;
   }
 }

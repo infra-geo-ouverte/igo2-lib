@@ -118,6 +118,60 @@ export class AppLayerComponent {
 
     this.layerService
       .createAsyncLayer({
+        title: 'lieu habité',
+        visible: false,
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          optionsFromCapabilities: true,
+          params: {
+            layers: 'lieuhabite',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'sh_dis_eco',
+        visible: false,
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/mffpecofor.fcgi',
+          optionsFromCapabilities: true,
+          params: {
+            layers: 'sh_dis_eco',
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
+        title: 'nurc:Arc_Sample_Parent',
+        visible: true,
+        legendOptions: {
+          // collapsed: false,
+          display: true,
+          // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
+          stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //
+        },
+        sourceOptions: {
+          type: 'wms',
+          url: 'https://demo.geo-solutions.it/geoserver/ows',
+          optionsFromCapabilities: true,
+          params: {
+            layers: 'nurc:Arc_Sample', // , test:Linea_costa
+            version: '1.3.0'
+          }
+        }
+      })
+      .subscribe(l => this.map.addLayer(l));
+
+    this.layerService
+      .createAsyncLayer({
         title: 'Avertissements routier',
         visible: false,
         sourceOptions: {

@@ -22,7 +22,11 @@ import { unByKey } from 'ol/Observable';
 
 import { Subject, Subscription, fromEvent } from 'rxjs';
 
-import { addLinearRingToOlPolygon, createDrawHoleInteractionStyle } from '../geometry.utils';
+import {
+  addLinearRingToOlPolygon,
+  createDrawHoleInteractionStyle,
+  getMousePositionFromOlGeometryEvent
+} from '../geometry.utils';
 
 export interface ModifyControlOptions {
   source?: OlVectorSource;
@@ -68,6 +72,8 @@ export class ModifyControl {
   private onDrawEndKey: string;
   private onDrawKey: string;
   private olDrawInteractionIsActive: boolean = false;
+
+  private mousePosition: [number, number];
 
   private keyDown$$: Subscription;
   private drawKeyUp$$: Subscription;
@@ -273,8 +279,10 @@ export class ModifyControl {
     const olGeometry = event.features.item(0).getGeometry();
     this.start$.next(olGeometry);
     this.onModifyKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
+      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });
+    this.subscribeToKeyDown();
   }
 
   /**
@@ -286,6 +294,7 @@ export class ModifyControl {
       unByKey(this.onModifyKey);
     }
     this.end$.next(event.features.item(0).getGeometry());
+    this.unsubscribeToKeyDown();
   }
 
   /**
@@ -293,9 +302,13 @@ export class ModifyControl {
    */
   private subscribeToKeyDown() {
     this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
-      // On ESC key down, remove the last vertex
-      if (event.keyCode === 27 && this.olDrawInteractionIsActive === true) {
-        this.olDrawInteraction.removeLastPoint();
+      if (event.keyCode === 32) {
+        // On space bar, pan to the current mouse position
+        this.olMap.getView().animate({
+          center: this.mousePosition,
+          duration: 0
+        });
+        return;
       }
     });
   }
@@ -422,16 +435,22 @@ export class ModifyControl {
    * Subscribe to CTRL key up to deactivate the draw control
    */
   private subscribeToDrawKeyUp() {
-    this.drawKeyUp$$ = fromEvent(document, 'keyup').subscribe((event: KeyboardEvent) => {
-      if (event.keyCode !== 17) { return; }
+    this.drawKeyUp$$ = fromEvent(document, 'keyup')
+      .subscribe((event: KeyboardEvent) => {
+        if (event.keyCode !== 17) {
+          return;
+        }
 
-      this.unsubscribeToDrawKeyUp();
-      this.subscribeToDrawKeyDown();
+        this.unsubscribeToDrawKeyUp();
+        this.unsubscribeToKeyDown();
+        this.deactivateDrawInteraction();
 
-      this.deactivateDrawInteraction();
-      this.activateModifyInteraction();
-      this.activateTranslateInteraction();
-    });
+        this.activateModifyInteraction();
+        this.activateTranslateInteraction();
+        this.subscribeToDrawKeyDown();
+
+        this.end$.next(this.getOlGeometry());
+      });
   }
 
   /**

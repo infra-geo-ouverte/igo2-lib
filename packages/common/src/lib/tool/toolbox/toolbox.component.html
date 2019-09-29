@@ -2,9 +2,10 @@
   *ngIf="(toolbar$ | async).length > 0"
   [store]="actionStore"
   [withIcon]="true"
-  [withTitle]="toolbarWithTitle"
-  [horizontal]="false"
-  [itemClassFunc]="actionBarItemClassFunc">
+  [withTitle]="toolbarWithTitle$ | async"
+  [withTooltip]="!(toolbarWithTitle$ | async)"
+  [scrollActive]="toolbarWithTitle$ | async"
+  [horizontal]="false">
 </igo-actionbar>
 
 <div

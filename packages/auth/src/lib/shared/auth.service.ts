@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, catchError } from 'rxjs/operators';
 
 import { ConfigService, LanguageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
@@ -128,17 +128,19 @@ export class AuthService {
   }
 
   private loginCall(body, headers) {
-    return this.http
-      .post(`${this.options.url}/login`, body, { headers })
-      .pipe(
-        tap((data: any) => {
-          this.tokenService.set(data.token);
-          const tokenDecoded = this.decodeToken();
-          if (tokenDecoded && tokenDecoded.user && tokenDecoded.user.locale) {
-            this.languageService.setLanguage(tokenDecoded.user.locale);
-          }
-          this.authenticate$.next(true);
-        })
-      );
+    return this.http.post(`${this.options.url}/login`, body, { headers }).pipe(
+      tap((data: any) => {
+        this.tokenService.set(data.token);
+        const tokenDecoded = this.decodeToken();
+        if (tokenDecoded && tokenDecoded.user && tokenDecoded.user.locale) {
+          this.languageService.setLanguage(tokenDecoded.user.locale);
+        }
+        this.authenticate$.next(true);
+      }),
+      catchError(err => {
+        err.error.caught = true;
+        throw err;
+      })
+    );
   }
 }

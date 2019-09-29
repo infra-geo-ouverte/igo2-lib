@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { MatCardModule, MatButtonModule } from '@angular/material';
 
 import { IgoActivityModule } from '@igo2/core';
+import { IgoSpinnerModule } from '@igo2/common';
 
 import { AppActivityComponent } from './activity.component';
 import { AppActivityRoutingModule } from './activity-routing.module';
@@ -12,7 +13,8 @@ import { AppActivityRoutingModule } from './activity-routing.module';
     AppActivityRoutingModule,
     MatCardModule,
     MatButtonModule,
-    IgoActivityModule.forRoot() // Only if you want register http calls
+    IgoActivityModule.forRoot(), // Only if you want register http calls
+    IgoSpinnerModule
   ],
   exports: [AppActivityComponent]
 })

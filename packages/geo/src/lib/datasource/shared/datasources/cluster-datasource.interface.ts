@@ -8,4 +8,5 @@ export interface ClusterDataSourceOptions extends FeatureDataSourceOptions {
   distance?: number;
   source?: FeatureDataSource;
   ol?: olSourceVector;
+  pathOffline?: string;
 }

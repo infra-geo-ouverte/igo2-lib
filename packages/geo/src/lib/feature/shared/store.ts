@@ -12,7 +12,7 @@ import { IgoMap } from '../../map';
 
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
-import { featureFromOl, featureToOl, moveToOlFeatures } from './feature.utils';
+import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures } from './feature.utils';
 import { FeatureStoreStrategy } from './strategies/strategy';
 
 /**
@@ -193,39 +193,20 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
     viewScale?: [number, number, number, number],
     areaRatio?: number
   ) {
-    const olFeaturesMap = new Map();
-    olFeatures.forEach((olFeature: OlFeature) => {
-      olFeaturesMap.set(olFeature.getId(), olFeature);
-    });
-
-    const olFeaturesToRemove = [];
-    this.source.ol.forEachFeature((olFeature: OlFeature) => {
-      const newOlFeature = olFeaturesMap.get(olFeature.getId());
-      if (newOlFeature === undefined) {
-        olFeaturesToRemove.push(olFeature);
-      } else if (newOlFeature.get('_entityRevision') !== olFeature.get('_entityRevision')) {
-        olFeaturesToRemove.push(olFeature);
-      } else {
-        olFeaturesMap.delete(newOlFeature.getId());
-      }
-    });
-
-    const olFeaturesToAddIds = Array.from(olFeaturesMap.keys());
-    const olFeaturesToAdd = olFeatures.filter((olFeature: OlFeature) => {
-      return olFeaturesToAddIds.indexOf(olFeature.getId()) >= 0;
-    });
-
-    if (olFeaturesToRemove.length > 0) {
-      this.removeOlFeaturesFromLayer(olFeaturesToRemove);
-    }
-    if (olFeaturesToAdd.length > 0) {
-      this.addOlFeaturesToLayer(olFeaturesToAdd);
+    const olSource = this.layer.ol.getSource();
+    const diff = computeOlFeaturesDiff(olSource.getFeatures(), olFeatures);
+    if (diff.remove.length > 0) {
+      this.removeOlFeaturesFromLayer(diff.remove);
     }
 
-    if (olFeaturesToAdd.length > 0) {
+    if (diff.add.length > 0) {
+      this.addOlFeaturesToLayer(diff.add);
+    }
+
+    if (diff.add.length > 0) {
       // If features are added, do a motion toward the newly added features
-      moveToOlFeatures(this.map, olFeaturesToAdd, motion, viewScale, areaRatio);
-    } else if (olFeatures.length > 0) {
+      moveToOlFeatures(this.map, diff.add, motion, viewScale, areaRatio);
+    } else if (diff.remove.length > 0) {
       // Else, do a motion toward all the features
       moveToOlFeatures(this.map, olFeatures, motion, viewScale, areaRatio);
     }

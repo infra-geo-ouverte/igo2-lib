@@ -2,11 +2,20 @@ mat-form-field {
     width: 100%;
 }
 
+h4 {
+  padding: 0 5px;
+}
+
 .igo-form {
-  padding: 5px;
+  padding: 15px 5px;
 }
 
 .igo-form-button-group {
   text-align: center;
   padding-top: 10px;
+}
+
+igo-spinner {
+  position: absolute;
+  padding-left: 10px;
 }

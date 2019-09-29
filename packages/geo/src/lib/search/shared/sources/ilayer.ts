@@ -82,10 +82,48 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return ILayerSearchSource.id;
   }
 
+  getType(): string {
+    return ILayerSearchSource.type;
+  }
+
   protected getDefaultOptions(): ILayerSearchSourceOptions {
     return {
       title: 'igo.geo.search.ilayer.name',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search'
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
+      settings: [
+        {
+          type: 'radiobutton',
+          title: 'results limit',
+          name: 'limit',
+          values: [
+            {
+              title: '1',
+              value: 1,
+              enabled: false
+            },
+            {
+              title: '5',
+              value: 5,
+              enabled: true
+            },
+            {
+              title: '10',
+              value: 10,
+              enabled: false
+            },
+            {
+              title: '25',
+              value: 25,
+              enabled: false
+            },
+            {
+              title: '50',
+              value: 50,
+              enabled: false
+            }
+          ]
+        }
+      ]
     };
   }
 
@@ -151,13 +189,18 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   private dataToResult(data: ILayerData): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
 
+    const titleHtml = data.highlight.title;
+    const subtitleHtml = data.properties.groupTitle
+      ? ' <small style="color: #6f6969"> ' + data.properties.groupTitle + '</small>'
+      : '';
+
     return {
       source: this,
       meta: {
         dataType: LAYER,
         id: [this.getId(), data.properties.id].join('.'),
         title: data.properties.title,
-        titleHtml: data.highlight.title,
+        titleHtml: titleHtml + subtitleHtml,
         icon: data.properties.type === 'Layer' ? 'layers' : 'map'
       },
       data: layerOptions

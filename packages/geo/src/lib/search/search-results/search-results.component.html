@@ -20,6 +20,7 @@
           igoListItem
           color="accent"
           [result]="result"
+          [showIcons]="showIcons"
           [focused]="store.state.get(result).focused"
           [selected]="store.state.get(result).selected"
           (focus)="onResultFocus(result)"

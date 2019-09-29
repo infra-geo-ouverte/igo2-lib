@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, } from 'rxjs';
 
 import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
 import { FormFieldSelectChoice } from '../shared/form.interfaces';
@@ -23,9 +23,15 @@ import { FormFieldComponent } from '../shared/form-field-component';
 })
 export class FormFieldSelectComponent implements OnInit {
 
-  choices$: Observable<FormFieldSelectChoice[]>;
+  readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  /**
+   * Select input choices
+   */
+  @Input()
+  set choices(value: FormFieldSelectChoice[]) { this.choices$.next(value); }
+  get choices(): FormFieldSelectChoice[] { return this.choices$.value; }
+  readonly choices$: BehaviorSubject<FormFieldSelectChoice[]> = new BehaviorSubject([]);
 
   /**
    * The field's form control
@@ -36,18 +42,6 @@ export class FormFieldSelectComponent implements OnInit {
    * Field placeholder
    */
   @Input() placeholder: string;
-
-  /**
-   * Select input choices
-   */
-  @Input()
-  set choices(value: Observable<FormFieldSelectChoice[]> | FormFieldSelectChoice[]) {
-    if (value instanceof Observable) {
-      this.choices$ = value;
-    } else {
-      this.choices$ = of(value);
-    }
-  }
 
   /**
    * Field placeholder

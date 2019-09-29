@@ -6,7 +6,8 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
 import { Tool } from '../shared/tool.interface';
@@ -21,6 +22,7 @@ import { toolSlideInOut } from './toolbox.animation';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
+
   /**
    * Observable of the active tool
    */
@@ -40,6 +42,13 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Observable of the toolbar
    */
   toolbar$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+
+  /**
+   * Whether the Toolbar should display actions' titles
+   */
+  toolbarWithTitle$: Observable<boolean> = this.activeTool$.pipe(
+    map((tool: Tool | undefined) => tool === undefined)
+  );
 
   /**
    * Subscription to the active tool
@@ -72,13 +81,6 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Whether the toolbox should animate the first tool entering
    */
   @Input() animate: boolean = false;
-
-  /**
-   * Whether the Toolbar should display actions' titles
-   */
-  get toolbarWithTitle(): boolean {
-    return this.activeTool$.value === undefined;
-  }
 
   /**
    * Initialize the toolbar and subscribe to the active tool
@@ -127,19 +129,6 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    */
   getToolInputs(tool: Tool): { [key: string]: any } {
     return tool.options || {};
-  }
-
-  /**
-   * Get Action bar item class function
-   * @internal
-   */
-  get actionBarItemClassFunc() {
-    return (tool: Tool) => {
-      if (!this.toolbox.activeTool$.value) {
-        return;
-      }
-      return { 'tool-actived': tool.id === this.toolbox.activeTool$.value.name };
-    };
   }
 
   /**
@@ -201,6 +190,26 @@ export class ToolboxComponent implements OnInit, OnDestroy {
         args: [tool, this.toolbox],
         handler: (_tool: Tool, _toolbox: Toolbox) => {
           _toolbox.activateTool(_tool.name);
+        },
+        ngClass: (_tool: Tool, _toolbox: Toolbox) => {
+          return this.toolbox.activeTool$.pipe(
+            map((activeTool: Tool) => {
+              let toolActivated = false;
+              if (activeTool !== undefined && _tool.name === activeTool.name) {
+                toolActivated = true;
+              }
+
+              let childrenToolActivated = false;
+              if (activeTool !== undefined && _tool.name === activeTool.parent) {
+               childrenToolActivated = true;
+              }
+
+              return {
+                'tool-activated': toolActivated,
+                'children-tool-activated': childrenToolActivated
+              };
+            })
+          );
         }
       });
       return acc;

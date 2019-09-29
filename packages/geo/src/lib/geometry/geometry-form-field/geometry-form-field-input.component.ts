@@ -98,9 +98,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   @Input()
   set drawStyle(value: OlStyle) {
-    this._drawStyle = value || createDrawInteractionStyle();
-    if (this.isStyleWithRadius(this.drawStyle)) {
-      this.defaultDrawStyleRadius = this.drawStyle.getImage().getRadius();
+    this._drawStyle = value;
+    if (value && this.isStyleWithRadius(value)) {
+      this.defaultDrawStyleRadius = value.getImage().getRadius();
     } else {
       this.defaultDrawStyleRadius = null;
     }
@@ -113,12 +113,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * If not specified, drawStyle applies
    */
   @Input()
-  set overlayStyle(value: OlStyle) {
-    this._overlayStyle = value;
-  }
-  get overlayStyle(): OlStyle {
-    return this._overlayStyle || this.drawStyle;
-  }
+  set overlayStyle(value: OlStyle) { this._overlayStyle = value; }
+  get overlayStyle(): OlStyle { return this._overlayStyle; }
   private _overlayStyle: OlStyle;
 
   /**
@@ -171,6 +167,14 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @internal
    */
   ngOnInit() {
+    if (this.drawStyle === undefined) {
+      this.drawStyle = createDrawInteractionStyle();
+    }
+
+    if (this.overlayStyle === undefined) {
+      this.overlayStyle = this.drawStyle;
+    }
+
     this.addOlOverlayLayer();
     this.createMeasureTooltip();
     this.createDrawControl();
@@ -419,7 +423,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (this.isStyleWithRadius(olStyle)) {
       const drawGuide = this.drawGuide;
       let radius;
-      if (drawGuide === null || drawGuide < 0) {
+      if (!drawGuide || drawGuide < 0) {
         radius = this.defaultDrawStyleRadius;
       } else {
         radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;

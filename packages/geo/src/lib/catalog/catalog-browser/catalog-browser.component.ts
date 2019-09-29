@@ -68,7 +68,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const currentItems = this.map.layers.map((layer: Layer) => {
       return {
-        id: layer.id,
+        id: layer.options.source.id,
         title: layer.title,
         type: CatalogItemType.Layer
       };
@@ -161,9 +161,16 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   private removeLayersFromMap(layers: CatalogItemLayer[]) {
     layers.forEach((layer: CatalogItemLayer) => {
       this.store.state.update(layer, { added: false });
-      const oLayer = this.map.getLayerById(layer.id);
-      if (oLayer !== undefined) {
-        this.map.removeLayer(oLayer);
+      if (layer.options.baseLayer === true) {
+        const oLayer = this.map.getLayerById(layer.options.id);
+        if (oLayer !== undefined) {
+          this.map.removeLayer(oLayer);
+        }
+      } else {
+        const oLayer = this.map.getLayerById(layer.id);
+        if (oLayer !== undefined) {
+          this.map.removeLayer(oLayer);
+        }
       }
     });
   }
@@ -177,7 +184,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       const added = this.store.state.get(item).added || false;
       return this.isLayer(item) && added === false;
     });
-    this.addLayersToMap(layers as CatalogItemLayer[]);
+    this.addLayersToMap(layers.reverse() as CatalogItemLayer[]);
   }
 
   /**

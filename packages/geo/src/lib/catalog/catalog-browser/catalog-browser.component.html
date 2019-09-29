@@ -16,7 +16,6 @@
         igoListItem
         [layer]="item"
         [added]="store.state.get(item).added"
-        [disabled]="store.state.get(item).added"
         (addedChange)="onLayerAddedChange($event)">
       </igo-catalog-browser-layer>
     </ng-container>

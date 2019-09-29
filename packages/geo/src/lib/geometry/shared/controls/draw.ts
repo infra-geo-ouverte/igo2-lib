@@ -11,10 +11,10 @@ import {
 } from 'ol/geom/Geometry';
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { unByKey } from 'ol/Observable';
-import { MapBrowserEvent as OlMapBrowserEvent } from 'ol/MapBrowserEvent';
-import { shiftKeyOnly } from 'ol/events/condition';
 
 import { Subject, Subscription, fromEvent } from 'rxjs';
+
+import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
 export interface DrawControlOptions {
   geometryType: OlGeometryType;
@@ -51,6 +51,8 @@ export class DrawControl {
   private onDrawStartKey: string;
   private onDrawEndKey: string;
   private onChangesKey: string;
+
+  private mousePosition: [number, number];
 
   private keyDown$$: Subscription;
 
@@ -196,6 +198,7 @@ export class DrawControl {
     this.start$.next(olGeometry);
     this.clearOlInnerOverlaySource();
     this.onChangesKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
+      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });
     this.subscribeToKeyDown();
@@ -222,6 +225,16 @@ export class DrawControl {
       // On ESC key down, remove the last vertex
       if (event.keyCode === 27) {
         this.olDrawInteraction.removeLastPoint();
+        return;
+      }
+
+      // On space bar, pan to the current mouse position
+      if (event.keyCode === 32) {
+        this.olMap.getView().animate({
+          center: this.mousePosition,
+          duration: 0
+        });
+        return;
       }
     });
   }

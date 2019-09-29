@@ -28,6 +28,9 @@ export const environment: Environment = {
     language: {
       prefix: './locale/'
     },
+    importExport: {
+      url: 'https://testgeoegl.msp.gouv.qc.ca/apis/ogre'
+    },
     catalog: {
       sources: [
         {
@@ -68,7 +71,7 @@ export const environment: Environment = {
         enabled: true
       },
       icherche: {
-        searchUrl: '/apis/icherche/geocode',
+        searchUrl: '/apis/icherche',
         order: 2,
         enabled: true,
         params: {
@@ -76,7 +79,7 @@ export const environment: Environment = {
         }
       },
       icherchereverse: {
-        searchUrl: '/apis/territoires/locate',
+        searchUrl: '/apis/territoires',
         order: 3,
         enabled: true
       },

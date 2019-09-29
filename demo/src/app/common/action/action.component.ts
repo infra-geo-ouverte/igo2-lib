@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
+import { BehaviorSubject } from 'rxjs';
+
 import {
   Media,
   MediaOrientation,
@@ -17,7 +19,7 @@ import { Overlay } from '@angular/cdk/overlay';
 export class AppActionComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);
 
-  private added = false;
+  private added$ = new BehaviorSubject(false);
 
   get actionbarMode(): ActionbarMode {
     const media = this.mediaService.media$.value;
@@ -35,8 +37,6 @@ export class AppActionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    const added = () => this.added === true;
-
     this.store.load([
       {
         id: 'add',
@@ -45,8 +45,7 @@ export class AppActionComponent implements OnInit, OnDestroy {
         tooltip: 'Add Tooltip',
         handler: () => {
           alert('Add!');
-          this.added = true;
-          this.store.updateActionsAvailability();
+          this.added$.next(true);
         }
       },
       {
@@ -54,11 +53,11 @@ export class AppActionComponent implements OnInit, OnDestroy {
         title: 'Edit',
         icon: 'pencil',
         tooltip: 'Edit Tooltip',
+        args: ['1'],
         handler: (item: string) => {
           alert(`Edit item ${item}!`);
         },
-        conditions: [added],
-        args: ['1']
+        availability: () => this.added$
       },
       {
         id: 'delete',
@@ -67,13 +66,11 @@ export class AppActionComponent implements OnInit, OnDestroy {
         icon: 'delete',
         handler: () => {
           alert('Delete!');
-          this.added = false;
-          this.store.updateActionsAvailability();
+          this.added$.next(false);
         },
-        conditions: [added]
+        availability: () => this.added$
       }
     ]);
-    this.store.updateActionsAvailability();
   }
 
   ngOnDestroy() {

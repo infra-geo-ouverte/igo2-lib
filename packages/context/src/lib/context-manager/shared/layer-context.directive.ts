@@ -1,4 +1,4 @@
-import { Directive, OnInit, OnDestroy, Optional } from '@angular/core';
+import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
 import { Subscription, of, zip } from 'rxjs';
 import { withLatestFrom, skip, filter } from 'rxjs/operators';
@@ -24,6 +24,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   private queryParams: any;
 
   private contextLayers: Layer[] = [];
+
+  @Input() removeLayersOnContextChange: boolean = true;
 
   get map(): IgoMap {
     return this.component.map;
@@ -62,8 +64,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   private handleContextChange(context: DetailedContext) {
     if (context.layers === undefined) { return; }
-
-    this.map.removeLayers(this.contextLayers);
+    if (this.removeLayersOnContextChange === true) {
+      this.map.removeAllLayers();
+    } else {
+      this.map.removeLayers(this.contextLayers);
+    }
     this.contextLayers = [];
 
     const layersAndIndex$ = zip(...context.layers.map((layerOptions: LayerOptions, index: number) => {
@@ -73,13 +78,20 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }));
 
     layersAndIndex$.subscribe((layersAndIndex: [Layer, number][]) => {
-      const layers = layersAndIndex.reduce((acc: Layer[], bunch: [Layer, number]) => {
-        const [layer, index] = bunch;
-        layer.visible = this.computeLayerVisibilityFromUrl(layer);
-        layer.zIndex = layer.zIndex || index + 1;  // Map indexes start at 1
-        acc[index] = layer;
-        return acc;
-      }, new Array(layersAndIndex.length));
+      const layers = layersAndIndex
+        .reduce((acc: Layer[], bunch: [Layer, number]) => {
+          const [layer, index] = bunch;
+          // A layer may be undefined when it's badly configured
+          if (layer !== undefined) {
+            layer.visible = this.computeLayerVisibilityFromUrl(layer);
+            layer.zIndex = layer.zIndex || index + 1;  // Map indexes start at 1
+          }
+
+          acc[index] = layer;
+          return acc;
+        }, new Array(layersAndIndex.length))
+        .filter((layer: Layer) => layer !== undefined);
+
       this.contextLayers = layers;
       this.map.addLayers(layers);
     });
