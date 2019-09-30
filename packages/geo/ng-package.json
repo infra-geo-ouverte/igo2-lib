@@ -8,6 +8,7 @@
   "whitelistedNonPeerDependencies": [
     "ts-md5",
     "@turf/helpers",
-    "@turf/line-intersect"
+    "@turf/line-intersect",
+    "ol-mapbox-style"
   ]
 }

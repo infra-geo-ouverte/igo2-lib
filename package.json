@@ -47,7 +47,7 @@
     "_watch.core": "wait-on dist/utils/package.json && ng build core --watch",
     "_watch.common": "wait-on dist/core/package.json && ng build common --watch",
     "_watch.auth": "wait-on dist/common/package.json && ng build auth --watch",
-    "_watch.geo": "wait-on dist/common/package.json && ng build geo --watch",
+    "_watch.geo": "wait-on dist/auth/package.json && ng build geo --watch",
     "_watch.context": "wait-on dist/geo/package.json && ng build context --watch",
     "_watch.integration": "wait-on dist/context/package.json && ng build integration --watch",
     "_watch.gulp": "wait-on dist/integration/package.json && gulp core && gulp common && gulp auth && gulp geo && gulp context && gulp integration && gulp core:bundleLocale",
@@ -106,7 +106,8 @@
     "typy": "^2.0.1",
     "unorm": "^1.4.1",
     "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.29"
+    "zone.js": "^0.8.29",
+    "ol-mapbox-style": "^4.3.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.2",
