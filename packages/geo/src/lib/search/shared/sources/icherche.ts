@@ -103,7 +103,6 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               title: 'Route',
               value: 'routes',
               enabled: true,
-              available: false,
               hashtags: ['route']
             },
             {
