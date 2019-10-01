@@ -71,9 +71,7 @@ export class SearchResultsToolComponent {
       .pipe(
         map(element => {
           this.feature = element ? (element.entity.data as Feature) : undefined;
-          if (!this.feature && this.store.stateView.empty) {
-            this.topPanelState = 'initial';
-          }
+          !this.feature ? this.topPanelState = 'initial': this.topPanelState = 'expanded';
           return this.feature;
         })
       );
