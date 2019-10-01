@@ -1,10 +1,11 @@
 
   .mat-button-toggle-group {
     margin: 5px 5px 5px 5px;
+    flex-wrap: wrap;
   }
 
   .mat-button-toggle {
-    width: 100%;
+    display: inline-flex;
   }
 
   ::ng-deep .material-tooltip {
