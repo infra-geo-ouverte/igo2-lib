@@ -218,7 +218,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Remove all the layers of a groufrom map
+   * Remove all the layers of a group from map
    * @param group Catalog group
    */
   private removeGroupFromMap(group: CatalogItemGroup) {
