@@ -175,14 +175,14 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     });
   }
 
-/**
+  /**
    * Sort the layers by title. asc or desc.
    * @internal
    */
   private sortCatalogItemsByTitle(items: CatalogItem[], direction) {
-    let returnItem = items.sort((a, b) => {
-      const titleA = a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      const titleB = b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    const returnItem = items.sort((a, b) => {
+      const titleA = a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const titleB = b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
       if (titleA < titleB) {
         return -1;
@@ -194,11 +194,11 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     });
     switch (direction) {
       case 'asc':
-        return returnItem
+        return returnItem;
       case 'desc':
-        return returnItem.reverse()
+        return returnItem.reverse();
       default:
-        return items
+        return items;
     }
   }
 
