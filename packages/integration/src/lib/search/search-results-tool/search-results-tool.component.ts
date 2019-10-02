@@ -69,13 +69,7 @@ export class SearchResultsToolComponent {
     return this.store.stateView
       .firstBy$(e => e.state.focused)
       .pipe(
-        map(element => {
-          this.feature = element ? (element.entity.data as Feature) : undefined;
-          !this.feature
-            ? (this.topPanelState = 'initial')
-            : (this.topPanelState = 'expanded');
-          return this.feature;
-        })
+        map(element => (element ? (element.entity.data as Feature) : undefined))
       );
   }
 
