@@ -1,6 +1,11 @@
 import { GeoJsonGeometryTypes } from 'geojson';
 import { RoutingFormat, SourceRoutingType } from './routing.enum';
 
+export interface Stop {
+  title?: string;
+  coords?: [number, number];
+}
+
 export interface Routing {
   id: string;
   source: string;

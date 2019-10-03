@@ -112,14 +112,11 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.unsubscribeRoutesQueries();
     this.unlistenSingleClick();
     this.queryService.queryEnabled = true;
-    const stopCoordinates = [];
 
-    this.stops.value.forEach(stop => {
-      stopCoordinates.push(stop.stopCoordinates);
-    });
+    this.writeStopsToFormService();
     this.routingRoutesOverlayDataSource.ol.clear();
     this.routingStopsOverlayDataSource.ol.clear();
-    this.routingFormService.setStopsCoordinates(stopCoordinates);
+
   }
 
   ngOnInit() {
@@ -260,6 +257,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
     const groupedLocations = [];
+    this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
     this.searchService
       .reverseSearch(coordinates, { zoom: this.map.getZoom() })
       .map(res =>
@@ -302,6 +300,18 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 } else {
                   // Not moving the translated point Only to suggest value into the UI.
                 }
+              } else if (results[0].source.getId() === 'coordinatesreverse') {
+                this.stops.at(stopIndex).patchValue({
+                  stopPoint: getEntityTitle(results[0])
+                });
+                if (results[0].data.geometry.type === 'Point') {
+                  this.stops.at(stopIndex).patchValue({
+                    stopCoordinates:
+                      results[0].data.geometry.coordinates
+                  });
+                } else {
+                  // Not moving the translated point Only to suggest value into the UI.
+                }                
               }
             } else {
               this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
@@ -358,15 +368,14 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.stopsForm.get('stops') as FormArray;
   }
 
-  getStopsCoordinates(): [number, number][] {
-    const stopCoordinates = [];
+  private writeStopsToFormService() {
+    const stops = [];
     this.stops.value.forEach(stop => {
       if (stop.stopCoordinates instanceof Array) {
-        stopCoordinates.push(stop.stopCoordinates);
+        stops.push(stop.stopCoordinates);
       }
     });
-    this.routingFormService.setStopsCoordinates(stopCoordinates);
-    return stopCoordinates;
+    this.routingFormService.setStops(stops);
   }
 
   addStop(): void {
@@ -413,7 +422,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   onFormChange() {
     if (this.stopsForm.valid) {
       this.routingRoutesOverlayDataSource.ol.clear();
-      const coords = this.getStopsCoordinates();
+      this.writeStopsToFormService();
+      const coords = this.routingFormService.getStopsCoordinates();
       if (coords.length >= 2) {
         this.getRoutes(coords);
       } else {
