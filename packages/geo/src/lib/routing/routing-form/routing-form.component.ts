@@ -257,7 +257,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
     const groupedLocations = [];
-    this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
+    const roundedCoordinates = [coordinates[0].toFixed(5),coordinates[1].toFixed(5)]
+    this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates });
     this.searchService
       .reverseSearch(coordinates, { zoom: this.map.getZoom() })
       .map(res =>
@@ -302,7 +303,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
               } else if (results[0].source.getId() === 'coordinatesreverse') {
                 this.stops.at(stopIndex).patchValue({
-                  stopPoint: getEntityTitle(results[0])
+                  stopPoint: [results[0].data.geometry.coordinates[0].toFixed(5),results[0].data.geometry.coordinates[1].toFixed(5)]
                 });
                 if (results[0].data.geometry.type === 'Point') {
                   this.stops.at(stopIndex).patchValue({
@@ -314,7 +315,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 }                
               }
             } else {
-              this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
+              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates });
               this.stops.at(stopIndex).patchValue({ stopProposals: [] });
             }
             this.changeDetectorRefs.detectChanges();
@@ -372,7 +373,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const stops = [];
     this.stops.value.forEach(stop => {
       if (stop.stopCoordinates instanceof Array) {
-        stops.push(stop.stopCoordinates);
+        stops.push({title: stop.stopPoint, coords: stop.stopCoordinates});
       }
     });
     this.routingFormService.setStops(stops);
