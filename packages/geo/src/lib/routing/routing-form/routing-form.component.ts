@@ -148,7 +148,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       zIndex: 999,
       id: 'routingStops',
       source: this.routingStopsOverlayDataSource,
-      showInLayerList: true
+      showInLayerList: false
     });
     this.routesLayer = new VectorLayer({
       title: 'routingRoutesOverlay',
@@ -156,7 +156,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       id: 'routingRoutes',
       opacity: 0.75,
       source: this.routingRoutesOverlayDataSource,
-      showInLayerList: true
+      showInLayerList: false
     });
 
     this.map.addLayer(this.routesLayer);
