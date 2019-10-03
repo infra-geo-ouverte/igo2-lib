@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import applyStyle from 'ol-mapbox-style/stylefunction';
+import stylefunction from 'ol-mapbox-style/stylefunction';
 import { ObjectUtils } from '@igo2/utils';
 import { ConfigService } from '@igo2/core';
 
@@ -214,7 +214,7 @@ export class LayerService {
   private applyMapboxStyle (layer: Layer, layerOptions: VectorTileLayerOptions ) {
     if (layerOptions.mapboxStyle) {
       const mapboxglStyle = this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
-          applyStyle(layer.ol, res, layerOptions.mapboxStyle.source);
+          stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
       });
     }
   }

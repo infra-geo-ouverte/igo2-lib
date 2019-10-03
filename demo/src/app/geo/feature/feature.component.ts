@@ -123,18 +123,22 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       }
     ]);
 
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
-      })
-      .subscribe(dataSource => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'OSM',
-            source: dataSource
-          })
-        );
-      });
+      this.layerService.createAsyncLayer(
+        {
+          title: "MVT test",
+          visible: true,
+          sourceOptions: {
+            type: "mvt",
+            url: "https://ahocevar.com/geoserver/gwc/service/tms/1.0.0/ne:ne_10m_admin_0_countries@EPSG:900913@pbf/{z}/{x}/{-y}.pbf",
+            queryable: true
+          },
+          mapboxStyle: {
+            url: "assets/mapboxStyleExample-vectortile.json",
+            source: "ahocevar"
+           }
+         }
+      )
+       .subscribe(l => this.map.addLayer(l));
 
     this.dataSourceService
       .createAsyncDataSource({
@@ -143,7 +147,14 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
       .subscribe(dataSource => {
         const layer = this.layerService.createLayer({
           title: 'Vector Layer',
-          source: dataSource
+          source: dataSource,
+          animation:{
+            duration: 2000
+          },
+          mapboxStyle: {
+            url: "assets/mapboxStyleExample-feature.json",
+            source: "source_nameX"
+         }
         }) as VectorLayer;
         this.map.addLayer(layer);
         this.store.bindLayer(layer);
