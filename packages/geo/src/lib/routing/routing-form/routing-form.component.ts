@@ -58,6 +58,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public projection = 'EPSG:4326';
   public currentStopIndex: number;
   private routesQueries$$: Subscription[] = [];
+  private search$$: Subscription;
 
   private stream$ = new Subject<string>();
 
@@ -896,9 +897,12 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleTermChanged(term: string) {
     if (term !== undefined || term.length !== 0) {
       const searchProposals = [];
+      if (this.search$$) {
+        this.search$$.unsubscribe();
+      }
       const researches = this.searchService.search(term, {searchType: 'Feature'});
       researches.map(res =>
-        this.routesQueries$$.push(
+        this.search$$ = 
           res.request.subscribe(results => {
             results
               .filter(r => r.data.geometry)
@@ -919,7 +923,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
               .patchValue({ stopProposals: searchProposals });
             this.changeDetectorRefs.detectChanges();
           })
-        )
       );
     }
   }
