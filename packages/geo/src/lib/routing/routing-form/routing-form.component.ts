@@ -380,7 +380,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const stops = [];
     this.stops.value.forEach(stop => {
       if (stop.stopCoordinates instanceof Array) {
-        stops.push({title: stop.stopPoint, coords: stop.stopCoordinates});
+        stops.push(stop);
       }
     });
     this.routingFormService.setStops(stops);

@@ -11,7 +11,7 @@ export class RoutingFormService {
     const stopsCoordinates = [];
     if (this.stops) {
       this.stops.forEach(stop => {
-        stopsCoordinates.push(stop.coords);
+        stopsCoordinates.push(stop.stopCoordinates);
       });
     }
     return stopsCoordinates;
