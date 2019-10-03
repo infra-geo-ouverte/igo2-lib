@@ -5,13 +5,13 @@ import { TranslateService } from '@ngx-translate/core';
   providedIn: 'root'
 })
 export class LanguageService {
+  private language: string = this.translate.getBrowserLang();
+
   constructor(public translate: TranslateService) {
     const lang = this.getLanguage();
     this.translate.setDefaultLang(lang);
   }
-
-  private language: string = this.translate.getBrowserLang();
-
+  
   public getLanguage(): string {
     return this.language.match(/en|fr/) ? this.language : 'en';
   }
