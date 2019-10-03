@@ -3,11 +3,10 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  ChangeDetectionStrategy,
-  Output
+  ChangeDetectionStrategy
 } from '@angular/core';
 
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
@@ -23,6 +22,7 @@ import { toolSlideInOut } from './toolbox.animation';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
+
   /**
    * Observable of the active tool
    */
@@ -42,6 +42,13 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Observable of the toolbar
    */
   toolbar$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+
+  /**
+   * Whether the Toolbar should display actions' titles
+   */
+  toolbarWithTitle$: Observable<boolean> = this.activeTool$.pipe(
+    map((tool: Tool | undefined) => tool === undefined)
+  );
 
   /**
    * Subscription to the active tool
@@ -74,13 +81,6 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Whether the toolbox should animate the first tool entering
    */
   @Input() animate: boolean = false;
-
-  /**
-   * Whether the Toolbar should display actions' titles
-   */
-  get toolbarWithTitle(): boolean {
-    return this.activeTool$.value === undefined;
-  }
 
   /**
    * Initialize the toolbar and subscribe to the active tool

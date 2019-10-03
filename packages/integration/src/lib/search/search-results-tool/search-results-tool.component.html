@@ -12,7 +12,7 @@
   collapsedMobile="calc(100% - 58px)"
   expanded="60%"
   expandedMobile="60%"
-  [state]="topPanelState">
+  [state]="(feature$ | async) ? topPanelState : 'initial'">
 
   <div class="igo-content">
     <igo-search-results

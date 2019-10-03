@@ -11,7 +11,7 @@
 <div *ngIf="geometryTypeField" class="geometry-type-toggle">
   <mat-button-toggle-group
     [disabled]="(value$ | async) !== undefined"
-    [ngModel]="geometryType">
+    [(ngModel)]="geometryType">
     <mat-button-toggle
       value="Point"
       [disabled]="geometryTypes.indexOf('Point') < 0">
@@ -35,7 +35,7 @@
     matInput
     type="number"
     [placeholder]="drawGuidePlaceholder"
-    [ngModel]="drawGuide">
+    [(ngModel)]="drawGuide">
   <mat-icon
     matPrefix
     [color]="'primary'"

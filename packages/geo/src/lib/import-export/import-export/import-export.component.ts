@@ -62,7 +62,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   importFiles(files: File[]) {
     let inputProj = this.inputProj;
     if (this.espgCodeRegex.test(inputProj)) {
-      inputProj =`EPSG:${inputProj}`;
+      inputProj = `EPSG:${inputProj}`;
     }
 
     this.loading$.next(true);
