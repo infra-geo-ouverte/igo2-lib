@@ -77,40 +77,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // https://stackoverflow.com/questions/46364852/create-input-fields-dynamically-in-angular-2
 
-  @Input()
-  get term() {
-    return this._term;
-  }
-  set term(value: string) {
-    this._term = value;
-  }
-  private _term = '';
+  @Input() term: string;
 
-  get debounce() {
-    return this._debounce;
-  }
-  set debounce(value: number) {
-    this._debounce = value;
-  }
-  private _debounce = 200;
+  @Input() debounce: number = 200;
 
-  @Input()
-  get length() {
-    return this._length;
-  }
-  set length(value: number) {
-    this._length = value;
-  }
-  private _length = 3;
+  @Input() length: number = 2;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   @Output() submit: EventEmitter<any> = new EventEmitter();
 
@@ -235,7 +208,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.routesQueries$$.push(
       this.stopsForm.statusChanges
-        .pipe(debounceTime(this._debounce))
+        .pipe(debounceTime(this.debounce))
         .subscribe(val => this.onFormChange())
     );
 
@@ -277,7 +250,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.routesQueries$$.push(
       this.stream$
         .pipe(
-          debounceTime(this._debounce),
+          debounceTime(this.debounce),
           distinctUntilChanged()
         )
         .subscribe((term: string) => this.handleTermChanged(term))
@@ -988,28 +961,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       if (geom.type === 'Point') {
         geomCoord = geom.coordinates;
       } else if (geom.type.search('Line') >= 0) {
-        let coordArray = [];
-        if (geom.coordinates instanceof Array) {
-          // Middle segment of multilinestring
-          coordArray =
-            geom.coordinates[Math.floor(geom.coordinates.length / 2)];
-        } else {
-          coordArray = geom.coordinates;
-        }
-        // middle point of coords
-        geomCoord = coordArray[Math.floor(coordArray.length / 2)];
-      } else if (geom.type.search('Polygon') >= 0 && proposal.extent) {
-        const polygonExtent = proposal.extent;
-        const long =
-          polygonExtent[0] + (polygonExtent[2] - polygonExtent[0]) / 2;
-        const lat =
-          polygonExtent[1] + (polygonExtent[3] - polygonExtent[1]) / 2;
-        geomCoord = [long, lat];
-      } else if (geom.type.search('Polygon') >= 0 && !proposal.extent) {
+        const line = (new OlGeoJSON()).readFeatures(geom);
+        geomCoord = line[0].getGeometry().getFirstCoordinate();
+        geomCoord = [geomCoord[0], geomCoord[1]];
+      } else if (geom.type.search('Polygon') >= 0) {
         const poly = (new OlGeoJSON()).readFeatures(geom);
-        // get the first feature of a multipolygon OR from the single feature of polygon.
-        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates() || poly.getGeometry().getInteriorPoints().getCoordinates();
-        geomCoord = [geomCoord[0][0], geomCoord[0][1]];
+        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates();
+        geomCoord = [geomCoord[0], geomCoord[1]];
       }
 
       if (geomCoord !== undefined) {
