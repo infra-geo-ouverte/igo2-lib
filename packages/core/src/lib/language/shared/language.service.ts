@@ -11,7 +11,7 @@ export class LanguageService {
     const lang = this.getLanguage();
     this.translate.setDefaultLang(lang);
   }
-  
+
   public getLanguage(): string {
     return this.language.match(/en|fr/) ? this.language : 'en';
   }
