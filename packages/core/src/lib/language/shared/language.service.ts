@@ -17,7 +17,7 @@ export class LanguageService {
   }
 
   public setLanguage(language: string) {
-    this.language= language.match(/en|fr/) ? language : 'en';
+    this.language = language.match(/en|fr/) ? language : 'en';
     this.translate.use(this.language);
     this.translate.reloadLang(this.language);
   }
