@@ -10,12 +10,14 @@ export class LanguageService {
     this.translate.setDefaultLang(lang);
   }
 
+  private language: string = this.translate.getBrowserLang();
+
   public getLanguage(): string {
-    const browserLang = this.translate.getBrowserLang();
-    return browserLang.match(/en|fr/) ? browserLang : 'en';
+    return this.language.match(/en|fr/) ? this.language : 'en';
   }
 
   public setLanguage(language: string) {
+    this.language= language.match(/en|fr/) ? language : 'en';
     this.translate.use(language);
     this.translate.reloadLang(language);
   }
