@@ -3,8 +3,7 @@ import { Stop } from '../shared/routing.interface';
 
 @Injectable()
 export class RoutingFormService {
-  private stopsCoordinates: [number, number][];
-  private stops: Stop[]
+  private stops: Stop[];
 
   constructor() {}
 
@@ -12,12 +11,11 @@ export class RoutingFormService {
     const stopsCoordinates = [];
     if (this.stops) {
       this.stops.forEach(stop => {
-        stopsCoordinates.push(stop.coords)
+        stopsCoordinates.push(stop.coords);
       });
     }
     return stopsCoordinates;
   }
-
 
   setStops(stops: Stop[]) {
     this.stops = stops;
