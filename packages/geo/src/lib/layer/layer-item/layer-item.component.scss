@@ -34,6 +34,8 @@
 .igo-layer-button-group {
   float: right;
   padding: 0 $igo-list-item-padding;
+  display: contents; /* ie11: display: ruby-base; */
+  max-width: 100%;
 
   @include mobile {
     float: none;

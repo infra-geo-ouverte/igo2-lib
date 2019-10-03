@@ -102,8 +102,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'Route',
               value: 'routes',
-              enabled: false,
-              available: false,
+              enabled: true,
               hashtags: ['route']
             },
             {
@@ -112,11 +111,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: true,
               hashtags: ['municipalité', 'mun']
             },
-            // {
-            //   title: 'Ancienne municipalité',
-            //   value: 'ancienne_municipalite',
-            //   enabled: true
-            // },
+            {
+              title: 'Ancienne municipalité',
+              value: 'anciennes-municipalites',
+              enabled: false
+            },
             {
               title: 'MRC',
               value: 'mrc',
@@ -262,6 +261,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           q: this.computeTerm(term),
           geometry: true,
           bbox: true,
+          icon: true,
           type:
             'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
         },
@@ -285,6 +285,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const subtitleHtml = data.highlight.title2
       ? ' <small> ' + data.highlight.title2 + '</small>'
       : '';
+    const subtitleHtml2 = data.highlight.title3
+      ? '<br><small> ' + data.highlight.title3 + '</small>'
+      : '';
 
     return {
       source: this,
@@ -303,8 +306,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        titleHtml: titleHtml + subtitleHtml,
-        icon: 'map-marker'
+        titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
+        icon: data.icon || 'map-marker'
       }
     };
   }
@@ -493,7 +496,8 @@ export class IChercheReverseSearchSource extends SearchSource
         {
           loc: lonLat.join(','),
           buffer: distance ? String(distance) : '100',
-          geometry: true
+          geometry: true,
+          icon: true
         },
         this.params,
         options.params || {}
@@ -509,10 +513,34 @@ export class IChercheReverseSearchSource extends SearchSource
     });
   }
 
+  private getSubtitle(data: IChercheReverseData) {
+    if (!this.settings.length) {
+      return '';
+    }
+    let subtitle = '';
+    switch (data.properties.type) {
+      case 'arrondissements':
+        subtitle = data.properties.municipalite + ' (Arrondissement)';
+        break;
+      default:
+        const typeSetting = this.settings.find(s => s.name === 'type');
+        const type = typeSetting.values.find(
+          t => t.value === data.properties.type
+        );
+        if (type) {
+          subtitle = type.title;
+        }
+    }
+    return subtitle;
+  }
+
   private dataToResult(data: IChercheReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const extent = this.computeExtent(data);
     const id = [this.getId(), properties.type, properties.code].join('.');
+
+    const titleHtml = data.properties.nom;
+    const subtitleHtml = ' <small> ' + this.getSubtitle(data) + '</small>';
 
     return {
       source: this,
@@ -531,7 +559,8 @@ export class IChercheReverseSearchSource extends SearchSource
         dataType: FEATURE,
         id,
         title: data.properties.nom,
-        icon: 'map-marker'
+        titleHtml: titleHtml + subtitleHtml,
+        icon: data.icon || 'map-marker'
       }
     };
   }

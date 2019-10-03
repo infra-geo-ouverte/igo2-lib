@@ -72,7 +72,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   set drawGuide(value: number) { this.drawGuide$.next(value); }
   get drawGuide(): number { return this.drawGuide$.value; }
   readonly drawGuide$: BehaviorSubject<number> = new BehaviorSubject(0);
-  
+
   /**
    * Draw guide placeholder
    */
