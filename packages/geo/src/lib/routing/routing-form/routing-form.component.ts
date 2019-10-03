@@ -66,6 +66,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public RoutingOverlayStyle: olstyle.Style;
   public routingStopsOverlayDataSource: FeatureDataSource;
   public routingRoutesOverlayDataSource: FeatureDataSource;
+  private stopsLayer
+  private routesLayer
 
   public routesResults: Routing[] | Message[];
   public activeRoute: Routing;
@@ -116,6 +118,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.writeStopsToFormService();
     this.routingRoutesOverlayDataSource.ol.clear();
     this.routingStopsOverlayDataSource.ol.clear();
+    this.map.removeLayer(this.stopsLayer);
+    this.map.removeLayer(this.routesLayer);
 
   }
 
@@ -139,47 +143,47 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
-    const stopsLayer = new VectorLayer({
+    this.stopsLayer = new VectorLayer({
       title: 'routingStopOverlay',
       zIndex: 999,
       id: 'routingStops',
       source: this.routingStopsOverlayDataSource,
-      showInLayerList: false
+      showInLayerList: true
     });
-    const routesLayer = new VectorLayer({
+    this.routesLayer = new VectorLayer({
       title: 'routingRoutesOverlay',
       zIndex: 999,
       id: 'routingRoutes',
       opacity: 0.75,
       source: this.routingRoutesOverlayDataSource,
-      showInLayerList: false
+      showInLayerList: true
     });
 
-    this.map.addLayer(routesLayer);
-    this.map.addLayer(stopsLayer);
+    this.map.addLayer(this.routesLayer);
+    this.map.addLayer(this.stopsLayer);
 
     let selectedStopFeature;
 
     const selectStops = new olinteraction.Select({
-      layers: [stopsLayer.ol],
+      layers: [this.stopsLayer.ol],
       condition: olcondition.pointerMove,
       hitTolerance: 7
     });
 
     const translateStop = new olinteraction.Translate({
-      layers: [stopsLayer.ol],
+      layers: [this.stopsLayer.ol],
       features: selectedStopFeature
     });
 
     // TODO: Check to disable pointermove IF a stop is already selected
     const selectRouteHover = new olinteraction.Select({
-      layers: [routesLayer.ol],
+      layers: [this.routesLayer.ol],
       condition: olcondition.pointerMove,
       hitTolerance: 7
     });
 
     this.selectRoute = new olinteraction.Select({
-      layers: [routesLayer.ol],
+      layers: [this.routesLayer.ol],
       hitTolerance: 7
     });
 

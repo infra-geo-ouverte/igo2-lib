@@ -74,5 +74,6 @@ export class RoutingFormBindingDirective implements AfterViewInit {
         }
       }
     }
+    this.component.onFormChange();
   }
 }
