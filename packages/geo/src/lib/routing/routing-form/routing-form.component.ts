@@ -262,7 +262,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
     const groupedLocations = [];
     const roundedCoordinates = [coordinates[0].toFixed(5),coordinates[1].toFixed(5)]
-    this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates });
+    this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
     this.searchService
       .reverseSearch(coordinates, { zoom: this.map.getZoom() })
       .map(res =>
@@ -307,7 +307,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
               } else if (results[0].source.getId() === 'coordinatesreverse') {
                 this.stops.at(stopIndex).patchValue({
-                  stopPoint: [results[0].data.geometry.coordinates[0].toFixed(5),results[0].data.geometry.coordinates[1].toFixed(5)]
+                  stopPoint: [results[0].data.geometry.coordinates[0].toFixed(5),results[0].data.geometry.coordinates[1].toFixed(5)].join(',')
                 });
                 if (results[0].data.geometry.type === 'Point') {
                   this.stops.at(stopIndex).patchValue({
@@ -319,7 +319,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 }                
               }
             } else {
-              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates });
+              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
               this.stops.at(stopIndex).patchValue({ stopProposals: [] });
             }
             this.changeDetectorRefs.detectChanges();
