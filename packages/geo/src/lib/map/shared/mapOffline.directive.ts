@@ -63,13 +63,13 @@ export class MapOfflineDirective implements AfterViewInit {
 
       if (sourceOptions.pathOffline  &&
         this.state.connection === false) {
-          if (sourceOptions.type === 'vector' || 'cluster') {
+          if (sourceOptions.type === 'vector' || sourceOptions.type === 'cluster') {
             return;
           }
           layer.ol.getSource().setUrl(sourceOptions.pathOffline);
       } else if (sourceOptions.pathOffline &&
         this.state.connection === true) {
-          if (sourceOptions.type === 'vector' || 'cluster') {
+          if (sourceOptions.type === 'vector' || sourceOptions.type === 'cluster') {
             return;
           }
           layer.ol.getSource().setUrl(sourceOptions.url);
