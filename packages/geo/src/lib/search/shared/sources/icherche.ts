@@ -102,8 +102,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'Route',
               value: 'routes',
-              enabled: false,
-              available: false,
+              enabled: true,
               hashtags: ['route']
             },
             {
@@ -112,11 +111,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: true,
               hashtags: ['municipalité', 'mun']
             },
-            // {
-            //   title: 'Ancienne municipalité',
-            //   value: 'ancienne_municipalite',
-            //   enabled: true
-            // },
+            {
+              title: 'Ancienne municipalité',
+              value: 'anciennes-municipalites',
+              enabled: false
+            },
             {
               title: 'MRC',
               value: 'mrc',
@@ -519,18 +518,20 @@ export class IChercheReverseSearchSource extends SearchSource
       return '';
     }
     let subtitle = '';
-    switch(data.properties.type) {
+    switch (data.properties.type) {
       case 'arrondissements':
         subtitle = data.properties.municipalite + ' (Arrondissement)';
         break;
       default:
         const typeSetting = this.settings.find(s => s.name === 'type');
-        const type = typeSetting.values.find(t => t.value === data.properties.type);
+        const type = typeSetting.values.find(
+          t => t.value === data.properties.type
+        );
         if (type) {
           subtitle = type.title;
         }
-      }
-      return subtitle;
+    }
+    return subtitle;
   }
 
   private dataToResult(data: IChercheReverseData): SearchResult<Feature> {

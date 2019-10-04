@@ -58,6 +58,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public projection = 'EPSG:4326';
   public currentStopIndex: number;
   private routesQueries$$: Subscription[] = [];
+  private search$$: Subscription;
 
   private stream$ = new Subject<string>();
 
@@ -65,6 +66,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public RoutingOverlayStyle: olstyle.Style;
   public routingStopsOverlayDataSource: FeatureDataSource;
   public routingRoutesOverlayDataSource: FeatureDataSource;
+  private stopsLayer;
+  private routesLayer;
 
   public routesResults: Routing[] | Message[];
   public activeRoute: Routing;
@@ -77,40 +80,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // https://stackoverflow.com/questions/46364852/create-input-fields-dynamically-in-angular-2
 
-  @Input()
-  get term() {
-    return this._term;
-  }
-  set term(value: string) {
-    this._term = value;
-  }
-  private _term = '';
+  @Input() term: string;
 
-  get debounce() {
-    return this._debounce;
-  }
-  set debounce(value: number) {
-    this._debounce = value;
-  }
-  private _debounce = 200;
+  @Input() debounce: number = 200;
 
-  @Input()
-  get length() {
-    return this._length;
-  }
-  set length(value: number) {
-    this._length = value;
-  }
-  private _length = 3;
+  @Input() length: number = 2;
 
-  @Input()
-  get map(): IgoMap {
-    return this._map;
-  }
-  set map(value: IgoMap) {
-    this._map = value;
-  }
-  private _map: IgoMap;
+  @Input() map: IgoMap;
 
   @Output() submit: EventEmitter<any> = new EventEmitter();
 
@@ -138,14 +114,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.unsubscribeRoutesQueries();
     this.unlistenSingleClick();
     this.queryService.queryEnabled = true;
-    const stopCoordinates = [];
 
-    this.stops.value.forEach(stop => {
-      stopCoordinates.push(stop.stopCoordinates);
-    });
+    this.writeStopsToFormService();
     this.routingRoutesOverlayDataSource.ol.clear();
     this.routingStopsOverlayDataSource.ol.clear();
-    this.routingFormService.setStopsCoordinates(stopCoordinates);
+    this.map.removeLayer(this.stopsLayer);
+    this.map.removeLayer(this.routesLayer);
+
   }
 
   ngOnInit() {
@@ -168,14 +143,14 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
-    const stopsLayer = new VectorLayer({
+    this.stopsLayer = new VectorLayer({
       title: 'routingStopOverlay',
       zIndex: 999,
       id: 'routingStops',
       source: this.routingStopsOverlayDataSource,
       showInLayerList: false
     });
-    const routesLayer = new VectorLayer({
+    this.routesLayer = new VectorLayer({
       title: 'routingRoutesOverlay',
       zIndex: 999,
       id: 'routingRoutes',
@@ -184,31 +159,31 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       showInLayerList: false
     });
 
-    this.map.addLayer(routesLayer);
-    this.map.addLayer(stopsLayer);
+    this.map.addLayer(this.routesLayer);
+    this.map.addLayer(this.stopsLayer);
 
     let selectedStopFeature;
 
     const selectStops = new olinteraction.Select({
-      layers: [stopsLayer.ol],
+      layers: [this.stopsLayer.ol],
       condition: olcondition.pointerMove,
       hitTolerance: 7
     });
 
     const translateStop = new olinteraction.Translate({
-      layers: [stopsLayer.ol],
+      layers: [this.stopsLayer.ol],
       features: selectedStopFeature
     });
 
     // TODO: Check to disable pointermove IF a stop is already selected
     const selectRouteHover = new olinteraction.Select({
-      layers: [routesLayer.ol],
+      layers: [this.routesLayer.ol],
       condition: olcondition.pointerMove,
       hitTolerance: 7
     });
 
     this.selectRoute = new olinteraction.Select({
-      layers: [routesLayer.ol],
+      layers: [this.routesLayer.ol],
       hitTolerance: 7
     });
 
@@ -235,7 +210,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.routesQueries$$.push(
       this.stopsForm.statusChanges
-        .pipe(debounceTime(this._debounce))
+        .pipe(debounceTime(this.debounce))
         .subscribe(val => this.onFormChange())
     );
 
@@ -277,7 +252,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.routesQueries$$.push(
       this.stream$
         .pipe(
-          debounceTime(this._debounce),
+          debounceTime(this.debounce),
           distinctUntilChanged()
         )
         .subscribe((term: string) => this.handleTermChanged(term))
@@ -286,6 +261,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
     const groupedLocations = [];
+    const roundedCoordinates = [coordinates[0].toFixed(5), coordinates[1].toFixed(5)];
+    this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
     this.searchService
       .reverseSearch(coordinates, { zoom: this.map.getZoom() })
       .map(res =>
@@ -328,9 +305,24 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 } else {
                   // Not moving the translated point Only to suggest value into the UI.
                 }
+              } else if (results[0].source.getId() === 'coordinatesreverse') {
+                this.stops.at(stopIndex).patchValue({
+                  stopPoint: [
+                    results[0].data.geometry.coordinates[0].toFixed(5),
+                    results[0].data.geometry.coordinates[1].toFixed(5)
+                  ].join(',')
+                });
+                if (results[0].data.geometry.type === 'Point') {
+                  this.stops.at(stopIndex).patchValue({
+                    stopCoordinates:
+                      results[0].data.geometry.coordinates
+                  });
+                } else {
+                  // Not moving the translated point Only to suggest value into the UI.
+                }
               }
             } else {
-              this.stops.at(stopIndex).patchValue({ stopPoint: coordinates });
+              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
               this.stops.at(stopIndex).patchValue({ stopProposals: [] });
             }
             this.changeDetectorRefs.detectChanges();
@@ -384,15 +376,14 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.stopsForm.get('stops') as FormArray;
   }
 
-  getStopsCoordinates(): [number, number][] {
-    const stopCoordinates = [];
+  private writeStopsToFormService() {
+    const stops = [];
     this.stops.value.forEach(stop => {
       if (stop.stopCoordinates instanceof Array) {
-        stopCoordinates.push(stop.stopCoordinates);
+        stops.push(stop);
       }
     });
-    this.routingFormService.setStopsCoordinates(stopCoordinates);
-    return stopCoordinates;
+    this.routingFormService.setStops(stops);
   }
 
   addStop(): void {
@@ -439,7 +430,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   onFormChange() {
     if (this.stopsForm.valid) {
       this.routingRoutesOverlayDataSource.ol.clear();
-      const coords = this.getStopsCoordinates();
+      this.writeStopsToFormService();
+      const coords = this.routingFormService.getStopsCoordinates();
       if (coords.length >= 2) {
         this.getRoutes(coords);
       } else {
@@ -923,30 +915,32 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleTermChanged(term: string) {
     if (term !== undefined || term.length !== 0) {
       const searchProposals = [];
+      if (this.search$$) {
+        this.search$$.unsubscribe();
+      }
       const researches = this.searchService.search(term, {searchType: 'Feature'});
       researches.map(res =>
-        this.routesQueries$$.push(
-          res.request.subscribe(results => {
-            results
-              .filter(r => r.data.geometry)
-              .forEach(element => {
-                if (
-                  searchProposals.filter(r => r.source === element.source)
-                    .length === 0
-                ) {
-                  searchProposals.push({
-                    source: element.source,
-                    meta: element.meta,
-                    results: results.map(r => r.data)
-                  });
-                }
-              });
-            this.stops
-              .at(this.currentStopIndex)
-              .patchValue({ stopProposals: searchProposals });
-            this.changeDetectorRefs.detectChanges();
-          })
-        )
+        this.search$$ =
+        res.request.subscribe(results => {
+          results
+            .filter(r => r.data.geometry)
+            .forEach(element => {
+              if (
+                searchProposals.filter(r => r.source === element.source)
+                  .length === 0
+              ) {
+                searchProposals.push({
+                  source: element.source,
+                  meta: element.meta,
+                  results: results.map(r => r.data)
+                });
+              }
+            });
+          this.stops
+            .at(this.currentStopIndex)
+            .patchValue({ stopProposals: searchProposals });
+          this.changeDetectorRefs.detectChanges();
+        })
       );
     }
   }
@@ -988,28 +982,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       if (geom.type === 'Point') {
         geomCoord = geom.coordinates;
       } else if (geom.type.search('Line') >= 0) {
-        let coordArray = [];
-        if (geom.coordinates instanceof Array) {
-          // Middle segment of multilinestring
-          coordArray =
-            geom.coordinates[Math.floor(geom.coordinates.length / 2)];
-        } else {
-          coordArray = geom.coordinates;
-        }
-        // middle point of coords
-        geomCoord = coordArray[Math.floor(coordArray.length / 2)];
-      } else if (geom.type.search('Polygon') >= 0 && proposal.extent) {
-        const polygonExtent = proposal.extent;
-        const long =
-          polygonExtent[0] + (polygonExtent[2] - polygonExtent[0]) / 2;
-        const lat =
-          polygonExtent[1] + (polygonExtent[3] - polygonExtent[1]) / 2;
-        geomCoord = [long, lat];
-      } else if (geom.type.search('Polygon') >= 0 && !proposal.extent) {
+        const line = (new OlGeoJSON()).readFeatures(geom);
+        geomCoord = line[0].getGeometry().getFirstCoordinate();
+        geomCoord = [geomCoord[0], geomCoord[1]];
+      } else if (geom.type.search('Polygon') >= 0) {
         const poly = (new OlGeoJSON()).readFeatures(geom);
-        // get the first feature of a multipolygon OR from the single feature of polygon.
-        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates() || poly.getGeometry().getInteriorPoints().getCoordinates();
-        geomCoord = [geomCoord[0][0], geomCoord[0][1]];
+        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates();
+        geomCoord = [geomCoord[0], geomCoord[1]];
       }
 
       if (geomCoord !== undefined) {
