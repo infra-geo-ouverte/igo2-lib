@@ -194,11 +194,11 @@
         }
       },
       "routing": {
-        "uturn": "demi-tour",
-        "sharp right": "fortement à droite",
+        "uturn": "u-turn",
+        "sharp right": "sharp right",
         "right": "right",
         "slight right": "slightly on right",
-        "sharp left": "fortement à gauche",
+        "sharp left": "sharp left",
         "left": "left",
         "slight left": "slightly on left",
         "straight": "forward"
@@ -207,7 +207,7 @@
         "n": "north",
         "ne": "northeast",
         "e": "east",
-        "se": "Southeast",
+        "se": "southeast",
         "s": "south",
         "sw": "southwest",
         "w": "west",
