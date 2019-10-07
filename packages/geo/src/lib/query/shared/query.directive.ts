@@ -184,6 +184,17 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
     const features = (olFeatures || []).map((olFeature: OlFeature) => {
       return featureFromOl(olFeature, this.map.projection);
     });
+
+    this.map.layers.forEach(layer=>{
+      features.forEach(feature=>{
+        if(typeof layer.ol.getSource().hasFeature != 'undefined'){
+          if(layer.ol.getSource().hasFeature(feature.ol)){
+              feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
+          }
+        }
+      })
+    })
+
     return of(features);
   }
 

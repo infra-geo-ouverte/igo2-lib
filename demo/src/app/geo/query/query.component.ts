@@ -104,7 +104,11 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector',
-        queryable: true
+        queryable: true,
+        sourceFields:[
+          { name:"name", alias:"Alias name" },
+          { name:"description", alias:"Alias description" }
+        ]
       } as QueryableDataSourceOptions )
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -124,14 +128,17 @@ export class AppQueryComponent {
         olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
-      ])
+      ]),
+        description: 'feature1 - description'
     });
 
     const feature2 = new olFeature({
       name: 'feature2',
       geometry: new olPoint(
         olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
-      )
+      ),
+      description: 'feature2 - description'
+
     });
 
     const feature3 = new olFeature({
@@ -142,7 +149,8 @@ export class AppQueryComponent {
           olproj.transform([-73, 47], 'EPSG:4326', 'EPSG:3857'),
           olproj.transform([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
         ]
-      ])
+      ]),
+        description: 'feature3 - description'
     });
 
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
