@@ -43,17 +43,16 @@ export class FilterableDataSourcePipe implements PipeTransform {
     let isOgcFilterable = false;
     if (
       dataSource.options.ogcFilters &&
-      dataSource.options.ogcFilters.enabled
+      dataSource.options.ogcFilters.enabled &&
+      dataSource.options.ogcFilters.editable
     ) {
       isOgcFilterable = true;
-    }
+    } 
     if (
       dataSource.options.ogcFilters &&
       dataSource.options.ogcFilters.enabled &&
-      !dataSource.options.ogcFilters.editable &&
-      !dataSource.options.ogcFilters.filters &&
-      !dataSource.options.ogcFilters.pushButtons) {
-        isOgcFilterable = false;
+      dataSource.options.ogcFilters.pushButtons) {
+        isOgcFilterable = true;
     }
     return isOgcFilterable;
   }
