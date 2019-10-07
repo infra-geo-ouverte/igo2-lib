@@ -16,12 +16,11 @@
     [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon svgIcon="plus"></mat-icon>
   </button>
+  <button *ngIf="!layer.visible && ogcFiltersHeaderShown" mat-icon-button tooltip-position="below"
+    matTooltipShowDelay="500" [matTooltip]="'igo.geo.layer.showLayer' | translate" color="warn" (click)="setVisible()">
+    <mat-icon svgIcon="alert-circle-outline"></mat-icon>
+  </button>
 </mat-list-item>
-
-<button *ngIf="!layer.visible && ogcFiltersHeaderShown" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.layer.showLayer' | translate"
-color="warn" (click)="setVisible()">
-<mat-icon svgIcon="error-outline"></mat-icon>
-</button>
 
 <div #ogcFilters class="igo-datasource-filters-container">
   <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
