@@ -1,4 +1,3 @@
-<span *ngIf="filtersAreEditable">
 <mat-list-item>
 
   <mat-icon *ngIf="ogcFiltersHeaderShown" class="igo-chevron" mat-list-avatar igoCollapse [target]="ogcFilters" [collapsed]="filtersCollapsed" svgIcon="chevron-up">
@@ -12,7 +11,7 @@
       <mat-icon svgIcon="download"></mat-icon>
     </button>
   </span>
-  <button *ngIf="isAdvancedOgcFilters()" [disabled]="addFilterDisabled()" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+  <button *ngIf="isAdvancedOgcFilters() && filtersAreEditable" [disabled]="addFilterDisabled()" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
     [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
     <mat-icon svgIcon="plus"></mat-icon>
   </button>
@@ -26,9 +25,8 @@
   <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
   </igo-ogc-filterable-form>
 
-  <mat-checkbox labelPosition='before' *ngIf="hasPushButton" (change)="changeOgcFilterType($event)"
+  <mat-checkbox labelPosition='before' *ngIf="hasPushButton && filtersAreEditable" (change)="changeOgcFilterType($event)"
     [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">
     {{'igo.geo.filter.advancedOgcFilters' | translate}}
   </mat-checkbox>
 </div>
-</span>
