@@ -83,7 +83,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
           const [layer, index] = bunch;
           // A layer may be undefined when it's badly configured
           if (layer !== undefined) {
-            layer.visible = this.computeLayerVisibilityFromUrl(layer);
             layer.zIndex = layer.zIndex || index + 1;  // Map indexes start at 1
           }
 
@@ -94,6 +93,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
       this.contextLayers = layers;
       this.map.addLayers(layers);
+      this.map.layers.forEach(layer => {
+        layer.visible = this.computeLayerVisibilityFromUrl(layer);
+      });
     });
   }
 
