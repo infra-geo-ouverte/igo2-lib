@@ -608,18 +608,7 @@ export class QueryService {
 
   getAllowedFieldsAndAlias(layer: any){
     let allowedFieldsAndAlias;
-    if (
-      layer.options &&
-      layer.options.sourceOptions &&
-      layer.options.sourceOptions.sourceFields &&
-      layer.options.sourceOptions.sourceFields.length >= 1
-    ) {
-      allowedFieldsAndAlias = {};
-      layer.options.sourceOptions.sourceFields.forEach(sourceField => {
-        const alias = sourceField.alias ? sourceField.alias : sourceField.name;
-        allowedFieldsAndAlias[sourceField.name] = alias;
-      });
-    } else if (layer.options &&
+    if (layer.options &&
       layer.options.source &&
       layer.options.source.options &&
       layer.options.source.options.sourceFields &&
