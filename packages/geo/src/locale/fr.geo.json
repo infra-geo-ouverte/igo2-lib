@@ -90,12 +90,14 @@
         "layerFiltered": "Cette couche d'information est présentement filtrée.",
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
-        "advancedOgcFilters": "Filtres avancés"
+        "advancedOgcFilters": "Filtres avancés",
+        "placeholder": "Saisir une valeur",
+        "placeholderSnrc": "Ex: 21L14"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
         "btnSetExtent": "Définir l'étendue du filtre selon l'étendue courante de la carte",
-        "snrc": "SNRC (ex:21L14)",
+        "snrc": "SNRC",
         "selectFeature": "",
         "drawFeature": ""
       },
