@@ -18,8 +18,8 @@ import { Overlay, OverlayRef } from '@angular/cdk/overlay';
   selector: '[igoContextMenu]'
 })
 export class ContextMenuDirective {
-  overlayRef: OverlayRef | null;
-  sub: Subscription;
+  private overlayRef: OverlayRef | null;
+  private sub: Subscription;
 
   @Input('igoContextMenu') menuContext: TemplateRef<any>;
   @Output() menuPosition = new EventEmitter<{ x: number; y: number }>();
@@ -89,10 +89,14 @@ export class ContextMenuDirective {
       )
       .subscribe(() => this.close());
   }
+
   close() {
     if (this.overlayRef) {
       this.overlayRef.dispose();
       this.overlayRef = null;
+    }
+    if (this.sub) {
+      this.sub.unsubscribe();
     }
   }
 }

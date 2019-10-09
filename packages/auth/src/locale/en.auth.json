@@ -9,7 +9,13 @@
       "user": "User",
       "welcome": "Welcome {{name}}!",
       "deconnection": "You are logged out.",
-      "home": "Return to the home page"
+      "home": "Return to the home page",
+      "error": {
+        "Password expired": "Password expired",
+        "Maximun logins exceeded": "Maximun logins exceeded",
+        "Wrong password": "Wrong password",
+        "Invalid username": "Invalid username"
+      }
     }
   }
 }
