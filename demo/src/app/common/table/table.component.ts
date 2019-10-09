@@ -9,7 +9,6 @@ import { TableDatabase, TableActionColor } from '@igo2/common';
   styleUrls: ['./table.component.scss']
 })
 export class AppTableComponent implements OnInit {
-
   public database: TableDatabase;
 
   public model = {
@@ -47,9 +46,9 @@ export class AppTableComponent implements OnInit {
 
   ngOnInit() {
     this.database = new TableDatabase([
-      {id: '2', name: 'Name 2', description: '­Description 2'},
-      {id: '1', name: 'Name 1', description: 'Description 1'},
-      {id: '3', name: 'Name 3', description: 'Description 3'}
+      { id: '2', name: 'Name 2', description: 'Hello 2' },
+      { id: '1', name: 'Name 1', description: 'Bonjour 1' },
+      { id: '3', name: 'Name 3', description: 'Hola 3' }
     ]);
   }
 
