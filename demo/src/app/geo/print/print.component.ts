@@ -31,10 +31,11 @@ export class AppPrintComponent {
         title: 'Quebec Base Map',
         sourceOptions: {
           type: 'wmts',
-          url: '/carto/wmts/1.0.0/wmts',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/carto/wmts/1.0.0/wmts',
           layer: 'carte_gouv_qc_ro',
           matrixSet: 'EPSG_3857',
-          version: '1.3.0'
+          version: '1.3.0',
+          crossOrigin: 'anonymous'
         }
       })
       .subscribe(l => this.map.addLayer(l));
@@ -44,52 +45,54 @@ export class AppPrintComponent {
         title: 'School board',
         sourceOptions: {
           type: 'wms',
-          url: '/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
           params: {
             layers: 'MELS_CS_ANGLO_S',
             version: '1.3.0'
-          }
+          },
+          crossOrigin: 'anonymous'
         }
       })
       .subscribe(l => this.map.addLayer(l));
-
+    //
     this.layerService
       .createAsyncLayer({
         title: 'Embacle',
         sourceOptions: {
           type: 'wms',
-          url: '/ws/igo_gouvouvert.fcgi',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
           params: {
             layers: 'vg_observation_v_inondation_embacle_wmst',
             version: '1.3.0'
-          }
+          },
+          crossOrigin: 'anonymous'
         }
       })
       .subscribe(l => this.map.addLayer(l));
 
-    this.layerService
-        .createAsyncLayer({
-          title: 'Geomet',
-          sourceOptions: {
-            type: 'wms',
-            url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
-            params: {
-              layers: 'RADAR_1KM_RDBR',
-              version: '1.3.0',
-            },
-            crossOrigin: 'anonymous'
-          }
-        })
-        .subscribe(l => this.map.addLayer(l));
+    // this.layerService
+    //   .createAsyncLayer({
+    //     title: 'Geomet',
+    //     sourceOptions: {
+    //       type: 'wms',
+    //       url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
+    //       params: {
+    //         layers: 'RADAR_1KM_RDBR',
+    //         version: '1.3.0'
+    //       },
+    //       crossOrigin: 'anonymous'
+    //     }
+    //   })
+    //   .subscribe(l => this.map.addLayer(l));
 
-        /*
+    /*
         //CORS error if activate (for test)
         this.layerService
           .createAsyncLayer({
             title: 'Geomet',
             sourceOptions: {
               type: 'wms',
-              url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wms',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wms',
               params: {
                 layers: 'swtq',
                 version: '1.3.0',

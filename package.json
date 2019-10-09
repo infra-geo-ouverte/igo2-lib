@@ -47,7 +47,7 @@
     "_watch.core": "wait-on dist/utils/package.json && ng build core --watch",
     "_watch.common": "wait-on dist/core/package.json && ng build common --watch",
     "_watch.auth": "wait-on dist/common/package.json && ng build auth --watch",
-    "_watch.geo": "wait-on dist/common/package.json && ng build geo --watch",
+    "_watch.geo": "wait-on dist/auth/package.json && ng build geo --watch",
     "_watch.context": "wait-on dist/geo/package.json && ng build context --watch",
     "_watch.integration": "wait-on dist/context/package.json && ng build integration --watch",
     "_watch.gulp": "wait-on dist/integration/package.json && gulp core && gulp common && gulp auth && gulp geo && gulp context && gulp integration && gulp core:bundleLocale",
@@ -60,7 +60,7 @@
     "preversion": "rimraf ./dist && npm run build.all && npm run test.all",
     "version": "gulp bumpVersion && npm run build.libs && npm run changelog && git add -u",
     "postversion": "git push && git push --tags && npm run publish && npm run ghpages && npm run ghrelease",
-    "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json']\" > dist/ghpages/_config.yml",
+    "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
     "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\""

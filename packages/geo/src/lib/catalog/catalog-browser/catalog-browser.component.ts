@@ -176,19 +176,49 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Sort the layers by title. asc or desc.
+   * @internal
+   */
+  private sortCatalogItemsByTitle(items: CatalogItem[], direction) {
+    const returnItem = items.sort((a, b) => {
+      const titleA = a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const titleB = b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+      if (titleA < titleB) {
+        return -1;
+      }
+      if (titleA > titleB) {
+        return 1;
+      }
+      return 0;
+    });
+    switch (direction) {
+      case 'asc':
+        return returnItem;
+      case 'desc':
+        return returnItem.reverse();
+      default:
+        return items;
+    }
+  }
+
+  /**
    * Add all the layers of a group to map
    * @param group Catalog group
    */
   private addGroupToMap(group: CatalogItemGroup) {
-    const layers = group.items.filter((item: CatalogItem) => {
+    let layers = group.items.filter((item: CatalogItem) => {
       const added = this.store.state.get(item).added || false;
       return this.isLayer(item) && added === false;
     });
+    if (this.catalog && this.catalog.sortDirection !== undefined) {
+      layers = this.sortCatalogItemsByTitle(layers, this.catalog.sortDirection);
+  }
     this.addLayersToMap(layers.reverse() as CatalogItemLayer[]);
   }
 
   /**
-   * Remove all the layers of a groufrom map
+   * Remove all the layers of a group from map
    * @param group Catalog group
    */
   private removeGroupFromMap(group: CatalogItemGroup) {

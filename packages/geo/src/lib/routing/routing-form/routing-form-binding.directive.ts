@@ -22,10 +22,9 @@ export class RoutingFormBindingDirective implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    const storedStopsCoordinates = this.routingFormService.getStopsCoordinates();
+    const storedStops = this.routingFormService.getStops();
     if (
-      !storedStopsCoordinates &&
-      this.route &&
+      !storedStops && this.route &&
       this.route.options.routingCoordKey
     ) {
       this.route.queryParams.subscribe(params => {
@@ -61,22 +60,17 @@ export class RoutingFormBindingDirective implements AfterViewInit {
           }
         }
       });
-    } else if (storedStopsCoordinates) {
-      for (let i = 0; i < storedStopsCoordinates.length; i++) {
-        if (i !== 0 && i !== storedStopsCoordinates.length - 1) {
+    } else if (storedStops) {
+      for (let i = 0; i < storedStops.length; i++) {
+        if (i !== 0 && i !== storedStops.length - 1) {
           this.component.stops.insert(i, this.component.createStop());
         }
-        if (storedStopsCoordinates[i] instanceof Array) {
-          this.component.addStopOverlay(storedStopsCoordinates[i], i);
-          this.component.stops
-            .at(i)
-            .patchValue({ stopCoordinates: storedStopsCoordinates[i] });
-          this.component.stops
-            .at(i)
-            .patchValue({ stopPoint: storedStopsCoordinates[i] });
-          this.component.handleLocationProposals(storedStopsCoordinates[i], i);
+        if (storedStops[i].stopCoordinates instanceof Array) {
+          this.component.addStopOverlay(storedStops[i].stopCoordinates, i);
+          this.component.stops.at(i).patchValue(storedStops[i] );
         }
       }
     }
+    this.component.onFormChange();
   }
 }

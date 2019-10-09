@@ -1,17 +1,28 @@
 import { Injectable } from '@angular/core';
+import { Stop } from '../shared/routing.interface';
 
 @Injectable()
 export class RoutingFormService {
-  private stopsCoordinates: [number, number][];
+  private stops: Stop[];
 
   constructor() {}
 
   getStopsCoordinates(): [number, number][] {
-    return this.stopsCoordinates;
+    const stopsCoordinates = [];
+    if (this.stops) {
+      this.stops.forEach(stop => {
+        stopsCoordinates.push(stop.stopCoordinates);
+      });
+    }
+    return stopsCoordinates;
   }
 
-  setStopsCoordinates(stopsCoordinates) {
-    this.stopsCoordinates = stopsCoordinates;
+  setStops(stops: Stop[]) {
+    this.stops = stops;
+  }
+
+  getStops() {
+    return this.stops;
   }
 
 }

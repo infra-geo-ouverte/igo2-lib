@@ -31,13 +31,12 @@ export class AppImportExportComponent {
         title: 'Quebec Base Map',
         sourceOptions: {
           type: 'wmts',
-          url: '/carto/wmts/1.0.0/wmts',
+          url: 'https://geoegl.msp.gouv.qc.ca/carto/wmts/1.0.0/wmts',
           layer: 'carte_gouv_qc_ro',
           matrixSet: 'EPSG_3857',
           version: '1.3.0'
         }
       })
       .subscribe(l => this.map.addLayer(l));
-
   }
 }
