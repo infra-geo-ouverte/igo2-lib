@@ -51,14 +51,14 @@ export abstract class Layer {
     this.options.baseLayer = baseLayer;
   }
 
-  set visible(value: boolean) {
-    this.ol.setVisible(value);
-    this.visible$.next(value);
-  }
-
   readonly visible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
   get visible(): boolean {
     return this.visible$.value;
+  }
+
+  set visible(value: boolean) {
+    this.ol.setVisible(value);
+    this.visible$.next(value);
   }
 
   get opacity(): number {

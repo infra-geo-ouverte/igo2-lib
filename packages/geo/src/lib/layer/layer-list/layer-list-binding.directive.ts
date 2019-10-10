@@ -29,9 +29,9 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
   ngOnInit() {
     // Override input layers
     this.component.layers = [];
-    this.layersOrResolutionChange$$ = combineLatest(
+    this.layersOrResolutionChange$$ = combineLatest([
       this.mapService.getMap().layers$,
-      this.mapService.getMap().viewController.resolution$
+      this.mapService.getMap().viewController.resolution$]
     ).pipe(
       debounceTime(10)
     ).subscribe((bunch: [Layer[], number]) => {
@@ -39,7 +39,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
         return layer.showInLayerList === true;
       });
       this.component.layers = shownLayers;
-      this.setLayersVisibilityRangeStatus(shownLayers);;
+      this.setLayersVisibilityRangeStatus(shownLayers);
     });
   }
 
@@ -67,7 +67,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
       this.component.layersAreAllInRange = layersAreAllInRange);
   }
 
-  private initRoutes() {  
+  private initRoutes() {
     if (
       this.route &&
       (this.route.options.llcKKey || this.route.options.llcAKey ||
