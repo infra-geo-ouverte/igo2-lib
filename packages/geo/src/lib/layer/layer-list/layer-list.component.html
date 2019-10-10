@@ -45,8 +45,7 @@
         [color]="onlyVisible ? 'warn' : 'primary'"
         (click)="toggleOnlyVisible()">
         <mat-icon
-        [ngStyle]="{'visibility': layersAreAllVisible ? 'hidden': 'visible' }"
-        [svgIcon]="!onlyVisible ? 'eye' : sort-variant-remove'"></mat-icon>
+        [svgIcon]="!onlyVisible ? 'eye' : 'sort-variant-remove'"></mat-icon>
       </button>
       <button
         mat-icon-button
@@ -58,7 +57,6 @@
         [color]="onlyInRange ? 'warn' : 'primary'"
         (click)="toggleOnlyInRange()">
         <mat-icon
-        [ngStyle]="{'visibility': layersAreAllInRange ? 'hidden': 'visible' }"
         [svgIcon]="!onlyInRange ? 'playlist-check' : 'sort-variant-remove'"></mat-icon>
       </button>
     </ng-container>
