@@ -6,15 +6,14 @@ import { MapService } from '../../map/shared/map.service';
 import { LayerListComponent } from './layer-list.component';
 import { LayerListService } from './layer-list.service';
 import { Layer } from '../shared/layers/layer';
-import { map } from 'rxjs/operators';
+import { map, debounceTime } from 'rxjs/operators';
 
 @Directive({
   selector: '[igoLayerListBinding]'
 })
 export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestroy {
   private component: LayerListComponent;
-  private layers$$: Subscription;
-
+  private layersOrResolutionChange$$: Subscription;
   layersVisibility$$: Subscription;
   layersRange$$: Subscription;
 
@@ -30,16 +29,18 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
   ngOnInit() {
     // Override input layers
     this.component.layers = [];
-
-    this.layers$$ = this.mapService
-      .getMap()
-      .layers$.subscribe((layers: Layer[]) => {
-        const shownLayers = layers.filter((layer: Layer) => {
-          return layer.showInLayerList === true;
-        });
-        this.setLayersVisibilityRangeStatus(shownLayers);
-        this.component.layers = shownLayers;
+    this.layersOrResolutionChange$$ = combineLatest(
+      this.mapService.getMap().layers$,
+      this.mapService.getMap().viewController.resolution$
+    ).pipe(
+      debounceTime(10)
+    ).subscribe((bunch: [Layer[], number]) => {
+      const shownLayers = bunch[0].filter((layer: Layer) => {
+        return layer.showInLayerList === true;
       });
+      this.component.layers = shownLayers;
+      this.setLayersVisibilityRangeStatus(shownLayers);;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -102,7 +103,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnDestroy() {
-    this.layers$$.unsubscribe();
+    this.layersOrResolutionChange$$.unsubscribe();
     if (this.layersVisibility$$ !== undefined) {
       this.layersVisibility$$.unsubscribe();
       this.layersVisibility$$ = undefined;
