@@ -33,8 +33,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerListComponent implements OnInit, OnDestroy {
-  hasLayerNotVisible = false;
-  hasLayerOutOfRange = false;
   orderable = true;
   thresholdToFilterAndSort = 5;
 
@@ -48,9 +46,13 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
 
+  @Input() layersAreAllVisible: boolean = true;
+
+  @Input() layersAreAllInRange: boolean = true;
+
   @Input()
   set layers(value: Layer[]) {
-    this.setLayers(value);
+    this._layers = value;
     this.next();
   }
   get layers(): Layer[] {
@@ -329,7 +331,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     if (
       this.layerFilterAndSortOptions.onlyVisible &&
       !this.onlyVisibleInitialized &&
-      this.hasLayerNotVisible
+      !this.layersAreAllVisible
     ) {
       this.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
       this.onlyVisibleInitialized = true;
@@ -337,27 +339,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
     if (
       this.layerFilterAndSortOptions.onlyInRange &&
       !this.onlyInRangeInitialized &&
-      this.hasLayerOutOfRange
+      !this.layersAreAllInRange
     ) {
       this.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
       this.onlyInRangeInitialized = true;
-    }
-  }
-
-  private setLayers(layers: Layer[]) {
-    this._layers = layers;
-
-    if (this.excludeBaseLayers) {
-      this.hasLayerNotVisible =
-        layers.find(l => l.visible === false && !l.baseLayer) !== undefined;
-      this.hasLayerOutOfRange =
-        layers.find(l => l.isInResolutionsRange === false && !l.baseLayer) !==
-        undefined;
-    } else {
-      this.hasLayerNotVisible =
-        layers.find(l => l.visible === false) !== undefined;
-      this.hasLayerOutOfRange =
-        layers.find(l => l.isInResolutionsRange === false) !== undefined;
     }
   }
 }
