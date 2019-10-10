@@ -18,7 +18,8 @@ import { Layer } from '../../layer/shared/layers/layer';
 import {
   WMSDataSource,
   CartoDataSource,
-  TileArcGISRestDataSource
+  TileArcGISRestDataSource,
+  WMSDataSourceOptions
 } from '../../datasource';
 
 import { QueryFormat, QueryHtmlTarget } from './query.enums';
@@ -275,6 +276,11 @@ export class QueryService {
     return features.map((feature: Feature, index: number) => {
       const mapLabel = feature.properties[queryDataSource.mapLabel];
       let title = feature.properties[queryDataSource.queryTitle];
+      let exclude;
+      if (layer.options.sourceOptions.type === 'wms') {
+        const sourceOptions = (layer.options.sourceOptions as WMSDataSourceOptions);
+        exclude = sourceOptions.excludeAttribute;
+      }
       if (!title && features.length > 1) {
         title = `${layer.title} (${index + 1})`;
       } else if (!title) {
@@ -285,7 +291,8 @@ export class QueryService {
         title,
         mapTitle: mapLabel,
         sourceTitle: layer.title,
-        order: 1000 - layer.zIndex
+        order: 1000 - layer.zIndex,
+        excludeAttribute: exclude
       });
 
       return Object.assign(feature, {
