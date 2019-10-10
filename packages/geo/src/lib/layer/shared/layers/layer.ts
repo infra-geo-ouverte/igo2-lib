@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 import olLayer from 'ol/layer/Layer';
 
@@ -51,12 +51,14 @@ export abstract class Layer {
     this.options.baseLayer = baseLayer;
   }
 
-  get visible(): boolean {
-    return this.ol.get('visible');
+  set visible(value: boolean) {
+    this.ol.setVisible(value);
+    this.visible$.next(value);
   }
 
-  set visible(visibility: boolean) {
-    this.ol.setVisible(visibility);
+  readonly visible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  get visible(): boolean {
+    return this.visible$.value;
   }
 
   get opacity(): number {
@@ -67,16 +69,22 @@ export abstract class Layer {
     this.ol.setOpacity(opacity);
   }
 
+  readonly isInResolutionsRange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+  set isInResolutionsRange(value: boolean) {
+    this.isInResolutionsRange$.next(value);
+  }
+
   get isInResolutionsRange(): boolean {
     if (!this.map) {
-      return false;
+      this.isInResolutionsRange = false;
     }
 
     const resolution = this.map.viewController.getResolution();
     const minResolution = this.ol.getMinResolution();
     const maxResolution = this.ol.getMaxResolution();
 
-    return resolution >= minResolution && resolution <= maxResolution;
+    this.isInResolutionsRange = resolution >= minResolution && resolution <= maxResolution;
+    return this.isInResolutionsRange$.value;
   }
 
   get showInLayerList(): boolean {
