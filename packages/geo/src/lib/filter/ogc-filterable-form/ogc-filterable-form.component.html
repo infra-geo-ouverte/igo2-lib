@@ -3,8 +3,8 @@
   </igo-ogc-filter-toggle-button>
 </igo-list>
 
-<igo-list *ngIf="advancedOgcFilters" [navigation]="false" [selection]="true">
-  <ng-template ngFor let-currentFilter [ngForOf]="this.datasource.options.ogcFilters.interfaceOgcFilters">
+<igo-list *ngIf="advancedOgcFilters && datasource.options.ogcFilters.editable " [navigation]="false" [selection]="true">
+  <ng-template ngFor let-currentFilter [ngForOf]="datasource.options.ogcFilters.interfaceOgcFilters">
     <igo-ogc-filter-form igoListItem [color]="color" [currentFilter]="currentFilter" [datasource]="datasource"
       [map]="map" [refreshFilters]="refreshFunc">
     </igo-ogc-filter-form>

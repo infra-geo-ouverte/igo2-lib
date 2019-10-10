@@ -90,12 +90,14 @@
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
-        "advancedOgcFilters": "Advanced filters"
+        "advancedOgcFilters": "Advanced filters",
+        "placeholder": "Enter a value",
+        "placeholderSnrc": "Ex: 21L14"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
         "btnSetExtent": "Define the extent of the spatial filter to the current view",
-        "snrc": "SNRC (ex:21L14)",
+        "snrc": "SNRC",
         "selectFeature": "",
         "drawFeature": ""
       },
