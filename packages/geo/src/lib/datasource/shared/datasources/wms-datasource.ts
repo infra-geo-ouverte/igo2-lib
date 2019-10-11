@@ -132,7 +132,7 @@ export class WMSDataSource extends DataSource {
       console.log('*******************************');
     }
 
-    if (options.paramsWFS && initOgcFilters && initOgcFilters.enabled) {
+    if (options.paramsWFS && initOgcFilters && initOgcFilters.enabled && initOgcFilters.editable) {
       this.wfsService.getSourceFieldsFromWFS(options);
     }
 
@@ -187,8 +187,9 @@ export class WMSDataSource extends DataSource {
     }
 
     legend = layers.map((layer: string) => {
+      const separator = baseUrl.match( /\?/m) ? '&' : '?'
       return {
-        url: `${baseUrl}?${params.join('&')}&LAYER=${layer}`,
+        url: `${baseUrl}${separator}${params.join('&')}&LAYER=${layer}`,
         title: layers.length > 1 ? layer : undefined,
         currentStyle: !style ? undefined : style as string
       };
