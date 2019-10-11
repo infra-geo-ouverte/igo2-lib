@@ -79,7 +79,9 @@ export abstract class Layer {
     return resolution >= minResolution && resolution <= maxResolution;
   }
 
-  get showInLayerList(): boolean { return this.options.showInLayerList !== false; }
+  get showInLayerList(): boolean {
+    return this.options.showInLayerList !== false;
+  }
 
   constructor(options: LayerOptions) {
     this.options = options;
@@ -98,13 +100,18 @@ export abstract class Layer {
     this.opacity =
       this.options.opacity === undefined ? 1 : this.options.opacity;
 
-    if (this.options.legendOptions && (this.options.legendOptions.url || this.options.legendOptions.html)) {
+    if (
+      this.options.legendOptions &&
+      (this.options.legendOptions.url || this.options.legendOptions.html)
+    ) {
       this.legend = this.dataSource.setLegend(this.options.legendOptions);
     }
 
-    this.legendCollapsed = this.options.legendOptions ?
-                            this.options.legendOptions.collapsed ? this.options.legendOptions.collapsed : true :
-                            true;
+    this.legendCollapsed = this.options.legendOptions
+      ? this.options.legendOptions.collapsed
+        ? this.options.legendOptions.collapsed
+        : true
+      : true;
 
     this.ol.set('_layer', this, true);
   }
