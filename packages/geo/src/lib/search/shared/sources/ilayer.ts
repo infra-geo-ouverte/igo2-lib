@@ -189,9 +189,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   private dataToResult(data: ILayerData): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
 
-    const titleHtml = data.highlight.title;
-    const subtitleHtml = data.properties.groupTitle
-      ? ' <small style="color: #6f6969"> ' + data.properties.groupTitle + '</small>'
+    const titleHtml = data.highlight.title || data.properties.title;
+    const groupTitle = data.highlight.groupTitle || data.properties.groupTitle;
+    const subtitleHtml = groupTitle
+      ? ' <small style="color: #6f6969"> ' + groupTitle + '</small>'
       : '';
 
     return {

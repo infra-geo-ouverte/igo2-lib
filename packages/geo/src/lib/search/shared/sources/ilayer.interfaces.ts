@@ -29,7 +29,8 @@ export interface ILayerDataSource {
 }
 
 export interface ILayerDataHighlight {
-  title: string;
+  title?: string;
+  groupTitle?: string;
 }
 
 interface QueryWMSDataSourceOptions
