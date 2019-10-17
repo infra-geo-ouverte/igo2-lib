@@ -47,7 +47,7 @@ export class FilterableDataSourcePipe implements PipeTransform {
       dataSource.options.ogcFilters.editable
     ) {
       isOgcFilterable = true;
-    } 
+    }
     if (
       dataSource.options.ogcFilters &&
       dataSource.options.ogcFilters.enabled &&
