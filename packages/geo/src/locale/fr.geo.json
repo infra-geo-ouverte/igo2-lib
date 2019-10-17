@@ -118,7 +118,7 @@
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
         "subsetLayersListOnlyVisible": "Conserver les couches visibles",
-        "subsetLayersListOnlyInRange": "Conserver les couches de la plage de d'échelle active",
+        "subsetLayersListOnlyInRange": "Conserver les couches de la plage d'échelle active",
         "sortAlphabetically": "Trier la liste des couches en ordre alphabétique",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Rétablie l'affichage de l'ensemble des couches",
