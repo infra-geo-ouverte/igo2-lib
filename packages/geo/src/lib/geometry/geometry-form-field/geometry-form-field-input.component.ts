@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { NgControl, ControlValueAccessor } from '@angular/forms';
 
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import * as OlStyle from 'ol/style';
 import OlGeoJSON from 'ol/format/GeoJSON';
