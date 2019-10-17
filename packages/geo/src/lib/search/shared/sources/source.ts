@@ -45,6 +45,10 @@ export class SearchSource {
     throw new Error('You have to implement the method "getType".');
   }
 
+  getTriggerType(): string {
+    throw new Error('You have to implement the method "getTriggerType".');
+  }
+
   /**
    * Get search source's default options
    * @returns Search source default options

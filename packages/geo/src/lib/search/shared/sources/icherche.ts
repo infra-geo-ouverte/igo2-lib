@@ -24,6 +24,7 @@ import {
   IChercheReverseData,
   IChercheReverseResponse
 } from './icherche.interfaces';
+import { triggerType } from './source.enum';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -41,6 +42,7 @@ export class IChercheSearchResultFormatter {
 export class IChercheSearchSource extends SearchSource implements TextSearch {
   static id = 'icherche';
   static type = FEATURE;
+  static trigger = triggerType.TERM
   static propertiesBlacklist: string[] = [];
 
   constructor(
@@ -70,6 +72,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
   getType(): string {
     return IChercheSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return IChercheSearchSource.trigger;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
@@ -381,6 +387,7 @@ export class IChercheReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'icherchereverse';
   static type = FEATURE;
+  static trigger = triggerType.REVERSE
   static propertiesBlacklist: string[] = [];
 
   constructor(
@@ -408,6 +415,10 @@ export class IChercheReverseSearchSource extends SearchSource
 
   getType(): string {
     return IChercheReverseSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return IChercheReverseSearchSource.trigger;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

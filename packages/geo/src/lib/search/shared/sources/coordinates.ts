@@ -10,6 +10,7 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService } from '@igo2/core';
 import { GoogleLinks } from '../../../utils/googleLinks';
+import { triggerType} from './source.enum';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -27,6 +28,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'coordinatesreverse';
   static type = FEATURE;
+  static trigger = triggerType.REVERSE
 
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -50,6 +52,10 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   getType(): string {
     return CoordinatesReverseSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return CoordinatesReverseSearchSource.trigger;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

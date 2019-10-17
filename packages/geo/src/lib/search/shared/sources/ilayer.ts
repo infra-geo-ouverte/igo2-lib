@@ -20,6 +20,7 @@ import {
   ILayerServiceResponse,
   ILayerDataSource
 } from './ilayer.interfaces';
+import { triggerType } from './source.enum';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -58,6 +59,7 @@ export class ILayerSearchResultFormatter {
 export class ILayerSearchSource extends SearchSource implements TextSearch {
   static id = 'ilayer';
   static type = LAYER;
+  static trigger = triggerType.TERM
 
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -84,6 +86,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   getType(): string {
     return ILayerSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return ILayerSearchSource.trigger;
   }
 
   protected getDefaultOptions(): ILayerSearchSourceOptions {

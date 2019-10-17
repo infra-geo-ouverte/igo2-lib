@@ -10,6 +10,7 @@ import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
+import { triggerType } from './source.enum';
 
 /**
  * Nominatim search source
@@ -18,6 +19,7 @@ import { NominatimData } from './nominatim.interfaces';
 export class NominatimSearchSource extends SearchSource implements TextSearch {
   static id = 'nominatim';
   static type = FEATURE;
+  static trigger = triggerType.TERM
 
   constructor(
     private http: HttpClient,
@@ -32,6 +34,10 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
 
   getType(): string {
     return NominatimSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return NominatimSearchSource.trigger;
   }
 
   /*

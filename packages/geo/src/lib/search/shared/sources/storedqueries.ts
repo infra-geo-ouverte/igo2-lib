@@ -25,6 +25,7 @@ import {
 } from './storedqueries.interfaces';
 
 import * as olformat from 'ol/format';
+import { triggerType } from './source.enum';
 
 /**
  * StoredQueries search source
@@ -33,6 +34,7 @@ import * as olformat from 'ol/format';
 export class StoredQueriesSearchSource extends SearchSource implements TextSearch {
   static id = 'storedqueries';
   static type = FEATURE;
+  static trigger = triggerType.TERM
   static propertiesBlacklist: string[] = [];
   public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
@@ -90,6 +92,10 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
 
   getType(): string {
     return StoredQueriesSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return StoredQueriesSearchSource.trigger;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
@@ -268,6 +274,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'storedqueriesreverse';
   static type = FEATURE;
+  static trigger = triggerType.REVERSE
   static propertiesBlacklist: string[] = [];
   public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
@@ -301,6 +308,10 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
   getType(): string {
     return StoredQueriesReverseSearchSource.type;
+  }
+
+  getTriggerType(): string {
+    return StoredQueriesReverseSearchSource.trigger;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

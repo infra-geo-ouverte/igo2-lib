@@ -1,5 +1,6 @@
 export * from './source';
 export * from './source.interfaces';
+export * from './source.enum';
 export * from './icherche';
 export * from './icherche.interfaces';
 export * from './icherche.providers';
