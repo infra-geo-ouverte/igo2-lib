@@ -30,7 +30,9 @@
   </div>
 
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
+    <mat-select 
+    tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate"
+    [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
       <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
@@ -164,7 +166,9 @@
 
   <!-- PropertySpatial  -->
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
+    <mat-select  
+      matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate" tooltip-position="below"
+      [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
       <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>

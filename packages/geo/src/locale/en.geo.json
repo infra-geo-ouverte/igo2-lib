@@ -92,7 +92,9 @@
         "filterBy": "Filter by",
         "advancedOgcFilters": "Advanced filters",
         "placeholder": "Enter a value",
-        "placeholderSnrc": "Ex: 21L14"
+        "placeholderSnrc": "Ex: 21L14",
+        "selectOperator" : "Select an operator"
+
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -105,11 +107,12 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "loadingLegendText": "Loading legend",
-        "filterPlaceholder": "Filter",
+        "filterPlaceholder": "Filter the layers list",
         "noLegendText": "No legend available for this layer",
         "noLegendScale": "No legend available for this scale",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
+        "moreOptions": "More options",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
