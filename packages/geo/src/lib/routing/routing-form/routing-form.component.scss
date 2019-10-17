@@ -2,6 +2,19 @@ mat-form-field {
   width: 85%;
 }
 
+.mat-option {
+  font-size: 1em;
+  margin: 1rem 0;
+  overflow: visible;
+  line-height: initial;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  }
+  
+  .mat-option-text.mat-option-text {
+  font-size: 1em;
+  white-space: normal;
+  }
 
 form {
   padding-top:  10px;
