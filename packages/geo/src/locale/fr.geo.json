@@ -106,7 +106,7 @@
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
-        "filterPlaceholder": "Filtre la liste de couches.",
+        "filterPlaceholder": "Filtre la liste de couches",
         "noLegendText": "Aucune légende disponible pour cette couche",
         "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
