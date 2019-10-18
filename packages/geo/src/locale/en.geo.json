@@ -94,7 +94,6 @@
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator" : "Select an operator"
-
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
