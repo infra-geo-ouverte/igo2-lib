@@ -19,7 +19,7 @@ import { triggerType } from './source.enum';
 export class NominatimSearchSource extends SearchSource implements TextSearch {
   static id = 'nominatim';
   static type = FEATURE;
-  static trigger = triggerType.TERM
+  static triggerType = triggerType.TERM
 
   constructor(
     private http: HttpClient,
@@ -37,7 +37,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
   }
 
   getTriggerType(): string {
-    return NominatimSearchSource.trigger;
+    return NominatimSearchSource.triggerType;
   }
 
   /*

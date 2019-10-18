@@ -28,7 +28,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'coordinatesreverse';
   static type = FEATURE;
-  static trigger = triggerType.REVERSE
+  static triggerType = triggerType.REVERSE
 
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -55,7 +55,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
   }
 
   getTriggerType(): string {
-    return CoordinatesReverseSearchSource.trigger;
+    return CoordinatesReverseSearchSource.triggerType;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

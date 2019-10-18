@@ -59,7 +59,7 @@ export class ILayerSearchResultFormatter {
 export class ILayerSearchSource extends SearchSource implements TextSearch {
   static id = 'ilayer';
   static type = LAYER;
-  static trigger = triggerType.TERM
+  static triggerType = triggerType.TERM
 
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -89,7 +89,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   }
 
   getTriggerType(): string {
-    return ILayerSearchSource.trigger;
+    return ILayerSearchSource.triggerType;
   }
 
   protected getDefaultOptions(): ILayerSearchSourceOptions {

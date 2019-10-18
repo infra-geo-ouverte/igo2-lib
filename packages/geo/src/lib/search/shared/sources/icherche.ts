@@ -42,7 +42,7 @@ export class IChercheSearchResultFormatter {
 export class IChercheSearchSource extends SearchSource implements TextSearch {
   static id = 'icherche';
   static type = FEATURE;
-  static trigger = triggerType.TERM
+  static triggerType = triggerType.TERM
   static propertiesBlacklist: string[] = [];
 
   constructor(
@@ -75,7 +75,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   }
 
   getTriggerType(): string {
-    return IChercheSearchSource.trigger;
+    return IChercheSearchSource.triggerType;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
@@ -387,7 +387,7 @@ export class IChercheReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'icherchereverse';
   static type = FEATURE;
-  static trigger = triggerType.REVERSE
+  static triggerType = triggerType.REVERSE
   static propertiesBlacklist: string[] = [];
 
   constructor(
@@ -418,7 +418,7 @@ export class IChercheReverseSearchSource extends SearchSource
   }
 
   getTriggerType(): string {
-    return IChercheReverseSearchSource.trigger;
+    return IChercheReverseSearchSource.triggerType;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {

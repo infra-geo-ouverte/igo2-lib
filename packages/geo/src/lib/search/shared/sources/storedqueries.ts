@@ -34,7 +34,7 @@ import { triggerType } from './source.enum';
 export class StoredQueriesSearchSource extends SearchSource implements TextSearch {
   static id = 'storedqueries';
   static type = FEATURE;
-  static trigger = triggerType.TERM
+  static triggerType = triggerType.TERM
   static propertiesBlacklist: string[] = [];
   public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
@@ -95,7 +95,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   }
 
   getTriggerType(): string {
-    return StoredQueriesSearchSource.trigger;
+    return StoredQueriesSearchSource.triggerType;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
@@ -274,7 +274,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   implements ReverseSearch {
   static id = 'storedqueriesreverse';
   static type = FEATURE;
-  static trigger = triggerType.REVERSE
+  static triggerType = triggerType.REVERSE
   static propertiesBlacklist: string[] = [];
   public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesReverseSearchSourceOptions;
@@ -311,7 +311,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   }
 
   getTriggerType(): string {
-    return StoredQueriesReverseSearchSource.trigger;
+    return StoredQueriesReverseSearchSource.triggerType;
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
