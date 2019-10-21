@@ -1,5 +1,4 @@
-import { AnyDataSourceOptions } from './../../../../../packages/geo/src/lib/datasource/shared/datasources/any-datasource.interface';
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import {
   IgoMap,
   DataSourceService,
@@ -13,34 +12,41 @@ import {
   DataSourceOptions,
   DataSource,
   createOverlayMarkerStyle,
-  QueryableDataSourceOptions
+  AnyDataSourceOptions,
+  QueryableDataSourceOptions,
+  SpatialFilterService,
+  SpatialFilterType,
+  SpatialFilterItemType,
+  SpatialFilterQueryType
 } from '@igo2/geo';
-import { SpatialFilterService } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.service';
-import { SpatialFilterQueryType } from '@igo2/geo/lib/filter/shared/spatial-filter.enum';
-import { SpatialFilterType, SpatialFilterItemType } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.enum';
-import { FormService, EntityStore } from '@igo2/common';
+import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { Observable, BehaviorSubject } from 'rxjs';
-import * as olstyle from 'ol/style';
+import { BehaviorSubject } from 'rxjs';
+import { MapState } from '../../map/map.state';
 
-@Component({
-  selector: 'app-spatial-filter',
-  templateUrl: './spatial-filter.component.html',
-  styleUrls: ['./spatial-filter.component.scss']
+/**
+ * Tool to apply spatial filter
+ */
+@ToolComponent({
+  name: 'spatialFilter',
+  title: 'igo.integration.tools.spatialFilter',
+  icon: 'grain'
 })
-export class AppSpatialFilterComponent {
-  public map = new IgoMap({
-    controls: {
-      attribution: {
-        collapsed: true
-      }
-    }
-  });
 
-  view = {
-    center: [-71.9, 46.9],
-    zoom: 10
-  };
+/**
+ * Spatial Filter Type
+ */
+@Component({
+  selector: 'igo-spatial-filter-tool',
+  templateUrl: './spatial-filter-tool.component.html',
+  styleUrls: ['./spatial-filter-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class SpatialFilterToolComponent {
+
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
 
   @Input() type: SpatialFilterType;
   @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
@@ -54,32 +60,18 @@ export class AppSpatialFilterComponent {
 
   private format = new olFormatGeoJSON();
 
-  public spatialListStore = new EntityStore<Feature>([]);
+  public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
-  public spatialItemStore = new EntityStore<Feature>([]);
+  public spatialItemStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
   public loading = false;
 
   constructor(
     private spatialFilterService: SpatialFilterService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService
-  ) {
-    this.dataSourceService
-      .createAsyncDataSource({
-        type: 'osm'
-      })
-      .subscribe(dataSource => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'OSM',
-            source: dataSource,
-            baseLayer: true,
-            visible: true
-          })
-        );
-      });
-    }
+    private layerService: LayerService,
+    private mapState: MapState
+  ) {}
 
   getOutputType(event: SpatialFilterType) {
     this.type = event;

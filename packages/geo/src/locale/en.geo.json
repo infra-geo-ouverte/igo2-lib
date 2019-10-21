@@ -274,6 +274,28 @@
         "endDate": "End Date",
         "startDate": "Start Date"
       },
+      "spatialFilter": {
+        "predefined" : "Predefined",
+        "polygon": "Polygon",
+        "point": "Point",
+        "AdmRegion": "Administrative Region",
+        "Mun": "Municipality",
+        "Arrond": "Borough",
+        "CircFed": "Federal district",
+        "CircProv": "Provincial district",
+        "DirReg": "Regional directorate",
+        "MRC": "RCM",
+        "RegTour": "Touristic region",
+        "searchLabel": "Search by",
+        "search": "Search",
+        "listLabel": "Zone",
+        "entity": "Entity",
+        "layer": "Layer",
+        "goSearch": "Lunch research",
+        "removeLayer": "Remove layers",
+        "clearForm": "Remove Zone",
+        "clearSearch": "Remove fields"
+      },
       "measure": {
         "dialog": {
           "title": "Sum of the selection",

@@ -9,7 +9,9 @@ import {
   MatSliderModule,
   MatSlideToggleModule,
   MatFormFieldModule,
+  MatTableModule,
   MatInputModule,
+  MatSnackBarModule,
   MatOptionModule,
   MatSelectModule,
   MatListModule,
@@ -17,7 +19,10 @@ import {
   MatDatepickerModule,
   MatNativeDateModule,
   MAT_DATE_LOCALE,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatTabsModule,
+  MatRadioModule,
+  MatMenuModule
 } from '@angular/material';
 
 import {
@@ -31,6 +36,7 @@ import {
   IgoListModule,
   IgoKeyValueModule
 } from '@igo2/common';
+import { IgoGeometryModule } from './../geometry/geometry.module';
 
 import { FilterableDataSourcePipe } from './shared/filterable-datasource.pipe';
 import { IgoLayerModule } from '../layer/layer.module';
@@ -63,12 +69,17 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
     MatAutocompleteModule,
     MatIconModule,
     MatButtonModule,
+    MatTabsModule,
+    MatRadioModule,
+    MatMenuModule,
+    MatTableModule,
     MatButtonToggleModule,
     MatCheckboxModule,
     MatSliderModule,
     MatSlideToggleModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSnackBarModule,
     MatOptionModule,
     MatSelectModule,
     MatListModule,
@@ -81,7 +92,8 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
     IgoLayerModule,
     IgoCollapsibleModule,
     IgoListModule,
-    IgoKeyValueModule
+    IgoKeyValueModule,
+    IgoGeometryModule
   ],
   exports: [
     FilterableDataSourcePipe,
