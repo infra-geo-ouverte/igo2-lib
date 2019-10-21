@@ -92,7 +92,8 @@
         "filterBy": "Filtrer par",
         "advancedOgcFilters": "Filtres avancés",
         "placeholder": "Saisir une valeur",
-        "placeholderSnrc": "Ex: 21L14"
+        "placeholderSnrc": "Ex: 21L14",
+        "selectOperator" : "Choisir un opérateur"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -105,21 +106,22 @@
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
-        "filterPlaceholder": "Filtre",
+        "filterPlaceholder": "Filtre la liste de couches",
         "noLegendText": "Aucune légende disponible pour cette couche",
         "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
+        "moreOptions": "Options sur la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
         "subsetLayersListOnlyVisible": "Conserver les couches visibles",
-        "subsetLayersListOnlyInRange": "Conserver les couches qui sont dans la plage de résolution active",
-        "sortAlphabetically": "Trier la liste des couches alphabétiquement",
+        "subsetLayersListOnlyInRange": "Conserver les couches de la plage d'échelle active",
+        "sortAlphabetically": "Trier la liste des couches en ordre alphabétique",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
-        "resetLayersList": "Supprimer le filtre appliqué à la liste",
+        "resetLayersList": "Rétablir l'affichage de l'ensemble des couches",
         "trackFeature": "Suivre l'entité"
       },
       "download": {
