@@ -1,0 +1,11 @@
+.mat-form-field {
+    margin-right: 10px;
+}
+
+.mat-tab-group {
+    margin-bottom: 5px;
+}
+
+.mat-tab-group ::ng-deep .mat-tab-body-content {
+    overflow: hidden;
+}

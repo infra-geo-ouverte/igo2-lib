@@ -1,0 +1,77 @@
+<igo-geometry-form-field-input *ngIf="isPolygon() || isPoint()"
+  [formControl]="formControl"
+  [map]="map"
+  [geometryType]="geometryType"
+  [drawGuide]="drawGuide$ | async"
+  [measure]="measure"
+  [drawStyle]="drawStyle"
+  [overlayStyle]="overlayStyle$ | async">
+</igo-geometry-form-field-input>
+
+<div class="header">
+  <mat-label>{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
+  <mat-radio-group [value]="selectedItemType">
+      <mat-radio-button *ngFor="let item of itemType"
+        [value]="item"
+        (change)="onItemTypeChange($event)">
+        {{item}}
+      </mat-radio-button>
+  </mat-radio-group>
+</div>
+
+<mat-table class="thematics-list" *ngIf="selectedItemType==='Thématiques'"
+  [dataSource]="thematicsList">
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.layer' | translate}}</mat-header-cell>
+    <mat-cell *matCellDef="let thematic"> {{thematic}} </mat-cell>
+  </ng-container>
+
+  <!-- Select Column -->
+  <ng-container matColumnDef="select">
+    <mat-header-cell *matHeaderCellDef>
+      <mat-checkbox (change)="$event ? masterToggle() : null"
+                    [checked]="selectedThematics.hasValue() && isAllSelected()"
+                    [indeterminate]="selectedThematics.hasValue() && !isAllSelected()">
+      </mat-checkbox>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <mat-checkbox (click)="$event.stopPropagation()"
+                    (change)="$event ? onToggleChange(row) : null"
+                    [checked]="selectedThematics.isSelected(row)">
+      </mat-checkbox>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<div class="buttons">
+  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()"
+  (click)="toggleSearchButton()">
+    {{'igo.geo.spatialFilter.goSearch' | translate}}
+  </button>
+
+  <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button" (click)="clearButton()">
+    {{'igo.geo.spatialFilter.removeLayer' | translate}}
+  </button>
+
+  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" (click)="clearForm()">
+    {{'igo.geo.spatialFilter.clearForm' | translate}}
+  </button>
+
+  <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" (click)="clearSearch()">
+    {{'igo.geo.spatialFilter.clearSearch' | translate}}
+  </button>
+</div>
+
+<div *ngIf="isPoint()">
+  <form class="radius-form">
+    <mat-form-field class="radius">
+      <input type="number" matInput placeholder="Radius" [formControl]="radiusFormControl" [value]="1000"
+      (input)="getRadius($event)">
+    </mat-form-field>
+  </form>
+</div>

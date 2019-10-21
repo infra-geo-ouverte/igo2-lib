@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
   MatCardModule,
@@ -5,8 +6,8 @@ import {
   MatIconModule
 } from '@angular/material';
 
-import { IgoPanelModule } from '@igo2/common';
-import { IgoMapModule, IgoFilterModule } from '@igo2/geo';
+import { IgoPanelModule, IgoFormModule } from '@igo2/common';
+import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureDetailsModule } from '@igo2/geo';
 
 import { AppSpatialFilterComponent } from './spatial-filter.component';
 import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
@@ -20,7 +21,11 @@ import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
     MatIconModule,
     IgoPanelModule,
     IgoMapModule,
-    IgoFilterModule
+    IgoQueryModule,
+    IgoFeatureDetailsModule,
+    IgoFilterModule,
+    IgoFormModule,
+    CommonModule
   ],
   exports: [AppSpatialFilterComponent]
 })

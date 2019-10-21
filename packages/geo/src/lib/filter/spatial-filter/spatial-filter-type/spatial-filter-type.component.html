@@ -1,1 +1,27 @@
+<mat-tab-group
+  [selectedIndex]="selectedTypeIndex.value"
+  (selectedIndexChange)="selectedTypeIndex.setValue($event)"
+  (selectedTabChange)="onTypeChange($event)">
 
+  <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
+    <mat-form-field>
+      <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
+      <mat-select (selectionChange)="onQueryTypeChange($event)" [(value)]="selectedQueryType">
+        <mat-option *ngFor="let queryType of queryType" [value]="queryType">
+          {{('igo.geo.spatialFilter.' + queryType) | translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <igo-spatial-filter-list
+      [store]="store"
+      [queryType]="selectedQueryType"
+      [clearList]="clearSearch"
+      (zoneChange)="onZoneChange($event)">
+    </igo-spatial-filter-list>
+  </mat-tab>
+
+  <mat-tab [label]="'igo.geo.spatialFilter.polygon' | translate"></mat-tab>
+
+  <mat-tab [label]="'igo.geo.spatialFilter.point' | translate"></mat-tab>
+
+</mat-tab-group>

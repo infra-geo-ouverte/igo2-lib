@@ -11,20 +11,38 @@
     <hr>
   </mat-card-content>
 
-  <igo-map-browser [map]="map" [view]="view">
+  <igo-map-browser [map]="map" [view]="view" igoOverlay igoQuery (query)="handleQueryResults($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
-  <igo-panel title="Filter Type">
-    <igo-spatial-filter-type></igo-spatial-filter-type>
+  <igo-panel title="Spatial Filter">
+    <igo-spatial-filter-type
+      [store]="spatialListStore"
+      [clearSearch]="clearSearch"
+      (eventType)="getOutputType($event)"
+      (eventQueryType)="getOutputQueryType($event)"
+      (zoneChange)="onZoneChange($event)">
+    </igo-spatial-filter-type>
+
+    <igo-spatial-filter-item
+      [type]="type"
+      [queryType]="queryType"
+      [map]="map"
+      [zone]="zone"
+      [loading]="loading"
+      (radiusEvent)="radius = $event"
+      (drawZoneEvent)="zone = $event"
+      (itemTypeChange)="itemType = $event"
+      (thematicChange)="thematics = $event"
+      (toggleSearch)="getOutputToggleSearch()"
+      (clearSearchEvent)="getOutputClearSearch()">
+    </igo-spatial-filter-item>
   </igo-panel>
 
-  <igo-panel title="TerrAPI">
-    <igo-spatial-filter-list></igo-spatial-filter-list>
-  </igo-panel>
-
-  <igo-panel title="Entity">
-    <igo-spatial-filter-item></igo-spatial-filter-item>
+  <igo-panel title="Details">
+    <ng-container *ngIf="selectedFeature$ | async as feature">
+      <igo-feature-details [feature]="feature"></igo-feature-details>
+    </ng-container>
   </igo-panel>
 
 </mat-card>

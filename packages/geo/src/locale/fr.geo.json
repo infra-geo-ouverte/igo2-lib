@@ -274,6 +274,28 @@
         "endDate": "Date de fin",
         "startDate": "Date de début"
       },
+      "spatialFilter": {
+        "predefined" : "Prédéfinie",
+        "polygon": "Polygone",
+        "point": "Point",
+        "AdmRegion": "Région Administrative",
+        "Mun": "Municipalité",
+        "Arrond": "Arrondissement",
+        "CircFed": "Circonscription fédérale",
+        "CircProv": "Circonscription provinciale",
+        "DirReg": "Direction Régionale",
+        "MRC": "MRC",
+        "RegTour": "Région touristique",
+        "searchLabel": "Rechercher par",
+        "search": "Recherche",
+        "listLabel": "Zone",
+        "entity": "Entité",
+        "layer": "Couche",
+        "goSearch": "Lancer la recherche",
+        "removeLayer": "Retirer les couches",
+        "clearForm": "Retirer la zone",
+        "clearSearch": "Retirer les champs"
+      },
       "measure": {
         "dialog": {
           "title": "Sommes de la sélection",

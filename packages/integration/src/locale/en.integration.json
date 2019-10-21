@@ -13,7 +13,8 @@
         "searchResults": "Search Results",
         "shareMap": "Share",
         "timeFilter": "Time Filter",
-        "about": "About"
+        "about": "About",
+        "spatialFilter": "Spatial Filter"
       },
       "searchResultsTool": {
         "noResults": "No results",

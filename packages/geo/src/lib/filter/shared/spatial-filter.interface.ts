@@ -1,9 +1,9 @@
-import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
-import { WMSDataSourceOptions } from '../../datasource/shared/datasources/wms-datasource.interface';
+import { Geometry } from 'geojson';
+import { SpatialFilterQueryType } from './spatial-filter.enum';
 
-export interface SpatialFilter {
-  type: string;
-  queryType?: string;
-  buffer?: number;
-  item: string;
+export interface SpatialFilterOptions {
+  code: string;
+  nom: string;
+  requestGeometry: Geometry;
+  queryType?: SpatialFilterQueryType;
 }

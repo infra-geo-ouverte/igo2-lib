@@ -1,0 +1,50 @@
+.header {
+    margin-top: 10px;
+}
+
+.mat-radio-group {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+}
+
+.mat-radio-button {
+    position: relative;
+    margin-left: 16px;
+    margin-top: 10px;
+}
+
+.mat-form-field {
+    margin-top: 10px;
+}
+
+.mat-column-select {
+    overflow: auto;
+}
+
+.buttons {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.search-button {
+    left: 5px;
+}
+
+.remove-button {
+    left: 20px;
+}
+
+.clear-form-button {
+    left: 35px;
+}
+
+.clear-search-button {
+    left: 45px;
+}
+
+.thematics-list {
+    max-height: 200px;
+    overflow: auto;
+}

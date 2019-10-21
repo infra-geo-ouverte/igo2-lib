@@ -4,6 +4,7 @@ import * as olstyle from 'ol/style';
 import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
+import { createOverlayMarkerStyle } from '../../overlay';
 
 @Injectable({
   providedIn: 'root'
@@ -172,23 +173,25 @@ export class StyleService {
 
   createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
     let style;
+    // const maxSize = 100;
     const range = clusterParam.clusterRange;
     const size = feature.get('features').length;
-    let color;
+    const color = 'green';
     if (size !== 1) {
-      if (range) {
-        if (size >= range[1]) {
-          color = 'red';
-        } else if (size < range[1] && size >= range[0]) {
-          color = 'orange';
-        } else if (size < range[0]) {
-          color = 'green';
-        }
-      }
+      // if (range) {
+      //   if (size >= range[1]) {
+      //     color = 'red';
+      //   } else if (size < range[1] && size >= range[0]) {
+      //     color = 'orange';
+      //   } else if (size < range[0]) {
+      //     color = 'green';
+      //   }
+      // }
       style = [
         new olstyle.Style({
           image: new olstyle.Circle({
-            radius: 2 * size + 3.4,
+            radius: 5 * Math.log(size),
+            opacity: 0.4,
             stroke: new olstyle.Stroke({
               color: 'black'
             }),
@@ -205,7 +208,7 @@ export class StyleService {
         })
       ];
     } else {
-      style = this.createStyle(layerStyle);
+      style = createOverlayMarkerStyle();
     }
     return style;
   }
