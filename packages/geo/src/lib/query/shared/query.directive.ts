@@ -23,6 +23,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
+import  { AnyLayer } from '../../layer/shared/layers';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
