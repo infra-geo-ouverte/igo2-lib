@@ -130,7 +130,6 @@ export class SpatialFilterService {
       } else {
         let response;
         thematics.forEach(thematic => {
-          console.log(this.getKeyByValue(this.urlType, thematic));
           urlItem = this.getKeyByValue(this.urlType, thematic);
           response = this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
             params: {

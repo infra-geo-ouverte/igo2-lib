@@ -1,4 +1,4 @@
-<!-- <igo-panel title="Spatial Filter">
+<igo-panel title="Spatial Filter">
   <igo-spatial-filter-type
     [store]="spatialListStore"
     [clearSearch]="clearSearch"
@@ -13,7 +13,7 @@
     [map]="map"
     [zone]="zone"
     [loading]="loading"
-    (bufferEvent)="buffer = $event"
+    (radiusEvent)="radius = $event"
     (drawZoneEvent)="zone = $event"
     (itemTypeChange)="itemType = $event"
     (thematicChange)="thematics = $event"
@@ -26,4 +26,4 @@
   <ng-container *ngIf="selectedFeature$ | async as feature">
     <igo-feature-details [feature]="feature"></igo-feature-details>
   </ng-container>
-</igo-panel> -->
+</igo-panel>

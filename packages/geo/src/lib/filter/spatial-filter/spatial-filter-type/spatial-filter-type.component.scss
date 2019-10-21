@@ -1,5 +1,6 @@
 .mat-form-field {
     margin-right: 10px;
+    margin-left: 5px;
 }
 
 .mat-tab-group {
@@ -8,4 +9,8 @@
 
 .mat-tab-group ::ng-deep .mat-tab-body-content {
     overflow: hidden;
+}
+
+igo-filter-list {
+    margin-left: 5px;
 }
