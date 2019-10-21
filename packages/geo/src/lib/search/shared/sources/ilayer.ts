@@ -177,7 +177,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         return null;
       }
     }
-    return term.replace(/(#[^\s]*)/g, '');
+    return term.replace(/(#[^\s]*)/g, '').replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
   }
 
   private extractResults(
