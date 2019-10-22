@@ -1,5 +1,13 @@
+:host {
+    margin-left: 5px;
+}
+
 .header {
     margin-top: 10px;
+}
+
+.title, .radius-form {
+    margin-left: 5px;
 }
 
 .mat-radio-group {
@@ -9,6 +17,7 @@
 }
 
 .mat-radio-button {
+    display: inline-flex;
     position: relative;
     margin-left: 16px;
     margin-top: 10px;
@@ -23,25 +32,25 @@
 }
 
 .buttons {
-    display: flex;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
 .search-button {
-    left: 5px;
+    left: 75px;
+    margin: 15px;
 }
 
 .remove-button {
-    left: 20px;
+    left: 10px;
 }
 
 .clear-form-button {
-    left: 35px;
+    left: 25px;
 }
 
 .clear-search-button {
-    left: 45px;
+    left: 25px;
 }
 
 .thematics-list {

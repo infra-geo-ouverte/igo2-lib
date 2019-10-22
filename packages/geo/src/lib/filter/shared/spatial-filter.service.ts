@@ -167,7 +167,7 @@ export class SpatialFilterService {
       } else {
         let response;
         thematics.forEach(thematic => {
-          const urlItem = '?type=' + thematic;
+          const urlItem = '?type=' + this.getKeyByValue(this.urlType, thematic);
           response = this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
             params: {
               geometry: 'true'

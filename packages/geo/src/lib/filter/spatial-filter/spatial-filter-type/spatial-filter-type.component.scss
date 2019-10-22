@@ -11,6 +11,8 @@
     overflow: hidden;
 }
 
-igo-filter-list {
-    margin-left: 5px;
+.mat-tab-group ::ng-deep .mat-tab-label {
+    width: 100px;
+    min-width: unset;
+    padding: 10px;
 }
