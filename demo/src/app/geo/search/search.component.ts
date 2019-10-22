@@ -124,7 +124,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.map.overlay.setFeatures([layer.data] as Feature[], FeatureMotion.Default);
+    this.map.overlay.setFeatures(
+      [layer.data] as Feature[],
+      FeatureMotion.Default
+    );
   }
 
   ngOnInit() {
@@ -182,7 +185,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   onSearchCoordinate() {
     this.searchStore.clear();
-    const results = this.searchService.reverseSearch(this.lonlat, {distance: 100});
+    const results = this.searchService.reverseSearch(this.lonlat);
 
     for (const i in results) {
       if (results.length > 0) {

@@ -218,6 +218,13 @@
         "nw": "northwest"
       },
       "search": {
+        "placeholder": "Search for a localisation or a layer",
+        "feature.title": "Localisation",
+        "feature.placeholder": "Search for a place localisation",
+        "layer.title": "Layer",
+        "layer.placeholder": "Search for a layer",
+        "icherche.name": "iCherche",
+        "ichercheReverse.name": "Search by coordinates",
         "ilayer": {
           "name": "Layers",
           "properties": {
@@ -240,6 +247,7 @@
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",
+            "radius": "Search radius",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
             "country limitation": "Limitation (country)",
@@ -308,12 +316,5 @@
         "wfsDownload.tooltip": "Download"
       }
     }
-  },
-  "search": {
-    "placeholder": "Search for a localisation or a layer",
-    "feature.title": "Localisation",
-    "feature.placeholder": "Search for a place localisation",
-    "layer.title": "Layer",
-    "layer.placeholder": "Search for a layer"
   }
 }
