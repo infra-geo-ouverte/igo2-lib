@@ -513,7 +513,8 @@ export class QueryService {
           options.projection,
           WMSGetFeatureInfoOptions
         );
-        if (wmsDatasource.params.version !== '1.3.0') {
+        const wmsVersion = wmsDatasource.params.VERSION || wmsDatasource.params.version || '1.3.0'
+        if (wmsVersion !== '1.3.0') {
           url = url.replace('&I=', '&X=');
           url = url.replace('&J=', '&Y=');
         }
