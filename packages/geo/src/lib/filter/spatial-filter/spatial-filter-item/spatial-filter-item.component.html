@@ -9,7 +9,7 @@
 </igo-geometry-form-field-input>
 
 <div class="header">
-  <mat-label>{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
+  <mat-label class="title">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
   <mat-radio-group [value]="selectedItemType">
       <mat-radio-button *ngFor="let item of itemType"
         [value]="item"
@@ -49,10 +49,6 @@
 </mat-table>
 
 <div class="buttons">
-  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()"
-  (click)="toggleSearchButton()">
-    {{'igo.geo.spatialFilter.goSearch' | translate}}
-  </button>
 
   <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button" (click)="clearButton()">
     {{'igo.geo.spatialFilter.removeLayer' | translate}}
@@ -65,6 +61,12 @@
   <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" (click)="clearSearch()">
     {{'igo.geo.spatialFilter.clearSearch' | translate}}
   </button>
+
+  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()"
+  (click)="toggleSearchButton()">
+    {{'igo.geo.spatialFilter.goSearch' | translate}}
+  </button>
+
 </div>
 
 <div *ngIf="isPoint()">

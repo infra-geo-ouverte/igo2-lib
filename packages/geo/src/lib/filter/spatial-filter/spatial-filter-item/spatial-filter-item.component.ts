@@ -58,7 +58,34 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000;
       this.drawGuide$.next(1000);
+      this.overlayStyle = (feature, resolution) => {
+        return new olstyle.Style ({
+          image: new olstyle.Circle ({
+            radius: this.radius / resolution,
+            stroke: new olstyle.Stroke({
+              width: 2,
+              color: 'rgba(0, 153, 255)'
+            }),
+            fill: new olstyle.Fill({
+              color: 'rgba(0, 153, 255, 0.2)'
+            })
+          })
+        })
+      }
+    } else {
+      this.overlayStyle = (feature, resolution) => {
+        return new olstyle.Style ({
+          stroke: new olstyle.Stroke({
+            width: 2,
+            color: 'rgba(0, 153, 255)'
+          }),
+          fill: new olstyle.Fill({
+            color: 'rgba(0, 153, 255, 0.2)'
+          })
+        })
+      }
     }
+    this.overlayStyle$.next(this.overlayStyle);
   }
   private _type: SpatialFilterType;
 
@@ -98,8 +125,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawGuidePlaceholder = '';
   public measure = false;
   public drawStyle: OlStyle;
-  public overlayStyle: OlStyle;
   public drawZone: Feature[];
+  public overlayStyle: OlStyle;
 
   public radius: number;
   public radiusFormControl = new FormControl();
@@ -115,7 +142,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.thematicsList = items;
     });
     this.drawGuide$.next(this.drawGuide);
-    this.overlayStyle$.next(this.overlayStyle);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
       this.value$.next(value ? value : undefined);
@@ -195,15 +221,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.drawZoneEvent.emit(this.drawZone);
     }
     if (this.radius !== undefined) {
-      const circle = poly.circular(this.formControl.value.coordinates, this.radius, 50, 3078137).flatCoordinates as any[];
-      const coord = [];
-      const circleArray = [];
-      for (let i = 0; i < circle.length - 1; i += 2) {
-        circleArray.push([circle[i], circle[i + 1]]);
-      }
-      coord.push(circleArray);
-      this.formControl.value.coordinates = coord;
-      this.formControl.value.type = 'Polygon';
+      // const circle = poly.circular(this.formControl.value.coordinates, this.radius, 50, 3078137).flatCoordinates as any[];
+      // const coord = [];
+      // const circleArray = [];
+      // for (let i = 0; i < circle.length - 1; i += 2) {
+      //   circleArray.push([circle[i], circle[i + 1]]);
+      // }
+      // coord.push(circleArray);
+      // this.formControl.value.coordinates = coord;
+      // this.formControl.value.type = 'Polygon';
       this.drawZone = this.formControl.value as Feature[];
       this.drawZoneEvent.emit(this.drawZone);
     }
@@ -218,6 +244,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         currentLayers.push(layer);
       }
     });
+    // console.log('----------current-----------')
+    // console.log(currentLayers);
     this.map.removeLayers(currentLayers);
     this.map.overlay.clear();
   }
