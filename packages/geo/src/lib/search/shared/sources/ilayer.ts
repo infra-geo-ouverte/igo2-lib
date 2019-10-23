@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
 
+import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LAYER } from '../../../layer';
 import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
 import { QueryHtmlTarget } from './../../../query/shared/query.enums';
@@ -227,6 +228,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         }
       },
       title: data.properties.title,
+      maxResolution:
+        getResolutionFromScale(Number(data.properties.maxScaleDenom)) || Infinity,
+      minResolution:
+        getResolutionFromScale(Number(data.properties.minScaleDenom)) || 0,
       properties: this.formatter.formatResult(data).properties
     };
   }
