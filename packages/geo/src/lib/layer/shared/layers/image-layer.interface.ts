@@ -8,7 +8,7 @@ import { WMSDataSourceOptions } from '../../../datasource/shared/datasources/wms
 export interface ImageLayerOptions extends LayerOptions {
   source?: WMSDataSource;
   sourceOptions?: WMSDataSourceOptions;
-  token?: string;
+  tokenKey?: string;
   ol?: olLayerImage;
   metadata?: {
     url?: string;
