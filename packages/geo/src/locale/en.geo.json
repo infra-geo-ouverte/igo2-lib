@@ -294,7 +294,10 @@
         "goSearch": "Lunch research",
         "removeLayer": "Remove layers",
         "clearForm": "Remove Zone",
-        "clearSearch": "Remove fields"
+        "clearSearch": "Remove fields",
+        "Address": "Addresses",
+        "Thematics": "Thematics",
+        "searchResults": "Search Results"
       },
       "measure": {
         "dialog": {

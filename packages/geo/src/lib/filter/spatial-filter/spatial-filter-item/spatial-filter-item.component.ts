@@ -11,7 +11,6 @@ import {
 import { SpatialFilterQueryType, SpatialFilterType } from '../../shared/spatial-filter.enum';
 import { SelectionModel } from '@angular/cdk/collections';
 import { IgoMap } from '../../../map';
-import { Layer } from '../../../layer';
 import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { FormControl } from '@angular/forms';
@@ -20,12 +19,8 @@ import OlGeometryType from 'ol/geom/GeometryType';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
-import * as poly from 'ol/geom/Polygon';
-import * as geom from 'ol/geom';
 import { MatSnackBar } from '@angular/material';
-import { createOverlayMarkerStyle } from '../../../overlay/shared/overlay.utils';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
-
 /**
  * Spatial-Filter-Item (search parameters)
  */
@@ -47,17 +42,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this._type = type;
     const index = this.geometryTypes.findIndex(geom => geom === this.type);
     this.geometryType = this.geometryTypes[index];
-    this.clearForm();
+    this.formControl.reset();
     this.clearButton();
     this.selectedThematics.clear();
     this.radius = undefined;
     this.drawGuide$.next(null);
-    // if (this.type === SpatialFilterType.Predefined) {
-    //   this.ngOnDestroy();
-    // }
+    this.drawStyle$.next(undefined);
+    if (this.type === SpatialFilterType.Predefined) {
+      const geojson: GeoJSONGeometry = {
+        type: 'Point',
+        coordinates: ''
+      };
+      this.formControl.setValue(geojson);
+    }
     if (this.type === SpatialFilterType.Point) {
-      this.radius = 1000;
-      this.drawGuide$.next(1000);
+      this.radius = 5000;
+      this.drawGuide$.next(this.radius);
       this.overlayStyle = (feature, resolution) => {
         return new olstyle.Style ({
           image: new olstyle.Circle ({
@@ -92,6 +92,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() queryType: SpatialFilterQueryType;
   @Input() zone: Feature;
   @Input() loading;
+  @Input() store;
 
   @Output() toggleSearch = new EventEmitter();
   @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
@@ -110,9 +111,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public thematicsList: string[] = [];
   public selectedThematics = new SelectionModel<string>(this.allowMultiSelect, this.initialSelection);
 
+  public displayedColumnsResults: string[] = ['nameResults'];
+
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
   overlayStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
+  drawStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
 
@@ -220,42 +224,31 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.drawZone = this.formControl.value as Feature[];
       this.drawZoneEvent.emit(this.drawZone);
     }
+
     if (this.radius !== undefined) {
-      // const circle = poly.circular(this.formControl.value.coordinates, this.radius, 50, 3078137).flatCoordinates as any[];
-      // const coord = [];
-      // const circleArray = [];
-      // for (let i = 0; i < circle.length - 1; i += 2) {
-      //   circleArray.push([circle[i], circle[i + 1]]);
-      // }
-      // coord.push(circleArray);
-      // this.formControl.value.coordinates = coord;
-      // this.formControl.value.type = 'Polygon';
       this.drawZone = this.formControl.value as Feature[];
       this.drawZoneEvent.emit(this.drawZone);
     }
+
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
   }
 
   clearButton() {
-    const currentLayers: Layer[] = [];
+    this.loading = true;
+    this.map.overlay.clear();
     this.map.layers.forEach(layer => {
       if (layer.baseLayer === false || layer.baseLayer === undefined) {
-        currentLayers.push(layer);
+        this.map.removeLayer(layer);
       }
     });
-    // console.log('----------current-----------')
-    // console.log(currentLayers);
-    this.map.removeLayers(currentLayers);
-    this.map.overlay.clear();
+    this.loading = false;
   }
 
   clearSearch() {
+    this.selectedThematics.clear();
+    this.thematicChange.emit(this.selectedThematics.selected);
     this.clearSearchEvent.emit();
-  }
-
-  clearForm() {
-    this.formControl.reset();
   }
 
   disableSearchButton(): boolean {
@@ -291,15 +284,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   getRadius(radius) {
-    if (radius.target.value >= 10000) {
-      this.openSnackBar('Le buffer doit être de moins de 10000', 'Fermer');
-      this.radius = undefined;
-      this.drawGuide$.next(null);
+    if (radius.target.value >= 10000 || radius.target.value < 0) {
+      this.openSnackBar('Le buffer doit être compris entre 0 et 10000', 'Fermer');
+      this.radius = 5000;
+      radius.target.value = 5000;
+      this.drawGuide$.next(this.radius);
       return;
     }
     if (radius.target.value === 0) {
-      this.radius = undefined;
-      this.drawGuide$.next(null);
+      this.radius = 0;
+      this.drawGuide$.next(0);
       return;
     }
     this.radius = radius.target.value;

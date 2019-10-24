@@ -200,6 +200,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.ready = false;
 
     this.deactivateControl();
+    this.cdRef.detach();
     this.olOverlaySource.clear();
     this.map.ol.removeLayer(this.olOverlayLayer);
   }
@@ -435,9 +436,13 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       if (!drawGuide || drawGuide < 0) {
         radius = this.defaultDrawStyleRadius;
       } else {
+        //console.log('ici');
+        //console.log(drawGuide);
         radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
+        //console.log(radius);
       }
       olStyle.getImage().setRadius(radius);
+      //console.log(olStyle);
     }
   }
 

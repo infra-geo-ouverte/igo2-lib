@@ -13,6 +13,9 @@ export class StyleService {
   constructor() {}
 
   createStyle(options: { [key: string]: any }) {
+    if (typeof options === 'function' || options instanceof olstyle.Style) {
+      return options;
+    }
     return this.parseStyle('style', options);
   }
 
@@ -176,7 +179,7 @@ export class StyleService {
     // const maxSize = 100;
     const range = clusterParam.clusterRange;
     const size = feature.get('features').length;
-    const color = 'green';
+    const color = 'rgba(24, 134, 45, 0.8)';
     if (size !== 1) {
       // if (range) {
       //   if (size >= range[1]) {

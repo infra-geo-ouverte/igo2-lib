@@ -16,6 +16,6 @@ export enum SpatialFilterType {
 }
 
 export enum SpatialFilterItemType {
-    Address = 'Adresses',
-    Thematics = 'Thématiques'
+    Address = 'Address',
+    Thematics = 'Thematics'
 }

@@ -294,7 +294,10 @@
         "goSearch": "Lancer la recherche",
         "removeLayer": "Retirer les couches",
         "clearForm": "Retirer la zone",
-        "clearSearch": "Retirer les champs"
+        "clearSearch": "Retirer les champs",
+        "Address": "Adresses",
+        "Thematics": "Thématiques",
+        "searchResults": "Résultats de la recherche"
       },
       "measure": {
         "dialog": {
