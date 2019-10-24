@@ -106,9 +106,9 @@ export class SpatialFilterService {
   }
 
   /*
-   * Loading data for spatial filter item component (Address or Thematics)
+   * Loading data for spatial filter item component (Address or Thematics) depends on predefined zone or draw zone (feature)
    */
-  loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematics?: string[], buffer?: number) {
+  loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematic?: string, buffer?: number) {
     if (type) {
       const urlType = type as string;
       const url = this.baseUrl + this.urlType[urlType];
@@ -122,29 +122,27 @@ export class SpatialFilterService {
         }).pipe(
           map(featureCollection => featureCollection.features.map(feature => {
             feature.meta = {
-              id: feature.properties.code
+              id: feature.properties.code,
+              title: 'Adresses'
             };
             return feature;
           }))
         );
       } else {
-        let response;
-        thematics.forEach(thematic => {
-          urlItem = this.getKeyByValue(this.urlType, thematic);
-          response = this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
-            params: {
-              geometry: 'true'
-            }
-          }).pipe(
-            map(featureCollection => featureCollection.features.map(feature => {
-              feature.meta = {
-                id: feature.properties.code
-              };
-              return feature;
-            }))
-          );
-        });
-        return response;
+        urlItem = this.getKeyByValue(this.urlType, thematic);
+        return this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
+          params: {
+            geometry: 'true'
+          }
+        }).pipe(
+          map(featureCollection => featureCollection.features.map(feature => {
+            feature.meta = {
+              id: feature.properties.code,
+              title: thematic
+            };
+            return feature;
+          }))
+        );
       }
     } else {
       const url = this.baseUrl + 'locate';
@@ -159,29 +157,27 @@ export class SpatialFilterService {
         }).pipe(
           map(featureCollection => featureCollection.features.map(feature => {
             feature.meta = {
-              id: feature.properties.code
+              id: feature.properties.code,
+              title: 'Adresses'
             };
             return feature;
           }))
         );
       } else {
-        let response;
-        thematics.forEach(thematic => {
-          const urlItem = '?type=' + this.getKeyByValue(this.urlType, thematic);
-          response = this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
-            params: {
-              geometry: 'true'
-            }
-          }).pipe(
-            map(featureCollection => featureCollection.features.map(feature => {
-              feature.meta = {
-                id: feature.properties.code
-              };
-              return feature;
-            }))
-          );
-        });
-        return response;
+        const urlItem = '?type=' + this.getKeyByValue(this.urlType, thematic);
+        return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
+          params: {
+            geometry: 'true'
+          }
+        }).pipe(
+          map(featureCollection => featureCollection.features.map(feature => {
+            feature.meta = {
+              id: feature.properties.code,
+              title: thematic
+            };
+            return feature;
+          }))
+        );
       }
     }
   }
