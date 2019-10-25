@@ -135,7 +135,7 @@ export class AppQueryComponent {
         olproj.transform([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
       ]),
-        description: 'feature1 - description'
+      description: 'feature1 - description'
     });
 
     const feature2 = new olFeature({
@@ -158,7 +158,7 @@ export class AppQueryComponent {
           olproj.transform([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
         ]
       ]),
-        description: 'feature3 - description'
+      description: 'feature3 - description'
     });
 
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
