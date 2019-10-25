@@ -74,7 +74,7 @@ export class AppQueryComponent {
           layers: 'bgr_v_sous_route_res_sup_act',
           version: '1.3.0'
         }
-      } as QueryableDataSourceOptions )
+      } as QueryableDataSourceOptions)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -110,11 +110,11 @@ export class AppQueryComponent {
         type: 'vector',
         queryable: true,
         queryTitle: 'So beautiful ${name}',
-        sourceFields:[
-          { name:"name", alias:"Alias name" },
-          { name:"description", alias:"Alias description" }
+        sourceFields: [
+          { name: 'name', alias: 'Alias name' },
+          { name: 'description', alias: 'Alias description' }
         ]
-      } as QueryableDataSourceOptions )
+      } as QueryableDataSourceOptions)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -145,7 +145,6 @@ export class AppQueryComponent {
         olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
       ),
       description: 'feature2 - description'
-
     });
 
     const feature3 = new olFeature({

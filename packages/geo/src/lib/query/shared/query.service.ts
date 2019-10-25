@@ -22,7 +22,11 @@ import {
 } from '../../datasource';
 
 import { QueryFormat, QueryHtmlTarget } from './query.enums';
-import { QueryOptions, QueryableDataSource, QueryableDataSourceOptions } from './query.interfaces';
+import {
+  QueryOptions,
+  QueryableDataSource,
+  QueryableDataSourceOptions
+} from './query.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -219,7 +223,7 @@ export class QueryService {
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
-    let allowedFieldsAndAlias = this.getAllowedFieldsAndAlias(layer);
+    const allowedFieldsAndAlias = this.getAllowedFieldsAndAlias(layer);
     let features = [];
     switch (queryDataSource.options.queryFormat) {
       case QueryFormat.GML3:
@@ -503,7 +507,10 @@ export class QueryService {
           options.projection,
           WMSGetFeatureInfoOptions
         );
-        const wmsVersion = wmsDatasource.params.VERSION || wmsDatasource.params.version || '1.3.0'
+        const wmsVersion =
+          wmsDatasource.params.VERSION ||
+          wmsDatasource.params.version ||
+          '1.3.0';
         if (wmsVersion !== '1.3.0') {
           url = url.replace('&I=', '&X=');
           url = url.replace('&J=', '&Y=');
@@ -611,29 +618,30 @@ export class QueryService {
 
   getAllowedFieldsAndAlias(layer: any) {
     let allowedFieldsAndAlias;
-    if (layer.options &&
+    if (
+      layer.options &&
       layer.options.source &&
       layer.options.source.options &&
       layer.options.source.options.sourceFields &&
-      layer.options.source.options.sourceFields.length >= 1) {
-        allowedFieldsAndAlias = {};
-        layer.options.source.options.sourceFields.forEach(sourceField => {
-          const alias = sourceField.alias ? sourceField.alias : sourceField.name;
-          allowedFieldsAndAlias[sourceField.name] = alias;
-        });
-      }
+      layer.options.source.options.sourceFields.length >= 1
+    ) {
+      allowedFieldsAndAlias = {};
+      layer.options.source.options.sourceFields.forEach(sourceField => {
+        const alias = sourceField.alias ? sourceField.alias : sourceField.name;
+        allowedFieldsAndAlias[sourceField.name] = alias;
+      });
+    }
     return allowedFieldsAndAlias;
   }
 
-  getQueryTitle(feature: Feature , layer: Layer ): string {
+  getQueryTitle(feature: Feature, layer: Layer): string {
     let title;
-    if (layer.options &&
-      layer.options.source &&
-      layer.options.source.options) {
-        const dataSourceOptions = layer.options.source.options as QueryableDataSourceOptions;
-        if (dataSourceOptions.queryTitle) {
-          title = this.getLabelMatch(feature, dataSourceOptions.queryTitle);
-        }
+    if (layer.options && layer.options.source && layer.options.source.options) {
+      const dataSourceOptions = layer.options.source
+        .options as QueryableDataSourceOptions;
+      if (dataSourceOptions.queryTitle) {
+        title = this.getLabelMatch(feature, dataSourceOptions.queryTitle);
+      }
     }
 
     return title;
