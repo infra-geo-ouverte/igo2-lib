@@ -987,7 +987,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         geomCoord = [geomCoord[0], geomCoord[1]];
       } else if (geom.type.search('Polygon') >= 0) {
         const poly = (new OlGeoJSON()).readFeatures(geom);
-        geomCoord = poly[0].getGeometry().getInteriorPoints().getCoordinates();
+        geomCoord = poly[0].getGeometry().getInteriorPoints().getFirstCoordinate();
         geomCoord = [geomCoord[0], geomCoord[1]];
       }
 
