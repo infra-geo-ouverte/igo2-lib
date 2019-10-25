@@ -278,7 +278,7 @@ export class QueryService {
 
       if (!title && features.length > 1) {
         title = `${layer.title} (${index + 1})`;
-      } else if ( !title ) {
+      } else if (!title) {
         title = layer.title;
       }
 
