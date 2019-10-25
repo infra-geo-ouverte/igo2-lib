@@ -119,7 +119,7 @@ export class LayerService {
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
     if (this.tokenKey) {
-      layerOptions.token = localStorage.getItem(this.tokenKey);
+      layerOptions.tokenKey = this.tokenKey;
     }
 
     return new ImageLayer(layerOptions);

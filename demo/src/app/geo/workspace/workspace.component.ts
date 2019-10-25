@@ -25,7 +25,6 @@ import { OgcFilterableDataSourceOptions } from 'packages/geo/src/public_api';
   styleUrls: ['./workspace.component.scss']
 })
 export class AppWorkspaceComponent implements OnInit {
-
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -55,7 +54,9 @@ export class AppWorkspaceComponent implements OnInit {
 
   ngOnInit() {
     this.selectedWorkspace$ = this.workspaceStore.stateView
-      .firstBy$((record: EntityRecord<Workspace>) => record.state.selected === true)
+      .firstBy$(
+        (record: EntityRecord<Workspace>) => record.state.selected === true
+      )
       .pipe(
         map((record: EntityRecord<Workspace>) => {
           return record === undefined ? undefined : record.entity;
@@ -75,45 +76,45 @@ export class AppWorkspaceComponent implements OnInit {
         );
       });
 
-    const wmsDataSourceOptions = {
-      type: 'wms',
-      url: 'https://ahocevar.com/geoserver/wms',
-      urlWfs: 'https://ahocevar.com/geoserver/wfs',
-      params: {
-        layers: 'water_areas',
-        version: '1.3.0'
-      },
-      paramsWFS: {
-        featureTypes: 'water_areas',
-        fieldNameGeometry: 'the_geom',
-        maxFeatures: 10000,
-        version: '1.1.0',
-        outputFormat: 'application/json',
-        outputFormatDownload: 'application/vnd.google-earth.kml+xml'
-      },
-      sourceFields: [
-        {name: 'waterway', alias: 'Chemin d eau'},
-        {name: 'osm_id'},
-        {name: 'landuse'}
-      ],
-      ogcFilters: {
-        enabled: true,
-        editable: true
-      },
-      serverType: 'geoserver'
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(wmsDataSourceOptions as OgcFilterableDataSourceOptions)
-      .subscribe(dataSource => {
-        const layer = {
-          optionsFromCapabilities: true,
-          title: 'WMS Geoserver filterable ',
-          visible: true,
-          source: dataSource
-        };
-        this.map.addLayer(this.layerService.createLayer(layer));
-      });
+    // const wmsDataSourceOptions = {
+    //   type: 'wms',
+    //   url: 'https://ahocevar.com/geoserver/wms',
+    //   urlWfs: 'https://ahocevar.com/geoserver/wfs',
+    //   params: {
+    //     layers: 'water_areas',
+    //     version: '1.3.0'
+    //   },
+    //   paramsWFS: {
+    //     featureTypes: 'water_areas',
+    //     fieldNameGeometry: 'the_geom',
+    //     maxFeatures: 10000,
+    //     version: '1.1.0',
+    //     outputFormat: 'application/json',
+    //     outputFormatDownload: 'application/vnd.google-earth.kml+xml'
+    //   },
+    //   sourceFields: [
+    //     {name: 'waterway', alias: 'Chemin d eau'},
+    //     {name: 'osm_id'},
+    //     {name: 'landuse'}
+    //   ],
+    //   ogcFilters: {
+    //     enabled: true,
+    //     editable: true
+    //   },
+    //   serverType: 'geoserver'
+    // };
+    //
+    // this.dataSourceService
+    //   .createAsyncDataSource(wmsDataSourceOptions as OgcFilterableDataSourceOptions)
+    //   .subscribe(dataSource => {
+    //     const layer = {
+    //       optionsFromCapabilities: true,
+    //       title: 'WMS Geoserver filterable ',
+    //       visible: true,
+    //       source: dataSource
+    //     };
+    //     this.map.addLayer(this.layerService.createLayer(layer));
+    //   });
 
     const wfsDataSourceOptions: WFSDataSourceOptions = {
       type: 'wfs',
@@ -125,9 +126,9 @@ export class AppWorkspaceComponent implements OnInit {
         outputFormat: 'geojson'
       },
       sourceFields: [
-        {name: 'idetablis', alias: 'ID'},
-        {name: 'nometablis', alias: 'Name'},
-        {name: 'typetablis', alias: 'Type'}
+        { name: 'idetablis', alias: 'ID' },
+        { name: 'nometablis', alias: 'Name' },
+        { name: 'typetablis', alias: 'Type' }
       ]
     };
 
@@ -142,5 +143,4 @@ export class AppWorkspaceComponent implements OnInit {
         this.map.addLayer(this.layerService.createLayer(layer));
       });
   }
-
 }

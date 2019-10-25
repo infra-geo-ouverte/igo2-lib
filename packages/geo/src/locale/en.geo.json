@@ -90,12 +90,15 @@
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
-        "advancedOgcFilters": "Advanced filters"
+        "advancedOgcFilters": "Advanced filters",
+        "placeholder": "Enter a value",
+        "placeholderSnrc": "Ex: 21L14",
+        "selectOperator" : "Select an operator"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
         "btnSetExtent": "Define the extent of the spatial filter to the current view",
-        "snrc": "SNRC (ex:21L14)",
+        "snrc": "SNRC",
         "selectFeature": "",
         "drawFeature": ""
       },
@@ -103,11 +106,12 @@
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
         "loadingLegendText": "Loading legend",
-        "filterPlaceholder": "Filter",
+        "filterPlaceholder": "Filter the layers list",
         "noLegendText": "No legend available for this layer",
         "noLegendScale": "No legend available for this scale",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
+        "moreOptions": "More options",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
@@ -214,6 +218,13 @@
         "nw": "northwest"
       },
       "search": {
+        "placeholder": "Search for a localisation or a layer",
+        "feature.title": "Localisation",
+        "feature.placeholder": "Search for a place localisation",
+        "layer.title": "Layer",
+        "layer.placeholder": "Search for a layer",
+        "icherche.name": "iCherche",
+        "ichercheReverse.name": "Search by coordinates",
         "ilayer": {
           "name": "Layers",
           "properties": {
@@ -236,6 +247,7 @@
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",
+            "radius": "Search radius",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
             "country limitation": "Limitation (country)",
@@ -304,12 +316,5 @@
         "wfsDownload.tooltip": "Download"
       }
     }
-  },
-  "search": {
-    "placeholder": "Search for a localisation or a layer",
-    "feature.title": "Localisation",
-    "feature.placeholder": "Search for a place localisation",
-    "layer.title": "Layer",
-    "layer.placeholder": "Search for a layer"
   }
 }

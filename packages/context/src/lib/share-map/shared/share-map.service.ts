@@ -145,9 +145,7 @@ export class ShareMapService {
     const center = `${centerKey}=${long},${lat}`.replace(/.00000/g, '');
     let context = '';
     if (this.contextService.context$.value) {
-      if (this.contextService.context$.value.uri !== '_default') {
-        context = `${contextKey}=${this.contextService.context$.value.uri}`;
-      }
+      context = `${contextKey}=${this.contextService.context$.value.uri}`;
     }
 
     let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParams}`;

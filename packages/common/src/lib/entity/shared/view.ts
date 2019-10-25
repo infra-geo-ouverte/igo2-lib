@@ -254,7 +254,8 @@ export class EntityView<E extends object, V extends object = E> {
       return ObjectUtils.naturalCompare(
         clause.valueAccessor(v1),
         clause.valueAccessor(v2),
-        clause.direction
+        clause.direction,
+        false
       );
     });
   }

@@ -26,9 +26,9 @@ export class EsriStyleGenerator {
   }
 
   static _getResolutionForScale(scale, units) {
-    const dpi = 25.4 / 0.28;
+    const dpi = 96;
     const mpu = olproj.METERS_PER_UNIT[units];
-    const inchesPerMeter = 39.37;
+    const inchesPerMeter = 39.3701;
     return parseFloat(scale) / (mpu * inchesPerMeter * dpi);
   }
 

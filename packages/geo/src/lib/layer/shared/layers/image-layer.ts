@@ -29,10 +29,9 @@ export class ImageLayer extends Layer {
     });
 
     const image = new olLayerImage(olOptions);
-    const token = this.options.token;
-    if (token) {
+    if (this.options.tokenKey) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src, token);
+        this.customLoader(tile, src);
       });
     }
 
@@ -48,10 +47,11 @@ export class ImageLayer extends Layer {
     super.setMap(map);
   }
 
-  private customLoader(tile, src, token?) {
+  private customLoader(tile, src) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
+    const token = localStorage.getItem(this.options.tokenKey);
     xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     xhr.responseType = 'arraybuffer';
 

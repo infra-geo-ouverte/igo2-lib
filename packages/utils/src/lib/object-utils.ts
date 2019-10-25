@@ -99,22 +99,22 @@ export class ObjectUtils {
     return obj;
   }
 
-  static naturalCompare(a, b, direction = 'asc', nullFirst = false) {
+  static naturalCompare(a, b, direction = 'asc', nullsFirst?: boolean) {
     if (direction === 'desc') {
       b = [a, (a = b)][0];
     }
 
-    if (a === undefined || a === null || a === '') {
+    // nullsFirst = undefined : end if direction = 'asc', first if direction = 'dess'
+    // nullsFirst = true : always first
+    // nullsFirst = false : always end
+    // *** 'undefined' values are always at the end of array despite the 'nullsFirst' option
+    if (a === null || a === '' || b === null || b === '') {
+      const nullScore =
+        a === b ? 0 : a === null ? 2 : b === null ? -2 : a === '' ? 1 : -1;
       if (direction === 'desc') {
-        return nullFirst ? -1 : 1;
+        return nullsFirst !== false ? nullScore : nullScore * -1;
       }
-      return nullFirst ? 1 : -1;
-    }
-    if (b === undefined || b === null || b === '') {
-      if (direction === 'desc') {
-        return nullFirst ? 1 : -1;
-      }
-      return nullFirst ? -1 : 1;
+      return nullsFirst === true ? nullScore * -1 : nullScore;
     }
 
     const ax = [];

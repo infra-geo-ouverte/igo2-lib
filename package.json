@@ -60,7 +60,7 @@
     "preversion": "rimraf ./dist && npm run build.all && npm run test.all",
     "version": "gulp bumpVersion && npm run build.libs && npm run changelog && git add -u",
     "postversion": "git push && git push --tags && npm run publish && npm run ghpages && npm run ghrelease",
-    "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json']\" > dist/ghpages/_config.yml",
+    "preghpages": "npm run build.demo -- --output-path ./dist/ghpages --base-href /igo2-lib/ && echo \"include: ['_default.json', '_contexts.json', '_base.json']\" > dist/ghpages/_config.yml",
     "ghpages": "VERSION=$(node -p -e \"require('./package.json').version\") && npx ngh --dir=dist/ghpages --no-silent=false --message=$VERSION",
     "postghpages": "rimraf ./dist/ghpages",
     "ghrelease": "VERSION=$(node -p -e \"require('./package.json').version\") && publish-release --owner infra-geo-ouverte --repo igo2-lib --tag $VERSION --name $VERSION --reuse-release --notes \"$(npm run changelog-current -s)\""

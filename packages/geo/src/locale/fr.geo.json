@@ -90,12 +90,15 @@
         "layerFiltered": "Cette couche d'information est présentement filtrée.",
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
-        "advancedOgcFilters": "Filtres avancés"
+        "advancedOgcFilters": "Filtres avancés",
+        "placeholder": "Saisir une valeur",
+        "placeholderSnrc": "Ex: 21L14",
+        "selectOperator" : "Choisir un opérateur"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
         "btnSetExtent": "Définir l'étendue du filtre selon l'étendue courante de la carte",
-        "snrc": "SNRC (ex:21L14)",
+        "snrc": "SNRC",
         "selectFeature": "",
         "drawFeature": ""
       },
@@ -103,21 +106,22 @@
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
         "loadingLegendText": "Chargement de la légende",
-        "filterPlaceholder": "Filtre",
+        "filterPlaceholder": "Filtre la liste de couches",
         "noLegendText": "Aucune légende disponible pour cette couche",
         "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
+        "moreOptions": "Options sur la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
         "subsetLayersListOnlyVisible": "Conserver les couches visibles",
-        "subsetLayersListOnlyInRange": "Conserver les couches qui sont dans la plage de résolution active",
-        "sortAlphabetically": "Trier la liste des couches alphabétiquement",
+        "subsetLayersListOnlyInRange": "Conserver les couches de la plage d'échelle active",
+        "sortAlphabetically": "Trier la liste des couches en ordre alphabétique",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
-        "resetLayersList": "Supprimer le filtre appliqué à la liste",
+        "resetLayersList": "Rétablir l'affichage de l'ensemble des couches",
         "trackFeature": "Suivre l'entité"
       },
       "download": {
@@ -214,6 +218,13 @@
         "nw": "nord-ouest"
       },
       "search": {
+        "placeholder": "Rechercher une localisation ou une couche de données",
+        "feature.title": "Localisation",
+        "feature.placeholder": "Rechercher une localisation",
+        "layer.title": "Couche de données",
+        "layer.placeholder": "Rechercher une couche de données.",
+        "icherche.name": "iCherche",
+        "ichercheReverse.name": "Recherche par coordonnées",
         "ilayer": {
           "name": "Couches",
           "properties": {
@@ -236,6 +247,7 @@
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
+            "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
             "country limitation": "Limitation (pays)",
@@ -304,12 +316,5 @@
         "wfsDownload.tooltip": "Télécharger les données associées"
       }
     }
-  },
-  "search": {
-    "placeholder": "Rechercher une localisation ou une couche de données",
-    "feature.title": "Localisation",
-    "feature.placeholder": "Rechercher une localisation",
-    "layer.title": "Couche de données",
-    "layer.placeholder": "Rechercher une couche de données."
   }
 }
