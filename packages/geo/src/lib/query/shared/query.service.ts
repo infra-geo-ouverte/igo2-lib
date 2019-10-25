@@ -22,7 +22,7 @@ import {
 } from '../../datasource';
 
 import { QueryFormat, QueryHtmlTarget } from './query.enums';
-import { QueryOptions, QueryableDataSource } from './query.interfaces';
+import { QueryOptions, QueryableDataSource, QueryableDataSourceOptions } from './query.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -274,12 +274,14 @@ export class QueryService {
 
     return features.map((feature: Feature, index: number) => {
       const mapLabel = feature.properties[queryDataSource.mapLabel];
-      let title = feature.properties[queryDataSource.queryTitle];
+      let title = this.getQueryTitle(feature, layer);
+
       if (!title && features.length > 1) {
         title = `${layer.title} (${index + 1})`;
       } else if (!title) {
         title = layer.title;
       }
+
       const meta = Object.assign({}, feature.meta || {}, {
         id: uuid(),
         title,
@@ -617,5 +619,51 @@ export class QueryService {
     }
 
     return mime;
+  }
+
+  getAllowedFieldsAndAlias(layer: any) {
+    let allowedFieldsAndAlias;
+    if (layer.options &&
+      layer.options.source &&
+      layer.options.source.options &&
+      layer.options.source.options.sourceFields &&
+      layer.options.source.options.sourceFields.length >= 1) {
+        allowedFieldsAndAlias = {};
+        layer.options.source.options.sourceFields.forEach(sourceField => {
+          const alias = sourceField.alias ? sourceField.alias : sourceField.name;
+          allowedFieldsAndAlias[sourceField.name] = alias;
+        });
+      }
+    return allowedFieldsAndAlias;
+  }
+
+  getQueryTitle(feature: Feature , layer: Layer ): string {
+    let title;
+    if (layer.options &&
+      layer.options.source &&
+      layer.options.source.options) {
+        const dataSourceOptions = layer.options.source.options as QueryableDataSourceOptions;
+        if (dataSourceOptions.queryTitle) {
+          title = this.getLabelMatch(feature, dataSourceOptions.queryTitle);
+        }
+    }
+
+    return title;
+  }
+
+  getLabelMatch(feature: Feature, labelMatch): string {
+    let label = labelMatch;
+    const labelToGet = Array.from(labelMatch.matchAll(/\$\{([^\{\}]+)\}/g));
+
+    labelToGet.forEach(v => {
+      label = label.replace(v[0], feature.properties[v[1]]);
+    });
+
+    // Nothing done? check feature's attribute
+    if (labelToGet.length === 0 && label === labelMatch) {
+      label = feature.properties[labelMatch] || labelMatch;
+    }
+
+    return label;
   }
 }
