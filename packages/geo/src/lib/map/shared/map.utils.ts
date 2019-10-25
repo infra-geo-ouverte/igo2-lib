@@ -111,7 +111,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
 
       lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
       lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
-    
+
     } else if (utmRegex.test(coordStr)) {
       isXYCoords = true;
       [, pattern, timeZone, lon, lat] = coordStr.match(patternUtm);
@@ -181,7 +181,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
     } else {
       lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
     }
-  
+
   } else if (mmRegex.test(coordStr)) {
       isXYCoords = true;
       [, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern);
