@@ -219,19 +219,7 @@ export class QueryService {
   ): Feature[] {
     const queryDataSource = layer.dataSource as QueryableDataSource;
 
-    let allowedFieldsAndAlias;
-    if (
-      layer.options &&
-      layer.options.sourceOptions &&
-      layer.options.sourceOptions.sourceFields &&
-      layer.options.sourceOptions.sourceFields.length >= 1
-    ) {
-      allowedFieldsAndAlias = {};
-      layer.options.sourceOptions.sourceFields.forEach(sourceField => {
-        const alias = sourceField.alias ? sourceField.alias : sourceField.name;
-        allowedFieldsAndAlias[sourceField.name] = alias;
-      });
-    }
+    let allowedFieldsAndAlias = this.getAllowedFieldsAndAlias(layer);
     let features = [];
     switch (queryDataSource.options.queryFormat) {
       case QueryFormat.GML3:
@@ -451,7 +439,7 @@ export class QueryService {
     return result;
   }
 
-  private featureToResult(
+  public featureToResult(
     featureOL: olFeature,
     zIndex: number,
     allowedFieldsAndAlias?

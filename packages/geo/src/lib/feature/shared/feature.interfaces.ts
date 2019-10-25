@@ -16,7 +16,7 @@ export interface Feature<P = {[key: string]: any}> {
   properties: P;
   extent?: [number, number, number, number];
   meta?: FeatureMeta;
-  ol?: OlFeature
+  ol?: OlFeature;
 }
 
 export interface FeatureMeta {
