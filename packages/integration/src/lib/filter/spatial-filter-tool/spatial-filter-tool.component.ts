@@ -58,9 +58,9 @@ export class SpatialFilterToolComponent {
 
   private format = new olFormatGeoJSON();
 
-  public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
+  public store: EntityStore<Feature> = new EntityStore<Feature>([]);
 
-  public spatialItemStore: EntityStore<Feature> = new EntityStore<Feature>([]);
+  public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
   public loading = false;
 
@@ -110,8 +110,7 @@ export class SpatialFilterToolComponent {
     this.thematics.forEach(thematic => {
     this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
       .subscribe((features: Feature[]) => {
-        this.spatialItemStore.clear();
-        this.spatialItemStore.load(features);
+        this.store.insertMany(features);
         const featuresPoint: Feature[] = [];
         const featuresLinePoly: Feature[] = [];
         let idPoint;

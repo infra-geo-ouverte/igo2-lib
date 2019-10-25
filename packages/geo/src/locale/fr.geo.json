@@ -297,7 +297,8 @@
         "clearSearch": "Retirer les champs",
         "Address": "Adresses",
         "Thematics": "Thématiques",
-        "searchResults": "Résultats de la recherche"
+        "searchResults": "Résultats de la recherche",
+        "type": "Type"
       },
       "measure": {
         "dialog": {

@@ -81,6 +81,12 @@
 <div class="results" *ngIf="store">
   <mat-table class="results-list" [dataSource]="store.entities$.value">
 
+    <!-- Type Column -->
+    <ng-container matColumnDef="typeResults">
+        <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.type' | translate}}</mat-header-cell>
+        <mat-cell *matCellDef="let result"> {{result.meta.title}} </mat-cell>
+      </ng-container>
+
     <!-- Name Column -->
     <ng-container matColumnDef="nameResults">
       <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.searchResults' | translate}}</mat-header-cell>
