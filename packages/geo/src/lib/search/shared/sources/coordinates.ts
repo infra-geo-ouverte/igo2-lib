@@ -85,7 +85,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
         extent: undefined,
         properties: {
           type: 'point',
-          coordonnees: String(data[0]) + ', ' + String(data[1]),
+          coordonnees: String(data[0].toFixed(5)) + ', ' + String(data[1].toFixed(5)),
           format: 'degrés decimaux',
           systemeCoordonnees: 'WGS84',
           GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
@@ -96,13 +96,13 @@ export class CoordinatesReverseSearchSource extends SearchSource
         },
         meta: {
           id: '1',
-          title: String(data[0]) + ', ' + String(data[1])
+          title: String(data[0].toFixed(5)) + ', ' + String(data[1].toFixed(5))
         }
       },
       meta: {
         dataType: FEATURE,
         id: '1',
-        title: String(data[0]) + ', ' + String(data[1]),
+        title: String(data[0].toFixed(5)) + ', ' + String(data[1].toFixed(5)),
         icon: 'map-marker'
       }
     };
