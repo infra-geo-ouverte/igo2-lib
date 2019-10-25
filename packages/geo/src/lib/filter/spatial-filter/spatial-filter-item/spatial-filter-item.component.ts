@@ -111,7 +111,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public thematicsList: string[] = [];
   public selectedThematics = new SelectionModel<string>(this.allowMultiSelect, this.initialSelection);
 
-  public displayedColumnsResults: string[] = ['nameResults'];
+  public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
@@ -242,6 +242,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         this.map.removeLayer(layer);
       }
     });
+    if (this.store) {
+      this.store.clear();
+    }
     this.loading = false;
   }
 
