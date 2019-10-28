@@ -23,5 +23,11 @@
     "target": "https://demo.geo-solutions.it",
     "changeOrigin": true,
     "secure": false
+  },
+  "/contexte": {
+    "target": "https://ws.mapserver.unit.mtq.min.intra",
+    "secure": false,
+    "changeOrigin": true,
+    "headers": {"Authorization": "Basic cGVsb3JkOmplaGFpc2xlc21vdHNkZXBhc3NlczEh"}
   }
 }
