@@ -32,7 +32,7 @@
           "title": "Fichier illisible"
         },
         "tooLarge": {
-          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 mb)",
+          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 Mo)",
           "title": "Fichier trop volumineux"
         },
         "invalidSRS": {
@@ -59,7 +59,7 @@
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
-        "importSizeMax": "La taille limite du fichier est de 30 mb.",
+        "importSizeMax": "La taille limite du fichier est de 30 Mo.",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
@@ -93,7 +93,7 @@
         "advancedOgcFilters": "Filtres avancés",
         "placeholder": "Saisir une valeur",
         "placeholderSnrc": "Ex: 21L14",
-        "selectOperator" : "Choisir un opérateur"
+        "selectOperator": "Choisir un opérateur"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",

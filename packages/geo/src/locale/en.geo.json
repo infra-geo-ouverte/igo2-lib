@@ -32,7 +32,7 @@
           "title": "The file '{{value}}' is unreadable"
         },
         "tooLarge": {
-          "text": "The file '{{value}}' is too large (Max: 30 mb)",
+          "text": "The file '{{value}}' is too large (Max: 30 MB)",
           "title": "File too large"
         },
         "invalidSRS": {
@@ -59,7 +59,7 @@
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
-        "importSizeMax": "The file size limit is 30 mb.",
+        "importSizeMax": "The file size limit is 30 MB.",
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
@@ -93,7 +93,7 @@
         "advancedOgcFilters": "Advanced filters",
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
-        "selectOperator" : "Select an operator"
+        "selectOperator": "Select an operator"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
