@@ -10,7 +10,8 @@ import {
   featureToOl,
   DataSource,
   createOverlayMarkerStyle,
-  QueryableDataSourceOptions
+  QueryableDataSourceOptions,
+  StyleService
 } from '@igo2/geo';
 import { SpatialFilterService } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.service';
 import { SpatialFilterQueryType } from '@igo2/geo/lib/filter/shared/spatial-filter.enum';
@@ -52,7 +53,7 @@ export class AppSpatialFilterComponent {
 
   private format = new olFormatGeoJSON();
 
-  public store = new EntityStore<Feature>([]);
+  public store = new EntityStore<Feature>([]); // Store to print results at the end
 
   public spatialListStore = new EntityStore<Feature>([]);
 
@@ -61,7 +62,8 @@ export class AppSpatialFilterComponent {
   constructor(
     private spatialFilterService: SpatialFilterService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    private styleService: StyleService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
@@ -116,26 +118,26 @@ export class AppSpatialFilterComponent {
       this.thematics = [SpatialFilterItemType.Address];
     }
     this.thematics.forEach(thematic => {
-    this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
-      .subscribe((features: Feature[]) => {
-        this.store.insertMany(features);
-        const featuresPoint: Feature[] = [];
-        const featuresLinePoly: Feature[] = [];
-        let idPoint;
-        let idLinePoly;
-        features.forEach(feature => {
-          if (feature.geometry.type === 'Point') {
-            featuresPoint.push(feature);
-            idPoint = feature.meta.id;
-          } else {
-            featuresLinePoly.push(feature);
-            idLinePoly = feature.meta.id;
-          }
+      this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
+        .subscribe((features: Feature[]) => {
+          this.store.insertMany(features);
+          const featuresPoint: Feature[] = [];
+          const featuresLinePoly: Feature[] = [];
+          let idPoint;
+          let idLinePoly;
+          features.forEach(feature => {
+            if (feature.geometry.type === 'Point') {
+              featuresPoint.push(feature);
+              idPoint = feature.meta.id;
+            } else {
+              featuresLinePoly.push(feature);
+              idLinePoly = feature.meta.id;
+            }
+          });
+          this.tryAddPointToMap(featuresPoint, idPoint);
+          this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
+          this.loading = false;
         });
-        this.tryAddPointToMap(featuresPoint, idPoint);
-        this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
-        this.loading = false;
-      });
     })
   }
 
@@ -148,15 +150,24 @@ export class AppSpatialFilterComponent {
   }
 
   /**
-   * Try to add features to the map overlay
+   * Try to add zone feature to the map overlay
    */
   public tryAddFeaturesToMap(features: Feature[]) {
+    let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
           if (layer.alias === feature.properties.code) {
             return;
           }
+          if  (layer.title.startsWith('Zone')) {
+            this.map.removeLayer(layer);
+          }
+        }
+      }
+      for (const layer of this.map.layers) {
+        if  (layer.title.startsWith('Zone')) {
+          i++;
         }
       }
       this.dataSourceService
@@ -166,16 +177,17 @@ export class AppSpatialFilterComponent {
       } as QueryableDataSourceOptions )
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: 'Zone',
+            title: 'Zone ' + i as string,
             alias: this.type === SpatialFilterType.Predefined ? feature.properties.code : undefined,
             source: dataSource,
             visible: true,
             style: (feature, resolution) => {
+              const coordinates = (features[0] as any).coordinates;
               return new olstyle.Style({
                 image: new olstyle.Circle({
-                    radius: this.radius / resolution,
+                    radius: coordinates ? this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution : undefined,
                     fill: new olstyle.Fill({
-                      color: 'rgba(200, 200, 20, 0.3)'
+                      color: 'rgba(200, 200, 20, 0.2)'
                     }),
                     stroke: new olstyle.Stroke({
                       width: 1,
@@ -187,7 +199,7 @@ export class AppSpatialFilterComponent {
                   color: 'orange'
                 }),
                 fill: new olstyle.Fill({
-                  color: 'rgba(200, 200, 20, 0.3)'
+                  color: 'rgba(200, 200, 20, 0.2)'
                 })
               })
             }
@@ -201,24 +213,37 @@ export class AppSpatialFilterComponent {
     }
   }
 
+  /**
+   * Try to point features to the map
+   * Necessary to create clusters
+   */
   private tryAddPointToMap(features: Feature[], id) {
+    console.log(features);
+    let i = 1;
     if (features.length > 1) {
       if (this.map === undefined) {
         return;
+      }
+      for (const layer of this.map.layers) {
+        if  (layer.title.startsWith(features[0].meta.title)) {
+          i++;
+        }
       }
       this.dataSourceService
       .createAsyncDataSource({
         type: 'cluster',
         id: id,
         queryable: true,
-        distance: 150
+        distance: 150,
+        meta: {
+          title: 'Cluster'
+        }
         } as QueryableDataSourceOptions )
         .subscribe((dataSource: ClusterDataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title,
+            title: features[0].meta.title + ' ' + i as string,
             source: dataSource,
             visible: true,
-            style: createOverlayMarkerStyle(),
             clusterParam: {clusterRange: [1, 5]}
           });
           const featuresOl = features.map(feature => {
@@ -227,16 +252,29 @@ export class AppSpatialFilterComponent {
           dataSource.ol.source.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            i = i - 1;
+            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.options.title = olLayer.title;
           }
+          console.log(olLayer);
           this.map.addLayer(olLayer);
         });
     }
   }
 
+  /**
+   * Try to add line or polygon features to the map
+   */
   private tryAddLayerToMap(features: Feature[], id) {
+    let i = 1;
     if (features.length > 1) {
       if (this.map === undefined) {
         return;
+      }
+      for (const layer of this.map.layers) {
+        if  (layer.title.startsWith(features[0].meta.title)) {
+          i++;
+        }
       }
       this.dataSourceService
       .createAsyncDataSource({
@@ -246,7 +284,7 @@ export class AppSpatialFilterComponent {
         } as QueryableDataSourceOptions )
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title,
+            title: features[0].meta.title + ' ' + i as string,
             source: dataSource,
             visible: true
           });
@@ -256,6 +294,9 @@ export class AppSpatialFilterComponent {
           dataSource.ol.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            i = i - 1;
+            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
         });
@@ -272,8 +313,29 @@ export class AppSpatialFilterComponent {
     }
   }
 
+  /**
+   * Permit the query action on results
+   * Do not work properly in the lib
+   */
   handleQueryResults(results) {
-    const features: Feature[] = results.features;
+    let features: Feature[] = [];
+    if (results.features.length) {
+      results.features.forEach(feature => {
+        if (feature.properties.features) {
+          feature.properties.features.forEach(element => {
+            element.title = element.values_.nom;
+          });
+          features.push(feature.properties.features);
+        } else {
+          feature.meta.alias = feature.properties.nom;
+          features.push(feature);
+        }
+      });
+    } else {
+      results.features.meta.alias = results.features.properties.nom;
+      features = results.features;
+    }
+
     let feature;
     if (features.length) {
       feature = features[0];

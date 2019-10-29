@@ -71,6 +71,12 @@ export function featureToOl(
 
   olFeature.set('_entityRevision', getEntityRevision(feature), true);
 
+  if (feature.icon) {
+    olFeature.icon = {
+      icon: feature.icon
+    };
+  }
+
   return olFeature;
 }
 
@@ -109,10 +115,8 @@ export function featureFromOl(
 
   if (olLayer) {
     title = olLayer.get('title');
-    if (olLayer.get('sourceOptions')) {
-      exclude = olLayer.get('sourceOptions').excludeAttribute;
-      excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
-    }
+    exclude = olLayer.get('sourceOptions') ? olLayer.get('sourceOptions').excludeAttribute : undefined;
+    excludeOffline = olLayer.get('sourceOptions') ? olLayer.get('sourceOptions').excludeAttributeOffline : undefined;
   } else {
     title = olFeature.get('_title');
   }

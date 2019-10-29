@@ -98,12 +98,19 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   @Input()
   set drawStyle(value: OlStyle) {
+    if (value === undefined) {
+      value = createDrawInteractionStyle();
+    }
     this._drawStyle = value;
     if (value && this.isStyleWithRadius(value)) {
       this.defaultDrawStyleRadius = value.getImage().getRadius();
     } else {
       this.defaultDrawStyleRadius = null;
     }
+    this.deactivateControl();
+    this.createDrawControl();
+    this.createModifyControl();
+    this.toggleControl();
   }
   get drawStyle(): OlStyle { return this._drawStyle; }
   private _drawStyle: OlStyle;
@@ -249,7 +256,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.drawControl = new DrawControl({
       geometryType: this.geometryType || 'Point',
       layer: this.olOverlayLayer,
-      drawStyle: (olFeature: OlFeature, resolution: number) => {
+      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
         const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
@@ -263,7 +270,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private createModifyControl() {
     this.modifyControl = new ModifyControl({
       layer: this.olOverlayLayer,
-      drawStyle: (olFeature: OlFeature, resolution: number) => {
+      drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
         const style = this.drawStyle;
         this.updateDrawStyleWithDrawGuide(style, resolution);
         return style;
@@ -436,13 +443,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       if (!drawGuide || drawGuide < 0) {
         radius = this.defaultDrawStyleRadius;
       } else {
-        //console.log('ici');
-        //console.log(drawGuide);
         radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
-        //console.log(radius);
       }
       olStyle.getImage().setRadius(radius);
-      //console.log(olStyle);
     }
   }
 
@@ -451,6 +454,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param olStyle The style on which to perform the check
    */
   private isStyleWithRadius(olStyle: OlStyle): boolean {
-    return olStyle.getImage && olStyle.getImage().setRadius;
+    return typeof olStyle !== 'function' && olStyle.getImage && olStyle.getImage().setRadius;
   }
 }

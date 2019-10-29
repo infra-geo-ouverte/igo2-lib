@@ -48,13 +48,23 @@
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 </mat-table>
 
-<div *ngIf="isPoint()">
+<div class="radius-unit" *ngIf="isPoint()">
   <form class="radius-form">
     <mat-form-field class="radius">
-      <input type="number" matInput placeholder="Radius" [formControl]="radiusFormControl" [value]="5000"
+      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl" [value]="1000"
       (input)="getRadius($event)">
     </mat-form-field>
   </form>
+
+  <mat-form-field class="unit-field">
+    <mat-select
+      [value]="measureUnit"
+      (selectionChange)="onMeasureUnitChange($event.value)">
+      <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
+        {{('igo.geo.measure.' + measureUnit) | translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <div class="buttons">

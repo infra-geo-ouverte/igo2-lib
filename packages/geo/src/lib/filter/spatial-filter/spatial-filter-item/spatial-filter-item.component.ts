@@ -1,3 +1,4 @@
+import { olFeature } from 'ol/Feature';
 import {
   Component,
   Input,
@@ -19,8 +20,11 @@ import OlGeometryType from 'ol/geom/GeometryType';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
+import * as olproj from 'ol/proj';
 import { MatSnackBar } from '@angular/material';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
+import { MeasureLengthUnit } from '../../../measure';
+
 /**
  * Spatial-Filter-Item (search parameters)
  */
@@ -48,6 +52,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.radius = undefined;
     this.drawGuide$.next(null);
     this.drawStyle$.next(undefined);
+
+    // Necessary to keep reference to the geometry form field input
     if (this.type === SpatialFilterType.Predefined) {
       const geojson: GeoJSONGeometry = {
         type: 'Point',
@@ -55,13 +61,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       };
       this.formControl.setValue(geojson);
     }
+
+    // Necessary to apply the right style when geometry type is Point
     if (this.type === SpatialFilterType.Point) {
-      this.radius = 5000;
-      this.drawGuide$.next(this.radius);
-      this.overlayStyle = (feature, resolution) => {
+      this.radius = 1000; // Base radius
+      this.overlayStyle = (feature: olFeature, resolution: number) => {
+        const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
         return new olstyle.Style ({
           image: new olstyle.Circle ({
-            radius: this.radius / resolution,
+            radius: this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution,
             stroke: new olstyle.Stroke({
               width: 2,
               color: 'rgba(0, 153, 255)'
@@ -72,6 +80,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           })
         })
       }
+      this.drawStyle$.next(this.overlayStyle);
     } else {
       this.overlayStyle = (feature, resolution) => {
         return new olstyle.Style ({
@@ -94,10 +103,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Input() loading;
   @Input() store;
 
+  /**
+   * Available measure units for the measure type given
+   * @internal
+   */
+  get measureUnits(): string[] {
+    return [MeasureLengthUnit.Meters];
+  }
+
   @Output() toggleSearch = new EventEmitter();
   @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
   @Output() thematicChange = new EventEmitter<string[]>();
-  @Output() drawZoneEvent = new EventEmitter<Feature[]>();
+  @Output() drawZoneEvent = new EventEmitter<Feature>();
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() clearSearchEvent = new EventEmitter();
 
@@ -110,7 +127,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public allowMultiSelect = true;
   public thematicsList: string[] = [];
   public selectedThematics = new SelectionModel<string>(this.allowMultiSelect, this.initialSelection);
-
   public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
@@ -129,11 +145,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawGuidePlaceholder = '';
   public measure = false;
   public drawStyle: OlStyle;
-  public drawZone: Feature[];
+  public drawZone: Feature;
   public overlayStyle: OlStyle;
 
   public radius: number;
   public radiusFormControl = new FormControl();
+
+  public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -141,15 +159,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     private spatialFilterService: SpatialFilterService) {}
 
   ngOnInit() {
-    this.spatialFilterService.loadItemList()
+    this.spatialFilterService.loadThematicsList()
     .subscribe((items: string[]) => {
       this.thematicsList = items;
     });
+
     this.drawGuide$.next(this.drawGuide);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
       this.value$.next(value ? value : undefined);
     });
+
     this.value$.subscribe(() => {
       this.cdRef.detectChanges();
     });
@@ -175,6 +195,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   onSourceAdressChange(event) {
     this.selectedSourceAddress = event.value;
+  }
+
+  /**
+   * Set the measure unit
+   * @internal
+   */
+  onMeasureUnitChange(unit: MeasureLengthUnit) {
+    this.measureUnit = unit;
   }
 
   isPredefined() {
@@ -203,6 +231,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.thematicChange.emit(this.selectedThematics.selected);
   }
 
+  /**
+   * Apply changes to the thematics selected table and emit event
+   */
   onToggleChange(rowSelected) {
     let bool = false;
     if (this.selectedThematics.selected.find(row => row === rowSelected) !== undefined) {
@@ -219,14 +250,31 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.thematicChange.emit(this.selectedThematics.selected);
   }
 
+  /**
+   * Launch search button
+   */
   toggleSearchButton() {
     if (this.isPolygon() || (this.isPoint() && this.radius === undefined)) {
-      this.drawZone = this.formControl.value as Feature[];
+      this.drawZone = this.formControl.value as Feature;
+      this.drawZone.meta = {
+        id: undefined,
+        title: 'Zone'
+      }
+      this.drawZone.properties = {
+        nom: 'Zone'
+      }
       this.drawZoneEvent.emit(this.drawZone);
     }
 
     if (this.radius !== undefined) {
-      this.drawZone = this.formControl.value as Feature[];
+      this.drawZone = this.formControl.value as Feature;
+      this.drawZone.meta = {
+        id: undefined,
+        title: 'Zone'
+      }
+      this.drawZone.properties = {
+        nom: 'Zone'
+      }
       this.drawZoneEvent.emit(this.drawZone);
     }
 
@@ -234,6 +282,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.toggleSearch.emit();
   }
 
+  /**
+   * Launch clear button (clear store and map layers)
+   */
   clearButton() {
     this.loading = true;
     this.map.overlay.clear();
@@ -248,12 +299,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.loading = false;
   }
 
+  /**
+   * Launch clear search (clear field if type is predefined)
+   */
   clearSearch() {
     this.selectedThematics.clear();
     this.thematicChange.emit(this.selectedThematics.selected);
     this.clearSearchEvent.emit();
   }
 
+  /**
+   * Verify conditions of incomplete fields or busy service
+   */
   disableSearchButton(): boolean {
     if (this.type === SpatialFilterType.Predefined) {
       if (this.selectedItemType === SpatialFilterItemType.Address) {
@@ -286,11 +343,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     });
   }
 
+  /**
+   * Manage radius value at user change
+   */
   getRadius(radius) {
     if (radius.target.value >= 10000 || radius.target.value < 0) {
       this.openSnackBar('Le buffer doit être compris entre 0 et 10000', 'Fermer');
-      this.radius = 5000;
-      radius.target.value = 5000;
+      this.radius = 1000;
+      radius.target.value = 1000;
       this.drawGuide$.next(this.radius);
       return;
     }

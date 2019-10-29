@@ -7,7 +7,7 @@ import {
 } from '@angular/material';
 
 import { IgoPanelModule, IgoFormModule } from '@igo2/common';
-import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureDetailsModule } from '@igo2/geo';
+import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureModule, IgoFeatureDetailsModule } from '@igo2/geo';
 
 import { AppSpatialFilterComponent } from './spatial-filter.component';
 import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
@@ -22,6 +22,7 @@ import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
     IgoPanelModule,
     IgoMapModule,
     IgoQueryModule,
+    IgoFeatureModule,
     IgoFeatureDetailsModule,
     IgoFilterModule,
     IgoFormModule,

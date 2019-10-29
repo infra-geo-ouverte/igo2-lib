@@ -1,3 +1,4 @@
+import { getEntityTitle } from '@igo2/common';
 import {
   Directive,
   Input,
@@ -189,21 +190,23 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       (featureOL: OlFeature, layerOL: OlLayer) => {
         if (featureOL) {
           if (featureOL.get('features')) {
-            featureOL = featureOL.get('features')[0];
+            console.log(layerOL);
+            for (const feature of featureOL.get('features')) {
+              const newFeature = featureFromOl(feature, this.map.projection);
+              newFeature.meta = {
+                title: feature.values_.nom,
+                id: feature.id_,
+                sourceTitle: layerOL.values_.title
+              };
+              clickedFeatures.push(newFeature);
+            }
+          } else {
+            const feature = featureFromOl(
+              featureOL,
+              this.map.projection,
+            );
+            clickedFeatures.push(feature);
           }
-          const feature = featureFromOl(
-            featureOL,
-            this.map.projection,
-            layerOL
-          );
-          clickedFeatures.push(feature);
-        } else {
-          const feature = featureFromOl(
-            featureOL,
-            this.map.projection,
-            layerOL
-          );
-          clickedFeatures.push(feature);
         }
       },
       {
@@ -219,13 +222,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
-            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
-              layer
-            );
-            feature.meta.title = this.queryService.getQueryTitle(
-              feature,
-              layer
-            );
+              feature.meta.id = feature.ol._id,
+              feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
+              feature.meta.title = feature.meta.title || this.queryService.getQueryTitle(feature, layer);
+              feature.meta.sourceTitle = layer.title;
           }
         }
       });

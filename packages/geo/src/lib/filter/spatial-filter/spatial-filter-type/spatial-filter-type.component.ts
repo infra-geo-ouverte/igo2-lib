@@ -2,9 +2,7 @@ import {
   Component,
   Input,
   OnInit,
-  OnDestroy,
   ChangeDetectionStrategy,
-  ViewChild,
   Output,
   EventEmitter
 } from '@angular/core';
@@ -89,13 +87,5 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   onZoneChange(feature) {
     this.zoneChange.emit(feature);
-  }
-
-  isPolygon() {
-    return this.type === SpatialFilterType.Polygon;
-  }
-
-  isPoint() {
-    return this.type === SpatialFilterType.Point;
   }
 }

@@ -298,7 +298,8 @@
         "Address": "Addresses",
         "Thematics": "Thematics",
         "searchResults": "Search Results",
-        "type": "Type"
+        "type": "Type",
+        "radius": "Radius"
       },
       "measure": {
         "dialog": {
