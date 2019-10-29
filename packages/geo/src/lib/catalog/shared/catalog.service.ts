@@ -226,7 +226,8 @@ export class CatalogService {
 
             const params = Object.assign({}, catalogQueryParams, {
               layers: layer.Name,
-              feature_count: catalog.count
+              feature_count: catalog.count,
+              version: catalog.version || '1.3.0'
             });
             const baseSourceOptions = {
               type: 'wms',

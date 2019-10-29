@@ -5,7 +5,7 @@ export interface IChercheData {
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
   properties: { [key: string]: any };
-  icon?: string
+  icon?: string;
   highlight: {
     title: string;
     title2?: string;
@@ -20,7 +20,7 @@ export interface IChercheResponse {
 export interface IChercheReverseData {
   geometry: FeatureGeometry;
   bbox: [number, number, number, number];
-  icon?: string
+  icon?: string;
   properties: { [key: string]: any };
 }
 

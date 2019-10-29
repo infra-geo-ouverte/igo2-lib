@@ -6,7 +6,8 @@ import {
   DataSourceService,
   LayerService,
   TimeFilterableDataSourceOptions,
-  TimeFilterType, TimeFilterStyle
+  TimeFilterType,
+  TimeFilterStyle
 } from '@igo2/geo';
 
 @Component({
@@ -46,39 +47,28 @@ export class AppTimeFilterComponent {
         );
       });
 
-    const datasource: TimeFilterableDataSourceOptions = {
-      type: 'wms',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-      params: {
-        layers: 'vg_observation_v_inondation_embacle_wmst',
-        version: '1.3.0'
-      },
-      timeFilterable: true,
-      timeFilter: {
-        min: '2017-01-01',
-        max: '2018-01-01',
-        range: true,
-        type: TimeFilterType.DATETIME,
-        style: TimeFilterStyle.SLIDER,
-        step: 86400000,
-        timeInterval: 2000
-      }
-    };
-
-    this.dataSourceService
-      .createAsyncDataSource(datasource)
-      .subscribe(dataSource => {
-        this.map.addLayer(
-          this.layerService.createLayer({
-            title: 'Embâcle',
-            source: dataSource
-          })
-        );
-      });
+    // const datasource: TimeFilterableDataSourceOptions = {
+    //   type: 'wms',
+    //   url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
+    //   params: {
+    //     layers: 'vg_observation_v_inondation_embacle_wmst',
+    //     version: '1.3.0'
+    //   },
+    //   timeFilterable: true,
+    //   timeFilter: {
+    //     min: '2017-01-01',
+    //     max: '2018-01-01',
+    //     range: true,
+    //     type: TimeFilterType.DATETIME,
+    //     style: TimeFilterStyle.SLIDER,
+    //     step: 86400000,
+    //     timeInterval: 2000
+    //   }
+    // };
 
     const datasourceYear: TimeFilterableDataSourceOptions = {
       type: 'wms',
-      url: '/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       params: {
         layers: 'vg_observation_v_inondation_embacle_wmst',
         version: '1.3.0'
@@ -101,11 +91,10 @@ export class AppTimeFilterComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle YEAR',
-            visible: false,
+            visible: true,
             source: dataSource
           })
         );
       });
-
   }
 }

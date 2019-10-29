@@ -30,7 +30,9 @@
   </div>
 
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
+    <mat-select 
+    tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate"
+    [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
       <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
@@ -39,8 +41,8 @@
 
     <!-- PropertyIsEqualTo -->
     <span *ngIf="currentFilter.operator === 'PropertyIsEqualTo' || currentFilter.operator === 'PropertyIsNotEqualTo'">
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionequalto (keyup)="changeProperty(currentFilter,'expression',expressionequalto.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionequalto (keyup)="changeProperty(currentFilter,'expression',expressionequalto.value)"
           (ngModelChange)="changeProperty(currentFilter,'expression',expressionequalto.value)" [ngModel]="currentFilter.expression">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
@@ -58,8 +60,8 @@
 
     <!-- PropertyIsLike  -->
     <span *ngIf="currentFilter.operator === 'PropertyIsLike'">
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #pattern (keyup)="changeProperty(currentFilter,'pattern',pattern.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #pattern (keyup)="changeProperty(currentFilter,'pattern',pattern.value)"
           (ngModelChange)="changeProperty(currentFilter,'pattern',pattern.value)" [ngModel]="currentFilter.pattern">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
@@ -80,8 +82,8 @@
 
     <!-- PropertyIs_Than  -->
     <span *ngIf="currentFilter.operator === 'PropertyIsGreaterThan' || currentFilter.operator === 'PropertyIsGreaterThanOrEqualTo' || currentFilter.operator === 'PropertyIsLessThan' || currentFilter.operator === 'PropertyIsLessThanOrEqualTo'">
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionthan type="number" (keyup)="changeNumericProperty(currentFilter,'expression',expressionthan.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionthan type="number" (keyup)="changeNumericProperty(currentFilter,'expression',expressionthan.value)"
           (ngModelChange)="changeNumericProperty(currentFilter,'expression',expressionthan.value)" [ngModel]="currentFilter.expression">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
@@ -98,8 +100,8 @@
 
     <!-- PropertyIsBetween -->
     <span *ngIf="currentFilter.operator === 'PropertyIsBetween'">
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #lowerBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #lowerBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)"
           (ngModelChange)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)" [ngModel]="currentFilter.lowerBoundary">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
@@ -110,8 +112,8 @@
           <mat-icon svgIcon="close"></mat-icon>
         </button>
       </mat-form-field>
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #upperBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #upperBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)"
           (ngModelChange)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)" [ngModel]="currentFilter.upperBoundary">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
@@ -129,8 +131,8 @@
 
     <!-- During -->
     <span *ngIf="currentFilter.operator === 'During'">
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #begin (keyup)="changeProperty(currentFilter,'begin',begin.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #begin (keyup)="changeProperty(currentFilter,'begin',begin.value)"
           (ngModelChange)="changeProperty(currentFilter,'begin',begin.value)" [ngModel]="currentFilter.begin">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values " [value]="value">
@@ -142,8 +144,8 @@
         </button>
       </mat-form-field>
 
-      <mat-form-field>
-        <input [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #end (keyup)="changeProperty(currentFilter,'end',end.value)"
+      <mat-form-field [floatLabel]="floatLabel">
+        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #end (keyup)="changeProperty(currentFilter,'end',end.value)"
           (ngModelChange)="changeProperty(currentFilter,'end',end.value)" [ngModel]="currentFilter.end">
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let value of values" [value]="value">
@@ -164,7 +166,9 @@
 
   <!-- PropertySpatial  -->
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
-    <mat-select [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
+    <mat-select  
+      matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate" tooltip-position="below"
+      [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
       <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
@@ -182,8 +186,8 @@
     </button>
 
 
-    <mat-form-field *ngIf="currentFilter.igoSpatialSelector === 'snrc'">
-      <input matInput #htmlSnrc (keyup)="changeGeometry(currentFilter,htmlSnrc.value)" (blur)="changeGeometry(currentFilter,htmlSnrc.value)"
+    <mat-form-field *ngIf="currentFilter.igoSpatialSelector === 'snrc'" [floatLabel]="floatLabel">
+      <input [placeholder]="'igo.geo.filter.placeholderSnrc' | translate" matInput #htmlSnrc (keyup)="changeGeometry(currentFilter,htmlSnrc.value)" (blur)="changeGeometry(currentFilter,htmlSnrc.value)"
         [(ngModel)]="snrc">
       <button mat-button *ngIf="snrc" matSuffix mat-icon-button aria-label="Clear" (click)="snrc=''">
         <mat-icon svgIcon="close"></mat-icon>

@@ -8,16 +8,20 @@ export const environment: Environment = {
   igo: {
     projections: [
       {
-      code: 'EPSG:32198',
-      def:
-      '+proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
-      extent: [-886251.0296, 180252.9126, 897177.3418, 2106143.8139]
+        code: 'EPSG:32198',
+        def:
+          '+proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
+        extent: [-886251.0296, 180252.9126, 897177.3418, 2106143.8139]
       }
-      ],
+    ],
     auth: {
       intern: {
         enabled: true
-      }
+      },
+      allowAnonymous: true
+    },
+    importExport: {
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ogre'
     },
     language: {
       prefix: './locale/'
@@ -32,10 +36,13 @@ export const environment: Environment = {
         {
           id: 'DefiningInfoFormat',
           title: 'Defining info_format',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           queryFormat: {
             html: '*',
-            'application/json':  ['stations_meteoroutieres', 'histo_stations_meteoroutieres']
+            'application/json': [
+              'stations_meteoroutieres',
+              'histo_stations_meteoroutieres'
+            ]
           },
           queryHtmlTarget: 'iframe',
           count: 30
@@ -43,7 +50,7 @@ export const environment: Environment = {
         {
           id: 'catalogwithregex',
           title: 'Filtered catalog by regex',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           regFilters: ['zpegt']
         },
         {
@@ -56,22 +63,28 @@ export const environment: Environment = {
     },
     searchSources: {
       nominatim: {
-        enabled: true
-      },
-      reseautq: {
-        searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        locateUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
-        zoomMaxOnSelect: 8,
-        enabled: true
+        enabled: false
       },
       icherche: {
-        searchUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/geocode',
-        locateUrl: 'https://geoegl.msp.gouv.qc.ca/icherche/xy',
-        zoomMaxOnSelect: 10,
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
+        order: 2,
+        enabled: true,
+        params: {
+          limit: '8'
+        }
+      },
+      icherchereverse: {
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/territoires',
+        order: 3,
         enabled: true
       },
-      datasource: {
-        searchUrl: 'https://geoegl.msp.gouv.qc.ca/igo2/api/layers/search'
+      ilayer: {
+        searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
+        order: 4,
+        enabled: true,
+        params: {
+          limit: '5'
+        }
       }
     }
   }

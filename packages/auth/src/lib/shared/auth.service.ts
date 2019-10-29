@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
-import { ConfigService, LanguageService } from '@igo2/core';
+import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
 import { AuthOptions, User } from './auth.interface';
@@ -25,6 +25,7 @@ export class AuthService {
     private tokenService: TokenService,
     private config: ConfigService,
     private languageService: LanguageService,
+    private messageService: MessageService,
     @Optional() private router: Router
   ) {
     this.options = this.config.getConfig('auth') || {};
@@ -132,8 +133,17 @@ export class AuthService {
       tap((data: any) => {
         this.tokenService.set(data.token);
         const tokenDecoded = this.decodeToken();
-        if (tokenDecoded && tokenDecoded.user && tokenDecoded.user.locale) {
-          this.languageService.setLanguage(tokenDecoded.user.locale);
+        if (tokenDecoded && tokenDecoded.user) {
+          if (tokenDecoded.user.locale) {
+            this.languageService.setLanguage(tokenDecoded.user.locale);
+          }
+          if (tokenDecoded.user.isExpired) {
+            this.languageService.translate
+              .get('igo.auth.error.Password expired')
+              .subscribe(expiredAlert =>
+                this.messageService.alert(expiredAlert)
+              );
+          }
         }
         this.authenticate$.next(true);
       }),

@@ -13,6 +13,7 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
 import { OgcFilterOperatorType } from '../../filter/shared/ogc-filter.enum';
+import { FloatLabelType } from '@angular/material';
 
 @Component({
   selector: 'igo-ogc-filter-form',
@@ -38,6 +39,8 @@ export class OgcFilterFormComponent implements OnInit {
   @Input() map: IgoMap;
 
   @Input() currentFilter: any;
+
+  @Input() floatLabel: FloatLabelType = 'never';
 
   get activeFilters() {
     this.updateField();

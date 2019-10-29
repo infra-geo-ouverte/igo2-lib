@@ -18,8 +18,11 @@ import {
   Feature,
   QueryableDataSourceOptions,
   QueryFormat,
-  QueryHtmlTarget
+  QueryHtmlTarget,
+  SearchResult
 } from '@igo2/geo';
+
+import { getEntityTitle, EntityStore } from '@igo2/common';
 
 @Component({
   selector: 'app-query',
@@ -64,13 +67,14 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
         queryable: true,
+        queryTitle: 'num_rts',
         params: {
           layers: 'bgr_v_sous_route_res_sup_act',
           version: '1.3.0'
         }
-      } as QueryableDataSourceOptions )
+      } as QueryableDataSourceOptions)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -83,7 +87,7 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
         queryable: true,
         queryFormat: QueryFormat.HTMLGML2,
         queryHtmlTarget: QueryHtmlTarget.IFRAME,
@@ -104,8 +108,13 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'vector',
-        queryable: true
-      } as QueryableDataSourceOptions )
+        queryable: true,
+        queryTitle: 'So beautiful ${name}',
+        sourceFields: [
+          { name: 'name', alias: 'Alias name' },
+          { name: 'description', alias: 'Alias description' }
+        ]
+      } as QueryableDataSourceOptions)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
@@ -120,29 +129,35 @@ export class AppQueryComponent {
   addFeatures(dataSource: FeatureDataSource) {
     const feature1 = new olFeature({
       name: 'feature1',
+      description: 'description feature1',
       geometry: new olLineString([
         olproj.transform([-72, 47.8], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-73.5, 47.4], 'EPSG:4326', 'EPSG:3857'),
         olproj.transform([-72.4, 48.6], 'EPSG:4326', 'EPSG:3857')
-      ])
+      ]),
+      description: 'feature1 - description'
     });
 
     const feature2 = new olFeature({
       name: 'feature2',
+      description: 'description feature2',
       geometry: new olPoint(
         olproj.transform([-73, 46.6], 'EPSG:4326', 'EPSG:3857')
-      )
+      ),
+      description: 'feature2 - description'
     });
 
     const feature3 = new olFeature({
       name: 'feature3',
+      description: 'description feature3',
       geometry: new olPolygon([
         [
           olproj.transform([-71, 46.8], 'EPSG:4326', 'EPSG:3857'),
           olproj.transform([-73, 47], 'EPSG:4326', 'EPSG:3857'),
           olproj.transform([-71.2, 46.6], 'EPSG:4326', 'EPSG:3857')
         ]
-      ])
+      ]),
+      description: 'feature3 - description'
     });
 
     dataSource.ol.addFeatures([feature1, feature2, feature3]);
@@ -155,5 +170,9 @@ export class AppQueryComponent {
       feature = features[0];
     }
     this.feature$.next(feature);
+  }
+
+  getTitle(result: SearchResult) {
+    return getEntityTitle(result);
   }
 }

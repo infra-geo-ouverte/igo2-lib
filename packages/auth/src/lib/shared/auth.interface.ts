@@ -34,6 +34,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   locale?: string;
+  isExpired?: boolean;
   admin?: boolean;
   defaultContextId?: string;
 }

@@ -23,6 +23,7 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -199,8 +200,20 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       hitTolerance: this.queryFeaturesHitTolerance || 0,
       layerFilter: this.queryFeaturesCondition ? this.queryFeaturesCondition : olLayerIsQueryable
     });
+    
+    const queryableLayers = this.map.layers.filter(layerIsQueryable);
+    clickedFeatures.forEach( (feature: Feature) => {
+      queryableLayers.forEach((layer: AnyLayer) => {
+        if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
+          if (layer.ol.getSource().hasFeature(feature.ol)) {
+              feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
+              feature.meta.title = this.queryService.getQueryTitle(feature, layer);
+          }
+        }
+      });
+    });
 
-    return of(clickedFeatures);
+    return of(features);
   }
 
   /**

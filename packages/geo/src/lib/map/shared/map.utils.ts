@@ -284,8 +284,9 @@ export function formatScale(scale) {
  * @param dpi DPI
  * @returns Resolution
  */
-export function getResolutionFromScale(scale: number, dpi: number = 72): number {
-  return scale / (39.37 * dpi);
+export function getResolutionFromScale(scale: number, dpi: number = 96): number {
+  const inchesPerMeter = 39.3701;
+  return scale / (inchesPerMeter * dpi);
 }
 
 /**
@@ -293,8 +294,9 @@ export function getResolutionFromScale(scale: number, dpi: number = 72): number 
  * @param Scale denom
  * @returns Resolution
  */
-export function getScaleFromResolution(resolution: number, unit: string = 'm', dpi: number = 72): number {
-  return resolution * olproj.METERS_PER_UNIT[unit] * 39.37 * dpi;
+export function getScaleFromResolution(resolution: number, unit: string = 'm', dpi: number = 96): number {
+  const inchesPerMeter = 39.3701;
+  return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMeter * dpi;
 }
 
 /**

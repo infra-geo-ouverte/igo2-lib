@@ -32,8 +32,6 @@ export class OgcFilterButtonComponent {
   constructor() {}
 
   toggleOgcFilter() {
-    if (this.layer.isInResolutionsRange) {
       this.ogcFilterCollapse = !this.ogcFilterCollapse;
-    }
   }
 }

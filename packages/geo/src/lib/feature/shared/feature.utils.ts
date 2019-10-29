@@ -130,7 +130,8 @@ export function featureFromOl(
       excludeAttributeOffline: excludeOffline
     },
     properties,
-    geometry
+    geometry,
+    ol: olFeature
   };
 }
 

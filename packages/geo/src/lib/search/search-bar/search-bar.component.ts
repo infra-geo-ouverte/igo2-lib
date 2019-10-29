@@ -33,13 +33,22 @@ import { SearchService } from '../shared/search.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
-
   /**
    * Invalid keys
    */
-  static invalidKeys = ['Control', 'Shift', 'Alt', 'ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'];
+  static invalidKeys = [
+    'Control',
+    'Shift',
+    'Alt',
+    'ArrowDown',
+    'ArrowUp',
+    'ArrowRight',
+    'ArrowLeft'
+  ];
 
-  readonly placeholder$: BehaviorSubject<string> = new BehaviorSubject('search.placeholder');
+  readonly placeholder$: BehaviorSubject<string> = new BehaviorSubject(
+    'igo.geo.search.placeholder'
+  );
 
   readonly empty$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -72,24 +81,38 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Search term
    */
   @Input()
-  set searchType(value: string) { this.setSearchType(value); }
-  get searchType(): string { return this.searchType$.value; }
-  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  set searchType(value: string) {
+    this.setSearchType(value);
+  }
+  get searchType(): string {
+    return this.searchType$.value;
+  }
+  readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(
+    undefined
+  );
 
   /**
    * Search term
    */
   @Input()
-  set term(value: string) { this.setTerm(value); }
-  get term(): string { return this.term$.value; }
+  set term(value: string) {
+    this.setTerm(value);
+  }
+  get term(): string {
+    return this.term$.value;
+  }
   readonly term$: BehaviorSubject<string> = new BehaviorSubject('');
 
   /**
    * Whether this component is disabled
    */
   @Input()
-  set disabled(value: boolean) { this.disabled$.next(value); }
-  get disabled(): boolean { return this.disabled$.value; }
+  set disabled(value: boolean) {
+    this.disabled$.next(value);
+  }
+  get disabled(): boolean {
+    return this.disabled$.value;
+  }
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
@@ -185,7 +208,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.stream$$ = this.stream$
       .pipe(
-        debounce((term: string) => term === '' ? EMPTY : timer(this.debounce))
+        debounce((term: string) => (term === '' ? EMPTY : timer(this.debounce)))
       )
       .subscribe((term: string) => this.onSetTerm(term));
 
@@ -306,7 +329,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.searchTypeChange.emit(searchType);
 
-    const placeholder = `search.${searchType.toLowerCase()}.placeholder`;
+    const placeholder = `igo.geo.search.${searchType.toLowerCase()}.placeholder`;
     this.placeholder$.next(placeholder);
 
     this.setTerm(this.term);

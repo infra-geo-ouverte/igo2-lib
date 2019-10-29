@@ -44,6 +44,7 @@ export class AppLayerComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'OSM',
+            visible: true,
             baseLayer: true,
             source: dataSource
           })
@@ -107,7 +108,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           params: {
             layers: 'bgr_v_sous_route_res_sup_act',
             version: '1.3.0'
@@ -122,7 +123,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           optionsFromCapabilities: true,
           params: {
             layers: 'lieuhabite',
@@ -151,12 +152,15 @@ export class AppLayerComponent {
     this.layerService
       .createAsyncLayer({
         title: 'nurc:Arc_Sample_Parent',
-        visible: true,
+        visible: false,
         legendOptions: {
           // collapsed: false,
           display: true,
           // url: 'https://v.seloger.com/s/width/1144/visuels/0/m/l/4/0ml42xbt1n3itaboek3qec5dtskdgw6nlscu7j69k.jpg',
-          stylesAvailable: [{name: 'rain', title: 'Pluie'}, {name: 'raster', title: 'Défaut'}] //
+          stylesAvailable: [
+            { name: 'rain', title: 'Pluie' },
+            { name: 'raster', title: 'Défaut' }
+          ] //
         },
         sourceOptions: {
           type: 'wms',
@@ -176,7 +180,7 @@ export class AppLayerComponent {
         visible: false,
         sourceOptions: {
           type: 'wms',
-          url: 'https://ws.mapserver.transports.gouv.qc.ca/swtq',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           params: {
             layers: 'evenements',
             version: '1.3.0'

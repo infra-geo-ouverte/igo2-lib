@@ -14,12 +14,14 @@
     [view]="view"
     igoOverlay
     igoQuery
+    [queryFeatures]="true"
     (query)="handleQueryResults($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
   <igo-panel title="Details">
     <ng-container *ngIf="feature$ | async as feature">
+      <h1>Query Title : <span style="background-color: #e0e0e0;">{{getTitle(feature)}}</span></h1>
       <igo-feature-details [feature]="feature"></igo-feature-details>
     </ng-container>
   </igo-panel>

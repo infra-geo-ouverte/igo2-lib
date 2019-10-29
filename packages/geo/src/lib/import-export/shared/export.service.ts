@@ -22,7 +22,8 @@ export class ExportService {
     GML: 'gml',
     GPX: 'gpx',
     KML: 'kml',
-    Shapefile: 'ESRI Shapefile'
+    Shapefile: 'ESRI Shapefile',
+    CSV: 'CSV'
   };
 
   static noOgreFallbacks = ['GML', 'GPX', 'KML'];
