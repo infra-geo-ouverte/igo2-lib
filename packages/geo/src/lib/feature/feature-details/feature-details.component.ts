@@ -96,12 +96,12 @@ export class FeatureDetailsComponent {
       });
       return properties;
     } else {
-        if (this.state.connection && feature.meta.excludeAttribute) {
+        if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
           const excludeAttribute = feature.meta.excludeAttribute;
           excludeAttribute.forEach(attribute => {
             delete feature.properties[attribute];
           });
-        } else if (!this.state.connection && feature.meta.excludeAttributeOffline) {
+        } else if (!this.state.connection && feature.meta && feature.meta.excludeAttributeOffline) {
           const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
           excludeAttributeOffline.forEach(attribute => {
             delete feature.properties[attribute];
