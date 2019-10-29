@@ -1,27 +1,27 @@
-{	
-    "/ws/": {	
-      "target": "https://geoegl.msp.gouv.qc.ca",	
-      "secure": false,	
-      "changeOrigin": true	
-    },	
-    "/carto/": {	
-      "target": "https://geoegl.msp.gouv.qc.ca",	
-      "secure": false,	
-      "changeOrigin": true	
-    },	
-    "/apis/": {	
-      "target": "https://testgeoegl.msp.gouv.qc.ca",	
-      "secure": false,	
-      "changeOrigin": true	
-    },	
-    "/swtq": {	
-      "target": "https://ws.mapserver.transports.gouv.qc.ca",	
-      "changeOrigin": true,	
-      "secure": false	
-    },	
-    "/geoserver": {	
-      "target": "https://demo.geo-solutions.it",	
-      "changeOrigin": true,	
-      "secure": false	
-    }	
+{
+  "/ws/": {
+    "target": "https://geoegl.msp.gouv.qc.ca",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/carto/": {
+    "target": "https://geoegl.msp.gouv.qc.ca",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/apis/": {
+    "target": "https://testgeoegl.msp.gouv.qc.ca",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/swtq": {
+    "target": "https://ws.mapserver.transports.gouv.qc.ca",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/geoserver": {
+    "target": "https://demo.geo-solutions.it",
+    "changeOrigin": true,
+    "secure": false
   }
+}
