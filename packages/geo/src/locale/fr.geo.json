@@ -105,10 +105,7 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
-        "loadingLegendText": "Chargement de la légende",
         "filterPlaceholder": "Filtre la liste de couches",
-        "noLegendText": "Aucune légende disponible pour cette couche",
-        "noLegendScale": "Aucune légende disponible pour cette échelle",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "moreOptions": "Options sur la couche",
@@ -122,7 +119,14 @@
         "sortAlphabetically": "Trier la liste des couches en ordre alphabétique",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Rétablir l'affichage de l'ensemble des couches",
-        "trackFeature": "Suivre l'entité"
+        "trackFeature": "Suivre l'entité",
+        "legend" : {
+          "default": "Défaut",
+          "loadingLegendText": "Chargement de la légende",        
+          "noLegendText": "Aucune légende disponible pour cette couche",
+          "noLegendScale": "Aucune légende disponible pour cette échelle",
+          "selectStyle": "Sélectionner le style de la légende"
+        }
       },
       "download": {
         "action": "Télécharger les données associées",

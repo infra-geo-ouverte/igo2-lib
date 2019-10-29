@@ -3,6 +3,7 @@ import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
+import OlLayer from 'ol/layer/Layer';
 import { uuid } from '@igo2/utils';
 
 import {
@@ -78,14 +79,19 @@ export function featureToOl(
  * The output object has a reference to the feature id.
  * @param olFeature OL Feature
  * @param projectionIn OL feature projection
+ * @param olLayer OL Layer
  * @param projectionOut Feature projection
  * @returns Feature
  */
 export function featureFromOl(
   olFeature: OlFeature,
   projectionIn: string,
+  olLayer?: OlLayer,
   projectionOut = 'EPSG:4326'
 ): Feature {
+  let title;
+  let exclude;
+  let excludeOffline;
   const olFormat = new OlFormatGeoJSON();
 
   const keys = olFeature.getKeys().filter((key: string) => {
@@ -101,7 +107,13 @@ export function featureFromOl(
     featureProjection: projectionIn
   });
 
-  const title = olFeature.get('_title');
+  if (olLayer) {
+    title = olLayer.get('title');
+    exclude = olLayer.get('sourceOptions').excludeAttribute;
+    excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
+  } else {
+    title = olFeature.get('_title');
+  }
   const mapTitle = olFeature.get('_mapTitle');
   const id = olFeature.getId() ? olFeature.getId() : uuid();
 
@@ -113,7 +125,9 @@ export function featureFromOl(
       id,
       title: title ? title : mapTitle ? mapTitle : id,
       mapTitle,
-      revision: olFeature.getRevision()
+      revision: olFeature.getRevision(),
+      excludeAttribute: exclude,
+      excludeAttributeOffline: excludeOffline
     },
     properties,
     geometry,

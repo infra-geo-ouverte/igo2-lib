@@ -27,6 +27,8 @@ export interface FeatureMeta {
   order?: number;
   alias?: {[key: string]: string};
   revision?: number;
+  excludeAttribute?: Array<string>;
+  excludeAttributeOffline?: Array<string>;
 }
 
 export interface FeatureGeometry {
