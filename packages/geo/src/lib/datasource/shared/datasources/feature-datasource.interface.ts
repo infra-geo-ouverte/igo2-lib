@@ -13,6 +13,8 @@ export interface FeatureDataSourceOptions extends DataSourceOptions {
   format?: olFormatFeature;
   url?: string;
   pathOffline?: string;
+  excludeAttribute?: Array<string>;
+  excludeAttributeOffline?: Array<string>;
 
   ol?: olSourceVector;
 }

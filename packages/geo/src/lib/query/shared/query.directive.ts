@@ -178,15 +178,30 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private doQueryFeatures(event: OlMapBrowserPointerEvent): Observable<Feature[]> {
-    const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
+    const clickedFeatures = [];
+
+    this.map.ol.forEachFeatureAtPixel(
+      event.pixel,
+      (featureOL: OlFeature, layerOL: OlLayer) => {
+        if (featureOL) {
+          if (featureOL.get('features')) {
+            featureOL = featureOL.get('features')[0];
+          }
+          const feature = featureFromOl(featureOL, this.map.projection, layerOL);
+          clickedFeatures.push(feature);
+
+        } else {
+          const feature = featureFromOl(featureOL, this.map.projection, layerOL);
+          clickedFeatures.push(feature);
+        }
+      },
+    {
       hitTolerance: this.queryFeaturesHitTolerance || 0,
       layerFilter: this.queryFeaturesCondition ? this.queryFeaturesCondition : olLayerIsQueryable
     });
-    const features = (olFeatures || []).map((olFeature: OlFeature) => {
-      return featureFromOl(olFeature, this.map.projection);
-    });
+    
     const queryableLayers = this.map.layers.filter(layerIsQueryable);
-    features.forEach( (feature: Feature) => {
+    clickedFeatures.forEach( (feature: Feature) => {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
@@ -197,7 +212,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       });
     });
 
-    return of(features);
+    return of(clickedFeatures);
   }
 
   /**
