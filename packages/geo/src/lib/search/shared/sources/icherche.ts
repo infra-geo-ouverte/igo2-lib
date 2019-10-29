@@ -1,7 +1,7 @@
 import { Injectable, Inject, Injector } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { AuthService } from '@igo2/auth';
@@ -42,15 +42,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   static id = 'icherche';
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
+  title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  private hashtagsLieuxToKeep = [];
+
+  get title(): string {
+    return this.title$.getValue();
+  }
 
   constructor(
     private http: HttpClient,
+    private languageService: LanguageService,
     @Inject('options') options: SearchSourceOptions,
     @Inject(IChercheSearchResultFormatter)
     private formatter: IChercheSearchResultFormatter,
     injector: Injector
   ) {
     super(options);
+
+    this.languageService.translate
+      .get(this.options.title)
+      .subscribe(title => this.title$.next(title));
 
     const authService = injector.get(AuthService);
     if (this.settings.length) {
@@ -74,7 +86,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'iCherche',
+      title: 'igo.geo.search.icherche.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
       settings: [
         {
@@ -88,11 +100,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: true,
               hashtags: ['adresse']
             },
-            // {
-            //   title: 'Ancienne adresse',
-            //   value: 'ancienne_adresse',
-            //   enabled: true
-            // },
+            {
+              title: 'Ancienne adresse',
+              value: 'anciennes-adresses',
+              enabled: false
+            },
             {
               title: 'Code Postal',
               value: 'codes-postaux',
@@ -186,27 +198,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           name: 'ecmax',
           values: [
             {
-              title: '10',
+              title: '10 %',
               value: 10,
               enabled: false
             },
             {
-              title: '30',
+              title: '30 %',
               value: 30,
               enabled: true
             },
             {
-              title: '50',
+              title: '50 %',
               value: 50,
               enabled: false
             },
             {
-              title: '75',
+              title: '75 %',
               value: 75,
               enabled: false
             },
             {
-              title: '100',
+              title: '100 %',
               value: 100,
               enabled: false
             }
@@ -246,7 +258,18 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         const typeSetting = this.settings.find(s => s.name === 'type');
         typeSetting.values.forEach(v => {
           const regex = new RegExp(`^${v.value}(\.*)?`);
-          v.available = types.findIndex(value => regex.test(value)) > -1;
+          const typesMatched = types.filter(value => regex.test(value));
+          v.available = typesMatched.length > 0;
+          if (v.value === 'lieux') {
+            this.hashtagsLieuxToKeep = [
+              ...(new Set(
+                typesMatched
+                  .map(t => t.split('.'))
+                  .reduce((a, b) => a.concat(b))
+                  .filter(t => t !== 'lieux')
+              ) as any)
+            ];
+          }
         });
       });
   }
@@ -255,20 +278,24 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     term: string,
     options: TextSearchOptions
   ): HttpParams {
-    return new HttpParams({
-      fromObject: Object.assign(
-        {
-          q: this.computeTerm(term),
-          geometry: true,
-          bbox: true,
-          icon: true,
-          type:
-            'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
-        },
-        this.params,
-        this.computeOptionsParam(term, options || {}).params
-      )
-    });
+    const queryParams: any = Object.assign(
+      {
+        q: this.computeTerm(term),
+        geometry: true,
+        bbox: true,
+        icon: true,
+        type:
+          'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
+      },
+      this.params,
+      this.computeOptionsParam(term, options || {}).params
+    );
+
+    if (queryParams.q.indexOf('#') !== -1) {
+      queryParams.type = 'lieux';
+    }
+
+    return new HttpParams({ fromObject: queryParams });
   }
 
   private extractResults(response: IChercheResponse): SearchResult<Feature>[] {
@@ -350,7 +377,29 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    */
   private computeTerm(term: string): string {
-    return term.replace(/(#[^\s]*)/g, '').replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
+    // Keep hashtags for "lieux"
+    const hashtags = term.match(/(#[^\s]+)/g) || [];
+    let keep = false;
+    keep = hashtags.some(hashtag => {
+      const hashtagKey = hashtag.substring(1);
+      return this.hashtagsLieuxToKeep.some(
+        h =>
+          h
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') ===
+          hashtagKey
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+      );
+    });
+
+    if (!keep) {
+      term = term.replace(/(#[^\s]*)/g, '');
+    }
+
+    return term.replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
   }
 
   /**
@@ -383,12 +432,23 @@ export class IChercheReverseSearchSource extends SearchSource
   static type = FEATURE;
   static propertiesBlacklist: string[] = [];
 
+  title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
+  get title(): string {
+    return this.title$.getValue();
+  }
+
   constructor(
     private http: HttpClient,
+    private languageService: LanguageService,
     @Inject('options') options: SearchSourceOptions,
     injector: Injector
   ) {
     super(options);
+
+    this.languageService.translate
+      .get(this.options.title)
+      .subscribe(title => this.title$.next(title));
 
     const authService = injector.get(AuthService);
     if (this.settings.length) {
@@ -412,8 +472,8 @@ export class IChercheReverseSearchSource extends SearchSource
 
   protected getDefaultOptions(): SearchSourceOptions {
     return {
-      title: 'Territoire (Géocodage inversé)',
-      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/territoires',
+      title: 'igo.geo.search.ichercheReverse.name',
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/terrapi',
       settings: [
         {
           type: 'checkbox',
@@ -450,6 +510,38 @@ export class IChercheReverseSearchSource extends SearchSource
               title: 'Région administrative',
               value: 'regadmin',
               enabled: true
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'radius',
+          name: 'buffer',
+          values: [
+            {
+              title: '100 m',
+              value: 100,
+              enabled: true
+            },
+            {
+              title: '500 m',
+              value: 500,
+              enabled: false
+            },
+            {
+              title: '1 km',
+              value: 1000,
+              enabled: false
+            },
+            {
+              title: '2 km',
+              value: 2000,
+              enabled: false
+            },
+            {
+              title: '5 km',
+              value: 5000,
+              enabled: false
             }
           ]
         }
@@ -490,12 +582,16 @@ export class IChercheReverseSearchSource extends SearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    const distance = options.distance;
+    if (options.distance) {
+      options.params = Object.assign(options.params || {}, {
+        buffer: options.distance
+      });
+    }
+
     return new HttpParams({
       fromObject: Object.assign(
         {
           loc: lonLat.join(','),
-          buffer: distance ? String(distance) : '100',
           geometry: true,
           icon: true
         },

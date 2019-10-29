@@ -145,7 +145,7 @@ export class MapViewController extends MapController {
    * @param dpi Dot per inches
    * @returns View scale
    */
-  getScale(dpi = 72) {
+  getScale(dpi = 96) {
     return getScaleFromResolution(
       this.getResolution(),
       this.getOlProjection().getUnits(),

@@ -10,7 +10,6 @@ import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filte
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import {
   formatWFSQueryString,
-  defaultWfsVersion,
   checkWfsParams,
   defaultFieldNameGeometry
 } from './wms-wfs.utils';
@@ -73,6 +72,11 @@ export class WMSDataSource extends DataSource {
       sourceParams.info_format = sourceParams.INFO_FORMAT;
     }
 
+    const dpi = sourceParams.dpi || 96;
+    sourceParams.DPI = dpi;
+    sourceParams.MAP_RESOLUTION = dpi;
+    sourceParams.FORMAT_OPTIONS = 'dpi:' + dpi;
+
     if (options.refreshIntervalSec && options.refreshIntervalSec > 0) {
       setInterval(() => {
         this.refresh();
@@ -93,6 +97,7 @@ export class WMSDataSource extends DataSource {
         dynamicUrl: this.buildDynamicDownloadUrlFromParamsWFS(options)
       });
     } //  ####   END  if paramsWFS
+
     if (!options.sourceFields || options.sourceFields.length === 0) {
       options.sourceFields = [];
     } else {
@@ -118,6 +123,7 @@ export class WMSDataSource extends DataSource {
         ? false
         : true;
     }
+
     if (
       sourceParams.layers.split(',').length > 1 &&
       initOgcFilters &&
@@ -187,7 +193,7 @@ export class WMSDataSource extends DataSource {
     }
 
     legend = layers.map((layer: string) => {
-      const separator = baseUrl.match( /\?/m) ? '&' : '?'
+      const separator = baseUrl.match(/\?/) ? '&' : '?';
       return {
         url: `${baseUrl}${separator}${params.join('&')}&LAYER=${layer}`,
         title: layers.length > 1 ? layer : undefined,

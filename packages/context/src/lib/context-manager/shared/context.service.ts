@@ -255,19 +255,6 @@ export class ContextService {
       request = this.getLocalContexts();
     }
     request.subscribe(contexts => {
-      const publicsContexts = this.contexts$.value.public;
-
-      if (publicsContexts) {
-        const contextUri = publicsContexts.find(
-          c => c.uri === this.options.defaultContextUri
-        );
-        if (contextUri) {
-          if (!contexts.public) {
-            contexts.public = [];
-          }
-          contexts.public.push(contextUri);
-        }
-      }
       this.contexts$.next(contexts);
     });
   }

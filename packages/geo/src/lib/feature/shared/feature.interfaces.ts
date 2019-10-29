@@ -7,6 +7,7 @@ import { EntityKey, EntityStoreOptions } from '@igo2/common';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
+import OlFeature from 'ol/Feature';
 
 export interface Feature<P = {[key: string]: any}> {
   type: string;
@@ -15,6 +16,7 @@ export interface Feature<P = {[key: string]: any}> {
   properties: P;
   extent?: [number, number, number, number];
   meta?: FeatureMeta;
+  ol?: OlFeature;
 }
 
 export interface FeatureMeta {

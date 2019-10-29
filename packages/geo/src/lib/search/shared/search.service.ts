@@ -40,13 +40,12 @@ export class SearchService {
 
     const response = stringToLonLat(term, this.mapService.getMap().projection);
     if (response.lonLat) {
-      return this.reverseSearch(response.lonLat);
+      return this.reverseSearch(response.lonLat, { distance: response.radius });
     } else if (response.message) {
       console.log(response.message);
     }
 
-    let sources = this.searchSourceService
-      .getEnabledSources();
+    let sources = this.searchSourceService.getEnabledSources();
 
     if (options) {
       if (options.getEnabledOnly || options.getEnabledOnly === undefined) {
@@ -55,7 +54,9 @@ export class SearchService {
         sources = this.searchSourceService.getSources();
       }
       if (options.searchType) {
-        sources = sources.filter(source => source.getType() === options.searchType);
+        sources = sources.filter(
+          source => source.getType() === options.searchType
+        );
       }
     }
     sources = sources.filter(sourceCanSearch);

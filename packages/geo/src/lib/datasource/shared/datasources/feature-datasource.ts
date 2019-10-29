@@ -42,4 +42,10 @@ export class FeatureDataSource extends DataSource {
   }
 
   public onUnwatch() {}
+
+  get queryTitle(): string {
+    return (this.options as any).queryTitle
+      ? (this.options as any).queryTitle
+      : 'title';
+  }
 }

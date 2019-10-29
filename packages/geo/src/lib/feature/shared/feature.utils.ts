@@ -116,7 +116,8 @@ export function featureFromOl(
       revision: olFeature.getRevision()
     },
     properties,
-    geometry
+    geometry,
+    ol: olFeature
   };
 }
 
