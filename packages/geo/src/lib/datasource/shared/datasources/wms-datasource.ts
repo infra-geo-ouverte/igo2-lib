@@ -68,6 +68,11 @@ export class WMSDataSource extends DataSource {
       }
     }
 
+    if (sourceParams && sourceParams.styles) {
+      sourceParams.STYLES = sourceParams.styles;
+      delete sourceParams.styles;
+    }
+
     if (sourceParams && sourceParams.INFO_FORMAT) {
       sourceParams.info_format = sourceParams.INFO_FORMAT;
     }
@@ -166,7 +171,7 @@ export class WMSDataSource extends DataSource {
 
   getLegend(style?: string, scale?: number): Legend[] {
     let legend = super.getLegend();
-    if (legend.length > 0 && (!style && !scale)) {
+    if (legend.length > 0 && (style === undefined && !scale)) {
       return legend;
     }
 
@@ -197,7 +202,7 @@ export class WMSDataSource extends DataSource {
       return {
         url: `${baseUrl}${separator}${params.join('&')}&LAYER=${layer}`,
         title: layers.length > 1 ? layer : undefined,
-        currentStyle: !style ? undefined : style as string
+        currentStyle: style === undefined ? undefined : style as string
       };
     });
 

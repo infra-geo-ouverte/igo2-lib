@@ -2,10 +2,11 @@ import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild
 
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
-import { Legend, DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
-import { Layer } from '../shared/layers';
+import { Legend } from '../../datasource/shared/datasources/datasource.interface';
+import { Layer, ItemStyleOptions } from '../shared/layers';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { map } from 'rxjs/operators';
+import { LanguageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -28,9 +29,14 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   private resolution$$: Subscription;
 
   /**
+   * The available styles
+   */
+  public styles;
+
+  /**
    * The style used to make the legend
    */
-  public currentStyle = '';
+  public currentStyle;
 
   /**
    * The scale used to make the legend
@@ -52,29 +58,38 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   @Input() layer: Layer;
 
-  constructor(private capabilitiesService: CapabilitiesService) {}
+  constructor(
+    private capabilitiesService: CapabilitiesService,
+    private languageService: LanguageService) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
    */
   ngOnInit() {
     let lastlLegend = this.layer.legend;
-    const listStyles = this.listStyles();
-
-    if (!this.layer.legend) {
-      if (listStyles && listStyles.length > 1) {
-        this.currentStyle = this.layer.options.legendOptions.stylesAvailable[0].name;
+    this.styles = this.listStyles();
+    const sourceOptions = this.layer.options.source.options as any;
+    if (
+      sourceOptions &&
+      sourceOptions.params &&
+      sourceOptions.params.STYLES) {
+      // if a styles is provided into the layers wms params
+      this.currentStyle = this.styles.find(style => style.name === sourceOptions.params.STYLES).name;
+    } else if (!this.layer.legend) {
+      // if no legend is manually provided
+      if (this.styles && this.styles.length > 1) {
+        this.currentStyle = this.styles[0].name;
       }
-      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
-    } else if (listStyles && listStyles.length > 1) {
-        this.currentStyle = lastlLegend[0].currentStyle;
+    } else if (this.styles && this.styles.length > 1) {
+      this.currentStyle = lastlLegend[0].currentStyle;
     }
 
+    lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
     if (this.updateLegendOnResolutionChange === true) {
       const resolution$ = this.layer.map.viewController.resolution$;
       this.resolution$$ = resolution$.subscribe((resolution: number) => this.onResolutionChange(resolution));
     } else if (lastlLegend.length !== 0) {
-        this.legendItems$.next(lastlLegend);
+      this.legendItems$.next(lastlLegend);
     }
   }
 
@@ -140,10 +155,17 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     this.legendItems$.next(legendItems);
   }
 
-  listStyles() {
+  private listStyles() {
     const layerOptions = this.layer.options;
     if (layerOptions && layerOptions.legendOptions) {
-        return layerOptions.legendOptions.stylesAvailable;
+      const translate = this.languageService.translate;
+      const title = translate.instant('igo.geo.layer.legend.default');
+      const stylesAvailable =  [{ name: '', title } as ItemStyleOptions]
+        .concat(layerOptions.legendOptions.stylesAvailable.filter(sA => (
+          sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
+          sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'defaut')));
+      stylesAvailable.map(s => s.title = s.title.charAt(0).toUpperCase() + s.title.slice(1).replace(/_/g, ' '));
+      return stylesAvailable;
     }
     return ;
   }

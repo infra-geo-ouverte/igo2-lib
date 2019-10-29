@@ -14,21 +14,24 @@
         </mat-icon>
         <h4 matLine>{{computeItemTitle(item) | async}}</h4>
       </mat-list-item>  
-      <mat-list-item *ngIf="currentStyle">
-        <mat-select tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
-          [(ngModel)]="currentStyle" (selectionChange)="onChangeStyle()">
-          <mat-option *ngFor="let style of listStyles()" [value]="style.name">{{style.title}}</mat-option>
-        </mat-select>
-      </mat-list-item>
       <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
+        <div *ngIf="currentStyle !== undefined">
+            <mat-form-field>
+              <mat-select tooltip-position="below" matTooltipShowDelay="500"
+                [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" [(ngModel)]="currentStyle"
+                (selectionChange)="onChangeStyle()">
+                <mat-option *ngFor="let style of styles" [value]="style.name">{{style.title}}</mat-option>
+              </mat-select>
+          </mat-form-field>
+        </div>
         <div *ngIf="!(item.collapsed)">
           <div *ngIf="item.url">
             <img #renderedLegend id="{{item.title}}" (load)="onLoadImage(item.title)"
               src="{{(item.url | secureImage) | async}}"
-              alt="{{'igo.geo.layer.loadingLegendText' | translate}}"
+              alt="{{'igo.geo.layer.legend.loadingLegendText' | translate}}"
             >
             <small *ngIf="imagesHeight[item.title]<16">
-                {{'igo.geo.layer.noLegendScale' | translate}}
+                {{'igo.geo.layer.legend.noLegendScale' | translate}}
             </small>
           </div>
           <div
@@ -43,7 +46,7 @@
 
   <ng-template #noItems>
     <small>
-      {{'igo.geo.layer.noLegendText' | translate}}
+      {{'igo.geo.layer.legend.noLegendText' | translate}}
     </small>
   </ng-template>
 
