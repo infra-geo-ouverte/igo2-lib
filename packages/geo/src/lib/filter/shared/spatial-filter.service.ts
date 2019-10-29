@@ -18,7 +18,7 @@ export class SpatialFilterService {
   /*
    * Type association with URL
    */
-  public urlType = {
+  public urlFilterList = {
     'AdmRegion': 'regadmin',
     'Arrond': 'arrondissements',
     'CircFed': 'circ-fed',
@@ -27,6 +27,9 @@ export class SpatialFilterService {
     'MRC': 'mrc',
     'Mun': 'municipalites',
     'RegTour': 'tourisme',
+  };
+
+  public urlThematicType = {
     'bornes': 'Bornes',
     'hydro': 'Hydrographie',
     'routes': 'Routes',
@@ -53,8 +56,8 @@ export class SpatialFilterService {
     'lieux.securite.organisme': 'Organismes de sécurité',
     'lieux.securite.palais-justice': 'Palais de justice',
     'lieux.securite.penitencier-fed': 'Pénitencier fédéraux',
-    'lieux.securite.penitencier-prov': 'Pénitencier provinciaux',
-  };
+    'lieux.securite.penitencier-prov': 'Pénitencier provinciaux'
+  }
 
   constructor(
     private http: HttpClient,
@@ -71,7 +74,7 @@ export class SpatialFilterService {
   loadFilterList(type: SpatialFilterQueryType): Observable<Feature[]> {
     const urlPath = type as string;
     if (urlPath) {
-      return this.http.get<{features: Feature[]}>(this.baseUrl + this.urlType[urlPath], {
+      return this.http.get<{features: Feature[]}>(this.baseUrl + this.urlFilterList[urlPath], {
         params: {
           // geometry: "true"
         }
@@ -89,15 +92,15 @@ export class SpatialFilterService {
   /*
    * Loading item list (STRING)
    */
-  loadItemList() {
+  loadThematicsList() {
     const url = 'types';
     const items: string[] = [];
     return this.http.get(this.baseUrl + url)
       .pipe(
         map((types: string[]) => {
           types.forEach(type => {
-            if (this.urlType[type.toString()]) {
-              items.push(this.urlType[type.toString()]);
+            if (this.urlThematicType[type.toString()]) {
+              items.push(this.urlThematicType[type.toString()]);
             }
           });
           return items;
@@ -109,15 +112,16 @@ export class SpatialFilterService {
    * Loading data for spatial filter item component (Address or Thematics) depends on predefined zone or draw zone (feature)
    */
   loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematic?: string, buffer?: number) {
-    if (type) {
+    if (type) { // Predefined type
       const urlType = type as string;
-      const url = this.baseUrl + this.urlType[urlType];
+      const url = this.baseUrl + this.urlFilterList[urlType];
       let urlItem = '';
       if (itemType === SpatialFilterItemType.Address) {
         urlItem = '/adresses';
         return this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
           params: {
-            geometry: 'true'
+            geometry: 'true',
+            icon: 'true'
           }
         }).pipe(
           map(featureCollection => featureCollection.features.map(feature => {
@@ -128,11 +132,12 @@ export class SpatialFilterService {
             return feature;
           }))
         );
-      } else {
-        urlItem = this.getKeyByValue(this.urlType, thematic);
+      } else { // If thematics search
+        urlItem = this.getKeyByValue(this.urlThematicType, thematic);
         return this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
           params: {
-            geometry: 'true'
+            geometry: 'true',
+            icon: 'true'
           }
         }).pipe(
           map(featureCollection => featureCollection.features.map(feature => {
@@ -144,7 +149,7 @@ export class SpatialFilterService {
           }))
         );
       }
-    } else {
+    } else { // Draw type
       const url = this.baseUrl + 'locate';
       const urlCoord = '&loc=' + JSON.stringify(feature);
       const urlBuffer = buffer ? '&buffer=' + buffer as string : '';
@@ -152,7 +157,8 @@ export class SpatialFilterService {
         const urlItem = '?type=adresses';
         return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
           params: {
-            geometry: 'true'
+            geometry: 'true',
+            icon: 'true'
           }
         }).pipe(
           map(featureCollection => featureCollection.features.map(feature => {
@@ -163,11 +169,12 @@ export class SpatialFilterService {
             return feature;
           }))
         );
-      } else {
-        const urlItem = '?type=' + this.getKeyByValue(this.urlType, thematic);
+      } else { // If thematics search
+        const urlItem = '?type=' + this.getKeyByValue(this.urlThematicType, thematic);
         return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
           params: {
-            geometry: 'true'
+            geometry: 'true',
+            icon: 'true'
           }
         }).pipe(
           map(featureCollection => featureCollection.features.map(feature => {
@@ -186,7 +193,7 @@ export class SpatialFilterService {
    * Get one territory by id (WITH GEOMETRY)
    */
   loadItemById(feature: Feature, type: SpatialFilterQueryType): Observable<Feature> {
-    const featureType = this.urlType[type];
+    const featureType = this.urlFilterList[type];
     const featureCode = '/' + feature.properties.code;
     if (featureType && featureCode) {
       return this.http.get<Feature>(this.baseUrl + featureType + featureCode, {
@@ -196,7 +203,9 @@ export class SpatialFilterService {
       }).pipe(
         map(feature => {
           feature.meta = {
-            id: feature.properties.code
+            id: feature.properties.code,
+            alias: feature.properties.nom,
+            title: feature.properties.nom
           };
           return feature;
         })

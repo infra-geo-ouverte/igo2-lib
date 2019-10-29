@@ -11,7 +11,12 @@
     <hr>
   </mat-card-content>
 
-  <igo-map-browser [map]="map" [view]="view" igoOverlay igoQuery (query)="handleQueryResults($event)">
+  <igo-map-browser
+    [map]="map"
+    [view]="view"
+    igoOverlay igoQuery
+    (query)="handleQueryResults($event)"
+    [queryFeatures]="true">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 

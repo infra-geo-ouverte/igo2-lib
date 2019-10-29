@@ -212,6 +212,15 @@ export class StyleService {
       ];
     } else {
       style = createOverlayMarkerStyle();
+      // console.log(feature);
+      // console.log(feature.values_.features[0].icon.icon);
+      // style = new olstyle.Style({
+      //   image: new olstyle.Icon({
+      //     src: feature.values_.features[0].icon.icon,
+      //     //scale: this.map.viewController.getScale() ? scale : 1
+      //   })
+      // });
+      // console.log(style);
     }
     return style;
   }

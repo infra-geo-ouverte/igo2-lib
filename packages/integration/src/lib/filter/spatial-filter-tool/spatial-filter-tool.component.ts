@@ -58,7 +58,7 @@ export class SpatialFilterToolComponent {
 
   private format = new olFormatGeoJSON();
 
-  public store: EntityStore<Feature> = new EntityStore<Feature>([]);
+  public store: EntityStore<Feature> = new EntityStore<Feature>([]); // Store to print results at the end
 
   public spatialListStore: EntityStore<Feature> = new EntityStore<Feature>([]);
 
@@ -140,7 +140,7 @@ export class SpatialFilterToolComponent {
   }
 
   /**
-   * Try to add features to the map overlay
+   * Try to add zone feature to the map overlay
    */
   public tryAddFeaturesToMap(features: Feature[]) {
     for (const feature of features) {
@@ -193,6 +193,10 @@ export class SpatialFilterToolComponent {
     }
   }
 
+  /**
+   * Try to point features to the map overlay
+   * Necessary to create clusters
+   */
   private tryAddPointToMap(features: Feature[], id) {
     if (features.length > 1) {
       if (this.map === undefined) {
@@ -225,6 +229,9 @@ export class SpatialFilterToolComponent {
     }
   }
 
+  /**
+   * Try to line or polygon features to the map overlay
+   */
   private tryAddLayerToMap(features: Feature[], id) {
     if (features.length > 1) {
       if (this.map === undefined) {
@@ -264,8 +271,27 @@ export class SpatialFilterToolComponent {
     }
   }
 
+  /**
+   * Permit the query action on results
+   */
   handleQueryResults(results) {
-    const features: Feature[] = results.features;
+    let features: Feature[] = [];
+    if (results.features.length) {
+      results.features.forEach(feature => {
+        if (feature.properties.features) {
+          feature.properties.features.forEach(element => {
+            element.title = element.values_.nom;
+          });
+          features.push(feature.properties.features);
+        } else {
+          feature.meta.alias = feature.properties.nom;
+          features.push(feature);
+        }
+      });
+    } else {
+      results.features.meta.alias = results.features.properties.nom;
+      features = results.features;
+    }
     let feature;
     if (features.length) {
       feature = features[0];
