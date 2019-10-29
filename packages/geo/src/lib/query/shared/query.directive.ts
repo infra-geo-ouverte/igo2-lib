@@ -178,7 +178,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private doQueryFeatures(event: OlMapBrowserPointerEvent): Observable<Feature[]> {
-    let feature;
     const clickedFeatures = [];
 
     this.map.ol.forEachFeatureAtPixel(
@@ -188,11 +187,11 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
           if (featureOL.get('features')) {
             featureOL = featureOL.get('features')[0];
           }
-          feature = featureFromOl(featureOL, this.map.projection, layerOL);
+          const feature = featureFromOl(featureOL, this.map.projection, layerOL);
           clickedFeatures.push(feature);
 
         } else {
-          feature = featureFromOl(featureOL, this.map.projection, layerOL);
+          const feature = featureFromOl(featureOL, this.map.projection, layerOL);
           clickedFeatures.push(feature);
         }
       },
@@ -213,7 +212,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       });
     });
 
-    return of(features);
+    return of(clickedFeatures);
   }
 
   /**
