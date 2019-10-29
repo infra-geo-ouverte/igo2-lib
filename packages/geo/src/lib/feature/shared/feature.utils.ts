@@ -3,7 +3,7 @@ import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
-import OlLayer from 'ol/Layer';
+import OlLayer from 'ol/layer/Layer';
 import { uuid } from '@igo2/utils';
 
 import {
