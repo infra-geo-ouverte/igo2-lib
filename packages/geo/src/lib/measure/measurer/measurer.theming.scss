@@ -1,4 +1,4 @@
-@mixin igo-measurer-theming($theme) {
+@mixin igo-measurer-theming($theme, $typography) {
   $foreground: map-get($theme, foreground);
 
   .igo-map-tooltip {
@@ -13,6 +13,6 @@
     border: 1px solid rgb(255, 205, 51);
     color: mat-color($foreground, text);
     font-weight: bold;
-    font-size: 14px;
+    font-size: mat-font-size($typography, subheading-2);
   }
 }

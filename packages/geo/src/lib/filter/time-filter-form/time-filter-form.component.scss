@@ -12,7 +12,7 @@ mat-slider >>> div.mat-slider-thumb-label {
 }
 
 mat-slider >>> span.mat-slider-thumb-label-text {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 #time-slider {
@@ -23,11 +23,6 @@ mat-slider >>> span.mat-slider-thumb-label-text {
     width: 60%;
     margin: 0 auto;
   }
-}
-
-#playFilterIcon {
-  font-size: 32px;
-  cursor: pointer;
 }
 
 .date-below {

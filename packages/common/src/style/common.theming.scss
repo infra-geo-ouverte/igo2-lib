@@ -5,7 +5,7 @@
 @import '../lib/panel/panel.theming';
 @import '../lib/tool/tool.theming';
 
-@mixin igo-common-theming($theme) {
+@mixin igo-common-theming($theme, $typography) {
   @include igo-action-theming($theme);
   @include igo-collapsible-theming($theme);
   @include igo-entity-theming($theme);
