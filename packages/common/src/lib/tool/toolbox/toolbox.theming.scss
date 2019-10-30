@@ -1,7 +1,7 @@
 @mixin igo-toolbox-theming($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
-
+  $foreground: map-get($theme, foreground);
 
   igo-toolbox > igo-actionbar mat-list.mat-list-base igo-actionbar-item mat-list-item {
     &:hover {
@@ -35,13 +35,13 @@
       .mat-list-item.mat-list-item-with-avatar {
         color: white;
         &:hover {
-          color: black;
+          color: mat-color($foreground, text);
         }
 
         &.tool-activated,
         &.children-tool-activated {
           background-color: white;
-          color: black;
+          color: mat-color($foreground, text);
         }
       }
     }
