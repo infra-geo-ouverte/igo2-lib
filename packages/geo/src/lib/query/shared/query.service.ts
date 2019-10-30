@@ -273,7 +273,7 @@ export class QueryService {
         const sourceOptions = (layer.options.sourceOptions as WMSDataSourceOptions);
         exclude = sourceOptions.excludeAttribute;
       }
-      
+
       let title = this.getQueryTitle(feature, layer);
       if (!title && features.length > 1) {
         title = `${layer.title} (${index + 1})`;
