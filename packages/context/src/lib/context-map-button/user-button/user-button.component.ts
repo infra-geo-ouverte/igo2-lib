@@ -35,6 +35,7 @@ export class UserButtonComponent {
 
   public expand = false;
   public visible = false;
+  public hasApi = false;
 
   constructor(
     private dialog: MatDialog,
@@ -42,6 +43,7 @@ export class UserButtonComponent {
     public auth: AuthService
   ) {
     this.visible = this.config.getConfig('auth') ? true : false;
+    this.hasApi = this.config.getConfig('context.url') !== undefined;
   }
 
   accountClick() {
