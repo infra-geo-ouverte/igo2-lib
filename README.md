@@ -51,14 +51,16 @@ If you want to develop in IGO2 Library, it can be installed by:
 ### Development server
 
 Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the demo's source files.
-If you modify files from the lib (../project/*) you must run:
+If you modify files from the lib (../packages/*) you must run:
 1. npm run build.libs to rebuild all the libs
 2. OR
-3. npm run build.geo if you have only modifyed the geo project or whatever part of the lib...
+3. npm run build.geo if you have only modifyed the geo package or whatever part of the lib...
+4. OR
+5. npm run start.watch to be aware of any modifications done to the lib.
 
 ### Build
 
-Run `npm run build.libs` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run `npm run build.libs` to build the whole project. The build artifacts will be stored in the `dist/` directory.
 
 ### Running tests
 
