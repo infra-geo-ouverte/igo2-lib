@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Feature } from '../../feature/shared';
 import { SpatialFilterQueryType, SpatialFilterItemType } from './spatial-filter.enum';
+import { SpatialFilterThematic } from './spatial-filter.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -55,8 +56,8 @@ export class SpatialFilterService {
     'lieux.securite.correctionnel': 'Centres correctionnels',
     'lieux.securite.organisme': 'Organismes de sécurité',
     'lieux.securite.palais-justice': 'Palais de justice',
-    'lieux.securite.penitencier-fed': 'Pénitencier fédéraux',
-    'lieux.securite.penitencier-prov': 'Pénitencier provinciaux'
+    'lieux.securite.penitencier-fed': 'Pénitenciers fédéraux',
+    'lieux.securite.penitencier-prov': 'Pénitenciers provinciaux'
   }
 
   constructor(
@@ -94,13 +95,29 @@ export class SpatialFilterService {
    */
   loadThematicsList() {
     const url = 'types';
-    const items: string[] = [];
+    const items: SpatialFilterThematic[] = [];
     return this.http.get(this.baseUrl + url)
       .pipe(
         map((types: string[]) => {
           types.forEach(type => {
             if (this.urlThematicType[type.toString()]) {
-              items.push(this.urlThematicType[type.toString()]);
+              const language = this.languageService.getLanguage();
+              let item: SpatialFilterThematic = {
+                name: undefined
+              };
+              item.name =
+                language === 'fr' ? this.urlThematicType[type.toString()] :
+                this.languageService.translate
+                  .instant('igo.geo.spatialFilter.frenchThematics.'+ this.urlThematicType[type.toString()]);
+              if (type.startsWith('lieux')) {
+                let substr = type.substring(6, type.length);
+                if (substr.includes('.')) {
+                  const index = substr.indexOf('.');
+                  substr = substr.substring(0, index);
+                }
+                item.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.' + substr);
+              }
+              items.push(item);
             }
           });
           return items;

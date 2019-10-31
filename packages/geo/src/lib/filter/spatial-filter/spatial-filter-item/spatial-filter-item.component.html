@@ -19,13 +19,13 @@
   </mat-radio-group>
 </div>
 
-<mat-table class="thematics-list" *ngIf="selectedItemType==='Thematics'"
-  [dataSource]="thematicsList">
+<mat-table class="thematics" *ngIf="selectedItemType==='Thematics' && groups.length > 0"
+  [dataSource]="thematics">
 
   <!-- Name Column -->
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.layer' | translate}}</mat-header-cell>
-    <mat-cell *matCellDef="let thematic"> {{thematic}} </mat-cell>
+    <mat-cell *matCellDef="let thematic"> {{thematic.name}} </mat-cell>
   </ng-container>
 
   <!-- Select Column -->
@@ -46,6 +46,16 @@
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  <!-- Group header
+  <ng-container matColumnDef="groupHeader" *ngIf="groups.length > 0">
+    <mat-cell *matCellDef="let thematic">{{thematic.group}}</mat-cell>
+  </ng-container>
+
+  <div *ngIf="groups.length > 0">
+    <mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup"></mat-row>
+  </div> -->
+
 </mat-table>
 
 <div class="radius-unit" *ngIf="isPoint()">
@@ -56,15 +66,9 @@
     </mat-form-field>
   </form>
 
-  <mat-form-field class="unit-field">
-    <mat-select
-      [value]="measureUnit"
-      (selectionChange)="onMeasureUnitChange($event.value)">
-      <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
-        {{('igo.geo.measure.' + measureUnit) | translate}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <label class="unit-field">
+    {{('igo.geo.measure.' + measureUnit) | translate}}
+  </label>
 </div>
 
 <div class="buttons">

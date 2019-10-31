@@ -3,16 +3,16 @@
     margin-left: 5px;
 }
 
-.mat-tab-group {
-    margin-bottom: 5px;
-}
-
 .mat-tab-group ::ng-deep .mat-tab-body-content {
     overflow: hidden;
 }
 
 .mat-tab-group ::ng-deep .mat-tab-label {
-    width: 100px;
+    width: 115px;
     min-width: unset;
     padding: 10px;
+}
+
+.mat-tab-group ::ng-deep .mat-tab-body-wrapper {
+    margin-top: 5px;
 }

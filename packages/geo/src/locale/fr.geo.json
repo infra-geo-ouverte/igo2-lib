@@ -275,9 +275,9 @@
         "startDate": "Date de début"
       },
       "spatialFilter": {
-        "predefined" : "Prédéfinie",
+        "predefined" : "Zone Prédéfinie",
         "polygon": "Polygone",
-        "point": "Point",
+        "point": "Cercle",
         "AdmRegion": "Région Administrative",
         "Mun": "Municipalité",
         "Arrond": "Arrondissement",
@@ -292,14 +292,25 @@
         "entity": "Entité",
         "layer": "Couche",
         "goSearch": "Lancer la recherche",
-        "removeLayer": "Retirer les couches",
+        "removeLayer": "Retirer la sélection",
         "clearForm": "Retirer la zone",
         "clearSearch": "Retirer les champs",
         "Address": "Adresses",
         "Thematics": "Thématiques",
         "searchResults": "Résultats de la recherche",
         "type": "Type",
-        "radius": "Rayon"
+        "radius": "Rayon",
+        "group" : {
+          "bati": "Infrastructure",
+          "geographie": "Géographie",
+          "hydro": "Hydrographie",
+          "parc": "Parc",
+          "secteur": "Secteur",
+          "culturel": "Culturel",
+          "education": "Éducation",
+          "sante": "Santé",
+          "securite": "Sécurité"
+        }
       },
       "measure": {
         "dialog": {
