@@ -370,7 +370,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.search.emit({ research, results });
 
     if (this.store !== undefined) {
-      const newResults = this.store.entities$.value
+      const newResults = this.store.all()
         .filter(result => result.source !== research.source)
         .concat(results);
       this.store.load(newResults);
