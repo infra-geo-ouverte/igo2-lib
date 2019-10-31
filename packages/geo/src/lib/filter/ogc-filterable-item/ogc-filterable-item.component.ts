@@ -15,6 +15,7 @@ import {
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
 import { OgcFilterWriter } from '../shared/ogc-filter';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-ogc-filterable-item',
@@ -29,6 +30,7 @@ export class OgcFilterableItemComponent implements OnInit {
   public filtersAreEditable = true;
   public filtersCollapsed = true;
   public hasPushButton: boolean = false;
+  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input() layer: Layer;
 
@@ -229,5 +231,20 @@ export class OgcFilterableItemComponent implements OnInit {
     if (isAdvancedOgcFilters.checked) {
       this.refreshFilters(true);
     }
+  }
+
+  private toggleLegend(collapsed: boolean) {
+    this.layer.legendCollapsed = collapsed;
+    this.showLegend$.next(!collapsed);
+  }
+
+  toggleLegendOnClick() {
+    if (!this.filtersCollapsed) {
+      this.toggleLegend(this.showLegend$.value);
+    }
+  }
+
+  toggleFiltersCollapsed() {
+    this.filtersCollapsed = !this.filtersCollapsed;
   }
 }

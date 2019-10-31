@@ -489,8 +489,4 @@ export class TimeFilterFormComponent implements OnInit {
   getStepDefinition(step) {
     return moment.duration(step).asMilliseconds();
   }
-
-  setVisible(event: any) {
-    this.layer.visible = true;
-  }
 }

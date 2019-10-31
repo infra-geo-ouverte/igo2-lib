@@ -33,6 +33,7 @@ import {
 } from '@igo2/common';
 
 import { FilterableDataSourcePipe } from './shared/filterable-datasource.pipe';
+import { IgoLayerModule } from '../layer/layer.module';
 import { TimeFilterFormComponent } from './time-filter-form/time-filter-form.component';
 import { TimeFilterItemComponent } from './time-filter-item/time-filter-item.component';
 import { TimeFilterListBindingDirective } from './time-filter-list/time-filter-list-binding.directive';
@@ -71,6 +72,7 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     MatDatetimepickerModule,
     MatNativeDatetimeModule,
     IgoLanguageModule,
+    IgoLayerModule,
     IgoCollapsibleModule,
     IgoListModule,
     IgoKeyValueModule
