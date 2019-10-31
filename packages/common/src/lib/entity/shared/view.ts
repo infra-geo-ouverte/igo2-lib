@@ -250,30 +250,14 @@ export class EntityView<E extends object, V extends object = E> {
    */
   private sortValues(values: V[], clause: EntitySortClause): V[] {
     if (clause === undefined) { return values; }
-
-    // This is needed to have the undefiend or null values always last
-    // because, somehow, the sort algorithm places the null first
-    // when sorting in ascending order.
-    const undefinedOrNull = [];
-    const sortValues = values.reduce((acc: V[], v: V) => {
-      const value = clause.valueAccessor(v);
-      if (value === undefined || value === null || value === '') {
-        undefinedOrNull.push(v);
-        return acc;
-      }
-
-      acc.push(v);
-      return acc;
-    }, []);
-
-    return sortValues.sort((v1: V, v2: V) => {
+    return values.sort((v1: V, v2: V) => {
       return ObjectUtils.naturalCompare(
         clause.valueAccessor(v1),
         clause.valueAccessor(v2),
         clause.direction,
-        false
+        clause.nullsFirst
       );
-    }).concat(undefinedOrNull);
+    });
   }
 
   private setValues(values: V[]) {
