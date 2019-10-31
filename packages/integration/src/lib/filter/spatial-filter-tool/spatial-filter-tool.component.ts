@@ -9,7 +9,6 @@ import {
   ClusterDataSource,
   featureToOl,
   DataSource,
-  createOverlayMarkerStyle,
   QueryableDataSourceOptions,
   SpatialFilterService,
   SpatialFilterType,
@@ -28,7 +27,7 @@ import * as olstyle from 'ol/style';
 @ToolComponent({
   name: 'spatialFilter',
   title: 'igo.integration.tools.spatialFilter',
-  icon: 'grain'
+  icon: 'map-marker-radius'
 })
 
 /**
@@ -108,26 +107,26 @@ export class SpatialFilterToolComponent {
       this.thematics = [SpatialFilterItemType.Address];
     }
     this.thematics.forEach(thematic => {
-    this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
-      .subscribe((features: Feature[]) => {
-        this.store.insertMany(features);
-        const featuresPoint: Feature[] = [];
-        const featuresLinePoly: Feature[] = [];
-        let idPoint;
-        let idLinePoly;
-        features.forEach(feature => {
-          if (feature.geometry.type === 'Point') {
-            featuresPoint.push(feature);
-            idPoint = feature.meta.id;
-          } else {
-            featuresLinePoly.push(feature);
-            idLinePoly = feature.meta.id;
-          }
+      this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
+        .subscribe((features: Feature[]) => {
+          this.store.insertMany(features);
+          const featuresPoint: Feature[] = [];
+          const featuresLinePoly: Feature[] = [];
+          let idPoint;
+          let idLinePoly;
+          features.forEach(feature => {
+            if (feature.geometry.type === 'Point') {
+              featuresPoint.push(feature);
+              idPoint = feature.meta.id;
+            } else {
+              featuresLinePoly.push(feature);
+              idLinePoly = feature.meta.id;
+            }
+          });
+          this.tryAddPointToMap(featuresPoint, idPoint);
+          this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
+          this.loading = false;
         });
-        this.tryAddPointToMap(featuresPoint, idPoint);
-        this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
-        this.loading = false;
-      });
     })
   }
 
@@ -143,12 +142,21 @@ export class SpatialFilterToolComponent {
    * Try to add zone feature to the map overlay
    */
   public tryAddFeaturesToMap(features: Feature[]) {
+    let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
           if (layer.alias === feature.properties.code) {
             return;
           }
+          if  (layer.title.startsWith('Zone')) {
+            this.map.removeLayer(layer);
+          }
+        }
+      }
+      for (const layer of this.map.layers) {
+        if  (layer.title.startsWith('Zone')) {
+          i++;
         }
       }
       this.dataSourceService
@@ -158,16 +166,17 @@ export class SpatialFilterToolComponent {
       } as QueryableDataSourceOptions )
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: 'Zone',
+            title: 'Zone ' + i as string,
             alias: this.type === SpatialFilterType.Predefined ? feature.properties.code : undefined,
             source: dataSource,
             visible: true,
             style: (feature, resolution) => {
+              const coordinates = (features[0] as any).coordinates;
               return new olstyle.Style({
                 image: new olstyle.Circle({
-                    radius: this.radius / resolution,
+                    radius: coordinates ? this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution : undefined,
                     fill: new olstyle.Fill({
-                      color: 'rgba(200, 200, 20, 0.3)'
+                      color: 'rgba(200, 200, 20, 0.2)'
                     }),
                     stroke: new olstyle.Stroke({
                       width: 1,
@@ -179,7 +188,7 @@ export class SpatialFilterToolComponent {
                   color: 'orange'
                 }),
                 fill: new olstyle.Fill({
-                  color: 'rgba(200, 200, 20, 0.3)'
+                  color: 'rgba(200, 200, 20, 0.2)'
                 })
               })
             }
@@ -194,27 +203,35 @@ export class SpatialFilterToolComponent {
   }
 
   /**
-   * Try to point features to the map overlay
+   * Try to point features to the map
    * Necessary to create clusters
    */
   private tryAddPointToMap(features: Feature[], id) {
+    let i = 1;
     if (features.length > 1) {
       if (this.map === undefined) {
         return;
+      }
+      for (const layer of this.map.layers) {
+        if  (layer.title.startsWith(features[0].meta.title)) {
+          i++;
+        }
       }
       this.dataSourceService
       .createAsyncDataSource({
         type: 'cluster',
         id: id,
         queryable: true,
-        distance: 150
+        distance: 150,
+        meta: {
+          title: 'Cluster'
+        }
         } as QueryableDataSourceOptions )
         .subscribe((dataSource: ClusterDataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title,
+            title: features[0].meta.title + ' ' + i as string,
             source: dataSource,
             visible: true,
-            style: createOverlayMarkerStyle(),
             clusterParam: {clusterRange: [1, 5]}
           });
           const featuresOl = features.map(feature => {
@@ -223,6 +240,9 @@ export class SpatialFilterToolComponent {
           dataSource.ol.source.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            i = i - 1;
+            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
         });
@@ -230,12 +250,18 @@ export class SpatialFilterToolComponent {
   }
 
   /**
-   * Try to line or polygon features to the map overlay
+   * Try to add line or polygon features to the map
    */
   private tryAddLayerToMap(features: Feature[], id) {
+    let i = 1;
     if (features.length > 1) {
       if (this.map === undefined) {
         return;
+      }
+      for (const layer of this.map.layers) {
+        if  (layer.title.startsWith(features[0].meta.title)) {
+          i++;
+        }
       }
       this.dataSourceService
       .createAsyncDataSource({
@@ -245,7 +271,7 @@ export class SpatialFilterToolComponent {
         } as QueryableDataSourceOptions )
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title,
+            title: features[0].meta.title + ' ' + i as string,
             source: dataSource,
             visible: true
           });
@@ -255,6 +281,9 @@ export class SpatialFilterToolComponent {
           dataSource.ol.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            i = i - 1;
+            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
         });

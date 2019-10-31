@@ -1,3 +1,4 @@
+import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { olFeature } from 'ol/Feature';
 import {
   Component,
@@ -69,7 +70,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
         return new olstyle.Style ({
           image: new olstyle.Circle ({
-            radius: this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution,
+            radius: this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution, // Latitude correction
             stroke: new olstyle.Stroke({
               width: 2,
               color: 'rgba(0, 153, 255)'
@@ -125,8 +126,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public displayedColumns: string[] = ['name', 'select'];
   public initialSelection = [];
   public allowMultiSelect = true;
-  public thematicsList: string[] = [];
-  public selectedThematics = new SelectionModel<string>(this.allowMultiSelect, this.initialSelection);
+  public thematics: SpatialFilterThematic[] = [];
+  public groups: string[] = [];
+  public selectedThematics = new SelectionModel<SpatialFilterThematic>(this.allowMultiSelect, this.initialSelection);
   public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
@@ -160,8 +162,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.spatialFilterService.loadThematicsList()
-    .subscribe((items: string[]) => {
-      this.thematicsList = items;
+    .subscribe((items: SpatialFilterThematic[]) => {
+      for (const item of items) {
+        this.thematics.push(item);
+      }
+      this.thematics.forEach(thematic => {
+        if ((thematic.group) && (this.groups.indexOf(thematic.group) === -1)) {
+          this.groups.push(thematic.group)
+        }
+      })
     });
 
     this.drawGuide$.next(this.drawGuide);
@@ -189,14 +198,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.itemTypeChange.emit(this.selectedItemType);
   }
 
-  onThematicChange() {
-    this.thematicChange.emit(this.selectedThematics.selected);
-  }
-
-  onSourceAdressChange(event) {
-    this.selectedSourceAddress = event.value;
-  }
-
   /**
    * Set the measure unit
    * @internal
@@ -217,18 +218,34 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return this.type === SpatialFilterType.Point;
   }
 
+  isGroup(index, item): boolean {
+    const groupIndex = this.groups.indexOf(item.group);
+    console.log(groupIndex);
+    if (groupIndex !== -1) {
+      this.groups.slice(0, groupIndex + 1);
+      console.log(this.groups);
+      return true;
+    }
+    return false;
+  }
+
   isAllSelected() {
     const numSelected = this.selectedThematics.selected.length;
-    const numRows = this.thematicsList.length;
+    const numRows = this.thematics.length;
     return numSelected === numRows;
   }
 
   masterToggle() {
     this.isAllSelected() ?
         this.selectedThematics.clear() :
-        this.thematicsList.forEach(row => this.selectedThematics.select(row));
+        this.thematics.forEach(row => this.selectedThematics.select(row));
 
-    this.thematicChange.emit(this.selectedThematics.selected);
+    let selectedThematicsName = [];
+    for (const thematic of this.selectedThematics.selected) {
+      selectedThematicsName.push(thematic.name);
+    }
+
+    this.thematicChange.emit(selectedThematicsName);
   }
 
   /**
@@ -239,7 +256,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.selectedThematics.selected.find(row => row === rowSelected) !== undefined) {
       bool = true;
     }
-    this.thematicsList.forEach(row => {
+    this.thematics.forEach(row => {
       if (row === rowSelected && bool === false) {
         this.selectedThematics.select(row);
       }
@@ -247,7 +264,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         this.selectedThematics.deselect(row);
       }
     });
-    this.thematicChange.emit(this.selectedThematics.selected);
+
+    let selectedThematicsName = [];
+    for (const thematic of this.selectedThematics.selected) {
+      selectedThematicsName.push(thematic.name);
+    }
+
+    this.thematicChange.emit(selectedThematicsName);
   }
 
   /**
@@ -304,7 +327,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearSearch() {
     this.selectedThematics.clear();
-    this.thematicChange.emit(this.selectedThematics.selected);
+    let selectedThematicsName = [];
+    this.thematicChange.emit(selectedThematicsName);
     this.clearSearchEvent.emit();
   }
 

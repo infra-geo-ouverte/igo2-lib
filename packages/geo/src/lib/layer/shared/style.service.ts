@@ -175,6 +175,8 @@ export class StyleService {
   }
 
   createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
+    let types: string[] = [];
+    console.log(feature);
     let style;
     // const maxSize = 100;
     const range = clusterParam.clusterRange;
@@ -212,14 +214,17 @@ export class StyleService {
       ];
     } else {
       style = createOverlayMarkerStyle();
-      // console.log(feature);
-      // console.log(feature.values_.features[0].icon.icon);
-      // style = new olstyle.Style({
-      //   image: new olstyle.Icon({
-      //     src: feature.values_.features[0].icon.icon,
-      //     //scale: this.map.viewController.getScale() ? scale : 1
+      // let icon = feature.values_.features[0].icon;
+      // style = new olstyle.Style ({
+      //   text: new olstyle.Text ({
+      //     text: icon,
+      //     font : 'normal 18px ' + icon,
+      //     textBaseline: 'bottom',
+      //     fill: new olstyle.Fill({
+      //         color: 'red'
+      //     })
       //   })
-      // });
+      // })
       // console.log(style);
     }
     return style;

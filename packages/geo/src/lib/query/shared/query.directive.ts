@@ -190,7 +190,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       (featureOL: OlFeature, layerOL: OlLayer) => {
         if (featureOL) {
           if (featureOL.get('features')) {
-            console.log(layerOL);
             for (const feature of featureOL.get('features')) {
               const newFeature = featureFromOl(feature, this.map.projection);
               newFeature.meta = {

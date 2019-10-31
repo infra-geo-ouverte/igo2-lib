@@ -50,6 +50,7 @@ export function featureToOl(
   const title = getEntityTitle(feature);
   if (title !== undefined) {
     olFeature.set('_title', title, true);
+    olFeature.title = title;
   }
 
   if (feature.extent !== undefined) {
@@ -72,9 +73,7 @@ export function featureToOl(
   olFeature.set('_entityRevision', getEntityRevision(feature), true);
 
   if (feature.icon) {
-    olFeature.icon = {
-      icon: feature.icon
-    };
+    olFeature.icon = feature.icon;
   }
 
   return olFeature;

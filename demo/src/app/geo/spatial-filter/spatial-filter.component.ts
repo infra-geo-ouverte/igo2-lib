@@ -9,9 +9,7 @@ import {
   ClusterDataSource,
   featureToOl,
   DataSource,
-  createOverlayMarkerStyle,
   QueryableDataSourceOptions,
-  StyleService
 } from '@igo2/geo';
 import { SpatialFilterService } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.service';
 import { SpatialFilterQueryType } from '@igo2/geo/lib/filter/shared/spatial-filter.enum';
@@ -62,8 +60,7 @@ export class AppSpatialFilterComponent {
   constructor(
     private spatialFilterService: SpatialFilterService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService,
-    private styleService: StyleService
+    private layerService: LayerService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
@@ -218,7 +215,6 @@ export class AppSpatialFilterComponent {
    * Necessary to create clusters
    */
   private tryAddPointToMap(features: Feature[], id) {
-    console.log(features);
     let i = 1;
     if (features.length > 1) {
       if (this.map === undefined) {
@@ -256,7 +252,6 @@ export class AppSpatialFilterComponent {
             olLayer.title = features[0].meta.title + ' ' + i as string;
             olLayer.options.title = olLayer.title;
           }
-          console.log(olLayer);
           this.map.addLayer(olLayer);
         });
     }
@@ -318,28 +313,28 @@ export class AppSpatialFilterComponent {
    * Do not work properly in the lib
    */
   handleQueryResults(results) {
-    let features: Feature[] = [];
-    if (results.features.length) {
-      results.features.forEach(feature => {
-        if (feature.properties.features) {
-          feature.properties.features.forEach(element => {
-            element.title = element.values_.nom;
-          });
-          features.push(feature.properties.features);
-        } else {
-          feature.meta.alias = feature.properties.nom;
-          features.push(feature);
-        }
-      });
-    } else {
-      results.features.meta.alias = results.features.properties.nom;
-      features = results.features;
-    }
+    // let features: Feature[] = [];
+    // if (results.features.length) {
+    //   results.features.forEach(feature => {
+    //     if (feature.properties.features) {
+    //       feature.properties.features.forEach(element => {
+    //         element.title = element.values_.nom;
+    //       });
+    //       features.push(feature.properties.features);
+    //     } else {
+    //       feature.meta.alias = feature.properties.nom;
+    //       features.push(feature);
+    //     }
+    //   });
+    // } else {
+    //   results.features.meta.alias = results.features.properties.nom;
+    //   features = results.features;
+    // }
 
-    let feature;
-    if (features.length) {
-      feature = features[0];
-    }
-    this.selectedFeature$.next(feature);
+    // let feature;
+    // if (features.length) {
+    //   feature = features[0];
+    // }
+    // this.selectedFeature$.next(feature);
   }
 }
