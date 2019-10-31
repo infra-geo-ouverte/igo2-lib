@@ -22,6 +22,9 @@ mat-form-field {
     overflow-y: hidden;
     word-wrap: normal;
     word-break: break-all;
+    &.textAreaWithButton {
+      width: calc(100% - 60px);
+    }
   }
   mat-form-field > button {
     float: right;

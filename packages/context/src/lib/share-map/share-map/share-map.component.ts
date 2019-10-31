@@ -25,24 +25,6 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
   }
   private _map: IgoMap;
 
-  @Input()
-  get hasShareMapButton(): boolean {
-    return this._hasShareMapButton;
-  }
-  set hasShareMapButton(value: boolean) {
-    this._hasShareMapButton = value;
-  }
-  private _hasShareMapButton = true;
-
-  @Input()
-  get hasCopyLinkButton(): boolean {
-    return this._hasCopyLinkButton;
-  }
-  set hasCopyLinkButton(value: boolean) {
-    this._hasCopyLinkButton = value;
-  }
-  private _hasCopyLinkButton = false;
-
   public url: string;
   public hasApi = false;
   public userId;
