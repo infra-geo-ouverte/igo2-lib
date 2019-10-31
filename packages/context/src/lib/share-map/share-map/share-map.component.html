@@ -43,15 +43,6 @@
     <textarea #textArea matInput readonly rows="1"
       [placeholder]="'igo.context.shareMap.placeholderLink' | translate"
       [value]="url"></textarea>
-    <button
-      mat-icon-button
-      tooltip-position="below"
-      matTooltipShowDelay="500"
-      [matTooltip]="'igo.context.shareMap.copy' | translate"
-      color="primary"
-      (click)="copyTextToClipboard(textArea)">
-      <mat-icon svgIcon="content-copy"></mat-icon>
-    </button>
   </mat-form-field>
 
   <div *ngIf="hasCopyLinkButton" class="igo-form-button-group">
