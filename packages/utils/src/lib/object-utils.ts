@@ -104,7 +104,7 @@ export class ObjectUtils {
       b = [a, (a = b)][0];
     }
 
-    // nullsFirst = undefined : end if direction = 'asc', first if direction = 'dess'
+    // nullsFirst = undefined : end if direction = 'asc', first if direction = 'desc'
     // nullsFirst = true : always first
     // nullsFirst = false : always end
     // *** 'undefined' values are always at the end of array despite the 'nullsFirst' option
