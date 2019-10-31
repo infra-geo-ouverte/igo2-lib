@@ -1,9 +1,14 @@
+@import '../foreground';
+
 $primary: mat-palette($mat-blue, 700, 400, 900);
 $accent: mat-palette($mat-blue, 200);
 $warn: mat-palette($mat-red);
 
-$theme: mat-light-theme(
+$temp-theme: mat-light-theme(
     $primary,
     $accent,
     $warn
 );
+
+$foreground: theme-foreground(mat-palette($mat-grey, 900));
+$theme: map-merge($temp-theme, (foreground: $foreground));

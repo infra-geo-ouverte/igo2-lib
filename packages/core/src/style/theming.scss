@@ -3,9 +3,9 @@
 @import './material.font';
 @import './core.theming';
 
-@mixin igo-theming($theme) {
-  @include mat-core();
+@mixin igo-theming($theme, $typography) {
+  @include mat-core($typography);
   @include angular-material-theme($theme);
 
-  @include igo-core-theming($theme);
+  @include igo-core-theming($theme, $typography);
 }

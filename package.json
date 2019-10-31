@@ -81,7 +81,7 @@
     "@ionic-native/network": "^5.12.0",
     "@ionic/angular": "^4.6.2",
     "@mat-datetimepicker/core": "^3.0.0-beta.0",
-    "@mdi/angular-material": "^4.4.95",
+    "@mdi/angular-material": "^4.5.95",
     "@ngx-translate/core": "^10.0.1",
     "@turf/helpers": "^6.1.4",
     "@turf/line-intersect": "^6.0.2",

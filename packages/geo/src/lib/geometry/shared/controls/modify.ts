@@ -82,6 +82,9 @@ export class ModifyControl {
   private removedOlInteractions: OlInteraction[] = [];
   private olLinearRingsLayer: OlVectorLayer;
 
+  // This is the geometry to test against when drawing holes
+  private olOuterGeometry: OlGeometry;
+
   /**
    * Wheter the control is active
    */
@@ -403,7 +406,8 @@ export class ModifyControl {
       stopClick: true,
       style: createDrawHoleInteractionStyle(),
       condition: (event: OlMapBrowserEvent) => {
-        return this.getOlGeometry().intersectsCoordinate(event.coordinate);
+        const olOuterGeometry = this.olOuterGeometry || this.getOlGeometry();
+        return olOuterGeometry.intersectsCoordinate(event.coordinate);
       }
     });
 
@@ -535,11 +539,13 @@ export class ModifyControl {
   }
 
   /**
-   * When draw start, add a new linerar ring to the geometrty and start watching for changes
+   * When draw start, add a new linerar ring to the geometry and start watching for changes
    * @param event Draw start event
    */
   private onDrawStart(event: OlDrawEvent) {
     const olGeometry = event.feature.getGeometry();
+    this.olOuterGeometry = this.getOlGeometry().clone();
+
     const linearRingCoordinates = olGeometry.getLinearRing().getCoordinates();
     this.addLinearRingToOlGeometry(linearRingCoordinates);
     this.start$.next(this.getOlGeometry());
@@ -560,6 +566,9 @@ export class ModifyControl {
     if (this.onDrawKey !== undefined) {
       unByKey(this.onDrawKey);
     }
+
+    this.olOuterGeometry = undefined;
+
     const linearRingCoordinates = event.feature.getGeometry().getLinearRing().getCoordinates();
     this.updateLinearRingOfOlGeometry(linearRingCoordinates);
     this.clearOlLinearRingsSource();

@@ -6,10 +6,10 @@
 @import '../lib/measure/measure.theming';
 @import '../lib/routing/routing.theming';
 
-@mixin igo-geo-theming($theme) {
+@mixin igo-geo-theming($theme, $typography) {
   @include igo-feature-theming($theme);
-  @include igo-filter-theming($theme);
+  @include igo-filter-theming($theme, $typography);
   @include igo-map-theming($theme);
-  @include igo-measure-theming($theme);
+  @include igo-measure-theming($theme, $typography);
   @include igo-routing-theming($theme);
 }

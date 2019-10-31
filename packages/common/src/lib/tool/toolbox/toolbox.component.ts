@@ -3,6 +3,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  HostBinding,
   ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -11,6 +12,7 @@ import { map } from 'rxjs/operators';
 
 import { Action, ActionStore } from '../../action';
 import { Tool } from '../shared/tool.interface';
+import { ToolboxColor } from '../shared/toolbox.enums';
 import { Toolbox } from '../shared/toolbox';
 import { toolSlideInOut } from './toolbox.animation';
 
@@ -22,7 +24,6 @@ import { toolSlideInOut } from './toolbox.animation';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolboxComponent implements OnInit, OnDestroy {
-
   /**
    * Observable of the active tool
    */
@@ -81,6 +82,27 @@ export class ToolboxComponent implements OnInit, OnDestroy {
    * Whether the toolbox should animate the first tool entering
    */
   @Input() animate: boolean = false;
+
+  /**
+   * Color of Toolbox
+   */
+  @Input() color: ToolboxColor = ToolboxColor.White;
+
+  /**
+   * @ignore
+   */
+  @HostBinding('class.color-grey')
+  get classColorGrey() {
+    return this.color === ToolboxColor.Grey;
+  }
+
+  /**
+   * @ignore
+   */
+  @HostBinding('class.color-primary')
+  get classColorPrimary() {
+    return this.color === ToolboxColor.Primary;
+  }
 
   /**
    * Initialize the toolbar and subscribe to the active tool
@@ -200,8 +222,11 @@ export class ToolboxComponent implements OnInit, OnDestroy {
               }
 
               let childrenToolActivated = false;
-              if (activeTool !== undefined && _tool.name === activeTool.parent) {
-               childrenToolActivated = true;
+              if (
+                activeTool !== undefined &&
+                _tool.name === activeTool.parent
+              ) {
+                childrenToolActivated = true;
               }
 
               return {
