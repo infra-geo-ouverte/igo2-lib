@@ -1,4 +1,4 @@
-<button *ngIf="timeFilterInLayers && options.timeFilterable && options.timeFilter"
+<button *ngIf="header && options.timeFilterable && options.timeFilter"
   mat-icon-button
   collapsibleButton
   tooltip-position="below"
@@ -10,11 +10,11 @@
 </button>
 
 <div #ogcFilter class="igo-layer-actions-container"
-*ngIf="timeFilterInLayers && options.timeFilterable && options.timeFilter">
+*ngIf="header && options.timeFilterable && options.timeFilter">
   <igo-time-filter-item
     *ngIf="timeFilterCollapse && options.timeFilter"
     igoListItem
-    [timeFiltersHeaderShown]="false"
+    [header]="false"
     [layer]="layer">
   </igo-time-filter-item>
 </div>

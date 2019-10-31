@@ -20,7 +20,7 @@ export class OgcFilterButtonComponent implements OnInit {
 
   @Input() color: string = 'primary';
 
-  @Input() ogcFiltersInLayers: boolean;
+  @Input() header: boolean;
 
   public ogcFilterCollapse = false;
 

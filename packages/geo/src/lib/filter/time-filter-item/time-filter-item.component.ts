@@ -16,7 +16,7 @@ export class TimeFilterItemComponent {
 
   filtersCollapsed: boolean = false;
 
-  @Input() timeFiltersHeaderShown: boolean = true;
+  @Input() header: boolean = true;
 
   @Input() layer: Layer;
 

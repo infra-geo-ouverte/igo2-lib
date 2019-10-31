@@ -36,6 +36,8 @@ export class OgcFilterableItemComponent implements OnInit {
 
   @Input() map: IgoMap;
 
+  @Input() header: boolean = true;
+  
   get refreshFunc() {
     return this.refreshFilters.bind(this);
   }
@@ -43,8 +45,6 @@ export class OgcFilterableItemComponent implements OnInit {
   get datasource(): OgcFilterableDataSource {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
-
-  @Input() ogcFiltersHeaderShown: boolean = true;
 
   get downloadable() {
     return (this.datasource.options as any).download;

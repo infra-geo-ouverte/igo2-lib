@@ -21,7 +21,7 @@ export class TimeFilterButtonComponent implements OnInit {
 
   @Input() color: string = 'primary';
 
-  @Input() timeFilterInLayers: boolean = true;
+  @Input() header: boolean = true;
 
   public timeFilterCollapse = false;
 
