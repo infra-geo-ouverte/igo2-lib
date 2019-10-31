@@ -153,7 +153,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     });
     this.stores$$ = combineLatest(...stores$)
       .pipe(
-        debounceTime(25),
+        debounceTime(5),
         skip(1), // Skip intial selection
         map((features: Array<Feature[]>) => features.reduce((a, b) => a.concat(b)))
       ).subscribe((features: Feature[]) => this.onSelectFromStore(features));

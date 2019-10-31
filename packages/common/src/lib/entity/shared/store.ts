@@ -70,14 +70,9 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
     this.getKey = options.getKey ? options.getKey : getEntityId;
     this.getProperty = options.getProperty ? options.getProperty : getEntityProperty;
 
-    this.state = new EntityStateManager<E, S>({store: this});
-    this.view = new EntityView<E>(this.entities$);
-    this.stateView = new EntityView<E, EntityRecord<E, S>>(this.view.all$()).join({
-      source: this.state.change$,
-      reduce: (entity: E): EntityRecord<E, S> => {
-        return {entity, state: this.state.get(entity)};
-      }
-    });
+    this.state = this.createStateManager();
+    this.view = this.createDataView();
+    this.stateView = this.createStateView();
 
     this.view.lift();
     this.stateView.lift();
@@ -227,6 +222,61 @@ export class EntityStore<E extends object, S extends EntityState = EntityState> 
     const empty = count === 0;
     this.count$.next(count);
     this.empty$.next(empty);
+  }
+
+  /**
+   * Create the entity state manager
+   * @returns EntityStateManager
+   */
+  private createStateManager() {
+    return new EntityStateManager<E, S>({store: this});
+  }
+
+  /**
+   * Create the data view
+   * @returns EntityView<E>
+   */
+  private createDataView() {
+    return new EntityView<E>(this.entities$);
+  }
+
+  /**
+   * Create the state view
+   * @returns EntityView<EntityRecord<E>>
+   */
+  private createStateView() {
+    return new EntityView<E, EntityRecord<E, S>>(this.view.all$())
+      .join({
+        source: this.state.change$,
+        reduce: (entity: E): EntityRecord<E, S> => {
+          const key = this.getKey(entity);
+          const state = this.state.get(entity);
+          const currentRecord = this.stateView.get(key);
+
+          if (
+            currentRecord !== undefined &&
+            currentRecord.entity === entity &&
+            this.statesAreTheSame(currentRecord.state, state)
+          ) {
+            return currentRecord;
+          }
+
+          const revision = currentRecord ? currentRecord.revision + 1 : 1;
+          const ref = `${key}-${revision}`;
+          return {entity, state, revision, ref};
+        }
+      })
+      .createIndex((record: EntityRecord<E, S>) => this.getKey(record.entity));
+  }
+
+  private statesAreTheSame(currentState: S, newState: S): boolean {
+    if (currentState === newState) {
+      return true;
+    }
+
+    const currentStateIsEmpty = Object.keys(currentState).length === 0;
+    const newStateIsEmpty = Object.keys(newState).length === 0;
+    return currentStateIsEmpty && newStateIsEmpty;
   }
 
 }

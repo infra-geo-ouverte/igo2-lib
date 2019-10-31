@@ -15,6 +15,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
   EntityRecord,
+  EntityState,
   EntityStore,
   EntityStoreWatcher,
   EntityTableTemplate,
@@ -39,7 +40,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   entityTableColumnRenderer = EntityTableColumnRenderer;
 
   /**
-   * Reference to the selection states
+   * Reference to the selection's state
    * @internal
    */
   entityTableSelectionState = EntityTableSelectionState;
@@ -48,7 +49,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * Observable of the selection,s state
    * @internal
    */
-  selectionState$: BehaviorSubject<EntityTableSelectionState> = new BehaviorSubject(undefined);
+  readonly selectionState$: BehaviorSubject<EntityTableSelectionState> = new BehaviorSubject(undefined);
 
   /**
    * Entity store watcher
@@ -114,7 +115,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * Data source consumable by the underlying material table
    * @internal
    */
-  get dataSource(): BehaviorSubject<object[]> { return this.store.view.all$(); }
+  get dataSource(): BehaviorSubject<EntityRecord<object>[]> { return this.store.stateView.all$(); }
 
   /**
    * Whether selection is supported
@@ -180,6 +181,18 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   }
 
   /**
+   * Trackby function
+   * @param record Record
+   * @param index Record index
+   * @internal
+   */
+  getTrackByFunction() {
+    return (index: number, record: EntityRecord<object, EntityState>) => {
+      return record.ref;
+    };
+  }
+
+  /**
    * Trigger a refresh of thre table. This can be useful when
    * the data source doesn't emit a new value but for some reason
    * the records need an update.
@@ -200,36 +213,36 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
       .find((c: EntityTableColumn) => c.name === event.active);
 
     if (direction === 'asc' || direction === 'desc') {
-      this.store.view.sort({
-        valueAccessor: (entity: object) => this.getValue(entity, column),
+      this.store.stateView.sort({
+        valueAccessor: (record: EntityRecord<object>) => this.getValue(record, column),
         direction,
         nullsFirst: this.sortNullsFirst
       });
     } else {
-      this.store.view.sort(undefined);
+      this.store.stateView.sort(undefined);
     }
   }
 
   /**
    * When an entity is clicked, emit an event
-   * @param entity Entity
+   * @param record Record
    * @internal
    */
-  onRowClick(entity: object) {
-    this.entityClick.emit(entity);
+  onRowClick(record: EntityRecord<object>) {
+    this.entityClick.emit(record.entity);
   }
 
   /**
    * When an entity is selected, select it in the store and emit an event. Even if
    * "many" is set to true, this method always select a single, exclusive row. Selecting
    * multiple rows should be achieved by using the checkboxes.
-   * @param entity Entity
+   * @param record Record
    * @internal
    */
-  onRowSelect(entity: object) {
+  onRowSelect(record: EntityRecord<object>) {
     if (this.selection === false) { return; }
 
-    // Selecting a
+    const entity = record.entity;
     this.store.state.update(entity, {selected: true}, true);
     this.entitySelectChange.emit({added: [entity]});
   }
@@ -244,7 +257,10 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
 
     this.store.state.updateAll({selected: toggle});
     if (toggle === true) {
-      this.entitySelectChange.emit({added: [this.store.view.all()]});
+      const entities = this.store.stateView
+        .all()
+        .map((record: EntityRecord<object>) => record.entity);
+      this.entitySelectChange.emit({added: [entities]});
     }
   }
 
@@ -252,12 +268,13 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * When an entity is toggled, select or unselect it in the store. On select,
    * emit an event.
    * @param toggle Select or unselect
-   * @param entity Entity
+   * @param record Record
    * @internal
    */
-  onToggleRow(toggle: boolean, entity: object) {
+  onToggleRow(toggle: boolean, record: EntityRecord<object>) {
     if (this.selection === false) { return; }
 
+    const entity = record.entity;
     const exclusive = toggle === true && !this.selectMany;
     this.store.state.update(entity, {selected: toggle}, exclusive);
     if (toggle === true) {
@@ -294,28 +311,29 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
 
   /**
    * Whether a row is should be selected based on the underlying entity state
-   * @param entity Entity
+   * @param record Record
    * @returns True if a row should be selected
    * @internal
    */
-  rowIsSelected(entity: object): boolean {
-    const state = this.store.state.get(entity);
+  rowIsSelected(record: EntityRecord<object>): boolean {
+    const state = record.state;
     return state.selected ? state.selected : false;
   }
 
   /**
    * Method to access an entity's values
-   * @param entity Entity
+   * @param record Record
    * @param column Column
    * @returns Any value
    * @internal
    */
-  getValue(entity: object, column: EntityTableColumn): any {
+  getValue(record: EntityRecord<object>, column: EntityTableColumn): any {
+    const entity = record.entity;
     if (column.valueAccessor !== undefined) {
-      return column.valueAccessor(entity);
+      return column.valueAccessor(entity, record);
     }
     if (this.template.valueAccessor !== undefined) {
-      return this.template.valueAccessor(entity, column.name);
+      return this.template.valueAccessor(entity, column.name, record);
     }
     return this.store.getProperty(entity, column.name);
   }
@@ -359,36 +377,38 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
 
   /**
    * Return a row ngClass
-   * @param entity Entity
+   * @param record Record
    * @returns ngClass
    * @internal
    */
-  getRowClass(entity: object): {[key: string]: boolean} {
+  getRowClass(record: EntityRecord<object>): {[key: string]: boolean} {
+    const entity = record.entity;
     const func = this.template.rowClassFunc;
     if (func instanceof Function) {
-      return func(entity);
+      return func(entity, record);
     }
     return {};
   }
 
   /**
    * Return a row ngClass
-   * @param entity Entity
+   * @param record Record
    * @param column Column
    * @returns ngClass
    * @internal
    */
-  getCellClass(entity: object, column: EntityTableColumn): {[key: string]: boolean} {
+  getCellClass(record: EntityRecord<object>, column: EntityTableColumn): {[key: string]: boolean} {
+    const entity = record.entity;
     const cls = {};
 
     const tableFunc = this.template.cellClassFunc;
     if (tableFunc instanceof Function) {
-      Object.assign(cls, tableFunc(entity, column));
+      Object.assign(cls, tableFunc(entity, column, record));
     }
 
     const columnFunc = column.cellClassFunc;
     if (columnFunc instanceof Function) {
-      Object.assign(cls, columnFunc(entity));
+      Object.assign(cls, columnFunc(entity, record));
     }
 
     return cls;
@@ -397,12 +417,15 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   /**
    * When a button is clicked
    * @param func Function
-   * @param entity Entity
+   * @param record Record
    * @internal
    */
-  onButtonClick(clickFunc: (entity: object) => void, entity: object) {
+  onButtonClick(
+    clickFunc: (entity: object, record?: EntityRecord<object>) => void,
+    record: EntityRecord<object>
+  ) {
     if (typeof clickFunc === 'function') {
-      clickFunc(entity);
+      clickFunc(record.entity, record);
     }
   }
 

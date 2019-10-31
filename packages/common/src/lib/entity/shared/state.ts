@@ -168,10 +168,19 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
     const allKeys = new Set(keys.concat(Array.from(this.getAllKeys())));
     allKeys.forEach((key: EntityKey) => {
       const state = this.index.get(key) || {} as S;
+
       if (keys.indexOf(key) >= 0) {
         this.index.set(key, Object.assign({}, state, changes));
       } else {
-        this.index.set(key, Object.assign({}, state, reverseChanges));
+        // Update only if the reverse changes would modify
+        // a key already present in the current state
+        const shouldUpdate = Object.keys(reverseChanges).some((changeKey: string) => {
+          return state[changeKey] !== undefined &&
+            state[changeKey] !== reverseChanges[changeKey];
+        });
+        if (shouldUpdate === true) {
+          this.index.set(key, Object.assign({}, state, reverseChanges));
+        }
       }
     });
 
