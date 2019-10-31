@@ -77,6 +77,12 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   scrollBehavior: EntityTableScrollBehavior = EntityTableScrollBehavior.Auto;
 
   /**
+   * Whether nulls should be first when sorting
+   */
+  @Input()
+  sortNullsFirst: boolean = false;
+
+  /**
    * Event emitted when an entity (row) is clicked
    */
   @Output() entityClick = new EventEmitter<object>();
@@ -196,7 +202,8 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
     if (direction === 'asc' || direction === 'desc') {
       this.store.view.sort({
         valueAccessor: (entity: object) => this.getValue(entity, column),
-        direction
+        direction,
+        nullsFirst: this.sortNullsFirst
       });
     } else {
       this.store.view.sort(undefined);

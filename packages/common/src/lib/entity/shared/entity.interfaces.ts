@@ -36,6 +36,12 @@ export type EntityFilterClause<E = object> = (entity: E) => boolean;
 export interface EntitySortClause<E = object> {
   valueAccessor: (entity: E) => string | number;
   direction: string;
+
+  // If true, null and undefined values will be first
+  // If false, null and undefined values will be last
+  // If undefined, default to true and false when sorting in descending and
+  // ascending order, respectively
+  nullsFirst?: boolean;
 }
 
 export interface EntityJoinClause {
