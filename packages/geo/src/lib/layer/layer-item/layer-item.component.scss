@@ -33,9 +33,9 @@
 }
 
 .igo-layer-button-group {
-  float: right;
-  padding: 0 $igo-list-item-padding;
-  max-width: 100%;
+  text-align: right;
+  padding: 0 10px 0 0;
+  width: 100%;
 }
 
 mat-icon.disabled {
