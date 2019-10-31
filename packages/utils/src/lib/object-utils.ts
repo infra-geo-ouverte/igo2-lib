@@ -107,10 +107,28 @@ export class ObjectUtils {
     // nullsFirst = undefined : end if direction = 'asc', first if direction = 'desc'
     // nullsFirst = true : always first
     // nullsFirst = false : always end
-    // *** 'undefined' values are always at the end of array despite the 'nullsFirst' option
-    if (a === null || a === '' || b === null || b === '') {
-      const nullScore =
-        a === b ? 0 : a === null ? 2 : b === null ? -2 : a === '' ? 1 : -1;
+    if (
+      a === null ||
+      a === '' ||
+      a === undefined ||
+      b === null ||
+      b === '' ||
+      b === undefined
+    ) {
+      let nullScore =
+        a === b
+          ? 0
+          : a === undefined
+          ? 3
+          : b === undefined
+          ? -3
+          : a === null
+          ? 2
+          : b === null
+          ? -2
+          : a === ''
+          ? 1
+          : -1;
       if (direction === 'desc') {
         return nullsFirst !== false ? nullScore : nullScore * -1;
       }
