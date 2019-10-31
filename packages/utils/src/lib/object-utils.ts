@@ -115,7 +115,7 @@ export class ObjectUtils {
       b === '' ||
       b === undefined
     ) {
-      let nullScore =
+      const nullScore =
         a === b
           ? 0
           : a === undefined

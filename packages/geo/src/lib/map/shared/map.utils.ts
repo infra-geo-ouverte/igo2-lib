@@ -126,10 +126,10 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
     isXYCoords = true;
     [, pattern, zone, lon, lat] = coordStr.match(patternMtm);
     let lon0;
-    if (Number(zone) <=2) {
+    if (Number(zone) <= 2) {
       lon0 = -50 - Number(zone) * 3;
-    } else if (Number(zone) >=12) {
-      lon0 = -81 - (Number(zone)-12) * 3;
+    } else if (Number(zone) >= 12) {
+      lon0 = -81 - (Number(zone) - 12) * 3;
     } else {
       lon0 = -49.5 - Number(zone) * 3;
     }
