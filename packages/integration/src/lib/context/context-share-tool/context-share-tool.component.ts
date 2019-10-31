@@ -15,9 +15,6 @@ import { MapState } from '../../map/map.state';
   templateUrl: './context-share-tool.component.html'
 })
 export class ContextShareToolComponent {
-  @Input() hasCopyLinkButton: boolean = false;
-
-  @Input() hasShareMapButton: boolean = true;
 
   get map(): IgoMap { return this.mapState.map; }
 

@@ -6,13 +6,13 @@ import {
 
 import { IgoFilterModule } from '@igo2/geo';
 import { OgcFilterToolComponent } from './ogc-filter-tool/ogc-filter-tool.component';
-import { TimeAnalysisToolComponent } from './time-analysis-tool/time-analysis-tool.component';
+import { TimeFilterToolComponent } from './time-filter-tool/time-filter-tool.component';
 
 @NgModule({
   imports: [IgoFilterModule],
-  declarations: [OgcFilterToolComponent, TimeAnalysisToolComponent],
-  exports: [OgcFilterToolComponent, TimeAnalysisToolComponent],
-  entryComponents: [OgcFilterToolComponent, TimeAnalysisToolComponent],
+  declarations: [OgcFilterToolComponent, TimeFilterToolComponent],
+  exports: [OgcFilterToolComponent, TimeFilterToolComponent],
+  entryComponents: [OgcFilterToolComponent, TimeFilterToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppFilterModule {
