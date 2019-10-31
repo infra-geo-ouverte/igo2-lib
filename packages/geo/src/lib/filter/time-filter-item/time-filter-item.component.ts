@@ -14,7 +14,9 @@ export class TimeFilterItemComponent {
 
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  @Input() filtersCollapsed: boolean = false;
+  filtersCollapsed: boolean = false;
+
+  @Input() timeFiltersHeaderShown: boolean = true;
 
   @Input() layer: Layer;
 

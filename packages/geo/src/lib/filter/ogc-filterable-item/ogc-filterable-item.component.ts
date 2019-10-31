@@ -44,7 +44,7 @@ export class OgcFilterableItemComponent implements OnInit {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
 
-  @Input() ogcFiltersHeaderShown: boolean;
+  @Input() ogcFiltersHeaderShown: boolean = true;
 
   get downloadable() {
     return (this.datasource.options as any).download;

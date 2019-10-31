@@ -28,6 +28,8 @@ export class MapToolComponent {
 
   @Input() ogcFiltersInLayers: boolean = true;
 
+  @Input() timeFilterInLayers: boolean = true;
+
   @Input() layerListControls: LayerListControlsOptions = {};
 
   @Input() queryBadge: boolean = false;
