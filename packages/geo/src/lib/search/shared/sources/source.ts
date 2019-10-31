@@ -137,6 +137,7 @@ export class SearchSource {
   }
 
   constructor(options: SearchSourceOptions) {
+    this.options = options;
     this.options = Object.assign({}, this.getDefaultOptions(), options);
 
     // Set Default Params from Settings

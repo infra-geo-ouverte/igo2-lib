@@ -5,7 +5,6 @@ export interface SearchSourceOptions {
   enabled?: boolean;
   order?: number;
   distance?: number;
-  zoomMaxOnSelect?: number;
   params?: { [key: string]: string };
   settings?: SearchSourceSettings[];
 }
