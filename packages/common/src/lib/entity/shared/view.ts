@@ -255,7 +255,7 @@ export class EntityView<E extends object, V extends object = E> {
         clause.valueAccessor(v1),
         clause.valueAccessor(v2),
         clause.direction,
-        false
+        clause.nullsFirst
       );
     });
   }
