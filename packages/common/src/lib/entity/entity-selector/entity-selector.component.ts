@@ -28,15 +28,17 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
    * The selected entity
    * @internal
    */
-  selected$ = new BehaviorSubject<object>(undefined);
+  readonly selected$ = new BehaviorSubject<object>(undefined);
 
   /**
    * The current multi select option text
    * @internal
    */
-  multiText$ = new BehaviorSubject<string>(undefined);
+  readonly multiText$ = new BehaviorSubject<string>(undefined);
 
   readonly multiSelectValue = {id: 'IGO_MULTI_SELECT'};
+
+  readonly emptyValue = {id: 'IGO_EMPTY_SELECT'};
 
   /**
    * Subscription to the selected entity
@@ -139,6 +141,7 @@ export class EntitySelectorComponent implements OnInit, OnDestroy {
       }
     }
 
+    entities = entities.filter((entity: object) => entity !== this.emptyValue);
     if (entities.length === 0) {
       this.store.state.updateAll({selected: false});
     } else {
