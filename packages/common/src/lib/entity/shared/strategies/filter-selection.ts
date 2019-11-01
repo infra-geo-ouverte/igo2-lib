@@ -9,7 +9,7 @@ import { EntityStoreStrategy } from './strategy';
 export class EntityStoreFilterSelectionStrategy extends EntityStoreStrategy {
 
   /**
-   * Store / filter ids map 
+   * Store / filter ids map
    */
   private filters: Map<EntityStore, string> = new Map();
 
@@ -55,14 +55,14 @@ export class EntityStoreFilterSelectionStrategy extends EntityStoreStrategy {
    * Filter all stores
    */
   private filterAll() {
-    this.stores.forEach((store: EntityStore) => this.filterStore(store)); 
+    this.stores.forEach((store: EntityStore) => this.filterStore(store));
   }
 
   /**
    * Unfilter all stores
    */
   private unfilterAll() {
-    this.stores.forEach((store: EntityStore) => this.unfilterStore(store)); 
+    this.stores.forEach((store: EntityStore) => this.unfilterStore(store));
   }
 
   /**
@@ -73,7 +73,7 @@ export class EntityStoreFilterSelectionStrategy extends EntityStoreStrategy {
       return;
     }
 
-    const filter = function(record: EntityRecord<object>) {
+    const filter = (record: EntityRecord<object>) => {
       return record.state.selected === true;
     };
     this.filters.set(store, store.stateView.addFilter(filter));
