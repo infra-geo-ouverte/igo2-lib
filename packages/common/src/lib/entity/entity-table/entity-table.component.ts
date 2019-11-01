@@ -5,10 +5,8 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  SimpleChanges,
   OnInit,
-  OnDestroy,
-  OnChanges
+  OnDestroy
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -17,7 +15,6 @@ import {
   EntityRecord,
   EntityState,
   EntityStore,
-  EntityStoreWatcher,
   EntityTableTemplate,
   EntityTableColumn,
   EntityTableColumnRenderer,
@@ -31,7 +28,7 @@ import {
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
+export class EntityTableComponent implements OnInit, OnDestroy  {
 
   /**
    * Reference to the column renderer types
@@ -50,11 +47,6 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
    * @internal
    */
   readonly selectionState$: BehaviorSubject<EntityTableSelectionState> = new BehaviorSubject(undefined);
-
-  /**
-   * Entity store watcher
-   */
-  private watcher: EntityStoreWatcher<object>;
 
   /**
    * Subscription to the store's selection
@@ -156,27 +148,10 @@ export class EntityTableComponent implements OnInit, OnDestroy, OnChanges  {
   }
 
   /**
-   * When the store change, create a new watcher
-   * @internal
-   */
-  ngOnChanges(changes: SimpleChanges) {
-    const store = changes.store;
-    if (store && store.currentValue !== store.previousValue) {
-      if (this.watcher !== undefined) {
-        this.watcher.destroy();
-      }
-      this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
-    }
-  }
-
-  /**
    * Unbind the store watcher
    * @internal
    */
   ngOnDestroy() {
-    if (this.watcher !== undefined) {
-      this.watcher.destroy();
-    }
     this.selection$$.unsubscribe();
   }
 
