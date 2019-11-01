@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 
 import { TranslateLoader } from '@ngx-translate/core';
 
+import { ObjectUtils } from '@igo2/utils';
+
 import { ConfigService } from '../../config/config.service';
 
 declare function require(arg: string): any;
@@ -35,7 +37,7 @@ export class LanguageLoader implements TranslateLoader {
 
     return locale$.pipe(
       map(translations => {
-        return Object.assign(translations[0], translations[1]);
+        return ObjectUtils.mergeDeep(translations[0], translations[1]);
       })
     );
   }

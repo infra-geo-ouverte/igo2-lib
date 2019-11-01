@@ -83,7 +83,7 @@ export class SearchSelectorComponent implements OnInit, OnDestroy {
    * @internal
    */
   getSearchTypeTitle(searchType: string) {
-    return `search.${searchType.toLowerCase()}.title`;
+    return `igo.geo.search.${searchType.toLowerCase()}.title`;
   }
 
   /**

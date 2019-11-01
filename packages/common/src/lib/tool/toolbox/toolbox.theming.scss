@@ -18,15 +18,34 @@
     }
   }
 
+  igo-toolbox > igo-actionbar:not(.with-title) > mat-list {
+    & > #lowChevron,
+    & > #topChevron {
+      &:hover {
+        background-color: mat-color($accent, lighter);
+        color: mat-color($foreground, text);
+      }
+    }
+  }
 
   igo-toolbox.color-primary > igo-actionbar:not(.with-title) {
     box-shadow: unset;
-    background-color: mat-color($primary)
+    background-color: mat-color($primary);
+    #lowChevron,
+    #topChevron {
+      background-color: mat-color($primary);
+      color: white;
+    }
   }
 
   igo-toolbox.color-grey > igo-actionbar:not(.with-title) {
     box-shadow: unset;
     background-color: #737475;
+    #lowChevron,
+    #topChevron {
+      background-color: #737475;
+      color: white;
+    }
   }
 
   igo-toolbox.color-primary,
