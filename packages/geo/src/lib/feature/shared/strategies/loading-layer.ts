@@ -1,9 +1,10 @@
 import { unByKey } from 'ol/Observable';
 import { OlEvent } from 'ol/events/Event';
 
+import { EntityStoreStrategy } from '@igo2/common';
+
 import { FeatureStore } from '../store';
 import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
-import { FeatureStoreStrategy } from './strategy';
 
 /**
  * This strategy loads a layer's features into it's store counterpart.
@@ -13,7 +14,7 @@ import { FeatureStoreStrategy } from './strategy';
  * Important: In it's current state, this strategy is to meant to be combined
  * with a standard Loading strategy and it would probably cause recursion issues.
  */
-export class FeatureStoreLoadingLayerStrategy extends FeatureStoreStrategy {
+export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
 
   /**
    * Subscription to the store's OL source changes
@@ -30,7 +31,7 @@ export class FeatureStoreLoadingLayerStrategy extends FeatureStoreStrategy {
    */
   bindStore(store: FeatureStore) {
     super.bindStore(store);
-    if (this.isActive() === true) {
+    if (this.active === true) {
       this.watchStore(store);
     }
   }
@@ -41,7 +42,7 @@ export class FeatureStoreLoadingLayerStrategy extends FeatureStoreStrategy {
    */
   unbindStore(store: FeatureStore) {
     super.unbindStore(store);
-    if (this.isActive() === true) {
+    if (this.active === true) {
       this.unwatchStore(store);
     }
   }
