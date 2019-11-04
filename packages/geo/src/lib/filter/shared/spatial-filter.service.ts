@@ -62,7 +62,6 @@ export class SpatialFilterService {
 
   constructor(
     private http: HttpClient,
-    private config: ConfigService,
     private languageService: LanguageService) {}
 
     getKeyByValue(object, value) {
@@ -109,7 +108,8 @@ export class SpatialFilterService {
                 language === 'fr' ? this.urlThematicType[type.toString()] :
                 this.languageService.translate
                   .instant('igo.geo.spatialFilter.frenchThematics.'+ this.urlThematicType[type.toString()]);
-              if (type.startsWith('lieux')) {
+
+              if (type.startsWith('lieux')) { // Get thematics group
                 let substr = type.substring(6, type.length);
                 if (substr.includes('.')) {
                   const index = substr.indexOf('.');

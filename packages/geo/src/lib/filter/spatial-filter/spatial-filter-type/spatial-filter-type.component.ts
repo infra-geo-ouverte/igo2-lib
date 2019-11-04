@@ -50,7 +50,9 @@ export class SpatialFilterTypeComponent implements OnInit {
   public type: SpatialFilterType;
 
   @Output() eventType = new EventEmitter<SpatialFilterType>();
+
   @Output() eventQueryType = new EventEmitter<SpatialFilterQueryType>();
+
   @Output() zoneChange = new EventEmitter<Feature>();
 
   constructor() {}

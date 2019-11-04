@@ -72,15 +72,13 @@
 }
 
 .radius {
-    width: 110px;
+    width: 100%;
+}
+
+.radius ::ng-deep .mat-form-field-infix {
+    display: inline-flex;
 }
 
 .unit-field {
-    margin-left: 5px;
-    margin-top: 33px;
-    height: 20px;
-}
-
-.radius-unit {
-    display: flex;
+    padding-left: 5px;
 }
