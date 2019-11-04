@@ -63,12 +63,11 @@
     <mat-form-field class="radius">
       <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl" [value]="1000"
       (input)="getRadius($event)">
+      <label class="unit-field">
+        {{('igo.geo.measure.' + measureUnit) | translate}}
+      </label>
     </mat-form-field>
   </form>
-
-  <label class="unit-field">
-    {{('igo.geo.measure.' + measureUnit) | translate}}
-  </label>
 </div>
 
 <div class="buttons">

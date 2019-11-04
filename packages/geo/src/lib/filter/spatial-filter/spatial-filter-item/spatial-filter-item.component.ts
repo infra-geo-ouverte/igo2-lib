@@ -48,7 +48,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     const index = this.geometryTypes.findIndex(geom => geom === this.type);
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
-    this.clearButton();
+    //this.clearButton();
     this.selectedThematics.clear();
     this.radius = undefined;
     this.drawGuide$.next(null);
@@ -83,6 +83,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       }
       this.drawStyle$.next(this.overlayStyle);
     } else {
+      // If geometry types is Polygon
       this.overlayStyle = (feature, resolution) => {
         return new olstyle.Style ({
           stroke: new olstyle.Stroke({
@@ -100,8 +101,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   private _type: SpatialFilterType;
 
   @Input() queryType: SpatialFilterQueryType;
+
   @Input() zone: Feature;
+
   @Input() loading;
+
   @Input() store;
 
   /**
@@ -113,16 +117,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   @Output() toggleSearch = new EventEmitter();
+
   @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
+
   @Output() thematicChange = new EventEmitter<string[]>();
+
   @Output() drawZoneEvent = new EventEmitter<Feature>();
+
   @Output() radiusEvent = new EventEmitter<number>();
+
   @Output() clearSearchEvent = new EventEmitter();
 
   public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
   public selectedSourceAddress;
 
+  // For thematics and results tables
   public displayedColumns: string[] = ['name', 'select'];
   public initialSelection = [];
   public allowMultiSelect = true;
@@ -131,6 +141,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public selectedThematics = new SelectionModel<SpatialFilterThematic>(this.allowMultiSelect, this.initialSelection);
   public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
+  // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
   drawGuide$: BehaviorSubject<number> = new BehaviorSubject(null);
   overlayStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
@@ -235,6 +246,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return numSelected === numRows;
   }
 
+  /**
+   * Apply header checkbox
+   */
   masterToggle() {
     this.isAllSelected() ?
         this.selectedThematics.clear() :
