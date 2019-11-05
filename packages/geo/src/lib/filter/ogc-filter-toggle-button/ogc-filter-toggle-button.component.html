@@ -1,9 +1,18 @@
-<ng-container *ngFor="let bundle of pushButtonBundle">
+<div *ngIf="getPushButtonsGroups().length > 1">
+    <mat-form-field>
+      <mat-select tooltip-position="below" matTooltipShowDelay="500"
+        [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" [(ngModel)]="currentPushButtonGroup"
+        (selectionChange)="onChangeGroup()">
+        <mat-option *ngFor="let pbg of getPushButtonsGroups()" [value]="pbg">{{pbg.title}}</mat-option>
+      </mat-select>
+  </mat-form-field>
+</div>
+<ng-container *ngFor="let bundle of currentPushButtonGroup.computedButtons">
         <mat-button-toggle-group appearance="legacy" vertical={{bundleIsVertical(bundle)}} multiple="true">
             <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
                 (change)="applyFilters(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
                 [matTooltip]="getToolTip(ogcPushButton)" matTooltipClass="material-tooltip" 
-                *ngFor="let ogcPushButton of bundle.ogcPushButtons" [value]="ogcPushButton">{{ogcPushButton.title}}
+                *ngFor="let ogcPushButton of bundle.buttons" [value]="ogcPushButton">{{ogcPushButton.title}}
             </mat-button-toggle>
         </mat-button-toggle-group>
 </ng-container>

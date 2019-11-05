@@ -53,6 +53,21 @@ export class ObjectUtils {
     return output;
   }
 
+  static copyDeep(src): any {
+    const target = Array.isArray(src) ? [] : {};
+    for (const prop in src) {
+      if (src.hasOwnProperty(prop)) {
+        const value = src[prop];
+        if (value && typeof value === 'object') {
+          target[prop] = this.copyDeep(value);
+        } else {
+          target[prop] = value;
+        }
+      }
+    }
+    return target;
+  }
+
   static removeUndefined(obj: object): any {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
