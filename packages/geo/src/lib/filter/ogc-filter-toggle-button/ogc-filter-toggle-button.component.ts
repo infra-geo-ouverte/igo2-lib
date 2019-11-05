@@ -8,7 +8,8 @@ import {
   OgcFilterableDataSource,
   IgoOgcFilterObject,
   OgcPushButton,
-  OgcPushButtonBundle
+  OgcPushButtonBundle,
+  PushButtonGroup
 
 } from '../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
@@ -31,7 +32,7 @@ export class OgcFilterToggleButtonComponent implements OnInit {
 
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
-  public pushButtonBundle: OgcPushButtonBundle[] = [];
+  public currentPushButtonGroup;
 
   constructor(
     private ogcFilterService: OGCFilterService
@@ -39,14 +40,18 @@ export class OgcFilterToggleButtonComponent implements OnInit {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
 
-  ngOnInit() {
+  getPushButtonsGroups(): PushButtonGroup[] {
+    return this.datasource.options.ogcFilters.pushButtons.groups;
+  }
 
+  ngOnInit() {
     if (this.datasource.options.ogcFilters &&
       this.datasource.options.ogcFilters.pushButtons) {
-        this.pushButtonBundle = this.datasource.options.ogcFilters.pushButtons as OgcPushButtonBundle[];
+      this.currentPushButtonGroup =
+        this.datasource.options.ogcFilters.pushButtons.groups.find(g => g.enabled) ||
+        this.datasource.options.ogcFilters.pushButtons.groups[0];
     }
     this.applyFilters();
-
   }
 
   getToolTip(pb: OgcPushButton): string  {
@@ -77,15 +82,22 @@ export class OgcFilterToggleButtonComponent implements OnInit {
     return bundle.vertical ? bundle.vertical : false;
   }
 
+  onChangeGroup() {
+
+    this.getPushButtonsGroups().map(g => g.enabled = false);
+    this.getPushButtonsGroups().find(g => g === this.currentPushButtonGroup).enabled = true;
+    this.applyFilters();
+  }
+
   applyFilters(currentOgcPushButton?: OgcPushButton) {
     if (currentOgcPushButton) {
       currentOgcPushButton.enabled = !currentOgcPushButton.enabled;
     }
     let filterQueryString = '';
     const conditions = [];
-    this.pushButtonBundle.map(buttonBundle => {
+    this.currentPushButtonGroup.computedButtons.map(buttonBundle => {
       const bundleCondition = [];
-      buttonBundle.ogcPushButtons
+      buttonBundle.buttons
       .filter(ogcpb => ogcpb.enabled === true)
       .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
       if (bundleCondition.length >= 1 ) {
