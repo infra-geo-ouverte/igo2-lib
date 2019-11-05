@@ -37,7 +37,7 @@ export class OgcFilterableItemComponent implements OnInit {
   @Input() map: IgoMap;
 
   @Input() header: boolean = true;
-  
+
   get refreshFunc() {
     return this.refreshFilters.bind(this);
   }
@@ -57,14 +57,12 @@ export class OgcFilterableItemComponent implements OnInit {
 
   ngOnInit() {
     const ogcFilters = this.datasource.options.ogcFilters;
-    if (
-      ogcFilters.pushButtons &&
-      ogcFilters.pushButtons.length > 0) {
-        if (ogcFilters.advancedOgcFilters === undefined) {
-          ogcFilters.advancedOgcFilters = false;
-        }
-        this.hasPushButton = true;
+    if (ogcFilters.pushButtons && ogcFilters.pushButtons.length > 0) {
+      if (ogcFilters.advancedOgcFilters === undefined) {
+        ogcFilters.advancedOgcFilters = false;
       }
+      this.hasPushButton = true;
+    }
 
     switch (this.datasource.options.type) {
       case 'wms':
@@ -83,9 +81,7 @@ export class OgcFilterableItemComponent implements OnInit {
           JSON.stringify(ogcFilters.interfaceOgcFilters)
         );
         if (
-          ogcFilters.interfaceOgcFilters.filter(
-            f => f.wkt_geometry
-          ).length >= 1
+          ogcFilters.interfaceOgcFilters.filter(f => f.wkt_geometry).length >= 1
         ) {
           this.hasActiveSpatialFilter = true;
         }
@@ -99,7 +95,8 @@ export class OgcFilterableItemComponent implements OnInit {
 
   addFilterToSequence() {
     this.filtersCollapsed = false;
-    const interfaceOgcFilters: OgcInterfaceFilterOptions[] = this.datasource.options.ogcFilters.interfaceOgcFilters;
+    const interfaceOgcFilters: OgcInterfaceFilterOptions[] = this.datasource
+      .options.ogcFilters.interfaceOgcFilters;
     const arr = interfaceOgcFilters || [];
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
@@ -219,7 +216,10 @@ export class OgcFilterableItemComponent implements OnInit {
   }
 
   public addFilterDisabled(): boolean {
-    return (!this.datasource.options.sourceFields || this.datasource.options.sourceFields.length === 0);
+    return (
+      !this.datasource.options.sourceFields ||
+      this.datasource.options.sourceFields.length === 0
+    );
   }
 
   private changeOgcFiltersAdvancedOgcFilters(value: boolean) {

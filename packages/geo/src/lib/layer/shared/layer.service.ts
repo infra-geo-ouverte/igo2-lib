@@ -114,7 +114,7 @@ export class LayerService {
           if (source === undefined) {
             return undefined;
           }
-          return this.createLayer( Object.assign(layerOptions, {source}));
+          return this.createLayer(Object.assign(layerOptions, { source }));
         })
       );
   }
@@ -169,7 +169,7 @@ export class LayerService {
       style
     });
 
-    if(!olLayer) {
+    if (!olLayer) {
       olLayer = new VectorLayer(layerOptionsOl);
     }
 
@@ -203,7 +203,7 @@ export class LayerService {
       style
     });
 
-    if(!olLayer) {
+    if (!olLayer) {
       olLayer = new VectorTileLayer(layerOptionsOl);
     }
 
@@ -211,10 +211,12 @@ export class LayerService {
     return olLayer;
   }
 
-  private applyMapboxStyle (layer: Layer, layerOptions: VectorTileLayerOptions ) {
+  private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      const mapboxglStyle = this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
-          stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+      const mapboxglStyle = this.getMapboxGlStyle(
+        layerOptions.mapboxStyle.url
+      ).subscribe(res => {
+        stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
       });
     }
   }
@@ -228,5 +230,4 @@ export class LayerService {
       })
     );
   }
-
 }

@@ -109,8 +109,10 @@ export function featureFromOl(
 
   if (olLayer) {
     title = olLayer.get('title');
-    exclude = olLayer.get('sourceOptions').excludeAttribute;
-    excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
+    if (olLayer.get('sourceOptions')) {
+      exclude = olLayer.get('sourceOptions').excludeAttribute;
+      excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
+    }
   } else {
     title = olFeature.get('_title');
   }

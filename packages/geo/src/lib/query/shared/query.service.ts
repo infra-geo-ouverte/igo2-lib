@@ -270,8 +270,9 @@ export class QueryService {
 
       let exclude;
       if (layer.options.sourceOptions.type === 'wms') {
-        const sourceOptions = (layer.options.sourceOptions as WMSDataSourceOptions);
-        exclude = sourceOptions.excludeAttribute;
+        const sourceOptions = layer.options
+          .sourceOptions as WMSDataSourceOptions;
+        exclude = sourceOptions ? sourceOptions.excludeAttribute : undefined;
       }
 
       let title = this.getQueryTitle(feature, layer);

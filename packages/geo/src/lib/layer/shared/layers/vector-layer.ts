@@ -75,9 +75,12 @@ export class VectorLayer extends Layer {
       const opacity = easeOut(1 - elapsedRatio);
       const newColor = ColorAsArray(this.options.animation.color || 'red');
       newColor[3] = opacity;
-      let style = this.ol.getStyleFunction().call(this, feature).find(style=> {
-        return style.getImage();
-      });
+      let style = this.ol
+        .getStyleFunction()
+        .call(this, feature)
+        .find(style2 => {
+          return style2.getImage();
+        });
       if (!style) {
         style = this.ol.getStyleFunction().call(this, feature)[0];
       }
