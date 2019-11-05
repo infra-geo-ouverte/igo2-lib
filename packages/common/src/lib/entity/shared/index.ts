@@ -6,3 +6,5 @@ export * from './state';
 export * from './watcher';
 export * from './transaction';
 export * from './view';
+
+export * from './strategies';

@@ -1,8 +1,9 @@
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, map, skip } from 'rxjs/operators';
 
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, uuid } from '@igo2/utils';
 import {
+  EntityKey,
   EntityFilterClause,
   EntitySortClause,
   EntityJoinClause
@@ -21,6 +22,11 @@ export class EntityView<E extends object, V extends object = E> {
   readonly values$ = new BehaviorSubject<V[]>([]);
 
   /**
+   * Subscription to the source (and joined sources) values
+   */
+  private values$$: Subscription;
+
+  /**
    * Whether this view has been lifted
    */
   private lifted = false;
@@ -36,14 +42,25 @@ export class EntityView<E extends object, V extends object = E> {
   private filter$ = new BehaviorSubject(undefined);
 
   /**
+   * Observable of filter clauses
+   */
+  private filters$: BehaviorSubject<EntityFilterClause[]> = new BehaviorSubject([]);
+
+  /**
+   * Filters index
+   */
+  private filterIndex: Map<string, EntityFilterClause> = new Map();
+
+  /**
    * Observable of a sort clause
    */
   private sort$ = new BehaviorSubject(undefined);
 
   /**
-   * Subscription to the source (and joined sources) values
+   * Method for indexing
    */
-  private values$$: Subscription;
+  get getKey(): (V) => EntityKey { return this.getKey$.value; }
+  private getKey$: BehaviorSubject<(V) => EntityKey> = new BehaviorSubject(undefined);
 
   /**
    * Number of entities
@@ -57,7 +74,25 @@ export class EntityView<E extends object, V extends object = E> {
   readonly empty$ = new BehaviorSubject<boolean>(true);
   get empty(): boolean { return this.empty$.value; }
 
+  /**
+   * Store index
+   */
+  get index(): Map<EntityKey, V> { return this._index; }
+  private _index: Map<EntityKey, V>;
+
   constructor(private source$: BehaviorSubject<E[]>) {}
+
+  /**
+   * Get a value from the view by key
+   * @param key Key
+   * @returns Value
+   */
+  get(key: EntityKey): V {
+    if (this._index === undefined) {
+      throw new Error('This view has no index, therefore, this method is unavailable.');
+    }
+    return this.index.get(key);
+  }
 
   /**
    * Get all the values
@@ -123,6 +158,17 @@ export class EntityView<E extends object, V extends object = E> {
   }
 
   /**
+   * Create an index
+   * @param getKey Method to get a value's id
+   * @returns The view
+   */
+  createIndex(getKey: (E) => EntityKey): EntityView<E, V> {
+    this._index = new Map();
+    this.getKey$.next(getKey);
+    return this;
+  }
+
+  /**
    * Join another source to the stream (chainable)
    * @param clause Join clause
    * @returns The view
@@ -146,6 +192,26 @@ export class EntityView<E extends object, V extends object = E> {
   }
 
   /**
+   * @param clause Filter clause
+   * @returns The filter id
+   */
+  addFilter(clause: EntityFilterClause<V>): string {
+    const id = uuid();
+    this.filterIndex.set(id, clause);
+    this.filters$.next(Array.from(this.filterIndex.values()));
+    return id;
+  }
+
+  /**
+   * Remove a filter by id
+   * @param clause Filter clause
+   */
+  removeFilter(id: string) {
+    this.filterIndex.delete(id);
+    this.filters$.next(Array.from(this.filterIndex.values()));
+  }
+
+  /**
    * Sort values (chainable)
    * @param clauseSort clause
    * @returns The view
@@ -162,12 +228,21 @@ export class EntityView<E extends object, V extends object = E> {
   lift() {
     this.lifted = true;
     const source$ = this.joins.length > 0 ? this.liftJoinedSource() : this.liftSource();
-    this.values$$ = combineLatest(source$, this.filter$, this.sort$)
-      .pipe(skip(1), debounceTime(25))
-      .subscribe((bunch: [V[], EntityFilterClause, EntitySortClause]) => {
-        const [_values, filter, sort] = bunch;
-        const values = this.processValues(_values, filter, sort);
-        this.setValues(values);
+    const observables$ = [
+      source$,
+      this.filters$,
+      this.filter$,
+      this.sort$,
+      this.getKey$
+    ];
+
+    this.values$$ = combineLatest(observables$)
+      .pipe(skip(1), debounceTime(5))
+      .subscribe((bunch: [V[],  EntityFilterClause[], EntityFilterClause, EntitySortClause, (V) => EntityKey]) => {
+        const [_values, filters, filter, sort, getKey] = bunch;
+        const values = this.processValues(_values, filters, filter, sort);
+        const generateIndex = getKey !== undefined;
+        this.setValues(values, generateIndex);
       });
   }
 
@@ -220,13 +295,16 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Filter and sort values before streaming them
    * @param values Values
+   * @param filters Filter clauses
    * @param filter Filter clause
    * @param sort Sort clause
    * @returns Filtered and sorted values
    */
-  private processValues(values: V[], filter: EntityFilterClause, sort: EntitySortClause): V[] {
+  private processValues(
+    values: V[], filters: EntityFilterClause[],  filter: EntityFilterClause, sort: EntitySortClause
+  ): V[] {
     values = values.slice(0);
-    values = this.filterValues(values, filter);
+    values = this.filterValues(values, filters.concat([filter]));
     values = this.sortValues(values, sort);
     return values;
   }
@@ -234,12 +312,18 @@ export class EntityView<E extends object, V extends object = E> {
   /**
    * Filter values
    * @param values Values
-   * @param filter Filter clause
+   * @param filters Filter clauses
    * @returns Filtered values
    */
-  private filterValues(values: V[], clause: EntityFilterClause): V[] {
-    if (clause === undefined) { return values; }
-    return values.filter((value: V) => clause(value));
+  private filterValues(values: V[], clauses: EntityFilterClause[]): V[] {
+    if (clauses.length === 0) { return values; }
+
+    return values
+      .filter((value: V) => {
+        return clauses
+          .filter((clause: EntityFilterClause) => clause !== undefined)
+          .every((clause: EntityFilterClause) => clause(value));
+      });
   }
 
   /**
@@ -260,11 +344,31 @@ export class EntityView<E extends object, V extends object = E> {
     });
   }
 
-  private setValues(values: V[]) {
+  /**
+   * Set value and optionally generate an index
+   * @param values Values
+   * @param generateIndex boolean
+   */
+  private setValues(values: V[], generateIndex: boolean) {
+    if (generateIndex === true) {
+      this._index = this.generateIndex(values);
+    }
+
     this.values$.next(values);
+
     const count = values.length;
     const empty = count === 0;
     this.count$.next(count);
     this.empty$.next(empty);
+  }
+
+  /**
+   * Generate a complete index of all the values
+   * @param entities Entities
+   * @returns Index
+   */
+  private generateIndex(values: V[]): Map<EntityKey, V> {
+    const entries = values.map((value: V) => [this.getKey(value), value]);
+    return new Map(entries as [EntityKey, V][]);
   }
 }

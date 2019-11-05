@@ -99,10 +99,6 @@
     <span>{{endYear}}</span>
     <p *ngIf= "options.enabled" class="date-below">{{year}}</p>
     <div #actions class="igo-layer-actions-container">
-      <button *ngIf="!layer.visible" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.showLayer' | translate" color="warn" (click)="setVisible($event)">
-        <mat-icon svgIcon="alert-circle"></mat-icon>
-      </button>
       <mat-slide-toggle (change)="toggleFilterState()" tooltip-position="below" matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="options.enabled"
         [disabled]="!layer.visible">

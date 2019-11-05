@@ -13,7 +13,6 @@ import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
 import { Feature, FeatureStoreOptions } from './feature.interfaces';
 import { computeOlFeaturesDiff, featureFromOl, featureToOl, moveToOlFeatures } from './feature.utils';
-import { FeatureStoreStrategy } from './strategies/strategy';
 
 /**
  * The class is a specialized version of an EntityStore that stores
@@ -21,12 +20,6 @@ import { FeatureStoreStrategy } from './strategies/strategy';
  * between the store and the layer is handled by strategies.
  */
 export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
-
-  /**
-   * Feature store strategies responsible of synchronizing the store
-   * and the layer
-   */
-  strategies: FeatureStoreStrategy[] = [];
 
   /**
    * Vector layer to display the features on
@@ -58,76 +51,6 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
   bindLayer(layer: VectorLayer): FeatureStore {
     this.layer = layer;
     return this;
-  }
-
-  /**
-   * Add a strategy to this store
-   * @param strategy Feature store strategy
-   * @returns Feature store
-   */
-  addStrategy(strategy: FeatureStoreStrategy, activate: boolean = false): FeatureStore {
-    const existingStrategy = this.strategies.find((_strategy: FeatureStoreStrategy) => {
-      return strategy.constructor === _strategy.constructor;
-    });
-    if (existingStrategy !== undefined) {
-      throw new Error('A strategy of this type already exists on that FeatureStore.');
-    }
-
-    this.strategies.push(strategy);
-    strategy.bindStore(this);
-
-    if (activate === true) {
-      strategy.activate();
-    }
-
-    return this;
-  }
-
-  /**
-   * Remove a strategy from this store
-   * @param strategy Feature store strategy
-   * @returns Feature store
-   */
-  removeStrategy(strategy: FeatureStoreStrategy): FeatureStore {
-    const index = this.strategies.indexOf(strategy);
-    if (index >= 0) {
-      this.strategies.splice(index, 1);
-      strategy.unbindStore(this);
-    }
-    return this;
-  }
-
-  /**
-   * Return strategies of a given type
-   * @param type Feature store strategy class
-   * @returns Strategies
-   */
-  getStrategyOfType(type: typeof FeatureStoreStrategy): FeatureStoreStrategy {
-    return this.strategies.find((strategy: FeatureStoreStrategy) => {
-      return strategy instanceof type;
-    });
-  }
-
-  /**
-   * Activate strategies of a given type
-   * @param type Feature store strategy class
-   */
-  activateStrategyOfType(type: typeof FeatureStoreStrategy) {
-    const strategy = this.getStrategyOfType(type);
-    if (strategy !== undefined) {
-      strategy.activate();
-    }
-  }
-
-  /**
-   * Deactivate strategies of a given type
-   * @param type Feature store strategy class
-   */
-  deactivateStrategyOfType(type: typeof FeatureStoreStrategy) {
-    const strategy = this.getStrategyOfType(type);
-    if (strategy !== undefined) {
-      strategy.deactivate();
-    }
   }
 
   /**

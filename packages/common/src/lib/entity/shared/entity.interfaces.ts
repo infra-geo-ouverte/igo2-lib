@@ -15,6 +15,8 @@ export interface EntityState {
 export interface EntityRecord<E extends object, S extends EntityState = EntityState> {
   entity: E;
   state: S;
+  revision: number;
+  ref: string;
 }
 
 export interface EntityStoreOptions {
@@ -26,6 +28,8 @@ export interface EntityStateManagerOptions {
   getKey?: (entity: object) => EntityKey;
   store?: EntityStore<object>;
 }
+
+export interface EntityStoreStrategyOptions {}
 
 export interface EntityTransactionOptions {
   getKey?: (entity: object) => EntityKey;
@@ -70,14 +74,14 @@ export interface EntityTableTemplate {
   selectMany?: boolean;
   sort?: boolean;
   fixedHeader?: boolean;
-  valueAccessor?: (entity: object, property: string) => any;
+  valueAccessor?: (entity: object, property: string, record: EntityRecord<object>) => any;
   headerClassFunc?: () => {
     [key: string]: boolean;
   };
-  rowClassFunc?: (entity: object) => {
+  rowClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
-  cellClassFunc?: (entity: object, column: EntityTableColumn) => {
+  cellClassFunc?: (entity: object, column: EntityTableColumn, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
 }
@@ -86,17 +90,17 @@ export interface EntityTableColumn {
   name: string;
   title: string;
   renderer?: EntityTableColumnRenderer;
-  valueAccessor?: (entity: object) => any;
+  valueAccessor?: (entity: object, record: EntityRecord<object>) => any;
   visible?: boolean;
   sort?: boolean;
-  cellClassFunc?: (entity: object) => {
+  cellClassFunc?: (entity: object, record: EntityRecord<object>) => {
     [key: string]: boolean;
   };
 }
 
 export interface EntityTableButton {
   icon: string;
-  click: (entity: object) => void;
+  click: (entity: object, record: EntityRecord<object>) => void;
   color?: 'primary' | 'accent' | 'warn';
   style?: 'mat-mini-fab' | 'mat-icon-button';
 }

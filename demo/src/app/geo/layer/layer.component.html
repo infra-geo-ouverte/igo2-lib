@@ -23,7 +23,8 @@
       <ng-template #igoLayerItemToolbar let-layer="layer">
         <igo-metadata-button [layer]="layer"></igo-metadata-button>
         <igo-download-button [layer]="layer"></igo-download-button>
-        <igo-ogc-filter-button [ogcFiltersInLayers]="true" [layer]="layer"></igo-ogc-filter-button>
+        <igo-ogc-filter-button [header]="true" [layer]="layer"></igo-ogc-filter-button>
+        <igo-time-filter-button [header]="true" [layer]="layer"></igo-time-filter-button>
         <igo-track-feature-button [layer]="layer" [trackFeature]="true"></igo-track-feature-button>
       </ng-template>
 
