@@ -130,10 +130,16 @@ export class AppOgcFilterComponent {
       ogcFilters: {
         enabled: true,
         editable: true,
-        pushButtons: [
+        pushButtons: {
+          groups : [
+            {title: 'Nom du group1', name: '1', ids : ['id1']},
+            {title: 'Nom du group2', name: '2', ids : ['id1', 'id2']},
+          ],
+          bundles: [
           {
+            id: 'id1',
             logical: 'Or',
-            ogcPushButtons: [
+            buttons: [
               {
                 title: 'Radar photo fixe',
                 enabled: true,
@@ -181,9 +187,10 @@ export class AppOgcFilterComponent {
             ]
           },
           {
+            id: 'id2',
             logical: 'Or',
             vertical: true,
-            ogcPushButtons: [
+            buttons: [
               {
                 title: 'Montréal & Laval',
                 enabled: false,
@@ -226,7 +233,8 @@ export class AppOgcFilterComponent {
               }
             ]
           }
-        ],
+        ]
+      },
         allowedOperatorsType: OgcFilterOperatorType.Basic
       },
       paramsWFS: {
