@@ -48,7 +48,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     const index = this.geometryTypes.findIndex(geom => geom === this.type);
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
-    //this.clearButton();
     this.selectedThematics.clear();
     this.radius = undefined;
     this.drawGuide$.next(null);
@@ -238,6 +237,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       return true;
     }
     return false;
+    //return true;
   }
 
   isAllSelected() {

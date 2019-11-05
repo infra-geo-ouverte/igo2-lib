@@ -45,7 +45,7 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   public queryType: string[] = ['AdmRegion', 'Mun', 'Arrond', 'CircFed', 'CircProv', 'DirReg', 'MRC', 'RegTour'];
   public selectedTypeIndex = new FormControl(0);
-  public selectedQueryType: SpatialFilterQueryType;
+  @Input() selectedQueryType: SpatialFilterQueryType;
 
   public type: SpatialFilterType;
 
