@@ -1,0 +1,78 @@
+{
+  "version": 8,
+  "name": "Empty Style",
+  "metadata": {"maputnik:renderer": "mbgljs"},
+  "sources": {
+    "source_nameX": {
+      "type": "vector",
+      "minZoom": 0,
+      "maxZoom": 22
+    }
+  },
+  "sprite": "",
+  "layers": [
+    {
+      "id": "labelling",
+      "type": "symbol",
+      "source": "source_nameX",
+      "paint": {
+        "text-color": "rgba(0, 0, 0, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)"
+      },
+      "layout": {
+        "visibility": "visible",
+        "text-anchor": "top-right",
+        "text-field": "{description}",
+        "text-font": [
+          "Noto Sans Regular"
+        ],
+        "text-max-width": 16,
+        "text-size": 16,
+        "text-padding": 3,
+        "text-allow-overlap": false,
+        "icon-text-fit": "both"
+       }
+      },
+    {
+      "id": "circle_style",
+      "type": "circle",
+      "source": "source_nameX",
+      "filter": ["any",["==","name","Name 1"]],
+      "paint": {
+        "circle-color": "rgba(0, 255, 0, 1)",
+        "circle-radius": 7,
+        "circle-blur": 0.5,
+        "circle-stroke-color": "rgba(0, 0, 0, 1)",
+        "circle-stroke-width": 2
+      },
+      "layout": { "visibility": "visible" }
+    },
+    {
+      "id": "line_style",
+      "type": "line",
+      "source": "source_nameX",
+      "filter": ["any",["==","name","Name 2"]],
+      "paint": {
+        "line-color": "rgba(0, 255, 0, 1)"
+      },
+      "layout": {
+        "visibility": "visible",
+        "line-cap": "round",
+        "line-join": "round"
+       }
+    },
+    {
+      "id": "poly_style",
+      "type": "fill",
+      "source": "source_nameX",
+      "filter": ["any",["==","name","Name 3"]],
+      "paint": {
+        "fill-color": "rgba(0, 255, 0, 1)"
+      },
+      "layout": {
+        "visibility": "visible"
+       }
+    }
+  ],
+  "id": "xsk9pp6fv"
+}

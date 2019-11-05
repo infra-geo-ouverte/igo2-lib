@@ -7,7 +7,7 @@ import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-dataso
 
 import { MVTDataSourceOptions } from '../../../datasource/shared/datasources/mvt-datasource.interface';
 
-import { StyleByAttribute } from '../stylebyattribute';
+import { StyleByAttribute, MapboxStyle } from '../vector-style.interface';
 
 export interface VectorTileLayerOptions extends LayerOptions {
   style?: { [key: string]: any } | olStyle | olStyle[];
@@ -18,4 +18,5 @@ export interface VectorTileLayerOptions extends LayerOptions {
   ol?: olLayerVectorTile;
   declutter?: boolean;
   styleByAttribute?: StyleByAttribute;
+  mapboxStyle ?: MapboxStyle;
 }
