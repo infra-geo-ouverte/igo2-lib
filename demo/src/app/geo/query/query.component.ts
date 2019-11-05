@@ -79,7 +79,8 @@ export class AppQueryComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS',
-            source: dataSource
+            source: dataSource,
+            sourceOptions: dataSource.options
           })
         );
       });
@@ -100,7 +101,8 @@ export class AppQueryComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'WMS html with a pre call in GML',
-            source: dataSource
+            source: dataSource,
+            sourceOptions: dataSource.options
           })
         );
       });
@@ -119,7 +121,8 @@ export class AppQueryComponent {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Vector Layer',
-            source: dataSource
+            source: dataSource,
+            sourceOptions: dataSource.options
           })
         );
         this.addFeatures(dataSource as FeatureDataSource);
