@@ -1,16 +1,27 @@
-<mat-list-item>
+<mat-list-item *ngIf="header">
   <mat-icon
     class="igo-chevron"
     mat-list-avatar
     igoCollapse
     [target]="filters"
-    [collapsed]="false"
+    [collapsed]="filtersCollapsed"
+    (click)="toggleFiltersCollapsed()"
     svgIcon="chevron-up" >
   </mat-icon>
-  <h4 matLine>{{layer.title}}</h4>
+  <h4 (click)="toggleLegendOnClick()" [ngStyle]="{'cursor': filtersCollapsed ? 'default' : 'pointer'}"  matLine>{{layer.title}}</h4>
+  
+  <button *ngIf="!layer.visible" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.layer.showLayer' | translate" color="warn" (click)="setVisible()">
+    <mat-icon svgIcon="alert-circle-outline"></mat-icon>
+  </button>
+
 </mat-list-item>
 
 <div #filters class="igo-datasource-filters-container">
+  <div #legend class="igo-layer-legend-container">
+    <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer">
+    </igo-layer-legend>
+  </div>
   <igo-time-filter-form
     [layer]= "layer"
     [options]="datasource.options.timeFilter"

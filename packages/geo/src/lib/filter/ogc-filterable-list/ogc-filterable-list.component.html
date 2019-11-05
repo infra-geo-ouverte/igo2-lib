@@ -1,6 +1,6 @@
 <igo-list [navigation]="false" [selection]="false">
   <ng-template ngFor let-layer [ngForOf]="layers | filterableDataSource: 'ogc'">
-    <igo-ogc-filterable-item igoListItem [ogcFiltersHeaderShown]="true" [layer]="layer" 
+    <igo-ogc-filterable-item igoListItem [header]="true" [layer]="layer" 
     [map]="layer.map" ></igo-ogc-filterable-item>
   </ng-template>
 </igo-list>

@@ -15,6 +15,7 @@ import {
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
 import { OgcFilterWriter } from '../shared/ogc-filter';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-ogc-filterable-item',
@@ -29,11 +30,14 @@ export class OgcFilterableItemComponent implements OnInit {
   public filtersAreEditable = true;
   public filtersCollapsed = true;
   public hasPushButton: boolean = false;
+  showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input() layer: Layer;
 
   @Input() map: IgoMap;
 
+  @Input() header: boolean = true;
+  
   get refreshFunc() {
     return this.refreshFilters.bind(this);
   }
@@ -41,8 +45,6 @@ export class OgcFilterableItemComponent implements OnInit {
   get datasource(): OgcFilterableDataSource {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
-
-  @Input() ogcFiltersHeaderShown: boolean;
 
   get downloadable() {
     return (this.datasource.options as any).download;
@@ -229,5 +231,20 @@ export class OgcFilterableItemComponent implements OnInit {
     if (isAdvancedOgcFilters.checked) {
       this.refreshFilters(true);
     }
+  }
+
+  private toggleLegend(collapsed: boolean) {
+    this.layer.legendCollapsed = collapsed;
+    this.showLegend$.next(!collapsed);
+  }
+
+  toggleLegendOnClick() {
+    if (!this.filtersCollapsed) {
+      this.toggleLegend(this.showLegend$.value);
+    }
+  }
+
+  toggleFiltersCollapsed() {
+    this.filtersCollapsed = !this.filtersCollapsed;
   }
 }
