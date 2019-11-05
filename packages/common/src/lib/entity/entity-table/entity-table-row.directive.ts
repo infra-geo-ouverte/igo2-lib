@@ -8,6 +8,8 @@ import {
   HostListener
 } from '@angular/core';
 
+import scrollIntoView from 'scroll-into-view-if-needed';
+
 import { EntityTableScrollBehavior } from '../shared/entity.enums';
 
 /**
@@ -41,8 +43,7 @@ export class EntityTableRowDirective {
   /**
    * Whether the selected row should be highlighted
    */
-  @Input()
-  highlightSelection: boolean = true;
+  @Input() highlightSelection: boolean = true;
 
   /**
    * Whether a row is selected
@@ -109,8 +110,8 @@ export class EntityTableRowDirective {
    */
   private scroll() {
     if (this._selected === true) {
-      this.el.nativeElement.scrollIntoView({
-        behavior: this.scrollBehavior,
+      scrollIntoView(this.el.nativeElement, {
+        scrollMode: 'if-needed',
         block: 'center',
         inline: 'center'
       });
