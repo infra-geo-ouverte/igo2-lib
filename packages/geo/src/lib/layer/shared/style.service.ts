@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MatIconRegistry } from '@angular/material';
 
 import * as olstyle from 'ol/style';
 import { StyleByAttribute } from './vector-style.interface';
@@ -10,7 +11,7 @@ import { createOverlayMarkerStyle } from '../../overlay';
   providedIn: 'root'
 })
 export class StyleService {
-  constructor() {}
+  constructor(private matIconRegistry: MatIconRegistry) {}
 
   createStyle(options: { [key: string]: any }) {
     if (typeof options === 'function' || options instanceof olstyle.Style) {
@@ -175,8 +176,6 @@ export class StyleService {
   }
 
   createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
-    let types: string[] = [];
-    console.log(feature);
     let style;
     // const maxSize = 100;
     const range = clusterParam.clusterRange;
@@ -214,18 +213,26 @@ export class StyleService {
       ];
     } else {
       style = createOverlayMarkerStyle();
-      // let icon = feature.values_.features[0].icon;
-      // style = new olstyle.Style ({
-      //   text: new olstyle.Text ({
-      //     text: icon,
-      //     font : 'normal 18px ' + icon,
-      //     textBaseline: 'bottom',
-      //     fill: new olstyle.Fill({
-      //         color: 'red'
-      //     })
-      //   })
-      // })
-      // console.log(style);
+
+    // const svg = '<svg width="120" height="120" version="1.1" xmlns="http://www.w3.org/2000/svg">'
+    //     + '<circle cx="60" cy="60" r="60"/>'
+    //     + '</svg>';
+
+    // const svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="120" height="120" viewBox="0 0 120 120"><path d="M12,4C14.21,4 16,5.79 16,8C16,10.21 14.21,12 12,12C9.79,12 8,10.21 8,8C8,5.79 9.79,4 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>';
+
+    // let icon = feature.values_.features[0].icon;
+    // let svg;
+    // setTimeout(() => this.matIconRegistry.getNamedSvgIcon(icon).subscribe(boom => svg = boom), 10000);
+    //   console.log(svg);
+
+    //   style = new olstyle.Style ({
+    //     image: new olstyle.Icon({
+    //       opacity: 1,
+    //       src: 'data:image/svg+xml;utf8,' + svg,
+    //       scale: 5
+    //     })
+    //   })
+    //   console.log(style);
     }
     return style;
   }

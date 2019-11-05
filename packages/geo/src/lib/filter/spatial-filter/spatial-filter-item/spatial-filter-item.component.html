@@ -46,14 +46,14 @@
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-
-  <!-- Group header
+<!-- 
+ Group header
   <ng-container matColumnDef="groupHeader" *ngIf="groups.length > 0">
     <mat-cell *matCellDef="let thematic">{{thematic.group}}</mat-cell>
   </ng-container>
 
   <div *ngIf="groups.length > 0">
-    <mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup"></mat-row>
+    <mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup(, row)"></mat-row>
   </div> -->
 
 </mat-table>

@@ -24,6 +24,7 @@
     <igo-spatial-filter-type
       [store]="spatialListStore"
       [clearSearch]="clearSearch"
+      [selectedQueryType]="queryType"
       (eventType)="getOutputType($event)"
       (eventQueryType)="getOutputQueryType($event)"
       (zoneChange)="onZoneChange($event)">
