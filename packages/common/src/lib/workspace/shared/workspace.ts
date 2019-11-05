@@ -1,5 +1,4 @@
 import { Subscription, BehaviorSubject, Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
 
 import { ActionStore } from '../../action';
 import { Widget } from '../../widget';
@@ -33,11 +32,6 @@ export class Workspace<E extends object = object> {
    * Subscription to the selected entity
    */
   private entities$$: Subscription;
-
-  /**
-   * Whether this workspace is active
-   */
-  private active: boolean = false;
 
   /**
    * State change that trigger an update of the actions availability
@@ -87,9 +81,11 @@ export class Workspace<E extends object = object> {
   constructor(protected options: WorkspaceOptions) {}
 
   /**
-   * Whether this workspace is active
+   * Whether this strategy is active
+   * @internal
    */
-  isActive(): boolean { return this.active; }
+  get active(): boolean { return this.active$.value; }
+  readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Activate the workspace. By doing that, the workspace will observe
@@ -100,7 +96,7 @@ export class Workspace<E extends object = object> {
     if (this.active === true) {
       this.deactivate();
     }
-    this.active = true;
+    this.active$.next(true);
 
     if (this.entityStore !== undefined) {
       this.entities$$ = this.entityStore.stateView.all$()
@@ -114,7 +110,7 @@ export class Workspace<E extends object = object> {
    * Deactivate the workspace. Unsubcribe to the selected entity.
    */
   deactivate() {
-    this.active = false;
+    this.active$.next(false);
     this.deactivateWidget();
 
     if (this.entities$$ !== undefined) {

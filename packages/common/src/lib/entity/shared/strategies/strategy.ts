@@ -1,36 +1,34 @@
-import { FeatureStoreStrategyOptions } from '../feature.interfaces';
-import { FeatureStore } from '../store';
+import { BehaviorSubject } from 'rxjs';
+
+import { EntityStoreStrategyOptions } from '../entity.interfaces';
+import { EntityStore } from '../store';
 
 /**
- * Strategies or responsible of synchronizing a feature store and a layer.
- * A strategy can be shared among multiple stores. Sharing a strategy
- * is a good idea when multiple strategies would have on cancelling effect
- * on each other.
+ * Entity store strategies. They can do pretty much anything during a store's
+ * lifetime. For example, they may act as triggers when something happens.
+ * Sharing a strategy is a good idea when multiple strategies would have
+ * on cancelling effect on each other.
  *
  * At creation, strategy is inactive and needs to be manually activated.
  */
-export class FeatureStoreStrategy {
+export class EntityStoreStrategy {
 
   /**
    * Feature store
    * @internal
    */
-  protected stores: FeatureStore[] = [];
+  protected stores: EntityStore[] = [];
 
   /**
    * Whether this strategy is active
    * @internal
    */
-  protected active = false;
+  get active(): boolean { return this.active$.value; }
+  readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  constructor(protected options: FeatureStoreStrategyOptions = {}) {
+  constructor(protected options: EntityStoreStrategyOptions = {}) {
     this.options = options;
   }
-
-  /**
-   * Whether this strategy is active
-   */
-  isActive(): boolean { return this.active; }
 
   /**
    * Activate the strategy. If it's already active, it'll be deactivated
@@ -40,7 +38,7 @@ export class FeatureStoreStrategy {
     if (this.active === true) {
       this.doDeactivate();
     }
-    this.active = true;
+    this.active$.next(true);
     this.doActivate();
   }
 
@@ -49,7 +47,7 @@ export class FeatureStoreStrategy {
    * and activated again.
    */
   deactivate() {
-    this.active = false;
+    this.active$.next(false);
     this.doDeactivate();
   }
 
@@ -57,7 +55,7 @@ export class FeatureStoreStrategy {
    * Bind this strategy to a store
    * @param store Feature store
    */
-  bindStore(store: FeatureStore) {
+  bindStore(store: EntityStore) {
     if (this.stores.indexOf(store) < 0) {
       this.stores.push(store);
     }
@@ -67,7 +65,7 @@ export class FeatureStoreStrategy {
    * Unbind this strategy from store
    * @param store Feature store
    */
-  unbindStore(store: FeatureStore) {
+  unbindStore(store: EntityStore) {
     const index = this.stores.indexOf(store);
     if (index >= 0) {
       this.stores.splice(index, 1);

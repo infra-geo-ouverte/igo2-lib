@@ -1,9 +1,10 @@
 import { Subscription } from 'rxjs';
 
+import { EntityStoreStrategy } from '@igo2/common';
+
 import { FeatureMotion } from '../feature.enums';
 import { Feature, FeatureStoreLoadingStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
-import { FeatureStoreStrategy } from './strategy';
 
 /**
  * This strategy loads a store's features into it's layer counterpart.
@@ -13,7 +14,7 @@ import { FeatureStoreStrategy } from './strategy';
  * Important: This strategy observes filtered entities, not raw entities. This
  * is not configurable yet.
  */
-export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
+export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
 
   /**
    * Subscription to the store's features
@@ -30,7 +31,7 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
    */
   bindStore(store: FeatureStore) {
     super.bindStore(store);
-    if (this.isActive() === true) {
+    if (this.active === true) {
       this.watchStore(store);
     }
   }
@@ -41,7 +42,7 @@ export class FeatureStoreLoadingStrategy extends FeatureStoreStrategy {
    */
   unbindStore(store: FeatureStore) {
     super.unbindStore(store);
-    if (this.isActive() === true) {
+    if (this.active === true) {
       this.unwatchStore(store);
     }
   }
