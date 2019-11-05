@@ -6,7 +6,7 @@ import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
 import {
   formatWFSQueryString,
   defaultFieldNameGeometry,
@@ -53,7 +53,7 @@ export class WFSDataSource extends DataSource {
     });
   }
 
-  private buildUrl(extent, proj, ogcFilters): string {
+  private buildUrl(extent, proj, ogcFilters: OgcFiltersOptions): string {
     const paramsWFS = this.options.paramsWFS;
     const queryStringValues = formatWFSQueryString(this.options, undefined, proj.getCode());
     let igoFilters;

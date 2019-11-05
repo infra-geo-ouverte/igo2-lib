@@ -57,7 +57,7 @@ export class OgcFilterableItemComponent implements OnInit {
     const ogcFilters = this.datasource.options.ogcFilters;
     if (
       ogcFilters.pushButtons &&
-      ogcFilters.pushButtons.length > 0) {
+      ogcFilters.pushButtons.bundles.length > 0) {
         if (ogcFilters.advancedOgcFilters === undefined) {
           ogcFilters.advancedOgcFilters = false;
         }
