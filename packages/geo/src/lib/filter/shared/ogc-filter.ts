@@ -429,6 +429,9 @@ export class OgcFilterWriter {
   private computeIgoPushButton(pushButtons: IgoPushButton): IgoPushButton {
     let pb: IgoPushButton;
     if (pushButtons.groups && pushButtons.bundles) {
+      if (!pushButtons.bundles.every(bundle => bundle.id !== undefined)) {
+        throw new Error('You must set an id for each of your pushButtons bundles');
+      }
       pb = ObjectUtils.copyDeep(pushButtons);
       pb.groups.forEach(group => {
         group.title = group.title ? group.title : group.name;
