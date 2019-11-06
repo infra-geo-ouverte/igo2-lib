@@ -414,7 +414,13 @@ export class ContextService {
     }
     const message = context.message;
     if (message) {
-      this.contextMessage = this.messageService.message(message as Message);
+      message.title = message.title
+        ? this.languageService.translate.instant(message.title)
+        : undefined;
+      message.text = message.text
+        ? this.languageService.translate.instant(message.text)
+        : undefined;
+      this.messageService.message(message as Message);
     }
   }
 
