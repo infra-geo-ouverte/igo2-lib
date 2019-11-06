@@ -43,3 +43,7 @@
   @import '~dist/core/style/themes/teal.theme';
   @include igo-all-theming($theme);
 }
+
+// mat-icon.mat-badge .mat-badge-content {
+//   display: flex;
+// }

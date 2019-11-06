@@ -4,22 +4,22 @@
 
   <igo-metadata-button [layer]="layer"></igo-metadata-button>
 
-  <button  
+  <button
     mat-icon-button
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="tooltip | translate"
     [color]="added ? 'warn' : ''"
     (click)="onToggleClick()">
-    <mat-icon 
-       matBadge = "*"
-       [matBadgeHidden]="isInResolutionsRange() || added"
-       matBadgeColor="accent" 
-       matBadgeSize="small" 
+    <mat-icon
+       matBadge
+       igoMatBadgeIcon="eye"
+       <!-- [matBadgeHidden]="isInResolutionsRange() || added" -->
+       matBadgeColor="accent"
+       matBadgeSize="small"
        matBadgePosition="after"
        [svgIcon]="added ? 'delete' : 'plus'">
     </mat-icon>
   </button>
-  <!-- igoMatBadgeIcon="eye"            à mettre dans le mat-icon si la directive fonctionne      -->
 
 </mat-list-item>

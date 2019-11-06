@@ -1,15 +1,9 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { MatBadgeIconDirective } from './badge-icon.directive';
-import { MatBadgeModule, MatButtonModule, MatIconModule } from '@angular/material';
-import { MatIconRegistry } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
+import { MatBadgeModule, MatIconModule } from '@angular/material';
 
 @NgModule({
-  imports: [
-    MatBadgeModule,
-    MatButtonModule,
-    MatIconModule
-  ],
+  imports: [MatBadgeModule, MatIconModule],
   declarations: [MatBadgeIconDirective],
   exports: [MatBadgeIconDirective]
 })
@@ -19,13 +13,5 @@ export class IgoMatBadgeIconModule {
       ngModule: IgoMatBadgeIconModule,
       providers: []
     };
-  }
-
-  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
-    matIconRegistry.addSvgIconSet(
-      domSanitizer.bypassSecurityTrustResourceUrl(
-        './assets/igo2/core/icons/mdi.svg'
-      )
-    );
   }
 }
