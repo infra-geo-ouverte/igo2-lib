@@ -5,6 +5,7 @@
 export * from './lib/action/action.module';
 export * from './lib/action/actionbar/actionbar.module';
 export * from './lib/backdrop/backdrop.module';
+export * from './lib/badge-icon/badge-icon.module';
 export * from './lib/clickout/clickout.module';
 export * from './lib/clone/clone.module';
 export * from './lib/collapsible/collapsible.module';
