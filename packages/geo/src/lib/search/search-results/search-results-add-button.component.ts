@@ -1,17 +1,25 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
 
 import { SearchResult } from '../shared/search.interfaces';
 import { IgoMap } from '../../map/shared/map';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 import { LayerService } from '../../layer/shared/layer.service';
 import { LAYER } from '../../layer/shared/layer.enums';
+import { Subscription, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-search-add-button',
   templateUrl: './search-results-add-button.component.html',
+  styleUrls: ['./search-results-add-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultAddButtonComponent implements OnInit {
+export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
+
+  public tooltip: string;
+
+  private resolution$$: Subscription;
+
+  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   @Input() layer: SearchResult;
 
@@ -43,6 +51,14 @@ export class SearchResultAddButtonComponent implements OnInit {
     if (this.layer.meta.dataType === 'Layer') {
       this.added = this.map.layers.findIndex((lay) => lay.id === this.layer.data.sourceOptions.id) !== -1;
     }
+    const resolution$ = this.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe((value) => {
+      this.isInResolutionsRange(value);
+    });
+  }
+
+  ngOnDestroy() {
+    this.resolution$$.unsubscribe();
   }
 
   /**
@@ -97,4 +113,15 @@ export class SearchResultAddButtonComponent implements OnInit {
     this.map.removeLayer(oLayer);
   }
 
+  isInResolutionsRange(resolution: number) {
+    const minResolution = this.layer.data.minResolution;
+    const maxResolution = this.layer.data.maxResolution;
+    this.inRange$.next(resolution >= minResolution && resolution <= maxResolution);
+    this.tooltip = this.computeTooltip();
+  }
+
+  computeTooltip(): string {
+      return this.added ? 'igo.geo.catalog.layer.removeFromMap' :
+      this.inRange$.value ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+  }
 }

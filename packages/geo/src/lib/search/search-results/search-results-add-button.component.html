@@ -3,8 +3,15 @@
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
-[matTooltip]="(added ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.addToMap') | translate"
+[matTooltip]="tooltip | translate"
 [color]="added ? 'warn' : ''"
 (click)="onToggleClick()">
-<mat-icon [svgIcon]="added ? 'delete' : 'plus'"></mat-icon>
+<mat-icon 
+  matBadge = "*"
+  [matBadgeHidden]="(inRange$ | async) || added"
+  matBadgeColor="primary" 
+  matBadgeSize="small" 
+  matBadgePosition="after"
+  [svgIcon]="added ? 'delete' : 'plus'">
+</mat-icon>
 </button>

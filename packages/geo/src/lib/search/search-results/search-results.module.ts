@@ -5,7 +5,8 @@ import {
   MatTooltipModule,
   MatIconModule,
   MatListModule,
-  MatButtonModule
+  MatButtonModule,
+  MatBadgeModule
 } from '@angular/material';
 
 import {
@@ -25,6 +26,7 @@ import { SearchResultAddButtonComponent } from './search-results-add-button.comp
 @NgModule({
   imports: [
     CommonModule,
+    MatBadgeModule,
     MatTooltipModule,
     MatIconModule,
     MatListModule,
