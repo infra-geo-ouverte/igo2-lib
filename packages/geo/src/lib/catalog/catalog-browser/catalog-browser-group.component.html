@@ -9,8 +9,7 @@
     (toggle)="onToggleCollapsed($event)">
   </mat-icon>
 
-  <h4 mat-line matTooltipShowDelay="500" [matTooltip]="title">{{title}}</h4>
-
+  <h4 class="igo-catalog-group-title" mat-line matTooltipShowDelay="500" [matTooltip]="title" (click)="onTitleClick()">{{title}}</h4>
   <ng-container *ngIf="added$ | async; else notadded">
     <button
       mat-icon-button

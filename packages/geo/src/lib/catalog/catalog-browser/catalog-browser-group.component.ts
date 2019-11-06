@@ -27,6 +27,7 @@ import {
 @Component({
   selector: 'igo-catalog-browser-group',
   templateUrl: './catalog-browser-group.component.html',
+  styleUrls: ['./catalog-browser-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
@@ -219,5 +220,9 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       disabled = collapsed;
     }
     this.disabled$.next(disabled);
+  }
+
+  onTitleClick() {
+    this.collapsed = !this.collapsed;
   }
 }
