@@ -1,8 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter, OnInit } from '@angular/core';
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { CatalogItemLayer } from '../shared';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Catalog browser layer item
@@ -10,9 +11,14 @@ import { CatalogItemLayer } from '../shared';
 @Component({
   selector: 'igo-catalog-browser-layer',
   templateUrl: './catalog-browser-layer.component.html',
+  styleUrls: ['./catalog-browser-layer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatalogBrowserLayerComponent {
+export class CatalogBrowserLayerComponent implements OnInit {
+
+  public tooltip: string;
+
+  @Input() resolution: number;
 
   /**
    * Catalog layer
@@ -44,6 +50,10 @@ export class CatalogBrowserLayerComponent {
 
   constructor() {}
 
+  ngOnInit(): void {
+    this.tooltip = this.computeTooltip(this.isInResolutionsRange());
+  }
+
   /**
    * On toggle button click, emit the added change event
    * @internal
@@ -66,6 +76,19 @@ export class CatalogBrowserLayerComponent {
   private remove() {
     this.added = false;
     this.addedChange.emit({added: false, layer: this.layer});
+  }
+
+  isInResolutionsRange(): boolean {
+    const minResolution = this.layer.options.minResolution;
+    const maxResolution = this.layer.options.maxResolution;
+    const inRange = this.resolution >= minResolution && this.resolution <= maxResolution;
+    this.tooltip = this.computeTooltip(inRange);
+    return inRange;
+  }
+
+  computeTooltip(inRange): string {
+      return this.added ? 'igo.geo.catalog.layer.removeFromMap' :
+      inRange ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
   }
 
 }

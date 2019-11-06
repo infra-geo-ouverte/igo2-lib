@@ -7,7 +7,7 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { zip } from 'rxjs';
+import { zip, Subscription, BehaviorSubject } from 'rxjs';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { Layer } from '../../layer/shared/layers/layer';
@@ -37,6 +37,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private watcher: EntityStoreWatcher<CatalogItem>;
 
+  private resolution$$: Subscription;
+  
+  public resolution$: BehaviorSubject<number> = new BehaviorSubject(0);
+  
   /**
    * Catalog
    */
@@ -81,10 +85,16 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       });
     }
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+
+    const resolution$ = this.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe((value) => {
+      this.resolution$.next(value);
+    });
   }
 
   ngOnDestroy() {
     this.watcher.destroy();
+    this.resolution$$.unsubscribe();
   }
 
   /**

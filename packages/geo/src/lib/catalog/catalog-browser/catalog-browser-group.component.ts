@@ -64,6 +64,8 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    */
   @Input() collapsed: boolean = true;
 
+  @Input() resolution: number;
+
   /**
    * Whether the group can be toggled when it's collapsed
    */

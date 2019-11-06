@@ -9,7 +9,7 @@
     (toggle)="onToggleCollapsed($event)">
   </mat-icon>
 
-  <h4 matLine>{{title}}</h4>
+  <h4 mat-line matTooltipShowDelay="500" [matTooltip]="title">{{title}}</h4>
 
   <ng-container *ngIf="added$ | async; else notadded">
     <button
@@ -44,6 +44,7 @@
       <igo-catalog-browser-layer
         igoListItem
         [layer]="item"
+        [resolution]="resolution"
         [added]="state.get(item).added"
         (addedChange)="onLayerAddedChange($event)">
       </igo-catalog-browser-layer>

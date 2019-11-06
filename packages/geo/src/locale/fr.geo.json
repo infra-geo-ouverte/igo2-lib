@@ -3,6 +3,7 @@
     "geo": {
       "catalog": {
         "layer.addToMap": "Ajouter à la carte",
+        "layer.addToMapOutRange": "Ajouter à la carte, toutefois, la donnée est non visible à l'échelle active. Veuillez zoomer +/- pour la faire apparaître",
         "layer.removeFromMap": "Retirer de la carte",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",

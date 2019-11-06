@@ -5,6 +5,7 @@
         [catalog]="catalog"
         [group]="item"
         [state]="store.state"
+        [resolution]="resolution$ | async"
         [toggleCollapsed]="toggleCollapsedGroup"
         (addedChange)="onGroupAddedChange($event)"
         (layerAddedChange)="onLayerAddedChange($event)">
@@ -15,6 +16,7 @@
       <igo-catalog-browser-layer
         igoListItem
         [layer]="item"
+        [resolution]="resolution$ | async"
         [added]="store.state.get(item).added"
         (addedChange)="onLayerAddedChange($event)">
       </igo-catalog-browser-layer>
