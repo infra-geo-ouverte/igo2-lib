@@ -5,7 +5,28 @@ import { MatIconRegistry } from '@angular/material';
   selector: '[igoMatBadgeIcon]'
 })
 export class MatBadgeIconDirective implements OnInit {
-  @Input() igoMatBadgeIcon: string;
+  @Input()
+  set igoMatBadgeIcon(value: string) {
+    this.matIconRegistry
+      .getNamedSvgIcon(value)
+      .subscribe(svgObj => {
+        this.badge.innerHTML = '';
+        this.badge.appendChild(svgObj);
+      });
+  }
+
+  @Input()
+  set igoMatBadgeHidden(value: boolean) {
+    this.badge.style.display = value
+      ? 'none'
+      : 'flex';
+    this._igoMatBadgeHidden = value;
+  }
+  private _igoMatBadgeHidden = false;
+
+  get badge() {
+    return this.el.nativeElement.querySelector('.mat-badge-content');
+  }
 
   constructor(
     private el: ElementRef,
@@ -13,18 +34,7 @@ export class MatBadgeIconDirective implements OnInit {
   ) {}
 
   ngOnInit() {
-    const badge = this.el.nativeElement.querySelector('.mat-badge-content');
-    this.matIconRegistry
-      .getNamedSvgIcon(this.igoMatBadgeIcon)
-      .subscribe(svgObj => {
-        // badge.style.display = this.el.nativeElement.classList.contains(
-        //   'mat-badge-hidden'
-        // )
-        //   ? 'hidden'
-        //   : 'flex';
-        badge.style.alignItems = 'center';
-        badge.style.justifyContent = 'center';
-        badge.appendChild(svgObj);
-      });
+    this.badge.style.alignItems = 'center';
+    this.badge.style.justifyContent = 'center';
   }
 }

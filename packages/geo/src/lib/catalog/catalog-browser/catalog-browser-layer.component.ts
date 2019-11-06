@@ -28,7 +28,7 @@ export class CatalogBrowserLayerComponent implements OnInit {
   /**
    * Whether the layer is already added to the map
    */
-  @Input() added: boolean;
+  @Input() added = false;
 
   /**
    * Event emitted when the add/remove button is clicked
