@@ -8,7 +8,7 @@
     mat-icon-button
     tooltip-position="below"
     matTooltipShowDelay="500"
-    [matTooltip]="tooltip"
+    [matTooltip]="tooltip | translate"
     [color]="added ? 'warn' : ''"
     (click)="onToggleClick()">
     <mat-icon 
