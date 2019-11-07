@@ -38,9 +38,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
   private watcher: EntityStoreWatcher<CatalogItem>;
 
   private resolution$$: Subscription;
-  
+
   public resolution$: BehaviorSubject<number> = new BehaviorSubject(0);
-  
+
   /**
    * Catalog
    */

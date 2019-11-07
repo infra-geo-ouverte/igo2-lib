@@ -121,7 +121,10 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
 
   computeTooltip(): string {
-      return this.added ? 'igo.geo.catalog.layer.removeFromMap' :
-      this.inRange$.value ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+    if (this.added) {
+      return this.inRange$.value ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
+    } else {
+      return this.inRange$.value ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+    }
   }
 }

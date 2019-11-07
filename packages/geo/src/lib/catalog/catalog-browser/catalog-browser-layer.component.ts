@@ -3,7 +3,6 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter, OnInit
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { CatalogItemLayer } from '../shared';
-import { BehaviorSubject } from 'rxjs';
 
 /**
  * Catalog browser layer item
@@ -87,8 +86,11 @@ export class CatalogBrowserLayerComponent implements OnInit {
   }
 
   computeTooltip(inRange): string {
-      return this.added ? 'igo.geo.catalog.layer.removeFromMap' :
-      inRange ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+    if (this.added) {
+      return inRange ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
+    } else {
+      return inRange ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+    }
   }
 
 }

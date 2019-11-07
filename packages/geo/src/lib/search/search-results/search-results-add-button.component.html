@@ -7,8 +7,9 @@ matTooltipShowDelay="500"
 [color]="added ? 'warn' : ''"
 (click)="onToggleClick()">
 <mat-icon 
-  matBadge = "*"
-  [matBadgeHidden]="(inRange$ | async) || added"
+  matBadge
+  igoMatBadgeIcon="eye-off"
+  [matBadgeHidden]="(inRange$ | async)"
   matBadgeColor="primary" 
   matBadgeSize="small" 
   matBadgePosition="after"
