@@ -16,13 +16,11 @@ export class MatBadgeIconDirective implements OnInit {
   }
 
   @Input()
-  set igoMatBadgeHidden(value: boolean) {
+  set matBadgeHidden(value: boolean) {
     this.badge.style.display = value
       ? 'none'
       : 'flex';
-    this._igoMatBadgeHidden = value;
   }
-  private _igoMatBadgeHidden = false;
 
   get badge() {
     return this.el.nativeElement.querySelector('.mat-badge-content');
