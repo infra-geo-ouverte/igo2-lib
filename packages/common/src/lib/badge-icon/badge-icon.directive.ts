@@ -34,5 +34,6 @@ export class MatBadgeIconDirective implements OnInit {
   ngOnInit() {
     this.badge.style.alignItems = 'center';
     this.badge.style.justifyContent = 'center';
+    this.badge.style.background = 'none';
   }
 }
