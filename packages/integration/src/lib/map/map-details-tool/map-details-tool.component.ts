@@ -21,7 +21,9 @@ export class MapDetailsToolComponent {
 
   @Input() updateLegendOnResolutionChange: boolean = false;
 
-  @Input() ogcFiltersInLayers: boolean = true;
+  @Input() ogcButton: boolean = true;
+
+  @Input() timeButton: boolean = true;
 
   @Input() layerListControls: LayerListControlsOptions = {};
 

@@ -1,5 +1,5 @@
 @import './measurer/measurer.theming';
 
-@mixin igo-measure-theming($theme) {
-  @include igo-measurer-theming($theme);
+@mixin igo-measure-theming($theme, $typography) {
+  @include igo-measurer-theming($theme, $typography);
 }

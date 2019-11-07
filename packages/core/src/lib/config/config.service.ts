@@ -6,12 +6,12 @@ import { catchError } from 'rxjs/operators';
 import { ObjectUtils } from '@igo2/utils';
 
 import { ConfigOptions } from './config.interface';
+import { version } from './version';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-
   private config: object = {};
 
   constructor(private injector: Injector) {}
@@ -35,22 +35,21 @@ export class ConfigService {
 
     const http = this.injector.get(HttpClient);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       http
         .get(options.path)
         .pipe(
-          catchError(
-            (error: any): any => {
-              console.log(
-                `Configuration file ${options.path} could not be read`
-              );
-              resolve(true);
-              return throwError(error.error || 'Server error');
-            }
-          )
+          catchError((error: any): any => {
+            console.log(`Configuration file ${options.path} could not be read`);
+            resolve(true);
+            return throwError(error.error || 'Server error');
+          })
         )
         .subscribe(configResponse => {
-          this.config = ObjectUtils.mergeDeep(baseConfig, configResponse);
+          this.config = ObjectUtils.mergeDeep(
+            ObjectUtils.mergeDeep({ version }, baseConfig),
+            configResponse
+          );
           resolve(true);
         });
     });

@@ -23,7 +23,6 @@ $slide-toggle-width: 60px;
 
     ::ng-deep .mat-slide-toggle-content {
       width: calc(100% - #{$slide-toggle-width});
-      font-size: 16px;
     }
   }
 }

@@ -19,6 +19,7 @@
     "@angular/material": "^7.3.3",
     "@igo2/core": "^1.0.0",
     "@igo2/utils": "^1.0.0",
+    "scroll-into-view-if-needed": "^2.2.20",
     "typy": "^2.0.1"
   }
 }

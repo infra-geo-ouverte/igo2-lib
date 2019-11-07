@@ -19,6 +19,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   ol?: olSourceImageWMS;
   refreshIntervalSec?: number;
   _layerOptionsFromCapabilities?: WMSLayerOptionsFromCapabilities;
+  excludeAttribute?: Array<string>;
 }
 
 export interface WMSDataSourceOptionsParams {

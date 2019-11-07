@@ -13,3 +13,8 @@ export interface StyleByAttribute {
     label?: string | { [key: string]: any } | olStyle | olStyle[];
     baseStyle?: { [key: string]: any } | olStyle | olStyle[];
 }
+
+export interface MapboxStyle {
+  url: string;
+  source: string;
+}

@@ -123,8 +123,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   @Input()
   set value(value: GeoJSONGeometry) {
+    this._value = value;
+
     if (this.ready === false) {
-      this._value = value;
       return;
     }
 
@@ -134,7 +135,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.olOverlaySource.clear();
     }
 
-    this._value = value;
     this.onChange(value);
     this.toggleControl();
     this.cdRef.detectChanges();
@@ -179,10 +179,12 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.createMeasureTooltip();
     this.createDrawControl();
     this.createModifyControl();
+
     if (this.value) {
       this.addGeoJSONToOverlay(this.value);
     }
     this.toggleControl();
+
     this.ready = true;
   }
 
@@ -191,6 +193,12 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @internal
    */
   ngOnDestroy() {
+    // This is mandatory when the form control is reused after
+    // this component has been destroyed. It seems like the control
+    // keeps a reference to this component even after it's destroyed
+    // and it attempts to set it's value
+    this.ready = false;
+
     this.deactivateControl();
     this.olOverlaySource.clear();
     this.map.ol.removeLayer(this.olOverlayLayer);
@@ -267,6 +275,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   private toggleControl() {
     this.deactivateControl();
+
     if (!this.value && this.geometryType) {
       this.activateControl(this.drawControl);
     } else {

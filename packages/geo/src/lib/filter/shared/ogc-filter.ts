@@ -3,7 +3,7 @@ import olFormatWKT from 'ol/format/WKT';
 import olFormatWFS from 'ol/format/WFS';
 import olGeometry from 'ol/geom/Geometry';
 
-import { uuid } from '@igo2/utils';
+import { uuid, ObjectUtils } from '@igo2/utils';
 
 import {
   OgcFilter,
@@ -12,7 +12,10 @@ import {
   AnyBaseOgcFilterOptions,
   OgcInterfaceFilterOptions,
   OgcFilterableDataSourceOptions,
-  OgcFiltersOptions
+  OgcFiltersOptions,
+  IgoPushButton,
+  PushButtonGroup,
+  OgcPushButtonBundle
 } from './ogc-filter.interface';
 
 export class OgcFilterWriter {
@@ -423,6 +426,37 @@ export class OgcFilterWriter {
     }
   }
 
+  private computeIgoPushButton(pushButtons: IgoPushButton): IgoPushButton {
+    let pb: IgoPushButton;
+    if (pushButtons.groups && pushButtons.bundles) {
+      if (!pushButtons.bundles.every(bundle => bundle.id !== undefined)) {
+        throw new Error('You must set an id for each of your pushButtons bundles');
+      }
+      pb = ObjectUtils.copyDeep(pushButtons);
+      pb.groups.forEach(group => {
+        group.title = group.title ? group.title : group.name;
+        group.enabled = group.enabled ? group.enabled : false;
+        group.computedButtons = ObjectUtils.copyDeep(pb.bundles.filter(b => group.ids.includes(b.id)));
+      });
+    } else if (!pushButtons.groups && pushButtons.bundles) {
+      pb = ObjectUtils.copyDeep(pushButtons);
+      pb.groups = [{ title: 'group1', name: 'group1', computedButtons: ObjectUtils.copyDeep(pb.bundles) } as PushButtonGroup];
+    } else {
+      pb = {
+        bundles: pushButtons as OgcPushButtonBundle[],
+        groups: [
+          {
+            title: 'group1', name: 'group1',
+            computedButtons: ObjectUtils.copyDeep(pushButtons) as OgcPushButtonBundle[]
+          } as PushButtonGroup]
+      };
+    }
+    if (!pb.groups.find(pbGroup => pbGroup.enabled)) {
+      pb.groups[0].enabled = true;
+    }
+    return pb;
+  }
+
   public handleOgcFiltersAppliedValue(options: OgcFilterableDataSourceOptions, fieldNameGeometry: string) {
     const ogcFilters = options.ogcFilters;
     if (!ogcFilters) {
@@ -431,11 +465,12 @@ export class OgcFilterWriter {
     let filterQueryStringPushButton = '';
     let filterQueryStringAdvancedFilters = '';
     if (ogcFilters.enabled && ogcFilters.pushButtons) {
-      const pushButtonBundle = ogcFilters.pushButtons;
+      ogcFilters.pushButtons = this.computeIgoPushButton(ogcFilters.pushButtons);
+      const pushButtonBundle = ogcFilters.pushButtons.groups.find(g => g.enabled).computedButtons;
       const conditions = [];
       pushButtonBundle.map(buttonBundle => {
         const bundleCondition = [];
-        buttonBundle.ogcPushButtons
+        buttonBundle.buttons
           .filter(ogcpb => ogcpb.enabled === true)
           .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
         if (bundleCondition.length === 1) {

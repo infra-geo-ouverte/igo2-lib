@@ -53,6 +53,21 @@ export class ObjectUtils {
     return output;
   }
 
+  static copyDeep(src): any {
+    const target = Array.isArray(src) ? [] : {};
+    for (const prop in src) {
+      if (src.hasOwnProperty(prop)) {
+        const value = src[prop];
+        if (value && typeof value === 'object') {
+          target[prop] = this.copyDeep(value);
+        } else {
+          target[prop] = value;
+        }
+      }
+    }
+    return target;
+  }
+
   static removeUndefined(obj: object): any {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
@@ -99,22 +114,40 @@ export class ObjectUtils {
     return obj;
   }
 
-  static naturalCompare(a, b, direction = 'asc', nullFirst = false) {
+  static naturalCompare(a, b, direction = 'asc', nullsFirst?: boolean) {
     if (direction === 'desc') {
       b = [a, (a = b)][0];
     }
 
-    if (a === undefined || a === null || a === '') {
+    // nullsFirst = undefined : end if direction = 'asc', first if direction = 'desc'
+    // nullsFirst = true : always first
+    // nullsFirst = false : always end
+    if (
+      a === null ||
+      a === '' ||
+      a === undefined ||
+      b === null ||
+      b === '' ||
+      b === undefined
+    ) {
+      const nullScore =
+        a === b
+          ? 0
+          : a === undefined
+          ? 3
+          : b === undefined
+          ? -3
+          : a === null
+          ? 2
+          : b === null
+          ? -2
+          : a === ''
+          ? 1
+          : -1;
       if (direction === 'desc') {
-        return nullFirst ? -1 : 1;
+        return nullsFirst !== false ? nullScore : nullScore * -1;
       }
-      return nullFirst ? 1 : -1;
-    }
-    if (b === undefined || b === null || b === '') {
-      if (direction === 'desc') {
-        return nullFirst ? 1 : -1;
-      }
-      return nullFirst ? -1 : 1;
+      return nullsFirst === true ? nullScore * -1 : nullScore;
     }
 
     const ax = [];

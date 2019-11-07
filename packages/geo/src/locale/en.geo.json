@@ -32,7 +32,7 @@
           "title": "The file '{{value}}' is unreadable"
         },
         "tooLarge": {
-          "text": "The file '{{value}}' is too large (Max: 30 mb)",
+          "text": "The file '{{value}}' is too large (Max: 30 MB)",
           "title": "File too large"
         },
         "invalidSRS": {
@@ -59,7 +59,7 @@
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
-        "importSizeMax": "The file size limit is 30 mb.",
+        "importSizeMax": "The file size limit is 30 MB.",
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
@@ -90,24 +90,25 @@
         "layerFiltered": "This layer is currently filtered",
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
-        "advancedOgcFilters": "Advanced filters"
+        "advancedOgcFilters": "Advanced filters",
+        "placeholder": "Enter a value",
+        "placeholderSnrc": "Ex: 21L14",
+        "selectOperator": "Select an operator"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
         "btnSetExtent": "Define the extent of the spatial filter to the current view",
-        "snrc": "SNRC (ex:21L14)",
+        "snrc": "SNRC",
         "selectFeature": "",
         "drawFeature": ""
       },
       "layer": {
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
-        "loadingLegendText": "Loading legend",
-        "filterPlaceholder": "Filter",
-        "noLegendText": "No legend available for this layer",
-        "noLegendScale": "No legend available for this scale",
+        "filterPlaceholder": "Filter the layers list",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
+        "moreOptions": "More options",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
@@ -118,7 +119,14 @@
         "sortAlphabetically": "Sort the layers's list alphabetically",
         "sortMapOrder": "Sort the layers's list based on layer's order on the map",
         "resetLayersList": "Remove the current applied filter to layers's list",
-        "trackFeature": "Track the feature"
+        "trackFeature": "Track the feature",
+        "legend" : {
+          "default": "Default",
+          "loadingLegendText": "Loading legend",
+          "noLegendText": "No legend available for this layer",
+          "noLegendScale": "No legend available for this scale",
+          "selectStyle": "Select the style of the legend"
+        }
       },
       "download": {
         "action": "Download data",
@@ -214,6 +222,13 @@
         "nw": "northwest"
       },
       "search": {
+        "placeholder": "Search for a localisation or a layer",
+        "feature.title": "Localisation",
+        "feature.placeholder": "Search for a place localisation",
+        "layer.title": "Layer",
+        "layer.placeholder": "Search for a layer",
+        "icherche.name": "iCherche",
+        "ichercheReverse.name": "Search by coordinates",
         "ilayer": {
           "name": "Layers",
           "properties": {
@@ -236,6 +251,7 @@
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",
+            "radius": "Search radius",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
             "country limitation": "Limitation (country)",
@@ -304,12 +320,5 @@
         "wfsDownload.tooltip": "Download"
       }
     }
-  },
-  "search": {
-    "placeholder": "Search for a localisation or a layer",
-    "feature.title": "Localisation",
-    "feature.placeholder": "Search for a place localisation",
-    "layer.title": "Layer",
-    "layer.placeholder": "Search for a layer"
   }
 }

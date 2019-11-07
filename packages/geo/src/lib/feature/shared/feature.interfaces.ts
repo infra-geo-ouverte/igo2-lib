@@ -2,19 +2,25 @@ import { FormGroup } from '@angular/forms';
 
 import { GeoJsonGeometryTypes } from 'geojson';
 
-import { EntityKey, EntityStoreOptions } from '@igo2/common';
+import {
+  EntityKey,
+  EntityStoreOptions,
+  EntityStoreStrategyOptions
+} from '@igo2/common';
 
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { FeatureMotion } from './feature.enums';
+import OlFeature from 'ol/Feature';
 
-export interface Feature<P = {[key: string]: any}> {
+export interface Feature<P = { [key: string]: any }> {
   type: string;
   projection?: string;
   geometry?: FeatureGeometry;
   properties: P;
   extent?: [number, number, number, number];
   meta?: FeatureMeta;
+  ol?: OlFeature;
 }
 
 export interface FeatureMeta {
@@ -23,8 +29,10 @@ export interface FeatureMeta {
   mapTitle?: string;
   sourceTitle?: string;
   order?: number;
-  alias?: {[key: string]: string};
+  alias?: { [key: string]: string };
   revision?: number;
+  excludeAttribute?: Array<string>;
+  excludeAttributeOffline?: Array<string>;
 }
 
 export interface FeatureGeometry {
@@ -37,7 +45,8 @@ export interface FeatureStoreOptions extends EntityStoreOptions {
   layer?: VectorLayer;
 }
 
-export interface FeatureStoreStrategyOptions {
+export interface FeatureStoreStrategyOptions
+  extends EntityStoreStrategyOptions {
   // When the store moves features into view, the view extent, which is also the features extent,
   // is scaled by those factors, effectively resulting in a decentered view or a more zoomed in/out view.
   // These factors are applied to the top, right, bottom and left directions, in that order.
@@ -48,14 +57,17 @@ export interface FeatureStoreStrategyOptions {
   areaRatio?: number;
 }
 
-export interface FeatureStoreLoadingStrategyOptions extends FeatureStoreStrategyOptions {
+export interface FeatureStoreLoadingStrategyOptions
+  extends FeatureStoreStrategyOptions {
   getFeatureId?: (Feature) => EntityKey;
   motion?: FeatureMotion;
 }
 
-export interface FeatureStoreLoadingLayerStrategyOptions extends FeatureStoreStrategyOptions {}
+export interface FeatureStoreLoadingLayerStrategyOptions
+  extends FeatureStoreStrategyOptions {}
 
-export interface FeatureStoreSelectionStrategyOptions extends FeatureStoreStrategyOptions {
+export interface FeatureStoreSelectionStrategyOptions
+  extends FeatureStoreStrategyOptions {
   map: IgoMap;
   getFeatureId?: (Feature) => EntityKey;
   motion?: FeatureMotion;

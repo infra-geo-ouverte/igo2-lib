@@ -198,7 +198,7 @@ export class CatalogService {
       // TODO: Slice that into multiple methods
       // Define object of group layer
       const groupItem = {
-        id: `catalog.group.${layerList.Name}`,
+        id: `catalog.group.${layerList.Name || group.Name}`,
         type: CatalogItemType.Group,
         title: layerList.Title,
         items: layerList.Layer.reduce(
@@ -226,7 +226,8 @@ export class CatalogService {
 
             const params = Object.assign({}, catalogQueryParams, {
               layers: layer.Name,
-              feature_count: catalog.count
+              feature_count: catalog.count,
+              version: catalog.version || '1.3.0'
             });
             const baseSourceOptions = {
               type: 'wms',

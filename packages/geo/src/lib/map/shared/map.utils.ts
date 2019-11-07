@@ -35,7 +35,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   let directionLat: string;
   let decimalLat: string;
   let pattern: string;
-  let timeZone: string;
+  let zone: string;
   let radius: string;
   let conf: string;
   let lon: any;
@@ -54,8 +54,11 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   const dmsCoordPattern = `${dmsCoord}([N|S]),?\\s*${dmsCoord}([E|W])`;
   const dmsRegex = new RegExp(`^${dmsCoordPattern}`, 'gi');
 
-  const patternUtmMtm = '(UTM|MTM)\-?(\\d{1,2})[\\s,.]*(\\d+[\\s.,]?\\d+)[\\s,.]+(\\d+[\\s.,]?\\d+)';
-  const utmMtmRegex =  new RegExp(`^${patternUtmMtm}`, 'gi');
+  const patternUtm = '(UTM)\-?(\\d{1,2})[\\s,.]*(\\d+[\\s.,]?\\d+)[\\s,.]+(\\d+[\\s.,]?\\d+)';
+  const utmRegex =  new RegExp(`^${patternUtm}`, 'gi');
+
+  const patternMtm = '(MTM)\-?(\\d{1,2})[\\s,.]*(\\d+[\\s.,]?\\d+)[\\s,.]+(\\d+[\\s.,]?\\d+)';
+  const mtmRegex =  new RegExp(`^${patternMtm}`, 'gi');
 
   const ddCoord = '([-+])?(\\d{1,3})[,.](\\d+)';
   const patternDd = `${ddCoord}[,.]?\\s*${ddCoord}`;
@@ -73,8 +76,9 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   const mmPattern = `${mmCoord}[\\s,.]\\s*${mmCoord}`;
   const mmRegex =  new RegExp(`^${mmPattern}$`, 'g');
 
-  str = str.toLocaleUpperCase();
+  let isXYCoords = false;
 
+  str = str.toLocaleUpperCase().trim();
   // Extract projection
   if (projectionRegex.test(str)) {
     [coordStr, projectionStr] = str.split(';');
@@ -111,11 +115,27 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
       lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
       lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
 
-  } else if (utmMtmRegex.test(coordStr)) {
-      [, pattern, timeZone, lon, lat] = coordStr.match(patternUtmMtm);
-      const utm = '+proj=' + pattern + ' +zone=' + timeZone;
-      const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-      [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+  } else if (utmRegex.test(coordStr)) {
+    isXYCoords = true;
+    [, pattern, zone, lon, lat] = coordStr.match(patternUtm);
+    const utm = '+proj=' + pattern + ' +zone=' + zone;
+    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+    [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+
+  } else if (mtmRegex.test(coordStr)) {
+    isXYCoords = true;
+    [, pattern, zone, lon, lat] = coordStr.match(patternMtm);
+    let lon0;
+    if (Number(zone) <= 2) {
+      lon0 = -50 - Number(zone) * 3;
+    } else if (Number(zone) >= 12) {
+      lon0 = -81 - (Number(zone) - 12) * 3;
+    } else {
+      lon0 = -49.5 - Number(zone) * 3;
+    }
+    const mtm = `+proj=tmerc +lat_0=0 +lon_0=${lon0} +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +units=m +no_defs`;
+    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+    [lon, lat] = proj4(mtm, wgs84, [parseFloat(lon), parseFloat(lat)]);
 
   } else if (dmdRegex.test(coordStr)) {
     [,
@@ -181,6 +201,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
     }
 
   } else if (mmRegex.test(coordStr)) {
+      isXYCoords = true;
       [, lon, decimalLon, lat, decimalLat] = coordStr.match(mmPattern);
 
       if (decimalLon) {
@@ -195,20 +216,24 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
     return {lonLat: undefined, message: '', radius: undefined, conf: undefined};
   }
 
-  // Set a negative coordinate for North America zone
-  if (lon > 0 && lat > 0) {
-    if (lon > lat) {
-      lon = -lon;
-    } else {
-      lat = -lat;
+  if (!isXYCoords) {
+    // Set a negative coordinate for North America zone
+    if (lon > 0 && lat > 0) {
+      if (lon > lat) {
+        lon = -lon;
+      } else {
+        lat = -lat;
+      }
     }
-  }
 
-  // Reverse coordinate to respect lonLat convention
-  if (lon < lat) {
-    lonLat = [lon, lat] as [number, number];
+    // Reverse coordinate to respect lonLat convention
+    if (lon < lat) {
+      lonLat = [lon, lat] as [number, number];
+    } else {
+      lonLat = [lat, lon] as [number, number];
+    }
   } else {
-    lonLat = [lat, lon] as [number, number];
+    lonLat = [lon, lat] as [number, number];
   }
 
   // Reproject the coordinate if projection parameter have been set and coord is not 4326
@@ -284,8 +309,9 @@ export function formatScale(scale) {
  * @param dpi DPI
  * @returns Resolution
  */
-export function getResolutionFromScale(scale: number, dpi: number = 72): number {
-  return scale / (39.37 * dpi);
+export function getResolutionFromScale(scale: number, dpi: number = 96): number {
+  const inchesPerMeter = 39.3701;
+  return scale / (inchesPerMeter * dpi);
 }
 
 /**
@@ -293,8 +319,9 @@ export function getResolutionFromScale(scale: number, dpi: number = 72): number 
  * @param Scale denom
  * @returns Resolution
  */
-export function getScaleFromResolution(resolution: number, unit: string = 'm', dpi: number = 72): number {
-  return resolution * olproj.METERS_PER_UNIT[unit] * 39.37 * dpi;
+export function getScaleFromResolution(resolution: number, unit: string = 'm', dpi: number = 96): number {
+  const inchesPerMeter = 39.3701;
+  return resolution * olproj.METERS_PER_UNIT[unit] * inchesPerMeter * dpi;
 }
 
 /**

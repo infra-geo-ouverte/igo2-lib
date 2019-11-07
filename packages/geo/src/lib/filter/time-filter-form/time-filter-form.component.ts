@@ -273,6 +273,7 @@ export class TimeFilterFormComponent implements OnInit {
         this.yearChange.emit(this.year);
       }
     } else {
+      this.stopFilter();
       this.storeCurrentFilterValue();
       this.change.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
     }
@@ -487,9 +488,5 @@ export class TimeFilterFormComponent implements OnInit {
    */
   getStepDefinition(step) {
     return moment.duration(step).asMilliseconds();
-  }
-
-  setVisible(event: any) {
-    this.layer.visible = true;
   }
 }

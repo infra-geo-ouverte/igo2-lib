@@ -39,13 +39,21 @@ export class FilterableDataSourcePipe implements PipeTransform {
     return dataSource.options.timeFilterable;
   }
 
-  private isOgcFilterable(dataSource: OgcFilterableDataSource) {
+  private isOgcFilterable(dataSource: OgcFilterableDataSource): boolean {
+    let isOgcFilterable = false;
     if (
       dataSource.options.ogcFilters &&
-      dataSource.options.ogcFilters.enabled
+      dataSource.options.ogcFilters.enabled &&
+      dataSource.options.ogcFilters.editable
     ) {
-      return true;
+      isOgcFilterable = true;
     }
-    return false;
+    if (
+      dataSource.options.ogcFilters &&
+      dataSource.options.ogcFilters.enabled &&
+      dataSource.options.ogcFilters.pushButtons) {
+        isOgcFilterable = true;
+    }
+    return isOgcFilterable;
   }
 }

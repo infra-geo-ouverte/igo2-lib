@@ -1,13 +1,69 @@
 @mixin igo-toolbox-theming($theme) {
+  $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
 
+  igo-toolbox > igo-actionbar mat-list.mat-list-base igo-actionbar-item mat-list-item {
+    &:hover {
+      background-color: mat-color($accent, lighter);
+    }
 
-  igo-toolbox > igo-actionbar igo-actionbar-item mat-list-item.tool-activated {
-    background-color: mat-color($accent);
+    &.tool-activated,
+    &.children-tool-activated {
+      background-color: mat-color($accent);
+      cursor: default;
+      button {
+        cursor: default;
+      }
+    }
   }
 
-  igo-toolbox > igo-actionbar igo-actionbar-item mat-list-item.children-tool-activated {
-    background-color: mat-color($accent);
+  igo-toolbox > igo-actionbar:not(.with-title) > mat-list {
+    & > #lowChevron,
+    & > #topChevron {
+      &:hover {
+        background-color: mat-color($accent, lighter);
+        color: mat-color($foreground, text);
+      }
+    }
   }
-  
+
+  igo-toolbox.color-primary > igo-actionbar:not(.with-title) {
+    box-shadow: unset;
+    background-color: mat-color($primary);
+    #lowChevron,
+    #topChevron {
+      background-color: mat-color($primary);
+      color: white;
+    }
+  }
+
+  igo-toolbox.color-grey > igo-actionbar:not(.with-title) {
+    box-shadow: unset;
+    background-color: #737475;
+    #lowChevron,
+    #topChevron {
+      background-color: #737475;
+      color: white;
+    }
+  }
+
+  igo-toolbox.color-primary,
+  igo-toolbox.color-grey {
+    & > igo-actionbar:not(.with-title) mat-list.mat-list-base {
+      .mat-list-item.mat-list-item-with-avatar {
+        color: white;
+        &:hover {
+          color: mat-color($foreground, text);
+        }
+
+        &.tool-activated,
+        &.children-tool-activated {
+          background-color: white;
+          color: mat-color($foreground, text);
+        }
+      }
+    }
+  }
+
 }
