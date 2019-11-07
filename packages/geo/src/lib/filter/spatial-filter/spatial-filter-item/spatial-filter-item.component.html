@@ -4,11 +4,18 @@
   [geometryType]="geometryType"
   [drawGuide]="drawGuide$ | async"
   [measure]="measure"
+  [drawControlIsActive]="drawControlIsActive"
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async">
 </igo-geometry-form-field-input>
 
 <div class="header">
+    <mat-slide-toggle class="draw-control" *ngIf="!isPredefined()"
+      [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
+      (change)="onDrawControlChange()">
+      {{'igo.geo.spatialFilter.drawControl' | translate}}
+    </mat-slide-toggle>
   <mat-label class="title">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
   <mat-radio-group [value]="selectedItemType">
       <mat-radio-button *ngFor="let item of itemType"
@@ -76,7 +83,8 @@
     {{'igo.geo.spatialFilter.removeLayer' | translate}}
   </button>
 
-  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" (click)="formControl.reset()">
+  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="disabledFormButton()"
+    (click)="formControl.reset()">
     {{'igo.geo.spatialFilter.clearForm' | translate}}
   </button>
 

@@ -10,6 +10,7 @@ import {
   featureToOl,
   DataSource,
   QueryableDataSourceOptions,
+  Layer,
 } from '@igo2/geo';
 import { SpatialFilterService } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.service';
 import { SpatialFilterQueryType } from '@igo2/geo/lib/filter/shared/spatial-filter.enum';
@@ -40,6 +41,8 @@ export class AppSpatialFilterComponent {
 
   @Input() type: SpatialFilterType;
   @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
+
+  public layers: Layer[] = [];
 
   public queryType: SpatialFilterQueryType;
   public thematics: string[];
@@ -81,7 +84,6 @@ export class AppSpatialFilterComponent {
   getOutputType(event: SpatialFilterType) {
     this.type = event;
     this.queryType = undefined;
-    this.thematics = undefined;
     this.radius = undefined;
   }
 
@@ -105,7 +107,8 @@ export class AppSpatialFilterComponent {
   }
 
   getOutputClearSearch() {
-    this.clearSearch = !this.clearSearch;
+    this.zone = undefined;
+    this.queryType = undefined;
   }
 
   private loadThematics() {
@@ -206,6 +209,7 @@ export class AppSpatialFilterComponent {
           });
           dataSource.ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
+          this.layers.push(olLayer);
         });
     }
   }
@@ -216,7 +220,7 @@ export class AppSpatialFilterComponent {
    */
   private tryAddPointToMap(features: Feature[], id) {
     let i = 1;
-    if (features.length > 1) {
+    if (features.length >= 1) {
       if (this.map === undefined) {
         return;
       }
@@ -230,7 +234,7 @@ export class AppSpatialFilterComponent {
         type: 'cluster',
         id: id,
         queryable: true,
-        distance: 150,
+        distance: 120,
         meta: {
           title: 'Cluster'
         }
@@ -253,6 +257,7 @@ export class AppSpatialFilterComponent {
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
+          this.layers.push(olLayer);
         });
     }
   }
@@ -294,6 +299,7 @@ export class AppSpatialFilterComponent {
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
+          this.layers.push(olLayer);
         });
     }
   }

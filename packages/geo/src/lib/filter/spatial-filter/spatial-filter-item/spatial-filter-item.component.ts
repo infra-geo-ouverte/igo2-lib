@@ -25,6 +25,8 @@ import * as olproj from 'ol/proj';
 import { MatSnackBar } from '@angular/material';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
+import { EntityStore } from '@igo2/common';
+import { Layer } from '../../../layer/shared';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -48,7 +50,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     const index = this.geometryTypes.findIndex(geom => geom === this.type);
     this.geometryType = this.geometryTypes[index];
     this.formControl.reset();
-    this.selectedThematics.clear();
     this.radius = undefined;
     this.drawGuide$.next(null);
     this.drawStyle$.next(undefined);
@@ -105,7 +106,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Input() loading;
 
-  @Input() store;
+  @Input()
+  get store(): EntityStore<Feature> {
+    return this._store;
+  }
+  set store(store: EntityStore<Feature>) {
+    this._store = store;
+    this._store.entities$.subscribe(() => {this.cdRef.detectChanges()});
+  }
+  private _store: EntityStore<Feature>;
 
   /**
    * Available measure units for the measure type given
@@ -114,6 +123,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   get measureUnits(): string[] {
     return [MeasureLengthUnit.Meters];
   }
+
+  @Input() layers: Layer[];
 
   @Output() toggleSearch = new EventEmitter();
 
@@ -124,6 +135,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
   @Output() radiusEvent = new EventEmitter<number>();
+
+  @Output() clearButtonEvent = new EventEmitter<Layer[]>();
 
   @Output() clearSearchEvent = new EventEmitter();
 
@@ -156,6 +169,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawGuide: number = null;
   public drawGuidePlaceholder = '';
   public measure = false;
+  public drawControlIsActive = true;
   public drawStyle: OlStyle;
   public drawZone: Feature;
   public overlayStyle: OlStyle;
@@ -228,17 +242,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return this.type === SpatialFilterType.Point;
   }
 
-  isGroup(index, item): boolean {
-    const groupIndex = this.groups.indexOf(item.group);
-    console.log(groupIndex);
-    if (groupIndex !== -1) {
-      this.groups.slice(0, groupIndex + 1);
-      console.log(this.groups);
-      return true;
-    }
-    return false;
-    //return true;
-  }
+  // isGroup(index, item): boolean {
+  //   const groupIndex = this.groups.indexOf(item.group);
+  //   console.log(groupIndex);
+  //   if (groupIndex !== -1) {
+  //     this.groups.slice(0, groupIndex + 1);
+  //     console.log(this.groups);
+  //     return true;
+  //   }
+  //   return false;
+  //   //return true;
+  // }
 
   isAllSelected() {
     const numSelected = this.selectedThematics.selected.length;
@@ -287,23 +301,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.thematicChange.emit(selectedThematicsName);
   }
 
+  onDrawControlChange() {
+    this.drawControlIsActive = !this.drawControlIsActive;
+  }
+
   /**
    * Launch search button
    */
   toggleSearchButton() {
-    if (this.isPolygon() || (this.isPoint() && this.radius === undefined)) {
-      this.drawZone = this.formControl.value as Feature;
-      this.drawZone.meta = {
-        id: undefined,
-        title: 'Zone'
-      }
-      this.drawZone.properties = {
-        nom: 'Zone'
-      }
-      this.drawZoneEvent.emit(this.drawZone);
-    }
-
-    if (this.radius !== undefined) {
+    if (this.isPolygon() || this.isPoint()) {
       this.drawZone = this.formControl.value as Feature;
       this.drawZone.meta = {
         id: undefined,
@@ -324,16 +330,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearButton() {
     this.loading = true;
-    this.map.overlay.clear();
-    this.map.layers.forEach(layer => {
-      if (layer.baseLayer === false || layer.baseLayer === undefined) {
-        this.map.removeLayer(layer);
-      }
-    });
+    this.map.removeLayers(this.layers);
+    this.loading = false;
     if (this.store) {
       this.store.clear();
     }
-    this.loading = false;
+    this.clearButtonEvent.emit([]);
   }
 
   /**
@@ -341,8 +343,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearSearch() {
     this.selectedThematics.clear();
-    let selectedThematicsName = [];
-    this.thematicChange.emit(selectedThematicsName);
+    this.thematicChange.emit([]);
     this.clearSearchEvent.emit();
   }
 
@@ -373,6 +374,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       }
     }
     return true;
+  }
+
+  /**
+   * Verify conditions of draw zone defined or draw control actived
+   */
+  disabledFormButton() {
+    if (!this.drawControlIsActive && this.formControl.value === null) {
+      return true;
+    }
+    return false;
   }
 
   openSnackBar(message: string, action: string) {

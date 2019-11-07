@@ -13,7 +13,8 @@ import {
   SpatialFilterService,
   SpatialFilterType,
   SpatialFilterItemType,
-  SpatialFilterQueryType
+  SpatialFilterQueryType,
+  Layer
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -47,6 +48,9 @@ export class SpatialFilterToolComponent {
 
   @Input() type: SpatialFilterType;
   @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
+
+  public layers: Layer[] = [];
+
   public queryType: SpatialFilterQueryType;
   public thematics: string[];
   public zone: Feature;
@@ -73,7 +77,6 @@ export class SpatialFilterToolComponent {
   getOutputType(event: SpatialFilterType) {
     this.type = event;
     this.queryType = undefined;
-    this.thematics = undefined;
     this.radius = undefined;
   }
 
@@ -198,6 +201,7 @@ export class SpatialFilterToolComponent {
           });
           dataSource.ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
+          this.layers.push(olLayer);
         });
     }
   }
@@ -222,7 +226,7 @@ export class SpatialFilterToolComponent {
         type: 'cluster',
         id: id,
         queryable: true,
-        distance: 150,
+        distance: 120,
         meta: {
           title: 'Cluster'
         }
@@ -245,6 +249,7 @@ export class SpatialFilterToolComponent {
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
+          this.layers.push(olLayer);
         });
     }
   }
@@ -286,6 +291,7 @@ export class SpatialFilterToolComponent {
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
+          this.layers.push(olLayer);
         });
     }
   }
@@ -300,31 +306,31 @@ export class SpatialFilterToolComponent {
     }
   }
 
-  /**
-   * Permit the query action on results
-   */
-  handleQueryResults(results) {
-    let features: Feature[] = [];
-    if (results.features.length) {
-      results.features.forEach(feature => {
-        if (feature.properties.features) {
-          feature.properties.features.forEach(element => {
-            element.title = element.values_.nom;
-          });
-          features.push(feature.properties.features);
-        } else {
-          feature.meta.alias = feature.properties.nom;
-          features.push(feature);
-        }
-      });
-    } else {
-      results.features.meta.alias = results.features.properties.nom;
-      features = results.features;
-    }
-    let feature;
-    if (features.length) {
-      feature = features[0];
-    }
-    this.selectedFeature$.next(feature);
-  }
+  // /**
+  //  * Permit the query action on results
+  //  */
+  // handleQueryResults(results) {
+  //   let features: Feature[] = [];
+  //   if (results.features.length) {
+  //     results.features.forEach(feature => {
+  //       if (feature.properties.features) {
+  //         feature.properties.features.forEach(element => {
+  //           element.title = element.values_.nom;
+  //         });
+  //         features.push(feature.properties.features);
+  //       } else {
+  //         feature.meta.alias = feature.properties.nom;
+  //         features.push(feature);
+  //       }
+  //     });
+  //   } else {
+  //     results.features.meta.alias = results.features.properties.nom;
+  //     features = results.features;
+  //   }
+  //   let feature;
+  //   if (features.length) {
+  //     feature = features[0];
+  //   }
+  //   this.selectedFeature$.next(feature);
+  // }
 }

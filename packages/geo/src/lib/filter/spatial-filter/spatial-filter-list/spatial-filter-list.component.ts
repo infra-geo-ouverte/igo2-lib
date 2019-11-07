@@ -41,20 +41,10 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
   private _queryType: SpatialFilterQueryType;
 
-  @Input()
-  get clearList(): boolean {
-    return this._clearList;
-  }
-  set clearList(clear: boolean) {
-    this._clearList = clear;
-    this.queryType = undefined;
-    this.selectedZone = undefined;
-  }
-  private _clearList: boolean;
+  @Input() selectedZone: Feature;
 
   public formControl = new FormControl();
 
-  public selectedZone: Feature;
   @Output() zoneChange = new EventEmitter<Feature>();
 
   formValueChanges$$: Subscription;
