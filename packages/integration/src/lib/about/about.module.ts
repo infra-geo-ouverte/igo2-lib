@@ -4,12 +4,13 @@ import {
   CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 
+import { IgoLanguageModule } from '@igo2/core';
 import { IgoCustomHtmlModule } from '@igo2/common';
 
 import { AboutToolComponent } from './about-tool/about-tool.component';
 
 @NgModule({
-  imports: [IgoCustomHtmlModule],
+  imports: [IgoLanguageModule, IgoCustomHtmlModule],
   declarations: [AboutToolComponent],
   exports: [AboutToolComponent],
   entryComponents: [AboutToolComponent],

@@ -260,6 +260,11 @@ gulp.task('core:bumpVersion', done => {
     )
     .pipe(gulp.dest('./packages/core/.'));
 
+  gulp
+    .src(['./packages/core/src/lib/config/version.ts'])
+    .pipe(replace(/lib: '[A-Za-z0-9\.\-]+'/g, `lib: '${version}'`))
+    .pipe(gulp.dest('./packages/core/src/lib/config/.'));
+
   done();
 });
 

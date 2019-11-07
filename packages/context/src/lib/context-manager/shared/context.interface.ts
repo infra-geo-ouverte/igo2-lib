@@ -1,6 +1,7 @@
+import { Message } from '@igo2/core';
+import { Tool } from '@igo2/common';
 import { MapViewOptions, LayerOptions } from '@igo2/geo';
 
-import { Tool } from '@igo2/common';
 import { TypePermission } from './context.enum';
 
 export interface Context {
@@ -26,6 +27,7 @@ export interface DetailedContext extends Context {
   layers?: LayerOptions[];
   tools?: Tool[];
   toolbar?: string[];
+  message?: Message;
   removeLayersOnContextChange?: boolean;
 }
 
