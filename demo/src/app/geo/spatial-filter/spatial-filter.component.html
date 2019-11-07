@@ -23,8 +23,8 @@
   <igo-panel title="Spatial Filter">
     <igo-spatial-filter-type
       [store]="spatialListStore"
-      [clearSearch]="clearSearch"
       [selectedQueryType]="queryType"
+      [zone]="zone"
       (eventType)="getOutputType($event)"
       (eventQueryType)="getOutputQueryType($event)"
       (zoneChange)="onZoneChange($event)">
@@ -37,11 +37,13 @@
       [zone]="zone"
       [loading]="loading"
       [store]="store"
+      [layers]="layers"
       (radiusEvent)="radius = $event"
       (drawZoneEvent)="zone = $event"
       (itemTypeChange)="itemType = $event"
       (thematicChange)="thematics = $event"
       (toggleSearch)="getOutputToggleSearch()"
+      (clearButtonEvent)="layers = $event"
       (clearSearchEvent)="getOutputClearSearch()">
     </igo-spatial-filter-item>
   </igo-panel>

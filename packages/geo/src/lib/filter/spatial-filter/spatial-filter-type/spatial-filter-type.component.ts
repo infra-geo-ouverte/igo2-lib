@@ -31,21 +31,12 @@ export class SpatialFilterTypeComponent implements OnInit {
   }
   private _store: EntityStore<Feature>;
 
-  @Input()
-  get clearSearch(): boolean {
-    return this._clearSearch;
-  }
-  set clearSearch(clearSearch: boolean) {
-    this._clearSearch = clearSearch;
-    this.selectedQueryType = undefined;
-    this.eventQueryType.emit(this.selectedQueryType);
-    this.zoneChange.emit(undefined);
-  }
-  private _clearSearch: boolean;
-
   public queryType: string[] = ['AdmRegion', 'Mun', 'Arrond', 'CircFed', 'CircProv', 'DirReg', 'MRC', 'RegTour'];
   public selectedTypeIndex = new FormControl(0);
+
   @Input() selectedQueryType: SpatialFilterQueryType;
+
+  @Input() zone: Feature;
 
   public type: SpatialFilterType;
 

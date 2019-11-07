@@ -288,6 +288,7 @@
         "RegTour": "Touristic region",
         "searchLabel": "Search by",
         "search": "Search",
+        "drawControl": "Activate draw control",
         "listLabel": "Zone",
         "layer": "Layer",
         "goSearch": "Launch research",

@@ -288,6 +288,7 @@
         "RegTour": "Région touristique",
         "searchLabel": "Rechercher par",
         "search": "Recherche",
+        "drawControl": "Activer le contrôle de dessin",
         "listLabel": "Zone",
         "entity": "Entité",
         "layer": "Couche",
