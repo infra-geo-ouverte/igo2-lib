@@ -1,4 +1,3 @@
-import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { olFeature } from 'ol/Feature';
 import {
   Component,
@@ -22,11 +21,13 @@ import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatTreeNestedDataSource } from '@angular/material';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
 import { EntityStore } from '@igo2/common';
 import { Layer } from '../../../layer/shared';
+import { NestedTreeControl } from '@angular/cdk/tree';
+import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -144,13 +145,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
   public selectedSourceAddress;
 
+  treeControl = new NestedTreeControl<SpatialFilterThematic>(node => node.children);
+
   // For thematics and results tables
   public displayedColumns: string[] = ['name', 'select'];
-  public initialSelection = [];
-  public allowMultiSelect = true;
-  public thematics: SpatialFilterThematic[] = [];
+  public childrens: SpatialFilterThematic[] = [];
   public groups: string[] = [];
-  public selectedThematics = new SelectionModel<SpatialFilterThematic>(this.allowMultiSelect, this.initialSelection);
+  public thematics: SpatialFilterThematic[] = [];
+  public dataSource = new MatTreeNestedDataSource<SpatialFilterThematic>();
+  public selectedThematics = new SelectionModel<SpatialFilterThematic>(true, []);
   public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   // For geometry form field input
@@ -188,14 +191,35 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.spatialFilterService.loadThematicsList()
     .subscribe((items: SpatialFilterThematic[]) => {
       for (const item of items) {
-        this.thematics.push(item);
+        this.childrens.push(item);
       }
+      this.childrens.forEach(child => {
+        if (child.group && (this.groups.indexOf(child.group) === -1)) {
+          this.groups.push(child.group);
+          const thematic: SpatialFilterThematic = {
+            name: child.group,
+            children: []
+          }
+          this.thematics.push(thematic);
+        }
+        if (!child.group) {
+          const thematic: SpatialFilterThematic = {
+            name: child.name,
+            children: []
+          }
+          this.thematics.push(thematic);
+        }
+      })
       this.thematics.forEach(thematic => {
-        if ((thematic.group) && (this.groups.indexOf(thematic.group) === -1)) {
-          this.groups.push(thematic.group)
+        for (const child of this.childrens) {
+          if (child.group === thematic.name) {
+            thematic.children.push(child);
+          }
         }
       })
     });
+
+    this.dataSource.data = this.thematics;
 
     this.drawGuide$.next(this.drawGuide);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
@@ -242,22 +266,52 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return this.type === SpatialFilterType.Point;
   }
 
-  // isGroup(index, item): boolean {
-  //   const groupIndex = this.groups.indexOf(item.group);
-  //   console.log(groupIndex);
-  //   if (groupIndex !== -1) {
-  //     this.groups.slice(0, groupIndex + 1);
-  //     console.log(this.groups);
-  //     return true;
-  //   }
-  //   return false;
-  //   //return true;
-  // }
+  hasChild(_: number, node: SpatialFilterThematic) {
+    if (node.children) {
+      return node.children.length;
+    }
+    return false;
+  }
 
-  isAllSelected() {
-    const numSelected = this.selectedThematics.selected.length;
-    const numRows = this.thematics.length;
-    return numSelected === numRows;
+  onToggleClick(node: SpatialFilterThematic) {
+    this.treeControl.isExpanded(node) ? this.treeControl.collapse(node) : this.treeControl.expand(node);
+  }
+
+  isAllSelected(node?: SpatialFilterThematic) {
+    let numSelected
+    let numNodes = 0;
+    if (!node) {
+      numSelected = this.selectedThematics.selected.length;
+      numNodes = this.thematics.length;
+      this.childrens.forEach(children => {
+        if (!this.thematics.find(thematic => thematic.name === children.name)) {
+          numNodes++;
+        }
+      })
+    } else {
+      numSelected = node.children.length;
+      node.children.forEach(children => {
+        if (this.selectedThematics.selected.find(thematic => thematic === children)) {
+          numNodes++;
+        }
+      })
+    }
+
+    if (numNodes >= 1) {
+      return numSelected === numNodes;
+    } else {
+      return false;
+    }
+  }
+
+  hasChildrenSelected(node: SpatialFilterThematic) {
+    let bool = false;
+    node.children.forEach(child => {
+      if (this.selectedThematics.selected.find(thematic => thematic.name === child.name)) {
+        bool = true;
+      }
+    })
+    return bool;
   }
 
   /**
@@ -265,31 +319,74 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   masterToggle() {
     this.isAllSelected() ?
-        this.selectedThematics.clear() :
-        this.thematics.forEach(row => this.selectedThematics.select(row));
+      this.selectedThematics.clear() :
+      this.selectAll();
 
     let selectedThematicsName = [];
     for (const thematic of this.selectedThematics.selected) {
       selectedThematicsName.push(thematic.name);
     }
 
+    this.thematics.forEach(thematic => {
+      if (this.hasChild(0, thematic)) {
+        this.treeControl.expand(thematic);
+      }
+    })
+    this.thematicChange.emit(selectedThematicsName);
+  }
+
+  selectAll(node?: SpatialFilterThematic) {
+    if (!node) {
+      this.thematics.forEach(thematic => this.selectedThematics.select(thematic));
+      this.childrens.forEach(children => {
+        if (!this.selectedThematics.selected.find(thematic => thematic.name === children.name)) {
+          this.selectedThematics.select(children);
+        }
+      })
+    } else {
+      if (this.hasChild(0, node)) {
+        node.children.forEach(children => this.selectedThematics.select(children));
+      }
+    }
+  }
+
+  childrensToggle(node: SpatialFilterThematic) {
+    this.isAllSelected(node) ?
+    node.children.forEach(child => this.selectedThematics.deselect(child)) :
+    this.selectAll(node);
+
+    let selectedThematicsName = [];
+    for (const thematic of this.selectedThematics.selected) {
+      selectedThematicsName.push(thematic.name);
+    }
+
+    this.treeControl.expand(node);
     this.thematicChange.emit(selectedThematicsName);
   }
 
   /**
-   * Apply changes to the thematics selected table and emit event
+   * Apply changes to the thematics selected tree and emit event
    */
-  onToggleChange(rowSelected) {
-    let bool = false;
-    if (this.selectedThematics.selected.find(row => row === rowSelected) !== undefined) {
-      bool = true;
+  onToggleChange(nodeSelected: SpatialFilterThematic) {
+    let selected = false;
+    if (this.selectedThematics.selected.find(thematic => thematic.name === nodeSelected.name) !== undefined) {
+      selected = true;
     }
-    this.thematics.forEach(row => {
-      if (row === rowSelected && bool === false) {
-        this.selectedThematics.select(row);
+
+    this.childrens.forEach(children => {
+      if (children === nodeSelected && selected === false) {
+        this.selectedThematics.select(children);
       }
-      if (row === rowSelected && bool === true) {
-        this.selectedThematics.deselect(row);
+      if (children === nodeSelected && selected === true) {
+        this.selectedThematics.deselect(children);
+      }
+    });
+    this.thematics.forEach(thematic => {
+      if (thematic === nodeSelected && selected === false) {
+        this.selectedThematics.select(thematic);
+      }
+      if (thematic === nodeSelected && selected === true) {
+        this.selectedThematics.deselect(thematic);
       }
     });
 
@@ -297,7 +394,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     for (const thematic of this.selectedThematics.selected) {
       selectedThematicsName.push(thematic.name);
     }
-
     this.thematicChange.emit(selectedThematicsName);
   }
 

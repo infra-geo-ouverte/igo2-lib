@@ -66,6 +66,7 @@
 .thematics {
     max-height: 150px;
     overflow: auto;
+    margin-top: 5px;
 }
 
 .results {
@@ -88,4 +89,27 @@
 .unit-field {
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.example-tree-invisible {
+    display: none;
+}
+
+.tree-ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+.tree-check, .tree-check-2 {
+    position: sticky;
+    left: 225px;
+}
+
+.mat-header-cell {
+    max-width: 200px;
+}
+
+.mat-checkbox {
+    padding: 5px;
 }
