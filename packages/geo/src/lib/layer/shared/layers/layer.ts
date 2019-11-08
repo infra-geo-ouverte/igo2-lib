@@ -1,4 +1,11 @@
-import { Subject, BehaviorSubject } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest
+} from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
@@ -16,8 +23,9 @@ export abstract class Layer {
   public firstLoadComponent: boolean = true;
   public map: IgoMap;
   public ol: olLayer;
-  public options: LayerOptions;
   public status$: Subject<SubjectStatus>;
+
+  private resolution$$: Subscription;
 
   get id(): string {
     return this.options.id || this.dataSource.id;
@@ -51,16 +59,6 @@ export abstract class Layer {
     this.options.baseLayer = baseLayer;
   }
 
-  readonly visible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
-  get visible(): boolean {
-    return this.visible$.value;
-  }
-
-  set visible(value: boolean) {
-    this.ol.setVisible(value);
-    this.visible$.next(value);
-  }
-
   get opacity(): number {
     return this.ol.get('opacity');
   }
@@ -69,55 +67,75 @@ export abstract class Layer {
     this.ol.setOpacity(opacity);
   }
 
-  readonly isInResolutionsRange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
-  set isInResolutionsRange(value: boolean) {
-    this.isInResolutionsRange$.next(value);
+  set isInResolutionsRange(value: boolean) { this.isInResolutionsRange$.next(value); }
+  get isInResolutionsRange(): boolean { return this.isInResolutionsRange$.value; }
+  readonly isInResolutionsRange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  set maxResolution(value: number) {
+    this.ol.setMaxResolution(value);
+    this.updateInResolutionsRange();
   }
+  get maxResolution(): number { return this.ol.getMaxResolution(); }
 
-  get isInResolutionsRange(): boolean {
-    if (!this.map) {
-      this.isInResolutionsRange = false;
-    }
-
-    const resolution = this.map.viewController.getResolution();
-    const minResolution = this.ol.getMinResolution();
-    const maxResolution = this.ol.getMaxResolution();
-
-    this.isInResolutionsRange = resolution >= minResolution && resolution <= maxResolution;
-    return this.isInResolutionsRange$.value;
+  set minResolution(value: number) {
+    this.ol.setMinResolution(value);
+    this.updateInResolutionsRange();
   }
+  get minResolution(): number { return this.ol.getMinResolution(); }
+
+  set visible(value: boolean) {
+    this.ol.setVisible(value);
+    this.visible$.next(value);
+  }
+  get visible(): boolean { return this.visible$.value; }
+  readonly visible$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+
+  get displayed(): boolean { return this.visible && this.isInResolutionsRange; }
+  readonly displayed$: Observable<boolean> = combineLatest([
+    this.isInResolutionsRange$,
+    this.visible$
+  ]).pipe(
+    map((bunch: [boolean, boolean]) => bunch[0] && bunch[1])
+  );
 
   get showInLayerList(): boolean {
     return this.options.showInLayerList !== false;
   }
 
-  constructor(options: LayerOptions) {
-    this.options = options;
-    this.dataSource = this.options.source;
+  constructor(public options: LayerOptions) {
+    this.dataSource = options.source;
 
     this.ol = this.createOlLayer();
-    if (this.options.zIndex !== undefined) {
-      this.zIndex = this.options.zIndex;
+    if (options.zIndex !== undefined) {
+      this.zIndex = options.zIndex;
     }
 
-    if (this.options.baseLayer && this.options.visible === undefined) {
-      this.options.visible = false;
+    if (options.baseLayer && options.visible === undefined) {
+      options.visible = false;
     }
+
+    if (options.maxResolution !== undefined) {
+      this.maxResolution = options.maxResolution;
+    }
+    if (options.minResolution !== undefined) {
+      this.minResolution = options.minResolution;
+    }
+
     this.visible =
-      this.options.visible === undefined ? true : this.options.visible;
+      options.visible === undefined ? true : options.visible;
     this.opacity =
-      this.options.opacity === undefined ? 1 : this.options.opacity;
+      options.opacity === undefined ? 1 : options.opacity;
 
     if (
-      this.options.legendOptions &&
-      (this.options.legendOptions.url || this.options.legendOptions.html)
+      options.legendOptions &&
+      (options.legendOptions.url || options.legendOptions.html)
     ) {
-      this.legend = this.dataSource.setLegend(this.options.legendOptions);
+      this.legend = this.dataSource.setLegend(options.legendOptions);
     }
 
-    this.legendCollapsed = this.options.legendOptions
-      ? this.options.legendOptions.collapsed
-        ? this.options.legendOptions.collapsed
+    this.legendCollapsed = options.legendOptions
+      ? options.legendOptions.collapsed
+        ? options.legendOptions.collapsed
         : true
       : true;
 
@@ -128,5 +146,36 @@ export abstract class Layer {
 
   setMap(map: IgoMap | undefined) {
     this.map = map;
+
+    this.unobserveResolution();
+    if (map !== undefined) {
+      this.observeResolution();
+    }
+  }
+
+  private observeResolution() {
+    this.resolution$$ = this.map.viewController.resolution$
+      .pipe(
+        debounceTime(10)
+      )
+      .subscribe(() => this.updateInResolutionsRange());
+  }
+
+  private unobserveResolution() {
+    if (this.resolution$$ !== undefined) {
+      this.resolution$$.unsubscribe();
+      this.resolution$$ = undefined;
+    }
+  }
+
+  private updateInResolutionsRange() {
+    if (this.map !== undefined) {
+      const resolution = this.map.viewController.getResolution();
+      const minResolution = this.minResolution || 0;
+      const maxResolution = this.maxResolution || Infinity;
+      this.isInResolutionsRange = resolution >= minResolution && resolution <= maxResolution;
+    } else {
+      this.isInResolutionsRange = false;
+    }
   }
 }
