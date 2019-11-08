@@ -35,7 +35,7 @@ export class SpatialFilterService {
     'hydro': 'Hydrographie',
     'routes': 'Routes',
     'lieux.bati': 'Bâtiments',
-    'lieux.geographie': 'Géographie',
+    'lieux.geographie': 'Géographies',
     'lieux.parc': 'Parcs',
     'lieux.secteur': 'Secteurs',
     'lieux.culturel.immeubles': 'Immeubles',
