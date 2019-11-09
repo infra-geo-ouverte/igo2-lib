@@ -8,7 +8,7 @@ import { unByKey } from 'ol/Observable';
 import { Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, skip } from 'rxjs/operators';
 
-import { EntityKey, EntityRecord } from '@igo2/common';
+import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureDataSource } from '../../../datasource';
 import { VectorLayer } from '../../../layer';
@@ -16,7 +16,6 @@ import { IgoMap, ctrlKeyDown } from '../../../map';
 
 import { Feature, FeatureStoreSelectionStrategyOptions } from '../feature.interfaces';
 import { FeatureStore } from '../store';
-import { FeatureStoreStrategy } from './strategy';
 import { FeatureMotion } from '../feature.enums';
 
 class OlDragSelectInteraction extends OlDragBoxInteraction {
@@ -35,7 +34,7 @@ class OlDragSelectInteraction extends OlDragBoxInteraction {
  * would trigger the strategy of each layer and they would cancel
  * each other as well as move the map view around needlessly.
  */
-export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
+export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
 
   /**
    * Listener to the map click event that allows selecting a feature
@@ -76,7 +75,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   bindStore(store: FeatureStore) {
     super.bindStore(store);
-    if (this.isActive() === true) {
+    if (this.active === true) {
       // Force reactivation
       this.activate();
     }
@@ -89,7 +88,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
    */
   unbindStore(store: FeatureStore) {
     super.unbindStore(store);
-    if (this.isActive() === true) {
+    if (this.active === true) {
       // Force reactivation
       this.activate();
     }
@@ -153,7 +152,7 @@ export class FeatureStoreSelectionStrategy extends FeatureStoreStrategy {
     });
     this.stores$$ = combineLatest(...stores$)
       .pipe(
-        debounceTime(25),
+        debounceTime(5),
         skip(1), // Skip intial selection
         map((features: Array<Feature[]>) => features.reduce((a, b) => a.concat(b)))
       ).subscribe((features: Feature[]) => this.onSelectFromStore(features));

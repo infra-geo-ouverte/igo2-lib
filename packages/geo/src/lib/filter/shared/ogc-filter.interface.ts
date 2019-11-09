@@ -42,7 +42,7 @@ export interface OgcFiltersOptions {
   enabled?: boolean;
   editable?: boolean;
   filters?: IgoLogicalArrayOptions | AnyBaseOgcFilterOptions;
-  pushButtons?: OgcPushButtonBundle[];
+  pushButtons?: IgoPushButton;
   interfaceOgcFilters?: OgcInterfaceFilterOptions[];
   filtered?: boolean;
   advancedOgcFilters?: boolean;
@@ -50,11 +50,26 @@ export interface OgcFiltersOptions {
   allowedOperatorsType?: OgcFilterOperatorType;
 }
 
+export interface IgoPushButton  {
+  groups?: PushButtonGroup[];
+  bundles?: OgcPushButtonBundle[];
+}
+
+export interface PushButtonGroup  {
+  enabled?: boolean;
+  title?: string;
+  name: string;
+  ids?;
+  computedButtons?: OgcPushButtonBundle[];
+}
+
 export interface OgcPushButtonBundle  {
+  id?: string;
   logical?: string;
   vertical?: boolean;
-  ogcPushButtons: OgcPushButton[];
+  buttons: OgcPushButton[];
 }
+
 export interface OgcPushButton {
   title: string;
   tooltip?: string;

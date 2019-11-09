@@ -521,27 +521,27 @@ export class IChercheReverseSearchSource extends SearchSource
             {
               title: '100 m',
               value: 100,
-              enabled: true
+              enabled: !this.options.distance || this.options.distance === 100
             },
             {
               title: '500 m',
               value: 500,
-              enabled: false
+              enabled: this.options.distance === 500
             },
             {
               title: '1 km',
               value: 1000,
-              enabled: false
+              enabled: this.options.distance === 1000
             },
             {
               title: '2 km',
               value: 2000,
-              enabled: false
+              enabled: this.options.distance === 2000
             },
             {
               title: '5 km',
               value: 5000,
-              enabled: false
+              enabled: this.options.distance === 5000
             }
           ]
         }
@@ -582,9 +582,9 @@ export class IChercheReverseSearchSource extends SearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    if (options.distance) {
+    if (options.distance || this.options.distance) {
       options.params = Object.assign(options.params || {}, {
-        buffer: options.distance
+        buffer: options.distance || this.options.distance
       });
     }
 
@@ -595,8 +595,8 @@ export class IChercheReverseSearchSource extends SearchSource
           geometry: true,
           icon: true
         },
-        this.params,
-        options.params || {}
+        options.params || {},
+        this.params
       )
     });
   }

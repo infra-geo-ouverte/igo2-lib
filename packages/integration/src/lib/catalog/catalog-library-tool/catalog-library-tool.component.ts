@@ -40,7 +40,7 @@ export class CatalogLibraryToolComponent implements OnInit {
    * @internal
    */
   ngOnInit() {
-    if (this.store.entities$.value.length === 0) {
+    if (this.store.count === 0) {
       this.loadCatalogs();
     }
   }

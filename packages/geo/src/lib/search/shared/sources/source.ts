@@ -137,6 +137,7 @@ export class SearchSource {
   }
 
   constructor(options: SearchSourceOptions) {
+    this.options = options;
     this.options = Object.assign({}, this.getDefaultOptions(), options);
 
     // Set Default Params from Settings
@@ -201,6 +202,7 @@ export interface TextSearch {
   /**
    * Search by text
    * @param term Text
+   * @param options Optional: TextSearchOptions
    * @returns Observable or search results
    */
   search(
@@ -216,7 +218,7 @@ export interface ReverseSearch {
   /**
    * Search by text
    * @param lonLat Coordinates
-   * @param distance Optional: Search radius arounf lonLat
+   * @param options Optional: ReverseSearchOptions
    * @returns Observable or search results
    */
   reverseSearch(

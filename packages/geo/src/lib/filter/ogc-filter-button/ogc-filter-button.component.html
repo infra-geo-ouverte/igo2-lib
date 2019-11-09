@@ -1,4 +1,4 @@
-<button *ngIf="ogcFiltersInLayers && options.ogcFilters && (options.ogcFilters.enabled
+<button *ngIf="header && options.ogcFilters && (options.ogcFilters.enabled
 && options.ogcFilters.editable)"
   mat-icon-button
   collapsibleButton
@@ -7,8 +7,7 @@
   [matTooltip]="'igo.geo.filter.filterBy' | translate"
   [color]="color"
   (click)="toggleOgcFilter()">
-  <mat-icon
-    [ngClass]='{disabled: !layer.isInResolutionsRange}'svgIcon="filter"></mat-icon>
+  <mat-icon svgIcon="filter"></mat-icon>
 </button>
 
 <div #ogcFilter class="igo-layer-actions-container"
@@ -17,7 +16,7 @@
   <igo-ogc-filterable-item
     *ngIf="ogcFilterCollapse && options.ogcFilters.enabled"
     igoListItem
-    [ogcFiltersHeaderShown]="false"
+    [header]="false"
     [map]="layer.map"
     [layer]="layer">
   </igo-ogc-filterable-item>

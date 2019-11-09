@@ -53,6 +53,21 @@ export class ObjectUtils {
     return output;
   }
 
+  static copyDeep(src): any {
+    const target = Array.isArray(src) ? [] : {};
+    for (const prop in src) {
+      if (src.hasOwnProperty(prop)) {
+        const value = src[prop];
+        if (value && typeof value === 'object') {
+          target[prop] = this.copyDeep(value);
+        } else {
+          target[prop] = value;
+        }
+      }
+    }
+    return target;
+  }
+
   static removeUndefined(obj: object): any {
     const output = {};
     if (ObjectUtils.isObject(obj)) {
@@ -107,10 +122,28 @@ export class ObjectUtils {
     // nullsFirst = undefined : end if direction = 'asc', first if direction = 'desc'
     // nullsFirst = true : always first
     // nullsFirst = false : always end
-    // *** 'undefined' values are always at the end of array despite the 'nullsFirst' option
-    if (a === null || a === '' || b === null || b === '') {
+    if (
+      a === null ||
+      a === '' ||
+      a === undefined ||
+      b === null ||
+      b === '' ||
+      b === undefined
+    ) {
       const nullScore =
-        a === b ? 0 : a === null ? 2 : b === null ? -2 : a === '' ? 1 : -1;
+        a === b
+          ? 0
+          : a === undefined
+          ? 3
+          : b === undefined
+          ? -3
+          : a === null
+          ? 2
+          : b === null
+          ? -2
+          : a === ''
+          ? 1
+          : -1;
       if (direction === 'desc') {
         return nullsFirst !== false ? nullScore : nullScore * -1;
       }

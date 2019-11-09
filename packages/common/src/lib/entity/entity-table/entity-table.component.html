@@ -4,6 +4,7 @@
     matSort
     [ngClass]="getTableClass()"
     [dataSource]="dataSource"
+    [trackBy]="getTrackByFunction()"
     (matSortChange)="onSort($event)">
 
     <ng-container matColumnDef="selectionCheckbox" class="mat-cell-checkbox">
@@ -17,10 +18,10 @@
           </ng-container>
         </ng-container>
       </th>
-      <td mat-cell *matCellDef="let entity">
+      <td mat-cell *matCellDef="let record">
         <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="onToggleRow($event.checked, entity)"
-                      [checked]="rowIsSelected(entity)">
+                      (change)="onToggleRow($event.checked, record)"
+                      [checked]="rowIsSelected(record)">
         </mat-checkbox>
       </td>
     </ng-container>
@@ -40,45 +41,45 @@
 
       <ng-container *ngIf="getColumnRenderer(column) as columnRenderer">
         <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Default">
-            <td mat-cell *matCellDef="let entity" class="mat-cell-text"
-              [ngClass]="getCellClass(entity, column)">
-              {{getValue(entity, column)}}
+            <td mat-cell *matCellDef="let record" class="mat-cell-text"
+              [ngClass]="getCellClass(record, column)">
+              {{getValue(record, column)}}
             </td>
           </ng-container>
           <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.HTML">
-            <td mat-cell *matCellDef="let entity" class="mat-cell-text"
-              [ngClass]="getCellClass(entity, column)"
-              [innerHTML]="getValue(entity, column)">
+            <td mat-cell *matCellDef="let record" class="mat-cell-text"
+              [ngClass]="getCellClass(record, column)"
+              [innerHTML]="getValue(record, column)">
             </td>
           </ng-container>
           <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.UnsanitizedHTML">
-              <td mat-cell *matCellDef="let entity" class="mat-cell-text"
-                [ngClass]="getCellClass(entity, column)"
-                [innerHTML]="getValue(entity, column) | sanitizeHtml">
+              <td mat-cell *matCellDef="let record" class="mat-cell-text"
+                [ngClass]="getCellClass(record, column)"
+                [innerHTML]="getValue(record, column) | sanitizeHtml">
               </td>
             </ng-container>
           <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.Icon">
-            <td mat-cell *matCellDef="let entity" class="mat-cell-text"
-              [ngClass]="getCellClass(entity, column)">
-              <mat-icon svgIcon="{{getValue(entity, column)}}"></mat-icon>
+            <td mat-cell *matCellDef="let record" class="mat-cell-text"
+              [ngClass]="getCellClass(record, column)">
+              <mat-icon svgIcon="{{getValue(record, column)}}"></mat-icon>
             </td>
           </ng-container>
           <ng-container *ngIf="columnRenderer === entityTableColumnRenderer.ButtonGroup">
-            <td mat-cell *matCellDef="let entity" class="mat-cell-text"
-              [ngClass]="getCellClass(entity, column)">
-              <span *ngFor="let button of getValue(entity, column)">
+            <td mat-cell *matCellDef="let record" class="mat-cell-text"
+              [ngClass]="getCellClass(record, column)">
+              <span *ngFor="let button of getValue(record, column)">
                 <button *ngIf="button.style === 'mat-icon-button'"
                   igoStopPropagation
                   mat-icon-button
                   [color]="button.color"
-                  (click)="onButtonClick(button.click, entity)">
+                  (click)="onButtonClick(button.click, record)">
                   <mat-icon svgIcon="{{button.icon}}"></mat-icon>
                 </button>
                 <button *ngIf="button.style !== 'mat-icon-button'"
                   igoStopPropagation
                   mat-mini-fab
                   [color]="button.color"
-                  (click)="onButtonClick(button.click, entity)">
+                  (click)="onButtonClick(button.click, record)">
                   <mat-icon svgIcon="{{button.icon}}"></mat-icon>
                 </button>
               </span>
@@ -95,13 +96,13 @@
     <tr
       mat-row
       igoEntityTableRow
-      *matRowDef="let entity; columns: headers;"
+      *matRowDef="let record; columns: headers;"
       [scrollBehavior]="scrollBehavior"
-      [ngClass]="getRowClass(entity)"
+      [ngClass]="getRowClass(record)"
       [selection]="selection"
-      [selected]="rowIsSelected(entity)"
-      (select)="onRowSelect(entity)"
-      (click)="onRowClick(entity)">
+      [selected]="rowIsSelected(record)"
+      (select)="onRowSelect(record)"
+      (click)="onRowClick(record)">
     </tr>
 
   </table>

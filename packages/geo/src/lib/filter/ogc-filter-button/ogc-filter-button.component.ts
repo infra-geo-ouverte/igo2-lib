@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
@@ -10,7 +10,9 @@ import { OgcFilterableDataSourceOptions } from '../shared/ogc-filter.interface';
   styleUrls: ['./ogc-filter-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OgcFilterButtonComponent {
+export class OgcFilterButtonComponent implements OnInit {
+
+  public options: OgcFilterableDataSourceOptions;
 
   @Input() layer: Layer;
 
@@ -18,18 +20,15 @@ export class OgcFilterButtonComponent {
 
   @Input() color: string = 'primary';
 
-  @Input() ogcFiltersInLayers: boolean;
-
-  get options(): OgcFilterableDataSourceOptions {
-    if (!this.layer) {
-      return;
-    }
-    return this.layer.dataSource.options;
-  }
+  @Input() header: boolean;
 
   public ogcFilterCollapse = false;
 
   constructor() {}
+
+  ngOnInit() {
+    this.options = this.layer.dataSource.options as OgcFilterableDataSourceOptions;
+  }
 
   toggleOgcFilter() {
       this.ogcFilterCollapse = !this.ogcFilterCollapse;

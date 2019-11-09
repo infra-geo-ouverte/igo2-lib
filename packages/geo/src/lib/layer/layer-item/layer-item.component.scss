@@ -16,6 +16,7 @@
 .igo-layer-actions-container {
   width: 100%;
   display: inline-block;
+  padding-left: 10px;
 }
 
 .igo-layer-actions-container > div {
@@ -32,14 +33,9 @@
 }
 
 .igo-layer-button-group {
-  float: right;
-  padding: 0 $igo-list-item-padding;
-  display: contents; /* ie11: display: ruby-base; */
-  max-width: 100%;
-
-  @include mobile {
-    float: none;
-  }
+  text-align: right;
+  padding: 0 10px 0 0;
+  width: 100%;
 }
 
 mat-icon.disabled {

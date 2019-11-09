@@ -1,7 +1,8 @@
 import { Injectable, Optional } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import stylefunction from 'ol-mapbox-style/stylefunction';
 import { ObjectUtils } from '@igo2/utils';
 import { ConfigService } from '@igo2/core';
 
@@ -44,6 +45,7 @@ export class LayerService {
   private tokenKey: string;
 
   constructor(
+    private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
     @Optional() private config: ConfigService
@@ -112,7 +114,7 @@ export class LayerService {
           if (source === undefined) {
             return undefined;
           }
-          return this.createLayer( Object.assign(layerOptions, {source}));
+          return this.createLayer(Object.assign(layerOptions, { source }));
         })
       );
   }
@@ -131,6 +133,7 @@ export class LayerService {
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
     let style;
+    let olLayer;
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
     }
@@ -146,7 +149,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      return new VectorLayer(layerOptions);
+      olLayer = new VectorLayer(layerOptions);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -159,20 +162,28 @@ export class LayerService {
           baseStyle
         );
       };
-      return new VectorLayer(layerOptions);
+      olLayer = new VectorLayer(layerOptions);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
     });
 
-    return new VectorLayer(layerOptionsOl);
+    if (!olLayer) {
+      olLayer = new VectorLayer(layerOptionsOl);
+    }
+
+    this.applyMapboxStyle(olLayer, layerOptionsOl);
+
+    return olLayer;
   }
 
   private createVectorTileLayer(
     layerOptions: VectorTileLayerOptions
   ): VectorTileLayer {
     let style;
+    let olLayer;
+
     if (layerOptions.style !== undefined) {
       style = this.styleService.createStyle(layerOptions.style);
     }
@@ -185,12 +196,38 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      return new VectorTileLayer(layerOptions);
+      olLayer = new VectorTileLayer(layerOptions);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
       style
     });
-    return new VectorTileLayer(layerOptionsOl);
+
+    if (!olLayer) {
+      olLayer = new VectorTileLayer(layerOptionsOl);
+    }
+
+    this.applyMapboxStyle(olLayer, layerOptionsOl);
+    return olLayer;
+  }
+
+  private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
+    if (layerOptions.mapboxStyle) {
+      const mapboxglStyle = this.getMapboxGlStyle(
+        layerOptions.mapboxStyle.url
+      ).subscribe(res => {
+        stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
+      });
+    }
+  }
+
+  public getMapboxGlStyle(url: string) {
+    return this.http.get(url).pipe(
+      map((res: any) => res),
+      catchError(err => {
+        console.log('No style was found');
+        return of(err);
+      })
+    );
   }
 }

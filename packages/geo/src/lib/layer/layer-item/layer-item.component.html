@@ -37,22 +37,23 @@
 
 <div #actions class="igo-layer-actions-container">
   <div class="igo-col igo-col-100 igo-col-100-m">
-    <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
-    <mat-slider
-      id="opacity-slider"
-      color="primary"
-      thumbLabel
-      tickInterval="5"
-      step="5"
-      [min]="0"
-      [max]="100"
-      [(ngModel)]="opacity"
-      [matTooltip]="'igo.geo.layer.opacity' | translate"
-      matTooltipShowDelay="500"
-      tooltip-position="below">
-    </mat-slider>
 
     <div class="igo-layer-button-group">
+      <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
+      <mat-slider
+        id="opacity-slider"
+        color="primary"
+        thumbLabel
+        tickInterval="5"
+        step="5"
+        [min]="0"
+        [max]="100"
+        [(ngModel)]="opacity"
+        [matTooltip]="'igo.geo.layer.opacity' | translate"
+        matTooltipShowDelay="500"
+        tooltip-position="below">
+      </mat-slider>
+      
       <button
         color="primary"
         mat-icon-button

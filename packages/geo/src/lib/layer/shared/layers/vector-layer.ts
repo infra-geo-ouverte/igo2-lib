@@ -75,7 +75,15 @@ export class VectorLayer extends Layer {
       const opacity = easeOut(1 - elapsedRatio);
       const newColor = ColorAsArray(this.options.animation.color || 'red');
       newColor[3] = opacity;
-      const style = this.ol.getStyleFunction().call(this, feature)[0];
+      let style = this.ol
+        .getStyleFunction()
+        .call(this, feature)
+        .find(style2 => {
+          return style2.getImage();
+        });
+      if (!style) {
+        style = this.ol.getStyleFunction().call(this, feature)[0];
+      }
       const styleClone = style.clone();
 
       switch (feature.getGeometry().getType()) {
@@ -87,7 +95,7 @@ export class VectorLayer extends Layer {
           break;
         case 'LineString':
           // TODO
-          if (styleClone.getImage().getStroke()) {
+          if (styleClone.getImage()) {
             styleClone
               .getImage()
               .getStroke()
@@ -115,7 +123,7 @@ export class VectorLayer extends Layer {
           break;
         case 'Polygon':
           // TODO
-          if (styleClone.getImage().getFill()) {
+          if (styleClone.getImage()) {
             styleClone
               .getImage()
               .getFill()

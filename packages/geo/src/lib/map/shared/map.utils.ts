@@ -35,7 +35,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   let directionLat: string;
   let decimalLat: string;
   let pattern: string;
-  let timeZone: string;
+  let zone: string;
   let radius: string;
   let conf: string;
   let lon: any;
@@ -56,6 +56,9 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
 
   const patternUtm = '(UTM)\-?(\\d{1,2})[\\s,.]*(\\d+[\\s.,]?\\d+)[\\s,.]+(\\d+[\\s.,]?\\d+)';
   const utmRegex =  new RegExp(`^${patternUtm}`, 'gi');
+
+  const patternMtm = '(MTM)\-?(\\d{1,2})[\\s,.]*(\\d+[\\s.,]?\\d+)[\\s,.]+(\\d+[\\s.,]?\\d+)';
+  const mtmRegex =  new RegExp(`^${patternMtm}`, 'gi');
 
   const ddCoord = '([-+])?(\\d{1,3})[,.](\\d+)';
   const patternDd = `${ddCoord}[,.]?\\s*${ddCoord}`;
@@ -112,12 +115,27 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
       lon = convertDMSToDD(parseFloat(degreesLon), parseFloat(minutesLon), parseFloat(secondsLon), directionLon);
       lat = convertDMSToDD(parseFloat(degreesLat), parseFloat(minutesLat), parseFloat(secondsLat), directionLat);
 
-    } else if (utmRegex.test(coordStr)) {
-      isXYCoords = true;
-      [, pattern, timeZone, lon, lat] = coordStr.match(patternUtm);
-      const utm = '+proj=' + pattern + ' +zone=' + timeZone;
-      const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-      [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+  } else if (utmRegex.test(coordStr)) {
+    isXYCoords = true;
+    [, pattern, zone, lon, lat] = coordStr.match(patternUtm);
+    const utm = '+proj=' + pattern + ' +zone=' + zone;
+    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+    [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+
+  } else if (mtmRegex.test(coordStr)) {
+    isXYCoords = true;
+    [, pattern, zone, lon, lat] = coordStr.match(patternMtm);
+    let lon0;
+    if (Number(zone) <= 2) {
+      lon0 = -50 - Number(zone) * 3;
+    } else if (Number(zone) >= 12) {
+      lon0 = -81 - (Number(zone) - 12) * 3;
+    } else {
+      lon0 = -49.5 - Number(zone) * 3;
+    }
+    const mtm = `+proj=tmerc +lat_0=0 +lon_0=${lon0} +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +units=m +no_defs`;
+    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+    [lon, lat] = proj4(mtm, wgs84, [parseFloat(lon), parseFloat(lat)]);
 
   } else if (dmdRegex.test(coordStr)) {
     [,

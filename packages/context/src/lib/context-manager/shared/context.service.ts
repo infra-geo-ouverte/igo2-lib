@@ -12,6 +12,8 @@ import {
   ConfigService,
   RouteService,
   Message,
+  MessageService,
+  Notification,
   LanguageService
 } from '@igo2/core';
 
@@ -39,6 +41,7 @@ export class ContextService {
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
+  private contextMessage: Notification;
 
   // Until the ContextService is completely refactored, this is needed
   // to track the current tools
@@ -49,6 +52,7 @@ export class ContextService {
     private authService: AuthService,
     private languageService: LanguageService,
     private config: ConfigService,
+    private messageService: MessageService,
     @Optional() private route: RouteService
   ) {
     this.options = Object.assign(
@@ -197,9 +201,7 @@ export class ContextService {
     contextId: string,
     permissionId: string
   ): Observable<void> {
-    const url = `${
-      this.baseUrl
-    }/contexts/${contextId}/permissions/${permissionId}`;
+    const url = `${this.baseUrl}/contexts/${contextId}/permissions/${permissionId}`;
     return this.http.delete<void>(url);
   }
 
@@ -217,7 +219,7 @@ export class ContextService {
   getLocalContext(uri: string): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.http.get<DetailedContext>(url).pipe(
-      flatMap((res) => {
+      flatMap(res => {
         if (!res.base) {
           return of(res);
         }
@@ -226,14 +228,25 @@ export class ContextService {
           map((resBase: DetailedContext) => {
             const resMerge = res;
             resMerge.map = ObjectUtils.mergeDeep(resBase.map, res.map);
-            resMerge.layers = (resBase.layers || []).concat((res.layers || [])).reverse()
-              .filter((l, index, self) => !l.id || self.findIndex((l2) => l2.id === l.id) === index)
+            resMerge.layers = (resBase.layers || [])
+              .concat(res.layers || [])
+              .reverse()
+              .filter(
+                (l, index, self) =>
+                  !l.id || self.findIndex(l2 => l2.id === l.id) === index
+              )
               .reverse();
-            resMerge.toolbar = [...new Set(
-              (resBase.toolbar || []).concat((res.toolbar || [])).reverse()) as any
+            resMerge.toolbar = [
+              ...(new Set(
+                (resBase.toolbar || []).concat(res.toolbar || []).reverse()
+              ) as any)
             ].reverse();
-            resMerge.tools = (res.tools || []).concat((resBase.tools || []))
-              .filter((t, index, self) => self.findIndex((t2) => t2.name === t.name) === index);
+            resMerge.tools = (res.tools || [])
+              .concat(resBase.tools || [])
+              .filter(
+                (t, index, self) =>
+                  self.findIndex(t2 => t2.name === t.name) === index
+              );
             return resMerge;
           }),
           catchError(err => {
@@ -312,6 +325,7 @@ export class ContextService {
   }
 
   setContext(context: DetailedContext) {
+    this.handleContextMessage(context);
     const currentContext = this.context$.value;
     if (currentContext && context && context.id === currentContext.id) {
       if (context.map.view.keepCurrentView === undefined) {
@@ -392,6 +406,22 @@ export class ContextService {
 
   setTools(tools: Tool[]) {
     this.tools = tools;
+  }
+
+  private handleContextMessage(context: DetailedContext) {
+    if (this.contextMessage) {
+      this.messageService.remove(this.contextMessage.id);
+    }
+    const message = context.message;
+    if (message) {
+      message.title = message.title
+        ? this.languageService.translate.instant(message.title)
+        : undefined;
+      message.text = message.text
+        ? this.languageService.translate.instant(message.text)
+        : undefined;
+      this.messageService.message(message as Message);
+    }
   }
 
   private getContextByUri(uri: string): Observable<DetailedContext> {

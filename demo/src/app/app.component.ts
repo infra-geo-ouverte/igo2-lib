@@ -6,6 +6,8 @@ import {
   Renderer2
 } from '@angular/core';
 
+import { version } from '@igo2/core';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,6 +17,7 @@ export class AppComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
 
   public title = 'IGO';
+  public version = version;
   private themeClass = 'deeppurple-theme';
   private _mobileQueryListener: () => void;
 

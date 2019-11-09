@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as olstyle from 'ol/style';
-import { StyleByAttribute } from './stylebyattribute';
+import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
 

@@ -382,6 +382,7 @@ export class IgoMap {
           )
         ) {
           this.overlay.dataSource.ol.removeFeature(this.geolocationFeature);
+          this.buffer.dataSource.ol.removeFeature(this.bufferFeature);
         }
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');

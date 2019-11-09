@@ -18,7 +18,7 @@ import { ClusterDataSourceOptions } from '../../../datasource/shared/datasources
 
 import { ClusterParam } from '../clusterParam';
 
-import { StyleByAttribute } from '../stylebyattribute';
+import { StyleByAttribute, MapboxStyle } from '../vector-style.interface';
 
 export interface VectorLayerOptions extends LayerOptions {
   source?:
@@ -41,6 +41,7 @@ export interface VectorLayerOptions extends LayerOptions {
   styleByAttribute?: StyleByAttribute;
   clusterParam?: ClusterParam;
   trackFeature?: string | number;
+  mapboxStyle ?: MapboxStyle;
 }
 
 export interface VectorAnimation {

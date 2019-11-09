@@ -33,7 +33,7 @@
         [matTooltip]="'igo.geo.layer.sortMapOrder' | translate"
         matTooltipShowDelay="500"
         (click)="toggleSort(false)">
-        <mat-icon color="warn" svgIcon="alert"></mat-icon>
+        <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
       </button>
       <button
         mat-icon-button
@@ -44,7 +44,7 @@
         matTooltipShowDelay="500"
         [color]="onlyVisible ? 'warn' : 'primary'"
         (click)="toggleOnlyVisible()">
-        <mat-icon [svgIcon]="!onlyVisible ? 'eye' : 'alert'"></mat-icon>
+        <mat-icon [svgIcon]="!onlyVisible ? 'eye' : 'sort-variant-remove'"></mat-icon>
       </button>
       <button
         mat-icon-button
@@ -55,7 +55,7 @@
         matTooltipShowDelay="500"
         [color]="onlyInRange ? 'warn' : 'primary'"
         (click)="toggleOnlyInRange()">
-        <mat-icon [svgIcon]="!onlyInRange ? 'playlist-check' : 'alert'"></mat-icon>
+        <mat-icon [svgIcon]="!onlyInRange ? 'playlist-check' : 'sort-variant-remove'"></mat-icon>
       </button>
     </ng-container>
   </mat-list-item>
