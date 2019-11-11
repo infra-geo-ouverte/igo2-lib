@@ -155,9 +155,6 @@ export abstract class Layer {
 
   private observeResolution() {
     this.resolution$$ = this.map.viewController.resolution$
-      .pipe(
-        debounceTime(10)
-      )
       .subscribe(() => this.updateInResolutionsRange());
   }
 

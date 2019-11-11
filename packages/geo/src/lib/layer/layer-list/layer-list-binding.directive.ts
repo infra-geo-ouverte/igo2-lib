@@ -39,7 +39,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
         return layer.showInLayerList === true;
       });
       this.component.layers = shownLayers;
-      this.setLayersVisibilityRangeStatus(shownLayers);
+      this.setLayersVisibilityRangeStatus(shownLayers,this.component.excludeBaseLayers);
     });
   }
 
@@ -47,7 +47,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
     this.initRoutes();
   }
 
-  private setLayersVisibilityRangeStatus(layers: Layer[]) {
+  private setLayersVisibilityRangeStatus(layers: Layer[], excludeBaseLayers: boolean) {
     if (this.layersVisibility$$ !== undefined) {
       this.layersVisibility$$.unsubscribe();
       this.layersVisibility$$ = undefined;
@@ -56,7 +56,9 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
       this.layersRange$$.unsubscribe();
       this.layersRange$$ = undefined;
     }
-    this.layersVisibility$$ = combineLatest(layers.map((layer: Layer) => layer.visible$))
+    this.layersVisibility$$ = combineLatest(layers
+      .filter(layer => layer.baseLayer !== excludeBaseLayers )
+      .map((layer: Layer) => layer.visible$))
       .pipe(map((visibles: boolean[]) => visibles.every(Boolean)))
       .subscribe((allLayersAreVisible: boolean) =>
         this.component.layersAreAllVisible = allLayersAreVisible);
