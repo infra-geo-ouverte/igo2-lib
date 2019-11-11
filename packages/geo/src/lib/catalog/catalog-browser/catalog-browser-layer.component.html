@@ -5,12 +5,13 @@
   <igo-metadata-button [layer]="layer"></igo-metadata-button>
 
   <button
+    (mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)"
     mat-icon-button
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]="computeTooltip() | translate"
-    [color]="added ? 'warn' : ''"
-    (click)="onToggleClick()">
+    [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
+    (click)="onToggleClick($event)">
     <mat-icon
        matBadge
        igoMatBadgeIcon="eye-off"
@@ -18,7 +19,7 @@
        matBadgeColor="accent"
        matBadgeSize="small"
        matBadgePosition="after"
-       [svgIcon]="added ? 'delete' : 'plus'">
+       [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
     </mat-icon>
   </button>
 

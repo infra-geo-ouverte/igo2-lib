@@ -17,6 +17,7 @@ import { BehaviorSubject } from 'rxjs';
 export class CatalogBrowserLayerComponent implements OnInit {
 
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input() resolution: number;
 
@@ -38,6 +39,8 @@ export class CatalogBrowserLayerComponent implements OnInit {
     layer: CatalogItemLayer;
   }>();
 
+  @Output() addedLayerIsPreview = new EventEmitter<boolean>();
+
   /**
    * @internal
    */
@@ -52,14 +55,46 @@ export class CatalogBrowserLayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.isInResolutionsRange();
+    this.isPreview$.subscribe(value =>
+      this.addedLayerIsPreview.emit(value)
+    );
+  }
+
+  /**
+   * On mouse event, mouseenter /mouseleave
+   * @internal
+   */
+  onMouseEvent(event) {
+    this.onToggleClick(event);
   }
 
   /**
    * On toggle button click, emit the added change event
    * @internal
    */
-  onToggleClick() {
-    this.added ? this.remove() : this.add();
+  onToggleClick(event) {
+    switch (event.type) {
+        case 'click':
+            if (!this.isPreview$.value) {
+                this.remove();
+            }
+            this.isPreview$.next(!this.isPreview$.value);
+            break;
+        case 'mouseenter':
+            if (!this.isPreview$.value && !this.added) {
+                this.add();
+                this.isPreview$.next(true);
+            }
+            break;
+        case 'mouseleave':
+            if (this.isPreview$.value) {
+                this.remove();
+                this.isPreview$.next(false);
+            }
+            break;
+        default:
+            break;
+    }
   }
 
   /**
@@ -87,7 +122,8 @@ export class CatalogBrowserLayerComponent implements OnInit {
 
   computeTooltip(): string {
     if (this.added) {
-      return this.inRange$.value ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
+      return this.isPreview$.value ? 'igo.geo.catalog.layer.addToMap' :
+      this.inRange$.value ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
     } else {
       return this.inRange$.value ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
     }

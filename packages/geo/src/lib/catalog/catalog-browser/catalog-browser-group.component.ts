@@ -43,7 +43,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    */
   added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  preview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /**
    * Whether the toggle button is disabled
    * @internal
@@ -185,6 +185,10 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       added: false,
       group: this.group
     });
+  }
+
+  onLayerPreview(event) {
+    this.preview$.next(event);
   }
 
   /**

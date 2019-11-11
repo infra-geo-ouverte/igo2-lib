@@ -1,11 +1,12 @@
 <button
+(mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)"
 *ngIf="layer.meta.dataType === 'Layer'"
 mat-icon-button
 tooltip-position="below"
 matTooltipShowDelay="500"
 [matTooltip]="(tooltip$ | async) | translate"
-[color]="added ? 'warn' : ''"
-(click)="onToggleClick()">
+[color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
+(click)="onToggleClick($event)">
 <mat-icon 
   matBadge
   igoMatBadgeIcon="eye-off"
@@ -13,6 +14,6 @@ matTooltipShowDelay="500"
   matBadgeColor="primary" 
   matBadgeSize="small" 
   matBadgePosition="after"
-  [svgIcon]="added ? 'delete' : 'plus'">
+  [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
 </mat-icon>
 </button>

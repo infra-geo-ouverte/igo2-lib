@@ -7,7 +7,7 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { zip, Subscription, BehaviorSubject } from 'rxjs';
+import { zip, BehaviorSubject } from 'rxjs';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 import { Layer } from '../../layer/shared/layers/layer';
@@ -40,7 +40,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
  // private resolution$$: Subscription;
 
   get resolution$(): BehaviorSubject<number> { return this.map.viewController.resolution$; }
-  
+
   /**
    * Catalog
    */
