@@ -15,7 +15,7 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
-  public tooltip: string;
+  public tooltip$: BehaviorSubject<string> = new BehaviorSubject('igo.geo.catalog.layer.addToMap');
 
   private resolution$$: Subscription;
 
@@ -51,9 +51,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     if (this.layer.meta.dataType === 'Layer') {
       this.added = this.map.layers.findIndex((lay) => lay.id === this.layer.data.sourceOptions.id) !== -1;
     }
-    const resolution$ = this.map.viewController.resolution$;
-    this.resolution$$ = resolution$.subscribe((value) => {
+    this.resolution$$ = this.map.viewController.resolution$.subscribe((value) => {
       this.isInResolutionsRange(value);
+      this.tooltip$.next(this.computeTooltip());
     });
   }
 
@@ -117,7 +117,6 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     const minResolution = this.layer.data.minResolution;
     const maxResolution = this.layer.data.maxResolution;
     this.inRange$.next(resolution >= minResolution && resolution <= maxResolution);
-    this.tooltip = this.computeTooltip();
   }
 
   computeTooltip(): string {

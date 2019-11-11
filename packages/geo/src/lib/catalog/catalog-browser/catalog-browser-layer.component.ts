@@ -3,6 +3,7 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter, OnInit
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { CatalogItemLayer } from '../shared';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Catalog browser layer item
@@ -15,7 +16,7 @@ import { CatalogItemLayer } from '../shared';
 })
 export class CatalogBrowserLayerComponent implements OnInit {
 
-  public tooltip: string;
+  public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   @Input() resolution: number;
 
@@ -50,7 +51,7 @@ export class CatalogBrowserLayerComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.tooltip = this.computeTooltip(this.isInResolutionsRange());
+    this.isInResolutionsRange();
   }
 
   /**
@@ -80,16 +81,15 @@ export class CatalogBrowserLayerComponent implements OnInit {
   isInResolutionsRange(): boolean {
     const minResolution = this.layer.options.minResolution;
     const maxResolution = this.layer.options.maxResolution;
-    const inRange = this.resolution >= minResolution && this.resolution <= maxResolution;
-    this.tooltip = this.computeTooltip(inRange);
-    return inRange;
+    this.inRange$.next(this.resolution >= minResolution && this.resolution <= maxResolution);
+    return this.inRange$.value;
   }
 
-  computeTooltip(inRange): string {
+  computeTooltip(): string {
     if (this.added) {
-      return inRange ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
+      return this.inRange$.value ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
     } else {
-      return inRange ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+      return this.inRange$.value ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
     }
   }
 

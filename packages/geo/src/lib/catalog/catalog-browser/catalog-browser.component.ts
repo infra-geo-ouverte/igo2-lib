@@ -37,10 +37,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private watcher: EntityStoreWatcher<CatalogItem>;
 
-  private resolution$$: Subscription;
+ // private resolution$$: Subscription;
 
-  public resolution$: BehaviorSubject<number> = new BehaviorSubject(0);
-
+  get resolution$(): BehaviorSubject<number> { return this.map.viewController.resolution$; }
+  
   /**
    * Catalog
    */
@@ -86,15 +86,10 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
     }
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
 
-    const resolution$ = this.map.viewController.resolution$;
-    this.resolution$$ = resolution$.subscribe((value) => {
-      this.resolution$.next(value);
-    });
   }
 
   ngOnDestroy() {
     this.watcher.destroy();
-    this.resolution$$.unsubscribe();
   }
 
   /**
