@@ -20,20 +20,20 @@ export class SpatialFilterService {
    * Type association with URL
    */
   public urlFilterList = {
-    'AdmRegion': 'regadmin',
-    'Arrond': 'arrondissements',
-    'CircFed': 'circ-fed',
-    'CircProv': 'circ-prov',
-    'DirReg': 'dir-reg',
-    'MRC': 'mrc',
-    'Mun': 'municipalites',
-    'RegTour': 'tourisme',
+    AdmRegion: 'regadmin',
+    Arrond: 'arrondissements',
+    CircFed: 'circ-fed',
+    CircProv: 'circ-prov',
+    DirReg: 'dir-reg',
+    MRC: 'mrc',
+    Mun: 'municipalites',
+    RegTour: 'tourisme'
   };
 
   public urlThematicType = {
-    'bornes': 'Bornes',
-    'hydro': 'Hydrographie',
-    'routes': 'Routes',
+    bornes: 'Bornes',
+    hydro: 'Hydrographie',
+    routes: 'Routes',
     'lieux.bati': 'Bâtiments',
     'lieux.geographie': 'Géographies',
     'lieux.parc': 'Parcs',
@@ -58,7 +58,7 @@ export class SpatialFilterService {
     'lieux.securite.palais-justice': 'Palais de justice',
     'lieux.securite.penitencier-fed': 'Pénitenciers fédéraux',
     'lieux.securite.penitencier-prov': 'Pénitenciers provinciaux'
-  }
+  };
 
   constructor(
     private http: HttpClient,
@@ -79,11 +79,11 @@ export class SpatialFilterService {
           // geometry: "true"
         }
       }).pipe(
-        map(featureCollection => featureCollection.features.map(feature => {
-          feature.meta = {
-            id: feature.properties.code
+        map(featureCollection => featureCollection.features.map(f => {
+          f.meta = {
+            id: f.properties.code
           };
-          return feature;
+          return f;
         }))
       );
     }
@@ -101,13 +101,13 @@ export class SpatialFilterService {
           types.forEach(type => {
             if (this.urlThematicType[type.toString()]) {
               const language = this.languageService.getLanguage();
-              let item: SpatialFilterThematic = {
+              const item: SpatialFilterThematic = {
                 name: undefined
               };
               item.name =
                 language === 'fr' ? this.urlThematicType[type.toString()] :
                 this.languageService.translate
-                  .instant('igo.geo.spatialFilter.frenchThematics.'+ this.urlThematicType[type.toString()]);
+                  .instant('igo.geo.spatialFilter.frenchThematics.' + this.urlThematicType[type.toString()]);
 
               if (type.startsWith('lieux')) { // Get thematics group
                 let substr = type.substring(6, type.length);
@@ -141,12 +141,12 @@ export class SpatialFilterService {
             icon: 'true'
           }
         }).pipe(
-          map(featureCollection => featureCollection.features.map(feature => {
-            feature.meta = {
-              id: feature.properties.code,
+          map(featureCollection => featureCollection.features.map(f => {
+            f.meta = {
+              id: f.properties.code,
               title: 'Adresses'
             };
-            return feature;
+            return f;
           }))
         );
       } else { // If thematics search
@@ -157,12 +157,12 @@ export class SpatialFilterService {
             icon: 'true'
           }
         }).pipe(
-          map(featureCollection => featureCollection.features.map(feature => {
-            feature.meta = {
-              id: feature.properties.code,
+          map(featureCollection => featureCollection.features.map(f => {
+            f.meta = {
+              id: f.properties.code,
               title: thematic
             };
-            return feature;
+            return f;
           }))
         );
       }
@@ -178,12 +178,12 @@ export class SpatialFilterService {
             icon: 'true'
           }
         }).pipe(
-          map(featureCollection => featureCollection.features.map(feature => {
-            feature.meta = {
-              id: feature.properties.code,
+          map(featureCollection => featureCollection.features.map(f => {
+            f.meta = {
+              id: f.properties.code,
               title: 'Adresses'
             };
-            return feature;
+            return f;
           }))
         );
       } else { // If thematics search
@@ -194,12 +194,12 @@ export class SpatialFilterService {
             icon: 'true'
           }
         }).pipe(
-          map(featureCollection => featureCollection.features.map(feature => {
-            feature.meta = {
-              id: feature.properties.code,
+          map(featureCollection => featureCollection.features.map(f => {
+            f.meta = {
+              id: f.properties.code,
               title: thematic
             };
-            return feature;
+            return f;
           }))
         );
       }
@@ -218,13 +218,13 @@ export class SpatialFilterService {
           geometry: 'true'
         }
       }).pipe(
-        map(feature => {
-          feature.meta = {
-            id: feature.properties.code,
-            alias: feature.properties.nom,
-            title: feature.properties.nom
+        map(f => {
+          f.meta = {
+            id: f.properties.code,
+            alias: f.properties.nom,
+            title: f.properties.nom
           };
-          return feature;
+          return f;
         })
       );
     }

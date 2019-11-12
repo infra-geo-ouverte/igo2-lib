@@ -106,8 +106,9 @@
     left: 225px;
 }
 
-.mat-header-cell {
-    max-width: 200px;
+.thematics-header, .checks-header {
+    min-width: 224px;
+    max-width: 224px;
 }
 
 .mat-checkbox {

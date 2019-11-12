@@ -300,6 +300,8 @@
         "searchResults": "Search Results",
         "type": "Type",
         "radius": "Radius",
+        "alert": "Radius must be between 0 and 10000",
+        "warning": "Warning",
         "frenchThematics" : {
           "Bornes": "Landmarks",
           "Hydrographie": "Hydrography",
