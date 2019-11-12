@@ -1,22 +1,19 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
-import { IgoLanguageModule } from '@igo2/core';
+import { IgoLanguageModule, IgoMessageModule } from '@igo2/core';
 
 import { AuthService } from './auth.service';
 
-describe('ShareMapService', () => {
+describe('AuthService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, IgoLanguageModule],
+      imports: [HttpClientModule, IgoLanguageModule, IgoMessageModule],
       providers: [AuthService]
     });
   });
 
-  it(
-    'should ...',
-    inject([AuthService], (service: AuthService) => {
-      expect(service).toBeTruthy();
-    })
-  );
+  it('should ...', inject([AuthService], (service: AuthService) => {
+    expect(service).toBeTruthy();
+  }));
 });
