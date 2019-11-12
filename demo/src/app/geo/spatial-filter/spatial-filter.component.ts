@@ -138,7 +138,7 @@ export class AppSpatialFilterComponent {
           this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
           this.loading = false;
         });
-    })
+    });
   }
 
   onZoneChange(feature: Feature) {
@@ -181,11 +181,11 @@ export class AppSpatialFilterComponent {
             alias: this.type === SpatialFilterType.Predefined ? feature.properties.code : undefined,
             source: dataSource,
             visible: true,
-            style: (feature, resolution) => {
+            style: (_feature, resolution) => {
               const coordinates = (features[0] as any).coordinates;
               return new olstyle.Style({
                 image: new olstyle.Circle({
-                    radius: coordinates ? this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution : undefined,
+                    radius: coordinates ? this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution : undefined,
                     fill: new olstyle.Fill({
                       color: 'rgba(200, 200, 20, 0.2)'
                     }),
@@ -201,11 +201,11 @@ export class AppSpatialFilterComponent {
                 fill: new olstyle.Fill({
                   color: 'rgba(200, 200, 20, 0.2)'
                 })
-              })
+              });
             }
           });
-          const featuresOl = features.map(feature => {
-            return featureToOl(feature, this.map.projection);
+          const featuresOl = features.map(f => {
+            return featureToOl(f, this.map.projection);
           });
           dataSource.ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
@@ -232,7 +232,7 @@ export class AppSpatialFilterComponent {
       this.dataSourceService
       .createAsyncDataSource({
         type: 'cluster',
-        id: id,
+        id,
         queryable: true,
         distance: 120,
         meta: {
@@ -279,7 +279,7 @@ export class AppSpatialFilterComponent {
       this.dataSourceService
       .createAsyncDataSource({
         type: 'vector',
-        id: id,
+        id,
         queryable: true
         } as QueryableDataSourceOptions )
         .subscribe((dataSource: DataSource) => {

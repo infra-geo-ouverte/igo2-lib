@@ -301,6 +301,8 @@
         "searchResults": "Résultats de la recherche",
         "type": "Type",
         "radius": "Rayon",
+        "alert": "Le rayon doit être compris entre 0 et 10000",
+        "warning": "Avertissement",
         "group" : {
           "bati": "Infrastructure",
           "geographie": "Géographie",

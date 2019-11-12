@@ -8,6 +8,7 @@ import {
 
 import { IgoPanelModule, IgoFormModule } from '@igo2/common';
 import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureModule, IgoFeatureDetailsModule } from '@igo2/geo';
+import { IgoMessageModule } from '@igo2/core';
 
 import { AppSpatialFilterComponent } from './spatial-filter.component';
 import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
@@ -21,6 +22,7 @@ import { AppSpatialFilterRoutingModule } from './spatial-filter-routing.module';
     MatIconModule,
     IgoPanelModule,
     IgoMapModule,
+    IgoMessageModule,
     IgoQueryModule,
     IgoFeatureModule,
     IgoFeatureDetailsModule,

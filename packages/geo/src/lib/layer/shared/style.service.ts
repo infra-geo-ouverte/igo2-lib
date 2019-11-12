@@ -218,7 +218,7 @@ export class StyleService {
       if (!feature.values_.features[0].icon) {
         style = createOverlayMarkerStyle();
       } else {
-        let icon = feature.values_.features[0].icon;
+        const icon = feature.values_.features[0].icon;
         this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
           const xmlSerializer = new XMLSerializer();
           svgObj.setAttribute('width', '30');
@@ -226,11 +226,11 @@ export class StyleService {
           svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
           svgObj.setAttribute('stroke', 'white');
           const svg = xmlSerializer.serializeToString(svgObj);
-          let clusterStyle = new olstyle.Style ({
+          const clusterStyle = new olstyle.Style ({
             image: new olstyle.Icon({
               src: 'data:image/svg+xml;utf8,' + svg
             })
-          })
+          });
           this.style = clusterStyle;
         });
         style = this.style;

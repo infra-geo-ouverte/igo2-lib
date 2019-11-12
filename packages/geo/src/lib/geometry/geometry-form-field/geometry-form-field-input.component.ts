@@ -76,9 +76,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (this.ready === false) {
       return;
     }
-    if (!this._drawControlIsActive) {
-      return;
-    }
+
     this.deactivateControl();
     this.createDrawControl();
     this.toggleControl();
@@ -131,13 +129,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.defaultDrawStyleRadius = null;
     }
 
-    if (!this._drawControlIsActive) {
-      return;
-    }
-
     this.deactivateControl();
     this.createDrawControl();
     this.createModifyControl();
+
     this.toggleControl();
   }
   get drawStyle(): OlStyle { return this._drawStyle; }
@@ -161,13 +156,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this._value = value;
 
     if (this.ready === false) {
-      return;
-    }
-
-    if (!this._drawControlIsActive) {
-      if (value === null) {
-        this.olOverlaySource.clear();
-      }
       return;
     }
 
@@ -319,6 +307,9 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private toggleControl() {
     this.deactivateControl();
 
+    if (!this.drawControlIsActive) {
+      return;
+    }
     if (!this.value && this.geometryType) {
       this.activateControl(this.drawControl);
     } else {

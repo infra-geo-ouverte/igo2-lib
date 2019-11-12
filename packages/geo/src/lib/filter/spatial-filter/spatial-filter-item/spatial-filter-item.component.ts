@@ -21,13 +21,14 @@ import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
-import { MatSnackBar, MatTreeNestedDataSource } from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
 import { EntityStore } from '@igo2/common';
 import { Layer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
+import { MessageService, LanguageService } from '@igo2/core';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -71,7 +72,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
         return new olstyle.Style ({
           image: new olstyle.Circle ({
-            radius: this.radius/(Math.cos((Math.PI/180)*coordinates[1]))/resolution, // Latitude correction
+            radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction
             stroke: new olstyle.Stroke({
               width: 2,
               color: 'rgba(0, 153, 255)'
@@ -80,8 +81,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
               color: 'rgba(0, 153, 255, 0.2)'
             })
           })
-        })
-      }
+        });
+      };
       this.drawStyle$.next(this.overlayStyle);
     } else {
       // If geometry types is Polygon
@@ -94,8 +95,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           fill: new olstyle.Fill({
             color: 'rgba(0, 153, 255, 0.2)'
           })
-        })
-      }
+        });
+      };
     }
     this.overlayStyle$.next(this.overlayStyle);
   }
@@ -113,7 +114,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   set store(store: EntityStore<Feature>) {
     this._store = store;
-    this._store.entities$.subscribe(() => {this.cdRef.detectChanges()});
+    this._store.entities$.subscribe(() => { this.cdRef.detectChanges(); });
   }
   private _store: EntityStore<Feature>;
 
@@ -184,8 +185,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   constructor(
     private cdRef: ChangeDetectorRef,
-    private _snackBar: MatSnackBar,
-    private spatialFilterService: SpatialFilterService) {}
+    private spatialFilterService: SpatialFilterService,
+    private messageService: MessageService,
+    private languageService: LanguageService) {}
 
   ngOnInit() {
     this.spatialFilterService.loadThematicsList()
@@ -199,24 +201,24 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           const thematic: SpatialFilterThematic = {
             name: child.group,
             children: []
-          }
+          };
           this.thematics.push(thematic);
         }
         if (!child.group) {
           const thematic: SpatialFilterThematic = {
             name: child.name,
             children: []
-          }
+          };
           this.thematics.push(thematic);
         }
-      })
+      });
       this.thematics.forEach(thematic => {
         for (const child of this.childrens) {
           if (child.group === thematic.name) {
             thematic.children.push(child);
           }
         }
-      })
+      });
     });
 
     this.dataSource.data = this.thematics;
@@ -278,23 +280,27 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   isAllSelected(node?: SpatialFilterThematic) {
-    let numSelected
+    let numSelected;
     let numNodes = 0;
     if (!node) {
       numSelected = this.selectedThematics.selected.length;
-      numNodes = this.thematics.length;
+      this.thematics.forEach(thematic => {
+        if (this.groups.indexOf(thematic.name) === -1) {
+          numNodes++;
+        }
+      });
       this.childrens.forEach(children => {
         if (!this.thematics.find(thematic => thematic.name === children.name)) {
           numNodes++;
         }
-      })
+      });
     } else {
       numSelected = node.children.length;
       node.children.forEach(children => {
         if (this.selectedThematics.selected.find(thematic => thematic === children)) {
           numNodes++;
         }
-      })
+      });
     }
 
     if (numNodes >= 1) {
@@ -310,7 +316,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (this.selectedThematics.selected.find(thematic => thematic.name === child.name)) {
         bool = true;
       }
-    })
+    });
     return bool;
   }
 
@@ -322,7 +328,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.selectedThematics.clear() :
       this.selectAll();
 
-    let selectedThematicsName = [];
+    const selectedThematicsName = [];
     for (const thematic of this.selectedThematics.selected) {
       selectedThematicsName.push(thematic.name);
     }
@@ -331,18 +337,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (this.hasChild(0, thematic)) {
         this.treeControl.expand(thematic);
       }
-    })
+    });
     this.thematicChange.emit(selectedThematicsName);
   }
 
   selectAll(node?: SpatialFilterThematic) {
     if (!node) {
-      this.thematics.forEach(thematic => this.selectedThematics.select(thematic));
+      this.thematics.forEach(thematic => {
+        if (this.groups.indexOf(thematic.name) === -1) {
+          this.selectedThematics.select(thematic);
+        }
+      });
       this.childrens.forEach(children => {
         if (!this.selectedThematics.selected.find(thematic => thematic.name === children.name)) {
           this.selectedThematics.select(children);
         }
-      })
+      });
     } else {
       if (this.hasChild(0, node)) {
         node.children.forEach(children => this.selectedThematics.select(children));
@@ -355,7 +365,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     node.children.forEach(child => this.selectedThematics.deselect(child)) :
     this.selectAll(node);
 
-    let selectedThematicsName = [];
+    const selectedThematicsName = [];
     for (const thematic of this.selectedThematics.selected) {
       selectedThematicsName.push(thematic.name);
     }
@@ -390,7 +400,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       }
     });
 
-    let selectedThematicsName = [];
+    const selectedThematicsName = [];
     for (const thematic of this.selectedThematics.selected) {
       selectedThematicsName.push(thematic.name);
     }
@@ -410,10 +420,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.drawZone.meta = {
         id: undefined,
         title: 'Zone'
-      }
+      };
       this.drawZone.properties = {
         nom: 'Zone'
-      }
+      };
       this.drawZoneEvent.emit(this.drawZone);
     }
 
@@ -482,18 +492,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return false;
   }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, {
-      duration: 5000
-    });
-  }
-
   /**
    * Manage radius value at user change
    */
   getRadius(radius) {
     if (radius.target.value >= 10000 || radius.target.value < 0) {
-      this.openSnackBar('Le buffer doit être compris entre 0 et 10000', 'Fermer');
+      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.alert'),
+        this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radius = 1000;
       radius.target.value = 1000;
       this.drawGuide$.next(this.radius);
