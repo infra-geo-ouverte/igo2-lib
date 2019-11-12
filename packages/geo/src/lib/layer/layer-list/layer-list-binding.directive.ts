@@ -1,18 +1,21 @@
 import { Directive, Self, OnInit, OnDestroy, AfterViewInit, Optional } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 
 import { RouteService } from '@igo2/core';
 import { MapService } from '../../map/shared/map.service';
 import { LayerListComponent } from './layer-list.component';
 import { LayerListService } from './layer-list.service';
 import { Layer } from '../shared/layers/layer';
+import { map, debounceTime } from 'rxjs/operators';
 
 @Directive({
   selector: '[igoLayerListBinding]'
 })
 export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestroy {
   private component: LayerListComponent;
-  private layers$$: Subscription;
+  private layersOrResolutionChange$$: Subscription;
+  layersVisibility$$: Subscription;
+  layersRange$$: Subscription;
 
   constructor(
     @Self() component: LayerListComponent,
@@ -26,18 +29,44 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
   ngOnInit() {
     // Override input layers
     this.component.layers = [];
-
-    this.layers$$ = this.mapService
-      .getMap()
-      .layers$.subscribe((layers: Layer[]) => {
-        this.component.layers = layers.filter((layer: Layer) => {
-          return layer.showInLayerList === true;
-        });
+    this.layersOrResolutionChange$$ = combineLatest([
+      this.mapService.getMap().layers$,
+      this.mapService.getMap().viewController.resolution$]
+    ).pipe(
+      debounceTime(10)
+    ).subscribe((bunch: [Layer[], number]) => {
+      const shownLayers = bunch[0].filter((layer: Layer) => {
+        return layer.showInLayerList === true;
       });
+      this.component.layers = shownLayers;
+      this.setLayersVisibilityRangeStatus(shownLayers, this.component.excludeBaseLayers);
+    });
   }
 
   ngAfterViewInit(): void {
     this.initRoutes();
+  }
+
+  private setLayersVisibilityRangeStatus(layers: Layer[], excludeBaseLayers: boolean) {
+    if (this.layersVisibility$$ !== undefined) {
+      this.layersVisibility$$.unsubscribe();
+      this.layersVisibility$$ = undefined;
+    }
+    if (this.layersRange$$ !== undefined) {
+      this.layersRange$$.unsubscribe();
+      this.layersRange$$ = undefined;
+    }
+    this.layersVisibility$$ = combineLatest(layers
+      .filter(layer => layer.baseLayer !== excludeBaseLayers )
+      .map((layer: Layer) => layer.visible$))
+      .pipe(map((visibles: boolean[]) => visibles.every(Boolean)))
+      .subscribe((allLayersAreVisible: boolean) =>
+        this.component.layersAreAllVisible = allLayersAreVisible);
+
+    this.layersRange$$ = combineLatest(layers.map((layer: Layer) => layer.isInResolutionsRange$))
+      .pipe(map((inrange: boolean[]) => inrange.every(Boolean)))
+      .subscribe((layersAreAllInRange: boolean) =>
+      this.component.layersAreAllInRange = layersAreAllInRange);
   }
 
   private initRoutes() {
@@ -61,13 +90,13 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
         }
         if (onlyVisibleFromUrl &&
           !this.layerListService.onlyVisibleInitialized &&
-          this.component.hasLayerNotVisible) {
+          !this.component.layersAreAllVisible) {
           this.layerListService.onlyVisible = onlyVisibleFromUrl === '1' ? true : false;
           this.layerListService.onlyVisibleInitialized = true;
         }
         if (onlyInRangeFromUrl &&
           !this.layerListService.onlyInRangeInitialized &&
-          this.component.hasLayerOutOfRange) {
+          !this.component.layersAreAllInRange) {
           this.layerListService.onlyInRange = onlyInRangeFromUrl === '1' ? true : false;
           this.layerListService.onlyInRangeInitialized = true;
         }
@@ -76,7 +105,15 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnDestroy() {
-    this.layers$$.unsubscribe();
+    this.layersOrResolutionChange$$.unsubscribe();
+    if (this.layersVisibility$$ !== undefined) {
+      this.layersVisibility$$.unsubscribe();
+      this.layersVisibility$$ = undefined;
+    }
+    if (this.layersRange$$ !== undefined) {
+      this.layersRange$$.unsubscribe();
+      this.layersRange$$ = undefined;
+    }
   }
 
 }
