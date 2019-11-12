@@ -39,7 +39,7 @@ export class LayerListBindingDirective implements OnInit, AfterViewInit, OnDestr
         return layer.showInLayerList === true;
       });
       this.component.layers = shownLayers;
-      this.setLayersVisibilityRangeStatus(shownLayers,this.component.excludeBaseLayers);
+      this.setLayersVisibilityRangeStatus(shownLayers, this.component.excludeBaseLayers);
     });
   }
 
