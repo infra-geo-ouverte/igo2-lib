@@ -1,17 +1,26 @@
 <mat-list-item>
   <mat-icon mat-list-avatar svgIcon="blank"></mat-icon>
-  <h4 mat-line>{{title}}</h4>
+  <h4 mat-line matTooltipShowDelay="500" [matTooltip]="title">{{title}}</h4>
 
   <igo-metadata-button [layer]="layer"></igo-metadata-button>
 
   <button
+    (mouseenter)="onMouseEvent($event)" (mouseleave)="onMouseEvent($event)"
     mat-icon-button
     tooltip-position="below"
     matTooltipShowDelay="500"
-    [matTooltip]="(added ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.addToMap') | translate"
-    [color]="added ? 'warn' : ''"
-    (click)="onToggleClick()">
-    <mat-icon [svgIcon]="added ? 'delete' : 'plus'"></mat-icon>
+    [matTooltip]="computeTooltip() | translate"
+    [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
+    (click)="onToggleClick($event)">
+    <mat-icon
+       matBadge
+       igoMatBadgeIcon="eye-off"
+       [matBadgeHidden]="isInResolutionsRange()"
+       matBadgeColor="accent"
+       matBadgeSize="small"
+       matBadgePosition="after"
+       [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
+    </mat-icon>
   </button>
 
 </mat-list-item>

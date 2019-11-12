@@ -5,12 +5,14 @@ import {
   MatTooltipModule,
   MatIconModule,
   MatListModule,
-  MatButtonModule
+  MatButtonModule,
+  MatBadgeModule
 } from '@angular/material';
 
 import {
   IgoCollapsibleModule,
-  IgoListModule
+  IgoListModule,
+  IgoMatBadgeIconModule
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -25,6 +27,7 @@ import { SearchResultAddButtonComponent } from './search-results-add-button.comp
 @NgModule({
   imports: [
     CommonModule,
+    MatBadgeModule,
     MatTooltipModule,
     MatIconModule,
     MatListModule,
@@ -32,6 +35,7 @@ import { SearchResultAddButtonComponent } from './search-results-add-button.comp
     IgoCollapsibleModule,
     IgoListModule,
     IgoLanguageModule,
+    IgoMatBadgeIconModule,
     IgoMetadataModule,
   ],
   exports: [
