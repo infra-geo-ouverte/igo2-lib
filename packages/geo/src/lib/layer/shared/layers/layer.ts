@@ -144,11 +144,11 @@ export abstract class Layer {
 
   protected abstract createOlLayer(): olLayer;
 
-  setMap(map: IgoMap | undefined) {
-    this.map = map;
+  setMap(igoMap: IgoMap | undefined) {
+    this.map = igoMap;
 
     this.unobserveResolution();
-    if (map !== undefined) {
+    if (igoMap !== undefined) {
       this.observeResolution();
     }
   }
