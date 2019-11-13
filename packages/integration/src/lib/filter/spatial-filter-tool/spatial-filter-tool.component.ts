@@ -14,6 +14,7 @@ import {
   SpatialFilterType,
   SpatialFilterItemType,
   SpatialFilterQueryType,
+  SpatialFilterThematic,
   Layer
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
@@ -21,6 +22,7 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { BehaviorSubject } from 'rxjs';
 import { MapState } from '../../map/map.state';
 import * as olstyle from 'ol/style';
+import { MessageService, LanguageService } from '@igo2/core';
 
 /**
  * Tool to apply spatial filter
@@ -52,7 +54,7 @@ export class SpatialFilterToolComponent {
   public layers: Layer[] = [];
 
   public queryType: SpatialFilterQueryType;
-  public thematics: string[];
+  public thematics: SpatialFilterThematic[];
   public zone: Feature;
   public radius: number;
   public clearSearch;
@@ -71,7 +73,9 @@ export class SpatialFilterToolComponent {
     private spatialFilterService: SpatialFilterService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
-    private mapState: MapState
+    private mapState: MapState,
+    private messageService: MessageService,
+    private languageService: LanguageService
   ) {}
 
   getOutputType(event: SpatialFilterType) {
@@ -107,12 +111,18 @@ export class SpatialFilterToolComponent {
     this.loading = true;
     this.tryAddFeaturesToMap([this.zone]);
     if (!this.thematics) {
-      this.thematics = [SpatialFilterItemType.Address];
+      const theme: SpatialFilterThematic = {
+        name: ''
+      }
+      this.thematics = [theme];
     }
     this.thematics.forEach(thematic => {
       this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
         .subscribe((features: Feature[]) => {
           this.store.insertMany(features);
+          features.length >= 10000 ?
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning')) : undefined
           const featuresPoint: Feature[] = [];
           const featuresLinePoly: Feature[] = [];
           let idPoint;
@@ -305,32 +315,4 @@ export class SpatialFilterToolComponent {
       moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
     }
   }
-
-  // /**
-  //  * Permit the query action on results
-  //  */
-  // handleQueryResults(results) {
-  //   let features: Feature[] = [];
-  //   if (results.features.length) {
-  //     results.features.forEach(feature => {
-  //       if (feature.properties.features) {
-  //         feature.properties.features.forEach(element => {
-  //           element.title = element.values_.nom;
-  //         });
-  //         features.push(feature.properties.features);
-  //       } else {
-  //         feature.meta.alias = feature.properties.nom;
-  //         features.push(feature);
-  //       }
-  //     });
-  //   } else {
-  //     results.features.meta.alias = results.features.properties.nom;
-  //     features = results.features;
-  //   }
-  //   let feature;
-  //   if (features.length) {
-  //     feature = features[0];
-  //   }
-  //   this.selectedFeature$.next(feature);
-  // }
 }

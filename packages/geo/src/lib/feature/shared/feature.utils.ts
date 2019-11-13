@@ -50,7 +50,6 @@ export function featureToOl(
   const title = getEntityTitle(feature);
   if (title !== undefined) {
     olFeature.set('_title', title, true);
-    olFeature.title = title;
   }
 
   if (feature.extent !== undefined) {
@@ -73,7 +72,7 @@ export function featureToOl(
   olFeature.set('_entityRevision', getEntityRevision(feature), true);
 
   if (feature.icon) {
-    olFeature.icon = feature.icon;
+    olFeature.set('_icon', feature.icon, true);
   }
 
   return olFeature;
@@ -113,9 +112,10 @@ export function featureFromOl(
   });
 
   if (olLayer) {
+    const sourceOptions = olLayer.get('sourceOptions');
     title = olLayer.get('title');
-    exclude = olLayer.get('sourceOptions') ? olLayer.get('sourceOptions').excludeAttribute : undefined;
-    excludeOffline = olLayer.get('sourceOptions') ? olLayer.get('sourceOptions').excludeAttributeOffline : undefined;
+    exclude = sourceOptions ? sourceOptions.excludeAttribute : undefined;
+    excludeOffline = sourceOptions ? sourceOptions.excludeAttributeOffline : undefined;
   } else {
     title = olFeature.get('_title');
   }

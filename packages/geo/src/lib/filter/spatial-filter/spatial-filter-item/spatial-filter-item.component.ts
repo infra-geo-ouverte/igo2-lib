@@ -132,7 +132,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
 
-  @Output() thematicChange = new EventEmitter<string[]>();
+  @Output() thematicChange = new EventEmitter<SpatialFilterThematic[]>();
 
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
@@ -174,6 +174,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawGuidePlaceholder = '';
   public measure = false;
   public drawControlIsActive = true;
+  public freehandDrawIsActive = false;
   public drawStyle: OlStyle;
   public drawZone: Feature;
   public overlayStyle: OlStyle;
@@ -194,6 +195,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     .subscribe((items: SpatialFilterThematic[]) => {
       for (const item of items) {
         this.childrens.push(item);
+        this.childrens.sort(function(a, b){
+          return a.name.localeCompare(b.name);
+        });
       }
       this.childrens.forEach(child => {
         if (child.group && (this.groups.indexOf(child.group) === -1)) {
@@ -211,6 +215,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           };
           this.thematics.push(thematic);
         }
+        this.thematics.sort(function(a, b){
+          return a.name.localeCompare(b.name);
+        });
       });
       this.thematics.forEach(thematic => {
         for (const child of this.childrens) {
@@ -328,9 +335,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.selectedThematics.clear() :
       this.selectAll();
 
-    const selectedThematicsName = [];
+    const selectedThematicsName: SpatialFilterThematic[] = [];
     for (const thematic of this.selectedThematics.selected) {
-      selectedThematicsName.push(thematic.name);
+      selectedThematicsName.push(thematic);
     }
 
     this.thematics.forEach(thematic => {
@@ -365,9 +372,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     node.children.forEach(child => this.selectedThematics.deselect(child)) :
     this.selectAll(node);
 
-    const selectedThematicsName = [];
+    const selectedThematicsName: SpatialFilterThematic[] = [];
     for (const thematic of this.selectedThematics.selected) {
-      selectedThematicsName.push(thematic.name);
+      selectedThematicsName.push(thematic);
     }
 
     this.treeControl.expand(node);
@@ -400,15 +407,24 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       }
     });
 
-    const selectedThematicsName = [];
+    const selectedThematicsName: SpatialFilterThematic[] = [];
     for (const thematic of this.selectedThematics.selected) {
-      selectedThematicsName.push(thematic.name);
+      selectedThematicsName.push(thematic);
     }
     this.thematicChange.emit(selectedThematicsName);
   }
 
   onDrawControlChange() {
     this.drawControlIsActive = !this.drawControlIsActive;
+  }
+
+  onfreehandControlChange() {
+    this.freehandDrawIsActive = !this.freehandDrawIsActive;
+    // if (this.freehandDrawIsActive === true) {
+    //   this.radiusFormControl.disable();
+    //   return;
+    // }
+    // this.radiusFormControl.enable();
   }
 
   /**
@@ -497,7 +513,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   getRadius(radius) {
     if (radius.target.value >= 10000 || radius.target.value < 0) {
-      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.alert'),
+      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
         this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radius = 1000;
       radius.target.value = 1000;

@@ -11,10 +11,13 @@ import {
   DataSource,
   QueryableDataSourceOptions,
   Layer,
+  SpatialFilterService,
+  SpatialFilterQueryType,
+  SpatialFilterType,
+  SpatialFilterItemType,
+  SpatialFilterThematic
 } from '@igo2/geo';
-import { SpatialFilterService } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.service';
-import { SpatialFilterQueryType } from '@igo2/geo/lib/filter/shared/spatial-filter.enum';
-import { SpatialFilterType, SpatialFilterItemType } from './../../../../../packages/geo/src/lib/filter/shared/spatial-filter.enum';
+import { MessageService, LanguageService } from '@igo2/core'
 import { EntityStore } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { BehaviorSubject } from 'rxjs';
@@ -45,7 +48,7 @@ export class AppSpatialFilterComponent {
   public layers: Layer[] = [];
 
   public queryType: SpatialFilterQueryType;
-  public thematics: string[];
+  public thematics: SpatialFilterThematic[];
   public zone: Feature;
   public radius: number;
   public clearSearch;
@@ -63,7 +66,9 @@ export class AppSpatialFilterComponent {
   constructor(
     private spatialFilterService: SpatialFilterService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    private messageService: MessageService,
+    private languageService: LanguageService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
@@ -99,6 +104,11 @@ export class AppSpatialFilterComponent {
       .subscribe((features: Feature[]) => {
         this.spatialListStore.clear();
         this.spatialListStore.load(features);
+        this.spatialListStore.entities$.value.sort(function(a, b){
+          if(a.properties.nom < b.properties.nom) { return -1; }
+          if(a.properties.nom > b.properties.nom) { return 1; }
+          return 0;
+        })
       });
   }
 
@@ -115,12 +125,18 @@ export class AppSpatialFilterComponent {
     this.loading = true;
     this.tryAddFeaturesToMap([this.zone]);
     if (!this.thematics) {
-      this.thematics = [SpatialFilterItemType.Address];
+      const theme: SpatialFilterThematic = {
+        name: ''
+      }
+      this.thematics = [theme];
     }
     this.thematics.forEach(thematic => {
       this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
         .subscribe((features: Feature[]) => {
           this.store.insertMany(features);
+          features.length >= 10000 ?
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning')) : undefined
           const featuresPoint: Feature[] = [];
           const featuresLinePoly: Feature[] = [];
           let idPoint;
@@ -315,32 +331,14 @@ export class AppSpatialFilterComponent {
   }
 
   /**
-   * Permit the query action on results
-   * Do not work properly in the lib
+   * Permit the query action on one item result
    */
   handleQueryResults(results) {
-    // let features: Feature[] = [];
-    // if (results.features.length) {
-    //   results.features.forEach(feature => {
-    //     if (feature.properties.features) {
-    //       feature.properties.features.forEach(element => {
-    //         element.title = element.values_.nom;
-    //       });
-    //       features.push(feature.properties.features);
-    //     } else {
-    //       feature.meta.alias = feature.properties.nom;
-    //       features.push(feature);
-    //     }
-    //   });
-    // } else {
-    //   results.features.meta.alias = results.features.properties.nom;
-    //   features = results.features;
-    // }
-
-    // let feature;
-    // if (features.length) {
-    //   feature = features[0];
-    // }
-    // this.selectedFeature$.next(feature);
+    const features: Feature[] = results.features;
+    let feature;
+    if (features.length) {
+      feature = features[0];
+    }
+    this.selectedFeature$.next(feature);
   }
 }

@@ -180,7 +180,6 @@ export class StyleService {
 
   createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
     let style;
-    // const maxSize = 100;
     const range = clusterParam.clusterRange;
     const size = feature.get('features').length;
     const color = 'rgba(24, 134, 45, 0.8)';
@@ -215,10 +214,10 @@ export class StyleService {
         })
       ];
     } else {
-      if (!feature.values_.features[0].icon) {
+      if (!feature.values_.features[0].get('_icon')) {
         style = createOverlayMarkerStyle();
       } else {
-        const icon = feature.values_.features[0].icon;
+        const icon = feature.values_.features[0].get('_icon');
         this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
           const xmlSerializer = new XMLSerializer();
           svgObj.setAttribute('width', '30');

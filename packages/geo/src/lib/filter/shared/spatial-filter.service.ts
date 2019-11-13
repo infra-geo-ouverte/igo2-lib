@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { LanguageService, ConfigService } from '@igo2/core';
+import { LanguageService } from '@igo2/core';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Feature } from '../../feature/shared';
@@ -30,35 +30,35 @@ export class SpatialFilterService {
     RegTour: 'tourisme'
   };
 
-  public urlThematicType = {
-    bornes: 'Bornes',
-    hydro: 'Hydrographie',
-    routes: 'Routes',
-    'lieux.bati': 'Bâtiments',
-    'lieux.geographie': 'Géographies',
-    'lieux.parc': 'Parcs',
-    'lieux.secteur': 'Secteurs',
-    'lieux.culturel.immeubles': 'Immeubles',
-    'lieux.culturel.sites': 'Sites culturels',
-    'lieux.education.cpe': 'CPE',
-    'lieux.education.public': 'Écoles publiques',
-    'lieux.education.prive': 'Écoles privé',
-    'lieux.education.gouvernemental': 'Écoles gouvernementales',
-    'lieux.education.colleges': 'Collèges',
-    'lieux.education.universites': 'Universités',
-    'lieux.sante.aine': 'Résidences pour aînés',
-    'lieux.sante.ambulance': 'Ambulances',
-    'lieux.sante.clinique': 'Cliniques',
-    'lieux.sante.etabl': 'Établissements santé',
-    'lieux.sante.gmf': 'Groupe de médecins de famille',
-    'lieux.sante.naissance': 'Naissance',
-    'lieux.sante.pharmacie': 'Pharmacie',
-    'lieux.securite.correctionnel': 'Centres correctionnels',
-    'lieux.securite.organisme': 'Organismes de sécurité',
-    'lieux.securite.palais-justice': 'Palais de justice',
-    'lieux.securite.penitencier-fed': 'Pénitenciers fédéraux',
-    'lieux.securite.penitencier-prov': 'Pénitenciers provinciaux'
-  };
+  // public urlThematicType = {
+  //   bornes: 'bornes',
+  //   hydro: 'hydro',
+  //   routes: 'routes',
+  //   'lieux.bati': 'bati',
+  //   'lieux.geographie': 'Géographies',
+  //   'lieux.parc': 'Parcs',
+  //   'lieux.secteur': 'Secteurs',
+  //   'lieux.culturel.immeubles': 'Immeubles',
+  //   'lieux.culturel.sites': 'Sites culturels',
+  //   'lieux.education.cpe': 'CPE',
+  //   'lieux.education.public': 'Écoles publiques',
+  //   'lieux.education.prive': 'Écoles privé',
+  //   'lieux.education.gouvernemental': 'Écoles gouvernementales',
+  //   'lieux.education.colleges': 'Collèges',
+  //   'lieux.education.universites': 'Universités',
+  //   'lieux.sante.aine': 'Résidences pour aînés',
+  //   'lieux.sante.ambulance': 'Ambulances',
+  //   'lieux.sante.clinique': 'Cliniques',
+  //   'lieux.sante.etabl': 'Établissements santé',
+  //   'lieux.sante.gmf': 'Groupe de médecins de famille',
+  //   'lieux.sante.naissance': 'Naissance',
+  //   'lieux.sante.pharmacie': 'Pharmacie',
+  //   'lieux.securite.correctionnel': 'Centres correctionnels',
+  //   'lieux.securite.organisme': 'Organismes de sécurité',
+  //   'lieux.securite.palais-justice': 'Palais de justice',
+  //   'lieux.securite.penitencier-fed': 'Pénitenciers fédéraux',
+  //   'lieux.securite.penitencier-prov': 'Pénitenciers provinciaux'
+  // };
 
   constructor(
     private http: HttpClient,
@@ -99,24 +99,22 @@ export class SpatialFilterService {
       .pipe(
         map((types: string[]) => {
           types.forEach(type => {
-            if (this.urlThematicType[type.toString()]) {
-              const language = this.languageService.getLanguage();
+            if (type.startsWith('lieux')) {
               const item: SpatialFilterThematic = {
-                name: undefined
+                name: undefined,
+                source: type
               };
-              item.name =
-                language === 'fr' ? this.urlThematicType[type.toString()] :
-                this.languageService.translate
-                  .instant('igo.geo.spatialFilter.frenchThematics.' + this.urlThematicType[type.toString()]);
-
-              if (type.startsWith('lieux')) { // Get thematics group
-                let substr = type.substring(6, type.length);
-                if (substr.includes('.')) {
-                  const index = substr.indexOf('.');
-                  substr = substr.substring(0, index);
-                }
-                item.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.' + substr);
+              let substr = type.substring(6, type.length);
+              let name = substr;
+              if (substr.includes('.')) {
+                const index = substr.indexOf('.');
+                name = substr.substring(index + 1, substr.length)
+                substr = substr.substring(0, index);
               }
+              item.name = this.languageService.translate
+                .instant('igo.geo.terrapi.' + name);
+
+              item.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.' + substr);
               items.push(item);
             }
           });
@@ -128,7 +126,7 @@ export class SpatialFilterService {
   /*
    * Loading data for spatial filter item component (Address or Thematics) depends on predefined zone or draw zone (feature)
    */
-  loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematic?: string, buffer?: number) {
+  loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematic?: SpatialFilterThematic, buffer?: number) {
     if (type) { // Predefined type
       const urlType = type as string;
       const url = this.baseUrl + this.urlFilterList[urlType];
@@ -144,13 +142,13 @@ export class SpatialFilterService {
           map(featureCollection => featureCollection.features.map(f => {
             f.meta = {
               id: f.properties.code,
-              title: 'Adresses'
+              title: this.languageService.translate.instant('igo.geo.spatialFilter.Address')
             };
             return f;
           }))
         );
       } else { // If thematics search
-        urlItem = this.getKeyByValue(this.urlThematicType, thematic);
+        urlItem = thematic.source;
         return this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
           params: {
             geometry: 'true',
@@ -160,7 +158,7 @@ export class SpatialFilterService {
           map(featureCollection => featureCollection.features.map(f => {
             f.meta = {
               id: f.properties.code,
-              title: thematic
+              title: thematic.name
             };
             return f;
           }))
@@ -181,13 +179,14 @@ export class SpatialFilterService {
           map(featureCollection => featureCollection.features.map(f => {
             f.meta = {
               id: f.properties.code,
-              title: 'Adresses'
+              title: this.languageService.translate.instant('igo.geo.spatialFilter.Address')
             };
             return f;
           }))
         );
       } else { // If thematics search
-        const urlItem = '?type=' + this.getKeyByValue(this.urlThematicType, thematic);
+        console.log(thematic.source);
+        const urlItem = '?type=' + thematic.source;
         return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
           params: {
             geometry: 'true',
@@ -197,7 +196,7 @@ export class SpatialFilterService {
           map(featureCollection => featureCollection.features.map(f => {
             f.meta = {
               id: f.properties.code,
-              title: thematic
+              title: thematic.name
             };
             return f;
           }))
