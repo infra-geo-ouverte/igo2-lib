@@ -79,6 +79,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
 
     this.deactivateControl();
     this.createDrawControl();
+    this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
   get geometryType(): OlGeometryType { return this._geometryType; }
@@ -108,11 +109,35 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (!this._drawControlIsActive) {
       return;
     } else {
-      this.createDrawControl();
       this.toggleControl();
     }
   }
   private _drawControlIsActive: boolean;
+
+  /**
+   * Whether freehand draw control should be active or not
+   */
+  @Input()
+  get freehandDrawIsActive(): boolean { return this._freehandDrawIsActive; }
+  set freehandDrawIsActive(value: boolean) {
+    this._freehandDrawIsActive = value;
+    if (this.ready === false) {
+      return;
+    }
+
+    if (!this.drawControlIsActive) {
+      return;
+    }
+
+    this.deactivateControl();
+
+    this.createDrawControl();
+    this.createModifyControl();
+
+    this.drawControl.freehand$.next(this.freehandDrawIsActive);
+    this.toggleControl();
+  }
+  private _freehandDrawIsActive: boolean;
 
   /**
    * Style for the draw control (applies while the geometry is being drawn)
@@ -133,6 +158,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.createDrawControl();
     this.createModifyControl();
 
+    this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
   get drawStyle(): OlStyle { return this._drawStyle; }
@@ -158,7 +184,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (this.ready === false) {
       return;
     }
-
+    console.log('Value: ', value);
     if (value) {
       this.addGeoJSONToOverlay(value);
     } else {
@@ -230,7 +256,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     this.ready = false;
 
     this.deactivateControl();
-    this.cdRef.detach();
     this.olOverlaySource.clear();
     this.map.ol.removeLayer(this.olOverlayLayer);
   }
@@ -374,6 +399,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param olGeometry OL geometry
    */
   private setOlGeometry(olGeometry: OlGeometry | undefined) {
+    console.log(olGeometry);
     if (olGeometry === undefined) {
       return;
     }

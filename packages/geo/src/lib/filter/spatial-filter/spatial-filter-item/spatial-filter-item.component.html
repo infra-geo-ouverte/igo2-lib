@@ -5,16 +5,23 @@
   [drawGuide]="drawGuide$ | async"
   [measure]="measure"
   [drawControlIsActive]="drawControlIsActive"
+  [freehandDrawIsActive]="freehandDrawIsActive"
   [drawStyle]="drawStyle$ | async"
   [overlayStyle]="overlayStyle$ | async">
 </igo-geometry-form-field-input>
 
 <div class="header">
-    <mat-slide-toggle class="draw-control" *ngIf="!isPredefined()"
+    <mat-slide-toggle *ngIf="!isPredefined()"
       [checked]="drawControlIsActive"
       [labelPosition]="'before'"
       (change)="onDrawControlChange()">
       {{'igo.geo.spatialFilter.drawControl' | translate}}
+    </mat-slide-toggle>
+    <mat-slide-toggle *ngIf="!isPredefined()"
+      [checked]="freehandDrawIsActive"
+      [labelPosition]="'before'"
+      (change)="onfreehandControlChange()">
+      {{'igo.geo.spatialFilter.freehandControl' | translate}}
     </mat-slide-toggle>
   <mat-label class="title">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
   <mat-radio-group [value]="selectedItemType">
@@ -86,8 +93,8 @@
 <div class="radius-unit" *ngIf="isPoint()">
   <form class="radius-form">
     <mat-form-field class="radius">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl" [value]="1000"
-      (input)="getRadius($event)">
+      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
+      [value]="1000" (input)="getRadius($event)">
       <label class="unit-field">
         {{('igo.geo.measure.' + measureUnit) | translate}}
       </label>

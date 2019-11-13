@@ -7,9 +7,15 @@
     display: inline-grid;
 }
 
-.draw-control {
+.mat-slide-toggle {
     padding: 5px;
     margin-bottom: 10px;
+    width: 100%;
+    max-width: 250px;
+
+    ::ng-deep .mat-slide-toggle-content {
+        width: calc(100% - 20px);
+    }
 }
 
 .title, .radius-form {

@@ -301,8 +301,10 @@
         "searchResults": "Résultats de la recherche",
         "type": "Type",
         "radius": "Rayon",
-        "alert": "Le rayon doit être compris entre 0 et 10000",
+        "radiusAlert": "Le rayon doit être compris entre 0 et 10000",
+        "maxSizeAlert": "Le nombre de résultats excède 10000. Certains pourraient être manquants.",
         "warning": "Avertissement",
+        "freehandControl": "À main levée",
         "group" : {
           "bati": "Infrastructure",
           "geographie": "Géographie",
@@ -314,6 +316,35 @@
           "sante": "Santé",
           "securite": "Sécurité"
         }
+      },
+      "terrapi": {
+        "bornes": "Bornes",
+        "hydro": "Hydrograhie",
+        "routes": "Routes",
+        "bati": "Bâtiments",
+        "geographie": "Géographies",
+        "parc": "Parcs",
+        "secteur": "Secteurs",
+        "immeubles": "Immeubles",
+        "sites": "Sites Culturels",
+        "cpe": "Centre de la petite enfance",
+        "public": "Écoles publiques",
+        "prive": "Écoles privés",
+        "gouvernemental": "Écoles gouvernementales",
+        "colleges": "Collèges",
+        "universites": "Universités",
+        "aine": "Résidences pour aînés",
+        "ambulance": "Ambulances",
+        "clinique": "Cliniques",
+        "etabl": "Établissements de santé",
+        "gmf": "Groupes de médecins de famille",
+        "naissance": "Naissances",
+        "pharmacie": "Pharmacies",
+        "correctionnel": "Centres correctionnels",
+        "organisme": "Organismes de sécurité",
+        "palais-justice": "Palais de justice",
+        "penitencier-fed": "Pénitenciers fédéraux",
+        "penitencier-prov": "Pénitenciers provinciaux"
       },
       "measure": {
         "dialog": {
