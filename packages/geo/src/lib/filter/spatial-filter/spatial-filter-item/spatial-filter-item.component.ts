@@ -1,4 +1,3 @@
-import { olFeature } from 'ol/Feature';
 import {
   Component,
   Input,
@@ -21,6 +20,7 @@ import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
+import { olFeature } from 'ol/Feature';
 import { MatTreeNestedDataSource } from '@angular/material';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
@@ -68,7 +68,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     // Necessary to apply the right style when geometry type is Point
     if (this.type === SpatialFilterType.Point) {
       this.radius = 1000; // Base radius
-      this.overlayStyle = (feature: olFeature, resolution: number) => {
+      this.radiusFormControl.setValue(this.radius);
+      this.PointStyle = (feature: olFeature, resolution: number) => {
         const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
         return new olstyle.Style ({
           image: new olstyle.Circle ({
@@ -83,10 +84,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           })
         });
       };
+      this.overlayStyle = this.PointStyle;
       this.drawStyle$.next(this.overlayStyle);
     } else {
       // If geometry types is Polygon
-      this.overlayStyle = (feature, resolution) => {
+      this.radius = undefined;
+      this.PolyStyle = (feature, resolution) => {
         return new olstyle.Style ({
           stroke: new olstyle.Stroke({
             width: 2,
@@ -97,6 +100,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           })
         });
       };
+      this.overlayStyle = this.PolyStyle;
     }
     this.overlayStyle$.next(this.overlayStyle);
   }
@@ -137,6 +141,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
   @Output() radiusEvent = new EventEmitter<number>();
+  @Output() freehandControl = new EventEmitter<boolean>();
 
   @Output() clearButtonEvent = new EventEmitter<Layer[]>();
 
@@ -164,6 +169,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   drawStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
+  private valueChanges$$: Subscription;
 
   public formControl = new FormControl();
   public geometryType: OlGeometryType;
@@ -178,6 +184,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawStyle: OlStyle;
   public drawZone: Feature;
   public overlayStyle: OlStyle;
+  public PointStyle: OlStyle;
+  public PolyStyle: OlStyle;
 
   public radius: number;
   public radiusFormControl = new FormControl();
@@ -238,6 +246,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
     this.value$.subscribe(() => {
       this.cdRef.detectChanges();
+    });
+
+    this.valueChanges$$ = this.radiusFormControl.valueChanges.subscribe(() => {
+      this.getRadius();
     });
   }
 
@@ -420,11 +432,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   onfreehandControlChange() {
     this.freehandDrawIsActive = !this.freehandDrawIsActive;
-    // if (this.freehandDrawIsActive === true) {
-    //   this.radiusFormControl.disable();
-    //   return;
-    // }
-    // this.radiusFormControl.enable();
+    this.freehandControl.emit(this.freehandDrawIsActive);
   }
 
   /**
@@ -442,7 +450,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       };
       this.drawZoneEvent.emit(this.drawZone);
     }
-
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
   }
@@ -458,6 +465,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.store.clear();
     }
     this.clearButtonEvent.emit([]);
+  }
+
+  clearForm() {
+    this.formControl.reset();
   }
 
   /**
@@ -511,21 +522,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   /**
    * Manage radius value at user change
    */
-  getRadius(radius) {
-    if (radius.target.value >= 10000 || radius.target.value < 0) {
+  getRadius() {
+    if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
       this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
         this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       this.radius = 1000;
-      radius.target.value = 1000;
+      this.radiusFormControl.setValue(1000);
       this.drawGuide$.next(this.radius);
       return;
     }
-    if (radius.target.value === 0) {
+    if (this.radiusFormControl.value === 0) {
       this.radius = 0;
       this.drawGuide$.next(0);
       return;
     }
-    this.radius = radius.target.value;
+    this.radius = this.radiusFormControl.value;
     this.drawGuide$.next(this.radius);
+    this.cdRef.detectChanges();
   }
 }

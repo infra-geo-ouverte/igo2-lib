@@ -184,7 +184,7 @@ export class DrawControl {
         });
       }
     }
-    console.log('Interaction: ', olDrawInteraction);
+
     this.onDrawStartKey = olDrawInteraction
       .on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
     this.onDrawEndKey = olDrawInteraction
@@ -234,7 +234,6 @@ export class DrawControl {
     if (this.onChangesKey !== undefined) {
       unByKey(this.onChangesKey);
     }
-    console.log('getGeometry', event.feature.getGeometry());
     this.end$.next(event.feature.getGeometry());
   }
 

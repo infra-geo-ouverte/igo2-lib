@@ -31,7 +31,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   }
   private _store: EntityStore<Feature>;
 
-  public queryType: string[] = ['AdmRegion', 'Mun', 'Arrond', 'CircFed', 'CircProv', 'DirReg', 'MRC', 'RegTour'];
+  public queryType: string[] = ['Arrond', 'CircFed', 'CircProv', 'DirReg', 'Mun', 'MRC', 'AdmRegion', 'RegTour'];
   public selectedTypeIndex = new FormControl(0);
 
   @Input() selectedQueryType: SpatialFilterQueryType;

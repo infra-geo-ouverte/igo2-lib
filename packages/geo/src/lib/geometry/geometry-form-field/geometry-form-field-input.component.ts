@@ -6,7 +6,9 @@ import {
   Optional,
   Self,
   ChangeDetectorRef,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { NgControl, ControlValueAccessor } from '@angular/forms';
 
@@ -20,6 +22,9 @@ import OlFeature from 'ol/Feature';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlOverlay from 'ol/Overlay';
+import * as poly from 'ol/geom/Polygon';
+import * as olproj from 'ol/proj';
+import Point from 'ol/geom/Point';
 
 import { IgoMap } from '../../map';
 import {
@@ -184,7 +189,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (this.ready === false) {
       return;
     }
-    console.log('Value: ', value);
+
     if (value) {
       this.addGeoJSONToOverlay(value);
     } else {
@@ -205,6 +210,8 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   get olOverlaySource(): OlVectorSource {
     return this.olOverlayLayer.getSource();
   }
+
+  @Output() radiusEvent = new EventEmitter<number>();
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -399,11 +406,24 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param olGeometry OL geometry
    */
   private setOlGeometry(olGeometry: OlGeometry | undefined) {
-    console.log(olGeometry);
+    let value;
+    let radius;
     if (olGeometry === undefined) {
       return;
     }
-    const value = this.olGeoJSON.writeGeometryObject(olGeometry, {
+
+    if (olGeometry.getType() === 'Circle') { // Because Circle doesn't exist as a GeoJSON object
+      const center = olGeometry.getCenter();
+      const coordinates = olproj.transform(center, 'EPSG:3857', 'EPSG:4326');
+      radius = Math.round(olGeometry.getRadius() * (Math.cos((Math.PI / 180) * coordinates[1])));
+      this.radiusEvent.emit(radius);
+
+      // Convert it to a point object
+      const point = new Point(center);
+      olGeometry = point;
+    }
+
+    value = this.olGeoJSON.writeGeometryObject(olGeometry, {
       featureProjection: this.map.projection,
       dataProjection: 'EPSG:4326'
     });

@@ -36,6 +36,7 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   private value$$: Subscription;
 
   public drawControlIsActive = true;
+  public freehandDrawIsActive = false;
 
   /**
    * The field's form control
