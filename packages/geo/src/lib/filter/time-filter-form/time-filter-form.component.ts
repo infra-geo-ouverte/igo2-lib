@@ -318,6 +318,10 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   playYear(event: any) {
+    if (this.year + this.mySlider.step > (this.max.getFullYear() + this.mySlider.step)) {
+      this.stopFilter();
+      this.resetFilter(event);
+    }
     if (this.interval) {
       this.stopFilter();
     } else {

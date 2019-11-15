@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import {
   MatIconModule,
   MatListModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatBadgeModule
 } from '@angular/material';
 
-import { IgoListModule, IgoCollapsibleModule } from '@igo2/common';
+import { IgoListModule, IgoCollapsibleModule, IgoMatBadgeIconModule } from '@igo2/common';
 
 import { IgoCatalogBrowserModule } from './catalog-browser/catalog-browser.module';
 import { IgoCatalogLibraryModule } from './catalog-library/catalog-library.module';
@@ -14,9 +15,11 @@ import { IgoCatalogLibraryModule } from './catalog-library/catalog-library.modul
 @NgModule({
   imports: [
     CommonModule,
+    MatBadgeModule,
     MatIconModule,
     MatListModule,
     MatTooltipModule,
+    IgoMatBadgeIconModule,
     IgoListModule,
     IgoCollapsibleModule
   ],

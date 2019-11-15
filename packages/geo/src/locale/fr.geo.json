@@ -3,7 +3,9 @@
     "geo": {
       "catalog": {
         "layer.addToMap": "Ajouter à la carte",
+        "layer.addToMapOutRange": "Ajouter à la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "layer.removeFromMap": "Retirer de la carte",
+        "layer.removeFromMapOutRange": "Retirer de la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
         "baseLayers": "Fonds de carte"
@@ -105,7 +107,7 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
-        "filterPlaceholder": "Filtre la liste de couches",
+        "filterPlaceholder": "Filtrer la liste de couches",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "moreOptions": "Options sur la couche",
@@ -120,9 +122,9 @@
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Rétablir l'affichage de l'ensemble des couches",
         "trackFeature": "Suivre l'entité",
-        "legend" : {
+        "legend": {
           "default": "Défaut",
-          "loadingLegendText": "Chargement de la légende",        
+          "loadingLegendText": "Chargement de la légende",
           "noLegendText": "Aucune légende disponible pour cette couche",
           "noLegendScale": "Aucune légende disponible pour cette échelle",
           "selectStyle": "Sélectionner le style de la légende"

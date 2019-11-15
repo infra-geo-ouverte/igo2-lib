@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import {
   MatTooltipModule,
+  MatBadgeModule,
   MatButtonModule,
   MatIconModule,
   MatListModule
@@ -10,6 +11,7 @@ import {
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
+  IgoMatBadgeIconModule,
   IgoCollapsibleModule,
   IgoListModule
 } from '@igo2/common';
@@ -25,10 +27,12 @@ import { CatalogBrowserGroupComponent } from './catalog-browser-group.component'
 @NgModule({
   imports: [
     CommonModule,
+    MatBadgeModule,
     MatButtonModule,
     MatIconModule,
     MatListModule,
     MatTooltipModule,
+    IgoMatBadgeIconModule,
     IgoLanguageModule,
     IgoListModule,
     IgoCollapsibleModule,
