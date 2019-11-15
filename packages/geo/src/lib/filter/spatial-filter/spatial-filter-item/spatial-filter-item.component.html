@@ -7,7 +7,8 @@
   [drawControlIsActive]="drawControlIsActive"
   [freehandDrawIsActive]="freehandDrawIsActive"
   [drawStyle]="drawStyle$ | async"
-  [overlayStyle]="overlayStyle$ | async">
+  [overlayStyle]="overlayStyle$ | async"
+  (radiusEvent)="radiusFormControl.setValue($event)">
 </igo-geometry-form-field-input>
 
 <div class="header">
@@ -94,7 +95,7 @@
   <form class="radius-form">
     <mat-form-field class="radius">
       <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
-      [value]="1000" (input)="getRadius($event)">
+      [value]="1000" (input)="getRadius()">
       <label class="unit-field">
         {{('igo.geo.measure.' + measureUnit) | translate}}
       </label>
@@ -109,7 +110,7 @@
   </button>
 
   <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="disabledFormButton()"
-    (click)="formControl.reset()">
+    (click)="clearForm()">
     {{'igo.geo.spatialFilter.clearForm' | translate}}
   </button>
 

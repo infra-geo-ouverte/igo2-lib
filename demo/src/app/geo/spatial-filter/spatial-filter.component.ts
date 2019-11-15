@@ -44,6 +44,7 @@ export class AppSpatialFilterComponent {
 
   @Input() type: SpatialFilterType;
   @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
+  @Input() freehandDrawIsActive: boolean;
 
   public layers: Layer[] = [];
 
@@ -130,13 +131,13 @@ export class AppSpatialFilterComponent {
       }
       this.thematics = [theme];
     }
+    if (this.type === SpatialFilterType.Polygon || this.freehandDrawIsActive) {
+      this.radius = undefined;
+    }
     this.thematics.forEach(thematic => {
       this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
         .subscribe((features: Feature[]) => {
           this.store.insertMany(features);
-          features.length >= 10000 ?
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning')) : undefined
           const featuresPoint: Feature[] = [];
           const featuresLinePoly: Feature[] = [];
           let idPoint;
@@ -153,6 +154,9 @@ export class AppSpatialFilterComponent {
           this.tryAddPointToMap(featuresPoint, idPoint);
           this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
           this.loading = false;
+          features.length >= 10000 ?
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000}) : undefined
         });
     });
   }

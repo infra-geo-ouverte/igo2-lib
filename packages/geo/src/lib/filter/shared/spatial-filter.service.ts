@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { LanguageService } from '@igo2/core';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -29,36 +29,6 @@ export class SpatialFilterService {
     Mun: 'municipalites',
     RegTour: 'tourisme'
   };
-
-  // public urlThematicType = {
-  //   bornes: 'bornes',
-  //   hydro: 'hydro',
-  //   routes: 'routes',
-  //   'lieux.bati': 'bati',
-  //   'lieux.geographie': 'Géographies',
-  //   'lieux.parc': 'Parcs',
-  //   'lieux.secteur': 'Secteurs',
-  //   'lieux.culturel.immeubles': 'Immeubles',
-  //   'lieux.culturel.sites': 'Sites culturels',
-  //   'lieux.education.cpe': 'CPE',
-  //   'lieux.education.public': 'Écoles publiques',
-  //   'lieux.education.prive': 'Écoles privé',
-  //   'lieux.education.gouvernemental': 'Écoles gouvernementales',
-  //   'lieux.education.colleges': 'Collèges',
-  //   'lieux.education.universites': 'Universités',
-  //   'lieux.sante.aine': 'Résidences pour aînés',
-  //   'lieux.sante.ambulance': 'Ambulances',
-  //   'lieux.sante.clinique': 'Cliniques',
-  //   'lieux.sante.etabl': 'Établissements santé',
-  //   'lieux.sante.gmf': 'Groupe de médecins de famille',
-  //   'lieux.sante.naissance': 'Naissance',
-  //   'lieux.sante.pharmacie': 'Pharmacie',
-  //   'lieux.securite.correctionnel': 'Centres correctionnels',
-  //   'lieux.securite.organisme': 'Organismes de sécurité',
-  //   'lieux.securite.palais-justice': 'Palais de justice',
-  //   'lieux.securite.penitencier-fed': 'Pénitenciers fédéraux',
-  //   'lieux.securite.penitencier-prov': 'Pénitenciers provinciaux'
-  // };
 
   constructor(
     private http: HttpClient,
@@ -170,22 +140,25 @@ export class SpatialFilterService {
       const urlBuffer = buffer ? '&buffer=' + buffer as string : '';
       if (itemType === SpatialFilterItemType.Address) {
         const urlItem = '?type=adresses';
+        // const header = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+        // let body = new HttpParams();
+        // body.set('geometry', 'true');
+        // body.set('icon', 'true');
         return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
           params: {
             geometry: 'true',
             icon: 'true'
           }
         }).pipe(
-          map(featureCollection => featureCollection.features.map(f => {
-            f.meta = {
-              id: f.properties.code,
-              title: this.languageService.translate.instant('igo.geo.spatialFilter.Address')
-            };
-            return f;
-          }))
-        );
+            map(featureCollection => featureCollection.features.map(f => {
+              f.meta = {
+                id: f.properties.code,
+                title: this.languageService.translate.instant('igo.geo.spatialFilter.Address')
+              };
+              return f;
+            }))
+          );
       } else { // If thematics search
-        console.log(thematic.source);
         const urlItem = '?type=' + thematic.source;
         return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
           params: {

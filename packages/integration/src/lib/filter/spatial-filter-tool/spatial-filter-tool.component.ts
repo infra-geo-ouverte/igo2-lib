@@ -50,6 +50,7 @@ export class SpatialFilterToolComponent {
 
   @Input() type: SpatialFilterType;
   @Input() itemType: SpatialFilterItemType = SpatialFilterItemType.Address;
+  @Input() freehandDrawIsActive: boolean;
 
   public layers: Layer[] = [];
 
@@ -96,6 +97,11 @@ export class SpatialFilterToolComponent {
       .subscribe((features: Feature[]) => {
         this.spatialListStore.clear();
         this.spatialListStore.load(features);
+        this.spatialListStore.entities$.value.sort(function(a, b){
+          if(a.properties.nom < b.properties.nom) { return -1; }
+          if(a.properties.nom > b.properties.nom) { return 1; }
+          return 0;
+        })
       });
   }
 
@@ -116,13 +122,13 @@ export class SpatialFilterToolComponent {
       }
       this.thematics = [theme];
     }
+    if (this.type === SpatialFilterType.Polygon || this.freehandDrawIsActive) {
+      this.radius = undefined;
+    }
     this.thematics.forEach(thematic => {
       this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
         .subscribe((features: Feature[]) => {
           this.store.insertMany(features);
-          features.length >= 10000 ?
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning')) : undefined
           const featuresPoint: Feature[] = [];
           const featuresLinePoly: Feature[] = [];
           let idPoint;
@@ -139,6 +145,9 @@ export class SpatialFilterToolComponent {
           this.tryAddPointToMap(featuresPoint, idPoint);
           this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
           this.loading = false;
+          features.length >= 10000 ?
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning')) : undefined
         });
     });
   }
