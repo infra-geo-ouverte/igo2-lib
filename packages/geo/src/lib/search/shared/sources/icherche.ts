@@ -146,10 +146,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['lieu']
             },
             {
-              title: 'Borne',
-              value: 'bornes',
+              title: 'Borne SUMI',
+              value: 'bornes-sumi',
               enabled: false,
-              hashtags: ['borne']
+              hashtags: ['borne', 'bornes', 'sumi']
             },
             {
               title: 'Entreprise',
@@ -257,7 +257,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       .subscribe((types: string[]) => {
         const typeSetting = this.settings.find(s => s.name === 'type');
         typeSetting.values.forEach(v => {
-          const regex = new RegExp(`^${v.value}(\.*)?`);
+          const regex = new RegExp(`^${v.value}(\\.|$)`);
           const typesMatched = types.filter(value => regex.test(value));
           v.available = typesMatched.length > 0;
           if (v.value === 'lieux') {
@@ -285,7 +285,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         bbox: true,
         icon: true,
         type:
-          'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes'
+          'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
       },
       this.params,
       this.computeOptionsParam(term, options || {}).params

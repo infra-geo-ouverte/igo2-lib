@@ -27,6 +27,7 @@ import {
 @Component({
   selector: 'igo-catalog-browser-group',
   templateUrl: './catalog-browser-group.component.html',
+  styleUrls: ['./catalog-browser-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
@@ -42,7 +43,7 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * @internal
    */
   added$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  preview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /**
    * Whether the toggle button is disabled
    * @internal
@@ -63,6 +64,8 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
    * Whether the group is collapsed
    */
   @Input() collapsed: boolean = true;
+
+  @Input() resolution: number;
 
   /**
    * Whether the group can be toggled when it's collapsed
@@ -184,6 +187,10 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
     });
   }
 
+  onLayerPreview(event) {
+    this.preview$.next(event);
+  }
+
   /**
    * If all the layers of the group added or removed, add or remove the group itself.
    * @param event The last layer added change event to occur
@@ -217,5 +224,9 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
       disabled = collapsed;
     }
     this.disabled$.next(disabled);
+  }
+
+  onTitleClick() {
+    this.collapsed = !this.collapsed;
   }
 }

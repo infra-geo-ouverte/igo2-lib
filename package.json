@@ -1,6 +1,6 @@
 {
   "name": "@igo/demo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "IGO Library",
   "author": "MSP",
   "license": "MIT",
@@ -98,6 +98,7 @@
     "moment": "^2.22.2",
     "ngx-cacheable": "^1.0.9",
     "ol": "^5.3.0",
+    "ol-mapbox-style": "^4.3.0",
     "proj4": "^2.5.0",
     "rxjs": "^6.4.0",
     "scroll-into-view-if-needed": "^2.2.20",
@@ -107,8 +108,7 @@
     "typy": "^2.0.1",
     "unorm": "^1.4.1",
     "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.29",
-    "ol-mapbox-style": "^4.3.0"
+    "zone.js": "^0.8.29"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.2",
@@ -150,6 +150,7 @@
     "tslint": "^5.12.1",
     "typescript": "~3.2.4",
     "wait-on": "^3.2.0",
-    "webdriver-manager": "^12.1.6"
+    "webdriver-manager": "^12.1.6",
+    "webpack": "^4.41.2"
   }
 }

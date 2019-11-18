@@ -35,28 +35,32 @@
         (click)="toggleSort(false)">
         <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
       </button>
-      <button
-        mat-icon-button
-        [disabled]="!hasLayerNotVisible"
-        [matTooltip]="onlyVisible ?
+      <div [matTooltip]="onlyVisible ?
         ('igo.geo.layer.resetLayersList' | translate) :
         ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)"
-        matTooltipShowDelay="500"
-        [color]="onlyVisible ? 'warn' : 'primary'"
-        (click)="toggleOnlyVisible()">
-        <mat-icon [svgIcon]="!onlyVisible ? 'eye' : 'sort-variant-remove'"></mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        [disabled]="!hasLayerOutOfRange"
-        [matTooltip]="onlyInRange ?
+        matTooltipShowDelay="500">
+        <button
+          mat-icon-button
+          [disabled]="layersAreAllVisible && !onlyVisible"
+          [color]="onlyVisible ? 'warn' : 'primary'"
+          (click)="toggleOnlyVisible()">
+          <mat-icon
+          [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'eye'"></mat-icon>
+        </button>
+      </div>
+      <div [matTooltip]="onlyInRange ?
         ('igo.geo.layer.resetLayersList' | translate) :
         ('igo.geo.layer.subsetLayersListOnlyInRange' | translate)"
-        matTooltipShowDelay="500"
-        [color]="onlyInRange ? 'warn' : 'primary'"
-        (click)="toggleOnlyInRange()">
-        <mat-icon [svgIcon]="!onlyInRange ? 'playlist-check' : 'sort-variant-remove'"></mat-icon>
-      </button>
+        matTooltipShowDelay="500">
+        <button
+          mat-icon-button
+          [disabled]="layersAreAllInRange && !onlyInRange"
+          [color]="onlyInRange ? 'warn' : 'primary'"
+          (click)="toggleOnlyInRange()">
+          <mat-icon
+          [svgIcon]="onlyInRange ? 'sort-variant-remove' : 'playlist-check'"></mat-icon>
+        </button>
+      </div>
     </ng-container>
   </mat-list-item>
 
