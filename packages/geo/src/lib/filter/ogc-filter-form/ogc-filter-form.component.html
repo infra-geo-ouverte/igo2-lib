@@ -1,4 +1,4 @@
-<mat-list-item>
+<mat-list-item class="mat-typography">
 
   <div class="igo-col igo-col-90 igo-col-100-m">
     <mat-select class="logical" [disabled]="!currentFilter.active" (selectionChange)="refreshFilters()" [(ngModel)]="currentFilter.parentLogical"
@@ -45,7 +45,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionequalto (keyup)="changeProperty(currentFilter,'expression',expressionequalto.value)"
           (ngModelChange)="changeProperty(currentFilter,'expression',expressionequalto.value)" [ngModel]="currentFilter.expression">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value">
+          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -64,7 +64,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #pattern (keyup)="changeProperty(currentFilter,'pattern',pattern.value)"
           (ngModelChange)="changeProperty(currentFilter,'pattern',pattern.value)" [ngModel]="currentFilter.pattern">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value">
+          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -86,7 +86,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #expressionthan type="number" (keyup)="changeNumericProperty(currentFilter,'expression',expressionthan.value)"
           (ngModelChange)="changeNumericProperty(currentFilter,'expression',expressionthan.value)" [ngModel]="currentFilter.expression">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value">
+          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -104,7 +104,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #lowerBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)"
           (ngModelChange)="changeNumericProperty(currentFilter,'lowerBoundary',lowerBoundary.value)" [ngModel]="currentFilter.lowerBoundary">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value">
+          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -116,7 +116,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #upperBoundary type="number" (keyup)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)"
           (ngModelChange)="changeNumericProperty(currentFilter,'upperBoundary',upperBoundary.value)" [ngModel]="currentFilter.upperBoundary">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value">
+          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -135,7 +135,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #begin (keyup)="changeProperty(currentFilter,'begin',begin.value)"
           (ngModelChange)="changeProperty(currentFilter,'begin',begin.value)" [ngModel]="currentFilter.begin">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values " [value]="value">
+          <mat-option *ngFor="let value of values " [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
@@ -148,7 +148,7 @@
         <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #end (keyup)="changeProperty(currentFilter,'end',end.value)"
           (ngModelChange)="changeProperty(currentFilter,'end',end.value)" [ngModel]="currentFilter.end">
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value">
+          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
             <span>{{ value }}</span>
           </mat-option>
         </mat-autocomplete>
