@@ -126,6 +126,13 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   get freehandDrawIsActive(): boolean { return this._freehandDrawIsActive; }
   set freehandDrawIsActive(value: boolean) {
     this._freehandDrawIsActive = value;
+    this.deactivateControl();
+
+    this.createDrawControl();
+    this.createModifyControl();
+
+    this.drawControl.freehand$.next(this.freehandDrawIsActive);
+
     if (this.ready === false) {
       return;
     }
@@ -133,13 +140,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (!this.drawControlIsActive) {
       return;
     }
-
-    this.deactivateControl();
-
-    this.createDrawControl();
-    this.createModifyControl();
-
-    this.drawControl.freehand$.next(this.freehandDrawIsActive);
     this.toggleControl();
   }
   private _freehandDrawIsActive: boolean;
@@ -149,6 +149,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   @Input()
   set drawStyle(value: OlStyle) {
+    console.log('ici2');
     if (value === undefined) {
       value = createDrawInteractionStyle();
     }
@@ -158,7 +159,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     } else {
       this.defaultDrawStyleRadius = null;
     }
-
     this.deactivateControl();
     this.createDrawControl();
     this.createModifyControl();
@@ -174,7 +174,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * If not specified, drawStyle applies
    */
   @Input()
-  set overlayStyle(value: OlStyle) { this._overlayStyle = value; }
+  set overlayStyle(value: OlStyle) { this._overlayStyle = value; console.log('ici3'); }
   get overlayStyle(): OlStyle { return this._overlayStyle; }
   private _overlayStyle: OlStyle;
 
@@ -196,6 +196,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.olOverlaySource.clear();
     }
 
+    console.log('iciiiiiiii');
     this.onChange(value);
     this.toggleControl();
     this.cdRef.detectChanges();
@@ -407,27 +408,35 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   private setOlGeometry(olGeometry: OlGeometry | undefined) {
     let value;
-    let radius;
     if (olGeometry === undefined) {
       return;
     }
 
     if (olGeometry.getType() === 'Circle') { // Because Circle doesn't exist as a GeoJSON object
-      const center = olGeometry.getCenter();
-      const coordinates = olproj.transform(center, 'EPSG:3857', 'EPSG:4326');
-      radius = Math.round(olGeometry.getRadius() * (Math.cos((Math.PI / 180) * coordinates[1])));
-      this.radiusEvent.emit(radius);
-
-      // Convert it to a point object
-      const point = new Point(center);
-      olGeometry = point;
+      olGeometry = this.circleToPoint(olGeometry);
     }
 
     value = this.olGeoJSON.writeGeometryObject(olGeometry, {
       featureProjection: this.map.projection,
       dataProjection: 'EPSG:4326'
     });
+    if (olGeometry.get('radius')) {
+      value.radius = olGeometry.get('radius');
+      olGeometry._radius = value.radius;
+    }
     this.writeValue(value);
+  }
+
+  private circleToPoint(olGeometry) {
+    const center = olGeometry.getCenter();
+    const coordinates = olproj.transform(center, this.map.projection, 'EPSG:4326');
+    const radius = Math.round(olGeometry.getRadius() * (Math.cos((Math.PI / 180) * coordinates[1])));
+    this.radiusEvent.emit(radius);
+
+    // Convert it to a point object
+    olGeometry = new Point(center);
+    olGeometry.set('radius', radius, true);
+    return olGeometry;
   }
 
   /**

@@ -136,20 +136,16 @@ export class SpatialFilterService {
       }
     } else { // Draw type
       const url = this.baseUrl + 'locate';
-      const urlCoord = '&loc=' + JSON.stringify(feature);
-      const urlBuffer = buffer ? '&buffer=' + buffer as string : '';
       if (itemType === SpatialFilterItemType.Address) {
         const urlItem = '?type=adresses';
-        // const header = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
-        // let body = new HttpParams();
-        // body.set('geometry', 'true');
-        // body.set('icon', 'true');
-        return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
-          params: {
+        return this.http.post<{features: Feature[]}>(url + urlItem,
+          {
             geometry: 'true',
-            icon: 'true'
-          }
-        }).pipe(
+            icon: 'true',
+            buffer,
+            loc: JSON.stringify(feature)
+          })
+        .pipe(
             map(featureCollection => featureCollection.features.map(f => {
               f.meta = {
                 id: f.properties.code,
@@ -160,12 +156,14 @@ export class SpatialFilterService {
           );
       } else { // If thematics search
         const urlItem = '?type=' + thematic.source;
-        return this.http.get<{features: Feature[]}>(url + urlItem + urlCoord + urlBuffer, {
-          params: {
+        return this.http.post<{features: Feature[]}>(url + urlItem,
+          {
             geometry: 'true',
-            icon: 'true'
-          }
-        }).pipe(
+            icon: 'true',
+            buffer,
+            loc: JSON.stringify(feature)
+          })
+        .pipe(
           map(featureCollection => featureCollection.features.map(f => {
             f.meta = {
               id: f.properties.code,

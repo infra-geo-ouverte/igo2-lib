@@ -5,13 +5,13 @@
 .header {
     margin-top: 5px;
     display: inline-grid;
+    width: 100%;
 }
 
 .mat-slide-toggle {
     padding: 5px;
-    margin-bottom: 10px;
-    width: 100%;
-    max-width: 250px;
+    margin-bottom: 15px;
+    width: 95%;
 
     ::ng-deep .mat-slide-toggle-content {
         width: calc(100% - 20px);

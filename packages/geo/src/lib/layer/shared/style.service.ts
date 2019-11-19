@@ -193,10 +193,15 @@ export class StyleService {
       //     color = 'green';
       //   }
       // }
+      const radiusMin = 6;
+      let clusterRadius = 5 * Math.log(size);
+      if (clusterRadius < radiusMin) {
+        clusterRadius = radiusMin;
+      }
       style = [
         new olstyle.Style({
           image: new olstyle.Circle({
-            radius: 5 * Math.log(size),
+            radius: clusterRadius,
             opacity: 0.4,
             stroke: new olstyle.Stroke({
               color: 'black'
