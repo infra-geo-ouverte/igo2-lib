@@ -47,6 +47,7 @@
                     class="igo-search-settings-radio-group"
                     [value]="setting">
                     <mat-radio-button *ngFor="let settingValue of setting.values"
+                      class="mat-typography"
                       [value]="settingValue"
                       [checked]="settingValue.enabled"
                       (click)="$event.stopPropagation()"
