@@ -305,11 +305,7 @@
         "warning": "Warning",
         "freehandControl": "Freehand",
         "group" : {
-          "bati": "Infrastructure",
-          "geographie": "Geography",
-          "hydro": "Hydrography",
-          "parc": "Park",
-          "secteur": "Sector",
+          "toponyme": "Toponym",
           "culturel": "Cultural",
           "education": "Education",
           "sante": "Health",

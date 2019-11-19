@@ -169,7 +169,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   drawStyle$: BehaviorSubject<OlStyle> = new BehaviorSubject(undefined);
 
   private value$$: Subscription;
-  private valueChanges$$: Subscription;
+  private radiusChanges$$: Subscription;
 
   public formControl = new FormControl();
   public geometryType: OlGeometryType;
@@ -245,10 +245,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     });
 
     this.value$.subscribe(() => {
+      this.getRadius();
       this.cdRef.detectChanges();
     });
 
-    this.valueChanges$$ = this.radiusFormControl.valueChanges.subscribe(() => {
+    this.radiusChanges$$ = this.radiusFormControl.valueChanges.subscribe(() => {
       this.getRadius();
     });
   }
@@ -523,21 +524,40 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Manage radius value at user change
    */
   getRadius() {
-    if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
-      this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-        this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-      this.radius = 1000;
-      this.radiusFormControl.setValue(1000);
+    let formValue;
+    this.formControl.value !== null ? formValue = this.formControl.value.radius : formValue = undefined;
+    if (this.type === SpatialFilterType.Point) {
+      if (!this.freehandDrawIsActive) {
+        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          this.radius = 1000;
+          this.radiusFormControl.setValue(this.radius);
+          this.drawGuide$.next(this.radius);
+          return;
+        }
+      } else {
+        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          this.radius = 1000;
+          this.radiusFormControl.setValue(this.radius);
+          this.drawGuide$.next(this.radius);
+          return;
+        }
+        if (formValue >= 10000) {
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+          this.formControl.reset();
+        }
+        if (formValue) {
+          formValue !== this.radiusFormControl.value ? this.radiusFormControl.setValue(formValue) : undefined;
+        }
+      }
+      this.radius = this.radiusFormControl.value;
       this.drawGuide$.next(this.radius);
-      return;
+      this.overlayStyle$.next(this.PointStyle);
+      this.drawStyle$.next(this.PointStyle);
     }
-    if (this.radiusFormControl.value === 0) {
-      this.radius = 0;
-      this.drawGuide$.next(0);
-      return;
-    }
-    this.radius = this.radiusFormControl.value;
-    this.drawGuide$.next(this.radius);
-    this.cdRef.detectChanges();
   }
 }

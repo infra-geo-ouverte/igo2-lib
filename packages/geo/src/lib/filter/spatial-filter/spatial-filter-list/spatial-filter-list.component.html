@@ -4,8 +4,7 @@
         [formControl]="formControl" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onZoneChange($event.option.value)"
         [displayWith]="displayFn">
-            <mat-option *ngFor="let entities of this.store.view.all$() | async"
-            [value]="entities">
+            <mat-option *ngFor="let entities of this.store.view.all$() | async" [value]="entities">
                 {{entities.properties.nom}}
             </mat-option>
         </mat-autocomplete>

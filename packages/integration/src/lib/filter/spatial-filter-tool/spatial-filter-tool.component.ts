@@ -95,13 +95,13 @@ export class SpatialFilterToolComponent {
   private loadFilterList() {
     this.spatialFilterService.loadFilterList(this.queryType)
       .subscribe((features: Feature[]) => {
-        this.spatialListStore.clear();
-        this.spatialListStore.load(features);
-        this.spatialListStore.entities$.value.sort(function(a, b){
+        features.sort(function(a, b){
           if(a.properties.nom < b.properties.nom) { return -1; }
           if(a.properties.nom > b.properties.nom) { return 1; }
           return 0;
-        })
+        });
+        this.spatialListStore.clear();
+        this.spatialListStore.load(features);
       });
   }
 
@@ -122,7 +122,7 @@ export class SpatialFilterToolComponent {
       }
       this.thematics = [theme];
     }
-    if (this.type === SpatialFilterType.Polygon || this.freehandDrawIsActive) {
+    if (this.type === SpatialFilterType.Polygon) {
       this.radius = undefined;
     }
     this.thematics.forEach(thematic => {
