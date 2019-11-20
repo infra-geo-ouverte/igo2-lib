@@ -236,11 +236,7 @@ export class ContextService {
                   !l.id || self.findIndex(l2 => l2.id === l.id) === index
               )
               .reverse();
-            resMerge.toolbar = [
-              ...(new Set(
-                (resBase.toolbar || []).concat(res.toolbar || []).reverse()
-              ) as any)
-            ].reverse();
+            resMerge.toolbar = res.toolbar  || resBase.toolbar;
             resMerge.tools = (res.tools || [])
               .concat(resBase.tools || [])
               .filter(

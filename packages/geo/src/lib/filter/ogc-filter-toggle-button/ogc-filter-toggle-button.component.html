@@ -8,7 +8,9 @@
   </mat-form-field>
 </div>
 <ng-container *ngFor="let bundle of currentPushButtonGroup.computedButtons">
-        <mat-button-toggle-group appearance="legacy" vertical={{bundleIsVertical(bundle)}} multiple="true">
+        <mat-button-toggle-group 
+        class="mat-typography"
+        appearance="legacy" vertical={{bundleIsVertical(bundle)}} multiple="true">
             <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
                 (change)="applyFilters(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
                 [matTooltip]="getToolTip(ogcPushButton)" matTooltipClass="material-tooltip" 
