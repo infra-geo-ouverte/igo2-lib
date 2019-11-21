@@ -7,7 +7,8 @@
   [drawControlIsActive]="drawControlIsActive"
   [freehandDrawIsActive]="freehandDrawIsActive"
   [drawStyle]="drawStyle$ | async"
-  [overlayStyle]="overlayStyle$ | async">
+  [overlayStyle]="overlayStyle$ | async"
+  [radius]="radius">
 </igo-geometry-form-field-input>
 
 <div class="header">
@@ -23,6 +24,20 @@
       (change)="onfreehandControlChange()">
       {{'igo.geo.spatialFilter.freehandControl' | translate}}
     </mat-slide-toggle>
+</div>
+
+  <div class="radius-unit" *ngIf="isPoint()">
+    <form class="radius-form">
+      <mat-form-field class="radius">
+        <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
+        [value]="1000" (input)="getRadius()" [readonly]="radiusDisable()">
+        <label class="unit-field">
+          {{('igo.geo.measure.' + measureUnit) | translate}}
+        </label>
+      </mat-form-field>
+    </form>
+  </div>
+
   <mat-label class="title">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
   <mat-radio-group [value]="selectedItemType">
       <mat-radio-button *ngFor="let item of itemType"
@@ -31,7 +46,6 @@
         {{'igo.geo.spatialFilter.' + item | translate}}
       </mat-radio-button>
   </mat-radio-group>
-</div>
 
 <div class="thematics" *ngIf="selectedItemType==='Thematics'">
   <mat-table>
@@ -88,18 +102,6 @@
     </mat-nested-tree-node>
 
   </mat-tree>
-</div>
-
-<div class="radius-unit" *ngIf="isPoint()">
-  <form class="radius-form">
-    <mat-form-field class="radius">
-      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
-      [value]="1000" (input)="getRadius()">
-      <label class="unit-field">
-        {{('igo.geo.measure.' + measureUnit) | translate}}
-      </label>
-    </mat-form-field>
-  </form>
 </div>
 
 <div class="buttons">

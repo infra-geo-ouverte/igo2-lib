@@ -34,6 +34,14 @@ export class SpatialFilterTypeComponent implements OnInit {
   public queryType: string[] = ['Arrond', 'CircFed', 'CircProv', 'DirReg', 'Mun', 'MRC', 'AdmRegion', 'RegTour'];
   public selectedTypeIndex = new FormControl(0);
 
+  /**
+   * Reference to the SpatialFIlterType enum
+   * @internal
+   */
+  public spatialType = SpatialFilterType;
+
+  public activeDrawType: SpatialFilterType = this.spatialType.Polygon;
+
   @Input() selectedQueryType: SpatialFilterQueryType;
 
   @Input() zone: Feature;
@@ -50,13 +58,10 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   ngOnInit() {
     if (this.selectedTypeIndex.value === 0) {
-      this.type = SpatialFilterType.Predefined;
+      this.type = this.spatialType.Predefined;
     }
     if (this.selectedTypeIndex.value === 1) {
-      this.type = SpatialFilterType.Polygon;
-    }
-    if (this.selectedTypeIndex.value === 2) {
-      this.type = SpatialFilterType.Point;
+      this.type = this.spatialType.Polygon;
     }
     this.eventType.emit(this.type);
   }
@@ -68,9 +73,6 @@ export class SpatialFilterTypeComponent implements OnInit {
     if (this.selectedTypeIndex.value === 1) {
       this.type = SpatialFilterType.Polygon;
     }
-    if (this.selectedTypeIndex.value === 2) {
-      this.type = SpatialFilterType.Point;
-    }
     this.eventType.emit(this.type);
   }
 
@@ -80,5 +82,10 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   onZoneChange(feature) {
     this.zoneChange.emit(feature);
+  }
+
+  onDrawTypeChange(spatialType: SpatialFilterType) {
+    this.activeDrawType = spatialType;
+    this.eventType.emit(this.activeDrawType);
   }
 }

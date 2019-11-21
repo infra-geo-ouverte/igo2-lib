@@ -1,6 +1,7 @@
 .mat-form-field {
-    margin-right: 10px;
-    margin-left: 5px;
+    padding: 5px;
+    width: 95%;
+    margin-left: 2px;
 }
 
 .mat-tab-group ::ng-deep .mat-tab-body-content {
@@ -8,11 +9,22 @@
 }
 
 .mat-tab-group ::ng-deep .mat-tab-label {
-    width: 115px;
-    min-width: unset;
     padding: 10px;
 }
 
 .mat-tab-group ::ng-deep .mat-tab-body-wrapper {
     margin-top: 5px;
 }
+
+.spatial-type-toggle {
+    padding: 10px;
+    text-align: center;
+
+    mat-button-toggle-group {
+      width: 50%;
+
+      mat-button-toggle {
+        width: 50%;
+      }
+    }
+  }

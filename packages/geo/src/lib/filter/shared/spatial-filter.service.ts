@@ -27,7 +27,10 @@ export class SpatialFilterService {
     DirReg: 'dir-reg',
     MRC: 'mrc',
     Mun: 'municipalites',
-    RegTour: 'tourisme'
+    RegTour: 'tourisme',
+    bornes: 'bornes-sumi',
+    hydro: 'hydro',
+    routes: 'routes'
   };
 
   constructor(
@@ -86,6 +89,14 @@ export class SpatialFilterService {
 
               item.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.' + substr);
               items.push(item);
+            } else {
+              if (this.getKeyByValue(this.urlFilterList, type)) {
+                const item: SpatialFilterThematic = {
+                  name: this.languageService.translate.instant('igo.geo.terrapi.' + this.getKeyByValue(this.urlFilterList, type)),
+                  source: type
+                };
+                items.push(item);
+              }
             }
           });
           return items;

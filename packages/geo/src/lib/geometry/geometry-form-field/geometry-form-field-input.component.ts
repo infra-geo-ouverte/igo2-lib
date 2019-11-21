@@ -1,3 +1,4 @@
+import { OlModify } from 'ol/interaction/Modify';
 import {
   Component,
   Input,
@@ -149,7 +150,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   @Input()
   set drawStyle(value: OlStyle) {
-    console.log('ici2');
     if (value === undefined) {
       value = createDrawInteractionStyle();
     }
@@ -174,7 +174,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * If not specified, drawStyle applies
    */
   @Input()
-  set overlayStyle(value: OlStyle) { this._overlayStyle = value; console.log('ici3'); }
+  set overlayStyle(value: OlStyle) { this._overlayStyle = value; }
   get overlayStyle(): OlStyle { return this._overlayStyle; }
   private _overlayStyle: OlStyle;
 
@@ -185,7 +185,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   @Input()
   set value(value: GeoJSONGeometry) {
     this._value = value;
-
     if (this.ready === false) {
       return;
     }
@@ -195,8 +194,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     } else {
       this.olOverlaySource.clear();
     }
-
-    console.log('iciiiiiiii');
     this.onChange(value);
     this.toggleControl();
     this.cdRef.detectChanges();
@@ -212,7 +209,22 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     return this.olOverlayLayer.getSource();
   }
 
-  @Output() radiusEvent = new EventEmitter<number>();
+  @Input()
+  set radius(value: any) {
+    if (this.ready === false) {
+      return;
+    }
+    this.modifyControl.getSource() ? this.modifyControl.getSource().refresh() : undefined;
+    if (this.freehandDrawIsActive) {
+      let olModify;
+      setTimeout(() => {
+        olModify = this.modifyControl.olModifyInteraction;
+        if (olModify) {
+          olModify.features_ ? olModify.features_.clear() : undefined;
+        }
+      }, 0);
+    }
+  }
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -431,7 +443,6 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     const center = olGeometry.getCenter();
     const coordinates = olproj.transform(center, this.map.projection, 'EPSG:4326');
     const radius = Math.round(olGeometry.getRadius() * (Math.cos((Math.PI / 180) * coordinates[1])));
-    this.radiusEvent.emit(radius);
 
     // Convert it to a point object
     olGeometry = new Point(center);

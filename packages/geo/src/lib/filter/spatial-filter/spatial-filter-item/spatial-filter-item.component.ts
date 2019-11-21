@@ -219,7 +219,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         if (!child.group) {
           const thematic: SpatialFilterThematic = {
             name: child.name,
-            children: []
+            children: [],
+            source: child.source
           };
           this.thematics.push(thematic);
         }
@@ -238,7 +239,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
     this.dataSource.data = this.thematics;
 
-    this.drawGuide$.next(this.drawGuide);
+    this.drawGuide$.next(null);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
       this.value$.next(value ? value : undefined);
@@ -251,6 +252,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
     this.radiusChanges$$ = this.radiusFormControl.valueChanges.subscribe(() => {
       this.getRadius();
+      this.cdRef.detectChanges();
     });
   }
 
@@ -310,7 +312,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       });
       this.childrens.forEach(children => {
-        if (!this.thematics.find(thematic => thematic.name === children.name)) {
+        if (!this.thematics.find(thematic => thematic.source === children.source)) {
           numNodes++;
         }
       });
@@ -333,7 +335,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   hasChildrenSelected(node: SpatialFilterThematic) {
     let bool = false;
     node.children.forEach(child => {
-      if (this.selectedThematics.selected.find(thematic => thematic.name === child.name)) {
+      if (this.selectedThematics.selected.find(thematic => thematic.source === child.source)) {
         bool = true;
       }
     });
@@ -353,11 +355,19 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       selectedThematicsName.push(thematic);
     }
 
-    this.thematics.forEach(thematic => {
-      if (this.hasChild(0, thematic)) {
-        this.treeControl.expand(thematic);
-      }
-    });
+    if (this.isAllSelected()) {
+      this.thematics.forEach(thematic => {
+        if (this.hasChild(0, thematic)) {
+          this.treeControl.expand(thematic);
+        }
+      });
+    } else {
+      this.thematics.forEach(thematic => {
+        if (this.hasChild(0, thematic)) {
+          this.treeControl.collapse(thematic);
+        }
+      });
+    }
     this.thematicChange.emit(selectedThematicsName);
   }
 
@@ -369,7 +379,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       });
       this.childrens.forEach(children => {
-        if (!this.selectedThematics.selected.find(thematic => thematic.name === children.name)) {
+        if (!this.selectedThematics.selected.find(thematic => thematic.source === children.source)) {
           this.selectedThematics.select(children);
         }
       });
@@ -389,7 +399,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     for (const thematic of this.selectedThematics.selected) {
       selectedThematicsName.push(thematic);
     }
-
     this.treeControl.expand(node);
     this.thematicChange.emit(selectedThematicsName);
   }
@@ -399,7 +408,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   onToggleChange(nodeSelected: SpatialFilterThematic) {
     let selected = false;
-    if (this.selectedThematics.selected.find(thematic => thematic.name === nodeSelected.name) !== undefined) {
+    if (this.selectedThematics.selected.find(thematic => thematic.source === nodeSelected.source) !== undefined) {
       selected = true;
     }
 
@@ -434,6 +443,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   onfreehandControlChange() {
     this.freehandDrawIsActive = !this.freehandDrawIsActive;
     this.freehandControl.emit(this.freehandDrawIsActive);
+  }
+
+  radiusDisable() {
+    return this.freehandDrawIsActive && this.formControl.value === null;
   }
 
   /**
@@ -549,6 +562,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           this.formControl.reset();
+          return;
         }
         if (formValue) {
           formValue !== this.radiusFormControl.value ? this.radiusFormControl.setValue(formValue) : undefined;
