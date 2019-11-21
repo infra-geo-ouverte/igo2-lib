@@ -8,7 +8,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
 
-import { AuthOptions, User } from './auth.interface';
+import { User } from './auth.interface';
 import { TokenService } from './token.service';
 
 @Injectable({
@@ -17,7 +17,6 @@ import { TokenService } from './token.service';
 export class AuthService {
   public authenticate$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
-  private options: AuthOptions;
   private anonymous = false;
 
   constructor(
@@ -28,11 +27,10 @@ export class AuthService {
     private messageService: MessageService,
     @Optional() private router: Router
   ) {
-    this.options = this.config.getConfig('auth') || {};
     this.authenticate$.next(this.authenticated);
   }
 
-  login(username: string, password: string): any {
+  login(username: string, password: string): Observable<void> {
     const myHeader = new HttpHeaders();
     myHeader.append('Content-Type', 'application/json');
 
@@ -44,7 +42,7 @@ export class AuthService {
     return this.loginCall(body, myHeader);
   }
 
-  loginWithToken(token: string, type: string): any {
+  loginWithToken(token: string, type: string): Observable<void> {
     const myHeader = new HttpHeaders();
     myHeader.append('Content-Type', 'application/json');
 
@@ -56,12 +54,25 @@ export class AuthService {
     return this.loginCall(body, myHeader);
   }
 
-  loginAnonymous() {
+  loginAnonymous(): Observable<boolean> {
     this.anonymous = true;
     return of(true);
   }
 
-  logout() {
+  refresh(): Observable<void> {
+    const url = this.config.getConfig('auth.url');
+    return this.http.post(`${url}/refresh`, {}).pipe(
+      tap((data: any) => {
+        this.tokenService.set(data.token);
+      }),
+      catchError(err => {
+        err.error.caught = true;
+        throw err;
+      })
+    );
+  }
+
+  logout(): Observable<boolean>{
     this.anonymous = false;
     this.tokenService.remove();
     this.authenticate$.next(false);
@@ -89,8 +100,9 @@ export class AuthService {
     }
     const redirectUrl = this.redirectUrl || this.router.url;
 
-    if (redirectUrl === this.options.loginRoute) {
-      const homeRoute = this.options.homeRoute || '/';
+    const options = this.config.getConfig('auth') || {};
+    if (redirectUrl === options.loginRoute) {
+      const homeRoute = options.homeRoute || '/';
       this.router.navigateByUrl(homeRoute);
     } else if (redirectUrl) {
       this.router.navigateByUrl(redirectUrl);
@@ -98,16 +110,17 @@ export class AuthService {
   }
 
   getUserInfo(): Observable<User> {
-    const url = this.options.url + '/info';
+    const url = this.config.getConfig('auth.url') + '/info';
     return this.http.get<User>(url);
   }
 
   getProfils() {
-    return this.http.get(`${this.options.url}/profils`);
+    const url = this.config.getConfig('auth.url');
+    return this.http.get(`${url}/profils`);
   }
 
   updateUser(user: User): Observable<User> {
-    const url = this.options.url;
+    const url = this.config.getConfig('auth.url');
     return this.http.patch<User>(url, JSON.stringify(user));
   }
 
@@ -129,7 +142,8 @@ export class AuthService {
   }
 
   private loginCall(body, headers) {
-    return this.http.post(`${this.options.url}/login`, body, { headers }).pipe(
+    const url = this.config.getConfig('auth.url');
+    return this.http.post(`${url}/login`, body, { headers }).pipe(
       tap((data: any) => {
         this.tokenService.set(data.token);
         const tokenDecoded = this.decodeToken();
