@@ -44,38 +44,7 @@ export class WMSDataSource extends DataSource {
     protected wfsService: WFSService
   ) {
     super(options);
-    // Important: To use wms versions smaller than 1.3.0, SRS
-    // needs to be supplied in the source "params"
-
-    // We need to do this to override the default version
-    // of openlayers which is uppercase
     const sourceParams: any = options.params;
-    if (sourceParams && sourceParams.version) {
-      sourceParams.VERSION = sourceParams.version;
-    }
-
-    if (sourceParams && sourceParams.VERSION) {
-      if (sourceParams.version !== '1.3.0') {
-        if (!sourceParams.SRS && !sourceParams.srs) {
-          throw new Error(
-            `You must set a SRS (or srs) param for your WMS
-           (layer =  ` +
-              sourceParams.layers +
-              `) because your want to use a WMS version under 1.3.0
-        Ex: "srs": "EPSG:3857" `
-          );
-        }
-      }
-    }
-
-    if (sourceParams && sourceParams.styles) {
-      sourceParams.STYLES = sourceParams.styles;
-      delete sourceParams.styles;
-    }
-
-    if (sourceParams && sourceParams.INFO_FORMAT) {
-      sourceParams.info_format = sourceParams.INFO_FORMAT;
-    }
 
     const dpi = sourceParams.DPI || 96;
     sourceParams.DPI = dpi;
@@ -152,7 +121,6 @@ export class WMSDataSource extends DataSource {
       fieldNameGeometry
     );
     sourceParams.FILTER = filterQueryString;
-    // this.ol.updateParams({ filter: filterQueryString });
   }
 
   refresh() {
