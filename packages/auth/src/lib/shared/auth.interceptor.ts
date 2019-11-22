@@ -6,19 +6,23 @@ import {
   HttpRequest
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
 import { TokenService } from './token.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
   private trustHosts: string[] = [];
+  private refreshInProgress = false;
 
   constructor(
     private config: ConfigService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private authService: AuthService
   ) {
     this.trustHosts = this.config.getConfig('auth.trustHosts') || [];
     this.trustHosts.push(window.location.hostname);
@@ -28,6 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    this.refreshToken();
     const token = this.tokenService.get();
     const element = document.createElement('a');
     element.href = req.url;
@@ -41,5 +46,29 @@ export class AuthInterceptor implements HttpInterceptor {
       headers: req.headers.set('Authorization', authHeader)
     });
     return next.handle(authReq);
+  }
+
+  interceptXhr(xhr, url: string) {
+    this.refreshToken();
+    const element = document.createElement('a');
+    element.href = url;
+
+    const token = this.tokenService.get();
+    if (!token && this.trustHosts.indexOf(element.hostname) === -1) {
+      return;
+    }
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+  }
+
+  refreshToken() {
+    const jwt = this.tokenService.decode();
+    const currentTime = (new Date().getTime() / 1000);
+
+    if (!this.refreshInProgress && jwt && currentTime < jwt.exp && currentTime > jwt.exp - 1800) {
+      this.refreshInProgress = true;
+      this.authService.refresh().pipe(
+        finalize(() => { this.refreshInProgress = false;})
+      ).subscribe();
+    }
   }
 }

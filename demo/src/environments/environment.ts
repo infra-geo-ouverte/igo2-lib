@@ -21,6 +21,8 @@ export const environment: Environment = {
       }
     ],
     auth: {
+      url: '/apis/users',
+      tokenKey: 'testIgo2Lib',
       intern: {
         enabled: true
       },
@@ -80,7 +82,7 @@ export const environment: Environment = {
         }
       },
       icherchereverse: {
-        searchUrl: '/apis/territoires',
+        searchUrl: '/apis/terrapi',
         order: 3,
         enabled: true
       },
