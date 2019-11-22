@@ -1,8 +1,8 @@
 <mat-list-item>
   <mat-icon *ngIf="icon" mat-list-avatar svgIcon="{{showIcons ? icon : 'blank'}}"></mat-icon>
-  
-  <h4 matLine *ngIf="titleHtml" [innerHtml]="titleHtml" matTooltipShowDelay="500" [matTooltip]="title"></h4>
-  <h4 matLine *ngIf="!titleHtml">{{title}}</h4>
+
+  <h4 matLine *ngIf="titleHtml" [innerHtml]="titleHtml" matTooltipShowDelay="500" [matTooltip]="tooltipHtml" matTooltipClass="search-result-tooltip"></h4>
+  <h4 matLine *ngIf="!titleHtml" matTooltipShowDelay="500" [matTooltip]="title">{{title}}</h4>
 
   <ng-content
     select=[igoSearchItemToolbar]>

@@ -151,6 +151,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: false,
               hashtags: ['borne', 'bornes', 'sumi']
             },
+            ,
+            {
+              title: 'Repère kilométrique',
+              value: 'bornes-km',
+              enabled: false,
+              hashtags: ['borne', 'bornes', 'repère', 'km']
+            },
             {
               title: 'Entreprise',
               value: 'entreprises',
