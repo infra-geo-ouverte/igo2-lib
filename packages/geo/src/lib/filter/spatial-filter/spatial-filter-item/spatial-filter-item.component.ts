@@ -130,7 +130,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters];
   }
 
-  @Input() layers: Layer[];
+  @Input() layers: Layer[] = [];
 
   @Output() toggleSearch = new EventEmitter();
 
@@ -203,7 +203,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     .subscribe((items: SpatialFilterThematic[]) => {
       for (const item of items) {
         this.childrens.push(item);
-        this.childrens.sort(function(a, b){
+        this.childrens.sort(function s(a, b) {
           return a.name.localeCompare(b.name);
         });
       }
@@ -224,7 +224,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           };
           this.thematics.push(thematic);
         }
-        this.thematics.sort(function(a, b){
+        this.thematics.sort(function s(a, b) {
           return a.name.localeCompare(b.name);
         });
       });
@@ -445,10 +445,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.freehandControl.emit(this.freehandDrawIsActive);
   }
 
-  radiusDisable() {
-    return this.freehandDrawIsActive && this.formControl.value === null;
-  }
-
   /**
    * Launch search button
    */
@@ -479,10 +475,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.store.clear();
     }
     this.clearButtonEvent.emit([]);
-  }
-
-  clearForm() {
-    this.formControl.reset();
   }
 
   /**
@@ -524,16 +516,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
 
   /**
-   * Verify conditions of draw zone defined or draw control actived
-   */
-  disabledFormButton() {
-    if (!this.drawControlIsActive && this.formControl.value === null) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Manage radius value at user change
    */
   getRadius() {
@@ -565,7 +547,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           return;
         }
         if (formValue) {
-          formValue !== this.radiusFormControl.value ? this.radiusFormControl.setValue(formValue) : undefined;
+          if (formValue !== this.radiusFormControl.value) {
+            this.radiusFormControl.setValue(formValue);
+          }
+          this.formControl.value.radius = undefined;
         }
       }
       this.radius = this.radiusFormControl.value;

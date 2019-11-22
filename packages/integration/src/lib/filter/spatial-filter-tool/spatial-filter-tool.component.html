@@ -1,4 +1,4 @@
-<igo-panel title="Spatial Filter">
+<igo-panel>
   <igo-spatial-filter-type
     [store]="spatialListStore"
     [selectedQueryType]="queryType"
@@ -27,7 +27,7 @@
   </igo-spatial-filter-item>
 </igo-panel>
 
-<igo-panel title="Details">
+<igo-panel>
   <ng-container *ngIf="selectedFeature$ | async as feature">
     <igo-feature-details [feature]="feature"></igo-feature-details>
   </ng-container>

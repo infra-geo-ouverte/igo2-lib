@@ -30,7 +30,7 @@
     <form class="radius-form">
       <mat-form-field class="radius">
         <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
-        [value]="1000" (input)="getRadius()" [readonly]="radiusDisable()">
+        [value]="1000" (input)="getRadius()" [readonly]="this.freehandDrawIsActive && this.formControl.value === null">
         <label class="unit-field">
           {{('igo.geo.measure.' + measureUnit) | translate}}
         </label>
@@ -106,22 +106,24 @@
 
 <div class="buttons">
 
-  <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button" (click)="clearButton()">
-    {{'igo.geo.spatialFilter.removeLayer' | translate}}
-  </button>
+    <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" [disabled]="!queryType && !zone"
+      (click)="clearSearch()">
+        {{'igo.geo.spatialFilter.clearSearch' | translate}}
+    </button>
 
-  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="disabledFormButton()"
-    (click)="clearForm()">
+  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="this.formControl.value === null"
+    (click)="this.formControl.reset()">
     {{'igo.geo.spatialFilter.clearForm' | translate}}
   </button>
 
-  <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" (click)="clearSearch()">
-    {{'igo.geo.spatialFilter.clearSearch' | translate}}
+  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()" color="primary"
+    (click)="toggleSearchButton()">
+    {{'igo.geo.spatialFilter.goSearch' | translate}}
   </button>
 
-  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()"
-  (click)="toggleSearchButton()">
-    {{'igo.geo.spatialFilter.goSearch' | translate}}
+  <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button"
+    [disabled]="!layers.length" (click)="clearButton()">
+    {{'igo.geo.spatialFilter.removeLayer' | translate}}
   </button>
 
 </div>

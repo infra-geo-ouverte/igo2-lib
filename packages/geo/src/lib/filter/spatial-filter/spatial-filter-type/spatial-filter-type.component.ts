@@ -61,7 +61,7 @@ export class SpatialFilterTypeComponent implements OnInit {
       this.type = this.spatialType.Predefined;
     }
     if (this.selectedTypeIndex.value === 1) {
-      this.type = this.spatialType.Polygon;
+      this.type = this.activeDrawType;
     }
     this.eventType.emit(this.type);
   }
@@ -71,7 +71,7 @@ export class SpatialFilterTypeComponent implements OnInit {
       this.type = SpatialFilterType.Predefined;
     }
     if (this.selectedTypeIndex.value === 1) {
-      this.type = SpatialFilterType.Polygon;
+      this.type = this.activeDrawType;
     }
     this.eventType.emit(this.type);
   }

@@ -214,13 +214,17 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (this.ready === false) {
       return;
     }
-    this.modifyControl.getSource() ? this.modifyControl.getSource().refresh() : undefined;
+    if (this.modifyControl.getSource()) {
+      this.modifyControl.getSource().refresh();
+    }
     if (this.freehandDrawIsActive) {
       let olModify;
       setTimeout(() => {
         olModify = this.modifyControl.olModifyInteraction;
         if (olModify) {
-          olModify.features_ ? olModify.features_.clear() : undefined;
+          if (olModify.features_) {
+            olModify.features_.clear();
+          }
         }
       }, 0);
     }

@@ -58,7 +58,6 @@ export class SpatialFilterToolComponent {
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
   public radius: number;
-  public clearSearch;
 
   public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
 
@@ -95,9 +94,9 @@ export class SpatialFilterToolComponent {
   private loadFilterList() {
     this.spatialFilterService.loadFilterList(this.queryType)
       .subscribe((features: Feature[]) => {
-        features.sort(function(a, b){
-          if(a.properties.nom < b.properties.nom) { return -1; }
-          if(a.properties.nom > b.properties.nom) { return 1; }
+        features.sort(function s(a, b) {
+          if (a.properties.nom < b.properties.nom) { return -1; }
+          if (a.properties.nom > b.properties.nom) { return 1; }
           return 0;
         });
         this.spatialListStore.clear();
@@ -110,7 +109,8 @@ export class SpatialFilterToolComponent {
   }
 
   getOutputClearSearch() {
-    this.clearSearch = !this.clearSearch;
+    this.zone = undefined;
+    this.queryType = undefined;
   }
 
   private loadThematics() {
@@ -119,7 +119,7 @@ export class SpatialFilterToolComponent {
     if (!this.thematics) {
       const theme: SpatialFilterThematic = {
         name: ''
-      }
+      };
       this.thematics = [theme];
     }
     if (this.type === SpatialFilterType.Polygon) {
@@ -145,9 +145,14 @@ export class SpatialFilterToolComponent {
           this.tryAddPointToMap(featuresPoint, idPoint);
           this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
           this.loading = false;
-          features.length >= 10000 ?
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning')) : undefined
+          if (features.length >= 10000) {
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000});
+          }
+          if (!features.length) {
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.zeroResults'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000});
+          }
         });
     });
   }

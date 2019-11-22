@@ -81,7 +81,7 @@ export class SpatialFilterService {
               let name = substr;
               if (substr.includes('.')) {
                 const index = substr.indexOf('.');
-                name = substr.substring(index + 1, substr.length)
+                name = substr.substring(index + 1, substr.length);
                 substr = substr.substring(0, index);
               }
               item.name = this.languageService.translate
@@ -107,13 +107,14 @@ export class SpatialFilterService {
   /*
    * Loading data for spatial filter item component (Address or Thematics) depends on predefined zone or draw zone (feature)
    */
-  loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematic?: SpatialFilterThematic, buffer?: number) {
+  loadFilterItem(feature, itemType: SpatialFilterItemType, type?: SpatialFilterQueryType, thematic?: SpatialFilterThematic,
+                 buffer?: number) {
     if (type) { // Predefined type
       const urlType = type as string;
       const url = this.baseUrl + this.urlFilterList[urlType];
       let urlItem = '';
       if (itemType === SpatialFilterItemType.Address) {
-        urlItem = '/adresses';
+        urlItem = 'adresses';
         return this.http.get<{features: Feature[]}>(url + '/' + feature.properties.code + '/' + urlItem, {
           params: {
             geometry: 'true',
