@@ -203,7 +203,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     .subscribe((items: SpatialFilterThematic[]) => {
       for (const item of items) {
         this.childrens.push(item);
-        this.childrens.sort(function s(a, b) {
+        this.childrens.sort((a, b) => {
           return a.name.localeCompare(b.name);
         });
       }
@@ -224,7 +224,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           };
           this.thematics.push(thematic);
         }
-        this.thematics.sort(function s(a, b) {
+        this.thematics.sort((a, b) => {
           return a.name.localeCompare(b.name);
         });
       });
