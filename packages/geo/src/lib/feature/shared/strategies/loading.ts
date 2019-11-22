@@ -21,8 +21,11 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, Subscription>();
 
+  private motion: FeatureMotion;
+
   constructor(protected options: FeatureStoreLoadingStrategyOptions) {
     super(options);
+    this.setMotion(options.motion);
   }
 
   /**
@@ -45,6 +48,14 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
     if (this.active === true) {
       this.unwatchStore(store);
     }
+  }
+
+  /**
+   * Define the motion to apply on load 
+   * @param motion Feature motion
+   */
+  setMotion(motion: FeatureMotion) {
+    this.motion = motion;
   }
 
   /**
@@ -127,7 +138,7 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
    * @returns The motion selected
    */
   private selectMotion(store: FeatureStore) {
-    if (this.options.motion !== undefined) { return this.options.motion; }
+    if (this.motion !== undefined) { return this.motion; }
 
     if (store.pristine === true) {
       // If features have just been loaded into the store, move/zoom on them
