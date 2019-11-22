@@ -94,7 +94,7 @@ export class SpatialFilterToolComponent {
   private loadFilterList() {
     this.spatialFilterService.loadFilterList(this.queryType)
       .subscribe((features: Feature[]) => {
-        features.sort(function s(a, b) {
+        features.sort((a, b) => {
           if (a.properties.nom < b.properties.nom) { return -1; }
           if (a.properties.nom > b.properties.nom) { return 1; }
           return 0;
