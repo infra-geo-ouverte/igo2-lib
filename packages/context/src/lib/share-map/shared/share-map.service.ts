@@ -93,7 +93,7 @@ export class ShareMapService {
     )) {
       if (contextLayersID.indexOf(layer.id) === -1) {
         const wmsUrl = (layer.dataSource.options as any).url;
-        const addedLayer = (layer.dataSource.options as any).params.layers;
+        const addedLayer = (layer.dataSource.options as any).params.LAYERS;
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
         if (

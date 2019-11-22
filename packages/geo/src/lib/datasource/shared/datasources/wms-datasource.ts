@@ -77,7 +77,7 @@ export class WMSDataSource extends DataSource {
       sourceParams.info_format = sourceParams.INFO_FORMAT;
     }
 
-    const dpi = sourceParams.dpi || 96;
+    const dpi = sourceParams.DPI || 96;
     sourceParams.DPI = dpi;
     sourceParams.MAP_RESOLUTION = dpi;
     sourceParams.FORMAT_OPTIONS = 'dpi:' + dpi;
@@ -130,14 +130,14 @@ export class WMSDataSource extends DataSource {
     }
 
     if (
-      sourceParams.layers.split(',').length > 1 &&
+      sourceParams.LAYERS.split(',').length > 1 &&
       initOgcFilters &&
       initOgcFilters.enabled
     ) {
       console.log('*******************************');
       console.log(
         'BE CAREFULL, YOUR WMS LAYERS (' +
-          sourceParams.layers +
+          sourceParams.LAYERS +
           ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! '
       );
       console.log('*******************************');
@@ -151,7 +151,8 @@ export class WMSDataSource extends DataSource {
       options,
       fieldNameGeometry
     );
-    this.ol.updateParams({ filter: filterQueryString });
+    sourceParams.FILTER = filterQueryString;
+    // this.ol.updateParams({ filter: filterQueryString });
   }
 
   refresh() {
@@ -178,8 +179,8 @@ export class WMSDataSource extends DataSource {
     const sourceParams = this.params;
 
     let layers = [];
-    if (sourceParams.layers !== undefined) {
-      layers = sourceParams.layers.split(',');
+    if (sourceParams.LAYERS !== undefined) {
+      layers = sourceParams.LAYERS.split(',');
     }
 
     const baseUrl = this.options.url.replace(/\?$/, '');

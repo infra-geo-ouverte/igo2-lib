@@ -42,7 +42,7 @@ export class TimeFilterService {
       time = newdateform;
     }
 
-    const params = { time };
+    const params = { TIME: time };
     datasource.ol.updateParams(params);
   }
 
@@ -78,7 +78,7 @@ export class TimeFilterService {
       time = year;
     }
 
-    const params = { time };
+    const params = { TIME: time };
     datasource.ol.updateParams(params);
   }
 

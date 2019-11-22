@@ -23,9 +23,12 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
 }
 
 export interface WMSDataSourceOptionsParams {
-  layers: string;
-  version?: string;
-  time?: string;
+  LAYERS: string;
+  VERSION?: string;
+  TIME?: string;
+  FEATURE_COUNT?: number;
+  FILTER?: string;
+  INFO_FORMAT?: string;
 }
 
 export interface WMSLayerOptionsFromCapabilities {
