@@ -29,6 +29,9 @@ export interface WMSDataSourceOptionsParams {
   FEATURE_COUNT?: number;
   FILTER?: string;
   INFO_FORMAT?: string;
+  DPI?: number;
+  MAP_RESOLUTION?: number;
+  FORMAT_OPTIONS?: string;
 }
 
 export interface WMSLayerOptionsFromCapabilities {
