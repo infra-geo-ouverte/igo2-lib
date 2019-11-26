@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
-import { LanguageService } from '@igo2/core';
+import { ConfigService, LanguageService } from '@igo2/core';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Feature } from '../../feature/shared';
@@ -36,8 +36,12 @@ export class SpatialFilterService {
 
   constructor(
     private http: HttpClient,
-    private languageService: LanguageService
-  ) {}
+    private languageService: LanguageService,
+    private configService: ConfigService
+  ) {
+    this.baseUrl =
+      this.configService.getConfig('spatialFilter.url') || this.baseUrl;
+  }
 
   getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
