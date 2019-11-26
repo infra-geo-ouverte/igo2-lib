@@ -30,7 +30,7 @@ export function generateIdFromSourceOptions(options: DataSourceOptions): string 
  * @returns A md5 hash of the the url and layers
  */
 export function generateWMSIdFromSourceOptions(options: WMSDataSourceOptions) {
-  const layers = options.params.layers;
+  const layers = options.params.LAYERS;
   const url = options.url.charAt(0) === '/' ? window.location.origin + options.url : options.url;
   const chain = 'wms' + url + layers;
   return Md5.hashStr(chain) as string;

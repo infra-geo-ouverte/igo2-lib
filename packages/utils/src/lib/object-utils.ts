@@ -68,6 +68,50 @@ export class ObjectUtils {
     return target;
   }
 
+  static removeDuplicateCaseInsensitive(obj: object) {
+    const summaryCapitalizeObject = {};
+    const capitalizeObject = {};
+    const upperCaseCount = [];
+
+    for (const property in obj) {
+      const upperCaseProperty = property.toUpperCase()
+      if (!summaryCapitalizeObject.hasOwnProperty(upperCaseProperty)) {
+        summaryCapitalizeObject[upperCaseProperty] = [{ [property]: obj[property] }];
+      }
+      else {
+        summaryCapitalizeObject[upperCaseProperty].push({ [property]: obj[property] });
+      }
+      // counting the number of uppercase letters
+      upperCaseCount.push({ key: property, count: property.replace(/[^A-Z]/g, "").length })
+    }
+    for (const capitalizedProperty in summaryCapitalizeObject) {
+      if (summaryCapitalizeObject.hasOwnProperty(capitalizedProperty)) {
+        const capitalizedPropertyObject = summaryCapitalizeObject[capitalizedProperty]
+        if (capitalizedPropertyObject.length === 1) {
+          // for single params (no duplicates)
+          const singlePossibility = capitalizedPropertyObject[0]
+          capitalizeObject[capitalizedProperty] = singlePossibility[Object.keys(singlePossibility)[0]]
+        } else if (capitalizedPropertyObject.length > 1) {
+          // defining the closest to lowercase property 
+          const paramClosestToLowercase = upperCaseCount
+            .filter(f => f.key.toLowerCase() === capitalizedProperty.toLowerCase())
+            .reduce((prev, current) => {
+              return (prev.y < current.y) ? prev : current
+            });
+          capitalizeObject[paramClosestToLowercase.key.toUpperCase()] = obj[paramClosestToLowercase.key];
+        }
+
+      }
+    }
+    for (const property in obj) {
+      delete obj[property]
+    }
+
+    for (const property in capitalizeObject) {
+      obj[property] = capitalizeObject[property]
+    }
+  }
+
   static removeUndefined(obj: object): any {
     const output = {};
     if (ObjectUtils.isObject(obj)) {

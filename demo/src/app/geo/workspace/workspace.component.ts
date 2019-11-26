@@ -81,8 +81,8 @@ export class AppWorkspaceComponent implements OnInit {
     //   url: 'https://ahocevar.com/geoserver/wms',
     //   urlWfs: 'https://ahocevar.com/geoserver/wfs',
     //   params: {
-    //     layers: 'water_areas',
-    //     version: '1.3.0'
+    //     LAYERS: 'water_areas',
+    //     VERSION: '1.3.0'
     //   },
     //   paramsWFS: {
     //     featureTypes: 'water_areas',

@@ -44,40 +44,9 @@ export class WMSDataSource extends DataSource {
     protected wfsService: WFSService
   ) {
     super(options);
-    // Important: To use wms versions smaller than 1.3.0, SRS
-    // needs to be supplied in the source "params"
-
-    // We need to do this to override the default version
-    // of openlayers which is uppercase
     const sourceParams: any = options.params;
-    if (sourceParams && sourceParams.version) {
-      sourceParams.VERSION = sourceParams.version;
-    }
 
-    if (sourceParams && sourceParams.VERSION) {
-      if (sourceParams.version !== '1.3.0') {
-        if (!sourceParams.SRS && !sourceParams.srs) {
-          throw new Error(
-            `You must set a SRS (or srs) param for your WMS
-           (layer =  ` +
-              sourceParams.layers +
-              `) because your want to use a WMS version under 1.3.0
-        Ex: "srs": "EPSG:3857" `
-          );
-        }
-      }
-    }
-
-    if (sourceParams && sourceParams.styles) {
-      sourceParams.STYLES = sourceParams.styles;
-      delete sourceParams.styles;
-    }
-
-    if (sourceParams && sourceParams.INFO_FORMAT) {
-      sourceParams.info_format = sourceParams.INFO_FORMAT;
-    }
-
-    const dpi = sourceParams.dpi || 96;
+    const dpi = sourceParams.DPI || 96;
     sourceParams.DPI = dpi;
     sourceParams.MAP_RESOLUTION = dpi;
     sourceParams.FORMAT_OPTIONS = 'dpi:' + dpi;
@@ -130,14 +99,14 @@ export class WMSDataSource extends DataSource {
     }
 
     if (
-      sourceParams.layers.split(',').length > 1 &&
+      sourceParams.LAYERS.split(',').length > 1 &&
       initOgcFilters &&
       initOgcFilters.enabled
     ) {
       console.log('*******************************');
       console.log(
         'BE CAREFULL, YOUR WMS LAYERS (' +
-          sourceParams.layers +
+          sourceParams.LAYERS +
           ') MUST SHARE THE SAME FIELDS TO ALLOW ogcFilters TO WORK !! '
       );
       console.log('*******************************');
@@ -151,7 +120,7 @@ export class WMSDataSource extends DataSource {
       options,
       fieldNameGeometry
     );
-    this.ol.updateParams({ filter: filterQueryString });
+    sourceParams.FILTER = filterQueryString;
   }
 
   refresh() {
@@ -178,8 +147,8 @@ export class WMSDataSource extends DataSource {
     const sourceParams = this.params;
 
     let layers = [];
-    if (sourceParams.layers !== undefined) {
-      layers = sourceParams.layers.split(',');
+    if (sourceParams.LAYERS !== undefined) {
+      layers = sourceParams.LAYERS.split(',');
     }
 
     const baseUrl = this.options.url.replace(/\?$/, '');
@@ -188,7 +157,7 @@ export class WMSDataSource extends DataSource {
       'SERVICE=wms',
       'FORMAT=image/png',
       'SLD_VERSION=1.1.0',
-      `VERSION=${sourceParams.version || '1.3.0'}`
+      `VERSION=${sourceParams.VERSION || '1.3.0'}`
     ];
     if (style !== undefined) {
       params.push(`STYLE=${style}`);

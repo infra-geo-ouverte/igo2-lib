@@ -95,8 +95,8 @@ export class AppLayerComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
           optionsFromCapabilities: true,
           params: {
-            layers: 'MELS_CS_ANGLO_S',
-            version: '1.3.0'
+            LAYERS: 'MELS_CS_ANGLO_S',
+            VERSION: '1.3.0'
           }
         }
       })
@@ -110,8 +110,8 @@ export class AppLayerComponent {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           params: {
-            layers: 'bgr_v_sous_route_res_sup_act',
-            version: '1.3.0'
+            LAYERS: 'bgr_v_sous_route_res_sup_act',
+            VERSION: '1.3.0'
           }
         }
       })
@@ -126,8 +126,8 @@ export class AppLayerComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           optionsFromCapabilities: true,
           params: {
-            layers: 'lieuhabite',
-            version: '1.3.0'
+            LAYERS: 'lieuhabite',
+            VERSION: '1.3.0'
           }
         }
       })
@@ -142,8 +142,8 @@ export class AppLayerComponent {
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/mffpecofor.fcgi',
           optionsFromCapabilities: true,
           params: {
-            layers: 'sh_dis_eco',
-            version: '1.3.0'
+            LAYERS: 'sh_dis_eco',
+            VERSION: '1.3.0'
           }
         }
       })
@@ -167,8 +167,8 @@ export class AppLayerComponent {
           url: 'https://demo.geo-solutions.it/geoserver/ows',
           optionsFromCapabilities: true,
           params: {
-            layers: 'nurc:Arc_Sample', // , test:Linea_costa
-            version: '1.3.0'
+            LAYERS: 'nurc:Arc_Sample', // , test:Linea_costa
+            VERSION: '1.3.0'
           }
         }
       })
@@ -182,8 +182,8 @@ export class AppLayerComponent {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
           params: {
-            layers: 'evenements',
-            version: '1.3.0'
+            LAYERS: 'evenements',
+            VERSION: '1.3.0'
           }
         }
       })
@@ -194,8 +194,8 @@ export class AppLayerComponent {
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
       refreshIntervalSec: 15,
       params: {
-        layers: 'vg_observation_v_inondation_embacle_wmst',
-        version: '1.3.0'
+        LAYERS: 'vg_observation_v_inondation_embacle_wmst',
+        VERSION: '1.3.0'
       }
     };
 

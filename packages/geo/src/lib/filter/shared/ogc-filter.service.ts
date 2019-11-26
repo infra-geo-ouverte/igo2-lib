@@ -9,8 +9,8 @@ export class OGCFilterService {
   constructor() {}
 
   public filterByOgc(wmsDatasource: WMSDataSource, filterString: string) {
-    const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(filterString, wmsDatasource.options.params.layers);
-    wmsDatasource.ol.updateParams({ filter: appliedFilter });
+    const appliedFilter = new OgcFilterWriter().formatProcessedOgcFilter(filterString, wmsDatasource.options.params.LAYERS);
+    wmsDatasource.ol.updateParams({ FILTER: appliedFilter });
   }
 
   public setOgcWFSFiltersOptions(wfsDatasource: OgcFilterableDataSource) {

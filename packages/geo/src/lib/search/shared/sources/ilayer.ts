@@ -228,7 +228,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         queryHtmlTarget: queryParams.queryHtmlTarget,
         queryable: data.properties.queryable,
         params: {
-          layers: data.properties.name
+          LAYERS: data.properties.name
         }
       },
       title: data.properties.title,
