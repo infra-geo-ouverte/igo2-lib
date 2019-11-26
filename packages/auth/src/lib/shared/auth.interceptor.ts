@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
 import {
   HttpEvent,
   HttpInterceptor,
@@ -6,11 +8,9 @@ import {
   HttpRequest
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
 import { TokenService } from './token.service';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private config: ConfigService,
     private tokenService: TokenService,
-    private authService: AuthService
+    private http: HttpClient
   ) {
     this.trustHosts = this.config.getConfig('auth.trustHosts') || [];
     this.trustHosts.push(window.location.hostname);
@@ -62,13 +62,27 @@ export class AuthInterceptor implements HttpInterceptor {
 
   refreshToken() {
     const jwt = this.tokenService.decode();
-    const currentTime = (new Date().getTime() / 1000);
+    const currentTime = new Date().getTime() / 1000;
 
-    if (!this.refreshInProgress && jwt && currentTime < jwt.exp && currentTime > jwt.exp - 1800) {
+    if (
+      !this.refreshInProgress &&
+      jwt &&
+      currentTime < jwt.exp &&
+      currentTime > jwt.exp - 1800
+    ) {
       this.refreshInProgress = true;
-      this.authService.refresh().pipe(
-        finalize(() => { this.refreshInProgress = false;})
-      ).subscribe();
+
+      const url = this.config.getConfig('auth.url');
+      return this.http.post(`${url}/refresh`, {}).subscribe(
+        (data: any) => {
+          this.tokenService.set(data.token);
+          this.refreshInProgress = false;
+        },
+        err => {
+          err.error.caught = true;
+          return err;
+        }
+      );
     }
   }
 }

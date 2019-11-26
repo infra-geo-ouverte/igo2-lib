@@ -72,7 +72,7 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<boolean>{
+  logout(): Observable<boolean> {
     this.anonymous = false;
     this.tokenService.remove();
     this.authenticate$.next(false);
