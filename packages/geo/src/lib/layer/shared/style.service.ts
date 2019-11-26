@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MatIconRegistry } from '@angular/material';
 
 import * as olstyle from 'ol/style';
 import { StyleByAttribute } from './vector-style.interface';
@@ -11,13 +10,13 @@ import { createOverlayMarkerStyle } from '../../overlay';
   providedIn: 'root'
 })
 export class StyleService {
-
   public style: olstyle.Style;
 
-  constructor(private matIconRegistry: MatIconRegistry) {}
-
   createStyle(options: { [key: string]: any }) {
-    if (typeof options === 'function' || options instanceof olstyle.Style) {
+    if (!options) {
+      return createOverlayMarkerStyle();
+    }
+    if (typeof options === 'function' || options instanceof olstyle.Style) {
       return options;
     }
     return this.parseStyle('style', options);
@@ -178,67 +177,57 @@ export class StyleService {
     }
   }
 
-  createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
-    let style;
-    const range = clusterParam.clusterRange;
+  createClusterStyle(feature, clusterParam: ClusterParam = {}, layerStyle) {
+    let style: olstyle.Style;
     const size = feature.get('features').length;
-    const color = 'rgba(24, 134, 45, 0.8)';
     if (size !== 1) {
-      // if (range) {
-      //   if (size >= range[1]) {
-      //     color = 'red';
-      //   } else if (size < range[1] && size >= range[0]) {
-      //     color = 'orange';
-      //   } else if (size < range[0]) {
-      //     color = 'green';
-      //   }
-      // }
-      const radiusMin = 6;
-      let clusterRadius = 5 * Math.log(size);
-      if (clusterRadius < radiusMin) {
-        clusterRadius = radiusMin;
+      if (clusterParam.clusterRanges) {
+        for (const r of clusterParam.clusterRanges) {
+          if (
+            (!r.minRadius || r.minRadius <= size) &&
+            (!r.maxRadius || r.maxRadius >= size)
+          ) {
+            style = this.createStyle(r.style);
+            break;
+          }
+        }
       }
-      style = [
-        new olstyle.Style({
-          image: new olstyle.Circle({
-            radius: clusterRadius,
-            opacity: 0.4,
-            stroke: new olstyle.Stroke({
-              color: 'black'
+
+      if (!style) {
+        let clusterRadius: number;
+        if (clusterParam.radiusCalc) {
+          clusterRadius = clusterParam.radiusCalc(size);
+        } else {
+          const radiusMin = 6;
+          clusterRadius = 5 * Math.log(size);
+          if (clusterRadius < radiusMin) {
+            clusterRadius = radiusMin;
+          }
+        }
+
+        style = [
+          new olstyle.Style({
+            image: new olstyle.Circle({
+              radius: clusterRadius,
+              opacity: 0.4,
+              stroke: new olstyle.Stroke({
+                color: 'black'
+              }),
+              fill: new olstyle.Fill({
+                color: 'rgba(24, 134, 45, 0.5)'
+              })
             }),
-            fill: new olstyle.Fill({
-              color: range ? color : 'blue'
-            })
-          }),
-          text: new olstyle.Text({
-            text: size.toString(),
-            fill: new olstyle.Fill({
-              color: '#fff'
+            text: new olstyle.Text({
+              text: size.toString(),
+              fill: new olstyle.Fill({
+                color: '#fff'
+              })
             })
           })
-        })
-      ];
-    } else {
-      if (!feature.values_.features[0].get('_icon')) {
-        style = createOverlayMarkerStyle();
-      } else {
-        const icon = feature.values_.features[0].get('_icon');
-        this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
-          const xmlSerializer = new XMLSerializer();
-          svgObj.setAttribute('width', '30');
-          svgObj.setAttribute('height', '30');
-          svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
-          svgObj.setAttribute('stroke', 'white');
-          const svg = xmlSerializer.serializeToString(svgObj);
-          const clusterStyle = new olstyle.Style ({
-            image: new olstyle.Icon({
-              src: 'data:image/svg+xml;utf8,' + svg
-            })
-          });
-          this.style = clusterStyle;
-        });
-        style = this.style;
+        ];
       }
+    } else {
+      style = this.createStyle(layerStyle);
     }
     return style;
   }

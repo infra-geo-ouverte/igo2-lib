@@ -195,15 +195,13 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
               newFeature.meta = {
                 title: feature.values_.nom,
                 id: feature.id_,
+                icon: feature.values_._icon,
                 sourceTitle: layerOL.values_.title
               };
               clickedFeatures.push(newFeature);
             }
           } else {
-            const feature = featureFromOl(
-              featureOL,
-              this.map.projection,
-            );
+            const feature = featureFromOl(featureOL, this.map.projection);
             clickedFeatures.push(feature);
           }
         }
@@ -221,10 +219,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
-              feature.meta.id = feature.ol._id,
-              feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
-              feature.meta.title = feature.meta.title || this.queryService.getQueryTitle(feature, layer);
-              feature.meta.sourceTitle = layer.title;
+            (feature.meta.id = feature.ol._id),
+              (feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
+                layer
+              ));
+            feature.meta.title =
+              feature.meta.title ||
+              this.queryService.getQueryTitle(feature, layer);
+            feature.meta.sourceTitle = layer.title;
           }
         }
       });

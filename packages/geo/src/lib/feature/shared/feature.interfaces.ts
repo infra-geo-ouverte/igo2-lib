@@ -21,7 +21,6 @@ export interface Feature<P = { [key: string]: any }> {
   extent?: [number, number, number, number];
   meta?: FeatureMeta;
   ol?: OlFeature;
-  icon?: any;
 }
 
 export interface FeatureMeta {
@@ -30,6 +29,7 @@ export interface FeatureMeta {
   mapTitle?: string;
   sourceTitle?: string;
   order?: number;
+  icon?: string;
   alias?: { [key: string]: string };
   revision?: number;
   excludeAttribute?: Array<string>;

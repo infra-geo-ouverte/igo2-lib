@@ -1,4 +1,8 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { MatIconRegistry } from '@angular/material';
+import { Observable, forkJoin } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
 import {
   IgoMap,
   DataSourceService,
@@ -15,7 +19,8 @@ import {
   SpatialFilterItemType,
   SpatialFilterQueryType,
   SpatialFilterThematic,
-  Layer
+  Layer,
+  createOverlayMarkerStyle
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -32,7 +37,6 @@ import { MessageService, LanguageService } from '@igo2/core';
   title: 'igo.integration.tools.spatialFilter',
   icon: 'map-marker-radius'
 })
-
 /**
  * Spatial Filter Type
  */
@@ -43,7 +47,6 @@ import { MessageService, LanguageService } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpatialFilterToolComponent {
-
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -59,7 +62,9 @@ export class SpatialFilterToolComponent {
   public zone: Feature;
   public radius: number;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
+  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
+    undefined
+  );
 
   private format = new olFormatGeoJSON();
 
@@ -70,6 +75,7 @@ export class SpatialFilterToolComponent {
   public loading = false;
 
   constructor(
+    private matIconRegistry: MatIconRegistry,
     private spatialFilterService: SpatialFilterService,
     private dataSourceService: DataSourceService,
     private layerService: LayerService,
@@ -92,11 +98,16 @@ export class SpatialFilterToolComponent {
   }
 
   private loadFilterList() {
-    this.spatialFilterService.loadFilterList(this.queryType)
+    this.spatialFilterService
+      .loadFilterList(this.queryType)
       .subscribe((features: Feature[]) => {
         features.sort((a, b) => {
-          if (a.properties.nom < b.properties.nom) { return -1; }
-          if (a.properties.nom > b.properties.nom) { return 1; }
+          if (a.properties.nom < b.properties.nom) {
+            return -1;
+          }
+          if (a.properties.nom > b.properties.nom) {
+            return 1;
+          }
           return 0;
         });
         this.spatialListStore.clear();
@@ -115,6 +126,7 @@ export class SpatialFilterToolComponent {
 
   private loadThematics() {
     this.loading = true;
+    let zeroResults = true;
     this.tryAddFeaturesToMap([this.zone]);
     if (!this.thematics) {
       const theme: SpatialFilterThematic = {
@@ -125,35 +137,71 @@ export class SpatialFilterToolComponent {
     if (this.type === SpatialFilterType.Polygon) {
       this.radius = undefined;
     }
+
+    const observables$: Observable<Feature[]>[] = [];
     this.thematics.forEach(thematic => {
-      this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
-        .subscribe((features: Feature[]) => {
-          this.store.insertMany(features);
-          const featuresPoint: Feature[] = [];
-          const featuresLinePoly: Feature[] = [];
-          let idPoint;
-          let idLinePoly;
-          features.forEach(feature => {
-            if (feature.geometry.type === 'Point') {
-              featuresPoint.push(feature);
-              idPoint = feature.meta.id;
-            } else {
-              featuresLinePoly.push(feature);
-              idLinePoly = feature.meta.id;
-            }
-          });
-          this.tryAddPointToMap(featuresPoint, idPoint);
-          this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
-          this.loading = false;
-          if (features.length >= 10000) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000});
-          }
-          if (!features.length) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.zeroResults'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000});
-          }
-        });
+      observables$.push(
+        this.spatialFilterService
+          .loadFilterItem(
+            this.zone,
+            this.itemType,
+            this.queryType,
+            thematic,
+            this.radius
+          )
+          .pipe(
+            tap((features: Feature[]) => {
+              this.store.insertMany(features);
+              const featuresPoint: Feature[] = [];
+              const featuresLinePoly: Feature[] = [];
+              let idPoint;
+              let idLinePoly;
+              features.forEach(feature => {
+                if (feature.geometry.type === 'Point') {
+                  featuresPoint.push(feature);
+                  idPoint = feature.meta.id;
+                } else {
+                  featuresLinePoly.push(feature);
+                  idLinePoly = feature.meta.id;
+                }
+              });
+
+              this.tryAddPointToMap(featuresPoint, idPoint);
+              this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
+
+              if (features.length) {
+                zeroResults = false;
+              }
+
+              if (features.length >= 10000) {
+                this.messageService.alert(
+                  this.languageService.translate.instant(
+                    'igo.geo.spatialFilter.maxSizeAlert'
+                  ),
+                  this.languageService.translate.instant(
+                    'igo.geo.spatialFilter.warning'
+                  ),
+                  { timeOut: 10000 }
+                );
+              }
+            })
+          )
+      );
+    });
+
+    forkJoin(observables$).subscribe(() => {
+      this.loading = false;
+      if (zeroResults) {
+        this.messageService.alert(
+          this.languageService.translate.instant(
+            'igo.geo.spatialFilter.zeroResults'
+          ),
+          this.languageService.translate.instant(
+            'igo.geo.spatialFilter.warning'
+          ),
+          { timeOut: 10000 }
+        );
+      }
     });
   }
 
@@ -176,39 +224,46 @@ export class SpatialFilterToolComponent {
           if (layer.alias === feature.properties.code) {
             return;
           }
-          if  (layer.title.startsWith('Zone')) {
+          if (layer.title.startsWith('Zone')) {
             this.map.removeLayer(layer);
           }
         }
       }
       for (const layer of this.map.layers) {
-        if  (layer.title.startsWith('Zone')) {
+        if (layer.title.startsWith('Zone')) {
           i++;
         }
       }
       this.dataSourceService
-      .createAsyncDataSource({
-        type: 'vector',
-        queryable: true
-      } as QueryableDataSourceOptions )
+        .createAsyncDataSource({
+          type: 'vector',
+          queryable: true
+        } as QueryableDataSourceOptions)
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: 'Zone ' + i as string,
-            alias: this.type === SpatialFilterType.Predefined ? feature.properties.code : undefined,
+            title: ('Zone ' + i) as string,
+            alias:
+              this.type === SpatialFilterType.Predefined
+                ? feature.properties.code
+                : undefined,
             source: dataSource,
             visible: true,
             style: (_feature, resolution) => {
               const coordinates = (features[0] as any).coordinates;
               return new olstyle.Style({
                 image: new olstyle.Circle({
-                    radius: coordinates ? this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution : undefined,
-                    fill: new olstyle.Fill({
-                      color: 'rgba(200, 200, 20, 0.2)'
-                    }),
-                    stroke: new olstyle.Stroke({
-                      width: 1,
-                      color: 'orange'
-                    })
+                  radius: coordinates
+                    ? this.radius /
+                      Math.cos((Math.PI / 180) * coordinates[1]) /
+                      resolution
+                    : undefined,
+                  fill: new olstyle.Fill({
+                    color: 'rgba(200, 200, 20, 0.2)'
+                  }),
+                  stroke: new olstyle.Stroke({
+                    width: 1,
+                    color: 'orange'
+                  })
                 }),
                 stroke: new olstyle.Stroke({
                   width: 1,
@@ -241,35 +296,47 @@ export class SpatialFilterToolComponent {
         return;
       }
       for (const layer of this.map.layers) {
-        if  (layer.title.startsWith(features[0].meta.title)) {
+        if (layer.title.startsWith(features[0].meta.title)) {
           i++;
         }
       }
       this.dataSourceService
-      .createAsyncDataSource({
-        type: 'cluster',
-        id,
-        queryable: true,
-        distance: 120,
-        meta: {
-          title: 'Cluster'
-        }
-        } as QueryableDataSourceOptions )
+        .createAsyncDataSource({
+          type: 'cluster',
+          id,
+          queryable: true,
+          distance: 120,
+          meta: {
+            title: 'Cluster'
+          }
+        } as QueryableDataSourceOptions)
         .subscribe((dataSource: ClusterDataSource) => {
+          const icon = features[0].meta.icon;
+          let style: olstyle.Style;
+          if (!icon) {
+            style = createOverlayMarkerStyle();
+          } else {
+            style = this.createSvgIcon(icon) || createOverlayMarkerStyle();
+          }
+
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title + ' ' + i as string,
+            title: (features[0].meta.title + ' ' + i) as string,
             source: dataSource,
             visible: true,
-            clusterParam: {clusterRange: [1, 5]}
+            style
           });
+
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
+
           dataSource.ol.source.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
-            this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            this.map.removeLayer(
+              this.map.layers.find(layer => layer.id === olLayer.id)
+            );
             i = i - 1;
-            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.title = (features[0].meta.title + ' ' + i) as string;
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
@@ -278,6 +345,23 @@ export class SpatialFilterToolComponent {
     }
   }
 
+  private createSvgIcon(icon) {
+    let style: olstyle.Style;
+    this.matIconRegistry.getNamedSvgIcon(icon).subscribe(svgObj => {
+      const xmlSerializer = new XMLSerializer();
+      svgObj.setAttribute('width', '30');
+      svgObj.setAttribute('height', '30');
+      svgObj.setAttribute('fill', 'rgba(0, 128, 255)');
+      svgObj.setAttribute('stroke', 'white');
+      const svg = xmlSerializer.serializeToString(svgObj);
+      style = new olstyle.Style({
+        image: new olstyle.Icon({
+          src: 'data:image/svg+xml;utf8,' + svg
+        })
+      });
+    });
+    return style;
+  }
   /**
    * Try to add line or polygon features to the map
    */
@@ -288,19 +372,19 @@ export class SpatialFilterToolComponent {
         return;
       }
       for (const layer of this.map.layers) {
-        if  (layer.title.startsWith(features[0].meta.title)) {
+        if (layer.title.startsWith(features[0].meta.title)) {
           i++;
         }
       }
       this.dataSourceService
-      .createAsyncDataSource({
-        type: 'vector',
-        id,
-        queryable: true
-        } as QueryableDataSourceOptions )
+        .createAsyncDataSource({
+          type: 'vector',
+          id,
+          queryable: true
+        } as QueryableDataSourceOptions)
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title + ' ' + i as string,
+            title: (features[0].meta.title + ' ' + i) as string,
             source: dataSource,
             visible: true
           });
@@ -309,9 +393,11 @@ export class SpatialFilterToolComponent {
           });
           dataSource.ol.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
-            this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            this.map.removeLayer(
+              this.map.layers.find(layer => layer.id === olLayer.id)
+            );
             i = i - 1;
-            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.title = (features[0].meta.title + ' ' + i) as string;
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);

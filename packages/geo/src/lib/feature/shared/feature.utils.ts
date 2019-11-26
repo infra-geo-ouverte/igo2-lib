@@ -11,7 +11,8 @@ import {
   getEntityId,
   getEntityTitle,
   getEntityRevision,
-  getEntityProperty
+  getEntityProperty,
+  getEntityIcon
 } from '@igo2/common';
 
 import { IgoMap } from '../../map';
@@ -71,8 +72,9 @@ export function featureToOl(
 
   olFeature.set('_entityRevision', getEntityRevision(feature), true);
 
-  if (feature.icon) {
-    olFeature.set('_icon', feature.icon, true);
+  const icon = getEntityIcon(feature);
+  if (icon !== undefined) {
+    olFeature.set('_icon', icon, true);
   }
 
   return olFeature;
@@ -115,7 +117,9 @@ export function featureFromOl(
     const sourceOptions = olLayer.get('sourceOptions');
     title = olLayer.get('title');
     exclude = sourceOptions ? sourceOptions.excludeAttribute : undefined;
-    excludeOffline = sourceOptions ? sourceOptions.excludeAttributeOffline : undefined;
+    excludeOffline = sourceOptions
+      ? sourceOptions.excludeAttributeOffline
+      : undefined;
   } else {
     title = olFeature.get('_title');
   }
