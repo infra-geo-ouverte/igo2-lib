@@ -494,7 +494,7 @@ export class OgcFilterWriter {
 
     let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
     if (options.type === 'wms') {
-      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.layers);
+      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.LAYERS);
     }
     if (options.type === 'wfs') {
       filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.featureTypes);

@@ -88,6 +88,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   }
 
   protected getDefaultOptions(): ILayerSearchSourceOptions {
+    const limit =
+      this.options.params && this.options.params.limit
+        ? Number(this.options.params.limit)
+        : undefined;
     return {
       title: 'igo.geo.search.ilayer.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
@@ -100,27 +104,27 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
             {
               title: '1',
               value: 1,
-              enabled: false
+              enabled: limit === 1
             },
             {
               title: '5',
               value: 5,
-              enabled: true
+              enabled: limit === 5 || !limit
             },
             {
               title: '10',
               value: 10,
-              enabled: false
+              enabled: limit === 10
             },
             {
               title: '25',
               value: 25,
-              enabled: false
+              enabled: limit === 25
             },
             {
               title: '50',
               value: 50,
-              enabled: false
+              enabled: limit === 50
             }
           ]
         }
@@ -224,12 +228,13 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         queryHtmlTarget: queryParams.queryHtmlTarget,
         queryable: data.properties.queryable,
         params: {
-          layers: data.properties.name
+          LAYERS: data.properties.name
         }
       },
       title: data.properties.title,
       maxResolution:
-        getResolutionFromScale(Number(data.properties.maxScaleDenom)) || Infinity,
+        getResolutionFromScale(Number(data.properties.maxScaleDenom)) ||
+        Infinity,
       minResolution:
         getResolutionFromScale(Number(data.properties.minScaleDenom)) || 0,
       properties: this.formatter.formatResult(data).properties

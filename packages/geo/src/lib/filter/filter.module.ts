@@ -9,6 +9,8 @@ import {
   MatSliderModule,
   MatSlideToggleModule,
   MatFormFieldModule,
+  MatTableModule,
+  MatTreeModule,
   MatInputModule,
   MatOptionModule,
   MatSelectModule,
@@ -17,7 +19,10 @@ import {
   MatDatepickerModule,
   MatNativeDateModule,
   MAT_DATE_LOCALE,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatTabsModule,
+  MatRadioModule,
+  MatMenuModule
 } from '@angular/material';
 
 import {
@@ -31,6 +36,7 @@ import {
   IgoListModule,
   IgoKeyValueModule
 } from '@igo2/common';
+import { IgoGeometryModule } from './../geometry/geometry.module';
 
 import { FilterableDataSourcePipe } from './shared/filterable-datasource.pipe';
 import { IgoLayerModule } from '../layer/layer.module';
@@ -50,6 +56,11 @@ import { OgcFilterButtonComponent } from './ogc-filter-button/ogc-filter-button.
 import { OGCFilterService } from './shared/ogc-filter.service';
 import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-filter-toggle-button.component';
 
+import { SpatialFilterTypeComponent } from './spatial-filter/spatial-filter-type/spatial-filter-type.component';
+import { SpatialFilterListComponent } from './spatial-filter/spatial-filter-list/spatial-filter-list.component';
+import { SpatialFilterItemComponent } from './spatial-filter/spatial-filter-item/spatial-filter-item.component';
+import { SpatialFilterService } from './shared/spatial-filter.service';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -58,6 +69,11 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     MatAutocompleteModule,
     MatIconModule,
     MatButtonModule,
+    MatTabsModule,
+    MatRadioModule,
+    MatMenuModule,
+    MatTableModule,
+    MatTreeModule,
     MatButtonToggleModule,
     MatCheckboxModule,
     MatSliderModule,
@@ -76,7 +92,8 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     IgoLayerModule,
     IgoCollapsibleModule,
     IgoListModule,
-    IgoKeyValueModule
+    IgoKeyValueModule,
+    IgoGeometryModule
   ],
   exports: [
     FilterableDataSourcePipe,
@@ -91,7 +108,10 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
-    OgcFilterableListBindingDirective
+    OgcFilterableListBindingDirective,
+    SpatialFilterTypeComponent,
+    SpatialFilterListComponent,
+    SpatialFilterItemComponent
   ],
   declarations: [
     FilterableDataSourcePipe,
@@ -106,9 +126,12 @@ import { OgcFilterToggleButtonComponent } from './ogc-filter-toggle-button/ogc-f
     OgcFilterableFormComponent,
     OgcFilterableItemComponent,
     OgcFilterableListComponent,
-    OgcFilterableListBindingDirective
+    OgcFilterableListBindingDirective,
+    SpatialFilterTypeComponent,
+    SpatialFilterListComponent,
+    SpatialFilterItemComponent
   ],
-  providers: [TimeFilterService, OGCFilterService]
+  providers: [TimeFilterService, OGCFilterService, SpatialFilterService]
 })
 export class IgoFilterModule {
   static forRoot(): ModuleWithProviders {

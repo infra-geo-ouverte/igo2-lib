@@ -1,3 +1,7 @@
 :host ::ng-deep small {
   color: #8C8C8C;
 }
+
+::ng-deep .search-result-tooltip {
+   white-space: pre-line;
+}

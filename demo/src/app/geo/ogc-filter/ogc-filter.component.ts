@@ -124,8 +124,8 @@ export class AppOgcFilterComponent {
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
       urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
       params: {
-        layers: 'radars_photos',
-        version: '1.3.0'
+        LAYERS: 'radars_photos',
+        VERSION: '1.3.0'
       },
       ogcFilters: {
         enabled: true,
@@ -296,8 +296,8 @@ export class AppOgcFilterComponent {
     //   url: '/geoserver/wms',
     //   urlWfs: '/geoserver/wfs',
     //   params: {
-    //     layers: 'water_areas',
-    //     version: '1.3.0'
+    //     LAYERS: 'water_areas',
+    //     VERSION: '1.3.0'
     //   },
     //   ogcFilters: {
     //     enabled: true,
