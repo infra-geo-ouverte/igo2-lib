@@ -29,6 +29,7 @@ export interface FeatureMeta {
   mapTitle?: string;
   sourceTitle?: string;
   order?: number;
+  icon?: string;
   alias?: { [key: string]: string };
   revision?: number;
   excludeAttribute?: Array<string>;

@@ -43,6 +43,7 @@ import { AppImportExport } from './geo/import-export/import-export.module';
 import { AppDirectionsModule } from './geo/directions/directions.module';
 import { AppTimeFilterModule } from './geo/time-filter/time-filter.module';
 import { AppOgcFilterModule } from './geo/ogc-filter/ogc-filter.module';
+import { AppSpatialFilterModule } from './geo/spatial-filter/spatial-filter.module';
 import { AppWorkspaceModule } from './geo/workspace/workspace.module';
 
 import { AppContextModule } from './context/context/context.module';
@@ -94,6 +95,7 @@ import { AppComponent } from './app.component';
     AppDirectionsModule,
     AppTimeFilterModule,
     AppOgcFilterModule,
+    AppSpatialFilterModule,
     AppWorkspaceModule,
 
     AppContextModule,

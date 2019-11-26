@@ -12,7 +12,7 @@ import {
 import { DrawEvent as OlDrawEvent } from 'ol/interaction/Draw';
 import { unByKey } from 'ol/Observable';
 
-import { Subject, Subscription, fromEvent } from 'rxjs';
+import { Subject, Subscription, fromEvent, BehaviorSubject } from 'rxjs';
 
 import { getMousePositionFromOlGeometryEvent } from '../geometry.utils';
 
@@ -55,6 +55,8 @@ export class DrawControl {
   private mousePosition: [number, number];
 
   private keyDown$$: Subscription;
+
+  freehand$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Wheter the control is active
@@ -153,16 +155,35 @@ export class DrawControl {
   /**
    * Add a draw interaction to the map an set up some listeners
    */
-  private addOlDrawInteraction() {
-    const olDrawInteraction = new OlDraw({
-      type: this.geometryType,
-      source: this.getSource(),
-      stopClick: true,
-      style: this.options.drawStyle,
-      maxPoints: this.options.maxPoints,
-      freehand: false,
-      freehandCondition: () => false
-    });
+  addOlDrawInteraction() {
+    let olDrawInteraction;
+    if (this.freehand$.getValue() === false) {
+      olDrawInteraction = new OlDraw({
+        type: this.geometryType,
+        source: this.getSource(),
+        stopClick: true,
+        style: this.options.drawStyle,
+        maxPoints: this.options.maxPoints,
+        freehand: false,
+        freehandCondition: () => false
+      });
+    } else {
+      if (this.geometryType === 'Point') {
+        olDrawInteraction = new OlDraw({
+          type: 'Circle',
+          source: this.getSource(),
+          maxPoints: this.options.maxPoints,
+          freehand: true
+        });
+      } else {
+        olDrawInteraction = new OlDraw({
+          type: this.geometryType,
+          source: this.getSource(),
+          maxPoints: this.options.maxPoints,
+          freehand: true
+        });
+      }
+    }
 
     this.onDrawStartKey = olDrawInteraction
       .on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));

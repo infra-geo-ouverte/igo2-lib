@@ -27,16 +27,15 @@ export class NetworkIonicService implements OnDestroy {
     private network: Network,
     private platform: Platform
   ) {
-      this.platform.ready().then(() => {
-          if (this.platform.is('cordova')) {
-              if (this.platform.is('android')) {
-                this.checkNetworkStateMobile();
-              }
-          } else {
-              console.log('yoy');
-              this.checkNetworkState();
-          }
-      });
+    this.platform.ready().then(() => {
+      if (this.platform.is('cordova')) {
+        if (this.platform.is('android')) {
+          this.checkNetworkStateMobile();
+        }
+      } else {
+        this.checkNetworkState();
+      }
+    });
   }
 
   private checkNetworkState() {
@@ -61,31 +60,31 @@ export class NetworkIonicService implements OnDestroy {
 
   private checkNetworkStateMobile() {
     this.offlineSubscription = this.network.onDisconnect().subscribe(() => {
-        this.state.connection = false;
-        setTimeout(() => {
-            if (!this.state.connection) {
-                const translate = this.injector.get(LanguageService).translate;
-                const message = translate.instant('igo.core.network.offline.message');
-                const title = translate.instant('igo.core.network.offline.title');
-                this.messageService.info(message, title);
-                this.state.connection = false;
-                this.emitEvent();
-            }
-        }, 10000);
-  });
+      this.state.connection = false;
+      setTimeout(() => {
+        if (!this.state.connection) {
+          const translate = this.injector.get(LanguageService).translate;
+          const message = translate.instant('igo.core.network.offline.message');
+          const title = translate.instant('igo.core.network.offline.title');
+          this.messageService.info(message, title);
+          this.state.connection = false;
+          this.emitEvent();
+        }
+      }, 10000);
+    });
 
     this.onlineSubscription = this.network.onConnect().subscribe(() => {
-        this.state.connection = true;
-        setTimeout(() => {
-            if (this.state.connection) {
-                const translate = this.injector.get(LanguageService).translate;
-                const message = translate.instant('igo.core.network.online.message');
-                const title = translate.instant('igo.core.network.online.title');
-                this.messageService.info(message, title);
-                this.state.connection = true;
-                this.emitEvent();
-            }
-        }, 10000);
+      this.state.connection = true;
+      setTimeout(() => {
+        if (this.state.connection) {
+          const translate = this.injector.get(LanguageService).translate;
+          const message = translate.instant('igo.core.network.online.message');
+          const title = translate.instant('igo.core.network.online.title');
+          this.messageService.info(message, title);
+          this.state.connection = true;
+          this.emitEvent();
+        }
+      }, 10000);
     });
   }
 
