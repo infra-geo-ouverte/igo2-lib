@@ -85,6 +85,29 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
+    const limit =
+      this.options.params && this.options.params.limit
+        ? Number(this.options.params.limit)
+        : undefined;
+    const ecmax =
+      this.options.params && this.options.params.ecmax
+        ? Number(this.options.params.ecmax)
+        : undefined;
+    const types =
+      this.options.params && this.options.params.type
+        ? this.options.params.type
+            .replace(/\s/g, '')
+            .toLowerCase()
+            .split(',')
+        : [
+            'adresses',
+            'codes-postaux',
+            'routes',
+            'municipalites',
+            'mrc',
+            'regadmin',
+            'lieux'
+          ];
     return {
       title: 'igo.geo.search.icherche.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
@@ -97,58 +120,58 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'Adresse',
               value: 'adresses',
-              enabled: true,
+              enabled: types.indexOf('adresses') !== -1,
               hashtags: ['adresse']
             },
             {
               title: 'Ancienne adresse',
               value: 'anciennes-adresses',
-              enabled: false
+              enabled: types.indexOf('anciennes-adresses') !== -1
             },
             {
               title: 'Code Postal',
               value: 'codes-postaux',
-              enabled: true,
+              enabled: types.indexOf('codes-postaux') !== -1,
               hashtags: ['code-postal']
             },
             {
               title: 'Route',
               value: 'routes',
-              enabled: true,
+              enabled: types.indexOf('routes') !== -1,
               hashtags: ['route']
             },
             {
               title: 'Municipalité',
               value: 'municipalites',
-              enabled: true,
+              enabled: types.indexOf('municipalites') !== -1,
               hashtags: ['municipalité', 'mun']
             },
             {
               title: 'Ancienne municipalité',
               value: 'anciennes-municipalites',
-              enabled: false
+              enabled: types.indexOf('anciennes-municipalites') !== -1
             },
             {
               title: 'MRC',
               value: 'mrc',
-              enabled: true
+              enabled: types.indexOf('mrc') !== -1
             },
             {
               title: 'Région administrative',
               value: 'regadmin',
-              enabled: true,
+              enabled: types.indexOf('regadmin') !== -1,
               hashtags: ['région-administrative']
             },
             {
               title: 'Lieu',
               value: 'lieux',
-              enabled: true,
+              enabled: types.indexOf('lieux') !== -1,
               hashtags: ['lieu']
             },
             {
               title: 'Borne SUMI',
               value: 'bornes-sumi',
-              enabled: false,
+              enabled: types.indexOf('bornes-sumi') !== -1,
               hashtags: ['borne', 'bornes', 'sumi']
             },
             ,
@@ -161,7 +184,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'Entreprise',
               value: 'entreprises',
-              enabled: false,
+              enabled: types.indexOf('entreprises') !== -1,
               available: false,
               hashtags: ['entreprise']
             }
@@ -175,27 +198,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: '1',
               value: 1,
-              enabled: false
+              enabled: limit === 1
             },
             {
               title: '5',
               value: 5,
-              enabled: true
+              enabled: limit === 5 || !limit
             },
             {
               title: '10',
               value: 10,
-              enabled: false
+              enabled: limit === 10
             },
             {
               title: '25',
               value: 25,
-              enabled: false
+              enabled: limit === 25
             },
             {
               title: '50',
               value: 50,
-              enabled: false
+              enabled: limit === 50
             }
           ]
         },
@@ -207,27 +230,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: '10 %',
               value: 10,
-              enabled: false
+              enabled: ecmax === 10
             },
             {
               title: '30 %',
               value: 30,
-              enabled: true
+              enabled: ecmax === 30 || !ecmax
             },
             {
               title: '50 %',
               value: 50,
-              enabled: false
+              enabled: ecmax === 50
             },
             {
               title: '75 %',
               value: 75,
-              enabled: false
+              enabled: ecmax === 75
             },
             {
               title: '100 %',
               value: 100,
-              enabled: false
+              enabled: ecmax === 100
             }
           ]
         }
@@ -478,6 +501,14 @@ export class IChercheReverseSearchSource extends SearchSource
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
+    const types =
+      this.options.params && this.options.params.type
+        ? this.options.params.type
+            .replace(/\s/g, '')
+            .toLowerCase()
+            .split(',')
+        : ['adresses', 'municipalites', 'mrc', 'regadmin'];
+
     return {
       title: 'igo.geo.search.ichercheReverse.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/terrapi',
@@ -490,33 +521,33 @@ export class IChercheReverseSearchSource extends SearchSource
             {
               title: 'Adresse',
               value: 'adresses',
-              enabled: true
+              enabled: types.indexOf('adresses') !== -1
             },
             {
               title: 'Route',
               value: 'routes',
-              enabled: false,
+              enabled: types.indexOf('routes') !== -1,
               available: false
             },
             {
               title: 'Arrondissement',
               value: 'arrondissements',
-              enabled: false
+              enabled: types.indexOf('arrondissements') !== -1
             },
             {
               title: 'Municipalité',
               value: 'municipalites',
-              enabled: true
+              enabled: types.indexOf('municipalites') !== -1
             },
             {
               title: 'MRC',
               value: 'mrc',
-              enabled: true
+              enabled: types.indexOf('mrc') !== -1
             },
             {
               title: 'Région administrative',
               value: 'regadmin',
-              enabled: true
+              enabled: types.indexOf('regadmin') !== -1
             }
           ]
         },
