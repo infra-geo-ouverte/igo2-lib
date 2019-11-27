@@ -49,7 +49,7 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(tile, src) {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
     this.authInterceptor.interceptXhr(xhr, src);
