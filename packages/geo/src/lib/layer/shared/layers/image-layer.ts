@@ -18,7 +18,10 @@ export class ImageLayer extends Layer {
 
   private watcher: ImageWatcher;
 
-  constructor(options: ImageLayerOptions, public authInterceptor?: AuthInterceptor) {
+  constructor(
+    options: ImageLayerOptions,
+    public authInterceptor?: AuthInterceptor
+  ) {
     super(options, authInterceptor);
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
@@ -49,10 +52,16 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(tile, src) {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
-    this.authInterceptor.interceptXhr(xhr, src);
+    const intercepted = this.authInterceptor.interceptXhr(xhr, src);
+    if (!intercepted) {
+      xhr.abort();
+      tile.getImage().src = src;
+      return;
+    }
+
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = function() {

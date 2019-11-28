@@ -63,8 +63,8 @@ export class DataSourceService {
         dataSource = this.createWFSDataSource(context as WFSDataSourceOptions);
         break;
       case 'wms':
-        const wmsContext =  context as WMSDataSourceOptions
-        ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params)
+        const wmsContext = context as WMSDataSourceOptions;
+        ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
         dataSource = this.createWMSDataSource(wmsContext);
         break;
       case 'wmts':
@@ -143,13 +143,13 @@ export class DataSourceService {
     context: WMSDataSourceOptions
   ): Observable<WMSDataSource> {
     if (context.optionsFromCapabilities) {
-      return this.capabilitiesService
-        .getWMSOptions(context)
-        .pipe(
-          map((options: WMSDataSourceOptions) => {
-            return options ? new WMSDataSource(options, this.wfsDataSourceService) : undefined;
-          })
-        );
+      return this.capabilitiesService.getWMSOptions(context).pipe(
+        map((options: WMSDataSourceOptions) => {
+          return options
+            ? new WMSDataSource(options, this.wfsDataSourceService)
+            : undefined;
+        })
+      );
     }
 
     return new Observable(d =>
@@ -161,13 +161,11 @@ export class DataSourceService {
     context: WMTSDataSourceOptions
   ): Observable<WMTSDataSource> {
     if (context.optionsFromCapabilities) {
-      return this.capabilitiesService
-        .getWMTSOptions(context)
-        .pipe(
-          map((options: WMTSDataSourceOptions) => {
-            return options ? new WMTSDataSource(options) : undefined;
-          })
-        );
+      return this.capabilitiesService.getWMTSOptions(context).pipe(
+        map((options: WMTSDataSourceOptions) => {
+          return options ? new WMTSDataSource(options) : undefined;
+        })
+      );
     }
 
     return new Observable(d => d.next(new WMTSDataSource(context)));

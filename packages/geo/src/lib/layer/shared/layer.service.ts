@@ -42,7 +42,6 @@ import { StyleService } from './style.service';
   providedIn: 'root'
 })
 export class LayerService {
-
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
@@ -204,9 +203,7 @@ export class LayerService {
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      const mapboxglStyle = this.getMapboxGlStyle(
-        layerOptions.mapboxStyle.url
-      ).subscribe(res => {
+      this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
         stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
       });
     }
