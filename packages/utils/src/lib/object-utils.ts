@@ -85,7 +85,7 @@ export class ObjectUtils {
             [property]: obj[property]
           });
         }
-        // counting the number of uppercase letters
+        // counting the number of uppercase lettersMna
         upperCaseCount.push({
           key: property,
           count: property.replace(/[^A-Z]/g, '').length
@@ -94,24 +94,26 @@ export class ObjectUtils {
     }
     for (const capitalizedProperty in summaryCapitalizeObject) {
       if (summaryCapitalizeObject.hasOwnProperty(capitalizedProperty)) {
-        const capitalizedPropertyObject =
-          summaryCapitalizeObject[capitalizedProperty];
-        if (capitalizedPropertyObject.length === 1) {
-          // for single params (no duplicates)
-          const singlePossibility = capitalizedPropertyObject[0];
-          capitalizeObject[capitalizedProperty] =
-            singlePossibility[Object.keys(singlePossibility)[0]];
-        } else if (capitalizedPropertyObject.length > 1) {
-          // defining the closest to lowercase property
-          const paramClosestToLowercase = upperCaseCount
-            .filter(
-              f => f.key.toLowerCase() === capitalizedProperty.toLowerCase()
-            )
-            .reduce((prev, current) => {
-              return prev.y < current.y ? prev : current;
-            });
-          capitalizeObject[paramClosestToLowercase.key.toUpperCase()] =
-            obj[paramClosestToLowercase.key];
+        if (summaryCapitalizeObject.hasOwnProperty(capitalizedProperty)) {
+          const capitalizedPropertyObject =
+            summaryCapitalizeObject[capitalizedProperty];
+          if (capitalizedPropertyObject.length === 1) {
+            // for single params (no duplicates)
+            const singlePossibility = capitalizedPropertyObject[0];
+            capitalizeObject[capitalizedProperty] =
+              singlePossibility[Object.keys(singlePossibility)[0]];
+          } else if (capitalizedPropertyObject.length > 1) {
+            // defining the closest to lowercase property
+            const paramClosestToLowercase = upperCaseCount
+              .filter(
+                f => f.key.toLowerCase() === capitalizedProperty.toLowerCase()
+              )
+              .reduce((prev, current) => {
+                return prev.y < current.y ? prev : current;
+              });
+            capitalizeObject[paramClosestToLowercase.key.toUpperCase()] =
+              obj[paramClosestToLowercase.key];
+          }
         }
       }
     }

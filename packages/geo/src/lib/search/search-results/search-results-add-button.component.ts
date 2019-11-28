@@ -23,6 +23,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  private layersSubcriptions = [];
+
   @Input() layer: SearchResult;
 
   /**
@@ -108,6 +110,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   private remove() {
     this.added = false;
     this.removeLayerFromMap();
+    this.layersSubcriptions.map(s => s.unsubscribe());
+    this.layersSubcriptions = [];
   }
 
   /**
@@ -123,9 +127,10 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
 
     const layerOptions = (this.layer as SearchResult<LayerOptions>).data;
+    this.layersSubcriptions.push(
     this.layerService
       .createAsyncLayer(layerOptions)
-      .subscribe(layer => this.map.addLayer(layer));
+      .subscribe(layer => this.map.addLayer(layer)));
   }
 
   /**

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { uuid, Clipboard } from '@igo2/utils';
@@ -7,15 +7,16 @@ import { AuthService } from '@igo2/auth';
 import { IgoMap, LayerListService } from '@igo2/geo';
 
 import { ShareMapService } from '../shared/share-map.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-share-map',
   templateUrl: './share-map.component.html',
   styleUrls: ['./share-map.component.scss']
 })
-export class ShareMapComponent implements AfterViewInit, OnInit {
+export class ShareMapComponent implements AfterViewInit, OnInit, OnDestroy {
   public form: FormGroup;
-
+  private mapState$$: Subscription;
   @Input()
   get map(): IgoMap {
     return this._map;
@@ -39,7 +40,8 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
     private auth: AuthService,
     private shareMapService: ShareMapService,
     private formBuilder: FormBuilder,
-    private layerListService: LayerListService
+    private layerListService: LayerListService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.hasApi = this.config.getConfig('context.url') ? true : false;
   }
@@ -51,12 +53,22 @@ export class ShareMapComponent implements AfterViewInit, OnInit {
       this.url = undefined;
       this.buildForm();
     });
+    this.mapState$$ = this.map.viewController.state$.subscribe(c => {
+      if (!this.hasApi) {
+        this.resetUrl();
+        this.cdRef.detectChanges();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     if (!this.hasApi) {
       this.resetUrl();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.mapState$$.unsubscribe();
   }
 
   public hasLayerListControls(): boolean {
