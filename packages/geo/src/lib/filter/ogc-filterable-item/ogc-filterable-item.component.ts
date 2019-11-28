@@ -100,7 +100,7 @@ export class OgcFilterableItemComponent implements OnInit {
     const arr = interfaceOgcFilters || [];
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
     let firstFieldName = '';
-    const includedFields = this.datasource.options.sourceFields.filter(f => !f.excludeFromOgcFilters)
+    const includedFields = this.datasource.options.sourceFields.filter(f => !f.excludeFromOgcFilters);
     if (includedFields.length > 0) {
       firstFieldName =
         includedFields[0].name === undefined ? '' : includedFields[0].name;
