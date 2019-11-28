@@ -48,16 +48,17 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authReq);
   }
 
-  interceptXhr(xhr, url: string) {
+  interceptXhr(xhr, url: string): boolean {
     this.refreshToken();
     const element = document.createElement('a');
     element.href = url;
 
     const token = this.tokenService.get();
-    if (!token && this.trustHosts.indexOf(element.hostname) === -1) {
-      return;
+    if (!token || this.trustHosts.indexOf(element.hostname) === -1) {
+      return false;
     }
     xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    return true;
   }
 
   refreshToken() {
