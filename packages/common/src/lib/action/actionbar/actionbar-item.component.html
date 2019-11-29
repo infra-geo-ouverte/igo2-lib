@@ -14,15 +14,14 @@
   <h4 *ngIf="withTitle" matLine>{{title | translate}}</h4>
 </mat-list-item>
 
-<mat-list-item *ngIf="action.checkbox"
+<mat-list-item class="item-checkbox" *ngIf="action.checkbox"
   matTooltipClass="actionbarItemTooltip"
   matTooltipShowDelay="500"
   [matTooltip]="withTooltip ? (tooltip | translate) : ''"
   [ngClass]="ngClass$ | async">
   <mat-checkbox *ngIf="action.checkbox"
-      labelPosition="after"
       (change)="action.handler()"
       [checked]="action.checkCondition">
   </mat-checkbox>
-  <h4 *ngIf="withTitle" matLine>{{title | translate}}</h4>
+  <h4 class="title" *ngIf="withTitle" matLine>{{title | translate}}</h4>
 </mat-list-item>

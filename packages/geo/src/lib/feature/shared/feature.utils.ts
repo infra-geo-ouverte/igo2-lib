@@ -258,7 +258,14 @@ export function featuresAreTooDeepInView(
   areaRatio = areaRatio ? areaRatio : 0.004;
   const mapExtent = map.getExtent();
   const mapExtentArea = olextent.getArea(mapExtent);
-  const featuresExtentArea = olextent.getArea(featuresExtent);
+  let featuresExtentArea = olextent.getArea(featuresExtent);
+  console.log(mapExtentArea);
+  console.log(areaRatio);
+
+  if (featuresExtentArea === 0) { // In case it's a point
+    featuresExtentArea = 1000000 * map.getZoom();
+  }
+  console.log(featuresExtentArea);
 
   return featuresExtentArea / mapExtentArea < areaRatio;
 }
