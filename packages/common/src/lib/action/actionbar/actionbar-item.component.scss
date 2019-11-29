@@ -6,3 +6,16 @@ mat-list-item.igo-actionbar-item-disabled {
 mat-list-item.igo-actionbar-item-no-display {
   display: none;
 }
+
+mat-checkbox {
+  position: absolute;
+  padding: 12px;
+}
+
+.item-checkbox {
+  height: 56px;
+}
+
+.item-checkbox ::ng-deep .mat-list-text {
+  align-items: center;
+}
