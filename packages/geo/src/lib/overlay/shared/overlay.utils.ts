@@ -2,7 +2,7 @@ import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 
 import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer';
+import { VectorLayer, StyleService } from '../../layer';
 
 /**
  * Create an overlay layer and it's source
@@ -33,6 +33,11 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
       style = createBufferStyle(olFeature.get('bufferStroke'), 2, olFeature.get('bufferFill'), olFeature.get('bufferText'));
       return style;
     } else {
+      const customStyle = olFeature.get('_style');
+      if (customStyle) {
+        const styleService = new StyleService();
+        return styleService.createStyle(customStyle);
+      }
       const geometryType = olFeature.getGeometry().getType();
       style = geometryType === 'Point' ? markerStyle : defaultStyle;
       style.getText().setText(olFeature.get('_mapTitle'));
@@ -76,7 +81,7 @@ function createOverlayDefaultStyle(): olstyle.Style {
  * Create a marker style for points
  * @returns Style
  */
-export function createOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
+export function createOverlayMarkerStyle(color = 'blue', text?, opacity?): olstyle.Style {
   let iconColor;
   switch (color) {
     case 'blue':
@@ -92,6 +97,7 @@ export function createOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
   return new olstyle.Style({
     image: new olstyle.Icon({
       src: './assets/igo2/geo/icons/place_' + iconColor + '_36px.svg',
+      opacity: opacity ? opacity : undefined,
       imgSize: [36, 36], // for ie
       anchor: [0.5, 1]
     }),

@@ -61,10 +61,6 @@ export function featureToOl(
     olFeature.set('_projection', feature.projection, true);
   }
 
-  if (feature.extent !== undefined) {
-    olFeature.set('_extent', feature.extent, true);
-  }
-
   const mapTitle = getEntityProperty(feature, 'meta.mapTitle');
   if (mapTitle !== undefined) {
     olFeature.set('_mapTitle', mapTitle, true);
@@ -75,6 +71,10 @@ export function featureToOl(
   const icon = getEntityIcon(feature);
   if (icon !== undefined) {
     olFeature.set('_icon', icon, true);
+  }
+
+  if (feature.meta && feature.meta.style) {
+    olFeature.set('_style', feature.meta.style, true);
   }
 
   return olFeature;
@@ -135,6 +135,7 @@ export function featureFromOl(
       title: title ? title : mapTitle ? mapTitle : id,
       mapTitle,
       revision: olFeature.getRevision(),
+      style: olFeature.get('_style'),
       excludeAttribute: exclude,
       excludeAttributeOffline: excludeOffline
     },
@@ -258,14 +259,11 @@ export function featuresAreTooDeepInView(
   areaRatio = areaRatio ? areaRatio : 0.004;
   const mapExtent = map.getExtent();
   const mapExtentArea = olextent.getArea(mapExtent);
-  let featuresExtentArea = olextent.getArea(featuresExtent);
-  console.log(mapExtentArea);
-  console.log(areaRatio);
+  const featuresExtentArea = olextent.getArea(featuresExtent);
 
-  if (featuresExtentArea === 0) { // In case it's a point
-    featuresExtentArea = 1000000 * map.getZoom();
+  if (featuresExtentArea === 0 && map.getZoom() > 13) { // In case it's a point
+      return false;
   }
-  console.log(featuresExtentArea);
 
   return featuresExtentArea / mapExtentArea < areaRatio;
 }
