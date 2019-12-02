@@ -51,11 +51,11 @@
 </mat-list>
 
 <div *ngIf="mode === actionbarMode.Overlay">
-  <button
+  <button class="buttonOverlay"
     mat-icon-button
     [matMenuTriggerFor]="actionbarMenu"
     [disabled]="store.view.empty">
-    <mat-icon svgIcon="dots-horizontal"></mat-icon>
+    <mat-icon svgIcon="menu"></mat-icon>
   </button>
 
   <mat-menu
