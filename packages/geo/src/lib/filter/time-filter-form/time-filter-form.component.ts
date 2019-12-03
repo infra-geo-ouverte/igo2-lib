@@ -180,7 +180,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   checkFilterValue() {
-    const timeFromWms = this.layer.dataSource.ol.getParams().time;
+    const timeFromWms = this.layer.dataSource.ol.getParams().TIME;
     if (!this.isRange && this.style === TimeFilterStyle.SLIDER && this.type === TimeFilterType.YEAR) {
       if (timeFromWms) {
         this.year = new Date(timeFromWms.toString()).getFullYear() + 1;
