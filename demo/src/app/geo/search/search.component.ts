@@ -183,6 +183,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return position;
   }
 
+  onPointerSearch(event) {
+    this.lonlat = event;
+    this.onSearchCoordinate();
+  }
+
   onSearchCoordinate() {
     this.searchStore.clear();
     const results = this.searchService.reverseSearch(this.lonlat);
