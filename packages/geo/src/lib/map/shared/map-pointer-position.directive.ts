@@ -21,9 +21,9 @@ import { transform } from 'ol/proj';
  * to avoid too many emitted values.
  */
 @Directive({
-  selector: '[igoMapPointer]'
+  selector: '[igoPointerPosition]'
 })
-export class MapPointerDirective implements OnInit, OnDestroy {
+export class PointerPositionDirective implements OnInit, OnDestroy {
 
   private lastTimeoutRequest;
 
@@ -40,12 +40,12 @@ export class MapPointerDirective implements OnInit, OnDestroy {
   /**
    * Delay before emitting an event
    */
-  @Input() pointerMoveDelay: number = 1000;
+  @Input() pointerPositionDelay: number = 1000;
 
   /**
    * Event emitted when the pointer move, delayed by pointerMoveDelay
    */
-  @Output() mapPointerCoord = new EventEmitter<[number, number]>();
+  @Output() pointerPositionCoord = new EventEmitter<[number, number]>();
 
   /**
    * IGO map
@@ -87,7 +87,7 @@ export class MapPointerDirective implements OnInit, OnDestroy {
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: OlMapBrowserPointerEvent) => this.onPointerEvent(event, this.pointerMoveDelay)
+      (event: OlMapBrowserPointerEvent) => this.onPointerEvent(event, this.pointerPositionDelay)
     );
   }
 
@@ -129,7 +129,7 @@ export class MapPointerDirective implements OnInit, OnDestroy {
 
     const lonlat = transform(event.coordinate, this.mapProjection, 'EPSG:4326');
     this.lastTimeoutRequest = setTimeout(() => {
-      this.mapPointerCoord.emit(lonlat);
+      this.pointerPositionCoord.emit(lonlat);
     }, delay);
   }
 }

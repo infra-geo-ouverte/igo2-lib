@@ -17,7 +17,7 @@ import { RotationButtonComponent } from './rotation-button/rotation-button.compo
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
 import { MapOfflineDirective } from './shared/mapOffline.directive';
-import { MapPointerDirective } from './shared/mapPointer.directive';
+import { PointerPositionDirective } from './shared/map-pointer-position.directive';
 import { PointerPositionByKeyDirective } from './shared/map-pointer-position-by-key.directive';
 
 @NgModule({
@@ -37,7 +37,7 @@ import { PointerPositionByKeyDirective } from './shared/map-pointer-position-by-
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
-    MapPointerDirective,
+    PointerPositionDirective,
     PointerPositionByKeyDirective
   ],
   declarations: [
@@ -48,7 +48,7 @@ import { PointerPositionByKeyDirective } from './shared/map-pointer-position-by-
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
-    MapPointerDirective,
+    PointerPositionDirective,
     PointerPositionByKeyDirective
   ]
 })
