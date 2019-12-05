@@ -12,6 +12,7 @@ import {
 import { Subscription, Observable, of, zip } from 'rxjs';
 
 import OlFeature from 'ol/Feature';
+import OlRenderFeature from 'ol/render/Feature';
 import OlLayer from 'ol/layer/Layer';
 
 import OlDragBoxInteraction from 'ol/interaction/DragBox';
@@ -21,6 +22,7 @@ import { ListenerFunction } from 'ol/events';
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Feature } from '../../feature/shared/feature.interfaces';
+import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
@@ -189,21 +191,29 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       event.pixel,
       (featureOL: OlFeature, layerOL: OlLayer) => {
         if (featureOL) {
-          if (featureOL.get('features')) {
-            for (const feature of featureOL.get('features')) {
-              const newFeature = featureFromOl(feature, this.map.projection);
-              newFeature.meta = {
-                title: feature.values_.nom,
-                id: feature.id_,
-                icon: feature.values_._icon,
-                sourceTitle: layerOL.values_.title
-              };
-              clickedFeatures.push(newFeature);
-            }
+          if (featureOL instanceof OlRenderFeature) {
+            const featureFromRender: OlFeature = featureOL;
+            const feature = renderFeatureFromOl(
+              featureOL,
+              this.map.projection,
+              layerOL
+            );
+            clickedFeatures.push(feature);
           } else {
-            const feature = featureFromOl(featureOL, this.map.projection);
+            const feature = featureFromOl(
+              featureOL,
+              this.map.projection,
+              layerOL
+            );
             clickedFeatures.push(feature);
           }
+        } else {
+          const feature = featureFromOl(
+            featureOL,
+            this.map.projection,
+            layerOL
+          );
+          clickedFeatures.push(feature);
         }
       },
       {
@@ -219,14 +229,13 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
-            (feature.meta.id = feature.ol._id),
-              (feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
-                layer
-              ));
-            feature.meta.title =
-              feature.meta.title ||
-              this.queryService.getQueryTitle(feature, layer);
-            feature.meta.sourceTitle = layer.title;
+            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
+              layer
+            );
+            feature.meta.title = this.queryService.getQueryTitle(
+              feature,
+              layer
+            );
           }
         }
       });

@@ -2,6 +2,11 @@ import * as olextent from 'ol/extent';
 import * as olproj from 'ol/proj';
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
+import OlGeometryLayout from 'ol/geom/GeometryLayout';
+import OlPolygon from 'ol/geom/Polygon';
+import OlPoint from 'ol/geom/Point';
+import OlLineString from 'ol/geom/LineString';
+import OlRenderFeature from 'ol/render/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlLayer from 'ol/layer/Layer';
 import { uuid } from '@igo2/utils';
@@ -11,8 +16,7 @@ import {
   getEntityId,
   getEntityTitle,
   getEntityRevision,
-  getEntityProperty,
-  getEntityIcon
+  getEntityProperty
 } from '@igo2/common';
 
 import { IgoMap } from '../../map';
@@ -72,14 +76,67 @@ export function featureToOl(
 
   olFeature.set('_entityRevision', getEntityRevision(feature), true);
 
-  const icon = getEntityIcon(feature);
-  if (icon !== undefined) {
-    olFeature.set('_icon', icon, true);
-  }
-
   return olFeature;
 }
 
+export function renderFeatureFromOl(
+  olRenderFeature: OlRenderFeature,
+  projectionIn: string,
+  olLayer?: OlLayer,
+  projectionOut = 'EPSG:4326'
+  ): Feature {
+    let geom;
+    let title;
+    let exclude;
+    let excludeOffline;
+
+    if (olLayer) {
+      title = olLayer.get('title');
+      if (olLayer.get('sourceOptions')) {
+        exclude = olLayer.get('sourceOptions').excludeAttribute;
+        excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
+      }
+    } else {
+      title = olRenderFeature.get('_title');
+    }
+
+    const olFormat = new OlFormatGeoJSON();
+    const properties = olRenderFeature.getProperties();
+    const geometryType = olRenderFeature.getType();
+
+    if (geometryType === 'Polygon') {
+      const ends = olRenderFeature.ends_;
+      geom = new OlPolygon(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY, ends);
+    } else if (geometryType === 'Point') {
+      geom = new OlPoint(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY);
+    } else if (geometryType === 'LineString') {
+      geom = new OlLineString(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY);
+    }
+
+    const geometry = olFormat.writeGeometryObject(geom, {
+      dataProjection: projectionOut,
+      featureProjection: projectionIn
+    });
+
+    const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
+    const mapTitle = olRenderFeature.get('_mapTitle');
+
+    return {
+      type: FEATURE,
+      projection: projectionOut,
+      extent: olRenderFeature.getExtent(),
+      meta: {
+        id,
+        title: title ? title : mapTitle ? mapTitle : id,
+        mapTitle,
+        excludeAttribute: exclude,
+        excludeAttributeOffline: excludeOffline
+      },
+      properties,
+      geometry,
+      ol: olRenderFeature
+    };
+  }
 /**
  * Create a feature object out of an OL feature
  * The output object has a reference to the feature id.
@@ -114,12 +171,11 @@ export function featureFromOl(
   });
 
   if (olLayer) {
-    const sourceOptions = olLayer.get('sourceOptions');
     title = olLayer.get('title');
-    exclude = sourceOptions ? sourceOptions.excludeAttribute : undefined;
-    excludeOffline = sourceOptions
-      ? sourceOptions.excludeAttributeOffline
-      : undefined;
+    if (olLayer.get('sourceOptions')) {
+      exclude = olLayer.get('sourceOptions').excludeAttribute;
+      excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
+    }
   } else {
     title = olFeature.get('_title');
   }
