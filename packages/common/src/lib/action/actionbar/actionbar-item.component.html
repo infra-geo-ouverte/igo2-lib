@@ -19,9 +19,9 @@
   matTooltipShowDelay="500"
   [matTooltip]="withTooltip ? (tooltip | translate) : ''"
   [ngClass]="ngClass$ | async">
-  <mat-checkbox *ngIf="action.checkbox"
+  <mat-checkbox *ngIf="withTitle"
       (change)="action.handler()"
       [checked]="action.checkCondition">
+      {{title | translate}}
   </mat-checkbox>
-  <h4 class="title" *ngIf="withTitle" matLine>{{title | translate}}</h4>
 </mat-list-item>

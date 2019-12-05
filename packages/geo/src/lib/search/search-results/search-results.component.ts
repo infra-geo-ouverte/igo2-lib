@@ -18,6 +18,7 @@ import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
 import { SearchResult } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
+import { IgoMap } from '../../map';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -45,6 +46,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   private watcher: EntityStoreWatcher<SearchResult>;
 
+  @Input() map: IgoMap;
+
   /**
    * Search results store
    */
@@ -61,9 +64,19 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Input() mode: SearchResultMode = SearchResultMode.Grouped;
 
   /**
+   * Whether there should be a zoom button
+   */
+  @Input() withZoomButton = false;
+
+  /**
    * Event emitted when a result is focused
    */
   @Output() resultFocus = new EventEmitter<SearchResult>();
+
+  /**
+   * Event emitted when a result is unfocused
+   */
+  @Output() resultUnfocus = new EventEmitter<SearchResult>();
 
   /**
    * Event emitted when a result is selected
@@ -109,6 +122,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   onResultFocus(result: SearchResult) {
     this.store.state.update(result, {focused: true}, true);
     this.resultFocus.emit(result);
+  }
+
+  onResultUnfocus(result: SearchResult) {
+    this.resultUnfocus.emit(result);
   }
 
   /**

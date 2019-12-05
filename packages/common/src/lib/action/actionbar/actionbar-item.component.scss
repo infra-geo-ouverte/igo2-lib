@@ -16,6 +16,6 @@ mat-checkbox {
   height: 56px;
 }
 
-.item-checkbox ::ng-deep .mat-list-text {
-  margin-left: 55px;
+.item-checkbox ::ng-deep .mat-checkbox-label {
+  margin-left: 20px;
 }

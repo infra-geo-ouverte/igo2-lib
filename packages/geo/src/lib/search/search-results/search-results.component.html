@@ -19,11 +19,14 @@
         <igo-search-results-item
           igoListItem
           color="accent"
+          [map]="map"
           [result]="result"
           [showIcons]="showIcons"
+          [withZoomButton]="withZoomButton"
           [focused]="store.state.get(result).focused"
           [selected]="store.state.get(result).selected"
           (focus)="onResultFocus(result)"
+          (unfocus)="onResultUnfocus(result)"
           (select)="onResultSelect(result)">
 
           <ng-container igoSearchItemToolbar
