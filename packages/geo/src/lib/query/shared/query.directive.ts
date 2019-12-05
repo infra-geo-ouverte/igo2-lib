@@ -28,7 +28,7 @@ import { AnyLayer } from '../../layer/shared/layers/any-layer';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
- * By default, all layers are queryable but this cna ben controlled at
+ * By default, all layers are queryable but this can ben controlled at
  * the layer level.
  */
 @Directive({
