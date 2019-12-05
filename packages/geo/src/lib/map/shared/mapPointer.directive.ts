@@ -16,7 +16,7 @@ import { MapBrowserComponent } from '../../map/map-browser/map-browser.component
 
 import { transform } from 'ol/proj';
 /**
- * This directive return the pointer coordinate (on click or pointermove) 
+ * This directive return the pointer coordinate (on click or pointermove)
  * in [longitude, latitude], delayed by in input (pointerMoveDelay)
  * to avoid too many emitted values.
  */
