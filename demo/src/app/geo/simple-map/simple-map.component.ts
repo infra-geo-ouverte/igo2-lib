@@ -51,6 +51,6 @@ export class AppSimpleMapComponent {
   }
 
   onPointerMove(event) {
-    this.pointerCoord = event
+    this.pointerCoord = event;
   }
 }
