@@ -18,6 +18,7 @@ import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-sw
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
 import { MapOfflineDirective } from './shared/mapOffline.directive';
 import { MapPointerDirective } from './shared/mapPointer.directive';
+import { PointerPositionByKeyDirective } from './shared/map-pointer-position-by-key.directive';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { MapPointerDirective } from './shared/mapPointer.directive';
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
-    MapPointerDirective
+    MapPointerDirective,
+    PointerPositionByKeyDirective
   ],
   declarations: [
     MapBrowserComponent,
@@ -46,7 +48,8 @@ import { MapPointerDirective } from './shared/mapPointer.directive';
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
     MapOfflineDirective,
-    MapPointerDirective
+    MapPointerDirective,
+    PointerPositionByKeyDirective
   ]
 })
 export class IgoMapModule {}
