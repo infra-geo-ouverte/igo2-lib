@@ -70,8 +70,8 @@ export class AppTimeFilterComponent {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       params: {
-        layers: 'vg_observation_v_inondation_embacle_wmst',
-        version: '1.3.0'
+        LAYERS: 'vg_observation_v_inondation_embacle_wmst',
+        VERSION: '1.3.0'
       },
       timeFilterable: true,
       timeFilter: {

@@ -1,3 +1,10 @@
 export interface ClusterParam {
-    clusterRange?: Array<number>; // utiliser lorsqu'on veux une symbologie active pour une source cluster.
+  clusterRanges?: ClusterRange[];
+  radiusCalc?: (size: number) => number;
+}
+
+export interface ClusterRange {
+  minRadius?: number;
+  maxRadius?: number;
+  style: { [key: string]: any };
 }

@@ -9,7 +9,8 @@ import {
   CapabilitiesService,
   WMSDataSourceOptions,
   WMTSDataSourceOptions,
-  generateIdFromSourceOptions
+  generateIdFromSourceOptions,
+  WMSDataSourceOptionsParams
 } from '../../datasource';
 import {
   LayerOptions,
@@ -66,7 +67,10 @@ export class CatalogService {
       // Catalogs from API
       const catalogsFromApi$ = this.http
         .get<Catalog[]>(`${apiUrl}/catalogs`)
-        .pipe(catchError((response: HttpErrorResponse) => EMPTY));
+        .pipe(
+          map(catalogs => catalogs.map((c: any) => Object.assign(c, c.options))),
+          catchError((response: HttpErrorResponse) => EMPTY)
+        );
       observables$.push(catalogsFromApi$);
     }
 
@@ -225,10 +229,11 @@ export class CatalogService {
               : undefined;
 
             const params = Object.assign({}, catalogQueryParams, {
-              layers: layer.Name,
-              feature_count: catalog.count,
-              version: catalog.version || '1.3.0'
-            });
+              LAYERS: layer.Name,
+              FEATURE_COUNT: catalog.count,
+              VERSION: catalog.version || '1.3.0'
+            } as WMSDataSourceOptionsParams
+            );
             const baseSourceOptions = {
               type: 'wms',
               url: catalog.url,

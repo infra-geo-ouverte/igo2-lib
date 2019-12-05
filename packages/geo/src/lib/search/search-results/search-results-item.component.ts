@@ -18,7 +18,6 @@ import { SearchResult } from '../shared/search.interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsItemComponent {
-
   /**
    * Search result item
    */
@@ -47,6 +46,16 @@ export class SearchResultsItemComponent {
   }
 
   /**
+   * Search result tooltip
+   * @internal
+   */
+  get tooltipHtml(): string {
+    return this.titleHtml
+      .replace(/<small?[^>]+(>|$)/g, '\n')
+      .replace(/<\/?[^>]+(>|$)/g, '');
+  }
+
+  /**
    * Search result icon
    * @internal
    */
@@ -55,5 +64,4 @@ export class SearchResultsItemComponent {
   }
 
   constructor() {}
-
 }

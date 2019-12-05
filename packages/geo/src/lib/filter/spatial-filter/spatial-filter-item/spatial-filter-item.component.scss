@@ -1,0 +1,136 @@
+.header {
+    margin-top: 5px;
+    width: 100%;
+}
+
+.mat-slide-toggle {
+    padding: 5px;
+    margin-bottom: 15px;
+    width: 98%;
+
+    ::ng-deep .mat-slide-toggle-content {
+        width: calc(100% - 20px);
+    }
+}
+
+.title, .radius-form {
+    margin-left: 5px;
+}
+
+.mat-radio-group {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+}
+
+.mat-radio-button {
+    display: inline-flex;
+    position: relative;
+    margin-left: 16px;
+    margin-top: 10px;
+}
+
+.mat-form-field {
+    margin-top: 5px;
+}
+
+.mat-column-select {
+    overflow: auto;
+}
+
+.buttons {
+    margin-top: 10px;
+}
+
+.search-button {
+    left: 25px;
+    width: 150px;
+}
+
+.remove-button {
+    left: 75px;
+    margin: 15px;
+    width: 150px;
+}
+
+.clear-form-button {
+    left: 10px;
+    width: 150px;
+}
+
+.clear-search-button {
+    left: 10px;
+    width: 150px;
+}
+
+.thematics {
+    max-height: 150px;
+    overflow: auto;
+    margin-top: 5px;
+    width: 98%;
+}
+
+.results {
+    overflow: auto;
+    max-height: 250px;
+    width: 98%
+}
+
+.mat-column-typeResults {
+    max-width: 100px;
+    margin-right: 5px;
+}
+
+.radius {
+    width: 90%;
+}
+
+.radius ::ng-deep .mat-form-field-infix {
+    display: inline-flex;
+}
+
+.unit-field {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.example-tree-invisible {
+    display: none;
+}
+
+.tree-ul {
+    margin: 0px;
+    padding: 0px;
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+.tree-check, .tree-check-2 {
+    position: relative;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.thematics-header {
+    max-width: 250px;
+}
+
+.checks-header {
+    padding: none;
+    max-width: calc(100% - 316px);
+    overflow: hidden;
+}
+
+.mat-checkbox {
+    padding: 5px;
+}
+
+.mat-tree-node {
+    position: relative;
+    min-height: 42px;
+    width: 280px;
+}
+
+.mat-header-cell {
+    height: 56px;
+}

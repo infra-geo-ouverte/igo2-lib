@@ -9,8 +9,13 @@
   height: auto;
 }
 
+.mat-form-field {
+  width: 100%;
+}
+
 .mat-list-item >>> div.mat-list-item-content {
   display: inline-table;
+  width: 100%;
 }
 
 .logical {

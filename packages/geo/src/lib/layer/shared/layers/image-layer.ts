@@ -1,6 +1,8 @@
 import olLayerImage from 'ol/layer/Image';
 import olSourceImage from 'ol/source/Image';
 
+import { AuthInterceptor } from '@igo2/auth';
+
 import { ImageWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
 
@@ -16,9 +18,11 @@ export class ImageLayer extends Layer {
 
   private watcher: ImageWatcher;
 
-  constructor(options: ImageLayerOptions) {
-    super(options);
-
+  constructor(
+    options: ImageLayerOptions,
+    public authInterceptor?: AuthInterceptor
+  ) {
+    super(options, authInterceptor);
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -29,7 +33,7 @@ export class ImageLayer extends Layer {
     });
 
     const image = new olLayerImage(olOptions);
-    if (this.options.tokenKey) {
+    if (this.authInterceptor) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
         this.customLoader(tile, src);
       });
@@ -51,8 +55,13 @@ export class ImageLayer extends Layer {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
-    const token = localStorage.getItem(this.options.tokenKey);
-    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    const intercepted = this.authInterceptor.interceptXhr(xhr, src);
+    if (!intercepted) {
+      xhr.abort();
+      tile.getImage().src = src;
+      return;
+    }
+
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = function() {

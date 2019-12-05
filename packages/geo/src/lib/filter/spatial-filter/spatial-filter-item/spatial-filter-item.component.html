@@ -1,0 +1,149 @@
+<igo-geometry-form-field-input
+  [formControl]="formControl"
+  [map]="map"
+  [geometryType]="geometryType"
+  [drawGuide]="drawGuide$ | async"
+  [measure]="measure"
+  [drawControlIsActive]="drawControlIsActive"
+  [freehandDrawIsActive]="freehandDrawIsActive"
+  [drawStyle]="drawStyle$ | async"
+  [overlayStyle]="overlayStyle$ | async"
+  [radius]="radius">
+</igo-geometry-form-field-input>
+
+<div class="header">
+    <mat-slide-toggle *ngIf="!isPredefined()"
+      [checked]="drawControlIsActive"
+      [labelPosition]="'before'"
+      (change)="onDrawControlChange()">
+      {{'igo.geo.spatialFilter.drawControl' | translate}}
+    </mat-slide-toggle>
+    <mat-slide-toggle *ngIf="!isPredefined()"
+      [checked]="freehandDrawIsActive"
+      [labelPosition]="'before'"
+      (change)="onfreehandControlChange()">
+      {{'igo.geo.spatialFilter.freehandControl' | translate}}
+    </mat-slide-toggle>
+</div>
+
+  <div class="radius-unit" *ngIf="isPoint()">
+    <form class="radius-form">
+      <mat-form-field class="radius">
+        <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
+        [value]="1000" (input)="getRadius()" [readonly]="this.freehandDrawIsActive && this.formControl.value === null">
+        <label class="unit-field">
+          {{('igo.geo.measure.' + measureUnit) | translate}}
+        </label>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <mat-label class="title">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
+  <mat-radio-group [value]="selectedItemType">
+      <mat-radio-button *ngFor="let item of itemType"
+        [value]="item"
+        (change)="onItemTypeChange($event)">
+        {{'igo.geo.spatialFilter.' + item | translate}}
+      </mat-radio-button>
+  </mat-radio-group>
+
+<div class="thematics" *ngIf="selectedItemType==='Thematics'">
+  <mat-table>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef class="thematics-header">{{'igo.geo.spatialFilter.Thematics' | translate}}</mat-header-cell>
+      </ng-container>
+
+      <!-- Select Column -->
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef class="checks-header">
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="isAllSelected()"
+                        [indeterminate]="selectedThematics.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <!-- This is the tree node template for leaf nodes -->
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+      <li class="mat-tree-node">
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <button mat-icon-button disabled></button>
+        {{node.name}}
+        <mat-checkbox class="tree-check" (click)="$event.stopPropagation()"
+                      (change)="$event ? onToggleChange(node) : null"
+                      [checked]="selectedThematics.isSelected(node)">
+        </mat-checkbox>
+      </li>
+    </mat-tree-node>
+
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+        <div class="mat-tree-node">
+          <button mat-icon-button
+            (click)="onToggleClick(node)">
+            <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'"></mat-icon>
+          </button>
+          {{node.name}}
+          <mat-checkbox class="tree-check-2" (change)="$event ? childrensToggle(node) : null"
+                        [checked]="isAllSelected(node)"
+                        [indeterminate]="hasChildrenSelected(node) && !isAllSelected(node)">
+          </mat-checkbox>
+        </div>
+        <ul class="tree-ul" [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+          <ng-container matTreeNodeOutlet></ng-container>
+        </ul>
+    </mat-nested-tree-node>
+
+  </mat-tree>
+</div>
+
+<div class="buttons">
+
+    <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" [disabled]="!queryType && !zone"
+      (click)="clearSearch()">
+        {{'igo.geo.spatialFilter.clearSearch' | translate}}
+    </button>
+
+  <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="this.formControl.value === null"
+    (click)="this.formControl.reset()">
+    {{'igo.geo.spatialFilter.clearForm' | translate}}
+  </button>
+
+  <button mat-raised-button class="search-button" [disabled]="disableSearchButton()" color="primary"
+    (click)="toggleSearchButton()">
+    {{'igo.geo.spatialFilter.goSearch' | translate}}
+  </button>
+
+  <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button"
+    [disabled]="!layers.length" (click)="clearButton()">
+    {{'igo.geo.spatialFilter.removeLayer' | translate}}
+  </button>
+
+</div>
+
+<div class="results" *ngIf="store">
+  <mat-table class="results-list" [dataSource]="store.entities$.value">
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="typeResults">
+        <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.type' | translate}}</mat-header-cell>
+        <mat-cell *matCellDef="let result"> {{result.meta.title}} </mat-cell>
+      </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="nameResults">
+      <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.searchResults' | translate}}</mat-header-cell>
+      <mat-cell *matCellDef="let result"> {{result.properties.nom}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumnsResults"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumnsResults;"></mat-row>
+  </mat-table>
+</div>

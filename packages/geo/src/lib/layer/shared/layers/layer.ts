@@ -12,6 +12,7 @@ import olLayer from 'ol/layer/Layer';
 import { DataSource, Legend } from '../../../datasource';
 import { IgoMap } from '../../../map';
 
+import { AuthInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
 import { LayerOptions } from './layer.interface';
 
@@ -102,7 +103,7 @@ export abstract class Layer {
     return this.options.showInLayerList !== false;
   }
 
-  constructor(public options: LayerOptions) {
+  constructor(public options: LayerOptions, protected authInterceptor?: AuthInterceptor) {
     this.dataSource = options.source;
 
     this.ol = this.createOlLayer();

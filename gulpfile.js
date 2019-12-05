@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 const gulp = require('gulp');
 const del = require('del');
+const babel = require('gulp-babel');
 const exec = require('gulp-exec');
 const merge = require('gulp-merge-json');
 const jeditor = require('gulp-json-editor');
@@ -381,6 +382,25 @@ gulp.task('geo:fixOL', done => {
       })
     )
     .pipe(gulp.dest('./node_modules/ol/'));
+
+  done();
+});
+
+gulp.task('geo:fixMapbox', done => {
+  gulp
+    .src(
+      [
+        './node_modules/@mapbox/mapbox-gl-style-spec/deref.js',
+        './node_modules/ol-mapbox-style/stylefunction.js'
+      ],
+      { base: './' }
+    )
+    .pipe(
+      babel({
+        presets: ['@babel/env']
+      })
+    )
+    .pipe(gulp.dest('.'));
 
   done();
 });

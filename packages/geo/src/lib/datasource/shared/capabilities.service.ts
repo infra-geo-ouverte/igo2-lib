@@ -38,7 +38,7 @@ export class CapabilitiesService {
     baseOptions: WMSDataSourceOptions
   ): Observable<WMSDataSourceOptions> {
     const url = baseOptions.url;
-    const version = (baseOptions.params as any).version;
+    const version = (baseOptions.params as any).VERSION;
 
     return this.getCapabilities('wms', url, version).pipe(
       map((capabilities: any) => {
@@ -151,7 +151,7 @@ export class CapabilitiesService {
     baseOptions: WMSDataSourceOptions,
     capabilities: any
   ): WMSDataSourceOptions {
-    const layers = (baseOptions.params as any).layers;
+    const layers = (baseOptions.params as any).LAYERS;
     const layer = this.findDataSourceInCapabilities(
       capabilities.Capability.Layer,
       layers

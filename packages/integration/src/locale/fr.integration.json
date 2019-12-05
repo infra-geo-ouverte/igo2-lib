@@ -12,8 +12,9 @@
         "print": "Imprimer",
         "searchResults": "Résultats de recherche",
         "shareMap": "Partager",
-        "timeFilter": "Filtre Temporel",
-        "about": "À propos"
+        "timeFilter": "Filtre temporel",
+        "about": "À propos",
+        "spatialFilter": "Filtre spatial"
       },
       "searchResultsTool": {
         "noResults": "Aucun résultat",
