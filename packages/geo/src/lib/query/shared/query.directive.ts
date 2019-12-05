@@ -124,7 +124,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Stop listenig for map clicks
+   * Stop listening for map clicks
    */
   private unlistenToMapClick() {
     this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);

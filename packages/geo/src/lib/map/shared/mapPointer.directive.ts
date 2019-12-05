@@ -110,7 +110,7 @@ export class MapPointerDirective implements OnInit, OnDestroy {
   }
 
   /**
-   * Stop listenig for map clicks
+   * Stop listening for map clicks
    */
   private unlistenToMapClick() {
     this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);
