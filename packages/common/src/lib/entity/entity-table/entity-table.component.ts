@@ -12,6 +12,7 @@ import {
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
+  EntityKey,
   EntityRecord,
   EntityState,
   EntityStore,
@@ -52,6 +53,13 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * Subscription to the store's selection
    */
   private selection$$: Subscription;
+
+  /**
+   * The last record checked. Useful for selecting
+   * multiple records by holding the shift key and checking
+   * checkboxes.
+   */
+  private lastRecordCheckedKey: EntityKey;
 
   /**
    * Entity store
@@ -255,6 +263,46 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     if (toggle === true) {
       this.entitySelectChange.emit({added: [entity]});
     }
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
+  }
+
+  /**
+   * When an entity is toggled, select or unselect it in the store. On select,
+   * emit an event.
+   * @param toggle Select or unselect
+   * @param record Record
+   * @internal
+   */
+  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>) {
+    if (this.selection === false) { return; }
+
+    if (this.selectMany === false || this.lastRecordCheckedKey === undefined) {
+      this.onToggleRow(toggle, record);
+      return;
+    }
+
+    // This is a workaround mat checkbox wrong behavior
+    // when the shift key is held.
+    // See https://github.com/angular/components/issues/6232
+    const range = window.document.createRange();
+    range.selectNode(event.target as HTMLElement);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    event.stopImmediatePropagation();
+
+    const records = this.store.stateView.all()
+    const recordIndex = records.indexOf(record);
+    const lastRecordChecked = this.store.stateView.get(this.lastRecordCheckedKey);
+    const lastRecordIndex = records.indexOf(lastRecordChecked);
+    const indexes = [recordIndex, lastRecordIndex];
+    const selectRecords = records.slice(Math.min(...indexes), Math.max(...indexes) + 1);
+
+    const entities = selectRecords.map((_record: EntityRecord<object>) => _record.entity);
+    this.store.state.updateMany(entities, {selected: toggle});
+    if (toggle === true) {
+      this.entitySelectChange.emit({added: entities});
+    }
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
   }
 
   /**
@@ -267,7 +315,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     const selectionCount = selectedRecords.length;
     return selectionCount === 0 ?
       states.None :
-      (selectionCount === this.store.view.count ? states.All : states.Some);
+      (selectionCount === this.store.stateView.count ? states.All : states.Some);
   }
 
   /**

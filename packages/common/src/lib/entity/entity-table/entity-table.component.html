@@ -19,7 +19,8 @@
         </ng-container>
       </th>
       <td mat-cell *matCellDef="let record">
-        <mat-checkbox (click)="$event.stopPropagation()"
+        <mat-checkbox (mousedown)="$event.shiftKey ? $event.preventDefault() : null"
+                      (click)="$event.shiftKey ? onShiftToggleRow(!rowIsSelected(record), record) : $event.stopPropagation()"
                       (change)="onToggleRow($event.checked, record)"
                       [checked]="rowIsSelected(record)">
         </mat-checkbox>
