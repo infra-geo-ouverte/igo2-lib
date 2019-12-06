@@ -83,6 +83,12 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
 
+  /**
+   * Events emitted when a result is focus or unfocus by mouse event
+   */
+  @Output() resultMouseenter = new EventEmitter<SearchResult>();
+  @Output() resultMouseleave = new EventEmitter<SearchResult>();
+
   @ContentChild('igoSearchItemToolbar') templateSearchToolbar: TemplateRef<any>;
 
   get results$(): Observable<{source: SearchSource; results: SearchResult[]}[]> {

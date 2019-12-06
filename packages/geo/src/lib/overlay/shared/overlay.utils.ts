@@ -26,6 +26,7 @@ export function createOverlayLayer(): VectorLayer {
 function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
   const defaultStyle = createOverlayDefaultStyle();
   const markerStyle = createOverlayMarkerStyle();
+
   let style;
 
   return (olFeature: OlFeature) => {
@@ -50,14 +51,21 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
  * Create a basic style for lines and polygons
  * @returns Style
  */
-function createOverlayDefaultStyle(): olstyle.Style {
+export function createOverlayDefaultStyle(color: number[]  = [0, 161, 222, 0.3], text?: string, opacity?: number): olstyle.Style {
+  const colorWithOpacity = color.slice(0);
+  const colorWithoutOpacity = color.slice(0);
+  colorWithoutOpacity[3] = 1;
+  if (opacity) {
+    colorWithOpacity[3] = opacity;
+  }
+
   const stroke = new olstyle.Stroke({
     width: 2,
-    color: [0, 161, 222, 1]
+    color: colorWithoutOpacity
   });
 
-  const fill = new olstyle.Stroke({
-    color: [0, 161, 222, 0.15]
+  const fill = new olstyle.Fill({
+    color: colorWithOpacity
   });
 
   return new olstyle.Style({
@@ -69,6 +77,7 @@ function createOverlayDefaultStyle(): olstyle.Style {
       fill
     }),
     text: new olstyle.Text({
+      text,
       font: '12px Calibri,sans-serif',
       fill: new olstyle.Fill({ color: '#000' }),
       stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
@@ -81,7 +90,7 @@ function createOverlayDefaultStyle(): olstyle.Style {
  * Create a marker style for points
  * @returns Style
  */
-export function createOverlayMarkerStyle(color = 'blue', text?, opacity?): olstyle.Style {
+export function createOverlayMarkerStyle(color: string = 'blue', text?: string, opacity: number = 1): olstyle.Style {
   let iconColor;
   switch (color) {
     case 'blue':
@@ -97,7 +106,7 @@ export function createOverlayMarkerStyle(color = 'blue', text?, opacity?): olsty
   return new olstyle.Style({
     image: new olstyle.Icon({
       src: './assets/igo2/geo/icons/place_' + iconColor + '_36px.svg',
-      opacity: opacity ? opacity : undefined,
+      opacity,
       imgSize: [36, 36], // for ie
       anchor: [0.5, 1]
     }),

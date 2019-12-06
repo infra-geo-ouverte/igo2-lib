@@ -27,7 +27,9 @@
           [selected]="store.state.get(result).selected"
           (focus)="onResultFocus(result)"
           (unfocus)="onResultUnfocus(result)"
-          (select)="onResultSelect(result)">
+          (select)="onResultSelect(result)"
+          (mouseenter)="resultMouseenter.emit(result)"
+          (mouseleave)="resultMouseleave.emit(result)">
 
           <ng-container igoSearchItemToolbar
             [ngTemplateOutlet]="templateSearchToolbar"
