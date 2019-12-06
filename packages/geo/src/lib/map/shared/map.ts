@@ -266,7 +266,7 @@ export class IgoMap {
     const newLayers = this.layers$.value.slice(0);
     const layersToRemove = [];
     layers.forEach((layer: Layer) => {
-      const index = this.getLayerIndex(layer);
+      const index = newLayers.indexOf(layer);
       if (index >= 0) {
         layersToRemove.push(layer);
         newLayers.splice(index, 1);
