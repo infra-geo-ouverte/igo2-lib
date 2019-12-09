@@ -51,13 +51,18 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
  * Create a basic style for lines and polygons
  * @returns Style
  */
-export function createOverlayDefaultStyle(color: number[]  = [0, 161, 222, 0.3], text?: string, opacity?: number): olstyle.Style {
+export function createOverlayDefaultStyle(
+  {text, fillOpacity, strokeOpacity, color = [0, 161, 222, 0.3]}:
+    {text?: string, fillOpacity?: number, strokeOpacity?: number, color?: number[]}  = {}
+  ): olstyle.Style {
   const fillWithOpacity = color.slice(0);
   const strokeWithOpacity = color.slice(0);
   strokeWithOpacity[3] = 1;
-  if (opacity) {
-    fillWithOpacity[3] = opacity;
-    strokeWithOpacity[3] = 0.5;
+  if (fillOpacity) {
+    fillWithOpacity[3] = fillOpacity;
+  }
+  if (strokeOpacity) {
+    strokeWithOpacity[3] = strokeOpacity;
   }
 
   const stroke = new olstyle.Stroke({
@@ -91,7 +96,10 @@ export function createOverlayDefaultStyle(color: number[]  = [0, 161, 222, 0.3],
  * Create a marker style for points
  * @returns Style
  */
-export function createOverlayMarkerStyle(color: string = 'blue', text?: string, opacity: number = 1): olstyle.Style {
+export function createOverlayMarkerStyle(
+  {text, opacity = 1, color = 'blue'}: 
+    {text?: string, opacity?: number, color?: string}  = {}
+  ): olstyle.Style {
   let iconColor;
   switch (color) {
     case 'blue':
