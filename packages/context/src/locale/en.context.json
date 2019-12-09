@@ -96,18 +96,18 @@
           "copyTitle": "Link"
         },
         "placeholderLink": "Link",
-        "included": "Included in shared URL",
-        "context": "The context when creating the sharing link",
-        "center": "The coordinates of the center of the map (longitude, latitude)",
-        "zoom": "The zoom level of the map",
-        "addedLayers": "The layers added by the catalog or by the search bar",
-        "visibleInvisible": "Visibility status of layers",
-        "layerListControls": "The restrictions applied to the table of contents (keyword, alphabetical order, visibility and scale)",
-        "excluded": "Excluded from the shared URL",
-        "order": "The order of the layers",
-        "opacity": "Modifications made to the opacity of the layers",
-        "filterOgc": "Additions / modifications made to filters by attribute",
-        "filterTime": "The current value for time filters"
+        "included": "Included in shared URL :",
+        "context": "The context when creating the sharing link.",
+        "center": "The coordinates of the center of the map (longitude, latitude).",
+        "zoom": "The zoom level of the map.",
+        "addedLayers": "The layers added by the catalog or by the search bar.",
+        "visibleInvisible": "Visibility status of layers.",
+        "layerListControls": "The restrictions applied to the table of contents (keyword, alphabetical order, visibility and scale).",
+        "excluded": "Excluded in the shared URL :",
+        "order": "The order of the layers.",
+        "opacity": "Modifications made to the opacity of the layers.",
+        "filterOgc": "Additions / modifications made to filters by attribute.",
+        "filterTime": "The current value for time filters."
       },
       "tool": {
         "dialog": {
