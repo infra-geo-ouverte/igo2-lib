@@ -2,3 +2,20 @@ mat-list-item.igo-actionbar-item-disabled {
   color: rgba(0, 0, 0, 0.26);
   cursor: default !important;
 }
+
+mat-list-item.igo-actionbar-item-no-display {
+  display: none;
+}
+
+mat-checkbox {
+  position: absolute;
+  padding: 12px;
+}
+
+.item-checkbox {
+  height: 56px;
+}
+
+.item-checkbox ::ng-deep .mat-checkbox-label {
+  margin-left: 20px;
+}

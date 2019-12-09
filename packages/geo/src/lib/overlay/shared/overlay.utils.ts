@@ -2,7 +2,7 @@ import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
 
 import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer';
+import { VectorLayer, StyleService } from '../../layer';
 
 /**
  * Create an overlay layer and it's source
@@ -26,6 +26,7 @@ export function createOverlayLayer(): VectorLayer {
 function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
   const defaultStyle = createOverlayDefaultStyle();
   const markerStyle = createOverlayMarkerStyle();
+
   let style;
 
   return (olFeature: OlFeature) => {
@@ -33,6 +34,11 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
       style = createBufferStyle(olFeature.get('bufferStroke'), 2, olFeature.get('bufferFill'), olFeature.get('bufferText'));
       return style;
     } else {
+      const customStyle = olFeature.get('_style');
+      if (customStyle) {
+        const styleService = new StyleService();
+        return styleService.createStyle(customStyle);
+      }
       const geometryType = olFeature.getGeometry().getType();
       style = geometryType === 'Point' ? markerStyle : defaultStyle;
       style.getText().setText(olFeature.get('_mapTitle'));
@@ -45,14 +51,27 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
  * Create a basic style for lines and polygons
  * @returns Style
  */
-function createOverlayDefaultStyle(): olstyle.Style {
+export function createOverlayDefaultStyle(
+  {text, fillOpacity, strokeOpacity, color = [0, 161, 222, 0.3]}:
+    {text?: string, fillOpacity?: number, strokeOpacity?: number, color?: number[]}  = {}
+  ): olstyle.Style {
+  const fillWithOpacity = color.slice(0);
+  const strokeWithOpacity = color.slice(0);
+  strokeWithOpacity[3] = 1;
+  if (fillOpacity) {
+    fillWithOpacity[3] = fillOpacity;
+  }
+  if (strokeOpacity) {
+    strokeWithOpacity[3] = strokeOpacity;
+  }
+
   const stroke = new olstyle.Stroke({
     width: 2,
-    color: [0, 161, 222, 1]
+    color: strokeWithOpacity
   });
 
-  const fill = new olstyle.Stroke({
-    color: [0, 161, 222, 0.15]
+  const fill = new olstyle.Fill({
+    color: fillWithOpacity
   });
 
   return new olstyle.Style({
@@ -64,6 +83,7 @@ function createOverlayDefaultStyle(): olstyle.Style {
       fill
     }),
     text: new olstyle.Text({
+      text,
       font: '12px Calibri,sans-serif',
       fill: new olstyle.Fill({ color: '#000' }),
       stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
@@ -76,7 +96,10 @@ function createOverlayDefaultStyle(): olstyle.Style {
  * Create a marker style for points
  * @returns Style
  */
-export function createOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
+export function createOverlayMarkerStyle(
+  {text, opacity = 1, color = 'blue'}: 
+    {text?: string, opacity?: number, color?: string}  = {}
+  ): olstyle.Style {
   let iconColor;
   switch (color) {
     case 'blue':
@@ -92,6 +115,7 @@ export function createOverlayMarkerStyle(color = 'blue', text?): olstyle.Style {
   return new olstyle.Style({
     image: new olstyle.Icon({
       src: './assets/igo2/geo/icons/place_' + iconColor + '_36px.svg',
+      opacity,
       imgSize: [36, 36], // for ie
       anchor: [0.5, 1]
     }),
