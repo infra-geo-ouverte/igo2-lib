@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
+import olFormatGeoJSON from 'ol/format/GeoJSON';
 
 import {
   getEntityTitle,
@@ -7,6 +8,8 @@ import {
 } from '@igo2/common';
 
 import { SearchResult } from '../shared/search.interfaces';
+import { FeatureMotion, moveToOlFeatures } from '../../feature';
+import { IgoMap } from '../../map';
 
 /**
  * Search results list item
@@ -23,6 +26,8 @@ export class SearchResultsItemComponent {
    */
   @Input() result: SearchResult;
 
+  @Input() map: IgoMap;
+
   /**
    * Search result title
    * @internal
@@ -32,6 +37,15 @@ export class SearchResultsItemComponent {
    * to show hide results icons
    */
   @Input() showIcons: boolean;
+
+  /**
+   * Whether there should be a zoom button
+   */
+  @Input() withZoomButton = false;
+
+  @Output() zoomEvent = new EventEmitter<boolean>();
+
+  private format = new olFormatGeoJSON();
 
   get title(): string {
     return getEntityTitle(this.result);
@@ -64,4 +78,12 @@ export class SearchResultsItemComponent {
   }
 
   constructor() {}
+
+  onZoomHandler() {
+    const olFeature = this.format.readFeature(this.result.data, {
+      dataProjection: this.result.data.projection,
+      featureProjection: this.map.projection
+    });
+    moveToOlFeatures(this.map, [olFeature], FeatureMotion.Default);
+  }
 }
