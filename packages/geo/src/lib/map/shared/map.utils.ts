@@ -119,24 +119,14 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   } else if (utmRegex.test(coordStr)) {
     isXYCoords = true;
     [, pattern, zone, lon, lat] = coordStr.match(patternUtm);
-    const utm = '+proj=' + pattern + ' +zone=' + zone;
-    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-    [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+    const epsgUtm = Number(zone) < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
+    [lon, lat] = olproj.transform([parseFloat(lon), parseFloat(lat)], epsgUtm, 'EPSG:4326');
 
   } else if (mtmRegex.test(coordStr)) {
     isXYCoords = true;
     [, pattern, zone, lon, lat] = coordStr.match(patternMtm);
-    let lon0;
-    if (Number(zone) <= 2) {
-      lon0 = -50 - Number(zone) * 3;
-    } else if (Number(zone) >= 12) {
-      lon0 = -81 - (Number(zone) - 12) * 3;
-    } else {
-      lon0 = -49.5 - Number(zone) * 3;
-    }
-    const mtm = `+proj=tmerc +lat_0=0 +lon_0=${lon0} +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +units=m +no_defs`;
-    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-    [lon, lat] = proj4(mtm, wgs84, [parseFloat(lon), parseFloat(lat)]);
+    const epsgMtm = Number(zone) < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + Number(zone)}`;
+    [lon, lat] =  olproj.transform([parseFloat(lon), parseFloat(lat)], epsgMtm,  'EPSG:4326');
 
   } else if (dmdRegex.test(coordStr)) {
     [,
