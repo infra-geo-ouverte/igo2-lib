@@ -349,7 +349,9 @@ export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
  */
 export function lonLatConversion(lonLat: [number, number], projections: Projection[]) {
 
-  const convertedLonLat = [];
+  const convertedLonLat = [
+    {code: 'EPSG:3857', alias: 'Web mercator', coord: olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857') }
+  ];
 
   // detect the current utm zone.
   const utmZone = utmZoneFromLonLat(lonLat);
