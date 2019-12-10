@@ -10,6 +10,8 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService } from '@igo2/core';
 import { GoogleLinks } from '../../../utils/googleLinks';
+import { Projection } from '../../../map/shared/projection.interfaces';
+import { lonLatConversion } from '../../../map/shared/map.utils';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -28,6 +30,8 @@ export class CoordinatesReverseSearchSource extends SearchSource
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
+  private projections;
+
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   get title(): string {
@@ -36,9 +40,11 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   constructor(
     @Inject('options') options: SearchSourceOptions,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    @Inject('projections') projections: Projection[],
   ) {
     super(options);
+    this.projections = projections;
     this.languageService.translate
       .get(this.options.title)
       .subscribe(title => this.title$.next(title));
@@ -72,7 +78,22 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return of([this.dataToResult(lonLat)]);
   }
 
+  roundToFiveDecimals(num: number) {
+    return Math.round(Number(num * 100000)) / 100000;
+  }
+
   private dataToResult(data: [number, number]): SearchResult<Feature> {
+    const convertedCoord = lonLatConversion(data, this.projections);
+    const coords = convertedCoord.reduce((obj, item) => (
+      obj[item.alias] = String(this.roundToFiveDecimals(item.coord[0])) + ', '
+      + String(this.roundToFiveDecimals(item.coord[1])), obj), {});
+
+    const roundedCoordString = String(this.roundToFiveDecimals(data[0])) + ', ' + String(this.roundToFiveDecimals(data[1]));
+    // provide the right syntax to trigger search by coordinate in the app.
+    this.projections.forEach(projection => {
+      coords[projection.alias] = `${coords[projection.alias]};${projection.code.split(':')[1]}`;
+    });
+
     return {
       source: this,
       data: {
@@ -83,9 +104,9 @@ export class CoordinatesReverseSearchSource extends SearchSource
           coordinates: [data[0], data[1]]
         },
         extent: undefined,
-        properties: {
+        properties: Object.assign({}, {
           type: 'point',
-          coordonnees: String(Math.round(Number(data[0] * 100000)) / 100000) + ', ' + String(Math.round(Number(data[1] * 100000)) / 100000),
+          coordonnees: roundedCoordString,
           format: 'degrés decimaux',
           systemeCoordonnees: 'WGS84',
           GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
@@ -93,16 +114,16 @@ export class CoordinatesReverseSearchSource extends SearchSource
             data[0],
             data[1]
           )
-        },
+        }, coords),
         meta: {
           id: '1',
-          title: String(Math.round(Number(data[0] * 100000)) / 100000) + ', ' + String(Math.round(Number(data[1] * 100000)) / 100000)
+          title: roundedCoordString
         }
       },
       meta: {
         dataType: FEATURE,
         id: '1',
-        title: String(Math.round(Number(data[0] * 100000)) / 100000) + ', ' + String(Math.round(Number(data[1] * 100000)) / 100000),
+        title: roundedCoordString,
         icon: 'map-marker'
       }
     };
