@@ -33,7 +33,7 @@ import * as olformat from 'ol/format';
 export class StoredQueriesSearchSource extends SearchSource implements TextSearch {
   static id = 'storedqueries';
   static type = FEATURE;
-  static propertiesBlacklist: string[] = [];
+  static propertiesBlacklist: string[] = ['boundedBy', 'id', 'coord_x', 'coord_y'];
   public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
   public multipleFieldsQuery: boolean;
@@ -44,12 +44,35 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   ) {
     super(options);
     this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions ;
+
+    const defaultStoredqueryId = 'rtss';
+    const defaultFieldSplitter: StoredQueriesFields[] = [
+      { name: 'rtss', defaultValue: '-99' },
+      { name: 'chainage', defaultValue: '0', splitPrefix: '\\+' }
+    ];
+    const defaultOutputformat = 'text/xml; subtype=gml/3.1.1';
+    const defaultSrsname = 'EPSG:4326';
+    const defaultResultTitle = 'title';
+
+    if (!this.storedQueriesOptions) {
+      console.log(' No configuration for this search source (storedqueries). You will use the default values');
+      this.storedQueriesOptions = {
+        storedquery_id: defaultStoredqueryId,
+        fields: defaultFieldSplitter,
+        outputformat: defaultOutputformat,
+        srsname: defaultSrsname,
+        resultTitle: defaultResultTitle
+      };
+      this.resultTitle = defaultResultTitle;
+      console.log('Default values', this.storedQueriesOptions);
+    }
+
     if (!this.storedQueriesOptions.storedquery_id) {
-      const err = 'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';
+      const err = 'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie". You will use de the default values.';
       throw new Error(err);
     }
     if (!this.storedQueriesOptions.fields) {
-      throw new Error('Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}');
+      throw new Error('Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}. You will use de the default values.');
     }
 
     this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
@@ -60,10 +83,6 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
       let err = 'You must set a geojson format for your stored query. This is due to an openlayers issue)';
       err += ' (wfs 1.1.0 & gml 3.1.1 limitation)';
       throw new Error(err);
-    }
-
-    if (!this.storedQueriesOptions.fields) {
-      throw new Error('Stored Queries :You must set a fields definition for your stored query');
     }
 
     if (!(this.storedQueriesOptions.fields instanceof Array)) {
@@ -95,17 +114,17 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
-      searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
     };
   }
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
   //  tslint:disable-next-line:max-line-length
-  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
+  //  https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
   //  tslint:disable-next-line:max-line-length
-  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
+  //  https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
    * Search a location by name or keyword
