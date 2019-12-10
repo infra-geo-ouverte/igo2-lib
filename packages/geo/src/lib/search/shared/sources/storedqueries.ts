@@ -30,10 +30,16 @@ import * as olformat from 'ol/format';
  * StoredQueries search source
  */
 @Injectable()
-export class StoredQueriesSearchSource extends SearchSource implements TextSearch {
+export class StoredQueriesSearchSource extends SearchSource
+  implements TextSearch {
   static id = 'storedqueries';
   static type = FEATURE;
-  static propertiesBlacklist: string[] = [];
+  static propertiesBlacklist: string[] = [
+    'boundedBy',
+    'id',
+    'coord_x',
+    'coord_y'
+  ];
   public resultTitle: 'title';
   public storedQueriesOptions: StoredQueriesSearchSourceOptions;
   public multipleFieldsQuery: boolean;
@@ -43,45 +49,86 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options);
-    this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions ;
+    this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions;
+    if (this.storedQueriesOptions && !this.storedQueriesOptions.available) {
+      return;
+    }
+
+    const defaultStoredqueryId = 'rtss';
+    const defaultFieldSplitter: StoredQueriesFields[] = [
+      { name: 'rtss', defaultValue: '-99' },
+      { name: 'chainage', defaultValue: '0', splitPrefix: '\\+' }
+    ];
+    const defaultOutputformat = 'text/xml; subtype=gml/3.1.1';
+    const defaultSrsname = 'EPSG:4326';
+    const defaultResultTitle = 'title';
+
+    if (!this.storedQueriesOptions) {
+      console.log(
+        ' No configuration for this search source (storedqueries). You will use the default values'
+      );
+      this.storedQueriesOptions = {
+        storedquery_id: defaultStoredqueryId,
+        fields: defaultFieldSplitter,
+        outputformat: defaultOutputformat,
+        srsname: defaultSrsname,
+        resultTitle: defaultResultTitle
+      };
+      this.resultTitle = defaultResultTitle;
+      console.log('Default values', this.storedQueriesOptions);
+    }
+
     if (!this.storedQueriesOptions.storedquery_id) {
-      const err = 'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';
+      const err =
+        'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie". You will use de the default values.';
       throw new Error(err);
     }
     if (!this.storedQueriesOptions.fields) {
-      throw new Error('Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}');
+      throw new Error(
+        'Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}. You will use de the default values.'
+      );
     }
 
-    this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
-    this.storedQueriesOptions.srsname = this.storedQueriesOptions.srsname || 'EPSG:4326';
+    this.storedQueriesOptions.outputformat =
+      this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
+    this.storedQueriesOptions.srsname =
+      this.storedQueriesOptions.srsname || 'EPSG:4326';
 
     const storedQueryId = this.storedQueriesOptions.storedquery_id.toLowerCase();
-    if (storedQueryId.includes('getfeaturebyid') && this.storedQueriesOptions.outputformat.toLowerCase().includes('getfeaturebyid') ) {
-      let err = 'You must set a geojson format for your stored query. This is due to an openlayers issue)';
+    if (
+      storedQueryId.includes('getfeaturebyid') &&
+      this.storedQueriesOptions.outputformat
+        .toLowerCase()
+        .includes('getfeaturebyid')
+    ) {
+      let err =
+        'You must set a geojson format for your stored query. This is due to an openlayers issue)';
       err += ' (wfs 1.1.0 & gml 3.1.1 limitation)';
       throw new Error(err);
-    }
-
-    if (!this.storedQueriesOptions.fields) {
-      throw new Error('Stored Queries :You must set a fields definition for your stored query');
     }
 
     if (!(this.storedQueriesOptions.fields instanceof Array)) {
       this.storedQueriesOptions.fields = [this.storedQueriesOptions.fields];
     }
 
-    this.multipleFieldsQuery  = this.storedQueriesOptions.fields.length > 1 ? true : false;
+    this.multipleFieldsQuery =
+      this.storedQueriesOptions.fields.length > 1 ? true : false;
 
     this.storedQueriesOptions.fields.forEach((field, index) => {
       if (this.multipleFieldsQuery && !field.splitPrefix && index !== 0) {
-        throw new Error('Stored Queries :You must set a field spliter into your field definition (optional for the first one!)');
+        throw new Error(
+          'Stored Queries :You must set a field spliter into your field definition (optional for the first one!)'
+        );
       }
       if (!field.defaultValue) {
-        throw new Error('Stored Queries :You must set a field default value into your field definition');
+        throw new Error(
+          'Stored Queries :You must set a field default value into your field definition'
+        );
       }
     });
 
-    this.storedQueriesOptions.resultTitle = this.storedQueriesOptions.resultTitle || this.resultTitle;
+    this.storedQueriesOptions.resultTitle =
+      this.storedQueriesOptions.resultTitle || this.resultTitle;
   }
 
   getId(): string {
@@ -95,17 +142,17 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Stored Queries',
-      searchUrl: 'https://ws.mapserver.transports.gouv.qc.ca/swtq'
+      searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
     };
   }
 
   // URL CALL EXAMPLES:
   //  GetFeatureById (mandatory storedquery for wfs server) (outputformat must be in geojson)
   //  tslint:disable-next-line:max-line-length
-  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
+  //  https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wfs&version=2.0.0&request=GetFeature&storedquery_id=urn:ogc:def:query:OGC-WFS::GetFeatureById&srsname=epsg:4326&outputformat=geojson&ID=a_num_route.132
   //  Custom StoredQuery
   //  tslint:disable-next-line:max-line-length
-  //  https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
+  //  https://geoegl.msp.gouv.qc.ca/apis/ws/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=rtss&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&rtss=0013801110000c&chainage=12
 
   /**
    * Search a location by name or keyword
@@ -116,21 +163,31 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     term: string,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
-    const storedqueriesParams = this.termSplitter(term, this.storedQueriesOptions.fields );
-    const params = this.computeRequestParams(options || {}, storedqueriesParams);
+    const storedqueriesParams = this.termSplitter(
+      term,
+      this.storedQueriesOptions.fields
+    );
+    const params = this.computeRequestParams(
+      options || {},
+      storedqueriesParams
+    );
 
-    if (new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)) {
+    if (
+      new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
+    ) {
       return this.http
-      .get(this.searchUrl, { params, responseType: 'text' })
-      .pipe(map((response) => {
-        return this.extractResults(this.extractWFSData(response));
-      }));
+        .get(this.searchUrl, { params, responseType: 'text' })
+        .pipe(
+          map(response => {
+            return this.extractResults(this.extractWFSData(response));
+          })
+        );
     } else {
-      return this.http
-      .get(this.searchUrl, { params })
-      .pipe(map((response) => {
-        return this.extractResults(this.extractWFSData(response));
-      }));
+      return this.http.get(this.searchUrl, { params }).pipe(
+        map(response => {
+          return this.extractResults(this.extractWFSData(response));
+        })
+      );
     }
   }
 
@@ -169,10 +226,9 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
       splittedTerm[field.name] = field.defaultValue;
       const splitterRegex = new RegExp(field.splitPrefix + '(.+)', 'i');
       if (splitterRegex.test(remainingTerm)) {
-        cnt = field.splitPrefix ? cnt += 1 : cnt;
+        cnt = field.splitPrefix ? (cnt += 1) : cnt;
         remainingTerm = remainingTerm.split(splitterRegex)[1];
       }
-
     });
     if (cnt === 0) {
       splittedTerm[fields[0].name] = term;
@@ -180,7 +236,7 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     }
     remainingTerm = term;
     const localFields = [...fields].reverse();
-    localFields.forEach((field) => {
+    localFields.forEach(field => {
       const splitterRegex = new RegExp(field.splitPrefix || '' + '(.+)', 'i');
       if (remainingTerm || remainingTerm !== '') {
         const values = remainingTerm.split(splitterRegex);
@@ -193,8 +249,15 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     return splittedTerm;
   }
 
-  private computeRequestParams(options: TextSearchOptions, queryParams): HttpParams {
-    const wfsversion = this.storedQueriesOptions.storedquery_id.toLowerCase().includes('getfeaturebyid') ? '2.0.0' : '1.1.0';
+  private computeRequestParams(
+    options: TextSearchOptions,
+    queryParams
+  ): HttpParams {
+    const wfsversion = this.storedQueriesOptions.storedquery_id
+      .toLowerCase()
+      .includes('getfeaturebyid')
+      ? '2.0.0'
+      : '1.1.0';
     return new HttpParams({
       fromObject: Object.assign(
         {
@@ -212,7 +275,9 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
     });
   }
 
-  private extractResults(response: StoredQueriesResponse): SearchResult<Feature>[] {
+  private extractResults(
+    response: StoredQueriesResponse
+  ): SearchResult<Feature>[] {
     return response.features.map((data: StoredQueriesData) => {
       return this.dataToResult(data);
     });
@@ -221,7 +286,9 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
   private dataToResult(data: StoredQueriesData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
-    const title = data.properties[this.storedQueriesOptions.resultTitle] ? this.storedQueriesOptions.resultTitle : this.resultTitle;
+    const title = data.properties[this.storedQueriesOptions.resultTitle]
+      ? this.storedQueriesOptions.resultTitle
+      : this.resultTitle;
     return {
       source: this,
       data: {
@@ -258,10 +325,10 @@ export class StoredQueriesSearchSource extends SearchSource implements TextSearc
  * StoredQueriesReverse search source
  */
 
- // EXAMPLE CALLS
- // tslint:disable-next-line:max-line-length
- // https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
- //
+// EXAMPLE CALLS
+// tslint:disable-next-line:max-line-length
+// https://ws.mapserver.transports.gouv.qc.ca/swtq?service=wfs&version=1.1.0&request=GetFeature&storedquery_id=lim_adm&srsname=epsg:4326&outputformat=text/xml;%20subtype=gml/3.1.1&long=-71.292469&lat=46.748107
+//
 
 @Injectable()
 export class StoredQueriesReverseSearchSource extends SearchSource
@@ -278,21 +345,29 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options);
-    this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions ;
+    this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions;
     if (!this.storedQueriesOptions.storedquery_id) {
-      const err = 'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';
+      const err =
+        'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';
       throw new Error(err);
     }
     if (!this.storedQueriesOptions.longField) {
-      throw new Error('Stored Queries :You have to set "longField" to map the longitude coordinate to the query params.');
+      throw new Error(
+        'Stored Queries :You have to set "longField" to map the longitude coordinate to the query params.'
+      );
     }
     if (!this.storedQueriesOptions.latField) {
-      throw new Error('Stored Queries :You have to set "latField" to map the latitude coordinate to the query params.');
+      throw new Error(
+        'Stored Queries :You have to set "latField" to map the latitude coordinate to the query params.'
+      );
     }
 
-    this.storedQueriesOptions.outputformat = this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
-    this.storedQueriesOptions.srsname = this.storedQueriesOptions.srsname || 'EPSG:4326';
-    this.storedQueriesOptions.resultTitle = this.storedQueriesOptions.resultTitle || this.resultTitle;
+    this.storedQueriesOptions.outputformat =
+      this.storedQueriesOptions.outputformat || 'text/xml; subtype=gml/3.1.1';
+    this.storedQueriesOptions.srsname =
+      this.storedQueriesOptions.srsname || 'EPSG:4326';
+    this.storedQueriesOptions.resultTitle =
+      this.storedQueriesOptions.resultTitle || this.resultTitle;
   }
 
   getId(): string {
@@ -322,20 +397,23 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
 
-    if (new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)) {
+    if (
+      new RegExp('.*?gml.*?', 'i').test(this.storedQueriesOptions.outputformat)
+    ) {
       return this.http
-      .get(this.searchUrl, { params, responseType: 'text' })
-      .pipe(map((response) => {
-        return this.extractResults(this.extractWFSData(response));
-      }));
+        .get(this.searchUrl, { params, responseType: 'text' })
+        .pipe(
+          map(response => {
+            return this.extractResults(this.extractWFSData(response));
+          })
+        );
     } else {
-      return this.http
-      .get(this.searchUrl, { params })
-      .pipe(map((response) => {
-        return this.extractResults(this.extractWFSData(response));
-      }));
+      return this.http.get(this.searchUrl, { params }).pipe(
+        map(response => {
+          return this.extractResults(this.extractWFSData(response));
+        })
+      );
     }
-
   }
 
   private getFormatFromOptions() {
@@ -367,7 +445,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     lonLat: [number, number],
     options?: ReverseSearchOptions
   ): HttpParams {
-    const longLatParams =  {};
+    const longLatParams = {};
     longLatParams[this.storedQueriesOptions.longField] = lonLat[0];
     longLatParams[this.storedQueriesOptions.latField] = lonLat[1];
 
@@ -379,7 +457,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
           request: 'GetFeature',
           storedquery_id: this.storedQueriesOptions.storedquery_id,
           srsname: this.storedQueriesOptions.srsname,
-          outputformat: this.storedQueriesOptions.outputformat,
+          outputformat: this.storedQueriesOptions.outputformat
         },
         longLatParams,
         this.params,
@@ -399,7 +477,9 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   private dataToResult(data: StoredQueriesReverseData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
-    const title = data.properties[this.storedQueriesOptions.resultTitle] ? this.storedQueriesOptions.resultTitle : this.resultTitle;
+    const title = data.properties[this.storedQueriesOptions.resultTitle]
+      ? this.storedQueriesOptions.resultTitle
+      : this.resultTitle;
 
     return {
       source: this,
@@ -422,7 +502,9 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     };
   }
 
-  private computeProperties(data: StoredQueriesReverseData): { [key: string]: any } {
+  private computeProperties(
+    data: StoredQueriesReverseData
+  ): { [key: string]: any } {
     const properties = ObjectUtils.removeKeys(
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist
