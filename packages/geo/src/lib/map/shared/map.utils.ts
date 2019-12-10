@@ -351,9 +351,11 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
 
   // detect the current mtm zone.
   const mtmZone = mtmZoneFromLonLat(lonLat);
-  const epsgMtm = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
-  const mtmName = `MTM-${mtmZone}`;
-  convertedLonLat.push( {code: epsgMtm, alias: mtmName, coord: olproj.transform(lonLat, 'EPSG:4326', epsgMtm) });
+  if (mtmZone) {
+    const epsgMtm = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
+    const mtmName = `MTM-${mtmZone}`;
+    convertedLonLat.push( {code: epsgMtm, alias: mtmName, coord: olproj.transform(lonLat, 'EPSG:4326', epsgMtm) });
+  }
 
   projections.forEach(projection => {
     convertedLonLat.push({code: projection.code, alias: projection.alias || projection.code, coord: olproj.transform(lonLat, 'EPSG:4326', projection.code) });
