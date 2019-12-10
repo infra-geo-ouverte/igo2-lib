@@ -4,6 +4,7 @@ import { MAC } from 'ol/has';
 
 import { MapViewState } from './map.interface';
 import proj4 from 'proj4';
+import { Projection } from './projection.interfaces';
 
 /**
  * This method extracts a coordinate tuple from a string.
@@ -336,4 +337,66 @@ export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
     (MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
     !originalEvent.shiftKey
   );
+}
+
+/**
+ * Returns an array of converted coordinates.
+ * Conversion is done for every configured projections
+ * and for the current UTM zone and MTM zone.
+ * @param lonLat [number, number] array of the coordinate to transform.
+ * @param projections  Projection[] Array of destination projection.
+ * @returns Returns an array of converted coordinates.
+ */
+export function lonLatConversion(lonLat: [number, number], projections: Projection[]) {
+
+  const convertedLonLat = [];
+
+  // detect the current utm zone.
+  const utmZone = utmZoneFromLonLat(lonLat);
+  const epsgUtm = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
+  const utmName = `UTM-${utmZone}`;
+  convertedLonLat.push({code: epsgUtm, alias: utmName, coord: olproj.transform(lonLat, 'EPSG:4326', epsgUtm) });
+
+  // detect the current mtm zone.
+  const mtmZone = mtmZoneFromLonLat(lonLat);
+  const epsgMtm = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
+  const mtmName = `MTM-${mtmZone}`;
+  convertedLonLat.push( {code: epsgMtm, alias: mtmName, coord: olproj.transform(lonLat, 'EPSG:4326', epsgMtm) });
+
+  projections.forEach(projection => {
+    convertedLonLat.push({code: projection.code, alias: projection.alias || projection.code, coord: olproj.transform(lonLat, 'EPSG:4326', projection.code) });
+  });
+
+  return convertedLonLat;
+
+}
+
+/**
+ * Detect the current utm zone of the lon/lat coordinate.
+ * @param lonLat [number, number] array of the coordinate to detect the UTM zone.
+ * @returns number The UTM zone.
+ */
+export function utmZoneFromLonLat(lonLat: [number, number]) {
+  return Math.ceil((lonLat[0] + 180) / 6);
+}
+
+/**
+ * Detect the current mtm zone of the lon/lat coordinate.
+ * @param lonLat [number, number] array of the coordinate to detect the MTM zone.
+ * @returns number The MTM zone. Undefined if outside of the mtm application zone.
+ */
+export function mtmZoneFromLonLat(lonLat: [number, number]) {
+  const long = lonLat[0];
+  let mtmZone;
+  if (long < -51 && long > -54) {mtmZone = 1; }
+  if (long < -54 && long > -57) {mtmZone = 2; }
+  if (long < -57 && long > -60) {mtmZone = 3; }
+  if (long < -60 && long > -63) {mtmZone = 4; }
+  if (long < -63 && long > -66) {mtmZone = 5; }
+  if (long < -66 && long > -69) {mtmZone = 6; }
+  if (long < -69 && long > -72) {mtmZone = 7; }
+  if (long < -72 && long > -75) {mtmZone = 8; }
+  if (long < -75 && long > -78) {mtmZone = 9; }
+  if (long < -78 && long > -81) {mtmZone = 10; }
+  return mtmZone;
 }
