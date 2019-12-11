@@ -630,6 +630,7 @@ export class IChercheReverseSearchSource extends SearchSource
       fromObject: Object.assign(
         {
           loc: lonLat.join(','),
+          sort: 'distance',
           geometry: true,
           icon: true
         },
