@@ -29,8 +29,9 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { take } from 'rxjs/operators';
 
 /**
- * This directive makes a map queryable with a click of with a drag box.
- * By default, all layers are queryable but this can ben controlled at
+ * This directive makes the mouse coordinate trigger a reverse search on available search sources.
+ * The search results are placed into a label, on a cross icon, representing the mouse coordinate.
+ * By default, no search sources. Config in config file must be defined.
  * the layer level.
  */
 @Directive({
@@ -45,7 +46,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   private reverseSearch$$: Subscription[] = [];
 
   /**
-   * Listener to the map click event
+   * Listener to the pointer move event
    */
   private pointerMoveListener: ListenerFunction;
 
@@ -53,7 +54,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   private pointerPositionLayer;
   private searchPointerSummaryFeatureId: string = 'searchPointerSummaryFeatureId';
   /**
-   * Whether all query should complete before emitting an event
+   * The delay where the mouse must be motionless before trigger the reverse search
    */
   @Input() pointerMoveDelay: number = 1000;
 
@@ -81,7 +82,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   ) { }
 
   /**
-   * Start listening to click and drag box events
+   * Start listening to pointermove and reverse search results.
    * @internal
    */
   ngOnInit() {
@@ -103,12 +104,13 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   }
 
   /**
-   * Stop listening to click and drag box events and cancel ongoind requests
+   * Stop listening to pointermove and reverse search results.
    * @internal
    */
   ngOnDestroy() {
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
+    this.unsubscribeReverseSearch();
 
     this.map.removeLayer(this.pointerPositionLayer);
   }
@@ -143,7 +145,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   }
 
   /**
-   * Stop listening for map clicks
+   * Stop listening for map pointermove
    */
   private unlistenToMapPointerMove() {
     this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
@@ -151,7 +153,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   }
 
   /**
-   * Issue queries from a map event and emit events with the results
+   * Trigger reverse search when the mouse is motionless during the defined delay (pointerMoveDelay).
    * @param event OL map browser pointer event
    */
   private onMapEvent(event: OlMapBrowserPointerEvent) {
@@ -213,15 +215,11 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     }
   }
 
-  private pointerPositionSummaryMarker(
-    { text, opacity = 1 }:
-      { text?: string, opacity?: number } = {}
-  ): olstyle.Style {
+  private pointerPositionSummaryMarker(text): olstyle.Style {
 
     return new olstyle.Style({
       image: new olstyle.Icon({
         src: './assets/igo2/geo/icons/cross_black_18px.svg',
-        opacity,
         imgSize: [18, 18], // for ie
       }),
 
