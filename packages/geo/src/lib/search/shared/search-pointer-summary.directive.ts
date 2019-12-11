@@ -202,7 +202,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     const feature = new olFeature({ geometry });
     feature.setId(this.searchPointerSummaryFeatureId);
 
-    const olStyle = this.pointerPositionSummaryMarker({ text });
+    const olStyle = this.pointerPositionSummaryMarker(text);
     feature.setStyle(olStyle);
     this.pointerPositionDataSource.ol.addFeature(feature);
 
