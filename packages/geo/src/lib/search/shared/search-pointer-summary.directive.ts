@@ -3,10 +3,11 @@ import {
   Input,
   OnDestroy,
   Self,
-  OnInit
+  OnInit,
+  HostListener
 } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
@@ -17,9 +18,10 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { SearchService } from './search.service';
 
 import { transform } from 'ol/proj';
-import { EntityStore } from '@igo2/common';
+
 import { SearchResult, Research } from './search.interfaces';
 import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
+import { EntityStore } from '@igo2/common';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -31,10 +33,11 @@ import { FEATURE, FeatureMotion } from '../../feature/shared/feature.enums';
 })
 export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
 
-  private lonLat: [ number, number]
-  private computedSummary$: BehaviorSubject<string> = new BehaviorSubject('');
-  public pointerSearchStore = new EntityStore<SearchResult>([]);
+  private lonLat: [ number, number];
+  public pointerSearchStore: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
   public lastTimeoutRequest;
+  private store$$: Subscription;
+  private reverseSearch$$: Subscription[] = [];
 
   /**
    * Listener to the map click event
@@ -46,6 +49,18 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    */
   @Input() pointerMoveDelay: number = 1000;
 
+  @HostListener('mouseout')
+  mouseout() {
+    // console.log('mouseout');
+    // console.log('deletePointerFeature');
+    clearTimeout(this.lastTimeoutRequest);
+    this.deletePointerFeature();
+  }
+
+  @HostListener('mouseenter')
+  mouseenter() {
+    console.log('enter');
+  }
   /**
    * IGO map
    * @internal
@@ -69,21 +84,8 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.listenToMapPointerMove();
-    this.pointerSearchStore.entities$.subscribe(positions => {
-     //  console.log('positions', positions)
-      const summary = []
-      positions.map(position => summary.push(position.meta.title));
+    this.subscribeToPointerStore();
 
-      console.log(summary.join('\n'))
-     
-
-
-
-      if (positions.length) {
-       // this.computedSummary$.next(summary.join('\n'))
-       this.addPointerOverlay(summary.join('\n') );
-      }
-    });
   }
 
   /**
@@ -91,8 +93,18 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    * @internal
    */
   ngOnDestroy() {
-    // this.cancelOngoingQueries();
     this.unlistenToMapPointerMove();
+    this.unsubscribeToPointerStore();
+  }
+
+  subscribeToPointerStore() {
+    this.store$$ = this.pointerSearchStore.entities$.subscribe(positions => {
+       const summary = [];
+       positions.map(position => summary.push(position.meta.title));
+      if (positions.length) {
+        this.addPointerOverlay(summary.join('\n'));
+      }
+     });
   }
 
   /**
@@ -101,8 +113,17 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event, this.pointerMoveDelay)
+      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
     );
+  }
+
+  unsubscribeToPointerStore() {
+    this.store$$.unsubscribe();
+  }
+
+  unsubscribeReverseSearch() {
+    this.reverseSearch$$.map(s => s.unsubscribe())
+    this.reverseSearch$$ = [];
   }
 
   /**
@@ -117,28 +138,33 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    * Issue queries from a map event and emit events with the results
    * @param event OL map browser pointer event
    */
-  private onMapEvent(event: OlMapBrowserPointerEvent, delay: number) {
+  private onMapEvent(event: OlMapBrowserPointerEvent) {
     if (event.dragging) { return; }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
+      this.deletePointerFeature();
+      this.unsubscribeReverseSearch();
     }
 
     this.lonLat = transform(event.coordinate, this.mapProjection, 'EPSG:4326');
+
     this.lastTimeoutRequest = setTimeout(() => {
-      // this.addPointerOverlay(lonlat);
+      // console.log('Delayed action');
+      // this.addPointerOverlay('');
       this.onSearchCoordinate();
-    }, delay);
+    }, this.pointerMoveDelay);
   }
 
   private onSearchCoordinate() {
     this.pointerSearchStore.clear();
-    const results = this.searchService.reverseSearch(this.lonLat);
+    const results = this.searchService.reverseSearch(this.lonLat, {params: {geometry: 'false', icon: 'false'}});
 
     for (const i in results) {
       if (results.length > 0) {
+        this.reverseSearch$$.push(
         results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
           this.onSearch({ research: results[i], results: _results });
-        });
+        }));
       }
     }
   }
@@ -149,6 +175,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
     this.pointerSearchStore.load(newResults);
+    // console.log('newResults', newResults)
   }
 
   private addPointerOverlay(text) {
@@ -164,9 +191,16 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
           id: 'pointerCoordLonLat',
           mapTitle: text
         }
-      
-    }
-    this.map.overlay.setFeatures([pointerFeature as any], FeatureMotion.None );
+
     };
-  
+    this.map.overlay.setFeatures([pointerFeature as any], FeatureMotion.None );
+    }
+
+    private deletePointerFeature() {
+      const pointerCoordLonLatFeature = this.map.overlay.dataSource.ol.getFeatureById('pointerCoordLonLat');
+      if (pointerCoordLonLatFeature) {
+        this.map.overlay.dataSource.ol.removeFeature(pointerCoordLonLatFeature);
+      }
+    }
+
 }
