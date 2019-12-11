@@ -231,6 +231,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
         textBaseline: 'bottom',
         font: '12px Calibri,sans-serif',
         fill: new olstyle.Fill({ color: '#000' }),
+        backgroundFill: new olstyle.Fill({ color: 'rgba(255, 255, 255, 0.65)' }),
         stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
         overflow: true,
         offsetX: 5,
