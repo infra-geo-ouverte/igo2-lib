@@ -21,12 +21,16 @@ import olFeature from 'ol/Feature';
 import { transform } from 'ol/proj';
 import * as olstyle from 'ol/style';
 import * as olgeom from 'ol/geom';
+import OlGeoJSON from 'ol/format/GeoJSON';
 
 import { SearchResult, Research } from './search.interfaces';
 import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { take } from 'rxjs/operators';
+import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
+import { FeatureStore } from '../../feature/shared/store';
+import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -39,6 +43,7 @@ import { take } from 'rxjs/operators';
 })
 export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
 
+  public store: FeatureStore<Feature>;
   private lonLat: [number, number];
   private pointerSearchStore: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
   private lastTimeoutRequest;
@@ -50,8 +55,6 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    */
   private pointerMoveListener: ListenerFunction;
 
-  private pointerPositionDataSource: FeatureDataSource;
-  private pointerPositionLayer;
   private searchPointerSummaryFeatureId: string = 'searchPointerSummaryFeatureId';
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
@@ -61,7 +64,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   @HostListener('mouseout')
   mouseout() {
     clearTimeout(this.lastTimeoutRequest);
-    this.deletePointerFeature();
+    this.store.clearLayer();
   }
 
   /**
@@ -89,18 +92,29 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     this.listenToMapPointerMove();
     this.subscribeToPointerStore();
 
-    this.pointerPositionDataSource = new FeatureDataSource({});
+    this.map.status$.pipe(take(1)).subscribe(() => {
+      this.store = new FeatureStore<Feature>([], {map: this.map});
+      this.initStore();
+    }
+    );
+  }
 
-    this.pointerPositionLayer = new VectorLayer({
+  /**
+   * Initialize the measure store and set up some listeners
+   * @internal
+   */
+  private initStore() {
+    const store = this.store;
+
+    const layer = new VectorLayer({
       title: 'searchPointerSummary',
-      zIndex: 999,
-      id: 'searchPointerSummaryId',
-      source: this.pointerPositionDataSource,
-      showInLayerList: true
+      zIndex: 900,
+      source: new FeatureDataSource(),
+      showInLayerList: false,
+      exportable: false,
+      browsable: false
     });
-
-    this.map.status$.pipe(take(1)).subscribe(() => this.map.addLayer(this.pointerPositionLayer));
-
+    tryBindStoreLayer(store, layer);
   }
 
   /**
@@ -112,21 +126,55 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     this.unsubscribeToPointerStore();
     this.unsubscribeReverseSearch();
 
-    this.map.removeLayer(this.pointerPositionLayer);
+    // this.map.removeLayer(this.pointerPositionLayer);
   }
 
   subscribeToPointerStore() {
-    this.store$$ = this.pointerSearchStore.entities$.subscribe(positions => {
-      const summary = [];
-      positions.map(position => summary.push(position.meta.title));
-      if (positions.length) {
-        this.addPointerOverlay(summary.join('\n'));
-      }
+    this.store$$ = this.pointerSearchStore.entities$.subscribe(resultsUnderPointerPosition => {
+      this.entitiesToPointerOverlay(resultsUnderPointerPosition);
+
     });
   }
 
+  private entitiesToPointerOverlay(resultsUnderPointerPosition: SearchResult[]) {
+
+    const closestResultByType = {};
+
+    resultsUnderPointerPosition.map(result => {
+      if (result.data.properties.type && result.data.properties.distance >= 0) {
+        if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
+          const prevDistance = closestResultByType[result.data.properties.type].distance;
+          if (result.data.properties.distance < prevDistance) {
+            closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+          }
+        } else {
+          closestResultByType[result.data.properties.type] = { distance: result.data.properties.distance, title: result.meta.title };
+        }
+      }
+    });
+
+    const summarizedClosestType = Object.keys(closestResultByType);
+    const processedSummarizedClosestType = [];
+    const summary = [];
+    resultsUnderPointerPosition.map(result => {
+      const typeIndex = summarizedClosestType.indexOf(result.data.properties.type);
+      if (typeIndex !== -1) {
+        summary.push(closestResultByType[result.data.properties.type].title);
+        summarizedClosestType.splice(typeIndex, 1);
+        processedSummarizedClosestType.push(result.data.properties.type);
+      } else {
+        if (processedSummarizedClosestType.indexOf(result.data.properties.type) === -1) {
+          summary.push(result.meta.title);
+        }
+      }
+    });
+    if (summary.length) {
+      this.addPointerOverlay(summary.join('\n'));
+    }
+  }
+
   /**
-   * On map click, issue queries
+   * On map pointermove
    */
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
@@ -160,7 +208,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     if (event.dragging) { return; }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
-      this.deletePointerFeature();
+      this.store.clearLayer();
       this.unsubscribeReverseSearch();
     }
 
@@ -173,7 +221,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
 
   private onSearchCoordinate() {
     this.pointerSearchStore.clear();
-    const results = this.searchService.reverseSearch(this.lonLat, { params: { geometry: 'false', icon: 'false' } });
+    const results = this.searchService.reverseSearch(this.lonLat, { params: { geometry: 'false', icon: 'false' } }, true);
 
     for (const i in results) {
       if (results.length > 0) {
@@ -194,48 +242,66 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   }
 
   private addPointerOverlay(text) {
-    this.deletePointerFeature();
+    this.store.clearLayer();
 
     const geometry = new olgeom.Point(
       transform(this.lonLat, 'EPSG:4326', this.mapProjection)
     );
     const feature = new olFeature({ geometry });
     feature.setId(this.searchPointerSummaryFeatureId);
+    feature.set('pointerSummary', text);
+    const olStyle = pointerPositionSummaryMarker(feature)
 
-    const olStyle = this.pointerPositionSummaryMarker(text);
-    feature.setStyle(olStyle);
-    this.pointerPositionDataSource.ol.addFeature(feature);
-
-  }
-
-  private deletePointerFeature() {
-    const localPointerCoordLonLatFeature = this.pointerPositionDataSource.ol.getFeatureById(this.searchPointerSummaryFeatureId);
-    if (localPointerCoordLonLatFeature) {
-      this.pointerPositionDataSource.ol.removeFeature(localPointerCoordLonLatFeature);
-    }
-  }
-
-  private pointerPositionSummaryMarker(text): olstyle.Style {
-
-    return new olstyle.Style({
-      image: new olstyle.Icon({
-        src: './assets/igo2/geo/icons/cross_black_18px.svg',
-        imgSize: [18, 18], // for ie
-      }),
-
-      text: new olstyle.Text({
-        text,
-        textAlign: 'left',
-        textBaseline: 'bottom',
-        font: '12px Calibri,sans-serif',
-        fill: new olstyle.Fill({ color: '#000' }),
-        backgroundFill: new olstyle.Fill({ color: 'rgba(255, 255, 255, 0.65)' }),
-        stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
-        overflow: true,
-        offsetX: 5,
-        offsetY: -2.5
-      })
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
+      featureProjection: this.mapProjection,
+      dataProjection: this.mapProjection
     });
+
+    const f: Feature = {
+      type: FEATURE,
+      geometry: geojsonGeom,
+      projection: this.mapProjection,
+      properties: {
+        id: this.searchPointerSummaryFeatureId
+      },
+      meta: {
+        id: this.searchPointerSummaryFeatureId,
+        style: pointerPositionSummaryMarker(feature)
+      },
+      ol: feature
+    };
+    this.store.setLayerFeatures([f], FeatureMotion.None)
+    this.store.source.ol.getFeatureById(this.searchPointerSummaryFeatureId).setStyle(olStyle);
+
   }
 
+}
+
+/**
+ * Create a default style for draw and modify interactions
+ * @param color Style color (R, G, B)
+ * @returns OL style
+ */
+export function pointerPositionSummaryMarker(feature): olstyle.Style {
+  return new olstyle.Style({
+    image: new olstyle.Icon({
+      src: './assets/igo2/geo/icons/cross_black_18px.svg',
+      imgSize: [18, 18], // for ie
+    }),
+
+    text: new olstyle.Text({
+      text: feature.get('pointerSummary'),
+      textAlign: 'left',
+      textBaseline: 'bottom',
+      font: '12px Calibri,sans-serif',
+      fill: new olstyle.Fill({ color: '#000' }),
+      backgroundFill: new olstyle.Fill({ color: 'rgba(255, 255, 255, 0.5)' }),
+      backgroundStroke: new olstyle.Stroke({ color: 'rgba(200, 200, 200, 0.75)', width: 2 }),
+      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
+      overflow: true,
+      offsetX: 10,
+      offsetY: -10,
+      padding: [2.5, 2.5, 2.5, 2.5]
+    })
+  });
 }
