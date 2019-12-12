@@ -250,7 +250,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     const feature = new olFeature({ geometry });
     feature.setId(this.searchPointerSummaryFeatureId);
     feature.set('pointerSummary', text);
-    const olStyle = pointerPositionSummaryMarker(feature)
+    const olStyle = pointerPositionSummaryMarker(feature);
 
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
       featureProjection: this.mapProjection,
@@ -270,7 +270,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
       },
       ol: feature
     };
-    this.store.setLayerFeatures([f], FeatureMotion.None)
+    this.store.setLayerFeatures([f], FeatureMotion.None);
     this.store.source.ol.getFeatureById(this.searchPointerSummaryFeatureId).setStyle(olStyle);
 
   }
