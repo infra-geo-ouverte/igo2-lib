@@ -112,7 +112,8 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
       source: new FeatureDataSource(),
       showInLayerList: false,
       exportable: false,
-      browsable: false
+      browsable: false,
+      style: pointerPositionSummaryMarker
     });
     tryBindStoreLayer(store, layer);
   }
@@ -241,17 +242,13 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     this.pointerSearchStore.load(newResults);
   }
 
-  private addPointerOverlay(text) {
+  private addPointerOverlay(text: string) {
     this.store.clearLayer();
 
     const geometry = new olgeom.Point(
       transform(this.lonLat, 'EPSG:4326', this.mapProjection)
     );
     const feature = new olFeature({ geometry });
-    feature.setId(this.searchPointerSummaryFeatureId);
-    feature.set('pointerSummary', text);
-    const olStyle = pointerPositionSummaryMarker(feature);
-
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
       featureProjection: this.mapProjection,
       dataProjection: this.mapProjection
@@ -262,27 +259,25 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
       geometry: geojsonGeom,
       projection: this.mapProjection,
       properties: {
-        id: this.searchPointerSummaryFeatureId
+        id: this.searchPointerSummaryFeatureId,
+        pointerSummary: text
       },
       meta: {
-        id: this.searchPointerSummaryFeatureId,
-        style: pointerPositionSummaryMarker(feature)
+        id: this.searchPointerSummaryFeatureId
       },
       ol: feature
     };
     this.store.setLayerFeatures([f], FeatureMotion.None);
-    this.store.source.ol.getFeatureById(this.searchPointerSummaryFeatureId).setStyle(olStyle);
-
   }
 
 }
 
 /**
- * Create a default style for draw and modify interactions
- * @param color Style color (R, G, B)
- * @returns OL style
+ * Create a default style for the pointer position and it's label summary.
+ * @param feature OlFeature
+ * @returns OL style function
  */
-export function pointerPositionSummaryMarker(feature): olstyle.Style {
+export function pointerPositionSummaryMarker(feature: olFeature, resolution: number): olstyle.Style {
   return new olstyle.Style({
     image: new olstyle.Icon({
       src: './assets/igo2/geo/icons/cross_black_18px.svg',
