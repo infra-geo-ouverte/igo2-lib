@@ -22,6 +22,7 @@ import {
   CatalogItemState,
   CatalogItemType
 } from '../shared';
+import { SubjectStatus } from '@igo2/utils';
 
 /**
  * Component to browse a catalog's groups and layers and display them on a map.
@@ -178,6 +179,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         }
       }
     });
+    this.map.status$.next(SubjectStatus.Done)
   }
 
   /**
