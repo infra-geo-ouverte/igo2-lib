@@ -64,7 +64,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   @HostListener('mouseout')
   mouseout() {
     clearTimeout(this.lastTimeoutRequest);
-    this.store.clearLayer();
+    this.clearLayer();
   }
 
   /**
@@ -95,12 +95,11 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     this.map.status$.pipe(take(1)).subscribe(() => {
       this.store = new FeatureStore<Feature>([], {map: this.map});
       this.initStore();
-    }
-    );
+    });
   }
 
   /**
-   * Initialize the measure store and set up some listeners
+   * Initialize the pointer position store
    * @internal
    */
   private initStore() {
@@ -126,10 +125,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unsubscribeReverseSearch();
-
-    // this.map.removeLayer(this.pointerPositionLayer);
   }
 
+  /**
+   * Subscribe to pointermove result store
+   * @internal
+   */
   subscribeToPointerStore() {
     this.store$$ = this.pointerSearchStore.entities$.subscribe(resultsUnderPointerPosition => {
       this.entitiesToPointerOverlay(resultsUnderPointerPosition);
@@ -137,11 +138,15 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     });
   }
 
-  private entitiesToPointerOverlay(resultsUnderPointerPosition: SearchResult[]) {
-
+  /**
+   * Build an object based on the closest feature by type (base on type and distance properties )
+   * @param results SearchResult[]
+   * @returns OL style function
+   */
+  private computeSummaryClosestFeature(results: SearchResult[]): {} {
     const closestResultByType = {};
 
-    resultsUnderPointerPosition.map(result => {
+    results.map(result => {
       if (result.data.properties.type && result.data.properties.distance >= 0) {
         if (closestResultByType.hasOwnProperty(result.data.properties.type)) {
           const prevDistance = closestResultByType[result.data.properties.type].distance;
@@ -154,6 +159,15 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
       }
     });
 
+    return closestResultByType;
+  }
+
+  /**
+   * convert store entities to a pointer position overlay with label summary on.
+   * @param event OL map browser pointer event
+   */
+  private entitiesToPointerOverlay(resultsUnderPointerPosition: SearchResult[]) {
+    const closestResultByType = this.computeSummaryClosestFeature(resultsUnderPointerPosition);
     const summarizedClosestType = Object.keys(closestResultByType);
     const processedSummarizedClosestType = [];
     const summary = [];
@@ -184,10 +198,17 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Unsubscribe to pointer store.
+   * @internal
+   */
   unsubscribeToPointerStore() {
     this.store$$.unsubscribe();
   }
-
+  /**
+   * Unsubscribe to reverse seatch store.
+   * @internal
+   */
   unsubscribeReverseSearch() {
     this.reverseSearch$$.map(s => s.unsubscribe());
     this.reverseSearch$$ = [];
@@ -195,6 +216,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
 
   /**
    * Stop listening for map pointermove
+   * @internal
    */
   private unlistenToMapPointerMove() {
     this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
@@ -209,7 +231,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     if (event.dragging) { return; }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
-      this.store.clearLayer();
+      this.clearLayer();
       this.unsubscribeReverseSearch();
     }
 
@@ -242,8 +264,12 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     this.pointerSearchStore.load(newResults);
   }
 
+  /**
+   * Add a feature to the pointer store
+   * @param text string
+   */
   private addPointerOverlay(text: string) {
-    this.store.clearLayer();
+    this.clearLayer();
 
     const geometry = new olgeom.Point(
       transform(this.lonLat, 'EPSG:4326', this.mapProjection)
@@ -269,6 +295,15 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     };
     this.store.setLayerFeatures([f], FeatureMotion.None);
   }
+
+/**
+ * Clear the pointer store features
+ */
+private clearLayer() {
+  if (this.store) {
+    this.store.clearLayer();
+  }
+}
 
 }
 
