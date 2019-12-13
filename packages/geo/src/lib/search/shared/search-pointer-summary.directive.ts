@@ -59,7 +59,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   /**
    * The delay where the mouse must be motionless before trigger the reverse search
    */
-  @Input() pointerMoveDelay: number = 1000;
+  @Input() igoSearchPointerSummaryDelay: number = 1000;
 
   @HostListener('mouseout')
   mouseout() {
@@ -239,7 +239,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
 
     this.lastTimeoutRequest = setTimeout(() => {
       this.onSearchCoordinate();
-    }, this.pointerMoveDelay);
+    }, this.igoSearchPointerSummaryDelay);
   }
 
   private onSearchCoordinate() {
