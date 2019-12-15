@@ -83,7 +83,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
     const coords = convertedCoord.reduce((obj, item) => (
       obj[item.alias] = item.igo2CoordFormat, obj), {});
 
-    const roundedCoordString = roundCoordTo(data).join(', ');
+    const roundedCoordString = roundCoordTo(data, 6).join(', ');
 
     return {
       source: this,
