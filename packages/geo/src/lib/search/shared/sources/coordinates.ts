@@ -11,7 +11,7 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { LanguageService } from '@igo2/core';
 import { GoogleLinks } from '../../../utils/googleLinks';
 import { Projection } from '../../../map/shared/projection.interfaces';
-import { lonLatConversion } from '../../../map/shared/map.utils';
+import { lonLatConversion, roundCoordTo } from '../../../map/shared/map.utils';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -78,19 +78,12 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return of([this.dataToResult(lonLat)]);
   }
 
-  roundLonLatToMmAccuracy(lonLat: [number, number]) {
-    return [
-      Math.round(Number(lonLat[0] * 1000000)) / 1000000,
-      Math.round(Number(lonLat[1] * 1000000)) / 1000000
-    ];
-  }
-
   private dataToResult(data: [number, number]): SearchResult<Feature> {
     const convertedCoord = lonLatConversion(data, this.projections);
     const coords = convertedCoord.reduce((obj, item) => (
       obj[item.alias] = item.igo2CoordFormat, obj), {});
 
-    const roundedCoordString = this.roundLonLatToMmAccuracy(data).join(', ');
+    const roundedCoordString = roundCoordTo(data).join(', ');
 
     return {
       source: this,

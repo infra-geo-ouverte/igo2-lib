@@ -329,10 +329,10 @@ export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
   );
 }
 
-export function roundXyToCm(xy: [number, number]) {
+export function roundCoordTo(coord: [number, number], decimal: number = 3) {
   return [
-    Math.round(Number(xy[0] * 10000000)) / 10000000,
-    Math.round(Number(xy[1] * 10000000)) / 10000000
+    coord[0].toFixed(decimal),
+    coord[1].toFixed(decimal)
   ];
 }
 
@@ -353,7 +353,7 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
       code: 'EPSG:3857',
       alias: 'Web mercator',
       coord: rawCoord3857,
-      igo2CoordFormat: `${roundXyToCm(rawCoord3857).join(',')};3857`
+      igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')};3857`
     }
   ];
 
@@ -367,7 +367,7 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
       code: epsgUtm,
       alias: 'UTM',
       coord: rawCoordUtm,
-      igo2CoordFormat: `${utmName} ${roundXyToCm(rawCoordUtm).join(',')}`
+      igo2CoordFormat: `${utmName} ${roundCoordTo(rawCoordUtm).join(', ')}`
     });
 
   // detect the current mtm zone.
@@ -381,7 +381,7 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
         code: epsgMtm,
         alias: 'MTM',
         coord: rawCoordMtm,
-        igo2CoordFormat: `${mtmName} ${roundXyToCm(rawCoordMtm).join(',')}`
+        igo2CoordFormat: `${mtmName} ${roundCoordTo(rawCoordMtm).join(', ')}`
       });
   }
 
@@ -393,7 +393,7 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
         code: projection.code,
         alias: projection.alias || projection.code,
         coord: rawCoord,
-        igo2CoordFormat: `${roundXyToCm(rawCoord).join(',')};${numericEpsgCode}`
+        igo2CoordFormat: `${roundCoordTo(rawCoord).join(', ')};${numericEpsgCode}`
       });
   });
 
