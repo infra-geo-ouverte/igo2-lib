@@ -329,6 +329,13 @@ export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
   );
 }
 
+export function roundXyToCm(xy: [number, number]) {
+  return [
+    Math.round(Number(xy[0] * 10000000)) / 10000000,
+    Math.round(Number(xy[1] * 10000000)) / 10000000
+  ];
+}
+
 /**
  * Returns an array of converted coordinates.
  * Conversion is done for every configured projections
@@ -337,28 +344,57 @@ export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
  * @param projections  Projection[] Array of destination projection.
  * @returns Returns an array of converted coordinates.
  */
-export function lonLatConversion(lonLat: [number, number], projections: Projection[]) {
+export function lonLatConversion(lonLat: [number, number], projections: Projection[]):
+{ code: string; alias: string, coord: [number, number], igo2CoordFormat: string }[] {
 
+  const rawCoord3857 = olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857');
   const convertedLonLat = [
-    {code: 'EPSG:3857', alias: 'Web mercator', coord: olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857') }
+    {
+      code: 'EPSG:3857',
+      alias: 'Web mercator',
+      coord: rawCoord3857,
+      igo2CoordFormat: `${roundXyToCm(rawCoord3857).join(',')};3857`
+    }
   ];
 
   // detect the current utm zone.
   const utmZone = utmZoneFromLonLat(lonLat);
   const epsgUtm = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
   const utmName = `UTM-${utmZone}`;
-  convertedLonLat.push({code: epsgUtm, alias: utmName, coord: olproj.transform(lonLat, 'EPSG:4326', epsgUtm) });
+  const rawCoordUtm = olproj.transform(lonLat, 'EPSG:4326', epsgUtm);
+  convertedLonLat.push(
+    {
+      code: epsgUtm,
+      alias: 'UTM',
+      coord: rawCoordUtm,
+      igo2CoordFormat: `${utmName} ${roundXyToCm(rawCoordUtm).join(',')}`
+    });
 
   // detect the current mtm zone.
   const mtmZone = mtmZoneFromLonLat(lonLat);
   if (mtmZone) {
     const epsgMtm = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
     const mtmName = `MTM-${mtmZone}`;
-    convertedLonLat.push( {code: epsgMtm, alias: mtmName, coord: olproj.transform(lonLat, 'EPSG:4326', epsgMtm) });
+    const rawCoordMtm = olproj.transform(lonLat, 'EPSG:4326', epsgMtm);
+    convertedLonLat.push(
+      {
+        code: epsgMtm,
+        alias: 'MTM',
+        coord: rawCoordMtm,
+        igo2CoordFormat: `${mtmName} ${roundXyToCm(rawCoordMtm).join(',')}`
+      });
   }
 
   projections.forEach(projection => {
-    convertedLonLat.push({code: projection.code, alias: projection.alias || projection.code, coord: olproj.transform(lonLat, 'EPSG:4326', projection.code) });
+    const rawCoord = olproj.transform(lonLat, 'EPSG:4326', projection.code);
+    const numericEpsgCode = projection.code.split(':')[1];
+    convertedLonLat.push(
+      {
+        code: projection.code,
+        alias: projection.alias || projection.code,
+        coord: rawCoord,
+        igo2CoordFormat: `${roundXyToCm(rawCoord).join(',')};${numericEpsgCode}`
+      });
   });
 
   return convertedLonLat;

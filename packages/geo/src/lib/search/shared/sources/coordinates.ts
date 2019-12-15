@@ -78,21 +78,19 @@ export class CoordinatesReverseSearchSource extends SearchSource
     return of([this.dataToResult(lonLat)]);
   }
 
-  roundToFiveDecimals(num: number) {
-    return Math.round(Number(num * 100000)) / 100000;
+  roundLonLatToMmAccuracy(lonLat: [number, number]) {
+    return [
+      Math.round(Number(lonLat[0] * 1000000)) / 1000000,
+      Math.round(Number(lonLat[1] * 1000000)) / 1000000
+    ];
   }
 
   private dataToResult(data: [number, number]): SearchResult<Feature> {
     const convertedCoord = lonLatConversion(data, this.projections);
     const coords = convertedCoord.reduce((obj, item) => (
-      obj[item.alias] = String(this.roundToFiveDecimals(item.coord[0])) + ', '
-      + String(this.roundToFiveDecimals(item.coord[1])), obj), {});
+      obj[item.alias] = item.igo2CoordFormat, obj), {});
 
-    const roundedCoordString = String(this.roundToFiveDecimals(data[0])) + ', ' + String(this.roundToFiveDecimals(data[1]));
-    // provide the right syntax to trigger search by coordinate in the app.
-    this.projections.forEach(projection => {
-      coords[projection.alias] = `${coords[projection.alias]};${projection.code.split(':')[1]}`;
-    });
+    const roundedCoordString = this.roundLonLatToMmAccuracy(data).join(', ');
 
     return {
       source: this,
