@@ -5,7 +5,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  OnInit
+  OnInit,
+  HostListener
 } from '@angular/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
@@ -35,6 +36,9 @@ export class SearchSettingsComponent implements OnInit {
   public pointerReverseSearchEnabled: boolean = false;
   public hasPointerReverseSearchSource: boolean = false;
 
+  public buffer = [];
+  public lastKeyTime = Date.now();
+
   /**
    * Event emitted when the enabled search source changes
    */
@@ -44,6 +48,21 @@ export class SearchSettingsComponent implements OnInit {
    * Event emitted when the pointer summary is activated
    */
   @Output() pointerSummaryEnabled = new EventEmitter<boolean>();
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+      if (event.keyCode !== 17) { return; }
+        const currentTime = Date.now();
+        if (currentTime - this.lastKeyTime > 1000 || this.buffer.length >= 2) {
+          this.buffer = [];
+      }
+      this.buffer.push('17');
+      this.lastKeyTime = currentTime;
+      if (this.buffer.length > 1) {
+        this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled
+        this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled)
+      }
+  }
 
   constructor(private searchSourceService: SearchSourceService) {}
 

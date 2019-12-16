@@ -68,7 +68,16 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   /**
    * If the user has enabled or not the directive
    */
-  @Input() igoSearchPointerSummaryEnabled: boolean = false;
+  @Input() 
+  set igoSearchPointerSummaryEnabled(val) {
+    this._igoSearchPointerSummaryEnabled = val;
+    this.clearLayer();
+  }
+  get igoSearchPointerSummaryEnabled() {
+    return this._igoSearchPointerSummaryEnabled;
+  }
+  private _igoSearchPointerSummaryEnabled = false;
+
 
   @HostListener('mouseout')
   mouseout() {
