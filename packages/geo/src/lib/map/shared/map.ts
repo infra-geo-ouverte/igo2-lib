@@ -324,7 +324,6 @@ export class IgoMap {
    * @param layer Layer
    */
   private doRemoveLayer(layer: Layer) {
-    layer.status$.next(SubjectStatus.Done)
     this.layerWatcher.unwatchLayer(layer);
     this.ol.removeLayer(layer.ol);
     layer.setMap(undefined);
