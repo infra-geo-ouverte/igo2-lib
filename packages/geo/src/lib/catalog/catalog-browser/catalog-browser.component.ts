@@ -179,7 +179,6 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         }
       }
     });
-    this.map.status$.next(SubjectStatus.Done)
   }
 
   /**
