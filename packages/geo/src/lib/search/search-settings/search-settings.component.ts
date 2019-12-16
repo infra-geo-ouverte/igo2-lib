@@ -4,7 +4,8 @@ import {
   Component,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnInit
 } from '@angular/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
@@ -13,6 +14,8 @@ import {
   SearchSourceSettings,
   SettingOptions
 } from '../shared/sources/source.interfaces';
+import { CoordinatesReverseSearchSource } from '../shared/sources/coordinates';
+import { sourceCanReverseSearchAsSummary } from '../shared/search.utils';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -28,13 +31,26 @@ import {
   styleUrls: ['./search-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchSettingsComponent {
+export class SearchSettingsComponent implements OnInit {
+
+  public pointerReverseSearchEnabled: boolean = false;
+  public hasPointerReverseSearchSource: boolean = false;
+
   /**
    * Event emitted when the enabled search source changes
    */
   @Output() searchSourceChange = new EventEmitter<SearchSource>();
 
+  /**
+   * Event emitted when the pointer summary is activated
+   */
+  @Output() pointerSummaryEnabled = new EventEmitter<boolean>();
+
   constructor(private searchSourceService: SearchSourceService) {}
+
+  ngOnInit(): void {
+    this.hasPointerReverseSearchSource = this.hasReverseSearchSourcesForPointerSummary();
+  }
 
   /**
    * Get all search sources
@@ -43,7 +59,19 @@ export class SearchSettingsComponent {
   getSearchSources(): SearchSource[] {
     return this.searchSourceService
       .getSources()
-      .filter(s => s.available && s.getId() !== 'map');
+      .filter(s => s.available && s.getId() !== 'map' && s.constructor !== CoordinatesReverseSearchSource);
+  }
+
+  /**
+   * Get all search sources usable for pointer summary
+   * @internal
+   */
+  hasReverseSearchSourcesForPointerSummary(): boolean {
+    if (this.searchSourceService.getEnabledSources().filter(sourceCanReverseSearchAsSummary).length) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -121,5 +149,20 @@ export class SearchSettingsComponent {
 
   getAvailableValues(setting: SearchSourceSettings) {
     return setting.values.filter(s => s.available !== false);
+  }
+
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
+
+  changePointerReverseSearch(event, fromTitleButton?: boolean) {
+    if (fromTitleButton) {
+      event.stopPropagation();
+      this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
+    } else {
+      this.pointerReverseSearchEnabled = event.checked;
+    }
+
+    this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
   }
 }

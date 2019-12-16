@@ -247,7 +247,12 @@
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
-          "title": "Paramètres"
+          "title": "Paramètres",
+          "pointerSearch": "Résumé de position (coordonnées)"
+        },
+        "pointerSearchSummary": {
+          "title": "Résumé de position (coordonnées)",
+          "tooltip": "Selon les sources activées, vous pouvez faire afficher le résumé de la position du curseur. Pour des résultats multiple de type indentiques, seul le plus proche est présenté."
         },
         "searchSources": {
           "settings": {
