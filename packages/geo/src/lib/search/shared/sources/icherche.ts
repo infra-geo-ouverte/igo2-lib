@@ -598,6 +598,9 @@ export class IChercheReverseSearchSource extends SearchSource
     options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
+    if (!params.get('type').length) {
+      return of([]);
+    }
     return this.http.get(`${this.searchUrl}/locate`, { params }).pipe(
       map((response: IChercheReverseResponse) => {
         return this.extractResults(response);
