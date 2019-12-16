@@ -4,7 +4,8 @@ import {
   OnDestroy,
   Self,
   OnInit,
-  HostListener
+  HostListener,
+  AfterContentChecked
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';
@@ -31,6 +32,8 @@ import { take } from 'rxjs/operators';
 import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
 import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
+import { SearchSourceService } from './search-source.service';
+import { sourceCanReverseSearchAsSummary } from './search.utils';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -41,7 +44,7 @@ import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 @Directive({
   selector: '[igoSearchPointerSummary]'
 })
-export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
+export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterContentChecked {
 
   public store: FeatureStore<Feature>;
   private lonLat: [number, number];
@@ -49,6 +52,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   private lastTimeoutRequest;
   private store$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
+  private hasPointerReverseSearchSource: boolean =  false;
 
   /**
    * Listener to the pointer move event
@@ -60,6 +64,11 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    * The delay where the mouse must be motionless before trigger the reverse search
    */
   @Input() igoSearchPointerSummaryDelay: number = 1000;
+
+  /**
+   * If the user has enabled or not the directive
+   */
+  @Input() igoSearchPointerSummaryEnabled: boolean = false;
 
   @HostListener('mouseout')
   mouseout() {
@@ -81,7 +90,8 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
 
   constructor(
     @Self() private component: MapBrowserComponent,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private searchSourceService: SearchSourceService,
   ) { }
 
   /**
@@ -117,6 +127,14 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
     tryBindStoreLayer(store, layer);
   }
 
+  ngAfterContentChecked(): void {
+      if (!this.searchSourceService.getEnabledSources().filter(sourceCanReverseSearchAsSummary).length) {
+        this.hasPointerReverseSearchSource = false;
+      } else {
+        this.hasPointerReverseSearchSource = true;
+      }
+    }
+
   /**
    * Stop listening to pointermove and reverse search results.
    * @internal
@@ -134,7 +152,6 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
   subscribeToPointerStore() {
     this.store$$ = this.pointerSearchStore.entities$.subscribe(resultsUnderPointerPosition => {
       this.entitiesToPointerOverlay(resultsUnderPointerPosition);
-
     });
   }
 
@@ -228,7 +245,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private onMapEvent(event: OlMapBrowserPointerEvent) {
-    if (event.dragging) { return; }
+    if (event.dragging || !this.igoSearchPointerSummaryEnabled || !this.hasPointerReverseSearchSource) { return; }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
       this.clearLayer();
