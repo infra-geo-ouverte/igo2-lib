@@ -14,8 +14,7 @@ import {
   SearchSourceSettings,
   SettingOptions
 } from '../shared/sources/source.interfaces';
-import { CoordinatesReverseSearchSource } from '../shared/sources/coordinates';
-import { sourceCanReverseSearchAsSummary } from '../shared/search.utils';
+import { sourceCanReverseSearchAsSummary, sourceCanSearch, sourceCanReverseSearch } from '../shared/search.utils';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -57,9 +56,16 @@ export class SearchSettingsComponent implements OnInit {
    * @internal
    */
   getSearchSources(): SearchSource[] {
-    return this.searchSourceService
+    const textSearchSources = this.searchSourceService
       .getSources()
-      .filter(s => s.available && s.getId() !== 'map' && s.constructor !== CoordinatesReverseSearchSource);
+      .filter(sourceCanSearch)
+      .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
+
+      const reverseSearchSources = this.searchSourceService
+      .getSources()
+      .filter(sourceCanReverseSearch)
+      .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
+    return textSearchSources.concat(reverseSearchSources);
   }
 
   /**
