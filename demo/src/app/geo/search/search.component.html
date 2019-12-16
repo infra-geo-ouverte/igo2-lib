@@ -13,6 +13,11 @@
   </mat-card-content>
 
   <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu
+
+    igoSearchPointerSummary
+    [igoSearchPointerSummaryDelay]="500"
+    [igoSearchPointerSummaryEnabled]="igoSearchPointerSummaryEnabled"
+
     (menuPosition)="onContextMenuOpen($event)" igoPointerPositionByKey [pointerPositionByKeyDelay]="500"
     [pointerPositionByKeyCode]="17" (pointerPositionByKeyCoord)="onPointerSearch($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
@@ -20,6 +25,7 @@
 
   <igo-panel title="Search">
     <igo-search-bar
+      (pointerSummaryEnabled)="onPointerSummaryEnabledChange($event)"
       [searchSettings]="true"
       (change)="onSearchTermChange($event)"
       (search)="onSearch($event)"

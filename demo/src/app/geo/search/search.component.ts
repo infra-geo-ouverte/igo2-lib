@@ -34,6 +34,8 @@ import { SearchState } from '@igo2/integration';
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);
 
+  public igoSearchPointerSummaryEnabled: boolean = false;
+
   public map = new IgoMap({
     overlay: true,
     controls: {
@@ -82,6 +84,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.osmLayer = layer;
         this.map.addLayer(layer);
       });
+  }
+
+  onPointerSummaryEnabledChange(value) {
+    this.igoSearchPointerSummaryEnabled = value;
   }
 
   onSearchTermChange(term?: string) {
