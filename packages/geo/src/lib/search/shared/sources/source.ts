@@ -82,6 +82,11 @@ export class SearchSource {
     return showInPointerSummary ? showInPointerSummary : false;
   }
 
+  get showInSettings(): boolean {
+    const showInSettings = this.options.showInSettings;
+    return showInSettings === undefined ? true : showInSettings;
+  }
+
   /**
    * Search url
    */

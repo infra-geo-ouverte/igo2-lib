@@ -8,6 +8,7 @@ export interface SearchSourceOptions {
   params?: { [key: string]: string };
   settings?: SearchSourceSettings[];
   showInPointerSummary?: boolean;
+  showInSettings?: boolean;
 }
 
 export interface SearchSourceSettings {
