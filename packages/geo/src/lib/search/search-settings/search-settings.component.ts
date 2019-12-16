@@ -61,7 +61,7 @@ export class SearchSettingsComponent implements OnInit {
       .filter(sourceCanSearch)
       .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
 
-      const reverseSearchSources = this.searchSourceService
+    const reverseSearchSources = this.searchSourceService
       .getSources()
       .filter(sourceCanReverseSearch)
       .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
