@@ -218,13 +218,6 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
             );
             clickedFeatures.push(feature);
           }
-        } else {
-          const feature = featureFromOl(
-            featureOL,
-            this.map.projection,
-            layerOL
-          );
-          clickedFeatures.push(feature);
         }
       },
       {
