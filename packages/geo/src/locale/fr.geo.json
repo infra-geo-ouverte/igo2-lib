@@ -247,8 +247,7 @@
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
-          "title": "Paramètres",
-          "pointerSearch": "Résumé de position (coordonnées)"
+          "title": "Paramètres"
         },
         "pointerSearchSummary": {
           "title": "Position du curseur",
