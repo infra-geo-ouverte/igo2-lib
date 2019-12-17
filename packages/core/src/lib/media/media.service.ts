@@ -67,6 +67,6 @@ export class MediaService {
   }
 
   isTouchScreen(): boolean {
-    return "ontouchstart" in document.documentElement ? true : false;
+    return 'ontouchstart' in document.documentElement ? true : false;
   }
 }
