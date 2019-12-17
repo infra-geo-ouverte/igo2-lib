@@ -48,7 +48,7 @@ export class LayerWatcher extends Watcher {
   }
 
   unwatchLayer(layer: Layer) {
-    layer.status$.next(SubjectStatus.Done)
+    layer.status$.next(SubjectStatus.Done);
     const index = this.layers.indexOf(layer);
     if (index >= 0) {
       const status = (layer as any).watcher.status;
