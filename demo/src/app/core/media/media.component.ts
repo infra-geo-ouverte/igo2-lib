@@ -17,4 +17,9 @@ export class AppMediaComponent {
   get orientation() {
     return this.mediaService.getOrientation();
   }
+
+  get isTouchScreen() {
+    return this.mediaService.isTouchScreen();
+  }
+
 }
