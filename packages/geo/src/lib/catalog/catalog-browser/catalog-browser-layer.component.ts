@@ -19,6 +19,8 @@ export class CatalogBrowserLayerComponent implements OnInit {
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  private lastTimeoutRequest ;
+
   @Input() resolution: number;
 
   /**
@@ -73,6 +75,11 @@ export class CatalogBrowserLayerComponent implements OnInit {
    * @internal
    */
   onToggleClick(event) {
+
+    if (typeof this.lastTimeoutRequest !== 'undefined') {
+      clearTimeout(this.lastTimeoutRequest);
+    }
+    
     switch (event.type) {
         case 'click':
             if (!this.isPreview$.value) {
@@ -82,8 +89,10 @@ export class CatalogBrowserLayerComponent implements OnInit {
             break;
         case 'mouseenter':
             if (!this.isPreview$.value && !this.added) {
+              this.lastTimeoutRequest = setTimeout(() => {
                 this.add();
                 this.isPreview$.next(true);
+              }, 500);
             }
             break;
         case 'mouseleave':
