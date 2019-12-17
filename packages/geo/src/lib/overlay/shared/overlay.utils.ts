@@ -97,7 +97,7 @@ export function createOverlayDefaultStyle(
  * @returns Style
  */
 export function createOverlayMarkerStyle(
-  {text, opacity = 1, color = 'blue'}: 
+  {text, opacity = 1, color = 'blue'}:
     {text?: string, opacity?: number, color?: string}  = {}
   ): olstyle.Style {
   let iconColor;

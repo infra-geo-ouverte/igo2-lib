@@ -69,10 +69,6 @@ export class ContextService {
     this.readParamsFromRoute();
 
     this.authService.authenticate$.subscribe(authenticated => {
-      if (authenticated === null) {
-        this.loadDefaultContext();
-        return;
-      }
       const contexts$$ = this.contexts$.subscribe(contexts => {
         if (contexts$$) {
           contexts$$.unsubscribe();
@@ -490,7 +486,7 @@ export class ContextService {
 
   private handleContextsChange(
     contexts: ContextsList,
-    keepCurrentContext = false
+    keepCurrentContext = true
   ) {
     const context = this.context$.value;
     const editedContext = this.editedContext$.value;
@@ -502,7 +498,9 @@ export class ContextService {
         context.map.view.keepCurrentView = true;
       }
       this.context$.next(context);
-      this.getDefault().subscribe(() => {});
+      if (this.baseUrl && this.authService.authenticated) {
+        this.getDefault().subscribe();
+      }
     }
     const editedFound = this.findContext(editedContext);
     if (!editedFound || editedFound.permission !== 'write') {
@@ -528,7 +526,7 @@ export class ContextService {
   }
 
   private findContext(context: Context) {
-    if (!context || !context.id) {
+    if (!context) {
       return false;
     }
 
@@ -536,7 +534,7 @@ export class ContextService {
     let found;
     for (const key of Object.keys(contexts)) {
       const value = contexts[key];
-      found = value.find(c => c.id === context.id);
+      found = value.find(c => ((context.id && c.id === context.id) || (context.uri && c.uri === context.uri)));
       if (found) {
         break;
       }
