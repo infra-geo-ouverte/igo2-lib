@@ -250,8 +250,8 @@
           "title": "Settings"
         },
         "pointerSearchSummary": {
-          "title": "Location summary (coordinate)",
-          "tooltip": "Based on every search source (reverse by coordinate), show the summary of the pointer location. For multiple results of the same type, only the closest is shown.  Hitting twice  (<1sec) the CTRL key down activate the summary on map"
+          "title": "Pointer position",
+          "tooltip": "Based on every search source (reverse by coordinate), show the summary of the pointer location. For multiple results of the same type, only the closest is shown. Use F2 to activate/desactivate."
         },
         "searchSources": {
           "settings": {

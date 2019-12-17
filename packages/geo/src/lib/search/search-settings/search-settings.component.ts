@@ -16,6 +16,7 @@ import {
   SettingOptions
 } from '../shared/sources/source.interfaces';
 import { sourceCanReverseSearchAsSummary, sourceCanSearch, sourceCanReverseSearch } from '../shared/search.utils';
+import { MediaService } from '@igo2/core';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -39,6 +40,10 @@ export class SearchSettingsComponent implements OnInit {
   public buffer = [];
   public lastKeyTime = Date.now();
 
+  get isTouchScreen(): boolean {
+    return this.mediaService.isTouchScreen();
+  }
+
   /**
    * Event emitted when the enabled search source changes
    */
@@ -51,20 +56,29 @@ export class SearchSettingsComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-      if (event.keyCode !== 17) { return; }
-        const currentTime = Date.now();
-        if (currentTime - this.lastKeyTime > 1000 || this.buffer.length >= 2) {
-          this.buffer = [];
-      }
-      this.buffer.push('17');
-      this.lastKeyTime = currentTime;
-      if (this.buffer.length > 1) {
-        this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled
-        this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled)
-      }
+
+    if (event.keyCode === 113) {
+      this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
+      this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
+    }
+
+    // if (event.keyCode !== 17) { return; }
+    // const currentTime = Date.now();
+    // if (currentTime - this.lastKeyTime > 1000 || this.buffer.length >= 2) {
+    //   this.buffer = [];
+    // }
+    // this.buffer.push('17');
+    // this.lastKeyTime = currentTime;
+    // if (this.buffer.length > 1) {
+    //   this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
+    //   this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
+    // }
   }
 
-  constructor(private searchSourceService: SearchSourceService) {}
+  constructor(
+    private searchSourceService: SearchSourceService,
+    private mediaService: MediaService
+    ) {}
 
   ngOnInit(): void {
     this.hasPointerReverseSearchSource = this.hasReverseSearchSourcesForPointerSummary();

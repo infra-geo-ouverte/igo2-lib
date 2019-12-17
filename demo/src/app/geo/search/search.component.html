@@ -9,9 +9,13 @@
     See search section of the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/environments"> environment config</a>
     <hr>
     <br>
-    You can trigger the seach by coordinate by holding the CRTL key down while moving your cursor (on desktop). Don't forget to focus on map before.
-    Hitting twice the CTRL key down activate the pointer Summary.
-
+    <span *ngIf="isTouchScreen" title="Details">
+      You can trigger the seach by coordinate by holding the CRTL key down while moving your cursor (on desktop). Don't
+      forget to focus on map before.
+      <br>
+      <br>
+      F2 activate/desactivate the pointer location.
+    </span>
   </mat-card-content>
 
   <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu

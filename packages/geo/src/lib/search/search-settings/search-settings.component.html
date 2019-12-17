@@ -74,7 +74,7 @@
             </ng-container>
           </mat-menu>
       </ng-container>
-      <span *ngIf="hasPointerReverseSearchSource">
+      <span *ngIf="hasPointerReverseSearchSource && !isTouchScreen">
         <mat-divider></mat-divider>
         <span class="pointer-summary-slide-toggle-container mat-typography">
           <mat-slide-toggle class="pointer-summary-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"

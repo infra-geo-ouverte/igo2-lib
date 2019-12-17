@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import * as proj from 'ol/proj';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MediaService } from '@igo2/core';
 import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
@@ -61,6 +61,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.searchState.store;
   }
 
+  get isTouchScreen(): boolean {
+    return this.mediaService.isTouchScreen();
+  }
+
   public selectedFeature: Feature;
 
   constructor(
@@ -69,7 +73,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private mediaService: MediaService
   ) {
     this.mapService.setMap(this.map);
 
