@@ -191,7 +191,18 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       event.pixel,
       (featureOL: OlFeature, layerOL: OlLayer) => {
         if (featureOL) {
-          if (featureOL instanceof OlRenderFeature) {
+          if (featureOL.get('features')) {
+            for (const feature of featureOL.get('features')) {
+              const newFeature = featureFromOl(feature, this.map.projection);
+              newFeature.meta = {
+                title: feature.values_.nom,
+                id: feature.id_,
+                icon: feature.values_._icon,
+                sourceTitle: layerOL.values_.title
+              };
+              clickedFeatures.push(newFeature);
+            }
+          } else if (featureOL instanceof OlRenderFeature) {
             const featureFromRender: OlFeature = featureOL;
             const feature = renderFeatureFromOl(
               featureOL,
@@ -229,13 +240,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
-            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
-              layer
-            );
-            feature.meta.title = this.queryService.getQueryTitle(
-              feature,
-              layer
-            );
+            (feature.meta.id = feature.ol._id),
+              (feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
+                layer
+              ));
+            feature.meta.title =
+              feature.meta.title ||
+              this.queryService.getQueryTitle(feature, layer);
+            feature.meta.sourceTitle = layer.title;
           }
         }
       });

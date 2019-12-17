@@ -16,6 +16,7 @@ import {
   getEntityId,
   getEntityTitle,
   getEntityRevision,
+  getEntityIcon,
   getEntityProperty
 } from '@igo2/common';
 
@@ -75,6 +76,11 @@ export function featureToOl(
   }
 
   olFeature.set('_entityRevision', getEntityRevision(feature), true);
+
+  const icon = getEntityIcon(feature);
+  if (icon !== undefined) {
+    olFeature.set('_icon', icon, true);
+  }
 
   return olFeature;
 }
