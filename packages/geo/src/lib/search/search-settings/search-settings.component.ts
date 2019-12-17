@@ -61,18 +61,6 @@ export class SearchSettingsComponent implements OnInit {
       this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
       this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
     }
-
-    // if (event.keyCode !== 17) { return; }
-    // const currentTime = Date.now();
-    // if (currentTime - this.lastKeyTime > 1000 || this.buffer.length >= 2) {
-    //   this.buffer = [];
-    // }
-    // this.buffer.push('17');
-    // this.lastKeyTime = currentTime;
-    // if (this.buffer.length > 1) {
-    //   this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
-    //   this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
-    // }
   }
 
   constructor(
