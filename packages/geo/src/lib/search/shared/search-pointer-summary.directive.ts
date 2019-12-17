@@ -34,6 +34,7 @@ import { FeatureStore } from '../../feature/shared/store';
 import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 import { SearchSourceService } from './search-source.service';
 import { sourceCanReverseSearchAsSummary } from './search.utils';
+import { MediaService } from '@igo2/core';
 
 /**
  * This directive makes the mouse coordinate trigger a reverse search on available search sources.
@@ -70,7 +71,6 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    */
   @Input() igoSearchPointerSummaryEnabled: boolean = false;
 
-
   @HostListener('mouseout')
   mouseout() {
     clearTimeout(this.lastTimeoutRequest);
@@ -93,6 +93,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     @Self() private component: MapBrowserComponent,
     private searchService: SearchService,
     private searchSourceService: SearchSourceService,
+    private mediaService: MediaService
   ) { }
 
   /**
@@ -246,9 +247,11 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * @param event OL map browser pointer event
    */
   private onMapEvent(event: OlMapBrowserPointerEvent) {
-    if (event.dragging || !this.igoSearchPointerSummaryEnabled || !this.hasPointerReverseSearchSource) { 
+    if (
+      event.dragging || !this.igoSearchPointerSummaryEnabled ||
+      !this.hasPointerReverseSearchSource || this.mediaService.isTouchScreen()) {
       this.clearLayer();
-      return; 
+      return;
     }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);

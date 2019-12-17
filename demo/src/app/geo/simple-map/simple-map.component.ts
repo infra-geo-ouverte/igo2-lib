@@ -30,6 +30,10 @@ export class AppSimpleMapComponent {
     return this.mediaService.getMedia();
   }
 
+  get isTouchScreen() {
+    return this.mediaService.isTouchScreen();
+  }
+
   constructor(
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,

@@ -20,4 +20,4 @@
 
 </mat-card>
 
-<p *ngIf="media === 'desktop'">{{pointerCoord}}</p>
+<p *ngIf="!isTouchScreen">{{pointerCoord}}</p>

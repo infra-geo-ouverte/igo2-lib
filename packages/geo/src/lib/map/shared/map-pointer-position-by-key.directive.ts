@@ -16,6 +16,7 @@ import { MapBrowserComponent } from '../../map/map-browser/map-browser.component
 
 import { transform } from 'ol/proj';
 import { Subscription, BehaviorSubject, fromEvent } from 'rxjs';
+import { MediaService } from '@igo2/core';
 /**
  * This directive return the pointer coordinate (on click or pointermove)
  * in [longitude, latitude], delayed by in input (pointerMoveDelay)
@@ -71,7 +72,8 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Self() private component: MapBrowserComponent
+    @Self() private component: MapBrowserComponent,
+    private mediaService: MediaService
   ) { }
 
   /**
@@ -187,7 +189,7 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private onPointerEvent(event: OlMapBrowserPointerEvent, delay: number) {
-    if (event.dragging) {return; }
+    if (event.dragging || this.mediaService.isTouchScreen()) {return; }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
     }
