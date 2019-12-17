@@ -68,15 +68,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   /**
    * If the user has enabled or not the directive
    */
-  @Input() 
-  set igoSearchPointerSummaryEnabled(val) {
-    this._igoSearchPointerSummaryEnabled = val;
-    this.clearLayer();
-  }
-  get igoSearchPointerSummaryEnabled() {
-    return this._igoSearchPointerSummaryEnabled;
-  }
-  private _igoSearchPointerSummaryEnabled = false;
+  @Input() igoSearchPointerSummaryEnabled: boolean = false;
 
 
   @HostListener('mouseout')
@@ -254,7 +246,10 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
    * @param event OL map browser pointer event
    */
   private onMapEvent(event: OlMapBrowserPointerEvent) {
-    if (event.dragging || !this.igoSearchPointerSummaryEnabled || !this.hasPointerReverseSearchSource) { return; }
+    if (event.dragging || !this.igoSearchPointerSummaryEnabled || !this.hasPointerReverseSearchSource) { 
+      this.clearLayer();
+      return; 
+    }
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
       this.clearLayer();
