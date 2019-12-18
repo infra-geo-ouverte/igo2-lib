@@ -33,6 +33,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 // Move some stuff into controllers.
 export class IgoMap {
   public ol: olMap;
+  public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
@@ -455,5 +456,9 @@ export class IgoMap {
     if (this.geolocation) {
       this.geolocation.setTracking(false);
     }
+  }
+
+  onOfflineToggle(offline: boolean) {
+    this.offlineButtonToggle$.next(offline);
   }
 }

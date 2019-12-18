@@ -17,6 +17,7 @@ import { RotationButtonComponent } from './rotation-button/rotation-button.compo
 import { BaseLayersSwitcherComponent } from './baselayers-switcher/baselayers-switcher.component';
 import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.component';
 import { MapOfflineDirective } from './shared/mapOffline.directive';
+import { OfflineButtonComponent } from './offline-button/offline-button.component';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { MapOfflineDirective } from './shared/mapOffline.directive';
     RotationButtonComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
-    MapOfflineDirective
+    MapOfflineDirective,
+    OfflineButtonComponent
   ],
   declarations: [
     MapBrowserComponent,
@@ -43,7 +45,8 @@ import { MapOfflineDirective } from './shared/mapOffline.directive';
     RotationButtonComponent,
     BaseLayersSwitcherComponent,
     MiniBaseMapComponent,
-    MapOfflineDirective
+    MapOfflineDirective,
+    OfflineButtonComponent
   ]
 })
 export class IgoMapModule {}
