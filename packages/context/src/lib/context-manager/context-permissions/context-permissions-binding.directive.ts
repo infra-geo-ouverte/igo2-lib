@@ -3,7 +3,8 @@ import {
   Self,
   OnInit,
   OnDestroy,
-  HostListener
+  HostListener,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -44,6 +45,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
         });
         const title = translate.instant('igo.context.permission.dialog.addTitle');
         this.messageService.success(message, title);
+        this.cd.detectChanges();
       });
   }
 
@@ -92,7 +94,8 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
     @Self() component: ContextPermissionsComponent,
     private contextService: ContextService,
     private languageService: LanguageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cd: ChangeDetectorRef
   ) {
     this.component = component;
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as olstyle from 'ol/style';
+import OlFeature from 'ol/Feature';
 import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
@@ -66,6 +67,7 @@ export class StyleService {
 
     return olCls;
   }
+
   createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
     let style;
     const type = styleByAttribute.type;
@@ -157,22 +159,24 @@ export class StyleService {
           return style;
         }
       }
-      if (!feature.getStyle()) {
-        if (baseStyle) {
-          style = this.createStyle(baseStyle);
+      if (feature instanceof OlFeature) {
+        if (!feature.getStyle()) {
+          if (baseStyle) {
+            style = this.createStyle(baseStyle);
+            return style;
+          }
+          style = [
+            new olstyle.Style({
+              stroke: new olstyle.Stroke({
+                color: 'black'
+              }),
+              fill: new olstyle.Fill({
+                color: '#bbbbf2'
+              })
+            })
+          ];
           return style;
         }
-        style = [
-          new olstyle.Style({
-            stroke: new olstyle.Stroke({
-              color: 'black'
-            }),
-            fill: new olstyle.Fill({
-              color: '#bbbbf2'
-            })
-          })
-        ];
-        return style;
       }
     }
   }
