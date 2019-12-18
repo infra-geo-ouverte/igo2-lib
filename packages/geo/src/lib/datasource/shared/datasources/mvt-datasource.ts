@@ -13,7 +13,12 @@ export class MVTDataSource extends DataSource {
   public ol: olSourceVectorTile;
 
   protected createOlSource(): olSourceVectorTile {
-    const mvtFormat = new olFormatMVT({featureClass: feature});
+    let mvtFormat;
+    if (this.options.featureClass === 'feature') {
+      mvtFormat = new olFormatMVT({featureClass: feature});
+    } else if (this.options.featureClass === undefined) {
+      mvtFormat = new olFormatMVT();
+    }
     this.options.format = mvtFormat;
     return new olSourceVectorTile(this.options);
   }

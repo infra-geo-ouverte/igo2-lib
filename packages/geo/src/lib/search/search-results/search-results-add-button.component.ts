@@ -25,6 +25,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   private layersSubcriptions = [];
 
+  private lastTimeoutRequest ;
+
   @Input() layer: SearchResult;
 
   /**
@@ -78,6 +80,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    * @internal
    */
   onToggleClick(event) {
+
+    if (typeof this.lastTimeoutRequest !== 'undefined') {
+      clearTimeout(this.lastTimeoutRequest);
+    }
+
     switch (event.type) {
         case 'click':
             if (!this.isPreview$.value) {
@@ -87,8 +94,10 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
             break;
         case 'mouseenter':
             if (!this.isPreview$.value && !this.added) {
-                this.add();
-                this.isPreview$.next(true);
+              this.lastTimeoutRequest = setTimeout(() => {
+                  this.add();
+                  this.isPreview$.next(true);
+                }, 500);
             }
             break;
         case 'mouseleave':
