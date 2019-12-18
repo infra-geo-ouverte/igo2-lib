@@ -86,6 +86,10 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
     const roundedCoordString = roundCoordTo(data, 6).join(', ');
 
+    const coordKey =  this.languageService.translate.instant('igo.geo.search.coordinates.coord');
+    const coordLonLat = {};
+    coordLonLat[coordKey]= roundedCoordString;
+
     return {
       source: this,
       data: {
@@ -97,7 +101,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
         },
         extent: undefined,
         properties: Object.assign({},
-          { 'Long, Lat (WGS84)': roundedCoordString },
+          coordLonLat,
           coords,
           {
             GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),

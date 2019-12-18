@@ -243,7 +243,8 @@
           }
         },
         "coordinates": {
-          "name": "Coordonnées"
+          "name": "Coordonnées",
+          "coord": "Coordonnée (longitude, latitude)"
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
