@@ -12,6 +12,7 @@ import { LanguageService } from '@igo2/core';
 import { GoogleLinks } from '../../../utils/googleLinks';
 import { Projection } from '../../../map/shared/projection.interfaces';
 import { lonLatConversion, roundCoordTo } from '../../../map/shared/map.utils';
+import { OsmLinks } from '../../../utils';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -95,17 +96,17 @@ export class CoordinatesReverseSearchSource extends SearchSource
           coordinates: [data[0], data[1]]
         },
         extent: undefined,
-        properties: Object.assign({}, {
-          type: 'point',
-          coordonnees: roundedCoordString,
-          format: 'degrés decimaux',
-          systemeCoordonnees: 'WGS84',
-          GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
-          GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
-            data[0],
-            data[1]
-          )
-        }, coords),
+        properties: Object.assign({},
+          { 'Long, Lat (WGS84)': roundedCoordString },
+          coords,
+          {
+            GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
+            GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
+              data[0],
+              data[1]
+            ),
+            OpenStreetMap: OsmLinks.getOpenStreetMapLink(data[0], data[1], 14)
+          }),
         meta: {
           id: '1',
           title: roundedCoordString
