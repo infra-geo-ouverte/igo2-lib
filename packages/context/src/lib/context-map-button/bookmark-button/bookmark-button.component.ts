@@ -58,6 +58,7 @@ export class BookmarkButtonComponent {
               }
             );
             this.messageService.success(message, titleD);
+            this.contextService.loadContext(context.uri);
           });
         }
       });

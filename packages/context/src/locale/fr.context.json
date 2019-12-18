@@ -96,18 +96,18 @@
           "copyTitle": "Lien"
         },
         "placeholderLink": "Lien",
-        "included": "Inclus dans le lien de partage",
-        "context": "Le contexte ouvert lors de la création du lien de partage",
-        "center": "Les coordonnées du centre de la carte (longitude, latitude)",
-        "zoom": "Le niveau de zoom de la carte",
-        "addedLayers": "Les couches ajoutées via le catalogue ou via la barre de recherche",
-        "visibleInvisible": "Le statut de visibilité des couches",
-        "layerListControls": "Les restrictions appliquées à la table des matières (mot-clef, ordre alphabétique, visibilité et échelle)",
-        "excluded": "Exclus du lien de partage",
-        "order": "L'ordre des couche",
-        "opacity": "Les modifications effectués à l'opacité des couches",
-        "filterOgc": "Les ajouts/modifications faites aux filtres par attribut",
-        "filterTime": "La valeur en cours pour les filtres temporels"
+        "included": "Inclus dans le lien de partage :",
+        "context": "Le contexte ouvert lors de la création du lien de partage.",
+        "center": "Les coordonnées du centre de la carte (longitude, latitude).",
+        "zoom": "Le niveau de zoom de la carte.",
+        "addedLayers": "Les couches ajoutées via le catalogue ou via la barre de recherche.",
+        "visibleInvisible": "Le statut de visibilité des couches.",
+        "layerListControls": "Les restrictions appliquées à la table des matières des couches (mot-clé, ordre alphabétique, visibilité et échelle).",
+        "excluded": "Exclus dans le lien de partage :",
+        "order": "L'ordre des couches.",
+        "opacity": "Les modifications effectuées à l'opacité des couches.",
+        "filterOgc": "Les ajouts/modifications faits aux filtres par attribut.",
+        "filterTime": "La valeur en cours pour les filtres temporels."
       },
       "tool": {
         "dialog": {
