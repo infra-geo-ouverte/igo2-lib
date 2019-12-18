@@ -2,12 +2,15 @@
 
 table {
   width: 100%;
-  white-space: nowrap;
 }
 
 table td {
   padding: $igo-padding;
 }
+
+#keyValue{
+   width: 30%;
+ }
 
 iframe {
   height: calc(100% - 4px);
