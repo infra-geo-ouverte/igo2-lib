@@ -139,6 +139,8 @@
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
+        "offline": "Offline mode",
+        "online": "Online mode",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
         "resetRotation": "Set map to north",
@@ -396,6 +398,16 @@
         "ogcFilter.tooltip": "Apply filters",
         "wfsDownload.title": "Download",
         "wfsDownload.tooltip": "Download"
+      },
+      "network": {
+        "online": {
+          "message": "Online",
+          "title": "Status:"
+        },
+        "offline": {
+          "message": "Offline",
+          "title": "Status:"
+        }
       }
     }
   }

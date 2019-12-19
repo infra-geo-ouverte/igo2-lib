@@ -139,6 +139,8 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "offline": "Passer en mode hors-ligne",
+        "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
         "resetRotation": "Réinitialiser la carte vers le nord",
@@ -397,6 +399,16 @@
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
         "wfsDownload.title": "Télécharger les données associées",
         "wfsDownload.tooltip": "Télécharger les données associées"
+      },
+      "network": {
+        "online": {
+          "message": "En ligne",
+          "title": "Statut:"
+        },
+        "offline": {
+          "message": "Hors-Ligne",
+          "title": "Statut:"
+        }
       }
     }
   }
