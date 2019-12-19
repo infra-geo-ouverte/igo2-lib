@@ -393,6 +393,16 @@
         "ogcFilter.tooltip": "Apply filters",
         "wfsDownload.title": "Download",
         "wfsDownload.tooltip": "Download"
+      },
+      "network": {
+        "online": {
+          "message": "Online",
+          "title": "Status:"
+        },
+        "offline": {
+          "message": "Offline",
+          "title": "Status:"
+        }
       }
     }
   }

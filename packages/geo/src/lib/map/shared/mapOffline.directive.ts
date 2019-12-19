@@ -1,5 +1,5 @@
 import { Directive, AfterViewInit } from '@angular/core';
-import { NetworkService, ConnectionState } from '@igo2/core';
+import { NetworkService, ConnectionState, MessageService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from './map';
 import { MapBrowserComponent } from '../map-browser/map-browser.component';
@@ -29,37 +29,57 @@ export class MapOfflineDirective implements AfterViewInit {
 
   constructor(
     component: MapBrowserComponent,
-    private networkService: NetworkService
+    private networkService: NetworkService,
+    private messageService: MessageService,
+    private languageService: LanguageService
     ) {
       this.component = component;
     }
 
-  ngAfterViewInit() {
-    this.map.offlineButtonToggle$.subscribe((offlineButtonToggle: boolean) => {
-      this.offlineButtonStatus = offlineButtonToggle;
-      if (this.offlineButtonStatus && this.networkState.connection) {
-        this.offlineButtonState.connection = false;
-        this.changeLayer();
-      } else if (!this.offlineButtonStatus && !this.networkState.connection) {
-        this.offlineButtonState.connection = false;
-        this.changeLayer();
-      } else if (!this.offlineButtonStatus && this.networkState.connection) {
-        this.offlineButtonState.connection = true;
-        this.changeLayer();
-      }
-    });
+    ngAfterViewInit() {
+      this.map.offlineButtonToggle$.subscribe((offlineButtonToggle: boolean) => {
+        this.offlineButtonStatus = offlineButtonToggle;
+        const translate = this.languageService.translate;
+        if (this.offlineButtonStatus && this.networkState.connection) {
+          const message = translate.instant('igo.geo.network.offline.message');
+          const title = translate.instant('igo.geo.network.offline.title');
+          this.messageService.info(message, title);
+          this.offlineButtonState.connection = false;
+          this.changeLayer();
+        } else if (!this.offlineButtonStatus && !this.networkState.connection) {
+          const message = translate.instant('igo.geo.network.offline.message');
+          const title = translate.instant('igo.geo.network.offline.title');
+          this.messageService.info(message, title);
+          this.offlineButtonState.connection = false;
+          this.changeLayer();
+        } else if (!this.offlineButtonStatus && this.networkState.connection) {
+          let message;
+          let title;
+          const messageObs = translate.get('igo.geo.network.online.message');
+          const titleObs = translate.get('igo.geo.network.online.title');
+          messageObs.subscribe((message1: string) => {
+            message = message1;
+          });
+          titleObs.subscribe((title1: string) => {
+            title = title1;
+          });
+          this.messageService.info(message, title);
+          this.offlineButtonState.connection = true;
+          this.changeLayer();
+        }
+      });
 
-    this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.networkState = state;
-      if (!this.offlineButtonStatus) {
-        this.changeLayer();
-      }
-    });
+      this.networkService.currentState().subscribe((state: ConnectionState) => {
+        this.networkState = state;
+        if (!this.offlineButtonStatus) {
+          this.changeLayer();
+        }
+      });
 
-    this.map.layers$.subscribe((layers: Layer[]) => {
-      this.changeLayer();
-    });
-  }
+      this.map.layers$.subscribe((layers: Layer[]) => {
+        this.changeLayer();
+      });
+    }
 
   private changeLayer() {
     let sourceOptions;

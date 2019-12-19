@@ -394,6 +394,16 @@
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
         "wfsDownload.title": "Télécharger les données associées",
         "wfsDownload.tooltip": "Télécharger les données associées"
+      },
+      "network": {
+        "online": {
+          "message": "En ligne",
+          "title": "Statut:"
+        },
+        "offline": {
+          "message": "Hors-Ligne",
+          "title": "Statut:"
+        }
       }
     }
   }
