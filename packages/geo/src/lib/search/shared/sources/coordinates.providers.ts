@@ -7,6 +7,7 @@ import {
   CoordinatesReverseSearchSource,
   CoordinatesSearchResultFormatter
 } from './coordinates';
+import { Projection } from '../../../map/shared/projection.interfaces';
 
 /**
  * ICherche search result formatter factory
@@ -39,7 +40,8 @@ export function CoordinatesReverseSearchSourceFactory(
 ) {
   return new CoordinatesReverseSearchSource(
     config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`),
-    languageService
+    languageService,
+    config.getConfig('projections') as Projection[] || []
   );
 }
 
