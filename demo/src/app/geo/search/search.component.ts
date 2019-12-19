@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import * as proj from 'ol/proj';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MediaService } from '@igo2/core';
 import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
@@ -34,6 +34,8 @@ import { SearchState } from '@igo2/integration';
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);
 
+  public igoSearchPointerSummaryEnabled: boolean = false;
+
   public map = new IgoMap({
     overlay: true,
     controls: {
@@ -59,6 +61,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     return this.searchState.store;
   }
 
+  get isTouchScreen(): boolean {
+    return this.mediaService.isTouchScreen();
+  }
+
   public selectedFeature: Feature;
 
   constructor(
@@ -67,7 +73,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private mediaService: MediaService
   ) {
     this.mapService.setMap(this.map);
 
@@ -82,6 +89,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
         this.osmLayer = layer;
         this.map.addLayer(layer);
       });
+  }
+
+  onPointerSummaryEnabledChange(value) {
+    this.igoSearchPointerSummaryEnabled = value;
   }
 
   onSearchTermChange(term?: string) {
@@ -181,6 +192,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       window.scrollX;
     const position = [contextmenuPoint.x, contextmenuPoint.y];
     return position;
+  }
+
+  onPointerSearch(event) {
+    this.lonlat = event;
+    this.onSearchCoordinate();
   }
 
   onSearchCoordinate() {

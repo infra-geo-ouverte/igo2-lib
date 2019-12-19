@@ -245,11 +245,16 @@
           }
         },
         "coordinates": {
-          "name": "Coordonnées"
+          "name": "Coordonnées",
+          "coord": "Coordonnée (longitude, latitude)"
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
           "title": "Paramètres"
+        },
+        "pointerSearchSummary": {
+          "title": "Position du curseur",
+          "tooltip": "Selon les sources activées, vous pouvez faire afficher le résumé de la position du curseur. Pour des résultats multiple de type indentiques, seul le plus proche est présenté. Utiliser F2 pour activer/désactiver."
         },
         "searchSources": {
           "settings": {

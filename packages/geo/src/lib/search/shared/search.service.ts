@@ -10,7 +10,7 @@ import {
 } from './sources/source.interfaces';
 import { SearchSourceService } from './search-source.service';
 import { Research } from './search.interfaces';
-import { sourceCanSearch, sourceCanReverseSearch } from './search.utils';
+import { sourceCanSearch, sourceCanReverseSearch, sourceCanReverseSearchAsSummary } from './search.utils';
 
 /**
  * This service perform researches in all the search sources enabled.
@@ -68,10 +68,11 @@ export class SearchService {
    * @param lonLat Any lon/lat coordinates
    * @returns Researches
    */
-  reverseSearch(lonLat: [number, number], options?: ReverseSearchOptions) {
+  reverseSearch(lonLat: [number, number], options?: ReverseSearchOptions, asPointerSummary: boolean = false) {
+    const reverseSourceFonction = asPointerSummary ? sourceCanReverseSearchAsSummary : sourceCanReverseSearch;
     const sources = this.searchSourceService
       .getEnabledSources()
-      .filter(sourceCanReverseSearch);
+      .filter(reverseSourceFonction);
     return this.reverseSearchSources(sources, lonLat, options || {});
   }
 

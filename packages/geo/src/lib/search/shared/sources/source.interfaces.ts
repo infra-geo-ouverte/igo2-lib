@@ -7,6 +7,8 @@ export interface SearchSourceOptions {
   distance?: number;
   params?: { [key: string]: string };
   settings?: SearchSourceSettings[];
+  showInPointerSummary?: boolean;
+  showInSettings?: boolean;
 }
 
 export interface SearchSourceSettings {
