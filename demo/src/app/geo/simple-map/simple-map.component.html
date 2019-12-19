@@ -9,10 +9,15 @@
     <hr>
   </mat-card-content>
 
-  <igo-map-browser [map]="map" [view]="view">
+  <igo-map-browser [map]="map" [view]="view"
+  igoPointerPosition
+  [pointerPositionDelay]="pointerCoordDelay"
+  (pointerPositionCoord)="onPointerMove($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
     <igo-geolocate-button [map]="map" color="primary"></igo-geolocate-button>
     <igo-rotation-button [map]="map" [showIfNoRotation]="true" color="primary"></igo-rotation-button>
   </igo-map-browser>
 
 </mat-card>
+
+<p *ngIf="!isTouchScreen">{{pointerCoord}}</p>

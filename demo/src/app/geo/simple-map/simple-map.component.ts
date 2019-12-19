@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MediaService } from '@igo2/core';
 import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
 
 @Component({
@@ -9,6 +9,8 @@ import { IgoMap, DataSourceService, LayerService } from '@igo2/geo';
   styleUrls: ['./simple-map.component.scss']
 })
 export class AppSimpleMapComponent {
+  public pointerCoord;
+  public pointerCoordDelay: number = 0;
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -24,10 +26,19 @@ export class AppSimpleMapComponent {
     rotation: 0.75
   };
 
+  get media() {
+    return this.mediaService.getMedia();
+  }
+
+  get isTouchScreen() {
+    return this.mediaService.isTouchScreen();
+  }
+
   constructor(
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    private mediaService: MediaService
   ) {
     this.dataSourceService
       .createAsyncDataSource({
@@ -41,5 +52,9 @@ export class AppSimpleMapComponent {
           })
         );
       });
+  }
+
+  onPointerMove(event) {
+    this.pointerCoord = event;
   }
 }

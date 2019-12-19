@@ -8,14 +8,30 @@
     See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/geo/search">code of this example</a><br>
     See search section of the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/environments"> environment config</a>
     <hr>
+    <br>
+    <span *ngIf="isTouchScreen" title="Details">
+      You can trigger the seach by coordinate by holding the CRTL key down while moving your cursor (on desktop). Don't
+      forget to focus on map before.
+      <br>
+      <br>
+      F2 activate/desactivate the pointer location.
+    </span>
   </mat-card-content>
 
-  <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu (menuPosition)="onContextMenuOpen($event)">
+  <igo-map-browser #mapBrowser [map]="map" [view]="view" igoOverlay [igoContextMenu]=actionbarMenu
+
+    igoSearchPointerSummary
+    [igoSearchPointerSummaryDelay]="500"
+    [igoSearchPointerSummaryEnabled]="igoSearchPointerSummaryEnabled"
+
+    (menuPosition)="onContextMenuOpen($event)" igoPointerPositionByKey [pointerPositionByKeyDelay]="500"
+    [pointerPositionByKeyCode]="17" (pointerPositionByKeyCoord)="onPointerSearch($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
   <igo-panel title="Search">
     <igo-search-bar
+      (pointerSummaryEnabled)="onPointerSummaryEnabledChange($event)"
       [searchSettings]="true"
       (change)="onSearchTermChange($event)"
       (search)="onSearch($event)"

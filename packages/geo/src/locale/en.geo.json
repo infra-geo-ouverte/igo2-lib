@@ -250,6 +250,10 @@
         "settings": {
           "title": "Settings"
         },
+        "pointerSearchSummary": {
+          "title": "Pointer position",
+          "tooltip": "Based on every search source (reverse by coordinate), show the summary of the pointer location. For multiple results of the same type, only the closest is shown. Use F2 to activate/desactivate."
+        },
         "searchSources": {
           "settings": {
             "results type": "Results type",
