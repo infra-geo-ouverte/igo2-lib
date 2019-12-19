@@ -9,12 +9,12 @@
     See search section of the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/environments"> environment config</a>
     <hr>
     <br>
-    <span *ngIf="isTouchScreen" title="Details">
+    <span *ngIf="!isTouchScreen" title="Details">
       You can trigger the seach by coordinate by holding the CRTL key down while moving your cursor (on desktop). Don't
       forget to focus on map before.
       <br>
       <br>
-      F2 activate/desactivate the pointer location.
+      F2 activate/desactivate the pointer location. 
     </span>
   </mat-card-content>
 
