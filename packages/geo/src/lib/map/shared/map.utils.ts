@@ -42,13 +42,13 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   let lon: any;
   let lat: any;
 
-  const projectionPattern = '(;[\\d]{4,6})';
+  const projectionPattern = '(\\s*;\\s*[\\d]{4,6})';
   const toProjection = '4326';
   let projectionStr: string;
   const projectionRegex = new RegExp(projectionPattern, 'g');
 
   const lonlatCoord =  '([-+])?([\\d]{1,3})([,.](\\d+))?';
-  const lonLatPattern = `${lonlatCoord}[\\s,.]\\s*${lonlatCoord}`;
+  const lonLatPattern = `${lonlatCoord}[\\s,.]+${lonlatCoord}`;
   const lonLatRegex = new RegExp(`^${lonLatPattern}$`, 'g');
 
   const dmsCoord = '([0-9]{1,2})[:|°]?\\s*([0-9]{1,2})?[:|\'|′|’]?\\s*([0-9]{1,2}(?:\.[0-9]+){0,1})?\\s*["|″|”]?\\s*';
@@ -62,11 +62,11 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   const mtmRegex =  new RegExp(`^${patternMtm}`, 'gi');
 
   const ddCoord = '([-+])?(\\d{1,3})[,.](\\d+)';
-  const patternDd = `${ddCoord}[,.]?\\s*${ddCoord}`;
+  const patternDd = `${ddCoord}\\s*[,.]?\\s*${ddCoord}`;
   const ddRegex =  new RegExp(`^${patternDd}`, 'g');
 
   const dmdCoord = '([-+])?(\\d{1,3})[\\s,.]{1}(\\d{1,2})[\\s,.]{1}(\\d{1,2})[.,]?(\\d{1,5})?';
-  const patternDmd = `${dmdCoord}[,.]?\\s*${dmdCoord}`;
+  const patternDmd = `${dmdCoord}\\s*[,.]?\\s*${dmdCoord}`;
   const dmdRegex =  new RegExp(`^${patternDmd}`, 'g');
 
   // tslint:disable:max-line-length
@@ -74,7 +74,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   const bellRegex =  new RegExp(`^${patternBELL}?`, 'gi');
 
   const mmCoord = '([-+]?\\d+)[,.]?(\\d+)?';
-  const mmPattern = `${mmCoord}[\\s,.]\\s*${mmCoord}`;
+  const mmPattern = `${mmCoord}[\\s,.]+${mmCoord}`;
   const mmRegex =  new RegExp(`^${mmPattern}$`, 'g');
 
   let isXYCoords = false;
@@ -82,7 +82,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   str = str.toLocaleUpperCase().trim();
   // Extract projection
   if (projectionRegex.test(str)) {
-    [coordStr, projectionStr] = str.split(';');
+    [coordStr, projectionStr] = str.split(';').map(s => s.trim());
   } else {
     coordStr = str;
   }
@@ -353,7 +353,7 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
       code: 'EPSG:3857',
       alias: 'Web mercator',
       coord: rawCoord3857,
-      igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')};3857`
+      igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')} ; 3857`
     }
   ];
 
@@ -393,7 +393,7 @@ export function lonLatConversion(lonLat: [number, number], projections: Projecti
         code: projection.code,
         alias: projection.alias || projection.code,
         coord: rawCoord,
-        igo2CoordFormat: `${roundCoordTo(rawCoord).join(', ')};${numericEpsgCode}`
+        igo2CoordFormat: `${roundCoordTo(rawCoord).join(', ')} ; ${numericEpsgCode}`
       });
   });
 
