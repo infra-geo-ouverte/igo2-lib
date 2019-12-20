@@ -51,7 +51,7 @@ export class FeatureStoreLoadingStrategy extends EntityStoreStrategy {
   }
 
   /**
-   * Define the motion to apply on load 
+   * Define the motion to apply on load
    * @param motion Feature motion
    */
   setMotion(motion: FeatureMotion) {

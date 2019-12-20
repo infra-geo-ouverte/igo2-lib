@@ -285,7 +285,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param features Store features
    */
   private onSelectFromStore(features: Feature[]) {
-    const motion = this.motion
+    const motion = this.motion;
     const olOverlayFeatures = this.overlayStore.layer.ol.getSource().getFeatures();
     const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature) => olFeature.getId());
     const featuresKeys = features.map(this.overlayStore.getKey);
