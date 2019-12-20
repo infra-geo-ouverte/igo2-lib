@@ -33,6 +33,8 @@ export interface ModifyControlOptions {
   layer?: OlVectorLayer;
   layerStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
   drawStyle?: OlStyle | ((olfeature: OlFeature) => OlStyle);
+  modify?: boolean;
+  translate?: boolean;
 }
 
 /**
@@ -108,7 +110,24 @@ export class ModifyControl {
     return this.olLinearRingsLayer.getSource();
   }
 
+  /**
+   * Whether a modify control should be available
+   */
+  private modify: boolean = true;
+
+  /**
+   * Whether a translate control should be available
+   */
+  private translate: boolean = true;
+
   constructor(private options: ModifyControlOptions) {
+    if (options.modify !== undefined) {
+      this.modify = options.modify;
+    }
+    if (options.translate !== undefined) {
+      this.translate = options.translate;
+    }
+
     if (options.layer !== undefined) {
       this.olOverlayLayer = options.layer;
     } else {
@@ -134,11 +153,20 @@ export class ModifyControl {
 
     this.olMap = olMap;
     this.addOlInnerOverlayLayer();
-    this.addOlDrawInteraction();
-    this.addOlTranslateInteraction();
-    this.activateTranslateInteraction();
-    this.addOlModifyInteraction();
-    this.activateModifyInteraction();
+
+    if (this.modify === true) {
+      this.addOlDrawInteraction();
+    }
+
+    if (this.translate === true) {
+      this.addOlTranslateInteraction();
+      this.activateTranslateInteraction();
+    }
+
+    if (this.modify === true) {
+      this.addOlModifyInteraction();
+      this.activateModifyInteraction();
+    }
   }
 
   /**
