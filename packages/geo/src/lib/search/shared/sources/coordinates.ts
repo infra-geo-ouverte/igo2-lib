@@ -89,7 +89,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
     const coordKey =  this.languageService.translate.instant('igo.geo.search.coordinates.coord');
     const coordLonLat = {};
-    coordLonLat[coordKey]= roundedCoordString;
+    coordLonLat[coordKey] = roundedCoordString;
 
     return {
       source: this,
