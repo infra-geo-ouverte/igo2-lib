@@ -478,7 +478,9 @@ export class ModifyControl {
         this.deactivateDrawInteraction();
 
         this.activateModifyInteraction();
-        this.activateTranslateInteraction();
+        if (this.translate === true) {
+          this.activateTranslateInteraction();
+        }
         this.subscribeToDrawKeyDown();
 
         this.end$.next(this.getOlGeometry());
