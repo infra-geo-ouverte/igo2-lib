@@ -390,7 +390,7 @@ export class ContextService {
     }
 
     context.tools = this.tools.map(tool => {
-      return { id: String(tool.id) };
+      return { id: String(tool.id), global: tool.global };
     });
 
     return context;
