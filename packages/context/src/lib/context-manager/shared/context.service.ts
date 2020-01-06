@@ -386,7 +386,9 @@ export class ContextService {
           url: layer.dataSource.options.url
         }
       };
-      context.layers.push(opts);
+      if (opts.sourceOptions.type) {
+        context.layers.push(opts);
+      }
     }
 
     context.tools = this.tools.map(tool => {
