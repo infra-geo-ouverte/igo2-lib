@@ -90,9 +90,13 @@ export class CatalogBrowserLayerComponent implements OnInit {
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
-          this.remove();
+          if (this.added) {
+            this.remove();
+          } else {
+            this.add();
+          }
         }
-        this.isPreview$.next(!this.isPreview$.value);
+        this.isPreview$.next(false);
         break;
       case 'mouseenter':
         if (!this.isPreview$.value && !this.added) {
@@ -117,16 +121,20 @@ export class CatalogBrowserLayerComponent implements OnInit {
    * Emit added change event with added = true
    */
   private add() {
-    this.added = true;
-    this.addedChange.emit({ added: true, layer: this.layer });
+    if (!this.added) {
+      this.added = true;
+      this.addedChange.emit({ added: true, layer: this.layer });
+    }
   }
 
   /**
    * Emit added change event with added = false
    */
   private remove() {
-    this.added = false;
-    this.addedChange.emit({ added: false, layer: this.layer });
+    if (this.added) {
+      this.added = false;
+      this.addedChange.emit({ added: false, layer: this.layer });
+    }
   }
 
   isInResolutionsRange(): boolean {
