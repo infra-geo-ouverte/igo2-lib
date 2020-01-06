@@ -29,7 +29,9 @@
           "uncaught": {
             "message": "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
             "title": "Erreur de serveur"
-          }
+          },
+          "addPermission": "La permission que vous tentez d'ajouter est déjà présente dans le contexte.",
+          "addPermissionTitle": "Erreur d'ajout de permission"
         },
         "favorite": "Favori",
         "form": {

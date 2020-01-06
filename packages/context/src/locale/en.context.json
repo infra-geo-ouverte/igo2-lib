@@ -29,7 +29,9 @@
           "uncaught": {
             "message": "Sorry, service is currently not available. Please try again later",
             "title": "Error server"
-          }
+          },
+          "addPermission": "The permission you are trying to add is already in the context.",
+          "addPermissionTitle": "Add permission error"
         },
         "favorite": "Favorite",
         "form": {
