@@ -101,13 +101,13 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    * @param catalog Selected catalog
    */
   private loadCatalogItems(catalog: Catalog) {
-    let store = this.catalogState.getCatalogItemsStore(catalog);
-    if (store !== undefined) {
-      this.store$.next(store);
-      return;
-    }
+    // let store = this.catalogState.getCatalogItemsStore(catalog);
+    // if (store !== undefined) {
+    //   this.store$.next(store);
+    //   return;
+    // }
 
-    store = new EntityStore<CatalogItem>([]);
+    const store = new EntityStore<CatalogItem>([]);
     this.catalogState.setCatalogItemsStore(catalog, store);
     this.catalogService
       .loadCatalogItems(catalog)

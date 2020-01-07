@@ -68,7 +68,9 @@ export class CatalogService {
       const catalogsFromApi$ = this.http
         .get<Catalog[]>(`${apiUrl}/catalogs`)
         .pipe(
-          map(catalogs => catalogs.map((c: any) => Object.assign(c, c.options))),
+          map(catalogs =>
+            catalogs.map((c: any) => Object.assign(c, c.options))
+          ),
           catchError((response: HttpErrorResponse) => EMPTY)
         );
       observables$.push(catalogsFromApi$);
@@ -96,6 +98,7 @@ export class CatalogService {
   }
 
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
+    console.log('ici2');
     if (catalog.type === 'baselayers') {
       return this.loadCatalogBaseLayerItems(catalog);
     } else if (catalog.type === 'wmts') {
@@ -232,8 +235,7 @@ export class CatalogService {
               LAYERS: layer.Name,
               FEATURE_COUNT: catalog.count,
               VERSION: catalog.version || '1.3.0'
-            } as WMSDataSourceOptionsParams
-            );
+            } as WMSDataSourceOptionsParams);
             const baseSourceOptions = {
               type: 'wms',
               url: catalog.url,
