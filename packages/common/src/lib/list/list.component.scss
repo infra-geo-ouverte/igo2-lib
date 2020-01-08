@@ -40,12 +40,7 @@ mat-list {
   height: $igo-list-item-height;
 }
 
-:host >>> .mat-list .mat-list-item .mat-list-text .igo-catalog-group-title {
-  font-weight: bold;
-  opacity: 0.8;
-}
-
-:host >>> .mat-list .search-results-title > .mat-list-item > .mat-list-item-content > .mat-list-text > * {
+:host >>> .mat-list ::ng-deep igo-collapsible > .mat-list-item > .mat-list-item-content > .mat-list-text > .mat-line {
   font-weight: bold;
   opacity: 0.8;
 }
