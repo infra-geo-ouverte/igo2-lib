@@ -22,7 +22,6 @@ export interface MapViewControllerOptions {
  * Controller to handle map view interactions
  */
 export class MapViewController extends MapController {
-
   /**
    * Observable of the current resolution
    */
@@ -36,7 +35,7 @@ export class MapViewController extends MapController {
   /**
    * Extent stream
    */
-  private extent$ = new Subject<{extent: MapExtent, action: MapViewAction}>();
+  private extent$ = new Subject<{ extent: MapExtent; action: MapViewAction }>();
 
   /**
    * Subscription to the movement stream
@@ -54,6 +53,11 @@ export class MapViewController extends MapController {
   private stateIndex: number = 0;
 
   /**
+   * View Padding
+   */
+  padding = [0, 0, 0, 0];
+
+  /**
    * Whether the view controller should keep the view's state history
    */
   get stateHistory(): boolean {
@@ -63,7 +67,9 @@ export class MapViewController extends MapController {
   /**
    * OL View
    */
-  get olView(): OlView { return this.olMap.getView(); }
+  get olView(): OlView {
+    return this.olMap.getView();
+  }
 
   constructor(private options?: MapViewControllerOptions) {
     super();
@@ -90,7 +96,7 @@ export class MapViewController extends MapController {
 
     this.extent$$ = this.extent$
       .pipe(debounceTime(25))
-      .subscribe((value: {extent: MapExtent, action: MapViewAction}) => {
+      .subscribe((value: { extent: MapExtent; action: MapViewAction }) => {
         this.setExtent(value.extent, value.action);
       });
   }
@@ -135,7 +141,11 @@ export class MapViewController extends MapController {
   getExtent(projection?: string | OlProjection): MapExtent {
     let extent = this.olView.calculateExtent(this.olMap.getSize());
     if (projection && extent) {
-      extent = olproj.transformExtent(extent, this.getOlProjection(), projection);
+      extent = olproj.transformExtent(
+        extent,
+        this.getOlProjection(),
+        projection
+      );
     }
     return extent;
   }
@@ -188,6 +198,7 @@ export class MapViewController extends MapController {
    * @param zoom Zoom level
    */
   zoomTo(zoom: number) {
+    this.olView.cancelAnimations();
     this.olView.animate({
       zoom,
       duration: 250,
@@ -201,7 +212,7 @@ export class MapViewController extends MapController {
    * @param extent Extent to move to
    */
   moveToExtent(extent: [number, number, number, number]) {
-    this.extent$.next({extent, action: MapViewAction.Move});
+    this.extent$.next({ extent, action: MapViewAction.Move });
   }
 
   /**
@@ -210,7 +221,7 @@ export class MapViewController extends MapController {
    * @param extent Extent to zoom to
    */
   zoomToExtent(extent: [number, number, number, number]) {
-    this.extent$.next({extent, action: MapViewAction.Zoom});
+    this.extent$.next({ extent, action: MapViewAction.Zoom });
   }
 
   /**
@@ -225,7 +236,7 @@ export class MapViewController extends MapController {
    * Reset the view rotation to 0
    */
   resetRotation() {
-    this.olView.animate({rotation: 0});
+    this.olView.animate({ rotation: 0 });
   }
 
   /**
@@ -283,14 +294,45 @@ export class MapViewController extends MapController {
    * Move to the extent retrieved from the stream
    * @param extent Extent
    * @param action Either zoom or move
+   * @param animation With or without animation to the target extent.
    */
-  private setExtent(extent: MapExtent, action: MapViewAction) {
+  private setExtent(
+    extent: MapExtent,
+    action: MapViewAction,
+    animation: boolean = true
+  ) {
     const olView = this.olView;
-    if (action === MapViewAction.Zoom) {
-      olView.fit(extent, {maxZoom: 17});
-    } else if (action === MapViewAction.Move) {
-      olView.fit(extent, {maxZoom: olView.getZoom()});
-    }
+    olView.cancelAnimations();
+    const duration = animation ? 500 : 0;
+    const zoom = olView.getZoom();
+
+    const fromCenter = olView.getCenter();
+    const toCenter = [
+      extent[0] + (extent[2] - extent[0]) / 2,
+      extent[1] + (extent[3] - extent[1]) / 2
+    ];
+    const distCenter = Math.sqrt(
+      Math.pow(fromCenter[0] - toCenter[0], 2) +
+        Math.pow(fromCenter[1] - toCenter[1], 2)
+    );
+    const fromExtent = olView.calculateExtent();
+    const fromSize = Math.sqrt(
+      Math.pow(fromExtent[2] - fromExtent[0], 2) +
+        Math.pow(fromExtent[3] - fromExtent[1], 2)
+    );
+    const toSize = Math.sqrt(
+      Math.pow(extent[2] - extent[0], 2) + Math.pow(extent[3] - extent[1], 2)
+    );
+    const moySize = (toSize + fromSize) / 2;
+    const xSize = distCenter / moySize;
+
+    const maxZoom = action === MapViewAction.Move ? zoom : 17;
+    console.log(this.padding);
+    olView.fit(extent, {
+      maxZoom,
+      padding: this.padding,
+      duration: xSize > 4 ? 0 : duration
+    });
   }
 
   /**
@@ -332,7 +374,8 @@ export class MapViewController extends MapController {
 
     if (this.stateHistory === true) {
       const stateIndex = this.stateIndex;
-      const stateAtIndex = this.states.length === 0 ? undefined : this.states[stateIndex];
+      const stateAtIndex =
+        this.states.length === 0 ? undefined : this.states[stateIndex];
       if (!viewStatesAreEqual(state, stateAtIndex)) {
         this.states = this.states.slice(0, stateIndex + 1).concat([state]);
         this.stateIndex = this.states.length - 1;
