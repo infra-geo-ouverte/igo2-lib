@@ -94,7 +94,7 @@ export class ContextService {
     return this.http
       .get<DetailedContext>(url)
       .pipe(catchError(res => {
-        return this.handleError(res, id)
+        return this.handleError(res, id);
       }));
   }
 
@@ -192,7 +192,7 @@ export class ContextService {
 
     return this.http.post<ContextPermission[]>(url, JSON.stringify(association))
       .pipe(catchError(res => {
-        return [this.handleError(res, undefined, true)]
+        return [this.handleError(res, undefined, true)];
       }));
   }
 

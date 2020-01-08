@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { AuthService } from '@igo2/auth';
 import { EntityStore } from '@igo2/common';
 import { Catalog, CatalogItem } from '@igo2/geo';
 
@@ -22,8 +23,12 @@ export class CatalogState {
    */
   private catalogItemsStores = new Map<string, EntityStore<CatalogItem>>();
 
-  constructor() {
+  constructor(authService: AuthService) {
     this._catalogStore = new EntityStore([]);
+
+    authService.authenticate$.subscribe(() => {
+      this.clearCatalogItemsStores();
+    });
   }
 
   /**
@@ -42,5 +47,12 @@ export class CatalogState {
    */
   setCatalogItemsStore(catalog: Catalog, store: EntityStore<CatalogItem>) {
     this.catalogItemsStores.set(catalog.id as string, store);
+  }
+
+  /**
+   * Clear all catalog items stores
+   */
+  clearCatalogItemsStores() {
+    this.catalogItemsStores.clear();
   }
 }
