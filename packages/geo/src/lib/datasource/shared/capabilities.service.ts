@@ -127,7 +127,9 @@ export class CapabilitiesService {
     );
   }
 
-  // @Cacheable()
+  @Cacheable({
+    maxCacheCount: 20
+  })
   getCapabilities(
     service: 'wms' | 'wmts',
     baseUrl: string,
