@@ -135,7 +135,6 @@ export class CapabilitiesService {
     baseUrl: string,
     version?: string
   ): Observable<any> {
-    console.log('ici');
     const params = new HttpParams({
       fromObject: {
         request: 'GetCapabilities',

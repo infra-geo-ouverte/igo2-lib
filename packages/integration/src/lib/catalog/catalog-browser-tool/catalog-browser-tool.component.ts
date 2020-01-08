@@ -114,7 +114,6 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private loadCatalogItems(catalog: Catalog) {
     let store = this.catalogState.getCatalogItemsStore(catalog);
     if (store !== undefined) {
-      console.log('deja store');
       this.store$.next(store);
       return;
     }
