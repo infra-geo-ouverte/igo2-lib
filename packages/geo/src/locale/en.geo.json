@@ -122,7 +122,7 @@
         "sortMapOrder": "Sort the layers's list based on layer's order on the map",
         "resetLayersList": "Remove the current applied filter to layers's list",
         "trackFeature": "Track the feature",
-        "legend" : {
+        "legend": {
           "default": "Default",
           "loadingLegendText": "Loading legend",
           "noLegendText": "No legend available for this layer",
@@ -231,7 +231,6 @@
         "feature.placeholder": "Search for a place localisation",
         "layer.title": "Layer",
         "layer.placeholder": "Search for a layer",
-        "icherche.name": "iCherche",
         "ichercheReverse.name": "Search by coordinates",
         "ilayer": {
           "name": "Layers",
@@ -242,6 +241,40 @@
             "type": "Type",
             "url": "URL",
             "metadataUrl": "Metadata"
+          },
+          "type": {
+            "layer": "Layer",
+            "groupLayer": "Group of layers"
+          }
+        },
+        "nominatim": {
+          "type": {
+            "food": "Food",
+            "health": "Health",
+            "entertainment": "Entertainment",
+            "finance": "Finance"
+          },
+          "country": {
+            "all": "The world",
+            "canada": "Canada"
+          }
+        },
+        "icherche": {
+          "name": "iCherche",
+          "type": {
+            "address": "Address",
+            "oldAddress": "Old address",
+            "district": "District",
+            "postalCode": "Postal Code",
+            "city": "City",
+            "oldCity": "Old city",
+            "mrc": "MRC",
+            "regadmin": "Administrative Region",
+            "road": "Road",
+            "place": "Place",
+            "sumi": "SUMI mark",
+            "km": "Mileage mark",
+            "entreprise": "Entreprise"
           }
         },
         "coordinates": {
@@ -265,7 +298,9 @@
             "multiple object": "Multiple object",
             "country limitation": "Limitation (country)",
             "selectAll": "Select All",
-            "unselectAll": "Unselect All"
+            "unselectAll": "Unselect All",
+            "true": "Yes",
+            "false": "No"
           }
         }
       },
@@ -282,7 +317,7 @@
         "startDate": "Start Date"
       },
       "spatialFilter": {
-        "predefined" : "Predefined Zone",
+        "predefined": "Predefined Zone",
         "draw": "Draw",
         "polygon": "Polygon",
         "point": "Circle",
@@ -307,7 +342,7 @@
         "zeroResults": "There are no results for this search.",
         "warning": "Warning",
         "freehandControl": "Freehand",
-        "group" : {
+        "group": {
           "toponyme": "Toponym",
           "culturel": "Cultural",
           "education": "Education",

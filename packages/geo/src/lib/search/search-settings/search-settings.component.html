@@ -52,7 +52,7 @@
                       [checked]="settingValue.enabled"
                       (click)="$event.stopPropagation()"
                       (change)="settingsValueCheckedRadioButton($event, source, setting, settingValue)">
-                      {{settingValue.title}}
+                      {{settingValue.title | translate}}
                     </mat-radio-button>
                   </mat-radio-group>
                 </span>
@@ -67,7 +67,7 @@
                     [value]="setting"
                     (click)="$event.stopPropagation()"
                     (change)="settingsValueCheckedCheckbox($event, source, setting, settingValue)">
-                    {{settingValue.title}}
+                    {{settingValue.title | translate}}
                   </mat-checkbox>
                 </span>
               </mat-menu>

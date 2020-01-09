@@ -231,7 +231,6 @@
         "feature.placeholder": "Rechercher une localisation",
         "layer.title": "Couche de données",
         "layer.placeholder": "Rechercher une couche de données.",
-        "icherche.name": "iCherche",
         "ichercheReverse.name": "Recherche par coordonnées",
         "ilayer": {
           "name": "Couches",
@@ -242,6 +241,40 @@
             "type": "Type",
             "url": "URL",
             "metadataUrl": "Métadonnées"
+          },
+          "type": {
+            "layer": "Couche",
+            "groupLayer": "Groupe de couches"
+          }
+        },
+        "nominatim": {
+          "type": {
+            "food": "Restauration",
+            "health": "Santé",
+            "entertainment": "Divertissement",
+            "finance": "Finance"
+          },
+          "country": {
+            "all": "Le monde",
+            "canada": "Canada"
+          }
+        },
+        "icherche": {
+          "name": "iCherche",
+          "type": {
+            "address": "Adresse",
+            "oldAddress": "Ancienne adresse",
+            "district": "Arrondissement",
+            "postalCode": "Code Postal",
+            "city": "Municipalité",
+            "oldCity": "Ancienne municipalité",
+            "mrc": "MRC",
+            "regadmin": "Région administrative",
+            "road": "Route",
+            "place": "Lieu",
+            "sumi": "Borne SUMI",
+            "km": "Repère kilométrique",
+            "entreprise": "Entreprise"
           }
         },
         "coordinates": {
@@ -265,7 +298,9 @@
             "multiple object": "Objet multiple",
             "country limitation": "Limitation (pays)",
             "selectAll": "Tout sélectionner",
-            "unselectAll": "Tout désélectionner"
+            "unselectAll": "Tout désélectionner",
+            "true": "Oui",
+            "false": "Non"
           }
         }
       },
@@ -282,7 +317,7 @@
         "startDate": "Date de début"
       },
       "spatialFilter": {
-        "predefined" : "Zone Prédéfinie",
+        "predefined": "Zone Prédéfinie",
         "draw": "Dessin",
         "polygon": "Polygone",
         "point": "Cercle",
@@ -308,7 +343,7 @@
         "zeroResults": "Aucun résultat ne correspond à cette recherche.",
         "warning": "Avertissement",
         "freehandControl": "À main levée",
-        "group" : {
+        "group": {
           "toponyme": "Toponyme",
           "culturel": "Culturel",
           "education": "Éducation",

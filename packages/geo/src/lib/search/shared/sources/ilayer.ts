@@ -127,6 +127,23 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               enabled: limit === 50
             }
           ]
+        },
+        {
+          type: 'checkbox',
+          title: 'results type',
+          name: 'type',
+          values: [
+            {
+              title: 'igo.geo.search.ilayer.type.layer',
+              value: 'layer',
+              enabled: true
+            },
+            {
+              title: 'igo.geo.search.ilayer.type.groupLayer',
+              value: 'group',
+              enabled: false
+            }
+          ]
         }
       ]
     };
