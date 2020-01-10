@@ -1,3 +1,8 @@
+import { LAYER } from './../../layer/shared/layer.enums';
+import { FEATURE } from './../../feature/shared/feature.enums';
+import { SEARCH_TYPES } from './../shared/search.enums';
+import { TextSearchOptions } from './../shared/sources/source.interfaces';
+import { SearchService } from './../shared/search.service';
 import {
   Component,
   Input,
@@ -16,9 +21,11 @@ import { debounce, map } from 'rxjs/operators';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
-import { SearchResult } from '../shared/search.interfaces';
+import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
 import { IgoMap } from '../../map';
+import { IChercheSearchSource } from './../shared/sources/icherche';
+import { _MatTreeNodeMixinBase } from '@angular/material';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -32,6 +39,7 @@ export enum SearchResultMode {
 @Component({
   selector: 'igo-search-results',
   templateUrl: './search-results.component.html',
+  styleUrls: ['./search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
@@ -45,6 +53,16 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * Search results store watcher
    */
   private watcher: EntityStoreWatcher<SearchResult>;
+
+  /**
+   * Page iterator for displaying more results function with icherche
+   */
+  public pageIteratorICherche: number = 2;
+
+  /**
+   * Page iterator for displaying more results function with ilayer
+   */
+  public pageIteratorILayer: number = 2;
 
   @Input() map: IgoMap;
 
@@ -69,6 +87,20 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Input() withZoomButton = false;
 
   /**
+   * Search term
+   */
+  @Input()
+  get term(): string {
+    return this._term;
+  }
+  set term(value: string) {
+    this._term = value;
+    this.pageIteratorILayer = 2;
+    this.pageIteratorICherche = 2;
+  }
+  public _term: string;
+
+  /**
    * Event emitted when a result is focused
    */
   @Output() resultFocus = new EventEmitter<SearchResult>();
@@ -82,6 +114,14 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * Event emitted when a result is selected
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
+
+  /**
+   * Event emitted when a research is completed after displaying more results is clicked
+   */
+  @Output() moreResults = new EventEmitter<{
+    research: Research;
+    results: SearchResult[];
+  }>();
 
   /**
    * Events emitted when a result is focus or unfocus by mouse event
@@ -101,7 +141,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     {source: SearchSource; results: SearchResult[]}[]
   >;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef,
+              private searchService: SearchService) {}
 
   /**
    * Bind the search results store to the watcher
@@ -205,5 +246,42 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     return Array.from(grouped.keys()).map((source: SearchSource) => {
       return {source, results: grouped.get(source)};
     });
+  }
+
+  isMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
+    if (group) {
+      if (Number(group.source.params.limit) > group.results.length) {
+        return false;
+      }
+      if (group.source.title === 'iCherche' && this.pageIteratorICherche > 10) {
+        return false;
+      }
+      if (group.source.title === 'Couches' && this.pageIteratorILayer > 10) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  displayMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
+    const searchTypeFeature: 'Feature' = FEATURE;
+    const searchTypeLayer: 'Layer' = LAYER;
+    const options: TextSearchOptions = {
+      params: {
+        page: group.source.title === 'Couches' ? this.pageIteratorILayer.toString() : this.pageIteratorICherche.toString()
+      },
+      searchType: group.source.title === 'Couches' ? searchTypeLayer : searchTypeFeature
+    };
+
+    const researches = this.searchService.search(this.term, options);
+    group.source.title === 'Couches' ? this.pageIteratorILayer += 1 : this.pageIteratorICherche += 1;
+    researches.map(research => {
+      research.request.subscribe((results: SearchResult[]) => {
+        const newResults = group.results.concat(results);
+        this.moreResults.emit({research, results: newResults});
+      });
+    });
+    return;
   }
 }

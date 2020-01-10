@@ -38,7 +38,11 @@
 
         </igo-search-results-item>
       </ng-template>
+      <span class="moreResults" *ngIf="isMoreResults(group)" (click)="displayMoreResults(group)">
+        <u>{{ 'igo.geo.search.displayMoreResults' | translate }}</u>
+      </span>
     </ng-template>
 
   </ng-template>
+
 </igo-list>

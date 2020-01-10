@@ -302,7 +302,8 @@
             "true": "Oui",
             "false": "Non"
           }
-        }
+        },
+        "displayMoreResults": "Afficher plus de résultats"
       },
       "geometry": {
         "geometry": "Geometrie",
