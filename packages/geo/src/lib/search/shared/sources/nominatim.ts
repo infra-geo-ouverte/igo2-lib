@@ -97,7 +97,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'country limitation',
+          title: 'restrictExtent',
           name: 'countrycodes',
           values: [
             {

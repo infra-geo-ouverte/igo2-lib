@@ -31,6 +31,7 @@ export interface TextSearchOptions {
   params?: { [key: string]: string };
   searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
   getEnabledOnly?: boolean;
+  extent?: [number, number, number, number];
 }
 
 export interface ReverseSearchOptions {

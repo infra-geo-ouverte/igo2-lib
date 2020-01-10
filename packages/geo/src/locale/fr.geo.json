@@ -275,6 +275,10 @@
             "sumi": "Borne SUMI",
             "km": "Repère kilométrique",
             "entreprise": "Entreprise"
+          },
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "quebec": "Au Québec"
           }
         },
         "coordinates": {
@@ -296,7 +300,7 @@
             "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "country limitation": "Limitation (pays)",
+            "restrictExtent": "Restreint l'étendue",
             "selectAll": "Tout sélectionner",
             "unselectAll": "Tout désélectionner",
             "true": "Oui",

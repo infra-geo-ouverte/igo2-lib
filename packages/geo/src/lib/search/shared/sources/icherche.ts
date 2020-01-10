@@ -253,6 +253,23 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: ecmax === 100
             }
           ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'restrictExtent',
+          name: 'loc',
+          values: [
+            {
+              title: 'igo.geo.search.icherche.restrictExtent.map',
+              value: 'true',
+              enabled: false
+            },
+            {
+              title: 'igo.geo.search.icherche.restrictExtent.quebec',
+              value: 'false',
+              enabled: true
+            }
+          ]
         }
       ]
     };
@@ -275,7 +292,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       map((response: IChercheResponse) => this.extractResults(response)),
       catchError(err => {
         err.error.toDisplay = true;
-        err.error.title = this.getDefaultOptions().title;
+        err.error.title = this.languageService.translate.instant(
+          this.getDefaultOptions().title
+        );
         throw err;
       })
     );
@@ -320,6 +339,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       this.params,
       this.computeOptionsParam(term, options || {}).params
     );
+
+    if (queryParams.loc === 'true') {
+      const [xMin, yMin, xMax, yMax] = options.extent;
+      queryParams.loc = `${xMin},${yMin};${xMax},${yMin};${xMax},${yMax};${xMin},${yMax};${xMin},${yMin}`;
+    } else if (queryParams.loc === 'false') {
+      delete queryParams.loc;
+    }
 
     if (queryParams.q.indexOf('#') !== -1) {
       queryParams.type = 'lieux';

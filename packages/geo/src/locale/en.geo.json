@@ -275,6 +275,10 @@
             "sumi": "SUMI mark",
             "km": "Mileage mark",
             "entreprise": "Entreprise"
+          },
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "quebec": "Au Québec"
           }
         },
         "coordinates": {
@@ -296,7 +300,7 @@
             "radius": "Search radius",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
-            "country limitation": "Limitation (country)",
+            "restrictExtent": "Restrict the extent",
             "selectAll": "Select All",
             "unselectAll": "Unselect All",
             "true": "Yes",

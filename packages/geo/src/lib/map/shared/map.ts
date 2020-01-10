@@ -164,12 +164,12 @@ export class IgoMap {
 
   // TODO: Move to ViewController and update every place it's used
   getCenter(projection?: string | OlProjection): [number, number] {
-    return this.viewController.getCenter();
+    return this.viewController.getCenter(projection);
   }
 
   // TODO: Move to ViewController and update every place it's used
   getExtent(projection?: string | OlProjection): MapExtent {
-    return this.viewController.getExtent();
+    return this.viewController.getExtent(projection);
   }
 
   // TODO: Move to ViewController and update every place it's used
