@@ -259,6 +259,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       if (group.source.title === 'Couches' && this.pageIteratorILayer > 10) {
         return false;
       }
+      if (group.results.length % Number(group.source.params.limit) !== 0) {
+        return false;
+      }
       return true;
     }
     return false;
