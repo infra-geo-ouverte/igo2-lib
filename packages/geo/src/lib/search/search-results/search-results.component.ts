@@ -1,8 +1,3 @@
-import { LAYER } from './../../layer/shared/layer.enums';
-import { FEATURE } from './../../feature/shared/feature.enums';
-import { SEARCH_TYPES } from './../shared/search.enums';
-import { TextSearchOptions } from './../shared/sources/source.interfaces';
-import { SearchService } from './../shared/search.service';
 import {
   Component,
   Input,
@@ -21,11 +16,14 @@ import { debounce, map } from 'rxjs/operators';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
+import { IgoMap } from '../../map';
+import { LAYER } from '../../layer/shared/layer.enums';
+import { FEATURE } from '../../feature/shared/feature.enums';
+
+import { TextSearchOptions } from '../shared/sources/source.interfaces';
+import { SearchService } from '../shared/search.service';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchSource } from '../shared/sources/source';
-import { IgoMap } from '../../map';
-import { IChercheSearchSource } from './../shared/sources/icherche';
-import { _MatTreeNodeMixinBase } from '@angular/material';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
