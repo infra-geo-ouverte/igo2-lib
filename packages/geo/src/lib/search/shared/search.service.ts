@@ -53,14 +53,19 @@ export class SearchService {
       .getMap()
       .viewController.getExtent('EPSG:4326');
 
-    let sources = this.searchSourceService.getEnabledSources();
+    let sources;
 
     if (options.getEnabledOnly || options.getEnabledOnly === undefined) {
       sources = this.searchSourceService.getEnabledSources();
     } else {
       sources = this.searchSourceService.getSources();
     }
-    if (options.searchType) {
+
+    if (options.sourceId) {
+      sources = sources.filter(
+        source => source.getId() === options.sourceId
+      );
+    } else if (options.searchType) {
       sources = sources.filter(
         source => source.getType() === options.searchType
       );
