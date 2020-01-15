@@ -11,7 +11,6 @@ import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
-import { WktService } from '../../../wkt/shared/wkt.service';
 
 /**
  * Cadastre search source
@@ -93,15 +92,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
 
   private dataToResult(data: string): SearchResult<Feature> {
     const lot = data.split(';');
-
-    console.log(data, lot);
     const numero = lot[0];
     const wkt = lot[7];
-
     const geometry = this.computeGeometry(wkt);
-
     const properties = { NoLot : numero };
-
     const id = [this.getId(), 'cadastre', numero].join('.');
 
     return {
