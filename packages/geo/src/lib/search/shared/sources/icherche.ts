@@ -333,6 +333,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         geometry: true,
         bbox: true,
         icon: true,
+        page: options.page,
         type:
           'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
       },
@@ -351,16 +352,16 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       queryParams.type = 'lieux';
     }
 
-    return new HttpParams({ fromObject: queryParams });
+    return new HttpParams({ fromObject: ObjectUtils.removeUndefined(queryParams) });
   }
 
   private extractResults(response: IChercheResponse): SearchResult<Feature>[] {
     return response.features.map((data: IChercheData) => {
-      return this.formatter.formatResult(this.dataToResult(data));
+      return this.formatter.formatResult(this.dataToResult(data, response));
     });
   }
 
-  private dataToResult(data: IChercheData): SearchResult<Feature> {
+  private dataToResult(data: IChercheData, response?: IChercheResponse): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, properties.code].join('.');
 
@@ -390,7 +391,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
-        icon: data.icon || 'map-marker'
+        icon: data.icon || 'map-marker',
+        nextPage: (response.features.length % Number(this.options.params.limit) !== 0
+        || Number(this.options.params.page) > 10) ? false : true
       }
     };
   }

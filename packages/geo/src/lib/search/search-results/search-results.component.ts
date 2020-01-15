@@ -1,3 +1,4 @@
+import { Feature } from './../../feature/shared/feature.interfaces';
 import {
   Component,
   Input,
@@ -52,15 +53,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   private watcher: EntityStoreWatcher<SearchResult>;
 
-  /**
-   * Page iterator for displaying more results function with icherche
-   */
-  public pageIteratorICherche: number = 2;
-
-  /**
-   * Page iterator for displaying more results function with ilayer
-   */
-  public pageIteratorILayer: number = 2;
+  public pageIterator =  { Layer: 1, Feature: 1};
 
   @Input() map: IgoMap;
 
@@ -93,8 +86,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
   set term(value: string) {
     this._term = value;
-    this.pageIteratorILayer = 2;
-    this.pageIteratorICherche = 2;
+    this.pageIterator.Layer = 1;
+    this.pageIterator.Feature = 1;
   }
   public _term: string;
 
@@ -247,17 +240,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   isMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
-    if (group) {
-      if (Number(group.source.params.limit) > group.results.length) {
-        return false;
-      }
-      if (group.source.title === 'iCherche' && this.pageIteratorICherche > 10) {
-        return false;
-      }
-      if (group.source.title === 'Couches' && this.pageIteratorILayer > 10) {
-        return false;
-      }
-      if (group.results.length % Number(group.source.params.limit) !== 0) {
+    if (group.results) {
+      if (group.results[group.results.length - 1].meta.nextPage === false) {
         return false;
       }
       return true;
@@ -269,14 +253,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     const searchTypeFeature: 'Feature' = FEATURE;
     const searchTypeLayer: 'Layer' = LAYER;
     const options: TextSearchOptions = {
-      params: {
-        page: group.source.title === 'Couches' ? this.pageIteratorILayer.toString() : this.pageIteratorICherche.toString()
-      },
-      searchType: group.source.title === 'Couches' ? searchTypeLayer : searchTypeFeature
+      searchType: group.results[0].meta.dataType === 'Layer' ? searchTypeLayer : searchTypeFeature,
+      page: ++this.pageIterator[group.results[0].meta.dataType]
     };
 
     const researches = this.searchService.search(this.term, options);
-    group.source.title === 'Couches' ? this.pageIteratorILayer += 1 : this.pageIteratorICherche += 1;
     researches.map(research => {
       research.request.subscribe((results: SearchResult[]) => {
         const newResults = group.results.concat(results);

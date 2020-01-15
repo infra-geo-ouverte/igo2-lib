@@ -5,6 +5,7 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LAYER } from '../../../layer';
@@ -174,14 +175,15 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options: TextSearchOptions
   ): HttpParams {
     return new HttpParams({
-      fromObject: Object.assign(
+      fromObject: ObjectUtils.removeUndefined(Object.assign(
         {
-          q: this.computeTerm(term)
+          q: this.computeTerm(term),
+          page: options.page
         },
         this.params,
         options.params || {}
       )
-    });
+    )});
   }
 
   /**
@@ -205,10 +207,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   private extractResults(
     response: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse>[] {
-    return response.items.map((data: ILayerData) => this.dataToResult(data));
+    return response.items.map((data: ILayerData) => this.dataToResult(data, response));
   }
 
-  private dataToResult(data: ILayerData): SearchResult<ILayerItemResponse> {
+  private dataToResult(data: ILayerData, response?: ILayerServiceResponse): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
 
     const titleHtml = data.highlight.title || data.properties.title;
@@ -224,7 +226,8 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         id: [this.getId(), data.properties.id].join('.'),
         title: data.properties.title,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.properties.type === 'Layer' ? 'layers' : 'map'
+        icon: data.properties.type === 'Layer' ? 'layers' : 'map',
+        nextPage: (response.items.length % Number(this.options.params.limit) !== 0) ? false : true
       },
       data: layerOptions
     };
