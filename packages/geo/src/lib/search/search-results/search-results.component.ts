@@ -239,13 +239,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   isMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
-    if (group.results) {
-      if (group.results[group.results.length - 1].meta.nextPage !== true) {
-        return false;
-      }
-      return true;
-    }
-    return false;
+    return group.results && group.results[group.results.length - 1].meta.nextPage === true;
   }
 
   displayMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
