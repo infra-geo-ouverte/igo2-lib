@@ -33,6 +33,7 @@ export interface TextSearchOptions {
   getEnabledOnly?: boolean;
   extent?: [number, number, number, number];
   page?: number;
+  sourceId?: string;
 }
 
 export interface ReverseSearchOptions {

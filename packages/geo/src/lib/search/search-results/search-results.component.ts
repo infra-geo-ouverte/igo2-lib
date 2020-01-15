@@ -1,4 +1,3 @@
-import { Feature } from './../../feature/shared/feature.interfaces';
 import {
   Component,
   Input,
@@ -18,8 +17,6 @@ import { debounce, map } from 'rxjs/operators';
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
 import { IgoMap } from '../../map';
-import { LAYER } from '../../layer/shared/layer.enums';
-import { FEATURE } from '../../feature/shared/feature.enums';
 
 import { TextSearchOptions } from '../shared/sources/source.interfaces';
 import { SearchService } from '../shared/search.service';
@@ -53,7 +50,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   private watcher: EntityStoreWatcher<SearchResult>;
 
-  public pageIterator =  { Layer: 1, Feature: 1};
+  public pageIterator: {sourceId: string}[] = [];
 
   @Input() map: IgoMap;
 
@@ -86,8 +83,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
   set term(value: string) {
     this._term = value;
-    this.pageIterator.Layer = 1;
-    this.pageIterator.Feature = 1;
+    this.pageIterator = [];
   }
   public _term: string;
 
@@ -235,13 +231,16 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     });
 
     return Array.from(grouped.keys()).map((source: SearchSource) => {
+      if (this.pageIterator[source.getId()] === undefined) {
+        this.pageIterator[source.getId()] = 1
+      };
       return {source, results: grouped.get(source)};
     });
   }
 
   isMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
     if (group.results) {
-      if (group.results[group.results.length - 1].meta.nextPage === false) {
+      if (group.results[group.results.length - 1].meta.nextPage !== true) {
         return false;
       }
       return true;
@@ -250,11 +249,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   displayMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
-    const searchTypeFeature: 'Feature' = FEATURE;
-    const searchTypeLayer: 'Layer' = LAYER;
     const options: TextSearchOptions = {
-      searchType: group.results[0].meta.dataType === 'Layer' ? searchTypeLayer : searchTypeFeature,
-      page: ++this.pageIterator[group.results[0].meta.dataType]
+      sourceId: group.source.getId(),
+      page: ++this.pageIterator[group.source.getId()]
     };
 
     const researches = this.searchService.search(this.term, options);
