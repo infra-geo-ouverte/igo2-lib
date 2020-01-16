@@ -178,6 +178,18 @@ export class SearchSettingsComponent implements OnInit {
     return setting.values.filter(s => s.available !== false);
   }
 
+  getAvailableHashtagsValues(setting: SettingOptions) {
+    if (setting.hashtags) {
+      let output: string[] = [];
+      for (let value of setting.hashtags) {
+        value = '#' + value;
+        output.push(value);
+      }
+      return output;
+    }
+    return;
+  }
+
   stopPropagation(event) {
     event.stopPropagation();
   }
