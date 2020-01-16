@@ -32,6 +32,8 @@ export interface TextSearchOptions {
   searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
   getEnabledOnly?: boolean;
   extent?: [number, number, number, number];
+  page?: number;
+  sourceId?: string;
 }
 
 export interface ReverseSearchOptions {

@@ -35,7 +35,7 @@ import { MessageService, LanguageService } from '@igo2/core';
 @ToolComponent({
   name: 'spatialFilter',
   title: 'igo.integration.tools.spatialFilter',
-  icon: 'map-marker-radius'
+  icon: 'selection-marker'
 })
 /**
  * Spatial Filter Type
