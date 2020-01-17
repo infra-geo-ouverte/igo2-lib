@@ -47,8 +47,8 @@ export class AppPrintComponent {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
           params: {
-            layers: 'MELS_CS_ANGLO_S',
-            version: '1.3.0'
+            LAYERS: 'MELS_CS_ANGLO_S',
+            VERSION: '1.3.0'
           },
           crossOrigin: 'anonymous'
         }
@@ -62,8 +62,8 @@ export class AppPrintComponent {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
           params: {
-            layers: 'vg_observation_v_inondation_embacle_wmst',
-            version: '1.3.0'
+            LAYERS: 'vg_observation_v_inondation_embacle_wmst',
+            VERSION: '1.3.0'
           },
           crossOrigin: 'anonymous'
         }
@@ -77,8 +77,8 @@ export class AppPrintComponent {
     //       type: 'wms',
     //       url: 'http://geo.weather.gc.ca/geomet/?lang=fr',
     //       params: {
-    //         layers: 'RADAR_1KM_RDBR',
-    //         version: '1.3.0'
+    //         LAYERS: 'RADAR_1KM_RDBR',
+    //         VERSION: '1.3.0'
     //       },
     //       crossOrigin: 'anonymous'
     //     }

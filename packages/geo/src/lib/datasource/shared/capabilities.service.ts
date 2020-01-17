@@ -19,8 +19,14 @@ import {
   ArcGISRestDataSourceOptions,
   TileArcGISRestDataSourceOptions
 } from './datasources';
-import { LegendOptions, ItemStyleOptions } from '../../layer/shared/layers/layer.interface';
-import { TimeFilterType, TimeFilterStyle } from '../../filter/shared/time-filter.enum';
+import {
+  LegendOptions,
+  ItemStyleOptions
+} from '../../layer/shared/layers/layer.interface';
+import {
+  TimeFilterType,
+  TimeFilterStyle
+} from '../../filter/shared/time-filter.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -38,11 +44,13 @@ export class CapabilitiesService {
     baseOptions: WMSDataSourceOptions
   ): Observable<WMSDataSourceOptions> {
     const url = baseOptions.url;
-    const version = (baseOptions.params as any).version;
+    const version = (baseOptions.params as any).VERSION;
 
     return this.getCapabilities('wms', url, version).pipe(
       map((capabilities: any) => {
-        return capabilities ? this.parseWMSOptions(baseOptions, capabilities) : undefined;
+        return capabilities
+          ? this.parseWMSOptions(baseOptions, capabilities)
+          : undefined;
       })
     );
   }
@@ -55,7 +63,9 @@ export class CapabilitiesService {
 
     const options = this.getCapabilities('wmts', url, version).pipe(
       map((capabilities: any) => {
-        return capabilities ? this.parseWMTSOptions(baseOptions, capabilities) : undefined;
+        return capabilities
+          ? this.parseWMTSOptions(baseOptions, capabilities)
+          : undefined;
       })
     );
 
@@ -117,7 +127,9 @@ export class CapabilitiesService {
     );
   }
 
-  @Cacheable()
+  @Cacheable({
+    maxCacheCount: 20
+  })
   getCapabilities(
     service: 'wms' | 'wmts',
     baseUrl: string,
@@ -127,7 +139,8 @@ export class CapabilitiesService {
       fromObject: {
         request: 'GetCapabilities',
         service,
-        version: version || '1.3.0'
+        version: version || '1.3.0',
+        _i: 'true'
       }
     });
 
@@ -151,7 +164,7 @@ export class CapabilitiesService {
     baseOptions: WMSDataSourceOptions,
     capabilities: any
   ): WMSDataSourceOptions {
-    const layers = (baseOptions.params as any).layers;
+    const layers = (baseOptions.params as any).LAYERS;
     const layer = this.findDataSourceInCapabilities(
       capabilities.Capability.Layer,
       layers
@@ -173,8 +186,7 @@ export class CapabilitiesService {
         title: layer.Title,
         maxResolution:
           getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
-        minResolution:
-          getResolutionFromScale(layer.MinScaleDenominator) || 0,
+        minResolution: getResolutionFromScale(layer.MinScaleDenominator) || 0,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
@@ -350,18 +362,22 @@ export class CapabilitiesService {
   }
 
   getStyle(Style): LegendOptions {
-
-    const styleOptions: ItemStyleOptions[] = Style
-    .map((style) => {
+    const styleOptions: ItemStyleOptions[] = Style.map(style => {
       return {
         name: style.Name,
         title: style.Title
       };
     })
-    // Handle repeat the style "default" in output  (MapServer or OpenLayer)
-    .filter((item, index, self) => self.findIndex((i: ItemStyleOptions) => i.name === item.name) === index);
+      // Handle repeat the style "default" in output  (MapServer or OpenLayer)
+      .filter(
+        (item, index, self) =>
+          self.findIndex((i: ItemStyleOptions) => i.name === item.name) ===
+          index
+      );
 
-    const legendOptions: LegendOptions = { stylesAvailable: styleOptions } as LegendOptions;
+    const legendOptions: LegendOptions = {
+      stylesAvailable: styleOptions
+    } as LegendOptions;
 
     return legendOptions;
   }

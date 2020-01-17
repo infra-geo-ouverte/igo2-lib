@@ -307,7 +307,13 @@ export class QueryService {
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
       parser = new olformat.WMSGetFeatureInfo();
-      features = parser.readFeatures(res);
+      try {
+        features = parser.readFeatures(res);
+      } catch (e) {
+        console.warn(
+          'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
+        );
+      }
     }
 
     return features.map(feature =>
@@ -498,10 +504,10 @@ export class QueryService {
 
         const WMSGetFeatureInfoOptions = {
           INFO_FORMAT:
-            wmsDatasource.params.info_format ||
+            wmsDatasource.params.INFO_FORMAT ||
             this.getMimeInfoFormat(datasource.options.queryFormat),
-          QUERY_LAYERS: wmsDatasource.params.layers,
-          FEATURE_COUNT: wmsDatasource.params.feature_count || '5'
+          QUERY_LAYERS: wmsDatasource.params.LAYERS,
+          FEATURE_COUNT: wmsDatasource.params.FEATURE_COUNT || '5'
         };
 
         if (forceGML2) {
@@ -516,14 +522,14 @@ export class QueryService {
           options.projection,
           WMSGetFeatureInfoOptions
         );
-        const wmsVersion =
-          wmsDatasource.params.VERSION ||
-          wmsDatasource.params.version ||
-          '1.3.0';
-        if (wmsVersion !== '1.3.0') {
-          url = url.replace('&I=', '&X=');
-          url = url.replace('&J=', '&Y=');
-        }
+        // const wmsVersion =
+        //   wmsDatasource.params.VERSION ||
+        //   wmsDatasource.params.version ||
+        //   '1.3.0';
+        // if (wmsVersion !== '1.3.0') {
+        //   url = url.replace('&I=', '&X=');
+        //   url = url.replace('&J=', '&Y=');
+        // }
         break;
       case CartoDataSource:
         const cartoDatasource = datasource as CartoDataSource;

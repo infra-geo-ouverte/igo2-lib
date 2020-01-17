@@ -13,4 +13,5 @@ export interface MVTDataSourceOptions extends DataSourceOptions {
   pathOffline?: string;
   excludeAttribute?: Array<string>;
   excludeAttributeOffline?: Array<string>;
+  featureClass?: string;
 }

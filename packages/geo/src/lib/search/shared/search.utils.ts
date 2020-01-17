@@ -22,6 +22,15 @@ export function sourceCanReverseSearch(source: SearchSource): boolean {
 }
 
 /**
+ * Function that checks whether a search source implements ReverseSearch AND is shown in the pointer summary
+ * @param source Search source
+ * @returns True if the search source implements ReverseSearch AND is shown in the pointer summary
+ */
+export function sourceCanReverseSearchAsSummary(source: SearchSource): boolean {
+  return (source as any).reverseSearch !== undefined && source.showInPointerSummary === true;
+}
+
+/**
  * Return a search result out of an Feature. This is used to adapt
  * the IGO query module to the new Feature/SearchResult interfaces
  * @param feature feature
@@ -39,7 +48,7 @@ export function featureToSearchResult(
       dataType: FEATURE,
       id: feature.meta.id as string,
       title: feature.meta.title,
-      icon: 'map-marker'
+      icon: feature.meta.icon || 'map-marker'
     }
   };
 }

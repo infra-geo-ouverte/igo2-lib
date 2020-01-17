@@ -77,6 +77,16 @@ export class SearchSource {
     return this.available && this.options.enabled !== false;
   }
 
+  get showInPointerSummary(): boolean {
+    const showInPointerSummary = this.options.showInPointerSummary;
+    return showInPointerSummary ? showInPointerSummary : false;
+  }
+
+  get showInSettings(): boolean {
+    const showInSettings = this.options.showInSettings;
+    return showInSettings === undefined ? true : showInSettings;
+  }
+
   /**
    * Search url
    */

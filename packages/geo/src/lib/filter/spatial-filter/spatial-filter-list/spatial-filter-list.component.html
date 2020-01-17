@@ -1,0 +1,12 @@
+<form class="form-list">
+    <mat-form-field>
+        <input #input type="text" placeholder="{{'igo.geo.spatialFilter.listLabel' | translate}}" matInput
+        [formControl]="formControl" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onZoneChange($event.option.value)"
+        [displayWith]="displayFn">
+            <mat-option *ngFor="let entities of this.store.view.all$() | async" [value]="entities">
+                {{entities.properties.nom}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+<form>

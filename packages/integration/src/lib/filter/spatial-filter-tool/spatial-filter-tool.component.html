@@ -1,0 +1,34 @@
+<igo-panel>
+  <igo-spatial-filter-type
+    [store]="spatialListStore"
+    [selectedQueryType]="queryType"
+    [zone]="zone"
+    (eventType)="getOutputType($event)"
+    (eventQueryType)="getOutputQueryType($event)"
+    (zoneChange)="onZoneChange($event)">
+  </igo-spatial-filter-type>
+
+  <igo-spatial-filter-item
+    [type]="type"
+    [queryType]="queryType"
+    [map]="map"
+    [zone]="zone"
+    [loading]="loading"
+    [store]="store"
+    [layers]="layers"
+    (radiusEvent)="radius = $event"
+    (freehandControl)="freehandDrawIsActive = $event"
+    (drawZoneEvent)="zone = $event"
+    (itemTypeChange)="itemType = $event"
+    (thematicChange)="thematics = $event"
+    (toggleSearch)="getOutputToggleSearch()"
+    (clearButtonEvent)="layers = $event"
+    (clearSearchEvent)="getOutputClearSearch()">
+  </igo-spatial-filter-item>
+</igo-panel>
+
+<igo-panel>
+  <ng-container *ngIf="selectedFeature$ | async as feature">
+    <igo-feature-details [feature]="feature"></igo-feature-details>
+  </ng-container>
+</igo-panel>

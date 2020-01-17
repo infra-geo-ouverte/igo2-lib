@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import {
@@ -21,6 +21,7 @@ export class ContextPermissionsComponent implements OnInit {
   }
   set context(value: Context) {
     this._context = value;
+    this.cd.detectChanges();
   }
   private _context: Context;
 
@@ -30,15 +31,16 @@ export class ContextPermissionsComponent implements OnInit {
   }
   set permissions(value: ContextPermissionsList) {
     this._permissions = value;
+    this.cd.detectChanges();
   }
   private _permissions: ContextPermissionsList;
 
   @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
-  @Output()
-  removePermission: EventEmitter<ContextPermission> = new EventEmitter();
+  @Output() removePermission: EventEmitter<ContextPermission> = new EventEmitter();
   @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private formBuilder: FormBuilder,
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.buildForm();

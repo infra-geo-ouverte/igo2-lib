@@ -10,6 +10,9 @@ import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService } from '@igo2/core';
 import { GoogleLinks } from '../../../utils/googleLinks';
+import { Projection } from '../../../map/shared/projection.interfaces';
+import { lonLatConversion, roundCoordTo } from '../../../map/shared/map.utils';
+import { OsmLinks } from '../../../utils';
 
 @Injectable()
 export class CoordinatesSearchResultFormatter {
@@ -28,6 +31,8 @@ export class CoordinatesReverseSearchSource extends SearchSource
   static id = 'coordinatesreverse';
   static type = FEATURE;
 
+  private projections;
+
   title$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   get title(): string {
@@ -36,9 +41,11 @@ export class CoordinatesReverseSearchSource extends SearchSource
 
   constructor(
     @Inject('options') options: SearchSourceOptions,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    @Inject('projections') projections: Projection[],
   ) {
     super(options);
+    this.projections = projections;
     this.languageService.translate
       .get(this.options.title)
       .subscribe(title => this.title$.next(title));
@@ -55,7 +62,8 @@ export class CoordinatesReverseSearchSource extends SearchSource
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'igo.geo.search.coordinates.name',
-      order: 1
+      order: 1,
+      showInSettings: false
     };
   }
 
@@ -73,6 +81,16 @@ export class CoordinatesReverseSearchSource extends SearchSource
   }
 
   private dataToResult(data: [number, number]): SearchResult<Feature> {
+    const convertedCoord = lonLatConversion(data, this.projections);
+    const coords = convertedCoord.reduce((obj, item) => (
+      obj[item.alias] = item.igo2CoordFormat, obj), {});
+
+    const roundedCoordString = roundCoordTo(data, 6).join(', ');
+
+    const coordKey =  this.languageService.translate.instant('igo.geo.search.coordinates.coord');
+    const coordLonLat = {};
+    coordLonLat[coordKey] = roundedCoordString;
+
     return {
       source: this,
       data: {
@@ -83,26 +101,26 @@ export class CoordinatesReverseSearchSource extends SearchSource
           coordinates: [data[0], data[1]]
         },
         extent: undefined,
-        properties: {
-          type: 'point',
-          coordonnees: String(data[0].toFixed(5)) + ', ' + String(data[1].toFixed(5)),
-          format: 'degrés decimaux',
-          systemeCoordonnees: 'WGS84',
-          GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
-          GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
-            data[0],
-            data[1]
-          )
-        },
+        properties: Object.assign({},
+          coordLonLat,
+          coords,
+          {
+            GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
+            GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
+              data[0],
+              data[1]
+            ),
+            OpenStreetMap: OsmLinks.getOpenStreetMapLink(data[0], data[1], 14)
+          }),
         meta: {
           id: '1',
-          title: String(data[0].toFixed(5)) + ', ' + String(data[1].toFixed(5))
+          title: roundedCoordString
         }
       },
       meta: {
         dataType: FEATURE,
         id: '1',
-        title: String(data[0].toFixed(5)) + ', ' + String(data[1].toFixed(5)),
+        title: roundedCoordString,
         icon: 'map-marker'
       }
     };

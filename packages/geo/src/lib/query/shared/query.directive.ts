@@ -1,3 +1,4 @@
+import { getEntityTitle } from '@igo2/common';
 import {
   Directive,
   Input,
@@ -11,6 +12,7 @@ import {
 import { Subscription, Observable, of, zip } from 'rxjs';
 
 import OlFeature from 'ol/Feature';
+import OlRenderFeature from 'ol/render/Feature';
 import OlLayer from 'ol/layer/Layer';
 
 import OlDragBoxInteraction from 'ol/interaction/DragBox';
@@ -20,6 +22,7 @@ import { ListenerFunction } from 'ol/events';
 import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { Feature } from '../../feature/shared/feature.interfaces';
+import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
@@ -27,7 +30,7 @@ import { AnyLayer } from '../../layer/shared/layers/any-layer';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
- * By default, all layers are queryable but this cna ben controlled at
+ * By default, all layers are queryable but this can ben controlled at
  * the layer level.
  */
 @Directive({
@@ -123,7 +126,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Stop listenig for map clicks
+   * Stop listening for map clicks
    */
   private unlistenToMapClick() {
     this.map.ol.un(this.mapClickListener.type, this.mapClickListener.listener);
@@ -189,21 +192,32 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       (featureOL: OlFeature, layerOL: OlLayer) => {
         if (featureOL) {
           if (featureOL.get('features')) {
-            featureOL = featureOL.get('features')[0];
+            for (const feature of featureOL.get('features')) {
+              const newFeature = featureFromOl(feature, this.map.projection);
+              newFeature.meta = {
+                title: feature.values_.nom,
+                id: feature.id_,
+                icon: feature.values_._icon,
+                sourceTitle: layerOL.values_.title
+              };
+              clickedFeatures.push(newFeature);
+            }
+          } else if (featureOL instanceof OlRenderFeature) {
+            const featureFromRender: OlFeature = featureOL;
+            const feature = renderFeatureFromOl(
+              featureOL,
+              this.map.projection,
+              layerOL
+            );
+            clickedFeatures.push(feature);
+          } else {
+            const feature = featureFromOl(
+              featureOL,
+              this.map.projection,
+              layerOL
+            );
+            clickedFeatures.push(feature);
           }
-          const feature = featureFromOl(
-            featureOL,
-            this.map.projection,
-            layerOL
-          );
-          clickedFeatures.push(feature);
-        } else {
-          const feature = featureFromOl(
-            featureOL,
-            this.map.projection,
-            layerOL
-          );
-          clickedFeatures.push(feature);
         }
       },
       {
@@ -219,13 +233,14 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
-            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
-              layer
-            );
-            feature.meta.title = this.queryService.getQueryTitle(
-              feature,
-              layer
-            );
+            (feature.meta.id = feature.ol._id),
+              (feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
+                layer
+              ));
+            feature.meta.title =
+              feature.meta.title ||
+              this.queryService.getQueryTitle(feature, layer);
+            feature.meta.sourceTitle = layer.title;
           }
         }
       });

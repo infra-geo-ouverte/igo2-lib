@@ -121,9 +121,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       return of(layerLegend.title);
     }
 
-    const layers = layerOptions.params.layers.split(',');
+    const layers = layerOptions.params.LAYERS.split(',');
     const localLayerOptions = JSON.parse(JSON.stringify(layerOptions)); // to avoid to alter the original options.
-    localLayerOptions.params.layers = layers.find(layer => layer === layerLegend.title);
+    localLayerOptions.params.LAYERS = layers.find(layer => layer === layerLegend.title);
     return this.capabilitiesService
       .getWMSOptions(localLayerOptions)
       .pipe(map(wmsDataSourceOptions => {

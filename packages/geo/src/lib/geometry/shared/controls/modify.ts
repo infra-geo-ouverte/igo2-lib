@@ -57,7 +57,7 @@ export class ModifyControl {
 
   private olMap: OlMap;
   private olOverlayLayer: OlVectorLayer;
-  private olModifyInteraction: OlModify;
+  public olModifyInteraction: OlModify;
   private onModifyStartKey: string;
   private onModifyEndKey: string;
   private onModifyKey: string;

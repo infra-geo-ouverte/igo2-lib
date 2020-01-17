@@ -1,17 +1,25 @@
 import { Injectable } from '@angular/core';
 
 import * as olstyle from 'ol/style';
+import OlFeature from 'ol/Feature';
 import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
+import { createOverlayMarkerStyle } from '../../overlay';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StyleService {
-  constructor() {}
+  public style: olstyle.Style;
 
   createStyle(options: { [key: string]: any }) {
+    if (!options) {
+      return createOverlayMarkerStyle();
+    }
+    if (typeof options === 'function' || options instanceof olstyle.Style) {
+      return options;
+    }
     return this.parseStyle('style', options);
   }
 
@@ -59,6 +67,7 @@ export class StyleService {
 
     return olCls;
   }
+
   createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
     let style;
     const type = styleByAttribute.type;
@@ -150,60 +159,77 @@ export class StyleService {
           return style;
         }
       }
-      if (!feature.getStyle()) {
-        if (baseStyle) {
-          style = this.createStyle(baseStyle);
+      if (feature instanceof OlFeature) {
+        if (!feature.getStyle()) {
+          if (baseStyle) {
+            style = this.createStyle(baseStyle);
+            return style;
+          }
+          style = [
+            new olstyle.Style({
+              stroke: new olstyle.Stroke({
+                color: 'black'
+              }),
+              fill: new olstyle.Fill({
+                color: '#bbbbf2'
+              })
+            })
+          ];
           return style;
         }
-        style = [
-          new olstyle.Style({
-            stroke: new olstyle.Stroke({
-              color: 'black'
-            }),
-            fill: new olstyle.Fill({
-              color: '#bbbbf2'
-            })
-          })
-        ];
-        return style;
       }
     }
   }
 
-  createClusterStyle(feature, clusterParam: ClusterParam, layerStyle) {
-    let style;
-    const range = clusterParam.clusterRange;
+  createClusterStyle(feature, clusterParam: ClusterParam = {}, layerStyle) {
+    let style: olstyle.Style;
     const size = feature.get('features').length;
-    let color;
     if (size !== 1) {
-      if (range) {
-        if (size >= range[1]) {
-          color = 'red';
-        } else if (size < range[1] && size >= range[0]) {
-          color = 'orange';
-        } else if (size < range[0]) {
-          color = 'green';
+      if (clusterParam.clusterRanges) {
+        for (const r of clusterParam.clusterRanges) {
+          if (
+            (!r.minRadius || r.minRadius <= size) &&
+            (!r.maxRadius || r.maxRadius >= size)
+          ) {
+            style = this.createStyle(r.style);
+            break;
+          }
         }
       }
-      style = [
-        new olstyle.Style({
-          image: new olstyle.Circle({
-            radius: 2 * size + 3.4,
-            stroke: new olstyle.Stroke({
-              color: 'black'
+
+      if (!style) {
+        let clusterRadius: number;
+        if (clusterParam.radiusCalc) {
+          clusterRadius = clusterParam.radiusCalc(size);
+        } else {
+          const radiusMin = 6;
+          clusterRadius = 5 * Math.log(size);
+          if (clusterRadius < radiusMin) {
+            clusterRadius = radiusMin;
+          }
+        }
+
+        style = [
+          new olstyle.Style({
+            image: new olstyle.Circle({
+              radius: clusterRadius,
+              opacity: 0.4,
+              stroke: new olstyle.Stroke({
+                color: 'black'
+              }),
+              fill: new olstyle.Fill({
+                color: 'rgba(24, 134, 45, 0.5)'
+              })
             }),
-            fill: new olstyle.Fill({
-              color: range ? color : 'blue'
-            })
-          }),
-          text: new olstyle.Text({
-            text: size.toString(),
-            fill: new olstyle.Fill({
-              color: '#fff'
+            text: new olstyle.Text({
+              text: size.toString(),
+              fill: new olstyle.Fill({
+                color: '#fff'
+              })
             })
           })
-        })
-      ];
+        ];
+      }
     } else {
       style = this.createStyle(layerStyle);
     }

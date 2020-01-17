@@ -10,7 +10,11 @@ import {
 } from './sources/source.interfaces';
 import { SearchSourceService } from './search-source.service';
 import { Research } from './search.interfaces';
-import { sourceCanSearch, sourceCanReverseSearch } from './search.utils';
+import {
+  sourceCanSearch,
+  sourceCanReverseSearch,
+  sourceCanReverseSearchAsSummary
+} from './search.utils';
 
 /**
  * This service perform researches in all the search sources enabled.
@@ -33,7 +37,7 @@ export class SearchService {
    * @param term Any text
    * @returns Researches
    */
-  search(term: string, options?: TextSearchOptions): Research[] {
+  search(term: string, options: TextSearchOptions = {}): Research[] {
     if (!this.termIsValid(term)) {
       return [];
     }
@@ -45,22 +49,30 @@ export class SearchService {
       console.log(response.message);
     }
 
-    let sources = this.searchSourceService.getEnabledSources();
+    options.extent = this.mapService
+      .getMap()
+      .viewController.getExtent('EPSG:4326');
 
-    if (options) {
-      if (options.getEnabledOnly || options.getEnabledOnly === undefined) {
-        sources = this.searchSourceService.getEnabledSources();
-      } else {
-        sources = this.searchSourceService.getSources();
-      }
-      if (options.searchType) {
-        sources = sources.filter(
-          source => source.getType() === options.searchType
-        );
-      }
+    let sources;
+
+    if (options.getEnabledOnly || options.getEnabledOnly === undefined) {
+      sources = this.searchSourceService.getEnabledSources();
+    } else {
+      sources = this.searchSourceService.getSources();
     }
+
+    if (options.sourceId) {
+      sources = sources.filter(
+        source => source.getId() === options.sourceId
+      );
+    } else if (options.searchType) {
+      sources = sources.filter(
+        source => source.getType() === options.searchType
+      );
+    }
+
     sources = sources.filter(sourceCanSearch);
-    return this.searchSources(sources, term, options || {});
+    return this.searchSources(sources, term, options);
   }
 
   /**
@@ -68,10 +80,17 @@ export class SearchService {
    * @param lonLat Any lon/lat coordinates
    * @returns Researches
    */
-  reverseSearch(lonLat: [number, number], options?: ReverseSearchOptions) {
+  reverseSearch(
+    lonLat: [number, number],
+    options?: ReverseSearchOptions,
+    asPointerSummary: boolean = false
+  ) {
+    const reverseSourceFonction = asPointerSummary
+      ? sourceCanReverseSearchAsSummary
+      : sourceCanReverseSearch;
     const sources = this.searchSourceService
       .getEnabledSources()
-      .filter(sourceCanReverseSearch);
+      .filter(reverseSourceFonction);
     return this.reverseSearchSources(sources, lonLat, options || {});
   }
 

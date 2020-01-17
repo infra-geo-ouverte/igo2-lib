@@ -12,7 +12,8 @@ import {
 import {
   IgoCollapsibleModule,
   IgoListModule,
-  IgoMatBadgeIconModule
+  IgoMatBadgeIconModule,
+  IgoStopPropagationModule
 } from '@igo2/common';
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -34,6 +35,7 @@ import { SearchResultAddButtonComponent } from './search-results-add-button.comp
     MatButtonModule,
     IgoCollapsibleModule,
     IgoListModule,
+    IgoStopPropagationModule,
     IgoLanguageModule,
     IgoMatBadgeIconModule,
     IgoMetadataModule,

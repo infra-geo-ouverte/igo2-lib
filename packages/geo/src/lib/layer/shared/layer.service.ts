@@ -1,10 +1,10 @@
-import { Injectable, Optional } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, Injector, Optional } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import stylefunction from 'ol-mapbox-style/stylefunction';
+import { AuthInterceptor } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
-import { ConfigService } from '@igo2/core';
 
 import {
   OSMDataSource,
@@ -42,18 +42,12 @@ import { StyleService } from './style.service';
   providedIn: 'root'
 })
 export class LayerService {
-  private tokenKey: string;
-
   constructor(
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
-    @Optional() private config: ConfigService
-  ) {
-    if (this.config) {
-      this.tokenKey = this.config.getConfig('auth.tokenKey');
-    }
-  }
+    @Optional() private authInterceptor: AuthInterceptor
+  ) {}
 
   createLayer(layerOptions: AnyLayerOptions): Layer {
     if (!layerOptions.source) {
@@ -120,11 +114,7 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    if (this.tokenKey) {
-      layerOptions.tokenKey = this.tokenKey;
-    }
-
-    return new ImageLayer(layerOptions);
+    return new ImageLayer(layerOptions, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
@@ -213,9 +203,7 @@ export class LayerService {
 
   private applyMapboxStyle(layer: Layer, layerOptions: VectorTileLayerOptions) {
     if (layerOptions.mapboxStyle) {
-      const mapboxglStyle = this.getMapboxGlStyle(
-        layerOptions.mapboxStyle.url
-      ).subscribe(res => {
+      this.getMapboxGlStyle(layerOptions.mapboxStyle.url).subscribe(res => {
         stylefunction(layer.ol, res, layerOptions.mapboxStyle.source);
       });
     }

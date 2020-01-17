@@ -1,4 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnDestroy
+} from '@angular/core';
 
 import { SearchResult } from '../shared/search.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -14,14 +20,19 @@ import { Subscription, BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
-
-  public tooltip$: BehaviorSubject<string> = new BehaviorSubject('igo.geo.catalog.layer.addToMap');
+  public tooltip$: BehaviorSubject<string> = new BehaviorSubject(
+    'igo.geo.catalog.layer.addToMap'
+  );
 
   private resolution$$: Subscription;
 
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  private layersSubcriptions = [];
+
+  private lastTimeoutRequest;
 
   @Input() layer: SearchResult;
 
@@ -51,9 +62,12 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
     if (this.layer.meta.dataType === 'Layer') {
-      this.added = this.map.layers.findIndex((lay) => lay.id === this.layer.data.sourceOptions.id) !== -1;
+      this.added =
+        this.map.layers.findIndex(
+          lay => lay.id === this.layer.data.sourceOptions.id
+        ) !== -1;
     }
-    this.resolution$$ = this.map.viewController.resolution$.subscribe((value) => {
+    this.resolution$$ = this.map.viewController.resolution$.subscribe(value => {
       this.isInResolutionsRange(value);
       this.tooltip$.next(this.computeTooltip());
     });
@@ -76,38 +90,54 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
    * @internal
    */
   onToggleClick(event) {
+    if (typeof this.lastTimeoutRequest !== 'undefined') {
+      clearTimeout(this.lastTimeoutRequest);
+    }
+
     switch (event.type) {
-        case 'click':
-            if (!this.isPreview$.value) {
-                this.remove();
-            }
-            this.isPreview$.next(!this.isPreview$.value);
-            break;
-        case 'mouseenter':
-            if (!this.isPreview$.value && !this.added) {
-                this.add();
-                this.isPreview$.next(true);
-            }
-            break;
-        case 'mouseleave':
-            if (this.isPreview$.value) {
-                this.remove();
-                this.isPreview$.next(false);
-            }
-            break;
-        default:
-            break;
+      case 'click':
+        if (!this.isPreview$.value) {
+          if (this.added) {
+            this.remove();
+          } else {
+            this.add();
+          }
+        }
+        this.isPreview$.next(false);
+        break;
+      case 'mouseenter':
+        if (!this.isPreview$.value && !this.added) {
+          this.lastTimeoutRequest = setTimeout(() => {
+            this.add();
+            this.isPreview$.next(true);
+          }, 500);
+        }
+        break;
+      case 'mouseleave':
+        if (this.isPreview$.value) {
+          this.remove();
+          this.isPreview$.next(false);
+        }
+        break;
+      default:
+        break;
     }
   }
 
   private add() {
-    this.added = true;
-    this.addLayerToMap();
+    if (!this.added) {
+      this.added = true;
+      this.addLayerToMap();
+    }
   }
 
   private remove() {
-    this.added = false;
-    this.removeLayerFromMap();
+    if (this.added) {
+      this.added = false;
+      this.removeLayerFromMap();
+      this.layersSubcriptions.map(s => s.unsubscribe());
+      this.layersSubcriptions = [];
+    }
   }
 
   /**
@@ -123,9 +153,11 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
 
     const layerOptions = (this.layer as SearchResult<LayerOptions>).data;
-    this.layerService
-      .createAsyncLayer(layerOptions)
-      .subscribe(layer => this.map.addLayer(layer));
+    this.layersSubcriptions.push(
+      this.layerService
+        .createAsyncLayer(layerOptions)
+        .subscribe(layer => this.map.addLayer(layer))
+    );
   }
 
   /**
@@ -147,14 +179,20 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   isInResolutionsRange(resolution: number) {
     const minResolution = this.layer.data.minResolution;
     const maxResolution = this.layer.data.maxResolution;
-    this.inRange$.next(resolution >= minResolution && resolution <= maxResolution);
+    this.inRange$.next(
+      resolution >= minResolution && resolution <= maxResolution
+    );
   }
 
   computeTooltip(): string {
     if (this.added) {
-      return this.inRange$.value ? 'igo.geo.catalog.layer.removeFromMap' : 'igo.geo.catalog.layer.removeFromMapOutRange';
+      return this.inRange$.value
+        ? 'igo.geo.catalog.layer.removeFromMap'
+        : 'igo.geo.catalog.layer.removeFromMapOutRange';
     } else {
-      return this.inRange$.value ? 'igo.geo.catalog.layer.addToMap' : 'igo.geo.catalog.layer.addToMapOutRange';
+      return this.inRange$.value
+        ? 'igo.geo.catalog.layer.addToMap'
+        : 'igo.geo.catalog.layer.addToMapOutRange';
     }
   }
 }

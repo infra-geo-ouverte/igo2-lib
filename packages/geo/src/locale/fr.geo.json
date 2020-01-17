@@ -139,6 +139,8 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "offline": "Passer en mode hors-ligne",
+        "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
         "resetRotation": "Réinitialiser la carte vers le nord",
@@ -229,7 +231,6 @@
         "feature.placeholder": "Rechercher une localisation",
         "layer.title": "Couche de données",
         "layer.placeholder": "Rechercher une couche de données.",
-        "icherche.name": "iCherche",
         "ichercheReverse.name": "Recherche par coordonnées",
         "ilayer": {
           "name": "Couches",
@@ -240,14 +241,57 @@
             "type": "Type",
             "url": "URL",
             "metadataUrl": "Métadonnées"
+          },
+          "type": {
+            "layer": "Couche",
+            "groupLayer": "Groupe de couches"
+          }
+        },
+        "nominatim": {
+          "type": {
+            "food": "Restauration",
+            "health": "Santé",
+            "entertainment": "Divertissement",
+            "finance": "Finance"
+          },
+          "country": {
+            "all": "Le monde",
+            "canada": "Canada"
+          }
+        },
+        "icherche": {
+          "name": "iCherche",
+          "type": {
+            "address": "Adresse",
+            "oldAddress": "Ancienne adresse",
+            "district": "Arrondissement",
+            "postalCode": "Code Postal",
+            "city": "Municipalité",
+            "oldCity": "Ancienne municipalité",
+            "mrc": "MRC",
+            "regadmin": "Région administrative",
+            "road": "Route",
+            "place": "Lieu",
+            "sumi": "Borne SUMI",
+            "km": "Repère kilométrique",
+            "entreprise": "Entreprise"
+          },
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "quebec": "Au Québec"
           }
         },
         "coordinates": {
-          "name": "Coordonnées"
+          "name": "Coordonnées",
+          "coord": "Coordonnée (longitude, latitude)"
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
           "title": "Paramètres"
+        },
+        "pointerSearchSummary": {
+          "title": "Position du curseur",
+          "tooltip": "Selon les sources activées, vous pouvez faire afficher le résumé de la position du curseur. Pour des résultats multiple de type indentiques, seul le plus proche est présenté. Utiliser F2 pour activer/désactiver."
         },
         "searchSources": {
           "settings": {
@@ -256,11 +300,14 @@
             "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "country limitation": "Limitation (pays)",
+            "restrictExtent": "Restreint l'étendue",
             "selectAll": "Tout sélectionner",
-            "unselectAll": "Tout désélectionner"
+            "unselectAll": "Tout désélectionner",
+            "true": "Oui",
+            "false": "Non"
           }
-        }
+        },
+        "displayMoreResults": "Afficher plus de résultats"
       },
       "geometry": {
         "geometry": "Geometrie",
@@ -273,6 +320,78 @@
         "date": "Date",
         "endDate": "Date de fin",
         "startDate": "Date de début"
+      },
+      "spatialFilter": {
+        "predefined": "Zone Prédéfinie",
+        "draw": "Dessin",
+        "polygon": "Polygone",
+        "point": "Cercle",
+        "drawPolygon": "Dessiner un polygone",
+        "drawCircle": "Dessiner un cercle",
+        "searchLabel": "Rechercher par",
+        "search": "Recherche",
+        "drawControl": "Activer le contrôle de dessin",
+        "listLabel": "Zone",
+        "entity": "Entité",
+        "layer": "Couche",
+        "goSearch": "Lancer la recherche",
+        "removeLayer": "Retirer les résultats",
+        "clearForm": "Retirer le dessin",
+        "clearSearch": "Réinitialiser",
+        "Address": "Adresses",
+        "Thematics": "Thématiques",
+        "searchResults": "Résultats de la recherche",
+        "type": "Type",
+        "radius": "Rayon",
+        "radiusAlert": "Le rayon doit être compris entre 0 et 10000",
+        "maxSizeAlert": "Le nombre de résultats excède 10000. Certains pourraient être manquants.",
+        "zeroResults": "Aucun résultat ne correspond à cette recherche.",
+        "warning": "Avertissement",
+        "freehandControl": "À main levée",
+        "group": {
+          "toponyme": "Toponyme",
+          "culturel": "Culturel",
+          "education": "Éducation",
+          "sante": "Santé",
+          "securite": "Sécurité"
+        }
+      },
+      "terrapi": {
+        "AdmRegion": "Régions administratives",
+        "Mun": "Municipalités",
+        "Arrond": "Arrondissements",
+        "CircFed": "Circonscriptions fédérales",
+        "CircProv": "Circonscriptions provinciales",
+        "DirReg": "Directions régionales",
+        "MRC": "MRC",
+        "RegTour": "Régions touristiques",
+        "bornes": "Bornes sumi",
+        "hydro": "Hydrographie",
+        "routes": "Routes",
+        "bati": "Bâtiments",
+        "geographie": "Lieux naturels",
+        "parc": "Parcs",
+        "secteur": "Secteurs",
+        "immeubles": "Immeubles patrimoniaux",
+        "sites": "Sites patrimoniaux",
+        "cpe": "Centre de la petite enfance",
+        "public": "Écoles publiques",
+        "prive": "Écoles privés",
+        "gouvernemental": "Écoles gouvernementales",
+        "colleges": "Collèges",
+        "universites": "Universités",
+        "aine": "Résidences pour aînés",
+        "ambulance": "Zones d'ambulance",
+        "clinique": "Cliniques",
+        "etabl": "Établissements de santé",
+        "gmf": "Groupes de médecins de famille",
+        "naissance": "Maisons de naissances",
+        "pharmacie": "Pharmacies",
+        "correctionnel": "Centres correctionnels",
+        "organisme": "Organismes de sécurité",
+        "palais-justice": "Palais de justice",
+        "penitencier-fed": "Pénitenciers fédéraux",
+        "penitencier-prov": "Pénitenciers provinciaux"
       },
       "measure": {
         "dialog": {
@@ -320,6 +439,16 @@
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
         "wfsDownload.title": "Télécharger les données associées",
         "wfsDownload.tooltip": "Télécharger les données associées"
+      },
+      "network": {
+        "online": {
+          "message": "En ligne",
+          "title": "Statut:"
+        },
+        "offline": {
+          "message": "Hors-Ligne",
+          "title": "Statut:"
+        }
       }
     }
   }

@@ -85,6 +85,29 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
+    const limit =
+      this.options.params && this.options.params.limit
+        ? Number(this.options.params.limit)
+        : undefined;
+    const ecmax =
+      this.options.params && this.options.params.ecmax
+        ? Number(this.options.params.ecmax)
+        : undefined;
+    const types =
+      this.options.params && this.options.params.type
+        ? this.options.params.type
+            .replace(/\s/g, '')
+            .toLowerCase()
+            .split(',')
+        : [
+            'adresses',
+            'codes-postaux',
+            'routes',
+            'municipalites',
+            'mrc',
+            'regadmin',
+            'lieux'
+          ];
     return {
       title: 'igo.geo.search.icherche.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
@@ -95,66 +118,73 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
           name: 'type',
           values: [
             {
-              title: 'Adresse',
+              title: 'igo.geo.search.icherche.type.address',
               value: 'adresses',
-              enabled: true,
+              enabled: types.indexOf('adresses') !== -1,
               hashtags: ['adresse']
             },
             {
-              title: 'Ancienne adresse',
+              title: 'igo.geo.search.icherche.type.oldAddress',
               value: 'anciennes-adresses',
-              enabled: false
+              enabled: types.indexOf('anciennes-adresses') !== -1
             },
             {
-              title: 'Code Postal',
+              title: 'igo.geo.search.icherche.type.postalCode',
               value: 'codes-postaux',
-              enabled: true,
+              enabled: types.indexOf('codes-postaux') !== -1,
               hashtags: ['code-postal']
             },
             {
-              title: 'Route',
+              title: 'igo.geo.search.icherche.type.road',
               value: 'routes',
-              enabled: true,
+              enabled: types.indexOf('routes') !== -1,
               hashtags: ['route']
             },
             {
-              title: 'Municipalité',
+              title: 'igo.geo.search.icherche.type.city',
               value: 'municipalites',
-              enabled: true,
+              enabled: types.indexOf('municipalites') !== -1,
               hashtags: ['municipalité', 'mun']
             },
             {
-              title: 'Ancienne municipalité',
+              title: 'igo.geo.search.icherche.type.oldCity',
               value: 'anciennes-municipalites',
-              enabled: false
+              enabled: types.indexOf('anciennes-municipalites') !== -1
             },
             {
-              title: 'MRC',
+              title: 'igo.geo.search.icherche.type.mrc',
               value: 'mrc',
-              enabled: true
+              enabled: types.indexOf('mrc') !== -1
             },
             {
-              title: 'Région administrative',
+              title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
-              enabled: true,
+              enabled: types.indexOf('regadmin') !== -1,
               hashtags: ['région-administrative']
             },
             {
-              title: 'Lieu',
+              title: 'igo.geo.search.icherche.type.place',
               value: 'lieux',
-              enabled: true,
+              enabled: types.indexOf('lieux') !== -1,
               hashtags: ['lieu']
             },
             {
-              title: 'Borne SUMI',
+              title: 'igo.geo.search.icherche.type.sumi',
               value: 'bornes-sumi',
-              enabled: false,
+              enabled: types.indexOf('bornes-sumi') !== -1,
               hashtags: ['borne', 'bornes', 'sumi']
             },
+            ,
             {
-              title: 'Entreprise',
-              value: 'entreprises',
+              title: 'igo.geo.search.icherche.type.km',
+              value: 'bornes-km',
               enabled: false,
+              hashtags: ['borne', 'bornes', 'repère', 'km']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.entreprise',
+              value: 'entreprises',
+              enabled: types.indexOf('entreprises') !== -1,
               available: false,
               hashtags: ['entreprise']
             }
@@ -168,27 +198,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: '1',
               value: 1,
-              enabled: false
+              enabled: limit === 1
             },
             {
               title: '5',
               value: 5,
-              enabled: true
+              enabled: limit === 5 || !limit
             },
             {
               title: '10',
               value: 10,
-              enabled: false
+              enabled: limit === 10
             },
             {
               title: '25',
               value: 25,
-              enabled: false
+              enabled: limit === 25
             },
             {
               title: '50',
               value: 50,
-              enabled: false
+              enabled: limit === 50
             }
           ]
         },
@@ -200,27 +230,44 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: '10 %',
               value: 10,
-              enabled: false
+              enabled: ecmax === 10
             },
             {
               title: '30 %',
               value: 30,
-              enabled: true
+              enabled: ecmax === 30 || !ecmax
             },
             {
               title: '50 %',
               value: 50,
-              enabled: false
+              enabled: ecmax === 50
             },
             {
               title: '75 %',
               value: 75,
-              enabled: false
+              enabled: ecmax === 75
             },
             {
               title: '100 %',
               value: 100,
+              enabled: ecmax === 100
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'restrictExtent',
+          name: 'loc',
+          values: [
+            {
+              title: 'igo.geo.search.icherche.restrictExtent.map',
+              value: 'true',
               enabled: false
+            },
+            {
+              title: 'igo.geo.search.icherche.restrictExtent.quebec',
+              value: 'false',
+              enabled: true
             }
           ]
         }
@@ -245,7 +292,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       map((response: IChercheResponse) => this.extractResults(response)),
       catchError(err => {
         err.error.toDisplay = true;
-        err.error.title = this.getDefaultOptions().title;
+        err.error.title = this.languageService.translate.instant(
+          this.getDefaultOptions().title
+        );
         throw err;
       })
     );
@@ -284,6 +333,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         geometry: true,
         bbox: true,
         icon: true,
+        page: options.page,
         type:
           'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
       },
@@ -291,20 +341,27 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       this.computeOptionsParam(term, options || {}).params
     );
 
+    if (queryParams.loc === 'true') {
+      const [xMin, yMin, xMax, yMax] = options.extent;
+      queryParams.loc = `${xMin},${yMin};${xMax},${yMin};${xMax},${yMax};${xMin},${yMax};${xMin},${yMin}`;
+    } else if (queryParams.loc === 'false') {
+      delete queryParams.loc;
+    }
+
     if (queryParams.q.indexOf('#') !== -1) {
       queryParams.type = 'lieux';
     }
 
-    return new HttpParams({ fromObject: queryParams });
+    return new HttpParams({ fromObject: ObjectUtils.removeUndefined(queryParams) });
   }
 
   private extractResults(response: IChercheResponse): SearchResult<Feature>[] {
     return response.features.map((data: IChercheData) => {
-      return this.formatter.formatResult(this.dataToResult(data));
+      return this.formatter.formatResult(this.dataToResult(data, response));
     });
   }
 
-  private dataToResult(data: IChercheData): SearchResult<Feature> {
+  private dataToResult(data: IChercheData, response?: IChercheResponse): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, properties.code].join('.');
 
@@ -334,7 +391,9 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
-        icon: data.icon || 'map-marker'
+        icon: data.icon || 'map-marker',
+        nextPage: (response.features.length % Number(this.options.params.limit) !== 0
+        || Number(this.options.params.page) > 10) ? false : true
       }
     };
   }
@@ -471,6 +530,14 @@ export class IChercheReverseSearchSource extends SearchSource
   }
 
   protected getDefaultOptions(): SearchSourceOptions {
+    const types =
+      this.options.params && this.options.params.type
+        ? this.options.params.type
+            .replace(/\s/g, '')
+            .toLowerCase()
+            .split(',')
+        : ['adresses', 'municipalites', 'mrc', 'regadmin'];
+
     return {
       title: 'igo.geo.search.ichercheReverse.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/terrapi',
@@ -481,35 +548,35 @@ export class IChercheReverseSearchSource extends SearchSource
           name: 'type',
           values: [
             {
-              title: 'Adresse',
+              title: 'igo.geo.search.icherche.type.address',
               value: 'adresses',
-              enabled: true
+              enabled: types.indexOf('adresses') !== -1
             },
             {
-              title: 'Route',
+              title: 'igo.geo.search.icherche.type.road',
               value: 'routes',
-              enabled: false,
+              enabled: types.indexOf('routes') !== -1,
               available: false
             },
             {
-              title: 'Arrondissement',
+              title: 'igo.geo.search.icherche.type.district',
               value: 'arrondissements',
-              enabled: false
+              enabled: types.indexOf('arrondissements') !== -1
             },
             {
-              title: 'Municipalité',
+              title: 'igo.geo.search.icherche.type.city',
               value: 'municipalites',
-              enabled: true
+              enabled: types.indexOf('municipalites') !== -1
             },
             {
-              title: 'MRC',
+              title: 'igo.geo.search.icherche.type.mrc',
               value: 'mrc',
-              enabled: true
+              enabled: types.indexOf('mrc') !== -1
             },
             {
-              title: 'Région administrative',
+              title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
-              enabled: true
+              enabled: types.indexOf('regadmin') !== -1
             }
           ]
         },
@@ -560,6 +627,9 @@ export class IChercheReverseSearchSource extends SearchSource
     options?: ReverseSearchOptions
   ): Observable<SearchResult<Feature>[]> {
     const params = this.computeRequestParams(lonLat, options || {});
+    if (!params.get('type').length) {
+      return of([]);
+    }
     return this.http.get(`${this.searchUrl}/locate`, { params }).pipe(
       map((response: IChercheReverseResponse) => {
         return this.extractResults(response);
@@ -592,6 +662,7 @@ export class IChercheReverseSearchSource extends SearchSource
       fromObject: Object.assign(
         {
           loc: lonLat.join(','),
+          sort: 'distance',
           geometry: true,
           icon: true
         },

@@ -32,3 +32,17 @@
   margin-left: $igo-margin;
   margin-right: $igo-margin;
 }
+
+.pointer-summary-option {
+  display: block;
+  margin-right: 10px;
+  margin-bottom: 15px;
+}
+
+.pointer-summary-slide-toggle-container {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    margin: 10px;
+  }
+}

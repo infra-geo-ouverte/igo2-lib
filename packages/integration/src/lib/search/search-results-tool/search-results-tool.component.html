@@ -20,9 +20,11 @@
     <igo-search-results
       [store]="store"
       [showIcons]="showIcons"
+      [term]="term"
       placeholder="false"
       (resultFocus)="onResultFocus($event)"
-      (resultSelect)="onResultFocus($event)">
+      (resultSelect)="onResultFocus($event)"
+      (moreResults)="onSearch($event)">
       <ng-template #igoSearchItemToolbar let-result="result">
         <igo-search-add-button
           [map]="map"
