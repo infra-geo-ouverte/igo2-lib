@@ -48,26 +48,26 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
           name: 'amenity',
           values: [
             {
-              title: 'Restauration',
+              title: 'igo.geo.search.nominatim.type.food',
               value:
                 'bar,bbq,biergaten,cafe,drinking_water,fast_food,food_court,ice_cream,pub,restaurant',
               enabled: false
             },
             {
-              title: 'Santé',
+              title: 'igo.geo.search.nominatim.type.health',
               value:
                 'baby_hatch,clinic,dentist,doctors,hospital,nursing_home,pharmacy,social_facility,veterinary',
               enabled: false
             },
             {
-              title: 'Divertissement',
+              title: 'igo.geo.search.nominatim.type.entertainment',
               value:
                 'arts_centre,brothel,casino,cinema,community_center_fountain,gambling,nightclub,planetarium \
                           ,public_bookcase,social_centre,stripclub,studio,swingerclub,theatre,internet_cafe',
               enabled: false
             },
             {
-              title: 'Finance',
+              title: 'igo.geo.search.nominatim.type.finance',
               value: 'atm,bank,bureau_de_change',
               enabled: false
             }
@@ -97,16 +97,16 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         },
         {
           type: 'radiobutton',
-          title: 'country limitation',
+          title: 'restrictExtent',
           name: 'countrycodes',
           values: [
             {
-              title: 'Canada',
+              title: 'igo.geo.search.nominatim.country.canada',
               value: 'CA',
               enabled: true
             },
             {
-              title: 'Le monde',
+              title: 'igo.geo.search.nominatim.country.all',
               value: null,
               enabled: false
             }
@@ -118,12 +118,12 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
           name: 'dedupe',
           values: [
             {
-              title: 'Oui',
+              title: 'igo.geo.search.searchSources.settings.true',
               value: 0,
               enabled: false
             },
             {
-              title: 'Non',
+              title: 'igo.geo.search.searchSources.settings.false',
               value: 1,
               enabled: true
             }

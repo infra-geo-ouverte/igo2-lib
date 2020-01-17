@@ -67,7 +67,10 @@ export class CatalogService {
       // Catalogs from API
       const catalogsFromApi$ = this.http
         .get<Catalog[]>(`${apiUrl}/catalogs`)
-        .pipe(catchError((response: HttpErrorResponse) => EMPTY));
+        .pipe(
+          map(catalogs => catalogs.map((c: any) => Object.assign(c, c.options))),
+          catchError((response: HttpErrorResponse) => EMPTY)
+        );
       observables$.push(catalogsFromApi$);
     }
 

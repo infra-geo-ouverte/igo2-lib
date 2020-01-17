@@ -17,5 +17,6 @@ export interface SearchResult<T = { [key: string]: any }> {
     title: string;
     titleHtml?: string;
     icon: string;
+    nextPage?: boolean;
   };
 }

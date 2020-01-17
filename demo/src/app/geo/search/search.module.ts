@@ -24,7 +24,8 @@ import {
   provideILayerSearchSource,
   provideNominatimSearchSource,
   provideIChercheReverseSearchSource,
-  provideCoordinatesReverseSearchSource
+  provideCoordinatesReverseSearchSource,
+  provideCadastreSearchSource
 } from '@igo2/geo';
 
 import { IgoAppSearchModule } from '@igo2/integration';
@@ -53,6 +54,7 @@ import { AppSearchRoutingModule } from './search-routing.module';
   exports: [AppSearchComponent],
   providers: [
     provideCoordinatesReverseSearchSource(),
+    provideCadastreSearchSource(),
     provideIChercheSearchSource(),
     provideILayerSearchSource(),
     provideNominatimSearchSource(),

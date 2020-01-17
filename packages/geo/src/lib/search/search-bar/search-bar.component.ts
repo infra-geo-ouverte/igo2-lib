@@ -92,6 +92,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   );
 
   /**
+   * Event emitted when the pointer summary is activated by the searchbar setting
+   */
+  @Output() pointerSummaryEnabled = new EventEmitter<boolean>();
+
+  /**
    * Search term
    */
   @Input()

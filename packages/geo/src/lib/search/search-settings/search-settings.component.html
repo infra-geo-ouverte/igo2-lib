@@ -52,7 +52,7 @@
                       [checked]="settingValue.enabled"
                       (click)="$event.stopPropagation()"
                       (change)="settingsValueCheckedRadioButton($event, source, setting, settingValue)">
-                      {{settingValue.title}}
+                      {{settingValue.title | translate}}
                     </mat-radio-button>
                   </mat-radio-group>
                 </span>
@@ -67,12 +67,22 @@
                     [value]="setting"
                     (click)="$event.stopPropagation()"
                     (change)="settingsValueCheckedCheckbox($event, source, setting, settingValue)">
-                    {{settingValue.title}}
+                    {{settingValue.title | translate}}
                   </mat-checkbox>
                 </span>
               </mat-menu>
             </ng-container>
           </mat-menu>
       </ng-container>
+      <span *ngIf="hasPointerReverseSearchSource && !isTouchScreen">
+        <mat-divider></mat-divider>
+        <span class="pointer-summary-slide-toggle-container mat-typography">
+          <mat-slide-toggle class="pointer-summary-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
+            matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.pointerSearchSummary.tooltip' | translate"
+            (click)="$event.stopPropagation()" [checked]="pointerReverseSearchEnabled" [labelPosition]="'after'">
+            {{'igo.geo.search.pointerSearchSummary.title' | translate}}
+          </mat-slide-toggle>
+        </span>
+      </span>
   </mat-menu>
 </div>

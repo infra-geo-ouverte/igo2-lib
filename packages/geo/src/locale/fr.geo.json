@@ -139,6 +139,8 @@
       "mapButtons": {
         "baselayerSwitcher": "Changer le fond de carte",
         "geolocate": "Afficher votre position",
+        "offline": "Passer en mode hors-ligne",
+        "online": "Passer en mode en ligne",
         "zoomIn": "Zoomer ({{zoom}})",
         "zoomOut": "Dézoomer ({{zoom}})",
         "resetRotation": "Réinitialiser la carte vers le nord",
@@ -229,7 +231,6 @@
         "feature.placeholder": "Rechercher une localisation",
         "layer.title": "Couche de données",
         "layer.placeholder": "Rechercher une couche de données.",
-        "icherche.name": "iCherche",
         "ichercheReverse.name": "Recherche par coordonnées",
         "ilayer": {
           "name": "Couches",
@@ -240,14 +241,57 @@
             "type": "Type",
             "url": "URL",
             "metadataUrl": "Métadonnées"
+          },
+          "type": {
+            "layer": "Couche",
+            "groupLayer": "Groupe de couches"
+          }
+        },
+        "nominatim": {
+          "type": {
+            "food": "Restauration",
+            "health": "Santé",
+            "entertainment": "Divertissement",
+            "finance": "Finance"
+          },
+          "country": {
+            "all": "Le monde",
+            "canada": "Canada"
+          }
+        },
+        "icherche": {
+          "name": "iCherche",
+          "type": {
+            "address": "Adresse",
+            "oldAddress": "Ancienne adresse",
+            "district": "Arrondissement",
+            "postalCode": "Code Postal",
+            "city": "Municipalité",
+            "oldCity": "Ancienne municipalité",
+            "mrc": "MRC",
+            "regadmin": "Région administrative",
+            "road": "Route",
+            "place": "Lieu",
+            "sumi": "Borne SUMI",
+            "km": "Repère kilométrique",
+            "entreprise": "Entreprise"
+          },
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "quebec": "Au Québec"
           }
         },
         "coordinates": {
-          "name": "Coordonnées"
+          "name": "Coordonnées",
+          "coord": "Coordonnée (longitude, latitude)"
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
           "title": "Paramètres"
+        },
+        "pointerSearchSummary": {
+          "title": "Position du curseur",
+          "tooltip": "Selon les sources activées, vous pouvez faire afficher le résumé de la position du curseur. Pour des résultats multiple de type indentiques, seul le plus proche est présenté. Utiliser F2 pour activer/désactiver."
         },
         "searchSources": {
           "settings": {
@@ -256,11 +300,14 @@
             "radius": "Rayon de recherche",
             "results limit": "Nombre de résultats",
             "multiple object": "Objet multiple",
-            "country limitation": "Limitation (pays)",
+            "restrictExtent": "Restreint l'étendue",
             "selectAll": "Tout sélectionner",
-            "unselectAll": "Tout désélectionner"
+            "unselectAll": "Tout désélectionner",
+            "true": "Oui",
+            "false": "Non"
           }
-        }
+        },
+        "displayMoreResults": "Afficher plus de résultats"
       },
       "geometry": {
         "geometry": "Geometrie",
@@ -275,7 +322,7 @@
         "startDate": "Date de début"
       },
       "spatialFilter": {
-        "predefined" : "Zone Prédéfinie",
+        "predefined": "Zone Prédéfinie",
         "draw": "Dessin",
         "polygon": "Polygone",
         "point": "Cercle",
@@ -301,7 +348,7 @@
         "zeroResults": "Aucun résultat ne correspond à cette recherche.",
         "warning": "Avertissement",
         "freehandControl": "À main levée",
-        "group" : {
+        "group": {
           "toponyme": "Toponyme",
           "culturel": "Culturel",
           "education": "Éducation",
@@ -392,6 +439,16 @@
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
         "wfsDownload.title": "Télécharger les données associées",
         "wfsDownload.tooltip": "Télécharger les données associées"
+      },
+      "network": {
+        "online": {
+          "message": "En ligne",
+          "title": "Statut:"
+        },
+        "offline": {
+          "message": "Hors-Ligne",
+          "title": "Statut:"
+        }
       }
     }
   }

@@ -1,6 +1,5 @@
 .header {
     margin-top: 5px;
-    display: inline-grid;
     width: 100%;
 }
 
@@ -79,6 +78,7 @@
 
 .mat-column-typeResults {
     max-width: 100px;
+    margin-right: 5px;
 }
 
 .radius {
@@ -106,8 +106,9 @@
 }
 
 .tree-check, .tree-check-2 {
-    position: sticky;
-    left: 250px;
+    position: relative;
+    margin-left: auto;
+    margin-right: 5px;
 }
 
 .thematics-header {
@@ -125,5 +126,11 @@
 }
 
 .mat-tree-node {
+    position: relative;
     min-height: 42px;
+    width: 280px;
+}
+
+.mat-header-cell {
+    height: 56px;
 }
