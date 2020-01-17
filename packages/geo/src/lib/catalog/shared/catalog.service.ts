@@ -9,7 +9,6 @@ import {
   CapabilitiesService,
   WMSDataSourceOptions,
   WMTSDataSourceOptions,
-  generateIdFromSourceOptions,
   WMSDataSourceOptionsParams
 } from '../../datasource';
 import {
@@ -28,6 +27,7 @@ import {
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
 import { QueryHtmlTarget, QueryFormat } from '../../query';
+import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
