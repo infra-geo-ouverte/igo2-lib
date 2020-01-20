@@ -62,6 +62,8 @@
       <mat-icon svgIcon="content-copy"></mat-icon>
       {{ 'igo.context.shareMap.copy' | translate }}
     </button>
+  </div>
+  <div *ngIf="!hasApi">
     <br/>
     <section class="mat-typography">
         <h4>{{'igo.context.shareMap.included' | translate}}</h4>

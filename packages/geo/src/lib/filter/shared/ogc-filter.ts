@@ -3,6 +3,8 @@ import olFormatWKT from 'ol/format/WKT';
 import olFormatWFS from 'ol/format/WFS';
 import olGeometry from 'ol/geom/Geometry';
 
+import olProjection from 'ol/proj/Projection';
+
 import { uuid, ObjectUtils } from '@igo2/utils';
 
 import {
@@ -427,6 +429,9 @@ export class OgcFilterWriter {
   }
 
   private computeIgoPushButton(pushButtons: IgoPushButton): IgoPushButton {
+    if (pushButtons.groups.every(group => group.computedButtons !== undefined)) {
+      return pushButtons;
+    }
     let pb: IgoPushButton;
     if (pushButtons.groups && pushButtons.bundles) {
       if (!pushButtons.bundles.every(bundle => bundle.id !== undefined)) {
@@ -457,7 +462,11 @@ export class OgcFilterWriter {
     return pb;
   }
 
-  public handleOgcFiltersAppliedValue(options: OgcFilterableDataSourceOptions, fieldNameGeometry: string) {
+  public handleOgcFiltersAppliedValue(
+    options: OgcFilterableDataSourceOptions, 
+    fieldNameGeometry: string, 
+    extent?: [number, number, number, number],
+    proj?: olProjection): string{
     const ogcFilters = options.ogcFilters;
     if (!ogcFilters) {
       return;
@@ -481,7 +490,10 @@ export class OgcFilterWriter {
       });
       if (conditions.length >= 1) {
         filterQueryStringPushButton = this.buildFilter(
-            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions }
+            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions },
+            extent,
+            proj,
+            ogcFilters.geometryName
           );
       }
     }
@@ -489,7 +501,7 @@ export class OgcFilterWriter {
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
-      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters);
+      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
     }
 
     let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
