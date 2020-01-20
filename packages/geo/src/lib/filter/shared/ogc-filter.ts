@@ -491,7 +491,9 @@ export class OgcFilterWriter {
       if (conditions.length >= 1) {
         filterQueryStringPushButton = this.buildFilter(
             conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions },
-            extent, proj, ogcFilters.geometryName
+            extent,
+            proj,
+            ogcFilters.geometryName
           );
       }
     }
@@ -499,7 +501,7 @@ export class OgcFilterWriter {
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
-      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters,extent,proj, ogcFilters.geometryName);
+      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
     }
 
     let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
