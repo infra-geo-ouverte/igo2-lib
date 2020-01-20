@@ -50,37 +50,25 @@ export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layer
   return layer;
 }
 
-export function addFeatureToLayer(features: Feature[], map: IgoMap, layerTitle: string,
-                                  config: ConfigService, styleService: StyleService): VectorLayer {
+export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap, layerTitle: string,
+                                               styleListService: StyleListService, styleService: StyleService): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
   let style;
-
-  const radius = config.getConfig(layerTitle.toString() + '.style.radius');
-
-  const stroke = new olStyle.Stroke({
-    color: config.getConfig(layerTitle.toString() + '.style.stroke.color'),
-    width: config.getConfig(layerTitle.toString() + '.style.stroke.width')
-  });
-
-  const fill = new olStyle.Fill({
-    color: config.getConfig(layerTitle.toString() + '.style.fill.color')
-  });
-  if (config.getConfig(layerTitle.toString() + '.styleByAttribute')) {
+  if (styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')) {
     const styleByAttribute: StyleByAttribute = {
-      type: config.getConfig(layerTitle.toString() + '.styleByAttribute.type'),
-      attribute: config.getConfig(layerTitle.toString() + '.styleByAttribute.attribute'),
-      data: config.getConfig(layerTitle.toString() + '.styleByAttribute.data'),
-      fill: config.getConfig(layerTitle.toString() + '.styleByAttribute.fill'),
-      stroke: config.getConfig(layerTitle.toString() + '.styleByAttribute.stroke'),
-      width: config.getConfig(layerTitle.toString() + '.styleByAttribute.width'),
-      radius: config.getConfig(layerTitle.toString() + '.styleByAttribute.radius'),
-      icon: config.getConfig(layerTitle.toString() + '.styleByAttribute.icon'),
-      scale: config.getConfig(layerTitle.toString() + '.styleByAttribute.scale'),
-      label: config.getConfig(layerTitle.toString() + '.styleByAttribute.label'),
-      baseStyle: config.getConfig(layerTitle.toString() + '.styleByAttribute.baseStyle')
+      type: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.type'),
+      attribute: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.attribute'),
+      data: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.data'),
+      fill: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.fill'),
+      stroke: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.stroke'),
+      width: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.width'),
+      radius: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.radius'),
+      icon: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.icon'),
+      scale: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.scale'),
+      label: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.label'),
+      baseStyle: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.baseStyle')
     };
 
-    console.log(styleByAttribute);
     const styleBy = feature => {
       return styleService.createStyleByAttribute(
         feature,
@@ -89,54 +77,64 @@ export function addFeatureToLayer(features: Feature[], map: IgoMap, layerTitle: 
     };
     style = styleBy;
 
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-      queryable: true
-    };
-    const source = new FeatureDataSource(sourceOptions);
-    source.ol.addFeatures(olFeatures);
+  } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
+    const radius = styleListService.getStyleList(layerTitle.toString() + '.style.radius');
 
-    const layer = new VectorLayer({
-      title: layerTitle,
-      source,
-      style
+    const stroke = new olStyle.Stroke({
+      color: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.color'),
+      width: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.width')
     });
-    console.log(layer);
-    map.addLayer(layer);
-    moveToOlFeatures(map, olFeatures);
 
-    return layer;
+    const fill = new olStyle.Fill({
+      color: styleListService.getStyleList(layerTitle.toString() + '.style.fill.color')
+    });
 
-  } else {
-    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-      queryable: true
-    };
-
-    console.log('king of the jungle');
-    const source = new FeatureDataSource(sourceOptions);
-    source.ol.addFeatures(olFeatures);
-
-    const layer = new VectorLayer({
-      title: layerTitle,
-      source,
-      style: new olStyle.Style({
+    style = new olStyle.Style({
+      stroke,
+      fill,
+      image: new olStyle.Circle({
+        radius: radius ? radius : 5,
         stroke,
-        fill,
-        image: new olStyle.Circle({
-          radius: radius ? radius : 5,
-          stroke,
-          fill
-        })
+        fill
       })
     });
-    console.log(layer);
-    map.addLayer(layer);
-    moveToOlFeatures(map, olFeatures);
+  } else {
+    const radius = styleListService.getStyleList('default.style.radius');
 
-    const titre = config.getConfig('yo');
-    console.log(titre);
+    const stroke = new olStyle.Stroke({
+      color: styleListService.getStyleList('default.style.stroke.color'),
+      width: styleListService.getStyleList('default.style.stroke.width')
+    });
 
-    return layer;
+    const fill = new olStyle.Fill({
+      color: styleListService.getStyleList('default.style.fill.color')
+    });
+
+    style = new olStyle.Style({
+      stroke,
+      fill,
+      image: new olStyle.Circle({
+        radius: radius ? radius : 5,
+        stroke,
+        fill
+      })
+    });
   }
+  const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    queryable: true
+  };
+  const source = new FeatureDataSource(sourceOptions);
+  source.ol.addFeatures(olFeatures);
+
+  const layer = new VectorLayer({
+    title: layerTitle,
+    source,
+    style
+  });
+  map.addLayer(layer);
+  moveToOlFeatures(map, olFeatures);
+
+  return layer;
 }
 
 export function handleFileImportSuccess(
@@ -145,9 +143,9 @@ export function handleFileImportSuccess(
   map: IgoMap,
   messageService: MessageService,
   languageService: LanguageService,
-  config?: ConfigService,
+  styleListService?: StyleListService,
   styleService?: StyleService,
-  intoLayer?: boolean
+  styleList?: boolean
 ) {
   if (features.length === 0) {
     handleNothingToImportError(file, messageService, languageService);
@@ -156,12 +154,12 @@ export function handleFileImportSuccess(
 
   const layerTitle = computeLayerTitleFromFile(file);
 
-  if (!intoLayer) {
+  if (!styleList) {
     console.log('normal');
     addLayerAndFeaturesToMap(features, map, layerTitle);
   } else {
     console.log('ma modif');
-    addFeatureToLayer(features, map, layerTitle, config, styleService);
+    addLayerAndFeaturesStyledToMap(features, map, layerTitle, styleListService, styleService);
   }
 
   const translate = languageService.translate;

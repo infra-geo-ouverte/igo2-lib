@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService, LanguageService, StyleListService } from '@igo2/core';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -18,6 +18,7 @@ import {
   handleFileImportSuccess,
   handleFileImportError
 } from '../shared/import.utils';
+import { StyleService } from '../../layer/shared/style.service';
 
 @Component({
   selector: 'igo-import-export',
@@ -42,6 +43,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private exportService: ExportService,
     private languageService: LanguageService,
     private messageService: MessageService,
+    private styleListService: StyleListService,
+    private styleService: StyleService,
     private formBuilder: FormBuilder
   ) {
     this.buildForm();

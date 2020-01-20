@@ -30,7 +30,7 @@ export class DropGeoFileLayerDirective extends DragAndDropDirective implements O
     private component: MapBrowserComponent,
     private importService: ImportService,
     private languageService: LanguageService,
-    private config: ConfigService,
+    private styleListService: StyleListService,
     private styleService: StyleService,
     private messageService: MessageService
   ) {
@@ -76,7 +76,7 @@ export class DropGeoFileLayerDirective extends DragAndDropDirective implements O
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService,
-                             this.config, this.styleService, true);
+                             this.styleListService, this.styleService, true);
   }
 
   private onFileImportError(file: File, error: Error) {

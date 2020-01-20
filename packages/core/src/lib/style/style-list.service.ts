@@ -28,6 +28,9 @@ export class StyleListService {
    */
   public load(options: StyleListOptions) {
     const baseStyleList = options.default || {};
+    console.log('styleList');
+    console.log(options);
+    console.log(this.styleList);
     if (!options.path) {
       this.styleList = baseStyleList;
       return true;

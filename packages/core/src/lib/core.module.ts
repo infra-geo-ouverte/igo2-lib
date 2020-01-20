@@ -9,6 +9,7 @@ import { IgoConfigModule } from './config/config.module';
 import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
 import { IgoErrorModule } from './request/error.module';
+import { IgoStyleListModule } from './style/style-list.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { IgoErrorModule } from './request/error.module';
     IgoConfigModule.forRoot(),
     IgoErrorModule.forRoot(),
     IgoLanguageModule.forRoot(),
-    IgoMessageModule.forRoot()
+    IgoMessageModule.forRoot(),
+    IgoStyleListModule.forRoot()
   ],
   declarations: [],
   exports: [
@@ -26,7 +28,8 @@ import { IgoErrorModule } from './request/error.module';
     IgoConfigModule,
     IgoErrorModule,
     IgoLanguageModule,
-    IgoMessageModule
+    IgoMessageModule,
+    IgoStyleListModule
   ]
 })
 export class IgoCoreModule {
