@@ -1,4 +1,5 @@
 export * from './drop-geo-file.directive';
+export * from './drop-geo-file-layer.directive';
 export * from './export.errors';
 export * from './export.interface';
 export * from './export.service';

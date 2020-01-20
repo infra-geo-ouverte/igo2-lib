@@ -42,6 +42,7 @@ export class MapOfflineDirective implements AfterViewInit {
     let sourceOptions;
     const layerList = this.map.layers$.value;
     layerList.forEach(layer => {
+      console.log(layer);
       if (layer.options.sourceOptions.type === 'mvt') {
         sourceOptions = (layer.options.sourceOptions as MVTDataSourceOptions);
         layer.ol.getSource().clear();

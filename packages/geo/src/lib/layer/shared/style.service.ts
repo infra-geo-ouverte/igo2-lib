@@ -109,7 +109,8 @@ export class StyleService {
               image: new olstyle.Circle({
                 radius: radius ? radius[i] : 4,
                 stroke: new olstyle.Stroke({
-                  color: stroke ? stroke[i] : 'black'
+                  color: stroke ? stroke[i] : 'black',
+                  width: width ? width[i] : 1
                 }),
                 fill: new olstyle.Fill({
                   color: fill ? fill[i] : 'black'

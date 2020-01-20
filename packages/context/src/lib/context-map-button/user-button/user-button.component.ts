@@ -43,6 +43,8 @@ export class UserButtonComponent {
     public auth: AuthService
   ) {
     this.visible = this.config.getConfig('auth') ? true : false;
+    console.log('dans contexte');
+    console.log(this.visible);
     this.hasApi = this.config.getConfig('context.url') !== undefined;
   }
 
