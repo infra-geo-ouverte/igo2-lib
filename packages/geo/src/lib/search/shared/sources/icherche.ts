@@ -126,7 +126,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'igo.geo.search.icherche.type.oldAddress',
               value: 'anciennes-adresses',
-              enabled: types.indexOf('anciennes-adresses') !== -1
+              enabled: types.indexOf('anciennes-adresses') !== -1,
+              hashtags: ['anciennes-adresses']
             },
             {
               title: 'igo.geo.search.icherche.type.postalCode',
@@ -149,18 +150,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'igo.geo.search.icherche.type.oldCity',
               value: 'anciennes-municipalites',
-              enabled: types.indexOf('anciennes-municipalites') !== -1
+              enabled: types.indexOf('anciennes-municipalites') !== -1,
+              hashtags: ['anciennes-municipalites']
             },
             {
               title: 'igo.geo.search.icherche.type.mrc',
               value: 'mrc',
-              enabled: types.indexOf('mrc') !== -1
+              enabled: types.indexOf('mrc') !== -1,
+              hashtags: ['mrc']
             },
             {
               title: 'igo.geo.search.icherche.type.regadmin',
               value: 'regadmin',
               enabled: types.indexOf('regadmin') !== -1,
-              hashtags: ['région-administrative']
+              hashtags: ['région-administrative', 'regadmin']
             },
             {
               title: 'igo.geo.search.icherche.type.place',
