@@ -31,7 +31,7 @@
 
   <igo-panel title="Search">
     <igo-search-bar
-      (pointerSummaryEnabled)="onPointerSummaryEnabledChange($event)"
+      (pointerSummaryStatus)="onPointerSummaryStatusChange($event)"
       [searchSettings]="true"
       (searchTermChange)="onSearchTermChange($event)"
       (search)="onSearch($event)"

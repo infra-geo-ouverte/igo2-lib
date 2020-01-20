@@ -463,10 +463,10 @@ export class OgcFilterWriter {
   }
 
   public handleOgcFiltersAppliedValue(
-    options: OgcFilterableDataSourceOptions, 
-    fieldNameGeometry: string, 
+    options: OgcFilterableDataSourceOptions,
+    fieldNameGeometry: string,
     extent?: [number, number, number, number],
-    proj?: olProjection): string{
+    proj?: olProjection): string {
     const ogcFilters = options.ogcFilters;
     if (!ogcFilters) {
       return;

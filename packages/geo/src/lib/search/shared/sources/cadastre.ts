@@ -59,7 +59,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     term = term.startsWith(',') ? term.substr(1) : term;
 
     const params = this.computeSearchRequestParams(term, options || {});
-    if (!params.get('numero')) {
+    if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {
       return of([]);
     }
     return this.http

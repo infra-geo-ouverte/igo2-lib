@@ -80,7 +80,7 @@
         <span class="pointer-summary-slide-toggle-container mat-typography">
           <mat-slide-toggle class="pointer-summary-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
             matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.pointerSearchSummary.tooltip' | translate"
-            (click)="$event.stopPropagation()" [checked]="pointerReverseSearchEnabled" [labelPosition]="'after'">
+            (click)="$event.stopPropagation()" [checked]="pointerSummaryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.pointerSearchSummary.title' | translate}}
           </mat-slide-toggle>
         </span>
