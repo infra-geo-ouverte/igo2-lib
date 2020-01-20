@@ -182,7 +182,7 @@ export class SearchSettingsComponent implements OnInit {
 
   getAvailableHashtagsValues(setting: SettingOptions) {
     if (setting.hashtags) {
-      let output: string[] = [];
+      const output: string[] = [];
       for (let value of setting.hashtags) {
         value = '#' + value;
         output.push(value);
