@@ -44,7 +44,7 @@ export class SearchSettingsComponent implements OnInit {
     return this.mediaService.isTouchScreen();
   }
 
-  @Input() pointerSummarySettingEnabled: boolean = false;
+  @Input() pointerSummaryEnabled: boolean = false;
 
   /**
    * Event emitted when the enabled search source changes
@@ -54,14 +54,14 @@ export class SearchSettingsComponent implements OnInit {
   /**
    * Event emitted when the pointer summary is activated
    */
-  @Output() pointerSummaryEnabled = new EventEmitter<boolean>();
+  @Output() pointerSummaryStatus = new EventEmitter<boolean>();
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
 
     if (event.keyCode === 113) {
-      this.pointerSummarySettingEnabled = !this.pointerSummarySettingEnabled;
-      this.pointerSummaryEnabled.emit(this.pointerSummarySettingEnabled);
+      this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
+      this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
     }
   }
 
@@ -199,11 +199,11 @@ export class SearchSettingsComponent implements OnInit {
   changePointerReverseSearch(event, fromTitleButton?: boolean) {
     if (fromTitleButton) {
       event.stopPropagation();
-      this.pointerSummarySettingEnabled = !this.pointerSummarySettingEnabled;
+      this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
     } else {
-      this.pointerSummarySettingEnabled = event.checked;
+      this.pointerSummaryEnabled = event.checked;
     }
 
-    this.pointerSummaryEnabled.emit(this.pointerSummarySettingEnabled);
+    this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
   }
 }

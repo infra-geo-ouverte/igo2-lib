@@ -37,8 +37,8 @@
 
     <igo-search-settings
       *ngIf="searchSettings"
-      [pointerSummarySettingEnabled]="pointerSummarySettingEnabled"
-      (pointerSummaryEnabled)="pointerSummaryEnabled.emit($event)"
+      [pointerSummaryEnabled]="pointerSummaryEnabled"
+      (pointerSummaryStatus)="pointerSummaryStatus.emit($event)"
       (searchSourceChange)="onSearchSettingsChange()">
     </igo-search-settings>
   </div>
