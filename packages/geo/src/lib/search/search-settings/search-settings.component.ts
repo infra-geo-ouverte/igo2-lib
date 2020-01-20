@@ -6,7 +6,8 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   OnInit,
-  HostListener
+  HostListener,
+  Input
 } from '@angular/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
@@ -34,7 +35,6 @@ import { MediaService } from '@igo2/core';
 })
 export class SearchSettingsComponent implements OnInit {
 
-  public pointerReverseSearchEnabled: boolean = false;
   public hasPointerReverseSearchSource: boolean = false;
 
   public buffer = [];
@@ -43,6 +43,8 @@ export class SearchSettingsComponent implements OnInit {
   get isTouchScreen(): boolean {
     return this.mediaService.isTouchScreen();
   }
+
+  @Input() pointerSummarySettingEnabled: boolean = false;
 
   /**
    * Event emitted when the enabled search source changes
@@ -58,8 +60,8 @@ export class SearchSettingsComponent implements OnInit {
   handleKeyboardEvent(event: KeyboardEvent) {
 
     if (event.keyCode === 113) {
-      this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
-      this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
+      this.pointerSummarySettingEnabled = !this.pointerSummarySettingEnabled;
+      this.pointerSummaryEnabled.emit(this.pointerSummarySettingEnabled);
     }
   }
 
@@ -197,11 +199,11 @@ export class SearchSettingsComponent implements OnInit {
   changePointerReverseSearch(event, fromTitleButton?: boolean) {
     if (fromTitleButton) {
       event.stopPropagation();
-      this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
+      this.pointerSummarySettingEnabled = !this.pointerSummarySettingEnabled;
     } else {
-      this.pointerReverseSearchEnabled = event.checked;
+      this.pointerSummarySettingEnabled = event.checked;
     }
 
-    this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
+    this.pointerSummaryEnabled.emit(this.pointerSummarySettingEnabled);
   }
 }

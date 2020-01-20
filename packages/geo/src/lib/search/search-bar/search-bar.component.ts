@@ -120,6 +120,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  @Input() pointerSummarySettingEnabled: boolean = false;
   /**
    * Whether a float label should be displayed
    */
