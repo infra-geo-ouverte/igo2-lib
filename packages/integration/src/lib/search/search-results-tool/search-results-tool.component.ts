@@ -108,6 +108,12 @@ export class SearchResultsToolComponent implements OnInit {
         this.term = searchTerm;
       }
     });
+
+    for (const res of this.store.entities$.value) {
+      if (this.store.state.get(res).selected === true) {
+        this.topPanelState = 'collapsed';
+      }
+    }
   }
   /**
    * Try to add a feature to the map when it's being focused
