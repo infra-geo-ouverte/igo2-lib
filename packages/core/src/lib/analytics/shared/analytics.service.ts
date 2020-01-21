@@ -10,6 +10,10 @@ import { AnalyticsOptions } from './analytics.interface';
 export class AnalyticsService {
   private options: AnalyticsOptions;
 
+  get paq() {
+    return ((window as any)._paq = (window as any)._paq || []);
+  }
+
   constructor(private config: ConfigService) {
     this.options = this.config.getConfig('analytics') || {};
 
@@ -27,13 +31,11 @@ export class AnalyticsService {
         ? this.options.url + 'matomo'
         : this.options.url;
 
-    (window as any)._paq = (window as any)._paq || [];
-    const paq: any = (window as any)._paq;
-    paq.push(['trackPageView']);
-    paq.push(['enableLinkTracking']);
+    // this.paq.push(['trackPageView']);
+    // this.paq.push(['enableLinkTracking']);
     (() => {
-      paq.push(['setTrackerUrl', url + '.php']);
-      paq.push(['setSiteId', this.options.id]);
+      this.paq.push(['setTrackerUrl', url + '.php']);
+      this.paq.push(['setSiteId', this.options.id]);
       const g = document.createElement('script');
       const s = document.getElementsByTagName('script')[0];
       g.type = 'text/javascript';
@@ -42,5 +44,50 @@ export class AnalyticsService {
       g.src = url + '.js';
       s.parentNode.insertBefore(g, s);
     })();
+  }
+
+  public setUser(
+    user: {
+      id: number;
+      sourceId?: string;
+      firstName?: string;
+      lastName?: string;
+    },
+    profils: string[]
+  ) {
+    if (this.options.provider === 'matomo') {
+      if (!user) {
+        this.paq.push(['resetUserId']);
+        this.paq.push(['deleteCustomVariable', 1, 'user']);
+        this.paq.push(['deleteCustomVariable', 2, 'name']);
+        this.paq.push(['deleteCustomVariable', 3, 'profils']);
+      } else {
+        this.paq.push(['setUserId', user.id]);
+
+        const name = `${user.firstName} ${user.lastName}`;
+        this.paq.push(['setCustomVariable', 1, 'user', user.sourceId, 'visit']);
+        this.paq.push(['setCustomVariable', 2, 'name', name, 'visit']);
+        // for (const profil of profils) {
+        this.paq.push(['setCustomVariable', 3, 'profils', profils, 'visit']);
+        // }
+      }
+
+      this.paq.push(['trackPageView']);
+      this.paq.push(['enableLinkTracking']);
+    }
+  }
+
+  public trackSearch(term: string, types: string[], nbResults: number) {
+    if (this.options.provider === 'matomo') {
+      // TODO: séparer les types pour en faire plusieurs recherches ?
+      // TODO: seulement envoyer sur la selection du résultat ?
+      this.paq.push(['trackSiteSearch', term, types, nbResults]);
+    }
+  }
+
+  public trackEvent(category: string, action: string, name: string) {
+    if (this.options.provider === 'matomo') {
+      this.paq.push(['trackEvent', category, action, name]);
+    }
   }
 }
