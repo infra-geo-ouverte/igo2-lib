@@ -257,6 +257,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         Infinity,
       minResolution:
         getResolutionFromScale(Number(data.properties.minScaleDenom)) || 0,
+      metadata: {
+        url: data.properties.metadataUrl,
+        extern: true
+      },
       properties: this.formatter.formatResult(data).properties
     };
   }
