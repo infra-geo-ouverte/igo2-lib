@@ -698,7 +698,7 @@ export class IChercheReverseSearchSource extends SearchSource
           t => t.value === data.properties.type
         );
         if (type) {
-          subtitle = type.title;
+          subtitle = this.languageService.translate.instant(type.title);
         }
     }
     return subtitle;
