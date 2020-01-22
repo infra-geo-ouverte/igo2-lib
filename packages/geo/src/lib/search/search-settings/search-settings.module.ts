@@ -7,7 +7,9 @@ import {
   MatButtonModule,
   MatMenuModule,
   MatRadioModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatDividerModule,
+  MatSlideToggleModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -25,6 +27,8 @@ import { IgoLanguageModule } from '@igo2/core';
     MatMenuModule,
     MatRadioModule,
     MatCheckboxModule,
+    MatDividerModule,
+    MatSlideToggleModule,
     IgoLanguageModule
   ],
   exports: [SearchSettingsComponent]

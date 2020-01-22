@@ -7,6 +7,9 @@ export interface Action {
   icon?: string;
   tooltip?: string;
   args?: any[];
+  checkbox?: boolean;
+  checkCondition?: boolean;
+  display?: (...args: any[]) => Observable<boolean>;
   availability?: (...args: any[]) => Observable<boolean>;
   ngClass?: (...args: any[]) => Observable<{[key: string]: boolean}>;
 }

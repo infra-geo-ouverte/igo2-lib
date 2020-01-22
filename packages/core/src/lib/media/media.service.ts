@@ -65,4 +65,8 @@ export class MediaService {
   getOrientation(): MediaOrientation {
     return this.orientation$.value;
   }
+
+  isTouchScreen(): boolean {
+    return 'ontouchstart' in document.documentElement ? true : false;
+  }
 }

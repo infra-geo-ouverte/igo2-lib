@@ -4,6 +4,7 @@ import { MAC } from 'ol/has';
 
 import { MapViewState } from './map.interface';
 import proj4 from 'proj4';
+import { Projection } from './projection.interfaces';
 
 /**
  * This method extracts a coordinate tuple from a string.
@@ -41,13 +42,13 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   let lon: any;
   let lat: any;
 
-  const projectionPattern = '(;[\\d]{4,6})';
+  const projectionPattern = '(\\s*;\\s*[\\d]{4,6})';
   const toProjection = '4326';
   let projectionStr: string;
   const projectionRegex = new RegExp(projectionPattern, 'g');
 
   const lonlatCoord =  '([-+])?([\\d]{1,3})([,.](\\d+))?';
-  const lonLatPattern = `${lonlatCoord}[\\s,.]\\s*${lonlatCoord}`;
+  const lonLatPattern = `${lonlatCoord}[\\s,.]+${lonlatCoord}`;
   const lonLatRegex = new RegExp(`^${lonLatPattern}$`, 'g');
 
   const dmsCoord = '([0-9]{1,2})[:|°]?\\s*([0-9]{1,2})?[:|\'|′|’]?\\s*([0-9]{1,2}(?:\.[0-9]+){0,1})?\\s*["|″|”]?\\s*';
@@ -61,11 +62,11 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   const mtmRegex =  new RegExp(`^${patternMtm}`, 'gi');
 
   const ddCoord = '([-+])?(\\d{1,3})[,.](\\d+)';
-  const patternDd = `${ddCoord}[,.]?\\s*${ddCoord}`;
+  const patternDd = `${ddCoord}\\s*[,.]?\\s*${ddCoord}`;
   const ddRegex =  new RegExp(`^${patternDd}`, 'g');
 
   const dmdCoord = '([-+])?(\\d{1,3})[\\s,.]{1}(\\d{1,2})[\\s,.]{1}(\\d{1,2})[.,]?(\\d{1,5})?';
-  const patternDmd = `${dmdCoord}[,.]?\\s*${dmdCoord}`;
+  const patternDmd = `${dmdCoord}\\s*[,.]?\\s*${dmdCoord}`;
   const dmdRegex =  new RegExp(`^${patternDmd}`, 'g');
 
   // tslint:disable:max-line-length
@@ -73,19 +74,19 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   const bellRegex =  new RegExp(`^${patternBELL}?`, 'gi');
 
   const mmCoord = '([-+]?\\d+)[,.]?(\\d+)?';
-  const mmPattern = `${mmCoord}[\\s,.]\\s*${mmCoord}`;
+  const mmPattern = `${mmCoord}[\\s,.]+${mmCoord}`;
   const mmRegex =  new RegExp(`^${mmPattern}$`, 'g');
 
   let isXYCoords = false;
 
   str = str.toLocaleUpperCase().trim();
+  str = str.replace(' ', '');
   // Extract projection
   if (projectionRegex.test(str)) {
-    [coordStr, projectionStr] = str.split(';');
+    [coordStr, projectionStr] = str.split(';').map(s => s.trim());
   } else {
     coordStr = str;
   }
-
   if (lonLatRegex.test(coordStr)) {
 
     [,
@@ -118,24 +119,14 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   } else if (utmRegex.test(coordStr)) {
     isXYCoords = true;
     [, pattern, zone, lon, lat] = coordStr.match(patternUtm);
-    const utm = '+proj=' + pattern + ' +zone=' + zone;
-    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-    [lon, lat] = proj4(utm.toLocaleLowerCase(), wgs84, [parseFloat(lon), parseFloat(lat)]);
+    const epsgUtm = Number(zone) < 10 ? `EPSG:3260${zone}` : `EPSG:326${zone}`;
+    [lon, lat] = olproj.transform([parseFloat(lon), parseFloat(lat)], epsgUtm, 'EPSG:4326');
 
   } else if (mtmRegex.test(coordStr)) {
     isXYCoords = true;
     [, pattern, zone, lon, lat] = coordStr.match(patternMtm);
-    let lon0;
-    if (Number(zone) <= 2) {
-      lon0 = -50 - Number(zone) * 3;
-    } else if (Number(zone) >= 12) {
-      lon0 = -81 - (Number(zone) - 12) * 3;
-    } else {
-      lon0 = -49.5 - Number(zone) * 3;
-    }
-    const mtm = `+proj=tmerc +lat_0=0 +lon_0=${lon0} +k=0.9999 +x_0=304800 +y_0=0 +ellps=GRS80 +units=m +no_defs`;
-    const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
-    [lon, lat] = proj4(mtm, wgs84, [parseFloat(lon), parseFloat(lat)]);
+    const epsgMtm = Number(zone) < 10 ? `EPSG:3218${zone}` : `EPSG:321${80 + Number(zone)}`;
+    [lon, lat] =  olproj.transform([parseFloat(lon), parseFloat(lat)], epsgMtm,  'EPSG:4326');
 
   } else if (dmdRegex.test(coordStr)) {
     [,
@@ -237,8 +228,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   }
 
   // Reproject the coordinate if projection parameter have been set and coord is not 4326
-  if ((projectionStr !== undefined && projectionStr !== toProjection) || (lonLat[0] > 180 || lonLat[0] < -180)) {
-
+  if ((projectionStr !== undefined && projectionStr !== toProjection) || (lonLat[0] > 180 || lonLat[0] < -180) || (lonLat[1] > 90 || lonLat[1] < -90)) {
     const source = projectionStr ? 'EPSG:' + projectionStr : mapProjection;
     const dest = 'EPSG:' + toProjection;
 
@@ -248,7 +238,6 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
       return {lonLat: undefined, message: 'Projection ' + source + ' not supported', radius: undefined, conf: undefined};
     }
   }
-
   return {lonLat, message: '', radius: radius ? parseInt(radius, 10) : undefined, conf: conf ? parseInt(conf, 10) : undefined};
 }
 
@@ -336,4 +325,106 @@ export function ctrlKeyDown(event: OlMapBrowserPointerEvent): boolean {
     (MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
     !originalEvent.shiftKey
   );
+}
+
+export function roundCoordTo(coord: [number, number], decimal: number = 3) {
+  return [
+    coord[0].toFixed(decimal),
+    coord[1].toFixed(decimal)
+  ];
+}
+
+/**
+ * Returns an array of converted coordinates.
+ * Conversion is done for every configured projections
+ * and for the current UTM zone and MTM zone.
+ * @param lonLat [number, number] array of the coordinate to transform.
+ * @param projections  Projection[] Array of destination projection.
+ * @returns Returns an array of converted coordinates.
+ */
+export function lonLatConversion(lonLat: [number, number], projections: Projection[]):
+{ code: string; alias: string, coord: [number, number], igo2CoordFormat: string }[] {
+
+  const rawCoord3857 = olproj.transform(lonLat, 'EPSG:4326', 'EPSG:3857');
+  const convertedLonLat = [
+    {
+      code: 'EPSG:3857',
+      alias: 'Web mercator',
+      coord: rawCoord3857,
+      igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')} ; 3857`
+    }
+  ];
+
+  // detect the current utm zone.
+  const utmZone = utmZoneFromLonLat(lonLat);
+  const epsgUtm = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
+  const utmName = `UTM-${utmZone}`;
+  const rawCoordUtm = olproj.transform(lonLat, 'EPSG:4326', epsgUtm);
+  convertedLonLat.push(
+    {
+      code: epsgUtm,
+      alias: 'UTM',
+      coord: rawCoordUtm,
+      igo2CoordFormat: `${utmName} ${roundCoordTo(rawCoordUtm).join(', ')}`
+    });
+
+  // detect the current mtm zone.
+  const mtmZone = mtmZoneFromLonLat(lonLat);
+  if (mtmZone) {
+    const epsgMtm = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
+    const mtmName = `MTM-${mtmZone}`;
+    const rawCoordMtm = olproj.transform(lonLat, 'EPSG:4326', epsgMtm);
+    convertedLonLat.push(
+      {
+        code: epsgMtm,
+        alias: 'MTM',
+        coord: rawCoordMtm,
+        igo2CoordFormat: `${mtmName} ${roundCoordTo(rawCoordMtm).join(', ')}`
+      });
+  }
+
+  projections.forEach(projection => {
+    const rawCoord = olproj.transform(lonLat, 'EPSG:4326', projection.code);
+    const numericEpsgCode = projection.code.split(':')[1];
+    convertedLonLat.push(
+      {
+        code: projection.code,
+        alias: projection.alias || projection.code,
+        coord: rawCoord,
+        igo2CoordFormat: `${roundCoordTo(rawCoord).join(', ')} ; ${numericEpsgCode}`
+      });
+  });
+
+  return convertedLonLat;
+
+}
+
+/**
+ * Detect the current utm zone of the lon/lat coordinate.
+ * @param lonLat [number, number] array of the coordinate to detect the UTM zone.
+ * @returns number The UTM zone.
+ */
+export function utmZoneFromLonLat(lonLat: [number, number]) {
+  return Math.ceil((lonLat[0] + 180) / 6);
+}
+
+/**
+ * Detect the current mtm zone of the lon/lat coordinate.
+ * @param lonLat [number, number] array of the coordinate to detect the MTM zone.
+ * @returns number The MTM zone. Undefined if outside of the mtm application zone.
+ */
+export function mtmZoneFromLonLat(lonLat: [number, number]) {
+  const long = lonLat[0];
+  let mtmZone;
+  if (long < -51 && long > -54) {mtmZone = 1; }
+  if (long < -54 && long > -57) {mtmZone = 2; }
+  if (long < -57 && long > -60) {mtmZone = 3; }
+  if (long < -60 && long > -63) {mtmZone = 4; }
+  if (long < -63 && long > -66) {mtmZone = 5; }
+  if (long < -66 && long > -69) {mtmZone = 6; }
+  if (long < -69 && long > -72) {mtmZone = 7; }
+  if (long < -72 && long > -75) {mtmZone = 8; }
+  if (long < -75 && long > -78) {mtmZone = 9; }
+  if (long < -78 && long > -81) {mtmZone = 10; }
+  return mtmZone;
 }

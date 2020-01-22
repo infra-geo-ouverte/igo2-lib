@@ -307,7 +307,13 @@ export class QueryService {
     // Handle non standard GML output (MapServer)
     if (features.length === 0) {
       parser = new olformat.WMSGetFeatureInfo();
-      features = parser.readFeatures(res);
+      try {
+        features = parser.readFeatures(res);
+      } catch (e) {
+        console.warn(
+          'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
+        );
+      }
     }
 
     return features.map(feature =>

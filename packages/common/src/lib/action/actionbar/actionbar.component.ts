@@ -121,12 +121,17 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @Input() withIcon = true;
 
   /**
+   * Which icon want to be shown
+   */
+  @Input() icon = 'dots-horizontal';
+
+  /**
    * Overlay X position
    */
   @Input() xPosition = 'before';
 
   /**
-   * Overlay X position
+   * Overlay Y position
    */
   @Input() yPosition = 'above';
 

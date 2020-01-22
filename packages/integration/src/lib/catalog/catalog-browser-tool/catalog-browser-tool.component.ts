@@ -9,6 +9,7 @@ import {
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
+import { AuthService } from '@igo2/auth';
 
 import {
   IgoMap,
@@ -52,6 +53,11 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   private catalog$$: Subscription;
 
   /**
+   * Subscription for authentication
+   */
+  private authenticate$$: Subscription;
+
+  /**
    * Whether a group can be toggled when it's collapsed
    */
   @Input() toggleCollapsedGroup: boolean = true;
@@ -67,7 +73,8 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
   constructor(
     private catalogService: CatalogService,
     private catalogState: CatalogState,
-    private mapState: MapState
+    private mapState: MapState,
+    private authService: AuthService
   ) {}
 
   /**
@@ -83,9 +90,12 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
         if (record && record.entity) {
           const catalog = record.entity;
           this.catalog = catalog;
-          this.loadCatalogItems(catalog);
         }
       });
+
+    this.authenticate$$ = this.authService.authenticate$.subscribe(() => {
+      this.loadCatalogItems(this.catalog);
+    });
   }
 
   /**
@@ -93,6 +103,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.catalog$$.unsubscribe();
+    this.authenticate$$.unsubscribe();
   }
 
   /**

@@ -25,6 +25,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  readonly noDisplay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   readonly ngClass$: BehaviorSubject<{[key: string]: boolean}> = new BehaviorSubject({});
 
   private ngClass$$: Subscription;
@@ -32,6 +34,10 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   private disabled$$: Subscription;
 
   private availability$$: Subscription;
+
+  private noDisplay$$: Subscription;
+
+  private display$$: Subscription;
 
   /**
    * Action
@@ -64,6 +70,13 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   @Input()
   set disabled(value: boolean) { this.disabled$.next(value); }
   get disabled(): boolean { return this.disabled$.value; }
+
+  /**
+   * Whether the action is display or not
+   */
+  @Input()
+  set noDisplay(value: boolean) { this.noDisplay$.next(value); }
+  get noDisplay(): boolean { return this.noDisplay$.value; }
 
   /**
    * Event emitted when the action button is clicked
@@ -102,6 +115,14 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
     this.disabled$$ = this.disabled$
       .subscribe((disabled: boolean) => this.updateNgClass({'igo-actionbar-item-disabled': disabled}));
+
+    if (this.action.display !== undefined) {
+      this.display$$ = this.action.display(...args)
+        .subscribe((display: boolean) => this.noDisplay = !display);
+    }
+
+    this.noDisplay$$ = this.noDisplay$
+      .subscribe((noDisplay: boolean) => this.updateNgClass({'igo-actionbar-item-no-display': noDisplay}));
   }
 
   ngOnDestroy() {
@@ -115,7 +136,13 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.availability$$ = undefined;
     }
 
+    if (this.display$$ !== undefined) {
+      this.display$$.unsubscribe();
+      this.display$$ = undefined;
+    }
+
     this.disabled$$.unsubscribe();
+    this.noDisplay$$.unsubscribe();
   }
 
   /**

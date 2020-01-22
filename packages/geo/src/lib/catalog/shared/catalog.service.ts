@@ -9,7 +9,6 @@ import {
   CapabilitiesService, TypeCapabilities,
   WMSDataSourceOptions,
   WMTSDataSourceOptions,
-  generateIdFromSourceOptions,
   WMSDataSourceOptionsParams
 } from '../../datasource';
 import {
@@ -30,7 +29,7 @@ import {
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryHtmlTarget, QueryFormat } from '../../query';
-import { ObjectUtils } from '@igo2/utils';
+import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
   providedIn: 'root'

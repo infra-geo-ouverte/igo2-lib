@@ -7,7 +7,8 @@ import {
   MatTooltipModule,
   MatListModule,
   MatMenuModule,
-  MatCardModule
+  MatCardModule,
+  MatCheckboxModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -27,7 +28,8 @@ import { ActionbarItemComponent } from './actionbar-item.component';
     MatTooltipModule,
     MatMenuModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    MatCheckboxModule
   ],
   exports: [ActionbarComponent],
   declarations: [ActionbarComponent, ActionbarItemComponent]

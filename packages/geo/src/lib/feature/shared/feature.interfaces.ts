@@ -30,6 +30,7 @@ export interface FeatureMeta {
   sourceTitle?: string;
   order?: number;
   icon?: string;
+  style?: { [key: string]: any };
   alias?: { [key: string]: string };
   revision?: number;
   excludeAttribute?: Array<string>;

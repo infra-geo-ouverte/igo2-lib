@@ -289,7 +289,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 let resultPos = 0;
                 for (let i = 0; i < results.length; i++) {
                   const feature: any = results[i].data;
-                  if (feature.properties.type === 'adresse') {
+                  if (feature.properties.type === 'adresses') {
                     resultPos = i;
                     break;
                   }
@@ -1085,7 +1085,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     if (geometry.getType() === 'Point') {
-      const olStyle = createOverlayMarkerStyle(stopColor, stopText);
+      const olStyle = createOverlayMarkerStyle({color: stopColor, text: stopText});
       feature.setStyle(olStyle);
     }
     this.routingStopsOverlayDataSource.ol.addFeature(feature);

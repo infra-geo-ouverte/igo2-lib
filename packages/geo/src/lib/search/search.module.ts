@@ -10,6 +10,7 @@ import { IgoSearchBarModule } from './search-bar/search-bar.module';
 import { IgoSearchSelectorModule } from './search-selector/search-selector.module';
 import { IgoSearchResultsModule } from './search-results/search-results.module';
 import { IgoSearchSettingsModule } from './search-settings/search-settings.module';
+import { SearchPointerSummaryDirective } from './shared/search-pointer-summary.directive';
 
 @NgModule({
   imports: [
@@ -23,9 +24,10 @@ import { IgoSearchSettingsModule } from './search-settings/search-settings.modul
     IgoSearchBarModule,
     IgoSearchSelectorModule,
     IgoSearchResultsModule,
-    IgoSearchSettingsModule
+    IgoSearchSettingsModule,
+    SearchPointerSummaryDirective
   ],
-  declarations: []
+  declarations: [SearchPointerSummaryDirective]
 })
 export class IgoSearchModule {
   static forRoot(): ModuleWithProviders {

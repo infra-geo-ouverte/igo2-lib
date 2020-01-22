@@ -91,23 +91,38 @@ export class SpatialFilterService {
               name = substr.substring(index + 1, substr.length);
               substr = substr.substring(0, index);
             }
-            item.name = this.languageService.translate.instant(
-              'igo.geo.terrapi.' + name
-            );
+            try {
+              item.name = this.languageService.translate.instant(
+                'igo.geo.terrapi.' + name
+              );
+            } catch (e) {
+              item.name = name.substring(0,1).toUpperCase() + name.substring(1, name.length - 1);
+            }
 
-            item.group = this.languageService.translate.instant(
-              'igo.geo.spatialFilter.group.' + substr
-            );
+            try {
+              item.group = this.languageService.translate.instant(
+                'igo.geo.spatialFilter.group.' + substr
+              );
+            } catch (e) {
+              item.group = substr.substring(0,1).toUpperCase() + substr.substring(1, name.length - 1);
+            }
+
             items.push(item);
           } else {
             if (this.getKeyByValue(this.urlFilterList, type)) {
               const item: SpatialFilterThematic = {
-                name: this.languageService.translate.instant(
-                  'igo.geo.terrapi.' +
-                    this.getKeyByValue(this.urlFilterList, type)
-                ),
+                name: undefined,
                 source: type
               };
+              const name = this.getKeyByValue(this.urlFilterList, type);
+              try {
+                item.name = this.languageService.translate.instant(
+                    'igo.geo.terrapi.' + name);
+              } catch (e) {
+                item.name = name.substring(0,1).toUpperCase() + name.substring(1, name.length - 1);
+              }
+              item.source = type
+
               items.push(item);
             }
           }

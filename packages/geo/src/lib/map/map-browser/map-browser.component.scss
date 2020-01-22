@@ -21,6 +21,15 @@
   }
 }
 
+:host >>> igo-offline-button {
+  position: absolute;
+  bottom:15px;
+  right: $igo-margin;
+  @include mobile {
+    bottom: $igo-margin;
+  }
+}
+
 :host >>> igo-geolocate-button {
   position: absolute;
   bottom: 5px;
