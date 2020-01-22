@@ -117,7 +117,7 @@ export function createOverlayMarkerStyle(
       src: './assets/igo2/geo/icons/place_' + iconColor + '_36px.svg',
       opacity,
       imgSize: [36, 36], // for ie
-      anchor: [0.5, 1]
+      anchor: [0.5, 0.92]
     }),
     text: new olstyle.Text({
       text,
