@@ -92,7 +92,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       });
   }
 
-  onPointerSummaryEnabledChange(value) {
+  onPointerSummaryStatusChange(value) {
     this.igoSearchPointerSummaryEnabled = value;
   }
 

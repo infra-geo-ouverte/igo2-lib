@@ -386,11 +386,13 @@
         "gmf": "Family doctors group",
         "naissance": "Birth house",
         "pharmacie": "Pharmacy",
+        "casernes": "Fire stations",
         "correctionnel": "Correctional centres",
         "organisme": "Security organization",
         "palais-justice": "Courthouses",
         "penitencier-fed": "Federal penitentiaries",
-        "penitencier-prov": "Provincial penitentiaries"
+        "penitencier-prov": "Provincial penitentiaries",
+        "polices": "Police station"
       },
       "measure": {
         "dialog": {

@@ -65,6 +65,7 @@
                     class="mat-menu-item"
                     [checked]="settingValue.enabled"
                     [value]="setting"
+                    [matTooltip]="getAvailableHashtagsValues(settingValue)"
                     (click)="$event.stopPropagation()"
                     (change)="settingsValueCheckedCheckbox($event, source, setting, settingValue)">
                     {{settingValue.title | translate}}
@@ -79,7 +80,7 @@
         <span class="pointer-summary-slide-toggle-container mat-typography">
           <mat-slide-toggle class="pointer-summary-option" (change)="changePointerReverseSearch($event)" tooltip-position="below"
             matTooltipShowDelay="500" [matTooltip]="'igo.geo.search.pointerSearchSummary.tooltip' | translate"
-            (click)="$event.stopPropagation()" [checked]="pointerReverseSearchEnabled" [labelPosition]="'after'">
+            (click)="$event.stopPropagation()" [checked]="pointerSummaryEnabled" [labelPosition]="'after'">
             {{'igo.geo.search.pointerSearchSummary.title' | translate}}
           </mat-slide-toggle>
         </span>

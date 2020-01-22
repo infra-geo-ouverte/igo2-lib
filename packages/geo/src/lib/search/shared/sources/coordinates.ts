@@ -113,13 +113,13 @@ export class CoordinatesReverseSearchSource extends SearchSource
             OpenStreetMap: OsmLinks.getOpenStreetMapLink(data[0], data[1], 14)
           }),
         meta: {
-          id: '1',
+          id: data[0].toString() + ',' + data[1].toString(),
           title: roundedCoordString
         }
       },
       meta: {
         dataType: FEATURE,
-        id: '1',
+        id: data[0].toString() + ',' + data[1].toString(),
         title: roundedCoordString,
         icon: 'map-marker'
       }

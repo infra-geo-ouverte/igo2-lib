@@ -154,6 +154,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultFocus(result: SearchResult) {
+    if (this.store.state.get(result)) {
+      if (this.store.state.get(result).focused === true) {
+        return;
+      }
+    }
     this.store.state.update(result, {focused: true}, true);
     this.resultFocus.emit(result);
   }
@@ -184,6 +189,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultSelect(result: SearchResult) {
+    if (this.store.state.get(result)) {
+      if (this.store.state.get(result).selected === true) {
+        return;
+      }
+    }
     this.store.state.update(result, {focused: true, selected: true}, true);
     this.resultSelect.emit(result);
   }
@@ -232,8 +242,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
     return Array.from(grouped.keys()).map((source: SearchSource) => {
       if (this.pageIterator[source.getId()] === undefined) {
-        this.pageIterator[source.getId()] = 1
-      };
+        this.pageIterator[source.getId()] = 1;
+      }
       return {source, results: grouped.get(source)};
     });
   }

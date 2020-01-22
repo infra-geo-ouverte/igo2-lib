@@ -94,7 +94,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   /**
    * Event emitted when the pointer summary is activated by the searchbar setting
    */
-  @Output() pointerSummaryEnabled = new EventEmitter<boolean>();
+  @Output() pointerSummaryStatus = new EventEmitter<boolean>();
 
   /**
    * Search term
@@ -120,6 +120,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  @Input() pointerSummaryEnabled: boolean = false;
   /**
    * Whether a float label should be displayed
    */

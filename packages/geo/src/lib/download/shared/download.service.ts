@@ -57,7 +57,11 @@ export class DownloadService {
 
         let filterQueryString;
         filterQueryString = new OgcFilterWriter()
-        .handleOgcFiltersAppliedValue(layer.dataSource.options, ogcFilters.geometryName);
+        .handleOgcFiltersAppliedValue(
+          layer.dataSource.options,
+          ogcFilters.geometryName,
+          layer.map.getExtent(),
+          new olProjection({ code: layer.map.projection }));
         if (!filterQueryString) {
           // Prevent getting all the features for empty filter
             filterQueryString = new OgcFilterWriter().buildFilter(
@@ -67,10 +71,10 @@ export class DownloadService {
             ogcFilters.geometryName
           );
         } else {
-          filterQueryString = 'filter=' + filterQueryString;
+          filterQueryString = 'filter=' + encodeURIComponent(filterQueryString);
         }
         window.open(
-          `${baseurl}&${encodeURIComponent(filterQueryString)}&${outputFormatDownload}`,
+          `${baseurl}&${filterQueryString}&${outputFormatDownload}`,
           '_blank'
         );
       } else if (DSOptions.download) {

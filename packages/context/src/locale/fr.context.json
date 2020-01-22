@@ -16,7 +16,7 @@
         "dialog": {
           "cloneMsg": "Le contexte '{{value}}' a été cloné",
           "cloneTitle": "Contexte cloné",
-          "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce context ?",
+          "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce contexte ?",
           "deleteMsg": "Le contexte '{{value}}' a été supprimé",
           "deleteTitle": "Contexte supprimé",
           "favoriteMsg": "Le contexte '{{value}}' a été défini comme favori",

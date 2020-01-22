@@ -6,7 +6,8 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   OnInit,
-  HostListener
+  HostListener,
+  Input
 } from '@angular/core';
 
 import { SearchSourceService } from '../shared/search-source.service';
@@ -34,7 +35,6 @@ import { MediaService } from '@igo2/core';
 })
 export class SearchSettingsComponent implements OnInit {
 
-  public pointerReverseSearchEnabled: boolean = false;
   public hasPointerReverseSearchSource: boolean = false;
 
   public buffer = [];
@@ -44,6 +44,8 @@ export class SearchSettingsComponent implements OnInit {
     return this.mediaService.isTouchScreen();
   }
 
+  @Input() pointerSummaryEnabled: boolean = false;
+
   /**
    * Event emitted when the enabled search source changes
    */
@@ -52,14 +54,14 @@ export class SearchSettingsComponent implements OnInit {
   /**
    * Event emitted when the pointer summary is activated
    */
-  @Output() pointerSummaryEnabled = new EventEmitter<boolean>();
+  @Output() pointerSummaryStatus = new EventEmitter<boolean>();
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
 
     if (event.keyCode === 113) {
-      this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
-      this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
+      this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
+      this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
     }
   }
 
@@ -178,6 +180,18 @@ export class SearchSettingsComponent implements OnInit {
     return setting.values.filter(s => s.available !== false);
   }
 
+  getAvailableHashtagsValues(setting: SettingOptions) {
+    if (setting.hashtags) {
+      const output: string[] = [];
+      for (let value of setting.hashtags) {
+        value = '#' + value;
+        output.push(value);
+      }
+      return output;
+    }
+    return;
+  }
+
   stopPropagation(event) {
     event.stopPropagation();
   }
@@ -185,11 +199,11 @@ export class SearchSettingsComponent implements OnInit {
   changePointerReverseSearch(event, fromTitleButton?: boolean) {
     if (fromTitleButton) {
       event.stopPropagation();
-      this.pointerReverseSearchEnabled = !this.pointerReverseSearchEnabled;
+      this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
     } else {
-      this.pointerReverseSearchEnabled = event.checked;
+      this.pointerSummaryEnabled = event.checked;
     }
 
-    this.pointerSummaryEnabled.emit(this.pointerReverseSearchEnabled);
+    this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
   }
 }

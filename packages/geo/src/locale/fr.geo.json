@@ -387,11 +387,13 @@
         "gmf": "Groupes de médecins de famille",
         "naissance": "Maisons de naissances",
         "pharmacie": "Pharmacies",
+        "casernes": "Casernes de pompiers",
         "correctionnel": "Centres correctionnels",
         "organisme": "Organismes de sécurité",
         "palais-justice": "Palais de justice",
         "penitencier-fed": "Pénitenciers fédéraux",
-        "penitencier-prov": "Pénitenciers provinciaux"
+        "penitencier-prov": "Pénitenciers provinciaux",
+        "polices": "Poste de police"
       },
       "measure": {
         "dialog": {
