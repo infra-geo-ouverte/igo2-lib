@@ -38,7 +38,9 @@
 
 <div #items>
   <ng-template ngFor let-item [ngForOf]="store.view.all$() | async">
-    <ng-container *ngIf="isGroup(item)"></ng-container>
+    <ng-container *ngIf="isGroup(item)">
+      <!-- todo: add display ans manage CatalogItemGroup -->
+    </ng-container>
     <ng-container *ngIf="isLayer(item)">
       <igo-catalog-browser-layer
         igoListItem

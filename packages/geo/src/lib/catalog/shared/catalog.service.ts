@@ -6,7 +6,7 @@ import { map, catchError } from 'rxjs/operators';
 import { uuid } from '@igo2/utils';
 import { LanguageService, ConfigService } from '@igo2/core';
 import {
-  CapabilitiesService,
+  CapabilitiesService, TypeCapabilities,
   WMSDataSourceOptions,
   WMTSDataSourceOptions,
   generateIdFromSourceOptions,
@@ -21,13 +21,16 @@ import {
 import { getResolutionFromScale } from '../../map';
 
 import {
-  Catalog,
+  ICatalog,
+  ICompositeCatalog,
   CatalogItem,
   CatalogItemLayer,
   CatalogItemGroup
 } from './catalog.interface';
-import { CatalogItemType } from './catalog.enum';
+import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
+import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryHtmlTarget, QueryFormat } from '../../query';
+import { ObjectUtils } from '@igo2/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -96,15 +99,13 @@ export class CatalogService {
   }
 
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
-    if (catalog.type === 'baselayers') {
-      return this.loadCatalogBaseLayerItems(catalog);
-    } else if (catalog.type === 'wmts') {
-      return this.loadCatalogWMTSLayerItems(catalog);
-    }
-    return this.loadCatalogWMSLayerItems(catalog);
+    let newCatalog: Catalog;
+    newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
+      // return newCatalog.operation();
+    return newCatalog.collectCatalogItems();
   }
 
-  private loadCatalogBaseLayerItems(
+  loadCatalogBaseLayerItems(
     catalog: Catalog
   ): Observable<CatalogItemGroup[]> {
     return this.getCatalogBaseLayersOptions(catalog).pipe(
@@ -135,10 +136,10 @@ export class CatalogService {
     return this.http.get<LayerOptions[]>(catalog.url);
   }
 
-  private loadCatalogWMSLayerItems(
+  loadCatalogWMSLayerItems(
     catalog: Catalog
   ): Observable<CatalogItem[]> {
-    return this.getCatalogWMSCapabilities(catalog).pipe(
+    return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
         const items = [];
         this.includeRecursiveItems(
@@ -151,34 +152,239 @@ export class CatalogService {
     );
   }
 
-  private loadCatalogWMTSLayerItems(
+  loadCatalogWMTSLayerItems(
     catalog: Catalog
   ): Observable<CatalogItem[]> {
-    return this.getCatalogWMTSCapabilities(catalog).pipe(
+    return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => this.getWMTSItems(catalog, capabilities))
     );
   }
 
-  private getCatalogWMSCapabilities(catalog: Catalog): Observable<any> {
+  loadCatalogCompositeLayerItems(
+    catalog: Catalog
+  ): Observable<CatalogItem[]> {
+
+    const compositeCatalog = (catalog as CompositeCatalog).composite;
+
+    const catalogsFromInstance = [] as Catalog[];
+    compositeCatalog.map((component: Catalog) => catalogsFromInstance.push(CatalogFactory.createInstanceCatalog(component, this)));
+
+    // -----------------------------------------------------
+    const request1$ = [];
+    catalogsFromInstance.map((component: Catalog) => request1$.push(component.collectCatalogItems()));
+
+    // -----------------------------------------------------
+    // integrate imposed group
+    let request2$ = [];
+
+    function flatDeepLayer(arr) {
+      return arr.reduce((acc, val) => acc.concat(val.type === CatalogItemType.Group ? flatDeepLayer(val.items) : val), []);
+    }
+
+    if (Object.keys(compositeCatalog).find(k => compositeCatalog[k].groupImpose)) {
+      const pushImposeGroup = (item, index) => {
+        const c = catalogsFromInstance[index];
+        const outGroupImpose = Object.assign({}, c.groupImpose);
+        outGroupImpose.address = c.id;
+        outGroupImpose.type = CatalogItemType.Group;
+        outGroupImpose.items = [];
+
+        const flatLayer = flatDeepLayer(item);
+        flatLayer.map((v) => v.address = outGroupImpose.address + '.' + outGroupImpose.id);
+        outGroupImpose.items = flatLayer;
+
+        return outGroupImpose;
+      };
+
+      request2$ = request1$.map((obs, idx) => obs.pipe(
+        map((items) => compositeCatalog[idx].groupImpose ? pushImposeGroup(items, idx) : items )
+      ));
+    } else {
+      request2$ = request1$;
+    }
+
+    // -----------------------------------------------------
+    // concat Group
+    const request3$ = zip(...request2$)
+      .pipe(
+          map((output: CatalogItem[]) => [].concat(...output) // [].concat.apply([], result1
+      ));
+
+    // -----------------------------------------------------
+    // merge Group (first level only)
+    const groupByGroupId = (data, keyFn) => data.reduce((acc, group, idx, arr) => {
+      const groupId = keyFn(group);
+      const ind = acc.find((x) => (x ? x.id === groupId : false)); // hb6 Forbidden non null assertion (no-non-null-assertion)
+
+      if (!ind) {
+        acc[acc.length] = group;
+      } else {
+        const ix = acc.indexOf(ind);
+        if (acc[ix].address.split('|').indexOf(group.a) === -1) {
+          acc[ix].address = acc[ix].address + '|' + group.address;
+        }
+        acc[ix].items.push(...group.items);
+      }
+      return acc;
+    }, []);
+
+    // merge Layer for each Level (catalog, group(recursive))
+    const recursiveGroupByLayerAddress = (items, keyFn) => items.reduce((acc, item, idx, arr) => {
+
+      const layerName = keyFn(item);
+      const outItem = Object.assign({}, item);
+
+      if (item.type === CatalogItemType.Layer) {
+        // same title, same address => only one item is keep
+
+        // same title, address diff
+        const diffAddress = arr.filter((x, i) => i !== idx && x.title === layerName && x.address !== item.address
+          && x.type === CatalogItemType.Layer);
+
+        if (diffAddress.length > 0) {
+          outItem.title = item.title + ' (catalog:' + item.address + ')';
+        }
+
+        const exist = acc.find((x) => x ? x.n === outItem.title && x.type === CatalogItemType.Layer : false);
+        if (!exist) {
+          acc[acc.length] = outItem;
+        }
+      } else if (item.type === CatalogItemType.Group) {
+          outItem.items = recursiveGroupByLayerAddress(item.items,  layer => layer.title);
+          acc[acc.length] = outItem;
+      }
+
+      return acc;
+    }, []);
+
+    const request4$ = request3$.pipe(
+      map(output => groupByGroupId(output, group => group.id)),
+      map((output) => [].concat(...output)),
+      map(data => recursiveGroupByLayerAddress(data,  layer => layer.title))
+    );
+
+    return request4$;
+  }
+
+  private getCatalogCapabilities(catalog: Catalog): Observable<any> {
+    const sType: string = TypeCatalog[catalog.type as string];
     return this.capabilitiesService.getCapabilities(
-      'wms',
+      TypeCapabilities[sType], // TypeCapabilities[catalog.type]
       catalog.url,
       catalog.version
     );
   }
 
-  private getCatalogWMTSCapabilities(catalog: Catalog): Observable<any> {
-    return this.capabilitiesService.getCapabilities(
-      'wmts',
-      catalog.url,
-      catalog.version
+  private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog,
+                                  catalogQueryParams, catalogSourceOptions, catalogTooltipType) {
+    const configuredQueryFormat = this.retriveLayerInfoFormat(
+      layer.Name,
+      layersQueryFormat
     );
+
+    const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
+    const abstract = layer.Abstract ? layer.Abstract : undefined;
+    const keywordList = layer.KeywordList
+      ? layer.KeywordList
+      : undefined;
+    const timeFilter = this.capabilitiesService.getTimeFilter(layer);
+    const timeFilterable =
+      timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
+    const legendOptions = layer.Style
+      ? this.capabilitiesService.getStyle(layer.Style)
+      : undefined;
+
+    const params = Object.assign({}, catalogQueryParams, {
+      LAYERS: layer.Name,
+      FEATURE_COUNT: catalog.count,
+      VERSION: catalog.version || '1.3.0'
+    } as WMSDataSourceOptionsParams
+    );
+    const baseSourceOptions = {
+      type: 'wms',
+      url: catalog.url,
+      crossOrigin: catalog.setCrossOriginAnonymous
+        ? 'anonymous'
+        : undefined,
+      timeFilter: { ...timeFilter, ...catalog.timeFilter },
+      timeFilterable: timeFilterable ? true : false,
+      queryable: layer.queryable,
+      queryFormat: configuredQueryFormat,
+      queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
+    };
+    const sourceOptions = Object.assign(
+      {},
+      baseSourceOptions,
+      catalogSourceOptions,
+      { params }
+    ) as WMSDataSourceOptions;
+
+    const layerPrepare = {
+      id: generateIdFromSourceOptions(sourceOptions),
+      type: CatalogItemType.Layer,
+      title: layer.Title,
+      address: idParent,
+      options: {
+        title: layer.Title,
+        maxResolution:
+          getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
+        minResolution:
+          getResolutionFromScale(layer.MinScaleDenominator) || 0,
+        metadata: {
+          url: metadata ? metadata.OnlineResource : undefined,
+          extern: metadata ? true : undefined,
+          abstract,
+          keywordList
+        },
+        legendOptions,
+        tooltip: { type: catalogTooltipType } as TooltipContent,
+        sourceOptions
+      }
+    };
+
+    return layerPrepare;
+  }
+
+  private prepareCatalogItemGroup(itemListIn, regexes, idGroup, layersQueryFormat, catalog,
+                                  catalogQueryParams, catalogSourceOptions, catalogTooltipType) {
+     const groupPrepare = {
+        id: idGroup,
+        type: CatalogItemType.Group,
+        title: itemListIn.Title,
+        address: catalog.id,
+        items: itemListIn.Layer.reduce(
+          (items: CatalogItem[], layer: any) => {
+
+            if (layer.Layer !== undefined) {
+              // recursive, check next level
+              const idGroupItemNextLevel = idGroup + `.group.${layer.Name || layer.Layer[0].Name}`;
+              const groupItem: CatalogItemGroup = this.prepareCatalogItemGroup(layer, regexes, idGroupItemNextLevel,
+                layersQueryFormat, catalog, catalogQueryParams, catalogSourceOptions, catalogTooltipType);
+
+              items.push(groupItem);
+            } else {
+              if (this.testLayerRegexes(layer.Name, regexes) === false) {
+                return items;
+              }
+
+              const layerItem: CatalogItemLayer<ImageLayerOptions> = this.prepareCatalogItemLayer(layer, idGroup, layersQueryFormat,
+                catalog, catalogQueryParams, catalogSourceOptions, catalogTooltipType);
+
+              items.push(layerItem);
+            }
+            return items;
+          },
+          []
+        )
+      };
+     return groupPrepare;
   }
 
   private includeRecursiveItems(
     catalog: Catalog,
-    layerList: any,
-    items: CatalogItem[]
+    itemListIn: any,
+    itemsPrepare: CatalogItem[],
+    loopLevel: number = 0,
   ) {
     // Dig all levels until last level (layer object are not defined on last level)
     const regexes = (catalog.regFilters || []).map(
@@ -187,105 +393,41 @@ export class CatalogService {
     const catalogQueryParams = catalog.queryParams || {};
     const catalogSourceOptions = catalog.sourceOptions || {};
 
-    if (!layerList.Layer) {
+    if (!itemListIn.Layer) {
       return;
     }
 
-    for (const group of layerList.Layer) {
-      if (group.Layer !== undefined) {
+    for (const item of itemListIn.Layer) {
+      if (item.Layer !== undefined) {
         // recursive, check next level
-        this.includeRecursiveItems(catalog, group, items);
+        this.includeRecursiveItems(catalog, item, itemsPrepare, loopLevel + 1);
         continue;
       }
+
       const catalogTooltipType = this.retrieveTooltipType(catalog);
       const layersQueryFormat = this.findCatalogInfoFormat(catalog);
-      // TODO: Slice that into multiple methods
-      // Define object of group layer
-      const groupItem = {
-        id: `catalog.group.${layerList.Name || group.Name}`,
-        type: CatalogItemType.Group,
-        title: layerList.Title,
-        items: layerList.Layer.reduce(
-          (layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
-            const configuredQueryFormat = this.retriveLayerInfoFormat(
-              layer.Name,
-              layersQueryFormat
-            );
 
-            if (this.testLayerRegexes(layer.Name, regexes) === false) {
-              return layers;
-            }
+      // split group...layers and layer level 1
+      if (loopLevel !== 0) {
 
-            const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
-            const abstract = layer.Abstract ? layer.Abstract : undefined;
-            const keywordList = layer.KeywordList
-              ? layer.KeywordList
-              : undefined;
-            const timeFilter = this.capabilitiesService.getTimeFilter(layer);
-            const timeFilterable =
-              timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
-            const legendOptions = layer.Style
-              ? this.capabilitiesService.getStyle(layer.Style)
-              : undefined;
+        // TODO: Slice that into multiple methods
+        // Define object of group layer
+        const idGroupItem = `catalog.group.${itemListIn.Name || item.Name}`;
+        const groupItem = this.prepareCatalogItemGroup(itemListIn, regexes, idGroupItem, layersQueryFormat, catalog,
+          catalogQueryParams, catalogSourceOptions, catalogTooltipType);
 
-            const params = Object.assign({}, catalogQueryParams, {
-              LAYERS: layer.Name,
-              FEATURE_COUNT: catalog.count,
-              VERSION: catalog.version || '1.3.0'
-            } as WMSDataSourceOptionsParams
-            );
-            const baseSourceOptions = {
-              type: 'wms',
-              url: catalog.url,
-              crossOrigin: catalog.setCrossOriginAnonymous
-                ? 'anonymous'
-                : undefined,
-              timeFilter: { ...timeFilter, ...catalog.timeFilter },
-              timeFilterable: timeFilterable ? true : false,
-              queryable: layer.queryable,
-              queryFormat: configuredQueryFormat,
-              queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
-            };
-            const sourceOptions = Object.assign(
-              {},
-              baseSourceOptions,
-              catalogSourceOptions,
-              { params }
-            ) as WMSDataSourceOptions;
+        if (groupItem.items.length !== 0) {
+          itemsPrepare.push(groupItem);
+        }
 
-            layers.push({
-              id: generateIdFromSourceOptions(sourceOptions),
-              type: CatalogItemType.Layer,
-              title: layer.Title,
-              options: {
-                title: layer.Title,
-                maxResolution:
-                  getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
-                minResolution:
-                  getResolutionFromScale(layer.MinScaleDenominator) || 0,
-                metadata: {
-                  url: metadata ? metadata.OnlineResource : undefined,
-                  extern: metadata ? true : undefined,
-                  abstract,
-                  keywordList
-                },
-                legendOptions,
-                tooltip: { type: catalogTooltipType } as TooltipContent,
-                sourceOptions
-              }
-            });
-            return layers;
-          },
-          []
-        )
-      };
-
-      if (groupItem.items.length !== 0) {
-        items.push(groupItem);
+        // Break the group (don't add a group of layer for each of their layer!)
+        break;
+      } else {
+        // layer without group
+        const layerItem = this.prepareCatalogItemLayer(item, catalog.id, layersQueryFormat,
+          catalog, catalogQueryParams, catalogSourceOptions, catalogTooltipType);
+        itemsPrepare.push(layerItem);
       }
-
-      // Break the group (don't add a group of layer for each of their layer!)
-      break;
     }
   }
 
@@ -331,6 +473,7 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: layer.Title,
+          address: catalog.id,
           options: {
             title: layer.Title,
             sourceOptions

@@ -22,6 +22,12 @@ import {
 import { LegendOptions, ItemStyleOptions } from '../../layer/shared/layers/layer.interface';
 import { TimeFilterType, TimeFilterStyle } from '../../filter/shared/time-filter.enum';
 
+export enum TypeCapabilities {
+  wms = 'wms', wmts = 'wmts'
+}
+
+export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -119,7 +125,7 @@ export class CapabilitiesService {
 
   @Cacheable()
   getCapabilities(
-    service: 'wms' | 'wmts',
+    service: TypeCapabilitiesStrings, // 'wms' | 'wmts'
     baseUrl: string,
     version?: string
   ): Observable<any> {

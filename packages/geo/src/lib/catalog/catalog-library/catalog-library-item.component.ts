@@ -2,8 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { getEntityTitle } from '@igo2/common';
 import { IgoMap } from '../../map';
-
-import { Catalog } from '../shared/catalog.interface';
+import { Catalog } from '../shared/catalog.abstract';
 
 /**
  * Catalog library item
