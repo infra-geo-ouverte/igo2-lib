@@ -13,7 +13,7 @@ export interface ICatalog {
   title: string;
   url: string;
   items?: CatalogItem[];
-  type?: TypeCatalogStrings; // wms, wmts, baselayers
+  type?: TypeCatalogStrings;
   version?: string;
   matrixSet?: string;
   requestEncoding?: string;
@@ -38,7 +38,7 @@ export interface CatalogItem {
   id: string;
   title: string;
   type: CatalogItemType;
-  address?: string; // CatalogAddress | CatalogAddress[];
+  address?: string;
 }
 
 export interface CatalogItemLayer<L = MetadataLayerOptions> extends CatalogItem {

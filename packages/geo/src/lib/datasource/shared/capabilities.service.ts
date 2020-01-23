@@ -137,7 +137,7 @@ export class CapabilitiesService {
     maxCacheCount: 20
   })
   getCapabilities(
-    service: TypeCapabilitiesStrings, // 'wms' | 'wmts'
+    service: TypeCapabilitiesStrings,
     baseUrl: string,
     version?: string
   ): Observable<any> {

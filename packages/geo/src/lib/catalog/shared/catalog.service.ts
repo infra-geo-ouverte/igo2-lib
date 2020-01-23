@@ -20,13 +20,15 @@ import {
 import { getResolutionFromScale } from '../../map';
 
 import {
-  ICatalog,
-  ICompositeCatalog,
   CatalogItem,
   CatalogItemLayer,
   CatalogItemGroup
 } from './catalog.interface';
-import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
+import {
+  Catalog,
+  CatalogFactory,
+  CompositeCatalog
+} from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryHtmlTarget, QueryFormat } from '../../query';
 import { generateIdFromSourceOptions } from '../../utils';
@@ -100,7 +102,6 @@ export class CatalogService {
   loadCatalogItems(catalog: Catalog): Observable<CatalogItem[]> {
     let newCatalog: Catalog;
     newCatalog = CatalogFactory.createInstanceCatalog(catalog, this);
-      // return newCatalog.operation();
     return newCatalog.collectCatalogItems();
   }
 
@@ -168,12 +169,11 @@ export class CatalogService {
     const catalogsFromInstance = [] as Catalog[];
     compositeCatalog.map((component: Catalog) => catalogsFromInstance.push(CatalogFactory.createInstanceCatalog(component, this)));
 
-    // -----------------------------------------------------
+    // get CatalogItems for each original Catalog-----------------------------------------------------
     const request1$ = [];
     catalogsFromInstance.map((component: Catalog) => request1$.push(component.collectCatalogItems()));
 
-    // -----------------------------------------------------
-    // integrate imposed group
+    // integrate imposed group -----------------------------------------------------
     let request2$ = [];
 
     function flatDeepLayer(arr) {
@@ -202,15 +202,13 @@ export class CatalogService {
       request2$ = request1$;
     }
 
-    // -----------------------------------------------------
-    // concat Group
+    // concat Group -----------------------------------------------------
     const request3$ = zip(...request2$)
       .pipe(
           map((output: CatalogItem[]) => [].concat(...output) // [].concat.apply([], result1
       ));
 
-    // -----------------------------------------------------
-    // merge Group (first level only)
+    // merge Group (first level only) -----------------------------------------------------
     const groupByGroupId = (data, keyFn) => data.reduce((acc, group, idx, arr) => {
       const groupId = keyFn(group);
       const ind = acc.find((x) => (x ? x.id === groupId : false)); // hb6 Forbidden non null assertion (no-non-null-assertion)
@@ -234,7 +232,7 @@ export class CatalogService {
       const outItem = Object.assign({}, item);
 
       if (item.type === CatalogItemType.Layer) {
-        // same title, same address => only one item is keep
+        // same title, same address => result: only one item is keep
 
         // same title, address diff
         const diffAddress = arr.filter((x, i) => i !== idx && x.title === layerName && x.address !== item.address
@@ -268,7 +266,7 @@ export class CatalogService {
   private getCatalogCapabilities(catalog: Catalog): Observable<any> {
     const sType: string = TypeCatalog[catalog.type as string];
     return this.capabilitiesService.getCapabilities(
-      TypeCapabilities[sType], // TypeCapabilities[catalog.type]
+      TypeCapabilities[sType],
       catalog.url,
       catalog.version
     );
@@ -406,7 +404,7 @@ export class CatalogService {
       const catalogTooltipType = this.retrieveTooltipType(catalog);
       const layersQueryFormat = this.findCatalogInfoFormat(catalog);
 
-      // split group...layers and layer level 1
+      // group(with layers) and layer(without group) level 1
       if (loopLevel !== 0) {
 
         // TODO: Slice that into multiple methods

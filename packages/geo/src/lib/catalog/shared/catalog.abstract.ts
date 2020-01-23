@@ -6,8 +6,6 @@ import { TimeFilterOptions } from '../../filter';
 import { QueryFormat, QueryHtmlTarget  } from '../../query';
 import { Observable } from 'rxjs';
 
-// import { EntityState } from '@igo2/common';
-// import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { TypeCatalog, TypeCatalogStrings } from './catalog.enum';
 
 export abstract class Catalog implements ICatalog {
@@ -34,7 +32,6 @@ export abstract class Catalog implements ICatalog {
     setCrossOriginAnonymous?: boolean;
     // ICatalog -----------------------------
 
-    // layerslist?: string[];
     catalogService: CatalogService;
 
     constructor(options: Catalog, service: CatalogService) {
@@ -46,8 +43,6 @@ export abstract class Catalog implements ICatalog {
         return false;
     }
 
-    public abstract operation(): string;
-
     public abstract collectCatalogItems(): Observable<CatalogItem[]>;
 }
 
@@ -56,10 +51,6 @@ class WMSCatalog extends Catalog {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.wms];
         this.type =  TypeCatalog[sType];
-    }
-
-    public operation(): string {
-        return 'wmsCatalog';
     }
 
     public collectCatalogItems(): Observable<CatalogItem[]> {
@@ -74,10 +65,6 @@ class WMTSCatalog extends Catalog {
         this.type =  TypeCatalog[sType];
     }
 
-    public operation(): string {
-        return 'wmtsCatalog';
-    }
-
     public collectCatalogItems(): Observable<CatalogItem[]> {
         return this.catalogService.loadCatalogWMTSLayerItems(this);
     }
@@ -90,17 +77,12 @@ class BaselayersCatalog extends Catalog {
         this.type =  TypeCatalog[sType];
     }
 
-    public operation(): string {
-        return 'baselayersCatalog';
-    }
-
     public collectCatalogItems(): Observable<CatalogItemGroup[]> {
         return this.catalogService.loadCatalogBaseLayerItems(this);
     }
 }
 
 export class CompositeCatalog extends Catalog implements ICompositeCatalog {
-    // url = null;
     composite: Catalog[];
 
     constructor(options: Catalog, service: CatalogService) {
@@ -120,15 +102,6 @@ export class CompositeCatalog extends Catalog implements ICompositeCatalog {
 
     public trace() {
         console.log('compositeCatalog Trace: ' + this.type);
-    }
-
-    public operation(): string {
-        const results = [];
-        for (const child of this.composite) {
-            results.push(child.operation());
-        }
-
-        return `Branch(${results.join('+')})`;
     }
 
     public collectCatalogItems(): Observable<CatalogItem[]> {
@@ -151,12 +124,6 @@ export class CatalogFactory {
         } else {
             catalog = new WMSCatalog(options, service);
         }
-
-        // console.log(options instanceof Catalog);
-        // console.log(options instanceof CompositeCatalog);
-        // console.log(newCatalog instanceof Catalog);
-        // console.log(newCatalog instanceof CompositeCatalog);
-        // (newCatalog as CompositeCatalog).trace();
 
         return catalog;
     }
