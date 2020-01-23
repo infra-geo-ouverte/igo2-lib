@@ -41,6 +41,8 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
 
   get resolution$(): BehaviorSubject<number> { return this.map.viewController.resolution$; }
 
+  @Input() catalogAllowLegend = false;
+
   /**
    * Catalog
    */
@@ -84,6 +86,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
         valueAccessor: (item: CatalogItem) => item.title
       });
     }
+
+    this.catalogAllowLegend = this.catalog.showLegend ? this.catalog.showLegend : this.catalogAllowLegend;
+
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
 
   }

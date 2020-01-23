@@ -26,6 +26,7 @@ export interface Catalog {
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;
+  showLegend?: boolean;
 }
 
 export interface CatalogItem {
