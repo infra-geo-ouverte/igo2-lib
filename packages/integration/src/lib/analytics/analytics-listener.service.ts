@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { skip } from 'rxjs/operators';
 
 import { AnalyticsService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
-import { ContextService } from '@igo2/context';
-import { ToolState } from '@igo2/integration';
+
+import { ContextState } from '../context/context.state';
+import { SearchState } from '../search/search.state';
+import { ToolState } from '../tool/tool.state';
 
 /**
  * Service that holds the state of the search module
@@ -19,14 +22,14 @@ export class AnalyticsListenerService {
   constructor(
     private analyticsService: AnalyticsService,
     private authService: AuthService,
-    private contextService: ContextService,
+    private contextState: ContextState,
+    private searchState: SearchState,
     private toolState: ToolState
   ) {}
 
   listen() {
     this.listenUser();
     this.listenContext();
-    this.listenLayer();
     this.listenTool();
     this.listenSearch();
   }
@@ -41,34 +44,32 @@ export class AnalyticsListenerService {
             this.analyticsService.setUser(tokenDecoded.user, profils.profils)
           );
       } else {
-        this.analyticsService.setUser(tokenDecoded.user, []);
+        this.analyticsService.setUser();
       }
     });
   }
 
   listenContext() {
-    this.contextService.context$.subscribe(context => {
-      this.analyticsService.trackEvent('context', 'activate', context.id);
+    this.contextState.context$.subscribe(context => {
+      if (context) {
+        this.analyticsService.trackEvent('context', 'activateContext', context.id || context.uri);
+      }
     });
   }
 
-  listenLayer() {
-    // this.contextService.context$.subscribe(context => {
-    //   this.analyticsService.trackEvent('context', 'activate', context.id);
-    // });
-  }
-
   listenTool() {
-    this.toolState.toolbox.activeTool$.subscribe(tool => {
+    this.toolState.toolbox.activeTool$.pipe(skip(1)).subscribe(tool => {
       if (tool) {
-        this.analyticsService.trackEvent('tool', 'activate', tool.name);
+        this.analyticsService.trackEvent('tool', 'activateTool', tool.name);
       }
     });
   }
 
   listenSearch() {
-    // this.contextService.context$.subscribe(context => {
-    //   this.analyticsService.trackSearch(term, types, nbResults);
-    // });
+    this.searchState.searchTerm$.pipe(skip(1)).subscribe((searchTerm: string) => {
+      if (searchTerm !== undefined && searchTerm !== null) {
+        this.analyticsService.trackSearch(searchTerm, this.searchState.store.count);
+      }
+    });
   }
 }

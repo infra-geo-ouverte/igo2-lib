@@ -47,13 +47,13 @@ export class AnalyticsService {
   }
 
   public setUser(
-    user: {
+    user?: {
       id: number;
       sourceId?: string;
       firstName?: string;
       lastName?: string;
     },
-    profils: string[]
+    profils?: string[]
   ) {
     if (this.options.provider === 'matomo') {
       if (!user) {
@@ -67,9 +67,7 @@ export class AnalyticsService {
         const name = `${user.firstName} ${user.lastName}`;
         this.paq.push(['setCustomVariable', 1, 'user', user.sourceId, 'visit']);
         this.paq.push(['setCustomVariable', 2, 'name', name, 'visit']);
-        // for (const profil of profils) {
         this.paq.push(['setCustomVariable', 3, 'profils', profils, 'visit']);
-        // }
       }
 
       this.paq.push(['trackPageView']);
@@ -77,11 +75,9 @@ export class AnalyticsService {
     }
   }
 
-  public trackSearch(term: string, types: string[], nbResults: number) {
+  public trackSearch(term: string, nbResults: number) {
     if (this.options.provider === 'matomo') {
-      // TODO: séparer les types pour en faire plusieurs recherches ?
-      // TODO: seulement envoyer sur la selection du résultat ?
-      this.paq.push(['trackSiteSearch', term, types, nbResults]);
+      this.paq.push(['trackSiteSearch', term, false, nbResults]);
     }
   }
 
