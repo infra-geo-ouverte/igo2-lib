@@ -27,6 +27,7 @@ export interface ILayerDataSource {
   type?: string;
   name?: string;
   queryable?: boolean;
+  metadataUrl?: string;
   maxScaleDenom?: string;
   minScaleDenom?: string;
 }

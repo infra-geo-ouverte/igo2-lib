@@ -80,13 +80,13 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   let isXYCoords = false;
 
   str = str.toLocaleUpperCase().trim();
+  str = str.replace(' ', '');
   // Extract projection
   if (projectionRegex.test(str)) {
     [coordStr, projectionStr] = str.split(';').map(s => s.trim());
   } else {
     coordStr = str;
   }
-
   if (lonLatRegex.test(coordStr)) {
 
     [,
@@ -228,8 +228,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   }
 
   // Reproject the coordinate if projection parameter have been set and coord is not 4326
-  if ((projectionStr !== undefined && projectionStr !== toProjection) || (lonLat[0] > 180 || lonLat[0] < -180)) {
-
+  if ((projectionStr !== undefined && projectionStr !== toProjection) || (lonLat[0] > 180 || lonLat[0] < -180) || (lonLat[1] > 90 || lonLat[1] < -90)) {
     const source = projectionStr ? 'EPSG:' + projectionStr : mapProjection;
     const dest = 'EPSG:' + toProjection;
 
@@ -239,7 +238,6 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
       return {lonLat: undefined, message: 'Projection ' + source + ' not supported', radius: undefined, conf: undefined};
     }
   }
-
   return {lonLat, message: '', radius: radius ? parseInt(radius, 10) : undefined, conf: conf ? parseInt(conf, 10) : undefined};
 }
 

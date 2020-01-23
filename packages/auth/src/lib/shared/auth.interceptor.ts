@@ -37,7 +37,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const element = document.createElement('a');
     element.href = req.url;
 
-    if (!token && this.trustHosts.indexOf(element.hostname) === -1) {
+    if (!token || this.trustHosts.indexOf(element.hostname) === -1) {
       return next.handle(req);
     }
 
