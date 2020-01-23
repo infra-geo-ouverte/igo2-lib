@@ -96,7 +96,7 @@ export class SpatialFilterService {
                 'igo.geo.terrapi.' + name
               );
             } catch (e) {
-              item.name = name.substring(0,1).toUpperCase() + name.substring(1, name.length - 1);
+              item.name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length - 1);
             }
 
             try {
@@ -104,7 +104,7 @@ export class SpatialFilterService {
                 'igo.geo.spatialFilter.group.' + substr
               );
             } catch (e) {
-              item.group = substr.substring(0,1).toUpperCase() + substr.substring(1, name.length - 1);
+              item.group = substr.substring(0, 1).toUpperCase() + substr.substring(1, name.length - 1);
             }
 
             items.push(item);
@@ -119,9 +119,9 @@ export class SpatialFilterService {
                 item.name = this.languageService.translate.instant(
                     'igo.geo.terrapi.' + name);
               } catch (e) {
-                item.name = name.substring(0,1).toUpperCase() + name.substring(1, name.length - 1);
+                item.name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length - 1);
               }
-              item.source = type
+              item.source = type;
 
               items.push(item);
             }
