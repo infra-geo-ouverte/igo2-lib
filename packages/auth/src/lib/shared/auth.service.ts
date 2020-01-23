@@ -118,9 +118,9 @@ export class AuthService {
     return this.http.get<User>(url);
   }
 
-  getProfils() {
+  getProfils(): Observable<{ profils: string[] }> {
     const url = this.config.getConfig('auth.url');
-    return this.http.get(`${url}/profils`);
+    return this.http.get<{ profils: string[] }>(`${url}/profils`);
   }
 
   updateUser(user: User): Observable<User> {

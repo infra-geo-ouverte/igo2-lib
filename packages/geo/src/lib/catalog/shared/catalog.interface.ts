@@ -3,7 +3,7 @@ import { EntityState } from '@igo2/common';
 import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
-import { QueryFormat, QueryHtmlTarget  } from '../../query';
+import { QueryFormat, QueryHtmlTarget } from '../../query';
 
 import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 import { Catalog } from './catalog.abstract';
@@ -41,7 +41,8 @@ export interface CatalogItem {
   address?: string;
 }
 
-export interface CatalogItemLayer<L = MetadataLayerOptions> extends CatalogItem {
+export interface CatalogItemLayer<L = MetadataLayerOptions>
+  extends CatalogItem {
   options: L;
 }
 
