@@ -117,7 +117,8 @@ export class SpatialFilterService {
               const name = this.getKeyByValue(this.urlFilterList, type);
               try {
                 item.name = this.languageService.translate.instant(
-                    'igo.geo.terrapi.' + name);
+                  'igo.geo.terrapi.' + name
+                );
               } catch (e) {
                 item.name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length - 1);
               }

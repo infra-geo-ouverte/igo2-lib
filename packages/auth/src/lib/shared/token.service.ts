@@ -12,7 +12,7 @@ export class TokenService {
 
   constructor(private injector: Injector) {}
 
-  set(token) {
+  set(token: string) {
     localStorage.setItem(this.tokenKey, token);
   }
 
