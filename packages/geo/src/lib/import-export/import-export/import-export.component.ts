@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { MessageService, LanguageService, StyleListService } from '@igo2/core';
+import { MessageService, LanguageService, StyleListService, ConfigService } from '@igo2/core';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -45,7 +45,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private messageService: MessageService,
     private styleListService: StyleListService,
     private styleService: StyleService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private config: ConfigService
   ) {
     this.buildForm();
   }
@@ -103,6 +104,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
+    if (!this.config.getConfig('importWithStyle')) {
     handleFileImportSuccess(
       file,
       features,
@@ -110,6 +112,17 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.messageService,
       this.languageService
     );
+    } else {
+      handleFileImportSuccess(
+        file,
+        features,
+        this.map,
+        this.messageService,
+        this.languageService,
+        this.styleListService,
+        this.styleService
+      );
+    }
   }
 
   private onFileImportError(file: File, error: Error) {

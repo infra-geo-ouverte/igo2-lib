@@ -15,7 +15,6 @@ import { IgoKeyValueModule, IgoDrapDropModule, IgoSpinnerModule } from '@igo2/co
 
 import { ImportExportComponent } from './import-export/import-export.component';
 import { DropGeoFileDirective } from './shared/drop-geo-file.directive';
-import { DropGeoFileLayerDirective } from './shared/drop-geo-file-layer.directive';
 
 @NgModule({
   imports: [
@@ -33,8 +32,8 @@ import { DropGeoFileLayerDirective } from './shared/drop-geo-file-layer.directiv
     IgoKeyValueModule,
     IgoDrapDropModule
   ],
-  exports: [ImportExportComponent, DropGeoFileDirective, DropGeoFileLayerDirective],
-  declarations: [ImportExportComponent, DropGeoFileDirective, DropGeoFileLayerDirective]
+  exports: [ImportExportComponent, DropGeoFileDirective],
+  declarations: [ImportExportComponent, DropGeoFileDirective]
 })
 export class IgoImportExportModule {
   static forRoot(): ModuleWithProviders {

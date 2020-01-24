@@ -144,8 +144,7 @@ export function handleFileImportSuccess(
   messageService: MessageService,
   languageService: LanguageService,
   styleListService?: StyleListService,
-  styleService?: StyleService,
-  styleList?: boolean
+  styleService?: StyleService
 ) {
   if (features.length === 0) {
     handleNothingToImportError(file, messageService, languageService);
@@ -154,7 +153,7 @@ export function handleFileImportSuccess(
 
   const layerTitle = computeLayerTitleFromFile(file);
 
-  if (!styleList) {
+  if (!styleListService) {
     console.log('normal');
     addLayerAndFeaturesToMap(features, map, layerTitle);
   } else {
