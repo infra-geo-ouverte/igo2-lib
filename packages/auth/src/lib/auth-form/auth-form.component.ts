@@ -93,7 +93,6 @@ export class AuthFormComponent implements OnInit {
     @Optional() private router: Router
   ) {
     this.options = this.config.getConfig('auth') || {};
-    console.log(this.options);
     this.visible = Object.getOwnPropertyNames(this.options).length !== 0;
   }
 

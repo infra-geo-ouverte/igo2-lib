@@ -28,9 +28,6 @@ export class ConfigService {
    */
   public load(options: ConfigOptions) {
     const baseConfig = options.default || {};
-    console.log('config');
-    console.log(options);
-    console.log(this.config);
     if (!options.path) {
       this.config = baseConfig;
       return true;
