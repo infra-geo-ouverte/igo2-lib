@@ -20,6 +20,7 @@ import { IgoMetadataModule } from './../../metadata/metadata.module';
 import { CatalogBrowserComponent } from './catalog-browser.component';
 import { CatalogBrowserLayerComponent } from './catalog-browser-layer.component';
 import { CatalogBrowserGroupComponent } from './catalog-browser-group.component';
+import { IgoLayerModule } from '../../layer/layer.module';
 
 /**
  * @ignore
@@ -36,7 +37,8 @@ import { CatalogBrowserGroupComponent } from './catalog-browser-group.component'
     IgoLanguageModule,
     IgoListModule,
     IgoCollapsibleModule,
-    IgoMetadataModule
+    IgoMetadataModule,
+    IgoLayerModule
   ],
   exports: [
     CatalogBrowserComponent

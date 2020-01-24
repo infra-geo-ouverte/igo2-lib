@@ -6,6 +6,7 @@
         [group]="item"
         [state]="store.state"
         [resolution]="resolution$ | async"
+        [catalogAllowLegend]="catalogAllowLegend"
         [toggleCollapsed]="toggleCollapsedGroup"
         (addedChange)="onGroupAddedChange($event)"
         (layerAddedChange)="onLayerAddedChange($event)">
@@ -17,6 +18,7 @@
         igoListItem
         [layer]="item"
         [resolution]="resolution$ | async"
+        [catalogAllowLegend]="catalogAllowLegend"
         [added]="store.state.get(item).added"
         (addedChange)="onLayerAddedChange($event)">
       </igo-catalog-browser-layer>
