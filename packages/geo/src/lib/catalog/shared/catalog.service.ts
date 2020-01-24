@@ -189,7 +189,7 @@ export class CatalogService {
         outGroupImpose.items = [];
 
         const flatLayer = flatDeepLayer(item);
-        flatLayer.map((v) => v.address = outGroupImpose.address + '.' + outGroupImpose.id);
+        flatLayer.map((v) => v.address = `${outGroupImpose.address}.${outGroupImpose.id}`);
         outGroupImpose.items = flatLayer;
 
         return outGroupImpose;
@@ -209,16 +209,16 @@ export class CatalogService {
       ));
 
     // merge Group (first level only) -----------------------------------------------------
-    const groupByGroupId = (data, keyFn) => data.reduce((acc, group, idx, arr) => {
+    const groupByGroupId = (data, keyFn) => data.reduce((acc, group) => {
       const groupId = keyFn(group);
-      const ind = acc.find((x) => (x ? x.id === groupId : false)); // hb6 Forbidden non null assertion (no-non-null-assertion)
+      const ind = acc.find((x) => x.id === groupId);
 
       if (!ind) {
         acc[acc.length] = group;
       } else {
         const ix = acc.indexOf(ind);
-        if (acc[ix].address.split('|').indexOf(group.a) === -1) {
-          acc[ix].address = acc[ix].address + '|' + group.address;
+        if (acc[ix].address.split('|').indexOf(group.address) === -1) {
+          acc[ix].address = `${acc[ix].address}|${group.address}`;
         }
         acc[ix].items.push(...group.items);
       }
@@ -228,21 +228,21 @@ export class CatalogService {
     // merge Layer for each Level (catalog, group(recursive))
     const recursiveGroupByLayerAddress = (items, keyFn) => items.reduce((acc, item, idx, arr) => {
 
-      const layerName = keyFn(item);
+      const layerTitle = keyFn(item);
       const outItem = Object.assign({}, item);
 
       if (item.type === CatalogItemType.Layer) {
         // same title, same address => result: only one item is keep
 
         // same title, address diff
-        const diffAddress = arr.filter((x, i) => i !== idx && x.title === layerName && x.address !== item.address
+        const diffAddress = arr.filter((x, i) => i !== idx && x.title === layerTitle && x.address !== item.address
           && x.type === CatalogItemType.Layer);
 
         if (diffAddress.length > 0) {
-          outItem.title = item.title + ' (catalog:' + item.address + ')';
+          outItem.title = `${item.title} (source: ${item.address.split('.')[0]})`;
         }
 
-        const exist = acc.find((x) => x ? x.n === outItem.title && x.type === CatalogItemType.Layer : false);
+        const exist = acc.find((x) => x.title === outItem.title && x.type === CatalogItemType.Layer);
         if (!exist) {
           acc[acc.length] = outItem;
         }

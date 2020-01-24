@@ -67,6 +67,80 @@ export const environment: Environment = {
           title: 'Controling tooltip format',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
           tooltipType: 'abstract' // or title
+        },
+        {
+          id: 'tq_swtq',
+          title: 'swtq',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
+        },
+        {
+          id: 'fusion_catalog',
+          title: '(composite catalog) fusion catalog',
+          composite: [
+            {
+              id: 'tq_swtq',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
+            },
+            {
+              id: 'rn_wmts',
+              url: 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
+              type: 'wmts',
+              crossOrigin: true,
+              matrixSet: 'EPSG_3857',
+              version: '1.0.0'
+            }
+          ]
+        },
+        {
+          id: 'group_impose',
+          title: '(composite catalog) group imposed and unique layer title for same source',
+          composite: [
+            {
+              id: 'tq_swtq',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+              regFilters: ['zpegt'],
+              groupImpose: {id: 'zpegt', title: 'zpegt'}
+            },
+            {
+              id: 'Gououvert',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+              regFilters: ['zpegt'],
+              groupImpose: {id: 'zpegt', title: 'zpegt'}
+            },
+            {
+              id: 'Gououvert',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+              regFilters: ['zpegt'],
+              groupImpose: {id: 'zpegt', title: 'zpegt'}
+            },
+            {
+              id: 'rn_wmts',
+              url: 'https://servicesmatriciels.mern.gouv.qc.ca/erdas-iws/ogc/wmts/Cartes_Images',
+              type: 'wmts',
+              crossOrigin: true,
+              matrixSet: 'EPSG_3857',
+              version: '1.0.0',
+              groupImpose: {id: 'cartetopo', title: 'Carte topo échelle 1/20 000'}
+            }
+          ]
+        },
+        {
+          id: 'tag_layernametitle',
+          title: '(composite catalog) tag source on same layer title',
+          composite: [
+            {
+              id: 'tq_swtq',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+              regFilters: ['limtn_charg'],
+              groupImpose: {id: 'mix_swtq_gouv', title: 'mix same name layer'}
+            },
+            {
+              id: 'Gououvert',
+              url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+              regFilters: ['limtn_charg'],
+              groupImpose: {id: 'mix_swtq_gouv', title: 'mix same name layer'}
+            }
+          ]
         }
       ]
     },
