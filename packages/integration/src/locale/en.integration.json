@@ -24,7 +24,8 @@
       "mapTool": {
         "empty": "No layer is currently active on this map. Customize it by adding layer from the : ",
         "search-tool": "Search tool",
-        "catalog-tool": "Data catalog"
+        "catalog-tool": "Data catalog",
+        "context-tool": "Context manager"
       }
     }
   }

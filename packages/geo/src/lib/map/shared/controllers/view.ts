@@ -327,7 +327,6 @@ export class MapViewController extends MapController {
     const xSize = distCenter / moySize;
 
     const maxZoom = action === MapViewAction.Move ? zoom : 17;
-    console.log(this.padding);
     olView.fit(extent, {
       maxZoom,
       padding: this.padding,

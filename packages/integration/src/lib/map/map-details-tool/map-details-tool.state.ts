@@ -10,6 +10,7 @@ export class MapDetailsState {
 
   @Output() searchToolActivate = new EventEmitter();
   @Output() catalogToolActivate = new EventEmitter();
+  @Output() contextToolActivate = new EventEmitter();
 
   constructor() {}
 
@@ -19,5 +20,9 @@ export class MapDetailsState {
 
   activateCatalogTool() {
     this.catalogToolActivate.emit();
+  }
+
+  activateContextTool() {
+    this.contextToolActivate.emit();
   }
 }
