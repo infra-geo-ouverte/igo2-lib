@@ -235,11 +235,21 @@ export class CatalogService {
         // same title, same address => result: only one item is keep
 
         // same title, address diff
-        const diffAddress = arr.filter((x, i) => i !== idx && x.title === layerTitle && x.address !== item.address
-          && x.type === CatalogItemType.Layer);
+        const indicesMatchTitle = [];
+        const diffAddress = arr.filter((x, i) => {
+          let bInd = false;
+          if (x.title === layerTitle && x.type === CatalogItemType.Layer) {
+            if (i !== idx && x.address !== item.address) {
+              bInd = true;
+            }
+            indicesMatchTitle.push(i);
+          }
+          return bInd;
+        }); // $& i !== idx
 
         if (diffAddress.length > 0) {
-          outItem.title = `${item.title} (source: ${item.address.split('.')[0]})`;
+          const nPosition = indicesMatchTitle.findIndex(x => x === idx) + 1;
+          outItem.title = `${item.title} (${nPosition})`; // source: ${item.address.split('.')[0]}
         }
 
         const exist = acc.find((x) => x.title === outItem.title && x.type === CatalogItemType.Layer);

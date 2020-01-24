@@ -6,7 +6,6 @@ import { TimeFilterOptions } from '../../filter';
 import { QueryFormat, QueryHtmlTarget } from '../../query';
 
 import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
-import { Catalog } from './catalog.abstract';
 
 export interface ICatalog {
   id: string;
@@ -31,7 +30,7 @@ export interface ICatalog {
 }
 
 export interface ICompositeCatalog extends ICatalog {
-  composite: Catalog[];
+  composite: ICatalog[];
 }
 
 export interface CatalogItem {

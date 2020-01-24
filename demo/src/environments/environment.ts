@@ -69,11 +69,6 @@ export const environment: Environment = {
           tooltipType: 'abstract' // or title
         },
         {
-          id: 'tq_swtq',
-          title: 'swtq',
-          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq'
-        },
-        {
           id: 'fusion_catalog',
           title: '(composite catalog) fusion catalog',
           composite: [

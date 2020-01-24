@@ -32,15 +32,11 @@ export abstract class Catalog implements ICatalog {
     setCrossOriginAnonymous?: boolean;
     // ICatalog -----------------------------
 
-    catalogService: CatalogService;
+    protected catalogService: CatalogService;
 
     constructor(options: Catalog, service: CatalogService) {
         Object.assign(this, options);
         this.catalogService = service;
-    }
-
-    public isComposite(): boolean {
-        return false;
     }
 
     public abstract collectCatalogItems(): Observable<CatalogItem[]>;
@@ -83,7 +79,7 @@ class BaselayersCatalog extends Catalog {
 }
 
 export class CompositeCatalog extends Catalog implements ICompositeCatalog {
-    composite: Catalog[];
+    composite: ICatalog[];
 
     constructor(options: Catalog, service: CatalogService) {
         super(options, service);
@@ -92,20 +88,7 @@ export class CompositeCatalog extends Catalog implements ICompositeCatalog {
         this.url = null;
     }
 
-    public add(component: Catalog): void {
-        this.composite.push(component);
-    }
-
-    public isComposite(): boolean {
-        return true;
-    }
-
-    public trace() {
-        console.log('compositeCatalog Trace: ' + this.type);
-    }
-
     public collectCatalogItems(): Observable<CatalogItem[]> {
-        // throw new Error('Method not implemented.');
         return this.catalogService.loadCatalogCompositeLayerItems(this);
     }
 }
