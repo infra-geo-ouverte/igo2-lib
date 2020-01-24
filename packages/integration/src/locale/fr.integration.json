@@ -24,7 +24,8 @@
       "mapTool": {
         "empty": "Aucune couche n'est présentement active sur cette carte. Personnalisez celle-ci en y ajoutant des couches à partir de : ",
         "search-tool": "L'outil de recherche",
-        "catalog-tool": "Le catalogue de données"
+        "catalog-tool": "Le catalogue de données",
+        "context-tool": "Le gestionnaire de contexte"
       }
     }
   }

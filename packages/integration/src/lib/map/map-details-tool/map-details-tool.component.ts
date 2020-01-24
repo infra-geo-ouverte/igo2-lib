@@ -78,4 +78,8 @@ export class MapDetailsToolComponent {
   catalogEmit() {
     this.mapDetailsState.activateCatalogTool();
   }
+
+  contextEmit() {
+    this.mapDetailsState.activateContextTool();
+  }
 }

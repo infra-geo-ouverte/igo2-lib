@@ -1,4 +1,4 @@
-.map-empty, .search-tool, .catalog-tool {
+.map-empty, .search-tool, .catalog-tool, .context-tool {
     margin: 10px;
 }
 
@@ -7,7 +7,7 @@
     text-align: justify;
 }
 
-.search-tool, .catalog-tool {
+.search-tool, .catalog-tool, .context-tool {
     cursor: pointer;
     font-weight: bold;
 }
