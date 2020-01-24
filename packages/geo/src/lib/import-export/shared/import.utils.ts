@@ -54,6 +54,7 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
                                                styleListService: StyleListService, styleService: StyleService): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
   let style;
+
   if (styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')) {
     const styleByAttribute: StyleByAttribute = {
       type: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.type'),
@@ -154,10 +155,8 @@ export function handleFileImportSuccess(
   const layerTitle = computeLayerTitleFromFile(file);
 
   if (!styleListService) {
-    console.log('normal');
     addLayerAndFeaturesToMap(features, map, layerTitle);
   } else {
-    console.log('ma modif');
     addLayerAndFeaturesStyledToMap(features, map, layerTitle, styleListService, styleService);
   }
 
