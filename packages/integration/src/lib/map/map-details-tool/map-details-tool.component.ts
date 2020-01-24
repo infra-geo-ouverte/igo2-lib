@@ -1,9 +1,11 @@
+import { MapState } from './../map.state';
 import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum } from '@igo2/geo';
+import { LayerListControlsEnum, IgoMap } from '@igo2/geo';
 
 import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
+import { MapDetailsState } from './map-details-tool.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -12,7 +14,8 @@ import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 })
 @Component({
   selector: 'igo-map-details-tool',
-  templateUrl: './map-details-tool.component.html'
+  templateUrl: './map-details-tool.component.html',
+  styleUrls: ['./map-details-tool.component.scss']
 })
 export class MapDetailsToolComponent {
   @Input() toggleLegendOnVisibilityChange: boolean = false;
@@ -28,6 +31,19 @@ export class MapDetailsToolComponent {
   @Input() layerListControls: LayerListControlsOptions = {};
 
   @Input() queryBadge: boolean = false;
+
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
+
+  get layers(): boolean {
+    for (const layer of this.map.layers) {
+      if (layer.baseLayer !== true && layer.title !== 'searchPointerSummary') {
+        return true;
+      }
+    }
+    return false;
+  }
 
   get excludeBaseLayers(): boolean {
     return this.layerListControls.excludeBaseLayers || false;
@@ -51,5 +67,15 @@ export class MapDetailsToolComponent {
         break;
     }
     return filterSortOptions;
+  }
+
+  constructor(private mapState: MapState, private mapDetailsState: MapDetailsState) {}
+
+  searchEmit() {
+    this.mapDetailsState.activateSearchTool();
+  }
+
+  catalogEmit() {
+    this.mapDetailsState.activateCatalogTool();
   }
 }

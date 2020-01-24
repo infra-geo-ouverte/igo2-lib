@@ -4,6 +4,8 @@ import {
   CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 
+import { CommonModule } from '@angular/common';
+
 import { MatTabsModule } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -21,6 +23,7 @@ import { MapToolComponent } from './map-tool/map-tool.component';
 
 @NgModule({
   imports: [
+    CommonModule,
     MatTabsModule,
     IgoLanguageModule,
     IgoLayerModule,
