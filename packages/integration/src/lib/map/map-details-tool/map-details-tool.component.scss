@@ -1,0 +1,13 @@
+.map-empty, .search-tool, .catalog-tool {
+    margin: 10px;
+}
+
+.map-empty {
+    font-size: small;
+    text-align: justify;
+}
+
+.search-tool, .catalog-tool {
+    cursor: pointer;
+    font-weight: bold;
+}
