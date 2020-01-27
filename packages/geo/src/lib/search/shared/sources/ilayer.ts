@@ -98,6 +98,23 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
       settings: [
         {
+          type: 'checkbox',
+          title: 'results type',
+          name: 'type',
+          values: [
+            {
+              title: 'igo.geo.search.ilayer.type.layer',
+              value: 'layer',
+              enabled: true
+            },
+            {
+              title: 'igo.geo.search.ilayer.type.groupLayer',
+              value: 'group',
+              enabled: false
+            }
+          ]
+        },
+        {
           type: 'radiobutton',
           title: 'results limit',
           name: 'limit',
@@ -126,23 +143,6 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               title: '50',
               value: 50,
               enabled: limit === 50
-            }
-          ]
-        },
-        {
-          type: 'checkbox',
-          title: 'results type',
-          name: 'type',
-          values: [
-            {
-              title: 'igo.geo.search.ilayer.type.layer',
-              value: 'layer',
-              enabled: true
-            },
-            {
-              title: 'igo.geo.search.ilayer.type.groupLayer',
-              value: 'group',
-              enabled: false
             }
           ]
         }
