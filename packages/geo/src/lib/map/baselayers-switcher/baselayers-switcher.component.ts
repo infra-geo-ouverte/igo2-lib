@@ -64,12 +64,15 @@ export class BaseLayersSwitcherComponent implements AfterViewInit, OnDestroy {
 
   get baseLayers(): Layer[] {
     const mapResolution = this.map.viewController.getResolution();
+    const mapZoom = this.map.viewController.getZoom();
 
     const bl = this._baseLayers.filter(l => {
       return (
         (!l.options.maxResolution ||
           mapResolution <= l.options.maxResolution) &&
-        (!l.options.minResolution || mapResolution >= l.options.minResolution)
+        (!l.options.minResolution || mapResolution >= l.options.minResolution) &&
+        (!l.options.source.options.maxZoom || mapZoom <= l.options.source.options.maxZoom) &&
+        (!l.options.source.options.minZoom || mapZoom >= l.options.source.options.minZoom)
       );
     });
 
