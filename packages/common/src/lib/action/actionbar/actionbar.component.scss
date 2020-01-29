@@ -25,7 +25,7 @@ mat-list {
 
 :host.horizontal {
   max-width: 100%;
-  overflow: hidden;
+  overflow: unset;
   mat-list {
     width: auto;
     white-space: nowrap;

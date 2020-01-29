@@ -166,6 +166,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['région-administrative', 'regadmin']
             },
             {
+              title: 'igo.geo.search.icherche.type.entreprise',
+              value: 'entreprises',
+              enabled: types.indexOf('entreprises') !== -1,
+              available: false,
+              hashtags: ['entreprise']
+            },
+            {
               title: 'igo.geo.search.icherche.type.place',
               value: 'lieux',
               enabled: types.indexOf('lieux') !== -1,
@@ -177,19 +184,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               enabled: types.indexOf('bornes-sumi') !== -1,
               hashtags: ['borne', 'bornes', 'sumi']
             },
-            ,
             {
               title: 'igo.geo.search.icherche.type.km',
               value: 'bornes-km',
               enabled: false,
               hashtags: ['borne', 'bornes', 'repère', 'km']
-            },
-            {
-              title: 'igo.geo.search.icherche.type.entreprise',
-              value: 'entreprises',
-              enabled: types.indexOf('entreprises') !== -1,
-              available: false,
-              hashtags: ['entreprise']
             }
           ]
         },

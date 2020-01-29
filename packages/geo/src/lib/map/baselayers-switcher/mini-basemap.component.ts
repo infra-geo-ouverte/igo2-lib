@@ -92,9 +92,12 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
 
     const options: any = Object.assign(
       Object.create(baselayer.options),
-      baselayer.options
+      baselayer.options,
+      {
+        visible: true,
+        baseLayer: false
+      }
     );
-    options.visible = true;
 
     const layer = this.layerService.createLayer(options);
     this.basemap.addLayer(layer);
