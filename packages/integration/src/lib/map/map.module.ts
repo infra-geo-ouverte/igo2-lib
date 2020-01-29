@@ -6,7 +6,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 
-import { MatTabsModule } from '@angular/material';
+import { MatTabsModule, MatListModule, MatIconModule } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
@@ -25,6 +25,8 @@ import { MapToolComponent } from './map-tool/map-tool.component';
   imports: [
     CommonModule,
     MatTabsModule,
+    MatListModule,
+    MatIconModule,
     IgoLanguageModule,
     IgoLayerModule,
     IgoMetadataModule,

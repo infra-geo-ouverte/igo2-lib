@@ -1,3 +1,4 @@
+import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
 import { Component, Input } from '@angular/core';
 
@@ -5,7 +6,6 @@ import { ToolComponent } from '@igo2/common';
 import { LayerListControlsEnum, IgoMap } from '@igo2/geo';
 
 import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
-import { MapDetailsState } from './map-details-tool.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -69,17 +69,29 @@ export class MapDetailsToolComponent {
     return filterSortOptions;
   }
 
-  constructor(private mapState: MapState, private mapDetailsState: MapDetailsState) {}
+  get searchTool(): boolean {
+    return this.toolState.toolbox.getTool('searchResults') !== undefined;
+  }
+
+  get catalogTool(): boolean {
+    return this.toolState.toolbox.getTool('catalog') !== undefined;
+  }
+
+  get contextTool(): boolean {
+    return this.toolState.toolbox.getTool('contextManager') !== undefined;
+  }
+
+  constructor(private mapState: MapState, private toolState: ToolState) {}
 
   searchEmit() {
-    this.mapDetailsState.activateSearchTool();
+    this.toolState.toolbox.activateTool('searchResults');
   }
 
   catalogEmit() {
-    this.mapDetailsState.activateCatalogTool();
+    this.toolState.toolbox.activateTool('catalog');
   }
 
   contextEmit() {
-    this.mapDetailsState.activateContextTool();
+    this.toolState.toolbox.activateTool('contextManager');
   }
 }
