@@ -6,7 +6,8 @@ import { map, catchError } from 'rxjs/operators';
 import { uuid } from '@igo2/utils';
 import { LanguageService, ConfigService } from '@igo2/core';
 import {
-  CapabilitiesService, TypeCapabilities,
+  CapabilitiesService,
+  TypeCapabilities,
   WMSDataSourceOptions,
   WMTSDataSourceOptions,
   WMSDataSourceOptionsParams
