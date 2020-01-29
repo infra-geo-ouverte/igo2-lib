@@ -18,6 +18,8 @@ export class SearchState {
 
   readonly searchDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  readonly searchSettingsChange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+
   /**
    * Store that holds the search results
    */
@@ -49,5 +51,9 @@ export class SearchState {
   setSearchType(searchType: string) {
     this.searchSourceService.enableSourcesByType(searchType);
     this.searchType$.next(searchType);
+  }
+
+  setSearchSettingsChange() {
+    this.searchSettingsChange$.next(true);
   }
 }

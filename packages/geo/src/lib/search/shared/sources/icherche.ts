@@ -291,6 +291,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     if (!params.get('type').length) {
       return of([]);
     }
+    this.options.params.page = params.get('page') || '1';
+
     return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
       map((response: IChercheResponse) => this.extractResults(response)),
       catchError(err => {
@@ -332,16 +334,18 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   ): HttpParams {
     const queryParams: any = Object.assign(
       {
-        q: this.computeTerm(term),
         geometry: true,
         bbox: true,
         icon: true,
-        page: options.page,
         type:
           'adresses,codes-postaux,municipalites,mrc,regadmin,lieux,entreprises,bornes-sumi'
       },
       this.params,
-      this.computeOptionsParam(term, options || {}).params
+      this.computeOptionsParam(term, options || {}).params,
+      {
+        q: this.computeTerm(term),
+        page: options.page
+      }
     );
 
     if (queryParams.loc === 'true') {
@@ -395,8 +399,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
-        nextPage: (response.features.length % Number(this.options.params.limit) !== 0
-        || Number(this.options.params.page) > 10) ? false : true
+        nextPage: response.features.length % +this.options.params.limit === 0 && +this.options.params.page < 10
       }
     };
   }
