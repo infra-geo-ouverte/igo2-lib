@@ -1,11 +1,11 @@
+import { Observable } from 'rxjs';
 
-import { ICatalog, ICompositeCatalog , CatalogItem, CatalogItemGroup } from './catalog.interface';
-import { CatalogService } from './catalog.service';
 import { TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
 import { QueryFormat, QueryHtmlTarget  } from '../../query';
-import { Observable } from 'rxjs';
 
+import { ICatalog, ICompositeCatalog , CatalogItem, CatalogItemGroup } from './catalog.interface';
+import { CatalogService } from './catalog.service';
 import { TypeCatalog, TypeCatalogStrings } from './catalog.enum';
 
 export abstract class Catalog implements ICatalog {
