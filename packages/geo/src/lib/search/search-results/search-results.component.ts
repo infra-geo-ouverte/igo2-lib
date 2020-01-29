@@ -11,7 +11,7 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { Observable, EMPTY, timer } from 'rxjs';
+import { Observable, EMPTY, timer, BehaviorSubject } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
@@ -52,6 +52,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   public pageIterator: {sourceId: string}[] = [];
 
+  public collapsed: {sourceId: string}[] = [];
+
   @Input() map: IgoMap;
 
   /**
@@ -86,6 +88,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     this.pageIterator = [];
   }
   public _term: string;
+
+  @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
   /**
    * Event emitted when a result is focused
@@ -137,6 +141,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+
+    this.settingsChange$.subscribe(() => {
+      this.pageIterator = [];
+    });
   }
 
   /**
@@ -262,6 +270,9 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     researches.map(research => {
       research.request.subscribe((results: SearchResult[]) => {
         const newResults = group.results.concat(results);
+        if (!results.length) {
+          newResults[newResults.length - 1].meta.nextPage = false;
+        }
         this.moreResults.emit({research, results: newResults});
       });
     });

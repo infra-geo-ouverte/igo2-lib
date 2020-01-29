@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
@@ -58,6 +59,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public mapProjection: string;
   public term: string;
 
+  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
+
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
   }
@@ -112,6 +115,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
     this.searchStore.load(newResults);
+  }
+
+  onSearchSettingsChange() {
+    this.settingsChange$.next(true);
   }
 
   /**
