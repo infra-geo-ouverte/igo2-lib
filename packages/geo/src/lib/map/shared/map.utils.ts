@@ -80,7 +80,7 @@ export function stringToLonLat(str: string, mapProjection: string): {lonLat: [nu
   let isXYCoords = false;
 
   str = str.toLocaleUpperCase().trim();
-  str = str.replace(' ', '');
+  str = str.replace(/ /g, '');
   // Extract projection
   if (projectionRegex.test(str)) {
     [coordStr, projectionStr] = str.split(';').map(s => s.trim());
