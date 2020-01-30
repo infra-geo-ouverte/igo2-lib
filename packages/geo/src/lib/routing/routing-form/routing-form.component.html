@@ -80,7 +80,7 @@
 
 <div class="igo-input-container" *ngIf="routesResults">
   <mat-form-field *ngIf="routesResults && routesResults.length > 1">
-    <mat-select placeholder="{{'igo.geo.routingForm.drivingOptions' | translate}}" (selectionChange)="changeRoute($event)" [(ngModel)]="activeRoute">
+    <mat-select placeholder="{{'igo.geo.routingForm.drivingOptions' | translate}}" (selectionChange)="changeRoute()" [(ngModel)]="activeRoute">
       <mat-option *ngFor="let pathRouting of routesResults; let cnt = index;" [value]="pathRouting">
         Option {{cnt + 1}} : {{formatDistance(pathRouting.distance)}} ({{formatDuration(pathRouting.duration)}})
       </mat-option>

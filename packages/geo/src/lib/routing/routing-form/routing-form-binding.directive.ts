@@ -56,7 +56,7 @@ export class RoutingFormBindingDirective implements AfterViewInit {
               this.component.addStopOverlay(stopCoordinatesFromURL, cnt);
               cnt++;
             });
-            this.component.getRoutes(stopsCoordinatesFromURL, true);
+            this.component.getRoutes(true);
           }
         }
       });
@@ -71,6 +71,6 @@ export class RoutingFormBindingDirective implements AfterViewInit {
         }
       }
     }
-    this.component.onFormChange();
+    this.component.writeStopsToFormService();
   }
 }

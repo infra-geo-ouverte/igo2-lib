@@ -10,8 +10,8 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { Subscription, Subject, BehaviorSubject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -36,22 +36,24 @@ import { IgoMap } from '../../map/shared/map';
 import { SearchService } from '../../search/shared/search.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { createOverlayMarkerStyle } from '../../overlay/shared/overlay.utils';
-import { FeatureMotion } from '../../feature/shared/feature.enums';
-import { moveToOlFeatures } from '../../feature/shared/feature.utils';
+import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
+import { moveToOlFeatures, tryBindStoreLayer } from '../../feature/shared/feature.utils';
 
 import { Routing } from '../shared/routing.interface';
 import { RoutingService } from '../shared/routing.service';
 import { RoutingFormService } from './routing-form.service';
 
 import { QueryService } from '../../query/shared/query.service';
+import { FeatureStore } from '../../feature/shared/store';
+import { Feature } from '../../feature/shared/feature.interfaces';
+import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 
 @Component({
   selector: 'igo-routing-form',
   templateUrl: './routing-form.component.html',
   styleUrls: ['./routing-form.component.scss']
 })
-export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
+export class RoutingFormComponent implements OnInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
   public stopsForm: FormGroup;
@@ -62,23 +64,14 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stream$ = new Subject<string>();
 
-  public RoutingOverlayMarkerStyle: olstyle.Style;
-  public RoutingOverlayStyle: olstyle.Style;
-  public routingStopsOverlayDataSource: FeatureDataSource;
-  public routingRoutesOverlayDataSource: FeatureDataSource;
-  private stopsLayer;
-  private routesLayer;
-
   public routesResults: Routing[] | Message[];
   public activeRoute: Routing;
-  private selectRoute;
+  private lastTimeoutRequest;
 
   private focusOnStop = false;
   private focusKey = [];
   public initialStopsCoords;
   private browserLanguage;
-
-  // https://stackoverflow.com/questions/46364852/create-input-fields-dynamically-in-angular-2
 
   @Input() term: string;
 
@@ -88,8 +81,12 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() map: IgoMap;
 
-  @Output() submit: EventEmitter<any> = new EventEmitter();
+  /**
+   * The stops and route store
+   */
+  @Input() store: FeatureStore;
 
+  @Output() submit: EventEmitter<any> = new EventEmitter();
   constructor(
     private formBuilder: FormBuilder,
     private routingService: RoutingService,
@@ -102,7 +99,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     @Optional() private route: RouteService
   ) {}
 
-  changeRoute(selectedRoute: Routing) {
+  changeRoute() {
     this.showRouteGeometry();
   }
 
@@ -110,20 +107,9 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     event.preventDefault();
    }
 
-  ngOnDestroy(): void {
-    this.unsubscribeRoutesQueries();
-    this.unlistenSingleClick();
-    this.queryService.queryEnabled = true;
-
-    this.writeStopsToFormService();
-    this.routingRoutesOverlayDataSource.ol.clear();
-    this.routingStopsOverlayDataSource.ol.clear();
-    this.map.removeLayer(this.stopsLayer);
-    this.map.removeLayer(this.routesLayer);
-
-  }
-
   ngOnInit() {
+    this.queryService.queryEnabled = false;
+    this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
     this.stopsForm = this.formBuilder.group({
       routingType: 'car',
@@ -136,62 +122,87 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       ])
     });
 
-    this.routingStopsOverlayDataSource = new FeatureDataSource({});
-    this.routingRoutesOverlayDataSource = new FeatureDataSource({});
+    this.store = new FeatureStore<Feature>([], {map: this.map});
+    this.initStore();
+    this.initOlInteraction();
+    this.subscribeToFormChange();
+
+    this.routesQueries$$.push(
+      this.stream$
+        .pipe(
+          debounceTime(this.debounce),
+          distinctUntilChanged()
+        )
+        .subscribe((term: string) => this.handleTermChanged(term))
+    );
   }
 
-  ngAfterViewInit(): void {
-    this.queryService.queryEnabled = false;
-    this.focusOnStop = false;
-    this.stopsLayer = new VectorLayer({
-      title: 'routingStopOverlay',
-      zIndex: 999,
-      id: 'routingStops',
-      source: this.routingStopsOverlayDataSource,
-      showInLayerList: false
+  ngOnDestroy(): void {
+    this.unsubscribeRoutesQueries();
+    this.unlistenSingleClick();
+    this.queryService.queryEnabled = true;
+
+    this.writeStopsToFormService();
+
+  }
+
+  private initStore() {
+    const store = this.store;
+    const layer = new VectorLayer({
+      title: 'Directions',
+      zIndex: 900,
+      source: new FeatureDataSource(),
+      showInLayerList: false,
+      exportable: false,
+      browsable: false,
+      style: stopMarker
     });
-    this.routesLayer = new VectorLayer({
-      title: 'routingRoutesOverlay',
-      zIndex: 999,
-      id: 'routingRoutes',
-      opacity: 0.75,
-      source: this.routingRoutesOverlayDataSource,
-      showInLayerList: false
-    });
+    tryBindStoreLayer(store, layer);
+    const loadingStrategy = new FeatureStoreLoadingStrategy({motion: FeatureMotion.None});
+    this.store.addStrategy(loadingStrategy, true);
+  }
 
-    this.map.addLayer(this.routesLayer);
-    this.map.addLayer(this.stopsLayer);
+  private initOlInteraction() {
 
-    let selectedStopFeature;
-
-    const selectStops = new olinteraction.Select({
-      layers: [this.stopsLayer.ol],
+    const selectStop = new olinteraction.Select({
+      layers: [this.store.layer.ol],
       condition: olcondition.pointerMove,
-      hitTolerance: 7
+      hitTolerance: 7,
+      filter: (feature) => {
+        return feature.get('type') === 'stop'
+      }
     });
 
     const translateStop = new olinteraction.Translate({
-      layers: [this.stopsLayer.ol],
-      features: selectedStopFeature
+      layers: [this.store.layer.ol],
+      features: selectStop.getFeatures(),
+      hitTolerance: 7,
+      filter: (feature) => {
+        return feature.get('type') === 'stop'
+      }
     });
 
-    // TODO: Check to disable pointermove IF a stop is already selected
-    const selectRouteHover = new olinteraction.Select({
-      layers: [this.routesLayer.ol],
-      condition: olcondition.pointerMove,
-      hitTolerance: 7
+    translateStop.on('translating', evt => {
+      const features = evt.features;
+      if (features.getLength() === 0) { return; }
+      this.executeTranslation(features, false);
     });
 
-    this.selectRoute = new olinteraction.Select({
-      layers: [this.routesLayer.ol],
-      hitTolerance: 7
+    translateStop.on('translateend', evt => {
+      const features = evt.features;
+      if (features.getLength() === 0) { return; }
+      this.executeTranslation(features, true);
     });
 
-    selectStops.on('select', evt => {
-      selectedStopFeature = evt.target.getFeatures()[0];
+    const selectedRoute = new olinteraction.Select({
+      layers: [this.store.layer.ol],
+      condition: olcondition.click,
+      hitTolerance: 7,
+      filter: (feature) => {
+        return feature.getId() === 'route';
+      }
     });
-
-    this.selectRoute.on('select', evt => {
+    selectedRoute.on('select', evt => {
       if (this.focusOnStop === false) {
         const selectCoordinates = olproj.transform(
           (evt as any).mapBrowserEvent.coordinate,
@@ -203,60 +214,62 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
         this.stops.at(pos).patchValue({ stopCoordinates: selectCoordinates });
         this.handleLocationProposals(selectCoordinates, pos);
         this.addStopOverlay(selectCoordinates, pos);
-        this.selectRoute.getFeatures().clear();
+        selectedRoute.getFeatures().clear();
       }
-      this.selectRoute.getFeatures().clear();
+      selectedRoute.getFeatures().clear();
     });
 
-    this.routesQueries$$.push(
-      this.stopsForm.statusChanges
-        .pipe(debounceTime(this.debounce))
-        .subscribe(val => this.onFormChange())
-    );
-
-    translateStop.on('translateend', evt => {
-      const translatedID = evt.features.getArray()[0].getId();
-      const translatedPos = translatedID.split('_');
-      let p;
-      switch (translatedPos[1]) {
-        case 'start':
-          p = 0;
-          break;
-        case 'end':
-          p = this.stops.length - 1;
-          break;
-        default:
-          p = Number(translatedPos[1]);
-          break;
-      }
-      const translationEndCoordinates = olproj.transform(
-        evt.features
-          .getArray()[0]
-          .getGeometry()
-          .getCoordinates(),
-        this.map.projection,
-        this.projection
-      );
-      this.stops
-        .at(p)
-        .patchValue({ stopCoordinates: translationEndCoordinates });
-      this.stops.at(p).patchValue({ stopProposals: [] });
-      this.handleLocationProposals(translationEndCoordinates, p);
-    });
-
-    this.map.ol.addInteraction(selectStops);
-    this.map.ol.addInteraction(selectRouteHover);
-    this.map.ol.addInteraction(this.selectRoute);
+    this.map.ol.addInteraction(selectStop);
     this.map.ol.addInteraction(translateStop);
+    this.map.ol.addInteraction(selectedRoute);
 
+  }
+
+  private subscribeToFormChange() {
     this.routesQueries$$.push(
-      this.stream$
-        .pipe(
-          debounceTime(this.debounce),
-          distinctUntilChanged()
-        )
-        .subscribe((term: string) => this.handleTermChanged(term))
+      this.stopsForm.valueChanges
+        .pipe(debounceTime(this.debounce))
+        .subscribe(val => {
+          this.writeStopsToFormService()
+        })
     );
+  }
+
+  private executeTranslation(features, reverseSearchProposal = false) {
+    const firstFeature = features.getArray()[0];
+    const translatedID = firstFeature.getId();
+    const translatedPos = translatedID.split('_');
+    let p;
+    switch (translatedPos[1]) {
+      case 'start':
+        p = 0;
+        break;
+      case 'end':
+        p = this.stops.length - 1;
+        break;
+      default:
+        p = Number(translatedPos[1]);
+        break;
+    }
+    const translationCoordinates = olproj.transform(
+      firstFeature.getGeometry().getCoordinates(),
+      this.map.projection,
+      this.projection
+    );
+    this.stops
+      .at(p)
+      .patchValue({ stopCoordinates: translationCoordinates, stopProposals: [] });
+    if (reverseSearchProposal) {
+      this.handleLocationProposals(translationCoordinates, p);
+    }
+    
+    if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
+      clearTimeout(this.lastTimeoutRequest);
+    }
+
+    this.lastTimeoutRequest = setTimeout(() => {
+      this.getRoutes();
+    }, 500);
   }
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
@@ -322,8 +335,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
               }
             } else {
-              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
-              this.stops.at(stopIndex).patchValue({ stopProposals: [] });
+              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(','), stopProposals: [] });
             }
             this.changeDetectorRefs.detectChanges();
           })
@@ -331,10 +343,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       );
   }
 
-  routingText(index: number): string {
+  routingText(index: number, stopsCounts = this.stops.length): string {
     if (index === 0) {
       return 'start';
-    } else if (index === this.stops.length - 1 || this.stops.length === 1) {
+    } else if (index === stopsCounts - 1 || stopsCounts === 1) {
       return 'end';
     } else {
       return 'intermediate';
@@ -353,7 +365,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  moveStop(index, diff) {
+  private moveStop(index, diff) {
     const fromValue = this.stops.at(index);
     this.removeStop(index);
     this.stops.insert(index + diff, fromValue);
@@ -376,7 +388,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.stopsForm.get('stops') as FormArray;
   }
 
-  private writeStopsToFormService() {
+  public writeStopsToFormService() {
     const stops = [];
     this.stops.value.forEach(stop => {
       if (stop.stopCoordinates instanceof Array) {
@@ -387,6 +399,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addStop(): void {
+    this.deleteStoreFeatureByID('route');
     const insertIndex = this.stops.length - 1;
     this.stops.insert(insertIndex, this.createStop());
   }
@@ -401,7 +414,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeStop(index: number): void {
-    this.routingStopsOverlayDataSource.ol.clear();
+    const id = this.getStopOverlayID(index);
+    this.deleteStoreFeatureByID(id);
     this.stops.removeAt(index);
     let cnt = 0;
     this.stops.value.forEach(stop => {
@@ -419,25 +433,8 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.stops.insert(0, this.createStop('start'));
     this.stops.insert(1, this.createStop('end'));
-    this.routingStopsOverlayDataSource.ol.getFeatures().forEach(element => {
-      this.deleteRoutingOverlaybyID(element.getId());
-    });
-    this.routingRoutesOverlayDataSource.ol.clear();
-    this.routingStopsOverlayDataSource.ol.clear();
-    this.selectRoute.getFeatures().clear();
-  }
 
-  onFormChange() {
-    if (this.stopsForm.valid) {
-      this.routingRoutesOverlayDataSource.ol.clear();
-      this.writeStopsToFormService();
-      const coords = this.routingFormService.getStopsCoordinates();
-      if (coords.length >= 2) {
-        this.getRoutes(coords);
-      } else {
-        this.routingRoutesOverlayDataSource.ol.clear();
-      }
-    }
+    this.store.clear();
   }
 
   formatStep(step, cnt) {
@@ -733,7 +730,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showRouteSegmentGeometry(coordinates, zoomToExtent = false) {
-    this.deleteRoutingOverlaybyID('endSegment');
+    const vertexId = 'vertex';
     const geometry4326 = new olgeom.LineString(coordinates);
     const geometry3857 = geometry4326.transform('EPSG:4326', 'EPSG:3857');
     const routeSegmentCoordinates = (geometry3857 as any).getCoordinates();
@@ -741,54 +738,81 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const geometry = new olgeom.Point(lastPoint);
     const feature = new olFeature({ geometry });
-    feature.setId('endSegment');
 
-    if (geometry === null) {
-      return;
-    }
-    if (geometry.getType() === 'Point') {
-      feature.setStyle([
-        new olstyle.Style({
-          geometry,
-          image: new olstyle.Circle({
-            radius: 7,
-            stroke: new olstyle.Stroke({ color: '#FF0000', width: 3 })
-          })
-        })
-      ]);
-    }
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
+      featureProjection: this.map.projection,
+      dataProjection: this.map.projection
+    });
+
+    const previousVertex = this.store.get(vertexId);
+    const previousVertexRevision = previousVertex ? previousVertex.meta.revision : 0;
+
+    const vertexFeature: Feature = {
+      type: FEATURE,
+      geometry: geojsonGeom,
+      projection: this.map.projection,
+      properties: {
+        id: vertexId,
+        type: 'vertex'
+      },
+      meta: {
+        id: vertexId,
+        revision: previousVertexRevision + 1
+      },
+      ol: feature
+    };
+    this.store.update(vertexFeature);
     if (zoomToExtent) {
       this.map.viewController.zoomToExtent(feature.getGeometry().getExtent());
     }
-    this.routingRoutesOverlayDataSource.ol.addFeature(feature);
   }
 
   zoomRoute() {
-    this.map.viewController.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
+    const routeExtent = this.store.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route').getGeometry().getExtent()
+    this.map.viewController.zoomToExtent(routeExtent);
   }
 
-  showRouteGeometry(moveToExtent = false) {
+  private showRouteGeometry(moveToExtent = false) {
     const geom = this.activeRoute.geometry.coordinates;
     const geometry4326 = new olgeom.LineString(geom);
     const geometry3857 = geometry4326.transform('EPSG:4326', 'EPSG:3857');
-    this.routingRoutesOverlayDataSource.ol.clear();
-    const routingFeature = new olFeature({ geometry: geometry3857 });
-    routingFeature.setStyle([
-      new olstyle.Style({
-        stroke: new olstyle.Stroke({ color: '#6a7982', width: 10 })
-      }),
-      new olstyle.Style({
-        stroke: new olstyle.Stroke({ color: '#4fa9dd', width: 6 })
-      })
-    ]);
-    this.routingRoutesOverlayDataSource.ol.addFeature(routingFeature);
     if (moveToExtent) {
-      this.map.viewController.zoomToExtent(this.routingRoutesOverlayDataSource.ol.getExtent());
+      this.zoomRoute()
     }
+
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry3857, {
+      featureProjection: this.map.projection,
+      dataProjection: this.map.projection
+    });
+
+    const previousRoute = this.store.get('route');
+    const previousRouteRevision = previousRoute ? previousRoute.meta.revision : 0;
+
+    const routeFeature: Feature = {
+      type: FEATURE,
+      geometry: geojsonGeom,
+      projection: this.map.projection,
+      properties: {
+        id: 'route',
+        type: 'route'
+      },
+      meta: {
+        id: 'route',
+        revision: previousRouteRevision + 1
+      },
+      ol: new olFeature({ geometry: geometry3857 })
+    };
+    this.store.update(routeFeature);
+
   }
 
-  getRoutes(stopsArrayCoordinates, moveToExtent = false) {
-    const routeResponse = this.routingService.route(stopsArrayCoordinates);
+  getRoutes(moveToExtent = false) {
+    this.writeStopsToFormService();
+    const coords = this.routingFormService.getStopsCoordinates();
+    if (coords.length < 2) {
+      return
+    } 
+    const routeResponse = this.routingService.route(coords);
     if (routeResponse) {
       routeResponse.map(res =>
         this.routesQueries$$.push(
@@ -968,10 +992,13 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clearStop(stopIndex) {
-    this.deleteRoutingOverlaybyID(this.getStopOverlayID(stopIndex));
+    // this.deleteRoutingOverlaybyID(this.getStopOverlayID(stopIndex));
+    const id = this.getStopOverlayID(stopIndex);
+    this.deleteStoreFeatureByID(id);
+    this.deleteStoreFeatureByID('route');
+    const stopsCounts = this.stops.length
     this.stops.removeAt(stopIndex);
-    this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex)));
-    this.routingRoutesOverlayDataSource.ol.clear();
+    this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex, stopsCounts)));
     this.routesResults = undefined;
   }
 
@@ -994,14 +1021,14 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       if (geomCoord !== undefined) {
         this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
         this.addStopOverlay(geomCoord, i);
-        const proposalExtent = this.routingStopsOverlayDataSource.ol
+      /*  const proposalExtent = this.routingStopsOverlayDataSource.ol
           .getFeatureById(this.getStopOverlayID(i))
           .getGeometry()
-          .getExtent();
+          .getExtent();*/
 
-        if (!olextent.intersects(proposalExtent, this.map.getExtent())) {
+       /* if (!olextent.intersects(proposalExtent, this.map.getExtent())) {
           this.map.viewController.moveToExtent(proposalExtent);
-        }
+        }*/
       }
     }
   }
@@ -1018,7 +1045,6 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleMapClick(event: olcondition, indexPos?) {
-    this.stops.at(indexPos).patchValue({ stopProposals: [] });
     if (this.currentStopIndex === undefined) {
       this.addStop();
       indexPos = this.stops.length - 2;
@@ -1031,7 +1057,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.map.projection,
       this.projection
     );
-    this.stops.at(indexPos).patchValue({ stopCoordinates: clickCoordinates });
+    this.stops.at(indexPos).patchValue({ stopProposals: [], stopCoordinates: clickCoordinates });
 
     this.handleLocationProposals(clickCoordinates, indexPos);
     this.addStopOverlay(clickCoordinates, indexPos);
@@ -1075,20 +1101,37 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     const geometry = new olgeom.Point(
       olproj.transform(coordinates, this.projection, this.map.projection)
     );
-    const feature = new olFeature({ geometry });
 
     const stopID = this.getStopOverlayID(index);
-    this.deleteRoutingOverlaybyID(stopID);
-    feature.setId(stopID);
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry, {
+      featureProjection: this.map.projection,
+      dataProjection: this.map.projection
+    });
 
-    if (geometry === null) {
-      return;
-    }
-    if (geometry.getType() === 'Point') {
-      const olStyle = createOverlayMarkerStyle({color: stopColor, text: stopText});
-      feature.setStyle(olStyle);
-    }
-    this.routingStopsOverlayDataSource.ol.addFeature(feature);
+    const previousStop = this.store.get(stopID);
+    const previousStopRevision = previousStop ? previousStop.meta.revision : 0;
+
+    const stopFeature: Feature = {
+      type: FEATURE,
+      geometry: geojsonGeom,
+      projection: this.map.projection,
+      properties: {
+        id: stopID,
+        type: 'stop',
+        stopText,
+        stopColor,
+        stopOpacity: 1
+      },
+      meta: {
+        id: stopID,
+        revision: previousStopRevision + 1
+      },
+      ol: new olFeature({ geometry })
+    };
+
+    this.store.update(stopFeature);
+    this.getRoutes();
+
   }
 
   public getStopOverlayID(index: number): string {
@@ -1103,16 +1146,10 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
     return 'routingStop_' + txt;
   }
 
-  private deleteRoutingOverlaybyID(id) {
-    if (this.routingStopsOverlayDataSource.ol.getFeatureById(id)) {
-      this.routingStopsOverlayDataSource.ol.removeFeature(
-        this.routingStopsOverlayDataSource.ol.getFeatureById(id)
-      );
-    }
-    if (this.routingRoutesOverlayDataSource.ol.getFeatureById(id)) {
-      this.routingRoutesOverlayDataSource.ol.removeFeature(
-        this.routingRoutesOverlayDataSource.ol.getFeatureById(id)
-      );
+  private deleteStoreFeatureByID(id) {
+    const entity = this.store.get(id);
+    if (entity) {
+      this.store.delete(entity);
     }
   }
 
@@ -1141,4 +1178,59 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
       location.pathname
     }?tool=directions&${routingUrl}`;
   }
+}
+
+/**
+ * Create a style for the routing stops and routes
+ * @param feature OlFeature
+ * @returns OL style function
+ */
+export function stopMarker(feature: olFeature, resolution: number): olstyle.Style {
+
+  const vertexStyle = [
+    new olstyle.Style({
+      geometry: feature.getGeometry(),
+      image: new olstyle.Circle({
+        radius: 7,
+        stroke: new olstyle.Stroke({ color: '#FF0000', width: 3 })
+      })
+    })
+  ];
+
+  const stopStyle = new olstyle.Style({
+    image: new olstyle.Icon({
+      src: './assets/igo2/geo/icons/place_' + feature.get('stopColor') + '_36px.svg',
+      opacity : feature.get('stopOpacity'),
+      imgSize: [36, 36], // for ie
+      anchor: [0.5, 0.92]
+    }),
+
+    text: new olstyle.Text({
+      text: feature.get('stopText'),
+      font: '12px Calibri,sans-serif',
+      fill: new olstyle.Fill({ color: '#000' }),
+      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
+      overflow: true
+    })
+  });
+
+  const routeStyle = [
+    new olstyle.Style({
+      stroke: new olstyle.Stroke({ color: '#6a7982', width: 10, opacity: 0.75 })
+    }),
+    new olstyle.Style({
+      stroke: new olstyle.Stroke({ color: '#4fa9dd', width: 6, opacity: 0.75 })
+    })
+  ];
+
+  if (feature.get('type') === 'stop') {
+    return stopStyle;
+  }
+  if (feature.get('type') === 'vertex') {
+    return vertexStyle;
+  }
+  if (feature.get('type') === 'route') {
+    return routeStyle;
+  } 
+
 }
