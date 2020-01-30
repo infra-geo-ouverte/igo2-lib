@@ -14,7 +14,14 @@ export class DirectionState {
   /**
    * Store that holds the stop and the driving route
    */
-  public store: FeatureStore = new FeatureStore([], {
+  public stopsStore: FeatureStore = new FeatureStore([], {
+    map: this.mapState.map
+  });
+
+    /**
+   * Store that holds the driving route
+   */
+  public routeStore: FeatureStore = new FeatureStore([], {
     map: this.mapState.map
   });
 

@@ -20,7 +20,14 @@ export class DirectionsToolComponent {
    * Map to measure on
    * @internal
    */
-  get store(): FeatureStore { return this.directionState.store; }
+  get stopsStore(): FeatureStore { return this.directionState.stopsStore; }
+
+  /**
+   * Map to measure on
+   * @internal
+   */
+  get routeStore(): FeatureStore { return this.directionState.routeStore; }
+
 
   /**
    * Map to measure on
