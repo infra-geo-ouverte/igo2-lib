@@ -1087,9 +1087,6 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.focusOnStop = false; // prevent to trigger map click and Select on routes at same time.
     }, 500);
-
-    console.log('ss',this.stopsStore.all());
-    console.log('rs',this.routeStore.all());
   }
 
   geolocateStop(index: number) {
