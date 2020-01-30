@@ -291,7 +291,7 @@
         },
         "pointerSearchSummary": {
           "title": "Position du curseur",
-          "tooltip": "Selon les sources activées, vous pouvez faire afficher le résumé de la position du curseur. Pour des résultats multiple de type indentiques, seul le plus proche est présenté. Utiliser F2 pour activer/désactiver."
+          "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
           "settings": {
