@@ -1,10 +1,12 @@
-import { ToolState } from './../../tool/tool.state';
-import { MapState } from './../map.state';
 import { Component, Input } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, IgoMap } from '@igo2/geo';
+import { LayerListControlsEnum, Layer, IgoMap } from '@igo2/geo';
 
+import { ToolState } from './../../tool/tool.state';
+import { MapState } from './../map.state';
 import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 
 @ToolComponent({
@@ -36,13 +38,14 @@ export class MapDetailsToolComponent {
     return this.mapState.map;
   }
 
-  get layers(): boolean {
-    for (const layer of this.map.layers) {
-      if (layer.baseLayer !== true && layer.title !== 'searchPointerSummary') {
-        return true;
-      }
-    }
-    return false;
+  get layers$(): Observable<Layer[]> {
+    return this.map.layers$.pipe(
+      map(
+        layers => layers.filter(
+          layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer)
+        )
+      )
+    )
   }
 
   get excludeBaseLayers(): boolean {
@@ -69,16 +72,16 @@ export class MapDetailsToolComponent {
     return filterSortOptions;
   }
 
-  get searchTool(): boolean {
-    return this.toolState.toolbox.getTool('searchResults') !== undefined;
+  get searchToolInToolbar(): boolean {
+    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1;
   }
 
-  get catalogTool(): boolean {
-    return this.toolState.toolbox.getTool('catalog') !== undefined;
+  get catalogToolInToolbar(): boolean {
+    return this.toolState.toolbox.getToolbar().indexOf('catalog') !== -1;
   }
 
-  get contextTool(): boolean {
-    return this.toolState.toolbox.getTool('contextManager') !== undefined;
+  get contextToolInToolbar(): boolean {
+    return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
 
   constructor(private mapState: MapState, private toolState: ToolState) {}
