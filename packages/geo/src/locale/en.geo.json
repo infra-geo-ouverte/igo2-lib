@@ -291,7 +291,7 @@
         },
         "pointerSearchSummary": {
           "title": "Pointer position",
-          "tooltip": "Based on every search source (reverse by coordinate), show the summary of the pointer location. For multiple results of the same type, only the closest is shown. Use F2 to activate/desactivate."
+          "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
         },
         "searchSources": {
           "settings": {

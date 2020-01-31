@@ -45,7 +45,7 @@ export class MapDetailsToolComponent {
           layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer)
         )
       )
-    )
+    );
   }
 
   get excludeBaseLayers(): boolean {
