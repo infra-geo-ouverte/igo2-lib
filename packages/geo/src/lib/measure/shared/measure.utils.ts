@@ -1,3 +1,4 @@
+import { LanguageService } from '@igo2/core';
 import * as olstyle from 'ol/style';
 import OlGeometry from 'ol/geom/Geometry';
 import OlPoint from 'ol/geom/Point';
@@ -134,12 +135,15 @@ export function squareMetersToUnit(value: number, unit: MeasureAreaUnit): number
  * @param options Formatting options
  * @returns Formatted measure
  */
-export function formatMeasure(measure: number, options?: {
-  decimal?: number;
-  unit?: MeasureAreaUnit | MeasureLengthUnit;
-  unitAbbr?: boolean;
-  locale?: string;
-}) {
+export function formatMeasure(
+  measure: number,
+  options?: {
+    decimal?: number;
+    unit?: MeasureAreaUnit | MeasureLengthUnit;
+    unitAbbr?: boolean;
+    locale?: string;
+  },
+  languageService?: LanguageService) {
   let decimal = options.decimal;
   if (decimal === undefined || decimal < 0) {
     decimal = 1;
@@ -156,10 +160,17 @@ export function formatMeasure(measure: number, options?: {
   }
 
   if (options.unit !== undefined && options.unitAbbr === true) {
-    parts.push(
-      MeasureLengthUnitAbbreviation[options.unit] ||
-      MeasureAreaUnitAbbreviation[options.unit]
-    );
+    if (languageService) {
+      parts.push(
+        MeasureLengthUnitAbbreviation[options.unit] ?
+          languageService.translate.instant('igo.geo.measure.' + MeasureLengthUnitAbbreviation[options.unit]) :
+          languageService.translate.instant('igo.geo.measure.' + MeasureAreaUnitAbbreviation[options.unit])
+      );
+    } else {
+      parts.push(
+        MeasureLengthUnitAbbreviation[options.unit] || MeasureAreaUnitAbbreviation[options.unit]
+      );
+    }
   }
 
   return parts.filter(p => p !== undefined).join(' ');
