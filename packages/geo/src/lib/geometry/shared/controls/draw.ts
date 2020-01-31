@@ -148,7 +148,7 @@ export class DrawControl {
    */
   private clearOlInnerOverlaySource() {
     if (this.options.layer === undefined && this.options.source === undefined) {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
   }
 
