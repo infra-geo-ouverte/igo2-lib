@@ -57,21 +57,7 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
   let style;
 
   if (styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')) {
-    const salut = Object.keys(styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute'));
-    console.log(salut);
-    const styleByAttribute: StyleByAttribute = {
-      type: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.type'),
-      attribute: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.attribute'),
-      data: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.data'),
-      fill: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.fill'),
-      stroke: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.stroke'),
-      width: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.width'),
-      radius: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.radius'),
-      icon: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.icon'),
-      scale: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.scale'),
-      label: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.label'),
-      baseStyle: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.baseStyle')
-    };
+    const styleByAttribute: StyleByAttribute = styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute');
 
     const styleBy = feature => {
       return styleService.createStyleByAttribute(
