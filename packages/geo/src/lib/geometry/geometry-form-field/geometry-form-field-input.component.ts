@@ -197,7 +197,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (value) {
       this.addGeoJSONToOverlay(value);
     } else {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
     this.onChange(value);
     this.toggleControl();
@@ -361,15 +361,20 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Toggle the proper control (draw or modify)
    */
   private toggleControl() {
-    this.deactivateControl();
-
-    if (!this.drawControlIsActive) {
-      return;
-    }
+    let activate;
     if (!this.value && this.geometryType) {
-      this.activateControl(this.drawControl);
+      activate = this.drawControl;
     } else {
-      this.activateControl(this.modifyControl);
+      activate = this.modifyControl;
+    }
+
+    // If the control that shoudl be activated
+    // is not the same as the current active control,
+    // deactivate the current control and activate the new one
+    // Otherwise, do nothing and keep the current control active
+    if (activate !== this.activeControl) {
+      this.deactivateControl();
+      this.activateControl(activate);
     }
   }
 

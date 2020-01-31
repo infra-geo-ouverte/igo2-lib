@@ -220,7 +220,7 @@ export class ModifyControl {
    */
   private clearOlInnerOverlaySource() {
     if (this.options.layer === undefined && this.options.source === undefined) {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
   }
 
@@ -329,7 +329,7 @@ export class ModifyControl {
   }
 
   /**
-   * Subscribe to CTRL key down to activate the draw control
+   * Subscribe to space key down to pan the map
    */
   private subscribeToKeyDown() {
     this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
@@ -435,7 +435,8 @@ export class ModifyControl {
       style: createDrawHoleInteractionStyle(),
       condition: (event: OlMapBrowserEvent) => {
         const olOuterGeometry = this.olOuterGeometry || this.getOlGeometry();
-        return olOuterGeometry.intersectsCoordinate(event.coordinate);
+        const intersects = olOuterGeometry.intersectsCoordinate(event.coordinate);
+        return intersects;
       }
     });
 
@@ -517,6 +518,7 @@ export class ModifyControl {
     this.unsubscribeToDrawKeyUp();
     this.unsubscribeToDrawKeyDown();
     this.deactivateDrawInteraction();
+    this.clearOlLinearRingsSource();
     this.olDrawInteraction = undefined;
   }
 
