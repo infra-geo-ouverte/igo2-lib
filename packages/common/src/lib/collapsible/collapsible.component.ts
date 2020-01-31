@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'igo-collapsible',
@@ -21,8 +21,9 @@ export class CollapsibleComponent {
   }
   set collapsed(value: boolean) {
     this._collapsed = value;
+    this.toggle.emit(value);
   }
   private _collapsed = false;
 
-  constructor() {}
+  @Output() toggle: EventEmitter<boolean> = new EventEmitter();
 }

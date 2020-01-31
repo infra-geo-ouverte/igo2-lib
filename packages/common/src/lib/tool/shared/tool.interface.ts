@@ -5,6 +5,7 @@ export interface Tool {
   icon?: string;
   iconImage?: string;
   tooltip?: string;
+  global?: boolean;
   options?: { [key: string]: any };
 
   parent?: string;

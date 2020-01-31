@@ -3,7 +3,7 @@ import { EntityState } from '@igo2/common';
 import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
-import { QueryFormat, QueryHtmlTarget  } from '../../query';
+import { QueryFormat, QueryHtmlTarget } from '../../query';
 
 import { CatalogItemType } from './catalog.enum';
 
@@ -26,6 +26,7 @@ export interface Catalog {
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;
+  showLegend?: boolean;
 }
 
 export interface CatalogItem {
@@ -34,7 +35,8 @@ export interface CatalogItem {
   type: CatalogItemType;
 }
 
-export interface CatalogItemLayer<L = MetadataLayerOptions> extends CatalogItem {
+export interface CatalogItemLayer<L = MetadataLayerOptions>
+  extends CatalogItem {
   options: L;
 }
 

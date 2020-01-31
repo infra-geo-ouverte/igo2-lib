@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import {
   HttpEvent,
   HttpInterceptor,
@@ -8,6 +7,7 @@ import {
   HttpRequest
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Md5 } from 'ts-md5';
 
 import { ConfigService } from '@igo2/core';
 import { TokenService } from './token.service';
@@ -37,14 +37,32 @@ export class AuthInterceptor implements HttpInterceptor {
     const element = document.createElement('a');
     element.href = req.url;
 
-    if (!token && this.trustHosts.indexOf(element.hostname) === -1) {
+    if (!token || this.trustHosts.indexOf(element.hostname) === -1) {
       return next.handle(req);
     }
 
     const authHeader = `Bearer ${token}`;
-    const authReq = req.clone({
+    let authReq = req.clone({
       headers: req.headers.set('Authorization', authHeader)
     });
+
+    const tokenDecoded: any = this.tokenService.decode();
+    if (
+      authReq.params.get('_i') === 'true' &&
+      tokenDecoded &&
+      tokenDecoded.user &&
+      tokenDecoded.user.sourceId
+    ) {
+      const hashUser = Md5.hashStr(tokenDecoded.user.sourceId) as string;
+      authReq = authReq.clone({
+        params: authReq.params.set('_i', hashUser)
+      });
+    } else if (authReq.params.get('_i') === 'true') {
+      authReq = authReq.clone({
+        params: authReq.params.delete('_i')
+      });
+    }
+
     return next.handle(authReq);
   }
 

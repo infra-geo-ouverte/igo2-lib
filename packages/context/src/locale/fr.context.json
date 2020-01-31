@@ -16,7 +16,7 @@
         "dialog": {
           "cloneMsg": "Le contexte '{{value}}' a été cloné",
           "cloneTitle": "Contexte cloné",
-          "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce context ?",
+          "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce contexte ?",
           "deleteMsg": "Le contexte '{{value}}' a été supprimé",
           "deleteTitle": "Contexte supprimé",
           "favoriteMsg": "Le contexte '{{value}}' a été défini comme favori",
@@ -29,7 +29,9 @@
           "uncaught": {
             "message": "Désolé! Le service que vous voulez utiliser n’est malheureusement pas disponible pour le moment. Essayez plus tard!",
             "title": "Erreur de serveur"
-          }
+          },
+          "addPermission": "La permission que vous tentez d'ajouter est déjà présente dans le contexte.",
+          "addPermissionTitle": "Erreur d'ajout de permission"
         },
         "favorite": "Favori",
         "form": {

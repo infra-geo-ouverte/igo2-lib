@@ -33,6 +33,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 // Move some stuff into controllers.
 export class IgoMap {
   public ol: olMap;
+  public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
@@ -163,12 +164,12 @@ export class IgoMap {
 
   // TODO: Move to ViewController and update every place it's used
   getCenter(projection?: string | OlProjection): [number, number] {
-    return this.viewController.getCenter();
+    return this.viewController.getCenter(projection);
   }
 
   // TODO: Move to ViewController and update every place it's used
   getExtent(projection?: string | OlProjection): MapExtent {
-    return this.viewController.getExtent();
+    return this.viewController.getExtent(projection);
   }
 
   // TODO: Move to ViewController and update every place it's used
@@ -186,6 +187,9 @@ export class IgoMap {
     }
 
     baseLayer.visible = true;
+
+    this.viewController.olView.setMinZoom(baseLayer.dataSource.options.minZoom || (this.options.view || {}).minZoom);
+    this.viewController.olView.setMaxZoom(baseLayer.dataSource.options.maxZoom || (this.options.view || {}).maxZoom);
   }
 
   getBaseLayers(): Layer[] {
@@ -455,5 +459,9 @@ export class IgoMap {
     if (this.geolocation) {
       this.geolocation.setTracking(false);
     }
+  }
+
+  onOfflineToggle(offline: boolean) {
+    this.offlineButtonToggle$.next(offline);
   }
 }

@@ -9,7 +9,7 @@
     (toggle)="onToggleCollapsed($event)">
   </mat-icon>
 
-  <h4 class="igo-catalog-group-title" mat-line matTooltipShowDelay="500" [matTooltip]="title" (click)="onTitleClick()">{{title}}</h4>
+  <h4 class="igo-catalog-group-title" id="catalog-group-title" mat-line matTooltipShowDelay="500" [matTooltip]="title" (click)="onTitleClick()">{{title}}</h4>
   <ng-container *ngIf="(added$ | async) && !(preview$ | async); else notadded">
     <button
       mat-icon-button
@@ -44,6 +44,7 @@
         igoListItem
         [layer]="item"
         [resolution]="resolution"
+        [catalogAllowLegend]="catalogAllowLegend"
         [added]="state.get(item).added"
         (addedLayerIsPreview)="onLayerPreview($event)"
         (addedChange)="onLayerAddedChange($event)">

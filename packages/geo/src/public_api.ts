@@ -35,6 +35,7 @@ export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
 
 export * from './lib/query/shared/query-search-source.providers';
+export * from './lib/search/shared/sources/cadastre.providers';
 export * from './lib/search/shared/sources/icherche.providers';
 export * from './lib/search/shared/sources/coordinates.providers';
 export * from './lib/search/shared/sources/ilayer.providers';

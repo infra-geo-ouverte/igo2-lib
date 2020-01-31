@@ -6,6 +6,7 @@ import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 
@@ -85,7 +86,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
     const layer = this.map.getLayerById(data.layer);
-    const olFeatures = layer.dataSource.ol.getFeatures();
+    let olFeatures = layer.dataSource.ol.getFeatures();
+    if (layer.dataSource instanceof ClusterDataSource) {
+      olFeatures = olFeatures.flatMap((cluster: any) => cluster.get('features'));
+    }
     this.exportService
       .export(olFeatures, data.format, layer.title, this.map.projection)
       .subscribe(

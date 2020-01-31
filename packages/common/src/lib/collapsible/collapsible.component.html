@@ -5,7 +5,8 @@
     mat-list-avatar
     igoCollapse
     [target]="content"
-    [collapsed]="collapsed">
+    [collapsed]="collapsed"
+    (toggle)="collapsed = $event">
   </mat-icon>
   <h4 matLine>{{title}}</h4>
 </mat-list-item>

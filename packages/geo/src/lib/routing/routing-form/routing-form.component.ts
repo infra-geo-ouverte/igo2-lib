@@ -289,7 +289,7 @@ export class RoutingFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 let resultPos = 0;
                 for (let i = 0; i < results.length; i++) {
                   const feature: any = results[i].data;
-                  if (feature.properties.type === 'adresse') {
+                  if (feature.properties.type === 'adresses') {
                     resultPos = i;
                     break;
                   }

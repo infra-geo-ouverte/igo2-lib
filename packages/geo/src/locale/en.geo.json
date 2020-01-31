@@ -122,7 +122,7 @@
         "sortMapOrder": "Sort the layers's list based on layer's order on the map",
         "resetLayersList": "Remove the current applied filter to layers's list",
         "trackFeature": "Track the feature",
-        "legend" : {
+        "legend": {
           "default": "Default",
           "loadingLegendText": "Loading legend",
           "noLegendText": "No legend available for this layer",
@@ -139,6 +139,8 @@
       "mapButtons": {
         "baselayerSwitcher": "Change base layer",
         "geolocate": "Geolocate",
+        "offline": "Offline mode",
+        "online": "Online mode",
         "zoomIn": "Zoom in ({{zoom}})",
         "zoomOut": "Zoom out ({{zoom}})",
         "resetRotation": "Set map to north",
@@ -229,7 +231,6 @@
         "feature.placeholder": "Search for a place localisation",
         "layer.title": "Layer",
         "layer.placeholder": "Search for a layer",
-        "icherche.name": "iCherche",
         "ichercheReverse.name": "Search by coordinates",
         "ilayer": {
           "name": "Layers",
@@ -240,14 +241,57 @@
             "type": "Type",
             "url": "URL",
             "metadataUrl": "Metadata"
+          },
+          "type": {
+            "layer": "Layer",
+            "groupLayer": "Group of layers"
+          }
+        },
+        "nominatim": {
+          "type": {
+            "food": "Food",
+            "health": "Health",
+            "entertainment": "Entertainment",
+            "finance": "Finance"
+          },
+          "country": {
+            "all": "The world",
+            "canada": "Canada"
+          }
+        },
+        "icherche": {
+          "name": "iCherche",
+          "type": {
+            "address": "Address",
+            "oldAddress": "Old address",
+            "district": "District",
+            "postalCode": "Postal Code",
+            "city": "City",
+            "oldCity": "Old city",
+            "mrc": "MRC",
+            "regadmin": "Administrative Region",
+            "road": "Road",
+            "place": "Place",
+            "sumi": "SUMI mark",
+            "km": "Mileage mark",
+            "entreprise": "Entreprise"
+          },
+          "restrictExtent": {
+            "map": "À l'étendue de la carte",
+            "quebec": "Au Québec"
           }
         },
         "coordinates": {
-          "name": "Coordinates"
+          "name": "Coordinates",
+          "coord": "Geographic (longitude, latitude)"
         },
         "menu.tooltip": "Search Options",
         "settings": {
           "title": "Settings"
+        },
+        "pointerSearchSummary": {
+          "title": "Pointer position",
+          "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
         },
         "searchSources": {
           "settings": {
@@ -256,11 +300,14 @@
             "radius": "Search radius",
             "results limit": "Number of results",
             "multiple object": "Multiple object",
-            "country limitation": "Limitation (country)",
+            "restrictExtent": "Restrict the extent",
             "selectAll": "Select All",
-            "unselectAll": "Unselect All"
+            "unselectAll": "Unselect All",
+            "true": "Yes",
+            "false": "No"
           }
-        }
+        },
+        "displayMoreResults": "Display more results"
       },
       "geometry": {
         "geometry": "Geometry",
@@ -275,7 +322,7 @@
         "startDate": "Start Date"
       },
       "spatialFilter": {
-        "predefined" : "Predefined Zone",
+        "predefined": "Predefined Zone",
         "draw": "Draw",
         "polygon": "Polygon",
         "point": "Circle",
@@ -300,7 +347,7 @@
         "zeroResults": "There are no results for this search.",
         "warning": "Warning",
         "freehandControl": "Freehand",
-        "group" : {
+        "group": {
           "toponyme": "Toponym",
           "culturel": "Cultural",
           "education": "Education",
@@ -339,11 +386,13 @@
         "gmf": "Family doctors group",
         "naissance": "Birth house",
         "pharmacie": "Pharmacy",
+        "casernes": "Fire stations",
         "correctionnel": "Correctional centres",
         "organisme": "Security organization",
         "palais-justice": "Courthouses",
         "penitencier-fed": "Federal penitentiaries",
-        "penitencier-prov": "Provincial penitentiaries"
+        "penitencier-prov": "Provincial penitentiaries",
+        "polices": "Police station"
       },
       "measure": {
         "dialog": {
@@ -391,6 +440,16 @@
         "ogcFilter.tooltip": "Apply filters",
         "wfsDownload.title": "Download",
         "wfsDownload.tooltip": "Download"
+      },
+      "network": {
+        "online": {
+          "message": "Online",
+          "title": "Status:"
+        },
+        "offline": {
+          "message": "Offline",
+          "title": "Status:"
+        }
       }
     }
   }

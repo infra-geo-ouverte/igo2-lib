@@ -11,14 +11,17 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { Observable, EMPTY, timer } from 'rxjs';
+import { Observable, EMPTY, timer, BehaviorSubject } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
 
-import { SearchResult } from '../shared/search.interfaces';
-import { SearchSource } from '../shared/sources/source';
 import { IgoMap } from '../../map';
+
+import { TextSearchOptions } from '../shared/sources/source.interfaces';
+import { SearchService } from '../shared/search.service';
+import { SearchResult, Research } from '../shared/search.interfaces';
+import { SearchSource } from '../shared/sources/source';
 
 export enum SearchResultMode {
   Grouped = 'grouped',
@@ -32,6 +35,7 @@ export enum SearchResultMode {
 @Component({
   selector: 'igo-search-results',
   templateUrl: './search-results.component.html',
+  styleUrls: ['./search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
@@ -45,6 +49,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * Search results store watcher
    */
   private watcher: EntityStoreWatcher<SearchResult>;
+
+  public pageIterator: {sourceId: string}[] = [];
+
+  public collapsed: {sourceId: string}[] = [];
 
   @Input() map: IgoMap;
 
@@ -69,6 +77,21 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Input() withZoomButton = false;
 
   /**
+   * Search term
+   */
+  @Input()
+  get term(): string {
+    return this._term;
+  }
+  set term(value: string) {
+    this._term = value;
+    this.pageIterator = [];
+  }
+  public _term: string;
+
+  @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
+
+  /**
    * Event emitted when a result is focused
    */
   @Output() resultFocus = new EventEmitter<SearchResult>();
@@ -82,6 +105,14 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * Event emitted when a result is selected
    */
   @Output() resultSelect = new EventEmitter<SearchResult>();
+
+  /**
+   * Event emitted when a research is completed after displaying more results is clicked
+   */
+  @Output() moreResults = new EventEmitter<{
+    research: Research;
+    results: SearchResult[];
+  }>();
 
   /**
    * Events emitted when a result is focus or unfocus by mouse event
@@ -101,7 +132,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     {source: SearchSource; results: SearchResult[]}[]
   >;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef,
+              private searchService: SearchService) {}
 
   /**
    * Bind the search results store to the watcher
@@ -109,6 +141,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   ngOnInit() {
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
+
+    this.settingsChange$.subscribe(() => {
+      this.pageIterator = [];
+    });
   }
 
   /**
@@ -126,6 +162,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultFocus(result: SearchResult) {
+    if (this.store.state.get(result)) {
+      if (this.store.state.get(result).focused === true) {
+        return;
+      }
+    }
     this.store.state.update(result, {focused: true}, true);
     this.resultFocus.emit(result);
   }
@@ -156,6 +197,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @internal
    */
   onResultSelect(result: SearchResult) {
+    if (this.store.state.get(result)) {
+      if (this.store.state.get(result).selected === true) {
+        return;
+      }
+    }
     this.store.state.update(result, {focused: true, selected: true}, true);
     this.resultSelect.emit(result);
   }
@@ -203,7 +249,33 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     });
 
     return Array.from(grouped.keys()).map((source: SearchSource) => {
+      if (this.pageIterator[source.getId()] === undefined) {
+        this.pageIterator[source.getId()] = 1;
+      }
       return {source, results: grouped.get(source)};
     });
+  }
+
+  isMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
+    return group.results && group.results[group.results.length - 1].meta.nextPage === true;
+  }
+
+  displayMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
+    const options: TextSearchOptions = {
+      sourceId: group.source.getId(),
+      page: ++this.pageIterator[group.source.getId()]
+    };
+
+    const researches = this.searchService.search(this.term, options);
+    researches.map(research => {
+      research.request.subscribe((results: SearchResult[]) => {
+        const newResults = group.results.concat(results);
+        if (!results.length) {
+          newResults[newResults.length - 1].meta.nextPage = false;
+        }
+        this.moreResults.emit({research, results: newResults});
+      });
+    });
+    return;
   }
 }
