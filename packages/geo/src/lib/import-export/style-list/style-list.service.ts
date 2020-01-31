@@ -6,7 +6,6 @@ import { catchError } from 'rxjs/operators';
 import { ObjectUtils } from '@igo2/utils';
 
 import { StyleListOptions } from './style-list.interface';
-import { styleListVersion } from './style-list-version';
 
 @Injectable({
   providedIn: 'root'
@@ -46,10 +45,7 @@ export class StyleListService {
           })
         )
         .subscribe(styleListResponse => {
-          this.styleList = ObjectUtils.mergeDeep(
-            ObjectUtils.mergeDeep({ styleListVersion }, baseStyleList),
-            styleListResponse
-          );
+          this.styleList = ObjectUtils.mergeDeep(baseStyleList, styleListResponse);
           resolve(true);
         });
     });

@@ -2,7 +2,7 @@ import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angul
 
 import { Subscription } from 'rxjs';
 
-import { MessageService, LanguageService, StyleListService, ConfigService } from '@igo2/core';
+import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 import { DragAndDropDirective } from '@igo2/common';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -11,6 +11,7 @@ import { MapBrowserComponent } from '../../map/map-browser/map-browser.component
 import { ImportService } from './import.service';
 import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
+import { StyleListService } from '../style-list/style-list.service';
 
 @Directive({
   selector: '[igoDropGeoFile]'

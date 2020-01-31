@@ -1,6 +1,6 @@
 import * as olStyle from 'ol/style';
 
-import { MessageService, LanguageService, StyleListService, ConfigService } from '@igo2/core';
+import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
@@ -11,6 +11,7 @@ import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleByAttribute } from '../../layer/shared/vector-style.interface';
+import { StyleListService } from '../style-list/style-list.service';
 
 export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layerTitle: string): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
@@ -56,6 +57,8 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
   let style;
 
   if (styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')) {
+    const salut = Object.keys(styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute'));
+    console.log(salut);
     const styleByAttribute: StyleByAttribute = {
       type: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.type'),
       attribute: styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute.attribute'),

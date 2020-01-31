@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { MessageService, LanguageService, StyleListService, ConfigService } from '@igo2/core';
+import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -19,6 +19,7 @@ import {
   handleFileImportError
 } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
+import { StyleListService } from '../style-list/style-list.service';
 
 @Component({
   selector: 'igo-import-export',
