@@ -71,11 +71,11 @@ export function formatWFSQueryString(
     }`;
   }
 
-  const getCapabilities = `${url}?service=wfs&request=GetCapabilities&${version}`;
-  let getFeature = `${url}?service=wfs&request=GetFeature&${version}&${featureTypes}&`;
+  const getCapabilities = `${url}?service=WFS&request=GetCapabilities&${version}`;
+  let getFeature = `${url}?service=WFS&request=GetFeature&${version}&${featureTypes}&`;
   getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}`;
 
-  let getpropertyvalue = `${url}?service=wfs&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
+  let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
   getpropertyvalue += `&${cnt}&${valueReference}`;
 
   return [
