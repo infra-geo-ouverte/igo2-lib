@@ -42,7 +42,9 @@ export class SearchService {
       return [];
     }
 
-    const response = stringToLonLat(term, this.mapService.getMap().projection);
+    const response = stringToLonLat(term, this.mapService.getMap().projection, {
+      forceNA: options.forceNA
+    });
     if (response.lonLat) {
       return this.reverseSearch(response.lonLat, { distance: response.radius });
     } else if (response.message) {
@@ -62,9 +64,7 @@ export class SearchService {
     }
 
     if (options.sourceId) {
-      sources = sources.filter(
-        source => source.getId() === options.sourceId
-      );
+      sources = sources.filter(source => source.getId() === options.sourceId);
     } else if (options.searchType) {
       sources = sources.filter(
         source => source.getType() === options.searchType

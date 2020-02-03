@@ -34,6 +34,7 @@ export interface TextSearchOptions {
   extent?: [number, number, number, number];
   page?: number;
   sourceId?: string;
+  forceNA?: boolean;
 }
 
 export interface ReverseSearchOptions {
