@@ -3,6 +3,7 @@ export type MapExtent = [number, number, number, number];
 export interface MapViewOptions {
   projection?: string;
   center?: [number, number];
+  maxZoomOnExtent?: number;
   geolocate?: boolean;
   buffer?: Buffer;
 
