@@ -30,6 +30,7 @@ export abstract class Catalog implements ICatalog {
     tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
     sortDirection?: 'asc' | 'desc';
     setCrossOriginAnonymous?: boolean;
+    showLegend?: boolean;
     // ICatalog -----------------------------
 
     protected catalogService: CatalogService;
