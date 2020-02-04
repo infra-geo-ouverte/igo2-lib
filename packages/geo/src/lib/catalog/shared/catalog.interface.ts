@@ -27,6 +27,7 @@ export interface ICatalog {
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;
+  showLegend?: boolean;
 }
 
 export interface ICompositeCatalog extends ICatalog {

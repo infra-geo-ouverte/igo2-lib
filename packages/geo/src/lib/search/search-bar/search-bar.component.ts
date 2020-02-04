@@ -157,6 +157,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() searchSettings = false;
 
   /**
+   * Force coordinates in north america
+   */
+  @Input() forceNA = false;
+
+  /**
    * Search results store
    */
   @Input() store: EntityStore<SearchResult>;
@@ -183,6 +188,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Event emitted when the search type changes
    */
   @Output() clearFeature = new EventEmitter();
+
+  /**
+   * Event emitted when the search settings changes
+   */
+  @Output() searchSettingsChange = new EventEmitter();
 
   /**
    * Input element
@@ -279,6 +289,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   onSearchSettingsChange() {
     this.doSearch(this.term);
+    this.searchSettingsChange.emit();
   }
 
   /**
@@ -358,7 +369,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.store.softClear();
     }
 
-    const researches = this.searchService.search(term);
+    const researches = this.searchService.search(term, {
+      forceNA: this.forceNA
+    });
     researches.map(research => {
       research.request.subscribe((results: SearchResult[]) => {
         this.onResearchCompleted(research, results);
@@ -376,7 +389,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.search.emit({ research, results });
 
     if (this.store !== undefined) {
-      const newResults = this.store.all()
+      const newResults = this.store
+        .all()
         .filter(result => result.source !== research.source)
         .concat(results);
       this.store.load(newResults);

@@ -134,6 +134,9 @@ export class IgoMap {
     );
 
     this.setView(Object.assign(viewOptions, options));
+    if (options.maxZoomOnExtent) {
+      this.viewController.maxZoomOnExtent = options.maxZoomOnExtent;
+    }
   }
 
   /**
@@ -187,6 +190,13 @@ export class IgoMap {
     }
 
     baseLayer.visible = true;
+
+    this.viewController.olView.setMinZoom(
+      baseLayer.dataSource.options.minZoom || (this.options.view || {}).minZoom
+    );
+    this.viewController.olView.setMaxZoom(
+      baseLayer.dataSource.options.maxZoom || (this.options.view || {}).maxZoom
+    );
   }
 
   getBaseLayers(): Layer[] {

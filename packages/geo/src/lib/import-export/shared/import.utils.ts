@@ -1,6 +1,6 @@
 import * as olStyle from 'ol/style';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureDataSourceOptions } from '../../datasource/shared/datasources/feature-datasource.interface';
@@ -9,6 +9,9 @@ import { featureToOl, moveToOlFeatures } from '../../feature/shared/feature.util
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
+import { StyleService } from '../../layer/shared/style.service';
+import { StyleByAttribute } from '../../layer/shared/vector-style.interface';
+import { StyleListService } from '../style-list/style-list.service';
 
 export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layerTitle: string): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
@@ -48,12 +51,90 @@ export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layer
   return layer;
 }
 
+export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap, layerTitle: string,
+                                               styleListService: StyleListService, styleService: StyleService): VectorLayer {
+  const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
+  let style;
+
+  if (styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')) {
+    const styleByAttribute: StyleByAttribute = styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute');
+
+    const styleBy = feature => {
+      return styleService.createStyleByAttribute(
+        feature,
+        styleByAttribute
+      );
+    };
+    style = styleBy;
+
+  } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
+    const radius = styleListService.getStyleList(layerTitle.toString() + '.style.radius');
+
+    const stroke = new olStyle.Stroke({
+      color: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.color'),
+      width: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.width')
+    });
+
+    const fill = new olStyle.Fill({
+      color: styleListService.getStyleList(layerTitle.toString() + '.style.fill.color')
+    });
+
+    style = new olStyle.Style({
+      stroke,
+      fill,
+      image: new olStyle.Circle({
+        radius: radius ? radius : 5,
+        stroke,
+        fill
+      })
+    });
+  } else {
+    const radius = styleListService.getStyleList('default.style.radius');
+
+    const stroke = new olStyle.Stroke({
+      color: styleListService.getStyleList('default.style.stroke.color'),
+      width: styleListService.getStyleList('default.style.stroke.width')
+    });
+
+    const fill = new olStyle.Fill({
+      color: styleListService.getStyleList('default.style.fill.color')
+    });
+
+    style = new olStyle.Style({
+      stroke,
+      fill,
+      image: new olStyle.Circle({
+        radius: radius ? radius : 5,
+        stroke,
+        fill
+      })
+    });
+  }
+  const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    queryable: true
+  };
+  const source = new FeatureDataSource(sourceOptions);
+  source.ol.addFeatures(olFeatures);
+
+  const layer = new VectorLayer({
+    title: layerTitle,
+    source,
+    style
+  });
+  map.addLayer(layer);
+  moveToOlFeatures(map, olFeatures);
+
+  return layer;
+}
+
 export function handleFileImportSuccess(
   file: File,
   features: Feature[],
   map: IgoMap,
   messageService: MessageService,
-  languageService: LanguageService
+  languageService: LanguageService,
+  styleListService?: StyleListService,
+  styleService?: StyleService
 ) {
   if (features.length === 0) {
     handleNothingToImportError(file, messageService, languageService);
@@ -61,7 +142,12 @@ export function handleFileImportSuccess(
   }
 
   const layerTitle = computeLayerTitleFromFile(file);
-  addLayerAndFeaturesToMap(features, map, layerTitle);
+
+  if (!styleListService) {
+    addLayerAndFeaturesToMap(features, map, layerTitle);
+  } else {
+    addLayerAndFeaturesStyledToMap(features, map, layerTitle, styleListService, styleService);
+  }
 
   const translate = languageService.translate;
   const messageTitle = translate.instant('igo.geo.dropGeoFile.success.title');

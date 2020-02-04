@@ -90,9 +90,7 @@ export class FeatureDetailsComponent {
 
     if (allowedFieldsAndAlias) {
       Object.keys(allowedFieldsAndAlias).forEach(field => {
-        if (feature.properties[field]) {
-          properties[allowedFieldsAndAlias[field]] = feature.properties[field];
-        }
+        properties[allowedFieldsAndAlias[field]] = feature.properties[field];
       });
       return properties;
     } else {

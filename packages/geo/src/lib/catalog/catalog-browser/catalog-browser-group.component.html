@@ -46,6 +46,7 @@
         igoListItem
         [layer]="item"
         [resolution]="resolution"
+        [catalogAllowLegend]="catalogAllowLegend"
         [added]="state.get(item).added"
         (addedLayerIsPreview)="onLayerPreview($event)"
         (addedChange)="onLayerAddedChange($event)">

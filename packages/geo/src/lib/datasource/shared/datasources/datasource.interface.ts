@@ -22,6 +22,8 @@ export interface DataSourceOptions {
   // view?: ol.olx.layer.ImageOptions;
   id?: string;
   ol?: olSource;
+  minZoom?: number;
+  maxZoom?: number;
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;

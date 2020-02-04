@@ -41,7 +41,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
   protected getDefaultOptions(): SearchSourceOptions {
     return {
       title: 'Cadastre (Québec)',
-      searchUrl: 'https://carto.cptaq.gouv.qc.ca/php/find_lot_v1.php?',
+      searchUrl: 'https://carto.cptaq.gouv.qc.ca/php/find_lot_v1.php?'
     };
   }
 
@@ -54,9 +54,9 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     term: string | undefined,
     options?: TextSearchOptions
   ): Observable<SearchResult<Feature>[]> {
-
     term = term.endsWith(',') ? term.slice(0, -1) : term;
     term = term.startsWith(',') ? term.substr(1) : term;
+    term = term.replace(/ /g, '');
 
     const params = this.computeSearchRequestParams(term, options || {});
     if (!params.get('numero') || !params.get('numero').match(/^[0-9,]+$/g)) {
@@ -84,10 +84,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
   }
 
   private extractResults(response: string): SearchResult<Feature>[] {
-
-    return response.split('<br />')
-    .filter((lot: string) => lot.length > 0)
-    .map((lot: string) => this.dataToResult(lot));
+    return response
+      .split('<br />')
+      .filter((lot: string) => lot.length > 0)
+      .map((lot: string) => this.dataToResult(lot));
   }
 
   private dataToResult(data: string): SearchResult<Feature> {
@@ -95,7 +95,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     const numero = lot[0];
     const wkt = lot[7];
     const geometry = this.computeGeometry(wkt);
-    const properties = { NoLot : numero };
+    const properties = { NoLot: numero };
     const id = [this.getId(), 'cadastre', numero].join('.');
 
     return {
@@ -129,5 +129,4 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
       coordinates: feature.getGeometry().getCoordinates()
     };
   }
-
 }

@@ -154,7 +154,7 @@ export class WMSDataSource extends DataSource {
     const baseUrl = this.options.url.replace(/\?$/, '');
     const params = [
       'REQUEST=GetLegendGraphic',
-      'SERVICE=wms',
+      'SERVICE=WMS',
       'FORMAT=image/png',
       'SLD_VERSION=1.1.0',
       `VERSION=${sourceParams.VERSION || '1.3.0'}`

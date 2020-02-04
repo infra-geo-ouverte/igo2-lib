@@ -33,6 +33,16 @@ export class MapViewController extends MapController {
   state$ = new BehaviorSubject<MapViewState>(undefined);
 
   /**
+   * View Padding
+   */
+  padding = [0, 0, 0, 0];
+
+  /**
+   * Max zoom after set extent
+   */
+  maxZoomOnExtent = 19;
+
+  /**
    * Extent stream
    */
   private extent$ = new Subject<{ extent: MapExtent; action: MapViewAction }>();
@@ -51,11 +61,6 @@ export class MapViewController extends MapController {
    * Current state index
    */
   private stateIndex: number = 0;
-
-  /**
-   * View Padding
-   */
-  padding = [0, 0, 0, 0];
 
   /**
    * Whether the view controller should keep the view's state history
@@ -326,8 +331,11 @@ export class MapViewController extends MapController {
     const moySize = (toSize + fromSize) / 2;
     const xSize = distCenter / moySize;
 
-    const maxZoom = action === MapViewAction.Move ? zoom : 17;
-    console.log(this.padding);
+    const maxZoom =
+      action === MapViewAction.Move || zoom > this.maxZoomOnExtent
+        ? zoom
+        : this.maxZoomOnExtent;
+
     olView.fit(extent, {
       maxZoom,
       padding: this.padding,

@@ -144,7 +144,7 @@ export class CapabilitiesService {
     const params = new HttpParams({
       fromObject: {
         request: 'GetCapabilities',
-        service,
+        service: service.toUpperCase(),
         version: version || '1.3.0',
         _i: 'true'
       }

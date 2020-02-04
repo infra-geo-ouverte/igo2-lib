@@ -452,7 +452,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     return new HttpParams({
       fromObject: Object.assign(
         {
-          service: 'wfs',
+          service: 'WFS',
           version: '1.1.0',
           request: 'GetFeature',
           storedquery_id: this.storedQueriesOptions.storedquery_id,
