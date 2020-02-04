@@ -55,6 +55,6 @@ export interface CatalogItemState extends EntityState {
 
 export interface CatalogServiceOptions {
   baseLayers?: boolean;
-  sources?: ICatalog[];
+  sources?: (ICatalog|ICompositeCatalog)[];
   sourcesUrl?: string;
 }
