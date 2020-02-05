@@ -105,12 +105,14 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
             {
               title: 'igo.geo.search.ilayer.type.layer',
               value: 'layer',
-              enabled: true
+              enabled: true,
+              hashtags: ['layer', 'layers', 'couche', 'couches']
             },
             {
               title: 'igo.geo.search.ilayer.type.groupLayer',
               value: 'group',
-              enabled: false
+              enabled: false,
+              hashtags: ['gr-layer', 'gr-layers', 'gr-couche', 'gr-couches']
             }
           ]
         },
@@ -160,7 +162,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
-    if (!params.get('q')) {
+    if (!params.get('q') || !params.get('type')) {
       return of([]);
     }
     this.options.params.page = params.get('page') || '1';
@@ -182,7 +184,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
           q: this.computeTerm(term)
         },
         this.params,
-        options.params || {},
+        this.computeOptionsParam(term, options || {}).params,
         {
           page: options.page
         }
@@ -195,17 +197,26 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    */
   private computeTerm(term: string): string {
-    const hashtags = term.match(/(#[^\s]+)/g);
-    if (hashtags) {
-      const validHashtags = ['layer', 'layers', 'couche', 'couches'];
-      const valid = hashtags.filter(h =>
-        validHashtags.some(v => h === '#' + v)
-      );
-      if (!valid.length) {
-        return null;
-      }
-    }
     return term.replace(/(#[^\s]*)/g, '').replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
+  }
+
+  /**
+   * Add hashtag to param if valid
+   * @param term Query with hashtag
+   * @param options TextSearchOptions
+   */
+  private computeOptionsParam(
+    term: string,
+    options: TextSearchOptions
+  ): TextSearchOptions {
+    const hashtags = super.getHashtagsValid(term, 'type');
+    if (hashtags) {
+      options.params = Object.assign(options.params || {}, {
+        type: hashtags.join(',')
+      });
+    }
+
+    return options;
   }
 
   private extractResults(
