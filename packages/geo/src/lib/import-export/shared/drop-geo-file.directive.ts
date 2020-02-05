@@ -2,7 +2,7 @@ import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angul
 
 import { Subscription } from 'rxjs';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 import { DragAndDropDirective } from '@igo2/common';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -10,6 +10,8 @@ import { IgoMap } from '../../map/shared/map';
 import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { ImportService } from './import.service';
 import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
+import { StyleService } from '../../layer/shared/style.service';
+import { StyleListService } from '../style-list/style-list.service';
 
 @Directive({
   selector: '[igoDropGeoFile]'
@@ -29,6 +31,9 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
     private component: MapBrowserComponent,
     private importService: ImportService,
     private languageService: LanguageService,
+    private styleListService: StyleListService,
+    private styleService: StyleService,
+    private config: ConfigService,
     private messageService: MessageService
   ) {
     super();
@@ -71,7 +76,12 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
-    handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService);
+    if (!this.config.getConfig('importWithStyle')) {
+      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService);
+    } else {
+      handleFileImportSuccess(file, features, this.map, this.messageService, this.languageService,
+                               this.styleListService, this.styleService);
+    }
   }
 
   private onFileImportError(file: File, error: Error) {
