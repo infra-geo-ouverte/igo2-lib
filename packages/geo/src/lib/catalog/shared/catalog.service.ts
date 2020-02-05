@@ -259,8 +259,10 @@ export class CatalogService {
               title: layer.Title,
               options: {
                 title: layer.Title,
-                maxResolution: Infinity,
-                minResolution: 0,
+                maxResolution:
+                  getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
+                minResolution:
+                  getResolutionFromScale(layer.MinScaleDenominator) || 0,
                 metadata: {
                   url: metadata ? metadata.OnlineResource : undefined,
                   extern: metadata ? true : undefined,
@@ -331,11 +333,7 @@ export class CatalogService {
           title: layer.Title,
           options: {
             title: layer.Title,
-            sourceOptions,
-            maxResolution:
-              getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
-            minResolution:
-              getResolutionFromScale(layer.MinScaleDenominator) || 0
+            sourceOptions
           }
         };
       })
