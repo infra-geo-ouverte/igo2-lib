@@ -333,7 +333,11 @@ export class CatalogService {
           title: layer.Title,
           options: {
             title: layer.Title,
-            sourceOptions
+            sourceOptions,
+            maxResolution:
+              getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
+            minResolution:
+              getResolutionFromScale(layer.MinScaleDenominator) || 0
           }
         };
       })
