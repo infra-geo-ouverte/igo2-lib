@@ -112,7 +112,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    console.log(this.map.viewController.state$.subscribe(s => console.log('viewstatus', s)))
+    console.log(this.map.viewController.state$.subscribe(s => console.log('viewstatus', s)));
 
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
@@ -192,7 +192,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       condition: olcondition.pointerMove,
       hitTolerance: 7,
       filter: (feature) => {
-        return feature.get('type') === 'stop'
+        return feature.get('type') === 'stop';
       }
     });
 
@@ -203,7 +203,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const translateStop = new olinteraction.Translate({
       layers: [this.stopsStore.layer.ol],
       features: selectedStopFeature
-      // TODO In Openlayers >= 6.x, filter is now allowed. 
+      // TODO In Openlayers >= 6.x, filter is now allowed.
     });
 
     translateStop.on('translating', evt => {
@@ -254,7 +254,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       this.stopsForm.valueChanges
         .pipe(debounceTime(this.debounce))
         .subscribe(val => {
-          this.writeStopsToFormService()
+          this.writeStopsToFormService();
         })
     );
   }
@@ -269,12 +269,11 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const routeStore = this.routeStore;
 
     this.map.removeLayer(stopsStore.layer);
-    this.map.removeLayer(routeStore.layer);   
+    this.map.removeLayer(routeStore.layer);
     stopsStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
     routeStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
 
   }
-
 
   private executeTranslation(features, reverseSearchProposal = false) {
     this.routeStore.clear();
@@ -304,7 +303,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     if (reverseSearchProposal) {
       this.handleLocationProposals(translationCoordinates, p);
     }
-    
+
     if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
     }
@@ -813,8 +812,8 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   zoomRoute() {
 
     this.routeStore.count$.pipe(skipWhile(val => val === 0), take(1)).subscribe(r => {
-      console.log('r', r)
-      const routeFeature = this.routeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route')
+      console.log('r', r);
+      const routeFeature = this.routeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route');
       if (routeFeature) {
         const routeExtent = routeFeature.getGeometry().getExtent();
         this.map.viewController.zoomToExtent(routeExtent);
@@ -827,7 +826,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const geometry4326 = new olgeom.LineString(geom);
     const geometry3857 = geometry4326.transform('EPSG:4326', 'EPSG:3857');
     if (moveToExtent) {
-      this.zoomRoute()
+      this.zoomRoute();
     }
 
     const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry3857, {
@@ -857,12 +856,12 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   }
 
   getRoutes(moveToExtent = false) {
-    this.deleteStoreFeatureByID(this.routeStore,'vertex')
+    this.deleteStoreFeatureByID(this.routeStore, 'vertex');
     this.writeStopsToFormService();
     const coords = this.routingFormService.getStopsCoordinates();
     if (coords.length < 2) {
-      return
-    } 
+      return;
+    }
     const routeResponse = this.routingService.route(coords);
     if (routeResponse) {
       routeResponse.map(res =>
@@ -1045,9 +1044,9 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   clearStop(stopIndex) {
     // this.deleteRoutingOverlaybyID(this.getStopOverlayID(stopIndex));
     const id = this.getStopOverlayID(stopIndex);
-    this.deleteStoreFeatureByID(this.stopsStore,id);
+    this.deleteStoreFeatureByID(this.stopsStore, id);
     this.routeStore.clear();
-    const stopsCounts = this.stops.length
+    const stopsCounts = this.stops.length;
     this.stops.removeAt(stopIndex);
     this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex, stopsCounts)));
     this.routesResults = undefined;
@@ -1197,7 +1196,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     return 'routingStop_' + txt;
   }
 
-  private deleteStoreFeatureByID(store,id) {
+  private deleteStoreFeatureByID(store, id) {
     const entity = store.get(id);
     if (entity) {
       store.delete(entity);
@@ -1282,6 +1281,6 @@ export function stopMarker(feature: olFeature, resolution: number): olstyle.Styl
   }
   if (feature.get('type') === 'route') {
     return routeStyle;
-  } 
+  }
 
 }
