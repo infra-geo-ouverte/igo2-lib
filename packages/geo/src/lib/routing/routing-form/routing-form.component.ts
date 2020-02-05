@@ -463,7 +463,6 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   }
 
   addStop(): void {
-    this.routeStore.clear();
     const insertIndex = this.stops.length - 1;
     this.stops.insert(insertIndex, this.createStop());
   }
@@ -1074,6 +1073,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this.stops.removeAt(stopIndex);
     this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex, stopsCounts)));
     this.routesResults = undefined;
+    this.getRoutes();
   }
 
   chooseProposal(proposal, i) {
