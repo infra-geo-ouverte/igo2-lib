@@ -1,5 +1,6 @@
 import olSourceVector from 'ol/source/Vector';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
+import olProjection from 'ol/proj/Projection';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -10,8 +11,6 @@ import { OgcFilterableDataSourceOptions, OgcFiltersOptions } from '../../../filt
 import {
   formatWFSQueryString,
   defaultFieldNameGeometry,
-  gmlRegex,
-  jsonRegex,
   checkWfsParams,
   getFormatFromOptions
 } from './wms-wfs.utils';
@@ -43,7 +42,7 @@ export class WFSDataSource extends DataSource {
     return new olSourceVector({
       format: getFormatFromOptions(this.options),
       overlaps: false,
-      url: (extent, resolution, proj) => {
+      url: (extent, resolution, proj: olProjection) => {
         return this.buildUrl(
           extent,
           proj,
@@ -53,7 +52,7 @@ export class WFSDataSource extends DataSource {
     });
   }
 
-  private buildUrl(extent, proj, ogcFilters: OgcFiltersOptions): string {
+  private buildUrl(extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
     const paramsWFS = this.options.paramsWFS;
     const queryStringValues = formatWFSQueryString(this.options, undefined, proj.getCode());
     let igoFilters;

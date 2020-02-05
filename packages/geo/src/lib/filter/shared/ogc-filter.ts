@@ -62,7 +62,7 @@ export class OgcFilterWriter {
   public buildFilter(
     filters?: IgoOgcFilterObject,
     extent?: [number, number, number, number],
-    proj?,
+    proj?: olProjection,
     fieldNameGeometry?: string
   ): string {
     let ourBboxFilter;
@@ -170,7 +170,7 @@ export class OgcFilterWriter {
       const wkt = new olFormatWKT();
       geometry = wkt.readGeometry(wfsWktGeometry, {
         dataProjection: wfsSrsName,
-        featureProjection: 'EPSG:3857'
+        featureProjection: wfsSrsName || 'EPSG:3857'
       });
     }
 

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import * as olstyle from 'ol/style';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { DownloadService } from '../../download/shared/download.service';
