@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { uuid } from '@igo2/utils';
 import { ConfigService, Message } from '@igo2/core';
 
-import { Routing } from '../shared/routing.interface';
+import { Routing, RoutingOptions } from '../shared/routing.interface';
 import { RoutingFormat, SourceRoutingType } from '../shared/routing.enum';
 
 import { RoutingSource } from './routing-source';
@@ -35,8 +35,8 @@ export class OsrmRoutingSource extends RoutingSource {
     return OsrmRoutingSource._name;
   }
 
-  route(coordinates: [number, number][]): Observable<Routing[]> {
-    const routingParams = this.getRouteParams();
+  route(coordinates: [number, number][], routingOptions: RoutingOptions = {}): Observable<Routing[]> {
+    const routingParams = this.getRouteParams(routingOptions);
     return this.http
       .get<JSON[]>(this.routingUrl + coordinates.join(';'), {
         params: routingParams
@@ -52,13 +52,19 @@ export class OsrmRoutingSource extends RoutingSource {
     return routeResponse;
   }
 
-  private getRouteParams(): HttpParams {
+  private getRouteParams(routingOptions: RoutingOptions = {}): HttpParams {
+
+    routingOptions.alternatives = routingOptions.alternatives !== undefined ? routingOptions.alternatives : true;
+    routingOptions.steps = routingOptions.steps !== undefined  ? routingOptions.steps : true;
+    routingOptions.geometries = routingOptions.geometries !== undefined  ? routingOptions.geometries : 'geojson';
+    routingOptions.overview = routingOptions.overview !== undefined  ? routingOptions.overview : false;
+
     return new HttpParams({
       fromObject: {
-        overview: 'full',
-        steps: 'true',
-        geometries: 'geojson',
-        alternatives: 'true'
+        alternatives: routingOptions.alternatives ? 'true' : 'false',
+        overview: routingOptions.overview ? 'simplified' : 'full',
+        steps: routingOptions.steps ? 'true' : 'false',
+        geometries: routingOptions.geometries ? routingOptions.geometries : 'geojson',
       }
     });
   }

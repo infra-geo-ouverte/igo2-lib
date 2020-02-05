@@ -37,7 +37,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 import { moveToOlFeatures, tryBindStoreLayer, tryAddLoadingStrategy } from '../../feature/shared/feature.utils';
 
-import { Routing } from '../shared/routing.interface';
+import { Routing, RoutingOptions } from '../shared/routing.interface';
 import { RoutingService } from '../shared/routing.service';
 import { RoutingFormService } from './routing-form.service';
 
@@ -210,13 +210,13 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     translateStop.on('translating', evt => {
       const features = evt.features;
       if (features.getLength() === 0) { return; }
-      this.executeTranslation(features, false);
+      this.executeTranslation(features, false, 125, true);
     });
 
     translateStop.on('translateend', evt => {
       const features = evt.features;
       if (features.getLength() === 0) { return; }
-      this.executeTranslation(features, true);
+      this.executeTranslation(features, true, 0, false);
     });
 
     const selectedRoute = new olinteraction.Select({
@@ -276,7 +276,11 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   }
 
-  private executeTranslation(features, reverseSearchProposal = false) {
+  private executeTranslation(
+    features,
+    reverseSearchProposal = false,
+    delay: number = 0,
+    overview: boolean = false) {
     this.routeStore.clear();
     const firstFeature = features.getArray()[0];
     const translatedID = firstFeature.getId();
@@ -305,13 +309,31 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       this.handleLocationProposals(translationCoordinates, p);
     }
 
-    if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
-      clearTimeout(this.lastTimeoutRequest);
+    const routingOptions = {
+      steps: true,
+      overview: false,
+      alternatives: true
+    } as RoutingOptions;
+
+    if (overview) {
+      routingOptions.overview = true;
+      routingOptions.steps = false;
+      routingOptions.alternatives = false;
     }
 
-    this.lastTimeoutRequest = setTimeout(() => {
-      this.getRoutes();
-    }, 125);
+    if (delay > 0) {
+      if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
+        clearTimeout(this.lastTimeoutRequest);
+      }
+      this.lastTimeoutRequest = setTimeout(() => {
+        this.getRoutes(undefined, routingOptions);
+      }, delay);
+
+    } else {
+      clearTimeout(this.lastTimeoutRequest);
+      this.getRoutes(undefined, routingOptions);
+    }
+
   }
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
@@ -857,14 +879,14 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   }
 
-  getRoutes(moveToExtent = false) {
+  getRoutes(moveToExtent: boolean = false, routingOptions: RoutingOptions = {}) {
     this.deleteStoreFeatureByID(this.routeStore, 'vertex');
     this.writeStopsToFormService();
     const coords = this.routingFormService.getStopsCoordinates();
     if (coords.length < 2) {
       return;
     }
-    const routeResponse = this.routingService.route(coords);
+    const routeResponse = this.routingService.route(coords, routingOptions);
     if (routeResponse) {
       routeResponse.map(res =>
         this.routesQueries$$.push(
