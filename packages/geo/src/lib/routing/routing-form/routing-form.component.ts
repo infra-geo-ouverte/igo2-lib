@@ -112,8 +112,6 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    console.log(this.map.viewController.state$.subscribe(s => console.log('viewstatus', s)));
-
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
@@ -128,25 +126,28 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       ])
     });
 
-    this.initStores();
-    this.initOlInteraction();
-    this.subscribeToFormChange();
+    this.map.status$.pipe(take(1)).subscribe(() => {
 
-    this.routesQueries$$.push(
-      this.stream$
-        .pipe(
-          debounceTime(this.debounce),
-          distinctUntilChanged()
-        )
-        .subscribe((term: string) => this.handleTermChanged(term))
-    );
+      this.initStores();
+      this.initOlInteraction();
+      this.subscribeToFormChange();
+
+      this.routesQueries$$.push(
+        this.stream$
+          .pipe(
+            debounceTime(this.debounce),
+            distinctUntilChanged()
+          )
+          .subscribe((term: string) => this.handleTermChanged(term))
+      );
+    });
   }
 
   ngOnDestroy(): void {
     this.unsubscribeRoutesQueries();
     this.unlistenSingleClick();
     this.queryService.queryEnabled = true;
-    this.freezeStore();
+    this.freezeStores();
     this.writeStopsToFormService();
 
   }
@@ -264,7 +265,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
    * and some listener removed
    * @internal
    */
-  private freezeStore() {
+  private freezeStores() {
     const stopsStore = this.stopsStore;
     const routeStore = this.routeStore;
 
@@ -774,8 +775,8 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   showRouteSegmentGeometry(coordinates, zoomToExtent = false) {
     const vertexId = 'vertex';
     const geometry4326 = new olgeom.LineString(coordinates);
-    const geometry3857 = geometry4326.transform('EPSG:4326', 'EPSG:3857');
-    const routeSegmentCoordinates = (geometry3857 as any).getCoordinates();
+    const geometryMapProjection = geometry4326.transform('EPSG:4326', this.map.projection);
+    const routeSegmentCoordinates = (geometryMapProjection as any).getCoordinates();
     const lastPoint = routeSegmentCoordinates[0];
 
     const geometry = new olgeom.Point(lastPoint);
@@ -809,27 +810,28 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  zoomRoute() {
+  zoomRoute(extent?) {
 
-    this.routeStore.count$.pipe(skipWhile(val => val === 0), take(1)).subscribe(r => {
-      console.log('r', r);
+    if (extent) {
+      this.map.viewController.zoomToExtent(extent);
+    } else {
       const routeFeature = this.routeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route');
       if (routeFeature) {
         const routeExtent = routeFeature.getGeometry().getExtent();
         this.map.viewController.zoomToExtent(routeExtent);
       }
-    });
+    }
   }
 
   private showRouteGeometry(moveToExtent = false) {
     const geom = this.activeRoute.geometry.coordinates;
     const geometry4326 = new olgeom.LineString(geom);
-    const geometry3857 = geometry4326.transform('EPSG:4326', 'EPSG:3857');
+    const geometryMapProjection = geometry4326.transform('EPSG:4326', this.map.projection);
     if (moveToExtent) {
-      this.zoomRoute();
+      this.zoomRoute(geometryMapProjection.getExtent());
     }
 
-    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometry3857, {
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometryMapProjection, {
       featureProjection: this.map.projection,
       dataProjection: this.map.projection
     });
@@ -849,7 +851,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
         id: 'route',
         revision: previousRouteRevision + 1
       },
-      ol: new olFeature({ geometry: geometry3857 })
+      ol: new olFeature({ geometry: geometryMapProjection })
     };
     this.routeStore.update(routeFeature);
 
