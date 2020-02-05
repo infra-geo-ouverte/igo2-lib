@@ -70,6 +70,7 @@ export class RoutingFormBindingDirective implements AfterViewInit {
           this.component.stops.at(i).patchValue(storedStops[i] );
         }
       }
+      this.component.getRoutes();
     }
     this.component.writeStopsToFormService();
   }

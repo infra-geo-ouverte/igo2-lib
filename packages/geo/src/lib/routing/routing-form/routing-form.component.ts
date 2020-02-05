@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, take, skipWhile } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -111,6 +111,9 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit() {
+
+    console.log(this.map.viewController.state$.subscribe(s => console.log('viewstatus', s)))
+
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
@@ -143,7 +146,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this.unsubscribeRoutesQueries();
     this.unlistenSingleClick();
     this.queryService.queryEnabled = true;
-
+    this.freezeStore();
     this.writeStopsToFormService();
 
   }
@@ -256,7 +259,25 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * Freeze any store, meaning the layer is removed, strategies are deactivated
+   * and some listener removed
+   * @internal
+   */
+  private freezeStore() {
+    const stopsStore = this.stopsStore;
+    const routeStore = this.routeStore;
+
+    this.map.removeLayer(stopsStore.layer);
+    this.map.removeLayer(routeStore.layer);   
+    stopsStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
+    routeStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
+
+  }
+
+
   private executeTranslation(features, reverseSearchProposal = false) {
+    this.routeStore.clear();
     const firstFeature = features.getArray()[0];
     const translatedID = firstFeature.getId();
     const translatedPos = translatedID.split('_');
@@ -290,7 +311,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
     this.lastTimeoutRequest = setTimeout(() => {
       this.getRoutes();
-    }, 250);
+    }, 125);
   }
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
@@ -790,8 +811,15 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   }
 
   zoomRoute() {
-    const routeExtent = this.routeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route').getGeometry().getExtent()
-    this.map.viewController.zoomToExtent(routeExtent);
+
+    this.routeStore.count$.pipe(skipWhile(val => val === 0), take(1)).subscribe(r => {
+      console.log('r', r)
+      const routeFeature = this.routeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route')
+      if (routeFeature) {
+        const routeExtent = routeFeature.getGeometry().getExtent();
+        this.map.viewController.zoomToExtent(routeExtent);
+      }
+    });
   }
 
   private showRouteGeometry(moveToExtent = false) {
