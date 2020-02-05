@@ -7,8 +7,8 @@
     <igo-collapsible
       *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
       [title]="computeGroupTitle(group)"
-      [collapsed]="collapsed[group.source.getId()]"
-      (toggle)="collapsed[group.source.getId()] = $event">
+      [collapsed]="collapsed[group.source.title]"
+      (toggle)="collapsed[group.source.title] = $event">
       <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
     </igo-collapsible>
 
