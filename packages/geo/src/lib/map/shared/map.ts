@@ -165,7 +165,6 @@ export class IgoMap {
     }
   }
 
-
   /**
    * Deprecated
    * TODO: Move to ViewController and update every place it's used
