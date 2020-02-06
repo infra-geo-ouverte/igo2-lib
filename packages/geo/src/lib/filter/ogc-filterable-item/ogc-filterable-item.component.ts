@@ -123,7 +123,8 @@ export class OgcFilterableItemComponent implements OnInit {
           propertyName: firstFieldName,
           operator: 'PropertyIsEqualTo',
           active: status,
-          igoSpatialSelector: 'fixedExtent'
+          igoSpatialSelector: 'fixedExtent',
+          srsName: this.map.projection,
         } as OgcInterfaceFilterOptions,
         fieldNameGeometry,
         lastLevel,
