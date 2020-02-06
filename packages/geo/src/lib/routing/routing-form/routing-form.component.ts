@@ -45,6 +45,7 @@ import { QueryService } from '../../query/shared/query.service';
 import { FeatureStore } from '../../feature/shared/store';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
+import { roundCoordTo } from '../../map/shared/map.utils';
 
 @Component({
   selector: 'igo-routing-form',
@@ -1248,7 +1249,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       this.routingFormService.getStopsCoordinates().length !== 0
     ) {
       this.routingFormService.getStopsCoordinates().forEach(coord => {
-        stopsCoordinates.push(coord);
+        stopsCoordinates.push(roundCoordTo(coord, 6));
       });
     }
     let routingUrl = '';
