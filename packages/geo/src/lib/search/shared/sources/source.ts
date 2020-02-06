@@ -193,7 +193,7 @@ export class SearchSource {
       });
     });
 
-    return hashtagsValid;
+    return hashtagsValid.filter((a, b) => hashtagsValid.indexOf(a) === b);
   }
 
   getSettingsValues(search: string): SearchSourceSettings {
