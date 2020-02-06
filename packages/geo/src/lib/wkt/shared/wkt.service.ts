@@ -9,7 +9,7 @@ import olWKT from 'ol/format/WKT';
 export class WktService {
   constructor() {}
 
-  public wktToFeature(wkt, wktProj, featureProj = 'EPSG:3857') {
+  public wktToFeature(wkt, wktProj, featureProj) {
     return new olWKT().readFeature(wkt, {
       dataProjection: wktProj,
       featureProjection: featureProj
@@ -61,7 +61,7 @@ export class WktService {
     return array;
   }
 
-  public snrcToWkt(snrc, epsgTO = 'EPSG:3857') {
+  public snrcToWkt(snrc, epsgTO) {
     snrc = snrc.toLowerCase();
     let wktPoly;
     const ew = {

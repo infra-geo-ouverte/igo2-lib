@@ -43,6 +43,7 @@ export class WFSDataSource extends DataSource {
       format: getFormatFromOptions(this.options),
       overlaps: false,
       url: (extent, resolution, proj: olProjection) => {
+        this.options.paramsWFS.srsName = this.options.paramsWFS.srsName || proj.getCode();
         return this.buildUrl(
           extent,
           proj,
