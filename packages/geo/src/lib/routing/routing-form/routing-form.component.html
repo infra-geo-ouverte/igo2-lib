@@ -91,14 +91,18 @@
   <mat-divider *ngIf="routesResults && routesResults.length === 0"></mat-divider>
 
   <mat-list>
-    <h3 mat-header class="igo-route-title mat-typography">{{activeRoute.title}}</h3>
-    <h3 mat-subheader>{{formatDistance(activeRoute.distance)}}, {{formatDuration(activeRoute.duration)}}</h3>
+    <h2 mat-header class="igo-route-title mat-typography">{{activeRoute.title}}</h2>
+    <h2 mat-subheader>{{formatDistance(activeRoute.distance)}}, {{formatDuration(activeRoute.duration)}}</h2>
 
-    <mat-list-item (mouseenter)="showSegment(step)" (click)="showSegment(step,true)" *ngFor="let step of activeRoute.steps; let cnt = index;"
+    <mat-list-item 
+    class="igo-steps"
+    (mouseenter)="showSegment(step)" 
+    (click)="showSegment(step,true)" 
+    *ngFor="let step of activeRoute.steps; let cnt = index;"
       igoListItem>
       <mat-icon [ngClass]="formatStep(step,cnt).cssClass" mat-list-icon svgIcon="{{formatStep(step,cnt).image}}"></mat-icon>
 
-      <h4 mat-line (click)="showSegment(step,true)">{{cnt +1}}. {{formatStep(step,cnt).instruction}}</h4>
+      <h4 mat-line>{{cnt +1}}. {{formatStep(step,cnt).instruction}}</h4>
       <h4 mat-line class="right">{{formatDistance(step.distance)}}</h4>
     </mat-list-item>
 

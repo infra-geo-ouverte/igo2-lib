@@ -126,21 +126,29 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       ])
     });
 
-    this.map.status$.pipe(take(1)).subscribe(() => {
+    if (!this.routingFormService.getStops()) {
+      this.map.status$.pipe(take(1)).subscribe(() => {
+        this.conditionalInit();
+      });
+    } else {
+      this.conditionalInit();
+    }
 
-      this.initStores();
-      this.initOlInteraction();
-      this.subscribeToFormChange();
+  }
 
-      this.routesQueries$$.push(
-        this.stream$
-          .pipe(
-            debounceTime(this.debounce),
-            distinctUntilChanged()
-          )
-          .subscribe((term: string) => this.handleTermChanged(term))
-      );
-    });
+  private conditionalInit() {
+    this.initStores();
+    this.initOlInteraction();
+    this.subscribeToFormChange();
+
+    this.routesQueries$$.push(
+      this.stream$
+        .pipe(
+          debounceTime(this.debounce),
+          distinctUntilChanged()
+        )
+        .subscribe((term: string) => this.handleTermChanged(term))
+    );
   }
 
   ngOnDestroy(): void {
@@ -210,7 +218,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     translateStop.on('translating', evt => {
       const features = evt.features;
       if (features.getLength() === 0) { return; }
-      this.executeTranslation(features, false, 125, true);
+      this.executeTranslation(features, false, 50, true);
     });
 
     translateStop.on('translateend', evt => {
