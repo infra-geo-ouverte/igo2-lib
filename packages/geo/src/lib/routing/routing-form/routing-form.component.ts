@@ -349,7 +349,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const roundedCoordinates = [coordinates[0].toFixed(5), coordinates[1].toFixed(5)];
     this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
     this.searchService
-      .reverseSearch(coordinates, { zoom: this.map.getZoom() })
+      .reverseSearch(coordinates, { zoom: this.map.viewController.getZoom() })
       .map(res =>
         this.routesQueries$$.push(
           res.request.pipe(map(f => f)).subscribe(results => {
@@ -1108,7 +1108,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
           .getGeometry()
           .getExtent();*/
 
-       /* if (!olextent.intersects(proposalExtent, this.map.getExtent())) {
+       /* if (!olextent.intersects(proposalExtent, this.map.viewController.getExtent())) {
           this.map.viewController.moveToExtent(proposalExtent);
         }*/
       }
@@ -1150,7 +1150,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   geolocateStop(index: number) {
     moveToOlFeatures(this.map, [this.map.geolocationFeature], FeatureMotion.Move);
-    const geolocateCoordinates = this.map.getCenter(this.projection);
+    const geolocateCoordinates = this.map.viewController.getCenter(this.projection);
     this.stops.at(index).patchValue({ stopCoordinates: geolocateCoordinates });
     this.addStopOverlay(geolocateCoordinates, index);
     this.handleLocationProposals(geolocateCoordinates, index);
