@@ -60,13 +60,13 @@ export class DownloadService {
         .handleOgcFiltersAppliedValue(
           layer.dataSource.options,
           ogcFilters.geometryName,
-          layer.map.getExtent(),
+          layer.map.viewController.getExtent(),
           new olProjection({ code: layer.map.projection }));
         if (!filterQueryString) {
           // Prevent getting all the features for empty filter
             filterQueryString = new OgcFilterWriter().buildFilter(
             undefined,
-            layer.map.getExtent(),
+            layer.map.viewController.getExtent(),
             new olProjection({ code: layer.map.projection }),
             ogcFilters.geometryName
           );
