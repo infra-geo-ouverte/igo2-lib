@@ -317,6 +317,7 @@ export class CatalogService {
           layer: layer.Identifier,
           matrixSet: catalog.matrixSet,
           optionsFromCapabilities: true,
+          optionsFromApi: true,
           requestEncoding: catalog.requestEncoding || 'KVP',
           style: 'default'
         } as WMTSDataSourceOptions;
