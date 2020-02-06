@@ -627,7 +627,7 @@ export class PrintService {
    */
   private getWorldFileInformation(map) {
     const currentResolution = map.viewController.getResolution();
-    const currentExtent = map.getExtent(); // Return [minx, miny, maxx, maxy]
+    const currentExtent = map.viewController.getExtent(); // Return [minx, miny, maxx, maxy]
     return [
       currentResolution,
       0,

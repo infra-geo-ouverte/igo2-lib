@@ -288,7 +288,7 @@ export function featuresAreOutOfView(
   map: IgoMap,
   featuresExtent: [number, number, number, number]
 ) {
-  const mapExtent = map.getExtent();
+  const mapExtent = map.viewController.getExtent();
   const edgeRatio = 0.05;
   const scale = [-1, -1, -1, -1].map(x => x * edgeRatio);
   const viewExtent = scaleExtent(mapExtent, scale as [
@@ -319,7 +319,7 @@ export function featuresAreTooDeepInView(
   // An area ratio of 0.004 means that the feature extent's width and height
   // should be about 1/16 of the map extent's width and height
   areaRatio = areaRatio ? areaRatio : 0.004;
-  const mapExtent = map.getExtent();
+  const mapExtent = map.viewController.getExtent();
   const mapExtentArea = olextent.getArea(mapExtent);
   const featuresExtentArea = olextent.getArea(featuresExtent);
 

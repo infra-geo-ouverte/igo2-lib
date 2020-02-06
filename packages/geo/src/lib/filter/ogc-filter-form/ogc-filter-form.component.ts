@@ -223,7 +223,7 @@ export class OgcFilterFormComponent implements OnInit {
         } else if (filter.igoSpatialSelector === 'fixedExtent') {
           wktPoly = this.wktService.extentToWkt(
             mapProjection,
-            this.map.getExtent(),
+            this.map.viewController.getExtent(),
             mapProjection
           ).wktPoly;
           element.wkt_geometry = wktPoly;
