@@ -16,6 +16,7 @@ export interface DataSourceOptions {
     | 'mvt'
     | 'cluster';
   optionsFromCapabilities?: boolean;
+  optionsFromApi?: boolean;
   // title: string;
   // alias?: string;
 

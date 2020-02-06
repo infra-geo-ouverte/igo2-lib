@@ -32,7 +32,6 @@ import {
   providedIn: 'root'
 })
 export class CapabilitiesService {
-  private capabilitiesStore: any[] = [];
   private parsers = {
     wms: new WMSCapabilities(),
     wmts: new WMTSCapabilities()
@@ -182,7 +181,7 @@ export class CapabilitiesService {
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
-      _layerOptionsFromCapabilities: {
+      _layerOptionsFromSource: {
         title: layer.Title,
         maxResolution:
           getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
