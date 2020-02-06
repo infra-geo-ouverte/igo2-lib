@@ -28,7 +28,6 @@ export class DirectionsToolComponent {
    */
   get routeStore(): FeatureStore { return this.directionState.routeStore; }
 
-
   /**
    * Map to measure on
    * @internal
