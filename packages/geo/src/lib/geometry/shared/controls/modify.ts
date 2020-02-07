@@ -154,6 +154,8 @@ export class ModifyControl {
     this.olMap = olMap;
     this.addOlInnerOverlayLayer();
 
+    // The order in which these interactions
+    // are added is important
     if (this.modify === true) {
       this.addOlDrawInteraction();
     }
@@ -295,8 +297,12 @@ export class ModifyControl {
     }
 
     this.olModifyInteractionIsActive = false;
-    unByKey(this.onModifyStartKey);
-    unByKey(this.onModifyEndKey);
+
+    unByKey([
+      this.onModifyStartKey,
+      this.onModifyEndKey,
+      this.onModifyKey
+    ]);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olModifyInteraction);
     }
@@ -321,9 +327,7 @@ export class ModifyControl {
    * @param event Modify end event
    */
   private onModifyEnd(event: OlModifyEvent) {
-    if (this.onModifyKey !== undefined) {
-      unByKey(this.onModifyKey);
-    }
+    unByKey(this.onModifyKey);
     this.end$.next(event.features.item(0).getGeometry());
     this.unsubscribeToKeyDown();
   }
@@ -394,8 +398,11 @@ export class ModifyControl {
     }
 
     this.olTranslateInteractionIsActive = false;
-    unByKey(this.onTranslateStartKey);
-    unByKey(this.onTranslateEndKey);
+    unByKey([
+      this.onTranslateStartKey,
+      this.onTranslateEndKey,
+      this.onTranslateKey
+    ]);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olTranslateInteraction);
     }
@@ -418,9 +425,7 @@ export class ModifyControl {
    * @param event Translate end event
    */
   private onTranslateEnd(event: OlTranslateEvent) {
-    if (this.onTranslateKey !== undefined) {
-      unByKey(this.onTranslateKey);
-    }
+    unByKey(this.onTranslateKey);
     this.end$.next(event.features.item(0).getGeometry());
   }
 
@@ -484,6 +489,8 @@ export class ModifyControl {
         }
         this.subscribeToDrawKeyDown();
 
+        this.olOuterGeometry = undefined;
+        this.clearOlLinearRingsSource();
         this.end$.next(this.getOlGeometry());
       });
   }
@@ -561,10 +568,14 @@ export class ModifyControl {
     this.removedOlInteractions.forEach((olInteraction: OlInteraction) => {
       this.olMap.addInteraction(olInteraction);
     });
+    this.removedOlInteractions = [];
 
     this.olDrawInteractionIsActive = false;
-    unByKey(this.onDrawStartKey);
-    unByKey(this.onDrawEndKey);
+    unByKey([
+      this.onDrawStartKey,
+      this.onDrawEndKey,
+      this.onDrawKey
+    ]);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olDrawInteraction);
     }
@@ -583,6 +594,7 @@ export class ModifyControl {
     this.start$.next(this.getOlGeometry());
 
     this.onDrawKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
+      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       const _linearRingCoordinates = olGeometryEvent.target.getLinearRing().getCoordinates();
       this.updateLinearRingOfOlGeometry(_linearRingCoordinates);
       this.changes$.next(this.getOlGeometry());
@@ -595,10 +607,7 @@ export class ModifyControl {
    * @param event Draw end event
    */
   private onDrawEnd(event: OlDrawEvent) {
-    if (this.onDrawKey !== undefined) {
-      unByKey(this.onDrawKey);
-    }
-
+    unByKey(this.onDrawKey);
     this.olOuterGeometry = undefined;
 
     const linearRingCoordinates = event.feature.getGeometry().getLinearRing().getCoordinates();

@@ -368,7 +368,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       activate = this.modifyControl;
     }
 
-    // If the control that shoudl be activated
+    // If the control that should be activated
     // is not the same as the current active control,
     // deactivate the current control and activate the new one
     // Otherwise, do nothing and keep the current control active
