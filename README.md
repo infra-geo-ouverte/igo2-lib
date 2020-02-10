@@ -40,6 +40,13 @@ Example:
 
 ### Developer Installation
 
+Require: 
+
+| IGO2 version | Node version         |   Git    |
+|--------------|----------------------|----------|
+| 1.x.x        | >= 8.17.0, <= 11.15.0 |   Yes |
+| 0.x.x        | >= 6.5.0, <= 10.18.1 |  Yes |
+
 If you want to develop in IGO2 Library, it can be installed by:
 
 1.  Clone current repository: using `git clone https://github.com/infra-geo-ouverte/igo2-lib.git`
