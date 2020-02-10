@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { IgoMap } from '@igo2/geo';
+import { IgoMap, FeatureStore } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
+import { DirectionState } from '../directions.state';
 
 @ToolComponent({
   name: 'directions',
@@ -15,9 +16,27 @@ import { MapState } from '../../map/map.state';
   templateUrl: './directions-tool.component.html'
 })
 export class DirectionsToolComponent {
-  get map(): IgoMap {
-    return this.mapState.map;
-  }
+  /**
+   * stops
+   * @internal
+   */
+  get stopsStore(): FeatureStore { return this.directionState.stopsStore; }
 
-  constructor(private mapState: MapState) {}
+  /**
+   * routes
+   * @internal
+   */
+  get routeStore(): FeatureStore { return this.directionState.routeStore; }
+
+  /**
+   * Map to measure on
+   * @internal
+   */
+  get map(): IgoMap { return this.mapState.map; }
+
+  constructor(
+    private directionState: DirectionState,
+    private mapState: MapState
+  ) {}
+
 }

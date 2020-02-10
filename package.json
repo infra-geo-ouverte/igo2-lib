@@ -1,6 +1,6 @@
 {
   "name": "@igo/demo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "IGO Library",
   "author": "MSP",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
     "doc": "npm run build.doc && compodoc -s --port 4220",
     "pretest": "ng lint",
-    "test": "ng test --watch=false",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test.watch": "ng test",
     "test.all": "npm run test.libs && npm run test.demo",
     "test.libs": "npm run lint && npm run test.core && npm run test.common && npm run test.geo && npm run test.context",

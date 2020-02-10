@@ -62,7 +62,7 @@ export class OgcFilterWriter {
   public buildFilter(
     filters?: IgoOgcFilterObject,
     extent?: [number, number, number, number],
-    proj?,
+    proj?: olProjection,
     fieldNameGeometry?: string
   ): string {
     let ourBboxFilter;
@@ -83,7 +83,7 @@ export class OgcFilterWriter {
     }
     let filterAssembly: OgcFilter;
     if (filters) {
-      filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry);
+      filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry, proj);
       if (extent && enableBbox) {
         filterAssembly = olfilter.and(
           ourBboxFilter,
@@ -170,7 +170,7 @@ export class OgcFilterWriter {
       const wkt = new olFormatWKT();
       geometry = wkt.readGeometry(wfsWktGeometry, {
         dataProjection: wfsSrsName,
-        featureProjection: 'EPSG:3857'
+        featureProjection: wfsSrsName || 'EPSG:3857'
       });
     }
 
@@ -320,13 +320,14 @@ export class OgcFilterWriter {
   public checkIgoFiltersProperties(
     filterObject: any,
     fieldNameGeometry,
+    proj: olProjection,
     active = false
   ) {
     const filterArray = [];
     if (filterObject instanceof Array) {
       filterObject.forEach(element => {
         filterArray.push(
-          this.checkIgoFiltersProperties(element, fieldNameGeometry, active)
+          this.checkIgoFiltersProperties(element, fieldNameGeometry, proj, active)
         );
       });
       return filterArray;
@@ -339,6 +340,7 @@ export class OgcFilterWriter {
             filters: this.checkIgoFiltersProperties(
               filterObject.filters,
               fieldNameGeometry,
+              proj,
               active
             )
           }
@@ -347,6 +349,7 @@ export class OgcFilterWriter {
         return this.addFilterProperties(
           filterObject as OgcInterfaceFilterOptions,
           fieldNameGeometry,
+          proj,
           active
         );
       }
@@ -356,6 +359,7 @@ export class OgcFilterWriter {
   private addFilterProperties(
     igoOgcFilterObject: OgcInterfaceFilterOptions,
     fieldNameGeometry,
+    proj: olProjection,
     active = false
   ) {
     const filterid = igoOgcFilterObject.hasOwnProperty('filterid')
@@ -365,12 +369,17 @@ export class OgcFilterWriter {
       ? igoOgcFilterObject.active
       : active;
 
+    const srsName = igoOgcFilterObject.hasOwnProperty('srsName')
+      ? igoOgcFilterObject.srsName
+      : proj ? proj.getCode() : 'EPSG:3857';
+
     return Object.assign(
       {},
       {
         filterid,
         active: status,
-        igoSpatialSelector: 'fixedExtent'
+        igoSpatialSelector: 'fixedExtent',
+        srsName
       },
       igoOgcFilterObject,
       { geometryName: fieldNameGeometry }
