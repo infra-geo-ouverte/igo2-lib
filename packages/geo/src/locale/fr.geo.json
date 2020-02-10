@@ -291,7 +291,7 @@
         },
         "pointerSearchSummary": {
           "title": "Position du curseur",
-          "tooltip": "Selon les sources activées, vous pouvez faire afficher le résumé de la position du curseur. Pour des résultats multiple de type indentiques, seul le plus proche est présenté. Utiliser F2 pour activer/désactiver."
+          "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
           "settings": {
@@ -417,15 +417,25 @@
         "lengthHeader": "Distance / Périmètre",
         "perimeter": "Périmètre",
         "meters": "Mètres",
+        "m": "m",
         "kilometers": "Kilomètres",
+        "km": "km",
         "miles": "Miles",
+        "mi": "mi",
         "feet": "Pieds",
+        "ft": "pi",
         "squareMeters": "Mètres²",
+        "m²": "m²",
         "squareKilometers": "Kilomètres²",
+        "km²": "km²",
         "squareMiles": "Miles²",
+        "mi²": "mi²",
         "squareFeet": "Pieds²",
+        "ft²": "pi²",
         "hectares": "Hectares",
+        "ha": "ha",
         "acres": "Acres",
+        "ac": "ac",
         "toggleActive": "Activer le contrôle de mesure",
         "toggleMapTooltips": "Mesures sur la carte",
         "toggleAutoUnits": "Unités automatiques",

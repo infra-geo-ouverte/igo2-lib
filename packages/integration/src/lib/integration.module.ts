@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { IgoAppAnalyticsModule } from './analytics/analytics.module';
 import { IgoAppContextModule } from './context/context.module';
 import { IgoAppCatalogModule } from './catalog/catalog.module';
 import { IgoAppDirectionsModule } from './directions/directions.module';
@@ -16,6 +17,7 @@ import { IgoAppAboutModule } from './about/about.module';
   imports: [],
   declarations: [],
   exports: [
+    IgoAppAnalyticsModule,
     IgoAppContextModule,
     IgoAppCatalogModule,
     IgoAppDirectionsModule,

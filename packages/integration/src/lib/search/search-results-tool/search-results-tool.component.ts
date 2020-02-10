@@ -84,6 +84,8 @@ export class SearchResultsToolComponent implements OnInit {
   public term = '';
   private searchTerm$$: Subscription;
 
+  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
+
   public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
 
   @Input()
@@ -114,6 +116,10 @@ export class SearchResultsToolComponent implements OnInit {
         this.topPanelState = 'collapsed';
       }
     }
+
+    this.searchState.searchSettingsChange$.subscribe(() => {
+      this.settingsChange$.next(true);
+    });
   }
   /**
    * Try to add a feature to the map when it's being focused

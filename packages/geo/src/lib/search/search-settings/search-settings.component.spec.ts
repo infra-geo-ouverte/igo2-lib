@@ -8,12 +8,15 @@ import {
   MatButtonModule,
   MatMenuModule,
   MatRadioModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatDividerModule,
+  MatSlideToggleModule
 } from '@angular/material';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';
 import { provideDefaultCoordinatesSearchResultFormatter } from '../shared/sources/coordinates.providers';
+import { provideILayerSearchResultFormatter } from '../shared/sources/ilayer.providers';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
@@ -29,8 +32,12 @@ describe('SearchSettingsComponent', () => {
   let fixture: ComponentFixture<SearchSettingsComponent>;
 
   beforeEach(async(() => {
-    const spy = jasmine.createSpyObj('SearchSourceService', ['getSources']);
+    const spy = jasmine.createSpyObj('SearchSourceService', [
+      'getSources',
+      'getEnabledSources'
+    ]);
     spy.getSources = jasmine.createSpy().and.returnValue([]);
+    spy.getEnabledSources = jasmine.createSpy().and.returnValue([]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -49,13 +56,16 @@ describe('SearchSettingsComponent', () => {
         MatButtonModule,
         MatMenuModule,
         MatRadioModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatDividerModule,
+        MatSlideToggleModule
       ],
       declarations: [SearchSettingsComponent],
       providers: [
         { provide: SearchSourceService, useValue: spy },
         provideDefaultIChercheSearchResultFormatter(),
-        provideDefaultCoordinatesSearchResultFormatter()
+        provideDefaultCoordinatesSearchResultFormatter(),
+        provideILayerSearchResultFormatter()
       ]
     }).compileComponents();
   }));

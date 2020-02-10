@@ -18,7 +18,7 @@ IGO2 library is divided into several elements:
 
 - @igo2/context : Library of components uniting @igo2/geo and @igo2/auth
 
-- @igo2/tools : Library integrate basic components
+- @igo2/integration : Library integrate basic components
 
 ## Demo
 

@@ -860,7 +860,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       unit: properties._unit,
       unitAbbr: true,
       locale: 'fr'
-    });
+    }, this.languageService);
   }
 
   /**

@@ -11,6 +11,9 @@ import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { CatalogItemLayer } from '../shared';
 import { BehaviorSubject } from 'rxjs';
+import { LayerService } from '../../layer/shared/layer.service';
+import { first } from 'rxjs/operators';
+import { Layer } from '../../layer/shared/layers';
 
 /**
  * Catalog browser layer item
@@ -27,7 +30,12 @@ export class CatalogBrowserLayerComponent implements OnInit {
 
   private lastTimeoutRequest;
 
+  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public igoLayer$ = new BehaviorSubject<Layer>(undefined);
+
   @Input() resolution: number;
+
+  @Input() catalogAllowLegend = false;
 
   /**
    * Catalog layer
@@ -63,7 +71,7 @@ export class CatalogBrowserLayerComponent implements OnInit {
     return getEntityIcon(this.layer) || 'layers';
   }
 
-  constructor() {}
+  constructor(private layerService: LayerService ) {}
 
   ngOnInit(): void {
     this.isInResolutionsRange();
@@ -76,6 +84,12 @@ export class CatalogBrowserLayerComponent implements OnInit {
    */
   onMouseEvent(event) {
     this.onToggleClick(event);
+  }
+
+  askForLegend(event) {
+    this.layerLegendShown$.next(!this.layerLegendShown$.value);
+    this.layerService.createAsyncLayer(this.layer.options).pipe(first())
+    .subscribe(layer => this.igoLayer$.next(layer));
   }
 
   /**

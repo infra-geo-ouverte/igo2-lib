@@ -1,0 +1,5 @@
+@import './layer-legend/layer-legend.theming';
+
+@mixin igo-layer-theming($theme) {
+  @include igo-layer-legend-theming($theme);
+}

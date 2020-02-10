@@ -43,6 +43,7 @@ export * from './lib/search/shared/sources/nominatim.providers';
 export * from './lib/search/shared/sources/storedqueries.providers';
 export * from './lib/routing/routing-sources/routing-source.provider';
 export * from './lib/routing/shared/routing-source.service';
+export * from './lib/import-export/style-list/style-list.provider';
 
 export * from './lib/catalog';
 export * from './lib/datasource';

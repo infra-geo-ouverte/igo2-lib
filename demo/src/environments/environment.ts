@@ -12,6 +12,7 @@ interface Environment {
 export const environment: Environment = {
   production: false,
   igo: {
+    importWithStyle: true,
     projections: [
       {
         code: 'EPSG:32198',

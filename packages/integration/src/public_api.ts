@@ -4,6 +4,7 @@
 
 export * from './lib/integration.module';
 export * from './lib/about/about.module';
+export * from './lib/analytics/analytics.module';
 export * from './lib/context/context.module';
 export * from './lib/catalog/catalog.module';
 
@@ -18,6 +19,7 @@ export * from './lib/search/search.module';
 export * from './lib/tool/tool.module';
 
 export * from './lib/about';
+export * from './lib/analytics';
 export * from './lib/context';
 
 export * from './lib/catalog/catalog-browser-tool/catalog-browser-tool.component';
