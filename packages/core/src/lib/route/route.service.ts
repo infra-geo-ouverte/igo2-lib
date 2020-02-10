@@ -35,7 +35,7 @@ export class RouteService {
       searchKey: 'search',
       visibleOnLayersKey: 'visiblelayers',
       visibleOffLayersKey: 'invisiblelayers',
-      routingCoordKey: 'routing',
+      directionsCoordKey: 'routing',
       toolKey: 'tool',
       llcKKey: 'llck',
       llcAKey: 'llca',

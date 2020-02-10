@@ -179,12 +179,12 @@
         "showScale": "Afficher l'échelle",
         "title": "Titre"
       },
-      "routingForm": {
+      "directionsForm": {
         "start": "Début",
         "intermediate": "Intermédiaire",
         "end": "Fin",
-        "routingBtn": "Obtenir l'itinéraire",
-        "resetRoutingBtn": "Supprimer l'itinéraire",
+        "directionsBtn": "Obtenir l'itinéraire",
+        "resetDirectionsBtn": "Supprimer l'itinéraire",
         "zoomRoute": "Zoomer sur l'itinéraire",
         "null": "",
         "directions": "Itinéraire",
@@ -205,7 +205,7 @@
           "copyTitle": "Itinéraire"
         }
       },
-      "routing": {
+      "directions": {
         "uturn": "demi-tour",
         "sharp right": "fortement à droite",
         "right": "droite",

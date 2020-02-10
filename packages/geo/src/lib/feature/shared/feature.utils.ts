@@ -323,7 +323,7 @@ export function featuresAreTooDeepInView(
   const mapExtentArea = olextent.getArea(mapExtent);
   const featuresExtentArea = olextent.getArea(featuresExtent);
 
-  if (featuresExtentArea === 0 && map.getZoom() > 13) { // In case it's a point
+  if (featuresExtentArea === 0 && map.viewController.getZoom() > 13) { // In case it's a point
       return false;
   }
 

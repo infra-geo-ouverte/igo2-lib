@@ -17,10 +17,10 @@ import {
 
 import { IgoLanguageModule } from '@igo2/core';
 
-import { RoutingFormComponent } from './routing-form/routing-form.component';
-import { RoutingFormBindingDirective } from './routing-form/routing-form-binding.directive';
-import { RoutingFormService } from './routing-form/routing-form.service';
-import { provideRoutingSourceService } from './shared/routing-source.service';
+import { DirectionsFormComponent } from './directions-form/directions-form.component';
+import { DirectionsFormBindingDirective } from './directions-form/directions-form-binding.directive';
+import { DirectionsFormService } from './directions-form/directions-form.service';
+import { provideDirectionsSourceService } from './shared/directions-source.service';
 
 @NgModule({
   imports: [
@@ -39,14 +39,14 @@ import { provideRoutingSourceService } from './shared/routing-source.service';
     MatAutocompleteModule,
     IgoLanguageModule
   ],
-  exports: [RoutingFormComponent, RoutingFormBindingDirective],
-  declarations: [RoutingFormComponent, RoutingFormBindingDirective],
-  providers: [RoutingFormService, provideRoutingSourceService()]
+  exports: [DirectionsFormComponent, DirectionsFormBindingDirective],
+  declarations: [DirectionsFormComponent, DirectionsFormBindingDirective],
+  providers: [DirectionsFormService, provideDirectionsSourceService()]
 })
-export class IgoRoutingModule {
+export class IgoDirectionsModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: IgoRoutingModule
+      ngModule: IgoDirectionsModule
     };
   }
 }

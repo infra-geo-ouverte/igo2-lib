@@ -7,36 +7,36 @@ import {
 
 import { RouteService } from '@igo2/core';
 
-import { RoutingFormComponent } from './routing-form.component';
-import { RoutingFormService } from './routing-form.service';
+import { DirectionsFormComponent } from './directions-form.component';
+import { DirectionsFormService } from './directions-form.service';
 
 @Directive({
-  selector: '[igoRoutingFormBinding]'
+  selector: '[igoDirectionsFormBinding]'
 })
-export class RoutingFormBindingDirective implements AfterViewInit {
+export class DirectionsFormBindingDirective implements AfterViewInit {
 
   constructor(
-    @Self() private component: RoutingFormComponent,
-    private routingFormService: RoutingFormService,
+    @Self() private component: DirectionsFormComponent,
+    private directionsFormService: DirectionsFormService,
     @Optional() private route: RouteService
   ) {}
 
   ngAfterViewInit(): void {
-    const storedStops = this.routingFormService.getStops();
+    const storedStops = this.directionsFormService.getStops();
     if (
       !storedStops && this.route &&
-      this.route.options.routingCoordKey
+      this.route.options.directionsCoordKey
     ) {
       this.route.queryParams.subscribe(params => {
-        const routingParams =
-          params[this.route.options.routingCoordKey as string];
+        const directionsParams =
+          params[this.route.options.directionsCoordKey as string];
         const stopsCoordinatesFromURL = [];
-        if (routingParams) {
-          const routingCoordUrl = routingParams.split(';');
-          if (routingCoordUrl.length >= 2) {
+        if (directionsParams) {
+          const directionsCoordUrl = directionsParams.split(';');
+          if (directionsCoordUrl.length >= 2) {
             let cnt = 0;
-            routingCoordUrl.forEach(coord => {
-              if (cnt !== 0 && cnt !== routingCoordUrl.length - 1) {
+            directionsCoordUrl.forEach(coord => {
+              if (cnt !== 0 && cnt !== directionsCoordUrl.length - 1) {
                 this.component.stops.insert(cnt, this.component.createStop());
               }
 
@@ -56,7 +56,7 @@ export class RoutingFormBindingDirective implements AfterViewInit {
               this.component.addStopOverlay(stopCoordinatesFromURL, cnt);
               cnt++;
             });
-            this.component.getRoutes(stopsCoordinatesFromURL, true);
+            this.component.getRoutes(true);
           }
         }
       });
@@ -70,7 +70,8 @@ export class RoutingFormBindingDirective implements AfterViewInit {
           this.component.stops.at(i).patchValue(storedStops[i] );
         }
       }
+      this.component.getRoutes();
     }
-    this.component.onFormChange();
+    this.component.writeStopsToFormService();
   }
 }
