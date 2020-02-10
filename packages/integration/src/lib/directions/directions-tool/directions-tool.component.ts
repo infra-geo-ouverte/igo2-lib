@@ -17,13 +17,13 @@ import { DirectionState } from '../directions.state';
 })
 export class DirectionsToolComponent {
   /**
-   * Map to measure on
+   * stops
    * @internal
    */
   get stopsStore(): FeatureStore { return this.directionState.stopsStore; }
 
   /**
-   * Map to measure on
+   * routes
    * @internal
    */
   get routeStore(): FeatureStore { return this.directionState.routeStore; }

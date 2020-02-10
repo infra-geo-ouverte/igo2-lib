@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Stop } from '../shared/routing.interface';
+import { Stop } from '../shared/directions.interface';
 
 @Injectable()
-export class RoutingFormService {
+export class DirectionsFormService {
   private stops: Stop[];
 
   constructor() {}

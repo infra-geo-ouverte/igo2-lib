@@ -5,7 +5,7 @@
 @import '../lib/layer/layer.theming';
 @import '../lib/map/map.theming';
 @import '../lib/measure/measure.theming';
-@import '../lib/routing/routing.theming';
+@import '../lib/directions/directions.theming';
 
 @mixin igo-geo-theming($theme, $typography) {
   @include igo-feature-theming($theme);
@@ -13,5 +13,5 @@
   @include igo-layer-theming($theme);
   @include igo-map-theming($theme);
   @include igo-measure-theming($theme, $typography);
-  @include igo-routing-theming($theme);
+  @include igo-directions-theming($theme);
 }

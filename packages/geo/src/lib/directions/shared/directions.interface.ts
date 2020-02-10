@@ -1,7 +1,7 @@
 import { GeoJsonGeometryTypes } from 'geojson';
-import { RoutingFormat, SourceRoutingType } from './routing.enum';
+import { DirectionsFormat, SourceDirectionsType } from './directions.enum';
 
-export interface RoutingOptions {
+export interface DirectionsOptions {
   overview?: boolean;
   steps?: boolean;
   geometries?: string;
@@ -12,29 +12,29 @@ export interface RoutingOptions {
 export interface Stop {
   stopPoint?: string;
   stopProposals?: [];
-  routingText?: string;
+  directionsText?: string;
   stopCoordinates?: [number, number];
 }
 
-export interface Routing {
+export interface Directions {
   id: string;
   source: string;
-  sourceType?: SourceRoutingType;
+  sourceType?: SourceDirectionsType;
   order?: number;
   title?: string;
-  format?: RoutingFormat;
+  format?: DirectionsFormat;
   icon?: string;
   projection?: string;
   waypoints?: any;
   distance?: number;
   duration?: number;
-  geometry?: RoutingGeometry;
+  geometry?: DirectionsGeometry;
   legs?: OsrmLeg[];
   steps?: IgoStep[];
   weight?: number;
   weight_name?: string;
 }
-export interface RoutingGeometry {
+export interface DirectionsGeometry {
   type: GeoJsonGeometryTypes;
   coordinates: [any];
 }
@@ -50,7 +50,7 @@ export interface IgoStep {
   distance?: number;
   driving_side?: string;
   duration?: number;
-  geometry?: RoutingGeometry;
+  geometry?: DirectionsGeometry;
   intersections?: OsrmIntersection[];
   maneuver?: OsrmManeuver;
   mode?: string;
@@ -60,7 +60,7 @@ export interface OsrmStep {
   distance?: number;
   driving_side?: string;
   duration?: number;
-  geometry?: RoutingGeometry;
+  geometry?: DirectionsGeometry;
   intersections?: OsrmIntersection[];
   maneuver?: OsrmManeuver;
   mode?: string;

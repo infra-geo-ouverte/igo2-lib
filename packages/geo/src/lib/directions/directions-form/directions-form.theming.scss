@@ -1,7 +1,7 @@
-@mixin igo-routing-form-theming($theme) {
+@mixin igo-directions-form-theming($theme) {
   $accent: map-get($theme, accent);
 
-  igo-routing-form > mat-list-item:hover {
+  igo-directions-form > mat-list-item:hover {
     background-color: mat-color($accent, lighter);
   }
 }

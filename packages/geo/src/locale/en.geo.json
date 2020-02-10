@@ -179,12 +179,12 @@
         "showScale": "Show scale",
         "title": "Title"
       },
-      "routingForm": {
+      "directionsForm": {
         "start": "Start",
         "intermediate": "Intermediate",
         "end": "End",
-        "routingBtn": "Get route",
-        "resetRoutingBtn": "Reset",
+        "directionsBtn": "Get route",
+        "resetDirectionsBtn": "Reset",
         "zoomRoute": "Zoom on route",
         "null": "",
         "directions": "Directions",
@@ -205,7 +205,7 @@
           "copyTitle": "Directions"
         }
       },
-      "routing": {
+      "directions": {
         "uturn": "u-turn",
         "sharp right": "sharp right",
         "right": "right",

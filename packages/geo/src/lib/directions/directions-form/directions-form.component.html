@@ -6,12 +6,12 @@
     <mat-list-item [formGroupName]="i">
 
       <div class="igo-input-container">
-        <button *ngIf="map.geolocationFeature" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.geolocate' | translate" (click)="geolocateStop(i)">
+        <button *ngIf="map.geolocationFeature" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.geolocate' | translate" (click)="geolocateStop(i)">
           <mat-icon svgIcon="crosshairs-gps"></mat-icon>
         </button>
         <mat-form-field>
           <input matInput formControlName="stopPoint" [matAutocomplete]="auto"
-            placeholder="{{'igo.geo.routingForm.'+stop.value.routingText | translate}}" (focus)="focus(i)"
+            placeholder="{{'igo.geo.directionsForm.'+stop.value.directionsText | translate}}" (focus)="focus(i)"
             (keyup)="keyup(i,$event)" (keydown.enter)="prevent($event)">
             <button 
               mat-button 
@@ -34,16 +34,16 @@
         <!-- <div class="igo-form-button-group"> -->
 
 
-          <!-- <button *ngIf="i !== 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.raiseStop' | translate"
+          <!-- <button *ngIf="i !== 0" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.raiseStop' | translate"
             [color]="color" (click)="raiseStop(i)">
             <mat-icon svgIcon="arrow-upward"></mat-icon>
           </button>
-          <button *ngIf="i !== stops.length - 1" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.lowerStop' | translate"
+          <button *ngIf="i !== stops.length - 1" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.lowerStop' | translate"
             [color]="color" (click)="lowerStop(i)">
             <mat-icon svgIcon="arrow-downward"></mat-icon>
           </button> -->
 
-          <button *ngIf="i !== 0 && i !== stops.length - 1" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.routingForm.removeStop' | translate"
+          <button *ngIf="i !== 0 && i !== stops.length - 1" mat-icon-button tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.directionsForm.removeStop' | translate"
             color="warn" (click)="removeStop(i)">
             <mat-icon svgIcon="delete"></mat-icon>
           </button>
@@ -54,25 +54,25 @@
   </div>
   <div class="igo-form-button-group">
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.routingForm.addStop' | translate" color="primary" (click)="addStop()">
+      [matTooltip]="'igo.geo.directionsForm.addStop' | translate" color="primary" (click)="addStop()">
       <mat-icon svgIcon="map-marker-plus"></mat-icon>
     </button>
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.routingForm.zoomRoute' | translate" *ngIf="routesResults" color="primary"
+      [matTooltip]="'igo.geo.directionsForm.zoomRoute' | translate" *ngIf="routesResults" color="primary"
       (click)="zoomRoute()">
       <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
     </button>
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.routingForm.resetRoutingBtn' | translate" *ngIf="routesResults" color="warn"
+      [matTooltip]="'igo.geo.directionsForm.resetDirectionsBtn' | translate" *ngIf="routesResults" color="warn"
       (click)="resetForm()">
       <mat-icon svgIcon="file-restore"></mat-icon>
     </button>
     <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.routingForm.copy' | translate" color="primary" (click)="copyDirectionsToClipboard()">
+      [matTooltip]="'igo.geo.directionsForm.copy' | translate" color="primary" (click)="copyDirectionsToClipboard()">
       <mat-icon svgIcon="content-copy"></mat-icon>
     </button>
     <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.routingForm.link' | translate" color="primary" (click)="copyLinkToClipboard()">
+      [matTooltip]="'igo.geo.directionsForm.link' | translate" color="primary" (click)="copyLinkToClipboard()">
       <mat-icon svgIcon="link"></mat-icon>
     </button>
   </div>
@@ -81,9 +81,9 @@
 
 <div class="igo-input-container" *ngIf="routesResults">
   <mat-form-field *ngIf="routesResults && routesResults.length > 1">
-    <mat-select placeholder="{{'igo.geo.routingForm.drivingOptions' | translate}}" (selectionChange)="changeRoute()" [(ngModel)]="activeRoute">
-      <mat-option *ngFor="let pathRouting of routesResults; let cnt = index;" [value]="pathRouting">
-        Option {{cnt + 1}} : {{formatDistance(pathRouting.distance)}} ({{formatDuration(pathRouting.duration)}})
+    <mat-select placeholder="{{'igo.geo.directionsForm.drivingOptions' | translate}}" (selectionChange)="changeRoute()" [(ngModel)]="activeRoute">
+      <mat-option *ngFor="let pathDirections of routesResults; let cnt = index;" [value]="pathDirections">
+        Option {{cnt + 1}} : {{formatDistance(pathDirections.distance)}} ({{formatDuration(pathDirections.duration)}})
       </mat-option>
     </mat-select>
   </mat-form-field>

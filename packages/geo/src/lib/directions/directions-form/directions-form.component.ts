@@ -37,9 +37,9 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
 import { moveToOlFeatures, tryBindStoreLayer, tryAddLoadingStrategy } from '../../feature/shared/feature.utils';
 
-import { Routing, RoutingOptions } from '../shared/routing.interface';
-import { RoutingService } from '../shared/routing.service';
-import { RoutingFormService } from './routing-form.service';
+import { Directions, DirectionsOptions } from '../shared/directions.interface';
+import { DirectionsService } from '../shared/directions.service';
+import { DirectionsFormService } from './directions-form.service';
 
 import { QueryService } from '../../query/shared/query.service';
 import { FeatureStore } from '../../feature/shared/store';
@@ -48,11 +48,11 @@ import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loa
 import { roundCoordTo } from '../../map/shared/map.utils';
 
 @Component({
-  selector: 'igo-routing-form',
-  templateUrl: './routing-form.component.html',
-  styleUrls: ['./routing-form.component.scss']
+  selector: 'igo-directions-form',
+  templateUrl: './directions-form.component.html',
+  styleUrls: ['./directions-form.component.scss']
 })
-export class RoutingFormComponent implements OnInit, OnDestroy {
+export class DirectionsFormComponent implements OnInit, OnDestroy {
   private readonly invalidKeys = ['Control', 'Shift', 'Alt'];
 
   public stopsForm: FormGroup;
@@ -63,8 +63,8 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   private stream$ = new Subject<string>();
 
-  public routesResults: Routing[] | Message[];
-  public activeRoute: Routing;
+  public routesResults: Directions[] | Message[];
+  public activeRoute: Directions;
   private lastTimeoutRequest;
 
   private focusOnStop = false;
@@ -93,12 +93,12 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   @Output() submit: EventEmitter<any> = new EventEmitter();
   constructor(
     private formBuilder: FormBuilder,
-    private routingService: RoutingService,
+    private directionsService: DirectionsService,
     private languageService: LanguageService,
     private messageService: MessageService,
     private searchService: SearchService,
     private queryService: QueryService,
-    private routingFormService: RoutingFormService,
+    private directionsFormService: DirectionsFormService,
     private changeDetectorRefs: ChangeDetectorRef,
     @Optional() private route: RouteService
   ) {}
@@ -117,17 +117,17 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
     this.stopsForm = this.formBuilder.group({
-      routingType: 'car',
-      routingMode: 'driving', // loop
+      directionsType: 'car',
+      directionsMode: 'driving', // loop
       stopOrderPriority: true,
-      routingFixedStartEnd: false,
+      directionsFixedStartEnd: false,
       stops: this.formBuilder.array([
         this.createStop('start'),
         this.createStop('end')
       ])
     });
 
-    if (!this.routingFormService.getStops()) {
+    if (!this.directionsFormService.getStops()) {
       this.map.status$.pipe(take(1)).subscribe(() => {
         this.conditionalInit();
       });
@@ -318,16 +318,16 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       this.handleLocationProposals(translationCoordinates, p);
     }
 
-    const routingOptions = {
+    const directionsOptions = {
       steps: true,
       overview: false,
       alternatives: true
-    } as RoutingOptions;
+    } as DirectionsOptions;
 
     if (overview) {
-      routingOptions.overview = true;
-      routingOptions.steps = false;
-      routingOptions.alternatives = false;
+      directionsOptions.overview = true;
+      directionsOptions.steps = false;
+      directionsOptions.alternatives = false;
     }
 
     if (delay > 0) {
@@ -335,12 +335,12 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
         clearTimeout(this.lastTimeoutRequest);
       }
       this.lastTimeoutRequest = setTimeout(() => {
-        this.getRoutes(undefined, routingOptions);
+        this.getRoutes(undefined, directionsOptions);
       }, delay);
 
     } else {
       clearTimeout(this.lastTimeoutRequest);
-      this.getRoutes(undefined, routingOptions);
+      this.getRoutes(undefined, directionsOptions);
     }
 
   }
@@ -416,7 +416,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       );
   }
 
-  routingText(index: number, stopsCounts = this.stops.length): string {
+  directionsText(index: number, stopsCounts = this.stops.length): string {
     if (index === 0) {
       return 'start';
     } else if (index === stopsCounts - 1 || stopsCounts === 1) {
@@ -442,10 +442,10 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const fromValue = this.stops.at(index);
     this.removeStop(index);
     this.stops.insert(index + diff, fromValue);
-    this.stops.at(index).patchValue({ routingText: this.routingText(index) });
+    this.stops.at(index).patchValue({ directionsText: this.directionsText(index) });
     this.stops
       .at(index + diff)
-      .patchValue({ routingText: this.routingText(index + diff) });
+      .patchValue({ directionsText: this.directionsText(index + diff) });
     if (this.stops.at(index).value.stopCoordinates) {
       this.addStopOverlay(this.stops.at(index).value.stopCoordinates, index);
     }
@@ -468,7 +468,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
         stops.push(stop);
       }
     });
-    this.routingFormService.setStops(stops);
+    this.directionsFormService.setStops(stops);
   }
 
   addStop(): void {
@@ -476,11 +476,11 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this.stops.insert(insertIndex, this.createStop());
   }
 
-  createStop(routingPos = 'intermediate'): FormGroup {
+  createStop(directionsPos = 'intermediate'): FormGroup {
     return this.formBuilder.group({
       stopPoint: [''],
       stopProposals: [[]],
-      routingText: routingPos,
+      directionsText: directionsPos,
       stopCoordinates: ['', [Validators.required]]
     });
   }
@@ -491,7 +491,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this.stops.removeAt(index);
     let cnt = 0;
     this.stops.value.forEach(stop => {
-      this.stops.at(cnt).patchValue({ routingText: this.routingText(cnt) });
+      this.stops.at(cnt).patchValue({ directionsText: this.directionsText(cnt) });
       this.addStopOverlay(this.stops.at(cnt).value.stopCoordinates, cnt);
       cnt++;
     });
@@ -708,29 +708,29 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   translateModifier(modifier) {
     if (modifier === 'uturn') {
-      return this.languageService.translate.instant('igo.geo.routing.uturn');
+      return this.languageService.translate.instant('igo.geo.directions.uturn');
     } else if (modifier === 'sharp right') {
       return this.languageService.translate.instant(
-        'igo.geo.routing.sharp right'
+        'igo.geo.directions.sharp right'
       );
     } else if (modifier === 'right') {
-      return this.languageService.translate.instant('igo.geo.routing.right');
+      return this.languageService.translate.instant('igo.geo.directions.right');
     } else if (modifier === 'slight right') {
       return this.languageService.translate.instant(
-        'igo.geo.routing.slight right'
+        'igo.geo.directions.slight right'
       );
     } else if (modifier === 'sharp left') {
       return this.languageService.translate.instant(
-        'igo.geo.routing.sharp left'
+        'igo.geo.directions.sharp left'
       );
     } else if (modifier === 'left') {
-      return this.languageService.translate.instant('igo.geo.routing.left');
+      return this.languageService.translate.instant('igo.geo.directions.left');
     } else if (modifier === 'slight left') {
       return this.languageService.translate.instant(
-        'igo.geo.routing.slight left'
+        'igo.geo.directions.slight left'
       );
     } else if (modifier === 'straight') {
-      return this.languageService.translate.instant('igo.geo.routing.straight');
+      return this.languageService.translate.instant('igo.geo.directions.straight');
     } else {
       return modifier;
     }
@@ -887,20 +887,20 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
 
   }
 
-  getRoutes(moveToExtent: boolean = false, routingOptions: RoutingOptions = {}) {
+  getRoutes(moveToExtent: boolean = false, directionsOptions: DirectionsOptions = {}) {
     this.deleteStoreFeatureByID(this.routeStore, 'vertex');
     this.writeStopsToFormService();
-    const coords = this.routingFormService.getStopsCoordinates();
+    const coords = this.directionsFormService.getStopsCoordinates();
     if (coords.length < 2) {
       return;
     }
-    const routeResponse = this.routingService.route(coords, routingOptions);
+    const routeResponse = this.directionsService.route(coords, directionsOptions);
     if (routeResponse) {
       routeResponse.map(res =>
         this.routesQueries$$.push(
           res.subscribe(route => {
             this.routesResults = route;
-            this.activeRoute = this.routesResults[0] as Routing;
+            this.activeRoute = this.routesResults[0] as Directions;
             this.showRouteGeometry(moveToExtent);
             this.changeDetectorRefs.detectChanges();
           })
@@ -926,8 +926,8 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const successful = Clipboard.copy(this.getUrl());
     if (successful) {
       const translate = this.languageService.translate;
-      const title = translate.instant('igo.geo.routingForm.dialog.copyTitle');
-      const msg = translate.instant('igo.geo.routingForm.dialog.copyMsgLink');
+      const title = translate.instant('igo.geo.directionsForm.dialog.copyTitle');
+      const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsgLink');
       this.messageService.success(msg, title);
     }
   }
@@ -936,11 +936,11 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const indent = '\t';
     let activeRouteDirective =
       this.languageService.translate.instant(
-        'igo.geo.routingForm.instructions'
+        'igo.geo.directionsForm.instructions'
       ) + ':\n';
     let wayPointList = '';
     const summary =
-      this.languageService.translate.instant('igo.geo.routingForm.summary') +
+      this.languageService.translate.instant('igo.geo.directionsForm.summary') +
       ': \n' +
       indent +
       this.activeRoute.title +
@@ -951,11 +951,11 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       indent +
       this.formatDuration(this.activeRoute.duration) +
       '\n\n' +
-      this.languageService.translate.instant('igo.geo.routingForm.stopsList') +
+      this.languageService.translate.instant('igo.geo.directionsForm.stopsList') +
       ':\n';
 
     const url =
-      this.languageService.translate.instant('igo.geo.routingForm.link') +
+      this.languageService.translate.instant('igo.geo.directionsForm.link') +
       ':\n' +
       indent +
       this.getUrl();
@@ -1012,8 +1012,8 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     const successful = Clipboard.copy(directionsBody);
     if (successful) {
       const translate = this.languageService.translate;
-      const title = translate.instant('igo.geo.routingForm.dialog.copyTitle');
-      const msg = translate.instant('igo.geo.routingForm.dialog.copyMsg');
+      const title = translate.instant('igo.geo.directionsForm.dialog.copyTitle');
+      const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsg');
       this.messageService.success(msg, title);
     }
   }
@@ -1074,13 +1074,13 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   }
 
   clearStop(stopIndex) {
-    // this.deleteRoutingOverlaybyID(this.getStopOverlayID(stopIndex));
+    // this.deleteDirectionsOverlaybyID(this.getStopOverlayID(stopIndex));
     const id = this.getStopOverlayID(stopIndex);
     this.deleteStoreFeatureByID(this.stopsStore, id);
     this.routeStore.clear();
     const stopsCounts = this.stops.length;
     this.stops.removeAt(stopIndex);
-    this.stops.insert(stopIndex, this.createStop(this.routingText(stopIndex, stopsCounts)));
+    this.stops.insert(stopIndex, this.createStop(this.directionsText(stopIndex, stopsCounts)));
     this.routesResults = undefined;
     this.getRoutes();
   }
@@ -1104,7 +1104,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       if (geomCoord !== undefined) {
         this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
         this.addStopOverlay(geomCoord, i);
-      /*  const proposalExtent = this.routingStopsOverlayDataSource.ol
+      /*  const proposalExtent = this.directionsStopsOverlayDataSource.ol
           .getFeatureById(this.getStopOverlayID(i))
           .getGeometry()
           .getExtent();*/
@@ -1158,24 +1158,24 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   }
 
   public addStopOverlay(coordinates: [number, number], index: number) {
-    const routingText = this.routingText(index);
+    const directionsText = this.directionsText(index);
     let stopColor;
     let stopText;
-    if (routingText === 'start') {
+    if (directionsText === 'start') {
       stopColor = 'green';
       stopText = this.languageService.translate.instant(
-        'igo.geo.routingForm.start'
+        'igo.geo.directionsForm.start'
       );
-    } else if (routingText === 'end') {
+    } else if (directionsText === 'end') {
       stopColor = 'red';
       stopText = this.languageService.translate.instant(
-        'igo.geo.routingForm.end'
+        'igo.geo.directionsForm.end'
       );
     } else {
       stopColor = 'yellow';
       stopText =
         this.languageService.translate.instant(
-          'igo.geo.routingForm.intermediate'
+          'igo.geo.directionsForm.intermediate'
         ) +
         ' #' +
         index;
@@ -1226,7 +1226,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     } else {
       txt = index;
     }
-    return 'routingStop_' + txt;
+    return 'directionsStop_' + txt;
   }
 
   private deleteStoreFeatureByID(store, id) {
@@ -1241,30 +1241,30 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const routingKey = this.route.options.routingCoordKey;
+    const directionsKey = this.route.options.directionsCoordKey;
     const stopsCoordinates = [];
     if (
-      this.routingFormService &&
-      this.routingFormService.getStopsCoordinates() &&
-      this.routingFormService.getStopsCoordinates().length !== 0
+      this.directionsFormService &&
+      this.directionsFormService.getStopsCoordinates() &&
+      this.directionsFormService.getStopsCoordinates().length !== 0
     ) {
-      this.routingFormService.getStopsCoordinates().forEach(coord => {
+      this.directionsFormService.getStopsCoordinates().forEach(coord => {
         stopsCoordinates.push(roundCoordTo(coord, 6));
       });
     }
-    let routingUrl = '';
+    let directionsUrl = '';
     if (stopsCoordinates.length >= 2) {
-      routingUrl = `${routingKey}=${stopsCoordinates.join(';')}`;
+      directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
     }
 
     return `${location.origin}${
       location.pathname
-    }?tool=directions&${routingUrl}`;
+    }?tool=directions&${directionsUrl}`;
   }
 }
 
 /**
- * Create a style for the routing stops and routes
+ * Create a style for the directions stops and routes
  * @param feature OlFeature
  * @returns OL style function
  */
