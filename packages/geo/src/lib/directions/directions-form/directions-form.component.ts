@@ -135,13 +135,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       this.conditionalInit();
     }
 
-  }
-
-  private conditionalInit() {
-    this.initStores();
-    this.initOlInteraction();
-    this.subscribeToFormChange();
-
     this.routesQueries$$.push(
       this.stream$
         .pipe(
@@ -150,6 +143,13 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         )
         .subscribe((term: string) => this.handleTermChanged(term))
     );
+
+  }
+
+  private conditionalInit() {
+    this.initStores();
+    this.initOlInteraction();
+    this.subscribeToFormChange();
   }
 
   ngOnDestroy(): void {
