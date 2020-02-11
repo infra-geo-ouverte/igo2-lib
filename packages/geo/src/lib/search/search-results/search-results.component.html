@@ -30,8 +30,8 @@
           (focus)="onResultFocus(result)"
           (unfocus)="onResultUnfocus(result)"
           (select)="onResultSelect(result)"
-          (mouseenter)="resultMouseenter.emit(result)"
-          (mouseleave)="resultMouseleave.emit(result)">
+          (mouseenter)="onResultFocus(result)"
+          (mouseleave)="onResultUnfocus(result)">
 
           <ng-container igoSearchItemToolbar
             [ngTemplateOutlet]="templateSearchToolbar"

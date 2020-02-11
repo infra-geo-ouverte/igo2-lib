@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, HostListener } from '@angular/core';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -98,6 +98,14 @@ export class SearchResultsToolComponent implements OnInit {
 
   private format = new olFormatGeoJSON();
 
+  @HostListener('document:keydown.enter', ['$event']) onSelectHandler(event: KeyboardEvent) {
+    for (const result of this.store.all()) {
+      if (this.store.state.get(result).focused === true){
+        this.onResultSelect(result);
+      }
+    }
+  }
+
   constructor(
     private mapState: MapState,
     private layerService: LayerService,
@@ -127,10 +135,21 @@ export class SearchResultsToolComponent implements OnInit {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
-    this.tryAddFeatureToMap(result);
+    if (result.meta.dataType === FEATURE) {
+      this.map.overlay.setFeatures([result.data] as Feature[], FeatureMotion.None);
+    }
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
+  }
+
+  onResultUnfocus() {
+    for (const result of this.store.all()) {
+      if (this.store.state.get(result).selected === true) {
+        return;
+      }
+    }
+    this.map.overlay.setFeatures([], FeatureMotion.None);
   }
 
   /**
@@ -140,7 +159,6 @@ export class SearchResultsToolComponent implements OnInit {
    */
   onResultSelect(result: SearchResult) {
     this.tryAddFeatureToMap(result);
-    this.tryAddLayerToMap(result);
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
