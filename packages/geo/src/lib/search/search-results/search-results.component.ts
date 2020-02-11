@@ -169,10 +169,12 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     }
     this.store.state.update(result, {focused: true}, true);
     this.resultFocus.emit(result);
+    this.resultMouseenter.emit(result);
   }
 
   onResultUnfocus(result: SearchResult) {
     this.resultUnfocus.emit(result);
+    this.resultMouseleave.emit(result);
   }
 
   /**
