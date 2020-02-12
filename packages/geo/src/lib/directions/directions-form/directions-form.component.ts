@@ -127,14 +127,12 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       ])
     });
 
-    if (!this.directionsFormService.getStops()) {
-      this.map.status$.pipe(take(1)).subscribe(() => {
-        this.conditionalInit();
-      });
-    } else {
-      this.conditionalInit();
-    }
+    setTimeout(() => {
+      this.initStores();
+      this.initOlInteraction();
+    }, 1);
 
+    this.subscribeToFormChange();
     this.routesQueries$$.push(
       this.stream$
         .pipe(
@@ -144,12 +142,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         .subscribe((term: string) => this.handleTermChanged(term))
     );
 
-  }
-
-  private conditionalInit() {
-    this.initStores();
-    this.initOlInteraction();
-    this.subscribeToFormChange();
   }
 
   ngOnDestroy(): void {
