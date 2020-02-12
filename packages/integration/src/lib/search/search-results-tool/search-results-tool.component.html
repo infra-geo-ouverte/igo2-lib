@@ -25,9 +25,9 @@
       placeholder="false"
       (resultFocus)="onResultFocus($event)"
       (resultSelect)="onResultSelect($event)"
-      (resultUnfocus)="onResultUnfocus()"
+      (resultUnfocus)="onResultUnfocus($event)"
       (resultMouseenter)="onResultFocus($event)"
-      (resultMouseleave)="onResultUnfocus()"
+      (resultMouseleave)="onResultUnfocus($event)"
       (moreResults)="onSearch($event)">
       <ng-template #igoSearchItemToolbar let-result="result">
         <igo-search-add-button

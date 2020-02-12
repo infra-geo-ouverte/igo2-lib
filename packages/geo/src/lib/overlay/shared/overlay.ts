@@ -126,6 +126,36 @@ export class Overlay {
   }
 
   /**
+   * Remove a feature from the overlay
+   * @param feature Feature
+   */
+  removeFeature(feature: Feature) {
+    this.removeFeatures([feature]);
+  }
+
+  /**
+   * Remove features from the overlay
+   * @param features Features
+   */
+  removeFeatures(features: Feature[]) {
+    features.forEach((feature: Feature) => {
+      if (feature.meta) {
+        if (this.dataSource.ol.getFeatureById(feature.meta.id)) {
+          this.removeOlFeature(this.dataSource.ol.getFeatureById(feature.meta.id));
+        }
+      }
+    });
+  }
+
+  /**
+   * Remove an OpenLayers feature from the overlay
+   * @param olFeature OpenLayers Feature
+   */
+  removeOlFeature(olFeature: OlFeature) {
+    this.dataSource.ol.removeFeature(olFeature);
+  }
+
+  /**
    * Clear the overlay
    */
   clear() {

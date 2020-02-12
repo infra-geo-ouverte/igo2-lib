@@ -136,20 +136,22 @@ export class SearchResultsToolComponent implements OnInit {
    */
   onResultFocus(result: SearchResult) {
     if (result.meta.dataType === FEATURE) {
-      this.map.overlay.setFeatures([result.data] as Feature[], FeatureMotion.None);
+      this.map.overlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
   }
 
-  onResultUnfocus() {
-    for (const result of this.store.all()) {
-      if (this.store.state.get(result).selected === true) {
-        return;
-      }
+  onResultUnfocus(result: SearchResult) {
+    if (result.meta.dataType !== FEATURE) {
+      return;
     }
-    this.map.overlay.setFeatures([], FeatureMotion.None);
+
+    if (this.store.state.get(result).selected === true) {
+      return;
+    }
+    this.map.overlay.removeFeature(result.data as Feature);
   }
 
   /**
@@ -158,6 +160,11 @@ export class SearchResultsToolComponent implements OnInit {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
+    for (const feature of this.store.all()) {
+      if (this.map.overlay.dataSource.ol.getFeatureById(feature.meta.id)) {
+        this.map.overlay.removeFeature(feature.data as Feature);
+      }
+    }
     this.tryAddFeatureToMap(result);
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
@@ -206,7 +213,7 @@ export class SearchResultsToolComponent implements OnInit {
       return;
     }
 
-    this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+    this.map.overlay.addFeature(feature);
   }
 
   /**
