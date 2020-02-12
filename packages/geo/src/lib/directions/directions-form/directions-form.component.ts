@@ -141,7 +141,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         )
         .subscribe((term: string) => this.handleTermChanged(term))
     );
-
   }
 
   ngOnDestroy(): void {
