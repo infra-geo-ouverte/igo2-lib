@@ -17,10 +17,7 @@ export interface DataSourceOptions {
     | 'cluster';
   optionsFromCapabilities?: boolean;
   optionsFromApi?: boolean;
-  // title: string;
-  // alias?: string;
-
-  // view?: ol.olx.layer.ImageOptions;
+  _layerOptionsFromSource?: { [key: string]: string };
   id?: string;
   ol?: olSource;
   minZoom?: number;

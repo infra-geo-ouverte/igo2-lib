@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, of, zip } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
-import { uuid } from '@igo2/utils';
+import { uuid, ObjectUtils } from '@igo2/utils';
 import { LanguageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
@@ -11,12 +11,7 @@ import {
   WMTSDataSourceOptions,
   WMSDataSourceOptionsParams
 } from '../../datasource';
-import {
-  LayerOptions,
-  ImageLayerOptions,
-  TooltipContent,
-  TooltipType
-} from '../../layer';
+import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
 
 import {
@@ -26,7 +21,6 @@ import {
   CatalogItemGroup
 } from './catalog.interface';
 import { CatalogItemType } from './catalog.enum';
-import { QueryHtmlTarget, QueryFormat } from '../../query';
 import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
@@ -68,8 +62,10 @@ export class CatalogService {
       const catalogsFromApi$ = this.http
         .get<Catalog[]>(`${apiUrl}/catalogs`)
         .pipe(
-          map(catalogs => catalogs.map((c: any) => Object.assign(c, c.options))),
-          catchError((response: HttpErrorResponse) => EMPTY)
+          map(catalogs =>
+            catalogs.map((c: any) => Object.assign(c, c.options))
+          ),
+          catchError((_response: HttpErrorResponse) => EMPTY)
         );
       observables$.push(catalogsFromApi$);
     }
@@ -197,8 +193,6 @@ export class CatalogService {
         this.includeRecursiveItems(catalog, group, items);
         continue;
       }
-      const catalogTooltipType = this.retrieveTooltipType(catalog);
-      const layersQueryFormat = this.findCatalogInfoFormat(catalog);
       // TODO: Slice that into multiple methods
       // Define object of group layer
       const groupItem = {
@@ -207,45 +201,34 @@ export class CatalogService {
         title: layerList.Title,
         items: layerList.Layer.reduce(
           (layers: CatalogItemLayer<ImageLayerOptions>[], layer: any) => {
-            const configuredQueryFormat = this.retriveLayerInfoFormat(
-              layer.Name,
-              layersQueryFormat
-            );
-
             if (this.testLayerRegexes(layer.Name, regexes) === false) {
               return layers;
             }
 
+            const legendOptions =
+              catalog.showLegend && layer.Style
+                ? this.capabilitiesService.getStyle(layer.Style)
+                : undefined;
+
             const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
-            const abstract = layer.Abstract ? layer.Abstract : undefined;
-            const keywordList = layer.KeywordList
-              ? layer.KeywordList
-              : undefined;
-            const timeFilter = this.capabilitiesService.getTimeFilter(layer);
-            const timeFilterable =
-              timeFilter && Object.keys(timeFilter).length > 0 ? true : false;
-            const legendOptions = layer.Style
-              ? this.capabilitiesService.getStyle(layer.Style)
-              : undefined;
 
             const params = Object.assign({}, catalogQueryParams, {
               LAYERS: layer.Name,
               FEATURE_COUNT: catalog.count,
-              VERSION: catalog.version || '1.3.0'
-            } as WMSDataSourceOptionsParams
-            );
+              VERSION: catalog.version
+            } as WMSDataSourceOptionsParams);
+
             const baseSourceOptions = {
               type: 'wms',
               url: catalog.url,
               crossOrigin: catalog.setCrossOriginAnonymous
                 ? 'anonymous'
                 : undefined,
-              timeFilter: { ...timeFilter, ...catalog.timeFilter },
-              timeFilterable: timeFilterable ? true : false,
-              queryable: layer.queryable,
-              queryFormat: configuredQueryFormat,
-              queryHtmlTarget: catalog.queryHtmlTarget || QueryHtmlTarget.IFRAME
+              timeFilter: catalog.timeFilter,
+              queryHtmlTarget: catalog.queryHtmlTarget,
+              optionsFromCapabilities: true
             };
+
             const sourceOptions = Object.assign(
               {},
               baseSourceOptions,
@@ -253,27 +236,27 @@ export class CatalogService {
               { params }
             ) as WMSDataSourceOptions;
 
-            layers.push({
-              id: generateIdFromSourceOptions(sourceOptions),
-              type: CatalogItemType.Layer,
-              title: layer.Title,
-              options: {
+            layers.push(
+              ObjectUtils.removeUndefined({
+                id: generateIdFromSourceOptions(sourceOptions),
+                type: CatalogItemType.Layer,
                 title: layer.Title,
-                maxResolution:
-                  getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
-                minResolution:
-                  getResolutionFromScale(layer.MinScaleDenominator) || 0,
-                metadata: {
-                  url: metadata ? metadata.OnlineResource : undefined,
-                  extern: metadata ? true : undefined,
-                  abstract,
-                  keywordList
-                },
-                legendOptions,
-                tooltip: { type: catalogTooltipType } as TooltipContent,
-                sourceOptions
-              }
-            });
+                options: {
+                  maxResolution:
+                    getResolutionFromScale(layer.MaxScaleDenominator) ||
+                    Infinity,
+                  minResolution:
+                    getResolutionFromScale(layer.MinScaleDenominator) || 0,
+                  metadata: {
+                    url: metadata ? metadata.OnlineResource : undefined,
+                    extern: metadata ? true : undefined
+                  },
+                  legendOptions,
+                  tooltip: { type: catalog.tooltipType },
+                  sourceOptions
+                }
+              })
+            );
             return layers;
           },
           []
@@ -317,7 +300,6 @@ export class CatalogService {
           layer: layer.Identifier,
           matrixSet: catalog.matrixSet,
           optionsFromCapabilities: true,
-          optionsFromApi: true,
           requestEncoding: catalog.requestEncoding || 'KVP',
           style: 'default'
         } as WMTSDataSourceOptions;
@@ -328,85 +310,41 @@ export class CatalogService {
           { params }
         ) as WMTSDataSourceOptions;
 
-        return {
+        return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: layer.Title,
           options: {
-            title: layer.Title,
             sourceOptions,
             maxResolution: Infinity,
             minResolution: 0
           }
-        };
+        });
       })
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
   }
 
-  private testLayerRegexes(layerName, regexes): boolean {
+  private testLayerRegexes(layerName: string, regexes: RegExp[]): boolean {
     if (regexes.length === 0) {
       return true;
     }
     return regexes.find((regex: RegExp) => regex.test(layerName)) !== undefined;
   }
 
-  private retriveLayerInfoFormat(
-    layerNameFromCatalog: string,
-    layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
-  ): QueryFormat {
-    const currentLayerInfoFormat = layersQueryFormat.find(
-      f => f.layer === layerNameFromCatalog
-    );
-    const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
-    let queryFormat: QueryFormat;
-    if (currentLayerInfoFormat) {
-      queryFormat = currentLayerInfoFormat.queryFormat;
-    } else if (baseInfoFormat) {
-      queryFormat = baseInfoFormat.queryFormat;
-    }
-    return queryFormat;
-  }
-
-  private retrieveTooltipType(catalog: Catalog): TooltipType {
-    if (!catalog.tooltipType) {
-      return TooltipType.TITLE;
-    }
-    return catalog.tooltipType;
-  }
-
-  private findCatalogInfoFormat(
-    catalog: Catalog
-  ): { layer: string; queryFormat: QueryFormat }[] {
-    const layersQueryFormat: { layer: string; queryFormat: QueryFormat }[] = [];
-    if (!catalog.queryFormat) {
-      return layersQueryFormat;
-    }
-    Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
-      if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
-        catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
-          if (
-            !layersQueryFormat.find(specific => specific.layer === layerName)
-          ) {
-            layersQueryFormat.push({
-              layer: layerName,
-              queryFormat: configuredInfoFormat as QueryFormat
-            });
-          }
-        });
-      } else {
-        if (
-          !layersQueryFormat.find(
-            specific =>
-              specific.layer === catalog.queryFormat[configuredInfoFormat]
-          )
-        ) {
-          layersQueryFormat.push({
-            layer: catalog.queryFormat[configuredInfoFormat],
-            queryFormat: configuredInfoFormat as QueryFormat
-          });
-        }
-      }
-    });
-    return layersQueryFormat;
-  }
+  // private retriveLayerInfoFormat(
+  //   layerNameFromCatalog: string,
+  //   layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
+  // ): QueryFormat {
+  //   const currentLayerInfoFormat = layersQueryFormat.find(
+  //     f => f.layer === layerNameFromCatalog
+  //   );
+  //   const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
+  //   let queryFormat: QueryFormat;
+  //   if (currentLayerInfoFormat) {
+  //     queryFormat = currentLayerInfoFormat.queryFormat;
+  //   } else if (baseInfoFormat) {
+  //     queryFormat = baseInfoFormat.queryFormat;
+  //   }
+  //   return queryFormat;
+  // }
 }

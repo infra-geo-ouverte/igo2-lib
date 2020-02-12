@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Optional } from '@angular/core';
 import { forkJoin, of, Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CapabilitiesService } from './capabilities.service';
-import { OptionsService } from './options.service';
+import { OptionsService } from './options/options.service';
 import { WFSService } from './datasources/wfs.service';
 import {
   DataSource,
@@ -42,7 +42,7 @@ export class DataSourceService {
 
   constructor(
     private capabilitiesService: CapabilitiesService,
-    private optionsService: OptionsService,
+    @Optional() private optionsService: OptionsService,
     private wfsDataSourceService: WFSService
   ) {}
 
@@ -149,7 +149,8 @@ export class DataSourceService {
       observables.push(this.capabilitiesService.getWMSOptions(context));
     }
 
-    if (context.optionsFromApi) {
+    console.log(this.optionsService);
+    if (this.optionsService && context.optionsFromApi !== false) {
       observables.push(this.optionsService.getWMSOptions(context));
     }
 

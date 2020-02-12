@@ -162,7 +162,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
-    if (!params.get('q') || !params.get('type')) {
+    if (!params.get('q') || !params.get('type')) {
       return of([]);
     }
     this.options.params.page = params.get('page') || '1';
@@ -179,17 +179,19 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options: TextSearchOptions
   ): HttpParams {
     return new HttpParams({
-      fromObject: ObjectUtils.removeUndefined(Object.assign(
-        {
-          q: this.computeTerm(term)
-        },
-        this.params,
-        this.computeOptionsParam(term, options || {}).params,
-        {
-          page: options.page
-        }
+      fromObject: ObjectUtils.removeUndefined(
+        Object.assign(
+          {
+            q: this.computeTerm(term)
+          },
+          this.params,
+          this.computeOptionsParam(term, options || {}).params,
+          {
+            page: options.page
+          }
+        )
       )
-    )});
+    });
   }
 
   /**
@@ -222,10 +224,15 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   private extractResults(
     response: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse>[] {
-    return response.items.map((data: ILayerData) => this.dataToResult(data, response));
+    return response.items.map((data: ILayerData) =>
+      this.dataToResult(data, response)
+    );
   }
 
-  private dataToResult(data: ILayerData, response?: ILayerServiceResponse): SearchResult<ILayerItemResponse> {
+  private dataToResult(
+    data: ILayerData,
+    response?: ILayerServiceResponse
+  ): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
 
     const titleHtml = data.highlight.title || data.properties.title;
@@ -242,7 +249,9 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         title: data.properties.title,
         titleHtml: titleHtml + subtitleHtml,
         icon: data.properties.type === 'Layer' ? 'layers' : 'map',
-        nextPage: response.items.length % +this.options.params.limit === 0 && +this.options.params.page < 10
+        nextPage:
+          response.items.length % +this.options.params.limit === 0 &&
+          +this.options.params.page < 10
       },
       data: layerOptions
     };
@@ -256,15 +265,13 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return {
       sourceOptions: {
         id: data.properties.id,
-        crossOrigin: 'anonymous',
         type: data.properties.format,
         url,
-        queryFormat: queryParams.queryFormat,
-        queryHtmlTarget: queryParams.queryHtmlTarget,
-        queryable: data.properties.queryable,
         params: {
           LAYERS: data.properties.name
-        }
+        },
+        optionsFromCapabilities: true,
+        crossOrigin: 'anonymous'
       },
       title: data.properties.title,
       maxResolution:
