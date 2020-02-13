@@ -605,11 +605,11 @@ export class QueryService {
 
   private getMimeInfoFormat(queryFormat: string) {
     let mime = 'application/vnd.ogc.gml';
-    const key = Object.keys(QueryFormat).find(
+    const keyEnum = Object.keys(QueryFormat).find(
       key => QueryFormat[key] === queryFormat
     );
-    if (key) {
-      mime = QueryFormatMimeType[key];
+    if (keyEnum) {
+      mime = QueryFormatMimeType[keyEnum];
     }
 
     return mime;
