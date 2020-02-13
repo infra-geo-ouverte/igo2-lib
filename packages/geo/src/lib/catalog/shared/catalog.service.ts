@@ -22,6 +22,7 @@ import {
 } from './catalog.interface';
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
+import { QueryFormat } from '../../query';
 import { generateIdFromSourceOptions } from '../../utils';
 
 @Injectable({
@@ -298,14 +299,15 @@ export class CatalogService {
   private prepareCatalogItemLayer(
     layer,
     idParent,
+    layersQueryFormat,
     catalog,
     catalogQueryParams,
     catalogSourceOptions
   ) {
-    // const configuredQueryFormat = this.retriveLayerInfoFormat(
-    //   layer.Name,
-    //   layersQueryFormat
-    // );
+    const configuredQueryFormat = this.retriveLayerInfoFormat(
+      layer.Name,
+      layersQueryFormat
+    );
 
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
     const legendOptions =
@@ -324,6 +326,7 @@ export class CatalogService {
       url: catalog.url,
       crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
       timeFilter: catalog.timeFilter,
+      queryFormat: configuredQueryFormat,
       queryHtmlTarget: catalog.queryHtmlTarget,
       optionsFromCapabilities: true
     };
@@ -354,13 +357,14 @@ export class CatalogService {
       }
     };
 
-    return layerPrepare;
+    return ObjectUtils.removeUndefined(layerPrepare);
   }
 
   private prepareCatalogItemGroup(
     itemListIn,
     regexes,
     idGroup,
+    layersQueryFormat,
     catalog,
     catalogQueryParams,
     catalogSourceOptions
@@ -379,6 +383,7 @@ export class CatalogService {
             layer,
             regexes,
             idGroupItemNextLevel,
+            layersQueryFormat,
             catalog,
             catalogQueryParams,
             catalogSourceOptions
@@ -395,6 +400,7 @@ export class CatalogService {
           > = this.prepareCatalogItemLayer(
             layer,
             idGroup,
+            layersQueryFormat,
             catalog,
             catalogQueryParams,
             catalogSourceOptions
@@ -432,6 +438,8 @@ export class CatalogService {
         continue;
       }
 
+      const layersQueryFormat = this.findCatalogInfoFormat(catalog);
+
       // group(with layers) and layer(without group) level 1
       if (loopLevel !== 0) {
         // TODO: Slice that into multiple methods
@@ -441,6 +449,7 @@ export class CatalogService {
           itemListIn,
           regexes,
           idGroupItem,
+          layersQueryFormat,
           catalog,
           catalogQueryParams,
           catalogSourceOptions
@@ -457,6 +466,7 @@ export class CatalogService {
         const layerItem = this.prepareCatalogItemLayer(
           item,
           catalog.id,
+          layersQueryFormat,
           catalog,
           catalogQueryParams,
           catalogSourceOptions
@@ -526,20 +536,56 @@ export class CatalogService {
     return regexes.find((regex: RegExp) => regex.test(layerName)) !== undefined;
   }
 
-  // private retriveLayerInfoFormat(
-  //   layerNameFromCatalog: string,
-  //   layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
-  // ): QueryFormat {
-  //   const currentLayerInfoFormat = layersQueryFormat.find(
-  //     f => f.layer === layerNameFromCatalog
-  //   );
-  //   const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
-  //   let queryFormat: QueryFormat;
-  //   if (currentLayerInfoFormat) {
-  //     queryFormat = currentLayerInfoFormat.queryFormat;
-  //   } else if (baseInfoFormat) {
-  //     queryFormat = baseInfoFormat.queryFormat;
-  //   }
-  //   return queryFormat;
-  // }
+  private retriveLayerInfoFormat(
+    layerNameFromCatalog: string,
+    layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
+  ): QueryFormat {
+    const currentLayerInfoFormat = layersQueryFormat.find(
+      f => f.layer === layerNameFromCatalog
+    );
+    const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
+    let queryFormat: QueryFormat;
+    if (currentLayerInfoFormat) {
+      queryFormat = currentLayerInfoFormat.queryFormat;
+    } else if (baseInfoFormat) {
+      queryFormat = baseInfoFormat.queryFormat;
+    }
+    return queryFormat;
+  }
+
+  private findCatalogInfoFormat(
+    catalog: Catalog
+  ): { layer: string; queryFormat: QueryFormat }[] {
+    const layersQueryFormat: { layer: string; queryFormat: QueryFormat }[] = [];
+    if (!catalog.queryFormat) {
+      return layersQueryFormat;
+    }
+    Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
+      if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
+        catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
+          if (
+            !layersQueryFormat.find(specific => specific.layer === layerName)
+          ) {
+            layersQueryFormat.push({
+              layer: layerName,
+              queryFormat: configuredInfoFormat as QueryFormat
+            });
+          }
+        });
+      } else {
+        if (
+          !layersQueryFormat.find(
+            specific =>
+              specific.layer === catalog.queryFormat[configuredInfoFormat]
+          )
+        ) {
+          layersQueryFormat.push({
+            layer: catalog.queryFormat[configuredInfoFormat],
+            queryFormat: configuredInfoFormat as QueryFormat
+          });
+        }
+      }
+    });
+    return layersQueryFormat;
+  }
 }
