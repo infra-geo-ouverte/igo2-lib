@@ -199,8 +199,7 @@ export class CapabilitiesService {
       QueryFormatMimeType.GML3,
       QueryFormatMimeType.GML2,
       QueryFormatMimeType.JSON,
-      QueryFormatMimeType.HTML,
-      QueryFormatMimeType.TEXT
+      QueryFormatMimeType.HTML
     ];
 
     for (const mimeType of queryFormatMimeTypePriority) {
