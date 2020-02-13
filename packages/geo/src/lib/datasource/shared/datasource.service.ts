@@ -149,7 +149,6 @@ export class DataSourceService {
       observables.push(this.capabilitiesService.getWMSOptions(context));
     }
 
-    console.log(this.optionsService);
     if (this.optionsService && context.optionsFromApi !== false) {
       observables.push(this.optionsService.getWMSOptions(context));
     }
