@@ -22,7 +22,11 @@ import {
   WMSDataSourceOptions
 } from '../../datasource';
 
-import { QueryFormat, QueryHtmlTarget } from './query.enums';
+import {
+  QueryFormat,
+  QueryFormatMimeType,
+  QueryHtmlTarget
+} from './query.enums';
 import {
   QueryOptions,
   QueryableDataSource,
@@ -599,33 +603,13 @@ export class QueryService {
     return url;
   }
 
-  private getMimeInfoFormat(queryFormat) {
-    let mime;
-    switch (queryFormat) {
-      case QueryFormat.GML2:
-        mime = 'application/vnd.ogc.gml';
-        break;
-      case QueryFormat.GML3:
-        mime = 'application/vnd.ogc.gml/3.1.1';
-        break;
-      case QueryFormat.JSON:
-        mime = 'application/json';
-        break;
-      case QueryFormat.GEOJSON:
-        mime = 'application/geojson';
-        break;
-      case QueryFormat.TEXT:
-        mime = 'text/plain';
-        break;
-      case QueryFormat.HTML:
-        mime = 'text/html';
-        break;
-      case QueryFormat.HTMLGML2:
-        mime = 'text/html';
-        break;
-      default:
-        mime = 'application/vnd.ogc.gml';
-        break;
+  private getMimeInfoFormat(queryFormat: string) {
+    let mime = 'application/vnd.ogc.gml';
+    const key = Object.keys(QueryFormat).find(
+      key => QueryFormat[key] === queryFormat
+    );
+    if (key) {
+      mime = QueryFormatMimeType[key];
     }
 
     return mime;

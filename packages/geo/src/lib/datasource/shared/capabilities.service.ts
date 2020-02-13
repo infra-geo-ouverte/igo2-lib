@@ -11,6 +11,10 @@ import olAttribution from 'ol/control/Attribution';
 import { ObjectUtils } from '@igo2/utils';
 import { getResolutionFromScale } from '../../map';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
+import {
+  QueryFormat,
+  QueryFormatMimeType
+} from '../../query/shared/query.enums';
 
 import {
   WMTSDataSourceOptions,
@@ -29,7 +33,8 @@ import {
 } from '../../filter/shared/time-filter.enum';
 
 export enum TypeCapabilities {
-  wms = 'wms', wmts = 'wmts'
+  wms = 'wms',
+  wmts = 'wmts'
 }
 
 export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
@@ -182,10 +187,34 @@ export class CapabilitiesService {
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
     const abstract = layer.Abstract ? layer.Abstract : undefined;
     const keywordList = layer.KeywordList ? layer.KeywordList : undefined;
-    const queryable = layer.queryable;
+    let queryable = layer.queryable;
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
+
+    let queryFormat: QueryFormat;
+    const queryFormatMimeTypePriority = [
+      QueryFormatMimeType.GEOJSON,
+      QueryFormatMimeType.GEOJSON2,
+      QueryFormatMimeType.GML3,
+      QueryFormatMimeType.GML2,
+      QueryFormatMimeType.JSON,
+      QueryFormatMimeType.HTML,
+      QueryFormatMimeType.TEXT
+    ];
+
+    for (const mimeType of queryFormatMimeTypePriority) {
+      if (capabilities.Capability.Request.GetFeatureInfo.Format.indexOf(mimeType) !== -1) {
+        const keyEnum = Object.keys(QueryFormatMimeType).find(
+          key => QueryFormatMimeType[key] === mimeType
+        );
+        queryFormat = QueryFormat[keyEnum];
+        break;
+      }
+    }
+    if (!queryFormat) {
+      queryable = false;
+    }
 
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromCapabilities: {
@@ -202,6 +231,7 @@ export class CapabilitiesService {
         legendOptions
       },
       queryable,
+      queryFormat,
       timeFilter: timeFilterable ? timeFilter : undefined,
       timeFilterable: timeFilterable ? true : undefined
     });
