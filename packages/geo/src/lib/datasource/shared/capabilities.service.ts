@@ -28,6 +28,12 @@ import {
   TimeFilterStyle
 } from '../../filter/shared/time-filter.enum';
 
+export enum TypeCapabilities {
+  wms = 'wms', wmts = 'wmts'
+}
+
+export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -130,7 +136,7 @@ export class CapabilitiesService {
     maxCacheCount: 20
   })
   getCapabilities(
-    service: 'wms' | 'wmts',
+    service: TypeCapabilitiesStrings,
     baseUrl: string,
     version?: string
   ): Observable<any> {

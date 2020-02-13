@@ -5,18 +5,19 @@ import { TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
 import { QueryFormat, QueryHtmlTarget } from '../../query';
 
-import { CatalogItemType } from './catalog.enum';
+import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 
-export interface Catalog {
+export interface ICatalog {
   id: string;
   title: string;
   url: string;
   items?: CatalogItem[];
-  type?: string;
+  type?: TypeCatalogStrings;
   version?: string;
   matrixSet?: string;
   requestEncoding?: string;
   regFilters?: string[];
+  groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id and title)
   timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
   queryHtmlTarget?: QueryHtmlTarget;
@@ -29,10 +30,15 @@ export interface Catalog {
   showLegend?: boolean;
 }
 
+export interface ICompositeCatalog extends ICatalog {
+  composite: ICatalog[];
+}
+
 export interface CatalogItem {
   id: string;
   title: string;
   type: CatalogItemType;
+  address?: string;
 }
 
 export interface CatalogItemLayer<L = MetadataLayerOptions>
@@ -50,6 +56,6 @@ export interface CatalogItemState extends EntityState {
 
 export interface CatalogServiceOptions {
   baseLayers?: boolean;
-  sources?: Catalog[];
+  sources?: (ICatalog|ICompositeCatalog)[];
   sourcesUrl?: string;
 }

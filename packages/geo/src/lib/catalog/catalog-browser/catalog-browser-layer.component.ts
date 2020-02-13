@@ -151,6 +151,10 @@ export class CatalogBrowserLayerComponent implements OnInit {
     }
   }
 
+  haveGroup(): boolean {
+    return !(!this.layer.address || this.layer.address.split('.').length === 1);
+  }
+
   isInResolutionsRange(): boolean {
     const minResolution = this.layer.options.minResolution;
     const maxResolution = this.layer.options.maxResolution;
