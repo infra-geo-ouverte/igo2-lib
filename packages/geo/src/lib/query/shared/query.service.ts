@@ -240,6 +240,7 @@ export class QueryService {
         break;
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
+      case QueryFormat.GEOJSON2:
         features = this.extractGeoJSONData(res);
         break;
       case QueryFormat.ESRIJSON:
