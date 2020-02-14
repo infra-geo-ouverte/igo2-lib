@@ -20,7 +20,8 @@ import {
   SearchResult,
   IgoMap,
   moveToOlFeatures,
-  Research
+  Research,
+  createOverlayDefaultStyle
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -136,6 +137,11 @@ export class SearchResultsToolComponent implements OnInit {
    */
   onResultFocus(result: SearchResult) {
     if (result.meta.dataType === FEATURE) {
+      if (this.map.viewController.getZoom() < 11 && result.data.geometry.type !== 'Point') {
+        result.data.meta.style = createOverlayDefaultStyle({strokeWidth: 5});
+      } else if (this.map.viewController.getZoom() > 10 && result.data.geometry.type !== 'Point') {
+        result.data.meta.style = createOverlayDefaultStyle();
+      }
       this.map.overlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
     if (this.topPanelState === 'initial') {
@@ -207,6 +213,9 @@ export class SearchResultsToolComponent implements OnInit {
       return undefined;
     }
     const feature = (result as SearchResult<Feature>).data;
+    if (feature.geometry.type !== 'Point') {
+      feature.meta.style = createOverlayDefaultStyle();
+    }
 
     // Somethimes features have no geometry. It happens with some GetFeatureInfo
     if (feature.geometry === undefined) {

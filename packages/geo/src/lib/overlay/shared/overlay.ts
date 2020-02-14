@@ -1,3 +1,4 @@
+import { SearchSource } from './../../search/shared/sources/source';
 import OlFeature from 'ol/Feature';
 
 import {
@@ -63,8 +64,12 @@ export class Overlay {
    */
   setFeatures(
     features: Feature[],
-    motion: FeatureMotion = FeatureMotion.Default
+    motion: FeatureMotion = FeatureMotion.Default,
+    sourceId?: string
   ) {
+    // if (sourceId) {
+    //   this.removeFeatures(features);
+    // }
     this.clear();
     this.addFeatures(features, motion);
   }
