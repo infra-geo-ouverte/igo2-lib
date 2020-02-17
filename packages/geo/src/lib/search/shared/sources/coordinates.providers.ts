@@ -1,5 +1,3 @@
-import { HttpClient } from '@angular/common/http';
-
 import { ConfigService, LanguageService } from '@igo2/core';
 
 import { SearchSource } from './source';
@@ -8,6 +6,7 @@ import {
   CoordinatesSearchResultFormatter
 } from './coordinates';
 import { Projection } from '../../../map/shared/projection.interfaces';
+import { ProjectionService } from '../../../map/shared/projection.service';
 
 /**
  * ICherche search result formatter factory
@@ -36,12 +35,13 @@ export function provideDefaultCoordinatesSearchResultFormatter() {
  */
 export function CoordinatesReverseSearchSourceFactory(
   config: ConfigService,
-  languageService: LanguageService
+  languageService: LanguageService,
+  _projectionService: ProjectionService
 ) {
   return new CoordinatesReverseSearchSource(
     config.getConfig(`searchSources.${CoordinatesReverseSearchSource.id}`),
     languageService,
-    config.getConfig('projections') as Projection[] || []
+    (config.getConfig('projections') as Projection[]) || []
   );
 }
 
@@ -53,6 +53,6 @@ export function provideCoordinatesReverseSearchSource() {
     provide: SearchSource,
     useFactory: CoordinatesReverseSearchSourceFactory,
     multi: true,
-    deps: [ConfigService, LanguageService]
+    deps: [ConfigService, LanguageService, ProjectionService]
   };
 }
