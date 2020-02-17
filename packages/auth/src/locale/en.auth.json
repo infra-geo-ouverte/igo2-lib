@@ -13,6 +13,7 @@
       "error": {
         "Password expired": "Password expired",
         "Maximun logins exceeded": "Maximun logins exceeded",
+        "Login lockout": "Maximum number of attempts exceeded. Your account is locked.",
         "Wrong password": "Wrong password",
         "Invalid username": "Invalid username"
       }
