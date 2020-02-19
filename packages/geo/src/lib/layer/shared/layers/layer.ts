@@ -5,13 +5,12 @@ import {
   Subscription,
   combineLatest
 } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
 import { DataSource, Legend } from '../../../datasource';
-import { IgoMap } from '../../../map';
-
+import { IgoMap, getResolutionFromScale } from '../../../map';
 import { AuthInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
 import { LayerOptions } from './layer.interface';
@@ -126,8 +125,12 @@ export abstract class Layer {
       options.visible = false;
     }
 
-    this.maxResolution = options.maxResolution;
-    this.minResolution = options.minResolution;
+    this.maxResolution = options.maxResolution || getResolutionFromScale(
+      Number(options.maxScaleDenom)
+    );
+    this.minResolution = options.minResolution || getResolutionFromScale(
+      Number(options.minScaleDenom)
+    );
 
     this.visible = options.visible === undefined ? true : options.visible;
     this.opacity = options.opacity === undefined ? 1 : options.opacity;

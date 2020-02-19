@@ -15,6 +15,8 @@ export interface LayerOptions {
   zIndex?: number;
   minResolution?: number;
   maxResolution?: number;
+  minScaleDenom?: number;
+  maxScaleDenom?: number;
   showInLayerList?: boolean;
   removable?: boolean;
   legendOptions?: LegendOptions;
