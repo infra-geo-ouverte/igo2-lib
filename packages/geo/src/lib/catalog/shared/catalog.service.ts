@@ -296,14 +296,7 @@ export class CatalogService {
     );
   }
 
-  private prepareCatalogItemLayer(
-    layer,
-    idParent,
-    layersQueryFormat,
-    catalog,
-    catalogQueryParams,
-    catalogSourceOptions
-  ) {
+  private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -315,9 +308,8 @@ export class CatalogService {
         ? this.capabilitiesService.getStyle(layer.Style)
         : undefined;
 
-    const params = Object.assign({}, catalogQueryParams, {
+    const params = Object.assign({}, catalog.queryParams, {
       LAYERS: layer.Name,
-      FEATURE_COUNT: catalog.count,
       VERSION: catalog.version
     } as WMSDataSourceOptionsParams);
 
@@ -325,16 +317,16 @@ export class CatalogService {
       type: 'wms',
       url: catalog.url,
       crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
-      timeFilter: catalog.timeFilter,
       queryFormat: configuredQueryFormat,
-      queryHtmlTarget: catalog.queryHtmlTarget,
+      queryHtmlTarget:
+        configuredQueryFormat === QueryFormat.HTML ? 'iframe' : undefined,
       optionsFromCapabilities: true
     };
 
     const sourceOptions = Object.assign(
       {},
       baseSourceOptions,
-      catalogSourceOptions,
+      catalog.sourceOptions,
       { params }
     ) as WMSDataSourceOptions;
 
@@ -344,8 +336,7 @@ export class CatalogService {
       title: layer.Title,
       address: idParent,
       options: {
-        maxResolution:
-          getResolutionFromScale(layer.MaxScaleDenominator),
+        maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
@@ -365,9 +356,7 @@ export class CatalogService {
     regexes,
     idGroup,
     layersQueryFormat,
-    catalog,
-    catalogQueryParams,
-    catalogSourceOptions
+    catalog
   ) {
     const groupPrepare = {
       id: idGroup,
@@ -384,9 +373,7 @@ export class CatalogService {
             regexes,
             idGroupItemNextLevel,
             layersQueryFormat,
-            catalog,
-            catalogQueryParams,
-            catalogSourceOptions
+            catalog
           );
 
           items.push(groupItem);
@@ -401,9 +388,7 @@ export class CatalogService {
             layer,
             idGroup,
             layersQueryFormat,
-            catalog,
-            catalogQueryParams,
-            catalogSourceOptions
+            catalog
           );
 
           items.push(layerItem);
@@ -424,9 +409,6 @@ export class CatalogService {
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
-    const catalogQueryParams = catalog.queryParams || {};
-    const catalogSourceOptions = catalog.sourceOptions || {};
-
     if (!itemListIn.Layer) {
       return;
     }
@@ -450,9 +432,7 @@ export class CatalogService {
           regexes,
           idGroupItem,
           layersQueryFormat,
-          catalog,
-          catalogQueryParams,
-          catalogSourceOptions
+          catalog
         );
 
         if (groupItem.items.length !== 0) {
@@ -467,9 +447,7 @@ export class CatalogService {
           item,
           catalog.id,
           layersQueryFormat,
-          catalog,
-          catalogQueryParams,
-          catalogSourceOptions
+          catalog
         );
         itemsPrepare.push(layerItem);
       }
@@ -484,15 +462,13 @@ export class CatalogService {
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
-    const catalogQueryParams = catalog.queryParams || {};
-    const catalogSourceOptions = catalog.sourceOptions || {};
 
     return layers
       .map((layer: any) => {
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
-        const params = Object.assign({}, catalogQueryParams, {
+        const params = Object.assign({}, catalog.queryParams, {
           version: '1.0.0'
         });
         const baseSourceOptions = {
@@ -510,7 +486,7 @@ export class CatalogService {
         const sourceOptions = Object.assign(
           {},
           baseSourceOptions,
-          catalogSourceOptions,
+          catalog.sourceOptions,
           { params }
         ) as WMTSDataSourceOptions;
 

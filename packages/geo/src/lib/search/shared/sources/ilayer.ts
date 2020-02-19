@@ -9,6 +9,8 @@ import { ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LAYER } from '../../../layer';
+import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
+import { QueryHtmlTarget } from './../../../query/shared/query.enums';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
@@ -257,11 +259,16 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   private computeLayerOptions(data: ILayerData): ILayerItemResponse {
     const url = data.properties.url;
-    return {
+    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(
+      url
+    );
+    return ObjectUtils.removeUndefined({
       sourceOptions: {
         id: data.properties.id,
         type: data.properties.format,
         url,
+        queryFormat: queryParams.queryFormat,
+        queryHtmlTarget: queryParams.queryHtmlTarget,
         params: {
           LAYERS: data.properties.name
         },
@@ -269,15 +276,53 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         crossOrigin: 'anonymous'
       },
       title: data.properties.title,
-      maxResolution:
-        getResolutionFromScale(Number(data.properties.maxScaleDenom)),
-      minResolution:
-        getResolutionFromScale(Number(data.properties.minScaleDenom)),
+      maxResolution: getResolutionFromScale(
+        Number(data.properties.maxScaleDenom)
+      ),
+      minResolution: getResolutionFromScale(
+        Number(data.properties.minScaleDenom)
+      ),
       metadata: {
         url: data.properties.metadataUrl,
         extern: true
       },
       properties: this.formatter.formatResult(data).properties
+    });
+  }
+
+  private extractQueryParamsFromSourceUrl(
+    url: string
+  ): { queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget } {
+    let queryFormat;
+    let queryHtmlTarget;
+    const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
+    if (formatOpt) {
+      for (const key of Object.keys(formatOpt)) {
+        const value = formatOpt[key];
+        if (value === '*') {
+          queryFormat = QueryFormat[key.toUpperCase()];
+          break;
+        }
+
+        const urls = ((value as any) as { urls: string[] }).urls;
+        if (Array.isArray(urls)) {
+          urls.forEach(urlOpt => {
+            if (url.indexOf(urlOpt) !== -1) {
+              queryFormat = QueryFormat[key.toUpperCase()];
+            }
+          });
+          break;
+        }
+      }
+
+      if (queryFormat === QueryFormat.HTML) {
+        queryHtmlTarget = 'iframe';
+      }
+    }
+
+    return {
+      queryFormat,
+      queryHtmlTarget
     };
   }
 }
