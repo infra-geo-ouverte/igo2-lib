@@ -75,7 +75,7 @@ export abstract class Layer {
   > = new BehaviorSubject(false);
 
   set maxResolution(value: number) {
-    this.ol.setMaxResolution(value);
+    this.ol.setMaxResolution(value || Infinity);
     this.updateInResolutionsRange();
   }
   get maxResolution(): number {
@@ -83,7 +83,7 @@ export abstract class Layer {
   }
 
   set minResolution(value: number) {
-    this.ol.setMinResolution(value);
+    this.ol.setMinResolution(value || 0);
     this.updateInResolutionsRange();
   }
   get minResolution(): number {
@@ -126,12 +126,8 @@ export abstract class Layer {
       options.visible = false;
     }
 
-    if (options.maxResolution !== undefined) {
-      this.maxResolution = options.maxResolution;
-    }
-    if (options.minResolution !== undefined) {
-      this.minResolution = options.minResolution;
-    }
+    this.maxResolution = options.maxResolution;
+    this.minResolution = options.minResolution;
 
     this.visible = options.visible === undefined ? true : options.visible;
     this.opacity = options.opacity === undefined ? 1 : options.opacity;
@@ -179,8 +175,8 @@ export abstract class Layer {
   private updateInResolutionsRange() {
     if (this.map !== undefined) {
       const resolution = this.map.viewController.getResolution();
-      const minResolution = this.minResolution || 0;
-      const maxResolution = this.maxResolution || Infinity;
+      const minResolution = this.minResolution;
+      const maxResolution = this.maxResolution;
       this.isInResolutionsRange =
         resolution >= minResolution && resolution <= maxResolution;
     } else {

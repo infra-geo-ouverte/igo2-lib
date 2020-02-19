@@ -9,8 +9,6 @@ import { ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LAYER } from '../../../layer';
-import { QueryableDataSourceOptions, QueryFormat } from '../../../query';
-import { QueryHtmlTarget } from './../../../query/shared/query.enums';
 
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
@@ -259,9 +257,6 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
 
   private computeLayerOptions(data: ILayerData): ILayerItemResponse {
     const url = data.properties.url;
-    const queryParams: QueryableDataSourceOptions = this.extractQueryParamsFromSourceUrl(
-      url
-    );
     return {
       sourceOptions: {
         id: data.properties.id,
@@ -275,51 +270,14 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       },
       title: data.properties.title,
       maxResolution:
-        getResolutionFromScale(Number(data.properties.maxScaleDenom)) ||
-        Infinity,
+        getResolutionFromScale(Number(data.properties.maxScaleDenom)),
       minResolution:
-        getResolutionFromScale(Number(data.properties.minScaleDenom)) || 0,
+        getResolutionFromScale(Number(data.properties.minScaleDenom)),
       metadata: {
         url: data.properties.metadataUrl,
         extern: true
       },
       properties: this.formatter.formatResult(data).properties
-    };
-  }
-
-  private extractQueryParamsFromSourceUrl(
-    url: string
-  ): { queryFormat: QueryFormat; queryHtmlTarget: QueryHtmlTarget } {
-    let queryFormat = QueryFormat.GML2;
-    let queryHtmlTarget;
-    const formatOpt = (this.options as ILayerSearchSourceOptions).queryFormat;
-    if (formatOpt) {
-      for (const key of Object.keys(formatOpt)) {
-        const value = formatOpt[key];
-        if (value === '*') {
-          queryFormat = QueryFormat[key.toUpperCase()];
-          break;
-        }
-
-        const urls = ((value as any) as { urls: string[] }).urls;
-        if (Array.isArray(urls)) {
-          urls.forEach(urlOpt => {
-            if (url.indexOf(urlOpt) !== -1) {
-              queryFormat = QueryFormat[key.toUpperCase()];
-            }
-          });
-          break;
-        }
-      }
-    }
-
-    if (queryFormat === QueryFormat.HTML) {
-      queryHtmlTarget = 'iframe';
-    }
-
-    return {
-      queryFormat,
-      queryHtmlTarget
     };
   }
 }

@@ -190,8 +190,8 @@ export class CapabilitiesService {
       _layerOptionsFromSource: {
         title: layer.Title,
         maxResolution:
-          getResolutionFromScale(layer.MaxScaleDenominator) || Infinity,
-        minResolution: getResolutionFromScale(layer.MinScaleDenominator) || 0,
+          getResolutionFromScale(layer.MaxScaleDenominator),
+        minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
