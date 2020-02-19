@@ -40,7 +40,7 @@ export class OptionsApiService extends OptionsService {
           sourceOptions: WMSDataSourceOptions;
           layerOptions: { [keys: string]: string };
         }) => {
-          if (!res.sourceOptions) {
+          if (!res || !res.sourceOptions) {
             return {} as WMSDataSourceOptions;
           }
           res.sourceOptions._layerOptionsFromSource = res.layerOptions;
