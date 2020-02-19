@@ -93,8 +93,7 @@ export class ShareMapService {
     )) {
       if (contextLayersID.indexOf(layer.id) === -1) {
         const wmsUrl = (layer.dataSource.options as any).url;
-        // Replacing grouped layers ex: layer1,layer2 by layer1+layer2 for avoid splitting on url interpreting.
-        const addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS.replace(/,/g, '+'));
+        const addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
         if (
