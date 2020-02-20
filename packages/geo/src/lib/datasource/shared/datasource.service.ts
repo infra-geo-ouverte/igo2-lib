@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@angular/core';
 import { forkJoin, of, Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 import { CapabilitiesService } from './capabilities.service';
 import { OptionsService } from './options/options.service';
@@ -150,7 +150,9 @@ export class DataSourceService {
     }
 
     if (this.optionsService && context.optionsFromApi !== false) {
-      observables.push(this.optionsService.getWMSOptions(context));
+      observables.push(this.optionsService.getWMSOptions(context).pipe(
+        catchError(_e => of({}))
+      ));
     }
 
     observables.push(of(context));
