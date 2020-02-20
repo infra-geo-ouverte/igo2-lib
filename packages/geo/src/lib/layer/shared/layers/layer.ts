@@ -9,10 +9,13 @@ import { map } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
-import { DataSource, Legend } from '../../../datasource';
-import { IgoMap, getResolutionFromScale } from '../../../map';
 import { AuthInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
+
+import { DataSource, Legend } from '../../../datasource';
+import { IgoMap } from '../../../map/shared/map';
+import { getResolutionFromScale } from '../../../map/shared/map.utils';
+
 import { LayerOptions } from './layer.interface';
 
 export abstract class Layer {
@@ -125,12 +128,8 @@ export abstract class Layer {
       options.visible = false;
     }
 
-    this.maxResolution = options.maxResolution || getResolutionFromScale(
-      Number(options.maxScaleDenom)
-    );
-    this.minResolution = options.minResolution || getResolutionFromScale(
-      Number(options.minScaleDenom)
-    );
+    this.maxResolution = options.maxResolution || getResolutionFromScale(Number(options.maxScaleDenom));
+    this.minResolution = options.minResolution || getResolutionFromScale(Number(options.minScaleDenom));
 
     this.visible = options.visible === undefined ? true : options.visible;
     this.opacity = options.opacity === undefined ? 1 : options.opacity;
