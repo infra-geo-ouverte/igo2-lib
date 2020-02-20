@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ConfigService } from '@igo2/core';
-
 import { WMSDataSourceOptions } from '../datasources';
 import { OptionsService } from './options.service';
+import { OptionsApiOptions } from './options-api.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +13,9 @@ import { OptionsService } from './options.service';
 export class OptionsApiService extends OptionsService {
   private urlApi = '/apis/igo2/layers/options';
 
-  constructor(private http: HttpClient, private configService: ConfigService) {
+  constructor(private http: HttpClient, @Inject('options') options: OptionsApiOptions = {}) {
     super();
-    this.urlApi = this.configService.getConfig('optionsApi.url') || this.urlApi;
+    this.urlApi = options.url || this.urlApi;
   }
 
   getWMSOptions(
