@@ -61,16 +61,22 @@ export class Overlay {
    * Set the overlay features and, optionally, move to them
    * @param features Features
    * @param motion Optional: Apply this motion to the map view
+   * @param sourceId Optional: Remove features of certain sourceId (ex: 'Map' for query features)
    */
   setFeatures(
     features: Feature[],
     motion: FeatureMotion = FeatureMotion.Default,
     sourceId?: string
   ) {
-    // if (sourceId) {
-    //   this.removeFeatures(features);
-    // }
-    this.clear();
+    if (sourceId) {
+      for (const olFeature of this.dataSource.ol.getFeatures()) {
+        if (olFeature.get('_sourceId') === sourceId) {
+          this.removeOlFeature(olFeature);
+        }
+      }
+    } else {
+      this.clear();
+    }
     this.addFeatures(features, motion);
   }
 

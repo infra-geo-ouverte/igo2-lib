@@ -108,7 +108,7 @@ export class ListItemDirective {
     this.selected = true;
   }
 
-  constructor(public renderer: Renderer2, private el: ElementRef) {}
+  constructor(public renderer: Renderer2, public el: ElementRef) {}
 
   getOffsetTop(): number {
     const padding = 5;

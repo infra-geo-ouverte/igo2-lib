@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, HostListener } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, ElementRef } from '@angular/core';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -7,7 +7,8 @@ import {
   EntityStore,
   ToolComponent,
   FlexibleState,
-  getEntityTitle
+  getEntityTitle,
+  FlexibleComponent
 } from '@igo2/common';
 
 import {
@@ -99,18 +100,11 @@ export class SearchResultsToolComponent implements OnInit {
 
   private format = new olFormatGeoJSON();
 
-  @HostListener('document:keydown.enter', ['$event']) onSelectHandler(event: KeyboardEvent) {
-    for (const result of this.store.all()) {
-      if (this.store.state.get(result).focused === true){
-        this.onResultSelect(result);
-      }
-    }
-  }
-
   constructor(
     private mapState: MapState,
     private layerService: LayerService,
-    private searchState: SearchState
+    private searchState: SearchState,
+    private elRef: ElementRef,
   ) {}
 
   ngOnInit() {
@@ -137,15 +131,14 @@ export class SearchResultsToolComponent implements OnInit {
    */
   onResultFocus(result: SearchResult) {
     if (result.meta.dataType === FEATURE) {
-      if (this.map.viewController.getZoom() < 11 && result.data.geometry.type !== 'Point') {
-        result.data.meta.style = createOverlayDefaultStyle({strokeWidth: 5});
+      if (this.map.viewController.getZoom() < 11 && (result.data.geometry.type === 'MultiLineString' || result.data.geometry.type === 'LineString')) {
+        result.data.meta.style = createOverlayDefaultStyle({strokeWidth: 10});
+      } else if (this.map.viewController.getZoom() < 11 && (result.data.geometry.type === 'MultiPolygon' || result.data.geometry.type === 'Polygon')) {
+        result.data.meta.style = createOverlayDefaultStyle({strokeWidth: 2});
       } else if (this.map.viewController.getZoom() > 10 && result.data.geometry.type !== 'Point') {
         result.data.meta.style = createOverlayDefaultStyle();
       }
       this.map.overlay.addFeature(result.data as Feature, FeatureMotion.None);
-    }
-    if (this.topPanelState === 'initial') {
-      this.toggleTopPanel();
     }
   }
 
@@ -191,6 +184,21 @@ export class SearchResultsToolComponent implements OnInit {
       this.topPanelState = 'collapsed';
     } else {
       this.topPanelState = 'expanded';
+
+      const items = document.getElementsByTagName('igo-search-results-item');
+      const igoList = this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
+      let selectedItem;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].className === 'ng-star-inserted igo-list-item-selected') {
+          selectedItem = items[i];
+        }
+      }
+
+      setTimeout(() => { // To be sure the flexible component has been displayed yet
+        if (!this.isScrolledIntoView(igoList, selectedItem)) {
+          igoList.scrollTop = selectedItem.offsetTop + selectedItem.children[0].offsetHeight - igoList.clientHeight;
+        }
+      }, FlexibleComponent.transitionTime + 100);
     }
   }
 
@@ -241,5 +249,15 @@ export class SearchResultsToolComponent implements OnInit {
     this.layerService
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
+  }
+
+  isScrolledIntoView(elemSource, elem) {
+    const padding = 6;
+    const docViewTop = elemSource.scrollTop;
+    const docViewBottom = docViewTop + elemSource.clientHeight;
+
+    const elemTop = elem.offsetTop;
+    const elemBottom = elemTop + elem.clientHeight + padding;
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
   }
 }
