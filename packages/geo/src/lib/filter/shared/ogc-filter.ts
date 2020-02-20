@@ -536,6 +536,7 @@ export class OgcFilterWriter {
         appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
       });
     }
+    appliedFilter = appliedFilter.replace(/\(\)/g, '');
     const filterValue = appliedFilter.length > 0 ? appliedFilter.replace('filter=', '') : undefined;
     return filterValue;
   }
