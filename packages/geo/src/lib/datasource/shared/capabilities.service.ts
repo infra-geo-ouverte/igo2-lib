@@ -166,6 +166,10 @@ export class CapabilitiesService {
         } catch (e) {
           return undefined;
         }
+      }),
+      catchError(e => {
+        e.error.caught = true;
+        throw e;
       })
     );
   }
@@ -202,7 +206,11 @@ export class CapabilitiesService {
     ];
 
     for (const mimeType of queryFormatMimeTypePriority) {
-      if (capabilities.Capability.Request.GetFeatureInfo.Format.indexOf(mimeType) !== -1) {
+      if (
+        capabilities.Capability.Request.GetFeatureInfo.Format.indexOf(
+          mimeType
+        ) !== -1
+      ) {
         const keyEnum = Object.keys(QueryFormatMimeType).find(
           key => QueryFormatMimeType[key] === mimeType
         );
@@ -217,8 +225,7 @@ export class CapabilitiesService {
     const options: WMSDataSourceOptions = ObjectUtils.removeUndefined({
       _layerOptionsFromSource: {
         title: layer.Title,
-        maxResolution:
-          getResolutionFromScale(layer.MaxScaleDenominator),
+        maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,

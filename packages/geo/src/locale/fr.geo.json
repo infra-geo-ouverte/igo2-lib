@@ -16,6 +16,10 @@
       "baselayersSwitcher": {
         "title": "Fonds de carte"
       },
+      "dataSource": {
+        "optionsApiUnavailable": "L'information sur les couches n'a pas pu être récupérée. Certaines couches pourraient ne pas présenter la bonne information.",
+        "unavailable": "La couche '{{value}}' est indisponible pour le moment."
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
