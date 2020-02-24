@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Injectable, Optional } from '@angular/core';
+import { forkJoin, of, Observable, BehaviorSubject } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 import { CapabilitiesService } from './capabilities.service';
+import { OptionsService } from './options/options.service';
 import { WFSService } from './datasources/wfs.service';
 import {
   DataSource,
@@ -41,6 +42,7 @@ export class DataSourceService {
 
   constructor(
     private capabilitiesService: CapabilitiesService,
+    @Optional() private optionsService: OptionsService,
     private wfsDataSourceService: WFSService
   ) {}
 
@@ -142,18 +144,26 @@ export class DataSourceService {
   private createWMSDataSource(
     context: WMSDataSourceOptions
   ): Observable<WMSDataSource> {
+    const observables = [];
     if (context.optionsFromCapabilities) {
-      return this.capabilitiesService.getWMSOptions(context).pipe(
-        map((options: WMSDataSourceOptions) => {
-          return options
-            ? new WMSDataSource(options, this.wfsDataSourceService)
-            : undefined;
-        })
-      );
+      observables.push(this.capabilitiesService.getWMSOptions(context));
     }
 
-    return new Observable(d =>
-      d.next(new WMSDataSource(context, this.wfsDataSourceService))
+    if (this.optionsService && context.optionsFromApi !== false) {
+      observables.push(this.optionsService.getWMSOptions(context).pipe(
+        catchError(_e => of({}))
+      ));
+    }
+
+    observables.push(of(context));
+
+    return forkJoin(observables).pipe(
+      map((options: WMSDataSourceOptions[]) => {
+        const optionsMerged = options.reduce((a, b) =>
+          ObjectUtils.mergeDeep(a, b)
+        );
+        return new WMSDataSource(optionsMerged, this.wfsDataSourceService);
+      })
     );
   }
 

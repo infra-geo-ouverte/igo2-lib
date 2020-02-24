@@ -156,8 +156,8 @@ export class CatalogBrowserLayerComponent implements OnInit {
   }
 
   isInResolutionsRange(): boolean {
-    const minResolution = this.layer.options.minResolution;
-    const maxResolution = this.layer.options.maxResolution;
+    const minResolution = this.layer.options.minResolution || 0;
+    const maxResolution = this.layer.options.maxResolution || Infinity;
     this.inRange$.next(
       this.resolution >= minResolution && this.resolution <= maxResolution
     );

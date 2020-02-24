@@ -127,7 +127,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     return this.capabilitiesService
       .getWMSOptions(localLayerOptions)
       .pipe(map(wmsDataSourceOptions => {
-        return wmsDataSourceOptions._layerOptionsFromCapabilities.title;
+        return wmsDataSourceOptions._layerOptionsFromSource.title;
       }));
   }
 
