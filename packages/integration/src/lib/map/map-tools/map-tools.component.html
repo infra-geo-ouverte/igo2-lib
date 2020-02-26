@@ -1,0 +1,35 @@
+<mat-tab-group [selectedIndex]="selectedTab">
+
+
+  <mat-tab [label]="'igo.integration.tools.layers' | translate">
+    <igo-layer-list
+      igoLayerListBinding
+      [excludeBaseLayers]="excludeBaseLayers"
+      [layerFilterAndSortOptions]="layerFilterAndSortOptions"
+      [expandLegendOfVisibleLayers]="expandLegendOfVisibleLayers"
+      [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
+      [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
+      [floatLabel]="false"
+      [queryBadge]="queryBadge">
+
+      <ng-template #igoLayerItemToolbar let-layer="layer">
+        <igo-download-button [layer]="layer"></igo-download-button>
+        <igo-metadata-button [layer]="layer"></igo-metadata-button>
+        <igo-ogc-filter-button [header]="ogcButton" [layer]="layer"></igo-ogc-filter-button>
+        <igo-time-filter-button [header]="timeButton" [layer]="layer"></igo-time-filter-button>
+        <igo-track-feature-button [trackFeature]="true" [layer]="layer"></igo-track-feature-button>
+      </ng-template>
+
+    </igo-layer-list>
+  </mat-tab>
+
+  <mat-tab [label]="'igo.integration.tools.legend' | translate">
+    <igo-layer-legend-list
+      igoLayerLegendListBinding
+      [excludeBaseLayers]="excludeBaseLayers"
+      [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
+    </igo-layer-legend-list>
+  </mat-tab>
+
+
+</mat-tab-group>

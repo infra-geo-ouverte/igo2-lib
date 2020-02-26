@@ -131,7 +131,8 @@
           "loadingLegendText": "Loading legend",
           "noLegendText": "No legend available for this layer",
           "noLegendScale": "No legend available for this scale",
-          "selectStyle": "Select the style of the legend"
+          "selectStyle": "Select the style of the legend",
+          "showAll" : "Show all legends (non visible and out of range)"
         }
       },
       "download": {

@@ -131,7 +131,8 @@
           "loadingLegendText": "Chargement de la légende",
           "noLegendText": "Aucune légende disponible pour cette couche",
           "noLegendScale": "Aucune légende disponible pour cette échelle",
-          "selectStyle": "Sélectionner le style de la légende"
+          "selectStyle": "Sélectionner le style de la légende",
+          "showAll" : "Montrer toutes les légendes (non visible and hors échelle)"
         }
       },
       "download": {
