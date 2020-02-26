@@ -63,7 +63,7 @@ export class AppLegendComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: 'geojson_utf8',
+        outputFormat: undefined,
         outputFormatDownload: 'shp'
       },
       ogcFilters: {

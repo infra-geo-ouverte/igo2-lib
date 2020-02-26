@@ -15,10 +15,9 @@ export class MapState {
   }
 
   set showAllLegendsValue(value) {
-    this._legendToolShowAll = value; 
+    this._legendToolShowAll = value;
   }
   private _legendToolShowAll: boolean = false;
-
 
   /**
    * Active map

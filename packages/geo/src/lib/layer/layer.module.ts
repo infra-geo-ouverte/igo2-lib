@@ -34,7 +34,6 @@ import { TrackFeatureButtonComponent } from './track-feature-button/track-featur
 import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
 import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
 
-
 @NgModule({
   imports: [
     MatInputModule,
@@ -44,7 +43,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     MatDividerModule,
     MatIconModule,
     MatButtonModule,
-    MatSlideToggleModule,    
+    MatSlideToggleModule,
     MatSelectModule,
     MatTooltipModule,
     MatListModule,
