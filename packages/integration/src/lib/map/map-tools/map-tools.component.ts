@@ -60,9 +60,9 @@ export class MapToolsComponent {
     return filterSortOptions;
   }
 
-  public selectedTab(): Number {
+  public selectedTab(): number {
     if (this.selectedTabAtOpening === 'legend') {
-      return 1
+      return 1;
     }
     return 0;
   }

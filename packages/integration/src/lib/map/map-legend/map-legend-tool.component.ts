@@ -32,7 +32,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   @Input() layerAdditionAllowed: boolean = true;
 
   @Input() allowShowAllLegends: boolean = false;
-  
+
   @Input() showAllLegendsValue: boolean = false;
 
   @Input() layerListControls: LayerListControlsOptions = {};
@@ -46,7 +46,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
         map(
           layers => layers
             .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value)
-        ))
+        ));
   }
 
   get visibleLayers$(): Observable<Layer[]> {
@@ -54,7 +54,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
         map(
           layers => layers
             .filter(layer => layer.visible$.value)
-        ))
+        ));
   }
 
   get excludeBaseLayers(): boolean {
@@ -81,8 +81,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
         this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
       ));
 
-
-      this.showAllLegendsValue$.next(this.showAllLegendsValue ? this.showAllLegendsValue : this.mapState.showAllLegendsValue)
+    this.showAllLegendsValue$.next(this.showAllLegendsValue ? this.showAllLegendsValue : this.mapState.showAllLegendsValue);
 
   }
 

@@ -62,7 +62,7 @@ export class AppOgcFilterComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: 'geojson',
+        outputFormat: undefined,
         outputFormatDownload: 'SHP' // based on service capabilities
       },
       sourceFields: [
