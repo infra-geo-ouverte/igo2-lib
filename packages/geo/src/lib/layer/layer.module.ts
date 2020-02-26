@@ -10,7 +10,9 @@ import {
   MatListModule,
   MatSliderModule,
   MatBadgeModule,
-  MatSelectModule
+  MatSelectModule,
+  MatSlideToggleModule,
+  MatDividerModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -27,7 +29,11 @@ import { LayerItemComponent } from './layer-item/layer-item.component';
 import { LayerLegendComponent } from './layer-legend/layer-legend.component';
 import { LayerListComponent } from './layer-list/layer-list.component';
 import { LayerListBindingDirective } from './layer-list/layer-list-binding.directive';
+import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legend-list-binding.directive';
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
+import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
+import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
+
 
 @NgModule({
   imports: [
@@ -35,8 +41,10 @@ import { TrackFeatureButtonComponent } from './track-feature-button/track-featur
     MatFormFieldModule,
     CommonModule,
     FormsModule,
+    MatDividerModule,
     MatIconModule,
     MatButtonModule,
+    MatSlideToggleModule,    
     MatSelectModule,
     MatTooltipModule,
     MatListModule,
@@ -49,16 +57,22 @@ import { TrackFeatureButtonComponent } from './track-feature-button/track-featur
   ],
   exports: [
     LayerItemComponent,
+    LayerLegendItemComponent,
     LayerLegendComponent,
     LayerListComponent,
+    LayerLegendListComponent,
     LayerListBindingDirective,
+    LayerLegendListBindingDirective,
     TrackFeatureButtonComponent
   ],
   declarations: [
     LayerItemComponent,
+    LayerLegendItemComponent,
     LayerLegendComponent,
     LayerListComponent,
+    LayerLegendListComponent,
     LayerListBindingDirective,
+    LayerLegendListBindingDirective,
     TrackFeatureButtonComponent
   ]
 })

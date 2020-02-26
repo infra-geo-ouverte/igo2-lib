@@ -1,0 +1,13 @@
+
+<mat-slide-toggle [checked]="showAllLegendsValue" class="mat-typography" *ngIf="allowShowAllLegends" [labelPosition]="'before'" (change)="toggleShowAllLegends($event.checked)">
+  {{'igo.geo.layer.legend.showAll' | translate}}
+</mat-slide-toggle>
+<mat-divider *ngIf="allowShowAllLegends"></mat-divider>
+<igo-list [navigation]="false" [selection]="false">
+  <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
+    <igo-layer-legend-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
+        igoListItem [layer]="layer"
+        [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
+    </igo-layer-legend-item>
+  </ng-template>
+</igo-list>
