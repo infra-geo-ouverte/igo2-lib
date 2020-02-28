@@ -1,5 +1,5 @@
 <igo-list [navigation]="true">
-  <mat-form-field class="contextFilter">
+  <mat-form-field *ngIf="showFilter()" class="contextFilter">
     <input
       matInput
       type="text"

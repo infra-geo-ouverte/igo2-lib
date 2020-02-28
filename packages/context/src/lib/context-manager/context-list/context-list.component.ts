@@ -10,6 +10,7 @@ import {
 import { AuthService } from '@igo2/auth';
 
 import { DetailedContext, ContextsList } from '../shared/context.interface';
+import { ContextListControlsEnum } from './context-list.enum';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -79,6 +80,10 @@ export class ContextListComponent implements OnInit {
   public term$: BehaviorSubject<string> = new BehaviorSubject('');
   term$$: Subscription;
 
+  public showContextFilter = ContextListControlsEnum.default;
+
+  public thresholdToFilter = 5;
+
   constructor(private cdRef: ChangeDetectorRef, public auth: AuthService) {}
 
   ngOnInit() {
@@ -118,5 +123,22 @@ export class ContextListComponent implements OnInit {
         this.contexts$.next(updateContexts);
       }
     });
+  }
+
+  public showFilter() {
+    switch (this.showContextFilter) {
+      case ContextListControlsEnum.always:
+        return true;
+      case ContextListControlsEnum.never:
+        return false;
+      default:
+        let totalLength = this.contexts.ours.length;
+        this.contexts.public ? totalLength += this.contexts.public.length : totalLength += 0;
+        this.contexts.shared ? totalLength += this.contexts.shared.length : totalLength += 0;
+        if (totalLength >= this.thresholdToFilter) {
+          return true;
+        }
+        return false;
+    }
   }
 }
