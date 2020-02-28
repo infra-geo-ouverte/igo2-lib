@@ -209,7 +209,7 @@ export class OgcFilterFormComponent implements OnInit {
         let wktPoly;
         if (filter.igoSpatialSelector === 'snrc') {
           if (value === '' && this.snrc !== '') {
-            wktPoly = this.wktService.snrcToWkt(this.snrc).wktPoly;
+            wktPoly = this.wktService.snrcToWkt(this.snrc, this.map.projection).wktPoly;
             element.wkt_geometry = wktPoly;
           } else if (
             value !== '' &&
@@ -217,13 +217,13 @@ export class OgcFilterFormComponent implements OnInit {
               checkSNRC250k.test(value) ||
               checkSNRC50k.test(value))
           ) {
-            wktPoly = this.wktService.snrcToWkt(value).wktPoly;
+            wktPoly = this.wktService.snrcToWkt(value, this.map.projection).wktPoly;
             element.wkt_geometry = wktPoly;
           }
         } else if (filter.igoSpatialSelector === 'fixedExtent') {
           wktPoly = this.wktService.extentToWkt(
             mapProjection,
-            this.map.getExtent(),
+            this.map.viewController.getExtent(),
             mapProjection
           ).wktPoly;
           element.wkt_geometry = wktPoly;

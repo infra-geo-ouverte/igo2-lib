@@ -1,6 +1,6 @@
 <mat-list-item>
-  <mat-icon mat-list-avatar svgIcon="blank"></mat-icon>
-  <h4 mat-line matTooltipShowDelay="500" [matTooltip]="title">{{title}}</h4>
+  <mat-icon *ngIf="haveGroup()" mat-list-avatar svgIcon="blank"></mat-icon>
+  <h4 mat-line matTooltipShowDelay="500" [ngClass]="(catalogAllowLegend)?'igo-cataloglayer-title':''" (click)="askForLegend($event)" [matTooltip]="title">{{title}}</h4>
 
   <igo-metadata-button [layer]="layer"></igo-metadata-button>
 
@@ -24,3 +24,10 @@
   </button>
 
 </mat-list-item>
+
+<div #legend class="igo-cataloglayer-legend-container">
+  <igo-layer-legend
+    *ngIf="(layerLegendShown$ | async) && (igoLayer$ | async) && catalogAllowLegend"
+    [layer]="igoLayer$ | async">
+  </igo-layer-legend>
+</div>

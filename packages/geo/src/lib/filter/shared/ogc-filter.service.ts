@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import olProjection from 'ol/proj/Projection';
+
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { OgcFilterWriter } from './ogc-filter';
 import { OgcFilterableDataSource } from './ogc-filter.interface';
@@ -21,6 +23,7 @@ export class OGCFilterService {
       options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
         options.ogcFilters.filters,
         options.paramsWFS.fieldNameGeometry,
+        new olProjection({ code: options.paramsWFS.srsName }),
         true
       );
       if (!options.ogcFilters.interfaceOgcFilters) {
@@ -40,6 +43,7 @@ export class OGCFilterService {
       options.ogcFilters.filters = ogcFilterWriter.checkIgoFiltersProperties(
         options.ogcFilters.filters,
         options.fieldNameGeometry,
+        undefined,
         true
       );
       if (!options.ogcFilters.interfaceOgcFilters) {

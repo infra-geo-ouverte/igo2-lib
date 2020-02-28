@@ -5,6 +5,7 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
+import { ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LAYER } from '../../../layer';
@@ -97,6 +98,25 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
       settings: [
         {
+          type: 'checkbox',
+          title: 'results type',
+          name: 'type',
+          values: [
+            {
+              title: 'igo.geo.search.ilayer.type.layer',
+              value: 'layer',
+              enabled: true,
+              hashtags: ['layer', 'layers', 'couche', 'couches']
+            },
+            {
+              title: 'igo.geo.search.ilayer.type.groupLayer',
+              value: 'group',
+              enabled: false,
+              hashtags: ['gr-layer', 'gr-layers', 'gr-couche', 'gr-couches']
+            }
+          ]
+        },
+        {
           type: 'radiobutton',
           title: 'results limit',
           name: 'limit',
@@ -142,9 +162,11 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options?: TextSearchOptions
   ): Observable<SearchResult<ILayerItemResponse>[]> {
     const params = this.computeSearchRequestParams(term, options || {});
-    if (!params.get('q')) {
+    if (!params.get('q') || !params.get('type')) {
       return of([]);
     }
+    this.options.params.page = params.get('page') || '1';
+
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
@@ -157,14 +179,17 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     options: TextSearchOptions
   ): HttpParams {
     return new HttpParams({
-      fromObject: Object.assign(
+      fromObject: ObjectUtils.removeUndefined(Object.assign(
         {
           q: this.computeTerm(term)
         },
         this.params,
-        options.params || {}
+        this.computeOptionsParam(term, options || {}).params,
+        {
+          page: options.page
+        }
       )
-    });
+    )});
   }
 
   /**
@@ -172,26 +197,35 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
    * @param term Query with hashtag
    */
   private computeTerm(term: string): string {
-    const hashtags = term.match(/(#[^\s]+)/g);
-    if (hashtags) {
-      const validHashtags = ['layer', 'layers', 'couche', 'couches'];
-      const valid = hashtags.filter(h =>
-        validHashtags.some(v => h === '#' + v)
-      );
-      if (!valid.length) {
-        return null;
-      }
-    }
     return term.replace(/(#[^\s]*)/g, '').replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
+  }
+
+  /**
+   * Add hashtag to param if valid
+   * @param term Query with hashtag
+   * @param options TextSearchOptions
+   */
+  private computeOptionsParam(
+    term: string,
+    options: TextSearchOptions
+  ): TextSearchOptions {
+    const hashtags = super.getHashtagsValid(term, 'type');
+    if (hashtags) {
+      options.params = Object.assign(options.params || {}, {
+        type: hashtags.join(',')
+      });
+    }
+
+    return options;
   }
 
   private extractResults(
     response: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse>[] {
-    return response.items.map((data: ILayerData) => this.dataToResult(data));
+    return response.items.map((data: ILayerData) => this.dataToResult(data, response));
   }
 
-  private dataToResult(data: ILayerData): SearchResult<ILayerItemResponse> {
+  private dataToResult(data: ILayerData, response?: ILayerServiceResponse): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
 
     const titleHtml = data.highlight.title || data.properties.title;
@@ -207,7 +241,8 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         id: [this.getId(), data.properties.id].join('.'),
         title: data.properties.title,
         titleHtml: titleHtml + subtitleHtml,
-        icon: data.properties.type === 'Layer' ? 'layers' : 'map'
+        icon: data.properties.type === 'Layer' ? 'layers' : 'map',
+        nextPage: response.items.length % +this.options.params.limit === 0 && +this.options.params.page < 10
       },
       data: layerOptions
     };
@@ -237,6 +272,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         Infinity,
       minResolution:
         getResolutionFromScale(Number(data.properties.minScaleDenom)) || 0,
+      metadata: {
+        url: data.properties.metadataUrl,
+        extern: true
+      },
       properties: this.formatter.formatResult(data).properties
     };
   }

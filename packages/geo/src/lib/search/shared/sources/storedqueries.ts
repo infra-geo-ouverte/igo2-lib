@@ -80,12 +80,12 @@ export class StoredQueriesSearchSource extends SearchSource
 
     if (!this.storedQueriesOptions.storedquery_id) {
       const err =
-        'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie". You will use de the default values.';
+        'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';
       throw new Error(err);
     }
     if (!this.storedQueriesOptions.fields) {
       throw new Error(
-        'Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}. You will use de the default values.'
+        'Stored Queries :You have to set "fields" into options. ex: fields: {"name": "rtss", "defaultValue": "-99"}'
       );
     }
 
@@ -452,7 +452,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
     return new HttpParams({
       fromObject: Object.assign(
         {
-          service: 'wfs',
+          service: 'WFS',
           version: '1.1.0',
           request: 'GetFeature',
           storedquery_id: this.storedQueriesOptions.storedquery_id,

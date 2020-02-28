@@ -4,8 +4,8 @@ import { MatCardModule, MatButtonModule } from '@angular/material';
 import { IgoMessageModule } from '@igo2/core';
 import {
   IgoMapModule,
-  IgoRoutingModule,
-  provideOsrmRoutingSource
+  IgoDirectionsModule,
+  provideOsrmDirectionsSource
 } from '@igo2/geo';
 
 import { AppDirectionsComponent } from './directions.component';
@@ -19,9 +19,9 @@ import { AppDirectionsRoutingModule } from './directions-routing.module';
     MatButtonModule,
     IgoMessageModule,
     IgoMapModule,
-    IgoRoutingModule
+    IgoDirectionsModule
   ],
   exports: [AppDirectionsComponent],
-  providers: [provideOsrmRoutingSource()]
+  providers: [provideOsrmDirectionsSource()]
 })
 export class AppDirectionsModule {}

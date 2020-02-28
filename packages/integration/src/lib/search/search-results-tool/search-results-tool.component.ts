@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 
@@ -19,7 +19,8 @@ import {
   LAYER,
   SearchResult,
   IgoMap,
-  moveToOlFeatures
+  moveToOlFeatures,
+  Research
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -39,7 +40,7 @@ import { SearchState } from '../search.state';
   templateUrl: './search-results-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultsToolComponent {
+export class SearchResultsToolComponent implements OnInit {
   /**
    * to show hide results icons
    */
@@ -80,6 +81,11 @@ export class SearchResultsToolComponent {
 
   public feature: Feature;
 
+  public term = '';
+  private searchTerm$$: Subscription;
+
+  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
+
   public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
 
   @Input()
@@ -98,6 +104,23 @@ export class SearchResultsToolComponent {
     private searchState: SearchState
   ) {}
 
+  ngOnInit() {
+    this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm: string) => {
+      if (searchTerm !== undefined && searchTerm !== null) {
+        this.term = searchTerm;
+      }
+    });
+
+    for (const res of this.store.entities$.value) {
+      if (this.store.state.get(res).selected === true) {
+        this.topPanelState = 'collapsed';
+      }
+    }
+
+    this.searchState.searchSettingsChange$.subscribe(() => {
+      this.settingsChange$.next(true);
+    });
+  }
   /**
    * Try to add a feature to the map when it's being focused
    * @internal
@@ -121,6 +144,15 @@ export class SearchResultsToolComponent {
     if (this.topPanelState === 'initial') {
       this.toggleTopPanel();
     }
+  }
+
+  onSearch(event: { research: Research; results: SearchResult[] }) {
+    const results = event.results;
+    this.store.state.updateAll({ focused: false, selected: false });
+    const newResults = this.store.entities$.value
+      .filter((result: SearchResult) => result.source !== event.research.source)
+      .concat(results);
+    this.store.load(newResults);
   }
 
   toggleTopPanel() {

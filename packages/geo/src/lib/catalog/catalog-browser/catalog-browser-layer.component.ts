@@ -11,6 +11,9 @@ import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { CatalogItemLayer } from '../shared';
 import { BehaviorSubject } from 'rxjs';
+import { LayerService } from '../../layer/shared/layer.service';
+import { first } from 'rxjs/operators';
+import { Layer } from '../../layer/shared/layers';
 
 /**
  * Catalog browser layer item
@@ -27,7 +30,12 @@ export class CatalogBrowserLayerComponent implements OnInit {
 
   private lastTimeoutRequest;
 
+  public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public igoLayer$ = new BehaviorSubject<Layer>(undefined);
+
   @Input() resolution: number;
+
+  @Input() catalogAllowLegend = false;
 
   /**
    * Catalog layer
@@ -63,7 +71,7 @@ export class CatalogBrowserLayerComponent implements OnInit {
     return getEntityIcon(this.layer) || 'layers';
   }
 
-  constructor() {}
+  constructor(private layerService: LayerService ) {}
 
   ngOnInit(): void {
     this.isInResolutionsRange();
@@ -78,6 +86,12 @@ export class CatalogBrowserLayerComponent implements OnInit {
     this.onToggleClick(event);
   }
 
+  askForLegend(event) {
+    this.layerLegendShown$.next(!this.layerLegendShown$.value);
+    this.layerService.createAsyncLayer(this.layer.options).pipe(first())
+    .subscribe(layer => this.igoLayer$.next(layer));
+  }
+
   /**
    * On toggle button click, emit the added change event
    * @internal
@@ -90,9 +104,13 @@ export class CatalogBrowserLayerComponent implements OnInit {
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
-          this.remove();
+          if (this.added) {
+            this.remove();
+          } else {
+            this.add();
+          }
         }
-        this.isPreview$.next(!this.isPreview$.value);
+        this.isPreview$.next(false);
         break;
       case 'mouseenter':
         if (!this.isPreview$.value && !this.added) {
@@ -117,16 +135,24 @@ export class CatalogBrowserLayerComponent implements OnInit {
    * Emit added change event with added = true
    */
   private add() {
-    this.added = true;
-    this.addedChange.emit({ added: true, layer: this.layer });
+    if (!this.added) {
+      this.added = true;
+      this.addedChange.emit({ added: true, layer: this.layer });
+    }
   }
 
   /**
    * Emit added change event with added = false
    */
   private remove() {
-    this.added = false;
-    this.addedChange.emit({ added: false, layer: this.layer });
+    if (this.added) {
+      this.added = false;
+      this.addedChange.emit({ added: false, layer: this.layer });
+    }
+  }
+
+  haveGroup(): boolean {
+    return !(!this.layer.address || this.layer.address.split('.').length === 1);
   }
 
   isInResolutionsRange(): boolean {

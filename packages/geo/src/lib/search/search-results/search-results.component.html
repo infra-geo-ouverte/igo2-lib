@@ -6,7 +6,9 @@
 
     <igo-collapsible
       *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
-      [title]="computeGroupTitle(group)">
+      [title]="computeGroupTitle(group)"
+      [collapsed]="collapsed[group.source.title]"
+      (toggle)="collapsed[group.source.title] = $event">
       <ng-container *ngTemplateOutlet="storeItemTemplate; context: {results: group.results}"></ng-container>
     </igo-collapsible>
 
@@ -38,7 +40,11 @@
 
         </igo-search-results-item>
       </ng-template>
+      <span class="moreResults mat-typography" *ngIf="isMoreResults(group)" (click)="displayMoreResults(group)">
+        <u>{{ 'igo.geo.search.displayMoreResults' | translate }}</u>
+      </span>
     </ng-template>
 
   </ng-template>
+
 </igo-list>

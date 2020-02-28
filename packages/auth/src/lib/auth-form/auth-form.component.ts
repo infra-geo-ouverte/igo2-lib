@@ -126,8 +126,8 @@ export class AuthFormComponent implements OnInit {
   }
 
   private getName() {
-    if (this.auth.decodeToken()) {
-      const tokenDecoded = this.auth.decodeToken();
+    const tokenDecoded = this.auth.decodeToken();
+    if (tokenDecoded) {
       this.user = {
         name: tokenDecoded.user.firstName || tokenDecoded.user.sourceId
       };

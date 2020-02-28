@@ -6,7 +6,7 @@ export interface RouteServiceOptions {
   searchKey?: boolean | string;
   visibleOnLayersKey?: boolean | string;
   visibleOffLayersKey?: boolean | string;
-  routingCoordKey?: boolean | string;
+  directionsCoordKey?: boolean | string;
   toolKey?: boolean | string;
   llcKKey?: boolean | string;
   llcAKey?: boolean | string;

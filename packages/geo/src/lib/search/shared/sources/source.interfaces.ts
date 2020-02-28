@@ -7,6 +7,8 @@ export interface SearchSourceOptions {
   distance?: number;
   params?: { [key: string]: string };
   settings?: SearchSourceSettings[];
+  showInPointerSummary?: boolean;
+  showInSettings?: boolean;
 }
 
 export interface SearchSourceSettings {
@@ -29,6 +31,10 @@ export interface TextSearchOptions {
   params?: { [key: string]: string };
   searchType?: 'Feature' | 'Layer'; // refer to search.enum.ts SEARCH_TYPES = [FEATURE, LAYER];
   getEnabledOnly?: boolean;
+  extent?: [number, number, number, number];
+  page?: number;
+  sourceId?: string;
+  forceNA?: boolean;
 }
 
 export interface ReverseSearchOptions {

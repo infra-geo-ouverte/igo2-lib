@@ -3,6 +3,8 @@ import olFormatWKT from 'ol/format/WKT';
 import olFormatWFS from 'ol/format/WFS';
 import olGeometry from 'ol/geom/Geometry';
 
+import olProjection from 'ol/proj/Projection';
+
 import { uuid, ObjectUtils } from '@igo2/utils';
 
 import {
@@ -60,7 +62,7 @@ export class OgcFilterWriter {
   public buildFilter(
     filters?: IgoOgcFilterObject,
     extent?: [number, number, number, number],
-    proj?,
+    proj?: olProjection,
     fieldNameGeometry?: string
   ): string {
     let ourBboxFilter;
@@ -81,7 +83,7 @@ export class OgcFilterWriter {
     }
     let filterAssembly: OgcFilter;
     if (filters) {
-      filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry);
+      filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry, proj);
       if (extent && enableBbox) {
         filterAssembly = olfilter.and(
           ourBboxFilter,
@@ -168,7 +170,7 @@ export class OgcFilterWriter {
       const wkt = new olFormatWKT();
       geometry = wkt.readGeometry(wfsWktGeometry, {
         dataProjection: wfsSrsName,
-        featureProjection: 'EPSG:3857'
+        featureProjection: wfsSrsName || 'EPSG:3857'
       });
     }
 
@@ -318,13 +320,14 @@ export class OgcFilterWriter {
   public checkIgoFiltersProperties(
     filterObject: any,
     fieldNameGeometry,
+    proj: olProjection,
     active = false
   ) {
     const filterArray = [];
     if (filterObject instanceof Array) {
       filterObject.forEach(element => {
         filterArray.push(
-          this.checkIgoFiltersProperties(element, fieldNameGeometry, active)
+          this.checkIgoFiltersProperties(element, fieldNameGeometry, proj, active)
         );
       });
       return filterArray;
@@ -337,6 +340,7 @@ export class OgcFilterWriter {
             filters: this.checkIgoFiltersProperties(
               filterObject.filters,
               fieldNameGeometry,
+              proj,
               active
             )
           }
@@ -345,6 +349,7 @@ export class OgcFilterWriter {
         return this.addFilterProperties(
           filterObject as OgcInterfaceFilterOptions,
           fieldNameGeometry,
+          proj,
           active
         );
       }
@@ -354,6 +359,7 @@ export class OgcFilterWriter {
   private addFilterProperties(
     igoOgcFilterObject: OgcInterfaceFilterOptions,
     fieldNameGeometry,
+    proj: olProjection,
     active = false
   ) {
     const filterid = igoOgcFilterObject.hasOwnProperty('filterid')
@@ -363,12 +369,17 @@ export class OgcFilterWriter {
       ? igoOgcFilterObject.active
       : active;
 
+    const srsName = igoOgcFilterObject.hasOwnProperty('srsName')
+      ? igoOgcFilterObject.srsName
+      : proj ? proj.getCode() : 'EPSG:3857';
+
     return Object.assign(
       {},
       {
         filterid,
         active: status,
-        igoSpatialSelector: 'fixedExtent'
+        igoSpatialSelector: 'fixedExtent',
+        srsName
       },
       igoOgcFilterObject,
       { geometryName: fieldNameGeometry }
@@ -427,6 +438,9 @@ export class OgcFilterWriter {
   }
 
   private computeIgoPushButton(pushButtons: IgoPushButton): IgoPushButton {
+    if (pushButtons.groups.every(group => group.computedButtons !== undefined)) {
+      return pushButtons;
+    }
     let pb: IgoPushButton;
     if (pushButtons.groups && pushButtons.bundles) {
       if (!pushButtons.bundles.every(bundle => bundle.id !== undefined)) {
@@ -457,7 +471,11 @@ export class OgcFilterWriter {
     return pb;
   }
 
-  public handleOgcFiltersAppliedValue(options: OgcFilterableDataSourceOptions, fieldNameGeometry: string) {
+  public handleOgcFiltersAppliedValue(
+    options: OgcFilterableDataSourceOptions,
+    fieldNameGeometry: string,
+    extent?: [number, number, number, number],
+    proj?: olProjection): string {
     const ogcFilters = options.ogcFilters;
     if (!ogcFilters) {
       return;
@@ -481,7 +499,10 @@ export class OgcFilterWriter {
       });
       if (conditions.length >= 1) {
         filterQueryStringPushButton = this.buildFilter(
-            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions }
+            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions },
+            extent,
+            proj,
+            ogcFilters.geometryName
           );
       }
     }
@@ -489,7 +510,7 @@ export class OgcFilterWriter {
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
-      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters);
+      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
     }
 
     let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;

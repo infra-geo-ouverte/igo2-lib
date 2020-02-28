@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
@@ -7,7 +8,7 @@ import {
 } from '@angular/core';
 import * as proj from 'ol/proj';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MediaService } from '@igo2/core';
 import { EntityStore, ActionStore } from '@igo2/common';
 import {
   FEATURE,
@@ -34,6 +35,8 @@ import { SearchState } from '@igo2/integration';
 export class AppSearchComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);
 
+  public igoSearchPointerSummaryEnabled: boolean = false;
+
   public map = new IgoMap({
     overlay: true,
     controls: {
@@ -54,9 +57,16 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public lonlat;
   public mapProjection: string;
+  public term: string;
+
+  public settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
   get searchStore(): EntityStore<SearchResult> {
     return this.searchState.store;
+  }
+
+  get isTouchScreen(): boolean {
+    return this.mediaService.isTouchScreen();
   }
 
   public selectedFeature: Feature;
@@ -67,7 +77,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private layerService: LayerService,
     private searchState: SearchState,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private mediaService: MediaService
   ) {
     this.mapService.setMap(this.map);
 
@@ -84,8 +95,14 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       });
   }
 
-  onSearchTermChange(term?: string) {
-    if (term === undefined || term === '') {
+  onPointerSummaryStatusChange(value) {
+    this.igoSearchPointerSummaryEnabled = value;
+  }
+
+  onSearchTermChange(term = '') {
+    this.term = term;
+    const termWithoutHashtag = term.replace(/(#[^\s]*)/g, '').trim();
+    if (termWithoutHashtag.length < 2) {
       this.searchStore.clear();
       this.selectedFeature = undefined;
     }
@@ -98,6 +115,10 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
     this.searchStore.load(newResults);
+  }
+
+  onSearchSettingsChange() {
+    this.settingsChange$.next(true);
   }
 
   /**
@@ -181,6 +202,11 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       window.scrollX;
     const position = [contextmenuPoint.x, contextmenuPoint.y];
     return position;
+  }
+
+  onPointerSearch(event) {
+    this.lonlat = event;
+    this.onSearchCoordinate();
   }
 
   onSearchCoordinate() {

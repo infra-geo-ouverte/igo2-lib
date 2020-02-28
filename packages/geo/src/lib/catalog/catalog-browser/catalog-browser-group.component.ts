@@ -67,6 +67,8 @@ export class CatalogBrowserGroupComponent implements OnInit, OnDestroy {
 
   @Input() resolution: number;
 
+  @Input() catalogAllowLegend = false;
+
   /**
    * Whether the group can be toggled when it's collapsed
    */

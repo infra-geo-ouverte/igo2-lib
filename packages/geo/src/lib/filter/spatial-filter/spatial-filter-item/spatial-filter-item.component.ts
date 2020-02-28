@@ -70,7 +70,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.radius = 1000; // Base radius
       this.radiusFormControl.setValue(this.radius);
       this.PointStyle = (feature: olFeature, resolution: number) => {
-        const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
+        const coordinates = olproj.transform(feature.getGeometry().getCoordinates(), this.map.projection, 'EPSG:4326');
         return new olstyle.Style ({
           image: new olstyle.Circle ({
             radius: this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution, // Latitude correction

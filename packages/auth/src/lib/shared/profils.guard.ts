@@ -5,7 +5,6 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ConfigService } from '@igo2/core';
@@ -21,14 +20,14 @@ export class ProfilsGuard implements CanActivate {
     private router: Router
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return this.authService.getProfils().pipe(
-      map((profils: string[]) => {
+      map((profils: { profils: string[] }) => {
         const authConfig = this.config.getConfig('auth');
-
         if (
           profils &&
-          profils.some(v => authConfig.profilsGuard.indexOf(v) !== -1)
+          profils.profils &&
+          profils.profils.some(v => authConfig.profilsGuard.indexOf(v) !== -1)
         ) {
           return true;
         }

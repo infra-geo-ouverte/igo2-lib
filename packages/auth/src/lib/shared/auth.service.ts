@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
+import { globalCacheBusterNotifier } from 'ngx-cacheable';
 
 import { ConfigService, LanguageService, MessageService } from '@igo2/core';
 import { Base64 } from '@igo2/utils';
@@ -28,6 +29,9 @@ export class AuthService {
     @Optional() private router: Router
   ) {
     this.authenticate$.next(this.authenticated);
+    this.authenticate$.subscribe(() => {
+      globalCacheBusterNotifier.next();
+    });
   }
 
   login(username: string, password: string): Observable<void> {
@@ -114,9 +118,9 @@ export class AuthService {
     return this.http.get<User>(url);
   }
 
-  getProfils() {
+  getProfils(): Observable<{ profils: string[] }> {
     const url = this.config.getConfig('auth.url');
-    return this.http.get(`${url}/profils`);
+    return this.http.get<{ profils: string[] }>(`${url}/profils`);
   }
 
   updateUser(user: User): Observable<User> {

@@ -3,20 +3,21 @@ import { EntityState } from '@igo2/common';
 import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { TooltipType } from '../../layer';
 import { TimeFilterOptions } from '../../filter';
-import { QueryFormat, QueryHtmlTarget  } from '../../query';
+import { QueryFormat, QueryHtmlTarget } from '../../query';
 
-import { CatalogItemType } from './catalog.enum';
+import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 
-export interface Catalog {
+export interface ICatalog {
   id: string;
   title: string;
   url: string;
   items?: CatalogItem[];
-  type?: string;
+  type?: TypeCatalogStrings;
   version?: string;
   matrixSet?: string;
   requestEncoding?: string;
   regFilters?: string[];
+  groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id and title)
   timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
   queryHtmlTarget?: QueryHtmlTarget;
@@ -26,15 +27,22 @@ export interface Catalog {
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;
+  showLegend?: boolean;
+}
+
+export interface ICompositeCatalog extends ICatalog {
+  composite: ICatalog[];
 }
 
 export interface CatalogItem {
   id: string;
   title: string;
   type: CatalogItemType;
+  address?: string;
 }
 
-export interface CatalogItemLayer<L = MetadataLayerOptions> extends CatalogItem {
+export interface CatalogItemLayer<L = MetadataLayerOptions>
+  extends CatalogItem {
   options: L;
 }
 
@@ -48,6 +56,6 @@ export interface CatalogItemState extends EntityState {
 
 export interface CatalogServiceOptions {
   baseLayers?: boolean;
-  sources?: Catalog[];
+  sources?: (ICatalog|ICompositeCatalog)[];
   sourcesUrl?: string;
 }

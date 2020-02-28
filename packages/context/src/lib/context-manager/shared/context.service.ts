@@ -1,5 +1,5 @@
 import { Injectable, Optional } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap, catchError, debounceTime, flatMap } from 'rxjs/operators';
@@ -91,9 +91,11 @@ export class ContextService {
 
   getDetails(id: string): Observable<DetailedContext> {
     const url = `${this.baseUrl}/contexts/${id}/details`;
-    return this.http
-      .get<DetailedContext>(url)
-      .pipe(catchError(res => this.handleError(res, id)));
+    return this.http.get<DetailedContext>(url).pipe(
+      catchError(res => {
+        return this.handleError(res, id);
+      })
+    );
   }
 
   getDefault(): Observable<DetailedContext> {
@@ -181,16 +183,20 @@ export class ContextService {
     contextId: string,
     profil: string,
     type: TypePermission
-  ): Observable<ContextPermission[]> {
+  ): Observable<ContextPermission[] | Message[]> {
     const url = `${this.baseUrl}/contexts/${contextId}/permissions`;
     const association = {
       profil,
       typePermission: type
     };
-    return this.http.post<ContextPermission[]>(
-      url,
-      JSON.stringify(association)
-    );
+
+    return this.http
+      .post<ContextPermission[]>(url, JSON.stringify(association))
+      .pipe(
+        catchError(res => {
+          return [this.handleError(res, undefined, true)];
+        })
+      );
   }
 
   deletePermissionAssociation(
@@ -232,7 +238,7 @@ export class ContextService {
                   !l.id || self.findIndex(l2 => l2.id === l.id) === index
               )
               .reverse();
-            resMerge.toolbar = res.toolbar  || resBase.toolbar;
+            resMerge.toolbar = res.toolbar || resBase.toolbar;
             resMerge.tools = (res.tools || [])
               .concat(resBase.tools || [])
               .filter(
@@ -386,11 +392,13 @@ export class ContextService {
           url: layer.dataSource.options.url
         }
       };
-      context.layers.push(opts);
+      if (opts.sourceOptions.type) {
+        context.layers.push(opts);
+      }
     }
 
     context.tools = this.tools.map(tool => {
-      return { id: String(tool.id) };
+      return { id: String(tool.id), global: tool.global };
     });
 
     return context;
@@ -469,19 +477,34 @@ export class ContextService {
     return `${basePath}/${file}`;
   }
 
-  private handleError(res: Response, uri: string): Message[] {
+  private handleError(
+    error: HttpErrorResponse,
+    uri: string,
+    permissionError?: boolean
+  ): Message[] {
     const context = this.contexts$.value.ours.find(obj => obj.uri === uri);
     const titleContext = context ? context.title : uri;
-    const titleError = this.languageService.translate.instant(
+    error.error.title = this.languageService.translate.instant(
       'igo.context.contextManager.invalid.title'
     );
 
-    const textError = this.languageService.translate.instant(
+    error.error.message = this.languageService.translate.instant(
       'igo.context.contextManager.invalid.text',
       { value: titleContext }
     );
 
-    throw [{ title: titleError, text: textError }];
+    error.error.toDisplay = true;
+
+    if (permissionError) {
+      error.error.title = this.languageService.translate.instant(
+        'igo.context.contextManager.errors.addPermissionTitle'
+      );
+      error.error.message = this.languageService.translate.instant(
+        'igo.context.contextManager.errors.addPermission'
+      );
+    }
+
+    throw error;
   }
 
   private handleContextsChange(
@@ -534,7 +557,11 @@ export class ContextService {
     let found;
     for (const key of Object.keys(contexts)) {
       const value = contexts[key];
-      found = value.find(c => ((context.id && c.id === context.id) || (context.uri && c.uri === context.uri)));
+      found = value.find(
+        c =>
+          (context.id && c.id === context.id) ||
+          (context.uri && c.uri === context.uri)
+      );
       if (found) {
         break;
       }

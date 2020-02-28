@@ -6,7 +6,7 @@ import {
 } from './datasource.interface';
 
 import { DataService } from './data.service';
-import { generateIdFromSourceOptions } from '../../utils/id-generator';
+import { generateIdFromSourceOptions } from '../../../utils/id-generator';
 import { LegendOptions } from '../../../layer';
 
 export abstract class DataSource {

@@ -9,7 +9,7 @@ import {
 
 import { EntityStore } from '@igo2/common';
 import { IgoMap } from '../../map';
-import { Catalog } from '../shared/catalog.interface';
+import { Catalog } from '../shared/catalog.abstract';
 
 /**
  * Component to browse a list of available catalogs
