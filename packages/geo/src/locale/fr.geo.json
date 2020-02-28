@@ -297,6 +297,8 @@
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
+          "selectAll": "Tout sélectionner",
+          "unselectAll": "Tout désélectionner",
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",

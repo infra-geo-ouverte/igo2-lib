@@ -297,6 +297,8 @@
           "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
         },
         "searchSources": {
+          "selectAll": "Select All",
+          "unselectAll": "Unselect All",
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",
