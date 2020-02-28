@@ -240,7 +240,10 @@
             "title": "Title",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Metadata"
+            "metadataUrl": "Metadata",
+            "name": "Layer name (Qgis, ArcMap...)",
+            "urlInfo": "URL - WMS/WFS (Qgis, ArcMap...)",
+            "downloadUrl": "Data download"
           },
           "type": {
             "layer": "Layer",

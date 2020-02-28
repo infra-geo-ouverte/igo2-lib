@@ -240,7 +240,10 @@
             "title": "Titre",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Métadonnées"
+            "metadataUrl": "Métadonnées",
+            "name": "Nom de la couche (Qgis, ArcMap...)",
+            "urlInfo": "Lien du service web WMS/WFS (Qgis, ArcMap...)",
+            "downloadUrl": "Lien de téléchargement de la données"
           },
           "type": {
             "layer": "Couche",

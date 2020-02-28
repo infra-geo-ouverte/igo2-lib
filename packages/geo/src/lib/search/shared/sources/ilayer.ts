@@ -28,7 +28,7 @@ export class ILayerSearchResultFormatter {
   constructor(private languageService: LanguageService) {}
 
   formatResult(data: ILayerData): ILayerData {
-    const allowedKey = ['title', 'abstract', 'groupTitle', 'metadataUrl'];
+    const allowedKey = ['title', 'abstract', 'groupTitle', 'metadataUrl', 'downloadUrl', 'urlInfo', 'name'];
 
     const property = Object.entries(data.properties)
       .filter(([key]) => allowedKey.indexOf(key) !== -1)
