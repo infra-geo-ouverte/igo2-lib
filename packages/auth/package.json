@@ -14,7 +14,9 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "dependencies": {
-    "jwt-decode": "^2.2.0"
+    "jwt-decode": "^2.2.0",
+    "ngx-cacheable": "^1.0.9",
+    "ts-md5": "^1.2.0"
   },
   "peerDependencies": {
     "@angular/cdk": "^7.3.3",
