@@ -5,5 +5,5 @@
   "lib": {
     "entryFile": "src/public_api.ts"
   },
-  "whitelistedNonPeerDependencies": ["jwt-decode"]
+  "whitelistedNonPeerDependencies": ["jwt-decode", "ngx-cacheable", "ts-md5"]
 }
