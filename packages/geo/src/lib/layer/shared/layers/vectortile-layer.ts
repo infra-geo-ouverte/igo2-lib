@@ -5,14 +5,19 @@ import { MVTDataSource } from '../../../datasource/shared/datasources/mvt-dataso
 
 import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
+import { TileWatcher } from '../../utils';
 
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
   public options: VectorTileLayerOptions;
   public ol: olLayerVectorTile;
 
+  private watcher: TileWatcher;
+
   constructor(options: VectorTileLayerOptions) {
     super(options);
+    this.watcher = new TileWatcher(this);
+    this.status$ = this.watcher.status$;
   }
 
   protected createOlLayer(): olLayerVectorTile {
