@@ -2,8 +2,6 @@ import olSourceImageWMS from 'ol/source/ImageWMS';
 
 import { DataSourceOptions } from './datasource.interface';
 import { WFSDataSourceOptionsParams } from './wfs-datasource.interface';
-import { MetadataOptions } from '../../../metadata/shared/metadata.interface';
-import { LegendOptions } from '../../../layer/shared/layers/layer.interface';
 
 export interface WMSDataSourceOptions extends DataSourceOptions {
   // type?: 'wms';
@@ -18,7 +16,6 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   ratio?: number;
   ol?: olSourceImageWMS;
   refreshIntervalSec?: number;
-  _layerOptionsFromCapabilities?: WMSLayerOptionsFromCapabilities;
   excludeAttribute?: Array<string>;
 }
 
@@ -32,12 +29,4 @@ export interface WMSDataSourceOptionsParams {
   DPI?: number;
   MAP_RESOLUTION?: number;
   FORMAT_OPTIONS?: string;
-}
-
-export interface WMSLayerOptionsFromCapabilities {
-  title?: string;
-  minResolution?: number;
-  maxResolution?: string;
-  metadata?: MetadataOptions;
-  legendOptions?: LegendOptions;
 }

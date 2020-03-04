@@ -16,6 +16,10 @@
       "baselayersSwitcher": {
         "title": "Fonds de carte"
       },
+      "dataSource": {
+        "optionsApiUnavailable": "L'information sur les couches n'a pas pu être récupérée. Certaines couches pourraient ne pas présenter la bonne information.",
+        "unavailable": "La couche '{{value}}' est indisponible pour le moment."
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
@@ -240,7 +244,10 @@
             "title": "Titre",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Métadonnées"
+            "metadataUrl": "Métadonnées",
+            "name": "Nom de la couche",
+            "urlInfo": "Lien du service web WMS/WFS",
+            "downloadUrl": "Lien de téléchargement de la données"
           },
           "type": {
             "layer": "Couche",
@@ -294,6 +301,8 @@
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
+          "selectAll": "Tout sélectionner",
+          "unselectAll": "Tout désélectionner",
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",

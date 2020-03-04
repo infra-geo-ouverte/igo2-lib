@@ -3,24 +3,31 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnInit
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 
 import { DetailedContext, ContextsList } from '../shared/context.interface';
+import { ContextListControlsEnum } from './context-list.enum';
+import { Subscription, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-context-list',
-  templateUrl: './context-list.component.html'
+  templateUrl: './context-list.component.html',
+  styleUrls: ['./context-list.component.scss']
 })
-export class ContextListComponent {
+export class ContextListComponent implements OnInit {
+  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(undefined);
+
   @Input()
   get contexts(): ContextsList {
     return this._contexts;
   }
   set contexts(value: ContextsList) {
     this._contexts = value;
+    this.contexts$.next(value);
     this.cdRef.detectChanges();
   }
   private _contexts: ContextsList = { ours: [] };
@@ -60,5 +67,78 @@ export class ContextListComponent {
     public: 'igo.context.contextManager.publicContexts'
   };
 
+  /**
+   * Context filter term
+   */
+  @Input()
+  set term(value: string) {
+    this.term$.next(value);
+  }
+  get term(): string {
+    return this.term$.value;
+  }
+  public term$: BehaviorSubject<string> = new BehaviorSubject('');
+  term$$: Subscription;
+
+  public showContextFilter = ContextListControlsEnum.default;
+
+  public thresholdToFilter = 5;
+
   constructor(private cdRef: ChangeDetectorRef, public auth: AuthService) {}
+
+  ngOnInit() {
+    this.term$$ = this.term$.subscribe((value) => {
+      if (value === '') {
+        this.contexts$.next(this.contexts);
+      }
+
+      if (value.length) {
+        let ours; let publics; let shared;
+        ours = this.contexts.ours.filter((context) => {
+          const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          return contextTitleNormalized.includes(filterNormalized);
+        });
+        const updateContexts: ContextsList = {
+          ours
+        };
+
+        if (this.contexts.public) {
+          publics = this.contexts.public.filter((context) => {
+            const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return contextTitleNormalized.includes(filterNormalized);
+          });
+          updateContexts.public = publics;
+        }
+        if (this.contexts.shared) {
+          shared = this.contexts.shared.filter((context) => {
+            const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return contextTitleNormalized.includes(filterNormalized);
+          });
+          updateContexts.shared = shared;
+        }
+
+        this.contexts$.next(updateContexts);
+      }
+    });
+  }
+
+  public showFilter() {
+    switch (this.showContextFilter) {
+      case ContextListControlsEnum.always:
+        return true;
+      case ContextListControlsEnum.never:
+        return false;
+      default:
+        let totalLength = this.contexts.ours.length;
+        this.contexts.public ? totalLength += this.contexts.public.length : totalLength += 0;
+        this.contexts.shared ? totalLength += this.contexts.shared.length : totalLength += 0;
+        if (totalLength >= this.thresholdToFilter) {
+          return true;
+        }
+        return false;
+    }
+  }
 }
