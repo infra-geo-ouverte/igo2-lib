@@ -16,6 +16,10 @@
       "baselayersSwitcher": {
         "title": "Basemaps"
       },
+      "dataSource": {
+        "optionsApiUnavailable": "Layer information could not be retrieved. Some layers may not present the correct information.",
+        "unavailable": "The layer '{{value}}' is unavailable at the moment."
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "The file '{{value}}' is invalid ({{mimeType}})",

@@ -181,7 +181,7 @@ export class AppSpatialFilterComponent {
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
-          if (layer.alias === feature.properties.code) {
+          if (layer.options._internal.code === feature.properties.code) {
             return;
           }
           if  (layer.title.startsWith('Zone')) {
@@ -202,7 +202,12 @@ export class AppSpatialFilterComponent {
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
             title: 'Zone ' + i as string,
-            alias: this.type === SpatialFilterType.Predefined ? feature.properties.code : undefined,
+            _internal: {
+              code:
+                this.type === SpatialFilterType.Predefined
+                  ? feature.properties.code
+                  : undefined
+            },
             source: dataSource,
             visible: true,
             style: (_feature, resolution) => {

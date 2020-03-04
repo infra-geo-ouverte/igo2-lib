@@ -177,8 +177,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
 
   isInResolutionsRange(resolution: number) {
-    const minResolution = this.layer.data.minResolution;
-    const maxResolution = this.layer.data.maxResolution;
+    const minResolution = this.layer.data.minResolution || 0;
+    const maxResolution = this.layer.data.maxResolution || Infinity;
     this.inRange$.next(
       resolution >= minResolution && resolution <= maxResolution
     );

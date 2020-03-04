@@ -16,10 +16,8 @@ export interface DataSourceOptions {
     | 'mvt'
     | 'cluster';
   optionsFromCapabilities?: boolean;
-  // title: string;
-  // alias?: string;
-
-  // view?: ol.olx.layer.ImageOptions;
+  optionsFromApi?: boolean;
+  _layerOptionsFromSource?: { [key: string]: string };
   id?: string;
   ol?: olSource;
   minZoom?: number;
