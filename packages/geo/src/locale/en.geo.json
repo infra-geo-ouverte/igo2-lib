@@ -241,8 +241,8 @@
             "type": "Type",
             "url": "URL",
             "metadataUrl": "Metadata",
-            "name": "Layer name (Qgis, ArcMap...)",
-            "urlInfo": "URL - WMS/WFS (Qgis, ArcMap...)",
+            "name": "Layer name",
+            "urlInfo": "URL - WMS/WFS",
             "downloadUrl": "Data download"
           },
           "type": {
