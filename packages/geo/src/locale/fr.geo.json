@@ -244,7 +244,10 @@
             "title": "Titre",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Métadonnées"
+            "metadataUrl": "Métadonnées",
+            "name": "Nom de la couche",
+            "urlInfo": "Lien du service web WMS/WFS",
+            "downloadUrl": "Lien de téléchargement de la données"
           },
           "type": {
             "layer": "Couche",
@@ -298,6 +301,8 @@
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
+          "selectAll": "Tout sélectionner",
+          "unselectAll": "Tout désélectionner",
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",

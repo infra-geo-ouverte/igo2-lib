@@ -36,6 +36,7 @@ import { MediaService } from '@igo2/core';
 export class SearchSettingsComponent implements OnInit {
 
   public hasPointerReverseSearchSource: boolean = false;
+  public searchSourcesAllEnabled: boolean = false;
 
   public buffer = [];
   public lastKeyTime = Date.now();
@@ -88,7 +89,9 @@ export class SearchSettingsComponent implements OnInit {
       .getSources()
       .filter(sourceCanReverseSearch)
       .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
-    return textSearchSources.concat(reverseSearchSources);
+    const sources = textSearchSources.concat(reverseSearchSources);
+    this.computeSourcesCheckAllBehavior(sources);
+    return sources;
   }
 
   /**
@@ -119,12 +122,12 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   /**
-   * Defining the action to do for check/uncheck checkboxes
+   * Defining the action to do for check/uncheck checkboxes (settings)
    * return true if all checkbox must be checked
    * return false if all checkbox must be unchecked
    * @internal
    */
-  computeCheckAllBehavior(setting: SearchSourceSettings) {
+  computeSettingCheckAllBehavior(setting: SearchSourceSettings) {
     if (setting.allEnabled === undefined) {
       if (setting.values.find(settingValue => settingValue.enabled)) {
         setting.allEnabled = false;
@@ -137,17 +140,41 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   /**
+   * Defining the action to do for check/uncheck checkboxes (sources)
+   * return true if all checkbox must be checked
+   * return false if all checkbox must be unchecked
+   * @internal
+   */
+  computeSourcesCheckAllBehavior(sources: SearchSource[]) {
+    const enabledSourcesCnt = sources.filter(source => source.enabled).length;
+    const disabledSourcesCnt = sources.filter(source => !source.enabled).length;
+    this.searchSourcesAllEnabled =  enabledSourcesCnt >= disabledSourcesCnt ? false : true;
+  }
+
+  /**
    * Triggered when the check all / uncheck all type is clicked,
    * @internal
    */
   checkUncheckAll(event, source: SearchSource, setting: SearchSourceSettings) {
     event.stopPropagation();
-    this.computeCheckAllBehavior(setting);
+    this.computeSettingCheckAllBehavior(setting);
     setting.values.forEach(settingValue => {
       settingValue.enabled = setting.allEnabled;
     });
     source.setParamFromSetting(setting);
     this.searchSourceChange.emit(source);
+  }
+
+  /**
+   * Triggered when the check all / uncheck all type is clicked,
+   * @internal
+   */
+  checkUncheckAllSources(event) {
+    event.stopPropagation();
+    this.getSearchSources().map(source => {
+      source.enabled = this.searchSourcesAllEnabled;
+      this.searchSourceChange.emit(source);
+    });
   }
 
   /**
