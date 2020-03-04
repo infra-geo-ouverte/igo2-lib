@@ -1,5 +1,25 @@
 <igo-list [navigation]="true">
-  <ng-template ngFor let-groupContexts [ngForOf]="contexts | keyvalue">
+  <mat-form-field *ngIf="showFilter()" class="contextFilter">
+    <input
+      matInput
+      type="text"
+      [placeholder]="'igo.context.contextManager.filterPlaceHolder' | translate"
+      [(ngModel)]="term">
+    <button
+      mat-button
+      mat-icon-button
+      matSuffix
+      class="clear-button"
+      *ngIf="term.length"
+      aria-label="Clear"
+      color="warn"
+      (click)="term = ''">
+      <mat-icon svgIcon="close"></mat-icon>
+    </button>
+  </mat-form-field>
+
+  <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">
+
     <igo-collapsible *ngIf="groupContexts.value.length && auth.authenticated" [title]="titleMapping[groupContexts.key] | translate">
 
       <ng-template ngFor let-context [ngForOf]="groupContexts.value">
