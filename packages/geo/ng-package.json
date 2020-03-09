@@ -6,6 +6,7 @@
     "entryFile": "src/public_api.ts"
   },
   "whitelistedNonPeerDependencies": [
+    "ngx-cacheable",
     "ts-md5",
     "@turf/helpers",
     "@turf/line-intersect"

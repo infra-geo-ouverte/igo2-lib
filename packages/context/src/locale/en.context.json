@@ -50,7 +50,8 @@
         "ourContexts": "Our contexts",
         "publicContexts": "Public contexts",
         "save": "Save this context",
-        "sharedContexts": "Shared contexts"
+        "sharedContexts": "Shared contexts",
+        "filterPlaceHolder": "Filer the contexts list"
       },
       "permission": {
         "addBtn": "Add",

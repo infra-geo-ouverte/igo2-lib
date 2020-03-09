@@ -50,7 +50,8 @@
         "ourContexts": "Vos contextes",
         "publicContexts": "Contextes publics",
         "save": "Sauvegarder ce contexte",
-        "sharedContexts": "Contextes partagés"
+        "sharedContexts": "Contextes partagés",
+        "filterPlaceHolder": "Filtrer la liste des contextes"
       },
       "permission": {
         "addBtn": "Ajouter",

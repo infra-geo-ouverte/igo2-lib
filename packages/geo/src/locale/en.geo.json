@@ -16,6 +16,10 @@
       "baselayersSwitcher": {
         "title": "Basemaps"
       },
+      "dataSource": {
+        "optionsApiUnavailable": "Layer information could not be retrieved. Some layers may not present the correct information.",
+        "unavailable": "The layer '{{value}}' is unavailable at the moment."
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "The file '{{value}}' is invalid ({{mimeType}})",
@@ -241,7 +245,10 @@
             "title": "Title",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Metadata"
+            "metadataUrl": "Metadata",
+            "name": "Layer name",
+            "urlInfo": "URL - WMS/WFS",
+            "downloadUrl": "Data download"
           },
           "type": {
             "layer": "Layer",
@@ -295,6 +302,8 @@
           "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
         },
         "searchSources": {
+          "selectAll": "Select All",
+          "unselectAll": "Unselect All",
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",

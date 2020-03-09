@@ -33,6 +33,7 @@ import {
   ClusterDataSourceOptions
 } from './datasources';
 import { ObjectUtils } from '@igo2/utils';
+import { LanguageService, MessageService } from '@igo2/core';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +44,9 @@ export class DataSourceService {
   constructor(
     private capabilitiesService: CapabilitiesService,
     @Optional() private optionsService: OptionsService,
-    private wfsDataSourceService: WFSService
+    private wfsDataSourceService: WFSService,
+    private languageService: LanguageService,
+    private messageService: MessageService
   ) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
@@ -141,18 +144,42 @@ export class DataSourceService {
     );
   }
 
-  private createWMSDataSource(
-    context: WMSDataSourceOptions
-  ): Observable<WMSDataSource> {
+  private createWMSDataSource(context: WMSDataSourceOptions): Observable<any> {
     const observables = [];
     if (context.optionsFromCapabilities) {
-      observables.push(this.capabilitiesService.getWMSOptions(context));
+      observables.push(
+        this.capabilitiesService.getWMSOptions(context).pipe(
+          catchError(e => {
+            const title = this.languageService.translate.instant(
+              'igo.core.errors.uncaught.title'
+            );
+            const message = this.languageService.translate.instant(
+              'igo.geo.dataSource.unavailable',
+              { value: context.params.LAYERS }
+            );
+
+            this.messageService.error(message, title);
+            throw e;
+          })
+        )
+      );
     }
 
     if (this.optionsService && context.optionsFromApi !== false) {
-      observables.push(this.optionsService.getWMSOptions(context).pipe(
-        catchError(_e => of({}))
-      ));
+      observables.push(
+        this.optionsService.getWMSOptions(context).pipe(
+          catchError(e => {
+            e.error.toDisplay = true;
+            e.error.title = this.languageService.translate.instant(
+              'igo.core.errors.uncaught.title'
+            );
+            e.error.message = this.languageService.translate.instant(
+              'igo.geo.dataSource.optionsApiUnavailable'
+            );
+            return of({});
+          })
+        )
+      );
     }
 
     observables.push(of(context));
@@ -163,6 +190,9 @@ export class DataSourceService {
           ObjectUtils.mergeDeep(a, b)
         );
         return new WMSDataSource(optionsMerged, this.wfsDataSourceService);
+      }),
+      catchError(() => {
+        return of(undefined);
       })
     );
   }
@@ -174,6 +204,18 @@ export class DataSourceService {
       return this.capabilitiesService.getWMTSOptions(context).pipe(
         map((options: WMTSDataSourceOptions) => {
           return options ? new WMTSDataSource(options) : undefined;
+        }),
+        catchError(() => {
+          const title = this.languageService.translate.instant(
+            'igo.core.errors.uncaught.title'
+          );
+          const message = this.languageService.translate.instant(
+            'igo.geo.dataSource.unavailable',
+            { value: context.layer }
+          );
+
+          this.messageService.error(message, title);
+          return of(undefined);
         })
       );
     }

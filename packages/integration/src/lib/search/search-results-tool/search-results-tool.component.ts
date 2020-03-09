@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -40,7 +40,7 @@ import { SearchState } from '../search.state';
   templateUrl: './search-results-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultsToolComponent implements OnInit {
+export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * to show hide results icons
    */
@@ -121,6 +121,11 @@ export class SearchResultsToolComponent implements OnInit {
       this.settingsChange$.next(true);
     });
   }
+
+  ngOnDestroy() {
+    this.searchTerm$$.unsubscribe();
+  }
+
   /**
    * Try to add a feature to the map when it's being focused
    * @internal
