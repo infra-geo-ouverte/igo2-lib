@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, ElementRef, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -42,7 +42,7 @@ import { SearchState } from '../search.state';
   templateUrl: './search-results-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultsToolComponent implements OnInit {
+export class SearchResultsToolComponent implements OnInit, OnDestroy {
   /**
    * to show hide results icons
    */
@@ -89,6 +89,7 @@ export class SearchResultsToolComponent implements OnInit {
   public settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
   public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
+  private topPanelState$$: Subscription;
 
   @Input()
   set topPanelState(value: FlexibleState) {
@@ -116,14 +117,32 @@ export class SearchResultsToolComponent implements OnInit {
 
     for (const res of this.store.entities$.value) {
       if (this.store.state.get(res).selected === true) {
-        this.topPanelState = 'collapsed';
+        this.topPanelState = 'expanded';
       }
     }
 
     this.searchState.searchSettingsChange$.subscribe(() => {
       this.settingsChange$.next(true);
     });
+
+    this.topPanelState$$ = this.topPanelState$.subscribe(() => {
+      const igoList = this.computeElementRef()[0];
+      const selected = this.computeElementRef()[1];
+      if (selected) {
+        setTimeout(() => { // To be sure the flexible component has been displayed yet
+          if (!this.isScrolledIntoView(igoList, selected)) {
+            this.adjustTopPanel(igoList, selected);
+          }
+        }, FlexibleComponent.transitionTime + 50);
+      }
+    });
   }
+
+  ngOnDestroy() {
+    this.topPanelState$$.unsubscribe();
+    this.searchTerm$$.unsubscribe();
+  }
+
   /**
    * Try to add a feature to the map when it's being focused
    * @internal
@@ -165,18 +184,72 @@ export class SearchResultsToolComponent implements OnInit {
       }
     }
     this.tryAddFeatureToMap(result);
+
+    if (this.topPanelState === 'expanded') {
+      const igoList = this.computeElementRef()[0];
+      const selected = this.computeElementRef()[1];
+      setTimeout(() => { // To be sure the flexible component has been displayed yet
+        if (!this.isScrolledIntoView(igoList, selected)) {
+          this.adjustTopPanel(igoList, selected);
+        }
+      }, FlexibleComponent.transitionTime + 50);
+    }
+
     if (this.topPanelState === 'initial') {
-      this.toggleTopPanel();
+      this.topPanelState = 'expanded';
     }
   }
 
   onSearch(event: { research: Research; results: SearchResult[] }) {
     const results = event.results;
-    this.store.state.updateAll({ focused: false, selected: false });
     const newResults = this.store.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
+
     this.store.load(newResults);
+
+    for (const res of this.store.all()) {
+      if (this.store.state.get(res).focused === true && this.store.state.get(res).selected !== true) {
+        this.store.state.update(res, {focused: false}, true);
+      }
+    }
+
+    setTimeout(() => {
+      const igoList = this.elRef.nativeElement.querySelector('igo-list');
+      let moreResults;
+      event.research.request.subscribe((source) => {
+        if (source[0].source.getId() === 'icherche') {
+          moreResults = igoList.querySelector('.icherche .moreResults');
+        } else if (source[0].source.getId() === 'ilayer') {
+          moreResults = igoList.querySelector('.ilayer .moreResults');
+        } else if (source[0].source.getId() === 'nominatim') {
+          moreResults = igoList.querySelector('.nominatim .moreResults');
+        }
+
+        if (moreResults !== null && !this.isScrolledIntoView(igoList, moreResults)) {
+          igoList.scrollTop = moreResults.offsetTop + moreResults.offsetHeight - igoList.clientHeight;
+        }
+      });
+    }, 250);
+  }
+
+  computeElementRef() {
+    const items = document.getElementsByTagName('igo-search-results-item');
+    const igoList = this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
+    let selectedItem;
+    // tslint:disable-next-line
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].className.includes('igo-list-item-selected')) {
+        selectedItem = items[i];
+      }
+    }
+    return [igoList, selectedItem];
+  }
+
+  adjustTopPanel(elemSource, elem) {
+    if (!this.isScrolledIntoView(elemSource, elem)) {
+      elemSource.scrollTop = elem.offsetTop + elem.children[0].offsetHeight - elemSource.clientHeight;
+    }
   }
 
   toggleTopPanel() {
@@ -184,22 +257,6 @@ export class SearchResultsToolComponent implements OnInit {
       this.topPanelState = 'collapsed';
     } else {
       this.topPanelState = 'expanded';
-
-      const items = document.getElementsByTagName('igo-search-results-item');
-      const igoList = this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
-      let selectedItem;
-      // tslint:disable-next-line
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].className === 'ng-star-inserted igo-list-item-selected') {
-          selectedItem = items[i];
-        }
-      }
-
-      setTimeout(() => { // To be sure the flexible component has been displayed yet
-        if (!this.isScrolledIntoView(igoList, selectedItem)) {
-          igoList.scrollTop = selectedItem.offsetTop + selectedItem.children[0].offsetHeight - igoList.clientHeight;
-        }
-      }, FlexibleComponent.transitionTime + 100);
     }
   }
 

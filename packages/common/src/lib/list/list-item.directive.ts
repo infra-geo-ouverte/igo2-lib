@@ -13,6 +13,7 @@ import {
 })
 export class ListItemDirective {
 
+  static focusedCls = 'igo-list-item-focused';
   static selectedCls = 'igo-list-item-selected';
   static disabledCls = 'igo-list-item-disabled';
 
@@ -40,7 +41,9 @@ export class ListItemDirective {
     value ? this.beforeFocus.emit(this) : this.beforeUnfocus.emit(this);
 
     this._focused = value;
-    this.toggleSelectedClass();
+    if (this.selected !== true) {
+      this.toggleFocusedClass();
+    }
 
     value ? this.focus.emit(this) : this.unfocus.emit(this);
   }
@@ -116,9 +119,18 @@ export class ListItemDirective {
     return this.el.nativeElement.offsetTop - padding;
   }
 
+  private toggleFocusedClass() {
+    if (this.focused) {
+      this.addCls(ListItemDirective.focusedCls);
+    } else {
+      this.removeCls(ListItemDirective.focusedCls);
+    }
+  }
+
   private toggleSelectedClass() {
-    if (this.focused || this.selected) {
+    if (this.selected) {
       this.addCls(ListItemDirective.selectedCls);
+      this.removeCls(ListItemDirective.focusedCls);
     } else {
       this.removeCls(ListItemDirective.selectedCls);
     }

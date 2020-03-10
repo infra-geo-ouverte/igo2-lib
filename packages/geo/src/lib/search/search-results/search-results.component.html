@@ -4,7 +4,7 @@
     ngFor let-group
     [ngForOf]="results$ | async">
 
-    <igo-collapsible
+    <igo-collapsible [class]="group.source.getId()"
       *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
       [title]="computeGroupTitle(group)"
       [collapsed]="collapsed[group.source.title]"

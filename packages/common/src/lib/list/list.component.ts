@@ -268,7 +268,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private handleItemBeforeFocus(item: ListItemDirective) {
     if (item !== this.focusedItem) {
-      this.unselect();
+      this.unfocus();
     }
   }
 
