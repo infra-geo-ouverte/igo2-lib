@@ -51,7 +51,7 @@
         "publicContexts": "Public contexts",
         "save": "Save this context",
         "sharedContexts": "Shared contexts",
-        "filterPlaceHolder": "Filer the contexts list"
+        "filterPlaceHolder": "Filter the contexts list"
       },
       "permission": {
         "addBtn": "Add",
@@ -105,7 +105,7 @@
         "zoom": "The zoom level of the map.",
         "addedLayers": "The layers added by the catalog or by the search bar.",
         "visibleInvisible": "Visibility status of layers.",
-        "layerListControls": "The restrictions applied to the table of contents (keyword, alphabetical order, visibility and scale).",
+        "layerListControls": "The restrictions applied to the table of contents (keyword, alphabetical order and visibility status).",
         "excluded": "Excluded in the shared URL :",
         "order": "The order of the layers.",
         "opacity": "Modifications made to the opacity of the layers.",

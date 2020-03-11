@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class LayerListService {
+export class LayerListToolService {
   public keyword: string;
   public sortedAlpha = false;
   public onlyVisible = false;

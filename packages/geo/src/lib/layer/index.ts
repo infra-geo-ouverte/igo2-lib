@@ -4,5 +4,6 @@ export * from './layer-legend';
 export * from './layer-legend-item';
 export * from './layer-legend-list';
 export * from './layer-list';
+export * from './layer-list-tool';
 export * from './track-feature-button';
 export * from './utils';

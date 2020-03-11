@@ -11,7 +11,6 @@ import { FloatLabelType } from '@angular/material';
 
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
-import { LayerListService } from './layer-list.service';
 import {
   BehaviorSubject,
   ReplaySubject,
@@ -48,8 +47,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input() layersAreAllVisible: boolean = true;
 
-  @Input() layersAreAllInRange: boolean = true;
-
   @Input()
   set layers(value: Layer[]) {
     this._layers = value;
@@ -75,66 +72,32 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @Input() queryBadge: boolean = false;
 
   get keyword(): string {
-    return this.layerListService.keyword;
+    return this._keyword;
   }
   set keyword(value: string) {
-    this.layerListService.keyword = value;
+    this._keyword = value;
     this.next();
   }
-
-  get keywordInitialized(): boolean {
-    return this.layerListService.keywordInitialized;
-  }
-  set keywordInitialized(value: boolean) {
-    this.layerListService.keywordInitialized = value;
-  }
+  private _keyword = undefined;
 
   get onlyVisible(): boolean {
-    return this.layerListService.onlyVisible;
+    return this._onlyVisible;
   }
   set onlyVisible(value: boolean) {
-    this.layerListService.onlyVisible = value;
+    this._onlyVisible = value;
     this.next();
   }
+  private _onlyVisible = false;
 
-  get onlyVisibleInitialized(): boolean {
-    return this.layerListService.onlyVisibleInitialized;
-  }
-  set onlyVisibleInitialized(value: boolean) {
-    this.layerListService.onlyVisibleInitialized = value;
-  }
-
-  get onlyInRange(): boolean {
-    return this.layerListService.onlyInRange;
-  }
-  set onlyInRange(value: boolean) {
-    this.layerListService.onlyInRange = value;
-    this.next();
-  }
-
-  get onlyInRangeInitialized(): boolean {
-    return this.layerListService.onlyInRangeInitialized;
-  }
-  set onlyInRangeInitialized(value: boolean) {
-    this.layerListService.onlyInRangeInitialized = value;
-  }
 
   get sortedAlpha(): boolean {
-    return this.layerListService.sortedAlpha;
+    return this._sortedAlpha
   }
   set sortedAlpha(value: boolean) {
-    this.layerListService.sortedAlpha = value;
+    this._sortedAlpha = value;
     this.next();
   }
-
-  get sortedAlphaInitialized(): boolean {
-    return this.layerListService.sortedAlphaInitialized;
-  }
-  set sortedAlphaInitialized(value: boolean) {
-    this.layerListService.sortedAlphaInitialized = value;
-  }
-
-  constructor(private layerListService: LayerListService) {}
+  private _sortedAlpha = false;
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -152,19 +115,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
         this.layers$.next(this.computeLayers(this.layers.slice(0)));
       });
 
-    this.initLayerFilterAndSortOptions();
   }
 
   ngOnDestroy() {
     this.change$$.unsubscribe();
   }
 
-  toggleOnlyVisible() {
-    this.onlyVisible = !this.onlyVisible;
-  }
-
-  toggleOnlyInRange() {
-    this.onlyInRange = !this.onlyInRange;
+  toggleOnlyVisible(onlyVisible: boolean) {
+    this.onlyVisible = onlyVisible;
   }
 
   toggleSort(sortAlpha: boolean) {
@@ -211,6 +169,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return layersOut;
   }
 
+  onKeywordChange(term) {
+    this.keyword = term;
+  }
+
   private filterLayers(layers: Layer[]): Layer[] {
     const keyword = this.keyword;
     if (
@@ -218,7 +180,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     ) {
       return layers;
     }
-    if (!keyword && !this.onlyInRange && !this.onlyVisible) {
+    if (!keyword && !this.onlyVisible) {
       return layers;
     }
 
@@ -263,13 +225,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
           keepLayerIds.splice(index, 1);
         }
       }
-
-      if (this.onlyInRange && layer.isInResolutionsRange === false) {
-        const index = keepLayerIds.indexOf(layer.id);
-        if (index > -1) {
-          keepLayerIds.splice(index, 1);
-        }
-      }
     });
 
     return layers.filter(
@@ -303,7 +258,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
         if (
           this.layers.length >= this.thresholdToFilterAndSort ||
           this.keyword ||
-          this.onlyInRange ||
           this.onlyVisible
         ) {
           return true;
@@ -312,37 +266,4 @@ export class LayerListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private initLayerFilterAndSortOptions() {
-    if (this.layerFilterAndSortOptions.toolbarThreshold) {
-      this.thresholdToFilterAndSort = this.layerFilterAndSortOptions.toolbarThreshold;
-    }
-
-    if (this.layerFilterAndSortOptions.keyword && !this.keywordInitialized) {
-      this.keyword = this.layerFilterAndSortOptions.keyword;
-      this.keywordInitialized = true;
-    }
-    if (
-      this.layerFilterAndSortOptions.sortedAlpha &&
-      !this.sortedAlphaInitialized
-    ) {
-      this.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
-      this.sortedAlphaInitialized = true;
-    }
-    if (
-      this.layerFilterAndSortOptions.onlyVisible &&
-      !this.onlyVisibleInitialized &&
-      !this.layersAreAllVisible
-    ) {
-      this.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
-      this.onlyVisibleInitialized = true;
-    }
-    if (
-      this.layerFilterAndSortOptions.onlyInRange &&
-      !this.onlyInRangeInitialized &&
-      !this.layersAreAllInRange
-    ) {
-      this.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
-      this.onlyInRangeInitialized = true;
-    }
-  }
 }
