@@ -7,5 +7,4 @@ export interface LayerListControlsOptions {
   keyword?: string;
   sortedAlpha?: boolean;
   onlyVisible?: boolean;
-  onlyInRange?: boolean;
 }

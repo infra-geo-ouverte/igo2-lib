@@ -1,69 +1,13 @@
 <igo-list [navigation]="false" [selection]="false">
-  <mat-list-item *ngIf="showToolbar$ | async">
-    <ng-container>
-      <mat-form-field class="inputFilter" [floatLabel]="floatLabel">
-        <input
-          matInput
-          [placeholder]="'igo.geo.layer.filterPlaceholder' | translate"
-          [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
-          matTooltipShowDelay="500"
-          type="text" [(ngModel)]="keyword">
-        <button
-          mat-button
-          *ngIf="keyword"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          color="warn"
-          (click)="clearKeyword()">
-          <mat-icon svgIcon="close"></mat-icon>
-        </button>
-      </mat-form-field>
-      <button
-        *ngIf="!sortedAlpha"
-        mat-icon-button
-        [matTooltip]="'igo.geo.layer.sortAlphabetically' | translate"
-        matTooltipShowDelay="500"
-        (click)="toggleSort(true)">
-        <mat-icon color="primary" svgIcon="sort-alphabetical"></mat-icon>
-      </button>
-      <button
-        *ngIf="sortedAlpha"
-        mat-icon-button
-        [matTooltip]="'igo.geo.layer.sortMapOrder' | translate"
-        matTooltipShowDelay="500"
-        (click)="toggleSort(false)">
-        <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
-      </button>
-      <div [matTooltip]="onlyVisible ?
-        ('igo.geo.layer.resetLayersList' | translate) :
-        ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)"
-        matTooltipShowDelay="500">
-        <button
-          mat-icon-button
-          [disabled]="layersAreAllVisible && !onlyVisible"
-          [color]="onlyVisible ? 'warn' : 'primary'"
-          (click)="toggleOnlyVisible()">
-          <mat-icon
-          [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'eye'"></mat-icon>
-        </button>
-      </div>
-      <div [matTooltip]="onlyInRange ?
-        ('igo.geo.layer.resetLayersList' | translate) :
-        ('igo.geo.layer.subsetLayersListOnlyInRange' | translate)"
-        matTooltipShowDelay="500">
-        <button
-          mat-icon-button
-          [disabled]="layersAreAllInRange && !onlyInRange"
-          [color]="onlyInRange ? 'warn' : 'primary'"
-          (click)="toggleOnlyInRange()">
-          <mat-icon
-          [svgIcon]="onlyInRange ? 'sort-variant-remove' : 'playlist-check'"></mat-icon>
-        </button>
-      </div>
-    </ng-container>
-  </mat-list-item>
-
+  <igo-layer-list-tool *ngIf="showToolbar$ | async"
+      floatLabel="auto"
+      [layersAreAllVisible]="layersAreAllVisible"
+      (keyword)="onKeywordChange($event)"
+      (sortAlpha)="toggleSort($event)"
+      (showVisible)="toggleOnlyVisible($event)">
+      
+    </igo-layer-list-tool>
+  
   <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
     <igo-layer-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
         igoListItem

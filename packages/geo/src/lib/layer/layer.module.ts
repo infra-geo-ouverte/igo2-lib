@@ -24,10 +24,11 @@ import {
 
 import { LayerService } from './shared/layer.service';
 import { StyleService } from './shared/style.service';
-import { LayerListService } from './layer-list/layer-list.service';
+import { LayerListToolService } from './layer-list-tool/layer-list-tool.service';
 import { LayerItemComponent } from './layer-item/layer-item.component';
 import { LayerLegendComponent } from './layer-legend/layer-legend.component';
 import { LayerListComponent } from './layer-list/layer-list.component';
+import { LayerListToolComponent } from './layer-list-tool/layer-list-tool.component';
 import { LayerListBindingDirective } from './layer-list/layer-list-binding.directive';
 import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legend-list-binding.directive';
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
@@ -59,6 +60,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     LayerLegendItemComponent,
     LayerLegendComponent,
     LayerListComponent,
+    LayerListToolComponent,
     LayerLegendListComponent,
     LayerListBindingDirective,
     LayerLegendListBindingDirective,
@@ -69,6 +71,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     LayerLegendItemComponent,
     LayerLegendComponent,
     LayerListComponent,
+    LayerListToolComponent,
     LayerLegendListComponent,
     LayerListBindingDirective,
     LayerLegendListBindingDirective,
@@ -79,7 +82,7 @@ export class IgoLayerModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: IgoLayerModule,
-      providers: [LayerService, StyleService, LayerListService]
+      providers: [LayerService, StyleService, LayerListToolService]
     };
   }
 }

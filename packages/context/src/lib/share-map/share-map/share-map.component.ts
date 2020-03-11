@@ -84,9 +84,6 @@ export class ShareMapComponent implements AfterViewInit, OnInit, OnDestroy {
         if (this.layerListService.onlyVisible) {
           this.publicShareOption.layerlistControls.querystring += '&llcv=1';
         }
-        if (this.layerListService.onlyInRange) {
-          this.publicShareOption.layerlistControls.querystring += '&llcr=1';
-        }
         return true;
     }
     return false;

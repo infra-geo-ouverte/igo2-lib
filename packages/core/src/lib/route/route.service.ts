@@ -40,7 +40,6 @@ export class RouteService {
       llcKKey: 'llck',
       llcAKey: 'llca',
       llcVKey: 'llcv',
-      llcRKey: 'llcr',
       wmsUrlKey: 'wmsUrl',
       layersKey:  'layers'
     };
