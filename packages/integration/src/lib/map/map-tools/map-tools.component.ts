@@ -36,9 +36,10 @@ export class MapToolsComponent implements OnInit {
   @Input()
   set layerListControls(value: LayerListControlsOptions) {
 
-    const stateKeyword = this.layerListToolState.keyword$.value;
-    const stateOnlyVisible = this.layerListToolState.onlyVisible$.value;
-    const stateSortAlpha = this.layerListToolState.sortAlpha$.value;
+    const stateOptions = this.layerListToolState.getLayerListControls();
+    const stateKeyword = stateOptions.keyword;
+    const stateOnlyVisible = stateOptions.onlyVisible;
+    const stateSortAlpha = stateOptions.sortAlpha;
 
     value.keyword = stateKeyword !== '' ? stateKeyword : value.keyword;
     value.onlyVisible = stateOnlyVisible !== undefined ? stateOnlyVisible : value.onlyVisible;

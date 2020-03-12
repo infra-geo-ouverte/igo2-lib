@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { LayerListControlsOptions } from '@igo2/geo';
 
 /**
  * Service that holds the state of layer list tool values
@@ -28,5 +29,13 @@ export class LayerListToolState {
 
     setSelectedTab(tab: number) {
       this.selectedTab$.next(tab);
+    }
+
+    getLayerListControls(): LayerListControlsOptions {
+      return {
+        keyword: this.keyword$.value,
+        onlyVisible: this.onlyVisible$.value,
+        sortAlpha: this.sortAlpha$.value
+      };
     }
 }
