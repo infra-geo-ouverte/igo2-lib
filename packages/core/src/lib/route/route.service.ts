@@ -37,9 +37,6 @@ export class RouteService {
       visibleOffLayersKey: 'invisiblelayers',
       directionsCoordKey: 'routing',
       toolKey: 'tool',
-      llcKKey: 'llck',
-      llcAKey: 'llca',
-      llcVKey: 'llcv',
       wmsUrlKey: 'wmsUrl',
       layersKey:  'layers'
     };

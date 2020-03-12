@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { uuid, Clipboard } from '@igo2/utils';
 import { ConfigService, MessageService, LanguageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
-import { IgoMap, LayerListControlsOptions } from '@igo2/geo';
+import { IgoMap } from '@igo2/geo';
 
 import { ShareMapService } from '../shared/share-map.service';
 import { Subscription } from 'rxjs';
@@ -19,8 +19,6 @@ export class ShareMapComponent implements AfterViewInit, OnInit, OnDestroy {
   private mapState$$: Subscription;
 
   @Input() map: IgoMap;
-
-  @Input() layerListControls: LayerListControlsOptions;
 
   public url: string;
   public hasApi = false;
@@ -66,25 +64,7 @@ export class ShareMapComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mapState$$.unsubscribe();
   }
 
-  private hasLayerListControls(): boolean {
-    if (this.layerListControls) {
-        this.publicShareOption.layerlistControls.querystring = '';
-        if (this.layerListControls.keyword !== undefined || this.layerListControls.keyword !== '' ) {
-          this.publicShareOption.layerlistControls.querystring += '&llck=' + this.layerListControls.keyword;
-        }
-        if (this.layerListControls.sortAlpha) {
-          this.publicShareOption.layerlistControls.querystring += '&llca=1';
-        }
-        if (this.layerListControls.onlyVisible) {
-          this.publicShareOption.layerlistControls.querystring += '&llcv=1';
-        }
-        return true;
-    }
-    return false;
-  }
-
   resetUrl(values: any = {}) {
-    this.hasLayerListControls();
     const inputs = Object.assign({}, values);
     inputs.uri = this.userId ? `${this.userId}-${values.uri}` : values.uri;
     this.url = this.shareMapService.getUrl(this.map, inputs, this.publicShareOption);
