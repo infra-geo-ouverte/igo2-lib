@@ -1,5 +1,7 @@
-<mat-tab-group [selectedIndex]="selectedTab">
-
+<mat-tab-group
+  #tabGroup
+  [selectedIndex]="layerListToolState.selectedTab$ | async" 
+  (selectedTabChange)="tabChanged($event)">
 
   <mat-tab [label]="'igo.integration.tools.layers' | translate">
     <igo-layer-list
@@ -10,7 +12,8 @@
       [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
       [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
       [floatLabel]="false"
-      [queryBadge]="queryBadge">
+      [queryBadge]="queryBadge"
+      (appliedFilterAndSort)= onLayerListChange($event)>
 
       <ng-template #igoLayerItemToolbar let-layer="layer">
         <igo-download-button [layer]="layer"></igo-download-button>

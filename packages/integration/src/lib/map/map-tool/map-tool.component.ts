@@ -1,9 +1,8 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum } from '@igo2/geo';
+import { LayerListControlsEnum, LayerListControlsOptions } from '@igo2/geo';
 
-import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -46,11 +45,9 @@ export class MapToolComponent {
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       case LayerListControlsEnum.never:
         filterSortOptions.showToolbar = LayerListControlsEnum.never;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       default:
         break;

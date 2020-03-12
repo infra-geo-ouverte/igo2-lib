@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class LayerListToolService {
   public keyword: string;
-  public sortedAlpha = false;
+  public sortAlpha = false;
   public onlyVisible = false;
   public onlyInRange = false;
   public keywordInitialized = false;
