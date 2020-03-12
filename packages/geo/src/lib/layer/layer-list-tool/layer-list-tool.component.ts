@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   EventEmitter,
-  Output
+  Output,
+  OnDestroy
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
@@ -12,6 +13,7 @@ import {
   BehaviorSubject,
   Subscription,
 } from 'rxjs';
+import { LayerListControlsOptions } from './layer-list-tool.interface';
 
 @Component({
   selector: 'igo-layer-list-tool',
@@ -19,16 +21,34 @@ import {
   styleUrls: ['./layer-list-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LayerListToolComponent implements OnInit {
+export class LayerListToolComponent implements OnInit, OnDestroy {
 
-  public onlyVisible: boolean = false;
-  public sortedAlpha: boolean = false;
+  public onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public sortAlpha$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public term$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  onlyVisible$$: Subscription;
+  sortAlpha$$: Subscription;
   term$$: Subscription;
 
   @Input() layersAreAllVisible: boolean = true;
 
   @Input() floatLabel: FloatLabelType = 'auto';
+
+  @Input()
+  set onlyVisible(value: boolean) {
+    this.onlyVisible$.next(value);
+  }
+  get onlyVisible(): boolean {
+    return this.onlyVisible$.value;
+  }
+
+  @Input()
+  set sortAlpha(value: boolean) {
+    this.sortAlpha$.next(value);
+  }
+  get sortAlpha(): boolean {
+    return this.sortAlpha$.value;
+  }
 
   @Input()
   set term(value: string) {
@@ -38,28 +58,45 @@ export class LayerListToolComponent implements OnInit {
     return this.term$.value;
   }
 
-  @Output() keyword: EventEmitter<string> = new EventEmitter<string>(undefined);
-  @Output() sortAlpha: EventEmitter<boolean> = new EventEmitter<boolean>(false);
-  @Output() showVisible: EventEmitter<boolean> = new EventEmitter<boolean>(false);
+  @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
 
   ngOnInit(): void {
     this.term$$ = this.term$.subscribe(keyword => {
-      this.keyword.emit(keyword);
-    }
-    );
+      this.appliedFilterAndSort.emit({
+        keyword,
+        onlyVisible: this.onlyVisible,
+        sortAlpha: this.sortAlpha});
+    });
+
+    this.onlyVisible$$ = this.onlyVisible$.subscribe(onlyVisible => {
+      this.appliedFilterAndSort.emit({
+        keyword: this.term,
+        onlyVisible,
+        sortAlpha: this.sortAlpha});
+    });
+    this.sortAlpha$$ = this.sortAlpha$.subscribe(sortAlpha => {
+      this.appliedFilterAndSort.emit({
+        keyword: this.term,
+        onlyVisible: this.onlyVisible,
+        sortAlpha});
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.onlyVisible$$.unsubscribe();
+    this.sortAlpha$$.unsubscribe();
+    this.term$$.unsubscribe();
   }
 
   clearTerm() {
     this.term = undefined;
   }
   toggleSortAlpha() {
-    this.sortedAlpha = !this.sortedAlpha;
-    this.sortAlpha.emit(this.sortedAlpha);
+    this.sortAlpha = !this.sortAlpha;
   }
 
   toggleOnlyVisible() {
     this.onlyVisible = !this.onlyVisible;
-    this.showVisible.emit(this.onlyVisible);
   }
 
 }

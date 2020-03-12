@@ -3,11 +3,10 @@ import { Observable, Subscription, BehaviorSubject, ReplaySubject, EMPTY, timer 
 import { map, debounce } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, Layer, IgoMap } from '@igo2/geo';
+import { LayerListControlsEnum, Layer, IgoMap, LayerListControlsOptions } from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
-import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 
 @ToolComponent({
   name: 'mapLegend',

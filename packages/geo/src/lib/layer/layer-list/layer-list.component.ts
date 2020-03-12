@@ -5,7 +5,9 @@ import {
   TemplateRef,
   ContentChild,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
@@ -23,6 +25,7 @@ import {
   MetadataOptions,
   MetadataLayerOptions
 } from '../../metadata/shared/metadata.interface';
+import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -59,7 +62,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input() floatLabel: FloatLabelType = 'auto';
 
-  @Input() layerFilterAndSortOptions: any = {};
+  @Input() layerFilterAndSortOptions: LayerListControlsOptions = {};
 
   @Input() excludeBaseLayers: boolean = false;
 
@@ -70,6 +73,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @Input() updateLegendOnResolutionChange: boolean = false;
 
   @Input() queryBadge: boolean = false;
+
+  @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
 
   get keyword(): string {
     return this._keyword;
@@ -89,11 +94,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
   private _onlyVisible = false;
 
-
-  get sortedAlpha(): boolean {
-    return this._sortedAlpha
+  get sortAlpha(): boolean {
+    return this._sortedAlpha;
   }
-  set sortedAlpha(value: boolean) {
+  set sortAlpha(value: boolean) {
     this._sortedAlpha = value;
     this.next();
   }
@@ -113,20 +117,17 @@ export class LayerListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.showToolbar$.next(this.computeShowToolbar());
         this.layers$.next(this.computeLayers(this.layers.slice(0)));
+        this.appliedFilterAndSort.emit({
+          keyword: this.keyword,
+          sortAlpha: this.sortAlpha,
+          onlyVisible: this.onlyVisible
+        });
       });
 
   }
 
   ngOnDestroy() {
     this.change$$.unsubscribe();
-  }
-
-  toggleOnlyVisible(onlyVisible: boolean) {
-    this.onlyVisible = onlyVisible;
-  }
-
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
   }
 
   clearKeyword() {
@@ -161,7 +162,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private computeLayers(layers: Layer[]): Layer[] {
     let layersOut = this.filterLayers(layers);
-    if (this.sortedAlpha) {
+    if (this.sortAlpha) {
       layersOut = this.sortLayersByTitle(layersOut);
     } else {
       layersOut = this.sortLayersByZindex(layersOut);
@@ -173,14 +174,19 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.keyword = term;
   }
 
+  onAppliedFilterAndSortChange(appliedFilter: LayerListControlsOptions) {
+    this.keyword = appliedFilter.keyword;
+    this.onlyVisible = appliedFilter.onlyVisible;
+    this.sortAlpha = appliedFilter.sortAlpha;
+  }
+
   private filterLayers(layers: Layer[]): Layer[] {
-    const keyword = this.keyword;
     if (
       this.layerFilterAndSortOptions.showToolbar === LayerListControlsEnum.never
     ) {
       return layers;
     }
-    if (!keyword && !this.onlyVisible) {
+    if (!this.keyword && !this.onlyVisible) {
       return layers;
     }
 
@@ -195,8 +201,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
         return kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       });
 
-      if (keyword) {
-        const localKeyword = keyword
+      if (this.keyword) {
+        const localKeyword = this.keyword
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
         const layerTitle = layer.title
@@ -209,7 +215,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
           undefined;
         if (
           !keywordRegex.test(layerTitle) &&
-          !(keyword.toLowerCase() === dataSourceType.toLowerCase()) &&
+          !(this.keyword.toLowerCase() === dataSourceType.toLowerCase()) &&
           !keywordInList
         ) {
           const index = keepLayerIds.indexOf(layer.id);

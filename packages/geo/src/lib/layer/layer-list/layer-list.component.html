@@ -2,9 +2,10 @@
   <igo-layer-list-tool *ngIf="showToolbar$ | async"
       floatLabel="auto"
       [layersAreAllVisible]="layersAreAllVisible"
-      (keyword)="onKeywordChange($event)"
-      (sortAlpha)="toggleSort($event)"
-      (showVisible)="toggleOnlyVisible($event)">
+      [term]="layerFilterAndSortOptions.keyword"
+      [onlyVisible]="layerFilterAndSortOptions.onlyVisible"
+      [sortAlpha]="layerFilterAndSortOptions.sortAlpha"
+      (appliedFilterAndSort)="onAppliedFilterAndSortChange($event)">
       
     </igo-layer-list-tool>
   

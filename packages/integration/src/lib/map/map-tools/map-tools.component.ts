@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, ViewChild } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum } from '@igo2/geo';
+import { LayerListControlsEnum, LayerListControlsOptions } from '@igo2/geo';
 
-import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
+import { LayerListToolState } from '../layer-list-tool.state';
+import { MatTabChangeEvent } from '@angular/material';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -18,7 +19,7 @@ import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
   styleUrls: ['./map-tools.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapToolsComponent {
+export class MapToolsComponent implements OnInit {
 
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
@@ -32,7 +33,28 @@ export class MapToolsComponent {
 
   @Input() timeButton: boolean = true;
 
-  @Input() layerListControls: LayerListControlsOptions = {};
+  @Input()
+  set layerListControls(value: LayerListControlsOptions) {
+
+    const stateKeyword = this.layerListToolState.keyword$.value;
+    const stateOnlyVisible = this.layerListToolState.onlyVisible$.value;
+    const stateSortAlpha = this.layerListToolState.sortAlpha$.value;
+
+    value.keyword = stateKeyword !== '' ? stateKeyword : value.keyword;
+    value.onlyVisible = stateOnlyVisible !== undefined ? stateOnlyVisible : value.onlyVisible;
+    value.sortAlpha = stateSortAlpha !== undefined ? stateSortAlpha : value.sortAlpha;
+
+    value.onlyVisible = value.onlyVisible === undefined ? false : value.onlyVisible;
+    value.sortAlpha = value.sortAlpha === undefined ? false : value.sortAlpha;
+
+    this._layerListControls = value;
+  }
+
+  get layerListControls(): LayerListControlsOptions {
+    return this._layerListControls;
+  }
+
+  private _layerListControls = {};
 
   @Input() queryBadge: boolean = false;
 
@@ -40,7 +62,7 @@ export class MapToolsComponent {
     return this.layerListControls.excludeBaseLayers || false;
   }
 
-  get layerFilterAndSortOptions(): any {
+  get layerFilterAndSortOptions(): LayerListControlsOptions {
     const filterSortOptions = Object.assign({
       showToolbar: LayerListControlsEnum.default
     }, this.layerListControls);
@@ -48,11 +70,9 @@ export class MapToolsComponent {
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       case LayerListControlsEnum.never:
         filterSortOptions.showToolbar = LayerListControlsEnum.never;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       default:
         break;
@@ -60,11 +80,36 @@ export class MapToolsComponent {
     return filterSortOptions;
   }
 
-  public selectedTab(): number {
-    if (this.selectedTabAtOpening === 'legend') {
-      return 1;
+  @ViewChild('tabGroup') tabGroup;
+
+  constructor(
+   public layerListToolState: LayerListToolState
+  ) {}
+
+  ngOnInit(): void {
+    this.selectedTab();
+  }
+
+  private selectedTab() {
+    const userSelectedTab = this.layerListToolState.selectedTab$.value;
+    if (userSelectedTab) {
+      this.layerListToolState.setSelectedTab(userSelectedTab);
+    } else {
+      if (this.selectedTabAtOpening === 'legend') {
+        this.layerListToolState.setSelectedTab(1);
+      }
+      this.layerListToolState.setSelectedTab(0);
     }
-    return 0;
+  }
+
+  public tabChanged(tab: MatTabChangeEvent) {
+    this.layerListToolState.setSelectedTab(tab.index);
+  }
+
+  onLayerListChange(appliedFilters: LayerListControlsOptions ) {
+    this.layerListToolState.setKeyword(appliedFilters.keyword);
+    this.layerListToolState.setSortAlpha(appliedFilters.sortAlpha);
+    this.layerListToolState.setOnlyVisible(appliedFilters.onlyVisible);
   }
 
 }

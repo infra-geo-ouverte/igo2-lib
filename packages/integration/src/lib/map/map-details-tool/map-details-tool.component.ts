@@ -3,11 +3,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, Layer, IgoMap } from '@igo2/geo';
+import { LayerListControlsEnum, Layer, IgoMap, LayerListControlsOptions } from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
-import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -60,11 +59,9 @@ export class MapDetailsToolComponent {
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       case LayerListControlsEnum.never:
         filterSortOptions.showToolbar = LayerListControlsEnum.never;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       default:
         break;

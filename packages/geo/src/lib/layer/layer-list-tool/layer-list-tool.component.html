@@ -20,11 +20,11 @@
         </button>
       </mat-form-field>
 
-      <div [matTooltip]="sortedAlpha ?
+      <div [matTooltip]="sortAlpha ?
       ('igo.geo.layer.sortAlphabetically' | translate) :
       ('igo.geo.layer.sortMapOrder' | translate)" matTooltipShowDelay="500">
-        <button [color]="sortedAlpha ? 'warn' : 'primary'" mat-icon-button (click)="toggleSortAlpha()">
-          <mat-icon [svgIcon]="sortedAlpha ? 'sort-variant-remove' : 'sort-alphabetical'"></mat-icon>
+        <button [color]="sortAlpha ? 'warn' : 'primary'" mat-icon-button (click)="toggleSortAlpha()">
+          <mat-icon [svgIcon]="sortAlpha ? 'sort-variant-remove' : 'sort-alphabetical'"></mat-icon>
         </button>
       </div>
 
