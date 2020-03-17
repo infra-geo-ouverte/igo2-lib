@@ -371,6 +371,7 @@ export class IgoMap {
 
   // TODO: Create a GeolocationController with everything below
   geolocate(track = false) {
+    console.log('"dsadsadsa"');
     let first = true;
     if (this.geolocation$$) {
       track = this.geolocation.getTracking();
@@ -393,8 +394,12 @@ export class IgoMap {
           )
         ) {
           this.overlay.dataSource.ol.removeFeature(this.geolocationFeature);
+        }
+
+        if (this.bufferFeature) {
           this.buffer.dataSource.ol.removeFeature(this.bufferFeature);
         }
+
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
         this.overlay.addOlFeature(this.geolocationFeature);
