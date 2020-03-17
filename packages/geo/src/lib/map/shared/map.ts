@@ -371,7 +371,6 @@ export class IgoMap {
 
   // TODO: Create a GeolocationController with everything below
   geolocate(track = false) {
-    console.log('"dsadsadsa"');
     let first = true;
     if (this.geolocation$$) {
       track = this.geolocation.getTracking();
