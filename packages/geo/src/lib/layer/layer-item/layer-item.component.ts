@@ -3,7 +3,9 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -57,6 +59,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   set opacity(opacity: number) {
     this.layer.opacity = opacity / 100;
   }
+
+  @Output() action: EventEmitter<Layer> = new EventEmitter<Layer>(undefined);
 
   constructor(private networkService: NetworkService) {}
 

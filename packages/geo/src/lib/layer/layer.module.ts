@@ -19,7 +19,8 @@ import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoListModule,
   IgoCollapsibleModule,
-  IgoImageModule
+  IgoImageModule,
+  IgoPanelModule
 } from '@igo2/common';
 
 import { LayerService } from './shared/layer.service';
@@ -53,7 +54,8 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     IgoLanguageModule,
     IgoListModule,
     IgoCollapsibleModule,
-    IgoImageModule
+    IgoImageModule,
+    IgoPanelModule
   ],
   exports: [
     LayerItemComponent,

@@ -44,6 +44,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   showToolbar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  layerTool = false;
+  activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+
   private change$$: Subscription;
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
@@ -59,6 +62,16 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return this._layers;
   }
   private _layers: Layer[];
+
+  @Input()
+  set activeLayer(value: Layer) {
+    this._activeLayer = value;
+    this.activeLayer$.next(value);
+  }
+  get activeLayer(): Layer {
+    return this._activeLayer;
+  }
+  private _activeLayer: Layer;
 
   @Input() floatLabel: FloatLabelType = 'auto';
 
@@ -102,6 +115,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.next();
   }
   private _sortedAlpha = false;
+
+  get opacity() {
+    return this.activeLayer$.getValue().opacity * 100;
+  }
+  set opacity(opacity: number) {
+    this.activeLayer$.getValue().opacity = opacity / 100;
+  }
+
+  public toggleOpacity = false;
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -272,4 +294,20 @@ export class LayerListComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleLayerTool(layer) {
+    this.toggleOpacity = false;
+    if (this.layerTool && layer === this.activeLayer) {
+      this.layerTool = false;
+    } else {
+      this.layerTool = true;
+    }
+    this.activeLayer = layer;
+    return;
+  }
+
+  removeLayer() {
+    this.activeLayer.map.removeLayer(this.activeLayer);
+    this.layerTool = false;
+    return;
+  }
 }

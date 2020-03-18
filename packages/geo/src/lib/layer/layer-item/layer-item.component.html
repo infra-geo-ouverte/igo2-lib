@@ -28,69 +28,10 @@
     [matTooltip]= "'igo.geo.layer.moreOptions' | translate"
     mat-icon-button
     color="primary"
-    igoCollapse
-    [target]="actions"
-    [collapsed]="true">
+    (click)="action.emit(layer)">
     <mat-icon svgIcon="dots-horizontal"></mat-icon>
   </button>
 </mat-list-item>
-
-<div #actions class="igo-layer-actions-container">
-  <div class="igo-col igo-col-100 igo-col-100-m">
-
-    <div class="igo-layer-button-group">
-      <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
-      <mat-slider
-        id="opacity-slider"
-        color="primary"
-        thumbLabel
-        tickInterval="5"
-        step="5"
-        [min]="0"
-        [max]="100"
-        [(ngModel)]="opacity"
-        [matTooltip]="'igo.geo.layer.opacity' | translate"
-        matTooltipShowDelay="500"
-        tooltip-position="below">
-      </mat-slider>
-      
-      <button
-        color="primary"
-        mat-icon-button
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
-        [disabled]="!orderable || raiseDisabled"
-        (click)="layer.map.raiseLayer(layer)">
-        <mat-icon svgIcon="arrow-up"></mat-icon>
-      </button>
-
-      <button
-        mat-icon-button
-        color="primary"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
-        [disabled]="!orderable || lowerDisabled"
-        (click)="layer.map.lowerLayer(layer)">
-        <mat-icon svgIcon="arrow-down"></mat-icon>
-      </button>
-
-      <button
-        *ngIf="removable === true"
-        mat-icon-button
-        color="warn"
-        tooltip-position="below"
-        matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.layer.removeLayer' | translate"
-        (click)="layer.map.removeLayer(layer)">
-        <mat-icon svgIcon="delete"></mat-icon>
-      </button>
-      <ng-content select="[igoLayerItemToolbar]"></ng-content>
-
-    </div>
-  </div>
-</div>
 
 <div #legend class="igo-layer-legend-container">
   <igo-layer-legend
