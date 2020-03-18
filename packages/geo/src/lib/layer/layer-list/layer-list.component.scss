@@ -2,3 +2,22 @@ mat-form-field.inputFilter {
   width: calc(100% - 100px);
   max-width: 200px;
 }
+
+.igo-layer-actions-container {
+  width: calc(100% - 25px);
+  display: inline-block;
+  padding-left: 10px;
+}
+
+.igo-layer-actions-container > div {
+  text-align: center;
+}
+
+#opacity-slider {
+  float: left;
+}
+
+.igo-layer-button-group {
+  text-align: right;
+  width: 100%;
+}
