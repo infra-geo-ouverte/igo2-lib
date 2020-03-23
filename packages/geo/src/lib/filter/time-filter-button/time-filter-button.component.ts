@@ -15,6 +15,16 @@ export class TimeFilterButtonComponent implements OnInit {
 
   public options: TimeFilterableDataSourceOptions;
 
+  get badge() {
+    const filter = this.options.timeFilter as any;
+    console.log(filter);
+    if (filter && filter.enabled) {
+      return '1';
+    } else {
+      return;
+    }
+  }
+
   @Input() layer: Layer;
 
   @Input() map: IgoMap;
@@ -31,7 +41,4 @@ export class TimeFilterButtonComponent implements OnInit {
     this.options = this.layer.dataSource.options as WMSDataSourceOptions;
   }
 
-  toggleTimeFilter() {
-      this.timeFilterCollapse = !this.timeFilterCollapse;
-  }
 }

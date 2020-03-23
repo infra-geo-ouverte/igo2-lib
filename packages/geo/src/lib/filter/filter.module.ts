@@ -22,7 +22,8 @@ import {
   MatCheckboxModule,
   MatTabsModule,
   MatRadioModule,
-  MatMenuModule
+  MatMenuModule,
+  MatBadgeModule
 } from '@angular/material';
 
 import {
@@ -93,7 +94,8 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
     IgoCollapsibleModule,
     IgoListModule,
     IgoKeyValueModule,
-    IgoGeometryModule
+    IgoGeometryModule,
+    MatBadgeModule
   ],
   exports: [
     FilterableDataSourcePipe,

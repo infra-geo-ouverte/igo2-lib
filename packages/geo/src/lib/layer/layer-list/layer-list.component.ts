@@ -7,9 +7,11 @@ import {
   OnInit,
   OnDestroy,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material';
+import { FloatLabelType, MatMenuTrigger } from '@angular/material';
 
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
@@ -52,6 +54,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
 
   @Input() layersAreAllVisible: boolean = true;
+
+  @Input() ogcButton: boolean = true;
+
+  @Input() timeButton: boolean = true;
 
   @Input()
   set layers(value: Layer[]) {

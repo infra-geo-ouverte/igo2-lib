@@ -15,9 +15,23 @@ mat-form-field.inputFilter {
 
 #opacity-slider {
   float: left;
+  min-width: unset;
+  width: 110px;
+  left: 10px;
 }
 
 .igo-layer-button-group {
-  text-align: right;
-  width: 100%;
+  display: flex;
+  float: right;
+  padding-top: 5px;
+}
+
+::ng-deep.mat-menu-panel {
+  max-width: unset;
+  width: 132px;
+  height: 70px;
+
+  .mat-menu-content:not(:empty) {
+    padding-top: 20px;
+  }
 }

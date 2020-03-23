@@ -12,7 +12,8 @@ import {
   MatBadgeModule,
   MatSelectModule,
   MatSlideToggleModule,
-  MatDividerModule
+  MatDividerModule,
+  MatMenuModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -43,6 +44,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     CommonModule,
     FormsModule,
     MatDividerModule,
+    MatMenuModule,
     MatIconModule,
     MatButtonModule,
     MatSlideToggleModule,
