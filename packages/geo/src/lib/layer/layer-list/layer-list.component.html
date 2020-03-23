@@ -21,41 +21,44 @@
         [updateLegendOnResolutionChange]="updateLegendOnResolutionChange"
         [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
         (action)="toggleLayerTool($event)">
-
-        <ng-container igoLayerItemToolbar
-          [ngTemplateOutlet]="templateLayerToolbar"
-          [ngTemplateOutletContext]="{layer: layer}">
-        </ng-container>
-
     </igo-layer-item>
   </ng-template>
 
   <igo-panel *ngIf="layerTool" class="igo-layer-actions-container" [title]="activeLayer.title">
     <div class="igo-layer-button-group">
+    <ng-container igoLayerItemToolbar
+      [ngTemplateOutlet]="templateLayerToolbar"
+      [ngTemplateOutletContext]="{layer: activeLayer}">
+    </ng-container>
+
+    <ng-content select="[igoLayerItemToolbar]"></ng-content>
       <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
       <button
         color="primary"
         mat-icon-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.layer.opacity' | translate"
-        (click)="toggleOpacity = !toggleOpacity">
+        [matMenuTriggerFor]="opacityMenu"
+        [matTooltip]="'igo.geo.layer.opacity' | translate">
         <mat-icon svgIcon="opacity"></mat-icon>
       </button>
-      <mat-slider *ngIf="toggleOpacity"
-        id="opacity-slider"
-        color="primary"
-        thumbLabel
-        tickInterval="5"
-        step="5"
-        [min]="0"
-        [max]="100"
-        [(ngModel)]="opacity"
-        [matTooltip]="'igo.geo.layer.opacity' | translate"
-        matTooltipShowDelay="500"
-        tooltip-position="below">
-      </mat-slider>
-      
+
+      <mat-menu #opacityMenu="matMenu">
+        <mat-slider
+          id="opacity-slider"
+          color="primary"
+          thumbLabel
+          tickInterval="5"
+          step="5"
+          [min]="0"
+          [max]="100"
+          [(ngModel)]="opacity"
+          [matTooltip]="'igo.geo.layer.opacity' | translate"
+          matTooltipShowDelay="500"
+          tooltip-position="below">
+        </mat-slider>
+      </mat-menu>
+
       <button
         color="primary"
         mat-icon-button
@@ -87,8 +90,6 @@
         (click)="removeLayer()">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
-      <ng-content select="[igoLayerItemToolbar]"></ng-content>
-
     </div>
   </igo-panel>
 </igo-list>

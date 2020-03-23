@@ -14,6 +14,17 @@ export class OgcFilterButtonComponent implements OnInit {
 
   public options: OgcFilterableDataSourceOptions;
 
+  get badge() {
+    const filter = this.options.ogcFilters.filters as any;
+    if (!filter) {
+      return;
+    } else if (filter && !filter.filters) {
+      return '1';
+    } else if (filter && filter.filters) {
+      return filter.filters.length.toString();
+    }
+  }
+
   @Input() layer: Layer;
 
   @Input() map: IgoMap;
@@ -30,7 +41,4 @@ export class OgcFilterButtonComponent implements OnInit {
     this.options = this.layer.dataSource.options as OgcFilterableDataSourceOptions;
   }
 
-  toggleOgcFilter() {
-      this.ogcFilterCollapse = !this.ogcFilterCollapse;
-  }
 }

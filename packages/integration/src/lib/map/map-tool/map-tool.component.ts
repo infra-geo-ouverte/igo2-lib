@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { LayerListControlsEnum, LayerListControlsOptions } from '@igo2/geo';
+import { ToolState } from '../../tool/tool.state';
 
 /**
  * Tool to browse a map's layers or to choose a different map

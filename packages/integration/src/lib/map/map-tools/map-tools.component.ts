@@ -5,6 +5,7 @@ import { LayerListControlsEnum, LayerListControlsOptions } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
 import { MatTabChangeEvent } from '@angular/material';
+import { ToolState } from '../../tool/tool.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -84,7 +85,8 @@ export class MapToolsComponent implements OnInit {
   @ViewChild('tabGroup') tabGroup;
 
   constructor(
-   public layerListToolState: LayerListToolState
+   public layerListToolState: LayerListToolState,
+   private toolState: ToolState
   ) {}
 
   ngOnInit(): void {
@@ -113,4 +115,11 @@ export class MapToolsComponent implements OnInit {
     this.layerListToolState.setOnlyVisible(appliedFilters.onlyVisible);
   }
 
+  activateTimeFilter() {
+    this.toolState.toolbox.activateTool('timeFilter');
+  }
+
+  activateOgcFilter() {
+    this.toolState.toolbox.activateTool('ogcFilter');
+  }
 }
