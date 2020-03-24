@@ -33,6 +33,7 @@
     <igo-search-bar
       (pointerSummaryStatus)="onPointerSummaryStatusChange($event)"
       [searchSettings]="true"
+      [store]="searchStore"
       (searchTermChange)="onSearchTermChange($event)"
       (search)="onSearch($event)"
       (clearFeature)="removeFeatureFromMap()"
