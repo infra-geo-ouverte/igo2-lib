@@ -2,9 +2,7 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  AfterViewInit,
-  OnInit
+  ChangeDetectorRef
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NetworkService, ConnectionState } from '@igo2/core';
@@ -13,9 +11,6 @@ import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
-import { MapService } from '../../map/shared/map.service';
-import { BehaviorSubject } from 'rxjs';
-import { MapBrowserComponent } from '../../map/map-browser/map-browser.component';
 import { IgoMap } from '../../map/shared/map';
 
 @Component({
