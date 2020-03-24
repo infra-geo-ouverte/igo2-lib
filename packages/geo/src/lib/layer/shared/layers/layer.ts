@@ -178,9 +178,8 @@ export abstract class Layer {
     if (this.map !== undefined) {
       const resolution = this.map.viewController.getResolution();
       const minResolution = this.minResolution;
-      const maxResolution = this.maxResolution;
-      this.isInResolutionsRange =
-        resolution >= minResolution && resolution <= maxResolution;
+      const maxResolution = this.maxResolution === undefined ? Infinity : this.maxResolution;
+      this.isInResolutionsRange = resolution >= minResolution && resolution <= maxResolution;
     } else {
       this.isInResolutionsRange = false;
     }
