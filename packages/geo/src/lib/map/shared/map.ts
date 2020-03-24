@@ -34,6 +34,7 @@ import { FeatureDataSource } from '../../datasource/shared/datasources/feature-d
 export class IgoMap {
   public ol: olMap;
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
+  public offlineButtonState: boolean = false;
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
@@ -470,5 +471,6 @@ export class IgoMap {
 
   onOfflineToggle(offline: boolean) {
     this.offlineButtonToggle$.next(offline);
+    this.offlineButtonState = offline;
   }
 }
