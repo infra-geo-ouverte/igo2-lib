@@ -43,7 +43,7 @@ export class ImportService {
   constructor(private http: HttpClient, private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
     const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
-    this.clientSideFileSizeMax = configFileSizeMb ? configFileSizeMb *  Math.pow(1024, 2) : 30000000;
+    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) *  Math.pow(1024, 2);
   }
 
   import(

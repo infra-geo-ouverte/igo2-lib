@@ -65,8 +65,7 @@
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
-        "importSizeMax": "La taille limite du fichier est de",
-        "importUnitMb": "Mo",
+        "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {

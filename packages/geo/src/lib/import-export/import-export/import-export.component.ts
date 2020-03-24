@@ -62,7 +62,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }) as VectorLayer[];
     });
     const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
-    this.clientSideFileSizeMax = configFileSizeMb ? configFileSizeMb * Math.pow(1024, 2) : 30000000;
+    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
 
   }
