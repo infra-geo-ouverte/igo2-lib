@@ -13,6 +13,10 @@
   <mat-menu
     #searchSettingsMenu="matMenu"
     class="no-border-radius">
+    <div class="checkAllButton" *ngIf="getSearchSources().length>4">
+      <button mat-raised-button
+        (click)="checkUncheckAllSources($event)">{{!searchSourcesAllEnabled  ? ('igo.geo.search.searchSources.unselectAll' | translate): ('igo.geo.search.searchSources.selectAll' | translate)}}</button>
+    </div>
       <ng-container *ngFor="let source of getSearchSources()">
         <span class="igo-search-settings-search-source">
           <mat-checkbox

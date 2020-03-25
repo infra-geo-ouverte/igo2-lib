@@ -38,7 +38,7 @@
           "title": "The file '{{value}}' is unreadable"
         },
         "tooLarge": {
-          "text": "The file '{{value}}' is too large (Max: 30 MB)",
+          "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
           "title": "File too large"
         },
         "invalidSRS": {
@@ -65,7 +65,7 @@
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
-        "importSizeMax": "The file size limit is 30 MB.",
+        "importSizeMax": "The file size limit is {{size}} Mb",
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
@@ -244,7 +244,10 @@
             "title": "Title",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Metadata"
+            "metadataUrl": "Metadata",
+            "name": "Layer name",
+            "urlInfo": "URL - WMS/WFS",
+            "downloadUrl": "Data download"
           },
           "type": {
             "layer": "Layer",
@@ -298,6 +301,8 @@
           "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
         },
         "searchSources": {
+          "selectAll": "Select All",
+          "unselectAll": "Unselect All",
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",

@@ -38,7 +38,7 @@
           "title": "Fichier illisible"
         },
         "tooLarge": {
-          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 Mo)",
+          "text": "Le fichier '{{value}}' est trop volumineux (Maximum: {{size}} Mo)",
           "title": "Fichier trop volumineux"
         },
         "invalidSRS": {
@@ -65,7 +65,7 @@
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
-        "importSizeMax": "La taille limite du fichier est de 30 Mo.",
+        "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
@@ -244,7 +244,10 @@
             "title": "Titre",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Métadonnées"
+            "metadataUrl": "Métadonnées",
+            "name": "Nom de la couche",
+            "urlInfo": "Lien du service web WMS/WFS",
+            "downloadUrl": "Lien de téléchargement de la données"
           },
           "type": {
             "layer": "Couche",
@@ -298,6 +301,8 @@
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
+          "selectAll": "Tout sélectionner",
+          "unselectAll": "Tout désélectionner",
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",
