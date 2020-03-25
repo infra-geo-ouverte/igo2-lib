@@ -52,6 +52,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
   private pointerSearchStore: EntityStore<SearchResult> = new EntityStore<SearchResult>([]);
   private lastTimeoutRequest;
   private store$$: Subscription;
+  private layers$$: Subscription;
   private reverseSearch$$: Subscription[] = [];
   private hasPointerReverseSearchSource: boolean =  false;
 
@@ -108,6 +109,14 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
       this.store = new FeatureStore<Feature>([], {map: this.map});
       this.initStore();
     });
+
+    // To handle context change without using the contextService.
+    this.layers$$ = this.map.layers$.subscribe((layers) => {
+      if (this.store) {
+        this.initStore();
+      }
+    });
+
   }
 
   /**
@@ -145,6 +154,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
     this.unsubscribeReverseSearch();
+    this.layers$$.unsubscribe();
   }
 
   /**
