@@ -112,7 +112,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
 
     // To handle context change without using the contextService.
     this.layers$$ = this.map.layers$.subscribe((layers) => {
-      if (this.store) {
+      if (this.store && !layers.find(l => l.id === 'searchPointerSummaryId')) {
         this.initStore();
       }
     });
@@ -127,6 +127,7 @@ export class SearchPointerSummaryDirective implements OnInit, OnDestroy, AfterCo
     const store = this.store;
 
     const layer = new VectorLayer({
+      id : 'searchPointerSummaryId',
       title: 'searchPointerSummary',
       zIndex: 900,
       source: new FeatureDataSource(),
