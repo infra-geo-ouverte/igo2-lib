@@ -4,7 +4,7 @@
     ngFor let-group
     [ngForOf]="results$ | async">
 
-    <igo-collapsible
+    <igo-collapsible [class]="group.source.getId()"
       *ngIf="mode === searchResultMode.Grouped; else flatTemplate"
       [title]="computeGroupTitle(group)"
       [collapsed]="collapsed[group.source.title]"
@@ -27,11 +27,11 @@
           [withZoomButton]="withZoomButton"
           [focused]="store.state.get(result).focused"
           [selected]="store.state.get(result).selected"
-          (focus)="onResultFocus(result)"
-          (unfocus)="onResultUnfocus(result)"
+          (focus)="resultFocus.emit(result)"
+          (unfocus)="resultUnfocus.emit(result)"
           (select)="onResultSelect(result)"
-          (mouseenter)="resultMouseenter.emit(result)"
-          (mouseleave)="resultMouseleave.emit(result)">
+          (mouseenter)="resultFocus.emit(result)"
+          (mouseleave)="resultUnfocus.emit(result)">
 
           <ng-container igoSearchItemToolbar
             [ngTemplateOutlet]="templateSearchToolbar"

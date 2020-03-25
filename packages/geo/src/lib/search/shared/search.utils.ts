@@ -41,6 +41,7 @@ export function featureToSearchResult(
   feature: Feature,
   source: SearchSource
 ): SearchResult<Feature> {
+  feature.sourceId = source.getId();
   return {
     source,
     data: feature,

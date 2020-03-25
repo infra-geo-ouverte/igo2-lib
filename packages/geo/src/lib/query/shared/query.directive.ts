@@ -233,13 +233,8 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       queryableLayers.forEach((layer: AnyLayer) => {
         if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
           if (layer.ol.getSource().hasFeature(feature.ol)) {
-            (feature.meta.id = feature.ol._id),
-              (feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(
-                layer
-              ));
-            feature.meta.title =
-              feature.meta.title ||
-              this.queryService.getQueryTitle(feature, layer);
+            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
+            feature.meta.title = feature.meta.title || this.queryService.getQueryTitle(feature, layer);
             feature.meta.sourceTitle = layer.title;
           }
         }
