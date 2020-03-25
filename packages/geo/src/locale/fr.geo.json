@@ -38,7 +38,7 @@
           "title": "Fichier illisible"
         },
         "tooLarge": {
-          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 Mo)",
+          "text": "Le fichier '{{value}}' est trop volumineux (Maximum: {{size}} Mo)",
           "title": "Fichier trop volumineux"
         },
         "invalidSRS": {
@@ -65,7 +65,7 @@
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
-        "importSizeMax": "La taille limite du fichier est de 30 Mo.",
+        "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
