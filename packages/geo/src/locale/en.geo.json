@@ -38,7 +38,7 @@
           "title": "The file '{{value}}' is unreadable"
         },
         "tooLarge": {
-          "text": "The file '{{value}}' is too large (Max: 30 MB)",
+          "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
           "title": "File too large"
         },
         "invalidSRS": {
@@ -65,7 +65,7 @@
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
-        "importSizeMax": "The file size limit is 30 MB.",
+        "importSizeMax": "The file size limit is {{size}} Mb",
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {

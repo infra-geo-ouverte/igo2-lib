@@ -38,9 +38,12 @@ export class ImportService {
   static allowedExtensions = ['geojson', 'kml', 'gpx', 'json', 'gml'];
 
   private ogreUrl: string;
+  private clientSideFileSizeMax: number;
 
   constructor(private http: HttpClient, private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
+    const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
+    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) *  Math.pow(1024, 2);
   }
 
   import(
@@ -90,7 +93,7 @@ export class ImportService {
     projectionOut: string
   ): Observable<Feature[]> {
     const doImport = (observer: Observer<Feature[]>) => {
-      if (file.size >= 30000000) {
+      if (file.size >= this.clientSideFileSizeMax) {
         observer.error(new ImportSizeError());
         return;
       }
