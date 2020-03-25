@@ -432,9 +432,11 @@ export class CatalogService {
         break;
       } else {
         // layer without group
-        const layerItem = this.prepareCatalogItemLayer(item, catalog.id, layersQueryFormat,
-          catalog, catalogQueryParams, catalogSourceOptions, catalogTooltipType);
-        itemsPrepare.push(layerItem);
+        if (this.testLayerRegexes(item.Name, regexes) !== false) {
+          const layerItem = this.prepareCatalogItemLayer(item, catalog.id, layersQueryFormat,
+            catalog, catalogQueryParams, catalogSourceOptions, catalogTooltipType);
+          itemsPrepare.push(layerItem);
+        }
       }
     }
   }
