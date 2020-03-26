@@ -49,6 +49,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
   layerTool = false;
   activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
 
+  layersChecked: Layer[] = [];
+  public selection = false;
+
   private change$$: Subscription;
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
@@ -129,7 +132,24 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.activeLayer$.getValue().opacity = opacity / 100;
   }
 
+  get checkOpacity() {
+    return this.layersCheckedOpacity() * 100;
+  }
+  set checkOpacity(opacity: number) {
+    for (const layer of this.layersChecked) {
+      layer.opacity = opacity / 100;
+    }
+  }
+
   public toggleOpacity = false;
+  // TROUVER UNE MANIÈRE DE LA PASSER UNE FOIS (PAS EN INPUT CONSTANT)
+  get selectAllCheck() {
+    return this._selectAllCheck;
+  }
+  set selectAllCheck(value) {
+    this._selectAllCheck = value;
+  }
+  private _selectAllCheck = false;
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -315,5 +335,47 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.activeLayer.map.removeLayer(this.activeLayer);
     this.layerTool = false;
     return;
+  }
+
+  layersCheck(event: {layer: Layer; check: boolean}) {
+    if (event.check) {
+      this.layersChecked.push(event.layer);
+    } else if (!event.check) {
+      const index = this.layersChecked.findIndex(layer => layer.id === event.layer.id);
+      this.layersChecked.splice(index, 1);
+    }
+    console.log(this.layersChecked);
+  }
+
+  toggleSelectionMode(value: boolean) {
+    this.selection = value;
+    this.layerTool = !this.layerTool;
+  }
+
+  layersCheckedOpacity(): any {
+    if (this.layersChecked.length > 1) {
+      return 1;
+    } else {
+      let opacity = [];
+      for (const layer of this.layersChecked) {
+        opacity.push(layer.opacity)
+      }
+      return opacity;
+    }
+  }
+
+  selectAll() {
+    if (!this.selectAllCheck) {
+      for (const layer of this.layers) {
+        if (this.layersChecked.findIndex(lay => lay.id === layer.id) === -1) {
+          this.layersChecked.push(layer);
+        }
+      }
+      this.selectAllCheck = true;
+    } else {
+      this.layersChecked = [];
+      this.selectAllCheck = false;
+    }
+    console.log(this.layersChecked);
   }
 }

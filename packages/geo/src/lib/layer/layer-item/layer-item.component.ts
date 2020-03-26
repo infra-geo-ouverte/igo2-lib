@@ -31,6 +31,22 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   state: ConnectionState;
 
+  @Input()
+  get selectAll() {
+    return this._selectAll;
+  }
+  set selectAll(value: boolean) {
+    this._selectAll = value;
+    if (value) {
+      this.layerCheck = true;
+    } else {
+      this.layerCheck = false;
+    }
+  }
+  private _selectAll = false;
+
+  public layerCheck = false;
+
   private resolution$$: Subscription;
 
   @Input() layer: Layer;
@@ -49,6 +65,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
+  @Input() selectionMode = false;
+
   get removable(): boolean {
     return this.layer.options.removable !== false;
   }
@@ -61,6 +79,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   @Output() action: EventEmitter<Layer> = new EventEmitter<Layer>(undefined);
+  @Output() checkbox = new EventEmitter<{
+    layer: Layer;
+    check: boolean;
+  }>();
 
   constructor(private networkService: NetworkService) {}
 
@@ -153,5 +175,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.layer.visible === false ||
       !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);
+  }
+
+  public check() {
+    this.checkbox.emit({layer: this.layer, check: this.layerCheck});
   }
 }
