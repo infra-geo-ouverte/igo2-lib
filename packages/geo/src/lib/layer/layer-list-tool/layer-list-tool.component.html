@@ -38,6 +38,13 @@
          </button>
        </div>
 
-       <mat-icon svgIcon="blank"></mat-icon>
+       <div [matTooltip]="selectionMode ?
+        ('igo.geo.layer.deactivateSelectionMode' | translate) :
+        ('igo.geo.layer.activateSelectionMode' | translate)" matTooltipShowDelay="500">
+         <button mat-icon-button
+           color="primary" (click)="toggleSelectionMode()">
+           <mat-icon [svgIcon]="selectionMode ? 'checkbox-multiple-marked-outline' : 'checkbox-multiple-blank-outline'"></mat-icon>
+         </button>
+       </div>
 
 </mat-list-item>

@@ -58,7 +58,10 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
     return this.term$.value;
   }
 
+  public selectionMode = false;
+
   @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
+  @Output() selection = new EventEmitter<boolean>();
 
   ngOnInit(): void {
     this.term$$ = this.term$.subscribe(keyword => {
@@ -99,4 +102,8 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
     this.onlyVisible = !this.onlyVisible;
   }
 
+  toggleSelectionMode() {
+    this.selectionMode = !this.selectionMode;
+    this.selection.emit(this.selectionMode);
+  }
 }

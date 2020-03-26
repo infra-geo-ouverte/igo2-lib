@@ -3,10 +3,16 @@ mat-form-field.inputFilter {
   max-width: 200px;
 }
 
-.igo-layer-actions-container {
-  width: calc(100% - 25px);
-  display: inline-block;
-  padding-left: 10px;
+igo-list {
+  position: relative;
+
+  .igo-layer-actions-container {
+    width: calc(100% - 20px);
+    display: inline-block;
+    padding-left: 10px;
+    bottom: 0px;
+    position: relative;
+  }
 }
 
 .igo-layer-actions-container > div {
