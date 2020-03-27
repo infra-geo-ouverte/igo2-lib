@@ -142,14 +142,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   public toggleOpacity = false;
-  // TROUVER UNE MANIÈRE DE LA PASSER UNE FOIS (PAS EN INPUT CONSTANT)
-  get selectAllCheck() {
-    return this._selectAllCheck;
-  }
-  set selectAllCheck(value) {
-    this._selectAllCheck = value;
-  }
-  private _selectAllCheck = false;
+
+  public selectAllCheck$ = new BehaviorSubject<boolean>(false);
+  selectAllCheck$$: Subscription;
+  public selectAllCheck = false;
+
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -172,6 +169,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
         });
       });
 
+      this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
+        this.selectAllCheck = value;
+      })
   }
 
   ngOnDestroy() {
@@ -202,6 +202,20 @@ export class LayerListComponent implements OnInit, OnDestroy {
         },
         { zIndex: undefined, id: undefined }
       );
+  }
+
+  raiseLayers(layers: Layer[]) {
+    for (const layer of layers) {
+      // Comparer mapIndex avec mapIndex + 1 pour la condition du disablde dans le html et 
+      // comparer layer par layer pour voir si il peut raiser ou pas
+      layer.map.raiseLayer(layer);
+    }
+  }
+
+  lowerLayers(layers: Layer[]) {
+    for (const layer of layers) {
+      layer.map.lowerLayer(layer);
+    }
   }
 
   private next() {
@@ -331,20 +345,37 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return;
   }
 
-  removeLayer() {
-    this.activeLayer.map.removeLayer(this.activeLayer);
-    this.layerTool = false;
+  removeLayers(layers?: Layer[]) {
+    if (layers && layers.length > 0) {
+      for (const layer of layers) {
+        const index = this.layersChecked.findIndex(lay => layer.id === lay.id);
+        if (index !== -1) {
+          this.layersChecked.splice(index, 1);
+        }
+        layer.map.removeLayer(layer);
+      }
+    } else if (!layers) {
+      this.activeLayer.map.removeLayer(this.activeLayer);
+      this.layerTool = false;
+    }
     return;
   }
 
   layersCheck(event: {layer: Layer; check: boolean}) {
-    if (event.check) {
+    if (event.check === true) {
+      const eventMapIndex = this.layers.findIndex(layer => event.layer.id === layer.id);
+      for (const layer of this.layersChecked) {
+        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+        if (eventMapIndex < mapIndex) {
+          this.layersChecked.splice(this.layersChecked.findIndex(lay => layer.id === lay.id), 0, event.layer);
+          return;
+        }
+      }
       this.layersChecked.push(event.layer);
-    } else if (!event.check) {
-      const index = this.layersChecked.findIndex(layer => layer.id === event.layer.id);
+    } else {
+      const index = this.layersChecked.findIndex(layer => event.layer.id === layer.id);
       this.layersChecked.splice(index, 1);
     }
-    console.log(this.layersChecked);
   }
 
   toggleSelectionMode(value: boolean) {
@@ -366,16 +397,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   selectAll() {
     if (!this.selectAllCheck) {
-      for (const layer of this.layers) {
-        if (this.layersChecked.findIndex(lay => lay.id === layer.id) === -1) {
-          this.layersChecked.push(layer);
-        }
-      }
-      this.selectAllCheck = true;
+      this.layersChecked = this.layers;
+      this.selectAllCheck$.next(true);
     } else {
       this.layersChecked = [];
-      this.selectAllCheck = false;
+      this.selectAllCheck$.next(false);
     }
-    console.log(this.layersChecked);
   }
 }

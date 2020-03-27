@@ -116,6 +116,7 @@
         "deactivateSelectionMode": "Deactivate multiple selection mode",
         "tools": "Tools",
         "selectAll": "Select all",
+        "deselectAll": "Deselect all",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "moreOptions": "More options",

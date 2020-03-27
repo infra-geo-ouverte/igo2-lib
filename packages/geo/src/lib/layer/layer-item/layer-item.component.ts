@@ -178,6 +178,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   public check() {
+    this.layerCheck = !this.layerCheck;
     this.checkbox.emit({layer: this.layer, check: this.layerCheck});
   }
 }

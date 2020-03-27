@@ -90,22 +90,26 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.removeLayer' | translate"
-        (click)="removeLayer()">
+        (click)="removeLayers()">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
     </div>
   </igo-panel>
 
-  <igo-panel *ngIf="selection" class="igo-layer-actions-container" [title]="'igo.geo.layer.tools' | translate">
+  <igo-panel *ngIf="selection && layers.length > 0" class="igo-layer-actions-container" [title]="'igo.geo.layer.tools' | translate">
     <div class="igo-layer-button-group">
 
       <button
         mat-stroked-button
         tooltip-position="below"
         matTooltipShowDelay="500"
-        [matTooltip]="'igo.geo.layer.selectAll' | translate"
+        [disabled]="layers.length === 0"
+        [matTooltip]="selectAll ?
+                      ('igo.geo.layer.deselectAll' | translate) :
+                      ('igo.geo.layer.selectAll' | translate)"
         (click)="selectAll()">
-        {{'igo.geo.layer.selectAll' | translate}}
+        {{selectAll ? ('igo.geo.layer.deselectAll' | translate) :
+                      ('igo.geo.layer.selectAll' | translate)}}
       </button>
 
       <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
@@ -142,8 +146,9 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
-        [disabled]="layersChecked.length === 0 || !orderable"
-        (click)="activeLayer.map.raiseLayer(activeLayer)">
+        [disabled]="layersChecked.length === 0 || !orderable ||
+                    (layersChecked.length === 1 && getUpperLayer().id === layersChecked[0].id)"
+        (click)="raiseLayers(layersChecked)">
         <mat-icon svgIcon="arrow-up"></mat-icon>
       </button>
 
@@ -153,8 +158,9 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
-        [disabled]="layersChecked.length === 0 || !orderable"
-        (click)="activeLayer.map.lowerLayer(activeLayer)">
+        [disabled]="layersChecked.length === 0 || !orderable ||
+                    (layersChecked.length === 1 && getLowerLayer().id === layersChecked[0].id)"
+        (click)="lowerLayers(layersChecked)">
         <mat-icon svgIcon="arrow-down"></mat-icon>
       </button>
 
@@ -165,7 +171,7 @@
         matTooltipShowDelay="500"
         [disabled]="layersChecked.length === 0"
         [matTooltip]="'igo.geo.layer.removeLayer' | translate"
-        (click)="removeLayer()">
+        (click)="removeLayers(layersChecked)">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
     </div>
