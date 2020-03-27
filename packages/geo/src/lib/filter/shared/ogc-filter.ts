@@ -277,7 +277,7 @@ export class OgcFilterWriter {
   public computeAllowedOperators(
     fields?: SourceFieldsOptionsParams[],
     propertyName?: string,
-    defaultOperatorsType: OgcFilterOperatorType = OgcFilterOperatorType.BasicAndSpatial ) {
+    defaultOperatorsType?: OgcFilterOperatorType ) {
     let effectiveOperators: {} = {};
     let allowedOperators;
     if (fields && propertyName) {
@@ -285,6 +285,8 @@ export class OgcFilterWriter {
       allowedOperators = srcField && srcField.allowedOperatorsType ?
         srcField.allowedOperatorsType : defaultOperatorsType;
     }
+
+    allowedOperators = allowedOperators ? allowedOperators : 'basicandspatial';
 
     switch (allowedOperators.toLowerCase()) {
       case 'all':
