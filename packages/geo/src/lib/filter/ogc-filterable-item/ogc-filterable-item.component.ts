@@ -120,8 +120,10 @@ export class OgcFilterableItemComponent implements OnInit {
         .fieldNameGeometry;
     }
     const status = arr.length === 0 ? true : false;
-
-    const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(this.datasource.options.sourceFields, firstFieldName);
+    const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(
+      this.datasource.options.sourceFields,
+      firstFieldName,
+      this.datasource.options.ogcFilters.allowedOperatorsType);
     const firstOperatorName = Object.keys(allowedOperators)[0];
 
     arr.push(

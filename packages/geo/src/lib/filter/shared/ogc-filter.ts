@@ -274,13 +274,16 @@ export class OgcFilterWriter {
     return this.filterSequence;
   }
 
-  public computeAllowedOperators(fields?: SourceFieldsOptionsParams[], propertyName?: string) {
+  public computeAllowedOperators(
+    fields?: SourceFieldsOptionsParams[],
+    propertyName?: string,
+    defaultOperatorsType: OgcFilterOperatorType = OgcFilterOperatorType.BasicAndSpatial ) {
     let effectiveOperators: {} = {};
     let allowedOperators;
     if (fields && propertyName) {
       const srcField = fields.find(field => field.name === propertyName);
       allowedOperators = srcField && srcField.allowedOperatorsType ?
-        srcField.allowedOperatorsType : OgcFilterOperatorType.BasicAndSpatial;
+        srcField.allowedOperatorsType : defaultOperatorsType;
     }
 
     switch (allowedOperators.toLowerCase()) {

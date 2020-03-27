@@ -23,7 +23,7 @@ import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/d
 })
 export class OgcFilterFormComponent implements OnInit {
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{[key: string]: any}>(undefined);
+  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
@@ -94,7 +94,10 @@ export class OgcFilterFormComponent implements OnInit {
       });
 
     this.fields$.next(fields);
-    const allowedOperators = new OgcFilterWriter().computeAllowedOperators(fields, this.currentFilter.propertyName);
+    const allowedOperators = new OgcFilterWriter().computeAllowedOperators(
+      fields,
+      this.currentFilter.propertyName,
+      this.datasource.options.ogcFilters.allowedOperatorsType);
     this.ogcFilterOperators$.next(allowedOperators);
     if (Object.keys(allowedOperators).indexOf(this.currentFilter$.value.operator) === -1) {
       this.currentFilter$.value.operator = Object.keys(allowedOperators)[0];
