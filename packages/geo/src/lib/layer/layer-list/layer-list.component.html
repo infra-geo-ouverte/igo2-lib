@@ -27,7 +27,7 @@
     </igo-layer-item>
   </ng-template>
 
-  <igo-panel *ngIf="layerTool && activeLayer" class="igo-layer-actions-container" [title]="activeLayer.title">
+  <igo-panel *ngIf="layerTool" class="igo-layer-actions-container" [title]="activeLayer.title">
     <div class="igo-layer-button-group">
     <ng-container igoLayerItemToolbar
       [ngTemplateOutlet]="templateLayerToolbar"
@@ -43,7 +43,7 @@
         matTooltipShowDelay="500"
         [matMenuTriggerFor]="opacityMenu"
         [matTooltip]="'igo.geo.layer.opacity' | translate">
-        <mat-icon svgIcon="opacity"></mat-icon>
+        <mat-icon [matBadge]="opacity" matBadgeColor="warn" matBadgeSize="medium" svgIcon="opacity"></mat-icon>
       </button>
 
       <mat-menu #opacityMenu="matMenu">
@@ -146,8 +146,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
-        [disabled]="layersChecked.length === 0 || !orderable ||
-                    (layersChecked.length === 1 && getUpperLayer().id === layersChecked[0].id)"
+        [disabled]="layersChecked.length === 0 || !orderable || !raisableLayers(layersChecked)"
         (click)="raiseLayers(layersChecked)">
         <mat-icon svgIcon="arrow-up"></mat-icon>
       </button>
@@ -158,8 +157,7 @@
         tooltip-position="below"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
-        [disabled]="layersChecked.length === 0 || !orderable ||
-                    (layersChecked.length === 1 && getLowerLayer().id === layersChecked[0].id)"
+        [disabled]="layersChecked.length === 0 || !orderable || !lowerableLayers(layersChecked)"
         (click)="lowerLayers(layersChecked)">
         <mat-icon svgIcon="arrow-down"></mat-icon>
       </button>

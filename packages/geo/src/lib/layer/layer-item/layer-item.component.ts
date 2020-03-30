@@ -5,7 +5,9 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   Output,
-  EventEmitter
+  EventEmitter,
+  Renderer2,
+  ElementRef
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -21,6 +23,9 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
+
+  public focusedCls = 'igo-layer-item-focused';
+
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -84,7 +89,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     check: boolean;
   }>();
 
-  constructor(private networkService: NetworkService) {}
+  constructor(
+    private networkService: NetworkService,
+    private renderer: Renderer2,
+    private elRef: ElementRef) {}
 
   ngOnInit() {
     if (
@@ -129,6 +137,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.toggleLegend(!this.layer.visible);
     }
     this.updateQueryBadge();
+  }
+
+  toggleLayerTool() {
+    console.log(this.focusedCls);
+    this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+    this.action.emit(this.layer);
   }
 
   computeTooltip(): string {

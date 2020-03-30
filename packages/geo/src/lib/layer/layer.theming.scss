@@ -1,5 +1,12 @@
 @import './layer-legend/layer-legend.theming';
 
 @mixin igo-layer-theming($theme) {
+  $primary: map-get($theme, primary);
+
   @include igo-layer-legend-theming($theme);
+
+  igo-layer-item [color="primary"].igo-layer-item-focused > mat-list-item {
+    background-color: mat-color($primary, lighter);
+    color: mat-color($primary, default-contrast);
+  }
 }

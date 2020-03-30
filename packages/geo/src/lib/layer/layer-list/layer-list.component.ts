@@ -7,11 +7,9 @@ import {
   OnInit,
   OnDestroy,
   Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef
+  EventEmitter
 } from '@angular/core';
-import { FloatLabelType, MatMenuTrigger } from '@angular/material';
+import { FloatLabelType } from '@angular/material';
 
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
@@ -147,7 +145,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
   selectAllCheck$$: Subscription;
   public selectAllCheck = false;
 
-
   /**
    * Subscribe to the search term stream and trigger researches
    * @internal
@@ -204,18 +201,55 @@ export class LayerListComponent implements OnInit, OnDestroy {
       );
   }
 
+  raisableLayers(layers: Layer[]) {
+    let response = false;
+    for (const layer of layers) {
+      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const previousLayer = this.layers[mapIndex - 1];
+      if (previousLayer && !previousLayer.baseLayer && !layers.find(lay => previousLayer.id === lay.id)) {
+        response = true;
+      }
+    }
+    return response;
+  }
+
   raiseLayers(layers: Layer[]) {
     for (const layer of layers) {
-      // Comparer mapIndex avec mapIndex + 1 pour la condition du disablde dans le html et 
-      // comparer layer par layer pour voir si il peut raiser ou pas
-      layer.map.raiseLayer(layer);
+      setTimeout(() => {
+        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+        const previousLayer = this.layers[mapIndex - 1];
+        if (previousLayer && !previousLayer.baseLayer && layers.find(lay => previousLayer.id === lay.id)) {
+          return;
+        }
+        layer.map.raiseLayer(layer);
+      }, 100);
     }
   }
 
-  lowerLayers(layers: Layer[]) {
+  lowerableLayers(layers: Layer[]) {
+    let response = false;
     for (const layer of layers) {
-      layer.map.lowerLayer(layer);
+      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const nextLayer = this.layers[mapIndex + 1];
+      if (nextLayer && !nextLayer.baseLayer && !layers.find(lay => nextLayer.id === lay.id)) {
+        response = true;
+      }
     }
+    return response;
+  }
+
+  lowerLayers(layers: Layer[]) {
+    for (const layer of layers.reverse()) {
+      setTimeout(() => {
+        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+        const nextLayer = this.layers[mapIndex + 1];
+        if (nextLayer && !nextLayer.baseLayer && layers.find(lay => nextLayer.id === lay.id)) {
+          return;
+        }
+        layer.map.lowerLayer(layer);
+      }, 100);
+    }
+    layers.reverse();
   }
 
   private next() {
@@ -348,12 +382,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
   removeLayers(layers?: Layer[]) {
     if (layers && layers.length > 0) {
       for (const layer of layers) {
-        const index = this.layersChecked.findIndex(lay => layer.id === lay.id);
-        if (index !== -1) {
-          this.layersChecked.splice(index, 1);
-        }
         layer.map.removeLayer(layer);
       }
+      this.layersChecked = [];
     } else if (!layers) {
       this.activeLayer.map.removeLayer(this.activeLayer);
       this.layerTool = false;
@@ -380,7 +411,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   toggleSelectionMode(value: boolean) {
     this.selection = value;
-    this.layerTool = !this.layerTool;
+    this.layerTool = !value;
   }
 
   layersCheckedOpacity(): any {
