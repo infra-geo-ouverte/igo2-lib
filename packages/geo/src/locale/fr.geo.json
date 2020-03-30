@@ -81,9 +81,26 @@
         "PropertyIsBetween": "entre",
         "During": "durant",
         "PropertyIsNull": "est nul",
-        "Intersects": "intersecte",
-        "Within": "contenu dans",
-        "Contains": "contient"
+        "Intersects": "intersecte (géométrique)",
+        "Within": "contenu dans (géométrique)",
+        "Contains": "contient (géométrique)",
+        "tooltip": {
+          "And": "Opérateur logique entre les filtres où les deux conditions doivent être remplies",
+          "Or": "Opérateur logique entre les filtres où au moins une (1) condition doit être vraie",
+          "PropertyIsEqualTo": "Opérateur qui compare si l'attribut correspond à la valeur fournie (sensible à la case)",
+          "PropertyIsNotEqualTo": "Opérateur qui compare si l'attribut est différent de la valeur fournie (sensible à la case)",
+          "PropertyIsLike": "Opérateur de comparaison par modèle. wildCard = '*', singleChar = '.' escapeChar = '!' (sensible à la case)",
+          "PropertyIsGreaterThan": "Opérateur qui vérifie que cet attribut est supérieur à la valeur fournie",
+          "PropertyIsGreaterThanOrEqualTo": "Opérateur qui vérifie si l'attribut est supérieur ou égal à la valeur fournie",
+          "PropertyIsLessThan": "Opérateur qui vérifie que cet attribut est inférieur à la valeur fournie",
+          "PropertyIsLessThanOrEqualTo": "Opérateur qui vérifie que cet attribut est inférieur ou égal à la valeur fournie",
+          "PropertyIsBetween": "Doit être contenu entre les limites inférieure et supérieure (les valeurs sont incluses)",
+          "During": "Doit être contenu entre les périodes de temps spécifiées",
+          "PropertyIsNull": "Dont l'attribut est nul",
+          "Intersects": "Retourne les entités étant en intersection géométrique avec la géométrie fournie",
+          "Within": "Retourne les entités étant entièrement contenue par la géométrie fournie (Within)",
+          "Contains": "Retourne les entités complètement contenues par la géométrie fournie (Contains)"
+        }
       },
       "sourceFields": {
         "selectField": "Choisir un champ"

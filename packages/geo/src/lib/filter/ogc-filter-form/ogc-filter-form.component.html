@@ -3,8 +3,8 @@
   <div class="igo-col igo-col-90 igo-col-100-m">
     <mat-select class="logical" [disabled]="!currentFilter.active" (selectionChange)="refreshFilters()" [(ngModel)]="currentFilter.parentLogical"
       *ngIf="activeFilters.indexOf(currentFilter) !== 0 && currentFilter.active===true">
-      <mat-option value="And">{{'igo.geo.operators.And' | translate}}</mat-option>
-      <mat-option value="Or">{{'igo.geo.operators.Or' | translate}}</mat-option>
+      <mat-option tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="'igo.geo.operators.tooltip.And' | translate" value="And">{{'igo.geo.operators.And' | translate}}</mat-option>
+      <mat-option tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="'igo.geo.operators.tooltip.Or' | translate" value="Or">{{'igo.geo.operators.Or' | translate}}</mat-option>
     </mat-select>
   </div>
   <!-- NON SPATIAL -->
@@ -33,7 +33,7 @@
     <mat-select 
     tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate"
     [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
-      <mat-option *ngFor="let operator of (ogcFilterOperators$ | async) | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
+      <mat-option *ngFor="let operator of (ogcFilterOperators$ | async) | keyvalue" [value]="operator.key" tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="('igo.geo.operators.tooltip.'+ operator.key) | translate" >{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
 
@@ -169,7 +169,7 @@
     <mat-select  
       matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate" tooltip-position="below"
       [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
-      <mat-option *ngFor="let operator of (ogcFilterOperators$ | async) | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
+      <mat-option *ngFor="let operator of (ogcFilterOperators$ | async) | keyvalue" [value]="operator.key"  tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="('igo.geo.operators.tooltip.'+ operator.key) | translate" >{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">

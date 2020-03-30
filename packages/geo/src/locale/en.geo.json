@@ -81,9 +81,26 @@
         "PropertyIsBetween": "between",
         "During": "during",
         "PropertyIsNull": "is null",
-        "Intersects": "intersects",
-        "Within": "within",
-        "Contains": "contains"
+        "Intersects": "intersects (spatial)",
+        "Within": "within (spatial)",
+        "Contains": "contains (spatial)",
+        "tooltip": {
+          "And": "Logical operator between filters where both conditions must be true",
+          "Or": "Logical operator between filters where at least one (1) condition must be true",
+          "PropertyIsEqualTo": "Operator that compares if the attribute match to the provided value (case sensitive)",
+          "PropertyIsNotEqualTo": "Operator that compares if the attribute is different to the provided value (case sensitive)",
+          "PropertyIsLike": "Comparison operator based on pattern matching. wildCard ='*', singleChar = '.' escapeChar = '!' (case sensitive)",
+          "PropertyIsGreaterThan": "Operator that checks that attribute is greater than its second subexpression.",
+          "PropertyIsGreaterThanOrEqualTo": "Operator that checks if attribute is greater or equal to its second subexpression.",
+          "PropertyIsLessThan": "Operator that checks that attribute is less than its second subexpression.",
+          "PropertyIsLessThanOrEqualTo": "Operator that checks that attribute is less or equal to its second subexpression.",
+          "PropertyIsBetween": "Apply a range check between the lower and upper boundary (values are included)",
+          "During": "Apply a range check for time attributes",
+          "PropertyIsNull": "Return features where the attribute is null",
+          "Intersects": "Return features in geometric intersection with the provided geometry",
+          "Within": "Return feature which are completely contained by the provided geometry",
+          "Contains": "Return feature completely containing by the provided geometry"
+        }
       },
       "sourceFields": {
         "selectField": "Choose a field"
