@@ -155,6 +155,13 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
+  // Issue with mapserver 7.2 and Postgis layers. Fixed in 7.4
+  // Due to this issue, the checkbox is hide.
+  changeCaseSensitive(matchCase) {
+    this.currentFilter.matchCase = matchCase.checked;
+    this.refreshFilters();
+  }
+
   changeProperty(filter: OgcInterfaceFilterOptions, property, value) {
     this.datasource.options.ogcFilters.interfaceOgcFilters
       .filter(f => f.filterid === filter.filterid)

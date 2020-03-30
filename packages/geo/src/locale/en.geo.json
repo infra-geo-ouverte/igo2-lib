@@ -69,6 +69,7 @@
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
+        "caseSensitive": "Case sensitive",
         "And": "And",
         "Or": "Or",
         "PropertyIsEqualTo": "=",

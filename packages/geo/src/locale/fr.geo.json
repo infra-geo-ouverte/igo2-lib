@@ -69,6 +69,7 @@
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
+        "caseSensitive": "Sensible à la case",
         "And": "Et",
         "Or": "Ou",
         "PropertyIsEqualTo": "=",
