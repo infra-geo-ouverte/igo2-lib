@@ -1,5 +1,6 @@
 import olSource from 'ol/source/Source';
 import { DownloadOptions } from '../../../download/shared/download.interface';
+import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
 
 export interface DataSourceOptions {
   type?:
@@ -32,6 +33,7 @@ export interface SourceFieldsOptionsParams {
   alias?: any;
   values?: any;
   excludeFromOgcFilters?: boolean;
+  allowedOperatorsType?: OgcFilterOperatorType;
 }
 
 export interface Legend {
