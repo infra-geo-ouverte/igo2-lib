@@ -2,7 +2,18 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/context",
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "ol/proj" : "olproj",
+      "ol/easing" : "oleasing",
+      "ol/geom/Point" : "olPoint",
+      "@igo2/utils" : "utils",
+      "@igo2/auth" : "auth",
+      "@igo2/core" : "core",
+      "@igo2/common" : "common",
+      "@igo2/geo" : "geo",
+      "ol/format/GeoJSON" : "olFormatGeoJSON"
+    }
   },
   "whitelistedNonPeerDependencies": ["ts-md5"]
 }
