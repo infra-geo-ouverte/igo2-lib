@@ -80,7 +80,7 @@
         "PropertyIsLessThan": "<",
         "PropertyIsLessThanOrEqualTo": "<=",
         "PropertyIsBetween": "entre",
-        "During": "durant",
+        "During": "durant (temporel)",
         "PropertyIsNull": "est nul",
         "Intersects": "intersecte (géométrique)",
         "Within": "contenu dans (géométrique)",
