@@ -11,6 +11,8 @@
       "ol/format/WFS" : "olFormatWFS",
       "ol/format/GML32" : "olFormatGML32",
       "ol/format/OSMXML" : "olFormatOSMXML",
+      "ol/geom/GeometryLayout" : "olGeometryLayout",
+      "ol/render/Feature" : "OlRenderFeature",
       "ol/source/ImageWMS" : "olSourceImageWMS",
       "ol/source/WMTS" : "olSourceWMTS",
       "ol/tilegrid/WMTS" : "olTileGridWMTS",
