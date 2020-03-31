@@ -80,7 +80,7 @@
         "PropertyIsLessThan": "<",
         "PropertyIsLessThanOrEqualTo": "<=",
         "PropertyIsBetween": "between",
-        "During": "during",
+        "During": "during (temporal)",
         "PropertyIsNull": "is null",
         "Intersects": "intersects (spatial)",
         "Within": "within (spatial)",
