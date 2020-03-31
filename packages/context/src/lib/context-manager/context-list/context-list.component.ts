@@ -4,8 +4,7 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  OnInit,
-  ElementRef
+  OnInit
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -15,8 +14,8 @@ import { IgoMap } from '@igo2/geo';
 import { DetailedContext, ContextsList } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { ContextService } from '../shared';
+import { MatDialog } from '@angular/material';
+import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 
 
@@ -53,6 +52,15 @@ export class ContextListComponent implements OnInit {
   private _selectedContext: DetailedContext;
 
   @Input()
+  get authenticated(): boolean {
+    return this._authenticated;
+  }
+  set authenticated(value: boolean) {
+    this._authenticated = value;
+  }
+  private _authenticated = false;
+
+  @Input()
   get map(): IgoMap {
     return this._map;
   }
@@ -85,6 +93,8 @@ export class ContextListComponent implements OnInit {
     shared: 'igo.context.contextManager.sharedContexts',
     public: 'igo.context.contextManager.publicContexts'
   };
+
+  public users = ['COG', '911', 'Public'];
 
   /**
    * Context filter term
@@ -270,5 +280,9 @@ export class ContextListComponent implements OnInit {
           });
         }
       });
+  }
+
+  userSelection() {
+    return;
   }
 }
