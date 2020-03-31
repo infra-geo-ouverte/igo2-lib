@@ -2,7 +2,12 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/core",
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "@igo2/utils" : "utils",
+      "angular2-notifications" : "ng2notify",
+      "@ngx-translate/core" : "ngxt-core"
+    }
   },
   "whitelistedNonPeerDependencies": ["@ngx-translate", "angular2-notifications"]
 }
