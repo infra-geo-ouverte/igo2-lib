@@ -3,20 +3,20 @@
   <div class="igo-col igo-col-90 igo-col-100-m">
     <mat-select class="logical" [disabled]="!currentFilter.active" (selectionChange)="refreshFilters()" [(ngModel)]="currentFilter.parentLogical"
       *ngIf="activeFilters.indexOf(currentFilter) !== 0 && currentFilter.active===true">
-      <mat-option value="And">{{'igo.geo.operators.And' | translate}}</mat-option>
-      <mat-option value="Or">{{'igo.geo.operators.Or' | translate}}</mat-option>
+      <mat-option tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="'igo.geo.operators.tooltip.And' | translate" value="And">{{'igo.geo.operators.And' | translate}}</mat-option>
+      <mat-option tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="'igo.geo.operators.tooltip.Or' | translate" value="Or">{{'igo.geo.operators.Or' | translate}}</mat-option>
     </mat-select>
   </div>
   <!-- NON SPATIAL -->
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator !== 'Intersects' && currentFilter.operator !== 'Contains' && currentFilter.operator !== 'Within')">
-    <span *ngIf="fields && fields.length > 0 && fields[0].name !== ''">
+    <span *ngIf="(fields$ | async) && (fields$| async).length > 0 && (fields$| async)[0].name !== ''">
       <mat-select [disabled]="!currentFilter.active" *ngIf="['Contains','Intersects','Within'].indexOf(currentFilter.operator) === -1"
         [(ngModel)]="currentFilter.propertyName" tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.sourceFields.selectField' | translate"
         (selectionChange)="updateField()">
-        <mat-option *ngFor="let field of fields" [value]="field.name">{{field.alias}}</mat-option>
+        <mat-option *ngFor="let field of  (fields$| async)" [value]="field.name">{{field.alias}}</mat-option>
       </mat-select>
     </span>
-    <span *ngIf="fields && fields.length === 1 && fields[0].name === ''">
+    <span *ngIf=" (fields$| async) &&  (fields$| async).length === 1 &&  (fields$| async)[0].name === ''">
       <mat-form-field>
         <input [disabled]="!currentFilter.active" matInput #fieldPerUser (keyup)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)"
           (blur)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)" [(ngModel)]="currentFilter.propertyName">
@@ -33,7 +33,7 @@
     <mat-select 
     tooltip-position="below" matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate"
     [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
-      <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
+      <mat-option *ngFor="let operator of (ogcFilterOperators$ | async) | keyvalue" [value]="operator.key" tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="('igo.geo.operators.tooltip.'+ operator.key) | translate" >{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
 
@@ -169,7 +169,7 @@
     <mat-select  
       matTooltipShowDelay="500" [matTooltip]="'igo.geo.filter.selectOperator' | translate" tooltip-position="below"
       [disabled]="!currentFilter.active" [(ngModel)]="currentFilter.operator" (selectionChange)="changeOperator(currentFilter)">
-      <mat-option *ngFor="let operator of ogcFilterOperators | keyvalue" [value]="operator.key">{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
+      <mat-option *ngFor="let operator of (ogcFilterOperators$ | async) | keyvalue" [value]="operator.key"  tooltip-position="above" matTooltipShowDelay="500" [matTooltip]="('igo.geo.operators.tooltip.'+ operator.key) | translate" >{{('igo.geo.operators.'+ operator.key) | translate}}</mat-option>
     </mat-select>
   </div>
   <div class="igo-col igo-col-90 igo-col-100-m" *ngIf="(currentFilter.operator === 'Intersects' || currentFilter.operator === 'Contains' || currentFilter.operator === 'Within')">
@@ -195,6 +195,10 @@
     </mat-form-field>
   </div>
   <!-- PropertySpatial  -->
+
+  <!-- <mat-checkbox labelPosition='before' (change)="changeCaseSensitive($event)" [(ngModel)]="currentFilter.matchCase">
+    {{('igo.geo.operators.caseSensitive') | translate}}
+  </mat-checkbox> -->
 
   <div class="igo-col igo-col-100 igo-col-100-m">
     <div class="igo-layer-button-group">

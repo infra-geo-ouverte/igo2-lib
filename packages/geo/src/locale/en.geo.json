@@ -69,6 +69,7 @@
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
+        "caseSensitive": "Case sensitive",
         "And": "And",
         "Or": "Or",
         "PropertyIsEqualTo": "=",
@@ -79,11 +80,28 @@
         "PropertyIsLessThan": "<",
         "PropertyIsLessThanOrEqualTo": "<=",
         "PropertyIsBetween": "between",
-        "During": "during",
+        "During": "during (temporal)",
         "PropertyIsNull": "is null",
-        "Intersects": "intersects",
-        "Within": "within",
-        "Contains": "contains"
+        "Intersects": "intersects (spatial)",
+        "Within": "within (spatial)",
+        "Contains": "contains (spatial)",
+        "tooltip": {
+          "And": "Logical operator between filters where both conditions must be true",
+          "Or": "Logical operator between filters where at least one (1) condition must be true",
+          "PropertyIsEqualTo": "Identical (case sensitive)",
+          "PropertyIsNotEqualTo": "Different(case sensitive)",
+          "PropertyIsLike": "Like Example: *road* Finds any values that have 'road' in any position. road* Finds any values that begin by 'road'. wildCard ='*', singleChar = '.' escapeChar = '!' (case sensitive)",
+          "PropertyIsGreaterThan": "Greater than",
+          "PropertyIsGreaterThanOrEqualTo": "Greater than or equal to ",
+          "PropertyIsLessThan": "Lesser than",
+          "PropertyIsLessThanOrEqualTo": "Lesser than or equal to",
+          "PropertyIsBetween": "Apply a range check between the lower and upper boundary (values are included)",
+          "During": "Apply a range check for time attributes",
+          "PropertyIsNull": "Return features where the attribute is null",
+          "Intersects": "Return features in geometric intersection with the provided geometry",
+          "Within": "Return feature which are completely contained by the provided geometry",
+          "Contains": "Return feature completely containing by the provided geometry"
+        }
       },
       "sourceFields": {
         "selectField": "Choose a field"
