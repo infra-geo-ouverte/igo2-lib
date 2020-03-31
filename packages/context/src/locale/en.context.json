@@ -53,7 +53,8 @@
         "sharedContexts": "Shared contexts",
         "filterPlaceHolder": "Filer the contexts list",
         "sortAlphabetically": "Sort the context's list alphabetically",
-        "sortContextOrder": "Replace contexts according to the initial list"
+        "sortContextOrder": "Replace contexts according to the initial list",
+        "userAccount": "User account"
       },
       "permission": {
         "addBtn": "Add",

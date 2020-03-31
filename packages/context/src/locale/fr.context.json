@@ -53,7 +53,8 @@
         "sharedContexts": "Contextes partagés",
         "filterPlaceHolder": "Filtrer la liste des contextes",
         "sortAlphabetically": "Trier la liste des contextes en ordre alphabétique",
-        "sortContextOrder": "Replacer les contextes selon la liste initial"
+        "sortContextOrder": "Replacer les contextes selon la liste initial",
+        "userAccount": "Profils utilisateurs"
       },
       "permission": {
         "addBtn": "Ajouter",
