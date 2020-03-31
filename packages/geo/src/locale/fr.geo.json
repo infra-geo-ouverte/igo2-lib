@@ -90,7 +90,7 @@
           "Or": "Opérateur logique entre les filtres où au moins une (1) condition doit être vraie",
           "PropertyIsEqualTo": "Identique (sensible à la case)",
           "PropertyIsNotEqualTo": "Différent (sensible à la case)",
-          "PropertyIsLike": "Comme. Exemple: *route* trouve toutes les valeurs contenent 'route', peu importe sa position dans l'attribut. route* trouve toutes les valeurs commencant par 'route'. Options avancées : wildCard ='*', singleChar = '.' escapeChar = '!' (case sensitive)",
+          "PropertyIsLike": "Comme. Exemple: *route* trouve toutes les valeurs contenent 'route', peu importe sa position dans l'attribut. route* trouve toutes les valeurs commencant par 'route'. Options avancées : wildCard ='*', singleChar = '.' escapeChar = '!' (sensible à la case)",
           "PropertyIsGreaterThan": "Plus grand",
           "PropertyIsGreaterThanOrEqualTo": "Plus grand ou égal",
           "PropertyIsLessThan": "Plus petit",
