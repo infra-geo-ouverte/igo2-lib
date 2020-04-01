@@ -4,7 +4,8 @@
   tooltip-position="below"
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.filter.filterBy' | translate"
-  [color]="color">
+  [color]="color"
+  (click)="toggle()">
   <mat-icon [matBadge]="badge" matBadgeColor="warn" matBadgeSize="medium" svgIcon="filter"></mat-icon>
 </button>
 

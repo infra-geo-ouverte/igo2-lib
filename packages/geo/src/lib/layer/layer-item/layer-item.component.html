@@ -7,7 +7,7 @@
   </mat-checkbox>
   <h4 (click)="toggleLegendOnClick()" matLine class="igo-layer-title" [matTooltip]="tooltipText" matTooltipShowDelay="500">{{layer.title}}</h4>
 
-  <button
+  <button *ngIf="!selectionMode"
     mat-icon-button
     [color]="layer.visible ? 'primary' : 'default'"
     collapsibleButton
@@ -28,13 +28,34 @@
     </mat-icon>
   </button>
 
+  <button *ngIf="selectionMode" class="selection-eye"
+  mat-icon-button
+  [color]="layer.visible ? 'primary' : 'default'"
+  collapsibleButton
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="layer.visible ?
+                ('igo.geo.layer.hideLayer' | translate) :
+                ('igo.geo.layer.showLayer' | translate)"
+  (click)="toggleVisibility()">
+  <mat-icon
+    matBadge="?"
+    matBadgeColor="accent"
+    matBadgeSize="small"
+    matBadgePosition="after"
+    [matBadgeHidden]="queryBadgeHidden$ | async"
+    [ngClass]="{disabled: !(inResolutionRange$ | async)}"
+    [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
+  </mat-icon>
+</button>
+
   <button *ngIf="!selectionMode"
     tooltip-position="below"
     matTooltipShowDelay="500"
     [matTooltip]= "'igo.geo.layer.moreOptions' | translate"
     mat-icon-button
     color="primary"
-    (click)="toggleLayerTool()">
+    (click)="action.emit(this.layer)">
     <mat-icon svgIcon="dots-horizontal"></mat-icon>
   </button>
 </mat-list-item>

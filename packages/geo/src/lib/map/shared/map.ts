@@ -277,10 +277,22 @@ export class IgoMap {
     }
   }
 
+  raiseLayers(layers: Layer[]) {
+    for (const layer of layers) {
+      this.raiseLayer(layer);
+    }
+  }
+
   lowerLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
     if (index < this.layers.length - 1) {
       this.moveLayer(layer, index, index + 1);
+    }
+  }
+
+  lowerLayers(layers: Layer[]) {
+    for (const layer of layers) {
+      this.lowerLayer(layer);
     }
   }
 

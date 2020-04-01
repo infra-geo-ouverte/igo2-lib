@@ -26,6 +26,21 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   public focusedCls = 'igo-layer-item-focused';
 
+  @Input()
+  get activeLayer() {
+    return this._activeLayer;
+  }
+  set activeLayer(value) {
+    if (value && value.id === this.layer.id && !this.selectionMode) {
+      this._activeLayer = true;
+      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+    } else {
+      this._activeLayer = false;
+      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+    }
+  }
+  private _activeLayer;
+
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -137,12 +152,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.toggleLegend(!this.layer.visible);
     }
     this.updateQueryBadge();
-  }
-
-  toggleLayerTool() {
-    console.log(this.focusedCls);
-    this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
-    this.action.emit(this.layer);
   }
 
   computeTooltip(): string {

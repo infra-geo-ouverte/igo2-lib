@@ -19,13 +19,25 @@ export class OgcFilterButtonComponent implements OnInit {
     if (!filter) {
       return;
     } else if (filter && !filter.filters) {
-      return '1';
+      return 1;
+    } else if (this.options.ogcFilters.pushButtons) {
+      return 1;
     } else if (filter && filter.filters) {
-      return filter.filters.length.toString();
+      return filter.filters.length;
     }
   }
 
-  @Input() layer: Layer;
+  @Input()
+  get layer(): Layer {
+    return this._layer;
+  }
+  set layer(value: Layer) {
+    this._layer = value;
+    if (value) {
+      this.options = this.layer.dataSource.options as OgcFilterableDataSourceOptions;
+    }
+  }
+  private _layer;
 
   @Input() map: IgoMap;
 
@@ -41,4 +53,7 @@ export class OgcFilterButtonComponent implements OnInit {
     this.options = this.layer.dataSource.options as OgcFilterableDataSourceOptions;
   }
 
+  toggle() {
+    console.log(this.options.ogcFilters);
+  }
 }

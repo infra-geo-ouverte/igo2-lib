@@ -17,15 +17,24 @@ export class TimeFilterButtonComponent implements OnInit {
 
   get badge() {
     const filter = this.options.timeFilter as any;
-    console.log(filter);
     if (filter && filter.enabled) {
-      return '1';
+      return 1;
     } else {
       return;
     }
   }
 
-  @Input() layer: Layer;
+  @Input()
+  get layer(): Layer {
+    return this._layer;
+  }
+  set layer(value: Layer) {
+    this._layer = value;
+    if (value) {
+      this.options = this.layer.dataSource.options as WMSDataSourceOptions;
+    }
+  }
+  private _layer;
 
   @Input() map: IgoMap;
 
@@ -40,5 +49,4 @@ export class TimeFilterButtonComponent implements OnInit {
   ngOnInit() {
     this.options = this.layer.dataSource.options as WMSDataSourceOptions;
   }
-
 }

@@ -1,11 +1,12 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit, ViewChild } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, LayerListControlsOptions } from '@igo2/geo';
+import { LayerListControlsEnum, LayerListControlsOptions, IgoMap } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
 import { MatTabChangeEvent } from '@angular/material';
 import { ToolState } from '../../tool/tool.state';
+import { MapState } from '../map.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -52,6 +53,10 @@ export class MapToolsComponent implements OnInit {
     this._layerListControls = value;
   }
 
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
+
   get layerListControls(): LayerListControlsOptions {
     return this._layerListControls;
   }
@@ -86,7 +91,8 @@ export class MapToolsComponent implements OnInit {
 
   constructor(
    public layerListToolState: LayerListToolState,
-   private toolState: ToolState
+   private toolState: ToolState,
+   public mapState: MapState
   ) {}
 
   ngOnInit(): void {

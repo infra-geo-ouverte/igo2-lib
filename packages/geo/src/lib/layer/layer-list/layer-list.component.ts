@@ -26,6 +26,7 @@ import {
   MetadataLayerOptions
 } from '../../metadata/shared/metadata.interface';
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
+import { IgoMap } from '../../map/shared/map';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -59,6 +60,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @Input() ogcButton: boolean = true;
 
   @Input() timeButton: boolean = true;
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
 
   @Input()
   set layers(value: Layer[]) {
@@ -128,6 +138,13 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
   set opacity(opacity: number) {
     this.activeLayer$.getValue().opacity = opacity / 100;
+  }
+
+  get badgeOpacity() {
+    if (this.opacity === 100) {
+      return;
+    }
+    return this.opacity;
   }
 
   get checkOpacity() {
@@ -213,19 +230,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return response;
   }
 
-  raiseLayers(layers: Layer[]) {
-    for (const layer of layers) {
-      setTimeout(() => {
-        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
-        const previousLayer = this.layers[mapIndex - 1];
-        if (previousLayer && !previousLayer.baseLayer && layers.find(lay => previousLayer.id === lay.id)) {
-          return;
-        }
-        layer.map.raiseLayer(layer);
-      }, 100);
-    }
-  }
-
   lowerableLayers(layers: Layer[]) {
     let response = false;
     for (const layer of layers) {
@@ -239,16 +243,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   lowerLayers(layers: Layer[]) {
-    for (const layer of layers.reverse()) {
-      setTimeout(() => {
-        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
-        const nextLayer = this.layers[mapIndex + 1];
-        if (nextLayer && !nextLayer.baseLayer && layers.find(lay => nextLayer.id === lay.id)) {
-          return;
-        }
-        layer.map.lowerLayer(layer);
-      }, 100);
-    }
+    this.map.lowerLayers(layers.reverse());
     layers.reverse();
   }
 
@@ -411,6 +406,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   toggleSelectionMode(value: boolean) {
     this.selection = value;
+    this.activeLayer = undefined;
     this.layerTool = !value;
   }
 
