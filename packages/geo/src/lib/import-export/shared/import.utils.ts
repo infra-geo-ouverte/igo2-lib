@@ -74,26 +74,7 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
     const clusterParam: ClusterParam = styleListService.getStyleList(layerTitle.toString() + '.clusterParam');
     distance = styleListService.getStyleList(layerTitle.toString() + '.distance');
 
-    const radius = styleListService.getStyleList(layerTitle.toString() + '.clusterStyle.radius');
-
-    const stroke = new olStyle.Stroke({
-      color: styleListService.getStyleList(layerTitle.toString() + '.clusterStyle.stroke.color'),
-      width: styleListService.getStyleList(layerTitle.toString() + '.clusterStyle.stroke.width')
-    });
-
-    const fill = new olStyle.Fill({
-      color: styleListService.getStyleList(layerTitle.toString() + '.clusterStyle.fill.color')
-    });
-
-    const baseStyle = new olStyle.Style({
-      stroke,
-      fill,
-      image: new olStyle.Circle({
-        radius: radius ? radius : 5,
-        stroke,
-        fill
-      })
-    });
+    const baseStyle = styleService.createStyle(styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'));
 
     style = feature => {
       return styleService.createClusterStyle(
@@ -104,47 +85,13 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
     };
 
   } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
-    const radius = styleListService.getStyleList(layerTitle.toString() + '.style.radius');
 
-    const stroke = new olStyle.Stroke({
-      color: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.color'),
-      width: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.width')
-    });
+    style = styleService.createStyle(styleListService.getStyleList(layerTitle.toString() + '.style'));
 
-    const fill = new olStyle.Fill({
-      color: styleListService.getStyleList(layerTitle.toString() + '.style.fill.color')
-    });
-
-    style = new olStyle.Style({
-      stroke,
-      fill,
-      image: new olStyle.Circle({
-        radius: radius ? radius : 5,
-        stroke,
-        fill
-      })
-    });
   } else {
-    const radius = styleListService.getStyleList('default.style.radius');
 
-    const stroke = new olStyle.Stroke({
-      color: styleListService.getStyleList('default.style.stroke.color'),
-      width: styleListService.getStyleList('default.style.stroke.width')
-    });
+    style = styleService.createStyle(styleListService.getStyleList('default.style'));
 
-    const fill = new olStyle.Fill({
-      color: styleListService.getStyleList('default.style.fill.color')
-    });
-
-    style = new olStyle.Style({
-      stroke,
-      fill,
-      image: new olStyle.Circle({
-        radius: radius ? radius : 5,
-        stroke,
-        fill
-      })
-    });
   }
   let source;
 
@@ -155,8 +102,7 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
       queryable: true
     };
     source = new ClusterDataSource(sourceOptions);
-    console.log(olFeatures);
-    source.ol.addFeatures(olFeatures);
+    source.ol.source.addFeatures(olFeatures);
   } else {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
       queryable: true
@@ -170,7 +116,6 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
     source,
     style
   });
-  console.log(layer);
   map.addLayer(layer);
   moveToOlFeatures(map, olFeatures);
 
