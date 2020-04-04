@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, Layer, IgoMap, LayerListControlsOptions } from '@igo2/geo';
+import { LayerListControlsEnum, Layer, IgoMap, LayerListControlsOptions, SearchSourceService, sourceCanSearch } from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
@@ -70,7 +70,12 @@ export class MapDetailsToolComponent {
   }
 
   get searchToolInToolbar(): boolean {
-    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1;
+    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1
+      &&
+      this.searchSourceService
+        .getSources()
+        .filter(sourceCanSearch)
+        .filter(s => s.available && s.getType() === 'Layer').length > 0;
   }
 
   get catalogToolInToolbar(): boolean {
@@ -81,7 +86,10 @@ export class MapDetailsToolComponent {
     return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
 
-  constructor(private mapState: MapState, private toolState: ToolState) {}
+  constructor(
+    private mapState: MapState,
+    private toolState: ToolState,
+    private searchSourceService: SearchSourceService ) {}
 
   searchEmit() {
     this.toolState.toolbox.activateTool('searchResults');
