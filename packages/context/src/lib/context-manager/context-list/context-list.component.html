@@ -1,5 +1,5 @@
 <igo-list [navigation]="true">
-  <mat-form-field *ngIf="showFilter()" class="contextFilter">
+  <mat-form-field *ngIf="showFilter()" [ngClass]="authenticated ? 'context-filter-min-width' : 'context-filter-max-width'">
     <input
       matInput
       type="text"

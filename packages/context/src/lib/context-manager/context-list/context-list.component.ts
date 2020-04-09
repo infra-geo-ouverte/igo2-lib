@@ -51,14 +51,7 @@ export class ContextListComponent implements OnInit {
   }
   private _selectedContext: DetailedContext;
 
-  @Input()
-  get authenticated(): boolean {
-    return this._authenticated;
-  }
-  set authenticated(value: boolean) {
-    this._authenticated = value;
-  }
-  private _authenticated = false;
+  public authenticated = false;
 
   @Input()
   get map(): IgoMap {
@@ -145,6 +138,10 @@ export class ContextListComponent implements OnInit {
         this.contexts = this.filterContextsList(value);
       }
     });
+
+    this.auth.authenticate$.subscribe((value) => {
+      this.authenticated = value;
+    })
   }
 
   private filterContextsList(term) {
