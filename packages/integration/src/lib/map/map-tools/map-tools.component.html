@@ -32,6 +32,9 @@
   <mat-tab [label]="'igo.integration.tools.legend' | translate">
     <igo-layer-legend-list
       igoLayerLegendListBinding
+      [allowShowAllLegends]="allowShowAllLegends"
+      [showAllLegendsValue]="(showAllLegendsValue$ | async)" 
+      (allLegendsShown)="onShowAllLegends($event)"
       [excludeBaseLayers]="excludeBaseLayers"
       [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
     </igo-layer-legend-list>
