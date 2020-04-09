@@ -272,7 +272,7 @@ export class IgoMap {
 
   raiseLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
-    if (index > 0) {
+    if (index > 1 && !this.layers[index - 1].baseLayer) {
       this.moveLayer(layer, index, index - 1);
     }
   }
@@ -285,13 +285,14 @@ export class IgoMap {
 
   lowerLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
-    if (index < this.layers.length - 1) {
+    if (index < this.layers.length - 1 && !this.layers[index + 1].baseLayer) {
       this.moveLayer(layer, index, index + 1);
     }
   }
 
   lowerLayers(layers: Layer[]) {
-    for (const layer of layers) {
+    const reverseLayers = layers.reverse();
+    for (const layer of reverseLayers) {
       this.lowerLayer(layer);
     }
   }

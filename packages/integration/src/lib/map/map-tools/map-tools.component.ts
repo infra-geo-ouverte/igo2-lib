@@ -36,6 +36,9 @@ export class MapToolsComponent implements OnInit {
   @Input() timeButton: boolean = true;
 
   @Input()
+  get layerListControls(): LayerListControlsOptions {
+    return this._layerListControls;
+  }
   set layerListControls(value: LayerListControlsOptions) {
 
     const stateOptions = this.layerListToolState.getLayerListControls();
@@ -52,16 +55,11 @@ export class MapToolsComponent implements OnInit {
 
     this._layerListControls = value;
   }
+  private _layerListControls = {};
 
   get map(): IgoMap {
     return this.mapState.map;
   }
-
-  get layerListControls(): LayerListControlsOptions {
-    return this._layerListControls;
-  }
-
-  private _layerListControls = {};
 
   @Input() queryBadge: boolean = false;
 

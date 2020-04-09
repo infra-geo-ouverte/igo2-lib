@@ -49,7 +49,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
 
   layersChecked: Layer[] = [];
-  public selection = false;
+  public selection;
 
   private change$$: Subscription;
 
@@ -183,9 +183,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
         });
       });
 
-      this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
-        this.selectAllCheck = value;
-      })
+    this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
+      this.selectAllCheck = value;
+    });
   }
 
   ngOnDestroy() {
@@ -243,7 +243,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   lowerLayers(layers: Layer[]) {
-    this.map.lowerLayers(layers.reverse());
+    this.map.lowerLayers(layers);
     layers.reverse();
   }
 
@@ -407,16 +407,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
   toggleSelectionMode(value: boolean) {
     this.selection = value;
     this.activeLayer = undefined;
-    this.layerTool = !value;
+    if (value === true) {
+      this.layerTool = false;
+    }
   }
 
   layersCheckedOpacity(): any {
     if (this.layersChecked.length > 1) {
       return 1;
     } else {
-      let opacity = [];
+      const opacity = [];
       for (const layer of this.layersChecked) {
-        opacity.push(layer.opacity)
+        opacity.push(layer.opacity);
       }
       return opacity;
     }

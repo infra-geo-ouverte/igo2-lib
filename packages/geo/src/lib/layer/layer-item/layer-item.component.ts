@@ -31,15 +31,16 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     return this._activeLayer;
   }
   set activeLayer(value) {
-    if (value && value.id === this.layer.id && !this.selectionMode) {
-      this._activeLayer = true;
+    if (value && this.layer && value.id === this.layer.id && !this.selectionMode) {
       this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
     } else {
-      this._activeLayer = false;
       this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
     }
   }
   private _activeLayer;
+
+  layerTool$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  layerTool$$: Subscription;
 
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -85,7 +86,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
-  @Input() selectionMode = false;
+  @Input() selectionMode;
 
   get removable(): boolean {
     return this.layer.options.removable !== false;
@@ -130,6 +131,14 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.state = state;
       this.onResolutionChange();
+    });
+
+    this.layerTool$$ = this.layerTool$.subscribe((value) => {
+      if (value === true) {
+        this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+      } else {
+        this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+      }
     });
   }
 
@@ -198,6 +207,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.layer.visible === false ||
       !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);
+  }
+
+  toggleLayerTool() {
+    this.layerTool$.next(!this.layerTool$.getValue());
+    this.action.emit(this.layer);
   }
 
   public check() {

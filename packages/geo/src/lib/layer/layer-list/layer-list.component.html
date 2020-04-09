@@ -1,4 +1,4 @@
-<igo-list #igoList [navigation]="false" [selection]="false">
+<igo-list #igoList [ngClass]="(layerTool || selection) ? 'igo-list-min-height': 'igo-list-max-height'" [navigation]="false" [selection]="false">
   <igo-layer-list-tool *ngIf="showToolbar$ | async"
       floatLabel="auto"
       [layersAreAllVisible]="layersAreAllVisible"
@@ -69,10 +69,10 @@
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
+      [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="!orderable || activeLayer.baseLayer || getUpperLayer().id === activeLayer.id"
       (click)="activeLayer.map.raiseLayer(activeLayer)">
-      <mat-icon svgIcon="arrow-up"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-up"></mat-icon>
     </button>
 
     <button
@@ -80,10 +80,10 @@
       color="primary"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
+      [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="!orderable || activeLayer.baseLayer || getLowerLayer().id === activeLayer.id"
       (click)="activeLayer.map.lowerLayer(activeLayer)">
-      <mat-icon svgIcon="arrow-down"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-down"></mat-icon>
     </button>
 
     <button
@@ -106,11 +106,11 @@
       tooltip-position="below"
       matTooltipShowDelay="500"
       [disabled]="layers.length === 0"
-      [matTooltip]="selectAll ?
+      [matTooltip]="selectAllCheck ?
                     ('igo.geo.layer.deselectAll' | translate) :
                     ('igo.geo.layer.selectAll' | translate)"
       (click)="selectAll()">
-      {{selectAll ? ('igo.geo.layer.deselectAll' | translate) :
+      {{selectAllCheck ? ('igo.geo.layer.deselectAll' | translate) :
                     ('igo.geo.layer.selectAll' | translate)}}
     </button>
 
@@ -147,10 +147,10 @@
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.raiseLayer' | translate"
+      [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="layersChecked.length === 0 || !orderable || !raisableLayers(layersChecked) || selectAllCheck === true"
       (click)="map.raiseLayers(layersChecked)">
-      <mat-icon svgIcon="arrow-up"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-up"></mat-icon>
     </button>
 
     <button
@@ -158,10 +158,10 @@
       color="primary"
       tooltip-position="below"
       matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.layer.lowerLayer' | translate"
+      [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="layersChecked.length === 0 || !orderable || !lowerableLayers(layersChecked) || selectAllCheck === true"
       (click)="lowerLayers(layersChecked)">
-      <mat-icon svgIcon="arrow-down"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-down"></mat-icon>
     </button>
 
     <button

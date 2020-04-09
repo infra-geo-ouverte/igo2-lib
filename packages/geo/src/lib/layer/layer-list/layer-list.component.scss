@@ -1,5 +1,6 @@
-igo-list {
+:host .igo-list-min-height {
   height: calc(100% - 91px);
+  padding-top: 8px;
 }
 
 mat-form-field.inputFilter {
@@ -29,7 +30,10 @@ mat-form-field.inputFilter {
   padding-top: 5px;
 }
 
-::ng-deep.mat-menu-panel {
+:host igo-panel {
+  height: unset;
+}
+:host ::ng-deep.mat-menu-panel {
   max-width: unset;
   width: 132px;
   height: 70px;

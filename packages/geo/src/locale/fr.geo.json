@@ -129,6 +129,7 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
+        "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
         "activateSelectionMode": "Activer le mode de sélection multiple",
         "deactivateSelectionMode": "Désactiver le mode de sélection multiple",
@@ -137,6 +138,7 @@
         "deselectAll": "Tout désélectionner",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
+        "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
         "moreOptions": "Options sur la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",

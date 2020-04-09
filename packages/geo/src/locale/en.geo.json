@@ -129,6 +129,7 @@
       "layer": {
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
+        "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
         "deactivateSelectionMode": "Deactivate multiple selection mode",
@@ -137,6 +138,7 @@
         "deselectAll": "Deselect all",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
+        "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
         "moreOptions": "More options",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
