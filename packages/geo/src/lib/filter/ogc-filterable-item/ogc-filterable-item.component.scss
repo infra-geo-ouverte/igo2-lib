@@ -6,10 +6,19 @@
   text-align: center;
   width: 100%;
   display: inline-block;
+  padding-top: 5px;
 }
 
 .mat-list-item {
   height: auto;
+}
+
+.ogc-header ::ng-deep .mat-list-item-content .mat-list-text {
+  display: none;
+}
+
+.buttons-container-header {
+  position: absolute;
 }
 
 .igo-layer-legend-container {

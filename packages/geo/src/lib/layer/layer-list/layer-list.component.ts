@@ -370,6 +370,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     } else {
       this.layerTool = true;
     }
+
+    for (const lay of this.layers) {
+      lay.options.active = false;
+    }
+    layer.options.active = true;
     this.activeLayer = layer;
     return;
   }

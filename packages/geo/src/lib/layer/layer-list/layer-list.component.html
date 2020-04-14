@@ -72,7 +72,7 @@
       [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="!orderable || activeLayer.baseLayer || getUpperLayer().id === activeLayer.id"
       (click)="activeLayer.map.raiseLayer(activeLayer)">
-      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-up"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-up"></mat-icon>
     </button>
 
     <button
@@ -83,7 +83,7 @@
       [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="!orderable || activeLayer.baseLayer || getLowerLayer().id === activeLayer.id"
       (click)="activeLayer.map.lowerLayer(activeLayer)">
-      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-down"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-down"></mat-icon>
     </button>
 
     <button
@@ -150,7 +150,7 @@
       [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="layersChecked.length === 0 || !orderable || !raisableLayers(layersChecked) || selectAllCheck === true"
       (click)="map.raiseLayers(layersChecked)">
-      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-up"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-up"></mat-icon>
     </button>
 
     <button
@@ -161,7 +161,7 @@
       [matTooltip]="(sortAlpha || onlyVisible) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="layersChecked.length === 0 || !orderable || !lowerableLayers(layersChecked) || selectAllCheck === true"
       (click)="lowerLayers(layersChecked)">
-      <mat-icon [matBadge]="(sortAlpha || onlyVisible) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-down"></mat-icon>
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" svgIcon="arrow-down"></mat-icon>
     </button>
 
     <button

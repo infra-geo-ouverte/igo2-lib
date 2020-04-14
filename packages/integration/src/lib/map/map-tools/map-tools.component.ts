@@ -120,10 +120,10 @@ export class MapToolsComponent implements OnInit {
   }
 
   activateTimeFilter() {
-    this.toolState.toolbox.activateTool('timeFilter');
+    this.toolState.toolbox.activateTool('activeTimeFilter');
   }
 
   activateOgcFilter() {
-    this.toolState.toolbox.activateTool('ogcFilter');
+    this.toolState.toolbox.activateTool('activeOgcFilter');
   }
 }
