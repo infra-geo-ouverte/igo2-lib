@@ -7,6 +7,7 @@ import { LayerListToolState } from '../layer-list-tool.state';
 import { MatTabChangeEvent } from '@angular/material';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
+import { BehaviorSubject } from 'rxjs';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -22,6 +23,12 @@ import { MapState } from '../map.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolsComponent implements OnInit {
+
+  showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  @Input() allowShowAllLegends: boolean = false;
+
+  @Input() showAllLegendsValue: boolean = false;
 
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
@@ -95,6 +102,11 @@ export class MapToolsComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedTab();
+  }
+
+  onShowAllLegends(event) {
+    this.mapState.showAllLegendsValue = event;
+    this.showAllLegendsValue$.next(event);
   }
 
   private selectedTab() {
