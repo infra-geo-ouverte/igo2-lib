@@ -1,13 +1,14 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, LayerListControlsOptions, IgoMap } from '@igo2/geo';
+import { LayerListControlsEnum, LayerListControlsOptions, IgoMap, SearchSourceService, sourceCanSearch, Layer } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
 import { MatTabChangeEvent } from '@angular/material';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -22,9 +23,12 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./map-tools.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapToolsComponent implements OnInit {
+export class MapToolsComponent implements OnInit, OnDestroy {
 
+  layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  private resolution$$: Subscription;
 
   @Input() allowShowAllLegends: boolean = false;
 
@@ -41,6 +45,8 @@ export class MapToolsComponent implements OnInit {
   @Input() ogcButton: boolean = true;
 
   @Input() timeButton: boolean = true;
+
+  @Input() layerAdditionAllowed: boolean = true;
 
   @Input()
   get layerListControls(): LayerListControlsOptions {
@@ -70,6 +76,22 @@ export class MapToolsComponent implements OnInit {
 
   @Input() queryBadge: boolean = false;
 
+  get visibleOrInRangeLayers$(): Observable<Layer[]> {
+    return this.layers$.pipe(
+      map(
+        layers => layers
+          .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value)
+      ));
+  }
+
+  get visibleLayers$(): Observable<Layer[]> {
+    return this.layers$.pipe(
+      map(
+        layers => layers
+          .filter(layer => layer.visible$.value)
+      ));
+  }
+
   get excludeBaseLayers(): boolean {
     return this.layerListControls.excludeBaseLayers || false;
   }
@@ -94,14 +116,40 @@ export class MapToolsComponent implements OnInit {
 
   @ViewChild('tabGroup') tabGroup;
 
+  get searchToolInToolbar(): boolean {
+    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1
+      &&
+      this.searchSourceService
+        .getSources()
+        .filter(sourceCanSearch)
+        .filter(s => s.available && s.getType() === 'Layer').length > 0;
+  }
+
+  get catalogToolInToolbar(): boolean {
+    return this.toolState.toolbox.getToolbar().indexOf('catalog') !== -1;
+  }
+
+  get contextToolInToolbar(): boolean {
+    return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
+  }
+
   constructor(
-   public layerListToolState: LayerListToolState,
-   private toolState: ToolState,
-   public mapState: MapState
-  ) {}
+    public layerListToolState: LayerListToolState,
+    private toolState: ToolState,
+    public mapState: MapState,
+    private searchSourceService: SearchSourceService
+  ) { }
 
   ngOnInit(): void {
     this.selectedTab();
+    this.resolution$$ = this.map.viewController.resolution$.subscribe(r =>
+      this.layers$.next(
+        this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+      ));
+  }
+
+  ngOnDestroy(): void {
+    this.resolution$$.unsubscribe();
   }
 
   onShowAllLegends(event) {
@@ -124,9 +172,12 @@ export class MapToolsComponent implements OnInit {
 
   public tabChanged(tab: MatTabChangeEvent) {
     this.layerListToolState.setSelectedTab(tab.index);
+    this.layers$.next(
+      this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+    );
   }
 
-  onLayerListChange(appliedFilters: LayerListControlsOptions ) {
+  onLayerListChange(appliedFilters: LayerListControlsOptions) {
     this.layerListToolState.setKeyword(appliedFilters.keyword);
     this.layerListToolState.setSortAlpha(appliedFilters.sortAlpha);
     this.layerListToolState.setOnlyVisible(appliedFilters.onlyVisible);
@@ -138,5 +189,17 @@ export class MapToolsComponent implements OnInit {
 
   activateOgcFilter() {
     this.toolState.toolbox.activateTool('activeOgcFilter');
+  }
+
+  searchEmit() {
+    this.toolState.toolbox.activateTool('searchResults');
+  }
+
+  catalogEmit() {
+    this.toolState.toolbox.activateTool('catalog');
+  }
+
+  contextEmit() {
+    this.toolState.toolbox.activateTool('contextManager');
   }
 }
