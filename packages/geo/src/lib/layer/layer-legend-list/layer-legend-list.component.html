@@ -1,5 +1,9 @@
 
-<mat-slide-toggle [checked]="showAllLegendsValue" class="mat-typography" *ngIf="allowShowAllLegends" [labelPosition]="'before'" (change)="toggleShowAllLegends($event.checked)">
+<mat-slide-toggle 
+tooltip-position="above"
+matTooltipShowDelay="500"
+[matTooltip]="'igo.geo.layer.legend.showAll' | translate"
+[checked]="showAllLegendsValue" class="mat-typography" *ngIf="allowShowAllLegends" [labelPosition]="'before'" (change)="toggleShowAllLegends($event.checked)">
   {{'igo.geo.layer.legend.showAll' | translate}}
 </mat-slide-toggle>
 <mat-divider *ngIf="allowShowAllLegends"></mat-divider>

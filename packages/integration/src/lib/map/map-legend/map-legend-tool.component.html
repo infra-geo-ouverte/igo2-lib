@@ -1,5 +1,5 @@
 <igo-layer-legend-list
-  *ngIf="((visibleOrInRangeLayers$ | async).length || allowShowAllLegends); else nothingVisibleOrInRange"
+  *ngIf="(visibleOrInRangeLayers$ | async).length; else nothingVisibleOrInRange"
   igoLayerLegendListBinding 
   [excludeBaseLayers]="excludeBaseLayers" 
   [allowShowAllLegends]="allowShowAllLegends"
