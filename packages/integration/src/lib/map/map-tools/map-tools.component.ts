@@ -36,7 +36,7 @@ export class MapToolsComponent implements OnInit {
 
   @Input() updateLegendOnResolutionChange: boolean = false;
 
-  @Input() selectedTabAtOpening: string = 'legend';
+  @Input() selectedTabAtOpening: string;
 
   @Input() ogcButton: boolean = true;
 
@@ -116,8 +116,9 @@ export class MapToolsComponent implements OnInit {
     } else {
       if (this.selectedTabAtOpening === 'legend') {
         this.layerListToolState.setSelectedTab(1);
+      } else {
+        this.layerListToolState.setSelectedTab(0);
       }
-      this.layerListToolState.setSelectedTab(0);
     }
   }
 
