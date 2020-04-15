@@ -270,6 +270,15 @@ export class QueryService {
         break;
     }
 
+    if (features.length > 0 && features[0].geometry == null) {
+      console.log('geom est null!!');
+      const geomToAdd = this.createGeometryFromUrlClick(url);
+
+      for (const feature of features) {
+        feature.geometry = geomToAdd;
+      }
+    }
+
     return features.map((feature: Feature, index: number) => {
       const mapLabel = feature.properties[queryDataSource.mapLabel];
 
@@ -304,6 +313,72 @@ export class QueryService {
             : options.projection
       });
     });
+  }
+
+  private createGeometryFromUrlClick(url) {
+
+    const searchParams: any = this.getQueryParams(url.toLowerCase());
+    const bboxRaw = searchParams.bbox;
+    const width = parseInt(searchParams.width, 10);
+    const height = parseInt(searchParams.height, 10);
+    const xPosition = parseInt(searchParams.i || searchParams.x, 10);
+    const yPosition = parseInt(searchParams.j || searchParams.y, 10);
+    const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
+
+    const bbox = bboxRaw.split(',');
+    let threshold =
+      (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.05;
+
+    // for context in degree (EPSG:4326,4269...)
+    if (Math.abs(parseFloat(bbox[0])) < 180) {
+      threshold = 0.045;
+    }
+    const clickx =
+      parseFloat(bbox[0]) +
+      (Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2])) * xPosition) /
+        width -
+      threshold;
+    const clicky =
+      parseFloat(bbox[1]) +
+      (Math.abs(parseFloat(bbox[1]) - parseFloat(bbox[3])) * yPosition) /
+        height -
+      threshold;
+    const clickx1 = clickx + threshold * 2;
+    const clicky1 = clicky + threshold * 2;
+
+    const wktPoly =
+      'POLYGON((' +
+      clickx +
+      ' ' +
+      clicky +
+      ', ' +
+      clickx +
+      ' ' +
+      clicky1 +
+      ', ' +
+      clickx1 +
+      ' ' +
+      clicky1 +
+      ', ' +
+      clickx1 +
+      ' ' +
+      clicky +
+      ', ' +
+      clickx +
+      ' ' +
+      clicky +
+      '))';
+
+    const format = new olformat.WKT();
+    const tenPercentWidthGeom = format.readFeature(wktPoly);
+    const f = tenPercentWidthGeom.getGeometry() as any;
+
+    const newGeom = {
+          type: f.getType(),
+          coordinates: f.getCoordinates()
+    };
+
+    return newGeom;
   }
 
   private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
@@ -364,61 +439,63 @@ export class QueryService {
   ) {
     // _blank , iframe or undefined
     const searchParams: any = this.getQueryParams(url.toLowerCase());
-    const bboxRaw = searchParams.bbox;
-    const width = parseInt(searchParams.width, 10);
-    const height = parseInt(searchParams.height, 10);
-    const xPosition = parseInt(searchParams.i || searchParams.x, 10);
-    const yPosition = parseInt(searchParams.j || searchParams.y, 10);
+    // const bboxRaw = searchParams.bbox;
+    // const width = parseInt(searchParams.width, 10);
+    // const height = parseInt(searchParams.height, 10);
+    // const xPosition = parseInt(searchParams.i || searchParams.x, 10);
+    // const yPosition = parseInt(searchParams.j || searchParams.y, 10);
     const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
 
-    const bbox = bboxRaw.split(',');
-    let threshold =
-      (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.05;
+    // const bbox = bboxRaw.split(',');
+    // let threshold =
+    //   (Math.abs(parseFloat(bbox[0])) - Math.abs(parseFloat(bbox[2]))) * 0.05;
 
-    // for context in degree (EPSG:4326,4269...)
-    if (Math.abs(parseFloat(bbox[0])) < 180) {
-      threshold = 0.045;
-    }
+    // // for context in degree (EPSG:4326,4269...)
+    // if (Math.abs(parseFloat(bbox[0])) < 180) {
+    //   threshold = 0.045;
+    // }
 
-    const clickx =
-      parseFloat(bbox[0]) +
-      (Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2])) * xPosition) /
-        width -
-      threshold;
-    const clicky =
-      parseFloat(bbox[1]) +
-      (Math.abs(parseFloat(bbox[1]) - parseFloat(bbox[3])) * yPosition) /
-        height -
-      threshold;
-    const clickx1 = clickx + threshold * 2;
-    const clicky1 = clicky + threshold * 2;
+    // const clickx =
+    //   parseFloat(bbox[0]) +
+    //   (Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2])) * xPosition) /
+    //     width -
+    //   threshold;
+    // const clicky =
+    //   parseFloat(bbox[1]) +
+    //   (Math.abs(parseFloat(bbox[1]) - parseFloat(bbox[3])) * yPosition) /
+    //     height -
+    //   threshold;
+    // const clickx1 = clickx + threshold * 2;
+    // const clicky1 = clicky + threshold * 2;
 
-    const wktPoly =
-      'POLYGON((' +
-      clickx +
-      ' ' +
-      clicky +
-      ', ' +
-      clickx +
-      ' ' +
-      clicky1 +
-      ', ' +
-      clickx1 +
-      ' ' +
-      clicky1 +
-      ', ' +
-      clickx1 +
-      ' ' +
-      clicky +
-      ', ' +
-      clickx +
-      ' ' +
-      clicky +
-      '))';
+    // const wktPoly =
+    //   'POLYGON((' +
+    //   clickx +
+    //   ' ' +
+    //   clicky +
+    //   ', ' +
+    //   clickx +
+    //   ' ' +
+    //   clicky1 +
+    //   ', ' +
+    //   clickx1 +
+    //   ' ' +
+    //   clicky1 +
+    //   ', ' +
+    //   clickx1 +
+    //   ' ' +
+    //   clicky +
+    //   ', ' +
+    //   clickx +
+    //   ' ' +
+    //   clicky +
+    //   '))';
 
-    const format = new olformat.WKT();
-    const tenPercentWidthGeom = format.readFeature(wktPoly);
-    const f = tenPercentWidthGeom.getGeometry() as any;
+    // const format = new olformat.WKT();
+    // const tenPercentWidthGeom = format.readFeature(wktPoly);
+    // const f = tenPercentWidthGeom.getGeometry() as any;
+
+    const geomToAdd = this.createGeometryFromUrlClick(url);
 
     if (
       htmlTarget !== QueryHtmlTarget.BLANK &&
@@ -440,10 +517,11 @@ export class QueryService {
         type: FEATURE,
         projection,
         properties: { target: htmlTarget, body: res, url },
-        geometry: imposedGeometry || {
-          type: f.getType(),
-          coordinates: f.getCoordinates()
-        }
+        geometry: imposedGeometry || geomToAdd
+        // {
+        //   type: f.getType(),
+        //   coordinates: f.getCoordinates()
+        // }
       }
     ];
   }
