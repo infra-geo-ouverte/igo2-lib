@@ -59,7 +59,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   set selectAll(value: boolean) {
     this._selectAll = value;
     if (value) {
-      this.layerCheck = true;
+      if (!this.layer.baseLayer) {
+        this.layerCheck = true;
+      }
     } else {
       this.layerCheck = false;
     }

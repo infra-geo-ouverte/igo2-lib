@@ -3,6 +3,10 @@
   padding-top: 8px;
 }
 
+:host .igo-list-max-height {
+  padding-top: 8px;
+}
+
 mat-form-field.inputFilter {
   width: calc(100% - 100px);
   max-width: 200px;

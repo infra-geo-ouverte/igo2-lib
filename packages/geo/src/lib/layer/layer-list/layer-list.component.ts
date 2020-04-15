@@ -431,7 +431,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   selectAll() {
     if (!this.selectAllCheck) {
-      this.layersChecked = this.layers;
+      for (const layer of this.layers) {
+        if (!layer.baseLayer) {
+          this.layersChecked.push(layer);
+        }
+      }
       this.selectAllCheck$.next(true);
     } else {
       this.layersChecked = [];
