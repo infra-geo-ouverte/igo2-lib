@@ -159,7 +159,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   private selectedTab() {
     const userSelectedTab = this.layerListToolState.selectedTab$.value;
-    if (userSelectedTab) {
+    if (userSelectedTab !== undefined) {
       this.layerListToolState.setSelectedTab(userSelectedTab);
     } else {
       if (this.selectedTabAtOpening === 'legend') {
