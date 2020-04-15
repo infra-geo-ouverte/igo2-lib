@@ -41,19 +41,19 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   }
 
   get visibleOrInRangeLayers$(): Observable<Layer[]> {
-      return this.layers$.pipe(
-        map(
-          layers => layers
-            .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value)
-        ));
+    return this.layers$.pipe(
+      map(
+        layers => layers
+          .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value)
+      ));
   }
 
   get visibleLayers$(): Observable<Layer[]> {
-      return this.layers$.pipe(
-        map(
-          layers => layers
-            .filter(layer => layer.visible$.value)
-        ));
+    return this.layers$.pipe(
+      map(
+        layers => layers
+          .filter(layer => layer.visible$.value)
+      ));
   }
 
   get excludeBaseLayers(): boolean {
