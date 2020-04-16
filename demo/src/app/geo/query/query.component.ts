@@ -67,11 +67,12 @@ export class AppQueryComponent {
     this.dataSourceService
       .createAsyncDataSource({
         type: 'wms',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+        url: 'https://servicescarto.mern.gouv.qc.ca/pes/services/Forets/STF_WMS/MapServer/WMSServer',
         queryable: true,
-        queryTitle: 'num_rts',
+        queryFormat: QueryFormat.GEOJSON,
+        queryTitle: 'Numéro',
         params: {
-          layers: 'bgr_v_sous_route_res_sup_act',
+          layers: 'Refuge biologique - p',
           version: '1.3.0'
         }
       } as QueryableDataSourceOptions)
@@ -83,7 +84,28 @@ export class AppQueryComponent {
             sourceOptions: dataSource.options
           })
         );
-      });
+    });
+
+    // this.dataSourceService
+    //   .createAsyncDataSource({
+    //     type: 'wms',
+    //     url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+    //     queryable: true,
+    //     queryTitle: 'num_rts',
+    //     params: {
+    //       layers: 'bgr_v_sous_route_res_sup_act',
+    //       version: '1.3.0'
+    //     }
+    //   } as QueryableDataSourceOptions)
+    //   .subscribe(dataSource => {
+    //     this.map.addLayer(
+    //       this.layerService.createLayer({
+    //         title: 'WMS',
+    //         source: dataSource,
+    //         sourceOptions: dataSource.options
+    //       })
+    //     );
+    //   });
 
     this.dataSourceService
       .createAsyncDataSource({
