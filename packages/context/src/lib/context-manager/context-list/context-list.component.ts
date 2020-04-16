@@ -18,7 +18,6 @@ import { MatDialog } from '@angular/material';
 import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 
-
 @Component({
   selector: 'igo-context-list',
   templateUrl: './context-list.component.html',
@@ -131,7 +130,7 @@ export class ContextListComponent implements OnInit {
       if (this.sortedAlpha === undefined && this.term === '') {
         this.contextsInitial = this.contexts;
       }
-    })
+    });
 
     this.term$$ = this.term$.subscribe((value) => {
       if (this.filterContextsList(value)) {
@@ -141,7 +140,7 @@ export class ContextListComponent implements OnInit {
 
     this.auth.authenticate$.subscribe((value) => {
       this.authenticated = value;
-    })
+    });
   }
 
   private filterContextsList(term) {
@@ -165,7 +164,7 @@ export class ContextListComponent implements OnInit {
           const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
-        })
+        });
         updateContexts.public = publics;
       }
       if (this.contexts.shared) {
@@ -279,7 +278,7 @@ export class ContextListComponent implements OnInit {
       });
   }
 
-  userSelection() {
-    return;
-  }
+  // userSelection() {
+  //   return;
+  // }
 }
