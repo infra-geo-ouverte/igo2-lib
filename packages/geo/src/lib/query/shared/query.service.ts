@@ -271,7 +271,6 @@ export class QueryService {
     }
 
     if (features.length > 0 && features[0].geometry == null) {
-      console.log('geom est null!!');
       const geomToAdd = this.createGeometryFromUrlClick(url);
 
       for (const feature of features) {
