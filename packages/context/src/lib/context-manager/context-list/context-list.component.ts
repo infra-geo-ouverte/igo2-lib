@@ -4,7 +4,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  OnInit
+  OnInit,
+  ChangeDetectionStrategy
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -21,7 +22,8 @@ import { BookmarkDialogComponent } from '../../context-map-button/bookmark-butto
 @Component({
   selector: 'igo-context-list',
   templateUrl: './context-list.component.html',
-  styleUrls: ['./context-list.component.scss']
+  styleUrls: ['./context-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContextListComponent implements OnInit {
   contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(undefined);
@@ -86,7 +88,7 @@ export class ContextListComponent implements OnInit {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  public users = ['COG', '911', 'Public'];
+  // public users = ['COG', '911', 'Public'];
 
   /**
    * Context filter term
@@ -94,6 +96,7 @@ export class ContextListComponent implements OnInit {
   @Input()
   set term(value: string) {
     this.term$.next(value);
+    this.cdRef.detectChanges();
   }
   get term(): string {
     return this.term$.value;
@@ -135,32 +138,37 @@ export class ContextListComponent implements OnInit {
     this.term$$ = this.term$.subscribe((value) => {
       if (this.filterContextsList(value)) {
         this.contexts = this.filterContextsList(value);
+        this.cdRef.detectChanges();
       }
     });
 
-    this.auth.authenticate$.subscribe((value) => {
-      this.authenticated = value;
+    this.auth.authenticate$.subscribe(() => {
+      this.authenticated = this.auth.authenticated;
     });
   }
 
   private filterContextsList(term) {
+    this.contexts = this.contextsInitial;
     if (term === '') {
+      if (this.sortedAlpha) {
+        this.contexts = this.sortContextsList(this.contextsInitial);
+      }
       return;
     }
 
     if (term.length) {
-      let ours; let publics; let shared;
-      ours = this.contexts.ours.filter((context) => {
+      const ours = this.contexts.ours.filter((context) => {
         const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         return contextTitleNormalized.includes(filterNormalized);
       });
-      const updateContexts: ContextsList = {
+
+      let updateContexts: ContextsList = {
         ours
       };
 
       if (this.contexts.public) {
-        publics = this.contexts.public.filter((context) => {
+        const publics = this.contexts.public.filter((context) => {
           const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
@@ -168,12 +176,16 @@ export class ContextListComponent implements OnInit {
         updateContexts.public = publics;
       }
       if (this.contexts.shared) {
-        shared = this.contexts.shared.filter((context) => {
+        const shared = this.contexts.shared.filter((context) => {
           const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
         });
         updateContexts.shared = shared;
+      }
+
+      if (this.sortedAlpha) {
+        updateContexts = this.sortContextsList(updateContexts);
       }
       return updateContexts;
     }
@@ -236,20 +248,24 @@ export class ContextListComponent implements OnInit {
 
   toggleSort(sortAlpha: boolean) {
     this.sortedAlpha = sortAlpha;
-    if (this.sortedAlpha === true) {
-      const filterList = this.filterContextsList(this.term) ? this.filterContextsList(this.term) : this.contextsInitial;
-      this.contextsTemp = filterList;
-      this.contextsAlpha = this.sortContextsList(filterList);
-      this.contexts = this.contextsAlpha;
-    } else if (this.sortedAlpha === false) {
-      const filterList = this.filterContextsList(this.term) ? this.contextsTemp : this.contextsInitial;
-      this.contexts = filterList;
+    if (this.term === '') {
+      if (this.sortedAlpha) {
+        this.contexts = this.sortContextsList(this.contextsInitial);
+      } else {
+        this.contexts = this.contextsInitial;
+      }
+      return;
     }
+    this.contexts = this.filterContextsList(this.term);
   }
 
   clearFilter() {
     this.term = '';
-    this.contexts = this.contextsInitial;
+    if (this.sortedAlpha) {
+      this.contexts = this.sortContextsList(this.contextsInitial);
+    } else {
+      this.contexts = this.contextsInitial;
+    }
   }
 
   createContext() {

@@ -17,6 +17,7 @@
       <mat-icon svgIcon="close"></mat-icon>
     </button>
   </mat-form-field>
+
   <button
   *ngIf="!sortedAlpha"
   mat-icon-button
@@ -32,6 +33,14 @@
     matTooltipShowDelay="500"
     (click)="toggleSort(false)">
     <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
+  </button>
+
+  <button *ngIf="authenticated"
+  mat-icon-button
+  [matTooltip]="'igo.context.bookmarkButton.create' | translate"
+  matTooltipShowDelay="500"
+  (click)="createContext()">
+  <mat-icon color="primary" svgIcon="star"></mat-icon>
   </button>
 
   <!-- <button *ngIf="authenticated"
@@ -51,14 +60,6 @@
       </mat-checkbox>
     </ng-container>
   </mat-menu> -->
-
-  <button *ngIf="authenticated"
-    mat-icon-button
-    [matTooltip]="'igo.context.bookmarkButton.create' | translate"
-    matTooltipShowDelay="500"
-    (click)="createContext()">
-    <mat-icon color="primary" svgIcon="star"></mat-icon>
-  </button>
 
   <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">
 
