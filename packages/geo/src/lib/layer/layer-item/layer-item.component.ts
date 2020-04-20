@@ -150,7 +150,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
         this.layerTool$.next(true);
         this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
       }
-    })
+    });
   }
 
   ngOnDestroy() {

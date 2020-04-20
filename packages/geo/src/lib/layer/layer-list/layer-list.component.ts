@@ -195,7 +195,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
           }
         }
       }
-    })
+    });
   }
 
   ngOnDestroy() {
