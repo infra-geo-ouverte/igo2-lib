@@ -32,6 +32,7 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
   set activeLayer(value) {
     if (value && this.layer && value.id === this.layer.id && !this.selectionMode) {
+      this.layerTool$.next(true);
       this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
     } else {
       this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
@@ -40,7 +41,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   private _activeLayer;
 
   layerTool$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  layerTool$$: Subscription;
 
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -72,7 +72,17 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   private resolution$$: Subscription;
 
-  @Input() layer: Layer;
+  layers$: BehaviorSubject<Layer> = new BehaviorSubject<Layer>(undefined);
+
+  @Input()
+  get layer() {
+    return this._layer;
+  }
+  set layer(value) {
+    this._layer = value;
+    this.layers$.next(value);
+  }
+  private _layer;
 
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
@@ -135,13 +145,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.onResolutionChange();
     });
 
-    this.layerTool$$ = this.layerTool$.subscribe((value) => {
-      if (value === true) {
+    this.layers$.subscribe(() => {
+      if (this.layer && this.layer.options.active) {
+        this.layerTool$.next(true);
         this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
-      } else {
-        this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
       }
-    });
+    })
   }
 
   ngOnDestroy() {
@@ -213,6 +222,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   toggleLayerTool() {
     this.layerTool$.next(!this.layerTool$.getValue());
+    if (this.layerTool$.getValue() === true) {
+      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+    } else {
+      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+    }
     this.action.emit(this.layer);
   }
 

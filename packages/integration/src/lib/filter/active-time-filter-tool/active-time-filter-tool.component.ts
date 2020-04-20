@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 import { MapState } from '../../map/map.state';
 import { IgoMap, Layer } from '@igo2/geo';
+import { toolSlideInOut } from './active-time-filter-tool.animation';
 
 @ToolComponent({
   name: 'activeTimeFilter',
@@ -12,7 +13,8 @@ import { IgoMap, Layer } from '@igo2/geo';
 })
 @Component({
   selector: 'igo-active-time-filter-tool',
-  templateUrl: './active-time-filter-tool.component.html'
+  templateUrl: './active-time-filter-tool.component.html',
+  animations: [toolSlideInOut()]
 })
 export class ActiveTimeFilterToolComponent {
 
@@ -28,6 +30,8 @@ export class ActiveTimeFilterToolComponent {
     }
     return;
   }
+
+  public animate = 'enter';
 
   constructor(public mapState: MapState) {}
 }

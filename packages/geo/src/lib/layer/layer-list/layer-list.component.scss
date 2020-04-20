@@ -26,6 +26,7 @@ mat-form-field.inputFilter {
   min-width: unset;
   width: 110px;
   left: 10px;
+  top: 10px
 }
 
 .igo-layer-button-group {
@@ -37,10 +38,11 @@ mat-form-field.inputFilter {
 :host igo-panel {
   height: unset;
 }
-:host ::ng-deep.mat-menu-panel {
+
+#opacity-menu {
   max-width: unset;
   width: 132px;
-  height: 70px;
+  height: 50px;
 
   .mat-menu-content:not(:empty) {
     padding-top: 20px;

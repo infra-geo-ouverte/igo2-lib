@@ -45,7 +45,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   showToolbar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  layerTool = false;
+  public layerTool: boolean;
   activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
 
   layersChecked: Layer[] = [];
@@ -80,7 +80,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
   private _layers: Layer[];
 
-  @Input()
   set activeLayer(value: Layer) {
     this._activeLayer = value;
     this.activeLayer$.next(value);
@@ -186,6 +185,17 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
       this.selectAllCheck = value;
     });
+
+    this.layers$.subscribe(() => {
+      if (this.layers) {
+        for (const layer of this.layers) {
+          if (layer.options.active) {
+            this.activeLayer = layer;
+            this.layerTool = true;
+          }
+        }
+      }
+    })
   }
 
   ngOnDestroy() {
