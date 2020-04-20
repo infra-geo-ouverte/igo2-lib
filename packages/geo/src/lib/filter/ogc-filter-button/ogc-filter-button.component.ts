@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
-import { OgcFilterableDataSourceOptions } from '../shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, IgoPushButton, OgcFiltersOptions } from '../shared/ogc-filter.interface';
 
 @Component({
   selector: 'igo-ogc-filter-button',
@@ -16,9 +16,15 @@ export class OgcFilterButtonComponent implements OnInit {
 
   get badge() {
     const filter = this.options.ogcFilters as any;
-    if (filter && !filter.filters) {
+    if (filter && !filter.advancedOgcFilters) {
       if (filter.pushButtons) {
-        return 1;
+        const pushButtons = filter.pushButtons as IgoPushButton;
+        const currentPushButtonGroup = pushButtons.groups.find(gr => gr.enabled);
+        let cntPushButtons = 0;
+        if (currentPushButtonGroup) {
+          currentPushButtonGroup.computedButtons.map(cb => cntPushButtons += cb.buttons.filter(button => button.enabled).length);
+        }
+        return cntPushButtons > 0 ? cntPushButtons : undefined;
       } else {
         return;
       }
