@@ -157,7 +157,11 @@
           "noLegendText": "No legend available for this layer",
           "noLegendScale": "No legend available for this scale",
           "selectStyle": "Select the style of the legend",
-          "showAll" : "Show all legends (non visible and out of range)"
+          "showAll" : "Show all legends (non visible and out of range)",
+          "noLayersVisibleWithShowAllButton": "No layer currently visible. Activate the button above to see all the legends.",
+          "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
+          "noLayersVisible": "No layers currently visible.",
+          "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."        
         }
       },
       "download": {

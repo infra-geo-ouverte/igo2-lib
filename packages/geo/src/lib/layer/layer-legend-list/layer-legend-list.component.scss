@@ -10,5 +10,10 @@ mat-slide-toggle {
 }
 
 igo-list {
-  display: inline-block;
+  display: contents;
+}
+
+.layers-empty {
+  text-align: justify;
+  margin: 10px;
 }

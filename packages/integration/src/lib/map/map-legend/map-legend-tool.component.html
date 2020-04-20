@@ -1,5 +1,4 @@
 <igo-layer-legend-list
-  *ngIf="(visibleOrInRangeLayers$ | async).length; else nothingVisibleOrInRange"
   igoLayerLegendListBinding 
   [excludeBaseLayers]="excludeBaseLayers" 
   [allowShowAllLegends]="allowShowAllLegends"
@@ -7,11 +6,10 @@
   [showAllLegendsValue]="(showAllLegendsValue$ | async)" 
   (allLegendsShown)="onShowAllLegends($event)">
 </igo-layer-legend-list>
-<ng-template #nothingVisibleOrInRange>
-  <p class="map-empty mat-typography" *ngIf="(layers$ | async).length; else emptyLayers">
-    {{ ((visibleLayers$ | async).length) ? ('igo.integration.mapTool.noLayersInRange' | translate) :  ('igo.integration.mapTool.noLayersVisible' | translate) }}
-  </p>
-</ng-template>
+<p class="map-empty mat-typography"
+  *ngIf="!(visibleOrInRangeLayers$ | async).length && (layers$ | async).length; else emptyLayers">
+  {{ ((visibleLayers$ | async).length) ? ('igo.integration.mapTool.noLayersInRange' | translate) :  ('igo.integration.mapTool.noLayersVisible' | translate) }}
+</p>
 
 
 <ng-template #emptyLayers>

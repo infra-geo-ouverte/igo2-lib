@@ -7,8 +7,8 @@ import { LayerListToolState } from '../layer-list-tool.state';
 import { MatTabChangeEvent } from '@angular/material';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
+import { map, debounceTime } from 'rxjs/operators';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -142,10 +142,16 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.selectedTab();
-    this.resolution$$ = this.map.viewController.resolution$.subscribe(r =>
+    this.resolution$$ = combineLatest([
+      this.map.layers$,
+      this.map.viewController.resolution$]
+    ).pipe(
+      debounceTime(10)
+    ).subscribe((bunch: [Layer[], number]) => {
       this.layers$.next(
-        this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
-      ));
+        bunch[0].filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+      );
+    });
   }
 
   ngOnDestroy(): void {

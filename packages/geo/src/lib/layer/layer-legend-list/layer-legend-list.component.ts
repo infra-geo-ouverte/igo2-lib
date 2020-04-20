@@ -12,6 +12,9 @@ import { debounce } from 'rxjs/operators';
 export class LayerLegendListComponent implements OnInit, OnDestroy {
   orderable = true;
 
+  hasVisibleOrInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  hasVisibleAndNotInRangeLayers$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  layersInUi$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegend: boolean =  false;
   public change$ = new ReplaySubject<void>(1);
@@ -44,9 +47,23 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         const layers = this.computeShownLayers(this.layers.slice(0));
         this.layers$.next(layers);
-      });
+        this.hasVisibleOrInRangeLayers$.next(
+          this.layers.slice(0)
+            .filter(layer => layer.baseLayer !== true)
+            .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value).length > 0
+        );
+        this.hasVisibleAndNotInRangeLayers$.next(
+          this.layers.slice(0)
+            .filter(layer => layer.baseLayer !== true)
+            .filter(layer => layer.visible$.value && !layer.isInResolutionsRange$.value).length > 0
+        );
 
+        this.layersInUi$.next(
+          layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+        );
+      });
   }
+
   ngOnDestroy() {
     this.change$$.unsubscribe();
   }
