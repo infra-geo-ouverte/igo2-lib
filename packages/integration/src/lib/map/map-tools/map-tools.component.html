@@ -1,10 +1,10 @@
 <mat-tab-group
   #tabGroup
-  [selectedIndex]="layerListToolState.selectedTab$ | async" 
+  [selectedIndex]="layerListToolState.selectedTab$ | async"
   (selectedTabChange)="tabChanged($event)">
 
   <mat-tab [label]="'igo.integration.tools.layers' | translate">
-    <igo-layer-list *ngIf="(layers$ | async).length; else emptyLayers"
+    <igo-layer-list *ngIf="(layers$ | async).length !== 0; else emptyLayers"
       igoLayerListBinding
       [excludeBaseLayers]="excludeBaseLayers"
       [layerFilterAndSortOptions]="layerFilterAndSortOptions"
@@ -30,17 +30,17 @@
   </mat-tab>
 
   <mat-tab [label]="'igo.integration.tools.legend' | translate">
-    <igo-layer-legend-list
+    <igo-layer-legend-list *ngIf="(layers$ | async).length !== 0; else emptyLayers"
       igoLayerLegendListBinding
       [allowShowAllLegends]="allowShowAllLegends"
-      [showAllLegendsValue]="(showAllLegendsValue$ | async)" 
+      [showAllLegendsValue]="(showAllLegendsValue$ | async)"
       (allLegendsShown)="onShowAllLegends($event)"
       [excludeBaseLayers]="excludeBaseLayers"
       [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
     </igo-layer-legend-list>
 
     <p class="map-empty mat-typography"
-      *ngIf="!(visibleOrInRangeLayers$ | async).length && (layers$ | async).length; else emptyLayers">
+      *ngIf="(visibleOrInRangeLayers$ | async).length === 0">
       {{ ((visibleLayers$ | async).length) ? ('igo.integration.mapTool.noLayersInRange' | translate) :  ('igo.integration.mapTool.noLayersVisible' | translate) }}
     </p>
   </mat-tab>
