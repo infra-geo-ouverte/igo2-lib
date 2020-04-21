@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 
@@ -14,6 +14,9 @@ import { ToolState } from '../../tool/tool.state';
   templateUrl: './context-manager-tool.component.html'
 })
 export class ContextManagerToolComponent {
+
+  @Input() toolToOpenOnContextChange: string = 'mapTools';
+
   constructor(private toolState: ToolState) {}
 
   editContext() {
