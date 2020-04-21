@@ -152,6 +152,10 @@ export class MapToolsComponent implements OnInit, OnDestroy {
         bunch[0].filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
       );
     });
+
+    this.mapState.showAllLegendsValue = this.mapState.showAllLegendsValue !== undefined ?
+    this.mapState.showAllLegendsValue : this.showAllLegendsValue || false;
+    this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
   }
 
   ngOnDestroy(): void {

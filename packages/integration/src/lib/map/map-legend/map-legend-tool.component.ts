@@ -87,7 +87,9 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
         this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
       ));
 
-    this.showAllLegendsValue$.next(this.showAllLegendsValue ? this.showAllLegendsValue : this.mapState.showAllLegendsValue);
+    this.mapState.showAllLegendsValue = this.mapState.showAllLegendsValue !== undefined ?
+    this.mapState.showAllLegendsValue : this.showAllLegendsValue || false;
+    this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
 
   }
 
