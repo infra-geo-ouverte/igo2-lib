@@ -30,7 +30,7 @@
   </mat-tab>
 
   <mat-tab [label]="'igo.integration.tools.legend' | translate">
-    <igo-layer-legend-list *ngIf="(layers$ | async).length !== 0; else emptyLayers"
+    <igo-layer-legend-list *ngIf="showAllLegend(); else emptyLayers"
       igoLayerLegendListBinding
       [allowShowAllLegends]="allowShowAllLegends"
       [showAllLegendsValue]="(showAllLegendsValue$ | async)"
@@ -40,7 +40,7 @@
     </igo-layer-legend-list>
 
     <p class="map-empty mat-typography"
-      *ngIf="(visibleOrInRangeLayers$ | async).length === 0">
+      *ngIf="(layers$ | async).length !== 0 && (visibleOrInRangeLayers$ | async).length === 0">
       {{ ((visibleLayers$ | async).length) ? ('igo.integration.mapTool.noLayersInRange' | translate) :  ('igo.integration.mapTool.noLayersVisible' | translate) }}
     </p>
   </mat-tab>

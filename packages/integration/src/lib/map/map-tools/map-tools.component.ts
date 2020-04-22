@@ -193,6 +193,22 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     this.layerListToolState.setOnlyVisible(appliedFilters.onlyVisible);
   }
 
+  showAllLegend() {
+    if (this.layers$.getValue().length === 0) {
+      return false;
+    } else if (this.layers$.getValue().length !== 0 && this.allowShowAllLegends === false) {
+      let visibleOrInRangeLayers;
+      this.visibleOrInRangeLayers$.subscribe((value) => {
+        value.length === 0 ? visibleOrInRangeLayers = false : visibleOrInRangeLayers = true;
+      })
+
+      if (visibleOrInRangeLayers === false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   activateTimeFilter() {
     this.toolState.toolbox.activateTool('activeTimeFilter');
   }
