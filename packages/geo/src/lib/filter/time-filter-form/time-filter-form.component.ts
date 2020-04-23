@@ -127,6 +127,13 @@ export class TimeFilterFormComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    // if (this.timeFilterService.yearFilterIsActive) {
+    //   this.startYear = this.timeFilterService.yearsFilteredActive[0];
+    //   this.initStartYear = this.timeFilterService.yearsInitial[0];
+    //   this.endYear = this.timeFilterService.yearsFilteredActive[1];
+    //   this.initEndYear = this.timeFilterService.yearsInitial[1];
+    // }
+
     if (this.startDate === undefined) {
       const utcmin = new Date(this.min);
       this.startDate = new Date(
@@ -142,10 +149,12 @@ export class TimeFilterFormComponent implements OnInit {
     if (this.startYear === undefined) {
       this.startYear = new Date(this.startDate).getFullYear();
       this.initStartYear = this.startYear;
+      // this.timeFilterService.yearsInitial.push(this.initStartYear);
     }
     if (this.endYear === undefined) {
       this.endYear = new Date(this.endDate).getFullYear();
       this.initEndYear = this.endYear;
+      // this.timeFilterService.yearsInitial.push(this.initEndYear);
     }
 
     if (!this.isRange) {
@@ -162,6 +171,7 @@ export class TimeFilterFormComponent implements OnInit {
     }
     this.options.enabled = this.options.enabled === undefined ? true : this.options.enabled;
     this.checkFilterValue();
+    debugger;
     if (this.options.enabled) {
       if (!this.isRange && this.style === 'slider' && this.type === 'year') {
         this.yearChange.emit(this.year);
@@ -189,9 +199,28 @@ export class TimeFilterFormComponent implements OnInit {
       } else {
         this.year = new Date(this.min).getFullYear() + 1;
       }
-    } else {
-      // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+
+    } else if (this.isRange && this.style === TimeFilterStyle.CALENDAR && this.type === TimeFilterType.YEAR) {
+      debugger;
+      if (timeFromWms) {
+        this.startYear = parseInt(timeFromWms.substr(0, 4));
+        this.endYear = parseInt(timeFromWms.substr(5, 4));
+        const newStartListYears: any[] = [];
+        const newEndListYears: any[] = [];
+        for (let i = this.initStartYear; i < this.endYear; i++) {
+          newStartListYears.push(i);
+        }
+        for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
+          newEndListYears.push(i);
+        }
+        this.startListYears = newStartListYears;
+        this.endListYears = newEndListYears;
+        debugger;
+      } else {
+        console.log('time du service est vide...')
+      }
     }
+       // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
   }
 
   handleDateChange(event: any) {
@@ -266,6 +295,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   toggleFilterState() {
+    debugger;
     this.options.enabled = !this.options.enabled;
 
     if (this.options.enabled) {
@@ -280,6 +310,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   resetFilter(event: any) {
+    debugger;
     this.date = new Date(this.min);
     this.year = this.date.getFullYear() + 1;
     if (!this.isRange && TimeFilterStyle.SLIDER && this.type === TimeFilterType.YEAR) {
@@ -342,6 +373,7 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   stopFilter() {
+    debugger;
     if (this.interval) {
       clearInterval(this.interval);
     }
