@@ -5,7 +5,8 @@ import {
   EventEmitter,
   ChangeDetectorRef,
   OnInit,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnDestroy
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
@@ -14,7 +15,7 @@ import { IgoMap } from '@igo2/geo';
 
 import { DetailedContext, ContextsList } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, ReplaySubject } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
@@ -25,8 +26,13 @@ import { BookmarkDialogComponent } from '../../context-map-button/bookmark-butto
   styleUrls: ['./context-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContextListComponent implements OnInit {
-  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(undefined);
+export class ContextListComponent implements OnInit, OnDestroy {
+  private contextsInitial: ContextsList = { ours: [] };
+  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(this.contextsInitial);
+
+  change$ = new ReplaySubject<void>(1);
+
+  private change$$: Subscription;
 
   @Input()
   get contexts(): ContextsList {
@@ -34,13 +40,10 @@ export class ContextListComponent implements OnInit {
   }
   set contexts(value: ContextsList) {
     this._contexts = value;
-    this.contexts$.next(value);
     this.cdRef.detectChanges();
+    this.next();
   }
   private _contexts: ContextsList = { ours: [] };
-  contexts$$: Subscription;
-
-  private contextsInitial: ContextsList = { ours: [] };
 
   @Input()
   get selectedContext(): DetailedContext {
@@ -51,8 +54,6 @@ export class ContextListComponent implements OnInit {
     this.cdRef.detectChanges();
   }
   private _selectedContext: DetailedContext;
-
-  public authenticated = false;
 
   @Input()
   get map(): IgoMap {
@@ -95,20 +96,20 @@ export class ContextListComponent implements OnInit {
    */
   @Input()
   set term(value: string) {
-    this.term$.next(value);
-    this.cdRef.detectChanges();
+    this._term = value;
+    this.next();
   }
   get term(): string {
-    return this.term$.value;
+    return this._term;
   }
-  public term$: BehaviorSubject<string> = new BehaviorSubject('');
-  term$$: Subscription;
+  public _term: string = '';
 
   get sortedAlpha(): boolean {
     return this._sortedAlpha;
   }
   set sortedAlpha(value: boolean) {
     this._sortedAlpha = value;
+    this.next();
   }
   private _sortedAlpha: boolean = undefined;
 
@@ -129,36 +130,24 @@ export class ContextListComponent implements OnInit {
     private messageService: MessageService) {}
 
   ngOnInit() {
-    this.contexts$$ = this.contexts$.subscribe(() => {
-      if (this.sortedAlpha === undefined && this.term === '') {
-        this.contextsInitial = this.contexts;
-      }
-    });
-
-    this.term$$ = this.term$.subscribe((value) => {
-      if (this.filterContextsList(value)) {
-        this.contexts = this.filterContextsList(value);
-        this.cdRef.detectChanges();
-      }
-    });
-
-    this.auth.authenticate$.subscribe(() => {
-      this.authenticated = this.auth.authenticated;
+    this.change$$ = this.change$.subscribe(() => {
+      this.contexts$.next(this.filterContextsList(this.contexts));
     });
   }
 
-  private filterContextsList(term) {
-    this.contexts = this.contextsInitial;
-    if (term === '') {
-      if (this.sortedAlpha) {
-        this.contexts = this.sortContextsList(this.contextsInitial);
-      }
-      return;
-    }
+  private next() {
+    this.change$.next();
+  }
 
-    if (term.length) {
-      const ours = this.contexts.ours.filter((context) => {
-        const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  private filterContextsList(contexts: ContextsList) {
+    if (this.term === '') {
+      if (this.sortedAlpha) {
+        contexts = this.sortContextsList(contexts);
+      }
+      return contexts;
+    } else {
+      const ours = contexts.ours.filter((context) => {
+        const filterNormalized = this.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         return contextTitleNormalized.includes(filterNormalized);
       });
@@ -168,16 +157,17 @@ export class ContextListComponent implements OnInit {
       };
 
       if (this.contexts.public) {
-        const publics = this.contexts.public.filter((context) => {
-          const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const publics = contexts.public.filter((context) => {
+          const filterNormalized = this.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
         });
         updateContexts.public = publics;
       }
+
       if (this.contexts.shared) {
-        const shared = this.contexts.shared.filter((context) => {
-          const filterNormalized = term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const shared = contexts.shared.filter((context) => {
+          const filterNormalized = this.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
         });
@@ -189,6 +179,10 @@ export class ContextListComponent implements OnInit {
       }
       return updateContexts;
     }
+  }
+
+  ngOnDestroy() {
+    this.change$$.unsubscribe();
   }
 
   public showFilter() {
@@ -248,24 +242,10 @@ export class ContextListComponent implements OnInit {
 
   toggleSort(sortAlpha: boolean) {
     this.sortedAlpha = sortAlpha;
-    if (this.term === '') {
-      if (this.sortedAlpha) {
-        this.contexts = this.sortContextsList(this.contextsInitial);
-      } else {
-        this.contexts = this.contextsInitial;
-      }
-      return;
-    }
-    this.contexts = this.filterContextsList(this.term);
   }
 
   clearFilter() {
     this.term = '';
-    if (this.sortedAlpha) {
-      this.contexts = this.sortContextsList(this.contextsInitial);
-    } else {
-      this.contexts = this.contextsInitial;
-    }
   }
 
   createContext() {

@@ -1,5 +1,5 @@
 <igo-list [navigation]="true">
-  <mat-form-field *ngIf="showFilter()" [ngClass]="authenticated ? 'context-filter-min-width' : 'context-filter-max-width'">
+  <mat-form-field *ngIf="showFilter()" [ngClass]="auth.authenticated ? 'context-filter-min-width' : 'context-filter-max-width'">
     <input
       matInput
       type="text"
@@ -35,12 +35,12 @@
     <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
   </button>
 
-  <button *ngIf="authenticated"
-  mat-icon-button
-  [matTooltip]="'igo.context.bookmarkButton.create' | translate"
-  matTooltipShowDelay="500"
-  (click)="createContext()">
-  <mat-icon color="primary" svgIcon="star"></mat-icon>
+  <button *ngIf="auth.authenticated"
+    mat-icon-button
+    [matTooltip]="'igo.context.bookmarkButton.create' | translate"
+    matTooltipShowDelay="500"
+    (click)="createContext()">
+    <mat-icon color="primary" svgIcon="star"></mat-icon>
   </button>
 
   <!-- <button *ngIf="authenticated"
