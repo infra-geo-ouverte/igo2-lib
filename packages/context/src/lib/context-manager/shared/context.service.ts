@@ -384,13 +384,13 @@ export class ContextService {
         layerOptions: {
           title: layer.options.title,
           zIndex: layer.zIndex,
-          visible: layer.visible,
-          queryable: layer.queryable
+          visible: layer.visible
         },
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
-          url: layer.dataSource.options.url
+          url: layer.dataSource.options.url,
+          queryable: layer.queryable
         }
       };
       if (opts.sourceOptions.type) {
