@@ -384,7 +384,8 @@ export class ContextService {
         layerOptions: {
           title: layer.options.title,
           zIndex: layer.zIndex,
-          visible: layer.visible
+          visible: layer.visible,
+          queryable: layer.queryable
         },
         sourceOptions: {
           type: layer.dataSource.options.type,
