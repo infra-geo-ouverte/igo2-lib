@@ -68,7 +68,6 @@ export class FeatureDetailsComponent {
   }
 
   htmlSanitizer(value): SafeResourceUrl {
-    console.log(value);
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
