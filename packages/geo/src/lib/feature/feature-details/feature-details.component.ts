@@ -18,6 +18,7 @@ import { SearchSource } from '../../search/shared/sources/source';
   styleUrls: ['./feature-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class FeatureDetailsComponent {
   private state: ConnectionState;
 
@@ -67,6 +68,7 @@ export class FeatureDetailsComponent {
   }
 
   htmlSanitizer(value): SafeResourceUrl {
+    console.log(value);
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
