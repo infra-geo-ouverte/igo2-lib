@@ -105,7 +105,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
       let visibleOrInRangeLayers;
       this.visibleOrInRangeLayers$.subscribe((value) => {
         value.length === 0 ? visibleOrInRangeLayers = false : visibleOrInRangeLayers = true;
-      })
+      });
 
       if (visibleOrInRangeLayers === false) {
         return false;
