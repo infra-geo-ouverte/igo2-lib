@@ -29,9 +29,14 @@ export class ExportService {
   static noOgreFallbacks = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
+  private aggregateInComment: boolean = false;
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
+    const gpxAggregateInComment = this.config.getConfig('importExport.GpxAggregateInComment');
+    if (gpxAggregateInComment !== undefined) {
+      this.aggregateInComment = gpxAggregateInComment;
+    }
   }
 
   export(
@@ -41,7 +46,25 @@ export class ExportService {
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
-    const exportOlFeatures = olFeatures.map((olFeature: OlFeature) => {
+    const exportOlFeatures = this.generateFeature(olFeatures, format);
+
+    return this.exportAsync(
+      exportOlFeatures,
+      format,
+      title,
+      projectionIn,
+      projectionOut
+    );
+  }
+
+  private generateFeature(
+    olFeatures: OlFeature[],
+    format: ExportFormat): OlFeature[] {
+    if (format === ExportFormat.GPX && this.aggregateInComment) {
+      return this.generateAggratedFeature(olFeatures);
+    }
+
+    return olFeatures.map((olFeature: OlFeature) => {
       const keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith('_'));
@@ -54,14 +77,30 @@ export class ExportService {
       );
       return new OlFeature(properties);
     });
+  }
 
-    return this.exportAsync(
-      exportOlFeatures,
-      format,
-      title,
-      projectionIn,
-      projectionOut
-    );
+  private generateAggratedFeature(olFeatures: OlFeature[]): OlFeature[] {
+    return olFeatures.map((olFeature: OlFeature) => {
+      const keys = olFeature
+        .getKeys()
+        .filter((key: string) => !key.startsWith('_'));
+      let remarque: string = '';
+      const properties: any[] = keys.reduce(
+        (acc: object, key: string) => {
+          if (key !== undefined && key !== 'geometry') {
+            remarque += key + ':' + olFeature.get(key) + '   \r\n';
+          }
+          acc[key] = olFeature.get(key);
+          return acc;
+        },
+        { geometry: olFeature.getGeometry() }
+      );
+      const nouveau = new OlFeature(properties);
+      nouveau.set('name', 'fiche : ' + olFeature.get('NoFiche'));
+      nouveau.set('cmt', remarque);
+
+      return nouveau;
+    });
   }
 
   private exportAsync(
