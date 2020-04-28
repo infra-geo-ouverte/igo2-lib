@@ -59,7 +59,7 @@ export class LayerLegendListComponent implements OnInit, OnDestroy {
         );
 
         this.layersInUi$.next(
-          layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+          this.layers.slice(0).filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
         );
       });
   }
