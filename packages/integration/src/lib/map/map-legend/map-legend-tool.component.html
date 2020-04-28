@@ -7,7 +7,7 @@
   (allLegendsShown)="onShowAllLegends($event)">
 </igo-layer-legend-list>
 <p class="map-empty mat-typography"
-  *ngIf="(layers$ | async).length !== 0 && (visibleOrInRangeLayers$ | async).length === 0">
+  *ngIf="!allowShowAllLegends &&  (layers$ | async).length !== 0 && (visibleOrInRangeLayers$ | async).length === 0">
   {{ ((visibleLayers$ | async).length) ? ('igo.integration.mapTool.noLayersInRange' | translate) :  ('igo.integration.mapTool.noLayersVisible' | translate) }}
 </p>
 
