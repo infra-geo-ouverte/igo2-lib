@@ -174,12 +174,6 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
-  dateClass = (d: Date): MatCalendarCellCssClasses => {
-    const date = d.getDate();
-
-    return (date === this.startDate.getDate() || date === this.endDate.getDate()) ? 'highlight-date-class' : '';
-  }
-
   storeCurrentFilterValue() {
     // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
     if (!this.isRange && this.style === TimeFilterStyle.SLIDER && this.type === TimeFilterType.YEAR) {
@@ -203,8 +197,6 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   handleDateChange(event: any) {
-    console.log('min', this.min);
-    console.log('startDate', this.startDate);
     this.setupDateOutput();
     this.applyTypeChange();
 
