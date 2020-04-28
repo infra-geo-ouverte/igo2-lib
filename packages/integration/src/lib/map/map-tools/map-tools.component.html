@@ -30,7 +30,7 @@
   </mat-tab>
 
   <mat-tab [label]="'igo.integration.tools.legend' | translate">
-    <igo-layer-legend-list *ngIf="showAllLegend(); else emptyLayers"
+    <igo-layer-legend-list *ngIf="showAllLegend()"
       igoLayerLegendListBinding
       [allowShowAllLegends]="allowShowAllLegends"
       [showAllLegendsValue]="(showAllLegendsValue$ | async)"
@@ -38,6 +38,7 @@
       [excludeBaseLayers]="excludeBaseLayers"
       [updateLegendOnResolutionChange]="updateLegendOnResolutionChange">
     </igo-layer-legend-list>
+    <ng-template *ngIf="(layers$ | async).length !== 0; else emptyLayers"></ng-template>
 
     <p class="map-empty mat-typography"
       *ngIf="!allowShowAllLegends && (layers$ | async).length !== 0 && (visibleOrInRangeLayers$ | async).length === 0">
