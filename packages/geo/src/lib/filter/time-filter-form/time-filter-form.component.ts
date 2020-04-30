@@ -127,6 +127,7 @@ export class TimeFilterFormComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+
     if (this.startDate === undefined) {
       const utcmin = new Date(this.min);
       this.startDate = new Date(
@@ -189,9 +190,24 @@ export class TimeFilterFormComponent implements OnInit {
       } else {
         this.year = new Date(this.min).getFullYear() + 1;
       }
-    } else {
-      // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+
+    } else if (this.isRange && this.style === TimeFilterStyle.CALENDAR && this.type === TimeFilterType.YEAR) {
+      if (timeFromWms) {
+        this.startYear = parseInt(timeFromWms.substr(0, 4), 10);
+        this.endYear = parseInt(timeFromWms.substr(5, 4), 10);
+        const newStartListYears: any[] = [];
+        const newEndListYears: any[] = [];
+        for (let i = this.initStartYear; i < this.endYear; i++) {
+          newStartListYears.push(i);
+        }
+        for (let i = this.startYear + 1; i <= this.initEndYear; i++) {
+          newEndListYears.push(i);
+        }
+        this.startListYears = newStartListYears;
+        this.endListYears = newEndListYears;
+      }
     }
+       // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
   }
 
   handleDateChange(event: any) {
