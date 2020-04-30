@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 
 import { ToolState } from '../../tool/tool.state';
+import { MapState } from '../../map/map.state';
+import { IgoMap } from '@igo2/geo';
 
 @ToolComponent({
   name: 'contextManager',
@@ -14,7 +16,10 @@ import { ToolState } from '../../tool/tool.state';
   templateUrl: './context-manager-tool.component.html'
 })
 export class ContextManagerToolComponent {
-  constructor(private toolState: ToolState) {}
+
+  get map(): IgoMap { return this.mapState.map; }
+
+  constructor(private toolState: ToolState, private mapState: MapState) {}
 
   editContext() {
     this.toolState.toolbox.activateTool('contextEditor');
