@@ -315,7 +315,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         }
       }
 
-      if (queryFormat === QueryFormat.HTML) {
+      if (queryFormat === QueryFormat.HTML || QueryFormat.HTMLGML2) {
         queryHtmlTarget = 'iframe';
       }
     }
