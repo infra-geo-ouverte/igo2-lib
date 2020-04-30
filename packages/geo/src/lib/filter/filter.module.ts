@@ -140,7 +140,7 @@ export class IgoFilterModule {
       providers: [
         {
           provide: MAT_DATE_LOCALE,
-          useValue: 'fr'
+          useValue: 'fr-FR'
         }
       ]
     };

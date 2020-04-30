@@ -6,7 +6,7 @@ import {
   EventEmitter,
   ViewChild
 } from '@angular/core';
-import { MatSlider } from '@angular/material';
+import { MatSlider, DateAdapter } from '@angular/material';
 import * as moment from 'moment';
 
 import { Layer } from '../../layer/shared/layers/layer';
@@ -109,36 +109,38 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   get min(): Date {
-    return this.options.min === undefined
-      ? undefined
-      : new Date(this.options.min);
+    if (this.options.min) {
+      let min  = new Date(this.options.min);
+      return new Date(min.getTime() + min.getTimezoneOffset() * 60000);
+    } else {
+      return undefined;
+    }
   }
 
   get max(): Date {
-    return this.options.max === undefined
-      ? undefined
-      : new Date(this.options.max);
+    if (this.options.max) {
+      let max  = new Date(this.options.max);
+      return new Date(max.getTime() + max.getTimezoneOffset() * 60000);
+    } else {
+      return undefined;
+    }
   }
 
   get is(): boolean {
     return this.options.range === undefined ? false : this.options.range;
   }
 
-  constructor() {}
+  constructor(private dateAdapter: DateAdapter<Date>) {
+    this.dateAdapter.setLocale('fr');
+  }
 
   ngOnInit() {
 
     if (this.startDate === undefined) {
-      const utcmin = new Date(this.min);
-      this.startDate = new Date(
-        utcmin.getTime() + utcmin.getTimezoneOffset() * 60000
-      );
+      this.startDate = new Date(this.min);
     }
     if (this.endDate === undefined) {
-      const utcmax = new Date(this.max);
-      this.endDate = new Date(
-        utcmax.getTime() + utcmax.getTimezoneOffset() * 60000
-      );
+      this.endDate = new Date(this.max);
     }
     if (this.startYear === undefined) {
       this.startYear = new Date(this.startDate).getFullYear();
