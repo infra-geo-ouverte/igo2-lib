@@ -15,10 +15,11 @@ import { IgoMap } from '@igo2/geo';
 
 import { DetailedContext, ContextsList } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
-import { Subscription, BehaviorSubject, ReplaySubject } from 'rxjs';
+import { Subscription, BehaviorSubject, ReplaySubject, EMPTY, timer } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
+import { debounce } from 'rxjs/operators';
 
 @Component({
   selector: 'igo-context-list',
@@ -130,9 +131,15 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private messageService: MessageService) {}
 
   ngOnInit() {
-    this.change$$ = this.change$.subscribe(() => {
-      this.contexts$.next(this.filterContextsList(this.contexts));
-    });
+    this.change$$ = this.change$
+      .pipe(
+        debounce(() => {
+          return this.contexts.ours.length === 0 ? EMPTY : timer(50);
+        })
+      )
+      .subscribe(() => {
+        this.contexts$.next(this.filterContextsList(this.contexts));
+      });
   }
 
   private next() {
