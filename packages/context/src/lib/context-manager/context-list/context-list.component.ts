@@ -114,10 +114,6 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _sortedAlpha: boolean = undefined;
 
-  public contextsAlpha: ContextsList;
-
-  public contextsTemp: ContextsList;
-
   public showContextFilter = ContextListControlsEnum.always;
 
   public thresholdToFilter = 5;
