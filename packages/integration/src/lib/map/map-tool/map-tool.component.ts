@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, LayerListControlsOptions } from '@igo2/geo';
-import { ToolState } from '../../tool/tool.state';
+import { LayerListControlsEnum, LayerListControlsOptions, IgoMap } from '@igo2/geo';
+import { MapState } from './../map.state';
 
 /**
  * Tool to browse a map's layers or to choose a different map
@@ -34,6 +34,10 @@ export class MapToolComponent {
 
   @Input() queryBadge: boolean = false;
 
+  get map(): IgoMap {
+    return this.mapState.map;
+  }
+
   get excludeBaseLayers(): boolean {
     return this.layerListControls.excludeBaseLayers || false;
   }
@@ -55,5 +59,7 @@ export class MapToolComponent {
     }
     return filterSortOptions;
   }
+
+  constructor(private mapState: MapState) {}
 
 }
