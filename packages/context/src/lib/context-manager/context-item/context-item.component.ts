@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
 import { TypePermission } from '../shared/context.enum';
@@ -7,7 +7,8 @@ import { DetailedContext } from '../shared/context.interface';
 @Component({
   selector: 'igo-context-item',
   templateUrl: './context-item.component.html',
-  styleUrls: ['./context-item.component.scss']
+  styleUrls: ['./context-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContextItemComponent {
   public typePermission = TypePermission;
