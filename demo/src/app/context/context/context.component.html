@@ -24,7 +24,7 @@
   </igo-panel>
 
   <igo-panel title="Layers">
-    <igo-layer-list igoLayerListBinding>
+    <igo-layer-list igoLayerListBinding [map]="map">
       <ng-template #igoLayerItemToolbar let-layer="layer">
         <igo-metadata-button [layer]="layer"></igo-metadata-button>
       </ng-template>
