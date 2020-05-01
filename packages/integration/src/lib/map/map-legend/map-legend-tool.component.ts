@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription, BehaviorSubject, ReplaySubject, EMPTY, timer } from 'rxjs';
-import { map, debounce } from 'rxjs/operators';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Observable, Subscription, BehaviorSubject, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, Layer, IgoMap, LayerListControlsOptions, SearchSourceService, sourceCanSearch } from '@igo2/geo';
+import { Layer, IgoMap, LayerListControlsOptions, SearchSourceService, sourceCanSearch } from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
@@ -19,6 +19,8 @@ import { MapState } from './../map.state';
   styleUrls: ['./map-legend-tool.component.scss']
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
+
+  public delayedShowEmptyMapContent: boolean = false;
 
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -79,7 +81,8 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   constructor(
     private mapState: MapState,
     private toolState: ToolState,
-    private searchSourceService: SearchSourceService ) {}
+    private searchSourceService: SearchSourceService,
+    private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.resolution$$ = this.map.viewController.resolution$.subscribe(r =>
@@ -90,6 +93,12 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
     this.mapState.showAllLegendsValue = this.mapState.showAllLegendsValue !== undefined ?
     this.mapState.showAllLegendsValue : this.showAllLegendsValue || false;
     this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
+
+    // prevent message to be shown too quickly. Waiting for layers
+    setTimeout(() => {
+      this.delayedShowEmptyMapContent = true;
+      this.cdRef.detectChanges();
+    }, 50);
 
   }
 

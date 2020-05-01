@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -18,7 +18,10 @@ import { MapState } from './../map.state';
   templateUrl: './map-details-tool.component.html',
   styleUrls: ['./map-details-tool.component.scss']
 })
-export class MapDetailsToolComponent {
+export class MapDetailsToolComponent implements OnInit {
+
+  public delayedShowEmptyMapContent: boolean = false;
+
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
   @Input() expandLegendOfVisibleLayers: boolean = false;
@@ -91,7 +94,16 @@ export class MapDetailsToolComponent {
   constructor(
     private mapState: MapState,
     private toolState: ToolState,
-    private searchSourceService: SearchSourceService ) {}
+    private searchSourceService: SearchSourceService,
+    private cdRef: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    // prevent message to be shown too quickly. Waiting for layers
+    setTimeout(() => {
+      this.delayedShowEmptyMapContent = true;
+      this.cdRef.detectChanges();
+    }, 50);
+  }
 
   searchEmit() {
     this.toolState.toolbox.activateTool('searchResults');

@@ -47,7 +47,7 @@
   </mat-tab>
 
     <ng-template #emptyLayers>
-      <mat-list>
+      <mat-list *ngIf="delayedShowEmptyMapContent">
         <p class="map-empty mat-typography">
           {{'igo.integration.mapTool.empty' | translate}}</p>
         <p *ngIf="layerAdditionAllowed && (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)"

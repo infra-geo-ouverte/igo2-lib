@@ -29,6 +29,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   private resolution$$: Subscription;
+  public delayedShowEmptyMapContent: boolean = false;
 
   @Input() allowShowAllLegends: boolean = false;
 
@@ -156,6 +157,9 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     this.mapState.showAllLegendsValue = this.mapState.showAllLegendsValue !== undefined ?
     this.mapState.showAllLegendsValue : this.showAllLegendsValue || false;
     this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
+
+    // prevent message to be shown too quickly. Waiting for layers
+    setTimeout(() => this.delayedShowEmptyMapContent = true, 50);
   }
 
   ngOnDestroy(): void {

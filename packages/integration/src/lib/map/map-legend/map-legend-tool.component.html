@@ -9,13 +9,13 @@
 <ng-template *ngIf="(layers$ | async).length !== 0; else emptyLayers"></ng-template>
 
 <p class="map-empty mat-typography"
-  *ngIf="!allowShowAllLegends &&  (layers$ | async).length !== 0 && (visibleOrInRangeLayers$ | async).length === 0">
+  *ngIf="!allowShowAllLegends && (layers$ | async).length !== 0 && (visibleOrInRangeLayers$ | async).length === 0">
   {{ ((visibleLayers$ | async).length) ? ('igo.integration.mapTool.noLayersInRange' | translate) :  ('igo.integration.mapTool.noLayersVisible' | translate) }}
 </p>
 
 
 <ng-template #emptyLayers>
-  <mat-list>
+  <mat-list *ngIf="delayedShowEmptyMapContent">
     <p class="map-empty mat-typography">
       {{'igo.integration.mapTool.empty' | translate}}</p>
     <p *ngIf="layerAdditionAllowed && (searchToolInToolbar || catalogToolInToolbar || contextToolInToolbar)" class="map-empty mat-typography">
