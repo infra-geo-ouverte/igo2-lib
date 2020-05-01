@@ -12,7 +12,6 @@ import {
 import { IgoLanguageModule } from '@igo2/core';
 
 import { ShareMapComponent } from './share-map/share-map.component';
-import { ShareMapBindingDirective } from './share-map/share-map-binding.directive';
 
 @NgModule({
   imports: [
@@ -26,8 +25,8 @@ import { ShareMapBindingDirective } from './share-map/share-map-binding.directiv
     MatButtonModule,
     IgoLanguageModule
   ],
-  exports: [ShareMapComponent, ShareMapBindingDirective],
-  declarations: [ShareMapComponent, ShareMapBindingDirective]
+  exports: [ShareMapComponent],
+  declarations: [ShareMapComponent]
 })
 export class IgoShareMapModule {
   static forRoot(): ModuleWithProviders {

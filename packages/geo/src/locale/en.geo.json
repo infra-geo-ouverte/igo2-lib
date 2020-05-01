@@ -129,9 +129,16 @@
       "layer": {
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
+        "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
+        "activateSelectionMode": "Activate multiple selection mode",
+        "deactivateSelectionMode": "Deactivate multiple selection mode",
+        "tools": "Tools",
+        "selectAll": "Select all",
+        "deselectAll": "Deselect all",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
+        "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
         "moreOptions": "More options",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
@@ -149,7 +156,12 @@
           "loadingLegendText": "Loading legend",
           "noLegendText": "No legend available for this layer",
           "noLegendScale": "No legend available for this scale",
-          "selectStyle": "Select the style of the legend"
+          "selectStyle": "Select the style of the legend",
+          "showAll" : "Show all legends (non visible and out of range)",
+          "noLayersVisibleWithShowAllButton": "No layer currently visible. Activate the button above to see all the legends.",
+          "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
+          "noLayersVisible": "No layers currently visible.",
+          "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."        
         }
       },
       "download": {

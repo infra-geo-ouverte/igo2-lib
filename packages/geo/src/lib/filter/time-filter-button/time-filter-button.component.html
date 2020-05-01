@@ -4,9 +4,8 @@
   tooltip-position="below"
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.filter.filterBy' | translate"
-  [color]="color"
-  (click)="toggleTimeFilter()">
-  <mat-icon svgIcon="history"></mat-icon>
+  [color]="color">
+  <mat-icon [matBadge]="badge" matBadgeColor="warn" matBadgeSize="medium" svgIcon="history"></mat-icon>
 </button>
 
 <div #ogcFilter class="igo-layer-actions-container"

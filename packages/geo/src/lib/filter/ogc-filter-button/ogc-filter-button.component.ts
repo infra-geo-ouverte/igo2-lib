@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
-import { OgcFilterableDataSourceOptions } from '../shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, IgoPushButton, OgcFiltersOptions } from '../shared/ogc-filter.interface';
 
 @Component({
   selector: 'igo-ogc-filter-button',
@@ -14,7 +14,38 @@ export class OgcFilterButtonComponent implements OnInit {
 
   public options: OgcFilterableDataSourceOptions;
 
-  @Input() layer: Layer;
+  get badge() {
+    const filter = this.options.ogcFilters as any;
+    if (filter && !filter.advancedOgcFilters) {
+      if (filter.pushButtons) {
+        const pushButtons = filter.pushButtons as IgoPushButton;
+        const currentPushButtonGroup = pushButtons.groups.find(gr => gr.enabled);
+        let cntPushButtons = 0;
+        if (currentPushButtonGroup) {
+          currentPushButtonGroup.computedButtons.map(cb => cntPushButtons += cb.buttons.filter(button => button.enabled).length);
+        }
+        return cntPushButtons > 0 ? cntPushButtons : undefined;
+      } else {
+        return;
+      }
+    } else if (filter && filter.filters && !filter.filters.filters) {
+      return 1;
+    } else if (filter && filter.filters && filter.filters.filters) {
+      return filter.filters.filters.length;
+    }
+  }
+
+  @Input()
+  get layer(): Layer {
+    return this._layer;
+  }
+  set layer(value: Layer) {
+    this._layer = value;
+    if (value) {
+      this.options = this.layer.dataSource.options as OgcFilterableDataSourceOptions;
+    }
+  }
+  private _layer;
 
   @Input() map: IgoMap;
 
@@ -28,9 +59,5 @@ export class OgcFilterButtonComponent implements OnInit {
 
   ngOnInit() {
     this.options = this.layer.dataSource.options as OgcFilterableDataSourceOptions;
-  }
-
-  toggleOgcFilter() {
-      this.ogcFilterCollapse = !this.ogcFilterCollapse;
   }
 }
