@@ -2,8 +2,7 @@ import { EntityState } from '@igo2/common';
 
 import { MetadataLayerOptions } from './../../metadata/shared/metadata.interface';
 import { TooltipType } from '../../layer';
-import { TimeFilterOptions } from '../../filter';
-import { QueryFormat, QueryHtmlTarget } from '../../query';
+import { QueryFormat } from '../../query';
 
 import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 
@@ -18,12 +17,9 @@ export interface ICatalog {
   requestEncoding?: string;
   regFilters?: string[];
   groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id and title)
-  timeFilter?: TimeFilterOptions;
   queryFormat?: QueryFormat;
-  queryHtmlTarget?: QueryHtmlTarget;
   queryParams?: { [key: string]: string };
   sourceOptions?: { [key: string]: any };
-  count?: number;
   tooltipType?: TooltipType.ABSTRACT | TooltipType.TITLE;
   sortDirection?: 'asc' | 'desc';
   setCrossOriginAnonymous?: boolean;

@@ -62,6 +62,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   listItems: QueryList<ListItemDirective>;
 
   @HostListener('document:keydown', ['$event'])
+  @HostListener('document:enter', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     // It would be nice to be able to unsubscribe to the event
     // completely but until ES7 this won't be possible because
@@ -121,6 +122,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   focusNext() {
     const items = this.listItems.toArray();
     let item;
+    const igoList = this.el.nativeElement;
     let disabled = true;
     let index = this.getFocusedIndex();
     if (index === undefined) {
@@ -136,11 +138,21 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
     if (item !== undefined) {
       this.focus(item);
     }
+
+    if (!items[index + 1]) {
+      igoList.scrollTop = igoList.scrollHeight - igoList.clientHeight;
+      return;
+    }
+
+    if (item !== undefined && !this.isScrolledIntoView(item.el.nativeElement)) {
+      igoList.scrollTop = item.el.nativeElement.offsetTop + item.el.nativeElement.children[0].offsetHeight - igoList.clientHeight;
+    }
   }
 
   focusPrevious() {
     const items = this.listItems.toArray();
-    let item;
+    let item: ListItemDirective;
+    const igoList = this.el.nativeElement;
     let disabled = true;
     let index = this.getFocusedIndex();
 
@@ -152,6 +164,16 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (item !== undefined) {
       this.focus(item);
+    }
+
+    if (!items[index - 1]) {
+      igoList.scrollTop = 0;
+      return;
+    }
+
+    if (item !== undefined && !this.isScrolledIntoView(item.el.nativeElement)) {
+      const padding = 3;
+      igoList.scrollTop = item.el.nativeElement.offsetTop - padding;
     }
   }
 
@@ -189,6 +211,15 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   scrollToItem(item: ListItemDirective) {
     this.el.nativeElement.scrollTop = item.getOffsetTop();
+  }
+
+  isScrolledIntoView(elem) {
+    const docViewTop = this.el.nativeElement.scrollTop + this.el.nativeElement.offsetTop;
+    const docViewBottom = docViewTop + this.el.nativeElement.clientHeight;
+
+    const elemTop = elem.offsetTop;
+    const elemBottom = elemTop + elem.children[0].offsetHeight;
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
   }
 
   private init() {
@@ -237,7 +268,7 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private handleItemBeforeFocus(item: ListItemDirective) {
     if (item !== this.focusedItem) {
-      this.unselect();
+      this.unfocus();
     }
   }
 

@@ -33,7 +33,7 @@ export class LanguageLoader implements TranslateLoader {
 
     const appLocale$ = this.http.get(`${this.prefix}${lang}${this.suffix}`);
 
-    const locale$ = combineLatest(igoLocale$, appLocale$);
+    const locale$ = combineLatest([igoLocale$, appLocale$]);
 
     return locale$.pipe(
       map(translations => {

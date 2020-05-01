@@ -150,7 +150,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
         map((records: EntityRecord<Feature>[]) => records.map(record => record.entity))
       );
     });
-    this.stores$$ = combineLatest(...stores$)
+    this.stores$$ = combineLatest(stores$)
       .pipe(
         debounceTime(5),
         skip(1), // Skip intial selection

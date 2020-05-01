@@ -3,7 +3,14 @@
   "dest": "../../dist/auth",
   "deleteDestPath": false,
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "@igo2/core" : "core",
+      "@igo2/utils" : "utils",
+      "jwt-decode" : "jwt",
+      "ngx-cacheable" : "ngxCacheable",
+      "ts-md5" : "tsMd5"
+    }
   },
-  "whitelistedNonPeerDependencies": ["jwt-decode"]
+  "whitelistedNonPeerDependencies": ["jwt-decode", "ngx-cacheable", "ts-md5"]
 }

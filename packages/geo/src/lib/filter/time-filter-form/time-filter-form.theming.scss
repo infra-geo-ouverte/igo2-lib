@@ -4,4 +4,9 @@
   mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-header {
     color: mat-color($primary);
   }
+
+  mat-datetimepicker-calendar > div.mat-datetimepicker-calendar-content .mat-datetimepicker-calendar-body-active {
+    background-color: mat-color($primary, lighter);
+    border-radius: 100%;
+  }
 }

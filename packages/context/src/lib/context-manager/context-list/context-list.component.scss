@@ -1,0 +1,19 @@
+.context-filter-max-width {
+  width: calc(100% - 60px);
+  margin: 5px;
+  padding-left: 6px;
+}
+
+.context-filter-min-width {
+  width: calc(100% - 95px);
+  margin: 5px;
+  padding-left: 6px;
+}
+
+.clear-button {
+  padding-right: 5px;
+}
+
+mat-form-field {
+  height: 40px;
+}

@@ -37,6 +37,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private layers$$: Subscription;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
+  private clientSideFileSizeMax: number;
+  public fileSizeMb: number;
 
   @Input() map: IgoMap;
 
@@ -59,6 +61,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         return layer instanceof VectorLayer && layer.exportable === true;
       }) as VectorLayer[];
     });
+    const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
+    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
+    this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
+
   }
 
   ngOnDestroy() {
@@ -136,7 +142,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       file,
       error,
       this.messageService,
-      this.languageService
+      this.languageService,
+      this.fileSizeMb
     );
   }
 

@@ -161,15 +161,17 @@ export function handleFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService
+  languageService: LanguageService,
+  sizeMb?: number
 ) {
+  sizeMb = sizeMb ? sizeMb : 30;
   const errMapping = {
     'Invalid file': handleInvalidFileImportError,
     'File is too large': handleSizeFileImportError,
     'Failed to read file': handleUnreadbleFileImportError,
     'Invalid SRS definition': handleSRSImportError
   };
-  errMapping[error.message](file, error, messageService, languageService);
+  errMapping[error.message](file, error, messageService, languageService, sizeMb);
 }
 
 export function handleInvalidFileImportError(
@@ -205,12 +207,14 @@ export function handleSizeFileImportError(
   file: File,
   error: Error,
   messageService: MessageService,
-  languageService: LanguageService
+  languageService: LanguageService,
+  sizeMb: number
 ) {
   const translate = languageService.translate;
   const title = translate.instant('igo.geo.dropGeoFile.tooLarge.title');
   const message = translate.instant('igo.geo.dropGeoFile.tooLarge.text', {
-      value: file.name
+      value: file.name,
+      size: sizeMb
   });
   messageService.error(message, title);
 }

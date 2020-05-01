@@ -16,6 +16,10 @@
       "baselayersSwitcher": {
         "title": "Basemaps"
       },
+      "dataSource": {
+        "optionsApiUnavailable": "Layer information could not be retrieved. Some layers may not present the correct information.",
+        "unavailable": "The layer '{{value}}' is unavailable at the moment."
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "The file '{{value}}' is invalid ({{mimeType}})",
@@ -34,7 +38,7 @@
           "title": "The file '{{value}}' is unreadable"
         },
         "tooLarge": {
-          "text": "The file '{{value}}' is too large (Max: 30 MB)",
+          "text": "The file '{{value}}' is too large (Max: {{size}} MB)",
           "title": "File too large"
         },
         "invalidSRS": {
@@ -61,10 +65,11 @@
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
-        "importSizeMax": "The file size limit is 30 MB.",
+        "importSizeMax": "The file size limit is {{size}} Mb",
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
+        "caseSensitive": "Case sensitive",
         "And": "And",
         "Or": "Or",
         "PropertyIsEqualTo": "=",
@@ -75,11 +80,28 @@
         "PropertyIsLessThan": "<",
         "PropertyIsLessThanOrEqualTo": "<=",
         "PropertyIsBetween": "between",
-        "During": "during",
+        "During": "during (temporal)",
         "PropertyIsNull": "is null",
-        "Intersects": "intersects",
-        "Within": "within",
-        "Contains": "contains"
+        "Intersects": "intersects (spatial)",
+        "Within": "within (spatial)",
+        "Contains": "contains (spatial)",
+        "tooltip": {
+          "And": "Logical operator between filters where both conditions must be true",
+          "Or": "Logical operator between filters where at least one (1) condition must be true",
+          "PropertyIsEqualTo": "Identical (case sensitive)",
+          "PropertyIsNotEqualTo": "Different(case sensitive)",
+          "PropertyIsLike": "Like Example: *road* Finds any values that have 'road' in any position. road* Finds any values that begin by 'road'. wildCard ='*', singleChar = '.' escapeChar = '!' (case sensitive)",
+          "PropertyIsGreaterThan": "Greater than",
+          "PropertyIsGreaterThanOrEqualTo": "Greater than or equal to ",
+          "PropertyIsLessThan": "Lesser than",
+          "PropertyIsLessThanOrEqualTo": "Lesser than or equal to",
+          "PropertyIsBetween": "Apply a range check between the lower and upper boundary (values are included)",
+          "During": "Apply a range check for time attributes",
+          "PropertyIsNull": "Return features where the attribute is null",
+          "Intersects": "Return features in geometric intersection with the provided geometry",
+          "Within": "Return feature which are completely contained by the provided geometry",
+          "Contains": "Return feature completely containing by the provided geometry"
+          }
       },
       "sourceFields": {
         "selectField": "Choose a field"
@@ -240,7 +262,10 @@
             "title": "Title",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Metadata"
+            "metadataUrl": "Metadata",
+            "name": "Layer name",
+            "urlInfo": "URL - WMS/WFS",
+            "downloadUrl": "Data download"
           },
           "type": {
             "layer": "Layer",
@@ -294,6 +319,8 @@
           "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
         },
         "searchSources": {
+          "selectAll": "Select All",
+          "unselectAll": "Unselect All",
           "settings": {
             "results type": "Results type",
             "ecmax": "Maximum deviation",

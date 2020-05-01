@@ -2,6 +2,7 @@ import olSourceTile from 'ol/source/Tile';
 import { uuid, Watcher, SubjectStatus } from '@igo2/utils';
 
 import { TileLayer } from '../shared/layers/tile-layer';
+import { VectorTileLayer } from '../shared/layers/vectortile-layer';
 
 export class TileWatcher extends Watcher {
   private id: string;
@@ -10,7 +11,7 @@ export class TileWatcher extends Watcher {
 
   private source: olSourceTile;
 
-  constructor(layer: TileLayer) {
+  constructor(layer: TileLayer | VectorTileLayer) {
     super();
     this.source = layer.options.source.ol;
     this.id = uuid();
