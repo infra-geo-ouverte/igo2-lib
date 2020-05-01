@@ -17,8 +17,7 @@ export class LayerLegendListBindingDirective implements OnInit, OnDestroy {
 
   constructor(
     @Self() component: LayerLegendListComponent,
-    private mapService: MapService,
-    @Optional() private route: RouteService
+    private mapService: MapService
   ) {
     this.component = component;
   }
