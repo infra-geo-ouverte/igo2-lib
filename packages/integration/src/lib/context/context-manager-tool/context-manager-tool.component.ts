@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 
@@ -16,6 +16,8 @@ import { IgoMap } from '@igo2/geo';
   templateUrl: './context-manager-tool.component.html'
 })
 export class ContextManagerToolComponent {
+
+  @Input() toolToOpenOnContextChange: string = 'mapTools';
 
   get map(): IgoMap { return this.mapState.map; }
 

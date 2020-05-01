@@ -129,9 +129,16 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
+        "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
+        "activateSelectionMode": "Activer le mode de sélection multiple",
+        "deactivateSelectionMode": "Désactiver le mode de sélection multiple",
+        "tools": "Outils",
+        "selectAll": "Tout sélectionner",
+        "deselectAll": "Tout désélectionner",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
+        "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
         "moreOptions": "Options sur la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
@@ -149,7 +156,13 @@
           "loadingLegendText": "Chargement de la légende",
           "noLegendText": "Aucune légende disponible pour cette couche",
           "noLegendScale": "Aucune légende disponible pour cette échelle",
-          "selectStyle": "Sélectionner le style de la légende"
+          "selectStyle": "Sélectionner le style de la légende",
+          "showAll" : "Montrer toutes les légendes (non visible et hors échelle)",
+          "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
+          "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
+          "noLayersVisible": "Aucune couche actuellement visible.",
+          "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
+        
         }
       },
       "download": {
