@@ -33,7 +33,7 @@ export class ExportService {
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
-    const gpxAggregateInComment = this.config.getConfig('importExport.GpxAggregateInComment');
+    const gpxAggregateInComment = this.config.getConfig('importExport.gpxAggregateInComment');
     if (gpxAggregateInComment !== undefined) {
       this.aggregateInComment = gpxAggregateInComment;
     }
@@ -84,22 +84,22 @@ export class ExportService {
       const keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith('_'));
-      let remarque: string = '';
+      let comment: string = '';
       const properties: any[] = keys.reduce(
         (acc: object, key: string) => {
           if (key !== undefined && key !== 'geometry') {
-            remarque += key + ':' + olFeature.get(key) + '   \r\n';
+            comment += key + ':' + olFeature.get(key) + '   \r\n';
           }
           acc[key] = olFeature.get(key);
           return acc;
         },
         { geometry: olFeature.getGeometry() }
       );
-      const nouveau = new OlFeature(properties);
-      nouveau.set('name', 'fiche : ' + olFeature.get('NoFiche'));
-      nouveau.set('cmt', remarque);
+      const newFeature = new OlFeature(properties);
+      newFeature.set('name', olFeature.getId());
+      newFeature.set('cmt', comment);
 
-      return nouveau;
+      return newFeature;
     });
   }
 
