@@ -1,0 +1,19 @@
+$slide-toggle-width: 60px;
+
+mat-slide-toggle {
+  width: 100%;
+  margin: 10px;
+
+  ::ng-deep .mat-slide-toggle-content {
+    width: calc(100% - #{$slide-toggle-width});
+  }
+}
+
+igo-list {
+  display: contents;
+}
+
+.layers-empty {
+  text-align: justify;
+  margin: 10px;
+}

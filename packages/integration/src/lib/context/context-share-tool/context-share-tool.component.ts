@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { IgoMap } from '@igo2/geo';
+import { IgoMap, LayerListControlsOptions } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
+import { LayerListToolState } from '../../map/layer-list-tool.state';
 
 @ToolComponent({
   name: 'shareMap',
@@ -18,7 +19,10 @@ export class ContextShareToolComponent {
 
   get map(): IgoMap { return this.mapState.map; }
 
+  get layerListControls(): LayerListControlsOptions { return this.layerListToolState.getLayerListControls(); }
+
   constructor(
-    private mapState: MapState
+    private mapState: MapState,
+    private layerListToolState: LayerListToolState
   ) {}
 }

@@ -57,8 +57,8 @@ export class ShareMapService {
     let invisibleKey = this.route.options.visibleOffLayersKey;
     const layers = map.layers;
 
-    const visibleLayers = layers.filter(lay => lay.visible);
-    const invisibleLayers = layers.filter(lay => !lay.visible);
+    const visibleLayers = layers.filter(lay => lay.visible && lay.id !== 'searchPointerSummaryId');
+    const invisibleLayers = layers.filter(lay => !lay.visible && lay.id !== 'searchPointerSummaryId');
 
     if (visibleLayers.length === 0) {
       visibleKey = '';

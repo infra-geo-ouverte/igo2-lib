@@ -10,6 +10,15 @@ import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
 })
 export class MapState {
 
+  get showAllLegendsValue(): boolean {
+    return this._legendToolShowAll;
+  }
+
+  set showAllLegendsValue(value) {
+    this._legendToolShowAll = value;
+  }
+  private _legendToolShowAll: boolean;
+
   /**
    * Active map
    */
