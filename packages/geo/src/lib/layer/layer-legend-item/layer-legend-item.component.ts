@@ -8,7 +8,6 @@ import {
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
-import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer, TooltipType } from '../shared/layers';
 import { NetworkService, ConnectionState } from '@igo2/core';
 
