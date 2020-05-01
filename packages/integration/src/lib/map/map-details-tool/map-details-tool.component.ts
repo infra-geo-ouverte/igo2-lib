@@ -33,6 +33,8 @@ export class MapDetailsToolComponent {
 
   @Input() queryBadge: boolean = false;
 
+  @Input() layerAdditionAllowed: boolean = true;
+
   get map(): IgoMap {
     return this.mapState.map;
   }
