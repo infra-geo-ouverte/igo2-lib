@@ -12,6 +12,9 @@ import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces'
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleByAttribute } from '../../layer/shared/vector-style.interface';
 import { StyleListService } from '../style-list/style-list.service';
+import { ClusterParam } from '../../layer/shared/clusterParam';
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 
 export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layerTitle: string): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
@@ -55,66 +58,58 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
                                                styleListService: StyleListService, styleService: StyleService): VectorLayer {
   const olFeatures = features.map((feature: Feature) => featureToOl(feature, map.projection));
   let style;
+  let distance: number;
 
   if (styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute')) {
     const styleByAttribute: StyleByAttribute = styleListService.getStyleList(layerTitle.toString() + '.styleByAttribute');
 
-    const styleBy = feature => {
+    style = feature => {
       return styleService.createStyleByAttribute(
         feature,
         styleByAttribute
       );
     };
-    style = styleBy;
+
+  } else if (styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')) {
+    const clusterParam: ClusterParam = styleListService.getStyleList(layerTitle.toString() + '.clusterParam');
+    distance = styleListService.getStyleList(layerTitle.toString() + '.distance');
+
+    const baseStyle = styleService.createStyle(styleListService.getStyleList(layerTitle.toString() + '.clusterStyle'));
+
+    style = feature => {
+      return styleService.createClusterStyle(
+        feature,
+        clusterParam,
+        baseStyle
+      );
+    };
 
   } else if (styleListService.getStyleList(layerTitle.toString() + '.style')) {
-    const radius = styleListService.getStyleList(layerTitle.toString() + '.style.radius');
 
-    const stroke = new olStyle.Stroke({
-      color: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.color'),
-      width: styleListService.getStyleList(layerTitle.toString() + '.style.stroke.width')
-    });
+    style = styleService.createStyle(styleListService.getStyleList(layerTitle.toString() + '.style'));
 
-    const fill = new olStyle.Fill({
-      color: styleListService.getStyleList(layerTitle.toString() + '.style.fill.color')
-    });
-
-    style = new olStyle.Style({
-      stroke,
-      fill,
-      image: new olStyle.Circle({
-        radius: radius ? radius : 5,
-        stroke,
-        fill
-      })
-    });
   } else {
-    const radius = styleListService.getStyleList('default.style.radius');
 
-    const stroke = new olStyle.Stroke({
-      color: styleListService.getStyleList('default.style.stroke.color'),
-      width: styleListService.getStyleList('default.style.stroke.width')
-    });
+    style = styleService.createStyle(styleListService.getStyleList('default.style'));
 
-    const fill = new olStyle.Fill({
-      color: styleListService.getStyleList('default.style.fill.color')
-    });
-
-    style = new olStyle.Style({
-      stroke,
-      fill,
-      image: new olStyle.Circle({
-        radius: radius ? radius : 5,
-        stroke,
-        fill
-      })
-    });
   }
-  const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
-    queryable: true
-  };
-  const source = new FeatureDataSource(sourceOptions);
-  source.ol.addFeatures(olFeatures);
+  let source;
+
+  if (styleListService.getStyleList(layerTitle.toString() + '.clusterStyle')) {
+    const sourceOptions: ClusterDataSourceOptions & QueryableDataSourceOptions = {
+      distance,
+      type: 'cluster',
+      queryable: true
+    };
+    source = new ClusterDataSource(sourceOptions);
+    source.ol.source.addFeatures(olFeatures);
+  } else {
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+      queryable: true
+    };
+    source = new FeatureDataSource(sourceOptions);
+    source.ol.addFeatures(olFeatures);
+  }
 
   const layer = new VectorLayer({
     title: layerTitle,
