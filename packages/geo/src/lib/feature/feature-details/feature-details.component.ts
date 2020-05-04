@@ -11,6 +11,7 @@ import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
+import { IgoMap } from '../../map/shared/map';
 
 @Component({
   selector: 'igo-feature-details',
@@ -30,6 +31,8 @@ export class FeatureDetailsComponent {
     this._source = value;
     this.cdRef.detectChanges();
   }
+
+  @Input() map: IgoMap;
 
   @Input()
   get feature(): Feature {
@@ -88,13 +91,21 @@ export class FeatureDetailsComponent {
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
+    let offlineButtonState;
+
+    if (this.map) {
+      this.map.offlineButtonToggle$.subscribe(state => {
+        offlineButtonState = state;
+      });
+    }
 
     if (allowedFieldsAndAlias) {
       Object.keys(allowedFieldsAndAlias).forEach(field => {
         properties[allowedFieldsAndAlias[field]] = feature.properties[field];
       });
       return properties;
-    } else {
+    } else if (offlineButtonState !== undefined) {
+      if (!offlineButtonState) {
         if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
           const excludeAttribute = feature.meta.excludeAttribute;
           excludeAttribute.forEach(attribute => {
@@ -106,7 +117,27 @@ export class FeatureDetailsComponent {
             delete feature.properties[attribute];
           });
         }
-        return feature.properties;
+      } else {
+        if (feature.meta && feature.meta.excludeAttributeOffline) {
+          const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
+          excludeAttributeOffline.forEach(attribute => {
+            delete feature.properties[attribute];
+          });
+        }
+      }
+    } else {
+      if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
+        const excludeAttribute = feature.meta.excludeAttribute;
+        excludeAttribute.forEach(attribute => {
+          delete feature.properties[attribute];
+        });
+      } else if (!this.state.connection && feature.meta && feature.meta.excludeAttributeOffline) {
+        const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
+        excludeAttributeOffline.forEach(attribute => {
+          delete feature.properties[attribute];
+        });
+      }
     }
+    return feature.properties;
   }
 }
