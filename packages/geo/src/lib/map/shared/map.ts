@@ -279,7 +279,9 @@ export class IgoMap {
 
   raiseLayers(layers: Layer[]) {
     for (const layer of layers) {
-      this.raiseLayer(layer);
+      if (layer.baseLayer !== true) {
+        this.raiseLayer(layer);
+      }
     }
   }
 
@@ -293,7 +295,9 @@ export class IgoMap {
   lowerLayers(layers: Layer[]) {
     const reverseLayers = layers.reverse();
     for (const layer of reverseLayers) {
-      this.lowerLayer(layer);
+      if (layer.baseLayer !== true) {
+        this.lowerLayer(layer);
+      }
     }
   }
 

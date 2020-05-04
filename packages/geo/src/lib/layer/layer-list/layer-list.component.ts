@@ -237,6 +237,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
         response = true;
       }
     }
+
+    if (this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) {
+      response = false;
+    }
     return response;
   }
 
@@ -248,6 +252,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
       if (nextLayer && !nextLayer.baseLayer && !layers.find(lay => nextLayer.id === lay.id)) {
         response = true;
       }
+    }
+
+    if (this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) {
+      response = false;
     }
     return response;
   }
