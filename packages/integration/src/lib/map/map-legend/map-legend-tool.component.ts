@@ -1,9 +1,22 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { Observable, Subscription, BehaviorSubject, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { Layer, IgoMap, LayerListControlsOptions, SearchSourceService, sourceCanSearch } from '@igo2/geo';
+import {
+  Layer,
+  IgoMap,
+  LayerListControlsOptions,
+  SearchSourceService,
+  sourceCanSearch
+} from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
@@ -19,7 +32,6 @@ import { MapState } from './../map.state';
   styleUrls: ['./map-legend-tool.component.scss']
 })
 export class MapLegendToolComponent implements OnInit, OnDestroy {
-
   public delayedShowEmptyMapContent: boolean = false;
 
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
@@ -44,18 +56,18 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
 
   get visibleOrInRangeLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
-      map(
-        layers => layers
-          .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value)
-      ));
+      map(layers =>
+        layers.filter(
+          layer => layer.visible$.value && layer.isInResolutionsRange$.value
+        )
+      )
+    );
   }
 
   get visibleLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
-      map(
-        layers => layers
-          .filter(layer => layer.visible$.value)
-      ));
+      map(layers => layers.filter(layer => layer.visible$.value))
+    );
   }
 
   get excludeBaseLayers(): boolean {
@@ -63,12 +75,13 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   }
 
   get searchToolInToolbar(): boolean {
-    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1
-      &&
+    return (
+      this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1 &&
       this.searchSourceService
         .getSources()
         .filter(sourceCanSearch)
-        .filter(s => s.available && s.getType() === 'Layer').length > 0;
+        .filter(s => s.available && s.getType() === 'Layer').length > 0
+    );
   }
 
   get catalogToolInToolbar(): boolean {
@@ -82,24 +95,31 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
     private mapState: MapState,
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef) {}
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.resolution$$ = this.map.viewController.resolution$.subscribe(r =>
       this.layers$.next(
-        this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
-      ));
+        this.map.layers.filter(
+          layer =>
+            layer.showInLayerList !== false &&
+            (!this.excludeBaseLayers || !layer.baseLayer)
+        )
+      )
+    );
 
-    this.mapState.showAllLegendsValue = this.mapState.showAllLegendsValue !== undefined ?
-    this.mapState.showAllLegendsValue : this.showAllLegendsValue || false;
+    this.mapState.showAllLegendsValue =
+      this.mapState.showAllLegendsValue !== undefined
+        ? this.mapState.showAllLegendsValue
+        : this.showAllLegendsValue || false;
     this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
 
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
       this.cdRef.detectChanges();
-    }, 50);
-
+    }, 100);
   }
 
   onShowAllLegends(event) {
@@ -110,10 +130,15 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   showAllLegend() {
     if (this.layers$.getValue().length === 0) {
       return false;
-    } else if (this.layers$.getValue().length !== 0 && this.allowShowAllLegends === false) {
+    } else if (
+      this.layers$.getValue().length !== 0 &&
+      this.allowShowAllLegends === false
+    ) {
       let visibleOrInRangeLayers;
-      this.visibleOrInRangeLayers$.subscribe((value) => {
-        value.length === 0 ? visibleOrInRangeLayers = false : visibleOrInRangeLayers = true;
+      this.visibleOrInRangeLayers$.subscribe(value => {
+        value.length === 0
+          ? (visibleOrInRangeLayers = false)
+          : (visibleOrInRangeLayers = true);
       });
 
       if (visibleOrInRangeLayers === false) {

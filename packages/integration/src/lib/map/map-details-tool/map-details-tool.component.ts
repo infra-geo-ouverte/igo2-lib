@@ -3,7 +3,14 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, Layer, IgoMap, LayerListControlsOptions, SearchSourceService, sourceCanSearch } from '@igo2/geo';
+import {
+  LayerListControlsEnum,
+  Layer,
+  IgoMap,
+  LayerListControlsOptions,
+  SearchSourceService,
+  sourceCanSearch
+} from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
@@ -19,7 +26,6 @@ import { MapState } from './../map.state';
   styleUrls: ['./map-details-tool.component.scss']
 })
 export class MapDetailsToolComponent implements OnInit {
-
   public delayedShowEmptyMapContent: boolean = false;
 
   @Input() toggleLegendOnVisibilityChange: boolean = false;
@@ -44,9 +50,11 @@ export class MapDetailsToolComponent implements OnInit {
 
   get layers$(): Observable<Layer[]> {
     return this.map.layers$.pipe(
-      map(
-        layers => layers.filter(
-          layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer)
+      map(layers =>
+        layers.filter(
+          layer =>
+            layer.showInLayerList !== false &&
+            (!this.excludeBaseLayers || !layer.baseLayer)
         )
       )
     );
@@ -57,9 +65,12 @@ export class MapDetailsToolComponent implements OnInit {
   }
 
   get layerFilterAndSortOptions(): any {
-    const filterSortOptions = Object.assign({
-      showToolbar: LayerListControlsEnum.default
-    }, this.layerListControls);
+    const filterSortOptions = Object.assign(
+      {
+        showToolbar: LayerListControlsEnum.default
+      },
+      this.layerListControls
+    );
 
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
@@ -75,12 +86,13 @@ export class MapDetailsToolComponent implements OnInit {
   }
 
   get searchToolInToolbar(): boolean {
-    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1
-      &&
+    return (
+      this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1 &&
       this.searchSourceService
         .getSources()
         .filter(sourceCanSearch)
-        .filter(s => s.available && s.getType() === 'Layer').length > 0;
+        .filter(s => s.available && s.getType() === 'Layer').length > 0
+    );
   }
 
   get catalogToolInToolbar(): boolean {
@@ -95,14 +107,15 @@ export class MapDetailsToolComponent implements OnInit {
     private mapState: MapState,
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef) {}
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
       this.cdRef.detectChanges();
-    }, 50);
+    }, 100);
   }
 
   searchEmit() {
