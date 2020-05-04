@@ -91,14 +91,20 @@ export class FeatureDetailsComponent {
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
-    const offlineButtonState = this.map.offlineButtonState;
+    let offlineButtonState;
+
+    if (this.map) {
+      this.map.offlineButtonToggle$.subscribe(state => {
+        offlineButtonState = state;
+      });
+    }
 
     if (allowedFieldsAndAlias) {
       Object.keys(allowedFieldsAndAlias).forEach(field => {
         properties[allowedFieldsAndAlias[field]] = feature.properties[field];
       });
       return properties;
-    } else {
+    } else if (offlineButtonState !== undefined) {
       if (!offlineButtonState) {
         if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
           const excludeAttribute = feature.meta.excludeAttribute;
@@ -119,7 +125,19 @@ export class FeatureDetailsComponent {
           });
         }
       }
-      return feature.properties;
+    } else {
+      if (this.state.connection && feature.meta && feature.meta.excludeAttribute) {
+        const excludeAttribute = feature.meta.excludeAttribute;
+        excludeAttribute.forEach(attribute => {
+          delete feature.properties[attribute];
+        });
+      } else if (!this.state.connection && feature.meta && feature.meta.excludeAttributeOffline) {
+        const excludeAttributeOffline = feature.meta.excludeAttributeOffline;
+        excludeAttributeOffline.forEach(attribute => {
+          delete feature.properties[attribute];
+        });
+      }
     }
+    return feature.properties;
   }
 }
