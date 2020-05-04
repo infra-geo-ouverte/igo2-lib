@@ -21,7 +21,6 @@ import { IgoMap } from '../../map/shared/map';
 })
 export class FeatureDetailsComponent {
   private state: ConnectionState;
-  private offlineButtonState: boolean;
 
   @Input()
   get source(): SearchSource {
