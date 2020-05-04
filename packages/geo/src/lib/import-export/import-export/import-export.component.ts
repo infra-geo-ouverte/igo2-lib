@@ -64,10 +64,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         return layer instanceof VectorLayer && layer.exportable === true;
       }) as VectorLayer[];
     });
-    const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
-    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
+    const configFileSizeMb = this.config.getConfig(
+      'importExport.clientSideFileSizeMaxMb'
+    );
+    this.clientSideFileSizeMax =
+      (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
-
   }
 
   ngOnDestroy() {
@@ -102,7 +104,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     let olFeatures = layer.dataSource.ol.getFeatures();
     if (layer.dataSource instanceof ClusterDataSource) {
-      olFeatures = olFeatures.flatMap((cluster: any) => cluster.get('features'));
+      olFeatures = olFeatures.flatMap((cluster: any) =>
+        cluster.get('features')
+      );
     }
     this.exportService
       .export(olFeatures, data.format, filename, this.map.projection)
@@ -120,25 +124,25 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
         layer: ['', [Validators.required]],
-        name: ['', [Validators.required]],
+        name: ['', [Validators.required]]
       });
     } else {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
-        layer: ['', [Validators.required]],
+        layer: ['', [Validators.required]]
       });
     }
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     if (!this.config.getConfig('importWithStyle')) {
-    handleFileImportSuccess(
-      file,
-      features,
-      this.map,
-      this.messageService,
-      this.languageService
-    );
+      handleFileImportSuccess(
+        file,
+        features,
+        this.map,
+        this.messageService,
+        this.languageService
+      );
     } else {
       handleFileImportSuccess(
         file,
@@ -174,7 +178,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
 
     if (this.config.getConfig('importExport.formats') !== undefined) {
-      const liste = this.validerListeFormat(this.config.getConfig('importExport.formats'));
+      const liste = this.validerListeFormat(
+        this.config.getConfig('importExport.formats')
+      );
       this.formats = strEnum(liste);
     } else {
       this.formats = ExportFormat;
@@ -182,40 +188,44 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private validerListeFormat(liste: string[]): string[] {
-    return liste.filter(format => {
-      if (format.toUpperCase() === ExportFormat.CSV.toUpperCase() ||
-      format.toUpperCase() === ExportFormat.GML.toUpperCase() ||
-      format.toUpperCase() === ExportFormat.GPX.toUpperCase() ||
-      format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase() ||
-      format.toUpperCase() === ExportFormat.KML.toUpperCase() ||
-      format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()) {
-        return format;
-      }
-    }).map(format => {
-      if (format.toUpperCase() === ExportFormat.CSV.toUpperCase()) {
-        format = ExportFormat.CSV;
-        return format;
-      }
-      if (format.toUpperCase() === ExportFormat.GML.toUpperCase()) {
-        format = ExportFormat.GML;
-        return format;
-      }
-      if (format.toUpperCase() === ExportFormat.GPX.toUpperCase()) {
-        format = ExportFormat.GPX;
-        return format;
-      }
-      if (format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase()) {
-        format = ExportFormat.GeoJSON;
-        return format;
-      }
-      if (format.toUpperCase() === ExportFormat.KML.toUpperCase()){
-        format = ExportFormat.KML;
-        return format;
-      }
-      if (format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()) {
-        format = ExportFormat.Shapefile;
-        return format;
-      }
-    });
+    return liste
+      .filter(format => {
+        if (
+          format.toUpperCase() === ExportFormat.CSV.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.GML.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.GPX.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.KML.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()
+        ) {
+          return format;
+        }
+      })
+      .map(format => {
+        if (format.toUpperCase() === ExportFormat.CSV.toUpperCase()) {
+          format = ExportFormat.CSV;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.GML.toUpperCase()) {
+          format = ExportFormat.GML;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.GPX.toUpperCase()) {
+          format = ExportFormat.GPX;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase()) {
+          format = ExportFormat.GeoJSON;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.KML.toUpperCase()) {
+          format = ExportFormat.KML;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()) {
+          format = ExportFormat.Shapefile;
+          return format;
+        }
+      });
   }
 }
