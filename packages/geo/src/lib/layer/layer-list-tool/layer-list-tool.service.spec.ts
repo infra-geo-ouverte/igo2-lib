@@ -1,18 +1,18 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { LayerListService } from './layer-list.service';
+import { LayerListToolService } from './layer-list-tool.service';
 
-describe('StyleService', () => {
+describe('LayerListToolService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [],
       providers: [
-        LayerListService
+        LayerListToolService
       ]
     });
   });
 
-  it('should ...', inject([LayerListService], (service: LayerListService) => {
+  it('should ...', inject([LayerListToolService], (service: LayerListToolService) => {
     expect(service).toBeTruthy();
   }));
 

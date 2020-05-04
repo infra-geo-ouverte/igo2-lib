@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter, OnDestroy, Injector } from '@angular/core';
+import { Injectable, EventEmitter, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { Observable, Subscription, fromEvent } from 'rxjs';
 import { debounceTime, startWith } from 'rxjs/operators';
 
@@ -20,6 +20,8 @@ export class NetworkIonicService implements OnDestroy {
   private state: ConnectionState = {
     connection: window.navigator.onLine
   };
+
+  private previousState: boolean = !window.navigator.onLine;
 
   constructor(
     private messageService: MessageService,
@@ -61,30 +63,36 @@ export class NetworkIonicService implements OnDestroy {
   private checkNetworkStateMobile() {
     this.offlineSubscription = this.network.onDisconnect().subscribe(() => {
       this.state.connection = false;
-      setTimeout(() => {
-        if (!this.state.connection) {
-          const translate = this.injector.get(LanguageService).translate;
-          const message = translate.instant('igo.core.network.offline.message');
-          const title = translate.instant('igo.core.network.offline.title');
-          this.messageService.info(message, title);
-          this.state.connection = false;
-          this.emitEvent();
-        }
-      }, 10000);
+      if (this.previousState !== this.state.connection) {
+        setTimeout(() => {
+          if (!this.state.connection) {
+            const translate = this.injector.get(LanguageService).translate;
+            const message = translate.instant('igo.core.network.offline.message');
+            const title = translate.instant('igo.core.network.offline.title');
+            this.messageService.info(message, title);
+            this.state.connection = false;
+            this.emitEvent();
+            this.previousState = this.state.connection;
+          }
+        }, 10000);
+      }
     });
 
     this.onlineSubscription = this.network.onConnect().subscribe(() => {
       this.state.connection = true;
-      setTimeout(() => {
-        if (this.state.connection) {
-          const translate = this.injector.get(LanguageService).translate;
-          const message = translate.instant('igo.core.network.online.message');
-          const title = translate.instant('igo.core.network.online.title');
-          this.messageService.info(message, title);
-          this.state.connection = true;
-          this.emitEvent();
-        }
-      }, 10000);
+      if (this.previousState !== this.state.connection) {
+        setTimeout(() => {
+          if (this.state.connection) {
+            const translate = this.injector.get(LanguageService).translate;
+            const message = translate.instant('igo.core.network.online.message');
+            const title = translate.instant('igo.core.network.online.title');
+            this.messageService.info(message, title);
+            this.state.connection = true;
+            this.emitEvent();
+            this.previousState = this.state.connection;
+          }
+        }, 10000);
+      }
     });
   }
 

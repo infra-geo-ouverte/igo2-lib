@@ -5,3 +5,7 @@
   margin-right: 10px;
   margin-top: 5px;
 }
+
+igo-list ::ng-deep mat-list {
+  height: 100%;
+}

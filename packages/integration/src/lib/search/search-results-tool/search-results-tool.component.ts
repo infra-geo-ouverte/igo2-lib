@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, ElementRef, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -7,7 +7,8 @@ import {
   EntityStore,
   ToolComponent,
   FlexibleState,
-  getEntityTitle
+  getEntityTitle,
+  FlexibleComponent
 } from '@igo2/common';
 
 import {
@@ -20,7 +21,8 @@ import {
   SearchResult,
   IgoMap,
   moveToOlFeatures,
-  Research
+  Research,
+  createOverlayDefaultStyle
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -87,6 +89,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   public settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
   public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
+  private topPanelState$$: Subscription;
 
   @Input()
   set topPanelState(value: FlexibleState) {
@@ -101,7 +104,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   constructor(
     private mapState: MapState,
     private layerService: LayerService,
-    private searchState: SearchState
+    private searchState: SearchState,
+    private elRef: ElementRef,
   ) {}
 
   ngOnInit() {
@@ -113,16 +117,29 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
     for (const res of this.store.entities$.value) {
       if (this.store.state.get(res).selected === true) {
-        this.topPanelState = 'collapsed';
+        this.topPanelState = 'expanded';
       }
     }
 
     this.searchState.searchSettingsChange$.subscribe(() => {
       this.settingsChange$.next(true);
     });
+
+    this.topPanelState$$ = this.topPanelState$.subscribe(() => {
+      const igoList = this.computeElementRef()[0];
+      const selected = this.computeElementRef()[1];
+      if (selected) {
+        setTimeout(() => { // To be sure the flexible component has been displayed yet
+          if (!this.isScrolledIntoView(igoList, selected)) {
+            this.adjustTopPanel(igoList, selected);
+          }
+        }, FlexibleComponent.transitionTime + 50);
+      }
+    });
   }
 
   ngOnDestroy() {
+    this.topPanelState$$.unsubscribe();
     this.searchTerm$$.unsubscribe();
   }
 
@@ -132,10 +149,27 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
-    this.tryAddFeatureToMap(result);
-    if (this.topPanelState === 'initial') {
-      this.toggleTopPanel();
+    if (result.meta.dataType === FEATURE) {
+      if (this.map.viewController.getZoom() < 11 && (result.data.geometry.type === 'MultiLineString' || result.data.geometry.type === 'LineString')) {
+        result.data.meta.style = createOverlayDefaultStyle({strokeWidth: 10});
+      } else if (this.map.viewController.getZoom() < 11 && (result.data.geometry.type === 'MultiPolygon' || result.data.geometry.type === 'Polygon')) {
+        result.data.meta.style = createOverlayDefaultStyle({strokeWidth: 2});
+      } else if (this.map.viewController.getZoom() > 10 && result.data.geometry.type !== 'Point') {
+        result.data.meta.style = createOverlayDefaultStyle();
+      }
+      this.map.overlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
+  }
+
+  onResultUnfocus(result: SearchResult) {
+    if (result.meta.dataType !== FEATURE) {
+      return;
+    }
+
+    if (this.store.state.get(result).selected === true) {
+      return;
+    }
+    this.map.overlay.removeFeature(result.data as Feature);
   }
 
   /**
@@ -144,20 +178,78 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
+    for (const feature of this.store.all()) {
+      if (this.map.overlay.dataSource.ol.getFeatureById(feature.meta.id)) {
+        this.map.overlay.removeFeature(feature.data as Feature);
+      }
+    }
     this.tryAddFeatureToMap(result);
-    this.tryAddLayerToMap(result);
+
+    if (this.topPanelState === 'expanded') {
+      const igoList = this.computeElementRef()[0];
+      const selected = this.computeElementRef()[1];
+      setTimeout(() => { // To be sure the flexible component has been displayed yet
+        if (!this.isScrolledIntoView(igoList, selected)) {
+          this.adjustTopPanel(igoList, selected);
+        }
+      }, FlexibleComponent.transitionTime + 50);
+    }
+
     if (this.topPanelState === 'initial') {
-      this.toggleTopPanel();
+      this.topPanelState = 'expanded';
     }
   }
 
   onSearch(event: { research: Research; results: SearchResult[] }) {
     const results = event.results;
-    this.store.state.updateAll({ focused: false, selected: false });
     const newResults = this.store.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
+
     this.store.load(newResults);
+
+    for (const res of this.store.all()) {
+      if (this.store.state.get(res).focused === true && this.store.state.get(res).selected !== true) {
+        this.store.state.update(res, {focused: false}, true);
+      }
+    }
+
+    setTimeout(() => {
+      const igoList = this.elRef.nativeElement.querySelector('igo-list');
+      let moreResults;
+      event.research.request.subscribe((source) => {
+        if (source[0].source.getId() === 'icherche') {
+          moreResults = igoList.querySelector('.icherche .moreResults');
+        } else if (source[0].source.getId() === 'ilayer') {
+          moreResults = igoList.querySelector('.ilayer .moreResults');
+        } else if (source[0].source.getId() === 'nominatim') {
+          moreResults = igoList.querySelector('.nominatim .moreResults');
+        }
+
+        if (moreResults !== null && !this.isScrolledIntoView(igoList, moreResults)) {
+          igoList.scrollTop = moreResults.offsetTop + moreResults.offsetHeight - igoList.clientHeight;
+        }
+      });
+    }, 250);
+  }
+
+  computeElementRef() {
+    const items = document.getElementsByTagName('igo-search-results-item');
+    const igoList = this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
+    let selectedItem;
+    // tslint:disable-next-line
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].className.includes('igo-list-item-selected')) {
+        selectedItem = items[i];
+      }
+    }
+    return [igoList, selectedItem];
+  }
+
+  adjustTopPanel(elemSource, elem) {
+    if (!this.isScrolledIntoView(elemSource, elem)) {
+      elemSource.scrollTop = elem.offsetTop + elem.children[0].offsetHeight - elemSource.clientHeight;
+    }
   }
 
   toggleTopPanel() {
@@ -187,13 +279,16 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       return undefined;
     }
     const feature = (result as SearchResult<Feature>).data;
+    if (feature.geometry.type !== 'Point') {
+      feature.meta.style = createOverlayDefaultStyle();
+    }
 
     // Somethimes features have no geometry. It happens with some GetFeatureInfo
     if (feature.geometry === undefined) {
       return;
     }
 
-    this.map.overlay.setFeatures([feature], FeatureMotion.Default);
+    this.map.overlay.addFeature(feature);
   }
 
   /**
@@ -212,5 +307,15 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.layerService
       .createAsyncLayer(layerOptions)
       .subscribe(layer => this.map.addLayer(layer));
+  }
+
+  isScrolledIntoView(elemSource, elem) {
+    const padding = 6;
+    const docViewTop = elemSource.scrollTop;
+    const docViewBottom = docViewTop + elemSource.clientHeight;
+
+    const elemTop = elem.offsetTop;
+    const elemBottom = elemTop + elem.clientHeight + padding;
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
   }
 }

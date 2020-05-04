@@ -3,5 +3,6 @@ export enum OgcFilterOperatorType {
     Basic = 'Basic',
     BasicAndSpatial = 'BasicAndSpatial',
     Spatial = 'Spatial',
-    All = 'All'
+    All = 'All',
+    Time = 'time'
 }

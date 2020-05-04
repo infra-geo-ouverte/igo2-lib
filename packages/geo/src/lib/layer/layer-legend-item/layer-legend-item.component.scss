@@ -1,0 +1,44 @@
+@import '../../../../../core/src/style/partial/media';
+@import '../../../../../common/src/style/partial/common.variables';
+
+:host {
+  overflow: hidden;
+}
+
+.igo-layer-list-item{
+  height: $igo-list-item-height;
+  clear: both;
+}
+
+.igo-layer-actions-container {
+  width: 100%;
+  display: inline-block;
+  padding-left: 10px;
+}
+
+.igo-layer-actions-container > div {
+  text-align: center;
+}
+
+.igo-layer-legend-container {
+  padding-left: 18px;
+  width: calc(100% - 18px);
+}
+
+#opacity-slider {
+  float: left;
+}
+
+.igo-layer-button-group {
+  text-align: right;
+  padding: 0 10px 0 0;
+  width: 100%;
+}
+
+mat-icon.disabled {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.mat-badge-small .mat-badge-content {
+  font-size: 12px;
+}

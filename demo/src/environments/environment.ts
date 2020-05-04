@@ -34,7 +34,8 @@ export const environment: Environment = {
       prefix: './locale/'
     },
     importExport: {
-      url: '/apis/ogre'
+      url: '/apis/ogre',
+      gpxAggregateInComment: true
     },
     catalog: {
       sources: [

@@ -82,6 +82,10 @@ export function featureToOl(
     olFeature.set('_style', feature.meta.style, true);
   }
 
+  if (feature.sourceId) {
+    olFeature.set('_sourceId', feature.sourceId, true);
+  }
+
   return olFeature;
 }
 

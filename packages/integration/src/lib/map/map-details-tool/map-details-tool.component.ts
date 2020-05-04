@@ -1,13 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, Layer, IgoMap } from '@igo2/geo';
+import {
+  LayerListControlsEnum,
+  Layer,
+  IgoMap,
+  LayerListControlsOptions,
+  SearchSourceService,
+  sourceCanSearch
+} from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
-import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -19,7 +25,9 @@ import { LayerListControlsOptions } from '../shared/map-details-tool.interface';
   templateUrl: './map-details-tool.component.html',
   styleUrls: ['./map-details-tool.component.scss']
 })
-export class MapDetailsToolComponent {
+export class MapDetailsToolComponent implements OnInit {
+  public delayedShowEmptyMapContent: boolean = false;
+
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
   @Input() expandLegendOfVisibleLayers: boolean = false;
@@ -34,15 +42,19 @@ export class MapDetailsToolComponent {
 
   @Input() queryBadge: boolean = false;
 
+  @Input() layerAdditionAllowed: boolean = true;
+
   get map(): IgoMap {
     return this.mapState.map;
   }
 
   get layers$(): Observable<Layer[]> {
     return this.map.layers$.pipe(
-      map(
-        layers => layers.filter(
-          layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer)
+      map(layers =>
+        layers.filter(
+          layer =>
+            layer.showInLayerList !== false &&
+            (!this.excludeBaseLayers || !layer.baseLayer)
         )
       )
     );
@@ -53,18 +65,19 @@ export class MapDetailsToolComponent {
   }
 
   get layerFilterAndSortOptions(): any {
-    const filterSortOptions = Object.assign({
-      showToolbar: LayerListControlsEnum.default
-    }, this.layerListControls);
+    const filterSortOptions = Object.assign(
+      {
+        showToolbar: LayerListControlsEnum.default
+      },
+      this.layerListControls
+    );
 
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
         filterSortOptions.showToolbar = LayerListControlsEnum.always;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       case LayerListControlsEnum.never:
         filterSortOptions.showToolbar = LayerListControlsEnum.never;
-        filterSortOptions.toolbarThreshold = undefined;
         break;
       default:
         break;
@@ -73,7 +86,13 @@ export class MapDetailsToolComponent {
   }
 
   get searchToolInToolbar(): boolean {
-    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1;
+    return (
+      this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1 &&
+      this.searchSourceService
+        .getSources()
+        .filter(sourceCanSearch)
+        .filter(s => s.available && s.getType() === 'Layer').length > 0
+    );
   }
 
   get catalogToolInToolbar(): boolean {
@@ -84,7 +103,20 @@ export class MapDetailsToolComponent {
     return this.toolState.toolbox.getToolbar().indexOf('contextManager') !== -1;
   }
 
-  constructor(private mapState: MapState, private toolState: ToolState) {}
+  constructor(
+    private mapState: MapState,
+    private toolState: ToolState,
+    private searchSourceService: SearchSourceService,
+    private cdRef: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    // prevent message to be shown too quickly. Waiting for layers
+    setTimeout(() => {
+      this.delayedShowEmptyMapContent = true;
+      this.cdRef.detectChanges();
+    }, 100);
+  }
 
   searchEmit() {
     this.toolState.toolbox.activateTool('searchResults');

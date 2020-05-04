@@ -42,7 +42,7 @@ import { UserButtonComponent } from './user-button/user-button.component';
     MatDialogModule,
     MatInputModule
   ],
-  exports: [BookmarkButtonComponent, PoiButtonComponent, UserButtonComponent],
+  exports: [BookmarkButtonComponent, PoiButtonComponent, UserButtonComponent, BookmarkDialogComponent],
   declarations: [
     BookmarkButtonComponent,
     BookmarkDialogComponent,

@@ -11,7 +11,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./time-filter-item.component.scss']
 })
 export class TimeFilterItemComponent {
-
+  public color = 'primary';
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   filtersCollapsed: boolean = false;
