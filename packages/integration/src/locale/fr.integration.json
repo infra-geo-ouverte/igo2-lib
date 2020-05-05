@@ -16,7 +16,8 @@
         "shareMap": "Partager",
         "timeFilter": "Filtre temporel",
         "about": "À propos",
-        "spatialFilter": "Filtre spatial"
+        "spatialFilter": "Filtre spatial",
+        "spatialFilterExport": "Export - Filtre spatial"
       },
       "searchResultsTool": {
         "noResults": "Aucun résultat",

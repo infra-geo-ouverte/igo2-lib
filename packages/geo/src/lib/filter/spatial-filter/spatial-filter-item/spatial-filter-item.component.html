@@ -121,9 +121,12 @@
     {{'igo.geo.spatialFilter.goSearch' | translate}}
   </button>
 
-  <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button"
-    [disabled]="!layers.length" (click)="clearButton()">
+  <button mat-raised-button class="remove-button" [disabled]="!store.entities$.getValue().length" (click)="clearButton()">
     {{'igo.geo.spatialFilter.removeLayer' | translate}}
+  </button>
+
+  <button mat-raised-button class="export-button" [disabled]="!store.entities$.getValue().length" (click)="export.emit()">
+    {{'igo.geo.spatialFilter.exportLayer' | translate}}
   </button>
 
 </div>

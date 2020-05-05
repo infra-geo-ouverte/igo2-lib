@@ -374,6 +374,8 @@
         "layer": "Layer",
         "goSearch": "Launch research",
         "removeLayer": "Remove results",
+        "exportLayer": "Export results",
+        "exportTool": "Export tool",
         "clearForm": "Remove draw",
         "clearSearch": "Reset",
         "Address": "Addresses",

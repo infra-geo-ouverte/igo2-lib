@@ -28,6 +28,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MapState } from '../../map/map.state';
 import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
+import { ToolState } from '../../tool/tool.state';
 
 /**
  * Tool to apply spatial filter
@@ -81,7 +82,8 @@ export class SpatialFilterToolComponent {
     private layerService: LayerService,
     private mapState: MapState,
     private messageService: MessageService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private toolState: ToolState
   ) {}
 
   getOutputType(event: SpatialFilterType) {
@@ -416,5 +418,9 @@ export class SpatialFilterToolComponent {
       });
       moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
     }
+  }
+
+  activateExportTool() {
+    this.toolState.toolbox.activateTool('spatialFilterExport');
   }
 }
