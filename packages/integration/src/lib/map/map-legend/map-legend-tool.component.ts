@@ -124,7 +124,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
       this.cdRef.detectChanges();
-    }, 100);
+    }, 250);
   }
 
   onShowAllLegends(event) {

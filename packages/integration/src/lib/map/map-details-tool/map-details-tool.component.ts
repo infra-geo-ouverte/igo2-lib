@@ -115,7 +115,7 @@ export class MapDetailsToolComponent implements OnInit {
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
       this.cdRef.detectChanges();
-    }, 100);
+    }, 250);
   }
 
   searchEmit() {
