@@ -411,12 +411,19 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   layersCheck(event: {layer: Layer; check: boolean}) {
+    event.layer.options.check = event.check;
     if (event.check === true) {
       const eventMapIndex = this.layers.findIndex(layer => event.layer.id === layer.id);
       for (const layer of this.layersChecked) {
         const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
         if (eventMapIndex < mapIndex) {
           this.layersChecked.splice(this.layersChecked.findIndex(lay => layer.id === lay.id), 0, event.layer);
+
+          if (this.layersChecked.length === this.layers.filter(lay => lay.baseLayer !== true).length) {
+            this.selectAllCheck = true;
+          } else {
+            this.selectAllCheck = false;
+          }
           return;
         }
       }
@@ -424,6 +431,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
     } else {
       const index = this.layersChecked.findIndex(layer => event.layer.id === layer.id);
       this.layersChecked.splice(index, 1);
+    }
+
+    if (this.layersChecked.length === this.layers.filter(layer => layer.baseLayer !== true).length) {
+      this.selectAllCheck = true;
+    } else {
+      this.selectAllCheck = false;
     }
   }
 
@@ -450,12 +463,16 @@ export class LayerListComponent implements OnInit, OnDestroy {
   selectAll() {
     if (!this.selectAllCheck) {
       for (const layer of this.layers) {
+        layer.options.check = true;
         if (!layer.baseLayer) {
           this.layersChecked.push(layer);
         }
       }
       this.selectAllCheck$.next(true);
     } else {
+      for (const layer of this.layers) {
+        layer.options.check = false;
+      }
       this.layersChecked = [];
       this.selectAllCheck$.next(false);
     }

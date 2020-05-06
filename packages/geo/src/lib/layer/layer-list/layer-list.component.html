@@ -23,13 +23,14 @@
         [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
         [selectionMode]="selection"
         [selectAll]="selectAllCheck"
+        [layerCheck]="layer.options.check"
         (action)="toggleLayerTool($event)"
         (checkbox)="layersCheck($event)">
     </igo-layer-item>
   </ng-template>
 </igo-list>
 
-<igo-panel *ngIf="layerTool && activeLayer" class="igo-layer-actions-container" [title]="activeLayer.title">
+<igo-panel *ngIf="!selection && layerTool && activeLayer" class="igo-layer-actions-container" [title]="activeLayer.title">
   <div class="igo-layer-button-group">
   <ng-container igoLayerItemToolbar
     [ngTemplateOutlet]="templateLayerToolbar"
