@@ -184,7 +184,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
 
     // prevent message to be shown too quickly. Waiting for layers
-    setTimeout(() => (this.delayedShowEmptyMapContent = true), 100);
+    setTimeout(() => (this.delayedShowEmptyMapContent = true), 250);
   }
 
   ngOnDestroy(): void {

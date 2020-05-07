@@ -6,8 +6,8 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { Observable, Subscription, BehaviorSubject, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subscription, BehaviorSubject, ReplaySubject, combineLatest } from 'rxjs';
+import { map, debounceTime } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
 import {
@@ -99,15 +99,20 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.resolution$$ = this.map.viewController.resolution$.subscribe(r =>
-      this.layers$.next(
-        this.map.layers.filter(
-          layer =>
-            layer.showInLayerList !== false &&
-            (!this.excludeBaseLayers || !layer.baseLayer)
-        )
-      )
-    );
+    this.resolution$$ = combineLatest([
+      this.map.layers$,
+      this.map.viewController.resolution$
+    ])
+      .pipe(debounceTime(10))
+      .subscribe((bunch: [Layer[], number]) => {
+        this.layers$.next(
+          bunch[0].filter(
+            layer =>
+              layer.showInLayerList !== false &&
+              (!this.excludeBaseLayers || !layer.baseLayer)
+          )
+        );
+      });
 
     this.mapState.showAllLegendsValue =
       this.mapState.showAllLegendsValue !== undefined
@@ -119,7 +124,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.delayedShowEmptyMapContent = true;
       this.cdRef.detectChanges();
-    }, 100);
+    }, 250);
   }
 
   onShowAllLegends(event) {
