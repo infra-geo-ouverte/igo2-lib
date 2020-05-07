@@ -96,7 +96,6 @@ export class MapOfflineDirective implements AfterViewInit {
         sourceOptions = (layer.options.sourceOptions as XYZDataSourceOptions);
       } else if (layer.options.source instanceof ClusterDataSource) {
         sourceOptions = (layer.options.sourceOptions as ClusterDataSourceOptions);
-        console.log(layer);
       } else if (layer.options.source instanceof FeatureDataSource) {
         sourceOptions = (layer.options.sourceOptions as FeatureDataSourceOptions);
       } else {
