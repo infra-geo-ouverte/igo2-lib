@@ -187,7 +187,6 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       this.showAllLegendsValue$.next(false);
     }
 
-
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => (this.delayedShowEmptyMapContent = true), 250);
   }
