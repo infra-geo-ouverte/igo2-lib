@@ -177,11 +177,15 @@ export class MapToolsComponent implements OnInit, OnDestroy {
         );
       });
 
-    this.mapState.showAllLegendsValue =
-      this.mapState.showAllLegendsValue !== undefined
-        ? this.mapState.showAllLegendsValue
-        : this.showAllLegendsValue || false;
-    this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
+    if (this.allowShowAllLegends) {
+      this.mapState.showAllLegendsValue =
+        this.mapState.showAllLegendsValue !== undefined
+          ? this.mapState.showAllLegendsValue
+          : this.showAllLegendsValue || false;
+      this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
+    } else {
+      this.showAllLegendsValue$.next(false);
+    }
 
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => (this.delayedShowEmptyMapContent = true), 250);
