@@ -5,7 +5,7 @@ import {
   Subscription,
   combineLatest
 } from 'rxjs';
-import { map, first } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
@@ -16,8 +16,8 @@ import { DataSource, Legend, WMSDataSource } from '../../../datasource';
 import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
-import { LayerOptions, LayersLink, ComputedLink } from './layer.interface';
-import { OgcFilterableDataSource } from '../../../filter/shared/ogc-filter.interface';
+import { LayerOptions, LayersLink } from './layer.interface';
+import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -172,8 +172,9 @@ export abstract class Layer {
       this.transferCommonProperties(evt);
     });
 
-    if ((this.dataSource as WMSDataSource).ogcFilters$) {
-      (this.dataSource as WMSDataSource).ogcFilters$.subscribe(ogcFilters => this.transferOgcFiltersProperties(ogcFilters));
+    if ((this.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters$) {
+      (this.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters$
+      .subscribe(ogcFilters => this.transferOgcFiltersProperties(ogcFilters));
     }
 
   }

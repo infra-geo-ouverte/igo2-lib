@@ -193,6 +193,26 @@ export class StyleService {
             (!r.maxRadius || r.maxRadius >= size)
           ) {
             style = this.createStyle(r.style);
+
+            if (r.showRange) {
+              const text = new olstyle.Text({
+                text: size.toString(),
+                fill: new olstyle.Fill({
+                  color: '#fff'
+                })
+              });
+              style.setText(text);
+            }
+
+            if (r.dynamicRadius) {
+              let clusterRadius: number;
+              const radiusMin = style.image_.getRadius();
+              clusterRadius = 5 * Math.log(size);
+              if (clusterRadius < radiusMin) {
+                clusterRadius = radiusMin;
+              }
+              style.image_.setRadius(clusterRadius);
+            }
             break;
           }
         }
