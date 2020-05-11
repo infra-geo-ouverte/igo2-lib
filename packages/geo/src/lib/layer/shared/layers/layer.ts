@@ -17,6 +17,7 @@ import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions, LayersLink, ComputedLink } from './layer.interface';
+import { OgcFilterableDataSource } from '../../../filter/shared/ogc-filter.interface';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -172,13 +173,81 @@ export abstract class Layer {
     });
 
     if ((this.dataSource as WMSDataSource).ogcFilters$) {
-      (this.dataSource as WMSDataSource).ogcFilters$.subscribe(ogcFilters => console.log(ogcFilters));
+      (this.dataSource as WMSDataSource).ogcFilters$.subscribe(ogcFilters => this.transferOgcFiltersProperties(ogcFilters));
     }
 
   }
 
-  private transferCommonProperties(layerChange) {
+  private transferOgcFiltersProperties(ogcFilters) {
     // TODO Sourcefields
+    // TODO timefilter
+    // TODO Synced delete layer.
+
+    const linkedLayers = this.ol.getProperties().linkedLayers as LayersLink;
+    if (!linkedLayers) {
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+    if (isParentLayer) {
+      // search for child layers
+      currentLinks.map(link => {
+        if (!link.properties || link.properties.indexOf('ogcFilters') === -1) {
+          return;
+        }
+        link.linkedIds.map(linkedId => {
+          const layerToApply = this.map.layers.find(layer => layer.options.linkedLayers && layer.options.linkedLayers.linkId === linkedId);
+          if (layerToApply) {
+            const layerType = layerToApply.ol.getProperties().sourceOptions.type;
+            (layerToApply.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, false);
+            if (layerType === 'wfs') {
+              layerToApply.ol.getSource().clear();
+            }
+            if (layerType === 'wms') {
+              if (this.ol.getProperties().sourceOptions.type === 'wfs') {
+                console.log('this', this);
+              }
+              const appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
+              (layerToApply.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
+            }
+          }
+        });
+      });
+    } else {
+      // search for parent layer
+      this.map.layers.map(layer => {
+        if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
+          layer.options.linkedLayers.links.map(l => {
+            if (l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
+              const layerType = layer.ol.getProperties().sourceOptions.type;
+              if (layerType === 'wfs') {
+                (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
+                layer.ol.getSource().clear();
+              }
+              if (layerType === 'wms') {
+                const appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
+                if (this.ol.getProperties().sourceOptions.type === 'wfs') {
+                  console.log('this', this);
+                  // TODO Trouver comment récupérer le filter appliqué
+                  // appliedOgcFilter = this.ogcFilterWriter.buildFilter(
+                  //   ogcFilters,
+                  //   undefined,
+                  //   undefined,
+                  //   (this.dataSource.options as any).fieldNameGeometry
+                  // );
+                }
+                (layer.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
+                (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
+              }
+            }
+          });
+        }
+      });
+    }
+
+  }
+  private transferCommonProperties(layerChange) {
     // Synced delete layer.
     const key = layerChange.key;
     const layerChangeProperties = layerChange.target.getProperties();

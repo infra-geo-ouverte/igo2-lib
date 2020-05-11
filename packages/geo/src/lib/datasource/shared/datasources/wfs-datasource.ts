@@ -14,9 +14,22 @@ import {
   checkWfsParams,
   getFormatFromOptions
 } from './wms-wfs.utils';
+import { BehaviorSubject } from 'rxjs';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
+
+  set ogcFilters(value: any) {
+    // this.ogcFilters$.next(value);
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
+  }
+  get ogcFilters(): any {
+    return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+    // return this.ogcFilters$.value;
+    // (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
+  }
+
+  readonly ogcFilters$: BehaviorSubject<any> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WFSDataSourceOptions,
@@ -35,6 +48,8 @@ export class WFSDataSource extends DataSource {
     ) {
       this.wfsService.getSourceFieldsFromWFS(this.options);
     }
+
+    this.setOgcFilters((this.options as OgcFilterableDataSourceOptions).ogcFilters, true);
   }
 
   protected createOlSource(): olSourceVector {
@@ -51,6 +66,13 @@ export class WFSDataSource extends DataSource {
       },
       strategy: OlLoadingStrategy.bbox
     });
+  }
+
+  setOgcFilters(ogcFilters, triggerEvent: boolean = false) {
+    this.ogcFilters = ogcFilters;
+    if (triggerEvent) {
+      this.ogcFilters$.next(this.ogcFilters);
+    }
   }
 
   private buildUrl(extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {

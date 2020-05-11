@@ -83,6 +83,7 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean );
 }
 
 export interface IgoLogicalArrayOptions {
