@@ -260,10 +260,10 @@ export class EntityView<E extends object, V extends object = E> {
    */
   private liftJoinedSource(): Observable<V[]> {
     const sources$ = [this.source$, combineLatest(
-      ...this.joins.map((join: EntityJoinClause) => join.source)
+      this.joins.map((join: EntityJoinClause) => join.source)
     )];
 
-    return combineLatest(...sources$)
+    return combineLatest(sources$)
       .pipe(
         map((bunch: [E[], any[]]) => {
           const [entities, joinData] = bunch;

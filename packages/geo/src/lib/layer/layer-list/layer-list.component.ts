@@ -5,13 +5,14 @@ import {
   TemplateRef,
   ContentChild,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FloatLabelType } from '@angular/material';
 
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
-import { LayerListService } from './layer-list.service';
 import {
   BehaviorSubject,
   ReplaySubject,
@@ -24,6 +25,8 @@ import {
   MetadataOptions,
   MetadataLayerOptions
 } from '../../metadata/shared/metadata.interface';
+import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
+import { IgoMap } from '../../map/shared/map';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -42,13 +45,30 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   showToolbar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  public layerTool: boolean;
+  activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+
+  layersChecked: Layer[] = [];
+  public selection;
+
   private change$$: Subscription;
 
   @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
 
   @Input() layersAreAllVisible: boolean = true;
 
-  @Input() layersAreAllInRange: boolean = true;
+  @Input() ogcButton: boolean = true;
+
+  @Input() timeButton: boolean = true;
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
 
   @Input()
   set layers(value: Layer[]) {
@@ -60,9 +80,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
   private _layers: Layer[];
 
+  set activeLayer(value: Layer) {
+    this._activeLayer = value;
+    this.activeLayer$.next(value);
+  }
+  get activeLayer(): Layer {
+    return this._activeLayer;
+  }
+  private _activeLayer: Layer;
+
   @Input() floatLabel: FloatLabelType = 'auto';
 
-  @Input() layerFilterAndSortOptions: any = {};
+  @Input() layerFilterAndSortOptions: LayerListControlsOptions = {};
 
   @Input() excludeBaseLayers: boolean = false;
 
@@ -74,67 +103,63 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
+  @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
+
   get keyword(): string {
-    return this.layerListService.keyword;
+    return this._keyword;
   }
   set keyword(value: string) {
-    this.layerListService.keyword = value;
+    this._keyword = value;
     this.next();
   }
-
-  get keywordInitialized(): boolean {
-    return this.layerListService.keywordInitialized;
-  }
-  set keywordInitialized(value: boolean) {
-    this.layerListService.keywordInitialized = value;
-  }
+  private _keyword = undefined;
 
   get onlyVisible(): boolean {
-    return this.layerListService.onlyVisible;
+    return this._onlyVisible;
   }
   set onlyVisible(value: boolean) {
-    this.layerListService.onlyVisible = value;
+    this._onlyVisible = value;
     this.next();
   }
+  private _onlyVisible = false;
 
-  get onlyVisibleInitialized(): boolean {
-    return this.layerListService.onlyVisibleInitialized;
+  get sortAlpha(): boolean {
+    return this._sortedAlpha;
   }
-  set onlyVisibleInitialized(value: boolean) {
-    this.layerListService.onlyVisibleInitialized = value;
-  }
-
-  get onlyInRange(): boolean {
-    return this.layerListService.onlyInRange;
-  }
-  set onlyInRange(value: boolean) {
-    this.layerListService.onlyInRange = value;
+  set sortAlpha(value: boolean) {
+    this._sortedAlpha = value;
     this.next();
   }
+  private _sortedAlpha = false;
 
-  get onlyInRangeInitialized(): boolean {
-    return this.layerListService.onlyInRangeInitialized;
+  get opacity() {
+    return this.activeLayer$.getValue().opacity * 100;
   }
-  set onlyInRangeInitialized(value: boolean) {
-    this.layerListService.onlyInRangeInitialized = value;
-  }
-
-  get sortedAlpha(): boolean {
-    return this.layerListService.sortedAlpha;
-  }
-  set sortedAlpha(value: boolean) {
-    this.layerListService.sortedAlpha = value;
-    this.next();
+  set opacity(opacity: number) {
+    this.activeLayer$.getValue().opacity = opacity / 100;
   }
 
-  get sortedAlphaInitialized(): boolean {
-    return this.layerListService.sortedAlphaInitialized;
-  }
-  set sortedAlphaInitialized(value: boolean) {
-    this.layerListService.sortedAlphaInitialized = value;
+  get badgeOpacity() {
+    if (this.opacity === 100) {
+      return;
+    }
+    return this.opacity;
   }
 
-  constructor(private layerListService: LayerListService) {}
+  get checkOpacity() {
+    return this.layersCheckedOpacity() * 100;
+  }
+  set checkOpacity(opacity: number) {
+    for (const layer of this.layersChecked) {
+      layer.opacity = opacity / 100;
+    }
+  }
+
+  public toggleOpacity = false;
+
+  public selectAllCheck$ = new BehaviorSubject<boolean>(false);
+  selectAllCheck$$: Subscription;
+  public selectAllCheck = false;
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -150,25 +175,31 @@ export class LayerListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.showToolbar$.next(this.computeShowToolbar());
         this.layers$.next(this.computeLayers(this.layers.slice(0)));
+        this.appliedFilterAndSort.emit({
+          keyword: this.keyword,
+          sortAlpha: this.sortAlpha,
+          onlyVisible: this.onlyVisible
+        });
       });
 
-    this.initLayerFilterAndSortOptions();
+    this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
+      this.selectAllCheck = value;
+    });
+
+    this.layers$.subscribe(() => {
+      if (this.layers) {
+        for (const layer of this.layers) {
+          if (layer.options.active) {
+            this.activeLayer = layer;
+            this.layerTool = true;
+          }
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
     this.change$$.unsubscribe();
-  }
-
-  toggleOnlyVisible() {
-    this.onlyVisible = !this.onlyVisible;
-  }
-
-  toggleOnlyInRange() {
-    this.onlyInRange = !this.onlyInRange;
-  }
-
-  toggleSort(sortAlpha: boolean) {
-    this.sortedAlpha = sortAlpha;
   }
 
   clearKeyword() {
@@ -197,13 +228,50 @@ export class LayerListComponent implements OnInit, OnDestroy {
       );
   }
 
+  raisableLayers(layers: Layer[]) {
+    let response = false;
+    for (const layer of layers) {
+      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const previousLayer = this.layers[mapIndex - 1];
+      if (previousLayer && !previousLayer.baseLayer && !layers.find(lay => previousLayer.id === lay.id)) {
+        response = true;
+      }
+    }
+
+    if (this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) {
+      response = false;
+    }
+    return response;
+  }
+
+  lowerableLayers(layers: Layer[]) {
+    let response = false;
+    for (const layer of layers) {
+      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const nextLayer = this.layers[mapIndex + 1];
+      if (nextLayer && !nextLayer.baseLayer && !layers.find(lay => nextLayer.id === lay.id)) {
+        response = true;
+      }
+    }
+
+    if (this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) {
+      response = false;
+    }
+    return response;
+  }
+
+  lowerLayers(layers: Layer[]) {
+    this.map.lowerLayers(layers);
+    layers.reverse();
+  }
+
   private next() {
     this.change$.next();
   }
 
   private computeLayers(layers: Layer[]): Layer[] {
     let layersOut = this.filterLayers(layers);
-    if (this.sortedAlpha) {
+    if (this.sortAlpha) {
       layersOut = this.sortLayersByTitle(layersOut);
     } else {
       layersOut = this.sortLayersByZindex(layersOut);
@@ -211,14 +279,23 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return layersOut;
   }
 
+  onKeywordChange(term) {
+    this.keyword = term;
+  }
+
+  onAppliedFilterAndSortChange(appliedFilter: LayerListControlsOptions) {
+    this.keyword = appliedFilter.keyword;
+    this.onlyVisible = appliedFilter.onlyVisible;
+    this.sortAlpha = appliedFilter.sortAlpha;
+  }
+
   private filterLayers(layers: Layer[]): Layer[] {
-    const keyword = this.keyword;
     if (
       this.layerFilterAndSortOptions.showToolbar === LayerListControlsEnum.never
     ) {
       return layers;
     }
-    if (!keyword && !this.onlyInRange && !this.onlyVisible) {
+    if (!this.keyword && !this.onlyVisible) {
       return layers;
     }
 
@@ -233,8 +310,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
         return kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       });
 
-      if (keyword) {
-        const localKeyword = keyword
+      if (this.keyword) {
+        const localKeyword = this.keyword
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
         const layerTitle = layer.title
@@ -247,7 +324,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
           undefined;
         if (
           !keywordRegex.test(layerTitle) &&
-          !(keyword.toLowerCase() === dataSourceType.toLowerCase()) &&
+          !(this.keyword.toLowerCase() === dataSourceType.toLowerCase()) &&
           !keywordInList
         ) {
           const index = keepLayerIds.indexOf(layer.id);
@@ -258,13 +335,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
 
       if (this.onlyVisible && layer.visible === false) {
-        const index = keepLayerIds.indexOf(layer.id);
-        if (index > -1) {
-          keepLayerIds.splice(index, 1);
-        }
-      }
-
-      if (this.onlyInRange && layer.isInResolutionsRange === false) {
         const index = keepLayerIds.indexOf(layer.id);
         if (index > -1) {
           keepLayerIds.splice(index, 1);
@@ -303,7 +373,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
         if (
           this.layers.length >= this.thresholdToFilterAndSort ||
           this.keyword ||
-          this.onlyInRange ||
           this.onlyVisible
         ) {
           return true;
@@ -312,37 +381,100 @@ export class LayerListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private initLayerFilterAndSortOptions() {
-    if (this.layerFilterAndSortOptions.toolbarThreshold) {
-      this.thresholdToFilterAndSort = this.layerFilterAndSortOptions.toolbarThreshold;
+  toggleLayerTool(layer) {
+    this.toggleOpacity = false;
+    if (this.layerTool && layer === this.activeLayer) {
+      this.layerTool = false;
+    } else {
+      this.layerTool = true;
     }
 
-    if (this.layerFilterAndSortOptions.keyword && !this.keywordInitialized) {
-      this.keyword = this.layerFilterAndSortOptions.keyword;
-      this.keywordInitialized = true;
+    for (const lay of this.layers) {
+      lay.options.active = false;
     }
-    if (
-      this.layerFilterAndSortOptions.sortedAlpha &&
-      !this.sortedAlphaInitialized
-    ) {
-      this.sortedAlpha = this.layerFilterAndSortOptions.sortedAlpha;
-      this.sortedAlphaInitialized = true;
+    layer.options.active = true;
+    this.activeLayer = layer;
+    return;
+  }
+
+  removeLayers(layers?: Layer[]) {
+    if (layers && layers.length > 0) {
+      for (const layer of layers) {
+        layer.map.removeLayer(layer);
+      }
+      this.layersChecked = [];
+    } else if (!layers) {
+      this.activeLayer.map.removeLayer(this.activeLayer);
+      this.layerTool = false;
     }
-    if (
-      this.layerFilterAndSortOptions.onlyVisible &&
-      !this.onlyVisibleInitialized &&
-      !this.layersAreAllVisible
-    ) {
-      this.onlyVisible = this.layerFilterAndSortOptions.onlyVisible;
-      this.onlyVisibleInitialized = true;
+    return;
+  }
+
+  layersCheck(event: {layer: Layer; check: boolean}) {
+    event.layer.options.check = event.check;
+    if (event.check === true) {
+      const eventMapIndex = this.layers.findIndex(layer => event.layer.id === layer.id);
+      for (const layer of this.layersChecked) {
+        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+        if (eventMapIndex < mapIndex) {
+          this.layersChecked.splice(this.layersChecked.findIndex(lay => layer.id === lay.id), 0, event.layer);
+
+          if (this.layersChecked.length === this.layers.filter(lay => lay.baseLayer !== true).length) {
+            this.selectAllCheck = true;
+          } else {
+            this.selectAllCheck = false;
+          }
+          return;
+        }
+      }
+      this.layersChecked.push(event.layer);
+    } else {
+      const index = this.layersChecked.findIndex(layer => event.layer.id === layer.id);
+      this.layersChecked.splice(index, 1);
     }
-    if (
-      this.layerFilterAndSortOptions.onlyInRange &&
-      !this.onlyInRangeInitialized &&
-      !this.layersAreAllInRange
-    ) {
-      this.onlyInRange = this.layerFilterAndSortOptions.onlyInRange;
-      this.onlyInRangeInitialized = true;
+
+    if (this.layersChecked.length === this.layers.filter(layer => layer.baseLayer !== true).length) {
+      this.selectAllCheck = true;
+    } else {
+      this.selectAllCheck = false;
+    }
+  }
+
+  toggleSelectionMode(value: boolean) {
+    this.selection = value;
+    this.activeLayer = undefined;
+    if (value === true) {
+      this.layerTool = false;
+    }
+  }
+
+  layersCheckedOpacity(): any {
+    if (this.layersChecked.length > 1) {
+      return 1;
+    } else {
+      const opacity = [];
+      for (const layer of this.layersChecked) {
+        opacity.push(layer.opacity);
+      }
+      return opacity;
+    }
+  }
+
+  selectAll() {
+    if (!this.selectAllCheck) {
+      for (const layer of this.layers) {
+        layer.options.check = true;
+        if (!layer.baseLayer) {
+          this.layersChecked.push(layer);
+        }
+      }
+      this.selectAllCheck$.next(true);
+    } else {
+      for (const layer of this.layers) {
+        layer.options.check = false;
+      }
+      this.layersChecked = [];
+      this.selectAllCheck$.next(false);
     }
   }
 }

@@ -8,7 +8,6 @@ export interface LayerOptions {
   sourceOptions?: AnyDataSourceOptions;
   title?: string;
   id?: string;
-  alias?: string;
   baseLayer?: boolean;
   opacity?: number;
   visible?: boolean;
@@ -16,11 +15,16 @@ export interface LayerOptions {
   zIndex?: number;
   minResolution?: number;
   maxResolution?: number;
+  minScaleDenom?: number;
+  maxScaleDenom?: number;
   showInLayerList?: boolean;
   removable?: boolean;
   legendOptions?: LegendOptions;
   ol?: olLayer;
   tooltip?: TooltipContent;
+  _internal?: { [key: string]: string };
+  active?: boolean;
+  check?: boolean;
 }
 
 export interface GroupLayers {
@@ -50,7 +54,7 @@ export interface LegendOptions {
 export interface ItemStyleOptions {
   name: string;
   title?: string;
-  }
+}
 
 export interface OutputLayerLegend {
   title: string;

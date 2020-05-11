@@ -1,5 +1,6 @@
 import olSource from 'ol/source/Source';
 import { DownloadOptions } from '../../../download/shared/download.interface';
+import { OgcFilterOperatorType } from '../../../filter/shared/ogc-filter.enum';
 
 export interface DataSourceOptions {
   type?:
@@ -16,10 +17,8 @@ export interface DataSourceOptions {
     | 'mvt'
     | 'cluster';
   optionsFromCapabilities?: boolean;
-  // title: string;
-  // alias?: string;
-
-  // view?: ol.olx.layer.ImageOptions;
+  optionsFromApi?: boolean;
+  _layerOptionsFromSource?: { [key: string]: string };
   id?: string;
   ol?: olSource;
   minZoom?: number;
@@ -34,6 +33,7 @@ export interface SourceFieldsOptionsParams {
   alias?: any;
   values?: any;
   excludeFromOgcFilters?: boolean;
+  allowedOperatorsType?: OgcFilterOperatorType;
 }
 
 export interface Legend {

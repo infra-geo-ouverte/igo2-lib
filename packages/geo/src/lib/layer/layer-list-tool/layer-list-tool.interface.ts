@@ -1,11 +1,9 @@
-import { LayerListControlsEnum } from '@igo2/geo';
+import { LayerListControlsEnum } from '../layer-list/layer-list.enum';
 
 export interface LayerListControlsOptions {
   excludeBaseLayers?: boolean;
   showToolbar?: LayerListControlsEnum;
-  toolbarThreshold?: number;
   keyword?: string;
-  sortedAlpha?: boolean;
+  sortAlpha?: boolean;
   onlyVisible?: boolean;
-  onlyInRange?: boolean;
 }

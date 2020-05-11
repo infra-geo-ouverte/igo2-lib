@@ -127,7 +127,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     return this.capabilitiesService
       .getWMSOptions(localLayerOptions)
       .pipe(map(wmsDataSourceOptions => {
-        return wmsDataSourceOptions._layerOptionsFromCapabilities.title;
+        return wmsDataSourceOptions._layerOptionsFromSource.title;
       }));
   }
 
@@ -172,7 +172,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   onChangeStyle() {
     this.updateLegend();
-    this.layer.dataSource.ol.updateParams({STYLES: this.currentStyle});
+    let STYLES = '';
+    this.layer.dataSource.ol.getParams().LAYERS.split(',').map(layer =>
+      STYLES += this.currentStyle + ','
+    );
+    STYLES = STYLES.slice(0, -1);
+    this.layer.dataSource.ol.updateParams({STYLES});
   }
 
   onLoadImage(id: string) {

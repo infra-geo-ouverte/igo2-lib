@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { MessageService, LanguageService, ConfigService } from '@igo2/core';
+import { strEnum } from '@igo2/utils';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { IgoMap } from '../../map/shared/map';
@@ -29,14 +30,17 @@ import { StyleListService } from '../style-list/style-list.service';
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
-  public formats = ExportFormat;
+  public formats;
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
+  public forceNaming = false;
 
   private layers$$: Subscription;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
+  private clientSideFileSizeMax: number;
+  public fileSizeMb: number;
 
   @Input() map: IgoMap;
 
@@ -50,6 +54,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private formBuilder: FormBuilder,
     private config: ConfigService
   ) {
+    this.chargerConfiguration();
     this.buildForm();
   }
 
@@ -59,6 +64,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         return layer instanceof VectorLayer && layer.exportable === true;
       }) as VectorLayer[];
     });
+    const configFileSizeMb = this.config.getConfig(
+      'importExport.clientSideFileSizeMaxMb'
+    );
+    this.clientSideFileSizeMax =
+      (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
+    this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
   }
 
   ngOnDestroy() {
@@ -86,12 +97,19 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
     const layer = this.map.getLayerById(data.layer);
+    let filename = layer.title;
+    if (data.name !== undefined) {
+      filename = data.name;
+    }
+
     let olFeatures = layer.dataSource.ol.getFeatures();
     if (layer.dataSource instanceof ClusterDataSource) {
-      olFeatures = olFeatures.flatMap((cluster: any) => cluster.get('features'));
+      olFeatures = olFeatures.flatMap((cluster: any) =>
+        cluster.get('features')
+      );
     }
     this.exportService
-      .export(olFeatures, data.format, layer.title, this.map.projection)
+      .export(olFeatures, data.format, filename, this.map.projection)
       .subscribe(
         () => {},
         (error: Error) => this.onFileExportError(error),
@@ -102,21 +120,29 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private buildForm() {
-    this.form = this.formBuilder.group({
-      format: ['', [Validators.required]],
-      layer: ['', [Validators.required]]
-    });
+    if (this.forceNaming) {
+      this.form = this.formBuilder.group({
+        format: ['', [Validators.required]],
+        layer: ['', [Validators.required]],
+        name: ['', [Validators.required]]
+      });
+    } else {
+      this.form = this.formBuilder.group({
+        format: ['', [Validators.required]],
+        layer: ['', [Validators.required]]
+      });
+    }
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
     if (!this.config.getConfig('importWithStyle')) {
-    handleFileImportSuccess(
-      file,
-      features,
-      this.map,
-      this.messageService,
-      this.languageService
-    );
+      handleFileImportSuccess(
+        file,
+        features,
+        this.map,
+        this.messageService,
+        this.languageService
+      );
     } else {
       handleFileImportSuccess(
         file,
@@ -136,12 +162,70 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       file,
       error,
       this.messageService,
-      this.languageService
+      this.languageService,
+      this.fileSizeMb
     );
   }
 
   private onFileExportError(error: Error) {
     this.loading$.next(false);
     handleFileExportError(error, this.messageService, this.languageService);
+  }
+
+  private chargerConfiguration() {
+    if (this.config.getConfig('importExport.forceNaming') !== undefined) {
+      this.forceNaming = this.config.getConfig('importExport.forceNaming');
+    }
+
+    if (this.config.getConfig('importExport.formats') !== undefined) {
+      const liste = this.validerListeFormat(
+        this.config.getConfig('importExport.formats')
+      );
+      this.formats = strEnum(liste);
+    } else {
+      this.formats = ExportFormat;
+    }
+  }
+
+  private validerListeFormat(liste: string[]): string[] {
+    return liste
+      .filter(format => {
+        if (
+          format.toUpperCase() === ExportFormat.CSV.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.GML.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.GPX.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.KML.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()
+        ) {
+          return format;
+        }
+      })
+      .map(format => {
+        if (format.toUpperCase() === ExportFormat.CSV.toUpperCase()) {
+          format = ExportFormat.CSV;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.GML.toUpperCase()) {
+          format = ExportFormat.GML;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.GPX.toUpperCase()) {
+          format = ExportFormat.GPX;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase()) {
+          format = ExportFormat.GeoJSON;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.KML.toUpperCase()) {
+          format = ExportFormat.KML;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()) {
+          format = ExportFormat.Shapefile;
+          return format;
+        }
+      });
   }
 }

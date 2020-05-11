@@ -12,7 +12,7 @@
           (toggle)="toggleLegendItem($event, item)"
           svgIcon="chevron-up">
         </mat-icon>
-        <h4 matLine>{{computeItemTitle(item) | async}}</h4>
+        <h4 matLine>{{computeItemTitle(item) | async}} </h4>
       </mat-list-item>  
       <div #legend class="igo-layer-legend" [ngClass]="{'with-title': item.title}">
         <div *ngIf="currentStyle !== undefined">

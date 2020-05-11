@@ -389,7 +389,8 @@ export class ContextService {
         sourceOptions: {
           type: layer.dataSource.options.type,
           params: layer.dataSource.options.params,
-          url: layer.dataSource.options.url
+          url: layer.dataSource.options.url,
+          queryable: layer.queryable
         }
       };
       if (opts.sourceOptions.type) {
