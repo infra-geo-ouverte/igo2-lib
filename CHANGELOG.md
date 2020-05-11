@@ -1,3 +1,48 @@
+# [1.3.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.2.0...1.3.0) (2020-05-11)
+
+
+### Bug Fixes
+
+* **catalog:** apply the regular expression on the isolated layers of the first level of the catalog ([#599](https://github.com/infra-geo-ouverte/igo2-lib/issues/599)) ([514822f](https://github.com/infra-geo-ouverte/igo2-lib/commit/514822f26d8d74674fd9e84687d581a35581cd44))
+* **context:** queryable must be saved ([dba0e3e](https://github.com/infra-geo-ouverte/igo2-lib/commit/dba0e3e33dd444851f7e3c5859924d37edb68711))
+* **context:** queryable must be saved ([2085a17](https://github.com/infra-geo-ouverte/igo2-lib/commit/2085a178b89b5bd2a6865af7ac67ab36ba3487f6))
+* **datasource:** improve error handling ([e83a84e](https://github.com/infra-geo-ouverte/igo2-lib/commit/e83a84ebaeb3fcfb63783cfde318125130859d32))
+* **demo/toast-panel:** fix spatial-filter alias in demo / resize checkbox in zoom menu feature ([#586](https://github.com/infra-geo-ouverte/igo2-lib/issues/586)) ([b9a1727](https://github.com/infra-geo-ouverte/igo2-lib/commit/b9a17271105301e3d92e60dcd0f82808f24a9340))
+* **directions:** search term change and map synchronization ([#580](https://github.com/infra-geo-ouverte/igo2-lib/issues/580)) ([dc68fe3](https://github.com/infra-geo-ouverte/igo2-lib/commit/dc68fe369a628e8090fae34948c6124348fad026))
+* **feature:** excludeAttribute works with offlineButton ([#628](https://github.com/infra-geo-ouverte/igo2-lib/issues/628)) ([4acfbbc](https://github.com/infra-geo-ouverte/igo2-lib/commit/4acfbbcfce8530653845770bf669fff8eea4e654))
+* **layer:** add tile-watcher to vectortile-layer ([#595](https://github.com/infra-geo-ouverte/igo2-lib/issues/595)) ([b3cb8b3](https://github.com/infra-geo-ouverte/igo2-lib/commit/b3cb8b301528d08bdea3bd6bb4a8395662c263fc))
+* **layer:** prevent empty map message to be shown too quickly ([c44378b](https://github.com/infra-geo-ouverte/igo2-lib/commit/c44378bbf59c1777e3751023ebdbebf8cdf591e4))
+* **layer:** updateInResolutionRange works properly if maxResolution = 0 ([#597](https://github.com/infra-geo-ouverte/igo2-lib/issues/597)) ([cb6226a](https://github.com/infra-geo-ouverte/igo2-lib/commit/cb6226aeb980845d79ffb63ffab89563310b2fe6))
+* **layer-list:** fix baselayer with select all and opacity CSS ([#632](https://github.com/infra-geo-ouverte/igo2-lib/issues/632)) ([f57405c](https://github.com/infra-geo-ouverte/igo2-lib/commit/f57405c51a5bf631136907105e6ebe5b6d99bbec))
+* **layer-list:** fix selection mode ([#635](https://github.com/infra-geo-ouverte/igo2-lib/issues/635)) ([29bac86](https://github.com/infra-geo-ouverte/igo2-lib/commit/29bac86bd4136153f210587324d132c72e8f1a10))
+* **map:** tracking fix ([#629](https://github.com/infra-geo-ouverte/igo2-lib/issues/629)) ([1c09410](https://github.com/infra-geo-ouverte/igo2-lib/commit/1c0941038936f47a50e9248be91830d4bd57c48d))
+* **network:** connection message after leaving the tab on the phone ([#614](https://github.com/infra-geo-ouverte/igo2-lib/issues/614)) ([b652565](https://github.com/infra-geo-ouverte/igo2-lib/commit/b652565933e382c39cba8d82f43954c49e079356))
+* **ogc-filter, style:** better handling grouped layers ([#581](https://github.com/infra-geo-ouverte/igo2-lib/issues/581)) ([f0c33d5](https://github.com/infra-geo-ouverte/igo2-lib/commit/f0c33d5d871b8e43a6e6fca314ecd726803f4b68))
+* **query:** fix Firefox and IE svg change bug ([#610](https://github.com/infra-geo-ouverte/igo2-lib/issues/610)) ([9ab8497](https://github.com/infra-geo-ouverte/igo2-lib/commit/9ab8497abf33b029918520478f3b55173f777b5d))
+* **queryFormat:** fix layer's queryFormat htmlgml2 ([#620](https://github.com/infra-geo-ouverte/igo2-lib/issues/620)) ([111f8fc](https://github.com/infra-geo-ouverte/igo2-lib/commit/111f8fc5708c4d0a8e72b4ab9762603c2d5a7cc5))
+* **search:** provide projection service for coordinates search source ([229c81a](https://github.com/infra-geo-ouverte/igo2-lib/commit/229c81aa7ccf7d8910458c7291ea8ee16fce15d0))
+* **spatial-filter:** fix bug when _internal is not defined ([b7a6354](https://github.com/infra-geo-ouverte/igo2-lib/commit/b7a63543238ad45722da27f262c3815036faa841))
+* **time-filter:** fix UTC time, language and style on selected date ([#621](https://github.com/infra-geo-ouverte/igo2-lib/issues/621)) ([30d5573](https://github.com/infra-geo-ouverte/igo2-lib/commit/30d557332cf53d7f72711cf319af8e05dc9e2676))
+* **TimeFilter:** calendar year range, don't reset year range in UI (igo2 [#359](https://github.com/infra-geo-ouverte/igo2-lib/issues/359)) ([#619](https://github.com/infra-geo-ouverte/igo2-lib/issues/619)) ([8091a41](https://github.com/infra-geo-ouverte/igo2-lib/commit/8091a41cc22ff6ece7e8d41db38a0176f1216994))
+
+
+### Features
+
+* **catalog:** add catalog composite ([#559](https://github.com/infra-geo-ouverte/igo2-lib/issues/559)) ([2d729fc](https://github.com/infra-geo-ouverte/igo2-lib/commit/2d729fcfc62469e69eeae40e133e712a94d33fa1))
+* **context:** allow user to filter context list ([#588](https://github.com/infra-geo-ouverte/igo2-lib/issues/588)) ([0ed466b](https://github.com/infra-geo-ouverte/igo2-lib/commit/0ed466b08ab53a24ccb312aff809c02d5c00787b))
+* **context-list:** add context list tool (alpha, add context) ([#624](https://github.com/infra-geo-ouverte/igo2-lib/issues/624)) ([d8a1431](https://github.com/infra-geo-ouverte/igo2-lib/commit/d8a143185733f143cad27cd7de66e943d7e4b049))
+* **datasource:** retrieve options from api ([#583](https://github.com/infra-geo-ouverte/igo2-lib/issues/583)) ([e943f86](https://github.com/infra-geo-ouverte/igo2-lib/commit/e943f86e52c988671c72c840e7eff0f0054526fc))
+* **datasource:** retrieve query format from capabilities ([#582](https://github.com/infra-geo-ouverte/igo2-lib/issues/582)) ([1278cef](https://github.com/infra-geo-ouverte/igo2-lib/commit/1278cef19772558b8f8785f5f4d5d9466bb43d9b))
+* **import:** import cluster ([#616](https://github.com/infra-geo-ouverte/igo2-lib/issues/616)) ([e5dcbfd](https://github.com/infra-geo-ouverte/igo2-lib/commit/e5dcbfd5d9f5c12823db42213563d5678a24a63d))
+* **import-export:** ajout de l'aggregation pour gpx ([#623](https://github.com/infra-geo-ouverte/igo2-lib/issues/623)) ([20253a4](https://github.com/infra-geo-ouverte/igo2-lib/commit/20253a4d41aa13b10f7513027e467b07b2c7fc38)), closes [#599](https://github.com/infra-geo-ouverte/igo2-lib/issues/599)
+* **layers:** Enhanced table of content for layers management ([#625](https://github.com/infra-geo-ouverte/igo2-lib/issues/625)) ([31c75a7](https://github.com/infra-geo-ouverte/igo2-lib/commit/31c75a70bd5e1658cfbc746e77fb811fcb2cb690))
+* **ogc-filter:** Provide operator at the field scale ([#608](https://github.com/infra-geo-ouverte/igo2-lib/issues/608)) ([f7911db](https://github.com/infra-geo-ouverte/igo2-lib/commit/f7911dbef4c27cb1d1e1175a9914ae95ef10df8d))
+* **QueryService:** Add create geom for mapTag when geom is null on extractData [#617](https://github.com/infra-geo-ouverte/igo2-lib/issues/617) ([#618](https://github.com/infra-geo-ouverte/igo2-lib/issues/618)) ([8c07a9f](https://github.com/infra-geo-ouverte/igo2-lib/commit/8c07a9fb619e30e4846909aa2c0420f627696d96))
+* **search results:** manage focus/unfocus and select action on search results (and get feature info) ([#585](https://github.com/infra-geo-ouverte/igo2-lib/issues/585)) ([b23693f](https://github.com/infra-geo-ouverte/igo2-lib/commit/b23693fd4ceddda61a777633790718ed1c10ee36))
+* **search-setting:** Add a button to check/uncheck all sources ([#589](https://github.com/infra-geo-ouverte/igo2-lib/issues/589)) ([92bbe07](https://github.com/infra-geo-ouverte/igo2-lib/commit/92bbe07403b320c232acae7ec140e7576d9bbf43))
+
+
+
 # [1.2.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.1.0...1.2.0) (2020-02-10)
 
 
