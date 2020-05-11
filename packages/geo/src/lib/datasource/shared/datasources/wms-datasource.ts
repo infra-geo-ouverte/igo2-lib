@@ -15,6 +15,7 @@ import {
 } from './wms-wfs.utils';
 
 import { ObjectUtils } from '@igo2/utils';
+import { BehaviorSubject } from 'rxjs';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
@@ -38,6 +39,18 @@ export class WMSDataSource extends DataSource {
       ? (this.options as any).queryHtmlTarget
       : QueryHtmlTarget.BLANK;
   }
+
+  set ogcFilters(value: any) {
+    // this.ogcFilters$.next(value);
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
+  }
+  get ogcFilters(): any {
+    return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+    // return this.ogcFilters$.value;
+    // (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
+  }
+
+  readonly ogcFilters$: BehaviorSubject<any> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WMSDataSourceOptions,
@@ -121,6 +134,9 @@ export class WMSDataSource extends DataSource {
       fieldNameGeometry
     );
     sourceParams.FILTER = filterQueryString;
+    // this.ogcFilters = initOgcFilters;
+    this.setOgcFilters(initOgcFilters, true);
+
   }
 
   refresh() {
@@ -136,6 +152,13 @@ export class WMSDataSource extends DataSource {
 
   protected createOlSource(): olSourceImageWMS {
     return new olSourceImageWMS(this.options);
+  }
+
+  setOgcFilters(ogcFilters, triggerEvent: boolean = false) {
+    this.ogcFilters = ogcFilters;
+    if (triggerEvent) {
+      this.ogcFilters$.next(this.ogcFilters);
+    }
   }
 
   getLegend(style?: string, scale?: number): Legend[] {

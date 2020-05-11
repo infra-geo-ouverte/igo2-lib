@@ -25,6 +25,26 @@ export interface LayerOptions {
   _internal?: { [key: string]: string };
   active?: boolean;
   check?: boolean;
+  linkedLayers?: LayersLink;
+}
+
+export interface LayersLink {
+  linkId: string;
+  links?: LayersLinkProperties[];
+  computedLinks?: ComputedLink[];
+}
+export interface LayersLinkProperties {
+  bidirectionnal?: boolean;
+  linkedIds: string[];
+  properties: string[]; // opacity,visible,ogcFilters & timeFilter ( todo zIndex)
+}
+
+export interface ComputedLink {
+  srcId: string;
+  dstId: string;
+  properties: string[]; // opacity,visible,ogcFilters & timeFilter ( todo zIndex)
+  bidirectionnal?: boolean;
+  srcProcessed?: boolean;
 }
 
 export interface GroupLayers {

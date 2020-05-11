@@ -5,18 +5,18 @@ import {
   Subscription,
   combineLatest
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
 import { AuthInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
 
-import { DataSource, Legend } from '../../../datasource';
+import { DataSource, Legend, WMSDataSource } from '../../../datasource';
 import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
-import { LayerOptions } from './layer.interface';
+import { LayerOptions, LayersLink, ComputedLink } from './layer.interface';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -158,8 +158,100 @@ export abstract class Layer {
     this.unobserveResolution();
     if (igoMap !== undefined) {
       this.observeResolution();
+      this.observePropertiesChange();
     }
   }
+
+  private observePropertiesChange() {
+    if (!this.map) {
+      return;
+    }
+    // not needed this.computeLayersRelation();
+    this.ol.on('propertychange', evt => {
+      this.transferCommonProperties(evt);
+    });
+
+    if ((this.dataSource as WMSDataSource).ogcFilters$) {
+      (this.dataSource as WMSDataSource).ogcFilters$.subscribe(ogcFilters => console.log(ogcFilters));
+    }
+
+  }
+
+  private transferCommonProperties(layerChange) {
+    // TODO Sourcefields
+    // Synced delete layer.
+    const key = layerChange.key;
+    const layerChangeProperties = layerChange.target.getProperties();
+    const newValue = layerChangeProperties[key];
+    if (key !== 'visible' &&  key !== 'opacity') {
+      return;
+    }
+    const linkedLayers = layerChangeProperties.linkedLayers as LayersLink;
+    if (!linkedLayers) {
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+    if (isParentLayer) {
+      // search for child layers
+      currentLinks.map(link => {
+        if (!link.properties || link.properties.indexOf(key) === -1) {
+          return;
+        }
+        link.linkedIds.map(linkedId => {
+          const layerToApply = this.map.layers.find(layer => layer.options.linkedLayers && layer.options.linkedLayers.linkId === linkedId);
+          if (layerToApply) {
+            layerToApply.ol.set(key, newValue, true);
+            if (key === 'visible') {
+              layerToApply.visible$.next(newValue);
+            }
+          }
+        });
+      });
+    } else {
+      // search for parent layer
+      this.map.layers.map(layer => {
+        if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
+          layer.options.linkedLayers.links.map(l => {
+            if (l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
+              layer.ol.set(key, newValue, false);
+              if (key === 'visible') {
+                layer.visible$.next(newValue);
+              }
+            }
+          });
+        }
+      });
+    }
+  }
+
+  // private computeLayersRelation() {
+  //   if (!this.map) { return; }
+  //   this.map.status$
+  //     .pipe(first())
+  //     .subscribe(() => {
+  //       const computedLinks = [];
+  //       this.map.layers
+  //         .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
+  //         .map(layer => {
+  //           const srcId = layer.options.linkedLayers.linkId;
+  //           layer.options.linkedLayers.links.map(link => {
+  //             const bidirectionnal = link.bidirectionnal !== undefined ? link.bidirectionnal : true;
+  //             link.linkedIds.map(linkedId => {
+  //               computedLinks.push(
+  //                 { srcId, dstId: linkedId, properties: link.properties, bidirectionnal, srcProcessed: undefined } as ComputedLink);
+  //             });
+  //           });
+  //         });
+
+  //       if (this.options.linkedLayers && this.options.linkedLayers.linkId) {
+  //         const linkId = this.options.linkedLayers.linkId;
+  //         this.options.linkedLayers.computedLinks =
+  //           computedLinks.filter(computedLink => computedLink.srcId === linkId || computedLink.dstId === linkId);
+  //       }
+  //     });
+  // }
 
   private observeResolution() {
     this.resolution$$ = this.map.viewController.resolution$.subscribe(() =>

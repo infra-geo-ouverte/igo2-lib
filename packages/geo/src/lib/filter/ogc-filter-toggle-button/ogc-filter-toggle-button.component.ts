@@ -120,5 +120,6 @@ export class OgcFilterToggleButtonComponent implements OnInit {
       // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
       this.datasource.ol.clear();
     }
+    this.refreshFilters();
   }
 }
