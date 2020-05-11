@@ -443,13 +443,6 @@ export class CatalogService {
         break;
       } else {
         // layer without group
-<<<<<<< HEAD
-        if (this.testLayerRegexes(item.Name, regexes) !== false) {
-          const layerItem = this.prepareCatalogItemLayer(item, catalog.id, layersQueryFormat,
-            catalog, catalogQueryParams, catalogSourceOptions, catalogTooltipType);
-          itemsPrepare.push(layerItem);
-        }
-=======
         const layerItem = this.prepareCatalogItemLayer(
           item,
           catalog.id,
@@ -457,7 +450,6 @@ export class CatalogService {
           catalog
         );
         itemsPrepare.push(layerItem);
->>>>>>> feat(datasource): retrieve options from api (#583)
       }
     }
   }
