@@ -1,7 +1,21 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnInit,
+  ViewChild,
+  OnDestroy
+} from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, LayerListControlsOptions, IgoMap, SearchSourceService, sourceCanSearch, Layer } from '@igo2/geo';
+import {
+  LayerListControlsEnum,
+  LayerListControlsOptions,
+  IgoMap,
+  SearchSourceService,
+  sourceCanSearch,
+  Layer
+} from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
 import { MatTabChangeEvent } from '@angular/material';
@@ -24,7 +38,6 @@ import { map, debounceTime } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
-
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -54,17 +67,19 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return this._layerListControls;
   }
   set layerListControls(value: LayerListControlsOptions) {
-
     const stateOptions = this.layerListToolState.getLayerListControls();
     const stateKeyword = stateOptions.keyword;
     const stateOnlyVisible = stateOptions.onlyVisible;
     const stateSortAlpha = stateOptions.sortAlpha;
 
     value.keyword = stateKeyword !== '' ? stateKeyword : value.keyword;
-    value.onlyVisible = stateOnlyVisible !== undefined ? stateOnlyVisible : value.onlyVisible;
-    value.sortAlpha = stateSortAlpha !== undefined ? stateSortAlpha : value.sortAlpha;
+    value.onlyVisible =
+      stateOnlyVisible !== undefined ? stateOnlyVisible : value.onlyVisible;
+    value.sortAlpha =
+      stateSortAlpha !== undefined ? stateSortAlpha : value.sortAlpha;
 
-    value.onlyVisible = value.onlyVisible === undefined ? false : value.onlyVisible;
+    value.onlyVisible =
+      value.onlyVisible === undefined ? false : value.onlyVisible;
     value.sortAlpha = value.sortAlpha === undefined ? false : value.sortAlpha;
 
     this._layerListControls = value;
@@ -79,18 +94,18 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   get visibleOrInRangeLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
-      map(
-        layers => layers
-          .filter(layer => layer.visible$.value && layer.isInResolutionsRange$.value)
-      ));
+      map(layers =>
+        layers.filter(
+          layer => layer.visible$.value && layer.isInResolutionsRange$.value
+        )
+      )
+    );
   }
 
   get visibleLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
-      map(
-        layers => layers
-          .filter(layer => layer.visible$.value)
-      ));
+      map(layers => layers.filter(layer => layer.visible$.value))
+    );
   }
 
   get excludeBaseLayers(): boolean {
@@ -98,9 +113,12 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   get layerFilterAndSortOptions(): LayerListControlsOptions {
-    const filterSortOptions = Object.assign({
-      showToolbar: LayerListControlsEnum.default
-    }, this.layerListControls);
+    const filterSortOptions = Object.assign(
+      {
+        showToolbar: LayerListControlsEnum.default
+      },
+      this.layerListControls
+    );
 
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
@@ -118,12 +136,13 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   @ViewChild('tabGroup') tabGroup;
 
   get searchToolInToolbar(): boolean {
-    return this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1
-      &&
+    return (
+      this.toolState.toolbox.getToolbar().indexOf('searchResults') !== -1 &&
       this.searchSourceService
         .getSources()
         .filter(sourceCanSearch)
-        .filter(s => s.available && s.getType() === 'Layer').length > 0;
+        .filter(s => s.available && s.getType() === 'Layer').length > 0
+    );
   }
 
   get catalogToolInToolbar(): boolean {
@@ -139,27 +158,37 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     private toolState: ToolState,
     public mapState: MapState,
     private searchSourceService: SearchSourceService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.selectedTab();
     this.resolution$$ = combineLatest([
       this.map.layers$,
-      this.map.viewController.resolution$]
-    ).pipe(
-      debounceTime(10)
-    ).subscribe((bunch: [Layer[], number]) => {
-      this.layers$.next(
-        bunch[0].filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
-      );
-    });
+      this.map.viewController.resolution$
+    ])
+      .pipe(debounceTime(10))
+      .subscribe((bunch: [Layer[], number]) => {
+        this.layers$.next(
+          bunch[0].filter(
+            layer =>
+              layer.showInLayerList !== false &&
+              (!this.excludeBaseLayers || !layer.baseLayer)
+          )
+        );
+      });
 
-    this.mapState.showAllLegendsValue = this.mapState.showAllLegendsValue !== undefined ?
-    this.mapState.showAllLegendsValue : this.showAllLegendsValue || false;
-    this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
+    if (this.allowShowAllLegends) {
+      this.mapState.showAllLegendsValue =
+        this.mapState.showAllLegendsValue !== undefined
+          ? this.mapState.showAllLegendsValue
+          : this.showAllLegendsValue || false;
+      this.showAllLegendsValue$.next(this.mapState.showAllLegendsValue);
+    } else {
+      this.showAllLegendsValue$.next(false);
+    }
 
     // prevent message to be shown too quickly. Waiting for layers
-    setTimeout(() => this.delayedShowEmptyMapContent = true, 50);
+    setTimeout(() => (this.delayedShowEmptyMapContent = true), 250);
   }
 
   ngOnDestroy(): void {
@@ -187,7 +216,11 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   public tabChanged(tab: MatTabChangeEvent) {
     this.layerListToolState.setSelectedTab(tab.index);
     this.layers$.next(
-      this.map.layers.filter(layer => layer.showInLayerList !== false && (!this.excludeBaseLayers || !layer.baseLayer))
+      this.map.layers.filter(
+        layer =>
+          layer.showInLayerList !== false &&
+          (!this.excludeBaseLayers || !layer.baseLayer)
+      )
     );
   }
 
@@ -200,10 +233,15 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   showAllLegend() {
     if (this.layers$.getValue().length === 0) {
       return false;
-    } else if (this.layers$.getValue().length !== 0 && this.allowShowAllLegends === false) {
+    } else if (
+      this.layers$.getValue().length !== 0 &&
+      this.allowShowAllLegends === false
+    ) {
       let visibleOrInRangeLayers;
-      this.visibleOrInRangeLayers$.subscribe((value) => {
-        value.length === 0 ? visibleOrInRangeLayers = false : visibleOrInRangeLayers = true;
+      this.visibleOrInRangeLayers$.subscribe(value => {
+        value.length === 0
+          ? (visibleOrInRangeLayers = false)
+          : (visibleOrInRangeLayers = true);
       });
 
       if (visibleOrInRangeLayers === false) {

@@ -23,13 +23,14 @@
         [toggleLegendOnVisibilityChange]="toggleLegendOnVisibilityChange"
         [selectionMode]="selection"
         [selectAll]="selectAllCheck"
+        [layerCheck]="layer.options.check"
         (action)="toggleLayerTool($event)"
         (checkbox)="layersCheck($event)">
     </igo-layer-item>
   </ng-template>
 </igo-list>
 
-<igo-panel *ngIf="layerTool && activeLayer" class="igo-layer-actions-container" [title]="activeLayer.title">
+<igo-panel *ngIf="!selection && layerTool && activeLayer" class="igo-layer-actions-container" [title]="activeLayer.title">
   <div class="igo-layer-button-group">
   <ng-container igoLayerItemToolbar
     [ngTemplateOutlet]="templateLayerToolbar"
@@ -129,19 +130,21 @@
     </button>
 
     <mat-menu #opacityMenu="matMenu">
-      <mat-slider *ngIf="layersChecked.length"
-        id="opacity-slider"
-        color="primary"
-        thumbLabel
-        tickInterval="5"
-        step="5"
-        [min]="0"
-        [max]="100"
-        [(ngModel)]="checkOpacity"
-        [matTooltip]="'igo.geo.layer.opacity' | translate"
-        matTooltipShowDelay="500"
-        tooltip-position="below">
-      </mat-slider>
+      <div id="opacity-menu">
+        <mat-slider *ngIf="layersChecked.length"
+          id="opacity-slider"
+          color="primary"
+          thumbLabel
+          tickInterval="5"
+          step="5"
+          [min]="0"
+          [max]="100"
+          [(ngModel)]="checkOpacity"
+          [matTooltip]="'igo.geo.layer.opacity' | translate"
+          matTooltipShowDelay="500"
+          tooltip-position="below">
+        </mat-slider>
+      </div>
     </mat-menu>
 
     <button

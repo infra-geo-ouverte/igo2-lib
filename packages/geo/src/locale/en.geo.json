@@ -60,6 +60,7 @@
         "exportButton": "Export",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
+        "exportFileNamePlaceholder": "Filename",
         "exportTabTitle": "Export",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",

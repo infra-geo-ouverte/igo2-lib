@@ -60,6 +60,7 @@
         "exportButton": "Exporter",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
+        "exportFileNamePlaceholder": "Nom du fichier",
         "exportTabTitle": "Exporter",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
