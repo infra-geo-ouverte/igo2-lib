@@ -163,33 +163,40 @@ export abstract class Layer {
     if (igoMap !== undefined) {
       this.observeResolution();
       this.observePropertiesChange();
-      // Sync the child layer with parent on the first load.
-      this.map.status$
-        .pipe(first())
-        .subscribe(() => {
-          this.map.layers
-            .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
-            .map(layer => {
-              layer.options.linkedLayers.links.map(link => {
-                if (link.properties.indexOf('visible') !== -1) {
-                  layer.ol.set('visible', !(layer.visible), false);
-                  layer.ol.set('visible', !(layer.visible), false);
-                  layer.visible = layer.visible;
-                }
-                if (link.properties.indexOf('opacity') !== -1) {
-                  const baseOpacity = layer.ol.get('opacity');
-                  layer.ol.set('opacity', 0, false);
-                  layer.ol.set('opacity', baseOpacity, false);
-                  layer.opacity = layer.opacity;
-                }
-                if (link.properties.indexOf('ogcFilters') !== -1) {
-                  const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
-                  ogcFilters$.next(ogcFilters$.value);
-                }
-              });
-            });
-        });
+      this.syncChildLayers();
     }
+  }
+
+  private syncChildLayers() {
+    // Force the sync the child layers with parent on the first load.
+    if (!this.map) {
+      return;
+    }
+    this.map.status$
+      .pipe(first())
+      .subscribe(() => {
+        this.map.layers
+          .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
+          .map(layer => {
+            layer.options.linkedLayers.links.map(link => {
+              if (link.properties.indexOf('visible') !== -1) {
+                layer.ol.set('visible', !(layer.visible), false);
+                layer.ol.set('visible', !(layer.visible), false);
+                layer.visible = layer.visible;
+              }
+              if (link.properties.indexOf('opacity') !== -1) {
+                const baseOpacity = layer.ol.get('opacity');
+                layer.ol.set('opacity', 0, false);
+                layer.ol.set('opacity', baseOpacity, false);
+                layer.opacity = layer.opacity;
+              }
+              if (link.properties.indexOf('ogcFilters') !== -1) {
+                const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
+                ogcFilters$.next(ogcFilters$.value);
+              }
+            });
+          });
+      });
   }
 
   private observePropertiesChange() {
