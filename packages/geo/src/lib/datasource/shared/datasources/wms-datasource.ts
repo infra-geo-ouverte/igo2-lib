@@ -6,7 +6,7 @@ import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import {
   formatWFSQueryString,
@@ -154,7 +154,7 @@ export class WMSDataSource extends DataSource {
     return new olSourceImageWMS(this.options);
   }
 
-  setOgcFilters(ogcFilters, triggerEvent: boolean = false) {
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);

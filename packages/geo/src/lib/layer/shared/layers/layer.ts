@@ -5,7 +5,7 @@ import {
   Subscription,
   combineLatest
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
@@ -18,6 +18,7 @@ import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions, LayersLink } from './layer.interface';
 import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -30,6 +31,7 @@ export abstract class Layer {
   public status$: Subject<SubjectStatus>;
 
   private resolution$$: Subscription;
+  private ogcFilterWriter;
 
   get id(): string {
     return this.options.id || this.dataSource.id;
@@ -118,6 +120,7 @@ export abstract class Layer {
     public options: LayerOptions,
     protected authInterceptor?: AuthInterceptor
   ) {
+    this.ogcFilterWriter = new OgcFilterWriter();
     this.dataSource = options.source;
 
     this.ol = this.createOlLayer();
@@ -160,6 +163,32 @@ export abstract class Layer {
     if (igoMap !== undefined) {
       this.observeResolution();
       this.observePropertiesChange();
+      // Sync the child layer with parent on the first load.
+      this.map.status$
+        .pipe(first())
+        .subscribe(() => {
+          this.map.layers
+            .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
+            .map(layer => {
+              layer.options.linkedLayers.links.map(link => {
+                if (link.properties.indexOf('visible') !== -1) {
+                  layer.ol.set('visible', !(layer.visible), false);
+                  layer.ol.set('visible', !(layer.visible), false);
+                  layer.visible = layer.visible;
+                }
+                if (link.properties.indexOf('opacity') !== -1) {
+                  const baseOpacity = layer.ol.get('opacity');
+                  layer.ol.set('opacity', 0, false);
+                  layer.ol.set('opacity', baseOpacity, false);
+                  layer.opacity = layer.opacity;
+                }
+                if (link.properties.indexOf('ogcFilters') !== -1) {
+                  const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
+                  ogcFilters$.next(ogcFilters$.value);
+                }
+              });
+            });
+        });
     }
   }
 
@@ -172,9 +201,9 @@ export abstract class Layer {
       this.transferCommonProperties(evt);
     });
 
-    if ((this.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters$) {
-      (this.dataSource.options as OgcFilterableDataSourceOptions).ogcFilters$
-      .subscribe(ogcFilters => this.transferOgcFiltersProperties(ogcFilters));
+    if ((this.dataSource as OgcFilterableDataSource).ogcFilters$) {
+      (this.dataSource as OgcFilterableDataSource).ogcFilters$
+        .subscribe(ogcFilters => this.transferOgcFiltersProperties(ogcFilters));
     }
 
   }
@@ -220,23 +249,23 @@ export abstract class Layer {
       this.map.layers.map(layer => {
         if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
           layer.options.linkedLayers.links.map(l => {
-            if (l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
+            if (l.properties && l.properties.indexOf('ogcFilters') !== -1 &&
+              l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
               const layerType = layer.ol.getProperties().sourceOptions.type;
               if (layerType === 'wfs') {
                 (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
                 layer.ol.getSource().clear();
               }
               if (layerType === 'wms') {
-                const appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
+                let appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
                 if (this.ol.getProperties().sourceOptions.type === 'wfs') {
-                  console.log('this', this);
-                  // TODO Trouver comment récupérer le filter appliqué
-                  // appliedOgcFilter = this.ogcFilterWriter.buildFilter(
-                  //   ogcFilters,
-                  //   undefined,
-                  //   undefined,
-                  //   (this.dataSource.options as any).fieldNameGeometry
-                  // );
+                  appliedOgcFilter = this.ogcFilterWriter.handleOgcFiltersAppliedValue(
+                    layer.dataSource.options as OgcFilterableDataSourceOptions,
+                    (this.dataSource.options as any).fieldNameGeometry,
+                    this.map.viewController.getExtent(),
+                    this.map.viewController.getOlProjection()
+                  );
+
                 }
                 (layer.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
                 (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
@@ -250,10 +279,12 @@ export abstract class Layer {
   }
   private transferCommonProperties(layerChange) {
     // Synced delete layer.
+    // TODO minResolution
+    // TODO maxResolution
     const key = layerChange.key;
     const layerChangeProperties = layerChange.target.getProperties();
     const newValue = layerChangeProperties[key];
-    if (key !== 'visible' &&  key !== 'opacity') {
+    if (key !== 'visible' && key !== 'opacity') {
       return;
     }
     const linkedLayers = layerChangeProperties.linkedLayers as LayersLink;
@@ -284,7 +315,8 @@ export abstract class Layer {
       this.map.layers.map(layer => {
         if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
           layer.options.linkedLayers.links.map(l => {
-            if (l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
+            if (l.properties && l.properties.indexOf(key) !== -1 &&
+              l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
               layer.ol.set(key, newValue, false);
               if (key === 'visible') {
                 layer.visible$.next(newValue);

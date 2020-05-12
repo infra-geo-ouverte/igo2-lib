@@ -68,7 +68,7 @@ export class WFSDataSource extends DataSource {
     });
   }
 
-  setOgcFilters(ogcFilters, triggerEvent: boolean = false) {
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);
