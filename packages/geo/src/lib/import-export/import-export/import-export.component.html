@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group *ngIf="!exportOnly">
 
   <mat-tab [label]="'igo.geo.importExportForm.importTabTitle' | translate">
     <form class="igo-form">
@@ -76,3 +76,44 @@
   </mat-tab>
 
 </mat-tab-group>
+
+<div *ngIf="exportOnly">
+  <form class="igo-form" [formGroup]="form">
+
+    <div class="igo-input-container">
+      <mat-form-field>
+        <mat-select
+          formControlName="layer"
+          placeholder="{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}">
+          <mat-option *ngFor="let layer of layers" [value]="layer.id">
+            {{layer.title}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="igo-input-container">
+      <mat-form-field>
+        <mat-select
+          formControlName="format"
+          placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
+          <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+            {{format.value}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="igo-form-button-group">
+      <button
+        mat-raised-button
+        type="button"
+        [disabled]="!form.valid || (loading$ | async)"
+        (click)="handleExportFormSubmit(form.value)">
+        {{'igo.geo.importExportForm.exportButton' | translate}}
+      </button>
+      <igo-spinner [shown]="loading$ | async"></igo-spinner>
+    </div>
+
+  </form>
+</div>

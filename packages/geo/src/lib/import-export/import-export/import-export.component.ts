@@ -40,6 +40,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
+  @Input() exportOnly = false;
+
   @Input() map: IgoMap;
 
   constructor(
