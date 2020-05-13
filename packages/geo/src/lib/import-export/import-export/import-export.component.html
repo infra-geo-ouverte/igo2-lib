@@ -39,9 +39,9 @@
 
       <div class="igo-input-container">
         <mat-form-field>
+          <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
           <mat-select
-            formControlName="layer"
-            placeholder="{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}">
+            [formControl]="form.controls.layer" multiple>
             <mat-option *ngFor="let layer of layers" [value]="layer.id">
               {{layer.title}}
             </mat-option>
@@ -51,9 +51,9 @@
 
       <div class="igo-input-container">
         <mat-form-field>
+          <mat-label>{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}</mat-label>
           <mat-select
-            formControlName="format"
-            placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
+            formControlName="format">
             <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
               {{format.value}}
             </mat-option>
