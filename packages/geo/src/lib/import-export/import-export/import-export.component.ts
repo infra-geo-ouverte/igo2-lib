@@ -129,6 +129,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.form.patchValue({ format: formats[Object.keys(formats)[0]] });
         }
       });
+    console.log(this.formats$);
 
     this.exportableLayers$$ = this.exportableLayers$
       .pipe(skipWhile(layers => !layers))

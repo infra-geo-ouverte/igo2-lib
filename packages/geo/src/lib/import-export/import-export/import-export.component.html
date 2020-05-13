@@ -46,10 +46,10 @@
    <form class="igo-form" [formGroup]="form" *ngIf="(exportableLayers$ | async).length > 0">
       <div class="igo-input-container">
         <mat-form-field>
+          <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
           <mat-select
-            formControlName="layer"
-            placeholder="{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}">
-            <mat-option *ngFor="let layer of (exportableLayers$ | async)" [value]="layer.id">
+            [formControl]="form.controls.layer" multiple>
+            <mat-option *ngFor="let layer of exportableLayers$ | async" [value]="layer.id">
               {{layer.title}}
             </mat-option>
           </mat-select>
@@ -58,11 +58,11 @@
 
       <div class="igo-input-container">
         <mat-form-field>
+          <mat-label>{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}</mat-label>
           <mat-select
-            formControlName="format"
-            placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
-            <mat-option *ngFor="let format of (formats$ | async) | keyvalue " [value]="format.key">
-              {{'igo.geo.export.format.' + format.value | translate}}
+            formControlName="format">
+            <mat-option *ngFor="let format of formats$ | keyvalue" [value]="format.key">
+              {{format.value}}
             </mat-option>
           </mat-select>
         </mat-form-field>
