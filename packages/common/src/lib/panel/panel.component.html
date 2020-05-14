@@ -6,6 +6,13 @@
       <ng-content select="[panelHeader]"></ng-content>
     </div>
     <ng-content select="[panelRightButton]"></ng-content>
+
+    <button
+      color="primary"
+      mat-icon-button
+      (click)="startInteractiveTour()">
+      <mat-icon svgIcon="screen_share"></mat-icon>
+    </button>
   </h3>
 </div>
 <div class="igo-panel-content" title="">

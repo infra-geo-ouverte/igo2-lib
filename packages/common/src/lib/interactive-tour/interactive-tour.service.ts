@@ -136,8 +136,11 @@ export class InteractiveTourService {
       this.introJS.setOptions(this.configService.getConfig('introOptionsContextsList'));
     } else if (tourTool === 'Layers') {
         this.introJS.setOptions(this.configService.getConfig('introOptionsLayers'));
-  } else if (tourTool === 'measurer') {
+  } else if (tourTool === 'Measurer') {
     this.introJS.setOptions(this.configService.getConfig('introOptionsMeasurer'));
+} else {
+  alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;
+  alert(tourTool) ;
 }
 
     this.introJS.start();

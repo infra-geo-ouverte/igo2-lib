@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   HostBinding
 } from '@angular/core';
+import { InteractiveTourService } from './../interactive-tour/interactive-tour.service';
 
 @Component({
   selector: 'igo-panel',
@@ -32,5 +33,28 @@ export class PanelComponent {
   }
   private _withHeader = true;
 
-  constructor() {}
+  constructor(private interactiveTourService: InteractiveTourService) {}
+
+  startInteractiveTour() {
+    console.log('tour tool partie');
+    debugger;
+    const title = this.title;
+    console.log('titre de loutil:');
+    // meilleur idée que d'utiliser le titre pour faire ceci??? le titre va changer si on change dans le fichier traduction
+    // nb par contre c'est peut être une facon d'avoir un tour en anglais et un en francais..
+
+    console.log(title);
+    this.interactiveTourService.startTour(title);
+
+    // if (this.title === 'Contexts list') {
+    //   this.interactiveTourService.startTour('Contexts list');
+    // } else if (this.title === 'Layers') {
+    //   this.interactiveTourService.startTour('Layers');
+    // } else if (this.title === 'Measurer') {
+    // this.interactiveTourService.startTour('measurer');
+    // } else {
+    //   console.log('**ATTENTION cet outil est inconnue du tourInteractif')
+    // }
+
+  }
 }
