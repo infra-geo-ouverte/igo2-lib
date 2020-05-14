@@ -43,3 +43,44 @@
   @import '~dist/core/style/themes/teal.theme';
   @include igo-all-theming($theme);
 }
+
+
+.introjs-helperNumberLayer{
+  position:relative !important;
+  top:0px !important;
+  left: 90% !important;
+  border-radius: 0% !important;
+  padding:6px !important;
+}
+
+.introjs-overlay{
+  background-color: transparent !important;
+    // display: none !important;
+}
+
+
+.igo-introjs-helperLayer:before {
+
+  content: '' !important;
+  position: absolute !important;
+  // position: fixed !important;
+  width: inherit !important;
+  height: inherit !important;
+  border-radius: 0.5em !important;
+  border: .2em solid rgba(255, 217, 68, 0.8) !important;
+  box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.6) !important;
+}
+
+.igo-introjs-helperLayer {
+  background: transparent !important;
+}
+
+.introjs-prevbutton {
+  display:none !important;
+}
+
+
+// .introjs-donebutton {
+//   color:red !important;
+//   background-color: red !important;
+// }

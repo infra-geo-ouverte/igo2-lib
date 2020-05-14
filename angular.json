@@ -39,7 +39,8 @@
                 "output": "./assets/igo2/geo/"
               }
             ],
-            "styles": ["demo/src/styles.scss"],
+            "styles": ["demo/src/styles.scss",
+            "node_modules/intro.js/introjs.css"],
             "scripts": [],
             "es5BrowserSupport": true
           },
