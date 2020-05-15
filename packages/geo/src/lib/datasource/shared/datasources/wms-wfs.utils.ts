@@ -129,51 +129,53 @@ export function checkWfsParams(wfsDataSourceOptions, srcType?: string) {
 export function getFormatFromOptions(
   options: WFSDataSourceOptions | WMSDataSourceOptions
 ) {
+  const wfsOptions = options as WFSDataSourceOptions;
+
   let olFormatCls = OlFormat.WFS;
-  const outputFormat = options.paramsWFS.outputFormat
-    ? options.paramsWFS.outputFormat
+  const outputFormat = wfsOptions.paramsWFS.outputFormat
+    ? wfsOptions.paramsWFS.outputFormat
     : undefined;
 
   if (!outputFormat) {
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   }
 
   if (OlFormat[outputFormat]) {
     olFormatCls = OlFormat[outputFormat];
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('gml2')) {
     olFormatCls = OlFormat.WFS;
-    return new olFormatCls({ gmlFormat: olFormatGML2 });
+    return new olFormatCls({ ...wfsOptions.formatOptions, ... { gmlFormat: olFormatGML2 }});
   } else if (outputFormat.toLowerCase().match('gml32')) {
     olFormatCls = OlFormat.WFS;
-    return new olFormatCls({ gmlFormat: olFormatGML32 });
+    return new olFormatCls({ ...wfsOptions.formatOptions, ... { gmlFormat: olFormatGML32 }});
   } else if (outputFormat.toLowerCase().match('gml3')) {
     olFormatCls = OlFormat.WFS;
-    return new olFormatCls({ gmlFormat: olFormatGML3 });
+    return new olFormatCls({ ...wfsOptions.formatOptions, ... { gmlFormat: olFormatGML3 }});
   } else if (outputFormat.toLowerCase().match('topojson')) {
     olFormatCls = OlFormat.TopoJSON;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('geojson')) {
     olFormatCls = OlFormat.GeoJSON;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('esrijson')) {
     olFormatCls = OlFormat.EsriJSON;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('json')) {
     olFormatCls = OlFormat.GeoJSON;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('gpx')) {
     olFormatCls = OlFormat.GPX;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('WKT')) {
     olFormatCls = OlFormat.WKT;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('osmxml')) {
     olFormatCls = olFormatOSMXML;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   } else if (outputFormat.toLowerCase().match('kml')) {
     olFormatCls = OlFormat.KML;
-    return new olFormatCls();
+    return new olFormatCls(wfsOptions.formatOptions);
   }
 
   return new olFormatCls();
