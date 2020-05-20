@@ -129,19 +129,19 @@ export class InteractiveTourService {
     });
 
     this.introJS.onafterchange(targetElement => {});
+    let nameInConfigFile = 'introOptions' + tourTool;
+    nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
+    // debugger;
 
-    if (tourTool === 'global') {
-      this.introJS.setOptions(this.configService.getConfig('introOptions'));
-    } else if (tourTool === 'Contexts list') {
-      this.introJS.setOptions(this.configService.getConfig('introOptionsContextsList'));
-    } else if (tourTool === 'Layers') {
-        this.introJS.setOptions(this.configService.getConfig('introOptionsLayers'));
-  } else if (tourTool === 'Measurer') {
-    this.introJS.setOptions(this.configService.getConfig('introOptionsMeasurer'));
-} else {
-  alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;
-  alert(tourTool) ;
-}
+    const tourOptions = this.configService.getConfig(nameInConfigFile);
+
+    if (tourOptions == null) {
+      alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;
+      alert(tourTool) ;
+      return;
+    } else {
+      this.introJS.setOptions(tourOptions);
+    }
 
     this.introJS.start();
   }

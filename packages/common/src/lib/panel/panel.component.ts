@@ -46,15 +46,5 @@ export class PanelComponent {
     console.log(title);
     this.interactiveTourService.startTour(title);
 
-    // if (this.title === 'Contexts list') {
-    //   this.interactiveTourService.startTour('Contexts list');
-    // } else if (this.title === 'Layers') {
-    //   this.interactiveTourService.startTour('Layers');
-    // } else if (this.title === 'Measurer') {
-    // this.interactiveTourService.startTour('measurer');
-    // } else {
-    //   console.log('**ATTENTION cet outil est inconnue du tourInteractif')
-    // }
-
   }
 }

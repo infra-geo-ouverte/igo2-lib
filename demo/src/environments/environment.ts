@@ -332,7 +332,7 @@ export const environment: Environment = {
       ]
     },
 
-    introOptionsContextsList : {
+    introOptionsContextslist : {
       skipLabel: '<h3 style="color:blue">Fermer </h3>',
       nextLabel: '<h3 style="color:blue">Suivant</h3>',
       prevLabel: '',
