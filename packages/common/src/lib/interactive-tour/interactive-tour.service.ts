@@ -8,7 +8,7 @@ import { introJs } from 'intro.js/intro.js';
 export class InteractiveTourService {
 
   public introJS = introJs();
-
+  private tourActiveOption;
   constructor(private configService: ConfigService) {}
 
   // .configTourForTool('measurer');
@@ -34,10 +34,10 @@ export class InteractiveTourService {
       // we need to set it when it exist
       if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
         console.log('target = elem doesnt exist');
-
-        const currentStepConfig = this.configService.getConfig('introOptions').steps[tourNo];
+        const currentStepConfig = this.tourActiveOption.steps[tourNo];
         const currentElemConfig = currentStepConfig.element;
         const currentPositionElemConfig = currentStepConfig.position;
+        // maybe more properties need to be set here...
 
         let unElem: HTMLElement;
         unElem = document.getElementsByTagName(currentElemConfig)[0] as HTMLElement;
@@ -133,14 +133,14 @@ export class InteractiveTourService {
     nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
     // debugger;
 
-    const tourOptions = this.configService.getConfig(nameInConfigFile);
+    this.tourActiveOption = this.configService.getConfig(nameInConfigFile);
 
-    if (tourOptions == null) {
+    if (this.tourActiveOption == null) {
       alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;
       alert(tourTool) ;
       return;
     } else {
-      this.introJS.setOptions(tourOptions);
+      this.introJS.setOptions(this.tourActiveOption);
     }
 
     this.introJS.start();

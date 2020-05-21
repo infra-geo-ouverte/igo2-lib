@@ -172,7 +172,7 @@ export const environment: Environment = {
       }
     },
 
-    introOptions : {
+    introOptionsGlobal : {
       skipLabel: '<h3 style="color:blue">Fermer </h3>',
       nextLabel: '<h3 style="color:blue">Suivant</h3>',
       doneLabel: 'Terminer',
