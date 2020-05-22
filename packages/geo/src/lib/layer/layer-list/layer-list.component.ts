@@ -146,6 +146,36 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return this.opacity;
   }
 
+  get raiseDisabled(): boolean {
+    if (!this.orderable || this.activeLayer.baseLayer || this.getUpperLayer().id === this.activeLayer.id ||
+        this.isUpperBaselayer(this.activeLayer)) {
+      return true;
+    }
+    return false;
+  }
+
+  get lowerDisabled(): boolean {
+    if (!this.orderable || this.activeLayer.baseLayer || this.getLowerLayer().id === this.activeLayer.id ||
+        this.isLowerBaselayer(this.activeLayer)) {
+      return true;
+    }
+    return false;
+  }
+
+  get raiseDisabledSelection(): boolean {
+    if (this.layersChecked.length === 0 || !this.orderable || !this.raisableLayers(this.layersChecked) || this.selectAllCheck === true) {
+      return true;
+    }
+    return false;
+  }
+
+  get lowerDisabledSelection(): boolean {
+    if (this.layersChecked.length === 0 || !this.orderable || !this.lowerableLayers(this.layersChecked) || this.selectAllCheck === true) {
+      return true;
+    }
+    return false;
+  }
+
   get checkOpacity() {
     return this.layersCheckedOpacity() * 100;
   }
@@ -217,6 +247,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
       );
   }
 
+  isLowerBaselayer(layer) {
+    const index = this.layers.findIndex(lay => layer.id === lay.id);
+    if (this.layers && this.layers[index + 1] && this.layers[index + 1].baseLayer === true) {
+      return true;
+    }
+    return false;
+  }
+
   getUpperLayer() {
     return this.layers
       .filter(l => !l.baseLayer)
@@ -228,6 +266,17 @@ export class LayerListComponent implements OnInit, OnDestroy {
       );
   }
 
+  isUpperBaselayer(layer) {
+    const index = this.layers.findIndex(lay => layer.id === lay.id);
+    if (this.layers && this.layers[index - 1] && this.layers[index - 1].baseLayer === true) {
+      return true;
+    }
+    return false;
+  }
+
+  /*
+   * For selection mode disabled attribute
+   */
   raisableLayers(layers: Layer[]) {
     let response = false;
     for (const layer of layers) {
@@ -244,6 +293,34 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return response;
   }
 
+  /*
+   * When multiple layers is selected but some may be allow to move
+   */
+  raisableLayer(index: number) {
+    if (index < 1) {
+      return false;
+    }
+
+    if (this.layers[index - 1].options.check) {
+      return this.raisableLayer(index - 1);
+    }
+    return true;
+  }
+
+  raiseLayers(layers: Layer[]) {
+    const layersToRaise = [];
+    for (const layer of layers) {
+      const index = this.layers.findIndex(lay => lay.id === layer.id);
+      if (this.raisableLayer(index)) {
+        layersToRaise.push(layer);
+      }
+    }
+    this.map.raiseLayers(layersToRaise);
+  }
+
+  /*
+   * For selection mode disabled attribute
+   */
   lowerableLayers(layers: Layer[]) {
     let response = false;
     for (const layer of layers) {
@@ -260,9 +337,29 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return response;
   }
 
+  /*
+   * When multiple layers is selected but some may be allow to move
+   */
+  lowerableLayer(index: number) {
+    if (index > this.layers.filter(lay => lay.baseLayer !== true).length - 2) {
+      return false;
+    }
+
+    if (this.layers[index + 1].options.check) {
+      return this.lowerableLayer(index + 1);
+    }
+    return true;
+  }
+
   lowerLayers(layers: Layer[]) {
-    this.map.lowerLayers(layers);
-    layers.reverse();
+    const layersToLower = [];
+    for (const layer of layers) {
+      const index = this.layers.findIndex(lay => lay.id === layer.id);
+      if (this.lowerableLayer(index)) {
+        layersToLower.push(layer);
+      }
+    }
+    this.map.lowerLayers(layersToLower);
   }
 
   private next() {
@@ -353,14 +450,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private sortLayersByTitle(layers: Layer[]) {
     return layers.sort((a, b) => {
-      if (a.title < b.title) {
+      if (this.normalize(a.title) < this.normalize(b.title)) {
         return -1;
       }
-      if (a.title > b.title) {
+      if (this.normalize(a.title) > this.normalize(b.title)) {
         return 1;
       }
       return 0;
     });
+  }
+
+  private normalize(str: string) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
 
   private computeShowToolbar(): boolean {
@@ -445,6 +546,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.activeLayer = undefined;
     if (value === true) {
       this.layerTool = false;
+      for (const layer of this.layers) {
+        if (layer.options.check) {
+          this.layersChecked.push(layer);
+        }
+      }
     }
   }
 
