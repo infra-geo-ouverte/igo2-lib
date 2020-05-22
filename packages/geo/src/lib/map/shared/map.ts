@@ -367,12 +367,6 @@ export class IgoMap {
    * @returns The original array, sorted by zIndex
    */
   private sortLayersByZIndex(layers: Layer[]) {
-    // To assure that none of the baselayers are above layers
-    for (const layer of layers) {
-      if (layer.baseLayer !== true) {
-        layer.zIndex += 20;
-      }
-    }
     // Sort by descending zIndex
     return layers.sort(
       (layer1: Layer, layer2: Layer) => layer2.zIndex - layer1.zIndex
