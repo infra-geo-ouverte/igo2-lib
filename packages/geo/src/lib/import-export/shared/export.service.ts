@@ -29,7 +29,7 @@ export class ExportService {
   static noOgreFallbacks = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
-  private aggregateInComment: boolean = false;
+  private aggregateInComment: boolean = true;
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');

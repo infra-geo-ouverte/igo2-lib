@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { WMSDataSourceOptions } from '../datasources';
@@ -11,9 +11,12 @@ import { OptionsApiOptions } from './options-api.interface';
   providedIn: 'root'
 })
 export class OptionsApiService extends OptionsService {
-  private urlApi = '/apis/igo2/layers/options';
+  private urlApi: string;
 
-  constructor(private http: HttpClient, @Inject('options') options: OptionsApiOptions = {}) {
+  constructor(
+    private http: HttpClient,
+    @Inject('options') options: OptionsApiOptions = {}
+  ) {
     super();
     this.urlApi = options.url || this.urlApi;
   }
@@ -21,6 +24,9 @@ export class OptionsApiService extends OptionsService {
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
   ): Observable<WMSDataSourceOptions> {
+    if (!this.urlApi) {
+      return of({} as WMSDataSourceOptions);
+    }
     const params = new HttpParams({
       fromObject: {
         type: baseOptions.type,

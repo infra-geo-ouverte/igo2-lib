@@ -228,9 +228,17 @@ export class IgoMap {
    * @param push DEPRECATED
    */
   addLayers(layers: Layer[], push = true) {
-    let incrementArray = 0;
+    let offsetZIndex = 0;
+    let offsetBaseLayerZIndex = 0;
     const addedLayers = layers
-      .map((layer: Layer) => this.doAddLayer(layer, incrementArray++))
+      .map((layer: Layer) => {
+        const offset = layer.zIndex
+          ? 0
+          : layer.baseLayer
+          ? offsetBaseLayerZIndex++
+          : offsetZIndex++;
+        return this.doAddLayer(layer, offset);
+      })
       .filter((layer: Layer | undefined) => layer !== undefined);
     this.setLayers([].concat(this.layers, addedLayers));
   }
@@ -272,22 +280,20 @@ export class IgoMap {
 
   raiseLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
-    if (index > 1 && !this.layers[index - 1].baseLayer) {
+    if (index > 1) {
       this.moveLayer(layer, index, index - 1);
     }
   }
 
   raiseLayers(layers: Layer[]) {
     for (const layer of layers) {
-      if (layer.baseLayer !== true) {
-        this.raiseLayer(layer);
-      }
+      this.raiseLayer(layer);
     }
   }
 
   lowerLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
-    if (index < this.layers.length - 1 && !this.layers[index + 1].baseLayer) {
+    if (index < this.layers.length - 1) {
       this.moveLayer(layer, index, index + 1);
     }
   }
@@ -295,9 +301,7 @@ export class IgoMap {
   lowerLayers(layers: Layer[]) {
     const reverseLayers = layers.reverse();
     for (const layer of reverseLayers) {
-      if (layer.baseLayer !== true) {
-        this.lowerLayer(layer);
-      }
+      this.lowerLayer(layer);
     }
   }
 
@@ -324,7 +328,7 @@ export class IgoMap {
    * @param layer Layer
    * @returns The layer added, if any
    */
-  private doAddLayer(layer: Layer, length: number) {
+  private doAddLayer(layer: Layer, offsetZIndex: number) {
     if (layer.baseLayer && layer.visible) {
       this.changeBaseLayer(layer);
     }
@@ -335,9 +339,24 @@ export class IgoMap {
       return;
     }
 
+    if (!layer.baseLayer && layer.zIndex) {
+      layer.zIndex += 10;
+    }
+
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const offset = layer.baseLayer ? 1 : 10;
-      layer.zIndex = this.layers.length + offset + length;
+      const maxZIndex = Math.max(
+        layer.baseLayer ? 0 : 10,
+        ...this.layers
+          .filter(
+            l => l.baseLayer === layer.baseLayer && l.zIndex < 200 // zIndex > 200 = system layer
+          )
+          .map(l => l.zIndex)
+      );
+      layer.zIndex = maxZIndex + 1 + offsetZIndex;
+    }
+
+    if (layer.baseLayer && layer.zIndex > 9) {
+      layer.zIndex = 10; // baselayer must have zIndex < 10
     }
 
     layer.setMap(this);

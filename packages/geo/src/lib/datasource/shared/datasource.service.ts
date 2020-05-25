@@ -165,7 +165,7 @@ export class DataSourceService {
       );
     }
 
-    if (this.optionsService && context.optionsFromApi !== false) {
+    if (this.optionsService && context.optionsFromApi === true) {
       observables.push(
         this.optionsService.getWMSOptions(context).pipe(
           catchError(e => {
