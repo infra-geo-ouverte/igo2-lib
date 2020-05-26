@@ -155,10 +155,10 @@
         "legend": {
           "default": "Défaut",
           "loadingLegendText": "Chargement de la légende",
-          "noLegendText": "Aucune légende disponible pour cette couche",
-          "noLegendScale": "Aucune légende disponible pour cette échelle",
+          "noLegendText": "Aucune symbologie disponible pour cette couche",
+          "noLegendScale": "Aucune symbologie disponible pour cette échelle",
           "selectStyle": "Sélectionner le style de la légende",
-          "showAll" : "Montrer toutes les légendes (non visible et hors échelle)",
+          "showAll" : "Montrer toutes les couches (non visible et hors échelle)",
           "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
