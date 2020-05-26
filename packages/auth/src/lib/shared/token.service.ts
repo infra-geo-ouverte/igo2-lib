@@ -14,6 +14,7 @@ export class TokenService {
 
   set(token: string) {
     localStorage.setItem(this.tokenKey, token);
+    document.cookie = this.tokenKey + '=' + token;
   }
 
   remove() {
