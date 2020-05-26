@@ -310,7 +310,7 @@ export class IgoMap {
     const zIndexTo = layerTo.zIndex;
     const zIndexFrom = layer.zIndex;
 
-    if (layerTo.baseLayer) {
+    if (layerTo.baseLayer || layer.baseLayer) {
       return;
     }
 
