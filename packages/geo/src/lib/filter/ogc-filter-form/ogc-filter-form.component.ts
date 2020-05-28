@@ -1,7 +1,8 @@
 import {
   Component,
   Input,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 
 import {
@@ -12,9 +13,14 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
-import { FloatLabelType } from '@angular/material';
 import { BehaviorSubject } from 'rxjs';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import { OgcFilterOperatorType } from '../../filter/shared/ogc-filter.enum';
+import { FloatLabelType, MatSlideToggle, MatDatepicker } from '@angular/material';
+import * as moment_ from 'moment';
+const moment = moment_;
+import { TimeFilterType, TimeFilterStyle } from '../shared/time-filter.enum';
+import { MatDatetimepickerFilterType } from '@mat-datetimepicker/core';
 
 @Component({
   selector: 'igo-ogc-filter-form',
@@ -27,7 +33,6 @@ export class OgcFilterFormComponent implements OnInit {
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
-  // public fields: any[];
   public fields$ = new BehaviorSubject<SourceFieldsOptionsParams[]>([]);
   public values: any[];
   public color = 'primary';
@@ -56,6 +61,12 @@ export class OgcFilterFormComponent implements OnInit {
     return this.datasource.options.ogcFilters.interfaceOgcFilters.filter(
       f => f.active === true
     );
+  }
+
+  get step(): number {
+    let step = 10800000;
+    step = this.getStepDefinition(this.currentFilter.step);
+    return step;
   }
 
   constructor(
@@ -139,6 +150,18 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
+  changeTemporalProperty(filter: OgcInterfaceFilterOptions, property, value) {
+    let valueTmp = new Date(value);
+    if (property === 'end' && this.calendarType() === 'date') {
+      /* Above month: see yearSelected or monthSelected */
+      if ( this.step < 2592000000 ) {
+        valueTmp = moment(valueTmp).endOf('day').toDate();
+      }
+    }
+    this.changeProperty(filter, property, valueTmp.toISOString());
+    this.refreshFilters();
+  }
+
   private removeOverlayByID(id) {
     const overlayId = this.baseOverlayName + id;
     if (this.map.overlay.dataSource.ol.getFeatureById(overlayId)) {
@@ -205,4 +228,71 @@ export class OgcFilterFormComponent implements OnInit {
       });
     this.refreshFilters();
   }
+
+  handleDate(value) {
+    if ( !value || value === '') {
+      return undefined;
+    }
+    return new Date(value);
+  }
+
+  /**
+   * Get the step (period) definition from the layer dimension tag
+   * @param step The step as ISO 8601 example: PT10M for 10 Minutes
+   * @return the duration in milliseconds
+   */
+  getStepDefinition(step) {
+    return moment.duration(step).asMilliseconds();
+  }
+
+  yearSelected(year, datePicker?: any, property?: string) {
+    if (this.currentFilter.step && this.step === 31536000000) {
+        datePicker.close();
+        if (property === 'end') {
+          year = moment(year).endOf('year').toDate();
+        }
+        this.changeTemporalProperty(this.currentFilter, property, year);
+    }
+  }
+
+  monthSelected(month, datePicker?: any, property?: string) {
+    if (this.currentFilter.step && this.currentFilter.step === 'P1M') {
+      datePicker.close();
+      if (property === 'end') {
+        month = moment(month).endOf('month').toDate();
+      }
+      this.changeTemporalProperty(this.currentFilter, property, month);
+    }
+  }
+
+  calendarView() {
+    const test = this.step;
+    const diff = Math.abs(new Date(this.currentFilter.end).getTime() - new Date(this.currentFilter.begin).getTime());
+    if ( test >= 31536000000 ) {
+      return 'multi-year';
+    } else if (test  >= 2592000000 ) {
+      return 'year';
+    } else if (test < 86400000 && diff < 86400000) {
+      return 'clock';
+    } else {
+      return 'month';
+    }
+  }
+
+  calendarType() {
+    const test = this.step;
+    const diff = Math.abs(new Date(this.currentFilter.end).getTime() - new Date(this.currentFilter.begin).getTime());
+    if (test < 86400000 && diff < 86400000 ) {
+      return 'datetime';
+    }
+    return 'date';
+  }
+
+  dateFilter(date, type: MatDatetimepickerFilterType): boolean {
+    const dateValue = new Date(date);
+    const diff = dateValue.getTime() - new Date(this.datasource.options.minTime).getTime();
+    const stepMillisecond = this.step;
+    return diff % stepMillisecond === 0;
+  }
+
 }

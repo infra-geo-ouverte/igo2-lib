@@ -10,7 +10,9 @@ import {
   WFSDataSourceOptionsParams,
   OgcFilterableDataSourceOptions,
   AnyBaseOgcFilterOptions,
-  OgcFilterOperatorType
+  OgcFilterOperatorType,
+  OgcFilterDuringOptions,
+  TimeFilterType
 } from '@igo2/geo';
 
 @Component({
@@ -104,7 +106,7 @@ export class AppOgcFilterComponent {
       }
     };
 
-    this.dataSourceService
+    /*this.dataSourceService
       .createAsyncDataSource(datasource)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -113,7 +115,115 @@ export class AppOgcFilterComponent {
             source: dataSource
           })
         );
-      });
+      });*/
+
+    const datasourceDuringFilter: WFSoptions = {
+      type: 'wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      params: {
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: undefined,
+        outputFormatDownload: 'SHP' // based on service capabilities
+      },
+      sourceFields: [
+        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+      ],
+      minTime: '2016-01-01T05:00:00Z',
+      maxTime: '2018-12-31T05:00:00Z',
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        allowedOperatorsType: OgcFilterOperatorType.All,
+        filters:
+          {
+            operator: 'during',
+            propertyName: 'date_observation',
+            begin: '2016-01-01T05:00:00.000Z',
+            end: '2016-01-31T05:00:00.000Z',
+            step: 'P3D'
+          } as OgcFilterDuringOptions
+      }
+    };
+/*
+    this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilter)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (Filtre Temporel, Step: P1D)',
+            id: '1',
+            source: dataSource
+          })
+        );
+      });*/
+/*
+    const datasourceDuringFilter2 = Object.assign({}, datasourceDuringFilter);
+    datasourceDuringFilter2.ogcFilters.filters = {
+      operator: 'during',
+      propertyName: 'date_observation',
+      begin: '2016-01-01T05:00:00.000Z',
+      end: '2016-01-31T05:00:00.000Z',
+      step: 'P1M'
+    } as OgcFilterDuringOptions;
+
+    this.dataSourceService
+    .createAsyncDataSource(datasourceDuringFilter2)
+    .subscribe(dataSource => {
+      this.map.addLayer(
+        this.layerService.createLayer({
+          title: 'Embâcle (Filtre Temporel, Step: P1M)',
+          id: '2',
+          source: dataSource
+        })
+      );
+    });*/
+
+    const datasourceDuringFilter3 = Object.assign({}, datasourceDuringFilter);
+    datasourceDuringFilter3.ogcFilters.filters = {
+      operator: 'during',
+      propertyName: 'date_observation',
+      begin: '2016-01-01T05:00:00Z',
+      end: '2016-01-31T05:00:00Z',
+      step: 'P1M'
+    } as OgcFilterDuringOptions;
+
+    this.dataSourceService
+    .createAsyncDataSource(datasourceDuringFilter3)
+    .subscribe(dataSource => {
+      this.map.addLayer(
+        this.layerService.createLayer({
+          title: 'Embâcle (Filtre Temporel, Step: P1Y)',
+          id: '3',
+          source: dataSource
+        })
+      );
+    });
+/*
+    const datasourceDuringFilter4 = Object.assign({}, datasourceDuringFilter);
+    datasourceDuringFilter4.ogcFilters.filters = {
+      operator: 'during',
+      propertyName: 'date_observation',
+      begin: '2016-01-11T15:00:00.000Z',
+      end: '2016-01-11T18:00:00.000Z',
+      step: 'PT3H'
+    } as OgcFilterDuringOptions;
+    datasourceDuringFilter4.id = '4';
+
+    this.dataSourceService
+    .createAsyncDataSource(datasourceDuringFilter4)
+    .subscribe(dataSource => {
+      this.map.addLayer(
+        this.layerService.createLayer({
+          title: 'Embâcle (Filtre Temporel, Step: PT3H)',
+          id: '4',
+          source: dataSource
+        })
+      );
+    });*/
+
 
     interface WMSoptions
       extends WMSDataSourceOptions,
@@ -247,7 +357,7 @@ export class AppOgcFilterComponent {
       } as WFSDataSourceOptionsParams
     };
 
-    this.dataSourceService
+    /*this.dataSourceService
       .createAsyncDataSource(filterableWMSwithPushButtons)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -256,7 +366,7 @@ export class AppOgcFilterComponent {
             source: dataSource
           })
         );
-      });
+      });*/
 
     // const datasourceWmsWith2Layers: WMSoptions = {
     //   type: 'wms',

@@ -131,33 +131,82 @@
 
     <!-- During -->
     <span *ngIf="currentFilter.operator === 'During'">
-      <mat-form-field [floatLabel]="floatLabel">
-        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #begin (keyup)="changeProperty(currentFilter,'begin',begin.value)"
-          (ngModelChange)="changeProperty(currentFilter,'begin',begin.value)" [ngModel]="currentFilter.begin">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values " [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
-            <span>{{ value }}</span>
-          </mat-option>
-        </mat-autocomplete>
-        <button mat-button *ngIf="currentFilter.begin" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.begin=''">
-          <mat-icon svgIcon="close"></mat-icon>
-        </button>
-      </mat-form-field>
+      <span *ngIf="calendarType() === 'datetime'">
+        <div class="igo-col igo-col-100">
+          <mat-form-field>
+            <mat-datetimepicker-toggle matSuffix [for]="startDatetimepicker" openOnFocus="true"></mat-datetimepicker-toggle>
+            <mat-datetimepicker #startDatetimepicker [startView]="calendarView()" [type]="calendarType()"
+                                openOnFocus="true" [startAt]="handleDate(currentFilter.begin)"
+                                (yearSelected)="yearSelected($event, startDatetimepicker, 'begin')" 
+                                (monthSelected)="monthSelected($event, startDatetimepicker, 'begin')">
+            </mat-datetimepicker>
+            <input [matDatetimepicker]="startDatetimepicker" [placeholder]="'igo.geo.timeFilter.startDate' | translate" 
+              [disabled]="!currentFilter.active" matInput #begin 
+              (dateChange)="changeTemporalProperty(currentFilter,'begin',begin.value)" 
+              [matDatepickerFilter]="dateFilter.bind(this)"
+              [value]="handleDate(currentFilter.begin)"
+              [min]="handleDate(datasource.options.minTime)"
+              [max]="handleDate(currentFilter.end)" >
+          </mat-form-field>
+        </div>
 
-      <mat-form-field [floatLabel]="floatLabel">
-        <input [placeholder]="'igo.geo.filter.placeholder' | translate" [disabled]="!currentFilter.active" matInput [matAutocomplete]="auto" #end (keyup)="changeProperty(currentFilter,'end',end.value)"
-          (ngModelChange)="changeProperty(currentFilter,'end',end.value)" [ngModel]="currentFilter.end">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let value of values" [value]="value" matTooltipShowDelay="500" [matTooltip]="value">
-            <span>{{ value }}</span>
-          </mat-option>
-        </mat-autocomplete>
-        <button mat-button *ngIf="currentFilter.end" matSuffix mat-icon-button aria-label="Clear" (click)="currentFilter.end=''">
-          <mat-icon svgIcon="close"></mat-icon>
-        </button>
-      </mat-form-field>
+        <div class="igo-col igo-col-100">
+          <mat-form-field>
+            <mat-datetimepicker-toggle matSuffix [for]="endDatetimepicker" openOnFocus="true"></mat-datetimepicker-toggle>
+            <mat-datetimepicker #endDatetimepicker [startView]="calendarView()" [type]="calendarType()"
+                                openOnFocus="true" [startAt]="handleDate(currentFilter.end)"
+                                (yearSelected)="yearSelected($event, endDatetimepicker, 'end')" 
+                                (monthSelected)="monthSelected($event, endDatetimepicker, 'end')">
+            </mat-datetimepicker>
+            <input [matDatetimepicker]="endDatetimepicker" [placeholder]="'igo.geo.timeFilter.endDate' | translate" 
+              [disabled]="!currentFilter.active" matInput #end 
+              (dateChange)="changeTemporalProperty(currentFilter,'end',end.value)" 
+              [matDatepickerFilter]="dateFilter.bind(this)"
+              [value]="handleDate(currentFilter.end)"
+              [min]="handleDate(currentFilter.begin)"
+              [max]="handleDate(datasource.options.maxTime)" >
+          </mat-form-field>
+        </div>
 
+      </span>
 
+      <span *ngIf="calendarType() !== 'datetime'">
+        <div class="igo-col igo-col-100">
+          <mat-form-field>
+            <mat-datepicker-toggle matSuffix [for]="startDatepicker" openOnFocus="true"></mat-datepicker-toggle>
+            <mat-datepicker #startDatepicker [startView]="calendarView()" 
+                                openOnFocus="true"  [startAt]="handleDate(currentFilter.begin)"
+                                (yearSelected)="yearSelected($event, startDatepicker, 'begin')" 
+                                (monthSelected)="monthSelected($event, startDatepicker, 'begin')">
+            </mat-datepicker>
+            <input [matDatepicker]="startDatepicker" [placeholder]="'igo.geo.timeFilter.startDate' | translate" 
+              [disabled]="!currentFilter.active" matInput #begin
+              (dateChange)="changeTemporalProperty(currentFilter,'begin',begin.value)" 
+              [matDatepickerFilter]="dateFilter.bind(this)"
+              [value]="handleDate(currentFilter.begin)"
+              [min]="handleDate(datasource.options.minTime)"
+              [max]="handleDate(currentFilter.end)" >
+          </mat-form-field>
+        </div>
+
+        <div class="igo-col igo-col-100">
+          <mat-form-field>
+            <mat-datepicker-toggle matSuffix [for]="endDatepicker" openOnFocus="true"></mat-datepicker-toggle>
+            <mat-datepicker #endDatepicker [startView]="calendarView()" 
+                                openOnFocus="true" [startAt]="handleDate(currentFilter.end)"
+                                (yearSelected)="yearSelected($event, endDatepicker, 'end')" 
+                                (monthSelected)="monthSelected($event, endDatepicker, 'end')">
+            </mat-datepicker>
+            <input [matDatepicker]="endDatepicker" [placeholder]="'igo.geo.timeFilter.endDate' | translate" 
+              [disabled]="!currentFilter.active" matInput #end 
+              (dateChange)="changeTemporalProperty(currentFilter,'end',end.value)" 
+              [matDatepickerFilter]="dateFilter.bind(this)"
+              [value]="handleDate(currentFilter.end)"
+              [min]="handleDate(currentFilter.begin)"
+              [max]="handleDate(datasource.options.maxTime)" >
+          </mat-form-field>
+        </div>
+      </span>
     </span>
     <!-- During  -->
   </div>
