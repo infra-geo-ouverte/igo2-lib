@@ -145,7 +145,8 @@
           [(ngModel)]="checkOpacity"
           [matTooltip]="'igo.geo.layer.opacity' | translate"
           matTooltipShowDelay="500"
-          tooltip-position="below">
+          tooltip-position="below"
+          (click) = "$event.stopPropagation()">
         </mat-slider>
       </div>
     </mat-menu>
