@@ -134,7 +134,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   private _sortedAlpha = false;
 
   get opacity() {
-    return this.activeLayer$.getValue().opacity * 100;
+    return Math.round(this.activeLayer$.getValue().opacity * 100);
   }
   set opacity(opacity: number) {
     this.activeLayer$.getValue().opacity = opacity / 100;
@@ -144,7 +144,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
     if (this.opacity === 100) {
       return;
     }
-    return this.opacity;
   }
 
   get raiseDisabled(): boolean {
