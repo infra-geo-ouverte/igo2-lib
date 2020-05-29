@@ -106,22 +106,18 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
         .subscribe((ngClass: {[key: string]: boolean}) => this.updateNgClass(ngClass));
     }
 
-    if (this.action.icon !== undefined) {
-      if (isObservable(this.action.icon)) {
-        this.icon$$ = this.action.icon
-          .subscribe((icon: string) => this.updateIcon(icon));
-      } else {
-        this.updateIcon(this.action.icon);
-      }
+    if (isObservable(this.action.icon)) {
+      this.icon$$ = this.action.icon
+        .subscribe((icon: string) => this.updateIcon(icon));
+    } else {
+      this.updateIcon(this.action.icon);
     }
 
-    if (this.action.tooltip !== undefined) {
-      if (isObservable(this.action.tooltip)) {
-        this.tooltip$$ = this.action.tooltip
-          .subscribe((tooltip: string) => this.updateTooltip(tooltip));
-      } else {
-        this.updateTooltip(this.action.tooltip);
-      }
+    if (isObservable(this.action.tooltip)) {
+      this.tooltip$$ = this.action.tooltip
+        .subscribe((tooltip: string) => this.updateTooltip(tooltip));
+    } else {
+      this.updateTooltip(this.action.tooltip);
     }
 
     if (this.action.availability !== undefined) {
