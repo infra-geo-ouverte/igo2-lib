@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -22,6 +22,7 @@ import {
 } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleListService } from '../style-list/style-list.service';
+import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
   selector: 'igo-import-export',
@@ -43,6 +44,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public fileSizeMb: number;
 
   @Input() map: IgoMap;
+
+  @Input() selectedIndex: number = 0;
+
+  @Output() selectedTabIndex = new EventEmitter<number>();
 
   constructor(
     private importService: ImportService,
@@ -227,5 +232,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           return format;
         }
       });
+  }
+
+  public tabChanged(tab: MatTabChangeEvent) {
+    console.log('tabChanged', tab);
+    this.selectedTabIndex.emit(tab.index);
   }
 }
