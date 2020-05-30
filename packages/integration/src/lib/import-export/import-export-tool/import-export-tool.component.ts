@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { IgoMap } from '@igo2/geo';
+import { IgoMap, ExportOptions } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { ImportExportState } from '../import-export.state';
@@ -43,7 +43,11 @@ export class ImportExportToolComponent implements OnInit {
   }
 
   public tabChanged(tab: number) {
-    console.log('tab change integration', tab);
     this.importExportState.setSelectedTab(tab);
   }
+
+  public exportOptionsChange(exportOptions: ExportOptions) {
+    this.importExportState.setsExportOptions(exportOptions);
+  }
+
 }

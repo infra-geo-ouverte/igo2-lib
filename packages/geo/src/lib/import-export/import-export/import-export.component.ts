@@ -49,6 +49,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Output() selectedTabIndex = new EventEmitter<number>();
 
+  @Input() exportOptions: ExportOptions;
+
+  @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
+
   constructor(
     private importService: ImportService,
     private exportService: ExportService,
@@ -75,6 +79,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
+
+    if (this.exportOptions) {
+      this.form.patchValue(this.exportOptions);
+    }
+
+    this.form.valueChanges.subscribe(() => {
+      this.exportOptionsChange.emit(this.form.value);
+  });
   }
 
   ngOnDestroy() {
@@ -235,7 +247,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   public tabChanged(tab: MatTabChangeEvent) {
-    console.log('tabChanged', tab);
     this.selectedTabIndex.emit(tab.index);
   }
 }
