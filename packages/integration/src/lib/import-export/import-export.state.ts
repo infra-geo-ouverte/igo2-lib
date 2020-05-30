@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ExportOptions } from '@igo2/geo';
 
 /**
- * Service that holds the state of the measure module
+ * Service that holds the state of the importExport module
  */
 @Injectable({
   providedIn: 'root'

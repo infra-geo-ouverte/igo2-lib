@@ -38,6 +38,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public forceNaming = false;
 
   private layers$$: Subscription;
+  private form$$: Subscription;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
@@ -84,13 +85,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.form.patchValue(this.exportOptions);
     }
 
-    this.form.valueChanges.subscribe(() => {
+    this.form$$ = this.form.valueChanges.subscribe(() => {
       this.exportOptionsChange.emit(this.form.value);
   });
   }
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
+    this.form$$.unsubscribe();
   }
 
   importFiles(files: File[]) {
