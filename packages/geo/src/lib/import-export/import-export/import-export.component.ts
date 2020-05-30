@@ -120,8 +120,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     if (data.name !== undefined) {
       filename = data.name;
     }
-
-    let olFeatures = layer.dataSource.ol.getFeatures();
+    let olFeatures;
+    if (data.featureInMapExtent) {
+      olFeatures = layer.dataSource.ol.getFeaturesInExtent(layer.map.viewController.getExtent());
+    } else {
+      olFeatures = layer.dataSource.ol.getFeatures();
+    }
     if (layer.dataSource instanceof ClusterDataSource) {
       olFeatures = olFeatures.flatMap((cluster: any) =>
         cluster.get('features')
@@ -143,12 +147,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
         layer: ['', [Validators.required]],
+        featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
     } else {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
-        layer: ['', [Validators.required]]
+        layer: ['', [Validators.required]],
+        featureInMapExtent: [false, [Validators.required]]
       });
     }
   }

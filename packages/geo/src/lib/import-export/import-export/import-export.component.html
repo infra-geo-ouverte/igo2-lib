@@ -69,6 +69,14 @@
         </mat-form-field>
       </div>
 
+      <div class="export-options mat-typography">
+        <mat-slide-toggle
+           formControlName="featureInMapExtent"
+           [labelPosition]="'before'">
+              {{'igo.geo.importExportForm.exportFeatureInExtent' | translate}}
+        </mat-slide-toggle>
+      </div>
+
       <div class="igo-form-button-group">
         <button
           mat-raised-button
