@@ -49,7 +49,7 @@
       <mat-icon [matBadge]="badgeOpacity" matBadgeColor="primary" matBadgeSize="medium" svgIcon="opacity"></mat-icon>
     </button>
 
-    <mat-menu #opacityMenu="matMenu" class="custom-mat-menu">
+    <mat-menu #opacityMenu="matMenu" class="mat-menu-opacity-slider">
       <div id="opacity-menu">
         <mat-slider
           id="opacity-slider"
@@ -132,7 +132,7 @@
       <mat-icon svgIcon="opacity"></mat-icon>
     </button>
 
-    <mat-menu #opacityMenu="matMenu"  class="custom-mat-menu">
+    <mat-menu #opacityMenu="matMenu"  class="mat-menu-opacity-slider">
       <div id="opacity-menu">
         <mat-slider *ngIf="layersChecked.length"
           id="opacity-slider"
