@@ -1,0 +1,16 @@
+<button *ngIf="!isActiveTool"
+  id="tour-button"
+  mat-raised-button
+  color="primary"
+  aria-label="test"
+  (click)="startInteractiveTour()"
+  matTooltip= "Tour interactif de présentation de application. Fonctionnement étape par étape">
+  {{'igo.common.interactiveTour.discover' | translate}}
+</button>
+
+<button *ngIf="isActiveTool"
+  color="primary"
+  mat-icon-button
+  (click)="startInteractiveTour(activeTool)">
+  <mat-icon svgIcon="presentation-play"></mat-icon>
+</button>

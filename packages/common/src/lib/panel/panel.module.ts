@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { PanelComponent } from './panel.component';
 import { MatIconModule } from '@angular/material';
 import { InteractiveTourService } from './../interactive-tour/interactive-tour.service';
+import { InteractiveTourModule } from './../interactive-tour/interactive-tour.module';
 
 @NgModule({
   imports: [
     MatIconModule,
-    CommonModule
+    CommonModule,
+    InteractiveTourModule
   ],
   exports: [
     PanelComponent

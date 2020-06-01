@@ -17,6 +17,9 @@
       "actionbar": {
         "scrollUp": "Défiler vers le haut",
         "scrollDown": "Défiler vers le bas"
+      },
+      "interactiveTour": {
+        "discover": "Découvrir l'application"
       }
     }
   }

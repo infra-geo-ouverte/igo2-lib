@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ConfigService} from '@igo2/core';
+import { ConfigService } from '@igo2/core';
 import { introJs } from 'intro.js/intro.js';
 
 @Injectable({

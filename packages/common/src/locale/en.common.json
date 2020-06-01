@@ -17,6 +17,9 @@
       "actionbar": {
         "scrollUp": "Scroll up",
         "scrollDown": "Scroll down"
+      },
+      "interactiveTour": {
+        "discover": "Discover the application"
       }
     }
   }
