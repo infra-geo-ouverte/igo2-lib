@@ -144,6 +144,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     if (this.opacity === 100) {
       return;
     }
+    return this.opacity;
   }
 
   get raiseDisabled(): boolean {
