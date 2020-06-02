@@ -319,7 +319,8 @@ export class CatalogService {
       crossOrigin: catalog.setCrossOriginAnonymous ? 'anonymous' : undefined,
       queryFormat: configuredQueryFormat,
       queryHtmlTarget:
-        configuredQueryFormat === (QueryFormat.HTML || QueryFormat.HTMLGML2)
+        configuredQueryFormat === QueryFormat.HTML ||
+        configuredQueryFormat === QueryFormat.HTMLGML2
           ? 'iframe'
           : undefined,
       optionsFromCapabilities: true

@@ -28,7 +28,15 @@ export class ILayerSearchResultFormatter {
   constructor(private languageService: LanguageService) {}
 
   formatResult(data: ILayerData): ILayerData {
-    const allowedKey = ['title', 'abstract', 'groupTitle', 'metadataUrl', 'downloadUrl', 'urlInfo', 'name'];
+    const allowedKey = [
+      'title',
+      'abstract',
+      'groupTitle',
+      'metadataUrl',
+      'downloadUrl',
+      'urlInfo',
+      'name'
+    ];
 
     const property = Object.entries(data.properties)
       .filter(([key]) => allowedKey.indexOf(key) !== -1)
@@ -315,7 +323,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         }
       }
 
-      if (queryFormat === QueryFormat.HTML || QueryFormat.HTMLGML2) {
+      if (
+        queryFormat === QueryFormat.HTML ||
+        queryFormat === QueryFormat.HTMLGML2
+      ) {
         queryHtmlTarget = 'iframe';
       }
     }
