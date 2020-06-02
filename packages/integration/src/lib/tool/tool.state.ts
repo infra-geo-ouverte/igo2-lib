@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Toolbox, ToolService } from '@igo2/common';
+import { ToolService } from '@igo2/common';
 
 /**
  * Service that holds the state of the search module
@@ -9,12 +9,9 @@ import { Toolbox, ToolService } from '@igo2/common';
   providedIn: 'root'
 })
 export class ToolState {
-  /**
-   * Toolbox that holds main tools
-   */
-  toolbox: Toolbox = new Toolbox();
-
-  constructor(private toolService: ToolService) {
-    this.toolbox.setTools(this.toolService.getTools());
+  get toolbox() {
+    return this.toolService.toolbox;
   }
+
+  constructor(private toolService: ToolService) {}
 }

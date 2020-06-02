@@ -33,18 +33,8 @@ export class PanelComponent {
   }
   private _withHeader = true;
 
-  constructor(private interactiveTourService: InteractiveTourService) {}
+  @Input() toast = false;
 
-  startInteractiveTour() {
-    console.log('tour tool partie');
-    debugger;
-    const title = this.title;
-    console.log('titre de loutil:');
-    // meilleur idée que d'utiliser le titre pour faire ceci??? le titre va changer si on change dans le fichier traduction
-    // nb par contre c'est peut être une facon d'avoir un tour en anglais et un en francais..
+  constructor() {}
 
-    console.log(title);
-    this.interactiveTourService.startTour(title);
-
-  }
 }

@@ -1,4 +1,4 @@
-<button *ngIf="!isActiveTool"
+<!-- <button *ngIf="!isActiveTool && tool"
   id="tour-button"
   mat-raised-button
   color="primary"
@@ -6,9 +6,9 @@
   (click)="startInteractiveTour()"
   matTooltip= "Tour interactif de présentation de application. Fonctionnement étape par étape">
   {{'igo.common.interactiveTour.discover' | translate}}
-</button>
+</button> -->
 
-<button *ngIf="isActiveTool"
+<button *ngIf="isActiveTool && !toast"
   color="primary"
   mat-icon-button
   (click)="startInteractiveTour(activeTool)">

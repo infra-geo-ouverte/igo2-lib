@@ -1,7 +1,7 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, Input } from '@angular/core';
 
+import { LanguageService } from '@igo2/core';
 import { InteractiveTourService } from './interactive-tour.service';
-import { Toolbox } from '../tool/shared/toolbox';
 import { ToolService } from '../tool/shared/tool.service';
 
 @Component({
@@ -14,21 +14,32 @@ export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
    */
-  toolbox: Toolbox = new Toolbox();
+  get toolbox() {
+    return this.toolService.toolbox;
+  }
 
   get activeTool() {
-    return this.toolbox.activeTool$.getValue().name;
+    if (this.toolbox) {
+      return this.toolbox.activeTool$.getValue().name;
+    } else {
+      return undefined;
+    }
   }
 
   get isActiveTool() {
-    return this.toolbox.activeTool$.getValue() !== undefined;
+    if (this.toolbox) {
+      return this.toolbox.activeTool$.getValue() !== undefined;
+    } else {
+      return undefined;
+    }
   }
+
+  @Input() toast = false;
 
   constructor(
     private interactiveTourService: InteractiveTourService,
-    private toolService: ToolService) {
-      this.toolbox.setTools(this.toolService.getTools());
-    }
+    private toolService: ToolService,
+    private languageService: LanguageService) {}
 
   startInteractiveTour(toolName?: string) {
     if (toolName) {
