@@ -43,7 +43,7 @@
     <mat-icon color="primary" svgIcon="star"></mat-icon>
   </button>
 
-  <!-- <button *ngIf="authenticated"
+  <button *ngIf="auth.authenticated"
     mat-icon-button
     [matTooltip]="'igo.context.contextManager.userAccount' | translate"
     matTooltipShowDelay="500"
@@ -59,7 +59,7 @@
         {{user}}
       </mat-checkbox>
     </ng-container>
-  </mat-menu> -->
+  </mat-menu>
 
   <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">
 
