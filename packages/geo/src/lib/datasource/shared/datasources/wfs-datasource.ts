@@ -55,7 +55,7 @@ export class WFSDataSource extends DataSource {
 
   private buildUrl(extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
     const paramsWFS = this.options.paramsWFS;
-    const queryStringValues = formatWFSQueryString(this.options, undefined, proj.getCode());
+    const queryStringValues = formatWFSQueryString(this.options, undefined, this.options.paramsWFS.srsName);
     let igoFilters;
     if (ogcFilters && ogcFilters.enabled) {
       igoFilters = ogcFilters.filters;
