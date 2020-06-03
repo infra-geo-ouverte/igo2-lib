@@ -49,10 +49,11 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       this.route.options.contextKey
     ) {
       const queryParams$$ = this.route.queryParams
-        .pipe(skip(1))
         .subscribe(params => {
-          this.queryParams = params;
-          queryParams$$.unsubscribe();
+          if ( Object.keys(params).length > 0 ) {
+            this.queryParams = params;
+            queryParams$$.unsubscribe();
+          }
         });
     }
   }
