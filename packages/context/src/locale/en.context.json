@@ -35,11 +35,11 @@
         },
         "favorite": "Favorite",
         "form": {
-          "edit": "Edit",
+          "edit": "Save",
           "title": "Title",
           "titleRequired": "Title required",
-          "uri": "URI",
-          "uriRequired": "URI required"
+          "uri": "ID",
+          "uriRequired": "ID required"
         },
         "invalid": {
           "text": "Context '{{value}}' is invalid",

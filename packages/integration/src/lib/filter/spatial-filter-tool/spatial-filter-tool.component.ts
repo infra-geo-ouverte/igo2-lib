@@ -369,7 +369,7 @@ export class SpatialFilterToolComponent {
    */
   private tryAddLayerToMap(features: Feature[], id) {
     let i = 1;
-    if (features.length > 1) {
+    if (features.length) {
       if (this.map === undefined) {
         return;
       }

@@ -87,7 +87,8 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.catalogAllowLegend = this.catalog.showLegend ? this.catalog.showLegend : this.catalogAllowLegend;
+    const catalogShowLegend = this.catalog ? this.catalog.showLegend : false;
+    this.catalogAllowLegend = catalogShowLegend ? catalogShowLegend : this.catalogAllowLegend;
 
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
 
@@ -155,6 +156,9 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    */
   private addLayersToMap(layers: CatalogItemLayer[]) {
     const layers$ = layers.map((layer: CatalogItemLayer) => {
+      if (layer.options.sourceOptions.optionsFromApi === undefined) {
+        layer.options.sourceOptions.optionsFromApi = true;
+      }
       return this.layerService.createAsyncLayer(layer.options);
     });
 

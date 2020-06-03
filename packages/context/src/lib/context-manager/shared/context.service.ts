@@ -375,15 +375,18 @@ export class ContextService {
       tools: []
     };
 
-    const layers = igoMap.layers$.getValue();
+    const layers = igoMap.layers$
+      .getValue()
+      .sort((a, b) => a.zIndex - b.zIndex);
 
+    let i = 0;
     for (const l of layers) {
       const layer: any = l;
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
         layerOptions: {
           title: layer.options.title,
-          zIndex: layer.zIndex,
+          zIndex: ++i,
           visible: layer.visible
         },
         sourceOptions: {

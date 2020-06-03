@@ -29,7 +29,7 @@ export class ExportService {
   static noOgreFallbacks = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
-  private aggregateInComment: boolean = false;
+  private aggregateInComment: boolean = true;
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
@@ -196,6 +196,8 @@ export class ExportService {
 
     const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
+    form.style.display = 'none';
+    document.body.appendChild(form);
     form.setAttribute('method', 'post');
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
@@ -209,10 +211,12 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
-    const outputName =
+    let outputName =
       format === 'Shapefile'
         ? `${title}.zip`
         : `${title}.${format.toLowerCase()}`;
+    outputName = outputName.replace(' ', '_');
+    outputName = outputName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
     outputNameField.setAttribute('value', outputName);
@@ -225,7 +229,6 @@ export class ExportService {
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
 
-    document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
 

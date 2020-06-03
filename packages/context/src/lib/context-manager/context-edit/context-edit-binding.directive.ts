@@ -1,4 +1,6 @@
 import {
+  Output,
+  EventEmitter,
   Directive,
   Self,
   OnInit,
@@ -20,6 +22,8 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
   private component: ContextEditComponent;
   private editedContext$$: Subscription;
 
+  @Output() submitSuccessed: EventEmitter<Context> = new EventEmitter();
+
   @HostListener('submitForm', ['$event'])
   onEdit(context: Context) {
     const id = this.component.context.id;
@@ -30,6 +34,8 @@ export class ContextEditBindingDirective implements OnInit, OnDestroy {
       });
       const title = translate.instant('igo.context.contextManager.dialog.saveTitle');
       this.messageService.success(message, title);
+      this.contextService.setEditedContext(undefined);
+      this.submitSuccessed.emit(context);
     });
   }
 

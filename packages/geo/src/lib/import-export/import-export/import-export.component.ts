@@ -54,7 +54,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private formBuilder: FormBuilder,
     private config: ConfigService
   ) {
-    this.chargerConfiguration();
+    this.loadConfig();
     this.buildForm();
   }
 
@@ -172,7 +172,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     handleFileExportError(error, this.messageService, this.languageService);
   }
 
-  private chargerConfiguration() {
+  private loadConfig() {
     if (this.config.getConfig('importExport.forceNaming') !== undefined) {
       this.forceNaming = this.config.getConfig('importExport.forceNaming');
     }

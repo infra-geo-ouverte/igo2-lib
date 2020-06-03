@@ -209,10 +209,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
     if (contexts) {
       const contextsList = JSON.parse(JSON.stringify(contexts));
       contextsList.ours.sort((a, b) => {
-        if (a.title < b.title) {
+        if (this.normalize(a.title) < this.normalize(b.title)) {
           return -1;
         }
-        if (a.title > b.title) {
+        if (this.normalize(a.title) > this.normalize(b.title)) {
           return 1;
         }
         return 0;
@@ -220,20 +220,20 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
       if (contextsList.shared) {
         contextsList.shared.sort((a, b) => {
-          if (a.title < b.title) {
+          if (this.normalize(a.title) < this.normalize(b.title)) {
             return -1;
           }
-          if (a.title > b.title) {
+          if (this.normalize(a.title) > this.normalize(b.title)) {
             return 1;
           }
           return 0;
         });
       } else if (contextsList.public) {
         contextsList.public.sort((a, b) => {
-          if (a.title < b.title) {
+          if (this.normalize(a.title) < this.normalize(b.title)) {
             return -1;
           }
-          if (a.title > b.title) {
+          if (this.normalize(a.title) > this.normalize(b.title)) {
             return 1;
           }
           return 0;
@@ -241,6 +241,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
       }
       return contextsList;
     }
+  }
+
+  normalize(str: string) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
 
   toggleSort(sortAlpha: boolean) {
