@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { ToolService } from '@igo2/common';
+import { Toolbox, ToolService } from '@igo2/common';
 
 /**
  * Service that holds the state of the search module
@@ -9,7 +9,7 @@ import { ToolService } from '@igo2/common';
   providedIn: 'root'
 })
 export class ToolState {
-  get toolbox() {
+  get toolbox(): Toolbox {
     return this.toolService.toolbox;
   }
 
