@@ -39,6 +39,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private layers$$: Subscription;
   private form$$: Subscription;
+  private exportOptions$$: Subscription;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
@@ -50,7 +51,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Output() selectedTabIndex = new EventEmitter<number>();
 
-  @Input() exportOptions: ExportOptions;
+  @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(undefined);
 
   @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
 
@@ -81,9 +82,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
 
-    if (this.exportOptions) {
-      this.form.patchValue(this.exportOptions);
-    }
+    this.exportOptions$$ = this.exportOptions$.subscribe((exportOptions) => {
+      this.form.patchValue(exportOptions, {emitEvent: false} );
+    });
 
     this.form$$ = this.form.valueChanges.subscribe(() => {
       this.exportOptionsChange.emit(this.form.value);
@@ -93,6 +94,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ngOnDestroy() {
     this.layers$$.unsubscribe();
     this.form$$.unsubscribe();
+    if (this.exportOptions$$) {
+      this.exportOptions$$.unsubscribe();
+    }
   }
 
   importFiles(files: File[]) {
