@@ -28,6 +28,7 @@ import {
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -36,6 +37,8 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
+  public alwaysTracking: boolean;
+  public positionFollower: boolean = true;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
   public bufferGeom: olCircle;
@@ -161,6 +164,10 @@ export class IgoMap {
 
       if (options.geolocate) {
         this.geolocate(true);
+      }
+
+      if (options.alwaysTracking) {
+        this.alwaysTracking = true;
       }
     }
   }
@@ -437,7 +444,13 @@ export class IgoMap {
 
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
-        this.overlay.addOlFeature(this.geolocationFeature);
+        if (!this.positionFollower && this.alwaysTracking) {
+          this.overlay.addOlFeature(this.geolocationFeature, FeatureMotion.None);
+        } else if (this.positionFollower && this.alwaysTracking) {
+          this.overlay.addOlFeature(this.geolocationFeature, FeatureMotion.Move);
+        } else {
+          this.overlay.addOlFeature(this.geolocationFeature);
+        }
 
         if (this.ol.getView().options_.buffer) {
           const bufferRadius = this.ol.getView().options_.buffer.bufferRadius;
@@ -458,10 +471,11 @@ export class IgoMap {
           this.bufferFeature.set('bufferStroke', bufferStroke);
           this.bufferFeature.set('bufferFill', bufferFill);
           this.bufferFeature.set('bufferText', bufferText);
-          this.buffer.addOlFeature(this.bufferFeature);
+          this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
         }
         if (first) {
           this.viewController.zoomToExtent(extent);
+          this.positionFollower = !this.positionFollower;
         }
       } else if (first) {
         const view = this.ol.getView();
@@ -469,7 +483,7 @@ export class IgoMap {
         view.setCenter(coordinates);
         view.setZoom(14);
       }
-      if (track) {
+      if (track && !this.alwaysTracking) {
         this.unsubscribeGeolocate();
       }
       first = false;

@@ -34,6 +34,7 @@ import {
 } from './datasources';
 import { ObjectUtils } from '@igo2/utils';
 import { LanguageService, MessageService } from '@igo2/core';
+import { ProjectionService } from '../../map/shared/projection.service';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,8 @@ export class DataSourceService {
     @Optional() private optionsService: OptionsService,
     private wfsDataSourceService: WFSService,
     private languageService: LanguageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private projectionService: ProjectionService
   ) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
