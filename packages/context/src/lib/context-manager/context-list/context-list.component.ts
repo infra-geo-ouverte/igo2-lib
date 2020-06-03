@@ -20,6 +20,7 @@ import { MatDialog } from '@angular/material';
 import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'igo-context-list',
@@ -34,6 +35,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
   change$ = new ReplaySubject<void>(1);
 
   private change$$: Subscription;
+
+  private authentification$: BehaviorSubject<boolean>= new BehaviorSubject(false);
+
+  private baseUrl = '/apis/igo2/profils?';
 
   @Input()
   get contexts(): ContextsList {
@@ -90,7 +95,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  // public users = ['COG', '911', 'Public'];
+  public users: string[];
 
   /**
    * Context filter term
@@ -124,7 +129,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private contextService: ContextService,
     private languageService: LanguageService,
-    private messageService: MessageService) {}
+    private messageService: MessageService,
+    private http: HttpClient) {}
 
   ngOnInit() {
     this.change$$ = this.change$
@@ -136,6 +142,15 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.contexts$.next(this.filterContextsList(this.contexts));
       });
+
+    this.auth.authenticate$.subscribe((authenticate) => {
+      if (authenticate) {
+        this.http.get(this.baseUrl).subscribe(profils => {
+          this.users = profils as string[];
+          console.log(this.users);
+        });
+      }
+    })
   }
 
   private next() {
@@ -281,7 +296,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // userSelection() {
-  //   return;
-  // }
+  userSelection() {
+    return;
+  }
 }
