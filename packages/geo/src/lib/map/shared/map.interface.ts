@@ -6,6 +6,7 @@ export interface MapViewOptions {
   maxZoomOnExtent?: number;
   geolocate?: boolean;
   buffer?: Buffer;
+  alwaysTracking?: boolean;
 
   constrainRotation?: boolean | number;
   enableRotation?: boolean;

@@ -86,7 +86,7 @@ export class WFSService extends DataService {
         this.wfsGetFeature(
           dataSourceOptions,
           dataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
-          undefined,
+          dataSourceOptions.paramsWFS.srsName,
           fieldListWoGeomStr
         ).subscribe(manyFeatures => {
           const mfeatures = olFormats.readFeatures(manyFeatures);
