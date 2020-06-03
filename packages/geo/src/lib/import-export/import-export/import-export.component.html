@@ -1,4 +1,6 @@
-<mat-tab-group>
+<mat-tab-group  
+[selectedIndex]="selectedIndex"
+(selectedTabChange)="tabChanged($event)">
 
   <mat-tab [label]="'igo.geo.importExportForm.importTabTitle' | translate">
     <form class="igo-form">
@@ -65,6 +67,14 @@
         <mat-form-field>
             <input matInput formControlName="name" placeholder="{{'igo.geo.importExportForm.exportFileNamePlaceholder' | translate}}">
         </mat-form-field>
+      </div>
+
+      <div class="export-options mat-typography">
+        <mat-slide-toggle
+           formControlName="featureInMapExtent"
+           [labelPosition]="'before'">
+              {{'igo.geo.importExportForm.exportFeatureInExtent' | translate}}
+        </mat-slide-toggle>
       </div>
 
       <div class="igo-form-button-group">

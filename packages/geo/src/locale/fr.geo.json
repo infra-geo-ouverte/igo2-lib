@@ -62,6 +62,7 @@
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",
         "exportTabTitle": "Exporter",
+        "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
