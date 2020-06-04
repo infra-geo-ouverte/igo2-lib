@@ -32,7 +32,8 @@ import { skipWhile } from 'rxjs/operators';
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
-  public formats;
+  public selectedFormat$ = new BehaviorSubject(undefined);
+  public formats$ = new BehaviorSubject(undefined);
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
@@ -213,9 +214,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       const validatedListFormat = this.validateListFormat(
         this.config.getConfig('importExport.formats')
       );
-      this.formats = strEnum(validatedListFormat);
+      this.formats$.next(strEnum(validatedListFormat));
     } else {
-      this.formats = ExportFormat;
+      this.formats$.next(ExportFormat);
     }
   }
 

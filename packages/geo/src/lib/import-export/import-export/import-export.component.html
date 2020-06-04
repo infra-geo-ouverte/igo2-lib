@@ -56,7 +56,7 @@
           <mat-select
             formControlName="format"
             placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
-            <mat-option *ngFor="let format of formats | keyvalue " [value]="format.key">
+            <mat-option *ngFor="let format of (formats$ | async) | keyvalue " [value]="format.key">
               {{format.value}}
             </mat-option>
           </mat-select>
