@@ -54,9 +54,9 @@
     <ng-container *ngFor="let user of users">
       <mat-checkbox
         class="mat-menu-item"
-        [checked]="true"
-        (change)="userSelection()">
-        {{user}}
+        [checked]="getPermission(user).checked"
+        (change)="userSelection(user)">
+        {{user.title}}
       </mat-checkbox>
     </ng-container>
   </mat-menu>
