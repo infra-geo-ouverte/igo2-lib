@@ -58,6 +58,7 @@
       },
       "importExportForm": {
         "exportButton": "Exporter",
+        "exportButtonLink": "Ouvrir le lien",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",

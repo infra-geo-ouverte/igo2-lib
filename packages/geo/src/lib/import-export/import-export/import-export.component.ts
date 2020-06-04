@@ -32,7 +32,6 @@ import { skipWhile } from 'rxjs/operators';
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
-  public selectedFormat$ = new BehaviorSubject(undefined);
   public formats$ = new BehaviorSubject(undefined);
   public layers: VectorLayer[];
   public inputProj: string = 'EPSG:4326';
@@ -92,7 +91,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     this.form$$ = this.form.valueChanges.subscribe(() => {
       this.exportOptionsChange.emit(this.form.value);
-  });
+    });
+
+
   }
 
   ngOnDestroy() {
@@ -229,7 +230,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           format.toUpperCase() === ExportFormat.GPX.toUpperCase() ||
           format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase() ||
           format.toUpperCase() === ExportFormat.KML.toUpperCase() ||
-          format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()
+          format.toUpperCase() === ExportFormat.Shapefile.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.URL.toUpperCase()
         ) {
           return format;
         }
@@ -257,6 +259,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
         if (format.toUpperCase() === ExportFormat.Shapefile.toUpperCase()) {
           format = ExportFormat.Shapefile;
+          return format;
+        }
+
+        if (format.toUpperCase() === ExportFormat.URL.toUpperCase()) {
+          format = ExportFormat.URL;
           return format;
         }
       });
