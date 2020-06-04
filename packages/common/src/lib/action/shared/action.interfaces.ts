@@ -4,8 +4,8 @@ export interface Action {
   id: string;
   handler: ActionHandler;
   title?: string;
-  icon?: string;
-  tooltip?: string;
+  icon?: string | Observable<string>;
+  tooltip?: string | Observable<string>;
   args?: any[];
   checkbox?: boolean;
   checkCondition?: boolean;

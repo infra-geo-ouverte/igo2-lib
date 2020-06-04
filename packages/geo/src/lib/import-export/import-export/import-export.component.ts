@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -22,6 +22,7 @@ import {
 } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleListService } from '../style-list/style-list.service';
+import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
   selector: 'igo-import-export',
@@ -37,12 +38,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public forceNaming = false;
 
   private layers$$: Subscription;
+  private form$$: Subscription;
+  private exportOptions$$: Subscription;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
   @Input() map: IgoMap;
+
+  @Input() selectedIndex: number = 0;
+
+  @Output() selectedTabIndex = new EventEmitter<number>();
+
+  @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(undefined);
+
+  @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
 
   constructor(
     private importService: ImportService,
@@ -54,7 +65,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private formBuilder: FormBuilder,
     private config: ConfigService
   ) {
-    this.chargerConfiguration();
+    this.loadConfig();
     this.buildForm();
   }
 
@@ -70,10 +81,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.clientSideFileSizeMax =
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
+
+    this.exportOptions$$ = this.exportOptions$.subscribe((exportOptions) => {
+      this.form.patchValue(exportOptions, {emitEvent: false} );
+    });
+
+    this.form$$ = this.form.valueChanges.subscribe(() => {
+      this.exportOptionsChange.emit(this.form.value);
+  });
   }
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
+    this.form$$.unsubscribe();
+    if (this.exportOptions$$) {
+      this.exportOptions$$.unsubscribe();
+    }
   }
 
   importFiles(files: File[]) {
@@ -101,8 +124,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     if (data.name !== undefined) {
       filename = data.name;
     }
-
-    let olFeatures = layer.dataSource.ol.getFeatures();
+    let olFeatures;
+    if (data.featureInMapExtent) {
+      olFeatures = layer.dataSource.ol.getFeaturesInExtent(layer.map.viewController.getExtent());
+    } else {
+      olFeatures = layer.dataSource.ol.getFeatures();
+    }
     if (layer.dataSource instanceof ClusterDataSource) {
       olFeatures = olFeatures.flatMap((cluster: any) =>
         cluster.get('features')
@@ -124,12 +151,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
         layer: ['', [Validators.required]],
+        featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
     } else {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
-        layer: ['', [Validators.required]]
+        layer: ['', [Validators.required]],
+        featureInMapExtent: [false, [Validators.required]]
       });
     }
   }
@@ -172,7 +201,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     handleFileExportError(error, this.messageService, this.languageService);
   }
 
-  private chargerConfiguration() {
+  private loadConfig() {
     if (this.config.getConfig('importExport.forceNaming') !== undefined) {
       this.forceNaming = this.config.getConfig('importExport.forceNaming');
     }
@@ -227,5 +256,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           return format;
         }
       });
+  }
+
+  public tabChanged(tab: MatTabChangeEvent) {
+    this.selectedTabIndex.emit(tab.index);
   }
 }

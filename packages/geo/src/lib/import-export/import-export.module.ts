@@ -7,7 +7,8 @@ import {
   MatSelectModule,
   MatOptionModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatSlideToggleModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -28,6 +29,7 @@ import { IgoStyleListModule } from './style-list/style-list.module';
     MatOptionModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSlideToggleModule,
     IgoLanguageModule,
     IgoSpinnerModule,
     IgoKeyValueModule,

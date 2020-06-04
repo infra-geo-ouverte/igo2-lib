@@ -315,7 +315,6 @@ export class QueryService {
   }
 
   private createGeometryFromUrlClick(url) {
-
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
     const width = parseInt(searchParams.width, 10);
@@ -373,8 +372,8 @@ export class QueryService {
     const f = tenPercentWidthGeom.getGeometry() as any;
 
     const newGeom = {
-          type: f.getType(),
-          coordinates: f.getCoordinates()
+      type: f.getType(),
+      coordinates: f.getCoordinates()
     };
 
     return newGeom;
@@ -402,7 +401,12 @@ export class QueryService {
 
   private extractGML3Data(res, zIndex, allowedFieldsAndAlias?) {
     const parser = new olFormatGML3();
-    const features = parser.readFeatures(res);
+    let features = [];
+    try {
+      features = parser.readFeatures(res);
+    } catch (e) {
+      console.warn('query.service: GML3 is not well supported');
+    }
     return features.map(feature =>
       this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
     );
@@ -436,7 +440,6 @@ export class QueryService {
     url,
     imposedGeometry?
   ) {
-
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
     const geomToAdd = this.createGeometryFromUrlClick(url);

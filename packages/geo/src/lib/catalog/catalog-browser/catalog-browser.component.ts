@@ -87,7 +87,8 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.catalogAllowLegend = this.catalog.showLegend ? this.catalog.showLegend : this.catalogAllowLegend;
+    const catalogShowLegend = this.catalog ? this.catalog.showLegend : false;
+    this.catalogAllowLegend = catalogShowLegend ? catalogShowLegend : this.catalogAllowLegend;
 
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
 

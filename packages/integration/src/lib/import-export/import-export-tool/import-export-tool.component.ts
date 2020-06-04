@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { IgoMap } from '@igo2/geo';
+import { IgoMap, ExportOptions } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
+import { ImportExportState } from '../import-export.state';
 
 @ToolComponent({
   name: 'importExport',
@@ -15,7 +16,7 @@ import { MapState } from '../../map/map.state';
   templateUrl: './import-export-tool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImportExportToolComponent {
+export class ImportExportToolComponent implements OnInit {
   /**
    * Map to measure on
    * @internal
@@ -23,7 +24,30 @@ export class ImportExportToolComponent {
   get map(): IgoMap { return this.mapState.map; }
 
   constructor(
-    private mapState: MapState
+    private mapState: MapState,
+    public importExportState: ImportExportState
   ) {}
+
+  ngOnInit(): void {
+    this.selectedTab();
+  }
+
+  private selectedTab() {
+    const userSelectedTab = this.importExportState.selectedTab$.value;
+    if (userSelectedTab !== undefined) {
+      this.importExportState.setSelectedTab(userSelectedTab);
+    } else {
+      this.importExportState.setSelectedTab(0);
+
+    }
+  }
+
+  public tabChanged(tab: number) {
+    this.importExportState.setSelectedTab(tab);
+  }
+
+  public exportOptionsChange(exportOptions: ExportOptions) {
+    this.importExportState.setsExportOptions(exportOptions);
+  }
 
 }

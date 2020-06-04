@@ -62,6 +62,7 @@
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
         "exportTabTitle": "Export",
+        "exportFeatureInExtent": "Export only features in map extent",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
