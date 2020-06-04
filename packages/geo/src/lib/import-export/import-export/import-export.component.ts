@@ -210,17 +210,17 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
 
     if (this.config.getConfig('importExport.formats') !== undefined) {
-      const liste = this.validerListeFormat(
+      const validatedListFormat = this.validateListFormat(
         this.config.getConfig('importExport.formats')
       );
-      this.formats = strEnum(liste);
+      this.formats = strEnum(validatedListFormat);
     } else {
       this.formats = ExportFormat;
     }
   }
 
-  private validerListeFormat(liste: string[]): string[] {
-    return liste
+  private validateListFormat(formats: string[]): string[] {
+    return formats
       .filter(format => {
         if (
           format.toUpperCase() === ExportFormat.CSV.toUpperCase() ||
