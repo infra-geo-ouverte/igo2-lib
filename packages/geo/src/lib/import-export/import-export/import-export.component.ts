@@ -10,6 +10,8 @@ import { IgoMap } from '../../map/shared/map';
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import { Layer } from '../../layer/shared/layers/layer';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
 import { handleFileExportError } from '../shared/export.utils';
 import { ExportOptions } from '../shared/export.interface';
@@ -33,13 +35,15 @@ import { skipWhile } from 'rxjs/operators';
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
   public formats$ = new BehaviorSubject(undefined);
-  public layers: VectorLayer[];
+  public layers: AnyLayer[];
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
 
   private layers$$: Subscription;
   private form$$: Subscription;
+  private formats$$: Subscription;
+  private formLayer$$: Subscription;
   private exportOptions$$: Subscription;
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
@@ -73,8 +77,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this.layers$$ = this.map.layers$.subscribe(layers => {
       this.layers = layers.filter((layer: Layer) => {
-        return layer instanceof VectorLayer && layer.exportable === true;
-      }) as VectorLayer[];
+        return (layer instanceof VectorLayer && layer.exportable === true) ||
+          (layer.dataSource.options.download && layer.dataSource.options.download.url);
+      }) as AnyLayer[];
     });
     const configFileSizeMb = this.config.getConfig(
       'importExport.clientSideFileSizeMaxMb'
@@ -93,12 +98,24 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.exportOptionsChange.emit(this.form.value);
     });
 
+    this.formLayer$$ = this.form.get('layer').valueChanges.subscribe((layerId) => {
+      this.computeFormats(this.map.getLayerById(layerId));
+    });
 
+    this.formats$$ = this.formats$
+      .pipe(skipWhile(formats => !formats))
+      .subscribe(formats => {
+        if (Object.keys(formats).length === 1) {
+          this.form.patchValue({ format: formats[Object.keys(formats)[0]] });
+        }
+      });
   }
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
     this.form$$.unsubscribe();
+    this.formats$$.unsubscribe();
+    this.formLayer$$.unsubscribe();
     if (this.exportOptions$$) {
       this.exportOptions$$.unsubscribe();
     }
@@ -129,6 +146,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     if (data.name !== undefined) {
       filename = data.name;
     }
+    const dSOptions: DataSourceOptions = layer.dataSource.options;
+    if (data.format === ExportFormat.URL && dSOptions.download && dSOptions.download.url) {
+      window.open(dSOptions.download.url, '_blank');
+      this.loading$.next(false);
+      return;
+    }
+
     let olFeatures;
     if (data.featureInMapExtent) {
       olFeatures = layer.dataSource.ol.getFeaturesInExtent(layer.map.viewController.getExtent());
@@ -209,6 +233,32 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private loadConfig() {
     if (this.config.getConfig('importExport.forceNaming') !== undefined) {
       this.forceNaming = this.config.getConfig('importExport.forceNaming');
+    }
+    this.computeFormats();
+  }
+
+  private computeFormats(layer?: AnyLayer) {
+    if (layer) {
+      if (!(layer instanceof VectorLayer) && layer.dataSource.options.download && layer.dataSource.options.download.url) {
+        // only url key
+        this.formats$.next(strEnum(['URL']));
+      } else if (layer.dataSource.options.download && layer.dataSource.options.download.url) {
+        // add/keep url key
+        this.computeFormats(); // reset
+        if (!(ExportFormat.URL in this.formats$.value)) {
+          const keys = Object.keys(this.formats$.value);
+          keys.push('URL');
+          this.formats$.next(strEnum(keys));
+        }
+      } else if (layer instanceof VectorLayer) {
+        // remove url key
+        this.computeFormats(); // reset
+        if (ExportFormat.URL in this.formats$.value) {
+          const keys = Object.keys(this.formats$.value).filter(key => key !== 'URL');
+          this.formats$.next(strEnum(keys));
+        }
+      }
+      return;
     }
 
     if (this.config.getConfig('importExport.formats') !== undefined) {
