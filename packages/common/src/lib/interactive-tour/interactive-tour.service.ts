@@ -11,7 +11,17 @@ export class InteractiveTourService {
   private tourActiveOption;
   constructor(private configService: ConfigService) {}
 
-  // .configTourForTool('measurer');
+  public isToolHaveTourConfig(toolName) {
+    let nameInConfigFile = 'introOptions_' + toolName;
+    nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
+    const tourActiveOption = this.configService.getConfig(nameInConfigFile);
+
+    if (tourActiveOption == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   public startTour(tourTool) {
 
@@ -131,7 +141,6 @@ export class InteractiveTourService {
     this.introJS.onafterchange(targetElement => {});
     let nameInConfigFile = 'introOptions_' + tourTool;
     nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
-    debugger;
 
     this.tourActiveOption = this.configService.getConfig(nameInConfigFile);
 

@@ -8,9 +8,9 @@
   {{'igo.common.interactiveTour.discover' | translate}}
 </button> -->
 
-<button *ngIf="isActiveTool && !toast"
+<button *ngIf="isActiveTool && !toast && isToolHaveTour"
   color="primary"
   mat-icon-button
-  (click)="startInteractiveTour(activeTool)">
+  (click)="startInteractiveTour(activeToolName)">
   <mat-icon svgIcon="presentation-play"></mat-icon>
 </button>

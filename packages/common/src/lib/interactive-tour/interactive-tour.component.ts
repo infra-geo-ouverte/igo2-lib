@@ -18,7 +18,7 @@ export class InteractiveTourComponent {
     return this.toolService.toolbox;
   }
 
-  get activeTool() {
+  get activeToolName() {
     if (this.toolbox) {
       return this.toolbox.activeTool$.getValue().name;
     } else {
@@ -34,6 +34,14 @@ export class InteractiveTourComponent {
     }
   }
 
+  get isToolHaveTour() {
+    if (this.isActiveTool) {
+      return this.interactiveTourService.isToolHaveTourConfig(this.activeToolName);
+    } else {
+      return false;
+    }
+  }
+
   @Input() toast = false;
 
   constructor(
@@ -42,11 +50,10 @@ export class InteractiveTourComponent {
     private languageService: LanguageService) {}
 
   startInteractiveTour(toolName?: string) {
-    debugger;
     if (toolName) {
       this.interactiveTourService.startTour(toolName);
     } else {
-      this.interactiveTourService.startTour('global');
+      return;
     }
   }
 }
