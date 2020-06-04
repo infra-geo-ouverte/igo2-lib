@@ -68,6 +68,7 @@
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
+        "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
@@ -164,7 +165,7 @@
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
-        
+
         }
       },
       "download": {
