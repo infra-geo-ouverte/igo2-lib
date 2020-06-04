@@ -63,6 +63,7 @@
         "exportFileNamePlaceholder": "Nom du fichier",
         "exportTabTitle": "Exporter",
         "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
+        "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",

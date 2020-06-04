@@ -63,6 +63,7 @@
         "exportFileNamePlaceholder": "Filename",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
+        "exportNoLayersExportable": "There is no layer exportable in your map",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",

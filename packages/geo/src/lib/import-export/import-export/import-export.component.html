@@ -37,8 +37,11 @@
   </mat-tab>
 
   <mat-tab [label]="'igo.geo.importExportForm.exportTabTitle' | translate">
-    <form class="igo-form" [formGroup]="form">
+    <section class="mat-typography" *ngIf="layers.length === 0">
+      <h4>{{'igo.geo.importExportForm.exportNoLayersExportable' | translate}}</h4>
+    </section>
 
+   <form class="igo-form" [formGroup]="form" *ngIf="layers.length > 0">
       <div class="igo-input-container">
         <mat-form-field>
           <mat-select
