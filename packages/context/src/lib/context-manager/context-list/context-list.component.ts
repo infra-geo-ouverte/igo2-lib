@@ -9,11 +9,11 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { AuthService } from '@igo2/auth';
+import { AuthService, TokenService } from '@igo2/auth';
 import { LanguageService, MessageService } from '@igo2/core';
 import { IgoMap } from '@igo2/geo';
 
-import { DetailedContext, ContextsList } from '../shared/context.interface';
+import { DetailedContext, ContextsList, ContextUserPermission } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
 import { Subscription, BehaviorSubject, ReplaySubject, EMPTY, timer } from 'rxjs';
 import { MatDialog } from '@angular/material';
@@ -36,9 +36,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   private change$$: Subscription;
 
-  private authentification$: BehaviorSubject<boolean>= new BehaviorSubject(false);
-
-  private baseUrl = '/apis/igo2/profils?';
+  private baseUrlProfils = '/apis/igo2/profils?';
+  private baseUrlContexts = '/apis/igo2/contexts?';
 
   @Input()
   get contexts(): ContextsList {
@@ -95,7 +94,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  public users: string[];
+  public users;
+  public permissions: ContextUserPermission[];
 
   /**
    * Context filter term
@@ -130,7 +130,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private contextService: ContextService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private http: HttpClient) {}
+    private http: HttpClient,
+    private tokenService: TokenService) {}
 
   ngOnInit() {
     this.change$$ = this.change$
@@ -145,9 +146,21 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
     this.auth.authenticate$.subscribe((authenticate) => {
       if (authenticate) {
-        this.http.get(this.baseUrl).subscribe(profils => {
-          this.users = profils as string[];
-          console.log(this.users);
+        this.http.get(this.baseUrlProfils).subscribe(profils => {
+          this.users = profils;
+          const publicUser = {
+            name: 'public',
+            title: 'Publique'
+          };
+          this.users.push(publicUser);
+          this.permissions = [];
+          for (const user of this.users) {
+            const permission: ContextUserPermission = {
+              name: user.name,
+              checked: true
+            }
+            this.permissions.push(permission);
+          }
         });
       }
     })
@@ -296,7 +309,33 @@ export class ContextListComponent implements OnInit, OnDestroy {
       });
   }
 
-  userSelection() {
-    return;
+  getPermission(user): ContextUserPermission {
+    return this.permissions.find(permission => permission.name === user.name);
+  }
+
+  userSelection(user) {
+    let permission = this.getPermission(user);
+    if (permission) {
+      permission.checked = !permission.checked;
+    }
+
+    let permissions = this.tokenService.decode().user.sourceId + ",";
+    for (const permission of this.permissions) {
+      if (permission.checked === true) {
+        permissions += permission.name + ',';
+      }
+    }
+    permissions = permissions.slice(0, -1);
+    if (permissions.length) {
+      this.http.get(this.baseUrlContexts + 'permission=' + permissions).subscribe(contexts => {
+        this.contexts = contexts as ContextsList;
+        this.contexts$.next(this.contexts);
+      })
+    } else {
+      this.http.get(this.baseUrlContexts + 'permission=' + permissions).subscribe(contexts => {
+        this.contexts = contexts as ContextsList;
+        this.contexts$.next(this.contexts);
+      })
+    }
   }
 }

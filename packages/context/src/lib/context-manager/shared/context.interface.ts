@@ -57,3 +57,8 @@ export interface ContextPermissionsList {
   read: ContextPermission[];
   write: ContextPermission[];
 }
+
+export interface ContextUserPermission {
+  name: string;
+  checked: boolean;
+}
