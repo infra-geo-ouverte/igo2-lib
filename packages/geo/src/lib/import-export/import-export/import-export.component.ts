@@ -35,12 +35,13 @@ import { skipWhile } from 'rxjs/operators';
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
   public formats$ = new BehaviorSubject(undefined);
-  public layers: AnyLayer[];
+  public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject([]);
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
 
   private layers$$: Subscription;
+  private exportableLayers$$: Subscription;
   private form$$: Subscription;
   private formats$$: Subscription;
   private formLayer$$: Subscription;
@@ -76,10 +77,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.layers$$ = this.map.layers$.subscribe(layers => {
-      this.layers = layers.filter((layer: Layer) => {
+      this.exportableLayers$.next(layers.filter((layer: Layer) => {
         return (layer instanceof VectorLayer && layer.exportable === true) ||
           (layer.dataSource.options.download && layer.dataSource.options.download.url);
-      }) as AnyLayer[];
+      }) as AnyLayer[]);
     });
     const configFileSizeMb = this.config.getConfig(
       'importExport.clientSideFileSizeMaxMb'
@@ -109,10 +110,19 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.form.patchValue({ format: formats[Object.keys(formats)[0]] });
         }
       });
+
+    this.exportableLayers$$ = this.exportableLayers$
+      .pipe(skipWhile(layers => !layers))
+      .subscribe(layers => {
+        if (layers.length === 1) {
+          this.form.patchValue({ layer: layers[0].id });
+        }
+      });
   }
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
+    this.exportableLayers$$.unsubscribe();
     this.form$$.unsubscribe();
     this.formats$$.unsubscribe();
     this.formLayer$$.unsubscribe();
