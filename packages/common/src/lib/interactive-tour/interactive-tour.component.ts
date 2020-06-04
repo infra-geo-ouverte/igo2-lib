@@ -42,10 +42,11 @@ export class InteractiveTourComponent {
     private languageService: LanguageService) {}
 
   startInteractiveTour(toolName?: string) {
+    debugger;
     if (toolName) {
       this.interactiveTourService.startTour(toolName);
     } else {
-      this.interactiveTourService.startTour('Global');
+      this.interactiveTourService.startTour('global');
     }
   }
 }

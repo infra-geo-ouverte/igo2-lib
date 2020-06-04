@@ -129,15 +129,14 @@ export class InteractiveTourService {
     });
 
     this.introJS.onafterchange(targetElement => {});
-    let nameInConfigFile = 'introOptions' + tourTool;
+    let nameInConfigFile = 'introOptions_' + tourTool;
     nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
-    // debugger;
+    debugger;
 
     this.tourActiveOption = this.configService.getConfig(nameInConfigFile);
 
     if (this.tourActiveOption == null) {
       alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;
-      alert(tourTool) ;
       return;
     } else {
       this.introJS.setOptions(this.tourActiveOption);
