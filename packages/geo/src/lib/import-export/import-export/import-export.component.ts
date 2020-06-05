@@ -101,6 +101,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     this.formLayer$$ = this.form.get('layer').valueChanges.subscribe((layerId) => {
       this.computeFormats(this.map.getLayerById(layerId));
+      if (Object.keys(this.formats$.value).indexOf(this.form.value.format) === -1) {
+        this.form.patchValue({ format: undefined });
+      }
     });
 
     this.formats$$ = this.formats$
