@@ -51,6 +51,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
+  private previousLayerSpecs$: BehaviorSubject<
+    { id: string, visible: boolean, opacity: number, queryable: boolean }
+  > = new BehaviorSubject(undefined);
+
   @Input() map: IgoMap;
 
   @Input() selectedIndex: number = 0;
@@ -100,9 +104,29 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     });
 
     this.formLayer$$ = this.form.get('layer').valueChanges.subscribe((layerId) => {
-      this.computeFormats(this.map.getLayerById(layerId));
+      if (this.previousLayerSpecs$.value) {
+        const previousLayer = this.map.getLayerById(this.previousLayerSpecs$.value.id);
+        previousLayer.visible = this.previousLayerSpecs$.value.visible;
+        previousLayer.opacity = this.previousLayerSpecs$.value.opacity;
+        (previousLayer as any).queryable = this.previousLayerSpecs$.value.queryable;
+        this.previousLayerSpecs$.next(undefined);
+      }
+      const layer = this.map.getLayerById(layerId);
+      this.computeFormats(layer);
       if (Object.keys(this.formats$.value).indexOf(this.form.value.format) === -1) {
         this.form.patchValue({ format: undefined });
+      }
+
+      if (layer instanceof VectorLayer && layer.dataSource.ol.getFeatures().length === 0) {
+        this.loading$.next(true);
+        this.previousLayerSpecs$.next(
+          { id: layerId, visible: layer.visible, opacity: layer.opacity, queryable: (layer as any).queryable }
+        );
+        layer.opacity = 0;
+        layer.visible = true;
+        setTimeout(() => {
+          this.loading$.next(false);
+        }, 500);
       }
     });
 
@@ -132,6 +156,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     if (this.exportOptions$$) {
       this.exportOptions$$.unsubscribe();
     }
+    if (this.previousLayerSpecs$.value) {
+      const previousLayer = this.map.getLayerById(this.previousLayerSpecs$.value.id);
+      previousLayer.visible = this.previousLayerSpecs$.value.visible;
+      previousLayer.opacity = this.previousLayerSpecs$.value.opacity;
+      (previousLayer as any).queryable = this.previousLayerSpecs$.value.queryable;
+      this.previousLayerSpecs$.next(undefined);
+    }
+
   }
 
   importFiles(files: File[]) {
