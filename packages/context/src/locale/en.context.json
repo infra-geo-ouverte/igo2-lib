@@ -42,7 +42,7 @@
           "uriRequired": "ID required"
         },
         "invalid": {
-          "text": "Context '{{value}}' is invalid",
+          "text": "Context '{{value}}' is invalid. The default context was loaded.",
           "title": "Invalid context"
         },
         "managePermissions": "Manage permissions context",
