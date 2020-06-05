@@ -158,8 +158,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
     const dSOptions: DataSourceOptions = layer.dataSource.options;
     if (data.format === ExportFormat.URL && dSOptions.download && dSOptions.download.url) {
-      window.open(dSOptions.download.url, '_blank');
-      this.loading$.next(false);
+      setTimeout(() => { // better look an feel
+        window.open(dSOptions.download.url, '_blank');
+        this.loading$.next(false);
+      }, 500);
       return;
     }
 
