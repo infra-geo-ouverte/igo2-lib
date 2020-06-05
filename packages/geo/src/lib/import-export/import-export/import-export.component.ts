@@ -42,7 +42,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private layers$$: Subscription;
   private exportableLayers$$: Subscription;
-  private form$$: Subscription;
   private formats$$: Subscription;
   private formLayer$$: Subscription;
   private exportOptions$$: Subscription;
@@ -96,21 +95,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.exportOptions$$ = this.exportOptions$
       .pipe(skipWhile(exportOptions => !exportOptions))
       .subscribe((exportOptions) => {
-        this.form.patchValue(exportOptions, { emitEvent: false });
+        this.form.patchValue(exportOptions, { emitEvent: true });
+        if (exportOptions.layer) {
+          this.computeFormats(this.map.getLayerById(exportOptions.layer));
+      }
       });
 
-    this.form$$ = this.form.valueChanges.subscribe(() => {
-      this.exportOptionsChange.emit(this.form.value);
-    });
-
     this.formLayer$$ = this.form.get('layer').valueChanges.subscribe((layerId) => {
-      if (this.previousLayerSpecs$.value) {
-        const previousLayer = this.map.getLayerById(this.previousLayerSpecs$.value.id);
-        previousLayer.visible = this.previousLayerSpecs$.value.visible;
-        previousLayer.opacity = this.previousLayerSpecs$.value.opacity;
-        (previousLayer as any).queryable = this.previousLayerSpecs$.value.queryable;
-        this.previousLayerSpecs$.next(undefined);
-      }
+      this.handlePreviousLayerSpecs();
       const layer = this.map.getLayerById(layerId);
       this.computeFormats(layer);
       if (Object.keys(this.formats$.value).indexOf(this.form.value.format) === -1) {
@@ -150,12 +142,17 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ngOnDestroy() {
     this.layers$$.unsubscribe();
     this.exportableLayers$$.unsubscribe();
-    this.form$$.unsubscribe();
     this.formats$$.unsubscribe();
     this.formLayer$$.unsubscribe();
     if (this.exportOptions$$) {
       this.exportOptions$$.unsubscribe();
     }
+    this.exportOptionsChange.emit(this.form.value);
+    this.handlePreviousLayerSpecs();
+
+  }
+
+  private handlePreviousLayerSpecs() {
     if (this.previousLayerSpecs$.value) {
       const previousLayer = this.map.getLayerById(this.previousLayerSpecs$.value.id);
       previousLayer.visible = this.previousLayerSpecs$.value.visible;
@@ -163,7 +160,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       (previousLayer as any).queryable = this.previousLayerSpecs$.value.queryable;
       this.previousLayerSpecs$.next(undefined);
     }
-
   }
 
   importFiles(files: File[]) {

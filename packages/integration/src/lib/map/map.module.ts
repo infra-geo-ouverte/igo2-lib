@@ -13,7 +13,8 @@ import {
   IgoLayerModule,
   IgoMetadataModule,
   IgoDownloadModule,
-  IgoFilterModule
+  IgoFilterModule,
+  IgoImportExportModule
 } from '@igo2/geo';
 
 import { IgoContextModule } from '@igo2/context';
@@ -33,6 +34,7 @@ import { MapLegendToolComponent } from './map-legend/map-legend-tool.component';
     IgoLayerModule,
     IgoMetadataModule,
     IgoDownloadModule,
+    IgoImportExportModule,
     IgoFilterModule,
     IgoContextModule
   ],
