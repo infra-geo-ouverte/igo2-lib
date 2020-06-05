@@ -1,4 +1,4 @@
-import * as bowser from 'bowser';
+import { userAgent } from './user-agent';
 
 export class Clipboard {
   static copy(element: HTMLTextAreaElement | string): boolean {
@@ -27,7 +27,7 @@ export class Clipboard {
   }
 
   private static selectText(textArea) {
-    if (bowser.ios) {
+    if (userAgent.getOSName() === 'iOS') {
       const oldContentEditable = textArea.contentEditable;
       const oldReadOnly = textArea.readOnly;
       const range = document.createRange();
@@ -47,7 +47,7 @@ export class Clipboard {
   }
 
   private static copyTextToClipboard(): boolean {
-    if (!(bowser.ios && bowser.version < 10)) {
+    if (!(userAgent.getOSName() === 'iOS' && userAgent.compareVersion('<10'))) {
       return document.execCommand('copy');
     }
     return false;
