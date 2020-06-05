@@ -7,14 +7,14 @@
 
 <p>
   <button
-  id="tour-button"
-  mat-raised-button
-  color="primary"
-  aria-label="test"
-  (click)="startTour()"
-  matTooltip= "Tour interactif de présentation de application. Fonctionnement étape par étape">
-  Découvrir application
-</button>
+    id="tour-button"
+    mat-raised-button
+    color="primary"
+    aria-label="test"
+    (click)="startTour()"
+    matTooltip= "Tour interactif de présentation de application. Fonctionnement étape par étape">
+    <span [style.display]="getDisplay()">Découvrir application</span> <mat-icon svgIcon="presentation-play"></mat-icon>
+  </button>
 </p>
 
 <p>
