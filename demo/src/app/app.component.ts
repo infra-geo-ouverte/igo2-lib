@@ -42,13 +42,13 @@ export class AppComponent implements OnDestroy {
 
   private detectOldBrowser() {
     const oldBrowser = userAgent.satisfies({
-       ie: "<11",
-       chrome: "<64",
-       firefox: "<60"
-     });
+      ie: '<11',
+      chrome: '<64',
+      firefox: '<60'
+    });
 
-     if (oldBrowser) {
-       console.log('Very old browser ! ', userAgent.getBrowser());
-     }
+    if (oldBrowser) {
+      console.log('Very old browser ! ', userAgent.getBrowser());
+    }
   }
 }
