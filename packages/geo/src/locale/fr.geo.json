@@ -379,6 +379,7 @@
         "layer": "Couche",
         "goSearch": "Lancer la recherche",
         "removeLayer": "Retirer les résultats",
+        "exportLayer": "Exporter les résultats",
         "clearForm": "Retirer le dessin",
         "clearSearch": "Réinitialiser",
         "Address": "Adresses",
