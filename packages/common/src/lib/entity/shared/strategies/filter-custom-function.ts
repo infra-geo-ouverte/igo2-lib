@@ -73,9 +73,7 @@ export class EntityStoreFilterCustomFuncStrategy extends EntityStoreStrategy {
    * Filter a store and add it to the filters map
    */
   private filterStore(store: EntityStore) {
-    if (this.options.filterClauseFunc) {
-      this.filters.set(store, store.stateView.addFilter(this.options.filterClauseFunc));
-    }
+    this.filters.set(store, store.stateView.addFilter(this.options.filterClauseFunc));
   }
 
   /**
