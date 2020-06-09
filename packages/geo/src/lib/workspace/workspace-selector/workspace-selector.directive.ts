@@ -7,11 +7,12 @@ import { Workspace, WorkspaceStore, WorkspaceSelectorComponent } from '@igo2/com
 
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
-import { WFSDataSource, WMSDataSource } from '../../datasource';
+import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasource';
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 
 @Directive({
   selector: '[igoWorkspaceSelector]'
@@ -29,7 +30,8 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   constructor(
     private component: WorkspaceSelectorComponent,
     private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService
+    private wmsWorkspaceService: WmsWorkspaceService,
+    private featureWorkspaceService: FeatureWorkspaceService
   ) {}
 
   ngOnInit() {
@@ -81,6 +83,8 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       return this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
     } else if (layer.dataSource instanceof WMSDataSource) {
       return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
+    } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
+      return this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
     }
 
     return;
@@ -91,7 +95,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     if (dataSource instanceof WFSDataSource) {
       return true;
     }
-
+    if (dataSource instanceof FeatureDataSource) {
+      return true;
+    }
     if (dataSource instanceof WMSDataSource) {
       const dataSourceOptions = (dataSource.options ||
         {}) as OgcFilterableDataSourceOptions;
