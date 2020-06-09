@@ -19,7 +19,7 @@ import {
   PushButtonGroup,
   OgcPushButtonBundle
 } from './ogc-filter.interface';
-import { OgcFilterOperatorType } from './ogc-filter.enum';
+import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 
 export class OgcFilterWriter {
@@ -176,38 +176,38 @@ export class OgcFilterWriter {
       });
     }
 
-    switch (operator) {
-      case 'BBOX':
+    switch (operator.toLowerCase()) {
+      case OgcFilterOperator.BBOX:
         return olfilter.bbox(wfsGeometryName, wfsExtent, wfsSrsName);
-      case 'PropertyIsBetween':
+      case OgcFilterOperator.PropertyIsBetween:
         return olfilter.between(
           wfsPropertyName,
           wfsLowerBoundary,
           wfsUpperBoundary
         );
-      case 'Contains':
+      case OgcFilterOperator.Contains:
         return olfilter.contains(wfsGeometryName, geometry, wfsSrsName);
-      case 'During':
+      case OgcFilterOperator.During:
         return olfilter.during(wfsPropertyName, wfsBegin, wfsEnd);
-      case 'PropertyIsEqualTo':
+      case OgcFilterOperator.PropertyIsEqualTo:
         return olfilter.equalTo(
           wfsPropertyName,
           wfsExpression,
           wfsMatchCase
         );
-      case 'PropertyIsGreaterThan':
+      case OgcFilterOperator.PropertyIsGreaterThan:
         return olfilter.greaterThan(wfsPropertyName, wfsExpression);
-      case 'PropertyIsGreaterThanOrEqualTo':
+      case OgcFilterOperator.PropertyIsGreaterThanOrEqualTo:
         return olfilter.greaterThanOrEqualTo(wfsPropertyName, wfsExpression);
-      case 'Intersects':
+      case OgcFilterOperator.Intersects:
         return olfilter.intersects(wfsGeometryName, geometry, wfsSrsName);
-      case 'PropertyIsNull':
+      case OgcFilterOperator.PropertyIsNull:
         return olfilter.isNull(wfsPropertyName);
-      case 'PropertyIsLessThan':
+      case OgcFilterOperator.PropertyIsLessThan:
         return olfilter.lessThan(wfsPropertyName, wfsExpression);
-      case 'PropertyIsLessThanOrEqualTo':
+      case OgcFilterOperator.PropertyIsLessThanOrEqualTo:
         return olfilter.lessThanOrEqualTo(wfsPropertyName, wfsExpression);
-      case 'PropertyIsLike':
+      case OgcFilterOperator.PropertyIsLike:
         return olfilter.like(
           wfsPropertyName,
           wfsPattern.replace(/[()_]/gi, wfsSingleChar),
@@ -216,20 +216,20 @@ export class OgcFilterWriter {
           wfsEscapeChar,
           wfsMatchCase
         );
-      case 'PropertyIsNotEqualTo':
+      case OgcFilterOperator.PropertyIsNotEqualTo:
         return olfilter.notEqualTo(
           wfsPropertyName,
           wfsExpression,
           wfsMatchCase
         );
-      case 'Within':
+      case OgcFilterOperator.Within:
         return olfilter.within(wfsGeometryName, geometry, wfsSrsName);
       // LOGICAL
-      case 'And':
+      case OgcFilterOperator.And:
         return olfilter.and.apply(null, logicalArray);
-      case 'Or':
+      case OgcFilterOperator.Or:
         return olfilter.or.apply(null, logicalArray);
-      case 'Not':
+      case OgcFilterOperator.Not:
         return olfilter.not.apply(null, logicalArray);
 
       default:
@@ -289,16 +289,16 @@ export class OgcFilterWriter {
     allowedOperators = allowedOperators ? allowedOperators : 'basicandspatial';
 
     switch (allowedOperators.toLowerCase()) {
-      case 'all':
+      case OgcFilterOperatorType.All:
         effectiveOperators = this.operators;
         break;
-      case 'spatial':
+      case OgcFilterOperatorType.Spatial:
         effectiveOperators = {
           Intersects: { spatial: true, fieldRestrict: [] },
           Within: { spatial: true, fieldRestrict: [] },
         };
         break;
-      case 'basicandspatial':
+      case OgcFilterOperatorType.BasicAndSpatial:
         effectiveOperators = {
           PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
           PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
@@ -306,18 +306,18 @@ export class OgcFilterWriter {
           Within: { spatial: true, fieldRestrict: [] },
         };
         break;
-      case 'basic':
+      case OgcFilterOperatorType.Basic:
         effectiveOperators = {
           PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
           PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] }
         };
         break;
-        case 'time':
+        case OgcFilterOperatorType.Time:
           effectiveOperators = {
             During: { spatial: false, fieldRestrict: [] },
           };
           break;
-      case 'basicnumeric':
+      case OgcFilterOperatorType.BasicNumericOperator:
         effectiveOperators = {
           PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
           PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
