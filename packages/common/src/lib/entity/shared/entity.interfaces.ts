@@ -29,9 +29,10 @@ export interface EntityStateManagerOptions {
   store?: EntityStore<object>;
 }
 
-export interface EntityStoreStrategyOptions {
-  state?: string;
-  value?: any;
+export interface EntityStoreStrategyOptions {}
+
+export interface EntityStoreStrategyFuncOptions extends EntityStoreStrategyOptions {
+  filterClauseFunc: EntityFilterClause;
 }
 
 export interface EntityTransactionOptions {
