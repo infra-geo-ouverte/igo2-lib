@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 
 import {
   ActionStore,
-  EntityTableTemplate
+  EntityTableTemplate,
+  EntityStoreFilterCustomFuncStrategy,
+  EntityStoreStrategyFuncOptions,
+  EntityRecord
 } from '@igo2/common';
 
 import {
@@ -15,16 +18,17 @@ import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams } from '../../datasource';
 
 import { WfsWorkspace } from './wfs-workspace';
+import { WfsActionsService } from './wfs-actions.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsWorkspaceService {
 
-  constructor() {}
+  constructor(private wfsActionsService: WfsActionsService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
-    return new WfsWorkspace({
+    const wks = new WfsWorkspace({
       id: layer.id,
       title: layer.title,
       layer,
@@ -35,6 +39,9 @@ export class WfsWorkspaceService {
         tableTemplate: this.createTableTemplate(layer)
       }
     });
+    wks.actionStore.insertMany(this.wfsActionsService.buildActions(wks));
+    return wks;
+
   }
 
   private createFeatureStore(layer: VectorLayer, map: IgoMap): FeatureStore {
@@ -44,11 +51,11 @@ export class WfsWorkspaceService {
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       map,
-      hitTolerance: 5
+      hitTolerance: 10
     });
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(selectionStrategy, true);
-
+    store.addStrategy(this.createFilterInMapExtentStrategy(), false);
     return store;
   }
 
@@ -68,4 +75,10 @@ export class WfsWorkspaceService {
     };
   }
 
+  private createFilterInMapExtentStrategy(): EntityStoreFilterCustomFuncStrategy {
+    const filterClauseFunc = (record: EntityRecord<object>) => {
+      return record.state.inMapExtent === true;
+    };
+    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
+  }
 }
