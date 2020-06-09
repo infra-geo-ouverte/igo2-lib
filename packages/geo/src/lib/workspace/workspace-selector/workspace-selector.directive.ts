@@ -1,7 +1,7 @@
 import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, skipWhile, first } from 'rxjs/operators';
 
 import { Workspace, WorkspaceStore, WorkspaceSelectorComponent } from '@igo2/common';
 
@@ -80,14 +80,42 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       return;
     }
     if (layer.dataSource instanceof WFSDataSource) {
-      return this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
+      const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
+      this.validateTableTemplate(wfsWks);
+      return wfsWks;
     } else if (layer.dataSource instanceof WMSDataSource) {
       return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
     } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
-      return this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
+      const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
+      this.validateTableTemplate(featureWks);
+      return featureWks;
     }
 
     return;
+  }
+
+  private validateTableTemplate(workspace: Workspace) {
+    workspace.entityStore.entities$.pipe(
+      skipWhile(val => val.length === 0),
+      first()
+    ).subscribe(r => {
+      ((workspace as any).layer as VectorLayer).dataSource.ol.once('change', () => {
+        if (
+          workspace &&
+          workspace.meta.tableTemplate.columns.length === 0 &&
+          workspace.entityStore.entities$.value.length > 0) {
+          workspace.meta.tableTemplate.columns =
+            (workspace.entityStore.entities$.value[0] as any).ol.getKeys().filter(f => !f.startsWith('_') && f !== 'geometry')
+              .map(col => {
+                return {
+                  name: `properties.${col}`,
+                  title: col
+                };
+              });
+        }
+      });
+      ((workspace as any).layer as VectorLayer).dataSource.ol.dispatchEvent('change');
+    });
   }
 
   private layerIsEditable(layer: Layer): boolean {
