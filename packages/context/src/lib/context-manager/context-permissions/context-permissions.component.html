@@ -21,7 +21,15 @@
     <mat-form-field class="full-width">
       <input matInput required
              [placeholder]="'igo.context.permission.profil' | translate"
-             formControlName="profil">
+             [formControl]="formControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProfilSelected($event.option.value)"
+        [displayWith]="displayFn">
+          <mat-option *ngFor="let profil of this.profils" [value]="profil">
+              {{profil.title}}<br>
+              <small class="mat-typography">{{profil.name}}</small>
+          </mat-option>
+      </mat-autocomplete>
      <mat-error>
        {{ 'igo.context.permission.profilRequired' | translate }}
      </mat-error>
