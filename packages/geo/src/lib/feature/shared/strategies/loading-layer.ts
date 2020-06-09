@@ -1,10 +1,12 @@
 import { unByKey } from 'ol/Observable';
 import { OlEvent } from 'ol/events/Event';
+import * as olextent from 'ol/extent';
 
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
-import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import { FeatureStoreLoadingLayerStrategyOptions, Feature } from '../feature.interfaces';
+import { Subscription } from 'rxjs';
 
 /**
  * This strategy loads a layer's features into it's store counterpart.
@@ -20,6 +22,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * Subscription to the store's OL source changes
    */
   private stores$$ = new Map<FeatureStore, string>();
+  private state$$: Subscription[];
 
   constructor(protected options: FeatureStoreLoadingLayerStrategyOptions) {
     super(options);
@@ -76,7 +79,22 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
     const olSource = store.layer.ol.getSource();
     olSource.on('change', (event: OlEvent) => {
       this.onSourceChanges(store);
+      this.updateEntitiesInExtent(store);
     });
+
+    this.state$$.push(store.layer.map.viewController.state$.subscribe(() => {
+      this.updateEntitiesInExtent(store);
+    }));
+  }
+
+  private updateEntitiesInExtent(store) {
+    store.state.updateAll({ inMapExtent: false });
+    const mapExtent = store.layer.map.viewController.getExtent();
+    const entitiesInMapExtent = store.entities$.value
+      .filter((entity: Feature) => olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent));
+    if (entitiesInMapExtent.length > 0) {
+      store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, true);
+    }
   }
 
   /**
@@ -99,6 +117,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
       unByKey(entries[1]);
     });
     this.stores$$.clear();
+    this.state$$.map(state => state.unsubscribe());
   }
 
   /**
