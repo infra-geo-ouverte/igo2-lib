@@ -280,13 +280,32 @@ export class OgcFilterWriter {
     defaultOperatorsType?: OgcFilterOperatorType ) {
     let effectiveOperators: {} = {};
     let allowedOperators;
+    let fieldsHasSpatialOperator: boolean;
+    let includeContains: boolean;
+
     if (fields && propertyName) {
       const srcField = fields.find(field => field.name === propertyName);
       allowedOperators = srcField && srcField.allowedOperatorsType ?
         srcField.allowedOperatorsType : defaultOperatorsType;
     }
 
-    allowedOperators = allowedOperators ? allowedOperators : 'basicandspatial';
+    if (fields) {
+      fields.map(field => {
+        if (!field.allowedOperatorsType) {return; }
+        const allowedOperatorsType = field.allowedOperatorsType.toLowerCase();
+        if (
+          allowedOperatorsType === OgcFilterOperatorType.All.toLowerCase() ||
+          allowedOperatorsType === OgcFilterOperatorType.Spatial.toLowerCase() ||
+          allowedOperatorsType === OgcFilterOperatorType.BasicAndSpatial.toLowerCase()) {
+            fieldsHasSpatialOperator = true;
+            if (allowedOperatorsType === OgcFilterOperatorType.All.toLowerCase()) {
+              includeContains = true;
+            }
+        }
+      });
+    }
+
+    allowedOperators = allowedOperators ? allowedOperators : OgcFilterOperatorType.BasicAndSpatial;
 
     switch (allowedOperators.toLowerCase()) {
       case 'all':
@@ -336,6 +355,14 @@ export class OgcFilterWriter {
         };
     }
 
+    if (fieldsHasSpatialOperator) {
+      (effectiveOperators as any).Intersects =  { spatial: true, fieldRestrict: [] };
+      (effectiveOperators as any).Within =  { spatial: true, fieldRestrict: [] };
+      if (includeContains) {
+        (effectiveOperators as any).Contains =  { spatial: true, fieldRestrict: [] };
+      }
+    }
+
     return effectiveOperators;
   }
 
@@ -364,6 +391,7 @@ export class OgcFilterWriter {
       escapeChar: '!',
       matchCase: true,
       igoSpatialSelector: '',
+      igoSNRC: '',
       geometryName: '',
       geometry: '',
       wkt_geometry: '',

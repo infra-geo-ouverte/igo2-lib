@@ -35,6 +35,8 @@
   <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
   </igo-ogc-filterable-form>
 
+  <mat-divider></mat-divider>
+
   <section class="mat-typography">
   <mat-checkbox labelPosition='before' *ngIf="hasPushButton && filtersAreEditable" (change)="changeOgcFilterType($event)"
     [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">

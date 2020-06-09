@@ -145,6 +145,7 @@ export interface OgcInterfaceFilterOptions {
   geometry?: olGeometry;
   geometryName?: string;
   igoSpatialSelector?: string;
+  igoSNRC?: string;
   level?: number;
   lowerBoundary?: number;
   matchCase?: boolean;
