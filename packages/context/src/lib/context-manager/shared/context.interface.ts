@@ -62,3 +62,8 @@ export interface ContextUserPermission {
   name: string;
   checked: boolean;
 }
+
+export interface ContextProfils {
+  name: string;
+  title: string;
+}
