@@ -115,6 +115,16 @@ export class ContextService {
     );
   }
 
+  getContextByPermission(permission: string): Observable<ContextsList> {
+    const url = this.baseUrl + '/contexts';
+    return this.http.get<ContextsList>(url + '?permission=' + permission);
+  }
+
+  getProfilByUser() {
+    const url = this.baseUrl + '/profils?';
+    return this.http.get(url);
+  }
+
   setDefault(id: string): Observable<any> {
     const url = this.baseUrl + '/contexts/default';
     return this.http.post(url, { defaultContextId: id });

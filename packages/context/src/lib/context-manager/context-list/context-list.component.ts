@@ -36,9 +36,6 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   private change$$: Subscription;
 
-  private baseUrlProfils = '/apis/igo2/profils?';
-  private baseUrlContexts = '/apis/igo2/contexts?';
-
   @Input()
   get contexts(): ContextsList {
     return this._contexts;
@@ -77,6 +74,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this._defaultContextId = value;
   }
   private _defaultContextId: string;
+
+  public collapsed: {contextScope}[] = [];
 
   @Output() select = new EventEmitter<DetailedContext>();
   @Output() unselect = new EventEmitter<DetailedContext>();
@@ -146,7 +145,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
     this.auth.authenticate$.subscribe((authenticate) => {
       if (authenticate) {
-        this.http.get(this.baseUrlProfils).subscribe(profils => {
+        this.contextService.getProfilByUser().subscribe(profils => {
           this.users = profils;
           const publicUser = {
             name: 'public',
@@ -326,16 +325,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
       }
     }
     permissions = permissions.slice(0, -1);
-    if (permissions.length) {
-      this.http.get(this.baseUrlContexts + 'permission=' + permissions).subscribe(contexts => {
-        this.contexts = contexts as ContextsList;
-        this.contexts$.next(this.contexts);
-      })
-    } else {
-      this.http.get(this.baseUrlContexts + 'permission=' + permissions).subscribe(contexts => {
-        this.contexts = contexts as ContextsList;
-        this.contexts$.next(this.contexts);
-      })
-    }
+    this.contextService.getContextByPermission(permissions).subscribe(contexts => {
+      this.contexts = contexts as ContextsList;
+      this.contexts$.next(this.contexts);
+    })
   }
 }
