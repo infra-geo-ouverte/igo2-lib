@@ -29,7 +29,10 @@ export interface EntityStateManagerOptions {
   store?: EntityStore<object>;
 }
 
-export interface EntityStoreStrategyOptions {}
+export interface EntityStoreStrategyOptions {
+  state?: string;
+  value?: any;
+}
 
 export interface EntityTransactionOptions {
   getKey?: (entity: object) => EntityKey;
