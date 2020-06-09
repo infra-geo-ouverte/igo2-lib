@@ -87,6 +87,8 @@ export class Workspace<E extends object = object> {
   get active(): boolean { return this.active$.value; }
   readonly active$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  toolToActivate$: BehaviorSubject<{ toolbox: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
+
   /**
    * Activate the workspace. By doing that, the workspace will observe
    * the selected entity (from the store) and update the actions availability.
