@@ -14,8 +14,4 @@ export class AppHomeComponent {
       this.interactiveTourService.startTour('global');
     }
 
-    getDisplay() {
-      return ' ';
-    }
-
 }

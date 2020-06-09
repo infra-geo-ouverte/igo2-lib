@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ConfigService } from '@igo2/core';
+import { ConfigService, MediaService } from '@igo2/core';
 import { introJs } from 'intro.js/intro.js';
 
 @Injectable({
@@ -9,7 +9,7 @@ export class InteractiveTourService {
 
   public introJS = introJs();
   private tourActiveOption;
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService, private mediaService: MediaService) {}
 
   public isToolHaveTourConfig(toolName) {
     let nameInConfigFile = 'introOptions_' + toolName;
@@ -21,6 +21,25 @@ export class InteractiveTourService {
     } else {
       return true;
     }
+  }
+
+  public isMobile() {
+
+    const media = this.mediaService.getMedia();
+    if (media === 'mobile') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public isTourDisplayInMobile() {
+
+    const showInMobile = this.configService.getConfig('introInteractiveTourInMobile');
+    if (showInMobile === undefined) {
+      return true;
+    }
+    return this.configService.getConfig('introInteractiveTourInMobile');
   }
 
   public startTour(tourTool) {

@@ -1,5 +1,4 @@
 import { Component, ViewEncapsulation, Input } from '@angular/core';
-
 import { LanguageService } from '@igo2/core';
 import { InteractiveTourService } from './interactive-tour.service';
 import { ToolService } from '../tool/shared/tool.service';
@@ -41,8 +40,29 @@ export class InteractiveTourComponent {
       return false;
     }
   }
+  get showTourButton() {
+  // 2 conditions to show: haveTourConfig and if we are in mobile displayInMobile= true
+    let haveTour: boolean;
+    haveTour = this.isToolHaveTour;
+    if (haveTour === false) {
+      return false;
+    }
 
-  @Input() toast = false;
+    let inMobileAndShow: boolean;
+    if (this.interactiveTourService.isMobile()) {
+      inMobileAndShow = this.isTourDisplayInMobile;
+      if (inMobileAndShow === false) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  get isTourDisplayInMobile() {
+    return this.interactiveTourService.isTourDisplayInMobile();
+  }
+
+  // @Input() toast = false;
 
   constructor(
     private interactiveTourService: InteractiveTourService,
