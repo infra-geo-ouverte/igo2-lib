@@ -496,7 +496,10 @@
         "ogcFilter.title": "Filtres",
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
         "wfsDownload.title": "Télécharger les données associées",
-        "wfsDownload.tooltip": "Télécharger les données associées"
+        "wfsDownload.tooltip": "Télécharger les données associées",
+        "inMapExtent.title": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
       },
       "network": {
         "online": {

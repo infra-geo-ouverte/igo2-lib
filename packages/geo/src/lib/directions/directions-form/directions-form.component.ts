@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take, skipWhile } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';

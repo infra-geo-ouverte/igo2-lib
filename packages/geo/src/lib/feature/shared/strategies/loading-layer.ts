@@ -23,7 +23,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * Subscription to the store's OL source changes
    */
   private stores$$ = new Map<FeatureStore, string>();
-  private state$$: Subscription[];
+  private states$$: Subscription[] = [];
 
   constructor(protected options: FeatureStoreLoadingLayerStrategyOptions) {
     super(options);
@@ -83,7 +83,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
       this.updateEntitiesInExtent(store);
     });
 
-    this.state$$.push(store.layer.map.viewController.state$.subscribe(() => {
+    this.states$$.push(store.layer.map.viewController.state$.subscribe(() => {
       this.updateEntitiesInExtent(store);
     }));
   }
@@ -118,7 +118,7 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
       unByKey(entries[1]);
     });
     this.stores$$.clear();
-    this.state$$.map(state => state.unsubscribe());
+    this.states$$.map(state => state.unsubscribe());
   }
 
   /**

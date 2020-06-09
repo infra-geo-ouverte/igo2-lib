@@ -494,7 +494,10 @@
         "ogcFilter.title": "Filters",
         "ogcFilter.tooltip": "Apply filters",
         "wfsDownload.title": "Download",
-        "wfsDownload.tooltip": "Download"
+        "wfsDownload.tooltip": "Download",
+        "inMapExtent.title": "Show records in map extent only",
+        "inMapExtent.active.tooltip": "Show records in map extent only",
+        "inMapExtent.inactive.tooltip": "Show all records"
       },
       "network": {
         "online": {
