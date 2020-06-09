@@ -14,7 +14,8 @@ import {
   IgoMap,
   SearchSourceService,
   sourceCanSearch,
-  Layer
+  Layer,
+  ExportOptions
 } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
@@ -23,6 +24,7 @@ import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
+import { ImportExportState } from '../../import-export/import-export.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -157,7 +159,8 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     public layerListToolState: LayerListToolState,
     private toolState: ToolState,
     public mapState: MapState,
-    private searchSourceService: SearchSourceService
+    private searchSourceService: SearchSourceService,
+    private importExportState: ImportExportState
   ) {}
 
   ngOnInit(): void {
@@ -249,6 +252,12 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       }
     }
     return true;
+  }
+
+  activateExport(id: string) {
+    this.importExportState.setsExportOptions({ layer: id } as ExportOptions);
+    this.importExportState.setSelectedTab(1);
+    this.toolState.toolbox.activateTool('importExport');
   }
 
   activateTimeFilter() {

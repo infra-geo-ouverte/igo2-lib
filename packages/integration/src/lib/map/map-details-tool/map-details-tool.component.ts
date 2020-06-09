@@ -9,11 +9,13 @@ import {
   IgoMap,
   LayerListControlsOptions,
   SearchSourceService,
-  sourceCanSearch
+  sourceCanSearch,
+  ExportOptions
 } from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
+import { ImportExportState } from '../../import-export/import-export.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -107,7 +109,8 @@ export class MapDetailsToolComponent implements OnInit {
     private mapState: MapState,
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private importExportState: ImportExportState
   ) {}
 
   ngOnInit(): void {
@@ -128,5 +131,11 @@ export class MapDetailsToolComponent implements OnInit {
 
   contextEmit() {
     this.toolState.toolbox.activateTool('contextManager');
+  }
+
+  activateExport(id: string) {
+    this.importExportState.setsExportOptions({layer: id} as ExportOptions);
+    this.importExportState.setSelectedTab(1);
+    this.toolState.toolbox.activateTool('importExport');
   }
 }
