@@ -58,11 +58,13 @@
       },
       "importExportForm": {
         "exportButton": "Export",
+        "exportButtonLink": "Open the link",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
+        "exportNoLayersExportable": "There is no exportable layer in your map",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
