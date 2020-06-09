@@ -106,16 +106,28 @@ export class AppOgcFilterComponent {
       }
     };
 
-    /*this.dataSourceService
+    this.dataSourceService
       .createAsyncDataSource(datasource)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
             title: 'Embâcle',
-            source: dataSource
+            source: dataSource,
+            style: {
+              circle : {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'orange',
+                  width: 1
+                }
+              }
+            }
           })
         );
-      });*/
+      });
 
     const datasourceDuringFilter: WFSoptions = {
       type: 'wfs',
@@ -131,8 +143,6 @@ export class AppOgcFilterComponent {
       sourceFields: [
         { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
       ],
-      minTime: '2016-01-01T05:00:00Z',
-      maxTime: '2018-12-31T05:00:00Z',
       ogcFilters: {
         enabled: true,
         editable: true,
@@ -141,93 +151,79 @@ export class AppOgcFilterComponent {
           {
             operator: 'during',
             propertyName: 'date_observation',
-            begin: '2016-01-01T05:00:00.000Z',
-            end: '2016-01-31T05:00:00.000Z',
-            step: 'P3D'
+            begin: '2016-01-21T05:00:00.000Z',
+            end: '2016-01-25T05:00:00.000Z'
           } as OgcFilterDuringOptions
-      }
+      },
+      minDate: '2016-01-01T05:00:00Z',
+      maxDate: '2019-01-01T05:00:00Z',
+      stepDate: 'P2D'
     };
-/*
+
     this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilter)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (Filtre Temporel, Step: P1D)',
+            title: 'Embâcle (Filtre Temporel, Step: P2D)',
             id: '1',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'blue',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      });
+    
+    interface WMSoptions
+    extends WMSDataSourceOptions,
+      OgcFilterableDataSourceOptions {}
+      
+    const wmsOgcFilterOptions: WMSoptions = {
+          type: 'wms',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+          optionsFromCapabilities: true,
+          params: {
+            LAYERS: 'vg_observation_v_inondation23avril2017_wmst',
+            VERSION: '1.3.0'
+          },
+          sourceFields: [
+            { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+          ],
+          ogcFilters: {
+            enabled: true,
+            editable: true,
+            filters:
+            {
+              operator: 'during',
+              propertyName: 'date_observation',
+              begin: '2017-04-22T05:00:00.000Z',
+              end: '2021-07-31T05:00:00.000Z'
+            } as OgcFilterDuringOptions,
+            allowedOperatorsType: OgcFilterOperatorType.Time
+          }
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(wmsOgcFilterOptions)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Filterable WMS layers',
             source: dataSource
           })
         );
-      });*/
-/*
-    const datasourceDuringFilter2 = Object.assign({}, datasourceDuringFilter);
-    datasourceDuringFilter2.ogcFilters.filters = {
-      operator: 'during',
-      propertyName: 'date_observation',
-      begin: '2016-01-01T05:00:00.000Z',
-      end: '2016-01-31T05:00:00.000Z',
-      step: 'P1M'
-    } as OgcFilterDuringOptions;
+      });
 
-    this.dataSourceService
-    .createAsyncDataSource(datasourceDuringFilter2)
-    .subscribe(dataSource => {
-      this.map.addLayer(
-        this.layerService.createLayer({
-          title: 'Embâcle (Filtre Temporel, Step: P1M)',
-          id: '2',
-          source: dataSource
-        })
-      );
-    });*/
-
-    const datasourceDuringFilter3 = Object.assign({}, datasourceDuringFilter);
-    datasourceDuringFilter3.ogcFilters.filters = {
-      operator: 'during',
-      propertyName: 'date_observation',
-      begin: '2016-01-01T05:00:00Z',
-      end: '2016-01-31T05:00:00Z',
-      step: 'P1M'
-    } as OgcFilterDuringOptions;
-
-    this.dataSourceService
-    .createAsyncDataSource(datasourceDuringFilter3)
-    .subscribe(dataSource => {
-      this.map.addLayer(
-        this.layerService.createLayer({
-          title: 'Embâcle (Filtre Temporel, Step: P1Y)',
-          id: '3',
-          source: dataSource
-        })
-      );
-    });
-/*
-    const datasourceDuringFilter4 = Object.assign({}, datasourceDuringFilter);
-    datasourceDuringFilter4.ogcFilters.filters = {
-      operator: 'during',
-      propertyName: 'date_observation',
-      begin: '2016-01-11T15:00:00.000Z',
-      end: '2016-01-11T18:00:00.000Z',
-      step: 'PT3H'
-    } as OgcFilterDuringOptions;
-    datasourceDuringFilter4.id = '4';
-
-    this.dataSourceService
-    .createAsyncDataSource(datasourceDuringFilter4)
-    .subscribe(dataSource => {
-      this.map.addLayer(
-        this.layerService.createLayer({
-          title: 'Embâcle (Filtre Temporel, Step: PT3H)',
-          id: '4',
-          source: dataSource
-        })
-      );
-    });*/
-
-
-    interface WMSoptions
-      extends WMSDataSourceOptions,
-        OgcFilterableDataSourceOptions {}
 
     const filterableWMSwithPushButtons: WMSoptions = {
       type: 'wms',
@@ -357,7 +353,7 @@ export class AppOgcFilterComponent {
       } as WFSDataSourceOptionsParams
     };
 
-    /*this.dataSourceService
+    this.dataSourceService
       .createAsyncDataSource(filterableWMSwithPushButtons)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -366,82 +362,7 @@ export class AppOgcFilterComponent {
             source: dataSource
           })
         );
-      });*/
+      });
 
-    // const datasourceWmsWith2Layers: WMSoptions = {
-    //   type: 'wms',
-    //   url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
-    //   urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
-    //   params: {
-    //     layers: 'stations_meteoroutieres,histo_stations_meteoroutieres',
-    //     version: '1.3.0'
-    //   },
-    //   ogcFilters: {
-    //     enabled: true,
-    //     editable: true
-    //   },
-    //   paramsWFS: {
-    //     featureTypes: 'histo_stations_meteoroutieres',
-    //     fieldNameGeometry: 'geometry',
-    //     maxFeatures: 10000,
-    //     version: '1.1.0',
-    //     outputFormat: 'geojson',
-    //     outputFormatDownload: 'shp'
-    //   } as WFSDataSourceOptionsParams
-    // };
-    //
-    // this.dataSourceService
-    //   .createAsyncDataSource(datasourceWmsWith2Layers)
-    //   .subscribe(dataSource => {
-    //     this.map.addLayer(
-    //       this.layerService.createLayer({
-    //         title: 'Layer build from 2 WMS layers',
-    //         source: dataSource
-    //       })
-    //     );
-    //   });
-
-    // const datasourceWms: WMSoptions = {
-    //   type: 'wms',
-    //   url: '/geoserver/wms',
-    //   urlWfs: '/geoserver/wfs',
-    //   params: {
-    //     LAYERS: 'water_areas',
-    //     VERSION: '1.3.0'
-    //   },
-    //   ogcFilters: {
-    //     enabled: true,
-    //     editable: true,
-    //     filters: {
-    //       operator: 'PropertyIsEqualTo',
-    //       propertyName: 'waterway',
-    //       expression: 'riverbank'
-    //     }
-    //   },
-    //   sourceFields: [
-    //     { name: 'waterway', alias: 'Chemin d eau' },
-    //     { name: 'osm_id' },
-    //     { name: 'landuse', values: ['yes', 'no'] }
-    //   ],
-    //   paramsWFS: {
-    //     featureTypes: 'water_areas',
-    //     fieldNameGeometry: 'the_geom',
-    //     maxFeatures: 10000,
-    //     version: '1.1.0',
-    //     outputFormat: 'application/json',
-    //     outputFormatDownload: 'application/vnd.google-earth.kml+xml'
-    //   } as WFSDataSourceOptionsParams
-    // };
-    //
-    // this.dataSourceService
-    //   .createAsyncDataSource(datasourceWms)
-    //   .subscribe(dataSource => {
-    //     this.map.addLayer(
-    //       this.layerService.createLayer({
-    //         title: 'Geoserver water_areas',
-    //         source: dataSource
-    //       })
-    //     );
-    //   });
   }
 }
