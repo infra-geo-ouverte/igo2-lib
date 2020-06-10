@@ -9,8 +9,8 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { AuthService, TokenService } from '@igo2/auth';
-import { LanguageService, MessageService } from '@igo2/core';
+import { AuthService } from '@igo2/auth';
+import { LanguageService, MessageService, StorageService } from '@igo2/core';
 import { IgoMap } from '@igo2/geo';
 
 import {
@@ -140,8 +140,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private contextService: ContextService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private tokenService: TokenService
-  ) {}
+    private storageService: StorageService) {}
 
   ngOnInit() {
     this.change$$ = this.change$
@@ -167,7 +166,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           for (const user of profilsAcc) {
             const permission: ContextUserPermission = {
               name: user.name,
-              checked: true
+              checked: this.storageService.get(user.name) === 'true' ? true : false
             };
             this.permissions.push(permission);
           }
@@ -345,18 +344,16 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   getPermission(user): ContextUserPermission {
-    return (
-      this.permissions.find(permission => permission.name === user.name) || {
-        name: user,
-        checked: false
-      }
-    );
+    const permission = this.permissions.find(p => p.name === user.name);
+    permission.checked = this.storageService.get(user.name) === 'true' ? true : false;
+    return permission;
   }
 
   userSelection(user, parent?) {
     const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;
+      this.storageService.set(permission.name, permission.checked.toString());
       permission.indeterminate = false;
     }
 
@@ -373,6 +370,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       const parentPermission = this.getPermission(parent);
       if (parentPermission) {
         parentPermission.checked = permission.checked;
+        this.storageService.set(parentPermission.name, permission.checked.toString());
         parentPermission.indeterminate = indeterminate;
       }
     }
@@ -382,6 +380,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         const childrenPermission = this.getPermission(c);
         if (childrenPermission && childrenPermission.checked !== permission.checked) {
           childrenPermission.checked = permission.checked;
+          this.storageService.set(childrenPermission.name, permission.checked.toString());
         }
       }
     }
