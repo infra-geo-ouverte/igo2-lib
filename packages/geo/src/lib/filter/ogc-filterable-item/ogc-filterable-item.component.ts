@@ -23,7 +23,7 @@ import { BehaviorSubject } from 'rxjs';
 export class OgcFilterableItemComponent implements OnInit {
   public color = 'primary';
   private lastRunOgcFilter;
-  private defaultLogicalParent = 'And';
+  private defaultLogicalParent = 'Or';
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;
@@ -119,7 +119,6 @@ export class OgcFilterableItemComponent implements OnInit {
       fieldNameGeometry = (this.datasource.options as any).paramsWFS
         .fieldNameGeometry;
     }
-    const status = arr.length === 0 ? true : false;
     const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(
       this.datasource.options.sourceFields,
       firstFieldName,
@@ -131,7 +130,7 @@ export class OgcFilterableItemComponent implements OnInit {
         {
           propertyName: firstFieldName,
           operator: firstOperatorName,
-          active: status,
+          active: true,
           igoSpatialSelector: 'fixedExtent',
           srsName: this.map.projection,
         } as OgcInterfaceFilterOptions,

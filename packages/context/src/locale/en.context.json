@@ -35,14 +35,14 @@
         },
         "favorite": "Favorite",
         "form": {
-          "edit": "Edit",
+          "edit": "Save",
           "title": "Title",
           "titleRequired": "Title required",
-          "uri": "URI",
-          "uriRequired": "URI required"
+          "uri": "ID",
+          "uriRequired": "ID required"
         },
         "invalid": {
-          "text": "Context '{{value}}' is invalid",
+          "text": "Context '{{value}}' is invalid. The default context was loaded.",
           "title": "Invalid context"
         },
         "managePermissions": "Manage permissions context",

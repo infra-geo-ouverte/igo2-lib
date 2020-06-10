@@ -147,6 +147,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Output() clearSearchEvent = new EventEmitter();
 
+  @Output() export = new EventEmitter();
+
   public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
   public selectedSourceAddress;

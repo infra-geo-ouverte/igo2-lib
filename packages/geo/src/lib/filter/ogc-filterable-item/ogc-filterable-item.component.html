@@ -27,7 +27,7 @@
     </button>
 </mat-list-item>
 
-<div #ogcFilters class="igo-datasource-filters-container">
+<div #ogcFilters>
     <div *ngIf="header" #legend class="igo-layer-legend-container">
       <igo-layer-legend *ngIf="showLegend$ | async" [layer]="layer">
       </igo-layer-legend>
@@ -35,10 +35,11 @@
   <igo-ogc-filterable-form [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
   </igo-ogc-filterable-form>
 
-  <section class="mat-typography">
-  <mat-checkbox labelPosition='before' *ngIf="hasPushButton && filtersAreEditable" (change)="changeOgcFilterType($event)"
-    [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">
-    {{'igo.geo.filter.advancedOgcFilters' | translate}}
-  </mat-checkbox>
-</section>
+  <section *ngIf="hasPushButton && filtersAreEditable" class="mat-typography advancedOgcFilters">
+    <mat-divider></mat-divider>
+    <mat-checkbox labelPosition='before' (change)="changeOgcFilterType($event)"
+      [(ngModel)]="datasource.options.ogcFilters.advancedOgcFilters">
+      {{'igo.geo.filter.advancedOgcFilters' | translate}}
+    </mat-checkbox>
+  </section>
 </div>

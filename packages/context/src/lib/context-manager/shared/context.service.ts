@@ -47,6 +47,14 @@ export class ContextService {
   // to track the current tools
   private tools: Tool[];
 
+  get defaultContextUri(): string {
+    return this._defaultContextUri || this.options.defaultContextUri;
+  }
+  set defaultContextUri(uri: string) {
+    this._defaultContextUri = uri;
+  }
+  private _defaultContextUri: string;
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
@@ -275,17 +283,17 @@ export class ContextService {
       if (!direct && this.baseUrl && this.authService.authenticated) {
         this.getDefault().subscribe(
           (_context: DetailedContext) => {
-            this.options.defaultContextUri = _context.uri;
+            this.defaultContextUri = _context.uri;
             this.addContextToList(_context);
             this.setContext(_context);
           },
           () => {
             this.defaultContextId$.next(undefined);
-            this.loadContext(this.options.defaultContextUri);
+            this.loadContext(this.defaultContextUri);
           }
         );
       } else {
-        this.loadContext(this.options.defaultContextUri);
+        this.loadContext(this.defaultContextUri);
       }
     };
 
@@ -294,7 +302,7 @@ export class ContextService {
         const contextParam = params[this.route.options.contextKey as string];
         let direct = false;
         if (contextParam) {
-          this.options.defaultContextUri = contextParam;
+          this.defaultContextUri = contextParam;
           direct = true;
         }
         loadFct(direct);
@@ -318,6 +326,9 @@ export class ContextService {
       },
       err => {
         contexts$$.unsubscribe();
+        if (uri !== this.options.defaultContextUri) {
+          this.loadContext(this.options.defaultContextUri);
+        }
       }
     );
   }
@@ -375,15 +386,18 @@ export class ContextService {
       tools: []
     };
 
-    const layers = igoMap.layers$.getValue();
+    const layers = igoMap.layers$
+      .getValue()
+      .sort((a, b) => a.zIndex - b.zIndex);
 
+    let i = 0;
     for (const l of layers) {
       const layer: any = l;
       const opts = {
         id: layer.options.id ? String(layer.options.id) : undefined,
         layerOptions: {
           title: layer.options.title,
-          zIndex: layer.zIndex,
+          zIndex: ++i,
           visible: layer.visible
         },
         sourceOptions: {

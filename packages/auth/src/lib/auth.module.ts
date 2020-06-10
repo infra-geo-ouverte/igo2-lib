@@ -8,8 +8,9 @@ import {
   MatButtonModule
 } from '@angular/material';
 
-import { IgoLanguageModule } from '@igo2/core';
+import { IgoLanguageModule, StorageService } from '@igo2/core';
 
+import { AuthStorageService } from './shared/storage.service';
 import { ProtectedDirective } from './shared/protected.directive';
 import { AuthInterceptor } from './shared/auth.interceptor';
 
@@ -45,6 +46,10 @@ export class IgoAuthModule {
           provide: HTTP_INTERCEPTORS,
           useClass: AuthInterceptor,
           multi: true
+        },
+        {
+          provide: StorageService,
+          useClass: AuthStorageService
         }
       ]
     };

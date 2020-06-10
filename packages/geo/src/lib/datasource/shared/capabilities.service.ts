@@ -185,7 +185,11 @@ export class CapabilitiesService {
     );
 
     if (!layer) {
-      return baseOptions;
+      throw {
+        error: {
+          message: 'Layer not found'
+        }
+      };
     }
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
     const abstract = layer.Abstract ? layer.Abstract : undefined;

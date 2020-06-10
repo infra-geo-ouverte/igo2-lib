@@ -28,6 +28,7 @@ import {
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -36,6 +37,8 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
+  public alwaysTracking: boolean;
+  public positionFollower: boolean = true;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
   public bufferGeom: olCircle;
@@ -162,6 +165,10 @@ export class IgoMap {
       if (options.geolocate) {
         this.geolocate(true);
       }
+
+      if (options.alwaysTracking) {
+        this.alwaysTracking = true;
+      }
     }
   }
 
@@ -228,9 +235,17 @@ export class IgoMap {
    * @param push DEPRECATED
    */
   addLayers(layers: Layer[], push = true) {
-    let incrementArray = 0;
+    let offsetZIndex = 0;
+    let offsetBaseLayerZIndex = 0;
     const addedLayers = layers
-      .map((layer: Layer) => this.doAddLayer(layer, incrementArray++))
+      .map((layer: Layer) => {
+        const offset = layer.zIndex
+          ? 0
+          : layer.baseLayer
+          ? offsetBaseLayerZIndex++
+          : offsetZIndex++;
+        return this.doAddLayer(layer, offset);
+      })
       .filter((layer: Layer | undefined) => layer !== undefined);
     this.setLayers([].concat(this.layers, addedLayers));
   }
@@ -272,22 +287,20 @@ export class IgoMap {
 
   raiseLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
-    if (index > 1 && !this.layers[index - 1].baseLayer) {
+    if (index > 1) {
       this.moveLayer(layer, index, index - 1);
     }
   }
 
   raiseLayers(layers: Layer[]) {
     for (const layer of layers) {
-      if (layer.baseLayer !== true) {
-        this.raiseLayer(layer);
-      }
+      this.raiseLayer(layer);
     }
   }
 
   lowerLayer(layer: Layer) {
     const index = this.getLayerIndex(layer);
-    if (index < this.layers.length - 1 && !this.layers[index + 1].baseLayer) {
+    if (index < this.layers.length - 1) {
       this.moveLayer(layer, index, index + 1);
     }
   }
@@ -295,9 +308,7 @@ export class IgoMap {
   lowerLayers(layers: Layer[]) {
     const reverseLayers = layers.reverse();
     for (const layer of reverseLayers) {
-      if (layer.baseLayer !== true) {
-        this.lowerLayer(layer);
-      }
+      this.lowerLayer(layer);
     }
   }
 
@@ -306,7 +317,7 @@ export class IgoMap {
     const zIndexTo = layerTo.zIndex;
     const zIndexFrom = layer.zIndex;
 
-    if (layerTo.baseLayer) {
+    if (layerTo.baseLayer || layer.baseLayer) {
       return;
     }
 
@@ -324,7 +335,7 @@ export class IgoMap {
    * @param layer Layer
    * @returns The layer added, if any
    */
-  private doAddLayer(layer: Layer, length: number) {
+  private doAddLayer(layer: Layer, offsetZIndex: number) {
     if (layer.baseLayer && layer.visible) {
       this.changeBaseLayer(layer);
     }
@@ -335,9 +346,24 @@ export class IgoMap {
       return;
     }
 
+    if (!layer.baseLayer && layer.zIndex) {
+      layer.zIndex += 10;
+    }
+
     if (layer.zIndex === undefined || layer.zIndex === 0) {
-      const offset = layer.baseLayer ? 1 : 10;
-      layer.zIndex = this.layers.length + offset + length;
+      const maxZIndex = Math.max(
+        layer.baseLayer ? 0 : 10,
+        ...this.layers
+          .filter(
+            l => l.baseLayer === layer.baseLayer && l.zIndex < 200 // zIndex > 200 = system layer
+          )
+          .map(l => l.zIndex)
+      );
+      layer.zIndex = maxZIndex + 1 + offsetZIndex;
+    }
+
+    if (layer.baseLayer && layer.zIndex > 9) {
+      layer.zIndex = 10; // baselayer must have zIndex < 10
     }
 
     layer.setMap(this);
@@ -418,7 +444,13 @@ export class IgoMap {
 
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
-        this.overlay.addOlFeature(this.geolocationFeature);
+        if (!this.positionFollower && this.alwaysTracking) {
+          this.overlay.addOlFeature(this.geolocationFeature, FeatureMotion.None);
+        } else if (this.positionFollower && this.alwaysTracking) {
+          this.overlay.addOlFeature(this.geolocationFeature, FeatureMotion.Move);
+        } else {
+          this.overlay.addOlFeature(this.geolocationFeature);
+        }
 
         if (this.ol.getView().options_.buffer) {
           const bufferRadius = this.ol.getView().options_.buffer.bufferRadius;
@@ -439,10 +471,11 @@ export class IgoMap {
           this.bufferFeature.set('bufferStroke', bufferStroke);
           this.bufferFeature.set('bufferFill', bufferFill);
           this.bufferFeature.set('bufferText', bufferText);
-          this.buffer.addOlFeature(this.bufferFeature);
+          this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
         }
         if (first) {
           this.viewController.zoomToExtent(extent);
+          this.positionFollower = !this.positionFollower;
         }
       } else if (first) {
         const view = this.ol.getView();
@@ -450,7 +483,7 @@ export class IgoMap {
         view.setCenter(coordinates);
         view.setZoom(14);
       }
-      if (track) {
+      if (track && !this.alwaysTracking) {
         this.unsubscribeGeolocate();
       }
       first = false;
