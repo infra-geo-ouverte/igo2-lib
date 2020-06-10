@@ -1,0 +1,9 @@
+<button
+  *ngIf="hasWorkspace()"
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.geo.download.action' | translate"
+  [color]="color">
+  <mat-icon svgIcon="table"></mat-icon>
+</button>
