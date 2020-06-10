@@ -9,9 +9,8 @@
 </button> -->
 
 <button *ngIf="isActiveTool && showTourButton "
+  mat-flat-button
   class="tour-button-tool"
-  color="basic"
-  mat-raised-button
   (click)="startInteractiveTour(activeToolName)"
   matTooltip= "Tour interactif de présentation du fonctionnement de l'outil">
   <mat-icon svgIcon="presentation-play"></mat-icon>

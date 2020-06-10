@@ -1,0 +1,19 @@
+
+@mixin igo-tour-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  igo-interactive-tour > button.tour-button-tool{
+    padding-top: 5px;
+    margin-top:3px;
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+    border:none;
+  }
+  igo-interactive-tour > button.tour-button-tool:hover {
+    background-color:mat-color($primary, default-contrast);
+    color: mat-color($primary);
+  }
+
+}
