@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ConfigService, MediaService } from '@igo2/core';
+import { ConfigService, MediaService, LanguageService } from '@igo2/core';
 import { introJs } from 'intro.js/intro.js';
 
 @Injectable({
@@ -9,7 +9,7 @@ export class InteractiveTourService {
 
   public introJS = introJs();
   private tourActiveOption;
-  constructor(private configService: ConfigService, private mediaService: MediaService) {}
+  constructor(private configService: ConfigService, private mediaService: MediaService, private languageService: LanguageService) {}
 
   public isToolHaveTourConfig(toolName) {
     let nameInConfigFile = 'introOptions_' + toolName;
@@ -24,7 +24,6 @@ export class InteractiveTourService {
   }
 
   public isMobile() {
-
     const media = this.mediaService.getMedia();
     if (media === 'mobile') {
       return true;
@@ -40,6 +39,16 @@ export class InteractiveTourService {
       return true;
     }
     return this.configService.getConfig('introInteractiveTourInMobile');
+  }
+
+  private isInEnglish() {
+    debugger;
+    const lang = this.languageService.getLanguage();
+    if (lang === 'en' || lang === 'EN') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public startTour(tourTool) {
@@ -162,6 +171,13 @@ export class InteractiveTourService {
     nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
 
     this.tourActiveOption = this.configService.getConfig(nameInConfigFile);
+    if (this.isInEnglish()) {
+      for (let step of this.tourActiveOption.steps) {
+        if (step.introEnglish) {
+          step.intro = step.introEnglish;
+        }
+      }
+    }
 
     if (this.tourActiveOption == null) {
       alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;

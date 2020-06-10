@@ -204,17 +204,20 @@ export const environment: Environment = {
           no: 0,
           element: 'igo-logo',
           intro: 'igo-logo  (ex. class)',
+          introEnglish: 'test message en anglais',
           position: 'bottom',
         },
         {
           no: 1,
           element: 'igo-title',
           intro: 'igo-title (ex. Id)',
+          introEnglish: 'test message en anglais',
           position: 'bottom',
         },
 
         {
           no: 2,
+          introEnglish: 'test message en anglais',
           element: 'aucun',
           action: 'clickOnTool33',
           // element: document.getElementsByClassName('mat-list-item')[33].click(),
