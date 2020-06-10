@@ -57,6 +57,7 @@
         <mat-checkbox
           class="mat-menu-item"
           [checked]="getPermission(user).checked"
+          [indeterminate]="getPermission(user).indeterminate"
           (change)="userSelection(user)">
         </mat-checkbox>
         <button *ngIf="user.childs"
@@ -75,7 +76,7 @@
         <mat-checkbox *ngFor="let child of user.childs"
           class="mat-menu-item"
           [checked]="getPermission(child).checked"
-          (change)="userSelection(child)">
+          (change)="userSelection(child, user)">
           {{child.title}}
         </mat-checkbox>
       </mat-menu>

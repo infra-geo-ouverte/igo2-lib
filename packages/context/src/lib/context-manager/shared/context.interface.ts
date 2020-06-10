@@ -61,6 +61,7 @@ export interface ContextPermissionsList {
 export interface ContextUserPermission {
   name: string;
   checked: boolean;
+  indeterminate?: boolean;
 }
 
 export interface ContextProfils {

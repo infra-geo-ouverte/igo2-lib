@@ -353,15 +353,42 @@ export class ContextListComponent implements OnInit, OnDestroy {
     );
   }
 
-  userSelection(user) {
+  userSelection(user, parent?) {
     const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;
+      permission.indeterminate = false;
+    }
+
+    if (parent) {
+      let indeterminate = false;
+
+      for (const c of parent.childs) {
+        const cPermission = this.getPermission(c);
+        if (cPermission.checked !== permission.checked) {
+          indeterminate = true;
+          break;
+        }
+      }
+      const parentPermission = this.getPermission(parent);
+      if (parentPermission) {
+        parentPermission.checked = permission.checked;
+        parentPermission.indeterminate = indeterminate;
+      }
+    }
+
+    if (user.childs) {
+      for (const c of user.childs) {
+        const childrenPermission = this.getPermission(c);
+        if (childrenPermission && childrenPermission.checked !== permission.checked) {
+          childrenPermission.checked = permission.checked;
+        }
+      }
     }
 
     let permissions = '';
     for (const p of this.permissions) {
-      if (p.checked === true) {
+      if (p.checked === true || p.indeterminate === true) {
         permissions += p.name + ',';
       }
     }
