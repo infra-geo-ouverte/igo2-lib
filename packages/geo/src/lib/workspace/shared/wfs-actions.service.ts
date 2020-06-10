@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@angular/core';
 
 import { Action, Widget, EntityStoreFilterCustomFuncStrategy } from '@igo2/common';
 
-import { DownloadService } from '../../download/shared/download.service';
 import { OgcFilterWidget } from '../widgets/widgets';
 import { WfsWorkspace } from './wfs-workspace';
 import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip } from './workspace.utils';
@@ -13,10 +12,12 @@ import { ExportOptions } from '../../import-export/shared/export.interface';
 })
 export class WfsActionsService {
 
-  constructor(
-    @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
-    private downloadService: DownloadService
-  ) {}
+  constructor(@Inject(OgcFilterWidget) private ogcFilterWidget: Widget) {}
+
+  loadActions(workspace: WfsWorkspace) {
+    const actions = this.buildActions(workspace);
+    workspace.actionStore.load(actions);
+  }
 
   buildActions(workspace: WfsWorkspace): Action[] {
     return [
@@ -49,7 +50,6 @@ export class WfsActionsService {
         },
         args: [this.ogcFilterWidget, workspace]
       },
-      ,
       {
         id: 'wfsDownload',
         icon: 'download',

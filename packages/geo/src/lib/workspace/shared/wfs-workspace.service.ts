@@ -4,8 +4,8 @@ import {
   ActionStore,
   EntityTableTemplate,
   EntityStoreFilterCustomFuncStrategy,
-  EntityStoreStrategyFuncOptions,
-  EntityRecord
+  EntityRecord,
+  EntityStoreStrategyFuncOptions
 } from '@igo2/common';
 
 import {
@@ -39,7 +39,7 @@ export class WfsWorkspaceService {
         tableTemplate: this.createTableTemplate(layer)
       }
     });
-    wks.actionStore.insertMany(this.wfsActionsService.buildActions(wks));
+    this.wfsActionsService.loadActions(wks);
     return wks;
 
   }
@@ -51,7 +51,7 @@ export class WfsWorkspaceService {
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       map,
-      hitTolerance: 10
+      hitTolerance: 15
     });
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(selectionStrategy, true);

@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import {
   ActionStore,
   EntityTableTemplate,
-  EntityStoreFilterSelectionStrategy,
   EntityStoreFilterCustomFuncStrategy,
   EntityRecord,
   EntityStoreStrategyFuncOptions
@@ -57,7 +56,6 @@ export class FeatureWorkspaceService {
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(this.createFilterInMapExtentStrategy(), false);
-
     return store;
   }
 
