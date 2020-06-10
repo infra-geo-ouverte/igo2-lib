@@ -16,6 +16,7 @@ import {
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
 import { ImportExportState } from '../../import-export/import-export.state';
+import { WorkspaceState } from '../../workspace/workspace.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -110,7 +111,8 @@ export class MapDetailsToolComponent implements OnInit {
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
     private cdRef: ChangeDetectorRef,
-    private importExportState: ImportExportState
+    private importExportState: ImportExportState,
+    public workspaceState: WorkspaceState
   ) {}
 
   ngOnInit(): void {
@@ -137,5 +139,17 @@ export class MapDetailsToolComponent implements OnInit {
     this.importExportState.setsExportOptions({layer: id} as ExportOptions);
     this.importExportState.setSelectedTab(1);
     this.toolState.toolbox.activateTool('importExport');
+  }
+
+  activateWorkspace(layerId: string) {
+    if (
+      this.workspaceState.workspace$.value &&
+      (this.workspaceState.workspace$.value as any).layer.id === layerId &&
+      this.workspaceState.workspacePanelExpanded) {
+        this.workspaceState.workspacePanelExpanded = false;
+    } else {
+      this.workspaceState.workspacePanelExpanded = true;
+      this.workspaceState.setActiveWorkspaceByLayerId(layerId);
+    }
   }
 }

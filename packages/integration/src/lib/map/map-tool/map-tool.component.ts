@@ -5,6 +5,7 @@ import { LayerListControlsEnum, LayerListControlsOptions, IgoMap, ExportOptions 
 import { MapState } from './../map.state';
 import { ImportExportState } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
+import { WorkspaceState } from '../../workspace/workspace.state';
 
 /**
  * Tool to browse a map's layers or to choose a different map
@@ -65,7 +66,20 @@ export class MapToolComponent {
   constructor(
     private mapState: MapState,
     private toolState: ToolState,
-    private importExportState: ImportExportState) {}
+    private importExportState: ImportExportState,
+    public workspaceState: WorkspaceState) {}
+
+    activateWorkspace(layerId: string) {
+      if (
+        this.workspaceState.workspace$.value &&
+        (this.workspaceState.workspace$.value as any).layer.id === layerId &&
+        this.workspaceState.workspacePanelExpanded) {
+          this.workspaceState.workspacePanelExpanded = false;
+      } else {
+        this.workspaceState.workspacePanelExpanded = true;
+        this.workspaceState.setActiveWorkspaceByLayerId(layerId);
+      }
+    }
 
   activateExport(id: string) {
     this.importExportState.setsExportOptions({ layer: id } as ExportOptions);

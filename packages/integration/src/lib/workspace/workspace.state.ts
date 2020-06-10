@@ -12,6 +12,10 @@ import { EntityRecord, Workspace, WorkspaceStore, Widget } from '@igo2/common';
 })
 export class WorkspaceState implements OnDestroy {
 
+  public workspacePanelExpanded: boolean = false;
+
+  readonly workspaceEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   /** Subscription to the active workspace */
   private activeWorkspace$$: Subscription;
 
@@ -62,6 +66,13 @@ export class WorkspaceState implements OnDestroy {
             .subscribe((widget: Widget) => this.activeWorkspaceWidget$.next(widget));
         }
       });
+  }
+
+  public setActiveWorkspaceByLayerId(id: string) {
+    const wksFromLayerId = this.store.all().find(workspace  => (workspace as any).options.layer.id === id);
+    if (wksFromLayerId) {
+      this.store.activateWorkspace(wksFromLayerId);
+    }
   }
 
   /**
