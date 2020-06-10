@@ -157,12 +157,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
             const permission: ContextUserPermission = {
               name: user.name,
               checked: true
-            }
+            };
             this.permissions.push(permission);
           }
         });
       }
-    })
+    });
   }
 
   private next() {
@@ -313,21 +313,21 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   userSelection(user) {
-    let permission = this.getPermission(user);
+    const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;
     }
 
-    let permissions = this.tokenService.decode().user.sourceId + ",";
-    for (const permission of this.permissions) {
-      if (permission.checked === true) {
-        permissions += permission.name + ',';
+    let permissions = this.tokenService.decode().user.sourceId + ',';
+    for (const p of this.permissions) {
+      if (p.checked === true) {
+        permissions += p.name + ',';
       }
     }
     permissions = permissions.slice(0, -1);
     this.contextService.getContextByPermission(permissions).subscribe(contexts => {
       this.contexts = contexts as ContextsList;
       this.contexts$.next(this.contexts);
-    })
+    });
   }
 }

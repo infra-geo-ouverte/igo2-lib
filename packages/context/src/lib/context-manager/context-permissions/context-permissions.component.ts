@@ -100,6 +100,6 @@ export class ContextPermissionsComponent implements OnInit {
     this.form.setValue({
       profil: value.name,
       typePermission: this.form.value.typePermission
-    })
+    });
   }
 }
