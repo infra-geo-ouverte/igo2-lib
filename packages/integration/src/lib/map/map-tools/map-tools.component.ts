@@ -25,7 +25,6 @@ import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
 import { ImportExportState } from '../../import-export/import-export.state';
-import { WorkspaceState } from '../../workspace/workspace.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -161,8 +160,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     private toolState: ToolState,
     public mapState: MapState,
     private searchSourceService: SearchSourceService,
-    private importExportState: ImportExportState,
-    public workspaceState: WorkspaceState
+    private importExportState: ImportExportState
   ) {}
 
   ngOnInit(): void {

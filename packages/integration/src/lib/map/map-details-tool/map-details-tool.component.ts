@@ -16,7 +16,6 @@ import {
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
 import { ImportExportState } from '../../import-export/import-export.state';
-import { WorkspaceState } from '../../workspace/workspace.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -111,8 +110,7 @@ export class MapDetailsToolComponent implements OnInit {
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
     private cdRef: ChangeDetectorRef,
-    private importExportState: ImportExportState,
-    public workspaceState: WorkspaceState
+    private importExportState: ImportExportState
   ) {}
 
   ngOnInit(): void {
