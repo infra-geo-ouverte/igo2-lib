@@ -40,6 +40,7 @@ export class OgcFilterFormComponent implements OnInit {
   public disabled;
   public baseOverlayName = 'ogcFilterOverlay_';
   public currentFilter$ = new BehaviorSubject<any>(undefined);
+  public defaultStepMillisecond = 6000;
 
   @Input() refreshFilters: () => void;
 
@@ -63,10 +64,13 @@ export class OgcFilterFormComponent implements OnInit {
     );
   }
 
-  get step(): number {
-    let step = 10800000;
-    step = this.getStepDefinition(this.currentFilter.step);
-    return step;
+  get step(): string {
+    return this.datasource.options.stepDate ? this.datasource.options.stepDate : this.currentFilter.step;
+  }
+
+  get stepMilliseconds(): number {
+    const step = moment.duration(this.step).asMilliseconds();
+    return step === 0 ? this.defaultStepMillisecond : step;
   }
 
   constructor(
@@ -154,7 +158,7 @@ export class OgcFilterFormComponent implements OnInit {
     let valueTmp = new Date(value);
     if (property === 'end' && this.calendarType() === 'date') {
       /* Above month: see yearSelected or monthSelected */
-      if ( this.step < 2592000000 ) {
+      if ( this.calendarType() !== 'datetime'  ) {
         valueTmp = moment(valueTmp).endOf('day').toDate();
       }
     }
@@ -236,17 +240,8 @@ export class OgcFilterFormComponent implements OnInit {
     return new Date(value);
   }
 
-  /**
-   * Get the step (period) definition from the layer dimension tag
-   * @param step The step as ISO 8601 example: PT10M for 10 Minutes
-   * @return the duration in milliseconds
-   */
-  getStepDefinition(step) {
-    return moment.duration(step).asMilliseconds();
-  }
-
   yearSelected(year, datePicker?: any, property?: string) {
-    if (this.currentFilter.step && this.step === 31536000000) {
+    if (this.stepIsYearDuration()) {
         datePicker.close();
         if (property === 'end') {
           year = moment(year).endOf('year').toDate();
@@ -256,7 +251,7 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   monthSelected(month, datePicker?: any, property?: string) {
-    if (this.currentFilter.step && this.currentFilter.step === 'P1M') {
+    if (this.stepIsMonthDuration()) {
       datePicker.close();
       if (property === 'end') {
         month = moment(month).endOf('month').toDate();
@@ -266,11 +261,11 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   calendarView() {
-    const test = this.step;
+    const test = this.stepMilliseconds;
     const diff = Math.abs(new Date(this.currentFilter.end).getTime() - new Date(this.currentFilter.begin).getTime());
-    if ( test >= 31536000000 ) {
+    if ( this.stepIsYearDuration() ) {
       return 'multi-year';
-    } else if (test  >= 2592000000 ) {
+    } else if (this.stepIsMonthDuration()) {
       return 'year';
     } else if (test < 86400000 && diff < 86400000) {
       return 'clock';
@@ -280,19 +275,65 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   calendarType() {
-    const test = this.step;
-    const diff = Math.abs(new Date(this.currentFilter.end).getTime() - new Date(this.currentFilter.begin).getTime());
-    if (test < 86400000 && diff < 86400000 ) {
+    if (this.stepMilliseconds < 86400000 ) {
       return 'datetime';
     }
     return 'date';
   }
 
-  dateFilter(date, type: MatDatetimepickerFilterType): boolean {
-    const dateValue = new Date(date);
-    const diff = dateValue.getTime() - new Date(this.datasource.options.minTime).getTime();
-    const stepMillisecond = this.step;
-    return diff % stepMillisecond === 0;
+  stepIsMonthDuration() {
+    const month = moment.duration(this.step).asMonths();
+    return month === 0 ? false : ( month % 1 ) === 0;
   }
 
+  stepIsYearDuration() {
+    const year = moment.duration(this.step).asYears();
+    return year === 0 ? false : ( year % 1 ) === 0;
+  }
+
+  stepIsWeekDuration() {
+    const week = moment.duration(this.step).asWeeks();
+    return week === 0 ? false : ( week % 1 ) === 0;
+  }
+
+  stepIsDayDuration() {
+    const day = moment.duration(this.step).asDays();
+    return day === 0 ? false : ( day % 1 ) === 0;
+  }
+
+  dateFilter(type: string, date: string ): boolean {
+    const dateValue = new Date(date);
+    const diff = dateValue.getTime() - new Date(this.datasource.options.minDate).getTime();
+
+    if (this.stepIsMonthDuration()) {
+      const monthDiff = moment(dateValue).diff(moment(this.datasource.options.minDate), 'months', true);
+      if ( type === 'end' ) {
+        const dateValuePlus1 = moment(dateValue).add(1, 'd');
+        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.datasource.options.minDate), 'months', true);
+        return (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
+      } else if ( type === 'begin' ) {
+        return (monthDiff % moment.duration(this.step).asMonths()) === 0;
+      }
+    } else if (this.stepIsWeekDuration()) {
+      const weekDiff = moment(dateValue).diff(moment(this.datasource.options.minDate), 'weeks', true);
+      if ( type === 'end' ) {
+        const dateValuePlus1 = moment(dateValue).add(1, 'd');
+        const weekDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.datasource.options.minDate), 'weeks', true);
+        return (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
+      } else if ( type === 'begin' ) {
+        return (weekDiff % moment.duration(this.step).asWeeks()) === 0;
+      }
+    } else if (this.stepIsDayDuration()) {
+      const dayDiff = moment(dateValue).diff(moment(this.datasource.options.minDate), 'days', true);
+      if ( type === 'end' ) {
+        const dateValuePlus1 = moment(dateValue).add(1, 'd');
+        const dayDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.datasource.options.minDate), 'days', true);
+        return (dayDiffPlus1 % moment.duration(this.step).asDays()) === 0;
+      } else if ( type === 'begin' ) {
+        return (dayDiff % moment.duration(this.step).asDays()) === 0;
+      }
+    }
+    return diff % this.stepMilliseconds === 0;
+
+  }
 }

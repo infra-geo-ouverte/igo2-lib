@@ -143,9 +143,9 @@
             <input [matDatetimepicker]="startDatetimepicker" [placeholder]="'igo.geo.timeFilter.startDate' | translate" 
               [disabled]="!currentFilter.active" matInput #begin 
               (dateChange)="changeTemporalProperty(currentFilter,'begin',begin.value)" 
-              [matDatepickerFilter]="dateFilter.bind(this)"
-              [value]="handleDate(currentFilter.begin)"
-              [min]="handleDate(datasource.options.minTime)"
+              [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
+              [value]="currentFilter.begin?handleDate(currentFilter.begin):handleDate(datasource.options.minDate)"
+              [min]="handleDate(datasource.options.minDate)"
               [max]="handleDate(currentFilter.end)" >
           </mat-form-field>
         </div>
@@ -161,10 +161,10 @@
             <input [matDatetimepicker]="endDatetimepicker" [placeholder]="'igo.geo.timeFilter.endDate' | translate" 
               [disabled]="!currentFilter.active" matInput #end 
               (dateChange)="changeTemporalProperty(currentFilter,'end',end.value)" 
-              [matDatepickerFilter]="dateFilter.bind(this)"
-              [value]="handleDate(currentFilter.end)"
+              [matDatepickerFilter]="dateFilter.bind(this, 'end')"
+              [value]="currentFilter.end?handleDate(currentFilter.end):handleDate(datasource.options.maxDate)"
               [min]="handleDate(currentFilter.begin)"
-              [max]="handleDate(datasource.options.maxTime)" >
+              [max]="handleDate(datasource.options.maxDate)" >
           </mat-form-field>
         </div>
 
@@ -182,9 +182,9 @@
             <input [matDatepicker]="startDatepicker" [placeholder]="'igo.geo.timeFilter.startDate' | translate" 
               [disabled]="!currentFilter.active" matInput #begin
               (dateChange)="changeTemporalProperty(currentFilter,'begin',begin.value)" 
-              [matDatepickerFilter]="dateFilter.bind(this)"
-              [value]="handleDate(currentFilter.begin)"
-              [min]="handleDate(datasource.options.minTime)"
+              [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
+              [value]="currentFilter.begin?handleDate(currentFilter.begin):handleDate(datasource.options.minDate)"
+              [min]="handleDate(datasource.options.minDate)"
               [max]="handleDate(currentFilter.end)" >
           </mat-form-field>
         </div>
@@ -200,10 +200,10 @@
             <input [matDatepicker]="endDatepicker" [placeholder]="'igo.geo.timeFilter.endDate' | translate" 
               [disabled]="!currentFilter.active" matInput #end 
               (dateChange)="changeTemporalProperty(currentFilter,'end',end.value)" 
-              [matDatepickerFilter]="dateFilter.bind(this)"
-              [value]="handleDate(currentFilter.end)"
+              [matDatepickerFilter]="dateFilter.bind(this, 'end')"
+              [value]="currentFilter.end?handleDate(currentFilter.end):handleDate(datasource.options.maxDate)"
               [min]="handleDate(currentFilter.begin)"
-              [max]="handleDate(datasource.options.maxTime)" >
+              [max]="handleDate(datasource.options.maxDate)" >
           </mat-form-field>
         </div>
       </span>
