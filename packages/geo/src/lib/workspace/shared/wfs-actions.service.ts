@@ -6,6 +6,7 @@ import { DownloadService } from '../../download/shared/download.service';
 import { OgcFilterWidget } from '../widgets/widgets';
 import { WfsWorkspace } from './wfs-workspace';
 import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip } from './workspace.utils';
+import { ExportOptions } from '../../import-export/shared/export.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -48,12 +49,19 @@ export class WfsActionsService {
         },
         args: [this.ogcFilterWidget, workspace]
       },
+      ,
       {
         id: 'wfsDownload',
         icon: 'download',
         title: 'igo.geo.workspace.wfsDownload.title',
         tooltip: 'igo.geo.workspace.wfsDownload.tooltip',
-        handler: (ws: WfsWorkspace) => this.downloadService.open(ws.layer),
+        handler: (ws: WfsWorkspace) => {
+          const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+          ws.toolToActivate$.next({
+            toolbox: 'importExport',
+            options: { layer: ws.layer.id, featureInMapExtent: filterStrategy.active } as ExportOptions
+          });
+        },
         args: [workspace]
       }
     ];

@@ -4,7 +4,7 @@ import { Action, EntityStoreFilterCustomFuncStrategy } from '@igo2/common';
 
 import { FeatureWorkspace } from './feature-workspace';
 import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip } from './workspace.utils';
-import { ExportOptions } from '../../import-export';
+import { ExportOptions } from '../../import-export/shared/export.interface';
 
 @Injectable({
   providedIn: 'root'
