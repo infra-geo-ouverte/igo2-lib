@@ -41,7 +41,7 @@ export class InteractiveTourComponent {
     }
   }
   get showTourButton() {
-  // 2 conditions to show: haveTourConfig and if we are in mobile displayInMobile= true
+  // 2 conditions to show: have Tour on tool in Config file and if we are in mobile displayInMobile= true
     let haveTour: boolean;
     haveTour = this.isToolHaveTour;
     if (haveTour === false) {

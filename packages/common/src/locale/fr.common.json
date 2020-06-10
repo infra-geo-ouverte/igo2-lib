@@ -19,7 +19,7 @@
         "scrollDown": "Défiler vers le bas"
       },
       "interactiveTour": {
-        "discover": "Découvrir l'application"
+        "tooltipTourToolButton": "Aide interactive sur l'outil"
       }
     }
   }

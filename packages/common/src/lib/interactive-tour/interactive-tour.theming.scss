@@ -14,6 +14,7 @@
   igo-interactive-tour > button.tour-button-tool:hover {
     background-color:mat-color($primary, default-contrast);
     color: mat-color($primary);
+    cursor: pointer;
   }
 
 }

@@ -9,9 +9,11 @@
 </button> -->
 
 <button *ngIf="isActiveTool && showTourButton "
-  mat-flat-button
+  mat-icon-button
   class="tour-button-tool"
   (click)="startInteractiveTour(activeToolName)"
-  matTooltip= "Tour interactif de présentation du fonctionnement de l'outil">
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.common.interactiveTour.tooltipTourToolButton' | translate">
   <mat-icon svgIcon="presentation-play"></mat-icon>
 </button>
