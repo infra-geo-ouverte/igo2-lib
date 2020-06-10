@@ -6,5 +6,6 @@ export * from './file';
 export * from './object-utils';
 export * from './strenum';
 export * from './string-utils';
+export * from './user-agent';
 export * from './uuid';
 export * from './watcher';

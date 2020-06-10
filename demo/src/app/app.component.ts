@@ -6,6 +6,7 @@ import {
   Renderer2
 } from '@angular/core';
 
+import { userAgent } from '@igo2/utils';
 import { version } from '@igo2/core';
 
 @Component({
@@ -31,9 +32,23 @@ export class AppComponent implements OnDestroy {
     this.mobileQuery.addListener(this._mobileQueryListener);
 
     this.renderer.addClass(document.body, this.themeClass);
+
+    this.detectOldBrowser();
   }
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+  private detectOldBrowser() {
+    const oldBrowser = userAgent.satisfies({
+      ie: '<11',
+      chrome: '<64',
+      firefox: '<60'
+    });
+
+    if (oldBrowser) {
+      console.log('Very old browser ! ', userAgent.getBrowser());
+    }
   }
 }

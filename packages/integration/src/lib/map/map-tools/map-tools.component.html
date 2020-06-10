@@ -17,7 +17,8 @@
       (appliedFilterAndSort)= onLayerListChange($event)>
 
       <ng-template #igoLayerItemToolbar let-layer="layer">
-        <igo-download-button [layer]="layer"></igo-download-button>
+        <!-- <igo-download-button [layer]="layer"></igo-download-button> -->
+        <igo-export-button [layer]="layer" (click)="activateExport(layer.id)"></igo-export-button>
         <igo-metadata-button [layer]="layer"></igo-metadata-button>
         <igo-ogc-filter-button [header]="ogcButton" [layer]="layer"
         (click)="activateOgcFilter()"></igo-ogc-filter-button>

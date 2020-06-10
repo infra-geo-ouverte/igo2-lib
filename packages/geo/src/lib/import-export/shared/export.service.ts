@@ -242,7 +242,7 @@ export class ExportService {
     if (format === 'GPX') {
       const pointOrLine = olFeatures.find(olFeature => {
         return (
-          ['Point', 'LineString'].indexOf(olFeature.getGeometry().getType()) >=
+          ['Point', 'LineString', 'MultiLineString'].indexOf(olFeature.getGeometry().getType()) >=
           0
         );
       });
