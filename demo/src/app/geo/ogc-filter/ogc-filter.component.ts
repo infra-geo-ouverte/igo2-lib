@@ -111,7 +111,7 @@ export class AppOgcFilterComponent {
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle',
+            title: 'Embâcle (PropertyIsEqualTo OR Intersects)',
             source: dataSource,
             style: {
               circle : {
@@ -165,7 +165,7 @@ export class AppOgcFilterComponent {
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (Filtre Temporel, Step: P2D)',
+            title: 'Embâcle (During, Step: P2D)',
             id: '1',
             source: dataSource,
             style: {
@@ -183,11 +183,11 @@ export class AppOgcFilterComponent {
           })
         );
       });
-    
+
     interface WMSoptions
     extends WMSDataSourceOptions,
       OgcFilterableDataSourceOptions {}
-      
+
     const wmsOgcFilterOptions: WMSoptions = {
           type: 'wms',
           url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
@@ -205,9 +205,7 @@ export class AppOgcFilterComponent {
             filters:
             {
               operator: 'during',
-              propertyName: 'date_observation',
-              begin: '2017-04-22T05:00:00.000Z',
-              end: '2021-07-31T05:00:00.000Z'
+              propertyName: 'date_observation'
             } as OgcFilterDuringOptions,
             allowedOperatorsType: OgcFilterOperatorType.Time
           }
@@ -218,12 +216,11 @@ export class AppOgcFilterComponent {
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Filterable WMS layers',
+            title: 'Inondation (During, optionsFromCapabilities)',
             source: dataSource
           })
         );
       });
-
 
     const filterableWMSwithPushButtons: WMSoptions = {
       type: 'wms',
