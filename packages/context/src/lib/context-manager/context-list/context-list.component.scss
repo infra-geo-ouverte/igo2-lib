@@ -17,3 +17,10 @@
 mat-form-field {
   height: 40px;
 }
+
+.profilsMenu {
+  display: flex;
+  & > mat-checkbox {
+    width: 8px;
+  }
+}

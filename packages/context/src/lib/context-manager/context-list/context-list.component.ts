@@ -13,14 +13,23 @@ import { AuthService, TokenService } from '@igo2/auth';
 import { LanguageService, MessageService } from '@igo2/core';
 import { IgoMap } from '@igo2/geo';
 
-import { DetailedContext, ContextsList, ContextUserPermission } from '../shared/context.interface';
+import {
+  DetailedContext,
+  ContextsList,
+  ContextUserPermission
+} from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
-import { Subscription, BehaviorSubject, ReplaySubject, EMPTY, timer } from 'rxjs';
+import {
+  Subscription,
+  BehaviorSubject,
+  ReplaySubject,
+  EMPTY,
+  timer
+} from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'igo-context-list',
@@ -30,7 +39,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ContextListComponent implements OnInit, OnDestroy {
   private contextsInitial: ContextsList = { ours: [] };
-  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(this.contextsInitial);
+  contexts$: BehaviorSubject<ContextsList> = new BehaviorSubject(
+    this.contextsInitial
+  );
 
   change$ = new ReplaySubject<void>(1);
 
@@ -75,7 +86,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
   private _defaultContextId: string;
 
-  public collapsed: {contextScope}[] = [];
+  public collapsed: { contextScope }[] = [];
 
   @Output() select = new EventEmitter<DetailedContext>();
   @Output() unselect = new EventEmitter<DetailedContext>();
@@ -94,7 +105,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   };
 
   public users;
-  public permissions: ContextUserPermission[];
+  public permissions: ContextUserPermission[] = [];
 
   /**
    * Context filter term
@@ -129,8 +140,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private contextService: ContextService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private http: HttpClient,
-    private tokenService: TokenService) {}
+    private tokenService: TokenService
+  ) {}
 
   ngOnInit() {
     this.change$$ = this.change$
@@ -143,17 +154,17 @@ export class ContextListComponent implements OnInit, OnDestroy {
         this.contexts$.next(this.filterContextsList(this.contexts));
       });
 
-    this.auth.authenticate$.subscribe((authenticate) => {
+    this.auth.authenticate$.subscribe(authenticate => {
       if (authenticate) {
         this.contextService.getProfilByUser().subscribe(profils => {
           this.users = profils;
-          const publicUser = {
-            name: 'public',
-            title: 'Publique'
-          };
-          this.users.push(publicUser);
           this.permissions = [];
-          for (const user of this.users) {
+          const profilsAcc = this.users.reduce((acc, cur) => {
+            acc = acc.concat(cur);
+            acc = cur.childs ? acc.concat(cur.childs) : acc;
+            return acc;
+          }, []);
+          for (const user of profilsAcc) {
             const permission: ContextUserPermission = {
               name: user.name,
               checked: true
@@ -176,9 +187,15 @@ export class ContextListComponent implements OnInit, OnDestroy {
       }
       return contexts;
     } else {
-      const ours = contexts.ours.filter((context) => {
-        const filterNormalized = this.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const ours = contexts.ours.filter(context => {
+        const filterNormalized = this.term
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        const contextTitleNormalized = context.title
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
         return contextTitleNormalized.includes(filterNormalized);
       });
 
@@ -187,18 +204,30 @@ export class ContextListComponent implements OnInit, OnDestroy {
       };
 
       if (this.contexts.public) {
-        const publics = contexts.public.filter((context) => {
-          const filterNormalized = this.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const publics = contexts.public.filter(context => {
+          const filterNormalized = this.term
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+          const contextTitleNormalized = context.title
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
         });
         updateContexts.public = publics;
       }
 
       if (this.contexts.shared) {
-        const shared = contexts.shared.filter((context) => {
-          const filterNormalized = this.term.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const contextTitleNormalized = context.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const shared = contexts.shared.filter(context => {
+          const filterNormalized = this.term
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+          const contextTitleNormalized = context.title
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
           return contextTitleNormalized.includes(filterNormalized);
         });
         updateContexts.shared = shared;
@@ -223,8 +252,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
         return false;
       default:
         let totalLength = this.contexts.ours.length;
-        this.contexts.public ? totalLength += this.contexts.public.length : totalLength += 0;
-        this.contexts.shared ? totalLength += this.contexts.shared.length : totalLength += 0;
+        this.contexts.public
+          ? (totalLength += this.contexts.public.length)
+          : (totalLength += 0);
+        this.contexts.shared
+          ? (totalLength += this.contexts.shared.length)
+          : (totalLength += 0);
         if (totalLength >= this.thresholdToFilter) {
           return true;
         }
@@ -271,7 +304,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   normalize(str: string) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
   }
 
   toggleSort(sortAlpha: boolean) {
@@ -309,7 +345,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   getPermission(user): ContextUserPermission {
-    return this.permissions.find(permission => permission.name === user.name);
+    return (
+      this.permissions.find(permission => permission.name === user.name) || {
+        name: user,
+        checked: false
+      }
+    );
   }
 
   userSelection(user) {
@@ -318,16 +359,18 @@ export class ContextListComponent implements OnInit, OnDestroy {
       permission.checked = !permission.checked;
     }
 
-    let permissions = this.tokenService.decode().user.sourceId + ',';
+    let permissions = '';
     for (const p of this.permissions) {
       if (p.checked === true) {
         permissions += p.name + ',';
       }
     }
     permissions = permissions.slice(0, -1);
-    this.contextService.getContextByPermission(permissions).subscribe(contexts => {
-      this.contexts = contexts as ContextsList;
-      this.contexts$.next(this.contexts);
-    });
+    this.contextService
+      .getContextByPermission(permissions)
+      .subscribe(contexts => {
+        this.contexts = contexts as ContextsList;
+        this.contexts$.next(this.contexts);
+      });
   }
 }
