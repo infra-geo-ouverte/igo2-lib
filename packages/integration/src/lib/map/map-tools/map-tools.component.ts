@@ -256,18 +256,6 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  activateWorkspace(layerId: string) {
-    if (
-      this.workspaceState.workspace$.value &&
-      (this.workspaceState.workspace$.value as any).layer.id === layerId &&
-      this.workspaceState.workspacePanelExpanded) {
-        this.workspaceState.workspacePanelExpanded = false;
-    } else {
-      this.workspaceState.workspacePanelExpanded = true;
-      this.workspaceState.setActiveWorkspaceByLayerId(layerId);
-    }
-  }
-
   activateExport(id: string) {
     this.importExportState.setsExportOptions({ layer: id } as ExportOptions);
     this.importExportState.setSelectedTab(1);

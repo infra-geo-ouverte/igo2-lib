@@ -31,6 +31,9 @@
         "context-tool": "Gestionnaire de contextes",
         "noLayersVisible": "Aucune couche visible.",
         "noLayersInRange": "Aucune couche visible dans la plage d'échelle active. Veuillez zoomer ou dézoomer pour découvrir ces couches."
+      },
+      "workspace": {
+        "toggleWorkspace": "Ouvrir/fermer la vue tabulaire"
       }
     }
   }

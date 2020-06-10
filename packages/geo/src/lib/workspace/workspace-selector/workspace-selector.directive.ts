@@ -81,20 +81,20 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     }
     if (layer.dataSource instanceof WFSDataSource) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-      this.validateTableTemplate(wfsWks);
+      this.computeTableTemplate(wfsWks);
       return wfsWks;
     } else if (layer.dataSource instanceof WMSDataSource) {
       return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
     } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-      this.validateTableTemplate(featureWks);
+      this.computeTableTemplate(featureWks);
       return featureWks;
     }
 
     return;
   }
 
-  private validateTableTemplate(workspace: Workspace) {
+  private computeTableTemplate(workspace: Workspace) {
     workspace.entityStore.entities$.pipe(
       skipWhile(val => val.length === 0),
       first()
