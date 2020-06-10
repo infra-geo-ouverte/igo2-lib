@@ -13,6 +13,7 @@ import { OgcFilterableDataSourceOptions } from '../../filter';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
+import { Feature } from '../../feature/shared/feature.interfaces';
 
 @Directive({
   selector: '[igoWorkspaceSelector]'
@@ -20,6 +21,7 @@ import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
   private layers$$: Subscription;
+  private entities$$: Subscription[] = [];
 
   @Input() map: IgoMap;
 
@@ -44,6 +46,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
+    this.entities$$.map(entities => entities.unsubscribe());
   }
 
   private onLayersChange(layers: Layer[]) {
@@ -95,27 +98,29 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   }
 
   private computeTableTemplate(workspace: Workspace) {
-    workspace.entityStore.entities$.pipe(
+    this.entities$$.push(workspace.entityStore.entities$.pipe(
       skipWhile(val => val.length === 0),
       first()
-    ).subscribe(r => {
-      ((workspace as any).layer as VectorLayer).dataSource.ol.once('change', () => {
-        if (
-          workspace &&
-          workspace.meta.tableTemplate.columns.length === 0 &&
-          workspace.entityStore.entities$.value.length > 0) {
-          workspace.meta.tableTemplate.columns =
-            (workspace.entityStore.entities$.value[0] as any).ol.getKeys().filter(f => !f.startsWith('_') && f !== 'geometry')
-              .map(col => {
-                return {
-                  name: `properties.${col}`,
-                  title: col
-                };
-              });
-        }
-      });
-      ((workspace as any).layer as VectorLayer).dataSource.ol.dispatchEvent('change');
-    });
+    ).subscribe(entities => {
+      if (
+        entities.length > 0 &&
+        workspace &&
+        workspace.meta.tableTemplate.columns.length === 0 &&
+        workspace.entityStore.entities$.value.length > 0) {
+        workspace.meta.tableTemplate.columns = (entities[0] as Feature).ol.getKeys()
+        .filter(
+          col => !col.startsWith('_') &&
+          col !== 'geometry' &&
+          col !== (entities[0] as Feature).ol.getGeometryName() &&
+          !col.match(/boundedby/gi))
+        .map(key => {
+          return {
+            name: `properties.${key}`,
+            title: key
+          };
+        });
+      }
+    }));
   }
 
   private layerIsEditable(layer: Layer): boolean {
