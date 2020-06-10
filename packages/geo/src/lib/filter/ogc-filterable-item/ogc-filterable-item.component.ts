@@ -197,7 +197,8 @@ export class OgcFilterableItemComponent implements OnInit {
             ogcLayer.filters,
             undefined,
             undefined,
-            (this.layer.dataSource.options as any).fieldNameGeometry
+            (this.layer.dataSource.options as any).fieldNameGeometry,
+            ogcDataSource.options
           );
         }
         this.ogcFilterService.filterByOgc(

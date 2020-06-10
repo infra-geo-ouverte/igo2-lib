@@ -238,7 +238,10 @@ export class CapabilitiesService {
       queryable,
       queryFormat,
       timeFilter: timeFilterable ? timeFilter : undefined,
-      timeFilterable: timeFilterable ? true : undefined
+      timeFilterable: timeFilterable ? true : undefined,
+      minDate: timeFilterable ? timeFilter.min : undefined,
+      maxDate: timeFilterable ? timeFilter.max : undefined,
+      stepDate: timeFilterable ? timeFilter.step : undefined
     });
 
     return ObjectUtils.mergeDeep(options, baseOptions);

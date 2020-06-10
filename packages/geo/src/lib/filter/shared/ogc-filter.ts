@@ -21,6 +21,8 @@ import {
 } from './ogc-filter.interface';
 import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import * as moment_ from 'moment';
+const moment = moment_;
 
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
@@ -65,7 +67,8 @@ export class OgcFilterWriter {
     filters?: IgoOgcFilterObject,
     extent?: [number, number, number, number],
     proj?: olProjection,
-    fieldNameGeometry?: string
+    fieldNameGeometry?: string,
+    options?: OgcFilterableDataSourceOptions
   ): string {
     let ourBboxFilter;
     let enableBbox: boolean;
@@ -89,10 +92,10 @@ export class OgcFilterWriter {
       if (extent && enableBbox) {
         filterAssembly = olfilter.and(
           ourBboxFilter,
-          this.bundleFilter(filters)
+          this.bundleFilter(filters, options)
         );
       } else {
-        filterAssembly = this.bundleFilter(filters);
+        filterAssembly = this.bundleFilter(filters, options);
       }
     } else {
       return 'bbox=' + extent.join(',') + ',' + proj.getCode();
@@ -116,26 +119,26 @@ export class OgcFilterWriter {
     return 'filter=' + str.split(regexp1)[1].split(regexp2)[0];
   }
 
-  private bundleFilter(filterObject: any) {
+  private bundleFilter(filterObject: any, options?: OgcFilterableDataSourceOptions) {
     if (filterObject instanceof Array) {
       const logicalArray = [];
       filterObject.forEach(element => {
-        logicalArray.push(this.bundleFilter(element));
+        logicalArray.push(this.bundleFilter(element, options));
       });
       return logicalArray;
     } else {
       if (filterObject.hasOwnProperty('logical')) {
         return this.createFilter({
           operator: filterObject.logical,
-          logicalArray: this.bundleFilter(filterObject.filters)
-        });
+          logicalArray: this.bundleFilter(filterObject.filters, options)
+        }, options);
       } else if (filterObject.hasOwnProperty('operator')) {
-        return this.createFilter(filterObject as AnyBaseOgcFilterOptions);
+        return this.createFilter(filterObject as AnyBaseOgcFilterOptions, options);
       }
     }
   }
 
-  private createFilter(filterOptions): OgcFilter {
+  private createFilter(filterOptions, options?: OgcFilterableDataSourceOptions): OgcFilter {
     const operator = filterOptions.operator;
     const logicalArray = filterOptions.logicalArray;
 
@@ -162,8 +165,8 @@ export class OgcFilterWriter {
       ? filterOptions.srsName
       : 'EPSG:3857';
 
-    const wfsBegin = filterOptions.begin;
-    const wfsEnd = filterOptions.end;
+    const wfsBegin = this.parseFilterOptionDate(filterOptions.begin, options ? options.minDate : undefined);
+    const wfsEnd = this.parseFilterOptionDate(filterOptions.end, options ? options.maxDate : undefined);
 
     const wfsExpression = filterOptions.expression;
 
@@ -577,7 +580,7 @@ export class OgcFilterWriter {
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
-      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName);
+      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName, options);
     }
 
     let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
@@ -606,5 +609,15 @@ export class OgcFilterWriter {
     appliedFilter = appliedFilter.replace(/\(\)/g, '');
     const filterValue = appliedFilter.length > 0 ? appliedFilter.replace('filter=', '') : undefined;
     return filterValue;
+  }
+
+  public parseFilterOptionDate(value: string, defaultValue?: string): string {
+    if (!value) {
+      return defaultValue;
+    } else if (moment(value).isValid()) {
+      return value;
+    } else {
+      return undefined;
+    }
   }
 }
