@@ -54,6 +54,15 @@
         "failed": {
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
+        },
+        "format": {
+          "GeoJSON": "GeoJSON",
+          "GML": "GML",
+          "GPX": "GPX",
+          "KML": "KML",
+          "Shapefile": "Shapefile",
+          "CSVcomma": "CSV (séparateur virgule)",
+          "CSVsemicolon": "CSV (séparateur point-virgule)"
         }
       },
       "importExportForm": {
