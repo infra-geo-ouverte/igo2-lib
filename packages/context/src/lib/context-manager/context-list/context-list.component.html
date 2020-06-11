@@ -36,7 +36,8 @@
   </button>
 
   <igo-actionbar *ngIf="auth.authenticated"
-    panelLeftButton
+    class="add-context-button"
+    [iconColor]="color"
     [store]="actionStore"
     [withIcon]="true"
     icon="plus"

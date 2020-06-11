@@ -111,6 +111,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
   public actionStore = new ActionStore([]);
   public actionbarMode = ActionbarMode.Overlay;
 
+  public color = 'primary';
+
   /**
    * Context filter term
    */
