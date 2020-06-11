@@ -172,7 +172,7 @@ export const environment: Environment = {
       }
     },
 
-    introInteractiveTourInMobile: false,
+    introInteractiveTourInMobile: true,
 
     introOptions_global : {
       skipLabel: '<h3 style="color:blue">Fermer </h3>',
@@ -183,20 +183,19 @@ export const environment: Environment = {
       hideNext: true,
       showStepNumbers: false,
       disableInteraction: true,
-
-      // positionPrecedence: ['right', 'bottom', 'top', 'left'],
-      // keyboardNavigation: true,
-      // showBullets: true,
-      // showProgress: false,
-      // showButtons: true,
-      // exitOnOverlayClick: false,
-      // helperElementPadding: 2,
-      // scrollToElement: true,
-      // scrollTo: 'element',
-      // scrollPadding: 200,
+      positionPrecedence: ['right', 'bottom', 'top', 'left'],
+      keyboardNavigation: true,
+      showBullets: true,
+      showProgress: false,
+      showButtons: true,
+      exitOnOverlayClick: false,
+      helperElementPadding: 2,
+      scrollToElement: true,
+      scrollTo: 'element',
+      scrollPadding: 200,
 
       highlightClass: 'igo-introjs-helperLayer',
-      // buttonClass: "mat-raised-button",
+      // buttonClass: "mat-raised-button", //problem introJs on the final step, the button next is there if we change button class...
       tooltipClass: 'mat-h2',
 
       steps: [
@@ -273,130 +272,6 @@ export const environment: Environment = {
           element: 'igo-layer-item:nth-child(2) button',
           intro: "click sur bouton oeil ->  element: 'igo-layer-item:nth-child(2) button'   -  action: 'clickOnElem'",
           action: 'clickOnElem',
-        }
-      ]
-    },
-
-    introOptionsMeasurer : {
-      skipLabel: '<h3 style="color:blue">Fermer </h3>',
-      nextLabel: '<h3 style="color:blue">Suivant</h3>',
-      prevLabel: '',
-      doneLabel: 'Terminer',
-      hidePrev: true,
-      hideNext: true,
-      positionPrecedence: ['right', 'bottom', 'top', 'left'],
-
-      keyboardNavigation: true,
-      showStepNumbers: false,
-      showBullets: true,
-      showProgress: false,
-      showButtons: true,
-      disableInteraction: true,
-      exitOnOverlayClick: false,
-      helperElementPadding: 2,
-      scrollToElement: true,
-      scrollTo: 'element',
-      scrollPadding: 200,
-      highlightClass: 'igo-introjs-helperLayer',
-      tooltipClass: 'mat-h2',
-
-      steps: [
-        {
-          no: 0,
-          element: 'mat-button-toggle-1-button',
-          intro: 'test',
-          position: 'bottom',
-        },
-        {
-          no: 1,
-          element: 'div.mat-button-toggle-ripple',
-          intro: 'test 2',
-          position: 'bottom',
-        },
-
-        {
-          no: 2,
-          element: 'span.mat-slide-toggle-content',
-          intro: 'tes3',
-          position: 'bottom',
-        },
-        {
-          no: 3,
-          element: 'igo-measurer div div mat-slide-toggle:nth-child(1) div',
-          intro: 'slider',
-          position: 'left',
-        },
-        {
-          no: 4,
-          element: 'igo-measurer div div mat-slide-toggle:nth-child(1) div',
-          intro: 'slider click',
-          action: 'clickOnElem',
-          position: 'left',
-        }
-
-      ]
-    },
-
-    introOptionsContextslist : {
-      skipLabel: '<h3 style="color:blue">Fermer </h3>',
-      nextLabel: '<h3 style="color:blue">Suivant</h3>',
-      prevLabel: '',
-      doneLabel: 'Terminer',
-      hidePrev: true,
-      hideNext: true,
-      positionPrecedence: ['right', 'bottom', 'top', 'left'],
-
-      keyboardNavigation: true,
-      showStepNumbers: false,
-      showBullets: true,
-      showProgress: false,
-      showButtons: true,
-      disableInteraction: true,
-      exitOnOverlayClick: false,
-      helperElementPadding: 2,
-      scrollToElement: true,
-      scrollTo: 'element',
-      scrollPadding: 200,
-      highlightClass: 'igo-introjs-helperLayer',
-      tooltipClass: 'mat-h2',
-
-      steps: [
-        {
-
-          element: 'rien',
-          intro: 'Tour pour le context list',
-        }
-      ]
-    },
-
-    introOptionsLayers : {
-      skipLabel: '<h3 style="color:blue">Fermer </h3>',
-      nextLabel: '<h3 style="color:blue">Suivant</h3>',
-      prevLabel: '',
-      doneLabel: 'Terminer',
-      hidePrev: true,
-      hideNext: true,
-      positionPrecedence: ['right', 'bottom', 'top', 'left'],
-
-      keyboardNavigation: true,
-      showStepNumbers: false,
-      showBullets: true,
-      showProgress: false,
-      showButtons: true,
-      disableInteraction: true,
-      exitOnOverlayClick: false,
-      helperElementPadding: 2,
-      scrollToElement: true,
-      scrollTo: 'element',
-      scrollPadding: 200,
-      highlightClass: 'igo-introjs-helperLayer',
-      tooltipClass: 'mat-h2',
-
-      steps: [
-        {
-
-          element: 'rien',
-          intro: 'Tour pour Layers',
         }
       ]
     }

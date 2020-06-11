@@ -42,7 +42,6 @@ export class InteractiveTourService {
   }
 
   private isInEnglish() {
-    debugger;
     const lang = this.languageService.getLanguage();
     if (lang === 'en' || lang === 'EN') {
       return true;
