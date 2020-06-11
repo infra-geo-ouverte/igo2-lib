@@ -149,7 +149,7 @@ export class AppOgcFilterComponent {
         allowedOperatorsType: OgcFilterOperatorType.All,
         filters:
           {
-            operator: 'during',
+            operator: 'During',
             propertyName: 'date_observation',
             begin: '2016-01-21T05:00:00.000Z',
             end: '2016-01-25T05:00:00.000Z'
@@ -204,7 +204,7 @@ export class AppOgcFilterComponent {
             editable: true,
             filters:
             {
-              operator: 'during',
+              operator: 'During',
               propertyName: 'date_observation'
             } as OgcFilterDuringOptions,
             allowedOperatorsType: OgcFilterOperatorType.Time

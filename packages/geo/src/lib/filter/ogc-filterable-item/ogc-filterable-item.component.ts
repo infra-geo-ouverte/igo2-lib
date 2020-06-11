@@ -10,6 +10,7 @@ import {
   OgcFiltersOptions,
   OgcInterfaceFilterOptions
 } from '../shared/ogc-filter.interface';
+import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
 import { OgcFilterWriter } from '../shared/ogc-filter';
@@ -23,7 +24,7 @@ import { BehaviorSubject } from 'rxjs';
 export class OgcFilterableItemComponent implements OnInit {
   public color = 'primary';
   private lastRunOgcFilter;
-  private defaultLogicalParent = 'Or';
+  private defaultLogicalParent = OgcFilterOperator.Or;
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;

@@ -8,21 +8,21 @@ export enum OgcFilterOperatorType {
 }
 
 export enum OgcFilterOperator {
-    BBOX = 'bbox',
-    PropertyIsBetween = 'propertyisbetween',
-    Contains = 'contains',
-    During = 'during',
-    PropertyIsEqualTo = 'propertyisequalto',
-    PropertyIsGreaterThan = 'propertyisgreaterthan',
-    PropertyIsGreaterThanOrEqualTo = 'propertyisgreaterthanorequalto',
-    Intersects = 'intersects',
-    PropertyIsNull = 'propertyisnull',
-    PropertyIsLessThan = 'propertyislessthan',
-    PropertyIsLessThanOrEqualTo = 'propertyislessthanorequalto',
-    PropertyIsLike = 'propertyislike',
-    PropertyIsNotEqualTo = 'propertyisnotequalto',
-    Within = 'within',
-    And = 'and',
-    Or = 'or',
-    Not = 'not'
+    BBOX = 'BBox',
+    PropertyIsBetween = 'PropertyIsBetween',
+    Contains = 'Contains',
+    During = 'During',
+    PropertyIsEqualTo = 'PropertyIsEqualTo',
+    PropertyIsGreaterThan = 'PropertyIsGreaterThan',
+    PropertyIsGreaterThanOrEqualTo = 'PropertyIsGreaterThanOrEqualTo',
+    Intersects = 'Intersects',
+    PropertyIsNull = 'PropertyIsNull',
+    PropertyIsLessThan = 'PropertyIsLessThan',
+    PropertyIsLessThanOrEqualTo = 'PropertyIsLessThanOrEqualTo',
+    PropertyIsLike = 'PropertyIsLike',
+    PropertyIsNotEqualTo = 'PropertyIsNotEqualTo',
+    Within = 'Within',
+    And = 'And',
+    Or = 'Or',
+    Not = 'Not'
 }
