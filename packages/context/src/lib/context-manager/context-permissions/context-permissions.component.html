@@ -7,7 +7,7 @@
         {{ 'igo.context.permission.scope.private' | translate }}
       </mat-radio-button>
       <mat-radio-button value="protected">
-        {{ 'igo.context.permission.scope.protected' | translate }}
+        {{ 'igo.context.permission.scope.shared' | translate }}
       </mat-radio-button>
       <mat-radio-button value="public">
         {{ 'igo.context.permission.scope.public' | translate }}
@@ -20,7 +20,7 @@
 
     <mat-form-field class="full-width">
       <input matInput required
-             [placeholder]="'igo.context.permission.profil' | translate"
+             [placeholder]="'igo.context.permission.user' | translate"
              [formControl]="formControl"
              [matAutocomplete]="auto">
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProfilSelected($event.option.value)"

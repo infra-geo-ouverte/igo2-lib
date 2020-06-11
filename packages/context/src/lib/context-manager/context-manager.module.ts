@@ -22,7 +22,8 @@ import {
   IgoListModule,
   IgoKeyValueModule,
   IgoCollapsibleModule,
-  IgoStopPropagationModule
+  IgoStopPropagationModule,
+  IgoActionbarModule
 } from '@igo2/common';
 
 import { BookmarkDialogComponent } from './../context-map-button/bookmark-button/bookmark-dialog.component';
@@ -66,7 +67,8 @@ const CONTEXT_DIRECTIVES = [
     IgoCollapsibleModule,
     IgoStopPropagationModule,
     IgoLanguageModule,
-    IgoContextMapButtonModule
+    IgoContextMapButtonModule,
+    IgoActionbarModule
   ],
   entryComponents: [
     BookmarkDialogComponent

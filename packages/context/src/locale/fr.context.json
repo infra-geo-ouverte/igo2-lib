@@ -51,10 +51,15 @@
         "publicContexts": "Contextes publics",
         "save": "Sauvegarder ce contexte",
         "sharedContexts": "Contextes partagés",
-        "filterPlaceHolder": "Filtrer la liste des contextes",
-        "sortAlphabetically": "Trier la liste des contextes en ordre alphabétique",
-        "sortContextOrder": "Replacer les contextes selon la liste initial",
-        "userAccount": "Profils utilisateurs"
+        "filterPlaceHolder": "Filtrer par nom",
+        "sortAlphabetically": "Trier en ordre alphabétique",
+        "sortContextOrder": "Replacer selon la date de création",
+        "userAccount": "Profils utilisateurs",
+        "filterUser": "Filtrer par groupe d'utilisateur",
+        "emptyContext": "Contexte vide",
+        "emptyContextTooltip": "Créer un nouveau contexte vide",
+        "contextMap": "Contexte à partir de la carte",
+        "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte"
       },
       "permission": {
         "addBtn": "Ajouter",
@@ -68,11 +73,13 @@
           "scopeChangedTitle": "Changement de la portée"
         },
         "profil": "Profil",
+        "user": "Utilisateur ou groupe",
         "profilRequired": "Le profil est obligatoire",
         "read": "Lecture seule",
         "scope": {
           "private": "Privé",
           "protected": "Protégé",
+          "shared": "Partagé",
           "public": "Public"
         },
         "write": "Lecture et écriture"

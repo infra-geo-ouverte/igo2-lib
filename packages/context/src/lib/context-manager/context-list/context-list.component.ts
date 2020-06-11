@@ -30,6 +30,7 @@ import { MatDialog } from '@angular/material';
 import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
+import { ActionStore, ActionbarMode } from '@igo2/common';
 
 @Component({
   selector: 'igo-context-list',
@@ -107,6 +108,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   public users;
   public permissions: ContextUserPermission[] = [];
 
+  public actionStore = new ActionStore([]);
+  public actionbarMode = ActionbarMode.Overlay;
+
   /**
    * Context filter term
    */
@@ -173,6 +177,27 @@ export class ContextListComponent implements OnInit, OnDestroy {
         });
       }
     });
+
+    this.actionStore.load([
+      {
+        id: 'emptyContext',
+        title: this.languageService.translate.instant('igo.context.contextManager.emptyContext'),
+        icon: 'map-outline',
+        tooltip: this.languageService.translate.instant('igo.context.contextManager.emptyContextTooltip'),
+        handler: () => {
+          this.createContext();
+        }
+      },
+      {
+        id: 'contextFromMap',
+        title: this.languageService.translate.instant('igo.context.contextManager.contextMap'),
+        icon: 'map-check',
+        tooltip: this.languageService.translate.instant('igo.context.contextManager.contextMapTooltip'),
+        handler: () => {
+          this.createContext();
+        }
+      }
+    ]);
   }
 
   private next() {
@@ -343,10 +368,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
       });
   }
 
-  getPermission(user): ContextUserPermission {
-    const permission = this.permissions.find(p => p.name === user.name);
-    permission.checked = this.storageService.get(user.name) === 'true' ? true : false;
-    return permission;
+  getPermission(user?): ContextUserPermission {
+    if (user) {
+      const permission = this.permissions.find(p => p.name === user.name);
+      permission.checked = this.storageService.get(user.name) !== 'false' ? true : false;
+      return permission;
+    }
   }
 
   userSelection(user, parent?) {
