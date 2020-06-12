@@ -3,6 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord, Workspace, WorkspaceStore, Widget } from '@igo2/common';
+import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
 
 /**
  * Service that holds the state of the workspace module
@@ -69,7 +70,9 @@ export class WorkspaceState implements OnDestroy {
   }
 
   public setActiveWorkspaceByLayerId(id: string) {
-    const wksFromLayerId = this.store.all().find(workspace  => (workspace as any).options.layer.id === id);
+    const wksFromLayerId = this.store
+    .all()
+    .find(workspace  => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
     if (wksFromLayerId) {
       this.store.activateWorkspace(wksFromLayerId);
     }

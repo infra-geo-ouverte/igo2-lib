@@ -10,6 +10,8 @@ export * from './lib/datasource/datasource.module';
 export * from './lib/directions/directions.module';
 export * from './lib/download/download.module';
 export * from './lib/workspace/workspace.module';
+export * from './lib/workspace/shared/wfs-workspace';
+export * from './lib/workspace/shared/feature-workspace';
 export * from './lib/workspace/workspace-selector/workspace-selector.module';
 export * from './lib/workspace/widgets/ogc-filter/ogc-filter.module';
 export * from './lib/feature/feature.module';
