@@ -22,7 +22,7 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.hasWorkspace$$  = this.workspaceState.workspaceEnabled$.subscribe(wksEnabled =>
-      (wksEnabled && this.layer instanceof VectorLayer) ? this.hasWorkspace$.next(true) : this.hasWorkspace$.next(false)
+      this.hasWorkspace$.next(wksEnabled && this.layer instanceof VectorLayer)
     );
   }
 
