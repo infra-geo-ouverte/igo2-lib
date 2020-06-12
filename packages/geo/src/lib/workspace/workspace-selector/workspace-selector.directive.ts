@@ -84,43 +84,15 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     }
     if (layer.dataSource instanceof WFSDataSource) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-      this.computeTableTemplate(wfsWks);
       return wfsWks;
     } else if (layer.dataSource instanceof WMSDataSource) {
       return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
     } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-      this.computeTableTemplate(featureWks);
       return featureWks;
     }
 
     return;
-  }
-
-  private computeTableTemplate(workspace: Workspace) {
-    this.entities$$.push(workspace.entityStore.entities$.pipe(
-      skipWhile(val => val.length === 0),
-      first()
-    ).subscribe(entities => {
-      if (
-        entities.length > 0 &&
-        workspace &&
-        workspace.meta.tableTemplate.columns.length === 0 &&
-        workspace.entityStore.entities$.value.length > 0) {
-        workspace.meta.tableTemplate.columns = (entities[0] as Feature).ol.getKeys()
-        .filter(
-          col => !col.startsWith('_') &&
-          col !== 'geometry' &&
-          col !== (entities[0] as Feature).ol.getGeometryName() &&
-          !col.match(/boundedby/gi))
-        .map(key => {
-          return {
-            name: `properties.${key}`,
-            title: key
-          };
-        });
-      }
-    }));
   }
 
   private layerIsEditable(layer: Layer): boolean {

@@ -12,7 +12,8 @@ import {
   FeatureStore,
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
-  FeatureStoreInMapExtentStrategy
+  FeatureStoreInMapExtentStrategy,
+  Feature
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
@@ -20,6 +21,7 @@ import { SourceFieldsOptionsParams } from '../../datasource';
 
 import { WfsWorkspace } from './wfs-workspace';
 import { WfsActionsService } from './wfs-actions.service';
+import { skipWhile, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -37,9 +39,10 @@ export class WfsWorkspaceService {
       entityStore: this.createFeatureStore(layer, map),
       actionStore: new ActionStore([]),
       meta: {
-        tableTemplate: this.createTableTemplate(layer)
+        tableTemplate: undefined
       }
     });
+    this.createTableTemplate(wks, layer);
     this.wfsActionsService.loadActions(wks);
     return wks;
 
@@ -62,16 +65,43 @@ export class WfsWorkspaceService {
     return store;
   }
 
-  private createTableTemplate(layer: VectorLayer): EntityTableTemplate {
+  private createTableTemplate(workspace: WfsWorkspace,  layer: VectorLayer): EntityTableTemplate {
     const fields = layer.dataSource.options.sourceFields || [];
+
+    if (fields.length === 0) {
+      workspace.entityStore.entities$.pipe(
+        skipWhile(val => val.length === 0),
+        take(1)
+      ).subscribe(entities => {
+        if (workspace) {
+          const columnsFromFeatures = (entities[0] as Feature).ol.getKeys()
+          .filter(
+            col => !col.startsWith('_') &&
+            col !== 'geometry' &&
+            col !== (entities[0] as Feature).ol.getGeometryName() &&
+            !col.match(/boundedby/gi))
+          .map(key => {
+            return {
+              name: `properties.${key}`,
+              title: key
+            };
+          });
+          workspace.meta.tableTemplate = {
+            selection: true,
+            sort: true,
+            columns: columnsFromFeatures
+          };
+        }
+      });
+      return;
+    }
     const columns = fields.map((field: SourceFieldsOptionsParams) => {
       return {
         name: `properties.${field.name}`,
         title: field.alias ? field.alias : field.name
       };
     });
-
-    return {
+    workspace.meta.tableTemplate = {
       selection: true,
       sort: true,
       columns
