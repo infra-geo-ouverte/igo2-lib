@@ -22,7 +22,7 @@ export class WorkspaceState implements OnDestroy {
   /** Subscription to the active workspace widget */
   private activeWorkspaceWidget$$: Subscription;
 
-  /** Active widget observable. Only one may be active for all clients */
+  /** Active widget observable. Only one may be active for all available workspaces */
   readonly activeWorkspaceWidget$: BehaviorSubject<Widget> = new BehaviorSubject<Widget>(undefined);
 
   /**
