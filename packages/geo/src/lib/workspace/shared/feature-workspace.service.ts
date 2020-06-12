@@ -11,7 +11,8 @@ import {
 import {
   FeatureStore,
   FeatureStoreLoadingLayerStrategy,
-  FeatureStoreSelectionStrategy
+  FeatureStoreSelectionStrategy,
+  FeatureStoreInMapExtentStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
@@ -49,11 +50,13 @@ export class FeatureWorkspaceService {
     store.bindLayer(layer);
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
+    const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       map,
       hitTolerance: 15
     });
     store.addStrategy(loadingStrategy, true);
+    store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(this.createFilterInMapExtentStrategy(), false);
     return store;

@@ -1,28 +1,25 @@
 import { unByKey } from 'ol/Observable';
-import { OlEvent } from 'ol/events/Event';
+import * as olextent from 'ol/extent';
 
 import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
-import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
-import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
+import { FeatureStoreInMapExtentStrategyOptions, Feature } from '../feature.interfaces';
+import { Subscription } from 'rxjs';
 
 /**
- * This strategy loads a layer's features into it's store counterpart.
- * The layer -> store binding is a one-way binding. That means any OL feature
- * added to the layer will be added to the store but the opposite is false.
- *
- * Important: In it's current state, this strategy is to meant to be combined
- * with a standard Loading strategy and it would probably cause recursion issues.
+ * This strategy maintain the store features updated while the map is moved.
+ * The features's state inside the map are tagged inMapExtent = true;
  */
-export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
+export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
 
   /**
    * Subscription to the store's OL source changes
    */
   private stores$$ = new Map<FeatureStore, string>();
+  private states$$: Subscription[] = [];
 
-  constructor(protected options: FeatureStoreLoadingLayerStrategyOptions) {
+  constructor(protected options: FeatureStoreInMapExtentStrategyOptions) {
     super(options);
   }
 
@@ -73,11 +70,20 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
       return;
     }
 
-    this.onSourceChanges(store);
-    const olSource = store.layer.ol.getSource();
-    olSource.on('change', (event: OlEvent) => {
-      this.onSourceChanges(store);
-    });
+    this.updateEntitiesInExtent(store);
+    this.states$$.push(store.layer.map.viewController.state$.subscribe(() => {
+      this.updateEntitiesInExtent(store);
+    }));
+  }
+
+  private updateEntitiesInExtent(store) {
+    store.state.updateAll({ inMapExtent: false });
+    const mapExtent = store.layer.map.viewController.getExtent();
+    const entitiesInMapExtent = store.entities$.value
+      .filter((entity: Feature) => olextent.intersects(entity.ol.getGeometry().getExtent(), mapExtent));
+    if (entitiesInMapExtent.length > 0) {
+      store.state.updateMany(entitiesInMapExtent, { inMapExtent: true }, true);
+    }
   }
 
   /**
@@ -100,25 +106,6 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
       unByKey(entries[1]);
     });
     this.stores$$.clear();
-  }
-
-  /**
-   * Load features from an OL source into a  store or clear the store if the source is empty
-   * @param features Store filtered features
-   * @param store Feature store
-   */
-  private onSourceChanges(store: FeatureStore) {
-    let olFeatures = store.layer.ol.getSource().getFeatures();
-
-    if (store.layer.dataSource instanceof ClusterDataSource) {
-      olFeatures = (olFeatures as any).flatMap((cluster: any) =>
-        cluster.get('features')
-      );
-    }
-    if (olFeatures.length === 0) {
-      store.clear();
-    } else {
-      store.setStoreOlFeatures(olFeatures);
-    }
+    this.states$$.map(state => state.unsubscribe());
   }
 }

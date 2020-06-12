@@ -67,6 +67,9 @@ export interface FeatureStoreLoadingStrategyOptions
   motion?: FeatureMotion;
 }
 
+export interface FeatureStoreInMapExtentStrategyOptions
+  extends FeatureStoreStrategyOptions {}
+
 export interface FeatureStoreLoadingLayerStrategyOptions
   extends FeatureStoreStrategyOptions {}
 
