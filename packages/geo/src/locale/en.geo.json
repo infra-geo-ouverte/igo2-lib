@@ -54,6 +54,15 @@
         "failed": {
           "text": "Failed to export",
           "title": "Failed to export features"
+        },
+        "format": {
+          "GeoJSON": "GeoJSON",
+          "GML": "GML",
+          "GPX": "GPX",
+          "KML": "KML",
+          "Shapefile": "Shapefile",
+          "CSVcomma": "CSV (comma delimited)",
+          "CSVsemicolon": "CSV (semicolon delimited)"
         }
       },
       "importExportForm": {
