@@ -7,13 +7,13 @@ import {
 
 import { AppHomeComponent } from './home.component';
 import { AppHomeRoutingModule } from './home-routing.module';
-import { InteractiveTourModule } from '@igo2/common';
+import { IgoInteractiveTourModule } from '@igo2/common';
 
 @NgModule({
   declarations: [AppHomeComponent],
   imports: [
     AppHomeRoutingModule,
-    InteractiveTourModule,
+    IgoInteractiveTourModule,
     MatTooltipModule,
     MatIconModule,
     MatButtonModule

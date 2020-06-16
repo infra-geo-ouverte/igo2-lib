@@ -21,4 +21,4 @@ import { InteractiveTourComponent } from './interactive-tour.component';
   providers: [InteractiveTourService],
   exports: [InteractiveTourComponent]
 })
-export class InteractiveTourModule {}
+export class IgoInteractiveTourModule {}
