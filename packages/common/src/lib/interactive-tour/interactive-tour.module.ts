@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
-import { MatIconModule, MatTooltipModule } from '@angular/material';
+import {
+  MatIconModule,
+  MatButtonModule,
+  MatTooltipModule
+} from '@angular/material';
 import { CommonModule } from '@angular/common';
 import { IgoLanguageModule } from '@igo2/core';
 import { InteractiveTourService } from './interactive-tour.service';
@@ -10,11 +14,11 @@ import { InteractiveTourComponent } from './interactive-tour.component';
   imports: [
     CommonModule,
     MatIconModule,
+    MatButtonModule,
     MatTooltipModule,
     IgoLanguageModule
-
   ],
   providers: [InteractiveTourService],
   exports: [InteractiveTourComponent]
 })
-export class InteractiveTourModule { }
+export class InteractiveTourModule {}

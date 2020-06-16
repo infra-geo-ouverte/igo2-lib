@@ -1,12 +1,23 @@
 import { NgModule } from '@angular/core';
+import {
+  MatTooltipModule,
+  MatIconModule,
+  MatButtonModule
+} from '@angular/material';
 
 import { AppHomeComponent } from './home.component';
 import { AppHomeRoutingModule } from './home-routing.module';
 import { InteractiveTourModule } from '@igo2/common';
-import { MatTooltipModule, MatIconModule } from '@angular/material';
+
 @NgModule({
   declarations: [AppHomeComponent],
-  imports: [AppHomeRoutingModule, InteractiveTourModule, MatTooltipModule, MatIconModule ],
+  imports: [
+    AppHomeRoutingModule,
+    InteractiveTourModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatButtonModule
+  ],
   exports: [AppHomeComponent]
 })
 export class AppHomeModule {}

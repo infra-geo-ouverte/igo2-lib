@@ -174,6 +174,7 @@ export class Toolbox {
           this.setActiveTool(undefined);
           return;
         }
+
         const tool = record.entity;
         const options = Object.assign(
           {},

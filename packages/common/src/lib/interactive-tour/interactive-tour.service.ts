@@ -1,17 +1,21 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, MediaService, LanguageService } from '@igo2/core';
-import { introJs } from 'intro.js/intro.js';
+import { introJs } from 'intro.js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InteractiveTourService {
-
   public introJS = introJs();
   private tourActiveOption;
-  constructor(private configService: ConfigService, private mediaService: MediaService, private languageService: LanguageService) {}
 
-  public isToolHaveTourConfig(toolName) {
+  constructor(
+    private configService: ConfigService,
+    private mediaService: MediaService,
+    private languageService: LanguageService
+  ) {}
+
+  public isToolHaveTourConfig(toolName: string) {
     let nameInConfigFile = 'introOptions_' + toolName;
     nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
     const tourActiveOption = this.configService.getConfig(nameInConfigFile);
@@ -33,8 +37,9 @@ export class InteractiveTourService {
   }
 
   public isTourDisplayInMobile() {
-
-    const showInMobile = this.configService.getConfig('introInteractiveTourInMobile');
+    const showInMobile = this.configService.getConfig(
+      'introInteractiveTourInMobile'
+    );
     if (showInMobile === undefined) {
       return true;
     }
@@ -51,21 +56,19 @@ export class InteractiveTourService {
   }
 
   public startTour(tourTool) {
-
-    this.introJS.oncomplete( () =>  {
+    this.introJS.oncomplete(() => {
       console.log('fin du tour');
     });
 
-    this.introJS.onexit( () =>  {
+    this.introJS.onexit(() => {
       console.log('le tour a ete fermé');
     });
 
     this.introJS.onbeforechange(targetElement => {
-
       const tourNo: number = this.introJS._currentStep;
       console.log('tourNo');
       console.log(tourNo);
-      console.log(targetElement.className );
+      console.log(targetElement.className);
 
       // When the element doesn't exist when you start tour
       // we need to set it when it exist
@@ -77,37 +80,46 @@ export class InteractiveTourService {
         // maybe more properties need to be set here...
 
         let unElem: HTMLElement;
-        unElem = document.getElementsByTagName(currentElemConfig)[0] as HTMLElement;
+        unElem = document.getElementsByTagName(
+          currentElemConfig
+        )[0] as HTMLElement;
 
         if (!unElem) {
           console.log('elem est vide avec tagName');
-          unElem = document.getElementsByClassName(currentElemConfig)[0] as HTMLElement;
+          unElem = document.getElementsByClassName(
+            currentElemConfig
+          )[0] as HTMLElement;
           if (!unElem) {
-              console.log('elem est vide avec ClassName');
-              unElem = document.querySelector(currentElemConfig);
+            console.log('elem est vide avec ClassName');
+            unElem = document.querySelector(currentElemConfig);
+            if (!unElem) {
+              console.log('elem est vide avec querySelector');
+              unElem = document.getElementById(
+                currentElemConfig
+              ) as HTMLElement;
               if (!unElem) {
-                console.log('elem est vide avec querySelector');
-                unElem = document.getElementById(currentElemConfig) as HTMLElement;
-                if (!unElem) {
-                  console.log('elem est vide avec getelemById');
-
-                } else {
-                  console.log('elem est OK avec ById');
-                  this.introJS._introItems[tourNo].element = unElem;
-                  this.introJS._introItems[tourNo].position = currentPositionElemConfig;
-                }
+                console.log('elem est vide avec getelemById');
               } else {
-                console.log('elem est OK avec QuerySelector');
+                console.log('elem est OK avec ById');
                 this.introJS._introItems[tourNo].element = unElem;
-                this.introJS._introItems[tourNo].position = currentPositionElemConfig;
+                this.introJS._introItems[
+                  tourNo
+                ].position = currentPositionElemConfig;
               }
-
-          } else {
-              console.log('elem est OK avec ClassName');
+            } else {
+              console.log('elem est OK avec QuerySelector');
               this.introJS._introItems[tourNo].element = unElem;
-              this.introJS._introItems[tourNo].position = currentPositionElemConfig;
+              this.introJS._introItems[
+                tourNo
+              ].position = currentPositionElemConfig;
+            }
+          } else {
+            console.log('elem est OK avec ClassName');
+            this.introJS._introItems[tourNo].element = unElem;
+            this.introJS._introItems[
+              tourNo
+            ].position = currentPositionElemConfig;
           }
-
         } else {
           console.log('est OK avec tagName');
           this.introJS._introItems[tourNo].element = unElem;
@@ -117,7 +129,6 @@ export class InteractiveTourService {
     });
 
     this.introJS.onchange(targetElement => {
-
       const tourNo = this.introJS._currentStep;
       if (tourNo) {
         // problem with prev Button... if the user back on tour, another click is made and some time that not what you want
@@ -129,36 +140,44 @@ export class InteractiveTourService {
 
           if (actionToMake === 'clickOnMenu') {
             // back to initial menu
-              const elemHomeBut: HTMLElement = document.querySelector('#homeButton') as HTMLElement;
-              if (elemHomeBut) {
-                elemHomeBut.click();
-              }
-
-              const elemMenuBut: HTMLElement = document.querySelector('#menu-button') as HTMLElement;
-              elemMenuBut.click();
-
-          } else if (actionToMake === 'clickOnElem') {
-                targetElement.click();
-
-          } else if (actionToMake.substring(0, 11) === 'clickOnTool') {
-            const toolIndex = actionToMake.substring(11) ;
-            element = document.getElementsByTagName('mat-list-item')[toolIndex] as HTMLElement;
-            if (!element) {
-              // console.log('click, est vide avec tagNam')
-              element = document.getElementsByClassName('mat-list-item')[toolIndex] as HTMLElement;
-              element.click();
-            } else {
-            element.click();
+            const elemHomeBut: HTMLElement = document.querySelector(
+              '#homeButton'
+            ) as HTMLElement;
+            if (elemHomeBut) {
+              elemHomeBut.click();
             }
 
+            const elemMenuBut: HTMLElement = document.querySelector(
+              '#menu-button'
+            ) as HTMLElement;
+            elemMenuBut.click();
+          } else if (actionToMake === 'clickOnElem') {
+            targetElement.click();
+          } else if (actionToMake.substring(0, 11) === 'clickOnTool') {
+            const toolIndex = actionToMake.substring(11);
+            element = document.getElementsByTagName('mat-list-item')[
+              toolIndex
+            ] as HTMLElement;
+            if (!element) {
+              // console.log('click, est vide avec tagNam')
+              element = document.getElementsByClassName('mat-list-item')[
+                toolIndex
+              ] as HTMLElement;
+              element.click();
+            } else {
+              element.click();
+            }
           } else if (actionToMake.substring(0, 14) === 'clickOnContext') {
-            const contextIndex = actionToMake.substring(14) ;
-            element = document.getElementsByTagName('igo-context-item')[contextIndex] as HTMLElement;
+            const contextIndex = actionToMake.substring(14);
+            element = document.getElementsByTagName('igo-context-item')[
+              contextIndex
+            ] as HTMLElement;
             element.click();
-
           } else if (actionToMake.substring(0, 12) === 'clickOnLayer') {
-            const layerIndex = actionToMake.substring(12) ;
-            element = document.getElementsByClassName('igo-layer-title')[layerIndex] as HTMLElement;
+            const layerIndex = actionToMake.substring(12);
+            element = document.getElementsByClassName('igo-layer-title')[
+              layerIndex
+            ] as HTMLElement;
             element.click();
           }
         }
@@ -179,7 +198,7 @@ export class InteractiveTourService {
     }
 
     if (this.tourActiveOption == null) {
-      alert(`cet outil est inconnu du tourInteractif : ${tourTool}`) ;
+      alert(`cet outil est inconnu du tourInteractif : ${tourTool}`);
       return;
     } else {
       this.introJS.setOptions(this.tourActiveOption);

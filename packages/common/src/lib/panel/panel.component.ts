@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   HostBinding
 } from '@angular/core';
-import { InteractiveTourService } from './../interactive-tour/interactive-tour.service';
 
 @Component({
   selector: 'igo-panel',
@@ -13,7 +12,6 @@ import { InteractiveTourService } from './../interactive-tour/interactive-tour.s
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PanelComponent {
-
   @Input()
   get title() {
     return this._title;
@@ -32,9 +30,4 @@ export class PanelComponent {
     this._withHeader = value;
   }
   private _withHeader = true;
-
-  @Input() toast = false;
-
-  constructor() {}
-
 }

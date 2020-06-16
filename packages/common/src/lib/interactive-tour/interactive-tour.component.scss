@@ -1,36 +1,29 @@
-
 .introjs-helperNumberLayer{
-  position:relative !important;
-  top:0px !important;
-  left: 90% !important;
-  border-radius: 0% !important;
-  padding:6px !important;
+  position:relative;
+  top:0px;
+  left: 90%;
+  border-radius: 0%;
+  padding:6px;
 }
 
 .introjs-overlay{
-  background-color: transparent !important;
-    // display: none !important;
+  background-color: transparent;
 }
 
-
 .igo-introjs-helperLayer:before {
-
-  content: '' !important;
-  position: absolute !important;
-  width: inherit !important;
-  height: inherit !important;
-  outline: .11em ridge rgba(255, 217, 68, 0.8) !important;
-
-  box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.6) !important;
+  content: '';
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  outline: .11em ridge rgba(255, 217, 68, 0.8);
+  box-shadow: 0 0 0 1000em rgba(0, 0, 0, 0.6);
 }
 
 .igo-introjs-helperLayer {
-  background: transparent !important;
-  border: 0px !important;
+  background: transparent;
+  border: 0px;
 }
 
 .introjs-prevbutton {
-  display:none !important;
+  display:none;
 }
-
-

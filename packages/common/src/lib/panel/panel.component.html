@@ -2,13 +2,10 @@
   <h3>
     <ng-content select="[panelLeftButton]"></ng-content>
     <div class="igo-panel-title">
-      {{title}}
+      {{ title }}
       <ng-content select="[panelHeader]"></ng-content>
     </div>
     <ng-content select="[panelRightButton]"></ng-content>
-
-    <igo-interactive-tour></igo-interactive-tour>
-    <!-- <igo-interactive-tour [toast]="toast"></igo-interactive-tour> -->
   </h3>
 </div>
 <div class="igo-panel-content" title="">
