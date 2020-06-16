@@ -1,3 +1,5 @@
+$slide-toggle-width: 60px;
+
 mat-form-field {
     width: 100%;
 }
@@ -18,4 +20,17 @@ h4 {
 igo-spinner {
   position: absolute;
   padding-left: 10px;
+}
+
+.export-options {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
 }

@@ -1,8 +1,10 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, LayerListControlsOptions, IgoMap } from '@igo2/geo';
+import { LayerListControlsEnum, LayerListControlsOptions, IgoMap, ExportOptions } from '@igo2/geo';
 import { MapState } from './../map.state';
+import { ImportExportState } from '../../import-export/import-export.state';
+import { ToolState } from '../../tool/tool.state';
 
 /**
  * Tool to browse a map's layers or to choose a different map
@@ -60,6 +62,15 @@ export class MapToolComponent {
     return filterSortOptions;
   }
 
-  constructor(private mapState: MapState) {}
+  constructor(
+    private mapState: MapState,
+    private toolState: ToolState,
+    private importExportState: ImportExportState) {}
+
+  activateExport(id: string) {
+    this.importExportState.setsExportOptions({ layer: id } as ExportOptions);
+    this.importExportState.setSelectedTab(1);
+    this.toolState.toolbox.activateTool('importExport');
+  }
 
 }

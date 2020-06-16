@@ -42,7 +42,7 @@
           "uriRequired": "L'identifiant est obligatoire"
         },
         "invalid": {
-          "text": "Le contexte \"{{value}}\" est invalide",
+          "text": "Le contexte \"{{value}}\" est invalide. Le contexte par défaut a été chargé.",
           "title": "Contexte invalide"
         },
         "managePermissions": "Gérer les permissions du contexte",

@@ -1,1 +1,7 @@
-<igo-import-export [map]="map"></igo-import-export>
+<igo-import-export 
+  [map]="map"
+  [selectedIndex]="importExportState.selectedTab$ | async"
+  (selectedTabIndex)="tabChanged($event)"
+  [exportOptions$]="importExportState.exportOptions$"
+  (exportOptionsChange)="exportOptionsChange($event)"
+  ></igo-import-export>

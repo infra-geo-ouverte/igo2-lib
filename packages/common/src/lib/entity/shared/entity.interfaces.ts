@@ -31,6 +31,10 @@ export interface EntityStateManagerOptions {
 
 export interface EntityStoreStrategyOptions {}
 
+export interface EntityStoreStrategyFuncOptions extends EntityStoreStrategyOptions {
+  filterClauseFunc: EntityFilterClause;
+}
+
 export interface EntityTransactionOptions {
   getKey?: (entity: object) => EntityKey;
 }

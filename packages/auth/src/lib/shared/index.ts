@@ -7,3 +7,5 @@ export * from './auth.guard';
 export * from './admin.guard';
 export * from './profils.guard';
 export * from './protected.directive';
+export * from './storage.interface';
+export * from './storage.service';
