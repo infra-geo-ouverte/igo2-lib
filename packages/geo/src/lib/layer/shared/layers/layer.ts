@@ -190,6 +190,18 @@ export abstract class Layer {
                 layer.ol.set('opacity', baseOpacity, false);
                 layer.opacity = layer.opacity;
               }
+              if (link.properties.indexOf('minResolution') !== -1) {
+                const baseMinResolution = layer.ol.get('minResolution');
+                layer.ol.set('minResolution', 0, false);
+                layer.ol.set('minResolution', baseMinResolution, false);
+                layer.minResolution = layer.minResolution;
+              }
+              if (link.properties.indexOf('maxResolution') !== -1) {
+                const baseMaxResolution = layer.ol.get('maxResolution');
+                layer.ol.set('maxResolution', 0, false);
+                layer.ol.set('maxResolution', baseMaxResolution, false);
+                layer.minResolution = layer.minResolution;
+              }
               if (link.properties.indexOf('ogcFilters') !== -1) {
                 const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
                 ogcFilters$.next(ogcFilters$.value);
@@ -285,13 +297,11 @@ export abstract class Layer {
 
   }
   private transferCommonProperties(layerChange) {
-    // Synced delete layer.
-    // TODO minResolution
-    // TODO maxResolution
+    // TODO synced delete layer.
     const key = layerChange.key;
     const layerChangeProperties = layerChange.target.getProperties();
     const newValue = layerChangeProperties[key];
-    if (key !== 'visible' && key !== 'opacity') {
+    if (['visible', 'opacity', 'minResolution', 'maxResolution'].indexOf(key) === -1) {
       return;
     }
     const linkedLayers = layerChangeProperties.linkedLayers as LayersLink;
