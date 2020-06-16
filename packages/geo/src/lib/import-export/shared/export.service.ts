@@ -191,7 +191,7 @@ export class ExportService {
     projectionIn: string,
     projectionOut: string
   ) {
-    let featuresText: string = new olformat.GeoJSON().writeFeatures(
+    const featuresText: string = new olformat.GeoJSON().writeFeatures(
       olFeatures,
       {
         dataProjection: projectionOut,
