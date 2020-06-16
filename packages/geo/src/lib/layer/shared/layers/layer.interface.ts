@@ -36,13 +36,13 @@ export interface LayersLink {
 export interface LayersLinkProperties {
   bidirectionnal?: boolean;
   linkedIds: string[];
-  properties: string[]; // opacity,visible,ogcFilters & timeFilter ( todo zIndex)
+  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter ( todo zIndex)
 }
 
 export interface ComputedLink {
   srcId: string;
   dstId: string;
-  properties: string[]; // opacity,visible,ogcFilters & timeFilter ( todo zIndex)
+  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter ( todo zIndex)
   bidirectionnal?: boolean;
   srcProcessed?: boolean;
 }
