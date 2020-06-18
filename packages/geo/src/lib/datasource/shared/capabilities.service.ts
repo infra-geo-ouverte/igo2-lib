@@ -252,9 +252,18 @@ export class CapabilitiesService {
     baseOptions: WMTSDataSourceOptions,
     capabilities: any
   ): WMTSDataSourceOptions {
+
+    // Put Title source in _layerOptionsFromSource. (For source & catalog in _layerOptionsFromSource, if not already on config)
+    const layer = capabilities.Contents.Layer.find(el => el.Identifier === baseOptions.layer);
+
     const options = optionsFromCapabilities(capabilities, baseOptions);
 
-    return Object.assign(options, baseOptions);
+    const ouputOptions = Object.assign(options, baseOptions);
+    const sourceOptions = ObjectUtils.removeUndefined({
+      _layerOptionsFromSource: {
+        title: layer.Title}});
+
+    return ObjectUtils.mergeDeep(sourceOptions, ouputOptions);
   }
 
   private parseCartoOptions(
