@@ -55,6 +55,10 @@
           "text": "Failed to export",
           "title": "Failed to export features"
         },
+        "success": {
+          "text": "Features have been exported.",
+          "title":"Features export success"
+        },
         "format": {
           "GeoJSON": "GeoJSON",
           "GML": "GML",

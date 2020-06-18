@@ -23,6 +23,17 @@ export function handleFileExportError(
   messageService.error(message, title);
 }
 
+export function handleFileExportSuccess(
+  messageService: MessageService,
+  languageService: LanguageService
+) {
+  const translate = languageService.translate;
+  const title = translate.instant('igo.geo.export.success.title');
+  const message = translate.instant('igo.geo.export.success.text');
+  console.log(translate.instant('igo.geo.export.success.text'));
+  messageService.success(message, title);
+}
+
 export function handleNothingToExportError(
   messageService: MessageService,
   languageService: LanguageService

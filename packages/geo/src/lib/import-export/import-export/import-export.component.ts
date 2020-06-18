@@ -13,7 +13,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
-import { handleFileExportError } from '../shared/export.utils';
+import { handleFileExportError, handleFileExportSuccess } from '../shared/export.utils';
 import { ExportOptions } from '../shared/export.interface';
 import { ExportFormat } from '../shared/export.type';
 import { ExportService } from '../shared/export.service';
@@ -213,6 +213,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         () => {},
         (error: Error) => this.onFileExportError(error),
         () => {
+          this.onFileExportSuccess();
           this.loading$.next(false);
         }
       );
@@ -369,5 +370,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   public tabChanged(tab: MatTabChangeEvent) {
     this.selectedTabIndex.emit(tab.index);
+  }
+
+  private onFileExportSuccess() {
+    handleFileExportSuccess(this.messageService, this.languageService);
   }
 }
