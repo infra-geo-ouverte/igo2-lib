@@ -318,7 +318,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     return formats
       .filter(format => {
         if (
-          format.toUpperCase() === ExportFormat.CSV.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.CSVcomma.toUpperCase() ||
+          format.toUpperCase() === ExportFormat.CSVsemicolon.toUpperCase() ||
           format.toUpperCase() === ExportFormat.GML.toUpperCase() ||
           format.toUpperCase() === ExportFormat.GPX.toUpperCase() ||
           format.toUpperCase() === ExportFormat.GeoJSON.toUpperCase() ||
@@ -330,8 +331,12 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       })
       .map(format => {
-        if (format.toUpperCase() === ExportFormat.CSV.toUpperCase()) {
-          format = ExportFormat.CSV;
+        if (format.toUpperCase() === ExportFormat.CSVcomma.toUpperCase()) {
+          format = ExportFormat.CSVcomma;
+          return format;
+        }
+        if (format.toUpperCase() === ExportFormat.CSVsemicolon.toUpperCase()) {
+          format = ExportFormat.CSVsemicolon;
           return format;
         }
         if (format.toUpperCase() === ExportFormat.GML.toUpperCase()) {
