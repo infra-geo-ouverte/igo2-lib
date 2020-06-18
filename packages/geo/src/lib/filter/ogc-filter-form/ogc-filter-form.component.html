@@ -254,7 +254,7 @@ class="snrc"
               [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
               [value]="currentFilter.begin?handleDate(currentFilter.begin):handleDate(datasource.options.minDate)"
               [min]="handleDate(datasource.options.minDate)"
-              [max]="handleDate(currentFilter.end)" >
+              [max]="currentFilter.end?handleDate(currentFilter.end):handleDate(datasource.options.maxDate)" >
           </mat-form-field>
       </span>
       <span *ngIf="calendarType() !== 'datetime'">
@@ -271,7 +271,7 @@ class="snrc"
             [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
             [value]="currentFilter.begin?handleDate(currentFilter.begin):handleDate(datasource.options.minDate)"
             [min]="handleDate(datasource.options.minDate)"
-            [max]="handleDate(currentFilter.end)" >
+            [max]="currentFilter.end?handleDate(currentFilter.end):handleDate(datasource.options.maxDate)" >
         </mat-form-field>
       </span>
     </span>
@@ -326,7 +326,7 @@ class="snrc"
               (dateChange)="changeTemporalProperty(end.value, 2)" 
               [matDatepickerFilter]="dateFilter.bind(this, 'end')"
               [value]="currentFilter.end?handleDate(currentFilter.end):handleDate(datasource.options.maxDate)"
-              [min]="handleDate(currentFilter.begin)"
+              [min]="currentFilter.begin?handleDate(currentFilter.begin):handleDate(datasource.options.minDate)"
               [max]="handleDate(datasource.options.maxDate)" >
           </mat-form-field>
         </span>
@@ -343,7 +343,7 @@ class="snrc"
               (dateChange)="changeTemporalProperty(end.value,2)" 
               [matDatepickerFilter]="dateFilter.bind(this, 'end')"
               [value]="currentFilter.end?handleDate(currentFilter.end):handleDate(datasource.options.maxDate)"
-              [min]="handleDate(currentFilter.begin)"
+              [min]="currentFilter.begin?handleDate(currentFilter.begin):handleDate(datasource.options.minDate)"
               [max]="handleDate(datasource.options.maxDate)" >
           </mat-form-field>
         </span>
