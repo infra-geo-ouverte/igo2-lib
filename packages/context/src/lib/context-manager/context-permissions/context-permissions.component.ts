@@ -10,6 +10,8 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
+import { AuthService } from '@igo2/auth';
+
 @Component({
   selector: 'igo-context-permissions',
   templateUrl: './context-permissions.component.html',
@@ -58,7 +60,8 @@ export class ContextPermissionsComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private cd: ChangeDetectorRef,
-              private http: HttpClient) {}
+              private http: HttpClient,
+              public authService: AuthService) {}
 
   ngOnInit(): void {
     this.buildForm();

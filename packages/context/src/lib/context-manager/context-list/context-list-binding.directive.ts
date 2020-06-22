@@ -142,7 +142,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     });
   }
 
-  @HostListener('filterPermissionsChanged', ['$event'])
+  @HostListener('filterPermissionsChanged')
   loadContexts() {
     let permissions = ['none'];
     for (const p of this.component.permissions) {

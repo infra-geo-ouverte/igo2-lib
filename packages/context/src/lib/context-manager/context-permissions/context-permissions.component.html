@@ -9,7 +9,7 @@
       <mat-radio-button value="protected">
         {{ 'igo.context.permission.scope.shared' | translate }}
       </mat-radio-button>
-      <mat-radio-button value="public">
+      <mat-radio-button *ngIf="authService.isAdmin" value="public">
         {{ 'igo.context.permission.scope.public' | translate }}
       </mat-radio-button>
     </mat-radio-group>

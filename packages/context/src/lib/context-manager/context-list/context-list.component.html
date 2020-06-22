@@ -46,14 +46,6 @@
     [mode]="actionbarMode">
   </igo-actionbar>
 
-  <!-- <button *ngIf="auth.authenticated"
-    mat-icon-button
-    [matTooltip]="'igo.context.bookmarkButton.create' | translate"
-    matTooltipShowDelay="500"
-    (click)="createContext()">
-    <mat-icon color="primary" svgIcon="plus"></mat-icon>
-  </button> -->
-
   <button *ngIf="auth.authenticated && users && users.length"
     mat-icon-button
     [matTooltip]="'igo.context.contextManager.filterUser' | translate"
