@@ -17,7 +17,7 @@ export class InteractiveTourService {
     private interactiveTourLoader: InteractiveTourLoader
     ) {}
 
-  public isToolHaveTourConfig(toolName: string) {
+  public isToolHaveTourConfig(toolName: string): boolean {
     const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(toolName);
     if (checkTourActiveOptions === undefined) {
       return false;
@@ -26,7 +26,7 @@ export class InteractiveTourService {
     }
   }
 
-  public isMobile() {
+  public isMobile(): boolean {
     const media = this.mediaService.getMedia();
     if (media === 'mobile') {
       return true;
@@ -35,17 +35,17 @@ export class InteractiveTourService {
     }
   }
 
-  public isTourDisplayInMobile() {
+  public isTourDisplayInMobile(): boolean {
     const showInMobile = this.configService.getConfig(
-      'introInteractiveTourInMobile'
+      'interactiveTourInMobile'
     );
     if (showInMobile === undefined) {
       return true;
     }
-    return this.configService.getConfig('introInteractiveTourInMobile');
+    return this.configService.getConfig('interactiveTourInMobile');
   }
 
-  private isInEnglish() {
+  private isInEnglish(): boolean {
     const lang = this.languageService.getLanguage();
     if (lang === 'en' || lang === 'EN') {
       return true;

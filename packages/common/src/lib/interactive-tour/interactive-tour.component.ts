@@ -25,7 +25,7 @@ export class InteractiveTourComponent {
     }
   }
 
-  get isActiveTool() {
+  get isActiveTool(): boolean {
     if (this.toolbox) {
       return this.toolbox.activeTool$.getValue() !== undefined;
     } else {
@@ -33,7 +33,7 @@ export class InteractiveTourComponent {
     }
   }
 
-  get isToolHaveTour() {
+  get isToolHaveTour(): boolean {
     if (this.isActiveTool) {
       return this.interactiveTourService.isToolHaveTourConfig(
         this.activeToolName
@@ -42,7 +42,7 @@ export class InteractiveTourComponent {
       return false;
     }
   }
-  get showTourButton() {
+  get showTourButton(): boolean {
     // 2 conditions to show: have Tour on tool in Config file and if we are in mobile displayInMobile= true
     let haveTour: boolean;
     haveTour = this.isToolHaveTour;
@@ -60,7 +60,7 @@ export class InteractiveTourComponent {
     return true;
   }
 
-  get isTourDisplayInMobile() {
+  get isTourDisplayInMobile(): boolean {
     return this.interactiveTourService.isTourDisplayInMobile();
   }
 
