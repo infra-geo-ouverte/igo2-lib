@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { IgoLanguageModule } from '@igo2/core';
 import { InteractiveTourService } from './interactive-tour.service';
 import { InteractiveTourComponent } from './interactive-tour.component';
+import { InteractiveTourLoader } from './interactive-tour.loader';
 
 @NgModule({
   declarations: [InteractiveTourComponent],
@@ -18,7 +19,7 @@ import { InteractiveTourComponent } from './interactive-tour.component';
     MatTooltipModule,
     IgoLanguageModule
   ],
-  providers: [InteractiveTourService],
+  providers: [InteractiveTourService, InteractiveTourLoader],
   exports: [InteractiveTourComponent]
 })
 export class IgoInteractiveTourModule {}

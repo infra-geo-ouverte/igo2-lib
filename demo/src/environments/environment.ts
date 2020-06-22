@@ -172,109 +172,110 @@ export const environment: Environment = {
       }
     },
 
-    introInteractiveTourInMobile: true,
+    introInteractiveTourInMobile: true
 
-    introOptions_global : {
-      skipLabel: '<h3 style="color:blue">Fermer </h3>',
-      nextLabel: '<h3 style="color:blue">Suivant</h3>',
-      doneLabel: 'Terminer',
-      prevLabel: '',
-      hidePrev: true,
-      hideNext: true,
-      showStepNumbers: false,
-      disableInteraction: true,
-      positionPrecedence: ['right', 'bottom', 'top', 'left'],
-      keyboardNavigation: true,
-      showBullets: true,
-      showProgress: false,
-      showButtons: true,
-      exitOnOverlayClick: false,
-      helperElementPadding: 2,
-      scrollToElement: true,
-      scrollTo: 'element',
-      scrollPadding: 200,
+  //   introOptions_global : {
+  //     skipLabel: '<h3 style="color:blue">Fermer </h3>',
+  //     nextLabel: '<h3 style="color:blue">Suivant</h3>',
+  //     doneLabel: 'Terminer',
+  //     prevLabel: '',
+  //     hidePrev: true,
+  //     hideNext: true,
+  //     showStepNumbers: false,
+  //     disableInteraction: true,
+  //     positionPrecedence: ['right', 'bottom', 'top', 'left'],
+  //     keyboardNavigation: true,
+  //     showBullets: true,
+  //     showProgress: false,
+  //     showButtons: true,
+  //     exitOnOverlayClick: false,
+  //     helperElementPadding: 2,
+  //     scrollToElement: true,
+  //     scrollTo: 'element',
+  //     scrollPadding: 200,
 
-      highlightClass: 'igo-introjs-helperLayer',
-      // buttonClass: "mat-raised-button", //problem introJs on the final step, the button next is there if we change button class...
-      tooltipClass: 'mat-h2',
+  //     highlightClass: 'igo-introjs-helperLayer',
+  //     // buttonClass: "mat-raised-button", //problem introJs on the final step, the button next is there if we change button class...
+  //     tooltipClass: 'mat-h2',
 
-      steps: [
-        {
-          no: 0,
-          element: 'igo-logo',
-          intro: 'igo-logo  (ex. class)',
-          introEnglish: 'test message en anglais',
-          position: 'bottom',
-        },
-        {
-          no: 1,
-          element: 'igo-title',
-          intro: 'igo-title (ex. Id)',
-          introEnglish: 'test message en anglais',
-          position: 'bottom',
-        },
+  //     steps: [
+  //       {
+  //         no: 0,
+  //         element: 'igo-logo',
+  //         intro: 'igo-logo  (ex. class)',
+  //         introEnglish: 'test message en anglais',
+  //         position: 'bottom',
+  //       },
+  //       {
+  //         no: 1,
+  //         element: 'igo-title',
+  //         intro: 'igo-title (ex. Id)',
+  //         introEnglish: 'test message en anglais',
+  //         position: 'bottom',
+  //       },
 
-        {
-          no: 2,
-          introEnglish: 'test message en anglais',
-          element: 'aucun',
-          action: 'clickOnTool33',
-          // element: document.getElementsByClassName('mat-list-item')[33].click(),
-          intro: 'CLICK on context <br> <strong> step config -> action: clickOnTool33</strong>',
-          position: 'bottom',
-        },
-        {
-          no: 3,
-          element: 'igo-panel-title',
-          intro: 'igo-panel-title',
-          position: 'bottom',
-        },
-        {
-          no: 5,
-          element: 'igo-map-browser',
-          intro: 'igo-map-browser',
-          position: 'bottom',
-        },
-        {
-          no: 6,
-          element: 'igo-list',
-          intro: 'igo-list',
-        },
-        {
-          no: 7,
-          element: 'igo-context-item:nth-child(3)',
-          intro: 'igo-context-item:nth-child(3)<br>NB: pour la mise en surbrillance l\'index pour nth-child debute a 1 donc index 3= 3e contexte de la liste',
-          position: 'bottom',
-        },
-        {
-          no: 8,
-          element: 'aucun',
-          action: 'clickOnContext2',
-          intro: 'Click on context index 2 <br> step config -> action: clickOnContext2 <br> NB: Ici index de la liste de contexte débute a 0, donc clickOnContext2 = click sur le 3e context'
-        },
-        {
-          no: 9,
-          element: 'igo-layer-list',
-          intro: 'igo-layer-list <br> problem sur le scroll dans lib mais est ok dans assemblage',
-        },
-        {
-          no: 10,
-          element: 'igo-layer-item:nth-child(2)',
-          intro: 'igo-layer-item:nth-child(2) <br> NB: pour la mise en surbrillance index pour nth-child debute a 1 <strong> DANS CE CAS-CI le filtre de couche est présent</strong> et ce dernier prend le 1er index donc pour sélectionner le 1er layer de la liste on doit indiquer ->igo-layer-item:nth-child(2)',
-        },
-        {
-          no: 11,
-          element: 'igo-layer-item:nth-child(2) button',
-          intro: 'eye button',
-        },
-        {
-          no: 12,
-          element: 'igo-layer-item:nth-child(2) button',
-          intro: "click sur bouton oeil ->  element: 'igo-layer-item:nth-child(2) button'   -  action: 'clickOnElem'",
-          action: 'clickOnElem',
-        }
-      ]
-    }
+  //       {
+  //         no: 2,
+  //         introEnglish: 'test message en anglais',
+  //         element: 'aucun',
+  //         action: 'clickOnTool33',
+  //         // element: document.getElementsByClassName('mat-list-item')[33].click(),
+  //         intro: 'CLICK on context <br> <strong> step config -> action: clickOnTool33</strong>',
+  //         position: 'bottom',
+  //       },
+  //       {
+  //         no: 3,
+  //         element: 'igo-panel-title',
+  //         intro: 'igo-panel-title',
+  //         position: 'bottom',
+  //       },
+  //       {
+  //         no: 5,
+  //         element: 'igo-map-browser',
+  //         intro: 'igo-map-browser',
+  //         position: 'bottom',
+  //       },
+  //       {
+  //         no: 6,
+  //         element: 'igo-list',
+  //         intro: 'igo-list',
+  //       },
+  //       {
+  //         no: 7,
+  //         element: 'igo-context-item:nth-child(3)',
+  //         intro: 'igo-context-item:nth-child(3)<br>NB: pour la mise en surbrillance l\'index pour nth-child debute a 1 donc index 3= 3e contexte de la liste',
+  //         position: 'bottom',
+  //       },
+  //       {
+  //         no: 8,
+  //         element: 'aucun',
+  //         action: 'clickOnContext2',
+  //         intro: 'Click on context index 2 <br> step config -> action: clickOnContext2 <br> NB: Ici index de la liste de contexte débute a 0, donc clickOnContext2 = click sur le 3e context'
+  //       },
+  //       {
+  //         no: 9,
+  //         element: 'igo-layer-list',
+  //         intro: 'igo-layer-list <br> problem sur le scroll dans lib mais est ok dans assemblage',
+  //       },
+  //       {
+  //         no: 10,
+  //         element: 'igo-layer-item:nth-child(2)',
+  //         intro: 'igo-layer-item:nth-child(2) <br> NB: pour la mise en surbrillance index pour nth-child debute a 1 <strong> DANS CE CAS-CI le filtre de couche est présent</strong> et ce dernier prend le 1er index donc pour sélectionner le 1er layer de la liste on doit indiquer ->igo-layer-item:nth-child(2)',
+  //       },
+  //       {
+  //         no: 11,
+  //         element: 'igo-layer-item:nth-child(2) button',
+  //         intro: 'eye button',
+  //       },
+  //       {
+  //         no: 12,
+  //         element: 'igo-layer-item:nth-child(2) button',
+  //         intro: "click sur bouton oeil ->  element: 'igo-layer-item:nth-child(2) button'   -  action: 'clickOnElem'",
+  //         action: 'clickOnElem',
+  //       }
+  //     ]
+  //   }
+  // }
   }
 };
 

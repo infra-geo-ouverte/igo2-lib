@@ -1,26 +1,24 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, MediaService, LanguageService } from '@igo2/core';
 import { introJs } from 'intro.js';
+import { InteractiveTourLoader } from './interactive-tour.loader';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InteractiveTourService {
   public introJS = introJs();
-  private tourActiveOption;
 
   constructor(
     private configService: ConfigService,
     private mediaService: MediaService,
-    private languageService: LanguageService
-  ) {}
+    private languageService: LanguageService,
+    private interactiveTourLoader: InteractiveTourLoader
+    ) {}
 
   public isToolHaveTourConfig(toolName: string) {
-    let nameInConfigFile = 'introOptions_' + toolName;
-    nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
-    const tourActiveOption = this.configService.getConfig(nameInConfigFile);
-
-    if (tourActiveOption == null) {
+    const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(toolName);
+    if (checkTourActiveOptions === undefined) {
       return false;
     } else {
       return true;
@@ -55,7 +53,8 @@ export class InteractiveTourService {
     }
   }
 
-  public startTour(tourTool) {
+  public startTour(toolName) {
+
     this.introJS.oncomplete(() => {
       console.log('fin du tour');
     });
@@ -74,7 +73,8 @@ export class InteractiveTourService {
       // we need to set it when it exist
       if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
         console.log('target = elem doesnt exist');
-        const currentStepConfig = this.tourActiveOption.steps[tourNo];
+
+        const currentStepConfig = this.interactiveTourLoader.getTourOptionData(toolName).steps[tourNo];
         const currentElemConfig = currentStepConfig.element;
         const currentPositionElemConfig = currentStepConfig.position;
         // maybe more properties need to be set here...
@@ -99,6 +99,7 @@ export class InteractiveTourService {
               ) as HTMLElement;
               if (!unElem) {
                 console.log('elem est vide avec getelemById');
+                console.log('** pas trouvé elem html via differente methode ** ');
               } else {
                 console.log('elem est OK avec ById');
                 this.introJS._introItems[tourNo].element = unElem;
@@ -159,7 +160,6 @@ export class InteractiveTourService {
               toolIndex
             ] as HTMLElement;
             if (!element) {
-              // console.log('click, est vide avec tagNam')
               element = document.getElementsByClassName('mat-list-item')[
                 toolIndex
               ] as HTMLElement;
@@ -185,23 +185,24 @@ export class InteractiveTourService {
     });
 
     this.introJS.onafterchange(targetElement => {});
-    let nameInConfigFile = 'introOptions_' + tourTool;
-    nameInConfigFile = nameInConfigFile.replace(/\s/g, '');
 
-    this.tourActiveOption = this.configService.getConfig(nameInConfigFile);
+    const activeTourOption = this.interactiveTourLoader.getTourOptionData(toolName);
+    if (activeTourOption === undefined) {
+      return;
+    }
+
     if (this.isInEnglish()) {
-      for (let step of this.tourActiveOption.steps) {
+      for (let step of activeTourOption.steps) {
         if (step.introEnglish) {
           step.intro = step.introEnglish;
         }
       }
     }
-
-    if (this.tourActiveOption == null) {
-      alert(`cet outil est inconnu du tourInteractif : ${tourTool}`);
+    if (activeTourOption == null) {
+      alert(`cet outil est inconnu du tourInteractif : ${toolName}`);
       return;
     } else {
-      this.introJS.setOptions(this.tourActiveOption);
+      this.introJS.setOptions(activeTourOption);
     }
 
     this.introJS.start();

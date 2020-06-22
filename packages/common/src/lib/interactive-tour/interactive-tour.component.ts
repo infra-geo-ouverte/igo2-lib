@@ -8,6 +8,7 @@ import { ToolService } from '../tool/shared/tool.service';
   styleUrls: ['./interactive-tour.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
+
 export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
