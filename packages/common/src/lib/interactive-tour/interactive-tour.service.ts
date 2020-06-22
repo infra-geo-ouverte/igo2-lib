@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService, MediaService, LanguageService } from '@igo2/core';
 import { introJs } from 'intro.js';
 import { InteractiveTourLoader } from './interactive-tour.loader';
+import { InteractiveTourOptions, InteractiveTourStep } from './interactive-tour.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +75,7 @@ export class InteractiveTourService {
       if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
         console.log('target = elem doesnt exist');
 
-        const currentStepConfig = this.interactiveTourLoader.getTourOptionData(toolName).steps[tourNo];
+        const currentStepConfig: InteractiveTourStep = this.interactiveTourLoader.getTourOptionData(toolName).steps[tourNo];
         const currentElemConfig = currentStepConfig.element;
         const currentPositionElemConfig = currentStepConfig.position;
         // maybe more properties need to be set here...
@@ -186,23 +187,23 @@ export class InteractiveTourService {
 
     this.introJS.onafterchange(targetElement => {});
 
-    const activeTourOption = this.interactiveTourLoader.getTourOptionData(toolName);
-    if (activeTourOption === undefined) {
+    const activeTourOptions: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(toolName);
+    if (activeTourOptions === undefined) {
       return;
     }
 
     if (this.isInEnglish()) {
-      for (let step of activeTourOption.steps) {
+      for (let step of activeTourOptions.steps) {
         if (step.introEnglish) {
           step.intro = step.introEnglish;
         }
       }
     }
-    if (activeTourOption == null) {
+    if (activeTourOptions == null) {
       alert(`cet outil est inconnu du tourInteractif : ${toolName}`);
       return;
     } else {
-      this.introJS.setOptions(activeTourOption);
+      this.introJS.setOptions(activeTourOptions);
     }
 
     this.introJS.start();

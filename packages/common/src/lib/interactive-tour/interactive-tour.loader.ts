@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { InteractiveTourOptions } from './interactive-tour.interface';
 
 @Injectable()
 
@@ -12,7 +13,6 @@ export class InteractiveTourLoader {
     private http: HttpClient
   ) {
     this.getJSON().subscribe(data => {
-      console.log('in loader subscribe');
       this.allToursOptions = data;
     });
   }
@@ -21,7 +21,7 @@ export class InteractiveTourLoader {
     return this.http.get(this.jsonURL);
   }
 
-  public getTourOptionData(toolName) {
+  public getTourOptionData(toolName): InteractiveTourOptions {
     if (this.allToursOptions === undefined) {
       return undefined;
     }
