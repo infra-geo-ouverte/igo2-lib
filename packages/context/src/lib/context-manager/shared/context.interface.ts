@@ -67,4 +67,5 @@ export interface ContextUserPermission {
 export interface ContextProfils {
   name: string;
   title: string;
+  childs?: ContextProfils[];
 }

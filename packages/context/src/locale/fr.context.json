@@ -33,7 +33,7 @@
           "addPermission": "La permission que vous tentez d'ajouter est déjà présente dans le contexte.",
           "addPermissionTitle": "Erreur d'ajout de permission"
         },
-        "favorite": "Favori",
+        "favorite": "Définir comme context favori",
         "form": {
           "edit": "Enregistrer",
           "title": "Titre",

@@ -33,7 +33,7 @@
           "addPermission": "The permission you are trying to add is already in the context.",
           "addPermissionTitle": "Add permission error"
         },
-        "favorite": "Favorite",
+        "favorite": "Set as favorite context",
         "form": {
           "edit": "Save",
           "title": "Title",

@@ -16,7 +16,8 @@ import { IgoMap } from '@igo2/geo';
 import {
   DetailedContext,
   ContextsList,
-  ContextUserPermission
+  ContextUserPermission,
+  ContextProfils
 } from '../shared/context.interface';
 import { ContextListControlsEnum } from './context-list.enum';
 import {
@@ -98,6 +99,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
   @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
+  @Output() filterPermissionsChanged = new EventEmitter<
+    ContextUserPermission[]
+  >();
 
   public titleMapping = {
     ours: 'igo.context.contextManager.ourContexts',
@@ -105,7 +109,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     public: 'igo.context.contextManager.publicContexts'
   };
 
-  public users;
+  public users: ContextProfils[];
   public permissions: ContextUserPermission[] = [];
 
   public actionStore = new ActionStore([]);
@@ -146,7 +150,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private contextService: ContextService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private storageService: StorageService) {}
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
     this.change$$ = this.change$
@@ -159,42 +164,29 @@ export class ContextListComponent implements OnInit, OnDestroy {
         this.contexts$.next(this.filterContextsList(this.contexts));
       });
 
-    this.auth.authenticate$.subscribe(authenticate => {
-      if (authenticate) {
-        this.contextService.getProfilByUser().subscribe(profils => {
-          this.users = profils;
-          this.permissions = [];
-          const profilsAcc = this.users.reduce((acc, cur) => {
-            acc = acc.concat(cur);
-            acc = cur.childs ? acc.concat(cur.childs) : acc;
-            return acc;
-          }, []);
-          for (const user of profilsAcc) {
-            const permission: ContextUserPermission = {
-              name: user.name,
-              checked: this.storageService.get(user.name) === 'true' ? true : false
-            };
-            this.permissions.push(permission);
-          }
-        });
-      }
-    });
-
     this.actionStore.load([
       {
         id: 'emptyContext',
-        title: this.languageService.translate.instant('igo.context.contextManager.emptyContext'),
+        title: this.languageService.translate.instant(
+          'igo.context.contextManager.emptyContext'
+        ),
         icon: 'map-outline',
-        tooltip: this.languageService.translate.instant('igo.context.contextManager.emptyContextTooltip'),
+        tooltip: this.languageService.translate.instant(
+          'igo.context.contextManager.emptyContextTooltip'
+        ),
         handler: () => {
           this.createContext();
         }
       },
       {
         id: 'contextFromMap',
-        title: this.languageService.translate.instant('igo.context.contextManager.contextMap'),
+        title: this.languageService.translate.instant(
+          'igo.context.contextManager.contextMap'
+        ),
         icon: 'map-check',
-        tooltip: this.languageService.translate.instant('igo.context.contextManager.contextMapTooltip'),
+        tooltip: this.languageService.translate.instant(
+          'igo.context.contextManager.contextMapTooltip'
+        ),
         handler: () => {
           this.createContext();
         }
@@ -373,7 +365,6 @@ export class ContextListComponent implements OnInit, OnDestroy {
   getPermission(user?): ContextUserPermission {
     if (user) {
       const permission = this.permissions.find(p => p.name === user.name);
-      permission.checked = this.storageService.get(user.name) !== 'false' ? true : false;
       return permission;
     }
   }
@@ -382,7 +373,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
     const permission = this.getPermission(user);
     if (permission) {
       permission.checked = !permission.checked;
-      this.storageService.set(permission.name, permission.checked.toString());
+      this.storageService.set(
+        'contexts.permissions.' + permission.name,
+        permission.checked.toString()
+      );
       permission.indeterminate = false;
     }
 
@@ -399,7 +393,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
       const parentPermission = this.getPermission(parent);
       if (parentPermission) {
         parentPermission.checked = permission.checked;
-        this.storageService.set(parentPermission.name, permission.checked.toString());
+        this.storageService.set(
+          'contexts.permissions.' + parentPermission.name,
+          permission.checked.toString()
+        );
         parentPermission.indeterminate = indeterminate;
       }
     }
@@ -407,25 +404,19 @@ export class ContextListComponent implements OnInit, OnDestroy {
     if (user.childs) {
       for (const c of user.childs) {
         const childrenPermission = this.getPermission(c);
-        if (childrenPermission && childrenPermission.checked !== permission.checked) {
+        if (
+          childrenPermission &&
+          childrenPermission.checked !== permission.checked
+        ) {
           childrenPermission.checked = permission.checked;
-          this.storageService.set(childrenPermission.name, permission.checked.toString());
+          this.storageService.set(
+            'contexts.permissions.' + childrenPermission.name,
+            permission.checked.toString()
+          );
         }
       }
     }
 
-    let permissions = '';
-    for (const p of this.permissions) {
-      if (p.checked === true || p.indeterminate === true) {
-        permissions += p.name + ',';
-      }
-    }
-    permissions = permissions.slice(0, -1);
-    this.contextService
-      .getContextByPermission(permissions)
-      .subscribe(contexts => {
-        this.contexts = contexts as ContextsList;
-        this.contexts$.next(this.contexts);
-      });
+    this.filterPermissionsChanged.emit(this.permissions);
   }
 }

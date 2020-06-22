@@ -27,7 +27,8 @@ import {
   Context,
   DetailedContext,
   ContextMapView,
-  ContextPermission
+  ContextPermission,
+  ContextProfils
 } from './context.interface';
 
 @Injectable({
@@ -77,18 +78,27 @@ export class ContextService {
     this.readParamsFromRoute();
 
     this.authService.authenticate$.subscribe(authenticated => {
-      const contexts$$ = this.contexts$.subscribe(contexts => {
-        if (contexts$$) {
-          contexts$$.unsubscribe();
+      if (authenticated && this.baseUrl) {
+        this.get().subscribe(contexts => {
           this.handleContextsChange(contexts);
-        }
-      });
-      this.loadContexts();
+        });
+      } else {
+        const contexts$$ = this.contexts$.subscribe(contexts => {
+          if (contexts$$) {
+            contexts$$.unsubscribe();
+            this.handleContextsChange(contexts);
+          }
+        });
+        this.loadContexts();
+      }
     });
   }
 
-  get(): Observable<ContextsList> {
-    const url = this.baseUrl + '/contexts';
+  get(permissions?: string[]): Observable<ContextsList> {
+    let url = this.baseUrl + '/contexts';
+    if (permissions && this.authService.authenticated) {
+      url += '?permission=' + permissions.join();
+    }
     return this.http.get<ContextsList>(url);
   }
 
@@ -115,14 +125,12 @@ export class ContextService {
     );
   }
 
-  getContextByPermission(permission: string): Observable<ContextsList> {
-    const url = this.baseUrl + '/contexts';
-    return this.http.get<ContextsList>(url + '?permission=' + permission);
-  }
-
-  getProfilByUser() {
-    const url = this.baseUrl + '/profils?';
-    return this.http.get(url);
+  getProfilByUser(): Observable<ContextProfils[]> {
+    if (this.baseUrl) {
+      const url = this.baseUrl + '/profils?';
+      return this.http.get<ContextProfils[]>(url);
+    }
+    return of([]);
   }
 
   setDefault(id: string): Observable<any> {
@@ -276,10 +284,10 @@ export class ContextService {
     );
   }
 
-  loadContexts() {
+  loadContexts(permissions?: string[]) {
     let request;
     if (this.baseUrl) {
-      request = this.get();
+      request = this.get(permissions);
     } else {
       request = this.getLocalContexts();
     }

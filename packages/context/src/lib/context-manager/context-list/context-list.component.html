@@ -54,7 +54,7 @@
     <mat-icon color="primary" svgIcon="plus"></mat-icon>
   </button> -->
 
-  <button *ngIf="auth.authenticated"
+  <button *ngIf="auth.authenticated && users && users.length"
     mat-icon-button
     [matTooltip]="'igo.context.contextManager.filterUser' | translate"
     matTooltipShowDelay="500"
