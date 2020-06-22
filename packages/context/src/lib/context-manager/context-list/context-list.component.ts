@@ -175,7 +175,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           'igo.context.contextManager.emptyContextTooltip'
         ),
         handler: () => {
-          this.createContext();
+          this.createContext(true);
         }
       },
       {
@@ -188,7 +188,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           'igo.context.contextManager.contextMapTooltip'
         ),
         handler: () => {
-          this.createContext();
+          this.createContext(false);
         }
       }
     ]);
@@ -336,13 +336,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.term = '';
   }
 
-  createContext() {
+  createContext(empty?: boolean) {
     this.dialog
       .open(BookmarkDialogComponent, { disableClose: false })
       .afterClosed()
       .subscribe(title => {
         if (title) {
-          const context = this.contextService.getContextFromMap(this.map);
+          const context = this.contextService.getContextFromMap(this.map, empty);
           context.title = title;
           this.contextService.create(context).subscribe(() => {
             const translate = this.languageService.translate;

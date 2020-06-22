@@ -381,7 +381,7 @@ export class ContextService {
     this.editedContext$.next(context);
   }
 
-  getContextFromMap(igoMap: IgoMap): DetailedContext {
+  getContextFromMap(igoMap: IgoMap, empty?: boolean): DetailedContext {
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
     const center: any = new olPoint(view.getCenter()).transform(
@@ -404,9 +404,17 @@ export class ContextService {
       tools: []
     };
 
-    const layers = igoMap.layers$
-      .getValue()
-      .sort((a, b) => a.zIndex - b.zIndex);
+    let layers = [];
+    if (empty === true) {
+      layers = igoMap.layers$
+        .getValue()
+        .filter(lay => lay.baseLayer === true || lay.options.id === 'searchPointerSummaryId')
+        .sort((a, b) => a.zIndex - b.zIndex);
+    } else {
+      layers = igoMap.layers$
+        .getValue()
+        .sort((a, b) => a.zIndex - b.zIndex);
+    }
 
     let i = 0;
     for (const l of layers) {

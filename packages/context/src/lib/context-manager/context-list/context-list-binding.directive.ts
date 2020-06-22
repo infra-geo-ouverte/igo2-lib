@@ -144,7 +144,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
   @HostListener('filterPermissionsChanged')
   loadContexts() {
-    let permissions = ['none'];
+    const permissions = ['none'];
     for (const p of this.component.permissions) {
       if (p.checked === true || p.indeterminate === true) {
         permissions.push(p.name);
