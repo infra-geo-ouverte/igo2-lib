@@ -200,9 +200,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
               name: user.name,
               checked:
                 this.storageService.get('contexts.permissions.' + user.name) ===
-                'true'
-                  ? true
-                  : false
+                'false'
+                  ? false
+                  : true
             };
             this.component.permissions.push(permission);
           }
