@@ -96,6 +96,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() hide = new EventEmitter<DetailedContext>();
+  @Output() show = new EventEmitter<DetailedContext>();
   @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
@@ -418,5 +420,13 @@ export class ContextListComponent implements OnInit, OnDestroy {
     }
 
     this.filterPermissionsChanged.emit(this.permissions);
+  }
+
+  hideContext(context: DetailedContext) {
+    context.hide = true;
+  }
+
+  showContext(context: DetailedContext) {
+    context.hide = false;
   }
 }

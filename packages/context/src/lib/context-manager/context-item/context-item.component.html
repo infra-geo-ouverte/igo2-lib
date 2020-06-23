@@ -77,6 +77,24 @@
         <mat-icon svgIcon="pencil"></mat-icon>
       </button>
 
+      <button *ngIf="!context.hide"
+        mat-icon-button
+        [color]="color"
+        [matTooltip]="'igo.context.contextManager.hide' | translate"
+        matTooltipShowDelay="500"
+        (click)="hide.emit(context)">
+        <mat-icon svgIcon="eye"></mat-icon>
+      </button>
+
+      <button *ngIf="context.hide"
+        mat-icon-button
+        [color]="color"
+        [matTooltip]="'igo.context.contextManager.show' | translate"
+        matTooltipShowDelay="500"
+        (click)="show.emit(context)">
+        <mat-icon svgIcon="eye-off"></mat-icon>
+      </button>
+
       <button
         mat-icon-button
         color="warn"

@@ -39,6 +39,8 @@ export class ContextItemComponent {
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() hide = new EventEmitter<DetailedContext>();
+  @Output() show = new EventEmitter<DetailedContext>();
   @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();

@@ -59,7 +59,9 @@
         "emptyContext": "Contexte vide",
         "emptyContextTooltip": "Créer un nouveau contexte vide",
         "contextMap": "Contexte à partir de la carte",
-        "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte"
+        "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte",
+        "hide": "Masquer ce contexte",
+        "show": "Montrer ce contexte"
       },
       "permission": {
         "addBtn": "Ajouter",

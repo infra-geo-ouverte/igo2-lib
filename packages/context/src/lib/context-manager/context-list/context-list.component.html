@@ -104,6 +104,8 @@
           (delete)="delete.emit(context)"
           (clone)="clone.emit(context)"
           (save)="save.emit(context)"
+          (hide)="hideContext(context)"
+          (show)="showContext(context)"
           (favorite)="favorite.emit(context)"
           (manageTools)="manageTools.emit(context)"
           (managePermissions)="managePermissions.emit(context)"
