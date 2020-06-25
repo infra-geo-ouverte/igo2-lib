@@ -410,7 +410,8 @@ export class ContextService {
         view: {
           center: center.getCoordinates(),
           zoom: view.getZoom(),
-          projection: proj
+          projection: proj,
+          maxZoomOnExtent: igoMap.viewController.maxZoomOnExtent
         }
       },
       layers: [],
