@@ -188,7 +188,8 @@ export class InteractiveTourService {
     this.introJS.onafterchange(targetElement => {});
 
     const activeTourOptions: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(toolName);
-    if (activeTourOptions === undefined) {
+    if (activeTourOptions === undefined || activeTourOptions == null) {
+      alert(`cet outil est inconnu du tourInteractif : ${toolName}`);
       return;
     }
 
@@ -199,13 +200,8 @@ export class InteractiveTourService {
         }
       }
     }
-    if (activeTourOptions == null) {
-      alert(`cet outil est inconnu du tourInteractif : ${toolName}`);
-      return;
-    } else {
-      this.introJS.setOptions(activeTourOptions);
-    }
 
+    this.introJS.setOptions(activeTourOptions);
     this.introJS.start();
   }
 }

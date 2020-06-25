@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ToolComponent } from '@igo2/common';
+import { ToolComponent, InteractiveTourService } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
 
 @ToolComponent({
@@ -10,8 +10,10 @@ import { ConfigService, Version } from '@igo2/core';
 })
 @Component({
   selector: 'igo-about-tool',
-  templateUrl: './about-tool.component.html'
+  templateUrl: './about-tool.component.html',
+  styleUrls: ['./about-tool.component.scss']
 })
+
 export class AboutToolComponent {
   @Input()
   get html() {
@@ -24,7 +26,10 @@ export class AboutToolComponent {
   public version: Version;
   private _html: string = 'igo.integration.about.html';
 
-  constructor(configService: ConfigService) {
+  constructor(configService: ConfigService, private interactiveTourService: InteractiveTourService) {
     this.version = configService.getConfig('version');
+  }
+  public startTour() {
+    this.interactiveTourService.startTour('global');
   }
 }

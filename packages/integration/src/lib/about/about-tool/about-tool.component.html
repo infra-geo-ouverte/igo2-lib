@@ -1,3 +1,13 @@
+<button
+  id="tour-button"
+  mat-raised-button
+  color="primary"
+  (click)="startTour()"
+  [matTooltip]= "'tourButton.tooltip' | translate">
+  <span class="tour-button-title">{{'tourButton.title' | translate}} {{'IGO' | translate}}</span>
+  <mat-icon svgIcon="presentation-play"></mat-icon>
+</button>
+
 <igo-custom-html class="mat-typography"
-[html]="html |  translate: {version: version}">
+  [html]="html |  translate: {version: version}">
 </igo-custom-html>

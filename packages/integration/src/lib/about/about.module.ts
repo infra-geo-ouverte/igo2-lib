@@ -3,6 +3,10 @@ import {
   ModuleWithProviders,
   CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
+import { MatButtonModule,
+  MatTooltipModule,
+  MatIconModule
+} from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoCustomHtmlModule } from '@igo2/common';
@@ -10,7 +14,7 @@ import { IgoCustomHtmlModule } from '@igo2/common';
 import { AboutToolComponent } from './about-tool/about-tool.component';
 
 @NgModule({
-  imports: [IgoLanguageModule, IgoCustomHtmlModule],
+  imports: [IgoLanguageModule, IgoCustomHtmlModule, MatButtonModule, MatTooltipModule, MatIconModule],
   declarations: [AboutToolComponent],
   exports: [AboutToolComponent],
   entryComponents: [AboutToolComponent],
