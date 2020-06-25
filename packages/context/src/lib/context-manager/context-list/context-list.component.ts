@@ -98,6 +98,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   @Output() clone = new EventEmitter<DetailedContext>();
   @Output() hide = new EventEmitter<DetailedContext>();
   @Output() show = new EventEmitter<DetailedContext>();
+  @Output() showHiddenContexts = new EventEmitter<boolean>();
   @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
@@ -118,6 +119,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
   public actionbarMode = ActionbarMode.Overlay;
 
   public color = 'primary';
+
+  public showHidden = this.storageService.get('contexts.showHidden') === 'true' ? true : false;
 
   /**
    * Context filter term
@@ -423,10 +426,18 @@ export class ContextListComponent implements OnInit, OnDestroy {
   }
 
   hideContext(context: DetailedContext) {
-    context.hide = true;
+    context.hidden = true;
+    this.storageService.set('contexts.hide.' + context.id, 'true');
+    this.contextService.hideContext(context.id).subscribe(() => {
+      this.hide.emit();
+    });
   }
 
   showContext(context: DetailedContext) {
-    context.hide = false;
+    context.hidden = false;
+    this.storageService.set('contexts.hide.' + context.id, 'false');
+    this.contextService.showContext(context.id).subscribe(() => {
+      this.show.emit();
+    });
   }
 }

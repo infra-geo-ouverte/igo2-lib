@@ -86,6 +86,13 @@
         </mat-checkbox>
       </mat-menu>
     </ng-container>
+    <mat-checkbox
+      class="mat-menu-item"
+      [checked]="showHidden"
+      (click)="$event.stopPropagation()"
+      (change)="showHiddenContexts.emit()">
+      {{ 'igo.context.contextManager.showHidden' | translate }}
+    </mat-checkbox>
   </mat-menu>
 
   <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">

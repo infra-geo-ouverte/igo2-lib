@@ -13,7 +13,7 @@ export interface Context {
   description?: string;
   icon?: string;
   iconImage?: string;
-  hide?: boolean;
+  hidden?: boolean;
 }
 
 export interface ContextsList {

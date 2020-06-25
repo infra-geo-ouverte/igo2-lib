@@ -1,4 +1,4 @@
-<mat-list-item>
+<mat-list-item [ngClass]="context.hidden ? 'mat-list-item-light' : 'mat-list-item'">
   <button mat-list-avatar
     *ngIf="auth.authenticated"
     mat-icon-button
@@ -77,7 +77,7 @@
         <mat-icon svgIcon="pencil"></mat-icon>
       </button>
 
-      <button *ngIf="!context.hide"
+      <button *ngIf="!context.hidden"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.hide' | translate"
@@ -86,7 +86,7 @@
         <mat-icon svgIcon="eye"></mat-icon>
       </button>
 
-      <button *ngIf="context.hide"
+      <button *ngIf="context.hidden"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.show' | translate"
