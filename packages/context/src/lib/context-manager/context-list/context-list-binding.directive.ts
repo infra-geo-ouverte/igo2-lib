@@ -143,8 +143,6 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   }
 
   @HostListener('filterPermissionsChanged')
-  @HostListener('hide')
-  @HostListener('show')
   loadContexts() {
     const permissions = ['none'];
     for (const p of this.component.permissions) {
@@ -152,20 +150,27 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         permissions.push(p.name);
       }
     }
-    this.component.showHidden ? this.contextService.loadContexts(permissions, true) : this.contextService.loadContexts(permissions, false);
+    this.component.showHidden
+      ? this.contextService.loadContexts(permissions, true)
+      : this.contextService.loadContexts(permissions, false);
   }
 
   @HostListener('showHiddenContexts')
   showHiddenContexts() {
     this.component.showHidden = !this.component.showHidden;
-    this.storageService.set('contexts.showHidden', this.component.showHidden.toString());
+    this.storageService.set(
+      'contexts.showHidden',
+      this.component.showHidden.toString()
+    );
     const permissions = ['none'];
     for (const p of this.component.permissions) {
       if (p.checked === true || p.indeterminate === true) {
         permissions.push(p.name);
       }
     }
-    this.component.showHidden ? this.contextService.loadContexts(permissions, true) : this.contextService.loadContexts(permissions, false);
+    this.component.showHidden
+      ? this.contextService.loadContexts(permissions, true)
+      : this.contextService.loadContexts(permissions, false);
   }
 
   constructor(
@@ -227,8 +232,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
               permissions.push(p.name);
             }
           }
-          this.component.showHidden ? this.contextService.loadContexts(permissions, true) :
-            this.contextService.loadContexts(permissions, false);
+          this.component.showHidden
+            ? this.contextService.loadContexts(permissions, true)
+            : this.contextService.loadContexts(permissions, false);
         });
       }
     });

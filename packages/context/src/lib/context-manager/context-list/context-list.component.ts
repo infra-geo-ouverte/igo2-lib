@@ -120,7 +120,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   public color = 'primary';
 
-  public showHidden = this.storageService.get('contexts.showHidden') === 'true' ? true : false;
+  public showHidden =
+    this.storageService.get('contexts.showHidden') === 'true' ? true : false;
 
   /**
    * Context filter term
@@ -347,7 +348,10 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe(title => {
         if (title) {
-          const context = this.contextService.getContextFromMap(this.map, empty);
+          const context = this.contextService.getContextFromMap(
+            this.map,
+            empty
+          );
           context.title = title;
           this.contextService.create(context).subscribe(() => {
             const translate = this.languageService.translate;
@@ -427,17 +431,24 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   hideContext(context: DetailedContext) {
     context.hidden = true;
+    if (!this.showHidden) {
+      const contexts: ContextsList = { ours: [], shared: [], public: [] };
+      contexts.ours = this.contexts.ours.filter(c => c.id !== context.id);
+      contexts.shared = this.contexts.shared.filter(c => c.id !== context.id);
+      contexts.public = this.contexts.public.filter(c => c.id !== context.id);
+      this.contexts = contexts;
+    }
     this.storageService.set('contexts.hide.' + context.id, 'true');
-    this.contextService.hideContext(context.id).subscribe(() => {
-      this.hide.emit();
-    });
+    this.contextService
+      .hideContext(context.id)
+      .subscribe(() => this.hide.emit());
   }
 
   showContext(context: DetailedContext) {
     context.hidden = false;
     this.storageService.set('contexts.hide.' + context.id, 'false');
-    this.contextService.showContext(context.id).subscribe(() => {
-      this.show.emit();
-    });
+    this.contextService
+      .showContext(context.id)
+      .subscribe(() => this.show.emit());
   }
 }
