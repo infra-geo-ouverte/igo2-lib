@@ -143,8 +143,7 @@ export class LayerService {
 
     if (layerOptions.source instanceof ClusterDataSource) {
       const serviceStyle = this.styleService;
-      const baseStyle = layerOptions.style;
-      layerOptions.clusterBaseStyle = baseStyle;
+      const baseStyle = layerOptions.clusterBaseStyle;
       layerOptions.style = feature => {
         return serviceStyle.createClusterStyle(
           feature,
