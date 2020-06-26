@@ -31,7 +31,7 @@
        igoStopPropagation
        class="igo-actions-container">
 
-     <button *ngIf="collapsed"
+     <button *ngIf="collapsed && selected"
        mat-icon-button
        [matTooltip]="'igo.context.contextManager.save' | translate"
        matTooltipShowDelay="500"
@@ -48,7 +48,7 @@
         matTooltipShowDelay="500"
         [color]="color"
         (click)="managePermissions.emit(context)">
-        <mat-icon svgIcon="account-outline"></mat-icon>
+        <mat-icon svgIcon="account-arrow-right"></mat-icon>
       </button>
 
       <!--button
