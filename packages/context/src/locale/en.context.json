@@ -59,7 +59,10 @@
         "emptyContext": "Empty context",
         "emptyContextTooltip": "Create a new empty context",
         "contextMap": "Context from map",
-        "contextMapTooltip": "Create a new context from map layers"
+        "contextMapTooltip": "Create a new context from map layers",
+        "hide": "Hide this context",
+        "show": "Show up this context",
+        "showHidden": "Show hidden contexts"
       },
       "permission": {
         "addBtn": "Add",

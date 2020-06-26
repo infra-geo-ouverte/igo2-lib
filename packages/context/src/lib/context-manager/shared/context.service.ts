@@ -94,10 +94,13 @@ export class ContextService {
     });
   }
 
-  get(permissions?: string[]): Observable<ContextsList> {
+  get(permissions?: string[], hidden?: boolean): Observable<ContextsList> {
     let url = this.baseUrl + '/contexts';
     if (permissions && this.authService.authenticated) {
       url += '?permission=' + permissions.join();
+      if (hidden) {
+        url += '&hidden=true';
+      }
     }
     return this.http.get<ContextsList>(url);
   }
@@ -136,6 +139,16 @@ export class ContextService {
   setDefault(id: string): Observable<any> {
     const url = this.baseUrl + '/contexts/default';
     return this.http.post(url, { defaultContextId: id });
+  }
+
+  hideContext(id: string) {
+    const url = this.baseUrl + '/contexts/' + id + '/hide';
+    return this.http.post(url, {});
+  }
+
+  showContext(id: string) {
+    const url = this.baseUrl + '/contexts/' + id + '/show';
+    return this.http.post(url, {});
   }
 
   delete(id: string): Observable<void> {
@@ -284,10 +297,10 @@ export class ContextService {
     );
   }
 
-  loadContexts(permissions?: string[]) {
+  loadContexts(permissions?: string[], hidden?: boolean) {
     let request;
     if (this.baseUrl) {
-      request = this.get(permissions);
+      request = this.get(permissions, hidden);
     } else {
       request = this.getLocalContexts();
     }
@@ -409,12 +422,14 @@ export class ContextService {
     if (empty === true) {
       layers = igoMap.layers$
         .getValue()
-        .filter(lay => lay.baseLayer === true || lay.options.id === 'searchPointerSummaryId')
+        .filter(
+          lay =>
+            lay.baseLayer === true ||
+            lay.options.id === 'searchPointerSummaryId'
+        )
         .sort((a, b) => a.zIndex - b.zIndex);
     } else {
-      layers = igoMap.layers$
-        .getValue()
-        .sort((a, b) => a.zIndex - b.zIndex);
+      layers = igoMap.layers$.getValue().sort((a, b) => a.zIndex - b.zIndex);
     }
 
     let i = 0;
