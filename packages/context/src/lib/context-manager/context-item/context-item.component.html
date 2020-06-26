@@ -12,7 +12,8 @@
   </button>
   <h4 matLine>{{context.title}}</h4>
 
-  <div igoStopPropagation
+  <div *ngIf="auth.authenticated"
+       igoStopPropagation
        class="igo-actions-container">
 
      <button *ngIf="collapsed && selected && context.permission === typePermission[typePermission.write]"
