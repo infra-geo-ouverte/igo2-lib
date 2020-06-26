@@ -1,4 +1,6 @@
-<mat-list-item [ngClass]="context.hidden ? 'mat-list-item mat-list-item-light' : 'mat-list-item'">
+<mat-list-item
+  class="mat-list-item"
+  [ngClass]="{'mat-list-item-light': hidden}">
   <button mat-list-avatar
     *ngIf="auth.authenticated"
     mat-icon-button

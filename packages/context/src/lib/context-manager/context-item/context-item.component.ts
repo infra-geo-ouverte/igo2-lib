@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { StorageService } from '@igo2/core';
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
 
@@ -22,7 +21,6 @@ export class ContextItemComponent {
   }
   set context(value: DetailedContext) {
     this._context = value;
-    this._context.hidden = this.storageService.get('contexts.hide.' + this.context.id) === 'true' ? true : false;
   }
   private _context: DetailedContext;
 
@@ -47,8 +45,11 @@ export class ContextItemComponent {
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
 
-  constructor(public auth: AuthService,
-              private storageService: StorageService) {}
+  get hidden(): boolean {
+    return this.context.hidden;
+  }
+
+  constructor(public auth: AuthService) {}
 
   favoriteClick(context) {
     if (this.auth.authenticated) {

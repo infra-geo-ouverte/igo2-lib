@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, MessageService, StorageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { IgoMap } from '@igo2/geo';
 
 import {
@@ -28,7 +28,6 @@ import {
   timer
 } from 'rxjs';
 import { MatDialog } from '@angular/material';
-import { ContextService } from '../shared/context.service';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
 import { ActionStore, ActionbarMode } from '@igo2/common';
@@ -96,6 +95,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() create = new EventEmitter<{ title: string; empty: boolean }>();
   @Output() hide = new EventEmitter<DetailedContext>();
   @Output() show = new EventEmitter<DetailedContext>();
   @Output() showHiddenContexts = new EventEmitter<boolean>();
@@ -120,8 +120,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   public color = 'primary';
 
-  public showHidden =
-    this.storageService.get('contexts.showHidden') === 'true' ? true : false;
+  public showHidden = false;
 
   /**
    * Context filter term
@@ -153,9 +152,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     public auth: AuthService,
     private dialog: MatDialog,
-    private contextService: ContextService,
     private languageService: LanguageService,
-    private messageService: MessageService,
     private storageService: StorageService
   ) {}
 
@@ -348,25 +345,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       .afterClosed()
       .subscribe(title => {
         if (title) {
-          const context = this.contextService.getContextFromMap(
-            this.map,
-            empty
-          );
-          context.title = title;
-          this.contextService.create(context).subscribe(() => {
-            const translate = this.languageService.translate;
-            const titleD = translate.instant(
-              'igo.context.bookmarkButton.dialog.createTitle'
-            );
-            const message = translate.instant(
-              'igo.context.bookmarkButton.dialog.createMsg',
-              {
-                value: context.title
-              }
-            );
-            this.messageService.success(message, titleD);
-            this.contextService.loadContext(context.uri);
-          });
+          this.create.emit({ title, empty });
         }
       });
   }
@@ -438,17 +417,11 @@ export class ContextListComponent implements OnInit, OnDestroy {
       contexts.public = this.contexts.public.filter(c => c.id !== context.id);
       this.contexts = contexts;
     }
-    this.storageService.set('contexts.hide.' + context.id, 'true');
-    this.contextService
-      .hideContext(context.id)
-      .subscribe(() => this.hide.emit());
+    this.hide.emit(context);
   }
 
   showContext(context: DetailedContext) {
     context.hidden = false;
-    this.storageService.set('contexts.hide.' + context.id, 'false');
-    this.contextService
-      .showContext(context.id)
-      .subscribe(() => this.show.emit());
+    this.show.emit(context);
   }
 }

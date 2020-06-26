@@ -142,6 +142,30 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     });
   }
 
+  @HostListener('create', ['$event'])
+  onCreate(opts: { title: string; empty: boolean }) {
+    const { title, empty } = opts;
+    const context = this.contextService.getContextFromMap(
+      this.component.map,
+      empty
+    );
+    context.title = title;
+    this.contextService.create(context).subscribe(() => {
+      const translate = this.languageService.translate;
+      const titleD = translate.instant(
+        'igo.context.bookmarkButton.dialog.createTitle'
+      );
+      const message = translate.instant(
+        'igo.context.bookmarkButton.dialog.createMsg',
+        {
+          value: context.title
+        }
+      );
+      this.messageService.success(message, titleD);
+      this.contextService.loadContext(context.uri);
+    });
+  }
+
   @HostListener('filterPermissionsChanged')
   loadContexts() {
     const permissions = ['none'];
@@ -162,15 +186,17 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       'contexts.showHidden',
       this.component.showHidden.toString()
     );
-    const permissions = ['none'];
-    for (const p of this.component.permissions) {
-      if (p.checked === true || p.indeterminate === true) {
-        permissions.push(p.name);
-      }
-    }
-    this.component.showHidden
-      ? this.contextService.loadContexts(permissions, true)
-      : this.contextService.loadContexts(permissions, false);
+    this.loadContexts();
+  }
+
+  @HostListener('show', ['$event'])
+  onShowContext(context: DetailedContext) {
+    this.contextService.showContext(context.id).subscribe();
+  }
+
+  @HostListener('hide', ['$event'])
+  onHideContext(context: DetailedContext) {
+    this.contextService.hideContext(context.id).subscribe();
   }
 
   constructor(
@@ -189,6 +215,8 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   ngOnInit() {
     // Override input contexts
     this.component.contexts = { ours: [] };
+    this.component.showHidden =
+      this.storageService.get('contexts.showHidden') === 'true' ? true : false;
 
     this.contexts$$ = this.contextService.contexts$.subscribe(contexts =>
       this.handleContextsChange(contexts)
