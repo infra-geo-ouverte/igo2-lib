@@ -422,12 +422,14 @@ export class ContextService {
     if (empty === true) {
       layers = igoMap.layers$
         .getValue()
-        .filter(lay => lay.baseLayer === true || lay.options.id === 'searchPointerSummaryId')
+        .filter(
+          lay =>
+            lay.baseLayer === true ||
+            lay.options.id === 'searchPointerSummaryId'
+        )
         .sort((a, b) => a.zIndex - b.zIndex);
     } else {
-      layers = igoMap.layers$
-        .getValue()
-        .sort((a, b) => a.zIndex - b.zIndex);
+      layers = igoMap.layers$.getValue().sort((a, b) => a.zIndex - b.zIndex);
     }
 
     let i = 0;
