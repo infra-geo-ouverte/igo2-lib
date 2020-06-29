@@ -178,11 +178,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
-    for (const feature of this.store.all()) {
-      if (this.map.overlay.dataSource.ol.getFeatureById(feature.meta.id)) {
-        this.map.overlay.removeFeature(feature.data as Feature);
-      }
-    }
+    this.map.overlay.dataSource.ol.clear();
     this.tryAddFeatureToMap(result);
 
     if (this.topPanelState === 'expanded') {
