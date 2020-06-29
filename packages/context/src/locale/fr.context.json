@@ -62,7 +62,7 @@
         "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte",
         "hide": "Masquer ce contexte",
         "show": "Montrer ce contexte",
-        "showHidden": "Montrer les contextes cachés"
+        "showHidden": "Montrer les contextes masqués"
       },
       "permission": {
         "addBtn": "Ajouter",
