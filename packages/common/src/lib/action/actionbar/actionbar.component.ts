@@ -101,6 +101,11 @@ export class ActionbarComponent implements OnDestroy, OnChanges {
   @Input() color = 'default';
 
   /**
+   * Color of the button if action mode === overlay
+   */
+  @Input() iconColor = 'default';
+
+  /**
    * Whether action titles are displayed
    */
   @Input() withTitle = true;

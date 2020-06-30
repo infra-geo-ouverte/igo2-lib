@@ -33,13 +33,21 @@ export class ContextItemComponent {
   }
   private _default = false;
 
+  @Input() selected: boolean;
+
   @Output() edit = new EventEmitter<DetailedContext>();
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() hide = new EventEmitter<DetailedContext>();
+  @Output() show = new EventEmitter<DetailedContext>();
   @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
+
+  get hidden(): boolean {
+    return this.context.hidden;
+  }
 
   constructor(public auth: AuthService) {}
 

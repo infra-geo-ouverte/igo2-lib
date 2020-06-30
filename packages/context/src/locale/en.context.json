@@ -33,7 +33,7 @@
           "addPermission": "The permission you are trying to add is already in the context.",
           "addPermissionTitle": "Add permission error"
         },
-        "favorite": "Favorite",
+        "favorite": "Set as favorite context",
         "form": {
           "edit": "Save",
           "title": "Title",
@@ -51,10 +51,18 @@
         "publicContexts": "Public contexts",
         "save": "Save this context",
         "sharedContexts": "Shared contexts",
-        "filterPlaceHolder": "Filter the contexts list",
-        "sortAlphabetically": "Sort the context's list alphabetically",
-        "sortContextOrder": "Replace contexts according to the initial list",
-        "userAccount": "User account"
+        "filterPlaceHolder": "Filter by name",
+        "sortAlphabetically": "Sort alphabetically",
+        "sortContextOrder": "Replace according to the creation date",
+        "userAccount": "User account",
+        "filterUser": "Filter by user group",
+        "emptyContext": "Empty context",
+        "emptyContextTooltip": "Create a new empty context",
+        "contextMap": "Context from map",
+        "contextMapTooltip": "Create a new context from map layers",
+        "hide": "Hide this context",
+        "show": "Show up this context",
+        "showHidden": "Show hidden contexts"
       },
       "permission": {
         "addBtn": "Add",
@@ -68,11 +76,13 @@
           "scopeChangedTitle": "Scope changed"
         },
         "profil": "Profil",
+        "user": "User or group",
         "profilRequired": "Profil required",
         "read": "Read only",
         "scope": {
           "private": "Private",
           "protected": "Protected",
+          "shared": "Shared",
           "public": "Public"
         },
         "write": "Read and Write"

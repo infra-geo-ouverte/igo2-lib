@@ -18,3 +18,7 @@ mat-list-item >>> .mat-list-item-content .mat-list-text {
 mat-icon.disabled {
   color: rgba(0, 0, 0, 0.38);
 }
+
+mat-list-item.mat-list-item-light >>> .mat-list-item-content {
+  color: rgba(150, 150, 150, 1);
+}

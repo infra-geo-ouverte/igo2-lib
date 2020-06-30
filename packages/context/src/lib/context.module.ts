@@ -1,7 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import {
   MatInputModule,
-  MatFormFieldModule
+  MatFormFieldModule,
+  MatMenuModule
 } from '@angular/material';
 
 import { IgoContextManagerModule } from './context-manager/context-manager.module';
@@ -10,9 +11,7 @@ import { IgoShareMapModule } from './share-map/share-map.module';
 import { IgoSidenavModule } from './sidenav/sidenav.module';
 
 @NgModule({
-  imports: [
-    MatInputModule,
-    MatFormFieldModule],
+  imports: [MatInputModule, MatFormFieldModule, MatMenuModule],
   declarations: [],
   exports: [
     IgoContextManagerModule,

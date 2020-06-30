@@ -5,7 +5,7 @@
 }
 
 .context-filter-min-width {
-  width: calc(100% - 95px);
+  width: calc(100% - 135px);
   margin: 5px;
   padding-left: 6px;
 }
@@ -16,4 +16,17 @@
 
 mat-form-field {
   height: 40px;
+}
+
+.profilsMenu {
+  display: flex;
+  & > mat-checkbox {
+    width: 8px;
+  }
+}
+
+.add-context-button {
+  margin: 0px;
+  width: 40px;
+  display: inline-flex;
 }
