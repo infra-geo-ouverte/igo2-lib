@@ -5,6 +5,8 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap, catchError, debounceTime, flatMap } from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
+import GeoJSON from 'ol/format/GeoJSON';
+import Cluster from 'ol/source/Cluster';
 
 import { Tool } from '@igo2/common';
 import { uuid, ObjectUtils } from '@igo2/utils';
@@ -18,7 +20,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import { IgoMap } from '@igo2/geo';
+import { IgoMap, Layer } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -37,8 +39,10 @@ import {
 export class ContextService {
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
+  public enhancedContexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
+  public importedContext: Array<string> = [];
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
@@ -47,6 +51,7 @@ export class ContextService {
   // Until the ContextService is completely refactored, this is needed
   // to track the current tools
   private tools: Tool[];
+  private toolbar: string[];
 
   get defaultContextUri(): string {
     return this._defaultContextUri || this.options.defaultContextUri;
@@ -284,6 +289,8 @@ export class ContextService {
                 (t, index, self) =>
                   self.findIndex(t2 => t2.name === t.name) === index
               );
+            this.tools = resMerge.tools;
+            this.toolbar = resMerge.toolbar;
             return resMerge;
           }),
           catchError(err => {
@@ -295,6 +302,53 @@ export class ContextService {
         return this.handleError(err2, uri);
       })
     );
+  }
+
+  mergeImportedContext(res: DetailedContext, uri: string): Observable<DetailedContext> {
+    let urlBase;
+    if (!res.base) {
+      urlBase = this.getPath(`${this.options.defaultContextUri}.json`);
+    } else {
+      urlBase = this.getPath(`${res.base}.json`);
+    }
+    return this.http.get<DetailedContext>(urlBase).pipe(
+          map((resBase: DetailedContext) => {
+            if (res.layers[0].baseLayer || res.layers[res.layers.length - 1].baseLayer || !res.base) {
+              this.tools = res.tools;
+              this.toolbar = res.toolbar;
+              return res;
+            } else {
+              const resMerge = res;
+              resMerge.map = ObjectUtils.mergeDeep(resBase.map, res.map);
+              resMerge.layers = (resBase.layers || [])
+                .concat(res.layers || [])
+                .reverse()
+                .filter(
+                  (l, index, self) =>
+                    !l.id || self.findIndex(l2 => l2.id === l.id) === index
+                )
+                .reverse();
+              resMerge.toolbar = res.toolbar || resBase.toolbar;
+              resMerge.tools = (res.tools || [])
+                .concat(resBase.tools || [])
+                .filter(
+                  (t, index, self) =>
+                    self.findIndex(t2 => t2.name === t.name) === index
+                );
+              resMerge.layers.forEach(layer => {
+                if (layer.baseLayer) {
+                  layer.visible = false;
+                }
+              });
+              this.tools = resMerge.tools;
+              this.toolbar = resMerge.toolbar;
+              return resMerge;
+            }
+          }),
+          catchError(err => {
+            return this.handleError(err, uri);
+          })
+        );
   }
 
   loadContexts(permissions?: string[], hidden?: boolean) {
@@ -461,6 +515,105 @@ export class ContextService {
     return context;
   }
 
+  getContextFromLayers(igoMap: IgoMap, layers: Layer[], name: string): DetailedContext {
+    const currentContext = this.context$.getValue();
+    const view = igoMap.ol.getView();
+    const proj = view.getProjection().getCode();
+    const center: any = new olPoint(view.getCenter()).transform(
+      proj,
+      'EPSG:4326'
+    );
+    let imported: boolean = true;
+    let currentBaseLayer;
+
+    const currentLayers = igoMap.layers$.getValue();
+    currentLayers.forEach(layer => {
+      if (layer.baseLayer && layer.visible) {
+        currentBaseLayer = layer.title;
+      }
+    });
+
+    const context = {
+      uri: name,
+      title: name,
+      base: currentContext.base ? currentContext.base : undefined,
+      visibleBaseLayer: currentBaseLayer,
+      map: {
+        view: {
+          center: center.getCoordinates(),
+          zoom: view.getZoom(),
+          projection: proj
+        }
+      },
+      layers: [],
+      toolbar: [],
+      tools: [],
+      extraFeatures: [],
+      catalogLayers: []
+    };
+
+    layers.forEach(layer => {
+      let opts;
+      let layerStyle;
+      currentContext.layers.forEach(contextLayer => {
+        if (layer.title === contextLayer.title && !contextLayer.baseLayer) {
+          layerStyle = contextLayer[`style`];
+          if (contextLayer[`styleByAttribute`]) {
+            layerStyle = undefined;
+          } else if (contextLayer[`clusterBaseStyle`]) {
+            layerStyle = undefined;
+            delete contextLayer.sourceOptions[`source`];
+            delete contextLayer.sourceOptions[`format`];
+          }
+          opts = {
+            id: layer.options.id ? String(layer.options.id) : undefined,
+            baseLayer: contextLayer.baseLayer,
+            title: layer.options.title,
+            zIndex: layer.zIndex,
+            styleByAttribute: contextLayer[`styleByAttribute`],
+            clusterBaseStyle: contextLayer[`clusterBaseStyle`],
+            style: layerStyle,
+            clusterParam: contextLayer[`clusterParam`],
+            visible: layer.visible,
+            opacity: layer.opacity,
+            sourceOptions: contextLayer.sourceOptions
+          };
+          context.layers.push(opts);
+          imported = false;
+        }
+      });
+      if (imported) {
+        if (layer.ol.type !== 'VECTOR') {
+          const catalogLayer = layer.options;
+          delete catalogLayer.source;
+          context.catalogLayers.push(catalogLayer);
+        } else {
+          let features;
+          const writer = new GeoJSON();
+          if (layer.ol.getSource() instanceof Cluster) {
+            features = writer.writeFeatures(layer.ol.getSource().getSource().getFeatures(), {
+              dataProjection: 'EPSG:4326',
+              featureProjection: 'EPSG:3857'
+            });
+          } else {
+            features = writer.writeFeatures(layer.ol.getSource().getFeatures(), {
+              dataProjection: 'EPSG:4326',
+              featureProjection: 'EPSG:3857'
+            });
+          }
+          features = JSON.parse(features);
+          features.name = layer.options.title;
+          context.extraFeatures.push(features);
+        }
+      }
+    });
+
+    context.toolbar = this.toolbar;
+    context.tools = this.tools;
+
+    return context;
+  }
+
   setTools(tools: Tool[]) {
     this.tools = tools;
   }
@@ -482,6 +635,8 @@ export class ContextService {
   }
 
   private getContextByUri(uri: string): Observable<DetailedContext> {
+    let imported: boolean;
+    let context: DetailedContext;
     if (this.baseUrl) {
       let contextToLoad;
       for (const key of Object.keys(this.contexts$.value)) {
@@ -497,8 +652,35 @@ export class ContextService {
       const id = contextToLoad ? contextToLoad.id : uri;
       return this.getDetails(id);
     }
+    this.enhancedContexts$.value.ours.forEach(currentContext => {
+      if (currentContext.uri === uri && currentContext.imported === true) {
+        imported = true;
+        for (const importedContext of this.importedContext) {
+          if (currentContext.uri === JSON.parse(importedContext).uri) {
+            context = JSON.parse(importedContext);
+            break;
+          } else {
+            context = currentContext;
+          }
+        }
+      }
+    });
+    if (imported) {
+        return this.mergeImportedContext(context, uri);
+    } else {
+      return this.getLocalContext(uri);
+    }
+  }
 
-    return this.getLocalContext(uri);
+  getContextLayers(igoMap: IgoMap) {
+    const layers: Layer[] = [];
+    const mapLayers = igoMap.layers$.getValue();
+    mapLayers.forEach(layer => {
+      if (!layer.baseLayer && layer.options.id !== 'searchPointerSummaryId') {
+        layers.push(layer);
+      }
+    });
+    return layers;
   }
 
   private readParamsFromRoute() {

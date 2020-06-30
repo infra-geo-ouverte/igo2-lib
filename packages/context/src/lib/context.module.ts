@@ -9,11 +9,13 @@ import { IgoContextManagerModule } from './context-manager/context-manager.modul
 import { IgoContextMapButtonModule } from './context-map-button/context-map-button.module';
 import { IgoShareMapModule } from './share-map/share-map.module';
 import { IgoSidenavModule } from './sidenav/sidenav.module';
+import { IgoContextImportExportModule } from './context-import-export/context-import-export.module';
 
 @NgModule({
   imports: [MatInputModule, MatFormFieldModule, MatMenuModule],
   declarations: [],
   exports: [
+    IgoContextImportExportModule,
     IgoContextManagerModule,
     IgoContextMapButtonModule,
     IgoShareMapModule,

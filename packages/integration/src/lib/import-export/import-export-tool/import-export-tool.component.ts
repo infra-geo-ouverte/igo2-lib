@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, EventEmitter, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { IgoMap, ExportOptions } from '@igo2/geo';
@@ -14,6 +14,7 @@ import { ImportExportState } from '../import-export.state';
 @Component({
   selector: 'igo-import-export-tool',
   templateUrl: './import-export-tool.component.html',
+  styleUrls: ['./import-export-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportExportToolComponent implements OnInit {
@@ -22,6 +23,9 @@ export class ImportExportToolComponent implements OnInit {
    * @internal
    */
   get map(): IgoMap { return this.mapState.map; }
+
+  public importExportType$: string = 'data';
+  @Output() itemTypeChange = new EventEmitter<string>();
 
   constructor(
     private mapState: MapState,
@@ -48,6 +52,11 @@ export class ImportExportToolComponent implements OnInit {
 
   public exportOptionsChange(exportOptions: ExportOptions) {
     this.importExportState.setsExportOptions(exportOptions);
+  }
+
+  importExportTypeChange(event) {
+    this.importExportType$ = event.value;
+    this.itemTypeChange.emit(this.importExportType$);
   }
 
 }
