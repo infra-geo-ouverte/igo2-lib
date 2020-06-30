@@ -417,10 +417,11 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       GoogleMaps: string;
       GoogleStreetView?: string;
     } = {
-      GoogleMaps: GoogleLinks.getGoogleMapsLink(
+      GoogleMaps: data.geometry.type === 'Point' ? GoogleLinks.getGoogleMapsLink(
         data.geometry.coordinates[0],
         data.geometry.coordinates[1]
-      )
+      ) :
+      GoogleLinks.getGoogleMapsNameLink(data.properties.nom || data.highlight.title)
     };
     if (data.geometry.type === 'Point') {
       googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
