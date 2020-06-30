@@ -9,12 +9,12 @@ import { MatButtonModule,
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoCustomHtmlModule } from '@igo2/common';
+import { IgoCustomHtmlModule, IgoInteractiveTourModule, InteractiveTourComponent } from '@igo2/common';
 
 import { AboutToolComponent } from './about-tool/about-tool.component';
 
 @NgModule({
-  imports: [IgoLanguageModule, IgoCustomHtmlModule, MatButtonModule, MatTooltipModule, MatIconModule],
+  imports: [IgoLanguageModule, IgoCustomHtmlModule, MatButtonModule, MatTooltipModule, MatIconModule, IgoInteractiveTourModule ],
   declarations: [AboutToolComponent],
   exports: [AboutToolComponent],
   entryComponents: [AboutToolComponent],

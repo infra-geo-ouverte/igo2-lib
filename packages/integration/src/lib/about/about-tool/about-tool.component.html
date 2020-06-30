@@ -1,12 +1,11 @@
-<button
-  id="tour-button"
+<p></p>
+<igo-interactive-tour
   mat-raised-button
-  color="primary"
-  (click)="startTour()"
-  [matTooltip]= "'tourButton.tooltip' | translate">
-  <span class="tour-button-title">{{'tourButton.title' | translate}} {{'IGO' | translate}}</span>
-  <mat-icon svgIcon="presentation-play"></mat-icon>
-</button>
+  tourToStart = "global"
+  menuIsOpen = true
+  styleButton= "raised"
+  >
+</igo-interactive-tour>
 
 <igo-custom-html class="mat-typography"
   [html]="html |  translate: {version: version}">

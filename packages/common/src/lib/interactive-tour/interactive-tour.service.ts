@@ -54,7 +54,7 @@ export class InteractiveTourService {
     }
   }
 
-  public startTour(toolName) {
+  public startTour(toolName, menuIsOpen: string) {
 
     this.introJS.oncomplete(() => {
       console.log('fin du tour');
@@ -140,7 +140,7 @@ export class InteractiveTourService {
         if (actionToMake) {
           let element: HTMLElement;
 
-          if (actionToMake === 'clickOnMenu') {
+          if (actionToMake === 'openMenu') {
             // back to initial menu
             const elemHomeBut: HTMLElement = document.querySelector(
               '#homeButton'
@@ -148,11 +148,34 @@ export class InteractiveTourService {
             if (elemHomeBut) {
               elemHomeBut.click();
             }
-
+            if (menuIsOpen === 'true') {
+              return;
+            }
+            menuIsOpen = 'true';
             const elemMenuBut: HTMLElement = document.querySelector(
               '#menu-button'
             ) as HTMLElement;
             elemMenuBut.click();
+          }
+
+          if (actionToMake === 'closeMenu') {
+            // back to initial menu
+            const elemHomeBut: HTMLElement = document.querySelector(
+              '#homeButton'
+            ) as HTMLElement;
+            if (elemHomeBut) {
+              elemHomeBut.click();
+            }
+            if (menuIsOpen === 'true') {
+              menuIsOpen = 'false';
+              const elemMenuBut: HTMLElement = document.querySelector(
+              '#menu-button'
+            ) as HTMLElement;
+              elemMenuBut.click();
+            } else {
+              return;
+            }
+
           } else if (actionToMake === 'clickOnElem') {
             targetElement.click();
           } else if (actionToMake.substring(0, 11) === 'clickOnTool') {

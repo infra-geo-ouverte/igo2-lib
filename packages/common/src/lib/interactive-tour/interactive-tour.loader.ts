@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { InteractiveTourOptions } from './interactive-tour.interface';
@@ -12,9 +12,10 @@ export class InteractiveTourLoader {
   constructor(
     private http: HttpClient
   ) {
-    this.getJSON().subscribe(data => {
-      this.allToursOptions = data;
-    });
+    this.getJSON().subscribe(
+      data => {this.allToursOptions = data; },
+      error => {console.log('oups', error); return undefined; }
+    );
   }
 
   public getJSON(): Observable<any> {

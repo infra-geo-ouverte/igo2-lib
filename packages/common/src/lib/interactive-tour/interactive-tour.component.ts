@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { InteractiveTourService } from './interactive-tour.service';
 import { ToolService } from '../tool/shared/tool.service';
 
@@ -13,8 +13,27 @@ export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
    */
+  @Input() tourToStart: string = '';
+  @Input() menuIsOpen;
+  @Input() styleButton: string;
+
+  getClass() {
+    return {
+      'tour-button-tool-icon': this.styleButton === 'icon',
+      'tour-button-tool': this.styleButton === 'raised'
+    };
+  }
+
   get toolbox() {
     return this.toolService.toolbox;
+  }
+
+  getTourToStart() {
+    if (this.tourToStart ) {
+      return this.tourToStart;
+    } else {
+      return this.activeToolName;
+    }
   }
 
   get activeToolName() {
@@ -38,11 +57,11 @@ export class InteractiveTourComponent {
   }
 
   get isToolHaveTour(): boolean {
-    if (this.activeToolName === 'about') {
+    if (this.activeToolName === 'about' && !this.tourToStart) {
       return false;
     }
     return this.interactiveTourService.isToolHaveTourConfig(
-      this.activeToolName
+      this.getTourToStart()
     );
   }
 
@@ -73,9 +92,10 @@ export class InteractiveTourComponent {
     private toolService: ToolService
   ) {}
 
-  startInteractiveTour(toolName?: string) {
-    if (toolName) {
-      this.interactiveTourService.startTour(toolName);
+  startInteractiveTour() {
+    const tour = this.getTourToStart();
+    if (tour) {
+      this.interactiveTourService.startTour(tour, this.menuIsOpen);
     } else {
       return;
     }

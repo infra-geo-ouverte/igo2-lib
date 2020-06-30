@@ -1,12 +1,5 @@
-@import '../../../../../core/src/style/partial/media';
 
-#tour-button {
-  margin-top: 10px;
-  margin-left: 10px;
+igo-interactive-tour {
+  margin-left: 20px;
 }
 
-.tour-button-title {
-  @include mobile {
-    display: none;
-  }
-}

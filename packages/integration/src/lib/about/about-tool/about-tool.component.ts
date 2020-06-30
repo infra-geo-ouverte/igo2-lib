@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ToolComponent, InteractiveTourService } from '@igo2/common';
+import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
 
 @ToolComponent({
@@ -26,10 +26,7 @@ export class AboutToolComponent {
   public version: Version;
   private _html: string = 'igo.integration.about.html';
 
-  constructor(configService: ConfigService, private interactiveTourService: InteractiveTourService) {
+  constructor(configService: ConfigService) {
     this.version = configService.getConfig('version');
-  }
-  public startTour() {
-    this.interactiveTourService.startTour('global');
   }
 }
