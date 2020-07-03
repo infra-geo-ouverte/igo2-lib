@@ -11,8 +11,8 @@
   <h4 (click)="toggleLegendOnClick()" [ngStyle]="{'cursor': filtersCollapsed ? 'default' : 'pointer'}"  matLine>{{layer.title}}</h4>
   
   <button *ngIf="!layer.visible" mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
-    [matTooltip]="'igo.geo.layer.showLayer' | translate" color="warn" (click)="setVisible()">
-    <mat-icon svgIcon="alert-circle-outline"></mat-icon>
+    [matTooltip]="'igo.geo.layer.showLayer' | translate" color="color" (click)="setVisible()">
+    <mat-icon svgIcon="eye-off"></mat-icon>
   </button>
 
 </mat-list-item>

@@ -29,9 +29,14 @@ export class ExportService {
   static noOgreFallbacks = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
+  private aggregateInComment: boolean = true;
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
+    const gpxAggregateInComment = this.config.getConfig('importExport.gpxAggregateInComment');
+    if (gpxAggregateInComment !== undefined) {
+      this.aggregateInComment = gpxAggregateInComment;
+    }
   }
 
   export(
@@ -41,7 +46,25 @@ export class ExportService {
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
-    const exportOlFeatures = olFeatures.map((olFeature: OlFeature) => {
+    const exportOlFeatures = this.generateFeature(olFeatures, format);
+
+    return this.exportAsync(
+      exportOlFeatures,
+      format,
+      title,
+      projectionIn,
+      projectionOut
+    );
+  }
+
+  private generateFeature(
+    olFeatures: OlFeature[],
+    format: ExportFormat): OlFeature[] {
+    if (format === ExportFormat.GPX && this.aggregateInComment) {
+      return this.generateAggratedFeature(olFeatures);
+    }
+
+    return olFeatures.map((olFeature: OlFeature) => {
       const keys = olFeature
         .getKeys()
         .filter((key: string) => !key.startsWith('_'));
@@ -54,14 +77,30 @@ export class ExportService {
       );
       return new OlFeature(properties);
     });
+  }
 
-    return this.exportAsync(
-      exportOlFeatures,
-      format,
-      title,
-      projectionIn,
-      projectionOut
-    );
+  private generateAggratedFeature(olFeatures: OlFeature[]): OlFeature[] {
+    return olFeatures.map((olFeature: OlFeature) => {
+      const keys = olFeature
+        .getKeys()
+        .filter((key: string) => !key.startsWith('_'));
+      let comment: string = '';
+      const properties: any[] = keys.reduce(
+        (acc: object, key: string) => {
+          if (key !== undefined && key !== 'geometry') {
+            comment += key + ':' + olFeature.get(key) + '   \r\n';
+          }
+          acc[key] = olFeature.get(key);
+          return acc;
+        },
+        { geometry: olFeature.getGeometry() }
+      );
+      const newFeature = new OlFeature(properties);
+      newFeature.set('name', olFeature.getId());
+      newFeature.set('cmt', comment);
+
+      return newFeature;
+    });
   }
 
   private exportAsync(
@@ -157,6 +196,8 @@ export class ExportService {
 
     const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
+    form.style.display = 'none';
+    document.body.appendChild(form);
     form.setAttribute('method', 'post');
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
@@ -170,10 +211,12 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
-    const outputName =
+    let outputName =
       format === 'Shapefile'
         ? `${title}.zip`
         : `${title}.${format.toLowerCase()}`;
+    outputName = outputName.replace(' ', '_');
+    outputName = outputName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
     outputNameField.setAttribute('value', outputName);
@@ -186,7 +229,6 @@ export class ExportService {
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
 
-    document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
 

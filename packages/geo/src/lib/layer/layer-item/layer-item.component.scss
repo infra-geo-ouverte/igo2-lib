@@ -5,38 +5,24 @@
   overflow: hidden;
 }
 
-.igo-layer-list-item{
+mat-list-item ::ng-deep .mat-list-item-content .layerCheck {
+  align-self: baseline;
+  width: 16px;
+  padding-right: 0px;
+}
+
+.igo-layer-list-item {
   height: $igo-list-item-height;
   clear: both;
 }
 
-.igo-layer-title  {
+.igo-layer-title {
   cursor: pointer;
-}
-
-.igo-layer-actions-container {
-  width: 100%;
-  display: inline-block;
-  padding-left: 10px;
-}
-
-.igo-layer-actions-container > div {
-  text-align: center;
 }
 
 .igo-layer-legend-container {
   padding-left: 18px;
   width: calc(100% - 18px);
-}
-
-#opacity-slider {
-  float: left;
-}
-
-.igo-layer-button-group {
-  text-align: right;
-  padding: 0 10px 0 0;
-  width: 100%;
 }
 
 mat-icon.disabled {
@@ -45,4 +31,8 @@ mat-icon.disabled {
 
 .mat-badge-small .mat-badge-content {
   font-size: 12px;
+}
+
+.selection-eye {
+  padding-right: 45px;
 }

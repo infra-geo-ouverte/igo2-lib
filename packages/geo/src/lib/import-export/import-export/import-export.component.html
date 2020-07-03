@@ -28,7 +28,7 @@
     <section class="mat-typography">
     <h4>{{'igo.geo.importExportForm.importClarifications' | translate}}</h4>
     <ul>
-      <li>{{'igo.geo.importExportForm.importSizeMax' | translate}}</li>
+      <li>{{'igo.geo.importExportForm.importSizeMax' | translate: {size: fileSizeMb} }}</li>
       <li>{{'igo.geo.importExportForm.importShpZip' | translate}}</li>
     </ul>
   </section>
@@ -58,6 +58,12 @@
               {{format.value}}
             </mat-option>
           </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="igo-input-container" *ngIf="forceNaming">
+        <mat-form-field>
+            <input matInput formControlName="name" placeholder="{{'igo.geo.importExportForm.exportFileNamePlaceholder' | translate}}">
         </mat-form-field>
       </div>
 

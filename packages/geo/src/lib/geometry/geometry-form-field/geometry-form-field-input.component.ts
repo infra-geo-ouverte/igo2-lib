@@ -118,7 +118,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       this.toggleControl();
     }
   }
-  private _drawControlIsActive: boolean;
+  private _drawControlIsActive: boolean = true;
 
   /**
    * Whether freehand draw control should be active or not

@@ -63,7 +63,7 @@ export class AppLayerComponent {
         fieldNameGeometry: 'geometry',
         maxFeatures: 10000,
         version: '2.0.0',
-        outputFormat: 'geojson_utf8',
+        outputFormat: undefined,
         outputFormatDownload: 'shp'
       },
       ogcFilters: {
@@ -82,6 +82,43 @@ export class AppLayerComponent {
       .subscribe(dataSource => {
         const layer: LayerOptions = {
           title: 'WFS ',
+          visible: true,
+          source: dataSource
+        };
+        this.map.addLayer(this.layerService.createLayer(layer));
+      });
+
+    const wfsDatasourceCustomEPSG: WFSoptions = {
+      type: 'wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      params: {
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: 'geojson_utf8',
+        srsName: 'EPSG:32198',
+        outputFormatDownload: 'shp'
+      },
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        filters: {
+          operator: 'PropertyIsEqualTo',
+          propertyName: 'code_municipalite',
+          expression: '12072'
+        }
+      },
+      formatOptions: {
+        dataProjection: 'EPSG:32198'
+      }
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(wfsDatasourceCustomEPSG)
+      .subscribe(dataSource => {
+        const layer: LayerOptions = {
+          title: 'WFS (Custom EPSG)',
           visible: true,
           source: dataSource
         };

@@ -85,6 +85,6 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
   }
 
   private onFileImportError(file: File, error: Error) {
-    handleFileImportError(file, error, this.messageService, this.languageService);
+    handleFileImportError(file, error, this.messageService, this.languageService, this.config.getConfig('importExport.clientSideFileSizeMaxMb'));
   }
 }

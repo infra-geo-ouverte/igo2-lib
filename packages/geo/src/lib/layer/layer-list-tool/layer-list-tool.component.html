@@ -1,0 +1,50 @@
+
+
+  <mat-list-item>
+      <mat-form-field class="inputFilter" [floatLabel]="floatLabel">
+        <input
+          matInput
+          [placeholder]="'igo.geo.layer.filterPlaceholder' | translate"
+          [matTooltip]="'igo.geo.layer.subsetLayersListKeyword' | translate"
+          matTooltipShowDelay="500"
+          type="text" [(ngModel)]="term">
+        <button
+          mat-button
+          *ngIf="term"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          color="warn"
+          (click)="clearTerm()">
+          <mat-icon svgIcon="close"></mat-icon>
+        </button>
+      </mat-form-field>
+
+      <div [matTooltip]="sortAlpha ?
+      ('igo.geo.layer.sortAlphabetically' | translate) :
+      ('igo.geo.layer.sortMapOrder' | translate)" matTooltipShowDelay="500">
+        <button [color]="sortAlpha ? 'warn' : 'primary'" mat-icon-button (click)="toggleSortAlpha()">
+          <mat-icon [svgIcon]="sortAlpha ? 'sort-variant-remove' : 'sort-alphabetical'"></mat-icon>
+        </button>
+      </div>
+
+
+       <div [matTooltip]="onlyVisible ?
+        ('igo.geo.layer.resetLayersList' | translate) :
+        ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)" matTooltipShowDelay="500">
+         <button mat-icon-button [disabled]="layersAreAllVisible && !onlyVisible"
+           [color]="onlyVisible ? 'warn' : 'primary'" (click)="toggleOnlyVisible()">
+           <mat-icon [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'eye'"></mat-icon>
+         </button>
+       </div>
+
+       <div [matTooltip]="selectionMode ?
+        ('igo.geo.layer.deactivateSelectionMode' | translate) :
+        ('igo.geo.layer.activateSelectionMode' | translate)" matTooltipShowDelay="500">
+         <button mat-icon-button
+           color="primary" (click)="toggleSelectionMode()">
+           <mat-icon [svgIcon]="selectionMode ? 'checkbox-multiple-marked-outline' : 'checkbox-multiple-blank-outline'"></mat-icon>
+         </button>
+       </div>
+
+</mat-list-item>

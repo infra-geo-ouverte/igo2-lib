@@ -31,6 +31,7 @@ import { AppAuthFormModule } from './auth/auth-form/auth-form.module';
 
 import { AppSimpleMapModule } from './geo/simple-map/simple-map.module';
 import { AppLayerModule } from './geo/layer/layer.module';
+import { AppLegendModule } from './geo/legend/legend.module';
 import { AppOverlayModule } from './geo/overlay/overlay.module';
 import { AppGeometryModule } from './geo/geometry/geometry.module';
 import { AppFeatureModule } from './geo/feature/feature.module';
@@ -83,6 +84,7 @@ import { AppComponent } from './app.component';
 
     AppSimpleMapModule,
     AppLayerModule,
+    AppLegendModule,
     AppOverlayModule,
     AppGeometryModule,
     AppFeatureModule,

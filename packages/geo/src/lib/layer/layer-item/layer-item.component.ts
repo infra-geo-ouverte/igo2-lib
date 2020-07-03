@@ -3,7 +3,11 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
+  Renderer2,
+  ElementRef
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -19,6 +23,25 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
+
+  public focusedCls = 'igo-layer-item-focused';
+
+  @Input()
+  get activeLayer() {
+    return this._activeLayer;
+  }
+  set activeLayer(value) {
+    if (value && this.layer && value.id === this.layer.id && !this.selectionMode) {
+      this.layerTool$.next(true);
+      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+    } else {
+      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+    }
+  }
+  private _activeLayer;
+
+  layerTool$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -29,9 +52,33 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   state: ConnectionState;
 
+  @Input()
+  get selectAll() {
+    return this._selectAll;
+  }
+  set selectAll(value: boolean) {
+    this._selectAll = value;
+    if (value === true) {
+      this.layerCheck = true;
+    }
+  }
+  private _selectAll = false;
+
+  @Input() layerCheck;
+
   private resolution$$: Subscription;
 
-  @Input() layer: Layer;
+  layers$: BehaviorSubject<Layer> = new BehaviorSubject<Layer>(undefined);
+
+  @Input()
+  get layer() {
+    return this._layer;
+  }
+  set layer(value) {
+    this._layer = value;
+    this.layers$.next(value);
+  }
+  private _layer;
 
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
@@ -47,6 +94,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() queryBadge: boolean = false;
 
+  @Input() selectionMode;
+
   get removable(): boolean {
     return this.layer.options.removable !== false;
   }
@@ -58,7 +107,16 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.layer.opacity = opacity / 100;
   }
 
-  constructor(private networkService: NetworkService) {}
+  @Output() action: EventEmitter<Layer> = new EventEmitter<Layer>(undefined);
+  @Output() checkbox = new EventEmitter<{
+    layer: Layer;
+    check: boolean;
+  }>();
+
+  constructor(
+    private networkService: NetworkService,
+    private renderer: Renderer2,
+    private elRef: ElementRef) {}
 
   ngOnInit() {
     if (
@@ -81,6 +139,13 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.state = state;
       this.onResolutionChange();
+    });
+
+    this.layers$.subscribe(() => {
+      if (this.layer && this.layer.options.active) {
+        this.layerTool$.next(true);
+        this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+      }
     });
   }
 
@@ -149,5 +214,20 @@ export class LayerItemComponent implements OnInit, OnDestroy {
       this.layer.visible === false ||
       !layerIsQueryable(this.layer);
     this.queryBadgeHidden$.next(hidden);
+  }
+
+  toggleLayerTool() {
+    this.layerTool$.next(!this.layerTool$.getValue());
+    if (this.layerTool$.getValue() === true) {
+      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+    } else {
+      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+    }
+    this.action.emit(this.layer);
+  }
+
+  public check() {
+    this.layerCheck = !this.layerCheck;
+    this.checkbox.emit({layer: this.layer, check: this.layerCheck});
   }
 }

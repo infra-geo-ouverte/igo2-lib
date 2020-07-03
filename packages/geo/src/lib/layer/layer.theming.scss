@@ -1,5 +1,17 @@
 @import './layer-legend/layer-legend.theming';
 
 @mixin igo-layer-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
   @include igo-layer-legend-theming($theme);
+
+  igo-layer-item.igo-layer-item-focused > mat-list-item {
+    background-color: mat-color($accent, lighter);
+    color: mat-color($primary, default-contrast);
+  }
+
+  .mat-menu-opacity-slider{
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.5), 0 4px 5px 0 rgba(0,0,0,.15), 0 1px 10px 0 rgba(0,0,0,.4)
+  }
 }

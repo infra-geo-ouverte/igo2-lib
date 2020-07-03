@@ -13,12 +13,10 @@
 
 
 **Does this PR introduce a breaking change?** (check one with "x")
-```
-[ ] Yes
-[ ] No
-```
+- [ ] Yes
+- [ ] No
 
-If this PR contains a breaking change, please describe the impact and migration path for existing applications:
+**If this PR contains a breaking change, please describe the impact and migration path for existing applications:**
 
 
 **Other information**:

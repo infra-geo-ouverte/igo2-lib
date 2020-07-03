@@ -8,6 +8,10 @@ import { XYZDataSourceOptions } from '../../datasource/shared/datasources/xyz-da
 import { MVTDataSourceOptions } from '../../datasource/shared/datasources/mvt-datasource.interface';
 import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
 import { Layer } from '../../layer/shared/layers/layer';
+import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
+import { MVTDataSource } from '../../datasource/shared/datasources/mvt-datasource';
+import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { XYZDataSource } from '../../datasource/shared/datasources/xyz-datasource';
 
 @Directive({
     selector: '[igoMapOffline]'
@@ -85,15 +89,15 @@ export class MapOfflineDirective implements AfterViewInit {
     let sourceOptions;
     const layerList = this.map.layers$.value;
     layerList.forEach(layer => {
-      if (layer.options.sourceOptions.type === 'mvt') {
+      if (layer.options.source instanceof MVTDataSource) {
         sourceOptions = (layer.options.sourceOptions as MVTDataSourceOptions);
         layer.ol.getSource().clear();
-      } else if (layer.options.sourceOptions.type === 'xyz') {
+      } else if (layer.options.source instanceof XYZDataSource) {
         sourceOptions = (layer.options.sourceOptions as XYZDataSourceOptions);
-      } else if (layer.options.sourceOptions.type === 'vector') {
-        sourceOptions = (layer.options.sourceOptions as FeatureDataSourceOptions);
-      } else if (layer.options.sourceOptions.type === 'cluster') {
+      } else if (layer.options.source instanceof ClusterDataSource) {
         sourceOptions = (layer.options.sourceOptions as ClusterDataSourceOptions);
+      } else if (layer.options.source instanceof FeatureDataSource) {
+        sourceOptions = (layer.options.sourceOptions as FeatureDataSourceOptions);
       } else {
         if (this.networkState.connection === false || this.offlineButtonState.connection === false) {
           layer.ol.setMaxResolution(0);
@@ -104,18 +108,26 @@ export class MapOfflineDirective implements AfterViewInit {
         }
       }
 
-      if (sourceOptions.pathOffline && this.networkState.connection === false ||
-        sourceOptions.pathOffline && this.offlineButtonState.connection === false) {
-          if (sourceOptions.type === 'vector' || sourceOptions.type === 'cluster') {
-            return;
+      if (sourceOptions) {
+        if (sourceOptions.pathOffline && this.networkState.connection === false ||
+          sourceOptions.pathOffline && this.offlineButtonState.connection === false) {
+            if (sourceOptions.type === 'vector' || sourceOptions.type === 'cluster') {
+              return;
+            }
+            layer.ol.getSource().setUrl(sourceOptions.pathOffline);
+        } else if (sourceOptions.pathOffline && this.networkState.connection === false ||
+          sourceOptions.pathOffline && this.offlineButtonState.connection === true) {
+            if (sourceOptions.type === 'vector' || sourceOptions.type === 'cluster') {
+              return;
+            }
+            layer.ol.getSource().setUrl(sourceOptions.url);
+        } else {
+          if (this.networkState.connection === false || this.offlineButtonState.connection === false) {
+            layer.ol.setMaxResolution(0);
+          } else if (this.networkState.connection === true || this.offlineButtonState.connection === true) {
+            layer.ol.setMaxResolution(Infinity);
           }
-          layer.ol.getSource().setUrl(sourceOptions.pathOffline);
-      } else if (sourceOptions.pathOffline && this.networkState.connection === false ||
-        sourceOptions.pathOffline && this.offlineButtonState.connection === true) {
-          if (sourceOptions.type === 'vector' || sourceOptions.type === 'cluster') {
-            return;
-          }
-          layer.ol.getSource().setUrl(sourceOptions.url);
+        }
       } else {
         if (this.networkState.connection === false || this.offlineButtonState.connection === false) {
           layer.ol.setMaxResolution(0);

@@ -1,6 +1,6 @@
 {
   "name": "@igo2/auth",
-  "version": "1.2.0",
+  "version": "1.3.1",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -14,7 +14,9 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "dependencies": {
-    "jwt-decode": "^2.2.0"
+    "jwt-decode": "^2.2.0",
+    "ngx-cacheable": "^1.0.9",
+    "ts-md5": "^1.2.0"
   },
   "peerDependencies": {
     "@angular/cdk": "^7.3.3",
@@ -22,8 +24,8 @@
     "@angular/core": "^7.2.6",
     "@angular/forms": "^7.2.6",
     "@angular/material": "^7.3.3",
-    "@igo2/core": "^1.2.0",
-    "@igo2/utils": "^1.2.0",
+    "@igo2/core": "^1.3.1",
+    "@igo2/utils": "^1.3.1",
     "rxjs": "^6.4.0"
   }
 }

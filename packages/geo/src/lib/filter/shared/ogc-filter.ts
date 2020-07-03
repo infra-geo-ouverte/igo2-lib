@@ -19,6 +19,8 @@ import {
   PushButtonGroup,
   OgcPushButtonBundle
 } from './ogc-filter.interface';
+import { OgcFilterOperatorType } from './ogc-filter.enum';
+import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
@@ -270,6 +272,71 @@ export class OgcFilterWriter {
       }
     }
     return this.filterSequence;
+  }
+
+  public computeAllowedOperators(
+    fields?: SourceFieldsOptionsParams[],
+    propertyName?: string,
+    defaultOperatorsType?: OgcFilterOperatorType ) {
+    let effectiveOperators: {} = {};
+    let allowedOperators;
+    if (fields && propertyName) {
+      const srcField = fields.find(field => field.name === propertyName);
+      allowedOperators = srcField && srcField.allowedOperatorsType ?
+        srcField.allowedOperatorsType : defaultOperatorsType;
+    }
+
+    allowedOperators = allowedOperators ? allowedOperators : 'basicandspatial';
+
+    switch (allowedOperators.toLowerCase()) {
+      case 'all':
+        effectiveOperators = this.operators;
+        break;
+      case 'spatial':
+        effectiveOperators = {
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+        break;
+      case 'basicandspatial':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+        break;
+      case 'basic':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] }
+        };
+        break;
+        case 'time':
+          effectiveOperators = {
+            During: { spatial: false, fieldRestrict: [] },
+          };
+          break;
+      case 'basicnumeric':
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
+          PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
+        };
+        break;
+      default:
+        effectiveOperators = {
+          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
+          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
+          Intersects: { spatial: true, fieldRestrict: [] },
+          Within: { spatial: true, fieldRestrict: [] },
+        };
+    }
+
+    return effectiveOperators;
   }
 
   public addInterfaceFilter(
@@ -536,6 +603,7 @@ export class OgcFilterWriter {
         appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
       });
     }
+    appliedFilter = appliedFilter.replace(/\(\)/g, '');
     const filterValue = appliedFilter.length > 0 ? appliedFilter.replace('filter=', '') : undefined;
     return filterValue;
   }

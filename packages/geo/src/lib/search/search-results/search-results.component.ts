@@ -156,26 +156,6 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * When a result is focused, update it's state in the store and emit
-   * an event.
-   * @param result Search result
-   * @internal
-   */
-  onResultFocus(result: SearchResult) {
-    if (this.store.state.get(result)) {
-      if (this.store.state.get(result).focused === true) {
-        return;
-      }
-    }
-    this.store.state.update(result, {focused: true}, true);
-    this.resultFocus.emit(result);
-  }
-
-  onResultUnfocus(result: SearchResult) {
-    this.resultUnfocus.emit(result);
-  }
-
-  /**
    * Compute a group title
    * @param group Search results group
    * @returns Group title

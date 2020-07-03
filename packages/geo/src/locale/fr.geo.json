@@ -16,6 +16,10 @@
       "baselayersSwitcher": {
         "title": "Fonds de carte"
       },
+      "dataSource": {
+        "optionsApiUnavailable": "L'information sur les couches n'a pas pu être récupérée. Certaines couches pourraient ne pas présenter la bonne information.",
+        "unavailable": "La couche '{{value}}' est indisponible pour le moment."
+      },
       "dropGeoFile": {
         "invalid": {
           "text": "Le fichier '{{value}}' est invalide. ({{mimeType}})",
@@ -34,7 +38,7 @@
           "title": "Fichier illisible"
         },
         "tooLarge": {
-          "text": "Le fichier '{{value}}' est trop volumineux (Maximun: 30 Mo)",
+          "text": "Le fichier '{{value}}' est trop volumineux (Maximum: {{size}} Mo)",
           "title": "Fichier trop volumineux"
         },
         "invalidSRS": {
@@ -56,15 +60,17 @@
         "exportButton": "Exporter",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
+        "exportFileNamePlaceholder": "Nom du fichier",
         "exportTabTitle": "Exporter",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
-        "importSizeMax": "La taille limite du fichier est de 30 Mo.",
+        "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
+        "caseSensitive": "Sensible à la case",
         "And": "Et",
         "Or": "Ou",
         "PropertyIsEqualTo": "=",
@@ -75,11 +81,28 @@
         "PropertyIsLessThan": "<",
         "PropertyIsLessThanOrEqualTo": "<=",
         "PropertyIsBetween": "entre",
-        "During": "durant",
+        "During": "durant (temporel)",
         "PropertyIsNull": "est nul",
-        "Intersects": "intersecte",
-        "Within": "contenu dans",
-        "Contains": "contient"
+        "Intersects": "intersecte (géométrique)",
+        "Within": "contenu dans (géométrique)",
+        "Contains": "contient (géométrique)",
+        "tooltip": {
+          "And": "Opérateur logique entre les filtres où les deux conditions doivent être remplies",
+          "Or": "Opérateur logique entre les filtres où au moins une (1) condition doit être vraie",
+          "PropertyIsEqualTo": "Identique (sensible à la case)",
+          "PropertyIsNotEqualTo": "Différent (sensible à la case)",
+          "PropertyIsLike": "Comme. Exemple: *route* trouve toutes les valeurs contenent 'route', peu importe sa position dans l'attribut. route* trouve toutes les valeurs commencant par 'route'. Options avancées : wildCard ='*', singleChar = '.' escapeChar = '!' (sensible à la case)",
+          "PropertyIsGreaterThan": "Plus grand",
+          "PropertyIsGreaterThanOrEqualTo": "Plus grand ou égal",
+          "PropertyIsLessThan": "Plus petit",
+          "PropertyIsLessThanOrEqualTo": "Plus petit ou égal",
+          "PropertyIsBetween": "Doit être contenu entre les limites inférieure et supérieure (les valeurs sont incluses)",
+          "During": "Doit être contenu entre les périodes de temps spécifiées",
+          "PropertyIsNull": "Dont l'attribut est nul",
+          "Intersects": "Retourne les entités étant en intersection géométrique avec la géométrie fournie",
+          "Within": "Retourne les entités étant entièrement contenue par la géométrie fournie (Within)",
+          "Contains": "Retourne les entités complètement contenues par la géométrie fournie (Contains)"
+        }
       },
       "sourceFields": {
         "selectField": "Choisir un champ"
@@ -107,9 +130,16 @@
       "layer": {
         "hideLayer": "Masquer la couche",
         "lowerLayer": "Mettre en arrière",
+        "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
+        "activateSelectionMode": "Activer le mode de sélection multiple",
+        "deactivateSelectionMode": "Désactiver le mode de sélection multiple",
+        "tools": "Outils",
+        "selectAll": "Tout sélectionner",
+        "deselectAll": "Tout désélectionner",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
+        "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
         "moreOptions": "Options sur la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
@@ -125,9 +155,15 @@
         "legend": {
           "default": "Défaut",
           "loadingLegendText": "Chargement de la légende",
-          "noLegendText": "Aucune légende disponible pour cette couche",
-          "noLegendScale": "Aucune légende disponible pour cette échelle",
-          "selectStyle": "Sélectionner le style de la légende"
+          "noLegendText": "Aucune symbologie disponible pour cette couche",
+          "noLegendScale": "Aucune symbologie disponible pour cette échelle",
+          "selectStyle": "Sélectionner le style de la légende",
+          "showAll" : "Montrer toutes les couches (non visible et hors échelle)",
+          "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
+          "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
+          "noLayersVisible": "Aucune couche actuellement visible.",
+          "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
+        
         }
       },
       "download": {
@@ -240,7 +276,10 @@
             "title": "Titre",
             "type": "Type",
             "url": "URL",
-            "metadataUrl": "Métadonnées"
+            "metadataUrl": "Métadonnées",
+            "name": "Nom de la couche",
+            "urlInfo": "Lien du service web WMS/WFS",
+            "downloadUrl": "Lien de téléchargement de la données"
           },
           "type": {
             "layer": "Couche",
@@ -294,6 +333,8 @@
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
         },
         "searchSources": {
+          "selectAll": "Tout sélectionner",
+          "unselectAll": "Tout désélectionner",
           "settings": {
             "results type": "Type de résultat",
             "ecmax": "Écart maximal",

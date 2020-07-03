@@ -32,3 +32,11 @@ mat-slider >>> span.mat-slider-thumb-label-text {
 mat-form-field {
   text-align: center;
 }
+
+mat-datetimepicker-toggle ::ng-deep .mat-icon {
+  padding-bottom: 30px;
+}
+
+.igo-layer-actions-container > .mat-slide-toggle {
+  vertical-align: middle;
+}

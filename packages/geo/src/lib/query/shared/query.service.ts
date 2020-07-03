@@ -22,7 +22,11 @@ import {
   WMSDataSourceOptions
 } from '../../datasource';
 
-import { QueryFormat, QueryHtmlTarget } from './query.enums';
+import {
+  QueryFormat,
+  QueryFormatMimeType,
+  QueryHtmlTarget
+} from './query.enums';
 import {
   QueryOptions,
   QueryableDataSource,
@@ -236,6 +240,7 @@ export class QueryService {
         break;
       case QueryFormat.JSON:
       case QueryFormat.GEOJSON:
+      case QueryFormat.GEOJSON2:
         features = this.extractGeoJSONData(res);
         break;
       case QueryFormat.ESRIJSON:
@@ -263,6 +268,14 @@ export class QueryService {
       default:
         features = this.extractGML2Data(res, layer, allowedFieldsAndAlias);
         break;
+    }
+
+    if (features.length > 0 && features[0].geometry == null) {
+      const geomToAdd = this.createGeometryFromUrlClick(url);
+
+      for (const feature of features) {
+        feature.geometry = geomToAdd;
+      }
     }
 
     return features.map((feature: Feature, index: number) => {
@@ -301,63 +314,7 @@ export class QueryService {
     });
   }
 
-  private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
-    let parser = new olFormatGML2();
-    let features = parser.readFeatures(res);
-    // Handle non standard GML output (MapServer)
-    if (features.length === 0) {
-      parser = new olformat.WMSGetFeatureInfo();
-      try {
-        features = parser.readFeatures(res);
-      } catch (e) {
-        console.warn(
-          'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
-        );
-      }
-    }
-
-    return features.map(feature =>
-      this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
-    );
-  }
-
-  private extractGML3Data(res, zIndex, allowedFieldsAndAlias?) {
-    const parser = new olFormatGML3();
-    const features = parser.readFeatures(res);
-    return features.map(feature =>
-      this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
-    );
-  }
-
-  private extractGeoJSONData(res) {
-    let features = [];
-    try {
-      features = JSON.parse(res).features;
-    } catch (e) {
-      console.warn('query.service: Unable to parse geojson', '\n', res);
-    }
-    return features;
-  }
-
-  private extractEsriJSONData(res, zIndex) {
-    const parser = new olFormatEsriJSON();
-    const features = parser.readFeatures(res);
-
-    return features.map(feature => this.featureToResult(feature, zIndex));
-  }
-
-  private extractTextData(res) {
-    // TODO
-    return [];
-  }
-
-  private extractHtmlData(
-    res,
-    htmlTarget: QueryHtmlTarget,
-    url,
-    imposedGeometry?
-  ) {
-    // _blank , iframe or undefined
+  private createGeometryFromUrlClick(url) {
     const searchParams: any = this.getQueryParams(url.toLowerCase());
     const bboxRaw = searchParams.bbox;
     const width = parseInt(searchParams.width, 10);
@@ -374,7 +331,6 @@ export class QueryService {
     if (Math.abs(parseFloat(bbox[0])) < 180) {
       threshold = 0.045;
     }
-
     const clickx =
       parseFloat(bbox[0]) +
       (Math.abs(parseFloat(bbox[0]) - parseFloat(bbox[2])) * xPosition) /
@@ -415,6 +371,79 @@ export class QueryService {
     const tenPercentWidthGeom = format.readFeature(wktPoly);
     const f = tenPercentWidthGeom.getGeometry() as any;
 
+    const newGeom = {
+      type: f.getType(),
+      coordinates: f.getCoordinates()
+    };
+
+    return newGeom;
+  }
+
+  private extractGML2Data(res, zIndex, allowedFieldsAndAlias?) {
+    let parser = new olFormatGML2();
+    let features = parser.readFeatures(res);
+    // Handle non standard GML output (MapServer)
+    if (features.length === 0) {
+      parser = new olformat.WMSGetFeatureInfo();
+      try {
+        features = parser.readFeatures(res);
+      } catch (e) {
+        console.warn(
+          'query.service: Multipolygons are badly managed in mapserver in GML2. Use another format.'
+        );
+      }
+    }
+
+    return features.map(feature =>
+      this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
+    );
+  }
+
+  private extractGML3Data(res, zIndex, allowedFieldsAndAlias?) {
+    const parser = new olFormatGML3();
+    let features = [];
+    try {
+      features = parser.readFeatures(res);
+    } catch (e) {
+      console.warn('query.service: GML3 is not well supported');
+    }
+    return features.map(feature =>
+      this.featureToResult(feature, zIndex, allowedFieldsAndAlias)
+    );
+  }
+
+  private extractGeoJSONData(res) {
+    let features = [];
+    try {
+      features = JSON.parse(res).features;
+    } catch (e) {
+      console.warn('query.service: Unable to parse geojson', '\n', res);
+    }
+    return features;
+  }
+
+  private extractEsriJSONData(res, zIndex) {
+    const parser = new olFormatEsriJSON();
+    const features = parser.readFeatures(res);
+
+    return features.map(feature => this.featureToResult(feature, zIndex));
+  }
+
+  private extractTextData(res) {
+    // TODO
+    return [];
+  }
+
+  private extractHtmlData(
+    res,
+    htmlTarget: QueryHtmlTarget,
+    url,
+    imposedGeometry?
+  ) {
+    const searchParams: any = this.getQueryParams(url.toLowerCase());
+    const projection = searchParams.crs || searchParams.srs || 'EPSG:3857';
+    const geomToAdd = this.createGeometryFromUrlClick(url);
+
     if (
       htmlTarget !== QueryHtmlTarget.BLANK &&
       htmlTarget !== QueryHtmlTarget.IFRAME
@@ -435,10 +464,7 @@ export class QueryService {
         type: FEATURE,
         projection,
         properties: { target: htmlTarget, body: res, url },
-        geometry: imposedGeometry || {
-          type: f.getType(),
-          coordinates: f.getCoordinates()
-        }
+        geometry: imposedGeometry || geomToAdd
       }
     ];
   }
@@ -599,33 +625,13 @@ export class QueryService {
     return url;
   }
 
-  private getMimeInfoFormat(queryFormat) {
-    let mime;
-    switch (queryFormat) {
-      case QueryFormat.GML2:
-        mime = 'application/vnd.ogc.gml';
-        break;
-      case QueryFormat.GML3:
-        mime = 'application/vnd.ogc.gml/3.1.1';
-        break;
-      case QueryFormat.JSON:
-        mime = 'application/json';
-        break;
-      case QueryFormat.GEOJSON:
-        mime = 'application/geojson';
-        break;
-      case QueryFormat.TEXT:
-        mime = 'text/plain';
-        break;
-      case QueryFormat.HTML:
-        mime = 'text/html';
-        break;
-      case QueryFormat.HTMLGML2:
-        mime = 'text/html';
-        break;
-      default:
-        mime = 'application/vnd.ogc.gml';
-        break;
+  private getMimeInfoFormat(queryFormat: string) {
+    let mime = 'application/vnd.ogc.gml';
+    const keyEnum = Object.keys(QueryFormat).find(
+      key => QueryFormat[key] === queryFormat
+    );
+    if (keyEnum) {
+      mime = QueryFormatMimeType[keyEnum];
     }
 
     return mime;

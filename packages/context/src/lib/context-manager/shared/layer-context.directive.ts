@@ -1,7 +1,7 @@
 import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
-import { Subscription, of, zip } from 'rxjs';
-import { withLatestFrom, skip, filter } from 'rxjs/operators';
+import { Subscription, merge } from 'rxjs';
+import { skip, buffer, debounceTime, filter } from 'rxjs/operators';
 
 import { RouteService } from '@igo2/core';
 import {
@@ -19,7 +19,6 @@ import { DetailedContext } from './context.interface';
   selector: '[igoLayerContext]'
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
-
   private context$$: Subscription;
   private queryParams: any;
 
@@ -63,7 +62,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
   }
 
   private handleContextChange(context: DetailedContext) {
-    if (context.layers === undefined) { return; }
+    if (context.layers === undefined) {
+      return;
+    }
     if (this.removeLayersOnContextChange === true) {
       this.map.removeAllLayers();
     } else {
@@ -71,30 +72,27 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
     this.contextLayers = [];
 
-    const layersAndIndex$ = zip(...context.layers.map((layerOptions: LayerOptions, index: number) => {
-      return this.layerService.createAsyncLayer(layerOptions).pipe(
-        withLatestFrom(of(index))
-      );
-    }));
+    const layersAndIndex$ = merge(
+      ...context.layers.map((layerOptions: LayerOptions, index: number) => {
+        return this.layerService.createAsyncLayer(layerOptions);
+      })
+    );
 
-    layersAndIndex$.subscribe((layersAndIndex: [Layer, number][]) => {
-      const layers = layersAndIndex
-        .reduce((acc: Layer[], bunch: [Layer, number]) => {
-          const [layer, index] = bunch;
-          // A layer may be undefined when it's badly configured
-          if (layer !== undefined) {
+    layersAndIndex$
+      .pipe(buffer(layersAndIndex$.pipe(debounceTime(500))))
+      .subscribe((layers: Layer[]) => {
+        layers = layers
+          .filter((layer: Layer) => layer !== undefined)
+          .map(layer => {
             layer.visible = this.computeLayerVisibilityFromUrl(layer);
-            layer.zIndex = layer.zIndex || index + 1;  // Map indexes start at 1
-          }
+            layer.zIndex = layer.zIndex;
 
-          acc[index] = layer;
-          return acc;
-        }, new Array(layersAndIndex.length))
-        .filter((layer: Layer) => layer !== undefined);
+            return layer;
+          });
 
-      this.contextLayers = layers;
-      this.map.addLayers(layers);
-    });
+        this.contextLayers.concat(layers);
+        this.map.addLayers(layers);
+      });
   }
 
   private computeLayerVisibilityFromUrl(layer: Layer): boolean {

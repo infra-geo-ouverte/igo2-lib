@@ -12,8 +12,9 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
-import { OgcFilterOperatorType } from '../../filter/shared/ogc-filter.enum';
 import { FloatLabelType } from '@angular/material';
+import { BehaviorSubject } from 'rxjs';
+import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 
 @Component({
   selector: 'igo-ogc-filter-form',
@@ -21,16 +22,19 @@ import { FloatLabelType } from '@angular/material';
   styleUrls: ['./ogc-filter-form.component.scss']
 })
 export class OgcFilterFormComponent implements OnInit {
-  public ogcFilterOperators;
+  public allOgcFilterOperators;
+  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
-  public fields: any[];
+  // public fields: any[];
+  public fields$ = new BehaviorSubject<SourceFieldsOptionsParams[]>([]);
   public values: any[];
   public color = 'primary';
   public snrc = '';
   public disabled;
   public baseOverlayName = 'ogcFilterOverlay_';
+  public currentFilter$ = new BehaviorSubject<any>(undefined);
 
   @Input() refreshFilters: () => void;
 
@@ -38,12 +42,17 @@ export class OgcFilterFormComponent implements OnInit {
 
   @Input() map: IgoMap;
 
-  @Input() currentFilter: any;
+  @Input()
+  set currentFilter(currentFilter: any) {
+    this.currentFilter$.next(currentFilter);
+  }
+  get currentFilter(): any {
+    return this.currentFilter$.value;
+  }
 
   @Input() floatLabel: FloatLabelType = 'never';
 
   get activeFilters() {
-    this.updateField();
     return this.datasource.options.ogcFilters.interfaceOgcFilters.filter(
       f => f.active === true
     );
@@ -56,7 +65,8 @@ export class OgcFilterFormComponent implements OnInit {
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...
     // Ex: IsNull vs PropertyIsNull vs IsNil ...
-    this.ogcFilterOperators = new OgcFilterWriter().operators;
+    this.allOgcFilterOperators = new OgcFilterWriter().operators;
+    this.ogcFilterOperators$.next(this.allOgcFilterOperators);
     this.igoSpatialSelectors = [
       {
         type: 'fixedExtent'
@@ -69,73 +79,30 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.computeAllowedOperators();
-  }
-
-  computeAllowedOperators() {
-    let allowedOperators = this.datasource.options.ogcFilters.allowedOperatorsType;
-    let effectiveOperators: {} = {};
-
-    if (!allowedOperators)  {
-      allowedOperators = OgcFilterOperatorType.BasicAndSpatial;
-    }
-
-    switch (allowedOperators.toLowerCase()) {
-      case 'all':
-        effectiveOperators = this.ogcFilterOperators;
-        break;
-      case 'spatial':
-        effectiveOperators = {
-          Intersects: { spatial: true, fieldRestrict: [] },
-          Within: { spatial: true, fieldRestrict: [] },
-        };
-        break;
-      case 'basicandspatial':
-        effectiveOperators = {
-          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
-          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
-          Intersects: { spatial: true, fieldRestrict: [] },
-          Within: { spatial: true, fieldRestrict: [] },
-        };
-        break;
-      case 'basic':
-        effectiveOperators = {
-          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
-          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] }
-        };
-        break;
-      case 'basicnumeric':
-        effectiveOperators = {
-          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
-          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
-          PropertyIsGreaterThan: { spatial: false, fieldRestrict: ['number'] },
-          PropertyIsGreaterThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
-          PropertyIsLessThan: { spatial: false, fieldRestrict: ['number'] },
-          PropertyIsLessThanOrEqualTo: { spatial: false, fieldRestrict: ['number'] },
-        };
-        break;
-      default:
-        effectiveOperators = {
-          PropertyIsEqualTo: { spatial: false, fieldRestrict: [] },
-          PropertyIsNotEqualTo: { spatial: false, fieldRestrict: [] },
-          Intersects: { spatial: true, fieldRestrict: [] },
-          Within: { spatial: true, fieldRestrict: [] },
-        };
-    }
-
-    this.ogcFilterOperators = effectiveOperators;
+    this.updateField();
   }
 
   updateField() {
     if (!this.datasource.options.sourceFields) {
       return;
     }
-    this.fields = this.datasource.options.sourceFields
-    .filter(sf => (sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters));
-    this.fields.filter(f => f.name === this.currentFilter.propertyName)
+    const fields = this.datasource.options.sourceFields
+      .filter(sf => (sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters));
+    fields.filter(f => f.name === this.currentFilter.propertyName)
       .forEach(element => {
         this.values = element.values !== undefined ? element.values.sort() : [];
       });
+
+    this.fields$.next(fields);
+    const allowedOperators = new OgcFilterWriter().computeAllowedOperators(
+      fields,
+      this.currentFilter.propertyName,
+      this.datasource.options.ogcFilters.allowedOperatorsType);
+    this.ogcFilterOperators$.next(allowedOperators);
+    if (Object.keys(allowedOperators).indexOf(this.currentFilter$.value.operator) === -1) {
+      this.currentFilter$.value.operator = Object.keys(allowedOperators)[0];
+    }
+    this.refreshFilters();
   }
 
   toggleFilterState(event, filter: OgcInterfaceFilterOptions, property) {
@@ -182,9 +149,16 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   changeOperator(filter) {
-    if (this.ogcFilterOperators[filter.operator].spatial === false) {
+    if (this.ogcFilterOperators$.value[filter.operator].spatial === false) {
       this.removeOverlayByID(filter.filterid);
     }
+    this.refreshFilters();
+  }
+
+  // Issue with mapserver 7.2 and Postgis layers. Fixed in 7.4
+  // Due to this issue, the checkbox is hide.
+  changeCaseSensitive(matchCase) {
+    this.currentFilter.matchCase = matchCase.checked;
     this.refreshFilters();
   }
 

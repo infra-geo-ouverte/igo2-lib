@@ -35,11 +35,11 @@
         },
         "favorite": "Favorite",
         "form": {
-          "edit": "Edit",
+          "edit": "Save",
           "title": "Title",
           "titleRequired": "Title required",
-          "uri": "URI",
-          "uriRequired": "URI required"
+          "uri": "ID",
+          "uriRequired": "ID required"
         },
         "invalid": {
           "text": "Context '{{value}}' is invalid",
@@ -50,7 +50,11 @@
         "ourContexts": "Our contexts",
         "publicContexts": "Public contexts",
         "save": "Save this context",
-        "sharedContexts": "Shared contexts"
+        "sharedContexts": "Shared contexts",
+        "filterPlaceHolder": "Filter the contexts list",
+        "sortAlphabetically": "Sort the context's list alphabetically",
+        "sortContextOrder": "Replace contexts according to the initial list",
+        "userAccount": "User account"
       },
       "permission": {
         "addBtn": "Add",
@@ -104,7 +108,6 @@
         "zoom": "The zoom level of the map.",
         "addedLayers": "The layers added by the catalog or by the search bar.",
         "visibleInvisible": "Visibility status of layers.",
-        "layerListControls": "The restrictions applied to the table of contents (keyword, alphabetical order, visibility and scale).",
         "excluded": "Excluded in the shared URL :",
         "order": "The order of the layers.",
         "opacity": "Modifications made to the opacity of the layers.",

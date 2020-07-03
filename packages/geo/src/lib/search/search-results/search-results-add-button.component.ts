@@ -153,6 +153,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
     }
 
     const layerOptions = (this.layer as SearchResult<LayerOptions>).data;
+    if (layerOptions.sourceOptions.optionsFromApi === undefined) {
+      layerOptions.sourceOptions.optionsFromApi = true;
+    }
     this.layersSubcriptions.push(
       this.layerService
         .createAsyncLayer(layerOptions)
@@ -177,8 +180,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
   }
 
   isInResolutionsRange(resolution: number) {
-    const minResolution = this.layer.data.minResolution;
-    const maxResolution = this.layer.data.maxResolution;
+    const minResolution = this.layer.data.minResolution || 0;
+    const maxResolution = this.layer.data.maxResolution || Infinity;
     this.inRange$.next(
       resolution >= minResolution && resolution <= maxResolution
     );
