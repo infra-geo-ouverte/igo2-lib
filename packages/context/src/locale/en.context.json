@@ -80,6 +80,8 @@
         "user": "User or group",
         "profilRequired": "Profil required",
         "read": "Read only",
+        "readOnlyTitle": "Read-only context",
+        "readOnlyMsg": "You can only revoke permission if the context is shared directly to your username.",
         "scope": {
           "private": "Private",
           "protected": "Protected",

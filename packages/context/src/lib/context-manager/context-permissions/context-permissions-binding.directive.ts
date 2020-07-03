@@ -129,6 +129,7 @@ export class ContextPermissionsBindingDirective implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.editedContext$$.unsubscribe();
+    this.contextService.editedContext$.next(undefined);
   }
 
   private handleEditedContextChange(context: DetailedContext) {

@@ -51,6 +51,7 @@ export interface ContextPermission {
   id?: string;
   contextId?: string;
   profil: string;
+  profilTitle?: string;
   typePermission: TypePermission;
 }
 

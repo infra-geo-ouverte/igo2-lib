@@ -57,10 +57,7 @@ export class ContextItemComponent {
   }
 
   get canShare(): boolean {
-    return (
-      this.storageService.get('canShare') === true &&
-      this.context.permission === this.typePermission[this.typePermission.write]
-    );
+    return this.storageService.get('canShare') === true;
   }
 
   constructor(

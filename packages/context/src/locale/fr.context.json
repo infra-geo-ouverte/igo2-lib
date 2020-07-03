@@ -80,6 +80,8 @@
         "user": "Utilisateur ou groupe",
         "profilRequired": "Le profil est obligatoire",
         "read": "Lecture seule",
+        "readOnlyTitle": "Contexte en lecture seule",
+        "readOnlyMsg": "Vous pouvez seulement retirer la permission si le contexte est directement partagé à votre nom d'utilisateur.",
         "scope": {
           "private": "Privé",
           "protected": "Protégé",
