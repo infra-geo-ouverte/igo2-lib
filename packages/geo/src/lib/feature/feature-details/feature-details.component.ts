@@ -138,6 +138,8 @@ export class FeatureDetailsComponent {
         });
       }
     }
-    return feature.properties;
+
+    const propertiesArray = Object.keys(feature.properties).map(key => ({key, value: feature.properties[key]}));
+    return propertiesArray.filter(property => property.key !== 'GoogleMapsNom');
   }
 }

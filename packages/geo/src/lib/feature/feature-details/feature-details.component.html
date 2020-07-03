@@ -1,6 +1,6 @@
 <table class="igo-striped mat-typography" *ngIf="feature && isObject(feature.properties) && feature.properties.target !== 'iframe'">
   <tbody>
-    <tr *ngFor="let property of filterFeatureProperties(feature) | keyvalue">
+    <tr *ngFor="let property of filterFeatureProperties(feature)">
 
       <td *ngIf="feature.properties.target === '_blank' && property.key === 'url'">
         <mat-icon mat-list-avatar svgIcon="{{icon}}"></mat-icon>
@@ -17,7 +17,12 @@
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]=property.value>
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && property.key === 'GoogleMaps'">
+        <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.searchByCoord' | translate }} </a> <br />
+        <a href="{{feature.properties.GoogleMapsNom}}" target='_blank'>{{ 'igo.geo.searchByName' | translate }} </a>
+      </td>
+
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value) && property.key !== 'GoogleMaps'">
         <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
       </td>
 

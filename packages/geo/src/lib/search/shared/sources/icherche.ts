@@ -8,6 +8,8 @@ import { AuthService } from '@igo2/auth';
 import { LanguageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
+import pointOnFeature from '@turf/point-on-feature';
+
 import { FEATURE, Feature } from '../../../feature';
 import { GoogleLinks } from './../../../utils/googleLinks';
 
@@ -415,14 +417,25 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const googleLinksProperties: {
       GoogleMaps: string;
+      GoogleMapsNom: string;
       GoogleStreetView?: string;
     } = {
-      GoogleMaps: data.geometry.type === 'Point' ? GoogleLinks.getGoogleMapsLink(
+      GoogleMaps: '',
+      GoogleMapsNom: ''
+    };
+
+    if (data.geometry.type === 'Point') {
+      googleLinksProperties.GoogleMaps = GoogleLinks.getGoogleMapsCoordLink(
         data.geometry.coordinates[0],
         data.geometry.coordinates[1]
-      ) :
-      GoogleLinks.getGoogleMapsNameLink(data.properties.nom || data.highlight.title)
-    };
+      );
+    } else {
+      const point = pointOnFeature(data.geometry);
+      googleLinksProperties.GoogleMaps = GoogleLinks.getGoogleMapsCoordLink(point.geometry.coordinates[0], point.geometry.coordinates[1]);
+    }
+
+    googleLinksProperties.GoogleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom || data.highlight.title);
+
     if (data.geometry.type === 'Point') {
       googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
         data.geometry.coordinates[0],

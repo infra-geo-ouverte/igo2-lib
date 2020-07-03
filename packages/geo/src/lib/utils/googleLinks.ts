@@ -1,5 +1,5 @@
 export class GoogleLinks {
-  static getGoogleMapsLink(lon, lat) {
+  static getGoogleMapsCoordLink(lon, lat) {
     return 'https://www.google.com/maps?q=' + lat + ',' + lon;
   }
 

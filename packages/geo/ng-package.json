@@ -53,6 +53,7 @@
       "ol/geom/LineString" : "OlLineString",
       "@turf/line-intersect" : "lineIntersect",
       "@turf/helpers" : "helpers",
+      "@turf/point-on-feature" : "pointOnFeature",
       "ol/interaction/Modify" : "OlModify",
       "ol/interaction/Translate" : "OlTranslate",
       "ol/interaction/Draw" : "OlDraw",
@@ -87,6 +88,7 @@
     "ngx-cacheable",
     "ts-md5",
     "@turf/helpers",
-    "@turf/line-intersect"
+    "@turf/line-intersect",
+    "@turf/point-on-feature"
   ]
 }
