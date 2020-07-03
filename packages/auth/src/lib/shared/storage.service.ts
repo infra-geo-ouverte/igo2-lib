@@ -36,7 +36,7 @@ export class AuthStorageService extends StorageService {
 
   set(
     key: string,
-    value: string | object,
+    value: string | object | boolean | number,
     scope: StorageScope = StorageScope.LOCAL
   ) {
     if (

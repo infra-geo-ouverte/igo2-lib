@@ -31,6 +31,7 @@
             "title": "Erreur de serveur"
           },
           "addPermission": "La permission que vous tentez d'ajouter est déjà présente dans le contexte.",
+          "addPermissionEmpty": "La permission que vous tentez d'ajouter n'est pas valide",
           "addPermissionTitle": "Erreur d'ajout de permission"
         },
         "favorite": "Définir comme context favori",

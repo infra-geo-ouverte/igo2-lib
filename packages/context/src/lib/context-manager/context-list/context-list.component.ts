@@ -363,7 +363,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       permission.checked = !permission.checked;
       this.storageService.set(
         'contexts.permissions.' + permission.name,
-        permission.checked.toString()
+        permission.checked
       );
       permission.indeterminate = false;
     }
@@ -383,7 +383,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         parentPermission.checked = permission.checked;
         this.storageService.set(
           'contexts.permissions.' + parentPermission.name,
-          permission.checked.toString()
+          permission.checked
         );
         parentPermission.indeterminate = indeterminate;
       }
@@ -399,7 +399,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
           childrenPermission.checked = permission.checked;
           this.storageService.set(
             'contexts.permissions.' + childrenPermission.name,
-            permission.checked.toString()
+            permission.checked
           );
         }
       }

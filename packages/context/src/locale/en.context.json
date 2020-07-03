@@ -31,6 +31,7 @@
             "title": "Error server"
           },
           "addPermission": "The permission you are trying to add is already in the context.",
+          "addPermissionEmpty": "The permission you are trying to add is not valid",
           "addPermissionTitle": "Add permission error"
         },
         "favorite": "Set as favorite context",
