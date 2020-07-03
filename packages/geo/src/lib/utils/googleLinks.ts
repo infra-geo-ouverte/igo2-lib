@@ -8,6 +8,7 @@ export class GoogleLinks {
   }
 
   static getGoogleMapsNameLink(name) {
-    return 'https://www.google.com/maps?q=' + name;
+    const encodedName = encodeURI(name);
+    return 'https://www.google.com/maps?q=' + encodedName;
   }
 }

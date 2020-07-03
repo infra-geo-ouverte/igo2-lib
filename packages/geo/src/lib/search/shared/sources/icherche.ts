@@ -417,24 +417,34 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
 
     const googleLinksProperties: {
       GoogleMaps: string;
-      GoogleMapsNom: string;
       GoogleStreetView?: string;
     } = {
-      GoogleMaps: '',
-      GoogleMapsNom: ''
+      GoogleMaps: ''
     };
 
+    let googleMaps;
     if (data.geometry.type === 'Point') {
-      googleLinksProperties.GoogleMaps = GoogleLinks.getGoogleMapsCoordLink(
+      googleMaps = GoogleLinks.getGoogleMapsCoordLink(
         data.geometry.coordinates[0],
         data.geometry.coordinates[1]
       );
     } else {
       const point = pointOnFeature(data.geometry);
-      googleLinksProperties.GoogleMaps = GoogleLinks.getGoogleMapsCoordLink(point.geometry.coordinates[0], point.geometry.coordinates[1]);
+      googleMaps = GoogleLinks.getGoogleMapsCoordLink(point.geometry.coordinates[0], point.geometry.coordinates[1]);
     }
 
-    googleLinksProperties.GoogleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom || data.highlight.title);
+    let googleMapsNom;
+    if (data.index === 'routes') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom + ', ' + data.properties.municipalite);
+    } else if (data.index === 'municipalites') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom + ', ' + data.properties.regAdmin);
+    } else {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom || data.highlight.title);
+    }
+
+    googleLinksProperties.GoogleMaps = '<a href=' + googleMaps + ' target="_blank">' +
+      this.languageService.translate.instant('igo.geo.searchByCoord') + '</a> <br /> <a href=' + googleMapsNom +
+        ' target="_blank">' + this.languageService.translate.instant('igo.geo.searchByName') + '</a>';
 
     if (data.geometry.type === 'Point') {
       googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
