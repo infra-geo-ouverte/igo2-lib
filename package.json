@@ -85,6 +85,7 @@
     "@ngx-translate/core": "^10.0.1",
     "@turf/helpers": "^6.1.4",
     "@turf/line-intersect": "^6.0.2",
+    "@turf/point-on-feature": "^5.1.5",
     "angular2-notifications": "^2.0.0",
     "bowser": "^2.9.0",
     "classlist.js": "^1.1.20150312",

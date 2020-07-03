@@ -105,7 +105,7 @@ export class CoordinatesReverseSearchSource extends SearchSource
           coordLonLat,
           coords,
           {
-            GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
+            GoogleMaps: GoogleLinks.getGoogleMapsCoordLink(data[0], data[1]),
             GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
               data[0],
               data[1]
