@@ -369,6 +369,8 @@
         "polygon": "Polygon"
       },
       "targetHtmlUrl": "Open the external link",
+      "searchByCoord": "Search by coordinates",
+      "searchByName": "Search by name",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",

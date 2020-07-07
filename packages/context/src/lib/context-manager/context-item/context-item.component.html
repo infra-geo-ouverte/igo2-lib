@@ -29,7 +29,7 @@
 
     <div #actions class="igo-actions-expand-container">
 
-      <button *ngIf="context.permission === typePermission[typePermission.write]"
+      <button *ngIf="canShare"
         mat-icon-button
         [matTooltip]="'igo.context.contextManager.managePermissions' | translate"
         matTooltipShowDelay="500"

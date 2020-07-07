@@ -31,6 +31,7 @@
             "title": "Error server"
           },
           "addPermission": "The permission you are trying to add is already in the context.",
+          "addPermissionEmpty": "The permission you are trying to add is not valid",
           "addPermissionTitle": "Add permission error"
         },
         "favorite": "Set as favorite context",
@@ -79,6 +80,8 @@
         "user": "User or group",
         "profilRequired": "Profil required",
         "read": "Read only",
+        "readOnlyTitle": "Read-only context",
+        "readOnlyMsg": "You can only revoke permission if the context is shared directly to your username.",
         "scope": {
           "private": "Private",
           "protected": "Protected",

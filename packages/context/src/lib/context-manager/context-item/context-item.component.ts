@@ -1,5 +1,12 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
+import { StorageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
@@ -49,7 +56,14 @@ export class ContextItemComponent {
     return this.context.hidden;
   }
 
-  constructor(public auth: AuthService) {}
+  get canShare(): boolean {
+    return this.storageService.get('canShare') === true;
+  }
+
+  constructor(
+    public auth: AuthService,
+    private storageService: StorageService
+  ) {}
 
   favoriteClick(context) {
     if (this.auth.authenticated) {

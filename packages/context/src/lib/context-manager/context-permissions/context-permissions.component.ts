@@ -7,6 +7,8 @@ import {
   ContextPermissionsList,
   ContextProfils
 } from '../shared/context.interface';
+import { TypePermission } from '../shared/context.enum';
+
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
@@ -48,6 +50,10 @@ export class ContextPermissionsComponent implements OnInit {
     this.cd.detectChanges();
   }
   private _profils: ContextProfils[] = [];
+
+  get canWrite(): boolean {
+    return this.context.permission === TypePermission[TypePermission.write];
+  }
 
   private baseUrlProfils = '/apis/igo2/profils-users?';
 

@@ -31,6 +31,7 @@
             "title": "Erreur de serveur"
           },
           "addPermission": "La permission que vous tentez d'ajouter est déjà présente dans le contexte.",
+          "addPermissionEmpty": "La permission que vous tentez d'ajouter n'est pas valide",
           "addPermissionTitle": "Erreur d'ajout de permission"
         },
         "favorite": "Définir comme context favori",
@@ -79,6 +80,8 @@
         "user": "Utilisateur ou groupe",
         "profilRequired": "Le profil est obligatoire",
         "read": "Lecture seule",
+        "readOnlyTitle": "Contexte en lecture seule",
+        "readOnlyMsg": "Vous pouvez seulement retirer la permission si le contexte est directement partagé à votre nom d'utilisateur.",
         "scope": {
           "private": "Privé",
           "protected": "Protégé",

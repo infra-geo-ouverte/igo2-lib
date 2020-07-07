@@ -182,10 +182,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   @HostListener('showHiddenContexts')
   showHiddenContexts() {
     this.component.showHidden = !this.component.showHidden;
-    this.storageService.set(
-      'contexts.showHidden',
-      this.component.showHidden.toString()
-    );
+    this.storageService.set('contexts.showHidden', this.component.showHidden);
     this.loadContexts();
   }
 
@@ -215,8 +212,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   ngOnInit() {
     // Override input contexts
     this.component.contexts = { ours: [] };
-    this.component.showHidden =
-      this.storageService.get('contexts.showHidden') === 'true' ? true : false;
+    this.component.showHidden = this.storageService.get(
+      'contexts.showHidden'
+    ) as boolean;
 
     this.contexts$$ = this.contextService.contexts$.subscribe(contexts =>
       this.handleContextsChange(contexts)
@@ -246,11 +244,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
           for (const user of profilsAcc) {
             const permission: ContextUserPermission = {
               name: user.name,
-              checked:
-                this.storageService.get('contexts.permissions.' + user.name) ===
-                'false'
-                  ? false
-                  : true
+              checked: this.storageService.get(
+                'contexts.permissions.' + user.name
+              ) as boolean
             };
             this.component.permissions.push(permission);
           }

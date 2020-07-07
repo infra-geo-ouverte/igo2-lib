@@ -1,6 +1,11 @@
 <div *ngIf="context">
 
-  <div class="scopeForm">
+  <div *ngIf="!canWrite" class="scopeForm">
+    <h4>{{ 'igo.context.permission.readOnlyTitle' | translate }}</h4>
+    <p>{{ 'igo.context.permission.readOnlyMsg' | translate }}</p>
+  </div>
+
+  <div *ngIf="canWrite" class="scopeForm">
     <mat-radio-group [(ngModel)]="context.scope"
                     (change)="scopeChanged.emit(context)">
       <mat-radio-button value="private">
@@ -15,7 +20,7 @@
     </mat-radio-group>
   </div>
 
-  <form *ngIf="context.scope !== 'private'" [formGroup]="form"
+  <form *ngIf="context.scope !== 'private' && canWrite" [formGroup]="form"
     (ngSubmit)="handleFormSubmit(form.value)">
 
     <mat-form-field class="full-width">
@@ -66,12 +71,12 @@
         <ng-template ngFor let-permission [ngForOf]="groupPermissions.value">
           <mat-list-item>
             <mat-icon mat-list-avatar svgIcon="account-outline"></mat-icon>
-            <h4 mat-line>{{permission.profil}}</h4>
+            <h4 mat-line>{{permission.profilTitle}} <small class="mat-typography">{{permission.profil}}</small></h4>
 
             <div igoStopPropagation
                  class="igo-actions-container">
 
-               <button
+               <button *ngIf="canWrite || permission.profil === authService.decodeToken().user.sourceId"
                  mat-icon-button
                  [matTooltip]="'igo.context.permission.delete' | translate"
                  matTooltipShowDelay="500"
