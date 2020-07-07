@@ -28,6 +28,7 @@ import {
 import { MapState } from '../../map/map.state';
 
 import { SearchState } from '../search.state';
+import { ToolState } from '../../tool/tool.state';
 
 /**
  * Tool to browse the search results
@@ -106,6 +107,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     private layerService: LayerService,
     private searchState: SearchState,
     private elRef: ElementRef,
+    public toolState: ToolState
   ) {}
 
   ngOnInit() {

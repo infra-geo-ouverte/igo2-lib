@@ -2,12 +2,14 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NetworkService, ConnectionState } from '@igo2/core';
 
-import { getEntityTitle, getEntityIcon } from '@igo2/common';
+import { getEntityTitle, getEntityIcon, Toolbox } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
@@ -34,6 +36,8 @@ export class FeatureDetailsComponent {
 
   @Input() map: IgoMap;
 
+  @Input() toolbox: Toolbox;
+
   @Input()
   get feature(): Feature {
     return this._feature;
@@ -45,6 +49,8 @@ export class FeatureDetailsComponent {
 
   private _feature: Feature;
   private _source: SearchSource;
+
+  @Output() routeEvent = new EventEmitter<boolean>();
 
   /**
    * @internal
@@ -139,6 +145,7 @@ export class FeatureDetailsComponent {
       }
     }
 
+    console.log(feature.properties);
     return feature.properties;
   }
 }

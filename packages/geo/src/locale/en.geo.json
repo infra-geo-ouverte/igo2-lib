@@ -382,6 +382,7 @@
       "targetHtmlUrl": "Open the external link",
       "searchByCoord": "Search by coordinates",
       "searchByName": "Search by name",
+      "seeRouting": "See routing",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",

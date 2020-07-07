@@ -59,7 +59,9 @@
       </button>
 
       <igo-feature-details
-        [feature]="feature$ | async">
+        [feature]="feature$ | async"
+        [map]="map"
+        [toolbox]="toolState.toolbox">
       </igo-feature-details>
     </igo-panel>
   </div>
