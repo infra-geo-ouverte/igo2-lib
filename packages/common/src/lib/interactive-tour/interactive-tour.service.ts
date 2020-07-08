@@ -54,7 +54,7 @@ export class InteractiveTourService {
     }
   }
 
-  public startTour(toolName, menuIsOpen: string) {
+  public startTour(toolName, menuIsOpen?: string) {
 
     this.introJS.oncomplete(() => {
       console.log('fin du tour');

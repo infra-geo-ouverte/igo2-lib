@@ -1,3 +1,4 @@
+import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
@@ -12,14 +13,17 @@ export class InteractiveTourLoader {
   constructor(
     private http: HttpClient
   ) {
-    this.getJSON().subscribe(
-      data => {this.allToursOptions = data; },
-      error => {console.log('oups', error); return undefined; }
-    );
+    this.getJSON();
   }
 
   public getJSON(): Observable<any> {
-    return this.http.get(this.jsonURL);
+    return this.http.get(this.jsonURL)
+      .pipe(
+        catchError(e => {
+          e.error.caught = true;
+          throw e;
+        })
+      )
   }
 
   public getTourOptionData(toolName): InteractiveTourOptions {
