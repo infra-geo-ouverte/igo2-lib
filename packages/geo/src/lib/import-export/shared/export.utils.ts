@@ -30,7 +30,6 @@ export function handleFileExportSuccess(
   const translate = languageService.translate;
   const title = translate.instant('igo.geo.export.success.title');
   const message = translate.instant('igo.geo.export.success.text');
-  console.log(translate.instant('igo.geo.export.success.text'));
   messageService.success(message, title);
 }
 
