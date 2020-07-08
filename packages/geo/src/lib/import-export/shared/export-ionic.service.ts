@@ -1,18 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '@igo2/core';
-import { downloadContent } from '@igo2/utils';
 
-import { Observable, Observer } from 'rxjs';
+import { Observer } from 'rxjs';
 
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 
 import { ExportFormat } from './export.type';
-import {
-  ExportInvalidFileError,
-  ExportNothingToExportError
-} from './export.errors';
 
 import { Platform } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
