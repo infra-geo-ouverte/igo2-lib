@@ -8,4 +8,3 @@ export * from './import.errors';
 export * from './import.interface';
 export * from './import.service';
 export * from './import.utils';
-export * from './export-ionic.service';
