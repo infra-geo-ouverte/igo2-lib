@@ -13,7 +13,9 @@ export class InteractiveTourLoader {
   constructor(
     private http: HttpClient
   ) {
-    this.getJSON();
+    this.allToursOptions = this.getJSON().subscribe(data => {
+      this.allToursOptions = data;
+    } );
   }
 
   public getJSON(): Observable<any> {
@@ -23,7 +25,7 @@ export class InteractiveTourLoader {
           e.error.caught = true;
           throw e;
         })
-      )
+      );
   }
 
   public getTourOptionData(toolName): InteractiveTourOptions {
