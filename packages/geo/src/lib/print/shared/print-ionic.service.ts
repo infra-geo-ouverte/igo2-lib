@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import * as jsPDF from 'jspdf';
-import * as _html2canvas from 'html2canvas';
 import { Platform } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 
 import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 import { PrintService } from './print.service';
-
-const html2canvas = _html2canvas;
 
 @Injectable({
   providedIn: 'root'
