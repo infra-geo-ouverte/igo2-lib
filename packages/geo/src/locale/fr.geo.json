@@ -56,6 +56,10 @@
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
         },
+        "success": {
+          "text": "Données exportées avec succès.",
+          "title":"Exportation réussie"
+        },
         "format": {
           "GeoJSON": "GeoJSON",
           "GML": "GML",
