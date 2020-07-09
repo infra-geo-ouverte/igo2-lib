@@ -20,7 +20,7 @@ export class LanguageLoader implements TranslateLoader {
   ) {}
 
   public getTranslation(lang: string): any {
-    const translation = require(`../locale/${lang}.json`);
+    const translation = require(`../../../locale/${lang}.json`);
     const igoLocale$ = of(translation);
 
     if (this.config && !this.prefix) {

@@ -13,7 +13,7 @@
   width: 100%;
 }
 
-.mat-list-item >>> div.mat-list-item-content {
+.mat-list-item ::ng-deep div.mat-list-item-content {
   display: inline-table;
   width: 100%;
 }

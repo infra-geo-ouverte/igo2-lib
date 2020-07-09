@@ -3,7 +3,7 @@ mat-select {
   background-color: white;
   height: 40px;
   padding-top: 0;
-  & >>> {
+  & ::ng-deep {
     .mat-select-trigger {
       height: 40px;
     }
@@ -31,7 +31,7 @@ mat-select {
 .buttonPoi {
   float: right;
   margin: 4px -10px 4px 0;
-  & >>> .mat-icon {
+  & ::ng-deep .mat-icon {
     margin: 0 8px;
   }
 }
