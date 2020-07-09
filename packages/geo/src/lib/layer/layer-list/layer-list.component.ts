@@ -10,7 +10,7 @@ import {
   EventEmitter,
   ElementRef
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material';
+import { FloatLabelType } from '@angular/material/core';
 
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';

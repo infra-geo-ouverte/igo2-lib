@@ -7,7 +7,7 @@ import {
   Output,
   OnDestroy
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material';
+import { FloatLabelType } from '@angular/material/core';
 
 import {
   BehaviorSubject,

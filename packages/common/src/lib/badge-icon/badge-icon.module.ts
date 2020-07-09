@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { MatBadgeIconDirective } from './badge-icon.directive';
-import { MatBadgeModule, MatIconModule } from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   imports: [MatBadgeModule, MatIconModule],

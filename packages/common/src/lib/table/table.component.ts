@@ -9,7 +9,7 @@ import {
   AfterViewInit,
   EventEmitter
 } from '@angular/core';
-import { MatSort } from '@angular/material';
+import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';

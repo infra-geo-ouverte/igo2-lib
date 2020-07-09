@@ -12,7 +12,7 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
-import { FloatLabelType } from '@angular/material';
+import { FloatLabelType } from '@angular/material/core';
 import { BehaviorSubject } from 'rxjs';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 

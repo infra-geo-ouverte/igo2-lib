@@ -2,16 +2,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IgoLanguageModule } from '@igo2/core';
 import { SearchSettingsComponent } from './search-settings.component';
 import { CommonModule } from '@angular/common';
-import {
-  MatTooltipModule,
-  MatIconModule,
-  MatButtonModule,
-  MatMenuModule,
-  MatRadioModule,
-  MatCheckboxModule,
-  MatDividerModule,
-  MatSlideToggleModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';

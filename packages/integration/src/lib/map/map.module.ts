@@ -6,7 +6,9 @@ import {
 
 import { CommonModule } from '@angular/common';
 
-import { MatTabsModule, MatListModule, MatIconModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { IgoLanguageModule } from '@igo2/core';
 import {

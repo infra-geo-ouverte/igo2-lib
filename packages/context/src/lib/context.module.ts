@@ -1,9 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import {
-  MatInputModule,
-  MatFormFieldModule,
-  MatMenuModule
-} from '@angular/material';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { IgoContextManagerModule } from './context-manager/context-manager.module';
 import { IgoContextMapButtonModule } from './context-map-button/context-map-button.module';

@@ -1,11 +1,9 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  MatIconModule,
-  MatListModule,
-  MatTooltipModule,
-  MatBadgeModule
-} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoListModule, IgoCollapsibleModule, IgoMatBadgeIconModule } from '@igo2/common';
 

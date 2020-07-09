@@ -27,7 +27,7 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
 import { ActionStore, ActionbarMode } from '@igo2/common';
