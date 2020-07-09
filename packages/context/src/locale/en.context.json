@@ -16,6 +16,8 @@
         "dialog": {
           "cloneMsg": "The context '{{value}}' was cloned",
           "cloneTitle": "Context cloned",
+          "copyMsg": "Text copied",
+          "copyTitle": "Context ID",
           "confirmDelete": "Are you sure you want to delete this context?",
           "deleteMsg": "The context '{{value}}' was deleted",
           "deleteTitle": "Context deleted",
@@ -36,6 +38,7 @@
         },
         "favorite": "Set as favorite context",
         "form": {
+          "copy": "Copy the context ID",
           "edit": "Save",
           "title": "Title",
           "titleRequired": "Title required",

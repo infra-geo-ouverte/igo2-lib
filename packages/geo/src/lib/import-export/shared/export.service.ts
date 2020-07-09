@@ -161,7 +161,7 @@ export class ExportService {
     return new Observable(doExport);
   }
 
-  private exportToFile(
+  protected exportToFile(
     olFeatures: OlFeature[],
     observer: Observer<void>,
     format: ExportFormat,

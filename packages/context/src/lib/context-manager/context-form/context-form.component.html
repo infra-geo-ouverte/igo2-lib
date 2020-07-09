@@ -16,10 +16,23 @@
     <span class="fieldWrapper">
       <input matInput
            maxlength="64"
+           floatLabel = "always"
            [placeholder]="'igo.context.contextManager.form.uri' | translate"
            formControlName="uri">
     </span>
   </mat-form-field>
+
+  <button
+    id="copyButton"
+    type="button"
+    mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.context.contextManager.form.copy' | translate"
+    color="primary"
+    (click)="copyTextToClipboard()">
+    <mat-icon svgIcon="content-copy"></mat-icon>
+  </button>
 
   <div class="igo-form-button-group">
     <button

@@ -80,6 +80,8 @@
     "@ionic-native/core": "^5.10.0",
     "@ionic-native/network": "^5.12.0",
     "@ionic/angular": "^4.6.2",
+    "@ionic-native/file": "^5.6.0",
+    "@ionic-native/file-opener": "^5.6.0",
     "@mat-datetimepicker/core": "^3.0.0-beta.0",
     "@mdi/angular-material": "^4.7.95",
     "@ngx-translate/core": "^10.0.1",

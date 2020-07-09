@@ -153,7 +153,7 @@ export class DataSourceService {
         this.capabilitiesService.getWMSOptions(context).pipe(
           catchError(e => {
             const title = this.languageService.translate.instant(
-              'igo.core.errors.uncaught.title'
+              'igo.geo.dataSource.unavailableTitle'
             );
             const message = this.languageService.translate.instant(
               'igo.geo.dataSource.unavailable',
@@ -173,7 +173,7 @@ export class DataSourceService {
           catchError(e => {
             e.error.toDisplay = true;
             e.error.title = this.languageService.translate.instant(
-              'igo.core.errors.uncaught.title'
+              'igo.geo.dataSource.unavailableTitle'
             );
             e.error.message = this.languageService.translate.instant(
               'igo.geo.dataSource.optionsApiUnavailable'
@@ -209,7 +209,7 @@ export class DataSourceService {
         }),
         catchError(() => {
           const title = this.languageService.translate.instant(
-            'igo.core.errors.uncaught.title'
+            'igo.geo.dataSource.unavailableTitle'
           );
           const message = this.languageService.translate.instant(
             'igo.geo.dataSource.unavailable',
