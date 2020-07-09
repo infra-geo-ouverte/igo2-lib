@@ -15,7 +15,7 @@ import { ConfirmDialogService } from './confirm-dialog.service';
   entryComponents: [ConfirmDialogComponent]
 })
 export class IgoConfirmDialogModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoConfirmDialogModule> {
     return {
       ngModule: IgoConfirmDialogModule,
       providers: []

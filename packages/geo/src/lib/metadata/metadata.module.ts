@@ -21,7 +21,7 @@ import { MetadataButtonComponent } from './metadata-button/metadata-button.compo
   declarations: [MetadataButtonComponent]
 })
 export class IgoMetadataModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoMetadataModule> {
     return {
       ngModule: IgoMetadataModule,
       providers: []

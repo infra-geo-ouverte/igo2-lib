@@ -19,7 +19,7 @@ import { IgoSidenavModule } from './sidenav/sidenav.module';
   ]
 })
 export class IgoContextModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoContextModule> {
     return {
       ngModule: IgoContextModule,
       providers: []

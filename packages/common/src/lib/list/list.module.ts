@@ -14,7 +14,7 @@ import { ListComponent } from './list.component';
   exports: [ListItemDirective, ListComponent]
 })
 export class IgoListModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoListModule> {
     return {
       ngModule: IgoListModule,
       providers: []

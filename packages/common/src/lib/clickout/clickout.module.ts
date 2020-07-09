@@ -7,7 +7,7 @@ import { ClickoutDirective } from './clickout.directive';
   exports: [ClickoutDirective]
 })
 export class IgoClickoutModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoClickoutModule> {
     return {
       ngModule: IgoClickoutModule,
       providers: []

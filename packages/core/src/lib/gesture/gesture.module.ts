@@ -9,7 +9,7 @@ import { IgoGestureConfig } from './gesture.provider';
   exports: []
 })
 export class IgoGestureModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoGestureModule> {
     return {
       ngModule: IgoGestureModule,
       providers: [

@@ -83,7 +83,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
   ]
 })
 export class IgoLayerModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoLayerModule> {
     return {
       ngModule: IgoLayerModule,
       providers: [LayerService, StyleService, LayerListToolService]

@@ -46,7 +46,7 @@ import { MapLegendToolComponent } from './map-legend/map-legend-tool.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppMapModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppMapModule> {
     return {
       ngModule: IgoAppMapModule,
       providers: []

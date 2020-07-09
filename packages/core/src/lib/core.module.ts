@@ -30,7 +30,7 @@ import { IgoErrorModule } from './request/error.module';
   ]
 })
 export class IgoCoreModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoCoreModule> {
     return {
       ngModule: IgoCoreModule,
       providers: []

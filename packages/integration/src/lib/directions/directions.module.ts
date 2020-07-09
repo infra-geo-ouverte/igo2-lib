@@ -15,7 +15,7 @@ import { DirectionsToolComponent } from './directions-tool/directions-tool.compo
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppDirectionsModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppDirectionsModule> {
     return {
       ngModule: IgoAppDirectionsModule,
       providers: []

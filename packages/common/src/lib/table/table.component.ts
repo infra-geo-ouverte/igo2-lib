@@ -66,7 +66,7 @@ export class TableComponent implements OnChanges, OnInit, AfterViewInit {
     source: SelectionModel<any>;
   }>();
 
-  @ViewChild('filter', { static: false }) filter: ElementRef;
+  @ViewChild('filter') filter: ElementRef;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   ngOnInit() {

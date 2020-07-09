@@ -57,7 +57,7 @@ import { UserButtonComponent } from './user-button/user-button.component';
   providers: [PoiService]
 })
 export class IgoContextMapButtonModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoContextMapButtonModule> {
     return {
       ngModule: IgoContextMapButtonModule
     };

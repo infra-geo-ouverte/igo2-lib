@@ -16,7 +16,7 @@ import { JsonDialogService } from './json-dialog.service';
   providers: [JsonDialogService]
 })
 export class IgoJsonDialogModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoJsonDialogModule> {
     return {
       ngModule: IgoJsonDialogModule
     };

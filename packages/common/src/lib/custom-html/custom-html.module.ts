@@ -23,7 +23,7 @@ import { SanitizeHtmlPipe } from './custom-html.pipe';
   declarations: [SanitizeHtmlPipe, CustomHtmlComponent]
 })
 export class IgoCustomHtmlModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoCustomHtmlModule> {
     return {
       ngModule: IgoCustomHtmlModule
     };

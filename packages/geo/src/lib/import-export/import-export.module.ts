@@ -43,7 +43,7 @@ import { IgoStyleListModule } from './style-list/style-list.module';
   declarations: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
 })
 export class IgoImportExportModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoImportExportModule> {
     return {
       ngModule: IgoImportExportModule
     };

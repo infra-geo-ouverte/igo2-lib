@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppImportExportModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppImportExportModule> {
     return {
       ngModule: IgoAppImportExportModule,
       providers: []

@@ -36,7 +36,7 @@ import { AuthFacebookComponent } from './auth-form/auth-facebook.component';
   exports: [AuthFormComponent, ProtectedDirective]
 })
 export class IgoAuthModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAuthModule> {
     return {
       ngModule: IgoAuthModule,
       providers: [

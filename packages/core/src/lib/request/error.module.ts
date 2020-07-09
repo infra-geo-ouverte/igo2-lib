@@ -14,7 +14,7 @@ import { ErrorInterceptor } from './error.interceptor';
   exports: []
 })
 export class IgoErrorModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoErrorModule> {
     return {
       ngModule: IgoErrorModule,
       providers: [

@@ -29,7 +29,7 @@ import { SidenavComponent } from './sidenav.component';
   declarations: [SidenavComponent]
 })
 export class IgoSidenavModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoSidenavModule> {
     return {
       ngModule: IgoSidenavModule
     };

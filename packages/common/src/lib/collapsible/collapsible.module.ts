@@ -11,7 +11,7 @@ import { CollapsibleComponent } from './collapsible.component';
   exports: [CollapsibleComponent, CollapseDirective]
 })
 export class IgoCollapsibleModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoCollapsibleModule> {
     return {
       ngModule: IgoCollapsibleModule,
       providers: []

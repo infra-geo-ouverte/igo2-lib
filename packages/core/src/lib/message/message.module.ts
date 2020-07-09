@@ -11,7 +11,7 @@ import { MessageCenterComponent } from './message-center/message-center.componen
   exports: [MessageCenterComponent]
 })
 export class IgoMessageModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoMessageModule> {
     return {
       ngModule: IgoMessageModule,
       providers: []

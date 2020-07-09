@@ -42,7 +42,7 @@ import { provideDirectionsSourceService } from './shared/directions-source.servi
   providers: [DirectionsFormService, provideDirectionsSourceService()]
 })
 export class IgoDirectionsModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoDirectionsModule> {
     return {
       ngModule: IgoDirectionsModule
     };

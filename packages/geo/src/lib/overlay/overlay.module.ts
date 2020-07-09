@@ -8,7 +8,7 @@ import { OverlayDirective } from './shared/overlay.directive';
   declarations: [OverlayDirective]
 })
 export class IgoOverlayModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoOverlayModule> {
     return {
       ngModule: IgoOverlayModule
     };

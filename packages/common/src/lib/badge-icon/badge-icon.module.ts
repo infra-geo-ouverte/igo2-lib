@@ -9,10 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
   exports: [MatBadgeIconDirective]
 })
 export class IgoMatBadgeIconModule {
-  static forRoot() {
+  static forRoot(): ModuleWithProviders<IgoMatBadgeIconModule> {
     return {
-      ngModule: IgoMatBadgeIconModule,
-      providers: []
+        ngModule: IgoMatBadgeIconModule,
+        providers: []
     };
-  }
+}
 }

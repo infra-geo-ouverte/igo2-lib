@@ -7,7 +7,7 @@ import { FlexibleComponent } from './flexible.component';
   exports: [FlexibleComponent]
 })
 export class IgoFlexibleModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoFlexibleModule> {
     return {
       ngModule: IgoFlexibleModule,
       providers: []

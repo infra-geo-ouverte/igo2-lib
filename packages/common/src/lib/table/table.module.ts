@@ -32,7 +32,7 @@ import { TableComponent } from './table.component';
   exports: [TableComponent]
 })
 export class IgoTableModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoTableModule> {
     return {
       ngModule: IgoTableModule,
       providers: []

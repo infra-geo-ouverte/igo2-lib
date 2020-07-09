@@ -27,7 +27,7 @@ import { ShareMapComponent } from './share-map/share-map.component';
   declarations: [ShareMapComponent]
 })
 export class IgoShareMapModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoShareMapModule> {
     return {
       ngModule: IgoShareMapModule
     };

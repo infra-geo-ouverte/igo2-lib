@@ -21,7 +21,7 @@ import { DownloadButtonComponent } from './download-button/download-button.compo
   declarations: [DownloadButtonComponent]
 })
 export class IgoDownloadModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoDownloadModule> {
     return {
       ngModule: IgoDownloadModule
     };

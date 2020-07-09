@@ -63,7 +63,7 @@ export class TimeFilterFormComponent implements OnInit {
   @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
   @Output()
   yearChange: EventEmitter<string | [string, string]> = new EventEmitter();
-  @ViewChild(MatSlider, { static: false }) mySlider;
+  @ViewChild(MatSlider) mySlider;
 
   get type(): TimeFilterType {
     return this.options.type === undefined

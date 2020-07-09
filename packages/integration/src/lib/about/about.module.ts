@@ -17,7 +17,7 @@ import { AboutToolComponent } from './about-tool/about-tool.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppAboutModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppAboutModule> {
     return {
       ngModule: IgoAppAboutModule,
       providers: []

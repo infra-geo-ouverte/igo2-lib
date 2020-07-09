@@ -97,7 +97,7 @@ const CONTEXT_DIRECTIVES = [
   ]
 })
 export class IgoContextManagerModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoContextManagerModule> {
     return {
       ngModule: IgoContextManagerModule
     };

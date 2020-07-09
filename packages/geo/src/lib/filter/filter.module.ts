@@ -132,7 +132,7 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
   providers: [TimeFilterService, OGCFilterService, SpatialFilterService]
 })
 export class IgoFilterModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoFilterModule> {
     return {
       ngModule: IgoFilterModule,
       providers: [
