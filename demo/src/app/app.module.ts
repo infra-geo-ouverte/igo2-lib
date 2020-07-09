@@ -1,7 +1,7 @@
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import {} from '@angular/platform-browser';
+import { HammerModule } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -99,7 +99,9 @@ import { AppComponent } from './app.component';
 
     AppContextModule,
 
-    AppRoutingModule
+    AppRoutingModule,
+
+    HammerModule
   ],
   bootstrap: [AppComponent]
 })
