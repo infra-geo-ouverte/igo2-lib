@@ -40,9 +40,10 @@
                 "output": "./assets/igo2/geo/"
               }
             ],
-            "styles": ["demo/src/styles.scss"],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "styles": [
+              "demo/src/styles.scss"
+            ],
+            "scripts": []
           },
           "configurations": {
             "production": {

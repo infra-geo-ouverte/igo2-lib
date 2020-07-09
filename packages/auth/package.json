@@ -17,7 +17,8 @@
     "jwt-decode": "^2.2.0",
     "ngx-cacheable": "^1.0.9",
     "ts-md5": "^1.2.0"
-  },
+  ,    "tslib": "^2.0.0"
+},
   "peerDependencies": {
     "@angular/cdk": "^7.3.3",
     "@angular/common": "^7.2.6",
