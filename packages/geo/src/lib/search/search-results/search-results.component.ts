@@ -120,7 +120,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   @Output() resultMouseenter = new EventEmitter<SearchResult>();
   @Output() resultMouseleave = new EventEmitter<SearchResult>();
 
-  @ContentChild('igoSearchItemToolbar') templateSearchToolbar: TemplateRef<any>;
+  @ContentChild('igoSearchItemToolbar', /* TODO: add static flag */ {}) templateSearchToolbar: TemplateRef<any>;
 
   get results$(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
     if (this._results$ === undefined) {

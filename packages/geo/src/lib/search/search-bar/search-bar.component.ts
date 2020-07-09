@@ -200,7 +200,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Input element
    * @internal
    */
-  @ViewChild('input') input: ElementRef;
+  @ViewChild('input', { static: true }) input: ElementRef;
 
   /**
    * Whether the search bar is empty

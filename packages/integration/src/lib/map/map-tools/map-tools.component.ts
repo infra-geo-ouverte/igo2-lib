@@ -135,7 +135,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return filterSortOptions;
   }
 
-  @ViewChild('tabGroup') tabGroup;
+  @ViewChild('tabGroup', { static: true }) tabGroup;
 
   get searchToolInToolbar(): boolean {
     return (

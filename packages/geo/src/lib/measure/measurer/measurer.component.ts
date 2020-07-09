@@ -264,7 +264,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   @Input() minSegmentLength: number = 10;
 
-  @ViewChild('table') table: EntityTableComponent;
+  @ViewChild('table', { static: true }) table: EntityTableComponent;
 
   /**
    * Wheter one of the draw control is active

@@ -12,7 +12,7 @@ import { FlexibleState, FlexibleDirection } from './flexible.type';
 export class FlexibleComponent implements OnInit {
   static transitionTime = 250;
 
-  @ViewChild('flexibleMain') main;
+  @ViewChild('flexibleMain', { static: true }) main;
 
   @Input()
   get initial(): string {

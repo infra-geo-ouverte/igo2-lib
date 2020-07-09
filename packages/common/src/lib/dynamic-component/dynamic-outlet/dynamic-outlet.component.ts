@@ -46,7 +46,7 @@ export class DynamicOutletComponent implements OnChanges, OnDestroy {
    * The view element to render the component to
    * @ignore
    */
-  @ViewChild('target', { read: ViewContainerRef })
+  @ViewChild('target', { read: ViewContainerRef, static: true })
   private target: ViewContainerRef;
 
   constructor(

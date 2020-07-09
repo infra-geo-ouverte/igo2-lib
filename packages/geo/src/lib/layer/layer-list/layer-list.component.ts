@@ -54,7 +54,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private change$$: Subscription;
 
-  @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
+  @ContentChild('igoLayerItemToolbar', /* TODO: add static flag */ {}) templateLayerToolbar: TemplateRef<any>;
 
   @Input() layersAreAllVisible: boolean = true;
 

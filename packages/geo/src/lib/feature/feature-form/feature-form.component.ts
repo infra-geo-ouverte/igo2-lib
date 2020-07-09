@@ -48,7 +48,7 @@ export class FeatureFormComponent {
    */
   @Output() submitForm = new EventEmitter<Feature>();
 
-  @ViewChild('igoForm') igoForm: FormComponent;
+  @ViewChild('igoForm', { static: true }) igoForm: FormComponent;
 
   constructor() {}
 
