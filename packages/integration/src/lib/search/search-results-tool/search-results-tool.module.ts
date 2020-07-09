@@ -31,7 +31,6 @@ import { SearchResultsToolComponent } from './search-results-tool.component';
   ],
   declarations: [SearchResultsToolComponent],
   exports: [SearchResultsToolComponent],
-  entryComponents: [SearchResultsToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppSearchResultsToolModule {}

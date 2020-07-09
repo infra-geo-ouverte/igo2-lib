@@ -11,7 +11,6 @@ import { DirectionsToolComponent } from './directions-tool/directions-tool.compo
   imports: [IgoDirectionsModule],
   declarations: [DirectionsToolComponent],
   exports: [DirectionsToolComponent],
-  entryComponents: [DirectionsToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppDirectionsModule {

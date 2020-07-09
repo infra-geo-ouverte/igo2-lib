@@ -11,8 +11,7 @@ import { ConfirmDialogService } from './confirm-dialog.service';
   imports: [MatButtonModule, MatDialogModule, IgoLanguageModule],
   declarations: [ConfirmDialogComponent],
   exports: [ConfirmDialogComponent],
-  providers: [ConfirmDialogService],
-  entryComponents: [ConfirmDialogComponent]
+  providers: [ConfirmDialogService]
 })
 export class IgoConfirmDialogModule {
   static forRoot(): ModuleWithProviders<IgoConfirmDialogModule> {

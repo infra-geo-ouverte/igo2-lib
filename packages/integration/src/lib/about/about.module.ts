@@ -13,7 +13,6 @@ import { AboutToolComponent } from './about-tool/about-tool.component';
   imports: [IgoLanguageModule, IgoCustomHtmlModule],
   declarations: [AboutToolComponent],
   exports: [AboutToolComponent],
-  entryComponents: [AboutToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppAboutModule {

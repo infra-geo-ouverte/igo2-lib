@@ -49,11 +49,6 @@ import { UserButtonComponent } from './user-button/user-button.component';
     UserButtonComponent,
     UserDialogComponent
   ],
-  entryComponents: [
-    BookmarkDialogComponent,
-    PoiDialogComponent,
-    UserDialogComponent
-  ],
   providers: [PoiService]
 })
 export class IgoContextMapButtonModule {

@@ -12,7 +12,6 @@ import { JsonDialogService } from './json-dialog.service';
   imports: [CommonModule, MatButtonModule, MatDialogModule, IgoKeyValueModule],
   exports: [JsonDialogComponent],
   declarations: [JsonDialogComponent],
-  entryComponents: [JsonDialogComponent],
   providers: [JsonDialogService]
 })
 export class IgoJsonDialogModule {

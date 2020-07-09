@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
   imports: [IgoImportExportModule, CommonModule],
   declarations: [ImportExportToolComponent],
   exports: [ImportExportToolComponent],
-  entryComponents: [ImportExportToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppImportExportModule {

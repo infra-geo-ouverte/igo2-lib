@@ -24,7 +24,6 @@ import {
   IgoActionbarModule
 } from '@igo2/common';
 
-import { BookmarkDialogComponent } from './../context-map-button/bookmark-button/bookmark-dialog.component';
 import { MapContextDirective } from './shared/map-context.directive';
 import { LayerContextDirective } from './shared/layer-context.directive';
 import { ContextListComponent } from './context-list/context-list.component';
@@ -67,9 +66,6 @@ const CONTEXT_DIRECTIVES = [
     IgoLanguageModule,
     IgoContextMapButtonModule,
     IgoActionbarModule
-  ],
-  entryComponents: [
-    BookmarkDialogComponent
   ],
   exports: [
     ContextListComponent,

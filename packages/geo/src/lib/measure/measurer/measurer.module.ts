@@ -44,9 +44,6 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
   exports: [
     MeasureFormatPipe,
     MeasurerComponent
-  ],
-  entryComponents: [
-    MeasurerDialogComponent
   ]
 })
 export class IgoMeasurerModule {}

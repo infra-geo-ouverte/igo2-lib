@@ -21,12 +21,6 @@ import { ContextShareToolComponent } from './context-share-tool/context-share-to
     ContextPermissionManagerToolComponent,
     ContextShareToolComponent
   ],
-  entryComponents: [
-    ContextEditorToolComponent,
-    ContextManagerToolComponent,
-    ContextPermissionManagerToolComponent,
-    ContextShareToolComponent
-  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppContextModule {}

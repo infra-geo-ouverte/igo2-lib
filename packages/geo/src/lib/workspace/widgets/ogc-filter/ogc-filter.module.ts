@@ -18,7 +18,6 @@ import { OgcFilterComponent } from './ogc-filter.component';
     IgoFilterModule
   ],
   exports: [OgcFilterComponent],
-  declarations: [OgcFilterComponent],
-  entryComponents: [OgcFilterComponent]
+  declarations: [OgcFilterComponent]
 })
 export class IgoOgcFilterModule {}

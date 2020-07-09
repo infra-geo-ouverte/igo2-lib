@@ -11,7 +11,6 @@ import { PrintToolComponent } from './print-tool/print-tool.component';
   imports: [IgoPrintModule],
   declarations: [PrintToolComponent],
   exports: [PrintToolComponent],
-  entryComponents: [PrintToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppPrintModule {
