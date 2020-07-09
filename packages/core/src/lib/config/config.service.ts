@@ -45,7 +45,7 @@ export class ConfigService {
             return throwError(error.error || 'Server error');
           })
         )
-        .subscribe(configResponse => {
+        .subscribe((configResponse: object) => {
           this.config = ObjectUtils.mergeDeep(
             ObjectUtils.mergeDeep({ version }, baseConfig),
             configResponse

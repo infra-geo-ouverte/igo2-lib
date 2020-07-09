@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppFormComponent } from './form.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppFormRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppFormRoutingModule = RouterModule.forChild(
   routes
 );

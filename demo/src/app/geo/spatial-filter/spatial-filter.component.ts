@@ -273,7 +273,7 @@ export class AppSpatialFilterComponent {
             title: features[0].meta.title + ' ' + i as string,
             source: dataSource,
             visible: true,
-            clusterParam: {clusterRange: [1, 5]}
+            clusterParam: {clusterRanges: [{minRadius: 1, maxRadius: 5, style: {}}]}
           });
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);

@@ -162,7 +162,7 @@ export class LayerService {
       olLayer = new VectorLayer(layerOptionsOl);
     }
 
-    this.applyMapboxStyle(olLayer, layerOptionsOl);
+    this.applyMapboxStyle(olLayer, layerOptionsOl as any);
 
     return olLayer;
   }
