@@ -27,8 +27,8 @@ import 'classlist.js'; // Run `npm install --save classlist.js`.
 import 'unorm/lib/unorm.js';
 
 /** IE10 and IE11 requires the following for some object management */
-import 'core-js/es7/object';
-import 'core-js/es7/string';
+import 'core-js/es/object';
+import 'core-js/es/string';
 /**
  * Web Animations `@angular/platform-browser/animations`
  * Only required if AnimationBuilder is used within the application and
