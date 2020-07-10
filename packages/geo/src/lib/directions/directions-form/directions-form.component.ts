@@ -9,14 +9,8 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Subscription, Subject } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  take,
-  skipWhile
-} from 'rxjs/operators';
+import { Subscription, Subject, BehaviorSubject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, take, skipWhile } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -93,7 +87,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   /**
    * The stops store
    */
-  @Input() stopsStore: FeatureStore;
+  @Input()
+  get stopsStore(): FeatureStore {
+    return this._stopsStore;
+  }
+  set stopsStore(value: FeatureStore) {
+    this._stopsStore = value;
+    this.stopsStore$.next(value);
+  }
+  private _stopsStore: FeatureStore;
+
+  private stopsStore$: BehaviorSubject<FeatureStore> = new BehaviorSubject(undefined);
 
   /**
    * The route and vertex store
@@ -150,6 +154,33 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         )
         .subscribe((term: string) => this.handleTermChanged(term))
     );
+
+    this.stopsStore$.subscribe(stopsStore => {
+      const stops = stopsStore.all();
+      console.log(stops);
+      if (stops.length > 1) {
+        const coords = [];
+        for (const feature of stops) {
+          this.chooseProposal(feature, stops.findIndex(f => f.geometry.coordinates === feature.geometry.coordinates))
+          coords.push(feature.geometry.coordinates);
+        }
+        const routeResponse = this.directionsService.route(coords, {});
+        if (routeResponse) {
+          routeResponse.map(res =>
+            this.routesQueries$$.push(
+              res.subscribe(route => {
+                this.routesResults = route;
+                this.activeRoute = this.routesResults[0] as Directions;
+                this.showRouteGeometry(true);
+                this.changeDetectorRefs.detectChanges();
+              })
+            )
+          );
+        }
+      } else if (stops.length === 1) {
+        this.chooseProposal(stops[0], 1);
+      }
+    })
   }
 
   ngOnDestroy(): void {
@@ -1071,31 +1102,31 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       if (this.search$$) {
         this.search$$.unsubscribe();
       }
-      const researches = this.searchService.search(term, {
-        searchType: 'Feature'
-      });
-      researches.map(
-        res =>
-          (this.search$$ = res.request.subscribe(results => {
-            results
-              .filter(r => r.data.geometry)
-              .forEach(element => {
-                if (
-                  searchProposals.filter(r => r.source === element.source)
-                    .length === 0
-                ) {
-                  searchProposals.push({
-                    source: element.source,
-                    meta: element.meta,
-                    results: results.map(r => r.data)
-                  });
-                }
-              });
+      const researches = this.searchService.search(term, {searchType: 'Feature'});
+      researches.map(res =>
+        this.search$$ =
+        res.request.subscribe(results => {
+          results
+            .filter(r => r.data.geometry)
+            .forEach(element => {
+              if (
+                searchProposals.filter(r => r.source === element.source)
+                  .length === 0
+              ) {
+                searchProposals.push({
+                  source: element.source,
+                  meta: element.meta,
+                  results: results.map(r => r.data)
+                });
+              }
+            });
+          if (this.stops) {
             this.stops
               .at(this.currentStopIndex)
               .patchValue({ stopProposals: searchProposals });
-            this.changeDetectorRefs.detectChanges();
-          }))
+          }
+          this.changeDetectorRefs.detectChanges();
+        })
       );
     }
   }
@@ -1157,7 +1188,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       }
 
       if (geomCoord !== undefined) {
-        this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
+        if (this.stops) {
+          this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
+        }
         this.addStopOverlay(geomCoord, i);
         /*  const proposalExtent = this.directionsStopsOverlayDataSource.ol
           .getFeatureById(this.getStopOverlayID(i))

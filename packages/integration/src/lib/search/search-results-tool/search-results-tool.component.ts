@@ -29,6 +29,7 @@ import { MapState } from '../../map/map.state';
 
 import { SearchState } from '../search.state';
 import { ToolState } from '../../tool/tool.state';
+import { DirectionState } from '../../directions/directions.state';
 
 /**
  * Tool to browse the search results
@@ -107,7 +108,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     private layerService: LayerService,
     private searchState: SearchState,
     private elRef: ElementRef,
-    public toolState: ToolState
+    public toolState: ToolState,
+    private directionState: DirectionState
   ) {}
 
   ngOnInit() {
@@ -297,5 +299,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     const elemTop = elem.offsetTop;
     const elemBottom = elemTop + elem.clientHeight + padding;
     return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+  }
+
+  getRoute(features: Feature[]) {
+    this.toolState.toolbox.activateTool('directions');
+    this.directionState.stopsStore.clear();
+    this.directionState.routeStore.clear();
+    this.directionState.stopsStore.insertMany(features);
   }
 }

@@ -481,9 +481,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     const routing: {
       Route: string
     } = {
-      Route: '<span id="routing">' + this.languageService.translate.instant('igo.geo.seeRouting') + '</span>'
+      Route: '<span class="routing">' + this.languageService.translate.instant('igo.geo.seeRouting') + '</span>'
     }
-    console.log(routing);
 
     return Object.assign(
       { type: data.index },

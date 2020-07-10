@@ -15,6 +15,8 @@ import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
 
+import olGeolocation from 'ol/Geolocation';
+
 @Component({
   selector: 'igo-feature-details',
   templateUrl: './feature-details.component.html',
@@ -45,12 +47,14 @@ export class FeatureDetailsComponent {
   set feature(value: Feature) {
     this._feature = value;
     this.cdRef.detectChanges();
+    this.selectFeature.emit();
   }
 
   private _feature: Feature;
   private _source: SearchSource;
 
   @Output() routeEvent = new EventEmitter<boolean>();
+  @Output() selectFeature = new EventEmitter<boolean>();
 
   /**
    * @internal
@@ -65,6 +69,13 @@ export class FeatureDetailsComponent {
   get icon(): string {
     return getEntityIcon(this.feature) || 'link';
   }
+
+  public geolocation: olGeolocation = new olGeolocation({
+    trackingOptions: {
+      enableHighAccuracy: true
+    },
+    tracking: true
+  });
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -145,7 +156,6 @@ export class FeatureDetailsComponent {
       }
     }
 
-    console.log(feature.properties);
     return feature.properties;
   }
 }
