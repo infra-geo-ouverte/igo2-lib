@@ -228,9 +228,20 @@ gulp.task('core:bundleLocale.en', done => {
   done();
 });
 
+gulp.task('core:copyBundleLocale', done => {
+  gulp
+    .src('./dist/core/locale/*')
+    .pipe(gulp.dest('./dist/core/__ivy_ngcc__/locale'));
+
+  done();
+});
+
 gulp.task(
   'core:bundleLocale',
-  gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en'])
+  gulp.series(
+    gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en']),
+    'core:copyBundleLocale'
+  )
 );
 
 // ==========================================================

@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, tap, catchError, debounceTime, flatMap } from 'rxjs/operators';
+import { map, tap, catchError, debounceTime, flatMap, first } from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
 
@@ -83,11 +83,8 @@ export class ContextService {
           this.handleContextsChange(contexts);
         });
       } else {
-        const contexts$$ = this.contexts$.subscribe(contexts => {
-          if (contexts$$) {
-            contexts$$.unsubscribe();
+        this.contexts$.pipe(first()).subscribe(contexts => {
             this.handleContextsChange(contexts);
-          }
         });
         this.loadContexts();
       }
@@ -349,14 +346,12 @@ export class ContextService {
       return;
     }
 
-    const contexts$$ = this.getContextByUri(uri).subscribe(
+    this.getContextByUri(uri).pipe(first()).subscribe(
       (_context: DetailedContext) => {
-        contexts$$.unsubscribe();
         this.addContextToList(_context);
         this.setContext(_context);
       },
       err => {
-        contexts$$.unsubscribe();
         if (uri !== this.options.defaultContextUri) {
           this.loadContext(this.options.defaultContextUri);
         }

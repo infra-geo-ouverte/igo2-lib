@@ -40,9 +40,7 @@
                 "output": "./assets/igo2/geo/"
               }
             ],
-            "styles": [
-              "demo/src/styles.scss"
-            ],
+            "styles": ["demo/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -157,9 +155,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/auth/ng-package.prod.json"
-            ,              "tsConfig": "packages/auth/tsconfig.lib.prod.json"
-}
+              "project": "packages/auth/ng-package.prod.json",
+              "tsConfig": "packages/auth/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -202,9 +200,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/common/ng-package.prod.json"
-            ,              "tsConfig": "packages/common/tsconfig.lib.prod.json"
-}
+              "project": "packages/common/ng-package.prod.json",
+              "tsConfig": "packages/common/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -247,9 +245,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/core/ng-package.prod.json"
-            ,              "tsConfig": "packages/core/tsconfig.lib.prod.json"
-}
+              "project": "packages/core/ng-package.prod.json",
+              "tsConfig": "packages/core/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -292,9 +290,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/geo/ng-package.prod.json"
-            ,              "tsConfig": "packages/geo/tsconfig.lib.prod.json"
-}
+              "project": "packages/geo/ng-package.prod.json",
+              "tsConfig": "packages/geo/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -331,9 +329,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/utils/ng-package.prod.json"
-            ,              "tsConfig": "packages/utils/tsconfig.lib.prod.json"
-}
+              "project": "packages/utils/ng-package.prod.json",
+              "tsConfig": "packages/utils/tsconfig.lib.prod.json"
+            }
           }
         },
         "lint": {
@@ -368,9 +366,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/context/ng-package.prod.json"
-            ,              "tsConfig": "packages/context/tsconfig.lib.prod.json"
-}
+              "project": "packages/context/ng-package.prod.json",
+              "tsConfig": "packages/context/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -413,9 +411,9 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/integration/ng-package.prod.json"
-            ,              "tsConfig": "packages/integration/tsconfig.lib.prod.json"
-}
+              "project": "packages/integration/ng-package.prod.json",
+              "tsConfig": "packages/integration/tsconfig.lib.prod.json"
+            }
           }
         },
         "lint": {
