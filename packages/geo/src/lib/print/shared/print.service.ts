@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
-import * as _html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
@@ -14,8 +14,6 @@ import { OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
-
-const html2canvas = _html2canvas;
 
 @Injectable({
   providedIn: 'root'
