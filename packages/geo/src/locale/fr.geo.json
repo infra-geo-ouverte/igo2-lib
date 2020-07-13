@@ -17,8 +17,9 @@
         "title": "Fonds de carte"
       },
       "dataSource": {
+        "unavailableTitle": "Couche indisponible",
         "optionsApiUnavailable": "L'information sur les couches n'a pas pu être récupérée. Certaines couches pourraient ne pas présenter la bonne information.",
-        "unavailable": "La couche '{{value}}' est indisponible pour le moment."
+        "unavailable": "La couche '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
       },
       "dropGeoFile": {
         "invalid": {
@@ -54,6 +55,10 @@
         "failed": {
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
+        },
+        "success": {
+          "text": "Données exportées avec succès.",
+          "title":"Exportation réussie"
         },
         "format": {
           "GeoJSON": "GeoJSON",

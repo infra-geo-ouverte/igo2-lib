@@ -594,7 +594,7 @@ export class PrintService {
    * Save document
    * @param  doc - Document to save
    */
-  private saveDoc(doc: jsPDF) {
+  protected saveDoc(doc: jsPDF) {
     doc.save('map.pdf');
   }
 

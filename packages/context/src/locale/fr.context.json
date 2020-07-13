@@ -16,6 +16,8 @@
         "dialog": {
           "cloneMsg": "Le contexte '{{value}}' a été cloné",
           "cloneTitle": "Contexte cloné",
+          "copyMsg": "Texte copié",
+          "copyTitle": "Identifiant du contexte",
           "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce contexte ?",
           "deleteMsg": "Le contexte '{{value}}' a été supprimé",
           "deleteTitle": "Contexte supprimé",
@@ -36,6 +38,7 @@
         },
         "favorite": "Définir comme context favori",
         "form": {
+          "copy": "Copier l'identifiant du contexte",
           "edit": "Enregistrer",
           "title": "Titre",
           "titleRequired": "Le titre est obligatoire",
