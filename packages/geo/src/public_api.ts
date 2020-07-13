@@ -34,6 +34,8 @@ export * from './lib/search/search-results/search-results.module';
 export * from './lib/toast/toast.module';
 export * from './lib/wkt/wkt.module';
 
+export * from './lib/import-export/style-list/style-list.provider';
+
 export * from './lib/catalog';
 export * from './lib/datasource';
 export * from './lib/download';
