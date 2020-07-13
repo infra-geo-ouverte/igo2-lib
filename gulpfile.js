@@ -82,6 +82,36 @@ gulp.task('geo:copyAssets', done => {
   done();
 });
 
+gulp.task('geo:copyNGCC', done => {
+  gulp
+    .src('./packages/geo/ngcc.config.js', {
+      base: './packages/geo/'
+    })
+    .pipe(gulp.dest('./dist/geo'));
+
+  done();
+});
+
+gulp.task('context:copyNGCC', done => {
+  gulp
+    .src('./packages/context/ngcc.config.js', {
+      base: './packages/context/'
+    })
+    .pipe(gulp.dest('./dist/context'));
+
+  done();
+});
+
+gulp.task('integration:copyNGCC', done => {
+  gulp
+    .src('./packages/integration/ngcc.config.js', {
+      base: './packages/integration/'
+    })
+    .pipe(gulp.dest('./dist/integration'));
+
+  done();
+});
+
 // ==========================================================
 
 gulp.task('core:copyStyles', done => {
@@ -384,7 +414,26 @@ gulp.task(
 
 // ==========================================================
 
-gulp.task('geo:fixOL', done => {
+// https://github.com/stylus/stylus/pull/2538
+gulp.task('libs:fixStylus', done => {
+  gulp
+    .src(['./node_modules/stylus/lib/nodes/index.js'])
+    .pipe(
+      replace(
+        `/**
+ * Constructors
+ */`,
+        `exports.lineno = null;
+exports.column = null;
+exports.filename = null;`
+      )
+    )
+    .pipe(gulp.dest('./node_modules/stylus/lib/nodes/'));
+
+  done();
+});
+
+gulp.task('libs:fixOL', done => {
   gulp
     .src(['./node_modules/ol/package.json'])
     .pipe(
@@ -396,6 +445,8 @@ gulp.task('geo:fixOL', done => {
 
   done();
 });
+
+gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixOL']));
 
 // ==========================================================
 
@@ -436,17 +487,31 @@ gulp.task(
   'geo',
   gulp.series(
     'geo:clean',
-    gulp.parallel(['geo:copyAssets', 'geo:copyStyles', 'geo:copyLocale']),
+    gulp.parallel([
+      'geo:copyAssets',
+      'geo:copyStyles',
+      'geo:copyLocale',
+      'geo:copyNGCC'
+    ]),
     gulp.parallel(['geo:bundleStyles']),
     'core:bundleLocale'
   )
 );
 
-gulp.task('context', gulp.series('context:copyLocale', 'core:bundleLocale'));
+gulp.task(
+  'context',
+  gulp.series(
+    gulp.parallel(['context:copyLocale', 'context:copyNGCC']),
+    'core:bundleLocale'
+  )
+);
 
 gulp.task(
   'integration',
-  gulp.series('integration:copyLocale', 'core:bundleLocale')
+  gulp.series(
+    gulp.parallel(['integration:copyLocale', 'integration:copyNGCC']),
+    'core:bundleLocale'
+  )
 );
 
 gulp.task(

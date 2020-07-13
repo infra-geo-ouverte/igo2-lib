@@ -9,8 +9,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material/core';
-
+import { FloatLabelType } from '@angular/material/form-field';
 import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 

@@ -41,7 +41,21 @@
               }
             ],
             "styles": ["demo/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "hammerjs",
+              "typy",
+              "jspdf",
+              "file-saver",
+              "jwt-decode",
+              "@turf/helpers",
+              "@turf/line-segment",
+              "@turf/meta",
+              "@turf/invariant",
+              "@turf/line-intersect",
+              "pbf",
+              "geojson-rbush"
+            ]
           },
           "configurations": {
             "production": {

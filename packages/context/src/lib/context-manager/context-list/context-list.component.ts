@@ -11,7 +11,7 @@ import {
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService, StorageService } from '@igo2/core';
-import { IgoMap } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo'
 
 import {
   DetailedContext,

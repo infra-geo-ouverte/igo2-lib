@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import type { FormControl } from '@angular/forms';
 
 import { BehaviorSubject, } from 'rxjs';
 
