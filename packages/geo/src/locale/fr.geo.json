@@ -54,19 +54,32 @@
         "failed": {
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
+        },
+        "format": {
+          "GeoJSON": "GeoJSON",
+          "GML": "GML",
+          "GPX": "GPX",
+          "KML": "KML",
+          "Shapefile": "Shapefile",
+          "CSVcomma": "CSV (séparateur virgule)",
+          "CSVsemicolon": "CSV (séparateur point-virgule)"
         }
       },
       "importExportForm": {
         "exportButton": "Exporter",
+        "exportButtonLink": "Ouvrir le lien",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",
         "exportTabTitle": "Exporter",
+        "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
+        "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
+        "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)"
       },
       "operators": {
@@ -155,15 +168,15 @@
         "legend": {
           "default": "Défaut",
           "loadingLegendText": "Chargement de la légende",
-          "noLegendText": "Aucune légende disponible pour cette couche",
-          "noLegendScale": "Aucune légende disponible pour cette échelle",
+          "noLegendText": "Aucune symbologie disponible pour cette couche",
+          "noLegendScale": "Aucune symbologie disponible pour cette échelle",
           "selectStyle": "Sélectionner le style de la légende",
-          "showAll" : "Montrer toutes les légendes (non visible et hors échelle)",
+          "showAll" : "Montrer toutes les couches (non visible et hors échelle)",
           "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
-        
+
         }
       },
       "download": {
@@ -357,6 +370,8 @@
         "polygon": "Surface"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
+      "searchByCoord": "Rechercher par coordonnées",
+      "searchByName": "Rechercher par nom",
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",
@@ -377,6 +392,7 @@
         "layer": "Couche",
         "goSearch": "Lancer la recherche",
         "removeLayer": "Retirer les résultats",
+        "exportLayer": "Exporter les résultats",
         "clearForm": "Retirer le dessin",
         "clearSearch": "Réinitialiser",
         "Address": "Adresses",

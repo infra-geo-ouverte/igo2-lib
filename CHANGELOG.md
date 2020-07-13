@@ -1,3 +1,27 @@
+## [1.3.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.3.0...1.3.1) (2020-06-01)
+
+
+### Bug Fixes
+
+* **context:** limit length title context ([88de4ee](https://github.com/infra-geo-ouverte/igo2-lib/commit/88de4ee4c836ef61a85386cf0a2c4060650129be))
+* **context:** reset z-index ([64c2861](https://github.com/infra-geo-ouverte/igo2-lib/commit/64c2861738681baa32900a382ad260de32d40990))
+* **datasource:** optionsFromApi disabled by default in context ([23abbe8](https://github.com/infra-geo-ouverte/igo2-lib/commit/23abbe81ea9baadab6ef9a8db88f4cbe6fa9437f))
+* **getCapabilites:** nonexistent layer results in an untitled layer ([07bd348](https://github.com/infra-geo-ouverte/igo2-lib/commit/07bd34830fd86e79ffb544b1946c0033be6a022f))
+* **getCapabilities:** slow request results in an unfilled list ([762f33f](https://github.com/infra-geo-ouverte/igo2-lib/commit/762f33f740a720928c50c83e356db4f3839d5a5b))
+* **layer-list:** sort alpha with upper cases and accent ([#647](https://github.com/infra-geo-ouverte/igo2-lib/issues/647)) ([f244e69](https://github.com/infra-geo-ouverte/igo2-lib/commit/f244e69ee99e662f269dd21ea1bb443818fa5660))
+* **layer-list / export:** Fix 1.3 release ([#654](https://github.com/infra-geo-ouverte/igo2-lib/issues/654)) ([ff28783](https://github.com/infra-geo-ouverte/igo2-lib/commit/ff2878339eccf2486cd7f936ef6a688e9824da37))
+* **map:** improve zIndex management ([6657c4a](https://github.com/infra-geo-ouverte/igo2-lib/commit/6657c4a5cccf676e512cf837a0dfea67244b2113))
+* **optionsApi:** remove default url ([b3eaf3b](https://github.com/infra-geo-ouverte/igo2-lib/commit/b3eaf3bc5611ba9030bbd08137c891c60e280724))
+* **query:** catch GML3 error ([4c9c4fe](https://github.com/infra-geo-ouverte/igo2-lib/commit/4c9c4fecd9f284c119a3da70db22959b864194b0))
+* **spatial-filter:** fix polygon/line layer display ([#655](https://github.com/infra-geo-ouverte/igo2-lib/issues/655)) ([9588672](https://github.com/infra-geo-ouverte/igo2-lib/commit/95886722f06d13cadba1a5b45c1a861721c61c87))
+
+
+### Features
+
+* **export:** GPX export properties in comment by default ([8687d53](https://github.com/infra-geo-ouverte/igo2-lib/commit/8687d53ab585a48f762b9d908d9a4e3f65bb4c95))
+
+
+
 # [1.3.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.2.0...1.3.0) (2020-05-11)
 
 

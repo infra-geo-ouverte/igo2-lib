@@ -54,19 +54,32 @@
         "failed": {
           "text": "Failed to export",
           "title": "Failed to export features"
+        },
+        "format": {
+          "GeoJSON": "GeoJSON",
+          "GML": "GML",
+          "GPX": "GPX",
+          "KML": "KML",
+          "Shapefile": "Shapefile",
+          "CSVcomma": "CSV (comma delimited)",
+          "CSVsemicolon": "CSV (semicolon delimited)"
         }
       },
       "importExportForm": {
         "exportButton": "Export",
+        "exportButtonLink": "Open the link",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
         "exportTabTitle": "Export",
+        "exportFeatureInExtent": "Export only features in map extent",
+        "exportNoLayersExportable": "There is no exportable layer in your map",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
+        "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Shapefiles must be zipped."
       },
       "operators": {
@@ -162,7 +175,7 @@
           "noLayersVisibleWithShowAllButton": "No layer currently visible. Activate the button above to see all the legends.",
           "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
           "noLayersVisible": "No layers currently visible.",
-          "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."        
+          "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."
         }
       },
       "download": {
@@ -356,6 +369,8 @@
         "polygon": "Polygon"
       },
       "targetHtmlUrl": "Open the external link",
+      "searchByCoord": "Search by coordinates",
+      "searchByName": "Search by name",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",
@@ -375,6 +390,7 @@
         "layer": "Layer",
         "goSearch": "Launch research",
         "removeLayer": "Remove results",
+        "exportLayer": "Export results",
         "clearForm": "Remove draw",
         "clearSearch": "Reset",
         "Address": "Addresses",

@@ -6,9 +6,10 @@ import {
 
 import { IgoImportExportModule } from '@igo2/geo';
 import { ImportExportToolComponent } from './import-export-tool/import-export-tool.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
-  imports: [IgoImportExportModule],
+  imports: [IgoImportExportModule, CommonModule],
   declarations: [ImportExportToolComponent],
   exports: [ImportExportToolComponent],
   entryComponents: [ImportExportToolComponent],

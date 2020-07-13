@@ -1,7 +1,5 @@
 import olSourceTileArcGISRest from 'ol/source/TileArcGISRest';
 
-import { uuid } from '@igo2/utils';
-
 import { DataSource } from './datasource';
 import { Legend } from './datasource.interface';
 import { TileArcGISRestDataSourceOptions } from './tilearcgisrest-datasource.interface';

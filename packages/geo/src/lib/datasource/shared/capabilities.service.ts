@@ -185,7 +185,11 @@ export class CapabilitiesService {
     );
 
     if (!layer) {
-      return baseOptions;
+      throw {
+        error: {
+          message: 'Layer not found'
+        }
+      };
     }
     const metadata = layer.DataURL ? layer.DataURL[0] : undefined;
     const abstract = layer.Abstract ? layer.Abstract : undefined;
@@ -248,9 +252,18 @@ export class CapabilitiesService {
     baseOptions: WMTSDataSourceOptions,
     capabilities: any
   ): WMTSDataSourceOptions {
+
+    // Put Title source in _layerOptionsFromSource. (For source & catalog in _layerOptionsFromSource, if not already on config)
+    const layer = capabilities.Contents.Layer.find(el => el.Identifier === baseOptions.layer);
+
     const options = optionsFromCapabilities(capabilities, baseOptions);
 
-    return Object.assign(options, baseOptions);
+    const ouputOptions = Object.assign(options, baseOptions);
+    const sourceOptions = ObjectUtils.removeUndefined({
+      _layerOptionsFromSource: {
+        title: layer.Title}});
+
+    return ObjectUtils.mergeDeep(sourceOptions, ouputOptions);
   }
 
   private parseCartoOptions(

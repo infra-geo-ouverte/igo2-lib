@@ -1,27 +1,40 @@
 <div *ngIf="context">
 
-  <div class="scopeForm">
+  <div *ngIf="!canWrite" class="scopeForm">
+    <h4>{{ 'igo.context.permission.readOnlyTitle' | translate }}</h4>
+    <p>{{ 'igo.context.permission.readOnlyMsg' | translate }}</p>
+  </div>
+
+  <div *ngIf="canWrite" class="scopeForm">
     <mat-radio-group [(ngModel)]="context.scope"
                     (change)="scopeChanged.emit(context)">
       <mat-radio-button value="private">
         {{ 'igo.context.permission.scope.private' | translate }}
       </mat-radio-button>
       <mat-radio-button value="protected">
-        {{ 'igo.context.permission.scope.protected' | translate }}
+        {{ 'igo.context.permission.scope.shared' | translate }}
       </mat-radio-button>
-      <mat-radio-button value="public">
+      <mat-radio-button *ngIf="authService.isAdmin" value="public">
         {{ 'igo.context.permission.scope.public' | translate }}
       </mat-radio-button>
     </mat-radio-group>
   </div>
 
-  <form *ngIf="context.scope !== 'private'" [formGroup]="form"
+  <form *ngIf="context.scope !== 'private' && canWrite" [formGroup]="form"
     (ngSubmit)="handleFormSubmit(form.value)">
 
     <mat-form-field class="full-width">
       <input matInput required
-             [placeholder]="'igo.context.permission.profil' | translate"
-             formControlName="profil">
+             [placeholder]="'igo.context.permission.user' | translate"
+             [formControl]="formControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProfilSelected($event.option.value)"
+        [displayWith]="displayFn">
+          <mat-option *ngFor="let profil of this.profils" [value]="profil">
+              {{profil.title}}<br>
+              <small class="mat-typography">{{profil.name}}</small>
+          </mat-option>
+      </mat-autocomplete>
      <mat-error>
        {{ 'igo.context.permission.profilRequired' | translate }}
      </mat-error>
@@ -58,12 +71,12 @@
         <ng-template ngFor let-permission [ngForOf]="groupPermissions.value">
           <mat-list-item>
             <mat-icon mat-list-avatar svgIcon="account-outline"></mat-icon>
-            <h4 mat-line>{{permission.profil}}</h4>
+            <h4 mat-line>{{permission.profilTitle}} <small class="mat-typography">{{permission.profil}}</small></h4>
 
             <div igoStopPropagation
                  class="igo-actions-container">
 
-               <button
+               <button *ngIf="canWrite || permission.profil === authService.decodeToken().user.sourceId"
                  mat-icon-button
                  [matTooltip]="'igo.context.permission.delete' | translate"
                  matTooltipShowDelay="500"

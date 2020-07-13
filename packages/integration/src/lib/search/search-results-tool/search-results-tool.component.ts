@@ -178,11 +178,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
-    for (const feature of this.store.all()) {
-      if (this.map.overlay.dataSource.ol.getFeatureById(feature.meta.id)) {
-        this.map.overlay.removeFeature(feature.data as Feature);
-      }
-    }
+    this.map.overlay.dataSource.ol.clear();
     this.tryAddFeatureToMap(result);
 
     if (this.topPanelState === 'expanded') {
@@ -289,24 +285,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
 
     this.map.overlay.addFeature(feature);
-  }
-
-  /**
-   * Try to add a layer to the map
-   * @param result A search result that could be some layer options
-   */
-  private tryAddLayerToMap(result: SearchResult) {
-    if (this.map === undefined) {
-      return;
-    }
-
-    if (result.meta.dataType !== LAYER) {
-      return undefined;
-    }
-    const layerOptions = (result as SearchResult<LayerOptions>).data;
-    this.layerService
-      .createAsyncLayer(layerOptions)
-      .subscribe(layer => this.map.addLayer(layer));
   }
 
   isScrolledIntoView(elemSource, elem) {

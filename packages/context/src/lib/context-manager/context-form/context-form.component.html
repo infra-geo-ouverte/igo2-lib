@@ -3,6 +3,7 @@
 
   <mat-form-field class="full-width">
     <input matInput required
+           maxlength="128"
            [placeholder]="'igo.context.contextManager.form.title' | translate"
            formControlName="title">
    <mat-error>
@@ -14,6 +15,7 @@
     <span *ngIf="prefix" class="prefix">{{prefix}}-</span>
     <span class="fieldWrapper">
       <input matInput
+           maxlength="64"
            [placeholder]="'igo.context.contextManager.form.uri' | translate"
            formControlName="uri">
     </span>

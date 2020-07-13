@@ -13,6 +13,7 @@ export interface Context {
   description?: string;
   icon?: string;
   iconImage?: string;
+  hidden?: boolean;
 }
 
 export interface ContextsList {
@@ -50,10 +51,23 @@ export interface ContextPermission {
   id?: string;
   contextId?: string;
   profil: string;
+  profilTitle?: string;
   typePermission: TypePermission;
 }
 
 export interface ContextPermissionsList {
   read: ContextPermission[];
   write: ContextPermission[];
+}
+
+export interface ContextUserPermission {
+  name: string;
+  checked: boolean;
+  indeterminate?: boolean;
+}
+
+export interface ContextProfils {
+  name: string;
+  title: string;
+  childs?: ContextProfils[];
 }

@@ -23,17 +23,20 @@ export class ExportService {
     GPX: 'gpx',
     KML: 'kml',
     Shapefile: 'ESRI Shapefile',
-    CSV: 'CSV'
+    CSVcomma: 'CSVcomma',
+    CSVsemicolon: 'CSVsemicolon'
   };
 
   static noOgreFallbacks = ['GML', 'GPX', 'KML'];
 
   private ogreUrl: string;
-  private aggregateInComment: boolean = false;
+  private aggregateInComment: boolean = true;
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
-    const gpxAggregateInComment = this.config.getConfig('importExport.gpxAggregateInComment');
+    const gpxAggregateInComment = this.config.getConfig(
+      'importExport.gpxAggregateInComment'
+    );
     if (gpxAggregateInComment !== undefined) {
       this.aggregateInComment = gpxAggregateInComment;
     }
@@ -59,7 +62,8 @@ export class ExportService {
 
   private generateFeature(
     olFeatures: OlFeature[],
-    format: ExportFormat): OlFeature[] {
+    format: ExportFormat
+  ): OlFeature[] {
     if (format === ExportFormat.GPX && this.aggregateInComment) {
       return this.generateAggratedFeature(olFeatures);
     }
@@ -187,20 +191,34 @@ export class ExportService {
     projectionIn: string,
     projectionOut: string
   ) {
-    const featuresText = new olformat.GeoJSON().writeFeatures(olFeatures, {
-      dataProjection: projectionOut,
-      featureProjection: projectionIn,
-      featureType: 'feature',
-      featureNS: 'http://example.com/feature'
-    });
+    const featuresText: string = new olformat.GeoJSON().writeFeatures(
+      olFeatures,
+      {
+        dataProjection: projectionOut,
+        featureProjection: projectionIn,
+        featureType: 'feature',
+        featureNS: 'http://example.com/feature'
+      }
+    );
 
     const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
+    form.style.display = 'none';
+    document.body.appendChild(form);
     form.setAttribute('method', 'post');
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
+
     form.acceptCharset = 'UTF-8';
     form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
+
+    if (format === 'CSVsemicolon') {
+      const options = document.createElement('input');
+      options.setAttribute('type', 'hidden');
+      options.setAttribute('name', 'lco');
+      options.setAttribute('value', 'SEPARATOR=SEMICOLON');
+      form.appendChild(options);
+    }
 
     const geojsonField = document.createElement('input');
     geojsonField.setAttribute('type', 'hidden');
@@ -209,23 +227,30 @@ export class ExportService {
     form.appendChild(geojsonField);
 
     const outputNameField = document.createElement('input');
-    const outputName =
+    let outputName =
       format === 'Shapefile'
         ? `${title}.zip`
         : `${title}.${format.toLowerCase()}`;
+    if (format === 'CSVcomma' || format === 'CSVsemicolon') {
+      outputName = `${title}.csv`;
+    }
+    outputName = outputName.replace(' ', '_');
+    outputName = outputName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     outputNameField.setAttribute('type', 'hidden');
     outputNameField.setAttribute('name', 'outputName');
     outputNameField.setAttribute('value', outputName);
     form.appendChild(outputNameField);
 
-    const ogreFormat = ExportService.ogreFormats[format];
+    let ogreFormat = ExportService.ogreFormats[format];
+    if (format === 'CSVcomma' || format === 'CSVsemicolon') {
+      ogreFormat = 'CSV';
+    }
     const outputFormatField = document.createElement('input');
     outputFormatField.setAttribute('type', 'hidden');
     outputFormatField.setAttribute('name', 'format');
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
 
-    document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
 
@@ -239,7 +264,7 @@ export class ExportService {
     if (format === 'GPX') {
       const pointOrLine = olFeatures.find(olFeature => {
         return (
-          ['Point', 'LineString'].indexOf(olFeature.getGeometry().getType()) >=
+          ['Point', 'LineString', 'MultiLineString'].indexOf(olFeature.getGeometry().getType()) >=
           0
         );
       });
