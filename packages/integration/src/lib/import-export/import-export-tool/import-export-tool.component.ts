@@ -24,7 +24,7 @@ export class ImportExportToolComponent implements OnInit {
    */
   get map(): IgoMap { return this.mapState.map; }
 
-  public importExportType$: string = 'data';
+  public importExportType$: string = 'layer';
   @Output() itemTypeChange = new EventEmitter<string>();
 
   constructor(
