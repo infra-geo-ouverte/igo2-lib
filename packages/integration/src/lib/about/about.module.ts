@@ -9,7 +9,7 @@ import { MatButtonModule,
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
-import { IgoCustomHtmlModule, IgoInteractiveTourModule, InteractiveTourComponent } from '@igo2/common';
+import { IgoCustomHtmlModule, IgoInteractiveTourModule } from '@igo2/common';
 
 import { AboutToolComponent } from './about-tool/about-tool.component';
 
