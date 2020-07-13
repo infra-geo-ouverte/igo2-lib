@@ -31,6 +31,7 @@ import { MatDialog } from '@angular/material';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
 import { ActionStore, ActionbarMode } from '@igo2/common';
+import { ContextService } from '../shared/context.service';
 
 @Component({
   selector: 'igo-context-list',
@@ -150,6 +151,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdRef: ChangeDetectorRef,
+    private contextService: ContextService,
     public auth: AuthService,
     private dialog: MatDialog,
     private languageService: LanguageService,
@@ -164,7 +166,12 @@ export class ContextListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => {
-        this.contexts$.next(this.filterContextsList(this.contexts));
+        if (this.contextService.enhancedContexts$.value.ours.length > 0) {
+          this.contexts.ours = this.contextService.enhancedContexts$.value.ours;
+          this.contexts$.next(this.filterContextsList(this.contexts));
+        } else {
+          this.contexts$.next(this.filterContextsList(this.contexts));
+        }
       });
 
     this.actionStore.load([

@@ -1,19 +1,23 @@
 import { Directive, OnInit, OnDestroy, Optional, Input } from '@angular/core';
 
 import { Subscription, merge } from 'rxjs';
-import { skip, buffer, debounceTime, filter } from 'rxjs/operators';
+import { buffer, debounceTime, filter } from 'rxjs/operators';
 
-import { RouteService } from '@igo2/core';
+import { RouteService, ConfigService } from '@igo2/core';
 import {
   IgoMap,
   MapBrowserComponent,
   Layer,
   LayerService,
-  LayerOptions
+  LayerOptions,
+  StyleListService,
+  StyleService
 } from '@igo2/geo';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
+import { addImportedFeaturesToMap, addImportedFeaturesStyledToMap } from '../../context-import-export/shared/context-import.utils';
+import GeoJSON from 'ol/format/GeoJSON';
 
 @Directive({
   selector: '[igoLayerContext]'
@@ -34,6 +38,9 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     private component: MapBrowserComponent,
     private contextService: ContextService,
     private layerService: LayerService,
+    private configService: ConfigService,
+    private styleListService: StyleListService,
+    private styleService: StyleService,
     @Optional() private route: RouteService
   ) {}
 
@@ -91,8 +98,39 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             return layer;
           });
 
+        layers.forEach(layer => {
+          if (layer.title === context.visibleBaseLayer) {
+            layer.visible = true;
+          }
+        });
         this.contextLayers.concat(layers);
         this.map.addLayers(layers);
+
+        if (context.extraFeatures) {
+          context.extraFeatures.forEach(featureCollection => {
+            const format = new GeoJSON();
+            const title = featureCollection.name;
+            featureCollection = JSON.stringify(featureCollection);
+            featureCollection = format.readFeatures(featureCollection, {
+              dataProjection: 'EPSG:4326',
+              featureProjection: 'EPSG:3857'
+            });
+            if (!this.configService.getConfig('importWithStyle')) {
+              addImportedFeaturesToMap(featureCollection, this.map, title);
+            } else {
+              addImportedFeaturesStyledToMap(featureCollection, this.map, title, this.styleListService, this.styleService);
+            }
+          });
+        }
+
+        if (context.catalogLayers && context.catalogLayers.length > 0) {
+          context.catalogLayers.forEach(catalogLayerOptions => {
+            const oLayer$ = this.layerService.createAsyncLayer(catalogLayerOptions);
+            oLayer$.subscribe((oLayer: Layer) => {
+              this.map.addLayer(oLayer);
+            });
+          });
+        }
       });
   }
 
