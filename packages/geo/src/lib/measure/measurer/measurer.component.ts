@@ -23,7 +23,8 @@ import OlOverlay from 'ol/Overlay';
 import { unByKey } from 'ol/Observable';
 
 import { LanguageService } from '@igo2/core';
-import { EntityRecord, EntityTableTemplate, EntityTableComponent } from '@igo2/common';
+import { EntityRecord, EntityTableTemplate } from '@igo2/common';
+import type { EntityTableComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { FeatureDataSource } from '../../datasource';

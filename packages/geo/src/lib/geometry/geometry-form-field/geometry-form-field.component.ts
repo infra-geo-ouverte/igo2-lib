@@ -10,7 +10,7 @@ import { FormControl } from '@angular/forms';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { Style as OlStyle } from 'ol/style';
 
 import { FormFieldComponent } from '@igo2/common';

@@ -11,10 +11,14 @@ import { map, debounceTime, skip } from 'rxjs/operators';
 import { EntityKey, EntityRecord, EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureDataSource } from '../../../datasource';
-import { VectorLayer } from '../../../layer';
-import { IgoMap, ctrlKeyDown } from '../../../map';
+import { VectorLayer } from '../../../layer/shared/layers/vector-layer';
+import { IgoMap } from '../../../map/shared/map';
+import { ctrlKeyDown } from '../../../map/shared/map.utils';
 
-import { Feature, FeatureStoreSelectionStrategyOptions } from '../feature.interfaces';
+import {
+  Feature,
+  FeatureStoreSelectionStrategyOptions
+} from '../feature.interfaces';
 import { FeatureStore } from '../store';
 import { FeatureMotion } from '../feature.enums';
 
@@ -35,7 +39,6 @@ class OlDragSelectInteraction extends OlDragBoxInteraction {
  * each other as well as move the map view around needlessly.
  */
 export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
-
   /**
    * Listener to the map click event that allows selecting a feature
    * by clicking on the map
@@ -54,13 +57,17 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   /**
    * The map the layers belong to
    */
-  get map(): IgoMap { return this.options.map; }
+  get map(): IgoMap {
+    return this.options.map;
+  }
 
   /**
    * A feature store that'll contain the selected features. It has it's own
    * layer, shared by all the stores this staretgy is bound to.
    */
-  get overlayStore(): FeatureStore { return this._overlayStore; }
+  get overlayStore(): FeatureStore {
+    return this._overlayStore;
+  }
   private _overlayStore: FeatureStore;
 
   constructor(protected options: FeatureStoreSelectionStrategyOptions) {
@@ -99,7 +106,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   unselectAll() {
     this.stores.forEach((store: FeatureStore) => {
-      store.state.updateAll({selected: false});
+      store.state.updateAll({ selected: false });
     });
   }
 
@@ -144,18 +151,25 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     this.unwatchAll();
 
     const stores$ = this.stores.map((store: FeatureStore) => {
-      return store.stateView.manyBy$((record: EntityRecord<Feature>) => {
-        return record.state.selected === true;
-      }).pipe(
-        map((records: EntityRecord<Feature>[]) => records.map(record => record.entity))
-      );
+      return store.stateView
+        .manyBy$((record: EntityRecord<Feature>) => {
+          return record.state.selected === true;
+        })
+        .pipe(
+          map((records: EntityRecord<Feature>[]) =>
+            records.map(record => record.entity)
+          )
+        );
     });
     this.stores$$ = combineLatest(stores$)
       .pipe(
         debounceTime(5),
         skip(1), // Skip intial selection
-        map((features: Array<Feature[]>) => features.reduce((a, b) => a.concat(b)))
-      ).subscribe((features: Feature[]) => this.onSelectFromStore(features));
+        map((features: Array<Feature[]>) =>
+          features.reduce((a, b) => a.concat(b))
+        )
+      )
+      .subscribe((features: Feature[]) => this.onSelectFromStore(features));
   }
 
   /**
@@ -173,9 +187,12 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * only on the layers bound to this strategy.
    */
   private listenToMapClick() {
-    this.mapClickListener = this.map.ol.on('singleclick', (event: OlMapBrowserPointerEvent) => {
-      this.onMapClick(event);
-    });
+    this.mapClickListener = this.map.ol.on(
+      'singleclick',
+      (event: OlMapBrowserPointerEvent) => {
+        this.onMapClick(event);
+      }
+    );
   }
 
   /**
@@ -199,7 +216,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const reverse = !exclusive;
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
       hitTolerance: this.options.hitTolerance || 0,
-      layerFilter: (olLayer) => {
+      layerFilter: olLayer => {
         const storeOlLayer = this.stores.find((store: FeatureStore) => {
           return store.layer.ol === olLayer;
         });
@@ -260,11 +277,14 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   private onDragBoxEnd(event: OlDragBoxEvent) {
     const exclusive = !ctrlKeyDown(event.mapBrowserEvent);
     const extent = event.target.getGeometry().getExtent();
-    const olFeatures = this.stores.reduce((acc: OlFeature[], store: FeatureStore) => {
-      const olSource = store.layer.ol.getSource();
-      acc.push(...olSource.getFeaturesInExtent(extent));
-      return acc;
-    }, []);
+    const olFeatures = this.stores.reduce(
+      (acc: OlFeature[], store: FeatureStore) => {
+        const olSource = store.layer.ol.getSource();
+        acc.push(...olSource.getFeaturesInExtent(extent));
+        return acc;
+      },
+      []
+    );
     this.onSelectFromMap(olFeatures, exclusive, false);
   }
 
@@ -275,16 +295,23 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private onSelectFromStore(features: Feature[]) {
     const motion = this.options ? this.options.motion : undefined;
-    const olOverlayFeatures = this.overlayStore.layer.ol.getSource().getFeatures();
-    const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature) => olFeature.getId());
+    const olOverlayFeatures = this.overlayStore.layer.ol
+      .getSource()
+      .getFeatures();
+    const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature) =>
+      olFeature.getId()
+    );
     const featuresKeys = features.map(this.overlayStore.getKey);
 
     let doMotion;
     if (features.length === 0) {
       doMotion = false;
     } else {
-      doMotion = overlayFeaturesKeys.length !== featuresKeys.length ||
-        !overlayFeaturesKeys.every((key: EntityKey) => featuresKeys.indexOf(key) >= 0);
+      doMotion =
+        overlayFeaturesKeys.length !== featuresKeys.length ||
+        !overlayFeaturesKeys.every(
+          (key: EntityKey) => featuresKeys.indexOf(key) >= 0
+        );
     }
 
     this.overlayStore.setLayerFeatures(
@@ -301,7 +328,11 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * in their store.
    * @param olFeatures OL feature objects
    */
-  private onSelectFromMap(olFeatures: OlFeature[], exclusive: boolean, reverse: boolean) {
+  private onSelectFromMap(
+    olFeatures: OlFeature[],
+    exclusive: boolean,
+    reverse: boolean
+  ) {
     const groupedFeatures = this.groupFeaturesByStore(olFeatures);
 
     this.stores.forEach((store: FeatureStore) => {
@@ -321,11 +352,16 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param store: Feature store
    * @param features Features
    */
-  private selectFeaturesFromStore(store: FeatureStore, features: Feature[], exclusive: boolean, reverse: boolean) {
+  private selectFeaturesFromStore(
+    store: FeatureStore,
+    features: Feature[],
+    exclusive: boolean,
+    reverse: boolean
+  ) {
     if (reverse === true) {
       store.state.reverseMany(features, ['selected']);
     } else {
-      store.state.updateMany(features, {selected: true}, exclusive);
+      store.state.updateMany(features, { selected: true }, exclusive);
     }
   }
 
@@ -334,7 +370,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param store: Feature store
    */
   private unselectAllFeaturesFromStore(store: FeatureStore) {
-    store.state.updateAll({selected: false});
+    store.state.updateAll({ selected: false });
   }
 
   /**
@@ -344,7 +380,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param olFeatures: OL feature objects
    * @returns Store -> features mapping
    */
-  private groupFeaturesByStore(olFeatures: OlFeature[]): Map<FeatureStore, Feature[]> {
+  private groupFeaturesByStore(
+    olFeatures: OlFeature[]
+  ): Map<FeatureStore, Feature[]> {
     const groupedFeatures = new Map<FeatureStore, Feature[]>();
     if (olFeatures === null || olFeatures === undefined) {
       return groupedFeatures;
@@ -352,7 +390,9 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
 
     olFeatures.forEach((olFeature: OlFeature) => {
       const store = olFeature.get('_featureStore');
-      if (store === undefined) { return; }
+      if (store === undefined) {
+        return;
+      }
 
       let features = groupedFeatures.get(store);
       if (features === undefined) {
@@ -377,7 +417,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const overlayLayer = this.options.layer
       ? this.options.layer
       : this.createOverlayLayer();
-    return new FeatureStore([], {map: this.map}).bindLayer(overlayLayer);
+    return new FeatureStore([], { map: this.map }).bindLayer(overlayLayer);
   }
 
   /**

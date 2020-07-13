@@ -9,7 +9,8 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
-import { Form, FormComponent, getEntityRevision } from '@igo2/common';
+import { Form, getEntityRevision } from '@igo2/common';
+import type { FormComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { FEATURE } from '../shared/feature.enums';

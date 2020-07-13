@@ -1,4 +1,3 @@
-import { SearchSource } from './../../search/shared/sources/source';
 import OlFeature from 'ol/Feature';
 
 import {
@@ -8,8 +7,8 @@ import {
   moveToOlFeatures
 } from '../../feature';
 import { FeatureDataSource } from '../../datasource';
-import { VectorLayer } from '../../layer';
-import { IgoMap } from '../../map';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { IgoMap } from '../../map/shared/map';
 
 import { createOverlayLayer } from './overlay.utils';
 

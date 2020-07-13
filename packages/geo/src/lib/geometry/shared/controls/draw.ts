@@ -1,7 +1,7 @@
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
 import OlStyle from 'ol/style';
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlDraw from 'ol/interaction/Draw';

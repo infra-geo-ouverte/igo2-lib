@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  TemplateRef,
   ContentChild,
   OnInit,
   OnDestroy,
@@ -10,6 +9,8 @@ import {
   EventEmitter,
   ElementRef
 } from '@angular/core';
+import type { TemplateRef } from '@angular/core';
+
 import { FloatLabelType } from '@angular/material/form-field';
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';

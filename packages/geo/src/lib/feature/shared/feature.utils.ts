@@ -21,15 +21,11 @@ import {
 } from '@igo2/common';
 
 import { IgoMap } from '../../map';
-import { VectorLayer } from '../../layer';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource';
 import { FEATURE, FeatureMotion } from './feature.enums';
 import { Feature } from './feature.interfaces';
 import { FeatureStore } from './store';
-import {
-  FeatureStoreLoadingStrategy,
-  FeatureStoreSelectionStrategy
-} from './strategies';
 
 /**
  * Create an Openlayers feature object out of a feature definition.
@@ -94,59 +90,66 @@ export function renderFeatureFromOl(
   projectionIn: string,
   olLayer?: OlLayer,
   projectionOut = 'EPSG:4326'
-  ): Feature {
-    let geom;
-    let title;
-    let exclude;
-    let excludeOffline;
+): Feature {
+  let geom;
+  let title;
+  let exclude;
+  let excludeOffline;
 
-    if (olLayer) {
-      title = olLayer.get('title');
-      if (olLayer.get('sourceOptions')) {
-        exclude = olLayer.get('sourceOptions').excludeAttribute;
-        excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
-      }
-    } else {
-      title = olRenderFeature.get('_title');
+  if (olLayer) {
+    title = olLayer.get('title');
+    if (olLayer.get('sourceOptions')) {
+      exclude = olLayer.get('sourceOptions').excludeAttribute;
+      excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
     }
-
-    const olFormat = new OlFormatGeoJSON();
-    const properties = olRenderFeature.getProperties();
-    const geometryType = olRenderFeature.getType();
-
-    if (geometryType === 'Polygon') {
-      const ends = olRenderFeature.ends_;
-      geom = new OlPolygon(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY, ends);
-    } else if (geometryType === 'Point') {
-      geom = new OlPoint(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY);
-    } else if (geometryType === 'LineString') {
-      geom = new OlLineString(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY);
-    }
-
-    const geometry = olFormat.writeGeometryObject(geom, {
-      dataProjection: projectionOut,
-      featureProjection: projectionIn
-    });
-
-    const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
-    const mapTitle = olRenderFeature.get('_mapTitle');
-
-    return {
-      type: FEATURE,
-      projection: projectionOut,
-      extent: olRenderFeature.getExtent(),
-      meta: {
-        id,
-        title: title ? title : mapTitle ? mapTitle : id,
-        mapTitle,
-        excludeAttribute: exclude,
-        excludeAttributeOffline: excludeOffline
-      },
-      properties,
-      geometry,
-      ol: olRenderFeature
-    };
+  } else {
+    title = olRenderFeature.get('_title');
   }
+
+  const olFormat = new OlFormatGeoJSON();
+  const properties = olRenderFeature.getProperties();
+  const geometryType = olRenderFeature.getType();
+
+  if (geometryType === 'Polygon') {
+    const ends = olRenderFeature.ends_;
+    geom = new OlPolygon(
+      olRenderFeature.flatCoordinates_,
+      OlGeometryLayout.XY,
+      ends
+    );
+  } else if (geometryType === 'Point') {
+    geom = new OlPoint(olRenderFeature.flatCoordinates_, OlGeometryLayout.XY);
+  } else if (geometryType === 'LineString') {
+    geom = new OlLineString(
+      olRenderFeature.flatCoordinates_,
+      OlGeometryLayout.XY
+    );
+  }
+
+  const geometry = olFormat.writeGeometryObject(geom, {
+    dataProjection: projectionOut,
+    featureProjection: projectionIn
+  });
+
+  const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
+  const mapTitle = olRenderFeature.get('_mapTitle');
+
+  return {
+    type: FEATURE,
+    projection: projectionOut,
+    extent: olRenderFeature.getExtent(),
+    meta: {
+      id,
+      title: title ? title : mapTitle ? mapTitle : id,
+      mapTitle,
+      excludeAttribute: exclude,
+      excludeAttributeOffline: excludeOffline
+    },
+    properties,
+    geometry,
+    ol: olRenderFeature
+  };
+}
 /**
  * Create a feature object out of an OL feature
  * The output object has a reference to the feature id.
@@ -327,8 +330,9 @@ export function featuresAreTooDeepInView(
   const mapExtentArea = olextent.getArea(mapExtent);
   const featuresExtentArea = olextent.getArea(featuresExtent);
 
-  if (featuresExtentArea === 0 && map.viewController.getZoom() > 13) { // In case it's a point
-      return false;
+  if (featuresExtentArea === 0 && map.viewController.getZoom() > 13) {
+    // In case it's a point
+    return false;
   }
 
   return featuresExtentArea / mapExtentArea < areaRatio;
@@ -402,49 +406,6 @@ export function tryBindStoreLayer(store: FeatureStore, layer?: VectorLayer) {
   if (store.layer.map === undefined) {
     store.map.addLayer(store.layer);
   }
-}
-
-/**
- * Try to add a loading strategy to a store and activate it.
- * If no strategy is given to that function, a basic one will be created.
- * @param store The store to bind the loading strategy
- * @param strategy An optional loading strategy
- */
-export function tryAddLoadingStrategy(
-  store: FeatureStore,
-  strategy?: FeatureStoreLoadingStrategy
-) {
-  if (store.getStrategyOfType(FeatureStoreLoadingStrategy) !== undefined) {
-    store.activateStrategyOfType(FeatureStoreLoadingStrategy);
-    return;
-  }
-
-  strategy = strategy ? strategy : new FeatureStoreLoadingStrategy({});
-  store.addStrategy(strategy);
-  strategy.activate();
-}
-
-/**
- * Try to add a selection strategy to a store and activate it.
- * If no strategy is given to that function, a basic one will be created.
- * @param store The store to bind the selection strategy
- * @param [strategy] An optional selection strategy
- */
-export function tryAddSelectionStrategy(
-  store: FeatureStore,
-  strategy?: FeatureStoreSelectionStrategy
-) {
-  if (store.getStrategyOfType(FeatureStoreSelectionStrategy) !== undefined) {
-    store.activateStrategyOfType(FeatureStoreSelectionStrategy);
-    return;
-  }
-  strategy = strategy
-    ? strategy
-    : new FeatureStoreSelectionStrategy({
-        map: store.map
-      });
-  store.addStrategy(strategy);
-  strategy.activate();
 }
 
 /**
