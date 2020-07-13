@@ -266,10 +266,15 @@ gulp.task('core:copyBundleLocale', done => {
   done();
 });
 
+gulp.task('sleep', done => {
+  setTimeout(() => done(), 1000);
+});
+
 gulp.task(
   'core:bundleLocale',
   gulp.series(
     gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en']),
+    'sleep',
     'core:copyBundleLocale'
   )
 );
