@@ -19,7 +19,8 @@
         "scrollDown": "Défiler vers le bas"
       },
       "interactiveTour": {
-        "tooltipTourToolButton": "Aide interactive sur l'outil"
+        "tooltipTourToolButton": "Aide interactive sur l'outil",
+        "buttonTitle": "Découvrir"
       }
     }
   }

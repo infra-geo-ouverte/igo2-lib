@@ -19,7 +19,8 @@
         "scrollDown": "Scroll down"
       },
       "interactiveTour": {
-        "tooltipTourToolButton": "Help with tool"
+        "tooltipTourToolButton": "Interactive tour of the application",
+        "buttonTitle": "Discover"
       }
     }
   }
