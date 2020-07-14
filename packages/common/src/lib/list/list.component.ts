@@ -65,7 +65,6 @@ export class ListComponent implements AfterViewInit, OnInit, OnDestroy {
   @HostListener('document:keydown', ['$event'])
   @HostListener('document:enter', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    console.log(event);
     // It would be nice to be able to unsubscribe to the event
     // completely but until ES7 this won't be possible because
     // document events are not observables

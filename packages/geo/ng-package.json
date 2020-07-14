@@ -20,6 +20,7 @@
       "ol/extent.js": "extent_js",
       "ol/source/CartoDB": "olSourceCarto",
       "ol/loadingstrategy": "OlLoadingStrategy",
+      "ol/render": "olRender",
       "ol/source/TileArcGISRest": "olSourceTileArcGISRest",
       "ts-md5": "tsMd5",
       "ol/source/VectorTile": "olSourceVectorTile",

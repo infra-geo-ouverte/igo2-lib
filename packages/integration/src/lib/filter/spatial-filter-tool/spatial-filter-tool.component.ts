@@ -230,7 +230,10 @@ export class SpatialFilterToolComponent {
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
-          if (layer.options._internal && layer.options._internal.code === feature.properties.code) {
+          if (
+            layer.options._internal &&
+            layer.options._internal.code === feature.properties.code
+          ) {
             return;
           }
           if (layer.title.startsWith('Zone')) {
