@@ -57,28 +57,21 @@ export class InteractiveTourService {
   public startTour(toolName, menuIsOpen?: string) {
 
     this.introJS.oncomplete(() => {
-      console.log('fin du tour');
     });
 
     this.introJS.onexit(() => {
-      console.log('le tour a ete fermé');
     });
 
     this.introJS.onbeforechange(targetElement => {
       const tourNo: number = this.introJS._currentStep;
-      console.log('tourNo');
-      console.log(tourNo);
-      console.log(targetElement.className);
 
       // When the element doesn't exist when you start tour
       // we need to set it when it exist
       if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
-        console.log('target = elem doesnt exist');
-
         const currentStepConfig: InteractiveTourStep = this.interactiveTourLoader.getTourOptionData(toolName).steps[tourNo];
         const currentElemConfig = currentStepConfig.element;
         const currentPositionElemConfig = currentStepConfig.position;
-        // maybe more properties need to be set here...
+        // maybe more properties introJS need to be set here...
 
         let unElem: HTMLElement;
         unElem = document.getElementsByTagName(
@@ -86,44 +79,35 @@ export class InteractiveTourService {
         )[0] as HTMLElement;
 
         if (!unElem) {
-          console.log('elem est vide avec tagName');
           unElem = document.getElementsByClassName(
             currentElemConfig
           )[0] as HTMLElement;
           if (!unElem) {
-            console.log('elem est vide avec ClassName');
             unElem = document.querySelector(currentElemConfig);
             if (!unElem) {
-              console.log('elem est vide avec querySelector');
               unElem = document.getElementById(
                 currentElemConfig
               ) as HTMLElement;
               if (!unElem) {
-                console.log('elem est vide avec getelemById');
-                console.log('** pas trouvé elem html via differente methode ** ');
               } else {
-                console.log('elem est OK avec ById');
                 this.introJS._introItems[tourNo].element = unElem;
                 this.introJS._introItems[
                   tourNo
                 ].position = currentPositionElemConfig;
               }
             } else {
-              console.log('elem est OK avec QuerySelector');
               this.introJS._introItems[tourNo].element = unElem;
               this.introJS._introItems[
                 tourNo
               ].position = currentPositionElemConfig;
             }
           } else {
-            console.log('elem est OK avec ClassName');
             this.introJS._introItems[tourNo].element = unElem;
             this.introJS._introItems[
               tourNo
             ].position = currentPositionElemConfig;
           }
         } else {
-          console.log('est OK avec tagName');
           this.introJS._introItems[tourNo].element = unElem;
           this.introJS._introItems[tourNo].position = currentPositionElemConfig;
         }

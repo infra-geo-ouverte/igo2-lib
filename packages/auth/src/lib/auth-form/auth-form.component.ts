@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   Input,
-  Optional
+  Optional,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -86,6 +88,8 @@ export class AuthFormComponent implements OnInit {
 
   private isLoginRoute: boolean;
   private isLogoutRoute: boolean;
+
+  @Output() evCloseAuthWindow: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
     public auth: AuthService,
