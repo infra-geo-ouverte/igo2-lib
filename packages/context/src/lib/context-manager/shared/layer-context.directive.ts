@@ -5,12 +5,12 @@ import { skip, buffer, debounceTime, filter } from 'rxjs/operators';
 
 import { RouteService } from '@igo2/core';
 import {
-  IgoMap,
   MapBrowserComponent,
   Layer,
   LayerService,
   LayerOptions
 } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';

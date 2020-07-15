@@ -12,12 +12,12 @@ import {
   formControlIsRequired,
   getControlErrorMessage
 } from '../shared/form.utils';
-import { FormFieldComponent } from '../shared/form-field-component';
+import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
  * This component renders a text field
  */
-@FormFieldComponent('text')
+@IgoFormFieldComponent('text')
 @Component({
   selector: 'igo-form-field-text',
   templateUrl: './form-field-text.component.html',

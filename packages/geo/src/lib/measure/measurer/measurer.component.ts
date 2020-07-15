@@ -37,7 +37,7 @@ import {
   tryAddLoadingStrategy,
   tryAddSelectionStrategy
 } from '../../feature';
-import { DrawControl, ModifyControl } from '../../geometry';
+import { DrawControl, ModifyControl } from '../../geometry/shared';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 

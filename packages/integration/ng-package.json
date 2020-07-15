@@ -11,7 +11,8 @@
       "ol/style": "olstyle",
       "@igo2/core": "core",
       "@igo2/context": "context",
-      "@igo2/common": "common"
+      "@igo2/common": "common",
+      "@ngx-translate/core" : "ngxt-core"
     }
   }
 }

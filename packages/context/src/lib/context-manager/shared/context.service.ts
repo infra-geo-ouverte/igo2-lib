@@ -25,7 +25,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import { IgoMap } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {

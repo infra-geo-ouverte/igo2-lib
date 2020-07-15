@@ -81,7 +81,8 @@
       "@igo2/common": "common",
       "ol/format": "olformat",
       "@igo2/utils": "utils",
-      "@igo2/core": "core"
+      "@igo2/core": "core",
+      "@ngx-translate/core" : "ngxt-core"
     }
   },
   "whitelistedNonPeerDependencies": [

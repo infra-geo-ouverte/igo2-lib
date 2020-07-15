@@ -12,7 +12,8 @@
       "@igo2/core" : "core",
       "@igo2/common" : "common",
       "@igo2/geo" : "geo",
-      "ol/format/GeoJSON" : "olFormatGeoJSON"
+      "ol/format/GeoJSON" : "olFormatGeoJSON",
+      "@ngx-translate/core" : "ngxt-core"
     }
   },
   "whitelistedNonPeerDependencies": ["ts-md5"]

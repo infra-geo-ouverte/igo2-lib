@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import type { Media } from '@igo2/core';
 import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
 import { Feature, FeatureMotion, moveToOlFeatures } from '@igo2/geo';
-import type { IgoMap } from '@igo2/geo'
+import type { IgoMap } from '@igo2/geo';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 

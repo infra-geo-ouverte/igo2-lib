@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 
 import { SearchSourceService } from '../shared/search-source.service';
 import { provideDefaultIChercheSearchResultFormatter } from '../shared/sources/icherche.providers';
@@ -56,7 +57,8 @@ describe('SearchSettingsComponent', () => {
         MatRadioModule,
         MatCheckboxModule,
         MatDividerModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatIconTestingModule
       ],
       declarations: [SearchSettingsComponent],
       providers: [

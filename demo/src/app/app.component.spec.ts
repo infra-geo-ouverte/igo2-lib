@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 
 import { IgoAuthModule } from '@igo2/auth';
 
@@ -25,6 +26,7 @@ describe('AppComponent', () => {
         MatToolbarModule,
         MatSidenavModule,
         MatListModule,
+        MatIconTestingModule,
         IgoAuthModule
       ],
       declarations: [AppComponent]

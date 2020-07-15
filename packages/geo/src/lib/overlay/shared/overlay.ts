@@ -5,7 +5,7 @@ import {
   FeatureMotion,
   featureToOl,
   moveToOlFeatures
-} from '../../feature';
+} from '../../feature/shared';
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { IgoMap } from '../../map/shared/map';
