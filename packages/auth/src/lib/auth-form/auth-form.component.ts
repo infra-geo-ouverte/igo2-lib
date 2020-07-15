@@ -104,6 +104,7 @@ export class AuthFormComponent implements OnInit {
   public login() {
     this.auth.goToRedirectUrl();
     this.getName();
+    this.auth.evCloseAuthWindow.emit(true);
   }
 
   public logout() {

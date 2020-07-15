@@ -1,4 +1,4 @@
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, Optional, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -19,6 +19,8 @@ export class AuthService {
   public authenticate$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   private anonymous = false;
+
+  @Output() evCloseAuthWindow: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
     private http: HttpClient,
