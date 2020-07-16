@@ -1,21 +1,28 @@
 import { catchError } from 'rxjs/operators';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { InteractiveTourOptions } from './interactive-tour.interface';
+import { ConfigService } from '@igo2/core';
 
 @Injectable()
 
 export class InteractiveTourLoader {
-  private jsonURL = 'locale/interactiveTour_configOptions.json';
+  private jsonURL: string;
   private allToursOptions;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient, private configService: ConfigService
   ) {
+    this.jsonURL = this.getPathToConfigFile();
     this.allToursOptions = this.getJSON().subscribe(data => {
       this.allToursOptions = data;
     } );
+  }
+
+  public getPathToConfigFile(): string {
+    return this.configService.getConfig('interactiveTour.pathToConfigFile');
+
   }
 
   public getJSON(): Observable<any> {

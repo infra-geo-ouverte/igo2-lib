@@ -37,12 +37,12 @@ export class InteractiveTourService {
 
   public isTourDisplayInMobile(): boolean {
     const showInMobile = this.configService.getConfig(
-      'interactiveTourInMobile'
+      'interactiveTour.tourInMobile'
     );
     if (showInMobile === undefined) {
       return true;
     }
-    return this.configService.getConfig('interactiveTourInMobile');
+    return this.configService.getConfig('interactiveTour.tourInMobile');
   }
 
   private isInEnglish(): boolean {

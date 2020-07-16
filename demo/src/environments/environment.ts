@@ -33,6 +33,10 @@ export const environment: Environment = {
     language: {
       prefix: './locale/'
     },
+    interactiveTour: {
+      tourInMobile: true,
+      pathToConfigFile: './locale/interactiveTour.json'
+    },
     importExport: {
       url: '/apis/ogre',
       gpxAggregateInComment: true
@@ -170,9 +174,7 @@ export const environment: Environment = {
           limit: '5'
         }
       }
-    },
-
-    interactiveTourInMobile: true
+    }
 
   }
 };
