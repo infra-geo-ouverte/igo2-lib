@@ -89,7 +89,6 @@ export class AuthFormComponent implements OnInit {
   private isLoginRoute: boolean;
   private isLogoutRoute: boolean;
 
-
   constructor(
     public auth: AuthService,
     private config: ConfigService,
