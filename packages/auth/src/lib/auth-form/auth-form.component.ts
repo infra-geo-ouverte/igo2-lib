@@ -81,6 +81,8 @@ export class AuthFormComponent implements OnInit {
     }
   }
 
+  @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   public options: AuthOptions;
   public user;
 
@@ -103,10 +105,10 @@ export class AuthFormComponent implements OnInit {
     this.getName();
   }
 
-  public login() {
+  public onLogin() {
     this.auth.goToRedirectUrl();
     this.getName();
-    this.auth.authLogin.emit(true);
+    this.login.emit(true);
   }
 
   public logout() {
@@ -143,7 +145,7 @@ export class AuthFormComponent implements OnInit {
     }
 
     this.router.events
-      .pipe(filter(event => event instanceof NavigationStart))
+      .pipe(filter((event) => event instanceof NavigationStart))
       .subscribe((changeEvent: any) => {
         if (changeEvent.url) {
           const currentRoute = changeEvent.url;

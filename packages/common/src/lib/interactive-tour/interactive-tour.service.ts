@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { ConfigService, MediaService, LanguageService } from '@igo2/core';
 import { introJs } from 'intro.js';
 import { InteractiveTourLoader } from './interactive-tour.loader';
-import { InteractiveTourOptions, InteractiveTourStep } from './interactive-tour.interface';
+import {
+  InteractiveTourOptions,
+  InteractiveTourStep
+} from './interactive-tour.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +18,12 @@ export class InteractiveTourService {
     private mediaService: MediaService,
     private languageService: LanguageService,
     private interactiveTourLoader: InteractiveTourLoader
-    ) {}
+  ) {}
 
   public isToolHaveTourConfig(toolName: string): boolean {
-    const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(toolName);
+    const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(
+      toolName
+    );
     if (checkTourActiveOptions === undefined) {
       return false;
     } else {
@@ -54,21 +59,20 @@ export class InteractiveTourService {
     }
   }
 
-  public startTour(toolName, menuIsOpen?: string) {
+  public startTour(toolName: string, menuIsOpen?: string) {
+    this.introJS.oncomplete(() => {});
 
-    this.introJS.oncomplete(() => {
-    });
+    this.introJS.onexit(() => {});
 
-    this.introJS.onexit(() => {
-    });
-
-    this.introJS.onbeforechange(targetElement => {
+    this.introJS.onbeforechange((targetElement) => {
       const tourNo: number = this.introJS._currentStep;
 
       // When the element doesn't exist when you start tour
       // we need to set it when it exist
       if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
-        const currentStepConfig: InteractiveTourStep = this.interactiveTourLoader.getTourOptionData(toolName).steps[tourNo];
+        const currentStepConfig: InteractiveTourStep = this.interactiveTourLoader.getTourOptionData(
+          toolName
+        ).steps[tourNo];
         const currentElemConfig = currentStepConfig.element;
         const currentPositionElemConfig = currentStepConfig.position;
         // maybe more properties introJS need to be set here...
@@ -114,7 +118,7 @@ export class InteractiveTourService {
       }
     });
 
-    this.introJS.onchange(targetElement => {
+    this.introJS.onchange((targetElement) => {
       const tourNo = this.introJS._currentStep;
       if (tourNo) {
         // problem with prev Button... if the user back on tour, another click is made and some time that not what you want
@@ -153,13 +157,12 @@ export class InteractiveTourService {
             if (menuIsOpen === 'true') {
               menuIsOpen = 'false';
               const elemMenuBut: HTMLElement = document.querySelector(
-              '#menu-button'
-            ) as HTMLElement;
+                '#menu-button'
+              ) as HTMLElement;
               elemMenuBut.click();
             } else {
               return;
             }
-
           } else if (actionToMake === 'clickOnElem') {
             targetElement.click();
           } else if (actionToMake.substring(0, 11) === 'clickOnTool') {
@@ -192,11 +195,13 @@ export class InteractiveTourService {
       }
     });
 
-    this.introJS.onafterchange(targetElement => {});
+    this.introJS.onafterchange((targetElement) => {});
 
-    const activeTourOptions: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(toolName);
+    const activeTourOptions: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
+      toolName
+    );
     if (activeTourOptions === undefined || activeTourOptions == null) {
-      alert(`cet outil est inconnu du tourInteractif : ${toolName}`);
+      alert(`this tool is unknown to the Interactive tour : ${toolName}`);
       return;
     }
 

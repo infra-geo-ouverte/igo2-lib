@@ -22,8 +22,7 @@ export const environment: Environment = {
       allowAnonymous: true
     },
     interactiveTour: {
-      tourInMobile: true,
-      pathToConfigFile: './locale/interactiveTour.json'
+      tourInMobile: true
     },
     importExport: {
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ogre'

@@ -8,7 +8,6 @@ import { ToolService } from '../tool/shared/tool.service';
   styleUrls: ['./interactive-tour.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-
 export class InteractiveTourComponent {
   /**
    * Toolbox that holds main tools
@@ -29,7 +28,7 @@ export class InteractiveTourComponent {
   }
 
   getTourToStart() {
-    if (this.tourToStart ) {
+    if (this.tourToStart) {
       return this.tourToStart;
     } else {
       return this.activeToolName;
@@ -38,8 +37,8 @@ export class InteractiveTourComponent {
 
   get activeToolName() {
     if (this.toolbox) {
-      if ( this.isActiveTool) {
-      return this.toolbox.activeTool$.getValue().name;
+      if (this.isActiveTool) {
+        return this.toolbox.activeTool$.getValue().name;
       } else {
         return 'global';
       }

@@ -1,4 +1,3 @@
-
 export interface InteractiveTourStep {
   element: string;
   intro: string;
@@ -44,8 +43,8 @@ export interface InteractiveTourOptions {
   /* Scroll to highlighted element? */
   scrollToElement?: boolean;
   /* Should we scroll the tooltip or target element? */
-  scrollTo?: string; /* Options are: 'element' or 'tooltip'
-  /* Padding to add after scrolling when element is not in the viewport (in pixels) */
+  scrollTo?: string /* Options are: 'element' or 'tooltip'
+  /* Padding to add after scrolling when element is not in the viewport (in pixels) */;
   scrollPadding?: number;
   /* Set the overlay opacity */
   overlayOpacity?: number;

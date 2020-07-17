@@ -13,7 +13,6 @@ import { ConfigService, Version } from '@igo2/core';
   templateUrl: './about-tool.component.html',
   styleUrls: ['./about-tool.component.scss']
 })
-
 export class AboutToolComponent {
   @Input()
   get html() {

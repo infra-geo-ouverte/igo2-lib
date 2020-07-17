@@ -26,6 +26,7 @@
             "assets": [
               "demo/src/favicon.ico",
               "demo/src/assets",
+              "demo/src/config",
               "demo/src/contexts",
               "demo/src/locale",
               {
@@ -39,8 +40,10 @@
                 "output": "./assets/igo2/geo/"
               }
             ],
-            "styles": ["demo/src/styles.scss",
-            "node_modules/intro.js/introjs.css"],
+            "styles": [
+              "demo/src/styles.scss",
+              "node_modules/intro.js/introjs.css"
+            ],
             "scripts": [],
             "es5BrowserSupport": true
           },

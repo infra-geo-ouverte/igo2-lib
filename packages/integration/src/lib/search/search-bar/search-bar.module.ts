@@ -8,10 +8,8 @@ import { SearchBarBindingDirective } from './search-bar-binding.directive';
  * @ignore
  */
 @NgModule({
-  imports: [
-    IgoSearchModule
-  ],
+  imports: [IgoSearchModule],
   declarations: [SearchBarBindingDirective],
-  exports: [SearchBarBindingDirective]
+  exports: [SearchBarBindingDirective],
 })
 export class IgoAppSearchBarModule {}

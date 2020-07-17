@@ -1,7 +1,5 @@
-
-
 {
-  "introOptions_global" : {
+  "introOptions_global": {
     "skipLabel": "<h3 style='color:blue'>Fermer </h3>",
     "nextLabel": "<h3 style='color:blue'>Suivant</h3>",
     "doneLabel": "<h3 style='color:blue'>Terminer</h3",
@@ -20,10 +18,8 @@
     "scrollToElement": true,
     "scrollTo": "element",
     "scrollPadding": 200,
-
     "highlightClass": "igo-introjs-helperLayer",
     "tooltipClass": "mat-h2",
-
     "steps": [
       {
         "no": 0,
@@ -99,4 +95,3 @@
     ]
   }
 }
-
