@@ -20,7 +20,7 @@ export class AuthService {
   public redirectUrl: string;
   private anonymous = false;
 
-  @Output() evCloseAuthWindow: EventEmitter<boolean> = new EventEmitter();
+  @Output() authLogin: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
     private http: HttpClient,

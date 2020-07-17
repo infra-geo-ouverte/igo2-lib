@@ -89,7 +89,6 @@ export class AuthFormComponent implements OnInit {
   private isLoginRoute: boolean;
   private isLogoutRoute: boolean;
 
-  @Output() evCloseAuthWindow: EventEmitter<boolean> = new EventEmitter();
 
   constructor(
     public auth: AuthService,
@@ -108,7 +107,7 @@ export class AuthFormComponent implements OnInit {
   public login() {
     this.auth.goToRedirectUrl();
     this.getName();
-    this.auth.evCloseAuthWindow.emit(true);
+    this.auth.authLogin.emit(true);
   }
 
   public logout() {
