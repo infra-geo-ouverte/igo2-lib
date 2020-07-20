@@ -20,6 +20,7 @@
         </button>
         <igo-spinner [shown]="loading$ | async"></igo-spinner>
         <input
+          hidden
           #fileInput
           type="file"
           [style.display]="'none'"
@@ -61,7 +62,7 @@
             formControlName="format"
             placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
             <mat-option *ngFor="let format of (formats$ | async) | keyvalue " [value]="format.key">
-              {{format.value}}
+              {{'igo.geo.export.format.' + format.value | translate}}
             </mat-option>
           </mat-select>
         </mat-form-field>

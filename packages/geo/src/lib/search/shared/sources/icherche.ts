@@ -8,6 +8,8 @@ import { AuthService } from '@igo2/auth';
 import { LanguageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
+import pointOnFeature from '@turf/point-on-feature';
+
 import { FEATURE, Feature } from '../../../feature';
 import { GoogleLinks } from './../../../utils/googleLinks';
 
@@ -417,11 +419,33 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       GoogleMaps: string;
       GoogleStreetView?: string;
     } = {
-      GoogleMaps: GoogleLinks.getGoogleMapsLink(
+      GoogleMaps: ''
+    };
+
+    let googleMaps;
+    if (data.geometry.type === 'Point') {
+      googleMaps = GoogleLinks.getGoogleMapsCoordLink(
         data.geometry.coordinates[0],
         data.geometry.coordinates[1]
-      )
-    };
+      );
+    } else {
+      const point = pointOnFeature(data.geometry);
+      googleMaps = GoogleLinks.getGoogleMapsCoordLink(point.geometry.coordinates[0], point.geometry.coordinates[1]);
+    }
+
+    let googleMapsNom;
+    if (data.index === 'routes') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom + ', ' + data.properties.municipalite);
+    } else if (data.index === 'municipalites') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom + ', ' + data.properties.regAdmin);
+    } else {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(data.properties.nom || data.highlight.title);
+    }
+
+    googleLinksProperties.GoogleMaps = '<a href=' + googleMaps + ' target="_blank">' +
+      this.languageService.translate.instant('igo.geo.searchByCoord') + '</a> <br /> <a href=' + googleMapsNom +
+        ' target="_blank">' + this.languageService.translate.instant('igo.geo.searchByName') + '</a>';
+
     if (data.geometry.type === 'Point') {
       googleLinksProperties.GoogleStreetView = GoogleLinks.getGoogleStreetViewLink(
         data.geometry.coordinates[0],

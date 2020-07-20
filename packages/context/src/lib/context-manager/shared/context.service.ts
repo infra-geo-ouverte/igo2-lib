@@ -27,7 +27,8 @@ import {
   Context,
   DetailedContext,
   ContextMapView,
-  ContextPermission
+  ContextPermission,
+  ContextProfils
 } from './context.interface';
 
 @Injectable({
@@ -77,18 +78,30 @@ export class ContextService {
     this.readParamsFromRoute();
 
     this.authService.authenticate$.subscribe(authenticated => {
-      const contexts$$ = this.contexts$.subscribe(contexts => {
-        if (contexts$$) {
-          contexts$$.unsubscribe();
+      if (authenticated && this.baseUrl) {
+        this.get().subscribe(contexts => {
           this.handleContextsChange(contexts);
-        }
-      });
-      this.loadContexts();
+        });
+      } else {
+        const contexts$$ = this.contexts$.subscribe(contexts => {
+          if (contexts$$) {
+            contexts$$.unsubscribe();
+            this.handleContextsChange(contexts);
+          }
+        });
+        this.loadContexts();
+      }
     });
   }
 
-  get(): Observable<ContextsList> {
-    const url = this.baseUrl + '/contexts';
+  get(permissions?: string[], hidden?: boolean): Observable<ContextsList> {
+    let url = this.baseUrl + '/contexts';
+    if (permissions && this.authService.authenticated) {
+      url += '?permission=' + permissions.join();
+      if (hidden) {
+        url += '&hidden=true';
+      }
+    }
     return this.http.get<ContextsList>(url);
   }
 
@@ -115,9 +128,27 @@ export class ContextService {
     );
   }
 
+  getProfilByUser(): Observable<ContextProfils[]> {
+    if (this.baseUrl) {
+      const url = this.baseUrl + '/profils?';
+      return this.http.get<ContextProfils[]>(url);
+    }
+    return of([]);
+  }
+
   setDefault(id: string): Observable<any> {
     const url = this.baseUrl + '/contexts/default';
     return this.http.post(url, { defaultContextId: id });
+  }
+
+  hideContext(id: string) {
+    const url = this.baseUrl + '/contexts/' + id + '/hide';
+    return this.http.post(url, {});
+  }
+
+  showContext(id: string) {
+    const url = this.baseUrl + '/contexts/' + id + '/show';
+    return this.http.post(url, {});
   }
 
   delete(id: string): Observable<void> {
@@ -266,10 +297,10 @@ export class ContextService {
     );
   }
 
-  loadContexts() {
+  loadContexts(permissions?: string[], hidden?: boolean) {
     let request;
     if (this.baseUrl) {
-      request = this.get();
+      request = this.get(permissions, hidden);
     } else {
       request = this.getLocalContexts();
     }
@@ -363,7 +394,7 @@ export class ContextService {
     this.editedContext$.next(context);
   }
 
-  getContextFromMap(igoMap: IgoMap): DetailedContext {
+  getContextFromMap(igoMap: IgoMap, empty?: boolean): DetailedContext {
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
     const center: any = new olPoint(view.getCenter()).transform(
@@ -379,16 +410,27 @@ export class ContextService {
         view: {
           center: center.getCoordinates(),
           zoom: view.getZoom(),
-          projection: proj
+          projection: proj,
+          maxZoomOnExtent: igoMap.viewController.maxZoomOnExtent
         }
       },
       layers: [],
       tools: []
     };
 
-    const layers = igoMap.layers$
-      .getValue()
-      .sort((a, b) => a.zIndex - b.zIndex);
+    let layers = [];
+    if (empty === true) {
+      layers = igoMap.layers$
+        .getValue()
+        .filter(
+          lay =>
+            lay.baseLayer === true ||
+            lay.options.id === 'searchPointerSummaryId'
+        )
+        .sort((a, b) => a.zIndex - b.zIndex);
+    } else {
+      layers = igoMap.layers$.getValue().sort((a, b) => a.zIndex - b.zIndex);
+    }
 
     let i = 0;
     for (const l of layers) {

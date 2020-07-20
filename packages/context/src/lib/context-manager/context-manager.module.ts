@@ -11,7 +11,9 @@ import {
   MatCheckboxModule,
   MatRadioModule,
   MatDialogModule,
-  MatMenuModule
+  MatMenuModule,
+  MatOptionModule,
+  MatAutocompleteModule
 } from '@angular/material';
 
 import { IgoAuthModule } from '@igo2/auth';
@@ -20,7 +22,8 @@ import {
   IgoListModule,
   IgoKeyValueModule,
   IgoCollapsibleModule,
-  IgoStopPropagationModule
+  IgoStopPropagationModule,
+  IgoActionbarModule
 } from '@igo2/common';
 
 import { BookmarkDialogComponent } from './../context-map-button/bookmark-button/bookmark-dialog.component';
@@ -56,13 +59,16 @@ const CONTEXT_DIRECTIVES = [
     MatRadioModule,
     MatDialogModule,
     MatMenuModule,
+    MatOptionModule,
+    MatAutocompleteModule,
     IgoAuthModule,
     IgoListModule,
     IgoKeyValueModule,
     IgoCollapsibleModule,
     IgoStopPropagationModule,
     IgoLanguageModule,
-    IgoContextMapButtonModule
+    IgoContextMapButtonModule,
+    IgoActionbarModule
   ],
   entryComponents: [
     BookmarkDialogComponent

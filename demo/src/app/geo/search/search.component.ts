@@ -223,7 +223,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   onOpenGoogleMaps() {
-    window.open(GoogleLinks.getGoogleMapsLink(this.lonlat[0], this.lonlat[1]));
+    window.open(GoogleLinks.getGoogleMapsCoordLink(this.lonlat[0], this.lonlat[1]));
   }
 
   onOpenGoogleStreetView() {

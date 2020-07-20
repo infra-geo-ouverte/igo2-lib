@@ -17,7 +17,8 @@
     "ngx-cacheable": "^1.0.9",
     "ts-md5": "^1.2.0",
     "@turf/helpers": "^6.1.4",
-    "@turf/line-intersect": "^6.0.2"
+    "@turf/line-intersect": "^6.1.2",
+    "@turf/point-on-feature": "^5.1.5"
   },
   "peerDependencies": {
     "@angular/animations": "^7.2.6",

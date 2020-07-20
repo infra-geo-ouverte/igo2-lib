@@ -138,6 +138,7 @@ export class FeatureDetailsComponent {
         });
       }
     }
+
     return feature.properties;
   }
 }

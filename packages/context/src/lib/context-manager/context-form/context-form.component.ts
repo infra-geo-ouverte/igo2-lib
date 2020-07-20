@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { ObjectUtils } from '@igo2/utils';
+import { ObjectUtils, Clipboard } from '@igo2/utils';
+import { MessageService, LanguageService } from '@igo2/core';
 import { Context } from '../shared/context.interface';
 
 @Component({
@@ -46,7 +47,11 @@ export class ContextFormComponent implements OnInit {
   @Output() clone: EventEmitter<any> = new EventEmitter();
   @Output() delete: EventEmitter<any> = new EventEmitter();
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private languageService: LanguageService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.buildForm();
@@ -62,6 +67,21 @@ export class ContextFormComponent implements OnInit {
       inputs.uri = this.prefix;
     }
     this.submitForm.emit(inputs);
+  }
+
+  public copyTextToClipboard() {
+    const text = this.prefix + '-' + this.form.value.uri.replace(' ', '');
+    const successful = Clipboard.copy(text);
+    if (successful) {
+      const translate = this.languageService.translate;
+      const title = translate.instant(
+        'igo.context.contextManager.dialog.copyTitle'
+      );
+      const msg = translate.instant(
+        'igo.context.contextManager.dialog.copyMsg'
+      );
+      this.messageService.success(msg, title);
+    }
   }
 
   private buildForm(): void {

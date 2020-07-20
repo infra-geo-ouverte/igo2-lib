@@ -72,6 +72,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   private searchType$$: Subscription;
 
+  private researches$$: Subscription[];
+
   /**
    * List of available search types
    */
@@ -357,6 +359,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * @param term Search term
    */
   private doSearch(term: string | undefined) {
+    if (this.researches$$) {
+      this.researches$$.map(research => research.unsubscribe());
+      this.researches$$ = undefined;
+    }
+
     const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
     if (slug === '') {
       if (this.store !== undefined) {
@@ -365,15 +372,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.store !== undefined) {
-      this.store.softClear();
-    }
-
     const researches = this.searchService.search(term, {
       forceNA: this.forceNA
     });
-    researches.map(research => {
-      research.request.subscribe((results: SearchResult[]) => {
+    this.researches$$ = researches.map(research => {
+      return research.request.subscribe((results: SearchResult[]) => {
         this.onResearchCompleted(research, results);
       });
     });

@@ -8,14 +8,16 @@ import {
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { MessageService, LanguageService } from '@igo2/core';
+import { MessageService, LanguageService, StorageService } from '@igo2/core';
+import { AuthService } from '@igo2/auth';
 import { ConfirmDialogService } from '@igo2/common';
 import { MapService } from '@igo2/geo';
 
 import {
   Context,
   DetailedContext,
-  ContextsList
+  ContextsList,
+  ContextUserPermission
 } from '../shared/context.interface';
 import { ContextService } from '../shared/context.service';
 import { ContextListComponent } from './context-list.component';
@@ -140,13 +142,69 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     });
   }
 
+  @HostListener('create', ['$event'])
+  onCreate(opts: { title: string; empty: boolean }) {
+    const { title, empty } = opts;
+    const context = this.contextService.getContextFromMap(
+      this.component.map,
+      empty
+    );
+    context.title = title;
+    this.contextService.create(context).subscribe(() => {
+      const translate = this.languageService.translate;
+      const titleD = translate.instant(
+        'igo.context.bookmarkButton.dialog.createTitle'
+      );
+      const message = translate.instant(
+        'igo.context.bookmarkButton.dialog.createMsg',
+        {
+          value: context.title
+        }
+      );
+      this.messageService.success(message, titleD);
+      this.contextService.loadContext(context.uri);
+    });
+  }
+
+  @HostListener('filterPermissionsChanged')
+  loadContexts() {
+    const permissions = ['none'];
+    for (const p of this.component.permissions) {
+      if (p.checked === true || p.indeterminate === true) {
+        permissions.push(p.name);
+      }
+    }
+    this.component.showHidden
+      ? this.contextService.loadContexts(permissions, true)
+      : this.contextService.loadContexts(permissions, false);
+  }
+
+  @HostListener('showHiddenContexts')
+  showHiddenContexts() {
+    this.component.showHidden = !this.component.showHidden;
+    this.storageService.set('contexts.showHidden', this.component.showHidden);
+    this.loadContexts();
+  }
+
+  @HostListener('show', ['$event'])
+  onShowContext(context: DetailedContext) {
+    this.contextService.showContext(context.id).subscribe();
+  }
+
+  @HostListener('hide', ['$event'])
+  onHideContext(context: DetailedContext) {
+    this.contextService.hideContext(context.id).subscribe();
+  }
+
   constructor(
     @Self() component: ContextListComponent,
     private contextService: ContextService,
     private mapService: MapService,
     private languageService: LanguageService,
     private confirmDialogService: ConfirmDialogService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private auth: AuthService,
+    private storageService: StorageService
   ) {
     this.component = component;
   }
@@ -154,6 +212,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
   ngOnInit() {
     // Override input contexts
     this.component.contexts = { ours: [] };
+    this.component.showHidden = this.storageService.get(
+      'contexts.showHidden'
+    ) as boolean;
 
     this.contexts$$ = this.contextService.contexts$.subscribe(contexts =>
       this.handleContextsChange(contexts)
@@ -170,7 +231,37 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       .pipe(debounceTime(100))
       .subscribe(context => (this.component.selectedContext = context));
 
-    this.contextService.loadContexts();
+    this.auth.authenticate$.subscribe(authenticate => {
+      if (authenticate) {
+        this.contextService.getProfilByUser().subscribe(profils => {
+          this.component.users = profils;
+          this.component.permissions = [];
+          const profilsAcc = this.component.users.reduce((acc, cur) => {
+            acc = acc.concat(cur);
+            acc = cur.childs ? acc.concat(cur.childs) : acc;
+            return acc;
+          }, []);
+          for (const user of profilsAcc) {
+            const permission: ContextUserPermission = {
+              name: user.name,
+              checked: this.storageService.get(
+                'contexts.permissions.' + user.name
+              ) as boolean
+            };
+            this.component.permissions.push(permission);
+          }
+          const permissions = ['none'];
+          for (const p of this.component.permissions) {
+            if (p.checked === true || p.indeterminate === true) {
+              permissions.push(p.name);
+            }
+          }
+          this.component.showHidden
+            ? this.contextService.loadContexts(permissions, true)
+            : this.contextService.loadContexts(permissions, false);
+        });
+      }
+    });
   }
 
   ngOnDestroy() {
