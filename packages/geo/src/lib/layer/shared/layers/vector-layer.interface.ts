@@ -34,7 +34,6 @@ export interface VectorLayerOptions extends LayerOptions {
     | WebSocketDataSourceOptions
     | ClusterDataSourceOptions;
   style?: { [key: string]: any } | olStyle | olStyle[];
-  clusterBaseStyle?: { [key: string]: any } | olStyle | olStyle[];
   browsable?: boolean;
   exportable?: boolean;
   ol?: olLayerVector;
