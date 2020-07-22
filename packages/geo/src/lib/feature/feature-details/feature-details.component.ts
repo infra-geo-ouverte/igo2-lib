@@ -70,13 +70,6 @@ export class FeatureDetailsComponent {
     return getEntityIcon(this.feature) || 'link';
   }
 
-  public geolocation: olGeolocation = new olGeolocation({
-    trackingOptions: {
-      enableHighAccuracy: true
-    },
-    tracking: true
-  });
-
   constructor(
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
@@ -155,7 +148,6 @@ export class FeatureDetailsComponent {
         });
       }
     }
-
     return feature.properties;
   }
 }

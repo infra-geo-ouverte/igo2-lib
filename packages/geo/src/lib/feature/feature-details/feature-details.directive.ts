@@ -44,7 +44,15 @@ export class FeatureDetailsDirective implements OnInit {
   feature$ = new BehaviorSubject(undefined);
 
   get geolocation() {
-    return this.component.geolocation;
+    return this.component.map.geolocation$.getValue();
+  }
+  set geolocation(value) {
+    if (value) {
+      this.geolocation = value;
+      this.geolocation.on('change', evt => {
+        this.geolocation$.next(this.geolocation);
+      });
+    }
   }
 
   @Output() routingEvent = new EventEmitter<Feature[]>()
@@ -62,12 +70,7 @@ export class FeatureDetailsDirective implements OnInit {
   }
 
   ngOnInit() {
-    this.geolocation.on('change', evt => {
-      this.geolocation$.next(this.geolocation);
-    });
-
     this.geolocation$.subscribe(geolocation => {
-      console.log(geolocation);
       if (!geolocation) {
         return;
       }
@@ -75,13 +78,12 @@ export class FeatureDetailsDirective implements OnInit {
 
       if (this.map.geolocation$.getValue() && this.map.geolocation$.getValue().getTracking() === false) {
         geolocation.setTracking(false);
+        this.start = undefined;
       }
-      console.log(geolocation.getTracking());
+
       if (geolocation.getTracking() === true) {
         let userCoord = geolocation.getPosition();
-        console.log(userCoord);
         userCoord = olProj.transform(userCoord, this.map.projection, 'EPSG:4326');
-        console.log(userCoord);
         this.start.geometry.coordinates = userCoord;
       }
     })
@@ -92,6 +94,7 @@ export class FeatureDetailsDirective implements OnInit {
       } else {
         this.end = pointOnFeature(this.feature.geometry);
       }
+      this.geolocation$.next(this.geolocation);
       this.bindClicking();
     })
   }
@@ -102,20 +105,6 @@ export class FeatureDetailsDirective implements OnInit {
   }
 
   activateRouting() {
-    if (!this.geolocation) {
-      const geolocation = new olGeolocation({
-        trackingOptions: {
-          enableHighAccuracy: true
-        },
-        projection: this.map.projection,
-        tracking: true
-      });
-
-      geolocation.on('change', evt => {
-        this.geolocation$.next(geolocation);
-      });
-    }
-    console.log(this.start, this.end);
     this.start.geometry.coordinates ? this.routingEvent.emit([this.start, this.end]) : this.routingEvent.emit([this.end]);
   }
 }

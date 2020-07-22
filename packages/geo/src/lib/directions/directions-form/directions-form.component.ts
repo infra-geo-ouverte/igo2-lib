@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject, BehaviorSubject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take, skipWhile } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, take, skipWhile, startWith } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -41,7 +41,7 @@ import {
 } from '../../feature/shared/feature.utils';
 import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 
-import { Directions, DirectionsOptions } from '../shared/directions.interface';
+import { Directions, DirectionsOptions, Stop } from '../shared/directions.interface';
 import { DirectionsService } from '../shared/directions.service';
 import { DirectionsFormService } from './directions-form.service';
 
@@ -87,17 +87,75 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   /**
    * The stops store
    */
-  @Input()
-  get stopsStore(): FeatureStore {
-    return this._stopsStore;
-  }
-  set stopsStore(value: FeatureStore) {
-    this._stopsStore = value;
-    this.stopsStore$.next(value);
-  }
-  private _stopsStore: FeatureStore;
+  @Input() stopsStore: FeatureStore
 
-  private stopsStore$: BehaviorSubject<FeatureStore> = new BehaviorSubject(undefined);
+  @Input()
+  get routeFromFeatureDetail(): boolean {
+    return this._routeFromFeatureDetail;
+  }
+  set routeFromFeatureDetail(value: boolean) {
+    this._routeFromFeatureDetail = value;
+
+    if (value === true) {
+      this.ngOnInit();
+
+      setTimeout(() => {
+        this.routesResults = undefined;
+
+        const nbStops = this.stops.length;
+        for (let i = 0; i < nbStops; i++) {
+          this.stops.removeAt(0);
+        }
+        this.stops.insert(0, this.createStop('start'));
+        this.stops.insert(1, this.createStop('end'));
+
+        this.routeStore.clear();
+        for (const feature of this.stopsStore.all()) {
+          if (feature.properties.id && feature.properties.id.toString().startsWith('directionsStop')) {
+            this.stopsStore.delete(feature);
+          }
+        }
+
+        console.log(this.stops);
+        console.log('if true', this.stopsStore.all());
+        if (this.stopsStore.all().length === 2) {
+          let i = 0;
+          const coordinates = [];
+
+          for (const feature of this.stopsStore.all()) {
+            let directionsText;
+            i === 0 ? directionsText = 'start' : directionsText = 'end';
+            coordinates.push(feature.geometry.coordinates);
+            this.handleLocationProposals(feature.geometry.coordinates, i);
+            this.addStopOverlay(feature.geometry.coordinates, i);
+            i++;
+          }
+          this.writeStopsToFormService(coordinates);
+
+          const routeResponse = this.directionsService.route(coordinates, {});
+          if (routeResponse) {
+            routeResponse.map(res =>
+              this.routesQueries$$.push(
+                res.subscribe(route => {
+                  this.routesResults = route;
+                  this.activeRoute = this.routesResults[0] as Directions;
+                  this.showRouteGeometry(true);
+                  this.changeDetectorRefs.detectChanges();
+                })
+              )
+            );
+          }
+
+        } else if (this.stopsStore.all().length === 1) {
+          this.handleLocationProposals(this.stopsStore.all()[0].geometry.coordinates, 1);
+          this.addStopOverlay(this.stopsStore.all()[0].geometry.coordinates, 1);
+          this.writeStopsToFormService(this.stopsStore.all()[0].geometry.coordinates);
+        }
+      }, 1);
+      this.routeFromFeatureDetail = false;
+    }
+  }
+  private _routeFromFeatureDetail: boolean;
 
   /**
    * The route and vertex store
@@ -154,33 +212,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         )
         .subscribe((term: string) => this.handleTermChanged(term))
     );
-
-    this.stopsStore$.subscribe(stopsStore => {
-      const stops = stopsStore.all();
-      console.log(stops);
-      if (stops.length > 1) {
-        const coords = [];
-        for (const feature of stops) {
-          this.chooseProposal(feature, stops.findIndex(f => f.geometry.coordinates === feature.geometry.coordinates))
-          coords.push(feature.geometry.coordinates);
-        }
-        const routeResponse = this.directionsService.route(coords, {});
-        if (routeResponse) {
-          routeResponse.map(res =>
-            this.routesQueries$$.push(
-              res.subscribe(route => {
-                this.routesResults = route;
-                this.activeRoute = this.routesResults[0] as Directions;
-                this.showRouteGeometry(true);
-                this.changeDetectorRefs.detectChanges();
-              })
-            )
-          );
-        }
-      } else if (stops.length === 1) {
-        this.chooseProposal(stops[0], 1);
-      }
-    })
   }
 
   ngOnDestroy(): void {
@@ -507,14 +538,18 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     return this.stopsForm.get('stops') as FormArray;
   }
 
-  public writeStopsToFormService() {
-    const stops = [];
-    this.stops.value.forEach(stop => {
-      if (stop.stopCoordinates instanceof Array) {
-        stops.push(stop);
-      }
-    });
-    this.directionsFormService.setStops(stops);
+  public writeStopsToFormService(stopsArray?) {
+    if (stopsArray) {
+      this.directionsFormService.setStops(stopsArray);
+    } else {
+      const stops = [];
+      this.stops.value.forEach(stop => {
+        if (stop.stopCoordinates instanceof Array) {
+          stops.push(stop);
+        }
+      });
+      this.directionsFormService.setStops(stops);
+    }
   }
 
   addStop(): void {
@@ -529,6 +564,16 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       directionsText: directionsPos,
       stopCoordinates: ['', [Validators.required]]
     });
+  }
+
+  createStopFromFeature(feature: Feature, directionsText?: string): Stop {
+    const stop: Stop = ({
+      stopPoint: feature.properties.nom,
+      stopProposals: [],
+      directionsText: directionsText,
+      stopCoordinates: feature.geometry.coordinates
+    });
+    return stop;
   }
 
   removeStop(index: number): void {
@@ -1188,9 +1233,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       }
 
       if (geomCoord !== undefined) {
-        if (this.stops) {
-          this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
-        }
+        this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
         this.addStopOverlay(geomCoord, i);
         /*  const proposalExtent = this.directionsStopsOverlayDataSource.ol
           .getFeatureById(this.getStopOverlayID(i))
