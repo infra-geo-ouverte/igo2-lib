@@ -73,25 +73,23 @@ export class FeatureWorkspaceService {
         skipWhile(val => val.length === 0),
         take(1)
       ).subscribe(entities => {
-        if (workspace) {
-          const columnsFromFeatures = (entities[0] as Feature).ol.getKeys()
-          .filter(
-            col => !col.startsWith('_') &&
-            col !== 'geometry' &&
-            col !== (entities[0] as Feature).ol.getGeometryName() &&
-            !col.match(/boundedby/gi))
-          .map(key => {
-            return {
-              name: `properties.${key}`,
-              title: key
-            };
-          });
-          workspace.meta.tableTemplate = {
-            selection: true,
-            sort: true,
-            columns: columnsFromFeatures
+        const columnsFromFeatures = (entities[0] as Feature).ol.getKeys()
+        .filter(
+          col => !col.startsWith('_') &&
+          col !== 'geometry' &&
+          col !== (entities[0] as Feature).ol.getGeometryName() &&
+          !col.match(/boundedby/gi))
+        .map(key => {
+          return {
+            name: `properties.${key}`,
+            title: key
           };
-        }
+        });
+        workspace.meta.tableTemplate = {
+          selection: true,
+          sort: true,
+          columns: columnsFromFeatures
+        };
       });
       return;
     }
