@@ -10,7 +10,8 @@ import {
   TypeCapabilities,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
-  WMTSDataSourceOptions
+  WMTSDataSourceOptions,
+  ArcGISRestDataSourceOptions
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -23,7 +24,7 @@ import {
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query';
-import { generateIdFromSourceOptions } from '../../utils';
+import { generateIdFromSourceOptions, generateId } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -148,6 +149,33 @@ export class CatalogService {
     );
   }
 
+  loadCatalogArcGISRestItems(catalog: Catalog): Observable<CatalogItem[]> {
+    console.log('iciiiiiiii');
+    let request;
+    let items: CatalogItem[];
+    const options = {
+      layer: catalog.id,
+      url: catalog.url
+    };
+    this.http.get(catalog.url + '?f=json').subscribe(res => {
+      request = res;
+    })
+    return this.capabilitiesService.getArcgisOptions(options as ArcGISRestDataSourceOptions).pipe(
+      map((arcgisOptions) => {
+        console.log(arcgisOptions);
+        return ObjectUtils.removeUndefined({
+          id: generateId,
+          type: CatalogItemType.Layer,
+          title: request.name,
+          address: catalog.id,
+          options: {
+            arcgisOptions
+          }
+        });
+      })
+    )
+  }
+
   loadCatalogCompositeLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     const compositeCatalog = (catalog as CompositeCatalog).composite;
 
@@ -160,9 +188,10 @@ export class CatalogService {
 
     // get CatalogItems for each original Catalog-----------------------------------------------------
     const request1$ = [];
-    catalogsFromInstance.map((component: Catalog) =>
+    catalogsFromInstance.map((component: Catalog) => {
+      console.log(component);
       request1$.push(component.collectCatalogItems())
-    );
+    });
 
     // integrate imposed group -----------------------------------------------------
     let request2$ = [];
@@ -181,6 +210,7 @@ export class CatalogService {
       Object.keys(compositeCatalog).find(k => compositeCatalog[k].groupImpose)
     ) {
       const pushImposeGroup = (item, index) => {
+        console.log(item, index);
         const c = catalogsFromInstance[index];
         const outGroupImpose = Object.assign({}, c.groupImpose);
         outGroupImpose.address = c.id;
@@ -196,6 +226,7 @@ export class CatalogService {
         return outGroupImpose;
       };
 
+      console.log(request1$);
       request2$ = request1$.map((obs, idx) =>
         obs.pipe(
           map(items =>
