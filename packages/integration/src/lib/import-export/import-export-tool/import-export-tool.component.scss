@@ -1,14 +1,12 @@
-.mat-radio-group {
-    display: flex;
-    flex-direction: row;
-    padding-top: 10px;
-    justify-content: center;
-    align-items: center;
-}
-
-.mat-radio-button {
-    display: inline-flex;
-    position: relative;
-    margin-left: 16px;
-    margin-top: 10px;
-}
+.import-export-type-toggle {
+    padding: 10px;
+    text-align: center;
+  
+    mat-button-toggle-group {
+      width: 100%;
+  
+      mat-button-toggle {
+        width: 50%;
+      }
+    }
+  }

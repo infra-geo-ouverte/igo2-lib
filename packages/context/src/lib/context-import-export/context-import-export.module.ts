@@ -4,11 +4,12 @@ import {
   MatButtonModule,
   MatFormFieldModule,
   MatInputModule,
+  MatDividerModule,
   MatTabsModule,
   MatSelectModule,
   MatOptionModule,
   MatTooltipModule,
-  MatCheckboxModule
+  MatCheckboxModule,
 } from '@angular/material';
 import { IgoLanguageModule } from '@igo2/core';
 import { ContextImportExportComponent } from './context-import-export/context-import-export.component';
@@ -21,6 +22,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     CommonModule,
     MatButtonModule,
+    MatDividerModule,
     MatTabsModule,
     MatSelectModule,
     MatOptionModule,

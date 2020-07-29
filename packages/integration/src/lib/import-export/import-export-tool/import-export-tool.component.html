@@ -1,7 +1,15 @@
-<mat-radio-group [value]="importExportType$">
-  <mat-radio-button value="layer" (change)="importExportTypeChange($event)">{{'igo.integration.importExportTool.importExportData' | translate}}</mat-radio-button>
-  <mat-radio-button value="context" (change)="importExportTypeChange($event)">{{'igo.integration.importExportTool.importExportContext' | translate}}</mat-radio-button>
-</mat-radio-group>
+<div class="import-export-type-toggle mat-typography">
+  <mat-button-toggle-group
+    [value]="importExportType$"
+    (change)="importExportTypeChange($event)">
+    <mat-button-toggle [value]="'layer'">
+      {{'igo.integration.importExportTool.importExportData' | translate}}
+    </mat-button-toggle>
+    <mat-button-toggle [value]="'context'">
+      {{'igo.integration.importExportTool.importExportContext' | translate}}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
 <igo-import-export *ngIf="importExportType$ ==='layer'" [map]="map"
   [selectedIndex]="importExportState.selectedTab$ | async"
   (selectedTabIndex)="tabChanged($event)"
