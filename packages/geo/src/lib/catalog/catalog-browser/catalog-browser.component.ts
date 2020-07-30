@@ -155,6 +155,7 @@ export class CatalogBrowserComponent implements OnInit, OnDestroy {
    * @param layers Catalog layers
    */
   private addLayersToMap(layers: CatalogItemLayer[]) {
+    console.log(layers);
     const layers$ = layers.map((layer: CatalogItemLayer) => {
       if (layer.options.sourceOptions.optionsFromApi === undefined) {
         layer.options.sourceOptions.optionsFromApi = true;

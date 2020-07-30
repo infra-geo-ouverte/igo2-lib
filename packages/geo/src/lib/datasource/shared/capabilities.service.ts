@@ -330,7 +330,6 @@ export class CapabilitiesService {
     const options = ObjectUtils.removeUndefined({
       params
     });
-    console.log(baseOptions, options);
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
