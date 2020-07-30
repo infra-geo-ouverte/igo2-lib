@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 import { MessageService, LanguageService, ConfigService } from '@igo2/core';
-import {IgoMap, Layer, VectorLayer } from '@igo2/geo';
+import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
 
 import { handleFileExportError } from '../shared/context-export.utils';
 import {
