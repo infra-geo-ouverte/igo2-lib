@@ -17,6 +17,13 @@
       "actionbar": {
         "scrollUp": "Défiler vers le haut",
         "scrollDown": "Défiler vers le bas"
+      },
+      "interactiveTour": {
+        "tooltipTourToolButton": "Aide interactive sur l'outil",
+        "buttonTitle": "Découvrir",
+        "exitButton": "Quitter",
+        "backButton": "Précédent",
+        "nextButton": "Suivant"
       }
     }
   }
