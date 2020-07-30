@@ -150,26 +150,25 @@ export class CatalogService {
   }
 
   loadCatalogArcGISRestItems(catalog: Catalog): Observable<CatalogItem[]> {
-    console.log('iciiiiiiii');
     let request;
-    let items: CatalogItem[];
-    const options = {
-      layer: catalog.id,
-      url: catalog.url
-    };
     this.http.get(catalog.url + '?f=json').subscribe(res => {
       request = res;
-    })
+    });
+    const options = {
+      layer: catalog.id,
+      url: catalog.url,
+      type: 'arcgisrest'
+    };
     return this.capabilitiesService.getArcgisOptions(options as ArcGISRestDataSourceOptions).pipe(
       map((arcgisOptions) => {
         console.log(arcgisOptions);
         return ObjectUtils.removeUndefined({
-          id: generateId,
+          id: generateId(arcgisOptions),
           type: CatalogItemType.Layer,
           title: request.name,
           address: catalog.id,
           options: {
-            arcgisOptions
+            sourceOptions: arcgisOptions
           }
         });
       })
@@ -189,7 +188,6 @@ export class CatalogService {
     // get CatalogItems for each original Catalog-----------------------------------------------------
     const request1$ = [];
     catalogsFromInstance.map((component: Catalog) => {
-      console.log(component);
       request1$.push(component.collectCatalogItems())
     });
 
@@ -197,6 +195,10 @@ export class CatalogService {
     let request2$ = [];
 
     function flatDeepLayer(arr) {
+      console.log(arr);
+      if (!arr.length) {
+        arr = [arr];
+      }
       return arr.reduce(
         (acc, val) =>
           acc.concat(
@@ -210,7 +212,6 @@ export class CatalogService {
       Object.keys(compositeCatalog).find(k => compositeCatalog[k].groupImpose)
     ) {
       const pushImposeGroup = (item, index) => {
-        console.log(item, index);
         const c = catalogsFromInstance[index];
         const outGroupImpose = Object.assign({}, c.groupImpose);
         outGroupImpose.address = c.id;
@@ -226,7 +227,6 @@ export class CatalogService {
         return outGroupImpose;
       };
 
-      console.log(request1$);
       request2$ = request1$.map((obs, idx) =>
         obs.pipe(
           map(items =>

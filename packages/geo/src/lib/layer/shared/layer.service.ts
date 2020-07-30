@@ -96,6 +96,7 @@ export class LayerService {
   }
 
   createAsyncLayer(layerOptions: AnyLayerOptions): Observable<Layer> {
+    console.log(layerOptions);
     if (layerOptions.source) {
       return new Observable(d => d.next(this.createLayer(layerOptions)));
     }
@@ -121,6 +122,7 @@ export class LayerService {
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
+    console.log(layerOptions);
     let style;
     let olLayer;
     if (layerOptions.style !== undefined) {
