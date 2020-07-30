@@ -58,7 +58,7 @@
         },
         "success": {
           "text": "Données exportées avec succès.",
-          "title":"Exportation réussie"
+          "title": "Exportation réussie"
         },
         "format": {
           "GeoJSON": "GeoJSON",
@@ -176,12 +176,11 @@
           "noLegendText": "Aucune symbologie disponible pour cette couche",
           "noLegendScale": "Aucune symbologie disponible pour cette échelle",
           "selectStyle": "Sélectionner le style de la légende",
-          "showAll" : "Montrer toutes les couches (non visible et hors échelle)",
+          "showAll": "Montrer toutes les couches (non visible et hors échelle)",
           "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
-
         }
       },
       "download": {
@@ -331,7 +330,8 @@
             "place": "Lieu",
             "sumi": "Borne SUMI",
             "km": "Repère kilométrique",
-            "entreprise": "Entreprise"
+            "entreprise": "Entreprise",
+            "cadastre": "Cadastre"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
