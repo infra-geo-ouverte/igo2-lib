@@ -1,19 +1,13 @@
-<div class="import-export-type-toggle mat-typography">
-  <mat-button-toggle-group
-    [value]="importExportType$"
-    (change)="importExportTypeChange($event)">
-    <mat-button-toggle [value]="'layer'">
-      {{'igo.integration.importExportTool.importExportData' | translate}}
-    </mat-button-toggle>
-    <mat-button-toggle [value]="'context'">
-      {{'igo.integration.importExportTool.importExportContext' | translate}}
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-</div>
-<igo-import-export *ngIf="importExportType$ ==='layer'" [map]="map"
-  [selectedIndex]="importExportState.selectedTab$ | async"
-  (selectedTabIndex)="tabChanged($event)"
-  [exportOptions$]="importExportState.exportOptions$"
-  (exportOptionsChange)="exportOptionsChange($event)">
-</igo-import-export>
-<igo-context-import-export *ngIf="importExportType$ ==='context'" [map]="map"></igo-context-import-export> 
+<mat-tab-group>
+  <mat-tab [label]="'igo.integration.importExportTool.importExportData' | translate">
+    <igo-import-export  [map]="map"
+      [selectedIndex]="importExportState.selectedTab$ | async"
+      (selectedTabIndex)="tabChanged($event)"
+      [exportOptions$]="importExportState.exportOptions$"
+      (exportOptionsChange)="exportOptionsChange($event)">
+    </igo-import-export>
+  </mat-tab>
+  <mat-tab [label]="'igo.integration.importExportTool.importExportContext' | translate">
+    <igo-context-import-export [map]="map"></igo-context-import-export> 
+  </mat-tab>
+</mat-tab-group>

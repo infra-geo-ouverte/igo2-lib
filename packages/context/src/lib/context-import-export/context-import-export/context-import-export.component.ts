@@ -31,6 +31,7 @@ export class ContextImportExportComponent implements OnInit {
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
+  public activeImportExport: string = 'import';
 
   @Input() map: IgoMap;
 
@@ -130,5 +131,9 @@ export class ContextImportExportComponent implements OnInit {
     if (e._selected === false) {
         this.form.controls.layers.setValue([]);
     }
+  }
+
+  onImportExportChange(event) {
+    this.activeImportExport = event.value;
   }
 }
