@@ -22,12 +22,6 @@ export class ContextImportService {
     'application/json'
   ];
 
-  static allowedZipMimeTypes = [
-    'application/zip',
-    'application/x-zip-compressed',
-    'application/x-zip'
-  ];
-
   static allowedExtensions = 'json';
 
   private ogreUrl: string;
@@ -57,7 +51,6 @@ export class ContextImportService {
     const mimeType = file.type;
     const allowedMimeTypes = [
       ...ContextImportService.allowedMimeTypes,
-      ...ContextImportService.allowedZipMimeTypes
     ];
     const allowedExtensions = ContextImportService.allowedExtensions;
 
