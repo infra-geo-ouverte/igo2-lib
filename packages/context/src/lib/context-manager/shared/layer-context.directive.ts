@@ -98,11 +98,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             return layer;
           });
 
-        layers.forEach(layer => {
-          if (layer.title === context.visibleBaseLayer) {
-            layer.visible = true;
-          }
-        });
+        this.storeBaseLayers(layers);
+
         this.contextLayers.concat(layers);
         this.map.addLayers(layers);
 
@@ -120,15 +117,6 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             } else {
               addImportedFeaturesStyledToMap(featureCollection, this.map, title, this.styleListService, this.styleService);
             }
-          });
-        }
-
-        if (context.catalogLayers && context.catalogLayers.length > 0) {
-          context.catalogLayers.forEach(catalogLayerOptions => {
-            const oLayer$ = this.layerService.createAsyncLayer(catalogLayerOptions);
-            oLayer$.subscribe((oLayer: Layer) => {
-              this.map.addLayer(oLayer);
-            });
           });
         }
       });
@@ -187,5 +175,15 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
 
     return visible;
+  }
+
+  storeBaseLayers(layers: Layer[]) {
+    const baseLayers = [];
+    layers.forEach(layer => {
+      if (layer.baseLayer) {
+        baseLayers.push(layer);
+      }
+    });
+    this.contextService.baseLayers = baseLayers;
   }
 }

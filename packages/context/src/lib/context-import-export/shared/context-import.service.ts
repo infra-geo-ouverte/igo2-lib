@@ -24,11 +24,9 @@ export class ContextImportService {
 
   static allowedExtensions = 'json';
 
-  private ogreUrl: string;
   private clientSideFileSizeMax: number;
 
   constructor(private http: HttpClient, private config: ConfigService) {
-    this.ogreUrl = this.config.getConfig('importExport.url');
     const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
     this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) *  Math.pow(1024, 2);
   }

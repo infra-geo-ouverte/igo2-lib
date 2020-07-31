@@ -43,6 +43,7 @@ export class ContextService {
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   public importedContext: Array<string> = [];
+  public baseLayers: Array<Layer> = [];
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
@@ -313,37 +314,53 @@ export class ContextService {
     }
     return this.http.get<DetailedContext>(urlBase).pipe(
           map((resBase: DetailedContext) => {
-            if (res.layers[0].baseLayer || res.layers[res.layers.length - 1].baseLayer || !res.base) {
-              this.tools = res.tools;
-              this.toolbar = res.toolbar;
-              return res;
-            } else {
-              const resMerge = res;
-              resMerge.map = ObjectUtils.mergeDeep(resBase.map, res.map);
-              resMerge.layers = (resBase.layers || [])
-                .concat(res.layers || [])
-                .reverse()
-                .filter(
-                  (l, index, self) =>
-                    !l.id || self.findIndex(l2 => l2.id === l.id) === index
-                )
-                .reverse();
-              resMerge.toolbar = res.toolbar || resBase.toolbar;
-              resMerge.tools = (res.tools || [])
-                .concat(resBase.tools || [])
-                .filter(
-                  (t, index, self) =>
-                    self.findIndex(t2 => t2.name === t.name) === index
-                );
-              resMerge.layers.forEach(layer => {
-                if (layer.baseLayer) {
-                  layer.visible = false;
-                }
-              });
+            const resMerge = res;
+            resMerge.map = ObjectUtils.mergeDeep(resBase.map, res.map);
+            if (!res.base) {
               this.tools = resMerge.tools;
               this.toolbar = resMerge.toolbar;
               return resMerge;
             }
+            if (res.layers[0].baseLayer || res.layers[res.layers.length - 1].baseLayer) {
+              resBase.layers.forEach(layer => {
+                layer.visible = false;
+              });
+            }
+
+            resMerge.layers.forEach(layer => {
+              this.baseLayers.forEach (currentBaseLayer => {
+                if (layer.baseLayer && layer.id === currentBaseLayer.id) {
+                  let i;
+                  for ( i = 0; i < resBase.layers.length; i++) {
+                    if (resBase.layers[i].title === currentBaseLayer.title) {
+                      delete resBase.layers[i];
+                    }
+                  }
+                }
+              });
+            });
+            resMerge.layers = (resBase.layers || [])
+              .concat(res.layers || [])
+              .reverse()
+              .filter(
+                (l, index, self) =>
+                  !l.id || self.findIndex(l2 => l2.id === l.id) === index
+              )
+              .reverse();
+            resMerge.toolbar = res.toolbar || resBase.toolbar;
+            resMerge.tools = (res.tools || [])
+              .concat(resBase.tools || [])
+              .filter(
+                (t, index, self) =>
+                  self.findIndex(t2 => t2.name === t.name) === index
+              );
+            resMerge.layers.forEach(layer => {
+              if (layer.baseLayer) {
+              }
+            });
+            this.tools = resMerge.tools;
+            this.toolbar = resMerge.toolbar;
+            return resMerge;
           }),
           catchError(err => {
             return this.handleError(err, uri);
@@ -529,7 +546,10 @@ export class ContextService {
     const currentLayers = igoMap.layers$.getValue();
     currentLayers.forEach(layer => {
       if (layer.baseLayer && layer.visible) {
-        currentBaseLayer = layer.title;
+        currentBaseLayer = layer;
+        currentBaseLayer.options.visible = true;
+        currentBaseLayer.options.id = currentBaseLayer.id;
+        delete currentBaseLayer.options.source;
       }
     });
 
@@ -537,7 +557,6 @@ export class ContextService {
       uri: name,
       title: name,
       base: currentContext.base ? currentContext.base : undefined,
-      visibleBaseLayer: currentBaseLayer,
       map: {
         view: {
           center: center.getCoordinates(),
@@ -548,9 +567,9 @@ export class ContextService {
       layers: [],
       toolbar: [],
       tools: [],
-      extraFeatures: [],
-      catalogLayers: []
+      extraFeatures: []
     };
+    context.layers.push(currentBaseLayer.options);
 
     layers.forEach(layer => {
       let opts;
@@ -586,7 +605,7 @@ export class ContextService {
         if (layer.ol.type !== 'VECTOR') {
           const catalogLayer = layer.options;
           delete catalogLayer.source;
-          context.catalogLayers.push(catalogLayer);
+          context.layers.push(catalogLayer);
         } else {
           let features;
           const writer = new GeoJSON();
@@ -607,7 +626,6 @@ export class ContextService {
         }
       }
     });
-
     context.toolbar = this.toolbar;
     context.tools = this.tools;
 
