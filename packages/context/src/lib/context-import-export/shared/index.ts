@@ -5,4 +5,3 @@ export * from './context-import.service';
 export * from './context-export.interface';
 export * from './context-import.utils';
 export * from './context-export.utils';
-export * from './context-export-ionic.service';

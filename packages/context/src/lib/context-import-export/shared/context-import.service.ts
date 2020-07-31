@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { ConfigService } from '@igo2/core';
-
 import { Observable, Observer } from 'rxjs';
+import { ConfigService } from '@igo2/core';
 
 import {
   ImportInvalidFileError,
   ImportUnreadableFileError,
-  ImportSizeError,
-  ImportSRSError
+  ImportSizeError
 } from './context-import.errors';
 import { getFileExtension } from './context-import.utils';
 import { DetailedContext } from '../../context-manager/shared/context.interface';
@@ -18,22 +14,21 @@ import { DetailedContext } from '../../context-manager/shared/context.interface'
   providedIn: 'root'
 })
 export class ContextImportService {
-  static allowedMimeTypes = [
-    'application/json'
-  ];
+  static allowedMimeTypes = ['application/json'];
 
   static allowedExtensions = 'json';
 
   private clientSideFileSizeMax: number;
 
-  constructor(private http: HttpClient, private config: ConfigService) {
-    const configFileSizeMb = this.config.getConfig('importExport.clientSideFileSizeMaxMb');
-    this.clientSideFileSizeMax = (configFileSizeMb ? configFileSizeMb : 30) *  Math.pow(1024, 2);
+  constructor(private config: ConfigService) {
+    const configFileSizeMb = this.config.getConfig(
+      'importExport.clientSideFileSizeMaxMb'
+    );
+    this.clientSideFileSizeMax =
+      (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
   }
 
-  import(
-    file: File
-  ): Observable<DetailedContext> {
+  import(file: File): Observable<DetailedContext> {
     return this.importAsync(file);
   }
 
@@ -47,9 +42,7 @@ export class ContextImportService {
   ) => void {
     const extension = getFileExtension(file);
     const mimeType = file.type;
-    const allowedMimeTypes = [
-      ...ContextImportService.allowedMimeTypes,
-    ];
+    const allowedMimeTypes = [...ContextImportService.allowedMimeTypes];
     const allowedExtensions = ContextImportService.allowedExtensions;
 
     if (
@@ -84,37 +77,29 @@ export class ContextImportService {
     return new Observable(doImport);
   }
 
-  private importFile(
-    file: File,
-    observer: Observer<DetailedContext>
-  ) {
+  private importFile(file: File, observer: Observer<DetailedContext>) {
     const reader = new FileReader();
 
     reader.onload = (event: any) => {
       try {
-        const context = this.parseContextFromFile(
-          file,
-          event.target.result,
-        );
+        const context = this.parseContextFromFile(file, event.target.result);
         observer.next(context);
       } catch (e) {
         observer.error(new ImportUnreadableFileError());
       }
 
       observer.complete();
+      console.log('fdsfds');
     };
 
-    reader.onerror = evt => {
+    reader.onerror = (evt) => {
       observer.error(new ImportUnreadableFileError());
     };
 
     reader.readAsText(file, 'UTF-8');
   }
 
-  private parseContextFromFile(
-    file: File,
-    data: string,
-  ): DetailedContext {
+  private parseContextFromFile(file: File, data: string): DetailedContext {
     const context: DetailedContext = JSON.parse(data);
     return context;
   }

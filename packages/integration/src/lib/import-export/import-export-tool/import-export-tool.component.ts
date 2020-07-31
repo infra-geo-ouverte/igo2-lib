@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { IgoMap, ExportOptions } from '@igo2/geo';

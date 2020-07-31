@@ -11,9 +11,6 @@ import { Observer, Observable } from 'rxjs';
 })
 export class ContextExportService {
 
-  constructor() {
-  }
-
   export(res: DetailedContext): Observable<void> {
     return this.exportAsync(res);
   }
