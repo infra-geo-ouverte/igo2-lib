@@ -97,7 +97,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .subscribe((exportOptions) => {
         this.form.patchValue(exportOptions, { emitEvent: true });
         if (exportOptions.layer) {
-          this.computeFormats(this.map.getLayerById(exportOptions.layer));
+          for (const layer of exportOptions.layer) {
+            this.computeFormats(this.map.getLayerById(layer));
+          }
       }
       });
 
@@ -129,7 +131,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.form.patchValue({ format: formats[Object.keys(formats)[0]] });
         }
       });
-    console.log(this.formats$);
 
     this.exportableLayers$$ = this.exportableLayers$
       .pipe(skipWhile(layers => !layers))
@@ -183,41 +184,44 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
-    const layer = this.map.getLayerById(data.layer);
-    let filename = layer.title;
-    if (data.name !== undefined) {
-      filename = data.name;
-    }
-    const dSOptions: DataSourceOptions = layer.dataSource.options;
-    if (data.format === ExportFormat.URL && dSOptions.download && dSOptions.download.url) {
-      setTimeout(() => { // better look an feel
-        window.open(dSOptions.download.url, '_blank');
-        this.loading$.next(false);
-      }, 500);
-      return;
-    }
-
-    let olFeatures;
-    if (data.featureInMapExtent) {
-      olFeatures = layer.dataSource.ol.getFeaturesInExtent(layer.map.viewController.getExtent());
-    } else {
-      olFeatures = layer.dataSource.ol.getFeatures();
-    }
-    if (layer.dataSource instanceof ClusterDataSource) {
-      olFeatures = olFeatures.flatMap((cluster: any) =>
-        cluster.get('features')
-      );
-    }
-    this.exportService
-      .export(olFeatures, data.format, filename, this.map.projection)
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
-          this.onFileExportSuccess();
+    data.layer.forEach((layer) => {
+      const lay = this.map.getLayerById(layer);
+      let filename = lay.title;
+      if (data.name !== undefined) {
+        filename = data.name;
+      }
+      const dSOptions: DataSourceOptions = lay.dataSource.options;
+      if (data.format === ExportFormat.URL && dSOptions.download && dSOptions.download.url) {
+        setTimeout(() => { // better look an feel
+          window.open(dSOptions.download.url, '_blank');
           this.loading$.next(false);
-        }
-      );
+        }, 500);
+        return;
+      }
+
+      let olFeatures;
+      if (data.featureInMapExtent) {
+        olFeatures = lay.dataSource.ol.getFeaturesInExtent(lay.map.viewController.getExtent());
+      } else {
+        olFeatures = lay.dataSource.ol.getFeatures();
+      }
+      if (lay.dataSource instanceof ClusterDataSource) {
+        olFeatures = olFeatures.flatMap((cluster: any) =>
+          cluster.get('features')
+        );
+      }
+
+      this.exportService
+        .export(olFeatures, data.format, filename, this.map.projection)
+          .subscribe(
+            () => {},
+            (error: Error) => this.onFileExportError(error),
+            () => {
+              this.onFileExportSuccess();
+              this.loading$.next(false);
+            }
+          );
+    });
   }
 
   private buildForm() {
