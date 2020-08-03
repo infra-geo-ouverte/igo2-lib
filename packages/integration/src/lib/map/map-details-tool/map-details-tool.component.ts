@@ -134,7 +134,7 @@ export class MapDetailsToolComponent implements OnInit {
   }
 
   activateExport(id: string) {
-    this.importExportState.setsExportOptions({layer: id} as ExportOptions);
+    this.importExportState.setsExportOptions({layer: [id]} as ExportOptions);
     this.importExportState.setSelectedTab(1);
     this.toolState.toolbox.activateTool('importExport');
   }

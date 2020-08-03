@@ -1,8 +1,8 @@
 import { ExportFormat } from './export.type';
 
 export interface ExportOptions {
-  format: ExportFormat;
+  format?: ExportFormat;
   layer: string[];
-  name: string;
-  featureInMapExtent: boolean;
+  name?: string;
+  featureInMapExtent?: boolean;
 }
