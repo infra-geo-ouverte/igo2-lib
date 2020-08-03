@@ -306,12 +306,7 @@ export class ContextService {
   }
 
   mergeImportedContext(res: DetailedContext, uri: string): Observable<DetailedContext> {
-    let urlBase;
-    if (!res.base) {
-      urlBase = this.getPath(`${this.options.defaultContextUri}.json`);
-    } else {
-      urlBase = this.getPath(`${res.base}.json`);
-    }
+    const urlBase = this.getPath(`${res.base}.json`);
     return this.http.get<DetailedContext>(urlBase).pipe(
           map((resBase: DetailedContext) => {
             const resMerge = res;
@@ -333,7 +328,8 @@ export class ContextService {
                   let i;
                   for ( i = 0; i < resBase.layers.length; i++) {
                     if (resBase.layers[i].title === currentBaseLayer.title) {
-                      delete resBase.layers[i];
+                      const next = i + 1;
+                      resBase.layers.splice(i, 1);
                     }
                   }
                 }
@@ -542,14 +538,19 @@ export class ContextService {
     );
     let imported: boolean = true;
     let currentBaseLayer;
+    let currentBaseLayerOptions;
 
     const currentLayers = igoMap.layers$.getValue();
     currentLayers.forEach(layer => {
       if (layer.baseLayer && layer.visible) {
         currentBaseLayer = layer;
-        currentBaseLayer.options.visible = true;
-        currentBaseLayer.options.id = currentBaseLayer.id;
-        delete currentBaseLayer.options.source;
+        currentBaseLayerOptions = {
+          baseLayer: true,
+          sourceOptions: currentBaseLayer.options.sourceOptions,
+          title: currentBaseLayer.options.title,
+          id: currentBaseLayer.id,
+          visible: true
+        };
       }
     });
 
@@ -569,7 +570,7 @@ export class ContextService {
       tools: [],
       extraFeatures: []
     };
-    context.layers.push(currentBaseLayer.options);
+    context.layers.push(currentBaseLayerOptions);
 
     layers.forEach(layer => {
       let opts;

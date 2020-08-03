@@ -89,7 +89,6 @@ export class ContextImportService {
       }
 
       observer.complete();
-      console.log('fdsfds');
     };
 
     reader.onerror = (evt) => {
