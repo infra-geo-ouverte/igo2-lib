@@ -166,12 +166,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(() => {
-        if (this.contextService.enhancedContexts$.value.ours.length > 0) {
-          this.contexts.ours = this.contextService.enhancedContexts$.value.ours;
           this.contexts$.next(this.filterContextsList(this.contexts));
-        } else {
-          this.contexts$.next(this.filterContextsList(this.contexts));
-        }
       });
 
     this.actionStore.load([

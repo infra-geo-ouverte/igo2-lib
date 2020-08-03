@@ -153,15 +153,8 @@ export function addContextToContextList(
   contextService: ContextService
 ) {
   context.title = contextTitle;
-  contextService.enhancedContexts$.value.ours = [];
-
-  Object.keys(contextService.contexts$.value.ours).forEach((key) =>
-    contextService.enhancedContexts$.value.ours.push(
-      contextService.contexts$.value.ours[key]
-    )
-  );
-  contextService.enhancedContexts$.value.ours.push(context);
-  contextService.enhancedContexts$.next(contextService.enhancedContexts$.value);
+  contextService.contexts$.value.ours.push(context);
+  contextService.contexts$.next(contextService.contexts$.value);
   const rawContext = JSON.stringify(context);
   contextService.importedContext.push(rawContext);
   contextService.loadContext(context.uri);

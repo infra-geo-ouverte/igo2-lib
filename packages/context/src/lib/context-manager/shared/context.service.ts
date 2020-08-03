@@ -39,7 +39,6 @@ import {
 export class ContextService {
   public context$ = new BehaviorSubject<DetailedContext>(undefined);
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
-  public enhancedContexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   public importedContext: Array<string> = [];
@@ -671,7 +670,7 @@ export class ContextService {
       const id = contextToLoad ? contextToLoad.id : uri;
       return this.getDetails(id);
     }
-    this.enhancedContexts$.value.ours.forEach(currentContext => {
+    this.contexts$.value.ours.forEach(currentContext => {
       if (currentContext.uri === uri && currentContext.imported === true) {
         imported = true;
         for (const importedContext of this.importedContext) {
