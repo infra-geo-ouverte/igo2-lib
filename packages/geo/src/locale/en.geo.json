@@ -67,7 +67,8 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (semicolon delimited)"
+          "CSVsemicolon": "CSV (semicolon delimited)",
+          "URL": "URL"
         }
       },
       "importExportForm": {
