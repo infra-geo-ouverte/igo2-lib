@@ -52,9 +52,9 @@
 <form class="igo-form" [formGroup]="form" *ngIf="(exportableLayers$ | async).length > 0 && activeImportExport === 'export'">
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
       <mat-select
-        formControlName="layer"
-        placeholder="{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}">
+        [formControl]="form.controls.layer" multiple>
         <mat-option *ngFor="let layer of (exportableLayers$ | async)" [value]="layer.id">
           {{layer.title}}
         </mat-option>
@@ -64,11 +64,16 @@
 
   <div class="igo-input-container">
     <mat-form-field>
+      <mat-label>{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}</mat-label>
       <mat-select
-        formControlName="format"
-        placeholder="{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}">
-        <mat-option *ngFor="let format of (formats$ | async) | keyvalue " [value]="format.key">
-          {{'igo.geo.export.format.' + format.value | translate}}
+        formControlName="format">
+        <ng-container *ngIf="(formats$ | async).length !== 0">
+          <mat-option *ngFor="let format of (formats$ | async) | keyvalue" [value]="format.key">
+            {{'igo.geo.export.format.' + format.value | translate}}
+          </mat-option>
+        </ng-container>
+        <mat-option *ngIf="(formats$ | async).length === 0" disabled="true">
+          {{'igo.geo.export.noFormat.title' | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -92,7 +97,7 @@
     <button
       mat-raised-button
       type="button"
-      [disabled]="!form.valid || (loading$ | async) || !map.getLayerById(form.get('layer').value)"
+      [disabled]="!form.valid || (loading$ | async)"
       (click)="handleExportFormSubmit(form.value)">
       {{form.value.format !== 'URL'  ? ('igo.geo.importExportForm.exportButton' | translate): ('igo.geo.importExportForm.exportButtonLink' | translate)}}
     </button>
