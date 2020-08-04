@@ -96,6 +96,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ) {
     this.loadConfig();
     this.buildForm();
+    console.log(this);
+    console.log(this.form);
+    console.log(this.form);
   }
 
   ngOnInit() {
@@ -350,6 +353,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         vectorAndUrl: false
       };
       layers.forEach((layer) => {
+        if (!layer) {
+          return;
+        }
         if (
           !(layer instanceof VectorLayer) &&
           layer.dataSource.options.download &&

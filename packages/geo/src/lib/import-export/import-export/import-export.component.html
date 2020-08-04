@@ -49,7 +49,7 @@
   <h4>{{'igo.geo.importExportForm.exportNoLayersExportable' | translate}}</h4>
 </section>
 
-<form class="igo-form" [formGroup]="form" *ngIf="(exportableLayers$ | async).length > 0">
+<form class="igo-form" [formGroup]="form" *ngIf="(exportableLayers$ | async).length > 0 && activeImportExport === 'export'">
   <div class="igo-input-container">
     <mat-form-field>
       <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
@@ -97,7 +97,7 @@
     <button
       mat-raised-button
       type="button"
-      [disabled]="!form.valid || (loading$ | async) || !map.getLayerById(form.get('layer').value)"
+      [disabled]="!form.valid || (loading$ | async)"
       (click)="handleExportFormSubmit(form.value)">
       {{form.value.format !== 'URL'  ? ('igo.geo.importExportForm.exportButton' | translate): ('igo.geo.importExportForm.exportButtonLink' | translate)}}
     </button>
