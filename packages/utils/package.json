@@ -14,7 +14,7 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "dependencies": {
-    "bowser": "^1.9.2"
+    "bowser": "^2.9.0"
   },
   "peerDependencies": {
     "@angular/common": "^7.2.6",
