@@ -1,5 +1,3 @@
-$slide-toggle-width: 60px;
-
 .import-export-toggle {
   padding: 10px;
   text-align: center;
@@ -13,19 +11,20 @@ $slide-toggle-width: 60px;
   }
 }
 
+.igo-input-container {
+  padding: 10px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
 h4 {
   padding: 0 5px;
 }
 
 .igo-form {
   padding: 15px 5px;
-
-}
-
-.igo-input-container {
-  mat-form-field {
-    width: 100%;
-  }
 }
 
 .igo-form-button-group {
@@ -36,17 +35,4 @@ h4 {
 igo-spinner {
   position: absolute;
   padding-left: 10px;
-}
-
-.export-options {
-  overflow-x: hidden;
-
-  mat-slide-toggle {
-    width: 100%;
-    margin: 10px;
-
-    ::ng-deep .mat-slide-toggle-content {
-      width: calc(100% - #{$slide-toggle-width});
-    }
-  }
-}
+} 

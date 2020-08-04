@@ -10,7 +10,8 @@ import {
   MatInputModule,
   MatSlideToggleModule,
   MatIconModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatButtonToggleModule
 } from '@angular/material';
 
 import { IgoLanguageModule } from '@igo2/core';
@@ -29,6 +30,7 @@ import { IgoStyleListModule } from './style-list/style-list.module';
     ReactiveFormsModule,
     CommonModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatTabsModule,
     MatSelectModule,
     MatOptionModule,
