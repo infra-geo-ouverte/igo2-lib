@@ -11,16 +11,19 @@ import {
   LayerService,
   LayerOptions,
   StyleListService,
-  StyleService
+  StyleService,
 } from '@igo2/geo';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
-import { addImportedFeaturesToMap, addImportedFeaturesStyledToMap } from '../../context-import-export/shared/context-import.utils';
+import {
+  addImportedFeaturesToMap,
+  addImportedFeaturesStyledToMap,
+} from '../../context-import-export/shared/context-import.utils';
 import GeoJSON from 'ol/format/GeoJSON';
 
 @Directive({
-  selector: '[igoLayerContext]'
+  selector: '[igoLayerContext]',
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
@@ -46,8 +49,8 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.context$$ = this.contextService.context$
-      .pipe(filter(context => context !== undefined))
-      .subscribe(context => this.handleContextChange(context));
+      .pipe(filter((context) => context !== undefined))
+      .subscribe((context) => this.handleContextChange(context));
 
     if (
       this.route &&
@@ -55,13 +58,12 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       this.route.options.visibleOffLayersKey &&
       this.route.options.contextKey
     ) {
-      const queryParams$$ = this.route.queryParams
-        .subscribe(params => {
-          if ( Object.keys(params).length > 0 ) {
-            this.queryParams = params;
-            queryParams$$.unsubscribe();
-          }
-        });
+      const queryParams$$ = this.route.queryParams.subscribe((params) => {
+        if (Object.keys(params).length > 0) {
+          this.queryParams = params;
+          queryParams$$.unsubscribe();
+        }
+      });
     }
   }
 
@@ -91,31 +93,35 @@ export class LayerContextDirective implements OnInit, OnDestroy {
       .subscribe((layers: Layer[]) => {
         layers = layers
           .filter((layer: Layer) => layer !== undefined)
-          .map(layer => {
+          .map((layer) => {
             layer.visible = this.computeLayerVisibilityFromUrl(layer);
             layer.zIndex = layer.zIndex;
 
             return layer;
           });
 
-        this.storeBaseLayers(layers);
-
         this.contextLayers.concat(layers);
         this.map.addLayers(layers);
 
         if (context.extraFeatures) {
-          context.extraFeatures.forEach(featureCollection => {
+          context.extraFeatures.forEach((featureCollection) => {
             const format = new GeoJSON();
             const title = featureCollection.name;
             featureCollection = JSON.stringify(featureCollection);
             featureCollection = format.readFeatures(featureCollection, {
               dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
+              featureProjection: 'EPSG:3857',
             });
             if (!this.configService.getConfig('importWithStyle')) {
               addImportedFeaturesToMap(featureCollection, this.map, title);
             } else {
-              addImportedFeaturesStyledToMap(featureCollection, this.map, title, this.styleListService, this.styleService);
+              addImportedFeaturesStyledToMap(
+                featureCollection,
+                this.map,
+                title,
+                this.styleListService,
+                this.styleService
+              );
             }
           });
         }
@@ -175,15 +181,5 @@ export class LayerContextDirective implements OnInit, OnDestroy {
     }
 
     return visible;
-  }
-
-  storeBaseLayers(layers: Layer[]) {
-    const baseLayers = [];
-    layers.forEach(layer => {
-      if (layer.baseLayer) {
-        baseLayers.push(layer);
-      }
-    });
-    this.contextService.baseLayers = baseLayers;
   }
 }

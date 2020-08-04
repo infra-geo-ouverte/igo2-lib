@@ -41,8 +41,7 @@ export class ContextService {
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
-  public importedContext: Array<string> = [];
-  public baseLayers: Array<Layer> = [];
+  public importedContext: Array<DetailedContext> = [];
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
@@ -82,13 +81,13 @@ export class ContextService {
 
     this.readParamsFromRoute();
 
-    this.authService.authenticate$.subscribe(authenticated => {
+    this.authService.authenticate$.subscribe((authenticated) => {
       if (authenticated && this.baseUrl) {
-        this.get().subscribe(contexts => {
+        this.get().subscribe((contexts) => {
           this.handleContextsChange(contexts);
         });
       } else {
-        const contexts$$ = this.contexts$.subscribe(contexts => {
+        const contexts$$ = this.contexts$.subscribe((contexts) => {
           if (contexts$$) {
             contexts$$.unsubscribe();
             this.handleContextsChange(contexts);
@@ -118,7 +117,7 @@ export class ContextService {
   getDetails(id: string): Observable<DetailedContext> {
     const url = `${this.baseUrl}/contexts/${id}/details`;
     return this.http.get<DetailedContext>(url).pipe(
-      catchError(res => {
+      catchError((res) => {
         return this.handleError(res, id);
       })
     );
@@ -127,7 +126,7 @@ export class ContextService {
   getDefault(): Observable<DetailedContext> {
     const url = this.baseUrl + '/contexts/default';
     return this.http.get<DetailedContext>(url).pipe(
-      tap(context => {
+      tap((context) => {
         this.defaultContextId$.next(context.id);
       })
     );
@@ -156,15 +155,21 @@ export class ContextService {
     return this.http.post(url, {});
   }
 
-  delete(id: string): Observable<void> {
+  delete(id: string, imported = false): Observable<void> {
+    const contexts: ContextsList = { ours: [] };
+    Object.keys(this.contexts$.value).forEach(
+      (key) =>
+        (contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id))
+    );
+
+    if (imported) {
+      this.importedContext = this.importedContext.filter((c) => c.id !== id);
+      return of(this.contexts$.next(contexts));
+    }
+
     const url = this.baseUrl + '/contexts/' + id;
     return this.http.delete<void>(url).pipe(
-      tap(res => {
-        const contexts: ContextsList = { ours: [] };
-        Object.keys(this.contexts$.value).forEach(
-          key =>
-            (contexts[key] = this.contexts$.value[key].filter(c => c.id !== id))
-        );
+      tap((res) => {
         this.contexts$.next(contexts);
       })
     );
@@ -173,7 +178,7 @@ export class ContextService {
   create(context: DetailedContext): Observable<Context> {
     const url = this.baseUrl + '/contexts';
     return this.http.post<Context>(url, JSON.stringify(context)).pipe(
-      map(contextCreated => {
+      map((contextCreated) => {
         if (this.authService.authenticated) {
           contextCreated.permission = TypePermission[TypePermission.write];
         } else {
@@ -189,7 +194,7 @@ export class ContextService {
   clone(id: string, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
     return this.http.post<Context>(url, JSON.stringify(properties)).pipe(
-      map(contextCloned => {
+      map((contextCloned) => {
         contextCloned.permission = TypePermission[TypePermission.write];
         this.contexts$.value.ours.push(contextCloned);
         this.contexts$.next(this.contexts$.value);
@@ -237,7 +242,7 @@ export class ContextService {
     return this.http
       .post<ContextPermission[]>(url, JSON.stringify(association))
       .pipe(
-        catchError(res => {
+        catchError((res) => {
           return [this.handleError(res, undefined, true)];
         })
       );
@@ -265,7 +270,7 @@ export class ContextService {
   getLocalContext(uri: string): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.http.get<DetailedContext>(url).pipe(
-      flatMap(res => {
+      flatMap((res) => {
         if (!res.base) {
           return of(res);
         }
@@ -279,7 +284,7 @@ export class ContextService {
               .reverse()
               .filter(
                 (l, index, self) =>
-                  !l.id || self.findIndex(l2 => l2.id === l.id) === index
+                  !l.id || self.findIndex((l2) => l2.id === l.id) === index
               )
               .reverse();
             resMerge.toolbar = res.toolbar || resBase.toolbar;
@@ -287,80 +292,19 @@ export class ContextService {
               .concat(resBase.tools || [])
               .filter(
                 (t, index, self) =>
-                  self.findIndex(t2 => t2.name === t.name) === index
+                  self.findIndex((t2) => t2.name === t.name) === index
               );
-            this.tools = resMerge.tools;
-            this.toolbar = resMerge.toolbar;
             return resMerge;
           }),
-          catchError(err => {
+          catchError((err) => {
             return this.handleError(err, uri);
           })
         );
       }),
-      catchError(err2 => {
+      catchError((err2) => {
         return this.handleError(err2, uri);
       })
     );
-  }
-
-  mergeImportedContext(res: DetailedContext, uri: string): Observable<DetailedContext> {
-    const urlBase = this.getPath(`${res.base}.json`);
-    return this.http.get<DetailedContext>(urlBase).pipe(
-          map((resBase: DetailedContext) => {
-            const resMerge = res;
-            resMerge.map = ObjectUtils.mergeDeep(resBase.map, res.map);
-            if (!res.base) {
-              this.tools = resMerge.tools;
-              this.toolbar = resMerge.toolbar;
-              return resMerge;
-            }
-            if (res.layers[0].baseLayer || res.layers[res.layers.length - 1].baseLayer) {
-              resBase.layers.forEach(layer => {
-                layer.visible = false;
-              });
-            }
-
-            resMerge.layers.forEach(layer => {
-              this.baseLayers.forEach (currentBaseLayer => {
-                if (layer.baseLayer && layer.id === currentBaseLayer.id) {
-                  let i;
-                  for ( i = 0; i < resBase.layers.length; i++) {
-                    if (resBase.layers[i].title === currentBaseLayer.title) {
-                      const next = i + 1;
-                      resBase.layers.splice(i, 1);
-                    }
-                  }
-                }
-              });
-            });
-            resMerge.layers = (resBase.layers || [])
-              .concat(res.layers || [])
-              .reverse()
-              .filter(
-                (l, index, self) =>
-                  !l.id || self.findIndex(l2 => l2.id === l.id) === index
-              )
-              .reverse();
-            resMerge.toolbar = res.toolbar || resBase.toolbar;
-            resMerge.tools = (res.tools || [])
-              .concat(resBase.tools || [])
-              .filter(
-                (t, index, self) =>
-                  self.findIndex(t2 => t2.name === t.name) === index
-              );
-            resMerge.layers.forEach(layer => {
-              if (layer.baseLayer) {
-              }
-            });
-            this.tools = resMerge.tools;
-            this.toolbar = resMerge.toolbar;
-            return resMerge;
-          }),
-          catchError(err => {
-            return this.handleError(err, uri);
-          })
-        );
   }
 
   loadContexts(permissions?: string[], hidden?: boolean) {
@@ -370,7 +314,8 @@ export class ContextService {
     } else {
       request = this.getLocalContexts();
     }
-    request.subscribe(contexts => {
+    request.subscribe((contexts) => {
+      contexts.ours = this.importedContext.concat(contexts.ours);
       this.contexts$.next(contexts);
     });
   }
@@ -395,7 +340,7 @@ export class ContextService {
     };
 
     if (this.route && this.route.options.contextKey) {
-      this.route.queryParams.pipe(debounceTime(100)).subscribe(params => {
+      this.route.queryParams.pipe(debounceTime(100)).subscribe((params) => {
         const contextParam = params[this.route.options.contextKey as string];
         let direct = false;
         if (contextParam) {
@@ -411,18 +356,19 @@ export class ContextService {
 
   loadContext(uri: string) {
     const context = this.context$.value;
+
     if (context && context.uri === uri) {
       return;
     }
 
     const contexts$$ = this.getContextByUri(uri).subscribe(
       (_context: DetailedContext) => {
-        contexts$$.unsubscribe();
+        contexts$$ ? contexts$$.unsubscribe() : undefined;
         this.addContextToList(_context);
         this.setContext(_context);
       },
-      err => {
-        contexts$$.unsubscribe();
+      (err) => {
+        contexts$$ ? contexts$$.unsubscribe() : undefined;
         if (uri !== this.options.defaultContextUri) {
           this.loadContext(this.options.defaultContextUri);
         }
@@ -489,7 +435,7 @@ export class ContextService {
       layers = igoMap.layers$
         .getValue()
         .filter(
-          lay =>
+          (lay) =>
             lay.baseLayer === true ||
             lay.options.id === 'searchPointerSummaryId'
         )
@@ -520,14 +466,18 @@ export class ContextService {
       }
     }
 
-    context.tools = this.tools.map(tool => {
+    context.tools = this.tools.map((tool) => {
       return { id: String(tool.id), global: tool.global };
     });
 
     return context;
   }
 
-  getContextFromLayers(igoMap: IgoMap, layers: Layer[], name: string): DetailedContext {
+  getContextFromLayers(
+    igoMap: IgoMap,
+    layers: Layer[],
+    name: string
+  ): DetailedContext {
     const currentContext = this.context$.getValue();
     const view = igoMap.ol.getView();
     const proj = view.getProjection().getCode();
@@ -535,28 +485,10 @@ export class ContextService {
       proj,
       'EPSG:4326'
     );
-    let imported: boolean = true;
-    let currentBaseLayer;
-    let currentBaseLayerOptions;
-
-    const currentLayers = igoMap.layers$.getValue();
-    currentLayers.forEach(layer => {
-      if (layer.baseLayer && layer.visible) {
-        currentBaseLayer = layer;
-        currentBaseLayerOptions = {
-          baseLayer: true,
-          sourceOptions: currentBaseLayer.options.sourceOptions,
-          title: currentBaseLayer.options.title,
-          id: currentBaseLayer.id,
-          visible: true
-        };
-      }
-    });
 
     const context = {
       uri: name,
       title: name,
-      base: currentContext.base ? currentContext.base : undefined,
       map: {
         view: {
           center: center.getCoordinates(),
@@ -569,13 +501,27 @@ export class ContextService {
       tools: [],
       extraFeatures: []
     };
-    context.layers.push(currentBaseLayerOptions);
 
-    layers.forEach(layer => {
+    const currentLayers = igoMap.layers$.getValue();
+    currentLayers.forEach((layer) => {
+      if (layer.baseLayer) {
+        const currentBaseLayerOptions = {
+          baseLayer: true,
+          sourceOptions: layer.options.sourceOptions,
+          title: layer.options.title,
+          id: layer.id,
+          visible: layer.visible
+        };
+        context.layers.push(currentBaseLayerOptions);
+      }
+    });
+
+    layers.forEach((layer) => {
+      let imported = true;
       let opts;
       let layerStyle;
-      currentContext.layers.forEach(contextLayer => {
-        if (layer.title === contextLayer.title && !contextLayer.baseLayer) {
+      currentContext.layers.forEach((contextLayer) => {
+        if (layer.id === contextLayer.id && !contextLayer.baseLayer) {
           layerStyle = contextLayer[`style`];
           if (contextLayer[`styleByAttribute`]) {
             layerStyle = undefined;
@@ -585,7 +531,7 @@ export class ContextService {
             delete contextLayer.sourceOptions[`format`];
           }
           opts = {
-            id: layer.options.id ? String(layer.options.id) : undefined,
+            id: layer.id ? String(layer.id) : undefined,
             baseLayer: contextLayer.baseLayer,
             title: layer.options.title,
             zIndex: layer.zIndex,
@@ -601,6 +547,7 @@ export class ContextService {
           imported = false;
         }
       });
+
       if (imported) {
         if (layer.ol.type !== 'VECTOR') {
           const catalogLayer = layer.options;
@@ -610,15 +557,21 @@ export class ContextService {
           let features;
           const writer = new GeoJSON();
           if (layer.ol.getSource() instanceof Cluster) {
-            features = writer.writeFeatures(layer.ol.getSource().getSource().getFeatures(), {
-              dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
-            });
+            features = writer.writeFeatures(
+              layer.ol.getSource().getSource().getFeatures(),
+              {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              }
+            );
           } else {
-            features = writer.writeFeatures(layer.ol.getSource().getFeatures(), {
-              dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857'
-            });
+            features = writer.writeFeatures(
+              layer.ol.getSource().getFeatures(),
+              {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              }
+            );
           }
           features = JSON.parse(features);
           features.name = layer.options.title;
@@ -626,6 +579,7 @@ export class ContextService {
         }
       }
     });
+
     context.toolbar = this.toolbar;
     context.tools = this.tools;
 
@@ -634,6 +588,10 @@ export class ContextService {
 
   setTools(tools: Tool[]) {
     this.tools = tools;
+  }
+
+  setToolbar(toolbar: string[]) {
+    this.toolbar = toolbar;
   }
 
   private handleContextMessage(context: DetailedContext) {
@@ -653,12 +611,10 @@ export class ContextService {
   }
 
   private getContextByUri(uri: string): Observable<DetailedContext> {
-    let imported: boolean;
-    let context: DetailedContext;
     if (this.baseUrl) {
       let contextToLoad;
       for (const key of Object.keys(this.contexts$.value)) {
-        contextToLoad = this.contexts$.value[key].find(c => {
+        contextToLoad = this.contexts$.value[key].find((c) => {
           return c.uri === uri;
         });
         if (contextToLoad) {
@@ -666,25 +622,21 @@ export class ContextService {
         }
       }
 
+      if (contextToLoad && contextToLoad.imported) {
+        return of(contextToLoad);
+      }
+
       // TODO : use always id or uri
       const id = contextToLoad ? contextToLoad.id : uri;
       return this.getDetails(id);
     }
-    this.contexts$.value.ours.forEach(currentContext => {
-      if (currentContext.uri === uri && currentContext.imported === true) {
-        imported = true;
-        for (const importedContext of this.importedContext) {
-          if (currentContext.uri === JSON.parse(importedContext).uri) {
-            context = JSON.parse(importedContext);
-            break;
-          } else {
-            context = currentContext;
-          }
-        }
-      }
+
+    const importedContext = this.contexts$.value.ours.find((currentContext) => {
+      return currentContext.uri === uri && currentContext.imported === true;
     });
-    if (imported) {
-        return this.mergeImportedContext(context, uri);
+
+    if (importedContext) {
+      return of(importedContext);
     } else {
       return this.getLocalContext(uri);
     }
@@ -693,7 +645,7 @@ export class ContextService {
   getContextLayers(igoMap: IgoMap) {
     const layers: Layer[] = [];
     const mapLayers = igoMap.layers$.getValue();
-    mapLayers.forEach(layer => {
+    mapLayers.forEach((layer) => {
       if (!layer.baseLayer && layer.options.id !== 'searchPointerSummaryId') {
         layers.push(layer);
       }
@@ -706,7 +658,7 @@ export class ContextService {
       return;
     }
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const centerKey = this.route.options.centerKey;
       if (centerKey && params[centerKey as string]) {
         const centerParams = params[centerKey as string];
@@ -739,7 +691,7 @@ export class ContextService {
     uri: string,
     permissionError?: boolean
   ): Message[] {
-    const context = this.contexts$.value.ours.find(obj => obj.uri === uri);
+    const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
     const titleContext = context ? context.title : uri;
     error.error.title = this.languageService.translate.instant(
       'igo.context.contextManager.invalid.title'
@@ -788,7 +740,7 @@ export class ContextService {
     }
   }
 
-  private addContextToList(context: Context) {
+  public addContextToList(context: Context) {
     const contextFound = this.findContext(context);
     if (!contextFound) {
       const contextSimplifie = {
@@ -798,6 +750,7 @@ export class ContextService {
         scope: context.scope,
         permission: TypePermission[TypePermission.read]
       };
+
       if (this.contexts$.value && this.contexts$.value.public) {
         this.contexts$.value.public.push(contextSimplifie);
         this.contexts$.next(this.contexts$.value);
@@ -815,7 +768,7 @@ export class ContextService {
     for (const key of Object.keys(contexts)) {
       const value = contexts[key];
       found = value.find(
-        c =>
+        (c) =>
           (context.id && c.id === context.id) ||
           (context.uri && c.uri === context.uri)
       );

@@ -153,10 +153,10 @@ export function addContextToContextList(
   contextService: ContextService
 ) {
   context.title = contextTitle;
+  context.imported = true;
   contextService.contexts$.value.ours.push(context);
   contextService.contexts$.next(contextService.contexts$.value);
-  const rawContext = JSON.stringify(context);
-  contextService.importedContext.push(rawContext);
+  contextService.importedContext.push(context);
   contextService.loadContext(context.uri);
 }
 
