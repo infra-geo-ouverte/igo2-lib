@@ -48,6 +48,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
+  public activeImportExport: string = 'import';
   public fileSizeMb: number;
 
   private previousLayerSpecs$: BehaviorSubject<
@@ -374,5 +375,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private onFileExportSuccess() {
     handleFileExportSuccess(this.messageService, this.languageService);
+  }
+
+  onImportExportChange(event) {
+    this.activeImportExport = event.value;
   }
 }

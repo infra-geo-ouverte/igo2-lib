@@ -18,7 +18,7 @@
        igoStopPropagation
        class="igo-actions-container">
 
-     <button *ngIf="collapsed && selected && context.permission === typePermission[typePermission.write]"
+     <button *ngIf="collapsed && selected && (context.permission === typePermission[typePermission.write] || context.imported)"
        mat-icon-button
        [matTooltip]="'igo.context.contextManager.save' | translate"
        matTooltipShowDelay="500"
@@ -29,7 +29,7 @@
 
     <div #actions class="igo-actions-expand-container">
 
-      <button *ngIf="canShare"
+      <button *ngIf="canShare && !context.imported"
         mat-icon-button
         [matTooltip]="'igo.context.contextManager.managePermissions' | translate"
         matTooltipShowDelay="500"
@@ -46,7 +46,7 @@
         <mat-icon svgIcon="widgets"></mat-icon>
       </button-->
 
-      <button
+      <button *ngIf="!context.imported"
         mat-icon-button
         [matTooltip]="'igo.context.contextManager.clone' | translate"
         matTooltipShowDelay="500"
@@ -55,7 +55,7 @@
         <mat-icon svgIcon="content-copy"></mat-icon>
       </button>
 
-      <button *ngIf="context.permission === typePermission[typePermission.write]"
+      <button *ngIf="context.permission === typePermission[typePermission.write] && !context.imported"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.edit' | translate"
@@ -64,7 +64,7 @@
         <mat-icon svgIcon="pencil"></mat-icon>
       </button>
 
-      <button *ngIf="!context.hidden"
+      <button *ngIf="!context.hidden && !context.imported"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.hide' | translate"
@@ -73,7 +73,7 @@
         <mat-icon svgIcon="eye"></mat-icon>
       </button>
 
-      <button *ngIf="context.hidden"
+      <button *ngIf="context.hidden && !context.imported"
         mat-icon-button
         [color]="color"
         [matTooltip]="'igo.context.contextManager.show' | translate"
@@ -82,7 +82,7 @@
         <mat-icon svgIcon="eye-off"></mat-icon>
       </button>
 
-      <button *ngIf="context.permission === typePermission[typePermission.write]"
+      <button *ngIf="context.permission === typePermission[typePermission.write] || context.imported"
         mat-icon-button
         color="warn"
         [matTooltip]="'igo.context.contextManager.delete' | translate"
