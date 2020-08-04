@@ -363,12 +363,16 @@ export class ContextService {
 
     const contexts$$ = this.getContextByUri(uri).subscribe(
       (_context: DetailedContext) => {
-        contexts$$ ? contexts$$.unsubscribe() : undefined;
+        if (contexts$$) {
+          contexts$$.unsubscribe();
+        }
         this.addContextToList(_context);
         this.setContext(_context);
       },
       (err) => {
-        contexts$$ ? contexts$$.unsubscribe() : undefined;
+        if (contexts$$) {
+          contexts$$.unsubscribe();
+        }
         if (uri !== this.options.defaultContextUri) {
           this.loadContext(this.options.defaultContextUri);
         }
