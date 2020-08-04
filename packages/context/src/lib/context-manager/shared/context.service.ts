@@ -184,7 +184,7 @@ export class ContextService {
         } else {
           contextCreated.permission = TypePermission[TypePermission.read];
         }
-        this.contexts$.value.ours.push(contextCreated);
+        this.contexts$.value.ours.unshift(contextCreated);
         this.contexts$.next(this.contexts$.value);
         return contextCreated;
       })
@@ -196,7 +196,7 @@ export class ContextService {
     return this.http.post<Context>(url, JSON.stringify(properties)).pipe(
       map((contextCloned) => {
         contextCloned.permission = TypePermission[TypePermission.write];
-        this.contexts$.value.ours.push(contextCloned);
+        this.contexts$.value.ours.unshift(contextCloned);
         this.contexts$.next(this.contexts$.value);
         return contextCloned;
       })
@@ -507,52 +507,46 @@ export class ContextService {
     };
 
     const currentLayers = igoMap.layers$.getValue();
-    currentLayers.forEach((layer) => {
-      if (layer.baseLayer) {
-        const currentBaseLayerOptions = {
+    context.layers = currentLayers
+      .filter((l) => l.baseLayer)
+      .map((l) => {
+        return {
           baseLayer: true,
-          sourceOptions: layer.options.sourceOptions,
-          title: layer.options.title,
-          id: layer.id,
-          visible: layer.visible
+          sourceOptions: l.options.sourceOptions,
+          title: l.options.title,
+          visible: l.visible
         };
-        context.layers.push(currentBaseLayerOptions);
-      }
-    });
-
-    layers.forEach((layer) => {
-      let imported = true;
-      let opts;
-      let layerStyle;
-      currentContext.layers.forEach((contextLayer) => {
-        if (layer.id === contextLayer.id && !contextLayer.baseLayer) {
-          layerStyle = contextLayer[`style`];
-          if (contextLayer[`styleByAttribute`]) {
-            layerStyle = undefined;
-          } else if (contextLayer[`clusterBaseStyle`]) {
-            layerStyle = undefined;
-            delete contextLayer.sourceOptions[`source`];
-            delete contextLayer.sourceOptions[`format`];
-          }
-          opts = {
-            id: layer.id ? String(layer.id) : undefined,
-            baseLayer: contextLayer.baseLayer,
-            title: layer.options.title,
-            zIndex: layer.zIndex,
-            styleByAttribute: contextLayer[`styleByAttribute`],
-            clusterBaseStyle: contextLayer[`clusterBaseStyle`],
-            style: layerStyle,
-            clusterParam: contextLayer[`clusterParam`],
-            visible: layer.visible,
-            opacity: layer.opacity,
-            sourceOptions: contextLayer.sourceOptions
-          };
-          context.layers.push(opts);
-          imported = false;
-        }
       });
 
-      if (imported) {
+    layers.forEach((layer) => {
+      const layerFound = currentContext.layers.find(
+        (contextLayer) =>
+          layer.id === contextLayer.id && !contextLayer.baseLayer
+      );
+
+      if (layerFound) {
+        let layerStyle = layerFound[`style`];
+        if (layerFound[`styleByAttribute`]) {
+          layerStyle = undefined;
+        } else if (layerFound[`clusterBaseStyle`]) {
+          layerStyle = undefined;
+          delete layerFound.sourceOptions[`source`];
+          delete layerFound.sourceOptions[`format`];
+        }
+        const opts = {
+          baseLayer: layerFound.baseLayer,
+          title: layer.options.title,
+          zIndex: layer.zIndex,
+          styleByAttribute: layerFound[`styleByAttribute`],
+          clusterBaseStyle: layerFound[`clusterBaseStyle`],
+          style: layerStyle,
+          clusterParam: layerFound[`clusterParam`],
+          visible: layer.visible,
+          opacity: layer.opacity,
+          sourceOptions: layerFound.sourceOptions
+        };
+        context.layers.push(opts);
+      } else {
         if (layer.ol.type !== 'VECTOR') {
           const catalogLayer = layer.options;
           delete catalogLayer.source;
@@ -744,7 +738,7 @@ export class ContextService {
     }
   }
 
-  public addContextToList(context: Context) {
+  private addContextToList(context: Context) {
     const contextFound = this.findContext(context);
     if (!contextFound) {
       const contextSimplifie = {

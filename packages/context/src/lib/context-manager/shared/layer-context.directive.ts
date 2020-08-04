@@ -11,19 +11,19 @@ import {
   LayerService,
   LayerOptions,
   StyleListService,
-  StyleService,
+  StyleService
 } from '@igo2/geo';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';
 import {
   addImportedFeaturesToMap,
-  addImportedFeaturesStyledToMap,
+  addImportedFeaturesStyledToMap
 } from '../../context-import-export/shared/context-import.utils';
 import GeoJSON from 'ol/format/GeoJSON';
 
 @Directive({
-  selector: '[igoLayerContext]',
+  selector: '[igoLayerContext]'
 })
 export class LayerContextDirective implements OnInit, OnDestroy {
   private context$$: Subscription;
@@ -110,7 +110,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
             featureCollection = JSON.stringify(featureCollection);
             featureCollection = format.readFeatures(featureCollection, {
               dataProjection: 'EPSG:4326',
-              featureProjection: 'EPSG:3857',
+              featureProjection: 'EPSG:3857'
             });
             if (!this.configService.getConfig('importWithStyle')) {
               addImportedFeaturesToMap(featureCollection, this.map, title);

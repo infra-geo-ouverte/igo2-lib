@@ -154,9 +154,9 @@ export function addContextToContextList(
 ) {
   context.title = contextTitle;
   context.imported = true;
-  contextService.contexts$.value.ours.push(context);
+  contextService.contexts$.value.ours.unshift(context);
   contextService.contexts$.next(contextService.contexts$.value);
-  contextService.importedContext.push(context);
+  contextService.importedContext.unshift(context);
   contextService.loadContext(context.uri);
 }
 
