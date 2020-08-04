@@ -14,6 +14,7 @@ import { ImportExportState } from '../import-export.state';
 @Component({
   selector: 'igo-import-export-tool',
   templateUrl: './import-export-tool.component.html',
+  styleUrls: ['./import-export-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportExportToolComponent implements OnInit {
@@ -22,6 +23,8 @@ export class ImportExportToolComponent implements OnInit {
    * @internal
    */
   get map(): IgoMap { return this.mapState.map; }
+
+  public importExportType$: string = 'layer';
 
   constructor(
     private mapState: MapState,
@@ -50,4 +53,7 @@ export class ImportExportToolComponent implements OnInit {
     this.importExportState.setsExportOptions(exportOptions);
   }
 
+  importExportTypeChange(event) {
+    this.importExportType$ = event.value;
+  }
 }

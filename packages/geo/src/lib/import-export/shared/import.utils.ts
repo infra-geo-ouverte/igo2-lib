@@ -31,6 +31,7 @@ export function addLayerAndFeaturesToMap(features: Feature[], map: IgoMap, layer
     color: [r, g, b, 0.4]
   });
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    type: 'vector',
     queryable: true
   };
   const source = new FeatureDataSource(sourceOptions);
@@ -116,6 +117,7 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
     source.ol.source.addFeatures(olFeatures);
   } else if (styleListService.getStyleList(layerTitle.toString())) {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+      type: 'vector',
       queryable: true
     };
     source = new FeatureDataSource(sourceOptions);
@@ -130,6 +132,7 @@ export function addLayerAndFeaturesStyledToMap(features: Feature[], map: IgoMap,
     source.ol.source.addFeatures(olFeatures);
   } else {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+      type: 'vector',
       queryable: true
     };
     source = new FeatureDataSource(sourceOptions);

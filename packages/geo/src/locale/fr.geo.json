@@ -72,7 +72,7 @@
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (séparateur virgule)",
           "CSVsemicolon": "CSV (séparateur point-virgule)",
-          "URL": "Url"
+          "URL": "URL"
         }
       },
       "importExportForm": {

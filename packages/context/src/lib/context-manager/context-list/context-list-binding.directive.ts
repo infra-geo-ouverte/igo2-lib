@@ -46,14 +46,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     const map = this.mapService.getMap();
     const contextFromMap = this.contextService.getContextFromMap(map);
 
-    const changes: any = {
-      layers: contextFromMap.layers,
-      map: {
-        view: contextFromMap.map.view
-      }
-    };
-
-    this.contextService.update(context.id, changes).subscribe(() => {
+    const msgSuccess = () => {
       const translate = this.languageService.translate;
       const message = translate.instant(
         'igo.context.contextManager.dialog.saveMsg',
@@ -65,6 +58,27 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
         'igo.context.contextManager.dialog.saveTitle'
       );
       this.messageService.success(message, title);
+    };
+
+    if (context.imported) {
+      contextFromMap.title = context.title;
+      this.contextService.delete(context.id, true);
+      this.contextService.create(contextFromMap).subscribe((contextCreated) => {
+        this.contextService.loadContext(contextCreated.uri);
+        msgSuccess();
+      });
+      return;
+    }
+
+    const changes: any = {
+      layers: contextFromMap.layers,
+      map: {
+        view: contextFromMap.map.view
+      }
+    };
+
+    this.contextService.update(context.id, changes).subscribe(() => {
+      msgSuccess();
     });
   }
 
@@ -103,20 +117,22 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       .open(
         translate.instant('igo.context.contextManager.dialog.confirmDelete')
       )
-      .subscribe(confirm => {
+      .subscribe((confirm) => {
         if (confirm) {
-          this.contextService.delete(context.id).subscribe(() => {
-            const message = translate.instant(
-              'igo.context.contextManager.dialog.deleteMsg',
-              {
-                value: context.title
-              }
-            );
-            const title = translate.instant(
-              'igo.context.contextManager.dialog.deleteTitle'
-            );
-            this.messageService.info(message, title);
-          });
+          this.contextService
+            .delete(context.id, context.imported)
+            .subscribe(() => {
+              const message = translate.instant(
+                'igo.context.contextManager.dialog.deleteMsg',
+                {
+                  value: context.title
+                }
+              );
+              const title = translate.instant(
+                'igo.context.contextManager.dialog.deleteTitle'
+              );
+              this.messageService.info(message, title);
+            });
         }
       });
   }
@@ -216,12 +232,12 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
       'contexts.showHidden'
     ) as boolean;
 
-    this.contexts$$ = this.contextService.contexts$.subscribe(contexts =>
+    this.contexts$$ = this.contextService.contexts$.subscribe((contexts) =>
       this.handleContextsChange(contexts)
     );
 
     this.defaultContextId$$ = this.contextService.defaultContextId$.subscribe(
-      id => {
+      (id) => {
         this.component.defaultContextId = id;
       }
     );
@@ -229,11 +245,11 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
     // See feature-list.component for an explanation about the debounce time
     this.selectedContext$$ = this.contextService.context$
       .pipe(debounceTime(100))
-      .subscribe(context => (this.component.selectedContext = context));
+      .subscribe((context) => (this.component.selectedContext = context));
 
-    this.auth.authenticate$.subscribe(authenticate => {
+    this.auth.authenticate$.subscribe((authenticate) => {
       if (authenticate) {
-        this.contextService.getProfilByUser().subscribe(profils => {
+        this.contextService.getProfilByUser().subscribe((profils) => {
           this.component.users = profils;
           this.component.permissions = [];
           const profilsAcc = this.component.users.reduce((acc, cur) => {
