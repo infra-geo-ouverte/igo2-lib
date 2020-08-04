@@ -61,8 +61,13 @@
           <mat-label>{{'igo.geo.importExportForm.exportFormatPlaceholder' | translate}}</mat-label>
           <mat-select
             formControlName="format">
-            <mat-option *ngFor="let format of (formats$ | async) | keyvalue" [value]="format.key">
-              {{'igo.geo.export.format.' + format.value | translate}}
+            <ng-container *ngIf="(formats$ | async).length > 0; else noFormat">
+              <mat-option *ngFor="let format of (formats$ | async) | keyvalue" [value]="format.key">
+                {{'igo.geo.export.format.' + format.value | translate}}
+              </mat-option>
+            </ng-container>
+            <mat-option #noFormat disabled="true">
+              {{'igo.geo.export.noFormat.title' | translate}}
             </mat-option>
           </mat-select>
         </mat-form-field>
