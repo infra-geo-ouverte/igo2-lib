@@ -224,6 +224,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
         if (olModify) {
           if (olModify.features_) {
             olModify.features_.clear();
+            this.addGeoJSONToOverlay(this.value);
           }
         }
       }, 0);

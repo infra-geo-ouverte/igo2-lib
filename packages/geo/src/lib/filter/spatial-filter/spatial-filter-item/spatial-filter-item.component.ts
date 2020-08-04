@@ -534,25 +534,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           return;
         }
       } else {
-        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.radius = 1000;
-          this.radiusFormControl.setValue(this.radius);
-          this.drawGuide$.next(this.radius);
-          return;
-        }
-        if (formValue >= 10000) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.formControl.reset();
-          return;
-        }
         if (formValue) {
+          if (formValue >= 10000) {
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.formControl.reset();
+            return;
+          }
           if (formValue !== this.radiusFormControl.value) {
             this.radiusFormControl.setValue(formValue);
+            return;
           }
-          this.formControl.value.radius = undefined;
         }
       }
       this.radius = this.radiusFormControl.value;
