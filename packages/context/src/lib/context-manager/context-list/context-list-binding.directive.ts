@@ -62,9 +62,9 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
 
     if (context.imported) {
       contextFromMap.title = context.title;
+      this.contextService.delete(context.id, true);
       this.contextService.create(contextFromMap).subscribe((contextCreated) => {
         this.contextService.loadContext(contextCreated.uri);
-        this.contextService.delete(context.id, true);
         msgSuccess();
       });
       return;
