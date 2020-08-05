@@ -94,7 +94,7 @@ export class ContextService {
           this.handleContextsChange(contexts);
         });
       } else {
-        this.contexts$.pipe(first()).subscribe(contexts => {
+        this.contexts$.pipe(first()).subscribe((contexts) => {
           this.handleContextsChange(contexts);
         });
         this.loadContexts();
@@ -274,7 +274,7 @@ export class ContextService {
   getLocalContext(uri: string): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.http.get<DetailedContext>(url).pipe(
-      mergeMap(res => {
+      mergeMap((res) => {
         if (!res.base) {
           return of(res);
         }
@@ -372,7 +372,7 @@ export class ContextService {
           this.addContextToList(_context);
           this.setContext(_context);
         },
-        err => {
+        (err) => {
           if (uri !== this.options.defaultContextUri) {
             this.loadContext(this.options.defaultContextUri);
           }
