@@ -16,8 +16,13 @@
   "peerDependencies": {
     "@angular/common": "^10.0.3",
     "@angular/core": "^10.0.3",
+<<<<<<< HEAD
     "@igo2/geo": "1.4.3",
     "@igo2/context": "1.4.3",
+=======
+    "@igo2/geo": "1.4.2",
+    "@igo2/context": "1.4.2",
+>>>>>>> feat(libs): upgrade librairies (#696)
     "rxjs": "^6.6.0"
   },
   "dependencies": {

@@ -8,8 +8,12 @@
       "@igo2/utils" : "utils",
       "scroll-into-view-if-needed" : "scrollIntoView",
       "typy" : "typy",
+<<<<<<< HEAD
       "@ngx-translate/core" : "ngxt-core",
       "angular-shepherd": "angularShepherd"
+=======
+      "@ngx-translate/core" : "ngxt-core"
+>>>>>>> feat(libs): upgrade librairies (#696)
     }
   }
 }
