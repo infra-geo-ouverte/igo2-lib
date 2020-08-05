@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { IgoGeometryFormFieldModule } from './geometry-form-field/geometry-form-field.module';
-import { GeometryFormFieldComponent } from './geometry-form-field/geometry-form-field.component';
 
 @NgModule({
   imports: [
@@ -13,9 +12,6 @@ import { GeometryFormFieldComponent } from './geometry-form-field/geometry-form-
     IgoGeometryFormFieldModule
   ],
   declarations: [],
-  providers: [],
-  entryComponents: [
-    GeometryFormFieldComponent
-  ]
+  providers: []
 })
 export class IgoGeometryModule {}

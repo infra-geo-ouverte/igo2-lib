@@ -2,7 +2,14 @@ import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, tap, catchError, debounceTime, flatMap } from 'rxjs/operators';
+import {
+  map,
+  tap,
+  catchError,
+  debounceTime,
+  mergeMap,
+  first
+} from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -20,7 +27,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import { IgoMap, Layer } from '@igo2/geo';
+import type { IgoMap, Layer } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -87,11 +94,8 @@ export class ContextService {
           this.handleContextsChange(contexts);
         });
       } else {
-        const contexts$$ = this.contexts$.subscribe((contexts) => {
-          if (contexts$$) {
-            contexts$$.unsubscribe();
-            this.handleContextsChange(contexts);
-          }
+        this.contexts$.pipe(first()).subscribe((contexts) => {
+          this.handleContextsChange(contexts);
         });
         this.loadContexts();
       }
@@ -270,7 +274,7 @@ export class ContextService {
   getLocalContext(uri: string): Observable<DetailedContext> {
     const url = this.getPath(`${uri}.json`);
     return this.http.get<DetailedContext>(url).pipe(
-      flatMap((res) => {
+      mergeMap((res) => {
         if (!res.base) {
           return of(res);
         }
@@ -361,23 +365,19 @@ export class ContextService {
       return;
     }
 
-    const contexts$$ = this.getContextByUri(uri).subscribe(
-      (_context: DetailedContext) => {
-        if (contexts$$) {
-          contexts$$.unsubscribe();
+    this.getContextByUri(uri)
+      .pipe(first())
+      .subscribe(
+        (_context: DetailedContext) => {
+          this.addContextToList(_context);
+          this.setContext(_context);
+        },
+        (err) => {
+          if (uri !== this.options.defaultContextUri) {
+            this.loadContext(this.options.defaultContextUri);
+          }
         }
-        this.addContextToList(_context);
-        this.setContext(_context);
-      },
-      (err) => {
-        if (contexts$$) {
-          contexts$$.unsubscribe();
-        }
-        if (uri !== this.options.defaultContextUri) {
-          this.loadContext(this.options.defaultContextUri);
-        }
-      }
-    );
+      );
   }
 
   setContext(context: DetailedContext) {

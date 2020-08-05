@@ -1,4 +1,5 @@
-import { MatCheckboxChange, MatRadioChange } from '@angular/material';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatRadioChange } from '@angular/material/radio';
 
 import {
   Component,
@@ -16,7 +17,11 @@ import {
   SearchSourceSettings,
   SettingOptions
 } from '../shared/sources/source.interfaces';
-import { sourceCanReverseSearchAsSummary, sourceCanSearch, sourceCanReverseSearch } from '../shared/search.utils';
+import {
+  sourceCanReverseSearchAsSummary,
+  sourceCanSearch,
+  sourceCanReverseSearch
+} from '../shared/search.utils';
 import { MediaService } from '@igo2/core';
 
 /**
@@ -34,7 +39,6 @@ import { MediaService } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchSettingsComponent implements OnInit {
-
   public hasPointerReverseSearchSource: boolean = false;
   public searchSourcesAllEnabled: boolean = false;
 
@@ -59,8 +63,7 @@ export class SearchSettingsComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-
-    if (event.keyCode === 113) {
+    if (event.key === 'F2') {
       this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
       this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
     }
@@ -69,7 +72,7 @@ export class SearchSettingsComponent implements OnInit {
   constructor(
     private searchSourceService: SearchSourceService,
     private mediaService: MediaService
-    ) {}
+  ) {}
 
   ngOnInit(): void {
     this.hasPointerReverseSearchSource = this.hasReverseSearchSourcesForPointerSummary();
@@ -99,7 +102,11 @@ export class SearchSettingsComponent implements OnInit {
    * @internal
    */
   hasReverseSearchSourcesForPointerSummary(): boolean {
-    if (this.searchSourceService.getEnabledSources().filter(sourceCanReverseSearchAsSummary).length) {
+    if (
+      this.searchSourceService
+        .getEnabledSources()
+        .filter(sourceCanReverseSearchAsSummary).length
+    ) {
       return true;
     } else {
       return false;
@@ -148,7 +155,8 @@ export class SearchSettingsComponent implements OnInit {
   computeSourcesCheckAllBehavior(sources: SearchSource[]) {
     const enabledSourcesCnt = sources.filter(source => source.enabled).length;
     const disabledSourcesCnt = sources.filter(source => !source.enabled).length;
-    this.searchSourcesAllEnabled =  enabledSourcesCnt >= disabledSourcesCnt ? false : true;
+    this.searchSourcesAllEnabled =
+      enabledSourcesCnt >= disabledSourcesCnt ? false : true;
   }
 
   /**

@@ -12,7 +12,7 @@
   height: 100%;
 }
 
-:host >>> igo-zoom-button {
+:host ::ng-deep igo-zoom-button {
   position: absolute;
   bottom: $igo-margin;
   right: $igo-margin;
@@ -21,7 +21,7 @@
   }
 }
 
-:host >>> igo-offline-button {
+:host ::ng-deep igo-offline-button {
   position: absolute;
   bottom:15px;
   right: $igo-margin;
@@ -30,7 +30,7 @@
   }
 }
 
-:host >>> igo-geolocate-button {
+:host ::ng-deep igo-geolocate-button {
   position: absolute;
   bottom: 5px;
   right: $igo-margin;
@@ -39,7 +39,7 @@
   }
 }
 
-:host >>> igo-rotation-button {
+:host ::ng-deep igo-rotation-button {
   position: absolute;
   top: calc(#{$igo-icon-size} + 5px + #{$igo-margin});
   right: $igo-margin;
@@ -48,7 +48,7 @@
   }
 }
 
-:host >>> igo-user-button {
+:host ::ng-deep igo-user-button {
   position: absolute;
   bottom: $igo-margin;
   right: calc(#{$igo-margin} + 50px);
@@ -57,13 +57,13 @@
   }
 }
 
-:host >>> igo-baselayers-switcher {
+:host ::ng-deep igo-baselayers-switcher {
   position: absolute;
   bottom: $igo-margin;
   left: $igo-margin;
 }
 
-:host >>> .ol-attribution {
+:host ::ng-deep .ol-attribution {
   left: $igo-margin;
   bottom: $igo-margin;
   text-align: left;
@@ -89,7 +89,7 @@
   }
 }
 
-:host >>> .ol-scale-line-inner {
+:host ::ng-deep .ol-scale-line-inner {
   color: rgba(black, 1);
   border-color: black;
   text-shadow: rgb(255, 255, 255) -1px -1px 3px,
@@ -99,13 +99,13 @@
   box-shadow: 0px 1px 0px 1px rgba(255, 255, 255, 0.6);
 }
 
-:host >>> .ol-scale-line {
+:host ::ng-deep .ol-scale-line {
   background-color: rgba(255, 255, 255, 0);
   bottom: 4px;
   transform: translate(-50%);
   left: 50%;
 }
 
-:host >>> canvas {
+:host ::ng-deep canvas {
   display: block;
 }

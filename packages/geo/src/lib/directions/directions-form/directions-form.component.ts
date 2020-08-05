@@ -10,7 +10,13 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take, skipWhile } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  take,
+  skipWhile
+} from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -35,7 +41,11 @@ import { SearchService } from '../../search/shared/search.service';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
-import { moveToOlFeatures, tryBindStoreLayer, tryAddLoadingStrategy } from '../../feature/shared/feature.utils';
+import {
+  moveToOlFeatures,
+  tryBindStoreLayer
+} from '../../feature/shared/feature.utils';
+import { tryAddLoadingStrategy } from '../../feature/shared/strategies.utils';
 
 import { Directions, DirectionsOptions } from '../shared/directions.interface';
 import { DirectionsService } from '../shared/directions.service';
@@ -109,10 +119,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
 
   prevent(event) {
     event.preventDefault();
-   }
+  }
 
   ngOnInit() {
-
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
@@ -149,12 +158,12 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.queryService.queryEnabled = true;
     this.freezeStores();
     this.writeStopsToFormService();
-
   }
 
   private initStores() {
-
-    const loadingStrategy = new FeatureStoreLoadingStrategy({motion: FeatureMotion.None});
+    const loadingStrategy = new FeatureStoreLoadingStrategy({
+      motion: FeatureMotion.None
+    });
 
     // STOP STORE
     const stopsStore = this.stopsStore;
@@ -183,7 +192,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     });
     tryBindStoreLayer(routeStore, routeLayer);
     tryAddLoadingStrategy(routeStore, loadingStrategy);
-
   }
 
   private initOlInteraction() {
@@ -192,7 +200,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       layers: [this.stopsStore.layer.ol],
       condition: olcondition.pointerMove,
       hitTolerance: 7,
-      filter: (feature) => {
+      filter: feature => {
         return feature.get('type') === 'stop';
       }
     });
@@ -209,13 +217,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
 
     translateStop.on('translating', evt => {
       const features = evt.features;
-      if (features.getLength() === 0) { return; }
+      if (features.getLength() === 0) {
+        return;
+      }
       this.executeTranslation(features, false, 50, true);
     });
 
     translateStop.on('translateend', evt => {
       const features = evt.features;
-      if (features.getLength() === 0) { return; }
+      if (features.getLength() === 0) {
+        return;
+      }
       this.executeTranslation(features, true, 0, false);
     });
 
@@ -223,7 +235,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       layers: [this.routeStore.layer.ol],
       condition: olcondition.click,
       hitTolerance: 7,
-      filter: (feature) => {
+      filter: feature => {
         return feature.getId() === 'route';
       }
     });
@@ -247,7 +259,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.map.ol.addInteraction(selectStop);
     this.map.ol.addInteraction(translateStop);
     this.map.ol.addInteraction(selectedRoute);
-
   }
 
   private subscribeToFormChange() {
@@ -273,14 +284,14 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.map.removeLayer(routeStore.layer);
     stopsStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
     routeStore.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
-
   }
 
   private executeTranslation(
     features,
     reverseSearchProposal = false,
     delay: number = 0,
-    overview: boolean = false) {
+    overview: boolean = false
+  ) {
     this.routeStore.clear();
     const firstFeature = features.getArray()[0];
     const translatedID = firstFeature.getId();
@@ -304,7 +315,10 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     );
     this.stops
       .at(p)
-      .patchValue({ stopCoordinates: translationCoordinates, stopProposals: [] });
+      .patchValue({
+        stopCoordinates: translationCoordinates,
+        stopProposals: []
+      });
     if (reverseSearchProposal) {
       this.handleLocationProposals(translationCoordinates, p);
     }
@@ -322,24 +336,28 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     }
 
     if (delay > 0) {
-      if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
+      if (typeof this.lastTimeoutRequest !== 'undefined') {
+        // cancel timeout when the mouse moves
         clearTimeout(this.lastTimeoutRequest);
       }
       this.lastTimeoutRequest = setTimeout(() => {
         this.getRoutes(undefined, directionsOptions);
       }, delay);
-
     } else {
       clearTimeout(this.lastTimeoutRequest);
       this.getRoutes(undefined, directionsOptions);
     }
-
   }
 
   handleLocationProposals(coordinates: [number, number], stopIndex: number) {
     const groupedLocations = [];
-    const roundedCoordinates = [coordinates[0].toFixed(5), coordinates[1].toFixed(5)];
-    this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(',') });
+    const roundedCoordinates = [
+      coordinates[0].toFixed(5),
+      coordinates[1].toFixed(5)
+    ];
+    this.stops
+      .at(stopIndex)
+      .patchValue({ stopPoint: roundedCoordinates.join(',') });
     this.searchService
       .reverseSearch(coordinates, { zoom: this.map.viewController.getZoom() })
       .map(res =>
@@ -391,15 +409,19 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
                 });
                 if (results[0].data.geometry.type === 'Point') {
                   this.stops.at(stopIndex).patchValue({
-                    stopCoordinates:
-                      results[0].data.geometry.coordinates
+                    stopCoordinates: results[0].data.geometry.coordinates
                   });
                 } else {
                   // Not moving the translated point Only to suggest value into the UI.
                 }
               }
             } else {
-              this.stops.at(stopIndex).patchValue({ stopPoint: roundedCoordinates.join(','), stopProposals: [] });
+              this.stops
+                .at(stopIndex)
+                .patchValue({
+                  stopPoint: roundedCoordinates.join(','),
+                  stopProposals: []
+                });
             }
             this.changeDetectorRefs.detectChanges();
           })
@@ -433,7 +455,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const fromValue = this.stops.at(index);
     this.removeStop(index);
     this.stops.insert(index + diff, fromValue);
-    this.stops.at(index).patchValue({ directionsText: this.directionsText(index) });
+    this.stops
+      .at(index)
+      .patchValue({ directionsText: this.directionsText(index) });
     this.stops
       .at(index + diff)
       .patchValue({ directionsText: this.directionsText(index + diff) });
@@ -482,7 +506,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.stops.removeAt(index);
     let cnt = 0;
     this.stops.value.forEach(stop => {
-      this.stops.at(cnt).patchValue({ directionsText: this.directionsText(cnt) });
+      this.stops
+        .at(cnt)
+        .patchValue({ directionsText: this.directionsText(cnt) });
       this.addStopOverlay(this.stops.at(cnt).value.stopCoordinates, cnt);
       cnt++;
     });
@@ -721,7 +747,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         'igo.geo.directions.slight left'
       );
     } else if (modifier === 'straight') {
-      return this.languageService.translate.instant('igo.geo.directions.straight');
+      return this.languageService.translate.instant(
+        'igo.geo.directions.straight'
+      );
     } else {
       return modifier;
     }
@@ -796,7 +824,10 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   showRouteSegmentGeometry(coordinates, zoomToExtent = false) {
     const vertexId = 'vertex';
     const geometry4326 = new olgeom.LineString(coordinates);
-    const geometryMapProjection = geometry4326.transform('EPSG:4326', this.map.projection);
+    const geometryMapProjection = geometry4326.transform(
+      'EPSG:4326',
+      this.map.projection
+    );
     const routeSegmentCoordinates = (geometryMapProjection as any).getCoordinates();
     const lastPoint = routeSegmentCoordinates[0];
 
@@ -809,7 +840,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     });
 
     const previousVertex = this.routeStore.get(vertexId);
-    const previousVertexRevision = previousVertex ? previousVertex.meta.revision : 0;
+    const previousVertexRevision = previousVertex
+      ? previousVertex.meta.revision
+      : 0;
 
     const vertexFeature: Feature = {
       type: FEATURE,
@@ -832,11 +865,13 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   zoomRoute(extent?) {
-
     if (extent) {
       this.map.viewController.zoomToExtent(extent);
     } else {
-      const routeFeature = this.routeStore.layer.ol.getSource().getFeatures().find(f => f.getId() === 'route');
+      const routeFeature = this.routeStore.layer.ol
+        .getSource()
+        .getFeatures()
+        .find(f => f.getId() === 'route');
       if (routeFeature) {
         const routeExtent = routeFeature.getGeometry().getExtent();
         this.map.viewController.zoomToExtent(routeExtent);
@@ -847,18 +882,26 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   private showRouteGeometry(moveToExtent = false) {
     const geom = this.activeRoute.geometry.coordinates;
     const geometry4326 = new olgeom.LineString(geom);
-    const geometryMapProjection = geometry4326.transform('EPSG:4326', this.map.projection);
+    const geometryMapProjection = geometry4326.transform(
+      'EPSG:4326',
+      this.map.projection
+    );
     if (moveToExtent) {
       this.zoomRoute(geometryMapProjection.getExtent());
     }
 
-    const geojsonGeom = new OlGeoJSON().writeGeometryObject(geometryMapProjection, {
-      featureProjection: this.map.projection,
-      dataProjection: this.map.projection
-    });
+    const geojsonGeom = new OlGeoJSON().writeGeometryObject(
+      geometryMapProjection,
+      {
+        featureProjection: this.map.projection,
+        dataProjection: this.map.projection
+      }
+    );
 
     const previousRoute = this.routeStore.get('route');
-    const previousRouteRevision = previousRoute ? previousRoute.meta.revision : 0;
+    const previousRouteRevision = previousRoute
+      ? previousRoute.meta.revision
+      : 0;
 
     const routeFeature: Feature = {
       type: FEATURE,
@@ -875,17 +918,22 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       ol: new olFeature({ geometry: geometryMapProjection })
     };
     this.routeStore.update(routeFeature);
-
   }
 
-  getRoutes(moveToExtent: boolean = false, directionsOptions: DirectionsOptions = {}) {
+  getRoutes(
+    moveToExtent: boolean = false,
+    directionsOptions: DirectionsOptions = {}
+  ) {
     this.deleteStoreFeatureByID(this.routeStore, 'vertex');
     this.writeStopsToFormService();
     const coords = this.directionsFormService.getStopsCoordinates();
     if (coords.length < 2) {
       return;
     }
-    const routeResponse = this.directionsService.route(coords, directionsOptions);
+    const routeResponse = this.directionsService.route(
+      coords,
+      directionsOptions
+    );
     if (routeResponse) {
       routeResponse.map(res =>
         this.routesQueries$$.push(
@@ -917,8 +965,12 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const successful = Clipboard.copy(this.getUrl());
     if (successful) {
       const translate = this.languageService.translate;
-      const title = translate.instant('igo.geo.directionsForm.dialog.copyTitle');
-      const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsgLink');
+      const title = translate.instant(
+        'igo.geo.directionsForm.dialog.copyTitle'
+      );
+      const msg = translate.instant(
+        'igo.geo.directionsForm.dialog.copyMsgLink'
+      );
       this.messageService.success(msg, title);
     }
   }
@@ -942,7 +994,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       indent +
       this.formatDuration(this.activeRoute.duration) +
       '\n\n' +
-      this.languageService.translate.instant('igo.geo.directionsForm.stopsList') +
+      this.languageService.translate.instant(
+        'igo.geo.directionsForm.stopsList'
+      ) +
       ':\n';
 
     const url =
@@ -1003,7 +1057,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     const successful = Clipboard.copy(directionsBody);
     if (successful) {
       const translate = this.languageService.translate;
-      const title = translate.instant('igo.geo.directionsForm.dialog.copyTitle');
+      const title = translate.instant(
+        'igo.geo.directionsForm.dialog.copyTitle'
+      );
       const msg = translate.instant('igo.geo.directionsForm.dialog.copyMsg');
       this.messageService.success(msg, title);
     }
@@ -1015,29 +1071,31 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       if (this.search$$) {
         this.search$$.unsubscribe();
       }
-      const researches = this.searchService.search(term, {searchType: 'Feature'});
-      researches.map(res =>
-        this.search$$ =
-        res.request.subscribe(results => {
-          results
-            .filter(r => r.data.geometry)
-            .forEach(element => {
-              if (
-                searchProposals.filter(r => r.source === element.source)
-                  .length === 0
-              ) {
-                searchProposals.push({
-                  source: element.source,
-                  meta: element.meta,
-                  results: results.map(r => r.data)
-                });
-              }
-            });
-          this.stops
-            .at(this.currentStopIndex)
-            .patchValue({ stopProposals: searchProposals });
-          this.changeDetectorRefs.detectChanges();
-        })
+      const researches = this.searchService.search(term, {
+        searchType: 'Feature'
+      });
+      researches.map(
+        res =>
+          (this.search$$ = res.request.subscribe(results => {
+            results
+              .filter(r => r.data.geometry)
+              .forEach(element => {
+                if (
+                  searchProposals.filter(r => r.source === element.source)
+                    .length === 0
+                ) {
+                  searchProposals.push({
+                    source: element.source,
+                    meta: element.meta,
+                    results: results.map(r => r.data)
+                  });
+                }
+              });
+            this.stops
+              .at(this.currentStopIndex)
+              .patchValue({ stopProposals: searchProposals });
+            this.changeDetectorRefs.detectChanges();
+          }))
       );
     }
   }
@@ -1071,7 +1129,10 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.routeStore.clear();
     const stopsCounts = this.stops.length;
     this.stops.removeAt(stopIndex);
-    this.stops.insert(stopIndex, this.createStop(this.directionsText(stopIndex, stopsCounts)));
+    this.stops.insert(
+      stopIndex,
+      this.createStop(this.directionsText(stopIndex, stopsCounts))
+    );
     this.routesResults = undefined;
     this.getRoutes();
   }
@@ -1083,24 +1144,27 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       if (geom.type === 'Point') {
         geomCoord = geom.coordinates;
       } else if (geom.type.search('Line') >= 0) {
-        const line = (new OlGeoJSON()).readFeatures(geom);
+        const line = new OlGeoJSON().readFeatures(geom);
         geomCoord = line[0].getGeometry().getFirstCoordinate();
         geomCoord = [geomCoord[0], geomCoord[1]];
       } else if (geom.type.search('Polygon') >= 0) {
-        const poly = (new OlGeoJSON()).readFeatures(geom);
-        geomCoord = poly[0].getGeometry().getInteriorPoints().getFirstCoordinate();
+        const poly = new OlGeoJSON().readFeatures(geom);
+        geomCoord = poly[0]
+          .getGeometry()
+          .getInteriorPoints()
+          .getFirstCoordinate();
         geomCoord = [geomCoord[0], geomCoord[1]];
       }
 
       if (geomCoord !== undefined) {
         this.stops.at(i).patchValue({ stopCoordinates: geomCoord });
         this.addStopOverlay(geomCoord, i);
-      /*  const proposalExtent = this.directionsStopsOverlayDataSource.ol
+        /*  const proposalExtent = this.directionsStopsOverlayDataSource.ol
           .getFeatureById(this.getStopOverlayID(i))
           .getGeometry()
           .getExtent();*/
 
-       /* if (!olextent.intersects(proposalExtent, this.map.viewController.getExtent())) {
+        /* if (!olextent.intersects(proposalExtent, this.map.viewController.getExtent())) {
           this.map.viewController.moveToExtent(proposalExtent);
         }*/
       }
@@ -1131,7 +1195,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       this.map.projection,
       this.projection
     );
-    this.stops.at(indexPos).patchValue({ stopProposals: [], stopCoordinates: clickCoordinates });
+    this.stops
+      .at(indexPos)
+      .patchValue({ stopProposals: [], stopCoordinates: clickCoordinates });
 
     this.handleLocationProposals(clickCoordinates, indexPos);
     this.addStopOverlay(clickCoordinates, indexPos);
@@ -1141,8 +1207,14 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   geolocateStop(index: number) {
-    moveToOlFeatures(this.map, [this.map.geolocationFeature], FeatureMotion.Move);
-    const geolocateCoordinates = this.map.viewController.getCenter(this.projection);
+    moveToOlFeatures(
+      this.map,
+      [this.map.geolocationFeature],
+      FeatureMotion.Move
+    );
+    const geolocateCoordinates = this.map.viewController.getCenter(
+      this.projection
+    );
     this.stops.at(index).patchValue({ stopCoordinates: geolocateCoordinates });
     this.addStopOverlay(geolocateCoordinates, index);
     this.handleLocationProposals(geolocateCoordinates, index);
@@ -1205,7 +1277,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
 
     this.stopsStore.update(stopFeature);
     this.getRoutes();
-
   }
 
   public getStopOverlayID(index: number): string {
@@ -1248,9 +1319,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
     }
 
-    return `${location.origin}${
-      location.pathname
-    }?tool=directions&${directionsUrl}`;
+    return `${location.origin}${location.pathname}?tool=directions&${directionsUrl}`;
   }
 }
 
@@ -1259,8 +1328,10 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
  * @param feature OlFeature
  * @returns OL style function
  */
-export function stopMarker(feature: olFeature, resolution: number): olstyle.Style {
-
+export function stopMarker(
+  feature: olFeature,
+  resolution: number
+): olstyle.Style {
   const vertexStyle = [
     new olstyle.Style({
       geometry: feature.getGeometry(),
@@ -1273,8 +1344,11 @@ export function stopMarker(feature: olFeature, resolution: number): olstyle.Styl
 
   const stopStyle = new olstyle.Style({
     image: new olstyle.Icon({
-      src: './assets/igo2/geo/icons/place_' + feature.get('stopColor') + '_36px.svg',
-      opacity : feature.get('stopOpacity'),
+      src:
+        './assets/igo2/geo/icons/place_' +
+        feature.get('stopColor') +
+        '_36px.svg',
+      opacity: feature.get('stopOpacity'),
       imgSize: [36, 36], // for ie
       anchor: [0.5, 0.92]
     }),
@@ -1306,5 +1380,4 @@ export function stopMarker(feature: olFeature, resolution: number): olstyle.Styl
   if (feature.get('type') === 'route') {
     return routeStyle;
   }
-
 }

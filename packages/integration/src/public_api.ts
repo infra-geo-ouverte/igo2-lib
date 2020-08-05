@@ -21,11 +21,7 @@ export * from './lib/tool/tool.module';
 export * from './lib/about';
 export * from './lib/analytics';
 export * from './lib/context';
-
-export * from './lib/catalog/catalog-browser-tool/catalog-browser-tool.component';
-export * from './lib/catalog/catalog-library-tool/catalog-library-tool.component';
 export * from './lib/catalog';
-
 export * from './lib/directions';
 export * from './lib/workspace';
 export * from './lib/filter';
@@ -33,9 +29,5 @@ export * from './lib/import-export';
 export * from './lib/map';
 export * from './lib/measure';
 export * from './lib/print';
-
-export * from './lib/search/search-bar/search-bar-binding.directive';
-export * from './lib/search/search-results-tool/search-results-tool.component';
 export * from './lib/search';
-
 export * from './lib/tool';

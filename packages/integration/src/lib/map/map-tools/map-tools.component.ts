@@ -19,7 +19,7 @@ import {
 } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
@@ -135,7 +135,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return filterSortOptions;
   }
 
-  @ViewChild('tabGroup') tabGroup;
+  @ViewChild('tabGroup', { static: true }) tabGroup;
 
   get searchToolInToolbar(): boolean {
     return (

@@ -10,7 +10,8 @@ import { Subscription } from 'rxjs';
 import { SubjectStatus } from '@igo2/utils';
 import { ActivityService } from '@igo2/core';
 
-import { IgoMap, MapViewOptions } from '../shared';
+import { IgoMap } from '../shared/map';
+import { MapViewOptions } from '../shared/map.interface';
 
 @Component({
   selector: 'igo-map-browser',
@@ -18,14 +19,15 @@ import { IgoMap, MapViewOptions } from '../shared';
   styleUrls: ['./map-browser.component.scss']
 })
 export class MapBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
-
   private activityId: string;
   private status$$: Subscription;
 
   @Input() map: IgoMap;
 
   @Input()
-  get view(): MapViewOptions { return this._view; }
+  get view(): MapViewOptions {
+    return this._view;
+  }
   set view(value: MapViewOptions) {
     this._view = value;
     if (this.map !== undefined) {

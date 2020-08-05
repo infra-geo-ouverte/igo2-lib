@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppLegendComponent } from './legend.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppLegendRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppLegendRoutingModule = RouterModule.forChild(
   routes
 );

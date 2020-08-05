@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  TemplateRef,
   ContentChild,
   OnInit,
   OnDestroy,
@@ -10,8 +9,9 @@ import {
   EventEmitter,
   ElementRef
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material';
+import type { TemplateRef } from '@angular/core';
 
+import { FloatLabelType } from '@angular/material/form-field';
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
 import {
@@ -54,7 +54,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private change$$: Subscription;
 
-  @ContentChild('igoLayerItemToolbar') templateLayerToolbar: TemplateRef<any>;
+  @ContentChild('igoLayerItemToolbar', /* TODO: add static flag */ {})
+  templateLayerToolbar: TemplateRef<any>;
 
   @Input() layersAreAllVisible: boolean = true;
 
@@ -148,30 +149,48 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   get raiseDisabled(): boolean {
-    if (!this.orderable || this.activeLayer.baseLayer || this.getUpperLayer().id === this.activeLayer.id ||
-        this.isUpperBaselayer(this.activeLayer)) {
+    if (
+      !this.orderable ||
+      this.activeLayer.baseLayer ||
+      this.getUpperLayer().id === this.activeLayer.id ||
+      this.isUpperBaselayer(this.activeLayer)
+    ) {
       return true;
     }
     return false;
   }
 
   get lowerDisabled(): boolean {
-    if (!this.orderable || this.activeLayer.baseLayer || this.getLowerLayer().id === this.activeLayer.id ||
-        this.isLowerBaselayer(this.activeLayer)) {
+    if (
+      !this.orderable ||
+      this.activeLayer.baseLayer ||
+      this.getLowerLayer().id === this.activeLayer.id ||
+      this.isLowerBaselayer(this.activeLayer)
+    ) {
       return true;
     }
     return false;
   }
 
   get raiseDisabledSelection(): boolean {
-    if (this.layersChecked.length === 0 || !this.orderable || !this.raisableLayers(this.layersChecked) || this.selectAllCheck === true) {
+    if (
+      this.layersChecked.length === 0 ||
+      !this.orderable ||
+      !this.raisableLayers(this.layersChecked) ||
+      this.selectAllCheck === true
+    ) {
       return true;
     }
     return false;
   }
 
   get lowerDisabledSelection(): boolean {
-    if (this.layersChecked.length === 0 || !this.orderable || !this.lowerableLayers(this.layersChecked) || this.selectAllCheck === true) {
+    if (
+      this.layersChecked.length === 0 ||
+      !this.orderable ||
+      !this.lowerableLayers(this.layersChecked) ||
+      this.selectAllCheck === true
+    ) {
       return true;
     }
     return false;
@@ -192,9 +211,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   selectAllCheck$$: Subscription;
   public selectAllCheck;
 
-  constructor(
-    private elRef: ElementRef,
-  ) {}
+  constructor(private elRef: ElementRef) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -217,7 +234,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
+    this.selectAllCheck$$ = this.selectAllCheck$.subscribe(value => {
       this.selectAllCheck = value;
     });
 
@@ -234,9 +251,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
           }
         }
         if (this.excludeBaseLayers) {
-          this.selectAllCheck = checks === this.layers.filter(lay => lay.baseLayer !== true && lay.showInLayerList).length ? true : false;
+          this.selectAllCheck =
+            checks ===
+            this.layers.filter(
+              lay => lay.baseLayer !== true && lay.showInLayerList
+            ).length
+              ? true
+              : false;
         } else {
-          this.selectAllCheck = checks === this.layers.filter(lay => lay.showInLayerList).length ? true : false;
+          this.selectAllCheck =
+            checks === this.layers.filter(lay => lay.showInLayerList).length
+              ? true
+              : false;
         }
       }
     });
@@ -262,8 +288,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   isLowerBaselayer(layer) {
-    const index = this.layers.findIndex(lay => layer.id === lay.id);
-    if (this.layers && this.layers[index + 1] && this.layers[index + 1].baseLayer === true) {
+    const index = this.layers.findIndex(lay => layer.id === lay.id);
+    if (
+      this.layers &&
+      this.layers[index + 1] &&
+      this.layers[index + 1].baseLayer === true
+    ) {
       return true;
     }
     return false;
@@ -281,8 +311,12 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   isUpperBaselayer(layer) {
-    const index = this.layers.findIndex(lay => layer.id === lay.id);
-    if (this.layers && this.layers[index - 1] && this.layers[index - 1].baseLayer === true) {
+    const index = this.layers.findIndex(lay => layer.id === lay.id);
+    if (
+      this.layers &&
+      this.layers[index - 1] &&
+      this.layers[index - 1].baseLayer === true
+    ) {
       return true;
     }
     return false;
@@ -295,20 +329,27 @@ export class LayerListComponent implements OnInit, OnDestroy {
     let response = false;
     let base = 0;
     for (const layer of layers) {
-      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
       const currentLayer = this.layers[mapIndex];
       if (currentLayer.baseLayer) {
         base += 1;
       }
 
       const previousLayer = this.layers[mapIndex - 1];
-      if (previousLayer && previousLayer.baseLayer !== true && !layers.find(lay => previousLayer.id === lay.id) &&
-            currentLayer.baseLayer !== true) {
+      if (
+        previousLayer &&
+        previousLayer.baseLayer !== true &&
+        !layers.find(lay => previousLayer.id === lay.id) &&
+        currentLayer.baseLayer !== true
+      ) {
         response = true;
       }
     }
 
-    if ((this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) || base === this.layersChecked.length) {
+    if (
+      (this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) ||
+      base === this.layersChecked.length
+    ) {
       response = false;
     }
     return response;
@@ -352,19 +393,26 @@ export class LayerListComponent implements OnInit, OnDestroy {
     let response = false;
     let base = 0;
     for (const layer of layers) {
-      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
       const currentLayer = this.layers[mapIndex];
       if (currentLayer.baseLayer) {
         base += 1;
       }
 
       const nextLayer = this.layers[mapIndex + 1];
-      if (nextLayer && nextLayer.baseLayer !== true && !layers.find(lay => nextLayer.id === lay.id)) {
+      if (
+        nextLayer &&
+        nextLayer.baseLayer !== true &&
+        !layers.find(lay => nextLayer.id === lay.id)
+      ) {
         response = true;
       }
     }
 
-    if ((this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) || base === this.layersChecked.length) {
+    if (
+      (this.layersChecked.length === 1 && this.layersChecked[0].baseLayer) ||
+      base === this.layersChecked.length
+    ) {
       response = false;
     }
     return response;
@@ -396,7 +444,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const elements = this.computeElementRef('lower');
       if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-        elements[0].scrollTop = elements[1].offsetParent.offsetTop + elements[1].offsetParent.offsetHeight - elements[0].clientHeight;
+        elements[0].scrollTop =
+          elements[1].offsetParent.offsetTop +
+          elements[1].offsetParent.offsetHeight -
+          elements[0].clientHeight;
       }
     }, 100);
   }
@@ -500,7 +551,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   private normalize(str: string) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
   }
 
   private computeShowToolbar(): boolean {
@@ -550,23 +604,37 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return;
   }
 
-  layersCheck(event: {layer: Layer; check: boolean}) {
+  layersCheck(event: { layer: Layer; check: boolean }) {
     event.layer.options.check = event.check;
     if (event.check === true) {
-      const eventMapIndex = this.layers.findIndex(layer => event.layer.id === layer.id);
+      const eventMapIndex = this.layers.findIndex(
+        layer => event.layer.id === layer.id
+      );
       for (const layer of this.layersChecked) {
-        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
         if (eventMapIndex < mapIndex) {
-          this.layersChecked.splice(this.layersChecked.findIndex(lay => layer.id === lay.id), 0, event.layer);
+          this.layersChecked.splice(
+            this.layersChecked.findIndex(lay => layer.id === lay.id),
+            0,
+            event.layer
+          );
 
           if (this.excludeBaseLayers) {
-            if (this.layersChecked.length === this.layers.filter(lay => (lay.baseLayer !== true && lay.showInLayerList)).length) {
+            if (
+              this.layersChecked.length ===
+              this.layers.filter(
+                lay => lay.baseLayer !== true && lay.showInLayerList
+              ).length
+            ) {
               this.selectAllCheck = true;
             } else {
               this.selectAllCheck = false;
             }
           } else if (!this.excludeBaseLayers) {
-            if (this.layersChecked.length === this.layers.filter(lay => lay.showInLayerList).length) {
+            if (
+              this.layersChecked.length ===
+              this.layers.filter(lay => lay.showInLayerList).length
+            ) {
               this.selectAllCheck = true;
             } else {
               this.selectAllCheck = false;
@@ -577,18 +645,27 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
       this.layersChecked.push(event.layer);
     } else {
-      const index = this.layersChecked.findIndex(layer => event.layer.id === layer.id);
+      const index = this.layersChecked.findIndex(
+        layer => event.layer.id === layer.id
+      );
       this.layersChecked.splice(index, 1);
     }
 
     if (this.excludeBaseLayers) {
-      if (this.layersChecked.length === this.layers.filter(lay => (lay.baseLayer !== true && lay.showInLayerList)).length) {
+      if (
+        this.layersChecked.length ===
+        this.layers.filter(lay => lay.baseLayer !== true && lay.showInLayerList)
+          .length
+      ) {
         this.selectAllCheck = true;
       } else {
         this.selectAllCheck = false;
       }
     } else if (!this.excludeBaseLayers) {
-      if (this.layersChecked.length === this.layers.filter(lay => lay.showInLayerList).length) {
+      if (
+        this.layersChecked.length ===
+        this.layers.filter(lay => lay.showInLayerList).length
+      ) {
         this.selectAllCheck = true;
       } else {
         this.selectAllCheck = false;
@@ -624,7 +701,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
   selectAll() {
     if (!this.selectAllCheck) {
       for (const layer of this.layers) {
-        if (this.excludeBaseLayers && layer.baseLayer !== true && layer.showInLayerList) {
+        if (
+          this.excludeBaseLayers &&
+          layer.baseLayer !== true &&
+          layer.showInLayerList
+        ) {
           layer.options.check = true;
           this.layersChecked.push(layer);
         } else if (!this.excludeBaseLayers && layer.showInLayerList) {
@@ -648,14 +729,24 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
     const elemTop = elem.offsetTop;
     const elemBottom = elemTop + elem.clientHeight;
-    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    return elemBottom <= docViewBottom && elemTop >= docViewTop;
   }
 
   computeElementRef(type?: string) {
-    const checkItems = this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked');
-    const checkItem = type === 'lower' ? this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked')[checkItems.length - 1] :
-      this.elRef.nativeElement.getElementsByClassName('mat-checkbox-checked')[0];
-    const igoList = this.elRef.nativeElement.getElementsByTagName('igo-list')[0];
+    const checkItems = this.elRef.nativeElement.getElementsByClassName(
+      'mat-checkbox-checked'
+    );
+    const checkItem =
+      type === 'lower'
+        ? this.elRef.nativeElement.getElementsByClassName(
+            'mat-checkbox-checked'
+          )[checkItems.length - 1]
+        : this.elRef.nativeElement.getElementsByClassName(
+            'mat-checkbox-checked'
+          )[0];
+    const igoList = this.elRef.nativeElement.getElementsByTagName(
+      'igo-list'
+    )[0];
 
     return [igoList, checkItem];
   }

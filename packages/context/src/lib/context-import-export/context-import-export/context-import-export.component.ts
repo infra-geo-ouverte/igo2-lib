@@ -3,7 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 import { MessageService, LanguageService, ConfigService } from '@igo2/core';
-import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
+import { Layer, VectorLayer } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { handleFileExportError } from '../shared/context-export.utils';
 import {
@@ -72,34 +73,36 @@ export class ContextImportExportComponent implements OnInit {
 
   handleExportFormSubmit(contextOptions) {
     this.loading$.next(true);
-    this.res = this.contextService.getContextFromLayers(this.map, contextOptions.layers, contextOptions.name);
+    this.res = this.contextService.getContextFromLayers(
+      this.map,
+      contextOptions.layers,
+      contextOptions.name
+    );
     this.res.imported = true;
-    this.contextExportService
-      .export(this.res)
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
-          this.onFileExportSuccess();
-          this.loading$.next(false);
-        }
-      );
-}
+    this.contextExportService.export(this.res).subscribe(
+      () => {},
+      (error: Error) => this.onFileExportError(error),
+      () => {
+        this.onFileExportSuccess();
+        this.loading$.next(false);
+      }
+    );
+  }
 
   private buildForm() {
     this.form = this.formBuilder.group({
-        layers: ['', [Validators.required]],
-        name: ['', [Validators.required]]
+      layers: ['', [Validators.required]],
+      name: ['', [Validators.required]]
     });
   }
 
   private onFileImportSuccess(file: File, context: DetailedContext) {
     handleFileImportSuccess(
-    file,
-    context,
-    this.messageService,
-    this.languageService,
-    this.contextService
+      file,
+      context,
+      this.messageService,
+      this.languageService,
+      this.contextService
     );
   }
 
@@ -125,11 +128,11 @@ export class ContextImportExportComponent implements OnInit {
 
   selectAll(e) {
     if (e._selected) {
-        this.form.controls.layers.setValue(this.layerList);
-        e._selected = true;
+      this.form.controls.layers.setValue(this.layerList);
+      e._selected = true;
     }
     if (e._selected === false) {
-        this.form.controls.layers.setValue([]);
+      this.form.controls.layers.setValue([]);
     }
   }
 

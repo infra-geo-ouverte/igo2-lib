@@ -9,7 +9,8 @@
       "@igo2/utils" : "utils",
       "jwt-decode" : "jwt",
       "ngx-cacheable" : "ngxCacheable",
-      "ts-md5" : "tsMd5"
+      "ts-md5" : "tsMd5",
+      "@ngx-translate/core" : "ngxt-core"
     }
   },
   "whitelistedNonPeerDependencies": ["jwt-decode", "ngx-cacheable", "ts-md5"]

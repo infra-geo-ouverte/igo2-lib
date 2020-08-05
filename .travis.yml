@@ -3,12 +3,14 @@ node_js:
   - 14
   - 13
   - 12
-  - 11
   - 10
 
 before_script:
   - npm install -g gulp-cli
+
+script:
   - npm run build.libs
+  - npm run test
 
 addons:
   chrome: stable

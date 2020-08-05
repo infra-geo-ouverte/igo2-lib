@@ -5,7 +5,7 @@ import OlFeature from 'ol/Feature';
 import { StyleByAttribute } from './vector-style.interface';
 
 import { ClusterParam } from './clusterParam';
-import { createOverlayMarkerStyle } from '../../overlay';
+import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 
 @Injectable({
   providedIn: 'root'

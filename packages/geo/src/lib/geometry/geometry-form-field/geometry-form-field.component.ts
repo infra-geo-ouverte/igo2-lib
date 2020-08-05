@@ -10,10 +10,10 @@ import { FormControl } from '@angular/forms';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { Style as OlStyle } from 'ol/style';
 
-import { FormFieldComponent } from '@igo2/common';
+import { IgoFormFieldComponent } from '@igo2/common';
 
 import { IgoMap } from '../../map';
 import { GeoJSONGeometry } from '../shared/geometry.interfaces';
@@ -22,7 +22,7 @@ import { GeoJSONGeometry } from '../shared/geometry.interfaces';
  * This input allows a user to draw a new geometry or to edit
  * an existing one on a map.
  */
-@FormFieldComponent('geometry')
+@IgoFormFieldComponent('geometry')
 @Component({
   selector: 'igo-geometry-form-field',
   templateUrl: './geometry-form-field.component.html',

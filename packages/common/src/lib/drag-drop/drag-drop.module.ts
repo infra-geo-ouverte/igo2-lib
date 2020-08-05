@@ -7,7 +7,7 @@ import { DragAndDropDirective } from './drag-drop.directive';
   exports: [DragAndDropDirective]
 })
 export class IgoDrapDropModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoDrapDropModule> {
     return {
       ngModule: IgoDrapDropModule,
       providers: []

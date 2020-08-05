@@ -2,7 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 
 import { IgoActivityModule } from './activity/activity.module';
 import { IgoConfigModule } from './config/config.module';
@@ -30,7 +30,7 @@ import { IgoErrorModule } from './request/error.module';
   ]
 })
 export class IgoCoreModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoCoreModule> {
     return {
       ngModule: IgoCoreModule,
       providers: []
