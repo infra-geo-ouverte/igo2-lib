@@ -16,11 +16,7 @@
     "url": "https://github.com/infra-geo-ouverte/igo2-lib/issues"
   },
   "dependencies": {
-<<<<<<< HEAD
     "bowser": "^2.10.0",
-=======
-    "bowser": "^1.9.2",
->>>>>>> feat(libs): upgrade librairies (#696)
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
