@@ -68,6 +68,47 @@
         "show": "Show up this context",
         "showHidden": "Show hidden contexts"
       },
+      "contextImportExport": {
+        "export": {
+          "exportPlaceHolder": "Layers",
+          "exportContextName": "Context name",
+          "exportSelectAll": "Select all",
+          "success": {
+            "text": "Context has been exported.",
+            "title":"Context export success"
+          },
+          "nothing": {
+            "text": "No context could be exported.",
+            "title": "Nothing to export"
+          },
+          "failed": {
+            "text": "Failed to export",
+            "title": "Failed to export context"
+          }
+        },
+        "import": {
+          "success": {
+            "title": "Imported context",
+            "text": "The context '{{value}}' was added to the map"
+          },
+          "empty": {
+            "text": "The context '{{value}}' contained nothing that could be imported.",
+            "title": "Nothing to import"
+          },
+          "invalid": {
+            "text": "The context '{{value}}' is invalid.",
+            "title": "Invalid context"
+          },
+          "unreadable": {
+            "title": "Unreadable context",
+            "text": "The context '{{value}}' is unreadable"
+          },
+          "tooLarge": {
+            "text": "The context '{{value}}' is too large (Max: {{size}} MB)",
+            "title": "Context too large"
+          }
+        }
+      },
       "permission": {
         "addBtn": "Add",
         "delete": "Remove permission",

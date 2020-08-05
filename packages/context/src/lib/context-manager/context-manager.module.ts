@@ -35,6 +35,7 @@ import { ContextEditBindingDirective } from './context-edit/context-edit-binding
 import { ContextPermissionsComponent } from './context-permissions/context-permissions.component';
 import { ContextPermissionsBindingDirective } from './context-permissions/context-permissions-binding.directive';
 import { IgoContextMapButtonModule } from '../context-map-button/context-map-button.module';
+import { IgoContextImportExportModule } from '../context-import-export/context-import-export.module';
 
 const CONTEXT_DIRECTIVES = [
   MapContextDirective,
@@ -64,6 +65,7 @@ const CONTEXT_DIRECTIVES = [
     IgoCollapsibleModule,
     IgoStopPropagationModule,
     IgoLanguageModule,
+    IgoContextImportExportModule,
     IgoContextMapButtonModule,
     IgoActionbarModule
   ],

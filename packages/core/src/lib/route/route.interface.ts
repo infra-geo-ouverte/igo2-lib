@@ -12,4 +12,5 @@ export interface RouteServiceOptions {
   wmsLayersKey?: boolean | string;
   wmtsUrlKey?: boolean | string;
   wmtsLayersKey?: boolean | string;
+  vectorKey?: boolean | string;
 }

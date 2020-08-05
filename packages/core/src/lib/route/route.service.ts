@@ -40,7 +40,8 @@ export class RouteService {
       wmsUrlKey: 'wmsUrl',
       wmsLayersKey:  'wmsLayers',
       wmtsUrlKey: 'wmtsUrl',
-      wmtsLayersKey:  'wmtsLayers'
+      wmtsLayersKey:  'wmtsLayers',
+      vectorKey: 'vector'
     };
     this.options = Object.assign({}, defaultOptions, options);
   }

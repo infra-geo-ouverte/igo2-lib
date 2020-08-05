@@ -14,6 +14,7 @@ export interface Context {
   icon?: string;
   iconImage?: string;
   hidden?: boolean;
+  imported?: boolean;
 }
 
 export interface ContextsList {
@@ -30,6 +31,7 @@ export interface DetailedContext extends Context {
   toolbar?: string[];
   message?: Message;
   removeLayersOnContextChange?: boolean;
+  extraFeatures?: any[];
 }
 
 export interface ContextMapView extends MapViewOptions {

@@ -31,6 +31,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
 import { ActionStore, ActionbarMode } from '@igo2/common';
+import { ContextService } from '../shared/context.service';
 
 @Component({
   selector: 'igo-context-list',
@@ -150,6 +151,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdRef: ChangeDetectorRef,
+    private contextService: ContextService,
     public auth: AuthService,
     private dialog: MatDialog,
     private languageService: LanguageService,
@@ -208,7 +210,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       }
       return contexts;
     } else {
-      const ours = contexts.ours.filter(context => {
+      const ours = contexts.ours.filter((context) => {
         const filterNormalized = this.term
           .toLowerCase()
           .normalize('NFD')
@@ -225,7 +227,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       };
 
       if (this.contexts.public) {
-        const publics = contexts.public.filter(context => {
+        const publics = contexts.public.filter((context) => {
           const filterNormalized = this.term
             .toLowerCase()
             .normalize('NFD')
@@ -240,7 +242,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
       }
 
       if (this.contexts.shared) {
-        const shared = contexts.shared.filter(context => {
+        const shared = contexts.shared.filter((context) => {
           const filterNormalized = this.term
             .toLowerCase()
             .normalize('NFD')
@@ -343,7 +345,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.dialog
       .open(BookmarkDialogComponent, { disableClose: false })
       .afterClosed()
-      .subscribe(title => {
+      .subscribe((title) => {
         if (title) {
           this.create.emit({ title, empty });
         }
@@ -352,7 +354,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
 
   getPermission(user?): ContextUserPermission {
     if (user) {
-      const permission = this.permissions.find(p => p.name === user.name);
+      const permission = this.permissions.find((p) => p.name === user.name);
       return permission;
     }
   }
@@ -412,9 +414,9 @@ export class ContextListComponent implements OnInit, OnDestroy {
     context.hidden = true;
     if (!this.showHidden) {
       const contexts: ContextsList = { ours: [], shared: [], public: [] };
-      contexts.ours = this.contexts.ours.filter(c => c.id !== context.id);
-      contexts.shared = this.contexts.shared.filter(c => c.id !== context.id);
-      contexts.public = this.contexts.public.filter(c => c.id !== context.id);
+      contexts.ours = this.contexts.ours.filter((c) => c.id !== context.id);
+      contexts.shared = this.contexts.shared.filter((c) => c.id !== context.id);
+      contexts.public = this.contexts.public.filter((c) => c.id !== context.id);
       this.contexts = contexts;
     }
     this.hide.emit(context);

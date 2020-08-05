@@ -40,6 +40,7 @@ export function addLayerAndFeaturesToMap(
     color: [r, g, b, 0.4]
   });
   const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+    type: 'vector',
     queryable: true
   };
   const source = new FeatureDataSource(sourceOptions);
@@ -140,8 +141,8 @@ export function addLayerAndFeaturesStyledToMap(
     source = new ClusterDataSource(sourceOptions);
     source.ol.source.addFeatures(olFeatures);
   } else if (styleListService.getStyleList(layerTitle.toString())) {
-    const sourceOptions: FeatureDataSourceOptions &
-      QueryableDataSourceOptions = {
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+      type: 'vector',
       queryable: true
     };
     source = new FeatureDataSource(sourceOptions);
@@ -159,8 +160,8 @@ export function addLayerAndFeaturesStyledToMap(
     source = new ClusterDataSource(sourceOptions);
     source.ol.source.addFeatures(olFeatures);
   } else {
-    const sourceOptions: FeatureDataSourceOptions &
-      QueryableDataSourceOptions = {
+    const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
+      type: 'vector',
       queryable: true
     };
     source = new FeatureDataSource(sourceOptions);

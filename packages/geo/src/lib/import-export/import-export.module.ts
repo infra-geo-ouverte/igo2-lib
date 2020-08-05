@@ -2,6 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +28,7 @@ import { IgoStyleListModule } from './style-list/style-list.module';
     ReactiveFormsModule,
     CommonModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatTabsModule,
     MatSelectModule,
     MatOptionModule,

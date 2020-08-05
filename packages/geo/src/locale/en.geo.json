@@ -52,6 +52,10 @@
           "text": "No feature could be exported.",
           "title": "Nothing to export"
         },
+        "noFormat": {
+          "text": "No export format valid for all selected layers. Please export the layers one at a time.",
+          "title": "No valid format"
+        },
         "failed": {
           "text": "Failed to export",
           "title": "Failed to export features"
@@ -67,7 +71,8 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (semicolon delimited)"
+          "CSVsemicolon": "CSV (semicolon delimited)",
+          "URL": "URL"
         }
       },
       "importExportForm": {

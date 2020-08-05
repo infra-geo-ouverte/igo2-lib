@@ -52,6 +52,10 @@
           "text": "Impossible d’exporter, donnée non valide ou aucune donnée sélectionnée.",
           "title": "Donnée non valide ou non présente"
         },
+        "noFormat": {
+          "text": "Aucun format d'exportation valide pour toutes les couches sélectionnées. Veuillez exporter les couches une à la fois.",
+          "title": "Aucun format disponible"
+        },
         "failed": {
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
@@ -67,7 +71,8 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (séparateur virgule)",
-          "CSVsemicolon": "CSV (séparateur point-virgule)"
+          "CSVsemicolon": "CSV (séparateur point-virgule)",
+          "URL": "URL"
         }
       },
       "importExportForm": {

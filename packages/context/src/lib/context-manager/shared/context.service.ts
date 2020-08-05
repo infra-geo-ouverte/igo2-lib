@@ -12,6 +12,8 @@ import {
 } from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
+import GeoJSON from 'ol/format/GeoJSON';
+import Cluster from 'ol/source/Cluster';
 
 import { Tool } from '@igo2/common';
 import { uuid, ObjectUtils } from '@igo2/utils';
@@ -25,7 +27,7 @@ import {
 } from '@igo2/core';
 
 import { AuthService } from '@igo2/auth';
-import type { IgoMap } from '@igo2/geo';
+import type { IgoMap, Layer } from '@igo2/geo';
 
 import { TypePermission } from './context.enum';
 import {
@@ -46,6 +48,7 @@ export class ContextService {
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
+  public importedContext: Array<DetailedContext> = [];
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
@@ -54,6 +57,7 @@ export class ContextService {
   // Until the ContextService is completely refactored, this is needed
   // to track the current tools
   private tools: Tool[];
+  private toolbar: string[];
 
   get defaultContextUri(): string {
     return this._defaultContextUri || this.options.defaultContextUri;
@@ -84,9 +88,9 @@ export class ContextService {
 
     this.readParamsFromRoute();
 
-    this.authService.authenticate$.subscribe(authenticated => {
+    this.authService.authenticate$.subscribe((authenticated) => {
       if (authenticated && this.baseUrl) {
-        this.get().subscribe(contexts => {
+        this.get().subscribe((contexts) => {
           this.handleContextsChange(contexts);
         });
       } else {
@@ -117,7 +121,7 @@ export class ContextService {
   getDetails(id: string): Observable<DetailedContext> {
     const url = `${this.baseUrl}/contexts/${id}/details`;
     return this.http.get<DetailedContext>(url).pipe(
-      catchError(res => {
+      catchError((res) => {
         return this.handleError(res, id);
       })
     );
@@ -126,7 +130,7 @@ export class ContextService {
   getDefault(): Observable<DetailedContext> {
     const url = this.baseUrl + '/contexts/default';
     return this.http.get<DetailedContext>(url).pipe(
-      tap(context => {
+      tap((context) => {
         this.defaultContextId$.next(context.id);
       })
     );
@@ -155,15 +159,21 @@ export class ContextService {
     return this.http.post(url, {});
   }
 
-  delete(id: string): Observable<void> {
+  delete(id: string, imported = false): Observable<void> {
+    const contexts: ContextsList = { ours: [] };
+    Object.keys(this.contexts$.value).forEach(
+      (key) =>
+        (contexts[key] = this.contexts$.value[key].filter((c) => c.id !== id))
+    );
+
+    if (imported) {
+      this.importedContext = this.importedContext.filter((c) => c.id !== id);
+      return of(this.contexts$.next(contexts));
+    }
+
     const url = this.baseUrl + '/contexts/' + id;
     return this.http.delete<void>(url).pipe(
-      tap(res => {
-        const contexts: ContextsList = { ours: [] };
-        Object.keys(this.contexts$.value).forEach(
-          key =>
-            (contexts[key] = this.contexts$.value[key].filter(c => c.id !== id))
-        );
+      tap((res) => {
         this.contexts$.next(contexts);
       })
     );
@@ -172,13 +182,13 @@ export class ContextService {
   create(context: DetailedContext): Observable<Context> {
     const url = this.baseUrl + '/contexts';
     return this.http.post<Context>(url, JSON.stringify(context)).pipe(
-      map(contextCreated => {
+      map((contextCreated) => {
         if (this.authService.authenticated) {
           contextCreated.permission = TypePermission[TypePermission.write];
         } else {
           contextCreated.permission = TypePermission[TypePermission.read];
         }
-        this.contexts$.value.ours.push(contextCreated);
+        this.contexts$.value.ours.unshift(contextCreated);
         this.contexts$.next(this.contexts$.value);
         return contextCreated;
       })
@@ -188,9 +198,9 @@ export class ContextService {
   clone(id: string, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
     return this.http.post<Context>(url, JSON.stringify(properties)).pipe(
-      map(contextCloned => {
+      map((contextCloned) => {
         contextCloned.permission = TypePermission[TypePermission.write];
-        this.contexts$.value.ours.push(contextCloned);
+        this.contexts$.value.ours.unshift(contextCloned);
         this.contexts$.next(this.contexts$.value);
         return contextCloned;
       })
@@ -236,7 +246,7 @@ export class ContextService {
     return this.http
       .post<ContextPermission[]>(url, JSON.stringify(association))
       .pipe(
-        catchError(res => {
+        catchError((res) => {
           return [this.handleError(res, undefined, true)];
         })
       );
@@ -278,7 +288,7 @@ export class ContextService {
               .reverse()
               .filter(
                 (l, index, self) =>
-                  !l.id || self.findIndex(l2 => l2.id === l.id) === index
+                  !l.id || self.findIndex((l2) => l2.id === l.id) === index
               )
               .reverse();
             resMerge.toolbar = res.toolbar || resBase.toolbar;
@@ -286,16 +296,16 @@ export class ContextService {
               .concat(resBase.tools || [])
               .filter(
                 (t, index, self) =>
-                  self.findIndex(t2 => t2.name === t.name) === index
+                  self.findIndex((t2) => t2.name === t.name) === index
               );
             return resMerge;
           }),
-          catchError(err => {
+          catchError((err) => {
             return this.handleError(err, uri);
           })
         );
       }),
-      catchError(err2 => {
+      catchError((err2) => {
         return this.handleError(err2, uri);
       })
     );
@@ -308,7 +318,8 @@ export class ContextService {
     } else {
       request = this.getLocalContexts();
     }
-    request.subscribe(contexts => {
+    request.subscribe((contexts) => {
+      contexts.ours = this.importedContext.concat(contexts.ours);
       this.contexts$.next(contexts);
     });
   }
@@ -333,7 +344,7 @@ export class ContextService {
     };
 
     if (this.route && this.route.options.contextKey) {
-      this.route.queryParams.pipe(debounceTime(100)).subscribe(params => {
+      this.route.queryParams.pipe(debounceTime(100)).subscribe((params) => {
         const contextParam = params[this.route.options.contextKey as string];
         let direct = false;
         if (contextParam) {
@@ -349,6 +360,7 @@ export class ContextService {
 
   loadContext(uri: string) {
     const context = this.context$.value;
+
     if (context && context.uri === uri) {
       return;
     }
@@ -427,7 +439,7 @@ export class ContextService {
       layers = igoMap.layers$
         .getValue()
         .filter(
-          lay =>
+          (lay) =>
             lay.baseLayer === true ||
             lay.options.id === 'searchPointerSummaryId'
         )
@@ -458,15 +470,126 @@ export class ContextService {
       }
     }
 
-    context.tools = this.tools.map(tool => {
+    context.tools = this.tools.map((tool) => {
       return { id: String(tool.id), global: tool.global };
     });
 
     return context;
   }
 
+  getContextFromLayers(
+    igoMap: IgoMap,
+    layers: Layer[],
+    name: string
+  ): DetailedContext {
+    const currentContext = this.context$.getValue();
+    const view = igoMap.ol.getView();
+    const proj = view.getProjection().getCode();
+    const center: any = new olPoint(view.getCenter()).transform(
+      proj,
+      'EPSG:4326'
+    );
+
+    const context = {
+      uri: name,
+      title: name,
+      map: {
+        view: {
+          center: center.getCoordinates(),
+          zoom: view.getZoom(),
+          projection: proj
+        }
+      },
+      layers: [],
+      toolbar: [],
+      tools: [],
+      extraFeatures: []
+    };
+
+    const currentLayers = igoMap.layers$.getValue();
+    context.layers = currentLayers
+      .filter((l) => l.baseLayer)
+      .map((l) => {
+        return {
+          baseLayer: true,
+          sourceOptions: l.options.sourceOptions,
+          title: l.options.title,
+          visible: l.visible
+        };
+      });
+
+    layers.forEach((layer) => {
+      const layerFound = currentContext.layers.find(
+        (contextLayer) =>
+          layer.id === contextLayer.source.id && !contextLayer.baseLayer
+      );
+
+      if (layerFound) {
+        let layerStyle = layerFound[`style`];
+        if (layerFound[`styleByAttribute`]) {
+          layerStyle = undefined;
+        } else if (layerFound[`clusterBaseStyle`]) {
+          layerStyle = undefined;
+          delete layerFound.sourceOptions[`source`];
+          delete layerFound.sourceOptions[`format`];
+        }
+        const opts = {
+          baseLayer: layerFound.baseLayer,
+          title: layer.options.title,
+          zIndex: layer.zIndex,
+          styleByAttribute: layerFound[`styleByAttribute`],
+          clusterBaseStyle: layerFound[`clusterBaseStyle`],
+          style: layerStyle,
+          clusterParam: layerFound[`clusterParam`],
+          visible: layer.visible,
+          opacity: layer.opacity,
+          sourceOptions: layerFound.sourceOptions
+        };
+        context.layers.push(opts);
+      } else {
+        if (layer.ol.type !== 'VECTOR') {
+          const catalogLayer = layer.options;
+          delete catalogLayer.source;
+          context.layers.push(catalogLayer);
+        } else {
+          let features;
+          const writer = new GeoJSON();
+          if (layer.ol.getSource() instanceof Cluster) {
+            features = writer.writeFeatures(
+              layer.ol.getSource().getSource().getFeatures(),
+              {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              }
+            );
+          } else {
+            features = writer.writeFeatures(
+              layer.ol.getSource().getFeatures(),
+              {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+              }
+            );
+          }
+          features = JSON.parse(features);
+          features.name = layer.options.title;
+          context.extraFeatures.push(features);
+        }
+      }
+    });
+
+    context.toolbar = this.toolbar;
+    context.tools = this.tools;
+
+    return context;
+  }
+
   setTools(tools: Tool[]) {
     this.tools = tools;
+  }
+
+  setToolbar(toolbar: string[]) {
+    this.toolbar = toolbar;
   }
 
   private handleContextMessage(context: DetailedContext) {
@@ -489,7 +612,7 @@ export class ContextService {
     if (this.baseUrl) {
       let contextToLoad;
       for (const key of Object.keys(this.contexts$.value)) {
-        contextToLoad = this.contexts$.value[key].find(c => {
+        contextToLoad = this.contexts$.value[key].find((c) => {
           return c.uri === uri;
         });
         if (contextToLoad) {
@@ -497,12 +620,35 @@ export class ContextService {
         }
       }
 
+      if (contextToLoad && contextToLoad.imported) {
+        return of(contextToLoad);
+      }
+
       // TODO : use always id or uri
       const id = contextToLoad ? contextToLoad.id : uri;
       return this.getDetails(id);
     }
 
-    return this.getLocalContext(uri);
+    const importedContext = this.contexts$.value.ours.find((currentContext) => {
+      return currentContext.uri === uri && currentContext.imported === true;
+    });
+
+    if (importedContext) {
+      return of(importedContext);
+    } else {
+      return this.getLocalContext(uri);
+    }
+  }
+
+  getContextLayers(igoMap: IgoMap) {
+    const layers: Layer[] = [];
+    const mapLayers = igoMap.layers$.getValue();
+    mapLayers.forEach((layer) => {
+      if (!layer.baseLayer && layer.options.id !== 'searchPointerSummaryId') {
+        layers.push(layer);
+      }
+    });
+    return layers;
   }
 
   private readParamsFromRoute() {
@@ -510,7 +656,7 @@ export class ContextService {
       return;
     }
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const centerKey = this.route.options.centerKey;
       if (centerKey && params[centerKey as string]) {
         const centerParams = params[centerKey as string];
@@ -543,7 +689,7 @@ export class ContextService {
     uri: string,
     permissionError?: boolean
   ): Message[] {
-    const context = this.contexts$.value.ours.find(obj => obj.uri === uri);
+    const context = this.contexts$.value.ours.find((obj) => obj.uri === uri);
     const titleContext = context ? context.title : uri;
     error.error.title = this.languageService.translate.instant(
       'igo.context.contextManager.invalid.title'
@@ -602,6 +748,7 @@ export class ContextService {
         scope: context.scope,
         permission: TypePermission[TypePermission.read]
       };
+
       if (this.contexts$.value && this.contexts$.value.public) {
         this.contexts$.value.public.push(contextSimplifie);
         this.contexts$.next(this.contexts$.value);
@@ -619,7 +766,7 @@ export class ContextService {
     for (const key of Object.keys(contexts)) {
       const value = contexts[key];
       found = value.find(
-        c =>
+        (c) =>
           (context.id && c.id === context.id) ||
           (context.uri && c.uri === context.uri)
       );
