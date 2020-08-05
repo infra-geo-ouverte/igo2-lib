@@ -19,7 +19,7 @@ mat-list {
   position: static;
 }
 
-:host >>> .mat-list .mat-list-item .mat-list-text > * {
+:host ::ng-deep .mat-list .mat-list-item .mat-list-text > * {
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -30,38 +30,38 @@ mat-list {
   -webkit-line-clamp: 2;
 }
 
-:host >>> .mat-list .mat-list-item.mat-list-item-avatar .mat-list-item-content {
+:host ::ng-deep .mat-list .mat-list-item.mat-list-item-avatar .mat-list-item-content {
   display: -webkit-flex;
   height: $igo-list-item-height;
   padding: $igo-list-item-padding;
 }
 
-:host >>> .mat-list .mat-list-item.mat-list-item-avatar {
+:host ::ng-deep .mat-list .mat-list-item.mat-list-item-avatar {
   height: $igo-list-item-height;
 }
 
-:host >>> .mat-list ::ng-deep igo-collapsible > .mat-list-item > .mat-list-item-content > .mat-list-text > .mat-line {
+:host ::ng-deep .mat-list ::ng-deep igo-collapsible > .mat-list-item > .mat-list-item-content > .mat-list-text > .mat-line {
   font-weight: bold;
   opacity: 0.9;
 }
 
 :host
-  >>> .mat-list
+  ::ng-deep .mat-list
   .mat-list-item.mat-list-item-avatar
   .mat-list-item-content
   > mat-icon {
   padding: $igo-list-item-icon-padding;
 }
 
-:host >>> [igolistitem] mat-list-item [mat-list-avatar] {
+:host ::ng-deep [igolistitem] mat-list-item [mat-list-avatar] {
   height: auto;
   width: 40px;
 }
 
-:host mat-list.selectable >>> [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {
+:host mat-list.selectable ::ng-deep [igolistitem]:not(.igo-list-item-disabled) mat-list-item:hover {
   cursor: pointer;
 }
 
-:host >>> [igolistitem]:focus {
+:host ::ng-deep [igolistitem]:focus {
   outline: none;
 }

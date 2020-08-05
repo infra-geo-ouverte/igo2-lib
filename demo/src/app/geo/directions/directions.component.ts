@@ -30,8 +30,8 @@ export class AppDirectionsComponent {
     geolocate: true
   };
 
-  public stopsStore = new FeatureStore<Feature>([], {map: this.map});
-  public routeStore = new FeatureStore<Feature>([], {map: this.map});
+  public stopsStore = new FeatureStore<Feature>([], { map: this.map });
+  public routeStore = new FeatureStore<Feature>([], { map: this.map });
 
   constructor(
     private projectionService: ProjectionService,
@@ -42,13 +42,9 @@ export class AppDirectionsComponent {
     this.mapService.setMap(this.map);
     this.layerService
       .createAsyncLayer({
-        title: 'Quebec Base Map',
+        title: 'OSM',
         sourceOptions: {
-          type: 'wmts',
-          url: 'https://geoegl.msp.gouv.qc.ca/carto/wmts/1.0.0/wmts',
-          layer: 'carte_gouv_qc_ro',
-          matrixSet: 'EPSG_3857',
-          version: '1.3.0'
+          type: 'osm'
         }
       })
       .subscribe(l => this.map.addLayer(l));

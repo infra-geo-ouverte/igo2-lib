@@ -4,12 +4,14 @@
   "lib": {
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
-      "@igo2/geo" : "igoGeo",
-      "ol/format/GeoJSON" : "olFormatGeoJSON",
-      "ol/style" : "olstyle",
-      "@igo2/core" : "igoCore",
-      "@igo2/context" : "igoContext",
-      "@igo2/common" : "igoCommon"
+      "@igo2/auth": "auth",
+      "@igo2/geo": "igoGeo",
+      "ol/format/GeoJSON": "olFormatGeoJSON",
+      "ol/style": "olstyle",
+      "@igo2/core": "igoCore",
+      "@igo2/context": "igoContext",
+      "@igo2/common": "igoCommon",
+      "@ngx-translate/core" : "ngxt-core"
     }
   }
 }

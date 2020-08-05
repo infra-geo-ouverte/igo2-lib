@@ -4,18 +4,18 @@ import {
   ChangeDetectionStrategy,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import type { FormControl } from '@angular/forms';
 
 import { BehaviorSubject, } from 'rxjs';
 
 import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
 import { FormFieldSelectChoice } from '../shared/form.interfaces';
-import { FormFieldComponent } from '../shared/form-field-component';
+import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
  * This component renders a select field
  */
-@FormFieldComponent('select')
+@IgoFormFieldComponent('select')
 @Component({
   selector: 'igo-form-field-select',
   templateUrl: './form-field-select.component.html',

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import * as olproj from 'ol/proj';
@@ -9,7 +9,7 @@ import olPoint from 'ol/geom/Point';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ConfirmDialogService } from '@igo2/common';
 import { AuthService } from '@igo2/auth';
-import { IgoMap } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { PoiService } from './shared/poi.service';
 import { Poi } from './shared/poi.interface';

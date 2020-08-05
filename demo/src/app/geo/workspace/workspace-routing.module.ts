@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppWorkspaceComponent } from './workspace.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppWorkspaceRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppWorkspaceRoutingModule = RouterModule.forChild(
   routes
 );

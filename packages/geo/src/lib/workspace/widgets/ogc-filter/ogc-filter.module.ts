@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
 
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -18,7 +18,6 @@ import { OgcFilterComponent } from './ogc-filter.component';
     IgoFilterModule
   ],
   exports: [OgcFilterComponent],
-  declarations: [OgcFilterComponent],
-  entryComponents: [OgcFilterComponent]
+  declarations: [OgcFilterComponent]
 })
 export class IgoOgcFilterModule {}

@@ -1,18 +1,17 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {
-  MatButtonModule,
-  MatTabsModule,
-  MatSelectModule,
-  MatOptionModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatSlideToggleModule,
-  MatIconModule,
-  MatTooltipModule,
-  MatButtonToggleModule
-} from '@angular/material';
+
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoKeyValueModule, IgoDrapDropModule, IgoSpinnerModule } from '@igo2/common';
@@ -47,7 +46,7 @@ import { IgoStyleListModule } from './style-list/style-list.module';
   declarations: [ImportExportComponent, DropGeoFileDirective, ExportButtonComponent]
 })
 export class IgoImportExportModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoImportExportModule> {
     return {
       ngModule: IgoImportExportModule
     };

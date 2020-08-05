@@ -31,6 +31,6 @@
 }
 
 button,
-:host >>> button .mat-button-ripple-round {
+:host ::ng-deep button .mat-button-ripple-round {
   border-radius: 0;
 }

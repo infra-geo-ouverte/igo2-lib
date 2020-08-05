@@ -1,5 +1,4 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
 
 import { AppAuthFormComponent } from './auth-form.component';
 
@@ -10,6 +9,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppAuthFormRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppAuthFormRoutingModule = RouterModule.forChild(
   routes
 );

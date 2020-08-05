@@ -1,4 +1,4 @@
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { GeoJsonGeometryTypes } from 'geojson';
 
 import { FormFieldInputs } from '@igo2/common';

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { MatCardModule, MatButtonModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 
 import { IgoMapModule, IgoOverlayModule } from '@igo2/geo';
 

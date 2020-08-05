@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppEntitySelectorComponent } from './entity-selector.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppEntitySelectorRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppEntitySelectorRoutingModule = RouterModule.forChild(
   routes
 );
