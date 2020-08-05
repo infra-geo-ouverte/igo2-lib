@@ -128,7 +128,7 @@ export class AppFeatureComponent implements OnInit, OnDestroy {
           url: 'assets/mapboxStyleExample-vectortile.json',
           source: 'ahocevar'
         }
-      })
+      } as any)
       .subscribe(l => this.map.addLayer(l));
 
     this.dataSourceService

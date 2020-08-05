@@ -2,10 +2,19 @@
   "default": {
     "style": {
       "fill": {
-        "color": "green"
+        "color": "rgba(0,255,0,0.3)"
       },
       "stroke": {
         "color": "black"
+      },
+      "circle": {
+        "fill": {
+          "color": "rgba(0,255,0,0.3)"
+        },
+        "stroke": {
+          "color": "black"
+        },
+        "radius": 5
       }
     }
   },

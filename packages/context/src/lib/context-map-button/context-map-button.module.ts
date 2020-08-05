@@ -2,16 +2,14 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import {
-  MatIconModule,
-  MatButtonModule,
-  MatSelectModule,
-  MatOptionModule,
-  MatTooltipModule,
-  MatFormFieldModule,
-  MatDialogModule,
-  MatInputModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoConfirmDialogModule, IgoStopPropagationModule } from '@igo2/common';
@@ -51,15 +49,10 @@ import { UserButtonComponent } from './user-button/user-button.component';
     UserButtonComponent,
     UserDialogComponent
   ],
-  entryComponents: [
-    BookmarkDialogComponent,
-    PoiDialogComponent,
-    UserDialogComponent
-  ],
   providers: [PoiService]
 })
 export class IgoContextMapButtonModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoContextMapButtonModule> {
     return {
       ngModule: IgoContextMapButtonModule
     };

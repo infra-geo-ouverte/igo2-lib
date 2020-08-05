@@ -4,17 +4,17 @@ import {
   ChangeDetectionStrategy,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import type { FormControl } from '@angular/forms';
 
 import { BehaviorSubject } from 'rxjs';
 
 import { formControlIsRequired, getControlErrorMessage } from '../shared/form.utils';
-import { FormFieldComponent } from '../shared/form-field-component';
+import { IgoFormFieldComponent } from '../shared/form-field-component';
 
 /**
  * This component renders a textarea field
  */
-@FormFieldComponent('textarea')
+@IgoFormFieldComponent('textarea')
 @Component({
   selector: 'igo-form-field-textarea',
   templateUrl: './form-field-textarea.component.html',

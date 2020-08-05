@@ -11,7 +11,7 @@ import {
 
 import { AuthService } from '@igo2/auth';
 import { LanguageService, StorageService } from '@igo2/core';
-import { IgoMap } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import {
   DetailedContext,
@@ -27,7 +27,7 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
 import { ActionStore, ActionbarMode } from '@igo2/common';

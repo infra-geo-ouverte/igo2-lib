@@ -6,7 +6,7 @@ import {
   ChangeDetectionStrategy,
   ViewChild
 } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
@@ -23,7 +23,8 @@ import OlOverlay from 'ol/Overlay';
 import { unByKey } from 'ol/Observable';
 
 import { LanguageService } from '@igo2/core';
-import { EntityRecord, EntityTableTemplate, EntityTableComponent } from '@igo2/common';
+import { EntityRecord, EntityTableTemplate } from '@igo2/common';
+import type { EntityTableComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
 
 import { FeatureDataSource } from '../../datasource';
@@ -36,7 +37,7 @@ import {
   tryAddLoadingStrategy,
   tryAddSelectionStrategy
 } from '../../feature';
-import { DrawControl, ModifyControl } from '../../geometry';
+import { DrawControl, ModifyControl } from '../../geometry/shared';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 
@@ -264,7 +265,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    */
   @Input() minSegmentLength: number = 10;
 
-  @ViewChild('table') table: EntityTableComponent;
+  @ViewChild('table', { static: true }) table: EntityTableComponent;
 
   /**
    * Wheter one of the draw control is active

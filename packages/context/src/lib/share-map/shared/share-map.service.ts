@@ -1,7 +1,8 @@
 import { Injectable, Optional } from '@angular/core';
 
 import { RouteService, ConfigService, MessageService } from '@igo2/core';
-import { IgoMap, Layer } from '@igo2/geo';
+import { Layer } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from '../../context-manager/shared/context.service';
 

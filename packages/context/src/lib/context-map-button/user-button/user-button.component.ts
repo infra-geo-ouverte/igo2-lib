@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ConfigService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
-import { IgoMap } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { UserDialogComponent } from './user-dialog.component';
 import { userButtonSlideInOut } from './user-button.animation';

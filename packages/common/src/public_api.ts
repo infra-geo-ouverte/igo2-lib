@@ -42,6 +42,7 @@ export * from './lib/workspace/workspace-widget-outlet/workspace-widget-outlet.m
 
 export * from './lib/action';
 export * from './lib/backdrop';
+export * from './lib/badge-icon';
 export * from './lib/clickout';
 export * from './lib/clone';
 export * from './lib/collapsible';
@@ -65,4 +66,3 @@ export * from './lib/table';
 export * from './lib/tool';
 export * from './lib/widget';
 export * from './lib/workspace';
-export * from './lib/workspace/workspace-selector/workspace-selector.component';

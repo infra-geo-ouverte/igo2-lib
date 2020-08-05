@@ -44,7 +44,7 @@ export class StyleListService {
             return throwError(error.error || 'Server error');
           })
         )
-        .subscribe(styleListResponse => {
+        .subscribe((styleListResponse: object) => {
           this.styleList = ObjectUtils.mergeDeep(baseStyleList, styleListResponse);
           resolve(true);
         });

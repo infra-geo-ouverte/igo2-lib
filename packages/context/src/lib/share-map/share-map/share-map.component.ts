@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { uuid, Clipboard } from '@igo2/utils';
 import { ConfigService, MessageService, LanguageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
-import { IgoMap } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { ShareMapService } from '../shared/share-map.service';
 import { Subscription } from 'rxjs';

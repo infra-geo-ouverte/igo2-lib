@@ -3,6 +3,7 @@ import olSourceVector from 'ol/source/Vector';
 import { unByKey } from 'ol/Observable';
 import { easeOut } from 'ol/easing';
 import { asArray as ColorAsArray } from 'ol/color';
+import { getVectorContext } from 'ol/render';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -64,10 +65,10 @@ export class VectorLayer extends Layer {
 
   protected flash(feature) {
     const start = new Date().getTime();
-    const listenerKey = this.map.ol.on('postcompose', animate.bind(this));
+    const listenerKey = this.ol.on('postrender', animate.bind(this));
 
     function animate(event) {
-      const vectorContext = event.vectorContext;
+      const vectorContext = getVectorContext(event);
       const frameState = event.frameState;
       const flashGeom = feature.getGeometry().clone();
       const elapsed = frameState.time - start;

@@ -1,6 +1,6 @@
 @import '../../../style/partial/media';
 
-:host >>> {
+:host ::ng-deep {
   div.simple-notification-wrapper {
     bottom: 0;
     right: calc(50% - 150px);
@@ -52,7 +52,7 @@
     }
   }
 
-  .closeIcon >>> .sn-title:after {
+  .closeIcon ::ng-deep .sn-title:after {
     content: 'close';
     font-family: 'Material Icons';
     font-feature-settings: 'liga' 1;

@@ -28,17 +28,10 @@ import { ActiveOgcFilterToolComponent } from './active-ogc-filter-tool/active-og
     ActiveTimeFilterToolComponent,
     SpatialFilterToolComponent
   ],
-  entryComponents: [
-    OgcFilterToolComponent,
-    ActiveOgcFilterToolComponent,
-    TimeFilterToolComponent,
-    ActiveTimeFilterToolComponent,
-    SpatialFilterToolComponent
-  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppFilterModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppFilterModule> {
     return {
       ngModule: IgoAppFilterModule,
       providers: []
