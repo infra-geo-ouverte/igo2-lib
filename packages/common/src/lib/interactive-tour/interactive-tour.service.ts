@@ -121,7 +121,7 @@ export class InteractiveTourService {
     const self = this as any;
     let nbTry = 0;
     const maxTry = 21;
-    const checkExist = setInterval(function () {
+    const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
         const currentStepElement = self.getCurrentStep().getElement();
         const header = currentStepElement
@@ -188,7 +188,7 @@ export class InteractiveTourService {
       }
       let nbTry = 0;
       const maxTry = actionConfig.maxWait ? actionConfig.maxWait / 100 : 20;
-      const checkExist = setInterval(function () {
+      const checkExist = setInterval(() => {
         nbTry++;
         if (nbTry > maxTry || document.querySelector(actionConfig.waitFor)) {
           clearInterval(checkExist);

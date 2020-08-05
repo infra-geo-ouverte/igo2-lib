@@ -10,13 +10,12 @@ import { Toolbox } from './toolbox';
   providedIn: 'root'
 })
 export class ToolService {
+  static tools: { [key: string]: Tool } = {};
 
   /**
    * Toolbox that holds main tools
    */
   public toolbox: Toolbox = new Toolbox();
-
-  static tools: {[key: string]: Tool} = {};
 
   static register(tool: Tool) {
     ToolService.tools[tool.name] = tool;
@@ -42,5 +41,4 @@ export class ToolService {
   getTools(): Tool[] {
     return Object.values(ToolService.tools);
   }
-
 }
