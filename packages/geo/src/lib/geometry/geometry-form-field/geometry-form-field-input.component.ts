@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 import * as OlStyle from 'ol/style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlGeometry from 'ol/geom/Geometry';
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlFeature from 'ol/Feature';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -224,6 +224,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
         if (olModify) {
           if (olModify.features_) {
             olModify.features_.clear();
+            this.addGeoJSONToOverlay(this.value);
           }
         }
       }, 0);

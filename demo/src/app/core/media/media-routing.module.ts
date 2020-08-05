@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppMediaComponent } from './media.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppMediaRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppMediaRoutingModule = RouterModule.forChild(
   routes
 );

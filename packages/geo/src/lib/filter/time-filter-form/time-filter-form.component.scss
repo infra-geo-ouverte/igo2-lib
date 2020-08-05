@@ -5,13 +5,13 @@
   padding-left: $igo-padding;
 }
 
-mat-slider >>> div.mat-slider-thumb-label {
+mat-slider ::ng-deep div.mat-slider-thumb-label {
   width: 32px;
   height: 32px;
   margin: 0 auto;
 }
 
-mat-slider >>> span.mat-slider-thumb-label-text {
+mat-slider ::ng-deep span.mat-slider-thumb-label-text {
   font-size: 10px;
 }
 

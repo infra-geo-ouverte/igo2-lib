@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { Media } from '@igo2/core';
+import type { Media } from '@igo2/core';
 import { FlexibleState, Tool, getEntityTitle } from '@igo2/common';
-import { Feature, FeatureMotion, IgoMap, moveToOlFeatures } from '@igo2/geo';
+import { Feature, FeatureMotion, moveToOlFeatures } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 

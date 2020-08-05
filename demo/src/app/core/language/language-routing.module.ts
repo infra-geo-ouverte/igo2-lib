@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppLanguageComponent } from './language.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppLanguageRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppLanguageRoutingModule = RouterModule.forChild(
   routes
 );

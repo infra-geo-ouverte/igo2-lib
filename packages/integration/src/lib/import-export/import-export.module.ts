@@ -22,11 +22,10 @@ import { IgoLanguageModule } from '@igo2/core';
   ],
   declarations: [ImportExportToolComponent],
   exports: [ImportExportToolComponent],
-  entryComponents: [ImportExportToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppImportExportModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppImportExportModule> {
     return {
       ngModule: IgoAppImportExportModule,
       providers: []

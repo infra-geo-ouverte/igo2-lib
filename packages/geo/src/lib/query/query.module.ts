@@ -12,7 +12,7 @@ import { provideQuerySearchSource } from './shared/query-search-source.providers
   providers: [QueryService]
 })
 export class IgoQueryModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoQueryModule> {
     return {
       ngModule: IgoQueryModule,
       providers: [provideQuerySearchSource()]

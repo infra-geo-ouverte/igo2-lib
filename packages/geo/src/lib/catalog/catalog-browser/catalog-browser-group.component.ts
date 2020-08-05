@@ -10,7 +10,8 @@ import {
 
 import { BehaviorSubject } from 'rxjs';
 
-import { EntityStateManager, EntityStore } from '@igo2/common';
+import { EntityStore } from '@igo2/common';
+import type { EntityStateManager } from '@igo2/common';
 
 import {
   Catalog,

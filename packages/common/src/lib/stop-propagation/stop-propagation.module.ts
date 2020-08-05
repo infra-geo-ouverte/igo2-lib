@@ -8,7 +8,7 @@ import { StopPropagationDirective } from './stop-propagation.directive';
   exports: [StopDropPropagationDirective, StopPropagationDirective]
 })
 export class IgoStopPropagationModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoStopPropagationModule> {
     return {
       ngModule: IgoStopPropagationModule,
       providers: []

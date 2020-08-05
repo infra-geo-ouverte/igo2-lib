@@ -9,7 +9,7 @@ import { LoggingInterceptor } from './logging.interceptor';
   exports: []
 })
 export class IgoLoggingModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoLoggingModule> {
     return {
       ngModule: IgoLoggingModule,
       providers: [

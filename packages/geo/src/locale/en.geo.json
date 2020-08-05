@@ -335,7 +335,8 @@
             "place": "Place",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
-            "entreprise": "Entreprise"
+            "entreprise": "Entreprise",
+            "cadastre": "Cadastre"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",

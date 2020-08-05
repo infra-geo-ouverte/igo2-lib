@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import {
   OgcInterfaceFilterOptions,
@@ -12,7 +8,7 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
-import { FloatLabelType } from '@angular/material';
+import { FloatLabelType } from '@angular/material/form-field';
 import { BehaviorSubject } from 'rxjs';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 
@@ -23,7 +19,9 @@ import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/d
 })
 export class OgcFilterFormComponent implements OnInit {
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(
+    undefined
+  );
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
@@ -58,9 +56,7 @@ export class OgcFilterFormComponent implements OnInit {
     );
   }
 
-  constructor(
-    private wktService: WktService
-  ) {
+  constructor(private wktService: WktService) {
     // TODO: Filter permitted operator based on wfscapabilities
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...
@@ -86,9 +82,11 @@ export class OgcFilterFormComponent implements OnInit {
     if (!this.datasource.options.sourceFields) {
       return;
     }
-    const fields = this.datasource.options.sourceFields
-      .filter(sf => (sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters));
-    fields.filter(f => f.name === this.currentFilter.propertyName)
+    const fields = this.datasource.options.sourceFields.filter(
+      sf => sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters
+    );
+    fields
+      .filter(f => f.name === this.currentFilter.propertyName)
       .forEach(element => {
         this.values = element.values !== undefined ? element.values.sort() : [];
       });
@@ -97,9 +95,14 @@ export class OgcFilterFormComponent implements OnInit {
     const allowedOperators = new OgcFilterWriter().computeAllowedOperators(
       fields,
       this.currentFilter.propertyName,
-      this.datasource.options.ogcFilters.allowedOperatorsType);
+      this.datasource.options.ogcFilters.allowedOperatorsType
+    );
     this.ogcFilterOperators$.next(allowedOperators);
-    if (Object.keys(allowedOperators).indexOf(this.currentFilter$.value.operator) === -1) {
+    if (
+      Object.keys(allowedOperators).indexOf(
+        this.currentFilter$.value.operator
+      ) === -1
+    ) {
       this.currentFilter$.value.operator = Object.keys(allowedOperators)[0];
     }
     this.refreshFilters();
@@ -183,7 +186,8 @@ export class OgcFilterFormComponent implements OnInit {
         let wktPoly;
         if (filter.igoSpatialSelector === 'snrc') {
           if (value === '' && this.snrc !== '') {
-            wktPoly = this.wktService.snrcToWkt(this.snrc, this.map.projection).wktPoly;
+            wktPoly = this.wktService.snrcToWkt(this.snrc, this.map.projection)
+              .wktPoly;
             element.wkt_geometry = wktPoly;
           } else if (
             value !== '' &&
@@ -191,7 +195,8 @@ export class OgcFilterFormComponent implements OnInit {
               checkSNRC250k.test(value) ||
               checkSNRC50k.test(value))
           ) {
-            wktPoly = this.wktService.snrcToWkt(value, this.map.projection).wktPoly;
+            wktPoly = this.wktService.snrcToWkt(value, this.map.projection)
+              .wktPoly;
             element.wkt_geometry = wktPoly;
           }
         } else if (filter.igoSpatialSelector === 'fixedExtent') {
