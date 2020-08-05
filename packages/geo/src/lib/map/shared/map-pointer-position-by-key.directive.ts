@@ -27,10 +27,11 @@ import { MediaService } from '@igo2/core';
   selector: '[igoPointerPositionByKey]'
 })
 export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
-
   private keyDown$$: Subscription;
   private keyUp$$: Subscription;
-  private definedKeyIsDown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private definedKeyIsDown$: BehaviorSubject<boolean> = new BehaviorSubject(
+    false
+  );
 
   private lastTimeoutRequest;
 
@@ -52,7 +53,7 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
   /**
    * The key pressed (must be hold) to trigger the output
    */
-  @Input() pointerPositionByKeyCode: number = 17;
+  @Input() pointerPositionByKey: string = 'Shift';
 
   /**
    * Event emitted when the pointer move, delayed by pointerMoveDelay
@@ -74,7 +75,7 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
   constructor(
     @Self() private component: MapBrowserComponent,
     private mediaService: MediaService
-  ) { }
+  ) {}
 
   /**
    * Start listening to pointermove
@@ -104,7 +105,8 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
   private listenToMapPointerMove() {
     this.pointerMoveListener = this.map.ol.on(
       'pointermove',
-      (event: OlMapBrowserPointerEvent) => this.onPointerEvent(event, this.pointerPositionByKeyDelay)
+      (event: OlMapBrowserPointerEvent) =>
+        this.onPointerEvent(event, this.pointerPositionByKeyDelay)
     );
   }
 
@@ -123,35 +125,40 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
    */
   private subscribeToKeyDown() {
     this.unsubscribeToKeyDown();
-    this.keyDown$$ = fromEvent(document, 'keydown')
-    .subscribe((event: KeyboardEvent) => {
-      // On user defined key is down,
-      if (event.keyCode === this.pointerPositionByKeyCode) {
-        this.definedKeyIsDown$.next(true);
-        return;
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe(
+      (event: KeyboardEvent) => {
+        // On user defined key is down,
+        if (event.key === this.pointerPositionByKey) {
+          this.definedKeyIsDown$.next(true);
+          return;
+        }
       }
-    });
+    );
   }
   /**
    * Subscribe to user defined key keyUp, release to desactivate the emit
    */
   private subscribeToKeyUp() {
     this.unsubscribeToKeyUp();
-    this.keyUp$$ = fromEvent(document, 'keyup')
-    .subscribe((event: KeyboardEvent) => {
-      // When user defined key is released,
-      if (event.keyCode === this.pointerPositionByKeyCode) {
-        this.definedKeyIsDown$.next(false);
-        return;
+    this.keyUp$$ = fromEvent(document, 'keyup').subscribe(
+      (event: KeyboardEvent) => {
+        // When user defined key is released,
+        if (event.key === this.pointerPositionByKey) {
+          this.definedKeyIsDown$.next(false);
+          return;
+        }
       }
-    });
+    );
   }
 
   /**
    * Stop listening for map pointermove
    */
   private unlistenToMapPointerMove() {
-    this.map.ol.un(this.pointerMoveListener.type, this.pointerMoveListener.listener);
+    this.map.ol.un(
+      this.pointerMoveListener.type,
+      this.pointerMoveListener.listener
+    );
     this.pointerMoveListener = undefined;
   }
 
@@ -189,16 +196,23 @@ export class PointerPositionByKeyDirective implements OnInit, OnDestroy {
    * @param event OL map browser pointer event
    */
   private onPointerEvent(event: OlMapBrowserPointerEvent, delay: number) {
-    if (event.dragging || this.mediaService.isTouchScreen()) {return; }
-    if (typeof this.lastTimeoutRequest !== 'undefined') { // cancel timeout when the mouse moves
+    if (event.dragging || this.mediaService.isTouchScreen()) {
+      return;
+    }
+    if (typeof this.lastTimeoutRequest !== 'undefined') {
+      // cancel timeout when the mouse moves
       clearTimeout(this.lastTimeoutRequest);
     }
 
     if (this.definedKeyIsDown$.value) {
-    const lonlat = transform(event.coordinate, this.mapProjection, 'EPSG:4326');
-    this.lastTimeoutRequest = setTimeout(() => {
-      this.pointerPositionByKeyCoord.emit(lonlat);
-    }, delay);
-  }
+      const lonlat = transform(
+        event.coordinate,
+        this.mapProjection,
+        'EPSG:4326'
+      );
+      this.lastTimeoutRequest = setTimeout(() => {
+        this.pointerPositionByKeyCoord.emit(lonlat);
+      }, delay);
+    }
   }
 }

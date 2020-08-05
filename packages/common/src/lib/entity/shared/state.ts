@@ -132,7 +132,7 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
       const changes = keys.reduce((acc: {[key: string]: boolean}, key: string) => {
         acc[key] = currentState[key] || false;
         return acc;
-      }, {});
+      }, {}) as Partial<S>;
       const reversedChanges = this.reverseChanges(changes);
       const state = Object.assign({}, currentState, reversedChanges);
       this.index.set(this.getKey(entity), state);
@@ -197,7 +197,7 @@ export class EntityStateManager<E extends object, S extends EntityState = Entity
     return Object.entries(changes).reduce((reverseChanges: Partial<S>, bunch: [string, any]) => {
       const [changeKey, value] = bunch;
       if (typeof value === typeof true) {
-        reverseChanges[changeKey] = !value;
+        (reverseChanges as object)[changeKey] = !value;
       }
       return reverseChanges;
     }, {});

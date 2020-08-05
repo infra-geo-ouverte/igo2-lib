@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import {
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatIconModule,
-  MatTooltipModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatSelectModule,
-  MatSlideToggleModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoEntityTableModule } from '@igo2/common';
@@ -46,9 +44,6 @@ import { MeasurerDialogComponent } from './measurer-dialog.component';
   exports: [
     MeasureFormatPipe,
     MeasurerComponent
-  ],
-  entryComponents: [
-    MeasurerDialogComponent
   ]
 })
 export class IgoMeasurerModule {}

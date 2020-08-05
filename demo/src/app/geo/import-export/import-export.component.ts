@@ -28,13 +28,9 @@ export class AppImportExportComponent {
   ) {
     this.layerService
       .createAsyncLayer({
-        title: 'Quebec Base Map',
+        title: 'OSM',
         sourceOptions: {
-          type: 'wmts',
-          url: 'https://geoegl.msp.gouv.qc.ca/carto/wmts/1.0.0/wmts',
-          layer: 'carte_gouv_qc_ro',
-          matrixSet: 'EPSG_3857',
-          version: '1.3.0'
+          type: 'osm'
         }
       })
       .subscribe(l => this.map.addLayer(l));

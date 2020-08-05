@@ -5,9 +5,9 @@ import {
   HostListener,
   Input,
   Output,
-  TemplateRef,
   ViewContainerRef
 } from '@angular/core';
+import type { TemplateRef } from '@angular/core';
 
 import { TemplatePortal } from '@angular/cdk/portal';
 import { fromEvent, Subscription } from 'rxjs';
@@ -31,9 +31,10 @@ export class ContextMenuDirective {
   ) {}
 
   @HostListener('contextmenu', ['$event'])
-  public onContextMenu({ x, y }: MouseEvent): void {
+  public onContextMenu(e: MouseEvent): void {
+    const {x, y} = e;
     this.close();
-    event.preventDefault();
+    e.preventDefault();
     this.menuPosition.emit({ x, y });
     this.overlayRef = null;
     const positionStrategy = this.overlay

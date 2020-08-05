@@ -7,7 +7,7 @@ import { KeyValuePipe } from './keyvalue.pipe';
   exports: [KeyValuePipe]
 })
 export class IgoKeyValueModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoKeyValueModule> {
     return {
       ngModule: IgoKeyValueModule,
       providers: []

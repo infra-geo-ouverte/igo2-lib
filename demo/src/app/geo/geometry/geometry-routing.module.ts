@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppGeometryComponent } from './geometry.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppGeometryRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppGeometryRoutingModule = RouterModule.forChild(
   routes
 );

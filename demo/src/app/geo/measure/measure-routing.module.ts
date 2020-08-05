@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppMeasureComponent } from './measure.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppMeasureRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppMeasureRoutingModule = RouterModule.forChild(
   routes
 );

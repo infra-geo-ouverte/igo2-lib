@@ -1,5 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { MatButtonModule, MatDialogModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { IgoLanguageModule } from '@igo2/core';
 
@@ -10,11 +11,10 @@ import { ConfirmDialogService } from './confirm-dialog.service';
   imports: [MatButtonModule, MatDialogModule, IgoLanguageModule],
   declarations: [ConfirmDialogComponent],
   exports: [ConfirmDialogComponent],
-  providers: [ConfirmDialogService],
-  entryComponents: [ConfirmDialogComponent]
+  providers: [ConfirmDialogService]
 })
 export class IgoConfirmDialogModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoConfirmDialogModule> {
     return {
       ngModule: IgoConfirmDialogModule,
       providers: []

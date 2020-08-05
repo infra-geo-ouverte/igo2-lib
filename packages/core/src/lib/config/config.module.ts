@@ -7,7 +7,7 @@ import { provideConfigOptions, provideConfigLoader } from './config.provider';
   exports: []
 })
 export class IgoConfigModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoConfigModule> {
     return {
       ngModule: IgoConfigModule,
       providers: [provideConfigOptions({}), provideConfigLoader()]

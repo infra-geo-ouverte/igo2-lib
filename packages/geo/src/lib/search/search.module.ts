@@ -30,7 +30,7 @@ import { SearchPointerSummaryDirective } from './shared/search-pointer-summary.d
   declarations: [SearchPointerSummaryDirective]
 })
 export class IgoSearchModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoSearchModule> {
     return {
       ngModule: IgoSearchModule,
       providers: [

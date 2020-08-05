@@ -1,5 +1,5 @@
 import { Directive, Input, ElementRef, OnInit } from '@angular/core';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 
 @Directive({
   selector: '[igoMatBadgeIcon]'
@@ -7,20 +7,24 @@ import { MatIconRegistry } from '@angular/material';
 export class MatBadgeIconDirective implements OnInit {
   @Input()
   set igoMatBadgeIcon(value: string) {
-    this.matIconRegistry
-      .getNamedSvgIcon(value)
-      .subscribe(svgObj => {
+    this.matIconRegistry.getNamedSvgIcon(value).subscribe(svgObj => {
+      this.svg = svgObj;
+      if (this.badge) {
         this.badge.innerHTML = '';
-        this.badge.appendChild(svgObj);
-      });
+        this.badge.appendChild(this.svg);
+      }
+    });
   }
+  private svg: SVGElement;
 
   @Input()
   set matBadgeHidden(value: boolean) {
-    this.badge.style.display = value
-      ? 'none'
-      : 'flex';
+    this.hidden = value;
+    if (this.badge) {
+      this.badge.style.display = this.hidden ? 'none' : 'flex';
+    }
   }
+  private hidden = false;
 
   get badge() {
     return this.el.nativeElement.querySelector('.mat-badge-content');
@@ -35,5 +39,9 @@ export class MatBadgeIconDirective implements OnInit {
     this.badge.style.alignItems = 'center';
     this.badge.style.justifyContent = 'center';
     this.badge.style.background = 'none';
+
+    this.badge.style.display = this.hidden ? 'none' : 'flex';
+    this.badge.innerHTML = '';
+    this.badge.appendChild(this.svg);
   }
 }

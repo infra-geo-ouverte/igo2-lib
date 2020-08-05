@@ -8,7 +8,7 @@ import { CatalogItemType, TypeCatalogStrings } from './catalog.enum';
 
 export interface ICatalog {
   id: string;
-  title: string;
+  title?: string;
   url: string;
   items?: CatalogItem[];
   type?: TypeCatalogStrings;
@@ -33,7 +33,7 @@ export interface ICompositeCatalog extends ICatalog {
 export interface CatalogItem {
   id: string;
   title: string;
-  type: CatalogItemType;
+  type?: CatalogItemType;
   address?: string;
 }
 
@@ -52,6 +52,6 @@ export interface CatalogItemState extends EntityState {
 
 export interface CatalogServiceOptions {
   baseLayers?: boolean;
-  sources?: (ICatalog|ICompositeCatalog)[];
+  sources?: (ICatalog | ICompositeCatalog)[];
   sourcesUrl?: string;
 }
