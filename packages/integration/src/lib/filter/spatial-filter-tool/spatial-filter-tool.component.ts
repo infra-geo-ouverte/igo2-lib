@@ -20,7 +20,8 @@ import {
   SpatialFilterQueryType,
   SpatialFilterThematic,
   Layer,
-  createOverlayMarkerStyle
+  createOverlayMarkerStyle,
+  ExportOptions
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -102,7 +103,12 @@ export class SpatialFilterToolComponent {
   }
 
   activateExportTool() {
-    this.importExportState.setSelectedTab(1);
+    const ids = [];
+    for (const layer of this.layers) {
+      ids.push(layer.id);
+    }
+    this.importExportState.setMode('export');
+    this.importExportState.setsExportOptions({ layer: ids } as ExportOptions);
     this.toolState.toolbox.activateTool('importExport');
   }
 
