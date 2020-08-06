@@ -32,21 +32,21 @@ export class ImportExportToolComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.selectedTab();
+    this.selectMode();
   }
 
-  private selectedTab() {
-    const userSelectedTab = this.importExportState.selectedTab$.value;
-    if (userSelectedTab !== undefined) {
-      this.importExportState.setSelectedTab(userSelectedTab);
+  private selectMode() {
+    const userSelectedMode = this.importExportState.selectedMode$.value;
+    if (userSelectedMode !== undefined) {
+      this.importExportState.setMode(userSelectedMode);
     } else {
-      this.importExportState.setSelectedTab(0);
+      this.importExportState.setMode('import');
 
     }
   }
 
-  public tabChanged(tab: number) {
-    this.importExportState.setSelectedTab(tab);
+  public modeChanged(mode: string) {
+    this.importExportState.setMode(mode);
   }
 
   public exportOptionsChange(exportOptions: ExportOptions) {
