@@ -78,7 +78,6 @@ export class FeatureDetailsDirective implements OnInit {
 
       if (this.map.geolocation$.getValue() && this.map.geolocation$.getValue().getTracking() === false) {
         geolocation.setTracking(false);
-        this.start = undefined;
       }
 
       if (geolocation.getTracking() === true) {
@@ -100,8 +99,12 @@ export class FeatureDetailsDirective implements OnInit {
   }
 
   bindClicking() {
-    const routeElement = (<HTMLElement>this.el.nativeElement).querySelector('span.routing');
-    routeElement.addEventListener('click', this.activateRouting.bind(this));
+    setTimeout(() => {
+      const routeElement = this.el.nativeElement.querySelector('span.routing');
+      routeElement.addEventListener('click', () => {
+        this.activateRouting()
+      });
+    }, 1);
   }
 
   activateRouting() {

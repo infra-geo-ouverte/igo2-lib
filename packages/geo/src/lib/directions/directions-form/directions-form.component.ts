@@ -87,7 +87,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   /**
    * The stops store
    */
-  @Input() stopsStore: FeatureStore
+  @Input()
+  get stopsStore(): FeatureStore {
+    return this._stopsStore;
+  }
+  set stopsStore(value: FeatureStore) {
+    this._stopsStore = value;
+    this.stopsStore$.next(value);
+  }
+  private _stopsStore: FeatureStore;
+
+  stopsStore$: BehaviorSubject<FeatureStore> = new BehaviorSubject<FeatureStore>(undefined);
 
   @Input()
   get routeFromFeatureDetail(): boolean {
@@ -95,65 +105,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
   set routeFromFeatureDetail(value: boolean) {
     this._routeFromFeatureDetail = value;
-
-    if (value === true) {
-      this.ngOnInit();
-
-      setTimeout(() => {
-        this.routesResults = undefined;
-
-        const nbStops = this.stops.length;
-        for (let i = 0; i < nbStops; i++) {
-          this.stops.removeAt(0);
-        }
-        this.stops.insert(0, this.createStop('start'));
-        this.stops.insert(1, this.createStop('end'));
-
-        this.routeStore.clear();
-        for (const feature of this.stopsStore.all()) {
-          if (feature.properties.id && feature.properties.id.toString().startsWith('directionsStop')) {
-            this.stopsStore.delete(feature);
-          }
-        }
-
-        console.log(this.stops);
-        console.log('if true', this.stopsStore.all());
-        if (this.stopsStore.all().length === 2) {
-          let i = 0;
-          const coordinates = [];
-
-          for (const feature of this.stopsStore.all()) {
-            let directionsText;
-            i === 0 ? directionsText = 'start' : directionsText = 'end';
-            coordinates.push(feature.geometry.coordinates);
-            this.handleLocationProposals(feature.geometry.coordinates, i);
-            this.addStopOverlay(feature.geometry.coordinates, i);
-            i++;
-          }
-          this.writeStopsToFormService(coordinates);
-
-          const routeResponse = this.directionsService.route(coordinates, {});
-          if (routeResponse) {
-            routeResponse.map(res =>
-              this.routesQueries$$.push(
-                res.subscribe(route => {
-                  this.routesResults = route;
-                  this.activeRoute = this.routesResults[0] as Directions;
-                  this.showRouteGeometry(true);
-                  this.changeDetectorRefs.detectChanges();
-                })
-              )
-            );
-          }
-
-        } else if (this.stopsStore.all().length === 1) {
-          this.handleLocationProposals(this.stopsStore.all()[0].geometry.coordinates, 1);
-          this.addStopOverlay(this.stopsStore.all()[0].geometry.coordinates, 1);
-          this.writeStopsToFormService(this.stopsStore.all()[0].geometry.coordinates);
-        }
-      }, 1);
-      this.routeFromFeatureDetail = false;
-    }
   }
   private _routeFromFeatureDetail: boolean;
 
@@ -184,6 +135,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('onInit');
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
@@ -212,6 +164,64 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         )
         .subscribe((term: string) => this.handleTermChanged(term))
     );
+
+    this.stopsStore$.subscribe(() => {
+      if (this.routeFromFeatureDetail === true) {
+        setTimeout(() => {
+          const nbStops = this.stops.length;
+          for (let i = 0; i < nbStops; i++) {
+            this.clearStop(i);
+          }
+          this.initStores();
+          this.initOlInteraction();
+          console.log(this.stopsStore.all());
+          for (const feature of this.stopsStore.all()) {
+            if (feature.properties.id && feature.properties.id.toString().startsWith('directionsStop')) {
+              this.stopsStore.delete(feature);
+            }
+          }
+
+          console.log('if true', this.stopsStore.all());
+          if (this.stopsStore.all().length === 2) {
+            console.log('=2');
+            let i = 0;
+            const coordinates = [];
+
+            for (const feature of this.stopsStore.all()) {
+              let directionsText;
+              i === 0 ? directionsText = 'start' : directionsText = 'end';
+              coordinates.push(feature.geometry.coordinates);
+              this.handleLocationProposals(feature.geometry.coordinates, i);
+              this.chooseProposal(feature, i);
+              i++;
+            }
+            this.writeStopsToFormService(coordinates);
+
+            const routeResponse = this.directionsService.route(coordinates, {});
+            if (routeResponse) {
+              routeResponse.map(res =>
+                this.routesQueries$$.push(
+                  res.subscribe(route => {
+                    this.routesResults = route;
+                    this.activeRoute = this.routesResults[0] as Directions;
+                    this.showRouteGeometry(true);
+                    this.changeDetectorRefs.detectChanges();
+                  })
+                )
+              );
+            }
+
+          } else if (this.stopsStore.all().length === 1) {
+            console.log('=1');
+            this.handleLocationProposals(this.stopsStore.all()[0].geometry.coordinates, 1);
+            this.chooseProposal(this.stopsStore.all()[0], 1);
+            this.writeStopsToFormService(this.stopsStore.all()[0].geometry.coordinates);
+            console.log(this.stopsStore, this.stops);
+          }
+        }, 1);
+        this.routeFromFeatureDetail = false;
+      }
+    })
   }
 
   ngOnDestroy(): void {
@@ -590,7 +600,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetForm() {
+  resetForm(stop: boolean) {
     this.routesResults = undefined;
     const nbStops = this.stops.length;
     for (let i = 0; i < nbStops; i++) {
@@ -599,7 +609,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.stops.insert(0, this.createStop('start'));
     this.stops.insert(1, this.createStop('end'));
 
-    this.stopsStore.clear();
+    if (stop) {
+      this.stopsStore.clear();
+    }
     this.routeStore.clear();
   }
 
@@ -1350,7 +1362,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       },
       ol: new olFeature({ geometry })
     };
-
+    console.log(stopFeature);
     this.stopsStore.update(stopFeature);
     this.getRoutes();
   }
