@@ -419,7 +419,9 @@
           "culturel": "Cultural",
           "education": "Education",
           "sante": "Health",
-          "securite": "Security"
+          "securite": "Security",
+          "sepaq": "SEPAQ",
+          "transport": "Transportation"
         }
       },
       "terrapi": {
@@ -435,6 +437,10 @@
         "hydro": "Hydrography",
         "routes": "Roads",
         "bati": "Buildings",
+        "batiment": "Buildings",
+        "camping": "Camping",
+        "equipement": "Equipment",
+        "commun": "Public",
         "geographie": "Natural sites",
         "parc": "Parks",
         "secteur": "Sector",
