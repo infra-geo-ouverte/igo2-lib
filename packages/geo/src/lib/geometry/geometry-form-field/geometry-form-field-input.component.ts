@@ -159,8 +159,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       value = createDrawInteractionStyle();
     }
     this._drawStyle = value;
-    if (value && this.isStyleWithRadius(value)) {
-      this.defaultDrawStyleRadius = value.getImage().getRadius();
+
+    var olGuideStyle = this.getGuideStyleFromDrawStyle(value);
+    if (olGuideStyle !== undefined) {
+      this.defaultDrawStyleRadius = olGuideStyle.getImage().getRadius();
     } else {
       this.defaultDrawStyleRadius = null;
     }
@@ -545,16 +547,19 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param resolution Resolution (to make the screen size of symbol fit the drawGuide value)
    */
   private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
-    if (this.isStyleWithRadius(olStyle)) {
-      const drawGuide = this.drawGuide;
-      let radius;
-      if (!drawGuide || drawGuide < 0) {
-        radius = this.defaultDrawStyleRadius;
-      } else {
-        radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
-      }
-      olStyle.getImage().setRadius(radius);
+    var olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle);
+    if (olGuideStyle === undefined) {
+      return;
     }
+
+    const drawGuide = this.drawGuide;
+    let radius;
+    if (!drawGuide || drawGuide < 0) {
+      radius = this.defaultDrawStyleRadius;
+    } else {
+      radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
+    }
+    olGuideStyle.getImage().setRadius(radius);
   }
 
   /**
@@ -563,5 +568,19 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   private isStyleWithRadius(olStyle: OlStyle): boolean {
     return typeof olStyle !== 'function' && olStyle.getImage && olStyle.getImage().setRadius;
+  }
+
+  /**
+   * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
+   * @param olStyle The style on which to perform the check
+   */
+  private getGuideStyleFromDrawStyle(olStyle: OlStyle |  OlStyle[]): OlStyle {
+    if (Array.isArray(olStyle)) {
+      olStyle = olStyle[0];
+    }
+    if (this.isStyleWithRadius(olStyle)) {
+      return olStyle;
+    }
+    return undefined;
   }
 }
