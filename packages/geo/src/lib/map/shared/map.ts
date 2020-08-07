@@ -220,6 +220,12 @@ export class IgoMap {
     return this.layers.find((layer: Layer) => layer.id && layer.id === id);
   }
 
+  getLayerByAlias(alias: string): Layer {
+    return this.layers.find(
+      (layer: Layer) => layer.alias && layer.alias === alias
+    );
+  }
+
   /**
    * Add a single layer
    * @param layer Layer to add
