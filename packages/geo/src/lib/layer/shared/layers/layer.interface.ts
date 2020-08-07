@@ -8,6 +8,7 @@ export interface LayerOptions {
   sourceOptions?: AnyDataSourceOptions;
   title?: string;
   id?: string;
+  alias?: string;
   baseLayer?: boolean;
   opacity?: number;
   visible?: boolean;
