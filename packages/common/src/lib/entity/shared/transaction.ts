@@ -95,6 +95,8 @@ export class EntityTransaction {
       if (existingOperation.type === EntityOperationType.Insert) {
         this.doInsert(current, store, meta);
         return;
+      } else if (existingOperation.type === EntityOperationType.Update) {
+        previous = existingOperation.previous;
       }
     }
 
