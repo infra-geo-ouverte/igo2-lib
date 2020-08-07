@@ -114,9 +114,22 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     });
   }
 
+  /**
+   * Clear the overlay
+   */
   clear() {
     this.overlayStore.source.ol.clear();
     this.overlayStore.clear();
+  }
+
+  /**
+   * Deactivate the selection without removing the selection
+   * overlay.
+   */
+  deactivateSelection() {
+    this.unlistenToMapClick();
+    this.removeDragBoxInteraction();
+    this.unwatchAll();
   }
 
   /**
@@ -139,9 +152,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doDeactivate() {
-    this.unlistenToMapClick();
-    this.removeDragBoxInteraction();
-    this.unwatchAll();
+    this.deactivateSelection();
     this.removeOverlayLayer();
   }
 
