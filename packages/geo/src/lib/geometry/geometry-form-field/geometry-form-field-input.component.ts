@@ -160,7 +160,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     }
     this._drawStyle = value;
 
-    var olGuideStyle = this.getGuideStyleFromDrawStyle(value);
+    const olGuideStyle = this.getGuideStyleFromDrawStyle(value);
     if (olGuideStyle !== undefined) {
       this.defaultDrawStyleRadius = olGuideStyle.getImage().getRadius();
     } else {
@@ -547,7 +547,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param resolution Resolution (to make the screen size of symbol fit the drawGuide value)
    */
   private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
-    var olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle);
+    const olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle);
     if (olGuideStyle === undefined) {
       return;
     }

@@ -290,7 +290,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     window.getSelection().addRange(range);
     event.stopImmediatePropagation();
 
-    const records = this.store.stateView.all()
+    const records = this.store.stateView.all();
     const recordIndex = records.indexOf(record);
     const lastRecordChecked = this.store.stateView.get(this.lastRecordCheckedKey);
     const lastRecordIndex = records.indexOf(lastRecordChecked);
