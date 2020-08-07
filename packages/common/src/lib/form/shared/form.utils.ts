@@ -39,5 +39,11 @@ export function getAllFormFields(form: Form): FormField[] {
   return form.groups.reduce((acc: FormField[], group: FormFieldGroup) => {
     return acc.concat(group.fields);
   }, [].concat(form.fields));
+}
 
+export function getFormFieldByName(form: Form, name: string): FormField {
+  const fields = getAllFormFields(form);
+  return fields.find((field: FormField) => {
+    return field.name === name;
+  });
 }
