@@ -1,7 +1,12 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
-import { LayerListControlsEnum, LayerListControlsOptions, IgoMap, ExportOptions } from '@igo2/geo';
+import {
+  LayerListControlsEnum,
+  LayerListControlsOptions,
+  IgoMap,
+  ExportOptions
+} from '@igo2/geo';
 import { MapState } from './../map.state';
 import { ImportExportState } from '../../import-export/import-export.state';
 import { ToolState } from '../../tool/tool.state';
@@ -21,7 +26,6 @@ import { ToolState } from '../../tool/tool.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolComponent {
-
   @Input() toggleLegendOnVisibilityChange: boolean = false;
 
   @Input() expandLegendOfVisibleLayers: boolean = false;
@@ -45,9 +49,12 @@ export class MapToolComponent {
   }
 
   get layerFilterAndSortOptions(): any {
-    const filterSortOptions = Object.assign({
-      showToolbar: LayerListControlsEnum.default
-    }, this.layerListControls);
+    const filterSortOptions = Object.assign(
+      {
+        showToolbar: LayerListControlsEnum.default
+      },
+      this.layerListControls
+    );
 
     switch (this.layerListControls.showToolbar) {
       case LayerListControlsEnum.always:
@@ -65,12 +72,12 @@ export class MapToolComponent {
   constructor(
     private mapState: MapState,
     private toolState: ToolState,
-    private importExportState: ImportExportState) {}
+    private importExportState: ImportExportState
+  ) {}
 
   activateExport(id: string) {
-    this.importExportState.setsExportOptions({ layer: id } as ExportOptions);
+    this.importExportState.setsExportOptions({ layer: [id] } as ExportOptions);
     this.importExportState.setSelectedTab(1);
     this.toolState.toolbox.activateTool('importExport');
   }
-
 }

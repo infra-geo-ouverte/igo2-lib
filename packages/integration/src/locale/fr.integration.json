@@ -32,6 +32,10 @@
         "noLayersVisible": "Aucune couche visible.",
         "noLayersInRange": "Aucune couche visible dans la plage d'échelle active. Veuillez zoomer ou dézoomer pour découvrir ces couches."
       },
+      "importExportTool": {
+        "importExportData": "Couche",
+        "importExportContext": "Contexte"
+      },
       "workspace": {
         "toggleWorkspace": "Ouvrir/fermer la vue tabulaire"
       }

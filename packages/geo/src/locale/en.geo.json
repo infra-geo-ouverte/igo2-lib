@@ -52,13 +52,17 @@
           "text": "No feature could be exported.",
           "title": "Nothing to export"
         },
+        "noFormat": {
+          "text": "No export format valid for all selected layers. Please export the layers one at a time.",
+          "title": "No valid format"
+        },
         "failed": {
           "text": "Failed to export",
           "title": "Failed to export features"
         },
         "success": {
           "text": "Features have been exported.",
-          "title":"Features export success"
+          "title": "Features export success"
         },
         "format": {
           "GeoJSON": "GeoJSON",
@@ -67,7 +71,8 @@
           "KML": "KML",
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (comma delimited)",
-          "CSVsemicolon": "CSV (semicolon delimited)"
+          "CSVsemicolon": "CSV (semicolon delimited)",
+          "URL": "URL"
         }
       },
       "importExportForm": {
@@ -120,7 +125,7 @@
           "Intersects": "Return features in geometric intersection with the provided geometry",
           "Within": "Return feature which are completely contained by the provided geometry",
           "Contains": "Return feature completely containing by the provided geometry"
-          }
+        }
       },
       "sourceFields": {
         "selectField": "Choose a field"
@@ -176,7 +181,7 @@
           "noLegendText": "No legend available for this layer",
           "noLegendScale": "No legend available for this scale",
           "selectStyle": "Select the style of the legend",
-          "showAll" : "Show all legends (non visible and out of range)",
+          "showAll": "Show all legends (non visible and out of range)",
           "noLayersVisibleWithShowAllButton": "No layer currently visible. Activate the button above to see all the legends.",
           "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
           "noLayersVisible": "No layers currently visible.",

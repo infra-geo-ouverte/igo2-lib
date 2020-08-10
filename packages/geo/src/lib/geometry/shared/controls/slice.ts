@@ -106,7 +106,7 @@ export class SliceControl {
    */
   setOlGeometry(olGeometry: OlGeometry) {
     const olFeature = new OlFeature({geometry: olGeometry});
-    this.olOverlaySource.clear();
+    this.olOverlaySource.clear(true);
     this.olOverlaySource.addFeature(olFeature);
   }
 
@@ -144,7 +144,7 @@ export class SliceControl {
    */
   private clearOlInnerOverlaySource() {
     if (this.options.layer === undefined && this.options.source === undefined) {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
   }
 
@@ -174,7 +174,7 @@ export class SliceControl {
 
     this.drawLineStart$$.unsubscribe();
     this.drawLineEnd$$.unsubscribe();
-    this.drawLineControl.getSource().clear();
+    this.drawLineControl.getSource().clear(true);
     this.drawLineControl.setOlMap(undefined);
   }
 
@@ -183,7 +183,7 @@ export class SliceControl {
    * @param olLine Ol linestring or polygon
    */
   private onDrawLineStart(olLine: OlLineString) {
-    this.drawLineControl.getSource().clear();
+    this.drawLineControl.getSource().clear(true);
   }
 
   /**
@@ -213,7 +213,7 @@ export class SliceControl {
       }
     }
 
-    this.drawLineControl.getSource().clear();
+    this.drawLineControl.getSource().clear(true);
 
     this.olOverlaySource.addFeatures(
       olSlicedGeometries.map((olGeometry: OlGeometry) => new OlFeature(olGeometry))

@@ -32,6 +32,10 @@
         "noLayersVisible": "There is no visible layers.",
         "noLayersInRange": "There is no visible layers at the current scale. Please zoom in or out to discover theses layers."
       },
+      "importExportTool": {
+        "importExportData": "Layer",
+        "importExportContext": "Context"
+      },
       "workspace": {
         "toggleWorkspace": "Open/Close the table view"
       }

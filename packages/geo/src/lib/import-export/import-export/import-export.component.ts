@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -13,7 +20,10 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 
-import { handleFileExportError, handleFileExportSuccess } from '../shared/export.utils';
+import {
+  handleFileExportError,
+  handleFileExportSuccess
+} from '../shared/export.utils';
 import { ExportOptions } from '../shared/export.interface';
 import { ExportFormat } from '../shared/export.type';
 import { ExportService } from '../shared/export.service';
@@ -35,7 +45,9 @@ import { skipWhile } from 'rxjs/operators';
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
   public formats$ = new BehaviorSubject(undefined);
-  public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject([]);
+  public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
+    []
+  );
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
@@ -48,10 +60,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
+  public activeImportExport: string = 'import';
   public fileSizeMb: number;
 
   private previousLayerSpecs$: BehaviorSubject<
-    { id: string, visible: boolean, opacity: number, queryable: boolean }
+    {
+      id: string;
+      visible: boolean;
+      opacity: number;
+      queryable: boolean;
+    }[]
   > = new BehaviorSubject(undefined);
 
   @Input() map: IgoMap;
@@ -60,7 +78,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Output() selectedTabIndex = new EventEmitter<number>();
 
-  @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(undefined);
+  @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(
+    undefined
+  );
 
   @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
 
@@ -76,14 +96,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ) {
     this.loadConfig();
     this.buildForm();
+    console.log(this);
+    console.log(this.form);
+    console.log(this.form);
   }
 
   ngOnInit() {
-    this.layers$$ = this.map.layers$.subscribe(layers => {
-      this.exportableLayers$.next(layers.filter((layer: Layer) => {
-        return (layer instanceof VectorLayer && layer.exportable === true) ||
-          (layer.dataSource.options.download && layer.dataSource.options.download.url);
-      }) as AnyLayer[]);
+    this.layers$$ = this.map.layers$.subscribe((layers) => {
+      this.exportableLayers$.next(
+        layers.filter((layer: Layer) => {
+          return (
+            (layer instanceof VectorLayer && layer.exportable === true) ||
+            (layer.dataSource.options.download &&
+              layer.dataSource.options.download.url)
+          );
+        }) as AnyLayer[]
+      );
     });
     const configFileSizeMb = this.config.getConfig(
       'importExport.clientSideFileSizeMaxMb'
@@ -93,46 +121,70 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
 
     this.exportOptions$$ = this.exportOptions$
-      .pipe(skipWhile(exportOptions => !exportOptions))
+      .pipe(skipWhile((exportOptions) => !exportOptions))
       .subscribe((exportOptions) => {
         this.form.patchValue(exportOptions, { emitEvent: true });
         if (exportOptions.layer) {
-          this.computeFormats(this.map.getLayerById(exportOptions.layer));
-      }
+          this.computeFormats(
+            exportOptions.layer.map((l) => this.map.getLayerById(l))
+          );
+        }
       });
 
-    this.formLayer$$ = this.form.get('layer').valueChanges.subscribe((layerId) => {
-      this.handlePreviousLayerSpecs();
-      const layer = this.map.getLayerById(layerId);
-      this.computeFormats(layer);
-      if (Object.keys(this.formats$.value).indexOf(this.form.value.format) === -1) {
-        this.form.patchValue({ format: undefined });
-      }
+    this.formLayer$$ = this.form
+      .get('layer')
+      .valueChanges.subscribe((layerId) => {
+        this.handlePreviousLayerSpecs();
+        const layers = layerId.map((l) => this.map.getLayerById(l));
+        this.computeFormats(layers);
 
-      if (layer instanceof VectorLayer && layer.dataSource.ol.getFeatures().length === 0) {
+        if (
+          Object.keys(this.formats$.value).indexOf(this.form.value.format) ===
+          -1
+        ) {
+          this.form.patchValue({ format: undefined });
+        }
+
         this.loading$.next(true);
-        this.previousLayerSpecs$.next(
-          { id: layerId, visible: layer.visible, opacity: layer.opacity, queryable: (layer as any).queryable }
-        );
-        layer.opacity = 0;
-        layer.visible = true;
+        const previousSpecs: {
+          id: string;
+          visible: boolean;
+          opacity: number;
+          queryable: boolean;
+        }[] = [];
+        layers.forEach((layer) => {
+          if (
+            layer instanceof VectorLayer &&
+            layer.dataSource.ol.getFeatures().length === 0
+          ) {
+            previousSpecs.push({
+              id: layer.id,
+              visible: layer.visible,
+              opacity: layer.opacity,
+              queryable: (layer as any).queryable
+            });
+            layer.opacity = 0;
+            layer.visible = true;
+          }
+        });
+
+        this.previousLayerSpecs$.next(previousSpecs);
         setTimeout(() => {
           this.loading$.next(false);
         }, 500);
-      }
-    });
+      });
 
     this.formats$$ = this.formats$
-      .pipe(skipWhile(formats => !formats))
-      .subscribe(formats => {
+      .pipe(skipWhile((formats) => !formats))
+      .subscribe((formats) => {
         if (Object.keys(formats).length === 1) {
           this.form.patchValue({ format: formats[Object.keys(formats)[0]] });
         }
       });
 
     this.exportableLayers$$ = this.exportableLayers$
-      .pipe(skipWhile(layers => !layers))
-      .subscribe(layers => {
+      .pipe(skipWhile((layers) => !layers))
+      .subscribe((layers) => {
         if (layers.length === 1) {
           this.form.patchValue({ layer: layers[0].id });
         }
@@ -149,17 +201,19 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
     this.exportOptionsChange.emit(this.form.value);
     this.handlePreviousLayerSpecs();
-
   }
 
   private handlePreviousLayerSpecs() {
-    if (this.previousLayerSpecs$.value) {
-      const previousLayer = this.map.getLayerById(this.previousLayerSpecs$.value.id);
-      previousLayer.visible = this.previousLayerSpecs$.value.visible;
-      previousLayer.opacity = this.previousLayerSpecs$.value.opacity;
-      (previousLayer as any).queryable = this.previousLayerSpecs$.value.queryable;
-      this.previousLayerSpecs$.next(undefined);
+    const previousSpecs = this.previousLayerSpecs$.value;
+    if (previousSpecs && previousSpecs.length) {
+      previousSpecs.forEach((specs) => {
+        const previousLayer = this.map.getLayerById(specs.id);
+        previousLayer.visible = specs.visible;
+        previousLayer.opacity = specs.opacity;
+        (previousLayer as any).queryable = specs.queryable;
+      });
     }
+    this.previousLayerSpecs$.next(undefined);
   }
 
   importFiles(files: File[]) {
@@ -182,41 +236,51 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
-    const layer = this.map.getLayerById(data.layer);
-    let filename = layer.title;
-    if (data.name !== undefined) {
-      filename = data.name;
-    }
-    const dSOptions: DataSourceOptions = layer.dataSource.options;
-    if (data.format === ExportFormat.URL && dSOptions.download && dSOptions.download.url) {
-      setTimeout(() => { // better look an feel
-        window.open(dSOptions.download.url, '_blank');
-        this.loading$.next(false);
-      }, 500);
-      return;
-    }
-
-    let olFeatures;
-    if (data.featureInMapExtent) {
-      olFeatures = layer.dataSource.ol.getFeaturesInExtent(layer.map.viewController.getExtent());
-    } else {
-      olFeatures = layer.dataSource.ol.getFeatures();
-    }
-    if (layer.dataSource instanceof ClusterDataSource) {
-      olFeatures = olFeatures.flatMap((cluster: any) =>
-        cluster.get('features')
-      );
-    }
-    this.exportService
-      .export(olFeatures, data.format, filename, this.map.projection)
-      .subscribe(
-        () => {},
-        (error: Error) => this.onFileExportError(error),
-        () => {
-          this.onFileExportSuccess();
+    data.layer.forEach((layer) => {
+      const lay = this.map.getLayerById(layer);
+      let filename = lay.title;
+      if (data.name !== undefined) {
+        filename = data.name;
+      }
+      const dSOptions: DataSourceOptions = lay.dataSource.options;
+      if (
+        data.format === ExportFormat.URL &&
+        dSOptions.download &&
+        dSOptions.download.url
+      ) {
+        setTimeout(() => {
+          // better look an feel
+          window.open(dSOptions.download.url, '_blank');
           this.loading$.next(false);
-        }
-      );
+        }, 500);
+        return;
+      }
+
+      let olFeatures;
+      if (data.featureInMapExtent) {
+        olFeatures = lay.dataSource.ol.getFeaturesInExtent(
+          lay.map.viewController.getExtent()
+        );
+      } else {
+        olFeatures = lay.dataSource.ol.getFeatures();
+      }
+      if (lay.dataSource instanceof ClusterDataSource) {
+        olFeatures = olFeatures.flatMap((cluster: any) =>
+          cluster.get('features')
+        );
+      }
+
+      this.exportService
+        .export(olFeatures, data.format, filename, this.map.projection)
+        .subscribe(
+          () => {},
+          (error: Error) => this.onFileExportError(error),
+          () => {
+            this.onFileExportSuccess();
+            this.loading$.next(false);
+          }
+        );
+    });
   }
 
   private buildForm() {
@@ -281,26 +345,67 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.computeFormats();
   }
 
-  private computeFormats(layer?: AnyLayer) {
-    if (layer) {
-      if (!(layer instanceof VectorLayer) && layer.dataSource.options.download && layer.dataSource.options.download.url) {
-        // only url key
+  private computeFormats(layers?: AnyLayer[]) {
+    if (layers && layers.length) {
+      const formatsType = {
+        onlyUrl: false,
+        onlyVector: false,
+        vectorAndUrl: false
+      };
+      layers.forEach((layer) => {
+        if (!layer) {
+          return;
+        }
+        if (
+          !(layer instanceof VectorLayer) &&
+          layer.dataSource.options.download &&
+          layer.dataSource.options.download.url
+        ) {
+          formatsType.onlyUrl = true;
+        } else if (
+          layer.dataSource.options.download &&
+          layer.dataSource.options.download.url
+        ) {
+          formatsType.vectorAndUrl = true;
+        } else if (layer instanceof VectorLayer) {
+          formatsType.onlyVector = true;
+        }
+      });
+
+      if (formatsType.onlyUrl === true && formatsType.onlyVector === false) {
         this.formats$.next(strEnum(['URL']));
-      } else if (layer.dataSource.options.download && layer.dataSource.options.download.url) {
-        // add/keep url key
+      } else if (
+        formatsType.onlyVector === true &&
+        formatsType.onlyUrl === false
+      ) {
+        this.computeFormats(); // reset
+        if (ExportFormat.URL in this.formats$.value) {
+          const keys = Object.keys(this.formats$.value).filter(
+            (key) => key !== 'URL'
+          );
+          this.formats$.next(strEnum(keys));
+        }
+      } else if (
+        formatsType.vectorAndUrl === true &&
+        formatsType.onlyUrl === false &&
+        formatsType.onlyVector === false
+      ) {
         this.computeFormats(); // reset
         if (!(ExportFormat.URL in this.formats$.value)) {
           const keys = Object.keys(this.formats$.value);
           keys.push('URL');
           this.formats$.next(strEnum(keys));
         }
-      } else if (layer instanceof VectorLayer) {
-        // remove url key
-        this.computeFormats(); // reset
-        if (ExportFormat.URL in this.formats$.value) {
-          const keys = Object.keys(this.formats$.value).filter(key => key !== 'URL');
-          this.formats$.next(strEnum(keys));
-        }
+      } else {
+        this.formats$.next([]);
+        this.messageService.alert(
+          this.languageService.translate.instant(
+            'igo.geo.export.noFormat.text'
+          ),
+          this.languageService.translate.instant(
+            'igo.geo.export.noFormat.title'
+          )
+        );
       }
       return;
     }
@@ -317,7 +422,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private validateListFormat(formats: string[]): string[] {
     return formats
-      .filter(format => {
+      .filter((format) => {
         if (
           format.toUpperCase() === ExportFormat.CSVcomma.toUpperCase() ||
           format.toUpperCase() === ExportFormat.CSVsemicolon.toUpperCase() ||
@@ -331,7 +436,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           return format;
         }
       })
-      .map(format => {
+      .map((format) => {
         if (format.toUpperCase() === ExportFormat.CSVcomma.toUpperCase()) {
           format = ExportFormat.CSVcomma;
           return format;
@@ -374,5 +479,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private onFileExportSuccess() {
     handleFileExportSuccess(this.messageService, this.languageService);
+  }
+
+  onImportExportChange(event) {
+    this.activeImportExport = event.value;
   }
 }

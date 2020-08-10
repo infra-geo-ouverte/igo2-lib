@@ -50,7 +50,7 @@ export class DrawControl {
   private olDrawInteraction: OlDraw;
   private onDrawStartKey: string;
   private onDrawEndKey: string;
-  private onChangesKey: string;
+  private onDrawKey: string;
 
   private mousePosition: [number, number];
 
@@ -148,7 +148,7 @@ export class DrawControl {
    */
   private clearOlInnerOverlaySource() {
     if (this.options.layer === undefined && this.options.source === undefined) {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
   }
 
@@ -202,8 +202,11 @@ export class DrawControl {
     }
 
     this.unsubscribeToKeyDown();
-    unByKey(this.onDrawStartKey);
-    unByKey(this.onDrawEndKey);
+    unByKey([
+      this.onDrawStartKey,
+      this.onDrawEndKey,
+      this.onDrawKey
+    ]);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olDrawInteraction);
     }
@@ -218,7 +221,7 @@ export class DrawControl {
     const olGeometry = event.feature.getGeometry();
     this.start$.next(olGeometry);
     this.clearOlInnerOverlaySource();
-    this.onChangesKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
+    this.onDrawKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
       this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
       this.changes$.next(olGeometryEvent.target);
     });
@@ -231,9 +234,7 @@ export class DrawControl {
    */
   private onDrawEnd(event: OlDrawEvent) {
     this.unsubscribeToKeyDown();
-    if (this.onChangesKey !== undefined) {
-      unByKey(this.onChangesKey);
-    }
+    unByKey(this.onDrawKey);
     this.end$.next(event.feature.getGeometry());
   }
 

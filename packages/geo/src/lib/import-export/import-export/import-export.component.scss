@@ -1,7 +1,16 @@
 $slide-toggle-width: 60px;
 
-mat-form-field {
+.import-export-toggle {
+  padding: 10px;
+  text-align: center;
+
+  mat-button-toggle-group {
     width: 100%;
+
+    mat-button-toggle {
+      width: 50%;
+    }
+  }
 }
 
 h4 {
@@ -10,6 +19,13 @@ h4 {
 
 .igo-form {
   padding: 15px 5px;
+
+}
+
+.igo-input-container {
+  mat-form-field {
+    width: 100%;
+  }
 }
 
 .igo-form-button-group {
