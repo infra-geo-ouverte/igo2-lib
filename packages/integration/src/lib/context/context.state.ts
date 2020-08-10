@@ -64,9 +64,9 @@ export class ContextState {
       tools.push(tool);
     });
 
-    tools.forEach(tool => {
+    tools.forEach((tool) => {
       if (tool.parent) {
-        const parentIndex = tools.findIndex(el => el.name === tool.parent);
+        const parentIndex = tools.findIndex((el) => el.name === tool.parent);
         if (parentIndex !== -1) {
           tools[parentIndex].children = [];
           tools[parentIndex].children.push(tool.name);
@@ -80,6 +80,7 @@ export class ContextState {
     // TODO: This is a patch so the context service can work without
     // injecting the ToolState or without being completely refactored
     this.contextService.setTools([].concat(tools));
+    this.contextService.setToolbar(context.toolbar || []);
   }
 
   /**

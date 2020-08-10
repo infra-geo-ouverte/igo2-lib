@@ -15,8 +15,8 @@ export class StorageService {
   /**
    * Use to get the data found in storage file
    */
-  get(key: string, scope?: StorageScope) {
-    let value: string;
+  get(key: string, scope?: StorageScope): string | object | boolean | number {
+    let value: any;
 
     if (!scope || scope === StorageScope.SESSION) {
       value = sessionStorage.getItem(`${this.options.key}.${key}`);
@@ -39,7 +39,7 @@ export class StorageService {
 
   set(
     key: string,
-    value: string | object,
+    value: string | object | boolean | number,
     scope: StorageScope = StorageScope.LOCAL
   ) {
     if (scope === StorageScope.SESSION) {

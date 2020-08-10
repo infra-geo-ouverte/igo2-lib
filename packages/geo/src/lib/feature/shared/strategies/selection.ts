@@ -51,6 +51,8 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    */
   private stores$$: Subscription;
 
+  private motion: FeatureMotion;
+
   /**
    * The map the layers belong to
    */
@@ -65,6 +67,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
 
   constructor(protected options: FeatureStoreSelectionStrategyOptions) {
     super(options);
+    this.setMotion(options.motion);
     this._overlayStore = this.createOverlayStore();
   }
 
@@ -95,6 +98,14 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
   }
 
   /**
+   * Define the motion to apply on select
+   * @param motion Feature motion
+   */
+  setMotion(motion: FeatureMotion) {
+    this.motion = motion;
+  }
+
+  /**
    * Unselect all entities, from all stores
    */
   unselectAll() {
@@ -103,9 +114,22 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     });
   }
 
+  /**
+   * Clear the overlay
+   */
   clear() {
     this.overlayStore.source.ol.clear();
     this.overlayStore.clear();
+  }
+
+  /**
+   * Deactivate the selection without removing the selection
+   * overlay.
+   */
+  deactivateSelection() {
+    this.unlistenToMapClick();
+    this.removeDragBoxInteraction();
+    this.unwatchAll();
   }
 
   /**
@@ -128,9 +152,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @internal
    */
   protected doDeactivate() {
-    this.unlistenToMapClick();
-    this.removeDragBoxInteraction();
-    this.unwatchAll();
+    this.deactivateSelection();
     this.removeOverlayLayer();
   }
 
@@ -274,7 +296,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
    * @param features Store features
    */
   private onSelectFromStore(features: Feature[]) {
-    const motion = this.options ? this.options.motion : undefined;
+    const motion = this.motion;
     const olOverlayFeatures = this.overlayStore.layer.ol.getSource().getFeatures();
     const overlayFeaturesKeys = olOverlayFeatures.map((olFeature: OlFeature) => olFeature.getId());
     const featuresKeys = features.map(this.overlayStore.getKey);

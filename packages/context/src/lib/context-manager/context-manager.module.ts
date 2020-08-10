@@ -11,7 +11,9 @@ import {
   MatCheckboxModule,
   MatRadioModule,
   MatDialogModule,
-  MatMenuModule
+  MatMenuModule,
+  MatOptionModule,
+  MatAutocompleteModule
 } from '@angular/material';
 
 import { IgoAuthModule } from '@igo2/auth';
@@ -20,7 +22,8 @@ import {
   IgoListModule,
   IgoKeyValueModule,
   IgoCollapsibleModule,
-  IgoStopPropagationModule
+  IgoStopPropagationModule,
+  IgoActionbarModule
 } from '@igo2/common';
 
 import { BookmarkDialogComponent } from './../context-map-button/bookmark-button/bookmark-dialog.component';
@@ -35,6 +38,7 @@ import { ContextEditBindingDirective } from './context-edit/context-edit-binding
 import { ContextPermissionsComponent } from './context-permissions/context-permissions.component';
 import { ContextPermissionsBindingDirective } from './context-permissions/context-permissions-binding.directive';
 import { IgoContextMapButtonModule } from '../context-map-button/context-map-button.module';
+import { IgoContextImportExportModule } from '../context-import-export/context-import-export.module';
 
 const CONTEXT_DIRECTIVES = [
   MapContextDirective,
@@ -56,13 +60,17 @@ const CONTEXT_DIRECTIVES = [
     MatRadioModule,
     MatDialogModule,
     MatMenuModule,
+    MatOptionModule,
+    MatAutocompleteModule,
     IgoAuthModule,
     IgoListModule,
     IgoKeyValueModule,
     IgoCollapsibleModule,
     IgoStopPropagationModule,
     IgoLanguageModule,
-    IgoContextMapButtonModule
+    IgoContextImportExportModule,
+    IgoContextMapButtonModule,
+    IgoActionbarModule
   ],
   entryComponents: [
     BookmarkDialogComponent

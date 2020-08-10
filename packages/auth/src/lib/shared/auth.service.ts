@@ -145,6 +145,14 @@ export class AuthService {
     return this.isAuthenticated();
   }
 
+  get isAdmin(): boolean {
+    const token = this.decodeToken();
+    if (token && token.user && token.user.isAdmin) {
+      return true;
+    }
+    return false;
+  }
+
   private loginCall(body, headers) {
     const url = this.config.getConfig('auth.url');
     return this.http.post(`${url}/login`, body, { headers }).pipe(

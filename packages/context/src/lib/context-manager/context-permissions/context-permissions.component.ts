@@ -1,11 +1,18 @@
 import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 
 import {
   Context,
   ContextPermission,
-  ContextPermissionsList
+  ContextPermissionsList,
+  ContextProfils
 } from '../shared/context.interface';
+import { TypePermission } from '../shared/context.enum';
+
+import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+
+import { AuthService } from '@igo2/auth';
 
 @Component({
   selector: 'igo-context-permissions',
@@ -35,15 +42,56 @@ export class ContextPermissionsComponent implements OnInit {
   }
   private _permissions: ContextPermissionsList;
 
+  get profils(): ContextProfils[] {
+    return this._profils;
+  }
+  set profils(value: ContextProfils[]) {
+    this._profils = value;
+    this.cd.detectChanges();
+  }
+  private _profils: ContextProfils[] = [];
+
+  get canWrite(): boolean {
+    return this.context.permission === TypePermission[TypePermission.write];
+  }
+
+  private baseUrlProfils = '/apis/igo2/profils-users?';
+
+  public formControl = new FormControl();
+  formValueChanges$$: Subscription;
+
   @Output() addPermission: EventEmitter<ContextPermission> = new EventEmitter();
   @Output() removePermission: EventEmitter<ContextPermission> = new EventEmitter();
   @Output() scopeChanged: EventEmitter<Context> = new EventEmitter();
 
   constructor(private formBuilder: FormBuilder,
-              private cd: ChangeDetectorRef) {}
+              private cd: ChangeDetectorRef,
+              private http: HttpClient,
+              public authService: AuthService) {}
 
   ngOnInit(): void {
     this.buildForm();
+
+    this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
+      if (value.length) {
+        this.http.get(this.baseUrlProfils + 'q=' + value).subscribe(profils => {
+          this.profils = profils as ContextProfils[];
+        });
+        this.profils.filter((profil) => {
+          const filterNormalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const profilTitleNormalized = profil.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const profilNameNormalized = profil.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const profilNormalized = profilNameNormalized + profilTitleNormalized;
+          return profilNormalized.includes(filterNormalized);
+        });
+      } else {
+        this.profils = [];
+      }
+    });
+  }
+
+  displayFn(profil?: ContextProfils): string | undefined {
+    return profil ? profil.title : undefined;
   }
 
   public handleFormSubmit(value) {
@@ -54,6 +102,13 @@ export class ContextPermissionsComponent implements OnInit {
     this.form = this.formBuilder.group({
       profil: [],
       typePermission: ['read']
+    });
+  }
+
+  onProfilSelected(value) {
+    this.form.setValue({
+      profil: value.name,
+      typePermission: this.form.value.typePermission
     });
   }
 }

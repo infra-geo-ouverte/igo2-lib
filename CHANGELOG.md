@@ -1,3 +1,50 @@
+## [1.4.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.4.1...1.4.2) (2020-08-04)
+
+
+
+## [1.4.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.4.0...1.4.1) (2020-08-04)
+
+
+
+# [1.4.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.3.1...1.4.0) (2020-08-04)
+
+
+### Bug Fixes
+
+* **context:** load default context when context is invalid ([42d7baf](https://github.com/infra-geo-ouverte/igo2-lib/commit/42d7baf3bb6a879384bd8f7c4f46b8f91c299074))
+* **context:** show button only if connected ([1fb7848](https://github.com/infra-geo-ouverte/igo2-lib/commit/1fb7848f37a9b525dab0869a9465b9124eb1888d))
+* **context-manager:** LayerContextDirective supports all income routes ([#650](https://github.com/infra-geo-ouverte/igo2-lib/issues/650)) ([7c9625f](https://github.com/infra-geo-ouverte/igo2-lib/commit/7c9625fe2730c313abdb0fae65d05133360847f0))
+* **export:** GPX export integrates MultiLineString geometry ([#660](https://github.com/infra-geo-ouverte/igo2-lib/issues/660)) ([7a26ddc](https://github.com/infra-geo-ouverte/igo2-lib/commit/7a26ddc48cf2c15f8f8dff306eb37404139da69e))
+* **export:** URL translation and layer remove from map ([#691](https://github.com/infra-geo-ouverte/igo2-lib/issues/691)) ([764c70b](https://github.com/infra-geo-ouverte/igo2-lib/commit/764c70b8577f8ca3b0e86362c29c27209e39bee2))
+* **GoogleMapsLink:** fix line and polygon google maps link ([#682](https://github.com/infra-geo-ouverte/igo2-lib/issues/682)) ([3cbe9fe](https://github.com/infra-geo-ouverte/igo2-lib/commit/3cbe9fec87cf2d8edaf5bbd357219161439f01fb))
+* **importExport:** Skip while exportOptions undefined ([#659](https://github.com/infra-geo-ouverte/igo2-lib/issues/659)) ([f95d7d4](https://github.com/infra-geo-ouverte/igo2-lib/commit/f95d7d4bb387e82f2488e5677469d902727c32b2))
+* **query:** html target = iframe for HTMLGML2 ([6a4ac45](https://github.com/infra-geo-ouverte/igo2-lib/commit/6a4ac450313156414843612dc3e2b0cec9c865a0))
+* **search-results:** remove previous selection with new selection ([#681](https://github.com/infra-geo-ouverte/igo2-lib/issues/681)) ([95c0583](https://github.com/infra-geo-ouverte/igo2-lib/commit/95c0583135bf01003f57a9359e29a23f408bdc94))
+* **search-results:** smoother search update ([29bf796](https://github.com/infra-geo-ouverte/igo2-lib/commit/29bf7969ae5af1179a7e16fb46958cb9d298e6de))
+
+
+### Features
+
+* **context:** Context hiding ([#680](https://github.com/infra-geo-ouverte/igo2-lib/issues/680)) ([d9052de](https://github.com/infra-geo-ouverte/igo2-lib/commit/d9052defab0f37f467e7ff625ba9db66e5be9ac2))
+* **context:** copy context id ([d3391e6](https://github.com/infra-geo-ouverte/igo2-lib/commit/d3391e6273f0c42c9dff547b8e69f5148fafb9c2))
+* **context:** filter context by user + autocomplete on permissions adding ([#664](https://github.com/infra-geo-ouverte/igo2-lib/issues/664)) ([e4967ca](https://github.com/infra-geo-ouverte/igo2-lib/commit/e4967caa17b428b50fc64f2e916c75db9a8a3395))
+* **context:** Import export context ([#693](https://github.com/infra-geo-ouverte/igo2-lib/issues/693)) ([f644956](https://github.com/infra-geo-ouverte/igo2-lib/commit/f6449567b5b86eadd17c12b37984e5f49d0d50e7))
+* **context:** read only context can revoke permission if the context is shared directly ([95e7c5b](https://github.com/infra-geo-ouverte/igo2-lib/commit/95e7c5b7ab2df59cc51d0dba9ec4a003141fda50))
+* **export:** Allow the CSV semicolon delimiter export format ([#668](https://github.com/infra-geo-ouverte/igo2-lib/issues/668)) ([95bf271](https://github.com/infra-geo-ouverte/igo2-lib/commit/95bf2716900068e4ff53a19e7c5a106ddcc353f8))
+* **export:** multiple layers ([#692](https://github.com/infra-geo-ouverte/igo2-lib/issues/692)) ([5e02471](https://github.com/infra-geo-ouverte/igo2-lib/commit/5e02471fe91197ad766a631ffbfb67913f59c21d))
+* **import:** clusterStyle in default style for importWithStyle ([#649](https://github.com/infra-geo-ouverte/igo2-lib/issues/649)) ([85335ed](https://github.com/infra-geo-ouverte/igo2-lib/commit/85335edd4e4c270fe70320e8eb69a8dfd444ca1e))
+* **import-export:** enhancement: add export in extent only, save selected tab and options ([#657](https://github.com/infra-geo-ouverte/igo2-lib/issues/657)) ([e308859](https://github.com/infra-geo-ouverte/igo2-lib/commit/e308859f9df93bc4a5a342a5b910dc48bc914f35))
+* **importExport:** new export method by URL (based on download property) ([#661](https://github.com/infra-geo-ouverte/igo2-lib/issues/661)) ([f1af5ed](https://github.com/infra-geo-ouverte/igo2-lib/commit/f1af5ed8d5393c0b8021cdc563c9919a5aedd82c))
+* **map:** geolocation follower ([#648](https://github.com/infra-geo-ouverte/igo2-lib/issues/648)) ([edabdd7](https://github.com/infra-geo-ouverte/igo2-lib/commit/edabdd7e91e60029fe5a3a0d7f61e39590be4b53))
+* **print:** print Ionic service ([#685](https://github.com/infra-geo-ouverte/igo2-lib/issues/685)) ([56dbb84](https://github.com/infra-geo-ouverte/igo2-lib/commit/56dbb84ec8d5083956cff9240316f37a132d1bc7))
+* **query-params:** Allow the user to add layer from URL (données Québec) ([#690](https://github.com/infra-geo-ouverte/igo2-lib/issues/690)) ([87eed27](https://github.com/infra-geo-ouverte/igo2-lib/commit/87eed27a6a7ea4a6e107b14c4c1da669df4179fc))
+* **spatial-filter:** link spatial filter to export tool ([#662](https://github.com/infra-geo-ouverte/igo2-lib/issues/662)) ([2ac67f1](https://github.com/infra-geo-ouverte/igo2-lib/commit/2ac67f151d4d03d06141ce9e62b1382c120f7e1e))
+* **storage:** add storage service ([25c033d](https://github.com/infra-geo-ouverte/igo2-lib/commit/25c033d02b39026f6396b4451550f4fa296d04e7))
+* **user-agent:** add service to detect browser and os ([9902593](https://github.com/infra-geo-ouverte/igo2-lib/commit/9902593bb6a3d15ad9f2eec4e8436ff6dfc1f887))
+* **vector-layer:** add clusterBaseStyle attribute ([#666](https://github.com/infra-geo-ouverte/igo2-lib/issues/666)) ([2ffd570](https://github.com/infra-geo-ouverte/igo2-lib/commit/2ffd57018fe87d60cd3bb6b17dff3ca100173f73))
+
+
+
 ## [1.3.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.3.0...1.3.1) (2020-06-01)
 
 
