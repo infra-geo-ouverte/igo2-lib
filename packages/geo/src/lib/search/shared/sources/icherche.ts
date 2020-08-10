@@ -452,7 +452,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       );
     } else if (data.index === 'municipalites') {
       googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
-        data.properties.nom + ', ' + data.properties.regAdmin
+        data.properties.nom + ', ' + 'ville'
+      );
+    } else if (data.index === 'mrc') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
+        'mrc+' + data.properties.nom
+      );
+    } else if (data.index === 'regadmin') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
+        data.properties.nom + ',+QC'
       );
     } else {
       googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
