@@ -11,6 +11,7 @@ export interface InteractiveTourStep {
   highlightClass?: string;
   scrollToElement?: boolean;
   disableInteraction?: boolean;
+  noBackButton?: boolean;
 }
 
 export interface InteractiveTourAction {

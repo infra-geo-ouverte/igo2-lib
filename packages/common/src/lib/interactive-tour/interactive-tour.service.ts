@@ -53,8 +53,19 @@ export class InteractiveTourService {
     return this.configService.getConfig('interactiveTour.tourInMobile');
   }
 
-  private getButtons(position?: 'first' | 'last') {
-    if (position === 'first') {
+  private getButtons(buttonKind?: 'first' | 'last' | 'noBackButton') {
+    if (buttonKind === 'noBackButton') {
+      return [
+        {
+          classes: 'shepherd-button-primary',
+          text: this.languageService.translate.instant(
+            'igo.common.interactiveTour.nextButton'
+          ),
+          type: 'next'
+        }
+      ];
+    }
+    if (buttonKind === 'first') {
       return [
         {
           classes: 'shepherd-button-secondary',
@@ -73,7 +84,7 @@ export class InteractiveTourService {
       ];
     }
 
-    if (position === 'last') {
+    if (buttonKind === 'last') {
       return [
         {
           classes: 'shepherd-button-secondary',
@@ -222,6 +233,8 @@ export class InteractiveTourService {
             ? 'first'
             : i + 1 === stepConfig.steps.length
             ? 'last'
+            : stepConfig.steps[i].noBackButton
+            ? 'noBackButton'
             : undefined
         ),
         classes: step.class,

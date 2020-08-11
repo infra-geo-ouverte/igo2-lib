@@ -1,6 +1,8 @@
 {
   "global": {
     "title": "interactiveTour.title",
+    "highlightClass": "mat-form-field",
+    "class": "mat-form-field",
     "steps": [
       {
         "element": "img.igo-logo",
@@ -9,6 +11,7 @@
       {
         "element": "#igo-title",
         "text": "interactiveTour.selectById",
+        "noBackButton": true,
         "beforeShow": {
           "element": "a.mat-list-item[routerlink=\\.]",
           "action": "click"
