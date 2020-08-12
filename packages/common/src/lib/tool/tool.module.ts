@@ -14,7 +14,7 @@ import { IgoToolboxModule } from './toolbox/toolbox.module';
   declarations: []
 })
 export class IgoToolModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoToolModule> {
     return {
       ngModule: IgoToolModule,
       providers: [

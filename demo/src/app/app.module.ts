@@ -1,15 +1,12 @@
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import {} from '@angular/platform-browser';
-import {
-  MatIconRegistry,
-  MatSidenavModule,
-  MatToolbarModule,
-  MatButtonModule,
-  MatIconModule,
-  MatListModule
-} from '@angular/material';
+import { HammerModule } from '@angular/platform-browser';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconRegistry, MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppHomeModule } from './core/home/home.module';
 import { AppActivityModule } from './core/activity/activity.module';
 import { AppConfigModule } from './core/config/config.module';
@@ -102,7 +99,9 @@ import { AppComponent } from './app.component';
 
     AppContextModule,
 
-    AppRoutingModule
+    AppRoutingModule,
+
+    HammerModule
   ],
   bootstrap: [AppComponent]
 })

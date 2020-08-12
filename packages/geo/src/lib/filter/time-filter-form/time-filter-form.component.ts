@@ -6,7 +6,8 @@ import {
   EventEmitter,
   ViewChild
 } from '@angular/core';
-import { MatSlider, DateAdapter } from '@angular/material';
+import { DateAdapter } from '@angular/material/core';
+import { MatSlider } from '@angular/material/slider';
 import * as moment from 'moment';
 
 import { Layer } from '../../layer/shared/layers/layer';

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
-import * as _html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
@@ -14,8 +14,6 @@ import { OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
-
-const html2canvas = _html2canvas;
 
 @Injectable({
   providedIn: 'root'
@@ -339,8 +337,10 @@ export class PrintService {
 
     let timeout;
 
-    map.ol.once('postcompose', (event: any) => {
-      const canvas = event.context.canvas;
+    map.ol.once('rendercomplete', (event: any) => {
+      const canvas = event.target
+        .getViewport()
+        .getElementsByTagName('canvas')[0];
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
 
@@ -432,9 +432,11 @@ export class PrintService {
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
-    map.ol.once('postcompose', (event: any) => {
+    map.ol.once('rendercomplete', (event: any) => {
       format = format.toLowerCase();
-      const context = event.context;
+      const oldCanvas = event.target
+        .getViewport()
+        .getElementsByTagName('canvas')[0];
       const newCanvas = document.createElement('canvas');
       const newContext = newCanvas.getContext('2d');
       // Postion in height to set the canvas in new canvas
@@ -442,8 +444,8 @@ export class PrintService {
       // Position in width to set the Proj/Scale in new canvas
       let positionWProjScale = 10;
       // Get height/width of map canvas
-      const width = context.canvas.width;
-      let height = context.canvas.height;
+      const width = oldCanvas.width;
+      let height = oldCanvas.height;
       // Set Font to calculate comment width
       newContext.font = '20px Calibri';
       const commentWidth = newContext.measureText(comment).width;
@@ -542,7 +544,7 @@ export class PrintService {
         }
       }
       // Add map to new canvas
-      newContext.drawImage(context.canvas, 0, positionHCanvas);
+      newContext.drawImage(oldCanvas, 0, positionHCanvas);
 
       let status = SubjectStatus.Done;
       try {

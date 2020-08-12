@@ -335,7 +335,8 @@
             "place": "Place",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
-            "entreprise": "Entreprise"
+            "entreprise": "Entreprise",
+            "cadastre": "Cadastre"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -418,7 +419,9 @@
           "culturel": "Cultural",
           "education": "Education",
           "sante": "Health",
-          "securite": "Security"
+          "securite": "Security",
+          "sepaq": "SEPAQ",
+          "transport": "Transportation"
         }
       },
       "terrapi": {
@@ -434,6 +437,10 @@
         "hydro": "Hydrography",
         "routes": "Roads",
         "bati": "Buildings",
+        "batiment": "Buildings",
+        "camping": "Camping",
+        "equipement": "Equipment",
+        "commun": "Public",
         "geographie": "Natural sites",
         "parc": "Parks",
         "secteur": "Sector",

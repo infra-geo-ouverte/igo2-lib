@@ -20,7 +20,7 @@ import { IgoMissingTranslationHandler } from './shared/missing-translation.guard
   exports: [TranslateModule]
 })
 export class IgoLanguageModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoLanguageModule> {
     return {
       ngModule: IgoLanguageModule,
       providers: [provideDefaultLanguageLoader()]

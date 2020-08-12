@@ -6,7 +6,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
   declarations: []
 })
 export class IgoWktModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoWktModule> {
     return {
       ngModule: IgoWktModule,
       providers: []

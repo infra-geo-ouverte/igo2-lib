@@ -21,9 +21,9 @@ export class MeasureFormatPipe implements PipeTransform {
     decimal: number = 1
   ): number {
     let out;
-    if (Object.values(MeasureAreaUnit).indexOf(unit) >= 0) {
+    if (Object.values(MeasureAreaUnit).indexOf(unit as MeasureAreaUnit) >= 0) {
       out = squareMetersToUnit(value, unit as MeasureAreaUnit);
-    } else if (Object.values(MeasureLengthUnit).indexOf(unit) >= 0) {
+    } else if (Object.values(MeasureLengthUnit).indexOf(unit as MeasureLengthUnit) >= 0) {
       out = metersToUnit(value, unit as MeasureLengthUnit);
     }
 

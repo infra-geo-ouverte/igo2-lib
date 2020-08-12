@@ -1,10 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import {
-  MatCardModule,
-  MatButtonModule,
-  MatIconModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 import { IgoPanelModule, IgoFormModule } from '@igo2/common';
 import { IgoMapModule, IgoFilterModule, IgoQueryModule, IgoFeatureModule, IgoFeatureDetailsModule } from '@igo2/geo';

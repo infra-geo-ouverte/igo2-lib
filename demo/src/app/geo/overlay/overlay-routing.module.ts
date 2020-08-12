@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppOverlayComponent } from './overlay.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppOverlayRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppOverlayRoutingModule = RouterModule.forChild(
   routes
 );

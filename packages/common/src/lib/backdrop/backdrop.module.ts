@@ -9,7 +9,7 @@ import { BackdropComponent } from './backdrop.component';
   exports: [BackdropComponent]
 })
 export class IgoBackdropModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoBackdropModule> {
     return {
       ngModule: IgoBackdropModule,
       providers: []

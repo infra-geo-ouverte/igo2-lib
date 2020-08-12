@@ -1,30 +1,26 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatAutocompleteModule,
-  MatIconModule,
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatFormFieldModule,
-  MatTableModule,
-  MatTreeModule,
-  MatInputModule,
-  MatOptionModule,
-  MatSelectModule,
-  MatListModule,
-  MatTooltipModule,
-  MatDatepickerModule,
-  MatNativeDateModule,
-  MAT_DATE_LOCALE,
-  MatCheckboxModule,
-  MatTabsModule,
-  MatRadioModule,
-  MatMenuModule,
-  MatBadgeModule
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule, MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTreeModule } from '@angular/material/tree';
 
 import {
   MatDatetimepickerModule,
@@ -136,7 +132,7 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
   providers: [TimeFilterService, OGCFilterService, SpatialFilterService]
 })
 export class IgoFilterModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoFilterModule> {
     return {
       ngModule: IgoFilterModule,
       providers: [

@@ -1,13 +1,21 @@
 <div style="text-align:center">
-  <h1>
+  <h1 id="igo-title">
     Welcome to IGO
   </h1>
-  <img width="180" src="assets/igo2/core/logo.png">
+  <img  class="igo-logo" width="180" src="assets/igo2/core/logo.png">
 </div>
 
 <p>
-IGO2 library contains many components and services that may benefit any web application. <br>
-IGO2 library is open source project using Angular, Angular Material and OpenLayers.
+  <igo-interactive-tour
+    tourToStart = "global"
+    menuIsOpen = true
+    styleButton = "raised">
+  </igo-interactive-tour>
+</p>
+
+<p>
+  IGO2 library contains many components and services that may benefit any web application. <br>
+  IGO2 library is open source project using Angular, Angular Material and OpenLayers.
 </p>
 
 <h3>IGO2 library is divided into several elements: </h3>

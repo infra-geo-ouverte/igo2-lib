@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Tool } from './tool.interface';
+import { Toolbox } from './toolbox';
 
 /**
  * Service where runtime tool configurations are registered
@@ -9,14 +10,20 @@ import { Tool } from './tool.interface';
   providedIn: 'root'
 })
 export class ToolService {
+  static tools: { [key: string]: Tool } = {};
 
-  static tools: {[key: string]: Tool} = {};
+  /**
+   * Toolbox that holds main tools
+   */
+  public toolbox: Toolbox = new Toolbox();
 
   static register(tool: Tool) {
     ToolService.tools[tool.name] = tool;
   }
 
-  constructor() {}
+  constructor() {
+    this.toolbox.setTools(this.getTools());
+  }
 
   /**
    * Return a tool
@@ -34,5 +41,4 @@ export class ToolService {
   getTools(): Tool[] {
     return Object.values(ToolService.tools);
   }
-
 }

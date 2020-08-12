@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
-import { Notification, NotificationsService, NotificationType} from 'angular2-notifications';
+import {
+  Notification,
+  NotificationsService,
+  NotificationType
+} from 'angular2-notifications';
 
 import { ConfigService } from '../../config/config.service';
 

@@ -5,7 +5,6 @@ import { buffer, debounceTime, filter } from 'rxjs/operators';
 
 import { RouteService, ConfigService } from '@igo2/core';
 import {
-  IgoMap,
   MapBrowserComponent,
   Layer,
   LayerService,
@@ -13,6 +12,7 @@ import {
   StyleListService,
   StyleService
 } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from './context.service';
 import { DetailedContext } from './context.interface';

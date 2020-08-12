@@ -10,7 +10,8 @@ import { ConfigService, Version } from '@igo2/core';
 })
 @Component({
   selector: 'igo-about-tool',
-  templateUrl: './about-tool.component.html'
+  templateUrl: './about-tool.component.html',
+  styleUrls: ['./about-tool.component.scss']
 })
 export class AboutToolComponent {
   @Input()

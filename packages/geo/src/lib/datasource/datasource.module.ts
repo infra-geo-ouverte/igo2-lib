@@ -6,7 +6,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
   declarations: []
 })
 export class IgoDataSourceModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoDataSourceModule> {
     return {
       ngModule: IgoDataSourceModule,
       providers: []

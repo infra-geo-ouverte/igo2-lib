@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatIconModule, MatButtonModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { IgoPanelModule, IgoFlexibleModule } from '@igo2/common';
 
@@ -20,7 +21,7 @@ import { ToastComponent } from './toast.component';
   declarations: [ToastComponent]
 })
 export class IgoToastModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoToastModule> {
     return {
       ngModule: IgoToastModule
     };

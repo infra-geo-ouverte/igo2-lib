@@ -3,3 +3,4 @@ export * from './feature.interfaces';
 export * from './feature.utils';
 export * from './store';
 export * from './strategies';
+export * from './strategies.utils';

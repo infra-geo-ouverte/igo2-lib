@@ -14,7 +14,6 @@ import { CatalogLibraryToolComponent } from './catalog-library-tool.component';
   ],
   declarations: [CatalogLibraryToolComponent],
   exports: [CatalogLibraryToolComponent],
-  entryComponents: [CatalogLibraryToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppCatalogLibraryToolModule {}

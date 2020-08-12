@@ -7,7 +7,7 @@ import { SidenavShimDirective } from './sidenav-shim.directive';
   exports: [SidenavShimDirective]
 })
 export class IgoSidenavModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoSidenavModule> {
     return {
       ngModule: IgoSidenavModule,
       providers: []

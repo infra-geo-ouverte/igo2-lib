@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppOgcFilterComponent } from './ogc-filter.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppOgcFilterRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppOgcFilterRoutingModule = RouterModule.forChild(
   routes
 );

@@ -10,5 +10,13 @@
   "Delete Tooltip": "Supprimer Tooltip",
   "Add": "Ajouter",
   "Edit": "Éditer",
-  "Delete": "Supprimer"
+  "Delete": "Supprimer",
+  "interactiveTour": {
+    "title": "Tour interactif",
+    "selectByClass": "Sélection par classe",
+    "selectById": "Sélection par id",
+    "changeTool": "Changement d'outil",
+    "context3": "Sélection du 3e contexte de la liste avec nth-of-type",
+    "end": "Fin du tour"
+  }
 }
