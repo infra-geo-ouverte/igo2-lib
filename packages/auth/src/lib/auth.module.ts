@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { IgoLanguageModule, StorageService } from '@igo2/core';
+import { StorageService, IgoLanguageModule } from '@igo2/core';
 
 import { AuthStorageService } from './shared/storage.service';
 import { ProtectedDirective } from './shared/protected.directive';
