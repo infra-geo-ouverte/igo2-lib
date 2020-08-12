@@ -12,7 +12,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PanelComponent {
-
   @Input()
   get title() {
     return this._title;
@@ -31,6 +30,4 @@ export class PanelComponent {
     this._withHeader = value;
   }
   private _withHeader = true;
-
-  constructor() {}
 }
