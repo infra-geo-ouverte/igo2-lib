@@ -1,10 +1,10 @@
 import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { debounceTime, skipWhile, first } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
-import { Workspace, WorkspaceStore, WorkspaceSelectorComponent } from '@igo2/common';
-
+import { Workspace } from '@igo2/common';
+import type { WorkspaceStore } from '@igo2/common';
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
 import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasource';
@@ -13,7 +13,6 @@ import { OgcFilterableDataSourceOptions } from '../../filter';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
-import { Feature } from '../../feature/shared/feature.interfaces';
 
 @Directive({
   selector: '[igoWorkspaceUpdator]'

@@ -1,7 +1,7 @@
 import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { debounceTime, skipWhile, first } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 import { Workspace, WorkspaceStore, WorkspaceSelectorComponent } from '@igo2/common';
 
@@ -13,7 +13,6 @@ import { OgcFilterableDataSourceOptions } from '../../filter';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
-import { Feature } from '../../feature/shared/feature.interfaces';
 
 @Directive({
   selector: '[igoWorkspaceSelector]'

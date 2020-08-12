@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { WorkspaceButtonComponent } from './workspace-button/workspace-button.component';
-import { MatIconModule, MatButtonModule, MatTooltipModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 import { IgoLanguageModule } from '@igo2/core';
 import { CommonModule } from '@angular/common';
 

@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import { Layer, VectorLayer } from '@igo2/geo';
+import { VectorLayer } from '@igo2/geo';
+import type { Layer } from '@igo2/geo';
 import { WorkspaceState } from '../workspace.state';
 import { BehaviorSubject, Subscription } from 'rxjs';
 

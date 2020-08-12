@@ -45,7 +45,7 @@ export class FeatureActionsService {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           ws.toolToActivate$.next({
             toolbox: 'importExport',
-            options: { layer: ws.layer.id, featureInMapExtent: filterStrategy.active } as ExportOptions
+            options: { layer: [ws.layer.id], featureInMapExtent: filterStrategy.active } as ExportOptions
           });
         },
         args: [workspace]
