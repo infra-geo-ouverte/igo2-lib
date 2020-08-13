@@ -10,7 +10,9 @@ import {
   WFSDataSourceOptionsParams,
   OgcFilterableDataSourceOptions,
   AnyBaseOgcFilterOptions,
-  OgcFilterOperatorType
+  OgcFilterOperatorType,
+  OgcFilterDuringOptions,
+  TimeFilterType
 } from '@igo2/geo';
 
 @Component({
@@ -109,11 +111,167 @@ export class AppOgcFilterComponent {
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle',
-            source: dataSource
+            title: 'Embâcle (PropertyIsEqualTo OR Intersects)',
+            source: dataSource,
+            style: {
+              circle : {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'orange',
+                  width: 1
+                }
+              }
+            }
           })
         );
       });
+    
+      const datasourceDuringFilter: WFSoptions = {
+        type: 'wfs',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+        params: {
+          featureTypes: 'vg_observation_v_autre_wmst',
+          fieldNameGeometry: 'geometry',
+          maxFeatures: 10000,
+          version: '2.0.0',
+          outputFormat: undefined,
+          outputFormatDownload: 'SHP' // based on service capabilities
+        },
+        sourceFields: [
+          { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        ],
+        ogcFilters: {
+          enabled: true,
+          editable: true,
+          allowedOperatorsType: OgcFilterOperatorType.All,
+          filters:
+            {
+              operator: 'During',
+              propertyName: 'date_observation',
+              begin: '2016-01-21T00:00:00-05:00',
+              end: '2016-01-26T00:00:00-05:00'
+            } as OgcFilterDuringOptions
+        },
+        minDate: '2016-01-01T00:00:00-05:00',
+        maxDate: '2016-02-10T00:00:00-05:00',
+        stepDate: 'P2D'
+      };
+
+      this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilter)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (During, Step: P2D)',
+            id: '1',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'blue',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      });
+
+      const datasourceDuringFilterTime: WFSoptions = {
+        type: 'wfs',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+        params: {
+          featureTypes: 'vg_observation_v_autre_wmst',
+          fieldNameGeometry: 'geometry',
+          maxFeatures: 10000,
+          version: '2.0.0',
+          outputFormat: undefined,
+          outputFormatDownload: 'SHP' // based on service capabilities
+        },
+        sourceFields: [
+          { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        ],
+        ogcFilters: {
+          enabled: true,
+          editable: true,
+          allowedOperatorsType: OgcFilterOperatorType.All,
+          filters:
+            {
+              operator: 'During',
+              propertyName: 'date_observation',
+              begin: '2016-01-21T12:00:00-05:00',
+              end: '2016-01-26T16:00:00-05:00'
+            } as OgcFilterDuringOptions
+        },
+        minDate: '2016-01-01T00:00:00-05:00',
+        maxDate: '2016-02-10T00:00:00-05:00',
+        stepDate: 'PT4H'
+      };
+
+      this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilterTime)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (During, Step: PT4H)',
+            id: '66',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'red',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      });
+    
+      const wmsOgcFilterOptions: WMSoptions = {
+        type: 'wms',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+        optionsFromCapabilities: true,
+        params: {
+          LAYERS: 'vg_observation_v_inondation23avril2017_wmst',
+          VERSION: '1.3.0'
+        },
+        sourceFields: [
+          { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+        ],
+        ogcFilters: {
+          enabled: true,
+          editable: true,
+          filters:
+          {
+            operator: 'During',
+            propertyName: 'date_observation'
+          } as OgcFilterDuringOptions,
+          allowedOperatorsType: OgcFilterOperatorType.Time
+        }
+      };
+
+      this.dataSourceService
+        .createAsyncDataSource(wmsOgcFilterOptions)
+        .subscribe(dataSource => {
+          this.map.addLayer(
+            this.layerService.createLayer({
+              title: 'Inondation (During, optionsFromCapabilities)',
+              source: dataSource
+            })
+          );
+        });
 
     interface WMSoptions
       extends WMSDataSourceOptions,

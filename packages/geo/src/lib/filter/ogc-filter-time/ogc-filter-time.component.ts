@@ -1,5 +1,6 @@
-import { Component, Input, ChangeDetectionStrategy, 
+import { Component, Input, ChangeDetectionStrategy,
         ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
@@ -20,11 +21,19 @@ export class OgcFilterTimeComponent implements OnInit {
   @Input() currentFilter: any;
   @Output() changeProperty: EventEmitter<{value: string, pos: number}> = new EventEmitter();
 
+  beginHours: number[];
+  endHours: number[];
+  beginMinutes: number[];
+  endMinutes: number[];
+  beginHourFormControl = new FormControl();
+  beginMinuteFormControl = new FormControl();
+  endHourFormControl = new FormControl();
+  endMinuteFormControl = new FormControl();
   _beginValue: Date;
   _endValue: Date;
   ogcFilterOperator = OgcFilterOperator;
 
-  public defaultStepMillisecond = 6000;
+  public defaultStepMillisecond = 60000;
   public options: OgcFilterableDataSourceOptions;
 
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
@@ -59,21 +68,21 @@ export class OgcFilterTimeComponent implements OnInit {
     return this._endValue;
   }
 
-  constructor() {}
-
-  ngOnInit(){
-    this.beginValue = new Date(this.currentFilter.begin);
-    this.endValue = new Date(this.currentFilter.end);
+  constructor() {
   }
 
-  changeTemporalProperty(value, time?, event?, pos? ) {
-    let valueTmp = this.getDateTime(value, time, event);
+  ngOnInit(){
+    this.beginValue = new Date(this.currentFilter.begin?this.currentFilter.begin:this.datasource.options.minDate);
+    this.endValue = new Date(this.currentFilter.end?this.currentFilter.end:this.datasource.options.maxDate);
+    this.updateHoursMinutesArray();
+  }
+
+  changeTemporalProperty(value, pos? ) {
+    let valueTmp = this.getDateTime(value, pos);
 
     if (pos === 2 && this.calendarType() === 'date') {
       /* Above month: see yearSelected or monthSelected */
-      if ( this.calendarType() !== 'datetime'  ) {
         valueTmp = moment(valueTmp).endOf('day').toDate();
-      }
     }
     
     if (pos === 1) {
@@ -81,6 +90,8 @@ export class OgcFilterTimeComponent implements OnInit {
     } else {
       this.endValue = valueTmp;
     }
+
+    this.updateHoursMinutesArray();
 
     this.changeProperty.next({'value': valueTmp.toISOString(), 'pos': pos});
   }
@@ -207,20 +218,19 @@ export class OgcFilterTimeComponent implements OnInit {
 
   }
   
-  getDateTime(date, time, eventTime) {
+  getDateTime(date, pos) {
     let valuetmp = new Date(date);
     let valuetmp2;
-    if (time?.nativeElement) {
-      let timeAsDate = new Date(time.nativeElement.value);
-      if (isNaN(timeAsDate.getTime())) {
-        valuetmp2 = valuetmp.setHours(time.nativeElement.value.split(':')[0], time.nativeElement.value.split(':')[1]);
-      } else {
-        valuetmp2 = valuetmp.setHours(timeAsDate.getHours(), timeAsDate.getMinutes());
-      }
-    } 
-    if (eventTime) {
-      valuetmp2 = valuetmp.setHours(eventTime.instance.hourElement.value, eventTime.instance.minuteElement.value);
-    }    
+    
+    switch(pos){
+      case 1:
+        valuetmp2 = valuetmp.setHours(this.beginHourFormControl.value, this.beginMinuteFormControl.value);
+        break;
+      case 2:
+        valuetmp2 = valuetmp.setHours(this.endHourFormControl.value, this.endMinuteFormControl.value);
+        break;
+    }
+    
     return new Date(valuetmp2?valuetmp2:valuetmp);
   }
 
@@ -233,14 +243,68 @@ export class OgcFilterTimeComponent implements OnInit {
       }
     } else if ( this.stepIsHourDuration() ) {
       return 60;
-    }
+    } 
+    return 1
   }
 
   handleHourIncrement() {
-    if(this.stepIsMinuteDuration()) {
-      return 1;
-    } else if ( this.stepIsHourDuration() ) {
+    if ( this.stepIsHourDuration() ) {
       return this.stepMilliseconds / 1000 / 60 / 60;
+    } 
+    return 1;
+  }
+
+  fullBeginHoursArray(checkEndValue?) {
+    if(checkEndValue){
+      this.beginHours = Array.from({ length: (this.endHourFormControl.value - 0) / this.handleHourIncrement() + 1}, (_, i) => 0 + (i * this.handleHourIncrement()));
+    } else {
+      this.beginHours = Array.from({ length: (24 - 0) / this.handleHourIncrement() + 1}, (_, i) => 0 + (i * this.handleHourIncrement()));
+    }   
+    this.beginHourFormControl.setValue(this.beginValue.getHours());   
+  }
+
+  fullEndHoursArray(checkEndValue?) {
+    if(checkEndValue){
+      this.endHours = Array.from({ length: (24 - this.beginHourFormControl.value) / this.handleHourIncrement() + 1}, (_, i) => this.beginHourFormControl.value + (i * this.handleHourIncrement()));
+    } else {
+      this.endHours = Array.from({ length: (24 - 0) / this.handleHourIncrement() + 1}, (_, i) => 0 + (i * this.handleHourIncrement()));
+    }      
+    this.endHourFormControl.setValue(this.endValue.getHours());
+  }
+
+  fullBeginMinutesArray(checkEndValue?) {
+    if (checkEndValue) {
+      this.beginMinutes = Array.from({ length: (this.endMinuteFormControl.value - 0) / this.handleMinuteIncrement() + 1}, (_, i) => 0 + (i * this.handleMinuteIncrement()));
+    } else {
+      this.beginMinutes = Array.from({ length: (59 - 0) / this.handleMinuteIncrement() + 1}, (_, i) => 0 + (i * this.handleMinuteIncrement()));
+    }
+    this.beginMinuteFormControl.setValue(this.beginValue.getMinutes());
+  }
+
+  fullEndMinutesArray(checkEndValue?) {
+    if (checkEndValue) {
+      this.endMinutes = Array.from({ length: (59 - this.beginMinuteFormControl.value) / this.handleMinuteIncrement() + 1}, (_, i) => this.beginMinuteFormControl.value + (i * this.handleMinuteIncrement()));
+    } else {
+      this.endMinutes = Array.from({ length: (59 - 0) / this.handleMinuteIncrement() + 1}, (_, i) => 0 + (i * this.handleMinuteIncrement()));
+    }
+    this.endMinuteFormControl.setValue(this.endValue.getMinutes());
+  }
+
+  updateHoursMinutesArray() {
+    const beginTmp = new Date(this.beginValue);
+    const endTmp = new Date(this.endValue);
+    if(beginTmp.setHours(0,0) === endTmp.setHours(0,0)){
+      this.fullBeginHoursArray(true);
+      this.fullEndHoursArray(true);
+      if(this.beginValue.getHours() === this.endValue.getHours()){
+        this.fullBeginMinutesArray(true);
+        this.fullEndMinutesArray(true);
+      }
+    } else {
+      this.fullBeginHoursArray();
+      this.fullEndHoursArray();
+      this.fullBeginMinutesArray();
+      this.fullEndMinutesArray();
     }
   }
 }
