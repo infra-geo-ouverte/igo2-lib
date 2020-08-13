@@ -36,8 +36,6 @@
     "ol-mapbox-style": "^4.3.0"
   },
   "optionalDependencies": {
-    "flatpickr": "^4.6.6",
-    "angularx-flatpickr": "^6.3.1",
     "file-saver": "^1.3.8",
     "html2canvas": "^1.0.0-alpha.12",
     "jspdf": "^1.5.3",

@@ -1,11 +1,12 @@
 
 <div style="display: inline-flex;">
-  <span style="display: inline-flex;">
+
+  <span class="time-input">
     <mat-form-field style="margin: auto;">
       <mat-datepicker-toggle matSuffix [for]="beginDatepicker"></mat-datepicker-toggle>
       <input [matDatepicker]="beginDatepicker" [placeholder]="'igo.geo.timeFilter.startDate' | translate" 
         [disabled]="!currentFilter.active" matInput #begin
-        (dateChange)="changeTemporalProperty(begin.value, beginTime , undefined, 1);" 
+        (dateChange)="changeTemporalProperty(begin.value, 1);" 
         [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
         [value]="beginValue?beginValue:handleDate(datasource.options.minDate)"
         [min]="handleDate(datasource.options.minDate)"
@@ -17,32 +18,28 @@
         (monthSelected)="monthSelected($event, beginDatepicker, 'begin')">
       </mat-datepicker>
     </mat-form-field>
-
-    <input 
-        #beginTime
-        *ngIf="calendarType() === 'datetime'"
-        type="text" 
-        mwlFlatpickr 
-        [value]="beginValue"
-        (flatpickrValueUpdate)="changeTemporalProperty(begin.value, undefined, $event, 1);" 
-        [altInput]="true" 
-        [time24hr]="true"
-        [enableTime]="true"
-        [altFormat]="'H:i'"
-        [dateFormat]="'H:i'"
-        [mode]="'single'"
-        [noCalendar]="true"
-        [hourIncrement]="handleHourIncrement()"
-        [minuteIncrement]="handleMinuteIncrement()"
-        [convertModelValue]="true">
+    <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
+      <mat-label>Heure</mat-label>
+      <mat-select [formControl]="beginHourFormControl"
+        (selectionChange)="changeTemporalProperty(begin.value, 1);">
+        <mat-option *ngFor="let hour of beginHours" [value]="hour">{{hour}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
+      <mat-label>Minute</mat-label>
+      <mat-select [formControl]="beginMinuteFormControl" 
+        (selectionChange)="changeTemporalProperty(begin.value, 1);">
+        <mat-option *ngFor="let minute of beginMinutes" [value]="minute">{{minute}}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </span>
 
-  <span style="display: inline-flex;">
+  <span class="time-input">
     <mat-form-field style="margin: auto;">
       <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
         <input [matDatepicker]="endDatepicker" [placeholder]="'igo.geo.timeFilter.endDate' | translate" 
           [disabled]="!currentFilter.active" matInput #end
-          (dateChange)="changeTemporalProperty(end.value, endTime, undefined,  2);" 
+          (dateChange)="changeTemporalProperty(end.value, 2);" 
           [matDatepickerFilter]="dateFilter.bind(this, 'end')"
           [value]="endValue?endValue:handleDate(datasource.options.maxDate)"
           [min]="beginValue?beginValue:handleDate(datasource.options.minDate)"
@@ -54,23 +51,20 @@
           (monthSelected)="monthSelected($event, endDatepicker, 'end')">
       </mat-datepicker>
     </mat-form-field>
-
-    <input 
-        #endTime
-        *ngIf="calendarType() === 'datetime'"
-        type="text" 
-        mwlFlatpickr 
-        [value]="endValue" 
-        (flatpickrValueUpdate)="changeTemporalProperty(end.value, undefined, $event, 2);"
-        [altInput]="true" 
-        [time24hr]="true"
-        [enableTime]="true"
-        [altFormat]="'H:i'"
-        [dateFormat]="'H:i'"
-        [mode]="'single'"
-        [noCalendar]="true"
-        [hourIncrement]="handleHourIncrement()"
-        [minuteIncrement]="handleMinuteIncrement()"
-        [convertModelValue]="false">
+    <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
+      <mat-label>Heure</mat-label>
+      <mat-select [formControl]="endHourFormControl"
+        (selectionChange)="changeTemporalProperty(end.value, 2);">
+        <mat-option *ngFor="let hour of endHours" [value]="hour">{{hour}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
+      <mat-label>Minute</mat-label>
+      <mat-select [formControl]="endMinuteFormControl" 
+        (selectionChange)="changeTemporalProperty(end.value, 2);">
+        <mat-option *ngFor="let minute of endMinutes" [value]="minute">{{minute}}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </span>
+
 </div>
