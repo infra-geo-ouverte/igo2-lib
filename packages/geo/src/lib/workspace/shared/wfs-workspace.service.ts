@@ -24,11 +24,14 @@ import { WfsWorkspace } from './wfs-workspace';
 import { WfsActionsService } from './wfs-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService } from '@igo2/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsWorkspaceService {
+
+  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
 
   get zoomAutoTable(): boolean {
     return this.storageService.get('zoomAutoTable') as boolean;
@@ -53,6 +56,9 @@ export class WfsWorkspaceService {
     });
     this.createTableTemplate(wks, layer);
     this.wfsActionsService.loadActions(wks);
+    this.wfsActionsService.toolToActivate$.subscribe((toolToActivate) =>
+    this.toolToActivate$.next(toolToActivate)
+  );
     return wks;
 
   }

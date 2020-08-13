@@ -9,11 +9,14 @@ import { ExportOptions } from '../../import-export/shared/export.interface';
 import { StorageService } from '@igo2/core';
 import { FeatureMotion } from '../../feature';
 import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsActionsService {
+
+  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
 
   get zoomAutoTable(): boolean {
     return this.storageService.get('zoomAutoTable') as boolean;
@@ -64,8 +67,8 @@ export class WfsActionsService {
         tooltip: 'igo.geo.workspace.wfsDownload.tooltip',
         handler: (ws: WfsWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
-          ws.toolToActivate$.next({
-            toolbox: 'importExport',
+          this.toolToActivate$.next({
+            tool: 'importExport',
             options: { layer: [ws.layer.id], featureInMapExtent: filterStrategy.active } as ExportOptions
           });
         },

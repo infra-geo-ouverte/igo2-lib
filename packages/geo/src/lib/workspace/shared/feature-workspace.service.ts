@@ -24,11 +24,14 @@ import { FeatureWorkspace } from './feature-workspace';
 import { FeatureActionsService } from './feature-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService } from '@igo2/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureWorkspaceService {
+
+  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
 
   get zoomAutoTable(): boolean {
     return this.storageService.get('zoomAutoTable') as boolean;
@@ -52,6 +55,9 @@ export class FeatureWorkspaceService {
     });
     this.createTableTemplate(wks, layer);
     this.featureActionsService.loadActions(wks);
+    this.featureActionsService.toolToActivate$.subscribe((toolToActivate) =>
+      this.toolToActivate$.next(toolToActivate)
+    );
     return wks;
 
   }
