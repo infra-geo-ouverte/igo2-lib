@@ -22,6 +22,10 @@ export class WfsActionsService {
     return this.storageService.get('zoomAutoTable') as boolean;
   }
 
+  get rowsInMapExtent(): boolean {
+    return this.storageService.get('rowsInMapExtent') as boolean;
+  }
+
   constructor(@Inject(OgcFilterWidget) private ogcFilterWidget: Widget, private storageService: StorageService) {}
 
   loadActions(workspace: WfsWorkspace) {
@@ -33,18 +37,19 @@ export class WfsActionsService {
     return [
       {
         id: 'filterInMapExtent',
-        icon: mapExtentStrategyActiveIcon(workspace),
+        checkbox: true,
         title: 'igo.geo.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
-        args: [workspace],
-        handler: (ws: WfsWorkspace) => {
-          const filterStrategy = ws.entityStore
+        checkCondition: this.rowsInMapExtent,
+        handler: () => {
+          const filterStrategy = workspace.entityStore
           .getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           if (filterStrategy.active) {
             filterStrategy.deactivate();
           } else {
             filterStrategy.activate();
           }
+          this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean);
         }
       },
       {
