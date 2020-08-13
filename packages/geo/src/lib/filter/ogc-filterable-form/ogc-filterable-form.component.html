@@ -1,12 +1,20 @@
-<igo-list *ngIf="!advancedOgcFilters" [navigation]="false" [selection]="true">
-  <igo-ogc-filter-toggle-button igoListItem [datasource]="datasource" [map]="map" [refreshFilters]="refreshFunc">
-  </igo-ogc-filter-toggle-button>
-</igo-list>
+<igo-ogc-filter-toggle-button 
+*ngIf="!advancedOgcFilters"
+igoListItem
+[refreshFilters]="refreshFunc"
+[datasource]="datasource"
+[map]="map">
+</igo-ogc-filter-toggle-button>
 
-<igo-list *ngIf="advancedOgcFilters && datasource.options.ogcFilters.editable " [navigation]="false" [selection]="true">
-  <ng-template ngFor let-currentFilter [ngForOf]="datasource.options.ogcFilters.interfaceOgcFilters">
-    <igo-ogc-filter-form igoListItem [color]="color" [currentFilter]="currentFilter" [datasource]="datasource"
-      [map]="map" [refreshFilters]="refreshFunc">
-    </igo-ogc-filter-form>
-  </ng-template>
-</igo-list>
+
+<ng-template 
+*ngIf="advancedOgcFilters && datasource.options.ogcFilters.editable"
+ngFor let-currentFilter 
+[ngForOf]="datasource.options.ogcFilters.interfaceOgcFilters">
+<igo-ogc-filter-form
+  [currentFilter]="currentFilter"
+  [refreshFilters]="refreshFunc"
+  [datasource]="datasource"
+  [map]="map">
+</igo-ogc-filter-form>
+</ng-template>

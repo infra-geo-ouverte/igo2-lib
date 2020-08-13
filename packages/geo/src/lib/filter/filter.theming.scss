@@ -1,4 +1,5 @@
 @import './time-filter-form/time-filter-form.theming';
+@import '~flatpickr/dist/flatpickr.css';
 
 @mixin igo-filter-theming($theme, $typography) {
   @include igo-time-filter-form-theming($theme);
