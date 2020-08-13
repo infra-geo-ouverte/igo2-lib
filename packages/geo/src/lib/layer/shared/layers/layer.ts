@@ -34,6 +34,10 @@ export abstract class Layer {
     return this.options.id || this.dataSource.id;
   }
 
+  get alias(): string {
+    return this.options.alias;
+  }
+
   get title(): string {
     return this.options.title;
   }

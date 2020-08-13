@@ -87,6 +87,11 @@ export class GeometryFormFieldComponent implements OnInit, OnDestroy {
   @Input() measure: boolean = false;
 
   /**
+   * Control options
+   */
+  @Input() controlOptions: {[key: string]: any} = {};
+
+  /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
   @Input() drawStyle: OlStyle;

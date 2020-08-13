@@ -220,6 +220,12 @@ export class IgoMap {
     return this.layers.find((layer: Layer) => layer.id && layer.id === id);
   }
 
+  getLayerByAlias(alias: string): Layer {
+    return this.layers.find(
+      (layer: Layer) => layer.alias && layer.alias === alias
+    );
+  }
+
   /**
    * Add a single layer
    * @param layer Layer to add
@@ -266,7 +272,7 @@ export class IgoMap {
     const newLayers = this.layers$.value.slice(0);
     const layersToRemove = [];
     layers.forEach((layer: Layer) => {
-      const index = this.getLayerIndex(layer);
+      const index = newLayers.indexOf(layer);
       if (index >= 0) {
         layersToRemove.push(layer);
         newLayers.splice(index, 1);
