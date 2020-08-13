@@ -3,15 +3,22 @@ import { Injectable } from '@angular/core';
 import { Action, EntityStoreFilterCustomFuncStrategy } from '@igo2/common';
 
 import { FeatureWorkspace } from './feature-workspace';
-import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip } from './workspace.utils';
+import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
 import { ExportOptions } from '../../import-export/shared/export.interface';
+import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
+import { FeatureMotion } from '../../feature';
+import { StorageService } from '@igo2/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureActionsService {
 
-  constructor() {}
+  get zoomAutoTable(): boolean {
+    return this.storageService.get('zoomAutoTable') as boolean;
+  }
+
+  constructor(private storageService: StorageService) {}
 
   loadActions(workspace: FeatureWorkspace) {
     const actions = this.buildActions(workspace);
@@ -49,7 +56,20 @@ export class FeatureActionsService {
           });
         },
         args: [workspace]
-      }
+      },
+      {
+        id: 'zoomAuto',
+        checkbox: true,
+        title: 'igo.geo.workspace.zoomAuto.title',
+        tooltip: FeatureMotionStrategyActiveToolTip(workspace),
+        checkCondition: this.zoomAutoTable,
+        handler: () => {
+          const zoomStrategy = workspace.entityStore
+          .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+          this.storageService.set('zoomAutoTable', !this.storageService.get('zoomAutoTable') as boolean);
+          zoomStrategy.setMotion(this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None);
+        }
+      },
     ];
   }
 }

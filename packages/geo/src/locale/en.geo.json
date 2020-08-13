@@ -525,7 +525,9 @@
         "wfsDownload.tooltip": "Download",
         "inMapExtent.title": "Show records in map extent only",
         "inMapExtent.active.tooltip": "Show records in map extent only",
-        "inMapExtent.inactive.tooltip": "Show all records"
+        "inMapExtent.inactive.tooltip": "Show all records",
+        "zoomAuto.title": "Zoom auto",
+        "zoomAuto.tooltip": "Zoom auto"
       },
       "network": {
         "online": {

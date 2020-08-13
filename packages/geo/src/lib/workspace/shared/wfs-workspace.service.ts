@@ -13,7 +13,8 @@ import {
   FeatureStoreLoadingLayerStrategy,
   FeatureStoreSelectionStrategy,
   FeatureStoreInMapExtentStrategy,
-  Feature
+  Feature,
+  FeatureMotion
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
@@ -22,13 +23,21 @@ import { SourceFieldsOptionsParams } from '../../datasource';
 import { WfsWorkspace } from './wfs-workspace';
 import { WfsActionsService } from './wfs-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
+import { StorageService } from '@igo2/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsWorkspaceService {
 
-  constructor(private wfsActionsService: WfsActionsService) {}
+  get zoomAutoTable(): boolean {
+    return this.storageService.get('zoomAutoTable') as boolean;
+  }
+
+  constructor(
+    private wfsActionsService: WfsActionsService,
+    private storageService: StorageService
+    ) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
     const wks = new WfsWorkspace({
@@ -56,7 +65,8 @@ export class WfsWorkspaceService {
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       map,
-      hitTolerance: 15
+      hitTolerance: 15,
+      motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None
     });
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);

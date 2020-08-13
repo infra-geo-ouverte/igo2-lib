@@ -4,15 +4,22 @@ import { Action, Widget, EntityStoreFilterCustomFuncStrategy } from '@igo2/commo
 
 import { OgcFilterWidget } from '../widgets/widgets';
 import { WfsWorkspace } from './wfs-workspace';
-import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip } from './workspace.utils';
+import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
 import { ExportOptions } from '../../import-export/shared/export.interface';
+import { StorageService } from '@igo2/core';
+import { FeatureMotion } from '../../feature';
+import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsActionsService {
 
-  constructor(@Inject(OgcFilterWidget) private ogcFilterWidget: Widget) {}
+  get zoomAutoTable(): boolean {
+    return this.storageService.get('zoomAutoTable') as boolean;
+  }
+
+  constructor(@Inject(OgcFilterWidget) private ogcFilterWidget: Widget, private storageService: StorageService) {}
 
   loadActions(workspace: WfsWorkspace) {
     const actions = this.buildActions(workspace);
@@ -63,7 +70,20 @@ export class WfsActionsService {
           });
         },
         args: [workspace]
-      }
+      },
+      {
+        id: 'zoomAuto',
+        checkbox: true,
+        title: 'igo.geo.workspace.zoomAuto.title',
+        tooltip: FeatureMotionStrategyActiveToolTip(workspace),
+        checkCondition: this.zoomAutoTable,
+        handler: () => {
+          const zoomStrategy = workspace.entityStore
+          .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+          this.storageService.set('zoomAutoTable', !this.storageService.get('zoomAutoTable') as boolean);
+          zoomStrategy.setMotion(this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None);
+        }
+      },
     ];
   }
 }
