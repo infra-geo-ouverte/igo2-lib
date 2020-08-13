@@ -57,6 +57,9 @@ import { SpatialFilterTypeComponent } from './spatial-filter/spatial-filter-type
 import { SpatialFilterListComponent } from './spatial-filter/spatial-filter-list/spatial-filter-list.component';
 import { SpatialFilterItemComponent } from './spatial-filter/spatial-filter-item/spatial-filter-item.component';
 import { SpatialFilterService } from './shared/spatial-filter.service';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+import { OgcFilterTimeComponent } from './ogc-filter-time/ogc-filter-time.component';
+import { FlatpickrModule } from 'angularx-flatpickr';
 
 @NgModule({
   imports: [
@@ -91,7 +94,11 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
     IgoListModule,
     IgoKeyValueModule,
     IgoGeometryModule,
-    MatBadgeModule
+    MatBadgeModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
+    FlatpickrModule.forRoot()
   ],
   exports: [
     FilterableDataSourcePipe,
@@ -109,7 +116,8 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
     OgcFilterableListBindingDirective,
     SpatialFilterTypeComponent,
     SpatialFilterListComponent,
-    SpatialFilterItemComponent
+    SpatialFilterItemComponent,
+    OgcFilterTimeComponent
   ],
   declarations: [
     FilterableDataSourcePipe,
@@ -127,7 +135,8 @@ import { SpatialFilterService } from './shared/spatial-filter.service';
     OgcFilterableListBindingDirective,
     SpatialFilterTypeComponent,
     SpatialFilterListComponent,
-    SpatialFilterItemComponent
+    SpatialFilterItemComponent,
+    OgcFilterTimeComponent
   ],
   providers: [TimeFilterService, OGCFilterService, SpatialFilterService]
 })

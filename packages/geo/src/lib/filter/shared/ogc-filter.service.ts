@@ -55,7 +55,12 @@ export class OGCFilterService {
       }
       this.filterByOgc(
         wmsDatasource as WMSDataSource,
-        ogcFilterWriter.buildFilter(options.ogcFilters.filters)
+        ogcFilterWriter.buildFilter(options.ogcFilters.filters,
+        undefined,
+        undefined,
+        undefined,
+        wmsDatasource.options
+        )
       );
       options.filtered = true;
     } else {
