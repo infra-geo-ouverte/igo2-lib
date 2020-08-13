@@ -36,6 +36,7 @@ export class FeatureActionsService {
     return [
       {
         id: 'filterInMapExtent',
+        checkbox: true,
         title: 'igo.geo.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
         checkCondition: this.rowsInMapExtent,
