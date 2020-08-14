@@ -212,7 +212,7 @@ export class AppOgcFilterComponent {
           } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
-      maxDate: '2016-02-14T20:00:00-0500',
+      maxDate: '2016-02-14T20:00:00-05:00',
       stepDate: 'PT4H'
     };
 
@@ -267,7 +267,7 @@ export class AppOgcFilterComponent {
           } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
-      maxDate: '2018-12-31T00:00:00-0500',
+      maxDate: '2018-12-31T00:00:00-05:00',
       stepDate: 'P1M'
     };
 
@@ -322,7 +322,7 @@ export class AppOgcFilterComponent {
           } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
-      maxDate: '2018-12-31T00:00:00-0500',
+      maxDate: '2018-12-31T00:00:00-05:00',
       stepDate: 'P1Y'
     };
 
@@ -377,7 +377,7 @@ export class AppOgcFilterComponent {
           } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
-      maxDate: '2018-12-31T00:00:00-0500',
+      maxDate: '2018-12-31T00:00:00-05:00',
       stepDate: 'P1D'
     };
 
