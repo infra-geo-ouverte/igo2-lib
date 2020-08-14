@@ -69,9 +69,31 @@ export class OgcFilterTimeComponent implements OnInit {
   }
 
   ngOnInit(){
-    this.beginValue = new Date(this.currentFilter.begin?this.currentFilter.begin:this.datasource.options.minDate);
-    this.endValue = new Date(this.currentFilter.end?this.currentFilter.end:this.datasource.options.maxDate);
+    this.beginValue = this.parseFilter(this.currentFilter.begin?this.currentFilter.begin:this.datasource.options.minDate);
+    this.endValue = this.parseFilter(this.currentFilter.end?this.currentFilter.end:this.datasource.options.maxDate);
+    //console.log(this.parseFilter(this.currentFilter.begin));
+    //console.log(this.parseFilter(this.currentFilter.end));
+
     this.updateHoursMinutesArray();
+  }
+
+  parseFilter(filter): Date {
+    if (isNaN(new Date(filter).getTime())) {
+      if(filter.search('now') >= 0 ) {
+        const interval = filter.match(/years|months|weeks|days|hours|seconds/);
+        if(filter.match(/\+/)) {
+          const intervalInt = parseInt(filter.substring(filter.search('+')+1, interval.index));
+          return moment().add(intervalInt, interval[0]).toDate();
+        } 
+        if(filter.match(/\-/)) {
+          const intervalInt = parseInt(filter.substring(filter.search('-')+1, interval.index));
+          return moment().subtract(intervalInt, interval[0]).toDate();
+        }
+        return new Date();
+      }
+      return new Date();
+    }
+    return new Date(filter);
   }
 
   changeTemporalProperty(value, pos? ) {
@@ -129,7 +151,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
   calendarView() {
     const test = this.stepMilliseconds;
-    const diff = Math.abs(new Date(this.currentFilter.end).getTime() - new Date(this.currentFilter.begin).getTime());
+    const diff = Math.abs(this.parseFilter(this.currentFilter.end).getTime() - this.parseFilter(this.currentFilter.begin).getTime());
     if ( this.stepIsYearDuration() ) {
       return 'multi-year';
     } else if (this.stepIsMonthDuration()) {
