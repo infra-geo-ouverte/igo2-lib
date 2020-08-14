@@ -175,6 +175,40 @@ export class AppOgcFilterComponent {
                   color: 'white'
                 },
                 stroke: {
+                  color: 'red',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      });
+
+      const datasourceDuringFilterTime = {... datasourceDuringFilter};
+      datasourceDuringFilterTime.maxDate = '2016-02-14T20:00:00-0500';
+      datasourceDuringFilterTime.ogcFilters.filters = {
+        operator: 'During',
+        propertyName: 'date_observation',
+        begin: '2016-01-01T4:00:00-05:00',
+        end: '2016-01-12T16:00:00-05:00'
+      } as OgcFilterDuringOptions ;
+      datasourceDuringFilterTime.stepDate = 'PT4H';
+      
+      this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilterTime)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (During, Step: PT4H)',
+            id: '2',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
                   color: 'blue',
                   width: 1
                 }
@@ -184,44 +218,23 @@ export class AppOgcFilterComponent {
         );
       });
 
-      const datasourceDuringFilterTime: WFSoptions = {
-        type: 'wfs',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-        params: {
-          featureTypes: 'vg_observation_v_autre_wmst',
-          fieldNameGeometry: 'geometry',
-          maxFeatures: 10000,
-          version: '2.0.0',
-          outputFormat: undefined,
-          outputFormatDownload: 'SHP' // based on service capabilities
-        },
-        sourceFields: [
-          { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
-        ],
-        ogcFilters: {
-          enabled: true,
-          editable: true,
-          allowedOperatorsType: OgcFilterOperatorType.All,
-          filters:
-            {
-              operator: 'During',
-              propertyName: 'date_observation',
-              begin: '2016-01-21T12:00:00-05:00',
-              end: '2016-01-26T16:00:00-05:00'
-            } as OgcFilterDuringOptions
-        },
-        minDate: '2016-01-01T00:00:00-05:00',
-        maxDate: '2016-02-10T00:00:00-05:00',
-        stepDate: 'PT4H'
-      };
-
+      const datasourceDuringFilterTimeMonth = {... datasourceDuringFilter};
+      datasourceDuringFilterTimeMonth.maxDate = '2018-12-31T00:00:00-0500';
+      datasourceDuringFilterTimeMonth.ogcFilters.filters = {
+        operator: 'During',
+        propertyName: 'date_observation',
+        begin: '2016-01-01T00:00:00-05:00',
+        end: '2016-03-01T00:00:00-05:00'
+      } as OgcFilterDuringOptions ;
+      datasourceDuringFilterTimeMonth.stepDate = 'P1M';
+      
       this.dataSourceService
-      .createAsyncDataSource(datasourceDuringFilterTime)
+      .createAsyncDataSource(datasourceDuringFilterTimeMonth)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Embâcle (During, Step: PT4H)',
-            id: '66',
+            title: 'Embâcle (During, Step: P1M)',
+            id: '3',
             source: dataSource,
             style: {
               circle: {
@@ -230,7 +243,41 @@ export class AppOgcFilterComponent {
                   color: 'white'
                 },
                 stroke: {
-                  color: 'red',
+                  color: 'yellow',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      });
+
+      const datasourceDuringFilterTimeYear = {... datasourceDuringFilter};
+      datasourceDuringFilterTimeYear.maxDate = '2018-12-31T00:00:00-0500';
+      datasourceDuringFilterTimeYear.ogcFilters.filters = {
+        operator: 'During',
+        propertyName: 'date_observation',
+        begin: '2016-01-01T00:00:00-05:00',
+        end: '2016-12-31T00:00:00-05:00'
+      } as OgcFilterDuringOptions ;
+      datasourceDuringFilterTimeYear.stepDate = 'P1Y';
+      
+      this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilterTimeYear)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (During, Step: P1Y)',
+            id: '4',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'green',
                   width: 1
                 }
               }
