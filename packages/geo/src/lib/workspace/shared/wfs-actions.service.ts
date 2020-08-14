@@ -4,9 +4,9 @@ import { Action, Widget, EntityStoreFilterCustomFuncStrategy } from '@igo2/commo
 
 import { OgcFilterWidget } from '../widgets/widgets';
 import { WfsWorkspace } from './wfs-workspace';
-import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
+import { mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
 import { ExportOptions } from '../../import-export/shared/export.interface';
-import { StorageService } from '@igo2/core';
+import { StorageService, StorageScope } from '@igo2/core';
 import { FeatureMotion } from '../../feature';
 import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
 import { BehaviorSubject } from 'rxjs';
@@ -49,7 +49,7 @@ export class WfsActionsService {
           } else {
             filterStrategy.activate();
           }
-          this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean);
+          this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean, StorageScope.SESSION);
         }
       },
       {

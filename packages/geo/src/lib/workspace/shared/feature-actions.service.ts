@@ -7,7 +7,7 @@ import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip, FeatureMot
 import { ExportOptions } from '../../import-export/shared/export.interface';
 import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
 import { FeatureMotion } from '../../feature';
-import { StorageService } from '@igo2/core';
+import { StorageService, StorageScope } from '@igo2/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -48,7 +48,7 @@ export class FeatureActionsService {
           } else {
             filterStrategy.activate();
           }
-          this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean);
+          this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean, StorageScope.SESSION);
         }
       },
       {

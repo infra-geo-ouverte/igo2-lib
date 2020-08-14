@@ -6,6 +6,7 @@ import { EntityStoreStrategy } from '@igo2/common';
 import { FeatureStore } from '../store';
 import { FeatureStoreInMapExtentStrategyOptions, Feature } from '../feature.interfaces';
 import { Subscription } from 'rxjs';
+import { skipWhile } from 'rxjs/operators';
 
 /**
  * This strategy maintain the store features updated while the map is moved.
@@ -18,6 +19,7 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
    */
   private stores$$ = new Map<FeatureStore, string>();
   private states$$: Subscription[] = [];
+  private empty$$: Subscription;
 
   constructor(protected options: FeatureStoreInMapExtentStrategyOptions) {
     super(options);
@@ -32,6 +34,9 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     if (this.active === true) {
       this.watchStore(store);
     }
+    this.empty$$ = store.empty$
+      .pipe(skipWhile((empty) => !empty))
+      .subscribe(() => this.updateEntitiesInExtent(store));
   }
 
   /**
@@ -107,5 +112,6 @@ export class FeatureStoreInMapExtentStrategy extends EntityStoreStrategy {
     });
     this.stores$$.clear();
     this.states$$.map(state => state.unsubscribe());
+    if (this.empty$$) { this.empty$$.unsubscribe(); }
   }
 }

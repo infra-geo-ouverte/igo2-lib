@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import {
   ActionStore,
@@ -23,15 +23,16 @@ import { SourceFieldsOptionsParams } from '../../datasource';
 import { FeatureWorkspace } from './feature-workspace';
 import { FeatureActionsService } from './feature-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
-import { StorageService } from '@igo2/core';
-import { BehaviorSubject } from 'rxjs';
+import { StorageService, StorageScope } from '@igo2/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FeatureWorkspaceService {
+export class FeatureWorkspaceService implements OnDestroy {
 
   toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
+  toolToActivate$$: Subscription;
 
   get zoomAutoTable(): boolean {
     return this.storageService.get('zoomAutoTable') as boolean;
@@ -40,6 +41,12 @@ export class FeatureWorkspaceService {
   constructor(
     private featureActionsService: FeatureActionsService,
     private storageService: StorageService) {}
+
+  ngOnDestroy() {
+    if (this.toolToActivate$$) {
+      this.toolToActivate$$.unsubscribe();
+    }
+  }
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
     const wks = new FeatureWorkspace({
@@ -55,7 +62,7 @@ export class FeatureWorkspaceService {
     });
     this.createTableTemplate(wks, layer);
     this.featureActionsService.loadActions(wks);
-    this.featureActionsService.toolToActivate$.subscribe((toolToActivate) =>
+    this.toolToActivate$$ = this.featureActionsService.toolToActivate$.subscribe((toolToActivate) =>
       this.toolToActivate$.next(toolToActivate)
     );
     return wks;
@@ -73,10 +80,11 @@ export class FeatureWorkspaceService {
       hitTolerance: 15,
       motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None
     });
+    this.storageService.set('rowsInMapExtent', true, StorageScope.SESSION);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(selectionStrategy, true);
-    store.addStrategy(this.createFilterInMapExtentStrategy(), false);
+    store.addStrategy(this.createFilterInMapExtentStrategy(), true);
     return store;
   }
 
