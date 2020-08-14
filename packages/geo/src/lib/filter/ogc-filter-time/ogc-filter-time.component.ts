@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy,
+import { Component, Input,
         ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
@@ -11,8 +11,7 @@ const moment = moment_;
 @Component({
   selector: 'igo-ogc-filter-time',
   templateUrl: './ogc-filter-time.component.html',
-  styleUrls: ['./ogc-filter-time.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./ogc-filter-time.component.scss']
 })
 export class OgcFilterTimeComponent implements OnInit {
 

@@ -20,14 +20,14 @@
     </mat-form-field>
     <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
       <mat-label>Heure</mat-label>
-      <mat-select [formControl]="beginHourFormControl"
+      <mat-select [formControl]="beginHourFormControl" [disabled]="!currentFilter.active"
         (selectionChange)="changeTemporalProperty(begin.value, 1);">
         <mat-option *ngFor="let hour of beginHours" [value]="hour">{{hour}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
       <mat-label>Minute</mat-label>
-      <mat-select [formControl]="beginMinuteFormControl" 
+      <mat-select [formControl]="beginMinuteFormControl"  [disabled]="!currentFilter.active"
         (selectionChange)="changeTemporalProperty(begin.value, 1);">
         <mat-option *ngFor="let minute of beginMinutes" [value]="minute">{{minute}}</mat-option>
       </mat-select>
@@ -51,16 +51,16 @@
           (monthSelected)="monthSelected($event, endDatepicker, 'end')">
       </mat-datepicker>
     </mat-form-field>
-    <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
+    <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'" >
       <mat-label>Heure</mat-label>
-      <mat-select [formControl]="endHourFormControl"
+      <mat-select [formControl]="endHourFormControl" [disabled]="!currentFilter.active"
         (selectionChange)="changeTemporalProperty(end.value, 2);">
         <mat-option *ngFor="let hour of endHours" [value]="hour">{{hour}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field style="width: 55px;" *ngIf="calendarType()==='datetime'">
       <mat-label>Minute</mat-label>
-      <mat-select [formControl]="endMinuteFormControl" 
+      <mat-select [formControl]="endMinuteFormControl"  [disabled]="!currentFilter.active"
         (selectionChange)="changeTemporalProperty(end.value, 2);">
         <mat-option *ngFor="let minute of endMinutes" [value]="minute">{{minute}}</mat-option>
       </mat-select>
