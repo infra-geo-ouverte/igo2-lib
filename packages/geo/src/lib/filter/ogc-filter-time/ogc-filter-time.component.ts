@@ -1,11 +1,10 @@
 import { Component, Input, ChangeDetectionStrategy,
         ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { Layer } from '../../layer/shared/layers/layer';
 import { IgoMap } from '../../map';
 import { OgcFilterableDataSourceOptions, OgcFilterableDataSource, OgcFiltersOptions } from '../shared/ogc-filter.interface';
-import { NgxMatTimepickerComponent } from '@angular-material-components/datetime-picker';
 import * as moment_ from 'moment';
 const moment = moment_;
 
@@ -38,8 +37,6 @@ export class OgcFilterTimeComponent implements OnInit {
 
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
   @ViewChild('beginDatepickerTime') beginDatepickerTime: ElementRef;
-  @ViewChild('endHour') endHour: NgxMatTimepickerComponent<any>;
-  @ViewChild('beginHour') beginHour: NgxMatTimepickerComponent<any>;
   @ViewChild('beginTime') beginTime: HTMLInputElement;
   @ViewChild('endTime') endTime: HTMLInputElement;
 
