@@ -648,5 +648,4 @@ export class OgcFilterWriter {
       return undefined;
     }
   }
-  
 }
