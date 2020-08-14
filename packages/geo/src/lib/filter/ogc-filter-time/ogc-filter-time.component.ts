@@ -71,6 +71,8 @@ export class OgcFilterTimeComponent implements OnInit {
     this.beginValue = this.parseFilter(this.currentFilter.begin ? this.currentFilter.begin : this.datasource.options.minDate);
     this.endValue = this.parseFilter(this.currentFilter.end ? this.currentFilter.end : this.datasource.options.maxDate);
     this.updateHoursMinutesArray();
+    // update value for now value
+    this.updateValues();
   }
 
   parseFilter(filter): Date {
@@ -339,5 +341,10 @@ export class OgcFilterTimeComponent implements OnInit {
       this.fullBeginMinutesArray();
       this.fullEndMinutesArray();
     }
+  }
+
+  private updateValues() {
+    this.changeTemporalProperty(this.beginValue, 1);
+    this.changeTemporalProperty(this.endValue, 2);
   }
 }
