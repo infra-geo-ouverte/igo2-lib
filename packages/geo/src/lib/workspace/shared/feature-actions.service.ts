@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Action, EntityStoreFilterCustomFuncStrategy } from '@igo2/common';
 
 import { FeatureWorkspace } from './feature-workspace';
-import { mapExtentStrategyActiveIcon, mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
+import { mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
 import { ExportOptions } from '../../import-export/shared/export.interface';
 import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
 import { FeatureMotion } from '../../feature';
