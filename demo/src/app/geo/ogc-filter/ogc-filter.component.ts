@@ -183,13 +183,13 @@ export class AppOgcFilterComponent {
           })
         );
       });
-
-      const datasourceDuringFilterTime = {... datasourceDuringFilter};
+      
+      const datasourceDuringFilterTime: WFSoptions = { ... datasourceDuringFilter};
       datasourceDuringFilterTime.maxDate = '2016-02-14T20:00:00-0500';
       datasourceDuringFilterTime.ogcFilters.filters = {
         operator: 'During',
         propertyName: 'date_observation',
-        begin: '2016-01-01T4:00:00-05:00',
+        begin: '2016-01-01T04:00:00-05:00',
         end: '2016-01-12T16:00:00-05:00'
       } as OgcFilterDuringOptions ;
       datasourceDuringFilterTime.stepDate = 'PT4H';
@@ -217,7 +217,7 @@ export class AppOgcFilterComponent {
           })
         );
       });
-
+      
       const datasourceDuringFilterTimeMonth = {... datasourceDuringFilter};
       datasourceDuringFilterTimeMonth.maxDate = '2018-12-31T00:00:00-0500';
       datasourceDuringFilterTimeMonth.ogcFilters.filters = {
@@ -251,7 +251,7 @@ export class AppOgcFilterComponent {
           })
         );
       });
-
+      
       const datasourceDuringFilterTimeYear = {... datasourceDuringFilter};
       datasourceDuringFilterTimeYear.maxDate = '2018-12-31T00:00:00-0500';
       datasourceDuringFilterTimeYear.ogcFilters.filters = {
@@ -285,6 +285,40 @@ export class AppOgcFilterComponent {
           })
         );
       });
+      
+      const datasourceDuringFilterTimeInterval = {... datasourceDuringFilter};
+      datasourceDuringFilterTimeInterval.maxDate = '2018-12-31T00:00:00-0500';
+      datasourceDuringFilterTimeInterval.ogcFilters.filters = {
+        operator: 'During',
+        propertyName: 'date_observation',
+        begin: 'now - 2 days',
+        end: 'now'
+      } as OgcFilterDuringOptions ;
+      datasourceDuringFilterTimeInterval.stepDate = 'P1D';
+      
+      this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilterTimeInterval)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (During, Interval from Now, Step: P1D)',
+            id: '5',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'white'
+                },
+                stroke: {
+                  color: 'black',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      }); 
     
       const wmsOgcFilterOptions: WMSoptions = {
         type: 'wms',
