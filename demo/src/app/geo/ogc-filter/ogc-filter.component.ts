@@ -128,39 +128,39 @@ export class AppOgcFilterComponent {
           })
         );
       });
-    
-      const datasourceDuringFilter: WFSoptions = {
-        type: 'wfs',
-        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
-        params: {
-          featureTypes: 'vg_observation_v_autre_wmst',
-          fieldNameGeometry: 'geometry',
-          maxFeatures: 10000,
-          version: '2.0.0',
-          outputFormat: undefined,
-          outputFormatDownload: 'SHP' // based on service capabilities
-        },
-        sourceFields: [
-          { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
-        ],
-        ogcFilters: {
-          enabled: true,
-          editable: true,
-          allowedOperatorsType: OgcFilterOperatorType.All,
-          filters:
-            {
-              operator: 'During',
-              propertyName: 'date_observation',
-              begin: '2016-01-21T00:00:00-05:00',
-              end: '2016-01-26T00:00:00-05:00'
-            } as OgcFilterDuringOptions
-        },
-        minDate: '2016-01-01T00:00:00-05:00',
-        maxDate: '2016-02-10T00:00:00-05:00',
-        stepDate: 'P2D'
-      };
 
-      this.dataSourceService
+    const datasourceDuringFilter: WFSoptions = {
+      type: 'wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      params: {
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: undefined,
+        outputFormatDownload: 'SHP' // based on service capabilities
+      },
+      sourceFields: [
+        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+      ],
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        allowedOperatorsType: OgcFilterOperatorType.All,
+        filters:
+          {
+            operator: 'During',
+            propertyName: 'date_observation',
+            begin: '2016-01-21T00:00:00-05:00',
+            end: '2016-01-26T00:00:00-05:00'
+          } as OgcFilterDuringOptions
+      },
+      minDate: '2016-01-01T00:00:00-05:00',
+      maxDate: '2016-02-10T00:00:00-05:00',
+      stepDate: 'P2D'
+    };
+
+    this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilter)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -183,18 +183,18 @@ export class AppOgcFilterComponent {
           })
         );
       });
-      
-      const datasourceDuringFilterTime: WFSoptions = { ... datasourceDuringFilter};
-      datasourceDuringFilterTime.maxDate = '2016-02-14T20:00:00-0500';
-      datasourceDuringFilterTime.ogcFilters.filters = {
+
+    const datasourceDuringFilterTime: WFSoptions = { ... datasourceDuringFilter};
+    datasourceDuringFilterTime.maxDate = '2016-02-14T20:00:00-0500';
+    datasourceDuringFilterTime.ogcFilters.filters = {
         operator: 'During',
         propertyName: 'date_observation',
         begin: '2016-01-01T04:00:00-05:00',
         end: '2016-01-12T16:00:00-05:00'
-      } as OgcFilterDuringOptions ;
-      datasourceDuringFilterTime.stepDate = 'PT4H';
-      
-      this.dataSourceService
+    } as OgcFilterDuringOptions ;
+    datasourceDuringFilterTime.stepDate = 'PT4H';
+
+    this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTime)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -217,18 +217,18 @@ export class AppOgcFilterComponent {
           })
         );
       });
-      
-      const datasourceDuringFilterTimeMonth = {... datasourceDuringFilter};
-      datasourceDuringFilterTimeMonth.maxDate = '2018-12-31T00:00:00-0500';
-      datasourceDuringFilterTimeMonth.ogcFilters.filters = {
+
+    const datasourceDuringFilterTimeMonth = {... datasourceDuringFilter};
+    datasourceDuringFilterTimeMonth.maxDate = '2018-12-31T00:00:00-0500';
+    datasourceDuringFilterTimeMonth.ogcFilters.filters = {
         operator: 'During',
         propertyName: 'date_observation',
         begin: '2016-01-01T00:00:00-05:00',
         end: '2016-03-01T00:00:00-05:00'
-      } as OgcFilterDuringOptions ;
-      datasourceDuringFilterTimeMonth.stepDate = 'P1M';
-      
-      this.dataSourceService
+    } as OgcFilterDuringOptions ;
+    datasourceDuringFilterTimeMonth.stepDate = 'P1M';
+
+    this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeMonth)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -251,18 +251,18 @@ export class AppOgcFilterComponent {
           })
         );
       });
-      
-      const datasourceDuringFilterTimeYear = {... datasourceDuringFilter};
-      datasourceDuringFilterTimeYear.maxDate = '2018-12-31T00:00:00-0500';
-      datasourceDuringFilterTimeYear.ogcFilters.filters = {
+
+    const datasourceDuringFilterTimeYear = {... datasourceDuringFilter};
+    datasourceDuringFilterTimeYear.maxDate = '2018-12-31T00:00:00-0500';
+    datasourceDuringFilterTimeYear.ogcFilters.filters = {
         operator: 'During',
         propertyName: 'date_observation',
         begin: '2016-01-01T00:00:00-05:00',
         end: '2016-12-31T00:00:00-05:00'
-      } as OgcFilterDuringOptions ;
-      datasourceDuringFilterTimeYear.stepDate = 'P1Y';
-      
-      this.dataSourceService
+    } as OgcFilterDuringOptions ;
+    datasourceDuringFilterTimeYear.stepDate = 'P1Y';
+
+    this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeYear)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -285,18 +285,18 @@ export class AppOgcFilterComponent {
           })
         );
       });
-      
-      const datasourceDuringFilterTimeInterval = {... datasourceDuringFilter};
-      datasourceDuringFilterTimeInterval.maxDate = '2018-12-31T00:00:00-0500';
-      datasourceDuringFilterTimeInterval.ogcFilters.filters = {
+
+    const datasourceDuringFilterTimeInterval = {... datasourceDuringFilter};
+    datasourceDuringFilterTimeInterval.maxDate = '2018-12-31T00:00:00-0500';
+    datasourceDuringFilterTimeInterval.ogcFilters.filters = {
         operator: 'During',
         propertyName: 'date_observation',
         begin: 'now - 2 days',
         end: 'now'
       } as OgcFilterDuringOptions ;
-      datasourceDuringFilterTimeInterval.stepDate = 'P1D';
-      
-      this.dataSourceService
+    datasourceDuringFilterTimeInterval.stepDate = 'P1D';
+
+    this.dataSourceService
       .createAsyncDataSource(datasourceDuringFilterTimeInterval)
       .subscribe(dataSource => {
         this.map.addLayer(
@@ -318,9 +318,9 @@ export class AppOgcFilterComponent {
             }
           })
         );
-      }); 
-    
-      const wmsOgcFilterOptions: WMSoptions = {
+      });
+
+    const wmsOgcFilterOptions: WMSoptions = {
         type: 'wms',
         url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
         optionsFromCapabilities: true,
@@ -341,18 +341,18 @@ export class AppOgcFilterComponent {
           } as OgcFilterDuringOptions,
           allowedOperatorsType: OgcFilterOperatorType.Time
         }
-      };
+    };
 
-      this.dataSourceService
-        .createAsyncDataSource(wmsOgcFilterOptions)
-        .subscribe(dataSource => {
-          this.map.addLayer(
-            this.layerService.createLayer({
-              title: 'Inondation (During, optionsFromCapabilities)',
-              source: dataSource
-            })
-          );
-        });
+    this.dataSourceService
+      .createAsyncDataSource(wmsOgcFilterOptions)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Inondation (During, optionsFromCapabilities)',
+            source: dataSource
+          })
+        );
+      });
 
     interface WMSoptions
       extends WMSDataSourceOptions,

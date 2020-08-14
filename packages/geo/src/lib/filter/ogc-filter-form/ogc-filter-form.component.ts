@@ -45,7 +45,7 @@ export class OgcFilterFormComponent implements OnInit {
   public disabled;
   public currentFilterIsSpatial$ = new BehaviorSubject<boolean>(false);
   public defaultStepMillisecond = 6000;
-  public inputClearable: string;  
+  public inputClearable: string;
 
   @Input() refreshFilters: () => void;
 
@@ -300,5 +300,4 @@ export class OgcFilterFormComponent implements OnInit {
   isTemporalOperator() {
     return this.currentFilter.operator.toLowerCase() === this.ogcFilterOperator.During.toLowerCase();
   }
-  
 }
