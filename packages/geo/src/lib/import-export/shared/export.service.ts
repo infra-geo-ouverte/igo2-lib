@@ -8,11 +8,14 @@ import { Observable, Observer } from 'rxjs';
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 
-import { ExportFormat } from './export.type';
+import { ExportFormat, EncodingFormat } from './export.type';
+
 import {
   ExportInvalidFileError,
   ExportNothingToExportError
 } from './export.errors';
+
+import * as iconv from 'iconv-lite';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +49,7 @@ export class ExportService {
     olFeatures: OlFeature[],
     format: ExportFormat,
     title: string,
+    encoding: EncodingFormat,
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
@@ -55,6 +59,7 @@ export class ExportService {
       exportOlFeatures,
       format,
       title,
+      encoding,
       projectionIn,
       projectionOut
     );
@@ -111,6 +116,7 @@ export class ExportService {
     olFeatures: OlFeature[],
     format: ExportFormat,
     title: string,
+    encoding: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ): Observable<void> {
@@ -143,6 +149,7 @@ export class ExportService {
           observer,
           format,
           title,
+          encoding,
           projectionIn,
           projectionOut
         );
@@ -188,10 +195,11 @@ export class ExportService {
     observer: Observer<void>,
     format: string,
     title: string,
+    encoding: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ) {
-    const featuresText: string = new olformat.GeoJSON().writeFeatures(
+    let featuresText: string = new olformat.GeoJSON().writeFeatures(
       olFeatures,
       {
         dataProjection: projectionOut,
@@ -200,6 +208,7 @@ export class ExportService {
         featureNS: 'http://example.com/feature'
       }
     );
+    console.log(encoding);
 
     const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
@@ -209,8 +218,18 @@ export class ExportService {
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
 
-    form.acceptCharset = 'UTF-8';
-    form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
+    if (encoding === EncodingFormat.UTF8) {
+      form.acceptCharset = 'UTF-8';
+      form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
+    } else if (encoding === EncodingFormat.LATIN1) {
+      form.acceptCharset = 'ISO-8859-1';
+      form.enctype = 'multipart/form-data';
+      console.log(featuresText);
+      const buffer = new Buffer(featuresText);
+      featuresText = iconv.decode(buffer, 'ISO-8859-1');
+      console.log(featuresText);
+      //featuresText = JSON.parse(iconverter.convert(JSON.stringify(featuresText)));
+    }
 
     if (format === 'CSVsemicolon') {
       const options = document.createElement('input');
@@ -250,7 +269,7 @@ export class ExportService {
     outputFormatField.setAttribute('name', 'format');
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
-
+    console.log(form);
     form.submit();
     document.body.removeChild(form);
 
