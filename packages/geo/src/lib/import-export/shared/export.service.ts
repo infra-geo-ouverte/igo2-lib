@@ -17,6 +17,8 @@ import {
 
 import * as iconv from 'iconv-lite';
 
+import { Buffer } from 'Buffer';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -222,13 +224,19 @@ export class ExportService {
       form.acceptCharset = 'UTF-8';
       form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
     } else if (encoding === EncodingFormat.LATIN1) {
-      form.acceptCharset = 'ISO-8859-1';
-      form.enctype = 'multipart/form-data';
-      console.log(featuresText);
-      const buffer = new Buffer(featuresText);
-      featuresText = iconv.decode(buffer, 'ISO-8859-1');
-      console.log(featuresText);
-      //featuresText = JSON.parse(iconverter.convert(JSON.stringify(featuresText)));
+      form.acceptCharset = 'Windows-1252';
+      form.enctype = 'application/x-www-form-urlencoded';
+      //const buffer = new Buffer(featuresText);
+      //console.log(buffer);
+      //const buffer = Buffer.from(featuresText['base64']);
+      const buffer = new Buffer(featuresText, 'binary');
+      console.log(buffer);
+      featuresText = iconv.decode(buffer, 'windows-1252');
+      // console.log(str);
+      // const latinEncodedStringBuf = iconv.encode(str, 'iso-8859-1');
+      // console.log(latinEncodedStringBuf);
+      // featuresText = iconv.decode(latinEncodedStringBuf, 'iso-8859-1');
+      console.log(featuresText)
     }
 
     if (format === 'CSVsemicolon') {
