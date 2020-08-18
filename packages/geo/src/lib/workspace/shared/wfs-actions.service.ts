@@ -4,7 +4,7 @@ import { Action, Widget, EntityStoreFilterCustomFuncStrategy } from '@igo2/commo
 
 import { OgcFilterWidget } from '../widgets/widgets';
 import { WfsWorkspace } from './wfs-workspace';
-import { mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip } from './workspace.utils';
+import { mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip, noElementSelected } from './workspace.utils';
 import { ExportOptions } from '../../import-export/shared/export.interface';
 import { StorageService, StorageScope } from '@igo2/core';
 import { FeatureMotion } from '../../feature';
@@ -91,6 +91,17 @@ export class WfsActionsService {
           this.storageService.set('zoomAutoTable', !this.storageService.get('zoomAutoTable') as boolean);
           zoomStrategy.setMotion(this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None);
         }
+      },
+      {
+        id: 'clearselection',
+        icon: 'select-off',
+        title: 'igo.geo.workspace.clearSelection.title',
+        tooltip: 'igo.geo.workspace.clearSelection.tooltip',
+        handler: (ws: WfsWorkspace) => {
+          ws.entityStore.state.updateMany(ws.entityStore.view.all(), { selected: false });
+        },
+        args: [workspace],
+        availability: (ws: WfsWorkspace) => noElementSelected(ws)
       },
     ];
   }

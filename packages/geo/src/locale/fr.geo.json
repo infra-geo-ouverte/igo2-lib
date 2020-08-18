@@ -528,7 +528,9 @@
         "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
         "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
         "zoomAuto.title": "Zoom auto",
-        "zoomAuto.tooltip": "Zoom auto"
+        "zoomAuto.tooltip": "Zoom auto",
+        "clearSelection.title": "Tout désélectionner",
+        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
       },
       "network": {
         "online": {

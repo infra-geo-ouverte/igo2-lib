@@ -527,7 +527,10 @@
         "inMapExtent.active.tooltip": "Show records in map extent only",
         "inMapExtent.inactive.tooltip": "Show all records",
         "zoomAuto.title": "Zoom auto",
-        "zoomAuto.tooltip": "Zoom auto"
+        "zoomAuto.tooltip": "Zoom auto",
+        "clearSelection.title": "Deselect all",
+        "clearSelection.tooltip": "Deselect all records"
+
       },
       "network": {
         "online": {
