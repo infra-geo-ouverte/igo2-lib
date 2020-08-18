@@ -18,13 +18,14 @@ import {
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
-import { SourceFieldsOptionsParams } from '../../datasource';
+import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 
 import { FeatureWorkspace } from './feature-workspace';
 import { FeatureActionsService } from './feature-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService, StorageScope } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { getMarkerStyle } from '../../utils/commonVectorStyle';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,14 @@ export class FeatureWorkspaceService implements OnDestroy {
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
+      layer: new VectorLayer({
+        zIndex: 300,
+        source: new FeatureDataSource(),
+        style: getMarkerStyle,
+        showInLayerList: false,
+        exportable: false,
+        browsable: false
+      }),
       map,
       hitTolerance: 15,
       motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None
