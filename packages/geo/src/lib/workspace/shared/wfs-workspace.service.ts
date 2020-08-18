@@ -88,7 +88,9 @@ export class WfsWorkspaceService implements OnDestroy {
       }),
       map,
       hitTolerance: 15,
-      motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None
+      motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None,
+      many: true,
+      dragBox: true
     });
     this.storageService.set('rowsInMapExtent', true, StorageScope.SESSION);
     store.addStrategy(loadingStrategy, true);
