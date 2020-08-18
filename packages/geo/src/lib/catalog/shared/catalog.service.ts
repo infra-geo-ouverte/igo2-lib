@@ -512,7 +512,7 @@ export class CatalogService {
     if (regexes.length === 0) {
       return true;
     }
-    return regexes.find((regex: RegExp) => regex.test(layerName)) !== undefined;
+    return regexes.find((regex: RegExp) => regex.source === layerName) !== undefined;
   }
 
   private retriveLayerInfoFormat(
