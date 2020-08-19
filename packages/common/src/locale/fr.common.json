@@ -24,6 +24,14 @@
         "exitButton": "Quitter",
         "backButton": "Précédent",
         "nextButton": "Suivant"
+      },
+      "paginator": {
+        "firstPageLabel": "Première page",
+        "itemsPerPageLabel": "Items par page",
+        "lastPageLabel": "Dernière page",
+        "nextPageLabel": "Page suivante",
+        "previousPageLabel": "Page précédente",
+        "of": "de"
       }
     }
   }

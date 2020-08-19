@@ -6,7 +6,8 @@ import {
   ViewChild,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy,
+  AfterViewInit
 } from '@angular/core';
 
 import {
@@ -14,6 +15,7 @@ import {
 } from '../shared';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { LanguageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-entity-table-paginator',
@@ -21,7 +23,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   styleUrls: ['./entity-table-paginator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
+export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private entitySortChange$$: Subscription;
 
@@ -73,7 +75,7 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
    */
   @Output() paginatorChange: EventEmitter<MatPaginator> = new EventEmitter<MatPaginator>();
 
-  constructor() { }
+  constructor(private languageService: LanguageService) { }
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -89,6 +91,38 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.translateLabels();
+    }, 250);
+  }
+  translateLabels() {
+    this.paginator._intl.firstPageLabel =
+    this.languageService.translate.instant('igo.common.paginator.firstPageLabel');
+    this.paginator._intl.getRangeLabel = this.rangeLabel;
+    this.paginator._intl.itemsPerPageLabel =
+    this.languageService.translate.instant('igo.common.paginator.itemsPerPageLabel');
+    this.paginator._intl.lastPageLabel =
+    this.languageService.translate.instant('igo.common.paginator.lastPageLabel');
+    this.paginator._intl.nextPageLabel =
+    this.languageService.translate.instant('igo.common.paginator.nextPageLabel');
+    this.paginator._intl.previousPageLabel =
+    this.languageService.translate.instant('igo.common.paginator.previousPageLabel');
+  }
+
+  rangeLabel = (page: number, pageSize: number, length: number) => {
+    const of =
+    this.languageService.translate.instant('igo.common.paginator.of');
+    if (length === 0 || pageSize === 0) { return `0 ${of} ${length}`; }
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex = startIndex < length ?
+        Math.min(startIndex + pageSize, length) :
+        startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} ${of} ${length}`;
+  }
+
+
   ngOnDestroy(): void {
     this.entitySortChange$$.unsubscribe();
   }
@@ -97,3 +131,5 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
     this.paginatorChange.emit(this.paginator);
   }
 }
+
+
