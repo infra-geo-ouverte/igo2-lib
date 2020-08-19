@@ -6,6 +6,7 @@
   </mat-card-content>
   <igo-entity-table-paginator
     [store]="store"
+    [pageSize]="10"
     [entitySortChange$]="entitySortChange$"
     (paginatorChange)="paginatorChange($event)">
   </igo-entity-table-paginator>
