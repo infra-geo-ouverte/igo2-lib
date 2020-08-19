@@ -5,7 +5,8 @@ import {
   EntityTableTemplate,
   EntityStoreFilterCustomFuncStrategy,
   EntityRecord,
-  EntityStoreStrategyFuncOptions
+  EntityStoreStrategyFuncOptions,
+  EntityStoreFilterSelectionStrategy
 } from '@igo2/common';
 
 import {
@@ -76,6 +77,7 @@ export class FeatureWorkspaceService implements OnDestroy {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
+    const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
         zIndex: 300,
@@ -95,6 +97,7 @@ export class FeatureWorkspaceService implements OnDestroy {
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(selectionStrategy, true);
+    store.addStrategy(selectedRecordStrategy, false);
     store.addStrategy(this.createFilterInMapExtentStrategy(), true);
     return store;
   }

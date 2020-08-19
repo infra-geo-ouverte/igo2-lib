@@ -528,6 +528,8 @@
         "inMapExtent.inactive.tooltip": "Show all records",
         "zoomAuto.title": "Zoom auto",
         "zoomAuto.tooltip": "Zoom auto",
+        "selected.title": "Show selected records only",
+        "selected.tooltip": "Show selected records only",
         "clearSelection.title": "Deselect all",
         "clearSelection.tooltip": "Deselect all records"
 

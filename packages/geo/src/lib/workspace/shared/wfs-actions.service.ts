@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 
-import { Action, Widget, EntityStoreFilterCustomFuncStrategy } from '@igo2/common';
+import { Action, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
 import { OgcFilterWidget } from '../widgets/widgets';
 import { WfsWorkspace } from './wfs-workspace';
@@ -90,6 +90,22 @@ export class WfsActionsService {
           .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
           this.storageService.set('zoomAutoTable', !this.storageService.get('zoomAutoTable') as boolean);
           zoomStrategy.setMotion(this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None);
+        }
+      },
+      {
+        id: 'selectedOnly',
+        checkbox: true,
+        title: 'igo.geo.workspace.selected.title',
+        tooltip: 'selectedOnly',
+        checkCondition: false,
+        handler: () => {
+          const filterStrategy = workspace.entityStore
+          .getStrategyOfType(EntityStoreFilterSelectionStrategy);
+          if (filterStrategy.active) {
+            filterStrategy.deactivate();
+          } else {
+            filterStrategy.activate();
+          }
         }
       },
       {

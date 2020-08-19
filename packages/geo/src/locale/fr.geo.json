@@ -529,6 +529,8 @@
         "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
         "zoomAuto.title": "Zoom auto",
         "zoomAuto.tooltip": "Zoom auto",
+        "selected.title": "Ne montrer que les enregistrements sélectionnés",
+        "selected.tooltip": "Ne montrer que les enregistrements sélectionnés",
         "clearSelection.title": "Tout désélectionner",
         "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
       },

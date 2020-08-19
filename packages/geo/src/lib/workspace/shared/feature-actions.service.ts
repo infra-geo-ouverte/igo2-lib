@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Action, EntityStoreFilterCustomFuncStrategy } from '@igo2/common';
+import { Action, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
 import { FeatureWorkspace } from './feature-workspace';
 import { mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip, noElementSelected } from './workspace.utils';
@@ -76,6 +76,22 @@ export class FeatureActionsService {
           .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
           this.storageService.set('zoomAutoTable', !this.storageService.get('zoomAutoTable') as boolean);
           zoomStrategy.setMotion(this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None);
+        }
+      },
+      {
+        id: 'selectedOnly',
+        checkbox: true,
+        title: 'igo.geo.workspace.selected.title',
+        tooltip: 'selectedOnly',
+        checkCondition: false,
+        handler: () => {
+          const filterStrategy = workspace.entityStore
+          .getStrategyOfType(EntityStoreFilterSelectionStrategy);
+          if (filterStrategy.active) {
+            filterStrategy.deactivate();
+          } else {
+            filterStrategy.activate();
+          }
         }
       },
       {
