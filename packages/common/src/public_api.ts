@@ -23,6 +23,7 @@ export * from './lib/form/form-group/form-group.module';
 export * from './lib/entity/entity.module';
 export * from './lib/entity/entity-selector/entity-selector.module';
 export * from './lib/entity/entity-table/entity-table.module';
+export * from './lib/entity/entity-table-paginator/entity-table-paginator.module';
 export * from './lib/image/image.module';
 export * from './lib/interactive-tour/interactive-tour.module';
 export * from './lib/json-dialog/json-dialog.module';
