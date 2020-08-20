@@ -83,7 +83,7 @@ export class AppLegendComponent {
       visible: true,
       legendOptions: {
         display: false,
-        html: "test html"
+        html: 'test html'
       },
       sourceOptions: {
         type: 'wms',

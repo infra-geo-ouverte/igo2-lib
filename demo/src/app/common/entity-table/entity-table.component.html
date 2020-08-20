@@ -6,6 +6,9 @@
   </mat-card-content>
   <igo-entity-table
     [store]="store"
-    [template]="template">
+    [withPaginator]="true"
+    [paginatorOptions]="paginatorOptions"
+    [template]="template"
+    (entitySortChange)="entitySortChange()">
   </igo-entity-table>
 </mat-card>

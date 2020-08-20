@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LanguageService } from '@igo2/core';
@@ -9,7 +9,8 @@ import {
   EntityRecord,
   EntityTableScrollBehavior,
   Workspace,
-  WorkspaceStore
+  WorkspaceStore,
+  EntityTablePaginatorOptions
 } from '@igo2/common';
 import {
   IgoMap,
@@ -17,7 +18,7 @@ import {
   LayerService,
   WFSDataSourceOptions
 } from '@igo2/geo';
-import { OgcFilterableDataSourceOptions } from 'packages/geo/src/public_api';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-workspace',
@@ -25,6 +26,18 @@ import { OgcFilterableDataSourceOptions } from 'packages/geo/src/public_api';
   styleUrls: ['./workspace.component.scss']
 })
 export class AppWorkspaceComponent implements OnInit {
+
+  public workspacePaginator: MatPaginator;
+  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public paginatorOptions: EntityTablePaginatorOptions = {
+    disabled: false, // Whether the component is disabled.
+    pageIndex: 3, // The zero-based page index of the displayed list of items.
+    hidePageSize: false, // Whether to hide the page size selection UI from the user.
+    pageSize: 5, // Number of items to display on a page.
+    pageSizeOptions: [1, 5, 10, 15, 30, 50, 100], // The set of provided page size options to display to the user.
+    showFirstLastButtons: true // Whether to show the first/last buttons UI to the user.
+  };
+
   public map = new IgoMap({
     controls: {
       attribution: {
@@ -42,7 +55,7 @@ export class AppWorkspaceComponent implements OnInit {
 
   public selectedWorkspace$: Observable<Workspace>;
 
-  public actionbarMode = ActionbarMode.Dock;
+  public actionbarMode = ActionbarMode.Overlay;
 
   public scrollBehavior = EntityTableScrollBehavior.Instant;
 
@@ -59,7 +72,20 @@ export class AppWorkspaceComponent implements OnInit {
       )
       .pipe(
         map((record: EntityRecord<Workspace>) => {
-          return record === undefined ? undefined : record.entity;
+          const entity = record === undefined ? undefined : record.entity;
+          if (entity) {
+            // In fact, the download action is not fully functionnal into the igo2-lib demo
+            // The reason why it's has been remove is that this button trigger a tool (importExport)
+            // and this tool is not available in the igo2-lib demo.
+            // This is why it's has been removed frome the actions's list.
+            // Refer to the igo2 demo at https://infra-geo-ouverte.github.io/igo2/
+            entity.actionStore.view.filter((action) => {
+              console.log('action', action);
+              return action.id !== 'wfsDownload';
+            });
+          }
+          return entity;
+
         })
       );
 
@@ -142,5 +168,9 @@ export class AppWorkspaceComponent implements OnInit {
         };
         this.map.addLayer(this.layerService.createLayer(layer));
       });
+  }
+
+  paginatorChange(event: MatPaginator) {
+    this.workspacePaginator = event;
   }
 }
