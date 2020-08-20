@@ -329,7 +329,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
    * @param record Record
    * @internal
    */
-  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>) {
+  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>, event: MouseEvent) {
     if (this.selection === false) { return; }
 
     if (this.selectMany === false || this.lastRecordCheckedKey === undefined) {
