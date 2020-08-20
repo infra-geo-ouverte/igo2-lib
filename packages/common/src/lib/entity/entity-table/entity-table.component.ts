@@ -268,6 +268,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
    * @internal
    */
   onRowClick(record: EntityRecord<object>) {
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
     this.entityClick.emit(record.entity);
   }
 
