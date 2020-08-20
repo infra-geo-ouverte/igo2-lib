@@ -75,16 +75,16 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterVi
   }
   translateLabels() {
     this.paginator._intl.firstPageLabel =
-    this.languageService.translate.instant('igo.common.paginator.firstPageLabel');
+      this.languageService.translate.instant('igo.common.paginator.firstPageLabel');
     this.paginator._intl.getRangeLabel = this.rangeLabel;
     this.paginator._intl.itemsPerPageLabel =
-    this.languageService.translate.instant('igo.common.paginator.itemsPerPageLabel');
+      this.languageService.translate.instant('igo.common.paginator.itemsPerPageLabel');
     this.paginator._intl.lastPageLabel =
-    this.languageService.translate.instant('igo.common.paginator.lastPageLabel');
+      this.languageService.translate.instant('igo.common.paginator.lastPageLabel');
     this.paginator._intl.nextPageLabel =
-    this.languageService.translate.instant('igo.common.paginator.nextPageLabel');
+      this.languageService.translate.instant('igo.common.paginator.nextPageLabel');
     this.paginator._intl.previousPageLabel =
-    this.languageService.translate.instant('igo.common.paginator.previousPageLabel');
+      this.languageService.translate.instant('igo.common.paginator.previousPageLabel');
   }
 
   rangeLabel = (page: number, pageSize: number, length: number) => {
@@ -99,7 +99,6 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterVi
     return `${startIndex + 1} - ${endIndex} ${of} ${length}`;
   }
 
-
   ngOnDestroy(): void {
     this.entitySortChange$$.unsubscribe();
   }
@@ -108,5 +107,3 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterVi
     this.paginatorChange.emit(this.paginator);
   }
 }
-
-
