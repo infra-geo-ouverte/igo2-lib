@@ -20,7 +20,6 @@ import {
 } from '@igo2/geo';
 import { MatPaginator } from '@angular/material/paginator';
 
-
 @Component({
   selector: 'app-workspace',
   templateUrl: './workspace.component.html',
