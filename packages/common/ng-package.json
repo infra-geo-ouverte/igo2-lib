@@ -9,7 +9,8 @@
       "@igo2/utils" : "utils",
       "scroll-into-view-if-needed" : "scrollIntoView",
       "typy" : "typy",
-      "@ngx-translate/core" : "ngxt-core"
+      "@ngx-translate/core" : "ngxt-core",
+      "angular-shepherd": "angularShepherd"
     }
   }
 }

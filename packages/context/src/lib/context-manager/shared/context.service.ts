@@ -292,6 +292,7 @@ export class ContextService {
               )
               .reverse();
             resMerge.toolbar = res.toolbar || resBase.toolbar;
+            resMerge.message = res.message || resBase.message;
             resMerge.tools = (res.tools || [])
               .concat(resBase.tools || [])
               .filter(
