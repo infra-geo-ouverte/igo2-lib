@@ -80,7 +80,6 @@ export class AppWorkspaceComponent implements OnInit {
             // This is why it's has been removed frome the actions's list.
             // Refer to the igo2 demo at https://infra-geo-ouverte.github.io/igo2/
             entity.actionStore.view.filter((action) => {
-              console.log('action', action);
               return action.id !== 'wfsDownload';
             });
           }
