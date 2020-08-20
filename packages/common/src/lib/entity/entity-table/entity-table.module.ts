@@ -10,6 +10,8 @@ import { IgoStopPropagationModule } from '../../stop-propagation/stop-propagatio
 import { IgoCustomHtmlModule } from '../../custom-html/custom-html.module';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 import { EntityTableComponent } from './entity-table.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-table-paginator.module';
 
 /**
  * @ignore
@@ -22,8 +24,10 @@ import { EntityTableComponent } from './entity-table.component';
     MatIconModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatPaginatorModule,
     IgoStopPropagationModule,
-    IgoCustomHtmlModule
+    IgoCustomHtmlModule,
+    IgoEntityTablePaginatorModule
   ],
   exports: [
     EntityTableComponent
