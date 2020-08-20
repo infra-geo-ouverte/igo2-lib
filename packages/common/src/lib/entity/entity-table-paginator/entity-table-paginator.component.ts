@@ -16,6 +16,7 @@ import {
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LanguageService } from '@igo2/core';
+import { EntityTablePaginatorOptions } from './entity-table-paginator.interface';
 
 @Component({
   selector: 'igo-entity-table-paginator',
@@ -34,34 +35,10 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterVi
   @Input() store: EntityStore<object>;
 
   /**
-   * Whether the component is disabled.
+   * Paginator options
    */
-  @Input() disabled: boolean = false;
-
-  /**
-   * Whether to hide the page size selection UI from the user.
-   */
-  @Input() hidePageSize: boolean = false;
-
-  /**
-   * The zero-based page index of the displayed list of items. Defaulted to 0.
-   */
-  @Input() pageIndex: number = 0;
-
-  /**
-   * Number of items to display on a page. By default set to 50.
-   */
-  @Input() pageSize: number = 50;
-
-  /**
-   * The set of provided page size options to display to the user.
-   */
-  @Input() pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
-
-  /**
-   * Whether to show the first/last buttons UI to the user.
-   */
-  @Input() showFirstLastButtons: boolean = true;
+  @Input()
+  paginatorOptions: EntityTablePaginatorOptions;
 
   /**
    * Event emitted when the paginator changes the page size or page index.

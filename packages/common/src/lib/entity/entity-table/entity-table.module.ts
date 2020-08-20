@@ -11,6 +11,7 @@ import { IgoCustomHtmlModule } from '../../custom-html/custom-html.module';
 import { EntityTableRowDirective } from './entity-table-row.directive';
 import { EntityTableComponent } from './entity-table.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-table-paginator.module';
 
 /**
  * @ignore
@@ -25,7 +26,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatCheckboxModule,
     MatPaginatorModule,
     IgoStopPropagationModule,
-    IgoCustomHtmlModule
+    IgoCustomHtmlModule,
+    IgoEntityTablePaginatorModule
   ],
   exports: [
     EntityTableComponent

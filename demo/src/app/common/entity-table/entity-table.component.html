@@ -4,15 +4,10 @@
   <mat-card-content>
     See the <a href="https://github.com/infra-geo-ouverte/igo2-lib/tree/master/demo/src/app/common/entity-table">code of this example</a>
   </mat-card-content>
-  <igo-entity-table-paginator
-    [store]="store"
-    [pageSize]="10"
-    [entitySortChange$]="entitySortChange$"
-    (paginatorChange)="paginatorChange($event)">
-  </igo-entity-table-paginator>
   <igo-entity-table
     [store]="store"
-    [paginator]="paginator"
+    [withPaginator]="true"
+    [paginatorOptions]="paginatorOptions"
     [template]="template"
     (entitySortChange)="entitySortChange()">
   </igo-entity-table>

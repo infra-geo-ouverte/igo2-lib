@@ -105,6 +105,11 @@
       (select)="onRowSelect(record)"
       (click)="onRowClick(record)">
     </tr>
-
   </table>
+  <igo-entity-table-paginator *ngIf="withPaginator"
+    [store]="store"
+    [paginatorOptions]="paginatorOptions"
+    [entitySortChange$]="entitySortChange$"
+    (paginatorChange)="paginatorChange($event)">
+  </igo-entity-table-paginator>
 </div>

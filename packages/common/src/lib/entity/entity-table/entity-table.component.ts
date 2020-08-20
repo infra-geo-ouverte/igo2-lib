@@ -25,6 +25,7 @@ import {
 } from '../shared';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 
 @Component({
   selector: 'igo-entity-table',
@@ -33,6 +34,8 @@ import { MatTableDataSource } from '@angular/material/table';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
+
+  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Reference to the column renderer types
@@ -103,6 +106,18 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
    */
   @Input()
   sortNullsFirst: boolean = false;
+
+  /**
+   * Show the table paginator or not. False by default.
+   */
+  @Input()
+  withPaginator: boolean = false;
+
+  /**
+   * Paginator options
+   */
+  @Input()
+  paginatorOptions: EntityTablePaginatorOptions;
 
   /**
    * Event emitted when an entity (row) is clicked
@@ -220,6 +235,10 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
     this.cdRef.detectChanges();
   }
 
+  paginatorChange(event: MatPaginator) {
+    this.paginator = event;
+  }
+
   /**
    * On sort, sort the store
    * @param event Sort event
@@ -237,6 +256,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
         nullsFirst: this.sortNullsFirst
       });
       this.entitySortChange.emit({column, direction});
+      this.entitySortChange$.next(true);
     } else {
       this.store.stateView.sort(undefined);
     }

@@ -5,7 +5,8 @@ import {
   EntityStore,
   EntityTableButton,
   getEntityProperty,
-  EntityTableColumnRenderer
+  EntityTableColumnRenderer,
+  EntityTablePaginatorOptions
 } from '@igo2/common';
 import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject } from 'rxjs';
@@ -19,6 +20,8 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store = new EntityStore([]);
   public paginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  public paginatorOptions: EntityTablePaginatorOptions = {pageSize: 10};
 
   public template = {
     selection: true,
@@ -84,7 +87,6 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
 
   paginatorChange(event: MatPaginator) {
     this.paginator = event;
-
   }
 
   ngOnDestroy() {
