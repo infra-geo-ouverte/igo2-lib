@@ -27,7 +27,7 @@
       },
       "paginator": {
         "firstPageLabel": "First page",
-        "itemsPerPageLabel": "Items per page",
+        "itemsPerPageLabel": "Items per page:",
         "lastPageLabel": "Last page",
         "nextPageLabel": "Next page",
         "previousPageLabel": "Previous page",

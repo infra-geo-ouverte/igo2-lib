@@ -6,8 +6,7 @@ import {
   ViewChild,
   Output,
   EventEmitter,
-  OnDestroy,
-  AfterViewInit
+  OnDestroy
 } from '@angular/core';
 
 import {
@@ -24,9 +23,16 @@ import { EntityTablePaginatorOptions } from './entity-table-paginator.interface'
   styleUrls: ['./entity-table-paginator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
 
+  public disabled: boolean = false;
+  public hidePageSize: boolean = false;
+  public pageIndex: number = 0;
+  public pageSize: number = 50;
+  public pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
+  public showFirstLastButtons: boolean = true;
   private entitySortChange$$: Subscription;
+  private paginationLabelTranslation$$: Subscription[] = [];
 
   @Input() entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /**
@@ -66,41 +72,65 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy, AfterVi
         this.paginator.firstPage();
       }
     });
+    this.initPaginatorOptions();
+    this.translateLabels();
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.translateLabels();
-    }, 250);
+  initPaginatorOptions() {
+    this.disabled = this.paginatorOptions?.disabled || this.disabled;
+    this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
+    this.pageIndex = this.paginatorOptions?.pageIndex || this.pageIndex;
+    this.pageSize = this.paginatorOptions?.pageSize || this.pageSize;
+    this.pageSizeOptions = this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
+    this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
   }
+
   translateLabels() {
-    this.paginator._intl.firstPageLabel =
-      this.languageService.translate.instant('igo.common.paginator.firstPageLabel');
+
+    this.paginationLabelTranslation$$.push(
+      this.languageService.translate.get('igo.common.paginator.firstPageLabel').subscribe((label: string) => {
+        this.paginator._intl.firstPageLabel = label;
+      }));
+
     this.paginator._intl.getRangeLabel = this.rangeLabel;
-    this.paginator._intl.itemsPerPageLabel =
-      this.languageService.translate.instant('igo.common.paginator.itemsPerPageLabel');
-    this.paginator._intl.lastPageLabel =
-      this.languageService.translate.instant('igo.common.paginator.lastPageLabel');
-    this.paginator._intl.nextPageLabel =
-      this.languageService.translate.instant('igo.common.paginator.nextPageLabel');
-    this.paginator._intl.previousPageLabel =
-      this.languageService.translate.instant('igo.common.paginator.previousPageLabel');
+
+    this.paginationLabelTranslation$$.push(
+      this.languageService.translate.get('igo.common.paginator.itemsPerPageLabel').subscribe((label: string) => {
+        this.paginator._intl.itemsPerPageLabel = label;
+      }));
+    this.paginationLabelTranslation$$.push(
+      this.languageService.translate.get('igo.common.paginator.lastPageLabel').subscribe((label: string) => {
+        this.paginator._intl.lastPageLabel = label;
+      }));
+    this.paginationLabelTranslation$$.push(
+      this.languageService.translate.get('igo.common.paginator.nextPageLabel').subscribe((label: string) => {
+        this.paginator._intl.nextPageLabel = label;
+      }));
+    this.paginationLabelTranslation$$.push(
+      this.languageService.translate.get('igo.common.paginator.previousPageLabel').subscribe((label: string) => {
+        this.paginator._intl.previousPageLabel = label;
+      }));
   }
 
   rangeLabel = (page: number, pageSize: number, length: number) => {
-    const of =
-    this.languageService.translate.instant('igo.common.paginator.of');
-    if (length === 0 || pageSize === 0) { return `0 ${of} ${length}`; }
+    const of: BehaviorSubject<string> = new BehaviorSubject('');
+
+    this.paginationLabelTranslation$$.push(
+      this.languageService.translate.get('igo.common.paginator.of').subscribe((label: string) => {
+        of.next(label);
+      }));
+    if (length === 0 || pageSize === 0) { return `0 ${of.value} ${length}`; }
     length = Math.max(length, 0);
     const startIndex = page * pageSize;
     const endIndex = startIndex < length ?
         Math.min(startIndex + pageSize, length) :
         startIndex + pageSize;
-    return `${startIndex + 1} - ${endIndex} ${of} ${length}`;
+    return `${startIndex + 1} - ${endIndex} ${of.value} ${length}`;
   }
 
   ngOnDestroy(): void {
     this.entitySortChange$$.unsubscribe();
+    this.paginationLabelTranslation$$.map(sub => sub.unsubscribe());
   }
 
   emitPaginator() {
