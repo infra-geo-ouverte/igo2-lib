@@ -73,7 +73,20 @@ export class AppWorkspaceComponent implements OnInit {
       )
       .pipe(
         map((record: EntityRecord<Workspace>) => {
-          return record === undefined ? undefined : record.entity;
+          const entity = record === undefined ? undefined : record.entity;
+          if (entity) {
+            // In fact, the download action is not fully functionnal into the igo2-lib demo
+            // The reason why it's has been remove is that this button trigger a tool (importExport)
+            // and this tool is not available in the igo2-lib demo.
+            // This is why it's has been removed frome the actions's list.
+            // Refer to the igo2 demo at https://infra-geo-ouverte.github.io/igo2/
+            entity.actionStore.view.filter((action) => {
+              console.log('action', action);
+              return action.id !== 'wfsDownload';
+            });
+          }
+          return entity;
+
         })
       );
 
