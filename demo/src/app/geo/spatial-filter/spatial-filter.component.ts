@@ -209,7 +209,6 @@ export class AppSpatialFilterComponent {
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
-          console.log(layer);
           if (
             layer.options._internal &&
             layer.options._internal.code === feature.properties.code

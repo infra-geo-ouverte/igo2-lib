@@ -150,29 +150,11 @@ export class CatalogService {
   }
 
   loadCatalogArcGISRestItems(catalog: Catalog): Observable<CatalogItem[]> {
-    let request;
-    this.http.get(catalog.url + '?f=json').subscribe(res => {
-      request = res;
-    });
-    const options = {
-      layer: catalog.id,
-      url: catalog.url,
-      type: 'arcgisrest'
-    };
-    return this.capabilitiesService.getArcgisOptions(options as ArcGISRestDataSourceOptions).pipe(
-      map((arcgisOptions) => {
-        console.log(arcgisOptions);
-        return ObjectUtils.removeUndefined({
-          id: generateId(arcgisOptions),
-          type: CatalogItemType.Layer,
-          title: request.name,
-          address: catalog.id,
-          options: {
-            sourceOptions: arcgisOptions
-          }
-        });
-      })
-    )
+    return this.getCatalogCapabilities(catalog).pipe(
+      map((capabilities: any) => {
+        return this.getArcGISRESTItems(catalog, capabilities)
+        })
+    );
   }
 
   loadCatalogCompositeLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
@@ -195,7 +177,6 @@ export class CatalogService {
     let request2$ = [];
 
     function flatDeepLayer(arr) {
-      console.log(arr);
       if (!arr.length) {
         arr = [arr];
       }
@@ -530,6 +511,50 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: layer.Title,
+          address: catalog.id,
+          options: {
+            sourceOptions
+          }
+        });
+      })
+      .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+  }
+
+  private getArcGISRESTItems(
+    catalog: Catalog,
+    capabilities
+  ): CatalogItemLayer[] {
+    const layers = capabilities.layers;
+    const regexes = (catalog.regFilters || []).map(
+      (pattern: string) => new RegExp(pattern)
+    );
+
+    return layers
+      .map((layer: any) => {
+        if (this.testLayerRegexes(layer.id, regexes) === false) {
+          return undefined;
+        }
+        const baseSourceOptions = {
+          type: 'arcgisrest',
+          url: catalog.url,
+          crossOrigin: catalog.setCrossOriginAnonymous
+            ? 'anonymous'
+            : undefined,
+          layer: layer.id as string,
+          matrixSet: catalog.matrixSet,
+          optionsFromCapabilities: true,
+          style: 'default'
+        } as ArcGISRestDataSourceOptions;
+        const sourceOptions = Object.assign(
+          {},
+          baseSourceOptions,
+          catalog.sourceOptions
+        ) as ArcGISRestDataSourceOptions;
+
+        return ObjectUtils.removeUndefined({
+          id: generateIdFromSourceOptions(sourceOptions),
+          type: CatalogItemType.Layer,
+          title: layer.name,
           address: catalog.id,
           options: {
             sourceOptions
