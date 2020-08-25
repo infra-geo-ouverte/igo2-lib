@@ -31,6 +31,7 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
   public pageSize: number = 50;
   public pageSizeOptions: number[] = [5, 10, 20, 50, 100, 200];
   public showFirstLastButtons: boolean = true;
+  private count$$: Subscription;
   private entitySortChange$$: Subscription;
   private paginationLabelTranslation$$: Subscription[] = [];
 
@@ -63,7 +64,7 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   ngOnInit() {
-    this.store.stateView.count$.subscribe((count) => {
+    this.count$$ = this.store.stateView.count$.subscribe((count) => {
       this.length = count;
       this.emitPaginator();
     });
@@ -131,6 +132,7 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.entitySortChange$$.unsubscribe();
     this.paginationLabelTranslation$$.map(sub => sub.unsubscribe());
+    this.count$$.unsubscribe();
   }
 
   emitPaginator() {
