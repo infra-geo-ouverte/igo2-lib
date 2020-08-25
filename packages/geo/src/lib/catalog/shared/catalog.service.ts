@@ -169,17 +169,14 @@ export class CatalogService {
 
     // get CatalogItems for each original Catalog-----------------------------------------------------
     const request1$ = [];
-    catalogsFromInstance.map((component: Catalog) => {
+    catalogsFromInstance.map((component: Catalog) =>
       request1$.push(component.collectCatalogItems())
-    });
+    );
 
     // integrate imposed group -----------------------------------------------------
     let request2$ = [];
 
     function flatDeepLayer(arr) {
-      if (!arr.length) {
-        arr = [arr];
-      }
       return arr.reduce(
         (acc, val) =>
           acc.concat(
