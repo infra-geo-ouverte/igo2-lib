@@ -79,6 +79,18 @@ class BaselayersCatalog extends Catalog {
     }
 }
 
+class ArcGISRestCatalog extends Catalog {
+    constructor(options: Catalog, service: CatalogService) {
+        super(options, service);
+        const sType: string = TypeCatalog[TypeCatalog.arcgisrest];
+        this.type =  TypeCatalog[sType];
+    }
+
+    public collectCatalogItems() {
+        return this.catalogService.loadCatalogArcGISRestItems(this);
+    }
+}
+
 export class CompositeCatalog extends Catalog implements ICompositeCatalog {
     composite: ICatalog[];
 
@@ -103,6 +115,8 @@ export class CatalogFactory {
             catalog = new CompositeCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.baselayers]) {
             catalog = new BaselayersCatalog(options, service);
+        } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
+            catalog = new ArcGISRestCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
             catalog = new WMTSCatalog(options, service);
         } else {
