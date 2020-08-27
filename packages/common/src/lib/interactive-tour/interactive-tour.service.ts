@@ -145,6 +145,8 @@ export class InteractiveTourService {
         }
 
         if (header) {
+          currentStepElement.querySelector('.shepherd-content').classList.add('mat-typography');
+          currentStepElement.querySelector('.shepherd-text').classList.add('mat-typography');
           const stepsArray = self.steps;
           const progress = document.createElement('span');
           progress.className = 'shepherd-progress';
