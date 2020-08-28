@@ -70,13 +70,13 @@ export class FeatureDetailsDirective implements OnInit {
   }
 
   ngOnInit() {
-    this.geolocation$.subscribe(geolocation => {
+    this.map.geolocation$.subscribe(geolocation => {
       if (!geolocation) {
         return;
       }
       geolocation.setProjection(this.map.projection);
 
-      if (this.map.geolocation$.getValue() && this.map.geolocation$.getValue().getTracking() === false) {
+      if (geolocation && geolocation.getTracking() === false) {
         geolocation.setTracking(false);
       }
 

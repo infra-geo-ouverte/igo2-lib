@@ -302,10 +302,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   }
 
   getRoute(features: Feature[]) {
-    console.log(features);
     this.toolState.toolbox.activateTool('directions');
     this.directionState.stopsStore.clear();
-    this.directionState.stopsStore.insertMany(features);
     this.directionState.setRouteFromFeatureDetail(true);
+    this.directionState.stopsStore.insertMany(features);
   }
 }

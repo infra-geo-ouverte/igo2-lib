@@ -10,7 +10,11 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Subscription, Subject, BehaviorSubject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, take, skipWhile, startWith } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map
+} from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
 import OlGeoJSON from 'ol/format/GeoJSON';
@@ -167,29 +171,20 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
 
     this.stopsStore$.subscribe(() => {
       if (this.routeFromFeatureDetail === true) {
+        this.directionsFormService.setStops([]);
         setTimeout(() => {
-          const nbStops = this.stops.length;
-          for (let i = 0; i < nbStops; i++) {
-            this.clearStop(i);
-          }
-          this.initStores();
-          this.initOlInteraction();
-          console.log(this.stopsStore.all());
+          this.resetForm(false);
           for (const feature of this.stopsStore.all()) {
             if (feature.properties.id && feature.properties.id.toString().startsWith('directionsStop')) {
               this.stopsStore.delete(feature);
             }
           }
 
-          console.log('if true', this.stopsStore.all());
           if (this.stopsStore.all().length === 2) {
-            console.log('=2');
             let i = 0;
             const coordinates = [];
 
             for (const feature of this.stopsStore.all()) {
-              let directionsText;
-              i === 0 ? directionsText = 'start' : directionsText = 'end';
               coordinates.push(feature.geometry.coordinates);
               this.handleLocationProposals(feature.geometry.coordinates, i);
               this.chooseProposal(feature, i);
@@ -212,11 +207,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
             }
 
           } else if (this.stopsStore.all().length === 1) {
-            console.log('=1');
             this.handleLocationProposals(this.stopsStore.all()[0].geometry.coordinates, 1);
             this.chooseProposal(this.stopsStore.all()[0], 1);
             this.writeStopsToFormService(this.stopsStore.all()[0].geometry.coordinates);
-            console.log(this.stopsStore, this.stops);
           }
         }, 1);
         this.routeFromFeatureDetail = false;
@@ -609,7 +602,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     this.stops.insert(0, this.createStop('start'));
     this.stops.insert(1, this.createStop('end'));
 
-    if (stop) {
+    if (stop === true) {
       this.stopsStore.clear();
     }
     this.routeStore.clear();
@@ -1362,7 +1355,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       },
       ol: new olFeature({ geometry })
     };
-    console.log(stopFeature);
     this.stopsStore.update(stopFeature);
     this.getRoutes();
   }
