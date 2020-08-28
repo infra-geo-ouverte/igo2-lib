@@ -214,6 +214,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     return;
   }
 
+  public getLayerTitleById(id): string {
+    return this.map.getLayerById(id).title;
+  }
+
+
   layerHasSelectedFeatures(layer: Layer): boolean {
     const wksFromLayer = this.getWorkspaceByLayerId(layer.id);
     if (wksFromLayer) {

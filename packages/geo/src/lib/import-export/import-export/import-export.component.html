@@ -55,6 +55,12 @@
       <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
       <mat-select 
         [(value)]="layers" multiple>
+        <mat-select-trigger>
+          {{layers.length ? getLayerTitleById(layers[0]) : ''}}
+          <span *ngIf="layers.length > 1" class="example-additional-selection">
+            (+{{layers.length - 1}} {{layers?.length === 2 ? 'other' : 'others'}})
+          </span>
+        </mat-select-trigger>        
         <mat-option 
           *ngFor="let layer of (exportableLayers$ | async)"
           [ngClass]="{'igo-export-layer-mat-option': layerHasSelectedFeatures(layer)}"
