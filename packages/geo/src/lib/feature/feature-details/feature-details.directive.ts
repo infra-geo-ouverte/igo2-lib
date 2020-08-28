@@ -55,7 +55,7 @@ export class FeatureDetailsDirective implements OnInit {
     }
   }
 
-  @Output() routingEvent = new EventEmitter<Feature[]>()
+  @Output() routingEvent = new EventEmitter<Feature[]>();
 
   @HostListener('selectFeature')
   setFeature() {
@@ -85,7 +85,7 @@ export class FeatureDetailsDirective implements OnInit {
         userCoord = olProj.transform(userCoord, this.map.projection, 'EPSG:4326');
         this.start.geometry.coordinates = userCoord;
       }
-    })
+    });
 
     this.feature$.subscribe(() => {
       if (this.feature.geometry.type === 'Point') {
@@ -95,14 +95,14 @@ export class FeatureDetailsDirective implements OnInit {
       }
       this.geolocation$.next(this.geolocation);
       this.bindClicking();
-    })
+    });
   }
 
   bindClicking() {
     setTimeout(() => {
       const routeElement = this.el.nativeElement.querySelector('span.routing');
       routeElement.addEventListener('click', () => {
-        this.activateRouting()
+        this.activateRouting();
       });
     }, 1);
   }

@@ -214,7 +214,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         }, 1);
         this.routeFromFeatureDetail = false;
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -567,16 +567,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       directionsText: directionsPos,
       stopCoordinates: ['', [Validators.required]]
     });
-  }
-
-  createStopFromFeature(feature: Feature, directionsText?: string): Stop {
-    const stop: Stop = ({
-      stopPoint: feature.properties.nom,
-      stopProposals: [],
-      directionsText: directionsText,
-      stopCoordinates: feature.geometry.coordinates
-    });
-    return stop;
   }
 
   removeStop(index: number): void {
