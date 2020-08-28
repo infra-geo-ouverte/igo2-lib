@@ -53,10 +53,24 @@
   <div class="igo-input-container">
     <mat-form-field>
       <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
-      <mat-select
-        [formControl]="form.controls.layer" multiple>
-        <mat-option *ngFor="let layer of (exportableLayers$ | async)" [value]="layer.id">
-          {{layer.title}}
+      <mat-select 
+        [(value)]="layers" multiple>
+        <mat-option 
+          *ngFor="let layer of (exportableLayers$ | async)"
+          [ngClass]="{'igo-export-layer-mat-option': layerHasSelectedFeatures(layer)}"
+          [value]="layer.id"
+          (click)="$event.stopPropagation()">
+          <p mat-line>{{layer.title}}</p>
+          <p mat-line>
+            <mat-slide-toggle
+              *ngIf="layerHasSelectedFeatures(layer)"
+                [labelPosition]="'after'"
+                (click)="onlySelectedClick($event,layer.id)"
+                (checked)="inLayersIdToExportSelectionOnly(layer)"
+                (change)="onlySelected($event,layer.id)">
+                <small>{{'igo.geo.importExportForm.exportSelectedFeature' | translate}}</small>
+            </mat-slide-toggle>
+          </p>
         </mat-option>
       </mat-select>
     </mat-form-field>
