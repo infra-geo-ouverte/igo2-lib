@@ -57,8 +57,8 @@
         [(value)]="layers" multiple>
         <mat-select-trigger>
           {{layers.length ? getLayerTitleById(layers[0]) : ''}}
-          <span *ngIf="layers.length > 1" class="example-additional-selection">
-            (+{{layers.length - 1}} {{layers?.length === 2 ? 'other' : 'others'}})
+          <span *ngIf="layers.length > 1" class="export-select-trigger">
+            (+{{layers.length - 1}} {{(layers?.length === 2 ? 'igo.geo.importExportForm.other' : 'igo.geo.importExportForm.others') | translate }})
           </span>
         </mat-select-trigger>        
         <mat-option 

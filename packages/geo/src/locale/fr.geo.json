@@ -91,7 +91,9 @@
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
-        "importShpZip": "Les shapefiles doivent être compressés (zippés)"
+        "importShpZip": "Les shapefiles doivent être compressés (zippés)",
+        "other": "autre",
+        "others": "autres"
       },
       "operators": {
         "caseSensitive": "Sensible à la case",
