@@ -14,7 +14,7 @@ import {
 } from '../shared';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, MediaService } from '@igo2/core';
 import { EntityTablePaginatorOptions } from './entity-table-paginator.interface';
 
 @Component({
@@ -58,7 +58,7 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
    */
   @Output() paginatorChange: EventEmitter<MatPaginator> = new EventEmitter<MatPaginator>();
 
-  constructor(private languageService: LanguageService) { }
+  constructor(private languageService: LanguageService, private mediaService: MediaService) { }
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -78,11 +78,16 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
 
   initPaginatorOptions() {
     this.disabled = this.paginatorOptions?.disabled || this.disabled;
-    this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
     this.pageIndex = this.paginatorOptions?.pageIndex || this.pageIndex;
     this.pageSize = this.paginatorOptions?.pageSize || this.pageSize;
     this.pageSizeOptions = this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
-    this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
+    if (this.mediaService.isMobile()) {
+      this.showFirstLastButtons = false;
+      this.hidePageSize = true;
+    } else {
+      this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
+      this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
+    }
   }
 
   translateLabels() {

@@ -1,0 +1,12 @@
+@import '../../../../../core/src/style/partial/media';
+
+:host{
+  z-index:-999;
+  margin-top: -10px;
+  padding-right: 15px;
+
+  @include mobile {
+    margin-top: 0px;
+    padding-right: 5px;
+  }
+}
