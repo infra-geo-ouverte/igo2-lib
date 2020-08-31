@@ -68,13 +68,15 @@ export class WfsActionsService {
       {
         id: 'wfsDownload',
         icon: 'download',
-        title: 'igo.geo.workspace.wfsDownload.title',
-        tooltip: 'igo.geo.workspace.wfsDownload.tooltip',
+        title: 'igo.geo.workspace.download.title',
+        tooltip: 'igo.geo.workspace.download.tooltip',
         handler: (ws: WfsWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+          const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
+          const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
           this.toolToActivate$.next({
             tool: 'importExport',
-            options: { layer: [ws.layer.id], featureInMapExtent: filterStrategy.active } as ExportOptions
+            options: { layers: [ws.layer.id], featureInMapExtent: filterStrategy.active, layersWithSelection } as ExportOptions
           });
         },
         args: [workspace]

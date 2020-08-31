@@ -34,8 +34,13 @@ import {
 } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleListService } from '../style-list/style-list.service';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { skipWhile } from 'rxjs/operators';
+import { EntityRecord, Workspace } from '@igo2/common';
+import type { WorkspaceStore } from '@igo2/common';
+import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
+import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'igo-import-export',
@@ -73,6 +78,11 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Input() map: IgoMap;
 
+  /**
+   * Store that holds the available workspaces.
+   */
+  @Input() store: WorkspaceStore;
+
   @Input() selectedMode = 'import';
 
   @Output() selectMode = new EventEmitter<string>();
@@ -82,6 +92,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   );
 
   @Output() exportOptionsChange = new EventEmitter<ExportOptions>();
+
+  get layers() {
+    return this.form.get('layers').value;
+  }
+  set layers(value) {
+    this.form.patchValue({ layers: value });
+  }
 
   constructor(
     private importService: ImportService,
@@ -120,18 +137,18 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .pipe(skipWhile((exportOptions) => !exportOptions))
       .subscribe((exportOptions) => {
         this.form.patchValue(exportOptions, { emitEvent: true });
-        if (exportOptions.layer) {
+        if (exportOptions.layers) {
           this.computeFormats(
-            exportOptions.layer.map((l) => this.map.getLayerById(l))
+            exportOptions.layers.map((l) => this.map.getLayerById(l))
           );
         }
       });
 
     this.formLayer$$ = this.form
-      .get('layer')
-      .valueChanges.subscribe((layerId) => {
+      .get('layers')
+      .valueChanges.subscribe((layersId) => {
         this.handlePreviousLayerSpecs();
-        const layers = layerId.map((l) => this.map.getLayerById(l));
+        const layers = layersId.map((l) => this.map.getLayerById(l));
         this.computeFormats(layers);
 
         if (
@@ -182,9 +199,55 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .pipe(skipWhile((layers) => !layers))
       .subscribe((layers) => {
         if (layers.length === 1) {
-          this.form.patchValue({ layer: layers[0].id });
+          this.form.patchValue({ layers: layers[0].id });
         }
       });
+  }
+
+  private getWorkspaceByLayerId(id: string): Workspace {
+    const wksFromLayerId = this.store
+    .all()
+    .find(workspace  => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
+    if (wksFromLayerId) {
+      return wksFromLayerId;
+    }
+    return;
+  }
+
+  public getLayerTitleById(id): string {
+    return this.map.getLayerById(id).title;
+  }
+
+
+  layerHasSelectedFeatures(layer: Layer): boolean {
+    const wksFromLayer = this.getWorkspaceByLayerId(layer.id);
+    if (wksFromLayer) {
+      const recs = wksFromLayer.entityStore.stateView
+        .firstBy((record: EntityRecord<Feature>) => {
+          return record.state.selected === true;
+        });
+      return recs ? true : false;
+    }
+  }
+
+  public onlySelected(event: MatSlideToggleChange, id: string) {
+    let layersWithSelection = this.form.value.layersWithSelection;
+    if (event.checked) {
+      layersWithSelection.push(id);
+    } else {
+      layersWithSelection = layersWithSelection.filter(layerId => layerId !== id);
+    }
+    this.form.patchValue({ layersWithSelection });
+  }
+
+  public onlySelectedClick(event, id: string) {
+    if (this.form.value.layers.find(layerId => layerId === id)) {
+      event.stopPropagation();
+    }
+  }
+
+  public inLayersIdToExportSelectionOnly(layer: Layer): boolean {
+    return this.form.value.layersWithSelection.find(layerId => layerId === layer.id) ? true : false;
   }
 
   ngOnDestroy() {
@@ -231,8 +294,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   handleExportFormSubmit(data: ExportOptions) {
+    console.log('data', data, this.form);
     this.loading$.next(true);
-    data.layer.forEach((layer) => {
+    data.layers.forEach((layer) => {
       const lay = this.map.getLayerById(layer);
       let filename = lay.title;
       if (data.name !== undefined) {
@@ -252,18 +316,40 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         return;
       }
 
+      const wks = this.getWorkspaceByLayerId(layer);
       let olFeatures;
-      if (data.featureInMapExtent) {
-        olFeatures = lay.dataSource.ol.getFeaturesInExtent(
-          lay.map.viewController.getExtent()
-        );
-      } else {
-        olFeatures = lay.dataSource.ol.getFeatures();
+      if (wks && wks.entityStore && wks.entityStore.stateView.all().length ) {
+
+        if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
+          // Only export selected feature &&  into map extent
+          olFeatures = wks.entityStore.stateView.all()
+          .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
+        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent ) {
+          // Only export selected feature &&  (into map extent OR not)
+          olFeatures = wks.entityStore.stateView.all()
+          .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
+        } else if (data.featureInMapExtent) {
+          // Only into map extent
+          olFeatures = wks.entityStore.stateView.all()
+          .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
+        } else {
+          // All features
+          olFeatures = wks.entityStore.stateView.all().map(e => (e.entity as Feature).ol);
+        }
       }
-      if (lay.dataSource instanceof ClusterDataSource) {
-        olFeatures = olFeatures.flatMap((cluster: any) =>
-          cluster.get('features')
-        );
+      else {
+        if (data.featureInMapExtent) {
+          olFeatures = lay.dataSource.ol.getFeaturesInExtent(
+            lay.map.viewController.getExtent()
+          );
+        } else {
+          olFeatures = lay.dataSource.ol.getFeatures();
+        }
+        if (lay.dataSource instanceof ClusterDataSource) {
+          olFeatures = olFeatures.flatMap((cluster: any) =>
+            cluster.get('features')
+          );
+        }
       }
 
       this.exportService
@@ -283,14 +369,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     if (this.forceNaming) {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
-        layer: ['', [Validators.required]],
+        layers: [[], [Validators.required]],
+        layersWithSelection: [[]],
         featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
     } else {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],
-        layer: ['', [Validators.required]],
+        layers: [[], [Validators.required]],
+        layersWithSelection: [[]],
         featureInMapExtent: [false, [Validators.required]]
       });
     }

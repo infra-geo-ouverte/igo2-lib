@@ -6,8 +6,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
-  OnDestroy,
-  AfterViewInit
+  OnDestroy
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -33,7 +32,7 @@ import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-ta
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
+export class EntityTableComponent implements OnInit, OnDestroy  {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -78,7 +77,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
   @Input() store: EntityStore<object>;
 
   /**
-   * Table paginator store
+   * Table paginator
    */
   @Input() set paginator(value: MatPaginator) {
     this._paginator = value;
@@ -198,9 +197,6 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
     this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
       this.dataSource.data = all;
     });
-  }
-
-  ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 

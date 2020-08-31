@@ -1,5 +1,10 @@
 $slide-toggle-width: 60px;
 
+mat-option.igo-export-layer-mat-option {
+  height: 5em;
+  line-height: 1em;
+}
+
 .import-export-toggle {
   padding: 10px;
   text-align: center;
@@ -49,4 +54,9 @@ igo-spinner {
       width: calc(100% - #{$slide-toggle-width});
     }
   }
+}
+
+.export-select-trigger {
+  opacity: 0.75;
+  font-size: 0.75em;
 }

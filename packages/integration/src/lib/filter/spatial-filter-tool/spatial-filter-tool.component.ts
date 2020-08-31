@@ -108,7 +108,7 @@ export class SpatialFilterToolComponent {
       ids.push(layer.id);
     }
     this.importExportState.setMode('export');
-    this.importExportState.setsExportOptions({ layer: ids } as ExportOptions);
+    this.importExportState.setsExportOptions({ layers: ids } as ExportOptions);
     this.toolState.toolbox.activateTool('importExport');
   }
 

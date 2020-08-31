@@ -84,13 +84,16 @@
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
         "exportNoLayersExportable": "There is no exportable layer in your map",
+        "exportSelectedFeature": "Export only selected features",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
-        "importShpZip": "Shapefiles must be zipped."
+        "importShpZip": "Shapefiles must be zipped.",
+        "other": "other",
+        "others": "others"
       },
       "operators": {
         "caseSensitive": "Case sensitive",
@@ -521,8 +524,8 @@
         "ogcFilter.close": "Close",
         "ogcFilter.title": "Filters",
         "ogcFilter.tooltip": "Apply filters",
-        "wfsDownload.title": "Download",
-        "wfsDownload.tooltip": "Download",
+        "download.title": "Download",
+        "download.tooltip": "Download",
         "inMapExtent.title": "Show records in map extent only",
         "inMapExtent.active.tooltip": "Show records in map extent only",
         "inMapExtent.inactive.tooltip": "Show all records",
