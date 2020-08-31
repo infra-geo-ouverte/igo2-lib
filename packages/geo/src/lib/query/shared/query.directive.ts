@@ -1,4 +1,4 @@
-import { getEntityTitle } from '@igo2/common';
+
 import {
   Directive,
   Input,
@@ -10,12 +10,13 @@ import {
 } from '@angular/core';
 
 import { Subscription, Observable, of, zip } from 'rxjs';
+import { unByKey } from 'ol/Observable';
 
 import OlFeature from 'ol/Feature';
 import OlRenderFeature from 'ol/render/Feature';
 import OlLayer from 'ol/layer/Layer';
 
-import OlDragBoxInteraction from 'ol/interaction/DragBox';
+import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
@@ -27,6 +28,9 @@ import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
 import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { ctrlKeyDown } from '../../map/shared/map.utils';
+import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -50,12 +54,12 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * OL drag box interaction
    */
-  private olDragBoxInteraction: OlDragBoxInteraction;
+  private olDragSelectInteraction: OlDragSelectInteraction;
 
   /**
    * Ol drag box "end" event key
    */
-  private olDragBoxInteractionEndKey: string;
+  private olDragSelectInteractionEndKey: string;
 
   /**
    * Whter to query features or not
@@ -104,6 +108,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit() {
     this.listenToMapClick();
+    this.addDragBoxInteraction();
   }
 
   /**
@@ -113,6 +118,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.cancelOngoingQueries();
     this.unlistenToMapClick();
+    this.removeDragBoxInteraction();
   }
 
   /**
@@ -250,5 +256,76 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private cancelOngoingQueries() {
     this.queries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.queries$$ = [];
+  }
+
+  /**
+   * Add a drag box interaction and, on drag box end, select features
+   */
+  private addDragBoxInteraction() {
+    let olDragSelectInteractionOnQuery;
+    const olInteractions = this.map.ol.getInteractions().getArray();
+
+    // There can only be one dragbox interaction, so find the current one, if any
+    // Don't keep a reference to the current dragbox because we don't want
+    // to remove it when this startegy is deactivated
+    for (const olInteraction of olInteractions) {
+      if (olInteraction instanceof OlDragSelectInteraction) {
+        olDragSelectInteractionOnQuery = olInteraction;
+        break;
+      }
+    }
+    // If no drag box interaction is found, create a new one and add it to the map
+    if (olDragSelectInteractionOnQuery === undefined) {
+      olDragSelectInteractionOnQuery = new OlDragSelectInteraction({
+        condition: ctrlKeyDown
+      });
+      this.map.ol.addInteraction(olDragSelectInteractionOnQuery);
+      this.olDragSelectInteraction = olDragSelectInteractionOnQuery;
+    }
+
+    this.olDragSelectInteractionEndKey = olDragSelectInteractionOnQuery.on(
+      'boxend',
+      (event: OlMapBrowserPointerEvent) => this.onDragBoxEnd(event)
+    );
+  }
+
+  /**
+   * Remove drag box interaction
+   */
+  private removeDragBoxInteraction() {
+    if (this.olDragSelectInteractionEndKey !== undefined) {
+      unByKey(this.olDragSelectInteractionEndKey);
+    }
+    if (this.olDragSelectInteraction !== undefined) {
+      this.map.ol.removeInteraction(this.olDragSelectInteraction);
+    }
+    this.olDragSelectInteraction = undefined;
+  }
+
+  /**
+   * On dragbox end, select features in drag box
+   * @param event OL MapBrowserPointerEvent
+   */
+  private onDragBoxEnd(event: OlDragBoxEvent) {
+    const dragExtent = event.target.getGeometry().getExtent();
+    const clickedFeatures = [];
+    const queryableLayers = this.map.layers
+      .filter(layerIsQueryable)
+      .filter(layer => layer instanceof VectorLayer && layer.visible);
+    queryableLayers.map(layer => {
+      const featuresOL = layer.dataSource.ol;
+      featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
+        const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
+        newFeature.meta = {
+          id: olFeature.id_,
+          icon: olFeature.values_._icon,
+          sourceTitle: layer.title,
+          alias: this.queryService.getAllowedFieldsAndAlias(layer),
+          title: this.queryService.getQueryTitle(newFeature, layer),
+        };
+        clickedFeatures.push(newFeature);
+      });
+    });
+    this.query.emit({ features: clickedFeatures, event });
   }
 }
