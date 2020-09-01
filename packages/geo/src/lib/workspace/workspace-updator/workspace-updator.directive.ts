@@ -21,13 +21,10 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
 
   private layers$$: Subscription;
   private entities$$: Subscription[] = [];
-  private toolToActivate$$: Subscription[] = [];
 
   @Input() map: IgoMap;
 
   @Input() workspaceStore: WorkspaceStore;
-
-  @Output() toolToActivate = new EventEmitter<{ tool: string; options: {[key: string]: any} }>();
 
   constructor(
     private wfsWorkspaceService: WfsWorkspaceService,
@@ -46,7 +43,6 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.layers$$.unsubscribe();
     this.entities$$.map(entities => entities.unsubscribe());
-    this.toolToActivate$$.map(toolToActivate => toolToActivate.unsubscribe());
   }
 
   private onLayersChange(layers: Layer[]) {
@@ -84,15 +80,11 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     }
     if (layer.dataSource instanceof WFSDataSource) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-      this.toolToActivate$$.push(this.wfsWorkspaceService.toolToActivate$.subscribe((toolToActivate) =>
-      this.toolToActivate.emit(toolToActivate)));
       return wfsWks;
     } else if (layer.dataSource instanceof WMSDataSource) {
       return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
     } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-      this.toolToActivate$$.push(this.featureWorkspaceService.toolToActivate$.subscribe((toolToActivate) =>
-        this.toolToActivate.emit(toolToActivate)));
       return featureWks;
     }
 

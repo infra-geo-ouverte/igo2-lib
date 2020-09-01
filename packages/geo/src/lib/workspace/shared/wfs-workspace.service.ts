@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import {
   ActionStore,
@@ -24,16 +24,11 @@ import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 import { WfsWorkspace } from './wfs-workspace';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService, StorageScope } from '@igo2/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { getMarkerStyle } from '../../utils/commonVectorStyle';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WfsWorkspaceService implements OnDestroy {
-
-  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
-  toolToActivate$$: Subscription;
+export class WfsWorkspaceService {
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
@@ -42,12 +37,6 @@ export class WfsWorkspaceService implements OnDestroy {
   constructor(
     private storageService: StorageService
     ) {}
-
-    ngOnDestroy() {
-      if (this.toolToActivate$$) {
-        this.toolToActivate$$.unsubscribe();
-      }
-    }
 
     createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
     const wks = new WfsWorkspace({
@@ -62,10 +51,6 @@ export class WfsWorkspaceService implements OnDestroy {
       }
     });
     this.createTableTemplate(wks, layer);
-    // this.wfsActionsService.loadActions(wks);
-    // this.toolToActivate$$ = this.wfsActionsService.toolToActivate$.subscribe((toolToActivate) =>
-    // this.toolToActivate$.next(toolToActivate)
-  // );
     return wks;
 
   }

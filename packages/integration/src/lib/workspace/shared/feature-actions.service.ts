@@ -15,13 +15,13 @@ import {
 import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
 import { skipWhile } from 'rxjs/operators';
+import { ToolState } from '../../tool/tool.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureActionsService implements OnDestroy {
 
-  toolToActivate$: BehaviorSubject<{ tool: string; options: { [key: string]: any } }> = new BehaviorSubject(undefined);
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
@@ -38,7 +38,9 @@ export class FeatureActionsService implements OnDestroy {
     return this.storageService.get('rowsInMapExtent') as boolean;
   }
 
-  constructor(private storageState: StorageState) {}
+  constructor(
+    private storageState: StorageState,
+    private toolState: ToolState) {}
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -92,7 +94,7 @@ export class FeatureActionsService implements OnDestroy {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
           const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
-          this.toolToActivate$.next({
+          this.toolState.toolToActivateFromOptions({
             tool: 'importExport',
             options: { layers: [ws.layer.id], featureInMapExtent: filterStrategy.active, layersWithSelection } as ExportOptions
           });

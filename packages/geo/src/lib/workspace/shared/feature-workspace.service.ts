@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import {
   ActionStore,
@@ -24,28 +24,18 @@ import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 import { FeatureWorkspace } from './feature-workspace';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService, StorageScope } from '@igo2/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { getMarkerStyle } from '../../utils/commonVectorStyle';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FeatureWorkspaceService implements OnDestroy {
+export class FeatureWorkspaceService {
 
-  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
-  toolToActivate$$: Subscription;
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
   constructor(private storageService: StorageService) {}
-
-  ngOnDestroy() {
-    if (this.toolToActivate$$) {
-      this.toolToActivate$$.unsubscribe();
-    }
-  }
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
     const wks = new FeatureWorkspace({
@@ -60,10 +50,6 @@ export class FeatureWorkspaceService implements OnDestroy {
       }
     });
     this.createTableTemplate(wks, layer);
-    // this.featureActionsService.loadActions(wks);
-    // this.toolToActivate$$ = this.featureActionsService.toolToActivate$.subscribe((toolToActivate) =>
-    //  this.toolToActivate$.next(toolToActivate)
-    // );
     return wks;
 
   }
