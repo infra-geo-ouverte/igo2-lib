@@ -57,6 +57,7 @@ export class FeatureActionsService implements OnDestroy {
       .pipe(skipWhile((storageChange: StorageServiceEvent) => storageChange.key !== 'zoomAuto'))
       .subscribe(() => {
         this.zoomAuto$.next(this.zoomAuto);
+        this.handleZoomAuto(workspace);
       }
       );
 
@@ -105,10 +106,8 @@ export class FeatureActionsService implements OnDestroy {
         tooltip: FeatureMotionStrategyActiveToolTip(workspace),
         checkCondition: this.zoomAuto$,
         handler: () => {
-          const zoomStrategy = workspace.entityStore
-            .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+          this.handleZoomAuto(workspace);
           this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
-          zoomStrategy.setMotion(this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None);
         }
       },
       {
@@ -139,5 +138,11 @@ export class FeatureActionsService implements OnDestroy {
         availability: (ws: FeatureWorkspace) => noElementSelected(ws)
       },
     ];
+  }
+
+  private handleZoomAuto(workspace: FeatureWorkspace) {
+    const zoomStrategy = workspace.entityStore
+      .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+    zoomStrategy.setMotion(this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None);
   }
 }

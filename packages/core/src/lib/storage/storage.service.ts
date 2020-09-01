@@ -59,7 +59,7 @@ export class StorageService {
     if (currentValue !== previousValue) {
       this.storageChange$.next({
         key, scope,
-        event: previousValue ? StorageServiceEventEnum.MODIFIED : StorageServiceEventEnum.ADDED,
+        event: previousValue !== undefined ? StorageServiceEventEnum.MODIFIED : StorageServiceEventEnum.ADDED,
         previousValue,
         currentValue
       });
