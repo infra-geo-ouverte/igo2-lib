@@ -4,6 +4,8 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { EntityRecord, Workspace, WorkspaceStore, Widget } from '@igo2/common';
 import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
+import { FeatureActionsService } from './shared/feature-actions.service';
+import { WfsActionsService } from './shared/wfs-actions.service';
 
 /**
  * Service that holds the state of the workspace module
@@ -37,7 +39,10 @@ export class WorkspaceState implements OnDestroy {
   get store(): WorkspaceStore { return this._store; }
   private _store: WorkspaceStore;
 
-  constructor() {
+  constructor(
+    private featureActionsService: FeatureActionsService,
+    private wfsActionsService: WfsActionsService,
+  ) {
     this.initWorkspaces();
   }
 
@@ -54,6 +59,20 @@ export class WorkspaceState implements OnDestroy {
         const workspace = record ? record.entity : undefined;
         this.workspace$.next(workspace);
       });
+
+    this._store.stateView.all$()
+    .subscribe((workspaces: EntityRecord<Workspace>[]) => {
+      workspaces.map((wks: EntityRecord<Workspace>) => {
+        if (wks.entity.actionStore.empty) {
+          if (wks.entity instanceof WfsWorkspace) {
+            this.wfsActionsService.loadActions(wks.entity);
+          } else if (wks.entity instanceof FeatureWorkspace) {
+            this.featureActionsService.loadActions(wks.entity);
+          }
+        }
+
+      });
+    });
 
     this.activeWorkspace$$ = this.workspace$
       .subscribe((workspace: Workspace) => {

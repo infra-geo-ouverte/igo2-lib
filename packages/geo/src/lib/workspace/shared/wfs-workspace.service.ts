@@ -22,7 +22,6 @@ import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 
 import { WfsWorkspace } from './wfs-workspace';
-import { WfsActionsService } from './wfs-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService, StorageScope } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -36,12 +35,11 @@ export class WfsWorkspaceService implements OnDestroy {
   toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
   toolToActivate$$: Subscription;
 
-  get zoomAutoTable(): boolean {
-    return this.storageService.get('zoomAutoTable') as boolean;
+  get zoomAuto(): boolean {
+    return this.storageService.get('zoomAuto') as boolean;
   }
 
   constructor(
-    private wfsActionsService: WfsActionsService,
     private storageService: StorageService
     ) {}
 
@@ -64,10 +62,10 @@ export class WfsWorkspaceService implements OnDestroy {
       }
     });
     this.createTableTemplate(wks, layer);
-    this.wfsActionsService.loadActions(wks);
-    this.toolToActivate$$ = this.wfsActionsService.toolToActivate$.subscribe((toolToActivate) =>
-    this.toolToActivate$.next(toolToActivate)
-  );
+    // this.wfsActionsService.loadActions(wks);
+    // this.toolToActivate$$ = this.wfsActionsService.toolToActivate$.subscribe((toolToActivate) =>
+    // this.toolToActivate$.next(toolToActivate)
+  // );
     return wks;
 
   }
@@ -90,7 +88,7 @@ export class WfsWorkspaceService implements OnDestroy {
       }),
       map,
       hitTolerance: 15,
-      motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None,
+      motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,
       many: true,
       dragBox: true
     });

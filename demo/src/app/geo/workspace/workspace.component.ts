@@ -19,6 +19,7 @@ import {
   WFSDataSourceOptions
 } from '@igo2/geo';
 import { MatPaginator } from '@angular/material/paginator';
+import { WorkspaceState } from '@igo2/integration';
 
 @Component({
   selector: 'app-workspace',
@@ -51,7 +52,9 @@ export class AppWorkspaceComponent implements OnInit {
     zoom: 5
   };
 
-  public workspaceStore = new WorkspaceStore([]);
+  get workspaceStore(): WorkspaceStore {
+    return this.workspaceState.store;
+  }
 
   public selectedWorkspace$: Observable<Workspace>;
 
@@ -62,7 +65,8 @@ export class AppWorkspaceComponent implements OnInit {
   constructor(
     private languageService: LanguageService,
     private dataSourceService: DataSourceService,
-    private layerService: LayerService
+    private layerService: LayerService,
+    public workspaceState: WorkspaceState,
   ) {}
 
   ngOnInit() {

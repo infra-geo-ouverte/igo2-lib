@@ -1,39 +1,47 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { Action, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
+import { Action, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
-import { OgcFilterWidget } from '../widgets/widgets';
-import { WfsWorkspace } from './wfs-workspace';
-import { mapExtentStrategyActiveToolTip, FeatureMotionStrategyActiveToolTip, noElementSelected } from './workspace.utils';
-import { ExportOptions } from '../../import-export/shared/export.interface';
-import { StorageService, StorageScope } from '@igo2/core';
-import { FeatureMotion } from '../../feature';
-import { FeatureStoreSelectionStrategy } from '../../feature/shared/strategies/selection';
 import { BehaviorSubject } from 'rxjs';
+import {
+  FeatureWorkspace,
+  mapExtentStrategyActiveToolTip,
+  FeatureMotionStrategyActiveToolTip,
+  FeatureStoreSelectionStrategy,
+  FeatureMotion,
+  noElementSelected,
+  ExportOptions
+} from '@igo2/geo';
+import { StorageService, StorageScope } from '@igo2/core';
+import { StorageState } from '../../app/storage/storage.state';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WfsActionsService {
+export class FeatureActionsService {
 
   toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
 
-  get zoomAutoTable(): boolean {
-    return this.storageService.get('zoomAutoTable') as boolean;
+  get storageService(): StorageService {
+    return this.storageState.storageService;
+  }
+
+  get zoomAuto(): boolean {
+    return this.storageService.get('zoomAuto') as boolean;
   }
 
   get rowsInMapExtent(): boolean {
     return this.storageService.get('rowsInMapExtent') as boolean;
   }
 
-  constructor(@Inject(OgcFilterWidget) private ogcFilterWidget: Widget, private storageService: StorageService) {}
+  constructor(private storageState: StorageState) {}
 
-  loadActions(workspace: WfsWorkspace) {
+  loadActions(workspace: FeatureWorkspace) {
     const actions = this.buildActions(workspace);
     workspace.actionStore.load(actions);
   }
 
-  buildActions(workspace: WfsWorkspace): Action[] {
+  buildActions(workspace: FeatureWorkspace): Action[] {
     return [
       {
         id: 'filterInMapExtent',
@@ -49,28 +57,19 @@ export class WfsActionsService {
           } else {
             filterStrategy.activate();
           }
-          this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean, StorageScope.SESSION);
+          this.storageService
+          .set(
+            'rowsInMapExtent',
+            !this.storageService.get('rowsInMapExtent') as boolean,
+            StorageScope.SESSION);
         }
       },
       {
-        id: 'ogcFilter',
-        icon: 'filter',
-        title: 'igo.geo.workspace.ogcFilter.title',
-        tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
-        handler: (widget: Widget, ws: WfsWorkspace) => {
-          ws.activateWidget(widget, {
-            map: ws.map,
-            layer: ws.layer
-          });
-        },
-        args: [this.ogcFilterWidget, workspace]
-      },
-      {
-        id: 'wfsDownload',
+        id: 'featureDownload',
         icon: 'download',
         title: 'igo.geo.workspace.download.title',
         tooltip: 'igo.geo.workspace.download.tooltip',
-        handler: (ws: WfsWorkspace) => {
+        handler: (ws: FeatureWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
           const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
@@ -86,12 +85,12 @@ export class WfsActionsService {
         checkbox: true,
         title: 'igo.geo.workspace.zoomAuto.title',
         tooltip: FeatureMotionStrategyActiveToolTip(workspace),
-        checkCondition: this.zoomAutoTable,
+        checkCondition: this.zoomAuto,
         handler: () => {
           const zoomStrategy = workspace.entityStore
           .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
-          this.storageService.set('zoomAutoTable', !this.storageService.get('zoomAutoTable') as boolean);
-          zoomStrategy.setMotion(this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None);
+          this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
+          zoomStrategy.setMotion(this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None);
         }
       },
       {
@@ -115,11 +114,11 @@ export class WfsActionsService {
         icon: 'select-off',
         title: 'igo.geo.workspace.clearSelection.title',
         tooltip: 'igo.geo.workspace.clearSelection.tooltip',
-        handler: (ws: WfsWorkspace) => {
+        handler: (ws: FeatureWorkspace) => {
           ws.entityStore.state.updateMany(ws.entityStore.view.all(), { selected: false });
         },
         args: [workspace],
-        availability: (ws: WfsWorkspace) => noElementSelected(ws)
+        availability: (ws: FeatureWorkspace) => noElementSelected(ws)
       },
     ];
   }

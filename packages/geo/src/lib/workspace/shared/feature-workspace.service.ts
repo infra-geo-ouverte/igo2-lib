@@ -22,7 +22,6 @@ import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 
 import { FeatureWorkspace } from './feature-workspace';
-import { FeatureActionsService } from './feature-actions.service';
 import { skipWhile, take } from 'rxjs/operators';
 import { StorageService, StorageScope } from '@igo2/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -36,13 +35,11 @@ export class FeatureWorkspaceService implements OnDestroy {
   toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
   toolToActivate$$: Subscription;
 
-  get zoomAutoTable(): boolean {
-    return this.storageService.get('zoomAutoTable') as boolean;
+  get zoomAuto(): boolean {
+    return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    private featureActionsService: FeatureActionsService,
-    private storageService: StorageService) {}
+  constructor(private storageService: StorageService) {}
 
   ngOnDestroy() {
     if (this.toolToActivate$$) {
@@ -63,10 +60,10 @@ export class FeatureWorkspaceService implements OnDestroy {
       }
     });
     this.createTableTemplate(wks, layer);
-    this.featureActionsService.loadActions(wks);
-    this.toolToActivate$$ = this.featureActionsService.toolToActivate$.subscribe((toolToActivate) =>
-      this.toolToActivate$.next(toolToActivate)
-    );
+    // this.featureActionsService.loadActions(wks);
+    // this.toolToActivate$$ = this.featureActionsService.toolToActivate$.subscribe((toolToActivate) =>
+    //  this.toolToActivate$.next(toolToActivate)
+    // );
     return wks;
 
   }
@@ -89,7 +86,7 @@ export class FeatureWorkspaceService implements OnDestroy {
       }),
       map,
       hitTolerance: 15,
-      motion: this.zoomAutoTable ? FeatureMotion.Default : FeatureMotion.None,
+      motion: this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None,
       many: true,
       dragBox: true
     });
