@@ -197,33 +197,47 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       this.map.ol.forEachFeatureAtPixel(
         event.pixel,
         (featureOL: OlFeature, layerOL: OlLayer) => {
+          const layer = this.map.getLayerById(layerOL.values_._layer.id);
           if (featureOL) {
             if (featureOL.get('features')) {
               for (const feature of featureOL.get('features')) {
                 const newFeature = featureFromOl(feature, this.map.projection);
                 newFeature.meta = {
                   title: feature.values_.nom,
-                  id: feature.id_,
+                  id: layerOL.values_._layer.id + '.' + feature.id_,
                   icon: feature.values_._icon,
-                  sourceTitle: layerOL.values_.title
+                  sourceTitle: layerOL.values_.title,
+                  alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                  // title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
                 };
                 clickedFeatures.push(newFeature);
               }
             } else if (featureOL instanceof OlRenderFeature) {
-              const featureFromRender: OlFeature = featureOL;
-              const feature = renderFeatureFromOl(
+              const newFeature = renderFeatureFromOl(
                 featureOL,
                 this.map.projection,
                 layerOL
               );
-              clickedFeatures.push(feature);
+              newFeature.meta = {
+                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                sourceTitle: layerOL.values_.title,
+                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+              };
+              clickedFeatures.push(newFeature);
             } else {
-              const feature = featureFromOl(
+              const newFeature = featureFromOl(
                 featureOL,
                 this.map.projection,
                 layerOL
               );
-              clickedFeatures.push(feature);
+              newFeature.meta = {
+                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                sourceTitle: layerOL.values_.title,
+                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+              };
+              clickedFeatures.push(newFeature);
             }
           }
         },
@@ -240,31 +254,21 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
         .filter(layerIsQueryable)
         .filter(layer => layer instanceof VectorLayer && layer.visible)
         .map(layer => {
-        const featuresOL = layer.dataSource.ol;
-        featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
-          const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
-          newFeature.meta = {
-            id: layer.id + '.' + olFeature.id_,
-            icon: olFeature.values_._icon,
-            sourceTitle: layer.title,
-          };
-          clickedFeatures.push(newFeature);
+          const featuresOL = layer.dataSource.ol;
+          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
+            const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
+            newFeature.meta = {
+              id: layer.id + '.' + olFeature.id_,
+              icon: olFeature.values_._icon,
+              sourceTitle: layer.title,
+              alias: this.queryService.getAllowedFieldsAndAlias(layer),
+              title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+            };
+            clickedFeatures.push(newFeature);
+          });
         });
-      });
     }
 
-    const queryableLayers = this.map.layers.filter(layerIsQueryable);
-    clickedFeatures.forEach((feature: Feature) => {
-      queryableLayers.forEach((layer: AnyLayer) => {
-        if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
-          if (layer.ol.getSource().hasFeature(feature.ol)) {
-            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
-            feature.meta.title = feature.meta.title || this.queryService.getQueryTitle(feature, layer);
-            feature.meta.sourceTitle = layer.title;
-          }
-        }
-      });
-    });
 
     return of(clickedFeatures);
   }
