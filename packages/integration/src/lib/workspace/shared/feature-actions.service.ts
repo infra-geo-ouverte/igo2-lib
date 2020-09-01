@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import { Action, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   FeatureWorkspace,
   mapExtentStrategyActiveToolTip,
@@ -12,15 +12,19 @@ import {
   noElementSelected,
   ExportOptions
 } from '@igo2/geo';
-import { StorageService, StorageScope } from '@igo2/core';
-import { StorageState } from '../../app/storage/storage.state';
+import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
+import { StorageState } from '../../storage/storage.state';
+import { skipWhile } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FeatureActionsService {
+export class FeatureActionsService implements OnDestroy {
 
-  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
+  toolToActivate$: BehaviorSubject<{ tool: string; options: { [key: string]: any } }> = new BehaviorSubject(undefined);
+  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private storageChange$$: Subscription;
+
 
   get storageService(): StorageService {
     return this.storageState.storageService;
@@ -36,12 +40,26 @@ export class FeatureActionsService {
 
   constructor(private storageState: StorageState) {}
 
+  ngOnDestroy(): void {
+    if (this.storageChange$$) {
+      this.storageChange$$.unsubscribe();
+    }
+  }
+
   loadActions(workspace: FeatureWorkspace) {
     const actions = this.buildActions(workspace);
     workspace.actionStore.load(actions);
   }
 
   buildActions(workspace: FeatureWorkspace): Action[] {
+    this.zoomAuto$.next(this.zoomAuto);
+    this.storageChange$$ = this.storageService.storageChange$
+      .pipe(skipWhile((storageChange: StorageServiceEvent) => storageChange.key !== 'zoomAuto'))
+      .subscribe(() => {
+        this.zoomAuto$.next(this.zoomAuto);
+      }
+      );
+
     return [
       {
         id: 'filterInMapExtent',
@@ -51,17 +69,17 @@ export class FeatureActionsService {
         checkCondition: this.rowsInMapExtent,
         handler: () => {
           const filterStrategy = workspace.entityStore
-          .getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+            .getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           if (filterStrategy.active) {
             filterStrategy.deactivate();
           } else {
             filterStrategy.activate();
           }
           this.storageService
-          .set(
-            'rowsInMapExtent',
-            !this.storageService.get('rowsInMapExtent') as boolean,
-            StorageScope.SESSION);
+            .set(
+              'rowsInMapExtent',
+              !this.storageService.get('rowsInMapExtent') as boolean,
+              StorageScope.SESSION);
         }
       },
       {
@@ -85,10 +103,10 @@ export class FeatureActionsService {
         checkbox: true,
         title: 'igo.geo.workspace.zoomAuto.title',
         tooltip: FeatureMotionStrategyActiveToolTip(workspace),
-        checkCondition: this.zoomAuto,
+        checkCondition: this.zoomAuto$,
         handler: () => {
           const zoomStrategy = workspace.entityStore
-          .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+            .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
           this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
           zoomStrategy.setMotion(this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None);
         }
@@ -101,7 +119,7 @@ export class FeatureActionsService {
         checkCondition: false,
         handler: () => {
           const filterStrategy = workspace.entityStore
-          .getStrategyOfType(EntityStoreFilterSelectionStrategy);
+            .getStrategyOfType(EntityStoreFilterSelectionStrategy);
           if (filterStrategy.active) {
             filterStrategy.deactivate();
           } else {

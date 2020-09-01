@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 
 import { Action, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   WfsWorkspace,
   mapExtentStrategyActiveToolTip,
@@ -12,15 +12,18 @@ import {
   ExportOptions,
   OgcFilterWidget
 } from '@igo2/geo';
-import { StorageService, StorageScope } from '@igo2/core';
-import { StorageState } from '../../app/storage/storage.state';
+import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
+import { StorageState } from '../../storage/storage.state';
+import { skipWhile } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WfsActionsService {
+export class WfsActionsService implements OnDestroy  {
 
-  toolToActivate$: BehaviorSubject<{ tool: string; options: {[key: string]: any} }> = new BehaviorSubject(undefined);
+  toolToActivate$: BehaviorSubject<{ tool: string; options: { [key: string]: any } }> = new BehaviorSubject(undefined);
+  zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private storageChange$$: Subscription;
 
   get storageService(): StorageService {
     return this.storageState.storageService;
@@ -36,12 +39,25 @@ export class WfsActionsService {
 
   constructor(@Inject(OgcFilterWidget) private ogcFilterWidget: Widget, private storageState: StorageState) {}
 
+  ngOnDestroy(): void {
+    if (this.storageChange$$) {
+      this.storageChange$$.unsubscribe();
+    }
+  }
+
   loadActions(workspace: WfsWorkspace) {
     const actions = this.buildActions(workspace);
     workspace.actionStore.load(actions);
   }
 
   buildActions(workspace: WfsWorkspace): Action[] {
+    this.zoomAuto$.next(this.zoomAuto);
+    this.storageService.storageChange$
+      .pipe(skipWhile((storageChange: StorageServiceEvent) => storageChange.key !== 'zoomAuto'))
+      .subscribe(() => {
+        this.zoomAuto$.next(this.zoomAuto);
+      }
+      );
     return [
       {
         id: 'filterInMapExtent',
@@ -51,7 +67,7 @@ export class WfsActionsService {
         checkCondition: this.rowsInMapExtent,
         handler: () => {
           const filterStrategy = workspace.entityStore
-          .getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+            .getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           if (filterStrategy.active) {
             filterStrategy.deactivate();
           } else {
@@ -94,10 +110,10 @@ export class WfsActionsService {
         checkbox: true,
         title: 'igo.geo.workspace.zoomAuto.title',
         tooltip: FeatureMotionStrategyActiveToolTip(workspace),
-        checkCondition: this.zoomAuto,
+        checkCondition: this.zoomAuto$,
         handler: () => {
           const zoomStrategy = workspace.entityStore
-          .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
+            .getStrategyOfType(FeatureStoreSelectionStrategy) as FeatureStoreSelectionStrategy;
           this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
           zoomStrategy.setMotion(this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None);
         }
@@ -110,7 +126,7 @@ export class WfsActionsService {
         checkCondition: false,
         handler: () => {
           const filterStrategy = workspace.entityStore
-          .getStrategyOfType(EntityStoreFilterSelectionStrategy);
+            .getStrategyOfType(EntityStoreFilterSelectionStrategy);
           if (filterStrategy.active) {
             filterStrategy.deactivate();
           } else {
