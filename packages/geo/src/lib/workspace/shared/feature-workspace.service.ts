@@ -82,7 +82,7 @@ export class FeatureWorkspaceService implements OnDestroy {
       layer: new VectorLayer({
         zIndex: 300,
         source: new FeatureDataSource(),
-        style: getMarkerStyle,
+        style: undefined,
         showInLayerList: false,
         exportable: false,
         browsable: false

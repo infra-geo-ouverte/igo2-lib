@@ -193,46 +193,65 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   ): Observable<Feature[]> {
     const clickedFeatures = [];
 
-    this.map.ol.forEachFeatureAtPixel(
-      event.pixel,
-      (featureOL: OlFeature, layerOL: OlLayer) => {
-        if (featureOL) {
-          if (featureOL.get('features')) {
-            for (const feature of featureOL.get('features')) {
-              const newFeature = featureFromOl(feature, this.map.projection);
-              newFeature.meta = {
-                title: feature.values_.nom,
-                id: feature.id_,
-                icon: feature.values_._icon,
-                sourceTitle: layerOL.values_.title
-              };
-              clickedFeatures.push(newFeature);
+    if (event.type === 'singleclick') {
+      this.map.ol.forEachFeatureAtPixel(
+        event.pixel,
+        (featureOL: OlFeature, layerOL: OlLayer) => {
+          if (featureOL) {
+            if (featureOL.get('features')) {
+              for (const feature of featureOL.get('features')) {
+                const newFeature = featureFromOl(feature, this.map.projection);
+                newFeature.meta = {
+                  title: feature.values_.nom,
+                  id: feature.id_,
+                  icon: feature.values_._icon,
+                  sourceTitle: layerOL.values_.title
+                };
+                clickedFeatures.push(newFeature);
+              }
+            } else if (featureOL instanceof OlRenderFeature) {
+              const featureFromRender: OlFeature = featureOL;
+              const feature = renderFeatureFromOl(
+                featureOL,
+                this.map.projection,
+                layerOL
+              );
+              clickedFeatures.push(feature);
+            } else {
+              const feature = featureFromOl(
+                featureOL,
+                this.map.projection,
+                layerOL
+              );
+              clickedFeatures.push(feature);
             }
-          } else if (featureOL instanceof OlRenderFeature) {
-            const featureFromRender: OlFeature = featureOL;
-            const feature = renderFeatureFromOl(
-              featureOL,
-              this.map.projection,
-              layerOL
-            );
-            clickedFeatures.push(feature);
-          } else {
-            const feature = featureFromOl(
-              featureOL,
-              this.map.projection,
-              layerOL
-            );
-            clickedFeatures.push(feature);
           }
+        },
+        {
+          hitTolerance: this.queryFeaturesHitTolerance || 0,
+          layerFilter: this.queryFeaturesCondition
+            ? this.queryFeaturesCondition
+            : olLayerIsQueryable
         }
-      },
-      {
-        hitTolerance: this.queryFeaturesHitTolerance || 0,
-        layerFilter: this.queryFeaturesCondition
-          ? this.queryFeaturesCondition
-          : olLayerIsQueryable
-      }
-    );
+      );
+    } else if (event.type === 'boxend') {
+      const dragExtent = event.target.getGeometry().getExtent();
+      this.map.layers
+        .filter(layerIsQueryable)
+        .filter(layer => layer instanceof VectorLayer && layer.visible)
+        .map(layer => {
+        const featuresOL = layer.dataSource.ol;
+        featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
+          const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
+          newFeature.meta = {
+            id: layer.id + '.' + olFeature.id_,
+            icon: olFeature.values_._icon,
+            sourceTitle: layer.title,
+          };
+          clickedFeatures.push(newFeature);
+        });
+      });
+    }
 
     const queryableLayers = this.map.layers.filter(layerIsQueryable);
     clickedFeatures.forEach((feature: Feature) => {
@@ -285,7 +304,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
 
     this.olDragSelectInteractionEndKey = olDragSelectInteractionOnQuery.on(
       'boxend',
-      (event: OlMapBrowserPointerEvent) => this.onDragBoxEnd(event)
+      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
     );
   }
 
@@ -300,32 +319,5 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
       this.map.ol.removeInteraction(this.olDragSelectInteraction);
     }
     this.olDragSelectInteraction = undefined;
-  }
-
-  /**
-   * On dragbox end, select features in drag box
-   * @param event OL MapBrowserPointerEvent
-   */
-  private onDragBoxEnd(event: OlDragBoxEvent) {
-    const dragExtent = event.target.getGeometry().getExtent();
-    const clickedFeatures = [];
-    const queryableLayers = this.map.layers
-      .filter(layerIsQueryable)
-      .filter(layer => layer instanceof VectorLayer && layer.visible);
-    queryableLayers.map(layer => {
-      const featuresOL = layer.dataSource.ol;
-      featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
-        const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
-        newFeature.meta = {
-          id: olFeature.id_,
-          icon: olFeature.values_._icon,
-          sourceTitle: layer.title,
-          alias: this.queryService.getAllowedFieldsAndAlias(layer),
-          title: this.queryService.getQueryTitle(newFeature, layer),
-        };
-        clickedFeatures.push(newFeature);
-      });
-    });
-    this.query.emit({ features: clickedFeatures, event });
   }
 }
