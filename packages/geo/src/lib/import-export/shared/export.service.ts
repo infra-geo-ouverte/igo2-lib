@@ -197,11 +197,11 @@ export class ExportService {
     observer: Observer<void>,
     format: string,
     title: string,
-    encoding: EncodingFormat,
+    encodingType: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ) {
-    let featuresText: string = new olformat.GeoJSON().writeFeatures(
+    const featuresText: string = new olformat.GeoJSON().writeFeatures(
       olFeatures,
       {
         dataProjection: projectionOut,
@@ -210,7 +210,6 @@ export class ExportService {
         featureNS: 'http://example.com/feature'
       }
     );
-    console.log(encoding);
 
     const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
@@ -220,23 +219,16 @@ export class ExportService {
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
 
-    if (encoding === EncodingFormat.UTF8) {
+    if (encodingType === EncodingFormat.UTF8) {
       form.acceptCharset = 'UTF-8';
       form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
-    } else if (encoding === EncodingFormat.LATIN1) {
-      form.acceptCharset = 'Windows-1252';
-      form.enctype = 'application/x-www-form-urlencoded';
-      //const buffer = new Buffer(featuresText);
-      //console.log(buffer);
-      //const buffer = Buffer.from(featuresText['base64']);
-      const buffer = new Buffer(featuresText, 'binary');
-      console.log(buffer);
-      featuresText = iconv.decode(buffer, 'windows-1252');
-      // console.log(str);
-      // const latinEncodedStringBuf = iconv.encode(str, 'iso-8859-1');
-      // console.log(latinEncodedStringBuf);
-      // featuresText = iconv.decode(latinEncodedStringBuf, 'iso-8859-1');
-      console.log(featuresText)
+    } else if (encodingType === EncodingFormat.LATIN1) {
+      const enctype = 'ISO-8859-1';
+      const encoding = document.createElement('input');
+      encoding.setAttribute('type', 'hidden');
+      encoding.setAttribute('name', 'encoding');
+      encoding.setAttribute('value', enctype);
+      form.appendChild(encoding);
     }
 
     if (format === 'CSVsemicolon') {
@@ -277,7 +269,7 @@ export class ExportService {
     outputFormatField.setAttribute('name', 'format');
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
-    console.log(form);
+
     form.submit();
     document.body.removeChild(form);
 

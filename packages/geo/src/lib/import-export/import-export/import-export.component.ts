@@ -52,6 +52,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
+  public controlFormat = 'format';
 
   private layers$$: Subscription;
   private exportableLayers$$: Subscription;
@@ -187,7 +188,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         if (Object.keys(encodings).length === 1) {
           this.form.patchValue({ encoding: encodings[Object.keys(encodings)[0]] });
         }
-      })
+      });
 
     this.exportableLayers$$ = this.exportableLayers$
       .pipe(skipWhile((layers) => !layers))
@@ -197,14 +198,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       });
 
-    this.form.controls['format'].valueChanges.subscribe((format) => {
+    this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
       if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
         this.form.patchValue({ encoding: EncodingFormat.LATIN1});
       } else {
         this.form.patchValue({ encoding: EncodingFormat.UTF8});
       }
       this.cdRef.detectChanges();
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -286,7 +287,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           cluster.get('features')
         );
       }
-      console.log(data);
+
       this.exportService
         .export(olFeatures, data.format, filename, data.encoding, this.map.projection)
         .subscribe(
