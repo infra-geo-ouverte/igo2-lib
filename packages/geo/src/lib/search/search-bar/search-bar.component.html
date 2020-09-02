@@ -1,12 +1,13 @@
 <div class="igo-search-bar-container" [ngClass]="{empty: empty$ | async}">
-  <mat-form-field [floatLabel]="floatLabel">
+  <mat-form-field [floatLabel]="floatLabel" [appearance]="appearance">
+    <mat-label *ngIf="label">{{label}}</mat-label>
     <input
       #input
       matInput
       autocomplete="off"
       [ngClass]="{'hasSearchIcon': searchIcon}"
       [disabled]="disabled$ | async"
-      [placeholder]="(placeholder$ | async) ? (placeholder$.value | translate) : undefined"
+      [placeholder]="placeholder ? placeholder : (placeholder$ | async) ? (placeholder$.value | translate) : undefined"
       [value]="term$ | async"
       (keyup)="onKeyup($event)"
       (touchend)="onKeyup($event)">

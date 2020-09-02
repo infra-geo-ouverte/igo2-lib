@@ -9,7 +9,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material/form-field';
+import { FloatLabelType, MatFormFieldAppearance } from '@angular/material/form-field';
 import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
@@ -126,6 +126,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Whether a float label should be displayed
    */
   @Input() floatLabel: FloatLabelType = 'never';
+
+  @Input() appearance: MatFormFieldAppearance = 'legacy';
+
+  @Input() placeholder: string;
+
+  @Input() label: string;
 
   /**
    * Icons color (search and clear)
