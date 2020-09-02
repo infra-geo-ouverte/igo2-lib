@@ -47,6 +47,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
   showToolbar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   public layerTool: boolean;
+
+  public hideSelectedLayers: boolean = false ;
+
   activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
 
   layersChecked: Layer[] = [];
@@ -604,7 +607,19 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return;
   }
 
-  layersCheck(event: { layer: Layer; check: boolean }) {
+
+  toggleVisibility( layers?: Layer[] ) {
+    if (layers && layers.length > 0) {
+      for (const layer of layers) {
+			layer.visible = !layer.visible ;
+      }
+
+	}
+	  this.hideSelectedLayers = ! this.hideSelectedLayers ;
+    return;
+  }
+
+  layersCheck(event: {layer: Layer; check: boolean}) {
     event.layer.options.check = event.check;
     if (event.check === true) {
       const eventMapIndex = this.layers.findIndex(
