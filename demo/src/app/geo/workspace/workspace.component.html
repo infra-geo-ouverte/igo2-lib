@@ -14,25 +14,36 @@
     [store]="workspaceStore"
     [map]="map">
   </igo-workspace-selector>
+
+  <igo-entity-table-paginator
+    *ngIf="selectedWorkspace$ | async as workspace"
+    [store]="workspace.entityStore"
+    [paginatorOptions]="paginatorOptions"
+    [entitySortChange$]="entitySortChange$"
+    (paginatorChange)="paginatorChange($event)">
+  </igo-entity-table-paginator>
+
   <ng-container *ngIf="selectedWorkspace$ | async as workspace">
     <igo-actionbar
       *ngIf="workspace.actionStore"
       [store]="workspace.actionStore"
       [horizontal]="true"
       [withToggleButton]="true"
-      [withTitle]="false"
+      [withTitle]="true"
       [mode]="actionbarMode">
     </igo-actionbar>
-
-    <igo-workspace-widget-outlet [workspace]="workspace"></igo-workspace-widget-outlet>
 
     <igo-entity-table
       *ngIf="workspace.entityStore && workspace.meta && workspace.meta.tableTemplate"
       class="table-compact table-centered"
+      [paginator]="workspacePaginator"
       [scrollBehavior]="scrollBehavior"
       [store]="workspace.entityStore"
       [template]="workspace.meta.tableTemplate">
     </igo-entity-table>
+
+    <igo-workspace-widget-outlet [workspace]="workspace"></igo-workspace-widget-outlet>
+
   </ng-container>
 
 </mat-card>

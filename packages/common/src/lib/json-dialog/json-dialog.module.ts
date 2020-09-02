@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatButtonModule, MatDialogModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { IgoKeyValueModule } from '../keyvalue/keyvalue.module';
 
@@ -11,11 +12,10 @@ import { JsonDialogService } from './json-dialog.service';
   imports: [CommonModule, MatButtonModule, MatDialogModule, IgoKeyValueModule],
   exports: [JsonDialogComponent],
   declarations: [JsonDialogComponent],
-  entryComponents: [JsonDialogComponent],
   providers: [JsonDialogService]
 })
 export class IgoJsonDialogModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoJsonDialogModule> {
     return {
       ngModule: IgoJsonDialogModule
     };

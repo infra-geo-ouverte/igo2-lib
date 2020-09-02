@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppWidgetComponent } from './widget.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppWidgetRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppWidgetRoutingModule = RouterModule.forChild(
   routes
 );

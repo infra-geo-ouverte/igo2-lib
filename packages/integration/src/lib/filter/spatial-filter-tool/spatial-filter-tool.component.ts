@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { Observable, forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -20,7 +20,8 @@ import {
   SpatialFilterQueryType,
   SpatialFilterThematic,
   Layer,
-  createOverlayMarkerStyle
+  createOverlayMarkerStyle,
+  ExportOptions
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -102,7 +103,12 @@ export class SpatialFilterToolComponent {
   }
 
   activateExportTool() {
-    this.importExportState.setSelectedTab(1);
+    const ids = [];
+    for (const layer of this.layers) {
+      ids.push(layer.id);
+    }
+    this.importExportState.setMode('export');
+    this.importExportState.setsExportOptions({ layer: ids } as ExportOptions);
     this.toolState.toolbox.activateTool('importExport');
   }
 
@@ -230,7 +236,10 @@ export class SpatialFilterToolComponent {
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
-          if (layer.options._internal && layer.options._internal.code === feature.properties.code) {
+          if (
+            layer.options._internal &&
+            layer.options._internal.code === feature.properties.code
+          ) {
             return;
           }
           if (layer.title.startsWith('Zone')) {

@@ -15,13 +15,13 @@ import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
 import { olFeature } from 'ol/Feature';
-import { MatTreeNestedDataSource } from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
 import { EntityStore } from '@igo2/common';
@@ -534,25 +534,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           return;
         }
       } else {
-        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.radius = 1000;
-          this.radiusFormControl.setValue(this.radius);
-          this.drawGuide$.next(this.radius);
-          return;
-        }
-        if (formValue >= 10000) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.formControl.reset();
-          return;
-        }
         if (formValue) {
+          if (formValue >= 10000) {
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.formControl.reset();
+            return;
+          }
           if (formValue !== this.radiusFormControl.value) {
             this.radiusFormControl.setValue(formValue);
+            return;
           }
-          this.formControl.value.radius = undefined;
         }
       }
       this.radius = this.radiusFormControl.value;

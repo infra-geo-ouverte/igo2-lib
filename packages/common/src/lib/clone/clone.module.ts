@@ -7,7 +7,7 @@ import { ClonePipe } from './clone.pipe';
   exports: [ClonePipe]
 })
 export class IgoCloneModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoCloneModule> {
     return {
       ngModule: IgoCloneModule,
       providers: []

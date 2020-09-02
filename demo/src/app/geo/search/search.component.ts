@@ -53,7 +53,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public osmLayer: Layer;
 
-  @ViewChild('mapBrowser', { read: ElementRef }) mapBrowser: ElementRef;
+  @ViewChild('mapBrowser', { read: ElementRef, static: true }) mapBrowser: ElementRef;
 
   public lonlat;
   public mapProjection: string;

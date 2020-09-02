@@ -1,0 +1,40 @@
+@mixin igo-tour-theming($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  igo-interactive-tour > button.mat-raised-button.tour-button-tool-icon {
+    box-shadow: none;
+  }
+
+  igo-interactive-tour > button.tour-button-tool-icon {
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+
+    box-shadow: none;
+    border:none;
+    border-radius: 50%;
+    padding: 0;
+    min-width: 0;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    line-height: 40px;
+  }
+
+  igo-interactive-tour > button.tour-button-tool-icon span.interactive-tour-button-title {
+    display: none;
+  }
+
+  igo-interactive-tour > button.tour-button-tool {
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+    border: none;
+  }
+
+  igo-interactive-tour > button.tour-button-tool-icon:hover {
+    background-color: mat-color($primary, default-contrast);
+    color: mat-color($primary);
+    cursor: pointer;
+  }
+}

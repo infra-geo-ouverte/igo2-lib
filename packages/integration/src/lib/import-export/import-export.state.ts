@@ -11,11 +11,11 @@ import { ExportOptions } from '@igo2/geo';
 })
 export class ImportExportState {
 
-  readonly selectedTab$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  readonly selectedMode$: BehaviorSubject<string> = new BehaviorSubject(undefined);
   readonly exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(undefined);
 
-  setSelectedTab(tab: number) {
-    this.selectedTab$.next(tab);
+  setMode(mode: string) {
+    this.selectedMode$.next(mode);
   }
 
   setsExportOptions(exportOptions: ExportOptions) {

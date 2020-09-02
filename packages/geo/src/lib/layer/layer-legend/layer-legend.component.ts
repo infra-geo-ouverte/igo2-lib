@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef, QueryList } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef } from '@angular/core';
+import type { QueryList } from '@angular/core';
 
 import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
@@ -83,8 +84,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     } else if (this.styles && this.styles.length > 1) {
       this.currentStyle = lastlLegend[0].currentStyle;
     }
+    if ( typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
+      lastlLegend = [];
+    } else {
+      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    }
 
-    lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
     if (this.updateLegendOnResolutionChange === true) {
       const resolution$ = this.layer.map.viewController.resolution$;
       this.resolution$$ = resolution$.subscribe((resolution: number) => this.onResolutionChange(resolution));

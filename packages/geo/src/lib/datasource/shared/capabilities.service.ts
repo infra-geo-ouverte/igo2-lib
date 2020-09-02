@@ -4,12 +4,12 @@ import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Cacheable } from 'ngx-cacheable';
 
-import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
+import { WMSCapabilities, WMTSCapabilities, EsriJSON } from 'ol/format';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
-import { getResolutionFromScale } from '../../map';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
 import {
   QueryFormat,
@@ -34,7 +34,8 @@ import {
 
 export enum TypeCapabilities {
   wms = 'wms',
-  wmts = 'wmts'
+  wmts = 'wmts',
+  arcgisrest = 'esriJSON'
 }
 
 export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
@@ -45,7 +46,8 @@ export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
 export class CapabilitiesService {
   private parsers = {
     wms: new WMSCapabilities(),
-    wmts: new WMTSCapabilities()
+    wmts: new WMTSCapabilities(),
+    esriJSON: new EsriJSON()
   };
 
   constructor(private http: HttpClient) {}
@@ -154,14 +156,22 @@ export class CapabilitiesService {
       }
     });
 
-    const request = this.http.get(baseUrl, {
-      params,
-      responseType: 'text'
-    });
+    let request;
+    if ((service as any) === 'esriJSON') {
+      request = this.http.get(baseUrl + '?f=json');
+    } else {
+      request = this.http.get(baseUrl, {
+        params,
+        responseType: 'text'
+      });
+    }
 
     return request.pipe(
       map(res => {
         try {
+          if ((service as any) === 'esriJSON') {
+            return res;
+          }
           return this.parsers[service].read(res);
         } catch (e) {
           return undefined;
@@ -293,6 +303,7 @@ export class CapabilitiesService {
     arcgisOptions: any,
     legend?: any
   ): ArcGISRestDataSourceOptions {
+    const title = arcgisOptions.name;
     const legendInfo = legend.layers ? legend : undefined;
     const styleGenerator = new EsriStyleGenerator();
     const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
@@ -328,7 +339,10 @@ export class CapabilitiesService {
       }
     );
     const options = ObjectUtils.removeUndefined({
-      params
+      params,
+      _layerOptionsFromSource: {
+        title
+      }
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }

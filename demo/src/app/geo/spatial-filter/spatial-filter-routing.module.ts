@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
+
 
 import { AppSpatialFilterComponent } from './spatial-filter.component';
 
@@ -10,6 +10,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppSpatialFilterRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppSpatialFilterRoutingModule = RouterModule.forChild(
   routes
 );

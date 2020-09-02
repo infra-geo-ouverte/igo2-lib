@@ -34,7 +34,7 @@ import {
 } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleListService } from '../style-list/style-list.service';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { skipWhile } from 'rxjs/operators';
 
 @Component({
@@ -60,7 +60,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
-  public activeImportExport: string = 'import';
   public fileSizeMb: number;
 
   private previousLayerSpecs$: BehaviorSubject<
@@ -74,9 +73,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   @Input() map: IgoMap;
 
-  @Input() selectedIndex: number = 0;
+  @Input() selectedMode = 'import';
 
-  @Output() selectedTabIndex = new EventEmitter<number>();
+  @Output() selectMode = new EventEmitter<string>();
 
   @Input() exportOptions$: BehaviorSubject<ExportOptions> = new BehaviorSubject(
     undefined
@@ -96,9 +95,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ) {
     this.loadConfig();
     this.buildForm();
-    console.log(this);
-    console.log(this.form);
-    console.log(this.form);
   }
 
   ngOnInit() {
@@ -473,8 +469,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       });
   }
 
-  public tabChanged(tab: MatTabChangeEvent) {
-    this.selectedTabIndex.emit(tab.index);
+  public modeChanged(mode) {
+    this.selectMode.emit(mode);
   }
 
   private onFileExportSuccess() {
@@ -482,6 +478,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   onImportExportChange(event) {
-    this.activeImportExport = event.value;
+    this.selectedMode = event.value;
   }
 }

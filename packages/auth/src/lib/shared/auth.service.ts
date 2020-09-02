@@ -17,6 +17,7 @@ import { TokenService } from './token.service';
 })
 export class AuthService {
   public authenticate$ = new BehaviorSubject<boolean>(undefined);
+  public logged$ = new BehaviorSubject<boolean>(undefined);
   public redirectUrl: string;
   private anonymous = false;
 
@@ -29,7 +30,8 @@ export class AuthService {
     @Optional() private router: Router
   ) {
     this.authenticate$.next(this.authenticated);
-    this.authenticate$.subscribe(() => {
+    this.authenticate$.subscribe((authenticated) => {
+      this.logged$.next(authenticated);
       globalCacheBusterNotifier.next();
     });
   }
@@ -60,6 +62,7 @@ export class AuthService {
 
   loginAnonymous(): Observable<boolean> {
     this.anonymous = true;
+    this.logged$.next(true);
     return of(true);
   }
 
@@ -69,7 +72,7 @@ export class AuthService {
       tap((data: any) => {
         this.tokenService.set(data.token);
       }),
-      catchError(err => {
+      catchError((err) => {
         err.error.caught = true;
         throw err;
       })
@@ -166,14 +169,14 @@ export class AuthService {
           if (tokenDecoded.user.isExpired) {
             this.languageService.translate
               .get('igo.auth.error.Password expired')
-              .subscribe(expiredAlert =>
+              .subscribe((expiredAlert) =>
                 this.messageService.alert(expiredAlert)
               );
           }
         }
         this.authenticate$.next(true);
       }),
-      catchError(err => {
+      catchError((err) => {
         err.error.caught = true;
         throw err;
       })

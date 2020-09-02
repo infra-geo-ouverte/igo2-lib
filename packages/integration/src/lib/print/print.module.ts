@@ -11,11 +11,10 @@ import { PrintToolComponent } from './print-tool/print-tool.component';
   imports: [IgoPrintModule],
   declarations: [PrintToolComponent],
   exports: [PrintToolComponent],
-  entryComponents: [PrintToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppPrintModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoAppPrintModule> {
     return {
       ngModule: IgoAppPrintModule,
       providers: []

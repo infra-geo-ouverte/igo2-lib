@@ -7,14 +7,12 @@ describe('NotificationComponent', () => {
   let component: MessageCenterComponent;
   let fixture: ComponentFixture<MessageCenterComponent>;
 
-  beforeEach(
-    async(() => {
-      TestBed.configureTestingModule({
-        imports: [SimpleNotificationsModule.forRoot()],
-        declarations: [MessageCenterComponent]
-      }).compileComponents();
-    })
-  );
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [SimpleNotificationsModule.forRoot()],
+      declarations: [MessageCenterComponent]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MessageCenterComponent);

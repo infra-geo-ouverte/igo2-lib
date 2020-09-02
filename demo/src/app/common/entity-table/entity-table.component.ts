@@ -5,8 +5,11 @@ import {
   EntityStore,
   EntityTableButton,
   getEntityProperty,
-  EntityTableColumnRenderer
+  EntityTableColumnRenderer,
+  EntityTablePaginatorOptions
 } from '@igo2/common';
+import { MatPaginator } from '@angular/material/paginator';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-entity-table',
@@ -15,6 +18,10 @@ import {
 })
 export class AppEntityTableComponent implements OnInit, OnDestroy {
   public store = new EntityStore([]);
+  public paginator: MatPaginator;
+  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
+  public paginatorOptions: EntityTablePaginatorOptions = {pageSize: 10};
 
   public template = {
     selection: true,
@@ -66,11 +73,20 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
   constructor(private languageService: LanguageService) {}
 
   ngOnInit() {
-    this.store.load([
-      { id: '2', name: 'Name 2', description: '<b>Description 2</b>' },
-      { id: '1', name: 'Name 1', description: '<b>Description 1</b>' },
-      { id: '3', name: 'Name 3', description: '<b>Description 3</b>' }
-    ]);
+    const ids = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+
+    const entities = ids.map(id => {
+      return { id , name: `Name ${id}`, description: `<b>Description ${id}</b>`};
+    });
+    this.store.load(entities);
+  }
+
+  entitySortChange() {
+    this.entitySortChange$.next(true);
+  }
+
+  paginatorChange(event: MatPaginator) {
+    this.paginator = event;
   }
 
   ngOnDestroy() {

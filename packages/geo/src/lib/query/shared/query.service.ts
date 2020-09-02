@@ -542,7 +542,7 @@ export class QueryService {
           );
         }
 
-        url = wmsDatasource.ol.getGetFeatureInfoUrl(
+        url = wmsDatasource.ol.getFeatureInfoUrl(
           options.coordinates,
           options.resolution,
           options.projection,

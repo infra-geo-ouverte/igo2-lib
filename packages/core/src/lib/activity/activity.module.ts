@@ -9,7 +9,7 @@ import { ActivityInterceptor } from './activity.interceptor';
   exports: []
 })
 export class IgoActivityModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoActivityModule> {
     return {
       ngModule: IgoActivityModule,
       providers: [

@@ -77,7 +77,7 @@ export class MapToolComponent {
 
   activateExport(id: string) {
     this.importExportState.setsExportOptions({ layer: [id] } as ExportOptions);
-    this.importExportState.setSelectedTab(1);
+    this.importExportState.setMode('export');
     this.toolState.toolbox.activateTool('importExport');
   }
 }

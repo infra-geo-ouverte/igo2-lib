@@ -1,6 +1,6 @@
 <div class="import-export-toggle mat-typography">
   <mat-button-toggle-group
-        [value]="activeImportExport"
+        [value]="selectedMode"
         (change)="onImportExportChange($event)">
         <mat-button-toggle [value]="'import'">
           {{'igo.geo.importExportForm.importTabTitle' | translate}}
@@ -11,7 +11,7 @@
   </mat-button-toggle-group>
 </div>
 
-<form class="igo-form" *ngIf="activeImportExport === 'import'">
+<form class="igo-form" *ngIf="selectedMode === 'import'">
   <div class="igo-input-container">
     <mat-form-field>
       <input
@@ -36,7 +36,7 @@
       (change)="importFiles($event.target.files)">
   </div>
 </form>
-<section class="mat-typography" *ngIf="activeImportExport === 'import'">
+<section class="mat-typography" *ngIf="selectedMode === 'import'">
   <h4>{{'igo.geo.importExportForm.importClarifications' | translate}}</h4>
   <ul>
     <li>{{'igo.geo.importExportForm.importSizeMax' | translate: {size: fileSizeMb} }}</li>
@@ -45,11 +45,11 @@
   </ul>
 </section>
 
-<section class="mat-typography" *ngIf="(exportableLayers$ | async).length === 0 && activeImportExport === 'export'">
+<section class="mat-typography" *ngIf="(exportableLayers$ | async).length === 0 && selectedMode === 'export'">
   <h4>{{'igo.geo.importExportForm.exportNoLayersExportable' | translate}}</h4>
 </section>
 
-<form class="igo-form" [formGroup]="form" *ngIf="(exportableLayers$ | async).length > 0 && activeImportExport === 'export'">
+<form class="igo-form" [formGroup]="form" *ngIf="(exportableLayers$ | async).length > 0 && selectedMode === 'export'">
   <div class="igo-input-container">
     <mat-form-field>
       <mat-label>{{'igo.geo.importExportForm.exportLayerPlaceholder' | translate}}</mat-label>
