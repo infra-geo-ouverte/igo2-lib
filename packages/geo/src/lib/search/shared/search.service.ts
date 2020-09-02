@@ -42,7 +42,8 @@ export class SearchService {
       return [];
     }
 
-    const response = stringToLonLat(term, this.mapService.getMap().projection, {
+    const proj = this.mapService.getMap()?.projection || 'EPSG:3857';
+    const response = stringToLonLat(term, proj, {
       forceNA: options.forceNA
     });
     if (response.lonLat) {
@@ -53,7 +54,7 @@ export class SearchService {
 
     options.extent = this.mapService
       .getMap()
-      .viewController.getExtent('EPSG:4326');
+      ?.viewController.getExtent('EPSG:4326');
 
     let sources;
 
@@ -64,10 +65,10 @@ export class SearchService {
     }
 
     if (options.sourceId) {
-      sources = sources.filter(source => source.getId() === options.sourceId);
+      sources = sources.filter((source) => source.getId() === options.sourceId);
     } else if (options.searchType) {
       sources = sources.filter(
-        source => source.getType() === options.searchType
+        (source) => source.getType() === options.searchType
       );
     }
 
