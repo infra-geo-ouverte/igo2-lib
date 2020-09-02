@@ -611,7 +611,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   toggleVisibility( layers?: Layer[] ) {
     if (layers && layers.length > 0) {
       for (const layer of layers) {
-			layer.visible = !layer.visible ;
+			layer.visible = this.hideSelectedLayers ;
       }
 
 	}

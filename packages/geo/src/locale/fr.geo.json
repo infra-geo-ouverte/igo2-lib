@@ -152,7 +152,7 @@
       },
       "layer": {
         "hideLayer": "Masquer la couche",
-        "hideSelectedLayers": "Inverser la visibilité",
+        "hideSelectedLayers": "Masquer les couches",
         "lowerLayer": "Mettre en arrière",
         "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
@@ -168,7 +168,7 @@
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
-        "showSelectedLayers": "Rétablir la visibilité",
+        "showSelectedLayers": "Afficher les couches",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
         "subsetLayersListOnlyVisible": "Conserver les couches visibles",
