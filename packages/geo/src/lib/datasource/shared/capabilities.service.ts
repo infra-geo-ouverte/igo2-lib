@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Cacheable } from 'ngx-cacheable';
@@ -168,17 +168,22 @@ export class CapabilitiesService {
 
     return request.pipe(
       map(res => {
-        try {
           if ((service as any) === 'esriJSON') {
             return res;
           }
-          return this.parsers[service].read(res);
-        } catch (e) {
-          return undefined;
-        }
+          if (String(res).includes('ServiceException') && String(res).includes('Access denied')) {
+            throw new HttpErrorResponse(
+              {error: {message: 'service error getCapabilities: Access is denied', caught: false}, status: 403 }
+            );
+          } else {
+            return this.parsers[service].read(res);
+          }
       }),
       catchError(e => {
-        e.error.caught = true;
+        // ** comment to show user service error message when a service have bad adress
+        // if (typeof(e.error) !== 'undefined') {
+        //   e.error.caught = true;
+        // }
         throw e;
       })
     );
