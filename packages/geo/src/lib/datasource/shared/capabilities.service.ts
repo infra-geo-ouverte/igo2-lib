@@ -172,9 +172,11 @@ export class CapabilitiesService {
             return res;
           }
           if (String(res).includes('ServiceException') && String(res).includes('Access denied')) {
-            throw new HttpErrorResponse(
-              {error: {message: 'service error getCapabilities: Access is denied', caught: false}, status: 403 }
-            );
+            throw {
+              error: {
+                message: 'Service error getCapabilities: Access is denied'
+              }
+            };
           } else {
             return this.parsers[service].read(res);
           }
