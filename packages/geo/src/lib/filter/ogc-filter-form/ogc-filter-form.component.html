@@ -50,26 +50,26 @@
   matTooltipShowDelay="500"
   [matTooltip]="(selectedField$ | async) ? (selectedField$ | async).alias : ('igo.geo.sourceFields.selectField' | translate)"
   (input)="updateFieldsList($event.target.value)">
-<mat-autocomplete #autoCompleteField="matAutocomplete"
-(optionSelected)='changeField($event.option.id)'>
-  <mat-option 
-    *ngFor="let field of filteredFields$ | async"
-    matTooltipShowDelay="500"
-    [value]="field.alias"
-    [id]="field.name"
-    [matTooltip]="field.alias">
-    {{field.alias}}
-  </mat-option>
-</mat-autocomplete>
-<button mat-button 
-  *ngIf="currentFilter.propertyName && inputClearable === 'selectField' && currentFilter.active"
-  matSuffix
-  mat-icon-button
-  aria-label="Clear"
-  [disabled]="!currentFilter.active"
-  (click)="clearSelectedField()">
-      <mat-icon svgIcon="close"></mat-icon>
-</button>
+  <mat-autocomplete #autoCompleteField="matAutocomplete"
+  (optionSelected)='changeField($event.option.id)'>
+    <mat-option 
+      *ngFor="let field of filteredFields$ | async"
+      matTooltipShowDelay="500"
+      [value]="field.alias"
+      [id]="field.name"
+      [matTooltip]="field.alias">
+      {{field.alias}}
+    </mat-option>
+  </mat-autocomplete>
+  <button mat-button 
+    *ngIf="currentFilter.propertyName && inputClearable === 'selectField' && currentFilter.active"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    [disabled]="!currentFilter.active"
+    (click)="clearSelectedField()">
+        <mat-icon svgIcon="close"></mat-icon>
+  </button>
 </mat-form-field>
 
 
@@ -97,16 +97,16 @@
 <mat-form-field
 class="spatialSelector" 
 *ngIf="currentFilterIsSpatial$ | async">
-<mat-select 
-  [disabled]="!currentFilter.active"
-  [value]="currentFilter.igoSpatialSelector"
-  (selectionChange)="changeSpatialSelector($event.value)">
-    <mat-option
-      *ngFor="let igoSpatialSelector of igoSpatialSelectors"
-      [value]="igoSpatialSelector.type">
-        {{('igo.geo.spatialSelector.'+ igoSpatialSelector.type) | translate}}
-    </mat-option>
-</mat-select>
+  <mat-select 
+    [disabled]="!currentFilter.active"
+    [value]="currentFilter.igoSpatialSelector"
+    (selectionChange)="changeSpatialSelector($event.value)">
+      <mat-option
+        *ngFor="let igoSpatialSelector of igoSpatialSelectors"
+        [value]="igoSpatialSelector.type">
+          {{('igo.geo.spatialSelector.'+ igoSpatialSelector.type) | translate}}
+      </mat-option>
+  </mat-select>
 </mat-form-field>
 
 <mat-form-field 
@@ -115,48 +115,48 @@ class="singleInput"
 (mouseenter)="inputClearable = 'selectProperty'"
 (mouseleave)="inputClearable = undefined"
 [floatLabel]="floatLabel">
-<input
-  matInput
-  [placeholder]="'igo.geo.filter.placeholder' | translate"
-  [disabled]="!currentFilter.active"
-  [matAutocomplete]="autoCompleteValues"
-  [value]="detectProperty() === 'expression' ? currentFilter.expression : currentFilter.pattern"
-  tooltip-position="above"
-  matTooltipShowDelay="500"
-  [matTooltip]="detectProperty() === 'expression' ? currentFilter.expression || '' : currentFilter.pattern || ''"
-  (input)="updateValuesList($event.target.value)">
-<mat-autocomplete #autoCompleteValues="matAutocomplete"
-  (optionSelected)="changeProperty($event.option.value)">
-  <mat-option 
-    *ngFor="let value of filteredValues$ | async"
+  <input
+    matInput
+    [placeholder]="'igo.geo.filter.placeholder' | translate"
+    [disabled]="!currentFilter.active"
+    [matAutocomplete]="autoCompleteValues"
+    [value]="detectProperty() === 'expression' ? currentFilter.expression : currentFilter.pattern"
+    tooltip-position="above"
     matTooltipShowDelay="500"
-    [value]="value"
-    [matTooltip]="value">
-    {{value}}
-  </mat-option>
-</mat-autocomplete>
-<button mat-button 
-  *ngIf="isClearable() && inputClearable === 'selectProperty' && currentFilter.active"
-  matSuffix
-  mat-icon-button
-  aria-label="Clear"
-  [disabled]="!currentFilter.active"
-  (click)="clearProperty()">
-      <mat-icon svgIcon="close"></mat-icon>
-</button>
+    [matTooltip]="detectProperty() === 'expression' ? currentFilter.expression || '' : currentFilter.pattern || ''"
+    (input)="updateValuesList($event.target.value)">
+  <mat-autocomplete #autoCompleteValues="matAutocomplete"
+    (optionSelected)="changeProperty($event.option.value)">
+    <mat-option 
+      *ngFor="let value of filteredValues$ | async"
+      matTooltipShowDelay="500"
+      [value]="value"
+      [matTooltip]="value">
+      {{value}}
+    </mat-option>
+  </mat-autocomplete>
+  <button mat-button 
+    *ngIf="isClearable() && inputClearable === 'selectProperty' && currentFilter.active"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    [disabled]="!currentFilter.active"
+    (click)="clearProperty()">
+        <mat-icon svgIcon="close"></mat-icon>
+  </button>
 </mat-form-field>
 
 <div class="igo-layer-button-group">
-<button
-  mat-icon-button
-  collapsibleButton
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.filter.removeFilter' | translate"
-  color="warn"
-  (click)="deleteFilter()">
-  <mat-icon svgIcon="delete"></mat-icon>
-</button>
+  <button
+    mat-icon-button
+    collapsibleButton
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.filter.removeFilter' | translate"
+    color="warn"
+    (click)="deleteFilter()">
+    <mat-icon svgIcon="delete"></mat-icon>
+  </button>
 </div>
 
 <mat-form-field 
@@ -165,39 +165,39 @@ class="snrc"
 (mouseenter)="inputClearable = 'selectSNRC'"
 (mouseleave)="inputClearable = undefined"
 [floatLabel]="floatLabel">
-<input 
-  matInput
-  [placeholder]="'igo.geo.filter.placeholderSnrc' | translate"
-  [value]="currentFilter.igoSNRC"
-  tooltip-position="above"
-  matTooltipShowDelay="500"
-  [matTooltip]="currentFilter.igoSNRC ? currentFilter.igoSNRC : ''"
-  (input)="changeSNRC($event.target.value)">
-<button
-  mat-button
-  *ngIf="currentFilter.igoSNRC"
-  matSuffix
-  mat-icon-button
-  aria-label="Clear"
-  [disabled]="!currentFilter.active && inputClearable === 'selectSNRC' && currentFilter.active"
-  (click)="currentFilter.igoSNRC=''">
-    <mat-icon svgIcon="close"></mat-icon>
-</button>
-</mat-form-field>
+  <input 
+    matInput
+    [placeholder]="'igo.geo.filter.placeholderSnrc' | translate"
+    [value]="currentFilter.igoSNRC"
+    tooltip-position="above"
+    matTooltipShowDelay="500"
+    [matTooltip]="currentFilter.igoSNRC ? currentFilter.igoSNRC : ''"
+    (input)="changeSNRC($event.target.value)">
+  <button
+    mat-button
+    *ngIf="currentFilter.igoSNRC"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    [disabled]="!currentFilter.active && inputClearable === 'selectSNRC' && currentFilter.active"
+    (click)="currentFilter.igoSNRC=''">
+      <mat-icon svgIcon="close"></mat-icon>
+  </button>
+  </mat-form-field>
 
-<ng-container *ngIf="(currentFilterIsSpatial$ | async) && currentFilter.igoSpatialSelector === 'fixedExtent'">
-  <button 
-  mat-button
-  [disabled]="!currentFilter.active"
-  *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
-  matSuffix
-  mat-icon-button
-  [disabled]="!currentFilter.active"
-  (click)="changeMapExtentGeometry()"
-  tooltip-position="below"
-  matTooltipShowDelay="500"
-  [matTooltip]="'igo.geo.spatialSelector.btnSetExtent' | translate">
-    <mat-icon svgIcon="arrow-expand-all"></mat-icon>
+  <ng-container *ngIf="(currentFilterIsSpatial$ | async) && currentFilter.igoSpatialSelector === 'fixedExtent'">
+    <button 
+    mat-button
+    [disabled]="!currentFilter.active"
+    *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
+    matSuffix
+    mat-icon-button
+    [disabled]="!currentFilter.active"
+    (click)="changeMapExtentGeometry()"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.spatialSelector.btnSetExtent' | translate">
+      <mat-icon svgIcon="arrow-expand-all"></mat-icon>
   </button>
 </ng-container>
 
