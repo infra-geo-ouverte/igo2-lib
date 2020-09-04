@@ -7,13 +7,15 @@ import {
   OnDestroy,
   Output,
   EventEmitter,
-  ElementRef
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
 import { FloatLabelType } from '@angular/material/form-field';
 import { Layer } from '../shared';
 import { LayerListControlsEnum } from './layer-list.enum';
+import { LayerListiSelectVisibleEnum } from './layer-list.enum';
 import {
   BehaviorSubject,
   ReplaySubject,
@@ -49,6 +51,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public layerTool: boolean;
 
   public hideSelectedLayers: boolean = false ;
+  private statusSelectedLayers: LayerListiSelectVisibleEnum = LayerListiSelectVisibleEnum.NULL;
+  private statusPrevSelectedLayers: LayerListiSelectVisibleEnum = LayerListiSelectVisibleEnum.NULL;
 
   activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
 
@@ -214,7 +218,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
   selectAllCheck$$: Subscription;
   public selectAllCheck;
 
-  constructor(private elRef: ElementRef) {}
+  constructor(
+    private elRef: ElementRef ,private cdRef: ChangeDetectorRef ,
+  ) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -607,17 +613,49 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return;
   }
 
-
+  //=====================================
   toggleVisibility( layers?: Layer[] ) {
     if (layers && layers.length > 0) {
       for (const layer of layers) {
 			layer.visible = this.hideSelectedLayers ;
       }
-
 	}
-	  this.hideSelectedLayers = ! this.hideSelectedLayers ;
+	  this.cdRef.detectChanges();
     return;
   }
+
+  get statusSelectedLayersCheck() :LayerListiSelectVisibleEnum
+  {
+	  let findTrue :boolean = false;
+	  let findFalse :boolean = false;
+	  this.statusPrevSelectedLayers = this.statusSelectedLayers;
+
+	  if(this.layersChecked.length === 0)
+	  {
+		  this.statusSelectedLayers = LayerListiSelectVisibleEnum.NULL;
+
+	  } else {
+		  this.statusSelectedLayers = LayerListiSelectVisibleEnum.MIXED;
+		  this.hideSelectedLayers = true ;
+
+		  for (const layer2 of this.layersChecked) {
+				if( layer2.visible===true )findTrue = true;
+				if( layer2.visible===false)findFalse = true;
+		  }
+		  if( findTrue===true && findFalse===false)
+		  {
+				this.statusSelectedLayers = LayerListiSelectVisibleEnum.ALL_VISIBLE;
+				this.hideSelectedLayers = false ;
+		  }
+		  if( findTrue===false && findFalse===true)
+		  {
+				this.statusSelectedLayers = LayerListiSelectVisibleEnum.ALL_HIDDEN;
+		  }
+	  }
+
+	  return this.statusSelectedLayers;
+  }
+
 
   layersCheck(event: {layer: Layer; check: boolean}) {
     event.layer.options.check = event.check;
@@ -686,6 +724,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
         this.selectAllCheck = false;
       }
     }
+
   }
 
   toggleSelectionMode(value: boolean) {
@@ -736,6 +775,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
       this.layersChecked = [];
       this.selectAllCheck$.next(false);
     }
+
   }
 
   isScrolledIntoView(elemSource, elem) {

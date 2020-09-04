@@ -178,13 +178,14 @@
 
     <button
       mat-icon-button
-      color="primary" 
+      [color]="(hideSelectedLayers?'primary':'default')" 
       tooltip-position="below"
       matTooltipShowDelay="500"
       [disabled]="layersChecked.length === 0"
-      [matTooltip]="'igo.geo.layer.hideSelectedLayers' | translate"
+      [matTooltip]="statusSelectedLayersCheck === 'ALL_VISIBLE' ? ('igo.geo.layer.hideSelectedLayers' | translate) : ('igo.geo.layer.showSelectedLayers' | translate) "		
       (click)="toggleVisibility( layersChecked )">
-      <mat-icon [svgIcon]="hideSelectedLayers ? 'eye-off' : 'eye'"></mat-icon>
+      <mat-icon [matBadge]="(statusSelectedLayersCheck === 'MIXED') ? 'i' : ''" matBadgeColor="warn" matBadgeSize="medium" 	  
+				[svgIcon]="(statusSelectedLayersCheck === 'ALL_VISIBLE') ? 'eye-off' : 'eye'"></mat-icon>
     </button>
 
     <button
