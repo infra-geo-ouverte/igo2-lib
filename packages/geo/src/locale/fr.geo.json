@@ -73,6 +73,10 @@
           "CSVcomma": "CSV (séparateur virgule)",
           "CSVsemicolon": "CSV (séparateur point-virgule)",
           "URL": "URL"
+        },
+        "encoding": {
+          "LATIN1": "LATIN-1",
+          "UTF8": "UTF-8"
         }
       },
       "importExportForm": {
@@ -81,6 +85,7 @@
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",
+        "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",
         "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
         "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
@@ -384,6 +389,7 @@
       "targetHtmlUrl": "Ouvrir le lien externe",
       "searchByCoord": "Rechercher par coordonnées",
       "searchByName": "Rechercher par nom",
+      "seeRouting": "Voir l'itinéraire",
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",

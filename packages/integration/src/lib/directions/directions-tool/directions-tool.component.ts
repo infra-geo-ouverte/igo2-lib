@@ -34,6 +34,11 @@ export class DirectionsToolComponent {
    */
   get map(): IgoMap { return this.mapState.map; }
 
+
+  get routeFromFeatureDetail() {
+    return this.directionState.routeFromFeatureDetail;
+  }
+
   constructor(
     private directionState: DirectionState,
     private mapState: MapState

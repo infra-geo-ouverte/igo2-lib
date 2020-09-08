@@ -12,6 +12,10 @@ table td {
    width: 30%;
  }
 
+table ::ng-deep .routing {
+  cursor: pointer;
+}
+
 iframe {
   height: calc(100% - 4px);
   width: 100%;

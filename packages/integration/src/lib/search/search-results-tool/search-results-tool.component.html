@@ -59,7 +59,11 @@
       </button>
 
       <igo-feature-details
-        [feature]="feature$ | async">
+        igoFeatureDetailsDirective
+        [feature]="feature$ | async"
+        [map]="map"
+        [toolbox]="toolState.toolbox"
+        (routingEvent)="getRoute($event)">
       </igo-feature-details>
     </igo-panel>
   </div>

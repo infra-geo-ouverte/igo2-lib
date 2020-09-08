@@ -417,7 +417,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   private computeProperties(data: IChercheData): { [key: string]: any } {
     const properties = ObjectUtils.removeKeys(
       data.properties,
-      IChercheSearchSource.propertiesBlacklist
+      IChercheSearchSource.propertiesBlacklist,
     );
 
     if (data.geometry === undefined) {
@@ -452,7 +452,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       );
     } else if (data.index === 'municipalites') {
       googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
-        data.properties.nom + ', ' + data.properties.regAdmin
+        data.properties.nom + ', ' + 'ville'
+      );
+    } else if (data.index === 'mrc') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
+        'mrc+' + data.properties.nom
+      );
+    } else if (data.index === 'regadmin') {
+      googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
+        data.properties.nom + ',+QC'
       );
     } else {
       googleMapsNom = GoogleLinks.getGoogleMapsNameLink(
@@ -478,10 +486,17 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       );
     }
 
+    const routing: {
+      Route: string
+    } = {
+      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+    };
+
     return Object.assign(
       { type: data.index },
       properties,
-      googleLinksProperties
+      googleLinksProperties,
+      routing
     );
   }
 

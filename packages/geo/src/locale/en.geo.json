@@ -73,6 +73,10 @@
           "CSVcomma": "CSV (comma delimited)",
           "CSVsemicolon": "CSV (semicolon delimited)",
           "URL": "URL"
+        },
+        "encoding": {
+          "LATIN1": "LATIN-1",
+          "UTF8": "UTF-8"
         }
       },
       "importExportForm": {
@@ -81,6 +85,7 @@
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
+        "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
         "exportNoLayersExportable": "There is no exportable layer in your map",
@@ -382,6 +387,7 @@
       "targetHtmlUrl": "Open the external link",
       "searchByCoord": "Search by coordinates",
       "searchByName": "Search by name",
+      "seeRouting": "See routing",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",

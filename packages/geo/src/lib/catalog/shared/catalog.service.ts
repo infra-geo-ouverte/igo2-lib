@@ -152,7 +152,7 @@ export class CatalogService {
   loadCatalogArcGISRestItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
-        return this.getArcGISRESTItems(catalog, capabilities)
+        return this.getArcGISRESTItems(catalog, capabilities);
         })
     );
   }
