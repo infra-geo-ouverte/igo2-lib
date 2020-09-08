@@ -158,6 +158,7 @@
       "layer": {
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
+        "hideSelectedLayers": "Hide selected layers",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
@@ -172,6 +173,7 @@
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
+        "showSelectedLayers": "Show selected layers",
         "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
         "deleteKeyword": "Delete the keyword",
         "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",

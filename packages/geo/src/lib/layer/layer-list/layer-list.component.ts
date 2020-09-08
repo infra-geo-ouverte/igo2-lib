@@ -50,9 +50,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   public layerTool: boolean;
 
-  public hideSelectedLayers: boolean = false ;
-  private statusSelectedLayers: LayerListiSelectVisibleEnum = LayerListiSelectVisibleEnum.NULL;
-  private statusPrevSelectedLayers: LayerListiSelectVisibleEnum = LayerListiSelectVisibleEnum.NULL;
+  public hideSelectedLayers: boolean = false;
+  private statusSelectedLayers: LayerListiSelectVisibleEnum =
+    LayerListiSelectVisibleEnum.NULL;
+  private statusPrevSelectedLayers: LayerListiSelectVisibleEnum =
+    LayerListiSelectVisibleEnum.NULL;
 
   activeLayer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
 
@@ -218,9 +220,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   selectAllCheck$$: Subscription;
   public selectAllCheck;
 
-  constructor(
-    private elRef: ElementRef ,private cdRef: ChangeDetectorRef ,
-  ) {}
+  constructor(private elRef: ElementRef, private cdRef: ChangeDetectorRef) {}
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -243,7 +243,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.selectAllCheck$$ = this.selectAllCheck$.subscribe(value => {
+    this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
       this.selectAllCheck = value;
     });
 
@@ -263,13 +263,13 @@ export class LayerListComponent implements OnInit, OnDestroy {
           this.selectAllCheck =
             checks ===
             this.layers.filter(
-              lay => lay.baseLayer !== true && lay.showInLayerList
+              (lay) => lay.baseLayer !== true && lay.showInLayerList
             ).length
               ? true
               : false;
         } else {
           this.selectAllCheck =
-            checks === this.layers.filter(lay => lay.showInLayerList).length
+            checks === this.layers.filter((lay) => lay.showInLayerList).length
               ? true
               : false;
         }
@@ -287,7 +287,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   getLowerLayer() {
     return this.layers
-      .filter(l => !l.baseLayer)
+      .filter((l) => !l.baseLayer)
       .reduce(
         (prev, current) => {
           return prev.zIndex < current.zIndex ? prev : current;
@@ -297,7 +297,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   isLowerBaselayer(layer) {
-    const index = this.layers.findIndex(lay => layer.id === lay.id);
+    const index = this.layers.findIndex((lay) => layer.id === lay.id);
     if (
       this.layers &&
       this.layers[index + 1] &&
@@ -310,7 +310,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   getUpperLayer() {
     return this.layers
-      .filter(l => !l.baseLayer)
+      .filter((l) => !l.baseLayer)
       .reduce(
         (prev, current) => {
           return prev.zIndex > current.zIndex ? prev : current;
@@ -320,7 +320,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   }
 
   isUpperBaselayer(layer) {
-    const index = this.layers.findIndex(lay => layer.id === lay.id);
+    const index = this.layers.findIndex((lay) => layer.id === lay.id);
     if (
       this.layers &&
       this.layers[index - 1] &&
@@ -338,7 +338,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     let response = false;
     let base = 0;
     for (const layer of layers) {
-      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const mapIndex = this.layers.findIndex((lay) => layer.id === lay.id);
       const currentLayer = this.layers[mapIndex];
       if (currentLayer.baseLayer) {
         base += 1;
@@ -348,7 +348,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
       if (
         previousLayer &&
         previousLayer.baseLayer !== true &&
-        !layers.find(lay => previousLayer.id === lay.id) &&
+        !layers.find((lay) => previousLayer.id === lay.id) &&
         currentLayer.baseLayer !== true
       ) {
         response = true;
@@ -381,7 +381,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   raiseLayers(layers: Layer[]) {
     const layersToRaise = [];
     for (const layer of layers) {
-      const index = this.layers.findIndex(lay => lay.id === layer.id);
+      const index = this.layers.findIndex((lay) => lay.id === layer.id);
       if (this.raisableLayer(index)) {
         layersToRaise.push(layer);
       }
@@ -402,7 +402,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     let response = false;
     let base = 0;
     for (const layer of layers) {
-      const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+      const mapIndex = this.layers.findIndex((lay) => layer.id === lay.id);
       const currentLayer = this.layers[mapIndex];
       if (currentLayer.baseLayer) {
         base += 1;
@@ -412,7 +412,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
       if (
         nextLayer &&
         nextLayer.baseLayer !== true &&
-        !layers.find(lay => nextLayer.id === lay.id)
+        !layers.find((lay) => nextLayer.id === lay.id)
       ) {
         response = true;
       }
@@ -431,7 +431,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
    * When multiple layers is selected but some may be allow to move
    */
   lowerableLayer(index: number) {
-    if (index > this.layers.filter(lay => lay.baseLayer !== true).length - 2) {
+    if (
+      index >
+      this.layers.filter((lay) => lay.baseLayer !== true).length - 2
+    ) {
       return false;
     }
 
@@ -444,7 +447,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   lowerLayers(layers: Layer[]) {
     const layersToLower = [];
     for (const layer of layers) {
-      const index = this.layers.findIndex(lay => lay.id === layer.id);
+      const index = this.layers.findIndex((lay) => lay.id === layer.id);
       if (this.lowerableLayer(index)) {
         layersToLower.push(layer);
       }
@@ -613,61 +616,59 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return;
   }
 
-  //=====================================
-  toggleVisibility( layers?: Layer[] ) {
+  toggleVisibility(layers?: Layer[]) {
     if (layers && layers.length > 0) {
       for (const layer of layers) {
-			layer.visible = this.hideSelectedLayers ;
+        layer.visible = this.hideSelectedLayers;
       }
-	}
-	  this.cdRef.detectChanges();
+    }
+    this.cdRef.detectChanges();
     return;
   }
 
-  get statusSelectedLayersCheck() :LayerListiSelectVisibleEnum
-  {
-	  let findTrue :boolean = false;
-	  let findFalse :boolean = false;
-	  this.statusPrevSelectedLayers = this.statusSelectedLayers;
+  get statusSelectedLayersCheck(): LayerListiSelectVisibleEnum {
+    let findTrue: boolean = false;
+    let findFalse: boolean = false;
+    this.statusPrevSelectedLayers = this.statusSelectedLayers;
 
-	  if(this.layersChecked.length === 0)
-	  {
-		  this.statusSelectedLayers = LayerListiSelectVisibleEnum.NULL;
+    if (this.layersChecked.length === 0) {
+      this.statusSelectedLayers = LayerListiSelectVisibleEnum.NULL;
+    } else {
+      this.statusSelectedLayers = LayerListiSelectVisibleEnum.MIXED;
+      this.hideSelectedLayers = true;
 
-	  } else {
-		  this.statusSelectedLayers = LayerListiSelectVisibleEnum.MIXED;
-		  this.hideSelectedLayers = true ;
+      for (const layer2 of this.layersChecked) {
+        if (layer2.visible === true) {
+          findTrue = true;
+        }
+        if (layer2.visible === false) {
+          findFalse = true;
+        }
+      }
 
-		  for (const layer2 of this.layersChecked) {
-				if( layer2.visible===true )findTrue = true;
-				if( layer2.visible===false)findFalse = true;
-		  }
-		  if( findTrue===true && findFalse===false)
-		  {
-				this.statusSelectedLayers = LayerListiSelectVisibleEnum.ALL_VISIBLE;
-				this.hideSelectedLayers = false ;
-		  }
-		  if( findTrue===false && findFalse===true)
-		  {
-				this.statusSelectedLayers = LayerListiSelectVisibleEnum.ALL_HIDDEN;
-		  }
-	  }
+      if (findTrue === true && findFalse === false) {
+        this.statusSelectedLayers = LayerListiSelectVisibleEnum.ALL_VISIBLE;
+        this.hideSelectedLayers = false;
+      }
+      if (findTrue === false && findFalse === true) {
+        this.statusSelectedLayers = LayerListiSelectVisibleEnum.ALL_HIDDEN;
+      }
+    }
 
-	  return this.statusSelectedLayers;
+    return this.statusSelectedLayers;
   }
 
-
-  layersCheck(event: {layer: Layer; check: boolean}) {
+  layersCheck(event: { layer: Layer; check: boolean }) {
     event.layer.options.check = event.check;
     if (event.check === true) {
       const eventMapIndex = this.layers.findIndex(
-        layer => event.layer.id === layer.id
+        (layer) => event.layer.id === layer.id
       );
       for (const layer of this.layersChecked) {
-        const mapIndex = this.layers.findIndex(lay => layer.id === lay.id);
+        const mapIndex = this.layers.findIndex((lay) => layer.id === lay.id);
         if (eventMapIndex < mapIndex) {
           this.layersChecked.splice(
-            this.layersChecked.findIndex(lay => layer.id === lay.id),
+            this.layersChecked.findIndex((lay) => layer.id === lay.id),
             0,
             event.layer
           );
@@ -676,7 +677,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
             if (
               this.layersChecked.length ===
               this.layers.filter(
-                lay => lay.baseLayer !== true && lay.showInLayerList
+                (lay) => lay.baseLayer !== true && lay.showInLayerList
               ).length
             ) {
               this.selectAllCheck = true;
@@ -686,7 +687,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
           } else if (!this.excludeBaseLayers) {
             if (
               this.layersChecked.length ===
-              this.layers.filter(lay => lay.showInLayerList).length
+              this.layers.filter((lay) => lay.showInLayerList).length
             ) {
               this.selectAllCheck = true;
             } else {
@@ -699,7 +700,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
       this.layersChecked.push(event.layer);
     } else {
       const index = this.layersChecked.findIndex(
-        layer => event.layer.id === layer.id
+        (layer) => event.layer.id === layer.id
       );
       this.layersChecked.splice(index, 1);
     }
@@ -707,8 +708,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
     if (this.excludeBaseLayers) {
       if (
         this.layersChecked.length ===
-        this.layers.filter(lay => lay.baseLayer !== true && lay.showInLayerList)
-          .length
+        this.layers.filter(
+          (lay) => lay.baseLayer !== true && lay.showInLayerList
+        ).length
       ) {
         this.selectAllCheck = true;
       } else {
@@ -717,14 +719,13 @@ export class LayerListComponent implements OnInit, OnDestroy {
     } else if (!this.excludeBaseLayers) {
       if (
         this.layersChecked.length ===
-        this.layers.filter(lay => lay.showInLayerList).length
+        this.layers.filter((lay) => lay.showInLayerList).length
       ) {
         this.selectAllCheck = true;
       } else {
         this.selectAllCheck = false;
       }
     }
-
   }
 
   toggleSelectionMode(value: boolean) {
@@ -775,7 +776,6 @@ export class LayerListComponent implements OnInit, OnDestroy {
       this.layersChecked = [];
       this.selectAllCheck$.next(false);
     }
-
   }
 
   isScrolledIntoView(elemSource, elem) {
