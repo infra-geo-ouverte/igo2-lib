@@ -171,7 +171,7 @@ export class CapabilitiesService {
           if ((service as any) === 'esriJSON') {
             return res;
           }
-          if (String(res).includes('ServiceException') && String(res).includes('Access denied')) {
+          if (String(res).toLowerCase().includes('serviceexception') && String(res).toLowerCase().includes('access denied')) {
             throw {
               error: {
                 message: 'Service error getCapabilities: Access is denied'
