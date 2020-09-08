@@ -15,10 +15,6 @@ import {
   ExportNothingToExportError
 } from './export.errors';
 
-import * as iconv from 'iconv-lite';
-
-import { Buffer } from 'Buffer';
-
 @Injectable({
   providedIn: 'root'
 })
