@@ -104,6 +104,9 @@ export class OgcFilterTimeComponent implements OnInit {
 
     if (position === 1) {
       this.beginValue = valueTmp;
+      if ( this.restrictedToStep()) {
+        this.changeTemporalProperty(this.addStep(valueTmp), 2);
+      }
     } else {
       this.endValue = valueTmp;
     }
@@ -129,19 +132,27 @@ export class OgcFilterTimeComponent implements OnInit {
 
   yearSelected(year, datePicker?: any, property?: string) {
     if (this.stepIsYearDuration()) {
+      if (datePicker) {
         datePicker.close();
-        if (property === 'end') {
-          year = moment(year).endOf('year').toDate();
-        }
-        this.changeTemporalProperty(year, ( property === 'begin' ? 1 : 2));
+      }
+      if (property === 'end') {
+        year = moment(year).endOf('year').toDate();
+      } else if ( (property === 'begin') && (this.restrictedToStep()) ){
+        this.yearSelected( year, undefined, 'end' );
+      }
+      this.changeTemporalProperty(year, ( property === 'begin' ? 1 : 2));
     }
   }
 
   monthSelected(month, datePicker?: any, property?: string) {
     if (this.stepIsMonthDuration()) {
-      datePicker.close();
+      if (datePicker) {
+        datePicker.close();
+      }
       if (property === 'end') {
         month = moment(month).endOf('month').toDate();
+      } else if ( (property === 'begin') && (this.restrictedToStep()) ){
+        this.monthSelected( month, undefined, 'end' );
       }
       this.changeTemporalProperty( month, ( property === 'begin' ? 1 : 2));
     }
@@ -346,5 +357,13 @@ export class OgcFilterTimeComponent implements OnInit {
   private updateValues() {
     this.changeTemporalProperty(this.beginValue, 1);
     this.changeTemporalProperty(this.endValue, 2);
+  }
+
+  public restrictedToStep(): boolean{
+    return this.currentFilter.restrictToStep ? this.currentFilter.restrictToStep : false;
+  }
+
+  private addStep(value) {
+    return moment(value).add(this.stepMilliseconds, 'milliseconds').toDate();
   }
 }

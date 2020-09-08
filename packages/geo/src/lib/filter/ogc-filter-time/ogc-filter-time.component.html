@@ -10,7 +10,7 @@
         [matDatepickerFilter]="dateFilter.bind(this, 'begin')"
         [value]="beginValue?beginValue:handleDate(datasource.options.minDate)"
         [min]="handleDate(datasource.options.minDate)"
-        [max]="endValue?endValue:handleDate(datasource.options.maxDate)" >
+        [max]="(endValue && (!restrictedToStep()))?endValue:handleDate(datasource.options.maxDate)" >
       <span class="filler"></span>
       <mat-datepicker #beginDatepicker [startView]="calendarView()" 
         [startAt]="beginValue"
@@ -34,7 +34,7 @@
     </mat-form-field>
   </span>
 
-  <span class="time-input">
+  <span class="time-input" *ngIf="!restrictedToStep()">
     <mat-form-field style="margin: auto;">
       <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
         <input [matDatepicker]="endDatepicker" [placeholder]="'igo.geo.timeFilter.endDate' | translate" 
