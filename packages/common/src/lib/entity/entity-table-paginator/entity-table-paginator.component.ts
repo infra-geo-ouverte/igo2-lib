@@ -59,7 +59,7 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
    */
   @Output() paginatorChange: EventEmitter<MatPaginator> = new EventEmitter<MatPaginator>();
 
-  constructor(private languageService: LanguageService, private mediaService: MediaService) { }
+  constructor(private languageService: LanguageService, private mediaService: MediaService) {}
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 

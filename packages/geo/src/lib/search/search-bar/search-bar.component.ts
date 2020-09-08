@@ -127,6 +127,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() floatLabel: FloatLabelType = 'never';
 
+  @Input() appearance: MatFormFieldAppearance = 'legacy';
+
+  @Input() placeholder: string;
+
+  @Input() label: string;
+
   /**
    * Icons color (search and clear)
    */
