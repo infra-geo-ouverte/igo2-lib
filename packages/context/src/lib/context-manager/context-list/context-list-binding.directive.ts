@@ -257,6 +257,7 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
             acc = cur.childs ? acc.concat(cur.childs) : acc;
             return acc;
           }, []);
+
           for (const user of profilsAcc) {
             const permission: ContextUserPermission = {
               name: user.name,
@@ -264,14 +265,19 @@ export class ContextListBindingDirective implements OnInit, OnDestroy {
                 'contexts.permissions.' + user.name
               ) as boolean
             };
+            if (permission.checked === null) {
+              permission.checked = true;
+            }
             this.component.permissions.push(permission);
           }
+
           const permissions = ['none'];
           for (const p of this.component.permissions) {
             if (p.checked === true || p.indeterminate === true) {
               permissions.push(p.name);
             }
           }
+
           this.component.showHidden
             ? this.contextService.loadContexts(permissions, true)
             : this.contextService.loadContexts(permissions, false);
