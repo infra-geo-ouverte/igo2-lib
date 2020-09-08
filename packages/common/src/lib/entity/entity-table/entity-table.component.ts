@@ -6,7 +6,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  AfterViewInit
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -22,6 +23,9 @@ import {
   EntityTableSelectionState,
   EntityTableScrollBehavior
 } from '../shared';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 
 @Component({
   selector: 'igo-entity-table',
@@ -29,7 +33,9 @@ import {
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy  {
+export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
+
+  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Reference to the column renderer types
@@ -55,6 +61,11 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   private selection$$: Subscription;
 
   /**
+   * Subscription to the dataSource
+   */
+  private dataSource$$: Subscription;
+
+  /**
    * The last record checked. Useful for selecting
    * multiple records by holding the shift key and checking
    * checkboxes.
@@ -65,6 +76,19 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * Entity store
    */
   @Input() store: EntityStore<object>;
+
+  /**
+   * Table paginator store
+   */
+  @Input() set paginator(value: MatPaginator) {
+    this._paginator = value;
+    this.dataSource.paginator = value;
+  }
+
+  get paginator(): MatPaginator {
+    return this._paginator;
+  }
+  private _paginator: MatPaginator;
 
   /**
    * Table template
@@ -84,6 +108,18 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   sortNullsFirst: boolean = false;
 
   /**
+   * Show the table paginator or not. False by default.
+   */
+  @Input()
+  withPaginator: boolean = false;
+
+  /**
+   * Paginator options
+   */
+  @Input()
+  paginatorOptions: EntityTablePaginatorOptions;
+
+  /**
    * Event emitted when an entity (row) is clicked
    */
   @Output() entityClick = new EventEmitter<object>();
@@ -94,6 +130,11 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   @Output() entitySelectChange = new EventEmitter<{
     added: object[];
   }>();
+
+  /**
+   * Event emitted when an entity (row) is selected
+   */
+  @Output() entitySortChange: EventEmitter<{column: EntityTableColumn, direction: string}> = new EventEmitter(undefined);
 
   /**
    * Table headers
@@ -115,7 +156,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * Data source consumable by the underlying material table
    * @internal
    */
-  get dataSource(): BehaviorSubject<EntityRecord<object>[]> { return this.store.stateView.all$(); }
+  dataSource = new MatTableDataSource<object>();
 
   /**
    * Whether selection is supported
@@ -153,6 +194,14 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
       .subscribe((records: EntityRecord<object>[]) => {
         this.selectionState$.next(this.computeSelectionState(records));
       });
+
+    this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
+      this.dataSource.data = all;
+    });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
   /**
@@ -161,6 +210,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    */
   ngOnDestroy() {
     this.selection$$.unsubscribe();
+    this.dataSource$$.unsubscribe();
   }
 
   /**
@@ -185,6 +235,10 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     this.cdRef.detectChanges();
   }
 
+  paginatorChange(event: MatPaginator) {
+    this.paginator = event;
+  }
+
   /**
    * On sort, sort the store
    * @param event Sort event
@@ -201,6 +255,8 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
         direction,
         nullsFirst: this.sortNullsFirst
       });
+      this.entitySortChange.emit({column, direction});
+      this.entitySortChange$.next(true);
     } else {
       this.store.stateView.sort(undefined);
     }
@@ -212,6 +268,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * @internal
    */
   onRowClick(record: EntityRecord<object>) {
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
     this.entityClick.emit(record.entity);
   }
 
@@ -273,7 +330,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * @param record Record
    * @internal
    */
-  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>) {
+  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>, event: MouseEvent) {
     if (this.selection === false) { return; }
 
     if (this.selectMany === false || this.lastRecordCheckedKey === undefined) {

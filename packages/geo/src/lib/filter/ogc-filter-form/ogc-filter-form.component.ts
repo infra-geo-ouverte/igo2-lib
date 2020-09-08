@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-  ElementRef
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import {
   OgcInterfaceFilterOptions,
@@ -14,7 +8,8 @@ import {
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { FloatLabelType } from '@angular/material/form-field';
+import { BehaviorSubject } from 'rxjs';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { FloatLabelType } from '@angular/material/form-field';
@@ -35,7 +30,9 @@ export class OgcFilterFormComponent implements OnInit {
   filteredValues$: Observable<string[]>;
   filteredFields$: Observable<SourceFieldsOptionsParams[]>;
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(
+    undefined
+  );
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
