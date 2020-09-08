@@ -44,7 +44,7 @@ export class VectorTileLayer extends Layer {
   }
 
   /**
-   * Custom loader for vector tile layer.
+   * Custom loader for vector tile layer. Modified from the loadFeaturesXhr function in ol\featureloader.js
    * @internal
    * @param url the url string or function to retrieve the data
    * @param format the format of the tile
