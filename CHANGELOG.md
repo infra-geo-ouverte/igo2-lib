@@ -1,3 +1,27 @@
+## [1.4.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.4.2...1.4.3) (2020-09-08)
+
+
+### Bug Fixes
+
+* layer and modify control issues ([3be1301](https://github.com/infra-geo-ouverte/igo2-lib/commit/3be1301ee88aefd15564259783b2e71f0c290c39))
+* **context-list:** profils are checked by defaults ([b1a7171](https://github.com/infra-geo-ouverte/igo2-lib/commit/b1a71712a43fb71b3c2561d55c99ffe0631f30a3))
+* **geometry:** fix performance issue when drawing multiple holes in a polygon ([5af7249](https://github.com/infra-geo-ouverte/igo2-lib/commit/5af724975b0f9603f9a77794f7beeea68f2a7fa7))
+* **geometry:** properly compute the draw guide style when the draw style is an array ([8087029](https://github.com/infra-geo-ouverte/igo2-lib/commit/8087029fafd08fc6cf73dd3b2770b43853b5a40c))
+* **layer:** fix issue with remove layer index ([cb7c1b9](https://github.com/infra-geo-ouverte/igo2-lib/commit/cb7c1b9c95873124bb7d97158acc7cba7c7bdf1c))
+* **modify:** modify performance issue caused by the drag box interaction ([47fc2e8](https://github.com/infra-geo-ouverte/igo2-lib/commit/47fc2e8e41395b0034922ba685ca28b90d28f13f))
+* **transaction:** when an entity is updated more than once, always keep a reference to the original entity ([1fd0eb7](https://github.com/infra-geo-ouverte/igo2-lib/commit/1fd0eb716e52f47ab94aabb5e5aaaeeb8c97efc5))
+
+
+### Features
+
+* **form:** add a method to get a form field by name ([bb0e1bd](https://github.com/infra-geo-ouverte/igo2-lib/commit/bb0e1bda2bd5efc1460b0d06fad001bd4b03fa30))
+* **geometry:** allow control options to be passed and translation to be disabled ([61835ab](https://github.com/infra-geo-ouverte/igo2-lib/commit/61835ab3d13ce49fc1174d304afcf96625a7c610))
+* **layer:** layers can have an alias ([986dac5](https://github.com/infra-geo-ouverte/igo2-lib/commit/986dac5258019f6f91a250eb43d5bd29a4034e0e))
+* **selection:** add a way to deactivate the selection without removing the selection overlay ([a61ce05](https://github.com/infra-geo-ouverte/igo2-lib/commit/a61ce05d2ee433720facdec532721d642b6f5c3b))
+* **strategy:** add a method to set a strategy's feature motion ([bb6be2d](https://github.com/infra-geo-ouverte/igo2-lib/commit/bb6be2db4a9e8fbf74b7038fd0c3f8c9d733f8b0))
+
+
+
 ## [1.4.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.4.1...1.4.2) (2020-08-04)
 
 

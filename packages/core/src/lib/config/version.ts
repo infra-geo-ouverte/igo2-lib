@@ -3,5 +3,5 @@ export interface Version {
 }
 
 export const version: Version = {
-  lib: '1.4.2'
+  lib: '1.4.3'
 };

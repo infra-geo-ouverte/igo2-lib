@@ -1,6 +1,6 @@
 {
   "name": "@igo2/auth",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "IGO Library",
   "author": "MSP",
   "keywords": ["igo"],
@@ -24,8 +24,8 @@
     "@angular/core": "^7.2.6",
     "@angular/forms": "^7.2.6",
     "@angular/material": "^7.3.3",
-    "@igo2/core": "^1.4.2",
-    "@igo2/utils": "^1.4.2",
+    "@igo2/core": "^1.4.3",
+    "@igo2/utils": "^1.4.3",
     "rxjs": "^6.4.0"
   }
 }
