@@ -387,6 +387,7 @@
       "targetHtmlUrl": "Ouvrir le lien externe",
       "searchByCoord": "Rechercher par coordonnées",
       "searchByName": "Rechercher par nom",
+      "seeRouting": "Voir l'itinéraire",
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",
