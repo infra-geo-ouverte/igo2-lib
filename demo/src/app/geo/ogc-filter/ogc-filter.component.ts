@@ -377,7 +377,7 @@ export class AppOgcFilterComponent {
           } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',
-      maxDate: '2018-12-31T00:00:00-05:00',
+      maxDate: '2025-12-31T00:00:00-05:00',
       stepDate: 'P1D'
     };
 
@@ -397,6 +397,61 @@ export class AppOgcFilterComponent {
                 },
                 stroke: {
                   color: 'black',
+                  width: 1
+                }
+              }
+            }
+          })
+        );
+      });
+
+    const datasourceDuringFilterTimeRestrictedToStep: WFSoptions = {
+      type: 'wfs',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/igo_gouvouvert.fcgi',
+      params: {
+        featureTypes: 'vg_observation_v_autre_wmst',
+        fieldNameGeometry: 'geometry',
+        maxFeatures: 10000,
+        version: '2.0.0',
+        outputFormat: undefined,
+        outputFormatDownload: 'SHP' // based on service capabilities
+      },
+      sourceFields: [
+        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
+      ],
+      ogcFilters: {
+        enabled: true,
+        editable: true,
+        allowedOperatorsType: OgcFilterOperatorType.All,
+        filters:
+          {
+            operator: 'During',
+            propertyName: 'date_observation',
+            begin: '2019-01-01 00:00:00',
+            restrictToStep: true
+          } as OgcFilterDuringOptions
+      },
+      minDate: '2016-01-01T00:00:00-05:00',
+      maxDate: '2025-12-31T00:00:00-05:00',
+      stepDate: 'P1M'
+    };
+
+    this.dataSourceService
+      .createAsyncDataSource(datasourceDuringFilterTimeRestrictedToStep)
+      .subscribe(dataSource => {
+        this.map.addLayer(
+          this.layerService.createLayer({
+            title: 'Embâcle (During, RestrictToStep, Step: P1M)',
+            id: '6',
+            source: dataSource,
+            style: {
+              circle: {
+                radius: 5,
+                fill: {
+                  color: 'black'
+                },
+                stroke: {
+                  color: 'red',
                   width: 1
                 }
               }
