@@ -210,14 +210,6 @@ export abstract class Layer {
                 const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
                 ogcFilters$.next(ogcFilters$.value);
               }
-              if (link.properties.indexOf('sourceFields') !== -1) {
-                console.log('layer', layer);
-                // layer.dataSource.options.sourceFields
-                /*const baseMaxResolution = layer.ol.get('maxResolution');
-                layer.ol.set('maxResolution', 0, false);
-                layer.ol.set('maxResolution', baseMaxResolution, false);
-                layer.minResolution = layer.minResolution;*/
-              }
             });
           });
       });
@@ -240,7 +232,6 @@ export abstract class Layer {
   }
 
   private transferOgcFiltersProperties(ogcFilters) {
-    // TODO Sourcefields
     // TODO timefilter
     // TODO Synced delete layer.
 
