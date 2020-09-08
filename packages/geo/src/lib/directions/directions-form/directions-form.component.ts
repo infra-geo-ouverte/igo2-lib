@@ -139,7 +139,6 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('onInit');
     this.queryService.queryEnabled = false;
     this.focusOnStop = false;
     this.browserLanguage = this.languageService.getLanguage();
