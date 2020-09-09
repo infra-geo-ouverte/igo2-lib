@@ -231,13 +231,7 @@ export class VectorLayer extends Layer {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url);
     interceptor.interceptXhr(xhr);
-    /*
-    const intercepted = interceptor.interceptXhr(xhr);
-    if (!intercepted) {
-      xhr.abort();
-      return;
-    }
-    */
+
     const onError = () => vectorSource.removeLoadedExtent(extent);
     xhr.onerror = onError;
     xhr.onload = () => {
