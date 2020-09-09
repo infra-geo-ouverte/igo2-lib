@@ -31,7 +31,13 @@
         ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)" matTooltipShowDelay="500">
          <button mat-icon-button [disabled]="layersAreAllVisible && !onlyVisible"
            [color]="onlyVisible ? 'warn' : 'primary'" (click)="toggleOnlyVisible()">
-           <mat-icon [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'filter'"></mat-icon>
+           <mat-icon
+             matBadge
+             [matBadgeDisabled]="layersAreAllVisible && !onlyVisible"
+             igoMatBadgeIcon="eye"
+             igoMatBadgeInverseColor="true"
+             [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'filter'">
+           </mat-icon>
          </button>
        </div>
 

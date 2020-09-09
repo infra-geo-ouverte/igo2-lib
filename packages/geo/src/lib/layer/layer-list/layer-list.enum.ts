@@ -3,7 +3,7 @@ export enum LayerListControlsEnum {
   never = 'never',
   default = 'default'
 }
-export enum LayerListiSelectVisibleEnum {
+export enum LayerListSelectVisibleEnum {
   ALL_VISIBLE = 'ALL_VISIBLE',
   ALL_HIDDEN = 'ALL_HIDDEN',
   MIXED = 'MIXED',
