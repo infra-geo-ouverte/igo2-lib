@@ -11,8 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 export class IgoMatBadgeIconModule {
   static forRoot(): ModuleWithProviders<IgoMatBadgeIconModule> {
     return {
-        ngModule: IgoMatBadgeIconModule,
-        providers: []
+      ngModule: IgoMatBadgeIconModule,
+      providers: []
     };
-}
+  }
 }
