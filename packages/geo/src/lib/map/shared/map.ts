@@ -311,7 +311,7 @@ export class IgoMap {
           return;
         }
         link.linkedIds.map(linkedId => {
-          const layerToApply = this.layers.find(layer => layer.options.linkedLayers && layer.options.linkedLayers.linkId === linkedId);
+          const layerToApply = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
           if (layerToApply) {
             layersToRemove.push(layerToApply);
           }
@@ -320,7 +320,7 @@ export class IgoMap {
     } else {
       // search for parent layer
       this.layers.map(layer => {
-        if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
+        if (layer.options.linkedLayers?.links) {
           layer.options.linkedLayers.links.map(l => {
             if (
               l.syncedDelete && l.bidirectionnal !== false &&
