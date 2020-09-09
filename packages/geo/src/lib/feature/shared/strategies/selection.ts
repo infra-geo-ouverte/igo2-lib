@@ -238,7 +238,7 @@ export class FeatureStoreSelectionStrategy extends EntityStoreStrategy {
     const reverse = !exclusive;
     const olFeatures = event.map.getFeaturesAtPixel(event.pixel, {
       hitTolerance: this.options.hitTolerance || 0,
-      layerFilter: (olLayer) => {
+      layerFilter: olLayer => {
         const storeOlLayer = this.stores.find((store: FeatureStore) => {
           return store.layer.ol === olLayer;
         });

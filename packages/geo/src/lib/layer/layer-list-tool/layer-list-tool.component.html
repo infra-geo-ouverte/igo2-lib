@@ -1,5 +1,3 @@
-
-
   <mat-list-item>
       <mat-form-field class="inputFilter" [floatLabel]="floatLabel">
         <input
@@ -28,13 +26,18 @@
         </button>
       </div>
 
-
        <div [matTooltip]="onlyVisible ?
         ('igo.geo.layer.resetLayersList' | translate) :
         ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)" matTooltipShowDelay="500">
          <button mat-icon-button [disabled]="layersAreAllVisible && !onlyVisible"
            [color]="onlyVisible ? 'warn' : 'primary'" (click)="toggleOnlyVisible()">
-           <mat-icon [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'eye'"></mat-icon>
+           <mat-icon
+             matBadge
+             [matBadgeDisabled]="layersAreAllVisible && !onlyVisible"
+             igoMatBadgeIcon="eye"
+             igoMatBadgeInverseColor="true"
+             [svgIcon]="onlyVisible ? 'sort-variant-remove' : 'filter'">
+           </mat-icon>
          </button>
        </div>
 

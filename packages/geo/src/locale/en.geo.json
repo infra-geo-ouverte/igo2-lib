@@ -73,6 +73,10 @@
           "CSVcomma": "CSV (comma delimited)",
           "CSVsemicolon": "CSV (semicolon delimited)",
           "URL": "URL"
+        },
+        "encoding": {
+          "LATIN1": "LATIN-1",
+          "UTF8": "UTF-8"
         }
       },
       "importExportForm": {
@@ -81,6 +85,7 @@
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
+        "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
         "exportFeatureInExtent": "Export only features in map extent",
         "exportNoLayersExportable": "There is no exportable layer in your map",
@@ -153,6 +158,7 @@
       "layer": {
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
+        "hideSelectedLayers": "Hide selected layers",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
@@ -167,6 +173,7 @@
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
+        "showSelectedLayers": "Show selected layers",
         "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
         "deleteKeyword": "Delete the keyword",
         "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",
@@ -382,6 +389,7 @@
       "targetHtmlUrl": "Open the external link",
       "searchByCoord": "Search by coordinates",
       "searchByName": "Search by name",
+      "seeRouting": "See routing",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",

@@ -64,7 +64,7 @@
     </button>
     <button mat-icon-button tooltip-position="below" matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.directionsForm.resetDirectionsBtn' | translate" *ngIf="routesResults" color="warn"
-      (click)="resetForm()">
+      (click)="resetForm(true)">
       <mat-icon svgIcon="file-restore"></mat-icon>
     </button>
     <button mat-icon-button *ngIf="routesResults" tooltip-position="below" matTooltipShowDelay="500"

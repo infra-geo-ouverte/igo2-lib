@@ -73,6 +73,10 @@
           "CSVcomma": "CSV (séparateur virgule)",
           "CSVsemicolon": "CSV (séparateur point-virgule)",
           "URL": "URL"
+        },
+        "encoding": {
+          "LATIN1": "LATIN-1",
+          "UTF8": "UTF-8"
         }
       },
       "importExportForm": {
@@ -81,6 +85,7 @@
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",
+        "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",
         "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
         "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
@@ -152,6 +157,7 @@
       },
       "layer": {
         "hideLayer": "Masquer la couche",
+        "hideSelectedLayers": "Masquer les couches sélectionnées",
         "lowerLayer": "Mettre en arrière",
         "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
@@ -167,10 +173,11 @@
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
+        "showSelectedLayers": "Afficher les couches sélectionnées",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
-        "subsetLayersListOnlyVisible": "Conserver les couches visibles",
-        "subsetLayersListOnlyInRange": "Conserver les couches de la plage d'échelle active",
+        "subsetLayersListOnlyVisible": "Conserver seulement les couches visibles",
+        "subsetLayersListOnlyInRange": "Conserver seulement les couches de la plage d'échelle active",
         "sortAlphabetically": "Trier la liste des couches en ordre alphabétique",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Rétablir l'affichage de l'ensemble des couches",
@@ -382,6 +389,7 @@
       "targetHtmlUrl": "Ouvrir le lien externe",
       "searchByCoord": "Rechercher par coordonnées",
       "searchByName": "Rechercher par nom",
+      "seeRouting": "Voir l'itinéraire",
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",
