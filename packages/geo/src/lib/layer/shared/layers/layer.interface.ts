@@ -37,15 +37,18 @@ export interface LayersLink {
 export interface LayersLinkProperties {
   bidirectionnal?: boolean;
   linkedIds: string[];
+  syncedDelete: boolean;
   properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter
-  // ( todo Sourcefields, timeFilter,zIndex sync deletion)
+  // TODO timeFilter,zIndex
+  // TODO Sourcefields at layer creation
 }
 
 export interface ComputedLink {
   srcId: string;
   dstId: string;
   properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter
-  // ( todo Sourcefields, timeFilter,zIndex sync deletion)
+  // TODO timeFilter,zIndex
+  // TODO Sourcefields at layer creation
   bidirectionnal?: boolean;
   srcProcessed?: boolean;
 }

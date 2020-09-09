@@ -183,30 +183,30 @@ export abstract class Layer {
           .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
           .map(layer => {
             layer.options.linkedLayers.links.map(link => {
-              if (link.properties.indexOf('visible') !== -1) {
+              if (link.properties?.indexOf('visible') !== -1) {
                 layer.ol.set('visible', !(layer.visible), false);
                 layer.ol.set('visible', !(layer.visible), false);
                 layer.visible = layer.visible;
               }
-              if (link.properties.indexOf('opacity') !== -1) {
+              if (link.properties?.indexOf('opacity') !== -1) {
                 const baseOpacity = layer.ol.get('opacity');
                 layer.ol.set('opacity', 0, false);
                 layer.ol.set('opacity', baseOpacity, false);
                 layer.opacity = layer.opacity;
               }
-              if (link.properties.indexOf('minResolution') !== -1) {
+              if (link.properties?.indexOf('minResolution') !== -1) {
                 const baseMinResolution = layer.ol.get('minResolution');
                 layer.ol.set('minResolution', 0, false);
                 layer.ol.set('minResolution', baseMinResolution, false);
                 layer.minResolution = layer.minResolution;
               }
-              if (link.properties.indexOf('maxResolution') !== -1) {
+              if (link.properties?.indexOf('maxResolution') !== -1) {
                 const baseMaxResolution = layer.ol.get('maxResolution');
                 layer.ol.set('maxResolution', 0, false);
                 layer.ol.set('maxResolution', baseMaxResolution, false);
                 layer.minResolution = layer.minResolution;
               }
-              if (link.properties.indexOf('ogcFilters') !== -1) {
+              if (link.properties?.indexOf('ogcFilters') !== -1) {
                 const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
                 ogcFilters$.next(ogcFilters$.value);
               }
@@ -304,7 +304,6 @@ export abstract class Layer {
     const key = layerChange.key;
     const layerChangeProperties = layerChange.target.getProperties();
     const newValue = layerChangeProperties[key];
-    console.log(key);
     if (['visible', 'opacity', 'minResolution', 'maxResolution'].indexOf(key) === -1) {
       return;
     }
