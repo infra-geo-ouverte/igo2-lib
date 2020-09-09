@@ -6,8 +6,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
-  OnDestroy,
-  AfterViewInit
+  OnDestroy
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -33,9 +32,7 @@ import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-ta
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
-
-  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+export class EntityTableComponent implements OnInit, OnDestroy  {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
