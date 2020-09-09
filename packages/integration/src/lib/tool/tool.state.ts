@@ -46,6 +46,4 @@ export class ToolState {
       this.openSidenav$.next(true);
     }
   }
-
-  constructor(private toolService: ToolService) {}
 }
