@@ -57,13 +57,7 @@ export class VectorTileLayer extends Layer {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url);
       interceptor.interceptXhr(xhr);
-      /*
-      const intercepted = interceptor.interceptXhr(xhr);
-      if (!intercepted) {
-        xhr.abort();
-        return;
-      }
-      */
+
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
       }
