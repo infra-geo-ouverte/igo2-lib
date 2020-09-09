@@ -7,12 +7,13 @@ matTooltipShowDelay="500"
 [matTooltip]="(tooltip$ | async) | translate"
 [color]="(isPreview$ | async) ? '' : added ? 'warn' : ''"
 (click)="onToggleClick($event)">
-<mat-icon 
+<mat-icon
   matBadge
   igoMatBadgeIcon="eye-off"
+  igoMatBadgeInverseColor="true"
   [matBadgeHidden]="(inRange$ | async)"
-  matBadgeColor="primary" 
-  matBadgeSize="small" 
+  matBadgeDisabled="true"
+  matBadgeSize="small"
   matBadgePosition="after"
   [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
 </mat-icon>

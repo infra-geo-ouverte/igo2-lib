@@ -7,7 +7,8 @@ import {
   Output,
   EventEmitter,
   Renderer2,
-  ElementRef
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -96,6 +97,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   @Input() selectionMode;
 
+  @Input() changeDetection;
+
   get removable(): boolean {
     return this.layer.options.removable !== false;
   }
@@ -116,7 +119,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   constructor(
     private networkService: NetworkService,
     private renderer: Renderer2,
-    private elRef: ElementRef) {}
+    private elRef: ElementRef,
+    private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     if (
@@ -147,6 +151,10 @@ export class LayerItemComponent implements OnInit, OnDestroy {
         this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
       }
     });
+
+    if (this.changeDetection) {
+      this.changeDetection.subscribe(() => this.cdRef.detectChanges());
+    }
   }
 
   ngOnDestroy() {

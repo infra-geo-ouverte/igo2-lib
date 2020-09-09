@@ -4,7 +4,8 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  EventEmitter
+  EventEmitter,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
@@ -25,7 +26,7 @@ import {
   handleFileExportSuccess
 } from '../shared/export.utils';
 import { ExportOptions } from '../shared/export.interface';
-import { ExportFormat } from '../shared/export.type';
+import { ExportFormat, EncodingFormat } from '../shared/export.type';
 import { ExportService } from '../shared/export.service';
 import { ImportService } from '../shared/import.service';
 import {
@@ -50,16 +51,19 @@ import { MatSelectChange } from '@angular/material/select';
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
   public formats$ = new BehaviorSubject(undefined);
+  public encodings$ = new BehaviorSubject(undefined);
   public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
     []
   );
   public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
+  public controlFormat = 'format';
 
   private layers$$: Subscription;
   private exportableLayers$$: Subscription;
   private formats$$: Subscription;
+  private encodings$$: Subscription;
   private formLayer$$: Subscription;
   private exportOptions$$: Subscription;
 
@@ -108,7 +112,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private styleListService: StyleListService,
     private styleService: StyleService,
     private formBuilder: FormBuilder,
-    private config: ConfigService
+    private config: ConfigService,
+    private cdRef: ChangeDetectorRef
   ) {
     this.loadConfig();
     this.buildForm();
@@ -195,6 +200,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }
       });
 
+    this.encodings$$ = this.encodings$
+      .pipe(skipWhile((encodings) => !encodings))
+      .subscribe((encodings) => {
+        if (Object.keys(encodings).length === 1) {
+          this.form.patchValue({ encoding: encodings[Object.keys(encodings)[0]] });
+        }
+      });
+
     this.exportableLayers$$ = this.exportableLayers$
       .pipe(skipWhile((layers) => !layers))
       .subscribe((layers) => {
@@ -202,6 +215,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.form.patchValue({ layers: layers[0].id });
         }
       });
+
+    this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
+      if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
+        this.form.patchValue({ encoding: EncodingFormat.LATIN1});
+      } else {
+        this.form.patchValue({ encoding: EncodingFormat.UTF8});
+      }
+      this.cdRef.detectChanges();
+    });
   }
 
   private getWorkspaceByLayerId(id: string): Workspace {
@@ -254,6 +276,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.layers$$.unsubscribe();
     this.exportableLayers$$.unsubscribe();
     this.formats$$.unsubscribe();
+    this.encodings$$.unsubscribe();
     this.formLayer$$.unsubscribe();
     if (this.exportOptions$$) {
       this.exportOptions$$.unsubscribe();
@@ -353,7 +376,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
 
       this.exportService
-        .export(olFeatures, data.format, filename, this.map.projection)
+        .export(olFeatures, data.format, filename, data.encoding, this.map.projection)
         .subscribe(
           () => {},
           (error: Error) => this.onFileExportError(error),
@@ -371,6 +394,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         format: ['', [Validators.required]],
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
+        encoding: [EncodingFormat.UTF8, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]],
         name: ['', [Validators.required]]
       });
@@ -379,6 +403,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         format: ['', [Validators.required]],
         layers: [[], [Validators.required]],
         layersWithSelection: [[]],
+        encoding: [EncodingFormat.UTF8, [Validators.required]],
         featureInMapExtent: [false, [Validators.required]]
       });
     }
@@ -427,6 +452,21 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.forceNaming = this.config.getConfig('importExport.forceNaming');
     }
     this.computeFormats();
+    this.loadEncodings();
+  }
+
+  public encodingDefaultValue(format: ExportFormat) {
+    if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
+      this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
+      return EncodingFormat.LATIN1;
+    } else {
+      this.form.patchValue({ encoding: EncodingFormat.UTF8 });
+      return EncodingFormat.UTF8;
+    }
+  }
+
+  private loadEncodings() {
+    this.encodings$.next(EncodingFormat);
   }
 
   private computeFormats(layers?: AnyLayer[]) {

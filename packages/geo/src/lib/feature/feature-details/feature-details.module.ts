@@ -6,6 +6,7 @@ import { IgoLanguageModule } from '@igo2/core';
 import { IgoKeyValueModule } from '@igo2/common';
 
 import { FeatureDetailsComponent } from './feature-details.component';
+import { FeatureDetailsDirective } from './feature-details.directive';
 
 /**
  * @ignore
@@ -17,7 +18,11 @@ import { FeatureDetailsComponent } from './feature-details.component';
     IgoLanguageModule,
     IgoKeyValueModule
   ],
-  exports: [FeatureDetailsComponent],
-  declarations: [FeatureDetailsComponent]
+  exports: [
+    FeatureDetailsComponent,
+    FeatureDetailsDirective],
+  declarations: [
+    FeatureDetailsComponent,
+    FeatureDetailsDirective]
 })
 export class IgoFeatureDetailsModule {}

@@ -1,3 +1,4 @@
+import { ArcGISRestDataSourceOptions } from './../datasource/shared/datasources/arcgisrest-datasource.interface';
 import { Md5 } from 'ts-md5';
 
 import { uuid } from '@igo2/utils';
@@ -18,6 +19,7 @@ export function generateIdFromSourceOptions(options: DataSourceOptions): string 
     wmts: generateWMTSIdFromSourceOptions,
     xyz: generateXYZIdFromSourceOptions,
     feature: generateFeatureIdFromSourceOptions,
+    arcgisrest: generateArcgisRestIdFromSourceOptions,
     osm: (_options: AnyDataSourceOptions) => 'OSM'
   };
   const generator = generators[options.type] || generateId;
@@ -65,6 +67,18 @@ export function generateXYZIdFromSourceOptions(options: WMTSDataSourceOptions) {
 export function generateFeatureIdFromSourceOptions(options: WMTSDataSourceOptions) {
   if (! options.url) { return generateId(options); }
   const chain = 'feature' + options.url;
+  return Md5.hashStr(chain) as string;
+}
+
+/**
+ * Generate a id from ArcGIS Rest data source options
+ * @param options ArcGIS Rest data source options
+ * @returns A md5 hash of the url and layers
+ */
+export function generateArcgisRestIdFromSourceOptions(options: ArcGISRestDataSourceOptions) {
+  const layers = options.layer;
+  const url = options.url.charAt(0) === '/' ? window.location.origin + options.url : options.url;
+  const chain = 'arcgis' + url + layers;
   return Md5.hashStr(chain) as string;
 }
 

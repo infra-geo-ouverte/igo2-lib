@@ -8,7 +8,8 @@ import { Observable, Observer } from 'rxjs';
 import * as olformat from 'ol/format';
 import OlFeature from 'ol/Feature';
 
-import { ExportFormat } from './export.type';
+import { ExportFormat, EncodingFormat } from './export.type';
+
 import {
   ExportInvalidFileError,
   ExportNothingToExportError
@@ -46,6 +47,7 @@ export class ExportService {
     olFeatures: OlFeature[],
     format: ExportFormat,
     title: string,
+    encoding: EncodingFormat,
     projectionIn = 'EPSG:4326',
     projectionOut = 'EPSG:4326'
   ): Observable<void> {
@@ -55,6 +57,7 @@ export class ExportService {
       exportOlFeatures,
       format,
       title,
+      encoding,
       projectionIn,
       projectionOut
     );
@@ -111,6 +114,7 @@ export class ExportService {
     olFeatures: OlFeature[],
     format: ExportFormat,
     title: string,
+    encoding: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ): Observable<void> {
@@ -143,6 +147,7 @@ export class ExportService {
           observer,
           format,
           title,
+          encoding,
           projectionIn,
           projectionOut
         );
@@ -188,6 +193,7 @@ export class ExportService {
     observer: Observer<void>,
     format: string,
     title: string,
+    encodingType: EncodingFormat,
     projectionIn: string,
     projectionOut: string
   ) {
@@ -209,8 +215,17 @@ export class ExportService {
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
 
-    form.acceptCharset = 'UTF-8';
-    form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
+    if (encodingType === EncodingFormat.UTF8) {
+      form.acceptCharset = 'UTF-8';
+      form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
+    } else if (encodingType === EncodingFormat.LATIN1) {
+      const enctype = 'ISO-8859-1';
+      const encoding = document.createElement('input');
+      encoding.setAttribute('type', 'hidden');
+      encoding.setAttribute('name', 'encoding');
+      encoding.setAttribute('value', enctype);
+      form.appendChild(encoding);
+    }
 
     if (format === 'CSVsemicolon') {
       const options = document.createElement('input');

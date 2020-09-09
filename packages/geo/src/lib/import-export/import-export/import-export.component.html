@@ -105,6 +105,20 @@
     </mat-form-field>
   </div>
 
+  <div class="igo-input-container" *ngIf="form.value.format === 'CSVcomma' || form.value.format === 'CSVsemicolon'">
+    <mat-form-field>
+      <mat-label>{{'igo.geo.importExportForm.encodingPlaceholder' | translate}}</mat-label>
+      <mat-select
+        formControlName="encoding">
+        <ng-container *ngIf="(encodings$ | async).length !== 0">
+          <mat-option *ngFor="let encoding of (encodings$ | async) | keyvalue" [value]="encoding.key">
+            {{'igo.geo.export.encoding.' + encoding.value | translate}}
+          </mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   <div class="export-options mat-typography" *ngIf="form.value.format !== 'URL'">
     <mat-slide-toggle
         formControlName="featureInMapExtent"

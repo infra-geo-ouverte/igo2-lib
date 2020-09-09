@@ -74,6 +74,19 @@ export const environment: Environment = {
           tooltipType: 'abstract' // or title
         },
         {
+          id: 'arcgisrestcompletecatalog',
+          title: 'ArcGIS Rest complete catalog',
+          url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
+          type: 'arcgisrest'
+        },
+        {
+          id: 'arcgisrestcatalog',
+          title: 'ArcGIS Rest focus catalog',
+          url: 'https://gisp.dfo-mpo.gc.ca/arcgis/rest/services/FGP/CSAS_Corals_Sponges_2010_FR/MapServer',
+          type: 'arcgisrest',
+          regFilters: ['^10$']
+        },
+        {
           id: 'fusion_catalog',
           title: '(composite catalog) fusion catalog',
           composite: [

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter, Output } from '@angular/core';
 
 import { FeatureStore } from '@igo2/geo';
 import { MapState } from '../map/map.state';
@@ -25,6 +25,12 @@ export class DirectionState {
     map: this.mapState.map
   });
 
+  public routeFromFeatureDetail = false;
+
   constructor(private mapState: MapState) {}
+
+  setRouteFromFeatureDetail(value: boolean) {
+    this.routeFromFeatureDetail = value;
+  }
 
 }

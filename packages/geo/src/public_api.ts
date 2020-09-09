@@ -19,6 +19,7 @@ export * from './lib/workspace/workspace.module';
 export * from './lib/feature/feature.module';
 export * from './lib/feature/feature-form/feature-form.module';
 export * from './lib/feature/feature-details/feature-details.module';
+export * from './lib/feature/feature-details/feature-details.directive';
 export * from './lib/filter/filter.module';
 export * from './lib/geometry/geometry.module';
 export * from './lib/geometry/geometry-form-field/geometry-form-field.module';
