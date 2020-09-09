@@ -225,7 +225,7 @@ export class VectorLayer extends Layer {
    * @param interceptor the interceptor of the data
    * @param extent the extent of the requested data
    * @param resolution the current resolution
-   * @param projection the projection to retrieve the data 
+   * @param projection the projection to retrieve the data
    */
   private customLoader(vectorSource, url, interceptor, extent, resolution, projection) {
     const xhr = new XMLHttpRequest();
