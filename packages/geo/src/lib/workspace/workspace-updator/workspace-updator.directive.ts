@@ -11,7 +11,7 @@ import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasourc
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
-import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+// import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
 
 @Directive({
@@ -28,7 +28,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
 
   constructor(
     private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService,
+    // private wmsWorkspaceService: WmsWorkspaceService,
     private featureWorkspaceService: FeatureWorkspaceService
   ) {}
 
@@ -81,8 +81,8 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
     if (layer.dataSource instanceof WFSDataSource) {
       const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return wfsWks;
-    } else if (layer.dataSource instanceof WMSDataSource) {
-      return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
+    /*} else if (layer.dataSource instanceof WMSDataSource) {
+      return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);*/
     } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
       const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
       return featureWks;
