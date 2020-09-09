@@ -15,8 +15,9 @@
     <mat-icon
        matBadge
        igoMatBadgeIcon="eye-off"
+       igoMatBadgeInverseColor="true"
        [matBadgeHidden]="isInResolutionsRange()"
-       matBadgeColor="accent"
+       matBadgeDisabled="true"
        matBadgeSize="small"
        matBadgePosition="after"
        [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">
