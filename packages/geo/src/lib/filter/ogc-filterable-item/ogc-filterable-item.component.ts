@@ -180,7 +180,7 @@ export class OgcFilterableItemComponent implements OnInit {
         ogcLayer.filters = this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
           activeFilters
         );
-        this.layer.dataSource.ol.clear();
+        this.layer.dataSource.ol.refresh();
       } else if (
         this.layer.dataSource.options.type === 'wms' &&
         ogcFilters.enabled
