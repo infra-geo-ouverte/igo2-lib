@@ -9,10 +9,10 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
 import { FloatLabelType } from '@angular/material/form-field';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
-import { FloatLabelType } from '@angular/material/form-field';
+
 import * as moment_ from 'moment';
 const moment = moment_;
 
