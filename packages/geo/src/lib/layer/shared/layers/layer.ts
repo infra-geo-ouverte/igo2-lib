@@ -180,7 +180,7 @@ export abstract class Layer {
       .pipe(first())
       .subscribe(() => {
         this.map.layers
-          .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
+          .filter(layer => layer.options.linkedLayers?.links)
           .map(layer => {
             layer.options.linkedLayers.links.map(link => {
               if (link.properties?.indexOf('visible') !== -1) {
@@ -219,7 +219,6 @@ export abstract class Layer {
     if (!this.map) {
       return;
     }
-    // not needed this.computeLayersRelation();
     this.ol.on('propertychange', evt => {
       this.transferCommonProperties(evt);
     });
@@ -249,7 +248,7 @@ export abstract class Layer {
           return;
         }
         link.linkedIds.map(linkedId => {
-          const layerToApply = this.map.layers.find(layer => layer.options.linkedLayers && layer.options.linkedLayers.linkId === linkedId);
+          const layerToApply = this.map.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
           if (layerToApply) {
             const layerType = layerToApply.ol.getProperties().sourceOptions.type;
             (layerToApply.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, false);
@@ -269,7 +268,7 @@ export abstract class Layer {
     } else {
       // search for parent layer
       this.map.layers.map(layer => {
-        if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
+        if (layer.options.linkedLayers?.links) {
           layer.options.linkedLayers.links.map(l => {
             if (l.properties && l.properties.indexOf('ogcFilters') !== -1 &&
               l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
@@ -300,11 +299,12 @@ export abstract class Layer {
 
   }
   private transferCommonProperties(layerChange) {
-    // TODO synced delete layer.
     const key = layerChange.key;
     const layerChangeProperties = layerChange.target.getProperties();
     const newValue = layerChangeProperties[key];
-    if (['visible', 'opacity', 'minResolution', 'maxResolution'].indexOf(key) === -1) {
+    const oldValue = layerChange.oldValue;
+
+    if (['zIndex', 'visible', 'opacity', 'minResolution', 'maxResolution'].indexOf(key) === -1) {
       return;
     }
     const linkedLayers = layerChangeProperties.linkedLayers as LayersLink;
@@ -314,16 +314,18 @@ export abstract class Layer {
     const currentLinkedId = linkedLayers.linkId;
     const currentLinks = linkedLayers.links;
     const isParentLayer = currentLinks ? true : false;
+
     if (isParentLayer) {
       // search for child layers
+      const silent = true;
       currentLinks.map(link => {
         if (!link.properties || link.properties.indexOf(key) === -1) {
           return;
         }
         link.linkedIds.map(linkedId => {
-          const layerToApply = this.map.layers.find(layer => layer.options.linkedLayers && layer.options.linkedLayers.linkId === linkedId);
+          const layerToApply = this.map.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
           if (layerToApply) {
-            layerToApply.ol.set(key, newValue, true);
+            layerToApply.ol.set(key, newValue, silent);
             if (key === 'visible') {
               layerToApply.visible$.next(newValue);
             }
@@ -332,48 +334,22 @@ export abstract class Layer {
       });
     } else {
       // search for parent layer
+      const silent = false;
       this.map.layers.map(layer => {
-        if (layer.options.linkedLayers && layer.options.linkedLayers.links) {
+        if (layer.options.linkedLayers?.links) {
           layer.options.linkedLayers.links.map(l => {
             if (l.properties && l.properties.indexOf(key) !== -1 &&
               l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
-              layer.ol.set(key, newValue, false);
-              if (key === 'visible') {
-                layer.visible$.next(newValue);
-              }
+                layer.ol.set(key, newValue, silent);
+                if (key === 'visible') {
+                  layer.visible$.next(newValue);
+                }
             }
           });
         }
       });
     }
   }
-
-  // private computeLayersRelation() {
-  //   if (!this.map) { return; }
-  //   this.map.status$
-  //     .pipe(first())
-  //     .subscribe(() => {
-  //       const computedLinks = [];
-  //       this.map.layers
-  //         .filter(layer => layer.options.linkedLayers && layer.options.linkedLayers.links)
-  //         .map(layer => {
-  //           const srcId = layer.options.linkedLayers.linkId;
-  //           layer.options.linkedLayers.links.map(link => {
-  //             const bidirectionnal = link.bidirectionnal !== undefined ? link.bidirectionnal : true;
-  //             link.linkedIds.map(linkedId => {
-  //               computedLinks.push(
-  //                 { srcId, dstId: linkedId, properties: link.properties, bidirectionnal, srcProcessed: undefined } as ComputedLink);
-  //             });
-  //           });
-  //         });
-
-  //       if (this.options.linkedLayers && this.options.linkedLayers.linkId) {
-  //         const linkId = this.options.linkedLayers.linkId;
-  //         this.options.linkedLayers.computedLinks =
-  //           computedLinks.filter(computedLink => computedLink.srcId === linkId || computedLink.dstId === linkId);
-  //       }
-  //     });
-  // }
 
   private observeResolution() {
     this.resolution$$ = this.map.viewController.resolution$.subscribe(() =>

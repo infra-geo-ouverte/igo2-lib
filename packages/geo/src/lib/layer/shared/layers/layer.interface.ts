@@ -39,16 +39,16 @@ export interface LayersLinkProperties {
   linkedIds: string[];
   syncedDelete: boolean;
   properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter
-  // TODO timeFilter,zIndex
-  // TODO Sourcefields at layer creation
+  // TODO timeFilter, zIndex
+  // TODO Sourcefields at layer creation because it is a static property
 }
 
 export interface ComputedLink {
   srcId: string;
   dstId: string;
   properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter
-  // TODO timeFilter,zIndex
-  // TODO Sourcefields at layer creation
+  // TODO timeFilter, zIndex
+  // TODO Sourcefields at layer creation because it is a static property
   bidirectionnal?: boolean;
   srcProcessed?: boolean;
 }

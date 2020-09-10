@@ -12,8 +12,8 @@ import {
 import type { TemplateRef } from '@angular/core';
 
 import { FloatLabelType } from '@angular/material/form-field';
-import { Layer } from '../shared';
-import { LayerListControlsEnum } from './layer-list.enum';
+import { Layer, LayersLink } from '../shared';
+import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
 import {
   BehaviorSubject,
@@ -209,12 +209,16 @@ export class LayerListComponent implements OnInit, OnDestroy {
     }
   }
 
+  get layerListDisplacement(): typeof LayerListDisplacement {
+    return LayerListDisplacement;
+  }
+
   public toggleOpacity = false;
 
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
 
-  constructor(private elRef: ElementRef) {}
+  constructor(private elRef: ElementRef) { }
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -325,6 +329,56 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement) {
+    const layersToMove = [activeLayer];
+    const linkedLayers = activeLayer.options.linkedLayers as LayersLink;
+    if (!linkedLayers) {
+      if (actiontype === LayerListDisplacement.Raise) {
+        activeLayer.map.raiseLayer(activeLayer);
+      } else if (actiontype === LayerListDisplacement.Lower) {
+        activeLayer.map.lowerLayer(activeLayer);
+      }
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+
+    if (isParentLayer) {
+      // search for child layers
+      currentLinks.map(link => {
+        if (!link.properties || link.properties.indexOf('zIndex') === -1) {
+          return;
+        }
+        link.linkedIds.map(linkedId => {
+          const layerToApply = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
+          if (layerToApply) {
+            layersToMove.push(layerToApply);
+          }
+        });
+      });
+    } else {
+      // search for parent layer
+      this.map.layers.map(parentLayer => {
+        if (parentLayer.options.linkedLayers?.links) {
+          parentLayer.options.linkedLayers.links.map(l => {
+            if (
+              l.properties?.indexOf('zIndex') !== -1 &&
+              l.bidirectionnal !== false &&
+              l.linkedIds.indexOf(currentLinkedId) !== -1) {
+              layersToMove.push(parentLayer);
+            }
+          });
+        }
+      });
+    }
+    if (actiontype === LayerListDisplacement.Raise) {
+      this.raiseLayers(isParentLayer ? layersToMove : layersToMove.reverse(), false);
+    } else if (actiontype === LayerListDisplacement.Lower) {
+      this.lowerLayers(isParentLayer ? layersToMove : layersToMove.reverse(), false);
+    }
+  }
+
   /*
    * For selection mode disabled attribute
    */
@@ -372,7 +426,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  raiseLayers(layers: Layer[]) {
+  raiseLayers(layers: Layer[], fromUi: boolean = true) {
     const layersToRaise = [];
     for (const layer of layers) {
       const index = this.layers.findIndex((lay) => lay.id === layer.id);
@@ -381,14 +435,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
     this.map.raiseLayers(layersToRaise);
-    setTimeout(() => {
-      const elements = this.computeElementRef();
-      if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-        elements[0].scrollTop = elements[1].offsetParent.offsetTop;
-      }
-    }, 100);
+    if (fromUi) {
+      setTimeout(() => {
+        const elements = this.computeElementRef();
+        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
+          elements[0].scrollTop = elements[1].offsetParent.offsetTop;
+        }
+      }, 100);
+    }
   }
-
   /*
    * For selection mode disabled attribute
    */
@@ -438,7 +493,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  lowerLayers(layers: Layer[]) {
+  lowerLayers(layers: Layer[], fromUi: boolean = true) {
     const layersToLower = [];
     for (const layer of layers) {
       const index = this.layers.findIndex((lay) => lay.id === layer.id);
@@ -447,17 +502,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
     this.map.lowerLayers(layersToLower);
-    setTimeout(() => {
-      const elements = this.computeElementRef('lower');
-      if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-        elements[0].scrollTop =
-          elements[1].offsetParent.offsetTop +
-          elements[1].offsetParent.offsetHeight -
-          elements[0].clientHeight;
-      }
-    }, 100);
+    if (fromUi) {
+      setTimeout(() => {
+        const elements = this.computeElementRef('lower');
+        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
+          elements[0].scrollTop =
+            elements[1].offsetParent.offsetTop +
+            elements[1].offsetParent.offsetHeight -
+            elements[0].clientHeight;
+        }
+      }, 100);
+    }
   }
-
   private next() {
     this.change$.next();
   }
