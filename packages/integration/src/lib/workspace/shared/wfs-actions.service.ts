@@ -5,7 +5,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   WfsWorkspace,
   mapExtentStrategyActiveToolTip,
-  FeatureMotionStrategyActiveToolTip,
+  featureMotionStrategyActiveToolTip,
   FeatureStoreSelectionStrategy,
   FeatureMotion,
   noElementSelected,
@@ -113,7 +113,7 @@ export class WfsActionsService implements OnDestroy  {
         id: 'zoomAuto',
         checkbox: true,
         title: 'igo.geo.workspace.zoomAuto.title',
-        tooltip: FeatureMotionStrategyActiveToolTip(workspace),
+        tooltip: featureMotionStrategyActiveToolTip(workspace),
         checkCondition: this.zoomAuto$,
         handler: () => {
           this.handleZoomAuto(workspace);
