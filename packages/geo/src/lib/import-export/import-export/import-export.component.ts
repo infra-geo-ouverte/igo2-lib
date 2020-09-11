@@ -317,7 +317,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   handleExportFormSubmit(data: ExportOptions) {
-    console.log('data', data, this.form);
     this.loading$.next(true);
     data.layers.forEach((layer) => {
       const lay = this.map.getLayerById(layer);
