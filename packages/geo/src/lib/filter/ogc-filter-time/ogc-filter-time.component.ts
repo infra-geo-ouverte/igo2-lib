@@ -291,7 +291,7 @@ export class OgcFilterTimeComponent implements OnInit {
         { length: (this.endHourFormControl.value - 0) / this.handleHourIncrement() + 1}, (_, i) => 0 + (i * this.handleHourIncrement()));
     } else {
       this.beginHours = Array.from(
-        { length: (24 - 0) / this.handleHourIncrement() + 1}, (_, i) => 0 + (i * this.handleHourIncrement()));
+        { length: (23 - 0) / this.handleHourIncrement() + 1}, (_, i) => 0 + (i * this.handleHourIncrement()));
     }
     this.beginHourFormControl.setValue(this.beginValue.getHours());
   }
@@ -299,11 +299,11 @@ export class OgcFilterTimeComponent implements OnInit {
   fullEndHoursArray(checkEndValue?) {
     if (checkEndValue) {
       this.endHours = Array.from(
-        { length: (24 - this.beginHourFormControl.value) / this.handleHourIncrement() + 1}, (_, i) =>
+        { length: (23 - this.beginHourFormControl.value) / this.handleHourIncrement() + 1}, (_, i) =>
             this.beginHourFormControl.value + (i * this.handleHourIncrement())
       );
     } else {
-      this.endHours = Array.from({ length: (24 - 0) / this.handleHourIncrement() + 1}, (_, i) =>
+      this.endHours = Array.from({ length: (23 - 0) / this.handleHourIncrement() + 1}, (_, i) =>
         0 + (i * this.handleHourIncrement())
       );
     }
