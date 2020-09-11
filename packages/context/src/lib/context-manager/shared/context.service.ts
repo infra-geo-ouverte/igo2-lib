@@ -526,9 +526,10 @@ export class ContextService {
 
     layers.forEach((layer) => {
       const layerFound = currentContext.layers.find(
-        (contextLayer) =>
-          layer.id === contextLayer.source.id && !contextLayer.baseLayer
-      );
+        (contextLayer) => {
+          const source = contextLayer.source;
+          return source && layer.id === source.id && !contextLayer.baseLayer;
+        });
 
       if (layerFound) {
         let layerStyle = layerFound[`style`];
