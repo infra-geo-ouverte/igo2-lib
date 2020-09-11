@@ -88,8 +88,7 @@ export class FlexibleComponent implements OnInit {
       expanded: this.expanded
     };
 
-    const media = this.mediaService.media$.value;
-    if (media === 'mobile') {
+    if (this.mediaService.isMobile()) {
       Object.assign(sizes, {
         initial: this.initialMobile,
         collapsed: this.collapsedMobile,

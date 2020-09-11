@@ -72,10 +72,6 @@ export class MediaService {
 
   isMobile(): boolean {
     const media = this.getMedia();
-    if (media === 'mobile') {
-      return true;
-    } else {
-      return false;
-    }
+    return media === 'mobile';
   }
 }
