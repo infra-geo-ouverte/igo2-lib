@@ -2,7 +2,7 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  OnInit,
+  OnChanges,
   ViewChild,
   Output,
   EventEmitter,
@@ -23,7 +23,7 @@ import { EntityTablePaginatorOptions } from './entity-table-paginator.interface'
   styleUrls: ['./entity-table-paginator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
+export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
 
   public disabled: boolean = false;
   public hidePageSize: boolean = false;
@@ -59,11 +59,12 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
    */
   @Output() paginatorChange: EventEmitter<MatPaginator> = new EventEmitter<MatPaginator>();
 
-  constructor(private languageService: LanguageService, private mediaService: MediaService) {}
+  constructor(private languageService: LanguageService) {}
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.unsubscribeAll();
     this.count$$ = this.store.stateView.count$.subscribe((count) => {
       this.length = count;
       this.emitPaginator();
@@ -82,13 +83,13 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
     this.pageIndex = this.paginatorOptions?.pageIndex || this.pageIndex;
     this.pageSize = this.paginatorOptions?.pageSize || this.pageSize;
     this.pageSizeOptions = this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
-    if (this.mediaService.isMobile()) {
+    /*if (this.mediaService.isMobile()) {
       this.showFirstLastButtons = false;
       this.hidePageSize = true;
-    } else {
-      this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
-      this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
-    }
+    } else {*/
+    this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
+    this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
+    // }
   }
 
   translateLabels() {
@@ -134,10 +135,14 @@ export class EntityTablePaginatorComponent implements OnInit, OnDestroy {
     return `${startIndex + 1} - ${endIndex} ${of.value} ${length}`;
   }
 
-  ngOnDestroy(): void {
-    this.entitySortChange$$.unsubscribe();
+  private unsubscribeAll() {
     this.paginationLabelTranslation$$.map(sub => sub.unsubscribe());
-    this.count$$.unsubscribe();
+    if (this.count$$) { this.count$$.unsubscribe(); }
+    if (this.entitySortChange$$) { this.entitySortChange$$.unsubscribe(); }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll();
   }
 
   emitPaginator() {
