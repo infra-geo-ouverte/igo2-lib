@@ -27,17 +27,47 @@ const moment = moment_;
 export class OgcFilterWriter {
   private filterSequence: OgcInterfaceFilterOptions[] = [];
   public operators = {
-    [OgcFilterOperator.PropertyIsEqualTo as string]: { spatial: false, fieldRestrict: [] },
-    [OgcFilterOperator.PropertyIsNotEqualTo as string]: { spatial: false, fieldRestrict: [] },
-    [OgcFilterOperator.PropertyIsLike as string]: { spatial: false, fieldRestrict: ['string'] },
-    [OgcFilterOperator.PropertyIsGreaterThan as string]: { spatial: false, fieldRestrict: ['number'] },
-    [OgcFilterOperator.PropertyIsGreaterThanOrEqualTo as string]: { spatial: false, fieldRestrict: ['number'] },
-    [OgcFilterOperator.PropertyIsLessThan as string]: { spatial: false, fieldRestrict: ['number'] },
-    [OgcFilterOperator.PropertyIsLessThanOrEqualTo as string]: { spatial: false, fieldRestrict: ['number'] },
-    [OgcFilterOperator.PropertyIsBetween as string]: { spatial: false, fieldRestrict: ['number'] },
+    [OgcFilterOperator.PropertyIsEqualTo as string]: {
+      spatial: false,
+      fieldRestrict: []
+    },
+    [OgcFilterOperator.PropertyIsNotEqualTo as string]: {
+      spatial: false,
+      fieldRestrict: []
+    },
+    [OgcFilterOperator.PropertyIsLike as string]: {
+      spatial: false,
+      fieldRestrict: ['string']
+    },
+    [OgcFilterOperator.PropertyIsGreaterThan as string]: {
+      spatial: false,
+      fieldRestrict: ['number']
+    },
+    [OgcFilterOperator.PropertyIsGreaterThanOrEqualTo as string]: {
+      spatial: false,
+      fieldRestrict: ['number']
+    },
+    [OgcFilterOperator.PropertyIsLessThan as string]: {
+      spatial: false,
+      fieldRestrict: ['number']
+    },
+    [OgcFilterOperator.PropertyIsLessThanOrEqualTo as string]: {
+      spatial: false,
+      fieldRestrict: ['number']
+    },
+    [OgcFilterOperator.PropertyIsBetween as string]: {
+      spatial: false,
+      fieldRestrict: ['number']
+    },
     [OgcFilterOperator.During as string]: { spatial: false, fieldRestrict: [] },
-    [OgcFilterOperator.PropertyIsNull as string]: { spatial: false, fieldRestrict: [] },
-    [OgcFilterOperator.Intersects as string]: { spatial: true, fieldRestrict: [] },
+    [OgcFilterOperator.PropertyIsNull as string]: {
+      spatial: false,
+      fieldRestrict: []
+    },
+    [OgcFilterOperator.Intersects as string]: {
+      spatial: true,
+      fieldRestrict: []
+    },
     [OgcFilterOperator.Within as string]: { spatial: true, fieldRestrict: [] },
     [OgcFilterOperator.Contains as string]: { spatial: true, fieldRestrict: [] }
   };
@@ -45,15 +75,22 @@ export class OgcFilterWriter {
   defineOgcFiltersDefaultOptions(
     ogcFiltersOptions: OgcFiltersOptions,
     fieldNameGeometry: string,
-    srcType?: string): OgcFiltersOptions  {
+    srcType?: string
+  ): OgcFiltersOptions {
     let ogcFiltersDefaultValue = true; // default values for wfs.
     if (srcType && srcType === 'wms') {
       ogcFiltersDefaultValue = false;
     }
 
     ogcFiltersOptions = ogcFiltersOptions || {};
-    ogcFiltersOptions.enabled = ogcFiltersOptions.enabled === undefined ? ogcFiltersDefaultValue : ogcFiltersOptions.enabled;
-    ogcFiltersOptions.editable = ogcFiltersOptions.editable === undefined ? ogcFiltersDefaultValue : ogcFiltersOptions.editable;
+    ogcFiltersOptions.enabled =
+      ogcFiltersOptions.enabled === undefined
+        ? ogcFiltersDefaultValue
+        : ogcFiltersOptions.enabled;
+    ogcFiltersOptions.editable =
+      ogcFiltersOptions.editable === undefined
+        ? ogcFiltersDefaultValue
+        : ogcFiltersOptions.editable;
     ogcFiltersOptions.geometryName = fieldNameGeometry;
 
     ogcFiltersOptions.advancedOgcFilters = true;
@@ -88,7 +125,11 @@ export class OgcFilterWriter {
     }
     let filterAssembly: OgcFilter;
     if (filters) {
-      filters = this.checkIgoFiltersProperties(filters, fieldNameGeometry, proj);
+      filters = this.checkIgoFiltersProperties(
+        filters,
+        fieldNameGeometry,
+        proj
+      );
       if (extent && enableBbox) {
         filterAssembly = olfilter.and(
           ourBboxFilter,
@@ -119,26 +160,38 @@ export class OgcFilterWriter {
     return 'filter=' + str.split(regexp1)[1].split(regexp2)[0];
   }
 
-  private bundleFilter(filterObject: any, options?: OgcFilterableDataSourceOptions) {
+  private bundleFilter(
+    filterObject: any,
+    options?: OgcFilterableDataSourceOptions
+  ) {
     if (filterObject instanceof Array) {
       const logicalArray = [];
-      filterObject.forEach(element => {
+      filterObject.forEach((element) => {
         logicalArray.push(this.bundleFilter(element, options));
       });
       return logicalArray;
     } else {
       if (filterObject.hasOwnProperty('logical')) {
-        return this.createFilter({
-          operator: filterObject.logical,
-          logicalArray: this.bundleFilter(filterObject.filters, options)
-        }, options);
+        return this.createFilter(
+          {
+            operator: filterObject.logical,
+            logicalArray: this.bundleFilter(filterObject.filters, options)
+          },
+          options
+        );
       } else if (filterObject.hasOwnProperty('operator')) {
-        return this.createFilter(filterObject as AnyBaseOgcFilterOptions, options);
+        return this.createFilter(
+          filterObject as AnyBaseOgcFilterOptions,
+          options
+        );
       }
     }
   }
 
-  private createFilter(filterOptions, options?: OgcFilterableDataSourceOptions): OgcFilter {
+  private createFilter(
+    filterOptions,
+    options?: OgcFilterableDataSourceOptions
+  ): OgcFilter {
     const operator = filterOptions.operator;
     const logicalArray = filterOptions.logicalArray;
 
@@ -165,8 +218,14 @@ export class OgcFilterWriter {
       ? filterOptions.srsName
       : 'EPSG:3857';
 
-    const wfsBegin = this.parseFilterOptionDate(filterOptions.begin, options ? options.minDate : undefined);
-    const wfsEnd = this.parseFilterOptionDate(filterOptions.end, options ? options.maxDate : undefined);
+    const wfsBegin = this.parseFilterOptionDate(
+      filterOptions.begin,
+      options ? options.minDate : undefined
+    );
+    const wfsEnd = this.parseFilterOptionDate(
+      filterOptions.end,
+      options ? options.maxDate : undefined
+    );
 
     const wfsExpression = filterOptions.expression;
 
@@ -193,11 +252,7 @@ export class OgcFilterWriter {
       case OgcFilterOperator.During.toLowerCase():
         return olfilter.during(wfsPropertyName, wfsBegin, wfsEnd);
       case OgcFilterOperator.PropertyIsEqualTo.toLowerCase():
-        return olfilter.equalTo(
-          wfsPropertyName,
-          wfsExpression,
-          wfsMatchCase
-        );
+        return olfilter.equalTo(wfsPropertyName, wfsExpression, wfsMatchCase);
       case OgcFilterOperator.PropertyIsGreaterThan.toLowerCase():
         return olfilter.greaterThan(wfsPropertyName, wfsExpression);
       case OgcFilterOperator.PropertyIsGreaterThanOrEqualTo.toLowerCase():
@@ -247,7 +302,7 @@ export class OgcFilterWriter {
     level = -1
   ): OgcInterfaceFilterOptions[] {
     if (filterObject instanceof Array) {
-      filterObject.forEach(element => {
+      filterObject.forEach((element) => {
         this.filterSequence.concat(
           this.defineInterfaceFilterSequence(
             element,
@@ -280,35 +335,47 @@ export class OgcFilterWriter {
   public computeAllowedOperators(
     fields?: SourceFieldsOptionsParams[],
     propertyName?: string,
-    defaultOperatorsType?: OgcFilterOperatorType ) {
+    defaultOperatorsType?: OgcFilterOperatorType
+  ) {
     let effectiveOperators: {} = {};
     let allowedOperators;
     let fieldsHasSpatialOperator: boolean;
     let includeContains: boolean;
 
     if (fields && propertyName) {
-      const srcField = fields.find(field => field.name === propertyName);
-      allowedOperators = srcField && srcField.allowedOperatorsType ?
-        srcField.allowedOperatorsType : defaultOperatorsType;
+      const srcField = fields.find((field) => field.name === propertyName);
+      allowedOperators =
+        srcField && srcField.allowedOperatorsType
+          ? srcField.allowedOperatorsType
+          : defaultOperatorsType;
     }
 
     if (fields) {
-      fields.map(field => {
-        if (!field.allowedOperatorsType) {return; }
+      fields.map((field) => {
+        if (!field.allowedOperatorsType) {
+          return;
+        }
         const allowedOperatorsType = field.allowedOperatorsType.toLowerCase();
         if (
           allowedOperatorsType === OgcFilterOperatorType.All.toLowerCase() ||
-          allowedOperatorsType === OgcFilterOperatorType.Spatial.toLowerCase() ||
-          allowedOperatorsType === OgcFilterOperatorType.BasicAndSpatial.toLowerCase()) {
-            fieldsHasSpatialOperator = true;
-            if (allowedOperatorsType === OgcFilterOperatorType.All.toLowerCase()) {
-              includeContains = true;
-            }
+          allowedOperatorsType ===
+            OgcFilterOperatorType.Spatial.toLowerCase() ||
+          allowedOperatorsType ===
+            OgcFilterOperatorType.BasicAndSpatial.toLowerCase()
+        ) {
+          fieldsHasSpatialOperator = true;
+          if (
+            allowedOperatorsType === OgcFilterOperatorType.All.toLowerCase()
+          ) {
+            includeContains = true;
+          }
         }
       });
     }
 
-    allowedOperators = allowedOperators ? allowedOperators : OgcFilterOperatorType.BasicAndSpatial;
+    allowedOperators = allowedOperators
+      ? allowedOperators
+      : OgcFilterOperatorType.BasicAndSpatial;
 
     switch (allowedOperators.toLowerCase()) {
       case OgcFilterOperatorType.All:
@@ -316,53 +383,95 @@ export class OgcFilterWriter {
         break;
       case OgcFilterOperatorType.Spatial:
         effectiveOperators = {
-          [OgcFilterOperator.Intersects] : { spatial: true, fieldRestrict: [] },
-          [OgcFilterOperator.Within]: { spatial: true, fieldRestrict: [] },
+          [OgcFilterOperator.Intersects]: { spatial: true, fieldRestrict: [] },
+          [OgcFilterOperator.Within]: { spatial: true, fieldRestrict: [] }
         };
         break;
       case OgcFilterOperatorType.BasicAndSpatial:
         effectiveOperators = {
-          [OgcFilterOperator.PropertyIsEqualTo]: { spatial: false, fieldRestrict: [] },
-          [OgcFilterOperator.PropertyIsNotEqualTo]: { spatial: false, fieldRestrict: [] },
+          [OgcFilterOperator.PropertyIsEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
+          [OgcFilterOperator.PropertyIsNotEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
           [OgcFilterOperator.Intersects]: { spatial: true, fieldRestrict: [] },
-          [OgcFilterOperator.Within]: { spatial: true, fieldRestrict: [] },
+          [OgcFilterOperator.Within]: { spatial: true, fieldRestrict: [] }
         };
         break;
       case OgcFilterOperatorType.Basic:
         effectiveOperators = {
-          [OgcFilterOperator.PropertyIsEqualTo]: { spatial: false, fieldRestrict: [] },
-          [OgcFilterOperator.PropertyIsNotEqualTo]: { spatial: false, fieldRestrict: [] }
+          [OgcFilterOperator.PropertyIsEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
+          [OgcFilterOperator.PropertyIsNotEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          }
         };
         break;
-        case OgcFilterOperatorType.Time:
-          effectiveOperators = {
-            [OgcFilterOperator.During]: { spatial: false, fieldRestrict: [] },
-          };
-          break;
+      case OgcFilterOperatorType.Time:
+        effectiveOperators = {
+          [OgcFilterOperator.During]: { spatial: false, fieldRestrict: [] }
+        };
+        break;
       case OgcFilterOperatorType.BasicNumericOperator:
         effectiveOperators = {
-          [OgcFilterOperator.PropertyIsEqualTo]: { spatial: false, fieldRestrict: [] },
-          [OgcFilterOperator.PropertyIsNotEqualTo]: { spatial: false, fieldRestrict: [] },
-          [OgcFilterOperator.PropertyIsGreaterThan]: { spatial: false, fieldRestrict: ['number'] },
-          [OgcFilterOperator.PropertyIsGreaterThanOrEqualTo]: { spatial: false, fieldRestrict: ['number'] },
-          [OgcFilterOperator.PropertyIsLessThan]: { spatial: false, fieldRestrict: ['number'] },
-          [OgcFilterOperator.PropertyIsLessThanOrEqualTo]: { spatial: false, fieldRestrict: ['number'] },
+          [OgcFilterOperator.PropertyIsEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
+          [OgcFilterOperator.PropertyIsNotEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
+          [OgcFilterOperator.PropertyIsGreaterThan]: {
+            spatial: false,
+            fieldRestrict: ['number']
+          },
+          [OgcFilterOperator.PropertyIsGreaterThanOrEqualTo]: {
+            spatial: false,
+            fieldRestrict: ['number']
+          },
+          [OgcFilterOperator.PropertyIsLessThan]: {
+            spatial: false,
+            fieldRestrict: ['number']
+          },
+          [OgcFilterOperator.PropertyIsLessThanOrEqualTo]: {
+            spatial: false,
+            fieldRestrict: ['number']
+          }
         };
         break;
       default:
         effectiveOperators = {
-          [OgcFilterOperator.PropertyIsEqualTo]: { spatial: false, fieldRestrict: [] },
-          [OgcFilterOperator.PropertyIsNotEqualTo]: { spatial: false, fieldRestrict: [] },
+          [OgcFilterOperator.PropertyIsEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
+          [OgcFilterOperator.PropertyIsNotEqualTo]: {
+            spatial: false,
+            fieldRestrict: []
+          },
           [OgcFilterOperator.Intersects]: { spatial: true, fieldRestrict: [] },
-          [OgcFilterOperator.Within]: { spatial: true, fieldRestrict: [] },
+          [OgcFilterOperator.Within]: { spatial: true, fieldRestrict: [] }
         };
     }
 
     if (fieldsHasSpatialOperator) {
-      (effectiveOperators as any).Intersects =  { spatial: true, fieldRestrict: [] };
-      (effectiveOperators as any).Within =  { spatial: true, fieldRestrict: [] };
+      (effectiveOperators as any).Intersects = {
+        spatial: true,
+        fieldRestrict: []
+      };
+      (effectiveOperators as any).Within = { spatial: true, fieldRestrict: [] };
       if (includeContains) {
-        (effectiveOperators as any).Contains =  { spatial: true, fieldRestrict: [] };
+        (effectiveOperators as any).Contains = {
+          spatial: true,
+          fieldRestrict: []
+        };
       }
     }
 
@@ -423,9 +532,14 @@ export class OgcFilterWriter {
   ) {
     const filterArray = [];
     if (filterObject instanceof Array) {
-      filterObject.forEach(element => {
+      filterObject.forEach((element) => {
         filterArray.push(
-          this.checkIgoFiltersProperties(element, fieldNameGeometry, proj, active)
+          this.checkIgoFiltersProperties(
+            element,
+            fieldNameGeometry,
+            proj,
+            active
+          )
         );
       });
       return filterArray;
@@ -469,7 +583,9 @@ export class OgcFilterWriter {
 
     const srsName = igoOgcFilterObject.hasOwnProperty('srsName')
       ? igoOgcFilterObject.srsName
-      : proj ? proj.getCode() : 'EPSG:3857';
+      : proj
+      ? proj.getCode()
+      : 'EPSG:3857';
 
     return Object.assign(
       {},
@@ -493,7 +609,7 @@ export class OgcFilterWriter {
         let nextElement: any;
         let logicalArray = [];
         let lastProcessedFilter;
-        sequence.forEach(uiFilter => {
+        sequence.forEach((uiFilter) => {
           const element = Object.assign({}, uiFilter);
           const index = sequence.indexOf(uiFilter);
           if (index >= 0 && index < sequence.length - 1) {
@@ -536,34 +652,50 @@ export class OgcFilterWriter {
   }
 
   private computeIgoPushButton(pushButtons: IgoPushButton): IgoPushButton {
-    if (pushButtons.groups.every(group => group.computedButtons !== undefined)) {
+    if (
+      pushButtons.groups.every((group) => group.computedButtons !== undefined)
+    ) {
       return pushButtons;
     }
     let pb: IgoPushButton;
     if (pushButtons.groups && pushButtons.bundles) {
-      if (!pushButtons.bundles.every(bundle => bundle.id !== undefined)) {
-        throw new Error('You must set an id for each of your pushButtons bundles');
+      if (!pushButtons.bundles.every((bundle) => bundle.id !== undefined)) {
+        throw new Error(
+          'You must set an id for each of your pushButtons bundles'
+        );
       }
       pb = ObjectUtils.copyDeep(pushButtons);
-      pb.groups.forEach(group => {
+      pb.groups.forEach((group) => {
         group.title = group.title ? group.title : group.name;
         group.enabled = group.enabled ? group.enabled : false;
-        group.computedButtons = ObjectUtils.copyDeep(pb.bundles.filter(b => group.ids.includes(b.id)));
+        group.computedButtons = ObjectUtils.copyDeep(
+          pb.bundles.filter((b) => group.ids.includes(b.id))
+        );
       });
     } else if (!pushButtons.groups && pushButtons.bundles) {
       pb = ObjectUtils.copyDeep(pushButtons);
-      pb.groups = [{ title: 'group1', name: 'group1', computedButtons: ObjectUtils.copyDeep(pb.bundles) } as PushButtonGroup];
+      pb.groups = [
+        {
+          title: 'group1',
+          name: 'group1',
+          computedButtons: ObjectUtils.copyDeep(pb.bundles)
+        } as PushButtonGroup
+      ];
     } else {
       pb = {
         bundles: pushButtons as OgcPushButtonBundle[],
         groups: [
           {
-            title: 'group1', name: 'group1',
-            computedButtons: ObjectUtils.copyDeep(pushButtons) as OgcPushButtonBundle[]
-          } as PushButtonGroup]
+            title: 'group1',
+            name: 'group1',
+            computedButtons: ObjectUtils.copyDeep(
+              pushButtons
+            ) as OgcPushButtonBundle[]
+          } as PushButtonGroup
+        ]
       };
     }
-    if (!pb.groups.find(pbGroup => pbGroup.enabled)) {
+    if (!pb.groups.find((pbGroup) => pbGroup.enabled)) {
       pb.groups[0].enabled = true;
     }
     return pb;
@@ -573,7 +705,8 @@ export class OgcFilterWriter {
     options: OgcFilterableDataSourceOptions,
     fieldNameGeometry: string,
     extent?: [number, number, number, number],
-    proj?: olProjection): string {
+    proj?: olProjection
+  ): string {
     const ogcFilters = options.ogcFilters;
     if (!ogcFilters) {
       return;
@@ -581,61 +714,90 @@ export class OgcFilterWriter {
     let filterQueryStringPushButton = '';
     let filterQueryStringAdvancedFilters = '';
     if (ogcFilters.enabled && ogcFilters.pushButtons) {
-      ogcFilters.pushButtons = this.computeIgoPushButton(ogcFilters.pushButtons);
-      const pushButtonBundle = ogcFilters.pushButtons.groups.find(g => g.enabled).computedButtons;
+      ogcFilters.pushButtons = this.computeIgoPushButton(
+        ogcFilters.pushButtons
+      );
+      const pushButtonBundle = ogcFilters.pushButtons.groups.find(
+        (g) => g.enabled
+      ).computedButtons;
       const conditions = [];
-      pushButtonBundle.map(buttonBundle => {
+      pushButtonBundle.map((buttonBundle) => {
         const bundleCondition = [];
         buttonBundle.buttons
-          .filter(ogcpb => ogcpb.enabled === true)
-          .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
+          .filter((ogcpb) => ogcpb.enabled === true)
+          .forEach((enabledPb) => bundleCondition.push(enabledPb.filters));
         if (bundleCondition.length === 1) {
           conditions.push(bundleCondition[0]);
         } else if (bundleCondition.length > 1) {
-          conditions.push({ logical: buttonBundle.logical, filters: bundleCondition });
+          conditions.push({
+            logical: buttonBundle.logical,
+            filters: bundleCondition
+          });
         }
       });
       if (conditions.length >= 1) {
         filterQueryStringPushButton = this.buildFilter(
-            conditions.length === 1 ? conditions[0] : { logical: 'And', filters: conditions },
-            extent,
-            proj,
-            ogcFilters.geometryName
-          );
+          conditions.length === 1
+            ? conditions[0]
+            : { logical: 'And', filters: conditions },
+          extent,
+          proj,
+          ogcFilters.geometryName
+        );
       }
     }
 
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
-      filterQueryStringAdvancedFilters = this.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName, options);
+      filterQueryStringAdvancedFilters = this.buildFilter(
+        igoFilters,
+        extent,
+        proj,
+        ogcFilters.geometryName,
+        options
+      );
     }
 
-    let filterQueryString = ogcFilters.advancedOgcFilters ? filterQueryStringAdvancedFilters : filterQueryStringPushButton;
+    let filterQueryString = ogcFilters.advancedOgcFilters
+      ? filterQueryStringAdvancedFilters
+      : filterQueryStringPushButton;
     if (options.type === 'wms') {
-      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.LAYERS);
+      filterQueryString = this.formatProcessedOgcFilter(
+        filterQueryString,
+        (options as any).params.LAYERS
+      );
     }
     if (options.type === 'wfs') {
-      filterQueryString = this.formatProcessedOgcFilter(filterQueryString, (options as any).params.featureTypes);
+      filterQueryString = this.formatProcessedOgcFilter(
+        filterQueryString,
+        (options as any).params.featureTypes
+      );
     }
 
     return filterQueryString;
-
   }
 
   public formatProcessedOgcFilter(
     processedFilter: string,
-    layersOrTypenames: string): string {
+    layersOrTypenames: string
+  ): string {
     let appliedFilter = '';
     if (processedFilter.length === 0 && layersOrTypenames.indexOf(',') === -1) {
       appliedFilter = processedFilter;
     } else {
-      layersOrTypenames.split(',').forEach(layerOrTypenames => {
-        appliedFilter = `${appliedFilter}(${processedFilter.replace('filter=', '')})`;
+      layersOrTypenames.split(',').forEach((layerOrTypenames) => {
+        appliedFilter = `${appliedFilter}(${processedFilter.replace(
+          'filter=',
+          ''
+        )})`;
       });
     }
     appliedFilter = appliedFilter.replace(/\(\)/g, '');
-    const filterValue = appliedFilter.length > 0 ? appliedFilter.replace('filter=', '') : undefined;
+    const filterValue =
+      appliedFilter.length > 0
+        ? appliedFilter.replace('filter=', '')
+        : undefined;
     return filterValue;
   }
 

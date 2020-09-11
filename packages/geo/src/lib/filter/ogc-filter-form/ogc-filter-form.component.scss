@@ -2,9 +2,9 @@
 @import '../../../../../common/src/style/partial/common.variables';
 
 :host {
-    width: 100%;
-    padding: 5px 10px;
-  }
+  width: 100%;
+  padding: 5px 10px;
+}
 
 ::ng-deep .mat-form-field .mat-icon svg {
   width: 1em;
@@ -13,7 +13,7 @@
 }
 
 .mat-form-field {
-    width: 100%;
+  width: 100%;
 }
 
 .mat-select-arrow {
@@ -46,7 +46,6 @@
 ::ng-deep .logicalHidden .mat-select-arrow {
   visibility: hidden;
 }
-
 
 .field {
   width: 20%;
@@ -106,5 +105,4 @@
 
 .container {
   display: flex;
-
- }
+}
