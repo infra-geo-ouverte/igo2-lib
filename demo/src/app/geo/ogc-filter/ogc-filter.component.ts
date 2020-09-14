@@ -372,8 +372,8 @@ export class AppOgcFilterComponent {
           {
             operator: 'During',
             propertyName: 'date_observation',
-            begin: 'now - 2 days',
-            end: 'now'
+            begin: 'today - 2 days', // "now" can also be used. Instead of midnight, the current time will be used
+            end: 'today', // "now" can also be used. Instead of midnight, the current time will be used
           } as OgcFilterDuringOptions
       },
       minDate: '2016-01-01T00:00:00-05:00',

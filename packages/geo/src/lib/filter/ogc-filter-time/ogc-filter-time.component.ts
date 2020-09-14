@@ -41,9 +41,10 @@ export class OgcFilterTimeComponent implements OnInit {
   endMinuteFormControl = new FormControl();
   _beginValue: Date;
   _endValue: Date;
+  readonly _defaultMin: string = '1900-01-01';
   ogcFilterOperator = OgcFilterOperator;
 
-  public defaultStepMillisecond = 60000;
+  readonly defaultStepMillisecond = 60000;
   public options: OgcFilterableDataSourceOptions;
 
   @ViewChild('endDatepickerTime') endDatepickerTime: ElementRef;
@@ -80,25 +81,19 @@ export class OgcFilterTimeComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    this.beginValue = this.parseFilter(
-      this.currentFilter.begin
-        ? this.currentFilter.begin
-        : this.datasource.options.minDate
-    );
-    this.endValue = this.parseFilter(
-      this.currentFilter.end
-        ? this.currentFilter.end
-        : this.datasource.options.maxDate
-    );
+  ngOnInit(){
+    this.beginValue = this.parseFilter(this.handleMin());
+    this.endValue = this.parseFilter(this.handleMax());
     this.updateHoursMinutesArray();
     // update value for now value
     this.updateValues();
   }
 
   parseFilter(filter): Date {
-    if (isNaN(new Date(filter).getTime())) {
-      if (filter.search('now') >= 0) {
+    if (!filter){
+      return new Date();
+    } else if ( isNaN( new Date(filter).getTime() ) ) {
+      if (filter.search('now') >= 0 ) {
         const interval = filter.match(/years|months|weeks|days|hours|seconds/);
         if (filter.match(/\+/)) {
           const intervalInt = parseInt(
@@ -116,9 +111,22 @@ export class OgcFilterTimeComponent implements OnInit {
         }
         return new Date();
       }
+      if (filter.search('today') >= 0){
+        const _now = moment().endOf('day').toDate();
+        const interval = filter.match(/years|months|weeks|days|hours|seconds/);
+        if ( filter.match(/\+/) ) {
+          const intervalInt = parseInt( filter.substring(filter.search('+') + 1, interval.index), 10 );
+          return moment(_now).add(intervalInt, interval[0]).toDate();
+        }
+        if ( filter.match(/\-/) ) {
+          const intervalInt = parseInt(filter.substring(filter.search('-') + 1, interval.index), 10);
+          return moment(_now).subtract(intervalInt, interval[0]).toDate();
+        }
+        return _now;
+      }
       return new Date();
     }
-    return new Date(filter);
+    return filter ? new Date(filter) : new Date();
   }
 
   changeTemporalProperty(value, position?) {
@@ -252,68 +260,42 @@ export class OgcFilterTimeComponent implements OnInit {
 
   dateFilter(type: string, date: string): boolean {
     const dateValue = new Date(date);
-    const diff =
-      dateValue.getTime() - new Date(this.datasource.options.minDate).getTime();
+    const diff = dateValue.getTime() - new Date(this.handleMin()).getTime();
 
     if (this.stepIsMonthDuration()) {
-      const monthDiff = moment(dateValue).diff(
-        moment(this.datasource.options.minDate),
-        'months',
-        true
-      );
-      if (type === 'end') {
+      const monthDiff = moment(dateValue).diff(moment(this.handleMin()), 'months', true);
+      if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const monthDiffPlus1 = moment(dateValuePlus1).diff(
-          moment(this.datasource.options.minDate),
-          'months',
-          true
-        );
-        return monthDiffPlus1 % moment.duration(this.step).asMonths() === 0;
-      } else if (type === 'begin') {
-        return monthDiff % moment.duration(this.step).asMonths() === 0;
+        const monthDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'months', true);
+        return (monthDiffPlus1 % moment.duration(this.step).asMonths()) === 0;
+      } else if ( type === 'begin' ) {
+        return (monthDiff % moment.duration(this.step).asMonths()) === 0;
       }
     } else if (this.stepIsWeekDuration()) {
-      const weekDiff = moment(dateValue).diff(
-        moment(this.datasource.options.minDate),
-        'weeks',
-        true
-      );
-      if (type === 'end') {
+      const weekDiff = moment(dateValue).diff(moment(this.handleMin()), 'weeks', true);
+      if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const weekDiffPlus1 = moment(dateValuePlus1).diff(
-          moment(this.datasource.options.minDate),
-          'weeks',
-          true
-        );
-        return weekDiffPlus1 % moment.duration(this.step).asWeeks() === 0;
-      } else if (type === 'begin') {
-        return weekDiff % moment.duration(this.step).asWeeks() === 0;
+        const weekDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'weeks', true);
+        return (weekDiffPlus1 % moment.duration(this.step).asWeeks()) === 0;
+      } else if ( type === 'begin' ) {
+        return (weekDiff % moment.duration(this.step).asWeeks()) === 0;
       }
     } else if (this.stepIsDayDuration()) {
-      const dayDiff = moment(dateValue).diff(
-        moment(this.datasource.options.minDate),
-        'days',
-        true
-      );
-      if (type === 'end') {
+      const dayDiff = moment(dateValue).diff(moment(this.handleMin()), 'days', true);
+      if ( type === 'end' ) {
         const dateValuePlus1 = moment(dateValue).add(1, 'd');
-        const dayDiffPlus1 = moment(dateValuePlus1).diff(
-          moment(this.datasource.options.minDate),
-          'days',
-          true
-        );
-        return dayDiffPlus1 % moment.duration(this.step).asDays() === 0;
-      } else if (type === 'begin') {
-        return dayDiff % moment.duration(this.step).asDays() === 0;
+        const dayDiffPlus1 =  moment(dateValuePlus1).diff(moment(this.handleMin()), 'days', true);
+        const _mod = (dayDiffPlus1 % moment.duration(this.step).asDays());
+        return  (_mod < 0.0000001 && _mod > -0.0000001) || _mod === 0 ; // 1 millisecond = 1.1574074074074076e-8
+      } else if ( type === 'begin' ) {
+        const _mod = ((dayDiff % moment.duration(this.step).asDays()) + 1);
+        return (_mod < 0.0000001 && _mod > -0.0000001 && _mod !== 0) || _mod === 1 ; // 1 millisecond = 1.1574074074074076e-8
       }
-    } else if (this.stepIsHourDuration()) {
-      const hourDiff = moment(dateValue).diff(
-        moment(this.datasource.options.minDate),
-        'hours',
-        true
-      );
-      return hourDiff % moment.duration(this.step).asHours() === 0;
-    } else if (this.stepIsMinuteDuration()) {
+    } else if ( this.stepIsHourDuration() ) {
+      const hourDiff = moment(dateValue).diff(moment(this.handleMin()), 'hours', true);
+      return (hourDiff % moment.duration(this.step).asHours()) === 0;
+
+    } else if ( this.stepIsMinuteDuration() ) {
       return true;
     }
 
@@ -345,7 +327,7 @@ export class OgcFilterTimeComponent implements OnInit {
   handleMinuteIncrement() {
     if (this.stepIsMinuteDuration()) {
       if (this.stepMilliseconds < 3600000) {
-        return this.stepMilliseconds / 1000;
+        return this.stepMilliseconds / 1000 === 60 ? 1 : this.stepMilliseconds / 1000;
       } else {
         return (this.stepMilliseconds % 3600000) / 60;
       }
@@ -473,5 +455,15 @@ export class OgcFilterTimeComponent implements OnInit {
 
   private addStep(value) {
     return moment(value).add(this.stepMilliseconds, 'milliseconds').toDate();
+  }
+
+  public handleMin() {
+    return this.currentFilter.begin ? this.currentFilter.begin :
+              (this.datasource.options.minDate ? this.datasource.options.minDate : this._defaultMin);
+  }
+
+  public handleMax() {
+    return this.currentFilter.end ? this.currentFilter.end :
+              (this.datasource.options.maxDate ? this.datasource.options.maxDate : undefined);
   }
 }
