@@ -209,6 +209,18 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
     this.selection$$ = this.store.stateView
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
+        const firstSelected = records[0];
+        const firstSelectedStateviewPosition = this.store.stateView.all().indexOf(firstSelected);
+        const pageMax = this.paginator.pageSize * (this.paginator.pageIndex + 1);
+        const pageMin = pageMax - this.paginator.pageSize;
+
+        if (
+          this.paginator &&
+          firstSelectedStateviewPosition < pageMin ||
+          firstSelectedStateviewPosition >= pageMax) {
+          const pageToReach = Math.floor(firstSelectedStateviewPosition / this.paginator.pageSize);
+          this.dataSource.paginator.pageIndex = pageToReach;
+        }
         this.selectionState$.next(this.computeSelectionState(records));
       });
     this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
