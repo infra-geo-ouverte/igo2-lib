@@ -6,7 +6,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -32,7 +34,7 @@ import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-ta
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy  {
+export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -201,12 +203,31 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   }
 
   /**
+   * @internal
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    const store = changes.store;
+    if (store && store.currentValue !== store.previousValue) {
+      this.unsubscribeDatasource();
+      this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
+        this.dataSource.data = all;
+      });
+    }
+  }
+
+  /**
    * Unbind the store watcher
    * @internal
    */
   ngOnDestroy() {
     this.selection$$.unsubscribe();
-    this.dataSource$$.unsubscribe();
+    this.unsubscribeDatasource();
+  }
+
+  private unsubscribeDatasource() {
+    if (this.dataSource$$) {
+      this.dataSource$$.unsubscribe();
+    }
   }
 
   /**
