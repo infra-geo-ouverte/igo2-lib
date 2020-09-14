@@ -133,7 +133,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
   }>();
 
   /**
-   * Event emitted when an entity (row) is selected
+   * Event emitted when the table sort is changed.
    */
   @Output() entitySortChange: EventEmitter<{column: EntityTableColumn, direction: string}> = new EventEmitter(undefined);
 
@@ -190,15 +190,7 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
    * @internal
    */
   ngOnInit() {
-    this.selection$$ = this.store.stateView
-      .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
-      .subscribe((records: EntityRecord<object>[]) => {
-        this.selectionState$.next(this.computeSelectionState(records));
-      });
-
-    this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
-      this.dataSource.data = all;
-    });
+    this.handleDatasource();
     this.dataSource.paginator = this.paginator;
   }
 
@@ -208,11 +200,21 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
   ngOnChanges(changes: SimpleChanges) {
     const store = changes.store;
     if (store && store.currentValue !== store.previousValue) {
-      this.unsubscribeDatasource();
-      this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
-        this.dataSource.data = all;
-      });
+      this.handleDatasource();
     }
+  }
+
+  private handleDatasource() {
+    this.unsubscribeStore();
+    this.selection$$ = this.store.stateView
+      .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
+      .subscribe((records: EntityRecord<object>[]) => {
+        this.selectionState$.next(this.computeSelectionState(records));
+      });
+    this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
+      this.dataSource.data = all;
+    });
+
   }
 
   /**
@@ -220,11 +222,13 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
    * @internal
    */
   ngOnDestroy() {
-    this.selection$$.unsubscribe();
-    this.unsubscribeDatasource();
+    this.unsubscribeStore();
   }
 
-  private unsubscribeDatasource() {
+  private unsubscribeStore() {
+    if (this.selection$$) {
+      this.selection$$.unsubscribe();
+    }
     if (this.dataSource$$) {
       this.dataSource$$.unsubscribe();
     }
