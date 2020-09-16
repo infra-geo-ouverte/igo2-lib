@@ -133,12 +133,19 @@ export class InteractiveTourService {
     let nbTry = 0;
     const maxTry = 21;
     const checkExist = setInterval(() => {
+      console.log(self.getCurrentStep());
       if (self.getCurrentStep()) {
-        console.log('self');
         const currentStepElement = self.getCurrentStep().getElement();
+        console.log('current', currentStepElement);
         const header = currentStepElement
           ? currentStepElement.querySelector('.shepherd-header')
           : undefined;
+
+        if (!document.querySelector(self.getCurrentStep().options.attachTo.element)) {
+          self.getCurrentStep().destroy();
+          this.shepherdService.tourObject.next();
+          return;
+        }
 
         nbTry++;
         if (header || nbTry > maxTry) {
@@ -146,7 +153,6 @@ export class InteractiveTourService {
         }
 
         if (header) {
-          console.log('header');
           currentStepElement.querySelector('.shepherd-content').classList.add('mat-typography');
           currentStepElement.querySelector('.shepherd-text').classList.add('mat-typography');
           const stepsArray = self.steps;
@@ -224,9 +230,6 @@ export class InteractiveTourService {
           on: step.position || stepConfig.position
         },
         beforeShowPromise: () => {
-          if (!step.element) {
-            return this.shepherdService.next();
-          }
           return Promise.all([
             this.executeActionPromise(
               this.previousStep,
@@ -244,7 +247,7 @@ export class InteractiveTourService {
             ? 'noBackButton'
             : undefined
         ),
-        classes: step.class,
+        class: step.class,
         highlightClass: step.highlightClass,
         scrollTo: step.scrollToElement || stepConfig.scrollToElement || true,
         canClickTarget: step.disableInteraction
@@ -287,6 +290,7 @@ export class InteractiveTourService {
     };
 
     const shepherdSteps = this.getShepherdSteps(stepConfig);
+    console.log(shepherdSteps);
 
     this.shepherdService.modal = true;
     this.shepherdService.confirmCancel = false;
