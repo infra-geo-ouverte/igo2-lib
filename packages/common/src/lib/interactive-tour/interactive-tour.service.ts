@@ -134,6 +134,7 @@ export class InteractiveTourService {
     const maxTry = 21;
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
+        console.log('self');
         const currentStepElement = self.getCurrentStep().getElement();
         const header = currentStepElement
           ? currentStepElement.querySelector('.shepherd-header')
@@ -145,6 +146,7 @@ export class InteractiveTourService {
         }
 
         if (header) {
+          console.log('header');
           currentStepElement.querySelector('.shepherd-content').classList.add('mat-typography');
           currentStepElement.querySelector('.shepherd-text').classList.add('mat-typography');
           const stepsArray = self.steps;
@@ -222,6 +224,9 @@ export class InteractiveTourService {
           on: step.position || stepConfig.position
         },
         beforeShowPromise: () => {
+          if (!step.element) {
+            return this.shepherdService.next();
+          }
           return Promise.all([
             this.executeActionPromise(
               this.previousStep,
