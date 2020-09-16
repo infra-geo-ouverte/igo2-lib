@@ -86,7 +86,9 @@ export class ShareMapService {
     const contextLayersID = [];
     const contextLayers = this.contextService.context$.value.layers;
     for (const contextLayer of contextLayers) {
-      contextLayersID.push(contextLayer.id || contextLayer.source.id);
+      if ( typeof contextLayer.id !== 'undefined'  ||  typeof contextLayer.source !== 'undefined' ) {
+        contextLayersID.push(contextLayer.id || contextLayer.source.id);
+      }
     }
 
     const addedLayersQueryParamsWms = this.makeLayersByService(layers, contextLayersID, 'wms');
