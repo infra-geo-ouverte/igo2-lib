@@ -38,7 +38,7 @@ export interface LayersLinkProperties {
   bidirectionnal?: boolean;
   linkedIds: string[];
   syncedDelete: boolean;
-  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter
+  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution
   // TODO timeFilter, zIndex
   // TODO Sourcefields at layer creation because it is a static property
 }
@@ -46,7 +46,7 @@ export interface LayersLinkProperties {
 export interface ComputedLink {
   srcId: string;
   dstId: string;
-  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution & timeFilter
+  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution
   // TODO timeFilter, zIndex
   // TODO Sourcefields at layer creation because it is a static property
   bidirectionnal?: boolean;
