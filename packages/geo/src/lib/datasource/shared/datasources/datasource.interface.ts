@@ -23,6 +23,9 @@ export interface DataSourceOptions {
   ol?: olSource;
   minZoom?: number;
   maxZoom?: number;
+  minDate?: string;
+  maxDate?: string;
+  stepDate?: string;
   // TODO: Should those options really belong here?
   sourceFields?: SourceFieldsOptionsParams[];
   download?: DownloadOptions;
