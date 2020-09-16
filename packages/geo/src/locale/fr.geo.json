@@ -8,7 +8,9 @@
         "layer.removeFromMapOutRange": "Retirer de la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
-        "baseLayers": "Fonds de carte"
+        "baseLayers": "Fonds de carte",
+        "unavailableTitle": "Catalogue indisponible",
+        "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
@@ -396,7 +398,9 @@
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",
-        "startDate": "Date de début"
+        "startDate": "Date de début",
+        "hour": "Heure",
+        "minute": "Minute"
       },
       "spatialFilter": {
         "predefined": "Zone Prédéfinie",

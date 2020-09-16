@@ -8,7 +8,9 @@
         "layer.removeFromMapOutRange": "Remove from map. The layer is not visible at the current scale. Please zoom in/out",
         "group.addToMap": "Add all layers from this group to map",
         "group.removeFromMap": "Remove all layers from this group to map",
-        "baseLayers": "Baselayers"
+        "baseLayers": "Baselayers",
+        "unavailableTitle": "Catalog unavailable",
+        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions."
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
@@ -396,7 +398,9 @@
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",
-        "startDate": "Start Date"
+        "startDate": "Start Date",
+        "hour": "Hour",
+        "minute": "Minute"
       },
       "spatialFilter": {
         "predefined": "Predefined Zone",

@@ -165,10 +165,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (layerOptions && layerOptions.legendOptions) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.geo.layer.legend.default');
-      const stylesAvailable =  [{ name: '', title } as ItemStyleOptions]
-        .concat(layerOptions.legendOptions.stylesAvailable.filter(sA => (
-          sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
-          sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'defaut')));
+      let stylesAvailable =  [{ name: '', title } as ItemStyleOptions];
+      if (layerOptions.legendOptions.stylesAvailable) {
+        stylesAvailable.concat(layerOptions.legendOptions.stylesAvailable.filter(sA => (
+            sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
+            sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'defaut')));
+      }
       stylesAvailable.map(s => s.title = s.title.charAt(0).toUpperCase() + s.title.slice(1).replace(/_/g, ' '));
       return stylesAvailable;
     }
