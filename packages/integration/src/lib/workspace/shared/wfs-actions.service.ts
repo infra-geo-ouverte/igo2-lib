@@ -64,6 +64,17 @@ export class WfsActionsService implements OnDestroy  {
       );
     return [
       {
+        id: 'zoomAuto',
+        checkbox: true,
+        title: 'igo.geo.workspace.zoomAuto.title',
+        tooltip: featureMotionStrategyActiveToolTip(workspace),
+        checkCondition: this.zoomAuto$,
+        handler: () => {
+          this.handleZoomAuto(workspace);
+          this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
+        }
+      },
+      {
         id: 'filterInMapExtent',
         checkbox: true,
         title: 'igo.geo.workspace.inMapExtent.title',
@@ -78,46 +89,6 @@ export class WfsActionsService implements OnDestroy  {
             filterStrategy.activate();
           }
           this.storageService.set('rowsInMapExtent', !this.storageService.get('rowsInMapExtent') as boolean, StorageScope.SESSION);
-        }
-      },
-      {
-        id: 'ogcFilter',
-        icon: 'filter',
-        title: 'igo.geo.workspace.ogcFilter.title',
-        tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
-        handler: (widget: Widget, ws: WfsWorkspace) => {
-          ws.activateWidget(widget, {
-            map: ws.map,
-            layer: ws.layer
-          });
-        },
-        args: [this.ogcFilterWidget, workspace]
-      },
-      {
-        id: 'wfsDownload',
-        icon: 'download',
-        title: 'igo.geo.workspace.download.title',
-        tooltip: 'igo.geo.workspace.download.tooltip',
-        handler: (ws: WfsWorkspace) => {
-          const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
-          const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
-          const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
-          this.toolState.toolToActivateFromOptions({
-            tool: 'importExport',
-            options: { layers: [ws.layer.id], featureInMapExtent: filterStrategy.active, layersWithSelection } as ExportOptions
-          });
-        },
-        args: [workspace]
-      },
-      {
-        id: 'zoomAuto',
-        checkbox: true,
-        title: 'igo.geo.workspace.zoomAuto.title',
-        tooltip: featureMotionStrategyActiveToolTip(workspace),
-        checkCondition: this.zoomAuto$,
-        handler: () => {
-          this.handleZoomAuto(workspace);
-          this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
         }
       },
       {
@@ -146,6 +117,35 @@ export class WfsActionsService implements OnDestroy  {
         },
         args: [workspace],
         availability: (ws: WfsWorkspace) => noElementSelected(ws)
+      },
+      {
+        id: 'wfsDownload',
+        icon: 'download',
+        title: 'igo.geo.workspace.download.title',
+        tooltip: 'igo.geo.workspace.download.tooltip',
+        handler: (ws: WfsWorkspace) => {
+          const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+          const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
+          const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
+          this.toolState.toolToActivateFromOptions({
+            tool: 'importExport',
+            options: { layers: [ws.layer.id], featureInMapExtent: filterStrategy.active, layersWithSelection } as ExportOptions
+          });
+        },
+        args: [workspace]
+      },
+      {
+        id: 'ogcFilter',
+        icon: 'filter',
+        title: 'igo.geo.workspace.ogcFilter.title',
+        tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
+        handler: (widget: Widget, ws: WfsWorkspace) => {
+          ws.activateWidget(widget, {
+            map: ws.map,
+            layer: ws.layer
+          });
+        },
+        args: [this.ogcFilterWidget, workspace]
       },
     ];
   }
