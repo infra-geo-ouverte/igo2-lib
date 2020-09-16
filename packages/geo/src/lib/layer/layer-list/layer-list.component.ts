@@ -260,9 +260,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
         if (this.excludeBaseLayers) {
           this.selectAllCheck =
             checks ===
-            this.layers.filter(
-              (lay) => lay.baseLayer !== true && lay.showInLayerList
-            ).length
+              this.layers.filter(
+                (lay) => lay.baseLayer !== true && lay.showInLayerList
+              ).length
               ? true
               : false;
         } else {
@@ -331,13 +331,24 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement) {
     const layersToMove = [activeLayer];
+    const sortedLayersToMove = [];
+    this.getLinkedLayers(activeLayer, layersToMove);
+    this.layers.map(layer => {
+      if (layersToMove.indexOf(layer) !== -1) {
+        sortedLayersToMove.push(layer);
+      }
+    });
+
+    if (actiontype === LayerListDisplacement.Raise) {
+      this.raiseLayers(sortedLayersToMove, false);
+    } else if (actiontype === LayerListDisplacement.Lower) {
+      this.lowerLayers(sortedLayersToMove, false);
+    }
+  }
+
+  private getLinkedLayers(activeLayer: Layer, layersList: Layer[]) {
     const linkedLayers = activeLayer.options.linkedLayers as LayersLink;
     if (!linkedLayers) {
-      if (actiontype === LayerListDisplacement.Raise) {
-        activeLayer.map.raiseLayer(activeLayer);
-      } else if (actiontype === LayerListDisplacement.Lower) {
-        activeLayer.map.lowerLayer(activeLayer);
-      }
       return;
     }
     const currentLinkedId = linkedLayers.linkId;
@@ -351,31 +362,29 @@ export class LayerListComponent implements OnInit, OnDestroy {
           return;
         }
         link.linkedIds.map(linkedId => {
-          const layerToApply = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
-          if (layerToApply) {
-            layersToMove.push(layerToApply);
+          const childLayer = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
+          if (childLayer) {
+            if (!layersList.includes(childLayer)) {
+              layersList.push(childLayer);
+            }
           }
         });
       });
     } else {
       // search for parent layer
-      this.map.layers.map(parentLayer => {
+      this.layers.map(parentLayer => {
         if (parentLayer.options.linkedLayers?.links) {
           parentLayer.options.linkedLayers.links.map(l => {
             if (
               l.properties?.indexOf('zIndex') !== -1 &&
               l.bidirectionnal !== false &&
               l.linkedIds.indexOf(currentLinkedId) !== -1) {
-              layersToMove.push(parentLayer);
+              layersList.push(parentLayer);
+              this.getLinkedLayers(parentLayer, layersList);
             }
           });
         }
       });
-    }
-    if (actiontype === LayerListDisplacement.Raise) {
-      this.raiseLayers(isParentLayer ? layersToMove : layersToMove.reverse(), false);
-    } else if (actiontype === LayerListDisplacement.Lower) {
-      this.lowerLayers(isParentLayer ? layersToMove : layersToMove.reverse(), false);
     }
   }
 
@@ -842,11 +851,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     const checkItem =
       type === 'lower'
         ? this.elRef.nativeElement.getElementsByClassName(
-            'mat-checkbox-checked'
-          )[checkItems.length - 1]
+          'mat-checkbox-checked'
+        )[checkItems.length - 1]
         : this.elRef.nativeElement.getElementsByClassName(
-            'mat-checkbox-checked'
-          )[0];
+          'mat-checkbox-checked'
+        )[0];
     const igoList = this.elRef.nativeElement.getElementsByTagName(
       'igo-list'
     )[0];
