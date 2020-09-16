@@ -65,6 +65,17 @@ export class FeatureActionsService implements OnDestroy {
 
     return [
       {
+        id: 'zoomAuto',
+        checkbox: true,
+        title: 'igo.geo.workspace.zoomAuto.title',
+        tooltip: featureMotionStrategyActiveToolTip(workspace),
+        checkCondition: this.zoomAuto$,
+        handler: () => {
+          this.handleZoomAuto(workspace);
+          this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
+        }
+      },
+      {
         id: 'filterInMapExtent',
         checkbox: true,
         title: 'igo.geo.workspace.inMapExtent.title',
@@ -83,33 +94,6 @@ export class FeatureActionsService implements OnDestroy {
               'rowsInMapExtent',
               !this.storageService.get('rowsInMapExtent') as boolean,
               StorageScope.SESSION);
-        }
-      },
-      {
-        id: 'featureDownload',
-        icon: 'download',
-        title: 'igo.geo.workspace.download.title',
-        tooltip: 'igo.geo.workspace.download.tooltip',
-        handler: (ws: FeatureWorkspace) => {
-          const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
-          const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
-          const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
-          this.toolState.toolToActivateFromOptions({
-            tool: 'importExport',
-            options: { layers: [ws.layer.id], featureInMapExtent: filterStrategy.active, layersWithSelection } as ExportOptions
-          });
-        },
-        args: [workspace]
-      },
-      {
-        id: 'zoomAuto',
-        checkbox: true,
-        title: 'igo.geo.workspace.zoomAuto.title',
-        tooltip: featureMotionStrategyActiveToolTip(workspace),
-        checkCondition: this.zoomAuto$,
-        handler: () => {
-          this.handleZoomAuto(workspace);
-          this.storageService.set('zoomAuto', !this.storageService.get('zoomAuto') as boolean);
         }
       },
       {
@@ -139,6 +123,23 @@ export class FeatureActionsService implements OnDestroy {
         args: [workspace],
         availability: (ws: FeatureWorkspace) => noElementSelected(ws)
       },
+      {
+        id: 'featureDownload',
+        icon: 'download',
+        title: 'igo.geo.workspace.download.title',
+        tooltip: 'igo.geo.workspace.download.tooltip',
+        handler: (ws: FeatureWorkspace) => {
+          const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+          const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
+          const layersWithSelection = filterSelectionStrategy.active ? [ws.layer.id] : [];
+          this.toolState.toolToActivateFromOptions({
+            tool: 'importExport',
+            options: { layers: [ws.layer.id], featureInMapExtent: filterStrategy.active, layersWithSelection } as ExportOptions
+          });
+        },
+        args: [workspace]
+      }
+
     ];
   }
 
