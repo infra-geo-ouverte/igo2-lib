@@ -1,30 +1,29 @@
-
-<mat-checkbox 
+<mat-checkbox
   tooltip-position="below"
   matTooltipShowDelay="500"
   [matTooltip]="'igo.geo.filter.toggleFilterState' | translate"
-  (click)="$event.stopPropagation()" 
+  (click)="$event.stopPropagation()"
   (change)="toggleFilterState($event)"
   [checked]="currentFilter.active">
 </mat-checkbox>
 
 <mat-form-field
   [ngClass]="{'logical': activeFilters.indexOf(currentFilter) !== 0 && currentFilter.active===true, 'logicalHidden': activeFilters.indexOf(currentFilter) === 0 || currentFilter.active!==true}">
-  <mat-select 
+  <mat-select
     [disabled]="!currentFilter.active"
     [value]="currentFilter.parentLogical"
     tooltip-position="above"
     matTooltipShowDelay="500"
     [matTooltip]="currentFilter.parentLogical ? (('igo.geo.operators.tooltip.'+ currentFilter.parentLogical) | translate) : ''"
     (selectionChange)="changeLogical($event.value)">
-      <mat-option 
+      <mat-option
         [value]=ogcFilterOperator.And
         tooltip-position="above"
         matTooltipShowDelay="500"
         [matTooltip]="'igo.geo.operators.tooltip.And' | translate">
           {{'igo.geo.operators.And' | translate}}
       </mat-option>
-      <mat-option 
+      <mat-option
         [value]=ogcFilterOperator.Or
         tooltip-position="above"
         matTooltipShowDelay="500"
@@ -34,8 +33,8 @@
   </mat-select>
 </mat-form-field>
 
-<mat-form-field 
-  class="field" 
+<mat-form-field
+  class="field"
   *ngIf="!(currentFilterIsSpatial$ | async) && (fields$ | async) && (fields$| async).length > 0 && (fields$| async)[0].name !== ''"
   (mouseenter)="inputClearable = 'selectField'"
   (mouseleave)="inputClearable = undefined"
@@ -52,7 +51,7 @@
   (input)="updateFieldsList($event.target.value)">
   <mat-autocomplete #autoCompleteField="matAutocomplete"
   (optionSelected)='changeField($event.option.id)'>
-    <mat-option 
+    <mat-option
       *ngFor="let field of filteredFields$ | async"
       matTooltipShowDelay="500"
       [value]="field.alias"
@@ -61,7 +60,7 @@
       {{field.alias}}
     </mat-option>
   </mat-autocomplete>
-  <button mat-button 
+  <button mat-button
     *ngIf="currentFilter.propertyName && inputClearable === 'selectField' && currentFilter.active"
     matSuffix
     mat-icon-button
@@ -73,7 +72,7 @@
 </mat-form-field>
 
 
-<mat-form-field 
+<mat-form-field
   [ngClass]="{'operator': !(currentFilterIsSpatial$ | async) , 'dualInput': (currentFilterIsSpatial$ | async)}"
   [floatLabel]="floatLabel">
   <mat-select
@@ -95,9 +94,9 @@
 </mat-form-field>
 
 <mat-form-field
-class="spatialSelector" 
+class="spatialSelector"
 *ngIf="currentFilterIsSpatial$ | async">
-  <mat-select 
+  <mat-select
     [disabled]="!currentFilter.active"
     [value]="currentFilter.igoSpatialSelector"
     (selectionChange)="changeSpatialSelector($event.value)">
@@ -109,7 +108,7 @@ class="spatialSelector"
   </mat-select>
 </mat-form-field>
 
-<mat-form-field 
+<mat-form-field
 class="singleInput"
 *ngIf="['expression','pattern'].indexOf(detectProperty()) !== -1"
 (mouseenter)="inputClearable = 'selectProperty'"
@@ -127,7 +126,7 @@ class="singleInput"
     (input)="updateValuesList($event.target.value)">
   <mat-autocomplete #autoCompleteValues="matAutocomplete"
     (optionSelected)="changeProperty($event.option.value)">
-    <mat-option 
+    <mat-option
       *ngFor="let value of filteredValues$ | async"
       matTooltipShowDelay="500"
       [value]="value"
@@ -135,7 +134,7 @@ class="singleInput"
       {{value}}
     </mat-option>
   </mat-autocomplete>
-  <button mat-button 
+  <button mat-button
     *ngIf="isClearable() && inputClearable === 'selectProperty' && currentFilter.active"
     matSuffix
     mat-icon-button
@@ -159,13 +158,13 @@ class="singleInput"
   </button>
 </div>
 
-<mat-form-field 
+<mat-form-field
 class="snrc"
 *ngIf="(currentFilterIsSpatial$ | async) && currentFilter.igoSpatialSelector === 'snrc'"
 (mouseenter)="inputClearable = 'selectSNRC'"
 (mouseleave)="inputClearable = undefined"
 [floatLabel]="floatLabel">
-  <input 
+  <input
     matInput
     [placeholder]="'igo.geo.filter.placeholderSnrc' | translate"
     [value]="currentFilter.igoSNRC"
@@ -186,7 +185,7 @@ class="snrc"
   </mat-form-field>
 
   <ng-container *ngIf="(currentFilterIsSpatial$ | async) && currentFilter.igoSpatialSelector === 'fixedExtent'">
-    <button 
+    <button
     mat-button
     [disabled]="!currentFilter.active"
     *ngIf="currentFilter.igoSpatialSelector === 'fixedExtent'"
@@ -203,13 +202,13 @@ class="snrc"
 
 <br/>
 
-<mat-form-field 
+<mat-form-field
 class="dualInput"
 *ngIf="!isTemporalOperator() && ['lowerBoundary','begin'].indexOf(detectProperty(1)) !== -1"
 (mouseenter)="inputClearable = 'selectProperty1'"
 (mouseleave)="inputClearable = undefined"
 [floatLabel]="floatLabel">
-    <input 
+    <input
       matInput
       [placeholder]="'igo.geo.filter.placeholder' | translate"
       [disabled]="!currentFilter.active"
@@ -219,7 +218,7 @@ class="dualInput"
       (input)="updateValuesList($event.target.value,1)">
     <mat-autocomplete #autoDualValueOperator1="matAutocomplete"
       (optionSelected)="changeNumericProperty($event.option.value,1)">
-      <mat-option 
+      <mat-option
         *ngFor="let value of filteredValues$ | async"
         matTooltipShowDelay="500"
         [value]="value"
@@ -227,7 +226,7 @@ class="dualInput"
         {{value}}
       </mat-option>
     </mat-autocomplete>
-    <button mat-button 
+    <button mat-button
       *ngIf="isClearable(1) && inputClearable === 'selectProperty1' && currentFilter.active"
       matSuffix
       mat-icon-button
@@ -238,13 +237,13 @@ class="dualInput"
     </button>
 </mat-form-field>
 
-<mat-form-field 
+<mat-form-field
   class="dualInput"
   *ngIf="!isTemporalOperator() && ['upperBoundary','end'].indexOf(detectProperty(2)) !== -1"
   (mouseenter)="inputClearable = 'selectProperty2'"
   (mouseleave)="inputClearable = undefined"
   [floatLabel]="floatLabel">
-    <input 
+    <input
       matInput
       [placeholder]="'igo.geo.filter.placeholder' | translate"
       [disabled]="!currentFilter.active"
@@ -254,7 +253,7 @@ class="dualInput"
       (input)="updateValuesList($event.target.value,2)">
     <mat-autocomplete #autoDualValueOperator2="matAutocomplete"
       (optionSelected)="changeNumericProperty($event.option.value,2)">
-      <mat-option 
+      <mat-option
         *ngFor="let value of filteredValues$ | async"
         matTooltipShowDelay="500"
         [value]="value"
@@ -262,7 +261,7 @@ class="dualInput"
         {{value}}
       </mat-option>
     </mat-autocomplete>
-    <button mat-button 
+    <button mat-button
       *ngIf="isClearable(2) && inputClearable === 'selectProperty2' && currentFilter.active"
       matSuffix
       mat-icon-button
@@ -279,7 +278,7 @@ class="dualInput"
   (changeProperty)="changeProperty($event.value, $event.pos)">
 </igo-ogc-filter-time>
 
-<!-- 
+<!--
 TODO C'EST PERTINENT je crois
 <mat-form-field class="field" *ngIf="!(currentFilterIsSpatial$ | async) && (fields$| async) && (fields$| async).length === 1 &&  (fields$| async)[0].name === ''">
 <input [disabled]="!currentFilter.active" matInput #fieldPerUser (keyup)="changeProperty(currentFilter,'propertyName',fieldPerUser.value)"

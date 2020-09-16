@@ -385,7 +385,9 @@
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",
-        "startDate": "Date de début"
+        "startDate": "Date de début",
+        "hour": "Heure",
+        "minute": "Minute"
       },
       "spatialFilter": {
         "predefined": "Zone Prédéfinie",

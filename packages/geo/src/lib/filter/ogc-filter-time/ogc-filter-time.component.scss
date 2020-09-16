@@ -3,7 +3,29 @@
   margin: auto 5px auto 5px !important;
 }
 
+.datetime-container {
+  text-align: center;
+}
+
+.datetime-input {
+  display: inline-block;
+  margin: 5px 25px;
+}
+
+.date-input {
+  width: 120px;
+  margin-right: 25px;
+}
+
 .time-input {
-  display: inline-flex;
-  margin: 10px;
+  display: inherit;
+  margin-right: 25px;
+}
+
+.hour-input, .minute-input {
+  width: 40px;
+}
+
+.minute-input {
+  margin-left: 10px;
 }
