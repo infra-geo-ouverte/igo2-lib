@@ -1,4 +1,4 @@
-import { Directive, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -13,6 +13,7 @@ import { OgcFilterableDataSourceOptions } from '../../filter';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 // import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
+import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 
 @Directive({
   selector: '[igoWorkspaceSelector]'
@@ -65,6 +66,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
     if (workspacesToRemove.length > 0) {
       workspacesToRemove.forEach((workspace: Workspace) => {
+        workspace.entityStore.deactivateStrategyOfType(FeatureStoreInMapExtentStrategy);
         workspace.deactivate();
       });
       this.workspaceStore.state.updateMany(workspacesToRemove, {active: false, selected: false});

@@ -13,6 +13,7 @@ import { OgcFilterableDataSourceOptions } from '../../filter';
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
 // import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
+import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 
 @Directive({
   selector: '[igoWorkspaceUpdator]'
@@ -62,6 +63,7 @@ export class WorkspaceUpdatorDirective implements OnInit, OnDestroy {
 
     if (workspacesToRemove.length > 0) {
       workspacesToRemove.forEach((workspace: Workspace) => {
+        workspace.entityStore.deactivateStrategyOfType(FeatureStoreInMapExtentStrategy);
         workspace.deactivate();
       });
       this.workspaceStore.state.updateMany(workspacesToRemove, {active: false, selected: false});
