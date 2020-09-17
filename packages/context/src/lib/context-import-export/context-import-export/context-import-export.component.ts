@@ -130,7 +130,7 @@ export class ContextImportExportComponent implements OnInit {
 
   selectAll(e) {
     if (e._selected) {
-      this.form.controls.layers.setValue(this.layerList);
+      this.form.controls.layers.setValue(this.userControlledLayerList);
       e._selected = true;
     }
     if (e._selected === false) {
