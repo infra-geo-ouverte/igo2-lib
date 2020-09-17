@@ -133,38 +133,42 @@ export class InteractiveTourService {
     let nbTry = 0;
     const maxTry = 21;
     const checkExist = setInterval(() => {
-      console.log(self.getCurrentStep());
       if (self.getCurrentStep()) {
-        const currentStepElement = self.getCurrentStep().getElement();
-        console.log('current', currentStepElement);
-        const header = currentStepElement
-          ? currentStepElement.querySelector('.shepherd-header')
-          : undefined;
-
         if (!document.querySelector(self.getCurrentStep().options.attachTo.element)) {
-          self.getCurrentStep().destroy();
-          this.shepherdService.tourObject.next();
+          self.getCurrentStep().hide();
+          const id = self.getCurrentStep().id;
+          self.next();
+          self.removeStep(id);
           return;
-        }
+        } else {
+          const currentStepElement = self.getCurrentStep().getElement();
+          if (currentStepElement) {
+            const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
+            shepherdList.forEach(element => {
+              element.classList.add('mat-typography');
+            });
+          }
+          const header = currentStepElement
+            ? currentStepElement.querySelector('.shepherd-header')
+            : undefined;
 
-        nbTry++;
-        if (header || nbTry > maxTry) {
-          clearInterval(checkExist);
-        }
+          nbTry++;
+          if (header || nbTry > maxTry) {
+            clearInterval(checkExist);
+          }
 
-        if (header) {
-          currentStepElement.querySelector('.shepherd-content').classList.add('mat-typography');
-          currentStepElement.querySelector('.shepherd-text').classList.add('mat-typography');
-          const stepsArray = self.steps;
-          const progress = document.createElement('span');
-          progress.className = 'shepherd-progress';
-          progress.innerText = `${
-            stepsArray.indexOf(self.getCurrentStep()) + 1
-          }/${stepsArray.length}`;
-          header.insertBefore(
-            progress,
-            currentStepElement.querySelector('.shepherd-cancel-icon')
-          );
+          if (header) {
+            const stepsArray = self.steps;
+            const progress = document.createElement('span');
+            progress.className = 'shepherd-progress';
+            progress.innerText = `${
+              stepsArray.indexOf(self.getCurrentStep()) + 1
+            }/${stepsArray.length}`;
+            header.insertBefore(
+              progress,
+              currentStepElement.querySelector('.shepherd-cancel-icon')
+            );
+          }
         }
       }
     }, 100);
@@ -247,7 +251,7 @@ export class InteractiveTourService {
             ? 'noBackButton'
             : undefined
         ),
-        class: step.class,
+        classes: step.class,
         highlightClass: step.highlightClass,
         scrollTo: step.scrollToElement || stepConfig.scrollToElement || true,
         canClickTarget: step.disableInteraction
@@ -290,7 +294,6 @@ export class InteractiveTourService {
     };
 
     const shepherdSteps = this.getShepherdSteps(stepConfig);
-    console.log(shepherdSteps);
 
     this.shepherdService.modal = true;
     this.shepherdService.confirmCancel = false;
