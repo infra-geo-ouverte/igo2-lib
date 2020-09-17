@@ -29,7 +29,7 @@ export class ContextImportExportComponent implements OnInit {
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public layerList: Layer[];
-  public userControledLayerList: Layer[];
+  public userControlledLayerList: Layer[];
   public res: DetailedContext;
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
@@ -57,7 +57,7 @@ export class ContextImportExportComponent implements OnInit {
       (configFileSizeMb ? configFileSizeMb : 30) * Math.pow(1024, 2);
     this.fileSizeMb = this.clientSideFileSizeMax / Math.pow(1024, 2);
     this.layerList = this.contextService.getContextLayers(this.map);
-    this.userControledLayerList = this.layerList.filter(layer => layer.showInLayerList);
+    this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
   }
 
   importFiles(files: File[]) {
