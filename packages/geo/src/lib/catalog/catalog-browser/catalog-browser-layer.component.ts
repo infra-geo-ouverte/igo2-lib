@@ -33,6 +33,8 @@ export class CatalogBrowserLayerComponent implements OnInit {
   public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
+  private mouseInsideAdd: boolean = false;
+
   @Input() resolution: number;
 
   @Input() catalogAllowLegend = false;
@@ -100,7 +102,9 @@ export class CatalogBrowserLayerComponent implements OnInit {
     if (typeof this.lastTimeoutRequest !== 'undefined') {
       clearTimeout(this.lastTimeoutRequest);
     }
-
+    if (event.type === 'mouseenter' && this.mouseInsideAdd ) {
+      return;
+    }
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
@@ -119,12 +123,14 @@ export class CatalogBrowserLayerComponent implements OnInit {
             this.isPreview$.next(true);
           }, 500);
         }
+        this.mouseInsideAdd = true;
         break;
       case 'mouseleave':
         if (this.isPreview$.value) {
           this.remove();
           this.isPreview$.next(false);
         }
+        this.mouseInsideAdd = false;
         break;
       default:
         break;
