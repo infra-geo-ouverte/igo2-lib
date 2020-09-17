@@ -31,6 +31,7 @@ import { ImportExportState } from './../../import-export/import-export.state';
 import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ToolState } from '../../tool/tool.state';
+import { WorkspaceState } from '../../workspace/workspace.state';
 
 /**
  * Tool to apply spatial filter
@@ -86,7 +87,8 @@ export class SpatialFilterToolComponent {
     private messageService: MessageService,
     private languageService: LanguageService,
     private importExportState: ImportExportState,
-    private toolState: ToolState
+    private toolState: ToolState,
+    private workspaceState: WorkspaceState
   ) {}
 
   getOutputType(event: SpatialFilterType) {
@@ -110,6 +112,12 @@ export class SpatialFilterToolComponent {
     this.importExportState.setMode('export');
     this.importExportState.setsExportOptions({ layers: ids } as ExportOptions);
     this.toolState.toolbox.activateTool('importExport');
+  }
+
+  activateWorkspace() {
+    const layerToOpenWks = this.layers.filter(layer => !layer.title?.startsWith('Zone'))[0];
+    this.workspaceState.workspacePanelExpanded = true;
+    this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
   }
 
   private loadFilterList() {
@@ -242,13 +250,13 @@ export class SpatialFilterToolComponent {
           ) {
             return;
           }
-          if (layer.title.startsWith('Zone')) {
+          if (layer.title?.startsWith('Zone')) {
             this.map.removeLayer(layer);
           }
         }
       }
       for (const layer of this.map.layers) {
-        if (layer.title.startsWith('Zone')) {
+        if (layer.title?.startsWith('Zone')) {
           i++;
         }
       }
@@ -316,7 +324,7 @@ export class SpatialFilterToolComponent {
         return;
       }
       for (const layer of this.map.layers) {
-        if (layer.title.startsWith(features[0].meta.title)) {
+        if (layer.title?.startsWith(features[0].meta.title)) {
           i++;
         }
       }
@@ -392,7 +400,7 @@ export class SpatialFilterToolComponent {
         return;
       }
       for (const layer of this.map.layers) {
-        if (layer.title.startsWith(features[0].meta.title)) {
+        if (layer.title?.startsWith(features[0].meta.title)) {
           i++;
         }
       }
