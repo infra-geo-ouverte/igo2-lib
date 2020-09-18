@@ -115,7 +115,9 @@ export interface OgcFilterAttributeOptions {
 
 export interface OgcFilterDuringOptions extends OgcFilterAttributeOptions {
   begin: string;
-  end: string;
+  end?: string;
+  step: string;
+  restrictToStep?: boolean;
 }
 export interface OgcFilterIsBetweenOptions extends OgcFilterAttributeOptions {
   lowerBoundary: number;
@@ -141,6 +143,8 @@ export interface OgcInterfaceFilterOptions {
   active?: boolean;
   begin?: string;
   end?: string;
+  step?: string;
+  restrictToStep?: boolean;
   escapeChar?: string;
   expression?: string | number;
   extent?: [number, number, number, number];
@@ -148,6 +152,7 @@ export interface OgcInterfaceFilterOptions {
   geometry?: olGeometry;
   geometryName?: string;
   igoSpatialSelector?: string;
+  igoSNRC?: string;
   level?: number;
   lowerBoundary?: number;
   matchCase?: boolean;
