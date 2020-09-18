@@ -165,7 +165,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (layerOptions && layerOptions.legendOptions) {
       const translate = this.languageService.translate;
       const title = translate.instant('igo.geo.layer.legend.default');
-      let stylesAvailable =  [{ name: '', title } as ItemStyleOptions];
+      const stylesAvailable =  [{ name: '', title } as ItemStyleOptions];
       if (layerOptions.legendOptions.stylesAvailable) {
         stylesAvailable.concat(layerOptions.legendOptions.stylesAvailable.filter(sA => (
             sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
