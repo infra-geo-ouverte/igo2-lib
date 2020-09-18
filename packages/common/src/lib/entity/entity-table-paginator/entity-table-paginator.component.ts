@@ -59,7 +59,7 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
    */
   @Output() paginatorChange: EventEmitter<MatPaginator> = new EventEmitter<MatPaginator>();
 
-  constructor(private languageService: LanguageService) {}
+  constructor(private languageService: LanguageService, private mediaService: MediaService) {}
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
@@ -83,13 +83,13 @@ export class EntityTablePaginatorComponent implements OnChanges, OnDestroy {
     this.pageIndex = this.paginatorOptions?.pageIndex || this.pageIndex;
     this.pageSize = this.paginatorOptions?.pageSize || this.pageSize;
     this.pageSizeOptions = this.paginatorOptions?.pageSizeOptions || this.pageSizeOptions;
-    /*if (this.mediaService.isMobile()) {
+    if (this.mediaService.isMobile()) {
       this.showFirstLastButtons = false;
       this.hidePageSize = true;
-    } else {*/
-    this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
-    this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
-    // }
+    } else {
+      this.showFirstLastButtons = this.paginatorOptions?.showFirstLastButtons || this.showFirstLastButtons;
+      this.hidePageSize = this.paginatorOptions?.hidePageSize || this.hidePageSize;
+    }
   }
 
   translateLabels() {
