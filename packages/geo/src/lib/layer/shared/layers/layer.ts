@@ -304,7 +304,7 @@ export abstract class Layer {
     const newValue = layerChangeProperties[key];
     const oldValue = layerChange.oldValue;
 
-    if (['zIndex', 'visible', 'opacity', 'minResolution', 'maxResolution'].indexOf(key) === -1) {
+    if (['visible', 'opacity', 'minResolution', 'maxResolution'].indexOf(key) === -1) {
       return;
     }
     const linkedLayers = layerChangeProperties.linkedLayers as LayersLink;
