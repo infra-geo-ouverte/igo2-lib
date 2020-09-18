@@ -140,7 +140,6 @@ export class WMSDataSource extends DataSource {
       fieldNameGeometry
     );
     sourceParams.FILTER = filterQueryString;
-    // this.ogcFilters = initOgcFilters;
     this.setOgcFilters(initOgcFilters, true);
 
     const timeFilterableDataSourceOptions = (options as TimeFilterableDataSourceOptions);

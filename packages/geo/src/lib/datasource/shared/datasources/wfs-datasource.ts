@@ -19,17 +19,14 @@ import { BehaviorSubject } from 'rxjs';
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
 
-  set ogcFilters(value: any) {
-    // this.ogcFilters$.next(value);
+  set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
-  get ogcFilters(): any {
+  get ogcFilters(): OgcFiltersOptions {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    // return this.ogcFilters$.value;
-    // (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
 
-  readonly ogcFilters$: BehaviorSubject<any> = new BehaviorSubject(undefined);
+  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WFSDataSourceOptions,

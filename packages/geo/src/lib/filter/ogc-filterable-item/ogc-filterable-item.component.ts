@@ -212,8 +212,6 @@ export class OgcFilterableItemComponent implements OnInit {
     } else {
       // identical filter. Nothing triggered
     }
-    // this.layer.ol.dispatchEvent('ogcFiltersChange');
-    // (this.layer.dataSource as WMSDataSource).ogcFilters$.next(ogcFilters);
     (this.layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
   }
 
