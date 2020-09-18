@@ -16,7 +16,7 @@ import { DataSource, Legend, WMSDataSource } from '../../../datasource';
 import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
-import { LayerOptions, LayersLink } from './layer.interface';
+import { LayerOptions, LayersLink, LinkedProperties } from './layer.interface';
 import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
 import { TimeFilterableDataSource } from '../../../filter';
@@ -184,34 +184,34 @@ export abstract class Layer {
           .filter(layer => layer.options.linkedLayers?.links)
           .map(layer => {
             layer.options.linkedLayers.links.map(link => {
-              if (link.properties?.indexOf('visible') !== -1) {
+              if (link.properties?.indexOf(LinkedProperties.VISIBLE) !== -1) {
                 layer.ol.set('visible', !(layer.visible), false);
                 layer.ol.set('visible', !(layer.visible), false);
                 layer.visible = layer.visible;
               }
-              if (link.properties?.indexOf('opacity') !== -1) {
+              if (link.properties?.indexOf(LinkedProperties.OPACITY) !== -1) {
                 const baseOpacity = layer.ol.get('opacity');
                 layer.ol.set('opacity', 0, false);
                 layer.ol.set('opacity', baseOpacity, false);
                 layer.opacity = layer.opacity;
               }
-              if (link.properties?.indexOf('minResolution') !== -1) {
+              if (link.properties?.indexOf(LinkedProperties.MINRESOLUTION) !== -1) {
                 const baseMinResolution = layer.ol.get('minResolution');
                 layer.ol.set('minResolution', 0, false);
                 layer.ol.set('minResolution', baseMinResolution, false);
                 layer.minResolution = layer.minResolution;
               }
-              if (link.properties?.indexOf('maxResolution') !== -1) {
+              if (link.properties?.indexOf(LinkedProperties.MAXRESOLUTION) !== -1) {
                 const baseMaxResolution = layer.ol.get('maxResolution');
                 layer.ol.set('maxResolution', 0, false);
                 layer.ol.set('maxResolution', baseMaxResolution, false);
                 layer.minResolution = layer.minResolution;
               }
-              if (link.properties?.indexOf('ogcFilters') !== -1) {
+              if (link.properties?.indexOf(LinkedProperties.OGCFILTERS) !== -1) {
                 const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
                 ogcFilters$.next(ogcFilters$.value);
               }
-              if (link.properties?.indexOf('timeFilter') !== -1) {
+              if (link.properties?.indexOf(LinkedProperties.TIMEFILTER) !== -1) {
                 const timeFilter$ = (layer.dataSource as TimeFilterableDataSource).timeFilter$;
                 timeFilter$.next(timeFilter$.value);
               }
@@ -251,7 +251,7 @@ export abstract class Layer {
     if (isParentLayer) {
       // search for child layers
       currentLinks.map(link => {
-        if (!link.properties || link.properties.indexOf('ogcFilters') === -1) {
+        if (!link.properties || link.properties.indexOf(LinkedProperties.OGCFILTERS) === -1) {
           return;
         }
         link.linkedIds.map(linkedId => {
@@ -274,7 +274,7 @@ export abstract class Layer {
       this.map.layers.map(layer => {
         if (layer.options.linkedLayers?.links) {
           layer.options.linkedLayers.links.map(l => {
-            if (l.properties && l.properties.indexOf('ogcFilters') !== -1 &&
+            if (l.properties && l.properties.indexOf(LinkedProperties.OGCFILTERS) !== -1 &&
               l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
               const layerType = layer.ol.getProperties().sourceOptions.type;
               if (layerType === 'wfs') {
@@ -313,7 +313,7 @@ export abstract class Layer {
     if (isParentLayer) {
       // search for child layers
       currentLinks.map(link => {
-        if (!link.properties || link.properties.indexOf('timeFilter') === -1) {
+        if (!link.properties || link.properties.indexOf(LinkedProperties.TIMEFILTER) === -1) {
           return;
         }
         link.linkedIds.map(linkedId => {
@@ -334,7 +334,7 @@ export abstract class Layer {
       .map(parentLayer => {
         if (parentLayer.options.linkedLayers?.links) {
           parentLayer.options.linkedLayers.links.map(l => {
-            if (l.properties && l.properties.indexOf('timeFilter') !== -1 &&
+            if (l.properties && l.properties.indexOf(LinkedProperties.TIMEFILTER) !== -1 &&
               l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
                 const appliedTimeFilter = this.ol.values_.source.getParams().TIME;
                 (parentLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });

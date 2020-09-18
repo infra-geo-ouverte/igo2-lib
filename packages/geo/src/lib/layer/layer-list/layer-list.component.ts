@@ -12,7 +12,6 @@ import {
 import type { TemplateRef } from '@angular/core';
 
 import { FloatLabelType } from '@angular/material/form-field';
-import { Layer, LayersLink } from '../shared';
 import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
 import {
@@ -29,6 +28,8 @@ import {
 } from '../../metadata/shared/metadata.interface';
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
 import { IgoMap } from '../../map/shared/map';
+import { Layer } from '../shared/layers/layer';
+import { LinkedProperties, LayersLink } from '../shared/layers/layer.interface';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -358,7 +359,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     if (isParentLayer) {
       // search for child layers
       currentLinks.map(link => {
-        if (!link.properties || link.properties.indexOf('zIndex') === -1) {
+        if (!link.properties || link.properties.indexOf(LinkedProperties.ZINDEX) === -1) {
           return;
         }
         link.linkedIds.map(linkedId => {
@@ -376,7 +377,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
         if (parentLayer.options.linkedLayers?.links) {
           parentLayer.options.linkedLayers.links.map(l => {
             if (
-              l.properties?.indexOf('zIndex') !== -1 &&
+              l.properties?.indexOf(LinkedProperties.ZINDEX) !== -1 &&
               l.bidirectionnal !== false &&
               l.linkedIds.indexOf(currentLinkedId) !== -1) {
               layersList.push(parentLayer);

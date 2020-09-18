@@ -32,25 +32,22 @@ export interface LayerOptions {
 export interface LayersLink {
   linkId: string;
   links?: LayersLinkProperties[];
-  computedLinks?: ComputedLink[];
 }
 export interface LayersLinkProperties {
   bidirectionnal?: boolean;
   linkedIds: string[];
   syncedDelete: boolean;
-  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution, zIndex
-  // TODO timeFilter
-  // TODO Sourcefields at layer creation because it is a static property
+  properties: LinkedProperties[];
 }
 
-export interface ComputedLink {
-  srcId: string;
-  dstId: string;
-  properties: string[]; // opacity,visible,ogcFilters,minResolution, maxResolution, zIndex
-  // TODO timeFilter
-  // TODO Sourcefields at layer creation because it is a static property
-  bidirectionnal?: boolean;
-  srcProcessed?: boolean;
+export enum LinkedProperties {
+  OPACITY = 'opacity',
+  VISIBLE = 'visible',
+  OGCFILTERS = 'ogcFilters',
+  MINRESOLUTION = 'minResolution',
+  MAXRESOLUTION = 'maxResolution',
+  ZINDEX = 'zIndex',
+  TIMEFILTER = 'timeFilter'
 }
 
 export interface GroupLayers {
