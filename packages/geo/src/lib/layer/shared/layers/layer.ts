@@ -19,6 +19,7 @@ import { getResolutionFromScale } from '../../../map/shared/map.utils';
 import { LayerOptions, LayersLink } from './layer.interface';
 import { OgcFilterableDataSource, OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
+import { TimeFilterableDataSource } from '../../../filter';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -210,6 +211,10 @@ export abstract class Layer {
                 const ogcFilters$ = (layer.dataSource as OgcFilterableDataSource).ogcFilters$;
                 ogcFilters$.next(ogcFilters$.value);
               }
+              if (link.properties?.indexOf('timeFilter') !== -1) {
+                const timeFilter$ = (layer.dataSource as TimeFilterableDataSource).timeFilter$;
+                timeFilter$.next(timeFilter$.value);
+              }
             });
           });
       });
@@ -228,12 +233,14 @@ export abstract class Layer {
         .subscribe(ogcFilters => this.transferOgcFiltersProperties(ogcFilters));
     }
 
+    if ((this.dataSource as TimeFilterableDataSource).timeFilter$) {
+      (this.dataSource as TimeFilterableDataSource).timeFilter$
+        .subscribe(timeFilter => this.transferTimeFilterProperties(timeFilter));
+    }
+
   }
 
   private transferOgcFiltersProperties(ogcFilters) {
-    // TODO timefilter
-    // TODO Synced delete layer.
-
     const linkedLayers = this.ol.getProperties().linkedLayers as LayersLink;
     if (!linkedLayers) {
       return;
@@ -256,9 +263,6 @@ export abstract class Layer {
               layerToApply.ol.getSource().clear();
             }
             if (layerType === 'wms') {
-              if (this.ol.getProperties().sourceOptions.type === 'wfs') {
-                console.log('this', this);
-              }
               const appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
               (layerToApply.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
             }
@@ -296,8 +300,52 @@ export abstract class Layer {
         }
       });
     }
-
   }
+
+  private transferTimeFilterProperties(timeFilter) {
+    const linkedLayers = this.ol.getProperties().linkedLayers as LayersLink;
+    if (!linkedLayers) {
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+    if (isParentLayer) {
+      // search for child layers
+      currentLinks.map(link => {
+        if (!link.properties || link.properties.indexOf('timeFilter') === -1) {
+          return;
+        }
+        link.linkedIds.map(linkedId => {
+          const childLayer = this.map.layers.find(layer =>
+            layer.dataSource instanceof WMSDataSource &&
+            layer.options.linkedLayers?.linkId === linkedId);
+          if (childLayer) {
+            (childLayer.dataSource as TimeFilterableDataSource).setTimeFilter(timeFilter, false);
+            const appliedTimeFilter = this.ol.values_.source.getParams().TIME;
+            (childLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });
+          }
+        });
+      });
+    } else {
+      // search for parent layer
+      this.map.layers
+      .filter(layer => layer.dataSource instanceof WMSDataSource)
+      .map(parentLayer => {
+        if (parentLayer.options.linkedLayers?.links) {
+          parentLayer.options.linkedLayers.links.map(l => {
+            if (l.properties && l.properties.indexOf('timeFilter') !== -1 &&
+              l.bidirectionnal !== false && l.linkedIds.indexOf(currentLinkedId) !== -1) {
+                const appliedTimeFilter = this.ol.values_.source.getParams().TIME;
+                (parentLayer.dataSource as WMSDataSource).ol.updateParams({ TIME: appliedTimeFilter });
+                (parentLayer.dataSource as TimeFilterableDataSource).setTimeFilter(timeFilter, true);
+            }
+          });
+        }
+      });
+    }
+  }
+
   private transferCommonProperties(layerChange) {
     const key = layerChange.key;
     const layerChangeProperties = layerChange.target.getProperties();

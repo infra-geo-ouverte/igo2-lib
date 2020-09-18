@@ -16,6 +16,7 @@ import {
 
 import { ObjectUtils } from '@igo2/utils';
 import { BehaviorSubject } from 'rxjs';
+import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
@@ -40,17 +41,22 @@ export class WMSDataSource extends DataSource {
       : QueryHtmlTarget.BLANK;
   }
 
-  set ogcFilters(value: any) {
-    // this.ogcFilters$.next(value);
+  set ogcFilters(value: OgcFiltersOptions) {
     (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
-  get ogcFilters(): any {
+  get ogcFilters(): OgcFiltersOptions {
     return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
-    // return this.ogcFilters$.value;
-    // (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
   }
 
-  readonly ogcFilters$: BehaviorSubject<any> = new BehaviorSubject(undefined);
+  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
+
+  set timeFilter(value: TimeFilterOptions ) {
+    (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
+  }
+  get timeFilter(): TimeFilterOptions {
+    return (this.options as TimeFilterableDataSourceOptions).timeFilter;
+  }
+  readonly timeFilter$: BehaviorSubject<TimeFilterOptions> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WMSDataSourceOptions,
@@ -137,6 +143,12 @@ export class WMSDataSource extends DataSource {
     // this.ogcFilters = initOgcFilters;
     this.setOgcFilters(initOgcFilters, true);
 
+    const timeFilterableDataSourceOptions = (options as TimeFilterableDataSourceOptions);
+    if (
+      timeFilterableDataSourceOptions?.timeFilterable &&
+      timeFilterableDataSourceOptions?.timeFilter) {
+      this.setTimeFilter(timeFilterableDataSourceOptions.timeFilter, true);
+    }
   }
 
   refresh() {
@@ -158,6 +170,13 @@ export class WMSDataSource extends DataSource {
     this.ogcFilters = ogcFilters;
     if (triggerEvent) {
       this.ogcFilters$.next(this.ogcFilters);
+    }
+  }
+
+  setTimeFilter(timeFilter: TimeFilterOptions, triggerEvent: boolean = false) {
+    this.timeFilter = timeFilter;
+    if (triggerEvent) {
+      this.timeFilter$.next(this.timeFilter);
     }
   }
 
