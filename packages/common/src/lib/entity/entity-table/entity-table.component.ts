@@ -7,7 +7,8 @@ import {
   ChangeDetectorRef,
   OnInit,
   OnDestroy,
-  AfterViewInit
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -33,7 +34,7 @@ import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-ta
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
+export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
 
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -78,7 +79,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
   @Input() store: EntityStore<object>;
 
   /**
-   * Table paginator store
+   * Table paginator
    */
   @Input() set paginator(value: MatPaginator) {
     this._paginator = value;
@@ -132,7 +133,7 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
   }>();
 
   /**
-   * Event emitted when an entity (row) is selected
+   * Event emitted when the table sort is changed.
    */
   @Output() entitySortChange: EventEmitter<{column: EntityTableColumn, direction: string}> = new EventEmitter(undefined);
 
@@ -189,19 +190,43 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
    * @internal
    */
   ngOnInit() {
+    this.handleDatasource();
+    this.dataSource.paginator = this.paginator;
+  }
+
+  /**
+   * @internal
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    const store = changes.store;
+    if (store && store.currentValue !== store.previousValue) {
+      this.handleDatasource();
+    }
+  }
+
+  private handleDatasource() {
+    this.unsubscribeStore();
     this.selection$$ = this.store.stateView
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
+        const firstSelected = records[0];
+        const firstSelectedStateviewPosition = this.store.stateView.all().indexOf(firstSelected);
+        const pageMax = this.paginator.pageSize * (this.paginator.pageIndex + 1);
+        const pageMin = pageMax - this.paginator.pageSize;
+
+        if (
+          this.paginator &&
+          firstSelectedStateviewPosition < pageMin ||
+          firstSelectedStateviewPosition >= pageMax) {
+          const pageToReach = Math.floor(firstSelectedStateviewPosition / this.paginator.pageSize);
+          this.dataSource.paginator.pageIndex = pageToReach;
+        }
         this.selectionState$.next(this.computeSelectionState(records));
       });
-
     this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
       this.dataSource.data = all;
     });
-  }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
   }
 
   /**
@@ -209,8 +234,16 @@ export class EntityTableComponent implements OnInit, OnDestroy, AfterViewInit  {
    * @internal
    */
   ngOnDestroy() {
-    this.selection$$.unsubscribe();
-    this.dataSource$$.unsubscribe();
+    this.unsubscribeStore();
+  }
+
+  private unsubscribeStore() {
+    if (this.selection$$) {
+      this.selection$$.unsubscribe();
+    }
+    if (this.dataSource$$) {
+      this.dataSource$$.unsubscribe();
+    }
   }
 
   /**

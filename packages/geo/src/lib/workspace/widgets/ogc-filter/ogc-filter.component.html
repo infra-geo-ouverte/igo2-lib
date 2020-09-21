@@ -1,13 +1,6 @@
 <igo-ogc-filterable-item
-  [layer]="layer" 
+  igoListItem
+  [layer]="layer"
+  [header]="false" 
   [map]="map" >
 </igo-ogc-filterable-item>
-
-<div>
-  <button
-    mat-button
-    type="button"
-    (click)="onClose()">
-    {{ 'igo.geo.workspace.ogcFilter.close' | translate }}
-  </button>
-</div>

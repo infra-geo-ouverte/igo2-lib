@@ -3,7 +3,8 @@ import { ExportFormat, EncodingFormat } from './export.type';
 export interface ExportOptions {
   format?: ExportFormat;
   encoding?: EncodingFormat;
-  layer: string[];
+  layers: string[];
+  layersWithSelection?: string[];
   name?: string;
   featureInMapExtent?: boolean;
 }

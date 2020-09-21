@@ -255,7 +255,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   }
 
   activateExport(id: string) {
-    this.importExportState.setsExportOptions({ layer: [id] } as ExportOptions);
+    this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode('export');
     this.toolState.toolbox.activateTool('importExport');
   }

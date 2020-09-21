@@ -91,13 +91,16 @@
         "exportTabTitle": "Exporter",
         "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
         "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
+        "exportSelectedFeature": "Seulement les entités sélectionnées",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
-        "importShpZip": "Les shapefiles doivent être compressés (zippés)"
+        "importShpZip": "Les shapefiles doivent être compressés (zippés)",
+        "other": "autre",
+        "others": "autres"
       },
       "operators": {
         "caseSensitive": "Sensible à la case",
@@ -534,8 +537,17 @@
         "ogcFilter.close": "Fermer",
         "ogcFilter.title": "Filtres",
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
-        "wfsDownload.title": "Télécharger les données associées",
-        "wfsDownload.tooltip": "Télécharger les données associées"
+        "download.title": "Télécharger les données associées",
+        "download.tooltip": "Télécharger les données associées",
+        "inMapExtent.title": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
+        "zoomAuto.title": "Zoom auto",
+        "zoomAuto.tooltip": "Zoom auto",
+        "selected.title": "Ne montrer que les enregistrements sélectionnés",
+        "selected.tooltip": "Ne montrer que les enregistrements sélectionnés",
+        "clearSelection.title": "Tout désélectionner",
+        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
       },
       "network": {
         "online": {

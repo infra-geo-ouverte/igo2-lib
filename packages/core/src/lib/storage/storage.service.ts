@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 
 import { ConfigService } from '../config/config.service';
-import { StorageScope, StorageOptions } from './storage.interface';
+import { StorageScope, StorageOptions, StorageServiceEvent, StorageServiceEventEnum } from './storage.interface';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
   protected options: StorageOptions;
+
+  public storageChange$: BehaviorSubject<StorageServiceEvent> = new BehaviorSubject(undefined);
 
   constructor(private config: ConfigService) {
     this.options = this.config.getConfig('storage') || { key: 'igo' };
@@ -42,6 +45,7 @@ export class StorageService {
     value: string | object | boolean | number,
     scope: StorageScope = StorageScope.LOCAL
   ) {
+    const previousValue = this.get(key, scope);
     if (scope === StorageScope.SESSION) {
       sessionStorage.setItem(
         `${this.options.key}.${key}`,
@@ -50,13 +54,25 @@ export class StorageService {
     } else {
       localStorage.setItem(`${this.options.key}.${key}`, JSON.stringify(value));
     }
+    const currentValue = this.get(key, scope);
+
+    if (currentValue !== previousValue) {
+      this.storageChange$.next({
+        key, scope,
+        event: previousValue !== undefined ? StorageServiceEventEnum.MODIFIED : StorageServiceEventEnum.ADDED,
+        previousValue,
+        currentValue
+      });
+    }
   }
 
   remove(key: string, scope: StorageScope = StorageScope.LOCAL) {
+    const previousValue = this.get(key, scope);
     if (scope === StorageScope.SESSION) {
       sessionStorage.removeItem(`${this.options.key}.${key}`);
     } else {
       localStorage.removeItem(`${this.options.key}.${key}`);
     }
+    this.storageChange$.next({key, scope, event: StorageServiceEventEnum.REMOVED, previousValue });
   }
 }

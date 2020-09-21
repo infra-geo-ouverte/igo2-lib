@@ -22,7 +22,7 @@ import {
 import { FeatureStore } from '../store';
 import { FeatureMotion } from '../feature.enums';
 
-class OlDragSelectInteraction extends OlDragBoxInteraction {
+export class OlDragSelectInteraction extends OlDragBoxInteraction {
   constructor(options) {
     super(options);
   }

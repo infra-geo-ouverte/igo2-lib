@@ -35,6 +35,9 @@
       "importExportTool": {
         "importExportData": "Couche",
         "importExportContext": "Contexte"
+      },
+      "workspace": {
+        "toggleWorkspace": "Ouvrir/fermer la vue tabulaire"
       }
     }
   }

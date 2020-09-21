@@ -35,12 +35,7 @@ export class InteractiveTourService {
   }
 
   public isMobile(): boolean {
-    const media = this.mediaService.getMedia();
-    if (media === 'mobile') {
-      return true;
-    } else {
-      return false;
-    }
+    return this.mediaService.isMobile();
   }
 
   public isTourDisplayInMobile(): boolean {

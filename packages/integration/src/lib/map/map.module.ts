@@ -25,6 +25,7 @@ import { MapDetailsToolComponent } from './map-details-tool/map-details-tool.com
 import { MapToolComponent } from './map-tool/map-tool.component';
 import { MapToolsComponent } from './map-tools/map-tools.component';
 import { MapLegendToolComponent } from './map-legend/map-legend-tool.component';
+import { IgoAppWorkspaceModule } from '../workspace/workspace.module';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { MapLegendToolComponent } from './map-legend/map-legend-tool.component';
     IgoDownloadModule,
     IgoImportExportModule,
     IgoFilterModule,
-    IgoContextModule
+    IgoContextModule,
+    IgoAppWorkspaceModule
   ],
   declarations: [MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   exports: [MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],

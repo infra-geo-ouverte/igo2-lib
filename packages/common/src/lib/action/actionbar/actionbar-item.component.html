@@ -21,7 +21,7 @@
   [ngClass]="ngClass$ | async">
   <mat-checkbox *ngIf="withTitle"
       (change)="action.handler()"
-      [checked]="action.checkCondition">
+      [checked]="checkCondition$ | async">
       {{title | translate}}
   </mat-checkbox>
 </mat-list-item>

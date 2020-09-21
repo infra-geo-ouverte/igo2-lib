@@ -25,6 +25,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  readonly checkCondition$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+
   readonly icon$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   readonly tooltip$: BehaviorSubject<string> = new BehaviorSubject(undefined);
@@ -40,6 +42,8 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   private availability$$: Subscription;
 
   private icon$$: Subscription;
+
+  private checkCondition$$: Subscription;
 
   private tooltip$$: Subscription;
 
@@ -113,6 +117,13 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.updateIcon(this.action.icon);
     }
 
+    if (isObservable(this.action.checkCondition)) {
+      this.checkCondition$$ = this.action.checkCondition
+        .subscribe((checkCondition: boolean) => this.updateCheckCondition(checkCondition));
+    } else {
+      this.updateCheckCondition(this.action.checkCondition);
+    }
+
     if (isObservable(this.action.tooltip)) {
       this.tooltip$$ = this.action.tooltip
         .subscribe((tooltip: string) => this.updateTooltip(tooltip));
@@ -153,6 +164,11 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.display$$ = undefined;
     }
 
+    if (this.checkCondition$$ !== undefined) {
+      this.checkCondition$$.unsubscribe();
+      this.checkCondition$$ = undefined;
+    }
+
     if (this.icon$$ !== undefined) {
       this.icon$$.unsubscribe();
       this.icon$$ = undefined;
@@ -185,6 +201,10 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private updateTooltip(tooltip: string) {
     this.tooltip$.next(tooltip);
+  }
+
+  private updateCheckCondition(checkCondition: boolean) {
+    this.checkCondition$.next(checkCondition);
   }
 
   private updateIcon(icon: string) {

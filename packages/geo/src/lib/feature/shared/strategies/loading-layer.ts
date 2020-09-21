@@ -5,6 +5,7 @@ import { EntityStoreStrategy } from '@igo2/common';
 
 import { FeatureStore } from '../store';
 import { FeatureStoreLoadingLayerStrategyOptions } from '../feature.interfaces';
+import { ClusterDataSource } from '../../../datasource/shared/datasources/cluster-datasource';
 
 /**
  * This strategy loads a layer's features into it's store counterpart.
@@ -107,7 +108,13 @@ export class FeatureStoreLoadingLayerStrategy extends EntityStoreStrategy {
    * @param store Feature store
    */
   private onSourceChanges(store: FeatureStore) {
-    const olFeatures = store.layer.ol.getSource().getFeatures();
+    let olFeatures = store.layer.ol.getSource().getFeatures();
+
+    if (store.layer.dataSource instanceof ClusterDataSource) {
+      olFeatures = (olFeatures as any).flatMap((cluster: any) =>
+        cluster.get('features')
+      );
+    }
     if (olFeatures.length === 0) {
       store.clear();
     } else {

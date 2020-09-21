@@ -50,7 +50,7 @@
                     {{'igo.context.contextImportExport.export.exportSelectAll' | translate}}
                 </mat-option>
                 <mat-divider></mat-divider>
-                <mat-option *ngFor="let layer of layerList" [value]="layer">{{layer.title}}</mat-option>
+                <mat-option *ngFor="let layer of userControlledLayerList" [value]="layer">{{layer.title}}</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
