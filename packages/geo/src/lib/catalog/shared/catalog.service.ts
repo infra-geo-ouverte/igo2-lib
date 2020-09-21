@@ -364,7 +364,8 @@ export class CatalogService {
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
-          extern: metadata ? true : undefined
+          extern: metadata ? true : undefined,
+          abstract: layer.Abstract
         },
         legendOptions,
         tooltip: { type: catalog.tooltipType },

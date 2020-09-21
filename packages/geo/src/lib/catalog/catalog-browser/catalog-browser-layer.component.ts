@@ -13,7 +13,8 @@ import { CatalogItemLayer } from '../shared';
 import { BehaviorSubject } from 'rxjs';
 import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
-import { Layer } from '../../layer/shared/layers';
+import { Layer, TooltipType } from '../../layer/shared/layers';
+import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 
 /**
  * Catalog browser layer item
@@ -78,6 +79,33 @@ export class CatalogBrowserLayerComponent implements OnInit {
   ngOnInit(): void {
     this.isInResolutionsRange();
     this.isPreview$.subscribe(value => this.addedLayerIsPreview.emit(value));
+  }
+
+  computeTitleTooltip(): string {
+      const layerOptions = this.layer.options;
+      if (!layerOptions.tooltip) {
+        return getEntityTitle(this.layer);
+      }
+      const layerTooltip = layerOptions.tooltip;
+      const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
+      switch (layerOptions.tooltip.type) {
+        case TooltipType.TITLE:
+          return this.layer.title;
+        case TooltipType.ABSTRACT:
+          if (layerMetadata && layerMetadata.abstract) {
+            return layerMetadata.abstract;
+          } else {
+            return this.layer.title;
+          }
+        case TooltipType.CUSTOM:
+          if (layerTooltip && layerTooltip.text) {
+            return layerTooltip.text;
+          } else {
+            return this.layer.title;
+          }
+        default:
+          return this.layer.title;
+      }
   }
 
   /**
