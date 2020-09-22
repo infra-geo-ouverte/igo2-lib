@@ -18,7 +18,10 @@
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
-        <a href="{{property.value}}" target='_blank'>{{ 'igo.geo.targetHtmlUrl' | translate }} </a>
+        <a href="{{property.value}}" target='_blank'>
+          <img *ngIf="isImg(property.value);else notImg" src="{{(property.value | secureImage) | async}}" width="225" heigth="auto">
+          <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span></ng-template>
+        </a>
       </td>
 
       <td *ngIf="feature.properties.target === undefined && isObject(property.value)" [innerHTML]="property.value | json">
