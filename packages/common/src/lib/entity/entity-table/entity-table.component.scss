@@ -28,6 +28,10 @@
   word-wrap: break-word;
 }
 
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  padding: 0 3px;
+}
+
 entity-table table.igo-entity-table-with-selection tr:hover {
   -moz-box-shadow: 2px 0px 2px 0px #dddddd;
   -webkit-box-shadow: 2px 0px 2px 0px #dddddd;

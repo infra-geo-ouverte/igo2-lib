@@ -6,16 +6,19 @@ import { provideOgcFilterWidget } from './widgets/widgets';
 
 import { IgoOgcFilterModule } from './widgets/ogc-filter/ogc-filter.module';
 import { IgoWorkspaceSelectorModule } from './workspace-selector/workspace-selector.module';
+import { IgoWorkspaceUpdatorModule } from './workspace-updator/workspace-updator.module';
 
 @NgModule({
   imports: [
     CommonModule,
     IgoWidgetModule,
     IgoWorkspaceSelectorModule,
+    IgoWorkspaceUpdatorModule,
     IgoOgcFilterModule
   ],
   exports: [
     IgoWorkspaceSelectorModule,
+    IgoWorkspaceUpdatorModule,
     IgoOgcFilterModule
   ],
   declarations: [],

@@ -13,7 +13,8 @@ import { CatalogItemLayer } from '../shared';
 import { BehaviorSubject } from 'rxjs';
 import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
-import { Layer } from '../../layer/shared/layers';
+import { Layer, TooltipType } from '../../layer/shared/layers';
+import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 
 /**
  * Catalog browser layer item
@@ -32,6 +33,8 @@ export class CatalogBrowserLayerComponent implements OnInit {
 
   public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
+
+  private mouseInsideAdd: boolean = false;
 
   @Input() resolution: number;
 
@@ -78,6 +81,33 @@ export class CatalogBrowserLayerComponent implements OnInit {
     this.isPreview$.subscribe(value => this.addedLayerIsPreview.emit(value));
   }
 
+  computeTitleTooltip(): string {
+      const layerOptions = this.layer.options;
+      if (!layerOptions.tooltip) {
+        return getEntityTitle(this.layer);
+      }
+      const layerTooltip = layerOptions.tooltip;
+      const layerMetadata = (layerOptions as MetadataLayerOptions).metadata;
+      switch (layerOptions.tooltip.type) {
+        case TooltipType.TITLE:
+          return this.layer.title;
+        case TooltipType.ABSTRACT:
+          if (layerMetadata && layerMetadata.abstract) {
+            return layerMetadata.abstract;
+          } else {
+            return this.layer.title;
+          }
+        case TooltipType.CUSTOM:
+          if (layerTooltip && layerTooltip.text) {
+            return layerTooltip.text;
+          } else {
+            return this.layer.title;
+          }
+        default:
+          return this.layer.title;
+      }
+  }
+
   /**
    * On mouse event, mouseenter /mouseleave
    * @internal
@@ -100,7 +130,9 @@ export class CatalogBrowserLayerComponent implements OnInit {
     if (typeof this.lastTimeoutRequest !== 'undefined') {
       clearTimeout(this.lastTimeoutRequest);
     }
-
+    if (event.type === 'mouseenter' && this.mouseInsideAdd ) {
+      return;
+    }
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
@@ -119,12 +151,14 @@ export class CatalogBrowserLayerComponent implements OnInit {
             this.isPreview$.next(true);
           }, 500);
         }
+        this.mouseInsideAdd = true;
         break;
       case 'mouseleave':
         if (this.isPreview$.value) {
           this.remove();
           this.isPreview$.next(false);
         }
+        this.mouseInsideAdd = false;
         break;
       default:
         break;

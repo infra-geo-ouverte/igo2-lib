@@ -9,13 +9,12 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NetworkService, ConnectionState } from '@igo2/core';
 
-import { getEntityTitle, getEntityIcon, Toolbox } from '@igo2/common';
+import { getEntityTitle, getEntityIcon } from '@igo2/common';
+import type { Toolbox } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
 import { IgoMap } from '../../map/shared/map';
-
-import olGeolocation from 'ol/Geolocation';
 
 @Component({
   selector: 'igo-feature-details',

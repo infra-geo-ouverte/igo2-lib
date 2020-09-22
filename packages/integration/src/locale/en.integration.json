@@ -35,6 +35,9 @@
       "importExportTool": {
         "importExportData": "Layer",
         "importExportContext": "Context"
+      },
+      "workspace": {
+        "toggleWorkspace": "Open/Close the table view"
       }
     }
   }

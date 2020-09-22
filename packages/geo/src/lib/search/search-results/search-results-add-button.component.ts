@@ -34,6 +34,8 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
 
   private lastTimeoutRequest;
 
+  private mouseInsideAdd: boolean = false;
+
   @Input() layer: SearchResult;
 
   /**
@@ -94,6 +96,9 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
       clearTimeout(this.lastTimeoutRequest);
     }
 
+    if (event.type === 'mouseenter' && this.mouseInsideAdd ) {
+      return;
+    }
     switch (event.type) {
       case 'click':
         if (!this.isPreview$.value) {
@@ -112,12 +117,14 @@ export class SearchResultAddButtonComponent implements OnInit, OnDestroy {
             this.isPreview$.next(true);
           }, 500);
         }
+        this.mouseInsideAdd = true;
         break;
       case 'mouseleave':
         if (this.isPreview$.value) {
           this.remove();
           this.isPreview$.next(false);
         }
+        this.mouseInsideAdd = false;
         break;
       default:
         break;

@@ -7,11 +7,13 @@ import { Workspace, WorkspaceStore, WorkspaceSelectorComponent } from '@igo2/com
 
 import { Layer, ImageLayer, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
-import { WFSDataSource, WMSDataSource } from '../../datasource';
+import { WFSDataSource, WMSDataSource, FeatureDataSource } from '../../datasource';
 import { OgcFilterableDataSourceOptions } from '../../filter';
 
 import { WfsWorkspaceService } from '../shared/wfs-workspace.service';
-import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+// import { WmsWorkspaceService } from '../shared/wms-workspace.service';
+import { FeatureWorkspaceService } from '../shared/feature-workspace.service';
+import { FeatureStoreInMapExtentStrategy } from '../../feature/shared/strategies/in-map-extent';
 
 @Directive({
   selector: '[igoWorkspaceSelector]'
@@ -19,6 +21,7 @@ import { WmsWorkspaceService } from '../shared/wms-workspace.service';
 export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
   private layers$$: Subscription;
+  private entities$$: Subscription[] = [];
 
   @Input() map: IgoMap;
 
@@ -29,7 +32,8 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
   constructor(
     private component: WorkspaceSelectorComponent,
     private wfsWorkspaceService: WfsWorkspaceService,
-    private wmsWorkspaceService: WmsWorkspaceService
+    // private wmsWorkspaceService: WmsWorkspaceService,
+    private featureWorkspaceService: FeatureWorkspaceService
   ) {}
 
   ngOnInit() {
@@ -42,6 +46,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.layers$$.unsubscribe();
+    this.entities$$.map(entities => entities.unsubscribe());
   }
 
   private onLayersChange(layers: Layer[]) {
@@ -61,6 +66,7 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
 
     if (workspacesToRemove.length > 0) {
       workspacesToRemove.forEach((workspace: Workspace) => {
+        workspace.entityStore.deactivateStrategyOfType(FeatureStoreInMapExtentStrategy);
         workspace.deactivate();
       });
       this.workspaceStore.state.updateMany(workspacesToRemove, {active: false, selected: false});
@@ -78,9 +84,13 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
       return;
     }
     if (layer.dataSource instanceof WFSDataSource) {
-      return this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
-    } else if (layer.dataSource instanceof WMSDataSource) {
-      return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);
+      const wfsWks = this.wfsWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
+      return wfsWks;
+   /* } else if (layer.dataSource instanceof WMSDataSource) {
+      return this.wmsWorkspaceService.createWorkspace(layer as ImageLayer, this.map);*/
+    } else if (layer.dataSource instanceof FeatureDataSource && (layer as VectorLayer).exportable === true) {
+      const featureWks = this.featureWorkspaceService.createWorkspace(layer as VectorLayer, this.map);
+      return featureWks;
     }
 
     return;
@@ -91,7 +101,9 @@ export class WorkspaceSelectorDirective implements OnInit, OnDestroy {
     if (dataSource instanceof WFSDataSource) {
       return true;
     }
-
+    if (dataSource instanceof FeatureDataSource) {
+      return true;
+    }
     if (dataSource instanceof WMSDataSource) {
       const dataSourceOptions = (dataSource.options ||
         {}) as OgcFilterableDataSourceOptions;

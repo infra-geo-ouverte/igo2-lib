@@ -35,12 +35,7 @@ export class InteractiveTourService {
   }
 
   public isMobile(): boolean {
-    const media = this.mediaService.getMedia();
-    if (media === 'mobile') {
-      return true;
-    } else {
-      return false;
-    }
+    return this.mediaService.isMobile();
   }
 
   public isTourDisplayInMobile(): boolean {
@@ -134,29 +129,41 @@ export class InteractiveTourService {
     const maxTry = 21;
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
-        const currentStepElement = self.getCurrentStep().getElement();
-        const header = currentStepElement
-          ? currentStepElement.querySelector('.shepherd-header')
-          : undefined;
+        if (!document.querySelector(self.getCurrentStep().options.attachTo.element)) {
+          self.getCurrentStep().hide();
+          const id = self.getCurrentStep().id;
+          self.next();
+          self.removeStep(id);
+          return;
+        } else {
+          const currentStepElement = self.getCurrentStep().getElement();
+          if (currentStepElement) {
+            const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
+            shepherdList.forEach(element => {
+              element.classList.add('mat-typography');
+            });
+          }
+          const header = currentStepElement
+            ? currentStepElement.querySelector('.shepherd-header')
+            : undefined;
 
-        nbTry++;
-        if (header || nbTry > maxTry) {
-          clearInterval(checkExist);
-        }
+          nbTry++;
+          if (header || nbTry > maxTry) {
+            clearInterval(checkExist);
+          }
 
-        if (header) {
-          currentStepElement.querySelector('.shepherd-content').classList.add('mat-typography');
-          currentStepElement.querySelector('.shepherd-text').classList.add('mat-typography');
-          const stepsArray = self.steps;
-          const progress = document.createElement('span');
-          progress.className = 'shepherd-progress';
-          progress.innerText = `${
-            stepsArray.indexOf(self.getCurrentStep()) + 1
-          }/${stepsArray.length}`;
-          header.insertBefore(
-            progress,
-            currentStepElement.querySelector('.shepherd-cancel-icon')
-          );
+          if (header) {
+            const stepsArray = self.steps;
+            const progress = document.createElement('span');
+            progress.className = 'shepherd-progress';
+            progress.innerText = `${
+              stepsArray.indexOf(self.getCurrentStep()) + 1
+            }/${stepsArray.length}`;
+            header.insertBefore(
+              progress,
+              currentStepElement.querySelector('.shepherd-cancel-icon')
+            );
+          }
         }
       }
     }, 100);
