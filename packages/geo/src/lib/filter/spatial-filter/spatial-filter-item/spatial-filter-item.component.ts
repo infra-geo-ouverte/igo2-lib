@@ -143,7 +143,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
 
-  @Output() clearButtonEvent = new EventEmitter<Layer[]>();
+  @Output() clearButtonEvent = new EventEmitter();
 
   @Output() clearSearchEvent = new EventEmitter();
 
@@ -469,7 +469,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (this.store.entities$.getValue().length) {
         this.openWorkspace.emit();
       }
-    }, 150);
+    }, 500);
   }
 
   /**
@@ -482,7 +482,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.store) {
       this.store.clear();
     }
-    this.clearButtonEvent.emit([]);
+    if (this.isPoint() || this.isPolygon()) {
+      this.drawZone = undefined;
+      this.formControl.reset();
+    }
+    this.clearButtonEvent.emit();
   }
 
   /**

@@ -121,7 +121,7 @@
     {{'igo.geo.spatialFilter.goSearch' | translate}}
   </button>
 
-  <button mat-raised-button class="remove-button" [disabled]="!store.entities$.getValue().length && !this.zone && !this.drawZone" (click)="clearButton()">
+  <button mat-raised-button class="remove-button" [disabled]="!store.entities$.getValue().length && !zone && !drawZone" (click)="clearButton()">
     {{'igo.geo.spatialFilter.removeLayer' | translate}}
   </button>
 

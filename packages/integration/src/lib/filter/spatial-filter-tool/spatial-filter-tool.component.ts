@@ -147,6 +147,11 @@ export class SpatialFilterToolComponent {
     this.queryType = undefined;
   }
 
+  clearMap() {
+    this.layers = [];
+    this.zone = undefined;
+  }
+
   private loadThematics() {
     this.loading = true;
     let zeroResults = true;
