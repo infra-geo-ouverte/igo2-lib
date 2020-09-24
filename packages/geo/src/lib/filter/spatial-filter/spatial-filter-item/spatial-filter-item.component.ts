@@ -164,7 +164,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public thematics: SpatialFilterThematic[] = [];
   public dataSource = new MatTreeNestedDataSource<SpatialFilterThematic>();
   public selectedThematics = new SelectionModel<SpatialFilterThematic>(true, []);
-  public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
@@ -466,6 +465,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
+    setTimeout(() => {
+      if (this.store.entities$.getValue().length) {
+        this.openWorkspace.emit();
+      }
+    }, 150);
   }
 
   /**
