@@ -97,6 +97,16 @@ export class FeatureDetailsComponent {
     }
   }
 
+  isImg(value) {
+    if (this.isUrl(value)) {
+      return (
+        ['jpg', 'png', 'gif'].includes(value.split('.').pop().toLowerCase())
+      );
+    } else {
+      return false;
+    }
+  }
+
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};

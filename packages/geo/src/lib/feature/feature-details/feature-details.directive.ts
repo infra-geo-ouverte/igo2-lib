@@ -88,13 +88,15 @@ export class FeatureDetailsDirective implements OnInit {
     });
 
     this.feature$.subscribe(() => {
-      if (this.feature.geometry.type === 'Point') {
-        this.end = this.feature;
-      } else {
-        this.end = pointOnFeature(this.feature.geometry);
+      if (this.feature.geometry) {
+        if (this.feature.geometry.type === 'Point') {
+          this.end = this.feature;
+        } else {
+          this.end = pointOnFeature(this.feature.geometry);
+        }
+        this.geolocation$.next(this.geolocation);
+        this.bindClicking();
       }
-      this.geolocation$.next(this.geolocation);
-      this.bindClicking();
     });
   }
 
