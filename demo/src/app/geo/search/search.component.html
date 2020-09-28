@@ -23,9 +23,7 @@
     igoSearchPointerSummary
     [igoSearchPointerSummaryDelay]="500"
     [igoSearchPointerSummaryEnabled]="igoSearchPointerSummaryEnabled"
-
-    (menuPosition)="onContextMenuOpen($event)" igoPointerPositionByKey [pointerPositionByKeyDelay]="500"
-    pointerPositionByKey="Shift" (pointerPositionByKeyCoord)="onPointerSearch($event)">
+    (menuPosition)="onContextMenuOpen($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 
