@@ -132,9 +132,10 @@ export class InteractiveTourService {
         if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
           self.getCurrentStep().hide();
           const id = self.getCurrentStep().id;
-          if (!(self.steps.findIndex(step => step.id === id) === self.steps.length - 1)) {
-            self.next();
+          if (self.steps.findIndex(step => step.id === id) === self.steps.length - 1) {
+            return;
           }
+          self.next();
           self.removeStep(id);
           return;
         } else {
