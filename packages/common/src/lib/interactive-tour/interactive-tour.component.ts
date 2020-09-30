@@ -86,7 +86,6 @@ export class InteractiveTourComponent {
   }
 
   get disabledTourButton(): boolean {
-    console.log(this.interactiveTourService.disabledTourButton(this.activeToolName));
     return this.interactiveTourService.disabledTourButton(this.activeToolName);
   }
 
