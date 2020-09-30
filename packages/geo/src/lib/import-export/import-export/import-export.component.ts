@@ -153,7 +153,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .get('layers')
       .valueChanges.subscribe((layersId) => {
         this.handlePreviousLayerSpecs();
-        const layers = layersId.map((l) => this.map.getLayerById(l));
+        const selectedLayers = layersId instanceof Array ? layersId : [layersId];
+        this.form.patchValue({ layers: selectedLayers }, { emitEvent: false });
+        const layers = selectedLayers.map((l) => this.map.getLayerById(l));
         this.computeFormats(layers);
 
         if (

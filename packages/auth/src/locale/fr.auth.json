@@ -16,6 +16,13 @@
         "Login lockout": "Nombre maximal d'essai dépassé. Votre compte est verrouillé.",
         "Wrong password": "Mot de passe incorrect",
         "Invalid username": "Utilisateur invalide"
+      },
+      "google": {
+        "login": "Se connecter avec Google",
+        "logged": "Connecté avec Google"
+      },
+      "microsoft": {
+        "login": "Se connecter avec Microsoft"
       }
     }
   }
