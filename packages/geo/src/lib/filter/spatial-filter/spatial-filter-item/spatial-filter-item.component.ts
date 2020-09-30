@@ -143,7 +143,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
 
-  @Output() clearButtonEvent = new EventEmitter<Layer[]>();
+  @Output() clearButtonEvent = new EventEmitter();
 
   @Output() clearSearchEvent = new EventEmitter();
 
@@ -164,7 +164,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public thematics: SpatialFilterThematic[] = [];
   public dataSource = new MatTreeNestedDataSource<SpatialFilterThematic>();
   public selectedThematics = new SelectionModel<SpatialFilterThematic>(true, []);
-  public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
@@ -466,6 +465,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
+    setTimeout(() => {
+      if (this.store.entities$.getValue().length) {
+        this.openWorkspace.emit();
+      }
+    }, 500);
   }
 
   /**
@@ -478,7 +482,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.store) {
       this.store.clear();
     }
-    this.clearButtonEvent.emit([]);
+    if (this.isPoint() || this.isPolygon()) {
+      this.drawZone = undefined;
+      this.formControl.reset();
+    }
+    this.clearButtonEvent.emit();
   }
 
   /**
