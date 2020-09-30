@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { InteractiveTourService } from './interactive-tour.service';
 import { ToolService } from '../tool/shared/tool.service';
 
