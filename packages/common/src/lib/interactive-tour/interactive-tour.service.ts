@@ -129,9 +129,12 @@ export class InteractiveTourService {
     const maxTry = 21;
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
-        if (!document.querySelector(self.getCurrentStep().options.attachTo.element)) {
+        if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
           self.getCurrentStep().hide();
           const id = self.getCurrentStep().id;
+          if (self.steps.findIndex(step => step.id === id) === self.steps.length - 1) {
+            return;
+          }
           self.next();
           self.removeStep(id);
           return;
