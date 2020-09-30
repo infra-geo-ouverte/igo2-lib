@@ -34,6 +34,20 @@ export class InteractiveTourService {
     }
   }
 
+  public disabledTourButton(toolName: string): boolean {
+    if (toolName === 'contextManager') {
+      if (document.querySelector('igo-context-item') === null) {
+        return true;
+      }
+    }
+    if (toolName === 'mapTools') {
+      if (document.querySelector('igo-layer-item') === null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public isMobile(): boolean {
     return this.mediaService.isMobile();
   }

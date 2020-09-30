@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input } from '@angular/core';
+import { Component, ViewEncapsulation, Input, ChangeDetectionStrategy } from '@angular/core';
 import { InteractiveTourService } from './interactive-tour.service';
 import { ToolService } from '../tool/shared/tool.service';
 
@@ -83,6 +83,11 @@ export class InteractiveTourComponent {
 
   get isTourDisplayInMobile(): boolean {
     return this.interactiveTourService.isTourDisplayInMobile();
+  }
+
+  get disabledTourButton(): boolean {
+    console.log(this.interactiveTourService.disabledTourButton(this.activeToolName));
+    return this.interactiveTourService.disabledTourButton(this.activeToolName);
   }
 
   constructor(

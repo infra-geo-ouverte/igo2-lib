@@ -20,6 +20,7 @@
       },
       "interactiveTour": {
         "tooltipTourToolButton": "Interactive tour of the application",
+        "disaledTooltipTourToolButton": "To have access to this tool's tour, add contexts or layers",
         "buttonTitle": "Discover",
         "exitButton": "Exit",
         "backButton": "Back",
