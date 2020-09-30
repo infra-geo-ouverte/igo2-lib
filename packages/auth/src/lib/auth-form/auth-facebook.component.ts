@@ -28,8 +28,10 @@ export class AuthFacebookComponent {
   ) {
     this.options = this.config.getConfig('auth.facebook') || {};
 
-    if (this.options.apiKey) {
+    if (this.options.appId) {
       this.loadSDKFacebook();
+    } else {
+      console.warn('Facebook authentification needs "appId" option');
     }
   }
 
@@ -64,7 +66,7 @@ export class AuthFacebookComponent {
     const fjs = document.getElementsByTagName('script')[0];
     const js = document.createElement('script');
     js.id = 'facebook-jssdk';
-    js.src = `${urlSDK}&appId=${this.options.apiKey}`;
+    js.src = `${urlSDK}&appId=${this.options.appId}`;
     js.onload = () => {
       this.subscribeEvents();
     };
