@@ -15,7 +15,7 @@ export function MSALConfigFactory(config: ConfigService): Configuration {
     auth: {
       clientId: msConf.clientId,
       authority: 'https://login.microsoftonline.com/organizations', // 'common'
-      redirectUri: window.location.origin
+      redirectUri: window.location.href
     },
     cache: {
       cacheLocation: 'sessionStorage'
