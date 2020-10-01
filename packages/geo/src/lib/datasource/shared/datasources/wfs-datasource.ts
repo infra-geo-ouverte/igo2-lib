@@ -58,11 +58,11 @@ export class WFSDataSource extends DataSource {
             alteredUrl = alteredUrl.replace('startIndex=0', '0');
             alteredUrl += '&startIndex=' + startIndex;
             alteredUrl.replace(/&&/g, '&');
-            this.getFeatures(vectorSource, extent, alteredUrl);
+            this.getFeatures(vectorSource, extent, alteredUrl, nbOfFeature);
             startIndex += nbOfFeature;
           }
         } else {
-          this.getFeatures(vectorSource, extent, url);
+          this.getFeatures(vectorSource, extent, url, this.options.paramsWFS.maxFeatures);
         }
 
 
@@ -72,7 +72,7 @@ export class WFSDataSource extends DataSource {
     return vectorSource;
   }
 
-  private getFeatures(vectorSource: olSourceVector, extent, url: string) {
+  private getFeatures(vectorSource: olSourceVector, extent, url: string, threshold: number) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     this.authInterceptor.interceptXhr(xhr, url);
@@ -80,8 +80,12 @@ export class WFSDataSource extends DataSource {
     xhr.onerror = onError;
     xhr.onload = () => {
       if (xhr.status === 200) {
-        vectorSource.addFeatures(
-          vectorSource.getFormat().readFeatures(xhr.responseText));
+        const features = vectorSource.getFormat().readFeatures(xhr.responseText);
+        // TODO Manage "More feature"
+        /*if (features.length === 0 || features.length < threshold ) {
+          console.log('No more data to download at this resolution');
+        }*/
+        vectorSource.addFeatures(features);
       } else {
         onError();
       }
