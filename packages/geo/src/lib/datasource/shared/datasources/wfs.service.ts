@@ -106,8 +106,8 @@ export class WFSService extends DataService {
               fieldListWoGeomStr = fieldListWoGeom.join(',');
               const processingArray = [];
               let startIndex = 0;
-              // If the service do not allow gml return, dice the
-              // call in multiple calls by increment of chunkSize with the original outputFormat
+              // If the service do not allow gml return, dice the call in multiple
+              // calls by increment of chunkSize with the original outputFormat
               if (
                 !allowGml && dataSourceOptions.paramsWFS.version === '2.0.0' &&
                 dataSourceOptions.paramsWFS.maxFeatures > defaultMaxFeatures) {
