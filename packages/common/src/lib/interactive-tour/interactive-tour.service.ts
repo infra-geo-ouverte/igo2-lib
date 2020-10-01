@@ -35,13 +35,12 @@ export class InteractiveTourService {
   }
 
   public disabledTourButton(toolName: string): boolean {
-    if (toolName === 'contextManager') {
-      if (document.querySelector('igo-context-item') === null) {
-        return true;
-      }
-    }
-    if (toolName === 'mapTools') {
-      if (document.querySelector('igo-layer-item') === null) {
+    const stepConfig: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
+      toolName
+    );
+
+    if (stepConfig.condition) {
+      if (document.querySelector(stepConfig.condition) === null) {
         return true;
       }
     }
