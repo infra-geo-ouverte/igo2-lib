@@ -40,7 +40,6 @@ export class WFSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceVector {
-
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
       loader: (extent, resolution, proj: olProjection) => {
@@ -59,37 +58,11 @@ export class WFSDataSource extends DataSource {
             alteredUrl = alteredUrl.replace('startIndex=0', '0');
             alteredUrl += '&startIndex=' + startIndex;
             alteredUrl.replace(/&&/g, '&');
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', alteredUrl);
-            this.authInterceptor.interceptXhr(xhr, alteredUrl);
-            const onError = () => vectorSource.removeLoadedExtent(extent);
-            xhr.onerror = onError;
-            xhr.onload = () => {
-              if (xhr.status === 200) {
-                vectorSource.addFeatures(
-                  vectorSource.getFormat().readFeatures(xhr.responseText));
-              } else {
-                onError();
-              }
-            };
-            xhr.send();
+            this.getFeatures(vectorSource, extent, alteredUrl);
             startIndex += nbOfFeature;
           }
         } else {
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', url);
-          this.authInterceptor.interceptXhr(xhr, url);
-          const onError = () => vectorSource.removeLoadedExtent(extent);
-          xhr.onerror = onError;
-          xhr.onload = () => {
-            if (xhr.status === 200) {
-              vectorSource.addFeatures(
-                vectorSource.getFormat().readFeatures(xhr.responseText));
-            } else {
-              onError();
-            }
-          };
-          xhr.send();
+          this.getFeatures(vectorSource, extent, url);
         }
 
 
@@ -97,6 +70,23 @@ export class WFSDataSource extends DataSource {
       strategy: OlLoadingStrategy.bbox
     });
     return vectorSource;
+  }
+
+  private getFeatures(vectorSource: olSourceVector, extent, url: string) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    this.authInterceptor.interceptXhr(xhr, url);
+    const onError = () => vectorSource.removeLoadedExtent(extent);
+    xhr.onerror = onError;
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        vectorSource.addFeatures(
+          vectorSource.getFormat().readFeatures(xhr.responseText));
+      } else {
+        onError();
+      }
+    };
+    xhr.send();
   }
 
   private buildUrl(extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
