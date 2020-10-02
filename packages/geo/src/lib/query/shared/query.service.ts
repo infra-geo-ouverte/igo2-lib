@@ -496,6 +496,7 @@ export class QueryService {
     delete properties.shape;
     delete properties.SHAPE;
     delete properties.the_geom;
+    delete properties.geom;
 
     let geometry;
     if (featureGeometry !== undefined) {

@@ -4,12 +4,17 @@ export interface AuthInternOptions {
 
 export interface AuthFacebookOptions {
   enabled?: boolean;
-  apiKey: string;
+  appId: string;
 }
 
 export interface AuthGoogleOptions {
   enabled?: boolean;
   apiKey: string;
+  clientId: string;
+}
+
+export interface AuthMicrosoftOptions {
+  enabled?: boolean;
   clientId: string;
 }
 
@@ -23,6 +28,7 @@ export interface AuthOptions {
   intern?: AuthInternOptions;
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;
+  microsoft?: AuthMicrosoftOptions;
   trustHosts?: string[];
   profilsGuard?: string[];
 }

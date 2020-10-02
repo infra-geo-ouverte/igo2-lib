@@ -2,6 +2,7 @@ export * from './token.service';
 export * from './auth.service';
 export * from './auth.interface';
 export * from './auth.interceptor';
+export * from './auth-microsoft.provider';
 export * from './logged.guard';
 export * from './auth.guard';
 export * from './admin.guard';
