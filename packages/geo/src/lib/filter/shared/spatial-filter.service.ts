@@ -143,6 +143,7 @@ export class SpatialFilterService {
     thematic?: SpatialFilterThematic,
     buffer?: number
   ) {
+    console.log(feature, itemType, type, thematic, buffer);
     if (type) {
       // Predefined type
       const urlType = type as string;

@@ -130,7 +130,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters];
   }
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: Layer[];
 
   @Output() toggleSearch = new EventEmitter();
 
@@ -459,17 +459,21 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         title: 'Zone'
       };
       this.drawZone.properties = {
-        nom: 'Zone'
+        nom: 'Zone',
+        type: this.type as string
       };
       this.drawZoneEvent.emit(this.drawZone);
     }
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
-    setTimeout(() => {
-      if (this.store.entities$.getValue().length) {
-        this.openWorkspace.emit();
-      }
-    }, 500);
+    this.store.entities$.subscribe((value) => {
+      setTimeout(() => {
+        if (value.length && this.layers.filter(layer => !layer.title.startsWith('Zone')).length) {
+          this.openWorkspace.emit();
+          console.log(this.layers);
+        }
+      }, 500)
+    })
   }
 
   /**

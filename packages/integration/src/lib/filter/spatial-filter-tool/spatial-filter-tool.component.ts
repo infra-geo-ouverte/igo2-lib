@@ -149,7 +149,9 @@ export class SpatialFilterToolComponent {
 
   clearMap() {
     this.layers = [];
-    this.zone = undefined;
+    if (this.type !== SpatialFilterType.Predefined) {
+      this.zone = undefined;
+    }
   }
 
   private loadThematics() {
@@ -165,7 +167,6 @@ export class SpatialFilterToolComponent {
     if (this.type === SpatialFilterType.Polygon) {
       this.radius = undefined;
     }
-
     const observables$: Observable<Feature[]>[] = [];
     this.thematics.forEach(thematic => {
       observables$.push(
@@ -196,7 +197,7 @@ export class SpatialFilterToolComponent {
 
               this.tryAddPointToMap(featuresPoint, idPoint);
               this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
-
+              console.log(features);
               if (features.length) {
                 zeroResults = false;
               }
@@ -219,6 +220,7 @@ export class SpatialFilterToolComponent {
 
     forkJoin(observables$).subscribe(() => {
       this.loading = false;
+      console.log(zeroResults);
       if (zeroResults) {
         this.messageService.alert(
           this.languageService.translate.instant(
@@ -308,9 +310,12 @@ export class SpatialFilterToolComponent {
               });
             }
           });
-          const featuresOl = features.map(f => {
+          let featuresOl = features.map(f => {
             return featureToOl(f, this.map.projection);
           });
+          const type = this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
+          featuresOl[0].set('nom', 'Zone', true);
+          featuresOl[0].set('type', type, true);
           dataSource.ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
@@ -362,7 +367,6 @@ export class SpatialFilterToolComponent {
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
-
           dataSource.ol.source.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
