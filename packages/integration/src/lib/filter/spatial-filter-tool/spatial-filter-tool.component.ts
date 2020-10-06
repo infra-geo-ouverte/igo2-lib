@@ -197,7 +197,6 @@ export class SpatialFilterToolComponent {
 
               this.tryAddPointToMap(featuresPoint, idPoint);
               this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
-              console.log(features);
               if (features.length) {
                 zeroResults = false;
               }
@@ -220,7 +219,6 @@ export class SpatialFilterToolComponent {
 
     forkJoin(observables$).subscribe(() => {
       this.loading = false;
-      console.log(zeroResults);
       if (zeroResults) {
         this.messageService.alert(
           this.languageService.translate.instant(

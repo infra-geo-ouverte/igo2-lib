@@ -470,7 +470,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       setTimeout(() => {
         if (value.length && this.layers.filter(layer => !layer.title.startsWith('Zone')).length) {
           this.openWorkspace.emit();
-          console.log(this.layers);
         }
       }, 500)
     })
