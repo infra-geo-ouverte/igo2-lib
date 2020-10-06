@@ -991,7 +991,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   getRoutes(
-    moveToExtent: boolean = false,
+    moveToExtent: boolean = true,
     directionsOptions: DirectionsOptions = {}
   ) {
     this.deleteStoreFeatureByID(this.routeStore, 'vertex');
@@ -1204,7 +1204,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       this.createStop(this.directionsText(stopIndex, stopsCounts))
     );
     this.routesResults = undefined;
-    this.getRoutes();
+    this.getRoutes(false);
   }
 
   chooseProposal(proposal, i) {
@@ -1221,7 +1221,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         const poly = new OlGeoJSON().readFeatures(geom);
         geomCoord = poly[0]
           .getGeometry()
-          .getInteriorPoints()
+          .getInteriorPoint()
           .getFirstCoordinate();
         geomCoord = [geomCoord[0], geomCoord[1]];
       }
@@ -1388,7 +1388,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
     }
 
-    return `${location.origin}${location.pathname}?tool=directions&${directionsUrl}`;
+    return `${location.origin}${location.pathname}?tool=directions&sidenav=1&${directionsUrl}`;
   }
 }
 

@@ -56,7 +56,9 @@ export class DirectionsFormBindingDirective implements AfterViewInit {
               this.component.addStopOverlay(stopCoordinatesFromURL, cnt);
               cnt++;
             });
-            this.component.getRoutes(true);
+            setTimeout(() => {
+              this.component.getRoutes();
+            }, 500);
           }
         }
       });
