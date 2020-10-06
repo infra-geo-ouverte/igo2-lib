@@ -34,6 +34,19 @@ export class InteractiveTourService {
     }
   }
 
+  public disabledTourButton(toolName: string): boolean {
+    const stepConfig: InteractiveTourOptions = this.interactiveTourLoader.getTourOptionData(
+      toolName
+    );
+
+    if (stepConfig.condition) {
+      if (document.querySelector(stepConfig.condition) === null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public isMobile(): boolean {
     return this.mediaService.isMobile();
   }

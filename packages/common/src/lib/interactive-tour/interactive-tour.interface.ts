@@ -34,4 +34,6 @@ export interface InteractiveTourOptions {
   scrollToElement?: boolean;
   /* Disable an interaction with element? */
   disableInteraction?: boolean;
+  /* Element to check to be able to start the tour */
+  condition?: string;
 }
