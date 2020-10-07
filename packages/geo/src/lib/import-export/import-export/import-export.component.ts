@@ -41,7 +41,6 @@ import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'igo-import-export',
