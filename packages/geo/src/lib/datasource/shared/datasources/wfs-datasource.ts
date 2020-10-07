@@ -12,7 +12,8 @@ import {
   formatWFSQueryString,
   defaultFieldNameGeometry,
   checkWfsParams,
-  getFormatFromOptions, defaultMaxFeatures
+  getFormatFromOptions,
+  defaultMaxFeatures
 } from './wms-wfs.utils';
 import { AuthInterceptor } from '@igo2/auth';
 
