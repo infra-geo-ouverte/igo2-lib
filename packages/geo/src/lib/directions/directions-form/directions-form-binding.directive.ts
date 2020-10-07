@@ -2,7 +2,8 @@ import {
   Directive,
   Self,
   AfterViewInit,
-  Optional, ChangeDetectorRef
+  Optional,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { RouteService } from '@igo2/core';
@@ -16,7 +17,6 @@ import { DirectionsFormService } from './directions-form.service';
   selector: '[igoDirectionsFormBinding]'
 })
 export class DirectionsFormBindingDirective implements AfterViewInit {
-
   constructor(
     @Self() private component: DirectionsFormComponent,
     private directionsFormService: DirectionsFormService,
@@ -27,11 +27,8 @@ export class DirectionsFormBindingDirective implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const storedStops = this.directionsFormService.getStops();
-    if (
-      !storedStops && this.route &&
-      this.route.options.directionsCoordKey
-    ) {
-      this.route.queryParams.subscribe(params => {
+    if (!storedStops && this.route && this.route.options.directionsCoordKey) {
+      this.route.queryParams.subscribe((params) => {
         const directionsParams =
           params[this.route.options.directionsCoordKey as string];
         const stopsCoordinatesFromURL = [];
@@ -39,7 +36,7 @@ export class DirectionsFormBindingDirective implements AfterViewInit {
           const directionsCoordUrl = directionsParams.split(';');
           if (directionsCoordUrl.length >= 2) {
             let cnt = 0;
-            directionsCoordUrl.forEach(coord => {
+            directionsCoordUrl.forEach((coord) => {
               if (cnt !== 0 && cnt !== directionsCoordUrl.length - 1) {
                 this.component.stops.insert(cnt, this.component.createStop());
               }
@@ -62,7 +59,7 @@ export class DirectionsFormBindingDirective implements AfterViewInit {
             });
             this.component.activeRoute$.subscribe((activeRoute) => {
               this.getRoutes(activeRoute);
-            })
+            });
           }
         }
       });
@@ -73,7 +70,7 @@ export class DirectionsFormBindingDirective implements AfterViewInit {
         }
         if (storedStops[i].stopCoordinates instanceof Array) {
           this.component.addStopOverlay(storedStops[i].stopCoordinates, i);
-          this.component.stops.at(i).patchValue(storedStops[i] );
+          this.component.stops.at(i).patchValue(storedStops[i]);
         }
       }
       this.component.getRoutes();
@@ -88,14 +85,11 @@ export class DirectionsFormBindingDirective implements AfterViewInit {
     if (coords.length < 2) {
       return;
     }
-    const routeResponse = this.directionsService.route(
-      coords,
-      {}
-    );
+    const routeResponse = this.directionsService.route(coords, {});
     if (routeResponse) {
-      routeResponse.map(res =>
+      routeResponse.map((res) =>
         this.component.routesQueries$$.push(
-          res.subscribe(route => {
+          res.subscribe((route) => {
             this.component.routesResults = route;
             if (!activeRoute) {
               this.component.activeRoute = route[0] as Directions;
