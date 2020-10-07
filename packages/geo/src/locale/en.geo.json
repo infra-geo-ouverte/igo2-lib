@@ -63,7 +63,9 @@
           "title": "Failed to export features"
         },
         "popupBlocked": {
-          "text": "</br>You try to open multiple URLs and your browser block them. </br></br>Enable the popup in your browser. </br>For Chrome and Edge, on the right into the Address Bar.</br> Please try again",
+          "text": "</br>Enable the popup in your browser. </br>For Chrome and Edge, on the right into the Address Bar.</br>{{extraMessage}}",
+          "selectAgain": "Fix it and re-select an output format.",
+          "retry": "Please retry to export",
           "title": "Popup blocked by your browser"
         },
         "success": {

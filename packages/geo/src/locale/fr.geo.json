@@ -63,7 +63,9 @@
           "title": "Problème d’exportation"
         },
         "popupBlocked": {
-          "text": "</br>Vous essayez d'ouvrir plusieurs URL simultanément et votre fureteur les a bloquées. </br></br>Autorisez l'ouverture des fenêtres (popup) dans votre fureteur. </br>Pour Chrome and Edge, à droite dans la barre d'addresse).</br> Veuillez recommencer.",
+          "text": "</br>Veuillez autoriser l'ouverture des fenêtres (popup) dans votre fureteur. </br>Pour Chrome and Edge, à droite dans la barre d'addresse).</br>{{extraMessage}}",
+          "selectAgain": "Faites le correctif et sélectionner à nouveau un format.",
+          "retry": "Veuillez recommencer l'exportation.",
           "title": "Ouverture de fenêtre bloquée par votre fureteur"
         },
         "success": {
