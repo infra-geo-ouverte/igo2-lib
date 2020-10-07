@@ -62,6 +62,10 @@
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
         },
+        "popupBlocked": {
+          "text": "</br>Vous essayez d'ouvrir plusieurs URL simultanément et votre fureteur les a bloquées. </br></br>Autorisez l'ouverture des fenêtres (popup) dans votre fureteur. </br>Pour Chrome and Edge, à droite dans la barre d'addresse).</br> Veuillez recommencer.",
+          "title": "Ouverture de fenêtre bloquée par votre fureteur"
+        },
         "success": {
           "text": "Données exportées avec succès.",
           "title": "Exportation réussie"
@@ -84,6 +88,7 @@
       "importExportForm": {
         "exportButton": "Exporter",
         "exportButtonLink": "Ouvrir le lien",
+        "exportButtonLinks": "Ouvrir les liens",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",

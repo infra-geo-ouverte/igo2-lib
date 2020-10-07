@@ -220,9 +220,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
       if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
-        this.form.patchValue({ encoding: EncodingFormat.LATIN1});
+        this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
       } else {
-        this.form.patchValue({ encoding: EncodingFormat.UTF8});
+        this.form.patchValue({ encoding: EncodingFormat.UTF8 });
       }
       this.cdRef.detectChanges();
     });
@@ -230,8 +230,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private getWorkspaceByLayerId(id: string): Workspace {
     const wksFromLayerId = this.store
-    .all()
-    .find(workspace  => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
+      .all()
+      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
     if (wksFromLayerId) {
       return wksFromLayerId;
     }
@@ -320,6 +320,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
+    let popupBlocked = false;
+    const urlOpenDelay = 500;
+    const openedWindows = [];
     data.layers.forEach((layer) => {
       const lay = this.map.getLayerById(layer);
       let filename = lay.title;
@@ -334,59 +337,70 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       ) {
         setTimeout(() => {
           // better look an feel
-          window.open(dSOptions.download.url, '_blank');
-          this.loading$.next(false);
-        }, 500);
-        return;
-      }
-
-      const wks = this.getWorkspaceByLayerId(layer);
-      let olFeatures;
-      if (wks && wks.entityStore && wks.entityStore.stateView.all().length ) {
-
-        if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
-          // Only export selected feature &&  into map extent
-          olFeatures = wks.entityStore.stateView.all()
-          .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent ) {
-          // Only export selected feature &&  (into map extent OR not)
-          olFeatures = wks.entityStore.stateView.all()
-          .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (data.featureInMapExtent) {
-          // Only into map extent
-          olFeatures = wks.entityStore.stateView.all()
-          .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
-        } else {
-          // All features
-          olFeatures = wks.entityStore.stateView.all().map(e => (e.entity as Feature).ol);
-        }
-      }
-      else {
-        if (data.featureInMapExtent) {
-          olFeatures = lay.dataSource.ol.getFeaturesInExtent(
-            lay.map.viewController.getExtent()
-          );
-        } else {
-          olFeatures = lay.dataSource.ol.getFeatures();
-        }
-        if (lay.dataSource instanceof ClusterDataSource) {
-          olFeatures = olFeatures.flatMap((cluster: any) =>
-            cluster.get('features')
-          );
-        }
-      }
-
-      this.exportService
-        .export(olFeatures, data.format, filename, data.encoding, this.map.projection)
-        .subscribe(
-          () => {},
-          (error: Error) => this.onFileExportError(error),
-          () => {
-            this.onFileExportSuccess();
-            this.loading$.next(false);
+          const newTab = window.open(dSOptions.download.url, '_blank');
+          if (!newTab || newTab.closed || typeof newTab.closed === 'undefined' || newTab === null) {
+            popupBlocked = true;
+          } else {
+            openedWindows.push(newTab);
           }
-        );
+          this.loading$.next(false);
+        }, urlOpenDelay);
+      } else {
+        const wks = this.getWorkspaceByLayerId(layer);
+        let olFeatures;
+        if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
+
+          if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
+            // Only export selected feature &&  into map extent
+            olFeatures = wks.entityStore.stateView.all()
+              .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
+          } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent) {
+            // Only export selected feature &&  (into map extent OR not)
+            olFeatures = wks.entityStore.stateView.all()
+              .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
+          } else if (data.featureInMapExtent) {
+            // Only into map extent
+            olFeatures = wks.entityStore.stateView.all()
+              .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
+          } else {
+            // All features
+            olFeatures = wks.entityStore.stateView.all().map(e => (e.entity as Feature).ol);
+          }
+        }
+        else {
+          if (data.featureInMapExtent) {
+            olFeatures = lay.dataSource.ol.getFeaturesInExtent(
+              lay.map.viewController.getExtent()
+            );
+          } else {
+            olFeatures = lay.dataSource.ol.getFeatures();
+          }
+          if (lay.dataSource instanceof ClusterDataSource) {
+            olFeatures = olFeatures.flatMap((cluster: any) =>
+              cluster.get('features')
+            );
+          }
+        }
+
+        this.exportService
+          .export(olFeatures, data.format, filename, data.encoding, this.map.projection)
+          .subscribe(
+            () => { },
+            (error: Error) => this.onFileExportError(error),
+            () => {
+              this.onFileExportSuccess();
+              this.loading$.next(false);
+            }
+          );
+      }
     });
+
+    setTimeout(() => {
+      if (popupBlocked) {
+        openedWindows.map(window => window.close());
+        this.onUrlPopupBlockedError();
+      }
+    }, urlOpenDelay + 1);
   }
 
   private buildForm() {
@@ -441,6 +455,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.languageService,
       this.fileSizeMb
     );
+  }
+
+  private onUrlPopupBlockedError() {
+    this.loading$.next(false);
+    const translate = this.languageService.translate;
+    const title = translate.instant('igo.geo.export.popupBlocked.title');
+    const message = translate.instant('igo.geo.export.popupBlocked.text');
+    this.messageService.error(message, title, { timeOut: 20000});
+
   }
 
   private onFileExportError(error: Error) {
