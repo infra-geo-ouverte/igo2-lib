@@ -346,6 +346,11 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   ) {
     super(options);
     this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions;
+
+    if (!this.storedQueriesOptions || (this.storedQueriesOptions && !this.storedQueriesOptions.available) ) {
+      return;
+    }
+
     if (!this.storedQueriesOptions.storedquery_id) {
       const err =
         'Stored Queries :You have to set "storedquery_id" into StoredQueries options. ex: storedquery_id: "nameofstoredquerie"';

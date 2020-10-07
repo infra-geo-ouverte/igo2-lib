@@ -34,8 +34,6 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
   constructor(private networkService: NetworkService) {}
 
   ngOnInit() {
-    this.layer.legendCollapsed = true;
-
     const resolution$ = this.layer.map.viewController.resolution$;
     this.resolution$$ = resolution$.subscribe(() => {
       this.onResolutionChange();

@@ -20,6 +20,7 @@
       },
       "interactiveTour": {
         "tooltipTourToolButton": "Aide interactive sur l'outil",
+        "disaledTooltipTourToolButton": "Pour avoir accès au tour interactif de cet outil, ajouter des contextes ou des couches",
         "buttonTitle": "Découvrir",
         "exitButton": "Quitter",
         "backButton": "Précédent",
