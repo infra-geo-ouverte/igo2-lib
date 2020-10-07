@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import olFeature from 'ol/Feature';
-import * as olformat from 'ol/format';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
 import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { DataService } from './data.service';
@@ -11,7 +10,8 @@ import { formatWFSQueryString,
           defaultEpsg,
           defaultMaxFeatures,
           getFormatFromOptions} from './wms-wfs.utils';
-
+import { concatMap } from 'rxjs/operators';
+import { WFS } from 'ol/format';
 @Injectable({
   providedIn: 'root'
 })
@@ -50,12 +50,14 @@ export class WFSService extends DataService {
     dataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions,
     nb: number = defaultMaxFeatures,
     epsgCode: string = defaultEpsg,
-    propertyName?: string
+    propertyName?: string,
+    startIndex: number = 0,
+    forceDefaultOutputFormat: boolean = false
   ): Observable<any> {
-    const queryStringValues = formatWFSQueryString(dataSourceOptions, nb, epsgCode, propertyName);
+    const queryStringValues = formatWFSQueryString(dataSourceOptions, nb, epsgCode, propertyName, startIndex, forceDefaultOutputFormat );
     const baseUrl = queryStringValues.find(f => f.name === 'getfeature').value;
     const outputFormat = dataSourceOptions.paramsWFS.outputFormat;
-    if (gmlRegex.test(outputFormat) || !outputFormat) {
+    if (forceDefaultOutputFormat || gmlRegex.test(outputFormat) || !outputFormat) {
       return this.http.get(baseUrl, { responseType: 'text' });
     } else {
       return this.http.get(baseUrl);
@@ -71,37 +73,87 @@ export class WFSService extends DataService {
       let fieldListWoGeom;
       let fieldListWoGeomStr;
       let olFormats;
+      let effectiveOlFormats;
 
       olFormats = getFormatFromOptions(dataSourceOptions);
+      const gmlDataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions = JSON.parse(
+        JSON.stringify(dataSourceOptions)
+      );
+      delete gmlDataSourceOptions.paramsWFS.outputFormat;
+      delete (gmlDataSourceOptions as WFSDataSourceOptions).formatOptions;
 
-      this.wfsGetFeature(dataSourceOptions, 1).subscribe(oneFeature => {
-        const features = olFormats.readFeatures(oneFeature);
-        fieldList = features[0].getKeys();
-        fieldListWoGeom = fieldList.filter(
-          field =>
-            field !== features[0].getGeometryName() &&
-            !field.match(/boundedby/gi)
-        );
-        fieldListWoGeomStr = fieldListWoGeom.join(',');
-        this.wfsGetFeature(
-          dataSourceOptions,
-          dataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
-          dataSourceOptions.paramsWFS.srsName,
-          fieldListWoGeomStr
-        ).subscribe(manyFeatures => {
-          const mfeatures = olFormats.readFeatures(manyFeatures);
+      effectiveOlFormats = getFormatFromOptions(gmlDataSourceOptions);
+      let sourceFieldsToRetrieveValues = dataSourceOptions.sourceFields?.filter(f => !f.values).map(f => f.name);
+
+      // Validate if the service manage no outputformat (wfs 1.0.0 and GML is the default return)
+      this.wfsGetFeature(dataSourceOptions, 1, undefined, undefined, 0, true).pipe(
+        concatMap(res => String(res).toLowerCase().includes('exception') ? of(false) : of(true)),
+        concatMap(allowGml => {
+          // If the service return GML (return no exception)
+          return this.wfsGetFeature(dataSourceOptions, 1).pipe(
+            concatMap(firstFeature => {
+              const features = olFormats.readFeatures(firstFeature);
+              fieldList = features[0].getKeys();
+              if (dataSourceOptions.sourceFields || dataSourceOptions.sourceFields.length === 0) {
+                sourceFieldsToRetrieveValues = fieldList;
+              }
+              fieldListWoGeom = fieldList.filter(
+                field =>
+                  sourceFieldsToRetrieveValues.includes(field) &&
+                  field !== features[0].getGeometryName() &&
+                  !field.match(/boundedby/gi)
+              );
+              fieldListWoGeomStr = fieldListWoGeom.join(',');
+              const processingArray = [];
+              let startIndex = 0;
+              // If the service do not allow gml return, dice the call in multiple
+              // calls by increment of chunkSize with the original outputFormat
+              if (
+                !allowGml && dataSourceOptions.paramsWFS.version === '2.0.0' &&
+                dataSourceOptions.paramsWFS.maxFeatures > defaultMaxFeatures) {
+                const chunkSize = 1000;
+                while (startIndex < dataSourceOptions.paramsWFS.maxFeatures) {
+                  processingArray.push(this.wfsGetFeature(
+                    dataSourceOptions,
+                    chunkSize,
+                    dataSourceOptions.paramsWFS.srsName,
+                    fieldListWoGeomStr,
+                    startIndex
+                  ));
+                  startIndex += chunkSize;
+                }
+                effectiveOlFormats = olFormats;
+              } else {
+                processingArray.push(this.wfsGetFeature(
+                  dataSourceOptions,
+                  dataSourceOptions.paramsWFS.maxFeatures || defaultMaxFeatures,
+                  dataSourceOptions.paramsWFS.srsName,
+                  fieldListWoGeomStr,
+                  0, true
+                ));
+              }
+              return combineLatest(processingArray);
+            })
+          );
+        })).subscribe((results) => {
+          let mfeatures: olFeature[] = [];
+          results.map((result) => {
+            const loopFeatures = effectiveOlFormats.readFeatures(result);
+            mfeatures = mfeatures.concat(loopFeatures);
+          });
           this.built_properties_value(mfeatures).forEach(element => {
             sourceFields.push(element);
           });
           d.next(sourceFields);
           d.complete();
         });
-      });
-
     });
   }
 
   private built_properties_value(features: olFeature[]): string[] {
+    if (features.length === 0) {
+      return [];
+    }
     const kv = Object.assign({}, features[0].getProperties());
     delete kv[features[0].getGeometryName()];
     delete kv.boundedBy;
