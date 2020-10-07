@@ -367,6 +367,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     const ogreFormats = Object.keys(ExportService.ogreFormats);
     if (
+      !this.popupChecked &&
       data.layers.length > 1 &&
       (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) &&
       !this.popupAllowed) {
