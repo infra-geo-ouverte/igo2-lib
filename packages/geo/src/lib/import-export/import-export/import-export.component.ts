@@ -75,6 +75,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
+  public popupChecked: boolean = false;
+
   private previousLayerSpecs$: BehaviorSubject<
     {
       id: string;
@@ -167,6 +169,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       .subscribe((format) => {
         const ogreFormats = Object.keys(ExportService.ogreFormats);
         if (
+          !this.popupChecked &&
           this.form.get('layers').value?.length > 1 &&
           (ogreFormats.indexOf(format) >= 0 || format === ExportFormat.URL)) {
           if (!this.handlePopup(true)) {
@@ -354,6 +357,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     } else {
       p2.close();
       this.popupAllowed = true;
+      this.popupChecked = true;
     }
     return this.popupAllowed;
   }
