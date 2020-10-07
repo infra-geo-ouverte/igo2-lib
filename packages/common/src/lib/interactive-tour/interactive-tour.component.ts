@@ -85,6 +85,10 @@ export class InteractiveTourComponent {
     return this.interactiveTourService.isTourDisplayInMobile();
   }
 
+  get disabledTourButton(): boolean {
+    return this.interactiveTourService.disabledTourButton(this.activeToolName);
+  }
+
   constructor(
     private interactiveTourService: InteractiveTourService,
     private toolService: ToolService
