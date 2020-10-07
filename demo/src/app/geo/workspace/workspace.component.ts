@@ -31,9 +31,6 @@ export class AppWorkspaceComponent implements OnInit {
   public workspacePaginator: MatPaginator;
   entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public paginatorOptions: EntityTablePaginatorOptions = {
-    disabled: false, // Whether the component is disabled.
-    pageIndex: 3, // The zero-based page index of the displayed list of items.
-    hidePageSize: false, // Whether to hide the page size selection UI from the user.
     pageSize: 5, // Number of items to display on a page.
     pageSizeOptions: [1, 5, 10, 15, 30, 50, 100], // The set of provided page size options to display to the user.
     showFirstLastButtons: true // Whether to show the first/last buttons UI to the user.

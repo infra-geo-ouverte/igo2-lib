@@ -244,6 +244,9 @@ export class InteractiveTourService {
           element: step.element,
           on: step.position || stepConfig.position
         },
+        popperOptions: {
+          modifiers: [{ name: 'offset', options: { offset: [0, 15] } }]
+        },
         beforeShowPromise: () => {
           return Promise.all([
             this.executeActionPromise(
