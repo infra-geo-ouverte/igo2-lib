@@ -22,6 +22,8 @@ export class AboutToolComponent {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
 
+  @Input() discoverTitleInLocale: string = 'IGO';
+
   public version: Version;
   private _html: string = 'igo.integration.about.html';
 

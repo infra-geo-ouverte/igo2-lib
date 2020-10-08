@@ -14,6 +14,7 @@ export class InteractiveTourComponent {
    */
   @Input() tourToStart: string = '';
   @Input() styleButton: string;
+  @Input() discoverTitleInLocale: string = 'IGO';
 
   getClass() {
     return {
