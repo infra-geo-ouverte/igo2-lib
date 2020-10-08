@@ -803,7 +803,14 @@ export class IChercheReverseSearchSource extends SearchSource
       data.properties,
       IChercheReverseSearchSource.propertiesBlacklist
     );
-    return properties;
+
+    const routing: {
+      Route: string
+    } = {
+      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+    };
+
+    return Object.assign(properties, routing);
   }
 
   private computeExtent(
