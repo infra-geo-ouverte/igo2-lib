@@ -337,6 +337,7 @@ export class MapViewController extends MapController {
         : this.maxZoomOnExtent;
 
     olView.fit(extent, {
+      size: this.olMap.getSize(),
       maxZoom,
       padding: this.padding,
       duration: xSize > 4 ? 0 : duration
