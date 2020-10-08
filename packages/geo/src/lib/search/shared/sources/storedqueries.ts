@@ -25,6 +25,7 @@ import {
 } from './storedqueries.interfaces';
 
 import * as olformat from 'ol/format';
+import { LanguageService } from '@igo2/core';
 
 /**
  * StoredQueries search source
@@ -46,6 +47,7 @@ export class StoredQueriesSearchSource extends SearchSource
 
   constructor(
     private http: HttpClient,
+    private languageService: LanguageService,
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options);
@@ -313,9 +315,13 @@ export class StoredQueriesSearchSource extends SearchSource
   }
 
   private computeProperties(data: StoredQueriesData): { [key: string]: any } {
-    const properties = ObjectUtils.removeKeys(
-      data.properties,
-      StoredQueriesSearchSource.propertiesBlacklist
+    const properties = Object.assign(
+      {},
+      ObjectUtils.removeKeys(
+        data.properties,
+        StoredQueriesSearchSource.propertiesBlacklist
+      ),
+      { Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>' }
     );
     return properties;
   }
@@ -342,6 +348,7 @@ export class StoredQueriesReverseSearchSource extends SearchSource
 
   constructor(
     private http: HttpClient,
+    private languageService: LanguageService,
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options);
@@ -514,6 +521,9 @@ export class StoredQueriesReverseSearchSource extends SearchSource
       data.properties,
       StoredQueriesReverseSearchSource.propertiesBlacklist
     );
-    return Object.assign(properties, { type: data.properties.doc_type });
+    const routing = {
+      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+    };
+    return Object.assign(properties, { type: data.properties.doc_type }, routing);
   }
 }
