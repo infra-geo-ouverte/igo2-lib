@@ -15,6 +15,7 @@ import {
 } from './wms-wfs.utils';
 
 import { ObjectUtils } from '@igo2/utils';
+import { LegendMapViewOptions } from '../../../layer/shared/layers/layer.interface';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
@@ -138,10 +139,18 @@ export class WMSDataSource extends DataSource {
     return new olSourceImageWMS(this.options);
   }
 
-  getLegend(style?: string, scale?: number): Legend[] {
+  getLegend(style?: string, view?: LegendMapViewOptions): Legend[] {
     let legend = super.getLegend();
-    if (legend.length > 0 && (style === undefined && !scale)) {
+    if (legend.length > 0 && (style === undefined && !view?.scale)) {
       return legend;
+    }
+
+    let contentDependent = false;
+    let projParam;
+
+    if (view?.extent && view?.projection && this.options.contentDependentLegend) {
+      projParam = this.params.VERSION === '1.3.0' || this.params.VERSION === undefined ? 'CRS' : 'SRS';
+      contentDependent = true;
     }
 
     const sourceParams = this.params;
@@ -162,8 +171,14 @@ export class WMSDataSource extends DataSource {
     if (style !== undefined) {
       params.push(`STYLE=${style}`);
     }
-    if (scale !== undefined) {
-      params.push(`SCALE=${scale}`);
+    if (view?.scale !== undefined) {
+      params.push(`SCALE=${view.scale}`);
+    }
+    if (contentDependent) {
+      params.push(`WIDTH=50`);
+      params.push(`HEIGHT=50`);
+      params.push(`BBOX=${view.extent.join(',')}`);
+      params.push(`${projParam}=${view.projection}`);
     }
 
     legend = layers.map((layer: string) => {

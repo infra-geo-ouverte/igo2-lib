@@ -2,6 +2,7 @@ import olLayer from 'ol/layer/Layer';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
+import { MapViewOptions } from '../../../map/shared/map.interface';
 
 export interface LayerOptions {
   source?: DataSource;
@@ -50,6 +51,10 @@ export interface LegendOptions {
   url?: string;
   html?: string;
   stylesAvailable?: ItemStyleOptions[];
+}
+
+export interface LegendMapViewOptions extends MapViewOptions{
+  scale?: number;
 }
 
 export interface ItemStyleOptions {

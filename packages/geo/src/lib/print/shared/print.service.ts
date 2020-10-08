@@ -10,7 +10,7 @@ import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
+import { LegendMapViewOptions, OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
@@ -98,7 +98,12 @@ export class PrintService {
     let html = '';
     const legends = getLayersLegends(
       map.layers,
-      map.viewController.getScale(resolution)
+      {
+        resolution: map.viewController.getResolution(),
+        extent: map.viewController.getExtent(),
+        projection: map.viewController.getOlProjection().getCode(),
+        scale: map.viewController.getScale(resolution)
+      } as LegendMapViewOptions
     );
     if (legends.length === 0) {
       return html;

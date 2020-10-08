@@ -1,13 +1,15 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef } from '@angular/core';
 import type { QueryList } from '@angular/core';
 
-import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
+import { Subscription, BehaviorSubject, of, Observable, combineLatest } from 'rxjs';
 
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer, ItemStyleOptions } from '../shared/layers';
+import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
 import { map } from 'rxjs/operators';
 import { LanguageService } from '@igo2/core';
+import { WMSDataSourceOptions } from '../../datasource';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -27,7 +29,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   /**
    * Subscription to the map's resolution
    */
-  private resolution$$: Subscription;
+  private state$$: Subscription;
 
   /**
    * The available styles
@@ -44,6 +46,10 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   private scale: number = undefined;
 
+  /**
+   * The extent used to make the legend
+   */
+  private view: LegendMapViewOptions  = undefined;
   /**
    * Get list of images display
    */
@@ -87,23 +93,24 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if ( typeof this.layer.options.legendOptions !== 'undefined' && this.layer.options.legendOptions.display === false) {
       lastlLegend = [];
     } else {
-      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+      lastlLegend = this.layer.dataSource.getLegend(this.currentStyle, this.view);
     }
 
-    if (this.updateLegendOnResolutionChange === true) {
-      const resolution$ = this.layer.map.viewController.resolution$;
-      this.resolution$$ = resolution$.subscribe((resolution: number) => this.onResolutionChange(resolution));
+    if (this.updateLegendOnResolutionChange === true || (sourceOptions as WMSDataSourceOptions).contentDependentLegend) {
+      const state$ = this.layer.map.viewController.state$;
+      this.state$$ = state$
+      .subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
     }
   }
 
   /**
-   * On destroy, unsubscribe to the map,s resolution
+   * On destroy, unsubscribe to the map's view state
    */
   ngOnDestroy() {
-    if (this.resolution$$ !== undefined) {
-      this.resolution$$.unsubscribe();
+    if (this.state$$ !== undefined) {
+      this.state$$.unsubscribe();
     }
   }
 
@@ -141,8 +148,13 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * legend accordingly.
    * @param resolution Map resolution
    */
-  private onResolutionChange(resolution: number) {
-    this.scale = this.layer.map.viewController.getScale();
+  private onViewControllerStateChange() {
+    this.view = {
+      resolution: this.layer.map.viewController.getResolution(),
+      extent: this.layer.map.viewController.getExtent(),
+      projection: this.layer.map.viewController.getOlProjection().getCode(),
+      scale: this.layer.map.viewController.getScale()
+    } as LegendMapViewOptions;
     this.updateLegend();
   }
 
@@ -150,7 +162,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    * Update the legend with scale level and style define
    */
   private updateLegend() {
-    let legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.scale);
+    let legendItems = this.layer.dataSource.getLegend(this.currentStyle, this.view);
     if (this.layer.legend && this.layer.legend.length > 1) { legendItems = this.transfertToggleLegendItem(legendItems); }
     this.layer.legend = legendItems;
 

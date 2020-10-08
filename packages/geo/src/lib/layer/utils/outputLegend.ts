@@ -1,11 +1,11 @@
 import { Layer } from '../shared/layers/layer';
-import { OutputLayerLegend } from '../shared/layers/layer.interface';
+import { LegendMapViewOptions, OutputLayerLegend } from '../shared/layers/layer.interface';
 
 /**
  * Get all the layers legend
  * @return Array of legend
  */
-export function getLayersLegends(layers: Layer[], scale?: number): OutputLayerLegend[] {
+export function getLayersLegends(layers: Layer[], view?: LegendMapViewOptions): OutputLayerLegend[] {
   const legends = [];
   const newCanvas = document.createElement('canvas');
   const newContext = newCanvas.getContext('2d');
@@ -15,7 +15,7 @@ export function getLayersLegends(layers: Layer[], scale?: number): OutputLayerLe
   for (const layer of layers) {
     if (layer.visible === false) { continue; }
 
-    const legendUrls = layer.dataSource.getLegend(undefined, scale) || [];
+    const legendUrls = layer.dataSource.getLegend(undefined, view) || [];
     for (const legendUrl of legendUrls) {
       if (legendUrl.url === undefined) { continue; }
 
