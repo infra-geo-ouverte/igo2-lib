@@ -103,9 +103,11 @@ export class FeatureDetailsDirective implements OnInit {
   bindClicking() {
     setTimeout(() => {
       const routeElement = this.el.nativeElement.querySelector('span.routing');
-      routeElement.addEventListener('click', () => {
-        this.activateRouting();
-      });
+      if (routeElement) {
+        routeElement.addEventListener('click', () => {
+          this.activateRouting();
+        });
+      }
     }, 1);
   }
 
