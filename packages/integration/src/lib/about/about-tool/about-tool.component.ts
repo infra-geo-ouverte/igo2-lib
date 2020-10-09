@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
+import { Observable, of } from 'rxjs';
 
 @ToolComponent({
   name: 'about',
@@ -21,6 +22,8 @@ export class AboutToolComponent {
   set html(value: string) {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
+
+  @Input() discoverTitleInLocale$: Observable<string> = of('IGO');
 
   public version: Version;
   private _html: string = 'igo.integration.about.html';

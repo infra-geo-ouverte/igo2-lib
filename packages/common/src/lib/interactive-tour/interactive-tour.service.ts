@@ -39,7 +39,7 @@ export class InteractiveTourService {
       toolName
     );
 
-    if (stepConfig.condition) {
+    if (stepConfig?.condition) {
       if (document.querySelector(stepConfig.condition) === null) {
         return true;
       }
