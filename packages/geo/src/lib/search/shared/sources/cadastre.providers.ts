@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService, LanguageService } from '@igo2/core';
 
 import { SearchSource } from './source';
 import { CadastreSearchSource } from './cadastre';
@@ -11,10 +11,12 @@ import { CadastreSearchSource } from './cadastre';
  */
 export function cadastreSearchSourceFactory(
   http: HttpClient,
+  languageService: LanguageService,
   config: ConfigService
 ) {
   return new CadastreSearchSource(
     http,
+    languageService,
     config.getConfig(`searchSources.${CadastreSearchSource.id}`),
   );
 }
@@ -27,6 +29,6 @@ export function provideCadastreSearchSource() {
     provide: SearchSource,
     useFactory: cadastreSearchSourceFactory,
     multi: true,
-    deps: [HttpClient, ConfigService]
+    deps: [HttpClient, LanguageService, ConfigService]
   };
 }
