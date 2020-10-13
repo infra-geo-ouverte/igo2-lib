@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { InteractiveTourService } from './interactive-tour.service';
 import { ToolService } from '../tool/shared/tool.service';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'igo-interactive-tour',
@@ -14,6 +15,7 @@ export class InteractiveTourComponent {
    */
   @Input() tourToStart: string = '';
   @Input() styleButton: string;
+  @Input() discoverTitleInLocale$: Observable<string> = of('IGO');
 
   getClass() {
     return {
@@ -83,6 +85,10 @@ export class InteractiveTourComponent {
 
   get isTourDisplayInMobile(): boolean {
     return this.interactiveTourService.isTourDisplayInMobile();
+  }
+
+  get disabledTourButton(): boolean {
+    return this.interactiveTourService.disabledTourButton(this.activeToolName);
   }
 
   constructor(

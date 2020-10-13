@@ -12,9 +12,11 @@ import {
   formatWFSQueryString,
   defaultFieldNameGeometry,
   checkWfsParams,
-  getFormatFromOptions
+  getFormatFromOptions,
+  defaultMaxFeatures
 } from './wms-wfs.utils';
 import { BehaviorSubject } from 'rxjs';
+import { AuthInterceptor } from '@igo2/auth';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
@@ -30,7 +32,8 @@ export class WFSDataSource extends DataSource {
 
   constructor(
     public options: WFSDataSourceOptions,
-    protected wfsService: WFSService
+    protected wfsService: WFSService,
+    private authInterceptor?: AuthInterceptor
   ) {
     super(checkWfsParams(options, 'wfs'));
 
@@ -50,19 +53,57 @@ export class WFSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceVector {
-
-    return new olSourceVector({
+    const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
-      overlaps: false,
-      url: (extent, resolution, proj: olProjection) => {
+      loader: (extent, resolution, proj: olProjection) => {
         this.options.paramsWFS.srsName = this.options.paramsWFS.srsName || proj.getCode();
-        return this.buildUrl(
+        const url = this.buildUrl(
           extent,
           proj,
           (this.options as OgcFilterableDataSourceOptions).ogcFilters);
+        let startIndex = 0;
+        if (
+          this.options.paramsWFS.version === '2.0.0' &&
+          this.options.paramsWFS.maxFeatures > defaultMaxFeatures) {
+          const nbOfFeature = 1000;
+          while (startIndex < this.options.paramsWFS.maxFeatures) {
+            let alteredUrl = url.replace('count=' + this.options.paramsWFS.maxFeatures, 'count=' + nbOfFeature);
+            alteredUrl = alteredUrl.replace('startIndex=0', '0');
+            alteredUrl += '&startIndex=' + startIndex;
+            alteredUrl.replace(/&&/g, '&');
+            this.getFeatures(vectorSource, extent, alteredUrl, nbOfFeature);
+            startIndex += nbOfFeature;
+          }
+        } else {
+          this.getFeatures(vectorSource, extent, url, this.options.paramsWFS.maxFeatures);
+        }
+
+
       },
       strategy: OlLoadingStrategy.bbox
     });
+    return vectorSource;
+  }
+
+  private getFeatures(vectorSource: olSourceVector, extent, url: string, threshold: number) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    this.authInterceptor.interceptXhr(xhr, url);
+    const onError = () => vectorSource.removeLoadedExtent(extent);
+    xhr.onerror = onError;
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const features = vectorSource.getFormat().readFeatures(xhr.responseText);
+        // TODO Manage "More feature"
+        /*if (features.length === 0 || features.length < threshold ) {
+          console.log('No more data to download at this resolution');
+        }*/
+        vectorSource.addFeatures(features);
+      } else {
+        onError();
+      }
+    };
+    xhr.send();
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
@@ -97,5 +138,5 @@ export class WFSDataSource extends DataSource {
     return baseUrl.replace(/&&/g, '&');
   }
 
-  public onUnwatch() {}
+  public onUnwatch() { }
 }

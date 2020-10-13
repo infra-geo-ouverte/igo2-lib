@@ -66,13 +66,23 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   public stopsForm: FormGroup;
   public projection = 'EPSG:4326';
   public currentStopIndex: number;
-  private routesQueries$$: Subscription[] = [];
+  public routesQueries$$: Subscription[] = [];
   private search$$: Subscription;
 
   private stream$ = new Subject<string>();
 
   public routesResults: Directions[] | Message[];
-  public activeRoute: Directions;
+  get activeRoute(): Directions {
+    return this._activeRoute;
+  }
+  set activeRoute(value: Directions) {
+    this._activeRoute = value;
+    if (value && this.activeRoute$.getValue() && value.id !== this.activeRoute$.getValue().id) {
+      this.activeRoute$.next(value);
+    }
+  }
+  private _activeRoute: Directions;
+  public activeRoute$: BehaviorSubject<Directions> = new BehaviorSubject(undefined);
   private lastTimeoutRequest;
 
   private focusOnStop = false;
@@ -131,7 +141,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   ) {}
 
   changeRoute() {
-    this.showRouteGeometry();
+    this.showRouteGeometry(true);
   }
 
   prevent(event) {
@@ -938,18 +948,20 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     if (extent) {
       this.map.viewController.zoomToExtent(extent);
     } else {
-      const routeFeature = this.routeStore.layer.ol
-        .getSource()
-        .getFeatures()
-        .find(f => f.getId() === 'route');
-      if (routeFeature) {
-        const routeExtent = routeFeature.getGeometry().getExtent();
-        this.map.viewController.zoomToExtent(routeExtent);
+      if (this.routeStore.layer) {
+        const routeFeature = this.routeStore.layer.ol
+          .getSource()
+          .getFeatures()
+          .find(f => f.getId() === 'route');
+        if (routeFeature) {
+          const routeExtent = routeFeature.getGeometry().getExtent();
+          this.map.viewController.zoomToExtent(routeExtent);
+        }
       }
     }
   }
 
-  private showRouteGeometry(moveToExtent = false) {
+  public showRouteGeometry(moveToExtent = false) {
     const geom = this.activeRoute.geometry.coordinates;
     const geometry4326 = new olgeom.LineString(geom);
     const geometryMapProjection = geometry4326.transform(
@@ -991,7 +1003,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
   }
 
   getRoutes(
-    moveToExtent: boolean = false,
+    moveToExtent: boolean = true,
     directionsOptions: DirectionsOptions = {}
   ) {
     this.deleteStoreFeatureByID(this.routeStore, 'vertex');
@@ -1204,7 +1216,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       this.createStop(this.directionsText(stopIndex, stopsCounts))
     );
     this.routesResults = undefined;
-    this.getRoutes();
+    this.getRoutes(false);
   }
 
   chooseProposal(proposal, i) {
@@ -1219,10 +1231,9 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
         geomCoord = [geomCoord[0], geomCoord[1]];
       } else if (geom.type.search('Polygon') >= 0) {
         const poly = new OlGeoJSON().readFeatures(geom);
-        geomCoord = poly[0]
-          .getGeometry()
-          .getInteriorPoints()
-          .getFirstCoordinate();
+        geomCoord = poly[0].getGeometry().getType() === 'Polygon' ?
+          geomCoord =  poly[0].getGeometry().getInteriorPoint().getFirstCoordinate() :
+          geomCoord =  poly[0].getGeometry().getInteriorPoints().getFirstCoordinate();
         geomCoord = [geomCoord[0], geomCoord[1]];
       }
 
@@ -1360,7 +1371,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     return 'directionsStop_' + txt;
   }
 
-  private deleteStoreFeatureByID(store, id) {
+  public deleteStoreFeatureByID(store, id) {
     const entity = store.get(id);
     if (entity) {
       store.delete(entity);
@@ -1388,7 +1399,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       directionsUrl = `${directionsKey}=${stopsCoordinates.join(';')}`;
     }
 
-    return `${location.origin}${location.pathname}?tool=directions&${directionsUrl}`;
+    return `${location.origin}${location.pathname}?tool=directions&sidenav=1&${directionsUrl}`;
   }
 }
 

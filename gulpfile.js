@@ -310,6 +310,7 @@ gulp.task('core:bumpVersion', done => {
   gulp
     .src(['./packages/core/src/lib/config/version.ts'])
     .pipe(replace(/lib: '[A-Za-z0-9\.\-]+'/g, `lib: '${version}'`))
+    .pipe(replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`))   
     .pipe(gulp.dest('./packages/core/src/lib/config/.'));
 
   done();

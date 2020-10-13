@@ -62,6 +62,12 @@
           "text": "Failed to export",
           "title": "Failed to export features"
         },
+        "popupBlocked": {
+          "text": "</br>Enable the popup in your browser. </br>For Chrome and Edge, on the right into the Address Bar.</br>{{extraMessage}}",
+          "selectAgain": "Fix it and re-select an output format.",
+          "retry": "Please retry to export",
+          "title": "Popup blocked by your browser"
+        },
         "success": {
           "text": "Features have been exported.",
           "title": "Features export success"
@@ -84,6 +90,7 @@
       "importExportForm": {
         "exportButton": "Export",
         "exportButtonLink": "Open the link",
+        "exportButtonLinks": "Open the links",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
