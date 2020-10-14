@@ -86,12 +86,12 @@ export class SearchSettingsComponent implements OnInit {
     const textSearchSources = this.searchSourceService
       .getSources()
       .filter(sourceCanSearch)
-      .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
+      .filter((s) => s.available && s.getId() !== 'map' && s.showInSettings);
 
     const reverseSearchSources = this.searchSourceService
       .getSources()
       .filter(sourceCanReverseSearch)
-      .filter(s => s.available && s.getId() !== 'map' && s.showInSettings);
+      .filter((s) => s.available && s.getId() !== 'map' && s.showInSettings);
     const sources = textSearchSources.concat(reverseSearchSources);
     this.computeSourcesCheckAllBehavior(sources);
     return sources;
@@ -136,7 +136,7 @@ export class SearchSettingsComponent implements OnInit {
    */
   computeSettingCheckAllBehavior(setting: SearchSourceSettings) {
     if (setting.allEnabled === undefined) {
-      if (setting.values.find(settingValue => settingValue.enabled)) {
+      if (setting.values.find((settingValue) => settingValue.enabled)) {
         setting.allEnabled = false;
       } else {
         setting.allEnabled = true;
@@ -153,8 +153,9 @@ export class SearchSettingsComponent implements OnInit {
    * @internal
    */
   computeSourcesCheckAllBehavior(sources: SearchSource[]) {
-    const enabledSourcesCnt = sources.filter(source => source.enabled).length;
-    const disabledSourcesCnt = sources.filter(source => !source.enabled).length;
+    const enabledSourcesCnt = sources.filter((source) => source.enabled).length;
+    const disabledSourcesCnt = sources.filter((source) => !source.enabled)
+      .length;
     this.searchSourcesAllEnabled =
       enabledSourcesCnt >= disabledSourcesCnt ? false : true;
   }
@@ -166,7 +167,7 @@ export class SearchSettingsComponent implements OnInit {
   checkUncheckAll(event, source: SearchSource, setting: SearchSourceSettings) {
     event.stopPropagation();
     this.computeSettingCheckAllBehavior(setting);
-    setting.values.forEach(settingValue => {
+    setting.values.forEach((settingValue) => {
       settingValue.enabled = setting.allEnabled;
     });
     source.setParamFromSetting(setting);
@@ -179,7 +180,7 @@ export class SearchSettingsComponent implements OnInit {
    */
   checkUncheckAllSources(event) {
     event.stopPropagation();
-    this.getSearchSources().map(source => {
+    this.getSearchSources().map((source) => {
       source.enabled = this.searchSourcesAllEnabled;
       this.searchSourceChange.emit(source);
     });
@@ -195,7 +196,7 @@ export class SearchSettingsComponent implements OnInit {
     setting: SearchSourceSettings,
     settingValue: SettingOptions
   ) {
-    setting.values.forEach(conf => {
+    setting.values.forEach((conf) => {
       if (conf.value !== settingValue.value) {
         conf.enabled = !event.source.checked;
       } else {
@@ -212,17 +213,12 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   getAvailableValues(setting: SearchSourceSettings) {
-    return setting.values.filter(s => s.available !== false);
+    return setting.values.filter((s) => s.available !== false);
   }
 
   getAvailableHashtagsValues(setting: SettingOptions) {
     if (setting.hashtags) {
-      const output: string[] = [];
-      for (let value of setting.hashtags) {
-        value = '#' + value;
-        output.push(value);
-      }
-      return output;
+      return setting.hashtags.map((h) => '#' + h).join(', ');
     }
     return;
   }
