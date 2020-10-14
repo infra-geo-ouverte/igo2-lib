@@ -479,7 +479,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (value.length && this.layers.length === this.thematicLength + 1) {
         this.openWorkspace.emit();
       }
-    })
+    });
   }
 
   /**

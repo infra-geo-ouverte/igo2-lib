@@ -137,7 +137,7 @@ export class SpatialFilterToolComponent {
               if (layer.title.includes(title)) {
                 layerToOpenWks = layer;
               }
-            })
+            });
         }
 
         if (layerToOpenWks) {
@@ -145,7 +145,7 @@ export class SpatialFilterToolComponent {
           this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
         }
       }
-    })
+    });
   }
 
   private loadFilterList() {
@@ -349,7 +349,7 @@ export class SpatialFilterToolComponent {
               });
             }
           });
-          let featuresOl = features.map(f => {
+          const featuresOl = features.map(f => {
             return featureToOl(f, this.map.projection);
           });
           if (this.type !== SpatialFilterType.Predefined) {
