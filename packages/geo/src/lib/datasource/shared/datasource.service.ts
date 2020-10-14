@@ -35,6 +35,7 @@ import {
 import { ObjectUtils } from '@igo2/utils';
 import { LanguageService, MessageService } from '@igo2/core';
 import { ProjectionService } from '../../map/shared/projection.service';
+import { AuthInterceptor } from '@igo2/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +49,8 @@ export class DataSourceService {
     private wfsDataSourceService: WFSService,
     private languageService: LanguageService,
     private messageService: MessageService,
-    private projectionService: ProjectionService
+    private projectionService: ProjectionService,
+    private authInterceptor?: AuthInterceptor
   ) {}
 
   createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
@@ -142,7 +144,7 @@ export class DataSourceService {
     context: WFSDataSourceOptions
   ): Observable<WFSDataSource> {
     return new Observable(d =>
-      d.next(new WFSDataSource(context, this.wfsDataSourceService))
+      d.next(new WFSDataSource(context, this.wfsDataSourceService, this.authInterceptor))
     );
   }
 

@@ -39,7 +39,7 @@ export class InteractiveTourService {
       toolName
     );
 
-    if (stepConfig.condition) {
+    if (stepConfig?.condition) {
       if (document.querySelector(stepConfig.condition) === null) {
         return true;
       }
@@ -243,6 +243,9 @@ export class InteractiveTourService {
         attachTo: {
           element: step.element,
           on: step.position || stepConfig.position
+        },
+        popperOptions: {
+          modifiers: [{ name: 'offset', options: { offset: [0, 15] } }]
         },
         beforeShowPromise: () => {
           return Promise.all([

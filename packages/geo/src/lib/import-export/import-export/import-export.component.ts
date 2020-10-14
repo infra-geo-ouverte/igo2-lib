@@ -10,7 +10,12 @@ import {
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
-import { MessageService, LanguageService, ConfigService } from '@igo2/core';
+import {
+  MessageService,
+  LanguageService,
+  ConfigService,
+  StorageService
+} from '@igo2/core';
 import { strEnum } from '@igo2/utils';
 
 import { Feature } from '../../feature/shared/feature.interfaces';
@@ -41,7 +46,6 @@ import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'igo-import-export',
@@ -70,6 +74,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private espgCodeRegex = new RegExp('^\\d{4,6}');
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
+
+  public popupChecked: boolean = false;
 
   private previousLayerSpecs$: BehaviorSubject<
     {
@@ -104,6 +110,14 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.form.patchValue({ layers: value });
   }
 
+  get popupAllowed(): boolean {
+    return this.storageService.get('importExportPopupAllowed') as boolean || false;
+  }
+
+  set popupAllowed(value: boolean) {
+    this.storageService.set('importExportPopupAllowed', value);
+  }
+
   constructor(
     private importService: ImportService,
     private exportService: ExportService,
@@ -113,7 +127,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private styleService: StyleService,
     private formBuilder: FormBuilder,
     private config: ConfigService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private storageService: StorageService
   ) {
     this.loadConfig();
     this.buildForm();
@@ -146,6 +161,20 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.computeFormats(
             exportOptions.layers.map((l) => this.map.getLayerById(l))
           );
+        }
+      });
+    this.formLayer$$ = this.form
+      .get('format')
+      .valueChanges
+      .subscribe((format) => {
+        const ogreFormats = Object.keys(ExportService.ogreFormats);
+        if (
+          !this.popupChecked &&
+          this.form.get('layers').value?.length > 1 &&
+          (ogreFormats.indexOf(format) >= 0 || format === ExportFormat.URL)) {
+          if (!this.handlePopup(true)) {
+            this.form.patchValue({ format: undefined }, { emitEvent: false });
+          }
         }
       });
 
@@ -220,9 +249,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     this.form.controls[this.controlFormat].valueChanges.subscribe((format) => {
       if (format === ExportFormat.CSVcomma || format === ExportFormat.CSVsemicolon) {
-        this.form.patchValue({ encoding: EncodingFormat.LATIN1});
+        this.form.patchValue({ encoding: EncodingFormat.LATIN1 });
       } else {
-        this.form.patchValue({ encoding: EncodingFormat.UTF8});
+        this.form.patchValue({ encoding: EncodingFormat.UTF8 });
       }
       this.cdRef.detectChanges();
     });
@@ -230,8 +259,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
   private getWorkspaceByLayerId(id: string): Workspace {
     const wksFromLayerId = this.store
-    .all()
-    .find(workspace  => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
+      .all()
+      .find(workspace => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
     if (wksFromLayerId) {
       return wksFromLayerId;
     }
@@ -318,8 +347,33 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }
   }
 
+  handlePopup(preCheck: boolean = true): boolean {
+    const p1 = window.open('', '_blank');
+    p1.close();
+    const p2 = window.open('', '_blank');
+    if (!p2 || p2.closed || typeof p2.closed === 'undefined' || p2 === null) {
+      this.onPopupBlockedError(preCheck);
+      this.popupAllowed = false;
+    } else {
+      p2.close();
+      this.popupAllowed = true;
+      this.popupChecked = true;
+    }
+    return this.popupAllowed;
+  }
+
   handleExportFormSubmit(data: ExportOptions) {
     this.loading$.next(true);
+
+    const ogreFormats = Object.keys(ExportService.ogreFormats);
+    if (
+      !this.popupChecked &&
+      data.layers.length > 1 &&
+      (ogreFormats.indexOf(data.format) >= 0 || data.format === ExportFormat.URL) &&
+      !this.popupAllowed) {
+      this.handlePopup();
+    }
+
     data.layers.forEach((layer) => {
       const lay = this.map.getLayerById(layer);
       let filename = lay.title;
@@ -339,23 +393,22 @@ export class ImportExportComponent implements OnDestroy, OnInit {
         }, 500);
         return;
       }
-
       const wks = this.getWorkspaceByLayerId(layer);
       let olFeatures;
-      if (wks && wks.entityStore && wks.entityStore.stateView.all().length ) {
+      if (wks && wks.entityStore && wks.entityStore.stateView.all().length) {
 
         if (data.layersWithSelection.indexOf(layer) !== -1 && data.featureInMapExtent) {
           // Only export selected feature &&  into map extent
           olFeatures = wks.entityStore.stateView.all()
-          .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
-        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent ) {
+            .filter((e: EntityRecord<object>) => e.state.inMapExtent && e.state.selected).map(e => (e.entity as Feature).ol);
+        } else if (data.layersWithSelection.indexOf(layer) !== -1 && !data.featureInMapExtent) {
           // Only export selected feature &&  (into map extent OR not)
           olFeatures = wks.entityStore.stateView.all()
-          .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
+            .filter((e: EntityRecord<object>) => e.state.selected).map(e => (e.entity as Feature).ol);
         } else if (data.featureInMapExtent) {
           // Only into map extent
           olFeatures = wks.entityStore.stateView.all()
-          .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
+            .filter((e: EntityRecord<object>) => e.state.inMapExtent).map(e => (e.entity as Feature).ol);
         } else {
           // All features
           olFeatures = wks.entityStore.stateView.all().map(e => (e.entity as Feature).ol);
@@ -379,7 +432,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.exportService
         .export(olFeatures, data.format, filename, data.encoding, this.map.projection)
         .subscribe(
-          () => {},
+          () => { },
           (error: Error) => this.onFileExportError(error),
           () => {
             this.onFileExportSuccess();
@@ -441,6 +494,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       this.languageService,
       this.fileSizeMb
     );
+  }
+
+  private onPopupBlockedError(preCheck: boolean = true) {
+    this.loading$.next(false);
+    const translate = this.languageService.translate;
+    const title = translate.instant('igo.geo.export.popupBlocked.title');
+    const extraMessage = preCheck ? translate.instant('igo.geo.export.popupBlocked.selectAgain') : translate.instant('igo.geo.export.popupBlocked.retry');
+    const message = translate.instant('igo.geo.export.popupBlocked.text', { extraMessage });
+    this.messageService.error(message, title, { timeOut: 20000 });
   }
 
   private onFileExportError(error: Error) {
