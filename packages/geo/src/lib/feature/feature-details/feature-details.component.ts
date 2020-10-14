@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   Input,
@@ -37,7 +38,16 @@ export class FeatureDetailsComponent {
 
   @Input() map: IgoMap;
 
-  @Input() toolbox: Toolbox;
+  @Input()
+  get toolbox(): Toolbox {
+    return this._toolbox;
+  }
+  set toolbox(value: Toolbox) {
+    this._toolbox = value;
+    this.toolbox$.next(value);
+  }
+  private _toolbox: Toolbox;
+  public toolbox$ = new BehaviorSubject<Toolbox>(undefined);
 
   @Input()
   get feature(): Feature {
@@ -115,6 +125,14 @@ export class FeatureDetailsComponent {
     if (this.map) {
       this.map.offlineButtonToggle$.subscribe(state => {
         offlineButtonState = state;
+      });
+    }
+
+    if (feature.properties && feature.properties.Route) {
+      this.toolbox$.subscribe((value) => {
+        if (value && !value.getTool('directions')) {
+          delete feature.properties.Route;
+        }
       });
     }
 
