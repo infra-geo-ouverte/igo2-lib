@@ -1,4 +1,4 @@
-<table class="igo-striped mat-typography" *ngIf="feature && isObject(feature.properties) && feature.properties.target !== 'iframe'">
+<table class="igo-striped mat-typography" *ngIf="feature && toolbox && isObject(feature.properties) && feature.properties.target !== 'iframe'">
   <tbody>
     <tr *ngFor="let property of filterFeatureProperties(feature) | keyvalue">
 
