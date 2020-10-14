@@ -184,6 +184,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   onResultSelect(result: SearchResult) {
     this.map.overlay.dataSource.ol.clear();
     this.tryAddFeatureToMap(result);
+    this.searchState.setSelectedResult(result);
 
     if (this.topPanelState === 'expanded') {
       const igoList = this.computeElementRef()[0];
