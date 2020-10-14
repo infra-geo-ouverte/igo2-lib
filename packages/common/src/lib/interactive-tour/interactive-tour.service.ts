@@ -21,7 +21,20 @@ export class InteractiveTourService {
     private languageService: LanguageService,
     private interactiveTourLoader: InteractiveTourLoader,
     private shepherdService: ShepherdService
-  ) {}
+  ) {
+    if (this.isAppHaveTour()) {
+      this.interactiveTourLoader.loadConfigTour();
+    }
+  }
+
+  public isAppHaveTour() {
+    const haveTour = this.configService.getConfig('interactiveTour.activateInteractiveTour')
+    if (haveTour === undefined) {
+      return true;
+    } else {
+      return haveTour;
+    }
+  }
 
   public isToolHaveTourConfig(toolName: string): boolean {
     const checkTourActiveOptions = this.interactiveTourLoader.getTourOptionData(
