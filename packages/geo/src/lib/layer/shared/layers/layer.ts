@@ -261,6 +261,7 @@ export abstract class Layer {
             (layerToApply.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, false);
             if (layerType === 'wfs') {
               layerToApply.ol.getSource().clear();
+              layerToApply.ol.getSource().refresh();
             }
             if (layerType === 'wms') {
               const appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
@@ -280,6 +281,7 @@ export abstract class Layer {
               if (layerType === 'wfs') {
                 (layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
                 layer.ol.getSource().clear();
+                layer.ol.getSource().refresh();
               }
               if (layerType === 'wms') {
                 let appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
