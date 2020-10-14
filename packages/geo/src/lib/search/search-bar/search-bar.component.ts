@@ -9,7 +9,10 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { FloatLabelType, MatFormFieldAppearance } from '@angular/material/form-field';
+import {
+  FloatLabelType,
+  MatFormFieldAppearance
+} from '@angular/material/form-field';
 import { BehaviorSubject, Subscription, EMPTY, timer } from 'rxjs';
 import { debounce, distinctUntilChanged } from 'rxjs/operators';
 
@@ -19,6 +22,7 @@ import { EntityStore } from '@igo2/common';
 import { SEARCH_TYPES } from '../shared/search.enums';
 import { SearchResult, Research } from '../shared/search.interfaces';
 import { SearchService } from '../shared/search.service';
+import { SearchSourceService } from '../shared/search-source.service';
 
 /**
  * Searchbar that triggers a research in all search sources enabled.
@@ -217,7 +221,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private searchSourceService: SearchSourceService
   ) {}
 
   /**
@@ -234,6 +239,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         debounce((term: string) => (term === '' ? EMPTY : timer(this.debounce)))
       )
       .subscribe((term: string) => this.onSetTerm(term));
+
+    this.handlePlaceholder();
 
     this.searchType$$ = this.searchType$
       .pipe(distinctUntilChanged())
@@ -297,6 +304,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   onSearchSettingsChange() {
     this.doSearch(this.term);
     this.searchSettingsChange.emit();
+    this.handlePlaceholder();
   }
 
   /**
@@ -346,6 +354,25 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.doSearch(term);
   }
 
+  private handlePlaceholder() {
+    const searchTypes = [
+      ...new Set(
+        this.searchSourceService
+          .getEnabledSources()
+          .filter((ss) => !['map', 'coordinatesreverse'].includes(ss.getId()))
+          .map((ss) => ss.getType())
+      )
+    ];
+
+    let placeholder = `igo.geo.search.placeholder`;
+    if (searchTypes.length === 1) {
+      placeholder = `igo.geo.search.${searchTypes[0].toLowerCase()}.placeholder`;
+    } else if (searchTypes.length === 0) {
+      placeholder = `igo.geo.search.emptyType.placeholder`;
+    }
+    this.placeholder$.next(placeholder);
+  }
+
   private onSetSearchType(searchType: string) {
     if (searchType === undefined || searchType === null) {
       return;
@@ -365,7 +392,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   private doSearch(term: string | undefined) {
     if (this.researches$$) {
-      this.researches$$.map(research => research.unsubscribe());
+      this.researches$$.map((research) => research.unsubscribe());
       this.researches$$ = undefined;
     }
 
@@ -380,7 +407,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     const researches = this.searchService.search(term, {
       forceNA: this.forceNA
     });
-    this.researches$$ = researches.map(research => {
+    this.researches$$ = researches.map((research) => {
       return research.request.subscribe((results: SearchResult[]) => {
         this.onResearchCompleted(research, results);
       });
@@ -399,7 +426,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     if (this.store !== undefined) {
       const newResults = this.store
         .all()
-        .filter(result => result.source !== research.source)
+        .filter((result) => result.source !== research.source)
         .concat(results);
       this.store.load(newResults);
     }
