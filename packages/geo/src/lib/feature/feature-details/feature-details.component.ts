@@ -38,16 +38,7 @@ export class FeatureDetailsComponent {
 
   @Input() map: IgoMap;
 
-  @Input()
-  get toolbox(): Toolbox {
-    return this._toolbox;
-  }
-  set toolbox(value: Toolbox) {
-    this._toolbox = value;
-    this.toolbox$.next(value);
-  }
-  private _toolbox: Toolbox;
-  public toolbox$ = new BehaviorSubject<Toolbox>(undefined);
+  @Input() toolbox: Toolbox;
 
   @Input()
   get feature(): Feature {
