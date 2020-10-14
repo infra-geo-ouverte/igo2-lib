@@ -20,6 +20,8 @@ export class SearchState {
 
   readonly searchSettingsChange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
 
+  readonly selectedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(undefined);
+
   /**
    * Store that holds the search results
    */
@@ -55,5 +57,9 @@ export class SearchState {
 
   setSearchSettingsChange() {
     this.searchSettingsChange$.next(true);
+  }
+
+  setSelectedResult(result: SearchResult) {
+    this.selectedResult$.next(result);
   }
 }
