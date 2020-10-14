@@ -28,7 +28,7 @@ export class InteractiveTourService {
   }
 
   public isAppHaveTour() {
-    const haveTour = this.configService.getConfig('interactiveTour.activateInteractiveTour')
+    const haveTour = this.configService.getConfig('interactiveTour.activateInteractiveTour');
     if (haveTour === undefined) {
       return true;
     } else {
