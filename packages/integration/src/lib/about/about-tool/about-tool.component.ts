@@ -2,7 +2,8 @@ import { Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 @ToolComponent({
   name: 'about',

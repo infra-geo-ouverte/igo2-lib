@@ -10,12 +10,9 @@
       "jwt-decode": "jwt",
       "ngx-cacheable": "ngxCacheable",
       "ts-md5": "tsMd5",
-      "@ngx-translate/core": "ngxt-core"
+      "@ngx-translate/core": "ngxt-core",
+      "@azure/msal-angular": "msal-angular"
     }
   },
-  "whitelistedNonPeerDependencies": [
-    "jwt-decode",
-    "ngx-cacheable",
-    "ts-md5"
-  ]
+  "whitelistedNonPeerDependencies": ["jwt-decode", "ngx-cacheable", "ts-md5"]
 }
