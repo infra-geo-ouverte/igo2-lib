@@ -16,7 +16,6 @@ import OlFeature from 'ol/Feature';
 import OlRenderFeature from 'ol/render/Feature';
 import OlLayer from 'ol/layer/Layer';
 
-import { DragBoxEvent as OlDragBoxEvent } from 'ol/interaction/DragBox';
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
@@ -27,7 +26,6 @@ import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
-import { AnyLayer } from '../../layer/shared/layers/any-layer';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';

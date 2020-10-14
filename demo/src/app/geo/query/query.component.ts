@@ -19,7 +19,8 @@ import {
   QueryableDataSourceOptions,
   QueryFormat,
   QueryHtmlTarget,
-  SearchResult
+  SearchResult,
+  FeatureMotion
 } from '@igo2/geo';
 
 import { getEntityTitle, EntityStore } from '@igo2/common';
@@ -162,11 +163,13 @@ export class AppQueryComponent {
 
   handleQueryResults(results) {
     const features: Feature[] = results.features;
-    let feature;
+    let feature: Feature;
     if (features.length) {
       feature = features[0];
     }
     this.feature$.next(feature);
+
+    this.map.overlay.setFeatures([feature], FeatureMotion.None);
   }
 
   getTitle(result: SearchResult) {
