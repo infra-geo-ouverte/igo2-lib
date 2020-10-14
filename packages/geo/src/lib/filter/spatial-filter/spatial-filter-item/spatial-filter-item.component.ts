@@ -132,6 +132,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Input() layers: Layer[];
 
+  @Input()
+  get thematicLength(): number {
+    return this._thematicLength;
+  }
+  set thematicLength(value: number) {
+    this._thematicLength = value;
+  }
+  private _thematicLength: number;
+
   @Output() toggleSearch = new EventEmitter();
 
   @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
@@ -467,11 +476,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
     this.store.entities$.subscribe((value) => {
-      setTimeout(() => {
-        if (value.length && this.layers.filter(layer => !layer.title.startsWith('Zone')).length) {
-          this.openWorkspace.emit();
-        }
-      }, 500)
+      if (value.length && this.layers.length === this.thematicLength + 1) {
+        this.openWorkspace.emit();
+      }
     })
   }
 

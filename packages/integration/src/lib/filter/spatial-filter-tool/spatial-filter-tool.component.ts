@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Observable, forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -60,11 +60,14 @@ export class SpatialFilterToolComponent {
   @Input() freehandDrawIsActive: boolean;
 
   public layers: Layer[] = [];
+  public activeLayers: Layer[] = [];
 
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
   public radius: number;
+
+  public iterator = 1;
 
   public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
     undefined
@@ -78,6 +81,8 @@ export class SpatialFilterToolComponent {
 
   public loading = false;
 
+  public thematicLength = 0;
+
   constructor(
     private matIconRegistry: MatIconRegistry,
     private spatialFilterService: SpatialFilterService,
@@ -88,7 +93,8 @@ export class SpatialFilterToolComponent {
     private languageService: LanguageService,
     private importExportState: ImportExportState,
     private toolState: ToolState,
-    private workspaceState: WorkspaceState
+    private workspaceState: WorkspaceState,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   getOutputType(event: SpatialFilterType) {
@@ -115,9 +121,31 @@ export class SpatialFilterToolComponent {
   }
 
   activateWorkspace() {
-    const layerToOpenWks = this.layers.filter(layer => !layer.title?.startsWith('Zone'))[0];
-    this.workspaceState.workspacePanelExpanded = true;
-    this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
+    let layerToOpenWks;
+    this.workspaceState.store.entities$.subscribe(() => {
+      if (this.activeLayers.length && this.workspaceState.store.all().length > 1) {
+        if (this.itemType === SpatialFilterItemType.Thematics) {
+            for (const thematic of this.thematics) {
+              if (!thematic.zeroResults) {
+                layerToOpenWks = this.activeLayers.find(layer => layer.title.includes(thematic.name + ' ' + this.iterator.toString()));
+                break;
+              }
+          }
+        } else {
+            const title = 'Adresses ' + this.iterator.toString();
+            this.activeLayers.forEach((layer) => {
+              if (layer.title.includes(title)) {
+                layerToOpenWks = layer;
+              }
+            })
+        }
+
+        if (layerToOpenWks) {
+          this.workspaceState.workspacePanelExpanded = true;
+          this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
+        }
+      }
+    })
   }
 
   private loadFilterList() {
@@ -149,6 +177,9 @@ export class SpatialFilterToolComponent {
 
   clearMap() {
     this.layers = [];
+    this.activeLayers = [];
+    this.thematicLength = 0;
+    this.iterator = 1;
     if (this.type !== SpatialFilterType.Predefined) {
       this.zone = undefined;
     }
@@ -157,18 +188,21 @@ export class SpatialFilterToolComponent {
   private loadThematics() {
     this.loading = true;
     let zeroResults = true;
+    let thematics;
     this.tryAddFeaturesToMap([this.zone]);
-    if (!this.thematics) {
+    if (this.itemType !== SpatialFilterItemType.Thematics) {
       const theme: SpatialFilterThematic = {
         name: ''
       };
-      this.thematics = [theme];
+      thematics = [theme];
+    } else {
+      thematics = this.thematics;
     }
     if (this.type === SpatialFilterType.Polygon) {
       this.radius = undefined;
     }
     const observables$: Observable<Feature[]>[] = [];
-    this.thematics.forEach(thematic => {
+    thematics.forEach(thematic => {
       observables$.push(
         this.spatialFilterService
           .loadFilterItem(
@@ -199,6 +233,11 @@ export class SpatialFilterToolComponent {
               this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
               if (features.length) {
                 zeroResults = false;
+                this.thematicLength += 1;
+                thematic.zeroResults = false;
+                this.cdRef.detectChanges();
+              } else {
+                thematic.zeroResults = true;
               }
 
               if (features.length >= 10000) {
@@ -259,8 +298,10 @@ export class SpatialFilterToolComponent {
             this.map.removeLayer(layer);
           }
         }
+      } else {
+        this.activeLayers = [];
       }
-      for (const layer of this.map.layers) {
+      for (const layer of this.layers) {
         if (layer.title?.startsWith('Zone')) {
           i++;
         }
@@ -311,12 +352,16 @@ export class SpatialFilterToolComponent {
           let featuresOl = features.map(f => {
             return featureToOl(f, this.map.projection);
           });
-          const type = this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
-          featuresOl[0].set('nom', 'Zone', true);
-          featuresOl[0].set('type', type, true);
+          if (this.type !== SpatialFilterType.Predefined) {
+            const type = this.type === SpatialFilterType.Point ? 'Cercle' : 'Polygone';
+            featuresOl[0].set('nom', 'Zone', true);
+            featuresOl[0].set('type', type, true);
+          }
           dataSource.ol.addFeatures(featuresOl);
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
+          this.activeLayers.push(olLayer);
+          this.cdRef.detectChanges();
         });
     }
   }
@@ -327,11 +372,11 @@ export class SpatialFilterToolComponent {
    */
   private tryAddPointToMap(features: Feature[], id) {
     let i = 1;
-    if (features.length > 1) {
+    if (features.length) {
       if (this.map === undefined) {
         return;
       }
-      for (const layer of this.map.layers) {
+      for (const layer of this.layers) {
         if (layer.title?.startsWith(features[0].meta.title)) {
           i++;
         }
@@ -374,8 +419,11 @@ export class SpatialFilterToolComponent {
             olLayer.title = (features[0].meta.title + ' ' + i) as string;
             olLayer.options.title = olLayer.title;
           }
+          this.iterator = i;
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
+          this.pushLayer(olLayer);
+          this.cdRef.detectChanges();
         });
     }
   }
@@ -437,6 +485,8 @@ export class SpatialFilterToolComponent {
           }
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
+          this.pushLayer(olLayer);
+          this.cdRef.detectChanges();
         });
     }
   }
@@ -448,6 +498,19 @@ export class SpatialFilterToolComponent {
         featureProjection: this.map.projection
       });
       moveToOlFeatures(this.map, [olFeature], FeatureMotion.Zoom);
+    }
+  }
+
+  pushLayer(layer) {
+    let push = true;
+    for (const lay of this.activeLayers) {
+      if (lay.id === layer.id) {
+        push = false;
+      }
+    }
+
+    if (push === true) {
+      this.activeLayers.push(layer);
     }
   }
 }
