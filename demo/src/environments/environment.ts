@@ -34,7 +34,8 @@ export const environment: Environment = {
       prefix: './locale/'
     },
     interactiveTour: {
-      tourInMobile: true
+      tourInMobile: true,
+      activateInteractiveTour: true
     },
     importExport: {
       url: '/apis/ogre',

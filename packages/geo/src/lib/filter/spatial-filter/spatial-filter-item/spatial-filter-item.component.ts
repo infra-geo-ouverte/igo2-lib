@@ -130,7 +130,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters];
   }
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: Layer[];
+
+  @Input()
+  get thematicLength(): number {
+    return this._thematicLength;
+  }
+  set thematicLength(value: number) {
+    this._thematicLength = value;
+  }
+  private _thematicLength: number;
 
   @Output() toggleSearch = new EventEmitter();
 
@@ -459,17 +468,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         title: 'Zone'
       };
       this.drawZone.properties = {
-        nom: 'Zone'
+        nom: 'Zone',
+        type: this.type as string
       };
       this.drawZoneEvent.emit(this.drawZone);
     }
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
-    setTimeout(() => {
-      if (this.store.entities$.getValue().length) {
+    this.store.entities$.subscribe((value) => {
+      if (value.length && this.layers.length === this.thematicLength + 1) {
         this.openWorkspace.emit();
       }
-    }, 500);
+    });
   }
 
   /**

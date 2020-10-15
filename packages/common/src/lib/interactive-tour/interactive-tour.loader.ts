@@ -12,10 +12,19 @@ export class InteractiveTourLoader {
 
   constructor(private http: HttpClient, private configService: ConfigService) {
     this.jsonURL = this.getPathToConfigFile();
-    this.allToursOptions = this.getJSON().subscribe((data) => {
-      this.allToursOptions = data;
-    });
   }
+
+   public loadConfigTour() {
+      this.getJSON()
+        .subscribe(
+          (data) => {
+            this.allToursOptions = data;
+          },
+          (err) => {
+            throw new Error('Problem with Interactive tour configuration file: interactiveTour.json not find. Check if the file and is path is set correctly.');
+          }
+        );
+   }
 
   public getPathToConfigFile(): string {
     return (
