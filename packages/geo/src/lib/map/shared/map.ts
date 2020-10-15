@@ -502,15 +502,10 @@ export class IgoMap {
 
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
-        if (!this.positionFollower && this.alwaysTracking) {
+        if (this.alwaysTracking) {
           this.overlay.addOlFeature(
             this.geolocationFeature,
-            FeatureMotion.None
-          );
-        } else if (this.positionFollower && this.alwaysTracking) {
-          this.overlay.addOlFeature(
-            this.geolocationFeature,
-            FeatureMotion.Move
+            this.positionFollower ? FeatureMotion.Move : FeatureMotion.None
           );
         } else {
           this.overlay.addOlFeature(this.geolocationFeature);
@@ -547,7 +542,7 @@ export class IgoMap {
         view.setCenter(coordinates);
         view.setZoom(14);
       }
-      if (track && !this.alwaysTracking) {
+      if (track !== true && this.alwaysTracking !== true) {
         this.unsubscribeGeolocate();
       }
       first = false;

@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Output,
-  EventEmitter
+  EventEmitter,
+  OnInit
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NetworkService, ConnectionState } from '@igo2/core';
@@ -23,8 +24,9 @@ import { IgoMap } from '../../map/shared/map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class FeatureDetailsComponent {
+export class FeatureDetailsComponent implements OnInit {
   private state: ConnectionState;
+  ready = false;
 
   @Input()
   get source(): SearchSource {
@@ -69,6 +71,7 @@ export class FeatureDetailsComponent {
     return getEntityIcon(this.feature) || 'link';
   }
 
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
@@ -77,6 +80,10 @@ export class FeatureDetailsComponent {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.state = state;
     });
+  }
+
+  ngOnInit() {
+    this.ready = true;
   }
 
   htmlSanitizer(value): SafeResourceUrl {
@@ -116,6 +123,10 @@ export class FeatureDetailsComponent {
       this.map.offlineButtonToggle$.subscribe(state => {
         offlineButtonState = state;
       });
+    }
+
+    if (feature.properties && feature.properties.Route && this.toolbox && !this.toolbox.getTool('directions')) {
+      delete feature.properties.Route;
     }
 
     if (allowedFieldsAndAlias) {
