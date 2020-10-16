@@ -550,6 +550,7 @@ export class ContextService {
       } else {
         if (layer.ol.type !== 'VECTOR') {
           const catalogLayer = layer.options;
+          catalogLayer.zIndex = layer.zIndex;
           delete catalogLayer.source;
           context.layers.push(catalogLayer);
         } else {
