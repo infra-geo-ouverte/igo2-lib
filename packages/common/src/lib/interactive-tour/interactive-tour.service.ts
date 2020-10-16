@@ -52,9 +52,11 @@ export class InteractiveTourService {
       toolName
     );
 
-    if (stepConfig?.condition) {
-      if (document.querySelector(stepConfig.condition) === null) {
-        return true;
+    if (stepConfig?.conditions) {
+      for (const condition of stepConfig?.conditions) {
+        if (document.querySelector(condition) === null) {
+          return true;
+        }
       }
     }
     return false;
