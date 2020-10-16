@@ -103,7 +103,7 @@ export class WFSDataSource extends DataSource {
     }
     const ogcFilterWriter = new OgcFilterWriter();
     const filterOrBox = ogcFilterWriter.buildFilter(igoFilters, extent, proj, ogcFilters.geometryName, this.options);
-    let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, ogcFilters.geometryName);
+    let filterOrPush = ogcFilterWriter.handleOgcFiltersAppliedValue(this.options, ogcFilters.geometryName, extent, proj);
 
     let prefix = 'filter';
     if (!filterOrPush) {

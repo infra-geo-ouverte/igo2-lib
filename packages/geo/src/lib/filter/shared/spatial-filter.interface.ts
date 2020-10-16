@@ -3,6 +3,7 @@ export interface SpatialFilterThematic {
   children?: SpatialFilterThematic[];
   group?: string;
   source?: string;
+  zeroResults?: boolean;
 }
 
 export interface SpatialFilterOptions {

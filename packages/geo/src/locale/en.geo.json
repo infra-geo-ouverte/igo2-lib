@@ -304,6 +304,7 @@
       },
       "search": {
         "placeholder": "Search for a localisation or a layer",
+        "emptyType.placeholder": "Please choose a search type",
         "feature.title": "Localisation",
         "feature.placeholder": "Search for a place localisation",
         "layer.title": "Layer",
