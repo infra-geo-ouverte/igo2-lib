@@ -1,11 +1,9 @@
 {
   "name": "@igo2/utils",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "IGO Library",
   "author": "MSP",
-  "keywords": [
-    "igo"
-  ],
+  "keywords": ["igo"],
   "license": "MIT",
   "homepage": "https://github.com/infra-geo-ouverte/igo2-lib#readme",
   "repository": {
