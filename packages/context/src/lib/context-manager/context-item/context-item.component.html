@@ -19,6 +19,7 @@
        class="igo-actions-container">
 
      <button *ngIf="collapsed && selected && (context.permission === typePermission[typePermission.write] || context.imported)"
+       class="save-button"
        mat-icon-button
        [matTooltip]="'igo.context.contextManager.save' | translate"
        matTooltipShowDelay="500"
