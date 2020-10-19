@@ -43,6 +43,10 @@ export class OgcFilterTimeComponent implements OnInit {
   _endValue: Date;
   readonly _defaultMin: string = '1900-01-01';
   ogcFilterOperator = OgcFilterOperator;
+  interval;
+  public playIcon = 'play-circle';
+  public resetIcon = 'replay';
+  public sliderMode = false;
 
   readonly defaultStepMillisecond = 60000;
   public options: OgcFilterableDataSourceOptions;
@@ -77,6 +81,12 @@ export class OgcFilterTimeComponent implements OnInit {
 
   get endValue(): Date {
     return this._endValue;
+  }
+
+  get timeInterval(): number {
+    return this.currentFilter.options.timeInterval === undefined
+      ? 2000
+      : this.currentFilter.options.timeInterval;
   }
 
   constructor() {}
@@ -131,8 +141,7 @@ export class OgcFilterTimeComponent implements OnInit {
 
   changeTemporalProperty(value, position?) {
     let valueTmp = this.getDateTime(value, position);
-
-    if (position === 2 && this.calendarType() === 'date') {
+    if (position === 2 && this.calendarType() === 'date' && !this.sliderMode) {
       /* Above month: see yearSelected or monthSelected */
       valueTmp = moment(valueTmp).endOf('day').toDate();
     }
@@ -145,9 +154,7 @@ export class OgcFilterTimeComponent implements OnInit {
     } else {
       this.endValue = valueTmp;
     }
-
     this.updateHoursMinutesArray();
-
     this.changeProperty.next({ value: valueTmp.toISOString(), pos: position });
   }
 
@@ -306,21 +313,22 @@ export class OgcFilterTimeComponent implements OnInit {
     const valuetmp = new Date(date);
     let valuetmp2;
 
-    switch (pos) {
-      case 1:
-        valuetmp2 = valuetmp.setHours(
-          this.beginHourFormControl.value,
-          this.beginMinuteFormControl.value
-        );
-        break;
-      case 2:
-        valuetmp2 = valuetmp.setHours(
-          this.endHourFormControl.value,
-          this.endMinuteFormControl.value
-        );
-        break;
+    if (!this.sliderMode) {
+      switch (pos) {
+        case 1:
+          valuetmp2 = valuetmp.setHours(
+            this.beginHourFormControl.value,
+            this.beginMinuteFormControl.value
+          );
+          break;
+        case 2:
+          valuetmp2 = valuetmp.setHours(
+            this.endHourFormControl.value,
+            this.endMinuteFormControl.value
+          );
+          break;
+      }
     }
-
     return new Date(valuetmp2 ? valuetmp2 : valuetmp);
   }
 
@@ -450,7 +458,7 @@ export class OgcFilterTimeComponent implements OnInit {
   public restrictedToStep(): boolean {
     return this.currentFilter.restrictToStep
       ? this.currentFilter.restrictToStep
-      : false;
+      : this.sliderMode ? this.sliderMode : false;
   }
 
   private addStep(value) {
@@ -465,5 +473,64 @@ export class OgcFilterTimeComponent implements OnInit {
   public handleMax() {
     return this.currentFilter.end ? this.currentFilter.end :
               (this.datasource.options.maxDate ? this.datasource.options.maxDate : undefined);
+  }
+
+  public dateToNumber(date: Date): number {
+    let newDate = new Date();
+    if (date) {
+      newDate = new Date(date);
+    }
+    return newDate.getTime();
+  }
+
+  sliderDisplayWith(value) {
+    return new Date(value).toISOString();
+  }
+
+  playFilter(event: any) {
+    if (this.interval) {
+      this.stopFilter();
+    } else {
+      this.playIcon = 'pause-circle';
+      this.interval = setInterval(
+        that => {
+          let newMinDateNumber;
+          const maxDateNumber = new Date(that.max);
+
+          newMinDateNumber =
+            that.date === undefined ? that.min.getTime() : that.date.getTime();
+          newMinDateNumber += that.mySlider.step;
+          that.date = new Date(newMinDateNumber);
+
+          if (newMinDateNumber > maxDateNumber.getTime()) {
+            that.stopFilter();
+          }
+
+          that.handleDateChange({ value: that.date, date: that.date });
+        },
+        this.timeInterval,
+        this
+      );
+    }
+  }
+
+  stopFilter() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    this.interval = undefined;
+    this.playIcon = 'play-circle';
+  }
+
+  handleSliderInput(matSliderChange) {
+    if(matSliderChange) {
+      if(this.stepIsYearDuration()) {
+        this.yearSelected(this.getDateTime(matSliderChange.value, 1), undefined, 'begin');
+      } else if ( this.stepIsMonthDuration()) {
+        this.monthSelected(this.getDateTime(matSliderChange.value, 1), undefined, 'begin');
+      } else if ( this.stepIsDayDuration() || this.stepIsHourDuration() || this.stepIsMinuteDuration()) {
+        this.changeTemporalProperty(matSliderChange.value, 1);
+      }
+    }
   }
 }
