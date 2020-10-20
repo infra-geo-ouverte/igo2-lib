@@ -1,3 +1,12 @@
+## [1.5.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.5.0...1.5.1) (2020-10-20)
+
+
+### Bug Fixes
+
+* **timeFilter:** getCapabilies populates the timeFilter ([41dbd1f](https://github.com/infra-geo-ouverte/igo2-lib/commit/41dbd1fb56afc4a6da1a12e2268ba5277ca77821))
+
+
+
 # [1.5.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.4.3...1.5.0) (2020-10-16)
 
 
