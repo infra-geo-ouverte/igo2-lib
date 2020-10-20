@@ -5,6 +5,8 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
 import olPoint from 'ol/geom/Point';
 
+import { ConfigService } from '@igo2/core';
+
 import {
   EntityStore,
   ToolComponent,
@@ -55,7 +57,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    */
   @Input() showIcons: boolean = true;
 
-  @Input() hasFeatureEmphasisOnSelection: boolean = false;
+  private hasFeatureEmphasisOnSelection: boolean = false;
 
   private focusedOrResolution$$: Subscription;
   private selectedOrResolution$$: Subscription;
@@ -122,8 +124,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     private searchState: SearchState,
     private elRef: ElementRef,
     public toolState: ToolState,
-    private directionState: DirectionState
-  ) {}
+    private directionState: DirectionState,
+    configService: ConfigService
+  ) {
+    this.hasFeatureEmphasisOnSelection = configService.getConfig(
+      'hasFeatureEmphasisOnSelection'
+    );
+  }
 
   ngOnInit() {
     this.searchTerm$$ = this.searchState.searchTerm$.subscribe((searchTerm: string) => {
