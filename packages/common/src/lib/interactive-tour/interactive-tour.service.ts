@@ -169,7 +169,6 @@ export class InteractiveTourService {
             self.removeStep(id);
           }
           clearInterval(checkExist);
-          console.log('ici1')
           return;
         } else {
           const currentStepElement = self.getCurrentStep().getElement();
@@ -239,7 +238,6 @@ export class InteractiveTourService {
     return new Promise((resolve) => {
       this.executeAction(step, actionConfig);
       if (!actionConfig || !actionConfig.waitFor) {
-        console.log('ici2')
         resolve();
         return;
       }
