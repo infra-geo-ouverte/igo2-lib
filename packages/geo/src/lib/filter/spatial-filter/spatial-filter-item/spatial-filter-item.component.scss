@@ -13,7 +13,7 @@
     }
 }
 
-.title, .radius-form {
+.title, .radius-form, .buffer-form {
     margin-left: 5px;
 }
 
@@ -84,11 +84,11 @@
     margin-right: 5px;
 }
 
-.radius {
+.radius, .buffer {
     width: 90%;
 }
 
-.radius ::ng-deep .mat-form-field-infix {
+.radius ::ng-deep .mat-form-field-infix,  .buffer ::ng-deep .mat-form-field-infix {
     display: inline-flex;
 }
 

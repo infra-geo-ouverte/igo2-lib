@@ -418,6 +418,7 @@
         "drawPolygon": "Dessiner un polygone",
         "drawCircle": "Dessiner un cercle",
         "searchLabel": "Rechercher par",
+        "buffer": "Zone tampon",
         "search": "Recherche",
         "drawControl": "Activer le contrôle de dessin",
         "listLabel": "Zone",

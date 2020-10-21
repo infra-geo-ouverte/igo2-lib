@@ -3,3 +3,12 @@
     width: 95%;
     margin-left: 2px;
 }
+
+.buffer ::ng-deep .mat-form-field-infix {
+    display: inline-flex;
+}
+
+.unit-field {
+    padding-left: 5px;
+    padding-right: 5px;
+}

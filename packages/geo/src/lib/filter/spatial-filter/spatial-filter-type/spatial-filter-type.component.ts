@@ -54,6 +54,8 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   @Output() zoneChange = new EventEmitter<Feature>();
 
+  @Output() bufferChange = new EventEmitter<number>();
+
   constructor() {}
 
   ngOnInit() {
@@ -82,6 +84,10 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   onZoneChange(feature) {
     this.zoneChange.emit(feature);
+  }
+
+  onBufferChange(buffer: number) {
+    this.bufferChange.emit(buffer);
   }
 
   onDrawTypeChange(spatialType: SpatialFilterType) {

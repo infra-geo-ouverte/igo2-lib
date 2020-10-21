@@ -418,6 +418,7 @@
         "drawPolygon": "Draw a polygon",
         "drawCircle": "Draw a circle",
         "searchLabel": "Search by",
+        "buffer": "Buffer",
         "search": "Search",
         "drawControl": "Activate draw control",
         "listLabel": "Zone",

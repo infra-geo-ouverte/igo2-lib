@@ -16,7 +16,8 @@
       [store]="store"
       [queryType]="selectedQueryType"
       [selectedZone]="zone"
-      (zoneChange)="onZoneChange($event)">
+      (zoneChange)="onZoneChange($event)"
+      (bufferChange)="onBufferChange($event)">
     </igo-spatial-filter-list>
   </mat-tab>
 

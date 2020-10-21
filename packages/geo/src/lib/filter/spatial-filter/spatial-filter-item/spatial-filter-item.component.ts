@@ -149,6 +149,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
+  @Output() bufferEvent = new EventEmitter<number>();
+
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
 
@@ -182,6 +184,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
+  private bufferChanges$$: Subscription;
 
   public formControl = new FormControl();
   public geometryType: OlGeometryType;
@@ -200,7 +203,9 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public PolyStyle: OlStyle;
 
   public radius: number;
+  public buffer: number;
   public radiusFormControl = new FormControl();
+  public bufferFormControl = new FormControl();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
@@ -266,6 +271,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.getRadius();
       this.cdRef.detectChanges();
     });
+
+    this.bufferChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
+      console.log(value);
+      this.buffer = value;
+      this.bufferEvent.emit(value)
+    });
   }
 
   /**
@@ -274,6 +285,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   ngOnDestroy() {
     this.value$$.unsubscribe();
+    this.radiusChanges$$.unsubscribe();
+    this.bufferChanges$$.unsubscribe();
     this.cdRef.detach();
   }
 
@@ -461,7 +474,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Launch search button
    */
   toggleSearchButton() {
-    if (this.isPolygon() || this.isPoint()) {
+    if (!this.isPredefined()) {
       this.drawZone = this.formControl.value as Feature;
       this.drawZone.meta = {
         id: undefined,
@@ -473,7 +486,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       };
       this.drawZoneEvent.emit(this.drawZone);
     }
-    this.radiusEvent.emit(this.radius);
+    if (this.isPoint()) {
+      this.radiusEvent.emit(this.radius);
+    } else {
+      this.bufferEvent.emit(this.buffer);
+    }
     this.toggleSearch.emit();
     this.store.entities$.subscribe((value) => {
       if (value.length && this.layers.length === this.thematicLength + 1) {
@@ -487,7 +504,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearButton() {
     this.loading = true;
-    this.map.removeLayers(this.layers);
     this.loading = false;
     if (this.store) {
       this.store.clear();
@@ -545,7 +561,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.formControl.value !== null ? formValue = this.formControl.value.radius : formValue = undefined;
     if (this.type === SpatialFilterType.Point) {
       if (!this.freehandDrawIsActive) {
-        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
+        if (this.radiusFormControl.value >= 100000 || this.radiusFormControl.value < 0) {
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           this.radius = 1000;
@@ -555,7 +571,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       } else {
         if (formValue) {
-          if (formValue >= 10000) {
+          if (formValue >= 100000) {
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
             this.formControl.reset();

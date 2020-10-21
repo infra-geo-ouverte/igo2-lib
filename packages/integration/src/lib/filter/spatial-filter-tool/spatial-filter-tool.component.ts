@@ -65,7 +65,7 @@ export class SpatialFilterToolComponent {
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
-  public radius: number;
+  public buffer = 0;
 
   public iterator = 1;
 
@@ -100,7 +100,6 @@ export class SpatialFilterToolComponent {
   getOutputType(event: SpatialFilterType) {
     this.type = event;
     this.queryType = undefined;
-    this.radius = undefined;
   }
 
   getOutputQueryType(event: SpatialFilterQueryType) {
@@ -176,6 +175,7 @@ export class SpatialFilterToolComponent {
   }
 
   clearMap() {
+    this.map.removeLayers(this.layers);
     this.layers = [];
     this.activeLayers = [];
     this.thematicLength = 0;
@@ -198,9 +198,7 @@ export class SpatialFilterToolComponent {
     } else {
       thematics = this.thematics;
     }
-    if (this.type === SpatialFilterType.Polygon) {
-      this.radius = undefined;
-    }
+    console.log(this.buffer);
     const observables$: Observable<Feature[]>[] = [];
     thematics.forEach(thematic => {
       observables$.push(
@@ -210,7 +208,7 @@ export class SpatialFilterToolComponent {
             this.itemType,
             this.queryType,
             thematic,
-            this.radius
+            this.buffer
           )
           .pipe(
             tap((features: Feature[]) => {
@@ -327,7 +325,7 @@ export class SpatialFilterToolComponent {
               return new olstyle.Style({
                 image: new olstyle.Circle({
                   radius: coordinates
-                    ? this.radius /
+                    ? this.buffer /
                       Math.cos((Math.PI / 180) * coordinates[1]) /
                       resolution
                     : undefined,

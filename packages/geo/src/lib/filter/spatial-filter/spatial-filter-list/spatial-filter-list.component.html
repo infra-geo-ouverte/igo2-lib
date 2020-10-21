@@ -10,3 +10,13 @@
         </mat-autocomplete>
     </mat-form-field>
 <form>
+
+<form class="buffer-form">
+    <mat-form-field class="buffer">
+        <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
+        [value]="0" [readonly]="selectedZone">
+        <label class="unit-field">
+        {{('igo.geo.measure.' + measureUnit) | translate}}
+        </label>
+    </mat-form-field>
+</form>

@@ -13,6 +13,7 @@ import {
 import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Feature } from '../../../feature';
+import { MeasureLengthUnit } from '../../../measure/shared';
 
 @Component({
   selector: 'igo-spatial-filter-list',
@@ -43,11 +44,19 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   @Input() selectedZone: Feature;
 
+  public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
+
   public formControl = new FormControl();
 
+  public bufferFormControl = new FormControl();
+
   @Output() zoneChange = new EventEmitter<Feature>();
+  @Output() bufferChange = new EventEmitter<number>();
 
   formValueChanges$$: Subscription;
+  bufferValueChanges$$: Subscription;
+
+  constructor(private spatialFilterService: SpatialFilterService) {}
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
@@ -59,6 +68,15 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
         });
       }
     });
+
+    this.bufferValueChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
+      if (value >= 0) {
+        console.log(value);
+        this.bufferChange.emit(value);
+      } else {
+        this.bufferFormControl.setValue(0);
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -68,8 +86,6 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   displayFn(feature?: Feature): string | undefined {
     return feature ? feature.properties.nom : undefined;
   }
-
-  constructor(private spatialFilterService: SpatialFilterService) {}
 
   onZoneChange(feature) {
     if (feature && this.queryType) {
