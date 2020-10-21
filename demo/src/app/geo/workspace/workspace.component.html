@@ -16,13 +16,13 @@
   </igo-workspace-selector>
 
   <ng-container *ngIf="selectedWorkspace$ | async as workspace">
-  <igo-entity-table-paginator
-    *ngIf="workspace.inResolutionRange$ | async"
-    [store]="workspace.entityStore"
-    [paginatorOptions]="paginatorOptions"
-    [entitySortChange$]="entitySortChange$"
-    (paginatorChange)="paginatorChange($event)">
-  </igo-entity-table-paginator>
+    <igo-entity-table-paginator
+      *ngIf="workspace.inResolutionRange$ | async"
+      [store]="workspace.entityStore"
+      [paginatorOptions]="paginatorOptions"
+      [entitySortChange$]="entitySortChange$"
+      (paginatorChange)="paginatorChange($event)">
+    </igo-entity-table-paginator>
 </ng-container>
 
   <ng-container *ngIf="selectedWorkspace$ | async as workspace">
