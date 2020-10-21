@@ -17,7 +17,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
    * Subscription to the store's OL source changes
    */
   private stores$$ = new Map<FeatureStore, string>();
-  private states$$: Subscription[] = [];
+  private resolution$$: Subscription[] = [];
   private empty$$: Subscription;
 
   constructor(protected options: FeatureStoreInMapResolutionStrategyOptions) {
@@ -74,7 +74,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
     }
 
     this.updateEntitiesInResolution(store, store.layer.map.viewController.getResolution());
-    this.states$$.push(store.layer.map.viewController.resolution$.subscribe((res) => {
+    this.resolution$$.push(store.layer.map.viewController.resolution$.subscribe((res) => {
       this.updateEntitiesInResolution(store, res);
     }));
   }
@@ -107,7 +107,7 @@ export class FeatureStoreInMapResolutionStrategy extends EntityStoreStrategy {
       unByKey(entries[1]);
     });
     this.stores$$.clear();
-    this.states$$.map(state => state.unsubscribe());
+    this.resolution$$.map(state => state.unsubscribe());
     if (this.empty$$) { this.empty$$.unsubscribe(); }
   }
 }
