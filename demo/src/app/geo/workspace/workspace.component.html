@@ -34,13 +34,17 @@
     </igo-actionbar>
 
     <igo-entity-table
-      *ngIf="workspace.entityStore && workspace.meta && workspace.meta.tableTemplate"
+      *ngIf="workspace.entityStore && workspace.meta && workspace.meta.tableTemplate && (workspace.inResolutionRange$ | async)"
       class="table-compact table-centered"
       [paginator]="workspacePaginator"
       [scrollBehavior]="scrollBehavior"
       [store]="workspace.entityStore"
       [template]="workspace.meta.tableTemplate">
     </igo-entity-table>
+    <mat-card-content
+    *ngIf="!(workspace.inResolutionRange$ | async)">
+      No data available at this scale. Please zoom in. 
+    </mat-card-content>
 
     <igo-workspace-widget-outlet [workspace]="workspace"></igo-workspace-widget-outlet>
 

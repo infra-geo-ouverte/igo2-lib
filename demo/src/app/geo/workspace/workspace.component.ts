@@ -144,7 +144,7 @@ export class AppWorkspaceComponent implements OnInit {
 
     const wfsDataSourceOptions: WFSDataSourceOptions = {
       type: 'wfs',
-      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+      url: '/swtq',
       params: {
         featureTypes: 'etablissement_mtq',
         fieldNameGeometry: 'geometry',
@@ -163,6 +163,7 @@ export class AppWorkspaceComponent implements OnInit {
       .subscribe(dataSource => {
         const layer = {
           title: 'Simple WFS ',
+          maxResolution: 3000,
           visible: true,
           source: dataSource
         };
