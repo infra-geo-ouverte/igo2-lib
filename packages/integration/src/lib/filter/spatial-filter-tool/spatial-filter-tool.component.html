@@ -6,7 +6,8 @@
     (eventType)="getOutputType($event)"
     (eventQueryType)="getOutputQueryType($event)"
     (zoneChange)="onZoneChange($event)"
-    (bufferChange)="buffer = $event">
+    (bufferChange)="buffer = $event"
+    (measureUnitChange)="measureUnit = $event">
   </igo-spatial-filter-type>
 
   <igo-spatial-filter-item
@@ -20,6 +21,7 @@
     [thematicLength]="thematicLength"
     (radiusEvent)="buffer = $event"
     (bufferEvent)="buffer = $event"
+    (measureUnitChange)="measureUnit = $event"
     (freehandControl)="freehandDrawIsActive = $event"
     (drawZoneEvent)="zone = $event"
     (itemTypeChange)="itemType = $event"

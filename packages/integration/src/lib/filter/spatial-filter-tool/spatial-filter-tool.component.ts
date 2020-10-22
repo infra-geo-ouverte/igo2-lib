@@ -21,7 +21,8 @@ import {
   SpatialFilterThematic,
   Layer,
   createOverlayMarkerStyle,
-  ExportOptions
+  ExportOptions,
+  MeasureLengthUnit
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -32,6 +33,7 @@ import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ToolState } from '../../tool/tool.state';
 import { WorkspaceState } from '../../workspace/workspace.state';
+import buffer from '@turf/buffer';
 
 /**
  * Tool to apply spatial filter
@@ -65,6 +67,7 @@ export class SpatialFilterToolComponent {
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
+  public zoneWithBuffer: Feature;
   public buffer = 0;
 
   public iterator = 1;
@@ -82,6 +85,8 @@ export class SpatialFilterToolComponent {
   public loading = false;
 
   public thematicLength = 0;
+
+  public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
   constructor(
     private matIconRegistry: MatIconRegistry,
@@ -198,7 +203,10 @@ export class SpatialFilterToolComponent {
     } else {
       thematics = this.thematics;
     }
-    console.log(this.buffer);
+    if (this.measureUnit === MeasureLengthUnit.Kilometers && this.type !== SpatialFilterType.Point) {
+      this.buffer = this.buffer * 1000;
+    }
+
     const observables$: Observable<Feature[]>[] = [];
     thematics.forEach(thematic => {
       observables$.push(
@@ -500,15 +508,12 @@ export class SpatialFilterToolComponent {
   }
 
   pushLayer(layer) {
-    let push = true;
     for (const lay of this.activeLayers) {
       if (lay.id === layer.id) {
-        push = false;
+        return;
       }
     }
 
-    if (push === true) {
-      this.activeLayers.push(layer);
-    }
+    this.activeLayers.push(layer);
   }
 }

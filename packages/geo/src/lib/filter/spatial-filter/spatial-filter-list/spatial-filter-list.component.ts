@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
+import { LanguageService, MessageService } from '@igo2/core';
 
 @Component({
   selector: 'igo-spatial-filter-list',
@@ -50,13 +51,25 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   public bufferFormControl = new FormControl();
 
+  /**
+   * Available measure units for the measure type given
+   * @internal
+   */
+  get measureUnits(): string[] {
+    return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
+  }
+
   @Output() zoneChange = new EventEmitter<Feature>();
   @Output() bufferChange = new EventEmitter<number>();
+  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   formValueChanges$$: Subscription;
   bufferValueChanges$$: Subscription;
 
-  constructor(private spatialFilterService: SpatialFilterService) {}
+  constructor(
+    private spatialFilterService: SpatialFilterService,
+    private messageService: MessageService,
+    private languageService: LanguageService) {}
 
   ngOnInit() {
     this.formValueChanges$$ = this.formControl.valueChanges.subscribe((value) => {
@@ -70,11 +83,14 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     });
 
     this.bufferValueChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
-      if (value >= 0) {
-        console.log(value);
+      if (this.measureUnit === MeasureLengthUnit.Meters && value >= 0 && value < 100000) {
+        this.bufferChange.emit(value);
+      } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 0 && value < 100) {
         this.bufferChange.emit(value);
       } else {
         this.bufferFormControl.setValue(0);
+        this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
       }
     })
   }
@@ -94,6 +110,22 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
         this.selectedZone = featureGeom;
         this.zoneChange.emit(featureGeom);
       });
+    }
+  }
+
+  /**
+   * Set the measure unit
+   * @internal
+   */
+  onMeasureUnitChange(unit: MeasureLengthUnit) {
+    if (unit === this.measureUnit) {
+      return;
+    } else {
+      this.measureUnit = unit;
+      this.measureUnitChange.emit(this.measureUnit);
+      this.measureUnit === MeasureLengthUnit.Meters ?
+        this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
+        this.bufferFormControl.setValue(this.bufferFormControl.value / 1000)
     }
   }
 }

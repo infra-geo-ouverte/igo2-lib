@@ -127,7 +127,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * @internal
    */
   get measureUnits(): string[] {
-    return [MeasureLengthUnit.Meters];
+    return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
   @Input() layers: Layer[];
@@ -150,6 +150,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
   @Output() bufferEvent = new EventEmitter<number>();
+  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
@@ -203,7 +204,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public PolyStyle: OlStyle;
 
   public radius: number;
-  public buffer: number;
+  public buffer: number = 0;
   public radiusFormControl = new FormControl();
   public bufferFormControl = new FormControl();
 
@@ -273,7 +274,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     });
 
     this.bufferChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
-      console.log(value);
       this.buffer = value;
       this.bufferEvent.emit(value)
     });
@@ -300,7 +300,21 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * @internal
    */
   onMeasureUnitChange(unit: MeasureLengthUnit) {
-    this.measureUnit = unit;
+    if (unit === this.measureUnit) {
+      return;
+    } else {
+      this.measureUnit = unit;
+      this.measureUnitChange.emit(this.measureUnit);
+      if (this.isPolygon()) {
+        this.measureUnit === MeasureLengthUnit.Meters ?
+          this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
+          this.bufferFormControl.setValue(this.bufferFormControl.value / 1000)
+      } else if (this.isPoint()) {
+        this.measureUnit === MeasureLengthUnit.Meters ?
+          this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
+          this.radiusFormControl.setValue(this.radiusFormControl.value / 1000)
+      }
+    }
   }
 
   isPredefined() {
@@ -488,7 +502,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     if (this.isPoint()) {
       this.radiusEvent.emit(this.radius);
-    } else {
+    } else if (this.isPolygon()) {
       this.bufferEvent.emit(this.buffer);
     }
     this.toggleSearch.emit();
@@ -558,14 +572,26 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   getRadius() {
     let formValue;
-    this.formControl.value !== null ? formValue = this.formControl.value.radius : formValue = undefined;
+    if (this.formControl.value !== null) {
+      this.measureUnit === MeasureLengthUnit.Meters ?
+        formValue = this.formControl.value.radius :
+        formValue = this.formControl.value.radius / 1000
+    } else {
+      formValue = undefined;
+    }
+
     if (this.type === SpatialFilterType.Point) {
       if (!this.freehandDrawIsActive) {
-        if (this.radiusFormControl.value >= 100000 || this.radiusFormControl.value < 0) {
+        if (
+          this.radiusFormControl.value < 0 ||
+          (this.measureUnit === MeasureLengthUnit.Meters && this.radiusFormControl.value >= 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && this.radiusFormControl.value >= 100)) {
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           this.radius = 1000;
-          this.radiusFormControl.setValue(this.radius);
+          this.measureUnit === MeasureLengthUnit.Meters ?
+            this.radiusFormControl.setValue(this.radius) :
+            this.radiusFormControl.setValue(this.radius / 1000);
           this.drawGuide$.next(this.radius);
           return;
         }
@@ -583,8 +609,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           }
         }
       }
-      this.radius = this.radiusFormControl.value;
-      this.drawGuide$.next(this.radius);
+      if (this.measureUnit === MeasureLengthUnit.Meters) {
+        this.radius = this.radiusFormControl.value;
+        this.drawGuide$.next(this.radius);
+      } else {
+        this.radius = this.radiusFormControl.value * 1000;
+        this.drawGuide$.next(this.radius * 1000);
+      }
       this.overlayStyle$.next(this.PointStyle);
       this.drawStyle$.next(this.PointStyle);
     }
