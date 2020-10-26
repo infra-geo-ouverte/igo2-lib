@@ -7,6 +7,7 @@ import { Layer } from './layer';
 import { VectorTileLayerOptions } from './vectortile-layer.interface';
 import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
+import { IgoMap } from '../../../map';
 
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
@@ -31,15 +32,14 @@ export class VectorTileLayer extends Layer {
     const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    if (this.authInterceptor) {
-      vectorTileSource.setTileLoadFunction((tile, url) => {
-        const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
-        if (loader) {
-          tile.setLoader(loader);
-        }
+    vectorTileSource.setTileLoadFunction((tile, url) => {
+      const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
+      if (loader) {
+        tile.setLoader(loader);
       }
-      );
     }
+    );
+
     return vectorTile;
   }
 
@@ -56,7 +56,9 @@ export class VectorTileLayer extends Layer {
     return ((extent, resolution, projection) => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url);
-      interceptor.interceptXhr(xhr);
+      if (interceptor) {
+        interceptor.interceptXhr(xhr);
+      }
 
       if (format.getType() === 'arraybuffer') {
         xhr.responseType = 'arraybuffer';
@@ -98,5 +100,14 @@ export class VectorTileLayer extends Layer {
       };
       xhr.send();
     });
+  }
+
+  public setMap(map: IgoMap | undefined) {
+    if (map === undefined) {
+      this.watcher.unsubscribe();
+    } else {
+      this.watcher.subscribe(() => {});
+    }
+    super.setMap(map);
   }
 }

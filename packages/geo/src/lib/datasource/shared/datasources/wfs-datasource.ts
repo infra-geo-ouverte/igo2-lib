@@ -56,6 +56,7 @@ export class WFSDataSource extends DataSource {
     const vectorSource = new olSourceVector({
       format: getFormatFromOptions(this.options),
       loader: (extent, resolution, proj: olProjection) => {
+        vectorSource.dispatchEvent({ type: 'vectorloading' });
         this.options.paramsWFS.srsName = this.options.paramsWFS.srsName || proj.getCode();
         const url = this.buildUrl(
           extent,
@@ -82,14 +83,22 @@ export class WFSDataSource extends DataSource {
       },
       strategy: OlLoadingStrategy.bbox
     });
+    vectorSource.addEventListener('vectorloading');
+    vectorSource.addEventListener('vectorloaded');
+    vectorSource.addEventListener('vectorloaderror');
     return vectorSource;
   }
 
   private getFeatures(vectorSource: olSourceVector, extent, url: string, threshold: number) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
-    this.authInterceptor.interceptXhr(xhr, url);
-    const onError = () => vectorSource.removeLoadedExtent(extent);
+    if (this.authInterceptor) {
+      this.authInterceptor.interceptXhr(xhr, url);
+    }
+    const onError = () => {
+      vectorSource.dispatchEvent({ type: 'vectorloaderror' });
+      vectorSource.removeLoadedExtent(extent);
+    };
     xhr.onerror = onError;
     xhr.onload = () => {
       if (xhr.status === 200) {
@@ -99,6 +108,7 @@ export class WFSDataSource extends DataSource {
           console.log('No more data to download at this resolution');
         }*/
         vectorSource.addFeatures(features);
+        vectorSource.dispatchEvent({ type: 'vectorloaded' });
       } else {
         onError();
       }
