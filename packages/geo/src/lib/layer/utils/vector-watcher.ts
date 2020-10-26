@@ -39,27 +39,11 @@ export class VectorWatcher extends Watcher {
   }
 
   private handleLoadStart(event: any) {
-  /*  if (!event.__watchers__) {
-      event.__watchers__ = [];
-    }
-    event.__watchers__.push(this.id);*/
-
     this.loading += 1;
     this.status = SubjectStatus.Working;
   }
 
   private handleLoadEnd(event) {
-  /*  if (!event.__watchers__) {
-      return;
-    }
-
-    const watcherIndex = event.__watchers__.indexOf(this.id);
-    if (watcherIndex < 0) {
-      return;
-    }
-
-    event.__watchers__.splice(watcherIndex, 1);*/
-
     this.loaded += 1;
 
     const loading = this.loading;
