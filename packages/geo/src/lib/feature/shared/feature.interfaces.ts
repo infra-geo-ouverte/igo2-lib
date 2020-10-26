@@ -68,6 +68,9 @@ export interface FeatureStoreLoadingStrategyOptions
 }
 
 export interface FeatureStoreInMapExtentStrategyOptions
+extends FeatureStoreStrategyOptions {}
+
+export interface FeatureStoreInMapResolutionStrategyOptions
   extends FeatureStoreStrategyOptions {}
 
 export interface FeatureStoreLoadingLayerStrategyOptions
