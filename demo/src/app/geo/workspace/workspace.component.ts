@@ -144,7 +144,7 @@ export class AppWorkspaceComponent implements OnInit {
 
     const wfsDataSourceOptions: WFSDataSourceOptions = {
       type: 'wfs',
-      url: '/swtq',
+      url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
       params: {
         featureTypes: 'etablissement_mtq',
         fieldNameGeometry: 'geometry',
