@@ -15,7 +15,8 @@ import {
   FeatureStoreSelectionStrategy,
   FeatureStoreInMapExtentStrategy,
   Feature,
-  FeatureMotion
+  FeatureMotion,
+  FeatureStoreInMapResolutionStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
@@ -61,6 +62,7 @@ export class WfsWorkspaceService {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
+    const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
@@ -80,9 +82,10 @@ export class WfsWorkspaceService {
     this.storageService.set('rowsInMapExtent', true, StorageScope.SESSION);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
+    store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
-    store.addStrategy(this.createFilterInMapExtentStrategy(), true);
+    store.addStrategy(this.createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
   }
 
@@ -126,10 +129,9 @@ export class WfsWorkspaceService {
       columns
     };
   }
-
-  private createFilterInMapExtentStrategy(): EntityStoreFilterCustomFuncStrategy {
+  private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
     const filterClauseFunc = (record: EntityRecord<object>) => {
-      return record.state.inMapExtent === true;
+      return record.state.inMapExtent === true && record.state.inMapResolution === true;
     };
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }
