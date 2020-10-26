@@ -51,12 +51,19 @@
       </button>
 
       <button
+        *ngIf="feature.geometry"
         mat-icon-button
         panelRightButton
         class="igo-icon-button"
-        (click)="zoomToFeatureExtent()"
-        *ngIf="feature.geometry">
-        <mat-icon svgIcon="magnify-plus-outline"></mat-icon>
+        [matTooltip]="((isSelectedResultOutOfView$ | async) ? 'igo.integration.searchResultsTool.zoomOnFeatureTooltipOutOfView' : 'igo.integration.searchResultsTool.zoomOnFeatureTooltip') | translate"
+        matTooltipShowDelay="500"
+        (click)="zoomToFeatureExtent()">
+        <mat-icon
+        [matBadge]="(isSelectedResultOutOfView$ | async) ? '!' : ''"
+        matBadgeColor="accent"
+        matBadgeSize="small"
+        [matBadgeHidden]="!(isSelectedResultOutOfView$ | async)"     
+        svgIcon="magnify-plus-outline"></mat-icon>
       </button>
 
       <igo-feature-details
