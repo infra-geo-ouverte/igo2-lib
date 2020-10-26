@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit, ElementRef, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, Subscription, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
 import olPoint from 'ol/geom/Point';
@@ -29,7 +29,9 @@ import {
   featureToOl,
   featureFromOl,
   getSelectedMarkerStyle,
-  createOverlayMarkerStyle
+  createOverlayMarkerStyle,
+  computeOlFeaturesExtent,
+  featuresAreOutOfView
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -62,6 +64,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   private focusedOrResolution$$: Subscription;
   private selectedOrResolution$$: Subscription;
   private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(undefined);
+  public isSelectedResultOutOfView$ = new BehaviorSubject(false);
+  private isSelectedResultOutOfView$$: Subscription;
   private abstractFocusedResult: Feature;
   private abstractSelectedResult: Feature;
 
@@ -171,8 +175,26 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.searchState.selectedResult$,
         this.map.viewController.resolution$
       ]).subscribe((bunch: [SearchResult<Feature>, number]) => this.buildResultEmphasis(bunch[0], 'selected'));
-
     }
+    this.monitorResultOutOfView();
+  }
+
+  private monitorResultOutOfView() {
+    this.isSelectedResultOutOfView$$ = combineLatest([
+      this.map.viewController.state$,
+      this.searchState.selectedResult$
+    ])
+    .pipe(debounceTime(100))
+    .subscribe((bunch) => {
+      const selectedResult = bunch[1] as SearchResult<Feature>;
+      if (!selectedResult) {
+        this.isSelectedResultOutOfView$.next(false);
+        return;
+      }
+      const selectedOlFeature = featureToOl(selectedResult.data, this.map.projection);
+      const selectedOlFeatureExtent = computeOlFeaturesExtent(this.map, [selectedOlFeature]);
+      this.isSelectedResultOutOfView$.next(featuresAreOutOfView(this.map, selectedOlFeatureExtent));
+    });
   }
 
   private buildResultEmphasis(
@@ -228,6 +250,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     if (this.focusedOrResolution$$) {
       this.focusedOrResolution$$.unsubscribe();
+    }
+    if (this.isSelectedResultOutOfView$$) {
+      this.isSelectedResultOutOfView$$.unsubscribe();
     }
   }
 
