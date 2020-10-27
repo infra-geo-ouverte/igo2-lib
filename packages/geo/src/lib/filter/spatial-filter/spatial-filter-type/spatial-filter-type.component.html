@@ -17,6 +17,7 @@
       [queryType]="selectedQueryType"
       [selectedZone]="zone"
       (zoneChange)="zoneChange.emit($event)"
+      (zoneWithBufferChange)="zoneWithBufferChange.emit($event)"
       (bufferChange)="bufferChange.emit($event)"
       (measureUnitChange)="measureUnitChange.emit($event)">
     </igo-spatial-filter-list>

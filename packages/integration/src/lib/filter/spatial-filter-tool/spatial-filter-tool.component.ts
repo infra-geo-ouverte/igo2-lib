@@ -33,7 +33,6 @@ import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ToolState } from '../../tool/tool.state';
 import { WorkspaceState } from '../../workspace/workspace.state';
-import buffer from '@turf/buffer';
 
 /**
  * Tool to apply spatial filter
@@ -279,6 +278,7 @@ export class SpatialFilterToolComponent {
   }
 
   onZoneChange(feature: Feature) {
+    console.log(feature);
     this.zone = feature;
     if (feature) {
       this.tryAddFeaturesToMap([feature]);
@@ -286,17 +286,27 @@ export class SpatialFilterToolComponent {
     }
   }
 
+  onZoneBufferChange(feature: Feature) {
+    console.log(feature);
+    this.zone = feature;
+    if (feature) {
+      this.tryAddFeaturesToMap([feature], true);
+      this.zoomToFeatureExtent(feature);
+    }
+  }
+
   /**
    * Try to add zone feature to the map overlay
    */
-  public tryAddFeaturesToMap(features: Feature[]) {
+  public tryAddFeaturesToMap(features: Feature[], buffer?: boolean) {
     let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
           if (
             layer.options._internal &&
-            layer.options._internal.code === feature.properties.code
+            layer.options._internal.code === feature.properties.code &&
+            !buffer
           ) {
             return;
           }
@@ -367,6 +377,7 @@ export class SpatialFilterToolComponent {
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);
+          console.log(this.activeLayers)
           this.cdRef.detectChanges();
         });
     }

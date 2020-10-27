@@ -54,6 +54,7 @@ export class SpatialFilterTypeComponent implements OnInit {
   @Output() eventQueryType = new EventEmitter<SpatialFilterQueryType>();
 
   @Output() zoneChange = new EventEmitter<Feature>();
+  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
 
   @Output() bufferChange = new EventEmitter<number>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>()
