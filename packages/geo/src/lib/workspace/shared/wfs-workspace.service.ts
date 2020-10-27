@@ -35,11 +35,12 @@ export class WfsWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    private storageService: StorageService
-    ) {}
+  constructor(private storageService: StorageService) {}
 
-    createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
+  createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
+    if (layer.options.workspace?.enabled === false) {
+      return;
+    }
     const wks = new WfsWorkspace({
       id: layer.id,
       title: layer.title,

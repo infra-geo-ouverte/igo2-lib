@@ -10,7 +10,8 @@ import {
   FeatureMotion,
   noElementSelected,
   ExportOptions,
-  OgcFilterWidget
+  OgcFilterWidget,
+  OgcFilterableDataSource
 } from '@igo2/geo';
 import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
@@ -62,7 +63,7 @@ export class WfsActionsService implements OnDestroy  {
         this.handleZoomAuto(workspace);
       }
       );
-    return [
+    const actions = [
       {
         id: 'zoomAuto',
         checkbox: true,
@@ -148,6 +149,8 @@ export class WfsActionsService implements OnDestroy  {
         args: [this.ogcFilterWidget, workspace]
       },
     ];
+    return (workspace.layer.dataSource as OgcFilterableDataSource).ogcFilters$?.value?.enabled ?
+    actions : actions.filter(action => action.id !== 'ogcFilter');
   }
 
   private handleZoomAuto(workspace: WfsWorkspace) {

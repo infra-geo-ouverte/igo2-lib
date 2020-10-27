@@ -39,6 +39,9 @@ export class FeatureWorkspaceService {
   constructor(private storageService: StorageService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
+    if (layer.options.workspace?.enabled === false) {
+      return;
+    }
     const wks = new FeatureWorkspace({
       id: layer.id,
       title: layer.title,

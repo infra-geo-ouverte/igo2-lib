@@ -20,6 +20,7 @@ export interface LayerOptions {
   maxScaleDenom?: number;
   showInLayerList?: boolean;
   removable?: boolean;
+  workspace?: WorkspaceOptions;
   legendOptions?: LegendOptions;
   ol?: olLayer;
   tooltip?: TooltipContent;
@@ -27,6 +28,13 @@ export interface LayerOptions {
   active?: boolean;
   check?: boolean;
   linkedLayers?: LayersLink;
+}
+
+export interface WorkspaceOptions {
+  srcId: string;
+  minResolution?: number;
+  maxResolution?: number;
+  enabled?: boolean;
 }
 
 export interface LayersLink {
