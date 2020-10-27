@@ -45,7 +45,6 @@ export class LayerSyncWatcher extends Watcher {
     }
 
     protected unwatch() {
-        console.log('unwatch layerSync-watcher', this.dataSource, this.map, this.layer, this.ol);
         this.ol.un('propertychange', evt => this.transferCommonProperties(evt));
         if (this.ogcFilters$$) { this.ogcFilters$$.unsubscribe(); }
         if (this.timeFilter$$) { this.timeFilter$$.unsubscribe(); }
