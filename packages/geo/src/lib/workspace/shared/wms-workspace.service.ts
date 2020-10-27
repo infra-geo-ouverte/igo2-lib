@@ -10,6 +10,7 @@ import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
 import { IgoMap } from '../../map';
+import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
 
 @Injectable({
@@ -80,6 +81,7 @@ export class WmsWorkspaceService {
           type: 'wfs',
           url: layer.options.sourceOptions.urlWfs || layer.options.sourceOptions.url,
           queryable: true,
+          queryTitle: (layer.dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: layer.options.sourceOptions.paramsWFS,
           ogcFilters: Object.assign({}, layer.dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
           sourceFields: layer.options.sourceOptions.sourceFields || undefined
