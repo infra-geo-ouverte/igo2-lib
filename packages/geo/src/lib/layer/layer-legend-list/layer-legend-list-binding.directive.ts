@@ -1,7 +1,6 @@
-import { Directive, Self, OnInit, OnDestroy, Optional } from '@angular/core';
+import { Directive, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 
-import { RouteService } from '@igo2/core';
 import { MapService } from '../../map/shared/map.service';
 import { Layer } from '../shared/layers/layer';
 import { debounceTime } from 'rxjs/operators';
