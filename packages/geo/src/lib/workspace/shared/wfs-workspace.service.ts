@@ -41,6 +41,9 @@ export class WfsWorkspaceService {
     if (layer.options.workspace?.enabled === false) {
       return;
     }
+
+    layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
+
     const wks = new WfsWorkspace({
       id: layer.id,
       title: layer.title,

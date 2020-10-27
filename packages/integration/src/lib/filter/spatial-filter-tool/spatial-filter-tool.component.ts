@@ -142,7 +142,7 @@ export class SpatialFilterToolComponent {
 
         if (layerToOpenWks) {
           this.workspaceState.workspacePanelExpanded = true;
-          this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
+          this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
         }
       }
     });

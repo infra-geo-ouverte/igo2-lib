@@ -31,7 +31,6 @@ export interface LayerOptions {
 }
 
 export interface WorkspaceOptions {
-  srcId: string;
   minResolution?: number;
   maxResolution?: number;
   enabled?: boolean;

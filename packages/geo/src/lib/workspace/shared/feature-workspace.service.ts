@@ -42,6 +42,8 @@ export class FeatureWorkspaceService {
     if (layer.options.workspace?.enabled === false) {
       return;
     }
+    layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
+
     const wks = new FeatureWorkspace({
       id: layer.id,
       title: layer.title,

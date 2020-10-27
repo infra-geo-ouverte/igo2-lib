@@ -38,7 +38,6 @@ export class WmsWorkspaceService {
       linkedIds: [wfsLinkId],
       properties: [
         LinkedProperties.ZINDEX,
-        // LinkedProperties.OPACITY,
         LinkedProperties.VISIBLE]
     } as LayersLinkProperties;
 
@@ -70,7 +69,6 @@ export class WmsWorkspaceService {
           linkId: wfsLinkId
         },
         workspace: {
-          srcId: layer.id,
           enabled: false,
         },
         showInLayerList: false,
@@ -105,6 +103,7 @@ export class WmsWorkspaceService {
         });
         this.createTableTemplate(wks, workspaceLayer);
 
+        layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
         return wks;
 
       });
