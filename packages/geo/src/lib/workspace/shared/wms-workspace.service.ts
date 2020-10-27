@@ -25,7 +25,7 @@ export class WmsWorkspaceService {
   constructor(private layerService: LayerService, private storageService: StorageService) { }
 
   createWorkspace(layer: ImageLayer, map: IgoMap): WfsWorkspace {
-    if (layer.options.workspace?.enabled === false) {
+    if (layer.options.workspace?.enabled !== true) {
       return;
     }
     const wmsLinkId = layer.id + '.WmsWorkspaceTableSrc';
