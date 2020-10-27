@@ -75,7 +75,7 @@ export class WmsWorkspaceService {
         },
         showInLayerList: false,
         opacity: 0,
-        title: 'Workspace for ' + layer.title,
+        title: layer.title,
         minResolution: layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
         sourceOptions: {
