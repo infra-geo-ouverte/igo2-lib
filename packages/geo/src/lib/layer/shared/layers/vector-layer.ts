@@ -65,9 +65,14 @@ export class VectorLayer extends Layer {
     }
 
     const vector = new olLayerVector(olOptions);
-    const vectorSource = vector.getSource() as olSourceVector;
+    const vectorSource = (
+      (this.dataSource instanceof ClusterDataSource) ? vector.getSource().getSource() : vector.getSource()
+    ) as olSourceVector;
     const url = vectorSource.getUrl();
-    if (url && this.authInterceptor) {
+    vectorSource.addEventListener('vectorloading');
+    vectorSource.addEventListener('vectorloaded');
+    vectorSource.addEventListener('vectorloaderror');
+    if (url) {
       const loader = (extent, resolution, proj) => {
         this.customLoader(vectorSource, url, this.authInterceptor, extent, resolution, proj);
       };
@@ -228,16 +233,23 @@ export class VectorLayer extends Layer {
    * @param projection the projection to retrieve the data
    */
   private customLoader(vectorSource, url, interceptor, extent, resolution, projection) {
+    vectorSource.dispatchEvent({ type: 'vectorloading' });
     const xhr = new XMLHttpRequest();
     xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url);
-    interceptor.interceptXhr(xhr);
+    if (interceptor) {
+      interceptor.interceptXhr(xhr);
+    }
 
-    const onError = () => vectorSource.removeLoadedExtent(extent);
+    const onError = () => {
+      vectorSource.dispatchEvent({ type: 'vectorloaderror' });
+      vectorSource.removeLoadedExtent(extent);
+    };
     xhr.onerror = onError;
     xhr.onload = () => {
       if (xhr.status === 200) {
         vectorSource.addFeatures(
           vectorSource.getFormat().readFeatures(xhr.responseText));
+        vectorSource.dispatchEvent({ type: 'vectorloaded' });
       } else {
         onError();
       }

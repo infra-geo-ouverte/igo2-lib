@@ -18,11 +18,11 @@ matTooltipShowDelay="500"
 </igo-list>
 
 <p class="layers-empty mat-typography" 
-  *ngIf="(layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && !(hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
+  *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && !(hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
   {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButton' | translate}} 
 </p>
 <p class="layers-empty mat-typography" 
-  *ngIf="(layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && (hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
+  *ngIf="!showAllLegendsValue && (layersInUi$ | async).length && !(hasVisibleOrInRangeLayers$ | async) && (hasVisibleAndNotInRangeLayers$ | async) && allowShowAllLegends">
   {{'igo.geo.layer.legend.noLayersVisibleWithShowAllButtonButZoom' | translate}} 
 </p>
 <p class="layers-empty mat-typography"

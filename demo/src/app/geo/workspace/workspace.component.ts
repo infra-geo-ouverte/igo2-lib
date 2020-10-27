@@ -163,6 +163,7 @@ export class AppWorkspaceComponent implements OnInit {
       .subscribe(dataSource => {
         const layer = {
           title: 'Simple WFS ',
+          maxResolution: 3000,
           visible: true,
           source: dataSource
         };
