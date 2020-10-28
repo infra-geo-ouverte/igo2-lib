@@ -17,7 +17,6 @@ jobs:
     - name: Set output
       id: vars
       run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
-    - run: git checkout ${{ github.head_ref }}
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
