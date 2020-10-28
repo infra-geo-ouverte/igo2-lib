@@ -29,7 +29,7 @@
     "build.geo": "ng build geo --prod && gulp geo",
     "build.context": "ng build context --prod && gulp context",
     "build.integration": "ng build integration --prod && gulp integration",
-    "build.demo": "ng build demo --prod",
+    "build.demo": "ng build demo --configuration=production",
     "build.doc": "compodoc -p tsconfig.json --disablePrivate --disableProtected --disableInternal --disableLifeCycleHooks --theme material",
     "doc": "npm run build.doc && compodoc -s --port 4220",
     "pretest": "ng lint",

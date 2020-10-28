@@ -154,6 +154,7 @@ export class PrintService {
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
+
     // Define event to execute after all images are loaded to create the canvas
     setTimeout(() => {
       html2canvas(div, { useCORS: true })
@@ -272,28 +273,30 @@ export class PrintService {
       this.saveDoc(doc);
       return true;
     }
-
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
-    html2canvas(div, { useCORS: true })
-      .then(canvas => {
-        let imgData;
-        const position = 10;
-
-        imgData = canvas.toDataURL('image/png');
-        doc.addPage();
-        const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-        doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-        that.saveDoc(doc);
-        div.parentNode.removeChild(div); // remove temp div (IE style)
-      })
-      .catch(e => {
-        console.log(e);
-      });
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
+
+    setTimeout(() => {
+      html2canvas(div, { useCORS: true })
+        .then(canvas => {
+          let imgData;
+          const position = 10;
+
+          imgData = canvas.toDataURL('image/png');
+          doc.addPage();
+          const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
+          doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
+          that.saveDoc(doc);
+          div.parentNode.removeChild(div); // remove temp div (IE style)
+        })
+        .catch(e => {
+          console.log(e);
+        });
+      }, 500);
   }
 
   private addCanvas(

@@ -3,7 +3,6 @@ import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowse
 import { MAC } from 'ol/has';
 
 import { MapViewState } from './map.interface';
-import proj4 from 'proj4';
 import { Projection } from './projection.interfaces';
 
 /**
@@ -59,7 +58,7 @@ export function stringToLonLat(
   const dmsCoord =
     '([0-9]{1,2})[:|°]?\\s*([0-9]{1,2})?[:|\'|′|’]?\\s*([0-9]{1,2}(?:.[0-9]+){0,1})?\\s*["|″|”]?\\s*';
   const dmsCoordPattern = `${dmsCoord}([N|S|E|W|O]),?\\s*${dmsCoord}([N|S|E|W|O])`;
-  const dmsRegex = new RegExp(`^${dmsCoordPattern}`, 'gi');
+  const dmsRegex = new RegExp(`^${dmsCoordPattern}$`, 'gi');
 
   const patternUtm =
     '(UTM)-?(\\d{1,2})[\\s,]*(\\d+[.,]?\\d+)[\\s,]+(\\d+[.,]?\\d+)';
@@ -345,9 +344,11 @@ function convertDMSToDD(
 ) {
   minutes = minutes || 0;
   seconds = seconds || 0;
-  let dd = degrees + minutes / 60 + seconds / 3600;
 
-  if (direction === 'S' || direction === 'W') {
+  const neg = degrees < 0;
+  let dd = Math.abs(degrees) + minutes / 60 + seconds / 3600;
+
+  if (neg || direction === 'S' || direction === 'W') {
     dd = -dd;
   } // Don't do anything for N or E
   return dd;
