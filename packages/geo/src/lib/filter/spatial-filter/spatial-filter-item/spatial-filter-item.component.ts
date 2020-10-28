@@ -29,6 +29,8 @@ import { Layer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
+import buffer from '@turf/buffer';
+import * as turf from '@turf/helpers';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -150,6 +152,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() drawZoneEvent = new EventEmitter<Feature>();
 
   @Output() bufferEvent = new EventEmitter<number>();
+  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   @Output() radiusEvent = new EventEmitter<number>();
@@ -198,7 +201,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
   public drawStyle: OlStyle;
-  public drawZone: Feature;
+  public drawZone;
   public overlayStyle: OlStyle;
   public PointStyle: OlStyle;
   public PolyStyle: OlStyle;
@@ -209,6 +212,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public bufferFormControl = new FormControl();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
+  public zoneWithBuffer;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -260,7 +264,14 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.drawGuide$.next(null);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
-      this.value$.next(value ? value : undefined);
+      console.log(value);
+      if (value) {
+        this.value$.next(value);
+        this.drawZone = this.formControl.value as Feature;
+      } else {
+        this.value$.next(undefined);
+        this.drawZone = undefined;
+      }
     });
 
     this.value$.subscribe(() => {
@@ -276,6 +287,22 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.bufferChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
       this.buffer = value;
       this.bufferEvent.emit(value)
+      setTimeout(() => {
+        if (value > 0 && value === this.bufferFormControl.value) {
+          this.measureUnit === MeasureLengthUnit.Kilometers ?
+            this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'}) :
+            this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
+          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+        } else if (value === 0 && value === this.bufferFormControl.value) {
+          this.drawZoneEvent.emit(this.drawZone);
+        } else if (
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100) ||
+          (this.measureUnit === MeasureLengthUnit.Meters && value > 100000)) {
+            this.bufferFormControl.setValue(0);
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
+            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+        }
+      }, 500);
     });
   }
 
@@ -489,7 +516,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   toggleSearchButton() {
     if (!this.isPredefined()) {
-      this.drawZone = this.formControl.value as Feature;
       this.drawZone.meta = {
         id: undefined,
         title: 'Zone'
@@ -524,6 +550,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     }
     if (this.isPoint() || this.isPolygon()) {
       this.drawZone = undefined;
+      this.bufferFormControl.setValue(0);
       this.formControl.reset();
     }
     this.clearButtonEvent.emit();
@@ -534,6 +561,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearSearch() {
     this.selectedThematics.clear();
+    this.bufferFormControl.setValue(0);
     this.thematicChange.emit([]);
     this.clearSearchEvent.emit();
   }

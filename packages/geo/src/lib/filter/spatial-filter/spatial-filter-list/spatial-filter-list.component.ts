@@ -1,3 +1,4 @@
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EntityStore } from '@igo2/common';
 import { SpatialFilterService } from './../../shared/spatial-filter.service';
 import { SpatialFilterQueryType } from './../../shared/spatial-filter.enum';
@@ -15,7 +16,7 @@ import { FormControl } from '@angular/forms';
 import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
 import { LanguageService, MessageService } from '@igo2/core';
-import buffer from '@turf/buffer'
+import buffer from '@turf/buffer';
 
 @Component({
   selector: 'igo-spatial-filter-list',
@@ -45,18 +46,20 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   private _queryType: SpatialFilterQueryType;
 
   @Input()
-  get selectedZone(): any {
-    return this._selectedZone;
+  get zone() {
+    return this._zone;
   }
-  set selectedZone(value: any) {
-    this._selectedZone = value;
+  set zone(value) {
+    this._zone = value;
     if (!value) {
       this.zoneWithBuffer = undefined;
+      this.bufferFormControl.setValue(0);
     }
   }
-  private _selectedZone;
+  private _zone;
 
   public zoneWithBuffer;
+  private selectedZone;
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
@@ -96,23 +99,31 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.bufferValueChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
-      if (this.measureUnit === MeasureLengthUnit.Meters && value >= 0 && value < 100000) {
-        this.bufferChange.emit(value);
-      } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 0 && value < 100) {
-        this.bufferChange.emit(value);
-      } else {
-        this.bufferFormControl.setValue(0);
-        this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-      }
-      if (value > 0) {
-        this.measureUnit === MeasureLengthUnit.Kilometers ?
-          this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value, {units: 'kilometers'}) :
+    this.bufferValueChanges$$ = this.bufferFormControl.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value < 100000) {
+          this.bufferChange.emit(value);
           this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value / 1000, {units: 'kilometers'});
-        this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        console.log(this.zoneWithBuffer);
-      }
+          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value < 100) {
+          this.bufferChange.emit(value);
+          this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value, {units: 'kilometers'});
+          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+        } else if (value === 0) {
+          this.bufferChange.emit(value);
+          this.zoneWithBufferChange.emit(this.selectedZone);
+        } else if (
+            value < 0 ||
+            (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
+            (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
+          this.bufferFormControl.setValue(0);
+          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+        }
     })
   }
 
@@ -125,15 +136,12 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
 
   onZoneChange(feature) {
+    this.bufferFormControl.setValue(0);
     if (feature && this.queryType) {
       this.spatialFilterService.loadItemById(feature, this.queryType)
       .subscribe((featureGeom: Feature) => {
-        this.selectedZone = featureGeom;
-        if (this.bufferFormControl.value > 0) {
-          this.zoneWithBuffer = buffer(featureGeom as any, this.bufferFormControl.value, {units: 'kilometers'});
-          console.log(this.zoneWithBuffer);
-        }
-        this.zoneWithBuffer ? this.zoneWithBufferChange.emit(this.zoneWithBuffer) : this.zoneChange.emit(featureGeom);
+        this.zone, this.selectedZone = featureGeom;
+        this.zoneChange.emit(featureGeom);
       });
     }
   }

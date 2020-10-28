@@ -85,4 +85,9 @@ export class SpatialFilterTypeComponent implements OnInit {
     this.activeDrawType = spatialType;
     this.eventType.emit(this.activeDrawType);
   }
+
+  onSelectionChange() {
+    this.eventQueryType.emit(this.selectedQueryType);
+    this.zoneChange.emit(undefined);
+  }
 }

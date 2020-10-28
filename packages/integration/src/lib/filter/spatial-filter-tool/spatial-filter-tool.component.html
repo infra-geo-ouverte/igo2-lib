@@ -25,6 +25,7 @@
     (measureUnitChange)="measureUnit = $event"
     (freehandControl)="freehandDrawIsActive = $event"
     (drawZoneEvent)="zone = $event"
+    (zoneWithBufferChange)="onZoneBufferChange($event)"
     (itemTypeChange)="itemType = $event"
     (thematicChange)="thematics = $event"
     (toggleSearch)="getOutputToggleSearch()"

@@ -205,7 +205,7 @@ export class SpatialFilterToolComponent {
     if (this.measureUnit === MeasureLengthUnit.Kilometers && this.type !== SpatialFilterType.Point) {
       this.buffer = this.buffer * 1000;
     }
-
+    console.log(this.buffer);
     const observables$: Observable<Feature[]>[] = [];
     thematics.forEach(thematic => {
       observables$.push(
@@ -311,6 +311,10 @@ export class SpatialFilterToolComponent {
             return;
           }
           if (layer.title?.startsWith('Zone')) {
+            let index = this.layers.indexOf(layer);
+            this.layers.splice(index, 1);
+            index = this.activeLayers.indexOf(layer);
+            this.activeLayers.splice(index, 1);
             this.map.removeLayer(layer);
           }
         }
@@ -377,7 +381,8 @@ export class SpatialFilterToolComponent {
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);
-          console.log(this.activeLayers)
+          console.log(this.activeLayers);
+          console.log(this.layers);
           this.cdRef.detectChanges();
         });
     }
