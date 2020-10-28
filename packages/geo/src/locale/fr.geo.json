@@ -80,7 +80,7 @@
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (séparateur virgule)",
           "CSVsemicolon": "CSV (séparateur point-virgule)",
-          "URL": "URL"
+          "URL": "Lien externe"
         },
         "encoding": {
           "LATIN1": "LATIN-1",
