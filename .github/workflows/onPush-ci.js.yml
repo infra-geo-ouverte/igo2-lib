@@ -6,6 +6,8 @@ name: push
 on:
   workflow_dispatch:
   push:
+    branches-ignore: 
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
