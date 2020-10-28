@@ -14,7 +14,9 @@ jobs:
         node-version: [12.x, 13.x, 14.x]
 
     steps:
-    - run: echo running on branch ${{ github.head_ref }}
+    - name: Set output
+      id: vars
+      run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
     - run: git checkout ${{ github.head_ref }}
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
