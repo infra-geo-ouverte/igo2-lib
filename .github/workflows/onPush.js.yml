@@ -14,9 +14,7 @@ jobs:
         node-version: [12.x, 13.x, 14.x]
 
     steps:
-    - name: Branch name
     - run: echo running on branch ${{ github.head_ref }}
-    - name: Checkout ${{ github.head_ref }}
     - run: git checkout ${{ github.head_ref }}
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
