@@ -314,6 +314,7 @@ export class SpatialFilterToolComponent {
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
             title: ('Zone ' + i) as string,
+            workspace: { enabled: false },
             _internal: {
               code:
                 this.type === SpatialFilterType.Predefined
