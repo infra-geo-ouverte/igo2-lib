@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 import { Layer, VectorLayer } from '@igo2/geo';
@@ -63,7 +64,7 @@ export class ContextImportExportComponent implements OnInit {
   importFiles(files: File[]) {
     this.loading$.next(true);
     for (const file of files) {
-      this.contextImportService.import(file).subscribe(
+      this.contextImportService.import(file).pipe(take(1)).subscribe(
         (context: DetailedContext) => this.onFileImportSuccess(file, context),
         (error: Error) => this.onFileImportError(file, error),
         () => {
@@ -81,7 +82,7 @@ export class ContextImportExportComponent implements OnInit {
       contextOptions.name
     );
     this.res.imported = true;
-    this.contextExportService.export(this.res).subscribe(
+    this.contextExportService.export(this.res).pipe(take(1)).subscribe(
       () => {},
       (error: Error) => this.onFileExportError(error),
       () => {

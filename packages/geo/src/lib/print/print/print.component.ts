@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { take } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
@@ -82,6 +83,7 @@ export class PrintComponent {
     if (data.isPrintService === true) {
       this.printService
         .print(this.map, data)
+        .pipe(take(1))
         .subscribe();
     } else {
       let nbFileToProcess = 1;
