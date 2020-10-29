@@ -143,7 +143,7 @@ export class OgcFilterFormComponent implements OnInit {
         : this.selectedField$.value
         ? of(this.selectedField$.value.values)
         : of([]);
-    if (value && value.length >= 2) {
+    if (value && value.length >= 1) {
       this.changeProperty(value, pos);
     }
   }
@@ -169,7 +169,7 @@ export class OgcFilterFormComponent implements OnInit {
       'gi'
     );
     return this.selectedField$.value.values.filter((val) =>
-      keywordRegex.test(
+      val && keywordRegex.test(
         val
           .toString()
           .normalize('NFD')
