@@ -1,7 +1,7 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { Observable, forkJoin } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, forkJoin, Subject } from 'rxjs';
+import { tap, take, takeUntil } from 'rxjs/operators';
 
 import {
   IgoMap,
@@ -50,7 +50,7 @@ import { WorkspaceState } from '../../workspace/workspace.state';
   styleUrls: ['./spatial-filter-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SpatialFilterToolComponent {
+export class SpatialFilterToolComponent implements OnDestroy {
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -83,6 +83,8 @@ export class SpatialFilterToolComponent {
 
   public thematicLength = 0;
 
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     private matIconRegistry: MatIconRegistry,
     private spatialFilterService: SpatialFilterService,
@@ -96,6 +98,11 @@ export class SpatialFilterToolComponent {
     private workspaceState: WorkspaceState,
     private cdRef: ChangeDetectorRef
   ) {}
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   getOutputType(event: SpatialFilterType) {
     this.type = event;
@@ -122,7 +129,7 @@ export class SpatialFilterToolComponent {
 
   activateWorkspace() {
     let layerToOpenWks;
-    this.workspaceState.store.entities$.subscribe(() => {
+    this.workspaceState.store.entities$.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       if (this.activeLayers.length && this.workspaceState.store.all().length > 1) {
         if (this.itemType === SpatialFilterItemType.Thematics) {
             for (const thematic of this.thematics) {
@@ -151,6 +158,7 @@ export class SpatialFilterToolComponent {
   private loadFilterList() {
     this.spatialFilterService
       .loadFilterList(this.queryType)
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((features: Feature[]) => {
         features.sort((a, b) => {
           if (a.properties.nom < b.properties.nom) {
@@ -256,7 +264,7 @@ export class SpatialFilterToolComponent {
       );
     });
 
-    forkJoin(observables$).subscribe(() => {
+    forkJoin(observables$).pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
       this.loading = false;
       if (zeroResults) {
         this.messageService.alert(
@@ -311,6 +319,7 @@ export class SpatialFilterToolComponent {
           type: 'vector',
           queryable: true
         } as QueryableDataSourceOptions)
+        .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
             title: ('Zone ' + i) as string,
@@ -392,6 +401,7 @@ export class SpatialFilterToolComponent {
             title: 'Cluster'
           }
         } as QueryableDataSourceOptions)
+        .pipe(take(1))
         .subscribe((dataSource: ClusterDataSource) => {
           const icon = features[0].meta.icon;
           let style: olstyle.Style;
@@ -466,6 +476,7 @@ export class SpatialFilterToolComponent {
           id,
           queryable: true
         } as QueryableDataSourceOptions)
+        .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
             title: (features[0].meta.title + ' ' + i) as string,

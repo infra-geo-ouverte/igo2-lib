@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import type { TemplateRef } from '@angular/core';
 
-import { Observable, EMPTY, timer, BehaviorSubject } from 'rxjs';
+import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
 import { EntityStore, EntityStoreWatcher } from '@igo2/common';
@@ -49,6 +49,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * Search results store watcher
    */
   private watcher: EntityStoreWatcher<SearchResult>;
+
+  private settingsChange$$: Subscription;
 
   public pageIterator: {sourceId: string}[] = [];
 
@@ -142,7 +144,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watcher = new EntityStoreWatcher(this.store, this.cdRef);
 
-    this.settingsChange$.subscribe(() => {
+    this.settingsChange$$ = this.settingsChange$.subscribe(() => {
       this.pageIterator = [];
     });
   }
@@ -153,6 +155,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.watcher.destroy();
+    this.settingsChange$$.unsubscribe();
   }
 
   /**

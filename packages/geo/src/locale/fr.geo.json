@@ -80,7 +80,7 @@
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (séparateur virgule)",
           "CSVsemicolon": "CSV (séparateur point-virgule)",
-          "URL": "URL"
+          "URL": "Lien externe"
         },
         "encoding": {
           "LATIN1": "LATIN-1",
@@ -92,7 +92,7 @@
         "exportButtonLink": "Ouvrir le lien",
         "exportButtonLinks": "Ouvrir les liens",
         "exportFormatPlaceholder": "Format",
-        "exportLayerPlaceholder": "Données géospatiales",
+        "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
         "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",

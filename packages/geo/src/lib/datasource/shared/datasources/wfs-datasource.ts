@@ -1,6 +1,7 @@
 import olSourceVector from 'ol/source/Vector';
 import * as OlLoadingStrategy from 'ol/loadingstrategy';
 import olProjection from 'ol/proj/Projection';
+import * as olproj from 'ol/proj';
 
 import { DataSource } from './datasource';
 import { WFSDataSourceOptions } from './wfs-datasource.interface';
@@ -57,26 +58,33 @@ export class WFSDataSource extends DataSource {
       format: getFormatFromOptions(this.options),
       loader: (extent, resolution, proj: olProjection) => {
         vectorSource.dispatchEvent({ type: 'vectorloading' });
-        this.options.paramsWFS.srsName = this.options.paramsWFS.srsName || proj.getCode();
-        const url = this.buildUrl(
+        const paramsWFS = this.options.paramsWFS;
+        const wfsProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : proj;
+
+        const currentExtent = olproj.transformExtent(
           extent,
           proj,
+          wfsProj
+        );
+
+        paramsWFS.srsName = paramsWFS.srsName || proj.getCode();
+        const url = this.buildUrl(
+          currentExtent,
+          wfsProj,
           (this.options as OgcFilterableDataSourceOptions).ogcFilters);
         let startIndex = 0;
-        if (
-          this.options.paramsWFS.version === '2.0.0' &&
-          this.options.paramsWFS.maxFeatures > defaultMaxFeatures) {
+        if (paramsWFS.version === '2.0.0' && paramsWFS.maxFeatures > defaultMaxFeatures) {
           const nbOfFeature = 1000;
-          while (startIndex < this.options.paramsWFS.maxFeatures) {
-            let alteredUrl = url.replace('count=' + this.options.paramsWFS.maxFeatures, 'count=' + nbOfFeature);
+          while (startIndex < paramsWFS.maxFeatures) {
+            let alteredUrl = url.replace('count=' + paramsWFS.maxFeatures, 'count=' + nbOfFeature);
             alteredUrl = alteredUrl.replace('startIndex=0', '0');
             alteredUrl += '&startIndex=' + startIndex;
             alteredUrl.replace(/&&/g, '&');
-            this.getFeatures(vectorSource, extent, alteredUrl, nbOfFeature);
+            this.getFeatures(vectorSource, currentExtent, wfsProj, proj, alteredUrl, nbOfFeature);
             startIndex += nbOfFeature;
           }
         } else {
-          this.getFeatures(vectorSource, extent, url, this.options.paramsWFS.maxFeatures);
+          this.getFeatures(vectorSource, currentExtent, wfsProj, proj, url, paramsWFS.maxFeatures);
         }
 
 
@@ -89,7 +97,7 @@ export class WFSDataSource extends DataSource {
     return vectorSource;
   }
 
-  private getFeatures(vectorSource: olSourceVector, extent, url: string, threshold: number) {
+  private getFeatures(vectorSource: olSourceVector, extent, dataProjection, featureProjection, url: string, threshold: number) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url);
     if (this.authInterceptor) {
@@ -101,8 +109,8 @@ export class WFSDataSource extends DataSource {
     };
     xhr.onerror = onError;
     xhr.onload = () => {
-      if (xhr.status === 200) {
-        const features = vectorSource.getFormat().readFeatures(xhr.responseText);
+      if (xhr.status === 200 && xhr.responseText.length > 0) {
+        const features = vectorSource.getFormat().readFeatures(xhr.responseText, {dataProjection, featureProjection});
         // TODO Manage "More feature"
         /*if (features.length === 0 || features.length < threshold ) {
           console.log('No more data to download at this resolution');

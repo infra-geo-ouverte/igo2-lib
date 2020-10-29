@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import olProjection from 'ol/proj/Projection';
+import * as olproj from 'ol/proj';
 
 import { MessageService, LanguageService } from '@igo2/core';
 
@@ -34,15 +35,21 @@ export class DownloadService {
         DSOptions.download.url === undefined
       ) {
         let wfsOptions;
-        if (
-          (layer.dataSource.options as any).paramsWFS &&
-          Object.keys((layer.dataSource.options as any).paramsWFS).length > 0
+        let currentProj = new olProjection({ code: layer.map.projection });
+        const paramsWFS = (layer.dataSource.options as any).paramsWFS;
+        if (paramsWFS && Object.keys(paramsWFS).length > 0
         ) {
+          currentProj = paramsWFS.srsName ? new olProjection({ code: paramsWFS.srsName }) : currentProj;
           wfsOptions = (layer.dataSource.options as any).paramsWFS;
         } else {
           wfsOptions = (layer.dataSource.options as any).params;
         }
 
+        const currentExtent = olproj.transformExtent(
+          layer.map.viewController.getExtent(),
+          new olProjection({ code: layer.map.projection }),
+          currentProj
+        );
         const outputFormatDownload =
           wfsOptions.outputFormatDownload === undefined
             ? 'outputformat=' + wfsOptions.outputFormat
@@ -60,14 +67,14 @@ export class DownloadService {
         .handleOgcFiltersAppliedValue(
           layer.dataSource.options,
           ogcFilters.geometryName,
-          layer.map.viewController.getExtent(),
-          new olProjection({ code: layer.map.projection }));
+          currentExtent,
+          currentProj);
         if (!filterQueryString) {
           // Prevent getting all the features for empty filter
             filterQueryString = new OgcFilterWriter().buildFilter(
             undefined,
-            layer.map.viewController.getExtent(),
-            new olProjection({ code: layer.map.projection }),
+            currentExtent,
+            currentProj,
             ogcFilters.geometryName
           );
         } else {

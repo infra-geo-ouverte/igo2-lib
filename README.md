@@ -1,5 +1,5 @@
 [![Angular Style Guide](https://mgechev.github.io/angular2-style-guide/images/badge.svg)](https://angular.io/styleguide)
-[![Build Status](https://travis-ci.org/infra-geo-ouverte/igo2-lib.svg?branch=master)](https://travis-ci.org/infra-geo-ouverte/igo2-lib)
+[![master Status](https://github.com/infra-geo-ouverte/igo2-lib/workflows/complete/badge.svg)](https://github.com/infra-geo-ouverte/igo2-lib/actions?query=workflow/complete)
 [![Dependencies Status](https://david-dm.org/infra-geo-ouverte/igo2-lib.svg)](https://david-dm.org/infra-geo-ouverte/igo2-lib)
 [![devDependencies Status](https://david-dm.org/infra-geo-ouverte/igo2-lib/dev-status.svg)](https://david-dm.org/infra-geo-ouverte/igo2-lib?type=dev)
 [![Known Vulnerabilities](https://snyk.io/test/github/infra-geo-ouverte/igo2-lib/badge.svg)](https://snyk.io/test/github/infra-geo-ouverte/igo2-lib)

@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { DownloadService } from '../../download/shared/download.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
@@ -47,14 +46,7 @@ export class OgcFilterableItemComponent implements OnInit {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
 
-  get downloadable() {
-    return (this.datasource.options as any).download;
-  }
-
-  constructor(
-    private ogcFilterService: OGCFilterService,
-    private downloadService: DownloadService
-  ) {
+  constructor(private ogcFilterService: OGCFilterService) {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
 
@@ -141,10 +133,6 @@ export class OgcFilterableItemComponent implements OnInit {
       )
     );
     this.datasource.options.ogcFilters.interfaceOgcFilters = arr;
-  }
-
-  openDownload() {
-    this.downloadService.open(this.layer);
   }
 
   refreshFilters(force?: boolean) {

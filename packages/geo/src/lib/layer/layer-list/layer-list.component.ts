@@ -57,6 +57,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selection: boolean;
 
   private change$$: Subscription;
+  private layers$$: Subscription;
   public layerItemChangeDetection$ = new BehaviorSubject(undefined);
 
   @ContentChild('igoLayerItemToolbar', /* TODO: add static flag */ {})
@@ -218,6 +219,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
+  private selectAllCheck$$: Subscription;
 
   constructor(private elRef: ElementRef) { }
 
@@ -242,11 +244,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.selectAllCheck$.subscribe((value) => {
+    this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
       this.selectAllCheck = value;
     });
 
-    this.layers$.subscribe(() => {
+    this.layers$$ = this.layers$.subscribe(() => {
       if (this.layers) {
         let checks = 0;
         for (const layer of this.layers) {
@@ -278,6 +280,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.change$$.unsubscribe();
+    this.selectAllCheck$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   clearKeyword() {

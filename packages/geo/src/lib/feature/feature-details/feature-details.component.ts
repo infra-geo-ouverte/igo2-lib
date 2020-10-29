@@ -5,11 +5,14 @@ import {
   ChangeDetectorRef,
   Output,
   EventEmitter,
-  OnInit
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { NetworkService, ConnectionState } from '@igo2/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
+import { NetworkService, ConnectionState } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
 
@@ -24,8 +27,9 @@ import { IgoMap } from '../../map/shared/map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class FeatureDetailsComponent implements OnInit {
+export class FeatureDetailsComponent implements OnInit, OnDestroy {
   private state: ConnectionState;
+  private unsubscribe$ = new Subject<void>();
   ready = false;
 
   @Input()
@@ -77,13 +81,18 @@ export class FeatureDetailsComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private networkService: NetworkService
   ) {
-    this.networkService.currentState().subscribe((state: ConnectionState) => {
+    this.networkService.currentState().pipe(takeUntil(this.unsubscribe$)).subscribe((state: ConnectionState) => {
       this.state = state;
     });
   }
 
   ngOnInit() {
     this.ready = true;
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   htmlSanitizer(value): SafeResourceUrl {
@@ -120,7 +129,7 @@ export class FeatureDetailsComponent implements OnInit {
     let offlineButtonState;
 
     if (this.map) {
-      this.map.offlineButtonToggle$.subscribe(state => {
+      this.map.offlineButtonToggle$.pipe(takeUntil(this.unsubscribe$)).subscribe(state => {
         offlineButtonState = state;
       });
     }

@@ -26,6 +26,7 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
   state: ConnectionState;
 
   private resolution$$: Subscription;
+  private network$$: Subscription;
 
   @Input() layer: Layer;
 
@@ -40,7 +41,7 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
     });
     this.tooltipText = this.computeTooltip();
 
-    this.networkService.currentState().subscribe((state: ConnectionState) => {
+    this.network$$ = this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.state = state;
       this.onResolutionChange();
     });
@@ -48,6 +49,7 @@ export class LayerLegendItemComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
+    this.network$$.unsubscribe();
   }
 
   computeTooltip(): string {
