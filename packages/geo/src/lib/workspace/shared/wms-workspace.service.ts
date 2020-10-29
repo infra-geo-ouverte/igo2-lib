@@ -79,12 +79,12 @@ export class WmsWorkspaceService {
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
         sourceOptions: {
           type: 'wfs',
-          url: layer.options.sourceOptions.urlWfs || layer.options.sourceOptions.url,
+          url: layer.dataSource.options.url || layer.dataSource.options.url,
           queryable: true,
           queryTitle: (layer.dataSource.options as QueryableDataSourceOptions).queryTitle,
-          params: layer.options.sourceOptions.paramsWFS,
+          params: layer.dataSource.options.paramsWFS,
           ogcFilters: Object.assign({}, layer.dataSource.ogcFilters$.value, {enabled: hasOgcFilters}),
-          sourceFields: layer.options.sourceOptions.sourceFields || undefined
+          sourceFields: layer.dataSource.options.sourceFields || undefined
         } as WFSoptions
       })
       .subscribe((workspaceLayer: VectorLayer) => {
