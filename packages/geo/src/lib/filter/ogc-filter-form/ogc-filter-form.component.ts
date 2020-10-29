@@ -134,6 +134,9 @@ export class OgcFilterFormComponent implements OnInit {
   updateFieldsList(value?: string) {
     this.filteredFields$ =
       value && value.length > 0 ? of(this._filterFields(value)) : this.fields$;
+    if (this.fields$.value.find((f) => f.name === value)) {
+      this.changeField(value);
+    }
   }
 
   updateValuesList(value?: string, pos?: number) {
