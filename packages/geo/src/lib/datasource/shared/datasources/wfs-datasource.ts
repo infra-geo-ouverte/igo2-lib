@@ -97,7 +97,7 @@ export class WFSDataSource extends DataSource {
     };
     xhr.onerror = onError;
     xhr.onload = () => {
-      if (xhr.status === 200) {
+      if (xhr.status === 200 && xhr.responseText.length > 0) {
         const features = vectorSource.getFormat().readFeatures(xhr.responseText, {dataProjection, featureProjection});
         // TODO Manage "More feature"
         /*if (features.length === 0 || features.length < threshold ) {

@@ -108,6 +108,9 @@ export class AppLayerComponent {
           propertyName: 'code_municipalite',
           expression: '12072'
         }
+      },
+      formatOptions: {
+        dataProjection: 'EPSG:32198'
       }
     };
 
