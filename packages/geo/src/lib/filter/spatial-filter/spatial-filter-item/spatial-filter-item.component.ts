@@ -350,11 +350,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (this.isPolygon()) {
         this.measureUnit === MeasureLengthUnit.Meters ?
           this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
-          this.bufferFormControl.setValue(this.bufferFormControl.value / 1000)
+          this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
       } else if (this.isPoint()) {
         this.measureUnit === MeasureLengthUnit.Meters ?
           this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
-          this.radiusFormControl.setValue(this.radiusFormControl.value / 1000)
+          this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
       }
     }
   }
@@ -618,7 +618,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.formControl.value !== null) {
       this.measureUnit === MeasureLengthUnit.Meters ?
         formValue = this.formControl.value.radius :
-        formValue = this.formControl.value.radius / 1000
+        formValue = this.formControl.value.radius / 1000;
     } else {
       formValue = undefined;
     }

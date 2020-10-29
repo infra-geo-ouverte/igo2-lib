@@ -59,7 +59,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   private _zone;
 
   public zoneWithBuffer;
-  private selectedZone;
+  public selectedZone;
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
@@ -124,7 +124,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
         }
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -140,7 +140,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
     if (feature && this.queryType) {
       this.spatialFilterService.loadItemById(feature, this.queryType)
       .subscribe((featureGeom: Feature) => {
-        this.zone, this.selectedZone = featureGeom;
+        this.selectedZone = featureGeom;
         this.zoneChange.emit(featureGeom);
       });
     }
@@ -158,7 +158,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
       this.measureUnitChange.emit(this.measureUnit);
       this.measureUnit === MeasureLengthUnit.Meters ?
         this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
-        this.bufferFormControl.setValue(this.bufferFormControl.value / 1000)
+        this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
     }
   }
 }
