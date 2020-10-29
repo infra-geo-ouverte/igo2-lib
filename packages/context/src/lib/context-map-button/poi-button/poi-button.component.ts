@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import * as olproj from 'ol/proj';
 import * as oleasing from 'ol/easing';
@@ -95,7 +96,7 @@ export class PoiButtonComponent implements OnInit, OnDestroy {
   }
 
   private getPois() {
-    this.poiService.get().subscribe(
+    this.poiService.get().pipe(take(1)).subscribe(
       rep => {
         this.pois = rep;
       },

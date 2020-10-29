@@ -68,6 +68,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   @Input() layerCheck;
 
   private resolution$$: Subscription;
+  private network$$: Subscription;
+  private layers$$: Subscription;
 
   layers$: BehaviorSubject<Layer> = new BehaviorSubject<Layer>(undefined);
 
@@ -140,12 +142,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     });
     this.tooltipText = this.computeTooltip();
 
-    this.networkService.currentState().subscribe((state: ConnectionState) => {
+    this.network$$ = this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.state = state;
       this.onResolutionChange();
     });
 
-    this.layers$.subscribe(() => {
+    this.layers$$ = this.layers$.subscribe(() => {
       if (this.layer && this.layer.options.active) {
         this.layerTool$.next(true);
         this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
@@ -159,6 +161,8 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.resolution$$.unsubscribe();
+    this.network$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   toggleLegend(collapsed: boolean) {

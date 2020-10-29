@@ -324,6 +324,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.radiusChanges$$.unsubscribe();
     this.bufferChanges$$.unsubscribe();
     this.cdRef.detach();
+    if (this.radiusChanges$$) {
+      this.radiusChanges$$.unsubscribe();
+    }
+    if (this.value$$) {
+      this.value$$.unsubscribe();
+    }
   }
 
   onItemTypeChange(event) {

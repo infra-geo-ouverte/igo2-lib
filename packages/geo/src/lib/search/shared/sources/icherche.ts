@@ -187,7 +187,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               title: 'igo.geo.search.icherche.type.exit',
               value: 'sorties-autoroute',
               enabled: types.indexOf('sorties-autoroute') !== -1,
-              hashtags: ['sortie','sorties','exit']
+              hashtags: ['sortie', 'sorties', 'exit']
             },
             {
               title: 'igo.geo.search.icherche.type.km',
