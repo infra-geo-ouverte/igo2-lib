@@ -205,7 +205,7 @@ export class SpatialFilterToolComponent {
     if (this.measureUnit === MeasureLengthUnit.Kilometers && this.type !== SpatialFilterType.Point) {
       this.buffer = this.buffer * 1000;
     }
-    console.log(this.buffer);
+
     const observables$: Observable<Feature[]>[] = [];
     thematics.forEach(thematic => {
       observables$.push(
@@ -277,20 +277,10 @@ export class SpatialFilterToolComponent {
     });
   }
 
-  onZoneChange(feature: Feature) {
-    console.log(feature);
+  onZoneChange(feature: Feature, buffer?: boolean) {
     this.zone = feature;
     if (feature) {
-      this.tryAddFeaturesToMap([feature]);
-      this.zoomToFeatureExtent(feature);
-    }
-  }
-
-  onZoneBufferChange(feature: Feature) {
-    console.log(feature);
-    this.zone = feature;
-    if (feature) {
-      this.tryAddFeaturesToMap([feature], true);
+      buffer ? this.tryAddFeaturesToMap([feature], true) : this.tryAddFeaturesToMap([feature]);
       this.zoomToFeatureExtent(feature);
     }
   }
@@ -308,17 +298,29 @@ export class SpatialFilterToolComponent {
             layer.options._internal.code === feature.properties.code &&
             !buffer
           ) {
+            if (!layer.title?.startsWith('Zone')) {
+              const index = this.layers.indexOf(layer);
+              this.layers.splice(index, 1);
+            }
             return;
           }
           if (layer.title?.startsWith('Zone')) {
-            let index = this.layers.indexOf(layer);
+            this.activeLayers = [];
+            const index = this.layers.indexOf(layer);
             this.layers.splice(index, 1);
-            index = this.activeLayers.indexOf(layer);
-            this.activeLayers.splice(index, 1);
             this.map.removeLayer(layer);
           }
         }
       } else {
+        if (buffer) {
+          for (const layer of this.activeLayers) {
+            if (this.activeLayers.length === 1 && layer.title?.startsWith('Zone')) {
+              const index = this.layers.indexOf(layer);
+              this.layers.splice(index, 1);
+              this.map.removeLayer(layer);
+            }
+          }
+        }
         this.activeLayers = [];
       }
       for (const layer of this.layers) {
@@ -381,8 +383,6 @@ export class SpatialFilterToolComponent {
           this.map.addLayer(olLayer);
           this.layers.push(olLayer);
           this.activeLayers.push(olLayer);
-          console.log(this.activeLayers);
-          console.log(this.layers);
           this.cdRef.detectChanges();
         });
     }

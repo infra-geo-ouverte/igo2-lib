@@ -118,10 +118,10 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
           this.zoneWithBufferChange.emit(this.selectedZone);
         } else if (
             value < 0 ||
-            (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
-            (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
-          this.bufferFormControl.setValue(0);
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
+            (this.measureUnit === MeasureLengthUnit.Meters && value >= 100000) ||
+            (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 100)) {
+            this.bufferFormControl.setValue(0);
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
         }
     })

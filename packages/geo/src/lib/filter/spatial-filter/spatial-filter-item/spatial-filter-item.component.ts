@@ -31,6 +31,7 @@ import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
 import buffer from '@turf/buffer';
 import * as turf from '@turf/helpers';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -264,7 +265,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.drawGuide$.next(null);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
-      console.log(value);
       if (value) {
         this.value$.next(value);
         this.drawZone = this.formControl.value as Feature;
@@ -284,25 +284,34 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.cdRef.detectChanges();
     });
 
-    this.bufferChanges$$ = this.bufferFormControl.valueChanges.subscribe((value) => {
-      this.buffer = value;
-      this.bufferEvent.emit(value)
-      setTimeout(() => {
-        if (value > 0 && value === this.bufferFormControl.value) {
-          this.measureUnit === MeasureLengthUnit.Kilometers ?
-            this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'}) :
-            this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
+    this.bufferChanges$$ = this.bufferFormControl.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value < 100000) {
+          this.buffer = value;
+          this.bufferEvent.emit(value);
+          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
+          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value < 100) {
+          this.buffer = value;
+          this.bufferEvent.emit(value);
+          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
         } else if (value === 0 && value === this.bufferFormControl.value) {
+          this.buffer = value;
+          this.bufferEvent.emit(value);
           this.drawZoneEvent.emit(this.drawZone);
         } else if (
-          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100) ||
-          (this.measureUnit === MeasureLengthUnit.Meters && value > 100000)) {
+          value < 0 ||
+          (this.measureUnit === MeasureLengthUnit.Meters && value >= 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 100)) {
             this.bufferFormControl.setValue(0);
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
         }
-      }, 500);
     });
   }
 
