@@ -330,7 +330,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       const igoList = this.elRef.nativeElement.querySelector('igo-list');
       let moreResults;
       event.research.request.subscribe((source) => {
-        if (source[0].source.getId() === 'icherche') {
+        if (!source[0] || !source[0].source) {
+          moreResults = null;
+        } else if (source[0].source.getId() === 'icherche') {
           moreResults = igoList.querySelector('.icherche .moreResults');
         } else if (source[0].source.getId() === 'ilayer') {
           moreResults = igoList.querySelector('.ilayer .moreResults');

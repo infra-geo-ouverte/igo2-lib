@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
 import { Subject } from 'rxjs';
+
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -23,6 +26,7 @@ export class PrintService {
   nbFileToProcess: number;
   activityId: string;
   constructor(
+    private http: HttpClient,
     private messageService: MessageService,
     private activityService: ActivityService,
     private languageService: LanguageService
@@ -150,14 +154,17 @@ export class PrintService {
     }
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.top = '0';
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
+
     // Define event to execute after all images are loaded to create the canvas
-    setTimeout(() => {
+    const toCanvas = () => {
       html2canvas(div, { useCORS: true })
-        .then(canvas => {
+        .then((canvas) => {
           let status = SubjectStatus.Done;
           try {
             if (!doZipFile) {
@@ -173,10 +180,26 @@ export class PrintService {
           }
           status$.next(status);
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
-    }, 500);
+    };
+
+    const imgList = div.getElementsByTagName('img');
+    const waitImgCompleted = setInterval(() => {
+      let completed = true;
+      for (let i = 0; i < imgList.length; i++) {
+        if (imgList.item(i).complete === false) {
+          completed = false;
+          break;
+        }
+      }
+
+      if (completed) {
+        clearInterval(waitImgCompleted);
+        toCanvas();
+      }
+    }, 100);
   }
 
   private addTitle(doc: jsPDF, title: string, pageWidth: number) {
@@ -272,28 +295,54 @@ export class PrintService {
       this.saveDoc(doc);
       return true;
     }
-
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
-    html2canvas(div, { useCORS: true })
-      .then(canvas => {
-        let imgData;
-        const position = 10;
-
-        imgData = canvas.toDataURL('image/png');
-        doc.addPage();
-        const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-        doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-        that.saveDoc(doc);
-        div.parentNode.removeChild(div); // remove temp div (IE style)
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    div.style.position = 'absolute';
+    div.style.top = '0';
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
+
+    const toCanvas = () => {
+      html2canvas(div, { useCORS: true })
+        .then((canvas) => {
+          let imgData;
+          const position = 10;
+          imgData = canvas.toDataURL('image/png');
+          doc.addPage();
+          const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
+          doc.addImage(
+            imgData,
+            'PNG',
+            10,
+            position,
+            imageSize[0],
+            imageSize[1]
+          );
+          that.saveDoc(doc);
+          div.parentNode.removeChild(div); // remove temp div (IE style)
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+
+    const imgList = div.getElementsByTagName('img');
+    const waitImgCompleted = setInterval(() => {
+      let completed = true;
+      for (let i = 0; i < imgList.length; i++) {
+        if (imgList.item(i).complete === false) {
+          completed = false;
+          break;
+        }
+      }
+
+      if (completed) {
+        clearInterval(waitImgCompleted);
+        toCanvas();
+      }
+    }, 100);
   }
 
   private addCanvas(
@@ -657,7 +706,7 @@ export class PrintService {
         navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
         this.saveFileProcessing();
       } else {
-        canvas.toBlob(blob => {
+        canvas.toBlob((blob) => {
           // download image
           saveAs(blob, name + '.' + format);
           that.saveFileProcessing();
@@ -696,7 +745,7 @@ export class PrintService {
       if (navigator.msSaveBlob) {
         this.addFileToZip(name, canvas.msToBlob());
       } else {
-        canvas.toBlob(blob => {
+        canvas.toBlob((blob) => {
           that.addFileToZip(name, blob);
         }, blobFormat);
       }
@@ -748,7 +797,7 @@ export class PrintService {
    */
   private getZipFile() {
     const that = this;
-    this.zipFile.generateAsync({ type: 'blob' }).then(blob => {
+    this.zipFile.generateAsync({ type: 'blob' }).then((blob) => {
       // 1) generate the zip file
       saveAs(blob, 'map.zip');
       delete that.zipFile;

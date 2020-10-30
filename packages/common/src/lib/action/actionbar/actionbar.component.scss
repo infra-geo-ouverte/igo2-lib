@@ -76,13 +76,24 @@ igo-actionbar-item ::ng-deep mat-list-item:hover {
 }
 
 #topChevron {
-  position: fixed;
+  position: sticky;
+  top: 0;
   background-color: white;
   z-index: 3;
+
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    position: fixed;
+    top: unset;
+  }
+  @supports (-ms-accelerator:true) {
+    position: fixed;
+    top: unset;
+  }
 }
 
 #lowChevron {
   position: fixed;
+  position: sticky;
   bottom: 0;
   background-color: white;
   z-index: 3;

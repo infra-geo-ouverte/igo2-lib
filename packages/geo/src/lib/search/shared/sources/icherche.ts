@@ -141,6 +141,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['route']
             },
             {
+              title: 'igo.geo.search.icherche.type.intersection',
+              value: 'intersections',
+              enabled: types.indexOf('intersections') !== -1,
+              hashtags: ['intersection', '+']
+            },
+            {
               title: 'igo.geo.search.icherche.type.city',
               value: 'municipalites',
               enabled: types.indexOf('municipalites') !== -1,
@@ -178,21 +184,39 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['lieu']
             },
             {
+              title: 'igo.geo.search.icherche.type.exit',
+              value: 'sorties-autoroute',
+              enabled: types.indexOf('sorties-autoroute') !== -1,
+              hashtags: ['sortie', 'sorties', 'exit']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.km',
+              value: 'bornes-km',
+              enabled: types.indexOf('bornes-km') !== -1,
+              hashtags: ['borne', 'bornes', 'repère', 'km']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.gcc',
+              value: 'bornes-gcc',
+              enabled: types.indexOf('bornes-gcc') !== -1,
+              hashtags: ['borne', 'bornes', 'repère', 'gcc', 'ccg']
+            },
+            {
+              title: 'igo.geo.search.icherche.type.cn',
+              value: 'bornes-cn',
+              enabled: types.indexOf('bornes-cn') !== -1,
+              hashtags: ['borne', 'bornes', 'cn']
+            },
+            {
               title: 'igo.geo.search.icherche.type.sumi',
               value: 'bornes-sumi',
               enabled: types.indexOf('bornes-sumi') !== -1,
               hashtags: ['borne', 'bornes', 'sumi']
             },
             {
-              title: 'igo.geo.search.icherche.type.km',
-              value: 'bornes-km',
-              enabled: false,
-              hashtags: ['borne', 'bornes', 'repère', 'km']
-            },
-            {
               title: 'igo.geo.search.icherche.type.cadastre',
               value: 'cadastre',
-              enabled: false
+              enabled: types.indexOf('cadastre') !== -1
             }
           ]
         },

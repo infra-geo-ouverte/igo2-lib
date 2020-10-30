@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { Media, MediaService } from '@igo2/core';
 
@@ -9,7 +10,7 @@ import { FlexibleState, FlexibleDirection } from './flexible.type';
   templateUrl: './flexible.component.html',
   styleUrls: ['./flexible.component.scss']
 })
-export class FlexibleComponent implements OnInit {
+export class FlexibleComponent implements OnInit, OnDestroy {
   static transitionTime = 250;
 
   @ViewChild('flexibleMain', { static: true }) main;
@@ -106,6 +107,8 @@ export class FlexibleComponent implements OnInit {
   }
   private _state: FlexibleState = 'initial';
 
+  private mediaService$$: Subscription;
+
   constructor(private el: ElementRef, private mediaService: MediaService) {}
 
   ngOnInit() {
@@ -113,9 +116,13 @@ export class FlexibleComponent implements OnInit {
 
     // Since this component supports different sizes
     // on mobile, force a redraw when the media changes
-    this.mediaService.media$.subscribe(
+    this.mediaService$$ = this.mediaService.media$.subscribe(
       (media: Media) => (this.state = this.state)
     );
+  }
+
+  ngOnDestroy() {
+    this.mediaService$$.unsubscribe();
   }
 
   private setSize(size: string) {

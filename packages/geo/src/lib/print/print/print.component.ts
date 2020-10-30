@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { SubjectStatus } from '@igo2/utils';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
@@ -18,7 +21,7 @@ import { PrintService } from '../shared/print.service';
   templateUrl: './print.component.html'
 })
 export class PrintComponent {
-  public disabled = false;
+  public disabled$ = new BehaviorSubject(false);
 
   @Input()
   get map(): IgoMap {
@@ -77,12 +80,15 @@ export class PrintComponent {
   constructor(private printService: PrintService) {}
 
   handleFormSubmit(data: PrintOptions) {
-    this.disabled = true;
+    this.disabled$.next(true);
 
     if (data.isPrintService === true) {
       this.printService
         .print(this.map, data)
-        .subscribe();
+        .pipe(take(1))
+        .subscribe(() => {
+          this.disabled$.next(false);
+        });
     } else {
       let nbFileToProcess = 1;
 
@@ -115,7 +121,9 @@ export class PrintComponent {
           +resolution
         );
       }
+      setTimeout(() => {
+        this.disabled$.next(false);
+      }, 1000);
     }
-    this.disabled = false;
   }
 }
