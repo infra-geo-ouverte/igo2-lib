@@ -67,7 +67,7 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'zoomAuto',
         checkbox: true,
-        title: 'igo.geo.workspace.zoomAuto.title',
+        title: 'igo.integration.workspace.zoomAuto.title',
         tooltip: featureMotionStrategyActiveToolTip(workspace),
         checkCondition: this.zoomAuto$,
         handler: () => {
@@ -78,7 +78,7 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'filterInMapExtent',
         checkbox: true,
-        title: 'igo.geo.workspace.inMapExtent.title',
+        title: 'igo.integration.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
         checkCondition: this.rowsInMapExtent,
         handler: () => {
@@ -95,8 +95,8 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'selectedOnly',
         checkbox: true,
-        title: 'igo.geo.workspace.selected.title',
-        tooltip: 'selectedOnly',
+        title: 'igo.integration.workspace.selected.title',
+        tooltip: 'igo.integration.workspace.selected.title',
         checkCondition: false,
         handler: () => {
           const filterStrategy = workspace.entityStore
@@ -111,8 +111,8 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'clearselection',
         icon: 'select-off',
-        title: 'igo.geo.workspace.clearSelection.title',
-        tooltip: 'igo.geo.workspace.clearSelection.tooltip',
+        title: 'igo.integration.workspace.clearSelection.title',
+        tooltip: 'igo.integration.workspace.clearSelection.tooltip',
         handler: (ws: WfsWorkspace) => {
           ws.entityStore.state.updateMany(ws.entityStore.view.all(), { selected: false });
         },
@@ -121,9 +121,9 @@ export class WfsActionsService implements OnDestroy  {
       },
       {
         id: 'wfsDownload',
-        icon: 'download',
-        title: 'igo.geo.workspace.download.title',
-        tooltip: 'igo.geo.workspace.download.tooltip',
+        icon: 'file-export',
+        title: 'igo.integration.workspace.download.title',
+        tooltip: 'igo.integration.workspace.download.tooltip',
         handler: (ws: WfsWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
@@ -138,8 +138,8 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'ogcFilter',
         icon: 'filter',
-        title: 'igo.geo.workspace.ogcFilter.title',
-        tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
+        title: 'igo.integration.workspace.ogcFilter.title',
+        tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
         handler: (widget: Widget, ws: WfsWorkspace) => {
           ws.activateWidget(widget, {
             map: ws.map,

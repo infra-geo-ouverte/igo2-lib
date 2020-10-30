@@ -16,7 +16,8 @@
       },
       "actionbar": {
         "scrollUp": "Défiler vers le haut",
-        "scrollDown": "Défiler vers le bas"
+        "scrollDown": "Défiler vers le bas",
+        "icon": "Actions supplémentaires"
       },
       "interactiveTour": {
         "tooltipTourToolButton": "Aide interactive sur l'outil",

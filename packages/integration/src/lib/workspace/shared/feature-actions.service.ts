@@ -74,7 +74,7 @@ export class FeatureActionsService implements OnDestroy {
       {
         id: 'zoomAuto',
         checkbox: true,
-        title: 'igo.geo.workspace.zoomAuto.title',
+        title: 'igo.integration.workspace.zoomAuto.title',
         tooltip: featureMotionStrategyActiveToolTip(workspace),
         checkCondition: this.zoomAuto$,
         handler: () => {
@@ -88,7 +88,7 @@ export class FeatureActionsService implements OnDestroy {
       {
         id: 'filterInMapExtent',
         checkbox: true,
-        title: 'igo.geo.workspace.inMapExtent.title',
+        title: 'igo.integration.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
         checkCondition: this.rowsInMapExtent,
         handler: () => {
@@ -110,8 +110,8 @@ export class FeatureActionsService implements OnDestroy {
       {
         id: 'selectedOnly',
         checkbox: true,
-        title: 'igo.geo.workspace.selected.title',
-        tooltip: 'igo.geo.workspace.selected.tooltip',
+        title: 'igo.integration.workspace.selected.title',
+        tooltip: 'igo.integration.workspace.selected.tooltip',
         checkCondition: false,
         handler: () => {
           const filterStrategy = workspace.entityStore.getStrategyOfType(
@@ -127,8 +127,8 @@ export class FeatureActionsService implements OnDestroy {
       {
         id: 'clearselection',
         icon: 'select-off',
-        title: 'igo.geo.workspace.clearSelection.title',
-        tooltip: 'igo.geo.workspace.clearSelection.tooltip',
+        title: 'igo.integration.workspace.clearSelection.title',
+        tooltip: 'igo.integration.workspace.clearSelection.tooltip',
         handler: (ws: FeatureWorkspace) => {
           ws.entityStore.state.updateMany(ws.entityStore.view.all(), {
             selected: false
@@ -139,9 +139,9 @@ export class FeatureActionsService implements OnDestroy {
       },
       {
         id: 'featureDownload',
-        icon: 'download',
-        title: 'igo.geo.workspace.download.title',
-        tooltip: 'igo.geo.workspace.download.tooltip',
+        icon: 'file-export',
+        title: 'igo.integration.workspace.download.title',
+        tooltip: 'igo.integration.workspace.download.tooltip',
         handler: (ws: FeatureWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(
             EntityStoreFilterCustomFuncStrategy

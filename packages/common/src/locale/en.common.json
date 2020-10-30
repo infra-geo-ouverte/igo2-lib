@@ -16,7 +16,8 @@
       },
       "actionbar": {
         "scrollUp": "Scroll up",
-        "scrollDown": "Scroll down"
+        "scrollDown": "Scroll down",
+        "icon": "Action list"
       },
       "interactiveTour": {
         "tooltipTourToolButton": "Interactive tour of the application",
