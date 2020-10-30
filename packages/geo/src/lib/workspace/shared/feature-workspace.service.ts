@@ -135,7 +135,8 @@ export class FeatureWorkspaceService {
     const columns = fields.map((field: SourceFieldsOptionsParams) => {
       return {
         name: `properties.${field.name}`,
-        title: field.alias ? field.alias : field.name
+        title: field.alias ? field.alias : field.name,
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML
       };
     });
     workspace.meta.tableTemplate = {
