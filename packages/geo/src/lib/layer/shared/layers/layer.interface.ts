@@ -20,7 +20,7 @@ export interface LayerOptions {
   maxScaleDenom?: number;
   showInLayerList?: boolean;
   removable?: boolean;
-  workspace?: WorkspaceOptions;
+  workspace?: GeoWorkspaceOptions;
   legendOptions?: LegendOptions;
   ol?: olLayer;
   tooltip?: TooltipContent;
@@ -30,7 +30,9 @@ export interface LayerOptions {
   linkedLayers?: LayersLink;
 }
 
-export interface WorkspaceOptions {
+export interface GeoWorkspaceOptions {
+  srcId?: string;
+  workspaceId?: string;
   minResolution?: number;
   maxResolution?: number;
   enabled?: boolean;

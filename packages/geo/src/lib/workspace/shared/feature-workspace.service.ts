@@ -19,6 +19,7 @@ import {
   FeatureStoreInMapResolutionStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
+import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 
@@ -43,6 +44,14 @@ export class FeatureWorkspaceService {
       return;
     }
     layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
+
+    layer.options.workspace = Object.assign({}, layer.options.workspace,
+      {
+        enabled: true,
+        srcId: layer.id,
+        workspaceId: layer.id
+      } as GeoWorkspaceOptions);
+
 
     const wks = new FeatureWorkspace({
       id: layer.id,
