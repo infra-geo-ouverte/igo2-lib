@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActionStore, EntityRecord, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy, EntityStoreStrategyFuncOptions, EntityTableTemplate } from '@igo2/common';
+import { ActionStore, EntityRecord, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy, EntityStoreStrategyFuncOptions, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
 import { StorageScope, StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { SourceFieldsOptionsParams } from '../../datasource';
@@ -175,7 +175,8 @@ export class WmsWorkspaceService {
           .map(key => {
             return {
               name: `properties.${key}`,
-              title: key
+              title: key,
+              renderer: EntityTableColumnRenderer.UnsanitizedHTML
             };
           });
         workspace.meta.tableTemplate = {

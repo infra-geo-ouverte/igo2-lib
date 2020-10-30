@@ -6,7 +6,8 @@ import {
   EntityStoreFilterCustomFuncStrategy,
   EntityRecord,
   EntityStoreStrategyFuncOptions,
-  EntityStoreFilterSelectionStrategy
+  EntityStoreFilterSelectionStrategy,
+  EntityTableColumnRenderer
 } from '@igo2/common';
 
 import {
@@ -119,7 +120,8 @@ export class FeatureWorkspaceService {
         .map(key => {
           return {
             name: `properties.${key}`,
-            title: key
+            title: key,
+            renderer: EntityTableColumnRenderer.UnsanitizedHTML
           };
         });
         workspace.meta.tableTemplate = {
