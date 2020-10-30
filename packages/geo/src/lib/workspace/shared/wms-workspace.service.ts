@@ -9,6 +9,7 @@ import { Feature, FeatureMotion, FeatureStore, FeatureStoreInMapExtentStrategy, 
 
 import { OgcFilterableDataSourceOptions } from '../../filter/shared/ogc-filter.interface';
 import { ImageLayer, LayerService, LayersLinkProperties, LinkedProperties, VectorLayer } from '../../layer';
+import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
@@ -70,6 +71,8 @@ export class WmsWorkspaceService {
           linkId: wfsLinkId
         },
         workspace: {
+          srcId: layer.id,
+          workspaceId: undefined,
           enabled: false,
         },
         showInLayerList: false,
@@ -78,6 +81,7 @@ export class WmsWorkspaceService {
         minResolution: layer.options.workspace?.minResolution || layer.minResolution || 0,
         maxResolution: layer.options.workspace?.maxResolution || layer.maxResolution || Infinity,
         sourceOptions: {
+          download: layer.dataSource.options.download,
           type: 'wfs',
           url: layer.dataSource.options.url || layer.dataSource.options.url,
           queryable: true,
@@ -105,7 +109,15 @@ export class WmsWorkspaceService {
         });
         this.createTableTemplate(wks, workspaceLayer);
 
-        layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
+        workspaceLayer.options.workspace.workspaceId = workspaceLayer.id;
+        layer.options.workspace = Object.assign({}, layer.options.workspace,
+          {
+            enabled: true,
+            srcId: layer.id,
+            workspaceId: workspaceLayer.id
+          } as GeoWorkspaceOptions);
+
+        delete layer.dataSource.options.download;
         return wks;
 
       });
