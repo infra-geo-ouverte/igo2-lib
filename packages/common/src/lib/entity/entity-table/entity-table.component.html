@@ -51,7 +51,7 @@
                 <td mat-cell class="mat-cell-text" [ngClass]="getCellClass(record, column)">
                   <a href="{{getValue(record, column)}}" target='_blank'>
                     <img *ngIf="isImg(getValue(record, column));else notImg" src="{{(getValue(record, column) | secureImage) | async}}" width="50" heigth="auto">
-                    <ng-template #notImg><span>{{ 'igo.geo.targetHtmlUrl' | translate }} </span></ng-template>
+                    <ng-template #notImg><span>{{ 'igo.common.entity-table.targetHtmlUrl' | translate }} </span></ng-template>
                   </a>
                 </td>
               </ng-template>
