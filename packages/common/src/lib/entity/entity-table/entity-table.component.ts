@@ -444,7 +444,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
   }
 
   isUrl(value) {
-    console.log('isUrl', value);
     if (typeof value === 'string') {
       return (
         value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
