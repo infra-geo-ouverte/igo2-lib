@@ -453,7 +453,6 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
     }
   }
 
-
   /**
    * Method to access an entity's values
    * @param record Record
