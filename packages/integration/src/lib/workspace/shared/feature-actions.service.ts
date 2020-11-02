@@ -10,7 +10,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   FeatureWorkspace,
   mapExtentStrategyActiveToolTip,
-  featureMotionStrategyActiveToolTip,
   FeatureStoreSelectionStrategy,
   FeatureMotion,
   noElementSelected,
@@ -75,7 +74,7 @@ export class FeatureActionsService implements OnDestroy {
         id: 'zoomAuto',
         checkbox: true,
         title: 'igo.integration.workspace.zoomAuto.title',
-        tooltip: featureMotionStrategyActiveToolTip(workspace),
+        tooltip: 'igo.integration.workspace.zoomAuto.tooltip',
         checkCondition: this.zoomAuto$,
         handler: () => {
           this.handleZoomAuto(workspace);

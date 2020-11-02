@@ -554,6 +554,10 @@
           "message": "Hors-Ligne",
           "title": "Statut:"
         }
+      },   
+      "workspace": {
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
       }
     }
   }
