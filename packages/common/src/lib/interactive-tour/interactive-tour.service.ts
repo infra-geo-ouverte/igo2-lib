@@ -152,25 +152,19 @@ export class InteractiveTourService {
   }
 
   private addProgress() {
+    console.log('addProgress');
     const self = this as any;
     let nbTry = 0;
     const maxTry = 21;
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
         if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
-          self.getCurrentStep().hide();
-          const id = self.getCurrentStep().id;
-          if (self.steps.findIndex(step => step.id === id) === self.steps.length - 1) {
-            return;
-          }
-          self.next();
-
-          if (self.steps.find(step => step.id === id).options.deleteAfterNext) {
-            self.removeStep(id);
-          }
+          self.cancel();
           clearInterval(checkExist);
           return;
         } else {
+          console.log('element');
+          console.log(self.steps);
           const currentStepElement = self.getCurrentStep().getElement();
           if (currentStepElement) {
             const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
@@ -202,6 +196,36 @@ export class InteractiveTourService {
         }
       }
     }, 100);
+  }
+
+  private checkNext(index?) {
+    console.log('checkNext');
+    const self = this as any;
+    if (self.getCurrentStep()) {
+      const id = self.getCurrentStep().id;
+      if (self.steps.findIndex(step => step.id === id) === self.steps.length - 1) {
+        return;
+      }
+
+      let nextIndex;
+      index ? nextIndex = index + 1 : nextIndex = self.steps.findIndex(step => step.id === id) + 1;
+      console.log(nextIndex);
+      const nextStep = self.steps[nextIndex];
+      console.log(nextStep);
+      if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
+        return;
+        this.checkNext(nextIndex);
+        // if (self.steps.find(step => step.id === nextStep.id).options.deleteAfterNext) {
+        //   self.removeStep(id);
+        // }
+      } else {
+        self.show(self.step[nextIndex].id);
+      }
+
+      // if (self.steps.find(step => step.id === id) && self.steps.find(step => step.id === id).options.deleteAfterNext) {
+      //   self.removeStep(id);
+      // }
+    }
   }
 
   private executeAction(
@@ -334,6 +358,7 @@ export class InteractiveTourService {
     this.shepherdService.addSteps(shepherdSteps);
 
     this.shepherdService.tourObject.on('show', this.addProgress);
+    this.shepherdService.tourObject.on('cancel', this.checkNext);
 
     this.shepherdService.start();
   }
