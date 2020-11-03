@@ -132,13 +132,13 @@
 
 <div class="buttons">
 
-    <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" [disabled]="!queryType && !zone"
-      (click)="clearSearch()">
-        {{'igo.geo.spatialFilter.clearSearch' | translate}}
-    </button>
+  <button *ngIf="isPredefined()" mat-raised-button class="clear-search-button" [disabled]="!queryType && !zone"
+    (click)="clearSearch()">
+      {{'igo.geo.spatialFilter.clearSearch' | translate}}
+  </button>
 
   <button *ngIf="isPolygon() || isPoint()" mat-raised-button class="clear-form-button" [disabled]="this.formControl.value === null"
-    (click)="this.formControl.reset()">
+    (click)="clearDrawZone()">
     {{'igo.geo.spatialFilter.clearForm' | translate}}
   </button>
 

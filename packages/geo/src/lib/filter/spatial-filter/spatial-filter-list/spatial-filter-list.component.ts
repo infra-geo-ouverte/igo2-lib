@@ -58,6 +58,15 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
   private _zone;
 
+  @Input()
+  get active(): boolean {
+    return this._active;
+  }
+  set active(value: boolean) {
+    this._active = value;
+  }
+  private _active = false;
+
   public zoneWithBuffer;
   public selectedZone;
 
@@ -79,6 +88,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   @Output() zoneWithBufferChange = new EventEmitter<Feature>();
   @Output() bufferChange = new EventEmitter<number>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
+  @Output() activeEvent = new EventEmitter<boolean>();
 
   formValueChanges$$: Subscription;
   bufferValueChanges$$: Subscription;
@@ -105,21 +115,21 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
         distinctUntilChanged()
       )
       .subscribe((value) => {
-        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value < 100000) {
+        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
           this.bufferChange.emit(value);
           this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value / 1000, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value < 100) {
+        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
           this.bufferChange.emit(value);
           this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (value === 0) {
+        } else if (value === 0 && this.active) {
           this.bufferChange.emit(value);
           this.zoneWithBufferChange.emit(this.selectedZone);
         } else if (
             value < 0 ||
-            (this.measureUnit === MeasureLengthUnit.Meters && value >= 100000) ||
-            (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 100)) {
+            (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
+            (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
             this.bufferFormControl.setValue(0);
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
@@ -136,6 +146,8 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
 
   onZoneChange(feature) {
+    this.active = true;
+    this.activeEvent.emit(true)
     this.bufferFormControl.setValue(0);
     if (feature && this.queryType) {
       this.spatialFilterService.loadItemById(feature, this.queryType)

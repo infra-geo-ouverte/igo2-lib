@@ -144,6 +144,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   }
   private _thematicLength: number;
 
+  @Input()
+  get active(): boolean {
+    return this._active;
+  }
+  set active(value: boolean) {
+    this._active = value;
+  }
+  private _active = false;
+
   @Output() toggleSearch = new EventEmitter();
 
   @Output() itemTypeChange = new EventEmitter<SpatialFilterItemType>();
@@ -166,6 +175,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() export = new EventEmitter();
 
   @Output() openWorkspace = new EventEmitter();
+  @Output() activeEvent = new EventEmitter<boolean>();
 
   public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
@@ -268,9 +278,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (value) {
         this.value$.next(value);
         this.drawZone = this.formControl.value as Feature;
+        this.active = true;
+        this.activeEvent.emit(true);
       } else {
         this.value$.next(undefined);
         this.drawZone = undefined;
+        this.active = false;
+        this.activeEvent.emit(false);
       }
     });
 
@@ -290,24 +304,24 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         distinctUntilChanged()
       )
       .subscribe((value) => {
-        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value < 100000) {
+        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
           this.buffer = value;
           this.bufferEvent.emit(value);
           this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value < 100) {
+        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
           this.buffer = value;
           this.bufferEvent.emit(value);
           this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (value === 0 && value === this.bufferFormControl.value) {
+        } else if (value === 0 && value === this.bufferFormControl.value && this.active) {
           this.buffer = value;
           this.bufferEvent.emit(value);
           this.drawZoneEvent.emit(this.drawZone);
         } else if (
           value < 0 ||
-          (this.measureUnit === MeasureLengthUnit.Meters && value >= 100000) ||
-          (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 100)) {
+          (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
             this.bufferFormControl.setValue(0);
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
@@ -559,16 +573,29 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearButton() {
     this.loading = true;
-    this.loading = false;
     if (this.store) {
       this.store.clear();
     }
     if (this.isPoint() || this.isPolygon()) {
       this.drawZone = undefined;
-      this.bufferFormControl.setValue(0);
       this.formControl.reset();
     }
+    this.active = false;
+    this.activeEvent.emit(false);
+    this.bufferFormControl.setValue(0);
+    this.buffer = 0;
+    this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
+    this.loading = false;
+  }
+
+  clearDrawZone() {
+    this.formControl.reset();
+    this.active = false;
+    this.activeEvent.emit(false);
+    this.bufferFormControl.setValue(0);
+    this.buffer = 0;
+    this.bufferEvent.emit(0);
   }
 
   /**
@@ -576,7 +603,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearSearch() {
     this.selectedThematics.clear();
+    this.active = false;
+    this.activeEvent.emit(false);
     this.bufferFormControl.setValue(0);
+    this.buffer = 0;
+    this.bufferEvent.emit(0);
     this.thematicChange.emit([]);
     this.clearSearchEvent.emit();
   }

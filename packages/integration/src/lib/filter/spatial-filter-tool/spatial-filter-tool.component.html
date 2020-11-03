@@ -3,10 +3,12 @@
     [store]="spatialListStore"
     [selectedQueryType]="queryType"
     [zone]="zone"
+    [active]="active"
     (eventType)="getOutputType($event)"
     (eventQueryType)="getOutputQueryType($event)"
     (zoneChange)="onZoneChange($event)"
     (zoneWithBufferChange)="onZoneChange($event, true)"
+    (activeEvent)="active = $event"
     (bufferChange)="buffer = $event"
     (measureUnitChange)="measureUnit = $event">
   </igo-spatial-filter-type>
@@ -16,6 +18,7 @@
     [queryType]="queryType"
     [map]="map"
     [zone]="zone"
+    [active]="active"
     [loading]="loading"
     [store]="store"
     [layers]="activeLayers"
@@ -25,6 +28,7 @@
     (measureUnitChange)="measureUnit = $event"
     (freehandControl)="freehandDrawIsActive = $event"
     (drawZoneEvent)="zone = $event"
+    (activeEvent)="active = $event"
     (zoneWithBufferChange)="onZoneChange($event, true)"
     (itemTypeChange)="itemType = $event"
     (thematicChange)="thematics = $event"
