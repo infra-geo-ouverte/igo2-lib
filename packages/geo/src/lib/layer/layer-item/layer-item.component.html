@@ -24,7 +24,7 @@
       matBadgePosition="after"
       [matBadgeHidden]="queryBadgeHidden$ | async"
       [ngClass]="{disabled: !(inResolutionRange$ | async)}"
-      [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
+      [svgIcon]="(layer.visible$ | async) ? 'eye' : 'eye-off'">
     </mat-icon>
   </button>
 

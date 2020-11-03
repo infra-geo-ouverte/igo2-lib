@@ -133,7 +133,11 @@ export class MapDetailsToolComponent implements OnInit {
     this.toolState.toolbox.activateTool('contextManager');
   }
 
-  activateExport(id: string) {
+  activateExport(layer: Layer) {
+    let id = layer.id;
+    if (layer.options.workspace?.workspaceId) {
+      id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
+    }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
     this.importExportState.setMode('export');
     this.toolState.toolbox.activateTool('importExport');

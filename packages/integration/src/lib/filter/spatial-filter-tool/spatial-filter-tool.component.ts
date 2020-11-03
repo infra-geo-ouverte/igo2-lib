@@ -151,7 +151,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
 
         if (layerToOpenWks) {
           this.workspaceState.workspacePanelExpanded = true;
-          this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
+          this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
         }
       }
     });
@@ -344,6 +344,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
             title: ('Zone ' + i) as string,
+            workspace: { enabled: true },
             _internal: {
               code:
                 this.type === SpatialFilterType.Predefined

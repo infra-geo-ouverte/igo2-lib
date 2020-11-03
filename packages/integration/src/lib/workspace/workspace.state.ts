@@ -88,12 +88,12 @@ export class WorkspaceState implements OnDestroy {
       });
   }
 
-  public setActiveWorkspaceByLayerId(id: string) {
-    const wksFromLayerId = this.store
+  public setActiveWorkspaceById(id: string) {
+    const wksFromId = this.store
     .all()
-    .find(workspace  => (workspace as WfsWorkspace | FeatureWorkspace).layer.id === id);
-    if (wksFromLayerId) {
-      this.store.activateWorkspace(wksFromLayerId);
+    .find(workspace  => workspace.id === id);
+    if (wksFromId) {
+      this.store.activateWorkspace(wksFromId);
     }
   }
 

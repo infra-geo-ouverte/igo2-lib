@@ -546,23 +546,6 @@
           "modify.tooltip": "Modify"
         }
       },
-      "workspace": {
-        "ogcFilter.close": "Close",
-        "ogcFilter.title": "Filters",
-        "ogcFilter.tooltip": "Apply filters",
-        "download.title": "Download",
-        "download.tooltip": "Download",
-        "inMapExtent.title": "Show records contained in map",
-        "inMapExtent.active.tooltip": "Show records contained in map",
-        "inMapExtent.inactive.tooltip": "Show all records",
-        "zoomAuto.title": "Zoom auto",
-        "zoomAuto.tooltip": "Zoom auto",
-        "selected.title": "Show selected records only",
-        "selected.tooltip": "Show selected records only",
-        "clearSelection.title": "Deselect all",
-        "clearSelection.tooltip": "Deselect all records"
-
-      },
       "network": {
         "online": {
           "message": "Online",
@@ -572,6 +555,10 @@
           "message": "Offline",
           "title": "Status:"
         }
+      },   
+      "workspace": {
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
       }
     }
   }

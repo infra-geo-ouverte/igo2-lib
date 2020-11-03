@@ -4,6 +4,7 @@ import olFormatFilter from 'ol/format/filter/Filter';
 import { DataSource } from '../../datasource/shared/datasources/datasource';
 import { DataSourceOptions } from '../../datasource/shared/datasources/datasource.interface';
 import { OgcFilterOperatorType } from './ogc-filter.enum';
+import { BehaviorSubject } from 'rxjs';
 
 export interface OgcFilter extends olFormatFilter {}
 
@@ -83,6 +84,8 @@ export interface OgcFilterableDataSourceOptions extends DataSourceOptions {
 }
 export interface OgcFilterableDataSource extends DataSource {
   options: OgcFilterableDataSourceOptions;
+  ogcFilters$?: BehaviorSubject<OgcFiltersOptions>;
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent?: boolean );
 }
 
 export interface IgoLogicalArrayOptions {

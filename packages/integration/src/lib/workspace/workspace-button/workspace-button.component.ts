@@ -1,8 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import { VectorLayer } from '@igo2/geo';
 import type { Layer } from '@igo2/geo';
 import { WorkspaceState } from '../workspace.state';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-workspace-button',
@@ -15,16 +14,26 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
   public hasWorkspace$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private hasWorkspace$$: Subscription;
 
-  @Input() layer: Layer;
+  private _layer: Layer;
+  private layer$: BehaviorSubject<Layer> = new BehaviorSubject(undefined);
+  @Input()
+  set layer(value: Layer) {
+    this._layer = value;
+    this.layer$.next(this._layer);
+  }
+
+  get layer(): Layer {
+    return this._layer;
+  }
 
   @Input() color: string = 'primary';
 
-  constructor(private workspaceState: WorkspaceState) {}
+  constructor(private workspaceState: WorkspaceState) { }
 
   ngOnInit(): void {
-    this.hasWorkspace$$  = this.workspaceState.workspaceEnabled$.subscribe(wksEnabled =>
-      this.hasWorkspace$.next(wksEnabled && this.layer instanceof VectorLayer)
-    );
+    this.hasWorkspace$$ = combineLatest([this.workspaceState.workspaceEnabled$, this.layer$])
+      .subscribe(bunch => this.hasWorkspace$.next(bunch[0] && bunch[1]?.options.workspace?.enabled)
+      );
   }
 
   ngOnDestroy(): void {
@@ -36,10 +45,10 @@ export class WorkspaceButtonComponent implements OnInit, OnDestroy {
       this.workspaceState.workspace$.value &&
       (this.workspaceState.workspace$.value as any).layer.id === this.layer.id &&
       this.workspaceState.workspacePanelExpanded) {
-        this.workspaceState.workspacePanelExpanded = false;
+      this.workspaceState.workspacePanelExpanded = false;
     } else {
       this.workspaceState.workspacePanelExpanded = true;
-      this.workspaceState.setActiveWorkspaceByLayerId(this.layer.id);
+      this.workspaceState.setActiveWorkspaceById(this.layer.id);
     }
   }
 }
