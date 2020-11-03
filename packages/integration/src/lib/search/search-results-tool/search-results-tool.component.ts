@@ -191,9 +191,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.isSelectedResultOutOfView$.next(false);
         return;
       }
-      const selectedOlFeature = featureToOl(selectedResult.data, this.map.projection);
-      const selectedOlFeatureExtent = computeOlFeaturesExtent(this.map, [selectedOlFeature]);
-      this.isSelectedResultOutOfView$.next(featuresAreOutOfView(this.map, selectedOlFeatureExtent));
+      if (selectedResult.data.geometry) {
+        const selectedOlFeature = featureToOl(selectedResult.data, this.map.projection);
+        const selectedOlFeatureExtent = computeOlFeaturesExtent(this.map, [selectedOlFeature]);
+        this.isSelectedResultOutOfView$.next(featuresAreOutOfView(this.map, selectedOlFeatureExtent));
+      }
     });
   }
 
