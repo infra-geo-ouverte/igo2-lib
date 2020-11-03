@@ -29,6 +29,9 @@ import { Layer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
+import buffer from '@turf/buffer';
+import * as turf from '@turf/helpers';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -127,7 +130,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * @internal
    */
   get measureUnits(): string[] {
-    return [MeasureLengthUnit.Meters];
+    return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
   @Input() layers: Layer[];
@@ -148,6 +151,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() thematicChange = new EventEmitter<SpatialFilterThematic[]>();
 
   @Output() drawZoneEvent = new EventEmitter<Feature>();
+
+  @Output() bufferEvent = new EventEmitter<number>();
+  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
+  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
@@ -182,6 +189,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   private value$$: Subscription;
   private radiusChanges$$: Subscription;
+  private bufferChanges$$: Subscription;
 
   public formControl = new FormControl();
   public geometryType: OlGeometryType;
@@ -194,15 +202,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public drawControlIsActive = true;
   public freehandDrawIsActive = false;
   public drawStyle: OlStyle;
-  public drawZone: Feature;
+  public drawZone;
   public overlayStyle: OlStyle;
   public PointStyle: OlStyle;
   public PolyStyle: OlStyle;
 
   public radius: number;
+  public buffer: number = 0;
   public radiusFormControl = new FormControl();
+  public bufferFormControl = new FormControl();
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
+  public zoneWithBuffer;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -254,7 +265,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     this.drawGuide$.next(null);
     this.value$.next(this.formControl.value ? this.formControl.value : undefined);
     this.value$$ = this.formControl.valueChanges.subscribe((value: GeoJSONGeometry) => {
-      this.value$.next(value ? value : undefined);
+      if (value) {
+        this.value$.next(value);
+        this.drawZone = this.formControl.value as Feature;
+      } else {
+        this.value$.next(undefined);
+        this.drawZone = undefined;
+      }
     });
 
     this.value$.subscribe(() => {
@@ -266,6 +283,36 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       this.getRadius();
       this.cdRef.detectChanges();
     });
+
+    this.bufferChanges$$ = this.bufferFormControl.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value < 100000) {
+          this.buffer = value;
+          this.bufferEvent.emit(value);
+          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
+          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value < 100) {
+          this.buffer = value;
+          this.bufferEvent.emit(value);
+          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'});
+          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+        } else if (value === 0 && value === this.bufferFormControl.value) {
+          this.buffer = value;
+          this.bufferEvent.emit(value);
+          this.drawZoneEvent.emit(this.drawZone);
+        } else if (
+          value < 0 ||
+          (this.measureUnit === MeasureLengthUnit.Meters && value >= 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 100)) {
+            this.bufferFormControl.setValue(0);
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+        }
+    });
   }
 
   /**
@@ -274,6 +321,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   ngOnDestroy() {
     this.value$$.unsubscribe();
+    this.radiusChanges$$.unsubscribe();
+    this.bufferChanges$$.unsubscribe();
     this.cdRef.detach();
     if (this.radiusChanges$$) {
       this.radiusChanges$$.unsubscribe();
@@ -293,7 +342,21 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * @internal
    */
   onMeasureUnitChange(unit: MeasureLengthUnit) {
-    this.measureUnit = unit;
+    if (unit === this.measureUnit) {
+      return;
+    } else {
+      this.measureUnit = unit;
+      this.measureUnitChange.emit(this.measureUnit);
+      if (this.isPolygon()) {
+        this.measureUnit === MeasureLengthUnit.Meters ?
+          this.bufferFormControl.setValue(this.bufferFormControl.value * 1000) :
+          this.bufferFormControl.setValue(this.bufferFormControl.value / 1000);
+      } else if (this.isPoint()) {
+        this.measureUnit === MeasureLengthUnit.Meters ?
+          this.radiusFormControl.setValue(this.radiusFormControl.value * 1000) :
+          this.radiusFormControl.setValue(this.radiusFormControl.value / 1000);
+      }
+    }
   }
 
   isPredefined() {
@@ -467,8 +530,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    * Launch search button
    */
   toggleSearchButton() {
-    if (this.isPolygon() || this.isPoint()) {
-      this.drawZone = this.formControl.value as Feature;
+    if (!this.isPredefined()) {
       this.drawZone.meta = {
         id: undefined,
         title: 'Zone'
@@ -479,7 +541,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       };
       this.drawZoneEvent.emit(this.drawZone);
     }
-    this.radiusEvent.emit(this.radius);
+    if (this.isPoint()) {
+      this.radiusEvent.emit(this.radius);
+    } else if (this.isPolygon()) {
+      this.bufferEvent.emit(this.buffer);
+    }
     this.toggleSearch.emit();
     this.store.entities$.subscribe((value) => {
       if (value.length && this.layers.length === this.thematicLength + 1) {
@@ -493,13 +559,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearButton() {
     this.loading = true;
-    this.map.removeLayers(this.layers);
     this.loading = false;
     if (this.store) {
       this.store.clear();
     }
     if (this.isPoint() || this.isPolygon()) {
       this.drawZone = undefined;
+      this.bufferFormControl.setValue(0);
       this.formControl.reset();
     }
     this.clearButtonEvent.emit();
@@ -510,6 +576,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearSearch() {
     this.selectedThematics.clear();
+    this.bufferFormControl.setValue(0);
     this.thematicChange.emit([]);
     this.clearSearchEvent.emit();
   }
@@ -548,20 +615,32 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   getRadius() {
     let formValue;
-    this.formControl.value !== null ? formValue = this.formControl.value.radius : formValue = undefined;
+    if (this.formControl.value !== null) {
+      this.measureUnit === MeasureLengthUnit.Meters ?
+        formValue = this.formControl.value.radius :
+        formValue = this.formControl.value.radius / 1000;
+    } else {
+      formValue = undefined;
+    }
+
     if (this.type === SpatialFilterType.Point) {
       if (!this.freehandDrawIsActive) {
-        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
+        if (
+          this.radiusFormControl.value < 0 ||
+          (this.measureUnit === MeasureLengthUnit.Meters && this.radiusFormControl.value >= 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && this.radiusFormControl.value >= 100)) {
           this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
             this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
           this.radius = 1000;
-          this.radiusFormControl.setValue(this.radius);
+          this.measureUnit === MeasureLengthUnit.Meters ?
+            this.radiusFormControl.setValue(this.radius) :
+            this.radiusFormControl.setValue(this.radius / 1000);
           this.drawGuide$.next(this.radius);
           return;
         }
       } else {
         if (formValue) {
-          if (formValue >= 10000) {
+          if (formValue >= 100000) {
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
             this.formControl.reset();
@@ -573,8 +652,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           }
         }
       }
-      this.radius = this.radiusFormControl.value;
-      this.drawGuide$.next(this.radius);
+      if (this.measureUnit === MeasureLengthUnit.Meters) {
+        this.radius = this.radiusFormControl.value;
+        this.drawGuide$.next(this.radius);
+      } else {
+        this.radius = this.radiusFormControl.value * 1000;
+        this.drawGuide$.next(this.radius * 1000);
+      }
       this.overlayStyle$.next(this.PointStyle);
       this.drawStyle$.next(this.PointStyle);
     }

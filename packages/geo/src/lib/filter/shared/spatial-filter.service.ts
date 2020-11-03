@@ -156,7 +156,8 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true'
+                icon: 'true',
+                buffer: buffer.toString()
               }
             }
           )
@@ -183,7 +184,8 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true'
+                icon: 'true',
+                buffer: buffer.toString()
               }
             }
           )
