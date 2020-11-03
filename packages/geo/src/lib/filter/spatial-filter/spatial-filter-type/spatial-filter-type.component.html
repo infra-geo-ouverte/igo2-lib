@@ -6,7 +6,7 @@
   <mat-tab [label]="'igo.geo.spatialFilter.predefined' | translate">
     <mat-form-field>
       <mat-label>{{'igo.geo.spatialFilter.searchLabel' | translate}}</mat-label>
-      <mat-select (selectionChange)="onQueryTypeChange($event)" [(value)]="selectedQueryType">
+      <mat-select (selectionChange)="onSelectionChange()" [(value)]="selectedQueryType">
         <mat-option *ngFor="let queryType of queryType" [value]="queryType">
           {{('igo.geo.terrapi.' + queryType) | translate}}
         </mat-option>
@@ -15,8 +15,11 @@
     <igo-spatial-filter-list
       [store]="store"
       [queryType]="selectedQueryType"
-      [selectedZone]="zone"
-      (zoneChange)="onZoneChange($event)">
+      [zone]="zone"
+      (zoneChange)="zoneChange.emit($event)"
+      (zoneWithBufferChange)="zoneWithBufferChange.emit($event)"
+      (bufferChange)="bufferChange.emit($event)"
+      (measureUnitChange)="measureUnitChange.emit($event)">
     </igo-spatial-filter-list>
   </mat-tab>
 
