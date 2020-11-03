@@ -133,11 +133,11 @@ export function renderFeatureFromOl(
 
   const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
   const mapTitle = olRenderFeature.get('_mapTitle');
-
+  const extent = olproj.transformExtent(olRenderFeature.getExtent(), projectionIn, projectionOut);
   return {
     type: FEATURE,
     projection: projectionOut,
-    extent: olRenderFeature.getExtent(),
+    extent,
     meta: {
       id,
       title: title ? title : mapTitle ? mapTitle : id,
