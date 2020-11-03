@@ -9,6 +9,9 @@
       "table": {
         "filter": "Filtre"
       },
+      "entity-table": {
+        "targetHtmlUrl": "Ouvrir le lien externe"
+      },
       "form": {
         "errors": {
           "required": "Ce champ est requis"

@@ -348,9 +348,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   handlePopup(preCheck: boolean = true): boolean {
-    const p1 = window.open('', '_blank');
+    const p1 = window.open('', 'popup', 'width=1, height=1');
     p1.close();
-    const p2 = window.open('', '_blank');
+    const p2 = window.open('', 'popup', 'width=1, height=1');
     if (!p2 || p2.closed || typeof p2.closed === 'undefined' || p2 === null) {
       this.onPopupBlockedError(preCheck);
       this.popupAllowed = false;
