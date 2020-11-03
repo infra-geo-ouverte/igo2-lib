@@ -163,6 +163,8 @@ export class InteractiveTourService {
           clearInterval(checkExist);
           return;
         } else {
+          const id = self.getCurrentStep().id;
+          console.log(self.steps.findIndex(step => step.id === id));
           console.log('element');
           console.log(self.steps);
           const currentStepElement = self.getCurrentStep().getElement();
@@ -198,7 +200,7 @@ export class InteractiveTourService {
     }, 100);
   }
 
-  private checkNext(index?) {
+  private checkNext(index?, i?) {
     console.log('checkNext');
     const self = this as any;
     if (self.getCurrentStep()) {
@@ -208,13 +210,14 @@ export class InteractiveTourService {
       }
 
       let nextIndex;
-      index ? nextIndex = index + 1 : nextIndex = self.steps.findIndex(step => step.id === id) + 1;
+      console.log(index);
+      console.log(i);
+      i ? nextIndex = i + 1 : nextIndex = index.index + 1;
       console.log(nextIndex);
       const nextStep = self.steps[nextIndex];
       console.log(nextStep);
       if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
-        return;
-        this.checkNext(nextIndex);
+        this.checkNext(index, );
         // if (self.steps.find(step => step.id === nextStep.id).options.deleteAfterNext) {
         //   self.removeStep(id);
         // }
