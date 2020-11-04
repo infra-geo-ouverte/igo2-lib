@@ -115,7 +115,7 @@ export class CatalogFactory {
             catalog = new CompositeCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.baselayers]) {
             catalog = new BaselayersCatalog(options, service);
-        } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
+        } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest] || options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
             catalog = new ArcGISRestCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
             catalog = new WMTSCatalog(options, service);
