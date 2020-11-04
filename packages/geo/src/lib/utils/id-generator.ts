@@ -20,6 +20,7 @@ export function generateIdFromSourceOptions(options: DataSourceOptions): string 
     xyz: generateXYZIdFromSourceOptions,
     feature: generateFeatureIdFromSourceOptions,
     arcgisrest: generateArcgisRestIdFromSourceOptions,
+    tilearcgisrest: generateArcgisRestIdFromSourceOptions,
     osm: (_options: AnyDataSourceOptions) => 'OSM'
   };
   const generator = generators[options.type] || generateId;
