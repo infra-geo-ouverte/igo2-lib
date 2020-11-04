@@ -17,6 +17,7 @@ import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure/shared';
 import { LanguageService, MessageService } from '@igo2/core';
 import buffer from '@turf/buffer';
+import { Layer } from '../../../layer';
 
 @Component({
   selector: 'igo-spatial-filter-list',
@@ -58,14 +59,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
   private _zone;
 
-  @Input()
-  get active(): boolean {
-    return this._active;
-  }
-  set active(value: boolean) {
-    this._active = value;
-  }
-  private _active = false;
+  @Input() layers: Layer[] = [];
 
   public zoneWithBuffer;
   public selectedZone;
@@ -88,7 +82,6 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   @Output() zoneWithBufferChange = new EventEmitter<Feature>();
   @Output() bufferChange = new EventEmitter<number>();
   @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
-  @Output() activeEvent = new EventEmitter<boolean>();
 
   formValueChanges$$: Subscription;
   bufferValueChanges$$: Subscription;
@@ -123,7 +116,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
           this.bufferChange.emit(value);
           this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (value === 0 && this.active) {
+        } else if (value === 0 && this.layers.length > 0) {
           this.bufferChange.emit(value);
           this.zoneWithBufferChange.emit(this.selectedZone);
         } else if (
@@ -146,8 +139,6 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
 
   onZoneChange(feature) {
-    this.active = true;
-    this.activeEvent.emit(true);
     this.bufferFormControl.setValue(0);
     if (feature && this.queryType) {
       this.spatialFilterService.loadItemById(feature, this.queryType)

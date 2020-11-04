@@ -63,8 +63,6 @@ export class SpatialFilterToolComponent implements OnDestroy {
   public layers: Layer[] = [];
   public activeLayers: Layer[] = [];
 
-  public active = false;
-
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
