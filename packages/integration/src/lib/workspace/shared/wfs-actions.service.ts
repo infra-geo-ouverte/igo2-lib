@@ -5,12 +5,12 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   WfsWorkspace,
   mapExtentStrategyActiveToolTip,
-  featureMotionStrategyActiveToolTip,
   FeatureStoreSelectionStrategy,
   FeatureMotion,
   noElementSelected,
   ExportOptions,
-  OgcFilterWidget
+  OgcFilterWidget,
+  OgcFilterableDataSource
 } from '@igo2/geo';
 import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
@@ -62,12 +62,12 @@ export class WfsActionsService implements OnDestroy  {
         this.handleZoomAuto(workspace);
       }
       );
-    return [
+    const actions = [
       {
         id: 'zoomAuto',
         checkbox: true,
-        title: 'igo.geo.workspace.zoomAuto.title',
-        tooltip: featureMotionStrategyActiveToolTip(workspace),
+        title: 'igo.integration.workspace.zoomAuto.title',
+        tooltip: 'igo.integration.workspace.zoomAuto.tooltip',
         checkCondition: this.zoomAuto$,
         handler: () => {
           this.handleZoomAuto(workspace);
@@ -77,7 +77,7 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'filterInMapExtent',
         checkbox: true,
-        title: 'igo.geo.workspace.inMapExtent.title',
+        title: 'igo.integration.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
         checkCondition: this.rowsInMapExtent,
         handler: () => {
@@ -94,8 +94,8 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'selectedOnly',
         checkbox: true,
-        title: 'igo.geo.workspace.selected.title',
-        tooltip: 'selectedOnly',
+        title: 'igo.integration.workspace.selected.title',
+        tooltip: 'igo.integration.workspace.selected.title',
         checkCondition: false,
         handler: () => {
           const filterStrategy = workspace.entityStore
@@ -110,8 +110,8 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'clearselection',
         icon: 'select-off',
-        title: 'igo.geo.workspace.clearSelection.title',
-        tooltip: 'igo.geo.workspace.clearSelection.tooltip',
+        title: 'igo.integration.workspace.clearSelection.title',
+        tooltip: 'igo.integration.workspace.clearSelection.tooltip',
         handler: (ws: WfsWorkspace) => {
           ws.entityStore.state.updateMany(ws.entityStore.view.all(), { selected: false });
         },
@@ -120,9 +120,9 @@ export class WfsActionsService implements OnDestroy  {
       },
       {
         id: 'wfsDownload',
-        icon: 'download',
-        title: 'igo.geo.workspace.download.title',
-        tooltip: 'igo.geo.workspace.download.tooltip',
+        icon: 'file-export',
+        title: 'igo.integration.workspace.download.title',
+        tooltip: 'igo.integration.workspace.download.tooltip',
         handler: (ws: WfsWorkspace) => {
           const filterStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
           const filterSelectionStrategy = ws.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
@@ -137,8 +137,8 @@ export class WfsActionsService implements OnDestroy  {
       {
         id: 'ogcFilter',
         icon: 'filter',
-        title: 'igo.geo.workspace.ogcFilter.title',
-        tooltip: 'igo.geo.workspace.ogcFilter.tooltip',
+        title: 'igo.integration.workspace.ogcFilter.title',
+        tooltip: 'igo.integration.workspace.ogcFilter.tooltip',
         handler: (widget: Widget, ws: WfsWorkspace) => {
           ws.activateWidget(widget, {
             map: ws.map,
@@ -148,6 +148,8 @@ export class WfsActionsService implements OnDestroy  {
         args: [this.ogcFilterWidget, workspace]
       },
     ];
+    return (workspace.layer.dataSource as OgcFilterableDataSource).ogcFilters$?.value?.enabled ?
+    actions : actions.filter(action => action.id !== 'ogcFilter');
   }
 
   private handleZoomAuto(workspace: WfsWorkspace) {

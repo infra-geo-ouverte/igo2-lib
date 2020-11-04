@@ -140,9 +140,8 @@ export class OgcFilterableItemComponent implements OnInit {
       this.lastRunOgcFilter = undefined;
     }
     const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
-    const activeFilters = ogcFilters.interfaceOgcFilters.filter(
-      f => f.active === true
-    );
+    const activeFilters = ogcFilters.interfaceOgcFilters ?
+      ogcFilters.interfaceOgcFilters.filter(f => f.active === true) : [];
     if (activeFilters.length === 0) {
       ogcFilters.filters = undefined;
       ogcFilters.filtered = false;
@@ -201,6 +200,7 @@ export class OgcFilterableItemComponent implements OnInit {
     } else {
       // identical filter. Nothing triggered
     }
+    (this.layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
   }
 
   public setVisible() {

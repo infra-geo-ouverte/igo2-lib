@@ -77,7 +77,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="(sortAlpha || onlyVisible || keyword) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="raiseDisabled"
-      (click)="activeLayer.map.raiseLayer(activeLayer)">
+      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Raise)">
       <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="raiseDisabled"
                 svgIcon="arrow-up"></mat-icon>
     </button>
@@ -89,7 +89,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="(sortAlpha || onlyVisible || keyword) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="lowerDisabled"
-      (click)="activeLayer.map.lowerLayer(activeLayer)">
+      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Lower)">
       <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="lowerDisabled"
                 svgIcon="arrow-down"></mat-icon>
     </button>

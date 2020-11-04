@@ -21,7 +21,8 @@ import {
   SpatialFilterThematic,
   Layer,
   createOverlayMarkerStyle,
-  ExportOptions
+  ExportOptions,
+  MeasureLengthUnit
 } from '@igo2/geo';
 import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
@@ -65,7 +66,8 @@ export class SpatialFilterToolComponent implements OnDestroy {
   public queryType: SpatialFilterQueryType;
   public thematics: SpatialFilterThematic[];
   public zone: Feature;
-  public radius: number;
+  public zoneWithBuffer: Feature;
+  public buffer = 0;
 
   public iterator = 1;
 
@@ -83,6 +85,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
 
   public thematicLength = 0;
 
+  public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -107,7 +110,6 @@ export class SpatialFilterToolComponent implements OnDestroy {
   getOutputType(event: SpatialFilterType) {
     this.type = event;
     this.queryType = undefined;
-    this.radius = undefined;
   }
 
   getOutputQueryType(event: SpatialFilterQueryType) {
@@ -149,7 +151,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
 
         if (layerToOpenWks) {
           this.workspaceState.workspacePanelExpanded = true;
-          this.workspaceState.setActiveWorkspaceByLayerId(layerToOpenWks.id);
+          this.workspaceState.setActiveWorkspaceById(layerToOpenWks.id);
         }
       }
     });
@@ -184,6 +186,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
   }
 
   clearMap() {
+    this.map.removeLayers(this.layers);
     this.layers = [];
     this.activeLayers = [];
     this.thematicLength = 0;
@@ -206,9 +209,10 @@ export class SpatialFilterToolComponent implements OnDestroy {
     } else {
       thematics = this.thematics;
     }
-    if (this.type === SpatialFilterType.Polygon) {
-      this.radius = undefined;
+    if (this.measureUnit === MeasureLengthUnit.Kilometers && this.type !== SpatialFilterType.Point) {
+      this.buffer = this.buffer * 1000;
     }
+
     const observables$: Observable<Feature[]>[] = [];
     thematics.forEach(thematic => {
       observables$.push(
@@ -218,7 +222,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
             this.itemType,
             this.queryType,
             thematic,
-            this.radius
+            this.buffer
           )
           .pipe(
             tap((features: Feature[]) => {
@@ -280,10 +284,10 @@ export class SpatialFilterToolComponent implements OnDestroy {
     });
   }
 
-  onZoneChange(feature: Feature) {
+  onZoneChange(feature: Feature, buffer?: boolean) {
     this.zone = feature;
     if (feature) {
-      this.tryAddFeaturesToMap([feature]);
+      buffer ? this.tryAddFeaturesToMap([feature], true) : this.tryAddFeaturesToMap([feature]);
       this.zoomToFeatureExtent(feature);
     }
   }
@@ -291,22 +295,39 @@ export class SpatialFilterToolComponent implements OnDestroy {
   /**
    * Try to add zone feature to the map overlay
    */
-  public tryAddFeaturesToMap(features: Feature[]) {
+  public tryAddFeaturesToMap(features: Feature[], buffer?: boolean) {
     let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
           if (
             layer.options._internal &&
-            layer.options._internal.code === feature.properties.code
+            layer.options._internal.code === feature.properties.code &&
+            !buffer
           ) {
+            if (!layer.title?.startsWith('Zone')) {
+              const index = this.layers.indexOf(layer);
+              this.layers.splice(index, 1);
+            }
             return;
           }
           if (layer.title?.startsWith('Zone')) {
+            this.activeLayers = [];
+            const index = this.layers.indexOf(layer);
+            this.layers.splice(index, 1);
             this.map.removeLayer(layer);
           }
         }
       } else {
+        if (buffer) {
+          for (const layer of this.activeLayers) {
+            if (this.activeLayers.length === 1 && layer.title?.startsWith('Zone')) {
+              const index = this.layers.indexOf(layer);
+              this.layers.splice(index, 1);
+              this.map.removeLayer(layer);
+            }
+          }
+        }
         this.activeLayers = [];
       }
       for (const layer of this.layers) {
@@ -323,6 +344,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
             title: ('Zone ' + i) as string,
+            workspace: { enabled: true },
             _internal: {
               code:
                 this.type === SpatialFilterType.Predefined
@@ -336,7 +358,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
               return new olstyle.Style({
                 image: new olstyle.Circle({
                   radius: coordinates
-                    ? this.radius /
+                    ? this.buffer /
                       Math.cos((Math.PI / 180) * coordinates[1]) /
                       resolution
                     : undefined,
@@ -513,15 +535,12 @@ export class SpatialFilterToolComponent implements OnDestroy {
   }
 
   pushLayer(layer) {
-    let push = true;
     for (const lay of this.activeLayers) {
       if (lay.id === layer.id) {
-        push = false;
+        return;
       }
     }
 
-    if (push === true) {
-      this.activeLayers.push(layer);
-    }
+    this.activeLayers.push(layer);
   }
 }

@@ -26,26 +26,52 @@
     </mat-slide-toggle>
 </div>
 
-  <div class="radius-unit" *ngIf="isPoint()">
-    <form class="radius-form">
-      <mat-form-field class="radius">
-        <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
-        [value]="1000" (input)="getRadius()" [readonly]="this.freehandDrawIsActive && this.formControl.value === null">
-        <label class="unit-field">
-          {{('igo.geo.measure.' + measureUnit) | translate}}
-        </label>
-      </mat-form-field>
-    </form>
-  </div>
+<div class="buffer-unit" *ngIf="isPolygon()">
+  <form class="buffer-form">
+    <mat-form-field class="buffer">
+      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
+      [value]="0" [readonly]="this.formControl.value === null">
+    </mat-form-field>
+  </form>
 
-  <mat-label class="title mat-typography">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
-  <mat-radio-group [value]="selectedItemType">
-      <mat-radio-button *ngFor="let item of itemType"
-        [value]="item"
-        (change)="onItemTypeChange($event)">
-        {{'igo.geo.spatialFilter.' + item | translate}}
-      </mat-radio-button>
-  </mat-radio-group>
+  <mat-form-field class="unit-field">
+    <mat-select
+    [value]="measureUnit"
+    (selectionChange)="onMeasureUnitChange($event.value)">
+    <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
+        {{('igo.geo.measure.' + measureUnit) | translate}}
+    </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="radius-unit" *ngIf="isPoint()">
+  <form class="radius-form">
+    <mat-form-field class="radius">
+      <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.radius' | translate}}" [formControl]="radiusFormControl"
+      [value]="1000" (input)="getRadius()" [readonly]="this.freehandDrawIsActive && this.formControl.value === null">
+    </mat-form-field>
+  </form>
+
+  <mat-form-field class="unit-field">
+    <mat-select
+    [value]="measureUnit"
+    (selectionChange)="onMeasureUnitChange($event.value)">
+    <mat-option *ngFor="let measureUnit of measureUnits" [value]="measureUnit">
+        {{('igo.geo.measure.' + measureUnit) | translate}}
+    </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<mat-label class="title mat-typography">{{'igo.geo.spatialFilter.search' | translate}} : </mat-label>
+<mat-radio-group [value]="selectedItemType">
+    <mat-radio-button *ngFor="let item of itemType"
+      [value]="item"
+      (change)="onItemTypeChange($event)">
+      {{'igo.geo.spatialFilter.' + item | translate}}
+    </mat-radio-button>
+</mat-radio-group>
 
 <div class="thematics" *ngIf="selectedItemType==='Thematics'">
   <mat-table>
