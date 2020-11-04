@@ -147,7 +147,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
 
   onZoneChange(feature) {
     this.active = true;
-    this.activeEvent.emit(true)
+    this.activeEvent.emit(true);
     this.bufferFormControl.setValue(0);
     if (feature && this.queryType) {
       this.spatialFilterService.loadItemById(feature, this.queryType)
