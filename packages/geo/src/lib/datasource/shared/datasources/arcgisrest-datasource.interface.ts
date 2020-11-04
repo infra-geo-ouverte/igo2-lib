@@ -7,6 +7,7 @@ export interface ArcGISRestDataSourceOptions extends FeatureDataSourceOptions {
   // type?: 'arcgisrest'
   layer: string;
   params?: ArcGISRestDataSourceOptionsParams;
+  idColumn?: string;
 }
 
 export interface ArcGISRestDataSourceOptionsParams {
