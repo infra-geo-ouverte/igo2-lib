@@ -99,7 +99,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     this.computeProjections();
   }
   get projectionsLimitations(): ProjectionsLimitationsOptions {
-    return this._projectionsLimitations;
+    return this._projectionsLimitations || {};
   }
 
   /**
