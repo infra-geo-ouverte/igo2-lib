@@ -14,7 +14,7 @@ declare function require(arg: string): any;
 export class LanguageLoader implements TranslateLoader {
   constructor(
     private http: HttpClient,
-    private prefix?: string,
+    private prefix?: string | string[],
     private suffix: string = '.json',
     private config?: ConfigService
   ) {}
@@ -24,20 +24,26 @@ export class LanguageLoader implements TranslateLoader {
     const igoLocale$ = of(translation);
 
     if (this.config && !this.prefix) {
-      this.prefix = this.config.getConfig('language.prefix');
+      const prefix = this.config.getConfig('language.prefix');
+      this.prefix = !prefix || Array.isArray(prefix) ? prefix : [prefix];
     }
 
-    if (!this.prefix) {
+    if (!this.prefix || this.prefix.length === 0) {
       return igoLocale$;
     }
 
-    const appLocale$ = this.http.get(`${this.prefix}${lang}${this.suffix}`);
+    const appLocale$ = (this.prefix as string[]).map((prefix) =>
+      this.http.get(`${prefix}${lang}${this.suffix}`)
+    );
 
-    const locale$ = combineLatest([igoLocale$, appLocale$]);
+    const locale$ = combineLatest([igoLocale$, ...appLocale$]);
 
     return locale$.pipe(
-      map(translations => {
-        return ObjectUtils.mergeDeep(translations[0], translations[1]);
+      map((translations) => {
+        return translations.reduce(
+          (acc, current) => ObjectUtils.mergeDeep(acc, current),
+          []
+        );
       })
     );
   }

@@ -1,3 +1,3 @@
 export interface LanguageOptions {
-  prefix?: string;
+  prefix?: string | string[];
 }
