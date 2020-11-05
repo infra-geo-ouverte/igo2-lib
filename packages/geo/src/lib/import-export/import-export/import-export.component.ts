@@ -55,12 +55,12 @@ import { InputProjections, ProjectionsLimitationsOptions } from './import-export
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
+  public importForm: FormGroup;
   public formats$ = new BehaviorSubject(undefined);
   public encodings$ = new BehaviorSubject(undefined);
   public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
     []
   );
-  public inputProj: InputProjections;
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
@@ -89,6 +89,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       queryable: boolean;
     }[]
   > = new BehaviorSubject(undefined);
+
+  @Input() selectFirstProj: boolean = false;
 
   @Input() map: IgoMap;
 
@@ -122,6 +124,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
   set layers(value) {
     this.form.patchValue({ layers: value });
+  }
+
+  get inputProj() {
+    return this.importForm.get('inputProj').value;
+  }
+  set inputProj(value) {
+    this.importForm.patchValue({ inputProj: value });
   }
 
   get popupAllowed(): boolean {
@@ -270,10 +279,15 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
       this.cdRef.detectChanges();
     });
-    if (this.projections$.value.length === 0) {
-      this.inputProj = {translateKey: 'nad83', alias: 'NAD83', code : 'EPSG:4326', zone: ''};
+
+    if (this.selectFirstProj) {
+      if (this.projections$.value.length === 0) {
+        this.importForm.patchValue({ inputProj: {translateKey: 'nad83', alias: 'NAD83', code : 'EPSG:4326', zone: ''} });
+      } else {
+        this.importForm.patchValue({ inputProj: this.projections$.value[0] });
+      }
     } else {
-      this.inputProj = this.projections$.value[0];
+      this.importForm.patchValue({ inputProj: undefined });
     }
   }
 
@@ -528,6 +542,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private buildForm() {
+    this.importForm = this.formBuilder.group({
+      inputProj: ['', [Validators.required]]
+    });
+
     if (this.forceNaming) {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],

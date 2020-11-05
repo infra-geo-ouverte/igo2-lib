@@ -23,6 +23,8 @@ export class ImportExportToolComponent implements OnInit {
 
   @Input() projectionsLimitations: ProjectionsLimitationsOptions;
 
+  @Input() selectFirstProj: boolean = false;
+
   /**
    * Map to measure on
    * @internal

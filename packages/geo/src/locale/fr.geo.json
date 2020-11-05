@@ -113,7 +113,8 @@
           "utm": "UTM {{zone}} ({{code}})",
           "webMercator": "Web Mercator ({{code}})",
           "nad83": "Lat-Long NAD83 ({{code}})",
-          "wgs84": "Lat-Long WGS84 ({{code}})"
+          "wgs84": "Lat-Long WGS84 ({{code}})",
+          "choose": "Vous devez choisir une projection avant d'importer le fichier."
         }
       },
       "operators": {
