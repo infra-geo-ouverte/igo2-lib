@@ -107,7 +107,15 @@
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Shapefiles must be zipped.",
         "other": "other",
-        "others": "others"
+        "others": "others",
+        "projections": {
+          "mtm": "MTM zone {{zone}} ({{code}})",
+          "utm": "UTM zone {{zone}} ({{code}})",
+          "webMercator": "Web Mercator ({{code}})",
+          "nad83": "Lat-Long NAD83 ({{code}})",
+          "wgs84": "Lat-Long WGS84 ({{code}})"
+        }
+
       },
       "operators": {
         "caseSensitive": "Case sensitive",
