@@ -9,6 +9,7 @@ import html2canvas from 'html2canvas';
 import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
+import { SecureImagePipe } from '@igo2/common';
 import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
@@ -98,7 +99,7 @@ export class PrintService {
    * @param  width The width that the legend need to be
    * @return Html code for the legend
    */
-  getLayersLegendHtml(map: IgoMap, width: number, resolution: number): string {
+  async getLayersLegendHtml(map: IgoMap, width: number, resolution: number) {
     let html = '';
     const legends = getLayersLegends(
       map.layers,
@@ -117,16 +118,30 @@ export class PrintService {
     html += '<font size="2" face="Courier New" >';
     html += '<div style="display:inline-block;max-width:' + width + 'mm">';
     // For each legend, define an html table cell
-    legends.forEach((legend: OutputLayerLegend) => {
+    await legends.forEach(async (legend: OutputLayerLegend) => {
+      const dataImage = await this.getDataImage(legend.url).then(data => {
+        return data;
+      });
+      console.log('dataImage', dataImage);
       html +=
         '<table border=1 style="display:inline-block;vertical-align:top">';
       html += '<tr><th width="170px">' + legend.title + '</th>';
-      html += '<td><img class="printImageLegend" src="' + legend.url + '">';
+      html += '<td><img class="printImageLegend" src="' + dataImage + '">';
       html += '</td></tr></table>';
     });
     html += '</div>';
 
+    console.log('Promise resolved');
     return html;
+  }
+
+  async getDataImage(url: string) {
+    const secureIMG = new SecureImagePipe(this.http);
+    const data = await secureIMG.transform(url).toPromise().then(data => {
+      console.log('getData', data);
+      return data;
+    });
+    return data;
   }
 
   /**
@@ -143,7 +158,11 @@ export class PrintService {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = this.getLayersLegendHtml(map, width, resolution);
+    let html;
+    this.getLayersLegendHtml(map, width, resolution).then(asyncResult => {
+      console.log('asyncResult', asyncResult);
+      html = asyncResult;
+    });
     const that = this;
     format = format.toLowerCase();
 
@@ -286,10 +305,15 @@ export class PrintService {
     margins: Array<number>,
     resolution: number
   ) {
+    console.log('addLegend');
     const that = this;
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = this.getLayersLegendHtml(map, width, resolution);
+    let html;
+    this.getLayersLegendHtml(map, width, resolution).then(asyncResult => {
+      html = asyncResult;
+    });
+    console.log('html', html);
     // If no legend, save the map directly
     if (html === '') {
       this.saveDoc(doc);
@@ -303,6 +327,7 @@ export class PrintService {
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
+    console.log('div', div);
 
     const toCanvas = () => {
       html2canvas(div, { useCORS: true })
