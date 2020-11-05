@@ -76,7 +76,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
-  // public projections: InputProjections[];
   public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
   private projectionsConstraints: ProjectionsLimitationsOptions;
 
@@ -92,8 +91,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   > = new BehaviorSubject(undefined);
 
   @Input() map: IgoMap;
-
-  // @Input() projectionsLimitations: ProjectionsLimitationsOptions;
 
   private _projectionsLimitations: ProjectionsLimitationsOptions = {};
   @Input()
