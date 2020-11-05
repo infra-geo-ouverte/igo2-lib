@@ -95,8 +95,7 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
         const epsg = geojson.crs.properties.name.match(/EPSG:{1,2}\d{0,6}/gm);
         this.epsgCode$.next(epsg[0].replace(/::/g, ':'));
         return;
-      }
-      if (file.name.toLowerCase().endsWith('.gml')) {
+      } else if (file.name.toLowerCase().endsWith('.gml')) {
         const text = (reader.result as string);
         const lines = (text as string).split('\n');
         for (let line = 0; line <= nbLines; line++) {
@@ -106,6 +105,8 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
               break;
           }
         }
+      } else {
+        return 'epsgNotDefined';
       }
     };
     reader.readAsText(file, 'UTF-8');
