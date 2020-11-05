@@ -6,7 +6,7 @@ import { WMSDataSourceOptions } from './wms-datasource.interface';
 import { WFSService } from './wfs.service';
 
 import { OgcFilterWriter } from '../../../filter/shared/ogc-filter';
-import { OgcFilterableDataSourceOptions } from '../../../filter/shared/ogc-filter.interface';
+import { OgcFilterableDataSourceOptions, OgcFiltersOptions } from '../../../filter/shared/ogc-filter.interface';
 import { QueryHtmlTarget } from '../../../query/shared/query.enums';
 import {
   formatWFSQueryString,
@@ -15,6 +15,8 @@ import {
 } from './wms-wfs.utils';
 
 import { ObjectUtils } from '@igo2/utils';
+import { BehaviorSubject } from 'rxjs';
+import { TimeFilterableDataSourceOptions, TimeFilterOptions } from '../../../filter/shared/time-filter.interface';
 
 export class WMSDataSource extends DataSource {
   public ol: olSourceImageWMS;
@@ -38,6 +40,23 @@ export class WMSDataSource extends DataSource {
       ? (this.options as any).queryHtmlTarget
       : QueryHtmlTarget.BLANK;
   }
+
+  set ogcFilters(value: OgcFiltersOptions) {
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
+  }
+  get ogcFilters(): OgcFiltersOptions {
+    return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+  }
+
+  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
+
+  set timeFilter(value: TimeFilterOptions ) {
+    (this.options as TimeFilterableDataSourceOptions).timeFilter = value;
+  }
+  get timeFilter(): TimeFilterOptions {
+    return (this.options as TimeFilterableDataSourceOptions).timeFilter;
+  }
+  readonly timeFilter$: BehaviorSubject<TimeFilterOptions> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WMSDataSourceOptions,
@@ -121,6 +140,14 @@ export class WMSDataSource extends DataSource {
       fieldNameGeometry
     );
     sourceParams.FILTER = filterQueryString;
+    this.setOgcFilters(initOgcFilters, true);
+
+    const timeFilterableDataSourceOptions = (options as TimeFilterableDataSourceOptions);
+    if (
+      timeFilterableDataSourceOptions?.timeFilterable &&
+      timeFilterableDataSourceOptions?.timeFilter) {
+      this.setTimeFilter(timeFilterableDataSourceOptions.timeFilter, true);
+    }
   }
 
   refresh() {
@@ -136,6 +163,20 @@ export class WMSDataSource extends DataSource {
 
   protected createOlSource(): olSourceImageWMS {
     return new olSourceImageWMS(this.options);
+  }
+
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
+    this.ogcFilters = ogcFilters;
+    if (triggerEvent) {
+      this.ogcFilters$.next(this.ogcFilters);
+    }
+  }
+
+  setTimeFilter(timeFilter: TimeFilterOptions, triggerEvent: boolean = false) {
+    this.timeFilter = timeFilter;
+    if (triggerEvent) {
+      this.timeFilter$.next(this.timeFilter);
+    }
   }
 
   getLegend(style?: string, scale?: number): Legend[] {

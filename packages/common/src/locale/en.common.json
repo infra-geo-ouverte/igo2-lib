@@ -9,6 +9,9 @@
       "table": {
         "filter": "Filter"
       },
+      "entity-table": {
+        "targetHtmlUrl": "Open the external link"
+      },
       "form": {
         "errors": {
           "required": "This field is required"
@@ -16,7 +19,8 @@
       },
       "actionbar": {
         "scrollUp": "Scroll up",
-        "scrollDown": "Scroll down"
+        "scrollDown": "Scroll down",
+        "icon": "Action list"
       },
       "interactiveTour": {
         "tooltipTourToolButton": "Interactive tour of the application",

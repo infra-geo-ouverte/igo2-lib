@@ -9,6 +9,9 @@
       "table": {
         "filter": "Filtre"
       },
+      "entity-table": {
+        "targetHtmlUrl": "Ouvrir le lien externe"
+      },
       "form": {
         "errors": {
           "required": "Ce champ est requis"
@@ -16,7 +19,8 @@
       },
       "actionbar": {
         "scrollUp": "Défiler vers le haut",
-        "scrollDown": "Défiler vers le bas"
+        "scrollDown": "Défiler vers le bas",
+        "icon": "Actions supplémentaires"
       },
       "interactiveTour": {
         "tooltipTourToolButton": "Aide interactive sur l'outil",

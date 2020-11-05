@@ -20,6 +20,7 @@ export function generateIdFromSourceOptions(options: DataSourceOptions): string 
     xyz: generateXYZIdFromSourceOptions,
     feature: generateFeatureIdFromSourceOptions,
     arcgisrest: generateArcgisRestIdFromSourceOptions,
+    tilearcgisrest: generateArcgisRestIdFromSourceOptions,
     osm: (_options: AnyDataSourceOptions) => 'OSM'
   };
   const generator = generators[options.type] || generateId;
@@ -78,7 +79,7 @@ export function generateFeatureIdFromSourceOptions(options: WMTSDataSourceOption
 export function generateArcgisRestIdFromSourceOptions(options: ArcGISRestDataSourceOptions) {
   const layers = options.layer;
   const url = options.url.charAt(0) === '/' ? window.location.origin + options.url : options.url;
-  const chain = 'arcgis' + url + layers;
+  const chain = (options.type || 'arcgis') + url + layers;
   return Md5.hashStr(chain) as string;
 }
 

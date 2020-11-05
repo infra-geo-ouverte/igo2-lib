@@ -422,6 +422,7 @@
         "drawPolygon": "Dessiner un polygone",
         "drawCircle": "Dessiner un cercle",
         "searchLabel": "Rechercher par",
+        "buffer": "Zone tampon",
         "search": "Recherche",
         "drawControl": "Activer le contrôle de dessin",
         "listLabel": "Zone",
@@ -437,7 +438,8 @@
         "searchResults": "Résultats de la recherche",
         "type": "Type",
         "radius": "Rayon",
-        "radiusAlert": "Le rayon doit être compris entre 0 et 10000",
+        "radiusAlert": "Le rayon doit être compris entre 0 et 100 kilomètres (ou 100 000 mètres)",
+        "bufferAlert": "La zone tampon doit être comprise entre 0 et 100 kilomètres (ou 100 000 mètres)",
         "maxSizeAlert": "Le nombre de résultats excède 10000. Certains pourraient être manquants.",
         "zeroResults": "Aucun résultat ne correspond à cette recherche.",
         "warning": "Avertissement",
@@ -545,22 +547,6 @@
           "modify.tooltip": "Modifier"
         }
       },
-      "workspace": {
-        "ogcFilter.close": "Fermer",
-        "ogcFilter.title": "Filtres",
-        "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
-        "download.title": "Télécharger les données associées",
-        "download.tooltip": "Télécharger les données associées",
-        "inMapExtent.title": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
-        "zoomAuto.title": "Zoom auto",
-        "zoomAuto.tooltip": "Zoom auto",
-        "selected.title": "Ne montrer que les enregistrements sélectionnés",
-        "selected.tooltip": "Ne montrer que les enregistrements sélectionnés",
-        "clearSelection.title": "Tout désélectionner",
-        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
-      },
       "network": {
         "online": {
           "message": "En ligne",
@@ -570,6 +556,10 @@
           "message": "Hors-Ligne",
           "title": "Statut:"
         }
+      },   
+      "workspace": {
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
       }
     }
   }

@@ -9,3 +9,8 @@ export enum LayerListSelectVisibleEnum {
   MIXED = 'MIXED',
   NULL = 'NULL'
 }
+
+export enum LayerListDisplacement {
+  Raise = 'raise',
+  Lower = 'lower',
+}

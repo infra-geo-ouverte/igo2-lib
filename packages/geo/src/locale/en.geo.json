@@ -422,6 +422,7 @@
         "drawPolygon": "Draw a polygon",
         "drawCircle": "Draw a circle",
         "searchLabel": "Search by",
+        "buffer": "Buffer",
         "search": "Search",
         "drawControl": "Activate draw control",
         "listLabel": "Zone",
@@ -436,7 +437,8 @@
         "searchResults": "Search Results",
         "type": "Type",
         "radius": "Radius",
-        "radiusAlert": "Radius must be between 0 and 10000",
+        "radiusAlert": "Radius must be between 0 and 100 kilometers (or 100 000 meters)",
+        "bufferAlert": "Buffer must be between 0 and 100 kilometers (or 100 000 meters)",
         "maxSizeAlert": "Search results number exceeds 10000. Some may be missing.",
         "zeroResults": "There are no results for this search.",
         "warning": "Warning",
@@ -544,23 +546,6 @@
           "modify.tooltip": "Modify"
         }
       },
-      "workspace": {
-        "ogcFilter.close": "Close",
-        "ogcFilter.title": "Filters",
-        "ogcFilter.tooltip": "Apply filters",
-        "download.title": "Download",
-        "download.tooltip": "Download",
-        "inMapExtent.title": "Show records contained in map",
-        "inMapExtent.active.tooltip": "Show records contained in map",
-        "inMapExtent.inactive.tooltip": "Show all records",
-        "zoomAuto.title": "Zoom auto",
-        "zoomAuto.tooltip": "Zoom auto",
-        "selected.title": "Show selected records only",
-        "selected.tooltip": "Show selected records only",
-        "clearSelection.title": "Deselect all",
-        "clearSelection.tooltip": "Deselect all records"
-
-      },
       "network": {
         "online": {
           "message": "Online",
@@ -570,6 +555,10 @@
           "message": "Offline",
           "title": "Status:"
         }
+      },   
+      "workspace": {
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
       }
     }
   }

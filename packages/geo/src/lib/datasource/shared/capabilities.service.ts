@@ -39,7 +39,8 @@ import {
 export enum TypeCapabilities {
   wms = 'wms',
   wmts = 'wmts',
-  arcgisrest = 'esriJSON'
+  arcgisrest = 'esriJSON',
+  tilearcgisrest = 'esriJSON'
 }
 
 export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;

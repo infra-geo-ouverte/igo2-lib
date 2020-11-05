@@ -16,10 +16,20 @@ import {
   getFormatFromOptions,
   defaultMaxFeatures
 } from './wms-wfs.utils';
+import { BehaviorSubject } from 'rxjs';
 import { AuthInterceptor } from '@igo2/auth';
 
 export class WFSDataSource extends DataSource {
   public ol: olSourceVector;
+
+  set ogcFilters(value: OgcFiltersOptions) {
+    (this.options as OgcFilterableDataSourceOptions).ogcFilters = value;
+  }
+  get ogcFilters(): OgcFiltersOptions {
+    return (this.options as OgcFilterableDataSourceOptions).ogcFilters;
+  }
+
+  readonly ogcFilters$: BehaviorSubject<OgcFiltersOptions> = new BehaviorSubject(undefined);
 
   constructor(
     public options: WFSDataSourceOptions,
@@ -39,6 +49,8 @@ export class WFSDataSource extends DataSource {
     ) {
       this.wfsService.getSourceFieldsFromWFS(this.options);
     }
+
+    this.setOgcFilters((this.options as OgcFilterableDataSourceOptions).ogcFilters, true);
   }
 
   protected createOlSource(): olSourceVector {
@@ -110,6 +122,13 @@ export class WFSDataSource extends DataSource {
       }
     };
     xhr.send();
+  }
+
+  setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {
+    this.ogcFilters = ogcFilters;
+    if (triggerEvent) {
+      this.ogcFilters$.next(this.ogcFilters);
+    }
   }
 
   private buildUrl(extent, proj: olProjection, ogcFilters: OgcFiltersOptions): string {
