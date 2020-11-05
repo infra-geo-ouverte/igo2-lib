@@ -100,7 +100,7 @@
         "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
         "exportSelectedFeature": "Seulement les entités sélectionnées",
         "importButton": "Importer",
-        "importProjPlaceholder": "Système de coordonnées",
+        "importProjPlaceholder": "Système de coordonnées du fichier à importer",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",

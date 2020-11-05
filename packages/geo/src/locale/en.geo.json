@@ -100,7 +100,7 @@
         "exportNoLayersExportable": "There is no exportable layer in your map",
         "exportSelectedFeature": "Export only selected features",
         "importButton": "Import",
-        "importProjPlaceholder": "Coordinate system",
+        "importProjPlaceholder": "Coordinate system of the file to import",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
