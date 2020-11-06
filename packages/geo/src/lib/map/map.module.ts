@@ -17,6 +17,7 @@ import { MiniBaseMapComponent } from './baselayers-switcher/mini-basemap.compone
 import { MapOfflineDirective } from './shared/mapOffline.directive';
 import { OfflineButtonComponent } from './offline-button/offline-button.component';
 import { PointerPositionDirective } from './shared/map-pointer-position.directive';
+import { HoverFeatureDirective } from './shared/hover-feature.directive';
 
 @NgModule({
   imports: [
@@ -36,7 +37,8 @@ import { PointerPositionDirective } from './shared/map-pointer-position.directiv
     MiniBaseMapComponent,
     MapOfflineDirective,
     OfflineButtonComponent,
-    PointerPositionDirective
+    PointerPositionDirective,
+    HoverFeatureDirective
   ],
   declarations: [
     MapBrowserComponent,
@@ -47,7 +49,8 @@ import { PointerPositionDirective } from './shared/map-pointer-position.directiv
     MiniBaseMapComponent,
     MapOfflineDirective,
     OfflineButtonComponent,
-    PointerPositionDirective
+    PointerPositionDirective,
+    HoverFeatureDirective
   ]
 })
 export class IgoMapModule {}
