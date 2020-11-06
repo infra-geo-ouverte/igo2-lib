@@ -42,7 +42,7 @@ export class LanguageLoader implements TranslateLoader {
       map((translations) => {
         return translations.reduce(
           (acc, current) => ObjectUtils.mergeDeep(acc, current),
-          []
+          {}
         );
       })
     );
