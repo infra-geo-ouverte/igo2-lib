@@ -25,7 +25,7 @@ export class LayerListBindingDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Override input layers
-    this.component.layers = [];
+    // this.component.layers = [];
     this.layersOrResolutionChange$$ = combineLatest([
       this.mapService.getMap().layers$,
       this.mapService.getMap().viewController.resolution$]

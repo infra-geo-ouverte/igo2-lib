@@ -7,7 +7,7 @@ import { ContextMenuDirective } from './context-menu.directive';
   exports: [ContextMenuDirective]
 })
 export class IgoContextMenuModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoContextMenuModule> {
     return {
       ngModule: IgoContextMenuModule,
       providers: []

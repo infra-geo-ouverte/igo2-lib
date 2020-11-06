@@ -1,7 +1,8 @@
 import { Injectable, Optional } from '@angular/core';
 
 import { RouteService, ConfigService, MessageService } from '@igo2/core';
-import { IgoMap } from '@igo2/geo';
+import { Layer } from '@igo2/geo';
+import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from '../../context-manager/shared/context.service';
 
@@ -85,52 +86,13 @@ export class ShareMapService {
     const contextLayersID = [];
     const contextLayers = this.contextService.context$.value.layers;
     for (const contextLayer of contextLayers) {
-      contextLayersID.push(contextLayer.id || contextLayer.source.id);
-    }
-    const addedLayersByService = [];
-    for (const layer of layers.filter(
-      l => l.dataSource.options && l.dataSource.options.type === 'wms'
-    )) {
-      if (contextLayersID.indexOf(layer.id) === -1) {
-        const wmsUrl = (layer.dataSource.options as any).url;
-        const addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
-        const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
-
-        if (
-          !addedLayersByService.find(definedUrl => definedUrl.url === wmsUrl)
-        ) {
-          addedLayersByService.push({
-            url: wmsUrl,
-            layers: [addedLayerPosition]
-          });
-        } else {
-          addedLayersByService.forEach(service => {
-            if (service.url === wmsUrl) {
-              service.layers.push(addedLayerPosition);
-            }
-          });
-        }
+      if ( typeof contextLayer.id !== 'undefined'  ||  typeof contextLayer.source !== 'undefined' ) {
+        contextLayersID.push(contextLayer.id || contextLayer.source.id);
       }
     }
-    let addedLayersQueryParams = '';
-    if (addedLayersByService.length >= 1) {
-      const wmsUrlKey = this.route.options.wmsUrlKey;
-      const layersKey = this.route.options.layersKey;
 
-      let wmsUrlQueryParams = '';
-      let layersQueryParams = '';
-      addedLayersByService.forEach(service => {
-        wmsUrlQueryParams += `${service.url},`;
-        layersQueryParams += `(${service.layers.join(',')}),`;
-      });
-      wmsUrlQueryParams = wmsUrlQueryParams.endsWith(',')
-        ? wmsUrlQueryParams.slice(0, -1)
-        : wmsUrlQueryParams;
-      layersQueryParams = layersQueryParams.endsWith(',')
-        ? layersQueryParams.slice(0, -1)
-        : layersQueryParams;
-      addedLayersQueryParams = `${wmsUrlKey}=${wmsUrlQueryParams}&${layersKey}=${layersQueryParams}`;
-    }
+    const addedLayersQueryParamsWms = this.makeLayersByService(layers, contextLayersID, 'wms');
+    const addedLayersQueryParamsWmts = this.makeLayersByService(layers, contextLayersID, 'wmts');
 
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
@@ -148,15 +110,74 @@ export class ShareMapService {
       context = `${contextKey}=${this.contextService.context$.value.uri}`;
     }
 
-    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParams}`;
+    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
       url = url.endsWith('&') ? url.slice(0, -1) : url;
     }
     url = url.endsWith('&') ? url.slice(0, -1) : url;
+    url = url.replace('?&wm', '&wm');
     url = url.replace('?&', '?');
 
     return url;
+  }
+
+  private makeLayersByService(layers: Layer[], contextLayersID: any[], typeService: string): string {
+
+    const addedLayersByService = [];
+    for (const layer of layers.filter(
+      l => l.dataSource.options && (l.dataSource.options.type === typeService)
+    )) {
+      if (contextLayersID.indexOf(layer.id) === -1) {
+        const linkUrl = (layer.dataSource.options as any).url;
+        let addedLayer = '';
+        if (layer.dataSource.options.type === 'wms') {
+          addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
+        } else if (layer.dataSource.options.type === 'wmts') {
+          addedLayer = encodeURIComponent((layer.dataSource.options as any).layer);
+        }
+        const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
+
+        if (
+          !addedLayersByService.find(definedUrl => definedUrl.url === linkUrl)
+        ) {
+          addedLayersByService.push({
+            url: linkUrl,
+            layers: [addedLayerPosition]
+          });
+        } else {
+          addedLayersByService.forEach(service => {
+            if (service.url === linkUrl) {
+              service.layers.push(addedLayerPosition);
+            }
+          });
+        }
+      }
+    }
+
+    let addedLayersQueryParams = '';
+    if (addedLayersByService.length >= 1) {
+      const linkUrlKey = (typeService === 'wms') ? this.route.options.wmsUrlKey :
+        (typeService === 'wmts') ? this.route.options.wmtsUrlKey : '' ;
+      const layersKey = (typeService === 'wms') ? this.route.options.wmsLayersKey :
+        (typeService === 'wmts') ? this.route.options.wmtsLayersKey : '' ;
+
+      let linkUrlQueryParams = '';
+      let layersQueryParams = '';
+      addedLayersByService.forEach(service => {
+        linkUrlQueryParams += `${service.url},`;
+        layersQueryParams += `(${service.layers.join(',')}),`;
+      });
+      linkUrlQueryParams = linkUrlQueryParams.endsWith(',')
+        ? linkUrlQueryParams.slice(0, -1)
+        : linkUrlQueryParams;
+      layersQueryParams = layersQueryParams.endsWith(',')
+        ? layersQueryParams.slice(0, -1)
+        : layersQueryParams;
+      addedLayersQueryParams = `${linkUrlKey}=${linkUrlQueryParams}&${layersKey}=${layersQueryParams}`;
+    }
+
+    return addedLayersQueryParams;
   }
 }

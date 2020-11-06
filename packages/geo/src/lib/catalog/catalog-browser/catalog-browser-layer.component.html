@@ -1,6 +1,6 @@
 <mat-list-item>
   <mat-icon *ngIf="haveGroup()" mat-list-avatar svgIcon="blank"></mat-icon>
-  <h4 mat-line matTooltipShowDelay="500" [ngClass]="(catalogAllowLegend)?'igo-cataloglayer-title':''" (click)="askForLegend($event)" [matTooltip]="title">{{title}}</h4>
+  <h4 mat-line matTooltipShowDelay="500" [ngClass]="(catalogAllowLegend)?'igo-cataloglayer-title':''" (click)="askForLegend($event)" [matTooltip]="computeTitleTooltip()">{{title}}</h4>
 
   <igo-metadata-button [layer]="layer"></igo-metadata-button>
 
@@ -15,8 +15,9 @@
     <mat-icon
        matBadge
        igoMatBadgeIcon="eye-off"
+       igoMatBadgeInverseColor="true"
        [matBadgeHidden]="isInResolutionsRange()"
-       matBadgeColor="accent"
+       matBadgeDisabled="true"
        matBadgeSize="small"
        matBadgePosition="after"
        [svgIcon]="(isPreview$ | async) ? 'plus' : added ? 'delete' : 'plus'">

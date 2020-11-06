@@ -5,11 +5,13 @@
   "lib": {
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
-      "@igo2/core" : "core",
-      "@igo2/utils" : "utils",
-      "jwt-decode" : "jwt",
-      "ngx-cacheable" : "ngxCacheable",
-      "ts-md5" : "tsMd5"
+      "@igo2/core": "core",
+      "@igo2/utils": "utils",
+      "jwt-decode": "jwt",
+      "ngx-cacheable": "ngxCacheable",
+      "ts-md5": "tsMd5",
+      "@ngx-translate/core": "ngxt-core",
+      "@azure/msal-angular": "msal-angular"
     }
   },
   "whitelistedNonPeerDependencies": ["jwt-decode", "ngx-cacheable", "ts-md5"]

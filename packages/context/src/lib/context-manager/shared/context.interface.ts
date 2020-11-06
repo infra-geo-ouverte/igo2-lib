@@ -13,6 +13,8 @@ export interface Context {
   description?: string;
   icon?: string;
   iconImage?: string;
+  hidden?: boolean;
+  imported?: boolean;
 }
 
 export interface ContextsList {
@@ -29,6 +31,7 @@ export interface DetailedContext extends Context {
   toolbar?: string[];
   message?: Message;
   removeLayersOnContextChange?: boolean;
+  extraFeatures?: any[];
 }
 
 export interface ContextMapView extends MapViewOptions {
@@ -50,10 +53,23 @@ export interface ContextPermission {
   id?: string;
   contextId?: string;
   profil: string;
+  profilTitle?: string;
   typePermission: TypePermission;
 }
 
 export interface ContextPermissionsList {
   read: ContextPermission[];
   write: ContextPermission[];
+}
+
+export interface ContextUserPermission {
+  name: string;
+  checked: boolean;
+  indeterminate?: boolean;
+}
+
+export interface ContextProfils {
+  name: string;
+  title: string;
+  childs?: ContextProfils[];
 }

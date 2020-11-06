@@ -28,6 +28,7 @@ import {
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
 
 // TODO: This class is messy. Clearly define it's scope and the map browser's.
 // Move some stuff into controllers.
@@ -36,6 +37,8 @@ export class IgoMap {
   public offlineButtonToggle$ = new BehaviorSubject<boolean>(false);
   public layers$ = new BehaviorSubject<Layer[]>([]);
   public status$: Subject<SubjectStatus>;
+  public alwaysTracking: boolean;
+  public positionFollower: boolean = true;
   public geolocation$ = new BehaviorSubject<olGeolocation>(undefined);
   public geolocationFeature: olFeature;
   public bufferGeom: olCircle;
@@ -148,6 +151,7 @@ export class IgoMap {
       this.viewController.clearStateHistory();
     }
 
+    options = Object.assign({ constrainResolution: true }, options);
     const view = new olView(options);
     this.ol.setView(view);
 
@@ -161,6 +165,10 @@ export class IgoMap {
 
       if (options.geolocate) {
         this.geolocate(true);
+      }
+
+      if (options.alwaysTracking) {
+        this.alwaysTracking = true;
       }
     }
   }
@@ -213,6 +221,12 @@ export class IgoMap {
     return this.layers.find((layer: Layer) => layer.id && layer.id === id);
   }
 
+  getLayerByAlias(alias: string): Layer {
+    return this.layers.find(
+      (layer: Layer) => layer.alias && layer.alias === alias
+    );
+  }
+
   /**
    * Add a single layer
    * @param layer Layer to add
@@ -259,7 +273,7 @@ export class IgoMap {
     const newLayers = this.layers$.value.slice(0);
     const layersToRemove = [];
     layers.forEach((layer: Layer) => {
-      const index = this.getLayerIndex(layer);
+      const index = newLayers.indexOf(layer);
       if (index >= 0) {
         layersToRemove.push(layer);
         newLayers.splice(index, 1);
@@ -348,9 +362,9 @@ export class IgoMap {
         layer.baseLayer ? 0 : 10,
         ...this.layers
           .filter(
-            l => l.baseLayer === layer.baseLayer && l.zIndex < 200 // zIndex > 200 = system layer
+            (l) => l.baseLayer === layer.baseLayer && l.zIndex < 200 // zIndex > 200 = system layer
           )
-          .map(l => l.zIndex)
+          .map((l) => l.zIndex)
       );
       layer.zIndex = maxZIndex + 1 + offsetZIndex;
     }
@@ -414,7 +428,7 @@ export class IgoMap {
     }
     this.startGeolocation();
 
-    this.geolocation$$ = this.geolocation$.subscribe(geolocation => {
+    this.geolocation$$ = this.geolocation$.subscribe((geolocation) => {
       if (!geolocation) {
         return;
       }
@@ -437,7 +451,14 @@ export class IgoMap {
 
         this.geolocationFeature = new olFeature({ geometry });
         this.geolocationFeature.setId('geolocationFeature');
-        this.overlay.addOlFeature(this.geolocationFeature);
+        if (this.alwaysTracking) {
+          this.overlay.addOlFeature(
+            this.geolocationFeature,
+            this.positionFollower ? FeatureMotion.Move : FeatureMotion.None
+          );
+        } else {
+          this.overlay.addOlFeature(this.geolocationFeature);
+        }
 
         if (this.ol.getView().options_.buffer) {
           const bufferRadius = this.ol.getView().options_.buffer.bufferRadius;
@@ -458,10 +479,11 @@ export class IgoMap {
           this.bufferFeature.set('bufferStroke', bufferStroke);
           this.bufferFeature.set('bufferFill', bufferFill);
           this.bufferFeature.set('bufferText', bufferText);
-          this.buffer.addOlFeature(this.bufferFeature);
+          this.buffer.addOlFeature(this.bufferFeature, FeatureMotion.None);
         }
         if (first) {
           this.viewController.zoomToExtent(extent);
+          this.positionFollower = !this.positionFollower;
         }
       } else if (first) {
         const view = this.ol.getView();
@@ -469,7 +491,7 @@ export class IgoMap {
         view.setCenter(coordinates);
         view.setZoom(14);
       }
-      if (track) {
+      if (track !== true && this.alwaysTracking !== true) {
         this.unsubscribeGeolocate();
       }
       first = false;
@@ -494,7 +516,7 @@ export class IgoMap {
         tracking: true
       });
 
-      this.geolocation.on('change', evt => {
+      this.geolocation.on('change', (evt) => {
         this.geolocation$.next(this.geolocation);
       });
     } else {

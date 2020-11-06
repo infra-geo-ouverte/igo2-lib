@@ -17,6 +17,22 @@
       "actionbar": {
         "scrollUp": "Défiler vers le haut",
         "scrollDown": "Défiler vers le bas"
+      },
+      "interactiveTour": {
+        "tooltipTourToolButton": "Aide interactive sur l'outil",
+        "disaledTooltipTourToolButton": "Pour avoir accès au tour interactif de cet outil, ajouter des contextes ou des couches",
+        "buttonTitle": "Découvrir",
+        "exitButton": "Quitter",
+        "backButton": "Précédent",
+        "nextButton": "Suivant"
+      },
+      "paginator": {
+        "firstPageLabel": "Première page",
+        "itemsPerPageLabel": "Items par page:",
+        "lastPageLabel": "Dernière page",
+        "nextPageLabel": "Page suivante",
+        "previousPageLabel": "Page précédente",
+        "of": "de"
       }
     }
   }

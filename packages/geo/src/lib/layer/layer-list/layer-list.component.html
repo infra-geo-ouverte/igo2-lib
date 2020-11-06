@@ -24,6 +24,7 @@
         [selectionMode]="selection"
         [selectAll]="selectAllCheck"
         [layerCheck]="layer.options.check"
+        [changeDetection]="layerItemChangeDetection$"
         (action)="toggleLayerTool($event)"
         (checkbox)="layersCheck($event)">
     </igo-layer-item>
@@ -31,6 +32,7 @@
 </igo-list>
 
 <igo-panel *ngIf="!selection && layerTool && activeLayer" class="igo-layer-actions-container" [title]="activeLayer.title">
+
   <div class="igo-layer-button-group">
   <ng-container igoLayerItemToolbar
     [ngTemplateOutlet]="templateLayerToolbar"
@@ -177,6 +179,17 @@
 
     <button
       mat-icon-button
+      color="primary"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [disabled]="layersChecked.length === 0"
+      [matTooltip]="statusSelectedLayersCheck === 'ALL_HIDDEN' ? ('igo.geo.layer.showSelectedLayers' | translate) : ('igo.geo.layer.hideSelectedLayers' | translate)"
+      (click)="toggleVisibility(layersChecked)">
+      <mat-icon	[svgIcon]="(statusSelectedLayersCheck === 'ALL_HIDDEN') ? 'eye-off' : 'eye'"></mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
       color="warn"
       tooltip-position="below"
       matTooltipShowDelay="500"
@@ -185,5 +198,6 @@
       (click)="removeLayers(layersChecked)">
       <mat-icon svgIcon="delete"></mat-icon>
     </button>
+
   </div>
 </igo-panel>

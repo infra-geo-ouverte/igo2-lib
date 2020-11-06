@@ -11,13 +11,14 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/demo",
             "index": "demo/src/index.html",
             "main": "demo/src/main.ts",
@@ -26,6 +27,7 @@
             "assets": [
               "demo/src/favicon.ico",
               "demo/src/assets",
+              "demo/src/config",
               "demo/src/contexts",
               "demo/src/locale",
               {
@@ -41,7 +43,23 @@
             ],
             "styles": ["demo/src/styles.scss"],
             "scripts": [],
-            "es5BrowserSupport": true
+            "allowedCommonJsDependencies": [
+              "hammerjs",
+              "typy",
+              "jspdf",
+              "file-saver",
+              "jwt-decode",
+              "@turf/helpers",
+              "@turf/line-segment",
+              "@turf/meta",
+              "@turf/invariant",
+              "@turf/line-intersect",
+              "pbf",
+              "geojson-rbush",
+              "minimatch",
+              "path",
+              "brace-expansion"
+            ]
           },
           "configurations": {
             "production": {
@@ -53,18 +71,22 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "6mb"
+                  "maximumWarning": "6mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -139,7 +161,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -151,7 +173,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/auth/ng-package.prod.json"
+              "project": "packages/auth/ng-package.prod.json",
+              "tsConfig": "packages/auth/tsconfig.lib.prod.json"
             }
           }
         },
@@ -183,7 +206,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -195,7 +218,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/common/ng-package.prod.json"
+              "project": "packages/common/ng-package.prod.json",
+              "tsConfig": "packages/common/tsconfig.lib.prod.json"
             }
           }
         },
@@ -227,7 +251,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -239,7 +263,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/core/ng-package.prod.json"
+              "project": "packages/core/ng-package.prod.json",
+              "tsConfig": "packages/core/tsconfig.lib.prod.json"
             }
           }
         },
@@ -271,7 +296,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -283,7 +308,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/geo/ng-package.prod.json"
+              "project": "packages/geo/ng-package.prod.json",
+              "tsConfig": "packages/geo/tsconfig.lib.prod.json"
             }
           }
         },
@@ -321,7 +347,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/utils/ng-package.prod.json"
+              "project": "packages/utils/ng-package.prod.json",
+              "tsConfig": "packages/utils/tsconfig.lib.prod.json"
             }
           }
         },
@@ -345,7 +372,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -357,7 +384,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/context/ng-package.prod.json"
+              "project": "packages/context/ng-package.prod.json",
+              "tsConfig": "packages/context/tsconfig.lib.prod.json"
             }
           }
         },
@@ -389,7 +417,7 @@
       "schematics": {
         "@schematics/angular:component": {
           "inlineTemplate": false,
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
@@ -401,7 +429,8 @@
           },
           "configurations": {
             "production": {
-              "project": "packages/integration/ng-package.prod.json"
+              "project": "packages/integration/ng-package.prod.json",
+              "tsConfig": "packages/integration/tsconfig.lib.prod.json"
             }
           }
         },

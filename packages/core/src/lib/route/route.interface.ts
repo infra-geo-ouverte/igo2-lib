@@ -9,5 +9,8 @@ export interface RouteServiceOptions {
   directionsCoordKey?: boolean | string;
   toolKey?: boolean | string;
   wmsUrlKey?: boolean | string;
-  layersKey?: boolean | string;
+  wmsLayersKey?: boolean | string;
+  wmtsUrlKey?: boolean | string;
+  wmtsLayersKey?: boolean | string;
+  vectorKey?: boolean | string;
 }

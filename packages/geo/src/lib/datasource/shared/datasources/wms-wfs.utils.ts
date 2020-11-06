@@ -25,17 +25,20 @@ export function formatWFSQueryString(
   dataSourceOptions: WFSDataSourceOptions | WMSDataSourceOptions,
   count?: number,
   epsg?: string,
-  properties?: string
+  properties?: string,
+  startIndex: number = 0,
+  forceDefaultOutputFormat: boolean = false
 ): { name: string; value: string }[] {
   const versionWfs200 = '2.0.0'; // not the same usage as defaultWfsVersion.
   const url = dataSourceOptions.urlWfs;
   const paramsWFS = dataSourceOptions.paramsWFS;
   const effectiveCount = count || defaultMaxFeatures;
+  const effectiveStartIndex = paramsWFS.version === versionWfs200 ? `startIndex=${startIndex}` : '';
   const epsgCode = epsg || defaultEpsg;
-  const outputFormat = paramsWFS.outputFormat
+  let outputFormat = paramsWFS.outputFormat
     ? `outputFormat=${paramsWFS.outputFormat}`
     : '';
-  const version = paramsWFS.version
+  let version = paramsWFS.version
     ? `version=${paramsWFS.version}`
     : `version=${defaultWfsVersion}`;
   const paramTypename =
@@ -43,11 +46,17 @@ export function formatWFSQueryString(
   const featureTypes = `${paramTypename}=${paramsWFS.featureTypes}`;
   const paramMaxFeatures =
     paramsWFS.version === versionWfs200 ? 'count' : 'maxFeatures';
-  const cnt = count
+  let cnt = count
     ? `${paramMaxFeatures}=${effectiveCount}`
     : paramsWFS.maxFeatures
     ? `${paramMaxFeatures}=${paramsWFS.maxFeatures}`
     : `${paramMaxFeatures}=${effectiveCount}`;
+  if (forceDefaultOutputFormat) {
+      outputFormat = '';
+      version = 'version=1.1.0';
+      cnt = cnt.replace('count', 'maxFeatures');
+    }
+
   const srs = epsg
     ? `srsname=${epsgCode}`
     : paramsWFS.srsName
@@ -73,7 +82,7 @@ export function formatWFSQueryString(
 
   const getCapabilities = `${url}?service=WFS&request=GetCapabilities&${version}`;
   let getFeature = `${url}?service=WFS&request=GetFeature&${version}&${featureTypes}&`;
-  getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}`;
+  getFeature += `${outputFormat}&${srs}&${cnt}&${propertyName}&${effectiveStartIndex}`;
 
   let getpropertyvalue = `${url}?service=WFS&request=GetPropertyValue&version=${versionWfs200}&${featureTypes}&`;
   getpropertyvalue += `&${cnt}&${valueReference}`;

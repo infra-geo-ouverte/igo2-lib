@@ -105,13 +105,17 @@ export class CoordinatesReverseSearchSource extends SearchSource
           coordLonLat,
           coords,
           {
-            GoogleMaps: GoogleLinks.getGoogleMapsLink(data[0], data[1]),
+            GoogleMaps: GoogleLinks.getGoogleMapsCoordLink(data[0], data[1]),
             GoogleStreetView: GoogleLinks.getGoogleStreetViewLink(
               data[0],
               data[1]
             ),
             OpenStreetMap: OsmLinks.getOpenStreetMapLink(data[0], data[1], 14)
-          }),
+          },
+          {
+            Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+          }
+          ),
         meta: {
           id: data[0].toString() + ',' + data[1].toString(),
           title: roundedCoordString

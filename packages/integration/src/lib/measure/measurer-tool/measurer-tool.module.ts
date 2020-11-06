@@ -13,7 +13,6 @@ import { MeasurerToolComponent } from './measurer-tool.component';
   ],
   declarations: [MeasurerToolComponent],
   exports: [MeasurerToolComponent],
-  entryComponents: [MeasurerToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppMeasurerToolModule {}

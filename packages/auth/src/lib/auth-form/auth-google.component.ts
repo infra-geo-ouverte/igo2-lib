@@ -6,7 +6,7 @@ import {
   EventEmitter
 } from '@angular/core';
 
-import { ConfigService } from '@igo2/core';
+import { ConfigService, LanguageService } from '@igo2/core';
 import { AuthGoogleOptions } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 
@@ -24,6 +24,7 @@ export class AuthGoogleComponent {
   constructor(
     private authService: AuthService,
     private config: ConfigService,
+    private languageService: LanguageService,
     private appRef: ApplicationRef
   ) {
     this.options = this.config.getConfig('auth.google') || {};
@@ -31,6 +32,8 @@ export class AuthGoogleComponent {
     if (this.options.apiKey && this.options.clientId) {
       this.loadSDKGoogle();
       this.loadPlatform();
+    } else {
+      console.warn('Google authentification needs "apiKey" and "clientId" options');
     }
   }
 
@@ -58,6 +61,7 @@ export class AuthGoogleComponent {
       })
       .then(() => {
         this.handleSignOutClick();
+        this.updateTextButton();
         (window as any).gapi.auth2.getAuthInstance().isSignedIn.listen(rep => {
           this.updateSigninStatus(rep);
         });
@@ -65,8 +69,20 @@ export class AuthGoogleComponent {
   }
 
   private updateSigninStatus(isSignedIn) {
+    this.updateTextButton();
     if (isSignedIn) {
       this.loginGoogle((window as any).gapi.client.getToken().access_token);
+    }
+  }
+
+  private updateTextButton() {
+    const btn = document.querySelector('span[id^="not_signed_"]');
+    if (btn && this.languageService.getLanguage() !== 'en') {
+      if (btn.innerHTML === 'Sign in with Google') {
+        btn.innerHTML = this.languageService.translate.instant('igo.auth.google.login');
+      } else if (btn.innerHTML === 'Signed in with Google') {
+        btn.innerHTML = this.languageService.translate.instant('igo.auth.google.logged');
+      }
     }
   }
 

@@ -9,11 +9,13 @@ import {
   IgoMap,
   LayerListControlsOptions,
   SearchSourceService,
-  sourceCanSearch
+  sourceCanSearch,
+  ExportOptions
 } from '@igo2/geo';
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
+import { ImportExportState } from '../../import-export/import-export.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -50,9 +52,9 @@ export class MapDetailsToolComponent implements OnInit {
 
   get layers$(): Observable<Layer[]> {
     return this.map.layers$.pipe(
-      map(layers =>
+      map((layers) =>
         layers.filter(
-          layer =>
+          (layer) =>
             layer.showInLayerList !== false &&
             (!this.excludeBaseLayers || !layer.baseLayer)
         )
@@ -91,7 +93,7 @@ export class MapDetailsToolComponent implements OnInit {
       this.searchSourceService
         .getSources()
         .filter(sourceCanSearch)
-        .filter(s => s.available && s.getType() === 'Layer').length > 0
+        .filter((s) => s.available && s.getType() === 'Layer').length > 0
     );
   }
 
@@ -107,7 +109,8 @@ export class MapDetailsToolComponent implements OnInit {
     private mapState: MapState,
     private toolState: ToolState,
     private searchSourceService: SearchSourceService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private importExportState: ImportExportState
   ) {}
 
   ngOnInit(): void {
@@ -128,5 +131,11 @@ export class MapDetailsToolComponent implements OnInit {
 
   contextEmit() {
     this.toolState.toolbox.activateTool('contextManager');
+  }
+
+  activateExport(id: string) {
+    this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
+    this.importExportState.setMode('export');
+    this.toolState.toolbox.activateTool('importExport');
   }
 }

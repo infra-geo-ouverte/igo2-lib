@@ -16,6 +16,8 @@
         "dialog": {
           "cloneMsg": "Le contexte '{{value}}' a été cloné",
           "cloneTitle": "Contexte cloné",
+          "copyMsg": "Texte copié",
+          "copyTitle": "Identifiant du contexte",
           "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce contexte ?",
           "deleteMsg": "Le contexte '{{value}}' a été supprimé",
           "deleteTitle": "Contexte supprimé",
@@ -31,10 +33,12 @@
             "title": "Erreur de serveur"
           },
           "addPermission": "La permission que vous tentez d'ajouter est déjà présente dans le contexte.",
+          "addPermissionEmpty": "La permission que vous tentez d'ajouter n'est pas valide",
           "addPermissionTitle": "Erreur d'ajout de permission"
         },
-        "favorite": "Favori",
+        "favorite": "Définir comme context favori",
         "form": {
+          "copy": "Copier l'identifiant du contexte",
           "edit": "Enregistrer",
           "title": "Titre",
           "titleRequired": "Le titre est obligatoire",
@@ -42,19 +46,68 @@
           "uriRequired": "L'identifiant est obligatoire"
         },
         "invalid": {
-          "text": "Le contexte \"{{value}}\" est invalide",
+          "text": "Le contexte \"{{value}}\" est invalide. Le contexte par défaut a été chargé.",
           "title": "Contexte invalide"
         },
         "managePermissions": "Gérer les permissions du contexte",
         "manageTools": "Gérer les outils du contexte",
-        "ourContexts": "Vos contextes",
+        "ourContexts": "Mes contextes",
         "publicContexts": "Contextes publics",
         "save": "Sauvegarder ce contexte",
         "sharedContexts": "Contextes partagés",
-        "filterPlaceHolder": "Filtrer la liste des contextes",
-        "sortAlphabetically": "Trier la liste des contextes en ordre alphabétique",
-        "sortContextOrder": "Replacer les contextes selon la liste initial",
-        "userAccount": "Profils utilisateurs"
+        "filterPlaceHolder": "Filtrer par nom",
+        "sortAlphabetically": "Trier en ordre alphabétique",
+        "sortContextOrder": "Replacer selon la date de création",
+        "userAccount": "Profils utilisateurs",
+        "filterUser": "Filtrer par groupe d'utilisateur",
+        "emptyContext": "Contexte vide",
+        "emptyContextTooltip": "Créer un nouveau contexte vide",
+        "contextMap": "Contexte à partir de la carte",
+        "contextMapTooltip": "Créer un nouveau contexte à partir des couches la carte",
+        "hide": "Masquer ce contexte",
+        "show": "Montrer ce contexte",
+        "showHidden": "Montrer les contextes masqués"
+      },
+      "contextImportExport": {
+        "export": {
+          "exportPlaceHolder": "Couches",
+          "exportContextName": "Nom du contexte",
+          "exportSelectAll": "Tout sélectionner",
+          "success": {
+            "text": "Contexte exporté avec succès.",
+            "title":"Exportation réussie"
+          },
+          "nothing": {
+            "text": "Impossible d’exporter, contexte non valide ou aucun contexte sélectionné.",
+            "title": "Donnée non valide ou non présente"
+          },
+          "failed": {
+            "text": "Impossible d’exporter, problème de contexte rencontré.",
+            "title": "Problème d’exportation"
+          }
+        },
+        "import": {
+          "success": {
+            "title": "Contexte importé",
+            "text": "Le context '{{value}}' a été ajouté à la carte"
+          },
+          "empty": {
+            "text": "Le context '{{value}}' est vide, impossible d'importer",
+            "title": "Contexte vide"
+          },
+          "invalid": {
+            "text": "Le context '{{value}}' est invalide.",
+            "title": "Context invalide"
+          },
+          "unreadable": {
+            "text": "Le context '{{value}}' est impossible à lire",
+            "title": "Context illisible"
+          },
+          "tooLarge": {
+            "text": "Le context '{{value}}' est trop volumineux (Maximum: {{size}} Mo)",
+            "title": "Context trop volumineux"
+          }
+        }
       },
       "permission": {
         "addBtn": "Ajouter",
@@ -68,11 +121,15 @@
           "scopeChangedTitle": "Changement de la portée"
         },
         "profil": "Profil",
+        "user": "Utilisateur ou groupe",
         "profilRequired": "Le profil est obligatoire",
         "read": "Lecture seule",
+        "readOnlyTitle": "Contexte en lecture seule",
+        "readOnlyMsg": "Vous pouvez seulement retirer la permission si le contexte est directement partagé à votre nom d'utilisateur.",
         "scope": {
           "private": "Privé",
           "protected": "Protégé",
+          "shared": "Partagé",
           "public": "Public"
         },
         "write": "Lecture et écriture"

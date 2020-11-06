@@ -16,6 +16,8 @@ import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { IgoMap } from '../../map';
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'igo-ogc-filter-toggle-button',
@@ -30,14 +32,30 @@ export class OgcFilterToggleButtonComponent implements OnInit {
 
   @Input() map: IgoMap;
 
+  public form: FormGroup;
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
-  public currentPushButtonGroup;
+
+  get currentPushButtonGroup() {
+    return this.form.get('group').value;
+  }
+  set currentPushButtonGroup(value) {
+    this.form.patchValue({ group: value });
+  }
 
   constructor(
-    private ogcFilterService: OGCFilterService
+    private ogcFilterService: OGCFilterService,
+    private formBuilder: FormBuilder
   ) {
     this.ogcFilterWriter = new OgcFilterWriter();
+    this.buildForm();
+  }
+
+  private buildForm() {
+    this.form = this.formBuilder.group({
+      buttons: ['', [Validators.required]],
+      group: ['', [Validators.required]]
+    });
   }
 
   getPushButtonsGroups(): PushButtonGroup[] {
@@ -52,6 +70,22 @@ export class OgcFilterToggleButtonComponent implements OnInit {
         this.datasource.options.ogcFilters.pushButtons.groups[0];
     }
     this.applyFilters();
+
+    this.form
+      .get('group')
+      .valueChanges
+      .pipe(debounceTime(750))
+      .subscribe(() => {
+        this.onChangeGroup();
+        this.applyFilters();
+      });
+    this.form
+      .get('buttons')
+      .valueChanges
+      .pipe(debounceTime(750))
+      .subscribe(() => {
+        this.applyFilters();
+      });
   }
 
   getToolTip(pb: OgcPushButton): string  {
@@ -82,17 +116,19 @@ export class OgcFilterToggleButtonComponent implements OnInit {
     return bundle.vertical ? bundle.vertical : false;
   }
 
-  onChangeGroup() {
+  private onChangeGroup() {
 
     this.getPushButtonsGroups().map(g => g.enabled = false);
     this.getPushButtonsGroups().find(g => g === this.currentPushButtonGroup).enabled = true;
-    this.applyFilters();
   }
 
-  applyFilters(currentOgcPushButton?: OgcPushButton) {
+  onButtonChange(currentOgcPushButton?: OgcPushButton) {
     if (currentOgcPushButton) {
       currentOgcPushButton.enabled = !currentOgcPushButton.enabled;
     }
+  }
+
+  private applyFilters() {
     let filterQueryString = '';
     const conditions = [];
     this.currentPushButtonGroup.computedButtons.map(buttonBundle => {
@@ -118,7 +154,7 @@ export class OgcFilterToggleButtonComponent implements OnInit {
     }
     if (this.datasource.options.type === 'wfs') {
       // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
-      this.datasource.ol.clear();
+      this.datasource.ol.refresh();
     }
   }
 }

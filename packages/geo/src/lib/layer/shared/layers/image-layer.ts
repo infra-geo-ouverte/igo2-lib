@@ -35,7 +35,7 @@ export class ImageLayer extends Layer {
     const image = new olLayerImage(olOptions);
     if (this.authInterceptor) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src);
+        this.customLoader(tile, src, this.authInterceptor);
       });
     }
 
@@ -51,11 +51,11 @@ export class ImageLayer extends Layer {
     super.setMap(map);
   }
 
-  private customLoader(tile, src) {
+  private customLoader(tile, src, interceptor) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
-    const intercepted = this.authInterceptor.interceptXhr(xhr, src);
+    const intercepted = interceptor.interceptXhr(xhr, src);
     if (!intercepted) {
       xhr.abort();
       tile.getImage().src = src;

@@ -1,20 +1,16 @@
-import {
-  Component,
-  Input,
-  OnInit
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FloatLabelType } from '@angular/material/form-field';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import {
-  OgcInterfaceFilterOptions,
   OgcFilterableDataSource,
   OgcFiltersOptions
 } from '../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
 import { WktService } from '../../wkt/shared/wkt.service';
 import { IgoMap } from '../../map';
-import { FloatLabelType } from '@angular/material';
-import { BehaviorSubject } from 'rxjs';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
+import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 
 @Component({
   selector: 'igo-ogc-filter-form',
@@ -22,19 +18,25 @@ import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/d
   styleUrls: ['./ogc-filter-form.component.scss']
 })
 export class OgcFilterFormComponent implements OnInit {
+  ogcFilterOperator = OgcFilterOperator;
+  filteredValues$: Observable<string[]>;
+  filteredFields$: Observable<SourceFieldsOptionsParams[]>;
   public allOgcFilterOperators;
-  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(undefined);
+  public ogcFilterOperators$ = new BehaviorSubject<{ [key: string]: any }>(
+    undefined
+  );
   public igoSpatialSelectors;
   public value = '';
   public inputOperator;
-  // public fields: any[];
+  public selectedField$ = new BehaviorSubject<SourceFieldsOptionsParams>(
+    undefined
+  );
   public fields$ = new BehaviorSubject<SourceFieldsOptionsParams[]>([]);
-  public values: any[];
   public color = 'primary';
-  public snrc = '';
   public disabled;
-  public baseOverlayName = 'ogcFilterOverlay_';
-  public currentFilter$ = new BehaviorSubject<any>(undefined);
+  public currentFilterIsSpatial$ = new BehaviorSubject<boolean>(false);
+  public defaultStepMillisecond = 6000;
+  public inputClearable: string;
 
   @Input() refreshFilters: () => void;
 
@@ -42,25 +44,45 @@ export class OgcFilterFormComponent implements OnInit {
 
   @Input() map: IgoMap;
 
-  @Input()
-  set currentFilter(currentFilter: any) {
-    this.currentFilter$.next(currentFilter);
+  @Input() currentFilter: any;
+
+  set snrc(value: any) {
+    const checkSNRC50k = /^\d{2}[a-l][0,1][0-9]$/gi;
+    const checkSNRC250k = /^\d{2}[a-p]$/gi;
+    const checkSNRC1m = /^\d{2}$/gi;
+    if (
+      checkSNRC1m.test(value) ||
+      checkSNRC250k.test(value) ||
+      checkSNRC50k.test(value)
+    ) {
+      this._snrc = value;
+      this.currentFilter.igoSNRC = value;
+    }
   }
-  get currentFilter(): any {
-    return this.currentFilter$.value;
+
+  get snrc(): any {
+    return this._snrc;
   }
+
+  private _snrc = '';
 
   @Input() floatLabel: FloatLabelType = 'never';
 
   get activeFilters() {
     return this.datasource.options.ogcFilters.interfaceOgcFilters.filter(
-      f => f.active === true
+      (f) => f.active === true
     );
   }
 
-  constructor(
-    private wktService: WktService
-  ) {
+  get allowedOperators() {
+    return new OgcFilterWriter().computeAllowedOperators(
+      this.fields$.value,
+      this.currentFilter.propertyName,
+      this.datasource.options.ogcFilters.allowedOperatorsType
+    );
+  }
+
+  constructor(private wktService: WktService) {
     // TODO: Filter permitted operator based on wfscapabilities
     // Need to work on regex on XML capabilities because
     // comaparison operator's name varies between WFS servers...
@@ -79,79 +101,142 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateField();
+    const sFields = this.datasource.options.sourceFields.filter(
+      (sf) =>
+        sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters
+    );
+    sFields.map((sfs) => {
+      if (sfs.values) {
+        sfs.values.sort();
+      }
+    });
+    this.fields$.next(sFields);
+    this.updateFieldsList();
+    this.selectedField$.next(
+      this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
+    );
+    this.updateValuesList();
+    this.selectedField$.subscribe((f) => {
+      this.ogcFilterOperators$.next(this.allowedOperators);
+      if (
+        Object.keys(this.allowedOperators).indexOf(
+          this.currentFilter.operator
+        ) === -1
+      ) {
+        this.currentFilter.operator = Object.keys(this.allowedOperators)[0];
+        this.currentFilter.operator = Object.keys(this.allowedOperators)[0];
+      }
+      this.updateValuesList();
+    });
+    this.currentFilterIsSpatial();
   }
 
-  updateField() {
-    if (!this.datasource.options.sourceFields) {
-      return;
-    }
-    const fields = this.datasource.options.sourceFields
-      .filter(sf => (sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters));
-    fields.filter(f => f.name === this.currentFilter.propertyName)
-      .forEach(element => {
-        this.values = element.values !== undefined ? element.values.sort() : [];
-      });
+  updateFieldsList(value?: string) {
+    this.filteredFields$ =
+      value && value.length > 0 ? of(this._filterFields(value)) : this.fields$;
+  }
 
-    this.fields$.next(fields);
-    const allowedOperators = new OgcFilterWriter().computeAllowedOperators(
-      fields,
-      this.currentFilter.propertyName,
-      this.datasource.options.ogcFilters.allowedOperatorsType);
-    this.ogcFilterOperators$.next(allowedOperators);
-    if (Object.keys(allowedOperators).indexOf(this.currentFilter$.value.operator) === -1) {
-      this.currentFilter$.value.operator = Object.keys(allowedOperators)[0];
+  updateValuesList(value?: string, pos?: number) {
+    this.filteredValues$ =
+      value && value.length > 0
+        ? of(this._filterValues(value))
+        : this.selectedField$.value
+        ? of(this.selectedField$.value.values)
+        : of([]);
+    if (value && value.length >= 2) {
+      this.changeProperty(value, pos);
     }
+  }
+
+  private _filterFields(value: string): SourceFieldsOptionsParams[] {
+    const keywordRegex = new RegExp(
+      value.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+      'gi'
+    );
+    return this.fields$.value.filter((val) =>
+      keywordRegex.test(
+        val.alias.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      )
+    );
+  }
+
+  private _filterValues(value: string): string[] {
+    const keywordRegex = new RegExp(
+      value
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, ''),
+      'gi'
+    );
+    return this.selectedField$.value.values.filter((val) =>
+      keywordRegex.test(
+        val
+          .toString()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+      )
+    );
+  }
+
+  clearSelectedField() {
+    this.currentFilter.propertyName = '';
+    this.selectedField$.next(undefined);
+    this.clearProperty();
+  }
+
+  isClearable(pos?: number) {
+    const detectedProperty = this.detectProperty(pos);
+    if (detectedProperty) {
+      return this.currentFilter[detectedProperty];
+    }
+  }
+  clearProperty(pos?: number) {
+    // this.autoCompleteInputValues.closePanel();
+    const detectedProperty = this.detectProperty(pos);
+    if (detectedProperty) {
+      return (this.currentFilter[detectedProperty] = '');
+    }
+  }
+
+  toggleFilterState(event) {
+    this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+      (f) => f.filterid === this.currentFilter.filterid
+    ).active = event.checked;
     this.refreshFilters();
   }
 
-  toggleFilterState(event, filter: OgcInterfaceFilterOptions, property) {
-    this.updateField();
-    if (event.checked) {
-      this.datasource.options.ogcFilters.interfaceOgcFilters
-        .filter(f => f.filterid === filter.filterid)
-        .forEach(element => {
-          element[property] = true;
-        });
-    } else {
-      this.removeOverlayByID(filter.filterid);
-      this.datasource.options.ogcFilters.interfaceOgcFilters
-        .filter(f => f.filterid === filter.filterid)
-        .forEach(element => {
-          element[property] = false;
-        });
-    }
-    this.refreshFilters();
-  }
-
-  deleteFilter(filter: OgcInterfaceFilterOptions) {
+  deleteFilter() {
     const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
     ogcFilters.interfaceOgcFilters = ogcFilters.interfaceOgcFilters.filter(
-      f => f.filterid !== filter.filterid
+      (f) => f.filterid !== this.currentFilter.filterid
     );
-    this.removeOverlayByID(filter.filterid);
-
     this.refreshFilters();
   }
 
-  changeNumericProperty(filter: OgcInterfaceFilterOptions, property, value) {
-    this.changeProperty(filter, property, parseFloat(value));
+  changeLogical(logical: string) {
+    this.currentFilter.parentLogical = logical;
     this.refreshFilters();
   }
 
-  private removeOverlayByID(id) {
-    const overlayId = this.baseOverlayName + id;
-    if (this.map.overlay.dataSource.ol.getFeatureById(overlayId)) {
-      this.map.overlay.dataSource.ol.removeFeature(
-        this.map.overlay.dataSource.ol.getFeatureById(overlayId)
-      );
+  changeOperator(operator: string) {
+    this.currentFilter.operator = operator;
+    this.currentFilterIsSpatial();
+
+    if (
+      this.currentFilterIsSpatial$.value &&
+      this.currentFilter.wkt_geometry.length === 0
+    ) {
+      this.changeSpatialSelector(this.currentFilter.igoSpatialSelector);
+    } else {
+      this.refreshFilters();
     }
   }
 
-  changeOperator(filter) {
-    if (this.ogcFilterOperators$.value[filter.operator].spatial === false) {
-      this.removeOverlayByID(filter.filterid);
-    }
+  changeField(field: string) {
+    this.currentFilter.propertyName = field;
+    this.selectedField$.next(
+      this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
+    );
     this.refreshFilters();
   }
 
@@ -162,47 +247,117 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
-  changeProperty(filter: OgcInterfaceFilterOptions, property, value) {
-    this.datasource.options.ogcFilters.interfaceOgcFilters
-      .filter(f => f.filterid === filter.filterid)
-      .forEach(element => {
-        element[property] = value;
-      });
+  changeProperty(value: any, pos?: number) {
+    const detectedProperty = this.detectProperty(pos);
+    if (detectedProperty) {
+      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter.filterid
+      )[detectedProperty] = value;
+      this.refreshFilters();
+    }
+  }
+
+  changeNumericProperty(value, pos: number) {
+    this.changeProperty(parseFloat(value), pos);
+  }
+
+  changeSpatialSelector(value: any) {
+    this.currentFilter.igoSpatialSelector = value;
+
+    if (value === 'fixedExtent') {
+      this.changeMapExtentGeometry(false);
+    }
+    this.currentFilterIsSpatial();
     this.refreshFilters();
   }
 
-  changeGeometry(filter, value?) {
-    const checkSNRC50k = /\d{2,3}[a-l][0,1][0-9]/gi;
-    const checkSNRC250k = /\d{2,3}[a-p]/gi;
-    const checkSNRC1m = /\d{2,3}/gi;
-    const mapProjection = this.map.projection;
-    this.removeOverlayByID(filter.filterid);
-    this.datasource.options.ogcFilters.interfaceOgcFilters
-      .filter(f => f.filterid === filter.filterid)
-      .forEach(element => {
-        let wktPoly;
-        if (filter.igoSpatialSelector === 'snrc') {
-          if (value === '' && this.snrc !== '') {
-            wktPoly = this.wktService.snrcToWkt(this.snrc, this.map.projection).wktPoly;
-            element.wkt_geometry = wktPoly;
-          } else if (
-            value !== '' &&
-            (checkSNRC1m.test(value) ||
-              checkSNRC250k.test(value) ||
-              checkSNRC50k.test(value))
-          ) {
-            wktPoly = this.wktService.snrcToWkt(value, this.map.projection).wktPoly;
-            element.wkt_geometry = wktPoly;
-          }
-        } else if (filter.igoSpatialSelector === 'fixedExtent') {
-          wktPoly = this.wktService.extentToWkt(
-            mapProjection,
-            this.map.viewController.getExtent(),
-            mapProjection
-          ).wktPoly;
-          element.wkt_geometry = wktPoly;
-        }
-      });
+  changeSNRC(value: any) {
+    this.snrc = value;
+    this.changeSNRCGeometry();
+  }
+
+  changeSNRCGeometry() {
+    const interfaceOgcFilter = this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+      (f) => f.filterid === this.currentFilter.filterid
+    );
+    if (!interfaceOgcFilter) {
+      return;
+    }
+
+    if (this.snrc && this.currentFilter.igoSpatialSelector === 'snrc') {
+      this.currentFilter.wkt_geometry = this.wktService.snrcToWkt(
+        this.snrc,
+        this.map.projection
+      ).wktPoly;
+    }
     this.refreshFilters();
+  }
+
+  changeMapExtentGeometry(refresh: boolean = true) {
+    const interfaceOgcFilter = this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+      (f) => f.filterid === this.currentFilter.filterid
+    );
+    if (!interfaceOgcFilter) {
+      return;
+    }
+
+    if (this.currentFilter.igoSpatialSelector === 'fixedExtent') {
+      this.currentFilter.wkt_geometry = this.wktService.extentToWkt(
+        this.map.projection,
+        this.map.viewController.getExtent(),
+        this.map.projection
+      ).wktPoly;
+    }
+    if (refresh) {
+      this.refreshFilters();
+    }
+  }
+
+  detectProperty(pos?: number): string {
+    switch (this.currentFilter.operator) {
+      case OgcFilterOperator.PropertyIsNotEqualTo:
+      case OgcFilterOperator.PropertyIsEqualTo:
+      case OgcFilterOperator.PropertyIsGreaterThan:
+      case OgcFilterOperator.PropertyIsGreaterThanOrEqualTo:
+      case OgcFilterOperator.PropertyIsLessThan:
+      case OgcFilterOperator.PropertyIsLessThanOrEqualTo:
+        return 'expression';
+      case OgcFilterOperator.PropertyIsLike:
+        return 'pattern';
+      case OgcFilterOperator.PropertyIsBetween:
+        return pos && pos === 1
+          ? 'lowerBoundary'
+          : pos && pos === 2
+          ? 'upperBoundary'
+          : undefined;
+      case OgcFilterOperator.During:
+        return pos && pos === 1
+          ? 'begin'
+          : pos && pos === 2
+          ? 'end'
+          : undefined;
+      default:
+        return;
+    }
+  }
+
+  private currentFilterIsSpatial() {
+    let isSpatial = false;
+    if (this.currentFilter) {
+      isSpatial =
+        [
+          OgcFilterOperator.Contains,
+          OgcFilterOperator.Intersects,
+          OgcFilterOperator.Within
+        ].indexOf(this.currentFilter.operator) !== -1;
+    }
+    this.currentFilterIsSpatial$.next(isSpatial);
+  }
+
+  isTemporalOperator() {
+    return (
+      this.currentFilter.operator.toLowerCase() ===
+      this.ogcFilterOperator.During.toLowerCase()
+    );
   }
 }

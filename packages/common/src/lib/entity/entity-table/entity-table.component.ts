@@ -6,12 +6,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import {
+  EntityKey,
   EntityRecord,
   EntityState,
   EntityStore,
@@ -21,6 +24,9 @@ import {
   EntityTableSelectionState,
   EntityTableScrollBehavior
 } from '../shared';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { EntityTablePaginatorOptions } from '../entity-table-paginator/entity-table-paginator.interface';
 
 @Component({
   selector: 'igo-entity-table',
@@ -28,7 +34,9 @@ import {
   styleUrls: ['./entity-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntityTableComponent implements OnInit, OnDestroy  {
+export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
+
+  entitySortChange$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Reference to the column renderer types
@@ -54,9 +62,34 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   private selection$$: Subscription;
 
   /**
+   * Subscription to the dataSource
+   */
+  private dataSource$$: Subscription;
+
+  /**
+   * The last record checked. Useful for selecting
+   * multiple records by holding the shift key and checking
+   * checkboxes.
+   */
+  private lastRecordCheckedKey: EntityKey;
+
+  /**
    * Entity store
    */
   @Input() store: EntityStore<object>;
+
+  /**
+   * Table paginator
+   */
+  @Input() set paginator(value: MatPaginator) {
+    this._paginator = value;
+    this.dataSource.paginator = value;
+  }
+
+  get paginator(): MatPaginator {
+    return this._paginator;
+  }
+  private _paginator: MatPaginator;
 
   /**
    * Table template
@@ -76,6 +109,18 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   sortNullsFirst: boolean = false;
 
   /**
+   * Show the table paginator or not. False by default.
+   */
+  @Input()
+  withPaginator: boolean = false;
+
+  /**
+   * Paginator options
+   */
+  @Input()
+  paginatorOptions: EntityTablePaginatorOptions;
+
+  /**
    * Event emitted when an entity (row) is clicked
    */
   @Output() entityClick = new EventEmitter<object>();
@@ -86,6 +131,11 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
   @Output() entitySelectChange = new EventEmitter<{
     added: object[];
   }>();
+
+  /**
+   * Event emitted when the table sort is changed.
+   */
+  @Output() entitySortChange: EventEmitter<{column: EntityTableColumn, direction: string}> = new EventEmitter(undefined);
 
   /**
    * Table headers
@@ -107,7 +157,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * Data source consumable by the underlying material table
    * @internal
    */
-  get dataSource(): BehaviorSubject<EntityRecord<object>[]> { return this.store.stateView.all$(); }
+  dataSource = new MatTableDataSource<object>();
 
   /**
    * Whether selection is supported
@@ -140,11 +190,43 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * @internal
    */
   ngOnInit() {
+    this.handleDatasource();
+    this.dataSource.paginator = this.paginator;
+  }
+
+  /**
+   * @internal
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    const store = changes.store;
+    if (store && store.currentValue !== store.previousValue) {
+      this.handleDatasource();
+    }
+  }
+
+  private handleDatasource() {
+    this.unsubscribeStore();
     this.selection$$ = this.store.stateView
       .manyBy$((record: EntityRecord<object>) => record.state.selected === true)
       .subscribe((records: EntityRecord<object>[]) => {
+        const firstSelected = records[0];
+        const firstSelectedStateviewPosition = this.store.stateView.all().indexOf(firstSelected);
+        const pageMax = this.paginator.pageSize * (this.paginator.pageIndex + 1);
+        const pageMin = pageMax - this.paginator.pageSize;
+
+        if (
+          this.paginator &&
+          firstSelectedStateviewPosition < pageMin ||
+          firstSelectedStateviewPosition >= pageMax) {
+          const pageToReach = Math.floor(firstSelectedStateviewPosition / this.paginator.pageSize);
+          this.dataSource.paginator.pageIndex = pageToReach;
+        }
         this.selectionState$.next(this.computeSelectionState(records));
       });
+    this.dataSource$$ = this.store.stateView.all$().subscribe((all) => {
+      this.dataSource.data = all;
+    });
+
   }
 
   /**
@@ -152,7 +234,16 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * @internal
    */
   ngOnDestroy() {
-    this.selection$$.unsubscribe();
+    this.unsubscribeStore();
+  }
+
+  private unsubscribeStore() {
+    if (this.selection$$) {
+      this.selection$$.unsubscribe();
+    }
+    if (this.dataSource$$) {
+      this.dataSource$$.unsubscribe();
+    }
   }
 
   /**
@@ -177,6 +268,10 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     this.cdRef.detectChanges();
   }
 
+  paginatorChange(event: MatPaginator) {
+    this.paginator = event;
+  }
+
   /**
    * On sort, sort the store
    * @param event Sort event
@@ -193,6 +288,8 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
         direction,
         nullsFirst: this.sortNullsFirst
       });
+      this.entitySortChange.emit({column, direction});
+      this.entitySortChange$.next(true);
     } else {
       this.store.stateView.sort(undefined);
     }
@@ -204,6 +301,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
    * @internal
    */
   onRowClick(record: EntityRecord<object>) {
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
     this.entityClick.emit(record.entity);
   }
 
@@ -255,6 +353,46 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     if (toggle === true) {
       this.entitySelectChange.emit({added: [entity]});
     }
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
+  }
+
+  /**
+   * When an entity is toggled, select or unselect it in the store. On select,
+   * emit an event.
+   * @param toggle Select or unselect
+   * @param record Record
+   * @internal
+   */
+  onShiftToggleRow(toggle: boolean, record: EntityRecord<object>, event: MouseEvent) {
+    if (this.selection === false) { return; }
+
+    if (this.selectMany === false || this.lastRecordCheckedKey === undefined) {
+      this.onToggleRow(toggle, record);
+      return;
+    }
+
+    // This is a workaround mat checkbox wrong behavior
+    // when the shift key is held.
+    // See https://github.com/angular/components/issues/6232
+    const range = window.document.createRange();
+    range.selectNode(event.target as HTMLElement);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    event.stopImmediatePropagation();
+
+    const records = this.store.stateView.all();
+    const recordIndex = records.indexOf(record);
+    const lastRecordChecked = this.store.stateView.get(this.lastRecordCheckedKey);
+    const lastRecordIndex = records.indexOf(lastRecordChecked);
+    const indexes = [recordIndex, lastRecordIndex];
+    const selectRecords = records.slice(Math.min(...indexes), Math.max(...indexes) + 1);
+
+    const entities = selectRecords.map((_record: EntityRecord<object>) => _record.entity);
+    this.store.state.updateMany(entities, {selected: toggle});
+    if (toggle === true) {
+      this.entitySelectChange.emit({added: entities});
+    }
+    this.lastRecordCheckedKey = this.store.stateView.getKey(record);
   }
 
   /**
@@ -267,7 +405,7 @@ export class EntityTableComponent implements OnInit, OnDestroy  {
     const selectionCount = selectedRecords.length;
     return selectionCount === 0 ?
       states.None :
-      (selectionCount === this.store.view.count ? states.All : states.Some);
+      (selectionCount === this.store.stateView.count ? states.All : states.Some);
   }
 
   /**

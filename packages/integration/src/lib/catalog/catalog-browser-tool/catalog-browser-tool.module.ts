@@ -14,7 +14,6 @@ import { CatalogBrowserToolComponent } from './catalog-browser-tool.component';
   ],
   declarations: [CatalogBrowserToolComponent],
   exports: [CatalogBrowserToolComponent],
-  entryComponents: [CatalogBrowserToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppCatalogBrowserToolModule {}

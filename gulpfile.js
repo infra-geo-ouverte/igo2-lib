@@ -82,6 +82,36 @@ gulp.task('geo:copyAssets', done => {
   done();
 });
 
+gulp.task('geo:copyNGCC', done => {
+  gulp
+    .src('./packages/geo/ngcc.config.js', {
+      base: './packages/geo/'
+    })
+    .pipe(gulp.dest('./dist/geo'));
+
+  done();
+});
+
+gulp.task('context:copyNGCC', done => {
+  gulp
+    .src('./packages/context/ngcc.config.js', {
+      base: './packages/context/'
+    })
+    .pipe(gulp.dest('./dist/context'));
+
+  done();
+});
+
+gulp.task('integration:copyNGCC', done => {
+  gulp
+    .src('./packages/integration/ngcc.config.js', {
+      base: './packages/integration/'
+    })
+    .pipe(gulp.dest('./dist/integration'));
+
+  done();
+});
+
 // ==========================================================
 
 gulp.task('core:copyStyles', done => {
@@ -120,17 +150,17 @@ gulp.task('core:bundleStyles', done => {
     .src('.')
     .pipe(
       exec(
-        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./packages/core/src/style/core.theming.scss -d ./dist/core/style/core.theming.scss'
+        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/core.theming.scss -o ./dist/core/style/core.theming.scss'
       )
     )
     .pipe(
       exec(
-        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./packages/core/src/style/theming.scss -d ./dist/core/style/theming.scss'
+        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/theming.scss -o ./dist/core/style/theming.scss'
       )
     )
     .pipe(
       exec(
-        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./packages/core/src/style/all.theming.scss -d ./dist/core/style/all.theming.scss'
+        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/core/src/style/all.theming.scss -o ./dist/core/style/all.theming.scss'
       )
     )
     .pipe(exec.reporter());
@@ -141,7 +171,7 @@ gulp.task('common:bundleStyles', done => {
     .src('.')
     .pipe(
       exec(
-        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./packages/common/src/style/common.theming.scss -d ./dist/common/style/common.theming.scss'
+        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/common/src/style/common.theming.scss -o ./dist/common/style/common.theming.scss'
       )
     )
     .pipe(exec.reporter());
@@ -152,7 +182,7 @@ gulp.task('geo:bundleStyles', done => {
     .src('.')
     .pipe(
       exec(
-        'node ./node_modules/scss-bundle/dist/bundle-cli.js -e ./packages/geo/src/style/geo.theming.scss -d ./dist/geo/style/geo.theming.scss'
+        'node ./node_modules/scss-bundle/dist/cli/main.js -p ./ -e ./packages/geo/src/style/geo.theming.scss -o ./dist/geo/style/geo.theming.scss'
       )
     )
     .pipe(exec.reporter());
@@ -228,9 +258,25 @@ gulp.task('core:bundleLocale.en', done => {
   done();
 });
 
+gulp.task('core:copyBundleLocale', done => {
+  gulp
+    .src('./dist/core/locale/*')
+    .pipe(gulp.dest('./dist/core/__ivy_ngcc__/locale'));
+
+  done();
+});
+
+gulp.task('sleep', done => {
+  setTimeout(() => done(), 1000);
+});
+
 gulp.task(
   'core:bundleLocale',
-  gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en'])
+  gulp.series(
+    gulp.parallel(['core:bundleLocale.fr', 'core:bundleLocale.en']),
+    'sleep',
+    'core:copyBundleLocale'
+  )
 );
 
 // ==========================================================
@@ -264,6 +310,7 @@ gulp.task('core:bumpVersion', done => {
   gulp
     .src(['./packages/core/src/lib/config/version.ts'])
     .pipe(replace(/lib: '[A-Za-z0-9\.\-]+'/g, `lib: '${version}'`))
+    .pipe(replace(/releaseDate: [0-9]+/g, `releaseDate: ${Date.now()}`))   
     .pipe(gulp.dest('./packages/core/src/lib/config/.'));
 
   done();
@@ -373,7 +420,26 @@ gulp.task(
 
 // ==========================================================
 
-gulp.task('geo:fixOL', done => {
+// https://github.com/stylus/stylus/pull/2538
+gulp.task('libs:fixStylus', done => {
+  gulp
+    .src(['./node_modules/stylus/lib/nodes/index.js'])
+    .pipe(
+      replace(
+        `/**
+ * Constructors
+ */`,
+        `exports.lineno = null;
+exports.column = null;
+exports.filename = null;`
+      )
+    )
+    .pipe(gulp.dest('./node_modules/stylus/lib/nodes/'));
+
+  done();
+});
+
+gulp.task('libs:fixOL', done => {
   gulp
     .src(['./node_modules/ol/package.json'])
     .pipe(
@@ -386,24 +452,7 @@ gulp.task('geo:fixOL', done => {
   done();
 });
 
-gulp.task('geo:fixMapbox', done => {
-  gulp
-    .src(
-      [
-        './node_modules/@mapbox/mapbox-gl-style-spec/deref.js',
-        './node_modules/ol-mapbox-style/stylefunction.js'
-      ],
-      { base: './' }
-    )
-    .pipe(
-      babel({
-        presets: ['@babel/env']
-      })
-    )
-    .pipe(gulp.dest('.'));
-
-  done();
-});
+gulp.task('fixLibs', gulp.parallel(['libs:fixStylus', 'libs:fixOL']));
 
 // ==========================================================
 
@@ -444,17 +493,31 @@ gulp.task(
   'geo',
   gulp.series(
     'geo:clean',
-    gulp.parallel(['geo:copyAssets', 'geo:copyStyles', 'geo:copyLocale']),
+    gulp.parallel([
+      'geo:copyAssets',
+      'geo:copyStyles',
+      'geo:copyLocale',
+      'geo:copyNGCC'
+    ]),
     gulp.parallel(['geo:bundleStyles']),
     'core:bundleLocale'
   )
 );
 
-gulp.task('context', gulp.series('context:copyLocale', 'core:bundleLocale'));
+gulp.task(
+  'context',
+  gulp.series(
+    gulp.parallel(['context:copyLocale', 'context:copyNGCC']),
+    'core:bundleLocale'
+  )
+);
 
 gulp.task(
   'integration',
-  gulp.series('integration:copyLocale', 'core:bundleLocale')
+  gulp.series(
+    gulp.parallel(['integration:copyLocale', 'integration:copyNGCC']),
+    'core:bundleLocale'
+  )
 );
 
 gulp.task(

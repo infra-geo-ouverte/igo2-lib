@@ -53,7 +53,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public osmLayer: Layer;
 
-  @ViewChild('mapBrowser', { read: ElementRef }) mapBrowser: ElementRef;
+  @ViewChild('mapBrowser', { read: ElementRef, static: true }) mapBrowser: ElementRef;
 
   public lonlat;
   public mapProjection: string;
@@ -223,7 +223,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   }
 
   onOpenGoogleMaps() {
-    window.open(GoogleLinks.getGoogleMapsLink(this.lonlat[0], this.lonlat[1]));
+    window.open(GoogleLinks.getGoogleMapsCoordLink(this.lonlat[0], this.lonlat[1]));
   }
 
   onOpenGoogleStreetView() {

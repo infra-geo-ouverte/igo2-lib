@@ -1,5 +1,12 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
+import { StorageService } from '@igo2/core';
 import { AuthService } from '@igo2/auth';
 import { TypePermission } from '../shared/context.enum';
 import { DetailedContext } from '../shared/context.interface';
@@ -33,15 +40,30 @@ export class ContextItemComponent {
   }
   private _default = false;
 
+  @Input() selected: boolean;
+
   @Output() edit = new EventEmitter<DetailedContext>();
   @Output() delete = new EventEmitter<DetailedContext>();
   @Output() save = new EventEmitter<DetailedContext>();
   @Output() clone = new EventEmitter<DetailedContext>();
+  @Output() hide = new EventEmitter<DetailedContext>();
+  @Output() show = new EventEmitter<DetailedContext>();
   @Output() favorite = new EventEmitter<DetailedContext>();
   @Output() managePermissions = new EventEmitter<DetailedContext>();
   @Output() manageTools = new EventEmitter<DetailedContext>();
 
-  constructor(public auth: AuthService) {}
+  get hidden(): boolean {
+    return this.context.hidden;
+  }
+
+  get canShare(): boolean {
+    return this.storageService.get('canShare') === true;
+  }
+
+  constructor(
+    public auth: AuthService,
+    private storageService: StorageService
+  ) {}
 
   favoriteClick(context) {
     if (this.auth.authenticated) {

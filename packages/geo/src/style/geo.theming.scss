@@ -11,7 +11,7 @@
   @include igo-feature-theming($theme);
   @include igo-filter-theming($theme, $typography);
   @include igo-layer-theming($theme);
-  @include igo-map-theming($theme);
+  @include igo-map-theming($theme, $typography);
   @include igo-measure-theming($theme, $typography);
   @include igo-directions-theming($theme);
 }

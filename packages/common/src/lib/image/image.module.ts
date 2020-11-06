@@ -7,7 +7,7 @@ import { SecureImagePipe } from './secure-image.pipe';
   exports: [SecureImagePipe]
 })
 export class IgoImageModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoImageModule> {
     return {
       ngModule: IgoImageModule,
       providers: []

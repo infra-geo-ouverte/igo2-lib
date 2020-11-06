@@ -1,28 +1,27 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  MatInputModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatButtonModule,
-  MatTooltipModule,
-  MatListModule,
-  MatSliderModule,
-  MatBadgeModule,
-  MatSelectModule,
-  MatSlideToggleModule,
-  MatDividerModule,
-  MatMenuModule,
-  MatCheckboxModule
-} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoListModule,
   IgoCollapsibleModule,
   IgoImageModule,
-  IgoPanelModule
+  IgoPanelModule,
+  IgoMatBadgeIconModule
 } from '@igo2/common';
 
 import { LayerService } from './shared/layer.service';
@@ -59,7 +58,8 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     IgoListModule,
     IgoCollapsibleModule,
     IgoImageModule,
-    IgoPanelModule
+    IgoPanelModule,
+    IgoMatBadgeIconModule
   ],
   exports: [
     LayerItemComponent,
@@ -85,7 +85,7 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
   ]
 })
 export class IgoLayerModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoLayerModule> {
     return {
       ngModule: IgoLayerModule,
       providers: [LayerService, StyleService, LayerListToolService]

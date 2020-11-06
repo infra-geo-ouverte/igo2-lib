@@ -16,6 +16,8 @@
         "dialog": {
           "cloneMsg": "The context '{{value}}' was cloned",
           "cloneTitle": "Context cloned",
+          "copyMsg": "Text copied",
+          "copyTitle": "Context ID",
           "confirmDelete": "Are you sure you want to delete this context?",
           "deleteMsg": "The context '{{value}}' was deleted",
           "deleteTitle": "Context deleted",
@@ -31,10 +33,12 @@
             "title": "Error server"
           },
           "addPermission": "The permission you are trying to add is already in the context.",
+          "addPermissionEmpty": "The permission you are trying to add is not valid",
           "addPermissionTitle": "Add permission error"
         },
-        "favorite": "Favorite",
+        "favorite": "Set as favorite context",
         "form": {
+          "copy": "Copy the context ID",
           "edit": "Save",
           "title": "Title",
           "titleRequired": "Title required",
@@ -42,7 +46,7 @@
           "uriRequired": "ID required"
         },
         "invalid": {
-          "text": "Context '{{value}}' is invalid",
+          "text": "Context '{{value}}' is invalid. The default context was loaded.",
           "title": "Invalid context"
         },
         "managePermissions": "Manage permissions context",
@@ -51,10 +55,59 @@
         "publicContexts": "Public contexts",
         "save": "Save this context",
         "sharedContexts": "Shared contexts",
-        "filterPlaceHolder": "Filter the contexts list",
-        "sortAlphabetically": "Sort the context's list alphabetically",
-        "sortContextOrder": "Replace contexts according to the initial list",
-        "userAccount": "User account"
+        "filterPlaceHolder": "Filter by name",
+        "sortAlphabetically": "Sort alphabetically",
+        "sortContextOrder": "Replace according to the creation date",
+        "userAccount": "User account",
+        "filterUser": "Filter by user group",
+        "emptyContext": "Empty context",
+        "emptyContextTooltip": "Create a new empty context",
+        "contextMap": "Context from map",
+        "contextMapTooltip": "Create a new context from map layers",
+        "hide": "Hide this context",
+        "show": "Show up this context",
+        "showHidden": "Show hidden contexts"
+      },
+      "contextImportExport": {
+        "export": {
+          "exportPlaceHolder": "Layers",
+          "exportContextName": "Context name",
+          "exportSelectAll": "Select all",
+          "success": {
+            "text": "Context has been exported.",
+            "title":"Context export success"
+          },
+          "nothing": {
+            "text": "No context could be exported.",
+            "title": "Nothing to export"
+          },
+          "failed": {
+            "text": "Failed to export",
+            "title": "Failed to export context"
+          }
+        },
+        "import": {
+          "success": {
+            "title": "Imported context",
+            "text": "The context '{{value}}' was added to the map"
+          },
+          "empty": {
+            "text": "The context '{{value}}' contained nothing that could be imported.",
+            "title": "Nothing to import"
+          },
+          "invalid": {
+            "text": "The context '{{value}}' is invalid.",
+            "title": "Invalid context"
+          },
+          "unreadable": {
+            "title": "Unreadable context",
+            "text": "The context '{{value}}' is unreadable"
+          },
+          "tooLarge": {
+            "text": "The context '{{value}}' is too large (Max: {{size}} MB)",
+            "title": "Context too large"
+          }
+        }
       },
       "permission": {
         "addBtn": "Add",
@@ -68,11 +121,15 @@
           "scopeChangedTitle": "Scope changed"
         },
         "profil": "Profil",
+        "user": "User or group",
         "profilRequired": "Profil required",
         "read": "Read only",
+        "readOnlyTitle": "Read-only context",
+        "readOnlyMsg": "You can only revoke permission if the context is shared directly to your username.",
         "scope": {
           "private": "Private",
           "protected": "Protected",
+          "shared": "Shared",
           "public": "Public"
         },
         "write": "Read and Write"

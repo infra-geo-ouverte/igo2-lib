@@ -4,13 +4,14 @@ import { EMPTY, Observable, of, zip } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { uuid, ObjectUtils } from '@igo2/utils';
-import { LanguageService, ConfigService } from '@igo2/core';
+import { LanguageService, MessageService, ConfigService } from '@igo2/core';
 import {
   CapabilitiesService,
   TypeCapabilities,
   WMSDataSourceOptions,
   WMSDataSourceOptionsParams,
-  WMTSDataSourceOptions
+  WMTSDataSourceOptions,
+  ArcGISRestDataSourceOptions
 } from '../../datasource';
 import { LayerOptions, ImageLayerOptions } from '../../layer';
 import { getResolutionFromScale } from '../../map';
@@ -23,7 +24,7 @@ import {
 import { Catalog, CatalogFactory, CompositeCatalog } from './catalog.abstract';
 import { CatalogItemType, TypeCatalog } from './catalog.enum';
 import { QueryFormat } from '../../query';
-import { generateIdFromSourceOptions } from '../../utils';
+import { generateIdFromSourceOptions, generateId } from '../../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,7 @@ export class CatalogService {
     private http: HttpClient,
     private config: ConfigService,
     private languageService: LanguageService,
+    private messageService: MessageService,
     private capabilitiesService: CapabilitiesService
   ) {}
 
@@ -64,7 +66,7 @@ export class CatalogService {
       const catalogsFromApi$ = this.http
         .get<Catalog[]>(`${apiUrl}/catalogs`)
         .pipe(
-          map(catalogs =>
+          map((catalogs) =>
             catalogs.map((c: any) => Object.assign(c, c.options))
           ),
           catchError((_response: HttpErrorResponse) => EMPTY)
@@ -77,7 +79,7 @@ export class CatalogService {
       observables$.push(
         of(catalogsFromConfig).pipe(
           map((catalogs: Catalog[]) =>
-            catalogs.map(c => {
+            catalogs.map((c) => {
               if (!c.id) {
                 c.id = uuid();
               }
@@ -148,6 +150,14 @@ export class CatalogService {
     );
   }
 
+  loadCatalogArcGISRestItems(catalog: Catalog): Observable<CatalogItem[]> {
+    return this.getCatalogCapabilities(catalog).pipe(
+      map((capabilities: any) => {
+        return this.getArcGISRESTItems(catalog, capabilities);
+      })
+    );
+  }
+
   loadCatalogCompositeLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     const compositeCatalog = (catalog as CompositeCatalog).composite;
 
@@ -178,7 +188,7 @@ export class CatalogService {
     }
 
     if (
-      Object.keys(compositeCatalog).find(k => compositeCatalog[k].groupImpose)
+      Object.keys(compositeCatalog).find((k) => compositeCatalog[k].groupImpose)
     ) {
       const pushImposeGroup = (item, index) => {
         const c = catalogsFromInstance[index];
@@ -189,7 +199,7 @@ export class CatalogService {
 
         const flatLayer = flatDeepLayer(item);
         flatLayer.map(
-          v => (v.address = `${outGroupImpose.address}.${outGroupImpose.id}`)
+          (v) => (v.address = `${outGroupImpose.address}.${outGroupImpose.id}`)
         );
         outGroupImpose.items = flatLayer;
 
@@ -198,7 +208,7 @@ export class CatalogService {
 
       request2$ = request1$.map((obs, idx) =>
         obs.pipe(
-          map(items =>
+          map((items) =>
             compositeCatalog[idx].groupImpose
               ? pushImposeGroup(items, idx)
               : items
@@ -220,7 +230,7 @@ export class CatalogService {
     const groupByGroupId = (data, keyFn) =>
       data.reduce((acc, group) => {
         const groupId = keyFn(group);
-        const ind = acc.find(x => x.id === groupId);
+        const ind = acc.find((x) => x.id === groupId);
 
         if (!ind) {
           acc[acc.length] = group;
@@ -257,12 +267,12 @@ export class CatalogService {
           }); // $& i !== idx
 
           if (diffAddress.length > 0) {
-            const nPosition = indicesMatchTitle.findIndex(x => x === idx) + 1;
+            const nPosition = indicesMatchTitle.findIndex((x) => x === idx) + 1;
             outItem.title = `${item.title} (${nPosition})`; // source: ${item.address.split('.')[0]}
           }
 
           const exist = acc.find(
-            x => x.title === outItem.title && x.type === CatalogItemType.Layer
+            (x) => x.title === outItem.title && x.type === CatalogItemType.Layer
           );
           if (!exist) {
             acc[acc.length] = outItem;
@@ -270,7 +280,7 @@ export class CatalogService {
         } else if (item.type === CatalogItemType.Group) {
           outItem.items = recursiveGroupByLayerAddress(
             item.items,
-            layer => layer.title
+            (layer) => layer.title
           );
           acc[acc.length] = outItem;
         }
@@ -279,9 +289,9 @@ export class CatalogService {
       }, []);
 
     const request4$ = request3$.pipe(
-      map(output => groupByGroupId(output, group => group.id)),
-      map(output => [].concat(...output)),
-      map(data => recursiveGroupByLayerAddress(data, layer => layer.title))
+      map((output) => groupByGroupId(output, (group) => group.id)),
+      map((output) => [].concat(...output)),
+      map((data) => recursiveGroupByLayerAddress(data, (layer) => layer.title))
     );
 
     return request4$;
@@ -289,11 +299,22 @@ export class CatalogService {
 
   private getCatalogCapabilities(catalog: Catalog): Observable<any> {
     const sType: string = TypeCatalog[catalog.type as string];
-    return this.capabilitiesService.getCapabilities(
-      TypeCapabilities[sType],
-      catalog.url,
-      catalog.version
-    );
+    return this.capabilitiesService
+      .getCapabilities(TypeCapabilities[sType], catalog.url, catalog.version)
+      .pipe(
+        catchError((e) => {
+          const title = this.languageService.translate.instant(
+            'igo.geo.catalog.unavailableTitle'
+          );
+          const message = this.languageService.translate.instant(
+            'igo.geo.catalog.unavailable',
+            { value: catalog.title }
+          );
+
+          this.messageService.error(message, title);
+          throw e;
+        })
+      );
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
@@ -343,7 +364,8 @@ export class CatalogService {
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
-          extern: metadata ? true : undefined
+          extern: metadata ? true : undefined,
+          abstract: layer.Abstract
         },
         legendOptions,
         tooltip: { type: catalog.tooltipType },
@@ -385,9 +407,7 @@ export class CatalogService {
             return items;
           }
 
-          const layerItem: CatalogItemLayer<
-            ImageLayerOptions
-          > = this.prepareCatalogItemLayer(
+          const layerItem: CatalogItemLayer<ImageLayerOptions> = this.prepareCatalogItemLayer(
             layer,
             idGroup,
             layersQueryFormat,
@@ -508,6 +528,50 @@ export class CatalogService {
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
   }
 
+  private getArcGISRESTItems(
+    catalog: Catalog,
+    capabilities
+  ): CatalogItemLayer[] {
+    const layers = capabilities.layers;
+    const regexes = (catalog.regFilters || []).map(
+      (pattern: string) => new RegExp(pattern)
+    );
+
+    return layers
+      .map((layer: any) => {
+        if (this.testLayerRegexes(layer.id, regexes) === false) {
+          return undefined;
+        }
+        const baseSourceOptions = {
+          type: 'arcgisrest',
+          url: catalog.url,
+          crossOrigin: catalog.setCrossOriginAnonymous
+            ? 'anonymous'
+            : undefined,
+          layer: layer.id as string,
+          matrixSet: catalog.matrixSet,
+          optionsFromCapabilities: true,
+          style: 'default'
+        } as ArcGISRestDataSourceOptions;
+        const sourceOptions = Object.assign(
+          {},
+          baseSourceOptions,
+          catalog.sourceOptions
+        ) as ArcGISRestDataSourceOptions;
+
+        return ObjectUtils.removeUndefined({
+          id: generateIdFromSourceOptions(sourceOptions),
+          type: CatalogItemType.Layer,
+          title: layer.name,
+          address: catalog.id,
+          options: {
+            sourceOptions
+          }
+        });
+      })
+      .filter((item: CatalogItemLayer | undefined) => item !== undefined);
+  }
+
   private testLayerRegexes(layerName: string, regexes: RegExp[]): boolean {
     if (regexes.length === 0) {
       return true;
@@ -520,9 +584,9 @@ export class CatalogService {
     layersQueryFormat: { layer: string; queryFormat: QueryFormat }[]
   ): QueryFormat {
     const currentLayerInfoFormat = layersQueryFormat.find(
-      f => f.layer === layerNameFromCatalog
+      (f) => f.layer === layerNameFromCatalog
     );
-    const baseInfoFormat = layersQueryFormat.find(f => f.layer === '*');
+    const baseInfoFormat = layersQueryFormat.find((f) => f.layer === '*');
     let queryFormat: QueryFormat;
     if (currentLayerInfoFormat) {
       queryFormat = currentLayerInfoFormat.queryFormat;
@@ -539,11 +603,11 @@ export class CatalogService {
     if (!catalog.queryFormat) {
       return layersQueryFormat;
     }
-    Object.keys(catalog.queryFormat).forEach(configuredInfoFormat => {
+    Object.keys(catalog.queryFormat).forEach((configuredInfoFormat) => {
       if (catalog.queryFormat[configuredInfoFormat] instanceof Array) {
-        catalog.queryFormat[configuredInfoFormat].forEach(layerName => {
+        catalog.queryFormat[configuredInfoFormat].forEach((layerName) => {
           if (
-            !layersQueryFormat.find(specific => specific.layer === layerName)
+            !layersQueryFormat.find((specific) => specific.layer === layerName)
           ) {
             layersQueryFormat.push({
               layer: layerName,
@@ -554,7 +618,7 @@ export class CatalogService {
       } else {
         if (
           !layersQueryFormat.find(
-            specific =>
+            (specific) =>
               specific.layer === catalog.queryFormat[configuredInfoFormat]
           )
         ) {

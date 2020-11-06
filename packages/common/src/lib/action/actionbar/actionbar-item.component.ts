@@ -8,7 +8,7 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, isObservable } from 'rxjs';
 
 import { Action } from '../shared/action.interfaces';
 
@@ -25,6 +25,12 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  readonly checkCondition$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
+
+  readonly icon$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+  readonly tooltip$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
   readonly noDisplay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   readonly ngClass$: BehaviorSubject<{[key: string]: boolean}> = new BehaviorSubject({});
@@ -34,6 +40,12 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
   private disabled$$: Subscription;
 
   private availability$$: Subscription;
+
+  private icon$$: Subscription;
+
+  private checkCondition$$: Subscription;
+
+  private tooltip$$: Subscription;
 
   private noDisplay$$: Subscription;
 
@@ -88,16 +100,6 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
    */
   get title(): string { return this.action.title; }
 
-  /**
-   * @internal
-   */
-  get tooltip(): string { return this.action.tooltip || this.title; }
-
-  /**
-   * @internal
-   */
-  get icon(): string { return this.action.icon; }
-
   constructor() {}
 
   ngOnInit() {
@@ -106,6 +108,27 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
     if (this.action.ngClass !== undefined) {
       this.ngClass$$ = this.action.ngClass(...args)
         .subscribe((ngClass: {[key: string]: boolean}) => this.updateNgClass(ngClass));
+    }
+
+    if (isObservable(this.action.icon)) {
+      this.icon$$ = this.action.icon
+        .subscribe((icon: string) => this.updateIcon(icon));
+    } else {
+      this.updateIcon(this.action.icon);
+    }
+
+    if (isObservable(this.action.checkCondition)) {
+      this.checkCondition$$ = this.action.checkCondition
+        .subscribe((checkCondition: boolean) => this.updateCheckCondition(checkCondition));
+    } else {
+      this.updateCheckCondition(this.action.checkCondition);
+    }
+
+    if (isObservable(this.action.tooltip)) {
+      this.tooltip$$ = this.action.tooltip
+        .subscribe((tooltip: string) => this.updateTooltip(tooltip));
+    } else {
+      this.updateTooltip(this.action.tooltip);
     }
 
     if (this.action.availability !== undefined) {
@@ -141,6 +164,21 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
       this.display$$ = undefined;
     }
 
+    if (this.checkCondition$$ !== undefined) {
+      this.checkCondition$$.unsubscribe();
+      this.checkCondition$$ = undefined;
+    }
+
+    if (this.icon$$ !== undefined) {
+      this.icon$$.unsubscribe();
+      this.icon$$ = undefined;
+    }
+
+    if (this.tooltip$$ !== undefined) {
+      this.tooltip$$.unsubscribe();
+      this.tooltip$$ = undefined;
+    }
+
     this.disabled$$.unsubscribe();
     this.noDisplay$$.unsubscribe();
   }
@@ -159,5 +197,17 @@ export class ActionbarItemComponent implements OnInit, OnDestroy {
 
   private updateNgClass(ngClass: {[key: string]: boolean}) {
     this.ngClass$.next(Object.assign({}, this.ngClass$.value, ngClass));
+  }
+
+  private updateTooltip(tooltip: string) {
+    this.tooltip$.next(tooltip);
+  }
+
+  private updateCheckCondition(checkCondition: boolean) {
+    this.checkCondition$.next(checkCondition);
+  }
+
+  private updateIcon(icon: string) {
+    this.icon$.next(icon);
   }
 }

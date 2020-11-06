@@ -46,7 +46,7 @@ export class FormComponent implements OnChanges {
    */
   @Output() submitForm = new EventEmitter<{[key: string]: any}>();
 
-  @ViewChild('buttons') buttons: ElementRef;
+  @ViewChild('buttons', { static: true }) buttons: ElementRef;
 
   get hasButtons(): boolean {
     return this.buttons.nativeElement.children.length !== 0;

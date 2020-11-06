@@ -16,6 +16,9 @@
         "Login lockout": "Maximum number of attempts exceeded. Your account is locked.",
         "Wrong password": "Wrong password",
         "Invalid username": "Invalid username"
+      },
+      "microsoft": {
+        "login": "Sign in with Microsoft"
       }
     }
   }

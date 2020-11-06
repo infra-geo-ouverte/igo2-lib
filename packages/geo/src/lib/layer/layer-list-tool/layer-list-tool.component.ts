@@ -7,12 +7,8 @@ import {
   Output,
   OnDestroy
 } from '@angular/core';
-import { FloatLabelType } from '@angular/material';
-
-import {
-  BehaviorSubject,
-  Subscription,
-} from 'rxjs';
+import { FloatLabelType } from '@angular/material/form-field';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { LayerListControlsOptions } from './layer-list-tool.interface';
 
 @Component({
@@ -22,7 +18,6 @@ import { LayerListControlsOptions } from './layer-list-tool.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerListToolComponent implements OnInit, OnDestroy {
-
   public onlyVisible$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public sortAlpha$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public term$: BehaviorSubject<string> = new BehaviorSubject(undefined);
@@ -68,20 +63,23 @@ export class LayerListToolComponent implements OnInit, OnDestroy {
       this.appliedFilterAndSort.emit({
         keyword,
         onlyVisible: this.onlyVisible,
-        sortAlpha: this.sortAlpha});
+        sortAlpha: this.sortAlpha
+      });
     });
 
     this.onlyVisible$$ = this.onlyVisible$.subscribe(onlyVisible => {
       this.appliedFilterAndSort.emit({
         keyword: this.term,
         onlyVisible,
-        sortAlpha: this.sortAlpha});
+        sortAlpha: this.sortAlpha
+      });
     });
     this.sortAlpha$$ = this.sortAlpha$.subscribe(sortAlpha => {
       this.appliedFilterAndSort.emit({
         keyword: this.term,
         onlyVisible: this.onlyVisible,
-        sortAlpha});
+        sortAlpha
+      });
     });
   }
 

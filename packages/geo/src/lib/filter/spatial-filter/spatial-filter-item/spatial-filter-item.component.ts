@@ -15,13 +15,13 @@ import { SpatialFilterItemType } from './../../shared/spatial-filter.enum';
 import { Feature } from './../../../feature/shared/feature.interfaces';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import { GeoJSONGeometry } from '../../../geometry/shared/geometry.interfaces';
 import { Style as OlStyle } from 'ol/style';
 import * as olstyle from 'ol/style';
 import * as olproj from 'ol/proj';
 import { olFeature } from 'ol/Feature';
-import { MatTreeNestedDataSource } from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { SpatialFilterService } from '../../shared/spatial-filter.service';
 import { MeasureLengthUnit } from '../../../measure';
 import { EntityStore } from '@igo2/common';
@@ -130,7 +130,16 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters];
   }
 
-  @Input() layers: Layer[] = [];
+  @Input() layers: Layer[];
+
+  @Input()
+  get thematicLength(): number {
+    return this._thematicLength;
+  }
+  set thematicLength(value: number) {
+    this._thematicLength = value;
+  }
+  private _thematicLength: number;
 
   @Output() toggleSearch = new EventEmitter();
 
@@ -143,9 +152,13 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   @Output() radiusEvent = new EventEmitter<number>();
   @Output() freehandControl = new EventEmitter<boolean>();
 
-  @Output() clearButtonEvent = new EventEmitter<Layer[]>();
+  @Output() clearButtonEvent = new EventEmitter();
 
   @Output() clearSearchEvent = new EventEmitter();
+
+  @Output() export = new EventEmitter();
+
+  @Output() openWorkspace = new EventEmitter();
 
   public itemType: SpatialFilterItemType[] = [SpatialFilterItemType.Address, SpatialFilterItemType.Thematics];
   public selectedItemType: SpatialFilterItemType = SpatialFilterItemType.Address;
@@ -160,7 +173,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   public thematics: SpatialFilterThematic[] = [];
   public dataSource = new MatTreeNestedDataSource<SpatialFilterThematic>();
   public selectedThematics = new SelectionModel<SpatialFilterThematic>(true, []);
-  public displayedColumnsResults: string[] = ['typeResults', 'nameResults'];
 
   // For geometry form field input
   value$: BehaviorSubject<GeoJSONGeometry> = new BehaviorSubject(undefined);
@@ -456,12 +468,18 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         title: 'Zone'
       };
       this.drawZone.properties = {
-        nom: 'Zone'
+        nom: 'Zone',
+        type: this.type as string
       };
       this.drawZoneEvent.emit(this.drawZone);
     }
     this.radiusEvent.emit(this.radius);
     this.toggleSearch.emit();
+    this.store.entities$.subscribe((value) => {
+      if (value.length && this.layers.length === this.thematicLength + 1) {
+        this.openWorkspace.emit();
+      }
+    });
   }
 
   /**
@@ -474,7 +492,11 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     if (this.store) {
       this.store.clear();
     }
-    this.clearButtonEvent.emit([]);
+    if (this.isPoint() || this.isPolygon()) {
+      this.drawZone = undefined;
+      this.formControl.reset();
+    }
+    this.clearButtonEvent.emit();
   }
 
   /**
@@ -532,25 +554,17 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           return;
         }
       } else {
-        if (this.radiusFormControl.value >= 10000 || this.radiusFormControl.value < 0) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.radius = 1000;
-          this.radiusFormControl.setValue(this.radius);
-          this.drawGuide$.next(this.radius);
-          return;
-        }
-        if (formValue >= 10000) {
-          this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
-            this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
-          this.formControl.reset();
-          return;
-        }
         if (formValue) {
+          if (formValue >= 10000) {
+            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.radiusAlert'),
+              this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
+            this.formControl.reset();
+            return;
+          }
           if (formValue !== this.radiusFormControl.value) {
             this.radiusFormControl.setValue(formValue);
+            return;
           }
-          this.formControl.value.radius = undefined;
         }
       }
       this.radius = this.radiusFormControl.value;

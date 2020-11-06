@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MatListModule } from '@angular/material';
+import { MatListModule } from '@angular/material/list';
 
 import { ListComponent } from './list.component';
 

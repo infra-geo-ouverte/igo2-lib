@@ -3,6 +3,7 @@ import olSourceVector from 'ol/source/Vector';
 import { unByKey } from 'ol/Observable';
 import { easeOut } from 'ol/easing';
 import { asArray as ColorAsArray } from 'ol/color';
+import { getVectorContext } from 'ol/render';
 
 import { FeatureDataSource } from '../../../datasource/shared/datasources/feature-datasource';
 import { WFSDataSource } from '../../../datasource/shared/datasources/wfs-datasource';
@@ -14,6 +15,7 @@ import { VectorWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
+import { AuthInterceptor } from '@igo2/auth';
 
 export class VectorLayer extends Layer {
   public dataSource:
@@ -35,8 +37,11 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
-  constructor(options: VectorLayerOptions) {
-    super(options);
+  constructor(
+    options: VectorLayerOptions,
+    public authInterceptor?: AuthInterceptor
+  ) {
+    super(options, authInterceptor);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -59,15 +64,28 @@ export class VectorLayer extends Layer {
       this.enableTrackFeature(this.options.trackFeature);
     }
 
-    return new olLayerVector(olOptions);
+    const vector = new olLayerVector(olOptions);
+    const vectorSource = vector.getSource() as olSourceVector;
+    const url = vectorSource.getUrl();
+    if (url && this.authInterceptor) {
+      const loader = (extent, resolution, proj) => {
+        this.customLoader(vectorSource, url, this.authInterceptor, extent, resolution, proj);
+      };
+      if (loader) {
+        vectorSource.setLoader(loader);
+      }
+
+
+    }
+    return vector;
   }
 
   protected flash(feature) {
     const start = new Date().getTime();
-    const listenerKey = this.map.ol.on('postcompose', animate.bind(this));
+    const listenerKey = this.ol.on('postrender', animate.bind(this));
 
     function animate(event) {
-      const vectorContext = event.vectorContext;
+      const vectorContext = getVectorContext(event);
       const frameState = event.frameState;
       const flashGeom = feature.getGeometry().clone();
       const elapsed = frameState.time - start;
@@ -197,5 +215,33 @@ export class VectorLayer extends Layer {
 
   public disableTrackFeature(id?: string | number) {
     unByKey(this.trackFeatureListenerId);
+  }
+
+  /**
+   * Custom loader for vector layer.
+   * @internal
+   * @param vectorSource the vector source to be created
+   * @param url the url string or function to retrieve the data
+   * @param interceptor the interceptor of the data
+   * @param extent the extent of the requested data
+   * @param resolution the current resolution
+   * @param projection the projection to retrieve the data
+   */
+  private customLoader(vectorSource, url, interceptor, extent, resolution, projection) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url);
+    interceptor.interceptXhr(xhr);
+
+    const onError = () => vectorSource.removeLoadedExtent(extent);
+    xhr.onerror = onError;
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        vectorSource.addFeatures(
+          vectorSource.getFormat().readFeatures(xhr.responseText));
+      } else {
+        onError();
+      }
+    };
+    xhr.send();
   }
 }

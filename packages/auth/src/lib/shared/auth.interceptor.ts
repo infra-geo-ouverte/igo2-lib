@@ -16,17 +16,19 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor {
-  private trustHosts: string[] = [];
   private refreshInProgress = false;
+
+  private get trustHosts() {
+    const trustHosts = this.config.getConfig('auth.trustHosts') || [];
+    trustHosts.push(window.location.hostname);
+    return trustHosts;
+  }
 
   constructor(
     private config: ConfigService,
     private tokenService: TokenService,
     private http: HttpClient
-  ) {
-    this.trustHosts = this.config.getConfig('auth.trustHosts') || [];
-    this.trustHosts.push(window.location.hostname);
-  }
+  ) {}
 
   intercept(
     req: HttpRequest<any>,

@@ -1,7 +1,10 @@
-import { ExportFormat } from './export.type';
+import { ExportFormat, EncodingFormat } from './export.type';
 
 export interface ExportOptions {
-  format: ExportFormat;
-  layer: string;
-  name: string;
+  format?: ExportFormat;
+  encoding?: EncodingFormat;
+  layers: string[];
+  layersWithSelection?: string[];
+  name?: string;
+  featureInMapExtent?: boolean;
 }

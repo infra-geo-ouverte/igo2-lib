@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpParams,
+  HttpErrorResponse
+} from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Cacheable } from 'ngx-cacheable';
 
-import { WMSCapabilities, WMTSCapabilities } from 'ol/format';
+import { WMSCapabilities, WMTSCapabilities, EsriJSON } from 'ol/format';
 import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
-import { getResolutionFromScale } from '../../map';
+import { getResolutionFromScale } from '../../map/shared/map.utils';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
 import {
   QueryFormat,
@@ -34,7 +38,8 @@ import {
 
 export enum TypeCapabilities {
   wms = 'wms',
-  wmts = 'wmts'
+  wmts = 'wmts',
+  arcgisrest = 'esriJSON'
 }
 
 export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
@@ -45,7 +50,8 @@ export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
 export class CapabilitiesService {
   private parsers = {
     wms: new WMSCapabilities(),
-    wmts: new WMTSCapabilities()
+    wmts: new WMTSCapabilities(),
+    esriJSON: new EsriJSON()
   };
 
   constructor(private http: HttpClient) {}
@@ -110,7 +116,7 @@ export class CapabilitiesService {
     const arcgisOptions = this.http.get(baseUrl);
     const legend = this.http.get(legendUrl).pipe(
       map((res: any) => res),
-      catchError(err => {
+      catchError((err) => {
         console.log('No legend associated with this Feature Service');
         return of(err);
       })
@@ -154,21 +160,38 @@ export class CapabilitiesService {
       }
     });
 
-    const request = this.http.get(baseUrl, {
-      params,
-      responseType: 'text'
-    });
+    let request;
+    if ((service as any) === 'esriJSON') {
+      request = this.http.get(baseUrl + '?f=json');
+    } else {
+      request = this.http.get(baseUrl, {
+        params,
+        responseType: 'text'
+      });
+    }
 
     return request.pipe(
-      map(res => {
-        try {
+      map((res) => {
+        if ((service as any) === 'esriJSON') {
+          return res;
+        }
+        if (
+          String(res).toLowerCase().includes('serviceexception') &&
+          String(res).toLowerCase().includes('access denied')
+        ) {
+          throw {
+            error: {
+              message: 'Service error getCapabilities: Access is denied'
+            }
+          };
+        } else {
           return this.parsers[service].read(res);
-        } catch (e) {
-          return undefined;
         }
       }),
-      catchError(e => {
-        e.error.caught = true;
+      catchError((e) => {
+        if (typeof e.error !== 'undefined') {
+          e.error.caught = true;
+        }
         throw e;
       })
     );
@@ -216,7 +239,7 @@ export class CapabilitiesService {
         ) !== -1
       ) {
         const keyEnum = Object.keys(QueryFormatMimeType).find(
-          key => QueryFormatMimeType[key] === mimeType
+          (key) => QueryFormatMimeType[key] === mimeType
         );
         queryFormat = QueryFormat[keyEnum];
         break;
@@ -242,7 +265,10 @@ export class CapabilitiesService {
       queryable,
       queryFormat,
       timeFilter: timeFilterable ? timeFilter : undefined,
-      timeFilterable: timeFilterable ? true : undefined
+      timeFilterable: timeFilterable ? true : undefined,
+      minDate: timeFilterable ? timeFilter.min : undefined,
+      maxDate: timeFilterable ? timeFilter.max : undefined,
+      stepDate: timeFilterable ? timeFilter.step : undefined
     });
 
     return ObjectUtils.mergeDeep(options, baseOptions);
@@ -252,9 +278,21 @@ export class CapabilitiesService {
     baseOptions: WMTSDataSourceOptions,
     capabilities: any
   ): WMTSDataSourceOptions {
+    // Put Title source in _layerOptionsFromSource. (For source & catalog in _layerOptionsFromSource, if not already on config)
+    const layer = capabilities.Contents.Layer.find(
+      (el) => el.Identifier === baseOptions.layer
+    );
+
     const options = optionsFromCapabilities(capabilities, baseOptions);
 
-    return Object.assign(options, baseOptions);
+    const ouputOptions = Object.assign(options, baseOptions);
+    const sourceOptions = ObjectUtils.removeUndefined({
+      _layerOptionsFromSource: {
+        title: layer.Title
+      }
+    });
+
+    return ObjectUtils.mergeDeep(sourceOptions, ouputOptions);
   }
 
   private parseCartoOptions(
@@ -263,7 +301,7 @@ export class CapabilitiesService {
   ): CartoDataSourceOptions {
     const layers = [];
     const params = cartoOptions.layers[1].options.layer_definition;
-    params.layers.forEach(element => {
+    params.layers.forEach((element) => {
       layers.push({
         type: element.type.toLowerCase(),
         options: element.options,
@@ -284,6 +322,7 @@ export class CapabilitiesService {
     arcgisOptions: any,
     legend?: any
   ): ArcGISRestDataSourceOptions {
+    const title = arcgisOptions.name;
     const legendInfo = legend.layers ? legend : undefined;
     const styleGenerator = new EsriStyleGenerator();
     const units = arcgisOptions.units === 'esriMeters' ? 'm' : 'degrees';
@@ -319,7 +358,10 @@ export class CapabilitiesService {
       }
     );
     const options = ObjectUtils.removeUndefined({
-      params
+      params,
+      _layerOptionsFromSource: {
+        title
+      }
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
@@ -369,7 +411,7 @@ export class CapabilitiesService {
   private findDataSourceInCapabilities(layerArray, name): any {
     if (Array.isArray(layerArray)) {
       let layer;
-      layerArray.find(value => {
+      layerArray.find((value) => {
         layer = this.findDataSourceInCapabilities(value, name);
         return layer !== undefined;
       }, this);
@@ -407,7 +449,7 @@ export class CapabilitiesService {
   }
 
   getStyle(Style): LegendOptions {
-    const styleOptions: ItemStyleOptions[] = Style.map(style => {
+    const styleOptions: ItemStyleOptions[] = Style.map((style) => {
       return {
         name: style.Name,
         title: style.Title

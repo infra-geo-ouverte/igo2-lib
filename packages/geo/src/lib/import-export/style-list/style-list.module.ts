@@ -7,7 +7,7 @@ import { provideStyleListOptions, provideStyleListLoader } from './style-list.pr
   exports: []
 })
 export class IgoStyleListModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoStyleListModule> {
     return {
       ngModule: IgoStyleListModule,
       providers: [provideStyleListOptions({}), provideStyleListLoader()]

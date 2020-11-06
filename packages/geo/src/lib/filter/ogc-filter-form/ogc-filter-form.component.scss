@@ -2,50 +2,107 @@
 @import '../../../../../common/src/style/partial/common.variables';
 
 :host {
-  overflow: hidden;
+  width: 100%;
+  padding: 5px 10px;
 }
 
-.mat-list-item {
-  height: auto;
+::ng-deep .mat-form-field .mat-icon svg {
+  width: 1em;
+  height: 1em;
+  color: lightgray;
 }
 
 .mat-form-field {
   width: 100%;
 }
 
-.mat-list-item >>> div.mat-list-item-content {
-  display: inline-table;
-  width: 100%;
+.mat-select-arrow {
+  visibility: hidden;
+}
+
+.mat-slide-toggle {
+  margin-top: 10px;
 }
 
 .logical {
-  font-weight: bold;
+  flex-flow: column nowrap;
+  width: 10%;
+  max-width: 45px;
+  margin-left: 5px;
 }
 
-mat-select,
-input {
-  margin-top: 10px;
+.logicalHidden {
+  flex-flow: column nowrap;
+  width: 10%;
+  visibility: hidden;
+  max-width: 45px;
+  margin-left: 5px;
+}
+
+::ng-deep .logical .mat-select-arrow {
+  visibility: hidden;
+}
+
+::ng-deep .logicalHidden .mat-select-arrow {
+  visibility: hidden;
+}
+
+.field {
+  width: 20%;
+  margin-left: 5px;
+}
+
+::ng-deep .field .mat-select-arrow {
+  visibility: hidden;
+}
+
+.operator {
+  width: 12%;
+  margin-left: 10px;
   text-align: center;
 }
 
-.igo-layer-actions-container {
-  width: 100%;
-  display: inline-block;
+::ng-deep .operator .mat-select-arrow {
+  visibility: hidden;
 }
 
-.igo-layer-actions-container > div {
-  text-align: center;
+.spatialSelector {
+  width: 15%;
+  margin-left: 5px;
+}
+
+::ng-deep .spatialSelector .mat-select-arrow {
+  visibility: hidden;
+}
+
+.singleInput {
+  width: 30%;
+  margin-left: 5px;
+}
+
+.snrc {
+  width: 20%;
+  margin-left: 5px;
+}
+
+::ng-deep .singleInput .mat-select-arrow {
+  visibility: hidden;
+}
+
+.dualInput {
+  width: 20%;
+  margin-left: 5px;
+}
+::ng-deep .dualInput .mat-select-arrow {
+  visibility: hidden;
 }
 
 .igo-layer-button-group {
-  float: center;
-  padding: 0 $igo-list-item-padding;
-
-  @include mobile {
-    float: none;
-  }
+  display: flex;
+  float: right;
+  padding-top: 5px;
 }
 
-mat-icon.disabled {
-  color: rgba(0, 0, 0, 0.38);
+.container {
+  display: flex;
 }

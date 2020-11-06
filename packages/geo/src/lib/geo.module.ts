@@ -46,7 +46,7 @@ import { IgoWktModule } from './wkt/wkt.module';
   ]
 })
 export class IgoGeoModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<IgoGeoModule> {
     return {
       ngModule: IgoGeoModule,
       providers: []

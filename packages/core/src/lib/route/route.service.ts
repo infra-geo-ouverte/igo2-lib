@@ -38,7 +38,10 @@ export class RouteService {
       directionsCoordKey: 'routing',
       toolKey: 'tool',
       wmsUrlKey: 'wmsUrl',
-      layersKey:  'layers'
+      wmsLayersKey:  'wmsLayers',
+      wmtsUrlKey: 'wmtsUrl',
+      wmtsLayersKey:  'wmtsLayers',
+      vectorKey: 'vector'
     };
     this.options = Object.assign({}, defaultOptions, options);
   }

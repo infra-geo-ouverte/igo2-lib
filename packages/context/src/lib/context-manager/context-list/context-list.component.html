@@ -24,7 +24,7 @@
   [matTooltip]="'igo.context.contextManager.sortAlphabetically' | translate"
   matTooltipShowDelay="500"
   (click)="toggleSort(true)">
-  <mat-icon color="primary" svgIcon="sort-alphabetical"></mat-icon>
+  <mat-icon color="primary" svgIcon="sort-alphabetical-variant"></mat-icon>
   </button>
   <button
     *ngIf="sortedAlpha"
@@ -35,35 +35,75 @@
     <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
   </button>
 
-  <button *ngIf="auth.authenticated"
-    mat-icon-button
-    [matTooltip]="'igo.context.bookmarkButton.create' | translate"
-    matTooltipShowDelay="500"
-    (click)="createContext()">
-    <mat-icon color="primary" svgIcon="star"></mat-icon>
-  </button>
+  <igo-actionbar *ngIf="auth.authenticated"
+    class="add-context-button"
+    [iconColor]="color"
+    [store]="actionStore"
+    [withIcon]="true"
+    icon="plus"
+    [withTitle]="actionbarMode === 'overlay'"
+    [horizontal]="false"
+    [mode]="actionbarMode">
+  </igo-actionbar>
 
-  <!-- <button *ngIf="authenticated"
+  <button *ngIf="auth.authenticated && users && users.length"
     mat-icon-button
-    [matTooltip]="'igo.context.contextManager.userAccount' | translate"
+    [matTooltip]="'igo.context.contextManager.filterUser' | translate"
     matTooltipShowDelay="500"
     [matMenuTriggerFor]="accountMenu">
-    <mat-icon color="primary" svgIcon="account"></mat-icon>
+    <mat-icon color="primary" svgIcon="filter-menu"></mat-icon>
   </button>
+
   <mat-menu #accountMenu="matMenu">
     <ng-container *ngFor="let user of users">
+      <span class="profilsMenu">
+        <mat-checkbox
+          class="mat-menu-item"
+          [checked]="getPermission(user).checked"
+          [indeterminate]="getPermission(user).indeterminate"
+          (click)="$event.stopPropagation()"
+          (change)="userSelection(user)">
+        </mat-checkbox>
+        <button *ngIf="user.childs"
+          [matMenuTriggerFor]="subAccountMenu"
+          mat-menu-item>
+          {{user.title}}
+        </button>
+        <button
+          mat-menu-item
+          *ngIf="!user.childs">
+          {{user.title}}
+        </button>
+      </span>
+
+      <mat-menu #subAccountMenu="matMenu">
+        <mat-checkbox *ngFor="let child of user.childs"
+          class="mat-menu-item"
+          [checked]="getPermission(child).checked"
+          (click)="$event.stopPropagation()"
+          (change)="userSelection(child, user)">
+          {{child.title}}
+        </mat-checkbox>
+      </mat-menu>
+    </ng-container>
+
+    <span class="profilsMenu">
       <mat-checkbox
         class="mat-menu-item"
-        [checked]="true"
-        (change)="userSelection()">
-        {{user}}
+        [checked]="showHidden"
+        (click)="$event.stopPropagation()"
+        (change)="showHiddenContexts.emit()">
       </mat-checkbox>
-    </ng-container>
-  </mat-menu> -->
+      <button mat-menu-item>
+        {{ 'igo.context.contextManager.showHidden' | translate }}
+      </button>
+    </span>
+  </mat-menu>
 
   <ng-template ngFor let-groupContexts [ngForOf]="contexts$ | async | keyvalue">
 
-    <igo-collapsible *ngIf="groupContexts.value.length && auth.authenticated" [title]="titleMapping[groupContexts.key] | translate">
+    <igo-collapsible *ngIf="groupContexts.value.length && auth.authenticated" [title]="titleMapping[groupContexts.key] | translate"
+      [collapsed]="collapsed[titleMapping[groupContexts.key]]" (toggle)="collapsed[titleMapping[groupContexts.key]] = $event">
 
       <ng-template ngFor let-context [ngForOf]="groupContexts.value">
         <igo-context-item
@@ -76,6 +116,8 @@
           (delete)="delete.emit(context)"
           (clone)="clone.emit(context)"
           (save)="save.emit(context)"
+          (hide)="hideContext(context)"
+          (show)="showContext(context)"
           (favorite)="favorite.emit(context)"
           (manageTools)="manageTools.emit(context)"
           (managePermissions)="managePermissions.emit(context)"

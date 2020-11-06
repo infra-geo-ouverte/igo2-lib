@@ -2,12 +2,16 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Output,
+  EventEmitter,
+  OnInit
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NetworkService, ConnectionState } from '@igo2/core';
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
+import type { Toolbox } from '@igo2/common';
 
 import { Feature } from '../shared';
 import { SearchSource } from '../../search/shared/sources/source';
@@ -20,8 +24,9 @@ import { IgoMap } from '../../map/shared/map';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class FeatureDetailsComponent {
+export class FeatureDetailsComponent implements OnInit {
   private state: ConnectionState;
+  ready = false;
 
   @Input()
   get source(): SearchSource {
@@ -34,6 +39,8 @@ export class FeatureDetailsComponent {
 
   @Input() map: IgoMap;
 
+  @Input() toolbox: Toolbox;
+
   @Input()
   get feature(): Feature {
     return this._feature;
@@ -41,10 +48,14 @@ export class FeatureDetailsComponent {
   set feature(value: Feature) {
     this._feature = value;
     this.cdRef.detectChanges();
+    this.selectFeature.emit();
   }
 
   private _feature: Feature;
   private _source: SearchSource;
+
+  @Output() routeEvent = new EventEmitter<boolean>();
+  @Output() selectFeature = new EventEmitter<boolean>();
 
   /**
    * @internal
@@ -60,6 +71,7 @@ export class FeatureDetailsComponent {
     return getEntityIcon(this.feature) || 'link';
   }
 
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
@@ -68,6 +80,10 @@ export class FeatureDetailsComponent {
     this.networkService.currentState().subscribe((state: ConnectionState) => {
       this.state = state;
     });
+  }
+
+  ngOnInit() {
+    this.ready = true;
   }
 
   htmlSanitizer(value): SafeResourceUrl {
@@ -88,6 +104,16 @@ export class FeatureDetailsComponent {
     }
   }
 
+  isImg(value) {
+    if (this.isUrl(value)) {
+      return (
+        ['jpg', 'png', 'gif'].includes(value.split('.').pop().toLowerCase())
+      );
+    } else {
+      return false;
+    }
+  }
+
   filterFeatureProperties(feature) {
     const allowedFieldsAndAlias = feature.meta ? feature.meta.alias : undefined;
     const properties = {};
@@ -97,6 +123,10 @@ export class FeatureDetailsComponent {
       this.map.offlineButtonToggle$.subscribe(state => {
         offlineButtonState = state;
       });
+    }
+
+    if (feature.properties && feature.properties.Route && this.toolbox && !this.toolbox.getTool('directions')) {
+      delete feature.properties.Route;
     }
 
     if (allowedFieldsAndAlias) {

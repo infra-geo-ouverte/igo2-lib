@@ -1,5 +1,4 @@
 import { Routes, RouterModule } from '@angular/router';
-import { ModuleWithProviders } from '@angular/core';
 
 import { AppActivityComponent } from './activity.component';
 
@@ -10,6 +9,6 @@ const routes: Routes = [
   }
 ];
 
-export const AppActivityRoutingModule: ModuleWithProviders = RouterModule.forChild(
+export const AppActivityRoutingModule = RouterModule.forChild(
   routes
 );

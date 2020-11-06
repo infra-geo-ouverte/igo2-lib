@@ -8,7 +8,9 @@
       "@igo2/core" : "core",
       "@igo2/utils" : "utils",
       "scroll-into-view-if-needed" : "scrollIntoView",
-      "typy" : "typy"
+      "typy" : "typy",
+      "@ngx-translate/core" : "ngxt-core",
+      "angular-shepherd": "angularShepherd"
     }
   }
 }

@@ -4,6 +4,7 @@ import { Layer } from '../../layer/shared/layers/layer';
 import { DownloadService } from '../../download/shared/download.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
+import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 
 import {
   OgcFilterableDataSource,
@@ -23,7 +24,7 @@ import { BehaviorSubject } from 'rxjs';
 export class OgcFilterableItemComponent implements OnInit {
   public color = 'primary';
   private lastRunOgcFilter;
-  private defaultLogicalParent = 'And';
+  private defaultLogicalParent = OgcFilterOperator.And;
   public hasActiveSpatialFilter = false;
   public filtersAreEditable = true;
   public filtersCollapsed = true;
@@ -119,7 +120,6 @@ export class OgcFilterableItemComponent implements OnInit {
       fieldNameGeometry = (this.datasource.options as any).paramsWFS
         .fieldNameGeometry;
     }
-    const status = arr.length === 0 ? true : false;
     const allowedOperators = this.ogcFilterWriter.computeAllowedOperators(
       this.datasource.options.sourceFields,
       firstFieldName,
@@ -131,7 +131,7 @@ export class OgcFilterableItemComponent implements OnInit {
         {
           propertyName: firstFieldName,
           operator: firstOperatorName,
-          active: status,
+          active: true,
           igoSpatialSelector: 'fixedExtent',
           srsName: this.map.projection,
         } as OgcInterfaceFilterOptions,
@@ -181,7 +181,7 @@ export class OgcFilterableItemComponent implements OnInit {
         ogcLayer.filters = this.ogcFilterWriter.rebuiltIgoOgcFilterObjectFromSequence(
           activeFilters
         );
-        this.layer.dataSource.ol.clear();
+        this.layer.dataSource.ol.refresh();
       } else if (
         this.layer.dataSource.options.type === 'wms' &&
         ogcFilters.enabled
@@ -197,7 +197,8 @@ export class OgcFilterableItemComponent implements OnInit {
             ogcLayer.filters,
             undefined,
             undefined,
-            (this.layer.dataSource.options as any).fieldNameGeometry
+            (this.layer.dataSource.options as any).fieldNameGeometry,
+            ogcDataSource.options
           );
         }
         this.ogcFilterService.filterByOgc(

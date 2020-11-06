@@ -1,0 +1,15 @@
+<button *ngIf="showTourButton"
+  (click) = "startInteractiveTour()"
+  [ngClass]="getClass()"
+  mat-raised-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [disabled]=disabledTourButton>
+  <span class="interactive-tour-button-title">{{'igo.common.interactiveTour.buttonTitle' | translate}} {{(discoverTitleInLocale$ | async) | translate}}</span>
+  <mat-icon
+    svgIcon="presentation-play"
+    [matTooltip]="disabledTourButton ?
+    ('igo.common.interactiveTour.disaledTooltipTourToolButton' | translate) :
+    ('igo.common.interactiveTour.tooltipTourToolButton' | translate)">
+  </mat-icon>
+</button>

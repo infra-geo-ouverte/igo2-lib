@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 import * as OlStyle from 'ol/style';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlGeometry from 'ol/geom/Geometry';
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlFeature from 'ol/Feature';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -146,6 +146,11 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
   private _freehandDrawIsActive: boolean;
 
   /**
+   * Control options
+   */
+  @Input() controlOptions: {[key: string]: any} = {};
+
+  /**
    * Style for the draw control (applies while the geometry is being drawn)
    */
   @Input()
@@ -154,8 +159,10 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
       value = createDrawInteractionStyle();
     }
     this._drawStyle = value;
-    if (value && this.isStyleWithRadius(value)) {
-      this.defaultDrawStyleRadius = value.getImage().getRadius();
+
+    const olGuideStyle = this.getGuideStyleFromDrawStyle(value);
+    if (olGuideStyle !== undefined) {
+      this.defaultDrawStyleRadius = olGuideStyle.getImage().getRadius();
     } else {
       this.defaultDrawStyleRadius = null;
     }
@@ -192,7 +199,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     if (value) {
       this.addGeoJSONToOverlay(value);
     } else {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
     this.onChange(value);
     this.toggleControl();
@@ -224,6 +231,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
         if (olModify) {
           if (olModify.features_) {
             olModify.features_.clear();
+            this.addGeoJSONToOverlay(this.value);
           }
         }
       }, 0);
@@ -325,7 +333,7 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * Create a draw control and subscribe to it's geometry
    */
   private createDrawControl() {
-    this.drawControl = new DrawControl({
+    const controlOptions = Object.assign({}, this.controlOptions, {
       geometryType: this.geometryType || 'Point',
       layer: this.olOverlayLayer,
       drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
@@ -334,13 +342,14 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
         return style;
       }
     });
+    this.drawControl = new DrawControl(controlOptions);
   }
 
   /**
    * Create a modify control and subscribe to it's geometry
    */
   private createModifyControl() {
-    this.modifyControl = new ModifyControl({
+    const controlOptions = Object.assign({}, this.controlOptions, {
       layer: this.olOverlayLayer,
       drawStyle: typeof this.drawStyle === 'function' ? this.drawStyle : (olFeature: OlFeature, resolution: number) => {
         const style = this.drawStyle;
@@ -348,21 +357,27 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
         return style;
       }
     });
+    this.modifyControl = new ModifyControl(controlOptions);
   }
 
   /**
    * Toggle the proper control (draw or modify)
    */
   private toggleControl() {
-    this.deactivateControl();
-
-    if (!this.drawControlIsActive) {
-      return;
-    }
+    let activate;
     if (!this.value && this.geometryType) {
-      this.activateControl(this.drawControl);
+      activate = this.drawControl;
     } else {
-      this.activateControl(this.modifyControl);
+      activate = this.modifyControl;
+    }
+
+    // If the control that should be activated
+    // is not the same as the current active control,
+    // deactivate the current control and activate the new one
+    // Otherwise, do nothing and keep the current control active
+    if (activate !== this.activeControl) {
+      this.deactivateControl();
+      this.activateControl(activate);
     }
   }
 
@@ -533,16 +548,19 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    * @param resolution Resolution (to make the screen size of symbol fit the drawGuide value)
    */
   private updateDrawStyleWithDrawGuide(olStyle: OlStyle, resolution: number) {
-    if (this.isStyleWithRadius(olStyle)) {
-      const drawGuide = this.drawGuide;
-      let radius;
-      if (!drawGuide || drawGuide < 0) {
-        radius = this.defaultDrawStyleRadius;
-      } else {
-        radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
-      }
-      olStyle.getImage().setRadius(radius);
+    const olGuideStyle = this.getGuideStyleFromDrawStyle(olStyle);
+    if (olGuideStyle === undefined) {
+      return;
     }
+
+    const drawGuide = this.drawGuide;
+    let radius;
+    if (!drawGuide || drawGuide < 0) {
+      radius = this.defaultDrawStyleRadius;
+    } else {
+      radius = drawGuide > 0 ? drawGuide / resolution : drawGuide;
+    }
+    olGuideStyle.getImage().setRadius(radius);
   }
 
   /**
@@ -551,5 +569,19 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
    */
   private isStyleWithRadius(olStyle: OlStyle): boolean {
     return typeof olStyle !== 'function' && olStyle.getImage && olStyle.getImage().setRadius;
+  }
+
+  /**
+   * Returns wether a given Open Layers style has a radius property that can be set (used to set draw guide)
+   * @param olStyle The style on which to perform the check
+   */
+  private getGuideStyleFromDrawStyle(olStyle: OlStyle |  OlStyle[]): OlStyle {
+    if (Array.isArray(olStyle)) {
+      olStyle = olStyle[0];
+    }
+    if (this.isStyleWithRadius(olStyle)) {
+      return olStyle;
+    }
+    return undefined;
   }
 }

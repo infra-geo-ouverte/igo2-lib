@@ -1,4 +1,4 @@
-import { getEntityTitle } from '@igo2/common';
+
 import {
   Directive,
   Input,
@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 
 import { Subscription, Observable, of, zip } from 'rxjs';
+import { unByKey } from 'ol/Observable';
 
 import OlFeature from 'ol/Feature';
 import OlRenderFeature from 'ol/render/Feature';
 import OlLayer from 'ol/layer/Layer';
 
-import OlDragBoxInteraction from 'ol/interaction/DragBox';
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
@@ -26,7 +26,9 @@ import { renderFeatureFromOl } from '../../feature/shared/feature.utils';
 import { featureFromOl } from '../../feature/shared/feature.utils';
 import { QueryService } from './query.service';
 import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
-import { AnyLayer } from '../../layer/shared/layers/any-layer';
+import { ctrlKeyDown } from '../../map/shared/map.utils';
+import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
+import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -50,12 +52,12 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   /**
    * OL drag box interaction
    */
-  private olDragBoxInteraction: OlDragBoxInteraction;
+  private olDragSelectInteraction: OlDragSelectInteraction;
 
   /**
    * Ol drag box "end" event key
    */
-  private olDragBoxInteractionEndKey: string;
+  private olDragSelectInteractionEndKey: string;
 
   /**
    * Whter to query features or not
@@ -104,6 +106,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
    */
   ngAfterViewInit() {
     this.listenToMapClick();
+    this.addDragBoxInteraction();
   }
 
   /**
@@ -113,6 +116,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.cancelOngoingQueries();
     this.unlistenToMapClick();
+    this.removeDragBoxInteraction();
   }
 
   /**
@@ -187,59 +191,82 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   ): Observable<Feature[]> {
     const clickedFeatures = [];
 
-    this.map.ol.forEachFeatureAtPixel(
-      event.pixel,
-      (featureOL: OlFeature, layerOL: OlLayer) => {
-        if (featureOL) {
-          if (featureOL.get('features')) {
-            for (const feature of featureOL.get('features')) {
-              const newFeature = featureFromOl(feature, this.map.projection);
+    if (event.type === 'singleclick') {
+      this.map.ol.forEachFeatureAtPixel(
+        event.pixel,
+        (featureOL: OlFeature, layerOL: OlLayer) => {
+          const layer = this.map.getLayerById(layerOL.values_._layer.id);
+          if (featureOL) {
+            if (featureOL.get('features')) {
+              for (const feature of featureOL.get('features')) {
+                const newFeature = featureFromOl(feature, this.map.projection);
+                newFeature.meta = {
+                  title: feature.values_.nom,
+                  id: layerOL.values_._layer.id + '.' + feature.id_,
+                  icon: feature.values_._icon,
+                  sourceTitle: layerOL.values_.title,
+                  alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                  // title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                };
+                clickedFeatures.push(newFeature);
+              }
+            } else if (featureOL instanceof OlRenderFeature) {
+              const newFeature = renderFeatureFromOl(
+                featureOL,
+                this.map.projection,
+                layerOL
+              );
               newFeature.meta = {
-                title: feature.values_.nom,
-                id: feature.id_,
-                icon: feature.values_._icon,
-                sourceTitle: layerOL.values_.title
+                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                sourceTitle: layerOL.values_.title,
+                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+              };
+              clickedFeatures.push(newFeature);
+            } else {
+              const newFeature = featureFromOl(
+                featureOL,
+                this.map.projection,
+                layerOL
+              );
+              newFeature.meta = {
+                id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
+                sourceTitle: layerOL.values_.title,
+                alias: this.queryService.getAllowedFieldsAndAlias(layer),
+                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
               };
               clickedFeatures.push(newFeature);
             }
-          } else if (featureOL instanceof OlRenderFeature) {
-            const featureFromRender: OlFeature = featureOL;
-            const feature = renderFeatureFromOl(
-              featureOL,
-              this.map.projection,
-              layerOL
-            );
-            clickedFeatures.push(feature);
-          } else {
-            const feature = featureFromOl(
-              featureOL,
-              this.map.projection,
-              layerOL
-            );
-            clickedFeatures.push(feature);
           }
+        },
+        {
+          hitTolerance: this.queryFeaturesHitTolerance || 0,
+          layerFilter: this.queryFeaturesCondition
+            ? this.queryFeaturesCondition
+            : olLayerIsQueryable
         }
-      },
-      {
-        hitTolerance: this.queryFeaturesHitTolerance || 0,
-        layerFilter: this.queryFeaturesCondition
-          ? this.queryFeaturesCondition
-          : olLayerIsQueryable
-      }
-    );
+      );
+    } else if (event.type === 'boxend') {
+      const dragExtent = event.target.getGeometry().getExtent();
+      this.map.layers
+        .filter(layerIsQueryable)
+        .filter(layer => layer instanceof VectorLayer && layer.visible)
+        .map(layer => {
+          const featuresOL = layer.dataSource.ol;
+          featuresOL.forEachFeatureIntersectingExtent(dragExtent, (olFeature: OlFeature) => {
+            const newFeature: Feature = featureFromOl(olFeature, this.map.projection, layer.ol);
+            newFeature.meta = {
+              id: layer.id + '.' + olFeature.id_,
+              icon: olFeature.values_._icon,
+              sourceTitle: layer.title,
+              alias: this.queryService.getAllowedFieldsAndAlias(layer),
+              title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+            };
+            clickedFeatures.push(newFeature);
+          });
+        });
+    }
 
-    const queryableLayers = this.map.layers.filter(layerIsQueryable);
-    clickedFeatures.forEach((feature: Feature) => {
-      queryableLayers.forEach((layer: AnyLayer) => {
-        if (typeof layer.ol.getSource().hasFeature !== 'undefined') {
-          if (layer.ol.getSource().hasFeature(feature.ol)) {
-            feature.meta.alias = this.queryService.getAllowedFieldsAndAlias(layer);
-            feature.meta.title = feature.meta.title || this.queryService.getQueryTitle(feature, layer);
-            feature.meta.sourceTitle = layer.title;
-          }
-        }
-      });
-    });
 
     return of(clickedFeatures);
   }
@@ -250,5 +277,49 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
   private cancelOngoingQueries() {
     this.queries$$.forEach((sub: Subscription) => sub.unsubscribe());
     this.queries$$ = [];
+  }
+
+  /**
+   * Add a drag box interaction and, on drag box end, select features
+   */
+  private addDragBoxInteraction() {
+    let olDragSelectInteractionOnQuery;
+    const olInteractions = this.map.ol.getInteractions().getArray();
+
+    // There can only be one dragbox interaction, so find the current one, if any
+    // Don't keep a reference to the current dragbox because we don't want
+    // to remove it when this startegy is deactivated
+    for (const olInteraction of olInteractions) {
+      if (olInteraction instanceof OlDragSelectInteraction) {
+        olDragSelectInteractionOnQuery = olInteraction;
+        break;
+      }
+    }
+    // If no drag box interaction is found, create a new one and add it to the map
+    if (olDragSelectInteractionOnQuery === undefined) {
+      olDragSelectInteractionOnQuery = new OlDragSelectInteraction({
+        condition: ctrlKeyDown
+      });
+      this.map.ol.addInteraction(olDragSelectInteractionOnQuery);
+      this.olDragSelectInteraction = olDragSelectInteractionOnQuery;
+    }
+
+    this.olDragSelectInteractionEndKey = olDragSelectInteractionOnQuery.on(
+      'boxend',
+      (event: OlMapBrowserPointerEvent) => this.onMapEvent(event)
+    );
+  }
+
+  /**
+   * Remove drag box interaction
+   */
+  private removeDragBoxInteraction() {
+    if (this.olDragSelectInteractionEndKey !== undefined) {
+      unByKey(this.olDragSelectInteractionEndKey);
+    }
+    if (this.olDragSelectInteraction !== undefined) {
+      this.map.ol.removeInteraction(this.olDragSelectInteraction);
+    }
+    this.olDragSelectInteraction = undefined;
   }
 }

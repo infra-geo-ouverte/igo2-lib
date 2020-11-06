@@ -8,7 +8,9 @@
         "layer.removeFromMapOutRange": "Remove from map. The layer is not visible at the current scale. Please zoom in/out",
         "group.addToMap": "Add all layers from this group to map",
         "group.removeFromMap": "Remove all layers from this group to map",
-        "baseLayers": "Baselayers"
+        "baseLayers": "Baselayers",
+        "unavailableTitle": "Catalog unavailable",
+        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions."
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
@@ -17,8 +19,9 @@
         "title": "Basemaps"
       },
       "dataSource": {
+        "unavailableTitle": "Layer unavailable",
         "optionsApiUnavailable": "Layer information could not be retrieved. Some layers may not present the correct information.",
-        "unavailable": "The layer '{{value}}' is unavailable at the moment."
+        "unavailable": "The layer '{{value}}' is unavailable at the moment or you don't have the required permissions."
       },
       "dropGeoFile": {
         "invalid": {
@@ -51,23 +54,60 @@
           "text": "No feature could be exported.",
           "title": "Nothing to export"
         },
+        "noFormat": {
+          "text": "No export format valid for all selected layers. Please export the layers one at a time.",
+          "title": "No valid format"
+        },
         "failed": {
           "text": "Failed to export",
           "title": "Failed to export features"
+        },
+        "popupBlocked": {
+          "text": "</br>Enable the popup in your browser. </br>For Chrome and Edge, on the right into the Address Bar.</br>{{extraMessage}}",
+          "selectAgain": "Fix it and re-select an output format.",
+          "retry": "Please retry to export",
+          "title": "Popup blocked by your browser"
+        },
+        "success": {
+          "text": "Features have been exported.",
+          "title": "Features export success"
+        },
+        "format": {
+          "GeoJSON": "GeoJSON",
+          "GML": "GML",
+          "GPX": "GPX",
+          "KML": "KML",
+          "Shapefile": "Shapefile",
+          "CSVcomma": "CSV (comma delimited)",
+          "CSVsemicolon": "CSV (semicolon delimited)",
+          "URL": "URL"
+        },
+        "encoding": {
+          "LATIN1": "LATIN-1",
+          "UTF8": "UTF-8"
         }
       },
       "importExportForm": {
         "exportButton": "Export",
+        "exportButtonLink": "Open the link",
+        "exportButtonLinks": "Open the links",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Layer",
         "exportFileNamePlaceholder": "Filename",
+        "encodingPlaceholder": "Encoding",
         "exportTabTitle": "Export",
+        "exportFeatureInExtent": "Export only features in map extent",
+        "exportNoLayersExportable": "There is no exportable layer in your map",
+        "exportSelectedFeature": "Export only selected features",
         "importButton": "Import",
         "importProjPlaceholder": "Coordinate system",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
-        "importShpZip": "Shapefiles must be zipped."
+        "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
+        "importShpZip": "Shapefiles must be zipped.",
+        "other": "other",
+        "others": "others"
       },
       "operators": {
         "caseSensitive": "Case sensitive",
@@ -102,7 +142,7 @@
           "Intersects": "Return features in geometric intersection with the provided geometry",
           "Within": "Return feature which are completely contained by the provided geometry",
           "Contains": "Return feature completely containing by the provided geometry"
-          }
+        }
       },
       "sourceFields": {
         "selectField": "Choose a field"
@@ -130,6 +170,7 @@
       "layer": {
         "hideLayer": "Hide Layer",
         "lowerLayer": "Bring layer backward",
+        "hideSelectedLayers": "Hide selected layers",
         "filterLowerLayer": "The backward movement is always done according to the order of the map!",
         "filterPlaceholder": "Filter the layers list",
         "activateSelectionMode": "Activate multiple selection mode",
@@ -144,6 +185,7 @@
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
+        "showSelectedLayers": "Show selected layers",
         "subsetLayersListKeyword": "Subset the layers's list by title or type (wms, wfs,...)",
         "deleteKeyword": "Delete the keyword",
         "subsetLayersListOnlyVisible": "Subset the layers's list by visibility",
@@ -158,11 +200,11 @@
           "noLegendText": "No legend available for this layer",
           "noLegendScale": "No legend available for this scale",
           "selectStyle": "Select the style of the legend",
-          "showAll" : "Show all legends (non visible and out of range)",
+          "showAll": "Show all legends (non visible and out of range)",
           "noLayersVisibleWithShowAllButton": "No layer currently visible. Activate the button above to see all the legends.",
           "noLayersVisibleWithShowAllButtonButZoom": "No layer currently visible. If you zoom in the map, some layers will appear OR activate the button above to see all the legends.",
           "noLayersVisible": "No layers currently visible.",
-          "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."        
+          "noLayersVisibleButZoom": "No layers currently visible. However, if you zoom in the map, some layers will appear."
         }
       },
       "download": {
@@ -262,6 +304,7 @@
       },
       "search": {
         "placeholder": "Search for a localisation or a layer",
+        "emptyType.placeholder": "Please choose a search type",
         "feature.title": "Localisation",
         "feature.placeholder": "Search for a place localisation",
         "layer.title": "Layer",
@@ -312,7 +355,8 @@
             "place": "Place",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
-            "entreprise": "Entreprise"
+            "entreprise": "Entreprise",
+            "cadastre": "Cadastre"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -356,10 +400,15 @@
         "polygon": "Polygon"
       },
       "targetHtmlUrl": "Open the external link",
+      "searchByCoord": "Search by coordinates",
+      "searchByName": "Search by name",
+      "seeRouting": "See routing",
       "timeFilter": {
         "date": "Date",
         "endDate": "End Date",
-        "startDate": "Start Date"
+        "startDate": "Start Date",
+        "hour": "Hour",
+        "minute": "Minute"
       },
       "spatialFilter": {
         "predefined": "Predefined Zone",
@@ -375,6 +424,7 @@
         "layer": "Layer",
         "goSearch": "Launch research",
         "removeLayer": "Remove results",
+        "exportLayer": "Export results",
         "clearForm": "Remove draw",
         "clearSearch": "Reset",
         "Address": "Addresses",
@@ -392,7 +442,9 @@
           "culturel": "Cultural",
           "education": "Education",
           "sante": "Health",
-          "securite": "Security"
+          "securite": "Security",
+          "sepaq": "SEPAQ",
+          "transport": "Transportation"
         }
       },
       "terrapi": {
@@ -408,6 +460,10 @@
         "hydro": "Hydrography",
         "routes": "Roads",
         "bati": "Buildings",
+        "batiment": "Buildings",
+        "camping": "Camping",
+        "equipement": "Equipment",
+        "commun": "Public",
         "geographie": "Natural sites",
         "parc": "Parks",
         "secteur": "Sector",
@@ -488,8 +544,18 @@
         "ogcFilter.close": "Close",
         "ogcFilter.title": "Filters",
         "ogcFilter.tooltip": "Apply filters",
-        "wfsDownload.title": "Download",
-        "wfsDownload.tooltip": "Download"
+        "download.title": "Download",
+        "download.tooltip": "Download",
+        "inMapExtent.title": "Show records in map extent only",
+        "inMapExtent.active.tooltip": "Show records in map extent only",
+        "inMapExtent.inactive.tooltip": "Show all records",
+        "zoomAuto.title": "Zoom auto",
+        "zoomAuto.tooltip": "Zoom auto",
+        "selected.title": "Show selected records only",
+        "selected.tooltip": "Show selected records only",
+        "clearSelection.title": "Deselect all",
+        "clearSelection.tooltip": "Deselect all records"
+
       },
       "network": {
         "online": {

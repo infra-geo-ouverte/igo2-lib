@@ -17,6 +17,22 @@
       "actionbar": {
         "scrollUp": "Scroll up",
         "scrollDown": "Scroll down"
+      },
+      "interactiveTour": {
+        "tooltipTourToolButton": "Interactive tour of the application",
+        "disaledTooltipTourToolButton": "To have access to this tool's tour, add contexts or layers",
+        "buttonTitle": "Discover",
+        "exitButton": "Exit",
+        "backButton": "Back",
+        "nextButton": "Next"
+      },
+      "paginator": {
+        "firstPageLabel": "First page",
+        "itemsPerPageLabel": "Items per page:",
+        "lastPageLabel": "Last page",
+        "nextPageLabel": "Next page",
+        "previousPageLabel": "Previous page",
+        "of": "of"
       }
     }
   }

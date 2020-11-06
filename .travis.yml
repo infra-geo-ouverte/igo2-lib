@@ -1,14 +1,16 @@
 language: node_js
 node_js:
-- 11
-- 10 
-- 9
-- 8      
-
+  - 14
+  - 13
+  - 12
+  - 10
 
 before_script:
   - npm install -g gulp-cli
+
+script:
   - npm run build.libs
+  - npm run test
 
 addons:
   chrome: stable

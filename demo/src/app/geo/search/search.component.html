@@ -10,11 +10,7 @@
     <hr>
     <br>
     <span *ngIf="!isTouchScreen" title="Details">
-      You can trigger the seach by coordinate by holding the CRTL key down while moving your cursor (on desktop). Don't
-      forget to focus on map before.
-      <br>
-      <br>
-      F2 activate/desactivate the pointer location. 
+      F2 activate/desactivate the pointer location.
     </span>
   </mat-card-content>
 
@@ -23,9 +19,7 @@
     igoSearchPointerSummary
     [igoSearchPointerSummaryDelay]="500"
     [igoSearchPointerSummaryEnabled]="igoSearchPointerSummaryEnabled"
-
-    (menuPosition)="onContextMenuOpen($event)" igoPointerPositionByKey [pointerPositionByKeyDelay]="500"
-    [pointerPositionByKeyCode]="17" (pointerPositionByKeyCoord)="onPointerSearch($event)">
+    (menuPosition)="onContextMenuOpen($event)">
     <igo-zoom-button [map]="map" color="primary"></igo-zoom-button>
   </igo-map-browser>
 

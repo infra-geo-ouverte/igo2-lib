@@ -53,7 +53,9 @@ export class AppSpatialFilterComponent {
   public zone: Feature;
   public radius: number;
 
-  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(undefined);
+  public selectedFeature$: BehaviorSubject<Feature> = new BehaviorSubject(
+    undefined
+  );
 
   private format = new olFormatGeoJSON();
 
@@ -84,7 +86,7 @@ export class AppSpatialFilterComponent {
           })
         );
       });
-    }
+  }
 
   getOutputType(event: SpatialFilterType) {
     this.type = event;
@@ -100,11 +102,16 @@ export class AppSpatialFilterComponent {
   }
 
   private loadFilterList() {
-    this.spatialFilterService.loadFilterList(this.queryType)
+    this.spatialFilterService
+      .loadFilterList(this.queryType)
       .subscribe((features: Feature[]) => {
         features.sort((a, b) => {
-          if (a.properties.nom < b.properties.nom) { return -1; }
-          if (a.properties.nom > b.properties.nom) { return 1; }
+          if (a.properties.nom < b.properties.nom) {
+            return -1;
+          }
+          if (a.properties.nom > b.properties.nom) {
+            return 1;
+          }
           return 0;
         });
         this.spatialListStore.clear();
@@ -134,7 +141,14 @@ export class AppSpatialFilterComponent {
       this.radius = undefined;
     }
     this.thematics.forEach(thematic => {
-      this.spatialFilterService.loadFilterItem(this.zone, this.itemType, this.queryType, thematic, this.radius)
+      this.spatialFilterService
+        .loadFilterItem(
+          this.zone,
+          this.itemType,
+          this.queryType,
+          thematic,
+          this.radius
+        )
         .subscribe((features: Feature[]) => {
           this.store.insertMany(features);
           const featuresPoint: Feature[] = [];
@@ -154,12 +168,26 @@ export class AppSpatialFilterComponent {
           this.tryAddLayerToMap(featuresLinePoly, idLinePoly);
           this.loading = false;
           if (features.length >= 10000) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.maxSizeAlert'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000});
+            this.messageService.alert(
+              this.languageService.translate.instant(
+                'igo.geo.spatialFilter.maxSizeAlert'
+              ),
+              this.languageService.translate.instant(
+                'igo.geo.spatialFilter.warning'
+              ),
+              { timeOut: 10000 }
+            );
           }
           if (!features.length) {
-            this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.zeroResults'),
-              this.languageService.translate.instant('igo.geo.spatialFilter.warning'), {timeOut: 10000});
+            this.messageService.alert(
+              this.languageService.translate.instant(
+                'igo.geo.spatialFilter.zeroResults'
+              ),
+              this.languageService.translate.instant(
+                'igo.geo.spatialFilter.warning'
+              ),
+              { timeOut: 10000 }
+            );
           }
         });
     });
@@ -181,27 +209,30 @@ export class AppSpatialFilterComponent {
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
         for (const layer of this.map.layers) {
-          if (layer.options._internal.code === feature.properties.code) {
+          if (
+            layer.options._internal &&
+            layer.options._internal.code === feature.properties.code
+          ) {
             return;
           }
-          if  (layer.title.startsWith('Zone')) {
+          if (layer.title.startsWith('Zone')) {
             this.map.removeLayer(layer);
           }
         }
       }
       for (const layer of this.map.layers) {
-        if  (layer.title.startsWith('Zone')) {
+        if (layer.title.startsWith('Zone')) {
           i++;
         }
       }
       this.dataSourceService
-      .createAsyncDataSource({
-        type: 'vector',
-        queryable: true
-      } as QueryableDataSourceOptions )
+        .createAsyncDataSource({
+          type: 'vector',
+          queryable: true
+        } as QueryableDataSourceOptions)
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: 'Zone ' + i as string,
+            title: ('Zone ' + i) as string,
             _internal: {
               code:
                 this.type === SpatialFilterType.Predefined
@@ -214,14 +245,18 @@ export class AppSpatialFilterComponent {
               const coordinates = (features[0] as any).coordinates;
               return new olstyle.Style({
                 image: new olstyle.Circle({
-                    radius: coordinates ? this.radius / (Math.cos((Math.PI / 180) * coordinates[1])) / resolution : undefined,
-                    fill: new olstyle.Fill({
-                      color: 'rgba(200, 200, 20, 0.2)'
-                    }),
-                    stroke: new olstyle.Stroke({
-                      width: 1,
-                      color: 'orange'
-                    })
+                  radius: coordinates
+                    ? this.radius /
+                      Math.cos((Math.PI / 180) * coordinates[1]) /
+                      resolution
+                    : undefined,
+                  fill: new olstyle.Fill({
+                    color: 'rgba(200, 200, 20, 0.2)'
+                  }),
+                  stroke: new olstyle.Stroke({
+                    width: 1,
+                    color: 'orange'
+                  })
                 }),
                 stroke: new olstyle.Stroke({
                   width: 1,
@@ -254,35 +289,39 @@ export class AppSpatialFilterComponent {
         return;
       }
       for (const layer of this.map.layers) {
-        if  (layer.title.startsWith(features[0].meta.title)) {
+        if (layer.title.startsWith(features[0].meta.title)) {
           i++;
         }
       }
       this.dataSourceService
-      .createAsyncDataSource({
-        type: 'cluster',
-        id,
-        queryable: true,
-        distance: 120,
-        meta: {
-          title: 'Cluster'
-        }
-        } as QueryableDataSourceOptions )
+        .createAsyncDataSource({
+          type: 'cluster',
+          id,
+          queryable: true,
+          distance: 120,
+          meta: {
+            title: 'Cluster'
+          }
+        } as QueryableDataSourceOptions)
         .subscribe((dataSource: ClusterDataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title + ' ' + i as string,
+            title: (features[0].meta.title + ' ' + i) as string,
             source: dataSource,
             visible: true,
-            clusterParam: {clusterRange: [1, 5]}
+            clusterParam: {
+              clusterRanges: [{ minRadius: 1, maxRadius: 5, style: {} }]
+            }
           });
           const featuresOl = features.map(feature => {
             return featureToOl(feature, this.map.projection);
           });
           dataSource.ol.source.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
-            this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            this.map.removeLayer(
+              this.map.layers.find(layer => layer.id === olLayer.id)
+            );
             i = i - 1;
-            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.title = (features[0].meta.title + ' ' + i) as string;
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
@@ -301,19 +340,19 @@ export class AppSpatialFilterComponent {
         return;
       }
       for (const layer of this.map.layers) {
-        if  (layer.title.startsWith(features[0].meta.title)) {
+        if (layer.title.startsWith(features[0].meta.title)) {
           i++;
         }
       }
       this.dataSourceService
-      .createAsyncDataSource({
-        type: 'vector',
-        id,
-        queryable: true
-        } as QueryableDataSourceOptions )
+        .createAsyncDataSource({
+          type: 'vector',
+          id,
+          queryable: true
+        } as QueryableDataSourceOptions)
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: features[0].meta.title + ' ' + i as string,
+            title: (features[0].meta.title + ' ' + i) as string,
             source: dataSource,
             visible: true
           });
@@ -322,9 +361,11 @@ export class AppSpatialFilterComponent {
           });
           dataSource.ol.addFeatures(featuresOl);
           if (this.map.layers.find(layer => layer.id === olLayer.id)) {
-            this.map.removeLayer(this.map.layers.find(layer => layer.id === olLayer.id));
+            this.map.removeLayer(
+              this.map.layers.find(layer => layer.id === olLayer.id)
+            );
             i = i - 1;
-            olLayer.title = features[0].meta.title + ' ' + i as string;
+            olLayer.title = (features[0].meta.title + ' ' + i) as string;
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);

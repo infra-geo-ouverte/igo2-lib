@@ -12,7 +12,7 @@ import { FlexibleState, FlexibleDirection } from './flexible.type';
 export class FlexibleComponent implements OnInit {
   static transitionTime = 250;
 
-  @ViewChild('flexibleMain') main;
+  @ViewChild('flexibleMain', { static: true }) main;
 
   @Input()
   get initial(): string {
@@ -88,8 +88,7 @@ export class FlexibleComponent implements OnInit {
       expanded: this.expanded
     };
 
-    const media = this.mediaService.media$.value;
-    if (media === 'mobile') {
+    if (this.mediaService.isMobile()) {
       Object.assign(sizes, {
         initial: this.initialMobile,
         collapsed: this.collapsedMobile,

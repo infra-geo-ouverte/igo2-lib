@@ -16,12 +16,12 @@
   height: $igo-icon-size;
 }
 
-.igo-panel-header >>> [panelleftbutton] {
+.igo-panel-header ::ng-deep [panelleftbutton] {
   float: left;
   margin-right: -40px;
 }
 
-.igo-panel-header >>> [panelrightbutton] {
+.igo-panel-header ::ng-deep [panelrightbutton] {
   float: right;
 }
 

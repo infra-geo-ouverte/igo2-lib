@@ -14,15 +14,17 @@ import {
   IgoMap,
   SearchSourceService,
   sourceCanSearch,
-  Layer
+  Layer,
+  ExportOptions
 } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
+import { ImportExportState } from '../../import-export/import-export.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -94,9 +96,9 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   get visibleOrInRangeLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
-      map(layers =>
+      map((layers) =>
         layers.filter(
-          layer => layer.visible$.value && layer.isInResolutionsRange$.value
+          (layer) => layer.visible$.value && layer.isInResolutionsRange$.value
         )
       )
     );
@@ -104,7 +106,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   get visibleLayers$(): Observable<Layer[]> {
     return this.layers$.pipe(
-      map(layers => layers.filter(layer => layer.visible$.value))
+      map((layers) => layers.filter((layer) => layer.visible$.value))
     );
   }
 
@@ -133,7 +135,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return filterSortOptions;
   }
 
-  @ViewChild('tabGroup') tabGroup;
+  @ViewChild('tabGroup', { static: true }) tabGroup;
 
   get searchToolInToolbar(): boolean {
     return (
@@ -141,7 +143,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       this.searchSourceService
         .getSources()
         .filter(sourceCanSearch)
-        .filter(s => s.available && s.getType() === 'Layer').length > 0
+        .filter((s) => s.available && s.getType() === 'Layer').length > 0
     );
   }
 
@@ -157,7 +159,8 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     public layerListToolState: LayerListToolState,
     private toolState: ToolState,
     public mapState: MapState,
-    private searchSourceService: SearchSourceService
+    private searchSourceService: SearchSourceService,
+    private importExportState: ImportExportState
   ) {}
 
   ngOnInit(): void {
@@ -170,7 +173,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       .subscribe((bunch: [Layer[], number]) => {
         this.layers$.next(
           bunch[0].filter(
-            layer =>
+            (layer) =>
               layer.showInLayerList !== false &&
               (!this.excludeBaseLayers || !layer.baseLayer)
           )
@@ -217,7 +220,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     this.layerListToolState.setSelectedTab(tab.index);
     this.layers$.next(
       this.map.layers.filter(
-        layer =>
+        (layer) =>
           layer.showInLayerList !== false &&
           (!this.excludeBaseLayers || !layer.baseLayer)
       )
@@ -238,7 +241,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       this.allowShowAllLegends === false
     ) {
       let visibleOrInRangeLayers;
-      this.visibleOrInRangeLayers$.subscribe(value => {
+      this.visibleOrInRangeLayers$.subscribe((value) => {
         value.length === 0
           ? (visibleOrInRangeLayers = false)
           : (visibleOrInRangeLayers = true);
@@ -249,6 +252,12 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       }
     }
     return true;
+  }
+
+  activateExport(id: string) {
+    this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
+    this.importExportState.setMode('export');
+    this.toolState.toolbox.activateTool('importExport');
   }
 
   activateTimeFilter() {

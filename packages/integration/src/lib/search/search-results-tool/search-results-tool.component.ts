@@ -28,6 +28,8 @@ import {
 import { MapState } from '../../map/map.state';
 
 import { SearchState } from '../search.state';
+import { ToolState } from '../../tool/tool.state';
+import { DirectionState } from '../../directions/directions.state';
 
 /**
  * Tool to browse the search results
@@ -106,6 +108,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     private layerService: LayerService,
     private searchState: SearchState,
     private elRef: ElementRef,
+    public toolState: ToolState,
+    private directionState: DirectionState
   ) {}
 
   ngOnInit() {
@@ -178,12 +182,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
-    for (const feature of this.store.all()) {
-      if (this.map.overlay.dataSource.ol.getFeatureById(feature.meta.id)) {
-        this.map.overlay.removeFeature(feature.data as Feature);
-      }
-    }
+    this.map.overlay.dataSource.ol.clear();
     this.tryAddFeatureToMap(result);
+    this.searchState.setSelectedResult(result);
 
     if (this.topPanelState === 'expanded') {
       const igoList = this.computeElementRef()[0];
@@ -299,5 +300,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     const elemTop = elem.offsetTop;
     const elemBottom = elemTop + elem.clientHeight + padding;
     return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+  }
+
+  getRoute(features: Feature[]) {
+    this.toolState.toolbox.activateTool('directions');
+    this.directionState.stopsStore.clear();
+    this.directionState.setRouteFromFeatureDetail(true);
+    this.directionState.stopsStore.insertMany(features);
   }
 }

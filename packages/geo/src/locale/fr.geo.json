@@ -8,7 +8,9 @@
         "layer.removeFromMapOutRange": "Retirer de la carte. La donnée est non visible à l'échelle active. Veuillez zoomer +/- si vous voulez l'apercevoir à la carte.",
         "group.addToMap": "Ajouter toutes les couches de ce groupe à la carte",
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
-        "baseLayers": "Fonds de carte"
+        "baseLayers": "Fonds de carte",
+        "unavailableTitle": "Catalogue indisponible",
+        "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
@@ -17,8 +19,9 @@
         "title": "Fonds de carte"
       },
       "dataSource": {
+        "unavailableTitle": "Couche indisponible",
         "optionsApiUnavailable": "L'information sur les couches n'a pas pu être récupérée. Certaines couches pourraient ne pas présenter la bonne information.",
-        "unavailable": "La couche '{{value}}' est indisponible pour le moment."
+        "unavailable": "La couche '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
       },
       "dropGeoFile": {
         "invalid": {
@@ -51,23 +54,60 @@
           "text": "Impossible d’exporter, donnée non valide ou aucune donnée sélectionnée.",
           "title": "Donnée non valide ou non présente"
         },
+        "noFormat": {
+          "text": "Aucun format d'exportation valide pour toutes les couches sélectionnées. Veuillez exporter les couches une à la fois.",
+          "title": "Aucun format disponible"
+        },
         "failed": {
           "text": "Impossible d’exporter, problème de donnée rencontré.",
           "title": "Problème d’exportation"
+        },
+        "popupBlocked": {
+          "text": "</br>Veuillez autoriser l'ouverture des fenêtres (popup) dans votre fureteur. </br>Pour Chrome and Edge, à droite dans la barre d'adresse).</br>{{extraMessage}}",
+          "selectAgain": "Faites le correctif et sélectionner à nouveau un format.",
+          "retry": "Veuillez recommencer l'exportation.",
+          "title": "Ouverture de fenêtre bloquée par votre fureteur"
+        },
+        "success": {
+          "text": "Données exportées avec succès.",
+          "title": "Exportation réussie"
+        },
+        "format": {
+          "GeoJSON": "GeoJSON",
+          "GML": "GML",
+          "GPX": "GPX",
+          "KML": "KML",
+          "Shapefile": "Shapefile",
+          "CSVcomma": "CSV (séparateur virgule)",
+          "CSVsemicolon": "CSV (séparateur point-virgule)",
+          "URL": "URL"
+        },
+        "encoding": {
+          "LATIN1": "LATIN-1",
+          "UTF8": "UTF-8"
         }
       },
       "importExportForm": {
         "exportButton": "Exporter",
+        "exportButtonLink": "Ouvrir le lien",
+        "exportButtonLinks": "Ouvrir les liens",
         "exportFormatPlaceholder": "Format",
         "exportLayerPlaceholder": "Données géospatiales",
         "exportFileNamePlaceholder": "Nom du fichier",
+        "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",
+        "exportFeatureInExtent": "Seulement les entités contenues dans la carte",
+        "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
+        "exportSelectedFeature": "Seulement les entités sélectionnées",
         "importButton": "Importer",
         "importProjPlaceholder": "Système de coordonnées",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
-        "importShpZip": "Les shapefiles doivent être compressés (zippés)"
+        "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
+        "importShpZip": "Les shapefiles doivent être compressés (zippés)",
+        "other": "autre",
+        "others": "autres"
       },
       "operators": {
         "caseSensitive": "Sensible à la case",
@@ -129,6 +169,7 @@
       },
       "layer": {
         "hideLayer": "Masquer la couche",
+        "hideSelectedLayers": "Masquer les couches sélectionnées",
         "lowerLayer": "Mettre en arrière",
         "filterLowerLayer": "Le déplacement arrière se fait toujours selon l'ordre de la carte!",
         "filterPlaceholder": "Filtrer la liste de couches",
@@ -144,10 +185,11 @@
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
+        "showSelectedLayers": "Afficher les couches sélectionnées",
         "subsetLayersListKeyword": "Limiter l'affichage de la liste selon le titre ou  par type (wms, wfs,...)",
         "deleteKeyword": "Supprimer le mot-clé",
-        "subsetLayersListOnlyVisible": "Conserver les couches visibles",
-        "subsetLayersListOnlyInRange": "Conserver les couches de la plage d'échelle active",
+        "subsetLayersListOnlyVisible": "Conserver seulement les couches visibles",
+        "subsetLayersListOnlyInRange": "Conserver seulement les couches de la plage d'échelle active",
         "sortAlphabetically": "Trier la liste des couches en ordre alphabétique",
         "sortMapOrder": "Replacer les couches selon l'ordre cartographique",
         "resetLayersList": "Rétablir l'affichage de l'ensemble des couches",
@@ -158,12 +200,11 @@
           "noLegendText": "Aucune symbologie disponible pour cette couche",
           "noLegendScale": "Aucune symbologie disponible pour cette échelle",
           "selectStyle": "Sélectionner le style de la légende",
-          "showAll" : "Montrer toutes les couches (non visible et hors échelle)",
+          "showAll": "Montrer toutes les couches (non visible et hors échelle)",
           "noLayersVisibleWithShowAllButton": "Aucune couche actuellement visible. Activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisibleWithShowAllButtonButZoom": "Aucune couche actuellement visible. Si vous zoomez dans la carte, certaines couches apparaîtront OU activez le bouton ci haut pour voir toutes les légendes.",
           "noLayersVisible": "Aucune couche actuellement visible.",
           "noLayersVisibleButZoom": "Aucune couche actuellement visible. Par contre, si vous zoomez dans la carte, certaines couches apparaîtront."
-        
         }
       },
       "download": {
@@ -263,6 +304,7 @@
       },
       "search": {
         "placeholder": "Rechercher une localisation ou une couche de données",
+        "emptyType.placeholder": "Veuillez choisir un type de recherche",
         "feature.title": "Localisation",
         "feature.placeholder": "Rechercher une localisation",
         "layer.title": "Couche de données",
@@ -313,7 +355,8 @@
             "place": "Lieu",
             "sumi": "Borne SUMI",
             "km": "Repère kilométrique",
-            "entreprise": "Entreprise"
+            "entreprise": "Entreprise",
+            "cadastre": "Cadastre"
           },
           "restrictExtent": {
             "map": "À l'étendue de la carte",
@@ -357,10 +400,15 @@
         "polygon": "Surface"
       },
       "targetHtmlUrl": "Ouvrir le lien externe",
+      "searchByCoord": "Rechercher par coordonnées",
+      "searchByName": "Rechercher par nom",
+      "seeRouting": "Voir l'itinéraire",
       "timeFilter": {
         "date": "Date",
         "endDate": "Date de fin",
-        "startDate": "Date de début"
+        "startDate": "Date de début",
+        "hour": "Heure",
+        "minute": "Minute"
       },
       "spatialFilter": {
         "predefined": "Zone Prédéfinie",
@@ -377,6 +425,7 @@
         "layer": "Couche",
         "goSearch": "Lancer la recherche",
         "removeLayer": "Retirer les résultats",
+        "exportLayer": "Exporter les résultats",
         "clearForm": "Retirer le dessin",
         "clearSearch": "Réinitialiser",
         "Address": "Adresses",
@@ -394,7 +443,9 @@
           "culturel": "Culturel",
           "education": "Éducation",
           "sante": "Santé",
-          "securite": "Sécurité"
+          "securite": "Sécurité",
+          "sepaq": "SÉPAQ",
+          "transport": "Transport"
         }
       },
       "terrapi": {
@@ -410,6 +461,10 @@
         "hydro": "Hydrographie",
         "routes": "Routes",
         "bati": "Bâtiments",
+        "batiment": "Bâtiments",
+        "camping": "Camping",
+        "equipement": "Équipements",
+        "commun": "Commun",
         "geographie": "Lieux naturels",
         "parc": "Parcs",
         "secteur": "Secteurs",
@@ -490,8 +545,17 @@
         "ogcFilter.close": "Fermer",
         "ogcFilter.title": "Filtres",
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
-        "wfsDownload.title": "Télécharger les données associées",
-        "wfsDownload.tooltip": "Télécharger les données associées"
+        "download.title": "Télécharger les données associées",
+        "download.tooltip": "Télécharger les données associées",
+        "inMapExtent.title": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
+        "zoomAuto.title": "Zoom auto",
+        "zoomAuto.tooltip": "Zoom auto",
+        "selected.title": "Ne montrer que les enregistrements sélectionnés",
+        "selected.tooltip": "Ne montrer que les enregistrements sélectionnés",
+        "clearSelection.title": "Tout désélectionner",
+        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
       },
       "network": {
         "online": {

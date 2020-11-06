@@ -1,7 +1,7 @@
 import OlMap from 'ol/Map';
 import OlFeature from 'ol/Feature';
 import OlStyle from 'ol/style';
-import OlGeometryType from 'ol/geom/GeometryType';
+import type { default as OlGeometryType } from 'ol/geom/GeometryType';
 import OlVectorSource from 'ol/source/Vector';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlDraw from 'ol/interaction/Draw';
@@ -29,7 +29,6 @@ export interface DrawControlOptions {
  * Control to draw geometries
  */
 export class DrawControl {
-
   /**
    * Draw start observable
    */
@@ -50,7 +49,7 @@ export class DrawControl {
   private olDrawInteraction: OlDraw;
   private onDrawStartKey: string;
   private onDrawEndKey: string;
-  private onChangesKey: string;
+  private onDrawKey: string;
 
   private mousePosition: [number, number];
 
@@ -148,7 +147,7 @@ export class DrawControl {
    */
   private clearOlInnerOverlaySource() {
     if (this.options.layer === undefined && this.options.source === undefined) {
-      this.olOverlaySource.clear();
+      this.olOverlaySource.clear(true);
     }
   }
 
@@ -185,10 +184,13 @@ export class DrawControl {
       }
     }
 
-    this.onDrawStartKey = olDrawInteraction
-      .on('drawstart', (event: OlDrawEvent) => this.onDrawStart(event));
-    this.onDrawEndKey = olDrawInteraction
-      .on('drawend', (event: OlDrawEvent) => this.onDrawEnd(event));
+    this.onDrawStartKey = olDrawInteraction.on(
+      'drawstart',
+      (event: OlDrawEvent) => this.onDrawStart(event)
+    );
+    this.onDrawEndKey = olDrawInteraction.on('drawend', (event: OlDrawEvent) =>
+      this.onDrawEnd(event)
+    );
     this.olMap.addInteraction(olDrawInteraction);
     this.olDrawInteraction = olDrawInteraction;
   }
@@ -202,8 +204,7 @@ export class DrawControl {
     }
 
     this.unsubscribeToKeyDown();
-    unByKey(this.onDrawStartKey);
-    unByKey(this.onDrawEndKey);
+    unByKey([this.onDrawStartKey, this.onDrawEndKey, this.onDrawKey]);
     if (this.olMap !== undefined) {
       this.olMap.removeInteraction(this.olDrawInteraction);
     }
@@ -218,10 +219,15 @@ export class DrawControl {
     const olGeometry = event.feature.getGeometry();
     this.start$.next(olGeometry);
     this.clearOlInnerOverlaySource();
-    this.onChangesKey = olGeometry.on('change', (olGeometryEvent: OlGeometryEvent) => {
-      this.mousePosition = getMousePositionFromOlGeometryEvent(olGeometryEvent);
-      this.changes$.next(olGeometryEvent.target);
-    });
+    this.onDrawKey = olGeometry.on(
+      'change',
+      (olGeometryEvent: OlGeometryEvent) => {
+        this.mousePosition = getMousePositionFromOlGeometryEvent(
+          olGeometryEvent
+        );
+        this.changes$.next(olGeometryEvent.target);
+      }
+    );
     this.subscribeToKeyDown();
   }
 
@@ -231,9 +237,7 @@ export class DrawControl {
    */
   private onDrawEnd(event: OlDrawEvent) {
     this.unsubscribeToKeyDown();
-    if (this.onChangesKey !== undefined) {
-      unByKey(this.onChangesKey);
-    }
+    unByKey(this.onDrawKey);
     this.end$.next(event.feature.getGeometry());
   }
 
@@ -242,22 +246,24 @@ export class DrawControl {
    */
   private subscribeToKeyDown() {
     this.unsubscribeToKeyDown();
-    this.keyDown$$ = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
-      // On ESC key down, remove the last vertex
-      if (event.keyCode === 27) {
-        this.olDrawInteraction.removeLastPoint();
-        return;
-      }
+    this.keyDown$$ = fromEvent(document, 'keydown').subscribe(
+      (event: KeyboardEvent) => {
+        // On ESC key down, remove the last vertex
+        if (event.key === 'Escape') {
+          this.olDrawInteraction.removeLastPoint();
+          return;
+        }
 
-      // On space bar, pan to the current mouse position
-      if (event.keyCode === 32) {
-        this.olMap.getView().animate({
-          center: this.mousePosition,
-          duration: 0
-        });
-        return;
+        // On space bar, pan to the current mouse position
+        if (event.key === ' ') {
+          this.olMap.getView().animate({
+            center: this.mousePosition,
+            duration: 0
+          });
+          return;
+        }
       }
-    });
+    );
   }
 
   /**

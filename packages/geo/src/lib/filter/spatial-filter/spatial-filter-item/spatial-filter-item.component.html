@@ -121,29 +121,12 @@
     {{'igo.geo.spatialFilter.goSearch' | translate}}
   </button>
 
-  <button *ngIf="selectedSourceAddress || selectedThematics" mat-raised-button class="remove-button"
-    [disabled]="!layers.length" (click)="clearButton()">
+  <button mat-raised-button class="remove-button" [disabled]="!store.entities$.getValue().length && !zone && !drawZone" (click)="clearButton()">
     {{'igo.geo.spatialFilter.removeLayer' | translate}}
   </button>
 
-</div>
+  <button mat-raised-button class="export-button" [disabled]="!store.entities$.getValue().length" (click)="export.emit()">
+    {{'igo.geo.spatialFilter.exportLayer' | translate}}
+  </button>
 
-<div class="results" *ngIf="store">
-  <mat-table class="results-list" [dataSource]="store.entities$.value">
-
-    <!-- Type Column -->
-    <ng-container matColumnDef="typeResults">
-        <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.type' | translate}}</mat-header-cell>
-        <mat-cell *matCellDef="let result"> {{result.meta.title}} </mat-cell>
-      </ng-container>
-
-    <!-- Name Column -->
-    <ng-container matColumnDef="nameResults">
-      <mat-header-cell *matHeaderCellDef>{{'igo.geo.spatialFilter.searchResults' | translate}}</mat-header-cell>
-      <mat-cell *matCellDef="let result"> {{result.properties.nom}} </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumnsResults"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumnsResults;"></mat-row>
-  </mat-table>
 </div>

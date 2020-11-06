@@ -12,6 +12,7 @@ import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
+import { LanguageService } from '@igo2/core';
 /**
  * Cadastre search source
  */
@@ -22,6 +23,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
 
   constructor(
     private http: HttpClient,
+    private languageService: LanguageService,
     @Inject('options') options: SearchSourceOptions
   ) {
     super(options);
@@ -95,7 +97,11 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     const numero = lot[0];
     const wkt = lot[7];
     const geometry = this.computeGeometry(wkt);
-    const properties = { NoLot: numero };
+
+    const properties = {
+      NoLot: numero,
+      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+    };
     const id = [this.getId(), 'cadastre', numero].join('.');
 
     return {

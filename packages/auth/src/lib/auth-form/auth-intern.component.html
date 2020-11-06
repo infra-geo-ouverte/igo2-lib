@@ -12,7 +12,9 @@
   </div>
 
   <button mat-raised-button type="submit" [disabled]="!form.valid || loading">{{'igo.auth.login' | translate}}</button>
-  <button *ngIf="allowAnonymous" mat-raised-button type="button" [disabled]="loading" (click)="loginAnonymous()">{{'igo.auth.accessAnonymous' | translate }}</button>
+  <button *ngIf="allowAnonymous" mat-raised-button class="anonymous" type="button" [disabled]="loading" (click)="loginAnonymous()">
+    {{'igo.auth.accessAnonymous' | translate }}
+  </button>
   <div *ngIf="error">
     <br/>
     <font size="3" color="red">{{error}}</font>

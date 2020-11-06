@@ -1,7 +1,8 @@
 <div *ngIf="!store || store.empty" style="margin: 10px;">
   <section class="mat-typography">
-    <h4>{{ 'igo.integration.searchResultsTool.noResults' | translate }}</h4>
-    <p>{{ 'igo.integration.searchResultsTool.doSearch' | translate }}</p>
+    <h4><strong>{{ 'igo.integration.searchResultsTool.noResults' | translate }}</strong></h4>
+    <p><strong>{{ 'igo.integration.searchResultsTool.doSearch' | translate }}</strong></p>
+    <div [innerHTML]="'igo.integration.searchResultsTool.examples' | translate | sanitizeHtml"></div>
 </section>
 </div>
 
@@ -59,7 +60,11 @@
       </button>
 
       <igo-feature-details
-        [feature]="feature$ | async">
+        igoFeatureDetailsDirective
+        [feature]="feature$ | async"
+        [map]="map"
+        [toolbox]="toolState.toolbox"
+        (routingEvent)="getRoute($event)">
       </igo-feature-details>
     </igo-panel>
   </div>
