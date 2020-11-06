@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -11,11 +11,12 @@ export class SecureImagePipe implements PipeTransform {
   constructor(private http: HttpClient) {}
 
   transform(url: string): Observable<string> {
+    const headers1 = new HttpHeaders();
+    headers1.append('Content-Type', 'text/plain');
+    headers1.append('activityInterceptor', 'false');
     return this.http
       .get(url, {
-        headers: {
-          activityInterceptor: 'false'
-        },
+        headers: headers1,
         responseType: 'blob'
       })
       .pipe(

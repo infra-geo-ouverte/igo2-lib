@@ -139,7 +139,6 @@ export class PrintService {
           })
         )
       );
-
       forkJoin(images$).subscribe((dataImages) => {
         html = dataImages.reduce((acc, current) => (acc += current), html);
         html += '</div>';
@@ -300,12 +299,11 @@ export class PrintService {
   ) {
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    let html = await this.getLayersLegendHtml(
+    const html = await this.getLayersLegendHtml(
       map,
       width,
       resolution
     ).toPromise();
-
     // If no legend, save the map directly
     if (html === '') {
       await this.saveDoc(doc);
