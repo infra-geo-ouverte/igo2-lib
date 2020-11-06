@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { SubjectStatus } from '@igo2/utils';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
@@ -102,28 +101,42 @@ export class PrintComponent {
       this.printService.defineNbFileToProcess(nbFileToProcess);
 
       const resolution = +data.resolution;
-      this.printService.downloadMapImage(
-        this.map,
-        resolution,
-        data.imageFormat,
-        data.showProjection,
-        data.showScale,
-        data.showLegend,
-        data.title,
-        data.comment,
-        data.doZipFile
-      );
-      if (data.showLegend) {
-        this.printService.getLayersLegendImage(
+
+      let nbRequests = data.showLegend ? 2 : 1;
+      this.printService
+        .downloadMapImage(
           this.map,
+          resolution,
           data.imageFormat,
-          data.doZipFile,
-          +resolution
-        );
+          data.showProjection,
+          data.showScale,
+          data.showLegend,
+          data.title,
+          data.comment,
+          data.doZipFile
+        )
+        .pipe(take(1))
+        .subscribe(() => {
+          nbRequests--;
+          if (!nbRequests) {
+            this.disabled$.next(false);
+          }
+        });
+      if (data.showLegend) {
+        this.printService
+          .getLayersLegendImage(
+            this.map,
+            data.imageFormat,
+            data.doZipFile,
+            +resolution
+          )
+          .then(() => {
+            nbRequests--;
+            if (!nbRequests) {
+              this.disabled$.next(false);
+            }
+          });
       }
-      setTimeout(() => {
-        this.disabled$.next(false);
-      }, 1000);
     }
   }
 }

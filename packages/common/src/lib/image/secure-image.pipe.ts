@@ -10,7 +10,7 @@ import { switchMap } from 'rxjs/operators';
 export class SecureImagePipe implements PipeTransform {
   constructor(private http: HttpClient) {}
 
-  transform(url: string) {
+  transform(url: string): Observable<string> {
     return this.http
       .get(url, {
         headers: {
@@ -19,15 +19,16 @@ export class SecureImagePipe implements PipeTransform {
         responseType: 'blob'
       })
       .pipe(
-        switchMap(blob => {
-          return new Observable(observer => {
+        switchMap((blob) => {
+          return new Observable((observer) => {
             const reader = new FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => {
               observer.next(reader.result);
+              observer.complete();
             };
           });
         })
-      );
+      ) as Observable<string>;
   }
 }
