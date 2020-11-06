@@ -18,6 +18,7 @@ import { MeasureLengthUnit } from '../../../measure/shared';
 import { LanguageService, MessageService } from '@igo2/core';
 import buffer from '@turf/buffer';
 import { Layer } from '../../../layer';
+import * as multiPolygon from 'ol/geom/MultiPolygon';
 
 @Component({
   selector: 'igo-spatial-filter-list',
@@ -62,7 +63,7 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   @Input() layers: Layer[] = [];
 
   public zoneWithBuffer;
-  public selectedZone;
+  public selectedZone: any;
 
   public measureUnit: MeasureLengthUnit = MeasureLengthUnit.Meters;
 
@@ -110,8 +111,16 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
       .subscribe((value) => {
         if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
           this.bufferChange.emit(value);
-          this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value / 1000, {units: 'kilometers'});
+          let bufferFeature = {...this.selectedZone};
+          console.log(bufferFeature);
+          bufferFeature.geometry = multiPolygon.transform('EPSG:4326', 'EPSG:3857');
+          console.log(bufferFeature.geometry);
+          console.log(this.selectedZone.geometry);
+          this.zoneWithBuffer = buffer(bufferFeature, this.bufferFormControl.value / 1000, {units: 'kilometers'});
+          this.zoneWithBuffer.geometry = multiPolygon.transform('EPSG:3857', 'EPSG:4326');
+          console.log(this.zoneWithBuffer);
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          console.log(this.zoneWithBuffer);
         } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
           this.bufferChange.emit(value);
           this.zoneWithBuffer = buffer(this.selectedZone, this.bufferFormControl.value, {units: 'kilometers'});
