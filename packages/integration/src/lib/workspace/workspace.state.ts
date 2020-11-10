@@ -6,6 +6,7 @@ import { EntityRecord, Workspace, WorkspaceStore, Widget } from '@igo2/common';
 import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
+import { StorageService } from '@igo2/core';
 
 /**
  * Service that holds the state of the workspace module
@@ -18,6 +19,11 @@ export class WorkspaceState implements OnDestroy {
   public workspacePanelExpanded: boolean = false;
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  readonly workspaceFullExtent$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.storageService.get('workspaceFullExtent') as boolean
+  );
+  private actionFullExtent$$: Subscription[] = [];
 
   /** Subscription to the active workspace */
   private activeWorkspace$$: Subscription;
@@ -42,6 +48,7 @@ export class WorkspaceState implements OnDestroy {
   constructor(
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
+    private storageService: StorageService
   ) {
     this.initWorkspaces();
   }
@@ -74,6 +81,14 @@ export class WorkspaceState implements OnDestroy {
       });
     });
 
+    this.actionFullExtent$$.push(this.featureActionsService.getWorkspaceFullExtentEmitter().subscribe(r => {
+      this.workspaceFullExtent$.next(r);
+    }));
+
+    this.actionFullExtent$$.push(this.wfsActionsService.getWorkspaceFullExtentEmitter().subscribe(r => {
+      this.workspaceFullExtent$.next(r);
+    }));
+
     this.activeWorkspace$$ = this.workspace$
       .subscribe((workspace: Workspace) => {
         if (this.activeWorkspaceWidget$$ !== undefined) {
@@ -103,6 +118,7 @@ export class WorkspaceState implements OnDestroy {
    */
   ngOnDestroy() {
     this.teardownWorkspaces();
+    this.actionFullExtent$$.map(a => a.unsubscribe());
   }
 
   /**

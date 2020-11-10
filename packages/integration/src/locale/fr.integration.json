@@ -54,7 +54,11 @@
         "selected.title": "Ne montrer que les enregistrements sélectionnés",
         "selected.tooltip": "Ne montrer que les enregistrements sélectionnés",
         "clearSelection.title": "Tout désélectionner",
-        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
+        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés",    
+        "fullExtent": "Agrandir",
+        "fullExtentTooltip": "Agrandir la fenêtre",
+        "standardExtent": "Réduire",
+        "standardExtentTooltip": "Réduire la fenêtre"
       }
     }
   }

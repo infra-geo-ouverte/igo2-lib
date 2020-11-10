@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy, Output } from '@angular/core';
 
 import {
   Action,
@@ -15,15 +15,36 @@ import {
   noElementSelected,
   ExportOptions
 } from '@igo2/geo';
-import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
+import { StorageService, StorageScope, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
-import { skipWhile } from 'rxjs/operators';
+import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureActionsService implements OnDestroy {
+
+  // To allow the workspace to use much larger extent on the map
+  get fullExtent(): boolean {
+    return this._fullExtent;
+  }
+  set fullExtent(value) {
+    if (value !== !this._fullExtent) {
+      return;
+    }
+    this._fullExtent = value;
+    this.fullExtent$.next(value);
+    this.workspaceFullExtentEvent.emit(value);
+    this.storageService.set('workspaceFullExtent', value);
+  }
+  private _fullExtent = this.storageService.get('workspaceFullExtent') as boolean;
+
+
+  public fullExtent$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.fullExtent
+  );
+
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
@@ -39,10 +60,18 @@ export class FeatureActionsService implements OnDestroy {
     return this.storageService.get('rowsInMapExtent') as boolean;
   }
 
+  @Output() workspaceFullExtentEvent = new EventEmitter<boolean>();
+
   constructor(
     private storageState: StorageState,
-    private toolState: ToolState
+    public languageService: LanguageService,
+    private toolState: ToolState,
+    private mediaService: MediaService
   ) {}
+
+  getWorkspaceFullExtentEmitter(): EventEmitter<boolean> {
+    return this.workspaceFullExtentEvent;
+  }
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -161,6 +190,36 @@ export class FeatureActionsService implements OnDestroy {
           });
         },
         args: [workspace]
+      },
+      {
+        id: 'fullExtent',
+        title: this.languageService.translate.instant('igo.integration.workspace.fullExtent'),
+        tooltip: this.languageService.translate.instant(
+          'igo.integration.workspace.fullExtentTooltip'
+        ),
+        icon: 'resize',
+        display: () => {
+          return this.fullExtent$.pipe(map((v) => !v && !this.mediaService.isMobile()));
+        },
+        handler: () => {
+          this.fullExtent = true;
+        },
+      },
+      {
+        id: 'standardExtent',
+        title: this.languageService.translate.instant(
+          'igo.integration.workspace.standardExtent'
+        ),
+        tooltip: this.languageService.translate.instant(
+          'igo.integration.workspace.standardExtentTooltip'
+        ),
+        icon: 'resize',
+        display: () => {
+          return this.fullExtent$.pipe(map((v) => v && !this.mediaService.isMobile()));
+        },
+        handler: () => {
+          this.fullExtent = false;
+        }
       }
     ];
   }

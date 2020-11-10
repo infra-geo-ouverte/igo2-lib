@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Inject, Injectable, OnDestroy, Output } from '@angular/core';
 
 import { Action, Widget, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy } from '@igo2/common';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -12,15 +12,35 @@ import {
   OgcFilterWidget,
   OgcFilterableDataSource
 } from '@igo2/geo';
-import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
+import { StorageService, StorageScope, StorageServiceEvent, LanguageService, MediaService } from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
-import { skipWhile } from 'rxjs/operators';
+import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WfsActionsService implements OnDestroy  {
+
+  // To allow the workspace to use much larger extent on the map
+  get fullExtent(): boolean {
+    return this._fullExtent;
+  }
+  set fullExtent(value) {
+    if (value !== !this._fullExtent) {
+      return;
+    }
+    this._fullExtent = value;
+    this.fullExtent$.next(value);
+    this.workspaceFullExtentEvent.emit(value);
+    this.storageService.set('workspaceFullExtent', value);
+  }
+  private _fullExtent = this.storageService.get('workspaceFullExtent') as boolean;
+
+
+  public fullExtent$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.fullExtent
+  );
 
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
@@ -37,10 +57,18 @@ export class WfsActionsService implements OnDestroy  {
     return this.storageService.get('rowsInMapExtent') as boolean;
   }
 
+  @Output() workspaceFullExtentEvent = new EventEmitter<boolean>();
+
   constructor(
     @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
     private storageState: StorageState,
+    public languageService: LanguageService,
+    private mediaService: MediaService,
     private toolState: ToolState) {}
+
+    getWorkspaceFullExtentEmitter(): EventEmitter<boolean> {
+      return this.workspaceFullExtentEvent;
+    }
 
   ngOnDestroy(): void {
     if (this.storageChange$$) {
@@ -147,6 +175,36 @@ export class WfsActionsService implements OnDestroy  {
         },
         args: [this.ogcFilterWidget, workspace]
       },
+      {
+        id: 'fullExtent',
+        title: this.languageService.translate.instant('igo.integration.workspace.fullExtent'),
+        tooltip: this.languageService.translate.instant(
+          'igo.integration.workspace.fullExtentTooltip'
+        ),
+        icon: 'resize',
+        display: () => {
+          return this.fullExtent$.pipe(map((v) => !v && !this.mediaService.isMobile()));
+        },
+        handler: () => {
+          this.fullExtent = true;
+        },
+      },
+      {
+        id: 'standardExtent',
+        title: this.languageService.translate.instant(
+          'igo.integration.workspace.standardExtent'
+        ),
+        tooltip: this.languageService.translate.instant(
+          'igo.integration.workspace.standardExtentTooltip'
+        ),
+        icon: 'resize',
+        display: () => {
+          return this.fullExtent$.pipe(map((v) => v && !this.mediaService.isMobile()));
+        },
+        handler: () => {
+          this.fullExtent = false;
+        }
+      }
     ];
     return (workspace.layer.dataSource as OgcFilterableDataSource).ogcFilters$?.value?.enabled ?
     actions : actions.filter(action => action.id !== 'ogcFilter');
