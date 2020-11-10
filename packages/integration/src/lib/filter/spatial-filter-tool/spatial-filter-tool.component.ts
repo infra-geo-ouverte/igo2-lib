@@ -193,6 +193,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
     this.iterator = 1;
     if (this.type !== SpatialFilterType.Predefined) {
       this.zone = undefined;
+      this.queryType = undefined;
     }
   }
 
@@ -212,7 +213,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
     if (this.measureUnit === MeasureLengthUnit.Kilometers && this.type !== SpatialFilterType.Point) {
       this.buffer = this.buffer * 1000;
     }
-
+    console.log(this.buffer);
     const observables$: Observable<Feature[]>[] = [];
     thematics.forEach(thematic => {
       observables$.push(
