@@ -46,15 +46,15 @@
         "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
         "download.title": "Télécharger les données associées",
         "download.tooltip": "Télécharger les données associées",
-        "inMapExtent.title": "Montrer les enregistrements contenus dans la carte",
-        "inMapExtent.active.tooltip": "Montrer les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
+        "inMapExtent.title": "Montrer les entités contenus dans la carte",
+        "inMapExtent.active.tooltip": "Montrer les entités contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer toutes les entités",
         "zoomAuto.title": "Zoom auto",
         "zoomAuto.tooltip": "Zoom auto",
-        "selected.title": "Montrer les enregistrements sélectionnés",
-        "selected.tooltip": "Montrer les enregistrements sélectionnés",
+        "selected.title": "Montrer les entités sélectionnés",
+        "selected.tooltip": "Montrer les entités sélectionnés",
         "clearSelection.title": "Tout désélectionner",
-        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
+        "clearSelection.tooltip": "Désélectionner les entités sélectionnés"
       }
     }
   }
