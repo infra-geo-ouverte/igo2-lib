@@ -55,8 +55,8 @@
         "selected.tooltip": "Show selected records only",
         "clearSelection.title": "Deselect all",
         "clearSelection.tooltip": "Deselect all records",
-        "fullExtent": "Extend",
-        "fullExtentTooltip": "Extend panel",
+        "maximize": "Extend",
+        "maximizeTooltip": "Extend panel",
         "standardExtent": "Reduce",
         "standardExtentTooltip": "Reduce panel"
       }

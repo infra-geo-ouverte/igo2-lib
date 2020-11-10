@@ -23,23 +23,23 @@ import { ToolState } from '../../tool/tool.state';
 export class WfsActionsService implements OnDestroy  {
 
   // To allow the workspace to use much larger extent on the map
-  get fullExtent(): boolean {
-    return this._fullExtent;
+  get maximize(): boolean {
+    return this._maximize;
   }
-  set fullExtent(value) {
-    if (value !== !this._fullExtent) {
+  set maximize(value) {
+    if (value !== !this._maximize) {
       return;
     }
-    this._fullExtent = value;
-    this.fullExtent$.next(value);
-    this.workspaceFullExtentEvent.emit(value);
-    this.storageService.set('workspaceFullExtent', value);
+    this._maximize = value;
+    this.maximize$.next(value);
+    this.workspaceMaximizeEvent.emit(value);
+    this.storageService.set('workspaceMaximize', value);
   }
-  private _fullExtent = this.storageService.get('workspaceFullExtent') as boolean;
+  private _maximize = this.storageService.get('workspaceMaximize') as boolean;
 
 
-  public fullExtent$: BehaviorSubject<boolean> = new BehaviorSubject(
-    this.fullExtent
+  public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.maximize
   );
 
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -57,7 +57,7 @@ export class WfsActionsService implements OnDestroy  {
     return this.storageService.get('rowsInMapExtent') as boolean;
   }
 
-  @Output() workspaceFullExtentEvent = new EventEmitter<boolean>();
+  @Output() workspaceMaximizeEvent = new EventEmitter<boolean>();
 
   constructor(
     @Inject(OgcFilterWidget) private ogcFilterWidget: Widget,
@@ -66,8 +66,8 @@ export class WfsActionsService implements OnDestroy  {
     private mediaService: MediaService,
     private toolState: ToolState) {}
 
-    getWorkspaceFullExtentEmitter(): EventEmitter<boolean> {
-      return this.workspaceFullExtentEvent;
+    getWorkspaceMaximizeEmitter(): EventEmitter<boolean> {
+      return this.workspaceMaximizeEvent;
     }
 
   ngOnDestroy(): void {
@@ -176,17 +176,17 @@ export class WfsActionsService implements OnDestroy  {
         args: [this.ogcFilterWidget, workspace]
       },
       {
-        id: 'fullExtent',
-        title: this.languageService.translate.instant('igo.integration.workspace.fullExtent'),
+        id: 'maximize',
+        title: this.languageService.translate.instant('igo.integration.workspace.maximize'),
         tooltip: this.languageService.translate.instant(
-          'igo.integration.workspace.fullExtentTooltip'
+          'igo.integration.workspace.maximizeTooltip'
         ),
         icon: 'resize',
         display: () => {
-          return this.fullExtent$.pipe(map((v) => !v && !this.mediaService.isMobile()));
+          return this.maximize$.pipe(map((v) => !v && !this.mediaService.isMobile()));
         },
         handler: () => {
-          this.fullExtent = true;
+          this.maximize = true;
         },
       },
       {
@@ -199,10 +199,10 @@ export class WfsActionsService implements OnDestroy  {
         ),
         icon: 'resize',
         display: () => {
-          return this.fullExtent$.pipe(map((v) => v && !this.mediaService.isMobile()));
+          return this.maximize$.pipe(map((v) => v && !this.mediaService.isMobile()));
         },
         handler: () => {
-          this.fullExtent = false;
+          this.maximize = false;
         }
       }
     ];
