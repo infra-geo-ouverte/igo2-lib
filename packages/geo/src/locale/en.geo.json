@@ -557,8 +557,8 @@
         }
       },   
       "workspace": {
-        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
+        "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les entités"
       }
     }
   }
