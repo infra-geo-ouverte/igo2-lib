@@ -22,24 +22,8 @@ import { ToolState } from '../../tool/tool.state';
 })
 export class WfsActionsService implements OnDestroy  {
 
-  // To allow the workspace to use much larger extent on the map
-  get maximize(): boolean {
-    return this._maximize;
-  }
-  set maximize(value) {
-    if (value !== !this._maximize) {
-      return;
-    }
-    this._maximize = value;
-    this.maximize$.next(value);
-    this.workspaceMaximizeEvent.emit(value);
-    this.storageService.set('workspaceMaximize', value);
-  }
-  private _maximize = this.storageService.get('workspaceMaximize') as boolean;
-
-
   public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
-    this.maximize
+    this.storageService.get('workspaceMaximize') as boolean
   );
 
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -186,7 +170,9 @@ export class WfsActionsService implements OnDestroy  {
           return this.maximize$.pipe(map((v) => !v && !this.mediaService.isMobile()));
         },
         handler: () => {
-          this.maximize = true;
+          if (!this.mediaService.isMobile()) {
+            this.maximize$.next(true);
+          }
         },
       },
       {
@@ -202,7 +188,7 @@ export class WfsActionsService implements OnDestroy  {
           return this.maximize$.pipe(map((v) => v && !this.mediaService.isMobile()));
         },
         handler: () => {
-          this.maximize = false;
+          this.maximize$.next(false);
         }
       }
     ];

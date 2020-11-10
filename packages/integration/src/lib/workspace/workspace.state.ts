@@ -81,12 +81,12 @@ export class WorkspaceState implements OnDestroy {
       });
     });
 
-    this.actionMaximize$$.push(this.featureActionsService.getWorkspaceMaximizeEmitter().subscribe(r => {
-      this.workspaceMaximize$.next(r);
+    this.actionMaximize$$.push(this.featureActionsService.maximize$.subscribe(maximized => {
+      this.setWorkspaceIsMaximized(maximized);
     }));
 
-    this.actionMaximize$$.push(this.wfsActionsService.getWorkspaceMaximizeEmitter().subscribe(r => {
-      this.workspaceMaximize$.next(r);
+    this.actionMaximize$$.push(this.wfsActionsService.maximize$.subscribe(maximized => {
+      this.setWorkspaceIsMaximized(maximized);
     }));
 
     this.activeWorkspace$$ = this.workspace$
@@ -101,6 +101,11 @@ export class WorkspaceState implements OnDestroy {
             .subscribe((widget: Widget) => this.activeWorkspaceWidget$.next(widget));
         }
       });
+  }
+
+  private setWorkspaceIsMaximized(maximized: boolean) {
+    this.storageService.set('workspaceMaximize', maximized);
+    this.workspaceMaximize$.next(maximized);
   }
 
   public setActiveWorkspaceById(id: string) {
