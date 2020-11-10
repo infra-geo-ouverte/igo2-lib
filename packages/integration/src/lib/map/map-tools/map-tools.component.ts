@@ -24,7 +24,7 @@ import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
-import { ImportExportState } from '../../import-export/import-export.state';
+import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -264,7 +264,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
     }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
-    this.importExportState.setMode('export');
+    this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
   }
 
