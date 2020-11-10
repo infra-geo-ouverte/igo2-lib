@@ -20,10 +20,10 @@ export class WorkspaceState implements OnDestroy {
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  readonly workspaceFullExtent$: BehaviorSubject<boolean> = new BehaviorSubject(
-    this.storageService.get('workspaceFullExtent') as boolean
+  readonly workspaceMaximize$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.storageService.get('workspaceMaximize') as boolean
   );
-  private actionFullExtent$$: Subscription[] = [];
+  private actionMaximize$$: Subscription[] = [];
 
   /** Subscription to the active workspace */
   private activeWorkspace$$: Subscription;
@@ -81,12 +81,12 @@ export class WorkspaceState implements OnDestroy {
       });
     });
 
-    this.actionFullExtent$$.push(this.featureActionsService.getWorkspaceFullExtentEmitter().subscribe(r => {
-      this.workspaceFullExtent$.next(r);
+    this.actionMaximize$$.push(this.featureActionsService.getWorkspaceMaximizeEmitter().subscribe(r => {
+      this.workspaceMaximize$.next(r);
     }));
 
-    this.actionFullExtent$$.push(this.wfsActionsService.getWorkspaceFullExtentEmitter().subscribe(r => {
-      this.workspaceFullExtent$.next(r);
+    this.actionMaximize$$.push(this.wfsActionsService.getWorkspaceMaximizeEmitter().subscribe(r => {
+      this.workspaceMaximize$.next(r);
     }));
 
     this.activeWorkspace$$ = this.workspace$
@@ -118,7 +118,7 @@ export class WorkspaceState implements OnDestroy {
    */
   ngOnDestroy() {
     this.teardownWorkspaces();
-    this.actionFullExtent$$.map(a => a.unsubscribe());
+    this.actionMaximize$$.map(a => a.unsubscribe());
   }
 
   /**
