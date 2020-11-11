@@ -46,6 +46,7 @@ import type { WorkspaceStore } from '@igo2/common';
 import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { InputProjections, ProjectionsLimitationsOptions } from './import-export.interface';
 
 @Component({
   selector: 'igo-import-export',
@@ -54,12 +55,12 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 })
 export class ImportExportComponent implements OnDestroy, OnInit {
   public form: FormGroup;
+  public importForm: FormGroup;
   public formats$ = new BehaviorSubject(undefined);
   public encodings$ = new BehaviorSubject(undefined);
   public exportableLayers$: BehaviorSubject<AnyLayer[]> = new BehaviorSubject(
     []
   );
-  public inputProj: string = 'EPSG:4326';
   public loading$ = new BehaviorSubject(false);
   public forceNaming = false;
   public controlFormat = 'format';
@@ -75,6 +76,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   private clientSideFileSizeMax: number;
   public fileSizeMb: number;
 
+  public projections$: BehaviorSubject<InputProjections[]> = new BehaviorSubject([]);
+  private projectionsConstraints: ProjectionsLimitationsOptions;
+
   public popupChecked: boolean = false;
 
   private previousLayerSpecs$: BehaviorSubject<
@@ -86,7 +90,19 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     }[]
   > = new BehaviorSubject(undefined);
 
+  @Input() selectFirstProj: boolean = false;
+
   @Input() map: IgoMap;
+
+  private _projectionsLimitations: ProjectionsLimitationsOptions = {};
+  @Input()
+  set projectionsLimitations(value: ProjectionsLimitationsOptions) {
+    this._projectionsLimitations = value;
+    this.computeProjections();
+  }
+  get projectionsLimitations(): ProjectionsLimitationsOptions {
+    return this._projectionsLimitations || {};
+  }
 
   /**
    * Store that holds the available workspaces.
@@ -108,6 +124,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
   set layers(value) {
     this.form.patchValue({ layers: value });
+  }
+
+  get inputProj() {
+    return this.importForm.get('inputProj').value;
+  }
+  set inputProj(value) {
+    this.importForm.patchValue({ inputProj: value });
   }
 
   get popupAllowed(): boolean {
@@ -132,6 +155,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   ) {
     this.loadConfig();
     this.buildForm();
+    this.computeProjections();
   }
 
   ngOnInit() {
@@ -255,6 +279,81 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       }
       this.cdRef.detectChanges();
     });
+
+    if (this.selectFirstProj) {
+      if (this.projections$.value.length === 0) {
+        this.importForm.patchValue({ inputProj: {translateKey: 'nad83', alias: 'NAD83', code : 'EPSG:4326', zone: ''} });
+      } else {
+        this.importForm.patchValue({ inputProj: this.projections$.value[0] });
+      }
+    } else {
+      this.importForm.patchValue({ inputProj: undefined });
+    }
+  }
+
+  private computeProjectionsConstraints() {
+    const utmZone = this.projectionsLimitations.utmZone;
+    const mtmZone = this.projectionsLimitations.mtmZone;
+    this.projectionsConstraints = {
+      projFromConfig: this.projectionsLimitations.projFromConfig === false ? false : true,
+      nad83: this.projectionsLimitations.nad83 === false ? false : true,
+      wgs84: this.projectionsLimitations.wgs84 === false ? false : true,
+      webMercator: this.projectionsLimitations.webMercator === false ? false : true,
+      utm: this.projectionsLimitations.utm === false ? false : true,
+      mtm: this.projectionsLimitations.mtm === false ? false : true,
+      utmZone: {
+        minZone: utmZone && utmZone.minZone ? utmZone.minZone : 1,
+        maxZone: utmZone && utmZone.maxZone ? utmZone.maxZone : 60,
+      },
+      mtmZone: {
+        minZone: mtmZone && mtmZone.minZone ? mtmZone.minZone : 1,
+        maxZone: mtmZone && mtmZone.maxZone ? mtmZone.maxZone : 10,
+      }
+    };
+  }
+
+  private computeProjections() {
+    this.computeProjectionsConstraints();
+    const projections: InputProjections[] = [];
+
+    if (this.projectionsConstraints.nad83) {
+      projections.push({translateKey: 'nad83', alias: 'NAD83', code : 'EPSG:4326', zone: ''});
+    }
+    if (this.projectionsConstraints.wgs84) {
+      projections.push({translateKey: 'wgs84', alias: 'WGS84', code : 'EPSG:4269', zone: ''});
+    }
+    if (this.projectionsConstraints.webMercator) {
+      projections.push({translateKey: 'webMercator', alias: 'Web Mercator', code : 'EPSG:3857', zone: ''});
+    }
+
+    if (this.projectionsConstraints.mtm) {
+      // all mtm zones
+      const minZone = this.projectionsConstraints.mtmZone.minZone;
+      const maxZone = this.projectionsConstraints.mtmZone.maxZone;
+
+      for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
+        const code = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
+        projections.push({translateKey: 'mtm', alias: `MTM ${mtmZone}`, code, zone: `${mtmZone}` });
+      }
+    }
+
+    if (this.projectionsConstraints.utm) {
+      // all utm zones
+      const minZone = this.projectionsConstraints.utmZone.minZone;
+      const maxZone = this.projectionsConstraints.utmZone.maxZone;
+
+      for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
+        const code = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
+        projections.push({translateKey: 'utm', alias: `UTM ${utmZone}`, code, zone: `${utmZone}` });
+      }
+    }
+
+    let configProjection = [];
+    if (this.projectionsConstraints.projFromConfig) {
+      configProjection = this.config.getConfig('projections') || [];
+    }
+
+    this.projections$.next(configProjection.concat(projections));
   }
 
   private getWorkspaceByLayerId(id: string): Workspace {
@@ -330,7 +429,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   importFiles(files: File[]) {
-    let inputProj = this.inputProj;
+    let inputProj = this.inputProj.code;
     if (this.espgCodeRegex.test(inputProj)) {
       inputProj = `EPSG:${inputProj}`;
     }
@@ -443,6 +542,10 @@ export class ImportExportComponent implements OnDestroy, OnInit {
   }
 
   private buildForm() {
+    this.importForm = this.formBuilder.group({
+      inputProj: ['', [Validators.required]]
+    });
+
     if (this.forceNaming) {
       this.form = this.formBuilder.group({
         format: ['', [Validators.required]],

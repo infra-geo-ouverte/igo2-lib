@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit, Input } from '@angular/core
 
 import { ToolComponent } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
-import { IgoMap, ExportOptions } from '@igo2/geo';
+import { IgoMap, ExportOptions, ProjectionsLimitationsOptions } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
 import { ImportExportMode, ImportExportState, ImportExportType } from '../import-export.state';
@@ -20,6 +20,11 @@ import { WorkspaceState } from '../../workspace/workspace.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportExportToolComponent implements OnInit {
+
+  @Input() projectionsLimitations: ProjectionsLimitationsOptions;
+
+  @Input() selectFirstProj: boolean = false;
+
   /**
    * Map to measure on
    * @internal
