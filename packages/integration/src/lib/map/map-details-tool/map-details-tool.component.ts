@@ -15,7 +15,7 @@ import {
 
 import { ToolState } from './../../tool/tool.state';
 import { MapState } from './../map.state';
-import { ImportExportState } from '../../import-export/import-export.state';
+import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
 
 @ToolComponent({
   name: 'mapDetails',
@@ -139,7 +139,7 @@ export class MapDetailsToolComponent implements OnInit {
       id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
     }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
-    this.importExportState.setMode('export');
+    this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
   }
 }
