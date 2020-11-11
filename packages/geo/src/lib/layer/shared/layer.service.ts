@@ -10,6 +10,7 @@ import {
   OSMDataSource,
   FeatureDataSource,
   XYZDataSource,
+  TileDebugDataSource,
   WFSDataSource,
   WMTSDataSource,
   WMSDataSource,
@@ -69,6 +70,7 @@ export class LayerService {
       case OSMDataSource:
       case WMTSDataSource:
       case XYZDataSource:
+      case TileDebugDataSource:
       case CartoDataSource:
       case TileArcGISRestDataSource:
         layer = this.createTileLayer(layerOptions as TileLayerOptions);

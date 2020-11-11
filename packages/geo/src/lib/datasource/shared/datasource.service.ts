@@ -13,6 +13,8 @@ import {
   FeatureDataSourceOptions,
   XYZDataSource,
   XYZDataSourceOptions,
+  TileDebugDataSource,
+  TileDebugDataSourceOptions,
   WFSDataSource,
   WFSDataSourceOptions,
   WMTSDataSource,
@@ -84,6 +86,9 @@ export class DataSourceService {
       case 'xyz':
         dataSource = this.createXYZDataSource(context as XYZDataSourceOptions);
         break;
+      case 'tiledebug':
+          dataSource = this.createTileDebugDataSource(context as TileDebugDataSource);
+          break;
       case 'carto':
         dataSource = this.createCartoDataSource(
           context as CartoDataSourceOptions
@@ -231,6 +236,12 @@ export class DataSourceService {
     context: XYZDataSourceOptions
   ): Observable<XYZDataSource> {
     return new Observable(d => d.next(new XYZDataSource(context)));
+  }
+
+  private createTileDebugDataSource(
+    context: TileDebugDataSourceOptions
+  ): Observable<TileDebugDataSource> {
+    return new Observable(d => d.next(new TileDebugDataSource(context)));
   }
 
   private createCartoDataSource(

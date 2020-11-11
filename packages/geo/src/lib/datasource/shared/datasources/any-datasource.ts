@@ -11,6 +11,7 @@ import { TileArcGISRestDataSource } from './tilearcgisrest-datasource';
 import { WebSocketDataSource } from './websocket-datasource';
 import { MVTDataSource } from './mvt-datasource';
 import { ClusterDataSource } from './cluster-datasource';
+import { TileDebugDataSource } from './tiledebug-datasource';
 
 export type AnyDataSource =
   | DataSource
@@ -18,6 +19,7 @@ export type AnyDataSource =
   | FeatureDataSource
   | WFSDataSource
   | XYZDataSource
+  | TileDebugDataSource
   | WMTSDataSource
   | WMSDataSource
   | CartoDataSource

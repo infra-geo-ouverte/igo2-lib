@@ -21,6 +21,8 @@ export * from './arcgisrest-datasource';
 export * from './arcgisrest-datasource.interface';
 export * from './tilearcgisrest-datasource';
 export * from './tilearcgisrest-datasource.interface';
+export * from './tiledebug-datasource';
+export * from './tiledebug-datasource.interface';
 export * from './websocket-datasource';
 export * from './websocket-datasource.interface';
 export * from './mvt-datasource';
