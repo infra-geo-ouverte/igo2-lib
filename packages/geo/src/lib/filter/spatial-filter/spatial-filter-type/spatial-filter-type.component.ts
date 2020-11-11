@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 import { EntityStore } from '@igo2/common';
 import { Feature } from '../../../feature';
 import { MeasureLengthUnit } from '../../../measure';
+import { Layer } from '../../../layer';
 
 /**
  * Spatial Filter Type
@@ -46,6 +47,8 @@ export class SpatialFilterTypeComponent implements OnInit {
   @Input() selectedQueryType: SpatialFilterQueryType;
 
   @Input() zone: Feature;
+
+  @Input() layers: Layer[] = [];
 
   public type: SpatialFilterType;
 

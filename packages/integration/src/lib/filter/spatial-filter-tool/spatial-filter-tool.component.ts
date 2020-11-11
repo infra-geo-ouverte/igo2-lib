@@ -193,6 +193,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
     this.iterator = 1;
     if (this.type !== SpatialFilterType.Predefined) {
       this.zone = undefined;
+      this.queryType = undefined;
     }
   }
 
