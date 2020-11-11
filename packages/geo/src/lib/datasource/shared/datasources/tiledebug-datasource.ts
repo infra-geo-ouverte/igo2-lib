@@ -9,7 +9,7 @@ export class TileDebugDataSource extends DataSource {
   public ol: TileDebug;
 
   protected createOlSource(): TileDebug {
-    const baseOptions = JSON.parse(JSON.stringify(this.options)); // to avoid to alter the original options. this.options;
+    const baseOptions = JSON.parse(JSON.stringify(this.options)); // to avoid to alter the original options
     if (this.options.tileGrid) {
         delete baseOptions.tileGrid;
         baseOptions.tileGrid = new TileGrid(this.options.tileGrid);
