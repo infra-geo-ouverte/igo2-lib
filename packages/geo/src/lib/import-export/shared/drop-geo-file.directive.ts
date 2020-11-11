@@ -75,6 +75,7 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
           first(),
           concatMap(epsgCode => {
             const epsg = epsgCode === 'epsgNotDefined' ? undefined : epsgCode;
+            this.epsgCode$.next(undefined);
             return this.importService.import(file, epsg);
           }),
         ).subscribe(
@@ -93,7 +94,11 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
       if (file.name.toLowerCase().endsWith('.geojson')) {
         const geojson = JSON.parse(reader.result as string);
         const epsg = geojson.crs.properties.name.match(/EPSG:{1,2}\d{0,6}/gm);
-        this.epsgCode$.next(epsg[0].replace(/::/g, ':'));
+        if (epsg !== null && epsg.length) {
+          this.epsgCode$.next(epsg[0].replace(/::/g, ':'));
+        } else {
+          this.epsgCode$.next('epsgNotDefined');
+        }
         return;
       } else if (file.name.toLowerCase().endsWith('.gml')) {
         const text = (reader.result as string);
@@ -103,10 +108,12 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
           if (epsg !== null && epsg.length) {
               this.epsgCode$.next(epsg[0]);
               break;
+          } else {
+            this.epsgCode$.next(undefined);
           }
         }
       } else {
-        return 'epsgNotDefined';
+        this.epsgCode$.next('epsgNotDefined');
       }
     };
     reader.readAsText(file, 'UTF-8');
