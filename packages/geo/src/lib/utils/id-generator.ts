@@ -21,7 +21,8 @@ export function generateIdFromSourceOptions(options: DataSourceOptions): string 
     feature: generateFeatureIdFromSourceOptions,
     arcgisrest: generateArcgisRestIdFromSourceOptions,
     tilearcgisrest: generateArcgisRestIdFromSourceOptions,
-    osm: (_options: AnyDataSourceOptions) => 'OSM'
+    osm: (_options: AnyDataSourceOptions) => 'OSM',
+    tiledebug: (_options: AnyDataSourceOptions) => 'tiledebug'
   };
   const generator = generators[options.type] || generateId;
   return generator(options);
