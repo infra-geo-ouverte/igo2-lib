@@ -32,7 +32,7 @@
       },
       "paginator": {
         "firstPageLabel": "Première page",
-        "itemsPerPageLabel": "Items par page:",
+        "itemsPerPageLabel": "Entités par page:",
         "lastPageLabel": "Dernière page",
         "nextPageLabel": "Page suivante",
         "previousPageLabel": "Page précédente",

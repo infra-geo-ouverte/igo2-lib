@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy, Output } from '@angular/core';
 
 import {
   Action,
@@ -15,15 +15,20 @@ import {
   noElementSelected,
   ExportOptions
 } from '@igo2/geo';
-import { StorageService, StorageScope, StorageServiceEvent } from '@igo2/core';
+import { StorageService, StorageScope, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
-import { skipWhile } from 'rxjs/operators';
+import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureActionsService implements OnDestroy {
+
+  public maximize$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.storageService.get('workspaceMaximize') as boolean
+  );
+
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
@@ -41,7 +46,9 @@ export class FeatureActionsService implements OnDestroy {
 
   constructor(
     private storageState: StorageState,
-    private toolState: ToolState
+    public languageService: LanguageService,
+    private toolState: ToolState,
+    private mediaService: MediaService
   ) {}
 
   ngOnDestroy(): void {
@@ -161,6 +168,38 @@ export class FeatureActionsService implements OnDestroy {
           });
         },
         args: [workspace]
+      },
+      {
+        id: 'maximize',
+        title: this.languageService.translate.instant('igo.integration.workspace.maximize'),
+        tooltip: this.languageService.translate.instant(
+          'igo.integration.workspace.maximizeTooltip'
+        ),
+        icon: 'resize',
+        display: () => {
+          return this.maximize$.pipe(map((v) => !v && !this.mediaService.isMobile()));
+        },
+        handler: () => {
+          if (!this.mediaService.isMobile()) {
+            this.maximize$.next(true);
+          }
+        },
+      },
+      {
+        id: 'standardExtent',
+        title: this.languageService.translate.instant(
+          'igo.integration.workspace.standardExtent'
+        ),
+        tooltip: this.languageService.translate.instant(
+          'igo.integration.workspace.standardExtentTooltip'
+        ),
+        icon: 'resize',
+        display: () => {
+          return this.maximize$.pipe(map((v) => v && !this.mediaService.isMobile()));
+        },
+        handler: () => {
+          this.maximize$.next(false);
+        }
       }
     ];
   }

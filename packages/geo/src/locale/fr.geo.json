@@ -100,14 +100,22 @@
         "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
         "exportSelectedFeature": "Seulement les entités sélectionnées",
         "importButton": "Importer",
-        "importProjPlaceholder": "Système de coordonnées",
+        "importProjPlaceholder": "Système de coordonnées du fichier à importer",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)",
         "other": "autre",
-        "others": "autres"
+        "others": "autres",
+        "projections": {
+          "mtm": "MTM {{zone}} ({{code}})",
+          "utm": "UTM {{zone}} ({{code}})",
+          "webMercator": "Web Mercator ({{code}})",
+          "nad83": "Lat-Long NAD83 ({{code}})",
+          "wgs84": "Lat-Long WGS84 ({{code}})",
+          "choose": "Vous devez choisir une projection avant d'importer le fichier."
+        }
       },
       "operators": {
         "caseSensitive": "Sensible à la case",
@@ -181,7 +189,7 @@
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
-        "moreOptions": "Options sur la couche",
+        "moreOptions": "Outils de la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",

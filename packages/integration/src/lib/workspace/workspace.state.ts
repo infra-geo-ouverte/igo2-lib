@@ -6,6 +6,7 @@ import { EntityRecord, Workspace, WorkspaceStore, Widget } from '@igo2/common';
 import { WfsWorkspace, FeatureWorkspace } from '@igo2/geo';
 import { FeatureActionsService } from './shared/feature-actions.service';
 import { WfsActionsService } from './shared/wfs-actions.service';
+import { StorageService } from '@igo2/core';
 
 /**
  * Service that holds the state of the workspace module
@@ -18,6 +19,11 @@ export class WorkspaceState implements OnDestroy {
   public workspacePanelExpanded: boolean = false;
 
   readonly workspaceEnabled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  readonly workspaceMaximize$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.storageService.get('workspaceMaximize') as boolean
+  );
+  private actionMaximize$$: Subscription[] = [];
 
   /** Subscription to the active workspace */
   private activeWorkspace$$: Subscription;
@@ -42,6 +48,7 @@ export class WorkspaceState implements OnDestroy {
   constructor(
     private featureActionsService: FeatureActionsService,
     private wfsActionsService: WfsActionsService,
+    private storageService: StorageService
   ) {
     this.initWorkspaces();
   }
@@ -74,6 +81,14 @@ export class WorkspaceState implements OnDestroy {
       });
     });
 
+    this.actionMaximize$$.push(this.featureActionsService.maximize$.subscribe(maximized => {
+      this.setWorkspaceIsMaximized(maximized);
+    }));
+
+    this.actionMaximize$$.push(this.wfsActionsService.maximize$.subscribe(maximized => {
+      this.setWorkspaceIsMaximized(maximized);
+    }));
+
     this.activeWorkspace$$ = this.workspace$
       .subscribe((workspace: Workspace) => {
         if (this.activeWorkspaceWidget$$ !== undefined) {
@@ -86,6 +101,11 @@ export class WorkspaceState implements OnDestroy {
             .subscribe((widget: Widget) => this.activeWorkspaceWidget$.next(widget));
         }
       });
+  }
+
+  private setWorkspaceIsMaximized(maximized: boolean) {
+    this.storageService.set('workspaceMaximize', maximized);
+    this.workspaceMaximize$.next(maximized);
   }
 
   public setActiveWorkspaceById(id: string) {
@@ -103,6 +123,7 @@ export class WorkspaceState implements OnDestroy {
    */
   ngOnDestroy() {
     this.teardownWorkspaces();
+    this.actionMaximize$$.map(a => a.unsubscribe());
   }
 
   /**
