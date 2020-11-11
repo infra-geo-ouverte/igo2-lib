@@ -1,6 +1,6 @@
 import { Directive, HostListener, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { MessageService, LanguageService, ConfigService } from '@igo2/core';
 import { DragAndDropDirective } from '@igo2/common';
@@ -12,6 +12,7 @@ import { ImportService } from './import.service';
 import { handleFileImportSuccess, handleFileImportError } from '../shared/import.utils';
 import { StyleService } from '../../layer/shared/style.service';
 import { StyleListService } from '../style-list/style-list.service';
+import { concatMap, first, skipWhile } from 'rxjs/operators';
 
 @Directive({
   selector: '[igoDropGeoFile]'
@@ -20,7 +21,8 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
 
   protected filesDropped: EventEmitter<File[]> = new EventEmitter();
   protected filesInvalid: EventEmitter<File[]> = new EventEmitter();
-
+  private epsgCode$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  private epsgCode$$: Subscription[] = [];
   private filesDropped$$: Subscription;
 
   get map(): IgoMap {
@@ -66,13 +68,60 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
 
   private onFilesDropped(files: File[]) {
     for (const file of files) {
-      this.importService
-        .import(file)
-        .subscribe(
+      this.detectEPSG(file);
+      this.epsgCode$$.push(
+        this.epsgCode$.pipe(
+          skipWhile((code) => !code),
+          first(),
+          concatMap(epsgCode => {
+            const epsg = epsgCode === 'epsgNotDefined' ? undefined : epsgCode;
+            this.epsgCode$.next(undefined);
+            return this.importService.import(file, epsg);
+          }),
+        ).subscribe(
           (features: Feature[]) => this.onFileImportSuccess(file, features),
           (error: Error) => this.onFileImportError(file, error)
-        );
+        ));
     }
+  }
+
+  private detectEPSG(file: File, nbLines: number = 500) {
+    if (!file.name.toLowerCase().endsWith('.geojson') && !file.name.toLowerCase().endsWith('.gml')) {
+      this.epsgCode$.next('epsgNotDefined');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (file.name.toLowerCase().endsWith('.geojson')) {
+        const geojson = JSON.parse(reader.result as string);
+        const epsg = geojson.crs.properties.name.match(/EPSG:{1,2}\d{0,6}/gm);
+        if (epsg !== null && epsg.length) {
+          this.epsgCode$.next(epsg[0].replace(/::/g, ':'));
+          return;
+        } else {
+          this.epsgCode$.next('epsgNotDefined');
+          return;
+        }
+        return;
+      } else if (file.name.toLowerCase().endsWith('.gml')) {
+        const text = (reader.result as string);
+        const lines = (text as string).split('\n');
+        for (let line = 0; line <= nbLines; line++) {
+          const epsg = lines[line].match(/EPSG:\d{0,6}/gm);
+          if (epsg !== null && epsg.length) {
+              this.epsgCode$.next(epsg[0]);
+              break;
+          } else {
+            this.epsgCode$.next(undefined);
+            return;
+          }
+        }
+      } else {
+        this.epsgCode$.next('epsgNotDefined');
+        return;
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
   }
 
   private onFileImportSuccess(file: File, features: Feature[]) {
