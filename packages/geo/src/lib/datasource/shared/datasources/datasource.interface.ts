@@ -10,6 +10,7 @@ export interface DataSourceOptions {
     | 'wmts'
     | 'xyz'
     | 'osm'
+    | 'tiledebug'
     | 'carto'
     | 'arcgisrest'
     | 'tilearcgisrest'
@@ -47,4 +48,16 @@ export interface Legend {
   style?: { [key: string]: string | number };
   title?: string;
   currentStyle?: string;
+}
+
+// refer to https://openlayers.org/en/latest/apidoc/module-ol_tilegrid_TileGrid-TileGrid.html
+export interface TileGridOptions {
+  extent: [number, number, number, number];
+  minZoom?: number;
+  origin?: [number, number];
+  origins?: [number, number][];
+  resolutions?: number[];
+  sizes?: [number, number][];
+  tileSize?: [number, number];
+  tileSizes?: [number, number][];
 }

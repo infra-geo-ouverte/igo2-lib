@@ -3,6 +3,7 @@
     [store]="spatialListStore"
     [selectedQueryType]="queryType"
     [zone]="zone"
+    [layers]="activeLayers"
     (eventType)="getOutputType($event)"
     (eventQueryType)="getOutputQueryType($event)"
     (zoneChange)="onZoneChange($event)"

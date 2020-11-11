@@ -28,7 +28,7 @@ import { EntityStore, ToolComponent } from '@igo2/common';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { BehaviorSubject } from 'rxjs';
 import { MapState } from '../../map/map.state';
-import { ImportExportState } from './../../import-export/import-export.state';
+import { ImportExportMode, ImportExportState } from './../../import-export/import-export.state';
 import * as olstyle from 'ol/style';
 import { MessageService, LanguageService } from '@igo2/core';
 import { ToolState } from '../../tool/tool.state';
@@ -124,7 +124,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
     for (const layer of this.layers) {
       ids.push(layer.id);
     }
-    this.importExportState.setMode('export');
+    this.importExportState.setMode(ImportExportMode.export);
     this.importExportState.setsExportOptions({ layers: ids } as ExportOptions);
     this.toolState.toolbox.activateTool('importExport');
   }
@@ -193,6 +193,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
     this.iterator = 1;
     if (this.type !== SpatialFilterType.Predefined) {
       this.zone = undefined;
+      this.queryType = undefined;
     }
   }
 

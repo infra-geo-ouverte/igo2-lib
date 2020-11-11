@@ -11,20 +11,34 @@
   </mat-button-toggle-group>
 </div>
 
-<form class="igo-form" *ngIf="selectedMode === 'import'">
+<form class="igo-form" [formGroup]="importForm" *ngIf="selectedMode === 'import'">
   <div class="igo-input-container">
     <mat-form-field>
-      <input
-        matInput
-        placeholder="{{'igo.geo.importExportForm.importProjPlaceholder' | translate}}"
-        name="inputProj"
-        [(ngModel)]="inputProj">
+      <mat-label>{{'igo.geo.importExportForm.importProjPlaceholder' | translate}}</mat-label>
+      <mat-select 
+        [(value)]="inputProj">     
+        <mat-option 
+          *ngFor="let projection of (projections$ | async)"
+          [value]="projection"
+          (click)="$event.stopPropagation()">
+          <p mat-line *ngIf="projection.translateKey">{{('igo.geo.importExportForm.projections.' + projection.translateKey) | translate: projection}}</p>
+          <p mat-line *ngIf="!projection.translateKey">{{projection.alias}}</p>
+        </mat-option>
+      </mat-select>
     </mat-form-field>
   </div>
 
-  <div class="igo-form-button-group">
-    <button mat-raised-button type="button" (click)="fileInput.click()" [disabled]="loading$ | async">
-      {{'igo.geo.importExportForm.importButton' | translate}}
+  <div 
+    tooltip-position="below" 
+    matTooltipShowDelay="500"
+    [matTooltip]="importForm.invalid ? ('igo.geo.importExportForm.projections.choose' | translate) : ('igo.geo.importExportForm.importButton' | translate)"
+    class="igo-form-button-group">
+    <button 
+      [disabled]="importForm.invalid || (loading$ | async)"
+      mat-raised-button
+      type="button"
+      (click)="fileInput.click()">
+        {{'igo.geo.importExportForm.importButton' | translate}}
     </button>
     <igo-spinner [shown]="loading$ | async"></igo-spinner>
     <input

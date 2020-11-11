@@ -100,14 +100,23 @@
         "exportNoLayersExportable": "There is no exportable layer in your map",
         "exportSelectedFeature": "Export only selected features",
         "importButton": "Import",
-        "importProjPlaceholder": "Coordinate system",
+        "importProjPlaceholder": "Coordinate system of the file to import",
         "importTabTitle": "Import",
         "importClarifications": "Clarifications",
         "importSizeMax": "The file size limit is {{size}} Mb",
         "importFormatAuthorized": "Formats authorized: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Shapefiles must be zipped.",
         "other": "other",
-        "others": "others"
+        "others": "others",
+        "projections": {
+          "mtm": "MTM zone {{zone}} ({{code}})",
+          "utm": "UTM zone {{zone}} ({{code}})",
+          "webMercator": "Web Mercator ({{code}})",
+          "nad83": "Lat-Long NAD83 ({{code}})",
+          "wgs84": "Lat-Long WGS84 ({{code}})",
+          "choose": "You must choose a projection for your input file."
+        }
+
       },
       "operators": {
         "caseSensitive": "Case sensitive",
@@ -181,7 +190,7 @@
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
-        "moreOptions": "More options",
+        "moreOptions": "Layer's tools",
         "removeLayer": "Remove this layer from the map",
         "showFeaturesList": "Show features list",
         "showLayer": "Show Layer",
@@ -557,8 +566,8 @@
         }
       },   
       "workspace": {
-        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
+        "inMapExtent.active.tooltip": "Ne montrer que les entités contenues dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les entités"
       }
     }
   }

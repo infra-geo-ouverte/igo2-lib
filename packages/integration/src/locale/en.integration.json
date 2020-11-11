@@ -54,7 +54,11 @@
         "selected.title": "Show selected records only",
         "selected.tooltip": "Show selected records only",
         "clearSelection.title": "Deselect all",
-        "clearSelection.tooltip": "Deselect all records"
+        "clearSelection.tooltip": "Deselect all records",
+        "maximize": "Extend",
+        "maximizeTooltip": "Extend panel",
+        "standardExtent": "Reduce",
+        "standardExtentTooltip": "Reduce panel"
       }
     }
   }

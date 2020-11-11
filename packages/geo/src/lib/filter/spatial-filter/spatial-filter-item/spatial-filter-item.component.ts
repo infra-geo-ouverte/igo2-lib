@@ -133,7 +133,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
     return [MeasureLengthUnit.Meters, MeasureLengthUnit.Kilometers];
   }
 
-  @Input() layers: Layer[];
+  @Input() layers: Layer[] = [];
 
   @Input()
   get thematicLength(): number {
@@ -268,6 +268,10 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       if (value) {
         this.value$.next(value);
         this.drawZone = this.formControl.value as Feature;
+        if (this.buffer !== 0) {
+          this.drawZoneEvent.emit(this.drawZone);
+          this.bufferFormControl.setValue(this.buffer);
+        }
       } else {
         this.value$.next(undefined);
         this.drawZone = undefined;
@@ -286,29 +290,29 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
     this.bufferChanges$$ = this.bufferFormControl.valueChanges
       .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
+        debounceTime(500)
       )
       .subscribe((value) => {
-        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value < 100000) {
+        if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
           this.buffer = value;
           this.bufferEvent.emit(value);
           this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value < 100) {
+        } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
           this.buffer = value;
           this.bufferEvent.emit(value);
           this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'});
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
-        } else if (value === 0 && value === this.bufferFormControl.value) {
+        } else if (value === 0) {
           this.buffer = value;
           this.bufferEvent.emit(value);
           this.drawZoneEvent.emit(this.drawZone);
         } else if (
           value < 0 ||
-          (this.measureUnit === MeasureLengthUnit.Meters && value >= 100000) ||
-          (this.measureUnit === MeasureLengthUnit.Kilometers && value >= 100)) {
+          (this.measureUnit === MeasureLengthUnit.Meters && value > 100000) ||
+          (this.measureUnit === MeasureLengthUnit.Kilometers && value > 100)) {
             this.bufferFormControl.setValue(0);
+            this.buffer = 0;
             this.messageService.alert(this.languageService.translate.instant('igo.geo.spatialFilter.bufferAlert'),
               this.languageService.translate.instant('igo.geo.spatialFilter.warning'));
         }
@@ -559,16 +563,24 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   clearButton() {
     this.loading = true;
-    this.loading = false;
     if (this.store) {
       this.store.clear();
     }
     if (this.isPoint() || this.isPolygon()) {
       this.drawZone = undefined;
-      this.bufferFormControl.setValue(0);
       this.formControl.reset();
     }
+    this.bufferFormControl.setValue(0);
+    this.buffer = 0;
+    this.bufferEvent.emit(0);
     this.clearButtonEvent.emit();
+    this.loading = false;
+  }
+
+  clearDrawZone() {
+    this.formControl.reset();
+    this.bufferFormControl.setValue(0);
+    this.buffer = 0;
   }
 
   /**
@@ -577,6 +589,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
   clearSearch() {
     this.selectedThematics.clear();
     this.bufferFormControl.setValue(0);
+    this.buffer = 0;
+    this.bufferEvent.emit(0);
     this.thematicChange.emit([]);
     this.clearSearchEvent.emit();
   }
@@ -608,6 +622,15 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
       }
     }
     return true;
+  }
+
+  disabledClearSearch() {
+    let disable = true;
+    this.selectedItemType === SpatialFilterItemType.Address ?
+      disable = this.queryType === undefined :
+      disable = this.queryType === undefined && this.selectedThematics.selected.length === 0;
+
+    return disable;
   }
 
   /**
