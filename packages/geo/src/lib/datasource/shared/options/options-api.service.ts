@@ -12,6 +12,7 @@ import { OptionsApiOptions } from './options-api.interface';
 })
 export class OptionsApiService extends OptionsService {
   private urlApi: string;
+  private provideContextUri: boolean;
 
   constructor(
     private http: HttpClient,
@@ -19,21 +20,27 @@ export class OptionsApiService extends OptionsService {
   ) {
     super();
     this.urlApi = options.url || this.urlApi;
+    this.provideContextUri = options.provideContextUri || this.provideContextUri;
   }
 
   getWMSOptions(
-    baseOptions: WMSDataSourceOptions
+    baseOptions: WMSDataSourceOptions,
+    detailedContextUri?: string
   ): Observable<WMSDataSourceOptions> {
     if (!this.urlApi) {
       return of({} as WMSDataSourceOptions);
     }
-    const params = new HttpParams({
+    let params = new HttpParams({
       fromObject: {
         type: baseOptions.type,
         url: baseOptions.url,
         layers: baseOptions.params.LAYERS
       }
     });
+
+    if (detailedContextUri && this.provideContextUri) {
+      params = params.append('context', detailedContextUri);
+    }
 
     const request = this.http.get(this.urlApi, {
       params
