@@ -14,6 +14,7 @@ import {
 })
 export class InteractiveTourService {
   private previousStep: InteractiveTourStep;
+  private nextIndex = 1;
 
   constructor(
     private configService: ConfigService,
@@ -152,7 +153,6 @@ export class InteractiveTourService {
   }
 
   private addProgress() {
-    console.log('addProgress');
     const self = this as any;
     let nbTry = 0;
     const maxTry = 21;
@@ -160,13 +160,12 @@ export class InteractiveTourService {
       if (self.getCurrentStep()) {
         if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
           self.cancel();
+          // const id = self.getCurrentStep().id;
+          // const index = self.steps.findIndex(step => step.id === id);
+          // this.checkNext(undefined, index);
           clearInterval(checkExist);
           return;
         } else {
-          const id = self.getCurrentStep().id;
-          console.log(self.steps.findIndex(step => step.id === id));
-          console.log('element');
-          console.log(self.steps);
           const currentStepElement = self.getCurrentStep().getElement();
           if (currentStepElement) {
             const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
@@ -200,29 +199,27 @@ export class InteractiveTourService {
     }, 100);
   }
 
-  private checkNext(index?, i?) {
-    console.log('checkNext');
-    const self = this as any;
-    if (self.getCurrentStep()) {
-      const id = self.getCurrentStep().id;
-      if (self.steps.findIndex(step => step.id === id) === self.steps.length - 1) {
+  private checkNext(index, tour, service, i?) {
+    if (tour.getCurrentStep()) {
+      const id = tour.getCurrentStep().id;
+      if (tour.steps.findIndex(step => step.id === id) === tour.steps.length - 1 || (i && i >= tour.steps.length - 1)) {
+        console.log('lastStep');
+        tour.complete();
         return;
       }
 
       let nextIndex;
-      console.log(index);
-      console.log(i);
       i ? nextIndex = i + 1 : nextIndex = index.index + 1;
-      console.log(nextIndex);
-      const nextStep = self.steps[nextIndex];
-      console.log(nextStep);
+      const nextStep = tour.steps[nextIndex];
       if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
-        this.checkNext(index, );
+        console.log('ICI');
+        service.checkNext(index, tour, service, nextIndex);
         // if (self.steps.find(step => step.id === nextStep.id).options.deleteAfterNext) {
         //   self.removeStep(id);
         // }
       } else {
-        self.show(self.step[nextIndex].id);
+        console.log('ici2');
+        tour.show(nextStep.id);
       }
 
       // if (self.steps.find(step => step.id === id) && self.steps.find(step => step.id === id).options.deleteAfterNext) {
@@ -361,7 +358,9 @@ export class InteractiveTourService {
     this.shepherdService.addSteps(shepherdSteps);
 
     this.shepherdService.tourObject.on('show', this.addProgress);
-    this.shepherdService.tourObject.on('cancel', this.checkNext);
+    this.shepherdService.tourObject.on('cancel', (index) => {
+      this.checkNext(index, this.shepherdService.tourObject, this);
+    });
 
     this.shepherdService.start();
   }
