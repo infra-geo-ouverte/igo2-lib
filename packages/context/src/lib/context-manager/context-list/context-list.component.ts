@@ -27,6 +27,8 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { MatDialog } from '@angular/material/dialog';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
@@ -345,7 +347,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.dialog
       .open(BookmarkDialogComponent, { disableClose: false })
       .afterClosed()
-      .subscribe((title) => {
+      .pipe(take(1))
+      .subscribe((title: string) => {
         if (title) {
           this.create.emit({ title, empty });
         }

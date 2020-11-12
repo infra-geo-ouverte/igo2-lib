@@ -4,13 +4,14 @@ import {
   ChangeDetectionStrategy,
   Output,
   EventEmitter,
-  OnInit
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
 import { CatalogItemLayer } from '../shared';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
 import { Layer, TooltipType } from '../../layer/shared/layers';
@@ -25,10 +26,10 @@ import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
   styleUrls: ['./catalog-browser-layer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatalogBrowserLayerComponent implements OnInit {
+export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public inRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   public isPreview$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  private isPreview$$: Subscription;
   private lastTimeoutRequest;
 
   public layerLegendShown$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -78,7 +79,11 @@ export class CatalogBrowserLayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.isInResolutionsRange();
-    this.isPreview$.subscribe(value => this.addedLayerIsPreview.emit(value));
+    this.isPreview$$ = this.isPreview$.subscribe(value => this.addedLayerIsPreview.emit(value));
+  }
+
+  ngOnDestroy() {
+    this.isPreview$$.unsubscribe();
   }
 
   computeTitleTooltip(): string {

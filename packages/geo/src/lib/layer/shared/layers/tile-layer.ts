@@ -9,6 +9,7 @@ import { WMTSDataSource } from '../../../datasource/shared/datasources/wmts-data
 import { XYZDataSource } from '../../../datasource/shared/datasources/xyz-datasource';
 import { CartoDataSource } from '../../../datasource/shared/datasources/carto-datasource';
 import { TileArcGISRestDataSource } from '../../../datasource/shared/datasources/tilearcgisrest-datasource';
+import { TileDebugDataSource } from '../../../datasource/shared/datasources/tiledebug-datasource';
 
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
@@ -18,6 +19,7 @@ export class TileLayer extends Layer {
     | OSMDataSource
     | WMTSDataSource
     | XYZDataSource
+    | TileDebugDataSource
     | CartoDataSource
     | TileArcGISRestDataSource;
   public options: TileLayerOptions;

@@ -23,8 +23,18 @@ export class AboutToolComponent {
   set html(value: string) {
     this._html = Array.isArray(value) ? value.join('\n') : value;
   }
+  private _discoverTitleInLocale: string = 'IGO';
+  public discoverTitleInLocale$: Observable<string> = of(this._discoverTitleInLocale);
 
-  @Input() discoverTitleInLocale$: Observable<string> = of('IGO');
+  @Input()
+  get discoverTitleInLocale() {
+    return this._discoverTitleInLocale;
+  }
+  set discoverTitleInLocale(value: string) {
+    this._discoverTitleInLocale = value;
+    this.discoverTitleInLocale$ = of(value);
+  }
+
 
   public version: Version;
   private _html: string = 'igo.integration.about.html';

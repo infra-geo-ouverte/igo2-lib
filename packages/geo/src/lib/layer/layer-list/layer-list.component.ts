@@ -12,8 +12,7 @@ import {
 import type { TemplateRef } from '@angular/core';
 
 import { FloatLabelType } from '@angular/material/form-field';
-import { Layer } from '../shared';
-import { LayerListControlsEnum } from './layer-list.enum';
+import { LayerListControlsEnum, LayerListDisplacement } from './layer-list.enum';
 import { LayerListSelectVisibleEnum } from './layer-list.enum';
 import {
   BehaviorSubject,
@@ -29,6 +28,8 @@ import {
 } from '../../metadata/shared/metadata.interface';
 import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.interface';
 import { IgoMap } from '../../map/shared/map';
+import { Layer } from '../shared/layers/layer';
+import { LinkedProperties, LayersLink } from '../shared/layers/layer.interface';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -56,6 +57,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
   public selection: boolean;
 
   private change$$: Subscription;
+  private layers$$: Subscription;
   public layerItemChangeDetection$ = new BehaviorSubject(undefined);
 
   @ContentChild('igoLayerItemToolbar', /* TODO: add static flag */ {})
@@ -209,12 +211,17 @@ export class LayerListComponent implements OnInit, OnDestroy {
     }
   }
 
+  get layerListDisplacement(): typeof LayerListDisplacement {
+    return LayerListDisplacement;
+  }
+
   public toggleOpacity = false;
 
   public selectAllCheck: boolean;
   public selectAllCheck$ = new BehaviorSubject<boolean>(undefined);
+  private selectAllCheck$$: Subscription;
 
-  constructor(private elRef: ElementRef) {}
+  constructor(private elRef: ElementRef) { }
 
   /**
    * Subscribe to the search term stream and trigger researches
@@ -237,11 +244,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
         });
       });
 
-    this.selectAllCheck$.subscribe((value) => {
+    this.selectAllCheck$$ = this.selectAllCheck$.subscribe((value) => {
       this.selectAllCheck = value;
     });
 
-    this.layers$.subscribe(() => {
+    this.layers$$ = this.layers$.subscribe(() => {
       if (this.layers) {
         let checks = 0;
         for (const layer of this.layers) {
@@ -256,9 +263,9 @@ export class LayerListComponent implements OnInit, OnDestroy {
         if (this.excludeBaseLayers) {
           this.selectAllCheck =
             checks ===
-            this.layers.filter(
-              (lay) => lay.baseLayer !== true && lay.showInLayerList
-            ).length
+              this.layers.filter(
+                (lay) => lay.baseLayer !== true && lay.showInLayerList
+              ).length
               ? true
               : false;
         } else {
@@ -273,6 +280,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.change$$.unsubscribe();
+    this.selectAllCheck$$.unsubscribe();
+    this.layers$$.unsubscribe();
   }
 
   clearKeyword() {
@@ -325,6 +334,65 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  moveActiveLayer(activeLayer: Layer, actiontype: LayerListDisplacement) {
+    const layersToMove = [activeLayer];
+    const sortedLayersToMove = [];
+    this.getLinkedLayers(activeLayer, layersToMove);
+    this.layers.map(layer => {
+      if (layersToMove.indexOf(layer) !== -1) {
+        sortedLayersToMove.push(layer);
+      }
+    });
+
+    if (actiontype === LayerListDisplacement.Raise) {
+      this.raiseLayers(sortedLayersToMove, false);
+    } else if (actiontype === LayerListDisplacement.Lower) {
+      this.lowerLayers(sortedLayersToMove, false);
+    }
+  }
+
+  private getLinkedLayers(activeLayer: Layer, layersList: Layer[]) {
+    const linkedLayers = activeLayer.options.linkedLayers as LayersLink;
+    if (!linkedLayers) {
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+
+    if (isParentLayer) {
+      // search for child layers
+      currentLinks.map(link => {
+        if (!link.properties || link.properties.indexOf(LinkedProperties.ZINDEX) === -1) {
+          return;
+        }
+        link.linkedIds.map(linkedId => {
+          const childLayer = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
+          if (childLayer) {
+            if (!layersList.includes(childLayer)) {
+              layersList.push(childLayer);
+            }
+          }
+        });
+      });
+    } else {
+      // search for parent layer
+      this.layers.map(parentLayer => {
+        if (parentLayer.options.linkedLayers?.links) {
+          parentLayer.options.linkedLayers.links.map(l => {
+            if (
+              l.properties?.indexOf(LinkedProperties.ZINDEX) !== -1 &&
+              l.bidirectionnal !== false &&
+              l.linkedIds.indexOf(currentLinkedId) !== -1) {
+              layersList.push(parentLayer);
+              this.getLinkedLayers(parentLayer, layersList);
+            }
+          });
+        }
+      });
+    }
+  }
+
   /*
    * For selection mode disabled attribute
    */
@@ -372,7 +440,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  raiseLayers(layers: Layer[]) {
+  raiseLayers(layers: Layer[], fromUi: boolean = true) {
     const layersToRaise = [];
     for (const layer of layers) {
       const index = this.layers.findIndex((lay) => lay.id === layer.id);
@@ -381,14 +449,15 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
     this.map.raiseLayers(layersToRaise);
-    setTimeout(() => {
-      const elements = this.computeElementRef();
-      if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-        elements[0].scrollTop = elements[1].offsetParent.offsetTop;
-      }
-    }, 100);
+    if (fromUi) {
+      setTimeout(() => {
+        const elements = this.computeElementRef();
+        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
+          elements[0].scrollTop = elements[1].offsetParent.offsetTop;
+        }
+      }, 100);
+    }
   }
-
   /*
    * For selection mode disabled attribute
    */
@@ -438,7 +507,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  lowerLayers(layers: Layer[]) {
+  lowerLayers(layers: Layer[], fromUi: boolean = true) {
     const layersToLower = [];
     for (const layer of layers) {
       const index = this.layers.findIndex((lay) => lay.id === layer.id);
@@ -447,17 +516,18 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
     this.map.lowerLayers(layersToLower);
-    setTimeout(() => {
-      const elements = this.computeElementRef('lower');
-      if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
-        elements[0].scrollTop =
-          elements[1].offsetParent.offsetTop +
-          elements[1].offsetParent.offsetHeight -
-          elements[0].clientHeight;
-      }
-    }, 100);
+    if (fromUi) {
+      setTimeout(() => {
+        const elements = this.computeElementRef('lower');
+        if (!this.isScrolledIntoView(elements[0], elements[1].offsetParent)) {
+          elements[0].scrollTop =
+            elements[1].offsetParent.offsetTop +
+            elements[1].offsetParent.offsetHeight -
+            elements[0].clientHeight;
+        }
+      }, 100);
+    }
   }
-
   private next() {
     this.change$.next();
   }
@@ -786,11 +856,11 @@ export class LayerListComponent implements OnInit, OnDestroy {
     const checkItem =
       type === 'lower'
         ? this.elRef.nativeElement.getElementsByClassName(
-            'mat-checkbox-checked'
-          )[checkItems.length - 1]
+          'mat-checkbox-checked'
+        )[checkItems.length - 1]
         : this.elRef.nativeElement.getElementsByClassName(
-            'mat-checkbox-checked'
-          )[0];
+          'mat-checkbox-checked'
+        )[0];
     const igoList = this.elRef.nativeElement.getElementsByTagName(
       'igo-list'
     )[0];

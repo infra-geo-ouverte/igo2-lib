@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { EntityRecord, EntityStore, ToolComponent } from '@igo2/common';
 import { AuthService } from '@igo2/auth';
@@ -122,6 +123,7 @@ export class CatalogBrowserToolComponent implements OnInit, OnDestroy {
     this.catalogState.setCatalogItemsStore(catalog, store);
     this.catalogService
       .loadCatalogItems(catalog)
+      .pipe(take(1))
       .subscribe((items: CatalogItem[]) => {
         store.load(items);
         this.store$.next(store);

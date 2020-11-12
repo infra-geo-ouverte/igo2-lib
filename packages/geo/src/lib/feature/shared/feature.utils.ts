@@ -133,11 +133,11 @@ export function renderFeatureFromOl(
 
   const id = olRenderFeature.getId() ? olRenderFeature.getId() : uuid();
   const mapTitle = olRenderFeature.get('_mapTitle');
-
+  const extent = olproj.transformExtent(olRenderFeature.getExtent(), projectionIn, projectionOut);
   return {
     type: FEATURE,
     projection: projectionOut,
-    extent: olRenderFeature.getExtent(),
+    extent,
     meta: {
       id,
       title: title ? title : mapTitle ? mapTitle : id,
@@ -168,6 +168,7 @@ export function featureFromOl(
   let title;
   let exclude;
   let excludeOffline;
+  let idColumn; // for arcgisrest and tilearcgisrest source
   const olFormat = new OlFormatGeoJSON();
 
   const keys = olFeature.getKeys().filter((key: string) => {
@@ -185,15 +186,19 @@ export function featureFromOl(
 
   if (olLayer) {
     title = olLayer.get('title');
-    if (olLayer.get('sourceOptions')) {
-      exclude = olLayer.get('sourceOptions').excludeAttribute;
-      excludeOffline = olLayer.get('sourceOptions').excludeAttributeOffline;
+    const sourceOptions = olLayer.get('sourceOptions');
+    if (sourceOptions) {
+      exclude = sourceOptions.excludeAttribute;
+      excludeOffline = sourceOptions.excludeAttributeOffline;
+      idColumn =
+        sourceOptions.idColumn ||
+        ((sourceOptions.type === 'arcgisrest' || sourceOptions.type === 'tilearcgisrest') ? 'OBJECTID' : undefined );
     }
   } else {
     title = olFeature.get('_title');
   }
   const mapTitle = olFeature.get('_mapTitle');
-  const id = olFeature.getId() ? olFeature.getId() : uuid();
+  const id = olFeature.getId() ? olFeature.getId() : olFeature.get(idColumn) ? olFeature.get(idColumn) : uuid();
 
   return {
     type: FEATURE,

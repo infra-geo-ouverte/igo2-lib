@@ -54,6 +54,7 @@
       "@turf/line-intersect": "lineIntersect",
       "@turf/helpers": "helpers",
       "@turf/point-on-feature": "pointOnFeature",
+      "@turf/buffer": "buffer",
       "ol/interaction/Modify": "OlModify",
       "ol/interaction/Translate": "OlTranslate",
       "ol/interaction/Draw": "OlDraw",

@@ -6,7 +6,8 @@ import {
   EntityStoreFilterCustomFuncStrategy,
   EntityRecord,
   EntityStoreStrategyFuncOptions,
-  EntityStoreFilterSelectionStrategy
+  EntityStoreFilterSelectionStrategy,
+  EntityTableColumnRenderer
 } from '@igo2/common';
 
 import {
@@ -19,6 +20,7 @@ import {
   FeatureStoreInMapResolutionStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
+import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 
@@ -35,11 +37,20 @@ export class WfsWorkspaceService {
     return this.storageService.get('zoomAuto') as boolean;
   }
 
-  constructor(
-    private storageService: StorageService
-    ) {}
+  constructor(private storageService: StorageService) {}
 
-    createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
+  createWorkspace(layer: VectorLayer, map: IgoMap): WfsWorkspace {
+    if (layer.options.workspace?.enabled === false) {
+      return;
+    }
+
+    layer.options.workspace = Object.assign({}, layer.options.workspace,
+      {
+        enabled: true,
+        srcId: layer.id,
+        workspaceId: layer.id
+      } as GeoWorkspaceOptions);
+
     const wks = new WfsWorkspace({
       id: layer.id,
       title: layer.title,
@@ -106,7 +117,8 @@ export class WfsWorkspaceService {
         .map(key => {
           return {
             name: `properties.${key}`,
-            title: key
+            title: key,
+            renderer: EntityTableColumnRenderer.UnsanitizedHTML
           };
         });
         workspace.meta.tableTemplate = {
@@ -120,7 +132,8 @@ export class WfsWorkspaceService {
     const columns = fields.map((field: SourceFieldsOptionsParams) => {
       return {
         name: `properties.${field.name}`,
-        title: field.alias ? field.alias : field.name
+        title: field.alias ? field.alias : field.name,
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML
       };
     });
     workspace.meta.tableTemplate = {

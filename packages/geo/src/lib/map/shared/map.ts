@@ -277,11 +277,62 @@ export class IgoMap {
       if (index >= 0) {
         layersToRemove.push(layer);
         newLayers.splice(index, 1);
+        this.handleLinkedLayersDeletion(layer, layersToRemove);
+        layersToRemove.map(linkedLayer => {
+          layersToRemove.push(linkedLayer);
+          const linkedIndex = newLayers.indexOf(linkedLayer);
+          if (linkedIndex >= 0) {
+            newLayers.splice(linkedIndex, 1);
+          }
+        });
       }
     });
 
     layersToRemove.forEach((layer: Layer) => this.doRemoveLayer(layer));
     this.setLayers(newLayers);
+  }
+
+  /**
+   * Build a list of linked layers to delete
+   * @param srcLayer Layer that has triggered the deletion
+   * @param layersToRemove list to append the layer to delete into
+   */
+  handleLinkedLayersDeletion(srcLayer: Layer, layersToRemove: Layer[]) {
+    const linkedLayers = srcLayer.options.linkedLayers;
+    if (!linkedLayers) {
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+    if (isParentLayer) {
+      // search for child layers
+      currentLinks.map(link => {
+        if (!link.syncedDelete) {
+          return;
+        }
+        link.linkedIds.map(linkedId => {
+          const layerToApply = this.layers.find(layer => layer.options.linkedLayers?.linkId === linkedId);
+          if (layerToApply) {
+            layersToRemove.push(layerToApply);
+          }
+        });
+      });
+    } else {
+      // search for parent layer
+      this.layers.map(layer => {
+        if (layer.options.linkedLayers?.links) {
+          layer.options.linkedLayers.links.map(l => {
+            if (
+              l.syncedDelete && l.bidirectionnal !== false &&
+              l.linkedIds.indexOf(currentLinkedId) !== -1) {
+              layersToRemove.push(layer);
+              this.handleLinkedLayersDeletion(layer, layersToRemove);
+            }
+          });
+        }
+      });
+    }
   }
 
   /**

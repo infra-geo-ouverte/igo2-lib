@@ -44,6 +44,10 @@ export class TimeFilterService {
 
     const params = { TIME: time };
     datasource.ol.updateParams(params);
+    if (datasource instanceof WMSDataSource) {
+      const wmsDataSource  = datasource as WMSDataSource;
+      wmsDataSource.setTimeFilter(wmsDataSource.timeFilter, true);
+    }
   }
 
   filterByYear(
@@ -80,6 +84,10 @@ export class TimeFilterService {
 
     const params = { TIME: time };
     datasource.ol.updateParams(params);
+    if (datasource instanceof WMSDataSource) {
+      const wmsDataSource  = datasource as WMSDataSource;
+      wmsDataSource.setTimeFilter(wmsDataSource.timeFilter, true);
+    }
   }
 
   private reformatDateTime(value) {

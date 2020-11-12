@@ -433,6 +433,26 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
     return state.selected ? state.selected : false;
   }
 
+  isImg(value) {
+    if (this.isUrl(value)) {
+      return (
+        ['jpg', 'png', 'gif'].indexOf(value.split('.').pop().toLowerCase()) !== -1
+      );
+    } else {
+      return false;
+    }
+  }
+
+  isUrl(value) {
+    if (typeof value === 'string') {
+      return (
+        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
+      );
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Method to access an entity's values
    * @param record Record

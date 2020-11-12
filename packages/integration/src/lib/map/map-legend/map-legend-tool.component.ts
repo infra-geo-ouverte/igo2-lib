@@ -39,6 +39,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
   change$ = new ReplaySubject<void>(1);
 
   private resolution$$: Subscription;
+  private visibleOrInRangeLayers$$: Subscription;
 
   @Input() updateLegendOnResolutionChange: boolean = false;
 
@@ -144,7 +145,7 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
       this.allowShowAllLegends === false
     ) {
       let visibleOrInRangeLayers;
-      this.visibleOrInRangeLayers$.subscribe(value => {
+      this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe(value => {
         value.length === 0
           ? (visibleOrInRangeLayers = false)
           : (visibleOrInRangeLayers = true);
@@ -159,6 +160,9 @@ export class MapLegendToolComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.resolution$$.unsubscribe();
+    if (this.visibleOrInRangeLayers$$) {
+      this.visibleOrInRangeLayers$$.unsubscribe();
+    }
   }
 
   searchEmit() {

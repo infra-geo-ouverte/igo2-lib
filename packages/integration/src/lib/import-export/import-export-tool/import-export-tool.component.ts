@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import type { WorkspaceStore } from '@igo2/common';
-import { IgoMap, ExportOptions } from '@igo2/geo';
+import { IgoMap, ExportOptions, ProjectionsLimitationsOptions } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
-import { ImportExportState } from '../import-export.state';
+import { ImportExportMode, ImportExportState, ImportExportType } from '../import-export.state';
 import { WorkspaceState } from '../../workspace/workspace.state';
 
 @ToolComponent({
@@ -20,6 +20,11 @@ import { WorkspaceState } from '../../workspace/workspace.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportExportToolComponent implements OnInit {
+
+  @Input() projectionsLimitations: ProjectionsLimitationsOptions;
+
+  @Input() selectFirstProj: boolean = false;
+
   /**
    * Map to measure on
    * @internal
@@ -30,7 +35,8 @@ export class ImportExportToolComponent implements OnInit {
     return this.workspaceState.store;
   }
 
-  public importExportType$: string = 'layer';
+  @Input() importExportType: ImportExportType = ImportExportType.layer;
+  @Input() importExportShowBothType: boolean = true;
 
   constructor(
     private mapState: MapState,
@@ -39,7 +45,20 @@ export class ImportExportToolComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.selectType();
     this.selectMode();
+  }
+
+  private selectType() {
+    if (this.importExportType) {
+      this.importExportState.importExportType$.next(this.importExportType);
+    }
+    const userSelectedType = this.importExportState.importExportType$.value;
+    if (userSelectedType !== undefined) {
+      this.importExportState.setImportExportType(userSelectedType);
+    } else {
+      this.importExportState.setImportExportType(ImportExportType.layer);
+    }
   }
 
   private selectMode() {
@@ -47,12 +66,12 @@ export class ImportExportToolComponent implements OnInit {
     if (userSelectedMode !== undefined) {
       this.importExportState.setMode(userSelectedMode);
     } else {
-      this.importExportState.setMode('import');
+      this.importExportState.setMode(ImportExportMode.import);
 
     }
   }
 
-  public modeChanged(mode: string) {
+  public modeChanged(mode: ImportExportMode) {
     this.importExportState.setMode(mode);
   }
 
@@ -61,6 +80,6 @@ export class ImportExportToolComponent implements OnInit {
   }
 
   importExportTypeChange(event) {
-    this.importExportType$ = event.value;
+    this.importExportType = event.value;
   }
 }

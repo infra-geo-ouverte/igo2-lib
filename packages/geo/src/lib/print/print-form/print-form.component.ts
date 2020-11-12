@@ -5,6 +5,7 @@ import {
   FormControl,
   Validators
 } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 
 import { PrintOptions } from '../shared/print.interface';
 
@@ -23,8 +24,6 @@ import {
 })
 export class PrintFormComponent implements OnInit {
   public form: FormGroup;
-  public submitted: boolean;
-
   public outputFormats = PrintOutputFormat;
   public paperFormats = PrintPaperFormat;
   public orientations = PrintOrientation;
@@ -32,14 +31,7 @@ export class PrintFormComponent implements OnInit {
   public imageFormats = PrintSaveImageFormat;
   public isPrintService = true;
 
-  @Input()
-  get disabled(): boolean {
-    return this._disabled;
-  }
-  set disabled(value: boolean) {
-    this._disabled = value;
-  }
-  private _disabled = false;
+  @Input() disabled$: BehaviorSubject<boolean>;
 
   @Input()
   get imageFormat(): PrintSaveImageFormat {
@@ -203,7 +195,6 @@ export class PrintFormComponent implements OnInit {
   }
 
   handleFormSubmit(data: PrintOptions, isValid: boolean) {
-    this.submitted = true;
     data.isPrintService = this.isPrintService;
     if (isValid) {
       this.submit.emit(data);

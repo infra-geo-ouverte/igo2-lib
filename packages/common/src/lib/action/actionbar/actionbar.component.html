@@ -53,6 +53,9 @@
 <div *ngIf="mode === actionbarMode.Overlay">
   <button class="buttonOverlay"
     mat-icon-button
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.common.actionbar.icon' | translate"
     [matMenuTriggerFor]="actionbarMenu"
     [disabled]="store.view.empty"
     [color]="iconColor">

@@ -40,7 +40,25 @@
         "importExportContext": "Context"
       },
       "workspace": {
-        "toggleWorkspace": "Open/Close the table view"
+        "toggleWorkspace": "Open/Close the table view",
+        "ogcFilter.close": "Close",
+        "ogcFilter.title": "Filters",
+        "ogcFilter.tooltip": "Apply filters",
+        "download.title": "Download",
+        "download.tooltip": "Download",
+        "inMapExtent.title": "Show records contained in map",
+        "inMapExtent.active.tooltip": "Show records contained in map",
+        "inMapExtent.inactive.tooltip": "Show all records",
+        "zoomAuto.title": "Zoom auto",
+        "zoomAuto.tooltip": "Zoom auto",
+        "selected.title": "Show selected records only",
+        "selected.tooltip": "Show selected records only",
+        "clearSelection.title": "Deselect all",
+        "clearSelection.tooltip": "Deselect all records",
+        "maximize": "Extend",
+        "maximizeTooltip": "Extend panel",
+        "standardExtent": "Reduce",
+        "standardExtentTooltip": "Reduce panel"
       }
     }
   }

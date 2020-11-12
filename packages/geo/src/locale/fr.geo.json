@@ -80,7 +80,7 @@
           "Shapefile": "Shapefile",
           "CSVcomma": "CSV (séparateur virgule)",
           "CSVsemicolon": "CSV (séparateur point-virgule)",
-          "URL": "URL"
+          "URL": "Lien externe"
         },
         "encoding": {
           "LATIN1": "LATIN-1",
@@ -92,7 +92,7 @@
         "exportButtonLink": "Ouvrir le lien",
         "exportButtonLinks": "Ouvrir les liens",
         "exportFormatPlaceholder": "Format",
-        "exportLayerPlaceholder": "Données géospatiales",
+        "exportLayerPlaceholder": "Couche(s)",
         "exportFileNamePlaceholder": "Nom du fichier",
         "encodingPlaceholder": "Encodage",
         "exportTabTitle": "Exporter",
@@ -100,14 +100,22 @@
         "exportNoLayersExportable": "Aucune couche exportable dans la carte courante",
         "exportSelectedFeature": "Seulement les entités sélectionnées",
         "importButton": "Importer",
-        "importProjPlaceholder": "Système de coordonnées",
+        "importProjPlaceholder": "Système de coordonnées du fichier à importer",
         "importTabTitle": "Importer",
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
         "importShpZip": "Les shapefiles doivent être compressés (zippés)",
         "other": "autre",
-        "others": "autres"
+        "others": "autres",
+        "projections": {
+          "mtm": "MTM {{zone}} ({{code}})",
+          "utm": "UTM {{zone}} ({{code}})",
+          "webMercator": "Web Mercator ({{code}})",
+          "nad83": "Lat-Long NAD83 ({{code}})",
+          "wgs84": "Lat-Long WGS84 ({{code}})",
+          "choose": "Vous devez choisir une projection avant d'importer le fichier."
+        }
       },
       "operators": {
         "caseSensitive": "Sensible à la case",
@@ -181,7 +189,7 @@
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
-        "moreOptions": "Options sur la couche",
+        "moreOptions": "Outils de la couche",
         "removeLayer": "Retirer la couche de la carte",
         "showFeaturesList": "Afficher la liste des entités",
         "showLayer": "Afficher la couche",
@@ -422,6 +430,7 @@
         "drawPolygon": "Dessiner un polygone",
         "drawCircle": "Dessiner un cercle",
         "searchLabel": "Rechercher par",
+        "buffer": "Zone tampon",
         "search": "Recherche",
         "drawControl": "Activer le contrôle de dessin",
         "listLabel": "Zone",
@@ -437,7 +446,8 @@
         "searchResults": "Résultats de la recherche",
         "type": "Type",
         "radius": "Rayon",
-        "radiusAlert": "Le rayon doit être compris entre 0 et 10000",
+        "radiusAlert": "Le rayon doit être compris entre 0 et 100 kilomètres (ou 100 000 mètres)",
+        "bufferAlert": "La zone tampon doit être comprise entre 0 et 100 kilomètres (ou 100 000 mètres)",
         "maxSizeAlert": "Le nombre de résultats excède 10000. Certains pourraient être manquants.",
         "zeroResults": "Aucun résultat ne correspond à cette recherche.",
         "warning": "Avertissement",
@@ -545,22 +555,6 @@
           "modify.tooltip": "Modifier"
         }
       },
-      "workspace": {
-        "ogcFilter.close": "Fermer",
-        "ogcFilter.title": "Filtres",
-        "ogcFilter.tooltip": "Appliquer des filtres sur la couche",
-        "download.title": "Télécharger les données associées",
-        "download.tooltip": "Télécharger les données associées",
-        "inMapExtent.title": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
-        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements",
-        "zoomAuto.title": "Zoom auto",
-        "zoomAuto.tooltip": "Zoom auto",
-        "selected.title": "Ne montrer que les enregistrements sélectionnés",
-        "selected.tooltip": "Ne montrer que les enregistrements sélectionnés",
-        "clearSelection.title": "Tout désélectionner",
-        "clearSelection.tooltip": "Désélectionner les enregistrements sélectionnés"
-      },
       "network": {
         "online": {
           "message": "En ligne",
@@ -570,6 +564,10 @@
           "message": "Hors-Ligne",
           "title": "Statut:"
         }
+      },   
+      "workspace": {
+        "inMapExtent.active.tooltip": "Ne montrer que les enregistrements contenus dans la carte",
+        "inMapExtent.inactive.tooltip": "Montrer tous les enregistrements"
       }
     }
   }
