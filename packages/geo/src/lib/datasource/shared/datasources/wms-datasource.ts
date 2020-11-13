@@ -136,7 +136,7 @@ export class WMSDataSource extends DataSource {
       initOgcFilters &&
       initOgcFilters.enabled &&
       initOgcFilters.editable &&
-      options.sourceFields.filter(sf => !sf.values).length > 0) {
+      (options.sourceFields || []).filter(sf => !sf.values).length > 0) {
       this.wfsService.getSourceFieldsFromWFS(options);
     }
 

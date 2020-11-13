@@ -46,7 +46,7 @@ export class WFSDataSource extends DataSource {
     if (
       (this.options as OgcFilterableDataSourceOptions).ogcFilters.enabled &&
       (this.options as OgcFilterableDataSourceOptions).ogcFilters.editable &&
-      options.sourceFields.filter(sf => !sf.values).length > 0
+      (options.sourceFields || []).filter(sf => !sf.values).length > 0
     ) {
       this.wfsService.getSourceFieldsFromWFS(this.options);
     }
