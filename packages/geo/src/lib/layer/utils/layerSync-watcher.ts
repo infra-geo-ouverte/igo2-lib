@@ -200,7 +200,7 @@ export class LayerSyncWatcher extends Watcher {
                                     appliedOgcFilter = this.ogcFilterWriter.handleOgcFiltersAppliedValue(
                                         layer.dataSource.options as OgcFilterableDataSourceOptions,
                                         (this.dataSource.options as any).fieldNameGeometry,
-                                        this.map.viewController.getExtent(),
+                                        undefined,
                                         this.map.viewController.getOlProjection()
                                     );
 
