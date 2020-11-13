@@ -12,6 +12,7 @@ export interface StyleByAttribute {
     scale?: Array<number>;
     label?: string | { [key: string]: any } | olStyle | olStyle[];
     baseStyle?: { [key: string]: any } | olStyle | olStyle[];
+    hoverStyle?: StyleByAttribute;
 }
 
 export interface MapboxStyle {

@@ -1,0 +1,183 @@
+{
+  "version": 8,
+  "name": "Empty Style",
+  "metadata": {"maputnik:renderer": "mbgljs"},
+  "sources": {
+    "covidpalier": {
+      "type": "vector",
+      "tiles": [
+        "http://localhost:4200/carto/gmaps/covidpalier@EPSG_3857/{z}/{x}/{y}.mvt"
+      ],
+      "minZoom": 0,
+      "maxZoom": 17
+    }
+  },
+  "sprite": "",
+  "layers": [
+    {
+      "id": "covidpalier500-2",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(202, 218, 25, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier500-3",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(238, 116, 0, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier500-4",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(207, 29, 29, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier500-line-2",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(228, 207, 33, 1)",
+        "line-blur": 0,
+        "line-width": 2,
+        "line-offset": 2,
+        "line-gap-width": 1
+      }
+    },
+    {
+      "id": "covidpalier500-line-3",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(240, 158, 16, 1)",
+        "line-blur": 0,
+        "line-width": 2,
+        "line-offset": 2,
+        "line-gap-width": 1
+      }
+    },
+    {
+      "id": "covidpalier500-line-4",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(236, 10, 10, 1)",
+        "line-blur": 0,
+        "line-width": 2,
+        "line-offset": 2,
+        "line-gap-width": 1
+      }
+    },
+    {
+      "id": "covidpalier500-text",
+      "type": "symbol",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "filter": [
+        "any",
+        [">", "population", 30000],
+        ["==", "label_nom", "Gaspé"],
+        ["==", "label_nom", "Matane"],
+        ["==", "label_nom", "Sainte-Anne-des-Monts"],
+        ["==", "label_nom", "Sept-Îles"],
+        ["==", "label_nom", "Baie-Comeau"],
+        ["==", "label_nom", "Rivière-du-Loup"],
+        ["==", "label_nom", "Mont-Tremblant"],
+        ["==", "label_nom", "La Tuque"],
+        ["==", "label_nom", "Carleton-sur-Mer"]
+      ],
+      "layout": {
+        "text-field": "{label_nom}",
+        "visibility": "visible",
+        "symbol-placement": "point",
+        "text-font": ["Open Sans Extra Bold"],
+        "text-size": 15,
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-keep-upright": false
+      }
+    },
+    {
+      "id": "covidpalier500-text-n8",
+      "type": "symbol",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "minzoom": 8,
+      "maxzoom": 9,
+      "filter": ["any", [">", "population", 5000],
+        ["==", "label_nom", "Gaspé"],
+        ["==", "label_nom", "Matane"],
+        ["==", "label_nom", "Sainte-Anne-des-Monts"],
+        ["==", "label_nom", "Sept-Îles"],
+        ["==", "label_nom", "Baie-Comeau"],
+        ["==", "label_nom", "Rivière-du-Loup"],
+        ["==", "label_nom", "Mont-Tremblant"],
+        ["==", "label_nom", "La Tuque"],
+        ["==", "label_nom", "Carleton-sur-Mer"]
+        ],
+      "layout": {
+        "text-field": "{label_nom}",
+        "visibility": "visible",
+        "symbol-placement": "point",
+        "text-font": ["Open Sans Extra Bold"],
+        "text-size": 15,
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-keep-upright": false
+      }
+    },
+    {
+      "id": "covidpalier500-text-n9etmoins",
+      "type": "symbol",
+      "source": "covidpalier",
+      "source-layer": "covidpalier",
+      "minzoom": 9,
+      "maxzoom": 24,
+      "filter": ["all"],
+      "layout": {
+        "text-field": "{label_nom}",
+        "visibility": "visible",
+        "symbol-placement": "point",
+        "text-font": ["Open Sans Extra Bold"],
+        "text-size": 15,
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-keep-upright": false
+      }
+    }
+  ],
+  "id": "xsk9pp6fv"
+}

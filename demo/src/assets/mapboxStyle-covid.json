@@ -1,0 +1,347 @@
+{
+  "version": 8,
+  "name": "Empty Style",
+  "metadata": {"maputnik:renderer": "mbgljs"},
+  "sources": {
+    "covidpalier": {
+      "type": "vector",
+      "tiles": [
+        "http://localhost:4200/carto/gmaps/covidpalier@EPSG_3857/{z}/{x}/{y}.mvt"
+      ],
+      "minZoom": 0,
+      "maxZoom": 17
+    }
+  },
+  "sprite": "",
+  "layers": [
+    {
+      "id": "covidpalier500-2",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(202, 218, 25, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier500-3",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(238, 116, 0, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier500-4",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(207, 29, 29, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier50-2",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "visible"},
+      "paint": {"fill-color": "rgba(202, 218, 25, 1)", "fill-opacity": 0.5}
+    },
+    {
+      "id": "covidpalier50-3",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-translate-anchor": "map",
+        "fill-color": "rgba(238, 116, 0, 1)",
+        "fill-outline-color": "rgba(50, 43, 158, 1)",
+        "fill-opacity": 0.5
+      }
+    },
+    {
+      "id": "covidpalier50-4",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "visible"},
+      "paint": {"fill-color": "rgba(207, 29, 29, 1)", "fill-opacity": 0.5}
+    },
+    {
+      "id": "covidpalier10-2",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier10",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "visible"},
+      "paint": {
+        "fill-color": "rgba(202, 218, 25, 1)",
+        "fill-opacity": 0.5,
+        "fill-outline-color": "rgba(0, 0, 0, 1)"
+      }
+    },
+    {
+      "id": "covidpalier10-3",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier10",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "visible"},
+      "paint": {"fill-color": "rgba(238, 116, 0, 1)", "fill-opacity": 0.5}
+    },
+    {
+      "id": "covidpalier10-4",
+      "type": "fill",
+      "source": "covidpalier",
+      "source-layer": "covidpalier10",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "visible"},
+      "paint": {"fill-color": "rgba(207, 29, 29, 1)", "fill-opacity": 0.5}
+    },
+    {
+      "id": "covidpalier500-line-2",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(228, 207, 33, 1)",
+        "line-blur": 0,
+        "line-width": 2,
+        "line-offset": 2,
+        "line-gap-width": 1
+      }
+    },
+    {
+      "id": "covidpalier500-line-3",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(240, 158, 16, 1)",
+        "line-blur": 0,
+        "line-width": 2,
+        "line-offset": 2,
+        "line-gap-width": 1
+      }
+    },
+    {
+      "id": "covidpalier500-line-4",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(236, 10, 10, 1)",
+        "line-blur": 0,
+        "line-width": 2,
+        "line-offset": 2,
+        "line-gap-width": 1
+      }
+    },
+    {
+      "id": "covidpalier10-line-2",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier10",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-width": 2,
+        "line-blur": 2,
+        "line-offset": 3,
+        "line-color": "rgba(228, 165, 37, 1)",
+        "line-translate-anchor": "map",
+        "line-gap-width": 5
+      }
+    },
+    {
+      "id": "covidpalier10-line-3",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier10",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-width": 2,
+        "line-blur": 2,
+        "line-offset": 3,
+        "line-color": "rgba(228, 165, 37, 1)",
+        "line-translate-anchor": "map",
+        "line-gap-width": 5
+      }
+    },
+    {
+      "id": "covidpalier10-line-4",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier10",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-width": 2,
+        "line-blur": 2,
+        "line-offset": 3,
+        "line-color": "rgba(206, 8, 8, 1)",
+        "line-translate-anchor": "map",
+        "line-gap-width": 5
+      }
+    },
+    {
+      "id": "covidpalier-50-line-3",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "filter": ["all", ["==", "no_palier", 3]],
+      "layout": {"visibility": "none"},
+      "paint": {
+        "line-color": "rgba(232, 155, 22, 1)",
+        "line-width": 2,
+        "line-offset": 3,
+        "line-blur": 2,
+        "line-gap-width": 5
+      }
+    },
+    {
+      "id": "covidpalier-50-line-4",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "filter": ["all", ["==", "no_palier", 4]],
+      "layout": {
+        "line-cap": "round",
+        "line-join": "miter",
+        "visibility": "none"
+      },
+      "paint": {
+        "line-color": "rgba(232, 22, 22, 1)",
+        "line-width": 7,
+        "line-offset": 4,
+        "line-blur": 0
+      }
+    },
+    {
+      "id": "covidpalier-50-line-2",
+      "type": "line",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "filter": ["all", ["==", "no_palier", 2]],
+      "layout": {
+        "line-miter-limit": 2,
+        "line-join": "round",
+        "line-cap": "round",
+        "visibility": "none"
+      },
+      "paint": {
+        "line-color": "rgba(232, 226, 22, 1)",
+        "line-width": 2,
+        "line-offset": 3,
+        "line-blur": 0,
+        "line-gap-width": 0
+      }
+    },
+    {
+      "id": "covidpalier500-text",
+      "type": "symbol",
+      "source": "covidpalier",
+      "source-layer": "covidpalier500",
+      "filter": [
+        "any",
+        [">", "population", 30000],
+        ["==", "label_nom", "Gaspé"],
+        ["==", "label_nom", "Matane"],
+        ["==", "label_nom", "Sainte-Anne-des-Monts"],
+        ["==", "label_nom", "Sept-Îles"],
+        ["==", "label_nom", "Baie-Comeau"],
+        ["==", "label_nom", "Rivière-du-Loup"],
+        ["==", "label_nom", "Mont-Tremblant"],
+        ["==", "label_nom", "La Tuque"],
+        ["==", "label_nom", "Carleton-sur-Mer"]
+      ],
+      "layout": {
+        "text-field": "{label_nom}",
+        "visibility": "visible",
+        "symbol-placement": "point",
+        "text-font": ["Open Sans Extra Bold"],
+        "text-size": 15,
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-keep-upright": false
+      }
+    },
+    {
+      "id": "covidpalier500-text-n8",
+      "type": "symbol",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "minzoom": 8,
+      "maxzoom": 9,
+      "filter": ["any", [">", "population", 5000],
+        ["==", "label_nom", "Gaspé"],
+        ["==", "label_nom", "Matane"],
+        ["==", "label_nom", "Sainte-Anne-des-Monts"],
+        ["==", "label_nom", "Sept-Îles"],
+        ["==", "label_nom", "Baie-Comeau"],
+        ["==", "label_nom", "Rivière-du-Loup"],
+        ["==", "label_nom", "Mont-Tremblant"],
+        ["==", "label_nom", "La Tuque"],
+        ["==", "label_nom", "Carleton-sur-Mer"]
+        ],
+      "layout": {
+        "text-field": "{label_nom}",
+        "visibility": "visible",
+        "symbol-placement": "point",
+        "text-font": ["Open Sans Extra Bold"],
+        "text-size": 15,
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-keep-upright": false
+      }
+    },
+    {
+      "id": "covidpalier500-text-n9etmoins",
+      "type": "symbol",
+      "source": "covidpalier",
+      "source-layer": "covidpalier50",
+      "minzoom": 9,
+      "maxzoom": 24,
+      "filter": ["all"],
+      "layout": {
+        "text-field": "{label_nom}",
+        "visibility": "visible",
+        "symbol-placement": "point",
+        "text-font": ["Open Sans Extra Bold"],
+        "text-size": 15,
+        "text-ignore-placement": false,
+        "text-allow-overlap": false,
+        "text-keep-upright": false
+      }
+    }
+  ],
+  "id": "xsk9pp6fv"
+}
