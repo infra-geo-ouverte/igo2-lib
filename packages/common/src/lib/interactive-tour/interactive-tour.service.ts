@@ -160,12 +160,10 @@ export class InteractiveTourService {
       if (self.getCurrentStep()) {
         if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
           self.cancel();
-          // const id = self.getCurrentStep().id;
-          // const index = self.steps.findIndex(step => step.id === id);
-          // this.checkNext(undefined, index);
           clearInterval(checkExist);
           return;
         } else {
+          console.log(self.getCurrentStep());
           const currentStepElement = self.getCurrentStep().getElement();
           if (currentStepElement) {
             const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
@@ -199,32 +197,29 @@ export class InteractiveTourService {
     }, 100);
   }
 
-  private checkNext(index, tour, service, i?) {
+  private checkNext(index, tour, service) {
     if (tour.getCurrentStep()) {
-      const id = tour.getCurrentStep().id;
-      if (tour.steps.findIndex(step => step.id === id) === tour.steps.length - 1 || (i && i >= tour.steps.length - 1)) {
-        console.log('lastStep');
+      if (tour.getCurrentStep().options.attachTo.element && document.querySelector(tour.getCurrentStep().options.attachTo.element)) {
         tour.complete();
         return;
       }
 
-      let nextIndex;
-      i ? nextIndex = i + 1 : nextIndex = index.index + 1;
-      const nextStep = tour.steps[nextIndex];
-      if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
-        console.log('ICI');
-        service.checkNext(index, tour, service, nextIndex);
-        // if (self.steps.find(step => step.id === nextStep.id).options.deleteAfterNext) {
-        //   self.removeStep(id);
-        // }
-      } else {
-        console.log('ici2');
-        tour.show(nextStep.id);
+      if (index.index === tour.steps.length - 1) {
+        tour.complete();
+        return;
       }
 
-      // if (self.steps.find(step => step.id === id) && self.steps.find(step => step.id === id).options.deleteAfterNext) {
-      //   self.removeStep(id);
-      // }
+      tour.steps.splice(index.index, 1);
+      const nextStep = tour.steps[index.index];
+      if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
+        console.log('ici');
+        service.checkNext(index, tour, service);
+      } else {
+        console.log('ici2');
+        console.log(nextStep);
+        console.log(tour);
+        tour.show(nextStep.id);
+      }
     }
   }
 
