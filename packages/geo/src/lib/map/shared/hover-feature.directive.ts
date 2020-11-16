@@ -180,15 +180,14 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   }
 
    /**
-   * On map singleclick
-   */
+    * On map singleclick
+    */
   private listenToMapClick() {
     this.singleClickMapListener = this.map.ol.on(
       'singleclick',
       (event: OlMapBrowserSingleClickEvent) => this.onMapSingleClickEvent(event)
     );
   }
-  
 
   /**
    * Unsubscribe to pointer store.
