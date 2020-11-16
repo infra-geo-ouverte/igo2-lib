@@ -5,6 +5,7 @@ export * from './map.service';
 export * from './map.utils';
 export * from './mapOffline.directive';
 export * from './map-pointer-position.directive';
+export * from './hover-feature.directive';
 export * from './projection.interfaces';
 export * from './projection.service';
 export * from './controllers';
