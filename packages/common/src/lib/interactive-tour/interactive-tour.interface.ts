@@ -35,5 +35,5 @@ export interface InteractiveTourOptions {
   /* Disable an interaction with element? */
   disableInteraction?: boolean;
   /* Element to check to be able to start the tour */
-  condition?: string;
+  conditions?: string[];
 }
