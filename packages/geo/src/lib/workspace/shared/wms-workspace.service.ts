@@ -83,7 +83,7 @@ export class WmsWorkspaceService {
         sourceOptions: {
           download: layer.dataSource.options.download,
           type: 'wfs',
-          url: layer.dataSource.options.url || layer.dataSource.options.url,
+          url: layer.dataSource.options.urlWfs || layer.dataSource.options.url,
           queryable: true,
           queryTitle: (layer.dataSource.options as QueryableDataSourceOptions).queryTitle,
           params: layer.dataSource.options.paramsWFS,
