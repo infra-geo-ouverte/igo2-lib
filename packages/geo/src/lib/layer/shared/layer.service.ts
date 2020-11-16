@@ -97,13 +97,13 @@ export class LayerService {
     return layer;
   }
 
-  createAsyncLayer(layerOptions: AnyLayerOptions): Observable<Layer> {
+  createAsyncLayer(layerOptions: AnyLayerOptions, detailedContextUri?: string): Observable<Layer> {
     if (layerOptions.source) {
       return new Observable(d => d.next(this.createLayer(layerOptions)));
     }
 
     return this.dataSourceService
-      .createAsyncDataSource(layerOptions.sourceOptions)
+      .createAsyncDataSource(layerOptions.sourceOptions, detailedContextUri)
       .pipe(
         map(source => {
           if (source === undefined) {

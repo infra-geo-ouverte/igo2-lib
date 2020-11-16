@@ -84,7 +84,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
 
     const layersAndIndex$ = merge(
       ...context.layers.map((layerOptions: LayerOptions, index: number) => {
-        return this.layerService.createAsyncLayer(layerOptions);
+        return this.layerService.createAsyncLayer(layerOptions, context.uri);
       })
     );
 
