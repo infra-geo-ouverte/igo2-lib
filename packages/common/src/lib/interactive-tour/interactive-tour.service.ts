@@ -163,7 +163,6 @@ export class InteractiveTourService {
           clearInterval(checkExist);
           return;
         } else {
-          console.log(self.getCurrentStep());
           const currentStepElement = self.getCurrentStep().getElement();
           if (currentStepElement) {
             const shepherdList = currentStepElement.querySelectorAll('.shepherd-content, .shepherd-text');
@@ -212,12 +211,9 @@ export class InteractiveTourService {
       tour.steps.splice(index.index, 1);
       const nextStep = tour.steps[index.index];
       if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
-        console.log('ici');
         service.checkNext(index, tour, service);
       } else {
-        console.log('ici2');
-        console.log(nextStep);
-        console.log(tour);
+        tour._setupModal();
         tour.show(nextStep.id);
       }
     }
@@ -312,7 +308,6 @@ export class InteractiveTourService {
         title: this.languageService.translate.instant(
           step.title || stepConfig.title
         ),
-        deleteAfterNext: step.deleteAfterNext,
         text: [this.languageService.translate.instant(step.text)],
         when: {
           show: () => {

@@ -12,7 +12,6 @@ export interface InteractiveTourStep {
   scrollToElement?: boolean;
   disableInteraction?: boolean;
   noBackButton?: boolean;
-  deleteAfterNext?: boolean;
 }
 
 export interface InteractiveTourAction {
