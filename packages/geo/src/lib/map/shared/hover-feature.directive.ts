@@ -12,6 +12,7 @@ import {
 import { Subscription } from 'rxjs';
 
 import { MapBrowserPointerEvent as OlMapBrowserPointerEvent } from 'ol/MapBrowserEvent';
+import { MapBrowserSingleClickEvent as OlMapBrowserSingleClickEvent } from 'ol/MapBrowserEvent';
 import { ListenerFunction } from 'ol/events';
 
 import { IgoMap } from '../../map/shared/map';
@@ -26,11 +27,11 @@ import * as olLayer from 'ol/layer';
 
 import { EntityStore } from '@igo2/common';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
-import { VectorLayer, VectorTileLayer, Layer } from '../../layer/shared/layers';
+import { VectorLayer, Layer } from '../../layer/shared/layers';
 import { take } from 'rxjs/operators';
 import { tryBindStoreLayer } from '../../feature/shared/feature.utils';
 import { FeatureStore } from '../../feature/shared/store';
-import { FeatureMotion, FEATURE } from '../../feature/shared/feature.enums';
+import { FeatureMotion } from '../../feature/shared/feature.enums';
 import { MediaService } from '@igo2/core';
 import { StyleService } from '../../layer/shared/style.service';
 
@@ -55,6 +56,8 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
    * Listener to the pointer move event
    */
   private pointerMoveListener: ListenerFunction;
+
+  private singleClickMapListener: ListenerFunction;
 
   private hoverFeatureId: string = 'hoverFeatureId';
   /**
@@ -98,6 +101,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   ngOnInit() {
     this.listenToMapPointerMove();
     this.subscribeToPointerStore();
+    this.listenToMapClick();
 
     this.map.status$.pipe(take(1)).subscribe(() => {
       this.store = new FeatureStore<Feature>([], {map: this.map});
@@ -141,6 +145,7 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unlistenToMapPointerMove();
     this.unsubscribeToPointerStore();
+    this.unlistenToMapSingleClick();
     this.layers$$.unsubscribe();
   }
 
@@ -174,6 +179,17 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
     );
   }
 
+   /**
+   * On map singleclick
+   */
+  private listenToMapClick() {
+    this.singleClickMapListener = this.map.ol.on(
+      'singleclick',
+      (event: OlMapBrowserSingleClickEvent) => this.onMapSingleClickEvent(event)
+    );
+  }
+  
+
   /**
    * Unsubscribe to pointer store.
    * @internal
@@ -192,7 +208,24 @@ export class HoverFeatureDirective implements OnInit, OnDestroy {
   }
 
   /**
-   * Trigger reverse search when the mouse is motionless during the defined delay (pointerMoveDelay).
+   * Stop listening for map singleclick
+   * @internal
+   */
+  private unlistenToMapSingleClick() {
+    this.map.ol.un(this.singleClickMapListener.type, this.singleClickMapListener.listener);
+    this.singleClickMapListener = undefined;
+  }
+
+  /**
+   * Trigger clear layer on singleclick.
+   * @param event OL map browser singleclick event
+   */
+  private onMapSingleClickEvent(event: OlMapBrowserSingleClickEvent){
+    this.clearLayer();
+  }
+
+  /**
+   * Trigger hover when the mouse is motionless during the defined delay (pointerMoveDelay).
    * @param event OL map browser pointer event
    */
   private onMapEvent(event: OlMapBrowserPointerEvent) {
