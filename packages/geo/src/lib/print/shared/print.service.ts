@@ -424,7 +424,6 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          console.log('timeout');
           for (const canvas of canvases) {
             if (canvas.width !== 0) {
               this.addCanvas(doc, canvas, margins);
