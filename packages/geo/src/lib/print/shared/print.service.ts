@@ -123,14 +123,21 @@ export class PrintService {
       html += 'mm !important; height: 2000px !important; }';
       html += '</style>';
       html += '<font size="2" face="Courier New" >';
-      html += '<div style="display:inline-block;max-width:' + width + 'mm">';
+      html +=
+        '<div style="display:grid;grid-template-columns:' +
+        width / 2 +
+        'mm ' +
+        width / 2 +
+        'mm;max-width:' +
+        width +
+        'mm">';
 
       // For each legend, define an html table cell
       const images$ = legends.map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
             let htmlImg =
-              '<table border=1 style="display:inline-block;vertical-align:top">';
+              '<table border=1 style="vertical-align:top">';
             htmlImg += '<tr><th width="170px">' + legend.title + '</th>';
             htmlImg +=
               '<td><img class="printImageLegend" src="' + dataImage + '">';

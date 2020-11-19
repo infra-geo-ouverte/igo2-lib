@@ -91,5 +91,4 @@ export interface ItemStyleOptions {
 export interface OutputLayerLegend {
   title: string;
   url: string;
-  image: string;
 }
