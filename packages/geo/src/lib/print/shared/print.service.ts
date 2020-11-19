@@ -346,13 +346,13 @@ export class PrintService {
   ) {
     let image;
 
-    image = canvas.toDataURL('image/jpeg');
+    image = canvas.toDataURL('image/png');
 
     if (image !== undefined) {
       const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
       doc.addImage(
         image,
-        'JPEG',
+        'PNG',
         margins[3],
         margins[0],
         imageSize[0],
@@ -381,9 +381,9 @@ export class PrintService {
     let timeout;
 
     map.ol.once('rendercomplete', (event: any) => {
-      const canvas = event.target
+      const canvases = event.target
         .getViewport()
-        .getElementsByTagName('canvas')[0];
+        .getElementsByTagName('canvas');
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
 
@@ -395,7 +395,11 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          this.addCanvas(doc, canvas, margins);
+          for (const canvas of canvases) {
+            if (canvas.width !== 0) {
+              this.addCanvas(doc, canvas, margins);
+            }
+          }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error(
@@ -420,7 +424,12 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          this.addCanvas(doc, canvas, margins);
+          console.log('timeout');
+          for (const canvas of canvases) {
+            if (canvas.width !== 0) {
+              this.addCanvas(doc, canvas, margins);
+            }
+          }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error(
