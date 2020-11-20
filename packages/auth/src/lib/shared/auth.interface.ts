@@ -31,7 +31,14 @@ export interface AuthOptions {
   microsoft?: AuthMicrosoftOptions;
   trustHosts?: string[];
   profilsGuard?: string[];
+  hostsWithCredentials?: WithCredentialsOptions[];
+  autoLoginAnonymous?: boolean;
+  loginButton?: boolean;
 }
+export interface WithCredentialsOptions {
+  withCredentials?: boolean;
+  domainRegFilters?: string;
+ }
 
 export interface User {
   source?: string;
