@@ -1,3 +1,21 @@
+## [1.5.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.5.2...1.5.3) (2020-11-19)
+
+
+### Bug Fixes
+
+* **flexible:** Cannot read property unsubscribe of undefined ([bdec1d5](https://github.com/infra-geo-ouverte/igo2-lib/commit/bdec1d59b2a443f8bd7783fd8ecbbd54743637a8))
+* **print:** the legend was called twice and improvement of its positioning ([1ea159c](https://github.com/infra-geo-ouverte/igo2-lib/commit/1ea159c12ef9badc9a01f079ff082c14e2d368dc))
+* **print-tool:** fix small screen layers print ([#780](https://github.com/infra-geo-ouverte/igo2-lib/issues/780)) ([9e404fe](https://github.com/infra-geo-ouverte/igo2-lib/commit/9e404fe9817ae571498ebd2dc352c22a778493b2))
+* **workspace:** WMS workspace with a different url for wms-wfs is not correctly assigned. ([#778](https://github.com/infra-geo-ouverte/igo2-lib/issues/778)) ([c16a1c9](https://github.com/infra-geo-ouverte/igo2-lib/commit/c16a1c91f263f486663db6e7427095f4fdf8520c))
+
+
+### Features
+
+* **hover:** Hover feature ([#779](https://github.com/infra-geo-ouverte/igo2-lib/issues/779)) ([aa182ec](https://github.com/infra-geo-ouverte/igo2-lib/commit/aa182ecb90d213e00edbc70d957922aba7b4a7f4)), closes [#773](https://github.com/infra-geo-ouverte/igo2-lib/issues/773) [#765](https://github.com/infra-geo-ouverte/igo2-lib/issues/765)
+* **tour:** Context interactive tour ([#751](https://github.com/infra-geo-ouverte/igo2-lib/issues/751)) ([09826e6](https://github.com/infra-geo-ouverte/igo2-lib/commit/09826e60ac6d5583192848339e05f1a0f5f6537c))
+
+
+
 ## [1.5.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.5.1...1.5.2) (2020-11-11)
 
 

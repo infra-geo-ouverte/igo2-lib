@@ -122,7 +122,9 @@ export class FlexibleComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.mediaService$$.unsubscribe();
+    if (this.mediaService$$) {
+      this.mediaService$$.unsubscribe();
+    }
   }
 
   private setSize(size: string) {
