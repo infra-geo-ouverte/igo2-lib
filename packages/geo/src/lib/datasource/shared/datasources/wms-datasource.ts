@@ -132,7 +132,12 @@ export class WMSDataSource extends DataSource {
       console.log('*******************************');
     }
 
-    if (options.paramsWFS && initOgcFilters && initOgcFilters.enabled && initOgcFilters.editable) {
+    if (
+      options.paramsWFS &&
+      initOgcFilters &&
+      initOgcFilters.enabled &&
+      initOgcFilters.editable &&
+      (options.sourceFields || []).filter(sf => !sf.values).length > 0) {
       this.wfsService.getSourceFieldsFromWFS(options);
     }
 

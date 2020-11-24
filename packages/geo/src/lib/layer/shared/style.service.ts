@@ -69,8 +69,9 @@ export class StyleService {
   }
 
   createStyleByAttribute(feature, styleByAttribute: StyleByAttribute) {
+
     let style;
-    const type = styleByAttribute.type;
+    const type = styleByAttribute.type ? styleByAttribute.type : this.guessTypeFeature(feature);
     const attribute = styleByAttribute.attribute;
     const data = styleByAttribute.data;
     const stroke = styleByAttribute.stroke;
@@ -79,13 +80,17 @@ export class StyleService {
     const radius = styleByAttribute.radius;
     const icon = styleByAttribute.icon;
     const scale = styleByAttribute.scale;
-    const size = data.length;
-    const label = styleByAttribute.label.attribute || styleByAttribute.label;
-    const labelStyle =
+    const size = data ? data.length : 0;
+    const label = styleByAttribute.label ? (styleByAttribute.label.attribute || styleByAttribute.label) : undefined;
+    const labelStyle = styleByAttribute.label ?
       this.parseStyle('text', styleByAttribute.label.style) ||
-      new olstyle.Text();
-    labelStyle.setText(this.getLabel(feature, label));
+      new olstyle.Text() : undefined;
     const baseStyle = styleByAttribute.baseStyle;
+
+    if (labelStyle) {
+      labelStyle.setText(this.getLabel(feature, label));
+    }
+
     if (type === 'circle') {
       for (let i = 0; i < size; i++) {
         const val =
@@ -123,6 +128,13 @@ export class StyleService {
         }
       }
       if (!feature.getStyle()) {
+        if (baseStyle) {
+          style = this.createStyle(baseStyle);
+          if (labelStyle) {
+            style.setText(labelStyle);
+          }
+          return style;
+        }
         style = [
           new olstyle.Style({
             image: new olstyle.Circle({
@@ -164,6 +176,9 @@ export class StyleService {
         if (!feature.getStyle()) {
           if (baseStyle) {
             style = this.createStyle(baseStyle);
+            if (labelStyle) {
+              style.setText(labelStyle);
+            }
             return style;
           }
           style = [
@@ -271,5 +286,16 @@ export class StyleService {
     }
 
     return label;
+  }
+
+  private guessTypeFeature(feature) {
+    switch (feature.getGeometry().getType()) {
+      case 'Point':
+      case 'MultiPoint':
+      case 'Circle':
+        return 'circle';
+      default:
+        return 'regular';
+    }
   }
 }

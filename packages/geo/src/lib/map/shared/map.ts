@@ -227,6 +227,12 @@ export class IgoMap {
     );
   }
 
+  getLayerByOlUId(olUId: string): Layer {
+    return this.layers.find(
+      (layer: Layer) => layer.ol.ol_uid && layer.ol.ol_uid === olUId
+    );
+  }
+
   /**
    * Add a single layer
    * @param layer Layer to add

@@ -175,7 +175,15 @@ export class LayerSyncWatcher extends Watcher {
                             layerToApply.ol.getSource().refresh();
                         }
                         if (layerType === 'wms') {
-                            const appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
+                            let appliedOgcFilter = this.ol.values_.sourceOptions.params.FILTER;
+                            if (this.ol.getProperties().sourceOptions.type === 'wfs') {
+                                appliedOgcFilter = this.ogcFilterWriter.handleOgcFiltersAppliedValue(
+                                    this.layer.dataSource.options as OgcFilterableDataSourceOptions,
+                                    (this.dataSource.options as any).fieldNameGeometry,
+                                    undefined,
+                                    this.map.viewController.getOlProjection()
+                                );
+                            }
                             (layerToApply.dataSource as WMSDataSource).ol.updateParams({ FILTER: appliedOgcFilter });
                         }
                     }
@@ -200,7 +208,7 @@ export class LayerSyncWatcher extends Watcher {
                                     appliedOgcFilter = this.ogcFilterWriter.handleOgcFiltersAppliedValue(
                                         layer.dataSource.options as OgcFilterableDataSourceOptions,
                                         (this.dataSource.options as any).fieldNameGeometry,
-                                        this.map.viewController.getExtent(),
+                                        undefined,
                                         this.map.viewController.getOlProjection()
                                     );
 

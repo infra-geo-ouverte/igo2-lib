@@ -110,7 +110,7 @@ export class FeatureStore<T extends Feature = Feature> extends EntityStore<T> {
    * @param features Openlayers feature objects
    * @param motion Optional: The type of motion to perform
    */
-  private setLayerOlFeatures(
+  public setLayerOlFeatures(
     olFeatures: OlFeature[],
     motion: FeatureMotion = FeatureMotion.Default,
     viewScale?: [number, number, number, number],

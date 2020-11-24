@@ -32,6 +32,7 @@ import { AppLegendModule } from './geo/legend/legend.module';
 import { AppOverlayModule } from './geo/overlay/overlay.module';
 import { AppGeometryModule } from './geo/geometry/geometry.module';
 import { AppFeatureModule } from './geo/feature/feature.module';
+import { AppHoverModule } from './geo/hover/hover.module';
 import { AppMeasureModule } from './geo/measure/measure.module';
 import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
@@ -85,6 +86,7 @@ import { AppComponent } from './app.component';
     AppOverlayModule,
     AppGeometryModule,
     AppFeatureModule,
+    AppHoverModule,
     AppMeasureModule,
     AppQueryModule,
     AppCatalogModule,

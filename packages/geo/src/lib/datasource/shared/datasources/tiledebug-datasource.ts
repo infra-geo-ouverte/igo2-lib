@@ -1,4 +1,4 @@
-import {TileDebug} from 'ol/source';
+import { TileDebug } from 'ol/source';
 import TileGrid from 'ol/tilegrid/TileGrid';
 
 import { DataSource } from './datasource';
@@ -11,12 +11,11 @@ export class TileDebugDataSource extends DataSource {
   protected createOlSource(): TileDebug {
     const baseOptions = JSON.parse(JSON.stringify(this.options)); // to avoid to alter the original options
     if (this.options.tileGrid) {
-        delete baseOptions.tileGrid;
-        baseOptions.tileGrid = new TileGrid(this.options.tileGrid);
+      delete baseOptions.tileGrid;
+      baseOptions.tileGrid = new TileGrid(this.options.tileGrid);
     }
     return new TileDebug(baseOptions);
   }
 
   public onUnwatch() {}
-
 }

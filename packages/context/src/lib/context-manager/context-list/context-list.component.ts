@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
 import {
@@ -154,6 +154,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   constructor(
     private cdRef: ChangeDetectorRef,
     private contextService: ContextService,
+    public configService: ConfigService,
     public auth: AuthService,
     private dialog: MatDialog,
     private languageService: LanguageService,
