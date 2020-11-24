@@ -216,7 +216,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             {
               title: 'igo.geo.search.icherche.type.cadastre',
               value: 'cadastre',
-              enabled: types.indexOf('cadastre') !== -1
+              enabled: types.indexOf('cadastre') !== -1,
+              hashtags: ['cadastre']
             }
           ]
         },
