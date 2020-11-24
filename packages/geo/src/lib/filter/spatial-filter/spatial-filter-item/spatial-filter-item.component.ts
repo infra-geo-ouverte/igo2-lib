@@ -29,9 +29,7 @@ import { Layer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
-import buffer from '@turf/buffer';
-import * as turf from '@turf/helpers';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -296,13 +294,25 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
-          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          this.spatialFilterService.loadBufferGeometry(
+            this.drawZone,
+            SpatialFilterType.Polygon,
+            value
+          ).subscribe((featureGeom: Feature) => {
+            this.zoneWithBuffer = featureGeom;
+            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          });
         } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'});
+          this.spatialFilterService.loadBufferGeometry(
+            this.drawZone,
+            SpatialFilterType.Polygon,
+            value * 1000
+          ).subscribe((featureGeom: Feature) => {
+            this.zoneWithBuffer = featureGeom;
           this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          });
         } else if (value === 0) {
           this.buffer = value;
           this.bufferEvent.emit(value);

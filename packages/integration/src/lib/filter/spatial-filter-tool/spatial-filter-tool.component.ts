@@ -191,7 +191,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
     this.activeLayers = [];
     this.thematicLength = 0;
     this.iterator = 1;
-    if (this.type !== SpatialFilterType.Predefined) {
+    if (this.type === SpatialFilterType.Predefined) {
       this.zone = undefined;
       this.queryType = undefined;
     }
@@ -222,8 +222,7 @@ export class SpatialFilterToolComponent implements OnDestroy {
             this.zone,
             this.itemType,
             this.queryType,
-            thematic,
-            this.buffer
+            thematic
           )
           .pipe(
             tap((features: Feature[]) => {

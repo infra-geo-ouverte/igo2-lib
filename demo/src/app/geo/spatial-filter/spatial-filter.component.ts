@@ -146,8 +146,7 @@ export class AppSpatialFilterComponent {
           this.zone,
           this.itemType,
           this.queryType,
-          thematic,
-          this.radius
+          thematic
         )
         .subscribe((features: Feature[]) => {
           this.store.insertMany(features);

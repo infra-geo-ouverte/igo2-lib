@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 import { Feature } from '../../feature/shared';
 import {
   SpatialFilterQueryType,
-  SpatialFilterItemType
+  SpatialFilterItemType,
+  SpatialFilterType
 } from './spatial-filter.enum';
 import { SpatialFilterThematic } from './spatial-filter.interface';
 
@@ -15,7 +16,7 @@ import { SpatialFilterThematic } from './spatial-filter.interface';
   providedIn: 'root'
 })
 export class SpatialFilterService {
-  public baseUrl: string = 'https://geoegl.msp.gouv.qc.ca/apis/terrapi/';
+  public baseUrl: string = 'https://testgeoegl.msp.gouv.qc.ca/apis/terrapi/';
 
   /*
    * Type association with URL
@@ -140,8 +141,7 @@ export class SpatialFilterService {
     feature,
     itemType: SpatialFilterItemType,
     type?: SpatialFilterQueryType,
-    thematic?: SpatialFilterThematic,
-    buffer?: number
+    thematic?: SpatialFilterThematic
   ) {
     if (type) {
       // Predefined type
@@ -156,8 +156,7 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true',
-                buffer: buffer.toString()
+                icon: 'true'
               }
             }
           )
@@ -184,8 +183,7 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true',
-                buffer: buffer.toString()
+                icon: 'true'
               }
             }
           )
@@ -211,7 +209,6 @@ export class SpatialFilterService {
           .post<{ features: Feature[] }>(url + urlItem, {
             geometry: 'true',
             icon: 'true',
-            buffer,
             loc: JSON.stringify(feature)
           })
           .pipe(
@@ -235,7 +232,6 @@ export class SpatialFilterService {
           .post<{ features: Feature[] }>(url + urlItem, {
             geometry: 'true',
             icon: 'true',
-            buffer,
             loc: JSON.stringify(feature)
           })
           .pipe(
@@ -280,6 +276,41 @@ export class SpatialFilterService {
             return f;
           })
         );
+    }
+  }
+
+  /*
+   * Get buffer geometry
+   */
+  loadBufferGeometry(
+    feature: Feature,
+    filterType: SpatialFilterType,
+    buffer?: number,
+    type?: SpatialFilterQueryType,
+  ): Observable<Feature> {
+    if (filterType === SpatialFilterType.Predefined) {
+      const featureType = this.urlFilterList[type];
+      const featureCode = '/' + feature.properties.code;
+      if (featureType && featureCode) {
+        return this.http
+          .get<Feature>(this.baseUrl + featureType + featureCode + '?geometry=1&buffer=' + buffer)
+          .pipe(
+            map(f => {
+              f.meta = {
+                id: f.properties.code,
+                alias: f.properties.nom,
+                title: f.properties.nom
+              };
+              return f;
+            })
+          );
+      }
+    } else {
+      return this.http
+        .post<Feature>(this.baseUrl + 'geospatial/buffer?loc=' + JSON.stringify(feature) + '&buffer=' + buffer, {
+          buffer,
+          loc: JSON.stringify(feature)
+        });
     }
   }
 }
