@@ -307,10 +307,15 @@ export class SpatialFilterService {
       }
     } else {
       return this.http
-        .post<Feature>(this.baseUrl + 'geospatial/buffer?loc=' + JSON.stringify(feature) + '&buffer=' + buffer, {
+        .post<Feature>(this.baseUrl + 'geospatial/buffer?', {
           buffer,
           loc: JSON.stringify(feature)
-        });
+        })
+        .pipe(
+          map(f => {
+            return f;
+          })
+        );
     }
   }
 }

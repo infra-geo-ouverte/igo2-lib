@@ -423,6 +423,7 @@
         "minute": "Minute"
       },
       "spatialFilter": {
+        "spatialFilter": "Filtre spatial",
         "predefined": "Zone Prédéfinie",
         "draw": "Dessin",
         "polygon": "Polygone",

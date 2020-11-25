@@ -424,6 +424,7 @@
         "minute": "Minute"
       },
       "spatialFilter": {
+        "spatialFilter": "Spatial filter",
         "predefined": "Predefined Zone",
         "draw": "Draw",
         "polygon": "Polygon",

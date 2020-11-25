@@ -545,15 +545,27 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   toggleSearchButton() {
     if (!this.isPredefined()) {
-      this.drawZone.meta = {
-        id: undefined,
-        title: 'Zone'
-      };
-      this.drawZone.properties = {
-        nom: 'Zone',
-        type: this.type as string
-      };
-      this.drawZoneEvent.emit(this.drawZone);
+      if (this.buffer > 0) {
+        this.zoneWithBuffer.meta = {
+          id: undefined,
+          title: 'Zone'
+        };
+        this.zoneWithBuffer.properties = {
+          nom: 'Zone',
+          type: this.type as string
+        };
+        this.drawZoneEvent.emit(this.zoneWithBuffer);
+      } else {
+        this.drawZone.meta = {
+          id: undefined,
+          title: 'Zone'
+        };
+        this.drawZone.properties = {
+          nom: 'Zone',
+          type: this.type as string
+        };
+        this.drawZoneEvent.emit(this.drawZone);
+      }
     }
     if (this.isPoint()) {
       this.radiusEvent.emit(this.radius);

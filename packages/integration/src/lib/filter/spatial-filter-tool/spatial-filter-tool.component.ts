@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Observable, forkJoin, Subject } from 'rxjs';
 import { tap, take, takeUntil } from 'rxjs/operators';
@@ -51,7 +51,7 @@ import { WorkspaceState } from '../../workspace/workspace.state';
   styleUrls: ['./spatial-filter-tool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SpatialFilterToolComponent implements OnDestroy {
+export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   get map(): IgoMap {
     return this.mapState.map;
   }
@@ -101,6 +101,15 @@ export class SpatialFilterToolComponent implements OnDestroy {
     private workspaceState: WorkspaceState,
     private cdRef: ChangeDetectorRef
   ) {}
+
+  ngOnInit() {
+    for (const layer of this.map.layers) {
+      if (layer.title.includes(this.languageService.translate.instant('igo.geo.spatialFilter.spatialFilter'))) {
+        this.layers.push(layer);
+      }
+    }
+    console.log(this.layers);
+  }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -201,7 +210,9 @@ export class SpatialFilterToolComponent implements OnDestroy {
     this.loading = true;
     let zeroResults = true;
     let thematics;
-    this.tryAddFeaturesToMap([this.zone]);
+    if (this.buffer === 0) {
+      this.tryAddFeaturesToMap([this.zone]);
+    }
     if (this.itemType !== SpatialFilterItemType.Thematics) {
       const theme: SpatialFilterThematic = {
         name: ''
@@ -343,7 +354,9 @@ export class SpatialFilterToolComponent implements OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: ('Zone ' + i) as string,
+            title: ('Zone ' + i + ' - ' + this.languageService.translate.instant(
+              'igo.geo.spatialFilter.spatialFilter'
+            )) as string,
             workspace: { enabled: true },
             _internal: {
               code:
@@ -433,7 +446,9 @@ export class SpatialFilterToolComponent implements OnDestroy {
           }
 
           const olLayer = this.layerService.createLayer({
-            title: (features[0].meta.title + ' ' + i) as string,
+            title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
+              'igo.geo.spatialFilter.spatialFilter'
+            )) as string,
             source: dataSource,
             visible: true,
             style
@@ -513,7 +528,9 @@ export class SpatialFilterToolComponent implements OnDestroy {
               this.map.layers.find(layer => layer.id === olLayer.id)
             );
             i = i - 1;
-            olLayer.title = (features[0].meta.title + ' ' + i) as string;
+            olLayer.title = (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
+              'igo.geo.spatialFilter.spatialFilter'
+            )) as string;
             olLayer.options.title = olLayer.title;
           }
           this.map.addLayer(olLayer);
