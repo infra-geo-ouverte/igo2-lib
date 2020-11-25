@@ -311,7 +311,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
             value * 1000
           ).subscribe((featureGeom: Feature) => {
             this.zoneWithBuffer = featureGeom;
-          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
           });
         } else if (value === 0) {
           this.buffer = value;
