@@ -133,6 +133,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Input() layers: Layer[] = [];
 
+  @Input() allLayers: Layer[] = [];
+
   @Input()
   get thematicLength(): number {
     return this._thematicLength;

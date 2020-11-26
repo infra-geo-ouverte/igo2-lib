@@ -141,7 +141,8 @@ export class SpatialFilterService {
     feature,
     itemType: SpatialFilterItemType,
     type?: SpatialFilterQueryType,
-    thematic?: SpatialFilterThematic
+    thematic?: SpatialFilterThematic,
+    buffer?: number
   ) {
     if (type) {
       // Predefined type
@@ -156,7 +157,9 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true'
+                icon: 'true',
+                bufferInput: buffer.toString(),
+                simplified: '0'
               }
             }
           )
@@ -183,7 +186,9 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true'
+                icon: 'true',
+                buffer: buffer.toString(),
+                simplified: '0'
               }
             }
           )
@@ -293,7 +298,14 @@ export class SpatialFilterService {
       const featureCode = '/' + feature.properties.code;
       if (featureType && featureCode) {
         return this.http
-          .get<Feature>(this.baseUrl + featureType + featureCode + '?geometry=1&buffer=' + buffer)
+          .get<Feature>(this.baseUrl + featureType + featureCode,
+            {
+              params: {
+                geometry: 'true',
+                bufferOutput: buffer.toString()
+              }
+            }
+          )
           .pipe(
             map(f => {
               f.meta = {

@@ -152,7 +152,6 @@ export class SpatialFilterListComponent implements OnInit, OnDestroy {
   }
 
   onZoneChange(feature) {
-    this.bufferFormControl.setValue(0);
     if (feature && this.queryType) {
       this.spatialFilterService.loadItemById(feature, this.queryType)
       .subscribe((featureGeom: Feature) => {

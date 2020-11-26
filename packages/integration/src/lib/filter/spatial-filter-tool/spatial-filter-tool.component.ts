@@ -104,11 +104,10 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     for (const layer of this.map.layers) {
-      if (layer.title.includes(this.languageService.translate.instant('igo.geo.spatialFilter.spatialFilter'))) {
+      if (layer.title && layer.title.includes(this.languageService.translate.instant('igo.geo.spatialFilter.spatialFilter'))) {
         this.layers.push(layer);
       }
     }
-    console.log(this.layers);
   }
 
   ngOnDestroy() {
@@ -233,7 +232,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             this.zone,
             this.itemType,
             this.queryType,
-            thematic
+            thematic,
+            this.buffer
           )
           .pipe(
             tap((features: Feature[]) => {
@@ -264,7 +264,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
               }
 
               if (features.length >= 10000) {
-                this.messageService.alert(
+                this.messageService.error(
                   this.languageService.translate.instant(
                     'igo.geo.spatialFilter.maxSizeAlert'
                   ),
@@ -310,7 +310,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
     let i = 1;
     for (const feature of features) {
       if (this.type === SpatialFilterType.Predefined) {
-        for (const layer of this.map.layers) {
+        for (const layer of this.layers) {
           if (
             layer.options._internal &&
             layer.options._internal.code === feature.properties.code &&
@@ -411,7 +411,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Try to point features to the map
+   * Try to add point features to the map
    * Necessary to create clusters
    */
   private tryAddPointToMap(features: Feature[], id) {
@@ -458,12 +458,14 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             return featureToOl(feature, this.map.projection);
           });
           dataSource.ol.source.addFeatures(featuresOl);
-          if (this.map.layers.find(layer => layer.id === olLayer.id)) {
+          if (this.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
-              this.map.layers.find(layer => layer.id === olLayer.id)
+              this.layers.find(layer => layer.id === olLayer.id)
             );
             i = i - 1;
-            olLayer.title = (features[0].meta.title + ' ' + i) as string;
+            olLayer.title = (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
+              'igo.geo.spatialFilter.spatialFilter'
+            )) as string;
             olLayer.options.title = olLayer.title;
           }
           this.iterator = i;
@@ -501,7 +503,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
       if (this.map === undefined) {
         return;
       }
-      for (const layer of this.map.layers) {
+      for (const layer of this.layers) {
         if (layer.title?.startsWith(features[0].meta.title)) {
           i++;
         }
@@ -515,7 +517,9 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((dataSource: DataSource) => {
           const olLayer = this.layerService.createLayer({
-            title: (features[0].meta.title + ' ' + i) as string,
+            title: (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
+              'igo.geo.spatialFilter.spatialFilter'
+            )) as string,
             source: dataSource,
             visible: true
           });
@@ -523,9 +527,9 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
             return featureToOl(feature, this.map.projection);
           });
           dataSource.ol.addFeatures(featuresOl);
-          if (this.map.layers.find(layer => layer.id === olLayer.id)) {
+          if (this.layers.find(layer => layer.id === olLayer.id)) {
             this.map.removeLayer(
-              this.map.layers.find(layer => layer.id === olLayer.id)
+              this.layers.find(layer => layer.id === olLayer.id)
             );
             i = i - 1;
             olLayer.title = (features[0].meta.title + ' ' + i + ' - ' + this.languageService.translate.instant(
