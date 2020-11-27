@@ -259,6 +259,7 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       });
     });
+    console.log(this.thematics);
 
     this.dataSource.data = this.thematics;
 

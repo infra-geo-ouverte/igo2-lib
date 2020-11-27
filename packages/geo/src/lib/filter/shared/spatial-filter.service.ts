@@ -159,7 +159,7 @@ export class SpatialFilterService {
                 geometry: 'true',
                 icon: 'true',
                 bufferInput: buffer.toString(),
-                simplified: '0'
+                simplified: '100'
               }
             }
           )
@@ -188,7 +188,7 @@ export class SpatialFilterService {
                 geometry: 'true',
                 icon: 'true',
                 buffer: buffer.toString(),
-                simplified: '0'
+                simplified: '100'
               }
             }
           )
@@ -301,7 +301,7 @@ export class SpatialFilterService {
           .get<Feature>(this.baseUrl + featureType + featureCode,
             {
               params: {
-                geometry: 'true',
+                geometry: '100',
                 bufferOutput: buffer.toString()
               }
             }
