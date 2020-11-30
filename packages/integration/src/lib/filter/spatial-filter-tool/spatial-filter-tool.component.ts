@@ -265,7 +265,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
                 thematic.zeroResults = true;
               }
 
-              if (features.length >= 20000) {
+              if (features.length >= 10000) {
                 this.messageService.alert(
                   this.languageService.translate.instant(
                     'igo.geo.spatialFilter.maxSizeAlert'
@@ -273,7 +273,7 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
                   this.languageService.translate.instant(
                     'igo.geo.spatialFilter.warning'
                   ),
-                  { timeOut: 10000, icon: 'alert-circle-outline' }
+                  { timeOut: 10000 }
                 );
               }
             })
