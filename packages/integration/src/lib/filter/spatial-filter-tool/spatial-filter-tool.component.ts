@@ -244,6 +244,8 @@ export class SpatialFilterToolComponent implements OnInit, OnDestroy {
               let idLinePoly;
               features.forEach(feature => {
                 if (feature.geometry.type === 'Point') {
+                  feature.properties.longitude = feature.geometry.coordinates[0];
+                  feature.properties.latitude = feature.geometry.coordinates[1];
                   featuresPoint.push(feature);
                   idPoint = feature.meta.id;
                 } else {

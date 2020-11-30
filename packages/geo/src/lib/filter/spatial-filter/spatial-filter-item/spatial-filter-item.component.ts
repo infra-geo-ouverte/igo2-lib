@@ -230,6 +230,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           return a.name.localeCompare(b.name);
         });
       }
+      this.groups.push(this.languageService.translate.instant('igo.geo.terrapi.limites'));
+      const limits: SpatialFilterThematic = {
+        name: this.groups[0],
+        children: []
+      };
+      this.thematics.push(limits);
       this.childrens.forEach(child => {
         if (child.group && (this.groups.indexOf(child.group) === -1)) {
           this.groups.push(child.group);
@@ -239,13 +245,28 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           };
           this.thematics.push(thematic);
         }
+
         if (!child.group) {
-          const thematic: SpatialFilterThematic = {
-            name: child.name,
-            children: [],
-            source: child.source
-          };
-          this.thematics.push(thematic);
+          if (
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.AdmRegion') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.Mun') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.Arrond') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.CircFed') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.CircProv') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.DirReg') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.MRC') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.RegTour')) {
+              child.group = limits.name;
+          } else if (child.name === this.languageService.translate.instant('igo.geo.terrapi.routes')) {
+            child.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.transport');
+          } else {
+            const thematic: SpatialFilterThematic = {
+              name: child.name,
+              children: [],
+              source: child.source
+            };
+            this.thematics.push(thematic);
+          }
         }
         this.thematics.sort((a, b) => {
           return a.name.localeCompare(b.name);
@@ -259,7 +280,6 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         }
       });
     });
-    console.log(this.thematics);
 
     this.dataSource.data = this.thematics;
 

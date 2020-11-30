@@ -46,10 +46,11 @@
 }
 
 .search-button {
-    left: 10px;
+    left: 15px;
     width: 165px;
 
     @include mobile {
+        left: 10px;
         width: 45%;
         min-height: 35px;
         white-space: normal;
@@ -58,10 +59,11 @@
 }
 
 .export-button {
-    left: 10px;
+    left: 15px;
     width: 165px;
 
     @include mobile {
+        left: 10px;
         margin-top: 10px;
         width: 45%;
         min-height: 35px;
@@ -109,7 +111,7 @@
 }
 
 .thematics {
-    max-height: 30%;
+    max-height: 35%;
     overflow: auto;
     margin-top: 5px;
     width: 98%;
