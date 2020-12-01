@@ -424,6 +424,7 @@
         "minute": "Minute"
       },
       "spatialFilter": {
+        "spatialFilter": "Spatial filter",
         "predefined": "Predefined Zone",
         "draw": "Draw",
         "polygon": "Polygon",
@@ -440,7 +441,7 @@
         "removeLayer": "Remove results",
         "exportLayer": "Export results",
         "clearForm": "Remove draw",
-        "clearSearch": "Reset",
+        "clearSearch": "Reset field",
         "Address": "Addresses",
         "Thematics": "Thematics",
         "searchResults": "Search Results",
@@ -471,6 +472,7 @@
         "DirReg": "Regionals directorates",
         "MRC": "RCM",
         "RegTour": "Touristics regions",
+        "limites": "Administrative boundaries",
         "bornes": "Landmarks",
         "hydro": "Hydrography",
         "routes": "Roads",

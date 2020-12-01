@@ -26,7 +26,7 @@
     </mat-slide-toggle>
 </div>
 
-<!-- <div class="buffer-unit" *ngIf="isPolygon()">
+<div class="buffer-unit" *ngIf="isPolygon()">
   <form class="buffer-form">
     <mat-form-field class="buffer">
       <input type="number" matInput placeholder="{{'igo.geo.spatialFilter.buffer' | translate}}" [formControl]="bufferFormControl"
@@ -43,7 +43,7 @@
     </mat-option>
     </mat-select>
   </mat-form-field>
-</div> -->
+</div>
 
 <div class="radius-unit" *ngIf="isPoint()">
   <form class="radius-form">
@@ -147,7 +147,7 @@
     {{'igo.geo.spatialFilter.goSearch' | translate}}
   </button>
 
-  <button mat-raised-button class="remove-button" [disabled]="layers.length === 0" (click)="clearButton()">
+  <button mat-raised-button class="remove-button" [disabled]="allLayers.length === 0" (click)="clearButton()">
     {{'igo.geo.spatialFilter.removeLayer' | translate}}
   </button>
 

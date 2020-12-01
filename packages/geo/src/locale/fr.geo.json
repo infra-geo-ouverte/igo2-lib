@@ -423,6 +423,7 @@
         "minute": "Minute"
       },
       "spatialFilter": {
+        "spatialFilter": "Filtre spatial",
         "predefined": "Zone Prédéfinie",
         "draw": "Dessin",
         "polygon": "Polygone",
@@ -440,7 +441,7 @@
         "removeLayer": "Retirer les résultats",
         "exportLayer": "Exporter les résultats",
         "clearForm": "Retirer le dessin",
-        "clearSearch": "Réinitialiser",
+        "clearSearch": "Réinitialiser les champs",
         "Address": "Adresses",
         "Thematics": "Thématiques",
         "searchResults": "Résultats de la recherche",
@@ -471,6 +472,7 @@
         "DirReg": "Directions régionales",
         "MRC": "MRC",
         "RegTour": "Régions touristiques",
+        "limites": "Limites administratives",
         "bornes": "Bornes sumi",
         "hydro": "Hydrographie",
         "routes": "Routes",
