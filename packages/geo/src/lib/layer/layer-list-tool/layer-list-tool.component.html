@@ -21,7 +21,7 @@
       <div [matTooltip]="sortAlpha ?
       ('igo.geo.layer.sortMapOrder' | translate) :
       ('igo.geo.layer.sortAlphabetically' | translate)" matTooltipShowDelay="500">
-        <button [color]="sortAlpha ? 'warn' : 'primary'" mat-icon-button (click)="toggleSortAlpha()">
+        <button class="sort-alpha" [color]="sortAlpha ? 'warn' : 'primary'" mat-icon-button (click)="toggleSortAlpha()">
           <mat-icon [svgIcon]="sortAlpha ? 'sort-ascending' : 'sort-alphabetical-ascending'"></mat-icon>
         </button>
       </div>
@@ -29,7 +29,7 @@
        <div [matTooltip]="onlyVisible ?
         ('igo.geo.layer.resetLayersList' | translate) :
         ('igo.geo.layer.subsetLayersListOnlyVisible' | translate)" matTooltipShowDelay="500">
-         <button mat-icon-button [disabled]="layersAreAllVisible && !onlyVisible"
+         <button class="only-visible" mat-icon-button [disabled]="layersAreAllVisible && !onlyVisible"
            [color]="onlyVisible ? 'warn' : 'primary'" (click)="toggleOnlyVisible()">
            <mat-icon
              matBadge
@@ -44,7 +44,7 @@
        <div [matTooltip]="selectionMode ?
         ('igo.geo.layer.deactivateSelectionMode' | translate) :
         ('igo.geo.layer.activateSelectionMode' | translate)" matTooltipShowDelay="500">
-         <button mat-icon-button
+         <button class="selection-mode" mat-icon-button
            color="primary" (click)="toggleSelectionMode()">
            <mat-icon [svgIcon]="selectionMode ? 'checkbox-multiple-marked-outline' : 'checkbox-multiple-blank-outline'"></mat-icon>
          </button>
