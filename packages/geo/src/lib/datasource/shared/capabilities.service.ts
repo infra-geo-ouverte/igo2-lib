@@ -174,7 +174,7 @@ export class CapabilitiesService {
     return request.pipe(
       map((res) => {
         if ((service as any) === 'esriJSON') {
-          return res as Object;
+          return res as object;
         }
         if (
           String(res).toLowerCase().includes('serviceexception') &&
