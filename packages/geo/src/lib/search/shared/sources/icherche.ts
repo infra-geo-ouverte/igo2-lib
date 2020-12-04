@@ -441,10 +441,10 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   private computeProperties(data: IChercheData): { [key: string]: any } {
     const properties = ObjectUtils.removeKeys(
       data.properties,
-      IChercheSearchSource.propertiesBlacklist,
+      IChercheSearchSource.propertiesBlacklist
     );
 
-    if (data.geometry === undefined) {
+    if (!data.geometry) {
       return Object.assign({ type: data.index }, properties);
     }
 
@@ -511,9 +511,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     }
 
     const routing: {
-      Route: string
+      Route: string;
     } = {
-      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+      Route:
+        '<span class="routing"> <u>' +
+        this.languageService.translate.instant('igo.geo.seeRouting') +
+        '</u> </span>'
     };
 
     return Object.assign(
@@ -829,9 +832,12 @@ export class IChercheReverseSearchSource extends SearchSource
     );
 
     const routing: {
-      Route: string
+      Route: string;
     } = {
-      Route: '<span class="routing"> <u>' + this.languageService.translate.instant('igo.geo.seeRouting') + '</u> </span>'
+      Route:
+        '<span class="routing"> <u>' +
+        this.languageService.translate.instant('igo.geo.seeRouting') +
+        '</u> </span>'
     };
 
     return Object.assign(properties, routing);
