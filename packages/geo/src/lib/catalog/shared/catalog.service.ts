@@ -318,6 +318,8 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
+    console.log('prepareCatalogItemLayer');
+    console.log(layer);
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -354,6 +356,17 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
+    const regexes = (catalog.regFilters || []).map(
+      (pattern: string) => new RegExp(pattern)
+    ) as string[];
+    console.log(regexes);
+    for (let regex of regexes) {
+      console.log(regex);
+      regex = regex.toString().replace('/', '').replace('^', '').replace('$', '');
+    }
+    console.log(regexes);
+    const index = regexes.findIndex(reg => reg === layer.name);
+    console.log(index);
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
@@ -483,6 +496,7 @@ export class CatalogService {
     catalog: Catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
+    console.log('WMTS');
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -490,6 +504,7 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
+        const index = layers.findIndex(lay => lay.id === layer.id);
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
@@ -518,7 +533,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layer.Title,
+          title: catalog.alias ? catalog.alias[index] : layer.Title,
           address: catalog.id,
           options: {
             sourceOptions
@@ -539,6 +554,7 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
+        const index = layers.findIndex(lay => lay.id === layer.id);
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
         }
@@ -562,7 +578,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layer.name,
+          title: catalog.alias ? catalog.alias[index] : layer.name,
           address: catalog.id,
           options: {
             sourceOptions
