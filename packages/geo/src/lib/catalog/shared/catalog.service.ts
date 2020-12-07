@@ -318,8 +318,6 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
-    console.log('prepareCatalogItemLayer');
-    console.log(layer);
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -359,18 +357,23 @@ export class CatalogService {
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     ) as string[];
-    console.log(regexes);
-    for (let regex of regexes) {
-      console.log(regex);
-      regex = regex.toString().replace('/', '').replace('^', '').replace('$', '');
+
+    let layerIndex;
+    if (catalog.alias) {
+      regexes.forEach((regex, index) => {
+        regex = regex.toString().split('/').join('');
+        regex = regex.toString().split('^').join('');
+        regex = regex.toString().split('$').join('');
+        if (regex === layer.Name) {
+          layerIndex = index;
+        }
+      });
     }
-    console.log(regexes);
-    const index = regexes.findIndex(reg => reg === layer.name);
-    console.log(index);
+
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
-      title: layer.Title,
+      title: layerIndex !== undefined ? catalog.alias[layerIndex] : layer.Title,
       address: idParent,
       options: {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
@@ -496,7 +499,6 @@ export class CatalogService {
     catalog: Catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
-    console.log('WMTS');
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
