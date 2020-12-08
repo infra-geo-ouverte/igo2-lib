@@ -364,7 +364,7 @@ export class CatalogService {
         regex = regex.toString().split('/').join('');
         regex = regex.toString().split('^').join('');
         regex = regex.toString().split('$').join('');
-        if (regex === layer.Name) {
+        if (regex === layer.Name && catalog.alias[index]) {
           layerIndex = index;
         }
       });
@@ -546,7 +546,7 @@ export class CatalogService {
   }
 
   private getArcGISRESTItems(
-    catalog: Catalog,
+    catalog,
     capabilities
   ): CatalogItemLayer[] {
     const layers = capabilities.layers;
@@ -556,7 +556,17 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        const index = layers.findIndex(lay => lay.id === layer.id);
+        let layerIndex;
+        if (catalog.alias) {
+          regexes.forEach((regex, index) => {
+            regex = regex.toString().split('/').join('');
+            regex = regex.toString().split('^').join('');
+            regex = regex.toString().split('$').join('');
+            if (regex === layer.id.toString() && catalog.alias[index]) {
+              layerIndex = index;
+            }
+          });
+        }
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
         }
@@ -580,7 +590,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: catalog.alias ? catalog.alias[index] : layer.name,
+          title: layerIndex !== undefined ? catalog.alias[layerIndex] : layer.name,
           address: catalog.id,
           options: {
             sourceOptions
