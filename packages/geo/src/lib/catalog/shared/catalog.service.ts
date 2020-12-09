@@ -496,7 +496,7 @@ export class CatalogService {
   }
 
   private getWMTSItems(
-    catalog: Catalog,
+    catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
     const layers = capabilities.Contents.Layer;
@@ -506,7 +506,17 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        const index = layers.findIndex(lay => lay.id === layer.id);
+        let layerIndex;
+        if (catalog.alias) {
+          regexes.forEach((regex, index) => {
+            regex = regex.toString().split('/').join('');
+            regex = regex.toString().split('^').join('');
+            regex = regex.toString().split('$').join('');
+            if (regex === layer.Title && catalog.alias[index]) {
+              layerIndex = index;
+            }
+          });
+        }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
@@ -535,7 +545,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: catalog.alias ? catalog.alias[index] : layer.Title,
+          title: layerIndex !== undefined ? catalog.alias[layerIndex] : layer.Title,
           address: catalog.id,
           options: {
             sourceOptions
