@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
@@ -13,14 +13,14 @@ import {
 import { OGCFilterService } from '../shared/ogc-filter.service';
 import { IgoMap } from '../../map';
 import { OgcFilterWriter } from '../shared/ogc-filter';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-ogc-filterable-item',
   templateUrl: './ogc-filterable-item.component.html',
   styleUrls: ['./ogc-filterable-item.component.scss']
 })
-export class OgcFilterableItemComponent implements OnInit {
+export class OgcFilterableItemComponent implements OnInit, OnDestroy {
   public color = 'primary';
   private lastRunOgcFilter;
   private defaultLogicalParent = OgcFilterOperator.And;
@@ -29,7 +29,8 @@ export class OgcFilterableItemComponent implements OnInit {
   public filtersCollapsed = true;
   public hasPushButton: boolean = false;
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
+  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  private resolution$$: Subscription;
   private ogcFilterWriter;
 
   @Input() layer: Layer;
@@ -86,6 +87,15 @@ export class OgcFilterableItemComponent implements OnInit {
         ? ogcFilters.editable
         : false;
     }
+
+    const resolution$ = this.layer.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe(() => {
+      this.inResolutionRange$.next(this.layer.isInResolutionsRange);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.resolution$$.unsubscribe();
   }
 
   addFilterToSequence() {
