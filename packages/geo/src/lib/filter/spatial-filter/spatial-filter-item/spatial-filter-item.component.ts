@@ -29,9 +29,7 @@ import { Layer } from '../../../layer/shared';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { SpatialFilterThematic } from './../../shared/spatial-filter.interface';
 import { MessageService, LanguageService } from '@igo2/core';
-import buffer from '@turf/buffer';
-import * as turf from '@turf/helpers';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 /**
  * Spatial-Filter-Item (search parameters)
@@ -135,6 +133,8 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
 
   @Input() layers: Layer[] = [];
 
+  @Input() allLayers: Layer[] = [];
+
   @Input()
   get thematicLength(): number {
     return this._thematicLength;
@@ -230,6 +230,12 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           return a.name.localeCompare(b.name);
         });
       }
+      this.groups.push(this.languageService.translate.instant('igo.geo.terrapi.limites'));
+      const limits: SpatialFilterThematic = {
+        name: this.groups[0],
+        children: []
+      };
+      this.thematics.push(limits);
       this.childrens.forEach(child => {
         if (child.group && (this.groups.indexOf(child.group) === -1)) {
           this.groups.push(child.group);
@@ -239,13 +245,28 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
           };
           this.thematics.push(thematic);
         }
+
         if (!child.group) {
-          const thematic: SpatialFilterThematic = {
-            name: child.name,
-            children: [],
-            source: child.source
-          };
-          this.thematics.push(thematic);
+          if (
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.AdmRegion') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.Mun') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.Arrond') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.CircFed') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.CircProv') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.DirReg') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.MRC') ||
+            child.name === this.languageService.translate.instant('igo.geo.terrapi.RegTour')) {
+              child.group = limits.name;
+          } else if (child.name === this.languageService.translate.instant('igo.geo.terrapi.routes')) {
+            child.group = this.languageService.translate.instant('igo.geo.spatialFilter.group.transport');
+          } else {
+            const thematic: SpatialFilterThematic = {
+              name: child.name,
+              children: [],
+              source: child.source
+            };
+            this.thematics.push(thematic);
+          }
         }
         this.thematics.sort((a, b) => {
           return a.name.localeCompare(b.name);
@@ -296,13 +317,25 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
         if (this.measureUnit === MeasureLengthUnit.Meters && value > 0 && value <= 100000) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value / 1000, {units: 'kilometers'});
-          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          this.spatialFilterService.loadBufferGeometry(
+            this.drawZone,
+            SpatialFilterType.Polygon,
+            value
+          ).subscribe((featureGeom: Feature) => {
+            this.zoneWithBuffer = featureGeom;
+            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          });
         } else if (this.measureUnit === MeasureLengthUnit.Kilometers && value > 0 && value <= 100) {
           this.buffer = value;
           this.bufferEvent.emit(value);
-          this.zoneWithBuffer = buffer(turf.polygon(this.drawZone.coordinates), this.bufferFormControl.value, {units: 'kilometers'});
-          this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          this.spatialFilterService.loadBufferGeometry(
+            this.drawZone,
+            SpatialFilterType.Polygon,
+            value * 1000
+          ).subscribe((featureGeom: Feature) => {
+            this.zoneWithBuffer = featureGeom;
+            this.zoneWithBufferChange.emit(this.zoneWithBuffer);
+          });
         } else if (value === 0) {
           this.buffer = value;
           this.bufferEvent.emit(value);
@@ -535,15 +568,27 @@ export class SpatialFilterItemComponent implements OnDestroy, OnInit {
    */
   toggleSearchButton() {
     if (!this.isPredefined()) {
-      this.drawZone.meta = {
-        id: undefined,
-        title: 'Zone'
-      };
-      this.drawZone.properties = {
-        nom: 'Zone',
-        type: this.type as string
-      };
-      this.drawZoneEvent.emit(this.drawZone);
+      if (this.buffer > 0) {
+        this.zoneWithBuffer.meta = {
+          id: undefined,
+          title: 'Zone'
+        };
+        this.zoneWithBuffer.properties = {
+          nom: 'Zone',
+          type: this.type as string
+        };
+        this.drawZoneEvent.emit(this.zoneWithBuffer);
+      } else {
+        this.drawZone.meta = {
+          id: undefined,
+          title: 'Zone'
+        };
+        this.drawZone.properties = {
+          nom: 'Zone',
+          type: this.type as string
+        };
+        this.drawZoneEvent.emit(this.drawZone);
+      }
     }
     if (this.isPoint()) {
       this.radiusEvent.emit(this.radius);
