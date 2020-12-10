@@ -7,6 +7,19 @@
   [discoverTitleInLocale$]="discoverTitleInLocale$">
 </igo-interactive-tour>
 
+<button
+  class="training-guide-button"
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  (click)="openGuide()">
+  <span>{{'igo.integration.aboutTool.trainingGuide' | translate}}</span>
+  <mat-icon
+    svgIcon="file-document"
+    [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate">
+  </mat-icon>
+</button>
+
 <igo-custom-html class="mat-typography"
   [html]="html |  translate: {version: version}">
 </igo-custom-html>

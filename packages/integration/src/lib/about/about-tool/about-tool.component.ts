@@ -37,9 +37,13 @@ export class AboutToolComponent {
 
 
   public version: Version;
-  private _html: string = 'igo.integration.about.html';
+  private _html: string = 'igo.integration.aboutTool.about.html';
 
   constructor(configService: ConfigService) {
     this.version = configService.getConfig('version');
+  }
+
+  openGuide() {
+    console.log('open guide https://stratus.msp.gouv.qc.ca/s/8CaynMCBkWxxY8G');
   }
 }
