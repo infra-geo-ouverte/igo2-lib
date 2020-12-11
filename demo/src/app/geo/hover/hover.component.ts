@@ -69,7 +69,7 @@ export class AppHoverComponent {
 
     const wfsDatasourcePolygon: WFSDataOptions = {
       type: 'wfs',
-      url: '/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'adn_bassin_n1_public_v',
         fieldNameGeometry: 'geometry',
@@ -93,7 +93,7 @@ export class AppHoverComponent {
 
     const wfsDatasourcePoint: WFSDataOptions = {
       type: 'wfs',
-      url: '/ws/igo_gouvouvert.fcgi',
+      url: 'https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi',
       params: {
         featureTypes: 'CASERNE',
         fieldNameGeometry: 'geometry',
