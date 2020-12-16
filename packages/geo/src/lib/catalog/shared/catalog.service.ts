@@ -318,6 +318,7 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
+    console.log(layer);
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -358,22 +359,19 @@ export class CatalogService {
       (pattern: string) => new RegExp(pattern)
     ) as string[];
 
-    let layerIndex;
-    if (catalog.alias) {
-      regexes.forEach((regex, index) => {
-        regex = regex.toString().split('/').join('');
-        regex = regex.toString().split('^').join('');
-        regex = regex.toString().split('$').join('');
-        if (regex === layer.Name && catalog.alias[index]) {
-          layerIndex = index;
+    let layerTitle;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.Name === property.layerName && property.title) {
+              layerTitle = property.title;
+            }
+          }
         }
-      });
-    }
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
-      title: layerIndex !== undefined ? catalog.alias[layerIndex] : layer.Title,
+      title: layerTitle !== undefined ? layerTitle : layer.Title,
       address: idParent,
       options: {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
@@ -506,14 +504,13 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        let layerIndex;
-        if (catalog.alias) {
-          regexes.forEach((regex, index) => {
-            regex = regex.toString().split('/').join('');
-            regex = regex.toString().split('^').join('');
-            regex = regex.toString().split('$').join('');
-            if (regex === layer.Title && catalog.alias[index]) {
-              layerIndex = index;
+        let layerTitle;
+        if (catalog.forcedProperties) {
+          layers.forEach(layer => {
+            for (const property of catalog.forcedProperties) {
+              if (layer.name === property.layerName && property.title) {
+                layerTitle = property.Title
+              }
             }
           });
         }
@@ -545,7 +542,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layerIndex !== undefined ? catalog.alias[layerIndex] : layer.Title,
+          title: layerTitle !== undefined ? layerTitle : layer.Title,
           address: catalog.id,
           options: {
             sourceOptions
@@ -566,14 +563,13 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        let layerIndex;
-        if (catalog.alias) {
-          regexes.forEach((regex, index) => {
-            regex = regex.toString().split('/').join('');
-            regex = regex.toString().split('^').join('');
-            regex = regex.toString().split('$').join('');
-            if (regex === layer.id.toString() && catalog.alias[index]) {
-              layerIndex = index;
+        let layerTitle;
+        if (catalog.forcedProperties) {
+          layers.forEach(layer => {
+            for (const property of catalog.forcedProperties) {
+              if (layer.name === property.layerName && property.title) {
+                layerTitle = property.title
+              }
             }
           });
         }
@@ -600,7 +596,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layerIndex !== undefined ? catalog.alias[layerIndex] : layer.name,
+          title: layerTitle !== undefined ? layerTitle : layer.name,
           address: catalog.id,
           options: {
             sourceOptions
