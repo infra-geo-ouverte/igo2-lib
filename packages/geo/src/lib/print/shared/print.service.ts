@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable, Subject, forkJoin } from 'rxjs';
+import { map as rxMap } from 'rxjs/operators';
+
 import { saveAs } from 'file-saver';
 import * as jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import * as JSZip from 'jszip';
 
 import { SubjectStatus } from '@igo2/utils';
+import { SecureImagePipe } from '@igo2/common';
 import { MessageService, ActivityService, LanguageService } from '@igo2/core';
 
 import { IgoMap } from '../../map/shared/map';
 import { formatScale } from '../../map/shared/map.utils';
-import { OutputLayerLegend } from '../../layer/shared/layers/layer.interface';
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
@@ -23,6 +27,7 @@ export class PrintService {
   nbFileToProcess: number;
   activityId: string;
   constructor(
+    private http: HttpClient,
     private messageService: MessageService,
     private activityService: ActivityService,
     private languageService: LanguageService
@@ -69,12 +74,12 @@ export class PrintService {
     }
 
     this.addMap(doc, map, resolution, size, margins).subscribe(
-      (status: SubjectStatus) => {
+      async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           if (options.showLegend === true) {
-            this.addLegend(doc, map, margins, resolution);
+            await this.addLegend(doc, map, margins, resolution);
           } else {
-            this.saveDoc(doc);
+            await this.saveDoc(doc);
           }
         }
 
@@ -94,35 +99,65 @@ export class PrintService {
    * @param  width The width that the legend need to be
    * @return Html code for the legend
    */
-  getLayersLegendHtml(map: IgoMap, width: number, resolution: number): string {
-    let html = '';
-    const legends = getLayersLegends(
-      map.layers,
-      map.viewController.getScale(resolution)
-    );
-    if (legends.length === 0) {
-      return html;
-    }
+  getLayersLegendHtml(
+    map: IgoMap,
+    width: number,
+    resolution: number
+  ): Observable<string> {
+    return new Observable((observer) => {
+      let html = '';
+      const legends = getLayersLegends(
+        map.layers,
+        map.viewController.getScale(resolution)
+      );
+      if (legends.length === 0) {
+        observer.next(html);
+        observer.complete();
+        return;
+      }
 
-    // Define important style to be sure that all container is convert
-    // to image not just visible part
-    html += '<style media="screen" type="text/css">';
-    html += '.html2canvas-container { width: ' + width;
-    html += 'mm !important; height: 2000px !important; }';
-    html += '</style>';
-    html += '<font size="2" face="Courier New" >';
-    html += '<div style="display:inline-block;max-width:' + width + 'mm">';
-    // For each legend, define an html table cell
-    legends.forEach((legend: OutputLayerLegend) => {
+      // Define important style to be sure that all container is convert
+      // to image not just visible part
+      html += '<style media="screen" type="text/css">';
+      html += '.html2canvas-container { width: ' + width;
+      html += 'mm !important; height: 2000px !important; }';
+      html += '</style>';
+      html += '<font size="2" face="Courier New" >';
       html +=
-        '<table border=1 style="display:inline-block;vertical-align:top">';
-      html += '<tr><th width="170px">' + legend.title + '</th>';
-      html += '<td><img class="printImageLegend" src="' + legend.url + '">';
-      html += '</td></tr></table>';
-    });
-    html += '</div>';
+        '<div style="display:grid;grid-template-columns:' +
+        width / 2 +
+        'mm ' +
+        width / 2 +
+        'mm;max-width:' +
+        width +
+        'mm">';
 
-    return html;
+      // For each legend, define an html table cell
+      const images$ = legends.map((legend) =>
+        this.getDataImage(legend.url).pipe(
+          rxMap((dataImage) => {
+            let htmlImg =
+              '<table border=1 style="vertical-align:top">';
+            htmlImg += '<tr><th width="170px">' + legend.title + '</th>';
+            htmlImg +=
+              '<td><img class="printImageLegend" src="' + dataImage + '">';
+            htmlImg += '</td></tr></table>';
+            return htmlImg;
+          })
+        )
+      );
+      forkJoin(images$).subscribe((dataImages) => {
+        html = dataImages.reduce((acc, current) => (acc += current), html);
+        html += '</div>';
+        observer.next(html);
+        observer.complete();
+      });
+    });
+  }
+
+  getDataImage(url: string): Observable<string> {
+    const secureIMG = new SecureImagePipe(this.http);
+    return secureIMG.transform(url);
   }
 
   /**
@@ -130,7 +165,7 @@ export class PrintService {
    * * @param  format - Image format. default value to "png"
    * @return The image of the legend
    */
-  getLayersLegendImage(
+  async getLayersLegendImage(
     map,
     format: string = 'png',
     doZipFile: boolean,
@@ -139,8 +174,11 @@ export class PrintService {
     const status$ = new Subject();
     // Get html code for the legend
     const width = 200; // milimeters unit, originally define for document pdf
-    let html = this.getLayersLegendHtml(map, width, resolution);
-    const that = this;
+    let html = await this.getLayersLegendHtml(
+      map,
+      width,
+      resolution
+    ).toPromise();
     format = format.toLowerCase();
 
     // If no legend show No LEGEND in an image
@@ -150,33 +188,36 @@ export class PrintService {
     }
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.top = '0';
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
-    // Define event to execute after all images are loaded to create the canvas
-    setTimeout(() => {
-      html2canvas(div, { useCORS: true })
-        .then(canvas => {
-          let status = SubjectStatus.Done;
-          try {
-            if (!doZipFile) {
-              // Save the canvas as file
-              that.saveCanvasImageAsFile(canvas, 'legendImage', format);
-            } else {
-              // Add the canvas to zip
-              that.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
-            }
-            div.parentNode.removeChild(div); // remove temp div (IE)
-          } catch (err) {
-            status = SubjectStatus.Error;
-          }
-          status$.next(status);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    }, 500);
+
+    await this.timeout(1);
+    const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+      console.log(e);
+    });
+
+    if (canvas) {
+      let status = SubjectStatus.Done;
+      try {
+        if (!doZipFile) {
+          // Save the canvas as file
+          this.saveCanvasImageAsFile(canvas, 'legendImage', format);
+        } else {
+          // Add the canvas to zip
+          this.generateCanvaFileToZip(canvas, 'legendImage' + '.' + format);
+        }
+        div.parentNode.removeChild(div); // remove temp div (IE)
+      } catch (err) {
+        status = SubjectStatus.Error;
+      }
+      status$.next(status);
+    }
+
+    return status$;
   }
 
   private addTitle(doc: jsPDF, title: string, pageWidth: number) {
@@ -257,43 +298,52 @@ export class PrintService {
    * @param  map - Map of the app
    * @param  margins - Page margins
    */
-  private addLegend(
+  private async addLegend(
     doc: jsPDF,
     map: IgoMap,
     margins: Array<number>,
     resolution: number
   ) {
-    const that = this;
     // Get html code for the legend
     const width = doc.internal.pageSize.width;
-    const html = this.getLayersLegendHtml(map, width, resolution);
+    const html = await this.getLayersLegendHtml(
+      map,
+      width,
+      resolution
+    ).toPromise();
     // If no legend, save the map directly
     if (html === '') {
-      this.saveDoc(doc);
+      await this.saveDoc(doc);
       return true;
     }
-
     // Create div to contain html code for legend
     const div = window.document.createElement('div');
-    html2canvas(div, { useCORS: true })
-      .then(canvas => {
-        let imgData;
-        const position = 10;
-
-        imgData = canvas.toDataURL('image/png');
-        doc.addPage();
-        const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-        doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-        that.saveDoc(doc);
-        div.parentNode.removeChild(div); // remove temp div (IE style)
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    div.style.position = 'absolute';
+    div.style.top = '0';
 
     // Add html code to convert in the new window
     window.document.body.appendChild(div);
     div.innerHTML = html;
+
+    await this.timeout(1);
+    const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+      console.log(e);
+    });
+
+    if (canvas) {
+      let imgData;
+      const position = 10;
+      imgData = canvas.toDataURL('image/png');
+      doc.addPage();
+      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
+      doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
+      await this.saveDoc(doc);
+      div.parentNode.removeChild(div); // remove temp div (IE style)
+    }
+  }
+
+  private timeout(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private addCanvas(
@@ -303,13 +353,13 @@ export class PrintService {
   ) {
     let image;
 
-    image = canvas.toDataURL('image/jpeg');
+    image = canvas.toDataURL('image/png');
 
     if (image !== undefined) {
       const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
       doc.addImage(
         image,
-        'JPEG',
+        'PNG',
         margins[3],
         margins[0],
         imageSize[0],
@@ -338,9 +388,9 @@ export class PrintService {
     let timeout;
 
     map.ol.once('rendercomplete', (event: any) => {
-      const canvas = event.target
+      const canvases = event.target
         .getViewport()
-        .getElementsByTagName('canvas')[0];
+        .getElementsByTagName('canvas');
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
 
@@ -352,7 +402,11 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          this.addCanvas(doc, canvas, margins);
+          for (const canvas of canvases) {
+            if (canvas.width !== 0) {
+              this.addCanvas(doc, canvas, margins);
+            }
+          }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error(
@@ -377,7 +431,11 @@ export class PrintService {
 
         let status = SubjectStatus.Done;
         try {
-          this.addCanvas(doc, canvas, margins);
+          for (const canvas of canvases) {
+            if (canvas.width !== 0) {
+              this.addCanvas(doc, canvas, margins);
+            }
+          }
         } catch (err) {
           status = SubjectStatus.Error;
           this.messageService.error(
@@ -586,6 +644,8 @@ export class PrintService {
       }
     });
     map.ol.renderSync();
+
+    return status$;
   }
 
   private renderMap(map, size, extent) {
@@ -596,8 +656,8 @@ export class PrintService {
    * Save document
    * @param  doc - Document to save
    */
-  protected saveDoc(doc: jsPDF) {
-    doc.save('map.pdf');
+  protected async saveDoc(doc: jsPDF) {
+    await doc.save('map.pdf', { returnPromise: true });
   }
 
   /**
@@ -657,7 +717,7 @@ export class PrintService {
         navigator.msSaveBlob(canvas.msToBlob(), name + '.' + format);
         this.saveFileProcessing();
       } else {
-        canvas.toBlob(blob => {
+        canvas.toBlob((blob) => {
           // download image
           saveAs(blob, name + '.' + format);
           that.saveFileProcessing();
@@ -696,7 +756,7 @@ export class PrintService {
       if (navigator.msSaveBlob) {
         this.addFileToZip(name, canvas.msToBlob());
       } else {
-        canvas.toBlob(blob => {
+        canvas.toBlob((blob) => {
           that.addFileToZip(name, blob);
         }, blobFormat);
       }
@@ -748,7 +808,7 @@ export class PrintService {
    */
   private getZipFile() {
     const that = this;
-    this.zipFile.generateAsync({ type: 'blob' }).then(blob => {
+    this.zipFile.generateAsync({ type: 'blob' }).then((blob) => {
       // 1) generate the zip file
       saveAs(blob, 'map.zip');
       delete that.zipFile;

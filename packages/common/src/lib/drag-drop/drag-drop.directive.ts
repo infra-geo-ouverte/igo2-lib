@@ -38,6 +38,11 @@ export class DragAndDropDirective {
   public onDrop(evt) {
     evt.preventDefault();
     evt.stopPropagation();
+    if (evt.alreadyFired) {
+      return;
+    }
+    evt.alreadyFired = true;
+
     this.background = 'inherit';
     const filesObj = this.validExtensions(evt);
     if (filesObj.valid.length) {

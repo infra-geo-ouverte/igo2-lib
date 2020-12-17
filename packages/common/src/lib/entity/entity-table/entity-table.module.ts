@@ -12,6 +12,8 @@ import { EntityTableRowDirective } from './entity-table-row.directive';
 import { EntityTableComponent } from './entity-table.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-table-paginator.module';
+import { IgoImageModule } from '../../image/image.module';
+import { IgoLanguageModule } from '@igo2/core';
 
 /**
  * @ignore
@@ -27,7 +29,9 @@ import { IgoEntityTablePaginatorModule } from '../entity-table-paginator/entity-
     MatPaginatorModule,
     IgoStopPropagationModule,
     IgoCustomHtmlModule,
-    IgoEntityTablePaginatorModule
+    IgoEntityTablePaginatorModule,
+    IgoImageModule,
+    IgoLanguageModule
   ],
   exports: [
     EntityTableComponent

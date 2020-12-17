@@ -14,6 +14,7 @@ import {
 })
 export class InteractiveTourService {
   private previousStep: InteractiveTourStep;
+  private nextIndex = 1;
 
   constructor(
     private configService: ConfigService,
@@ -52,9 +53,11 @@ export class InteractiveTourService {
       toolName
     );
 
-    if (stepConfig?.condition) {
-      if (document.querySelector(stepConfig.condition) === null) {
-        return true;
+    if (stepConfig?.conditions) {
+      for (const condition of stepConfig?.conditions) {
+        if (document.querySelector(condition) === null) {
+          return true;
+        }
       }
     }
     return false;
@@ -156,13 +159,8 @@ export class InteractiveTourService {
     const checkExist = setInterval(() => {
       if (self.getCurrentStep()) {
         if (self.getCurrentStep().options.attachTo.element && !document.querySelector(self.getCurrentStep().options.attachTo.element)) {
-          self.getCurrentStep().hide();
-          const id = self.getCurrentStep().id;
-          if (self.steps.findIndex(step => step.id === id) === self.steps.length - 1) {
-            return;
-          }
-          self.next();
-          self.removeStep(id);
+          self.cancel();
+          clearInterval(checkExist);
           return;
         } else {
           const currentStepElement = self.getCurrentStep().getElement();
@@ -196,6 +194,29 @@ export class InteractiveTourService {
         }
       }
     }, 100);
+  }
+
+  private checkNext(index, tour, service) {
+    if (tour.getCurrentStep()) {
+      if (tour.getCurrentStep().options.attachTo.element && document.querySelector(tour.getCurrentStep().options.attachTo.element)) {
+        tour.complete();
+        return;
+      }
+
+      if (index.index === tour.steps.length - 1) {
+        tour.complete();
+        return;
+      }
+
+      tour.steps.splice(index.index, 1);
+      const nextStep = tour.steps[index.index];
+      if (nextStep.options.attachTo.element && !document.querySelector(nextStep.options.attachTo.element)) {
+        service.checkNext(index, tour, service);
+      } else {
+        tour._setupModal();
+        tour.show(nextStep.id);
+      }
+    }
   }
 
   private executeAction(
@@ -327,6 +348,9 @@ export class InteractiveTourService {
     this.shepherdService.addSteps(shepherdSteps);
 
     this.shepherdService.tourObject.on('show', this.addProgress);
+    this.shepherdService.tourObject.on('cancel', (index) => {
+      this.checkNext(index, this.shepherdService.tourObject, this);
+    });
 
     this.shepherdService.start();
   }

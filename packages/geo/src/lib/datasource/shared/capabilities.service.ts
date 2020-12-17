@@ -39,7 +39,8 @@ import {
 export enum TypeCapabilities {
   wms = 'wms',
   wmts = 'wmts',
-  arcgisrest = 'esriJSON'
+  arcgisrest = 'esriJSON',
+  tilearcgisrest = 'esriJSON'
 }
 
 export type TypeCapabilitiesStrings = keyof typeof TypeCapabilities;
@@ -173,7 +174,7 @@ export class CapabilitiesService {
     return request.pipe(
       map((res) => {
         if ((service as any) === 'esriJSON') {
-          return res;
+          return res as object;
         }
         if (
           String(res).toLowerCase().includes('serviceexception') &&

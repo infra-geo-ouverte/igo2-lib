@@ -15,7 +15,8 @@ import {
   SearchSourceService,
   sourceCanSearch,
   Layer,
-  ExportOptions
+  ExportOptions,
+  VectorLayer
 } from '@igo2/geo';
 
 import { LayerListToolState } from '../layer-list-tool.state';
@@ -24,7 +25,7 @@ import { ToolState } from '../../tool/tool.state';
 import { MapState } from '../map.state';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime } from 'rxjs/operators';
-import { ImportExportState } from '../../import-export/import-export.state';
+import { ImportExportMode, ImportExportState } from '../../import-export/import-export.state';
 /**
  * Tool to browse a map's layers or to choose a different map
  */
@@ -44,6 +45,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   private resolution$$: Subscription;
+  private visibleOrInRangeLayers$$: Subscription;
   public delayedShowEmptyMapContent: boolean = false;
 
   @Input() allowShowAllLegends: boolean = false;
@@ -196,6 +198,9 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.resolution$$.unsubscribe();
+    if (this.visibleOrInRangeLayers$$) {
+      this.visibleOrInRangeLayers$$.unsubscribe();
+    }
   }
 
   onShowAllLegends(event) {
@@ -241,7 +246,7 @@ export class MapToolsComponent implements OnInit, OnDestroy {
       this.allowShowAllLegends === false
     ) {
       let visibleOrInRangeLayers;
-      this.visibleOrInRangeLayers$.subscribe((value) => {
+      this.visibleOrInRangeLayers$$ = this.visibleOrInRangeLayers$.subscribe((value) => {
         value.length === 0
           ? (visibleOrInRangeLayers = false)
           : (visibleOrInRangeLayers = true);
@@ -254,9 +259,13 @@ export class MapToolsComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  activateExport(id: string) {
+  activateExport(layer: Layer) {
+    let id = layer.id;
+    if (layer.options.workspace?.workspaceId) {
+      id = layer.options.workspace.workspaceId !== layer.id ? layer.options.workspace.workspaceId : layer.id;
+    }
     this.importExportState.setsExportOptions({ layers: [id] } as ExportOptions);
-    this.importExportState.setMode('export');
+    this.importExportState.setMode(ImportExportMode.export);
     this.toolState.toolbox.activateTool('importExport');
   }
 
@@ -278,5 +287,27 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
   contextEmit() {
     this.toolState.toolbox.activateTool('contextManager');
+  }
+
+  isTimeFilterButton(layer): boolean {
+    const options = layer.dataSource.options;
+    return this.timeButton && options.timeFilterable && options.timeFilter;
+  }
+
+  isOGCFilterButton(layer): boolean {
+    const options = layer.dataSource.options;
+    return this.ogcButton && options.ogcFilters && options.ogcFilters.enabled &&
+    (options.ogcFilters.pushButtons || options.ogcFilters.editable);
+  }
+
+  isExportButton(layer: Layer): boolean {
+    if (
+      (layer instanceof VectorLayer && layer.exportable === true) ||
+      (layer.dataSource.options.download && layer.dataSource.options.download.url) ||
+      (layer.options.workspace?.enabled && layer.options.workspace?.workspaceId !== layer.id))
+      {
+          return true;
+      }
+    return false;
   }
 }

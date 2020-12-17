@@ -23,7 +23,7 @@ export class OgcFilterableListBindingDirective implements OnInit, OnDestroy {
     this.component.layers = [];
 
     this.layers$$ = this.mapService.getMap().layers$.subscribe(layers => {
-      this.component.layers = layers;
+      this.component.layers = layers.filter(layer => layer.showInLayerList);
     });
   }
 

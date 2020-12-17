@@ -4,8 +4,10 @@
   "lib": {
     "entryFile": "src/public_api.ts",
     "umdModuleIds": {
-      "@igo2/auth": "auth",
+      "@igo2/auth": "igoAuth",
       "@igo2/geo": "igoGeo",
+      "ol/Feature": "olFeature",
+      "ol/geom/Point": "olPoint",
       "ol/format/GeoJSON": "olFormatGeoJSON",
       "ol/style": "olstyle",
       "@igo2/core": "igoCore",

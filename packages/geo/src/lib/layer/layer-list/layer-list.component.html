@@ -42,6 +42,7 @@
   <ng-content select="[igoLayerItemToolbar]"></ng-content>
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <button
+      class="opacity-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -71,30 +72,33 @@
     </mat-menu>
 
     <button
+      class="up-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="(sortAlpha || onlyVisible || keyword) ? ('igo.geo.layer.filterRaiseLayer' | translate) : ('igo.geo.layer.raiseLayer' | translate)"
       [disabled]="raiseDisabled"
-      (click)="activeLayer.map.raiseLayer(activeLayer)">
+      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Raise)">
       <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="raiseDisabled"
                 svgIcon="arrow-up"></mat-icon>
     </button>
 
     <button
+      class="down-button"
       mat-icon-button
       color="primary"
       tooltip-position="below"
       matTooltipShowDelay="500"
       [matTooltip]="(sortAlpha || onlyVisible || keyword) ? ('igo.geo.layer.filterLowerLayer' | translate) : ('igo.geo.layer.lowerLayer' | translate)"
       [disabled]="lowerDisabled"
-      (click)="activeLayer.map.lowerLayer(activeLayer)">
+      (click)="moveActiveLayer(activeLayer,layerListDisplacement.Lower)">
       <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="lowerDisabled"
                 svgIcon="arrow-down"></mat-icon>
     </button>
 
     <button
+      class="delete-button"
       mat-icon-button
       color="warn"
       tooltip-position="below"
@@ -124,6 +128,7 @@
 
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <button
+      class="opacity-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -154,6 +159,7 @@
     </mat-menu>
 
     <button
+      class="up-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -166,6 +172,7 @@
     </button>
 
     <button
+      class="down-button"
       mat-icon-button
       color="primary"
       tooltip-position="below"
@@ -178,6 +185,7 @@
     </button>
 
     <button
+      class="eye-button"
       mat-icon-button
       color="primary"
       tooltip-position="below"
@@ -189,6 +197,7 @@
     </button>
 
     <button
+      class="delete-button"
       mat-icon-button
       color="warn"
       tooltip-position="below"

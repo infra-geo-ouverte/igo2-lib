@@ -10,6 +10,8 @@ import { SpatialFilterQueryType, SpatialFilterType } from '../../shared/spatial-
 import { FormControl } from '@angular/forms';
 import { EntityStore } from '@igo2/common';
 import { Feature } from '../../../feature';
+import { MeasureLengthUnit } from '../../../measure';
+import { Layer } from '../../../layer';
 
 /**
  * Spatial Filter Type
@@ -46,6 +48,8 @@ export class SpatialFilterTypeComponent implements OnInit {
 
   @Input() zone: Feature;
 
+  @Input() layers: Layer[] = [];
+
   public type: SpatialFilterType;
 
   @Output() eventType = new EventEmitter<SpatialFilterType>();
@@ -53,6 +57,10 @@ export class SpatialFilterTypeComponent implements OnInit {
   @Output() eventQueryType = new EventEmitter<SpatialFilterQueryType>();
 
   @Output() zoneChange = new EventEmitter<Feature>();
+  @Output() zoneWithBufferChange = new EventEmitter<Feature>();
+
+  @Output() bufferChange = new EventEmitter<number>();
+  @Output() measureUnitChange = new EventEmitter<MeasureLengthUnit>();
 
   constructor() {}
 
@@ -76,16 +84,13 @@ export class SpatialFilterTypeComponent implements OnInit {
     this.eventType.emit(this.type);
   }
 
-  onQueryTypeChange(event) {
-    this.eventQueryType.emit(this.selectedQueryType);
-  }
-
-  onZoneChange(feature) {
-    this.zoneChange.emit(feature);
-  }
-
   onDrawTypeChange(spatialType: SpatialFilterType) {
     this.activeDrawType = spatialType;
     this.eventType.emit(this.activeDrawType);
+  }
+
+  onSelectionChange() {
+    this.eventQueryType.emit(this.selectedQueryType);
+    this.zoneChange.emit(undefined);
   }
 }

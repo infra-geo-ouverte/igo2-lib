@@ -6,7 +6,8 @@ import {
   EntityStoreFilterCustomFuncStrategy,
   EntityRecord,
   EntityStoreStrategyFuncOptions,
-  EntityStoreFilterSelectionStrategy
+  EntityStoreFilterSelectionStrategy,
+  EntityTableColumnRenderer
 } from '@igo2/common';
 
 import {
@@ -15,9 +16,11 @@ import {
   FeatureStoreSelectionStrategy,
   FeatureStoreInMapExtentStrategy,
   Feature,
-  FeatureMotion
+  FeatureMotion,
+  FeatureStoreInMapResolutionStrategy
 } from '../../feature';
 import { VectorLayer } from '../../layer';
+import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { SourceFieldsOptionsParams, FeatureDataSource } from '../../datasource';
 
@@ -38,6 +41,19 @@ export class FeatureWorkspaceService {
   constructor(private storageService: StorageService) {}
 
   createWorkspace(layer: VectorLayer, map: IgoMap): FeatureWorkspace {
+    if (layer.options.workspace?.enabled === false) {
+      return;
+    }
+    layer.options.workspace = Object.assign({}, layer.options.workspace, {enabled: true});
+
+    layer.options.workspace = Object.assign({}, layer.options.workspace,
+      {
+        enabled: true,
+        srcId: layer.id,
+        workspaceId: layer.id
+      } as GeoWorkspaceOptions);
+
+
     const wks = new FeatureWorkspace({
       id: layer.id,
       title: layer.title,
@@ -60,6 +76,7 @@ export class FeatureWorkspaceService {
 
     const loadingStrategy = new FeatureStoreLoadingLayerStrategy({});
     const inMapExtentStrategy = new FeatureStoreInMapExtentStrategy({});
+    const inMapResolutionStrategy = new FeatureStoreInMapResolutionStrategy({});
     const selectedRecordStrategy = new EntityStoreFilterSelectionStrategy({});
     const selectionStrategy = new FeatureStoreSelectionStrategy({
       layer: new VectorLayer({
@@ -79,9 +96,10 @@ export class FeatureWorkspaceService {
     this.storageService.set('rowsInMapExtent', true, StorageScope.SESSION);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
+    store.addStrategy(inMapResolutionStrategy, true);
     store.addStrategy(selectionStrategy, true);
     store.addStrategy(selectedRecordStrategy, false);
-    store.addStrategy(this.createFilterInMapExtentStrategy(), true);
+    store.addStrategy(this.createFilterInMapExtentOrResolutionStrategy(), true);
     return store;
   }
 
@@ -102,7 +120,8 @@ export class FeatureWorkspaceService {
         .map(key => {
           return {
             name: `properties.${key}`,
-            title: key
+            title: key,
+            renderer: EntityTableColumnRenderer.UnsanitizedHTML
           };
         });
         workspace.meta.tableTemplate = {
@@ -116,7 +135,8 @@ export class FeatureWorkspaceService {
     const columns = fields.map((field: SourceFieldsOptionsParams) => {
       return {
         name: `properties.${field.name}`,
-        title: field.alias ? field.alias : field.name
+        title: field.alias ? field.alias : field.name,
+        renderer: EntityTableColumnRenderer.UnsanitizedHTML
       };
     });
     workspace.meta.tableTemplate = {
@@ -126,9 +146,9 @@ export class FeatureWorkspaceService {
     };
   }
 
-  private createFilterInMapExtentStrategy(): EntityStoreFilterCustomFuncStrategy {
+  private createFilterInMapExtentOrResolutionStrategy(): EntityStoreFilterCustomFuncStrategy {
     const filterClauseFunc = (record: EntityRecord<object>) => {
-      return record.state.inMapExtent === true;
+      return record.state.inMapExtent === true && record.state.inMapResolution === true;
     };
     return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
   }

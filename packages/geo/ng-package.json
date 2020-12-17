@@ -55,6 +55,7 @@
       "@turf/line-intersect": "lineIntersect",
       "@turf/helpers": "helpers",
       "@turf/point-on-feature": "pointOnFeature",
+      "@turf/buffer": "buffer",
       "ol/interaction/Modify": "OlModify",
       "ol/interaction/Translate": "OlTranslate",
       "ol/interaction/Draw": "OlDraw",
@@ -63,6 +64,10 @@
       "ol/interaction/DragBox": "OlDragBoxInteraction",
       "ol/source/Vector": "OlVectorSource",
       "ol/layer/Vector": "OlVectorLayer",
+      "ol/layer": "olLayer",
+      "ol/source": "olSource",
+      "ol/style/Circle": "olStyleCircle",
+      "ol/tilegrid/TileGrid": "olTileGrid",
       "moment": "moment",
       "ol/format/WKT": "olWKT",
       "file-saver": "fileSaver",
@@ -83,7 +88,7 @@
       "ol/format": "olformat",
       "@igo2/utils": "utils",
       "@igo2/core": "core",
-      "@ngx-translate/core" : "ngxt-core"
+      "@ngx-translate/core": "ngxt-core"
     }
   },
   "whitelistedNonPeerDependencies": [

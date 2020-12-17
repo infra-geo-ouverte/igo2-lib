@@ -4,7 +4,7 @@ import { Toolbox, ToolService } from '@igo2/common';
 
 import { ExportOptions } from '@igo2/geo';
 import { BehaviorSubject } from 'rxjs';
-import { ImportExportState } from '../import-export/import-export.state';
+import { ImportExportMode, ImportExportState } from '../import-export/import-export.state';
 
 /**
  * Service that holds the state of the search module
@@ -38,7 +38,7 @@ export class ToolState {
         exportOptions.featureInMapExtent = toolToActivate.options.featureInMapExtent;
       }
       this.importExportState.setsExportOptions(exportOptions);
-      this.importExportState.setMode('export');
+      this.importExportState.setMode(ImportExportMode.export);
     }
 
     if (this.toolbox.getTool(toolToActivate.tool)) {

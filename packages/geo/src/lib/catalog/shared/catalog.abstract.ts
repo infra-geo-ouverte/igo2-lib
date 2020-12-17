@@ -91,6 +91,18 @@ class ArcGISRestCatalog extends Catalog {
     }
 }
 
+class TileArcGISRestCatalog extends Catalog {
+    constructor(options: Catalog, service: CatalogService) {
+        super(options, service);
+        const sType: string = TypeCatalog[TypeCatalog.tilearcgisrest];
+        this.type =  TypeCatalog[sType];
+    }
+
+    public collectCatalogItems() {
+        return this.catalogService.loadCatalogArcGISRestItems(this);
+    }
+}
+
 export class CompositeCatalog extends Catalog implements ICompositeCatalog {
     composite: ICatalog[];
 
@@ -117,6 +129,8 @@ export class CatalogFactory {
             catalog = new BaselayersCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
             catalog = new ArcGISRestCatalog(options, service);
+        } else if (options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
+            catalog = new TileArcGISRestCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
             catalog = new WMTSCatalog(options, service);
         } else {

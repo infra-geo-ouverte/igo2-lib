@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 import { Feature } from '../../feature/shared';
 import {
   SpatialFilterQueryType,
-  SpatialFilterItemType
+  SpatialFilterItemType,
+  SpatialFilterType
 } from './spatial-filter.enum';
 import { SpatialFilterThematic } from './spatial-filter.interface';
 
@@ -156,7 +157,9 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true'
+                icon: 'true',
+                bufferInput: buffer.toString(),
+                simplified: '100'
               }
             }
           )
@@ -183,7 +186,9 @@ export class SpatialFilterService {
             {
               params: {
                 geometry: 'true',
-                icon: 'true'
+                icon: 'true',
+                bufferInput: buffer.toString(),
+                simplified: '100'
               }
             }
           )
@@ -209,8 +214,9 @@ export class SpatialFilterService {
           .post<{ features: Feature[] }>(url + urlItem, {
             geometry: 'true',
             icon: 'true',
-            buffer,
-            loc: JSON.stringify(feature)
+            loc: JSON.stringify(feature),
+            bufferInput: buffer.toString(),
+            simplified: '100'
           })
           .pipe(
             map(featureCollection =>
@@ -233,8 +239,9 @@ export class SpatialFilterService {
           .post<{ features: Feature[] }>(url + urlItem, {
             geometry: 'true',
             icon: 'true',
-            buffer,
-            loc: JSON.stringify(feature)
+            loc: JSON.stringify(feature),
+            bufferInput: buffer.toString(),
+            simplified: '100'
           })
           .pipe(
             map(featureCollection =>
@@ -275,6 +282,53 @@ export class SpatialFilterService {
               alias: f.properties.nom,
               title: f.properties.nom
             };
+            return f;
+          })
+        );
+    }
+  }
+
+  /*
+   * Get buffer geometry
+   */
+  loadBufferGeometry(
+    feature: Feature,
+    filterType: SpatialFilterType,
+    buffer?: number,
+    type?: SpatialFilterQueryType,
+  ): Observable<Feature> {
+    if (filterType === SpatialFilterType.Predefined) {
+      const featureType = this.urlFilterList[type];
+      const featureCode = '/' + feature.properties.code;
+      if (featureType && featureCode) {
+        return this.http
+          .get<Feature>(this.baseUrl + featureType + featureCode,
+            {
+              params: {
+                geometry: '100',
+                bufferOutput: buffer.toString()
+              }
+            }
+          )
+          .pipe(
+            map(f => {
+              f.meta = {
+                id: f.properties.code,
+                alias: f.properties.nom,
+                title: f.properties.nom
+              };
+              return f;
+            })
+          );
+      }
+    } else {
+      return this.http
+        .post<Feature>(this.baseUrl + 'geospatial/buffer?', {
+          buffer,
+          loc: JSON.stringify(feature)
+        })
+        .pipe(
+          map(f => {
             return f;
           })
         );

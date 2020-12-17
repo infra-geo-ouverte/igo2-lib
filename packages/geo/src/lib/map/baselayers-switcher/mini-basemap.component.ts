@@ -6,7 +6,7 @@ import {
   ApplicationRef
 } from '@angular/core';
 
-import { Layer } from '../../layer/shared';
+import { Layer, LayerOptions } from '../../layer/shared';
 import { LayerService } from '../../layer/shared/layer.service';
 import { IgoMap } from '../shared';
 
@@ -101,5 +101,36 @@ export class MiniBaseMapComponent implements AfterViewInit, OnDestroy {
 
     const layer = this.layerService.createLayer(options);
     this.basemap.addLayer(layer);
+    this.handleLinkedBaseLayer(layer);
+  }
+
+  private handleLinkedBaseLayer(baselayer: Layer) {
+    const linkedLayers = baselayer.options.linkedLayers;
+    if (!linkedLayers) {
+      return;
+    }
+    const currentLinkedId = linkedLayers.linkId;
+    const currentLinks = linkedLayers.links;
+    const isParentLayer = currentLinks ? true : false;
+    if (isParentLayer && currentLinkedId === baselayer.options.linkedLayers.linkId) {
+      // search for child layers
+      currentLinks.map(link => {
+        link.linkedIds.map(linkedId => {
+          const layerToApply = this.map.layers.find(l => l.options.linkedLayers?.linkId === linkedId);
+          if (layerToApply) {
+            const linkedLayerOptions: any = Object.assign(
+              Object.create(layerToApply.options),
+              layerToApply.options,
+              {
+                zIndex: 9000,
+                visible: true,
+                baseLayer: false,
+              } as LayerOptions
+            );
+            this.basemap.addLayer(this.layerService.createLayer(linkedLayerOptions));
+          }
+        });
+      });
+    }
   }
 }

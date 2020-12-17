@@ -13,6 +13,8 @@ import {
   FeatureDataSourceOptions,
   XYZDataSource,
   XYZDataSourceOptions,
+  TileDebugDataSource,
+  TileDebugDataSourceOptions,
   WFSDataSource,
   WFSDataSourceOptions,
   WMTSDataSource,
@@ -53,7 +55,7 @@ export class DataSourceService {
     private authInterceptor?: AuthInterceptor
   ) {}
 
-  createAsyncDataSource(context: AnyDataSourceOptions): Observable<DataSource> {
+  createAsyncDataSource(context: AnyDataSourceOptions, detailedContextUri?: string): Observable<DataSource> {
     if (!context.type) {
       console.error(context);
       throw new Error('Datasource needs a type');
@@ -74,7 +76,7 @@ export class DataSourceService {
       case 'wms':
         const wmsContext = context as WMSDataSourceOptions;
         ObjectUtils.removeDuplicateCaseInsensitive(wmsContext.params);
-        dataSource = this.createWMSDataSource(wmsContext);
+        dataSource = this.createWMSDataSource(wmsContext, detailedContextUri);
         break;
       case 'wmts':
         dataSource = this.createWMTSDataSource(
@@ -84,6 +86,9 @@ export class DataSourceService {
       case 'xyz':
         dataSource = this.createXYZDataSource(context as XYZDataSourceOptions);
         break;
+      case 'tiledebug':
+          dataSource = this.createTileDebugDataSource(context as TileDebugDataSource);
+          break;
       case 'carto':
         dataSource = this.createCartoDataSource(
           context as CartoDataSourceOptions
@@ -148,7 +153,7 @@ export class DataSourceService {
     );
   }
 
-  private createWMSDataSource(context: WMSDataSourceOptions): Observable<any> {
+  private createWMSDataSource(context: WMSDataSourceOptions, detailedContextUri?: string): Observable<any> {
     const observables = [];
     if (context.optionsFromCapabilities) {
       observables.push(
@@ -171,7 +176,7 @@ export class DataSourceService {
 
     if (this.optionsService && context.optionsFromApi === true) {
       observables.push(
-        this.optionsService.getWMSOptions(context).pipe(
+        this.optionsService.getWMSOptions(context, detailedContextUri).pipe(
           catchError(e => {
             e.error.toDisplay = true;
             e.error.title = this.languageService.translate.instant(
@@ -231,6 +236,12 @@ export class DataSourceService {
     context: XYZDataSourceOptions
   ): Observable<XYZDataSource> {
     return new Observable(d => d.next(new XYZDataSource(context)));
+  }
+
+  private createTileDebugDataSource(
+    context: TileDebugDataSourceOptions
+  ): Observable<TileDebugDataSource> {
+    return new Observable(d => d.next(new TileDebugDataSource(context)));
   }
 
   private createCartoDataSource(

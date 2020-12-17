@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { IgoMap } from '../../map/shared/map';
 import { PrintOptions } from '../shared/print.interface';
@@ -18,7 +20,7 @@ import { PrintService } from '../shared/print.service';
   templateUrl: './print.component.html'
 })
 export class PrintComponent {
-  public disabled = false;
+  public disabled$ = new BehaviorSubject(false);
 
   @Input()
   get map(): IgoMap {
@@ -77,12 +79,15 @@ export class PrintComponent {
   constructor(private printService: PrintService) {}
 
   handleFormSubmit(data: PrintOptions) {
-    this.disabled = true;
+    this.disabled$.next(true);
 
     if (data.isPrintService === true) {
       this.printService
         .print(this.map, data)
-        .subscribe();
+        .pipe(take(1))
+        .subscribe(() => {
+          this.disabled$.next(false);
+        });
     } else {
       let nbFileToProcess = 1;
 
@@ -96,26 +101,42 @@ export class PrintComponent {
       this.printService.defineNbFileToProcess(nbFileToProcess);
 
       const resolution = +data.resolution;
-      this.printService.downloadMapImage(
-        this.map,
-        resolution,
-        data.imageFormat,
-        data.showProjection,
-        data.showScale,
-        data.showLegend,
-        data.title,
-        data.comment,
-        data.doZipFile
-      );
-      if (data.showLegend) {
-        this.printService.getLayersLegendImage(
+
+      let nbRequests = data.showLegend ? 2 : 1;
+      this.printService
+        .downloadMapImage(
           this.map,
+          resolution,
           data.imageFormat,
-          data.doZipFile,
-          +resolution
-        );
+          data.showProjection,
+          data.showScale,
+          data.showLegend,
+          data.title,
+          data.comment,
+          data.doZipFile
+        )
+        .pipe(take(1))
+        .subscribe(() => {
+          nbRequests--;
+          if (!nbRequests) {
+            this.disabled$.next(false);
+          }
+        });
+      if (data.showLegend) {
+        this.printService
+          .getLayersLegendImage(
+            this.map,
+            data.imageFormat,
+            data.doZipFile,
+            +resolution
+          )
+          .then(() => {
+            nbRequests--;
+            if (!nbRequests) {
+              this.disabled$.next(false);
+            }
+          });
       }
     }
-    this.disabled = false;
   }
 }

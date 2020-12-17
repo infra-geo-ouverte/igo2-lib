@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { DownloadService } from '../../download/shared/download.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { WFSDataSourceOptionsParams } from '../../datasource/shared/datasources/wfs-datasource.interface';
 import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
@@ -47,14 +46,7 @@ export class OgcFilterableItemComponent implements OnInit {
     return this.layer.dataSource as OgcFilterableDataSource;
   }
 
-  get downloadable() {
-    return (this.datasource.options as any).download;
-  }
-
-  constructor(
-    private ogcFilterService: OGCFilterService,
-    private downloadService: DownloadService
-  ) {
+  constructor(private ogcFilterService: OGCFilterService) {
     this.ogcFilterWriter = new OgcFilterWriter();
   }
 
@@ -143,18 +135,13 @@ export class OgcFilterableItemComponent implements OnInit {
     this.datasource.options.ogcFilters.interfaceOgcFilters = arr;
   }
 
-  openDownload() {
-    this.downloadService.open(this.layer);
-  }
-
   refreshFilters(force?: boolean) {
     if (force === true) {
       this.lastRunOgcFilter = undefined;
     }
     const ogcFilters: OgcFiltersOptions = this.datasource.options.ogcFilters;
-    const activeFilters = ogcFilters.interfaceOgcFilters.filter(
-      f => f.active === true
-    );
+    const activeFilters = ogcFilters.interfaceOgcFilters ?
+      ogcFilters.interfaceOgcFilters.filter(f => f.active === true) : [];
     if (activeFilters.length === 0) {
       ogcFilters.filters = undefined;
       ogcFilters.filtered = false;
@@ -213,6 +200,7 @@ export class OgcFilterableItemComponent implements OnInit {
     } else {
       // identical filter. Nothing triggered
     }
+    (this.layer.dataSource as OgcFilterableDataSource).setOgcFilters(ogcFilters, true);
   }
 
   public setVisible() {
