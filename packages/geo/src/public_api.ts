@@ -9,8 +9,8 @@ export * from './lib/catalog/catalog-library/catalog-library.module';
 export * from './lib/datasource/datasource.module';
 export * from './lib/directions/directions.module';
 export * from './lib/download/download.module';
-export * from './lib/draw/draw.module';
-export * from './lib/draw/drawer/drawer.module';
+export * from './lib/draw/drawingTool.module';
+export * from './lib/draw/draw/draw.module';
 export * from './lib/workspace/workspace.module';
 // TODO CLEAN UP
 // export * from './lib/workspace/shared/wfs-workspace';

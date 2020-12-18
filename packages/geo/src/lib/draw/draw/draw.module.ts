@@ -32,9 +32,9 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 import { IgoLanguageModule } from '@igo2/core';
 import { IgoEntityTableModule } from '@igo2/common';
-import { DrawerComponent } from './drawer.component';
+import { DrawComponent } from './draw.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DrawerPopupComponent } from './drawer-popup.component';
+import { DrawPopupComponent } from './draw-popup.component';
 
 /**
  * @ignore
@@ -59,13 +59,13 @@ import { DrawerPopupComponent } from './drawer-popup.component';
     ColorPickerModule
   ],
   declarations: [
-    DrawerComponent,
-    DrawerPopupComponent
+    DrawComponent,
+    DrawPopupComponent
   ],
   exports: [
-    DrawerComponent
+    DrawComponent
   ],
   entryComponents: [
   ]
 })
-export class IgoDrawerModule {}
+export class IgoDrawModule {}

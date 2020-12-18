@@ -1,2 +1,2 @@
 export * from './draw.state';
-export * from './drawer-tool/drawer-tool.component';
+export * from './drawing-tool/drawing-tool.component';

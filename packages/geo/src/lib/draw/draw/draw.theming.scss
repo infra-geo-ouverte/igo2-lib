@@ -1,4 +1,4 @@
-@mixin igo-drawer-theming($theme, $typography) {
+@mixin igo-draw-theming($theme, $typography) {
     $foreground: map-get($theme, foreground);
   
     .igo-map-tooltip {

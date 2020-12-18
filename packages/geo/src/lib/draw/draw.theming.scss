@@ -1,5 +1,0 @@
-@import './drawer/drawer.theming';
-
-@mixin igo-draw-theming($theme, $typography) {
-  @include igo-drawer-theming($theme, $typography);
-}

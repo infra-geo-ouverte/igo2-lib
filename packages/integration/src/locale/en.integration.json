@@ -5,7 +5,7 @@
         "catalog": "Catalog",
         "contexts": "Contexts",
         "directions": "Directions",
-        "drawer": "Draw",
+        "draw": "Draw",
         "importExport": "Import & export",
         "ogcFilter": "Filter by",
         "map": "Map",

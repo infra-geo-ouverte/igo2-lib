@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { IgoCatalogModule } from './catalog/catalog.module';
 import { IgoDataSourceModule } from './datasource/datasource.module';
 import { IgoDownloadModule } from './download/download.module';
-import { IgoDrawModule } from './draw/draw.module';
+import { IgoDrawingToolModule } from './draw/drawingTool.module';
 import { IgoFeatureModule } from './feature/feature.module';
 import { IgoFilterModule } from './filter/filter.module';
 import { IgoGeometryModule } from './geometry/geometry.module';
@@ -28,7 +28,7 @@ import { IgoWktModule } from './wkt/wkt.module';
     IgoCatalogModule,
     IgoDataSourceModule,
     IgoDownloadModule,
-    IgoDrawModule,
+    IgoDrawingToolModule,
     IgoFeatureModule,
     IgoFilterModule,
     IgoGeometryModule,

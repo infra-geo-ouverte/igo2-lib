@@ -12,16 +12,16 @@ import { DrawState } from '../draw.state';
  * Tool to measure lengths and areas
  */
 @ToolComponent({
-    name: 'drawer',
-    title: 'igo.integration.tools.drawer',
+    name: 'draw',
+    title: 'igo.integration.tools.draw',
     icon: 'pencil'
 })
 @Component({
-    selector: 'igo-drawer-tool',
-    templateUrl: './drawer-tool.component.html',
+    selector: 'igo-drawing-tool',
+    templateUrl: './drawing-tool.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DrawerToolComponent {
+export class DrawingToolComponent {
 
 /**
  * Map to measure on

@@ -43,7 +43,7 @@ import { getDistance } from 'ol/sphere';
 import { uuid } from '@igo2/utils';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
-import { DrawerPopupComponent } from './drawer-popup.component';
+import { DrawPopupComponent } from './draw-popup.component';
 import { 
     getTooltipsOfOlGeometry
 } from '../../measure/shared/measure.utils';
@@ -56,13 +56,13 @@ import {
 import { transform } from 'ol/proj';
 
 @Component ({
-    selector: 'igo-drawer',
-    templateUrl: './drawer.component.html',
-    styleUrls: ['./drawer.component.scss'],
+    selector: 'igo-draw',
+    templateUrl: './draw.component.html',
+    styleUrls: ['./draw.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class DrawerComponent implements OnInit, OnDestroy {
+export class DrawComponent implements OnInit, OnDestroy {
 
     /**
      * Table template
@@ -316,7 +316,7 @@ export class DrawerComponent implements OnInit, OnDestroy {
     }
     
     private openDialog(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): void {
-        const dialogRef = this.dialog.open(DrawerPopupComponent, {
+        const dialogRef = this.dialog.open(DrawPopupComponent, {
             disableClose: false
         });
 

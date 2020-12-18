@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { IgoDrawerModule } from './drawer/drawer.module';
+import { IgoDrawModule } from './draw/draw.module';
 
 @NgModule({
     imports: [
@@ -8,8 +8,8 @@ import { IgoDrawerModule } from './drawer/drawer.module';
     declarations: [
     ],
     exports: [
-        IgoDrawerModule
+        IgoDrawModule
     ]
 })
 
-export class IgoDrawModule {}
+export class IgoDrawingToolModule {}
