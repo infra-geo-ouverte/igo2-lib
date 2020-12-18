@@ -1,0 +1,42 @@
+$slide-toggle-width: 60px;
+
+.draw-type-toggle {
+    padding: 10px;
+    text-align: center;
+  
+    mat-button-toggle-group {
+      width: 100%;
+  
+      mat-button-toggle {
+        width: 25%;
+      }
+    }
+}
+
+.draw-options {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
+}
+
+.fill-color-picker {
+    text-align: left;
+    display: inline-block;
+}
+
+.stroke-color-picker {
+    padding: 10px;
+    text-align: center;
+}
+
+.igo-form {
+  padding: 10px;
+  text-align: left;
+}

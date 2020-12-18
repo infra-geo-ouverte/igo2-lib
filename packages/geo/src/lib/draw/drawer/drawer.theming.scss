@@ -1,0 +1,16 @@
+@mixin igo-drawer-theming($theme, $typography) {
+    $foreground: map-get($theme, foreground);
+  
+    .igo-map-tooltip {
+      position: relative;
+      border-radius: 4px;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+  
+    .igo-map-tooltip-draw {
+      color: mat-color($foreground, text);
+      font-weight: bold;
+      font-size: mat-font-size($typography, subheading-2);
+    }
+ }

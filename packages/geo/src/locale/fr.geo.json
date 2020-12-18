@@ -557,6 +557,22 @@
           "modify.tooltip": "Modifier"
         }
       },
+      "draw": {
+        "Point": "Point",
+        "LineString": "Ligne",
+        "Polygon": "Polygone",
+        "Circle": "Cercle",
+        "fill": "Remplissage",
+        "stroke": "Contour",
+        "radius": "Rayon",
+        "drawing": "Dessins",
+        "styleSelect": "Selectionner le style",
+        "cancelColorPicker": "Annulé",
+        "delete": "Retirer les dessins de la carte",
+        "toggleMapTooltips": "Texte sur la carte",
+        "dialogTitle": "Titre",
+        "dialogInstruction": "Veuillez entrer le titre de votre dessin"
+      },
       "network": {
         "online": {
           "message": "En ligne",
