@@ -318,7 +318,6 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
-    console.log(layer);
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -355,18 +354,14 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
-    const regexes = (catalog.regFilters || []).map(
-      (pattern: string) => new RegExp(pattern)
-    ) as string[];
-
     let layerTitle;
-        if (catalog.forcedProperties) {
-          for (const property of catalog.forcedProperties) {
-            if (layer.Name === property.layerName && property.title) {
-              layerTitle = property.title;
-            }
-          }
+    if (catalog.forcedProperties) {
+      for (const property of catalog.forcedProperties) {
+        if (layer.Name === property.layerName && property.title) {
+          layerTitle = property.title;
         }
+      }
+    }
 
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
@@ -504,15 +499,13 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        let layerTitle;
+        let forcedTitle;
         if (catalog.forcedProperties) {
-          layers.forEach(layer => {
-            for (const property of catalog.forcedProperties) {
-              if (layer.name === property.layerName && property.title) {
-                layerTitle = property.Title
-              }
+          for (const property of catalog.forcedProperties) {
+            if (layer.Title === property.layerName && property.title) {
+              forcedTitle = property.title;
             }
-          });
+          }
         }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
@@ -542,7 +535,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layerTitle !== undefined ? layerTitle : layer.Title,
+          title: forcedTitle !== undefined ? forcedTitle : layer.Title,
           address: catalog.id,
           options: {
             sourceOptions
@@ -563,15 +556,13 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
-        let layerTitle;
+        let forcedTitle;
         if (catalog.forcedProperties) {
-          layers.forEach(layer => {
-            for (const property of catalog.forcedProperties) {
-              if (layer.name === property.layerName && property.title) {
-                layerTitle = property.title
-              }
+          for (const property of catalog.forcedProperties) {
+            if (layer.name === property.layerName && property.title) {
+              forcedTitle = property.title;
             }
-          });
+          }
         }
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
@@ -596,7 +587,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layerTitle !== undefined ? layerTitle : layer.name,
+          title: forcedTitle !== undefined ? forcedTitle : layer.name,
           address: catalog.id,
           options: {
             sourceOptions
