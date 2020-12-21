@@ -38,7 +38,6 @@ export class AboutToolComponent {
 
   @Input() trainingGuideURL;
 
-
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.about.html';
 
