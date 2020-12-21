@@ -14,9 +14,20 @@
       [matTooltip]="'igo.geo.filter.addFilter' | translate" [color]="color" (click)="addFilterToSequence()">
       <mat-icon svgIcon="plus"></mat-icon>
     </button>
-    <button *ngIf="!layer.visible && header" mat-icon-button tooltip-position="below"
-      matTooltipShowDelay="500" [matTooltip]="'igo.geo.layer.showLayer' | translate" color="color" (click)="setVisible()">
-      <mat-icon svgIcon="eye-off"></mat-icon>
+    <button *ngIf="header"
+      mat-icon-button
+      [color]="layer.visible ? 'primary' : 'default'"
+      collapsibleButton
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="layer.visible ?
+                    ('igo.geo.layer.hideLayer' | translate) :
+                    ('igo.geo.layer.showLayer' | translate)"
+      (click)="layer.visible = !layer.visible">
+      <mat-icon
+        [ngClass]="{disabled: !(inResolutionRange$ | async)}"
+        [svgIcon]="layer.visible ? 'eye' : 'eye-off'">
+      </mat-icon>
     </button>
 </mat-list-item>
 

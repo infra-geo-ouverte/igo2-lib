@@ -382,6 +382,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           moreResults = igoList.querySelector('.ilayer .moreResults');
         } else if (source[0].source.getId() === 'nominatim') {
           moreResults = igoList.querySelector('.nominatim .moreResults');
+        } else {
+          moreResults = igoList.querySelector('.' + source[0].source.getId() + ' .moreResults');
         }
 
         if (

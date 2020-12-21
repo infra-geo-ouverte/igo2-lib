@@ -1,18 +1,20 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Layer } from '../../layer/shared/layers/layer';
 import { TimeFilterableDataSource } from '../shared/time-filter.interface';
 import { TimeFilterService } from '../shared/time-filter.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-time-filter-item',
   templateUrl: './time-filter-item.component.html',
   styleUrls: ['./time-filter-item.component.scss']
 })
-export class TimeFilterItemComponent {
+export class TimeFilterItemComponent implements OnInit, OnDestroy {
   public color = 'primary';
   showLegend$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  inResolutionRange$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  private resolution$$: Subscription;
 
   filtersCollapsed: boolean = false;
 
@@ -24,6 +26,17 @@ export class TimeFilterItemComponent {
     return this.layer.dataSource as TimeFilterableDataSource;
   }
   constructor(private timeFilterService: TimeFilterService) {}
+
+  ngOnInit(): void {
+    const resolution$ = this.layer.map.viewController.resolution$;
+    this.resolution$$ = resolution$.subscribe(() => {
+      this.inResolutionRange$.next(this.layer.isInResolutionsRange);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.resolution$$.unsubscribe();
+  }
 
   handleYearChange(year: string | [string, string]) {
     this.timeFilterService.filterByYear(this.datasource, year);

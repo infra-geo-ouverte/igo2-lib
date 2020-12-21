@@ -53,6 +53,7 @@
                     <mat-radio-button *ngFor="let settingValue of setting.values"
                       class="mat-typography"
                       [value]="settingValue"
+                      [matTooltip]="getAvailableHashtagsValues(settingValue)"
                       [checked]="settingValue.enabled"
                       (click)="$event.stopPropagation()"
                       (change)="settingsValueCheckedRadioButton($event, source, setting, settingValue)">
