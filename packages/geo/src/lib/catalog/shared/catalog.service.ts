@@ -354,10 +354,19 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
+    let layerTitle;
+    if (catalog.forcedProperties) {
+      for (const property of catalog.forcedProperties) {
+        if (layer.Name === property.layerName && property.title) {
+          layerTitle = property.title;
+        }
+      }
+    }
+
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
-      title: layer.Title,
+      title: layerTitle !== undefined ? layerTitle : layer.Title,
       address: idParent,
       options: {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
@@ -480,7 +489,7 @@ export class CatalogService {
   }
 
   private getWMTSItems(
-    catalog: Catalog,
+    catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
     const layers = capabilities.Contents.Layer;
@@ -490,6 +499,14 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
+        let forcedTitle;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.Title === property.layerName && property.title) {
+              forcedTitle = property.title;
+            }
+          }
+        }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
@@ -518,7 +535,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layer.Title,
+          title: forcedTitle !== undefined ? forcedTitle : layer.Title,
           address: catalog.id,
           options: {
             sourceOptions
@@ -529,7 +546,7 @@ export class CatalogService {
   }
 
   private getArcGISRESTItems(
-    catalog: Catalog,
+    catalog,
     capabilities
   ): CatalogItemLayer[] {
     const layers = capabilities.layers;
@@ -539,6 +556,14 @@ export class CatalogService {
 
     return layers
       .map((layer: any) => {
+        let forcedTitle;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.name === property.layerName && property.title) {
+              forcedTitle = property.title;
+            }
+          }
+        }
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
         }
@@ -562,7 +587,7 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layer.name,
+          title: forcedTitle !== undefined ? forcedTitle : layer.name,
           address: catalog.id,
           options: {
             sourceOptions
