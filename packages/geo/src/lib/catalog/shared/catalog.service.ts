@@ -134,6 +134,10 @@ export class CatalogService {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
         const items = [];
+        if (capabilities && capabilities.Service && capabilities.Service.Abstract) {
+          catalog.abstract = capabilities.Service.Abstract;
+        }
+
         this.includeRecursiveItems(
           catalog,
           capabilities.Capability.Layer,
@@ -318,6 +322,7 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
+    console.log(catalog);
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -374,13 +379,14 @@ export class CatalogService {
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
-          abstract: layer.Abstract
+          abstract: layer.Abstract || catalog.abstract
         },
         legendOptions,
         tooltip: { type: catalog.tooltipType },
         sourceOptions
       }
     };
+    console.log(layerPrepare);
 
     return ObjectUtils.removeUndefined(layerPrepare);
   }
