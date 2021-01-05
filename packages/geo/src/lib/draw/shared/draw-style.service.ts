@@ -10,8 +10,10 @@ import { MapService } from '../../map/shared/map.service';
 export class DrawStyleService {
 
     private fillColor: string = 'rgba(255,255,255,0.4)';
-    private strokeColor: string = '#3399CC';
+    private strokeColor: string = 'rgba(51,153,204,1)';
     private drawCounter: number = 1;
+    private toggleLabel = true
+
 
     constructor(
       private mapService: MapService
@@ -37,18 +39,38 @@ export class DrawStyleService {
     getDrawCount() {
       return this.drawCounter;
     }
+    
+    getToggleLabel() {
+      return this.toggleLabel;
+    }
+
+    switchLabel() {
+      this.toggleLabel = !this.toggleLabel;
+    }
 
     raiseDrawCounter() {
       this.drawCounter = this.drawCounter + 1;
     }
 
-    createDrawLayerStyle(feature, resolution, label?: string): olstyle.Style {
+    createDrawLayerStyle(feature, resolution, label?: boolean): olstyle.Style {
       let style;
       const proj = this.mapService.getMap().ol.getView().getProjection().getCode();
       if (feature.get('radius') !== undefined) {
         const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
         style = [ 
           new olstyle.Style({
+            text: new olstyle.Text({
+              text: label? feature.get('draw') : '',
+              stroke: new olstyle.Stroke({
+                color: 'white',
+                width: 0.75
+              }),
+              fill: new olstyle.Fill({
+                color: 'black'
+              }),
+              font: '20px sans-serif',
+              overflow: true
+            }),
             image: new olstyle.Circle({
               radius: feature.get('radius') /
               Math.cos((Math.PI / 180) * coordinates[1]) /
@@ -67,7 +89,16 @@ export class DrawStyleService {
         style = [ 
           new olstyle.Style({
             text: new olstyle.Text({
-              text: label ? label : ''
+              text: label? feature.get('draw') : '',
+              stroke: new olstyle.Stroke({
+                color: 'white',
+                width: 0.75
+              }),
+              fill: new olstyle.Fill({
+                color: 'black'
+              }),
+              font: '20px sans-serif',
+              overflow: true
             }),
             stroke: new olstyle.Stroke({
               color: this.strokeColor,

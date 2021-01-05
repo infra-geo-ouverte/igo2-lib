@@ -25,7 +25,7 @@
         {{'igo.geo.spatialFilter.drawControl' | translate}}
       </mat-slide-toggle>
       <mat-slide-toggle
-        [checked]="showTooltips"
+        [checked]="toggleLabel"
         [labelPosition]="'before'"
         (change)="onToggleTooltips($event.checked)">
         {{'igo.geo.draw.toggleMapTooltips' | translate}}
@@ -35,37 +35,39 @@
       <mat-label>{{'igo.geo.draw.styleSelect'| translate}}</mat-label>
       <div class="fill-color-picker mat-typography">
         <mat-form-field appearance="outline">
-          <mat-label>{{'igo.geo.draw.fill'| translate}}</mat-label>
+          <mat-label>{{fillColor}}</mat-label>
           <input
             formControlName="fill"
             matInput
             type="text"
             [(colorPicker)]="fillColor"
-            [style.background]="fillForm"
+            [style.background]="fillColor"
             [readonly]="true"
             [colorPicker]="fillColor"
             [cpPosition]="'bottom'"
+            [cpOutputFormat] = "'rgba'"
             [cpCancelButton]="true"
             [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
             [value]="fillColor"
-            (colorPickerSelect)="changeStoreLayerStyle()">
+            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel)">
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'igo.geo.draw.stroke'| translate}}</mat-label>
+          <mat-label>{{strokeColor}}</mat-label>
           <input
             formControlName="stroke"
             matInput
             type="text"
             [(colorPicker)]="strokeColor"
-            [style.background]="strokeForm"
+            [style.background]="strokeColor"
             [readonly]="true"
             [colorPicker]="strokeColor"
             [cpPosition]="'bottom'"
+            [cpOutputFormat] = "'rgba'"
             [cpCancelButton]="true"
             [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
             [value]="strokeColor"
-            (colorPickerSelect)="changeStoreLayerStyle()">
+            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel)">
         </mat-form-field>
       </div>
     </form>

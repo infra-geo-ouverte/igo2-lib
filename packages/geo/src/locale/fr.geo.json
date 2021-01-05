@@ -569,9 +569,9 @@
         "styleSelect": "Selectionner le style",
         "cancelColorPicker": "Annulé",
         "delete": "Retirer les dessins de la carte",
-        "toggleMapTooltips": "Texte sur la carte",
-        "dialogTitle": "Titre",
-        "dialogInstruction": "Veuillez entrer le titre de votre dessin"
+        "toggleMapTooltips": "Afficher les étiquettes",
+        "dialogTitle": "Étiquette",
+        "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin"
       },
       "network": {
         "online": {
