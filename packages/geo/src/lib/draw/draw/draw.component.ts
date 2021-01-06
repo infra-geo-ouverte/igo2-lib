@@ -16,7 +16,7 @@ import {
     tryAddSelectionStrategy,
   } from '../../feature';
 
-import { LanguageService, AnalyticsOptions } from '@igo2/core';
+import { LanguageService } from '@igo2/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawType } from '../shared/draw.enum';
 import { IgoMap } from '../../map/shared/map';
@@ -38,23 +38,14 @@ import OlPolygon from 'ol/geom/Polygon';
 import OlCircle from 'ol/geom/Circle';
 import OlGeoJSON from 'ol/format/GeoJSON';
 import OlOverlay from 'ol/Overlay';
-import OlFeature from 'ol/Feature';
 import { getDistance } from 'ol/sphere';
 import { uuid } from '@igo2/utils';
 import { DrawStyleService } from '../shared/draw-style.service';
 import { skip } from 'rxjs/operators';
 import { DrawPopupComponent } from './draw-popup.component';
-import { 
-    getTooltipsOfOlGeometry
-} from '../../measure/shared/measure.utils';
-import {
-  createDrawingInteractionStyle,
-  updateOlTooltipDrawAtCenter,
-  updateOlTooltipsDrawAtMidpoints
-} from '../shared/draw.utils';
-
+import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
+import { createDrawingInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
-import { Layer } from '../../layer';
 
 @Component ({
     selector: 'igo-draw',
@@ -102,7 +93,7 @@ export class DrawComponent implements OnInit, OnDestroy {
      * Feature added listener key
      */
     private onFeatureAddedKey: string;
-    
+
     /**
      * Feature added listener key
      */
@@ -232,15 +223,15 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
 
     private initStore() {
-        this.map.removeLayer(this.layer)
         const store = this.store;
+        this.map.removeLayer(this.layer);
 
         this.layer = new VectorLayer({
           title: this.languageService.translate.instant('igo.geo.draw.drawing'),
           zIndex: 200,
           source: new FeatureDataSource(),
           style: (feature, resolution) => {
-            return this.drawStyleService.createDrawLayerStyle(feature, resolution, true)
+            return this.drawStyleService.createDrawLayerStyle(feature, resolution, true);
           },
           showInLayerList: true,
           exportable: false,
@@ -254,13 +245,13 @@ export class DrawComponent implements OnInit, OnDestroy {
           map: this.map,
           many: true
         }));
-        
+
         this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent) => {
             const feature = event.feature;
             const olGeometry = feature.getGeometry();
             // this.updateGeomOfOlGeometry(olGeometry, feature.get('draw'));
         });
-  
+
         this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
             const olGeometry = event.feature.getGeometry();
             this.clearTooltipsOfOlGeometry(olGeometry);
@@ -284,11 +275,11 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.drawStyleService.setStroke(this.strokeColor);
         if (enableLabel) {
             this.store.layer.ol.setStyle((feature, resolution) => {
-                return this.drawStyleService.createDrawLayerStyle(feature, resolution, true)
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, true);
             });
         } else {
             this.store.layer.ol.setStyle((feature, resolution) => {
-                return this.drawStyleService.createDrawLayerStyle(feature, resolution, false)
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, false);
             });
         }
         this.createDrawPointControl();
@@ -325,7 +316,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             this.activateDrawControl(this.drawCircleControl);
         }
     }
-    
+
     private openDialog(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): void {
         const dialogRef = this.dialog.open(DrawPopupComponent, {
             disableClose: false
@@ -336,7 +327,7 @@ export class DrawComponent implements OnInit, OnDestroy {
                 this.drawLabel = label;
                 this.updateLabelOfOlGeometry(olGeometry, label);
                 this.onDrawEnd(olGeometry);
-            })
+            });
         });
     }
 
@@ -404,7 +395,6 @@ export class DrawComponent implements OnInit, OnDestroy {
      */
     private addFeatureToStore(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, feature?: FeatureWithDraw) {
         let rad;
-        let center;
         const featureId = feature ? feature.properties.id : uuid();
         const projection = this.map.ol.getView().getProjection();
 
@@ -412,7 +402,7 @@ export class DrawComponent implements OnInit, OnDestroy {
             featureProjection: projection,
             dataProjection: projection
         });
-        
+
         if (olGeometry instanceof OlCircle) {
             geometry.type = 'Point';
             geometry.coordinates = olGeometry.getCenter();
@@ -459,117 +449,15 @@ export class DrawComponent implements OnInit, OnDestroy {
             }
         });
     }
-    /**
-     * Clear the map tooltips
-     * @param olDrawSource OL vector source
-     */
-    private clearTooltipsOfOlSource(olSource: OlVectorSource) {
-        olSource.forEachFeature((olFeature: OlFeature) => {
-        const olGeometry = olFeature.getGeometry();
-            if (olGeometry !== undefined) {
-                this.clearTooltipsOfOlGeometry(olFeature.getGeometry());
-            }
-        });
-    }
 
     onToggleTooltips(toggle: boolean) {
         this.drawStyleService.switchLabel();
-        this.toggleLabel = !this.toggleLabel
+        this.toggleLabel = !this.toggleLabel;
         this.changeStoreLayerStyle(this.toggleLabel);
-        /*
-        this.showTooltips = toggle;
-        if (toggle === true) {
-        this.showTooltipsOfOlSource(this.store.source.ol);
-        } else {
-        this.clearTooltipsOfOlSource(this.store.source.ol);
-        }
-        */
     }
 
-    private showTooltipsOfOlSource(olSource: OlVectorSource) {
-        olSource.forEachFeature((olFeature: OlFeature) => {
-            this.showTooltipsOfOlGeometry(olFeature.getGeometry());
-        });
-    }
-   
-    private showTooltipsOfOlGeometry(olGeometry:  OlPoint | OlLineString | OlPolygon | OlCircle) {
-        getTooltipsOfOlGeometry(olGeometry).forEach((olTooltip: OlOverlay | undefined) => {
-            if (this.shouldShowTooltip(olTooltip)) {
-                this.map.ol.addOverlay(olTooltip);
-            }
-        });
-    }
-
-    private updateLabelOfOlGeometry(olGeometry:  OlPoint | OlLineString | OlPolygon | OlCircle, label: string) {
+    private updateLabelOfOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, label: string) {
         olGeometry.setProperties({_label: label}, true);
-    }
-
-    private updateGeomOfOlGeometry(olGeometry:  OlPoint | OlLineString | OlPolygon | OlCircle, label: string) {
-        let geom;
-        if (olGeometry instanceof OlPoint) {
-            geom = 'Point'
-        } else if (olGeometry instanceof OlLineString) {
-            geom = 'Linestring'
-        } else if (olGeometry instanceof OlPolygon) {
-            geom = 'Polygon'
-        } else if (olGeometry instanceof OlCircle) {
-            geom = 'Circle'
-        }
-
-        const olMidpointsTooltips = updateOlTooltipsDrawAtMidpoints(olGeometry);
-
-        if (geom === 'Polygon') {
-            this.updateOlTooltip(
-                updateOlTooltipDrawAtCenter(olGeometry),
-                label,
-                geom
-            );
-        } else {
-            this.updateOlTooltip(
-                olMidpointsTooltips[0],
-                label,
-                geom
-            );
-        }
-    
-    }
-    /**
-   * Update an OL tooltip properties and inner HTML and add it to the map if possible
-   * @param olTooltip OL tooltip
-   * @param label The draw label
-   * @param type geometry type
-   */
-    private updateOlTooltip(
-        olTooltip: OlOverlay,
-        label: string,
-        type: string
-    ) {
-        olTooltip.setProperties({_label: label, _type: type}, true);
-        olTooltip.getElement().innerHTML = label;
-
-        if (this.shouldShowTooltip(olTooltip)) {
-            this.map.ol.addOverlay(olTooltip);
-        }
-    }
-    
-    /**
-     * Whether a tooltip should be showned based on the length
-     * of the segment it is bound to.
-     * @param olTooltip OL overlay
-     * @returns True if the tooltip should be shown
-     */
-    private shouldShowTooltip(olTooltip: OlOverlay): boolean {
-        if (this.showTooltips === false) {
-            return false;
-        }
-
-        const properties = olTooltip.getProperties() as any;
-        const label = properties._label;
-        if (label === undefined) {
-            return false;
-        }
-
-        return true;
     }
 }
 

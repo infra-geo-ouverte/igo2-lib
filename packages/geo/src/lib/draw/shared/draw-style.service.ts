@@ -12,7 +12,7 @@ export class DrawStyleService {
     private fillColor: string = 'rgba(255,255,255,0.4)';
     private strokeColor: string = 'rgba(51,153,204,1)';
     private drawCounter: number = 1;
-    private toggleLabel = true
+    private toggleLabel = true;
 
 
     constructor(
@@ -39,7 +39,7 @@ export class DrawStyleService {
     getDrawCount() {
       return this.drawCounter;
     }
-    
+
     getToggleLabel() {
       return this.toggleLabel;
     }
@@ -57,10 +57,10 @@ export class DrawStyleService {
       const proj = this.mapService.getMap().ol.getView().getProjection().getCode();
       if (feature.get('radius') !== undefined) {
         const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
-        style = [ 
+        style = [
           new olstyle.Style({
             text: new olstyle.Text({
-              text: label? feature.get('draw') : '',
+              text: label ? feature.get('draw') : '',
               stroke: new olstyle.Stroke({
                 color: 'white',
                 width: 0.75
@@ -86,10 +86,10 @@ export class DrawStyleService {
         ];
         return style;
       } else {
-        style = [ 
+        style = [
           new olstyle.Style({
             text: new olstyle.Text({
-              text: label? feature.get('draw') : '',
+              text: label ? feature.get('draw') : '',
               stroke: new olstyle.Stroke({
                 color: 'white',
                 width: 0.75

@@ -7,7 +7,7 @@ import OlOverlay from 'ol/Overlay';
 import {
   updateOlGeometryMidpoints,
   updateOlGeometryCenter
-} from '../../measure/shared/measure.utils'
+} from '../../measure/shared/measure.utils';
 
 
 /**
@@ -44,7 +44,7 @@ export function createDrawingInteractionStyle(fill?: string, stroke?: string, te
  * @returns OL overlays
  */
 export function updateOlTooltipsDrawAtMidpoints(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle): OlOverlay[] {
-  let olMidpoints
+  let olMidpoints;
   if (olGeometry instanceof OlPoint) {
     const olMidpointPoint = new OlPoint(olGeometry.flatCoordinates);
     olMidpoints = new Array(1);

@@ -335,7 +335,7 @@ export function updateOlGeometryMidpoints(olGeometry: OlPoint | OlLineString | O
         [coordinates[j], coordinates[j + 1]],
         [coordinates[j + 2], coordinates[j + 3]]
       ]);
-  
+
       const midpointCoordinate = olSegment.getCoordinateAt(0.5);
       const olMidpoint = olMidpoints[i];
       if (olMidpoint !== undefined) {
