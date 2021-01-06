@@ -17,6 +17,7 @@ import { IgoMap } from '../../../map/shared/map';
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
 
 import { LayerOptions } from './layer.interface';
+import { LayerSyncWatcher } from '../../utils/layerSync-watcher';
 
 export abstract class Layer {
   public collapsed: boolean;
@@ -117,6 +118,8 @@ export abstract class Layer {
     return this.options.showInLayerList !== false;
   }
 
+  private layerSyncWatcher: LayerSyncWatcher;
+
   constructor(
     public options: LayerOptions,
     protected authInterceptor?: AuthInterceptor
@@ -162,6 +165,10 @@ export abstract class Layer {
     this.unobserveResolution();
     if (igoMap !== undefined) {
       this.observeResolution();
+      this.layerSyncWatcher = new LayerSyncWatcher(this, this.map);
+      this.layerSyncWatcher.subscribe(() => {});
+    } else {
+      this.layerSyncWatcher.unsubscribe();
     }
   }
 

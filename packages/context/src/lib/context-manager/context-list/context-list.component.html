@@ -1,5 +1,5 @@
 <igo-list [navigation]="true">
-  <mat-form-field *ngIf="showFilter()" [ngClass]="auth.authenticated ? 'context-filter-min-width' : 'context-filter-max-width'">
+  <mat-form-field *ngIf="showFilter()" [ngClass]="auth.authenticated && configService.getConfig('context') ? 'context-filter-min-width' : 'context-filter-max-width'">
     <input
       matInput
       type="text"
@@ -20,6 +20,7 @@
 
   <button
   *ngIf="!sortedAlpha"
+  class="sort-alpha"
   mat-icon-button
   [matTooltip]="'igo.context.contextManager.sortAlphabetically' | translate"
   matTooltipShowDelay="500"
@@ -28,6 +29,7 @@
   </button>
   <button
     *ngIf="sortedAlpha"
+    class="sort-alpha"
     mat-icon-button
     [matTooltip]="'igo.context.contextManager.sortContextOrder' | translate"
     matTooltipShowDelay="500"
@@ -35,7 +37,7 @@
     <mat-icon color="warn" svgIcon="sort-variant-remove"></mat-icon>
   </button>
 
-  <igo-actionbar *ngIf="auth.authenticated"
+  <igo-actionbar *ngIf="auth.authenticated && configService.getConfig('context')"
     class="add-context-button"
     [iconColor]="color"
     [store]="actionStore"
@@ -46,7 +48,8 @@
     [mode]="actionbarMode">
   </igo-actionbar>
 
-  <button *ngIf="auth.authenticated && users && users.length"
+  <button *ngIf="auth.authenticated && configService.getConfig('context')"
+    class="users-filter"
     mat-icon-button
     [matTooltip]="'igo.context.contextManager.filterUser' | translate"
     matTooltipShowDelay="500"

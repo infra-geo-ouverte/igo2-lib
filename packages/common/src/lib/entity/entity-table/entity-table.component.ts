@@ -211,8 +211,8 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
       .subscribe((records: EntityRecord<object>[]) => {
         const firstSelected = records[0];
         const firstSelectedStateviewPosition = this.store.stateView.all().indexOf(firstSelected);
-        const pageMax = this.paginator.pageSize * (this.paginator.pageIndex + 1);
-        const pageMin = pageMax - this.paginator.pageSize;
+        const pageMax = this.paginator ? this.paginator.pageSize * (this.paginator.pageIndex + 1) : 0;
+        const pageMin = this.paginator ? pageMax - this.paginator.pageSize : 0;
 
         if (
           this.paginator &&
@@ -431,6 +431,26 @@ export class EntityTableComponent implements OnInit, OnChanges, OnDestroy  {
   rowIsSelected(record: EntityRecord<object>): boolean {
     const state = record.state;
     return state.selected ? state.selected : false;
+  }
+
+  isImg(value) {
+    if (this.isUrl(value)) {
+      return (
+        ['jpg', 'png', 'gif'].indexOf(value.split('.').pop().toLowerCase()) !== -1
+      );
+    } else {
+      return false;
+    }
+  }
+
+  isUrl(value) {
+    if (typeof value === 'string') {
+      return (
+        value.slice(0, 8) === 'https://' || value.slice(0, 7) === 'http://'
+      );
+    } else {
+      return false;
+    }
   }
 
   /**

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService, StorageService } from '@igo2/core';
+import { ConfigService, LanguageService, StorageService } from '@igo2/core';
 import type { IgoMap } from '@igo2/geo';
 
 import {
@@ -27,6 +27,8 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { MatDialog } from '@angular/material/dialog';
 import { BookmarkDialogComponent } from '../../context-map-button/bookmark-button/bookmark-dialog.component';
 import { debounce } from 'rxjs/operators';
@@ -152,6 +154,7 @@ export class ContextListComponent implements OnInit, OnDestroy {
   constructor(
     private cdRef: ChangeDetectorRef,
     private contextService: ContextService,
+    public configService: ConfigService,
     public auth: AuthService,
     private dialog: MatDialog,
     private languageService: LanguageService,
@@ -345,7 +348,8 @@ export class ContextListComponent implements OnInit, OnDestroy {
     this.dialog
       .open(BookmarkDialogComponent, { disableClose: false })
       .afterClosed()
-      .subscribe((title) => {
+      .pipe(take(1))
+      .subscribe((title: string) => {
         if (title) {
           this.create.emit({ title, empty });
         }

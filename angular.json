@@ -58,6 +58,7 @@
               "geojson-rbush",
               "minimatch",
               "path",
+              "pixelworks",
               "brace-expansion"
             ]
           },

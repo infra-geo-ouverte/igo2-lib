@@ -56,6 +56,14 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
         renderer: EntityTableColumnRenderer.HTML
       },
       {
+        name: 'url',
+        title: 'Hyperlink'
+      },
+      {
+        name: 'image',
+        title: 'Image'
+      },
+      {
         name: 'action',
         title: '',
         valueAccessor: (entity: object) => {
@@ -76,7 +84,7 @@ export class AppEntityTableComponent implements OnInit, OnDestroy {
     const ids = [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
     const entities = ids.map(id => {
-      return { id , name: `Name ${id}`, description: `<b>Description ${id}</b>`};
+      return { id , name: `Name ${id}`, description: `<b>Description ${id}</b>`, url: 'https://igouverte.org', image: 'http://www.igouverte.org/assets/img/Igo_logoavec.png'};
     });
     this.store.load(entities);
   }

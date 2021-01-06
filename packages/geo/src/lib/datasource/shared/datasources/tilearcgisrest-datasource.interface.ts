@@ -16,4 +16,5 @@ export interface TileArcGISRestDataSourceOptions extends DataSourceOptions {
   urls?: string[];
 
   ol?: olSourceTileArcGISRest;
+  idColumn?: string;
 }
