@@ -150,13 +150,20 @@ export class CatalogService {
 
   loadCatalogWMTSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
-      map((capabilities: any) => this.getWMTSItems(catalog, capabilities))
+      map((capabilities: any) => {
+        if (capabilities && capabilities.ServiceIdentification && capabilities.ServiceIdentification.Abstract) {
+          catalog.abstract = capabilities.ServiceIdentification.Abstract;
+        }
+
+        return this.getWMTSItems(catalog, capabilities)
+      })
     );
   }
 
   loadCatalogArcGISRestItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
+        console.log(capabilities);
         return this.getArcGISRESTItems(catalog, capabilities);
       })
     );
@@ -322,7 +329,6 @@ export class CatalogService {
   }
 
   private prepareCatalogItemLayer(layer, idParent, layersQueryFormat, catalog) {
-    console.log(catalog);
     const configuredQueryFormat = this.retriveLayerInfoFormat(
       layer.Name,
       layersQueryFormat
@@ -386,7 +392,6 @@ export class CatalogService {
         sourceOptions
       }
     };
-    console.log(layerPrepare);
 
     return ObjectUtils.removeUndefined(layerPrepare);
   }
@@ -498,6 +503,7 @@ export class CatalogService {
     catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
+    console.log(catalog);
     const layers = capabilities.Contents.Layer;
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
@@ -537,6 +543,7 @@ export class CatalogService {
           catalog.sourceOptions,
           { params }
         ) as WMTSDataSourceOptions;
+        console.log(sourceOptions);
 
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
@@ -544,7 +551,12 @@ export class CatalogService {
           title: forcedTitle !== undefined ? forcedTitle : layer.Title,
           address: catalog.id,
           options: {
-            sourceOptions
+            sourceOptions,
+            metadata: catalog.abstract ? {
+              url: undefined,
+              extern: undefined,
+              abstract: catalog.abstract
+            } : undefined,
           }
         });
       })

@@ -5,6 +5,7 @@ export interface MetadataOptions {
   extern?: boolean;
   abstract?: string;
   keywordList?: string[];
+  layerTitle?: string;
 }
 
 export interface MetadataLayerOptions extends LayerOptions {

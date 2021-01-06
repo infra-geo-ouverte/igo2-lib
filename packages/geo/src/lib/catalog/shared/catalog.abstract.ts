@@ -50,11 +50,9 @@ class WMSCatalog extends Catalog {
         super(options, service);
         const sType: string = TypeCatalog[TypeCatalog.wms];
         this.type =  TypeCatalog[sType];
-        console.log(options);
     }
 
     public collectCatalogItems(): Observable<CatalogItem[]> {
-        console.log('collect', this);
         return this.catalogService.loadCatalogWMSLayerItems(this);
     }
 }
