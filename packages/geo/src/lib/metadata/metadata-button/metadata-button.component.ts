@@ -45,7 +45,8 @@ export class MetadataButtonComponent {
       this.dialog.open(MetadataAbstractComponent, {
         data: {
           layerTitle: this.layer.title,
-          abstract: metadata.abstract
+          abstract: metadata.abstract,
+          type: metadata.type
         }
       });
     }
