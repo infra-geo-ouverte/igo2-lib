@@ -150,9 +150,7 @@ export class CatalogService {
 
   loadCatalogWMTSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(
-      map((capabilities: any) => {
-        return this.getWMTSItems(catalog, capabilities);
-      })
+      map((capabilities: any) => this.getWMTSItems(catalog, capabilities))
     );
   }
 
