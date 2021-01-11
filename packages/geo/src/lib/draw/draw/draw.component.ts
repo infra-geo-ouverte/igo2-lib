@@ -231,7 +231,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           zIndex: 200,
           source: new FeatureDataSource(),
           style: (feature, resolution) => {
-            return this.drawStyleService.createDrawLayerStyle(feature, resolution, true);
+            return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, true);
           },
           showInLayerList: true,
           exportable: false,
@@ -275,11 +275,11 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.drawStyleService.setStroke(this.strokeColor);
         if (enableLabel) {
             this.store.layer.ol.setStyle((feature, resolution) => {
-                return this.drawStyleService.createDrawLayerStyle(feature, resolution, true);
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, true);
             });
         } else {
             this.store.layer.ol.setStyle((feature, resolution) => {
-                return this.drawStyleService.createDrawLayerStyle(feature, resolution, false);
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, false);
             });
         }
         this.createDrawPointControl();

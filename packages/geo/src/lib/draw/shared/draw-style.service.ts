@@ -52,9 +52,9 @@ export class DrawStyleService {
       this.drawCounter = this.drawCounter + 1;
     }
 
-    createDrawLayerStyle(feature, resolution, label?: boolean): olstyle.Style {
+    createDrawLayerStyle(feature, resolution, map, label?: boolean): olstyle.Style {
       let style;
-      const proj = this.mapService.getMap().ol.getView().getProjection().getCode();
+      const proj = map.ol.getView().getProjection().getCode();
       if (feature.get('radius') !== undefined) {
         const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
         style = [
