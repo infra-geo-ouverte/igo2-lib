@@ -558,20 +558,21 @@
         }
       },
       "draw": {
-        "Point": "Point",
-        "LineString": "Ligne",
-        "Polygon": "Polygone",
-        "Circle": "Cercle",
-        "fill": "Remplissage",
-        "stroke": "Contour",
-        "radius": "Rayon",
-        "drawing": "Dessins",
-        "styleSelect": "Selectionner le style",
         "cancelColorPicker": "Annulé",
-        "delete": "Retirer les dessins de la carte",
-        "toggleMapTooltips": "Afficher les étiquettes",
+        "Circle": "Cercle",
+        "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
         "dialogTitle": "Étiquette",
-        "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin"
+        "delete": "Retirer les dessins de la carte",
+        "drawing": "Dessins",
+        "fill": "Remplissage",
+        "labels": "Étiquettes",
+        "LineString": "Ligne",
+        "Point": "Point",
+        "Polygon": "Polygone",
+        "radius": "Rayon",
+        "stroke": "Contour",
+        "styleSelect": "Sélectionner le style",
+        "toggleMapTooltips": "Afficher les étiquettes"
       },
       "network": {
         "online": {

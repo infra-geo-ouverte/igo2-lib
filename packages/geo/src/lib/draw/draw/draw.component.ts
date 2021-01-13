@@ -14,6 +14,8 @@ import {
     tryBindStoreLayer,
     tryAddLoadingStrategy,
     tryAddSelectionStrategy,
+    FeatureMotion,
+    FeatureStoreLoadingStrategy,
   } from '../../feature';
 
 import { LanguageService } from '@igo2/core';
@@ -68,7 +70,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         columns: [
             {
                 name: 'Drawing',
-                title: this.languageService.translate.instant('igo.geo.draw.drawing'),
+                title: this.languageService.translate.instant('igo.geo.draw.labels'),
                 valueAccessor: (feature: FeatureWithDraw) => {
                     return feature.properties.draw;
                 }
@@ -147,6 +149,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     public fillForm: string;
     public strokeForm: string;
     public toggleLabel: boolean;
+    public drawsPresence: boolean = false;
 
     public position: string = 'bottom';
     public form: FormGroup;
@@ -172,6 +175,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         this.createDrawPolygonControl();
         this.createDrawCircleControl();
         this.toggleDrawControl();
+        this.checkStoreCount();
     }
 
     /**
@@ -239,10 +243,13 @@ export class DrawComponent implements OnInit, OnDestroy {
         });
         tryBindStoreLayer(store, this.layer);
 
-        tryAddLoadingStrategy(store);
+        tryAddLoadingStrategy(store, new FeatureStoreLoadingStrategy({
+            motion: FeatureMotion.None
+          }));
 
         tryAddSelectionStrategy(store, new FeatureStoreSelectionStrategy({
           map: this.map,
+          motion: FeatureMotion.None,
           many: true
         }));
 
@@ -327,6 +334,7 @@ export class DrawComponent implements OnInit, OnDestroy {
                 this.drawLabel = label;
                 this.updateLabelOfOlGeometry(olGeometry, label);
                 this.onDrawEnd(olGeometry);
+                this.checkStoreCount();
             });
         });
     }
@@ -436,6 +444,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     deleteDrawings() {
         this.store.deleteMany(this.selectedFeatures$.value);
+        this.checkStoreCount();
     }
 
     /**
@@ -451,6 +460,7 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
 
     onToggleTooltips(toggle: boolean) {
+        console.log('allo');
         this.drawStyleService.switchLabel();
         this.toggleLabel = !this.toggleLabel;
         this.changeStoreLayerStyle(this.toggleLabel);
@@ -458,6 +468,15 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     private updateLabelOfOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, label: string) {
         olGeometry.setProperties({_label: label}, true);
+    }
+
+    private checkStoreCount() {
+        console.log(this.store.count$.getValue());
+        if (this.store.count$.getValue() !== 0) {
+            this.drawsPresence = true;
+        } else {
+            this.drawsPresence = false;
+        }
     }
 }
 

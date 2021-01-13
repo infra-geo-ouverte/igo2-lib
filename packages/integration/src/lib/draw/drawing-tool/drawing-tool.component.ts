@@ -14,7 +14,7 @@ import { DrawState } from '../draw.state';
 @ToolComponent({
     name: 'draw',
     title: 'igo.integration.tools.draw',
-    icon: 'pencil'
+    icon: 'draw'
 })
 @Component({
     selector: 'igo-drawing-tool',

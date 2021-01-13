@@ -32,8 +32,8 @@
       </mat-slide-toggle>
     </div>
     <form class="igo-form" [formGroup]="form" >
-      <mat-label>{{'igo.geo.draw.styleSelect'| translate}}</mat-label>
       <div class="fill-color-picker mat-typography">
+        {{'igo.geo.draw.fill' | translate}} <mat-icon svgIcon="palette"></mat-icon>
         <mat-form-field appearance="outline">
           <mat-label>{{fillColor}}</mat-label>
           <input
@@ -51,7 +51,9 @@
             [value]="fillColor"
             (colorPickerSelect)="changeStoreLayerStyle(toggleLabel)">
         </mat-form-field>
+        <br>
 
+        {{'igo.geo.draw.stroke' | translate}} <mat-icon svgIcon="palette"></mat-icon>
         <mat-form-field appearance="outline">
           <mat-label>{{strokeColor}}</mat-label>
           <input
@@ -75,7 +77,8 @@
     <mat-divider></mat-divider>
 
     <div>
-      <button
+      <button 
+        *ngIf="drawsPresence"
         mat-icon-button
         color="warn"
         tooltip-position="below"

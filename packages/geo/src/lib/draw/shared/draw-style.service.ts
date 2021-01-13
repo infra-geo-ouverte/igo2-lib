@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as olstyle from 'ol/style';
+import OlPoint from 'ol/geom/Point';
 import { transform } from 'ol/proj';
 import { MapService } from '../../map/shared/map.service';
 
@@ -54,7 +55,15 @@ export class DrawStyleService {
 
     createDrawLayerStyle(feature, resolution, map, label?: boolean): olstyle.Style {
       let style;
+      let labelOffset: boolean = false;
       const proj = map.ol.getView().getProjection().getCode();
+      const geom = feature.getGeometry();
+
+      if (geom instanceof OlPoint) {
+        labelOffset = !labelOffset;
+      }
+
+
       if (feature.get('radius') !== undefined) {
         const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
         style = [
@@ -98,7 +107,8 @@ export class DrawStyleService {
                 color: 'black'
               }),
               font: '20px sans-serif',
-              overflow: true
+              overflow: true,
+              offsetY: labelOffset ? -15 : 0
             }),
             stroke: new olstyle.Stroke({
               color: this.strokeColor,

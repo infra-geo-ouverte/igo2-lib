@@ -558,20 +558,21 @@
         }
       },
       "draw": {
-        "Point": "Point",
-        "LineString": "Line",
-        "Polygon": "Polygon",
-        "Circle": "Circle",
-        "fill": "Fill",
-        "stroke": "Stroke",
-        "radius": "Radius",
-        "drawing": "Drawings",
-        "styleSelect": "Select style",
         "cancelColorPicker": "Cancel",
-        "delete": "Remove Drawings from map",
-        "toggleMapTooltips": "Show map tooltips",
+        "Circle": "Circle",
+        "dialogInstruction": "Enter your draw's label",
         "dialogTitle": "Label",
-        "dialogInstruction": "Enter your draw's label"
+        "delete": "Remove Drawings from map",
+        "drawing": "Draws",
+        "fill": "Fill",
+        "labels": "Labels",
+        "LineString": "Line",
+        "Point": "Point",
+        "Polygon": "Polygon",
+        "radius": "Radius",
+        "stroke": "Stroke",
+        "styleSelect": "Select style",
+        "toggleMapTooltips": "Show map tooltips"
       },
       "network": {
         "online": {

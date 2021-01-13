@@ -26,17 +26,18 @@ $slide-toggle-width: 60px;
   }
 }
 
+.igo-form {
+  padding: 10px;
+}
+
 .fill-color-picker {
-    text-align: left;
-    display: inline-block;
+    mat-form-field {
+      left: 10px
+    }
 }
 
 .stroke-color-picker {
-    padding: 10px;
-    text-align: center;
-}
-
-.igo-form {
-  padding: 10px;
-  text-align: left;
+    mat-form-field {
+      left: 10px
+    }
 }
