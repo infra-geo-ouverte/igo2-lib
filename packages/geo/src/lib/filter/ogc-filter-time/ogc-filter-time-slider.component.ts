@@ -126,6 +126,18 @@ export class OgcFilterTimeSliderComponent implements OnInit {
     this.playIcon = 'play-circle';
   }
 
+  resetFilter(event: any) {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    this.interval = undefined;
+    this.playIcon = 'play-circle';
+    this.slider.value = 1;
+    const _increment = '_increment';
+    const _emitInputEvent = '_emitInputEvent';
+    this.slider[_emitInputEvent]();
+  }
+
   handleSliderInput(matSliderChange) {
     if (matSliderChange) {
 
