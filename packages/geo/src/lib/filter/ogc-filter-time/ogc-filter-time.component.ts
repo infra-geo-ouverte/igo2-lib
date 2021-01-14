@@ -102,7 +102,7 @@ export class OgcFilterTimeComponent implements OnInit {
   constructor(public ogcFilterTimeService: OGCFilterTimeService) {}
 
   ngOnInit(){
-    this.currentFilter.sliderOptions.enabled = this.currentFilter.sliderOptions.enabled ? 
+    this.currentFilter.sliderOptions.enabled = this.currentFilter.sliderOptions.enabled ?
                                                   this.currentFilter.sliderOptions.enabled : this._defaultSliderModeEnabled;
     this.beginValue = this.parseFilter(this.handleMin());
     this.endValue = this.parseFilter(this.handleMax());
