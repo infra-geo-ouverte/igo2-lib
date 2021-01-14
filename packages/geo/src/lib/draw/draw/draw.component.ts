@@ -238,8 +238,11 @@ export class DrawComponent implements OnInit, OnDestroy {
             return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, true);
           },
           showInLayerList: true,
-          exportable: false,
-          browsable: false
+          exportable: true,
+          browsable: false,
+          workspace: {
+            enabled: false
+          },
         });
         tryBindStoreLayer(store, this.layer);
 
