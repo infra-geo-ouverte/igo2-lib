@@ -82,6 +82,10 @@
           "CSVsemicolon": "CSV (séparateur point-virgule)",
           "URL": "Lien externe"
         },
+        "gpx.error.poly": {
+          "title": "GPX en erreur",
+          "text": "Le format GPX ne permet pas de stocker les polygones"
+        },
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
