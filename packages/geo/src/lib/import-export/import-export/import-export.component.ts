@@ -553,7 +553,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           this.messageService.error(message, title, { timeOut: 20000 });
         }
       }
-      if (geomTypes.length === 0 || geomTypes.length === 0) {
+      if (geomTypes.length === 0) {
         this.loading$.next(false);
         const title = translate.instant('igo.geo.export.nothing.title');
         const message = translate.instant('igo.geo.export.nothing.text');
