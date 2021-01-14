@@ -250,13 +250,16 @@ export class OgcFilterFormComponent implements OnInit {
     this.refreshFilters();
   }
 
-  changeProperty(value: any, pos?: number) {
+  changeProperty(value: any, pos?: number, refreshFilter = true) {
     const detectedProperty = this.detectProperty(pos);
     if (detectedProperty) {
       this.datasource.options.ogcFilters.interfaceOgcFilters.find(
         (f) => f.filterid === this.currentFilter.filterid
       )[detectedProperty] = value;
-      this.refreshFilters();
+
+      if ( refreshFilter ) {
+        this.refreshFilters();
+      }
     }
   }
 

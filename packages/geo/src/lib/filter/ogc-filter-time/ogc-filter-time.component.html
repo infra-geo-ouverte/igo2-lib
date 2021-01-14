@@ -1,24 +1,22 @@
 <div class="datetime-container">
 
-  <mat-slide-toggle [(ngModel)]="sliderMode">
-    slider Mode
+  <mat-slide-toggle 
+    *ngIf="this.currentFilter.sliderOptions.enabled"
+    [(ngModel)]="sliderMode"
+    (change)="modeChange($event)">
+    {{'igo.geo.filter.sliderModeTitle' | translate}}
   </mat-slide-toggle>
 
   <div class="slider-container" *ngIf="sliderMode">
-    <mat-slider
-      id="time-slider"
-      step="{{stepMilliseconds}}"
-      [min]="dateToNumber(handleDate(datasource.options.minDate))"
-      [max]="dateToNumber(handleDate(datasource.options.maxDate))"
-      [value]="dateToNumber(beginValue?beginValue:handleDate(datasource.options.minDate))"
-      [displayWith]="sliderDisplayWith"
-      (input)="handleSliderInput($event)"
-      thumbLabel
-      >
-    </mat-slider>
-    <button mat-icon-button color="primary" (click)="playFilter($event)">
-      <mat-icon svgIcon="{{playIcon}}"></mat-icon>
-    </button>
+    <igo-ogc-filter-time-slider
+      [begin]="beginValue"
+      [max]="this.restrictedToStep() ? this.maxDate : this.endValue"
+      [currentFilter]="currentFilter" 
+      [datasource]="datasource"
+      (changeProperty)="changePropertyByPass($event)"
+    >
+    </igo-ogc-filter-time-slider>
+    
   </div>
 
   <div *ngIf="!sliderMode">

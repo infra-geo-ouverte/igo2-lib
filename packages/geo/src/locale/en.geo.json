@@ -167,7 +167,8 @@
         "advancedOgcFilters": "Advanced filters",
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
-        "selectOperator": "Select an operator"
+        "selectOperator": "Select an operator",
+        "sliderModeTitle": "Time slider"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -421,7 +422,7 @@
         "endDate": "End Date",
         "startDate": "Start Date",
         "hour": "Hour",
-        "minute": "Minute"
+        "minute": "Minute"        
       },
       "spatialFilter": {
         "spatialFilter": "Spatial filter",
