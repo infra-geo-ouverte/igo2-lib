@@ -134,6 +134,10 @@ export class CatalogService {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
         const items = [];
+        if (capabilities.Service && capabilities.Service.Abstract && capabilities.Service.Abstract.length) {
+          catalog.abstract = capabilities.Service.Abstract;
+        }
+
         this.includeRecursiveItems(
           catalog,
           capabilities.Capability.Layer,
@@ -363,6 +367,13 @@ export class CatalogService {
       }
     }
 
+    let abstract;
+    if (layer.Abstract) {
+      abstract = layer.Abstract;
+    } else if (!layer.Abstract && catalog.abstract) {
+      abstract = catalog.abstract;
+    }
+
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
@@ -374,7 +385,8 @@ export class CatalogService {
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
-          abstract: layer.Abstract
+          abstract,
+          type: baseSourceOptions.type
         },
         legendOptions,
         tooltip: { type: catalog.tooltipType },
@@ -497,6 +509,13 @@ export class CatalogService {
       (pattern: string) => new RegExp(pattern)
     );
 
+    if (
+      capabilities.ServiceIdentification &&
+      capabilities.ServiceIdentification.Abstract &&
+      capabilities.ServiceIdentification.Abstract.length) {
+      catalog.abstract = capabilities.ServiceIdentification.Abstract;
+    }
+
     return layers
       .map((layer: any) => {
         let forcedTitle;
@@ -538,7 +557,13 @@ export class CatalogService {
           title: forcedTitle !== undefined ? forcedTitle : layer.Title,
           address: catalog.id,
           options: {
-            sourceOptions
+            sourceOptions,
+            metadata: {
+              url: undefined,
+              extern: undefined,
+              abstract: catalog.abstract,
+              type: baseSourceOptions.type
+            }
           }
         });
       })
@@ -553,6 +578,11 @@ export class CatalogService {
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
+
+    let abstract;
+    if (capabilities.serviceDescription && capabilities.serviceDescription.length) {
+      abstract = capabilities.serviceDescription;
+    }
 
     return layers
       .map((layer: any) => {
@@ -590,7 +620,13 @@ export class CatalogService {
           title: forcedTitle !== undefined ? forcedTitle : layer.name,
           address: catalog.id,
           options: {
-            sourceOptions
+            sourceOptions,
+            metadata: {
+              url: undefined,
+              extern: undefined,
+              abstract,
+              type: baseSourceOptions.type
+            }
           }
         });
       })
