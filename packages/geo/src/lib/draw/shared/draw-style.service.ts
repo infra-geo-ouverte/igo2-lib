@@ -15,11 +15,9 @@ export class DrawStyleService {
     private drawCounter: number = 1;
     private toggleLabel = true;
 
-
     constructor(
       private mapService: MapService
-    ) {
-    }
+    ) {}
 
     getFill(): string {
         return this.fillColor;
@@ -62,7 +60,6 @@ export class DrawStyleService {
       if (geom instanceof OlPoint) {
         labelOffset = !labelOffset;
       }
-
 
       if (feature.get('radius') !== undefined) {
         const coordinates = transform(feature.getGeometry().flatCoordinates, proj, 'EPSG:4326');
