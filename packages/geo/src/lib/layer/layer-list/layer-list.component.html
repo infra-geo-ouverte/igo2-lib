@@ -62,6 +62,7 @@
           step="5"
           [min]="0"
           [max]="100"
+          [value]="opacity"
           (input)="changeOpacity($event)"
           [matTooltip]="'igo.geo.layer.opacity' | translate"
           (click) = "$event.stopPropagation()"
