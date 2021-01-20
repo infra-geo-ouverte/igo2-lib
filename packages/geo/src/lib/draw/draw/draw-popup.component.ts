@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
+import { LanguageService } from '@igo2/core';
 
 @Component({
     selector: 'igo-draw-popup-component',
@@ -11,8 +12,11 @@ import { BehaviorSubject } from 'rxjs';
     public title: string;
     public message: string;
     onOk$: BehaviorSubject<string> = new BehaviorSubject('');
-    constructor(public dialog: MatDialogRef<DrawPopupComponent>) {
-        this.title = 'Label';
-        this.message = 'Veuillez entrer le label';
+    constructor(
+      private languageService: LanguageService,
+      public dialog: MatDialogRef<DrawPopupComponent>
+      ) {
+        this.title = this.languageService.translate.instant('igo.geo.draw.labels');
+        this.message = this.languageService.translate.instant('igo.geo.draw.dialogInstruction');
      }
   }

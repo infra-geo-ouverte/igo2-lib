@@ -463,7 +463,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
 
     onToggleTooltips(toggle: boolean) {
-        console.log('allo');
         this.drawStyleService.switchLabel();
         this.toggleLabel = !this.toggleLabel;
         this.changeStoreLayerStyle(this.toggleLabel);
@@ -474,7 +473,6 @@ export class DrawComponent implements OnInit, OnDestroy {
     }
 
     private checkStoreCount() {
-        console.log(this.store.count$.getValue());
         if (this.store.count$.getValue() !== 0) {
             this.drawsPresence = true;
         } else {
