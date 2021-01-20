@@ -194,7 +194,7 @@ export class WMSDataSource extends DataSource {
     let contentDependent = false;
     let projParam;
 
-    if (view?.extent && view?.projection && this.options.contentDependentLegend) {
+    if (view?.size && view?.extent && view?.projection && this.options.contentDependentLegend) {
       projParam = this.params.VERSION === '1.3.0' || this.params.VERSION === undefined ? 'CRS' : 'SRS';
       contentDependent = true;
     }
@@ -221,8 +221,8 @@ export class WMSDataSource extends DataSource {
       params.push(`SCALE=${view.scale}`);
     }
     if (contentDependent) {
-      params.push(`WIDTH=50`);
-      params.push(`HEIGHT=50`);
+      params.push(`WIDTH=${view.size[0]}`);
+      params.push(`HEIGHT=${view.size[1]}`);
       params.push(`BBOX=${view.extent.join(',')}`);
       params.push(`${projParam}=${view.projection}`);
     }

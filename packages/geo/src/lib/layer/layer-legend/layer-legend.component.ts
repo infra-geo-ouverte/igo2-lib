@@ -153,7 +153,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       resolution: this.layer.map.viewController.getResolution(),
       extent: this.layer.map.viewController.getExtent(),
       projection: this.layer.map.viewController.getOlProjection().getCode(),
-      scale: this.layer.map.viewController.getScale()
+      scale: this.layer.map.viewController.getScale(),
+      size: this.layer.map.ol.getSize()
     } as LegendMapViewOptions;
     this.updateLegend();
   }

@@ -86,6 +86,7 @@ export interface LegendOptions {
 
 export interface LegendMapViewOptions extends MapViewOptions{
   scale?: number;
+  size?: [number, number];
 }
 
 export interface ItemStyleOptions {
