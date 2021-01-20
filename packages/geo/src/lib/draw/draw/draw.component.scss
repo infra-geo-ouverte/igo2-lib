@@ -31,13 +31,23 @@ $slide-toggle-width: 60px;
 }
 
 .fill-color-picker {
-    mat-form-field {
-      left: 10px
-    }
+  display: flex;
+  justify-content: space-between;
+  mat-form-field {
+    margin: 10px;
+  }
+}
+
+.test {
+  line-height: 90px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .stroke-color-picker {
+  display: flex;
+  justify-content: space-between;
     mat-form-field {
-      left: 10px
+      margin: 10px;
     }
 }

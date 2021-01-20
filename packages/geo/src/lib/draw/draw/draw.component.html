@@ -33,7 +33,9 @@
     </div>
     <form class="igo-form" [formGroup]="form" >
       <div class="fill-color-picker mat-typography">
-        {{'igo.geo.draw.fill' | translate}} <mat-icon svgIcon="palette"></mat-icon>
+        <span class="test">
+          {{'igo.geo.draw.fill' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon> 
+        </span>
         <mat-form-field appearance="outline">
           <mat-label>{{fillColor}}</mat-label>
           <input
@@ -51,10 +53,14 @@
             [value]="fillColor"
             (colorPickerSelect)="changeStoreLayerStyle(toggleLabel)">
         </mat-form-field>
-        <br>
+      </div>
+      <br>
 
-        {{'igo.geo.draw.stroke' | translate}} <mat-icon svgIcon="palette"></mat-icon> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <mat-form-field appearance="outline">
+      <div class="stroke-color-picker mat-typography">
+        <span class="test">
+          {{'igo.geo.draw.stroke' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon> 
+        </span>
+        <mat-form-field class="stroke-color-picker-box" appearance="outline">
           <mat-label>{{strokeColor}}</mat-label>
           <input
             formControlName="stroke"
