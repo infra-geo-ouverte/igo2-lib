@@ -104,6 +104,7 @@
     "moment": "^2.24.0",
     "msal": "^1.4.0",
     "ngx-cacheable": "^1.0.9",
+    "ngx-color-picker": "^9.1.0",
     "ol": "^6.3.1",
     "ol-mapbox-style": "^6.1.2",
     "proj4": "^2.6.2",

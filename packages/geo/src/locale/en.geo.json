@@ -82,6 +82,10 @@
           "CSVsemicolon": "CSV (semicolon delimited)",
           "URL": "External link"
         },
+        "gpx.error.poly": {
+          "title": "GPX error",
+          "text": "GPX format do now allow polygon features"
+        },
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
@@ -556,6 +560,23 @@
           "delete.tooltip": "Delete",
           "modify.tooltip": "Modify"
         }
+      },
+      "draw": {
+        "cancelColorPicker": "Cancel",
+        "Circle": "Circle",
+        "dialogInstruction": "Enter your draw's label",
+        "dialogTitle": "Label",
+        "delete": "Remove Drawings from map",
+        "drawing": "Draws",
+        "fill": "Fill",
+        "labels": "Labels",
+        "LineString": "Line",
+        "Point": "Point",
+        "Polygon": "Polygon",
+        "radius": "Radius",
+        "stroke": "Stroke",
+        "styleSelect": "Select style",
+        "toggleMapTooltips": "Show map tooltips"
       },
       "network": {
         "online": {

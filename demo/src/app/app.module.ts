@@ -34,6 +34,7 @@ import { AppGeometryModule } from './geo/geometry/geometry.module';
 import { AppFeatureModule } from './geo/feature/feature.module';
 import { AppHoverModule } from './geo/hover/hover.module';
 import { AppMeasureModule } from './geo/measure/measure.module';
+import { AppDrawModule } from './geo/draw/draw.module';
 import { AppQueryModule } from './geo/query/query.module';
 import { AppCatalogModule } from './geo/catalog/catalog.module';
 import { AppSearchModule } from './geo/search/search.module';
@@ -88,6 +89,7 @@ import { AppComponent } from './app.component';
     AppFeatureModule,
     AppHoverModule,
     AppMeasureModule,
+    AppDrawModule,
     AppQueryModule,
     AppCatalogModule,
     AppSearchModule,

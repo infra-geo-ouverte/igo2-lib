@@ -1,0 +1,53 @@
+$slide-toggle-width: 60px;
+
+.draw-type-toggle {
+    padding: 10px;
+    text-align: center;
+  
+    mat-button-toggle-group {
+      width: 100%;
+  
+      mat-button-toggle {
+        width: 25%;
+      }
+    }
+}
+
+.draw-options {
+  overflow-x: hidden;
+
+  mat-slide-toggle {
+    width: 100%;
+    margin: 10px;
+
+    ::ng-deep .mat-slide-toggle-content {
+      width: calc(100% - #{$slide-toggle-width});
+    }
+  }
+}
+
+.igo-form {
+  padding: 10px;
+}
+
+.fill-color-picker {
+  display: flex;
+  justify-content: space-between;
+  mat-form-field {
+    margin: 10px;
+  }
+}
+
+.test {
+  line-height: 90px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.stroke-color-picker {
+  display: flex;
+  justify-content: space-between;
+    mat-form-field {
+      margin: 10px;
+    }
+}
