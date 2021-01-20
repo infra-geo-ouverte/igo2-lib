@@ -1,6 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
 
-
 import { AppDrawComponent } from './draw.component';
 
 const routes: Routes = [
