@@ -101,16 +101,20 @@ export class OgcFilterFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    const sFields = this.datasource.options.sourceFields.filter(
-      (sf) =>
-        sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters
-    );
-    sFields.map((sfs) => {
-      if (sfs.values) {
-        sfs.values.sort();
-      }
-    });
-    this.fields$.next(sFields);
+
+    if ( this.datasource.options.sourceFields) {
+      const sFields = this.datasource.options.sourceFields.filter(
+        (sf) =>
+          sf.excludeFromOgcFilters === undefined || !sf.excludeFromOgcFilters
+      );
+      sFields.map((sfs) => {
+        if (sfs.values) {
+          sfs.values.sort();
+        }
+      });
+      this.fields$.next(sFields);
+    }
+    
     this.updateFieldsList();
     this.selectedField$.next(
       this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)

@@ -140,9 +140,6 @@ export class AppOgcFilterComponent {
         outputFormat: undefined,
         outputFormatDownload: 'SHP' // based on service capabilities
       },
-      sourceFields: [
-        { name: 'date_observation', alias: 'Date de l\'observation', allowedOperatorsType: 'Time' as OgcFilterOperatorType }
-      ],
       ogcFilters: {
         enabled: true,
         editable: true,
