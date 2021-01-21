@@ -1,3 +1,4 @@
+import { TypeCatalogStrings } from '../../catalog';
 import { LayerOptions } from '../../layer/shared/layers/layer.interface';
 
 export interface MetadataOptions {
@@ -5,6 +6,8 @@ export interface MetadataOptions {
   extern?: boolean;
   abstract?: string;
   keywordList?: string[];
+  layerTitle?: string;
+  type?: TypeCatalogStrings;
 }
 
 export interface MetadataLayerOptions extends LayerOptions {

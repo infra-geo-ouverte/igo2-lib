@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, Inject, ViewEncapsulation } from '@angular/core';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { Layer } from '../../layer/shared/layers/layer';
 
@@ -33,10 +34,22 @@ export class MetadataButtonComponent {
   }
   private _color = 'primary';
 
-  constructor(private metadataService: MetadataService) {}
+  constructor(
+    private metadataService: MetadataService,
+    private dialog: MatDialog) {}
 
   openMetadata(metadata: MetadataOptions) {
-    this.metadataService.open(metadata);
+    if (metadata.extern) {
+      this.metadataService.open(metadata);
+    } else if (!metadata.extern && metadata.abstract) {
+      this.dialog.open(MetadataAbstractComponent, {
+        data: {
+          layerTitle: this.layer.title,
+          abstract: metadata.abstract,
+          type: metadata.type
+        }
+      });
+    }
   }
 
   get options(): MetadataLayerOptions {
@@ -45,4 +58,14 @@ export class MetadataButtonComponent {
     }
     return this.layer.options;
   }
+}
+
+@Component({
+  selector: 'igo-metadata-abstract',
+  templateUrl: './metadata-abstract.component.html',
+  styleUrls: ['./metadata-abstract.component.scss'],
+  encapsulation: ViewEncapsulation.None
+})
+export class MetadataAbstractComponent {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: MetadataOptions) {}
 }

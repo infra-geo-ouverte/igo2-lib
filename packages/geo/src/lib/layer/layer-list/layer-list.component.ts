@@ -30,6 +30,7 @@ import { LayerListControlsOptions } from '../layer-list-tool/layer-list-tool.int
 import { IgoMap } from '../../map/shared/map';
 import { Layer } from '../shared/layers/layer';
 import { LinkedProperties, LayersLink } from '../shared/layers/layer.interface';
+import { MatSliderChange } from '@angular/material/slider';
 
 // TODO: This class could use a clean up. Also, some methods could be moved ealsewhere
 @Component({
@@ -282,6 +283,10 @@ export class LayerListComponent implements OnInit, OnDestroy {
     this.change$$.unsubscribe();
     this.selectAllCheck$$.unsubscribe();
     this.layers$$.unsubscribe();
+  }
+
+  changeOpacity(event: MatSliderChange ){
+    this.opacity = event.value;
   }
 
   clearKeyword() {

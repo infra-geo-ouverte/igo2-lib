@@ -166,6 +166,11 @@ export class GeometryFormFieldInputComponent implements OnInit, OnDestroy, Contr
     } else {
       this.defaultDrawStyleRadius = null;
     }
+
+    if (this.ready === false) {
+      return;
+    }
+
     this.deactivateControl();
     this.createDrawControl();
     this.createModifyControl();

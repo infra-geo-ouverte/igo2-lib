@@ -82,6 +82,10 @@
           "CSVsemicolon": "CSV (séparateur point-virgule)",
           "URL": "Lien externe"
         },
+        "gpx.error.poly": {
+          "title": "GPX en erreur",
+          "text": "Le format GPX ne permet pas de stocker les polygones"
+        },
         "encoding": {
           "LATIN1": "LATIN-1",
           "UTF8": "UTF-8"
@@ -105,7 +109,7 @@
         "importClarifications": "Précisions",
         "importSizeMax": "La taille limite du fichier est de {{size}} Mo",
         "importFormatAuthorized": "Formats autorisés: geojson, kml, gpx, gml, shapefile",
-        "importShpZip": "Les shapefiles doivent être compressés (zippés)",
+        "importShpZip": "Les shapefiles doivent être compressés (zippés) ET leurs géométries doivent être en coordonnées Latitude Longitude (EPSG:4326/WGS84)",
         "other": "autre",
         "others": "autres",
         "projections": {
@@ -423,6 +427,7 @@
         "minute": "Minute"
       },
       "spatialFilter": {
+        "spatialFilter": "Filtre spatial",
         "predefined": "Zone Prédéfinie",
         "draw": "Dessin",
         "polygon": "Polygone",
@@ -440,7 +445,7 @@
         "removeLayer": "Retirer les résultats",
         "exportLayer": "Exporter les résultats",
         "clearForm": "Retirer le dessin",
-        "clearSearch": "Réinitialiser",
+        "clearSearch": "Réinitialiser les champs",
         "Address": "Adresses",
         "Thematics": "Thématiques",
         "searchResults": "Résultats de la recherche",
@@ -471,6 +476,7 @@
         "DirReg": "Directions régionales",
         "MRC": "MRC",
         "RegTour": "Régions touristiques",
+        "limites": "Limites administratives",
         "bornes": "Bornes sumi",
         "hydro": "Hydrographie",
         "routes": "Routes",
@@ -554,6 +560,23 @@
           "delete.tooltip": "Supprimer",
           "modify.tooltip": "Modifier"
         }
+      },
+      "draw": {
+        "cancelColorPicker": "Annulé",
+        "Circle": "Cercle",
+        "dialogInstruction": "Veuillez entrer l'étiquette de votre dessin",
+        "dialogTitle": "Étiquette",
+        "delete": "Retirer les dessins de la carte",
+        "drawing": "Dessins",
+        "fill": "Remplissage",
+        "labels": "Étiquettes",
+        "LineString": "Ligne",
+        "Point": "Point",
+        "Polygon": "Polygone",
+        "radius": "Rayon",
+        "stroke": "Contour",
+        "styleSelect": "Sélectionner le style",
+        "toggleMapTooltips": "Afficher les étiquettes"
       },
       "network": {
         "online": {

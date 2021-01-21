@@ -42,6 +42,7 @@
   <ng-content select="[igoLayerItemToolbar]"></ng-content>
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <button
+      class="opacity-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -61,7 +62,8 @@
           step="5"
           [min]="0"
           [max]="100"
-          [(ngModel)]="opacity"
+          [value]="opacity"
+          (input)="changeOpacity($event)"
           [matTooltip]="'igo.geo.layer.opacity' | translate"
           (click) = "$event.stopPropagation()"
           matTooltipShowDelay="500"
@@ -71,6 +73,7 @@
     </mat-menu>
 
     <button
+      class="up-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -83,6 +86,7 @@
     </button>
 
     <button
+      class="down-button"
       mat-icon-button
       color="primary"
       tooltip-position="below"
@@ -95,6 +99,7 @@
     </button>
 
     <button
+      class="delete-button"
       mat-icon-button
       color="warn"
       tooltip-position="below"
@@ -124,6 +129,7 @@
 
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <button
+      class="opacity-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -154,6 +160,7 @@
     </mat-menu>
 
     <button
+      class="up-button"
       color="primary"
       mat-icon-button
       tooltip-position="below"
@@ -166,6 +173,7 @@
     </button>
 
     <button
+      class="down-button"
       mat-icon-button
       color="primary"
       tooltip-position="below"
@@ -178,6 +186,7 @@
     </button>
 
     <button
+      class="eye-button"
       mat-icon-button
       color="primary"
       tooltip-position="below"
@@ -189,6 +198,7 @@
     </button>
 
     <button
+      class="delete-button"
       mat-icon-button
       color="warn"
       tooltip-position="below"
