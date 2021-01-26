@@ -2,18 +2,11 @@ import {
   Component,
   Input,
   ViewChild,
-  ElementRef,
   Output,
   EventEmitter,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { OgcFilterOperator } from '../../filter/shared/ogc-filter.enum';
 import { OGCFilterTimeService } from '../shared/ogc-filter-time.service';
-import {
-  OgcFilterableDataSourceOptions,
-  OgcFilterableDataSource
-} from '../shared/ogc-filter.interface';
 
 import * as moment_ from 'moment';
 import { MatSlider } from '@angular/material/slider';

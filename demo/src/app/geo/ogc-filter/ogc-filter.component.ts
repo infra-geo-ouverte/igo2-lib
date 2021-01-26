@@ -11,8 +11,7 @@ import {
   OgcFilterableDataSourceOptions,
   AnyBaseOgcFilterOptions,
   OgcFilterOperatorType,
-  OgcFilterDuringOptions,
-  TimeFilterType
+  OgcFilterDuringOptions
 } from '@igo2/geo';
 
 @Component({

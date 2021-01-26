@@ -1,7 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
-
-import olProjection from 'ol/proj/Projection';
-
+import { Injectable } from '@angular/core';
 import * as moment_ from 'moment';
 const moment = moment_;
 

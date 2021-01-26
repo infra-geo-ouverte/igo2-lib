@@ -114,7 +114,7 @@ export class OgcFilterFormComponent implements OnInit {
       });
       this.fields$.next(sFields);
     }
-    
+
     this.updateFieldsList();
     this.selectedField$.next(
       this.fields$.value.find((f) => f.name === this.currentFilter.propertyName)
