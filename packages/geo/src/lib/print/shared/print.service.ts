@@ -52,15 +52,24 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [20, 10, 20, 10];
-    const width = dimensions[0] - margins[3] - margins[1];
-    const height = dimensions[1] - margins[0] - margins[2];
+    const margins = [10, 10, 10, 10]; //modifier pour correspondre à normes MERN / dépends taille papier /top-bottom-left-right
+    const width = dimensions[0] - margins[3] - margins[2];
+    const height = dimensions[1] - margins[0] - margins[1];
     const size = [width, height];
 
     if (options.title !== undefined) {
-      this.addTitle(doc, options.title, dimensions[0]);
+      var titleSizeResults = [0,0];
+      titleSizeResults = this.getTitleSize(options.title,width,height,doc) // retour : taille(pt) et marge gauche (mm)
+      this.addTitle(doc, options.title, titleSizeResults[0] , margins[3]+titleSizeResults[1], titleSizeResults[0]*(25.4/72)); //modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
+      console.log(titleSizeResults[0])
+      //margins[0] = margins[0] + 10)
     }
-
+    if (options.subtitle !== undefined) {
+      var subtitleSizeResult = 0;
+      subtitleSizeResult = this.getSubTitleSize(options.subtitle,width,height,doc) // retour : taille(pt) et marge gauche (mm)
+      this.addSubTitle(doc, options.subtitle, titleSizeResults[0]*0.7,margins[3]+subtitleSizeResult,titleSizeResults[0]*1.7*(25.4/72)); //modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
+      margins[0] = margins[0] + titleSizeResults[0]*0.7*(25.4/72)
+    }
     if (options.showProjection === true || options.showScale === true) {
       this.addProjScale(
         doc,
@@ -91,6 +100,7 @@ export class PrintService {
       }
     );
 
+      
     return status$;
   }
 
@@ -227,23 +237,64 @@ export class PrintService {
     return status$;
   }
 
-  private addTitle(doc: jsPDF, title: string, pageWidth: number) {
+  getTitleSize(title: string, pageWidth: number, pageHeight: number,doc: jsPDF) {
     const pdfResolution = 96;
-    const titleSize = 32;
-    const titleWidth = ((titleSize * 25.4) / pdfResolution) * title.length;
+    const titleSize = Math.round(2*(pageHeight+145)*0.05)/2;
+
+    doc.setFont('Times');
+    doc.setFontType('Bold');
+    doc.setFontSize(titleFontSize);
+    var width = doc.getTextWidth(title)
+
+    const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
+    const titleTailleMinimale = Math.round(2*(pageHeight+150)*0.037)/2;
+    var titleFontSize = 0;
 
     let titleMarginLeft;
-    if (titleWidth > pageWidth) {
+    if (titleWidth >= (pageWidth)) {
       titleMarginLeft = 0;
+      titleFontSize = Math.round(((pageWidth/title.length)*pdfResolution)/25.4);
+      //Si la formule pour trouver la taille de la police donne en bas de la taille minimale définie
+      if (titleFontSize < titleTailleMinimale) {
+        titleFontSize = titleTailleMinimale
+      }
     } else {
-      titleMarginLeft = (pageWidth - titleWidth) / 2;
+      titleMarginLeft = (pageWidth - titleWidth) / 2 ; //marge a gauche
+      titleFontSize = titleSize;
     }
-
-    doc.setFont('courier');
-    doc.setFontSize(32);
-    doc.text(title, titleMarginLeft, 15);
+    return [titleFontSize,titleMarginLeft];
   }
 
+  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number,doc: jsPDF) {
+    const subtitleSize = 0.7*Math.round(2*(pageHeight+145)*0.05)/2; //70% du font size du titre
+
+    doc.setFont('Times');
+    doc.setFontType('Bold');
+
+    const subtitleWidth = doc.getStringUnitWidth(subtitle) * subtitleSize / doc.internal.scaleFactor;
+
+    let subtitleMarginLeft;
+    if (subtitleWidth >= (pageWidth)) {
+      subtitleMarginLeft = 0;
+    } else {
+      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ; //marge a gauche
+    }
+    return subtitleMarginLeft;
+  }
+
+  private addTitle(doc: jsPDF, title: string, titleFontSize: number, titleMarginLeft: number,titleMarginTop: number) {
+    doc.setFont('Times');
+    doc.setFontType('Bold');
+    doc.setFontSize(titleFontSize);
+    doc.text(title, titleMarginLeft, titleMarginTop); //3e param = marge en haut
+  }
+
+  private addSubTitle(doc: jsPDF, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number,subtitleMarginTop: number) {
+    doc.setFont('Times');
+    doc.setFontType();
+    doc.setFontSize(subtitleFontSize);
+    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop); //3e param = marge en haut
+  }
   /**
    * Add comment to the document
    * * @param  doc - pdf document
@@ -393,7 +444,10 @@ export class PrintService {
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
 
     let timeout;
-
+    console.log(map)
+    //const scaleline = document.getElementsByClassName('ol-scale-line');
+    const scaleline = map.ol.controls.array_[1];
+    console.log(scaleline)
     map.ol.once('rendercomplete', (event: any) => {
       const canvases = event.target
         .getViewport()
@@ -426,8 +480,9 @@ export class PrintService {
             'print'
           );
         }
-
         this.renderMap(map, mapSize, extent);
+        console.log("part_a")
+        //scaleline.setDpi();
         status$.next(status);
       });
 
@@ -455,7 +510,8 @@ export class PrintService {
             'print'
           );
         }
-
+        console.log("part_B")
+        //scaleline.setDpi();
         this.renderMap(map, mapSize, extent);
         status$.next(status);
       }, 200);
@@ -478,6 +534,7 @@ export class PrintService {
    * @param  scale - Indicate if scale need to be add. Default to false
    * @param  legend - Indicate if the legend of layers need to be download. Default to false
    * @param  title - Title to add for the map - Default to blank
+   * @param  subtitle - Subtitle to add for the map - Default to blank
    * @param  comment - Comment to add for the map - Default to blank
    * @param  doZipFile - Indicate if we do a zip with the file
    * @return Image file of the map with extension format given as parameter
@@ -490,10 +547,14 @@ export class PrintService {
     scale = false,
     legend = false,
     title = '',
+    subtitle = '',
     comment = '',
     doZipFile = true
   ) {
     const status$ = new Subject();
+    console.log(map)
+    
+   
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
@@ -536,10 +597,21 @@ export class PrintService {
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
+        // Ajuster en fonction de la longueur du titre
+
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
-        newContext.fillText(title, width / 2, 20);
+        //newContext.fillText(title, width / 2, 20);
+        newContext.fillText(width, width / 2, 20, width*0.9);
+      }
+      if (subtitle !== '') {
+        // Set font for title
+        // Ajuster en fonction de la longueur du titre
+        newContext.font = '26px Calibri';
+        positionHCanvas = 30;
+        newContext.textAlign = 'center';
+        newContext.fillText(width, width / 2, 20, width*0.9);
       }
       // Set font for next section
       newContext.font = '20px Calibri';
@@ -554,8 +626,9 @@ export class PrintService {
         );
         positionWProjScale += 200; // Width position change for scale position
       }
+
       // If scale need to be added to canvas
-      if (scale !== false) {
+      if (true) {
         const scaleText = translate.instant('igo.geo.printForm.scale');
         const mapScale = map.viewController.getScale(resolution);
         newContext.textAlign = 'start';
@@ -656,6 +729,7 @@ export class PrintService {
   }
 
   private renderMap(map, size, extent) {
+    map.ol.updateSize();
     map.ol.renderSync();
   }
 

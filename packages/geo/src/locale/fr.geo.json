@@ -266,7 +266,8 @@
         "showLegend": "Afficher la légende",
         "showProjection": "Afficher la projection",
         "showScale": "Afficher l'échelle",
-        "title": "Titre"
+        "title": "Titre",
+        "subtitle": "Sous-titre"
       },
       "directionsForm": {
         "start": "Début",
