@@ -52,23 +52,24 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [10, 10, 10, 10]; //modifier pour correspondre à normes MERN / dépends taille papier /top-bottom-left-right
+    const margins = [10, 10, 10, 10]; // modifier pour correspondre à normes MERN / dépends taille papier /top-bottom-left-right
     const width = dimensions[0] - margins[3] - margins[2];
     const height = dimensions[1] - margins[0] - margins[1];
     const size = [width, height];
+    let titleSizeResults = [0, 0];
 
     if (options.title !== undefined) {
-      var titleSizeResults = [0,0];
-      titleSizeResults = this.getTitleSize(options.title,width,height,doc) // retour : taille(pt) et marge gauche (mm)
-      this.addTitle(doc, options.title, titleSizeResults[0] , margins[3]+titleSizeResults[1], titleSizeResults[0]*(25.4/72)); //modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
-      console.log(titleSizeResults[0])
-      //margins[0] = margins[0] + 10)
+      titleSizeResults = this.getTitleSize(options.title, width, height, doc); // retour : taille(pt) et marge gauche (mm)
+      // modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
+      this.addTitle(doc, options.title, titleSizeResults[0], margins[3] + titleSizeResults[1], titleSizeResults[0] * (25.4 / 72));
     }
     if (options.subtitle !== undefined) {
-      var subtitleSizeResult = 0;
-      subtitleSizeResult = this.getSubTitleSize(options.subtitle,width,height,doc) // retour : taille(pt) et marge gauche (mm)
-      this.addSubTitle(doc, options.subtitle, titleSizeResults[0]*0.7,margins[3]+subtitleSizeResult,titleSizeResults[0]*1.7*(25.4/72)); //modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
-      margins[0] = margins[0] + titleSizeResults[0]*0.7*(25.4/72)
+      let subtitleSizeResult = 0;
+      const titleH = titleSizeResults[0];
+      subtitleSizeResult = this.getSubTitleSize(options.subtitle, width, height, doc); // retour : taille(pt) et marge gauche (mm)
+      // modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
+      this.addSubTitle(doc, options.subtitle, titleH * 0.7, margins[3] + subtitleSizeResult, titleH * 1.7 * (25.4 / 72));
+      margins[0] = margins[0] + titleSizeResults[0] * 0.7 * (25.4 / 72);
     }
     if (options.showProjection === true || options.showScale === true) {
       this.addProjScale(
@@ -100,7 +101,6 @@ export class PrintService {
       }
     );
 
-      
     return status$;
   }
 
@@ -237,36 +237,35 @@ export class PrintService {
     return status$;
   }
 
-  getTitleSize(title: string, pageWidth: number, pageHeight: number,doc: jsPDF) {
+  getTitleSize(title: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
     const pdfResolution = 96;
-    const titleSize = Math.round(2*(pageHeight+145)*0.05)/2;
-
+    const titleSize = Math.round(2 * (pageHeight + 145) * 0.05) / 2;
     doc.setFont('Times');
     doc.setFontType('Bold');
     doc.setFontSize(titleFontSize);
-    var width = doc.getTextWidth(title)
+    const width = doc.getTextWidth(title);
 
     const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
-    const titleTailleMinimale = Math.round(2*(pageHeight+150)*0.037)/2;
-    var titleFontSize = 0;
+    const titleTailleMinimale = Math.round( 2 * (pageHeight + 150 ) * 0.037) / 2;
+    let titleFontSize = 0;
 
     let titleMarginLeft;
     if (titleWidth >= (pageWidth)) {
       titleMarginLeft = 0;
-      titleFontSize = Math.round(((pageWidth/title.length)*pdfResolution)/25.4);
-      //Si la formule pour trouver la taille de la police donne en bas de la taille minimale définie
+      titleFontSize = Math.round(((pageWidth / title.length) * pdfResolution) / 25.4);
+      // Si la formule pour trouver la taille de la police donne en bas de la taille minimale définie
       if (titleFontSize < titleTailleMinimale) {
-        titleFontSize = titleTailleMinimale
+        titleFontSize = titleTailleMinimale;
       }
     } else {
-      titleMarginLeft = (pageWidth - titleWidth) / 2 ; //marge a gauche
+      titleMarginLeft = (pageWidth - titleWidth) / 2 ; // marge a gauche
       titleFontSize = titleSize;
     }
-    return [titleFontSize,titleMarginLeft];
+    return [titleFontSize, titleMarginLeft];
   }
 
-  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number,doc: jsPDF) {
-    const subtitleSize = 0.7*Math.round(2*(pageHeight+145)*0.05)/2; //70% du font size du titre
+  getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
+    const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% du font size du titre
 
     doc.setFont('Times');
     doc.setFontType('Bold');
@@ -277,23 +276,23 @@ export class PrintService {
     if (subtitleWidth >= (pageWidth)) {
       subtitleMarginLeft = 0;
     } else {
-      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ; //marge a gauche
+      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ; // marge a gauche
     }
     return subtitleMarginLeft;
   }
 
-  private addTitle(doc: jsPDF, title: string, titleFontSize: number, titleMarginLeft: number,titleMarginTop: number) {
+  private addTitle(doc: jsPDF, title: string, titleFontSize: number, titleMarginLeft: number, titleMarginTop: number) {
     doc.setFont('Times');
     doc.setFontType('Bold');
     doc.setFontSize(titleFontSize);
-    doc.text(title, titleMarginLeft, titleMarginTop); //3e param = marge en haut
+    doc.text(title, titleMarginLeft, titleMarginTop); // 3e param = marge en haut
   }
 
-  private addSubTitle(doc: jsPDF, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number,subtitleMarginTop: number) {
+  private addSubTitle(doc: jsPDF, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
     doc.setFont('Times');
     doc.setFontType();
     doc.setFontSize(subtitleFontSize);
-    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop); //3e param = marge en haut
+    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop); // 3e param = marge en haut
   }
   /**
    * Add comment to the document
@@ -444,10 +443,8 @@ export class PrintService {
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
 
     let timeout;
-    console.log(map)
-    //const scaleline = document.getElementsByClassName('ol-scale-line');
-    const scaleline = map.ol.controls.array_[1];
-    console.log(scaleline)
+    // const scaleline = document.getElementsByClassName('ol-scale-line');
+    // const scaleline = map.ol.controls.array_[1];
     map.ol.once('rendercomplete', (event: any) => {
       const canvases = event.target
         .getViewport()
@@ -481,8 +478,6 @@ export class PrintService {
           );
         }
         this.renderMap(map, mapSize, extent);
-        console.log("part_a")
-        //scaleline.setDpi();
         status$.next(status);
       });
 
@@ -510,8 +505,6 @@ export class PrintService {
             'print'
           );
         }
-        console.log("part_B")
-        //scaleline.setDpi();
         this.renderMap(map, mapSize, extent);
         status$.next(status);
       }, 200);
@@ -552,9 +545,6 @@ export class PrintService {
     doZipFile = true
   ) {
     const status$ = new Subject();
-    console.log(map)
-    
-   
     // const resolution = map.ol.getView().getResolution();
     this.activityId = this.activityService.register();
     const translate = this.languageService.translate;
@@ -602,8 +592,7 @@ export class PrintService {
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
-        //newContext.fillText(title, width / 2, 20);
-        newContext.fillText(width, width / 2, 20, width*0.9);
+        newContext.fillText(width, width / 2, 20, width * 0.9);
       }
       if (subtitle !== '') {
         // Set font for title
@@ -611,7 +600,7 @@ export class PrintService {
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
-        newContext.fillText(width, width / 2, 20, width*0.9);
+        newContext.fillText(width, width / 2, 20, width * 0.9);
       }
       // Set font for next section
       newContext.font = '20px Calibri';
