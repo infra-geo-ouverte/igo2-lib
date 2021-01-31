@@ -52,7 +52,7 @@ export class PrintService {
       doc.internal.pageSize.height
     ];
 
-    const margins = [10, 10, 10, 10]; // modifier pour correspondre à normes MERN / dépends taille papier /top-bottom-left-right
+    const margins = [10, 10, 10, 10];
     const width = dimensions[0] - margins[3] - margins[2];
     const height = dimensions[1] - margins[0] - margins[1];
     const size = [width, height];
@@ -242,7 +242,6 @@ export class PrintService {
     const titleSize = Math.round(2 * (pageHeight + 145) * 0.05) / 2;
     doc.setFont('Times');
     doc.setFontType('Bold');
-    doc.setFontSize(titleFontSize);
     const width = doc.getTextWidth(title);
 
     const titleWidth = doc.getStringUnitWidth(title) * titleSize / doc.internal.scaleFactor;
@@ -443,8 +442,6 @@ export class PrintService {
     const heightPixels = Math.round((size[1] * resolution) / 25.4);
 
     let timeout;
-    // const scaleline = document.getElementsByClassName('ol-scale-line');
-    // const scaleline = map.ol.controls.array_[1];
     map.ol.once('rendercomplete', (event: any) => {
       const canvases = event.target
         .getViewport()
@@ -592,7 +589,7 @@ export class PrintService {
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
-        newContext.fillText(width, width / 2, 20, width * 0.9);
+        newContext.fillText(title, width / 2, 20, width * 0.9);
       }
       if (subtitle !== '') {
         // Set font for title
@@ -600,7 +597,7 @@ export class PrintService {
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
-        newContext.fillText(width, width / 2, 20, width * 0.9);
+        newContext.fillText(subtitle, width / 2, 20, width * 0.9);
       }
       // Set font for next section
       newContext.font = '20px Calibri';
@@ -617,7 +614,7 @@ export class PrintService {
       }
 
       // If scale need to be added to canvas
-      if (true) {
+      if (scale !== false) {
         const scaleText = translate.instant('igo.geo.printForm.scale');
         const mapScale = map.viewController.getScale(resolution);
         newContext.textAlign = 'start';
