@@ -170,7 +170,8 @@
         "advancedOgcFilters": "Filtres avancés",
         "placeholder": "Saisir une valeur",
         "placeholderSnrc": "Ex: 21L14",
-        "selectOperator": "Choisir un opérateur"
+        "selectOperator": "Choisir un opérateur",
+        "sliderModeTitle": "Curseur temporel"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
