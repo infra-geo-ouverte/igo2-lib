@@ -53,21 +53,19 @@ export class PrintService {
     ];
 
     const margins = [10, 10, 10, 10];
-    const width = dimensions[0] - margins[3] - margins[2];
-    const height = dimensions[1] - margins[0] - margins[1];
+    const width = dimensions[0] - margins[3] - margins[1];
+    const height = dimensions[1] - margins[0] - margins[2];
     const size = [width, height];
     let titleSizeResults = [0, 0];
 
     if (options.title !== undefined) {
-      titleSizeResults = this.getTitleSize(options.title, width, height, doc); // retour : taille(pt) et marge gauche (mm)
-      // modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
+      titleSizeResults = this.getTitleSize(options.title, width, height, doc); // return : size(pt) and left margin (mm)
       this.addTitle(doc, options.title, titleSizeResults[0], margins[3] + titleSizeResults[1], titleSizeResults[0] * (25.4 / 72));
     }
     if (options.subtitle !== undefined) {
       let subtitleSizeResult = 0;
       const titleH = titleSizeResults[0];
-      subtitleSizeResult = this.getSubTitleSize(options.subtitle, width, height, doc); // retour : taille(pt) et marge gauche (mm)
-      // modifié pour utiliser width et height car on veut avoir les marges pour definir la position du titre aussi
+      subtitleSizeResult = this.getSubTitleSize(options.subtitle, width, height, doc); // return : size(pt) and left margin (mm)
       this.addSubTitle(doc, options.subtitle, titleH * 0.7, margins[3] + subtitleSizeResult, titleH * 1.7 * (25.4 / 72));
       margins[0] = margins[0] + titleSizeResults[0] * 0.7 * (25.4 / 72);
     }
@@ -252,19 +250,19 @@ export class PrintService {
     if (titleWidth >= (pageWidth)) {
       titleMarginLeft = 0;
       titleFontSize = Math.round(((pageWidth / title.length) * pdfResolution) / 25.4);
-      // Si la formule pour trouver la taille de la police donne en bas de la taille minimale définie
+      // If the formula to find the font size gives below the defined minimum size
       if (titleFontSize < titleTailleMinimale) {
         titleFontSize = titleTailleMinimale;
       }
     } else {
-      titleMarginLeft = (pageWidth - titleWidth) / 2 ; // marge a gauche
+      titleMarginLeft = (pageWidth - titleWidth) / 2 ;
       titleFontSize = titleSize;
     }
     return [titleFontSize, titleMarginLeft];
   }
 
   getSubTitleSize(subtitle: string, pageWidth: number, pageHeight: number, doc: jsPDF) {
-    const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% du font size du titre
+    const subtitleSize = 0.7 * Math.round(2 * (pageHeight + 145) * 0.05) / 2; // 70% of the title's font size
 
     doc.setFont('Times');
     doc.setFontType('Bold');
@@ -275,7 +273,7 @@ export class PrintService {
     if (subtitleWidth >= (pageWidth)) {
       subtitleMarginLeft = 0;
     } else {
-      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ; // marge a gauche
+      subtitleMarginLeft = (pageWidth - subtitleWidth) / 2 ;
     }
     return subtitleMarginLeft;
   }
@@ -284,14 +282,14 @@ export class PrintService {
     doc.setFont('Times');
     doc.setFontType('Bold');
     doc.setFontSize(titleFontSize);
-    doc.text(title, titleMarginLeft, titleMarginTop); // 3e param = marge en haut
+    doc.text(title, titleMarginLeft, titleMarginTop);
   }
 
   private addSubTitle(doc: jsPDF, subtitle: string, subtitleFontSize: number, subtitleMarginLeft: number, subtitleMarginTop: number) {
     doc.setFont('Times');
     doc.setFontType();
     doc.setFontSize(subtitleFontSize);
-    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop); // 3e param = marge en haut
+    doc.text(subtitle, subtitleMarginLeft, subtitleMarginTop);
   }
   /**
    * Add comment to the document
@@ -584,16 +582,15 @@ export class PrintService {
       // If a title need to be added to canvas
       if (title !== '') {
         // Set font for title
-        // Ajuster en fonction de la longueur du titre
-
+        // Adjust according to title length
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
         newContext.fillText(title, width / 2, 20, width * 0.9);
       }
       if (subtitle !== '') {
-        // Set font for title
-        // Ajuster en fonction de la longueur du titre
+        // Set font for subtitle
+        // Adjust according to title length
         newContext.font = '26px Calibri';
         positionHCanvas = 30;
         newContext.textAlign = 'center';
