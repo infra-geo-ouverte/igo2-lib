@@ -267,7 +267,8 @@
         "showLegend": "Show legend",
         "showProjection": "Show projection",
         "showScale": "Show scale",
-        "title": "Title"
+        "title": "Title",
+        "subtitle": "Subtitle"
       },
       "directionsForm": {
         "start": "Start",
