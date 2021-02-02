@@ -179,7 +179,7 @@ export class LayerContextDirective implements OnInit, OnDestroy {
         visible = false;
       }
     }
-    
+
     return visible;
   }
 }
