@@ -1,7 +1,5 @@
 @mixin igo-ogc-filter-time-slider-theming($theme) {
-    $primary: map-get($theme, primary);
-    @include mat-core();
-    
+    $primary: map-get($theme, primary);    
     $color: mat-palette($mat-yellow);
 
     .mat-slider-thumb-label {
@@ -9,4 +7,3 @@
         border-radius: 50% 50% 0 !important;
       }
   }
-  
