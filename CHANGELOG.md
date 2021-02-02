@@ -1,3 +1,13 @@
+## [1.6.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.0...1.6.1) (2021-02-02)
+
+
+### Bug Fixes
+
+* **layerContextDirective.computeLayerVisibilityFromUrl:** share link bug with layer id numeric ([#807](https://github.com/infra-geo-ouverte/igo2-lib/issues/807)) ([158a7a6](https://github.com/infra-geo-ouverte/igo2-lib/commit/158a7a60b9d826cbc310947ae8e82c6bf8c836ea))
+* **typo:** font-size is overwrited ([bb7e601](https://github.com/infra-geo-ouverte/igo2-lib/commit/bb7e60126e86ac8d01ad320f03fa6a4b74fbd09e))
+
+
+
 # [1.6.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.5.3...1.6.0) (2021-02-01)
 
 
