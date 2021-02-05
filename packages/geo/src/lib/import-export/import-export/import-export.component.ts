@@ -282,7 +282,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
     if (this.selectFirstProj) {
       if (this.projections$.value.length === 0) {
-        this.importForm.patchValue({ inputProj: {translateKey: 'nad83', alias: 'NAD83', code : 'EPSG:4326', zone: ''} });
+        this.importForm.patchValue({ inputProj: { translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4326', zone: '' } });
       } else {
         this.importForm.patchValue({ inputProj: this.projections$.value[0] });
       }
@@ -317,13 +317,13 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     const projections: InputProjections[] = [];
 
     if (this.projectionsConstraints.nad83) {
-      projections.push({translateKey: 'nad83', alias: 'NAD83', code : 'EPSG:4326', zone: ''});
+      projections.push({ translateKey: 'nad83', alias: 'NAD83', code: 'EPSG:4326', zone: '' });
     }
     if (this.projectionsConstraints.wgs84) {
-      projections.push({translateKey: 'wgs84', alias: 'WGS84', code : 'EPSG:4269', zone: ''});
+      projections.push({ translateKey: 'wgs84', alias: 'WGS84', code: 'EPSG:4269', zone: '' });
     }
     if (this.projectionsConstraints.webMercator) {
-      projections.push({translateKey: 'webMercator', alias: 'Web Mercator', code : 'EPSG:3857', zone: ''});
+      projections.push({ translateKey: 'webMercator', alias: 'Web Mercator', code: 'EPSG:3857', zone: '' });
     }
 
     if (this.projectionsConstraints.mtm) {
@@ -333,7 +333,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       for (let mtmZone = minZone; mtmZone <= maxZone; mtmZone++) {
         const code = mtmZone < 10 ? `EPSG:3218${mtmZone}` : `EPSG:321${80 + mtmZone}`;
-        projections.push({translateKey: 'mtm', alias: `MTM ${mtmZone}`, code, zone: `${mtmZone}` });
+        projections.push({ translateKey: 'mtm', alias: `MTM ${mtmZone}`, code, zone: `${mtmZone}` });
       }
     }
 
@@ -344,7 +344,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
 
       for (let utmZone = minZone; utmZone <= maxZone; utmZone++) {
         const code = utmZone < 10 ? `EPSG:3260${utmZone}` : `EPSG:326${utmZone}`;
-        projections.push({translateKey: 'utm', alias: `UTM ${utmZone}`, code, zone: `${utmZone}` });
+        projections.push({ translateKey: 'utm', alias: `UTM ${utmZone}`, code, zone: `${utmZone}` });
       }
     }
 
@@ -527,17 +527,50 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           );
         }
       }
-
-      this.exportService
-        .export(olFeatures, data.format, filename, data.encoding, this.map.projection)
-        .subscribe(
-          () => { },
-          (error: Error) => this.onFileExportError(error),
-          () => {
-            this.onFileExportSuccess();
-            this.loading$.next(false);
+      const translate = this.languageService.translate;
+      let geomTypes: { geometryType: string, features: any[] }[] = [];
+      if (data.format === ExportFormat.Shapefile || data.format === ExportFormat.GPX) {
+        olFeatures.forEach((olFeature) => {
+          const featureGeomType = olFeature.getGeometry().getType();
+          const currentGeomType = geomTypes.find(geomType => geomType.geometryType === featureGeomType);
+          if (currentGeomType) {
+            currentGeomType.features.push(olFeature);
+          } else {
+            geomTypes.push({ geometryType: featureGeomType, features: [olFeature] });
           }
-        );
+        });
+      } else {
+        geomTypes = [{ geometryType: '', features: olFeatures }];
+      }
+
+      if (data.format === ExportFormat.GPX) {
+        const gpxFeatureCnt = geomTypes.length;
+        geomTypes = geomTypes.filter(geomType => ['LineString', 'Point'].includes(geomType.geometryType));
+        const gpxFeatureCntPointOrPoly = geomTypes.length;
+        if (gpxFeatureCnt > gpxFeatureCntPointOrPoly) {
+          const title = translate.instant('igo.geo.export.gpx.error.poly.title');
+          const message = translate.instant('igo.geo.export.gpx.error.poly.text');
+          this.messageService.error(message, title, { timeOut: 20000 });
+        }
+      }
+      if (geomTypes.length === 0) {
+        this.loading$.next(false);
+        const title = translate.instant('igo.geo.export.nothing.title');
+        const message = translate.instant('igo.geo.export.nothing.text');
+        this.messageService.error(message, title, { timeOut: 20000 });
+      } else {
+        geomTypes.map(geomType =>
+          this.exportService
+            .export(geomType.features, data.format, filename + geomType.geometryType, data.encoding, this.map.projection)
+            .subscribe(
+              () => { },
+              (error: Error) => this.onFileExportError(error),
+              () => {
+                this.onFileExportSuccess();
+                this.loading$.next(false);
+              }
+            ));
+      }
     });
   }
 

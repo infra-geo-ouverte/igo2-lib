@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { SearchService } from './shared/search.service';
 import { provideSearchSourceService } from './shared/search-source-service.providers';
 import { provideDefaultIChercheSearchResultFormatter } from './shared/sources/icherche.providers';
 import { provideDefaultCoordinatesSearchResultFormatter } from './shared/sources/coordinates.providers';
@@ -34,6 +35,7 @@ export class IgoSearchModule {
     return {
       ngModule: IgoSearchModule,
       providers: [
+        SearchService,
         provideSearchSourceService(),
         provideDefaultIChercheSearchResultFormatter(),
         provideDefaultCoordinatesSearchResultFormatter(),

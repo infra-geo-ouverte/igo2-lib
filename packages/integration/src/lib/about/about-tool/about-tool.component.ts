@@ -4,6 +4,7 @@ import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
+import { AuthService } from '@igo2/auth';
 
 @ToolComponent({
   name: 'about',
@@ -35,11 +36,18 @@ export class AboutToolComponent {
     this.discoverTitleInLocale$ = of(value);
   }
 
+  @Input() trainingGuideURL;
 
   public version: Version;
-  private _html: string = 'igo.integration.about.html';
+  private _html: string = 'igo.integration.aboutTool.html';
 
-  constructor(configService: ConfigService) {
+  constructor(
+    public configService: ConfigService,
+    public auth: AuthService) {
     this.version = configService.getConfig('version');
+  }
+
+  openGuide() {
+    window.open(this.trainingGuideURL, '_blank');
   }
 }

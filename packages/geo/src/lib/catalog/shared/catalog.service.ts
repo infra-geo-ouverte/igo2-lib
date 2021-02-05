@@ -134,6 +134,10 @@ export class CatalogService {
     return this.getCatalogCapabilities(catalog).pipe(
       map((capabilities: any) => {
         const items = [];
+        if (capabilities.Service && capabilities.Service.Abstract && capabilities.Service.Abstract.length) {
+          catalog.abstract = capabilities.Service.Abstract;
+        }
+
         this.includeRecursiveItems(
           catalog,
           capabilities.Capability.Layer,
@@ -354,10 +358,26 @@ export class CatalogService {
       { params }
     ) as WMSDataSourceOptions;
 
+    let layerTitle;
+    if (catalog.forcedProperties) {
+      for (const property of catalog.forcedProperties) {
+        if (layer.Name === property.layerName && property.title) {
+          layerTitle = property.title;
+        }
+      }
+    }
+
+    let abstract;
+    if (layer.Abstract) {
+      abstract = layer.Abstract;
+    } else if (!layer.Abstract && catalog.abstract) {
+      abstract = catalog.abstract;
+    }
+
     const layerPrepare = {
       id: generateIdFromSourceOptions(sourceOptions),
       type: CatalogItemType.Layer,
-      title: layer.Title,
+      title: layerTitle !== undefined ? layerTitle : layer.Title,
       address: idParent,
       options: {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
@@ -365,7 +385,8 @@ export class CatalogService {
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
-          abstract: layer.Abstract
+          abstract,
+          type: baseSourceOptions.type
         },
         legendOptions,
         tooltip: { type: catalog.tooltipType },
@@ -480,7 +501,7 @@ export class CatalogService {
   }
 
   private getWMTSItems(
-    catalog: Catalog,
+    catalog,
     capabilities: { [key: string]: any }
   ): CatalogItemLayer[] {
     const layers = capabilities.Contents.Layer;
@@ -488,8 +509,23 @@ export class CatalogService {
       (pattern: string) => new RegExp(pattern)
     );
 
+    if (
+      capabilities.ServiceIdentification &&
+      capabilities.ServiceIdentification.Abstract &&
+      capabilities.ServiceIdentification.Abstract.length) {
+      catalog.abstract = capabilities.ServiceIdentification.Abstract;
+    }
+
     return layers
       .map((layer: any) => {
+        let forcedTitle;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.Title === property.layerName && property.title) {
+              forcedTitle = property.title;
+            }
+          }
+        }
         if (this.testLayerRegexes(layer.Identifier, regexes) === false) {
           return undefined;
         }
@@ -518,10 +554,16 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layer.Title,
+          title: forcedTitle !== undefined ? forcedTitle : layer.Title,
           address: catalog.id,
           options: {
-            sourceOptions
+            sourceOptions,
+            metadata: {
+              url: undefined,
+              extern: undefined,
+              abstract: catalog.abstract,
+              type: baseSourceOptions.type
+            }
           }
         });
       })
@@ -529,7 +571,7 @@ export class CatalogService {
   }
 
   private getArcGISRESTItems(
-    catalog: Catalog,
+    catalog,
     capabilities
   ): CatalogItemLayer[] {
     const layers = capabilities.layers;
@@ -537,8 +579,21 @@ export class CatalogService {
       (pattern: string) => new RegExp(pattern)
     );
 
+    let abstract;
+    if (capabilities.serviceDescription && capabilities.serviceDescription.length) {
+      abstract = capabilities.serviceDescription;
+    }
+
     return layers
       .map((layer: any) => {
+        let forcedTitle;
+        if (catalog.forcedProperties) {
+          for (const property of catalog.forcedProperties) {
+            if (layer.name === property.layerName && property.title) {
+              forcedTitle = property.title;
+            }
+          }
+        }
         if (this.testLayerRegexes(layer.id, regexes) === false) {
           return undefined;
         }
@@ -562,10 +617,16 @@ export class CatalogService {
         return ObjectUtils.removeUndefined({
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
-          title: layer.name,
+          title: forcedTitle !== undefined ? forcedTitle : layer.name,
           address: catalog.id,
           options: {
-            sourceOptions
+            sourceOptions,
+            metadata: {
+              url: undefined,
+              extern: undefined,
+              abstract,
+              type: baseSourceOptions.type
+            }
           }
         });
       })

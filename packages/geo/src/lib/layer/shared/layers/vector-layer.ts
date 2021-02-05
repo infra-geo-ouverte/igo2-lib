@@ -235,9 +235,9 @@ export class VectorLayer extends Layer {
   private customLoader(vectorSource, url, interceptor, extent, resolution, projection) {
     vectorSource.dispatchEvent({ type: 'vectorloading' });
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url);
+    xhr.open('GET', typeof url === 'function' ? url = url(extent, resolution, projection) : url);
     if (interceptor) {
-      interceptor.interceptXhr(xhr);
+      interceptor.interceptXhr(xhr, url);
     }
 
     const onError = () => {
