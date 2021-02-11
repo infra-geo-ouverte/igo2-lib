@@ -621,6 +621,8 @@ export class CatalogService {
           address: catalog.id,
           options: {
             sourceOptions,
+            minResolution: getResolutionFromScale(layer.maxScale),
+            maxResolution: getResolutionFromScale(layer.minScale),
             metadata: {
               url: undefined,
               extern: undefined,
