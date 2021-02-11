@@ -45,7 +45,7 @@ export class TileArcGISRestDataSource extends DataSource {
     if (!lyr) {
       return
     }
-    let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
+    let htmlString = '<table>';
 
     for (const lyrLegend of lyr.legend) {
       const src = `${this.options.url}/${lyr.layerId}/images/${

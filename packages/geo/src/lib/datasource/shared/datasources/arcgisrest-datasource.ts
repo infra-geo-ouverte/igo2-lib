@@ -66,7 +66,7 @@ export class ArcGISRestDataSource extends DataSource {
     if (!lyr) {
       return
     }
-    let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
+    let htmlString = '<table>';
 
     for (const lyrLegend of lyr.legend) {
       const modifiedUrl = this.options.url.replace(
