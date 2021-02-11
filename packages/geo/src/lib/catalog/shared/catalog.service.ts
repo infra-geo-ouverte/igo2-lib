@@ -574,7 +574,7 @@ export class CatalogService {
     catalog,
     capabilities
   ): CatalogItemLayer[] {
-    const layers = capabilities.layers;
+    const layers = capabilities.layers.filter(layer => layer.type === 'Feature Layer');
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
@@ -621,6 +621,8 @@ export class CatalogService {
           address: catalog.id,
           options: {
             sourceOptions,
+            minResolution: getResolutionFromScale(layer.maxScale),
+            maxResolution: getResolutionFromScale(layer.minScale),
             metadata: {
               url: undefined,
               extern: undefined,
