@@ -34,13 +34,17 @@ export class TileArcGISRestDataSource extends DataSource {
   }
 
   getLegend(): Legend[] {
+    const legendInfo = this.options.legendInfo;
     const legend = super.getLegend();
-    if (this.options.legendInfo === undefined || legend.length > 0) {
+    if (legendInfo === undefined || legend.length > 0) {
       return legend;
     }
 
     const id = parseInt(this.options.layer, 10);
-    const lyr = this.options.legendInfo.layers[id];
+    const lyr = legendInfo.layers.find(layer => layer.layerId === id)
+    if (!lyr) {
+      return
+    }
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
 
     for (const lyrLegend of lyr.legend) {

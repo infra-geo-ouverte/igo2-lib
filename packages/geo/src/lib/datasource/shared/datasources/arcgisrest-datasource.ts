@@ -62,7 +62,10 @@ export class ArcGISRestDataSource extends DataSource {
     }
 
     const id = parseInt(this.options.layer, 10);
-    const lyr = legendInfo.layers[id];
+    const lyr = legendInfo.layers.find(layer => layer.layerId === id)
+    if (!lyr) {
+      return
+    }
     let htmlString = '<table><tr><td>' + lyr.layerName + '</td></tr>';
 
     for (const lyrLegend of lyr.legend) {
