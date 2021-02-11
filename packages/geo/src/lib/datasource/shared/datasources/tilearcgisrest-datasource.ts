@@ -41,9 +41,9 @@ export class TileArcGISRestDataSource extends DataSource {
     }
 
     const id = parseInt(this.options.layer, 10);
-    const lyr = legendInfo.layers.find(layer => layer.layerId === id)
+    const lyr = legendInfo.layers.find(layer => layer.layerId === id);
     if (!lyr) {
-      return
+      return;
     }
     let htmlString = '<table>';
 
