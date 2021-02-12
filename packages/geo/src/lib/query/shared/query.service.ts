@@ -588,11 +588,11 @@ export class QueryService {
       case ImageArcGISRestDataSource:
       case TileArcGISRestDataSource:
         const tileArcGISRestDatasource = datasource as TileArcGISRestDataSource;
-        const deltaX = Math.abs(mapExtent[0]- mapExtent[2])
-        const deltaY = Math.abs(mapExtent[1]- mapExtent[3])
+        const deltaX = Math.abs(mapExtent[0] - mapExtent[2]);
+        const deltaY = Math.abs(mapExtent[1] - mapExtent[3]);
         const maxDelta = deltaX > deltaY ? deltaX : deltaY;
-        const clickBuffer = maxDelta * 0.005
-        const threshold = tileArcGISRestDatasource.options.queryPrecision ? tileArcGISRestDatasource.options.queryPrecision : clickBuffer
+        const clickBuffer = maxDelta * 0.005;
+        const threshold = tileArcGISRestDatasource.options.queryPrecision ? tileArcGISRestDatasource.options.queryPrecision : clickBuffer;
         const extent = olextent.buffer(
           olextent.boundingExtent([options.coordinates]),
           threshold

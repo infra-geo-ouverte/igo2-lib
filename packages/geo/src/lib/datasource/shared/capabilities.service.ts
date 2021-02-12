@@ -440,7 +440,7 @@ export class CapabilitiesService {
       timeFilter,
       attributions,
       sourceFields: arcgisOptions.fields,
-      queryTitle: arcgisOptions.displayField  
+      queryTitle: arcgisOptions.displayField
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }

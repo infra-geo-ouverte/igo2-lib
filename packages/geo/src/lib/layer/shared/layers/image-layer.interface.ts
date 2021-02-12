@@ -12,7 +12,7 @@ export interface ImageLayerOptions extends LayerOptions {
   source?:
     | WMSDataSource
     | ImageArcGISRestDataSource;
-  sourceOptions?: 
+  sourceOptions?:
     | WMSDataSourceOptions
     | ArcGISRestImageDataSourceOptions;
   tokenKey?: string;

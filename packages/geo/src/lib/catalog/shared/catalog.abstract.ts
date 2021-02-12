@@ -131,9 +131,9 @@ export class CatalogFactory {
         } else if (options.type === TypeCatalog[TypeCatalog.arcgisrest]) {
             catalog = new ArcGISRestCatalog(options, service);
         } else if (options.type === TypeCatalog[TypeCatalog.tilearcgisrest]) {
-            catalog = new TileOrImageArcGISRestCatalog(options, service,TypeCatalog.tilearcgisrest);
+            catalog = new TileOrImageArcGISRestCatalog(options, service, TypeCatalog.tilearcgisrest);
         } else if (options.type === TypeCatalog[TypeCatalog.imagearcgisrest]) {
-            catalog = new TileOrImageArcGISRestCatalog(options, service,TypeCatalog.imagearcgisrest);
+            catalog = new TileOrImageArcGISRestCatalog(options, service, TypeCatalog.imagearcgisrest);
         } else if (options.type === TypeCatalog[TypeCatalog.wmts]) {
             catalog = new WMTSCatalog(options, service);
         } else {

@@ -603,9 +603,9 @@ export class CatalogService {
           crossOrigin: catalog.setCrossOriginAnonymous
             ? 'anonymous'
             : undefined,
-          layer: layer.id as string,                
+          layer: layer.id as string,
           queryable: true,
-          queryFormat: "esrijson",
+          queryFormat: 'esrijson',
           matrixSet: catalog.matrixSet,
           optionsFromCapabilities: true,
           style: 'default'
