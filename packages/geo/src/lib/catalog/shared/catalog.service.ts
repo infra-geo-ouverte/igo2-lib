@@ -598,12 +598,14 @@ export class CatalogService {
           return undefined;
         }
         const baseSourceOptions = {
-          type: 'arcgisrest',
+          type: TypeCatalog[catalog.type],
           url: catalog.url,
           crossOrigin: catalog.setCrossOriginAnonymous
             ? 'anonymous'
             : undefined,
-          layer: layer.id as string,
+          layer: layer.id as string,                
+          queryable: true,
+          queryFormat: "esrijson",
           matrixSet: catalog.matrixSet,
           optionsFromCapabilities: true,
           style: 'default'
