@@ -574,7 +574,7 @@ export class CatalogService {
     catalog,
     capabilities
   ): CatalogItemLayer[] {
-    const layers = capabilities.layers.filter(layer => layer.type === undefined || layer.type === 'Feature Layer');
+    const layers = capabilities.layers.filter(layer => layer.type !== 'Feature Group');
     const regexes = (catalog.regFilters || []).map(
       (pattern: string) => new RegExp(pattern)
     );
