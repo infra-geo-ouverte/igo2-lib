@@ -13,7 +13,7 @@ import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 
 export class ImageLayer extends Layer {
-  public dataSource: | WMSDataSource | ImageArcGISRestDataSource;
+  public dataSource: WMSDataSource | ImageArcGISRestDataSource;
   public options: ImageLayerOptions;
   public ol: olLayerImage;
 
