@@ -563,7 +563,7 @@ export class PrintService {
       // Add height for title if defined
       height = title !== '' ? height + 30 : height;
       // Add height for title if defined
-      height = subtitle !== '' ? height + 30 : height; 
+      height = subtitle !== '' ? height + 30 : height;
       // Add height for projection or scale (same line) if defined
       height = projection !== false || scale !== false ? height + 30 : height;
       const positionHProjScale = height - 10;
