@@ -47,6 +47,7 @@ import { WfsWorkspace } from '../../workspace/shared/wfs-workspace';
 import { FeatureWorkspace } from '../../workspace/shared/feature-workspace';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { InputProjections, ProjectionsLimitationsOptions } from './import-export.interface';
+import { DownloadService } from '../../download/shared/download.service';
 
 @Component({
   selector: 'igo-import-export',
@@ -151,7 +152,8 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     private formBuilder: FormBuilder,
     private config: ConfigService,
     private cdRef: ChangeDetectorRef,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private downloadService: DownloadService
   ) {
     this.loadConfig();
     this.buildForm();
@@ -483,11 +485,16 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       if (
         data.format === ExportFormat.URL &&
         dSOptions.download &&
-        dSOptions.download.url
+        (dSOptions.download.url || dSOptions.download.dynamicUrl)
       ) {
         setTimeout(() => {
           // better look an feel
-          window.open(dSOptions.download.url, '_blank');
+          const url = dSOptions.download.url ||dSOptions.download.dynamicUrl
+          if (url.match(/service=wfs/gi)) {
+            this.downloadService.open(lay)
+          } else {
+            window.open(url , '_blank');
+          }
           this.loading$.next(false);
         }, 500);
         return;
@@ -693,7 +700,7 @@ export class ImportExportComponent implements OnDestroy, OnInit {
           formatsType.onlyUrl = true;
         } else if (
           layer.dataSource.options.download &&
-          layer.dataSource.options.download.url
+          (layer.dataSource.options.download.url || layer.dataSource.options.download.dynamicUrl)
         ) {
           formatsType.vectorAndUrl = true;
         } else if (layer instanceof VectorLayer) {
@@ -765,11 +772,6 @@ export class ImportExportComponent implements OnDestroy, OnInit {
     } else {
       this.formats$.next(strEnum(appliedformats));
     }
-
-
-
-
-
   }
 
   private validateListFormat(formats: string[]): string[] {
