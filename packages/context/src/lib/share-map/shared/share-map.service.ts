@@ -113,7 +113,7 @@ export class ShareMapService {
       context = `${contextKey}=${this.contextService.context$.value.uri}`;
     }
 
-    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}`;
+    let url = `${location.origin}${location.pathname}?${context}&${zoom}&${center}&${layersUrl}&${llc}&${addedLayersQueryParamsWms}&${llc}&${addedLayersQueryParamsWmts}&${addedLayersQueryParamsArcgisRest}&${addedLayersQueryParamsImageArcgisRest}&${addedLayersQueryParamsTileArcgisRest}`;
 
     for (let i = 0; i < 5; i++) {
       url = url.replace(/&&/g, '&');
@@ -133,10 +133,16 @@ export class ShareMapService {
       if (contextLayersID.indexOf(layer.id) === -1) {
         const linkUrl = encodeURIComponent((layer.dataSource.options as any).url);
         let addedLayer = '';
-        if (layer.dataSource.options.type === 'wms') {
-          addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
-        } else if (layer.dataSource.options.type === 'wmts') {
-          addedLayer = encodeURIComponent((layer.dataSource.options as any).layer);
+        switch (layer.dataSource.options.type.toLowerCase()) {
+          case 'wms':
+            addedLayer = encodeURIComponent((layer.dataSource.options as any).params.LAYERS);
+            break;
+          case 'wmts':
+          case 'arcgisrest':
+          case 'imagearcgisrest':
+          case 'tilearcgisrest':
+            addedLayer = encodeURIComponent((layer.dataSource.options as any).layer);
+            break;
         }
         const addedLayerPosition = `${addedLayer}:igoz${layer.zIndex}`;
 
