@@ -489,9 +489,9 @@ export class ImportExportComponent implements OnDestroy, OnInit {
       ) {
         setTimeout(() => {
           // better look an feel
-          const url = dSOptions.download.url ||dSOptions.download.dynamicUrl
+          const url = dSOptions.download.url || dSOptions.download.dynamicUrl;
           if (url.match(/service=wfs/gi)) {
-            this.downloadService.open(lay)
+            this.downloadService.open(lay);
           } else {
             window.open(url , '_blank');
           }
