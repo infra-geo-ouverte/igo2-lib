@@ -93,6 +93,9 @@ export class ShareMapService {
 
     const addedLayersQueryParamsWms = this.makeLayersByService(layers, contextLayersID, 'wms');
     const addedLayersQueryParamsWmts = this.makeLayersByService(layers, contextLayersID, 'wmts');
+    const addedLayersQueryParamsArcgisRest = this.makeLayersByService(layers, contextLayersID, 'arcgisrest');
+    const addedLayersQueryParamsImageArcgisRest = this.makeLayersByService(layers, contextLayersID, 'imagearcgisrest');
+    const addedLayersQueryParamsTileArcgisRest = this.makeLayersByService(layers, contextLayersID, 'tilearcgisrest');
 
     layersUrl = layersUrl.substr(0, layersUrl.length - 1);
 
@@ -126,9 +129,7 @@ export class ShareMapService {
   private makeLayersByService(layers: Layer[], contextLayersID: any[], typeService: string): string {
 
     const addedLayersByService = [];
-    for (const layer of layers.filter(
-      l => l.dataSource.options && (l.dataSource.options.type === typeService)
-    )) {
+    for (const layer of layers.filter(l => l.dataSource.options?.type === typeService)) {
       if (contextLayersID.indexOf(layer.id) === -1) {
         const linkUrl = encodeURIComponent((layer.dataSource.options as any).url);
         let addedLayer = '';
@@ -158,10 +159,39 @@ export class ShareMapService {
 
     let addedLayersQueryParams = '';
     if (addedLayersByService.length >= 1) {
+      let linkUrlKey;
+      let layersKey;
+      /*
       const linkUrlKey = (typeService === 'wms') ? this.route.options.wmsUrlKey :
         (typeService === 'wmts') ? this.route.options.wmtsUrlKey : '' ;
       const layersKey = (typeService === 'wms') ? this.route.options.wmsLayersKey :
         (typeService === 'wmts') ? this.route.options.wmtsLayersKey : '' ;
+*/
+      switch (typeService.toLowerCase()) {
+        case 'wms':
+          linkUrlKey = this.route.options.wmsUrlKey;
+          layersKey = this.route.options.wmsLayersKey;
+          break;
+        case 'wmts':
+          linkUrlKey = this.route.options.wmtsUrlKey;
+          layersKey = this.route.options.wmtsLayersKey;
+          break;
+        case 'arcgisrest':
+          linkUrlKey = this.route.options.arcgisUrlKey;
+          layersKey = this.route.options.arcgisLayersKey;
+          break;
+        case 'imagearcgisrest':
+          linkUrlKey = this.route.options.iarcgisUrlKey;
+          layersKey = this.route.options.iarcgisLayersKey;
+          break;
+        case 'tilearcgisrest':
+          linkUrlKey = this.route.options.tarcgisUrlKey;
+          layersKey = this.route.options.tarcgisLayersKey;
+          break;
+        default:
+          linkUrlKey = '';
+          layersKey = '';
+      }
 
       let linkUrlQueryParams = '';
       let layersQueryParams = '';
