@@ -91,8 +91,8 @@ export class WfsWorkspaceService {
       many: true,
       dragBox: true
     });
-    setRowsInMapExtent(true,layer.id, this.storageService)
-    setSelectedOnly(false,layer.id, this.storageService)
+    setRowsInMapExtent(true, layer.id, this.storageService);
+    setSelectedOnly(false, layer.id, this.storageService);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
