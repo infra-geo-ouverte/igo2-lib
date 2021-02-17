@@ -7,6 +7,7 @@ import { AnyDataSourceOptions } from '../datasource/shared/datasources/any-datas
 import { DataSourceOptions } from '../datasource/shared/datasources/datasource.interface';
 import { WMSDataSourceOptions } from '../datasource/shared/datasources/wms-datasource.interface';
 import { WMTSDataSourceOptions } from '../datasource/shared/datasources/wmts-datasource.interface';
+import { WFSDataSourceOptions } from '../datasource';
 
 /**
  * Generate a id from it's datasource options.
@@ -19,6 +20,7 @@ export function generateIdFromSourceOptions(options: DataSourceOptions): string 
     wmts: generateWMTSIdFromSourceOptions,
     xyz: generateXYZIdFromSourceOptions,
     feature: generateFeatureIdFromSourceOptions,
+    wfs: generateWfsIdFromSourceOptions,
     arcgisrest: generateArcgisRestIdFromSourceOptions,
     imagearcgisrest: generateArcgisRestIdFromSourceOptions,
     tilearcgisrest: generateArcgisRestIdFromSourceOptions,
@@ -73,6 +75,16 @@ export function generateFeatureIdFromSourceOptions(options: WMTSDataSourceOption
   return Md5.hashStr(chain) as string;
 }
 
+/**
+ * Generate a id from feature data source options
+ * @param options XYZ data source options
+ * @returns A md5 hash of the the url and layer
+ */
+export function generateWfsIdFromSourceOptions(options: WFSDataSourceOptions) {
+  if (!options.url || !options.params) { return generateId(options); }
+  const chain = 'wfs' + options.url + JSON.stringify(options.params);
+  return Md5.hashStr(chain) as string;
+}
 /**
  * Generate a id from ArcGIS Rest data source options
  * @param options ArcGIS Rest data source options
