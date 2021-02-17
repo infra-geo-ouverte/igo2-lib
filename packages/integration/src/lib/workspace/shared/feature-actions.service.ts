@@ -13,7 +13,11 @@ import {
   FeatureStoreSelectionStrategy,
   FeatureMotion,
   noElementSelected,
-  ExportOptions
+  ExportOptions,
+  getRowsInMapExtent,
+  setRowsInMapExtent,
+  getSelectedOnly,
+  setSelectedOnly
 } from '@igo2/geo';
 import { StorageService, StorageScope, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
@@ -38,10 +42,6 @@ export class FeatureActionsService implements OnDestroy {
 
   get zoomAuto(): boolean {
     return this.storageService.get('zoomAuto') as boolean;
-  }
-
-  get rowsInMapExtent(): boolean {
-    return this.storageService.get('rowsInMapExtent') as boolean;
   }
 
   constructor(
@@ -96,7 +96,7 @@ export class FeatureActionsService implements OnDestroy {
         checkbox: true,
         title: 'igo.integration.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
-        checkCondition: this.rowsInMapExtent,
+        checkCondition: getRowsInMapExtent(workspace.layer.id, this.storageService),
         handler: () => {
           const filterStrategy = workspace.entityStore.getStrategyOfType(
             EntityStoreFilterCustomFuncStrategy
@@ -106,11 +106,8 @@ export class FeatureActionsService implements OnDestroy {
           } else {
             filterStrategy.activate();
           }
-          this.storageService.set(
-            'rowsInMapExtent',
-            !this.storageService.get('rowsInMapExtent') as boolean,
-            StorageScope.SESSION
-          );
+          const layerId = workspace.layer.id
+          setRowsInMapExtent(!getRowsInMapExtent(layerId, this.storageService),layerId, this.storageService)
         }
       },
       {
@@ -118,7 +115,7 @@ export class FeatureActionsService implements OnDestroy {
         checkbox: true,
         title: 'igo.integration.workspace.selected.title',
         tooltip: 'igo.integration.workspace.selected.tooltip',
-        checkCondition: false,
+        checkCondition: getSelectedOnly(workspace.layer.id, this.storageService),
         handler: () => {
           const filterStrategy = workspace.entityStore.getStrategyOfType(
             EntityStoreFilterSelectionStrategy
@@ -128,6 +125,8 @@ export class FeatureActionsService implements OnDestroy {
           } else {
             filterStrategy.activate();
           }
+          const layerId = workspace.layer.id
+          setSelectedOnly(!getSelectedOnly(layerId, this.storageService),layerId, this.storageService)
         }
       },
       {

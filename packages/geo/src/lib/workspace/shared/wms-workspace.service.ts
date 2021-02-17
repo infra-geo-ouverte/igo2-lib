@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActionStore, EntityRecord, EntityStoreFilterCustomFuncStrategy, EntityStoreFilterSelectionStrategy, EntityStoreStrategyFuncOptions, EntityTableColumnRenderer, EntityTableTemplate } from '@igo2/common';
-import { StorageScope, StorageService } from '@igo2/core';
+import { StorageService } from '@igo2/core';
 import { skipWhile, take } from 'rxjs/operators';
 import { SourceFieldsOptionsParams, WMSDataSource } from '../../datasource';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -13,6 +13,7 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
+import { setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -149,7 +150,8 @@ export class WmsWorkspaceService {
       many: true,
       dragBox: true
     });
-    this.storageService.set('rowsInMapExtent', true, StorageScope.SESSION);
+    setRowsInMapExtent(true,layer.id, this.storageService)
+    setSelectedOnly(false,layer.id, this.storageService)
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
