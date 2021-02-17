@@ -11,7 +11,7 @@ export function getRowsInMapExtent(layerId, storageService): boolean {
   return storageService.get(`workspace.rowsInMapExtent.${layerId}`) as boolean;
 }
 
-export function setRowsInMapExtent(value,layerId, storageService) {
+export function setRowsInMapExtent(value, layerId, storageService) {
   storageService.set(`workspace.rowsInMapExtent.${layerId}`, value, StorageScope.SESSION);
 }
 
@@ -19,7 +19,7 @@ export function getSelectedOnly(layerId, storageService): boolean {
   return storageService.get(`workspace.selectedOnly.${layerId}`) as boolean;
 }
 
-export function setSelectedOnly(value,layerId, storageService) {
+export function setSelectedOnly(value, layerId, storageService) {
   storageService.set(`workspace.selectedOnly.${layerId}`, value, StorageScope.SESSION);
 }
 

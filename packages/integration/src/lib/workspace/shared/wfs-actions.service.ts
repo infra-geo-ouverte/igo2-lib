@@ -100,8 +100,8 @@ export class WfsActionsService implements OnDestroy  {
           } else {
             filterStrategy.activate();
           }
-          const layerId = workspace.layer.id
-          setRowsInMapExtent(!getRowsInMapExtent(layerId, this.storageService),layerId, this.storageService)
+          const layerId = workspace.layer.id;
+          setRowsInMapExtent(!getRowsInMapExtent(layerId, this.storageService), layerId, this.storageService);
         }
       },
       {
@@ -118,8 +118,8 @@ export class WfsActionsService implements OnDestroy  {
           } else {
             filterStrategy.activate();
           }
-          const layerId = workspace.layer.id
-          setSelectedOnly(!getSelectedOnly(layerId, this.storageService),layerId, this.storageService)
+          const layerId = workspace.layer.id;
+          setSelectedOnly(!getSelectedOnly(layerId, this.storageService), layerId, this.storageService);
         }
       },
       {
