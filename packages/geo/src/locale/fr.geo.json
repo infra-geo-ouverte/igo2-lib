@@ -50,6 +50,10 @@
         }
       },
       "export": {
+        "customList": {
+          "text": "Certaines couches sélectionnées ( {{value}} ) réduisent la liste des formats possible",
+          "title": "Liste restreinte de formats"
+        },
         "nothing": {
           "text": "Impossible d’exporter, donnée non valide ou aucune donnée sélectionnée.",
           "title": "Donnée non valide ou non présente"
