@@ -14,9 +14,7 @@ import {
   FeatureMotion,
   noElementSelected,
   ExportOptions,
-  getRowsInMapExtent,
   setRowsInMapExtent,
-  getSelectedOnly,
   setSelectedOnly
 } from '@igo2/geo';
 import { StorageService, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
@@ -77,7 +75,6 @@ export class FeatureActionsService implements OnDestroy {
         this.zoomAuto$.next(this.zoomAuto);
         this.handleZoomAuto(workspace);
       });
-    const layerId = workspace.layer.id;
     return [
       {
         id: 'zoomAuto',
@@ -109,7 +106,7 @@ export class FeatureActionsService implements OnDestroy {
             filterStrategy.activate();
           }
           this.rowsInMapExtentCheckCondition$.next(filterStrategy.active);
-          setRowsInMapExtent(filterStrategy.active, layerId, this.storageService);
+          setRowsInMapExtent(filterStrategy.active, this.storageService);
         }
       },
       {
@@ -128,7 +125,7 @@ export class FeatureActionsService implements OnDestroy {
             filterStrategy.activate();
           }
           this.selectOnlyCheckCondition$.next(filterStrategy.active);
-          setSelectedOnly(filterStrategy.active, layerId, this.storageService);
+          setSelectedOnly(filterStrategy.active, this.storageService);
         }
       },
       {

@@ -7,20 +7,20 @@ import { Feature } from '../../feature/shared/feature.interfaces';
 import { StorageScope } from '@igo2/core';
 
 
-export function getRowsInMapExtent(layerId, storageService): boolean {
-  return storageService.get(`workspace.rowsInMapExtent.${layerId}`) as boolean || true;
+export function getRowsInMapExtent(storageService): boolean {
+  return storageService.get(`workspace.rowsInMapExtent`) as boolean || true;
 }
 
-export function setRowsInMapExtent(value, layerId, storageService) {
-  storageService.set(`workspace.rowsInMapExtent.${layerId}`, value, StorageScope.SESSION);
+export function setRowsInMapExtent(value, storageService) {
+  storageService.set(`workspace.rowsInMapExtent`, value, StorageScope.SESSION);
 }
 
-export function getSelectedOnly(layerId, storageService): boolean {
-  return storageService.get(`workspace.selectedOnly.${layerId}`) as boolean || false;
+export function getSelectedOnly(storageService): boolean {
+  return storageService.get(`workspace.selectedOnly`) as boolean || false;
 }
 
-export function setSelectedOnly(value, layerId, storageService) {
-  storageService.set(`workspace.selectedOnly.${layerId}`, value, StorageScope.SESSION);
+export function setSelectedOnly(value, storageService) {
+  storageService.set(`workspace.selectedOnly`, value, StorageScope.SESSION);
 }
 
 export function mapExtentStrategyActiveToolTip(ws: WfsWorkspace | FeatureWorkspace): Observable<string> {

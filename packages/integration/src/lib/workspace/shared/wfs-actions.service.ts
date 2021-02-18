@@ -11,9 +11,7 @@ import {
   ExportOptions,
   OgcFilterWidget,
   OgcFilterableDataSource,
-  getRowsInMapExtent,
   setRowsInMapExtent,
-  getSelectedOnly,
   setSelectedOnly
 } from '@igo2/geo';
 import { StorageService, StorageServiceEvent, LanguageService, MediaService } from '@igo2/core';
@@ -76,7 +74,6 @@ export class WfsActionsService implements OnDestroy  {
         this.handleZoomAuto(workspace);
       }
       );
-    const layerId = workspace.layer.id;
     const actions = [
       {
         id: 'zoomAuto',
@@ -104,7 +101,7 @@ export class WfsActionsService implements OnDestroy  {
             filterStrategy.activate();
           }
           this.rowsInMapExtentCheckCondition$.next(filterStrategy.active);
-          setRowsInMapExtent(filterStrategy.active, layerId, this.storageService);
+          setRowsInMapExtent(filterStrategy.active, this.storageService);
         }
       },
       {
@@ -122,7 +119,7 @@ export class WfsActionsService implements OnDestroy  {
             filterStrategy.activate();
           }
           this.selectOnlyCheckCondition$.next(filterStrategy.active);
-          setSelectedOnly(filterStrategy.active, layerId, this.storageService);
+          setSelectedOnly(filterStrategy.active, this.storageService);
         }
       },
       {
