@@ -19,7 +19,7 @@ import {
   getSelectedOnly,
   setSelectedOnly
 } from '@igo2/geo';
-import { StorageService, StorageScope, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
+import { StorageService, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
 import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
@@ -33,6 +33,8 @@ export class FeatureActionsService implements OnDestroy {
     this.storageService.get('workspaceMaximize') as boolean
   );
 
+  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
@@ -75,7 +77,7 @@ export class FeatureActionsService implements OnDestroy {
         this.zoomAuto$.next(this.zoomAuto);
         this.handleZoomAuto(workspace);
       });
-
+    const layerId = workspace.layer.id;
     return [
       {
         id: 'zoomAuto',
@@ -96,7 +98,7 @@ export class FeatureActionsService implements OnDestroy {
         checkbox: true,
         title: 'igo.integration.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
-        checkCondition: getRowsInMapExtent(workspace.layer.id, this.storageService),
+        checkCondition: this.rowsInMapExtentCheckCondition$,
         handler: () => {
           const filterStrategy = workspace.entityStore.getStrategyOfType(
             EntityStoreFilterCustomFuncStrategy
@@ -106,8 +108,8 @@ export class FeatureActionsService implements OnDestroy {
           } else {
             filterStrategy.activate();
           }
-          const layerId = workspace.layer.id;
-          setRowsInMapExtent(!getRowsInMapExtent(layerId, this.storageService), layerId, this.storageService);
+          this.rowsInMapExtentCheckCondition$.next(filterStrategy.active);
+          setRowsInMapExtent(filterStrategy.active, layerId, this.storageService);
         }
       },
       {
@@ -115,7 +117,7 @@ export class FeatureActionsService implements OnDestroy {
         checkbox: true,
         title: 'igo.integration.workspace.selected.title',
         tooltip: 'igo.integration.workspace.selected.tooltip',
-        checkCondition: getSelectedOnly(workspace.layer.id, this.storageService),
+        checkCondition: this.selectOnlyCheckCondition$,
         handler: () => {
           const filterStrategy = workspace.entityStore.getStrategyOfType(
             EntityStoreFilterSelectionStrategy
@@ -125,8 +127,8 @@ export class FeatureActionsService implements OnDestroy {
           } else {
             filterStrategy.activate();
           }
-          const layerId = workspace.layer.id;
-          setSelectedOnly(!getSelectedOnly(layerId, this.storageService), layerId, this.storageService);
+          this.selectOnlyCheckCondition$.next(filterStrategy.active);
+          setSelectedOnly(filterStrategy.active, layerId, this.storageService);
         }
       },
       {

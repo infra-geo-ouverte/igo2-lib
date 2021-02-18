@@ -8,7 +8,7 @@ import { StorageScope } from '@igo2/core';
 
 
 export function getRowsInMapExtent(layerId, storageService): boolean {
-  return storageService.get(`workspace.rowsInMapExtent.${layerId}`) as boolean;
+  return storageService.get(`workspace.rowsInMapExtent.${layerId}`) as boolean || true;
 }
 
 export function setRowsInMapExtent(value, layerId, storageService) {
@@ -16,7 +16,7 @@ export function setRowsInMapExtent(value, layerId, storageService) {
 }
 
 export function getSelectedOnly(layerId, storageService): boolean {
-  return storageService.get(`workspace.selectedOnly.${layerId}`) as boolean;
+  return storageService.get(`workspace.selectedOnly.${layerId}`) as boolean || false;
 }
 
 export function setSelectedOnly(value, layerId, storageService) {

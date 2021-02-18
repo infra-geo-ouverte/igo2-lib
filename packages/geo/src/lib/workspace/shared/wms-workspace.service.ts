@@ -13,7 +13,7 @@ import { GeoWorkspaceOptions } from '../../layer/shared/layers/layer.interface';
 import { IgoMap } from '../../map';
 import { QueryableDataSourceOptions } from '../../query/shared/query.interfaces';
 import { WfsWorkspace } from './wfs-workspace';
-import { setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
+import { getRowsInMapExtent, getSelectedOnly, setRowsInMapExtent, setSelectedOnly } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -150,8 +150,8 @@ export class WmsWorkspaceService {
       many: true,
       dragBox: true
     });
-    setRowsInMapExtent(true, layer.id, this.storageService);
-    setSelectedOnly(false, layer.id, this.storageService);
+    setRowsInMapExtent(getRowsInMapExtent(layer.id, this.storageService), layer.id, this.storageService);
+    setSelectedOnly(getSelectedOnly(layer.id, this.storageService), layer.id, this.storageService);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);
