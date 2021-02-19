@@ -56,14 +56,14 @@ export class StorageService {
     }
     const currentValue = this.get(key, scope);
 
-    if (currentValue !== previousValue) {
-      this.storageChange$.next({
-        key, scope,
-        event: previousValue !== undefined ? StorageServiceEventEnum.MODIFIED : StorageServiceEventEnum.ADDED,
-        previousValue,
-        currentValue
-      });
-    }
+    this.storageChange$.next({
+      key, scope,
+      event: previousValue !== undefined ?
+        previousValue === currentValue ? StorageServiceEventEnum.RELOADED : StorageServiceEventEnum.MODIFIED :
+        StorageServiceEventEnum.ADDED,
+      previousValue,
+      currentValue
+    });
   }
 
   remove(key: string, scope: StorageScope = StorageScope.LOCAL) {

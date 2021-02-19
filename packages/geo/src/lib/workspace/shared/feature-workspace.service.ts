@@ -94,8 +94,6 @@ export class FeatureWorkspaceService {
       many: true,
       dragBox: true
     });
-    setRowsInMapExtent(getRowsInMapExtent(layer.id, this.storageService), layer.id, this.storageService);
-    setSelectedOnly(getSelectedOnly(layer.id, this.storageService), layer.id, this.storageService);
     store.addStrategy(loadingStrategy, true);
     store.addStrategy(inMapExtentStrategy, true);
     store.addStrategy(inMapResolutionStrategy, true);

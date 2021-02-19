@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, OnDestroy, Output } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import {
   Action,
@@ -10,17 +10,14 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   FeatureWorkspace,
   mapExtentStrategyActiveToolTip,
-  FeatureStoreSelectionStrategy,
-  FeatureMotion,
   noElementSelected,
   ExportOptions,
-  setRowsInMapExtent,
-  setSelectedOnly
 } from '@igo2/geo';
 import { StorageService, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
 import { map, skipWhile } from 'rxjs/operators';
 import { ToolState } from '../../tool/tool.state';
+import { handleZoomAuto } from './workspace.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +28,6 @@ export class FeatureActionsService implements OnDestroy {
     this.storageService.get('workspaceMaximize') as boolean
   );
 
-  selectOnlyCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  rowsInMapExtentCheckCondition$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   zoomAuto$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private storageChange$$: Subscription;
 
@@ -57,12 +52,24 @@ export class FeatureActionsService implements OnDestroy {
     }
   }
 
-  loadActions(workspace: FeatureWorkspace) {
-    const actions = this.buildActions(workspace);
+  loadActions(
+    workspace: FeatureWorkspace,
+    rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
+    selectOnlyCheckCondition$: BehaviorSubject<boolean>
+    ) {
+    const actions = this.buildActions(
+      workspace,
+      rowsInMapExtentCheckCondition$,
+      selectOnlyCheckCondition$
+      );
     workspace.actionStore.load(actions);
   }
 
-  buildActions(workspace: FeatureWorkspace): Action[] {
+  buildActions(
+    workspace: FeatureWorkspace,
+    rowsInMapExtentCheckCondition$: BehaviorSubject<boolean>,
+    selectOnlyCheckCondition$: BehaviorSubject<boolean>
+    ): Action[] {
     this.zoomAuto$.next(this.zoomAuto);
     this.storageChange$$ = this.storageService.storageChange$
       .pipe(
@@ -73,9 +80,8 @@ export class FeatureActionsService implements OnDestroy {
       )
       .subscribe(() => {
         this.zoomAuto$.next(this.zoomAuto);
-        this.handleZoomAuto(workspace);
+        handleZoomAuto(workspace, this.storageService);
       });
-    const layerId = workspace.layer.id;
     return [
       {
         id: 'zoomAuto',
@@ -84,7 +90,7 @@ export class FeatureActionsService implements OnDestroy {
         tooltip: 'igo.integration.workspace.zoomAuto.tooltip',
         checkCondition: this.zoomAuto$,
         handler: () => {
-          this.handleZoomAuto(workspace);
+          handleZoomAuto(workspace, this.storageService);
           this.storageService.set(
             'zoomAuto',
             !this.storageService.get('zoomAuto') as boolean
@@ -96,38 +102,16 @@ export class FeatureActionsService implements OnDestroy {
         checkbox: true,
         title: 'igo.integration.workspace.inMapExtent.title',
         tooltip: mapExtentStrategyActiveToolTip(workspace),
-        checkCondition: this.rowsInMapExtentCheckCondition$,
-        handler: () => {
-          const filterStrategy = workspace.entityStore.getStrategyOfType(
-            EntityStoreFilterCustomFuncStrategy
-          );
-          if (filterStrategy.active) {
-            filterStrategy.deactivate();
-          } else {
-            filterStrategy.activate();
-          }
-          this.rowsInMapExtentCheckCondition$.next(filterStrategy.active);
-          setRowsInMapExtent(filterStrategy.active, layerId, this.storageService);
-        }
+        checkCondition: rowsInMapExtentCheckCondition$,
+        handler: () => rowsInMapExtentCheckCondition$.next(!rowsInMapExtentCheckCondition$.value)
       },
       {
         id: 'selectedOnly',
         checkbox: true,
         title: 'igo.integration.workspace.selected.title',
         tooltip: 'igo.integration.workspace.selected.tooltip',
-        checkCondition: this.selectOnlyCheckCondition$,
-        handler: () => {
-          const filterStrategy = workspace.entityStore.getStrategyOfType(
-            EntityStoreFilterSelectionStrategy
-          );
-          if (filterStrategy.active) {
-            filterStrategy.deactivate();
-          } else {
-            filterStrategy.activate();
-          }
-          this.selectOnlyCheckCondition$.next(filterStrategy.active);
-          setSelectedOnly(filterStrategy.active, layerId, this.storageService);
-        }
+        checkCondition: selectOnlyCheckCondition$,
+        handler: () => selectOnlyCheckCondition$.next(!selectOnlyCheckCondition$.value)
       },
       {
         id: 'clearselection',
@@ -201,14 +185,5 @@ export class FeatureActionsService implements OnDestroy {
         }
       }
     ];
-  }
-
-  private handleZoomAuto(workspace: FeatureWorkspace) {
-    const zoomStrategy = workspace.entityStore.getStrategyOfType(
-      FeatureStoreSelectionStrategy
-    ) as FeatureStoreSelectionStrategy;
-    zoomStrategy.setMotion(
-      this.zoomAuto ? FeatureMotion.Default : FeatureMotion.None
-    );
   }
 }
