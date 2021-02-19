@@ -74,6 +74,7 @@ export class WfsActionsService implements OnDestroy  {
         this.handleZoomAuto(workspace);
       }
       );
+    const layerId = workspace.layer.id;
     const actions = [
       {
         id: 'zoomAuto',
@@ -101,7 +102,7 @@ export class WfsActionsService implements OnDestroy  {
             filterStrategy.activate();
           }
           this.rowsInMapExtentCheckCondition$.next(filterStrategy.active);
-          setRowsInMapExtent(filterStrategy.active, this.storageService);
+          setRowsInMapExtent(filterStrategy.active, layerId, this.storageService);
         }
       },
       {
@@ -119,7 +120,7 @@ export class WfsActionsService implements OnDestroy  {
             filterStrategy.activate();
           }
           this.selectOnlyCheckCondition$.next(filterStrategy.active);
-          setSelectedOnly(filterStrategy.active, this.storageService);
+          setSelectedOnly(filterStrategy.active, layerId, this.storageService);
         }
       },
       {

@@ -75,6 +75,7 @@ export class FeatureActionsService implements OnDestroy {
         this.zoomAuto$.next(this.zoomAuto);
         this.handleZoomAuto(workspace);
       });
+    const layerId = workspace.layer.id;
     return [
       {
         id: 'zoomAuto',
@@ -106,7 +107,7 @@ export class FeatureActionsService implements OnDestroy {
             filterStrategy.activate();
           }
           this.rowsInMapExtentCheckCondition$.next(filterStrategy.active);
-          setRowsInMapExtent(filterStrategy.active, this.storageService);
+          setRowsInMapExtent(filterStrategy.active, layerId, this.storageService);
         }
       },
       {
@@ -125,7 +126,7 @@ export class FeatureActionsService implements OnDestroy {
             filterStrategy.activate();
           }
           this.selectOnlyCheckCondition$.next(filterStrategy.active);
-          setSelectedOnly(filterStrategy.active, this.storageService);
+          setSelectedOnly(filterStrategy.active, layerId, this.storageService);
         }
       },
       {
