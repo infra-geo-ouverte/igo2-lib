@@ -11,7 +11,7 @@
     <ng-container *ngFor="let bundle of currentPushButtonGroup.computedButtons">
       <mat-button-toggle-group formControlName="buttons" class="mat-typography" appearance="legacy"
         vertical={{bundleIsVertical(bundle)}} multiple="true">
-        <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
+        <mat-button-toggle [ngStyle]="getButtonStyle(ogcPushButton)" [checked]="ogcPushButton.enabled"
           (change)="onButtonChange(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
           [matTooltip]="getToolTip(ogcPushButton)" matTooltipClass="material-tooltip"
           *ngFor="let ogcPushButton of bundle.buttons" [value]="ogcPushButton">{{ogcPushButton.title}}

@@ -18,6 +18,7 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { Rgba } from 'ngx-color-picker';
 
 @Component({
   selector: 'igo-ogc-filter-toggle-button',
@@ -100,7 +101,7 @@ export class OgcFilterToggleButtonComponent implements OnInit {
     return tt || '';
   }
 
-  getButtonColor(pb: OgcPushButton): {} {
+  getButtonStyle(pb: OgcPushButton): {} {
 
     let styles;
     if (pb.color) {
@@ -108,6 +109,11 @@ export class OgcFilterToggleButtonComponent implements OnInit {
         'background-color': pb.enabled ? `rgba(${pb.color})` : `rgba(255,255,255,0)`,
 
       };
+    } else {
+      styles = {
+        'background-color': pb.enabled ? `rgba(33,33,33,0.38)` : `rgba(255,255,255,0)`,
+        'color': pb.enabled ? `rgba(0,0,0,0.9)` : `rgba(33,33,33,0.38)`
+      }
     }
     return styles;
   }

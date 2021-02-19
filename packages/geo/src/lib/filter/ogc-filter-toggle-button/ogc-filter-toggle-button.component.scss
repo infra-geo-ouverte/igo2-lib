@@ -2,14 +2,24 @@
   .mat-button-toggle-group {
     margin: 5px 5px 5px 5px;
     flex-wrap: wrap;
+    box-shadow: none;
   }
-  
+
   .pushButtonGroups, .pushButtonSelector {
     text-align: center;
   }
 
-  .mat-button-toggle {
+  mat-button-toggle {
     display: inline-flex;
+    outline: auto;
+    margin: 5px;
+    white-space: normal;
+    height: 36px;
+    width: 150px;
+
+    ::ng-deep .mat-button-toggle-label-content {
+      line-height: unset;
+    }
   }
 
   ::ng-deep .material-tooltip {
