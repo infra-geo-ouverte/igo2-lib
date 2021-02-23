@@ -50,6 +50,10 @@
         }
       },
       "export": {
+        "customList": {
+          "text": "Some of the selected layers ( {{value}} ) limit the format's list",
+          "title": "Restricted list of formats"
+        },
         "nothing": {
           "text": "No feature could be exported.",
           "title": "Nothing to export"
