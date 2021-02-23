@@ -18,7 +18,6 @@ export interface StorageServiceEvent {
 export enum StorageServiceEventEnum {
   ADDED = 'Added',
   MODIFIED = 'Modified',
-  REMOVED = 'Removed',
-  RELOADED = 'Reloaded'
+  REMOVED = 'Removed'
 }
 
