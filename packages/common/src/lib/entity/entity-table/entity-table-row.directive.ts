@@ -111,10 +111,10 @@ export class EntityTableRowDirective {
   private scroll() {
     if (this._selected === true) {
       scrollIntoView(this.el.nativeElement, {
-        scrollMode: 'always',
+        scrollMode: 'if-needed',
         behavior: 'smooth',
         block: 'end',
-        inline: 'nearest',
+        inline: 'nearest'
       });
     }
   }
