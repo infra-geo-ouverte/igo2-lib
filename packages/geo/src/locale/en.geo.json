@@ -250,12 +250,12 @@
         "outputFormat": "Output format",
         "paperFormat": "Paper format",
         "paperFormats": {
-          "A0": "A0",
-          "A1": "A1",
-          "A2": "A2",
-          "A3": "A3",
-          "A4": "A4",
-          "A5": "A5",
+          "A0": "33.1 X 46.8\" (A0)",
+          "A1": "23.4 X 33.1\" (A1)",
+          "A2": "16.5 X 23.5\" (A2)",
+          "A3": "11.7 X 16.5\" (A3)",
+          "A4": "8.3  X 11.7\" (A4)",
+          "A5": "5.8  X 8.3\" (A5)",
           "Letter": "Letter",
           "Legal": "Legal"
         },
