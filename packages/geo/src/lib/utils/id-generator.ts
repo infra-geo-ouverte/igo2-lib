@@ -85,7 +85,8 @@ export function generateFeatureIdFromSourceOptions(options: WMTSDataSourceOption
  */
 export function generateWfsIdFromSourceOptions(options: WFSDataSourceOptions) {
   if (!options.url || !options.params) { return generateId(options); }
-  const chain = 'wfs' + options.url + JSON.stringify(options.params);
+  const url = standardizeUrl(options.url);
+  const chain = 'wfs' + url + JSON.stringify(options.params);
   return Md5.hashStr(chain) as string;
 }
 /**
