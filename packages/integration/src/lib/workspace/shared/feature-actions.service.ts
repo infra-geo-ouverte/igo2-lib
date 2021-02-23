@@ -11,7 +11,7 @@ import {
   FeatureWorkspace,
   mapExtentStrategyActiveToolTip,
   noElementSelected,
-  ExportOptions,
+  ExportOptions
 } from '@igo2/geo';
 import { StorageService, StorageServiceEvent, LanguageService, MediaService} from '@igo2/core';
 import { StorageState } from '../../storage/storage.state';
