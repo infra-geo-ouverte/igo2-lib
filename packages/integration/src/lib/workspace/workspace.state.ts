@@ -165,10 +165,10 @@ export class WorkspaceState implements OnDestroy {
   ngOnDestroy() {
     this.teardownWorkspaces();
     this.actionMaximize$$.map(a => a.unsubscribe());
-    if (this.rowsInMapExtentCheckCondition$$) { 
+    if (this.rowsInMapExtentCheckCondition$$) {
       this.selectOnlyCheckCondition$$.unsubscribe();
-    }    
-    if (this.selectOnlyCheckCondition$$) { 
+    }
+    if (this.selectOnlyCheckCondition$$) {
       this.selectOnlyCheckCondition$$.unsubscribe();
     }
   }
