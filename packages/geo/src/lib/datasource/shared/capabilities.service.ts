@@ -158,7 +158,13 @@ export class CapabilitiesService {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
     const arcgisOptions = this.http.get(baseUrl);
-    const legendInfo = this.http.get(legendUrl);
+    const legendInfo = this.http.get(legendUrl).pipe(
+      map((res: any) => res),
+      catchError((err) => {
+        console.log('No legend associated with this Tile Service');
+        return of(err);
+      })
+    );
 
     return forkJoin([arcgisOptions, legendInfo]).pipe(
       map((res: any) =>

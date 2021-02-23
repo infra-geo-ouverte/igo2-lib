@@ -1,3 +1,12 @@
+## [1.6.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.2...1.6.3) (2021-02-23)
+
+
+### Bug Fixes
+
+* **datasource:** standardize the URL when generating the id ([bb3fdba](https://github.com/infra-geo-ouverte/igo2-lib/commit/bb3fdba6de7557244e0a237d7e96e4a602856fe2))
+
+
+
 ## [1.6.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.1...1.6.2) (2021-02-15)
 
 
