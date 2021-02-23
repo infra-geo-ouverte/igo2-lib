@@ -27,6 +27,9 @@ export class WorkspaceState implements OnDestroy {
   );
   private actionMaximize$$: Subscription[] = [];
 
+  private rowsInMapExtentCheckCondition$$: Subscription;
+  private selectOnlyCheckCondition$$: Subscription;
+
   /** Subscription to the active workspace */
   private activeWorkspace$$: Subscription;
 
@@ -110,7 +113,7 @@ export class WorkspaceState implements OnDestroy {
         }
       });
 
-    this.rowsInMapExtentCheckCondition$.subscribe((rowsInMapExtent) => {
+    this.rowsInMapExtentCheckCondition$$ = this.rowsInMapExtentCheckCondition$.subscribe((rowsInMapExtent) => {
       this._store.stateView.all().map((wks: EntityRecord<Workspace>) => {
         if (!wks.entity.actionStore.empty) {
           const filterStrategy = wks.entity.entityStore.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
@@ -125,7 +128,7 @@ export class WorkspaceState implements OnDestroy {
       });
     });
 
-    this.selectOnlyCheckCondition$.subscribe((selectOnly) => {
+    this.selectOnlyCheckCondition$$ = this.selectOnlyCheckCondition$.subscribe((selectOnly) => {
       this._store.stateView.all().map((wks: EntityRecord<Workspace>) => {
         if (!wks.entity.actionStore.empty) {
           const filterStrategy = wks.entity.entityStore.getStrategyOfType(EntityStoreFilterSelectionStrategy);
@@ -162,6 +165,12 @@ export class WorkspaceState implements OnDestroy {
   ngOnDestroy() {
     this.teardownWorkspaces();
     this.actionMaximize$$.map(a => a.unsubscribe());
+    if (this.rowsInMapExtentCheckCondition$$) { 
+      this.selectOnlyCheckCondition$$.unsubscribe();
+    }    
+    if (this.selectOnlyCheckCondition$$) { 
+      this.selectOnlyCheckCondition$$.unsubscribe();
+    }
   }
 
   /**
