@@ -101,19 +101,28 @@ export class OgcFilterToggleButtonComponent implements OnInit {
     return tt || '';
   }
 
-  getButtonStyle(pb: OgcPushButton): {} {
+  // getButtonStyle(pb: OgcPushButton): {} {
 
+  //   let styles;
+  //   if (pb.color) {
+  //     styles = {
+  //       'background-color': pb.enabled ? `rgba(${pb.color})` : `rgba(255,255,255,0)`
+  //     };
+  //   } else {
+  //     styles = {
+  //       'background-color': pb.enabled ? 'accent': `rgba(255,255,255,0)`,
+  //       'color': pb.enabled ? `rgba(0,0,0,0.9)` : `rgba(33,33,33,0.38)`
+  //     }
+  //   }
+  //   return styles;
+  // }
+
+  getButtonColor(pb: OgcPushButton): {} {
     let styles;
-    if (pb.color) {
+    if (pb.color && pb.enabled) {
       styles = {
-        'background-color': pb.enabled ? `rgba(${pb.color})` : `rgba(255,255,255,0)`,
-
+        'background-color': `rgba(${pb.color})`
       };
-    } else {
-      styles = {
-        'background-color': pb.enabled ? `rgba(33,33,33,0.38)` : `rgba(255,255,255,0)`,
-        'color': pb.enabled ? `rgba(0,0,0,0.9)` : `rgba(33,33,33,0.38)`
-      }
     }
     return styles;
   }
