@@ -562,6 +562,8 @@ export class PrintService {
       const commentWidth = newContext.measureText(comment).width;
       // Add height for title if defined
       height = title !== '' ? height + 30 : height;
+      // Add height for title if defined
+      height = subtitle !== '' ? height + 30 : height;
       // Add height for projection or scale (same line) if defined
       height = projection !== false || scale !== false ? height + 30 : height;
       const positionHProjScale = height - 10;
@@ -592,9 +594,9 @@ export class PrintService {
         // Set font for subtitle
         // Adjust according to title length
         newContext.font = '26px Calibri';
-        positionHCanvas = 30;
+        positionHCanvas = 60;
         newContext.textAlign = 'center';
-        newContext.fillText(subtitle, width / 2, 20, width * 0.9);
+        newContext.fillText(subtitle, width / 2, 50, width * 0.9);
       }
       // Set font for next section
       newContext.font = '20px Calibri';
