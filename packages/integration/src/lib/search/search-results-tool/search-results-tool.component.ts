@@ -6,7 +6,7 @@ import {
   ElementRef,
   OnDestroy
 } from '@angular/core';
-import { Observable, BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
@@ -114,7 +114,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   public feature: Feature;
 
   public term = '';
+  public termSplitter;
   private searchTerm$$: Subscription;
+  private searchTermSplitter$$: Subscription;
 
   public settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
@@ -150,6 +152,14 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       (searchTerm: string) => {
         if (searchTerm !== undefined && searchTerm !== null) {
           this.term = searchTerm;
+        }
+      }
+    );
+
+    this.searchTermSplitter$$ = this.searchState.searchTermSplitter$.subscribe(
+      (termSplitter: string) => {
+        if (termSplitter !== undefined && termSplitter !== null) {
+          this.termSplitter = termSplitter;
         }
       }
     );
@@ -274,6 +284,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.topPanelState$$.unsubscribe();
     this.searchTerm$$.unsubscribe();
+    this.searchTermSplitter$$.unsubscribe();
     if (this.selectedOrResolution$$) {
       this.selectedOrResolution$$.unsubscribe();
     }
@@ -373,7 +384,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const igoList = this.elRef.nativeElement.querySelector('igo-list');
       let moreResults;
-      event.research.request.subscribe((source) => {
+
+      forkJoin(event.research.requests).subscribe((res: SearchResult[][]) => {
+        const source = [].concat.apply([], res);
         if (!source[0] || !source[0].source) {
           moreResults = null;
         } else if (source[0].source.getId() === 'icherche') {

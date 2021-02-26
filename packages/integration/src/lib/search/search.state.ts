@@ -12,6 +12,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SearchState {
 
+  readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
   readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);
