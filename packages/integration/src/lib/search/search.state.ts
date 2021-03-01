@@ -51,7 +51,7 @@ export class SearchState {
 
   /**
    * Activate custom strategy
-   * 
+   *
    */
   activateCustomFilterTermStrategy() {
     const strategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
@@ -62,7 +62,7 @@ export class SearchState {
 
   /**
    * Deactivate custom strategy
-   * 
+   *
    */
   deactivateCustomFilterTermStrategy() {
     const strategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
