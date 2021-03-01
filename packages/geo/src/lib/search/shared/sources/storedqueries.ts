@@ -26,7 +26,7 @@ import {
 
 import * as olformat from 'ol/format';
 import { LanguageService } from '@igo2/core';
-import { computeStringDiffPercentage } from '../search.utils';
+import { computeTermSimilarity } from '../search.utils';
 
 /**
  * StoredQueries search source
@@ -311,7 +311,7 @@ export class StoredQueriesSearchSource extends SearchSource
         title: data.properties.title,
         titleHtml: data.properties[title],
         icon: 'map-marker',
-        score: computeStringDiffPercentage(term.trim(), data.properties.title),
+        score: computeTermSimilarity(term.trim(), data.properties.title),
       }
     };
   }

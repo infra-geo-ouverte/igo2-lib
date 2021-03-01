@@ -13,7 +13,7 @@ import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService } from '@igo2/core';
-import { computeStringDiffPercentage } from '../search.utils';
+import { computeTermSimilarity } from '../search.utils';
 /**
  * Cadastre search source
  */
@@ -111,7 +111,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: numero,
-        score: computeStringDiffPercentage(term.trim(), numero),
+        score: computeTermSimilarity(term.trim(), numero),
         icon: 'map-marker'
       },
       data: {

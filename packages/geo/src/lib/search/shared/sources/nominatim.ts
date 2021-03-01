@@ -10,7 +10,7 @@ import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 import { NominatimData } from './nominatim.interfaces';
-import { computeStringDiffPercentage } from '../search.utils';
+import { computeTermSimilarity } from '../search.utils';
 
 /**
  * Nominatim search source
@@ -185,7 +185,7 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
         id,
         title: data.display_name,
         icon: 'map-marker',
-        score: computeStringDiffPercentage(term.trim(), data.display_name),
+        score: computeTermSimilarity(term.trim(), data.display_name),
       },
       data: {
         type: FEATURE,

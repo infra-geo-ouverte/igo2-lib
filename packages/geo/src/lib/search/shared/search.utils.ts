@@ -64,7 +64,7 @@ export function findDiff(str1: string, str2: string){
   return diff;
 }
 
-export function computeStringDiffPercentage(from, to): number {
+export function computeTermSimilarity(from, to): number {
   const fromToDiff = findDiff(from, to);
   const toFromDiff = findDiff(to, from);
   const totalDiff = fromToDiff + toFromDiff;
@@ -74,5 +74,5 @@ export function computeStringDiffPercentage(from, to): number {
     delta =  totalDiff.length / from.length * 100;
   }
 
-  return Math.floor(delta);
+  return 100 - Math.floor(delta);
 }
