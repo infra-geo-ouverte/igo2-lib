@@ -13,6 +13,7 @@ import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService } from '@igo2/core';
+import { computeStringDiffPercentage } from '../search.utils';
 /**
  * Cadastre search source
  */
@@ -66,7 +67,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     }
     return this.http
       .get(this.searchUrl, { params, responseType: 'text' })
-      .pipe(map((response: string) => this.extractResults(response)));
+      .pipe(map((response: string) => this.extractResults(response, term)));
   }
 
   private computeSearchRequestParams(
@@ -85,14 +86,14 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: string): SearchResult<Feature>[] {
+  private extractResults(response: string, term: string): SearchResult<Feature>[] {
     return response
       .split('<br />')
       .filter((lot: string) => lot.length > 0)
-      .map((lot: string) => this.dataToResult(lot));
+      .map((lot: string) => this.dataToResult(lot, term));
   }
 
-  private dataToResult(data: string): SearchResult<Feature> {
+  private dataToResult(data: string, term: string): SearchResult<Feature> {
     const lot = data.split(';');
     const numero = lot[0];
     const wkt = lot[7];
@@ -110,6 +111,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: numero,
+        score: computeStringDiffPercentage(term.trim(), numero),
         icon: 'map-marker'
       },
       data: {

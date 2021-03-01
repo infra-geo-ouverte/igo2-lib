@@ -26,6 +26,7 @@ import {
   IChercheReverseData,
   IChercheReverseResponse
 } from './icherche.interfaces';
+import { computeStringDiffPercentage } from '../search.utils';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -322,7 +323,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     this.options.params.page = params.get('page') || '1';
 
     return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
-      map((response: IChercheResponse) => this.extractResults(response)),
+      map((response: IChercheResponse) => this.extractResults(response, term)),
       catchError((err) => {
         err.error.toDisplay = true;
         err.error.title = this.languageService.translate.instant(
@@ -392,14 +393,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: IChercheResponse): SearchResult<Feature>[] {
+  private extractResults(response: IChercheResponse, term: string): SearchResult<Feature>[] {
     return response.features.map((data: IChercheData) => {
-      return this.formatter.formatResult(this.dataToResult(data, response));
+      return this.formatter.formatResult(this.dataToResult(data, term, response));
     });
   }
 
   private dataToResult(
     data: IChercheData,
+    term: string,
     response?: IChercheResponse
   ): SearchResult<Feature> {
     const properties = this.computeProperties(data);
@@ -432,6 +434,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
+        score: data.score ||  computeStringDiffPercentage(term.trim(), data.properties.nom),
         nextPage:
           response.features.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
