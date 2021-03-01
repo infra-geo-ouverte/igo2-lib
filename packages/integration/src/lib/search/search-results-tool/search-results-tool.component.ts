@@ -114,7 +114,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   public feature: Feature;
 
   public term = '';
-  public termSplitter;
+  public termSplitter = '|';
   private searchTerm$$: Subscription;
   private searchTermSplitter$$: Subscription;
 
@@ -164,8 +164,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       }
     );
 
-    for (const res of this.store.entities$.value) {
-      if (this.store.state.get(res).selected === true) {
+    for (const res of this.store.stateView.all$().value) {
+      if (this.store.state.get(res.entity).selected === true) {
         this.topPanelState = 'expanded';
       }
     }
