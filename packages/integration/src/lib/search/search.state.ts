@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
+import { EntityRecord, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreStrategyFuncOptions } from '@igo2/common';
 import { SearchResult, SearchSourceService, SearchSource } from '@igo2/geo';
 import { BehaviorSubject } from 'rxjs';
 
@@ -38,7 +38,39 @@ export class SearchState {
       .map((source: SearchSource) => (source.constructor as any).type);
   }
 
-  constructor(private searchSourceService: SearchSourceService) {}
+  constructor(private searchSourceService: SearchSourceService) {
+    this.store.addStrategy(this.createCustomFilterTermStrategy(), false);
+  }
+
+  private createCustomFilterTermStrategy(): EntityStoreFilterCustomFuncStrategy {
+    const filterClauseFunc = (record: EntityRecord<SearchResult>) => {
+      return record.entity.meta.score === 100;
+    };
+    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
+  }
+
+  /**
+   * Activate custom strategy
+   * 
+   */
+  activateCustomFilterTermStrategy() {
+    const strategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+    if (strategy !== undefined) {
+      strategy.activate();
+    }
+  }
+
+  /**
+   * Deactivate custom strategy
+   * 
+   */
+  deactivateCustomFilterTermStrategy() {
+    const strategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+    if (strategy !== undefined) {
+      strategy.deactivate();
+    }
+  }
+
 
   enableSearch() {
     this.searchDisabled$.next(false);
