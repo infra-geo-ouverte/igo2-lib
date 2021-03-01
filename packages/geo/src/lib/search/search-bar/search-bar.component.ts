@@ -406,7 +406,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const terms = this.termSplitter ?
+    const terms = this.termSplitter && this.term.match(new RegExp(this.termSplitter,"g")) ?
     term.split(this.termSplitter).filter((t) => t.length >= this.minLength ) : [term];
 
     if (!terms.length) {
