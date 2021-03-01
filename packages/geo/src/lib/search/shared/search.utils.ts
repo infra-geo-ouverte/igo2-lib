@@ -54,11 +54,12 @@ export function featureToSearchResult(
   };
 }
 
-export function findDiff(str1: string, str2: string){ 
-  let diff= "";
-  str2.split('').forEach((val, i) =>{
-    if (val != str1.charAt(i))
-      diff += val ;         
+export function findDiff(str1: string, str2: string){
+  let diff = '';
+  str2.split('').forEach((val, i) => {
+    if (val !== str1.charAt(i)) {
+      diff += val;
+    }
   });
   return diff;
 }
@@ -70,7 +71,7 @@ export function computeStringDiffPercentage(from, to): number {
 
   let delta = 0;
   if (totalDiff.length) {
-    delta =  totalDiff.length / from.length * 100
+    delta =  totalDiff.length / from.length * 100;
   }
 
   return Math.floor(delta);

@@ -37,7 +37,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public igoSearchPointerSummaryEnabled: boolean = false;
 
-  public termSplitter = "|";
+  public termSplitter = '|';
 
   public map = new IgoMap({
     overlay: true,
