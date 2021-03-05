@@ -415,7 +415,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     const researches = this.searchService.search(terms, {
       forceNA: this.forceNA
     });
-    researches.map((r: Research) => r.source).map((source) => {
+    this.researches$$ = researches.map((r: Research) => r.source).map((source) => {
       const currentResearch = researches.find((r) => r.source === source);
       return forkJoin(currentResearch.requests).subscribe((res: SearchResult[][]) => {
         const results = [].concat.apply([], res);
