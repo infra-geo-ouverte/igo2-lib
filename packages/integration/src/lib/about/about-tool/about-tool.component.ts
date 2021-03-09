@@ -36,10 +36,12 @@ export class AboutToolComponent {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  @Input() trainingGuideURL;
+  @Input() trainingGuide;
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
+
+  private baseUrl = 'https://testgeoegl.msp.gouv.qc.ca/apis/depot/projects/Documentation/files/';
 
   constructor(
     public configService: ConfigService,
@@ -48,6 +50,6 @@ export class AboutToolComponent {
   }
 
   openGuide() {
-    window.open(this.trainingGuideURL, '_blank');
+    window.open(this.baseUrl + this.trainingGuide, '_blank');
   }
 }
