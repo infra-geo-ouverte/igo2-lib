@@ -5,6 +5,7 @@ import { ConfigService, Version } from '@igo2/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { AuthService } from '@igo2/auth';
+import { HttpClient } from '@angular/common/http';
 
 @ToolComponent({
   name: 'about',
@@ -36,20 +37,31 @@ export class AboutToolComponent {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  @Input() trainingGuide;
+  public trainingGuideURL;
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
 
-  private baseUrl = 'https://testgeoegl.msp.gouv.qc.ca/apis/depot/projects/Documentation/files/';
+  private baseUrlProfils = '/apis/igo2/user/igo?';
+
+  private baseUrlGuide = '/apis/depot/projects/Documentation/files/';
 
   constructor(
     public configService: ConfigService,
-    public auth: AuthService) {
+    public auth: AuthService,
+    private http: HttpClient,) {
     this.version = configService.getConfig('version');
   }
 
+  ngOnInit() {
+    this.http.get(this.baseUrlProfils).subscribe((profil) => {
+      console.log(profil);
+      const recast = profil as any;
+      this.trainingGuideURL = recast.guide;
+    });
+  }
+
   openGuide() {
-    window.open(this.baseUrl + this.trainingGuide, '_blank');
+    window.open(this.baseUrlGuide + this.trainingGuideURL, '_blank');
   }
 }
