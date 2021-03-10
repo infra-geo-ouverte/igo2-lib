@@ -37,8 +37,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<void> {
-    const myHeader = new HttpHeaders();
-    myHeader.append('Content-Type', 'application/json');
+    const myHeader = new HttpHeaders({'Content-Type': 'application/json'});
 
     const body = JSON.stringify({
       username,
@@ -49,8 +48,7 @@ export class AuthService {
   }
 
   loginWithToken(token: string, type: string): Observable<void> {
-    const myHeader = new HttpHeaders();
-    myHeader.append('Content-Type', 'application/json');
+    const myHeader = new HttpHeaders({'Content-Type': 'application/json'});
 
     const body = JSON.stringify({
       token,
