@@ -18,14 +18,13 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
-import { Rgba } from 'ngx-color-picker';
 
 @Component({
-  selector: 'igo-ogc-filter-toggle-button',
-  templateUrl: './ogc-filter-toggle-button.component.html',
-  styleUrls: ['./ogc-filter-toggle-button.component.scss']
+  selector: 'igo-ogc-filter-selection',
+  templateUrl: './ogc-filter-selection.component.html',
+  styleUrls: ['./ogc-filter-selection.component.scss']
 })
-export class OgcFilterToggleButtonComponent implements OnInit {
+export class OgcFilterSelectionComponent implements OnInit {
 
   @Input() refreshFilters: () => void;
 
@@ -87,6 +86,7 @@ export class OgcFilterToggleButtonComponent implements OnInit {
       .subscribe(() => {
         this.applyFilters();
       });
+      console.log(this.datasource)
   }
 
   getToolTip(pb: OgcPushButton): string  {

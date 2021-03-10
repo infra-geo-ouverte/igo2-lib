@@ -1,4 +1,4 @@
-@mixin igo-ogc-filter-toggle-button-theming($theme) {
+@mixin igo-ogc-filter-selection-theming($theme) {
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $dark: mat-palette($mat-grey, 800, 700, 900);;
