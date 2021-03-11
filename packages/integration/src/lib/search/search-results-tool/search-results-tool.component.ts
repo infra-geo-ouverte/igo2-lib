@@ -6,7 +6,7 @@ import {
   ElementRef,
   OnDestroy
 } from '@angular/core';
-import { Observable, BehaviorSubject, Subscription, combineLatest } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription, combineLatest, forkJoin } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import olFeature from 'ol/Feature';
@@ -19,7 +19,8 @@ import {
   ToolComponent,
   FlexibleState,
   getEntityTitle,
-  FlexibleComponent
+  FlexibleComponent,
+  EntityState
 } from '@igo2/common';
 
 import {
@@ -38,7 +39,8 @@ import {
   getSelectedMarkerStyle,
   createOverlayMarkerStyle,
   computeOlFeaturesExtent,
-  featuresAreOutOfView
+  featuresAreOutOfView,
+  getMarkerStyle
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -70,6 +72,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private focusedOrResolution$$: Subscription;
   private selectedOrResolution$$: Subscription;
+  private showResultGeometries$$: Subscription;
   private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
     undefined
   );
@@ -118,6 +121,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   public settingsChange$ = new BehaviorSubject<boolean>(undefined);
 
+  public focusOrSelectChange$ = new BehaviorSubject<boolean>(undefined);
+
   public topPanelState$ = new BehaviorSubject<FlexibleState>('initial');
   private topPanelState$$: Subscription;
 
@@ -159,6 +164,31 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         this.topPanelState = 'expanded';
       }
     }
+
+    this.showResultGeometries$$ = combineLatest([
+      this.searchState.searchResultsGeometryEnabled$,
+      this.store.stateView.all$(),
+      this.focusOrSelectChange$
+    ]).subscribe((bunch: [boolean, { entity: SearchResult, state: EntityState }[], boolean]) => {
+      bunch[1].map(result => {
+        if (result.entity.meta.dataType === FEATURE && result.entity.data.geometry) {
+          if (bunch[0]) {
+            if (result.state.focused || result.state.focused === undefined) {
+              result.entity.data.meta.style = getMarkerStyle(result.entity.data);
+            } else {
+              result.entity.data.meta.style = getSelectedMarkerStyle(result.entity.data);
+            }
+            this.map.overlay.addFeature(result.entity.data as Feature, FeatureMotion.None);
+          } else {
+            if (this.store.state.get(result.entity).selected === true) {
+              return;
+            }
+            this.map.overlay.removeFeature(result.entity.data as Feature);
+          }
+        }
+      }
+      );
+    });
 
     this.searchState.searchSettingsChange$.subscribe(() => {
       this.settingsChange$.next(true);
@@ -283,6 +313,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (this.isSelectedResultOutOfView$$) {
       this.isSelectedResultOutOfView$$.unsubscribe();
     }
+    if (this.showResultGeometries$$) {
+      this.showResultGeometries$$.unsubscribe();
+    }
   }
 
   /**
@@ -291,31 +324,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature
    */
   onResultFocus(result: SearchResult) {
+    this.focusOrSelectChange$.next(true);
     this.focusedResult$.next(result);
-    if (result.meta.dataType === FEATURE && result.data.geometry) {
-      if (
-        this.map.viewController.getZoom() < 11 &&
-        (result.data.geometry.type === 'MultiLineString' ||
-          result.data.geometry.type === 'LineString')
-      ) {
-        result.data.meta.style = createOverlayDefaultStyle({ strokeWidth: 10 });
-      } else if (
-        this.map.viewController.getZoom() < 11 &&
-        (result.data.geometry.type === 'MultiPolygon' ||
-          result.data.geometry.type === 'Polygon')
-      ) {
-        result.data.meta.style = createOverlayDefaultStyle({ strokeWidth: 2 });
-      } else if (
-        this.map.viewController.getZoom() > 10 &&
-        result.data.geometry.type !== 'Point'
-      ) {
-        result.data.meta.style = createOverlayDefaultStyle();
-      }
-      this.map.overlay.addFeature(result.data as Feature, FeatureMotion.None);
-    }
   }
 
   onResultUnfocus(result: SearchResult) {
+    this.focusedResult$.next(result);
     this.focusedResult$.next(undefined);
     if (result.meta.dataType !== FEATURE) {
       return;
@@ -324,7 +338,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (this.store.state.get(result).selected === true) {
       return;
     }
-    this.map.overlay.removeFeature(result.data as Feature);
   }
 
   /**
@@ -333,6 +346,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
+    this.focusedResult$.next(result);
     this.map.overlay.dataSource.ol.clear();
     this.tryAddFeatureToMap(result);
     this.searchState.setSelectedResult(result);

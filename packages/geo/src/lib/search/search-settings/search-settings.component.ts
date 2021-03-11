@@ -50,6 +50,7 @@ export class SearchSettingsComponent implements OnInit {
   }
 
   @Input() pointerSummaryEnabled: boolean = false;
+  @Input() searchResultsGeometryEnabled: boolean = false;
 
   /**
    * Event emitted when the enabled search source changes
@@ -60,6 +61,11 @@ export class SearchSettingsComponent implements OnInit {
    * Event emitted when the pointer summary is activated
    */
   @Output() pointerSummaryStatus = new EventEmitter<boolean>();
+
+  /**
+   * Event emitted when the show geometry summary is changed
+   */
+  @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -227,14 +233,13 @@ export class SearchSettingsComponent implements OnInit {
     event.stopPropagation();
   }
 
-  changePointerReverseSearch(event, fromTitleButton?: boolean) {
-    if (fromTitleButton) {
-      event.stopPropagation();
-      this.pointerSummaryEnabled = !this.pointerSummaryEnabled;
-    } else {
-      this.pointerSummaryEnabled = event.checked;
-    }
-
+  changePointerReverseSearch(event) {
+    this.pointerSummaryEnabled = event.checked;
     this.pointerSummaryStatus.emit(this.pointerSummaryEnabled);
+  }
+
+  changeSearchResultsGeometry(event) {
+    this.searchResultsGeometryEnabled = event.checked;
+    this.searchResultsGeometryStatus.emit(this.searchResultsGeometryEnabled);
   }
 }
