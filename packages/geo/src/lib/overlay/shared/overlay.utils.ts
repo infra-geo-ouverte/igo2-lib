@@ -75,9 +75,13 @@ export function createOverlayDefaultStyle({
 } = {}): olstyle.Style {
   const fillWithOpacity = color.slice(0);
   const strokeWithOpacity = color.slice(0);
-  strokeWithOpacity[3] = 1;
+  if (strokeWithOpacity.length === 3) {
+    strokeWithOpacity[3] = 1;
+  }
   if (fillOpacity) {
-    fillWithOpacity[3] = fillOpacity;
+    if (fillWithOpacity.length === 3) {
+      fillWithOpacity[3] = fillOpacity;
+    }
   }
   if (strokeOpacity) {
     strokeWithOpacity[3] = strokeOpacity;

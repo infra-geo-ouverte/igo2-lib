@@ -168,15 +168,17 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     this.showResultGeometries$$ = combineLatest([
       this.searchState.searchResultsGeometryEnabled$,
       this.store.stateView.all$(),
-      this.focusOrSelectChange$
-    ]).subscribe((bunch: [boolean, { entity: SearchResult, state: EntityState }[], boolean]) => {
+      this.focusOrSelectChange$,
+      this.map.viewController.resolution$
+    ]).subscribe((bunch: [boolean, { entity: SearchResult, state: EntityState }[], boolean, number]) => {
       bunch[1].map(result => {
         if (result.entity.meta.dataType === FEATURE && result.entity.data.geometry) {
           if (bunch[0]) {
             if (result.state.focused || result.state.focused === undefined) {
-              result.entity.data.meta.style = getMarkerStyle(result.entity.data, this.map.viewController.getZoom());
+              result.entity.data.meta.style = getMarkerStyle({feature: result.entity.data, currentZoom: this.map.viewController.getZoom()});
             } else {
-              result.entity.data.meta.style = getSelectedMarkerStyle(result.entity.data);
+              result.entity.data.meta.style = getSelectedMarkerStyle(
+                { feature: result.entity.data});
             }
             this.map.overlay.addFeature(result.entity.data as Feature, FeatureMotion.None);
           } else {
@@ -275,7 +277,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         abstractResult.meta.style =
           trigger === 'focused'
             ? createOverlayMarkerStyle()
-            : getSelectedMarkerStyle(abstractResult);
+            : getSelectedMarkerStyle({feature: abstractResult});
         abstractResult.meta.style.setZIndex(2000);
         this.map.overlay.addFeature(abstractResult, FeatureMotion.None);
         if (trigger === 'focused') {
@@ -470,9 +472,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (feature.geometry.type !== 'Point') {
-      feature.meta.style = createOverlayDefaultStyle();
-    }
+    feature.meta.style = getSelectedMarkerStyle({feature});
 
     this.map.overlay.addFeature(feature);
   }
