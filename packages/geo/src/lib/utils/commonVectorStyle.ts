@@ -39,7 +39,7 @@ export function getSelectedMarkerStyle(feature: Feature | olFeature): olstyle.St
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getMarkerStyle(feature: Feature | olFeature): olstyle.Style {
+export function getMarkerStyle(feature: Feature | olFeature, currentZoom?: number): olstyle.Style {
 
   const baseColor = [0, 255, 255];
 
@@ -58,6 +58,7 @@ export function getMarkerStyle(feature: Feature | olFeature): olstyle.Style {
     geometryType === 'MultiLineString'
   ) {
     return createOverlayDefaultStyle({
+      strokeWidth: currentZoom && currentZoom < 11 ? 5 : undefined,
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       strokeOpacity: 0.5,
       strokeColor: baseColor

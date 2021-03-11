@@ -174,7 +174,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         if (result.entity.meta.dataType === FEATURE && result.entity.data.geometry) {
           if (bunch[0]) {
             if (result.state.focused || result.state.focused === undefined) {
-              result.entity.data.meta.style = getMarkerStyle(result.entity.data);
+              result.entity.data.meta.style = getMarkerStyle(result.entity.data, [0, 255, 255], this.map.viewController.getZoom());
             } else {
               result.entity.data.meta.style = getSelectedMarkerStyle(result.entity.data);
             }
