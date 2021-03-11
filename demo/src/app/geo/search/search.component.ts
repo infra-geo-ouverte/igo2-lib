@@ -140,7 +140,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       return undefined;
     }
 
-    // Somethimes features have no geometry. It happens with some GetFeatureInfo
+    // Sometimes features have no geometry. It happens with some GetFeatureInfo
     if (layer.data.geometry === undefined) {
       return;
     }
