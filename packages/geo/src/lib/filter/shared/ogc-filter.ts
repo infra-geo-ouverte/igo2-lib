@@ -15,9 +15,9 @@ import {
   OgcInterfaceFilterOptions,
   OgcFilterableDataSourceOptions,
   OgcFiltersOptions,
-  IgoPushButton,
-  PushButtonGroup,
-  OgcPushButtonBundle
+  IgoOgcSelector,
+  SelectorGroup,
+  OgcSelectorBundle
 } from './ogc-filter.interface';
 import { OgcFilterOperatorType, OgcFilterOperator } from './ogc-filter.enum';
 import { SourceFieldsOptionsParams } from '../../datasource/shared/datasources/datasource.interface';
@@ -653,54 +653,54 @@ export class OgcFilterWriter {
     }
   }
 
-  private computeIgoPushButton(pushButtons: IgoPushButton): IgoPushButton {
+  private computeIgoPushButton(pushButtons: IgoOgcSelector): IgoOgcSelector {
     if (
-      pushButtons.groups.every((group) => group.computedButtons !== undefined)
+      pushButtons.groups.every((group) => group.computedSelectors !== undefined)
     ) {
       return pushButtons;
     }
-    let pb: IgoPushButton;
+    let selector: IgoOgcSelector;
     if (pushButtons.groups && pushButtons.bundles) {
       if (!pushButtons.bundles.every((bundle) => bundle.id !== undefined)) {
         throw new Error(
           'You must set an id for each of your pushButtons bundles'
         );
       }
-      pb = ObjectUtils.copyDeep(pushButtons);
-      pb.groups.forEach((group) => {
+      selector = ObjectUtils.copyDeep(pushButtons);
+      selector.groups.forEach((group) => {
         group.title = group.title ? group.title : group.name;
         group.enabled = group.enabled ? group.enabled : false;
-        group.computedButtons = ObjectUtils.copyDeep(
-          pb.bundles.filter((b) => group.ids.includes(b.id))
+        group.computedSelectors = ObjectUtils.copyDeep(
+          selector.bundles.filter((b) => group.ids.includes(b.id))
         );
       });
     } else if (!pushButtons.groups && pushButtons.bundles) {
-      pb = ObjectUtils.copyDeep(pushButtons);
-      pb.groups = [
+      selector = ObjectUtils.copyDeep(pushButtons);
+      selector.groups = [
         {
           title: 'group1',
           name: 'group1',
-          computedButtons: ObjectUtils.copyDeep(pb.bundles)
-        } as PushButtonGroup
+          computedSelectors: ObjectUtils.copyDeep(selector.bundles)
+        } as SelectorGroup
       ];
     } else {
-      pb = {
-        bundles: pushButtons as OgcPushButtonBundle[],
+      selector = {
+        bundles: pushButtons as OgcSelectorBundle[],
         groups: [
           {
             title: 'group1',
             name: 'group1',
-            computedButtons: ObjectUtils.copyDeep(
+            computedSelectors: ObjectUtils.copyDeep(
               pushButtons
-            ) as OgcPushButtonBundle[]
-          } as PushButtonGroup
+            ) as OgcSelectorBundle[]
+          } as SelectorGroup
         ]
       };
     }
-    if (!pb.groups.find((pbGroup) => pbGroup.enabled)) {
-      pb.groups[0].enabled = true;
+    if (!selector.groups.find((selectorGroup) => selectorGroup.enabled)) {
+      selector.groups[0].enabled = true;
     }
-    return pb;
+    return selector;
   }
 
   public handleOgcFiltersAppliedValue(
@@ -721,13 +721,14 @@ export class OgcFilterWriter {
       );
       const pushButtonBundle = ogcFilters.pushButtons.groups.find(
         (g) => g.enabled
-      ).computedButtons;
+      ).computedSelectors;
       const conditions = [];
       pushButtonBundle.map((buttonBundle) => {
         const bundleCondition = [];
-        buttonBundle.buttons
-          .filter((ogcpb) => ogcpb.enabled === true)
-          .forEach((enabledPb) => bundleCondition.push(enabledPb.filters));
+        const selectors = buttonBundle.selectors as any;
+        selectors
+          .filter((ogcselector) => ogcselector.enabled === true)
+          .forEach((enabledSelector) => bundleCondition.push(enabledSelector.filters));
         if (bundleCondition.length === 1) {
           conditions.push(bundleCondition[0]);
         } else if (bundleCondition.length > 1) {

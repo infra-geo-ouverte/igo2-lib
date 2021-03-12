@@ -8,8 +8,8 @@ import {
   OgcFilterableDataSource,
   IgoOgcFilterObject,
   OgcPushButton,
-  OgcPushButtonBundle,
-  PushButtonGroup
+  OgcSelectorBundle,
+  SelectorGroup
 
 } from '../../filter/shared/ogc-filter.interface';
 import { OgcFilterWriter } from '../../filter/shared/ogc-filter';
@@ -36,10 +36,10 @@ export class OgcFilterSelectionComponent implements OnInit {
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
 
-  get currentPushButtonGroup() {
+  get currentGroup() {
     return this.form.get('group').value;
   }
-  set currentPushButtonGroup(value) {
+  set currentGroup(value) {
     this.form.patchValue({ group: value });
   }
 
@@ -58,16 +58,33 @@ export class OgcFilterSelectionComponent implements OnInit {
     });
   }
 
-  getPushButtonsGroups(): PushButtonGroup[] {
-    return this.datasource.options.ogcFilters.pushButtons.groups;
+  getSelectorGroups(): SelectorGroup[] {
+    if (this.datasource.options.ogcFilters.pushButtons) {
+      return this.datasource.options.ogcFilters.pushButtons.groups;
+    } else if (this.datasource.options.ogcFilters.checkboxes) {
+      return this.datasource.options.ogcFilters.checkboxes.groups;
+    } else if (this.datasource.options.ogcFilters.radioButtons) {
+      return this.datasource.options.ogcFilters.radioButtons.groups;
+    }
   }
 
   ngOnInit() {
-    if (this.datasource.options.ogcFilters &&
-      this.datasource.options.ogcFilters.pushButtons) {
-      this.currentPushButtonGroup =
-        this.datasource.options.ogcFilters.pushButtons.groups.find(g => g.enabled) ||
-        this.datasource.options.ogcFilters.pushButtons.groups[0];
+    if (this.datasource.options.ogcFilters) {
+      if (this.datasource.options.ogcFilters.pushButtons) {
+        this.currentGroup =
+          this.datasource.options.ogcFilters.pushButtons.groups.find(g => g.enabled) ||
+          this.datasource.options.ogcFilters.pushButtons.groups[0];
+      }
+      if (this.datasource.options.ogcFilters.checkboxes) {
+        this.currentGroup =
+          this.datasource.options.ogcFilters.checkboxes.groups.find(g => g.enabled) ||
+          this.datasource.options.ogcFilters.checkboxes.groups[0];
+      }
+      if (this.datasource.options.ogcFilters.radioButtons) {
+        this.currentGroup =
+          this.datasource.options.ogcFilters.radioButtons.groups.find(g => g.enabled) ||
+          this.datasource.options.ogcFilters.radioButtons.groups[0];
+      }
     }
     this.applyFilters();
 
@@ -89,13 +106,13 @@ export class OgcFilterSelectionComponent implements OnInit {
       console.log(this.datasource)
   }
 
-  getToolTip(pb: OgcPushButton): string  {
+  getToolTip(selector): string  {
     let tt;
-    if (pb.tooltip) {
-      if (Array.isArray(pb.tooltip)) {
-        tt = pb.tooltip.join('\n');
+    if (selector.tooltip) {
+      if (Array.isArray(selector.tooltip)) {
+        tt = selector.tooltip.join('\n');
       } else {
-        tt = pb.tooltip;
+        tt = selector.tooltip;
       }
     }
     return tt || '';
@@ -127,35 +144,34 @@ export class OgcFilterSelectionComponent implements OnInit {
     return styles;
   }
 
-  bundleIsVertical(bundle: OgcPushButtonBundle): boolean {
+  bundleIsVertical(bundle: OgcSelectorBundle): boolean {
     return bundle.vertical ? bundle.vertical : false;
   }
 
   private onChangeGroup() {
-
-    this.getPushButtonsGroups().map(g => g.enabled = false);
-    this.getPushButtonsGroups().find(g => g === this.currentPushButtonGroup).enabled = true;
+    this.getSelectorGroups().map(g => g.enabled = false);
+    this.getSelectorGroups().find(g => g === this.currentGroup).enabled = true;
   }
 
-  onButtonChange(currentOgcPushButton?: OgcPushButton) {
-    if (currentOgcPushButton) {
-      currentOgcPushButton.enabled = !currentOgcPushButton.enabled;
+  onSelectorChange(currentOgcSelector?) {
+    if (currentOgcSelector) {
+      currentOgcSelector.enabled = !currentOgcSelector.enabled;
     }
   }
 
   private applyFilters() {
     let filterQueryString = '';
     const conditions = [];
-    this.currentPushButtonGroup.computedButtons.map(buttonBundle => {
+    this.currentGroup.computedSelectors.map(selectorBundle => {
       const bundleCondition = [];
-      buttonBundle.buttons
-      .filter(ogcpb => ogcpb.enabled === true)
-      .forEach(enabledPb => bundleCondition.push(enabledPb.filters));
+      selectorBundle.selectors
+      .filter(ogcSelector => ogcSelector.enabled === true)
+      .forEach(enabledSelector => bundleCondition.push(enabledSelector.filters));
       if (bundleCondition.length >= 1 ) {
         if (bundleCondition.length === 1) {
           conditions.push(bundleCondition[0]);
         } else {
-          conditions.push({logical: buttonBundle.logical, filters: bundleCondition});
+          conditions.push({logical: selectorBundle.logical, filters: bundleCondition});
         }
       }
     });

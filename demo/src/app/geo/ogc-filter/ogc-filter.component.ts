@@ -520,7 +520,7 @@ export class AppOgcFilterComponent {
           {
             id: 'id1',
             logical: 'Or',
-            buttons: [
+            selectors: [
               {
                 title: 'Radar photo fixe',
                 enabled: true,
@@ -571,7 +571,7 @@ export class AppOgcFilterComponent {
             id: 'id2',
             logical: 'Or',
             vertical: true,
-            buttons: [
+            selectors: [
               {
                 title: 'Montréal & Laval',
                 enabled: false,
