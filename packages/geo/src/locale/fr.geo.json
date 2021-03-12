@@ -571,6 +571,7 @@
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
         "fill": "Remplissage",
+        "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
         "Point": "Point",

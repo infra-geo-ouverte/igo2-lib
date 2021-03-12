@@ -48,6 +48,7 @@ import { DrawPopupComponent } from './draw-popup.component';
 import { getTooltipsOfOlGeometry } from '../../measure/shared/measure.utils';
 import { createDrawingInteractionStyle } from '../shared/draw.utils';
 import { transform } from 'ol/proj';
+import { DrawIconService } from '../shared/draw-icon.service';
 
 @Component ({
     selector: 'igo-draw',
@@ -153,6 +154,8 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     public position: string = 'bottom';
     public form: FormGroup;
+    public icons: Array<string>;
+    public icon: string;
 
     constructor(
         private languageService: LanguageService,
@@ -160,12 +163,15 @@ export class DrawComponent implements OnInit, OnDestroy {
         private formBuilder: FormBuilder,
         private drawStyleService: DrawStyleService,
         private dialog: MatDialog,
+        private drawIconService: DrawIconService
     ) {
         this.buildForm();
         this.fillColor = this.drawStyleService.getFill();
         this.strokeColor = this.drawStyleService.getStroke();
         this.showTooltips = this.drawStyleService.getToggleLabel();
         this.toggleLabel = this.drawStyleService.getToggleLabel();
+        this.icons = this.drawIconService.getIcons();
+        this.icon = this.drawStyleService.getIcon();
     }
 
     ngOnInit() {
@@ -235,7 +241,7 @@ export class DrawComponent implements OnInit, OnDestroy {
           zIndex: 200,
           source: new FeatureDataSource(),
           style: (feature, resolution) => {
-            return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, true);
+            return this.drawStyleService.createDrawLayerStyle(feature, resolution, true, this.icon);
           },
           showInLayerList: true,
           exportable: true,
@@ -278,18 +284,28 @@ export class DrawComponent implements OnInit, OnDestroy {
 
     }
 
-    changeStoreLayerStyle(enableLabel: boolean) {
+    changeStoreLayerStyle(enableLabel: boolean, icon: boolean) {
         this.fillForm = this.fillColor;
         this.strokeForm = this.strokeColor;
         this.drawStyleService.setFill(this.fillColor);
         this.drawStyleService.setStroke(this.strokeColor);
-        if (enableLabel) {
+        if (enableLabel && !icon) {
             this.store.layer.ol.setStyle((feature, resolution) => {
-                return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, true);
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, true);
             });
-        } else {
+            this.icon = undefined;
+        } else if (!enableLabel && !icon) {
             this.store.layer.ol.setStyle((feature, resolution) => {
-                return this.drawStyleService.createDrawLayerStyle(feature, resolution, this.map, false);
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, false);
+            });
+            this.icon = undefined;
+        } else if (enableLabel && icon) {
+            this.store.layer.ol.setStyle((feature, resolution) => {
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, true, this.icon);
+            });
+        } else if (!enableLabel && icon) {
+            this.store.layer.ol.setStyle((feature, resolution) => {
+                return this.drawStyleService.createDrawLayerStyle(feature, resolution, false, this.icon);
             });
         }
         this.createDrawPointControl();
@@ -465,11 +481,23 @@ export class DrawComponent implements OnInit, OnDestroy {
     onToggleTooltips(toggle: boolean) {
         this.drawStyleService.switchLabel();
         this.toggleLabel = !this.toggleLabel;
-        this.changeStoreLayerStyle(this.toggleLabel);
+        if (this.icon) {
+            this.changeStoreLayerStyle(this.toggleLabel, true);
+        } else {
+            this.changeStoreLayerStyle(this.toggleLabel, false);
+        }
     }
 
     private updateLabelOfOlGeometry(olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle, label: string) {
         olGeometry.setProperties({_label: label}, true);
+    }
+
+    onIconChange(event) {
+        this.icon = event;
+        this.drawStyleService.setIcon(this.icon);
+        this.store.layer.ol.setStyle((feature, resolution) => {
+            return this.drawStyleService.createDrawLayerStyle(feature, resolution, true, this.icon);
+        });
     }
 
     private checkStoreCount() {
