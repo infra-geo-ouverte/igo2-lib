@@ -22,9 +22,28 @@ export class OgcFilterButtonComponent implements OnInit {
         const currentPushButtonGroup = pushButtons.groups.find(gr => gr.enabled);
         let cntPushButtons = 0;
         if (currentPushButtonGroup) {
-          currentPushButtonGroup.computedSelectors.map(cb => cntPushButtons += (cb.selectors as any).filter(button => button.enabled).length);
+          currentPushButtonGroup.computedSelectors.map(cb => cntPushButtons += (cb.selectors as any).filter(
+            button => button.enabled).length);
         }
         return cntPushButtons > 0 ? cntPushButtons : undefined;
+      } else if (filter.checkboxes) {
+        const checkboxes = filter.checkboxes as IgoOgcSelector;
+        const currentCheckboxGroup = checkboxes.groups.find(gr => gr.enabled);
+        let cntCheckboxes = 0;
+        if (currentCheckboxGroup) {
+          currentCheckboxGroup.computedSelectors.map(cb => cntCheckboxes += (cb.selectors as any).filter(
+            checkbox => checkbox.enabled).length);
+        }
+        return cntCheckboxes > 0 ? cntCheckboxes : undefined;
+      } else if (filter.radioButtons) {
+        const radioButtons = filter.radioButtons as IgoOgcSelector;
+        const currentRadioButtonsGroup = radioButtons.groups.find(gr => gr.enabled);
+        let cntRadioButtons = 0;
+        if (currentRadioButtonsGroup) {
+          currentRadioButtonsGroup.computedSelectors.map(cb => cntRadioButtons += (cb.selectors as any).filter(
+            checkbox => checkbox.enabled).length);
+        }
+        return cntRadioButtons > 0 ? cntRadioButtons : undefined;
       } else {
         return;
       }

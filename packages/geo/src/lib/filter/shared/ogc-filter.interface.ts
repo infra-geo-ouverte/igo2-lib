@@ -84,7 +84,7 @@ export interface OgcPushButton {
 export interface OgcCheckbox {
   title: string;
   tooltip?: string;
-  checked: boolean;
+  enabled: boolean;
   filters: IgoOgcFilterObject;
 }
 

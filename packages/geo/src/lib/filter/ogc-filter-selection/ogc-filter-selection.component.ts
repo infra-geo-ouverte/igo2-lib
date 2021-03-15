@@ -53,7 +53,9 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      buttons: ['', [Validators.required]],
+      pushButtons: ['', [Validators.required]],
+      checkboxes: ['', [Validators.required]],
+      radioButtons: ['', [Validators.required]],
       group: ['', [Validators.required]]
     });
   }
@@ -97,13 +99,26 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.applyFilters();
       });
     this.form
-      .get('buttons')
+      .get('pushButtons')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
         this.applyFilters();
       });
-      console.log(this.datasource)
+    this.form
+      .get('checkboxes')
+      .valueChanges
+      .pipe(debounceTime(750))
+      .subscribe(() => {
+        this.applyFilters();
+      });
+    this.form
+      .get('radioButtons')
+      .valueChanges
+      .pipe(debounceTime(750))
+      .subscribe(() => {
+        this.applyFilters();
+      });
   }
 
   getToolTip(selector): string  {
@@ -153,9 +168,10 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.getSelectorGroups().find(g => g === this.currentGroup).enabled = true;
   }
 
-  onSelectorChange(currentOgcSelector?) {
-    if (currentOgcSelector) {
-      currentOgcSelector.enabled = !currentOgcSelector.enabled;
+  onSelectionChange(currentOgcSelection?) {
+    console.log(currentOgcSelection);
+    if (currentOgcSelection) {
+      currentOgcSelection.enabled = !currentOgcSelection.enabled;
     }
   }
 

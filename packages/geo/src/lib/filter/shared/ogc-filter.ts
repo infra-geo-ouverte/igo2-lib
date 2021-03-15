@@ -94,7 +94,7 @@ export class OgcFilterWriter {
     ogcFiltersOptions.geometryName = fieldNameGeometry;
 
     ogcFiltersOptions.advancedOgcFilters = true;
-    if (ogcFiltersOptions.enabled && ogcFiltersOptions.pushButtons) {
+    if (ogcFiltersOptions.enabled && (ogcFiltersOptions.pushButtons || ogcFiltersOptions.checkboxes || ogcFiltersOptions.radioButtons)) {
       ogcFiltersOptions.advancedOgcFilters = false;
     }
     return ogcFiltersOptions;
@@ -653,20 +653,20 @@ export class OgcFilterWriter {
     }
   }
 
-  private computeIgoPushButton(pushButtons: IgoOgcSelector): IgoOgcSelector {
+  private computeIgoSelector(selectors: IgoOgcSelector): IgoOgcSelector {
     if (
-      pushButtons.groups.every((group) => group.computedSelectors !== undefined)
+      selectors.groups.every((group) => group.computedSelectors !== undefined)
     ) {
-      return pushButtons;
+      return selectors;
     }
     let selector: IgoOgcSelector;
-    if (pushButtons.groups && pushButtons.bundles) {
-      if (!pushButtons.bundles.every((bundle) => bundle.id !== undefined)) {
+    if (selectors.groups && selectors.bundles) {
+      if (!selectors.bundles.every((bundle) => bundle.id !== undefined)) {
         throw new Error(
-          'You must set an id for each of your pushButtons bundles'
+          'You must set an id for each of your bundles'
         );
       }
-      selector = ObjectUtils.copyDeep(pushButtons);
+      selector = ObjectUtils.copyDeep(selectors);
       selector.groups.forEach((group) => {
         group.title = group.title ? group.title : group.name;
         group.enabled = group.enabled ? group.enabled : false;
@@ -674,8 +674,8 @@ export class OgcFilterWriter {
           selector.bundles.filter((b) => group.ids.includes(b.id))
         );
       });
-    } else if (!pushButtons.groups && pushButtons.bundles) {
-      selector = ObjectUtils.copyDeep(pushButtons);
+    } else if (!selectors.groups && selectors.bundles) {
+      selector = ObjectUtils.copyDeep(selectors);
       selector.groups = [
         {
           title: 'group1',
@@ -685,13 +685,13 @@ export class OgcFilterWriter {
       ];
     } else {
       selector = {
-        bundles: pushButtons as OgcSelectorBundle[],
+        bundles: selectors as OgcSelectorBundle[],
         groups: [
           {
             title: 'group1',
             name: 'group1',
             computedSelectors: ObjectUtils.copyDeep(
-              pushButtons
+              selectors
             ) as OgcSelectorBundle[]
           } as SelectorGroup
         ]
@@ -713,41 +713,10 @@ export class OgcFilterWriter {
     if (!ogcFilters) {
       return;
     }
-    let filterQueryStringPushButton = '';
+    const filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
-    if (ogcFilters.enabled && ogcFilters.pushButtons) {
-      ogcFilters.pushButtons = this.computeIgoPushButton(
-        ogcFilters.pushButtons
-      );
-      const pushButtonBundle = ogcFilters.pushButtons.groups.find(
-        (g) => g.enabled
-      ).computedSelectors;
-      const conditions = [];
-      pushButtonBundle.map((buttonBundle) => {
-        const bundleCondition = [];
-        const selectors = buttonBundle.selectors as any;
-        selectors
-          .filter((ogcselector) => ogcselector.enabled === true)
-          .forEach((enabledSelector) => bundleCondition.push(enabledSelector.filters));
-        if (bundleCondition.length === 1) {
-          conditions.push(bundleCondition[0]);
-        } else if (bundleCondition.length > 1) {
-          conditions.push({
-            logical: buttonBundle.logical,
-            filters: bundleCondition
-          });
-        }
-      });
-      if (conditions.length >= 1) {
-        filterQueryStringPushButton = this.buildFilter(
-          conditions.length === 1
-            ? conditions[0]
-            : { logical: 'And', filters: conditions },
-          extent,
-          proj,
-          ogcFilters.geometryName
-        );
-      }
+    if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons)) {
+      this.formatGroupAndFilter(ogcFilters, filterQueryStringSelector, extent, proj);
     }
 
     if (ogcFilters.enabled && ogcFilters.filters) {
@@ -764,7 +733,7 @@ export class OgcFilterWriter {
 
     let filterQueryString = ogcFilters.advancedOgcFilters
       ? filterQueryStringAdvancedFilters
-      : filterQueryStringPushButton;
+      : filterQueryStringSelector;
     if (options.type === 'wms') {
       filterQueryString = this.formatProcessedOgcFilter(
         filterQueryString,
@@ -779,6 +748,58 @@ export class OgcFilterWriter {
     }
 
     return filterQueryString;
+  }
+
+  public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, filterQueryStringSelector = '', extent, proj) {
+    let selectors;
+    if (ogcFilters.pushButtons) {
+      selectors = ogcFilters.pushButtons;
+    } else if (ogcFilters.checkboxes) {
+      selectors = ogcFilters.checkboxes;
+    } else if (ogcFilters.radioButtons) {
+      selectors = ogcFilters.radioButtons;
+    }
+
+    selectors = this.computeIgoSelector(
+      selectors
+    );
+    const selectorBundle = selectors.groups.find(
+      (g) => g.enabled
+    ).computedSelectors;
+    const conditions = [];
+    selectorBundle.map((bundle) => {
+      const bundleCondition = [];
+      const selectorsType = bundle.selectors as any;
+      selectorsType
+        .filter((ogcselector) => ogcselector.enabled === true)
+        .forEach((enabledSelector) => bundleCondition.push(enabledSelector.filters));
+      if (bundleCondition.length === 1) {
+        conditions.push(bundleCondition[0]);
+      } else if (bundleCondition.length > 1) {
+        conditions.push({
+          logical: bundle.logical,
+          filters: bundleCondition
+        });
+      }
+    });
+    if (conditions.length >= 1) {
+      filterQueryStringSelector = this.buildFilter(
+        conditions.length === 1
+          ? conditions[0]
+          : { logical: 'And', filters: conditions },
+        extent,
+        proj,
+        ogcFilters.geometryName
+      );
+    }
+
+    if (ogcFilters.pushButtons) {
+      ogcFilters.pushButtons = selectors;
+    } else if (ogcFilters.checkboxes) {
+      ogcFilters.checkboxes = selectors;
+    } else if (ogcFilters.radioButtons) {
+      ogcFilters.radioButtons = selectors;
+    }
   }
 
   public formatProcessedOgcFilter(

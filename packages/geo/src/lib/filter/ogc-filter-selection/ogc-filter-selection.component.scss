@@ -1,11 +1,11 @@
 
-  .mat-button-toggle-group {
+  .mat-button-toggle-group, .mat-radio-group, .checkboxes {
     margin: 5px 5px 5px 5px;
     flex-wrap: wrap;
     box-shadow: none;
   }
 
-  .pushButtonGroups, .selector {
+  .pushButtonGroups, .checkboxGroups, .radioButtonGroups, .selector {
     text-align: center;
   }
 
@@ -24,4 +24,8 @@
 
   ::ng-deep .material-tooltip {
     white-space: pre-line;
+  }
+
+  mat-checkbox, mat-radio-button {
+    margin: 5px;
   }

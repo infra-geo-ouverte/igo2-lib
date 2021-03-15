@@ -9,10 +9,10 @@
   </div>
   <div class="pushButtonGroups" *ngIf="datasource.options.ogcFilters.pushButtons">
     <ng-container *ngFor="let bundle of currentGroup.computedSelectors">
-      <mat-button-toggle-group formControlName="buttons" class="mat-typography" appearance="legacy"
+      <mat-button-toggle-group formControlName="pushButtons" class="mat-typography" appearance="legacy"
         vertical={{bundleIsVertical(bundle)}} multiple="true">
         <mat-button-toggle [ngStyle]="getButtonColor(ogcPushButton)" [checked]="ogcPushButton.enabled"
-          (change)="onSelectorChange(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
+          (change)="onSelectionChange(ogcPushButton)" tooltip-position="below" matTooltipShowDelay="500"
           [matTooltip]="getToolTip(ogcPushButton)" matTooltipClass="material-tooltip"
           *ngFor="let ogcPushButton of bundle.selectors" [value]="ogcPushButton">{{ogcPushButton.title}}
         </mat-button-toggle>
@@ -21,10 +21,9 @@
   </div>
   <div class="checkboxGroups" *ngIf="datasource.options.ogcFilters.checkboxes">
     <ng-container *ngFor="let bundle of currentGroup.computedSelectors">
-      <div formControlName="checkboxes" class="mat-typography"
-        appearance="legacy" multiple="true">
-        <mat-checkbox [checked]="ogcCheckbox.enabled"
-          (change)="onSelectorChange(ogcCheckbox)" tooltip-position="below" matTooltipShowDelay="500"
+      <div class="checkboxes mat-typography" appearance="legacy" multiple="true">
+        <mat-checkbox [checked]="ogcCheckbox.enabled" formControlName="checkboxes"
+          (change)="onSelectionChange(ogcCheckbox)" tooltip-position="below" matTooltipShowDelay="500"
           [matTooltip]="getToolTip(ogcCheckbox)" matTooltipClass="material-tooltip"
           *ngFor="let ogcCheckbox of bundle.selectors" [value]="ogcCheckbox">{{ogcCheckbox.title}}
         </mat-checkbox>
@@ -35,8 +34,8 @@
     <ng-container *ngFor="let bundle of currentGroup.computedSelectors">
       <mat-radio-group formControlName="radioButtons" class="mat-typography"
         appearance="legacy" multiple="true">
-        <mat-radio-button [checked]="ogcRadioButton.enabled"
-          (change)="onSelectorChange(ogcRadioButton)" tooltip-position="below" matTooltipShowDelay="500"
+        <mat-radio-button
+          (change)="onSelectionChange(ogcRadioButton)" tooltip-position="below" matTooltipShowDelay="500"
           [matTooltip]="getToolTip(ogcRadioButton)" matTooltipClass="material-tooltip"
           *ngFor="let ogcRadioButton of bundle.selectors" [value]="ogcRadioButton">{{ogcRadioButton.title}}
         </mat-radio-button>
