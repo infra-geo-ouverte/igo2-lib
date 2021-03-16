@@ -57,7 +57,8 @@ export class AboutToolComponent {
     this.http.get(this.baseUrlProfils).subscribe((profil) => {
       console.log(profil);
       const recast = profil as any;
-      this.trainingGuideURL = recast.guide;
+      this.trainingGuideURL = recast.guides[0];
+      console.log(this.trainingGuideURL);
     });
   }
 
