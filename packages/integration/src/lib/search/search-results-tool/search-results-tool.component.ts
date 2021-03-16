@@ -249,7 +249,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
               { feature: abstractResult },
               this.searchState.searchOverlayStyleSelection));
       abstractResult.meta.style.setZIndex(2000);
-      this.map.overlay.addFeature(abstractResult, FeatureMotion.None);
+      this.map.searchResultsOverlay.addFeature(abstractResult, FeatureMotion.None);
       if (trigger === 'focused') {
         this.abstractFocusedResult = abstractResult;
       }
@@ -263,11 +263,11 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private clearFeatureEmphasis(trigger: 'selected' | 'focused' | undefined) {
     if (trigger === 'focused' && this.abstractFocusedResult) {
-      this.map.overlay.removeFeature(this.abstractFocusedResult);
+      this.map.searchResultsOverlay.removeFeature(this.abstractFocusedResult);
       this.abstractFocusedResult = undefined;
     }
     if (trigger === 'selected' && this.abstractSelectedResult) {
-      this.map.overlay.removeFeature(this.abstractSelectedResult);
+      this.map.searchResultsOverlay.removeFeature(this.abstractSelectedResult);
       this.abstractSelectedResult = undefined;
     }
   }
@@ -312,7 +312,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       ) {
         result.data.meta.style = createOverlayDefaultStyle();
       }
-      this.map.overlay.addFeature(result.data as Feature, FeatureMotion.None);
+      this.map.searchResultsOverlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
   }
 
@@ -325,7 +325,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (this.store.state.get(result).selected === true) {
       return;
     }
-    this.map.overlay.removeFeature(result.data as Feature);
+    this.map.searchResultsOverlay.removeFeature(result.data as Feature);
   }
 
   /**
@@ -334,7 +334,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
    * @param result A search result that could be a feature or some layer options
    */
   onResultSelect(result: SearchResult) {
-    this.map.overlay.dataSource.ol.clear();
+    this.map.searchResultsOverlay.dataSource.ol.clear();
     this.tryAddFeatureToMap(result);
     this.searchState.setSelectedResult(result);
 
@@ -462,7 +462,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         { feature },
         this.searchState.searchOverlayStyleSelection));
 
-    this.map.overlay.addFeature(feature);
+    this.map.searchResultsOverlay.addFeature(feature);
   }
 
   isScrolledIntoView(elemSource, elem) {
