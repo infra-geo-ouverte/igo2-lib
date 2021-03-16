@@ -1,3 +1,12 @@
+## [1.2.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.2.0...1.2.1) (2021-03-16)
+
+
+### Bug Fixes
+
+* **auth:** send correctly Content-Type header ([476460e](https://github.com/infra-geo-ouverte/igo2-lib/commit/476460e3349f2d4f7d12727586f65f66cb3ce1f5))
+
+
+
 # [1.2.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.1.0...1.2.0) (2020-02-10)
 
 
@@ -414,8 +423,8 @@
 * **edition:** consider thta no entity is selected when more than one is selected ([918ce5b](https://github.com/infra-geo-ouverte/igo2-lib/commit/918ce5bd9a69ffdc8647010a8ffcd7a23c4f6749))
 * **edition:** wms edition with ogc filters + wfs download widget ([7f216d4](https://github.com/infra-geo-ouverte/igo2-lib/commit/7f216d496605f22aaa69444677a5eb21b7476857))
 * **entity:** entity selector component ([d4e5ea0](https://github.com/infra-geo-ouverte/igo2-lib/commit/d4e5ea0b4715d4656e43adcb3d202df6f018a4a2))
-* **entity:** merge entity module and add an entity-table demo ([757e45b](https://github.com/infra-geo-ouverte/igo2-lib/commit/757e45ba62022ef3fca9827c8762519ff027a62e))
 * **entity:** merge entity module and add an entity-table demo ([f892dc2](https://github.com/infra-geo-ouverte/igo2-lib/commit/f892dc25da44a40565c53e7377be83b34df55590))
+* **entity:** merge entity module and add an entity-table demo ([757e45b](https://github.com/infra-geo-ouverte/igo2-lib/commit/757e45ba62022ef3fca9827c8762519ff027a62e))
 * **entity table:** add optional selection checkboxes to the entity table ([5cfe6ac](https://github.com/infra-geo-ouverte/igo2-lib/commit/5cfe6ac7c736e2176f99c9c45ba6fd3091d82587))
 * **entity table:** allow custom header class ([00affa1](https://github.com/infra-geo-ouverte/igo2-lib/commit/00affa1fb65804bd3d30c768fcde66edc3df5cf7))
 * **entity table:** allow multiple selections ([3b4f1d9](https://github.com/infra-geo-ouverte/igo2-lib/commit/3b4f1d957d93442c7d42b420d0283e126e5f4fe9))
@@ -441,8 +450,8 @@
 * **measure:** allow measuring while drawing a geometry using the geometry field ([f476587](https://github.com/infra-geo-ouverte/igo2-lib/commit/f476587e8f382bf55fc75a5a4e051085432410f1))
 * **measure:** allow selecting multiple measures with checkboxes ([fd4158f](https://github.com/infra-geo-ouverte/igo2-lib/commit/fd4158f519419dd49f0ebaf38129e96cdc192ac5))
 * **measure:** remove vertex measures on completion of an area measure ([90dd732](https://github.com/infra-geo-ouverte/igo2-lib/commit/90dd732803c1ad2e8594f418a472d0aa9c5922b9))
-* **measure:** working measure module ([e61a2aa](https://github.com/infra-geo-ouverte/igo2-lib/commit/e61a2aaac288df06ecd31c1ce2333df087c6d7b3))
 * **measure:** working measure module ([4a74094](https://github.com/infra-geo-ouverte/igo2-lib/commit/4a7409491f9bc14b10a9711ce4f33a25cfd0b12d))
+* **measure:** working measure module ([e61a2aa](https://github.com/infra-geo-ouverte/igo2-lib/commit/e61a2aaac288df06ecd31c1ce2333df087c6d7b3))
 * **modify:** the modify control can now add holes to a polygon by holding the CTRL key ([601a295](https://github.com/infra-geo-ouverte/igo2-lib/commit/601a295fa366fd1a935f426736ba75afd7bfdcae))
 * **package:** upgrade openlayers ([863d849](https://github.com/infra-geo-ouverte/igo2-lib/commit/863d849a6e69a943b8e711e79ee1b402d807f02b))
 * **projection:** inject the projection service with the map state ([d3a8f32](https://github.com/infra-geo-ouverte/igo2-lib/commit/d3a8f32012a12fb5ef8ef4a75dc805023784c750))
@@ -578,8 +587,8 @@
 * **context:** rename order to zIndex ([3c7f958](https://github.com/infra-geo-ouverte/igo2-lib/commit/3c7f9582a8a8a4618a718d0e6c660afa98c57572))
 * **context:** send type layer to api ([81436c8](https://github.com/infra-geo-ouverte/igo2-lib/commit/81436c8b5f8020e53cd24011d2a4f6ad41e969c2))
 * **context:** stop propagation on button ([a923548](https://github.com/infra-geo-ouverte/igo2-lib/commit/a92354807baa84c4b24c46117da6370f31d9ce1f))
-* **css:** add padding to forms ([5c33716](https://github.com/infra-geo-ouverte/igo2-lib/commit/5c337167377f6930ba415d95d76b078698cd49a7))
 * **css:** add padding to forms ([3d27dee](https://github.com/infra-geo-ouverte/igo2-lib/commit/3d27dee68486899b4bb496acb2dbc1849ab9ff37))
+* **css:** add padding to forms ([5c33716](https://github.com/infra-geo-ouverte/igo2-lib/commit/5c337167377f6930ba415d95d76b078698cd49a7))
 * **custom-html:** add padding ([f3bced5](https://github.com/infra-geo-ouverte/igo2-lib/commit/f3bced58dbe593e76d475ba69b01df22e0fcf9e9))
 * **datasource:** always lowercase type ([98aee36](https://github.com/infra-geo-ouverte/igo2-lib/commit/98aee365ffcbf0fcb78286e49cf8ff58002e53bf))
 * **demo:** ajust size map (responsible) ([84a6794](https://github.com/infra-geo-ouverte/igo2-lib/commit/84a679475e8ff241a13a77665f36692a113dc235))
@@ -1154,8 +1163,8 @@
 ### Features
 
 * **auth:** add anonymous login ([e7a6a4d](https://github.com/infra-geo-ouverte/igo2-lib/commit/e7a6a4debef0529a46d03eb63fba5df1758266e2))
-* **auth:** add authentication form and service ([468b5c8](https://github.com/infra-geo-ouverte/igo2-lib/commit/468b5c822dc595d59e9e774f39189896ffa7a61f))
 * **auth:** add authentication form and service ([c5b20ec](https://github.com/infra-geo-ouverte/igo2-lib/commit/c5b20ecfdb8bb323106489d33aba1de848374cba))
+* **auth:** add authentication form and service ([468b5c8](https://github.com/infra-geo-ouverte/igo2-lib/commit/468b5c822dc595d59e9e774f39189896ffa7a61f))
 * **auth:** call service with token ([d028163](https://github.com/infra-geo-ouverte/igo2-lib/commit/d028163be2eb5b372f6e2e45d80d3962a1089b1a))
 * **bookmark:** add map tool to create new context ([6436510](https://github.com/infra-geo-ouverte/igo2-lib/commit/6436510a44c9c268dd7f2f0a72ce514fc90e75df))
 * **catalog:** add catalog tool ([4c9a7d1](https://github.com/infra-geo-ouverte/igo2-lib/commit/4c9a7d1fff8deaef61f70052ca8bd7ee55d92ead))
