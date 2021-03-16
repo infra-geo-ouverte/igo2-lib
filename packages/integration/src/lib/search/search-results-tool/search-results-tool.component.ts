@@ -245,7 +245,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         abstractResult.meta.style =
           trigger === 'focused'
             ? createOverlayMarkerStyle()
-            : getSelectedMarkerStyle(abstractResult);
+            : getSelectedMarkerStyle({feature: abstractResult});
         abstractResult.meta.style.setZIndex(2000);
         this.map.overlay.addFeature(abstractResult, FeatureMotion.None);
         if (trigger === 'focused') {
