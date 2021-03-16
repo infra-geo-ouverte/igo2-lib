@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { EntityStore } from '@igo2/common';
-import { SearchResult, SearchSourceService, SearchSource } from '@igo2/geo';
+import { ConfigService } from '@igo2/core';
+import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions } from '@igo2/geo';
 import { BehaviorSubject } from 'rxjs';
 
 /**
@@ -11,6 +12,8 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SearchState {
+  public searchOverlayStyleSelection: CommonVectorStyleOptions  = {};
+  public searchOverlayStyleFocus: CommonVectorStyleOptions  = {};
 
   readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
@@ -36,7 +39,18 @@ export class SearchState {
       .map((source: SearchSource) => (source.constructor as any).type);
   }
 
-  constructor(private searchSourceService: SearchSourceService) {}
+  constructor(
+    private searchSourceService: SearchSourceService,
+    private configService: ConfigService) {
+    const searchOverlayStyle = this.configService.getConfig('searchOverlayStyle') as {
+      selection?: CommonVectorStyleOptions,
+      focus?: CommonVectorStyleOptions
+    };
+    if (searchOverlayStyle) {
+      this.searchOverlayStyleSelection = searchOverlayStyle.selection;
+      this.searchOverlayStyleFocus = searchOverlayStyle.focus;
+    }
+  }
 
   enableSearch() {
     this.searchDisabled$.next(false);

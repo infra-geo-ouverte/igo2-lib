@@ -232,31 +232,32 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     const myOlFeature = featureToOl(result.data, this.map.projection);
     const olGeometry = myOlFeature.getGeometry();
-    if (result.data.geometry.type !== 'Point') {
-      if (featuresAreTooDeepInView(this.map, olGeometry.getExtent(), 0.0025)) {
-        const extent = olGeometry.getExtent();
-        const x = extent[0] + (extent[2] - extent[0]) / 2;
-        const y = extent[1] + (extent[3] - extent[1]) / 2;
-        const feature1 = new olFeature({
-          name: `${trigger}AbstractResult'`,
-          geometry: new olPoint([x, y])
-        });
-        const abstractResult = featureFromOl(feature1, this.map.projection);
-        abstractResult.meta.style =
-          trigger === 'focused'
-            ? createOverlayMarkerStyle()
-            : getSelectedMarkerStyle({feature: abstractResult});
-        abstractResult.meta.style.setZIndex(2000);
-        this.map.overlay.addFeature(abstractResult, FeatureMotion.None);
-        if (trigger === 'focused') {
-          this.abstractFocusedResult = abstractResult;
-        }
-        if (trigger === 'selected') {
-          this.abstractSelectedResult = abstractResult;
-        }
-      } else {
-        this.clearFeatureEmphasis(trigger);
+    if (featuresAreTooDeepInView(this.map, olGeometry.getExtent(), 0.0025)) {
+      const extent = olGeometry.getExtent();
+      const x = extent[0] + (extent[2] - extent[0]) / 2;
+      const y = extent[1] + (extent[3] - extent[1]) / 2;
+      const feature1 = new olFeature({
+        name: `${trigger}AbstractResult'`,
+        geometry: new olPoint([x, y])
+      });
+      const abstractResult = featureFromOl(feature1, this.map.projection);
+      abstractResult.meta.style =
+        trigger === 'focused'
+          ? createOverlayMarkerStyle(this.searchState.searchOverlayStyleFocus)
+          : getSelectedMarkerStyle(
+            Object.assign({},
+              { feature: abstractResult },
+              this.searchState.searchOverlayStyleSelection));
+      abstractResult.meta.style.setZIndex(2000);
+      this.map.overlay.addFeature(abstractResult, FeatureMotion.None);
+      if (trigger === 'focused') {
+        this.abstractFocusedResult = abstractResult;
       }
+      if (trigger === 'selected') {
+        this.abstractSelectedResult = abstractResult;
+      }
+    } else {
+      this.clearFeatureEmphasis(trigger);
     }
   }
 
@@ -456,9 +457,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (feature.geometry.type !== 'Point') {
-      feature.meta.style = createOverlayDefaultStyle();
-    }
+    feature.meta.style = getSelectedMarkerStyle(
+      Object.assign({},
+        { feature },
+        this.searchState.searchOverlayStyleSelection));
 
     this.map.overlay.addFeature(feature);
   }
