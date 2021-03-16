@@ -1,5 +1,6 @@
 import * as olstyle from 'ol/style';
 import OlFeature from 'ol/Feature';
+import { asArray as ColorAsArray } from 'ol/color';
 
 import { FeatureDataSource } from '../../datasource';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
@@ -70,11 +71,11 @@ export function createOverlayDefaultStyle({
   fillOpacity?: number;
   strokeWidth?: number;
   strokeOpacity?: number;
-  color?: number[];
-  strokeColor?: number[];
+  color?: string | number[];
+  strokeColor?: string | number[];
 } = {}): olstyle.Style {
-  const fillWithOpacity = color.slice(0);
-  const strokeWithOpacity = color.slice(0);
+  const fillWithOpacity = ColorAsArray(color).slice(0);
+  const strokeWithOpacity = ColorAsArray(color).slice(0);
   strokeWithOpacity[3] = 1;
   if (fillOpacity) {
     fillWithOpacity[3] = fillOpacity;
@@ -83,9 +84,10 @@ export function createOverlayDefaultStyle({
     strokeWithOpacity[3] = strokeOpacity;
   }
   if (strokeColor) {
-    strokeWithOpacity[0] = strokeColor[0];
-    strokeWithOpacity[1] = strokeColor[1];
-    strokeWithOpacity[2] = strokeColor[2];
+    const newStrokeColor = ColorAsArray(strokeColor).slice(0);
+    strokeWithOpacity[0] = newStrokeColor[0];
+    strokeWithOpacity[1] = newStrokeColor[1];
+    strokeWithOpacity[2] = newStrokeColor[2];
   }
 
   const stroke = new olstyle.Stroke({

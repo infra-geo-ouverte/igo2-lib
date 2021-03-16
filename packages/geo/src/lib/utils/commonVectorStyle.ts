@@ -4,6 +4,7 @@ import olFeature from 'ol/Feature';
 import { Feature } from '../feature/shared/feature.interfaces';
 import { createOverlayMarkerStyle } from '../overlay/shared/overlay-marker-style.utils';
 import { createOverlayDefaultStyle } from '../overlay/shared/overlay.utils';
+import { FeatureCommonVectorStyleOptions } from './commonVertorStyle.interface';
 
 
 /**
@@ -14,20 +15,12 @@ import { createOverlayDefaultStyle } from '../overlay/shared/overlay.utils';
 export function getSelectedMarkerStyle(
   {
     feature,
-    pinColor = '#00A1DE',
+    markerColor = '#00A1DE',
     fillColor,
     outlineColor = [0, 255, 255],
     strokeColor = [0, 255, 255],
     strokeWidth = 4
-  }: {
-    feature?: Feature | olFeature,
-    pinColor?: string | number[];
-    fillColor?: string | number[];
-    outlineColor?: string | number[];
-    strokeColor?: string | number[];
-    strokeWidth?: number;
-
-  }): olstyle.Style {
+  }: FeatureCommonVectorStyleOptions): olstyle.Style {
 
   const isOlFeature = feature instanceof olFeature;
   const geometry = isOlFeature ? feature.getGeometry() : feature.geometry;
@@ -37,7 +30,7 @@ export function getSelectedMarkerStyle(
     return createOverlayMarkerStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       outlineColor,
-      color: pinColor
+      color: markerColor
     });
   } else {
     return createOverlayDefaultStyle({
@@ -57,20 +50,12 @@ export function getSelectedMarkerStyle(
 export function getMarkerStyle(
   {
     feature,
-    pinColor = '#00A1DE',
+    markerColor = '#00A1DE',
     fillColor,
     outlineColor = [0, 255, 255],
     strokeColor = [0, 255, 255],
     strokeWidth = 2
-  }: {
-    feature?: Feature | olFeature,
-    pinColor?: string | number[];
-    fillColor?: string | number[];
-    outlineColor?: string | number[];
-    strokeColor?: string | number[];
-    strokeWidth?: number;
-
-  }): olstyle.Style {
+  }: FeatureCommonVectorStyleOptions): olstyle.Style {
 
   const isOlFeature = feature instanceof olFeature;
   const geometry = isOlFeature ? feature.getGeometry() : feature.geometry;
@@ -81,7 +66,7 @@ export function getMarkerStyle(
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       opacity: 0.5,
       outlineColor,
-      color: pinColor
+      color: markerColor
     });
   } else if (
     geometryType === 'LineString' ||
