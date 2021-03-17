@@ -21,6 +21,8 @@ export class SearchState {
 
   readonly searchDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  readonly searchResultsGeometryEnabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   readonly searchSettingsChange$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
 
   readonly selectedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(undefined);
