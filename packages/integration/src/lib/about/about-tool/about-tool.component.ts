@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
@@ -17,7 +17,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './about-tool.component.html',
   styleUrls: ['./about-tool.component.scss']
 })
-export class AboutToolComponent {
+export class AboutToolComponent implements OnInit {
   @Input()
   get html() {
     return this._html;
