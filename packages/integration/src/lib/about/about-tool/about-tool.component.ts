@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
@@ -37,32 +37,45 @@ export class AboutToolComponent {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  public trainingGuideURL;
+  public trainingGuideURLs;
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
 
-  private baseUrlProfils = '/apis/igo2/user/igo?';
-
+  private baseUrlProfil = '/apis/igo2/user/igo?';
   private baseUrlGuide = '/apis/depot/projects/Documentation/files/';
 
   constructor(
     public configService: ConfigService,
     public auth: AuthService,
-    private http: HttpClient,) {
+    private http: HttpClient,
+    private cdRef: ChangeDetectorRef) {
     this.version = configService.getConfig('version');
   }
 
   ngOnInit() {
-    this.http.get(this.baseUrlProfils).subscribe((profil) => {
-      console.log(profil);
+    this.http.get(this.baseUrlProfil).subscribe((profil) => {
       const recast = profil as any;
-      this.trainingGuideURL = recast.guides[0];
-      console.log(this.trainingGuideURL);
+      this.trainingGuideURLs = recast.guides;
+      this.cdRef.detectChanges();
     });
   }
 
   openGuide() {
-    window.open(this.baseUrlGuide + this.trainingGuideURL, '_blank');
+    for (const trainingGuideURL of this.trainingGuideURLs) {
+      this.http
+      .get(this.baseUrlGuide + trainingGuideURL + '?', {
+        responseType: 'blob'
+      })
+      .subscribe((response) => {
+        const blob = new Blob([response]);
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = trainingGuideURL;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      });
+    }
   }
 }
