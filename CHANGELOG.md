@@ -1,3 +1,40 @@
+## [1.6.4](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.3...1.6.4) (2021-03-15)
+
+
+### Bug Fixes
+
+* **arcgisREST:** fix forced title and legend for arcgis layer ([#819](https://github.com/infra-geo-ouverte/igo2-lib/issues/819)) ([abdd881](https://github.com/infra-geo-ouverte/igo2-lib/commit/abdd8813865b58ab08ca82ed00b18aa2882caae1))
+* **auth:** httpHeader class are immutable objects ([72c51d0](https://github.com/infra-geo-ouverte/igo2-lib/commit/72c51d009aa5a887b4bec36ccd476b64ac407e35))
+* **context:** pass object to service instead of json.stringify ([2a54c62](https://github.com/infra-geo-ouverte/igo2-lib/commit/2a54c62e981f226ec67cf36303a2db4c7d71354b))
+* **draw:** drawing popup label changed ([#820](https://github.com/infra-geo-ouverte/igo2-lib/issues/820)) ([d2227b9](https://github.com/infra-geo-ouverte/igo2-lib/commit/d2227b95c06f35b903a5d6ea17676fa174ee4380)), closes [#645](https://github.com/infra-geo-ouverte/igo2-lib/issues/645) [#646](https://github.com/infra-geo-ouverte/igo2-lib/issues/646)
+* **options-api:** fix when layerOptions is undefined ([2255c5b](https://github.com/infra-geo-ouverte/igo2-lib/commit/2255c5b266d64ece14476fca2b1430e9c0c58747))
+
+
+
+## [1.6.3](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.2...1.6.3) (2021-02-23)
+
+
+### Bug Fixes
+
+* **datasource:** standardize the URL when generating the id ([bb3fdba](https://github.com/infra-geo-ouverte/igo2-lib/commit/bb3fdba6de7557244e0a237d7e96e4a602856fe2))
+
+
+
+## [1.6.2](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.1...1.6.2) (2021-02-15)
+
+
+### Bug Fixes
+
+* **catalog:** esri rest catalog were showing group as layer. ([#808](https://github.com/infra-geo-ouverte/igo2-lib/issues/808)) ([f431f47](https://github.com/infra-geo-ouverte/igo2-lib/commit/f431f47e0d33be4958c77cedf779346ed24e50c9))
+* **print:** subtitle newline image format fix ([#809](https://github.com/infra-geo-ouverte/igo2-lib/issues/809)) ([5a9fe42](https://github.com/infra-geo-ouverte/igo2-lib/commit/5a9fe42761bf586444d65d714f8a7d7a1698d1aa))
+
+
+### Features
+
+* **layers-list:** add removable option ([483a7f4](https://github.com/infra-geo-ouverte/igo2-lib/commit/483a7f4621768dd92a5fafa96991b43be7ce146d))
+
+
+
 ## [1.6.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.0...1.6.1) (2021-02-02)
 
 
