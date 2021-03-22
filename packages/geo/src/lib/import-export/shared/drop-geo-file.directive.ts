@@ -103,7 +103,6 @@ export class DropGeoFileDirective extends DragAndDropDirective implements OnInit
             this.epsgCode$.next('epsgNotDefined');
             return;
           }
-          
         } else {
           this.epsgCode$.next('epsgNotDefined');
           return;
