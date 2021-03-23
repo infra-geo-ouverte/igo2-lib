@@ -42,8 +42,8 @@ export class AboutToolComponent implements OnInit {
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
 
-  private baseUrlProfil = '/apis/igo2/user/igo?';
-  private baseUrlGuide = '/apis/depot/projects/Documentation/files/';
+  private baseUrlProfil;
+  private baseUrlGuide;
 
   constructor(
     public configService: ConfigService,
@@ -51,6 +51,8 @@ export class AboutToolComponent implements OnInit {
     private http: HttpClient,
     private cdRef: ChangeDetectorRef) {
     this.version = configService.getConfig('version');
+    this.baseUrlProfil = configService.getConfig('context.url') + '/user/igo?';
+    this.baseUrlGuide = configService.getConfig('depot.url') + '/projects/Documentation/files/';
   }
 
   ngOnInit() {

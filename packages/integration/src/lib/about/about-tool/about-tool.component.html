@@ -12,7 +12,7 @@
   mat-raised-button
   tooltip-position="below"
   matTooltipShowDelay="500"
-  [disabled]="!trainingGuideURLs?.length"
+  [disabled]="!trainingGuideURLs || !trainingGuideURLs.length"
   [matTooltip]="'igo.integration.aboutTool.trainingGuideTooltip' | translate"
   (click)="openGuide()">
   <span>{{'igo.integration.aboutTool.trainingGuide' | translate}}</span>
