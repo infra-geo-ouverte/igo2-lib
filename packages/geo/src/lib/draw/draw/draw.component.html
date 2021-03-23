@@ -33,7 +33,7 @@
     </div>
     <form class="igo-form" [formGroup]="form" >
       <div class="fill-color-picker mat-typography">
-        <span class="test">
+        <span class="color_element">
           {{'igo.geo.draw.fill' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon> 
         </span>
         <mat-form-field appearance="outline">
@@ -51,13 +51,13 @@
             [cpCancelButton]="true"
             [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
             [value]="fillColor"
-            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel)">
+            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel, false)">
         </mat-form-field>
       </div>
       <br>
 
       <div class="stroke-color-picker mat-typography">
-        <span class="test">
+        <span class="color_element">
           {{'igo.geo.draw.stroke' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon> 
         </span>
         <mat-form-field class="stroke-color-picker-box" appearance="outline">
@@ -75,7 +75,27 @@
             [cpCancelButton]="true"
             [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
             [value]="strokeColor"
-            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel)">
+            (colorPickerSelect)="changeStoreLayerStyle(toggleLabel, false)">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>{{'igo.geo.draw.icon' | translate}}</mat-label>
+          <mat-select>   
+            <mat-select-trigger>
+              <div *ngIf="icon" class="box">
+                <img src={{icon}}>
+              </div>
+            </mat-select-trigger>  
+            <mat-option 
+              *ngFor="let icon_html of icons"
+              [value]="icon_html"
+              (click)="onIconChange(icon_html)">
+              <div class="box">
+                <img src={{icon_html}}>
+              </div>
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
     </form>

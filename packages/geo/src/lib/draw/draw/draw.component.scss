@@ -38,7 +38,7 @@ $slide-toggle-width: 60px;
   }
 }
 
-.test {
+.color_elementt {
   line-height: 90px;
   display: inline-block;
   vertical-align: middle;
@@ -50,4 +50,14 @@ $slide-toggle-width: 60px;
     mat-form-field {
       margin: 10px;
     }
+}
+
+.box {
+  width: 25px;
+  height: 25px;
+}
+
+img {
+  width: 100%;
+  height: 100%;
 }
