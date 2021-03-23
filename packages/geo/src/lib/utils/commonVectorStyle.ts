@@ -15,7 +15,7 @@ import { FeatureCommonVectorStyleOptions } from './commonVertorStyle.interface';
 export function getSelectedMarkerStyle(
   {
     feature,
-    markerColor = '#00A1DE',
+    markerColor = '#00a1de',
     fillColor,
     outlineColor = [0, 255, 255],
     strokeColor = [0, 255, 255],
@@ -50,7 +50,7 @@ export function getSelectedMarkerStyle(
 export function getMarkerStyle(
   {
     feature,
-    markerColor = '#00A1DE',
+    markerColor = '#00a1de',
     fillColor,
     outlineColor = [0, 255, 255],
     strokeColor = [0, 255, 255],
