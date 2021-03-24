@@ -14,7 +14,7 @@
     outline: auto;
     margin: 5px;
     white-space: normal;
-    height: 36px;
+    height: 40px;
     width: 150px;
 
     ::ng-deep .mat-button-toggle-label-content {
@@ -28,4 +28,13 @@
 
   mat-checkbox, mat-radio-button {
     margin: 5px;
+    width: 150px;
+
+    ::ng-deep label {
+      white-space: normal;
+    }
+  }
+
+  .radioButtonGroups, mat-radio-group {
+    display: flex;
   }

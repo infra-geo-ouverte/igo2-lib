@@ -169,7 +169,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   onSelectionChange(currentOgcSelection?) {
-    console.log(currentOgcSelection);
     if (currentOgcSelection) {
       currentOgcSelection.enabled = !currentOgcSelection.enabled;
     }
