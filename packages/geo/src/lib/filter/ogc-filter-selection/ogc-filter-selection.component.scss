@@ -23,16 +23,25 @@
   }
 
   ::ng-deep .material-tooltip {
-    white-space: pre-line;
+    white-space: pre-wrap;
   }
 
   mat-checkbox, mat-radio-button {
     margin: 5px;
     width: 150px;
+    display: inline-flex;
 
     ::ng-deep label {
       white-space: normal;
     }
+  }
+
+  mat-radio-button {
+    align-items: center;
+  }
+
+  mat-checkbox {
+    vertical-align: middle;
   }
 
   .radioButtonGroups, mat-radio-group {

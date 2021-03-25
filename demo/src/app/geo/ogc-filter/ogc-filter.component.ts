@@ -500,7 +500,7 @@ export class AppOgcFilterComponent {
       extends WMSDataSourceOptions,
         OgcFilterableDataSourceOptions {}
 
-    const filterableWMSwithSelector: WMSoptions = {
+    const filterableWMSwithPushButtons: WMSoptions = {
       type: 'wms',
       url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
       urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
@@ -627,15 +627,195 @@ export class AppOgcFilterComponent {
     };
 
     this.dataSourceService
-      .createAsyncDataSource(filterableWMSwithSelector)
+      .createAsyncDataSource(filterableWMSwithPushButtons)
       .subscribe(dataSource => {
         this.map.addLayer(
           this.layerService.createLayer({
-            title: 'Filterable WMS layers with predefined filters (buttons)',
+            title: 'Filterable WMS layers with predefined filters (push buttons)',
             source: dataSource
           })
         );
       });
+
+      const filterableWMSwithCheckboxes: WMSoptions = {
+        type: 'wms',
+        url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+        urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+        params: {
+          LAYERS: 'radars_photos',
+          VERSION: '1.3.0'
+        },
+        ogcFilters: {
+            enabled: true,
+            editable: true,
+            checkboxes: {
+              groups : [
+                {title: 'Nom du group1', name: '1', ids : ['id1']},
+                {title: 'Nom du group2', name: '2', ids : ['id1', 'id2']},
+              ],
+              bundles: [
+              {
+                id: 'id1',
+                logical: 'Or',
+                selectors: [
+                  {
+                    title: 'Radar photo fixe',
+                    enabled: true,
+                    tooltip: 'Here a tooltip explaning ...',
+                    filters: {
+                      operator: 'PropertyIsEqualTo',
+                      propertyName: 'typeAppareil',
+                      expression: 'Radar photo fixe'
+                    }
+                  },
+                  {
+                    title: 'Radar photo mobile',
+                    enabled: false,
+                    tooltip: 'Here a tooltip explaning ...',
+                    filters: {
+                      operator: 'PropertyIsEqualTo',
+                      propertyName: 'typeAppareil',
+                      expression: 'Radar photo mobile'
+                    }
+                  },
+                  {
+                    title: 'Radar photo fixe + feu rouge',
+                    enabled: false,
+                    color: '0,200,0',
+                    tooltip: 'Here a tooltip explaning ...',
+                    filters: {
+                      operator: 'PropertyIsEqualTo',
+                      propertyName: 'typeAppareil',
+                      expression: 'Radar photo fixe et surveillance au feu rouge'
+                    }
+                  },
+                  {
+                    title: 'Radar feu rouge',
+                    enabled: false,
+                    color: '255,0,0',
+                    tooltip: 'Here a tooltip explaning ...',
+                    filters: {
+                      operator: 'PropertyIsEqualTo',
+                      propertyName: 'typeAppareil',
+                      expression: 'Appareil de surveillance au feu rouge'
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+            allowedOperatorsType: OgcFilterOperatorType.Basic
+          },
+        paramsWFS: {
+          featureTypes: 'radars_photos',
+          fieldNameGeometry: 'geometry',
+          maxFeatures: 10000,
+          version: '1.1.0',
+          outputFormat: 'geojson',
+          outputFormatDownload: 'shp'
+        } as WFSDataSourceOptionsParams
+      };
+  
+      this.dataSourceService
+        .createAsyncDataSource(filterableWMSwithCheckboxes)
+        .subscribe(dataSource => {
+          this.map.addLayer(
+            this.layerService.createLayer({
+              title: 'Filterable WMS layers with predefined filters (checkboxes)',
+              source: dataSource
+            })
+          );
+        });
+
+        const filterableWMSwithRadioButtons: WMSoptions = {
+          type: 'wms',
+          url: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          urlWfs: 'https://geoegl.msp.gouv.qc.ca/apis/ws/swtq',
+          params: {
+            LAYERS: 'radars_photos',
+            VERSION: '1.3.0'
+          },
+          ogcFilters: {
+              enabled: true,
+              editable: true,
+              radioButtons: {
+                groups : [
+                  {title: 'Nom du group1', name: '1', ids : ['id1']},
+                  {title: 'Nom du group2', name: '2', ids : ['id1', 'id2']},
+                ],
+                bundles: [
+                {
+                  id: 'id1',
+                  logical: 'Or',
+                  selectors: [
+                    {
+                      title: 'Radar photo fixe',
+                      enabled: true,
+                      tooltip: 'Here a tooltip explaning ...',
+                      filters: {
+                        operator: 'PropertyIsEqualTo',
+                        propertyName: 'typeAppareil',
+                        expression: 'Radar photo fixe'
+                      }
+                    },
+                    {
+                      title: 'Radar photo mobile',
+                      enabled: false,
+                      tooltip: 'Here a tooltip explaning ...',
+                      filters: {
+                        operator: 'PropertyIsEqualTo',
+                        propertyName: 'typeAppareil',
+                        expression: 'Radar photo mobile'
+                      }
+                    },
+                    {
+                      title: 'Radar photo fixe + feu rouge',
+                      enabled: false,
+                      color: '0,200,0',
+                      tooltip: 'Here a tooltip explaning ...',
+                      filters: {
+                        operator: 'PropertyIsEqualTo',
+                        propertyName: 'typeAppareil',
+                        expression: 'Radar photo fixe et surveillance au feu rouge'
+                      }
+                    },
+                    {
+                      title: 'Radar feu rouge',
+                      enabled: false,
+                      color: '255,0,0',
+                      tooltip: 'Here a tooltip explaning ...',
+                      filters: {
+                        operator: 'PropertyIsEqualTo',
+                        propertyName: 'typeAppareil',
+                        expression: 'Appareil de surveillance au feu rouge'
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+              allowedOperatorsType: OgcFilterOperatorType.Basic
+            },
+          paramsWFS: {
+            featureTypes: 'radars_photos',
+            fieldNameGeometry: 'geometry',
+            maxFeatures: 10000,
+            version: '1.1.0',
+            outputFormat: 'geojson',
+            outputFormatDownload: 'shp'
+          } as WFSDataSourceOptionsParams
+        };
+    
+        this.dataSourceService
+          .createAsyncDataSource(filterableWMSwithRadioButtons)
+          .subscribe(dataSource => {
+            this.map.addLayer(
+              this.layerService.createLayer({
+                title: 'Filterable WMS layers with predefined filters (radio buttons)',
+                source: dataSource
+              })
+            );
+          });
 
     // const datasourceWmsWith2Layers: WMSoptions = {
     //   type: 'wms',
