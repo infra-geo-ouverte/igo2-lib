@@ -389,7 +389,9 @@
         },
         "coordinates": {
           "name": "Coordonnées",
-          "coord": "Coordonnée (longitude, latitude)"
+          "coord": "Coordonnée (longitude, latitude)",
+          "radius": "Rayon",
+          "conf": "Confiance"
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
