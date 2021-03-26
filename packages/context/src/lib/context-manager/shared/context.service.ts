@@ -1,14 +1,15 @@
 import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import {
   map,
   tap,
   catchError,
   debounceTime,
   mergeMap,
-  first
+  first,
+  skip
 } from 'rxjs/operators';
 
 import olPoint from 'ol/geom/Point';
@@ -49,6 +50,7 @@ export class ContextService {
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
   public importedContext: Array<DetailedContext> = [];
+  public toolsChanged$ = new Subject<DetailedContext>();
   private mapViewFromRoute: ContextMapView = {};
   private options: ContextServiceOptions;
   private baseUrl: string;
@@ -88,14 +90,10 @@ export class ContextService {
 
     this.readParamsFromRoute();
 
-    this.authService.authenticate$.subscribe((authenticated) => {
-      if (authenticated && this.baseUrl) {
-        this.get().subscribe((contexts) => {
-          this.handleContextsChange(contexts);
-        });
-      } else {
-        this.contexts$.pipe(first()).subscribe((contexts) => {
-          this.handleContextsChange(contexts);
+    this.authService.logged$.subscribe((logged) => {
+      if (logged) {
+        this.contexts$.pipe(skip(1), first()).subscribe((c) => {
+          this.handleContextsChange();
         });
         this.loadContexts();
       }
@@ -181,7 +179,7 @@ export class ContextService {
 
   create(context: DetailedContext): Observable<Context> {
     const url = this.baseUrl + '/contexts';
-    return this.http.post<Context>(url, JSON.stringify(context)).pipe(
+    return this.http.post<Context>(url, context).pipe(
       map((contextCreated) => {
         if (this.authService.authenticated) {
           contextCreated.permission = TypePermission[TypePermission.write];
@@ -197,7 +195,7 @@ export class ContextService {
 
   clone(id: string, properties = {}): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id + '/clone';
-    return this.http.post<Context>(url, JSON.stringify(properties)).pipe(
+    return this.http.post<Context>(url, properties).pipe(
       map((contextCloned) => {
         contextCloned.permission = TypePermission[TypePermission.write];
         this.contexts$.value.ours.unshift(contextCloned);
@@ -209,7 +207,7 @@ export class ContextService {
 
   update(id: string, context: Context): Observable<Context> {
     const url = this.baseUrl + '/contexts/' + id;
-    return this.http.patch<Context>(url, JSON.stringify(context));
+    return this.http.patch<Context>(url, context);
   }
 
   // =================================================================
@@ -219,7 +217,7 @@ export class ContextService {
     const association = {
       toolId
     };
-    return this.http.post<void>(url, JSON.stringify(association));
+    return this.http.post<void>(url, association);
   }
 
   deleteToolAssociation(contextId: string, toolId: string): Observable<any> {
@@ -243,13 +241,11 @@ export class ContextService {
       typePermission: type
     };
 
-    return this.http
-      .post<ContextPermission[]>(url, JSON.stringify(association))
-      .pipe(
-        catchError((res) => {
-          return [this.handleError(res, undefined, true)];
-        })
-      );
+    return this.http.post<ContextPermission[]>(url, association).pipe(
+      catchError((res) => {
+        return [this.handleError(res, undefined, true)];
+      })
+    );
   }
 
   deletePermissionAssociation(
@@ -717,19 +713,25 @@ export class ContextService {
   }
 
   private handleContextsChange(
-    contexts: ContextsList,
     keepCurrentContext = true
   ) {
     const context = this.context$.value;
     const editedContext = this.editedContext$.value;
-
+    if (!context || context.uri === this.options.defaultContextUri) {
+      keepCurrentContext = false;
+    }
     if (!keepCurrentContext || !this.findContext(context)) {
+      this.defaultContextUri = undefined;
       this.loadDefaultContext();
     } else {
-      if (context.map.view.keepCurrentView === undefined) {
-        context.map.view.keepCurrentView = true;
-      }
-      this.context$.next(context);
+      this.getContextByUri(context.uri)
+        .pipe(first())
+        .subscribe(
+          (newContext: DetailedContext) => {
+            this.toolsChanged$.next(newContext);
+          }
+        );
+
       if (this.baseUrl && this.authService.authenticated) {
         this.getDefault().subscribe();
       }
