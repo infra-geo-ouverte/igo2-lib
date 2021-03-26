@@ -294,24 +294,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   onResultFocus(result: SearchResult) {
     this.focusedResult$.next(result);
     if (result.meta.dataType === FEATURE && result.data.geometry) {
-      if (
-        this.map.viewController.getZoom() < 11 &&
-        (result.data.geometry.type === 'MultiLineString' ||
-          result.data.geometry.type === 'LineString')
-      ) {
-        result.data.meta.style = createOverlayDefaultStyle({ strokeWidth: 10 });
-      } else if (
-        this.map.viewController.getZoom() < 11 &&
-        (result.data.geometry.type === 'MultiPolygon' ||
-          result.data.geometry.type === 'Polygon')
-      ) {
-        result.data.meta.style = createOverlayDefaultStyle({ strokeWidth: 2 });
-      } else if (
-        this.map.viewController.getZoom() > 10 &&
-        result.data.geometry.type !== 'Point'
-      ) {
-        result.data.meta.style = createOverlayDefaultStyle();
-      }
+      result.data.meta.style = getSelectedMarkerStyle(
+        Object.assign({},
+          { feature: result.data },
+          this.searchState.searchOverlayStyleSelection));
       this.map.searchResultsOverlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
   }
