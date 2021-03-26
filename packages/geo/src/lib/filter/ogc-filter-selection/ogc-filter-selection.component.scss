@@ -28,8 +28,9 @@
 
   mat-checkbox, mat-radio-button {
     margin: 5px;
-    width: 150px;
+    width: 300px;
     display: inline-flex;
+    font-size: larger;
 
     ::ng-deep label {
       white-space: normal;
@@ -46,4 +47,11 @@
 
   .radioButtonGroups, mat-radio-group {
     display: flex;
+  }
+
+  .moreResults {
+    cursor: pointer;
+    color: blue;
+    float: right;
+    margin: 5px;
   }

@@ -511,7 +511,7 @@ export class AppOgcFilterComponent {
       ogcFilters: {
           enabled: true,
           editable: true,
-          pushButtons: {
+          radioButtons: {
             groups : [
               {title: 'Nom du group1', name: '1', ids : ['id1']},
               {title: 'Nom du group2', name: '2', ids : ['id1', 'id2']},
@@ -561,6 +561,16 @@ export class AppOgcFilterComponent {
                     operator: 'PropertyIsEqualTo',
                     propertyName: 'typeAppareil',
                     expression: 'Appareil de surveillance au feu rouge'
+                  }
+                },
+                {
+                  title: 'Radar photo fixe 345',
+                  enabled: true,
+                  tooltip: 'Here a tooltip explaning ...',
+                  filters: {
+                    operator: 'PropertyIsEqualTo',
+                    propertyName: 'typeAppareil',
+                    expression: 'Radar photo fixe'
                   }
                 }
               ]

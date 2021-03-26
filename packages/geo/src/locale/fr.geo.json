@@ -172,6 +172,7 @@
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
         "advancedOgcFilters": "Filtres avancés",
+        "displayMoreResults": "Afficher plus (+)",
         "placeholder": "Saisir une valeur",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",

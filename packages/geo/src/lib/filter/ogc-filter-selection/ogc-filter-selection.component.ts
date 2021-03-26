@@ -32,15 +32,56 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   @Input() map: IgoMap;
 
+  @Input() checkboxesIndex = 4;
+  @Input() radioButtonsIndex = 4;
+
   public form: FormGroup;
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
 
-  get currentGroup() {
-    return this.form.get('group').value;
+  get currentPushButtonsGroup() {
+    return this.form.get('pushButtonsGroup').value;
   }
-  set currentGroup(value) {
-    this.form.patchValue({ group: value });
+  set currentPushButtonsGroup(value) {
+    this.form.patchValue({ pushButtonsGroup: value });
+  }
+
+  get currentCheckboxesGroup() {
+    return this.form.get('checkboxesGroup').value;
+  }
+  set currentCheckboxesGroup(value) {
+    this.form.patchValue({ checkboxesGroup: value });
+  }
+
+  get currentRadioButtonsGroup() {
+    return this.form.get('radioButtonsGroup').value;
+  }
+  set currentRadioButtonsGroup(value) {
+    this.form.patchValue({ radioButtonsGroup: value });
+  }
+
+  getCurrentCheckboxesSelectors(bundle) {
+    const current = [];
+    if (bundle?.selectors.length) {
+      for (let i = 0; i < this.checkboxesIndex; i++) {
+        if (bundle.selectors[i]) {
+          current.push(bundle.selectors[i]);
+        }
+      }
+    }
+    return current;
+  }
+
+  getCurrentRadioButtonsSelectors(bundle) {
+    const current = [];
+    if (bundle?.selectors.length) {
+      for (let i = 0; i < this.radioButtonsIndex; i++) {
+        if (bundle.selectors[i]) {
+          current.push(bundle.selectors[i]);
+        }
+      }
+    }
+    return current;
   }
 
   constructor(
@@ -56,16 +97,26 @@ export class OgcFilterSelectionComponent implements OnInit {
       pushButtons: ['', [Validators.required]],
       checkboxes: ['', [Validators.required]],
       radioButtons: ['', [Validators.required]],
-      group: ['', [Validators.required]]
+      pushButtonsGroup: ['', [Validators.required]],
+      checkboxesGroup: ['', [Validators.required]],
+      radioButtonsGroup: ['', [Validators.required]]
     });
   }
 
-  getSelectorGroups(): SelectorGroup[] {
-    if (this.datasource.options.ogcFilters.pushButtons) {
+  getPushButtonsGroups(): SelectorGroup[] {
+    if (this.datasource?.options?.ogcFilters?.pushButtons) {
       return this.datasource.options.ogcFilters.pushButtons.groups;
-    } else if (this.datasource.options.ogcFilters.checkboxes) {
+    }
+  }
+
+  getCheckboxesGroups(): SelectorGroup[] {
+    if (this.datasource?.options?.ogcFilters?.checkboxes) {
       return this.datasource.options.ogcFilters.checkboxes.groups;
-    } else if (this.datasource.options.ogcFilters.radioButtons) {
+    }
+  }
+
+  getRadioButtonsGroups(): SelectorGroup[] {
+    if (this.datasource?.options?.ogcFilters?.radioButtons) {
       return this.datasource.options.ogcFilters.radioButtons.groups;
     }
   }
@@ -73,51 +124,67 @@ export class OgcFilterSelectionComponent implements OnInit {
   ngOnInit() {
     if (this.datasource.options.ogcFilters) {
       if (this.datasource.options.ogcFilters.pushButtons) {
-        this.currentGroup =
+        this.currentPushButtonsGroup =
           this.datasource.options.ogcFilters.pushButtons.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.pushButtons.groups[0];
       }
       if (this.datasource.options.ogcFilters.checkboxes) {
-        this.currentGroup =
+        this.currentCheckboxesGroup =
           this.datasource.options.ogcFilters.checkboxes.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.checkboxes.groups[0];
       }
       if (this.datasource.options.ogcFilters.radioButtons) {
-        this.currentGroup =
+        this.currentRadioButtonsGroup =
           this.datasource.options.ogcFilters.radioButtons.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.radioButtons.groups[0];
       }
     }
-    this.applyFilters();
+    this.applyFilters(4);
 
     this.form
-      .get('group')
+    .get('pushButtonsGroup')
+    .valueChanges
+    .pipe(debounceTime(750))
+    .subscribe(() => {
+      this.onPushButtonsChangeGroup();
+      this.applyFilters(this.currentPushButtonsGroup);
+      });
+    this.form
+    .get('checkboxesGroup')
+    .valueChanges
+    .pipe(debounceTime(750))
+    .subscribe(() => {
+      this.onCheckboxesChangeGroup();
+      this.applyFilters(this.currentCheckboxesGroup);
+      });
+    this.form
+      .get('radioButtonsGroup')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.onChangeGroup();
-        this.applyFilters();
+        this.onRadioButtonsChangeGroup();
+        this.applyFilters(this.currentRadioButtonsGroup);
       });
     this.form
       .get('pushButtons')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.applyFilters();
+        this.applyFilters(this.currentPushButtonsGroup);
       });
     this.form
       .get('checkboxes')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.applyFilters();
+        this.applyFilters(this.currentCheckboxesGroup);
       });
     this.form
       .get('radioButtons')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.applyFilters();
+        this.applyFilters(this.currentRadioButtonsGroup);
       });
   }
 
@@ -163,9 +230,19 @@ export class OgcFilterSelectionComponent implements OnInit {
     return bundle.vertical ? bundle.vertical : false;
   }
 
-  private onChangeGroup() {
-    this.getSelectorGroups().map(g => g.enabled = false);
-    this.getSelectorGroups().find(g => g === this.currentGroup).enabled = true;
+  private onPushButtonsChangeGroup() {
+    this.getPushButtonsGroups().map(g => g.enabled = false);
+    this.getPushButtonsGroups().find(g => g === this.currentPushButtonsGroup).enabled = true;
+  }
+
+  private onCheckboxesChangeGroup() {
+    this.getCheckboxesGroups().map(g => g.enabled = false);
+    this.getCheckboxesGroups().find(g => g === this.currentCheckboxesGroup).enabled = true;
+  }
+
+  private onRadioButtonsChangeGroup() {
+    this.getRadioButtonsGroups().map(g => g.enabled = false);
+    this.getRadioButtonsGroups().find(g => g === this.currentRadioButtonsGroup).enabled = true;
   }
 
   onSelectionChange(currentOgcSelection?) {
@@ -174,22 +251,24 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  private applyFilters() {
+  private applyFilters(currentGroup) {
     let filterQueryString = '';
     const conditions = [];
-    this.currentGroup.computedSelectors.map(selectorBundle => {
-      const bundleCondition = [];
-      selectorBundle.selectors
-      .filter(ogcSelector => ogcSelector.enabled === true)
-      .forEach(enabledSelector => bundleCondition.push(enabledSelector.filters));
-      if (bundleCondition.length >= 1 ) {
-        if (bundleCondition.length === 1) {
-          conditions.push(bundleCondition[0]);
-        } else {
-          conditions.push({logical: selectorBundle.logical, filters: bundleCondition});
+    if (currentGroup?.computedSelectors) {
+      currentGroup.computedSelectors.map(selectorBundle => {
+        const bundleCondition = [];
+        selectorBundle.selectors
+        .filter(ogcSelector => ogcSelector.enabled === true)
+        .forEach(enabledSelector => bundleCondition.push(enabledSelector.filters));
+        if (bundleCondition.length >= 1 ) {
+          if (bundleCondition.length === 1) {
+            conditions.push(bundleCondition[0]);
+          } else {
+            conditions.push({logical: selectorBundle.logical, filters: bundleCondition});
+          }
         }
-      }
-    });
+      });
+    }
     if (conditions.length >= 1) {
       filterQueryString = this.ogcFilterWriter
         .buildFilter(conditions.length === 1 ?
@@ -203,5 +282,21 @@ export class OgcFilterSelectionComponent implements OnInit {
       this.datasource.ol.refresh();
     }
     this.refreshFilters();
+  }
+
+  isMoreResults(currentGroup, type) {
+    let selectorsLength = 0;
+    for (const bundle of currentGroup?.computedSelectors) {
+      for (const selectors of bundle.selectors) {
+        selectorsLength++;
+      }
+    }
+    const index = type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
+    return selectorsLength > index;
+  }
+
+  displayMoreResults(type) {
+    type === 'radio' ? this.radioButtonsIndex += 5 : this.checkboxesIndex += 5;
+    return;
   }
 }

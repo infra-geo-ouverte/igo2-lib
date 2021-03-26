@@ -173,6 +173,7 @@
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
         "advancedOgcFilters": "Advanced filters",
+        "displayMoreResults": "Display more (+)",
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Select an operator",
