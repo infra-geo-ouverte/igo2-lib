@@ -46,10 +46,13 @@
             [style.background]="fillColor"
             [readonly]="true"
             [colorPicker]="fillColor"
+            [cpWidth]="('200px')"
             [cpPosition]="'bottom'"
             [cpOutputFormat] = "'rgba'"
             [cpCancelButton]="true"
             [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
+            [cpOKButton]="true"
+            [cpOKButtonText]="'igo.geo.draw.okColorPicker' | translate"
             [value]="fillColor"
             (colorPickerSelect)="changeStoreLayerStyle(toggleLabel, false)">
         </mat-form-field>
@@ -70,16 +73,19 @@
             [style.background]="strokeColor"
             [readonly]="true"
             [colorPicker]="strokeColor"
+            [cpWidth]="('200px')"
             [cpPosition]="'bottom'"
             [cpOutputFormat] = "'rgba'"
             [cpCancelButton]="true"
             [cpCancelButtonText]="'igo.geo.draw.cancelColorPicker' | translate"
+            [cpOKButton]="true"
+            [cpOKButtonText]="'igo.geo.draw.okColorPicker' | translate"
             [value]="strokeColor"
             (colorPickerSelect)="changeStoreLayerStyle(toggleLabel, false)">
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field>
+        <mat-form-field *ngIf="icons.length >= 1">
           <mat-label>{{'igo.geo.draw.icon' | translate}}</mat-label>
           <mat-select>   
             <mat-select-trigger>
