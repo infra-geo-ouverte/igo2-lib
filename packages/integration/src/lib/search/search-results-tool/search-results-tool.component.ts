@@ -360,7 +360,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   onResultFocus(result: SearchResult) {
     this.focusedResult$.next(result);
     if (result.meta.dataType === FEATURE && result.data.geometry) {
-      result.data.meta.style = createOverlayMarkerStyle(this.searchState.searchOverlayStyleFocus);
+      result.data.meta.style = getSelectedMarkerStyle(
+        Object.assign({},
+          { feature: result.data },
+          this.searchState.searchOverlayStyleSelection));
       this.map.searchResultsOverlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
   }
