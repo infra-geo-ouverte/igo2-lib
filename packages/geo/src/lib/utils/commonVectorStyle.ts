@@ -71,8 +71,8 @@ export function getCommonVectorStyle(
   } else {
     const fillWithOpacity = ColorAsArray(fillColor).slice(0);
     const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
-    fillWithOpacity[3] = 0.15
-    strokeWithOpacity[3] = 0.5
+    fillWithOpacity[3] = 0.15;
+    strokeWithOpacity[3] = 0.5;
     return createOverlayDefaultStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       strokeWidth,
