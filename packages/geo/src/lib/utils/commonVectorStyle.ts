@@ -12,7 +12,7 @@ import { FeatureCommonVectorStyleOptions } from './commonVertorStyle.interface';
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getSelectedMarkerStyle(
+export function getCommonVectorSelectedStyle(
   {
     feature,
     markerColor = '#00a1de',
@@ -47,7 +47,7 @@ export function getSelectedMarkerStyle(
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getMarkerStyle(
+export function getCommonVectorStyle(
   {
     feature,
     markerColor = '#00a1de',
