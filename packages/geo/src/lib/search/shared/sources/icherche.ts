@@ -555,7 +555,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       term = term.replace(/(#[^\s]*)/g, '');
     }
 
-    return term.replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
+    return term.replace(/[^\wÀ-ÿ !\-\+\(\)\.\/½¼¾,'#]+/g, '');
   }
 
   /**
