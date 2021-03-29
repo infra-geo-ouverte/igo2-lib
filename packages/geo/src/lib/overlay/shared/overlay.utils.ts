@@ -61,34 +61,17 @@ function createOverlayLayerStyle(): (olFeature: OlFeature) => olstyle.Style {
  */
 export function createOverlayDefaultStyle({
   text,
-  fillOpacity,
   strokeWidth = 2,
-  strokeOpacity,
-  color = [0, 161, 222, 0.3],
-  strokeColor
+  fillColor = [0, 161, 222, 0.3],
+  strokeColor = [0, 161, 222, 0.9],
 }: {
   text?: string;
-  fillOpacity?: number;
   strokeWidth?: number;
-  strokeOpacity?: number;
-  color?: string | number[];
+  fillColor?: string | number[];
   strokeColor?: string | number[];
 } = {}): olstyle.Style {
-  const fillWithOpacity = ColorAsArray(color).slice(0);
-  const strokeWithOpacity = ColorAsArray(color).slice(0);
-  strokeWithOpacity[3] = 1;
-  if (fillOpacity) {
-    fillWithOpacity[3] = fillOpacity;
-  }
-  if (strokeOpacity) {
-    strokeWithOpacity[3] = strokeOpacity;
-  }
-  if (strokeColor) {
-    const newStrokeColor = ColorAsArray(strokeColor).slice(0);
-    strokeWithOpacity[0] = newStrokeColor[0];
-    strokeWithOpacity[1] = newStrokeColor[1];
-    strokeWithOpacity[2] = newStrokeColor[2];
-  }
+  const fillWithOpacity = ColorAsArray(fillColor).slice(0);
+  const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
 
   const stroke = new olstyle.Stroke({
     width: strokeWidth,

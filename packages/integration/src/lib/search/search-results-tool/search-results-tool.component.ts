@@ -31,12 +31,10 @@ import {
   IgoMap,
   moveToOlFeatures,
   Research,
-  createOverlayDefaultStyle,
   featuresAreTooDeepInView,
   featureToOl,
   featureFromOl,
   getSelectedMarkerStyle,
-  createOverlayMarkerStyle,
   computeOlFeaturesExtent,
   featuresAreOutOfView
 } from '@igo2/geo';
@@ -241,10 +239,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         geometry: new olPoint([x, y])
       });
       const abstractResult = featureFromOl(feature1, this.map.projection);
-      abstractResult.meta.style =
-        trigger === 'focused'
-          ? createOverlayMarkerStyle(this.searchState.searchOverlayStyleFocus)
-          : getSelectedMarkerStyle(
+      abstractResult.meta.style = getSelectedMarkerStyle(
             Object.assign({},
               { feature: abstractResult },
               this.searchState.searchOverlayStyleSelection));
@@ -294,7 +289,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   onResultFocus(result: SearchResult) {
     this.focusedResult$.next(result);
     if (result.meta.dataType === FEATURE && result.data.geometry) {
-      result.data.meta.style = getSelectedMarkerStyle(
+      result.data.meta.style = getCommonVectorSelectedStyle(
         Object.assign({},
           { feature: result.data },
           this.searchState.searchOverlayStyleSelection));
@@ -443,7 +438,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       return;
     }
 
-    feature.meta.style = getSelectedMarkerStyle(
+    feature.meta.style = getCommonVectorSelectedStyle(
       Object.assign({},
         { feature },
         this.searchState.searchOverlayStyleSelection));
