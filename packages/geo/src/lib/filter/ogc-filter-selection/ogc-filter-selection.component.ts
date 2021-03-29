@@ -32,8 +32,9 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   @Input() map: IgoMap;
 
-  @Input() checkboxesIndex = 4;
-  @Input() radioButtonsIndex = 4;
+  @Input() checkboxesIndex = 5;
+  @Input() radioButtonsIndex = 5;
+  @Input() baseIndex = 5;
 
   public form: FormGroup;
   private ogcFilterWriter: OgcFilterWriter;
@@ -127,19 +128,21 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.currentPushButtonsGroup =
           this.datasource.options.ogcFilters.pushButtons.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.pushButtons.groups[0];
+        this.applyFilters(this.currentPushButtonsGroup);
       }
       if (this.datasource.options.ogcFilters.checkboxes) {
         this.currentCheckboxesGroup =
           this.datasource.options.ogcFilters.checkboxes.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.checkboxes.groups[0];
+        this.applyFilters(this.currentCheckboxesGroup);
       }
       if (this.datasource.options.ogcFilters.radioButtons) {
         this.currentRadioButtonsGroup =
           this.datasource.options.ogcFilters.radioButtons.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.radioButtons.groups[0];
+        this.applyFilters(this.currentRadioButtonsGroup);
       }
     }
-    this.applyFilters(4);
 
     this.form
     .get('pushButtonsGroup')
@@ -254,7 +257,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   private applyFilters(currentGroup) {
     let filterQueryString = '';
     const conditions = [];
-    if (currentGroup?.computedSelectors) {
+    if (currentGroup.computedSelectors) {
       currentGroup.computedSelectors.map(selectorBundle => {
         const bundleCondition = [];
         selectorBundle.selectors
@@ -286,7 +289,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   isMoreResults(currentGroup, type) {
     let selectorsLength = 0;
-    for (const bundle of currentGroup?.computedSelectors) {
+    for (const bundle of currentGroup.computedSelectors) {
       for (const selectors of bundle.selectors) {
         selectorsLength++;
       }
@@ -297,6 +300,22 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   displayMoreResults(type) {
     type === 'radio' ? this.radioButtonsIndex += 5 : this.checkboxesIndex += 5;
+    return;
+  }
+
+  isLessResults(currentGroup, type) {
+    let selectorsLength = 0;
+    for (const bundle of currentGroup.computedSelectors) {
+      for (const selectors of bundle.selectors) {
+        selectorsLength++;
+      }
+    }
+    const index = type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
+    return this.baseIndex !== index;
+  }
+
+  displayLessResults(type) {
+    type === 'radio' ? this.radioButtonsIndex = this.baseIndex : this.checkboxesIndex = this.baseIndex;
     return;
   }
 }

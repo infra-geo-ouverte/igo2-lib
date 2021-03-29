@@ -38,6 +38,9 @@
         </mat-checkbox>
       </div>
     </ng-container>
+    <span class="lessResults mat-typography" *ngIf="isLessResults(currentCheckboxesGroup, 'checkbox')" (click)="displayLessResults('checkbox')">
+      <u>{{ 'igo.geo.filter.displayLessResults' | translate }}</u>
+    </span>
     <span class="moreResults mat-typography" *ngIf="isMoreResults(currentCheckboxesGroup, 'checkbox')" (click)="displayMoreResults('checkbox')">
       <u>{{ 'igo.geo.filter.displayMoreResults' | translate }}</u>
     </span>
@@ -62,6 +65,9 @@
         </mat-radio-button>
       </mat-radio-group>
     </ng-container>
+    <span class="lessResults mat-typography" *ngIf="isLessResults(currentRadioButtonsGroup, 'radio')" (click)="displayLessResults('radio')">
+      <u>{{ 'igo.geo.filter.displayLessResults' | translate }}</u>
+    </span>
     <span class="moreResults mat-typography" *ngIf="isMoreResults(currentRadioButtonsGroup, 'radio')" (click)="displayMoreResults('radio')">
       <u>{{ 'igo.geo.filter.displayMoreResults' | translate }}</u>
     </span>

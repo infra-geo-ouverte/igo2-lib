@@ -1,11 +1,11 @@
 
-  .mat-button-toggle-group, .mat-radio-group, .checkboxes {
+  .mat-button-toggle-group, .checkboxes {
     margin: 5px 5px 5px 5px;
     flex-wrap: wrap;
     box-shadow: none;
   }
 
-  .pushButtonGroups, .checkboxGroups, .radioButtonGroups, .selector {
+  .pushButtonGroups, .checkboxGroups, .selector {
     text-align: center;
   }
 
@@ -37,21 +37,20 @@
     }
   }
 
-  mat-radio-button {
-    align-items: center;
-  }
-
   mat-checkbox {
     vertical-align: middle;
-  }
-
-  .radioButtonGroups, mat-radio-group {
-    display: flex;
   }
 
   .moreResults {
     cursor: pointer;
     color: blue;
     float: right;
+    margin: 5px;
+  }
+
+  .lessResults {
+    cursor: pointer;
+    color: blue;
+    float: left;
     margin: 5px;
   }

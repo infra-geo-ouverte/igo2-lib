@@ -572,6 +572,16 @@ export class AppOgcFilterComponent {
                     propertyName: 'typeAppareil',
                     expression: 'Radar photo fixe'
                   }
+                },
+                {
+                  title: 'Radar photo fixe ++',
+                  enabled: true,
+                  tooltip: 'Here a tooltip explaning ...',
+                  filters: {
+                    operator: 'PropertyIsEqualTo',
+                    propertyName: 'typeAppareil',
+                    expression: 'Radar photo fixe'
+                  }
                 }
               ]
             },
@@ -624,7 +634,7 @@ export class AppOgcFilterComponent {
             }
           ]
         },
-          allowedOperatorsType: OgcFilterOperatorType.Basic
+        allowedOperatorsType: OgcFilterOperatorType.Basic
         },
       paramsWFS: {
         featureTypes: 'radars_photos',
