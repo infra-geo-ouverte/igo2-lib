@@ -12,6 +12,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { userAgent } from '@igo2/utils';
 import { NetworkService, ConnectionState } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
@@ -95,8 +96,21 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  htmlSanitizer(value): SafeResourceUrl {
+  urlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
+  }
+
+  htmlSanitizer(value): SafeResourceUrl {
+    if (!value.body || userAgent.getBrowserName() === 'Internet Explorer') {
+      return;
+    }
+    const regexBase = /<base href="[\w:\/\.]+">/;
+    if (!regexBase.test(value.body)) {
+      const url = new URL(value.url);
+      value.body = value.body.replace('<head>', `<head><base href="${url.origin}">`);
+    }
+
+    return this.sanitizer.bypassSecurityTrustHtml(value.body);
   }
 
   isObject(value) {
