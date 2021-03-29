@@ -90,14 +90,19 @@ export class ContextService {
 
     this.readParamsFromRoute();
 
-    this.authService.logged$.subscribe((logged) => {
-      if (logged) {
-        this.contexts$.pipe(skip(1), first()).subscribe((c) => {
-          this.handleContextsChange();
-        });
-        this.loadContexts();
-      }
-    });
+    if (this.authService.hasAuthService) {
+      this.authService.logged$.subscribe((logged) => {
+        if (logged) {
+          this.contexts$.pipe(skip(1), first()).subscribe((c) => {
+            this.handleContextsChange();
+          });
+          this.loadContexts();
+        }
+      });
+    } else {
+      this.loadContexts();
+      this.handleContextsChange(false);
+    }
   }
 
   get(permissions?: string[], hidden?: boolean): Observable<ContextsList> {

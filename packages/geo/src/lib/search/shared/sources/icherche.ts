@@ -677,7 +677,7 @@ export class IChercheReverseSearchSource extends SearchSource
         {
           type: 'radiobutton',
           title: 'radius',
-          name: 'buffer',
+          name: 'bufferInput',
           values: [
             {
               title: '100 m',
@@ -748,7 +748,7 @@ export class IChercheReverseSearchSource extends SearchSource
   ): HttpParams {
     if (options.distance || this.options.distance) {
       options.params = Object.assign(options.params || {}, {
-        buffer: options.distance || this.options.distance
+        bufferInput: options.distance || this.options.distance
       });
     }
 
