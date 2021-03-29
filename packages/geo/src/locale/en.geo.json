@@ -580,6 +580,7 @@
         "icon": "Icons",
         "labels": "Labels",
         "LineString": "Line",
+        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygon",
         "radius": "Radius",

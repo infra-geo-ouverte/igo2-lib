@@ -580,6 +580,7 @@
         "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
+        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygone",
         "radius": "Rayon",
