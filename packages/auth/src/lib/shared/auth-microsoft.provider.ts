@@ -37,7 +37,6 @@ export function MSALConfigFactory(config: ConfigService): PublicClientApplicatio
 export function MSALConfigFactoryb2c(config: ConfigService): PublicClientApplication {
 
   const msConf: BrowserAuthOptions = config.getConfig('auth.microsoftb2c.browserAuthOptions') || {};
-
   msConf.redirectUri = msConf.redirectUri || window.location.href;
   msConf.authority = msConf.authority || 'https://login.microsoftonline.com/organizations';
 
