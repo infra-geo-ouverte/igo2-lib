@@ -78,7 +78,6 @@ export function MSALAngularConfigFactoryb2c(config: ConfigService): MSPMsalGuard
 }
 
 export function provideAuthMicrosoft(type?: string) {
-
   if (type === 'b2c') {
     return [
       {
