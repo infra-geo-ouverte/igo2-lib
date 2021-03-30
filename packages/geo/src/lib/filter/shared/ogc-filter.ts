@@ -716,7 +716,19 @@ export class OgcFilterWriter {
     const filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
     if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons)) {
-      this.formatGroupAndFilter(ogcFilters, filterQueryStringSelector, extent, proj);
+      let selectors;
+      if (ogcFilters.pushButtons) {
+        selectors = ogcFilters.pushButtons;
+        this.formatGroupAndFilter(ogcFilters, selectors, filterQueryStringSelector, extent, proj);
+      }
+      if (ogcFilters.checkboxes) {
+        selectors = ogcFilters.checkboxes;
+        this.formatGroupAndFilter(ogcFilters, selectors, filterQueryStringSelector, extent, proj);
+      }
+      if (ogcFilters.radioButtons) {
+        selectors = ogcFilters.radioButtons;
+        this.formatGroupAndFilter(ogcFilters, selectors, filterQueryStringSelector, extent, proj);
+      }
     }
 
     if (ogcFilters.enabled && ogcFilters.filters) {
@@ -750,16 +762,7 @@ export class OgcFilterWriter {
     return filterQueryString;
   }
 
-  public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, filterQueryStringSelector = '', extent, proj) {
-    let selectors;
-    if (ogcFilters.pushButtons) {
-      selectors = ogcFilters.pushButtons;
-    } else if (ogcFilters.checkboxes) {
-      selectors = ogcFilters.checkboxes;
-    } else if (ogcFilters.radioButtons) {
-      selectors = ogcFilters.radioButtons;
-    }
-
+  public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, selectors, filterQueryStringSelector = '', extent, proj) {
     selectors = this.computeIgoSelector(
       selectors
     );
@@ -793,11 +796,11 @@ export class OgcFilterWriter {
       );
     }
 
-    if (ogcFilters.pushButtons) {
+    if (selectors.selectorType === 'pushButton') {
       ogcFilters.pushButtons = selectors;
-    } else if (ogcFilters.checkboxes) {
+    } else if (selectors.selectorType === 'checkbox') {
       ogcFilters.checkboxes = selectors;
-    } else if (ogcFilters.radioButtons) {
+    } else if (selectors.selectorType === 'radioButton') {
       ogcFilters.radioButtons = selectors;
     }
   }

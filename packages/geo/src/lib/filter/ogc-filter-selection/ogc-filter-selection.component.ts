@@ -287,12 +287,10 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.refreshFilters();
   }
 
-  isMoreResults(currentGroup, type) {
+  isMoreResults(bundle, type) {
     let selectorsLength = 0;
-    for (const bundle of currentGroup.computedSelectors) {
-      for (const selectors of bundle.selectors) {
-        selectorsLength++;
-      }
+    for (const selectors of bundle.selectors) {
+      selectorsLength++;
     }
     const index = type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
     return selectorsLength > index;
@@ -303,12 +301,10 @@ export class OgcFilterSelectionComponent implements OnInit {
     return;
   }
 
-  isLessResults(currentGroup, type) {
+  isLessResults(bundle, type) {
     let selectorsLength = 0;
-    for (const bundle of currentGroup.computedSelectors) {
-      for (const selectors of bundle.selectors) {
-        selectorsLength++;
-      }
+    for (const selectors of bundle.selectors) {
+      selectorsLength++;
     }
     const index = type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
     return this.baseIndex !== index;

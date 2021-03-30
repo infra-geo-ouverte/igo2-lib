@@ -5,7 +5,7 @@
     box-shadow: none;
   }
 
-  .pushButtonGroups, .checkboxGroups, .selector {
+  .pushButtonGroups, .selector {
     text-align: center;
   }
 
@@ -19,6 +19,7 @@
 
     ::ng-deep .mat-button-toggle-label-content {
       line-height: unset;
+      font-size: small;
     }
   }
 
@@ -27,7 +28,7 @@
   }
 
   mat-checkbox, mat-radio-button {
-    margin: 5px;
+    margin: 7px;
     width: 300px;
     display: inline-flex;
     font-size: larger;
@@ -39,6 +40,15 @@
 
   mat-checkbox {
     vertical-align: middle;
+  }
+
+  h4 {
+    margin: 7px;
+    text-align: center;
+  }
+
+  .sectionDivider {
+    border-top-width: medium;
   }
 
   .moreResults {
