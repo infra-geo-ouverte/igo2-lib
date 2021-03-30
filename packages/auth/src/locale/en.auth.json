@@ -18,8 +18,12 @@
         "Invalid username": "Invalid username"
       },
       "microsoft": {
-        "login": "Sign in with Microsoft"
+        "login": "Sign in with MSP account"
+      },
+      "microsoftb2c": {
+        "login": "Sign in"
       }
+
     }
   }
 }
