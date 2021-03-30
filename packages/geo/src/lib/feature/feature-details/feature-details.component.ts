@@ -100,7 +100,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
-  isHtmlDisplay():boolean {
+  isHtmlDisplay(): boolean {
     if (this.feature && this.isObject(this.feature.properties) && this.feature.properties.target === 'iframe') {
       this.htmlDisplayEvent.emit(true);
       return true;
