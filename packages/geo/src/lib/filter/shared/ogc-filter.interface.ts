@@ -57,6 +57,7 @@ export interface IgoOgcSelector  {
   groups?: SelectorGroup[];
   bundles?: OgcSelectorBundle[];
   selectorType?: 'pushButton' | 'checkbox' | 'radioButton';
+  order?: number;
 }
 
 export interface SelectorGroup  {

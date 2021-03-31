@@ -1,6 +1,11 @@
 
-  .mat-button-toggle-group, .checkboxes {
+  .mat-button-toggle-group {
     margin: 5px 5px 5px 5px;
+    flex-wrap: wrap;
+    box-shadow: none;
+  }
+
+  .checkboxes {
     flex-wrap: wrap;
     box-shadow: none;
   }
@@ -29,7 +34,7 @@
 
   mat-checkbox, mat-radio-button {
     margin: 7px;
-    width: 300px;
+    width: 95%;
     display: inline-flex;
     font-size: larger;
 
@@ -51,16 +56,12 @@
     border-top-width: medium;
   }
 
-  .moreResults {
+  u {
     cursor: pointer;
     color: blue;
-    float: right;
     margin: 5px;
   }
 
-  .lessResults {
-    cursor: pointer;
-    color: blue;
-    float: left;
-    margin: 5px;
+  p {
+    margin: unset;
   }

@@ -40,6 +40,29 @@ export class OgcFilterSelectionComponent implements OnInit {
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
 
+  get ogcFiltersSelectors() {
+    let ogcSelector = [];
+    if (this.datasource?.options?.ogcFilters?.pushButtons) {
+      ogcSelector.push(this.datasource?.options?.ogcFilters?.pushButtons);
+    }
+    if (this.datasource?.options?.ogcFilters?.checkboxes) {
+      ogcSelector.push(this.datasource?.options?.ogcFilters?.checkboxes);
+    }
+    if (this.datasource?.options?.ogcFilters?.radioButtons) {
+      ogcSelector.push(this.datasource?.options?.ogcFilters?.radioButtons);
+    }
+    ogcSelector.sort((a, b) => {
+      if (a.order < b.order) {
+        return -1;
+      }
+      if (a.order > b.order) {
+        return 1;
+      }
+      return 0;
+    })
+    return ogcSelector;
+  }
+
   get currentPushButtonsGroup() {
     return this.form.get('pushButtonsGroup').value;
   }
@@ -189,6 +212,8 @@ export class OgcFilterSelectionComponent implements OnInit {
       .subscribe(() => {
         this.applyFilters(this.currentRadioButtonsGroup);
       });
+
+      console.log(this.ogcFiltersSelectors);
   }
 
   getToolTip(selector): string  {
@@ -307,7 +332,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       selectorsLength++;
     }
     const index = type === 'radio' ? this.radioButtonsIndex : this.checkboxesIndex;
-    return this.baseIndex !== index;
+    return this.baseIndex !== index && selectorsLength > this.baseIndex;
   }
 
   displayLessResults(type) {

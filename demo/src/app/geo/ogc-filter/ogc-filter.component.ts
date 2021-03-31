@@ -513,6 +513,7 @@ export class AppOgcFilterComponent {
         editable: true,
         pushButtons: {
           selectorType: 'pushButton',
+          order: 3,
           groups : [
             {title: 'Nom du group1 - push', name: '1 - push', ids : ['id1']},
           ],
@@ -638,6 +639,7 @@ export class AppOgcFilterComponent {
         },
         radioButtons: {
           selectorType: 'radioButton',
+          order: 2,
           groups : [
             {title: 'Nom du group1 - radio', name: '1 - radio', ids : ['id1']}
           ],
@@ -763,6 +765,7 @@ export class AppOgcFilterComponent {
         },
         checkboxes: {
           selectorType: 'checkbox',
+          order: 1,
           groups : [
             {title: 'Nom du group1 - checkbox', name: '1 - checkbox', ids : ['id1']},
             {title: 'Nom du group2 - checkbox', name: '2 - checkbox', ids : ['id1', 'id2']},
