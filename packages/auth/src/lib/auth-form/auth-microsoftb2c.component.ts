@@ -7,14 +7,22 @@ import {
   Inject
 } from '@angular/core';
 
-
-import { MsalBroadcastService, MsalService, MSAL_GUARD_CONFIG, MsalGuardConfiguration} from '@azure/msal-angular';
-import { InteractionStatus, AuthenticationResult, InteractionType, PopupRequest, SilentRequest,InteractionRequiredAuthError } from '@azure/msal-browser';
+import { MSAL_GUARD_CONFIG } from '@azure/msal-angular';
+import {
+  InteractionStatus,
+  AuthenticationResult,
+  PublicClientApplication,
+  PopupRequest,
+  SilentRequest,
+  InteractionRequiredAuthError
+} from '@azure/msal-browser';
 import { ConfigService } from '@igo2/core';
-import { AuthMicrosoftb2cOptions } from '../shared/auth.interface';
+import { AuthMicrosoftb2cOptions, MSPMsalGuardConfiguration } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { MsalBroadcastServiceb2c } from '../shared/auth-msalBroadcastServiceb2c.service';
+import { MsalServiceb2c } from '../shared/auth-msalServiceb2c.service.';
 
 @Component({
   selector: 'igo-auth-microsoftb2c',
@@ -26,16 +34,26 @@ export class AuthMicrosoftb2cComponent {
   private options: AuthMicrosoftb2cOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  private broadcastService: MsalBroadcastServiceb2c;
 
   constructor(
     private authService: AuthService,
     private config: ConfigService,
     private appRef: ApplicationRef,
-    private broadcastService: MsalBroadcastService,
-    private msalService: MsalService,
-    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
+    private msalService: MsalServiceb2c,
+    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MSPMsalGuardConfiguration[],
   ) {
+
     this.options = this.config.getConfig('auth.microsoftb2c') || {};
+
+    this.msalService.instance = new PublicClientApplication({
+      auth: this.options.browserAuthOptions,
+      cache: {
+        cacheLocation: 'sessionStorage'
+      }
+    });
+
+    this.broadcastService = new MsalBroadcastServiceb2c(this.msalService.instance, this.msalService);
 
     if (this.options.browserAuthOptions.clientId) {
       this.broadcastService.inProgress$
@@ -45,15 +63,15 @@ export class AuthMicrosoftb2cComponent {
       )
       .subscribe(() => {
         this.checkAccount();
-      })
-     
+      });
+
     } else {
       console.warn('Microsoft authentification needs "clientId" option');
     }
   }
 
   public loginMicrosoftb2c() {
-    this.msalService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest)
+    this.msalService.loginPopup({...this.getConf().authRequest} as PopupRequest)
     .subscribe((response: AuthenticationResult) => {
       this.msalService.instance.setActiveAccount(response.account);
     });
@@ -61,7 +79,7 @@ export class AuthMicrosoftb2cComponent {
 
   private checkAccount() {
     this.msalService.instance
-      .acquireTokenSilent(this.msalGuardConfig.authRequest as SilentRequest)
+      .acquireTokenSilent(this.getConf().authRequest as SilentRequest)
       .then((response: AuthenticationResult) => {
         const token = response.idToken;
         this.authService.loginWithToken(token, 'microsoftb2c').subscribe(() => {
@@ -72,10 +90,14 @@ export class AuthMicrosoftb2cComponent {
       .catch(async (error) => {
         if (error instanceof InteractionRequiredAuthError) {
             // fallback to interaction when silent call fails
-            return this.msalService.acquireTokenPopup(this.msalGuardConfig.authRequest as SilentRequest);
+            return this.msalService.acquireTokenPopup(this.getConf().authRequest as SilentRequest);
         }
         }).catch(error => {
-            console.log('Fuck');
+            console.log('Silent token fails');
         });
+  }
+
+  private getConf(): MSPMsalGuardConfiguration {
+    return this.msalGuardConfig.filter(conf => conf.type === 'b2c')[0];
   }
 }
