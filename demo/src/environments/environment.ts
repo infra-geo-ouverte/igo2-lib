@@ -28,37 +28,6 @@ export const environment: Environment = {
       intern: {
         enabled: true
       },
-      microsoft: {
-        enabled: true,
-        clientId: "a9eb7c37-160f-41d4-b62c-86f06390cbf6",
-      },
-      microsoftb2c: {
-        enabled: true,
-        browserAuthOptions: {
-          clientId: "9250242d-7e14-45eb-bd5c-517bba163694",
-          authority: 'https://mspgouvqccab2c.b2clogin.com/mspgouvqccab2c.onmicrosoft.com/b2c_1_igo-connexion-inscription',
-          knownAuthorities: ['mspgouvqccab2c.b2clogin.com']
-        },
-        b2cOptions: {
-          names: {
-            signUpSignIn: "b2c_1_igo-connexion-inscription",
-            forgotPassword: "",
-            editProfile: ""
-          },
-          authorities: {
-              signUpSignIn: {
-                  authority: "https://mspgouvqccab2c.b2clogin.com/mspgouvqccab2c.onmicrosoft.com/b2c_1_igo-connexion-inscription",
-              },
-              forgotPassword: {
-                  authority: "",
-              },
-              editProfile: {
-                  authority: ""
-              }
-          },
-          authorityDomain: ["mspgouvqccab2c.b2clogin.com"]
-        }
-      },
       allowAnonymous: true
     },
     language: {
