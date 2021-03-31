@@ -6,12 +6,17 @@ import {
   EventEmitter,
   Inject
 } from '@angular/core';
-
-
-import { MsalBroadcastService, MsalService, MSAL_GUARD_CONFIG, MsalGuardConfiguration} from '@azure/msal-angular';
-import { InteractionStatus, AuthenticationResult, InteractionType, PopupRequest, SilentRequest,InteractionRequiredAuthError } from '@azure/msal-browser';
+import { MsalBroadcastService, MsalService, MSAL_GUARD_CONFIG} from '@azure/msal-angular';
+import {
+  InteractionStatus,
+  AuthenticationResult,
+  PublicClientApplication,
+  PopupRequest,
+  SilentRequest,
+  InteractionRequiredAuthError
+} from '@azure/msal-browser';
 import { ConfigService } from '@igo2/core';
-import { AuthMicrosoftOptions } from '../shared/auth.interface';
+import { AuthMicrosoftOptions, MSPMsalGuardConfiguration } from '../shared/auth.interface';
 import { AuthService } from '../shared/auth.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -26,16 +31,25 @@ export class AuthMicrosoftComponent {
   private options: AuthMicrosoftOptions;
   private readonly _destroying$ = new Subject<void>();
   @Output() login: EventEmitter<boolean> = new EventEmitter<boolean>();
+  private broadcastService: MsalBroadcastService;
 
   constructor(
     private authService: AuthService,
     private config: ConfigService,
     private appRef: ApplicationRef,
-    private broadcastService: MsalBroadcastService,
     private msalService: MsalService,
-    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
+    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MSPMsalGuardConfiguration[],
   ) {
     this.options = this.config.getConfig('auth.microsoft') || {};
+
+    this.msalService.instance = new PublicClientApplication({
+      auth: this.options,
+      cache: {
+        cacheLocation: 'sessionStorage'
+      }
+    });
+
+    this.broadcastService = new MsalBroadcastService(this.msalService.instance, this.msalService);
 
     if (this.options.clientId) {
       this.broadcastService.inProgress$
@@ -45,15 +59,15 @@ export class AuthMicrosoftComponent {
       )
       .subscribe(() => {
         this.checkAccount();
-      })
-     
+      });
+
     } else {
       console.warn('Microsoft authentification needs "clientId" option');
     }
   }
 
   public loginMicrosoft() {
-    this.msalService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest)
+    this.msalService.loginPopup({...this.getConf().authRequest} as PopupRequest)
     .subscribe((response: AuthenticationResult) => {
       this.msalService.instance.setActiveAccount(response.account);
     });
@@ -61,7 +75,7 @@ export class AuthMicrosoftComponent {
 
   private checkAccount() {
     this.msalService.instance
-      .acquireTokenSilent(this.msalGuardConfig.authRequest as SilentRequest)
+      .acquireTokenSilent(this.getConf().authRequest as SilentRequest)
       .then((response: AuthenticationResult) => {
         const token = response.accessToken;
         this.authService.loginWithToken(token, 'microsoft').subscribe(() => {
@@ -72,10 +86,14 @@ export class AuthMicrosoftComponent {
       .catch(async (error) => {
         if (error instanceof InteractionRequiredAuthError) {
             // fallback to interaction when silent call fails
-            return this.msalService.acquireTokenPopup(this.msalGuardConfig.authRequest as SilentRequest);
+            return this.msalService.acquireTokenPopup(this.getConf().authRequest as SilentRequest);
         }
         }).catch(error => {
-            console.log('Fuck');
+            console.log('Silent token fails');
         });
+  }
+
+  private getConf(): MSPMsalGuardConfiguration {
+    return this.msalGuardConfig.filter(conf => conf.type === 'add')[0];
   }
 }

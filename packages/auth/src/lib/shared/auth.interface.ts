@@ -1,4 +1,5 @@
 import { BrowserAuthOptions } from '@azure/msal-browser';
+import { MsalGuardConfiguration } from '@azure/msal-angular';
 
 export interface AuthInternOptions {
   enabled?: boolean;
@@ -30,24 +31,24 @@ export interface AuthMicrosoftb2cOptions {
 }
 
 export interface AuthMicrosoftb2cOptionsOptions {
-  names: authMicrosoftb2cOptionsNames;
-  authorities: authMicrosoftb2cOptionsAuthorities;
+  names: AuthMicrosoftb2cOptionsNames;
+  authorities: AuthMicrosoftb2cOptionsAuthorities;
   authorityDomain: string[];
 }
 
-export interface authMicrosoftb2cOptionsNames {
+export interface AuthMicrosoftb2cOptionsNames {
   signUpSignIn: string;
   forgotPassword: string;
   editProfile: string;
 }
 
-export interface authMicrosoftb2cOptionsAuthorities {
-  signUpSignIn: authMicrosoftb2cOptionsAuthority;
-  forgotPassword: authMicrosoftb2cOptionsAuthority;
-  editProfile: authMicrosoftb2cOptionsAuthority;
+export interface AuthMicrosoftb2cOptionsAuthorities {
+  signUpSignIn: AuthMicrosoftb2cOptionsAuthority;
+  forgotPassword: AuthMicrosoftb2cOptionsAuthority;
+  editProfile: AuthMicrosoftb2cOptionsAuthority;
 }
 
-export interface authMicrosoftb2cOptionsAuthority {
+export interface AuthMicrosoftb2cOptionsAuthority {
   authority: string;
 }
 
@@ -62,7 +63,7 @@ export interface AuthOptions {
   facebook?: AuthFacebookOptions;
   google?: AuthGoogleOptions;
   microsoft?: AuthMicrosoftOptions;
-  microsoftb2c?: AuthMicrosoftb2cOptions
+  microsoftb2c?: AuthMicrosoftb2cOptions;
   trustHosts?: string[];
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];
@@ -71,6 +72,10 @@ export interface WithCredentialsOptions {
   withCredentials?: boolean;
   domainRegFilters?: string;
  }
+
+export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
+  type: string;
+}
 
 export interface User {
   source?: string;
