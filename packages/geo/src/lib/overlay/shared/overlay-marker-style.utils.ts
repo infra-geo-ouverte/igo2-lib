@@ -8,13 +8,13 @@ import { asArray as ColorAsArray } from 'ol/color';
 export function createOverlayMarkerStyle({
   text,
   opacity = 1,
-  color = '#00a1de',
-  outlineColor = '#ffffff'
+  markerColor = '#00a1de',
+  markerOutlineColor = '#ffffff'
 }: {
   text?: string;
   opacity?: number;
-  color?: string | number[];
-  outlineColor?: string | number[];
+  markerColor?: string | number[];
+  markerOutlineColor?: string | number[];
 } = {}): olstyle.Style {
   let iconColor;
   let svgIconColor;
@@ -23,11 +23,11 @@ export function createOverlayMarkerStyle({
 
   const isIE = /msie\s|trident\/|edge\//i.test(window.navigator.userAgent); // To fix IE11 svg bug (temporarly)
 
-  const newColor = ColorAsArray(color || 'red').slice(0);
-  const newOutlineColor = ColorAsArray(outlineColor || 'red').slice(0);
+  const newColor = ColorAsArray(markerColor).slice(0);
+  const newOutlineColor = ColorAsArray(markerOutlineColor).slice(0);
 
-  svgIconColor = `"rgb(${newColor[0]},${newColor[1]},${newColor[2]},${newColor[3]})"`;
-  iconColor = color;
+  svgIconColor = `"rgba(${newColor[0]},${newColor[1]},${newColor[2]},${newColor[3] || opacity})"`;
+  iconColor = markerColor;
 
   svgOutlineColor = `"rgb(${newOutlineColor[0]},${newOutlineColor[1]},${newOutlineColor[2]})"`;
 
@@ -42,7 +42,7 @@ export function createOverlayMarkerStyle({
 
   let src;
   if (isIE) {
-    switch (color) {
+    switch (markerColor) {
       case 'blue' || '#00a1de':
         iconColor = 'blue';
         break;
@@ -50,7 +50,7 @@ export function createOverlayMarkerStyle({
         iconColor = 'red';
         break;
       case 'yellow' || '#ffd700':
-        iconColor = color;
+        iconColor = 'yellow';
         break;
       case 'green' || '#008000':
         iconColor = 'green';

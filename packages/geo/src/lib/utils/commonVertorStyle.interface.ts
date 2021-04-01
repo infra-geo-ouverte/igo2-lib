@@ -7,8 +7,8 @@ export interface FeatureCommonVectorStyleOptions extends CommonVectorStyleOption
 
 export interface CommonVectorStyleOptions {
   markerColor?: string | number[];        // marker fill
+  markerOutlineColor?: string | number[]; // marker contour
   fillColor?: string | number[];          // poly
-  outlineColor?: string | number[];       // marker contour
   strokeColor?: string | number[];        // line and poly
   strokeWidth?: number;
 }

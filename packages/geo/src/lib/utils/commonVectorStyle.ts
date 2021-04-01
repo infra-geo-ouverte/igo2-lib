@@ -1,7 +1,7 @@
 import * as olstyle from 'ol/style';
 import olFeature from 'ol/Feature';
+import { asArray as ColorAsArray } from 'ol/color';
 
-import { Feature } from '../feature/shared/feature.interfaces';
 import { createOverlayMarkerStyle } from '../overlay/shared/overlay-marker-style.utils';
 import { createOverlayDefaultStyle } from '../overlay/shared/overlay.utils';
 import { FeatureCommonVectorStyleOptions } from './commonVertorStyle.interface';
@@ -12,12 +12,12 @@ import { FeatureCommonVectorStyleOptions } from './commonVertorStyle.interface';
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getSelectedMarkerStyle(
+export function getCommonVectorSelectedStyle(
   {
     feature,
     markerColor = '#00a1de',
+    markerOutlineColor,
     fillColor,
-    outlineColor = [0, 255, 255],
     strokeColor = [0, 255, 255],
     strokeWidth = 4
   }: FeatureCommonVectorStyleOptions): olstyle.Style {
@@ -29,15 +29,15 @@ export function getSelectedMarkerStyle(
   if (!geometry || geometryType === 'Point') {
     return createOverlayMarkerStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
-      outlineColor,
-      color: markerColor
+      markerOutlineColor,
+      markerColor
     });
   } else {
     return createOverlayDefaultStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       strokeWidth,
       strokeColor,
-      color: fillColor
+      fillColor
     });
   }
 }
@@ -47,12 +47,12 @@ export function getSelectedMarkerStyle(
  * @param feature The feature to generate the style
  * @returns A olStyle
  */
-export function getMarkerStyle(
+export function getCommonVectorStyle(
   {
     feature,
     markerColor = '#00a1de',
-    fillColor,
-    outlineColor = [0, 255, 255],
+    markerOutlineColor = [0, 255, 255],
+    fillColor = [0, 255, 255],
     strokeColor = [0, 255, 255],
     strokeWidth = 2
   }: FeatureCommonVectorStyleOptions): olstyle.Style {
@@ -65,27 +65,19 @@ export function getMarkerStyle(
     return createOverlayMarkerStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       opacity: 0.5,
-      outlineColor,
-      color: markerColor
-    });
-  } else if (
-    geometryType === 'LineString' ||
-    geometryType === 'MultiLineString'
-  ) {
-    return createOverlayDefaultStyle({
-      text: isOlFeature ? undefined : feature.meta.mapTitle,
-      strokeOpacity: 0.5,
-      strokeWidth,
-      strokeColor,
-      color: fillColor
+      markerOutlineColor,
+      markerColor
     });
   } else {
+    const fillWithOpacity = ColorAsArray(fillColor).slice(0);
+    const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
+    fillWithOpacity[3] = 0.15;
+    strokeWithOpacity[3] = 0.5;
     return createOverlayDefaultStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
-      fillOpacity: 0.15,
       strokeWidth,
-      strokeColor,
-      color: fillColor
+      strokeColor: strokeWithOpacity,
+      fillColor: fillWithOpacity
     });
   }
 }

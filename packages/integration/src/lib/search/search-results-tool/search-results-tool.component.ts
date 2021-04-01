@@ -32,15 +32,14 @@ import {
   IgoMap,
   moveToOlFeatures,
   Research,
-  createOverlayDefaultStyle,
   featuresAreTooDeepInView,
   featureToOl,
   featureFromOl,
-  getSelectedMarkerStyle,
-  createOverlayMarkerStyle,
+  getCommonVectorStyle,
+  getCommonVectorSelectedStyle,
   computeOlFeaturesExtent,
   featuresAreOutOfView,
-  getMarkerStyle
+  createOverlayMarkerStyle
 } from '@igo2/geo';
 
 import { MapState } from '../../map/map.state';
@@ -224,7 +223,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
       featureToHandleGeom.map(result => {
         if (searchResultsGeometryEnabled) {
-          result.entity.data.meta.style = getMarkerStyle(Object.assign({}, { feature: result.entity.data }, this.searchState.searchOverlayStyleFocus));
+          result.entity.data.meta.style = getCommonVectorStyle(Object.assign({}, { feature: result.entity.data }, this.searchState.searchOverlayStyleFocus));
           this.shownResultsGeometries.push(result.entity.data as Feature);
           this.map.queryResultsOverlay.addFeature(result.entity.data as Feature, FeatureMotion.None);
           if (this.hasFeatureEmphasisOnSelection) {
@@ -293,10 +292,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           zIndexOffset = 1;
           break;
         case 'shown':
-          computedStyle = getMarkerStyle(Object.assign({}, { feature: abstractResult }, this.searchState.searchOverlayStyleFocus));
+          computedStyle = getCommonVectorStyle(Object.assign({}, { feature: abstractResult }, this.searchState.searchOverlayStyleFocus));
           break;
         case 'selected':
-          computedStyle = getSelectedMarkerStyle(
+          computedStyle = getCommonVectorSelectedStyle(
             Object.assign({},
               { feature: abstractResult },
               this.searchState.searchOverlayStyleSelection));
@@ -360,7 +359,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   onResultFocus(result: SearchResult) {
     this.focusedResult$.next(result);
     if (result.meta.dataType === FEATURE && result.data.geometry) {
-      result.data.meta.style = getSelectedMarkerStyle(
+      result.data.meta.style = getCommonVectorSelectedStyle(
         Object.assign({},
           { feature: result.data },
           this.searchState.searchOverlayStyleSelection));
@@ -509,7 +508,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       return;
     }
 
-    feature.meta.style = getSelectedMarkerStyle(
+    feature.meta.style = getCommonVectorSelectedStyle(
       Object.assign({},
         { feature },
         this.searchState.searchOverlayStyleSelection));
