@@ -151,19 +151,19 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.currentPushButtonsGroup =
           this.datasource.options.ogcFilters.pushButtons.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.pushButtons.groups[0];
-        this.applyFilters(this.currentPushButtonsGroup);
+        this.applyFilters();
       }
       if (this.datasource.options.ogcFilters.checkboxes) {
         this.currentCheckboxesGroup =
           this.datasource.options.ogcFilters.checkboxes.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.checkboxes.groups[0];
-        this.applyFilters(this.currentCheckboxesGroup);
+        this.applyFilters();
       }
       if (this.datasource.options.ogcFilters.radioButtons) {
         this.currentRadioButtonsGroup =
           this.datasource.options.ogcFilters.radioButtons.groups.find(g => g.enabled) ||
           this.datasource.options.ogcFilters.radioButtons.groups[0];
-        this.applyFilters(this.currentRadioButtonsGroup);
+        this.applyFilters();
       }
     }
 
@@ -173,7 +173,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     .pipe(debounceTime(750))
     .subscribe(() => {
       this.onPushButtonsChangeGroup();
-      this.applyFilters(this.currentPushButtonsGroup);
+      this.applyFilters();
       });
     this.form
     .get('checkboxesGroup')
@@ -181,7 +181,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     .pipe(debounceTime(750))
     .subscribe(() => {
       this.onCheckboxesChangeGroup();
-      this.applyFilters(this.currentCheckboxesGroup);
+      this.applyFilters();
       });
     this.form
       .get('radioButtonsGroup')
@@ -189,28 +189,28 @@ export class OgcFilterSelectionComponent implements OnInit {
       .pipe(debounceTime(750))
       .subscribe(() => {
         this.onRadioButtonsChangeGroup();
-        this.applyFilters(this.currentRadioButtonsGroup);
+        this.applyFilters();
       });
     this.form
       .get('pushButtons')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.applyFilters(this.currentPushButtonsGroup);
+        this.applyFilters();
       });
     this.form
       .get('checkboxes')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.applyFilters(this.currentCheckboxesGroup);
+        this.applyFilters();
       });
     this.form
       .get('radioButtons')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.applyFilters(this.currentRadioButtonsGroup);
+        this.applyFilters();
       });
 
       console.log(this.ogcFiltersSelectors);
@@ -279,23 +279,26 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  private applyFilters(currentGroup) {
+  private applyFilters() {
     let filterQueryString = '';
     const conditions = [];
-    if (currentGroup.computedSelectors) {
-      currentGroup.computedSelectors.map(selectorBundle => {
-        const bundleCondition = [];
-        selectorBundle.selectors
-        .filter(ogcSelector => ogcSelector.enabled === true)
-        .forEach(enabledSelector => bundleCondition.push(enabledSelector.filters));
-        if (bundleCondition.length >= 1 ) {
-          if (bundleCondition.length === 1) {
-            conditions.push(bundleCondition[0]);
-          } else {
-            conditions.push({logical: selectorBundle.logical, filters: bundleCondition});
+    const currentGroups = [this.currentPushButtonsGroup, this.currentCheckboxesGroup, this.currentRadioButtonsGroup];
+    for (const currentGroup of currentGroups) {
+      if (currentGroup.computedSelectors) {
+        currentGroup.computedSelectors.map(selectorBundle => {
+          const bundleCondition = [];
+          selectorBundle.selectors
+          .filter(ogcSelector => ogcSelector.enabled === true)
+          .forEach(enabledSelector => bundleCondition.push(enabledSelector.filters));
+          if (bundleCondition.length >= 1 ) {
+            if (bundleCondition.length === 1) {
+              conditions.push(bundleCondition[0]);
+            } else {
+              conditions.push({logical: selectorBundle.logical, filters: bundleCondition});
+            }
           }
-        }
-      });
+        });
+      }
     }
     if (conditions.length >= 1) {
       filterQueryString = this.ogcFilterWriter
