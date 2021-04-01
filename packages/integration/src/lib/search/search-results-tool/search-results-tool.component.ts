@@ -223,7 +223,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
       featureToHandleGeom.map(result => {
         if (searchResultsGeometryEnabled) {
-          result.entity.data.meta.style = getCommonVectorStyle(Object.assign({}, { feature: result.entity.data }, this.searchState.searchOverlayStyleFocus));
+          result.entity.data.meta.style =
+            getCommonVectorStyle(
+              Object.assign(
+                {},
+                { feature: result.entity.data },
+                this.searchState.searchOverlayStyleFocus
+              ));
           this.shownResultsGeometries.push(result.entity.data as Feature);
           this.map.queryResultsOverlay.addFeature(result.entity.data as Feature, FeatureMotion.None);
           if (this.hasFeatureEmphasisOnSelection) {
