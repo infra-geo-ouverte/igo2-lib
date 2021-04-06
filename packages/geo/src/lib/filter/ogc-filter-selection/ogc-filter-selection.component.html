@@ -1,8 +1,8 @@
 <form [formGroup]="form">
   <div *ngFor="let selector of ogcFiltersSelectors">
     <div class="pushButtonGroups" *ngIf="selector.selectorType === 'pushButton'">
-      <mat-divider class="sectionDivider"></mat-divider>
-      <div class="selector" *ngIf="getPushButtonsGroups().length > 1">
+      <mat-divider></mat-divider>
+      <div class="groupsSelector" *ngIf="getPushButtonsGroups().length > 1">
         <mat-form-field>
           <mat-select tooltip-position="below" matTooltipShowDelay="500" formControlName="pushButtonsGroup"
             [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" [(value)]="currentPushButtonsGroup">
@@ -23,8 +23,8 @@
       </ng-container>
     </div>
     <div class="checkboxGroups" *ngIf="selector.selectorType === 'checkbox'">
-      <mat-divider class="sectionDivider"></mat-divider>
-      <div class="selector" *ngIf="getCheckboxesGroups().length > 1">
+      <mat-divider></mat-divider>
+      <div class="groupsSelector" *ngIf="getCheckboxesGroups().length > 1">
         <mat-form-field>
           <mat-select tooltip-position="below" matTooltipShowDelay="500" formControlName="checkboxesGroup"
             [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" [(value)]="currentCheckboxesGroup">
@@ -49,12 +49,11 @@
             {{ 'igo.geo.filter.displayMoreResults' | translate }}
           </u>
         </p>
-        <mat-divider class="bundleDivider"></mat-divider>
       </ng-container>
     </div>
     <div class="radioButtonGroups" *ngIf="selector.selectorType === 'radioButton'">
-      <mat-divider class="sectionDivider"></mat-divider>
-      <div class="selector" *ngIf="getRadioButtonsGroups().length > 1">
+      <mat-divider></mat-divider>
+      <div class="groupsSelector" *ngIf="getRadioButtonsGroups().length > 1">
         <mat-form-field>
           <mat-select tooltip-position="below" matTooltipShowDelay="500" formControlName="radioButtonsGroup"
             [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" [(value)]="currentRadioButtonsGroup">
@@ -80,7 +79,6 @@
             </u>
           </p>
         </mat-radio-group>
-        <mat-divider class="bundleDivider"></mat-divider>
       </ng-container>
     </div>
   </div>

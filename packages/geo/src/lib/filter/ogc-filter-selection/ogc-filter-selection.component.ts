@@ -41,7 +41,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   public color = 'primary';
 
   get ogcFiltersSelectors() {
-    let ogcSelector = [];
+    const ogcSelector = [];
     if (this.datasource?.options?.ogcFilters?.pushButtons) {
       ogcSelector.push(this.datasource?.options?.ogcFilters?.pushButtons);
     }
@@ -59,7 +59,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         return 1;
       }
       return 0;
-    })
+    });
     return ogcSelector;
   }
 
@@ -212,8 +212,6 @@ export class OgcFilterSelectionComponent implements OnInit {
       .subscribe(() => {
         this.applyFilters();
       });
-
-      console.log(this.ogcFiltersSelectors);
   }
 
   getToolTip(selector): string  {

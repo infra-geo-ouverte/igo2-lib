@@ -10,13 +10,14 @@
     box-shadow: none;
   }
 
-  .pushButtonGroups, .selector {
+  .groupsSelector {
     text-align: center;
   }
 
   mat-button-toggle {
     display: inline-flex;
-    outline: auto;
+    border: 1.5px solid black;
+    border-radius: 5px;
     margin: 5px;
     white-space: normal;
     height: 40px;
@@ -49,11 +50,7 @@
 
   h4 {
     margin: 7px;
-    text-align: center;
-  }
-
-  .sectionDivider {
-    border-top-width: medium;
+    text-align: left;
   }
 
   u {
