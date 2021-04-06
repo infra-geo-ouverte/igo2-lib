@@ -70,6 +70,7 @@ export class AuthMicrosoftComponent {
     this.msalService.loginPopup({...this.getConf().authRequest} as PopupRequest)
     .subscribe((response: AuthenticationResult) => {
       this.msalService.instance.setActiveAccount(response.account);
+      this.checkAccount();
     });
   }
 
@@ -85,11 +86,11 @@ export class AuthMicrosoftComponent {
       })
       .catch(async (error) => {
         if (error instanceof InteractionRequiredAuthError) {
-            // fallback to interaction when silent call fails
-            return this.msalService.acquireTokenPopup(this.getConf().authRequest as SilentRequest);
+          // fallback to interaction when silent call fails
+          return this.msalService.acquireTokenPopup(this.getConf().authRequest as SilentRequest);
         }
         }).catch(error => {
-            console.log('Silent token fails');
+          console.log('Silent token fails');
         });
   }
 
