@@ -101,6 +101,10 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
       this.options.params && this.options.params.limit
         ? Number(this.options.params.limit)
         : undefined;
+    const ecmax =
+      this.options.params && this.options.params.ecmax
+        ? Number(this.options.params.ecmax)
+        : undefined;
     return {
       title: 'igo.geo.search.ilayer.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/layers/search',
@@ -153,6 +157,38 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
               title: '50',
               value: 50,
               enabled: limit === 50
+            }
+          ]
+        },
+        {
+          type: 'radiobutton',
+          title: 'ecmax',
+          name: 'ecmax',
+          values: [
+            {
+              title: '10 %',
+              value: 10,
+              enabled: ecmax === 10
+            },
+            {
+              title: '30 %',
+              value: 30,
+              enabled: ecmax === 30
+            },
+            {
+              title: '50 %',
+              value: 50,
+              enabled: ecmax === 50 || !ecmax
+            },
+            {
+              title: '75 %',
+              value: 75,
+              enabled: ecmax === 75
+            },
+            {
+              title: '100 %',
+              value: 100,
+              enabled: ecmax === 100
             }
           ]
         }

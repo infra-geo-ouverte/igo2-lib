@@ -1,5 +1,5 @@
 import { Injectable, Inject, Injector } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -33,6 +33,26 @@ export class IChercheSearchResultFormatter {
 
   formatResult(result: SearchResult<Feature>): SearchResult<Feature> {
     return result;
+  }
+}
+
+// Fix the "+" is replaced with space " " in a query string
+// https://github.com/angular/angular/issues/11058
+export class IgoHttpParameterCodec implements HttpParameterCodec {
+  encodeKey(key: string): string {
+    return encodeURIComponent(key);
+  }
+
+  encodeValue(value: string): string {
+    return encodeURIComponent(value);
+  }
+
+  decodeKey(key: string): string {
+    return decodeURIComponent(key);
+  }
+
+  decodeValue(value: string): string {
+    return decodeURIComponent(value);
   }
 }
 
@@ -388,7 +408,8 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     }
 
     return new HttpParams({
-      fromObject: ObjectUtils.removeUndefined(queryParams)
+      fromObject: ObjectUtils.removeUndefined(queryParams),
+      encoder: new IgoHttpParameterCodec()
     });
   }
 
@@ -555,7 +576,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       term = term.replace(/(#[^\s]*)/g, '');
     }
 
-    return term.replace(/[^\wÀ-ÿ !\-\(\),'#]+/g, '');
+    return term.replace(/[^\wÀ-ÿ !\-\+\(\)\.\/½¼¾,'#]+/g, '');
   }
 
   /**
@@ -677,7 +698,7 @@ export class IChercheReverseSearchSource extends SearchSource
         {
           type: 'radiobutton',
           title: 'radius',
-          name: 'buffer',
+          name: 'bufferInput',
           values: [
             {
               title: '100 m',
@@ -748,7 +769,7 @@ export class IChercheReverseSearchSource extends SearchSource
   ): HttpParams {
     if (options.distance || this.options.distance) {
       options.params = Object.assign(options.params || {}, {
-        buffer: options.distance || this.options.distance
+        bufferInput: options.distance || this.options.distance
       });
     }
 

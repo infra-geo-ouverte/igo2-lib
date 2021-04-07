@@ -6,7 +6,7 @@ import { DataSourceOptions } from './datasource.interface';
 export interface ArcGISRestImageDataSourceOptions extends DataSourceOptions {
   // type?: 'imagearcgisrest';
   queryPrecision?: number;
-  layer: string;
+  layer?: string;
   legendInfo?: any;
   params?: any;
   attributions?: olAttribution;
@@ -14,4 +14,5 @@ export interface ArcGISRestImageDataSourceOptions extends DataSourceOptions {
   url?: string;
   ol?: ImageArcGISRest;
   idColumn?: string;
+  options?: any;
 }

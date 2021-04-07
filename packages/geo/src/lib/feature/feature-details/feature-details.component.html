@@ -31,4 +31,4 @@
   </tbody>
 </table>
 
-<iframe *ngIf="isHtmlDisplay()" [src]="htmlSanitizer(feature.properties.url)"></iframe>
+<iframe *ngIf="isHtmlDisplay()" [srcdoc]="htmlSanitizer(feature.properties)" [src]="urlSanitizer(feature.properties.url)"></iframe>
