@@ -37,7 +37,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   get source(): SearchSource {
     return this._source;
   }
-  set source(value: SearchSource ) {
+  set source(value: SearchSource) {
     this._source = value;
     this.cdRef.detectChanges();
   }
@@ -110,8 +110,9 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
       this.htmlDisplayEvent.emit(false);
       return false;
     }
+  }
 
-    htmlSanitizer(value): SafeResourceUrl {
+  htmlSanitizer(value): SafeResourceUrl {
     if (!value.body || userAgent.getBrowserName() === 'Internet Explorer') {
       return;
     }
