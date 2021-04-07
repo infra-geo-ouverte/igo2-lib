@@ -12,8 +12,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class SearchState {
-  public searchOverlayStyleSelection: CommonVectorStyleOptions  = {};
-  public searchOverlayStyleFocus: CommonVectorStyleOptions  = {};
+  public searchOverlayStyle: CommonVectorStyleOptions = {};
+  public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
+  public searchOverlayStyleFocus: CommonVectorStyleOptions = {};
 
   readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
@@ -45,10 +46,12 @@ export class SearchState {
     private searchSourceService: SearchSourceService,
     private configService: ConfigService) {
     const searchOverlayStyle = this.configService.getConfig('searchOverlayStyle') as {
+      base?: CommonVectorStyleOptions,
       selection?: CommonVectorStyleOptions,
       focus?: CommonVectorStyleOptions
     };
     if (searchOverlayStyle) {
+      this.searchOverlayStyle = searchOverlayStyle.base;
       this.searchOverlayStyleSelection = searchOverlayStyle.selection;
       this.searchOverlayStyleFocus = searchOverlayStyle.focus;
     }

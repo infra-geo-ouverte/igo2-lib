@@ -71,7 +71,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private focusedOrResolution$$: Subscription;
   private selectedOrResolution$$: Subscription;
-  private showResultGeometries$$: Subscription;
+  private showResultsGeometries$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
   private focusedResult$: BehaviorSubject<SearchResult> = new BehaviorSubject(
@@ -198,7 +198,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
     this.monitorResultOutOfView();
 
-    this.showResultGeometries$$ = combineLatest([
+    this.showResultsGeometries$$ = combineLatest([
       this.searchState.searchResultsGeometryEnabled$,
       this.store.stateView.all$(),
       this.focusedResult$,
@@ -228,7 +228,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
               Object.assign(
                 {},
                 { feature: result.entity.data },
-                this.searchState.searchOverlayStyleFocus
+                this.searchState.searchOverlayStyle
               ));
           this.shownResultsGeometries.push(result.entity.data as Feature);
           this.map.queryResultsOverlay.addFeature(result.entity.data as Feature, FeatureMotion.None);
@@ -298,7 +298,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           zIndexOffset = 1;
           break;
         case 'shown':
-          computedStyle = getCommonVectorStyle(Object.assign({}, { feature: abstractResult }, this.searchState.searchOverlayStyleFocus));
+          computedStyle = getCommonVectorStyle(Object.assign({}, { feature: abstractResult }, this.searchState.searchOverlayStyle));
           break;
         case 'selected':
           computedStyle = getCommonVectorSelectedStyle(
@@ -325,7 +325,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
   }
 
-  private clearFeatureEmphasis(trigger: 'selected' | 'focused' | 'shown' | undefined) {
+  private clearFeatureEmphasis(trigger: 'selected' | 'focused' | 'shown') {
     if (trigger === 'focused' && this.abstractFocusedResult) {
       this.map.searchResultsOverlay.removeFeature(this.abstractFocusedResult);
       this.abstractFocusedResult = undefined;
@@ -352,8 +352,8 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     if (this.isSelectedResultOutOfView$$) {
       this.isSelectedResultOutOfView$$.unsubscribe();
     }
-    if (this.showResultGeometries$$) {
-      this.showResultGeometries$$.unsubscribe();
+    if (this.showResultsGeometries$$) {
+      this.showResultsGeometries$$.unsubscribe();
     }
   }
 
