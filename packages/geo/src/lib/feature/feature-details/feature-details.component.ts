@@ -61,6 +61,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   @Output() routeEvent = new EventEmitter<boolean>();
   @Output() selectFeature = new EventEmitter<boolean>();
+  @Output() htmlDisplayEvent = new EventEmitter<boolean>();
 
   /**
    * @internal
@@ -100,7 +101,17 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
-  htmlSanitizer(value): SafeResourceUrl {
+
+  isHtmlDisplay(): boolean {
+    if (this.feature && this.isObject(this.feature.properties) && this.feature.properties.target === 'iframe') {
+      this.htmlDisplayEvent.emit(true);
+      return true;
+    } else {
+      this.htmlDisplayEvent.emit(false);
+      return false;
+    }
+
+    htmlSanitizer(value): SafeResourceUrl {
     if (!value.body || userAgent.getBrowserName() === 'Internet Explorer') {
       return;
     }
