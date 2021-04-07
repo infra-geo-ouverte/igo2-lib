@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
 import { ConfigService, Version } from '@igo2/core';
 import { of } from 'rxjs';
 import type { Observable } from 'rxjs';
 import { AuthService } from '@igo2/auth';
+import { HttpClient } from '@angular/common/http';
 
 @ToolComponent({
   name: 'about',
@@ -16,7 +17,7 @@ import { AuthService } from '@igo2/auth';
   templateUrl: './about-tool.component.html',
   styleUrls: ['./about-tool.component.scss']
 })
-export class AboutToolComponent {
+export class AboutToolComponent implements OnInit {
   @Input()
   get html() {
     return this._html;
@@ -36,18 +37,47 @@ export class AboutToolComponent {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  @Input() trainingGuideURL;
+  public trainingGuideURLs;
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
 
+  private baseUrlProfil;
+  private baseUrlGuide;
+
   constructor(
     public configService: ConfigService,
-    public auth: AuthService) {
+    public auth: AuthService,
+    private http: HttpClient,
+    private cdRef: ChangeDetectorRef) {
     this.version = configService.getConfig('version');
+    this.baseUrlProfil = configService.getConfig('context.url') + '/user/igo?';
+    this.baseUrlGuide = configService.getConfig('depot.url') + '/projects/Documentation/files/';
+  }
+
+  ngOnInit() {
+    this.http.get(this.baseUrlProfil).subscribe((profil) => {
+      const recast = profil as any;
+      this.trainingGuideURLs = recast.guides;
+      this.cdRef.detectChanges();
+    });
   }
 
   openGuide() {
-    window.open(this.trainingGuideURL, '_blank');
+    for (const trainingGuideURL of this.trainingGuideURLs) {
+      this.http
+      .get(this.baseUrlGuide + trainingGuideURL + '?', {
+        responseType: 'blob'
+      })
+      .subscribe((response) => {
+        const blob = new Blob([response]);
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = trainingGuideURL;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      });
+    }
   }
 }
