@@ -18,6 +18,7 @@ import { OGCFilterService } from '../shared/ogc-filter.service';
 import { WMSDataSource } from '../../datasource/shared/datasources/wms-datasource';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 
 @Component({
   selector: 'igo-ogc-filter-selection',
@@ -35,6 +36,9 @@ export class OgcFilterSelectionComponent implements OnInit {
   @Input() checkboxesIndex = 5;
   @Input() radioButtonsIndex = 5;
   @Input() baseIndex = 5;
+
+  public ogcFilterOperator = OgcFilterOperator;
+  public currentFilter: any;
 
   public form: FormGroup;
   private ogcFilterWriter: OgcFilterWriter;
@@ -146,6 +150,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentFilter = this.datasource.options.ogcFilters.filters;
     if (this.datasource.options.ogcFilters) {
       if (this.datasource.options.ogcFilters.pushButtons) {
         this.currentPushButtonsGroup =
@@ -298,6 +303,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         });
       }
     }
+    console.log(conditions);
     if (conditions.length >= 1) {
       filterQueryString = this.ogcFilterWriter
         .buildFilter(conditions.length === 1 ?
@@ -339,5 +345,53 @@ export class OgcFilterSelectionComponent implements OnInit {
   displayLessResults(type) {
     type === 'radio' ? this.radioButtonsIndex = this.baseIndex : this.checkboxesIndex = this.baseIndex;
     return;
+  }
+
+  isTemporalOperator() {
+    return (
+      this.currentFilter?.operator?.toLowerCase() ===
+      this.ogcFilterOperator.During.toLowerCase()
+    );
+  }
+
+  changeProperty(value: any, pos?: number, refreshFilter = true) {
+    const detectedProperty = this.detectProperty(pos);
+    if (detectedProperty) {
+      this.datasource.options.ogcFilters.interfaceOgcFilters.find(
+        (f) => f.filterid === this.currentFilter.filterid
+      )[detectedProperty] = value;
+
+      if ( refreshFilter ) {
+        this.refreshFilters();
+      }
+    }
+  }
+
+  detectProperty(pos?: number): string {
+    switch (this.currentFilter.operator) {
+      case OgcFilterOperator.PropertyIsNotEqualTo:
+      case OgcFilterOperator.PropertyIsEqualTo:
+      case OgcFilterOperator.PropertyIsGreaterThan:
+      case OgcFilterOperator.PropertyIsGreaterThanOrEqualTo:
+      case OgcFilterOperator.PropertyIsLessThan:
+      case OgcFilterOperator.PropertyIsLessThanOrEqualTo:
+        return 'expression';
+      case OgcFilterOperator.PropertyIsLike:
+        return 'pattern';
+      case OgcFilterOperator.PropertyIsBetween:
+        return pos && pos === 1
+          ? 'lowerBoundary'
+          : pos && pos === 2
+          ? 'upperBoundary'
+          : undefined;
+      case OgcFilterOperator.During:
+        return pos && pos === 1
+          ? 'begin'
+          : pos && pos === 2
+          ? 'end'
+          : undefined;
+      default:
+        return;
+    }
   }
 }

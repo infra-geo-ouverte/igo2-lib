@@ -82,4 +82,10 @@
       </ng-container>
     </div>
   </div>
+
+  <igo-ogc-filter-time *ngIf="isTemporalOperator()"
+    [(datasource)]="datasource"
+    [(currentFilter)]="currentFilter"
+    (changeProperty)="changeProperty($event.value, $event.pos)">
+  </igo-ogc-filter-time>
 </form>
