@@ -401,7 +401,7 @@
           "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/deactivate."
         },
         "searchResultsGeometry": {
-          "title": "Show result geometries",
+          "title": "Show results geometries",
           "tooltip": "Hide/ show the results geometries "
         },
         "searchSources": {
