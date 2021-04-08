@@ -138,8 +138,8 @@ export class CatalogService {
           catalog.abstract = capabilities.Service.Abstract;
         }
         const finalLayers = [];
-        this.flattenWmsCapabilities(capabilities.Capability.Layer,0,finalLayers, catalog.groupSeparator);
-        const capabilitiesCapabilityLayer = Object.assign({},capabilities.Capability.Layer);
+        this.flattenWmsCapabilities(capabilities.Capability.Layer, 0, finalLayers, catalog.groupSeparator);
+        const capabilitiesCapabilityLayer = Object.assign({}, capabilities.Capability.Layer);
         capabilitiesCapabilityLayer.Layer = finalLayers.filter(f => f.Layer.length !== 0);
         this.includeRecursiveItems(
           catalog,
@@ -153,7 +153,7 @@ export class CatalogService {
 
   flattenWmsCapabilities(parent, level = 0, finalLayers, separator = ' / ') {
     if (!finalLayers.includes(parent.Title)) {
-        const modifiedParent = Object.assign({},parent);
+        const modifiedParent = Object.assign({}, parent);
         modifiedParent.Layer = [];
         finalLayers.push(modifiedParent);
     }
@@ -165,7 +165,7 @@ export class CatalogService {
         if (layer.Layer) {
             this.flattenWmsCapabilities(modifiedLayer, level + 1, finalLayers, separator);
         } else {
-            finalLayers.find(ff=> ff.Title === parent.Title).Layer.push(layer);
+            finalLayers.find(ff => ff.Title === parent.Title).Layer.push(layer);
          }
     }
 }
