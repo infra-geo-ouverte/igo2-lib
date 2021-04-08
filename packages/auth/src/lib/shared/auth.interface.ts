@@ -19,7 +19,7 @@ export interface AuthMicrosoftOptions {
 }
 
 export interface AuthOptions {
-  url: string;
+  url?: string;
   tokenKey: string;
   allowAnonymous?: boolean;
   loginRoute?: string;
@@ -32,7 +32,6 @@ export interface AuthOptions {
   trustHosts?: string[];
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];
-  autoLoginAnonymous?: boolean;
   loginButton?: boolean;
 }
 export interface WithCredentialsOptions {
