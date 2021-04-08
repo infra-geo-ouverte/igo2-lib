@@ -25,6 +25,10 @@ export class OgcFilterableFormComponent {
     return;
   }
 
+  get currentFilter(): any {
+    return this.datasource.options.ogcFilters.interfaceOgcFilters[0];
+  }
+
   public color = 'primary';
 
   constructor() {}

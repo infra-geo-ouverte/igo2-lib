@@ -178,7 +178,8 @@
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Select an operator",
-        "sliderModeTitle": "Time slider"
+        "sliderModeTitle": "Time slider",
+        "reportingDate": "Reporting date"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",

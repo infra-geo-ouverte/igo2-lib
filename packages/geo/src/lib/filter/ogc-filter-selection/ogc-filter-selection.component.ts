@@ -36,9 +36,9 @@ export class OgcFilterSelectionComponent implements OnInit {
   @Input() checkboxesIndex = 5;
   @Input() radioButtonsIndex = 5;
   @Input() baseIndex = 5;
+  @Input() currentFilter: any;
 
   public ogcFilterOperator = OgcFilterOperator;
-  public currentFilter: any;
 
   public form: FormGroup;
   private ogcFilterWriter: OgcFilterWriter;
@@ -150,7 +150,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentFilter = this.datasource.options.ogcFilters.filters;
     if (this.datasource.options.ogcFilters) {
       if (this.datasource.options.ogcFilters.pushButtons) {
         this.currentPushButtonsGroup =
@@ -171,6 +170,7 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.applyFilters();
       }
     }
+    this.currentFilter.sliderMode = false;
 
     this.form
     .get('pushButtonsGroup')
@@ -303,7 +303,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         });
       }
     }
-    console.log(conditions);
+    if (this.isTemporalOperator()) {
+      conditions.push(this.datasource.options.ogcFilters.interfaceOgcFilters[0]);
+    }
     if (conditions.length >= 1) {
       filterQueryString = this.ogcFilterWriter
         .buildFilter(conditions.length === 1 ?
@@ -316,7 +318,6 @@ export class OgcFilterSelectionComponent implements OnInit {
       // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
       this.datasource.ol.refresh();
     }
-    this.refreshFilters();
   }
 
   isMoreResults(bundle, type) {
@@ -362,7 +363,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       )[detectedProperty] = value;
 
       if ( refreshFilter ) {
-        this.refreshFilters();
+        this.applyFilters();
       }
     }
   }
