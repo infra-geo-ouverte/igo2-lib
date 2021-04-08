@@ -8,8 +8,8 @@ import { asArray as ColorAsArray } from 'ol/color';
 export function createOverlayMarkerStyle({
   text,
   opacity = 1,
-  markerColor = '#00a1de',
-  markerOutlineColor = '#ffffff'
+  markerColor = [0, 161, 222],
+  markerOutlineColor = [255, 255, 255]
 }: {
   text?: string;
   opacity?: number;
@@ -43,7 +43,7 @@ export function createOverlayMarkerStyle({
   let src;
   if (isIE) {
     switch (markerColor) {
-      case 'blue' || '#00a1de':
+      case 'blue' || [0, 161, 222] || '#00a1de':
         iconColor = 'blue';
         break;
       case 'red' || '#f64139':

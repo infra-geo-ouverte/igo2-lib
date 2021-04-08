@@ -15,31 +15,27 @@ import { FeatureCommonVectorStyleOptions } from './commonVertorStyle.interface';
 export function getCommonVectorSelectedStyle(
   {
     feature,
-    markerColor = '#00a1de',
-    markerOutlineColor,
+    markerColor = [0, 161, 222],
+    markerOpacity = 1,
+    markerOutlineColor = [0, 255, 255],
     fillColor,
+    fillOpacity = 0.15, 
     strokeColor = [0, 255, 255],
+    strokeOpacity = 0.5,
     strokeWidth = 4
   }: FeatureCommonVectorStyleOptions): olstyle.Style {
 
-  const isOlFeature = feature instanceof olFeature;
-  const geometry = isOlFeature ? feature.getGeometry() : feature.geometry;
-  const geometryType = isOlFeature ? geometry.getType() : geometry.type;
-
-  if (!geometry || geometryType === 'Point') {
-    return createOverlayMarkerStyle({
-      text: isOlFeature ? undefined : feature.meta.mapTitle,
-      markerOutlineColor,
-      markerColor
-    });
-  } else {
-    return createOverlayDefaultStyle({
-      text: isOlFeature ? undefined : feature.meta.mapTitle,
-      strokeWidth,
-      strokeColor,
-      fillColor
-    });
-  }
+  return getCommonVectorStyle({
+    feature,
+    markerColor,
+    markerOpacity,
+    markerOutlineColor,
+    fillColor,
+    fillOpacity,
+    strokeColor,
+    strokeOpacity,
+    strokeWidth
+  });
 }
 
 /**
@@ -50,10 +46,13 @@ export function getCommonVectorSelectedStyle(
 export function getCommonVectorStyle(
   {
     feature,
-    markerColor = '#00a1de',
-    markerOutlineColor = [0, 255, 255],
-    fillColor = [0, 255, 255],
-    strokeColor = [0, 255, 255],
+    markerColor = [0, 161, 222],
+    markerOpacity = 0.5,
+    markerOutlineColor,
+    fillColor =[0, 161, 222],
+    fillOpacity = 0.15, 
+    strokeColor = [0, 161, 222],
+    strokeOpacity = 0.5, 
     strokeWidth = 2
   }: FeatureCommonVectorStyleOptions): olstyle.Style {
 
@@ -62,17 +61,26 @@ export function getCommonVectorStyle(
   const geometryType = isOlFeature ? geometry.getType() : geometry.type;
 
   if (!geometry || geometryType === 'Point') {
+    const markerColorAsArray = ColorAsArray(markerColor).slice(0);
+    const markerColorRGB = markerColorAsArray.slice(0,3);
+    if (markerColorAsArray.length === 4) {
+      markerOpacity = markerColorAsArray[3];
+    }
     return createOverlayMarkerStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
-      opacity: 0.5,
+      opacity: markerOpacity,
       markerOutlineColor,
-      markerColor
+      markerColor: markerColorRGB
     });
   } else {
     const fillWithOpacity = ColorAsArray(fillColor).slice(0);
     const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
-    fillWithOpacity[3] = 0.15;
-    strokeWithOpacity[3] = 0.5;
+    if (fillWithOpacity.length === 3) {
+      fillWithOpacity[3] = fillOpacity;
+    }
+    if (strokeWithOpacity.length === 3) {
+      strokeWithOpacity[3] = strokeOpacity;
+    }
     return createOverlayDefaultStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       strokeWidth,
