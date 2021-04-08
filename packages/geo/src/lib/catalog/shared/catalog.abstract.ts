@@ -23,6 +23,7 @@ export abstract class Catalog implements ICatalog {
     requestEncoding?: string;
     regFilters?: string[];
     groupImpose?: CatalogItemGroup;
+    groupSeparator?: string;
     timeFilter?: TimeFilterOptions;
     queryFormat?: QueryFormat;
     queryHtmlTarget?: QueryHtmlTarget;

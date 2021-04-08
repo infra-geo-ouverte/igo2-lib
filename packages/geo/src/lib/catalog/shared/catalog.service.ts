@@ -137,16 +137,38 @@ export class CatalogService {
         if (capabilities.Service && capabilities.Service.Abstract && capabilities.Service.Abstract.length) {
           catalog.abstract = capabilities.Service.Abstract;
         }
-
+        const finalLayers = [];
+        this.flattenWmsCapabilities(capabilities.Capability.Layer,0,finalLayers, catalog.groupSeparator);
+        const capabilitiesCapabilityLayer = Object.assign({},capabilities.Capability.Layer);
+        capabilitiesCapabilityLayer.Layer = finalLayers.filter(f => f.Layer.length !== 0);
         this.includeRecursiveItems(
           catalog,
-          capabilities.Capability.Layer,
+          capabilitiesCapabilityLayer,
           items
         );
         return items;
       })
     );
   }
+
+  flattenWmsCapabilities(parent, level = 0, finalLayers, separator = ' / ') {
+    if (!finalLayers.includes(parent.Title)) {
+        const modifiedParent = Object.assign({},parent);
+        modifiedParent.Layer = [];
+        finalLayers.push(modifiedParent);
+    }
+    for (const layer of parent.Layer) {
+        const modifiedLayer = Object.assign({}, layer);
+        if (level > 0) {
+          modifiedLayer.Title = parent.Title + separator + layer.Title;
+        }
+        if (layer.Layer) {
+            this.flattenWmsCapabilities(modifiedLayer, level + 1, finalLayers, separator);
+        } else {
+            finalLayers.find(ff=> ff.Title === parent.Title).Layer.push(layer);
+         }
+    }
+}
 
   loadCatalogWMTSLayerItems(catalog: Catalog): Observable<CatalogItem[]> {
     return this.getCatalogCapabilities(catalog).pipe(

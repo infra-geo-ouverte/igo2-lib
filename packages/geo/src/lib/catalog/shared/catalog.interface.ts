@@ -18,6 +18,7 @@ export interface ICatalog {
   requestEncoding?: string;
   regFilters?: string[];
   groupImpose?: CatalogItemGroup; // only use by ICompositeCatalog object (id and title)
+  groupSeparator?: string;
   queryFormat?: QueryFormat;
   queryParams?: { [key: string]: string };
   sourceOptions?: { [key: string]: any };
