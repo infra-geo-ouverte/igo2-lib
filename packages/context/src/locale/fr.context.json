@@ -183,7 +183,8 @@
         "dialog": {
           "email": "Courriel",
           "expiration": "Expiration",
-          "user": "Utilisateur"
+          "user": "Utilisateur",
+          "clearPreferences": "Supprimer mes préférences"
         },
         "infoTitle": "Info sur l'utilisateur",
         "logout": "Se déconnecter"

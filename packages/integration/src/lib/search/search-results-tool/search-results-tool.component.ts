@@ -23,7 +23,6 @@ import {
 } from '@igo2/common';
 
 import {
-  LayerService,
   FEATURE,
   Feature,
   FeatureMotion,
@@ -135,7 +134,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   constructor(
     private mapState: MapState,
-    private layerService: LayerService,
     private searchState: SearchState,
     private elRef: ElementRef,
     public toolState: ToolState,

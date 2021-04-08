@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
@@ -79,11 +79,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: ILayerSearchSourceOptions,
     @Inject(ILayerSearchResultFormatter)
     private formatter: ILayerSearchResultFormatter
   ) {
-    super(options);
+    super(options, storageService);
     this.languageService.translate
       .get(this.options.title)
       .subscribe(title => this.title$.next(title));

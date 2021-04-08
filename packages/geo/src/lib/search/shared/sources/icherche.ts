@@ -5,7 +5,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
@@ -76,12 +76,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
     @Inject(IChercheSearchResultFormatter)
     private formatter: IChercheSearchResultFormatter,
     injector: Injector
   ) {
-    super(options);
+    super(options, storageService);
 
     this.languageService.translate
       .get(this.options.title)
@@ -116,18 +117,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
-    const types =
-      this.options.params && this.options.params.type
+
+    const types = this.options.params?.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
         : [
             'adresses',
             'codes-postaux',
             'routes',
+            'intersections',
             'municipalites',
             'mrc',
             'regadmin',
             'lieux'
           ];
+
     return {
       title: 'igo.geo.search.icherche.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
@@ -621,10 +624,11 @@ export class IChercheReverseSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
-    injector: Injector
+    injector: Injector,
   ) {
-    super(options);
+    super(options, storageService);
 
     this.languageService.translate
       .get(this.options.title)
