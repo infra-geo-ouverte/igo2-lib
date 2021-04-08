@@ -295,7 +295,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       switch (trigger) {
         case 'focused':
           computedStyle = createOverlayMarkerStyle(this.searchState.searchOverlayStyleFocus);
-          zIndexOffset = 1;
+          zIndexOffset = 2;
           break;
         case 'shown':
           computedStyle = getCommonVectorStyle(Object.assign({}, { feature: abstractResult }, this.searchState.searchOverlayStyle));
@@ -305,7 +305,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
             Object.assign({},
               { feature: abstractResult },
               this.searchState.searchOverlayStyleSelection));
-          zIndexOffset = 2;
+          zIndexOffset = 1;
           break;
       }
       abstractResult.meta.style = computedStyle;
