@@ -11,7 +11,7 @@ import { SearchResult } from '../search.interfaces';
 import { SearchSource, ReverseSearch } from './source';
 import { SearchSourceOptions, ReverseSearchOptions } from './source.interfaces';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { GoogleLinks } from '../../../utils/googleLinks';
 import { Projection } from '../../../map/shared/projection.interfaces';
 import { lonLatConversion, roundCoordTo } from '../../../map/shared/map.utils';
@@ -45,9 +45,10 @@ export class CoordinatesReverseSearchSource extends SearchSource
   constructor(
     @Inject('options') options: SearchSourceOptions,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('projections') projections: Projection[],
   ) {
-    super(options);
+    super(options, storageService);
     this.projections = projections;
     this.languageService.translate
       .get(this.options.title)

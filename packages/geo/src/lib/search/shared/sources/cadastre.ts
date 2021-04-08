@@ -12,7 +12,7 @@ import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 /**
  * Cadastre search source
  */
@@ -24,9 +24,10 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions
   ) {
-    super(options);
+    super(options, storageService);
   }
 
   getId(): string {

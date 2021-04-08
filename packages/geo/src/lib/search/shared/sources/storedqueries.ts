@@ -25,7 +25,7 @@ import {
 } from './storedqueries.interfaces';
 
 import * as olformat from 'ol/format';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 
 /**
  * StoredQueries search source
@@ -48,9 +48,10 @@ export class StoredQueriesSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions
   ) {
-    super(options);
+    super(options, storageService);
     this.storedQueriesOptions = options as StoredQueriesSearchSourceOptions;
     if (this.storedQueriesOptions && !this.storedQueriesOptions.available) {
       return;
@@ -349,9 +350,10 @@ export class StoredQueriesReverseSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions
   ) {
-    super(options);
+    super(options, storageService);
     this.storedQueriesOptions = options as StoredQueriesReverseSearchSourceOptions;
 
     if (!this.storedQueriesOptions || (this.storedQueriesOptions && !this.storedQueriesOptions.available) ) {

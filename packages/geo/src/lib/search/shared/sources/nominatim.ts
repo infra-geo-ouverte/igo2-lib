@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { FEATURE, Feature, FeatureGeometry } from '../../../feature';
 
+import { StorageService } from '@igo2/core';
 import { SearchResult } from '../search.interfaces';
 import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
@@ -21,9 +22,10 @@ export class NominatimSearchSource extends SearchSource implements TextSearch {
 
   constructor(
     private http: HttpClient,
-    @Inject('options') options: SearchSourceOptions
+    @Inject('options') options: SearchSourceOptions,
+    storageService: StorageService
   ) {
-    super(options);
+    super(options, storageService);
   }
 
   getId(): string {
