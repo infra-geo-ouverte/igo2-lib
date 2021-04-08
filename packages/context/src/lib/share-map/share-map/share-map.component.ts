@@ -7,7 +7,7 @@ import { AuthService } from '@igo2/auth';
 import type { IgoMap } from '@igo2/geo';
 
 import { ShareMapService } from '../shared/share-map.service';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-share-map',
@@ -46,12 +46,14 @@ export class ShareMapComponent implements AfterViewInit, OnInit, OnDestroy {
       this.url = undefined;
       this.buildForm();
     });
-    this.mapState$$ = this.map.viewController.state$.subscribe(c => {
-      if (!this.hasApi) {
-        this.resetUrl();
-        this.cdRef.detectChanges();
-      }
-    });
+    this.mapState$$ = combineLatest([
+      this.map.viewController.state$,
+      this.map.status$]).subscribe(c => {
+        if (!this.hasApi) {
+          this.resetUrl();
+          this.cdRef.detectChanges();
+        }
+      });
   }
 
   ngAfterViewInit(): void {
