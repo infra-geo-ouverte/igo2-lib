@@ -32,7 +32,6 @@ export interface AuthOptions {
   trustHosts?: string[];
   profilsGuard?: string[];
   hostsWithCredentials?: WithCredentialsOptions[];
-  loginButton?: boolean;
 }
 export interface WithCredentialsOptions {
   withCredentials?: boolean;
