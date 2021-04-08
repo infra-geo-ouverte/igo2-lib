@@ -19,7 +19,7 @@ export function getCommonVectorSelectedStyle(
     markerOpacity = 1,
     markerOutlineColor = [0, 255, 255],
     fillColor,
-    fillOpacity = 0.15, 
+    fillOpacity = 0.15,
     strokeColor = [0, 255, 255],
     strokeOpacity = 0.5,
     strokeWidth = 4
@@ -49,10 +49,10 @@ export function getCommonVectorStyle(
     markerColor = [0, 161, 222],
     markerOpacity = 0.5,
     markerOutlineColor,
-    fillColor =[0, 161, 222],
-    fillOpacity = 0.15, 
+    fillColor = [0, 161, 222],
+    fillOpacity = 0.15,
     strokeColor = [0, 161, 222],
-    strokeOpacity = 0.5, 
+    strokeOpacity = 0.5,
     strokeWidth = 2
   }: FeatureCommonVectorStyleOptions): olstyle.Style {
 
@@ -62,7 +62,7 @@ export function getCommonVectorStyle(
 
   if (!geometry || geometryType === 'Point') {
     const markerColorAsArray = ColorAsArray(markerColor).slice(0);
-    const markerColorRGB = markerColorAsArray.slice(0,3);
+    const markerColorRGB = markerColorAsArray.slice(0, 3);
     if (markerColorAsArray.length === 4) {
       markerOpacity = markerColorAsArray[3];
     }
