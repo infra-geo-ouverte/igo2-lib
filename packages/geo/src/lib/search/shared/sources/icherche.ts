@@ -5,7 +5,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { AuthService } from '@igo2/auth';
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import pointOnFeature from '@turf/point-on-feature';
@@ -26,6 +26,7 @@ import {
   IChercheReverseData,
   IChercheReverseResponse
 } from './icherche.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 
 @Injectable()
 export class IChercheSearchResultFormatter {
@@ -75,12 +76,13 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
     @Inject(IChercheSearchResultFormatter)
     private formatter: IChercheSearchResultFormatter,
     injector: Injector
   ) {
-    super(options);
+    super(options, storageService);
 
     this.languageService.translate
       .get(this.options.title)
@@ -115,18 +117,20 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       this.options.params && this.options.params.ecmax
         ? Number(this.options.params.ecmax)
         : undefined;
-    const types =
-      this.options.params && this.options.params.type
+
+    const types = this.options.params?.type
         ? this.options.params.type.replace(/\s/g, '').toLowerCase().split(',')
         : [
             'adresses',
             'codes-postaux',
             'routes',
+            'intersections',
             'municipalites',
             'mrc',
             'regadmin',
             'lieux'
           ];
+
     return {
       title: 'igo.geo.search.icherche.name',
       searchUrl: 'https://geoegl.msp.gouv.qc.ca/apis/icherche',
@@ -342,7 +346,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     this.options.params.page = params.get('page') || '1';
 
     return this.http.get(`${this.searchUrl}/geocode`, { params }).pipe(
-      map((response: IChercheResponse) => this.extractResults(response)),
+      map((response: IChercheResponse) => this.extractResults(response, term)),
       catchError((err) => {
         err.error.toDisplay = true;
         err.error.title = this.languageService.translate.instant(
@@ -413,14 +417,15 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: IChercheResponse): SearchResult<Feature>[] {
+  private extractResults(response: IChercheResponse, term: string): SearchResult<Feature>[] {
     return response.features.map((data: IChercheData) => {
-      return this.formatter.formatResult(this.dataToResult(data, response));
+      return this.formatter.formatResult(this.dataToResult(data, term, response));
     });
   }
 
   private dataToResult(
     data: IChercheData,
+    term: string,
     response?: IChercheResponse
   ): SearchResult<Feature> {
     const properties = this.computeProperties(data);
@@ -453,6 +458,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
         title: data.properties.nom,
         titleHtml: titleHtml + subtitleHtml + subtitleHtml2,
         icon: data.icon || 'map-marker',
+        score: data.score ||  computeTermSimilarity(term.trim(), data.properties.nom),
         nextPage:
           response.features.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
@@ -618,10 +624,11 @@ export class IChercheReverseSearchSource extends SearchSource
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: SearchSourceOptions,
-    injector: Injector
+    injector: Injector,
   ) {
-    super(options);
+    super(options, storageService);
 
     this.languageService.translate
       .get(this.options.title)
