@@ -441,9 +441,31 @@ export class PrintService {
 
     let timeout;
     map.ol.once('rendercomplete', (event: any) => {
-      const canvases = event.target
-        .getViewport()
-        .getElementsByTagName('canvas');
+      const canvases = event.target.getViewport().getElementsByTagName('canvas');
+      // Get the scale and attribution
+      // we use cloneNode to modify the nodes to print without modifying it on the page, using deep:true to get children
+      let canvasOverlayHTML;
+      const mapOverlayHTML = map.ol.getOverlayContainerStopEvent();
+      // Remove the UI buttons from the nodes
+      const OverlayHTMLButton = mapOverlayHTML.getElementsByTagName('button');
+      for (const but of OverlayHTMLButton) {
+        but.setAttribute('data-html2canvas-ignore', 'true');
+      }
+      // Change the styles of hyperlink in the printed version
+      // Transform the Overlay into a canvas
+      // scale is necessary to make it in google chrome
+      // background as null because otherwise it is white and cover the map
+      // allowtaint is to allow rendering images in the attributions
+      // useCORS: true pour permettre de renderer les images (ne marche pas en local)
+      html2canvas(mapOverlayHTML, {
+        scale: 1,
+        backgroundColor: null,
+        allowTaint: true,
+        useCORS: true,
+      }).then( e => {
+        canvasOverlayHTML = e;
+      });
+
       const mapStatus$$ = map.status$.subscribe((mapStatus: SubjectStatus) => {
         clearTimeout(timeout);
 
@@ -472,6 +494,7 @@ export class PrintService {
             'print'
           );
         }
+        this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
         this.renderMap(map, mapSize, extent);
         status$.next(status);
       });
@@ -500,6 +523,7 @@ export class PrintService {
             'print'
           );
         }
+        this.addCanvas(doc, canvasOverlayHTML, margins); // this adds scales and attributions
         this.renderMap(map, mapSize, extent);
         status$.next(status);
       }, 200);
@@ -563,7 +587,7 @@ export class PrintService {
       // Add height for title if defined
       height = title !== '' ? height + 30 : height;
       // Add height for title if defined
-      height = subtitle !== '' ? height + 30 : height; 
+      height = subtitle !== '' ? height + 30 : height;
       // Add height for projection or scale (same line) if defined
       height = projection !== false || scale !== false ? height + 30 : height;
       const positionHProjScale = height - 10;
