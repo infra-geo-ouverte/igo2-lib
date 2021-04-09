@@ -14,6 +14,7 @@ export abstract class Catalog implements ICatalog {
     id: string;
     title: string;
     url: string;
+    externalProvider?: boolean;
     abstract?: string;
     forcedProperties?: any[];
     items?: CatalogItem[];

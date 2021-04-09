@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 
 import { EntityStore } from '@igo2/common';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { IgoMap } from '../../map';
 import { Catalog } from '../shared/catalog.abstract';
 
@@ -44,6 +46,16 @@ export class CatalogLibaryComponent implements OnInit {
    */
   ngOnInit() {
     this.store.state.clear();
+  }
+
+  getInternCatalog(): Observable<Catalog[]> {
+    return this.store.view.all$().pipe(
+      map(catalogs => catalogs.filter(Catalog => Catalog.externalProvider !== true)));
+  }
+
+  getExternCatalog(): Observable<Catalog[]> {
+    return this.store.view.all$().pipe(
+      map(catalogs => catalogs.filter(Catalog => Catalog.externalProvider === true)));
   }
 
   /**

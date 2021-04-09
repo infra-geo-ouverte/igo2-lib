@@ -10,6 +10,7 @@ export interface ICatalog {
   id: string;
   title?: string;
   url: string;
+  externalProvider?: boolean;
   items?: CatalogItem[];
   type?: TypeCatalogStrings;
   version?: string;
