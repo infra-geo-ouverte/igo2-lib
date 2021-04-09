@@ -36,8 +36,17 @@ export class OgcFilterSelectionComponent implements OnInit {
   @Input() checkboxesIndex = 5;
   @Input() radioButtonsIndex = 5;
   @Input() baseIndex = 5;
-  @Input() currentFilter: any;
-
+  @Input()
+  get currentFilter(): any {
+    return this._currentFilter;
+  }
+  set currentFilter(value) {
+    this._currentFilter = value;
+    if (this._currentFilter.sliderOptions) {
+      this._currentFilter.sliderOptions.enabled = false; // remove slider toggle (animation temporelle)
+    }
+  }
+  private _currentFilter: any;
   public ogcFilterOperator = OgcFilterOperator;
 
   public form: FormGroup;
@@ -170,7 +179,6 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.applyFilters();
       }
     }
-    this.currentFilter.sliderMode = false;
 
     this.form
     .get('pushButtonsGroup')

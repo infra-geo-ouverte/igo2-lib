@@ -62,3 +62,8 @@
   p {
     margin: unset;
   }
+
+  igo-ogc-filter-time ::ng-deep .datetime-input {
+    width: 140px;
+    margin: 10px 0px 5px 10px;
+  }
