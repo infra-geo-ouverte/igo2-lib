@@ -1,3 +1,10 @@
 <mat-list-item>
-  <h4 mat-line>{{title}}</h4>
+  <h4 mat-line>
+    <ng-container *ngIf="catalog.externalProvider">
+      <small matBadge igoMatBadgeIcon="deathly-hallows" igoMatBadgeInverseColor="true"
+        class="mat-typography">Fournisseur externe</small>
+      <br>
+    </ng-container>
+    {{title}}
+  </h4>
 </mat-list-item>

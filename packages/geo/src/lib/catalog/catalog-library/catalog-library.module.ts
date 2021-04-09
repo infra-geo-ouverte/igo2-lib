@@ -5,10 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { IgoListModule } from '@igo2/common';
+import { IgoListModule, IgoMatBadgeIconModule } from '@igo2/common';
 
 import { CatalogLibaryComponent, } from './catalog-library.component';
 import { CatalogLibaryItemComponent } from './catalog-library-item.component';
+import { MatBadgeModule } from '@angular/material/badge';
 
 /**
  * @ignore
@@ -17,6 +18,8 @@ import { CatalogLibaryItemComponent } from './catalog-library-item.component';
   imports: [
     CommonModule,
     MatIconModule,
+    MatBadgeModule,
+    IgoMatBadgeIconModule,
     MatListModule,
     MatTooltipModule,
     IgoListModule
