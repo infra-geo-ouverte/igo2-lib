@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageService } from '@igo2/core';
 import { ObjectUtils } from '@igo2/utils';
 
 import { getResolutionFromScale } from '../../../map/shared/map.utils';
@@ -22,6 +22,7 @@ import {
   ILayerServiceResponse,
   ILayerDataSource
 } from './ilayer.interfaces';
+import { computeTermSimilarity } from '../search.utils';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -78,11 +79,12 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   constructor(
     private http: HttpClient,
     private languageService: LanguageService,
+    storageService: StorageService,
     @Inject('options') options: ILayerSearchSourceOptions,
     @Inject(ILayerSearchResultFormatter)
     private formatter: ILayerSearchResultFormatter
   ) {
-    super(options);
+    super(options, storageService);
     this.languageService.translate
       .get(this.options.title)
       .subscribe(title => this.title$.next(title));
@@ -214,7 +216,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
-        map((response: ILayerServiceResponse) => this.extractResults(response))
+        map((response: ILayerServiceResponse) => this.extractResults(response, term))
       );
   }
 
@@ -266,15 +268,16 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   }
 
   private extractResults(
-    response: ILayerServiceResponse
+    response: ILayerServiceResponse, term: string
   ): SearchResult<ILayerItemResponse>[] {
     return response.items.map((data: ILayerData) =>
-      this.dataToResult(data, response)
+      this.dataToResult(data, term, response)
     );
   }
 
   private dataToResult(
     data: ILayerData,
+    term: string,
     response?: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
@@ -293,6 +296,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         title: data.properties.title,
         titleHtml: titleHtml + subtitleHtml,
         icon: data.properties.type === 'Layer' ? 'layers' : 'map',
+        score: data.score || computeTermSimilarity(term.trim(), data.properties.name),
         nextPage:
           response.items.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10
