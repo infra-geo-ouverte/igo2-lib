@@ -371,7 +371,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
       result.data.meta.style = getCommonVectorSelectedStyle(
         Object.assign({},
           { feature: result.data },
-          this.searchState.searchOverlayStyleSelection));
+          this.searchState.searchOverlayStyleFocus));
       this.map.searchResultsOverlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
   }
