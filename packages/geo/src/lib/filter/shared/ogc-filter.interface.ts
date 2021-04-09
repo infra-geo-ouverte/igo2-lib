@@ -79,7 +79,7 @@ export interface OgcSelectorBundle  {
 export interface OgcPushButton {
   title: string;
   tooltip?: string;
-  enabled: boolean;
+  enabled?: boolean;
   filters: IgoOgcFilterObject;
   color?: string;
 }
@@ -87,14 +87,14 @@ export interface OgcPushButton {
 export interface OgcCheckbox {
   title: string;
   tooltip?: string;
-  enabled: boolean;
+  enabled?: boolean;
   filters: IgoOgcFilterObject;
 }
 
 export interface OgcRadiobutton {
   title: string;
   tooltip?: string;
-  enabled: boolean;
+  enabled?: boolean;
   filters: IgoOgcFilterObject;
 }
 

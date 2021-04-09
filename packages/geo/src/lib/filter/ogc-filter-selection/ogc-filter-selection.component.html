@@ -83,3 +83,13 @@
     </div>
   </div>
 </form>
+
+<div *ngIf="isTemporalOperator()">
+  <mat-divider></mat-divider>
+  <h4>{{ 'igo.geo.filter.reportingDate' | translate }}</h4>
+  <igo-ogc-filter-time
+    [(datasource)]="datasource"
+    [(currentFilter)]="currentFilter"
+    (changeProperty)="changeProperty($event.value, $event.pos)">
+  </igo-ogc-filter-time>
+</div>
