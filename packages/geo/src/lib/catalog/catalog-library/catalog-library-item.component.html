@@ -1,10 +1,17 @@
-<mat-list-item>
+<mat-list-item>  
   <h4 mat-line>
-    <ng-container *ngIf="catalog.externalProvider">
-      <small matBadge igoMatBadgeIcon="deathly-hallows" igoMatBadgeInverseColor="true"
-        class="mat-typography">Fournisseur externe</small>
-      <br>
-    </ng-container>
     {{title}}
   </h4>
+  <mat-icon 
+   *ngIf="catalog.externalProvider"
+    matBadge="!" 
+    matBadgeColor="accent" 
+    matBadgeSize="small" 
+    svgIcon="arrow-down"
+    tooltip-position="below"
+    matTooltipShowDelay="500"
+    [matTooltip]="'igo.geo.catalog.externalProvider.catalog' | translate"
+    color="primary"
+    svgIcon="bank-transfer-in">
+  </mat-icon>
 </mat-list-item>

@@ -9,7 +9,6 @@ import {
 
 import { EntityStore } from '@igo2/common';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { IgoMap } from '../../map';
 import { Catalog } from '../shared/catalog.abstract';
 
@@ -48,15 +47,10 @@ export class CatalogLibaryComponent implements OnInit {
     this.store.state.clear();
   }
 
-  getInternCatalog(): Observable<Catalog[]> {
-    return this.store.view.all$().pipe(
-      map(catalogs => catalogs.filter(Catalog => Catalog.externalProvider !== true)));
+  getCatalogs(): Observable<Catalog[]> {
+    return this.store.view.all$();
   }
 
-  getExternCatalog(): Observable<Catalog[]> {
-    return this.store.view.all$().pipe(
-      map(catalogs => catalogs.filter(Catalog => Catalog.externalProvider === true)));
-  }
 
   /**
    * When a catalog is selected, update it's state in the store

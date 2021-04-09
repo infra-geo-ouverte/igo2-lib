@@ -10,7 +10,11 @@
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
         "baseLayers": "Fonds de carte",
         "unavailableTitle": "Catalogue indisponible",
-        "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
+        "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
+        "externalProvider": {
+          "catalog": "Ce catalogue provient d'une organisation externe.",
+          "layer": "Cette couche provient d'une organisation externe."
+       }
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"

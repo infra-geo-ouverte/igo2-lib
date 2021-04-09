@@ -1,15 +1,5 @@
 <igo-list [navigation]="false">
-  <ng-template ngFor let-catalog [ngForOf]="getInternCatalog() | async">
-    <igo-catalog-library-item
-      igoListItem
-      color="accent"
-      [map]="map"
-      [catalog]="catalog"
-      (select)="onCatalogSelect(catalog)">
-    </igo-catalog-library-item>
-  </ng-template>
-  
-  <ng-template ngFor let-catalog [ngForOf]="getExternCatalog() | async">
+  <ng-template ngFor let-catalog [ngForOf]="getCatalogs() | async">
     <igo-catalog-library-item
       igoListItem
       color="accent"

@@ -10,7 +10,7 @@ import {
 
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 
-import { CatalogItemLayer } from '../shared';
+import { Catalog, CatalogItemLayer } from '../shared';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { LayerService } from '../../layer/shared/layer.service';
 import { first } from 'rxjs/operators';
@@ -36,6 +36,8 @@ export class CatalogBrowserLayerComponent implements OnInit, OnDestroy {
   public igoLayer$ = new BehaviorSubject<Layer>(undefined);
 
   private mouseInsideAdd: boolean = false;
+
+  @Input() catalog: Catalog;
 
   @Input() resolution: number;
 
