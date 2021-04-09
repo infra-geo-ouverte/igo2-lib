@@ -109,6 +109,7 @@ export class CatalogService {
             id: generateIdFromSourceOptions(layerOptions.sourceOptions),
             title: layerOptions.title,
             type: CatalogItemType.Layer,
+            externalProvider: catalog.externalProvider,
             options: layerOptions
           } as CatalogItemLayer;
         });
@@ -401,6 +402,7 @@ export class CatalogService {
       type: CatalogItemType.Layer,
       title: layerTitle !== undefined ? layerTitle : layer.Title,
       address: idParent,
+      externalProvider: catalog.externalProvider || false,
       options: {
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
@@ -414,7 +416,7 @@ export class CatalogService {
         tooltip: { type: catalog.tooltipType },
         sourceOptions
       }
-    };
+    } as CatalogItem;
 
     return ObjectUtils.removeUndefined(layerPrepare);
   }
@@ -578,6 +580,7 @@ export class CatalogService {
           type: CatalogItemType.Layer,
           title: forcedTitle !== undefined ? forcedTitle : layer.Title,
           address: catalog.id,
+          externalProvider: catalog.externalProvider,
           options: {
             sourceOptions,
             metadata: {
@@ -587,7 +590,7 @@ export class CatalogService {
               type: baseSourceOptions.type
             }
           }
-        });
+        } as CatalogItem);
       })
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
   }
@@ -641,6 +644,7 @@ export class CatalogService {
           id: generateIdFromSourceOptions(sourceOptions),
           type: CatalogItemType.Layer,
           title: forcedTitle !== undefined ? forcedTitle : layer.name,
+          externalProvider: catalog.externalProvider,
           address: catalog.id,
           options: {
             sourceOptions,
@@ -654,7 +658,7 @@ export class CatalogService {
             },
             title: forcedTitle !== undefined ? forcedTitle : layer.name
           }
-        });
+        } as CatalogItem);
       })
       .filter((item: CatalogItemLayer | undefined) => item !== undefined);
   }

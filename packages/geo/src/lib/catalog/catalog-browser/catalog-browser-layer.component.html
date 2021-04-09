@@ -1,19 +1,16 @@
 <mat-list-item>
   <mat-icon *ngIf="haveGroup()" mat-list-avatar svgIcon="blank"></mat-icon>
   <h4 mat-line matTooltipShowDelay="500" [ngClass]="(catalogAllowLegend)?'igo-cataloglayer-title':''" (click)="askForLegend($event)" [matTooltip]="computeTitleTooltip()">{{title}}</h4>
-
-  <mat-icon 
-    *ngIf="catalog.externalProvider"
-    matBadge="!" 
-    matBadgeColor="accent" 
-    matBadgeSize="small" 
-    svgIcon="arrow-down"
-    tooltip-position="below"
-    matTooltipShowDelay="500"
-    [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
-    color="primary"
-    svgIcon="bank-transfer-in">
-  </mat-icon>
+  
+    <mat-icon 
+      class="igo-cataloglayer-external-icon"
+      *ngIf="layer.externalProvider"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.catalog.externalProvider.layer' | translate"
+      color="primary"
+      svgIcon="bank-transfer-in">
+    </mat-icon>
 
   <igo-metadata-button [layer]="layer"></igo-metadata-button>
 

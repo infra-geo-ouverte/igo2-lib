@@ -38,6 +38,7 @@ export interface CatalogItem {
   title: string;
   type?: CatalogItemType;
   address?: string;
+  externalProvider?: boolean;
 }
 
 export interface CatalogItemLayer<L = MetadataLayerOptions>
