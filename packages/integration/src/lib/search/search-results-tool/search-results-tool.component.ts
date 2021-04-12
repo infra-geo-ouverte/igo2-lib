@@ -24,7 +24,6 @@ import {
 } from '@igo2/common';
 
 import {
-  LayerService,
   FEATURE,
   Feature,
   FeatureMotion,
@@ -69,8 +68,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   private hasFeatureEmphasisOnSelection: boolean = false;
 
-  private focusedOrResolution$$: Subscription;
-  private selectedOrResolution$$: Subscription;
   private showResultsGeometries$$: Subscription;
   private shownResultsGeometries: Feature[] = [];
   private shownResultsEmphasisGeometries: Feature[] = [];
@@ -137,7 +134,6 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
 
   constructor(
     private mapState: MapState,
-    private layerService: LayerService,
     private searchState: SearchState,
     private elRef: ElementRef,
     public toolState: ToolState,
@@ -182,19 +178,23 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     });
 
     if (this.hasFeatureEmphasisOnSelection) {
-      this.focusedOrResolution$$ = combineLatest([
-        this.focusedResult$,
-        this.map.viewController.resolution$
-      ]).subscribe((bunch: [SearchResult<Feature>, number]) =>
-        this.buildResultEmphasis(bunch[0], 'focused')
-      );
+      if (!this.searchState.focusedOrResolution$$) {
+        this.searchState.focusedOrResolution$$ = combineLatest([
+          this.focusedResult$,
+          this.map.viewController.resolution$
+        ]).subscribe((bunch: [SearchResult<Feature>, number]) =>
+          this.buildResultEmphasis(bunch[0], 'focused')
+        );
+      }
 
-      this.selectedOrResolution$$ = combineLatest([
-        this.searchState.selectedResult$,
-        this.map.viewController.resolution$
-      ]).subscribe((bunch: [SearchResult<Feature>, number]) =>
-        this.buildResultEmphasis(bunch[0], 'selected')
-      );
+      if (!this.searchState.selectedOrResolution$$) {
+        this.searchState.selectedOrResolution$$ = combineLatest([
+          this.searchState.selectedResult$,
+          this.map.viewController.resolution$
+        ]).subscribe((bunch: [SearchResult<Feature>, number]) =>
+          this.buildResultEmphasis(bunch[0], 'selected')
+        );
+      }
     }
     this.monitorResultOutOfView();
 
@@ -346,12 +346,7 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.topPanelState$$.unsubscribe();
     this.searchTerm$$.unsubscribe();
-    if (this.selectedOrResolution$$) {
-      this.selectedOrResolution$$.unsubscribe();
-    }
-    if (this.focusedOrResolution$$) {
-      this.focusedOrResolution$$.unsubscribe();
-    }
+
     if (this.isSelectedResultOutOfView$$) {
       this.isSelectedResultOutOfView$$.unsubscribe();
     }
@@ -372,6 +367,12 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
         Object.assign({},
           { feature: result.data },
           this.searchState.searchOverlayStyleFocus));
+
+      const olFeature = this.map.searchResultsOverlay.dataSource.ol.getFeatureById(result.meta.id);
+      if (olFeature) {
+        olFeature.setStyle(result.data.meta.style);
+        return;
+      }
       this.map.searchResultsOverlay.addFeature(result.data as Feature, FeatureMotion.None);
     }
   }
@@ -383,6 +384,14 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
 
     if (this.store.state.get(result).selected === true) {
+      const olFeature = this.map.searchResultsOverlay.dataSource.ol.getFeatureById(result.meta.id);
+      if (olFeature) {
+        const style = getCommonVectorSelectedStyle(
+          Object.assign({},
+            { feature: result.data },
+            this.searchState.searchOverlayStyleSelection));
+        olFeature.setStyle(style);
+      }
       return;
     }
     this.map.searchResultsOverlay.removeFeature(result.data as Feature);

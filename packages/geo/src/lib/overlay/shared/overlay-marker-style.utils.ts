@@ -26,7 +26,11 @@ export function createOverlayMarkerStyle({
   const newColor = ColorAsArray(markerColor).slice(0);
   const newOutlineColor = ColorAsArray(markerOutlineColor).slice(0);
 
-  svgIconColor = `"rgba(${newColor[0]},${newColor[1]},${newColor[2]},${newColor[3] || opacity})"`;
+  if (newColor.length === 4 && (typeof markerColor !== 'string' || /^#[0-9A-F]{8}$/i.test(markerColor as string))) {
+    opacity = newColor[3];
+  }
+
+  svgIconColor = `"rgba(${newColor[0]},${newColor[1]},${newColor[2]},${opacity})"`;
   iconColor = markerColor;
 
   svgOutlineColor = `"rgb(${newOutlineColor[0]},${newOutlineColor[1]},${newOutlineColor[2]})"`;

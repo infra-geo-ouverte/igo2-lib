@@ -63,9 +63,12 @@ export function getCommonVectorStyle(
   if (!geometry || geometryType === 'Point') {
     const markerColorAsArray = ColorAsArray(markerColor).slice(0);
     const markerColorRGB = markerColorAsArray.slice(0, 3);
-    if (markerColorAsArray.length === 4) {
+
+    if (markerColorAsArray.length === 4 &&
+        (typeof markerColor !== 'string' || /^#[0-9A-F]{8}$/i.test(markerColor as string))) {
       markerOpacity = markerColorAsArray[3];
     }
+
     return createOverlayMarkerStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       opacity: markerOpacity,
@@ -75,12 +78,17 @@ export function getCommonVectorStyle(
   } else {
     const fillWithOpacity = ColorAsArray(fillColor).slice(0);
     const strokeWithOpacity = ColorAsArray(strokeColor).slice(0);
-    if (fillWithOpacity.length === 3) {
+
+    if (!(fillWithOpacity.length === 4 &&
+        (typeof fillColor !== 'string' || /^#[0-9A-F]{8}$/i.test(fillColor as string)))) {
       fillWithOpacity[3] = fillOpacity;
     }
-    if (strokeWithOpacity.length === 3) {
+
+    if (!(strokeWithOpacity.length === 4 &&
+        (typeof strokeColor !== 'string' || /^#[0-9A-F]{8}$/i.test(strokeColor as string)))) {
       strokeWithOpacity[3] = strokeOpacity;
     }
+
     return createOverlayDefaultStyle({
       text: isOlFeature ? undefined : feature.meta.mapTitle,
       strokeWidth,

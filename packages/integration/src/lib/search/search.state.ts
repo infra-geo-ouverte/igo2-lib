@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 import { EntityStore } from '@igo2/common';
-import { ConfigService } from '@igo2/core';
+import { ConfigService, StorageService } from '@igo2/core';
 import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions } from '@igo2/geo';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 /**
  * Service that holds the state of the search module
@@ -15,6 +15,9 @@ export class SearchState {
   public searchOverlayStyle: CommonVectorStyleOptions = {};
   public searchOverlayStyleSelection: CommonVectorStyleOptions = {};
   public searchOverlayStyleFocus: CommonVectorStyleOptions = {};
+
+  public focusedOrResolution$$: Subscription;
+  public selectedOrResolution$$: Subscription;
 
   readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
@@ -44,6 +47,7 @@ export class SearchState {
 
   constructor(
     private searchSourceService: SearchSourceService,
+    private storageService: StorageService,
     private configService: ConfigService) {
     const searchOverlayStyle = this.configService.getConfig('searchOverlayStyle') as {
       base?: CommonVectorStyleOptions,
@@ -54,6 +58,11 @@ export class SearchState {
       this.searchOverlayStyle = searchOverlayStyle.base;
       this.searchOverlayStyleSelection = searchOverlayStyle.selection;
       this.searchOverlayStyleFocus = searchOverlayStyle.focus;
+    }
+
+    const searchResultsGeometryEnabled = this.storageService.get('searchResultsGeometryEnabled') as boolean;
+    if (searchResultsGeometryEnabled) {
+      this.searchResultsGeometryEnabled$.next(searchResultsGeometryEnabled);
     }
   }
 
@@ -80,5 +89,10 @@ export class SearchState {
 
   setSelectedResult(result: SearchResult) {
     this.selectedResult$.next(result);
+  }
+
+  setSearchResultsGeometryStatus(value) {
+    this.storageService.set('searchResultsGeometryEnabled', value);
+    this.searchResultsGeometryEnabled$.next(value);
   }
 }
