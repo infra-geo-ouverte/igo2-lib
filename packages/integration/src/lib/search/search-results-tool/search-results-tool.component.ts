@@ -368,9 +368,9 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
           { feature: result.data },
           this.searchState.searchOverlayStyleFocus));
 
-      const olFeature = this.map.searchResultsOverlay.dataSource.ol.getFeatureById(result.meta.id);
-      if (olFeature) {
-        olFeature.setStyle(result.data.meta.style);
+      const feature = this.map.searchResultsOverlay.dataSource.ol.getFeatureById(result.meta.id);
+      if (feature) {
+        feature.setStyle(result.data.meta.style);
         return;
       }
       this.map.searchResultsOverlay.addFeature(result.data as Feature, FeatureMotion.None);
@@ -384,13 +384,13 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     }
 
     if (this.store.state.get(result).selected === true) {
-      const olFeature = this.map.searchResultsOverlay.dataSource.ol.getFeatureById(result.meta.id);
-      if (olFeature) {
+      const feature = this.map.searchResultsOverlay.dataSource.ol.getFeatureById(result.meta.id);
+      if (feature) {
         const style = getCommonVectorSelectedStyle(
           Object.assign({},
             { feature: result.data },
             this.searchState.searchOverlayStyleSelection));
-        olFeature.setStyle(style);
+        feature.setStyle(style);
       }
       return;
     }
