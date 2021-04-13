@@ -10,8 +10,7 @@
     </igo-catalog-library-item>
   </ng-template>
 </igo-list>
-
-<form class="igo-form" [formGroup]="form">
+<form *ngIf="addCatalogAllowed" class="igo-form" [formGroup]="form">
   <div class="igo-input-container">
 
     <mat-form-field>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
 import { take } from 'rxjs/operators';
 
 import { ToolComponent } from '@igo2/common';
@@ -31,6 +31,11 @@ export class CatalogLibraryToolComponent implements OnInit {
   get store(): EntityStore<Catalog> {
     return this.catalogState.catalogStore;
   }
+
+  /**
+   * Determine if the form to add a catalog is allowed
+   */
+  @Input() addCatalogAllowed: boolean = false;
 
   constructor(
     private catalogService: CatalogService,

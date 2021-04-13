@@ -42,6 +42,12 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   @Input() map: IgoMap;
 
   /**
+   * Determine if the form to add a catalog is allowed
+   */
+   @Input() addCatalogAllowed: boolean =  false;
+
+
+  /**
    * Event emitted a catalog is selected or unselected
    */
   @Output() catalogSelectChange = new EventEmitter<{
