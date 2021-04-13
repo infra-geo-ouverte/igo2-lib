@@ -37,7 +37,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   get source(): SearchSource {
     return this._source;
   }
-  set source(value: SearchSource ) {
+  set source(value: SearchSource) {
     this._source = value;
     this.cdRef.detectChanges();
   }

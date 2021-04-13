@@ -403,6 +403,10 @@
         "pointerSearchSummary": {
           "title": "Position du curseur",
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
+        },        
+        "searchResultsGeometry": {
+          "title": "Montrer tous les résultats",
+          "tooltip": "Afficher/cacher la géométrie des résultats"
         },
         "searchSources": {
           "selectAll": "Tout sélectionner",

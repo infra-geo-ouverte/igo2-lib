@@ -147,7 +147,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.map.overlay.setFeatures(
+    this.map.searchResultsOverlay.setFeatures(
       [layer.data] as Feature[],
       FeatureMotion.Default
     );
@@ -182,7 +182,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Remove a feature to the map overlay
    */
   removeFeatureFromMap() {
-    this.map.overlay.clear();
+    this.map.searchResultsOverlay.clear();
   }
 
   onContextMenuOpen(event: { x: number; y: number }) {

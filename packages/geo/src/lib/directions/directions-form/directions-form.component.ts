@@ -1307,17 +1307,17 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
     let stopColor;
     let stopText;
     if (directionsText === 'start') {
-      stopColor = 'green';
+      stopColor = '#008000';
       stopText = this.languageService.translate.instant(
         'igo.geo.directionsForm.start'
       );
     } else if (directionsText === 'end') {
-      stopColor = 'red';
+      stopColor = '#f64139';
       stopText = this.languageService.translate.instant(
         'igo.geo.directionsForm.end'
       );
     } else {
-      stopColor = 'yellow';
+      stopColor = '#ffd700';
       stopText =
         this.languageService.translate.instant(
           'igo.geo.directionsForm.intermediate'
