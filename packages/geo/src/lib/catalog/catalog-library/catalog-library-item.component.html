@@ -10,4 +10,15 @@
     color="primary"
     svgIcon="bank-transfer-in">
   </mat-icon>
+
+  <button 
+  *ngIf="catalog.removable"
+  mat-icon-button
+  tooltip-position="below"
+  matTooltipShowDelay="500"
+  [matTooltip]="'igo.geo.catalog.library.remove' | translate"
+  color="warn"
+  (click)="removeCatalogFromLibrary($event)">
+  <mat-icon svgIcon="delete"></mat-icon>
+</button>
 </mat-list-item>

@@ -11,6 +11,11 @@ import { CatalogLibaryComponent, } from './catalog-library.component';
 import { CatalogLibaryItemComponent } from './catalog-library-item.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { IgoLanguageModule } from '@igo2/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 /**
  * @ignore
@@ -23,7 +28,12 @@ import { IgoLanguageModule } from '@igo2/core';
     MatListModule,
     MatTooltipModule,
     IgoListModule,
-    IgoLanguageModule
+    IgoLanguageModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatSelectModule
   ],
   exports: [
     CatalogLibaryComponent

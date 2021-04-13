@@ -14,7 +14,13 @@
         "externalProvider": {
            "catalog": "This catalog comes from an external organization.",
            "layer": "This layer comes from an external organization."
-        }
+        },
+        "library.add": "Add this catalog to the list",
+        "library.remove": "Remove this catalog from the list",
+        "library.inlist": {
+          "title": "Catalog already contained",
+          "message": "The catalog is already contained in the list."
+        } 
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
