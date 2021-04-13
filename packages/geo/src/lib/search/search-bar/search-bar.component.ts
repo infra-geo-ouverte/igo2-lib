@@ -102,6 +102,11 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @Output() pointerSummaryStatus = new EventEmitter<boolean>();
 
   /**
+   * Event emitted when the show geometry setting is changed
+   */
+   @Output() searchResultsGeometryStatus = new EventEmitter<boolean>();
+
+  /**
    * Search term
    */
   @Input()
@@ -128,6 +133,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   readonly disabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @Input() pointerSummaryEnabled: boolean = false;
+  @Input() searchResultsGeometryEnabled: boolean = false;
   /**
    * Whether a float label should be displayed
    */
