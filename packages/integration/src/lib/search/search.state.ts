@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { EntityStore } from '@igo2/common';
+import { EntityRecord, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreStrategyFuncOptions } from '@igo2/common';
 import { ConfigService, StorageService } from '@igo2/core';
 import { SearchResult, SearchSourceService, SearchSource, CommonVectorStyleOptions } from '@igo2/geo';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -18,6 +18,8 @@ export class SearchState {
 
   public focusedOrResolution$$: Subscription;
   public selectedOrResolution$$: Subscription;
+
+  readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
@@ -63,6 +65,37 @@ export class SearchState {
     const searchResultsGeometryEnabled = this.storageService.get('searchResultsGeometryEnabled') as boolean;
     if (searchResultsGeometryEnabled) {
       this.searchResultsGeometryEnabled$.next(searchResultsGeometryEnabled);
+    }
+    
+    this.store.addStrategy(this.createCustomFilterTermStrategy(), false);
+  }
+
+  private createCustomFilterTermStrategy(): EntityStoreFilterCustomFuncStrategy {
+    const filterClauseFunc = (record: EntityRecord<SearchResult>) => {
+      return record.entity.meta.score === 100;
+    };
+    return new EntityStoreFilterCustomFuncStrategy({filterClauseFunc} as EntityStoreStrategyFuncOptions);
+  }
+
+  /**
+   * Activate custom strategy
+   *
+   */
+  activateCustomFilterTermStrategy() {
+    const strategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+    if (strategy !== undefined) {
+      strategy.activate();
+    }
+  }
+
+  /**
+   * Deactivate custom strategy
+   *
+   */
+  deactivateCustomFilterTermStrategy() {
+    const strategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
+    if (strategy !== undefined) {
+      strategy.deactivate();
     }
   }
 

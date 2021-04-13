@@ -183,7 +183,8 @@
         "dialog": {
           "email": "Email",
           "expiration": "Expiration",
-          "user": "User"
+          "user": "User",
+          "clearPreferences": "Clear my preferences"
         },
         "infoTitle": "User info",
         "logout": "Logout"

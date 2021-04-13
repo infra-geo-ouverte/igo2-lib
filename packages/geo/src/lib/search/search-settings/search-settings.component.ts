@@ -22,7 +22,7 @@ import {
   sourceCanSearch,
   sourceCanReverseSearch
 } from '../shared/search.utils';
-import { MediaService } from '@igo2/core';
+import { MediaService, StorageService } from '@igo2/core';
 
 /**
  * This component allows a user to select a search type yo enable. In it's
@@ -77,7 +77,8 @@ export class SearchSettingsComponent implements OnInit {
 
   constructor(
     private searchSourceService: SearchSourceService,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -215,6 +216,12 @@ export class SearchSettingsComponent implements OnInit {
 
   onCheckSearchSource(event: MatCheckboxChange, source: SearchSource) {
     source.enabled = event.checked;
+    const storage = (this.storageService.get(source.getId() + '.options') || {}) as SettingOptions;
+    storage.enabled = source.enabled;
+    this.storageService.set(
+      source.getId() + '.options',
+      storage
+    );
     this.searchSourceChange.emit(source);
   }
 
