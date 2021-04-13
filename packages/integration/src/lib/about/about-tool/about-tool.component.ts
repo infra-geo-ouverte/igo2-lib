@@ -56,28 +56,27 @@ export class AboutToolComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get(this.baseUrlProfil).subscribe((profil) => {
-      const recast = profil as any;
-      this.trainingGuideURLs = recast.guides;
-      this.cdRef.detectChanges();
-    });
-  }
-
-  openGuide() {
-    for (const trainingGuideURL of this.trainingGuideURLs) {
-      this.http
-      .get(this.baseUrlGuide + trainingGuideURL + '?', {
-        responseType: 'blob'
-      })
-      .subscribe((response) => {
-        const blob = new Blob([response]);
-        const url = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = trainingGuideURL;
-        anchor.click();
-        URL.revokeObjectURL(url);
+    if (this.auth.authenticated) {
+      this.http.get(this.baseUrlProfil).subscribe((profil) => {
+        const recast = profil as any;
+        this.trainingGuideURLs = recast.guides;
+        console.log(this.trainingGuideURLs)
+        this.cdRef.detectChanges();
       });
     }
+  }
+
+  openGuide(guide?) {
+    const url = guide ?
+      this.baseUrlGuide + guide + '?' :
+      this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
+    console.log(url);
+    this.http
+    .get(url, {
+      responseType: 'blob'
+    })
+    .subscribe(() => {
+      window.open(url, '_blank');
+    });
   }
 }
