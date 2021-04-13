@@ -19,7 +19,7 @@
         "library.remove": "Retirer ce catalogue de la liste",
         "library.inlist": {
           "title": "Catalogue déjà contenu",
-          "message": "Le catalogue a ajouter est déja dans la liste"
+          "message": "Le catalogue à ajouter est déjà dans la liste"
         } 
       },
       "clickOnMap": {

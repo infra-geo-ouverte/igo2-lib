@@ -10,7 +10,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { EntityStore } from '@igo2/common';
-import { LanguageService, MessageService } from '@igo2/core';
+import { LanguageService, MessageService, StorageService } from '@igo2/core';
 import { Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
@@ -55,11 +55,19 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   private addingCatalog$$: Subscription;
   private addedCatalogType$$: Subscription;
 
+  get addedCatalogs(): Catalog[] {
+    return (this.storageService.get('addedCatalogs') || []) as Catalog[];
+  }
+  set addedCatalogs(catalogs: Catalog[]) {
+    this.storageService.set('addedCatalogs', catalogs);
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private capabilitiesService: CapabilitiesService,
     private messageService: MessageService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private storageService: StorageService
   ) {
 
     this.form = this.formBuilder.group({
@@ -111,11 +119,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     }
   }
 
-  addUrl(addedCatalog:
-    { title: string,
-      url: string,
-      type: string
-    }) {
+  addCatalog(addedCatalog: Catalog) {
     const id = Md5.hashStr(addedCatalog.type + standardizeUrl(addedCatalog.url)) as string;
     if (this.store.get(id)) {
       const title = this.languageService.translate.instant(
@@ -161,15 +165,18 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
             default:
               title = addedCatalog.title;
           }
-          this.store.insert(
-            {
-              id,
-              title,
-              url: addedCatalog.url,
-              type: addedCatalog.type,
-              removable: true
-            } as Catalog
-          );
+
+          const catalogToAdd = {
+            id,
+            title,
+            url: addedCatalog.url,
+            type: addedCatalog.type,
+            removable: true
+          } as Catalog;
+          this.store.insert(catalogToAdd);
+          const newCatalogs = this.addedCatalogs.slice(0);
+          newCatalogs.push(catalogToAdd);
+          this.addedCatalogs = newCatalogs;
           this.unsubscribeAddingCatalog();
           this.form.patchValue({ title: '' });
           this.form.patchValue({ url: '' });
@@ -184,6 +191,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   onCatalogRemove(catalog) {
     this.store.delete(catalog);
+    this.addedCatalogs = this.addedCatalogs.slice(0).filter(c => c.id !== catalog.id);
   }
 
 }

@@ -5,6 +5,7 @@ import { ToolComponent } from '@igo2/common';
 
 import { EntityStore } from '@igo2/common';
 import { Catalog, CatalogService } from '@igo2/geo';
+import { StorageService } from '@igo2/core';
 
 import { ToolState } from '../../tool/tool.state';
 import { CatalogState } from '../catalog.state';
@@ -34,7 +35,8 @@ export class CatalogLibraryToolComponent implements OnInit {
   constructor(
     private catalogService: CatalogService,
     private catalogState: CatalogState,
-    private toolState: ToolState
+    private toolState: ToolState,
+    private storageService: StorageService
   ) {}
 
   /**
@@ -65,7 +67,7 @@ export class CatalogLibraryToolComponent implements OnInit {
   private loadCatalogs() {
     this.catalogService.loadCatalogs().pipe(take(1)).subscribe((catalogs: Catalog[]) => {
       this.store.clear();
-      this.store.load(catalogs);
+      this.store.load(catalogs.concat((this.storageService.get('addedCatalogs') || []) as Catalog[]));
     });
   }
 }
