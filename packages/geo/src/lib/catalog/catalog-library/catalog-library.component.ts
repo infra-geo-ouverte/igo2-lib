@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { EntityStore } from '@igo2/common';
 import { LanguageService, MessageService, StorageService } from '@igo2/core';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Md5 } from 'ts-md5';
 import { CapabilitiesService, TypeCapabilities } from '../../datasource';
@@ -44,8 +44,12 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   /**
    * Determine if the form to add a catalog is allowed
    */
-   @Input() addCatalogAllowed: boolean =  false;
+  @Input() addCatalogAllowed: boolean = false;
 
+  /**
+   * Determine if the form to add a catalog is allowed
+   */
+  @Input() predefinedCatalogs: Catalog[] = [];
 
   /**
    * Event emitted a catalog is selected or unselected
@@ -60,6 +64,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   private defaultAddedCatalogType = 'wms';
   private addingCatalog$$: Subscription;
   private addedCatalogType$$: Subscription;
+  private storeViewAll$$: Subscription;
 
   get addedCatalogs(): Catalog[] {
     return (this.storageService.get('addedCatalogs') || []) as Catalog[];
@@ -67,6 +72,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   set addedCatalogs(catalogs: Catalog[]) {
     this.storageService.set('addedCatalogs', catalogs);
   }
+
+ public predefinedCatalogsList$ = new BehaviorSubject<Catalog[]>([]);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -77,6 +84,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ) {
 
     this.form = this.formBuilder.group({
+      id: ['', []],
       title: ['', []],
       url: ['', [Validators.required]],
       type: [this.defaultAddedCatalogType, [Validators.required]]
@@ -99,6 +107,10 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
         }
         this.form.get('title').updateValueAndValidity();
       });
+    this.computePredefinedCatalogList();
+    this.storeViewAll$$ = this.store.view.all$().subscribe(() => this.computePredefinedCatalogList());
+
+
   }
 
   getCatalogs(): Observable<Catalog[]> {
@@ -116,17 +128,23 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
       selected: true,
       focused: true
     }, true);
-    this.catalogSelectChange.emit({selected: true, catalog});
+    this.catalogSelectChange.emit({ selected: true, catalog });
   }
 
-  private unsubscribeAddingCatalog(){
-        if (this.addingCatalog$$ ){
+  private unsubscribeAddingCatalog() {
+    if (this.addingCatalog$$) {
       this.addingCatalog$$.unsubscribe();
     }
   }
 
   addCatalog(addedCatalog: Catalog) {
-    const id = Md5.hashStr(addedCatalog.type + standardizeUrl(addedCatalog.url)) as string;
+    let id = Md5.hashStr(addedCatalog.type + standardizeUrl(addedCatalog.url)) as string;
+    const predefinedCatalog = this.predefinedCatalogs.find(c => c.id === addedCatalog.id);
+    if (predefinedCatalog) {
+      addedCatalog.externalProvider = predefinedCatalog.externalProvider;
+      id = predefinedCatalog.id;
+    }
+
     if (this.store.get(id)) {
       const title = this.languageService.translate.instant(
         'igo.geo.catalog.library.inlist.title'
@@ -176,7 +194,8 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
             id,
             title,
             url: addedCatalog.url,
-            type: addedCatalog.type,
+            type: addedCatalog.type || 'wms',
+            externalProvider: addedCatalog.externalProvider || false,
             removable: true
           } as Catalog;
           this.store.insert(catalogToAdd);
@@ -193,6 +212,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAddingCatalog();
     this.addedCatalogType$$.unsubscribe();
+    this.storeViewAll$$.unsubscribe();
   }
 
   onCatalogRemove(catalog) {
@@ -200,4 +220,13 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
     this.addedCatalogs = this.addedCatalogs.slice(0).filter(c => c.id !== catalog.id);
   }
 
+  changeUrl(catalog: Catalog) {
+    this.form.patchValue(catalog);
+    this.computePredefinedCatalogList();
+  }
+
+  computePredefinedCatalogList() {
+    this.predefinedCatalogsList$
+    .next(this.predefinedCatalogs.filter(c => !this.store.get(c.id)));
+  }
 }

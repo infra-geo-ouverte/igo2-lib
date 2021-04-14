@@ -37,6 +37,11 @@ export class CatalogLibraryToolComponent implements OnInit {
    */
   @Input() addCatalogAllowed: boolean = false;
 
+  /**
+   * List of predefined catalogs
+   */
+  @Input() predefinedCatalogs: Catalog[] = [];
+
   constructor(
     private catalogService: CatalogService,
     private catalogState: CatalogState,

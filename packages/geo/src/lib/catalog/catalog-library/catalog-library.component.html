@@ -20,20 +20,23 @@
         placeholder="{{'igo.geo.printForm.title' | translate}}">
     </mat-form-field>
     <mat-form-field>
-      <input
-        matInput
-        formControlName="url"
-        placeholder="URL">
+      <input type="text" formControlName="url" placeholder="URL" matInput [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)='changeUrl($event.option.value)'>
+        <mat-option *ngFor="let predefinedCatalog of (predefinedCatalogsList$ | async)" matTooltipShowDelay="500"
+          [matTooltip]="predefinedCatalog.url" [value]="predefinedCatalog">
+          {{predefinedCatalog.url}}
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
     <mat-form-field>
       <mat-select
-      formControlName="type"
-      placeholder="Type">     
-        <mat-option 
+        formControlName="type"
+        placeholder="Type">
+        <mat-option
           *ngFor="let type of typeCapabilities"
           [value]="type"
           (click)="$event.stopPropagation()">
-          <p mat-line >{{type}}</p>
+            <p mat-line>{{type}}</p>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -42,7 +45,7 @@
 
   <div class="igo-form-button-group print-button-top-padding">
     <button
-      mat-raised-button
+      mat-raised-button 
       type="button"
       [disabled]="!form.valid"
       (click)="addCatalog(form.value)">

@@ -10,6 +10,7 @@ import { Catalog } from '../shared/catalog.abstract';
 @Component({
   selector: 'igo-catalog-library-item',
   templateUrl: './catalog-library-item.component.html',
+  styleUrls: ['./catalog-library-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogLibaryItemComponent {
