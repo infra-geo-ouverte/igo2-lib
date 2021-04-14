@@ -60,7 +60,6 @@ export class AboutToolComponent implements OnInit {
       this.http.get(this.baseUrlProfil).subscribe((profil) => {
         const recast = profil as any;
         this.trainingGuideURLs = recast.guides;
-        console.log(this.trainingGuideURLs)
         this.cdRef.detectChanges();
       });
     }
@@ -70,7 +69,6 @@ export class AboutToolComponent implements OnInit {
     const url = guide ?
       this.baseUrlGuide + guide + '?' :
       this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
-    console.log(url);
     this.http
     .get(url, {
       responseType: 'blob'
@@ -78,5 +76,12 @@ export class AboutToolComponent implements OnInit {
     .subscribe(() => {
       window.open(url, '_blank');
     });
+  }
+
+  formatFileName(name: string) {
+    name = name.split('_').join(' ');
+    const index = name.indexOf('.');
+    name = name.slice(0, index);
+    return name;
   }
 }
