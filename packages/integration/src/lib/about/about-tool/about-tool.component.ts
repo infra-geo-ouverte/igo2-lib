@@ -37,7 +37,7 @@ export class AboutToolComponent implements OnInit {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  public trainingGuideURLs;
+  @Input() trainingGuideURLs;
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
@@ -56,12 +56,17 @@ export class AboutToolComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.auth.authenticated) {
+    if (this.auth.authenticated && this.configService.getConfig('context.url')) {
       this.http.get(this.baseUrlProfil).subscribe((profil) => {
         const recast = profil as any;
         this.trainingGuideURLs = recast.guides;
         this.cdRef.detectChanges();
       });
+    } else if (
+        this.auth.authenticated &&
+        !this.configService.getConfig('context.url') &&
+        this.configService.getConfig('depot.trainingGuides')) {
+          this.trainingGuideURLs = this.configService.getConfig('depot.trainingGuides');
     }
   }
 
