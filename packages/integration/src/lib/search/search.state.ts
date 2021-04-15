@@ -66,7 +66,6 @@ export class SearchState {
     if (searchResultsGeometryEnabled) {
       this.searchResultsGeometryEnabled$.next(searchResultsGeometryEnabled);
     }
-
     this.store.addStrategy(this.createCustomFilterTermStrategy(), false);
   }
 
