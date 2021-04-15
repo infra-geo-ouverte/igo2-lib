@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef } from '@angular/core';
 import type { QueryList } from '@angular/core';
 
@@ -67,7 +68,8 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
 
   constructor(
     private capabilitiesService: CapabilitiesService,
-    private languageService: LanguageService) {}
+    private languageService: LanguageService,
+    private http: HttpClient) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
@@ -112,6 +114,20 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (this.state$$ !== undefined) {
       this.state$$.unsubscribe();
     }
+  }
+
+  getLegendGraphic(item: Legend) {
+    this.http.get(item.url, {
+      responseType: 'blob'
+    }).subscribe(
+      () => {},
+      (err) => {
+        err.error.caught = true;
+        this.legendItems$.next([]);
+        return false;
+      }
+    );
+    return true;
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
