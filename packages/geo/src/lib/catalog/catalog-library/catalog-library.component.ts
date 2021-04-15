@@ -25,6 +25,7 @@ import { Catalog } from '../shared/catalog.abstract';
 @Component({
   selector: 'igo-catalog-library',
   templateUrl: './catalog-library.component.html',
+  styleUrls: ['./catalog-library.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatalogLibaryComponent implements OnInit, OnDestroy {
