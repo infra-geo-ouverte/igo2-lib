@@ -73,7 +73,7 @@ export interface OgcSelectorBundle  {
   title?: string;
   logical?: string;
   vertical?: boolean;
-  selectors: OgcPushButton[] | OgcCheckbox[] | OgcRadiobutton[];
+  selectors: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[];
 }
 
 export interface OgcPushButton {
@@ -91,7 +91,7 @@ export interface OgcCheckbox {
   filters: IgoOgcFilterObject;
 }
 
-export interface OgcRadiobutton {
+export interface OgcRadioButton {
   title: string;
   tooltip?: string;
   enabled?: boolean;
