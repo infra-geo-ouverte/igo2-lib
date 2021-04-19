@@ -37,7 +37,7 @@ export class AboutToolComponent implements OnInit {
     this.discoverTitleInLocale$ = of(value);
   }
 
-  public trainingGuideURLs;
+  @Input() trainingGuideURLs;
 
   public version: Version;
   private _html: string = 'igo.integration.aboutTool.html';
@@ -56,28 +56,37 @@ export class AboutToolComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get(this.baseUrlProfil).subscribe((profil) => {
-      const recast = profil as any;
-      this.trainingGuideURLs = recast.guides;
-      this.cdRef.detectChanges();
+    if (this.auth.authenticated && this.configService.getConfig('context.url')) {
+      this.http.get(this.baseUrlProfil).subscribe((profil) => {
+        const recast = profil as any;
+        this.trainingGuideURLs = recast.guides;
+        this.cdRef.detectChanges();
+      });
+    } else if (
+        this.auth.authenticated &&
+        !this.configService.getConfig('context.url') &&
+        this.configService.getConfig('depot.trainingGuides')) {
+          this.trainingGuideURLs = this.configService.getConfig('depot.trainingGuides');
+    }
+  }
+
+  openGuide(guide?) {
+    const url = guide ?
+      this.baseUrlGuide + guide + '?' :
+      this.baseUrlGuide + this.trainingGuideURLs[0] + '?';
+    this.http
+    .get(url, {
+      responseType: 'blob'
+    })
+    .subscribe(() => {
+      window.open(url, '_blank');
     });
   }
 
-  openGuide() {
-    for (const trainingGuideURL of this.trainingGuideURLs) {
-      this.http
-      .get(this.baseUrlGuide + trainingGuideURL + '?', {
-        responseType: 'blob'
-      })
-      .subscribe((response) => {
-        const blob = new Blob([response]);
-        const url = window.URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = trainingGuideURL;
-        anchor.click();
-        URL.revokeObjectURL(url);
-      });
-    }
+  formatFileName(name: string) {
+    name = name.split('_').join(' ');
+    const index = name.indexOf('.');
+    name = name.slice(0, index);
+    return name;
   }
 }
