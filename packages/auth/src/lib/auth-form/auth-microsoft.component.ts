@@ -78,8 +78,9 @@ export class AuthMicrosoftComponent {
     this.msalService.instance
       .acquireTokenSilent(this.getConf().authRequest as SilentRequest)
       .then((response: AuthenticationResult) => {
-        const token = response.accessToken;
-        this.authService.loginWithToken(token, 'microsoft').subscribe(() => {
+        const tokenAccess = response.accessToken;
+        const tokenId = response.idToken;
+        this.authService.loginWithToken(tokenAccess, 'microsoft', {tokenId: tokenId} ).subscribe(() => {
           this.appRef.tick();
           this.login.emit(true);
         });
