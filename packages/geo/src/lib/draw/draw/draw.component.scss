@@ -3,10 +3,10 @@ $slide-toggle-width: 60px;
 .draw-type-toggle {
     padding: 10px;
     text-align: center;
-  
+
     mat-button-toggle-group {
       width: 100%;
-  
+
       mat-button-toggle {
         width: 25%;
       }
@@ -31,25 +31,23 @@ $slide-toggle-width: 60px;
 }
 
 .fill-color-picker {
-  display: flex;
-  justify-content: space-between;
+  mat-icon {
+    position: relative;
+    top: 7px;
+  }
   mat-form-field {
-    margin: 10px;
+    left: 8px;
   }
 }
 
-.color_elementt {
-  line-height: 90px;
-  display: inline-block;
-  vertical-align: middle;
-}
-
 .stroke-color-picker {
-  display: flex;
-  justify-content: space-between;
-    mat-form-field {
-      margin: 10px;
-    }
+  mat-icon {
+    position: relative;
+    top: 7px;
+  }
+  mat-form-field {
+    left: 35px;
+  }
 }
 
 .box {
@@ -60,4 +58,8 @@ $slide-toggle-width: 60px;
 img {
   width: 100%;
   height: 100%;
+}
+
+.deleteBtn {
+  margin-left: 12px;
 }

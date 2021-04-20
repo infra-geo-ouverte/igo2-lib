@@ -34,7 +34,7 @@
     <form class="igo-form" [formGroup]="form" >
       <div class="fill-color-picker mat-typography">
         <span class="color_element">
-          {{'igo.geo.draw.fill' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon> 
+          {{'igo.geo.draw.fill' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon>
         </span>
         <mat-form-field appearance="outline">
           <mat-label>{{fillColor}}</mat-label>
@@ -46,7 +46,7 @@
             [style.background]="fillColor"
             [readonly]="true"
             [colorPicker]="fillColor"
-            [cpWidth]="('200px')"
+            [cpWidth]="('220px')"
             [cpPosition]="'bottom'"
             [cpOutputFormat] = "'rgba'"
             [cpCancelButton]="true"
@@ -61,7 +61,7 @@
 
       <div class="stroke-color-picker mat-typography">
         <span class="color_element">
-          {{'igo.geo.draw.stroke' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon> 
+          {{'igo.geo.draw.stroke' | translate}} <mat-icon class="stroke-palette-icon" svgIcon="palette"></mat-icon>
         </span>
         <mat-form-field class="stroke-color-picker-box" appearance="outline">
           <mat-label>{{strokeColor}}</mat-label>
@@ -73,7 +73,7 @@
             [style.background]="strokeColor"
             [readonly]="true"
             [colorPicker]="strokeColor"
-            [cpWidth]="('200px')"
+            [cpWidth]="('220px')"
             [cpPosition]="'bottom'"
             [cpOutputFormat] = "'rgba'"
             [cpCancelButton]="true"
@@ -87,13 +87,14 @@
       <div>
         <mat-form-field *ngIf="icons.length >= 1">
           <mat-label>{{'igo.geo.draw.icon' | translate}}</mat-label>
-          <mat-select>   
+          <mat-select>
             <mat-select-trigger>
               <div *ngIf="icon" class="box">
                 <img src={{icon}}>
               </div>
-            </mat-select-trigger>  
-            <mat-option 
+            </mat-select-trigger>
+            <mat-option value="" (click)="onIconChange()">{{'igo.geo.draw.noIcon' | translate}}</mat-option>
+            <mat-option
               *ngFor="let icon_html of icons"
               [value]="icon_html"
               (click)="onIconChange(icon_html)">
@@ -105,12 +106,13 @@
         </mat-form-field>
       </div>
     </form>
-    
+
     <mat-divider></mat-divider>
 
     <div>
-      <button 
+      <button
         *ngIf="drawsPresence"
+        class="deleteBtn"
         mat-icon-button
         color="warn"
         tooltip-position="below"
@@ -120,7 +122,7 @@
         (click)="deleteDrawings()">
         <mat-icon svgIcon="delete"></mat-icon>
       </button>
-  
+
       <igo-entity-table
         #table
         class="table-compact"

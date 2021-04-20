@@ -20,7 +20,8 @@ export class DrawIconService {
     }
 
     getPath(): any {
-      return this.config.getConfig('drawingToolIcons') || [];
+      console.log(this);
+      return this.config.getConfig('drawingTool.icons') || [];
     }
 
     getIconsList() {

@@ -105,6 +105,7 @@ export class DrawStyleService {
           new olstyle.Style({
             text: new olstyle.Text({
               text: label ? feature.get('draw') : '',
+              offsetY: -26,
               stroke: new olstyle.Stroke({
                 color: 'white',
                 width: 0.75
@@ -123,19 +124,8 @@ export class DrawStyleService {
               color: this.fillColor
             }),
             image: new olstyle.Icon({
-              size: [52, 52],
               src: icon
             })
-            /*
-            image: new olstyle.Circle({
-              radius: 5,
-              stroke: new olstyle.Stroke({
-                color: this.strokeColor
-              }),
-              fill: new olstyle.Fill({
-                color: this.fillColor
-              })
-            }) */
           })
         ];
         return style;
