@@ -88,3 +88,7 @@ export interface User {
   admin?: boolean;
   defaultContextId?: string;
 }
+
+export interface IInfosUser {
+  tokenId: string;
+}
