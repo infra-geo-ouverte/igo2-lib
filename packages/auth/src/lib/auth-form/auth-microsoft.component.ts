@@ -80,7 +80,7 @@ export class AuthMicrosoftComponent {
       .then((response: AuthenticationResult) => {
         const tokenAccess = response.accessToken;
         const tokenId = response.idToken;
-        this.authService.loginWithToken(tokenAccess, 'microsoft', {tokenId: tokenId} ).subscribe(() => {
+        this.authService.loginWithToken(tokenAccess, 'microsoft', { tokenId } ).subscribe(() => {
           this.appRef.tick();
           this.login.emit(true);
         });
