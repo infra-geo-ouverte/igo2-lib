@@ -1,5 +1,5 @@
 <ng-container *ngIf="legendItems$ | async as items">
-  <ng-container *ngIf="items.length; else noItems">
+  <ng-container *ngIf="(items.length && getLegend); else noItems">
     <ng-container *ngFor="let item of items.slice().reverse()" #renderedLegends>
       <div *ngIf="getLegendGraphic(item); else noItems">
         <mat-list-item *ngIf="item.title">

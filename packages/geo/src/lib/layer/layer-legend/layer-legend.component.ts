@@ -62,6 +62,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   public imagesHeight: { [srcKey: string]: number } = {};
 
   /**
+   * Check if getLegendGraphic is supported
+   */
+  public getLegend = true;
+
+  /**
    * Layer
    */
   @Input() layer: Layer;
@@ -104,6 +109,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       .subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
+      this.getLegend = this.getLegendGraphic(lastlLegend[0])
     }
   }
 
@@ -117,17 +123,17 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   getLegendGraphic(item: Legend) {
+    let res = true;
     this.http.get(item.url, {
       responseType: 'blob'
     }).subscribe(
       () => {},
       (err) => {
         err.error.caught = true;
-        this.legendItems$.next([]);
-        return false;
+        res = false;
       }
     );
-    return true;
+    return res;
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
