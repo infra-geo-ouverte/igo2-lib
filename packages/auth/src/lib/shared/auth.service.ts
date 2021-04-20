@@ -57,7 +57,7 @@ export class AuthService {
     const body = {
       token,
       typeConnection: type,
-      infosUser: infosUser
+      infosUser
     };
 
     return this.loginCall(body, myHeader);
