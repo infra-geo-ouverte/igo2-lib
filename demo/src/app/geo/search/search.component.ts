@@ -1,4 +1,4 @@
-import { BehaviorSubject, forkJoin } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   Component,
   ElementRef,
@@ -36,8 +36,6 @@ export class AppSearchComponent implements OnInit, OnDestroy {
   public store = new ActionStore([]);
 
   public igoSearchPointerSummaryEnabled: boolean = false;
-
-  public termSplitter = '|';
 
   public map = new IgoMap({
     overlay: true,
@@ -213,15 +211,15 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   onSearchCoordinate() {
     this.searchStore.clear();
-    const researches = this.searchService.reverseSearch(this.lonlat);
+    const results = this.searchService.reverseSearch(this.lonlat);
 
-    researches.map((r: Research) => r.source).map((source) => {
-      const currentResearch = researches.find((r) => r.source === source);
-      return forkJoin(currentResearch.requests).subscribe((res: SearchResult[][]) => {
-        const results = [].concat.apply([], res);
-        this.onSearch({ research: currentResearch, results });
-      });
-    });
+    for (const i in results) {
+      if (results.length > 0) {
+        results[i].request.subscribe((_results: SearchResult<Feature>[]) => {
+          this.onSearch({ research: results[i], results: _results });
+        });
+      }
+    }
   }
 
   onOpenGoogleMaps() {

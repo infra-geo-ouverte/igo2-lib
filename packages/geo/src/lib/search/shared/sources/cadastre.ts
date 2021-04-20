@@ -13,8 +13,6 @@ import { SearchSource, TextSearch } from './source';
 import { SearchSourceOptions, TextSearchOptions } from './source.interfaces';
 
 import { LanguageService, StorageService } from '@igo2/core';
-import { computeTermSimilarity } from '../search.utils';
-
 /**
  * Cadastre search source
  */
@@ -69,7 +67,7 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     }
     return this.http
       .get(this.searchUrl, { params, responseType: 'text' })
-      .pipe(map((response: string) => this.extractResults(response, term)));
+      .pipe(map((response: string) => this.extractResults(response)));
   }
 
   private computeSearchRequestParams(
@@ -88,14 +86,14 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
     });
   }
 
-  private extractResults(response: string, term: string): SearchResult<Feature>[] {
+  private extractResults(response: string): SearchResult<Feature>[] {
     return response
       .split('<br />')
       .filter((lot: string) => lot.length > 0)
-      .map((lot: string) => this.dataToResult(lot, term));
+      .map((lot: string) => this.dataToResult(lot));
   }
 
-  private dataToResult(data: string, term: string): SearchResult<Feature> {
+  private dataToResult(data: string): SearchResult<Feature> {
     const lot = data.split(';');
     const numero = lot[0];
     const wkt = lot[7];
@@ -113,7 +111,6 @@ export class CadastreSearchSource extends SearchSource implements TextSearch {
         dataType: FEATURE,
         id,
         title: numero,
-        score: computeTermSimilarity(term.trim(), numero),
         icon: 'map-marker'
       },
       data: {

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { SearchSource } from './sources/source';
 
 export interface Research {
-  requests: Observable<SearchResult[]>[];
+  request: Observable<SearchResult[]>;
   reverse: boolean;
   source: SearchSource;
 }
@@ -17,7 +17,6 @@ export interface SearchResult<T = { [key: string]: any }> {
     title: string;
     titleHtml?: string;
     icon: string;
-    score?: number;
     nextPage?: boolean;
   };
 }

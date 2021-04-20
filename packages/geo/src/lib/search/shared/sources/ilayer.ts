@@ -22,7 +22,6 @@ import {
   ILayerServiceResponse,
   ILayerDataSource
 } from './ilayer.interfaces';
-import { computeTermSimilarity } from '../search.utils';
 
 @Injectable()
 export class ILayerSearchResultFormatter {
@@ -216,7 +215,7 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
     return this.http
       .get(this.searchUrl, { params })
       .pipe(
-        map((response: ILayerServiceResponse) => this.extractResults(response, term))
+        map((response: ILayerServiceResponse) => this.extractResults(response))
       );
   }
 
@@ -268,16 +267,15 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
   }
 
   private extractResults(
-    response: ILayerServiceResponse, term: string
+    response: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse>[] {
     return response.items.map((data: ILayerData) =>
-      this.dataToResult(data, term, response)
+      this.dataToResult(data, response)
     );
   }
 
   private dataToResult(
     data: ILayerData,
-    term: string,
     response?: ILayerServiceResponse
   ): SearchResult<ILayerItemResponse> {
     const layerOptions = this.computeLayerOptions(data);
@@ -296,7 +294,6 @@ export class ILayerSearchSource extends SearchSource implements TextSearch {
         title: data.properties.title,
         titleHtml: titleHtml + subtitleHtml,
         icon: data.properties.type === 'Layer' ? 'layers' : 'map',
-        score: data.score || computeTermSimilarity(term.trim(), data.properties.name),
         nextPage:
           response.items.length % +this.options.params.limit === 0 &&
           +this.options.params.page < 10

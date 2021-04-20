@@ -26,7 +26,6 @@ import {
 
 import * as olformat from 'ol/format';
 import { LanguageService, StorageService } from '@igo2/core';
-import { computeTermSimilarity } from '../search.utils';
 
 /**
  * StoredQueries search source
@@ -183,13 +182,13 @@ export class StoredQueriesSearchSource extends SearchSource
         .get(this.searchUrl, { params, responseType: 'text' })
         .pipe(
           map(response => {
-            return this.extractResults(this.extractWFSData(response), term);
+            return this.extractResults(this.extractWFSData(response));
           })
         );
     } else {
       return this.http.get(this.searchUrl, { params }).pipe(
         map(response => {
-          return this.extractResults(this.extractWFSData(response), term);
+          return this.extractResults(this.extractWFSData(response));
         })
       );
     }
@@ -280,14 +279,14 @@ export class StoredQueriesSearchSource extends SearchSource
   }
 
   private extractResults(
-    response: StoredQueriesResponse, term: string
+    response: StoredQueriesResponse
   ): SearchResult<Feature>[] {
     return response.features.map((data: StoredQueriesData) => {
-      return this.dataToResult(data, term);
+      return this.dataToResult(data);
     });
   }
 
-  private dataToResult(data: StoredQueriesData, term: string): SearchResult<Feature> {
+  private dataToResult(data: StoredQueriesData): SearchResult<Feature> {
     const properties = this.computeProperties(data);
     const id = [this.getId(), properties.type, data.id].join('.');
     const title = data.properties[this.storedQueriesOptions.resultTitle]
@@ -311,8 +310,7 @@ export class StoredQueriesSearchSource extends SearchSource
         id,
         title: data.properties.title,
         titleHtml: data.properties[title],
-        icon: 'map-marker',
-        score: computeTermSimilarity(term.trim(), data.properties.title),
+        icon: 'map-marker'
       }
     };
   }
