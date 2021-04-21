@@ -130,6 +130,10 @@ export class SearchResultsToolComponent implements OnInit, OnDestroy {
     return this.topPanelState$.value;
   }
 
+  get termSplitter(): string {
+    return this.searchState.searchTermSplitter$.value;
+  }
+
   private format = new olFormatGeoJSON();
 
   constructor(

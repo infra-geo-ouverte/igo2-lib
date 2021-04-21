@@ -14,7 +14,7 @@ import type { TemplateRef } from '@angular/core';
 import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
-import { EntityState, EntityStore, EntityStoreWatcher } from '@igo2/common';
+import { EntityState, EntityStore, EntityStoreFilterCustomFuncStrategy, EntityStoreWatcher } from '@igo2/common';
 
 import { IgoMap } from '../../map';
 
@@ -92,6 +92,8 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
   public _term: string;
 
   @Input() settingsChange$ = new BehaviorSubject<boolean>(undefined);
+
+  @Input() termSplitter: string = '|';
 
   /**
    * Event emitted when a result is focused
@@ -239,8 +241,11 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
     });
   }
 
-  isMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
-    return group.results && group.results[group.results.length - 1].meta.nextPage === true;
+  isMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
+    // getStrategyOfType is to avoid display more result based on a filtered state
+    return !this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy).active &&
+      group.results &&
+      group.results[group.results.length - 1].meta.nextPage === true;
   }
 
   displayMoreResults(group: {source: SearchSource; results: SearchResult[]}) {
@@ -249,7 +254,18 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
       page: ++this.pageIterator[group.source.getId()]
     };
 
-    const researches = this.searchService.search(this.term, options);
+    let terms;
+    if (this.termSplitter && this.term.match(new RegExp(this.termSplitter, 'g'))) {
+      terms = this.term.split(this.termSplitter);
+    } else {
+      terms = [this.term];
+    }
+
+    let researches: Research[] = [];
+    terms.map((term: string) => {
+      researches = researches.concat(this.searchService.search(term, options));
+    });
+
     researches.map(research => {
       research.request.subscribe((results: SearchResult[]) => {
         const newResults = group.results.concat(results);
