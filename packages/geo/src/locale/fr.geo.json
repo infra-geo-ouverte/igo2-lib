@@ -20,7 +20,7 @@
         "library.inlist": {
           "title": "Catalogue déjà contenu",
           "message": "Le catalogue à ajouter est déjà dans la liste"
-        } 
+        }
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
@@ -413,7 +413,7 @@
         "pointerSearchSummary": {
           "title": "Position du curseur",
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
-        },        
+        },
         "searchResultsGeometry": {
           "title": "Montrer tous les résultats",
           "tooltip": "Afficher/cacher la géométrie des résultats"
@@ -596,14 +596,17 @@
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
         "fill": "Remplissage",
+        "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
+        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygone",
         "radius": "Rayon",
         "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
-        "toggleMapTooltips": "Afficher les étiquettes"
+        "toggleMapTooltips": "Afficher les étiquettes",
+        "noIcon": "Aucune icône"
       },
       "network": {
         "online": {
