@@ -114,7 +114,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     const newResults = this.searchStore.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
-    this.searchStore.load(newResults);
+    this.searchStore.updateMany(newResults);
   }
 
   onSearchSettingsChange() {

@@ -148,6 +148,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() color = 'primary';
 
+  @Input() termSplitter = '|';
+
   /**
    * Debounce time between each keystroke
    */
@@ -396,22 +398,33 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    * Execute the search
    * @param term Search term
    */
-  private doSearch(term: string | undefined) {
+  private doSearch(rawTerm: string | undefined) {
     if (this.researches$$) {
       this.researches$$.map((research) => research.unsubscribe());
       this.researches$$ = undefined;
     }
 
-    const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
-    if (slug === '') {
-      if (this.store !== undefined) {
-        this.store.clear();
-      }
-      return;
+    let terms;
+    if (this.termSplitter && rawTerm.match(new RegExp(this.termSplitter, 'g'))) {
+      terms = rawTerm.split(this.termSplitter).filter((t) => t.length >= this.minLength);
+      this.store.clear();
+    } else {
+      terms = [rawTerm];
     }
 
-    const researches = this.searchService.search(term, {
-      forceNA: this.forceNA
+    let researches: Research[] = [];
+    terms.map((term: string) => {
+      const slug = term ? term.replace(/(#[^\s]*)/g, '').trim() : '';
+      if (slug === '') {
+        if (this.store !== undefined) {
+          this.store.clear();
+        }
+        return;
+      }
+
+      researches = researches.concat(this.searchService.search(term, {
+        forceNA: this.forceNA
+      }));
     });
     this.researches$$ = researches.map((research) => {
       return research.request.subscribe((results: SearchResult[]) => {
@@ -434,7 +447,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         .all()
         .filter((result) => result.source !== research.source)
         .concat(results);
-      this.store.load(newResults);
+      this.store.updateMany(newResults);
     }
   }
 }
