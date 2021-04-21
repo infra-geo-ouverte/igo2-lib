@@ -14,7 +14,7 @@ import type { TemplateRef } from '@angular/core';
 import { Observable, EMPTY, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { debounce, map } from 'rxjs/operators';
 
-import { EntityStore, EntityStoreWatcher } from '@igo2/common';
+import { EntityState, EntityStore, EntityStoreWatcher } from '@igo2/common';
 
 import { IgoMap } from '../../map';
 
@@ -194,13 +194,13 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
    * @returns Observable of grouped search results
    * @internal
    */
-  private liftResults(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
-    return this.store.view.all$().pipe(
-      debounce((results: SearchResult[]) => {
+   private liftResults(): Observable<{source: SearchSource; results: SearchResult[]}[]> {
+    return this.store.stateView.all$().pipe(
+      debounce((results: {entity: SearchResult, state: EntityState}[]) => {
         return results.length === 0 ? EMPTY : timer(200);
       }),
-      map((results: SearchResult[]) => {
-        return this.groupResults(results.sort(this.sortByOrder));
+      map((results: {entity: SearchResult, state: EntityState}[]) => {
+        return this.groupResults(results.map(r => r.entity).sort(this.sortByOrder));
       })
     );
   }
