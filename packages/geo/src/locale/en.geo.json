@@ -10,7 +10,17 @@
         "group.removeFromMap": "Remove all layers from this group to map",
         "baseLayers": "Baselayers",
         "unavailableTitle": "Catalog unavailable",
-        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions."
+        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions.",
+        "externalProvider": {
+           "catalog": "This catalog comes from an external organization.",
+           "layer": "This layer comes from an external organization."
+        },
+        "library.add": "Add this catalog to the list",
+        "library.remove": "Remove this catalog from the list",
+        "library.inlist": {
+          "title": "Catalog already contained",
+          "message": "The catalog is already contained in the list."
+        }
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
@@ -583,14 +593,17 @@
         "delete": "Remove Drawings from map",
         "drawing": "Draws",
         "fill": "Fill",
+        "icon": "Icons",
         "labels": "Labels",
         "LineString": "Line",
+        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygon",
         "radius": "Radius",
         "stroke": "Stroke",
         "styleSelect": "Select style",
-        "toggleMapTooltips": "Show map tooltips"
+        "toggleMapTooltips": "Show map tooltips",
+        "noIcon": "No icon"
       },
       "network": {
         "online": {
