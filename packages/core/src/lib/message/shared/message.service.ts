@@ -47,7 +47,7 @@ export class MessageService {
     }
     if (
       currentDate > message.options.from && currentDate < message.options.to) {
-      
+
       message = this.handleTemplate(message);
 
       let notification: Notification;
