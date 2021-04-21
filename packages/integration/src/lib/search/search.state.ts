@@ -19,6 +19,8 @@ export class SearchState {
   public focusedOrResolution$$: Subscription;
   public selectedOrResolution$$: Subscription;
 
+  readonly searchTermSplitter$: BehaviorSubject<string> = new BehaviorSubject('|');
+
   readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   readonly searchType$: BehaviorSubject<string> = new BehaviorSubject(undefined);

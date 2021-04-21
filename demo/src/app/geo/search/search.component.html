@@ -28,7 +28,7 @@
       (pointerSummaryStatus)="onPointerSummaryStatusChange($event)"
       [searchSettings]="true"
       [store]="searchStore"
-      (termSplitter)="|"
+      [termSplitter]="termSplitter"
       (searchTermChange)="onSearchTermChange($event)"
       (search)="onSearch($event)"
       (clearFeature)="removeFeatureFromMap()"
@@ -38,6 +38,7 @@
     <igo-search-results
       [store]="searchStore"
       [term]="term"
+      [termSplitter]="termSplitter"
       placeholder="false"
       [settingsChange$]="settingsChange$"
       (resultFocus)="onResultFocus($event)"

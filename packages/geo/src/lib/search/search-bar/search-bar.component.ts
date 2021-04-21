@@ -148,7 +148,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
    */
   @Input() color = 'primary';
 
-  @Input() termSplitter = '|';
+  @Input() termSplitter: string = '|';
 
   /**
    * Debounce time between each keystroke
