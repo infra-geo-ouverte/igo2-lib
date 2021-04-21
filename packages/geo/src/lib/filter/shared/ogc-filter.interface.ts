@@ -54,9 +54,9 @@ export interface OgcFiltersOptions {
 }
 
 export interface IgoOgcSelector  {
-  groups?: SelectorGroup[];
-  bundles?: OgcSelectorBundle[];
-  selectorType?: 'pushButton' | 'checkbox' | 'radioButton';
+  groups: SelectorGroup[];
+  bundles: OgcSelectorBundle[];
+  selectorType: 'pushButton' | 'checkbox' | 'radioButton';
   order?: number;
 }
 
@@ -69,7 +69,7 @@ export interface SelectorGroup  {
 }
 
 export interface OgcSelectorBundle  {
-  id?: string;
+  id: string;
   title?: string;
   logical?: string;
   vertical?: boolean;

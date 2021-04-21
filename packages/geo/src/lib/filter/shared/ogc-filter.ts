@@ -685,7 +685,7 @@ export class OgcFilterWriter {
       ];
     } else {
       selector = {
-        bundles: selectors as OgcSelectorBundle[],
+        bundles: selectors as any,
         groups: [
           {
             title: 'group1',
@@ -694,7 +694,8 @@ export class OgcFilterWriter {
               selectors
             ) as OgcSelectorBundle[]
           } as SelectorGroup
-        ]
+        ],
+        selectorType: selector.selectorType
       };
     }
     if (!selector.groups.find((selectorGroup) => selectorGroup.enabled)) {
@@ -773,6 +774,9 @@ export class OgcFilterWriter {
     selectorBundle.map((bundle) => {
       const bundleCondition = [];
       const selectorsType = bundle.selectors as any;
+      if (!selectorsType) {
+        return;
+      }
       selectorsType
         .filter((ogcselector) => ogcselector.enabled === true)
         .forEach((enabledSelector) => bundleCondition.push(enabledSelector.filters));
