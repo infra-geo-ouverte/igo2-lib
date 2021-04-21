@@ -14,6 +14,6 @@ export interface Message {
 
 export interface MessageOptions extends Notification {
   template?: string;
-  from?: Date | string; // if the current date is the 2021-04-20, this date is included with this example new Date('2021-04-20')
-  to?: Date | string; // if the current date is the 2021-04-21, this date is excluded with this example new Date('2021-04-21')
+  from?: Date | string;
+  to?: Date | string;
 }
