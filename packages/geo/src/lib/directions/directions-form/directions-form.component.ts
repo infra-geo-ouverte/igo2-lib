@@ -9,10 +9,11 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Subscription, Subject, BehaviorSubject, forkJoin } from 'rxjs';
+import { Subscription, Subject, BehaviorSubject } from 'rxjs';
 import {
   debounceTime,
-  distinctUntilChanged
+  distinctUntilChanged,
+  map
 } from 'rxjs/operators';
 
 import olFeature from 'ol/Feature';
@@ -435,8 +436,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       .reverseSearch(coordinates, { zoom: this.map.viewController.getZoom() })
       .map(res =>
         this.routesQueries$$.push(
-          forkJoin(res.requests).subscribe(r => {
-            const results = [].concat.apply([], r);
+          res.request.pipe(map(f => f)).subscribe(results => {
             results.forEach(result => {
               if (
                 groupedLocations.filter(f => f.source === result.source)
@@ -444,7 +444,7 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
               ) {
                 groupedLocations.push({
                   source: result.source,
-                  results: results.map(response => response.data)
+                  results: results.map(r => r.data)
                 });
               }
             });
@@ -1156,19 +1156,18 @@ export class DirectionsFormComponent implements OnInit, OnDestroy {
       const researches = this.searchService.search(term, {searchType: 'Feature'});
       researches.map(res =>
         this.search$$ =
-        forkJoin(res.requests).subscribe(r => {
-          const results = [].concat.apply([], r);
+        res.request.subscribe(results => {
           results
-            .filter(resp => resp.data.geometry)
+            .filter(r => r.data.geometry)
             .forEach(element => {
               if (
-                searchProposals.filter(q => q.source === element.source)
+                searchProposals.filter(r => r.source === element.source)
                   .length === 0
               ) {
                 searchProposals.push({
                   source: element.source,
                   meta: element.meta,
-                  results: results.map(p => p.data)
+                  results: results.map(r => r.data)
                 });
               }
             });
