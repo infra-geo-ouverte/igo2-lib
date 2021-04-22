@@ -1,7 +1,7 @@
 <ng-container *ngIf="legendItems$ | async as items">
-  <ng-container *ngIf="(items.length && getLegend); else noItems">
+  <ng-container *ngIf="items.length; else noItems">
     <ng-container *ngFor="let item of items.slice().reverse()" #renderedLegends>
-      <div *ngIf="getLegendGraphic(item); else noItems">
+      <div *ngIf="getLegend; else noItems">
         <mat-list-item *ngIf="item.title">
           <mat-icon
             id="legend-toggle"
@@ -28,7 +28,7 @@
           <div *ngIf="!(item.collapsed)">
             <div *ngIf="item.url">
               <img #renderedLegend id="{{item.title}}" (load)="onLoadImage(item.title)"
-                src="{{(item.url | secureImage) | async}}"
+                src="{{legendGraphic}}"
                 alt="{{'igo.geo.layer.legend.loadingLegendText' | translate}}">
               <small *ngIf="imagesHeight[item.title]<16">
                   {{'igo.geo.layer.legend.noLegendScale' | translate}}

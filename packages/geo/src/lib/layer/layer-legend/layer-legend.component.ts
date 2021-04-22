@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import type { QueryList } from '@angular/core';
 
-import { Subscription, BehaviorSubject, of, Observable, combineLatest } from 'rxjs';
+import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer, ItemStyleOptions } from '../shared/layers';
 import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { LanguageService } from '@igo2/core';
 import { WMSDataSourceOptions } from '../../datasource';
+import { SecureImagePipe } from '@igo2/common';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -62,19 +63,25 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   public imagesHeight: { [srcKey: string]: number } = {};
 
   /**
-   * Check if getLegendGraphic is supported
-   */
-  public getLegend = true;
-
-  /**
    * Layer
    */
   @Input() layer: Layer;
 
+  /**
+   * if getLegendGraphic is authorized
+   */
+  public getLegend = true;
+
+  /**
+   * activeLegend
+   */
+  public legendGraphic: string;
+
   constructor(
     private capabilitiesService: CapabilitiesService,
     private languageService: LanguageService,
-    private http: HttpClient) {}
+    private http: HttpClient,
+    private cdRef: ChangeDetectorRef) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
@@ -109,7 +116,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       .subscribe(() => this.onViewControllerStateChange());
     } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
-      this.getLegend = this.getLegendGraphic(lastlLegend[0])
+      for (const legend of lastlLegend) {
+        this.getLegendGraphic(legend);
+      }
     }
   }
 
@@ -123,17 +132,18 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
   }
 
   getLegendGraphic(item: Legend) {
-    let res = true;
-    this.http.get(item.url, {
-      responseType: 'blob'
-    }).subscribe(
-      () => {},
-      (err) => {
+    const secureIMG = new SecureImagePipe(this.http);
+    secureIMG.transform(item.url).pipe(
+      catchError((err) => {
         err.error.caught = true;
-        res = false;
-      }
-    );
-    return res;
+        this.getLegend = false;
+        this.cdRef.detectChanges();
+        return err;
+      })
+    ).subscribe((legend: string) => {
+      this.legendGraphic = legend;
+      this.cdRef.detectChanges();
+    });
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
@@ -193,6 +203,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       return;
     }
     this.legendItems$.next(legendItems);
+    for (const legend of this.legendItems$.value) {
+      this.getLegendGraphic(legend);
+    }
   }
 
   private listStyles() {
