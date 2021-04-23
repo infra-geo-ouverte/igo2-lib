@@ -185,10 +185,13 @@
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
         "advancedOgcFilters": "Filtres avancés",
+        "displayMoreResults": "Afficher plus (+)",
+        "displayLessResults": "Afficher moins (-)",
         "placeholder": "Saisir une valeur",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",
-        "sliderModeTitle": "Curseur temporel"
+        "sliderModeTitle": "Curseur temporel",
+        "reportingDate": "Date de signalement"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",

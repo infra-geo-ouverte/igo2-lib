@@ -113,7 +113,7 @@ export class WMSDataSource extends DataSource {
         'wms'
       );
     } else {
-      initOgcFilters.advancedOgcFilters = initOgcFilters.pushButtons
+      initOgcFilters.advancedOgcFilters = (initOgcFilters.pushButtons || initOgcFilters.checkboxes || initOgcFilters.radioButtons)
         ? false
         : true;
     }
