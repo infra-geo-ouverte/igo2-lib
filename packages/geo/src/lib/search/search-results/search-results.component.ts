@@ -243,7 +243,7 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
   isMoreResults(group: { source: SearchSource; results: SearchResult[] }) {
     // getStrategyOfType is to avoid display more result based on a filtered state
-    const stategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy)
+    const stategy = this.store.getStrategyOfType(EntityStoreFilterCustomFuncStrategy);
     const active = stategy?.active || false;
     return !active && group.results &&
       group.results[group.results.length - 1].meta.nextPage === true;
