@@ -37,7 +37,6 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
       url: ['', [Validators.required]],
       type: [this.defaultAddedCatalogType, [Validators.required]]
     });
-    console.log(this.form);
   }
 
   ngOnInit() {
