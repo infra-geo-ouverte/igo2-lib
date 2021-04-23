@@ -512,8 +512,7 @@ export class PrintService {
             ),
             this.languageService.translate.instant(
               'igo.geo.printForm.corsErrorMessageHeader'
-            ),
-            'print'
+            )
           );
         }
         this.renderMap(map, mapSize, extent);
@@ -540,8 +539,7 @@ export class PrintService {
             ),
             this.languageService.translate.instant(
               'igo.geo.printForm.corsErrorMessageHeader'
-            ),
-            'print'
+            )
           );
         }
         this.renderMap(map, mapSize, extent);
@@ -836,8 +834,7 @@ export class PrintService {
         ),
         this.languageService.translate.instant(
           'igo.geo.printForm.corsErrorMessageHeader'
-        ),
-        'print'
+        )
       );
     }
   }
@@ -873,8 +870,7 @@ export class PrintService {
         ),
         this.languageService.translate.instant(
           'igo.geo.printForm.corsErrorMessageHeader'
-        ),
-        'print'
+        )
       );
     }
   }
