@@ -54,6 +54,7 @@ import { FeatureStore } from '../../feature/shared/store';
 import { Feature } from '../../feature/shared/feature.interfaces';
 import { FeatureStoreLoadingStrategy } from '../../feature/shared/strategies/loading';
 import { roundCoordTo } from '../../map/shared/map.utils';
+import { createOverlayMarkerStyle } from '../../overlay/shared/overlay-marker-style.utils';
 
 @Component({
   selector: 'igo-directions-form',
@@ -1422,25 +1423,11 @@ export function stopMarker(
     })
   ];
 
-  const stopStyle = new olstyle.Style({
-    image: new olstyle.Icon({
-      src:
-        './assets/igo2/geo/icons/place_' +
-        feature.get('stopColor') +
-        '_36px.svg',
-      opacity: feature.get('stopOpacity'),
-      imgSize: [36, 36], // for ie
-      anchor: [0.5, 0.92]
-    }),
-
-    text: new olstyle.Text({
-      text: feature.get('stopText'),
-      font: '12px Calibri,sans-serif',
-      fill: new olstyle.Fill({ color: '#000' }),
-      stroke: new olstyle.Stroke({ color: '#fff', width: 3 }),
-      overflow: true
-    })
-  });
+  const stopStyle = createOverlayMarkerStyle({
+    text: feature.get('stopText'),
+    opacity: feature.get('stopOpacity'),
+    markerColor: feature.get('stopColor'),
+    markerOutlineColor: [255, 255, 255]});
 
   const routeStyle = [
     new olstyle.Style({
