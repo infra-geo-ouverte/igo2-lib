@@ -294,6 +294,8 @@
         "subtitle": "Subtitle"
       },
       "directionsForm": {
+        "stopLayer": "Directions - stops",
+        "routeLayer": "Directions - route",
         "start": "Start",
         "intermediate": "Intermediate",
         "end": "End",

@@ -293,6 +293,8 @@
         "subtitle": "Sous-titre"
       },
       "directionsForm": {
+        "stopLayer": "Itinéraire - arrêts",
+        "routeLayer": "Itinéraire - Tracé",
         "start": "Début",
         "intermediate": "Intermédiaire",
         "end": "Fin",
