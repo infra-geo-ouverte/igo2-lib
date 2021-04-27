@@ -20,12 +20,14 @@
     border-radius: 5px;
     margin: 5px;
     white-space: normal;
-    height: 40px;
+    min-height: 40px;
+    height: auto;
     width: 150px;
 
     ::ng-deep .mat-button-toggle-label-content {
       line-height: unset;
       font-size: small;
+      display: block;
     }
   }
 
