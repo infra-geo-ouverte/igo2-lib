@@ -55,6 +55,8 @@ export class OgcFilterSelectionComponent implements OnInit {
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
 
+  public applyFiltersTimeout;
+
   get ogcFiltersSelectors() {
     const ogcSelector = [];
     if (this.datasource?.options?.ogcFilters?.pushButtons) {
@@ -255,10 +257,11 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   onSelectionChange(currentOgcSelection?) {
+    clearTimeout(this.applyFiltersTimeout);
     if (currentOgcSelection) {
       currentOgcSelection.enabled = !currentOgcSelection.enabled;
     }
-    setTimeout(() => {
+    this.applyFiltersTimeout = setTimeout(() => {
       this.applyFilters();
     }, 750);
   }
