@@ -714,24 +714,44 @@ export class OgcFilterWriter {
     if (!ogcFilters) {
       return;
     }
-    const filterQueryStringSelector = '';
+    const conditions = [];
+    let filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
     if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons)) {
       let selectors;
       if (ogcFilters.pushButtons) {
         selectors = ogcFilters.pushButtons;
-        this.formatGroupAndFilter(ogcFilters, selectors, filterQueryStringSelector, extent, proj);
+        const pushConditions = this.formatGroupAndFilter(ogcFilters, selectors);
+        for (const condition of pushConditions) {
+          conditions.push(condition);
+        }
       }
       if (ogcFilters.checkboxes) {
         selectors = ogcFilters.checkboxes;
-        this.formatGroupAndFilter(ogcFilters, selectors, filterQueryStringSelector, extent, proj);
+        const checkboxConditions = this.formatGroupAndFilter(ogcFilters, selectors);
+        for (const condition of checkboxConditions) {
+          conditions.push(condition);
+        }
       }
       if (ogcFilters.radioButtons) {
         selectors = ogcFilters.radioButtons;
-        this.formatGroupAndFilter(ogcFilters, selectors, filterQueryStringSelector, extent, proj);
+        const radioConditions = this.formatGroupAndFilter(ogcFilters, selectors);
+        for (const condition of radioConditions) {
+          conditions.push(condition);
+        }
+      }
+
+      if (conditions.length >= 1) {
+        filterQueryStringSelector = this.buildFilter(
+          conditions.length === 1
+            ? conditions[0]
+            : { logical: 'And', filters: conditions },
+          extent,
+          proj,
+          ogcFilters.geometryName
+        );
       }
     }
-
     if (ogcFilters.enabled && ogcFilters.filters) {
       ogcFilters.geometryName = ogcFilters.geometryName || fieldNameGeometry;
       const igoFilters = ogcFilters.filters;
@@ -763,7 +783,7 @@ export class OgcFilterWriter {
     return filterQueryString;
   }
 
-  public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, selectors, filterQueryStringSelector = '', extent, proj) {
+  public formatGroupAndFilter(ogcFilters: OgcFiltersOptions, selectors) {
     selectors = this.computeIgoSelector(
       selectors
     );
@@ -789,16 +809,6 @@ export class OgcFilterWriter {
         });
       }
     });
-    if (conditions.length >= 1) {
-      filterQueryStringSelector = this.buildFilter(
-        conditions.length === 1
-          ? conditions[0]
-          : { logical: 'And', filters: conditions },
-        extent,
-        proj,
-        ogcFilters.geometryName
-      );
-    }
 
     if (selectors.selectorType === 'pushButton') {
       ogcFilters.pushButtons = selectors;
@@ -807,6 +817,7 @@ export class OgcFilterWriter {
     } else if (selectors.selectorType === 'radioButton') {
       ogcFilters.radioButtons = selectors;
     }
+    return conditions;
   }
 
   public formatProcessedOgcFilter(

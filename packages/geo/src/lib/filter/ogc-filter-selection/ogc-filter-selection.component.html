@@ -35,10 +35,10 @@
       <ng-container *ngFor="let bundle of currentCheckboxesGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
         <div class="checkboxes mat-typography" appearance="legacy" multiple="true">
-          <mat-checkbox [checked]="ogcCheckbox.enabled" formControlName="checkboxes"
+          <mat-checkbox [checked]="ogcCheckbox.enabled"
             (change)="onSelectionChange(ogcCheckbox)" tooltip-position="below" matTooltipShowDelay="500"
             [matTooltip]="getToolTip(ogcCheckbox)" matTooltipClass="material-tooltip"
-            *ngFor="let ogcCheckbox of getCurrentCheckboxesSelectors(bundle)" [value]="ogcCheckbox">{{ogcCheckbox.title}}
+            *ngFor="let ogcCheckbox of bundle.selectors; let i = index" [value]="ogcCheckbox">{{ogcCheckbox.title}}
           </mat-checkbox>
         </div>
         <p *ngIf="isLessResults(bundle, 'checkbox') || isMoreResults(bundle, 'checkbox')">
@@ -68,7 +68,7 @@
           <mat-radio-button
             (change)="onSelectionChange(ogcRadioButton)" tooltip-position="below" matTooltipShowDelay="500"
             [matTooltip]="getToolTip(ogcRadioButton)" matTooltipClass="material-tooltip"
-            *ngFor="let ogcRadioButton of getCurrentRadioButtonsSelectors(bundle)" [value]="ogcRadioButton">{{ogcRadioButton.title}}
+            *ngFor="let ogcRadioButton of bundle.selectors" [value]="ogcRadioButton">{{ogcRadioButton.title}}
           </mat-radio-button>
           <p *ngIf="isLessResults(bundle, 'radio') || isMoreResults(bundle, 'radio')">
             <u *ngIf="isLessResults(bundle, 'radio')" class="lessResults mat-typography" (click)="displayLessResults('radio')">

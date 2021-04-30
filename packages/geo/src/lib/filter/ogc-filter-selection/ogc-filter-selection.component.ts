@@ -99,30 +99,6 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.form.patchValue({ radioButtonsGroup: value });
   }
 
-  getCurrentCheckboxesSelectors(bundle) {
-    const current = [];
-    if (bundle?.selectors.length) {
-      for (let i = 0; i < this.checkboxesIndex; i++) {
-        if (bundle.selectors[i]) {
-          current.push(bundle.selectors[i]);
-        }
-      }
-    }
-    return current;
-  }
-
-  getCurrentRadioButtonsSelectors(bundle) {
-    const current = [];
-    if (bundle?.selectors.length) {
-      for (let i = 0; i < this.radioButtonsIndex; i++) {
-        if (bundle.selectors[i]) {
-          current.push(bundle.selectors[i]);
-        }
-      }
-    }
-    return current;
-  }
-
   constructor(
     private ogcFilterService: OGCFilterService,
     private formBuilder: FormBuilder
@@ -134,7 +110,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   private buildForm() {
     this.form = this.formBuilder.group({
       pushButtons: ['', [Validators.required]],
-      checkboxes: ['', [Validators.required]],
       radioButtons: ['', [Validators.required]],
       pushButtonsGroup: ['', [Validators.required]],
       checkboxesGroup: ['', [Validators.required]],
@@ -214,13 +189,6 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.applyFilters();
       });
     this.form
-      .get('checkboxes')
-      .valueChanges
-      .pipe(debounceTime(750))
-      .subscribe(() => {
-        this.applyFilters();
-      });
-    this.form
       .get('radioButtons')
       .valueChanges
       .pipe(debounceTime(750))
@@ -290,6 +258,9 @@ export class OgcFilterSelectionComponent implements OnInit {
     if (currentOgcSelection) {
       currentOgcSelection.enabled = !currentOgcSelection.enabled;
     }
+    setTimeout(() => {
+      this.applyFilters();
+    }, 750);
   }
 
   private applyFilters() {
