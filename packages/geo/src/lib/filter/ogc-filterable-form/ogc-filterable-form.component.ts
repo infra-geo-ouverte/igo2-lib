@@ -27,7 +27,7 @@ export class OgcFilterableFormComponent {
 
   get currentFilter(): any {
     return this.datasource.options.ogcFilters.interfaceOgcFilters ?
-    this.datasource.options.ogcFilters.interfaceOgcFilters[0]: undefined
+    this.datasource.options.ogcFilters.interfaceOgcFilters[0] : undefined;
   }
 
   public color = 'primary';

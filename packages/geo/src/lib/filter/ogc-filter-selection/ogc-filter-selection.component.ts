@@ -302,7 +302,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       // TODO: Check how to prevent wfs to refresh when filter icon is pushed...
       this.datasource.ol.refresh();
     }
-    this.datasource.setOgcFilters(this.datasource.options.ogcFilters,true);
+    this.datasource.setOgcFilters(this.datasource.options.ogcFilters, true);
   }
 
   isMoreResults(bundle, type) {
