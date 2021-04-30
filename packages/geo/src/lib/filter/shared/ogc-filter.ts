@@ -714,7 +714,7 @@ export class OgcFilterWriter {
     if (!ogcFilters) {
       return;
     }
-    let conditions = [];
+    const conditions = [];
     let filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
     if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons)) {
