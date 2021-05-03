@@ -135,10 +135,12 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     const secureIMG = new SecureImagePipe(this.http);
     secureIMG.transform(item.url).pipe(
       catchError((err) => {
-        err.error.caught = true;
-        this.getLegend = false;
-        this.cdRef.detectChanges();
-        return err;
+        if (err.error) {
+          err.error.caught = true;
+          this.getLegend = false;
+          this.cdRef.detectChanges();
+          return err;
+        }
       })
     ).subscribe((legend: string) => {
       this.legendGraphic = legend;
