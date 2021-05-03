@@ -29,7 +29,10 @@ export class ImageArcGISRestDataSource extends DataSource {
   }
 
   protected createOlSource(): ImageArcGISRest {
-    const params = this.options.layer !== undefined ? {LAYERS: `show:${this.options.layer}`} : this.options.params;
+    const params = this.options.layer === undefined ? this.options.params : Object.assign(
+      {LAYERS: `show:${this.options.layer}`},
+      this.options.params
+    );
 
     if (typeof params.renderingRule === 'object') {
       params.renderingRule = JSON.stringify(params.renderingRule);
