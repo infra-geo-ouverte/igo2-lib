@@ -1,3 +1,22 @@
+## [1.7.1](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.7.0...1.7.1) (2021-05-03)
+
+
+### Bug Fixes
+
+* **directions:** marker was not correctly selected. ([#844](https://github.com/infra-geo-ouverte/igo2-lib/issues/844)) ([04ae23b](https://github.com/infra-geo-ouverte/igo2-lib/commit/04ae23b12d6c4b914f366b93143a707b33ac7123))
+* **imagearcgisrest/layer-legend:** release 1.7 various fix ([#848](https://github.com/infra-geo-ouverte/igo2-lib/issues/848)) ([5ab57af](https://github.com/infra-geo-ouverte/igo2-lib/commit/5ab57af5808f101c2ce8225be04e0c9a85a0f3e8))
+* **ogcFilter:** css fix for pushButtons title ([#846](https://github.com/infra-geo-ouverte/igo2-lib/issues/846)) ([05cbf68](https://github.com/infra-geo-ouverte/igo2-lib/commit/05cbf689e9b63f4ceba4e978ffd82a7dd15b84ed))
+* **ogcFilters:** fix wfs datasource ogcFilters / clearTimeout for checkbox filters ([#849](https://github.com/infra-geo-ouverte/igo2-lib/issues/849)) ([99f9d75](https://github.com/infra-geo-ouverte/igo2-lib/commit/99f9d75985f037e93575ffea1faf5137fe1ded27))
+* **ogcFilters:** various fix for release 1.7 ([#847](https://github.com/infra-geo-ouverte/igo2-lib/issues/847)) ([166a895](https://github.com/infra-geo-ouverte/igo2-lib/commit/166a895b0cad266230e1a25f7797f86a931e92a3))
+
+
+### Features
+
+* **directions:** let the layer into the layer list (to be printed) ([#845](https://github.com/infra-geo-ouverte/igo2-lib/issues/845)) ([e53721a](https://github.com/infra-geo-ouverte/igo2-lib/commit/e53721a148662a5003574832a63404483d23f83d))
+* **search:** computeTermSimilarity is now not case sensitive ([#850](https://github.com/infra-geo-ouverte/igo2-lib/issues/850)) ([ef9e548](https://github.com/infra-geo-ouverte/igo2-lib/commit/ef9e548c6a5fdb83687495c53b8101f62454d216))
+
+
+
 # [1.7.0](https://github.com/infra-geo-ouverte/igo2-lib/compare/1.6.4...1.7.0) (2021-04-26)
 
 
