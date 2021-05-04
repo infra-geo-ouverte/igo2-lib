@@ -65,6 +65,9 @@ export function findDiff(str1: string, str2: string){
 }
 
 export function computeTermSimilarity(from, to, caseSensitive: boolean = false): number {
+  if (!from || !to) {
+    return 0;
+  }
   const termFrom = caseSensitive ? from : from.toLowerCase();
   const termTo = caseSensitive ? to : to.toLowerCase();
   const fromToDiff = findDiff(termFrom, termTo);
