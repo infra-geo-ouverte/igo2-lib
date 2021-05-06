@@ -210,7 +210,7 @@ export class CatalogLibaryComponent implements OnInit, OnDestroy {
 
   addCatalogDialog() {
     const dialogRef = this.dialog.open(AddCatalogDialogComponent, {
-      width: '400px',
+      width: '700px',
       data: {
         predefinedCatalogs: this.predefinedCatalogs,
         store: this.store
