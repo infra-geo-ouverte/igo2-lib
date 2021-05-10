@@ -183,7 +183,11 @@ export class StoredQueriesSearchSource extends SearchSource
         .get(this.searchUrl, { params, responseType: 'text' })
         .pipe(
           map(response => {
-            return this.extractResults(this.extractWFSData(response), term);
+            let resultArray = this.extractResults(this.extractWFSData(response), term);
+            resultArray.sort((a,b) => (a.meta.score > b.meta.score) ? 1: (a.meta.score === b.meta.score) ? ((a.meta.titleHtml < b.meta.titleHtml) ? 1: -1) : -1);
+            resultArray.reverse();
+            return resultArray;
+            // return this.extractResults(this.extractWFSData(response), term);
           })
         );
     } else {
@@ -293,6 +297,7 @@ export class StoredQueriesSearchSource extends SearchSource
     const title = data.properties[this.storedQueriesOptions.resultTitle]
       ? this.storedQueriesOptions.resultTitle
       : this.resultTitle;
+      debugger;
     return {
       source: this,
       data: {
@@ -312,7 +317,8 @@ export class StoredQueriesSearchSource extends SearchSource
         title: data.properties.title,
         titleHtml: data.properties[title],
         icon: 'map-marker',
-        score: computeTermSimilarity(term.trim(), data.properties.title)
+        score: (data.properties.title) ? computeTermSimilarity(term.trim(), data.properties.title) : computeTermSimilarity(term.trim(), data.properties[title]),
+        // score: computeTermSimilarity(term.trim(), data.properties.title)
       }
     };
   }
