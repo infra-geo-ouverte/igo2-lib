@@ -89,6 +89,18 @@ export class IgoMap {
         const scaleLineOpt = (this.options.controls.scaleLine === true
           ? {}
           : this.options.controls.scaleLine) as MapScaleLineOptions;
+        
+        console.log(this.options);
+
+        // const scaleBarParams = {
+        //   "units":"metric",
+        //   "bar":true, //ok
+        //   "steps":4, //ok
+        //   "text":false, //ok
+        //   "minWidth":140 //ok
+        // };
+
+        // controls.push(new olControlScaleLine(scaleBarParams));
         controls.push(new olControlScaleLine(scaleLineOpt));
       }
     }

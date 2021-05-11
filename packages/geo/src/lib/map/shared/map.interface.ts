@@ -43,6 +43,9 @@ export interface MapScaleLineOptions {
   minWidth?: number;
   target?: Element;
   units?: string;
+  bar?: boolean;
+  steps?:number;
+  text?:boolean;
 }
 
 export interface MapAttributionOptions {
