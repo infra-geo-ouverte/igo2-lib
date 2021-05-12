@@ -190,17 +190,17 @@ export class StoredQueriesSearchSource extends SearchSource
           map(response => {
             let resultArray = this.extractResults(this.extractWFSData(response), term);
             resultArray.sort((a, b) =>
-              (a.meta.score > b.meta.score) ? 1 : 
+              (a.meta.score > b.meta.score) ? 1 :
               (a.meta.score === b.meta.score) ? ((a.meta.titleHtml < b.meta.titleHtml) ? 1 : -1) : -1);
             resultArray.reverse();
             if (resultArray.length > Number(this.options.params.limit)) {
-              let idxEnd = Number(this.options.params.limit) * Number(this.options.params.page); 
-              let resultTotLenght = resultArray.length;
+              const idxEnd = Number(this.options.params.limit) * Number(this.options.params.page);
+              const resultTotLenght = resultArray.length;
               resultArray = resultArray.slice(0, idxEnd);
               if (idxEnd < resultTotLenght) {
-                resultArray[resultArray.length-1].meta.nextPage= true;
+                resultArray[resultArray.length- 1 ].meta.nextPage = true;
               } else {
-                resultArray[resultArray.length-1].meta.nextPage= false;
+                resultArray[resultArray.length- 1 ].meta.nextPage = false;
               }
             }
             return resultArray;
