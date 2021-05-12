@@ -42,7 +42,7 @@ export interface ContextMap {
   view: ContextMapView;
   controls?: {
     scaleLine?: boolean | MapScaleLineOptions;
-    attribution?: MapAttributionOptions;
+    attribution?: boolean | MapAttributionOptions;
   };
 }
 
