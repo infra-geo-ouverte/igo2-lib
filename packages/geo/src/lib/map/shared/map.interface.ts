@@ -36,8 +36,8 @@ export interface MapOptions {
 }
 
 export interface MapControlsOptions {
-  attribution?: boolean | MapAttributionOptions; // need boolean
-  scaleLine?: boolean | MapScaleLineOptions; // need boolean
+  attribution?: boolean | MapAttributionOptions;
+  scaleLine?: boolean | MapScaleLineOptions;
 }
 
 export interface MapScaleLineOptions {
