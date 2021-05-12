@@ -67,7 +67,7 @@ export class AddCatalogDialogComponent implements OnInit, OnDestroy {
       .all$()
       .subscribe(() => this.computePredefinedCatalogList());
 
-    this.emailAddress = this.configService.getConfig('catalog.emailAddress');
+    this.emailAddress = this.configService.getConfig('emailAddress');
   }
 
   ngOnDestroy() {

@@ -39,7 +39,7 @@
     <p class="error">{{languageService.translate.instant('igo.geo.catalog.externalProvider.unavailableWithEmail', { value: addedCatalog.url, email: emailAddress })}}</p>
   </span>
   <span *ngIf="error && addedCatalog && !emailAddress">
-    <p class="error">{{languageService.translate.instant('igo.geo.catalog.unavailable')}}</p>
+    <p class="error">{{languageService.translate.instant('igo.geo.catalog.unavailable', { value: addedCatalog.url })}}</p>
   </span>
 </div>
 <div mat-dialog-actions style="justify-content: center">
