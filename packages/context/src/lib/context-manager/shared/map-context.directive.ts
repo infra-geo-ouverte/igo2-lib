@@ -3,7 +3,7 @@ import { Directive, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { MapViewOptions, MapBrowserComponent } from '@igo2/geo';
+import { MapViewOptions, MapBrowserComponent, MapControlsOptions } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from './context.service';
@@ -59,6 +59,11 @@ export class MapContextDirective implements OnInit, OnDestroy {
     const viewContext: ContextMapView = context.map.view;
     if (!this.component.view || viewContext.keepCurrentView !== true) {
       this.component.view = viewContext as MapViewOptions;
+    }
+
+    const controlsContext: MapControlsOptions = context.map.controls;
+    if (!this.component.controls) {
+      this.component.controls = controlsContext;
     }
   }
 }

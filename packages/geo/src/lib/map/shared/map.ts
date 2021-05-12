@@ -24,7 +24,8 @@ import {
   MapOptions,
   MapAttributionOptions,
   MapScaleLineOptions,
-  MapExtent
+  MapExtent,
+  MapControlsOptions
 } from './map.interface';
 import { MapViewController } from './controllers/view';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
@@ -89,18 +90,6 @@ export class IgoMap {
         const scaleLineOpt = (this.options.controls.scaleLine === true
           ? {}
           : this.options.controls.scaleLine) as MapScaleLineOptions;
-        
-        console.log(this.options);
-
-        // const scaleBarParams = {
-        //   "units":"metric",
-        //   "bar":true, //ok
-        //   "steps":4, //ok
-        //   "text":false, //ok
-        //   "minWidth":140 //ok
-        // };
-
-        // controls.push(new olControlScaleLine(scaleBarParams));
         controls.push(new olControlScaleLine(scaleLineOpt));
       }
     }
@@ -187,6 +176,34 @@ export class IgoMap {
         this.alwaysTracking = true;
       }
     }
+  }
+
+  updateControls(value: MapControlsOptions) {
+    if (value === undefined) {
+      return;
+    }
+
+    const controls = [];
+    if (value.attribution) {
+      const attributionOpt = (value.attribution === true
+        ? {}
+        : value.attribution) as MapAttributionOptions;
+      controls.push(new olControlAttribution(attributionOpt));
+    }
+    if (value.scaleLine) {
+      const scaleLineOpt = (value.scaleLine === true
+        ? {}
+        : value.scaleLine) as MapScaleLineOptions;
+      controls.push(new olControlScaleLine(scaleLineOpt));
+    }
+
+    const currentControls = Object.assign([], this.ol.getControls().array_);
+    currentControls.forEach(control => {
+      this.ol.removeControl(control);
+    });
+    controls.forEach(control => {
+      this.ol.addControl(control);
+    });
   }
 
   /**
