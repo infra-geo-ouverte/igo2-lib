@@ -198,9 +198,9 @@ export class StoredQueriesSearchSource extends SearchSource
               const resultTotLenght = resultArray.length;
               resultArray = resultArray.slice(0, idxEnd);
               if (idxEnd < resultTotLenght) {
-                resultArray[resultArray.length- 1 ].meta.nextPage = true;
+                resultArray[resultArray.length - 1 ].meta.nextPage = true;
               } else {
-                resultArray[resultArray.length- 1 ].meta.nextPage = false;
+                resultArray[resultArray.length - 1 ].meta.nextPage = false;
               }
             }
             return resultArray;

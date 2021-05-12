@@ -170,7 +170,7 @@ export const environment: Environment = {
         title: 'Feuillets SNRC',
         searchUrl: '/ws/mffpecofor.fcgi',
         storedquery_id: 'sq250et20kFeuillet',
-        fields: {name: 'no_feuillet','defaultValue': '0'},
+        fields: { name: 'no_feuillet', defaultValue: '0'},
         resultTitle: 'feuillet',
         params: {
           limit: '8'
