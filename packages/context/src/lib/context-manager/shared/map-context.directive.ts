@@ -64,7 +64,7 @@ export class MapContextDirective implements OnInit, OnDestroy {
     }
 
     const controlsContext: MapControlsOptions = context.map.controls;
-    if (!this.component.controls) {
+    if (!this.component.controls && controlsContext !== undefined) {
       if (this.mediaService.isMobile()) {
         if (typeof(controlsContext.scaleLine) !== 'boolean') {
           const scaleLineOption = controlsContext.scaleLine as MapScaleLineOptions;
