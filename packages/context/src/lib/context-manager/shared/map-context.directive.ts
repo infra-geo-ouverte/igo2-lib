@@ -3,11 +3,12 @@ import { Directive, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { MapViewOptions, MapBrowserComponent, MapControlsOptions } from '@igo2/geo';
+import { MapViewOptions, MapBrowserComponent, MapControlsOptions, MapScaleLineOptions } from '@igo2/geo';
 import type { IgoMap } from '@igo2/geo';
 
 import { ContextService } from './context.service';
 import { DetailedContext, ContextMapView } from './context.interface';
+import { MediaService } from '@igo2/core';
 
 @Directive({
   selector: '[igoMapContext]'
@@ -22,7 +23,8 @@ export class MapContextDirective implements OnInit, OnDestroy {
 
   constructor(
     component: MapBrowserComponent,
-    private contextService: ContextService
+    private contextService: ContextService,
+    private mediaService: MediaService
   ) {
     this.component = component;
   }
@@ -63,6 +65,15 @@ export class MapContextDirective implements OnInit, OnDestroy {
 
     const controlsContext: MapControlsOptions = context.map.controls;
     if (!this.component.controls) {
+      if (this.mediaService.isMobile()) {
+        if (typeof(controlsContext.scaleLine) !== 'boolean') {
+          const scaleLineOption = controlsContext.scaleLine as MapScaleLineOptions;
+          if (scaleLineOption.minWidth !== undefined) {
+            scaleLineOption.minWidth = Math.min(64, scaleLineOption.minWidth);
+            controlsContext.scaleLine = scaleLineOption;
+          }
+        }
+      }
       this.component.controls = controlsContext;
     }
   }
