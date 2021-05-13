@@ -64,11 +64,11 @@ export class MapContextDirective implements OnInit, OnDestroy {
     }
 
     const controlsContext: MapControlsOptions = context.map.controls;
-    if (!this.component.controls && controlsContext !== undefined) {
+    if (!this.component.controls && !controlsContext) {
       if (this.mediaService.isMobile()) {
         if (typeof(controlsContext.scaleLine) !== 'boolean') {
           const scaleLineOption = controlsContext.scaleLine as MapScaleLineOptions;
-          if (scaleLineOption.minWidth !== undefined) {
+          if (!scaleLineOption.minWidth) {
             scaleLineOption.minWidth = Math.min(64, scaleLineOption.minWidth);
             controlsContext.scaleLine = scaleLineOption;
           }
