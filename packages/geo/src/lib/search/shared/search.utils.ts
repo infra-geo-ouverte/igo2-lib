@@ -64,6 +64,15 @@ export function findDiff(str1: string, str2: string){
   return diff;
 }
 
+
+/**
+ * Return a score calculation based on "from" term with the "to" term,
+ * where the perfect match is 100 and a total difference is 0 or under.
+ * @param from string
+ * @param to string
+ * @param caseSensitive boolean
+ * @returns number
+ */
 export function computeTermSimilarity(from, to, caseSensitive: boolean = false): number {
   if (!from || !to) {
     return 0;
