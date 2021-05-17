@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { IgoMap, MapService, ProjectionService } from '@igo2/geo';
-import { ContextState } from '../context';
 
 /**
  * Service that holds the state of the map module
