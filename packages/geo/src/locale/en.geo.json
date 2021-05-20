@@ -412,6 +412,7 @@
         "coordinates": {
           "name": "Coordinates",
           "coord": "Geographic (longitude, latitude)",
+          "coordDMS": "Geographic (longitude, latitude) (DMS)",
           "radius": "Radius",
           "conf": "Confidence"
         },
