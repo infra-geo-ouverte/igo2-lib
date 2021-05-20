@@ -371,7 +371,7 @@ function convertDMSToDD(
 export function convertDDToDMS(
   lonLatDD: [number, number], decimal: number = 3
 ): string[] {
-  let lonLatDMS = [];
+  const lonLatDMS = [];
 
   lonLatDD.forEach(dd => {
     const degrees = dd < 0 ? Math.ceil(dd) : Math.floor(dd);
@@ -380,7 +380,7 @@ export function convertDDToDMS(
     const seconds = ((int - minutes) * 60).toFixed(decimal);
 
     lonLatDMS.push(`${degrees}° ${minutes}' ${seconds}"`);
-  })
+  });
   return lonLatDMS;
 }
 
