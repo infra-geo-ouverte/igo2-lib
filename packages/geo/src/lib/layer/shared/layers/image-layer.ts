@@ -11,6 +11,8 @@ import { WMSDataSource } from '../../../datasource/shared/datasources/wms-dataso
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
+import { HttpClient } from '@angular/common/http';
+import { LanguageService, MessageService } from '@igo2/core';
 
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
@@ -21,6 +23,9 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
+    private http: HttpClient,
+    private messageService: MessageService,
+    private languageService: LanguageService,
     public authInterceptor?: AuthInterceptor
   ) {
     super(options, authInterceptor);
@@ -62,6 +67,19 @@ export class ImageLayer extends Layer {
       tile.getImage().src = src;
       return;
     }
+
+    this.http.get(src, {
+      responseType: 'text'
+    }).subscribe((value) => {
+      if (value.includes('ServiceExceptionReport')) {
+        this.messageService.error(this.languageService.translate.instant(
+          'igo.geo.dataSource.optionsApiUnavailable'
+        ),
+        this.languageService.translate.instant(
+          'igo.geo.dataSource.unavailableTitle'
+        ))
+      }
+    })
 
     xhr.responseType = 'arraybuffer';
 
