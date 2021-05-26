@@ -1,3 +1,3 @@
 export * from './network.service';
 export * from './network.interfaces';
-export * from './networking.service'
+export * from './geo-network.service';
