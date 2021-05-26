@@ -162,6 +162,10 @@ export class IgoMap {
 
     this.unsubscribeGeolocate();
     if (options) {
+      if (options.maxLayerZoomExtent) {
+        this.viewController.maxLayerZoomExtent = options.maxLayerZoomExtent;
+      }
+
       if (options.center) {
         const projection = view.getProjection().getCode();
         const center = olproj.fromLonLat(options.center, projection);

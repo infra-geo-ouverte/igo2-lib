@@ -36,6 +36,7 @@ import {
   TimeFilterType,
   TimeFilterStyle
 } from '../../filter/shared/time-filter.enum';
+import * as olproj from 'ol/proj';
 
 export enum TypeCapabilities {
   wms = 'wms',
@@ -251,6 +252,9 @@ export class CapabilitiesService {
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
+    const extent = layer.EX_GeographicBoundingBox ?
+        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', 'EPSG:3857') :
+        undefined;
 
     let queryFormat: QueryFormat;
     const queryFormatMimeTypePriority = [
@@ -284,6 +288,7 @@ export class CapabilitiesService {
         title: layer.Title,
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
+        extent,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
