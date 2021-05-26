@@ -252,7 +252,10 @@ export class CapabilitiesService {
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
-    const extent = olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', 'EPSG:3857');
+      
+    const extent = layer.EX_GeographicBoundingBox ?
+        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', 'EPSG:3857') :
+        undefined;
 
     let queryFormat: QueryFormat;
     const queryFormatMimeTypePriority = [
