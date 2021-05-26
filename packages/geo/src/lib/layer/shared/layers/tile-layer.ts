@@ -13,6 +13,7 @@ import { TileDebugDataSource } from '../../../datasource/shared/datasources/tile
 
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
+import { GeoNetworkService } from '@igo2/core';
 
 export class TileLayer extends Layer {
   public dataSource:
@@ -27,7 +28,9 @@ export class TileLayer extends Layer {
 
   private watcher: TileWatcher;
 
-  constructor(options: TileLayerOptions) {
+  constructor(
+    options: TileLayerOptions,
+    private geoNetwork: GeoNetworkService ) {
     super(options);
 
     this.watcher = new TileWatcher(this);
@@ -39,7 +42,28 @@ export class TileLayer extends Layer {
       source: this.options.source.ol as olSourceTile
     });
 
-    return new olLayerTile(olOptions);
+    const tile = new olLayerTile(olOptions);
+    
+    (tile.getSource() as any).setTileLoadFunction((tile, src)=> {
+      this.customLoader(tile, src);
+    })
+    return tile
+  }
+
+  private customLoader(tile: olLayerTile, src: string) {
+    console.log("Get of tile: ", src);
+    const request = this.geoNetwork.get(src);
+    request.subscribe((blob) => {
+      // need error state handler for tile
+      // https://openlayers.org/en/latest/apidoc/module-ol_Tile.html#~LoadFunction
+      if (!blob) { 
+        return;
+      }
+
+      const urlCreator = window.URL;
+      const imageUrl = urlCreator.createObjectURL(blob);
+      tile.getImage().src = imageUrl;
+    });
   }
 
   public setMap(map: IgoMap | undefined) {

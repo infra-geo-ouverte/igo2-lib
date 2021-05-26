@@ -18,6 +18,10 @@ const dbConfig: DBConfig = {
     store:'contexts',
     storeConfig: {keyPath: 'url', autoIncrement:false},
     storeSchema: []
+  }, {
+    store:'geoData',
+    storeConfig: {keyPath: 'url', autoIncrement:false},
+    storeSchema: []
   }]
 }
 
