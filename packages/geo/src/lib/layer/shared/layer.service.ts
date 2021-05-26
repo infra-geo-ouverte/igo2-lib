@@ -24,6 +24,7 @@ import {
 } from '../../datasource';
 
 import { DataSourceService } from '../../datasource/shared/datasource.service';
+import { GeoNetworkService } from '@igo2/core';
 
 import {
   Layer,
@@ -48,6 +49,7 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
+    private geoNetwork: GeoNetworkService,
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
 
@@ -117,11 +119,11 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.authInterceptor);
+    return new ImageLayer(layerOptions, this.geoNetwork, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
-    return new TileLayer(layerOptions);
+    return new TileLayer(layerOptions, this.geoNetwork);
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {

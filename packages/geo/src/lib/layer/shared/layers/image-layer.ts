@@ -11,6 +11,7 @@ import { WMSDataSource } from '../../../datasource/shared/datasources/wms-dataso
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
+import { GeoNetworkService } from '@igo2/core';
 
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
@@ -21,9 +22,11 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
-    public authInterceptor?: AuthInterceptor
+    public geoNetwork: GeoNetworkService,
+    public authInterceptor?: AuthInterceptor,
   ) {
     super(options, authInterceptor);
+    // this.geoNetwork = new GeoNetworkService();
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -53,25 +56,44 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(tile, src, interceptor) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', src);
+    // const xhr = new XMLHttpRequest();
+    // xhr.open('GET', src);
 
-    const intercepted = interceptor.interceptXhr(xhr, src);
-    if (!intercepted) {
-      xhr.abort();
-      tile.getImage().src = src;
-      return;
-    }
+    // const intercepted = interceptor.interceptXhr(xhr, src);
+    // if (!intercepted) {
+    //   xhr.abort();
+    //   tile.getImage().src = src;
+    //   return;
+    // }
 
-    xhr.responseType = 'arraybuffer';
+    // xhr.responseType = 'arraybuffer';
 
-    xhr.onload = function() {
-      const arrayBufferView = new Uint8Array((this as any).response);
-      const blob = new Blob([arrayBufferView], { type: 'image/png' });
+    // xhr.onload = function() {
+    //   const arrayBufferView = new Uint8Array((this as any).response);
+    //   const blob = new Blob([arrayBufferView], { type: 'image/png' });
+    //   const urlCreator = window.URL;
+    //   const imageUrl = urlCreator.createObjectURL(blob);
+    //   tile.getImage().src = imageUrl;
+    // };
+    // xhr.send();
+    
+    // const intercepted = interceptor.intercept(request.clone(), src)
+    // if (!intercepted) {
+      //   //sub.unsubscribe();
+      //   tile.getImage().src = src;
+      //   return;
+      // }
+      
+    const request = this.geoNetwork.get(src)
+    request.subscribe((blob) => {
+      console.log(blob);
+      if (!blob) {
+        return;
+      }
+      
       const urlCreator = window.URL;
       const imageUrl = urlCreator.createObjectURL(blob);
       tile.getImage().src = imageUrl;
-    };
-    xhr.send();
+    });
   }
 }
