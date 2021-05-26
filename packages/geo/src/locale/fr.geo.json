@@ -411,6 +411,7 @@
         "coordinates": {
           "name": "Coordonnées",
           "coord": "Coordonnée (longitude, latitude)",
+          "coordDMS": "Coordonnée (longitude, latitude) (DMS)",
           "radius": "Rayon",
           "conf": "Confiance"
         },
