@@ -21,7 +21,7 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
-import { debounce } from 'rxjs/operators';
+import { debounce, isEmpty } from 'rxjs/operators';
 import {
   MetadataOptions,
   MetadataLayerOptions
@@ -314,7 +314,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (!layersExtent.isEmpty) {
+    if (!olextent.isEmpty(layersExtent)) {
       if (maxLayerZoomExtent) {
         valid = (olextent.containsExtent(maxLayerZoomExtent, layersExtent));
       } else {
