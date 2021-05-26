@@ -8,7 +8,8 @@ import { VectorTileLayerOptions } from './vectortile-layer.interface';
 import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
 import { IgoMap } from '../../../map';
-
+import { MessageService } from '@igo2/core';
+import { Optional } from '@angular/core';
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
   public options: VectorTileLayerOptions;
@@ -18,8 +19,9 @@ export class VectorTileLayer extends Layer {
 
   constructor(
     options: VectorTileLayerOptions,
+    public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor) {
-    super(options, authInterceptor);
+    super(options, messageService, authInterceptor);
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;
   }

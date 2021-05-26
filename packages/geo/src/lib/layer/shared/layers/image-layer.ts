@@ -11,7 +11,7 @@ import { WMSDataSource } from '../../../datasource/shared/datasources/wms-dataso
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
-
+import { MessageService } from '@igo2/core';
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
   public options: ImageLayerOptions;
@@ -21,9 +21,10 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
+    public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor
   ) {
-    super(options, authInterceptor);
+    super(options, messageService, authInterceptor);
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }

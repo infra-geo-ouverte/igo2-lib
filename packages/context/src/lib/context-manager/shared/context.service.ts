@@ -294,7 +294,7 @@ export class ContextService {
               .reverse();
             resMerge.toolbar = res.toolbar || resBase.toolbar;
             resMerge.message = res.message || resBase.message;
-            resMerge.messages = res.messages || resBase.messages; 
+            resMerge.messages = res.messages || resBase.messages;
             resMerge.tools = (res.tools || [])
               .concat(resBase.tools || [])
               .filter(
@@ -611,8 +611,8 @@ export class ContextService {
           ? this.languageService.translate.instant(message.text)
           : undefined;
         this.messageService.message(message as Message);
-      }    
-    })
+      }
+    });
   }
 
   private getContextByUri(uri: string): Observable<DetailedContext> {
