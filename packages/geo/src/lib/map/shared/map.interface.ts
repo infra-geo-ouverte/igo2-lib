@@ -30,12 +30,14 @@ export interface MapViewState {
 
 export interface MapOptions {
   view?: MapViewOptions;
-  controls?: {
-    attribution?: boolean | MapAttributionOptions;
-    scaleLine?: boolean | MapScaleLineOptions;
-  };
+  controls?: MapControlsOptions;
   overlay?: boolean;
   interactions?: boolean;
+}
+
+export interface MapControlsOptions {
+  attribution?: boolean | MapAttributionOptions;
+  scaleLine?: boolean | MapScaleLineOptions;
 }
 
 export interface MapScaleLineOptions {
@@ -43,6 +45,9 @@ export interface MapScaleLineOptions {
   minWidth?: number;
   target?: Element;
   units?: string;
+  bar?: boolean;
+  steps?: number;
+  text?: boolean;
 }
 
 export interface MapAttributionOptions {
