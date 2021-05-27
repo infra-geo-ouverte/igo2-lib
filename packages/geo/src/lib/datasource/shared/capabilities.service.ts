@@ -13,7 +13,7 @@ import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
-import { MapService } from '@igo2/geo'
+import { MapService } from '@igo2/geo';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
 import {
