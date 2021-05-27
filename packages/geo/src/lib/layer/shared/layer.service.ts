@@ -120,7 +120,7 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.http, this.messageService, this.languageService, this.authInterceptor);
+    return new ImageLayer(layerOptions, this.messageService, this.languageService, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
