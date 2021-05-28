@@ -213,6 +213,8 @@
         "tools": "Tools",
         "selectAll": "Select all",
         "deselectAll": "Deselect all",
+        "zoomLayer": "Zoom To Layer Extents",
+        "zoomLayers": "Zoom To Selected Layers Extents",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
@@ -410,6 +412,7 @@
         "coordinates": {
           "name": "Coordinates",
           "coord": "Geographic (longitude, latitude)",
+          "coordDMS": "Geographic (longitude, latitude) (DMS)",
           "radius": "Radius",
           "conf": "Confidence"
         },
