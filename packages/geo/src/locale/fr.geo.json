@@ -13,7 +13,8 @@
         "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
         "externalProvider": {
           "catalog": "Ce catalogue provient d'une organisation externe.",
-          "layer": "Cette couche provient d'une organisation externe."
+          "layer": "Cette couche provient d'une organisation externe.",
+          "unavailableWithEmail": "Le catalogue '{{value}}' est indisponible pour le moment. Pour ajouter un service externe à la liste prédéfinie, veuillez contacter {{email}}. Des délais peuvent s'appliquer si problème il y a avec le fournisseur externe."
         },
         "library.add": "Ajouter ce catalogue",
         "library.cancel": "Annuler",
@@ -211,6 +212,8 @@
         "tools": "Outils",
         "selectAll": "Tout sélectionner",
         "deselectAll": "Tout désélectionner",
+        "zoomLayer": "Cadrer sur l'étendue de la couche",
+        "zoomLayers": "Cadrer sur l'étendue des couches sélectionnées",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
@@ -408,6 +411,7 @@
         "coordinates": {
           "name": "Coordonnées",
           "coord": "Coordonnée (longitude, latitude)",
+          "coordDMS": "Coordonnée (longitude, latitude) (DMS)",
           "radius": "Rayon",
           "conf": "Confiance"
         },
