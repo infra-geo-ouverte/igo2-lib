@@ -24,11 +24,11 @@ export class GeoNetworkService {
   private getOnline(url: string): Observable<Blob> {
     console.log("Online get: ", url);
     const request = this.http.get(url, { responseType: 'blob' });
-    request
-      .pipe(first())
-      .subscribe((blob) => {
-        this.geoDataDB.update(url, blob);
-      });
+    // request
+    //   .pipe(first())
+    //   .subscribe((blob) => {
+    //     this.geoDataDB.update(url, blob);
+    //   });
     return request;
   }
 

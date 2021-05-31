@@ -1,5 +1,6 @@
 import olLayerTile from 'ol/layer/Tile';
 import olSourceTile from 'ol/source/Tile';
+import TileState from 'ol/TileState';
 
 import { TileWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
@@ -14,6 +15,7 @@ import { TileDebugDataSource } from '../../../datasource/shared/datasources/tile
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
 import { GeoNetworkService } from '@igo2/core';
+import { first } from 'rxjs/operators';
 
 export class TileLayer extends Layer {
   public dataSource:
@@ -31,6 +33,7 @@ export class TileLayer extends Layer {
   constructor(
     options: TileLayerOptions,
     private geoNetwork: GeoNetworkService ) {
+    
     super(options);
 
     this.watcher = new TileWatcher(this);
@@ -53,16 +56,21 @@ export class TileLayer extends Layer {
   private customLoader(tile: olLayerTile, src: string) {
     console.log("Get of tile: ", src);
     const request = this.geoNetwork.get(src);
-    request.subscribe((blob) => {
+    request.pipe(first())
+    .subscribe((blob) => {
       // need error state handler for tile
       // https://openlayers.org/en/latest/apidoc/module-ol_Tile.html#~LoadFunction
-      if (!blob) { 
-        return;
+      if (blob) {
+        const urlCreator = window.URL;
+        const imageUrl = urlCreator.createObjectURL(blob);
+        tile.getImage().src = imageUrl;
+        tile.getImage().onload = function() {
+          URL.revokeObjectURL(this.src);
+        };
+      } else {
+        console.log("tile state to error changed");
+        tile.setState(TileState.ERROR);
       }
-
-      const urlCreator = window.URL;
-      const imageUrl = urlCreator.createObjectURL(blob);
-      tile.getImage().src = imageUrl;
     });
   }
 

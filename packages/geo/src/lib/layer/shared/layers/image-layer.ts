@@ -1,5 +1,6 @@
 import olLayerImage from 'ol/layer/Image';
 import olSourceImage from 'ol/source/Image';
+import TileState from 'ol/TileState';
 
 import { AuthInterceptor } from '@igo2/auth';
 
@@ -12,6 +13,7 @@ import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 import { GeoNetworkService } from '@igo2/core';
+import { first } from 'rxjs/operators';
 
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
@@ -85,15 +87,19 @@ export class ImageLayer extends Layer {
       // }
       
     const request = this.geoNetwork.get(src)
-    request.subscribe((blob) => {
-      console.log(blob);
-      if (!blob) {
-        return;
+    request.pipe(first()).subscribe((blob) => {
+      if (blob) {
+        const urlCreator = window.URL;
+        const imageUrl = urlCreator.createObjectURL(blob);
+        tile.getImage().src = imageUrl;
+        tile.getImage().onload = function() {
+          URL.revokeObjectURL(this.src);
+        }
       }
-      
-      const urlCreator = window.URL;
-      const imageUrl = urlCreator.createObjectURL(blob);
-      tile.getImage().src = imageUrl;
+      // } else {
+      //   console.log("image tile state changed to error")
+      //   //tile.setState(TileState.ERROR);
+      // }
     });
   }
 }
