@@ -89,6 +89,10 @@ export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
   type: string;
 }
 
+export interface MSPMsalGuardConfiguration extends MsalGuardConfiguration {
+  type: string;
+}
+
 export interface User {
   source?: string;
   sourceId?: string;
