@@ -57,7 +57,8 @@ export function MSALAngularConfigFactory(config: ConfigService): MSPMsalGuardCon
   return {
     interactionType: InteractionType.Popup,
     authRequest: {
-      scopes: ['user.read']
+      scopes: ['user.read'],
+      loginHint: 'todo',
     },
     type: 'add'
   };

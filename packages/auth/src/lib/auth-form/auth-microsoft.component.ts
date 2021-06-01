@@ -90,9 +90,10 @@ export class AuthMicrosoftComponent {
           // fallback to interaction when silent call fails
           return this.msalService.acquireTokenPopup(this.getConf().authRequest as SilentRequest);
         }
-        }).catch(error => {
-          console.log('Silent token fails');
-        });
+        console.log(error);
+      }).catch(error => {
+        console.log('Silent token fails');
+      });
   }
 
   private getConf(): MSPMsalGuardConfiguration {
