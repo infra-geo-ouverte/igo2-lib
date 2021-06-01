@@ -18,7 +18,7 @@
         "Invalid username": "Invalid username"
       },
       "microsoft": {
-        "login": "Sign in with MSP account"
+        "login": "Sign in with Azure account"
       },
       "microsoftb2c": {
         "login": "Sign in"

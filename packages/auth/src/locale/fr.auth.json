@@ -22,7 +22,7 @@
         "logged": "Connecté avec Google"
       },
       "microsoft": {
-        "login": "Se connecter avec compte MSP"
+        "login": "Se connecter avec compte Azure"
       },
       "microsoftb2c": {
         "login": "Se connecter"
