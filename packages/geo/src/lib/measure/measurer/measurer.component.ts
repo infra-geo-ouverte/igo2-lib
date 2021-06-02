@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, from, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 
 import OlProjection from 'ol/proj/Projection';
@@ -59,6 +59,7 @@ import {
   formatMeasure
 } from '../shared/measure.utils';
 import { MeasurerDialogComponent } from './measurer-dialog.component';
+import { feature } from '@turf/helpers';
 
 /**
  * Tool to measure lengths and areas
@@ -135,6 +136,18 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   public measureUnitsAuto: boolean = false;
+
+  /**
+   * Whether display of distances
+   * @internal
+   */
+  public displayDistance: boolean = true;
+
+  /**
+   * Observable of area boolean
+   * @internal
+   */
+  public hasArea$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   /**
    * Observable of area
@@ -345,9 +358,32 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Activate or deactivate the current draw control
    * @internal
    */
-  onToggleMeasureUnitsAuto(toggle: boolean) {
+   onToggleMeasureUnitsAuto(toggle: boolean) {
     this.measureUnitsAuto = toggle;
   }
+
+  /**
+   * Activate or deactivate the current display of distances
+   * @internal
+   */
+  onToggleDisplayDistance(toggle: boolean) {
+    this.displayDistance = toggle;
+    this.onDisplayDistance();
+  }
+
+  /**
+   * Activate or deactivate the current display of distances
+   * @internal
+   */
+     onDisplayDistance() {
+      if (this.displayDistance) {
+        Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
+          value.classList.remove('igo-map-tooltip-hidden'));
+      } else {
+        Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
+          value.classList.add('igo-map-tooltip-hidden'));
+      }
+    }
 
   /**
    * Set the measure type
@@ -461,6 +497,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       const feature = event.feature;
       const olGeometry = feature.getGeometry();
       this.updateMeasureOfOlGeometry(olGeometry, feature.get('measure'));
+      this.onDisplayDistance();
     });
 
     this.onFeatureRemovedKey = store.source.ol.on('removefeature', (event: OlVectorSourceEvent) => {
@@ -478,6 +515,15 @@ export class MeasurerComponent implements OnInit, OnDestroy {
         this.deactivateModifyControl();
       }
       this.selectedFeatures$.next(records.map(record => record.entity));
+    });
+
+    this.store.entities$.subscribe(objectsExists  => {
+    if (objectsExists.find(objectExist => objectExist.geometry.type === 'Polygon')){
+        this.hasArea$.next(true);
+      }
+      else {
+        this.hasArea$.next(false);
+      }
     });
   }
 
@@ -689,11 +735,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   private finalizeMeasureOfOlGeometry(olGeometry: OlLineString | OlPolygon) {
     let measure = measureOlGeometry(olGeometry, this.projection);
-    if (olGeometry instanceof OlPolygon) {
-      measure = Object.assign({}, measure, {
-        lengths: []  // We don't want to display an area tooltip while drawing.
-      });
-    }
     this.updateMeasureOfOlGeometry(olGeometry, measure);
   }
 

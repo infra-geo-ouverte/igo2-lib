@@ -26,6 +26,14 @@
       (change)="onToggleTooltips($event.checked)">
       {{'igo.geo.measure.toggleMapTooltips' | translate}}
     </mat-slide-toggle>
+    
+    <mat-slide-toggle
+      [disabled]="!(hasArea$ | async)"
+      [checked]="displayDistance"
+      [labelPosition]="'before'"
+      (change)="onToggleDisplayDistance($event.checked)">
+      {{'igo.geo.measure.toggleDisplayDistance' | translate}}
+    </mat-slide-toggle>
 
     <mat-slide-toggle
       [checked]="measureUnitsAuto"

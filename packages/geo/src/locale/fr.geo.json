@@ -589,6 +589,7 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activer le contrôle de mesure",
+        "toggleDisplayDistance": "Afficher les distances pour les superficies",
         "toggleMapTooltips": "Mesures sur la carte",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
