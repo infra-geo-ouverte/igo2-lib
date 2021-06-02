@@ -46,7 +46,7 @@ function getNumberOfTreeNodes(tile: Tile, maxDepth: number) {
   providedIn: 'root'
 })
 export class TileDownloaderService {
-  readonly maxDepth: number = 10;
+  readonly maxHeigthDelta: number = 2;
   public urlGenerator: (coord: [number, number, number], 
                         pixelRatio, projection) => string;
 
@@ -55,10 +55,7 @@ export class TileDownloaderService {
     private geoDB: GeoDataDBService) { }
   
   private generateTiles(tile: Tile): Tile[] {
-    const a = function(a:string) {
-      return a;
-    }
-    return getTreeNodes(tile, this.maxDepth);
+    return getTreeNodes(tile, tile.Z + this.maxHeigthDelta);
   }
 
   private generateTilesRegion(region: Tile[]) {
