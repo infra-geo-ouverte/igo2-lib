@@ -1,5 +1,5 @@
 export interface CompressedData {
-    size: number;
+    length: number;
     type: string;
     object: any;
 }

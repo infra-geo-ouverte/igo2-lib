@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
+import { CompressionService } from './compression.service';
 import { DbData } from './dbData';
 
 @Injectable({
@@ -10,10 +11,24 @@ import { DbData } from './dbData';
 export class GeoDataDBService {
   readonly dbName: string = 'geoData';
   constructor(
-    private dbService: NgxIndexedDBService
+    private dbService: NgxIndexedDBService,
+    private compression: CompressionService
   ) { }
 
   update(url: string, object) {
+    if (!object) {
+      return;
+    }
+
+    if (object instanceof Blob) {
+      const compressObs = this.compression.compressBlob(object);
+      compressObs.pipe(first())
+        .subscribe((compressedObject) => {
+          console.log("data compressed", compressedObject);
+          this.dbService.update(this.dbName, { url: url, object: compressedObject })
+        });
+    }
+
     this.dbService.update(this.dbName, {url: url, object: object})
       .pipe(first())
       .subscribe(() => console.log("db updated"));
@@ -24,7 +39,11 @@ export class GeoDataDBService {
       map((data) => {
         console.log("database get:", url);
         if (data) {
-          return (data as DbData).object;
+          const object = (data as DbData).object;
+          if (object instanceof Blob) {
+            return object;
+          }
+          return this.compression.decompressBlob(object);
         }
         console.log("not in db")
       })
