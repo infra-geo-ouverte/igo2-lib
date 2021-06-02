@@ -85,9 +85,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       {
         name: 'length',
         title: this.languageService.translate.instant('igo.geo.measure.lengthHeader'),
-        valueAccessor: (feature: FeatureWithMeasure) => {
+        valueAccessor: (localFeature: FeatureWithMeasure) => {
           const unit = this.activeLengthUnit;
-          const measure = metersToUnit(feature.properties.measure.length, unit);
+          const measure = metersToUnit(localFeature.properties.measure.length, unit);
           return formatMeasure(measure, {
             decimal: 1,
             unit,
@@ -99,9 +99,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       {
         name: 'area',
         title: this.languageService.translate.instant('igo.geo.measure.areaHeader'),
-        valueAccessor: (feature: FeatureWithMeasure) => {
+        valueAccessor: (localFeature: FeatureWithMeasure) => {
           const unit = this.activeAreaUnit;
-          const measure = squareMetersToUnit(feature.properties.measure.area, unit);
+          const measure = squareMetersToUnit(localFeature.properties.measure.area, unit);
           return measure ? formatMeasure(measure, {
             decimal: 1,
             unit,
@@ -413,20 +413,20 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   onCalculateClick() {
     const features = this.selectedFeatures$.value;
-    const area = features.reduce((sum: number, feature: FeatureWithMeasure) => {
-      return sum + feature.properties.measure.area || 0;
+    const area = features.reduce((sum: number, localFeature: FeatureWithMeasure) => {
+      return sum + localFeature.properties.measure.area || 0;
     }, 0);
-    const length = features.reduce((sum: number, feature: FeatureWithMeasure) => {
-      if (feature.geometry.type === 'Polygon') {
+    const length = features.reduce((sum: number, localFeature: FeatureWithMeasure) => {
+      if (localFeature.geometry.type === 'Polygon') {
         return sum;
       }
-      return sum + feature.properties.measure.length || 0;
+      return sum + localFeature.properties.measure.length || 0;
     }, 0);
-    const perimeter = features.reduce((sum: number, feature: FeatureWithMeasure) => {
-      if (feature.geometry.type === 'LineString') {
+    const perimeter = features.reduce((sum: number, localFeature: FeatureWithMeasure) => {
+      if (localFeature.geometry.type === 'LineString') {
         return sum;
       }
-      return sum + feature.properties.measure.length || 0;
+      return sum + localFeature.properties.measure.length || 0;
     }, 0);
 
     this.openDialog({
@@ -447,10 +447,10 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       this.deactivateModifyControl();
       this.toggleDrawControl();
     } else {
-      const feature = this.selectedFeatures$.value[0];
+      const localFeature = this.selectedFeatures$.value[0];
       const olFeatures = this.store.layer.ol.getSource().getFeatures();
       const olFeature = olFeatures.find((_olFeature: OlFeature) => {
-        return _olFeature.get('id') === feature.properties.id;
+        return _olFeature.get('id') === localFeature.properties.id;
       });
 
       if (olFeature !== undefined) {
@@ -480,8 +480,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
       zIndex: 200,
       source: new FeatureDataSource(),
       style: createMeasureLayerStyle(),
-      showInLayerList: false,
-      exportable: false,
+      showInLayerList: true,
+      exportable: true,
       browsable: false
     });
     tryBindStoreLayer(store, layer);
@@ -494,9 +494,9 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }));
 
     this.onFeatureAddedKey = store.source.ol.on('addfeature', (event: OlVectorSourceEvent) => {
-      const feature = event.feature;
-      const olGeometry = feature.getGeometry();
-      this.updateMeasureOfOlGeometry(olGeometry, feature.get('measure'));
+      const localFeature = event.feature;
+      const olGeometry = localFeature.getGeometry();
+      this.updateMeasureOfOlGeometry(olGeometry, localFeature.get('measure'));
       this.onDisplayDistance();
     });
 
@@ -537,8 +537,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.selectedFeatures$$.unsubscribe();
     unByKey(this.onFeatureAddedKey);
     unByKey(this.onFeatureRemovedKey);
-    this.clearTooltipsOfOlSource(store.source.ol);
-    this.map.removeLayer(store.layer);
+    // this.clearTooltipsOfOlSource(store.source.ol);
+    // this.map.removeLayer(store.layer);
     store.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
     store.deactivateStrategyOfType(FeatureStoreSelectionStrategy);
   }
@@ -695,8 +695,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
     if (this.activeOlGeometry !== undefined) {
       if (this.selectedFeatures$.value.length === 1) {
-        const feature = this.selectedFeatures$.value[0];
-        this.addFeatureToStore(this.activeOlGeometry, feature);
+        const localFeature = this.selectedFeatures$.value[0];
+        this.addFeatureToStore(this.activeOlGeometry, localFeature);
       }
       this.finalizeMeasureOfOlGeometry(this.activeOlGeometry);
     }
@@ -760,8 +760,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * will trigger and add the feature to the map.
    * @internal
    */
-  private addFeatureToStore(olGeometry: OlLineString | OlPolygon, feature?: FeatureWithMeasure) {
-    const featureId = feature ? feature.properties.id : uuid();
+  private addFeatureToStore(olGeometry: OlLineString | OlPolygon, localFeature?: FeatureWithMeasure) {
+    const featureId = localFeature ? localFeature.properties.id : uuid();
     const projection = this.map.ol.getView().getProjection();
     const geometry = new OlGeoJSON().writeGeometryObject(olGeometry, {
       featureProjection: projection,
