@@ -18,6 +18,7 @@ import { StyleListService } from '../style-list/style-list.service';
 import { ClusterParam } from '../../layer/shared/clusterParam';
 import { ClusterDataSource } from '../../datasource/shared/datasources/cluster-datasource';
 import { ClusterDataSourceOptions } from '../../datasource/shared/datasources/cluster-datasource.interface';
+import { uuid } from '@igo2/utils';
 
 export function addLayerAndFeaturesToMap(
   features: Feature[],
@@ -69,7 +70,9 @@ export function addLayerAndFeaturesStyledToMap(
   map: IgoMap,
   layerTitle: string,
   styleListService: StyleListService,
-  styleService: StyleService
+  styleService: StyleService,
+  layerId?: string,
+  imposedSourceOptions? 
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
@@ -138,14 +141,14 @@ export function addLayerAndFeaturesStyledToMap(
       type: 'cluster',
       queryable: true
     };
-    source = new ClusterDataSource(sourceOptions);
+    source = new ClusterDataSource(Object.assign(sourceOptions, imposedSourceOptions));
     source.ol.source.addFeatures(olFeatures);
   } else if (styleListService.getStyleList(layerTitle.toString())) {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
       type: 'vector',
       queryable: true
     };
-    source = new FeatureDataSource(sourceOptions);
+    source = new FeatureDataSource(Object.assign(sourceOptions, imposedSourceOptions));
     source.ol.addFeatures(olFeatures);
   } else if (
     styleListService.getStyleList('default.clusterStyle') &&
@@ -157,19 +160,20 @@ export function addLayerAndFeaturesStyledToMap(
       type: 'cluster',
       queryable: true
     };
-    source = new ClusterDataSource(sourceOptions);
+    source = new ClusterDataSource(Object.assign(sourceOptions, imposedSourceOptions));
     source.ol.source.addFeatures(olFeatures);
   } else {
     const sourceOptions: FeatureDataSourceOptions & QueryableDataSourceOptions = {
       type: 'vector',
       queryable: true
     };
-    source = new FeatureDataSource(sourceOptions);
+    source = new FeatureDataSource(Object.assign(sourceOptions, imposedSourceOptions));
     source.ol.addFeatures(olFeatures);
   }
 
   const layer = new VectorLayer({
     title: layerTitle,
+    id: layerId || uuid(),
     source,
     style
   });
