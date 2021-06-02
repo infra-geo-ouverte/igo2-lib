@@ -734,7 +734,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   private finalizeMeasureOfOlGeometry(olGeometry: OlLineString | OlPolygon) {
-    let measure = measureOlGeometry(olGeometry, this.projection);
+    const measure = measureOlGeometry(olGeometry, this.projection);
     this.updateMeasureOfOlGeometry(olGeometry, measure);
   }
 
