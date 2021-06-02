@@ -24,20 +24,24 @@ export class GeoDataDBService {
       const compressObs = this.compression.compressBlob(object);
       compressObs.pipe(first())
         .subscribe((compressedObject) => {
-          console.log("data compressed", compressedObject);
-          this.dbService.update(this.dbName, { url: url, object: compressedObject })
+          console.log('data compressed', compressedObject);
+          const dbData: DbData = {
+            url,
+            object: compressedObject
+          };
+          this.dbService.update(this.dbName, dbData);
         });
     }
 
-    this.dbService.update(this.dbName, {url: url, object: object})
+    this.dbService.update(this.dbName, {url, object})
       .pipe(first())
-      .subscribe(() => console.log("db updated"));
+      .subscribe(() => console.log('db updated'));
   }
 
   get(url: string): Observable<Blob> {
     return this.dbService.getByID(this.dbName, url).pipe(
       map((data) => {
-        console.log("database get:", url);
+        console.log('database get:', url);
         if (data) {
           const object = (data as DbData).object;
           if (object instanceof Blob) {
@@ -45,7 +49,7 @@ export class GeoDataDBService {
           }
           return this.compression.decompressBlob(object);
         }
-        console.log("not in db")
+        console.log('not in db');
       })
     );
   }

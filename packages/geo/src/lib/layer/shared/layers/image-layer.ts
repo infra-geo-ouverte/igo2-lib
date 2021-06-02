@@ -78,15 +78,15 @@ export class ImageLayer extends Layer {
     //   tile.getImage().src = imageUrl;
     // };
     // xhr.send();
-    
+
     // const intercepted = interceptor.intercept(request.clone(), src)
     // if (!intercepted) {
       //   //sub.unsubscribe();
       //   tile.getImage().src = src;
       //   return;
       // }
-      
-    const request = this.geoNetwork.get(src)
+
+    const request = this.geoNetwork.get(src);
     request.pipe(first()).subscribe((blob) => {
       if (blob) {
         const urlCreator = window.URL;
@@ -94,12 +94,8 @@ export class ImageLayer extends Layer {
         tile.getImage().src = imageUrl;
         tile.getImage().onload = function() {
           URL.revokeObjectURL(this.src);
-        }
+        };
       }
-      // } else {
-      //   console.log("image tile state changed to error")
-      //   //tile.setState(TileState.ERROR);
-      // }
     });
   }
 }

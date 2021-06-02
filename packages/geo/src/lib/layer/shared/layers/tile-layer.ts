@@ -33,7 +33,7 @@ export class TileLayer extends Layer {
   constructor(
     options: TileLayerOptions,
     private geoNetwork: GeoNetworkService ) {
-    
+
     super(options);
 
     this.watcher = new TileWatcher(this);
@@ -45,16 +45,16 @@ export class TileLayer extends Layer {
       source: this.options.source.ol as olSourceTile
     });
 
-    const tile = new olLayerTile(olOptions);
-    
-    (tile.getSource() as any).setTileLoadFunction((tile, src)=> {
+    const newTile = new olLayerTile(olOptions);
+
+    (newTile.getSource() as any).setTileLoadFunction((tile, src) => {
       this.customLoader(tile, src);
-    })
-    return tile
+    });
+    return newTile;
   }
 
   private customLoader(tile: olLayerTile, src: string) {
-    console.log("Get of tile: ", src);
+    console.log('Get of tile: ', src);
     const request = this.geoNetwork.get(src);
     request.pipe(first())
     .subscribe((blob) => {
@@ -68,7 +68,7 @@ export class TileLayer extends Layer {
           URL.revokeObjectURL(this.src);
         };
       } else {
-        console.log("tile state to error changed");
+        console.log('tile state to error changed');
         tile.setState(TileState.ERROR);
       }
     });

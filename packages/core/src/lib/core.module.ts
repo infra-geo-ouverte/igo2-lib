@@ -15,15 +15,11 @@ const dbConfig: DBConfig = {
   name: 'igo2DB',
   version: 1,
   objectStoresMeta: [{
-    store:'contexts',
-    storeConfig: {keyPath: 'url', autoIncrement:false},
-    storeSchema: []
-  }, {
-    store:'geoData',
-    storeConfig: {keyPath: 'url', autoIncrement:false},
+    store: 'geoData',
+    storeConfig: { keyPath: 'url', autoIncrement: false },
     storeSchema: []
   }]
-}
+};
 
 @NgModule({
   imports: [
