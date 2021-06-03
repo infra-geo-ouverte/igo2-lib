@@ -39,7 +39,7 @@ import {
 } from './layers';
 
 import { StyleService } from './style.service';
-import { MessageService } from '@igo2/core';
+import { LanguageService, MessageService } from '@igo2/core';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +50,7 @@ export class LayerService {
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
     private messageService: MessageService,
+    private languageService: LanguageService,
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
 
@@ -119,7 +120,7 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.messageService, this.authInterceptor);
+    return new ImageLayer(layerOptions, this.messageService, this.languageService, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {

@@ -13,6 +13,7 @@ import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
+import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
 import {
@@ -58,7 +59,7 @@ export class CapabilitiesService {
     esriJSON: new EsriJSON()
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private mapService: MapService) {}
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
@@ -252,9 +253,8 @@ export class CapabilitiesService {
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
-
     const extent = layer.EX_GeographicBoundingBox ?
-        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', 'EPSG:3857') :
+        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', this.mapService.getMap().projection) :
         undefined;
 
     let queryFormat: QueryFormat;

@@ -11,7 +11,8 @@ import { WMSDataSource } from '../../../datasource/shared/datasources/wms-dataso
 import { Layer } from './layer';
 import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
-import { MessageService } from '@igo2/core';
+import { LanguageService, MessageService } from '@igo2/core';
+
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
   public options: ImageLayerOptions;
@@ -21,7 +22,8 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
-    public messageService?: MessageService,
+    public messageService: MessageService,
+    private languageService: LanguageService,
     public authInterceptor?: AuthInterceptor
   ) {
     super(options, messageService, authInterceptor);
@@ -37,7 +39,7 @@ export class ImageLayer extends Layer {
     const image = new olLayerImage(olOptions);
     if (this.authInterceptor) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src, this.authInterceptor);
+        this.customLoader(tile, src, this.authInterceptor, this.messageService, this.languageService);
       });
     }
 
@@ -53,7 +55,7 @@ export class ImageLayer extends Layer {
     super.setMap(map);
   }
 
-  private customLoader(tile, src, interceptor) {
+  private customLoader(tile, src, interceptor, messageService, languageService) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
@@ -68,6 +70,15 @@ export class ImageLayer extends Layer {
 
     xhr.onload = function() {
       const arrayBufferView = new Uint8Array((this as any).response);
+      const responseString = new TextDecoder().decode(arrayBufferView);
+      if (responseString.includes('ServiceExceptionReport')) {
+        messageService.error(languageService.translate.instant(
+          'igo.geo.dataSource.optionsApiUnavailable'
+        ),
+        languageService.translate.instant(
+          'igo.geo.dataSource.unavailableTitle'
+        ));
+      }
       const blob = new Blob([arrayBufferView], { type: 'image/png' });
       const urlCreator = window.URL;
       const imageUrl = urlCreator.createObjectURL(blob);
