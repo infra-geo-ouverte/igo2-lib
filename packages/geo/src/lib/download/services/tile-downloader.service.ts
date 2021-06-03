@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { GeoDataDBService } from '@igo2/core';
 import { first } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, Observer } from 'rxjs';
+import { CompressedData } from '@igo2/core/lib/storage/compressedData.interface';
 
 interface Tile {
   X: number;
@@ -46,10 +47,16 @@ function getNumberOfTreeNodes(tile: Tile, maxDepth: number) {
   providedIn: 'root'
 })
 export class TileDownloaderService {
-  readonly maxHeigthDelta: number = 2;
+  readonly maxHeigthDelta: number = 4;
+  readonly simultaneousRequests: number = 20;
+
+  private urlQueue: string[] = [];
+  private isDownloading: boolean = false;
+
   public urlGenerator: (coord: [number, number, number],
                         pixelRatio, projection) => string;
-
+  
+  
   constructor(
     private http: HttpClient,
     private geoDB: GeoDataDBService) { }
@@ -97,21 +104,48 @@ export class TileDownloaderService {
     this.initURLGenerator(tileGrid, src);
     const rootTile: Tile = {X: coord3D[1], Y: coord3D[2], Z: coord3D[0]};
     const tiles = this.generateTiles(rootTile);
-    const urls = tiles.map((tile) => {
-      return this.generateURL(tile);
+    
+    tiles.forEach((tile) => {
+      const url = this.generateURL(tile);
+      this.urlQueue.push(url)
     });
 
-    console.log(urls);
-    const requests = urls.map((url) => {
-      return this.http.get(url, { responseType: 'blob' });
-    });
+    console.log("Queue :", this.urlQueue.length);
+    // if not already downloading start downloading
+    if (!this.isDownloading) {
+      // put count here
+      console.log("starting download sequence!");
+      this.isDownloading = true;
+      this.downloadSequence();
+    }
+  }
 
-    requests.map((request, i) => {
-        return request.pipe(first()).subscribe((blob) => {
-          this.geoDB.update(urls[i], blob);
+  private downloadSequence() {
+    const downloadTile = (url: string) => {
+      return (observer: Observer<any>) => {
+        const request = this.http.get(url, { responseType: 'blob' });
+        request.subscribe((blob) => {
+          this.geoDB.update(url, blob).subscribe(() => {
+            observer.next('done downloading ' + url);
+            observer.complete();
+          });
         });
-    });
+      }
+    }
 
-    forkJoin(requests).pipe(first()).subscribe(request => console.log('downloading done'));
+    const nextDownload = () => {
+      const url =  this.urlQueue.shift();
+      if (!url) {
+        this.isDownloading = false;
+        console.log("downloading is done");
+        return;
+      }
+      const request = new Observable(downloadTile(url));
+      request.subscribe(() => nextDownload())
+    }
+    
+    for (let i = 0; i < this.simultaneousRequests; i++) {
+      nextDownload();
+    }
   }
 }
