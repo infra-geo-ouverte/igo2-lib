@@ -54,7 +54,6 @@ export class TileLayer extends Layer {
   }
 
   private customLoader(tile: olLayerTile, src: string) {
-    console.log('Get of tile: ', src);
     const request = this.geoNetwork.get(src);
     request.pipe(first())
     .subscribe((blob) => {
