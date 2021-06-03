@@ -72,7 +72,7 @@ export function addLayerAndFeaturesStyledToMap(
   styleListService: StyleListService,
   styleService: StyleService,
   layerId?: string,
-  imposedSourceOptions? 
+  imposedSourceOptions?
 ): VectorLayer {
   const olFeatures = features.map((feature: Feature) =>
     featureToOl(feature, map.projection)
