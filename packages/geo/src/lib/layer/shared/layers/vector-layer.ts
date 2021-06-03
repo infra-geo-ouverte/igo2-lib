@@ -17,7 +17,6 @@ import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
 import { MessageService } from '@igo2/core';
-import { Optional } from '@angular/core';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource

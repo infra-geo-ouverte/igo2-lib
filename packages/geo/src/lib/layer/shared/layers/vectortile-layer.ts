@@ -9,7 +9,7 @@ import { TileWatcher } from '../../utils';
 import { AuthInterceptor } from '@igo2/auth';
 import { IgoMap } from '../../../map';
 import { MessageService } from '@igo2/core';
-import { Optional } from '@angular/core';
+
 export class VectorTileLayer extends Layer {
   public dataSource: MVTDataSource;
   public options: VectorTileLayerOptions;
