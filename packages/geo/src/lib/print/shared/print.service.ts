@@ -105,11 +105,11 @@ export class PrintService {
   }
 
   /**
-    * Add measure overlay on the map on the document when the measure layer is present
-    * @param  doc - Pdf document where legend will be added
-    * @param  map - Map of the app
-    * @param  margins - Page margins
-    */
+   * Add measure overlay on the map on the document when the measure layer is present
+   * @param  doc - Pdf document where measure tooltip will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
   private async handleMeasureLayer(
     doc: jsPDF,
     map: IgoMap,
