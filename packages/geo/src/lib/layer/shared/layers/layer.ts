@@ -174,16 +174,16 @@ export abstract class Layer {
       this.layerSyncWatcher = new LayerSyncWatcher(this, this.map);
       this.layerSyncWatcher.subscribe(() => {});
       this.hasBeenVisible$$ = this.hasBeenVisible$.subscribe(() => {
-        if (this.options.messages && this.visible){
+        if (this.options.messages && this.visible) {
           this.options.messages.map(message => {
             message.title = message.title;
             message.text = message.text;
             this.messageService.message(message as Message);
-            });
-          }
-    });
+          });
+        }
+      });
     } else {
-    this.layerSyncWatcher.unsubscribe();
+      this.layerSyncWatcher.unsubscribe();
     }
   }
 
