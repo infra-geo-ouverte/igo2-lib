@@ -13,8 +13,8 @@ import { TileDebugDataSource } from '../../../datasource/shared/datasources/tile
 
 import { Layer } from './layer';
 import { TileLayerOptions } from './tile-layer.interface';
+
 import { MessageService } from '@igo2/core';
-import { Optional } from '@angular/core';
 export class TileLayer extends Layer {
   public dataSource:
     | OSMDataSource
