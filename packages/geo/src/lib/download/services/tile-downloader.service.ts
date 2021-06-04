@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GeoDataDBService } from '@igo2/core';
+import { GeoDataDBService, GeoNetworkService } from '@igo2/core';
 import { first } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { forkJoin, Observable, Observer } from 'rxjs';
@@ -59,6 +59,7 @@ export class TileDownloaderService {
   
   constructor(
     private http: HttpClient,
+    private network: GeoNetworkService,
     private geoDB: GeoDataDBService) { }
 
   private generateTiles(tile: Tile): Tile[] {
@@ -101,6 +102,10 @@ export class TileDownloaderService {
   }
 
   public downloadFromCoord(coord3D: [number, number, number], tileGrid, src) {
+    if (!this.network.isOnline()) {
+      return;
+    }
+
     this.initURLGenerator(tileGrid, src);
     const rootTile: Tile = {X: coord3D[1], Y: coord3D[2], Z: coord3D[0]};
     const tiles = this.generateTiles(rootTile);
@@ -114,7 +119,7 @@ export class TileDownloaderService {
     // if not already downloading start downloading
     if (!this.isDownloading) {
       // put count here
-      console.log("starting download sequence!");
+      console.log('starting download sequence!');
       this.isDownloading = true;
       this.downloadSequence();
     }
