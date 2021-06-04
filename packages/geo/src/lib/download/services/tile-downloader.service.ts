@@ -50,8 +50,11 @@ export class TileDownloaderService {
   readonly maxHeigthDelta: number = 4;
   readonly simultaneousRequests: number = 20;
 
+  public progression: Observable<number>;
   private urlQueue: string[] = [];
   private isDownloading: boolean = false;
+
+  private currentDownloads: number = 0;
 
   public urlGenerator: (coord: [number, number, number],
                         pixelRatio, projection) => string;
@@ -79,7 +82,11 @@ export class TileDownloaderService {
   }
 
   private generateURL(tile: Tile) {
-    return this.urlGenerator([tile.Z, tile.X, tile.Y], 0, 0);
+    try {
+      return this.urlGenerator([tile.Z, tile.X, tile.Y], 0, 0);
+    } catch(e) {
+      return undefined;
+    }
   }
 
   public downloadRegion(region: Tile[], domain: string) {
@@ -112,17 +119,21 @@ export class TileDownloaderService {
     
     tiles.forEach((tile) => {
       const url = this.generateURL(tile);
-      this.urlQueue.push(url)
+      if (url) {
+        this.urlQueue.push(url)
+      }
     });
 
     console.log("Queue :", this.urlQueue.length);
     // if not already downloading start downloading
     if (!this.isDownloading) {
       // put count here
+      this.currentDownloads = tiles.length;
       console.log('starting download sequence!');
       this.isDownloading = true;
       this.downloadSequence();
     }
+    this.currentDownloads += tiles.length;
   }
 
   private downloadSequence() {
@@ -145,12 +156,23 @@ export class TileDownloaderService {
         console.log("downloading is done");
         return;
       }
+      console.log(this.getProgression())
       const request = new Observable(downloadTile(url));
-      request.subscribe(() => nextDownload())
+      request.subscribe(() => nextDownload());
     }
     
-    for (let i = 0; i < this.simultaneousRequests; i++) {
+    const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
+    for (let i = 0; i < nWorkers; i++) {
       nextDownload();
     }
+  }
+
+  public getProgression() {
+    return 1 - this.urlQueue.length / this.currentDownloads;
+  }
+
+  public downloadEstimate(nTiles: number) {
+    const averageBytesPerTile = 13375; // empiric for 5600 tiles in db
+    return nTiles * averageBytesPerTile;
   }
 }
