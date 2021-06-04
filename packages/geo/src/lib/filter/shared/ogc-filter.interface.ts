@@ -46,6 +46,7 @@ export interface OgcFiltersOptions {
   pushButtons?: IgoOgcSelector;
   checkboxes?: IgoOgcSelector;
   radioButtons?: IgoOgcSelector;
+  selectMulti?: IgoOgcSelector;
   interfaceOgcFilters?: OgcInterfaceFilterOptions[];
   filtered?: boolean;
   advancedOgcFilters?: boolean;
@@ -56,7 +57,7 @@ export interface OgcFiltersOptions {
 export interface IgoOgcSelector  {
   groups: SelectorGroup[];
   bundles: OgcSelectorBundle[];
-  selectorType: 'pushButton' | 'checkbox' | 'radioButton';
+  selectorType: 'pushButton' | 'checkbox' | 'radioButton' | 'selectMulti';
   order?: number;
 }
 
@@ -73,7 +74,8 @@ export interface OgcSelectorBundle  {
   title?: string;
   logical?: string;
   vertical?: boolean;
-  selectors: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[];
+  multiple?: boolean;
+  selectors: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[] | OgcSelectMulti[];
 }
 
 export interface OgcPushButton {
@@ -92,6 +94,13 @@ export interface OgcCheckbox {
 }
 
 export interface OgcRadioButton {
+  title: string;
+  tooltip?: string;
+  enabled?: boolean;
+  filters: IgoOgcFilterObject;
+}
+
+export interface OgcSelectMulti {
   title: string;
   tooltip?: string;
   enabled?: boolean;
