@@ -238,6 +238,12 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
               hashtags: ['borne', 'bornes', 'sumi']
             },
             {
+              title: 'igo.geo.search.icherche.type.hq',
+              value: 'hq',
+              enabled: types.indexOf('hq') !== -1,
+              hashtags: ['hq']
+            },
+            {
               title: 'igo.geo.search.icherche.type.cadastre',
               value: 'cadastre',
               enabled: types.indexOf('cadastre') !== -1,
@@ -407,7 +413,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
       delete queryParams.loc;
     }
 
-    if (queryParams.q.indexOf('#') !== -1) {
+    if (/#[A-Za-z]+/.test(queryParams.q)) {
       queryParams.type = 'lieux';
     }
 
@@ -561,7 +567,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
    */
   private computeTerm(term: string): string {
     // Keep hashtags for "lieux"
-    const hashtags = term.match(/(#[^\s]+)/g) || [];
+    const hashtags = term.match(/(#[A-Za-z]+)/g) || [];
     let keep = false;
     keep = hashtags.some((hashtag) => {
       const hashtagKey = hashtag.substring(1);
@@ -579,7 +585,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
     });
 
     if (!keep) {
-      term = term.replace(/(#[^\s]*)/g, '');
+      term = term.replace(/(#[A-Za-z]+)/g, '');
     }
 
     return term.replace(/[^\wÀ-ÿ !\-\+\(\)\.\/½¼¾,'#]+/g, '');
