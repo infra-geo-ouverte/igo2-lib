@@ -130,7 +130,7 @@
               </div>
               <mat-option *ngFor="let ogcSelectMulti of bundle.selectors"
                 [matTooltip]="getToolTip(ogcSelectMulti)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
-                (onSelectionChange)="onSelectionChange(ogcSelectMulti, selector.selectorType); optionClick()"
+                (onSelectionChange)="optionClick()"
                 [value]="ogcSelectMulti">{{ogcSelectMulti.title}}
               </mat-option>
             </mat-select>

@@ -1,5 +1,4 @@
 import {
-  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -23,6 +22,7 @@ import { debounceTime } from 'rxjs/operators';
 import { OgcFilterOperator } from '../shared/ogc-filter.enum';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'igo-ogc-filter-selection',
@@ -62,7 +62,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   public color = 'primary';
   public allSelected = false;
   public selectMulti = new FormControl();
-  public enableds = [];
+  public enableds$ = new BehaviorSubject([]);
 
   public applyFiltersTimeout;
 
@@ -120,10 +120,31 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.form.patchValue({ selectMultiGroup: value });
   }
 
+  get enableds() {
+    return this.enableds$.value;
+  }
+
+  set enableds(value) {
+    this.enableds$.next(value);
+    clearTimeout(this.applyFiltersTimeout);
+    this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
+      compSelect.selectors.forEach(selector => {
+        if (value.includes(selector)) {
+          selector.enabled = true;
+        } else {
+          selector.enabled = false;
+        }
+      });
+    });
+
+    this.applyFiltersTimeout = setTimeout(() => {
+      this.applyFilters();
+    }, 750);
+  }
+
   constructor(
     private ogcFilterService: OGCFilterService,
     private formBuilder: FormBuilder,
-    // private cdRef: ChangeDetectorRef
   ) {
     this.ogcFilterWriter = new OgcFilterWriter();
     this.buildForm();
@@ -186,7 +207,6 @@ export class OgcFilterSelectionComponent implements OnInit {
           this.datasource.options.ogcFilters.selectMulti.groups.find(group => group.enabled) ||
           this.datasource.options.ogcFilters.selectMulti.groups[0];
         this.enableds = this.getSelectMultiEnabled();
-        console.log(this.enableds);
       }
       this.applyFilters();
     }
@@ -240,8 +260,14 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   private getSelectMultiEnabled() {
-    const enableds = this.currentSelectMultiGroup.computedSelectors[0].selectors.filter(selector => selector.enabled);
-    console.log(enableds);
+    const enableds = [];
+    this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
+      compSelect.selectors.forEach(selector => {
+        if (selector.enabled) {
+          enableds.push(selector);
+        }
+      });
+    });
     return enableds;
   }
 
@@ -308,7 +334,6 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   onSelectionChange(currentOgcSelection?, selectorType?) {
-    console.log("onslectionChange");
     clearTimeout(this.applyFiltersTimeout);
     if (selectorType === 'radioButton') {
       this.currentRadioButtonsGroup.computedSelectors.forEach(compSelect => {
