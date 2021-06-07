@@ -40,6 +40,18 @@
   </ng-container>
 
   <ng-content select="[igoLayerItemToolbar]"></ng-content>
+    <button
+      *ngIf="activeLayerIsValid(activeLayer)"
+      class="zoomLayer-button"
+      color="primary"
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.layer.zoomLayer' | translate"
+      (click)="zoomLayerExtents(activeLayer)">
+      <mat-icon matBadgeColor="primary" matBadgeSize="medium" svgIcon="magnify-scan"></mat-icon>
+    </button>
+
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <button
       class="opacity-button"
@@ -126,6 +138,18 @@
       (click)="selectAll()">
       {{selectAllCheck ? ('igo.geo.layer.deselectAll' | translate) :
                     ('igo.geo.layer.selectAll' | translate)}}
+    </button>
+
+    <button
+      *ngIf="layersChecked.length !== 0 && activeLayersAreValid(layersChecked)"
+      class="zoomLayer-button"
+      color="primary"
+      mat-icon-button
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.layer.zoomLayers' | translate"
+      (click)="zoomLayersExtents(layersChecked)">
+      <mat-icon matBadgeColor="primary" matBadgeSize="medium" svgIcon="magnify-scan"></mat-icon>
     </button>
 
     <button
