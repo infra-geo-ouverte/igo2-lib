@@ -371,7 +371,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayDistance(toggle: boolean) {
     this.displayDistance = toggle;
     this.onDisplayDistance();
-    toggle ? (this.storageService.set('distanceToggle', true, StorageScope.SESSION)) : (this.storageService.set('distanceToggle', false, StorageScope.SESSION));
+    toggle ? (this.storageService.set('distanceToggle', true, StorageScope.SESSION)) :
+     (this.storageService.set('distanceToggle', false, StorageScope.SESSION));
   }
 
   /**
