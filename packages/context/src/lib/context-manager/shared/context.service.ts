@@ -600,6 +600,10 @@ export class ContextService {
     if (this.contextMessage) {
       this.messageService.remove(this.contextMessage.id);
     }
+    if (this.context$.value && context.uri && this.context$.value.uri !== context.uri) {
+      this.messageService.remove();
+    }
+
     context.messages = context.messages ? context.messages : [];
     context.messages.push(context.message);
     context.messages.map(message => {
