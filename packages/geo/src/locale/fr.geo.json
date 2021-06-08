@@ -563,6 +563,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Périmètre en mètres"
         },
+        "layerTitle": "Mesure à la carte",
         "area": "Superficie",
         "areaHeader": "Superficie",
         "length": "Distance",

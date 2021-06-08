@@ -563,6 +563,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Perimeter in meters"
         },
+        "layerTitle": "Measure on map",
         "area": "Area",
         "areaHeader": "Area",
         "length": "Length",
