@@ -22,7 +22,7 @@ import OlFeature from 'ol/Feature';
 import OlOverlay from 'ol/Overlay';
 import { unByKey } from 'ol/Observable';
 
-import { LanguageService } from '@igo2/core';
+import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
 import type { EntityTableComponent } from '@igo2/common';
 import { uuid } from '@igo2/utils';
@@ -294,7 +294,8 @@ export class MeasurerComponent implements OnInit, OnDestroy {
 
   constructor(
     private languageService: LanguageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private storageService: StorageService
   ) {}
 
   /**
@@ -309,6 +310,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.toggleDrawControl();
     this.onToggleTooltips(this.showTooltips);
     this.updateTooltipsOfOlSource(this.store.source.ol);
+    this.checkDistanceAreaToggle();
   }
 
   /**
@@ -369,6 +371,17 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   onToggleDisplayDistance(toggle: boolean) {
     this.displayDistance = toggle;
     this.onDisplayDistance();
+    toggle ? (this.storageService.set('distanceToggle', true, StorageScope.SESSION)) : (this.storageService.set('distanceToggle', false, StorageScope.SESSION));
+  }
+
+  /**
+   * Set this.displayDistance in a current value
+   * @internal
+   */
+  checkDistanceAreaToggle(){
+    if (this.storageService.get('distanceToggle') === false){
+      this.displayDistance = false;
+    }
   }
 
   /**
@@ -476,15 +489,28 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     const store = this.store;
 
     const layer = new VectorLayer({
-      title: 'Measures',
+      title: this.languageService.translate.instant('igo.geo.measure.layerTitle'),
+      id: `igo-measures-${uuid()}`,
       zIndex: 200,
       source: new FeatureDataSource(),
       style: createMeasureLayerStyle(),
       showInLayerList: true,
-      exportable: true,
-      browsable: false
+      exportable: false,
+      browsable: false,
+      workspace: { enabled: false }
     });
     tryBindStoreLayer(store, layer);
+
+    layer.visible$.subscribe(visible => {
+      if (visible) {
+        Array.from(document.getElementsByClassName('igo-map-tooltip-measure')).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-measure-by-display'));
+      }
+      else {
+        Array.from(document.getElementsByClassName('igo-map-tooltip-measure')).map((value: Element) =>
+        value.classList.add('igo-map-tooltip-measure-by-display'));
+      }
+    });
 
     tryAddLoadingStrategy(store);
 
