@@ -1,15 +1,16 @@
 import { CUSTOM_ELEMENTS_SCHEMA, ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DownloadToolComponent } from './download-tool';
+import { MatCarouselModule } from '@ngbmodule/material-carousel';
+import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { IgoCustomHtmlModule } from '@igo2/common/public_api';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    MatCarouselModule,
+    MatCardModule,
+    MatButtonModule
   ],
   declarations: [DownloadToolComponent],
   exports: [DownloadToolComponent],

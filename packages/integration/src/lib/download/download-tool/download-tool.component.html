@@ -1,3 +1,30 @@
-<p>
-  DOWNLOAD PAGE WORKS
-</p>
+<mat-card class="download-card">
+  <mat-card-title>Download</mat-card-title>
+  <mat-carousel
+  timings="250ms ease-in"
+  [autoplay]="true"
+  interval="5000"
+  color="accent"
+  maxWidth="auto"
+  proportion="40"
+  slides="5"
+  [loop]="true"
+  [hideArrows]="false"
+  [hideIndicators]="false"
+  [useKeyboard]="true"
+  [useMouseWheel]="false"
+  orientation="ltr">
+
+    <mat-carousel-slide
+    *ngFor="let tile of tilesToDownload; let i = index"
+    [image]="tile.url"
+    overlayColor="#00000040"
+    [hideOverlay]="false"></mat-carousel-slide>
+   
+  </mat-carousel>
+
+  <mat-card-actions>
+    <button mat-button #download (click)=onDownloadClick()>Download</button>
+    <button mat-button #cancel (click)=onCancelClick()>Cancel</button>
+  </mat-card-actions>
+</mat-card>

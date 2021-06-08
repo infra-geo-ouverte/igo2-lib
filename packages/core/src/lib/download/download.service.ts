@@ -58,6 +58,4 @@ export class DownloadService {
     // the DownloadService of remembering all the urls therefore saving space
     // in indexedDB
   }
-
-  
 }
