@@ -14,6 +14,7 @@ import { IgoAppSearchModule } from './search/search.module';
 import { IgoAppFilterModule } from './filter/filter.module';
 import { IgoAppAboutModule } from './about/about.module';
 import { IgoAppStorageModule } from './storage/storage.module';
+import { IgoAppDownloadModule } from './download/download.module';
 
 @NgModule({
   imports: [],
@@ -32,7 +33,8 @@ import { IgoAppStorageModule } from './storage/storage.module';
     IgoAppPrintModule,
     IgoAppSearchModule,
     IgoAppFilterModule,
-    IgoAppAboutModule
+    IgoAppAboutModule,
+    IgoAppDownloadModule
   ]
 })
 export class IgoIntegrationModule {}

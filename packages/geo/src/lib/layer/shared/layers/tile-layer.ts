@@ -67,7 +67,6 @@ export class TileLayer extends Layer {
           URL.revokeObjectURL(this.src);
         };
       } else {
-        console.log('tile state to error changed');
         tile.setState(TileState.ERROR);
       }
     });

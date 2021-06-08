@@ -38,9 +38,8 @@ function getTreeNodes(root: Tile, maxDepth: number) {
   return [root].concat(nextChildren);
 }
 
-function getNumberOfTreeNodes(tile: Tile, maxDepth: number) {
-  const h = maxDepth - tile.Z;
-  return (Math.pow(4, h + 1) - 1) / 3;
+function getNumberOfTreeNodes(deltaHeigth: number) {
+  return (Math.pow(4, deltaHeigth + 1) - 1) / 3;
 }
 
 @Injectable({
@@ -49,6 +48,7 @@ function getNumberOfTreeNodes(tile: Tile, maxDepth: number) {
 export class TileDownloaderService {
   readonly maxHeigthDelta: number = 4;
   readonly simultaneousRequests: number = 20;
+  readonly averageBytesPerTile = 13375;
 
   public progression: Observable<number>;
   private urlQueue: string[] = [];
@@ -172,7 +172,11 @@ export class TileDownloaderService {
   }
 
   public downloadEstimate(nTiles: number) {
-    const averageBytesPerTile = 13375; // empiric for 5600 tiles in db
-    return nTiles * averageBytesPerTile;
+    return nTiles * this.averageBytesPerTile;
+  }
+
+  public downloadEstimatePerDepth(depth: number) {
+    const nTiles = getNumberOfTreeNodes(depth);
+    return this.downloadEstimate(nTiles);
   }
 }

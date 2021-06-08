@@ -28,13 +28,13 @@ export class GeoNetworkService {
   }
 
   private getOnline(url: string): Observable<Blob> {
-    console.log("Online get")
+    //console.log("Online get")
     const request = this.http.get(url, { responseType: 'blob' });
     return request;
   }
 
   private getOffline(url: string): Observable<Blob>  {
-    console.log("Offline get")
+    //console.log("Offline get")
     return this.geoDataDB.get(url);
   }
 
@@ -53,11 +53,11 @@ export class GeoNetworkService {
       })
     })
     .subscribe(() => {
-      console.log("ping good");
+      //console.log("ping good");
       this.networkOnline = true;
     },
     () => {
-      console.log("ping error");
+      //console.log("ping error");
       this.networkOnline = false;
     });
   }

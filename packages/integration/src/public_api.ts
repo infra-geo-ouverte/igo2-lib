@@ -19,6 +19,7 @@ export * from './lib/measure/measure.module';
 export * from './lib/print/print.module';
 export * from './lib/search/search.module';
 export * from './lib/tool/tool.module';
+export * from './lib/download/download.module';
 
 export * from './lib/about';
 export * from './lib/analytics';
@@ -35,3 +36,4 @@ export * from './lib/print';
 export * from './lib/search';
 export * from './lib/tool';
 export * from './lib/storage';
+export * from './lib/download'
