@@ -75,6 +75,7 @@ export interface OgcSelectorBundle  {
   logical?: string;
   vertical?: boolean;
   multiple?: boolean;
+  unfiltered?: boolean;
   selectors: OgcPushButton[] | OgcCheckbox[] | OgcRadioButton[] | OgcSelectMulti[];
 }
 
