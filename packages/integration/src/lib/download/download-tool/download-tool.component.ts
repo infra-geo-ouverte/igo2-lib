@@ -4,6 +4,7 @@ import { ToolComponent } from '@igo2/common';
 import { LayerListToolService, TileDownloaderService } from '@igo2/geo';
 import { timeStamp } from 'console';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
+import { Subscription } from 'rxjs';
 import { ToolState } from '../../tool';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
@@ -37,6 +38,8 @@ export class DownloadToolComponent implements OnInit {
   urlToDownload: Set<string> = new Set();
   tilesToDownload: TileToDownload[] = [];
   depth: number = 0;
+  progression$$: Subscription;
+
   constructor(
     private downloadService: TileDownloaderService,
     private downloadState: DownloadState
@@ -79,6 +82,13 @@ export class DownloadToolComponent implements OnInit {
   }
 
   public onDownloadClick() {
+    if (!this.progression$$) {
+      this.progression$$ = this.downloadService.progression$
+        .subscribe((progression: number) => {
+          console.log(progression);
+        });
+    }
+
     for (const tile of this.tilesToDownload) { // change for foreach
       this.downloadService
       .downloadFromCoord(

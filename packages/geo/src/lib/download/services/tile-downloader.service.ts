@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { GeoDataDBService, GeoNetworkService } from '@igo2/core';
 import { first } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { forkJoin, Observable, Observer } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Observer } from 'rxjs';
 import { CompressedData } from '@igo2/core/lib/storage/compressedData.interface';
 
 interface Tile {
@@ -50,7 +50,7 @@ export class TileDownloaderService {
   readonly simultaneousRequests: number = 20;
   readonly averageBytesPerTile = 13375;
 
-  public progression: Observable<number>;
+  readonly progression$: BehaviorSubject<number> = new BehaviorSubject(undefined);
   private urlQueue: string[] = [];
   private isDownloading: boolean = false;
 
@@ -155,7 +155,7 @@ export class TileDownloaderService {
         console.log('downloading is done');
         return;
       }
-      console.log(this.getProgression());
+      this.progression$.next(this.getProgression());
       const request = new Observable(downloadTile(url));
       request.subscribe(() => nextDownload());
     };
