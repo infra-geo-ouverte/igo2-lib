@@ -19,6 +19,7 @@ import { LegendMapViewOptions, OutputLayerLegend } from '../../layer/shared/laye
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
+import { Console } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,7 @@ export class PrintService {
     const paperFormat: string = options.paperFormat;
     const resolution = +options.resolution; // Default is 96
     const orientation = options.orientation;
+    const legendPostion = options.legendPosition;
 
     this.activityId = this.activityService.register();
     const doc = new jsPDF({
@@ -86,8 +88,12 @@ export class PrintService {
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           await this.addScale(doc, map, margins);
-          if (options.showLegend === true) {
-            await this.addLegend(doc, map, margins, resolution);
+          if (options.legendPosition !== 'none') {
+            if (['topleft', 'topright', 'bottomleft', 'bottomright'].indexOf(options.legendPosition) > -1 ) {
+              await this.addLegendSamePage(doc, map, margins, resolution, options.legendPosition);
+            } else if (options.legendPosition === 'newpage') {
+              await this.addLegend(doc, map, margins, resolution);
+            }
           } else {
             await this.saveDoc(doc);
           }
@@ -131,39 +137,33 @@ export class PrintService {
         observer.complete();
         return;
       }
-
       // Define important style to be sure that all container is convert
       // to image not just visible part
       html += '<style media="screen" type="text/css">';
-      html += '.html2canvas-container { width: ' + width;
-      html += 'mm !important; height: 2000px !important; }';
+      html += '.html2canvas-container { width: ' + width + 'mm !important; height: 2000px !important; }';
+      html += 'table.tableLegend {table-layout: auto;}';
+      html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
       html += '</style>';
-      html += '<font size="2" face="Courier New" >';
-      html +=
-        '<div style="display:grid;grid-template-columns:' +
-        width / 2 +
-        'mm ' +
-        width / 2 +
-        'mm;max-width:' +
-        width +
-        'mm">';
+      // la taille de la police est reduite par la suite (globalement pour la taille de la legende)
+      // cela permet d'avoir une taille relative correcte entre les elements ici
+      // mais aussi de reduire globalement la taille de la légende dans la carte de maniere plus simple
+      html += '<font size="3" face="Times" >';
+      html += '<div class="styleLegend">';
+      html += '<table class="tableLegend" >';
 
       // For each legend, define an html table cell
       const images$ = legends.map((legend) =>
         this.getDataImage(legend.url).pipe(
           rxMap((dataImage) => {
-            let htmlImg =
-              '<table border=1 style="vertical-align:top">';
-            htmlImg += '<tr><th width="170px">' + legend.title + '</th>';
-            htmlImg +=
-              '<td><img class="printImageLegend" src="' + dataImage + '">';
-            htmlImg += '</td></tr></table>';
+            let htmlImg = '<tr><td>' + legend.title.toUpperCase() + '</td></tr>';
+            htmlImg  += '<tr><td><img src="' + dataImage + '"></td></tr>';
             return htmlImg;
           })
         )
       );
       forkJoin(images$).subscribe((dataImages) => {
         html = dataImages.reduce((acc, current) => (acc += current), html);
+        html += '</table>';
         html += '</div>';
         observer.next(html);
         observer.complete();
@@ -386,16 +386,80 @@ export class PrintService {
     });
 
     if (canvas) {
+      const pourcentageReduction = 0.85;
+      const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution, pourcentageReduction
+        * (25.4 * canvas.height) / resolution];
       let imgData;
-      const position = 10;
-      imgData = canvas.toDataURL('image/png');
       doc.addPage();
-      const imageSize = this.getImageSizeToFitPdf(doc, canvas, margins);
-      doc.addImage(imgData, 'PNG', 10, position, imageSize[0], imageSize[1]);
-      await this.saveDoc(doc);
+      imgData = canvas.toDataURL('image/png');
+      doc.addImage(imgData, 'PNG', 10, 10, imageSize[0], imageSize[1]);
       div.parentNode.removeChild(div); // remove temp div (IE style)
     }
+
+    await this.saveDoc(doc);
+
   }
+
+  /**
+   * Add the legend to the document
+   * @param  doc - Pdf document where legend will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
+     private async addLegendSamePage(
+      doc: jsPDF,
+      map: IgoMap,
+      margins: Array<number>,
+      resolution: number,
+      legendPosition: string
+    ) {
+      // Get html code for the legend
+      const width = doc.internal.pageSize.width;
+      const html = await this.getLayersLegendHtml(
+        map,
+        width,
+        resolution
+      ).toPromise();
+      // If no legend, save the map directly
+      if (html === '') {
+        await this.saveDoc(doc);
+        return true;
+      }
+      // Create div to contain html code for legend
+      const div = window.document.createElement('div');
+      div.style.position = 'absolute';
+      div.style.top = '0';
+      // Add html code to convert in the new window
+      window.document.body.appendChild(div);
+      div.innerHTML = html;
+      await this.timeout(1);
+      const canvas = await html2canvas(div, { useCORS: true }).catch((e) => {
+        console.log(e);
+      });
+      let marginsLegend;
+      if (canvas) {
+        const pourcentageReduction = 0.85;
+        const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution,
+           pourcentageReduction * (25.4 * canvas.height) / resolution];
+        // aligne la legende en bas a droite
+        if ( legendPosition === 'bottomright') {
+          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1], margins[1],
+           margins[2], doc.internal.pageSize.width - margins[1] - imageSize[0]];
+        } else if (legendPosition === 'topright') {
+          marginsLegend = [margins[0], margins[1], doc.internal.pageSize.height - margins[0] - imageSize[1],
+          doc.internal.pageSize.width - margins[1] - imageSize[0] ];
+        } else if (legendPosition === 'bottomleft') {
+          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1],
+          doc.internal.pageSize.width - margins[3] - imageSize[0], margins[2], margins[3] ];
+        } else if (legendPosition === 'topleft') {
+          marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
+           doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
+        }
+        this.addCanvas(doc, canvas, marginsLegend); // this adds scales and attributions
+        div.parentNode.removeChild(div); // remove temp div (IE style)
+        await this.saveDoc(doc);
+      }
+    }
 
   /**
    * Add scale and attributions on the map on the document

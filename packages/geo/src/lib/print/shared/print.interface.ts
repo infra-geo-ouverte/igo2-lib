@@ -3,7 +3,8 @@ import {
   PrintPaperFormat,
   PrintOrientation,
   PrintResolution,
-  PrintSaveImageFormat
+  PrintSaveImageFormat,
+  PrintLegendPosition
 } from './print.type';
 
 export interface PrintOptions {
@@ -11,6 +12,7 @@ export interface PrintOptions {
   paperFormat: PrintPaperFormat;
   orientation: PrintOrientation;
   resolution: PrintResolution;
+  legendPosition: PrintLegendPosition;
   title?: string;
   subtitle?: string;
   comment?: string;
