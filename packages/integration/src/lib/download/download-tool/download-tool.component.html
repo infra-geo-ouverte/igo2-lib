@@ -1,15 +1,15 @@
 <mat-card class="download-card">
-  <mat-card-title>Download</mat-card-title>
+  <mat-label>Download</mat-card-title>
   <mat-carousel
   timings="250ms ease-in"
   [autoplay]="true"
   interval="5000"
   color="accent"
   maxWidth="auto"
-  proportion="40"
+  proportion="100"
   slides="5"
   [loop]="true"
-  [hideArrows]="false"
+  [hideArrows]="true"
   [hideIndicators]="false"
   [useKeyboard]="true"
   [useMouseWheel]="false"
@@ -22,6 +22,35 @@
     [hideOverlay]="false"></mat-carousel-slide>
    
   </mat-carousel>
+  <p>
+    <mat-form-field appearance="legacy">
+      <mat-label>name</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </p>
+  <div>
+    <div><mat-label>Depth </mat-label><mat-label>{{depth}}</mat-label></div>
+    <div><mat-slider 
+      #depthSlider
+      (input)="onDepthSliderChange()"
+      min="0" 
+      max="5" 
+      step="1" 
+      value="0" 
+      thumbLabel
+      tickInterval = "auto">
+    </mat-slider></div>
+  </div>
+  <div>
+    <div>
+      <mat-label>Estimated Download Size in MB </mat-label>
+      <div>{{ sizeEstimationInMB() }}</div>
+    </div>
+    <div>
+      <mat-label>Number of tiles to download </mat-label>
+      <div>{{ numberOfTilesToDownload() }}</div>
+    </div>
+  </div>
 
   <mat-card-actions>
     <button mat-button #download (click)=onDownloadClick()>Download</button>

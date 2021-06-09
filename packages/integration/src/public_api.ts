@@ -36,4 +36,4 @@ export * from './lib/print';
 export * from './lib/search';
 export * from './lib/tool';
 export * from './lib/storage';
-export * from './lib/download'
+export * from './lib/download';

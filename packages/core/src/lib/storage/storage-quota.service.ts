@@ -44,5 +44,5 @@ export class StorageQuotaService {
       }
     ));
     return quotaObs;
-  }  
+  }
 }

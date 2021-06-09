@@ -58,21 +58,20 @@ export class TileDownloaderService {
 
   public urlGenerator: (coord: [number, number, number],
                         pixelRatio, projection) => string;
-  
-  
+
   constructor(
     private http: HttpClient,
     private network: GeoNetworkService,
     private geoDB: GeoDataDBService) { }
 
-  private generateTiles(tile: Tile): Tile[] {
-    return getTreeNodes(tile, tile.Z + this.maxHeigthDelta);
+  private generateTiles(tile: Tile, depth: number): Tile[] {
+    return getTreeNodes(tile, tile.Z + depth);
   }
 
-  private generateTilesRegion(region: Tile[]) {
+  private generateTilesRegion(region: Tile[], depth: number) {
     let tiles = [];
     region.forEach((tile) => {
-      tiles = tiles.concat(this.generateTiles(tile));
+      tiles = tiles.concat(this.generateTiles(tile, depth));
     });
     return tiles;
   }
@@ -84,14 +83,14 @@ export class TileDownloaderService {
   private generateURL(tile: Tile) {
     try {
       return this.urlGenerator([tile.Z, tile.X, tile.Y], 0, 0);
-    } catch(e) {
+    } catch (e) {
       return undefined;
     }
   }
 
-  public downloadRegion(region: Tile[], domain: string) {
+  public downloadRegion(region: Tile[], depth: number, domain: string) {
     if (window.navigator.onLine) {
-      const tiles = this.generateTilesRegion(region);
+      const tiles = this.generateTilesRegion(region, depth);
       const urls = tiles.map((tile) => {
         return this.generateURL(tile);
       });
@@ -108,23 +107,23 @@ export class TileDownloaderService {
     }
   }
 
-  public downloadFromCoord(coord3D: [number, number, number], tileGrid, src) {
+  public downloadFromCoord(coord3D: [number, number, number], depth: number, tileGrid, src) {
     if (!this.network.isOnline()) {
       return;
     }
 
     this.initURLGenerator(tileGrid, src);
     const rootTile: Tile = {X: coord3D[1], Y: coord3D[2], Z: coord3D[0]};
-    const tiles = this.generateTiles(rootTile);
-    
+    const tiles = this.generateTiles(rootTile, depth);
+
     tiles.forEach((tile) => {
       const url = this.generateURL(tile);
       if (url) {
-        this.urlQueue.push(url)
+        this.urlQueue.push(url);
       }
     });
 
-    console.log("Queue :", this.urlQueue.length);
+    console.log('Queue :', this.urlQueue.length);
     // if not already downloading start downloading
     if (!this.isDownloading) {
       // put count here
@@ -146,21 +145,21 @@ export class TileDownloaderService {
             observer.complete();
           });
         });
-      }
-    }
+      };
+    };
 
     const nextDownload = () => {
       const url =  this.urlQueue.shift();
       if (!url) {
         this.isDownloading = false;
-        console.log("downloading is done");
+        console.log('downloading is done');
         return;
       }
-      console.log(this.getProgression())
+      console.log(this.getProgression());
       const request = new Observable(downloadTile(url));
       request.subscribe(() => nextDownload());
-    }
-    
+    };
+
     const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
     for (let i = 0; i < nWorkers; i++) {
       nextDownload();
@@ -178,5 +177,9 @@ export class TileDownloaderService {
   public downloadEstimatePerDepth(depth: number) {
     const nTiles = getNumberOfTreeNodes(depth);
     return this.downloadEstimate(nTiles);
+  }
+
+  public numberOfTiles(depth: number) {
+    return getNumberOfTreeNodes(depth);
   }
 }

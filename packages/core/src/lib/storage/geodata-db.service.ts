@@ -31,8 +31,8 @@ export class GeoDataDBService {
           this.dbService.update(this.dbName, dbData);
         });
     }
-    const dbRequest = this.dbService.update(this.dbName, {url, object})
-      
+    const dbRequest = this.dbService.update(this.dbName, {url, object});
+
     dbRequest.pipe(first())
       .subscribe(() => console.log('db updated'));
 

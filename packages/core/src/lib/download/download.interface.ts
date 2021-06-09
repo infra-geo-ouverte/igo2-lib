@@ -1,5 +1,3 @@
-import { StringUtils } from "@igo2/utils/lib";
-
 export interface Region {
     name: string;
     zIndex: number;

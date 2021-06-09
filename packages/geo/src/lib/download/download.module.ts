@@ -20,7 +20,7 @@ import { TileDownloaderService } from './services/tile-downloader.service';
   ],
   exports: [DownloadButtonComponent],
   declarations: [DownloadButtonComponent],
-  providers:[TileDownloaderService]
+  providers: [TileDownloaderService]
 })
 export class IgoDownloadModule {
   static forRoot(): ModuleWithProviders<IgoDownloadModule> {

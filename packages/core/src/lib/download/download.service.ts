@@ -18,12 +18,12 @@ export class DownloadService {
   ) { }
   // need on right click method for the controler
   public downloadSelectedRegion() {
-    // need to ajust download depth of tileDownloader 
+    // need to ajust download depth of tileDownloader
   }
 
   public addToSelectedRegion(parentCoords: [number, number, number]) {
     // const url = generateUrl
-    // 
+    //
   }
 
   public updateRegion(name: string) {
@@ -48,7 +48,7 @@ export class DownloadService {
 
   public createRegion(name: string) {
     // this.selectedRegion = new Region
-    
+
   }
 
   public deleteRegion(name: string) {
