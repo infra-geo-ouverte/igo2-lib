@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { ToolComponent } from '@igo2/common';
 import { LayerListToolService, TileDownloaderService } from '@igo2/geo';
-import { timeStamp } from 'console';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { Subscription } from 'rxjs';
-import { ToolState } from '../../tool';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
+import { MessageService } from '@igo2/core';
+import { first, map } from 'rxjs/operators';
+import { filter } from 'jszip';
 
 // need to do the TODOs in downloadService beforehand
 // need to make prototype of the interface
@@ -36,25 +38,44 @@ function getNumberOfTiles(deltaHeight: number) {
 })
 export class DownloadToolComponent implements OnInit {
   @ViewChild('depthSlider') slider: MatSlider;
+  private progressBarPlaceHolder: MatProgressBar;
+  @ViewChild('progressBar') progressBar;
+
   urlToDownload: Set<string> = new Set();
   tilesToDownload: TileToDownload[] = [];
   depth: number = 0;
+  
   progressionCount$$: Subscription;
-  private _isDownloading: boolean = false;
+  progression$: Observable<number>;
   _progression: number = 0;
+  
+  isDownloading$$: Subscription;
+  isDownloading$: Observable<boolean>;
+  private _isDownloading: boolean = false;
+  
   private _nTilesToDownload: number;
-
+  
   constructor(
     private downloadService: TileDownloaderService,
-    private downloadState: DownloadState
+    private downloadState: DownloadState,
+    private messageService: MessageService 
   ) {
     this.downloadState.addNewTile$.subscribe((tile: TransferedTile) => {
       if (!tile) {
         return;
       }
-      console.log('tile received :', tile);
       this.addTileToDownload(tile.coord, tile.templateUrl, tile.tileGrid);
     });
+
+    // this.progression$ = this.downloadService.progression$
+    //                       .pipe(map((value: number) => {
+    //                         return value / this._nTilesToDownload;
+    //                       }));
+    this.isDownloading$ = this.downloadService.isDownloading$;
+    this.progression$ = this.downloadService.progression$
+        .pipe(map((value: number) => {
+          return Math.round(value / this._nTilesToDownload * 100);
+        }));               
   }
 
   ngOnInit() {
@@ -76,6 +97,7 @@ export class DownloadToolComponent implements OnInit {
 
       const firstZ = firstTile.coord[0];
       if (z !== firstZ) {
+        this.messageService.error("The tile you selected is not on the same level as the previous ones");
         // maybe put error message for user in download prompt
         return;
       }
@@ -92,20 +114,10 @@ export class DownloadToolComponent implements OnInit {
     if (this.tilesToDownload.length === 0) {
       return;
     }
-    this._isDownloading = true;
+
     this._nTilesToDownload = this.numberOfTilesToDownload();
-    if (!this.progressionCount$$) {
-      this.progressionCount$$ = this.downloadService.progression$
-        .subscribe((progression: number) => {
-          this._progression = progression / this._nTilesToDownload;
-          console.log(this._progression);
-          if (this._progression === 1) {
-            this._isDownloading = false;
-            this._progression = 0;
-            // message to say download is done
-          }
-        });
-    }
+    
+    //need to put message when download is done
 
     for (const tile of this.tilesToDownload) { // change for foreach
       this.downloadService
@@ -130,7 +142,7 @@ export class DownloadToolComponent implements OnInit {
   public sizeEstimationInMB() {
     const space = this.downloadService.downloadEstimatePerDepth(this.depth);
     const nDownloads = this.tilesToDownload.length;
-    return space * nDownloads * 1e-6;
+    return (space * nDownloads * 1e-6).toFixed(4);
   }
 
   public numberOfTilesToDownload() {

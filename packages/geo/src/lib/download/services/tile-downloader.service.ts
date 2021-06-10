@@ -51,8 +51,10 @@ export class TileDownloaderService {
   readonly averageBytesPerTile = 13375;
 
   readonly progression$: BehaviorSubject<number> = new BehaviorSubject(undefined);
+  readonly isDownloading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   private urlQueue: string[] = [];
-  private isDownloading: boolean = false;
+  private _isDownloading: boolean = false;
 
   private currentDownloads: number = 0;
   private downloadCount: number = 0;
@@ -130,7 +132,8 @@ export class TileDownloaderService {
       // put count here
       this.currentDownloads = tiles.length;
       console.log('starting download sequence!');
-      this.isDownloading = true;
+      this._isDownloading = true;
+      this.isDownloading$.next(true);
       this.downloadSequence();
     }
     this.currentDownloads += tiles.length;
@@ -152,7 +155,8 @@ export class TileDownloaderService {
     const nextDownload = () => {
       const url =  this.urlQueue.shift();
       if (!url) {
-        this.isDownloading = false;
+        this._isDownloading = false;
+        this.isDownloading$.next(false);
         console.log('downloading is done');
         return;
       }
@@ -182,5 +186,9 @@ export class TileDownloaderService {
 
   public numberOfTiles(depth: number) {
     return getNumberOfTreeNodes(depth);
+  }
+
+  get isDownloading() {
+    return this._isDownloading;
   }
 }

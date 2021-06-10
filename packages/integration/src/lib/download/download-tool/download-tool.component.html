@@ -20,12 +20,11 @@
     [hideOverlay]="false"></mat-carousel-slide>
    
   </mat-carousel>
-  <p>
-    <mat-form-field appearance="legacy">
-      <mat-label>name</mat-label>
-      <input matInput>
-    </mat-form-field>
-  </p>
+  <mat-form-field appearance="legacy">
+    <mat-label>Region Name</mat-label>
+    <input matInput>
+  </mat-form-field>
+  <br>
   <div>
     <div><mat-label>Depth </mat-label><mat-label>{{depth}}</mat-label></div>
     <div><mat-slider 
@@ -50,10 +49,10 @@
       <div>{{ numberOfTilesToDownload() }}</div>
     </div>
   </div>
-  <div *ngIf="isDownloading">
+  <div *ngIf="isDownloading$ | async">
     <br>
     <mat-label>Progression</mat-label>
-    <mat-progress-bar  mode="determinate" value="{{progression}}"></mat-progress-bar>
+    <mat-progress-bar #progressBar mode="determinate" [value]="progression$ | async"></mat-progress-bar>
   </div>
   <div class="button-row">
     <button mat-button #download (click)=onDownloadClick() [disabled]="disableButton">Download</button>
