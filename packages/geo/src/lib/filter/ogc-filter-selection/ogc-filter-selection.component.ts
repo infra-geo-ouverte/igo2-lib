@@ -62,7 +62,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   public color = 'primary';
   public allSelected = false;
   public selectMulti = new FormControl();
-  public enabledsMulti$ = new BehaviorSubject([]);
+  public enableds$ = new BehaviorSubject(undefined);
 
   public applyFiltersTimeout;
 
@@ -120,12 +120,13 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.form.patchValue({ selectMultiGroup: value });
   }
 
-  get enabledsMulti() {
-    return this.enabledsMulti$.value;
+  get enableds() {
+    return this.enableds$.value;
   }
 
-  set enabledsMulti(value) {
-    this.enabledsMulti$.next(value);
+  set enableds(value) {
+    console.log('value', value);
+    this.enableds$.next(value);
     clearTimeout(this.applyFiltersTimeout);
     this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
       if (compSelect.multiple || Array.isArray(value)) {
@@ -208,7 +209,9 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.currentSelectMultiGroup =
           this.datasource.options.ogcFilters.selectMulti.groups.find(group => group.enabled) ||
           this.datasource.options.ogcFilters.selectMulti.groups[0];
-        this.enabledsMulti = this.getSelectMultiEnabled();
+        console.log('this.currentSelectMultiGroup', this.currentSelectMultiGroup);
+        this.enableds = this.getSelectMultiEnabled();
+        console.log('this.enableds', this.enableds);
       }
       this.applyFilters();
     }
@@ -262,15 +265,28 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   private getSelectMultiEnabled() {
-    const enabledsMulti = [];
+    const enableds = [];
+    let enabled = undefined;
     this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
-      compSelect.selectors.forEach(selector => {
-        if (selector.enabled) {
-          enabledsMulti.push(selector);
-        }
-      });
+      console.log('compSelect', compSelect);
+      if (compSelect.multiple) {
+        compSelect.selectors.forEach(selector => {
+          if (selector.enabled) {
+            enableds.push(selector);
+          }
+        });
+        console.log('enableds', enableds);
+        return enableds;
+      } else {
+        compSelect.selectors.forEach(selector => {
+          if (selector.enabled) {
+            enabled = selector;
+          }
+        });
+        console.log('enabled', enabled);
+        return enabled;
+      }
     });
-    return enabledsMulti;
   }
 
   getToolTip(selector): string  {
@@ -356,7 +372,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   emptySelectMulti() {
-    this.enabledsMulti = [];
+    this.enableds = [];
   }
 
   toggleAllSelection() {

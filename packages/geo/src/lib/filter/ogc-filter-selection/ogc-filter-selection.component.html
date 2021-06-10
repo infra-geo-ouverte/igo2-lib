@@ -126,7 +126,7 @@
             <div *ngIf="bundle.multiple; else notMulti">
               <mat-select
                 #selection [multiple]="bundle.multiple" [placeholder]="bundle.title"
-                [formControl]="selectMulti" [(ngModel)]="enabledsMulti">
+                [formControl]="selectMulti" [(ngModel)]="enableds">
                 <div class="checkboxes mat-typography">
                   <mat-checkbox *ngIf="bundle.multiple"
                     [(ngModel)]="allSelected" [ngModelOptions]="{standalone: true}"
@@ -143,7 +143,7 @@
             <ng-template #notMulti>
               <mat-select
                 [placeholder]="bundle.title"
-                [formControl]="selectMulti" [(ngModel)]="enabledsMulti">
+                [formControl]="selectMulti" [(ngModel)]="enableds">
                 <mat-option *ngIf="bundle.unfiltered"
                   [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
                   (onSelectionChange)="emptySelectMulti()">{{ 'igo.geo.filter.resetFilters' | translate }}
