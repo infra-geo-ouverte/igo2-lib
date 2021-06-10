@@ -80,12 +80,15 @@
       </div>
       <ng-container *ngFor="let bundle of currentRadioButtonsGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
+        <mat-button *ngIf="bundle.unfiltered"
+          mat-icon-button
+          color="warn"
+          [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
+          (click)="emptyRadioButtons()">
+          <mat-icon svgIcon="filter-remove"></mat-icon>
+        </mat-button>
         <mat-radio-group
           formControlName="radioButtons" class="mat-typography">
-          <mat-radio-button *ngIf="bundle.unfiltered"
-            [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
-            (change)="emptyRadioButtons()">{{ 'igo.geo.filter.resetFilters' | translate }}
-          </mat-radio-button>
           <mat-radio-button *ngFor="let ogcRadioButton of bundle.selectors"
             [matTooltip]="getToolTip(ogcRadioButton)" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
             [checked]="ogcRadioButton.enabled" (change)="onSelectionChange(ogcRadioButton, selector.selectorType)"
@@ -122,6 +125,13 @@
       <ng-container *ngFor="let bundle of currentSelectMultiGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
         <div class="groupsSelector">
+          <mat-button *ngIf="bundle.unfiltered"
+            mat-icon-button
+            color="warn"
+            [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
+            (click)="emptySelectMulti()">
+            <mat-icon svgIcon="filter-remove"></mat-icon>
+          </mat-button>
           <mat-form-field>
             <div *ngIf="bundle.multiple; else notMulti">
               <mat-select
@@ -143,11 +153,7 @@
             <ng-template #notMulti>
               <mat-select
                 [placeholder]="bundle.title"
-                [formControl]="selectMulti" [(ngModel)]="enableds">
-                <mat-option *ngIf="bundle.unfiltered"
-                  [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
-                  (onSelectionChange)="emptySelectMulti()">{{ 'igo.geo.filter.resetFilters' | translate }}
-                </mat-option>
+                [formControl]="selectMulti" [(ngModel)]="enabled">
                 <mat-option *ngFor="let ogcSelectMulti of bundle.selectors"
                   [matTooltip]="getToolTip(ogcSelectMulti)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
                   [value]="ogcSelectMulti">{{ogcSelectMulti.title}}
