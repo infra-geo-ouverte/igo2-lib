@@ -266,7 +266,7 @@ export class OgcFilterSelectionComponent implements OnInit {
 
   private getSelectMultiEnabled() {
     const enableds = [];
-    let enabled = undefined;
+    let enabled;
     this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
       console.log('compSelect', compSelect);
       if (compSelect.multiple) {
