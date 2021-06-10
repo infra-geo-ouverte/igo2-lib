@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleRequiredValidator } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { MatInputModule } from '@angular/material/input';
     MatCardModule,
     MatSliderModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressBarModule
   ],
   declarations: [DownloadToolComponent],
   exports: [DownloadToolComponent],

@@ -1,5 +1,3 @@
-<mat-card class="download-card">
-  <mat-card-title>Download</mat-card-title>
   <mat-carousel
   timings="250ms ease-in"
   [autoplay]="true"
@@ -33,6 +31,7 @@
     <div><mat-slider 
       #depthSlider
       (input)="onDepthSliderChange()"
+      [disabled]="disableButton"
       min="0" 
       max="5" 
       step="1" 
@@ -51,9 +50,12 @@
       <div>{{ numberOfTilesToDownload() }}</div>
     </div>
   </div>
-
-  <mat-card-actions>
-    <button mat-button #download (click)=onDownloadClick()>Download</button>
-    <button mat-button #cancel (click)=onCancelClick()>Cancel</button>
-  </mat-card-actions>
-</mat-card>
+  <div *ngIf="isDownloading">
+    <br>
+    <mat-label>Progression</mat-label>
+    <mat-progress-bar  mode="determinate" value="{{progression}}"></mat-progress-bar>
+  </div>
+  <div class="button-row">
+    <button mat-button #download (click)=onDownloadClick() [disabled]="disableButton">Download</button>
+    <button mat-button #cancel (click)=onCancelClick() [disabled]="disableButton">Cancel</button>
+  <div>

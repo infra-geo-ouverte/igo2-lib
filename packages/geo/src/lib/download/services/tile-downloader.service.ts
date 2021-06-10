@@ -55,7 +55,7 @@ export class TileDownloaderService {
   private isDownloading: boolean = false;
 
   private currentDownloads: number = 0;
-
+  private downloadCount: number = 0;
   public urlGenerator: (coord: [number, number, number],
                         pixelRatio, projection) => string;
 
@@ -126,6 +126,7 @@ export class TileDownloaderService {
     console.log('Queue :', this.urlQueue.length);
     // if not already downloading start downloading
     if (!this.isDownloading) {
+      this.downloadCount = 0;
       // put count here
       this.currentDownloads = tiles.length;
       console.log('starting download sequence!');
@@ -155,7 +156,7 @@ export class TileDownloaderService {
         console.log('downloading is done');
         return;
       }
-      this.progression$.next(this.getProgression());
+      this.progression$.next(++this.downloadCount);
       const request = new Observable(downloadTile(url));
       request.subscribe(() => nextDownload());
     };
@@ -166,7 +167,7 @@ export class TileDownloaderService {
     }
   }
 
-  public getProgression() {
+  public getBufferProgression() {
     return 1 - this.urlQueue.length / this.currentDownloads;
   }
 

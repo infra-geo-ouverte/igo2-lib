@@ -31,20 +31,27 @@ function getNumberOfTiles(deltaHeight: number) {
 })
 @Component({
   selector: 'igo-download-tool',
-  templateUrl: './download-tool.component.html'
+  templateUrl: './download-tool.component.html',
+  styleUrls: ['./download-tool.component.scss']
 })
 export class DownloadToolComponent implements OnInit {
   @ViewChild('depthSlider') slider: MatSlider;
   urlToDownload: Set<string> = new Set();
   tilesToDownload: TileToDownload[] = [];
   depth: number = 0;
-  progression$$: Subscription;
+  progressionCount$$: Subscription;
+  private _isDownloading: boolean = false;
+  _progression: number = 0;
+  private _nTilesToDownload: number;
 
   constructor(
     private downloadService: TileDownloaderService,
     private downloadState: DownloadState
   ) {
     this.downloadState.addNewTile$.subscribe((tile: TransferedTile) => {
+      if (!tile) {
+        return;
+      }
       console.log('tile received :', tile);
       this.addTileToDownload(tile.coord, tile.templateUrl, tile.tileGrid);
     });
@@ -82,10 +89,21 @@ export class DownloadToolComponent implements OnInit {
   }
 
   public onDownloadClick() {
-    if (!this.progression$$) {
-      this.progression$$ = this.downloadService.progression$
+    if (this.tilesToDownload.length === 0) {
+      return;
+    }
+    this._isDownloading = true;
+    this._nTilesToDownload = this.numberOfTilesToDownload();
+    if (!this.progressionCount$$) {
+      this.progressionCount$$ = this.downloadService.progression$
         .subscribe((progression: number) => {
-          console.log(progression);
+          this._progression = progression / this._nTilesToDownload;
+          console.log(this._progression);
+          if (this._progression === 1) {
+            this._isDownloading = false;
+            this._progression = 0;
+            // message to say download is done
+          }
         });
     }
 
@@ -119,5 +137,17 @@ export class DownloadToolComponent implements OnInit {
     const nTilesPerDownload = this.downloadService.numberOfTiles(this.depth);
     const nDownloads = this.tilesToDownload.length;
     return nTilesPerDownload * nDownloads;
+  }
+
+  get isDownloading(): boolean {
+    return this._isDownloading;
+  }
+
+  get progression(): number {
+    return Math.round(this._progression * 100);
+  }
+
+  get disableButton() {
+    return this._isDownloading || this.tilesToDownload.length === 0;
   }
 }
