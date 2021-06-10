@@ -17,7 +17,8 @@
         "shareMap": "Partager",
         "timeFilter": "Filtre temporel",
         "about": "À propos",
-        "spatialFilter": "Filtre spatial"
+        "spatialFilter": "Filtre spatial",
+        "download":"Téléchargement"
       },
       "searchResultsTool": {
         "noResults": "Aucun résultat",
