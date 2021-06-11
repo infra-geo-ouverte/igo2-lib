@@ -80,15 +80,12 @@
       </div>
       <ng-container *ngFor="let bundle of currentRadioButtonsGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
-        <mat-button *ngIf="bundle.unfiltered"
-          mat-icon-button
-          color="warn"
-          [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
-          (click)="emptyRadioButtons()">
-          <mat-icon svgIcon="filter-remove"></mat-icon>
-        </mat-button>
         <mat-radio-group
           formControlName="radioButtons" class="mat-typography">
+          <mat-radio-button *ngIf="bundle.unfiltered"
+            [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
+            (change)="emptyRadioButtons()">{{ 'igo.geo.filter.resetFilters' | translate }}
+          </mat-radio-button>
           <mat-radio-button *ngFor="let ogcRadioButton of bundle.selectors"
             [matTooltip]="getToolTip(ogcRadioButton)" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
             [checked]="ogcRadioButton.enabled" (change)="onSelectionChange(ogcRadioButton, selector.selectorType)"
@@ -125,7 +122,7 @@
       <ng-container *ngFor="let bundle of currentSelectMultiGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
         <div class="groupsSelector">
-          <mat-button *ngIf="bundle.unfiltered"
+          <mat-button *ngIf="bundle.unfiltered && !bundle.multiple"
             mat-icon-button
             color="warn"
             [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
