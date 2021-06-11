@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Layer, TileLayer } from '../../layer';
 
 import { IgoMap } from '../shared/map';
@@ -9,19 +9,18 @@ import { getRenderPixel } from 'ol/render';
   templateUrl: './swipe-control.component.html',
   styleUrls: ['./swipe-control.component.scss']
 })
-export class SwipeControlComponent {
+export class SwipeControlComponent implements OnInit {
 
   @Input() map: IgoMap;
 
-  
   constructor() { }
-  public swipe : any;
-  private layers : Layer[];
+  public swipe: any;
+  private layers: Layer[];
   private layer: Layer;
-  
-  ngOnInit(){
+
+  ngOnInit() {
     this.getSwipe();
-    this.eventListener();   
+    this.eventListener();
   }
 
   getSwipe(){
@@ -30,17 +29,17 @@ export class SwipeControlComponent {
 
   eventListener(){
     this.swipe.addEventListener(
-      'input', () =>{
+      'input', () => {
         this.getListOfLayers();
         this.renderLayers(this.layers);
         this.map.ol.render();
       }, false);
-      
+
   }
 
   getListOfLayers(){
     this.layers = this.map.layers;
-    console.log("getlistOfLayers : this.layers = ", this.layers);
+    console.log('getlistOfLayers : this.layers = ', this.layers);
   }
 
   renderLayers(layers: Layer[]){
@@ -54,8 +53,8 @@ export class SwipeControlComponent {
 
   prerender(idLayer: Layer){
     idLayer.ol.on('prerender', (event) => {
-      let ctx = event.context;
-      let width = ctx.canvas.width * this.swipe.value / 1000;
+      const ctx = event.context;
+      const width = ctx.canvas.width * this.swipe.value / 1000;
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, 0, width, ctx.canvas.height);
@@ -65,8 +64,8 @@ export class SwipeControlComponent {
   }
 
   postrender(idLayer: Layer){
-    idLayer.ol.on('postrender', (event) =>{
-      let ctx = event.context;
+    idLayer.ol.on('postrender', (event) => {
+      const ctx = event.context;
       ctx.restore();
     });
   }
