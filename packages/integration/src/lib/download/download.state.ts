@@ -9,12 +9,25 @@ import { TransferedTile } from './TransferedTile';
 export class DownloadState {
 
     readonly addNewTile$: BehaviorSubject<TransferedTile> = new BehaviorSubject(undefined);
+    private _openedWithMouse: boolean;
 
     addNewTileToDownload(tile: TransferedTile) {
         if (!tile) {
             return;
         }
-        console.log('tile to transfer: ', tile);
         this.addNewTile$.next(tile);
+    }
+
+    set openedWithMouse(value: boolean) {
+        this._openedWithMouse = value;
+    }
+
+    get openedWithMouse() {
+        if (this._openedWithMouse === undefined) {
+            return true;
+        }
+        const out = this._openedWithMouse;
+        this._openedWithMouse = false;
+        return out;
     }
 }

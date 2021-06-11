@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { ToolComponent } from '@igo2/common';
@@ -8,14 +8,15 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
 import { MessageService } from '@igo2/core';
-import { first, map } from 'rxjs/operators';
+import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
 import { filter } from 'jszip';
+import { DownloadToolState } from './dowload-tool.state';
 
 // need to do the TODOs in downloadService beforehand
 // need to make prototype of the interface
 // need to create the all the methods
 
-interface TileToDownload {
+export interface TileToDownload {
   url: string;
   coord: [number, number, number];
   templateUrl: string;
@@ -36,50 +37,81 @@ function getNumberOfTiles(deltaHeight: number) {
   templateUrl: './download-tool.component.html',
   styleUrls: ['./download-tool.component.scss']
 })
-export class DownloadToolComponent implements OnInit {
+
+export class DownloadToolComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('depthSlider') slider: MatSlider;
   private progressBarPlaceHolder: MatProgressBar;
   @ViewChild('progressBar') progressBar;
 
-  urlToDownload: Set<string> = new Set();
-  tilesToDownload: TileToDownload[] = [];
-  depth: number = 0;
+  urlsToDownload: Set<string> = this.downloadToolState.urlsToDownload;
+  tilesToDownload: TileToDownload[] = this.downloadToolState.tilesToDownload;
+  depth: number = this.downloadToolState.depth;
   
-  progressionCount$$: Subscription;
   progression$: Observable<number>;
   _progression: number = 0;
   
   isDownloading$$: Subscription;
   isDownloading$: Observable<boolean>;
-  private _isDownloading: boolean = false;
   
+  private addNewTile$$: Subscription;
+
   private _nTilesToDownload: number;
   
+
   constructor(
     private downloadService: TileDownloaderService,
     private downloadState: DownloadState,
-    private messageService: MessageService 
+    private downloadToolState: DownloadToolState,
+    private messageService: MessageService
   ) {
-    this.downloadState.addNewTile$.subscribe((tile: TransferedTile) => {
-      if (!tile) {
-        return;
-      }
-      this.addTileToDownload(tile.coord, tile.templateUrl, tile.tileGrid);
-    });
+    const openedWithMouse = this.downloadState.openedWithMouse;
+    const numberToSkip = openedWithMouse ? 0 : 1;
+    this.addNewTile$$ = this.downloadState.addNewTile$
+      .pipe(skip(numberToSkip))
+      .subscribe((tile: TransferedTile) => {
+        if (!tile) {
+          return;
+        }
+        this.addTileToDownload(tile.coord, tile.templateUrl, tile.tileGrid);
+      });
 
-    // this.progression$ = this.downloadService.progression$
-    //                       .pipe(map((value: number) => {
-    //                         return value / this._nTilesToDownload;
-    //                       }));
     this.isDownloading$ = this.downloadService.isDownloading$;
-    this.progression$ = this.downloadService.progression$
+
+    if (!this.downloadToolState.progression$) {
+      this.progression$ = this.downloadService.progression$
         .pipe(map((value: number) => {
           return Math.round(value / this._nTilesToDownload * 100);
-        }));               
+        }));
+    } else {
+      this.progression$ = this.downloadToolState.progression$;
+    }
+    
   }
 
   ngOnInit() {
 
+  }
+
+  ngAfterViewInit() {
+    this.slider.value = this.depth;
+  }
+
+  ngOnDestroy() {
+    this.saveState();
+    this.addNewTile$$.unsubscribe();
+  }
+
+  private loadState() {
+    this.urlsToDownload = this.downloadToolState.urlsToDownload;
+    this.tilesToDownload = this.downloadToolState.tilesToDownload;
+    this.depth = this.downloadToolState.depth;
+  }
+
+  private saveState() {
+    this.downloadToolState.depth = this.depth;
+    this.downloadToolState.tilesToDownload = this.tilesToDownload;
+    this.downloadToolState.urlsToDownload = this.urlsToDownload;
+    this.downloadToolState.progression$ = this.progression$;
   }
 
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
@@ -90,7 +122,7 @@ export class DownloadToolComponent implements OnInit {
       const z = coord[0];
       const firstTile = this.tilesToDownload[0];
       if (!firstTile) {
-        this.urlToDownload.add(url);
+        this.urlsToDownload.add(url);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid });
         return;
       }
@@ -98,12 +130,13 @@ export class DownloadToolComponent implements OnInit {
       const firstZ = firstTile.coord[0];
       if (z !== firstZ) {
         this.messageService.error("The tile you selected is not on the same level as the previous ones");
-        // maybe put error message for user in download prompt
         return;
       }
-      if (!this.urlToDownload.has(url)) {
-        this.urlToDownload.add(url);
+      if (!this.urlsToDownload.has(url)) {
+        this.urlsToDownload.add(url);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid });
+      } else {
+        this.messageService.error("The tile is already selected");
       }
     } catch (e) {
       return;
@@ -117,7 +150,18 @@ export class DownloadToolComponent implements OnInit {
 
     this._nTilesToDownload = this.numberOfTilesToDownload();
     
-    //need to put message when download is done
+    if (this.isDownloading$$) {
+      this.isDownloading$$.unsubscribe();
+    }
+
+    this.isDownloading$$ = this.isDownloading$
+      .pipe(skip(1))
+      .subscribe((value) => {
+        this.downloadToolState.isDownloading = value;
+        if (!value) {
+          this.messageService.success('Your download is done');
+        }
+      });
 
     for (const tile of this.tilesToDownload) { // change for foreach
       this.downloadService
@@ -131,8 +175,8 @@ export class DownloadToolComponent implements OnInit {
   }
 
   public onCancelClick() {
-    this.tilesToDownload = [];
-    this.urlToDownload = new Set();
+    this.tilesToDownload = new Array();
+    this.urlsToDownload = new Set();
   }
 
   public onDepthSliderChange() {
@@ -152,7 +196,7 @@ export class DownloadToolComponent implements OnInit {
   }
 
   get isDownloading(): boolean {
-    return this._isDownloading;
+    return this.downloadToolState.isDownloading;
   }
 
   get progression(): number {
@@ -160,6 +204,6 @@ export class DownloadToolComponent implements OnInit {
   }
 
   get disableButton() {
-    return this._isDownloading || this.tilesToDownload.length === 0;
+    return this.downloadToolState.isDownloading || this.tilesToDownload.length === 0;
   }
 }
