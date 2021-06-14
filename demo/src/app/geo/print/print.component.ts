@@ -13,7 +13,6 @@ export class AppPrintComponent {
     controls: {
       attribution: {
         collapsed: false,
-        //collapsible: false;
       }
     }
   });

@@ -37,6 +37,8 @@ export class AppSearchComponent implements OnInit, OnDestroy {
 
   public igoSearchPointerSummaryEnabled: boolean = false;
 
+  public termSplitter: string = '|';
+
   public map = new IgoMap({
     overlay: true,
     controls: {
@@ -114,7 +116,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
     const newResults = this.searchStore.entities$.value
       .filter((result: SearchResult) => result.source !== event.research.source)
       .concat(results);
-    this.searchStore.load(newResults);
+    this.searchStore.updateMany(newResults);
   }
 
   onSearchSettingsChange() {
@@ -145,7 +147,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.map.overlay.setFeatures(
+    this.map.searchResultsOverlay.setFeatures(
       [layer.data] as Feature[],
       FeatureMotion.Default
     );
@@ -180,7 +182,7 @@ export class AppSearchComponent implements OnInit, OnDestroy {
    * Remove a feature to the map overlay
    */
   removeFeatureFromMap() {
-    this.map.overlay.clear();
+    this.map.searchResultsOverlay.clear();
   }
 
   onContextMenuOpen(event: { x: number; y: number }) {

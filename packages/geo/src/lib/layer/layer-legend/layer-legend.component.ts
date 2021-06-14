@@ -1,15 +1,17 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import type { QueryList } from '@angular/core';
 
-import { Subscription, BehaviorSubject, of, Observable, combineLatest } from 'rxjs';
+import { Subscription, BehaviorSubject, of, Observable } from 'rxjs';
 
 import { Legend } from '../../datasource/shared/datasources/datasource.interface';
 import { Layer, ItemStyleOptions } from '../shared/layers';
 import { LegendMapViewOptions } from '../shared/layers/layer.interface';
 import { CapabilitiesService } from '../../datasource/shared/capabilities.service';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { LanguageService } from '@igo2/core';
 import { WMSDataSourceOptions } from '../../datasource';
+import { SecureImagePipe } from '@igo2/common';
 
 @Component({
   selector: 'igo-layer-legend',
@@ -65,9 +67,21 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
    */
   @Input() layer: Layer;
 
+  /**
+   * if getLegendGraphic is authorized
+   */
+  public getLegend = true;
+
+  /**
+   * activeLegend
+   */
+  public legendGraphic: string;
+
   constructor(
     private capabilitiesService: CapabilitiesService,
-    private languageService: LanguageService) {}
+    private languageService: LanguageService,
+    private http: HttpClient,
+    private cdRef: ChangeDetectorRef) {}
 
   /**
    * On init, subscribe to the map's resolution and update the legend accordingly
@@ -100,8 +114,11 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       const state$ = this.layer.map.viewController.state$;
       this.state$$ = state$
       .subscribe(() => this.onViewControllerStateChange());
-    } else if (lastlLegend.length !== 0) {
+    } else if (lastlLegend && lastlLegend.length !== 0) {
       this.legendItems$.next(lastlLegend);
+      for (const legend of lastlLegend) {
+        this.getLegendGraphic(legend);
+      }
     }
   }
 
@@ -112,6 +129,23 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
     if (this.state$$ !== undefined) {
       this.state$$.unsubscribe();
     }
+  }
+
+  getLegendGraphic(item: Legend) {
+    const secureIMG = new SecureImagePipe(this.http);
+    secureIMG.transform(item.url).pipe(
+      catchError((err) => {
+        if (err.error) {
+          err.error.caught = true;
+          this.getLegend = false;
+          this.cdRef.detectChanges();
+          return err;
+        }
+      })
+    ).subscribe((legend: string) => {
+      this.legendGraphic = legend;
+      this.cdRef.detectChanges();
+    });
   }
 
   toggleLegendItem(collapsed: boolean, item: Legend) {
@@ -171,6 +205,9 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
       return;
     }
     this.legendItems$.next(legendItems);
+    for (const legend of this.legendItems$.value) {
+      this.getLegendGraphic(legend);
+    }
   }
 
   private listStyles() {
@@ -184,6 +221,7 @@ export class LayerLegendComponent implements OnInit, OnDestroy {
           sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'default' &&
           sA.name.normalize('NFD').replace(/[\u0300-\u036f]/gi, '') !== 'defaut')));
       }
+      stylesAvailable.filter(sa => !sa.title).map((sa) => sa.title = sa.name);
       stylesAvailable.map(s => s.title = s.title.charAt(0).toUpperCase() + s.title.slice(1).replace(/_/g, ' '));
       return stylesAvailable;
     }

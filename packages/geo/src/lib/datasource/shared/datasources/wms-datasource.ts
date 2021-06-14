@@ -113,9 +113,18 @@ export class WMSDataSource extends DataSource {
         'wms'
       );
     } else {
-      initOgcFilters.advancedOgcFilters = initOgcFilters.pushButtons
+      initOgcFilters.advancedOgcFilters = (initOgcFilters.pushButtons || initOgcFilters.checkboxes || initOgcFilters.radioButtons)
         ? false
         : true;
+      if (initOgcFilters.pushButtons){
+        initOgcFilters.pushButtons.selectorType = 'pushButton';
+      }
+      if (initOgcFilters.checkboxes){
+        initOgcFilters.checkboxes.selectorType = 'checkbox';
+      }
+      if (initOgcFilters.radioButtons){
+        initOgcFilters.radioButtons.selectorType = 'radioButton';
+      }
     }
 
     if (
@@ -168,7 +177,7 @@ export class WMSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceImageWMS {
-    return new olSourceImageWMS(this.options);
+    return new olSourceImageWMS(Object.assign({ratio: 1}, this.options));
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {

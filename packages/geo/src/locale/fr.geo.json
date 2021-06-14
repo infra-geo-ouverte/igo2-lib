@@ -10,7 +10,21 @@
         "group.removeFromMap": "Retirer toutes les couches de ce groupe de la carte",
         "baseLayers": "Fonds de carte",
         "unavailableTitle": "Catalogue indisponible",
-        "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises."
+        "unavailable": "Le catalogue '{{value}}' est indisponible pour le moment ou vous n'avez pas les permissions requises.",
+        "externalProvider": {
+          "catalog": "Ce catalogue provient d'une organisation externe.",
+          "layer": "Cette couche provient d'une organisation externe.",
+          "unavailableWithEmail": "Le catalogue '{{value}}' est indisponible pour le moment. Pour ajouter un service externe à la liste prédéfinie, veuillez contacter {{email}}. Des délais peuvent s'appliquer si problème il y a avec le fournisseur externe."
+        },
+        "library.add": "Ajouter ce catalogue",
+        "library.cancel": "Annuler",
+        "library.remove": "Retirer ce catalogue de la liste",
+        "library.inlist": {
+          "title": "Catalogue déjà contenu",
+          "message": "Le catalogue à ajouter est déjà dans la liste"
+        },
+        "library.addTitle": "Ajout d'un catalogue",
+        "library.addBtn": "Ajouter un catalogue"
       },
       "clickOnMap": {
         "clickedFeature": "Entités cliquées"
@@ -50,6 +64,10 @@
         }
       },
       "export": {
+        "customList": {
+          "text": "Certaines couches sélectionnées ( {{value}} ) réduisent la liste des formats possible",
+          "title": "Liste restreinte de formats"
+        },
         "nothing": {
           "text": "Impossible d’exporter, donnée non valide ou aucune donnée sélectionnée.",
           "title": "Donnée non valide ou non présente"
@@ -168,10 +186,13 @@
         "layerFilterable": "Cette couche d'information est filtrable",
         "filterBy": "Filtrer par",
         "advancedOgcFilters": "Filtres avancés",
+        "displayMoreResults": "Afficher plus (+)",
+        "displayLessResults": "Afficher moins (-)",
         "placeholder": "Saisir une valeur",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Choisir un opérateur",
-        "sliderModeTitle": "Curseur temporel"
+        "sliderModeTitle": "Curseur temporel",
+        "reportingDate": "Date de signalement"
       },
       "spatialSelector": {
         "fixedExtent": "Étendue fixe",
@@ -191,6 +212,8 @@
         "tools": "Outils",
         "selectAll": "Tout sélectionner",
         "deselectAll": "Tout désélectionner",
+        "zoomLayer": "Cadrer sur l'étendue de la couche",
+        "zoomLayers": "Cadrer sur l'étendue des couches sélectionnées",
         "opacity": "Opacité",
         "raiseLayer": "Mettre en avant",
         "filterRaiseLayer": "Le déplacement avant se fait toujours selon l'ordre de la carte!",
@@ -249,12 +272,12 @@
         "outputFormat": "Format de sortie",
         "paperFormat": "Format du papier",
         "paperFormats": {
-          "A0": "A0",
-          "A1": "A1",
-          "A2": "A2",
-          "A3": "A3",
-          "A4": "A4",
-          "A5": "A5",
+          "A0": "33.1 X 46.8\" (A0)",
+          "A1": "23.4 X 33.1\" (A1)",
+          "A2": "16.5 X 23.5\" (A2)",
+          "A3": "11.7 X 16.5\" (A3)",
+          "A4": "8.3 X 11.7\" (A4)",
+          "A5": "5.8 X 8.3\" (A5)",
           "Letter": "Lettre",
           "Legal": "Légal"
         },
@@ -266,10 +289,7 @@
         "resolution": "Résolution",
         "saveBtn": "Sauvegarder",
         "scale": "Échelle",
-        "showLegend": "Afficher la légende",
-        "showLegend2": "Afficher la légende2",
         "showProjection": "Afficher la projection",
-        "showScale": "Afficher l'échelle",
         "title": "Titre",
         "subtitle": "Sous-titre",
         "legendPosition": "Position de la légende",
@@ -283,6 +303,8 @@
         }
       },
       "directionsForm": {
+        "stopLayer": "Itinéraire - arrêts",
+        "routeLayer": "Itinéraire - Tracé",
         "start": "Début",
         "intermediate": "Intermédiaire",
         "end": "Fin",
@@ -385,6 +407,7 @@
             "gcc": "Repère de la garde cotière (GCC)",
             "sumi": "Borne SUMI",
             "km": "Repère kilométrique",
+            "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre"
           },
@@ -395,7 +418,10 @@
         },
         "coordinates": {
           "name": "Coordonnées",
-          "coord": "Coordonnée (longitude, latitude)"
+          "coord": "Coordonnée (longitude, latitude)",
+          "coordDMS": "Coordonnée (longitude, latitude) (DMS)",
+          "radius": "Rayon",
+          "conf": "Confiance"
         },
         "menu.tooltip": "Options de recherche",
         "settings": {
@@ -404,6 +430,10 @@
         "pointerSearchSummary": {
           "title": "Position du curseur",
           "tooltip": "Afficher les coordonnées du curseur ainsi que d'autres informations sur sa position en fonction des types de résultats activées. Utiliser F2 pour activer / désactiver."
+        },
+        "searchResultsGeometry": {
+          "title": "Montrer tous les résultats",
+          "tooltip": "Afficher/cacher la géométrie des résultats"
         },
         "searchSources": {
           "selectAll": "Tout sélectionner",
@@ -583,14 +613,17 @@
         "delete": "Retirer les dessins de la carte",
         "drawing": "Dessins",
         "fill": "Remplissage",
+        "icon": "Icônes",
         "labels": "Étiquettes",
         "LineString": "Ligne",
+        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygone",
         "radius": "Rayon",
         "stroke": "Contour",
         "styleSelect": "Sélectionner le style",
-        "toggleMapTooltips": "Afficher les étiquettes"
+        "toggleMapTooltips": "Afficher les étiquettes",
+        "noIcon": "Aucune icône"
       },
       "network": {
         "online": {

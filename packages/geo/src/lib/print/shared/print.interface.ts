@@ -17,7 +17,6 @@ export interface PrintOptions {
   subtitle?: string;
   comment?: string;
   imageFormat?: PrintSaveImageFormat;
-  showLegend?: boolean;
   showProjection?: boolean;
   showScale?: boolean;
   isPrintService: boolean;

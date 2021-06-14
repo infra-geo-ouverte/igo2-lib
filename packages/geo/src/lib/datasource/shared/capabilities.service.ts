@@ -13,6 +13,7 @@ import { optionsFromCapabilities } from 'ol/source/WMTS.js';
 import olAttribution from 'ol/control/Attribution';
 
 import { ObjectUtils } from '@igo2/utils';
+import { MapService } from '../../map/shared/map.service';
 import { getResolutionFromScale } from '../../map/shared/map.utils';
 import { EsriStyleGenerator } from '../utils/esri-style-generator';
 import {
@@ -25,7 +26,8 @@ import {
   WMSDataSourceOptions,
   CartoDataSourceOptions,
   ArcGISRestDataSourceOptions,
-  TileArcGISRestDataSourceOptions
+  TileArcGISRestDataSourceOptions,
+  ArcGISRestImageDataSourceOptions
 } from './datasources';
 import {
   LegendOptions,
@@ -35,11 +37,13 @@ import {
   TimeFilterType,
   TimeFilterStyle
 } from '../../filter/shared/time-filter.enum';
+import * as olproj from 'ol/proj';
 
 export enum TypeCapabilities {
   wms = 'wms',
   wmts = 'wmts',
   arcgisrest = 'esriJSON',
+  imagearcgisrest = 'esriJSON',
   tilearcgisrest = 'esriJSON'
 }
 
@@ -55,7 +59,7 @@ export class CapabilitiesService {
     esriJSON: new EsriJSON()
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private mapService: MapService) {}
 
   getWMSOptions(
     baseOptions: WMSDataSourceOptions
@@ -129,17 +133,44 @@ export class CapabilitiesService {
     );
   }
 
+  getImageArcgisOptions(
+    baseOptions: ArcGISRestImageDataSourceOptions
+  ): Observable<ArcGISRestImageDataSourceOptions> {
+    const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
+    const modifiedUrl = baseOptions.url.replace('FeatureServer', 'MapServer');
+    const legendUrl = modifiedUrl + '/legend?f=json';
+    const arcgisOptions = this.http.get(baseUrl);
+    const legend = this.http.get(legendUrl).pipe(
+      map((res: any) => res),
+      catchError((err) => {
+        console.log('No legend associated with this Image Service');
+        return of(err);
+      })
+    );
+    return forkJoin([arcgisOptions, legend]).pipe(
+      map((res: any) => {
+        return this.parseTileOrImageArcgisOptions(baseOptions, res[0], res[1]);
+      })
+    );
+  }
+
   getTileArcgisOptions(
     baseOptions: TileArcGISRestDataSourceOptions
   ): Observable<TileArcGISRestDataSourceOptions> {
     const baseUrl = baseOptions.url + '/' + baseOptions.layer + '?f=json';
     const legendUrl = baseOptions.url + '/legend?f=json';
     const arcgisOptions = this.http.get(baseUrl);
-    const legendInfo = this.http.get(legendUrl);
+    const legendInfo = this.http.get(legendUrl).pipe(
+      map((res: any) => res),
+      catchError((err) => {
+        console.log('No legend associated with this Tile Service');
+        return of(err);
+      })
+    );
 
     return forkJoin([arcgisOptions, legendInfo]).pipe(
       map((res: any) =>
-        this.parseTileArcgisOptions(baseOptions, res[0], res[1])
+        this.parseTileOrImageArcgisOptions(baseOptions, res[0], res[1])
       )
     );
   }
@@ -222,6 +253,9 @@ export class CapabilitiesService {
     const timeFilter = this.getTimeFilter(layer);
     const timeFilterable = timeFilter && Object.keys(timeFilter).length > 0;
     const legendOptions = layer.Style ? this.getStyle(layer.Style) : undefined;
+    const extent = layer.EX_GeographicBoundingBox ?
+        olproj.transformExtent(layer.EX_GeographicBoundingBox, 'EPSG:4326', this.mapService.getMap().projection) :
+        undefined;
 
     let queryFormat: QueryFormat;
     const queryFormatMimeTypePriority = [
@@ -255,6 +289,7 @@ export class CapabilitiesService {
         title: layer.Title,
         maxResolution: getResolutionFromScale(layer.MaxScaleDenominator),
         minResolution: getResolutionFromScale(layer.MinScaleDenominator),
+        extent,
         metadata: {
           url: metadata ? metadata.OnlineResource : undefined,
           extern: metadata ? true : undefined,
@@ -361,17 +396,22 @@ export class CapabilitiesService {
     const options = ObjectUtils.removeUndefined({
       params,
       _layerOptionsFromSource: {
-        title
-      }
+        title,
+        minResolution: getResolutionFromScale(arcgisOptions.maxScale),
+        maxResolution: getResolutionFromScale(arcgisOptions.minScale)
+      },
+      sourceFields: arcgisOptions.fields,
+      queryTitle: arcgisOptions.displayField
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }
 
-  private parseTileArcgisOptions(
-    baseOptions: TileArcGISRestDataSourceOptions,
+  private parseTileOrImageArcgisOptions(
+    baseOptions: TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions,
     arcgisOptions: any,
     legend: any
-  ): TileArcGISRestDataSourceOptions {
+  ): TileArcGISRestDataSourceOptions | ArcGISRestImageDataSourceOptions {
+    const title = arcgisOptions.name;
     const legendInfo = legend.layers ? legend : undefined;
     const attributions = new olAttribution({
       html: arcgisOptions.copyrightText
@@ -396,15 +436,22 @@ export class CapabilitiesService {
     const params = Object.assign(
       {},
       {
-        layers: 'show:' + baseOptions.layer,
+        LAYERS: baseOptions.layer ? 'show:' + baseOptions.layer : undefined,
         time: timeExtent
       }
     );
     const options = ObjectUtils.removeUndefined({
       params,
+      _layerOptionsFromSource: {
+        title,
+        minResolution: getResolutionFromScale(arcgisOptions.maxScale),
+        maxResolution: getResolutionFromScale(arcgisOptions.minScale)
+      },
       legendInfo,
       timeFilter,
-      attributions
+      attributions,
+      sourceFields: arcgisOptions.fields,
+      queryTitle: arcgisOptions.displayField
     });
     return ObjectUtils.mergeDeep(options, baseOptions);
   }

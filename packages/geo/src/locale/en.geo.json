@@ -10,7 +10,21 @@
         "group.removeFromMap": "Remove all layers from this group to map",
         "baseLayers": "Baselayers",
         "unavailableTitle": "Catalog unavailable",
-        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions."
+        "unavailable": "The catalog '{{value}}' is unavailable at the moment or you don't have the required permissions.",
+        "externalProvider": {
+           "catalog": "This catalog comes from an external organization.",
+           "layer": "This layer comes from an external organization.",
+           "unavailableWithEmail": "The catalog '{{value}}' is unavailable at the moment. To add an external service to the predefined list, please contact us at {{emailAddress}}. Delays can apply if problems occurs with the provider."
+        },
+        "library.add": "Add this catalog to the list",
+        "library.cancel": "Cancel",
+        "library.remove": "Remove this catalog from the list",
+        "library.inlist": {
+          "title": "Catalog already contained",
+          "message": "The catalog is already contained in the list."
+        },
+        "library.addTitle": "Adding a catalog",
+        "library.addBtn": "Add a catalog"
       },
       "clickOnMap": {
         "clickedFeature": "Clicked Feature"
@@ -50,6 +64,10 @@
         }
       },
       "export": {
+        "customList": {
+          "text": "Some of the selected layers ( {{value}} ) limit the format's list",
+          "title": "Restricted list of formats"
+        },
         "nothing": {
           "text": "No feature could be exported.",
           "title": "Nothing to export"
@@ -169,10 +187,13 @@
         "layerFilterable": "This layer is filterable",
         "filterBy": "Filter by",
         "advancedOgcFilters": "Advanced filters",
+        "displayMoreResults": "Display more (+)",
+        "displayLessResults": "Display less (-)",
         "placeholder": "Enter a value",
         "placeholderSnrc": "Ex: 21L14",
         "selectOperator": "Select an operator",
-        "sliderModeTitle": "Time slider"
+        "sliderModeTitle": "Time slider",
+        "reportingDate": "Reporting date"
       },
       "spatialSelector": {
         "fixedExtent": "Fixed extent",
@@ -192,6 +213,8 @@
         "tools": "Tools",
         "selectAll": "Select all",
         "deselectAll": "Deselect all",
+        "zoomLayer": "Zoom To Layer Extents",
+        "zoomLayers": "Zoom To Selected Layers Extents",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
@@ -250,12 +273,12 @@
         "outputFormat": "Output format",
         "paperFormat": "Paper format",
         "paperFormats": {
-          "A0": "A0",
-          "A1": "A1",
-          "A2": "A2",
-          "A3": "A3",
-          "A4": "A4",
-          "A5": "A5",
+          "A0": "33.1 X 46.8\" (A0)",
+          "A1": "23.4 X 33.1\" (A1)",
+          "A2": "16.5 X 23.5\" (A2)",
+          "A3": "11.7 X 16.5\" (A3)",
+          "A4": "8.3 X 11.7\" (A4)",
+          "A5": "5.8 X 8.3\" (A5)",
           "Letter": "Letter",
           "Legal": "Legal"
         },
@@ -267,9 +290,7 @@
         "resolution": "Resolution",
         "saveBtn": "Save",
         "scale": "Scale",
-        "showLegend": "Show legend",
         "showProjection": "Show projection",
-        "showScale": "Show scale",
         "title": "Title",
         "subtitle": "Subtitle",
         "legendPosition": "Legend Position",
@@ -283,6 +304,8 @@
         }
       },
       "directionsForm": {
+        "stopLayer": "Directions - stops",
+        "routeLayer": "Directions - route",
         "start": "Start",
         "intermediate": "Intermediate",
         "end": "End",
@@ -385,6 +408,7 @@
             "gcc": "Coast Guard mark (CCG)",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
+            "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre"
           },
@@ -395,7 +419,10 @@
         },
         "coordinates": {
           "name": "Coordinates",
-          "coord": "Geographic (longitude, latitude)"
+          "coord": "Geographic (longitude, latitude)",
+          "coordDMS": "Geographic (longitude, latitude) (DMS)",
+          "radius": "Radius",
+          "conf": "Confidence"
         },
         "menu.tooltip": "Search Options",
         "settings": {
@@ -403,7 +430,11 @@
         },
         "pointerSearchSummary": {
           "title": "Pointer position",
-          "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/desactivate."
+          "tooltip": "Based on every search source, show the summary of the pointer location. Use F2 to activate/deactivate."
+        },
+        "searchResultsGeometry": {
+          "title": "Show results geometries",
+          "tooltip": "Hide/ show the results geometries "
         },
         "searchSources": {
           "selectAll": "Select All",
@@ -582,14 +613,17 @@
         "delete": "Remove Drawings from map",
         "drawing": "Draws",
         "fill": "Fill",
+        "icon": "Icons",
         "labels": "Labels",
         "LineString": "Line",
+        "okColorPicker": "OK",
         "Point": "Point",
         "Polygon": "Polygon",
         "radius": "Radius",
         "stroke": "Stroke",
         "styleSelect": "Select style",
-        "toggleMapTooltips": "Show map tooltips"
+        "toggleMapTooltips": "Show map tooltips",
+        "noIcon": "No icon"
       },
       "network": {
         "online": {

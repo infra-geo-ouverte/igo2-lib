@@ -15,6 +15,7 @@ import {
   WMTSDataSource,
   WMSDataSource,
   CartoDataSource,
+  ImageArcGISRestDataSource,
   ArcGISRestDataSource,
   TileArcGISRestDataSource,
   WebSocketDataSource,
@@ -38,6 +39,7 @@ import {
 } from './layers';
 
 import { StyleService } from './style.service';
+import { LanguageService, MessageService } from '@igo2/core';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +49,8 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
+    private messageService: MessageService,
+    private languageService: LanguageService,
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
 
@@ -82,6 +86,7 @@ export class LayerService {
       case ClusterDataSource:
         layer = this.createVectorLayer(layerOptions as VectorLayerOptions);
         break;
+      case ImageArcGISRestDataSource:
       case WMSDataSource:
         layer = this.createImageLayer(layerOptions as ImageLayerOptions);
         break;
@@ -115,7 +120,7 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.authInterceptor);
+    return new ImageLayer(layerOptions, this.messageService, this.languageService, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {

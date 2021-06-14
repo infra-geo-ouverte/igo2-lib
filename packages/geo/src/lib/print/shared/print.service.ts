@@ -19,7 +19,6 @@ import { LegendMapViewOptions, OutputLayerLegend } from '../../layer/shared/laye
 import { getLayersLegends } from '../../layer/utils/outputLegend';
 
 import { PrintOptions } from './print.interface';
-import { Console } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -144,9 +143,9 @@ export class PrintService {
       html += 'table.tableLegend {table-layout: auto;}';
       html += 'div.styleLegend {padding-top: 5px; padding-right:5px;padding-left:5px;padding-bottom:5px;}';
       html += '</style>';
-      // la taille de la police est reduite par la suite (globalement pour la taille de la legende)
-      // cela permet d'avoir une taille relative correcte entre les elements ici
-      // mais aussi de reduire globalement la taille de la légende dans la carte de maniere plus simple
+      // The font size will also be lowered afterwards (globally along the legend size)
+      // this allows having a good relative font size here and to keep ajusting the legend size
+      // while keeping good relative font size
       html += '<font size="3" face="Times" >';
       html += '<div class="styleLegend">';
       html += '<table class="tableLegend" >';
@@ -441,7 +440,7 @@ export class PrintService {
         const pourcentageReduction = 0.85;
         const imageSize = [pourcentageReduction * (25.4 * canvas.width) / resolution,
            pourcentageReduction * (25.4 * canvas.height) / resolution];
-        // aligne la legende en bas a droite
+        // Move the legend to the correct position on the page
         if ( legendPosition === 'bottomright') {
           marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1], margins[1],
            margins[2], doc.internal.pageSize.width - margins[1] - imageSize[0]];
@@ -576,8 +575,7 @@ export class PrintService {
             ),
             this.languageService.translate.instant(
               'igo.geo.printForm.corsErrorMessageHeader'
-            ),
-            'print'
+            )
           );
         }
         this.renderMap(map, mapSize, extent);
@@ -604,8 +602,7 @@ export class PrintService {
             ),
             this.languageService.translate.instant(
               'igo.geo.printForm.corsErrorMessageHeader'
-            ),
-            'print'
+            )
           );
         }
         this.renderMap(map, mapSize, extent);
@@ -900,8 +897,7 @@ export class PrintService {
         ),
         this.languageService.translate.instant(
           'igo.geo.printForm.corsErrorMessageHeader'
-        ),
-        'print'
+        )
       );
     }
   }
@@ -937,8 +933,7 @@ export class PrintService {
         ),
         this.languageService.translate.instant(
           'igo.geo.printForm.corsErrorMessageHeader'
-        ),
-        'print'
+        )
       );
     }
   }

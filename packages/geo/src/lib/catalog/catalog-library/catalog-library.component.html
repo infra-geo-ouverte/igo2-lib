@@ -1,11 +1,24 @@
 <igo-list [navigation]="false">
-  <ng-template ngFor let-catalog [ngForOf]="store.view.all$() | async">
+  <ng-template ngFor let-catalog [ngForOf]="getCatalogs() | async">
     <igo-catalog-library-item
       igoListItem
       color="accent"
       [map]="map"
       [catalog]="catalog"
+      (catalogRemove)="onCatalogRemove(catalog)"
       (select)="onCatalogSelect(catalog)">
     </igo-catalog-library-item>
   </ng-template>
 </igo-list>
+
+<div *ngIf="addCatalogAllowed" class=btnAddCatalog>
+  <button
+    mat-raised-button
+    [matTooltip]="'igo.geo.catalog.library.addBtn' | translate"
+    matTooltipPosition="above"
+    color="primary"
+    (click)="addCatalogDialog()">
+    {{'igo.geo.catalog.library.addBtn' | translate}}
+    <mat-icon svgIcon="earth-plus"></mat-icon>
+  </button>
+</div>
