@@ -129,9 +129,9 @@ export class MessageService {
 
   removeAllAreNotError() {
     for (const mess of this.messages$.value) {
-      if (mess.type !== 'error') { 
+      if (mess.type !== 'error') {
         this.remove(mess.options.id);
-      };
+      }
     }
   }
 
