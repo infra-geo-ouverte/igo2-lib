@@ -19,14 +19,21 @@
       (change)="onToggleDrawControl($event.checked)">
       {{'igo.geo.measure.toggleActive' | translate}}
     </mat-slide-toggle>
-
-    <mat-slide-toggle
+  
+    <mat-slide-toggle *ngIf="activeMeasureType === measureType.Length"
       [checked]="showTooltips"
       [labelPosition]="'before'"
       (change)="onToggleTooltips($event.checked)">
-      {{'igo.geo.measure.toggleMapTooltips' | translate}}
-    </mat-slide-toggle>
-    
+      {{'igo.geo.measure.toggleMapTooltipsLength' | translate}}
+    </mat-slide-toggle> 
+
+    <mat-slide-toggle *ngIf="activeMeasureType === measureType.Area"
+      [checked]="showTooltips"
+      [labelPosition]="'before'"
+      (change)="onToggleTooltips($event.checked)">
+      {{'igo.geo.measure.toggleMapTooltipsArea' | translate}}
+    </mat-slide-toggle> 
+
     <mat-slide-toggle
       [disabled]="!(hasArea$ | async)"
       [checked]="displayDistance"

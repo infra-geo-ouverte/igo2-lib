@@ -591,7 +591,8 @@
         "ac": "ac",
         "toggleActive": "Activate measures",
         "toggleDisplayDistance": "Display distances for the areas",
-        "toggleMapTooltips": "Show map tooltips",
+        "toggleMapTooltipsLength": "Show distances",
+        "toggleMapTooltipsArea": "Show areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",

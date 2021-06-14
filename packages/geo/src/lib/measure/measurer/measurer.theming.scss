@@ -1,3 +1,10 @@
 @mixin igo-measurer-theming($theme, $typography) {
   $foreground: map-get($theme, foreground);
+
+  .igo-map-tooltip {
+    position: relative;
+    border-radius: 4px;
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
 }

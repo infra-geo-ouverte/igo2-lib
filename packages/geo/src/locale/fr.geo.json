@@ -591,7 +591,8 @@
         "ac": "ac",
         "toggleActive": "Activer le contrôle de mesure",
         "toggleDisplayDistance": "Afficher les distances pour les superficies",
-        "toggleMapTooltips": "Mesures sur la carte",
+        "toggleMapTooltipsLength": "Afficher les distances",
+        "toggleMapTooltipsArea": "Afficher les superficies",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
           "calculate.tooltip": "Calculer",
