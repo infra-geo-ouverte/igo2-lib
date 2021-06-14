@@ -564,8 +564,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.selectedFeatures$$.unsubscribe();
     unByKey(this.onFeatureAddedKey);
     unByKey(this.onFeatureRemovedKey);
-    // this.clearTooltipsOfOlSource(store.source.ol);
-    // this.map.removeLayer(store.layer);
     store.deactivateStrategyOfType(FeatureStoreLoadingStrategy);
     store.deactivateStrategyOfType(FeatureStoreSelectionStrategy);
   }
