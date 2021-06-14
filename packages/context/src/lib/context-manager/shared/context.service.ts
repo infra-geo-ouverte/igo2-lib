@@ -601,7 +601,7 @@ export class ContextService {
       this.messageService.remove(this.contextMessage.id);
     }
     if (this.context$.value && context.uri && this.context$.value.uri !== context.uri) {
-      this.messageService.remove();
+      this.messageService.removeAllAreNotError();
     }
 
     context.messages = context.messages ? context.messages : [];
