@@ -128,11 +128,10 @@ export class MessageService {
   }
 
   removeAllAreNotError() {
-    debugger;
-    for (let mess of this.messages$.value) {
+    for (const mess of this.messages$.value) {
       if (mess.type !== 'error') { 
-        this.remove(mess.options.id)
-      }
+        this.remove(mess.options.id);
+      };
     }
   }
 
