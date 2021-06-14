@@ -95,7 +95,7 @@ export class OgcFilterWriter {
 
     ogcFiltersOptions.advancedOgcFilters = true;
     if (ogcFiltersOptions.enabled && (ogcFiltersOptions.pushButtons || ogcFiltersOptions.checkboxes
-      || ogcFiltersOptions.radioButtons || ogcFiltersOptions.selectMulti)) {
+      || ogcFiltersOptions.radioButtons || ogcFiltersOptions.select)) {
       ogcFiltersOptions.advancedOgcFilters = false;
     }
     return ogcFiltersOptions;
@@ -718,7 +718,7 @@ export class OgcFilterWriter {
     const conditions = [];
     let filterQueryStringSelector = '';
     let filterQueryStringAdvancedFilters = '';
-    if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons || ogcFilters.selectMulti)) {
+    if (ogcFilters.enabled && (ogcFilters.pushButtons || ogcFilters.checkboxes || ogcFilters.radioButtons || ogcFilters.select)) {
       let selectors;
       if (ogcFilters.pushButtons) {
         selectors = ogcFilters.pushButtons;
@@ -742,11 +742,11 @@ export class OgcFilterWriter {
           conditions.push(condition);
         }
       }
-      if (ogcFilters.selectMulti) {
-        selectors = ogcFilters.selectMulti;
+      if (ogcFilters.select) {
+        selectors = ogcFilters.select;
         const selectorsCorr = this.verifyMultipleEnableds(selectors);
-        const selectMultiConditions = this.formatGroupAndFilter(ogcFilters, selectorsCorr);
-        for (const condition of selectMultiConditions) {
+        const selectConditions = this.formatGroupAndFilter(ogcFilters, selectorsCorr);
+        for (const condition of selectConditions) {
           conditions.push(condition);
         }
       }
@@ -841,8 +841,8 @@ export class OgcFilterWriter {
       ogcFilters.checkboxes = selectors;
     } else if (selectors.selectorType === 'radioButton') {
       ogcFilters.radioButtons = selectors;
-    } else if (selectors.selectorType === 'selectMulti') {
-      ogcFilters.selectMulti = selectors;
+    } else if (selectors.selectorType === 'select') {
+      ogcFilters.select = selectors;
     }
     return conditions;
   }

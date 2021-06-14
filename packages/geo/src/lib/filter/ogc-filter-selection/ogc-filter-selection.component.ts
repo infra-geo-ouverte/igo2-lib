@@ -61,7 +61,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   private ogcFilterWriter: OgcFilterWriter;
   public color = 'primary';
   public allSelected = false;
-  public selectMulti = new FormControl();
+  public select = new FormControl();
   public enabled$ = new BehaviorSubject(undefined);
   public enableds$ = new BehaviorSubject([]);
 
@@ -78,8 +78,8 @@ export class OgcFilterSelectionComponent implements OnInit {
     if (this.datasource?.options?.ogcFilters?.radioButtons) {
       ogcSelector.push(this.datasource?.options?.ogcFilters?.radioButtons);
     }
-    if (this.datasource?.options?.ogcFilters?.selectMulti) {
-      ogcSelector.push(this.datasource?.options?.ogcFilters?.selectMulti);
+    if (this.datasource?.options?.ogcFilters?.select) {
+      ogcSelector.push(this.datasource?.options?.ogcFilters?.select);
     }
     ogcSelector.sort((a, b) => {
       if (a.order < b.order) {
@@ -114,11 +114,11 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.form.patchValue({ radioButtonsGroup: value });
   }
 
-  get currentSelectMultiGroup() {
-    return this.form.get('selectMultiGroup').value;
+  get currentSelectGroup() {
+    return this.form.get('selectGroup').value;
   }
-  set currentSelectMultiGroup(value) {
-    this.form.patchValue({ selectMultiGroup: value });
+  set currentSelectGroup(value) {
+    this.form.patchValue({ selectGroup: value });
   }
 
   get enabled() {
@@ -128,7 +128,7 @@ export class OgcFilterSelectionComponent implements OnInit {
   set enabled(value) {
     this.enabled$.next(value);
     clearTimeout(this.applyFiltersTimeout);
-    this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
+    this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       compSelect.selectors.forEach(selector => {
         value === selector ? selector.enabled = true : selector.enabled = false;
       });
@@ -147,7 +147,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     console.log('enableds value', value);
     this.enableds$.next(value);
     clearTimeout(this.applyFiltersTimeout);
-    this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
+    this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       compSelect.selectors.forEach(selector => {
         console.log('enableds value', selector);
         value.includes(selector) ? selector.enabled = true : selector.enabled = false;
@@ -174,7 +174,7 @@ export class OgcFilterSelectionComponent implements OnInit {
       pushButtonsGroup: ['', [Validators.required]],
       checkboxesGroup: ['', [Validators.required]],
       radioButtonsGroup: ['', [Validators.required]],
-      selectMultiGroup: ['', [Validators.required]],
+      selectGroup: ['', [Validators.required]],
     });
   }
 
@@ -196,9 +196,9 @@ export class OgcFilterSelectionComponent implements OnInit {
     }
   }
 
-  getSelectMultiGroups(): SelectorGroup[] {
-    if (this.datasource?.options?.ogcFilters?.selectMulti) {
-      return this.datasource.options.ogcFilters.selectMulti.groups;
+  getSelectGroups(): SelectorGroup[] {
+    if (this.datasource?.options?.ogcFilters?.select) {
+      return this.datasource.options.ogcFilters.select.groups;
     }
   }
 
@@ -219,11 +219,11 @@ export class OgcFilterSelectionComponent implements OnInit {
           this.datasource.options.ogcFilters.radioButtons.groups.find(group => group.enabled) ||
           this.datasource.options.ogcFilters.radioButtons.groups[0];
       }
-      if (this.datasource.options.ogcFilters.selectMulti) {
-        this.currentSelectMultiGroup =
-          this.datasource.options.ogcFilters.selectMulti.groups.find(group => group.enabled) ||
-          this.datasource.options.ogcFilters.selectMulti.groups[0];
-        this.getSelectMultiEnabled();
+      if (this.datasource.options.ogcFilters.select) {
+        this.currentSelectGroup =
+          this.datasource.options.ogcFilters.select.groups.find(group => group.enabled) ||
+          this.datasource.options.ogcFilters.select.groups[0];
+        this.getSelectEnabled();
       }
       this.applyFilters();
     }
@@ -253,11 +253,11 @@ export class OgcFilterSelectionComponent implements OnInit {
         this.applyFilters();
       });
     this.form
-      .get('selectMultiGroup')
+      .get('selectGroup')
       .valueChanges
       .pipe(debounceTime(750))
       .subscribe(() => {
-        this.onSelectMultiChangeGroup();
+        this.onSelectChangeGroup();
         this.applyFilters();
       });
     this.form
@@ -276,10 +276,10 @@ export class OgcFilterSelectionComponent implements OnInit {
       });
   }
 
-  private getSelectMultiEnabled() {
+  private getSelectEnabled() {
     const enableds = [];
     let enabled;
-    this.currentSelectMultiGroup.computedSelectors.forEach(compSelect => {
+    this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       if (compSelect.multiple) {
         compSelect.selectors.forEach(selector => {
           if (selector.enabled) {
@@ -355,9 +355,9 @@ export class OgcFilterSelectionComponent implements OnInit {
     this.getRadioButtonsGroups().find(group => group === this.currentRadioButtonsGroup).enabled = true;
   }
 
-  private onSelectMultiChangeGroup() {
-    this.getSelectMultiGroups().map(group => group.enabled = false);
-    this.getSelectMultiGroups().find(group => group === this.currentSelectMultiGroup).enabled = true;
+  private onSelectChangeGroup() {
+    this.getSelectGroups().map(group => group.enabled = false);
+    this.getSelectGroups().find(group => group === this.currentSelectGroup).enabled = true;
   }
 
   onSelectionChange(currentOgcSelection?, selectorType?) {
@@ -384,7 +384,7 @@ export class OgcFilterSelectionComponent implements OnInit {
    });
   }
 
-  emptySelectMulti() {
+  emptySelect() {
     this.enabled = [];
   }
 
@@ -410,7 +410,7 @@ export class OgcFilterSelectionComponent implements OnInit {
     let filterQueryString = '';
     const conditions = [];
     const currentGroups = [this.currentPushButtonsGroup, this.currentCheckboxesGroup,
-      this.currentRadioButtonsGroup, this.currentSelectMultiGroup];
+      this.currentRadioButtonsGroup, this.currentSelectGroup];
     for (const currentGroup of currentGroups) {
       if (currentGroup.computedSelectors) {
         currentGroup.computedSelectors.map(selectorBundle => {

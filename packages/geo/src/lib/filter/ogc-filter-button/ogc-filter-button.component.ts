@@ -48,15 +48,15 @@ export class OgcFilterButtonComponent implements OnInit {
         }
         cnt += cntRadioButtons;
       }
-      if (filter.selectMulti) {
-        const selectMulti = filter.selectMulti as IgoOgcSelector;
-        const currentSelectMultiGroup = selectMulti.groups.find(gr => gr.enabled);
-        let cntSelectMulti = 0;
-        if (currentSelectMultiGroup) {
-          currentSelectMultiGroup.computedSelectors.map(cb => cntSelectMulti += (cb.selectors as any).filter(
+      if (filter.select) {
+        const select = filter.select as IgoOgcSelector;
+        const currentSelectGroup = select.groups.find(gr => gr.enabled);
+        let cntSelect = 0;
+        if (currentSelectGroup) {
+          currentSelectGroup.computedSelectors.map(cb => cntSelect += (cb.selectors as any).filter(
             multi => multi.enabled).length);
         }
-        cnt += cntSelectMulti;
+        cnt += cntSelect;
       } else {
         return;
       }

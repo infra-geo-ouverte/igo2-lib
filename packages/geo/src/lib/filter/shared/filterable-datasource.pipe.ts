@@ -55,7 +55,7 @@ export class FilterableDataSourcePipe implements PipeTransform {
         dataSource.options.ogcFilters.pushButtons ||
         dataSource.options.ogcFilters.checkboxes ||
         dataSource.options.ogcFilters.radioButtons ||
-        dataSource.options.ogcFilters.selectMulti)) {
+        dataSource.options.ogcFilters.select)) {
         isOgcFilterable = true;
     }
     return isOgcFilterable;

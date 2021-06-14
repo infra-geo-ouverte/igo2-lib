@@ -105,55 +105,55 @@
       </ng-container>
     </div>
 
-    <div class="selectMultiGroups" *ngIf="selector.selectorType === 'selectMulti'">
+    <div class="selectGroups" *ngIf="selector.selectorType === 'select'">
       <mat-divider></mat-divider>
-      <div class="groupsSelector" *ngIf="getSelectMultiGroups().length > 1">
+      <div class="groupsSelector" *ngIf="getSelectGroups().length > 1">
         <mat-form-field>
           <mat-select
-            formControlName="selectMultiGroup"
+            formControlName="selectGroup"
             [matTooltip]="'igo.geo.layer.legend.selectStyle' | translate" tooltip-position="below" matTooltipShowDelay="500"
-            [(value)]="currentSelectMultiGroup">
-            <mat-option *ngFor="let selectorGroup of getSelectMultiGroups()"
+            [(value)]="currentSelectGroup">
+            <mat-option *ngFor="let selectorGroup of getSelectGroups()"
               [value]="selectorGroup">{{selectorGroup.title}}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
-      <ng-container *ngFor="let bundle of currentSelectMultiGroup.computedSelectors">
+      <ng-container *ngFor="let bundle of currentSelectGroup.computedSelectors">
         <h4>{{bundle.title}}</h4>
         <div class="groupsSelector">
           <mat-button *ngIf="bundle.unfiltered && !bundle.multiple"
             mat-icon-button
             color="warn"
             [matTooltip]="'igo.geo.filter.resetFilters' | translate" tooltip-position="below" matTooltipShowDelay="500"  matTooltipClass="material-tooltip"
-            (click)="emptySelectMulti()">
+            (click)="emptySelect()">
             <mat-icon svgIcon="filter-remove"></mat-icon>
           </mat-button>
           <mat-form-field>
             <div *ngIf="bundle.multiple; else notMulti">
               <mat-select
                 #selection [multiple]="bundle.multiple" [placeholder]="bundle.title"
-                [formControl]="selectMulti" [(ngModel)]="enableds">
+                [formControl]="select" [(ngModel)]="enableds">
                 <div class="checkboxes mat-typography">
                   <mat-checkbox *ngIf="bundle.multiple"
                     [(ngModel)]="allSelected" [ngModelOptions]="{standalone: true}"
                     (change)="toggleAllSelection()">Tous
                   </mat-checkbox>
                 </div>
-                <mat-option *ngFor="let ogcSelectMulti of bundle.selectors"
-                  [matTooltip]="getToolTip(ogcSelectMulti)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
+                <mat-option *ngFor="let ogcSelect of bundle.selectors"
+                  [matTooltip]="getToolTip(ogcSelect)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
                   (onSelectionChange)="optionClick()"
-                  [value]="ogcSelectMulti">{{ogcSelectMulti.title}}
+                  [value]="ogcSelect">{{ogcSelect.title}}
                 </mat-option>
               </mat-select>
             </div>
             <ng-template #notMulti>
               <mat-select
                 [placeholder]="bundle.title"
-                [formControl]="selectMulti" [(ngModel)]="enabled">
-                <mat-option *ngFor="let ogcSelectMulti of bundle.selectors"
-                  [matTooltip]="getToolTip(ogcSelectMulti)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
-                  [value]="ogcSelectMulti">{{ogcSelectMulti.title}}
+                [formControl]="select" [(ngModel)]="enabled">
+                <mat-option *ngFor="let ogcSelect of bundle.selectors"
+                  [matTooltip]="getToolTip(ogcSelect)" tooltip-position="below" matTooltipDelay="500" matTooltipClass="material-tooltip"
+                  [value]="ogcSelect">{{ogcSelect.title}}
                 </mat-option>
               </mat-select>
             </ng-template>

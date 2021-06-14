@@ -114,7 +114,7 @@ export class WMSDataSource extends DataSource {
       );
     } else {
       initOgcFilters.advancedOgcFilters = (initOgcFilters.pushButtons || initOgcFilters.checkboxes
-        || initOgcFilters.radioButtons || initOgcFilters.selectMulti)
+        || initOgcFilters.radioButtons || initOgcFilters.select)
         ? false
         : true;
       if (initOgcFilters.pushButtons){
@@ -126,8 +126,8 @@ export class WMSDataSource extends DataSource {
       if (initOgcFilters.radioButtons){
         initOgcFilters.radioButtons.selectorType = 'radioButton';
       }
-      if (initOgcFilters.selectMulti){
-        initOgcFilters.selectMulti.selectorType = 'selectMulti';
+      if (initOgcFilters.select){
+        initOgcFilters.select.selectorType = 'select';
       }
     }
 

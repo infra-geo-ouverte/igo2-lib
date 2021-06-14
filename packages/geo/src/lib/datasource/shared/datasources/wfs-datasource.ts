@@ -60,8 +60,8 @@ export class WFSDataSource extends DataSource {
     if (ogcFilters?.radioButtons){
       ogcFilters.radioButtons.selectorType = 'radioButton';
     }
-    if (ogcFilters?.selectMulti){
-      ogcFilters.selectMulti.selectorType = 'selectMulti';
+    if (ogcFilters?.select){
+      ogcFilters.select.selectorType = 'select';
     }
 
     this.setOgcFilters((this.options as OgcFilterableDataSourceOptions).ogcFilters, true);

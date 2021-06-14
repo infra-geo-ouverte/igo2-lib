@@ -57,7 +57,7 @@ export class OgcFilterableItemComponent implements OnInit, OnDestroy {
       (ogcFilters.pushButtons && ogcFilters.pushButtons.bundles.length > 0) ||
       (ogcFilters.checkboxes && ogcFilters.checkboxes.bundles.length > 0) ||
       (ogcFilters.radioButtons && ogcFilters.radioButtons.bundles.length > 0) ||
-      (ogcFilters.selectMulti && ogcFilters.selectMulti.bundles.length > 0)) {
+      (ogcFilters.select && ogcFilters.select.bundles.length > 0)) {
       if (ogcFilters.advancedOgcFilters === undefined) {
         ogcFilters.advancedOgcFilters = false;
       }
