@@ -90,26 +90,14 @@ export class TileDownloaderService {
     }
   }
 
-  // need to create to refactor donwload service
+  // need to create to refactor download service
   public downloadRegion(regionID: number, coords: [[number, number, number]], depth: number, tileGrids, srcs) {
-    // if (!this.network.isOnline()) {
-    //   return;
-    // }
-    // let urls: string[] = [];
-    // for (let i = 0; i < coords.length; i++) {
-    //   this.initURLGenerator(tileGrids[i], srcs[i]);
-    //   const rootTile: Tile = {X: coords[i][1], Y: coords[i][2], Z: coords[i][0]};
-    //   const tiles = this.generateTiles(rootTile, depth);
-    //   urls = urls.concat(tiles.map((tile: Tile) => {
-    //     return this.generateURL(tile);
-    //   }));
-    // }
-
     
   }
 
   public downloadFromCoord(
-    coord3D: [number, number, number], 
+    coord3D: [number, number, number],
+    regionID: number,
     depth: number,
     tileGrid, 
     src
@@ -139,17 +127,17 @@ export class TileDownloaderService {
       console.log('starting download sequence!');
       this._isDownloading = true;
       this.isDownloading$.next(true);
-      this.downloadSequence();
+      this.downloadSequence(regionID);
     }
     this.currentDownloads += tiles.length;
   }
 
-  private downloadSequence() {
+  private downloadSequence(regionID: number) {
     const downloadTile = (url: string) => {
       return (observer: Observer<any>) => {
         const request = this.http.get(url, { responseType: 'blob' });
         request.subscribe((blob) => {
-          this.geoDB.update(url, blob).subscribe(() => {
+          this.geoDB.update(url, regionID, blob).subscribe(() => {
             observer.next('done downloading ' + url);
             observer.complete();
           });

@@ -8,18 +8,30 @@ import { MatSlideToggleRequiredValidator } from '@angular/material/slide-toggle'
 import { MatSliderModule } from '@angular/material/slider';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { FormsModule } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RegionEditorComponent } from './region-editor/region-editor.component';
+import { RegionManagerComponent } from './region-manager/region-manager.component';
 
 @NgModule({
   imports: [
+    BrowserAnimationsModule,
     CommonModule,
     MatCarouselModule,
     MatCardModule,
     MatSliderModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatTabsModule,
+    FormsModule
   ],
-  declarations: [DownloadToolComponent],
+  declarations: [
+    DownloadToolComponent,
+    RegionEditorComponent,
+    RegionManagerComponent
+  ],
   exports: [DownloadToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

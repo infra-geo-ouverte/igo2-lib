@@ -15,7 +15,7 @@ export class GeoDataDBService {
     private compression: CompressionService
   ) { }
 
-  update(url: string, object): Observable<any> {
+  update(url: string, regionID: number, object): Observable<any> {
     if (!object) {
       return;
     }
@@ -26,6 +26,7 @@ export class GeoDataDBService {
         .subscribe((compressedObject) => {
           const dbData: DbData = {
             url,
+            regionID,
             object: compressedObject
           };
           this.dbService.update(this.dbName, dbData);

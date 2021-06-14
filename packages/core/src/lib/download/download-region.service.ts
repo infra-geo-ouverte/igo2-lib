@@ -38,7 +38,13 @@ export class DownloadRegionService {
         console.log("done adding regionId: ", regionID);
         for (let tile of tilesToDownload) {
            // need to change tileDonwloader download method
-          this.tileDownloader.downloadFromCoord(tile.coord, depth, tile.tileGrid, tile.templateUrl);
+          this.tileDownloader.downloadFromCoord(
+            tile.coord, 
+            regionID, 
+            depth, 
+            tile.tileGrid, 
+            tile.templateUrl
+          );
         }
       });
     
