@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSlider } from '@angular/material/slider';
 import { ToolComponent } from '@igo2/common';
-import { LayerListToolService, TileDownloaderService } from '@igo2/geo';
+import { LayerListToolService } from '@igo2/geo';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
@@ -11,8 +11,9 @@ import { MessageService } from '@igo2/core';
 import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
 import { filter } from 'jszip';
 import { DownloadToolState } from './dowload-tool.state';
-
-// need to do the TODOs in downloadService beforehand
+import { MatInput } from '@angular/material/input';
+import { TileDownloaderService, DownloadRegionService } from '@igo2/core';
+// need to do the TODOs in tileDownloader beforehand
 // need to make prototype of the interface
 // need to create the all the methods
 
@@ -30,7 +31,7 @@ function getNumberOfTiles(deltaHeight: number) {
 @ToolComponent({
   name: 'download',
   title: 'igo.integration.tools.download',
-  icon: 'share-variant' // testing purposes need to find good icon.
+  icon: 'download'
 })
 @Component({
   selector: 'igo-download-tool',
@@ -39,6 +40,7 @@ function getNumberOfTiles(deltaHeight: number) {
 })
 
 export class DownloadToolComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('regionName') regionNameInput: MatInput;
   @ViewChild('depthSlider') slider: MatSlider;
   private progressBarPlaceHolder: MatProgressBar;
   @ViewChild('progressBar') progressBar;
@@ -59,7 +61,8 @@ export class DownloadToolComponent implements OnInit, OnDestroy, AfterViewInit {
   
 
   constructor(
-    private downloadService: TileDownloaderService,
+    private tileDownloader: TileDownloaderService,
+    private downloadService: DownloadRegionService,
     private downloadState: DownloadState,
     private downloadToolState: DownloadToolState,
     private messageService: MessageService
@@ -75,10 +78,10 @@ export class DownloadToolComponent implements OnInit, OnDestroy, AfterViewInit {
         this.addTileToDownload(tile.coord, tile.templateUrl, tile.tileGrid);
       });
 
-    this.isDownloading$ = this.downloadService.isDownloading$;
+    this.isDownloading$ = this.tileDownloader.isDownloading$;
 
     if (!this.downloadToolState.progression$) {
-      this.progression$ = this.downloadService.progression$
+      this.progression$ = this.tileDownloader.progression$
         .pipe(map((value: number) => {
           return Math.round(value / this._nTilesToDownload * 100);
         }));
@@ -162,16 +165,25 @@ export class DownloadToolComponent implements OnInit, OnDestroy, AfterViewInit {
           this.messageService.success('Your download is done');
         }
       });
+    
+    const regionName = this.regionNameInput.value;
+    console.log("region name: ", regionName);
 
-    for (const tile of this.tilesToDownload) { // change for foreach
-      this.downloadService
-      .downloadFromCoord(
-          tile.coord,
-          this.depth,
-          tile.tileGrid,
-          tile.templateUrl,
-        );
-    }
+    this.downloadService.downloadSelectedRegion(
+      this.tilesToDownload,
+      regionName,
+      this.depth
+      );
+    
+    // for (const tile of this.tilesToDownload) { // change for foreach
+    //   this.tileDownloader
+    //   .downloadFromCoord(
+    //       tile.coord,
+    //       this.depth,
+    //       tile.tileGrid,
+    //       tile.templateUrl,
+    //     );
+    // }
   }
 
   public onCancelClick() {
@@ -184,13 +196,13 @@ export class DownloadToolComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public sizeEstimationInMB() {
-    const space = this.downloadService.downloadEstimatePerDepth(this.depth);
+    const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
     const nDownloads = this.tilesToDownload.length;
     return (space * nDownloads * 1e-6).toFixed(4);
   }
 
   public numberOfTilesToDownload() {
-    const nTilesPerDownload = this.downloadService.numberOfTiles(this.depth);
+    const nTilesPerDownload = this.tileDownloader.numberOfTiles(this.depth);
     const nDownloads = this.tilesToDownload.length;
     return nTilesPerDownload * nDownloads;
   }

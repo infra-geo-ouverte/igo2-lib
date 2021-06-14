@@ -10,6 +10,8 @@ import { IgoLanguageModule } from './language/language.module';
 import { IgoMessageModule } from './message/message.module';
 import { IgoErrorModule } from './request/error.module';
 import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
+import { DownloadRegionService, TileDownloaderService } from './download';
+
 
 const dbConfig: DBConfig = {
   name: 'igo2DB',
@@ -17,9 +19,17 @@ const dbConfig: DBConfig = {
   objectStoresMeta: [{
     store: 'geoData',
     storeConfig: { keyPath: 'url', autoIncrement: false },
-    storeSchema: []
+    storeSchema: [
+    ]
+  }, {
+    store: 'regionData',
+    storeConfig: { keyPath:'id', autoIncrement: true},
+    storeSchema: [
+      { name: 'name', keypath: 'name', options:{ unique: false }}
+    ]
   }]
 };
+//      { name: 'region_id', keypath: 'region_id', options:{ unique: false}}
 
 @NgModule({
   imports: [
@@ -39,6 +49,10 @@ const dbConfig: DBConfig = {
     IgoErrorModule,
     IgoLanguageModule,
     IgoMessageModule
+  ],
+  providers: [
+    TileDownloaderService,
+    DownloadRegionService
   ]
 })
 export class IgoCoreModule {

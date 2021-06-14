@@ -8,7 +8,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { IgoLanguageModule } from '@igo2/core';
 
 import { DownloadButtonComponent } from './download-button/download-button.component';
-import { TileDownloaderService } from './services/tile-downloader.service';
 
 @NgModule({
   imports: [
@@ -19,8 +18,7 @@ import { TileDownloaderService } from './services/tile-downloader.service';
     IgoLanguageModule
   ],
   exports: [DownloadButtonComponent],
-  declarations: [DownloadButtonComponent],
-  providers: [TileDownloaderService]
+  declarations: [DownloadButtonComponent]
 })
 export class IgoDownloadModule {
   static forRoot(): ModuleWithProviders<IgoDownloadModule> {

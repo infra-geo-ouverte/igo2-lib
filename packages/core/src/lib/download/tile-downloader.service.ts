@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GeoDataDBService, GeoNetworkService } from '@igo2/core';
+import { GeoDataDBService } from '../storage';
 import { first } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, forkJoin, Observable, Observer } from 'rxjs';
-import { CompressedData } from '@igo2/core/lib/storage/compressedData.interface';
+import { GeoNetworkService } from '../network';
 
 interface Tile {
   X: number;
@@ -90,26 +90,31 @@ export class TileDownloaderService {
     }
   }
 
-  public downloadRegion(region: Tile[], depth: number, domain: string) {
-    if (window.navigator.onLine) {
-      const tiles = this.generateTilesRegion(region, depth);
-      const urls = tiles.map((tile) => {
-        return this.generateURL(tile);
-      });
+  // need to create to refactor donwload service
+  public downloadRegion(regionID: number, coords: [[number, number, number]], depth: number, tileGrids, srcs) {
+    // if (!this.network.isOnline()) {
+    //   return;
+    // }
+    // let urls: string[] = [];
+    // for (let i = 0; i < coords.length; i++) {
+    //   this.initURLGenerator(tileGrids[i], srcs[i]);
+    //   const rootTile: Tile = {X: coords[i][1], Y: coords[i][2], Z: coords[i][0]};
+    //   const tiles = this.generateTiles(rootTile, depth);
+    //   urls = urls.concat(tiles.map((tile: Tile) => {
+    //     return this.generateURL(tile);
+    //   }));
+    // }
 
-      urls.forEach((url) => {
-        this.http.get(url , { responseType: 'blob' })
-          .pipe(first())
-          .subscribe((blob) => {
-            if (blob) {
-              this.geoDB.update(url, blob);
-            }
-          });
-      });
-    }
+    
   }
 
-  public downloadFromCoord(coord3D: [number, number, number], depth: number, tileGrid, src) {
+  public downloadFromCoord(
+    coord3D: [number, number, number], 
+    depth: number,
+    tileGrid, 
+    src
+  ) {
+    
     if (!this.network.isOnline()) {
       return;
     }
