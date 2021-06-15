@@ -179,6 +179,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
+        "resetFilters": "(Apply no filters)",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
@@ -401,6 +402,7 @@
             "gcc": "Coast Guard mark (CCG)",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
+            "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre"
           },

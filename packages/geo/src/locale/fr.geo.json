@@ -178,6 +178,7 @@
         "selectField": "Choisir un champ"
       },
       "filter": {
+        "resetFilters": "(Appliquer aucun filtre)",
         "addFilter": "Ajouter un filtre vide à la liste courante",
         "removeFilter": "Supprimer le présent filtre à la liste des filtres",
         "toggleFilterState": "Activer/désactiver le présent filtre",
@@ -400,6 +401,7 @@
             "gcc": "Repère de la garde cotière (GCC)",
             "sumi": "Borne SUMI",
             "km": "Repère kilométrique",
+            "hq": "Hydro-Québec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre"
           },
