@@ -17,7 +17,7 @@ import { IgoMap } from '../../../map';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
 import { AuthInterceptor } from '@igo2/auth';
-
+import { MessageService } from '@igo2/core';
 export class VectorLayer extends Layer {
   public dataSource:
     | FeatureDataSource
@@ -40,9 +40,10 @@ export class VectorLayer extends Layer {
 
   constructor(
     options: VectorLayerOptions,
+    public messageService?: MessageService,
     public authInterceptor?: AuthInterceptor
   ) {
-    super(options, authInterceptor);
+    super(options, messageService, authInterceptor);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }

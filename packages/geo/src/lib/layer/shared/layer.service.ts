@@ -124,7 +124,7 @@ export class LayerService {
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
-    return new TileLayer(layerOptions);
+    return new TileLayer(layerOptions, this.messageService);
   }
 
   private createVectorLayer(layerOptions: VectorLayerOptions): VectorLayer {
@@ -145,7 +145,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      olLayer = new VectorLayer(layerOptions, this.authInterceptor);
+      olLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -158,7 +158,7 @@ export class LayerService {
           baseStyle
         );
       };
-      olLayer = new VectorLayer(layerOptions, this.authInterceptor);
+      olLayer = new VectorLayer(layerOptions, this.messageService, this.authInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -166,7 +166,7 @@ export class LayerService {
     });
 
     if (!olLayer) {
-      olLayer = new VectorLayer(layerOptionsOl, this.authInterceptor);
+      olLayer = new VectorLayer(layerOptionsOl, this.messageService, this.authInterceptor);
     }
 
     this.applyMapboxStyle(olLayer, layerOptionsOl as any);
@@ -192,7 +192,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      olLayer = new VectorTileLayer(layerOptions, this.authInterceptor);
+      olLayer = new VectorTileLayer(layerOptions, this.messageService, this.authInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -200,7 +200,7 @@ export class LayerService {
     });
 
     if (!olLayer) {
-      olLayer = new VectorTileLayer(layerOptionsOl, this.authInterceptor);
+      olLayer = new VectorTileLayer(layerOptionsOl, this.messageService, this.authInterceptor);
     }
 
     this.applyMapboxStyle(olLayer, layerOptionsOl);
