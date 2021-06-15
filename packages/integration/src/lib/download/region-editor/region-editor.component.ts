@@ -7,7 +7,7 @@ import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
-import { MessageService } from '@igo2/core';
+import { MessageService, RegionDBService } from '@igo2/core';
 import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
 import { filter } from 'jszip';
 import { DownloadToolState } from './../download-tool/download-tool.state';
@@ -31,7 +31,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private progressBarPlaceHolder: MatProgressBar;
   @ViewChild('progressBar') progressBar;
 
-  regionName;
+  regionName: string = this.downloadToolState.regionName;
 
   urlsToDownload: Set<string> = this.downloadToolState.urlsToDownload;
   tilesToDownload: TileToDownload[] = this.downloadToolState.tilesToDownload;
@@ -50,6 +50,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private tileDownloader: TileDownloaderService,
+    private regionDB: RegionDBService,
     private downloadService: DownloadRegionService,
     private downloadState: DownloadState,
     private downloadToolState: DownloadToolState,
@@ -102,6 +103,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.downloadToolState.depth = this.depth;
     this.downloadToolState.tilesToDownload = this.tilesToDownload;
     this.downloadToolState.urlsToDownload = this.urlsToDownload;
+    this.downloadToolState.regionName = this.regionName;
     this.downloadToolState.progression$ = this.progression$;
   }
 
@@ -155,7 +157,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     
     console.log("region name: ", this.regionName);
-
+    this.downloadToolState.updateRegion();
     this.downloadService.downloadSelectedRegion(
       this.tilesToDownload,
       this.regionName,
@@ -171,6 +173,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     //       tile.templateUrl,
     //     );
     // }
+  }
+
+  public loadRegion(regionID: number) {
+    // this.regionDB.get(regionID).pipe(first())
+    //   .subscribe(() => {
+
+    //   });
   }
 
   public onCancelClick() {

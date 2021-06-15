@@ -1,1 +1,52 @@
-<mat-label>region manager works!</mat-label>
+<mat-carousel
+  timings="250ms ease-in"
+  [autoplay]="true"
+  interval="5000"
+  color="accent"
+  maxWidth="auto"
+  proportion="100"
+  slides="5"
+  [loop]="true"
+  [hideArrows]="true"
+  [hideIndicators]="false"
+  [useKeyboard]="true"
+  [useMouseWheel]="false"
+  orientation="ltr">
+
+    <mat-carousel-slide
+    *ngFor="let url of selectedRegionUrls; let i = index"
+    [image]="url"
+    overlayColor="#00000040"
+    [hideOverlay]="false"></mat-carousel-slide>
+   
+</mat-carousel>
+
+<table mat-table [dataSource]="regions">
+    <!-- Delete Column -->
+    <ng-container matColumnDef="edit">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let region">
+            <button mat-icon-button color="primary">
+                <mat-icon> edit </mat-icon>
+            </button>
+        </mat-cell>
+    </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-cell *matCellDef="let region"> {{region.name}} </mat-cell>
+    </ng-container>
+
+    <!-- Space Column -->
+    <ng-container matColumnDef="space">
+        <mat-header-cell mat-header-cell *matHeaderCellDef> Number of Tiles </mat-header-cell>
+        <mat-cell *matCellDef="let region"> {{region.numberOfTiles}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row 
+        *matRowDef="let row; columns: displayedColumns;" 
+        (click)="getRegion(row)" 
+        matRipple
+        [ngClass]="{'highlight': selectedRowID == row.id}"></mat-row>
+</table>

@@ -1,0 +1,13 @@
+::ng-deep table {
+    width: 100%;
+}
+
+::ng-deep .mat-row:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.highlight {
+    background-color: lightblue;
+}
+

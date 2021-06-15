@@ -13,6 +13,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RegionEditorComponent } from './region-editor/region-editor.component';
 import { RegionManagerComponent } from './region-manager/region-manager.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   imports: [
@@ -25,7 +27,9 @@ import { RegionManagerComponent } from './region-manager/region-manager.componen
     MatButtonModule,
     MatProgressBarModule,
     MatTabsModule,
-    FormsModule
+    FormsModule,
+    MatTableModule,
+    MatRippleModule
   ],
   declarations: [
     DownloadToolComponent,
