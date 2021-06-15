@@ -495,7 +495,7 @@ export function lonLatConversion(
   const convertedLonLat = [
     {
       code: 'EPSG:3857',
-      alias: 'Web mercator',
+      alias: 'Web Mercator',
       coord: rawCoord3857,
       igo2CoordFormat: `${roundCoordTo(rawCoord3857).join(', ')} ; 3857`
     }
