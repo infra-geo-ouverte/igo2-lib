@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { TileToDownload } from './download-tool.component';
-
-
+import { TileToDownload } from '../region-editor/region-editor.component';
 
 @Injectable({
    providedIn: 'root'
