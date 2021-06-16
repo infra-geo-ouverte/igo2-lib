@@ -31,11 +31,21 @@ export class RegionManagerComponent implements OnInit {
         this.regions = regions;
       });
   }
+
   ngOnInit() {
 
   }
 
-  getRegion(row: DBRegion) {
+  public removeRegion(region) {
+    this.regionDB.remove(region);
+    console.log("Remove ", region);
+  }
+
+  public editRegion(region) {
+    console.log("Edit ", region);
+  }
+
+  public getRegion(row: DBRegion) {
     this.selectedRegionUrls = row.parentUrls;
     this.selectedRowID = row.id;
   }

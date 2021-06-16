@@ -52,6 +52,14 @@ export class RegionDBService {
     return this.dbService.getAll(this.dbName);
   }
 
+  remove(region: DBRegion): Observable<boolean> {
+    const dbRequest = this.dbService.deleteByKey(this.dbName, region.id);
+    dbRequest.subscribe(() => {
+      this.update$.next(true);
+    })
+    return dbRequest;
+  }
+
   delete(id: number): Observable<boolean> {
     if (!id) {
       return;

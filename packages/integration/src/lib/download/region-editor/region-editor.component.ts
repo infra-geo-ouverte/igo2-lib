@@ -173,13 +173,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // }
   }
 
-  public loadRegion(regionID: number) {
-    // this.regionDB.get(regionID).pipe(first())
-    //   .subscribe(() => {
-
-    //   });
-  }
-
   public onCancelClick() {
     this.tilesToDownload = new Array();
     this.urlsToDownload = new Set();

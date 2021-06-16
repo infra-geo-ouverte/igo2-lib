@@ -26,10 +26,10 @@
     <ng-container matColumnDef="edit">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let region">
-            <button mat-icon-button color="primary">
+            <button mat-icon-button color="primary" (click)="editRegion(region)">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="primary">
+            <button mat-icon-button color="primary" (click)="removeRegion(region)">
                 <mat-icon>remove</mat-icon>
             </button>
         </mat-cell>
