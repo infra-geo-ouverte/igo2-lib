@@ -31,7 +31,7 @@ export class SwipeControlComponent {
     event.preventDefault();
     this.pos3 = event.clientX;
     document.onmouseup = this.closeDragElement;
-    // document.onmousemove = this.elementDrag;
+    // document.onmousemove = this.elementDrag;/
   }
 
   elementDrag(event) {
