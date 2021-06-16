@@ -9,11 +9,7 @@ import { DownloadToolState } from '../download-tool/download-tool.state';
   styleUrls: ['./region-manager.component.scss']
 })
 export class RegionManagerComponent implements OnInit {
-  regions: DBRegion[] = [
-    { name:"test1", parentUrls: [ "https://www.wikihow.com/images/thumb/6/65/Cite-Google-Images-Step-1.jpg/aid9392799-v4-728px-Cite-Google-Images-Step-1.jpg.webp" ], numberOfTiles: 85, id: 1 },
-    { name:"test2", parentUrls: [ "https://www.wikihow.com/images/thumb/6/65/Cite-Google-Images-Step-1.jpg/aid9392799-v4-728px-Cite-Google-Images-Step-1.jpg.webp" ], numberOfTiles: 121, id: 2 },
-    { name:"test3", parentUrls: [ "https://www.wikihow.com/images/thumb/6/65/Cite-Google-Images-Step-1.jpg/aid9392799-v4-728px-Cite-Google-Images-Step-1.jpg.webp" ], numberOfTiles: 21, id: 3 }
-  ];
+  regions: DBRegion[] ;
   displayedColumns = ['edit', 'name', 'space'];
   selectedRegionUrls: string[];
   selectedRowID: number = -1;
@@ -23,7 +19,7 @@ export class RegionManagerComponent implements OnInit {
     private downloadToolState: DownloadToolState
   ) { 
     this.updateRegions();
-    
+    // need change to db
     this.downloadToolState.regionsUpToDate$
       .subscribe((upToDate: boolean) => {
         console.log("need update", upToDate);
