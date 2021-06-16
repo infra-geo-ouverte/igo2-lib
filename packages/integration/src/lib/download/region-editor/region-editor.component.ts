@@ -155,9 +155,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.messageService.success('Your download is done');
         }
       });
-    
-    console.log("region name: ", this.regionName);
-    this.downloadToolState.updateRegion();
+
     this.downloadService.downloadSelectedRegion(
       this.tilesToDownload,
       this.regionName,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export interface Region {
   name: string;
@@ -20,6 +20,7 @@ export interface DBRegion {
 })
 export class RegionDBService {
   readonly dbName: string = 'regionData';
+  readonly update$: Subject<boolean> = new Subject();
   constructor(private dbService: NgxIndexedDBService) { }
 
   update(region: DBRegion): Observable<DBRegion[]> {
@@ -30,6 +31,7 @@ export class RegionDBService {
     const dbRequest = this.dbService.update(this.dbName, region);
     dbRequest.subscribe(() => {
       console.log("Region db item updated");
+      this.update$.next(true);
     });
   }
 
@@ -41,6 +43,7 @@ export class RegionDBService {
     const dbRequest = this.dbService.add(this.dbName, region);
     dbRequest.subscribe((key) => {
       console.log('Region db added key: ', key);
+      this.update$.next(true);
     });
     return dbRequest;
   }

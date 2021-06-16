@@ -15,19 +15,14 @@ export class RegionManagerComponent implements OnInit {
   selectedRowID: number = -1;
 
   constructor(
-    private regionDB: RegionDBService,
-    private downloadToolState: DownloadToolState
+    private regionDB: RegionDBService
   ) { 
     this.updateRegions();
-    // need change to db
-    this.downloadToolState.regionsUpToDate$
-      .subscribe((upToDate: boolean) => {
-        console.log("need update", upToDate);
-        if (!upToDate) {
-          this.updateRegions();
-        }
-      })
     
+    this.regionDB.update$.subscribe(() => {
+        this.updateRegions();
+      }
+    );
   }
 
   updateRegions() {
@@ -35,15 +30,12 @@ export class RegionManagerComponent implements OnInit {
       .subscribe((regions: DBRegion[]) => {
         this.regions = regions;
       });
-    this.downloadToolState.regionUpdated();
   }
   ngOnInit() {
-    console.log("on init");
+
   }
 
   getRegion(row: DBRegion) {
-    console.log("Row clicked");
-    console.log(row);
     this.selectedRegionUrls = row.parentUrls;
     this.selectedRowID = row.id;
   }

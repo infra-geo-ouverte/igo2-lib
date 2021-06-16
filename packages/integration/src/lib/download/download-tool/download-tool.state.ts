@@ -6,8 +6,6 @@ import { TileToDownload } from '../region-editor/region-editor.component';
    providedIn: 'root'
  })
 export class DownloadToolState {
-    public _regionsUpToDate: boolean;
-    private readonly _regionsUpToDate$: BehaviorSubject<boolean> = new BehaviorSubject(undefined);
     private _depth: number = 0;
     private _tilesToDownload: TileToDownload[] = new Array();
     private _urlsToDownload: Set<string> = new Set();
@@ -17,28 +15,6 @@ export class DownloadToolState {
     private _progression$: Observable<number>;
     
     constructor() {}
-
-    updateRegion() {
-        this._regionsUpToDate = false;
-        this._regionsUpToDate$.next(false);
-    }
-
-    regionUpdated() {
-        this._regionsUpToDate = true;
-        this._regionsUpToDate$.next(true);
-    }
-
-    get regionsUpToDate$() {
-        return this._regionsUpToDate$;
-    }
-
-    set regionsUpToDate(value: boolean) {
-        this._regionsUpToDate = value;
-    }
-
-    get regionsUpToDate() {
-        return this._regionsUpToDate
-    }
 
     set depth(value: number) {
         this._depth = value;
