@@ -22,12 +22,15 @@
 </mat-carousel>
 
 <table mat-table [dataSource]="regions">
-    <!-- Delete Column -->
+    <!-- Button Column -->
     <ng-container matColumnDef="edit">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let region">
             <button mat-icon-button color="primary">
-                <mat-icon> edit </mat-icon>
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="primary">
+                <mat-icon>remove</mat-icon>
             </button>
         </mat-cell>
     </ng-container>
