@@ -12,7 +12,7 @@ export class AppPrintComponent {
   public map = new IgoMap({
     controls: {
       attribution: {
-        collapsed: false,
+        collapsed: false
       }
     }
   });
