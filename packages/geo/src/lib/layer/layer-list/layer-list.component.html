@@ -40,7 +40,7 @@
   </ng-container>
 
   <ng-content select="[igoLayerItemToolbar]"></ng-content>
-    <button
+    <button #zlb
       *ngIf="activeLayerIsValid(activeLayer)"
       class="zoomLayer-button"
       color="primary"
@@ -53,7 +53,7 @@
     </button>
 
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
-    <button
+    <button #ob
       class="opacity-button"
       color="primary"
       mat-icon-button
@@ -84,7 +84,7 @@
       </div>
     </mat-menu>
 
-    <button
+    <button #ub
       class="up-button"
       color="primary"
       mat-icon-button
@@ -97,7 +97,7 @@
                 svgIcon="arrow-up"></mat-icon>
     </button>
 
-    <button
+    <button #db
       class="down-button"
       mat-icon-button
       color="primary"
@@ -110,7 +110,7 @@
                 svgIcon="arrow-down"></mat-icon>
     </button>
 
-    <button
+    <button #deb
       *ngIf="isLayerRemovable(activeLayer)"
       class="delete-button"
       mat-icon-button
@@ -128,16 +128,16 @@
   <div class="igo-layer-button-group">
 
     <button
-      mat-stroked-button
+      mat-icon-button
       tooltip-position="below"
+      [color]="selectAllCheck ? 'warn' : 'primary'"
       matTooltipShowDelay="500"
       [disabled]="layers.length === 0"
       [matTooltip]="selectAllCheck ?
                     ('igo.geo.layer.deselectAll' | translate) :
                     ('igo.geo.layer.selectAll' | translate)"
       (click)="selectAll()">
-      {{selectAllCheck ? ('igo.geo.layer.deselectAll' | translate) :
-                    ('igo.geo.layer.selectAll' | translate)}}
+      <mat-icon [svgIcon]="selectAllCheck ? 'checkbox-multiple-blank-outline' : 'checkbox-multiple-marked'"></mat-icon>
     </button>
 
     <button
@@ -149,7 +149,7 @@
       matTooltipShowDelay="500"
       [matTooltip]="'igo.geo.layer.zoomLayers' | translate"
       (click)="zoomLayersExtents(layersChecked)">
-      <mat-icon matBadgeColor="primary" matBadgeSize="medium" svgIcon="magnify-scan"></mat-icon>
+      <mat-icon svgIcon="magnify-scan"></mat-icon>
     </button>
 
     <button

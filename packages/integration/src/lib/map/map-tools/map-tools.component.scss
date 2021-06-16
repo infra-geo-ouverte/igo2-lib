@@ -10,6 +10,13 @@
   cursor: pointer;
 }
 
+.more-menu {
+  max-width: unset;
+  max-height: unset;
+  width: 125px;
+  height: 45px;
+}
+
 mat-list mat-list-item h4 {
   font-weight: bold;
 }

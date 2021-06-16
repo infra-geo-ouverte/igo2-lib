@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
@@ -40,7 +42,9 @@ import { IgoAppWorkspaceModule } from '../workspace/workspace.module';
     IgoImportExportModule,
     IgoFilterModule,
     IgoContextModule,
-    IgoAppWorkspaceModule
+    IgoAppWorkspaceModule,
+    MatMenuModule,
+    MatButtonModule
   ],
   declarations: [MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   exports: [MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],

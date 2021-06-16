@@ -18,14 +18,25 @@
 
       <ng-template #igoLayerItemToolbar let-layer="layer">
         <!-- <igo-download-button [layer]="layer"></igo-download-button> -->
-        <igo-workspace-button [layer]="layer"></igo-workspace-button>
-        <igo-export-button *ngIf="isExportButton(layer)" [layer]="layer" (click)="activateExport(layer)"></igo-export-button>
-        <igo-ogc-filter-button *ngIf="isOGCFilterButton(layer)" [header]="ogcButton" [layer]="layer"
-        (click)="activateOgcFilter()"></igo-ogc-filter-button>
-        <igo-time-filter-button *ngIf="isTimeFilterButton(layer)" [header]="timeButton" [layer]="layer"
+        <!--<button
+          class="more-button"
+          mat-icon-button
+          color="primary"
+          [matMenuTriggerFor]="moreMenu">
+          <mat-icon svgIcon="dots-vertical"></mat-icon>
+        </button>
+        <mat-menu #moreMenu="matMenu">
+          <div class="more-menu">-->
+            <igo-workspace-button #iwb [layer]="layer"></igo-workspace-button>
+            <igo-export-button #ieb *ngIf="isExportButton(layer)" [layer]="layer" (click)="activateExport(layer)"></igo-export-button>
+            <igo-ogc-filter-button #iofb *ngIf="isOGCFilterButton(layer)" [header]="ogcButton" [layer]="layer"
+                                    (click)="activateOgcFilter()"></igo-ogc-filter-button>
+          <!--</div>
+        </mat-menu>-->
+        <igo-time-filter-button #itfb *ngIf="isTimeFilterButton(layer)" [header]="timeButton" [layer]="layer"
           (click)="activateTimeFilter()"></igo-time-filter-button>
-        <igo-track-feature-button [trackFeature]="true" [layer]="layer"></igo-track-feature-button>
-        <igo-metadata-button [layer]="layer"></igo-metadata-button>
+        <igo-track-feature-button #itrfb [trackFeature]="true" [layer]="layer"></igo-track-feature-button>
+        <igo-metadata-button #imb [layer]="layer"></igo-metadata-button>
       </ng-template>
 
     </igo-layer-list>
