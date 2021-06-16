@@ -72,7 +72,7 @@ export class SwipeControlComponent {
     idLayer.ol.on('prerender', (event) => {
       const ctx = event.context;
       const width = document.getElementById('myswipe').offsetLeft;
-      //const width = ctx.canvas.width * document.getElementById('myswipe').offsetLeft / 1000;
+      // const width = ctx.canvas.width * document.getElementById('myswipe').offsetLeft / 1000;
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, 0, width, ctx.canvas.height);
