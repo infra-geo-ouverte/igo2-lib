@@ -1,3 +1,84 @@
+// .igo-swipe-control-arrows i:first-child {
+//   .rotate(180deg);
+// }
+
+.igo-swipe-control-container {
+	position: absolute;
+	width: 32px;
+	height: 100%;
+	top: 0%;
+	left: 50%;
+	cursor: grab; 
+}
+
+.igo-swipe-control-container:active{
+	cursor: grabbing;
+}
+
+.igo-swipe-control-line {
+	position: absolute;
+	width: 4px;
+	height: 100%;
+	top: 50%;
+	left: 50%;
+	z-index: 990;
+	transform: translate(-50%,-50%);
+	margin-left: 0px;
+	background-color: red;
+}
+
+.igo-swipe-control-arrows {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	left: 50%;
+	top: 50%;
+	margin-top: -16px;
+	padding: 5px 4px;
+	background-color: red;
+	transform: translate(-50%,-50%);
+
+	div {
+		display: inline-block;
+		width: 0; 
+		height: 0; 
+		border-top: 10px solid transparent;
+		border-bottom: 10px solid transparent;
+	}
+
+	.igo-arrow-right{
+		margin-left: 4px;
+		border-left: 10px solid white;
+	}
+
+	.igo-arrow-left {
+		border-right: 10px solid white;
+	}
+}
+
+.igo-swipe-control-layer-label {
+//   display: none;
+	position: absolute;
+	width: 120px;
+	bottom: 55px;
+	right: 65%;
+	padding: 5px 3px; 
+	font-size: 11px;
+	font-weight: bold;
+	background-color: white;
+	border: blue;
+	
+	&:before {
+		padding-right: 3px;
+	}
+}
+	
+//   @media (max-width: @screen-tablet), (max-height: @screen-s-height) {
+// 	bottom: 20px;
+//   } 
+// }
+// }
+/*
 .igo-swipe-control { width: 100%; }
 
 .slider {
@@ -37,4 +118,4 @@
 	background: #aa040c;
 	cursor: pointer;
 	opacity: 1;
-}
+}  */

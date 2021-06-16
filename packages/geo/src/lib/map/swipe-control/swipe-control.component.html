@@ -1,17 +1,30 @@
+<div class="igo-swipe-control-container"  id="myswipe"
+
+  (mousedown)="dragMouseDown($event)"
+  (mousemove)="elementDrag($event)"
+
+  (mouseup)="closeDragElement()">
+  <div class="igo-swipe-control-line" id="myswipe"></div>
+
+  <div class="igo-swipe-control-layer-label" id="myswipe">
+    <i class="fa fa-arrow-left"></i>
+  </div>
+
+  <div class="igo-swipe-control-arrows" id="myswipe">
+    <div class="igo-arrow-left"></div>
+    <div class="igo-arrow-right"></div>
+  </div>
+   <!--
+ {{layer.label}}   (mousemove)="elementDrag($event)" (mouseup)="closeDragElement()"       AFFICHER IGO-SWIPE-CONTROL
+-->
+</div>
+
+
+
+
+<!-- 
 <div class="igo-swipe-control">
   <input type="range" class="slider" id="swipe" min="1" max="1000" value="500"> 
 </div>
 
-<!-- 
-<div class="igo-swipe-contol" igo-draggable>
-  <div class="igo-swipe-control-line"></div>
-  <div class="igo-swipe-control-layer-label">
-    <i class="fa fa-arrow-left"></i>
-    {{layer.label}}  
-  </div>
-  <div class="igo-swipe-control-arrows">
-    <div class="igo-arrow-left"></div>
-    <div class="igo-arrow-right"></div>
-  </div>
-</div>
 -->
