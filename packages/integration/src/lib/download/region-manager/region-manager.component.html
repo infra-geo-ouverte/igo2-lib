@@ -1,4 +1,5 @@
 <mat-carousel
+  #regionCarousel
   timings="250ms ease-in"
   [autoplay]="true"
   interval="5000"
@@ -34,7 +35,7 @@
             </button>
         </mat-cell>
     </ng-container>
-    
+
     <!-- Name Column -->
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
