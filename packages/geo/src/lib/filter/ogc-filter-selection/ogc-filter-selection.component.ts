@@ -144,12 +144,10 @@ export class OgcFilterSelectionComponent implements OnInit {
   }
 
   set enableds(value) {
-    console.log('enableds value', value);
     this.enableds$.next(value);
     clearTimeout(this.applyFiltersTimeout);
     this.currentSelectGroup.computedSelectors.forEach(compSelect => {
       compSelect.selectors.forEach(selector => {
-        console.log('enableds value', selector);
         value.includes(selector) ? selector.enabled = true : selector.enabled = false;
       });
     });
