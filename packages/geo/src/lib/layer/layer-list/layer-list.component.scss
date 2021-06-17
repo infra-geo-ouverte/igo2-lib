@@ -4,6 +4,7 @@
 }
 
 :host .igo-list-max-height {
+  height: calc(100% - 127px);
   padding-top: 8px;
 }
 
@@ -30,9 +31,13 @@ mat-form-field.inputFilter {
   top: 10px
 }
 
-.igo-layer-button-group {
+.igo-layer-button-group, .select-all-button, .actions-buttons-multi {
   display: flex;
-  float: right;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.igo-layer-button-group, .select-all-button {
   padding-top: 5px;
 }
 
