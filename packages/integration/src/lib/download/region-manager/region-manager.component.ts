@@ -43,7 +43,7 @@ export class RegionManagerComponent implements OnInit{
   }
 
   public deleteRegion(region) {
-    this.downloadManager.deleteRegion(region);
+    this.downloadManager.deleteRegionByID(region.id);
   }
 
   public editRegion(region) {

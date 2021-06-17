@@ -70,9 +70,9 @@ export class DownloadRegionService {
 
   }
 
-  public deleteRegion(region: DBRegion): Observable<[boolean, boolean]> {
-    const regionDBRequest = this.regionDB.delete(region);
-    const tileDBRequest = this.tileDB.deleteByRegionID(region.id);
+  public deleteRegionByID(regionID: number): Observable<[boolean, boolean]> {
+    const regionDBRequest = this.regionDB.deleteByRegionID(regionID);
+    const tileDBRequest = this.tileDB.deleteByRegionID(regionID);
     return zip(regionDBRequest, tileDBRequest);
   }
 }

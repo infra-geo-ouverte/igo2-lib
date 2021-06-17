@@ -52,12 +52,12 @@ export class RegionDBService {
     return this.dbService.getAll(this.dbName);
   }
 
-  delete(region: DBRegion): Observable<boolean> {
-    if (!region) {
+  deleteByRegionID(regionID: number): Observable<boolean> {
+    if (!regionID) {
       return;
     }
 
-    const dbRequest = this.dbService.deleteByKey(this.dbName, region.id);
+    const dbRequest = this.dbService.deleteByKey(this.dbName, regionID);
     dbRequest.subscribe(() => {
       this.update$.next(true);
     })
