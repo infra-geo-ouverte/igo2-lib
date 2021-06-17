@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, zip } from 'rxjs';
+import { Observable, Subscription, zip } from 'rxjs';
+import { skip, timestamp } from 'rxjs/operators';
 import { DBRegion, GeoDataDBService, RegionDBService } from '../storage';
 import { TileDownloaderService } from './tile-downloader.service';
 // need to make region db
@@ -19,6 +20,8 @@ interface TileToDownload {
   providedIn: 'root'
 })
 export class DownloadRegionService {
+  isDownloading$$: Subscription;
+  
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: GeoDataDBService,
@@ -30,6 +33,10 @@ export class DownloadRegionService {
     regionName: string,
     depth: number
   ) {
+
+    if (this.isDownloading$$) {
+      this.isDownloading$$.unsubscribe();
+    }
     const parentUrls = tilesToDownload.map((item: TileToDownload) => {
       return item.url;
     });
@@ -49,7 +56,14 @@ export class DownloadRegionService {
           );
         }
       });
-    
+
+    this.isDownloading$$ = this.tileDownloader.isDownloading$
+      .pipe(skip(1))
+      .subscribe((value) => {
+        if (!value) {
+          this.updateAllRegionTileCount();
+        }
+      });
   }
 
   public addToSelectedRegion(parentCoords: [number, number, number]) {
@@ -71,8 +85,35 @@ export class DownloadRegionService {
   }
 
   public deleteRegionByID(regionID: number): Observable<[boolean, boolean]> {
+    if (!regionID) {
+      return;
+    }
+    
     const regionDBRequest = this.regionDB.deleteByRegionID(regionID);
     const tileDBRequest = this.tileDB.deleteByRegionID(regionID);
     return zip(regionDBRequest, tileDBRequest);
+  }
+
+  public updateRegionTileCount(region: DBRegion) {
+    if (!region) {
+      return;
+    }
+
+    this.tileDB.getRegionTileCountByID(region.id).subscribe((count: number) => {
+      this.regionDB.update({
+        id: region.id,
+        name: region.name,
+        parentUrls: region.parentUrls,
+        numberOfTiles: count
+      })
+    });
+  }
+
+  public updateAllRegionTileCount() {
+    this.regionDB.getAll().subscribe((regions: DBRegion[]) => {
+      regions.forEach((region: DBRegion) => {
+        this.updateRegionTileCount(region);
+      });
+    });
   }
 }
