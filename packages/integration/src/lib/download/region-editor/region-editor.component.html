@@ -31,6 +31,7 @@
     <div><mat-slider 
       #depthSlider
       (input)="onDepthSliderChange()"
+      [(ngModel)]="depth"
       [disabled]="disableSlider"
       min="0" 
       max="5" 

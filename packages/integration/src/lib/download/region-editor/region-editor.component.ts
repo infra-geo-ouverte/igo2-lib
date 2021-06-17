@@ -176,6 +176,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   public onCancelClick() {
     this.tilesToDownload = new Array();
     this.urlsToDownload = new Set();
+    this.regionName = undefined;
+    this.depth = 0;
   }
 
   public onDepthSliderChange() {
