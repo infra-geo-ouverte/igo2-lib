@@ -211,6 +211,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get disableCancelButton() {
-    return this.downloadToolState.isDownloading || this.tilesToDownload.length === 0;
+    return this.downloadToolState.isDownloading;
   }
 }
