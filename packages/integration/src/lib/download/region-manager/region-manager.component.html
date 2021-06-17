@@ -21,7 +21,7 @@
    
 </mat-carousel>
 
-<table mat-table [dataSource]="regions">
+<table mat-table [dataSource]="regions | async">
     <!-- Button Column -->
     <ng-container matColumnDef="edit">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
@@ -34,6 +34,7 @@
             </button>
         </mat-cell>
     </ng-container>
+    
     <!-- Name Column -->
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>

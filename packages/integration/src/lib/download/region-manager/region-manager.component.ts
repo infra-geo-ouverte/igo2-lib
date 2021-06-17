@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DBRegion, DownloadRegionService, RegionDBService } from '@igo2/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { DownloadToolState } from '../download-tool/download-tool.state';
 
@@ -10,7 +10,7 @@ import { DownloadToolState } from '../download-tool/download-tool.state';
   styleUrls: ['./region-manager.component.scss']
 })
 export class RegionManagerComponent implements OnInit {
-  regions: DBRegion[] ;
+  regions: BehaviorSubject<DBRegion[]> = new BehaviorSubject(undefined);
   displayedColumns = ['edit', 'name', 'space'];
   selectedRegionUrls: string[];
   selectedRowID: number = -1;
@@ -30,7 +30,7 @@ export class RegionManagerComponent implements OnInit {
   updateRegions() {
     this.regionDB.getAll().pipe(first())
       .subscribe((regions: DBRegion[]) => {
-        this.regions = regions;
+        this.regions.next(regions);
       });
   }
 
