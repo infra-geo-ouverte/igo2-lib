@@ -383,6 +383,7 @@ export class IChercheSearchSource extends SearchSource implements TextSearch {
             ];
           }
         });
+        this.setParamFromSetting(typeSetting, false);
       });
   }
 
@@ -773,6 +774,7 @@ export class IChercheReverseSearchSource extends SearchSource
         typeSetting.values.forEach((v) => {
           v.available = types.indexOf(v.value as string) > -1;
         });
+        this.setParamFromSetting(typeSetting, false);
       });
   }
 
