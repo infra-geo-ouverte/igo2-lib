@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { RegionDBService } from '../storage';
+import { Observable, zip } from 'rxjs';
+import { DBRegion, GeoDataDBService, RegionDBService } from '../storage';
 import { TileDownloaderService } from './tile-downloader.service';
 // need to make region db
 // need to ajust download method of TileDownloaderService
@@ -20,6 +21,7 @@ interface TileToDownload {
 export class DownloadRegionService {
   constructor(
     private tileDownloader: TileDownloaderService,
+    private tileDB: GeoDataDBService,
     private regionDB: RegionDBService
   ) { }
   // need on right click method for the controler
@@ -68,11 +70,9 @@ export class DownloadRegionService {
 
   }
 
-  public deleteRegion(name: string) {
-    // 1) for every urls in region delete it
-    // 2) or by region index in db
-    // the second option seems more appropriate because it deresponsabilise
-    // the DownloadService of remembering all the urls therefore saving space
-    // in indexedDB
+  public deleteRegion(region: DBRegion): Observable<[boolean, boolean]> {
+    const regionDBRequest = this.regionDB.delete(region);
+    const tileDBRequest = this.tileDB.deleteByRegionID(region.id);
+    return zip(regionDBRequest, tileDBRequest);
   }
 }

@@ -55,4 +55,19 @@ export class GeoDataDBService {
       })
     );
   }
+
+  deleteByRegionID(id: number): Observable<any> { //to change
+    if (!id) {
+      return;
+    }
+    const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
+    const dbRequest = this.dbService.getAllByIndex(this.dbName, 'regionID', IDBKey);
+    dbRequest.subscribe((tiles: DbData[]) => {
+      tiles.forEach((tile) => {
+        console.log(tile);
+        this.dbService.deleteByKey(this.dbName, tile.url);
+      });
+    })
+    return dbRequest;
+  }
 }

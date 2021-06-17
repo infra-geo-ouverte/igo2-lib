@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { DBRegion, RegionDBService } from '@igo2/core';
+import { DBRegion, DownloadRegionService, RegionDBService } from '@igo2/core';
+import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { DownloadToolState } from '../download-tool/download-tool.state';
 
@@ -15,7 +16,8 @@ export class RegionManagerComponent implements OnInit {
   selectedRowID: number = -1;
 
   constructor(
-    private regionDB: RegionDBService
+    private regionDB: RegionDBService,
+    private downloadManager: DownloadRegionService
   ) { 
     this.updateRegions();
     
@@ -36,9 +38,8 @@ export class RegionManagerComponent implements OnInit {
 
   }
 
-  public removeRegion(region) {
-    this.regionDB.remove(region);
-    console.log("Remove ", region);
+  public deleteRegion(region) {
+    this.downloadManager.deleteRegion(region);
   }
 
   public editRegion(region) {
