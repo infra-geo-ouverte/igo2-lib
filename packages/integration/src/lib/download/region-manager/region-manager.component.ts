@@ -5,6 +5,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { DownloadToolState } from '../download-tool/download-tool.state';
 
+interface Region {
+  id: number;
+  name: string;
+  numberOfTiles: number;
+  parentUrls: string[];
+}
+
 @Component({
   selector: 'igo-region-manager',
   templateUrl: './region-manager.component.html',
@@ -13,7 +20,7 @@ import { DownloadToolState } from '../download-tool/download-tool.state';
 export class RegionManagerComponent implements OnInit{
   @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
-  regions: BehaviorSubject<DBRegion[]> = new BehaviorSubject(undefined);
+  regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
   displayedColumns = ['edit', 'name', 'space'];
   selectedRegionUrls: string[];
   selectedRowID: number = -1;
@@ -32,10 +39,39 @@ export class RegionManagerComponent implements OnInit{
 
   updateRegions() {
     this.regionDB.getAll().pipe(first())
-      .subscribe((regions: DBRegion[]) => {
+      .subscribe((dbRegions: DBRegion[]) => {
         this.selectedRegionUrls = undefined;
+        const regions = this.createRegion(dbRegions);
         this.regions.next(regions);
       });
+  }
+
+  private createRegion(dBRegions: DBRegion[]) {
+    const regions: Region[] = []
+    const nameOccurences: Map<string, number> = new Map();
+    for (let region of dBRegions) {
+      const name = region.name;
+      let occurence = nameOccurences.get(name);
+      if (occurence === undefined) {
+        regions.push({
+          id: region.id,
+          name,
+          numberOfTiles: region.numberOfTiles,
+          parentUrls: region.parentUrls
+        });
+        nameOccurences.set(name, 1);
+      } else {
+        const newName = name + ' (' + occurence + ')';
+        regions.push({
+          id: region.id,
+          name: newName,
+          numberOfTiles: region.numberOfTiles,
+          parentUrls: region.parentUrls
+        });
+        nameOccurences.set(name, ++occurence);
+      }
+    }
+    return regions;
   }
 
   ngOnInit() {
@@ -50,7 +86,7 @@ export class RegionManagerComponent implements OnInit{
     console.log("Edit ", region);
   }
 
-  public getRegion(row: DBRegion) {
+  public getRegion(row: Region) {
     this.selectedRegionUrls = row.parentUrls;
     this.selectedRowID = row.id;
     this.regionCarousel.slideTo(0);
