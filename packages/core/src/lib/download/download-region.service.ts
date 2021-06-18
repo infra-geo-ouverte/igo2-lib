@@ -118,9 +118,6 @@ export class DownloadRegionService {
   }
 
   public getDownloadSpaceEstimate(nTiles: number): number {
-    if (!nTiles) {
-      return;
-    }
     return this.tileDownloader.downloadEstimate(nTiles);
   }
 }
