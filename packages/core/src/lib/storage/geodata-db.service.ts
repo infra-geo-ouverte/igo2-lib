@@ -15,7 +15,7 @@ export class GeoDataDBService {
     private dbService: NgxIndexedDBService,
     private compression: CompressionService
   ) { }
-  
+
   update(url: string, regionID: number, object: Blob): Observable<any> {
     if (!object) {
       return;
@@ -31,18 +31,18 @@ export class GeoDataDBService {
           object: compressedObject
         };
         const getRequest = this.dbService.getByID(this.dbName, url);
-        getRequest.subscribe((object) => {
+        getRequest.subscribe((dbObject) => {
           let dbRequest: Observable<DbData>;
-          if (!object) {
-            dbRequest = this.dbService.addItem(this.dbName, dbData)
+          if (!dbObject) {
+            dbRequest = this.dbService.addItem(this.dbName, dbData);
           } else {
             dbRequest = this.customUpdate(dbData);
           }
-          dbRequest.subscribe((object) => {
-            subject.next(object);
+          dbRequest.subscribe((response) => {
+            subject.next(response);
             subject.complete();
           });
-        })
+        });
       });
     return subject;
   }
@@ -58,7 +58,7 @@ export class GeoDataDBService {
           subject.complete();
         });
       } else {
-        subject.complete()
+        subject.complete();
       }
     });
     return subject;
@@ -92,13 +92,13 @@ export class GeoDataDBService {
     if (!id) {
       return;
     }
-    
+
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.dbService.getAllByIndex(this.dbName, 'regionID', IDBKey);
     return dbRequest;
   }
 
-  deleteByRegionID(id: number): Observable<any> { //to change
+  deleteByRegionID(id: number): Observable<any> {
     if (!id) {
       return;
     }
@@ -110,7 +110,7 @@ export class GeoDataDBService {
         console.log(tile);
         this.dbService.deleteByKey(this.dbName, tile.url);
       });
-    })
+    });
     return dbRequest;
   }
 }

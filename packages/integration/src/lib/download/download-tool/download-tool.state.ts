@@ -13,7 +13,7 @@ export class DownloadToolState {
     private _regionName: string;
     private _isDownloading$: Observable<boolean>;
     private _progression$: Observable<number>;
-    
+
     constructor() {}
 
     set depth(value: number) {
@@ -47,22 +47,21 @@ export class DownloadToolState {
     get isDownloading() {
         return this._isDownloading;
     }
-    
-    
+
+    get isDownloading$() {
+        return this._isDownloading$;
+    }
+
     set isDownloading$(value: Observable<boolean>) {
         this._isDownloading$ = value;
     }
-    
+
     get regionName(): string {
         return this._regionName;
     }
 
     set regionName(value: string) {
         this._regionName = value;
-    }
-
-    get isDownloading$() {
-        return this._isDownloading$;
     }
 
     set progression$(value: Observable<number>) {
@@ -72,5 +71,4 @@ export class DownloadToolState {
     get progression$() {
         return this._progression$;
     }
-
 }

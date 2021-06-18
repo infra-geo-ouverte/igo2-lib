@@ -30,7 +30,6 @@ export class RegionDBService {
 
     const dbRequest = this.dbService.update(this.dbName, region);
     dbRequest.subscribe(() => {
-      console.log("Region db item updated");
       this.update$.next(true);
     });
   }
@@ -42,7 +41,6 @@ export class RegionDBService {
 
     const dbRequest = this.dbService.add(this.dbName, region);
     dbRequest.subscribe((key) => {
-      console.log('Region db added key: ', key);
       this.update$.next(true);
     });
     return dbRequest;
@@ -60,7 +58,7 @@ export class RegionDBService {
     const dbRequest = this.dbService.deleteByKey(this.dbName, regionID);
     dbRequest.subscribe(() => {
       this.update$.next(true);
-    })
+    });
     return dbRequest;
   }
 }

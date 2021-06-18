@@ -92,17 +92,17 @@ export class TileDownloaderService {
 
   // need to create to refactor download service
   public downloadRegion(regionID: number, coords: [[number, number, number]], depth: number, tileGrids, srcs) {
-    
+
   }
 
   public downloadFromCoord(
     coord3D: [number, number, number],
     regionID: number,
     depth: number,
-    tileGrid, 
+    tileGrid,
     src
   ) {
-    
+
     if (!this.network.isOnline()) {
       return;
     }

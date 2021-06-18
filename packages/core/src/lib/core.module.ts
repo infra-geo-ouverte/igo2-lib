@@ -20,17 +20,16 @@ const dbConfig: DBConfig = {
     store: 'geoData',
     storeConfig: { keyPath: 'url', autoIncrement: false },
     storeSchema: [
-      { name: 'regionID', keypath: 'regionID', options:{ unique: false}}
+      { name: 'regionID', keypath: 'regionID', options: { unique: false }}
     ]
   }, {
     store: 'regionData',
-    storeConfig: { keyPath:'id', autoIncrement: true},
+    storeConfig: { keyPath: 'id', autoIncrement: true },
     storeSchema: [
-      { name: 'name', keypath: 'name', options:{ unique: false }}
+      { name: 'name', keypath: 'name', options: { unique: false }}
     ]
   }]
 };
-//      
 
 @NgModule({
   imports: [

@@ -21,7 +21,7 @@ interface TileToDownload {
 })
 export class DownloadRegionService {
   isDownloading$$: Subscription;
-  
+
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: GeoDataDBService,
@@ -44,14 +44,12 @@ export class DownloadRegionService {
     const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
     this.regionDB.add({name: regionName, parentUrls, numberOfTiles})
       .subscribe((regionID: number) => {
-        console.log("done adding regionId: ", regionID);
-        for (let tile of tilesToDownload) {
-           // need to change tileDonwloader download method
+        for (const tile of tilesToDownload) {
           this.tileDownloader.downloadFromCoord(
-            tile.coord, 
-            regionID, 
-            depth, 
-            tile.tileGrid, 
+            tile.coord,
+            regionID,
+            depth,
+            tile.tileGrid,
             tile.templateUrl
           );
         }
@@ -88,7 +86,7 @@ export class DownloadRegionService {
     if (!regionID) {
       return;
     }
-    
+
     const regionDBRequest = this.regionDB.deleteByRegionID(regionID);
     const tileDBRequest = this.tileDB.deleteByRegionID(regionID);
     return zip(regionDBRequest, tileDBRequest);
@@ -105,7 +103,7 @@ export class DownloadRegionService {
         name: region.name,
         parentUrls: region.parentUrls,
         numberOfTiles: count
-      })
+      });
     });
   }
 

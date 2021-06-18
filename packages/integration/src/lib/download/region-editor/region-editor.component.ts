@@ -36,17 +36,16 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   urlsToDownload: Set<string> = this.downloadToolState.urlsToDownload;
   tilesToDownload: TileToDownload[] = this.downloadToolState.tilesToDownload;
   depth: number = this.downloadToolState.depth;
-  
+
   progression$: Observable<number>;
   _progression: number = 0;
-  
+
   isDownloading$$: Subscription;
   isDownloading$: Observable<boolean>;
-  
+
   private addNewTile$$: Subscription;
 
   private _nTilesToDownload: number;
-  
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -77,7 +76,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.progression$ = this.downloadToolState.progression$;
     }
-    
   }
 
   ngOnInit() {
@@ -122,14 +120,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       const firstZ = firstTile.coord[0];
       if (z !== firstZ) {
-        this.messageService.error("The tile you selected is not on the same level as the previous ones");
+        this.messageService.error('The tile you selected is not on the same level as the previous ones');
         return;
       }
       if (!this.urlsToDownload.has(url)) {
         this.urlsToDownload.add(url);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid });
       } else {
-        this.messageService.error("The tile is already selected");
+        this.messageService.error('The tile is already selected');
       }
     } catch (e) {
       return;
@@ -142,7 +140,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this._nTilesToDownload = this.numberOfTilesToDownload();
-    
+
     if (this.isDownloading$$) {
       this.isDownloading$$.unsubscribe();
     }
@@ -161,16 +159,6 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.regionName,
       this.depth
       );
-    
-    // for (const tile of this.tilesToDownload) { // change for foreach
-    //   this.tileDownloader
-    //   .downloadFromCoord(
-    //       tile.coord,
-    //       this.depth,
-    //       tile.tileGrid,
-    //       tile.templateUrl,
-    //     );
-    // }
   }
 
   public onCancelClick() {

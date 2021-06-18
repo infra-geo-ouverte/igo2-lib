@@ -28,9 +28,9 @@ export class RegionManagerComponent implements OnInit{
   constructor(
     private regionDB: RegionDBService,
     private downloadManager: DownloadRegionService
-  ) { 
+  ) {
     this.updateRegions();
-    
+
     this.regionDB.update$.subscribe(() => {
         this.updateRegions();
       }
@@ -47,9 +47,9 @@ export class RegionManagerComponent implements OnInit{
   }
 
   private createRegion(dBRegions: DBRegion[]) {
-    const regions: Region[] = []
+    const regions: Region[] = [];
     const nameOccurences: Map<string, number> = new Map();
-    for (let region of dBRegions) {
+    for (const region of dBRegions) {
       const name = region.name;
       let occurence = nameOccurences.get(name);
       if (occurence === undefined) {
@@ -83,7 +83,7 @@ export class RegionManagerComponent implements OnInit{
   }
 
   public editRegion(region) {
-    console.log("Edit ", region);
+    console.log('Edit ', region);
   }
 
   public getRegion(row: Region) {
