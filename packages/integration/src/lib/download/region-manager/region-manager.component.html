@@ -42,10 +42,16 @@
         <mat-cell *matCellDef="let region"> {{region.name}} </mat-cell>
     </ng-container>
 
-    <!-- Space Column -->
-    <ng-container matColumnDef="space">
+    <!-- nTiles Column -->
+    <ng-container matColumnDef="nTiles">
         <mat-header-cell mat-header-cell *matHeaderCellDef> Number of Tiles </mat-header-cell>
         <mat-cell *matCellDef="let region"> {{region.numberOfTiles}} </mat-cell>
+    </ng-container>
+
+    <!-- Storage Space Column -->
+    <ng-container matColumnDef="space">
+        <mat-header-cell mat-header-cell *matHeaderCellDef> Size in MB </mat-header-cell>
+        <mat-cell *matCellDef="let region"> {{getRegionSpaceInMB(region)}} </mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

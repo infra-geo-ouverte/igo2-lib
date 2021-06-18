@@ -21,7 +21,7 @@ export class RegionManagerComponent implements OnInit{
   @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
-  displayedColumns = ['edit', 'name', 'space'];
+  displayedColumns = ['edit', 'name', 'nTiles', 'space'];
   selectedRegionUrls: string[];
   selectedRowID: number = -1;
 
@@ -90,5 +90,11 @@ export class RegionManagerComponent implements OnInit{
     this.selectedRegionUrls = row.parentUrls;
     this.selectedRowID = row.id;
     this.regionCarousel.slideTo(0);
+  }
+
+  public getRegionSpaceInMB(region: Region) {
+    const space: number = this.downloadManager
+      .getDownloadSpaceEstimate(region.numberOfTiles);
+    return (space * 1e-06).toFixed(4);
   }
 }
