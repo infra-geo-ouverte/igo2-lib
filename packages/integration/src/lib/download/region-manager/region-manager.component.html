@@ -23,19 +23,26 @@
 </mat-carousel>
 
 <table mat-table [dataSource]="regions | async">
-    <!-- Button Column -->
+    <!-- Edit Button Column -->
     <ng-container matColumnDef="edit">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let region">
             <button mat-icon-button color="primary" (click)="editRegion(region)">
                 <mat-icon>edit</mat-icon>
             </button>
+        </mat-cell>
+    </ng-container>
+    
+    <!-- Delete Button Column -->
+    <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let region">
             <button mat-icon-button color="primary" (click)="deleteRegion(region)">
                 <mat-icon>delete</mat-icon>
             </button>
         </mat-cell>
     </ng-container>
-
+    
     <!-- Name Column -->
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>

@@ -21,7 +21,7 @@ export class RegionManagerComponent implements OnInit{
   @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
-  displayedColumns = ['edit', 'name', 'nTiles', 'space'];
+  displayedColumns = ['edit', 'delete', 'name', 'nTiles', 'space'];
   selectedRegionUrls: string[];
   selectedRowID: number = -1;
 
