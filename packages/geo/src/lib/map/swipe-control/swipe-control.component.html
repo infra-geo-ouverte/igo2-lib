@@ -1,25 +1,26 @@
 <div class="igo-swipe-control-container"  id="myswipe"
 
-  (mousedown)="dragMouseDown($event)"
+  (mousedown)="dragDown($event)"
   (mousemove)="elementDrag($event)"
+  (mouseup)="closeDragMouseElement()"
+  (touchstart)="dragDown($event)"
+  (touchmove)="elementDrag($event)"
+  (touchend)="closeDragTouchElement()">
+  <div class="igo-swipe-control-line" ></div>
+  
+  <div class="igo-swipe-control-layer-label">
+  <i class="fa fa-arrow-left"></i>
+  
+    </div>
 
-  (mouseup)="closeDragElement()">
-  <div class="igo-swipe-control-line" id="myswipe"></div>
-
-  <div class="igo-swipe-control-layer-label" id="myswipe">
-    <i class="fa fa-arrow-left"></i>
-  </div>
-
-  <div class="igo-swipe-control-arrows" id="myswipe">
+  <div class="igo-swipe-control-arrows" id="arrows">
     <div class="igo-arrow-left"></div>
     <div class="igo-arrow-right"></div>
   </div>
    <!--
- {{layer.label}}   (mousemove)="elementDrag($event)" (mouseup)="closeDragElement()"    s   AFFICHER IGO-SWIPE-CONTROL
+ {{TEXTE a afficher}} - pour afficher le texte dans le layer-label
 -->
 </div>
-
-
 
 
 <!-- 

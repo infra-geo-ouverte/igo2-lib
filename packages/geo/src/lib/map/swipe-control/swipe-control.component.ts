@@ -10,53 +10,67 @@ import { getRenderPixel } from 'ol/render';
   styleUrls: ['./swipe-control.component.scss']
 })
 export class SwipeControlComponent {
-
   @Input() map: IgoMap;
-
   constructor() { }
   public swipe: any;
   private layers: Layer[];
-  private layer: Layer;
-  private element: any;
   private pos1: number;
-  private pos3 = 700;
+  private pos3: number;
   private inDragAction: boolean = false;
-  // getElement(): any {
-  //   this.element = document.getElementById("myswipe");
-  // }
 
-  dragMouseDown(event) {
-    this.inDragAction = true;
-    // event = event || window.event;
-    event.preventDefault();
-    this.pos3 = event.clientX;
-    document.onmouseup = this.closeDragElement;
-    // document.onmousemove = this.elementDrag;/
+
+  get swipeId(){
+    return  document.getElementById('myswipe');
   }
 
-  elementDrag(event) {
+  dragDown(event) {
+    this.inDragAction = true;
+    event.preventDefault();
+    if (event.type === 'mousdown'){
+        this.pos3 = event.clientX;
+        document.onmouseup = this.closeDragMouseElement;
+    }
+    else if (event.type === 'touchstart'){
+        document.getElementById('arrows').style.visibility = 'hidden';
+        this.pos3 = event.touches[0].clientX;
+        document.ontouchend = this.closeDragTouchElement;
+    }
+  }
+
+  elementDrag(event){
     if (this.inDragAction){
-      // event = event || window.event;
-      event.preventDefault();
-      this.pos1 = this.pos3 - event.clientX;
-      this.pos3 = event.clientX;
-      document.getElementById('myswipe').style.left = (document.getElementById('myswipe').offsetLeft - this.pos1) + 'px';
-      }
+          event.preventDefault();
+          if (event.type === 'mousemove'){
+            this.pos1 = this.pos3 - event.clientX;
+            this.pos3 = event.clientX;
+          }
+          else if (event.type === 'touchmove') {
+            document.getElementById('arrows').style.visibility = 'hidden';
+            this.pos1 = this.pos3 - event.changedTouches[0].clientX;
+            this.pos3 = event.changedTouches[0].clientX;
+          }
+          this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
+        }
     this.getListOfLayers();
     this.renderLayers(this.layers);
     this.map.ol.render();
   }
 
-    closeDragElement() {
-    console.log('close');
+  closeDragMouseElement() {
     document.onmouseup = null;
     document.onmousemove = null;
     this.inDragAction = false;
   }
 
+  closeDragTouchElement() {
+    document.ontouchend = null;
+    document.ontouchmove = null;
+    document.getElementById('arrows').style.visibility = 'visible';
+    this.inDragAction = false;
+  }
+
   getListOfLayers(){
     this.layers = this.map.layers;
-    // console.log('getlistOfLayers : this.layers = ', this.layers);
   }
 
   renderLayers(layers: Layer[]){
@@ -68,14 +82,23 @@ export class SwipeControlComponent {
     }
   }
 
-  prerender(idLayer: Layer){
+  prerender(idLayer) {
     idLayer.ol.on('prerender', (event) => {
       const ctx = event.context;
-      const width = document.getElementById('myswipe').offsetLeft;
-      // const width = ctx.canvas.width * document.getElementById('myswipe').offsetLeft / 1000;
+      const mapSize = this.map.ol.getSize();
+      const width = this.swipeId.offsetLeft ;
+      // let width = document.getElementById('myswipe').offsetLeft ;
+      const tl = getRenderPixel(event, [width, 0]);
+      const tr = getRenderPixel(event, [0, 0]);
+      const bl = getRenderPixel(event, [width, mapSize[1]]);
+      const br = getRenderPixel(event, [0, mapSize[1]]);
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, 0, width, ctx.canvas.height);
+      ctx.moveTo(tl[0], tl[1]);
+      ctx.lineTo(bl[0], bl[1]);
+      ctx.lineTo(br[0], br[1]);
+      ctx.lineTo(tr[0], tr[1]);
+      ctx.closePath();
       ctx.clip();
     });
   }
@@ -86,54 +109,4 @@ export class SwipeControlComponent {
       ctx.restore();
     });
   }
-
 }
-/*
-  getSwipe(){
-    this.swipe = document.getElementById('swipe');
-  }
-
-  eventListener(){
-    this.swipe.addEventListener(
-      'input', () => {
-        this.getListOfLayers();
-        this.renderLayers(this.layers);
-        this.map.ol.render();
-      }, false);
-
-  }
-
-  getListOfLayers(){
-    this.layers = this.map.layers;
-    console.log('getlistOfLayers : this.layers = ', this.layers);
-  }
-
-  renderLayers(layers: Layer[]){
-    for (const layer of layers){
-      if (!(layer instanceof TileLayer)){
-          this.prerender(layer);
-          this.postrender(layer);
-      }
-    }
-  }
-
-  prerender(idLayer: Layer){
-    idLayer.ol.on('prerender', (event) => {
-      const ctx = event.context;
-      const width = ctx.canvas.width * this.swipe.value / 1000;
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, width, ctx.canvas.height);
-      ctx.clip();
-      ctx.clip();
-    });
-  }
-
-  postrender(idLayer: Layer){
-    idLayer.ol.on('postrender', (event) => {
-      const ctx = event.context;
-      ctx.restore();
-    });
-  }
-*/
-// }
