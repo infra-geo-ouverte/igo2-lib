@@ -15,36 +15,58 @@ export class GeoDataDBService {
     private dbService: NgxIndexedDBService,
     private compression: CompressionService
   ) { }
-
-  update(url: string, regionID: number, object): Observable<any> {
+  
+  update(url: string, regionID: number, object: Blob): Observable<any> {
     if (!object) {
       return;
     }
 
-    if (object instanceof Blob) {
-      const compressObs = this.compression.compressBlob(object);
-      compressObs.pipe(first())
-        .subscribe((compressedObject) => {
-          const dbData: DbData = {
-            url,
-            regionID,
-            object: compressedObject
-          };
-          this.dbService.update(this.dbName, dbData);
+    const subject: Subject<DbData> = new Subject();
+    const compress$ = this.compression.compressBlob(object);
+    compress$.pipe(first())
+      .subscribe((compressedObject) => {
+        const dbData: DbData = {
+          url,
+          regionID,
+          object: compressedObject
+        };
+        const getRequest = this.dbService.getByID(this.dbName, url);
+        getRequest.subscribe((object) => {
+          let dbRequest: Observable<DbData>;
+          if (!object) {
+            dbRequest = this.dbService.addItem(this.dbName, dbData)
+          } else {
+            dbRequest = this.customUpdate(dbData);
+          }
+          dbRequest.subscribe((object) => {
+            subject.next(object);
+            subject.complete();
+          });
+        })
+      });
+    return subject;
+  }
+
+  private customUpdate(dbData: DbData): Observable<DbData> {
+    const subject: Subject<DbData> = new Subject();
+    const deleteRequest = this.dbService.deleteByKey(this.dbName, dbData.url);
+    deleteRequest.subscribe((isDeleted) => {
+      if (isDeleted) {
+        const addRequest = this.dbService.addItem(this.dbName, dbData);
+        addRequest.subscribe((object) => {
+          subject.next(object);
+          subject.complete();
         });
-    }
-    const dbRequest = this.dbService.update(this.dbName, {url, object});
-
-    dbRequest.pipe(first())
-      .subscribe(() => console.log('db updated'));
-
-    return dbRequest;
+      } else {
+        subject.complete()
+      }
+    });
+    return subject;
   }
 
   get(url: string): Observable<Blob> {
     return this.dbService.getByID(this.dbName, url).pipe(
       map((data) => {
-        console.log('database get:', url);
         if (data) {
           const object = (data as DbData).object;
           if (object instanceof Blob) {
@@ -52,7 +74,6 @@ export class GeoDataDBService {
           }
           return this.compression.decompressBlob(object);
         }
-        console.log('not in db');
       })
     );
   }
