@@ -115,15 +115,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     check: boolean;
   }>();
 
-  get buttons() {
-    return this.buttons;
-  }
-
-  set buttons(value) {
-    this.buttons = value;
-    console.log(this.buttons);
-  }
-
   constructor(
     private networkService: NetworkService,
     private renderer: Renderer2,

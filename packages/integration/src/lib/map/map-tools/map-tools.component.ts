@@ -41,6 +41,7 @@ import { ImportExportMode, ImportExportState } from '../../import-export/import-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
+  btnCnt: number;
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -309,5 +310,10 @@ export class MapToolsComponent implements OnInit, OnDestroy {
           return true;
       }
     return false;
+  }
+
+  setBtnCnt(btnCnt) {
+    this.btnCnt = btnCnt;
+    console.log(btnCnt);
   }
 }

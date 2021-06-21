@@ -21,7 +21,7 @@ import {
   EMPTY,
   timer
 } from 'rxjs';
-import { debounce, isEmpty } from 'rxjs/operators';
+import { debounce, debounceTime, isEmpty } from 'rxjs/operators';
 import {
   MetadataOptions,
   MetadataLayerOptions
@@ -60,6 +60,7 @@ export class LayerListComponent implements OnInit, OnDestroy {
 
   private change$$: Subscription;
   private layers$$: Subscription;
+  private activeLayer$$: Subscription;
   public layerItemChangeDetection$ = new BehaviorSubject(undefined);
 
   @ContentChild('igoLayerItemToolbar', /* TODO: add static flag */ {})
@@ -114,6 +115,8 @@ export class LayerListComponent implements OnInit, OnDestroy {
   @Input() queryBadge: boolean = false;
 
   @Output() appliedFilterAndSort = new EventEmitter<LayerListControlsOptions>();
+
+  @Output() toggleLayerToolsEvent: EventEmitter<number> = new EventEmitter<number>();
 
   get keyword(): string {
     return this._keyword;
@@ -278,6 +281,14 @@ export class LayerListComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.activeLayer$$ = this.activeLayer$
+      .pipe(debounceTime(150))
+      .subscribe(() => {
+        const btnCnt = document.querySelector('igo-layer-list').querySelector('.igo-layer-actions-container')
+          .querySelectorAll('button').length;
+        this.toggleLayerToolsEvent.emit(btnCnt);
+      });
   }
 
   ngOnDestroy() {
