@@ -193,16 +193,18 @@ export class TileDownloaderService {
   public getBufferProgression() {
     return 1 - this.urlQueue.length / this.currentDownloads;
   }
-
+  // need to remove from here
   public downloadEstimate(nTiles: number) {
     return nTiles * this.averageBytesPerTile;
   }
 
+  // need to remove from here
   public downloadEstimatePerDepth(depth: number) {
     const nTiles = getNumberOfTreeNodes(depth);
     return this.downloadEstimate(nTiles);
   }
 
+  // need to remove from here
   public numberOfTiles(depth: number) {
     return getNumberOfTreeNodes(depth);
   }
