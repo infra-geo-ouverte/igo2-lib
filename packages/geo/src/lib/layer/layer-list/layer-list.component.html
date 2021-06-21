@@ -1,4 +1,5 @@
-<igo-list #igoList [ngClass]="(layerTool || selection) ? 'igo-list-min-height': 'igo-list-max-height'" [navigation]="false" [selection]="false">
+
+<mat-list>
   <igo-layer-list-tool *ngIf="showToolbar$ | async"
       floatLabel="auto"
       [layersAreAllVisible]="layersAreAllVisible"
@@ -8,7 +9,9 @@
       (appliedFilterAndSort)="onAppliedFilterAndSortChange($event)"
       (selection)="toggleSelectionMode($event)">
     </igo-layer-list-tool>
+</mat-list>
 
+<igo-list #igoList [ngClass]="(layerTool || selection) ? 'igo-list-min-height': 'igo-list-max-height'" [navigation]="false" [selection]="false">
   <ng-template ngFor let-layer let-i="index" [ngForOf]="layers$ | async">
     <igo-layer-item *ngIf="!(excludeBaseLayers && layer.baseLayer)"
         igoListItem
