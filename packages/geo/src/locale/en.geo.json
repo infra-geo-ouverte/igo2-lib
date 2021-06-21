@@ -592,9 +592,9 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activate measures",
+        "toggleDisplayLines": "Display distances for the lines",
         "toggleDisplayDistance": "Display distances for the areas",
-        "toggleMapTooltipsLength": "Show distances",
-        "toggleMapTooltipsArea": "Show areas",
+        "toggleDisplayAreas": "Display areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",

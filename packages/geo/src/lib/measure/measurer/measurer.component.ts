@@ -138,10 +138,22 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   public measureUnitsAuto: boolean = false;
 
   /**
-   * Whether display of distances
+   * Whether display of distances of areas
    * @internal
    */
   public displayDistance: boolean = true;
+
+  /**
+   * Whether display of distances of lines
+   * @internal
+   */
+  public displayLines: boolean = true;
+
+  /**
+   * Whether display of areas
+   * @internal
+   */
+  public displayAreas: boolean = true;
 
   /**
    * Observable of area boolean
@@ -308,7 +320,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.createDrawPolygonControl();
     this.createModifyControl();
     this.toggleDrawControl();
-    this.onToggleTooltips(this.showTooltips);
+    // this.onToggleTooltips(this.showTooltips);
     this.updateTooltipsOfOlSource(this.store.source.ol);
     this.checkDistanceAreaToggle();
   }
@@ -347,14 +359,16 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * Activate or deactivate the current draw control
    * @internal
    */
-  onToggleTooltips(toggle: boolean) {
-    this.showTooltips = toggle;
-    if (toggle === true) {
-      this.showTooltipsOfOlSource(this.store.source.ol);
-    } else {
-      this.clearTooltipsOfOlSource(this.store.source.ol);
-    }
-  }
+  // TODO: check if we need this function and 4 others
+  // 
+  // onToggleTooltips(toggle: boolean) {
+  //   this.showTooltips = toggle;
+  //   if (toggle === true) {
+  //     this.showTooltipsOfOlSource(this.store.source.ol);
+  //   } else {
+  //     this.clearTooltipsOfOlSource(this.store.source.ol);
+  //   }
+  // }
 
   /**
    * Activate or deactivate the current draw control
@@ -365,7 +379,7 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Activate or deactivate the current display of distances
+   * Activate or deactivate the current display of distances of the areas
    * @internal
    */
   onToggleDisplayDistance(toggle: boolean) {
@@ -376,28 +390,84 @@ export class MeasurerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Set this.displayDistance in a current value
+   * Activate or deactivate the current display of distances of the lines
+   * @internal
+   */
+  onToggleDisplayLines(toggle: boolean) {
+    this.displayLines = toggle;
+    this.onDisplayLines();
+    toggle ? (this.storageService.set('linesToggle', true, StorageScope.SESSION)) :
+     (this.storageService.set('linesToggle', false, StorageScope.SESSION));
+  }
+
+  /**
+   * Activate or deactivate the current display of areas
+   * @internal
+   */
+  onToggleDisplayAreas(toggle: boolean) {
+    this.displayAreas = toggle;
+    this.onDisplayAreas();
+    toggle ? (this.storageService.set('areasToggle', true, StorageScope.SESSION)) :
+     (this.storageService.set('areasToggle', false, StorageScope.SESSION));
+  }
+
+  /**
+   * Set display parametres in current values
    * @internal
    */
   checkDistanceAreaToggle(){
     if (this.storageService.get('distanceToggle') === false){
       this.displayDistance = false;
     }
+    if (this.storageService.get('linesToggle') === false){
+      this.displayLines = false;
+    }
+    if (this.storageService.get('areasToggle') === false){
+      this.displayAreas = false;
+    }
   }
 
   /**
-   * Activate or deactivate the current display of distances
+   * Activate or deactivate the current display of distances of areas
    * @internal
    */
-     onDisplayDistance() {
-      if (this.displayDistance) {
-        Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
-          value.classList.remove('igo-map-tooltip-hidden'));
-      } else {
-        Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
-          value.classList.add('igo-map-tooltip-hidden'));
-      }
+  onDisplayDistance() {
+    if (this.displayDistance) {
+      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-hidden'));
+    } else {
+      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-polygone-segments')).map((value: Element) =>
+        value.classList.add('igo-map-tooltip-hidden'));
     }
+  }
+
+  /**
+   * Activate or deactivate the current display of distances of lines
+   * @internal
+   */
+  onDisplayLines() {
+    if (this.displayLines) {
+      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-line-segments')).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-hidden'));
+    } else {
+      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-line-segments')).map((value: Element) =>
+        value.classList.add('igo-map-tooltip-hidden'));
+    }
+  }
+
+  /**
+   * Activate or deactivate the current display of areas
+   * @internal
+   */
+  onDisplayAreas() {
+    if (this.displayAreas) {
+      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-area')).map((value: Element) =>
+        value.classList.remove('igo-map-tooltip-hidden'));
+    } else {
+      Array.from(document.getElementsByClassName('igo-map-tooltip-measure-area')).map((value: Element) =>
+        value.classList.add('igo-map-tooltip-hidden'));
+    }
+  }
 
   /**
    * Set the measure type

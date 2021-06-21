@@ -539,7 +539,7 @@ export function createOlTooltipAtPoint(olPoint: OlPoint, center: boolean = false
     offset: [-30, -10],
     className: (center ?
     [ 'igo-map-tooltip',
-      'igo-map-tooltip-measure'] : ['igo-map-tooltip', 'igo-map-tooltip-measure',
+      'igo-map-tooltip-measure', 'igo-map-tooltip-measure-area'] : ['igo-map-tooltip', 'igo-map-tooltip-measure',
       `igo-map-tooltip-measure-${srcGeomType}segments`]).join(' '),
     stopEvent: false
   });
