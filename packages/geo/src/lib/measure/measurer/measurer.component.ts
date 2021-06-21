@@ -320,7 +320,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     this.createDrawPolygonControl();
     this.createModifyControl();
     this.toggleDrawControl();
-    // this.onToggleTooltips(this.showTooltips);
     this.updateTooltipsOfOlSource(this.store.source.ol);
     this.checkDistanceAreaToggle();
   }
@@ -355,19 +354,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Activate or deactivate the current draw control
-   * @internal
-   */
-  // TODO: check if we need this function and 4 others
-  // onToggleTooltips(toggle: boolean) {
-  //   this.showTooltips = toggle;
-  //   if (toggle === true) {
-  //     this.showTooltipsOfOlSource(this.store.source.ol);
-  //   } else {
-  //     this.clearTooltipsOfOlSource(this.store.source.ol);
-  //   }
-  // }
 
   /**
    * Activate or deactivate the current draw control
