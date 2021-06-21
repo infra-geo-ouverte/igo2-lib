@@ -12,9 +12,7 @@
 
 .more-menu {
   max-width: unset;
-  max-height: unset;
-  width: 125px;
-  height: 45px;
+  min-width: unset;
 }
 
 mat-list mat-list-item h4 {

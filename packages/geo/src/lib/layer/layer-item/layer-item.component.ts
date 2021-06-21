@@ -24,6 +24,7 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
+  public buttons$ = new BehaviorSubject(undefined);
 
   public focusedCls = 'igo-layer-item-focused';
 
@@ -113,6 +114,15 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     layer: Layer;
     check: boolean;
   }>();
+
+  get buttons() {
+    return this.buttons;
+  }
+
+  set buttons(value) {
+    this.buttons = value;
+    console.log(this.buttons);
+  }
 
   constructor(
     private networkService: NetworkService,

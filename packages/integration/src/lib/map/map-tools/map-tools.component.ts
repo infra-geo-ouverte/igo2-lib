@@ -5,8 +5,6 @@ import {
   OnInit,
   ViewChild,
   OnDestroy,
-  ContentChildren,
-  QueryList
 } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
@@ -43,8 +41,6 @@ import { ImportExportMode, ImportExportState } from '../../import-export/import-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
-  @ContentChildren('iwb, ieb, iofb, itfb, itrfb, imb') items: QueryList<any>
-
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -198,10 +194,6 @@ export class MapToolsComponent implements OnInit, OnDestroy {
 
     // prevent message to be shown too quickly. Waiting for layers
     setTimeout(() => (this.delayedShowEmptyMapContent = true), 250);
-  }
-
-  ngAfterContentInit() {
-    console.log(this.items.length);
   }
 
   ngOnDestroy(): void {
