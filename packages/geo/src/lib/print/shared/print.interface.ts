@@ -18,6 +18,7 @@ export interface PrintOptions {
   comment?: string;
   imageFormat?: PrintSaveImageFormat;
   showProjection?: boolean;
+  showLegend?: boolean;
   showScale?: boolean;
   isPrintService: boolean;
   doZipFile: boolean;
