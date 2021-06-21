@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GeoDataDBService } from '../storage';
+import { GeoDataDBService } from '../../storage';
 import { first } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { BehaviorSubject, forkJoin, Observable, Observer } from 'rxjs';
-import { GeoNetworkService } from '../network';
-
-interface Tile {
-  X: number;
-  Y: number;
-  Z: number;
-}
+import { BehaviorSubject, forkJoin, Observable, Observer, throwError } from 'rxjs';
+import { GeoNetworkService } from '../../network';
+import { Tile } from '../Tile.interface';
+import { TileGenerationStrategy } from './tile-generation-strategies/tile-generation-strategy';
+import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-generation';
+import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
+import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
+import { ChildTileGeneration } from './tile-generation-strategies/child-tile-generation';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -53,6 +53,8 @@ export class TileDownloaderService {
   readonly progression$: BehaviorSubject<number> = new BehaviorSubject(undefined);
   readonly isDownloading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
+  private tileGenerationStrategy: TileGenerationStrategy = new ParentTileGeneration();
+  
   private urlQueue: string[] = [];
   private _isDownloading: boolean = false;
   private _nWorkerDone: number;
@@ -66,9 +68,13 @@ export class TileDownloaderService {
     private http: HttpClient,
     private network: GeoNetworkService,
     private geoDB: GeoDataDBService) { }
-
+  
+  // need to change the argument of the function then change the logic in the region-editor
+  // component
   private generateTiles(tile: Tile, depth: number): Tile[] {
-    return getTreeNodes(tile, tile.Z + depth);
+    // testing puporses
+    return this.tileGenerationStrategy.generate(tile, tile.Z, tile.Z + depth);
+    //return getTreeNodes(tile, tile.Z + depth);
   }
 
   private generateTilesRegion(region: Tile[], depth: number) {
@@ -165,6 +171,22 @@ export class TileDownloaderService {
 
     for (let i = 0; i < nWorkers; i++) {
       nextDownload();
+    }
+  }
+
+  public changeStrategy(strategyName: string) {
+    switch(strategyName) {
+      case TileGenerationStrategies.PARENT:
+        this.tileGenerationStrategy = new ParentTileGeneration();
+        break;
+      case TileGenerationStrategies.MIDDLE:
+        this.tileGenerationStrategy = new MiddleTileGeneration();
+        break;
+      case TileGenerationStrategies.CHILD:
+        this.tileGenerationStrategy = new ChildTileGeneration();
+        break;
+      default:
+        throw new Error('Invalid Tile Generation Strategy');
     }
   }
 

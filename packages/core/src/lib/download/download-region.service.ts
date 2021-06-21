@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subscription, zip } from 'rxjs';
 import { skip, timestamp } from 'rxjs/operators';
 import { DBRegion, GeoDataDBService, RegionDBService } from '../storage';
-import { TileDownloaderService } from './tile-downloader.service';
+import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 // need to make region db
 // need to ajust download method of TileDownloaderService
 // need to create regionDBService
