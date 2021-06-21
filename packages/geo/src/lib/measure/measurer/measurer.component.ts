@@ -360,7 +360,6 @@ export class MeasurerComponent implements OnInit, OnDestroy {
    * @internal
    */
   // TODO: check if we need this function and 4 others
-  // 
   // onToggleTooltips(toggle: boolean) {
   //   this.showTooltips = toggle;
   //   if (toggle === true) {
