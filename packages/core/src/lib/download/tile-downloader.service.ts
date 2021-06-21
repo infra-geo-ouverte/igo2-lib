@@ -55,6 +55,7 @@ export class TileDownloaderService {
 
   private urlQueue: string[] = [];
   private _isDownloading: boolean = false;
+  private _nWorkerDone: number;
 
   private currentDownloads: number = 0;
   private downloadCount: number = 0;
@@ -122,7 +123,7 @@ export class TileDownloaderService {
     // if not already downloading start downloading
     if (!this.isDownloading) {
       this.downloadCount = 0;
-      // put count here
+      this._nWorkerDone = 0;
       this.currentDownloads = tiles.length;
       console.log('starting download sequence!');
       this._isDownloading = true;
@@ -145,11 +146,15 @@ export class TileDownloaderService {
       };
     };
 
+    const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
     const nextDownload = () => {
       const url =  this.urlQueue.shift();
       if (!url) {
-        this._isDownloading = false;
-        this.isDownloading$.next(false);
+        this._nWorkerDone++;
+        if (this._nWorkerDone === nWorkers) {
+          this._isDownloading = false;
+          this.isDownloading$.next(false);
+        }
         console.log('downloading is done');
         return;
       }
@@ -158,7 +163,6 @@ export class TileDownloaderService {
       request.subscribe(() => nextDownload());
     };
 
-    const nWorkers = Math.min(this.simultaneousRequests, this.urlQueue.length);
     for (let i = 0; i < nWorkers; i++) {
       nextDownload();
     }
