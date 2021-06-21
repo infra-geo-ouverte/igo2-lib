@@ -7,12 +7,21 @@ export interface Region {
   parentUrls: string[];
   numberOfTiles: number;
 }
+export interface RegionDate extends Region {
+  timestamp: Date;
+}
 
-export interface DBRegion {
+export interface DBRegion extends RegionDate {
   id: number;
-  name: string;
-  parentUrls: string[];
-  numberOfTiles: number;
+}
+
+function createRegionDateFromRegion(region: Region): RegionDate {
+  const regionDate: RegionDate = <RegionDate>{};
+  regionDate.name = region.name;
+  regionDate.numberOfTiles = region.numberOfTiles;
+  regionDate.parentUrls = region.parentUrls;
+  regionDate.timestamp = new Date();
+  return regionDate;
 }
 
 @Injectable({
@@ -27,7 +36,7 @@ export class RegionDBService {
     if (!region) {
       return;
     }
-
+    region.timestamp = new Date();
     const dbRequest = this.dbService.update(this.dbName, region);
     dbRequest.subscribe(() => {
       this.update$.next(true);
@@ -38,8 +47,9 @@ export class RegionDBService {
     if (!region) {
       return;
     }
-
-    const dbRequest = this.dbService.add(this.dbName, region);
+    const date = new Date();
+    const regionDate: RegionDate = createRegionDateFromRegion(region);
+    const dbRequest = this.dbService.add(this.dbName, regionDate);
     dbRequest.subscribe((key) => {
       this.update$.next(true);
     });

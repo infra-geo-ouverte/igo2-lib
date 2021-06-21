@@ -102,7 +102,8 @@ export class DownloadRegionService {
         id: region.id,
         name: region.name,
         parentUrls: region.parentUrls,
-        numberOfTiles: count
+        numberOfTiles: count,
+        timestamp: region.timestamp
       });
     });
   }
