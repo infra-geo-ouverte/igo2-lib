@@ -47,7 +47,6 @@ export class RegionDBService {
     if (!region) {
       return;
     }
-    const date = new Date();
     const regionDate: RegionDate = createRegionDateFromRegion(region);
     const dbRequest = this.dbService.add(this.dbName, regionDate);
     dbRequest.subscribe((key) => {
