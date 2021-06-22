@@ -181,7 +181,7 @@ export class WMSDataSource extends DataSource {
   }
 
   protected createOlSource(): olSourceImageWMS {
-    return new olSourceImageWMS(this.options);
+    return new olSourceImageWMS(Object.assign({ratio: 1}, this.options));
   }
 
   setOgcFilters(ogcFilters: OgcFiltersOptions, triggerEvent: boolean = false) {

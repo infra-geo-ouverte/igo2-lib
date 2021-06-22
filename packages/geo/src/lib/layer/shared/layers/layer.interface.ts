@@ -1,4 +1,5 @@
 import olLayer from 'ol/layer/Layer';
+import { Message } from '@igo2/core';
 
 import { DataSource } from '../../../datasource/shared/datasources/datasource';
 import { AnyDataSourceOptions } from '../../../datasource/shared/datasources/any-datasource.interface';
@@ -15,6 +16,7 @@ export interface LayerOptions {
   visible?: boolean;
   extent?: MapExtent;
   zIndex?: number;
+  messages?: Message[];
   minResolution?: number;
   maxResolution?: number;
   minScaleDenom?: number;
