@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject } from 'rxjs';
 
 export interface Region {
@@ -69,5 +69,18 @@ export class RegionDBService {
       this.update$.next(true);
     });
     return dbRequest;
+  }
+
+  openCursor(
+    keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0), 
+    mode: DBMode = DBMode.readonly
+  ) {
+    // need to update when openCursor is fixed in ngx-indexed-db
+    const request = this.dbService.openCursorByIndex(this.dbName, 'name', keyRange, mode);
+    return request;
+  }
+
+  needUpdate() {
+    this.update$.next(true);
   }
 }

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { DBMode } from 'ngx-indexed-db';
 import { Observable, Subscription, zip } from 'rxjs';
 import { skip, timestamp } from 'rxjs/operators';
 import { DBRegion, GeoDataDBService, RegionDBService } from '../storage';
+import { DbData } from '../storage/dbData';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 // need to make region db
 // need to ajust download method of TileDownloaderService
@@ -21,7 +23,7 @@ interface TileToDownload {
 })
 export class DownloadRegionService {
   isDownloading$$: Subscription;
-
+  private isUpdating$$: Subscription;
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: GeoDataDBService,
@@ -108,11 +110,58 @@ export class DownloadRegionService {
     });
   }
 
+  private updateRegionTileCountWithMap(tileCountPerRegion: Map<number, number>) {
+    if (!tileCountPerRegion) {
+      return;
+    }
+
+    this.regionDB.openCursor(undefined, DBMode.readwrite).subscribe((event) => {
+      if (!event) {
+        return;
+      }
+
+      const cursor = (event.target as IDBOpenDBRequest).result;
+      if (cursor) {
+        const region: DBRegion = (<any>cursor).value;
+        const tileCount = tileCountPerRegion.get(region.id);
+        if (tileCount !== undefined) {
+          region.numberOfTiles = tileCount;
+        } else {
+          region.numberOfTiles = 0;
+        }
+        (<any>cursor).update(region);
+        (<any>cursor).continue();
+      } else {
+        this.regionDB.needUpdate();
+      }
+    });
+  }
+
   public updateAllRegionTileCount() {
-    this.regionDB.getAll().subscribe((regions: DBRegion[]) => {
-      regions.forEach((region: DBRegion) => {
-        this.updateRegionTileCount(region);
-      });
+    if (this.isUpdating$$) {
+      this.isUpdating$$.unsubscribe();
+    }
+    
+    const tileCountPerRegion: Map<number, number> = new Map();
+    this.isUpdating$$ = this.tileDB.openCursor().subscribe((event) => {
+      if (!event) {
+        return;
+      }
+      
+      const cursor = (event.target as IDBOpenDBRequest).result;
+      if(cursor) {
+        const value: DbData = (<any>cursor).value;
+        const regionID = value.regionID
+        let tileCount = tileCountPerRegion.get(regionID);
+        if (tileCount) {
+          tileCountPerRegion.set(regionID, ++tileCount);
+        } else {
+          tileCountPerRegion.set(regionID, 1);
+        }
+        (<any>cursor).continue();
+      } else {
+        this.updateRegionTileCountWithMap(tileCountPerRegion);
+      }
     });
   }
 

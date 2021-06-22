@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, pipe, Subject } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { CompressionService } from './compression.service';
@@ -112,5 +112,13 @@ export class GeoDataDBService {
       });
     });
     return dbRequest;
+  }
+
+  openCursor(
+    keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0), 
+    mode: DBMode = DBMode.readonly
+  ) {
+    const request = this.dbService.openCursorByIndex(this.dbName, 'regionID', keyRange, mode)
+    return request;
   }
 }
