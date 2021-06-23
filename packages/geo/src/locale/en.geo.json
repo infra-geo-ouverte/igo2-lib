@@ -565,6 +565,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Perimeter in meters"
         },
+        "layerTitle": "Measure on map",
         "area": "Area",
         "areaHeader": "Area",
         "length": "Length",
@@ -591,7 +592,9 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activate measures",
-        "toggleMapTooltips": "Show map tooltips",
+        "toggleDisplayLines": "Display distances for the lines",
+        "toggleDisplayDistance": "Display distances for the areas",
+        "toggleDisplayAreas": "Display areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",

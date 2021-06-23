@@ -565,6 +565,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Périmètre en mètres"
         },
+        "layerTitle": "Mesure à la carte",
         "area": "Superficie",
         "areaHeader": "Superficie",
         "length": "Distance",
@@ -591,7 +592,9 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activer le contrôle de mesure",
-        "toggleMapTooltips": "Mesures sur la carte",
+        "toggleDisplayLines": "Afficher les distances sur les lignes",
+        "toggleDisplayDistance": "Afficher les distances pour les superficies",
+        "toggleDisplayAreas": "Afficher les superficies",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
           "calculate.tooltip": "Calculer",
