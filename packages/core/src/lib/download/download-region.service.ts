@@ -28,7 +28,9 @@ export class DownloadRegionService {
     private tileDownloader: TileDownloaderService,
     private tileDB: GeoDataDBService,
     private regionDB: RegionDBService
-  ) { }
+  ) {
+    this.updateAllRegionTileCount();
+  }
   // need on right click method for the controler
   public downloadSelectedRegion(
     tilesToDownload: TileToDownload[],
@@ -61,7 +63,9 @@ export class DownloadRegionService {
       .pipe(skip(1))
       .subscribe((value) => {
         if (!value) {
-          this.updateAllRegionTileCount();
+          const collisionMap = this.tileDB.collisionsMap;
+          this.regionDB.updateWithCollisions(collisionMap);
+          this.tileDB.resetCollisionMap();          
         }
       });
   }

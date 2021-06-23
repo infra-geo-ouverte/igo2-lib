@@ -11,6 +11,7 @@ import { DBRegion } from './region-db.service';
 })
 export class GeoDataDBService {
   readonly dbName: string = 'geoData';
+  public collisionsMap: Map<number, number> = new Map();
   constructor(
     private dbService: NgxIndexedDBService,
     private compression: CompressionService
@@ -31,11 +32,18 @@ export class GeoDataDBService {
           object: compressedObject
         };
         const getRequest = this.dbService.getByID(this.dbName, url);
-        getRequest.subscribe((dbObject) => {
+        getRequest.subscribe((dbObject: DbData) => {
           let dbRequest: Observable<DbData>;
           if (!dbObject) {
             dbRequest = this.dbService.addItem(this.dbName, dbData);
           } else {
+            const regionID = dbObject.regionID;
+            let nCollision = this.collisionsMap.get(regionID);
+            if (nCollision !== undefined) {
+              this.collisionsMap.set(regionID, ++nCollision);
+            } else {
+              this.collisionsMap.set(regionID, 1);
+            }
             dbRequest = this.customUpdate(dbData);
           }
           dbRequest.subscribe((response) => {
@@ -120,5 +128,9 @@ export class GeoDataDBService {
   ) {
     const request = this.dbService.openCursorByIndex(this.dbName, 'regionID', keyRange, mode)
     return request;
+  }
+
+  resetCollisionMap() {
+    this.collisionsMap = new Map();
   }
 }

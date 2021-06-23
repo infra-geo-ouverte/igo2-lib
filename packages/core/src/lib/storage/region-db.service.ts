@@ -80,7 +80,32 @@ export class RegionDBService {
     return request;
   }
 
+  updateWithCollisions(collisionsMap: Map<number, number>) {
+    const it = collisionsMap.keys();
+    let regionID = it.next().value;
+    while (regionID !== undefined) {
+      const collisions = collisionsMap.get(regionID);
+      this.dbService.getByID(this.dbName, regionID).subscribe(
+        (region: DBRegion) => {
+          region.numberOfTiles -= collisions;
+          this.updateWithNoTimestamp(region);
+        }
+      );
+      regionID = it.next().value;
+    }
+  }
+
   needUpdate() {
     this.update$.next(true);
+  }
+
+  private updateWithNoTimestamp(region: DBRegion): Observable<DBRegion[]> {
+    if (!region) {
+      return;
+    }
+    const dbRequest = this.dbService.update(this.dbName, region);
+    dbRequest.subscribe(() => {
+      this.update$.next(true);
+    });
   }
 }
