@@ -7,7 +7,7 @@ import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
-import { MessageService, RegionDBService } from '@igo2/core';
+import { MessageService, RegionDBService, StorageQuotaService } from '@igo2/core';
 import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
 import { filter } from 'jszip';
 import { DownloadToolState } from './../download-tool/download-tool.state';
@@ -46,14 +46,17 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private addNewTile$$: Subscription;
 
   private _nTilesToDownload: number;
-
+  private _notEnoughSpace: boolean = true;
+  private _notEnoughSpace$: Observable<boolean>;
+  
   constructor(
     private tileDownloader: TileDownloaderService,
     private regionDB: RegionDBService,
     private downloadService: DownloadRegionService,
     private downloadState: DownloadState,
     private downloadToolState: DownloadToolState,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private storageQuota: StorageQuotaService
   ) {
     const openedWithMouse = this.downloadState.openedWithMouse;
     const numberToSkip = openedWithMouse ? 0 : 1;
@@ -105,6 +108,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.downloadToolState.progression$ = this.progression$;
   }
 
+  private updateVariables() {
+    this._notEnoughSpace$ = this.storageQuota.enoughSpace(this.sizeEstimationInBytes())
+      .pipe(map((value) => { 
+        return !value;
+      }));
+  }
+
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
@@ -126,6 +136,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.urlsToDownload.has(url)) {
         this.urlsToDownload.add(url);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid });
+        this.updateVariables();
       } else {
         this.messageService.error('The tile is already selected');
       }
@@ -166,22 +177,33 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.urlsToDownload = new Set();
     this.regionName = undefined;
     this.depth = 0;
+    this.updateVariables();
   }
 
   public onDepthSliderChange() {
     this.depth = this.slider.value;
+    this.updateVariables();
+  }
+
+  private sizeEstimationInBytes(): number {
+    const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
+    const nDownloads = this.tilesToDownload.length;
+    return space * nDownloads;
   }
 
   public sizeEstimationInMB() {
-    const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
-    const nDownloads = this.tilesToDownload.length;
-    return (space * nDownloads * 1e-6).toFixed(4);
+    const size = this.sizeEstimationInBytes();
+    return (size * 1e-6).toFixed(4);
   }
 
   public numberOfTilesToDownload() {
     const nTilesPerDownload = this.tileDownloader.numberOfTiles(this.depth);
     const nDownloads = this.tilesToDownload.length;
     return nTilesPerDownload * nDownloads;
+  }
+
+  get invalidDownloadSize$(): Observable<boolean> {
+    return this._notEnoughSpace$;
   }
 
   get isDownloading(): boolean {

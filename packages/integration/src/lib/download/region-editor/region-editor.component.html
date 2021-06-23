@@ -44,7 +44,7 @@
   <div>
     <div>
       <mat-label>Estimated Download Size in MB </mat-label>
-      <div>{{ sizeEstimationInMB() }}</div>
+      <div [ngClass]="{'invalid-size': (invalidDownloadSize$ | async)}">{{ sizeEstimationInMB() }}</div>
     </div>
     <div>
       <mat-label>Number of tiles to download </mat-label>
@@ -57,7 +57,7 @@
     <mat-progress-bar #progressBar mode="determinate" [value]="progression$ | async"></mat-progress-bar>
   </div>
   <div class="button-row">
-    <button mat-button #download (click)=onDownloadClick() [disabled]="disableDownloadButton">Download</button>
+    <button mat-button #download (click)=onDownloadClick() [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">Download</button>
     <button mat-button #cancel (click)=onCancelClick() [disabled]="disableCancelButton">Cancel</button>
   <div>
 </div>
