@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageQuotaService {
-
+  private readonly reservedSpace = 1e07;
   constructor() { }
 
   private getStorageQuota(): Observable<StorageEstimate> {
@@ -19,7 +19,7 @@ export class StorageQuotaService {
       (quota) => {
         const totalSpace = quota.quota;
         const usedSpace = quota.usage;
-        return totalSpace >= usedSpace + objectSize;
+        return totalSpace >= usedSpace + objectSize + this.reservedSpace;
       }
     ));
     return quotaObs;
@@ -40,7 +40,7 @@ export class StorageQuotaService {
       (quota) => {
         const totalSpace = quota.quota;
         const usedSpace = quota.usage;
-        return totalSpace - usedSpace;
+        return totalSpace - usedSpace - this.reservedSpace;
       }
     ));
     return quotaObs;
