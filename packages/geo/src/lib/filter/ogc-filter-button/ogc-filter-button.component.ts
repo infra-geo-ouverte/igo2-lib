@@ -57,8 +57,6 @@ export class OgcFilterButtonComponent implements OnInit {
             multi => multi.enabled).length);
         }
         cnt += cntSelect;
-      } else {
-        return;
       }
     } else if (filter && filter.filters && !filter.filters.filters) {
       return 1;
