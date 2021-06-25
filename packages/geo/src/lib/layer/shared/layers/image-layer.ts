@@ -14,6 +14,7 @@ import { ImageLayerOptions } from './image-layer.interface';
 import { ImageArcGISRestDataSource } from '../../../datasource/shared/datasources/imagearcgisrest-datasource';
 import { GeoNetworkService } from '@igo2/core';
 import { first } from 'rxjs/operators';
+import { LanguageService, MessageService } from '@igo2/core';
 
 export class ImageLayer extends Layer {
   public dataSource: WMSDataSource | ImageArcGISRestDataSource;
@@ -24,11 +25,12 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
-    public geoNetwork: GeoNetworkService,
-    public authInterceptor?: AuthInterceptor,
+    public messageService: MessageService,
+    private geoNetwork: GeoNetworkService,
+    private languageService: LanguageService,
+    public authInterceptor?: AuthInterceptor
   ) {
-    super(options, authInterceptor);
-    // this.geoNetwork = new GeoNetworkService();
+    super(options, messageService, authInterceptor);
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -41,7 +43,7 @@ export class ImageLayer extends Layer {
     const image = new olLayerImage(olOptions);
     if (this.authInterceptor) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src, this.authInterceptor);
+        this.customLoader(tile, src, this.authInterceptor, this.messageService, this.languageService);
       });
     }
 
@@ -57,38 +59,22 @@ export class ImageLayer extends Layer {
     super.setMap(map);
   }
 
-  private customLoader(tile, src, interceptor) {
-    // const xhr = new XMLHttpRequest();
-    // xhr.open('GET', src);
-
-    // const intercepted = interceptor.interceptXhr(xhr, src);
-    // if (!intercepted) {
-    //   xhr.abort();
-    //   tile.getImage().src = src;
-    //   return;
-    // }
-
-    // xhr.responseType = 'arraybuffer';
-
-    // xhr.onload = function() {
-    //   const arrayBufferView = new Uint8Array((this as any).response);
-    //   const blob = new Blob([arrayBufferView], { type: 'image/png' });
-    //   const urlCreator = window.URL;
-    //   const imageUrl = urlCreator.createObjectURL(blob);
-    //   tile.getImage().src = imageUrl;
-    // };
-    // xhr.send();
-
-    // const intercepted = interceptor.intercept(request.clone(), src)
-    // if (!intercepted) {
-      //   //sub.unsubscribe();
-      //   tile.getImage().src = src;
-      //   return;
-      // }
-
+  private customLoader(tile, src, interceptor, messageService, languageService) {
     const request = this.geoNetwork.get(src);
     request.pipe(first()).subscribe((blob) => {
       if (blob) {
+        const buffer = blob.arrayBuffer();
+        buffer.then((arrayBufferView) => {
+          const responseString = new TextDecoder().decode(arrayBufferView);
+          if (responseString.includes('ServiceExceptionReport')) {
+            messageService.error(languageService.translate.instant(
+              'igo.geo.dataSource.optionsApiUnavailable'
+            ),
+            languageService.translate.instant(
+              'igo.geo.dataSource.unavailableTitle'
+            ));
+          }
+        });
         const urlCreator = window.URL;
         const imageUrl = urlCreator.createObjectURL(blob);
         tile.getImage().src = imageUrl;

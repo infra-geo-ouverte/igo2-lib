@@ -17,6 +17,7 @@ import { TileLayerOptions } from './tile-layer.interface';
 import { GeoNetworkService } from '@igo2/core';
 import { first } from 'rxjs/operators';
 
+import { MessageService } from '@igo2/core';
 export class TileLayer extends Layer {
   public dataSource:
     | OSMDataSource
@@ -32,9 +33,10 @@ export class TileLayer extends Layer {
 
   constructor(
     options: TileLayerOptions,
-    private geoNetwork: GeoNetworkService ) {
-
-    super(options);
+    private geoNetwork: GeoNetworkService,
+    public messageService?: MessageService
+    ) {
+    super(options, messageService);
 
     this.watcher = new TileWatcher(this);
     this.status$ = this.watcher.status$;

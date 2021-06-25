@@ -86,6 +86,7 @@ export class PrintService {
       async (status: SubjectStatus) => {
         if (status === SubjectStatus.Done) {
           await this.addScale(doc, map, margins);
+          await this.handleMeasureLayer(doc, map, margins);
           if (options.showLegend === true) {
             await this.addLegend(doc, map, margins, resolution);
           } else {
@@ -101,6 +102,30 @@ export class PrintService {
     );
 
     return status$;
+  }
+
+  /**
+   * Add measure overlay on the map on the document when the measure layer is present
+   * @param  doc - Pdf document where measure tooltip will be added
+   * @param  map - Map of the app
+   * @param  margins - Page margins
+   */
+  private async handleMeasureLayer(
+    doc: jsPDF,
+    map: IgoMap,
+    margins: Array<number>
+  ) {
+    if (map.layers.find(layer => layer.visible && layer.id.startsWith('igo-measures-'))) {
+      let canvasOverlayHTMLMeasures;
+      const mapOverlayMeasuresHTML = map.ol.getOverlayContainer();
+      await html2canvas(mapOverlayMeasuresHTML, {
+        scale: 1,
+        backgroundColor: null
+      }).then(e => {
+        canvasOverlayHTMLMeasures = e;
+      });
+      this.addCanvas(doc, canvasOverlayHTMLMeasures, margins); // this adds measure overlays
+    }
   }
 
   /**

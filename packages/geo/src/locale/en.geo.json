@@ -179,6 +179,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
+        "resetFilters": "(Apply no filters)",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
@@ -213,6 +214,8 @@
         "tools": "Tools",
         "selectAll": "Select all",
         "deselectAll": "Deselect all",
+        "zoomLayer": "Zoom To Layer Extents",
+        "zoomLayers": "Zoom To Selected Layers Extents",
         "opacity": "Opacity",
         "raiseLayer": "Bring layer forward",
         "filterRaiseLayer": "The forward movement is always done according to the order of the map!",
@@ -399,6 +402,7 @@
             "gcc": "Coast Guard mark (CCG)",
             "sumi": "SUMI mark",
             "km": "Mileage mark",
+            "hq": "Hydro-Quebec",
             "entreprise": "Entreprise",
             "cadastre": "Cadastre"
           },
@@ -410,6 +414,7 @@
         "coordinates": {
           "name": "Coordinates",
           "coord": "Geographic (longitude, latitude)",
+          "coordDMS": "Geographic (longitude, latitude) (DMS)",
           "radius": "Radius",
           "conf": "Confidence"
         },
@@ -560,6 +565,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Perimeter in meters"
         },
+        "layerTitle": "Measure on map",
         "area": "Area",
         "areaHeader": "Area",
         "length": "Length",
@@ -586,7 +592,9 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activate measures",
-        "toggleMapTooltips": "Show map tooltips",
+        "toggleDisplayLines": "Display distances for the lines",
+        "toggleDisplayDistance": "Display distances for the areas",
+        "toggleDisplayAreas": "Display areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",

@@ -1,10 +1,11 @@
 :host .igo-list-min-height {
-  height: calc(100% - 91px);
+  height: calc(100% - 151px);
   padding-top: 8px;
 }
 
 :host .igo-list-max-height {
   padding-top: 8px;
+  height: calc(100% - 55px);
 }
 
 mat-form-field.inputFilter {
