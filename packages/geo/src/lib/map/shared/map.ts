@@ -123,10 +123,6 @@ export class IgoMap {
     this.buffer = new Overlay(this);
   }
 
-  setattribution(){
-    this.options.controls.attribution = true;
-  }
-
   setTarget(id: string) {
     this.ol.setTarget(id);
     if (id !== undefined) {
