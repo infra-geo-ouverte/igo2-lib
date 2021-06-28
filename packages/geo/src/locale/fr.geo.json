@@ -290,6 +290,7 @@
         "saveBtn": "Sauvegarder",
         "scale": "Échelle",
         "showProjection": "Afficher la projection",
+        "showScale": "Afficher l'échelle",
         "title": "Titre",
         "subtitle": "Sous-titre",
         "legendPosition": "Position de la légende",
