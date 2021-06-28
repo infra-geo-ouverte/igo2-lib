@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { GeoDataDBService } from '../../storage';
-import { first } from 'rxjs/operators';
+import { retry } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
-import { BehaviorSubject, forkJoin, Observable, Observer, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Observer } from 'rxjs';
 import { GeoNetworkService } from '../../network';
 import { Tile } from '../Tile.interface';
 import { TileGenerationStrategy } from './tile-generation-strategies/tile-generation-strategy';
@@ -142,12 +142,19 @@ export class TileDownloaderService {
   private downloadSequence(regionID: number) {
     const downloadTile = (url: string) => {
       return (observer: Observer<any>) => {
-        const request = this.http.get(url, { responseType: 'blob' });
+        const request = this.http.get(url, { responseType: 'blob' }).pipe(
+          retry(2)
+        )
         request.subscribe((blob) => {
           this.geoDB.update(url, regionID, blob).subscribe(() => {
             observer.next('done downloading ' + url);
             observer.complete();
           });
+        },
+        (err) => {
+          console.log("sub error handle")
+          observer.next('done downloading ' + url);
+          observer.complete();
         });
       };
     };
