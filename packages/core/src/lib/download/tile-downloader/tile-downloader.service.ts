@@ -61,6 +61,8 @@ export class TileDownloaderService {
 
   private currentDownloads: number = 0;
   private downloadCount: number = 0;
+  public validDownloadCount: number = 0;
+
   public urlGenerator: (coord: [number, number, number],
                         pixelRatio, projection) => string;
 
@@ -129,6 +131,7 @@ export class TileDownloaderService {
     // if not already downloading start downloading
     if (!this.isDownloading) {
       this.downloadCount = 0;
+      this.validDownloadCount = 0;
       this._nWorkerDone = 0;
       this.currentDownloads = tiles.length;
       console.log('starting download sequence!');
@@ -147,6 +150,7 @@ export class TileDownloaderService {
         )
         request.subscribe((blob) => {
           this.geoDB.update(url, regionID, blob).subscribe(() => {
+            this.validDownloadCount++;
             observer.next('done downloading ' + url);
             observer.complete();
           });

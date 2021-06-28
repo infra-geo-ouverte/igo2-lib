@@ -57,16 +57,25 @@ export class DownloadRegionService {
             tile.templateUrl
           );
         }
-      });
-
-    this.isDownloading$$ = this.tileDownloader.isDownloading$
-      .pipe(skip(1))
-      .subscribe((value) => {
-        if (!value) {
-          const collisionMap = this.tileDB.collisionsMap;
-          this.regionDB.updateWithCollisions(collisionMap);
-          this.tileDB.resetCollisionMap();          
-        }
+        this.isDownloading$$ = this.tileDownloader.isDownloading$
+          .pipe(skip(1))
+          .subscribe((isDownloading) => {
+            if (!isDownloading) {
+              const collisionMap = this.tileDB.collisionsMap;
+              const validTile = this.tileDownloader.validDownloadCount;
+              const date = new Date();
+              const regionDb: DBRegion = {
+                id: regionID,
+                name: regionName,
+                parentUrls,
+                numberOfTiles: validTile,
+                timestamp: date
+              }
+              this.regionDB.update(regionDb);
+              this.regionDB.updateWithCollisions(collisionMap);
+              this.tileDB.resetCollisionMap();
+          }
+        });
       });
   }
 
