@@ -77,7 +77,7 @@ export class PrintService {
         resolution,
         options.showProjection,
         options.showScale
-      );
+        );
     }
     if (options.comment !== '') {
       this.addComment(doc, options.comment);
@@ -448,13 +448,14 @@ export class PrintService {
           marginsLegend = [margins[0], margins[1], doc.internal.pageSize.height - margins[0] - imageSize[1],
           doc.internal.pageSize.width - margins[1] - imageSize[0] ];
         } else if (legendPosition === 'bottomleft') {
-          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1],
-          doc.internal.pageSize.width - margins[3] - imageSize[0], margins[2], margins[3] ];
+          // When the legend is in the bottom left, raise the legend slightly upward so that attributions are visible
+          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1] - 0.02*doc.internal.pageSize.height,
+          doc.internal.pageSize.width - margins[3] - imageSize[0], margins[2] + 0.02*doc.internal.pageSize.height, margins[3] ];
         } else if (legendPosition === 'topleft') {
           marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
         }
-        this.addCanvas(doc, canvas, marginsLegend); // this adds scales and attributions
+        this.addCanvas(doc, canvas, marginsLegend); // this adds the legend
         div.parentNode.removeChild(div); // remove temp div (IE style)
         await this.saveDoc(doc);
       }
