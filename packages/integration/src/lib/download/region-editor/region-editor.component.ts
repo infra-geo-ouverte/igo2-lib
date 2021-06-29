@@ -10,7 +10,7 @@ import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
 import { filter } from 'jszip';
 import { DownloadToolState } from './../download-tool/download-tool.state';
 import { MatInput } from '@angular/material/input';
-import { TileDownloaderService, DownloadRegionService } from '@igo2/core';
+import { TileDownloaderService, DownloadRegionService, TileToDownload } from '@igo2/core';
 import { uuid } from '@igo2/utils';
 
 import { fromExtent } from 'ol/geom/Polygon';
@@ -19,13 +19,6 @@ import * as olformat from 'ol/format';
 import { Feature, FEATURE } from '@igo2/geo';
 import { RegionDBService, StorageQuotaService } from '@igo2/core';
 
-
-export interface TileToDownload {
-  url: string;
-  coord: [number, number, number];
-  templateUrl: string;
-  tileGrid;
-}
 
 @Component({
   selector: 'igo-region-editor',
@@ -54,7 +47,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _nTilesToDownload: number;
   private _notEnoughSpace: boolean = true;
   private _notEnoughSpace$: Observable<boolean>;
-  
+  private editedTilesFeature: Feature[] = new Array();
+
   constructor(
     private tileDownloader: TileDownloaderService,
     private regionDB: RegionDBService,
@@ -135,7 +129,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
 
     const polygonGeometry = fromExtent(tileGrid.getTileCoordExtent(coord));
-    const feature = new OlFeature(polygonGeometry);
+    // add this feature to db
+    const feature: OlFeature = new OlFeature(polygonGeometry);
 
     const projectionIn = 'EPSG:4326'
     const projectionOut = 'EPSG:4326'
@@ -149,7 +144,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         featureNS: 'http://example.com/feature'
       }
     );
-    
+
     const offlineRegionFeature: Feature = {
       type: FEATURE,
       geometry: JSON.parse(featuresText).geometry,
@@ -165,14 +160,59 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       ol: feature
     };
     this.regionStore.update(offlineRegionFeature);
+    
+  }
+
+  private getTileFeature(tileGrid, coord: [number, number, number]) {
+    const id = uuid();
+    const previousRegion = this.regionStore.get(id);
+    const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
+
+    const polygonGeometry = fromExtent(tileGrid.getTileCoordExtent(coord));
+    // add this feature to db
+    const feature: OlFeature = new OlFeature(polygonGeometry);
+
+    const projectionIn = 'EPSG:4326'
+    const projectionOut = 'EPSG:4326'
+
+    const featuresText: string = new olformat.GeoJSON().writeFeature(
+      feature,
+      {
+        dataProjection: projectionOut,
+        featureProjection: projectionIn,
+        featureType: 'feature',
+        featureNS: 'http://example.com/feature'
+      }
+    );
+
+    const regionFeature: Feature = {
+      type: FEATURE,
+      geometry: JSON.parse(featuresText).geometry,
+      projection: this.map.projection,
+      properties: {
+        id:id,
+        stopOpacity: 1
+      },
+      meta: {
+        id: id,
+        revision: previousRegionRevision + 1
+      },
+      ol: feature
+    };
+    return regionFeature;
   }
 
   public clearFeatures() {
+    this.editedTilesFeature = new Array();
     this.regionStore.clear();
   }
 
+  public showEditedTilesFeature() {
+    this.regionStore.clear();
+    this.regionStore.updateMany(this.editedTilesFeature);
+  }
+
   addTileToDownload(coord: [number, number, number], templateUrl, tileGrid) {
-    console.log("add tile to download");
     try {
       const urlGen = createFromTemplate(templateUrl, tileGrid);
       const url = urlGen(coord, 0, 0);
@@ -181,8 +221,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const firstTile = this.tilesToDownload[0];
       if (!firstTile) {
         this.urlsToDownload.add(url);
-        this.tilesToDownload.push({ url, coord, templateUrl, tileGrid });
-        this.addTileToFeature(tileGrid, coord);
+        const feature = this.getTileFeature(tileGrid, coord);
+        const featureText = JSON.stringify(feature);
+        
+        this.editedTilesFeature.push(feature);
+        this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
+        
+        this.showEditedTilesFeature();
+
+        //this.addTileToFeature(tileGrid, coord);
         return;
       }
 
@@ -192,9 +239,19 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
       if (!this.urlsToDownload.has(url)) {
+        // this.urlsToDownload.add(url);
+        // const featureText = JSON.stringify(this.getTileFeature(tileGrid, coord));
+        // this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText }); // add feature
+        // this.addTileToFeature(tileGrid, coord);
+        // this.updateVariables();
         this.urlsToDownload.add(url);
-        this.tilesToDownload.push({ url, coord, templateUrl, tileGrid });
-        this.addTileToFeature(tileGrid, coord);
+        const feature = this.getTileFeature(tileGrid, coord);
+        const featureText = JSON.stringify(feature);
+        
+        this.editedTilesFeature.push(feature);
+        this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
+        
+        this.showEditedTilesFeature();
         this.updateVariables();
       } else {
         this.messageService.error('The tile is already selected');

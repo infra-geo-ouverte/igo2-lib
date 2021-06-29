@@ -11,9 +11,10 @@ import { TileDownloaderService } from './tile-downloader/tile-downloader.service
 // need to create geodata-db delete method
 // need to create geodata-db deleteRegion by id or name wtv method
 
-interface TileToDownload {
+export interface TileToDownload {
   url: string;
   coord: [number, number, number];
+  featureText: string;
   templateUrl: string;
   tileGrid;
 }
@@ -45,8 +46,12 @@ export class DownloadRegionService {
       return item.url;
     });
 
+    const parentFeatureText = tilesToDownload.map((item: TileToDownload) => {
+      return item.featureText;
+    })
+
     const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
-    this.regionDB.add({name: regionName, parentUrls, numberOfTiles})
+    this.regionDB.add({name: regionName, parentUrls, numberOfTiles, parentFeatureText})
       .subscribe((regionID: number) => {
         for (const tile of tilesToDownload) {
           this.tileDownloader.downloadFromCoord(
@@ -68,6 +73,7 @@ export class DownloadRegionService {
                 id: regionID,
                 name: regionName,
                 parentUrls,
+                parentFeatureText,
                 numberOfTiles: validTile,
                 timestamp: date
               }
@@ -117,6 +123,7 @@ export class DownloadRegionService {
         id: region.id,
         name: region.name,
         parentUrls: region.parentUrls,
+        parentFeatureText: region.parentFeatureText,
         numberOfTiles: count,
         timestamp: region.timestamp
       });
