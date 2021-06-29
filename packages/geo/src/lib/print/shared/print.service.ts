@@ -449,8 +449,8 @@ export class PrintService {
           doc.internal.pageSize.width - margins[1] - imageSize[0] ];
         } else if (legendPosition === 'bottomleft') {
           // When the legend is in the bottom left, raise the legend slightly upward so that attributions are visible
-          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1] - 0.02*doc.internal.pageSize.height,
-          doc.internal.pageSize.width - margins[3] - imageSize[0], margins[2] + 0.02*doc.internal.pageSize.height, margins[3] ];
+          marginsLegend = [doc.internal.pageSize.height - margins[2] - imageSize[1] - 0.02 * doc.internal.pageSize.height,
+          doc.internal.pageSize.width - margins[3] - imageSize[0], margins[2] + 0.02 * doc.internal.pageSize.height, margins[3] ];
         } else if (legendPosition === 'topleft') {
           marginsLegend = [margins[0], doc.internal.pageSize.width - margins[3] - imageSize[0],
            doc.internal.pageSize.height - margins[0] - imageSize[1], margins[3] ];
