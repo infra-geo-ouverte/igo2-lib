@@ -1,27 +1,92 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Layer, TileLayer } from '../../layer';
 
 import { IgoMap } from '../shared/map';
 import { getRenderPixel } from 'ol/render';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'igo-swipe-control',
   templateUrl: './swipe-control.component.html',
   styleUrls: ['./swipe-control.component.scss']
 })
-export class SwipeControlComponent {
-  @Input() map: IgoMap;
-  constructor() { }
-  public swipe: any;
+export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
+  // @Input() map: IgoMap;
+
+
+  @Input()
+  get map(): IgoMap {
+    return this._map;
+  }
+  set map(value: IgoMap) {
+    this._map = value;
+  }
+  private _map: IgoMap;
+  private swipedLayers: Layer[] = [];
   private layers: Layer[];
   private pos1: number;
   private pos3: number;
   private inDragAction: boolean = false;
+  private swipeEnabled$$: Subscription;
+  public doSwipe: boolean = false;
+  constructor() { }
 
+  ngOnInit(): void {
+  }
+  ngAfterViewInit(): void {
+    this.checkEnabled();
+  }
+
+  ngOnDestroy(): void {
+    this.swipeEnabled$$.unsubscribe();
+    this.map.swipeEnabled$.unsubscribe();
+    this.displayOff();
+  }
+
+  checkEnabled() {
+    this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe(value => {
+        value ? this.display() : this.displayOff();
+      });
+  }
+
+  display() {
+      this.doSwipe = true;
+      this.swipeId.style.visibility = 'visible';
+      this.getListOfLayers();
+      this.renderLayers(this.layers);
+      this.map.ol.render();
+  }
+
+  displayOff() {
+    this.doSwipe = false;
+    this.swipeId.style.visibility = 'hidden';
+    this.getListOfLayers();
+    this.renderLayers(this.layers);
+    this.map.ol.render();
+    this.swipedLayers.map(layer => layer.ol.un('prerender', (event) => {
+        event.context.restore();
+        event.context.save();
+    } ));
+    this.swipedLayers = [];
+  }
 
   get swipeId(){
     return  document.getElementById('myswipe');
   }
+  getListOfLayers() {
+    this.layers = [];
+    if (this.doSwipe) {
+        this.map.selectedFeatures$.subscribe(layers => {
+            if (layers !== null) {
+                for (const layer of layers) {
+                  if (!this.layers.includes(layer)) {
+                    this.layers.push(layer);
+                  }
+                }
+            }
+        });
+    }
+}
 
   dragDown(event) {
     this.inDragAction = true;
@@ -69,16 +134,10 @@ export class SwipeControlComponent {
     this.inDragAction = false;
   }
 
-  getListOfLayers(){
-    this.layers = this.map.layers;
-  }
-
   renderLayers(layers: Layer[]){
     for (const layer of layers){
-      if (!(layer instanceof TileLayer)){
-          this.prerender(layer);
-          this.postrender(layer);
-      }
+        this.prerender(layer);
+        this.postrender(layer);
     }
   }
 
@@ -86,7 +145,8 @@ export class SwipeControlComponent {
     idLayer.ol.on('prerender', (event) => {
       const ctx = event.context;
       const mapSize = this.map.ol.getSize();
-      const width = this.swipeId.offsetLeft ;
+      const width = this.doSwipe ? this.swipeId.offsetLeft : mapSize[0];
+      // const width = this.swipeId.offsetLeft ;
       // let width = document.getElementById('myswipe').offsetLeft ;
       const tl = getRenderPixel(event, [width, 0]);
       const tr = getRenderPixel(event, [0, 0]);
@@ -101,6 +161,7 @@ export class SwipeControlComponent {
       ctx.closePath();
       ctx.clip();
     });
+    this.swipedLayers.push(idLayer);
   }
 
   postrender(idLayer: Layer){

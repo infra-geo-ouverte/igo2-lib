@@ -17,7 +17,8 @@
         "shareMap": "Partager",
         "timeFilter": "Filtre temporel",
         "about": "À propos",
-        "spatialFilter": "Filtre spatial"
+        "spatialFilter": "Filtre spatial",
+        "advancedMap": "advancedMap pel"
       },
       "searchResultsTool": {
         "noResults": "Aucun résultat",
@@ -64,6 +65,10 @@
         "maximizeTooltip": "Agrandir la fenêtre",
         "standardExtent": "Réduire",
         "standardExtentTooltip": "Réduire la fenêtre"
+      },
+      "advanced-map-tool":{
+        "swipe-select": "Choisir les couches à swiper",
+        "selectAll": "Tout sélectionner"
       }
     }
   }

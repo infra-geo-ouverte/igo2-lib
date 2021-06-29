@@ -17,7 +17,8 @@
         "shareMap": "Share",
         "timeFilter": "Time Filter",
         "about": "About",
-        "spatialFilter": "Spatial Filter"
+        "spatialFilter": "Spatial Filter",
+        "advancedMap": "advancedMap pel"
       },
       "searchResultsTool": {
         "noResults": "No results",
@@ -64,7 +65,9 @@
         "maximizeTooltip": "Extend panel",
         "standardExtent": "Reduce",
         "standardExtentTooltip": "Reduce panel"
-      }
+      },
+      "advanced-map-tools": "select the layers for swiping",
+      "selectAll": "Select all"
     }
   }
 }

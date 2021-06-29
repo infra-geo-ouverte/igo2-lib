@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
-
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { IgoLanguageModule } from '@igo2/core';
 import {
   IgoLayerModule,
@@ -26,9 +26,58 @@ import { MapToolComponent } from './map-tool/map-tool.component';
 import { MapToolsComponent } from './map-tools/map-tools.component';
 import { MapLegendToolComponent } from './map-legend/map-legend-tool.component';
 import { IgoAppWorkspaceModule } from '../workspace/workspace.module';
+import { AdvancedMapToolComponent } from './advanced-map-tool/advanced-map-tool.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
+
+
+
+
+
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatOptionModule } from '@angular/material/core';
+
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { IgoSpinnerModule } from '@igo2/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
+
+
+
+
 
 @NgModule({
   imports: [
+
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatDividerModule,
+    MatTabsModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    IgoLanguageModule,
+    IgoSpinnerModule,
+    MatTooltipModule,
+
+
+
+
+
+
+    MatFormFieldModule,
     CommonModule,
     MatTabsModule,
     MatListModule,
@@ -40,10 +89,11 @@ import { IgoAppWorkspaceModule } from '../workspace/workspace.module';
     IgoImportExportModule,
     IgoFilterModule,
     IgoContextModule,
-    IgoAppWorkspaceModule
+    IgoAppWorkspaceModule,
+    MatSlideToggleModule
   ],
-  declarations: [MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
-  exports: [MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
+  declarations: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
+  exports: [AdvancedMapToolComponent, MapToolComponent, MapToolsComponent, MapDetailsToolComponent, MapLegendToolComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class IgoAppMapModule {
