@@ -4,7 +4,7 @@ import {
   Input,
   OnInit,
   ViewChild,
-  OnDestroy,
+  OnDestroy
 } from '@angular/core';
 
 import { ToolComponent } from '@igo2/common';
