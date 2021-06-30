@@ -1,9 +1,9 @@
 
-<mat-tab-group>
+<mat-tab-group (selectedTabChange)="onTabChange($event)">
   <mat-tab label='Region Editor'>
-    <igo-region-editor></igo-region-editor>
+    <igo-region-editor #editor></igo-region-editor>
   </mat-tab>
   <mat-tab label='Downloaded Regions'>
-    <igo-region-manager></igo-region-manager>
+    <igo-region-manager #manager></igo-region-manager>
   </mat-tab>
 </mat-tab-group>

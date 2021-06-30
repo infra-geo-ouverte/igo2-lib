@@ -92,6 +92,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.saveState();
     this.addNewTile$$.unsubscribe();
+    this.clearFeatures();
   }
 
   private loadState() {
@@ -209,6 +210,10 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public showEditedTilesFeature() {
     this.regionStore.clear();
+    if (!this.editedTilesFeature) {
+      return;
+    }
+    
     this.regionStore.updateMany(this.editedTilesFeature);
   }
 

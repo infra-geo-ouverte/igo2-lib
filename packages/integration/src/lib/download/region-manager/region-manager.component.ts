@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DBRegion, DownloadRegionService, Region, RegionDBService } from '@igo2/core';
 import { Feature } from '@igo2/geo/public_api';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
@@ -20,7 +20,7 @@ interface DisplayRegion extends Region {
   templateUrl: './region-manager.component.html',
   styleUrls: ['./region-manager.component.scss']
 })
-export class RegionManagerComponent implements OnInit{
+export class RegionManagerComponent implements OnInit, OnDestroy {
   @ViewChild('regionCarousel') regionCarousel: MatCarouselComponent;
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
@@ -41,6 +41,14 @@ export class RegionManagerComponent implements OnInit{
         this.updateRegions();
       }
     );
+  }
+
+  ngOnInit() {
+
+  }
+
+  ngOnDestroy() {
+    this.clearFeature();
   }
 
   private get regionStore() {
@@ -90,10 +98,6 @@ export class RegionManagerComponent implements OnInit{
     return regions;
   }
 
-  ngOnInit() {
-
-  }
-
   public deleteRegion(region) {
     this.downloadManager.deleteRegionByID(region.id);
   }
@@ -123,8 +127,16 @@ export class RegionManagerComponent implements OnInit{
     return (space * 1e-06).toFixed(4);
   }
 
-  private showSelectedRegionFeatures() {
+  public showSelectedRegionFeatures() {
     this.regionStore.clear();
+    if (!this.selectedRegionFeatures) {
+      return;
+    }
+
     this.regionStore.updateMany(this.selectedRegionFeatures);
+  }
+
+  private clearFeature() {
+    this.regionStore.clear();
   }
 }
