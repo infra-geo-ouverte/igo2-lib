@@ -41,7 +41,6 @@ import { ImportExportMode, ImportExportState } from '../../import-export/import-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapToolsComponent implements OnInit, OnDestroy {
-  btnCnt: number;
   layers$: BehaviorSubject<Layer[]> = new BehaviorSubject([]);
   showAllLegendsValue$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -298,7 +297,8 @@ export class MapToolsComponent implements OnInit, OnDestroy {
   isOGCFilterButton(layer): boolean {
     const options = layer.dataSource.options;
     return this.ogcButton && options.ogcFilters && options.ogcFilters.enabled &&
-    (options.ogcFilters.pushButtons || options.ogcFilters.checkboxes || options.ogcFilters.radioButtons || options.ogcFilters.editable);
+    (options.ogcFilters.pushButtons || options.ogcFilters.checkboxes || options.ogcFilters.radioButtons
+      || options.ogcFilters.select || options.ogcFilters.editable);
   }
 
   isExportButton(layer: Layer): boolean {
@@ -310,10 +310,5 @@ export class MapToolsComponent implements OnInit, OnDestroy {
           return true;
       }
     return false;
-  }
-
-  setBtnCnt(btnCnt) {
-    this.btnCnt = btnCnt;
-    console.log(btnCnt);
   }
 }

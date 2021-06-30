@@ -11,6 +11,10 @@ mat-list-item ::ng-deep .mat-list-item-content .layerCheck {
   padding-right: 0px;
 }
 
+.layerCheck {
+  margin-left: 16px;
+}
+
 .igo-layer-list-item {
   height: $igo-list-item-height;
   clear: both;
