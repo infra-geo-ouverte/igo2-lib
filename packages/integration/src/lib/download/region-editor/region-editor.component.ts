@@ -18,6 +18,7 @@ import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { Feature, FEATURE } from '@igo2/geo';
 import { RegionDBService, StorageQuotaService } from '@igo2/core';
+import { RegionEditorState } from './region-editor.state';
 
 
 @Component({
@@ -27,34 +28,22 @@ import { RegionDBService, StorageQuotaService } from '@igo2/core';
 })
 export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('depthSlider') slider: MatSlider;
-  private progressBarPlaceHolder: MatProgressBar;
-  @ViewChild('progressBar') progressBar;
+  @ViewChild('progressBar') progressBar: MatProgressBar;
 
-  regionName: string = this.downloadToolState.regionName;
+  private _nTilesToDownload: number;
+  private _notEnoughSpace$: Observable<boolean>;
+  private _progression: number = 0;
 
-  urlsToDownload: Set<string> = this.downloadToolState.urlsToDownload;
-  tilesToDownload: TileToDownload[] = this.downloadToolState.tilesToDownload;
-  depth: number = this.downloadToolState.depth;
-
-  progression$: Observable<number>;
-  _progression: number = 0;
-
+  isDownloading$: Observable<boolean>; 
   isDownloading$$: Subscription;
-  isDownloading$: Observable<boolean>;
 
   private addNewTile$$: Subscription;
 
-  private _nTilesToDownload: number;
-  private _notEnoughSpace: boolean = true;
-  private _notEnoughSpace$: Observable<boolean>;
-  private editedTilesFeature: Feature[] = new Array();
-
   constructor(
     private tileDownloader: TileDownloaderService,
-    private regionDB: RegionDBService,
     private downloadService: DownloadRegionService,
     private downloadState: DownloadState,
-    private downloadToolState: DownloadToolState,
+    private state: RegionEditorState,
     private messageService: MessageService,
     private storageQuota: StorageQuotaService
   ) {
@@ -71,18 +60,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isDownloading$ = this.tileDownloader.isDownloading$;
 
-    if (!this.downloadToolState.progression$) {
+    if (!this.progression$) {
       this.progression$ = this.tileDownloader.progression$
         .pipe(map((value: number) => {
           return Math.round(value / this._nTilesToDownload * 100);
         }));
-    } else {
-      this.progression$ = this.downloadToolState.progression$;
     }
   }
 
   ngOnInit() {
-
+    if (!this.editedTilesFeature) {
+      this.regionStore.updateMany(this.editedTilesFeature);
+    }
   }
 
   ngAfterViewInit() {
@@ -90,23 +79,8 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.saveState();
     this.addNewTile$$.unsubscribe();
-    this.clearFeatures();
-  }
-
-  private loadState() {
-    this.urlsToDownload = this.downloadToolState.urlsToDownload;
-    this.tilesToDownload = this.downloadToolState.tilesToDownload;
-    this.depth = this.downloadToolState.depth;
-  }
-
-  private saveState() {
-    this.downloadToolState.depth = this.depth;
-    this.downloadToolState.tilesToDownload = this.tilesToDownload;
-    this.downloadToolState.urlsToDownload = this.urlsToDownload;
-    this.downloadToolState.regionName = this.regionName;
-    this.downloadToolState.progression$ = this.progression$;
+    this.regionStore.clear();
   }
 
   private updateVariables() {
@@ -116,61 +90,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }));
   }
 
-  private get regionStore() {
-    return this.downloadState.regionStore;
-  }
-
-  private get map() {
-    return this.downloadState.map;
-  }
-
-  private addTileToFeature(tileGrid, coord) {
-    const id = uuid();
-    const previousRegion = this.regionStore.get(id);
-    const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
-
-    const polygonGeometry = fromExtent(tileGrid.getTileCoordExtent(coord));
-    // add this feature to db
-    const feature: OlFeature = new OlFeature(polygonGeometry);
-
-    const projectionIn = 'EPSG:4326'
-    const projectionOut = 'EPSG:4326'
-
-    const featuresText: string = new olformat.GeoJSON().writeFeature(
-      feature,
-      {
-        dataProjection: projectionOut,
-        featureProjection: projectionIn,
-        featureType: 'feature',
-        featureNS: 'http://example.com/feature'
-      }
-    );
-
-    const offlineRegionFeature: Feature = {
-      type: FEATURE,
-      geometry: JSON.parse(featuresText).geometry,
-      projection: this.map.projection,
-      properties: {
-        id:id,
-        stopOpacity: 1
-      },
-      meta: {
-        id: id,
-        revision: previousRegionRevision + 1
-      },
-      ol: feature
-    };
-    this.regionStore.update(offlineRegionFeature);
-    
-  }
-
   private getTileFeature(tileGrid, coord: [number, number, number]) {
     const id = uuid();
     const previousRegion = this.regionStore.get(id);
     const previousRegionRevision = previousRegion ? previousRegion.meta.revision : 0;
 
     const polygonGeometry = fromExtent(tileGrid.getTileCoordExtent(coord));
-    // add this feature to db
+    
     const feature: OlFeature = new OlFeature(polygonGeometry);
 
     const projectionIn = 'EPSG:4326'
@@ -208,7 +134,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionStore.clear();
   }
 
-  public showEditedTilesFeature() {
+  public showEditedRegionFeatures() {
     this.regionStore.clear();
     if (!this.editedTilesFeature) {
       return;
@@ -231,10 +157,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         
         this.editedTilesFeature.push(feature);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
-        
-        this.showEditedTilesFeature();
-
-        //this.addTileToFeature(tileGrid, coord);
+        this.showEditedRegionFeatures();
         return;
       }
 
@@ -244,19 +167,13 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
       if (!this.urlsToDownload.has(url)) {
-        // this.urlsToDownload.add(url);
-        // const featureText = JSON.stringify(this.getTileFeature(tileGrid, coord));
-        // this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText }); // add feature
-        // this.addTileToFeature(tileGrid, coord);
-        // this.updateVariables();
         this.urlsToDownload.add(url);
         const feature = this.getTileFeature(tileGrid, coord);
         const featureText = JSON.stringify(feature);
         
         this.editedTilesFeature.push(feature);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
-        
-        this.showEditedTilesFeature();
+        this.showEditedRegionFeatures();
         this.updateVariables();
       } else {
         this.messageService.error('The tile is already selected');
@@ -280,7 +197,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isDownloading$$ = this.isDownloading$
       .pipe(skip(1))
       .subscribe((value) => {
-        this.downloadToolState.isDownloading = value;
+        this.isDownloading = value;
         if (!value) {
           this.messageService.success('Your download is done');
         }
@@ -324,12 +241,72 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return nTilesPerDownload * nDownloads;
   }
 
-  get invalidDownloadSize$(): Observable<boolean> {
-    return this._notEnoughSpace$;
+  private get regionStore() {
+    return this.downloadState.regionStore;
+  }
+
+  private get map() {
+    return this.downloadState.map;
+  }
+
+  set regionName(name: string) {
+    this.state.regionName = name;
+  }
+
+  get regionName(): string {
+    return this.state.regionName;
+  }
+
+  set urlsToDownload(urls: Set<string>) {
+    this.state.urlsToDownload = urls;
+  }
+
+  get urlsToDownload(): Set<string> {
+    return this.state.urlsToDownload;
+  }
+
+  set tilesToDownload(tiles: TileToDownload[]) {
+    this.state.tilesToDownload = tiles;
+  }
+
+  get tilesToDownload(): TileToDownload[] {
+      return this.state.tilesToDownload;
+  }
+
+  set depth(depth: number) {
+      this.state.depth = depth;
+  }
+
+  get depth(): number {
+      return this.state.depth;
+  }
+
+  set editedTilesFeature(features: Feature[]) {
+      this.state.editedTilesFeatures = features;
+  }
+
+  get editedTilesFeature(): Feature[] {
+      return this.state.editedTilesFeatures ;
+  }
+
+  set progression$(progression$: Observable<number>) {
+    this.state.progression$ = progression$;
+  }
+
+  get progression$(): Observable<number> {
+    return this.state.progression$;
+  }
+
+  set isDownloading(value: boolean) {
+    this.state.isDownloading = value;
   }
 
   get isDownloading(): boolean {
-    return this.downloadToolState.isDownloading;
+    return this.state.isDownloading;
+  }
+
+  get invalidDownloadSize$(): Observable<boolean> {
+    return this._notEnoughSpace$;
   }
 
   get progression(): number {
@@ -337,14 +314,14 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get disableSlider() {
-    return this.downloadToolState.isDownloading || this.tilesToDownload.length === 0;
+    return this.isDownloading || this.tilesToDownload.length === 0;
   }
 
   get disableDownloadButton() {
-    return !this.regionName || this.downloadToolState.isDownloading || this.tilesToDownload.length === 0;
+    return !this.regionName || this.isDownloading || this.tilesToDownload.length === 0;
   }
 
   get disableCancelButton() {
-    return this.downloadToolState.isDownloading;
+    return this.isDownloading;
   }
 }

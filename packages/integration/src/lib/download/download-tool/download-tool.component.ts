@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
 import { RegionEditorComponent } from '../region-editor/region-editor.component';
 import { RegionManagerComponent } from '../region-manager/region-manager.component';
@@ -21,7 +21,7 @@ export enum Tab {
   templateUrl: './download-tool.component.html',
   styleUrls: ['./download-tool.component.scss']
 })
-export class DownloadToolComponent implements OnInit {
+export class DownloadToolComponent implements OnInit, AfterViewInit {
   @ViewChild('editor') regionEditor: RegionEditorComponent;
   @ViewChild('manager') regionManager: RegionManagerComponent;
   constructor() {}
@@ -30,11 +30,15 @@ export class DownloadToolComponent implements OnInit {
 
   }
 
+  ngAfterViewInit() {
+    this.regionEditor.showEditedRegionFeatures();
+  }
+
   onTabChange(event) {
     const tabTitle: string = event.tab.textLabel;
     switch (tabTitle) {
       case Tab.Editor:
-        this.regionEditor.showEditedTilesFeature();
+        this.regionEditor.showEditedRegionFeatures();
         break;
 
       case Tab.Manager:
