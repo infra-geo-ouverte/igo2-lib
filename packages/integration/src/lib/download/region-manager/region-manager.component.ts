@@ -7,8 +7,9 @@ import { first } from 'rxjs/operators';
 import { MapState } from '../../map';
 import { DownloadToolState } from '../download-tool/download-tool.state';
 import { DownloadState } from '../download.state';
+import { RegionManagerState } from './region-manager.state';
 
-interface DisplayRegion extends Region {
+export interface DisplayRegion extends Region {
   id: number;
   name: string;
   numberOfTiles: number;
@@ -25,14 +26,15 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
   displayedColumns = ['edit', 'delete', 'name', 'nTiles', 'space'];
-  selectedRegionUrls: string[];
-  selectedRegionFeatures: Feature[];
-  selectedRowID: number = -1;
+  // selectedRegionUrls: string[];
+  // selectedRegionFeatures: Feature[];
+  // selectedRowID: number = -1;
 
   constructor(
     private regionDB: RegionDBService,
     private downloadManager: DownloadRegionService,
     private downloadState: DownloadState,
+    private state: RegionManagerState,
     private mapState: MapState
   ) {
     this.updateRegions();
@@ -44,7 +46,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.selectRegion(this.selectedRegion);
   }
 
   ngOnDestroy() {
@@ -59,10 +61,10 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
     return this.mapState.map;
   }
 
-  updateRegions() {
+  public updateRegions() {
     this.regionDB.getAll().pipe(first())
       .subscribe((dbRegions: DBRegion[]) => {
-        this.selectedRegionUrls = undefined;
+        this.selectedRegion = undefined;
         const regions = this.createRegion(dbRegions);
         this.regions.next(regions);
       });
@@ -113,12 +115,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   private selectRegion(region: DisplayRegion) {
-    this.selectedRegionUrls = region.parentUrls;
-    this.selectedRowID = region.id;
-    this.selectedRegionFeatures = region.parentFeatureText.map(
-      (featureText: string) => {
-        return JSON.parse(featureText);
-      });
+    this.selectedRegion = region;
   }
 
   public getRegionSpaceInMB(region: DisplayRegion) {
@@ -138,5 +135,28 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   private clearFeature() {
     this.regionStore.clear();
+  }
+
+  set selectedRegion(region: DisplayRegion) {
+    this.state.selectedRegion = region;
+  }
+
+  get selectedRegion(): DisplayRegion {
+    return this.state.selectedRegion;
+  }
+
+  get selectedRegionUrls(): string[] {
+    return this.selectedRegion.parentUrls;
+  }
+
+  get selectedRegionFeatures(): Feature[] {
+    return this.selectedRegion.parentFeatureText.map(
+      (featureText: string) => {
+        return JSON.parse(featureText);
+      });;
+  }
+
+  get selectedRowID(): number{
+    return this.selectedRegion.id;
   }
 }
