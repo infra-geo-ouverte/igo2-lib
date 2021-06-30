@@ -82,7 +82,7 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
   }
 
   applyNewsLayers(e) {
-    this.startSwipe(this.swipe);
+    this.startSwipe(false);
   }
 
   selectAll(e) {

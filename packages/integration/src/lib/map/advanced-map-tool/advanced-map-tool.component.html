@@ -1,4 +1,3 @@
-<p>advanced-map-tool works!</p>
 <!-- <igo-interactive-tour
   mat-raised-button
   tourToStart="global"
@@ -10,12 +9,12 @@
 
 
 <form class="igo-form" [formGroup]="form">
-    <div class="igo-swipe-select-container">
+    <!-- <div class="igo-swipe-select-container">
         <mat-form-field class="example-full-width">
             <mat-label>{{'nom du couche'}}</mat-label>
             <input formControlName="name" matInput [value]="">
         </mat-form-field>
-    </div>
+    </div> -->
     <div class="igo-swipe-select-container">
         <mat-form-field>
             <mat-label>{{'igo.integration.advanced-map-tool.swipe-select' | translate}}</mat-label>
@@ -35,7 +34,7 @@
     [checked]="swipe"
     [labelPosition]="'before'"
     (change)="startSwipe($event.checked)">
-    {{'swipe'}}
+    {{'Swipe'}}
 </mat-slide-toggle> 
 
 <!-- <form class="igo-form" *ngIf="swipe" [formGroup]="form">
