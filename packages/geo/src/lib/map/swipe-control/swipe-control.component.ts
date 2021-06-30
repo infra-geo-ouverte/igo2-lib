@@ -22,7 +22,7 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
     this._map = value;
   }
   private _map: IgoMap;
-  private swipedLayers: Layer[] = [];
+  // private swipedLayers: Layer[] = [];
   private layers: Layer[];
   private pos1: number;
   private pos3: number;
@@ -62,11 +62,11 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
     this.swipeId.style.visibility = 'hidden';
     this.renderLayers(this.layers);
     this.map.ol.render();
-    this.swipedLayers.map(layer => layer.ol.un('prerender', (event) => {
+    this.layers.map(layer => layer.ol.un('prerender', (event) => {
         event.context.restore();
         event.context.save();
     } ));
-    this.swipedLayers = [];
+    // this.swipedLayers = [];
   }
 
   get swipeId(){
@@ -157,7 +157,7 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.closePath();
       ctx.clip();
     });
-    this.swipedLayers.push(layer);
+    // this.swipedLayers.push(layer);
   }
 
   postrender(layer: Layer){
