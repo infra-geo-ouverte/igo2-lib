@@ -1,5 +1,4 @@
-
-<mat-tab-group (selectedTabChange)="onTabChange($event)">
+<mat-tab-group #tabGroup (selectedTabChange)="onTabChange($event)" [selectedIndex]="selectedTabIndex">
   <mat-tab label='Region Editor'>
     <igo-region-editor #editor></igo-region-editor>
   </mat-tab>

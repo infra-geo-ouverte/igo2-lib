@@ -6,7 +6,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
    providedIn: 'root'
  })
 export class DownloadToolState {
+  selectedTabIndex: number = 0;
 
-    constructor() {}
+  constructor() {}
 
 }
