@@ -1,20 +1,9 @@
 import { Injectable } from '@angular/core';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject } from 'rxjs';
+import { Region, RegionDate, RegionTileDBData } from './Region.interface';
 
-export interface Region {
-  name: string;
-  parentUrls: string[];
-  parentFeatureText: string[];
-  numberOfTiles: number;
-}
-export interface RegionDate extends Region {
-  timestamp: Date;
-}
 
-export interface DBRegion extends RegionDate {
-  id: number;
-}
 
 function createRegionDateFromRegion(region: Region): RegionDate {
   const regionDate: RegionDate = <RegionDate>{};
@@ -33,7 +22,7 @@ export class RegionDBService {
   readonly update$: Subject<boolean> = new Subject();
   constructor(private dbService: NgxIndexedDBService) { }
 
-  update(region: DBRegion): Observable<DBRegion[]> {
+  update(region: RegionTileDBData): Observable<RegionTileDBData[]> {
     if (!region) {
       return;
     }
@@ -56,7 +45,7 @@ export class RegionDBService {
     return dbRequest;
   }
 
-  getAll(): Observable<DBRegion[]> {
+  getAll(): Observable<RegionTileDBData[]> {
     return this.dbService.getAll(this.dbName);
   }
 
@@ -76,7 +65,7 @@ export class RegionDBService {
     keyRange: IDBKeyRange = IDBKeyRange.lowerBound(0), 
     mode: DBMode = DBMode.readonly
   ) {
-    // need to update when openCursor is fixed in ngx-indexed-db
+    // need to update when openCursor method is fixed in ngx-indexed-db package
     const request = this.dbService.openCursorByIndex(this.dbName, 'name', keyRange, mode);
     return request;
   }
@@ -87,7 +76,7 @@ export class RegionDBService {
     while (regionID !== undefined) {
       const collisions = collisionsMap.get(regionID);
       this.dbService.getByID(this.dbName, regionID).subscribe(
-        (region: DBRegion) => {
+        (region: RegionTileDBData) => {
           region.numberOfTiles -= collisions;
           this.updateWithNoTimestamp(region);
         }
@@ -100,7 +89,7 @@ export class RegionDBService {
     this.update$.next(true);
   }
 
-  private updateWithNoTimestamp(region: DBRegion): Observable<DBRegion[]> {
+  private updateWithNoTimestamp(region: RegionTileDBData): Observable<RegionTileDBData[]> {
     if (!region) {
       return;
     }

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { GeoDataDBService } from '../../storage';
+import { TileDBService } from '../../storage';
 import { retry } from 'rxjs/operators';
 import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Observer } from 'rxjs';
@@ -69,7 +69,7 @@ export class TileDownloaderService {
   constructor(
     private http: HttpClient,
     private network: GeoNetworkService,
-    private geoDB: GeoDataDBService) { }
+    private geoDB: TileDBService) { }
   
   // need to change the argument of the function then change the logic in the region-editor
   // component

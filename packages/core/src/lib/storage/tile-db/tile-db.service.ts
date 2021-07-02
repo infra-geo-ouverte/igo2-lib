@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, pipe, Subject } from 'rxjs';
 import { first, map } from 'rxjs/operators';
-import { CompressionService } from './compression.service';
-import { DbData } from './dbData';
-import { DBRegion } from './region-db.service';
+import { CompressionService } from '../compression/compression.service';
+import { TileDBData } from './TileDBData.interface';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GeoDataDBService {
+export class TileDBService {
   readonly dbName: string = 'geoData';
   public collisionsMap: Map<number, number> = new Map();
   constructor(
@@ -22,20 +21,20 @@ export class GeoDataDBService {
       return;
     }
 
-    const subject: Subject<DbData> = new Subject();
+    const subject: Subject<TileDBData> = new Subject();
     const compress$ = this.compression.compressBlob(object);
     compress$.pipe(first())
       .subscribe((compressedObject) => {
-        const dbData: DbData = {
+        const TileDBData: TileDBData = {
           url,
           regionID,
           object: compressedObject
         };
         const getRequest = this.dbService.getByID(this.dbName, url);
-        getRequest.subscribe((dbObject: DbData) => {
-          let dbRequest: Observable<DbData>;
+        getRequest.subscribe((dbObject: TileDBData) => {
+          let dbRequest: Observable<TileDBData>;
           if (!dbObject) {
-            dbRequest = this.dbService.addItem(this.dbName, dbData);
+            dbRequest = this.dbService.addItem(this.dbName, TileDBData);
           } else {
             const regionID = dbObject.regionID;
             let nCollision = this.collisionsMap.get(regionID);
@@ -44,7 +43,7 @@ export class GeoDataDBService {
             } else {
               this.collisionsMap.set(regionID, 1);
             }
-            dbRequest = this.customUpdate(dbData);
+            dbRequest = this.customUpdate(TileDBData);
           }
           dbRequest.subscribe((response) => {
             subject.next(response);
@@ -55,12 +54,12 @@ export class GeoDataDBService {
     return subject;
   }
 
-  private customUpdate(dbData: DbData): Observable<DbData> {
-    const subject: Subject<DbData> = new Subject();
-    const deleteRequest = this.dbService.deleteByKey(this.dbName, dbData.url);
+  private customUpdate(TileDBData: TileDBData): Observable<TileDBData> {
+    const subject: Subject<TileDBData> = new Subject();
+    const deleteRequest = this.dbService.deleteByKey(this.dbName, TileDBData.url);
     deleteRequest.subscribe((isDeleted) => {
       if (isDeleted) {
-        const addRequest = this.dbService.addItem(this.dbName, dbData);
+        const addRequest = this.dbService.addItem(this.dbName, TileDBData);
         addRequest.subscribe((object) => {
           subject.next(object);
           subject.complete();
@@ -76,7 +75,7 @@ export class GeoDataDBService {
     return this.dbService.getByID(this.dbName, url).pipe(
       map((data) => {
         if (data) {
-          const object = (data as DbData).object;
+          const object = (data as TileDBData).object;
           if (object instanceof Blob) {
             return object;
           }
@@ -113,7 +112,7 @@ export class GeoDataDBService {
 
     const IDBKey: IDBKeyRange = IDBKeyRange.only(id);
     const dbRequest = this.dbService.getAllByIndex(this.dbName, 'regionID', IDBKey);
-    dbRequest.subscribe((tiles: DbData[]) => {
+    dbRequest.subscribe((tiles: TileDBData[]) => {
       tiles.forEach((tile) => {
         console.log(tile);
         this.dbService.deleteByKey(this.dbName, tile.url);

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { DBMode } from 'ngx-indexed-db';
 import { Observable, Subscription, zip } from 'rxjs';
 import { skip, timestamp } from 'rxjs/operators';
-import { DBRegion, GeoDataDBService, RegionDBService } from '../storage';
-import { DbData } from '../storage/dbData';
+import { RegionTileDBData, TileDBService, RegionDBService } from '../storage';
+import { TileDBData } from '../storage/tile-db/TileDBData.interface';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 // need to make region db
 // need to ajust download method of TileDownloaderService
@@ -27,7 +27,7 @@ export class DownloadRegionService {
   private isUpdating$$: Subscription;
   constructor(
     private tileDownloader: TileDownloaderService,
-    private tileDB: GeoDataDBService,
+    private tileDB: TileDBService,
     private regionDB: RegionDBService
   ) {
     this.updateAllRegionTileCount();
@@ -69,7 +69,7 @@ export class DownloadRegionService {
               const collisionMap = this.tileDB.collisionsMap;
               const validTile = this.tileDownloader.validDownloadCount;
               const date = new Date();
-              const regionDb: DBRegion = {
+              const regionDb: RegionTileDBData = {
                 id: regionID,
                 name: regionName,
                 parentUrls,
@@ -113,7 +113,7 @@ export class DownloadRegionService {
     return zip(regionDBRequest, tileDBRequest);
   }
 
-  public updateRegionTileCount(region: DBRegion) {
+  public updateRegionTileCount(region: RegionTileDBData) {
     if (!region) {
       return;
     }
@@ -142,7 +142,7 @@ export class DownloadRegionService {
 
       const cursor = (event.target as IDBOpenDBRequest).result;
       if (cursor) {
-        const region: DBRegion = (<any>cursor).value;
+        const region: RegionTileDBData = (<any>cursor).value;
         const tileCount = tileCountPerRegion.get(region.id);
         if (tileCount !== undefined) {
           region.numberOfTiles = tileCount;
@@ -170,7 +170,7 @@ export class DownloadRegionService {
       
       const cursor = (event.target as IDBOpenDBRequest).result;
       if(cursor) {
-        const value: DbData = (<any>cursor).value;
+        const value: TileDBData = (<any>cursor).value;
         const regionID = value.regionID
         let tileCount = tileCountPerRegion.get(regionID);
         if (tileCount) {

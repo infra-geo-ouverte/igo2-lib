@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { interval, Observable, Observer, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { GeoDataDBService } from '../storage';
+import { TileDBService } from '../storage';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class GeoNetworkService {
   private pingServer$: Subscription;
   constructor(
     private http: HttpClient,
-    private geoDataDB: GeoDataDBService
+    private geoDataDB: TileDBService
   ) {
     this.pingServer$ = interval(2000).subscribe(() => {
       this.pingServer();
