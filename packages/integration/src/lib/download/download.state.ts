@@ -13,8 +13,7 @@ export class DownloadState {
     private _openedWithMouse: boolean = false;
     public regionStore: FeatureStore = new FeatureStore([], { map: this.map });
     readonly rightMouseClick$: Subject<boolean> = new Subject();
-    //public rightMouseClick: boolean = false;
-
+    
     constructor(private mapState: MapState) {}
 
     public get map() {
