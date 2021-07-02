@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ToolComponent } from '@igo2/common';
+import { DownloadState } from '../download.state';
 import { RegionEditorComponent } from '../region-editor/region-editor.component';
 import { RegionManagerComponent } from '../region-manager/region-manager.component';
 import { DownloadToolState } from './download-tool.state';
@@ -26,7 +27,16 @@ export class DownloadToolComponent implements OnInit, AfterViewInit {
   @ViewChild('editor') regionEditor: RegionEditorComponent;
   @ViewChild('manager') regionManager: RegionManagerComponent;
   
-  constructor(private state: DownloadToolState) {}
+  constructor(
+    private state: DownloadToolState,
+    private downloadState: DownloadState
+  ) {
+    this.downloadState.rightMouseClick$.subscribe((value) => {
+      if (value) {
+        this.selectedTabIndex = 0;
+      }
+    });
+  }
 
   set selectedTabIndex(index: number) {
     this.state.selectedTabIndex = index;
@@ -37,10 +47,14 @@ export class DownloadToolComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
+    const openedWithMouse = this.downloadState.openedWithMouse;
+    if (openedWithMouse) {
+      this.selectedTabIndex = 0;
+    }
   }
 
   ngAfterViewInit() {
+    this.downloadState.openedWithMouse = false;
     this.initTab(this.selectedTabIndex);
   }
 

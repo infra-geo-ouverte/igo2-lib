@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { TransferedTile } from './TransferedTile';
 import { MapState } from '../map';
 import { FeatureStore } from '@igo2/geo';
@@ -10,8 +10,10 @@ import { FeatureStore } from '@igo2/geo';
 export class DownloadState {
 
     readonly addNewTile$: BehaviorSubject<TransferedTile> = new BehaviorSubject(undefined);
-    private _openedWithMouse: boolean;
-    public regionStore: FeatureStore = new FeatureStore([], { map: this.map })
+    private _openedWithMouse: boolean = false;
+    public regionStore: FeatureStore = new FeatureStore([], { map: this.map });
+    readonly rightMouseClick$: Subject<boolean> = new Subject();
+    //public rightMouseClick: boolean = false;
 
     constructor(private mapState: MapState) {}
 
@@ -30,12 +32,11 @@ export class DownloadState {
         this._openedWithMouse = value;
     }
 
-    get openedWithMouse() {
-        if (this._openedWithMouse === undefined) {
-            return true;
-        }
-        const out = this._openedWithMouse;
-        this._openedWithMouse = false;
-        return out;
+    get openedWithMouse(): boolean {
+        return this._openedWithMouse;
+    }
+
+    set rightMouseClick(value: boolean) {
+        this.rightMouseClick$.next(value);
     }
 }
