@@ -1,15 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators  } from '@angular/forms';
 import { ToolComponent } from '@igo2/common';
-import { ContextExportService, ContextService, DetailedContext } from '@igo2/context';
+import { ContextService, DetailedContext } from '@igo2/context';
 import { IgoMap, Layer, VectorLayer } from '@igo2/geo';
-import { LanguageService, StorageScope, StorageService  } from '@igo2/core';
-import { take } from 'rxjs/operators';
+import { StorageService } from '@igo2/core';
 import { MapState } from '../map.state';
-import { BehaviorSubject, Subject } from 'rxjs';
-
-
-
 
 @ToolComponent({
   name: 'advancedMap',
@@ -17,6 +12,9 @@ import { BehaviorSubject, Subject } from 'rxjs';
   icon: 'leaf-maple'
 })
 
+/**
+ * Tool to handle the advanced map tools
+ */
 @Component({
   selector: 'igo-advanced-map-tool',
   templateUrl: './advanced-map-tool.component.html',
@@ -32,38 +30,44 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
   public layers: VectorLayer[];
   public res: DetailedContext;
   public listForSwipe: Layer[];
-  // public selectedFeatures$ = new BehaviorSubject<Layer[]>(null);
 
+  /**
+   * Get an active map state
+   */
   get map(): IgoMap {
     return this.mapState.map;
   }
 
-    constructor(
+  constructor(
     public mapState: MapState,
     private contextService: ContextService,
     private formBuilder: FormBuilder,
-    private contextExportService: ContextExportService,
     private storageService: StorageService) {
       this.buildForm();
-    }
+  }
 
+  /**
+   * Get the list of layers for swipe
+   * @internal
+   */
   ngOnInit() {
     this.layerList = this.contextService.getContextLayers(this.map);
     this.userControlledLayerList = this.layerList.filter(layer => layer.showInLayerList);
-    // this.checkSwipeToggle();
+    this.userControlledLayerList = this.userControlledLayerList.filter(layer => layer.displayed);
   }
+
+  /**
+   * Desactivate the swipe
+   * @internal
+   */
   ngOnDestroy(){
     this.swipe = false;
     this.map.swipeEnabled$.next(this.swipe);
   }
 
-
-  checkSwipeToggle(){
-    // if (this.storageService.get('swipeToggle') === true){
-    //   this.swipe = true;
-    // }
-  }
-
+  /**
+   * Build a form for choise of the layers
+   */
   private buildForm() {
     this.form = this.formBuilder.group({
       layers: ['', [Validators.required]],
@@ -71,6 +75,9 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Activate the swipe, send a list of layers for a swipe-tool
+   */
   startSwipe(toggle: boolean){
     this.swipe = toggle;
     this.map.swipeEnabled$.next(toggle);
@@ -81,10 +88,16 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
     this.map.selectedFeatures$.next(this.listForSwipe);
   }
 
+  /**
+   * Restart a swipe for a new layers-list
+   */
   applyNewsLayers(e) {
     this.startSwipe(false);
   }
 
+  /**
+   * Select all list of layers and restart a tool
+   */
   selectAll(e) {
     if (e._selected) {
       this.form.controls.layers.setValue(this.userControlledLayerList);
@@ -93,6 +106,6 @@ export class AdvancedMapToolComponent implements OnInit, OnDestroy {
     if (e._selected === false) {
       this.form.controls.layers.setValue([]);
     }
-    this.startSwipe(this.swipe);
+    this.startSwipe(false);
   }
 }

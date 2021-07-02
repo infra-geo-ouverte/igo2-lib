@@ -1,90 +1,140 @@
 import { Component, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { Layer, TileLayer } from '../../layer';
-
+import { Layer } from '../../layer';
 import { IgoMap } from '../shared/map';
 import { getRenderPixel } from 'ol/render';
 import { Subscription } from 'rxjs';
 
+/**
+ * Tool to swipe the layers
+ */
 @Component({
   selector: 'igo-swipe-control',
   templateUrl: './swipe-control.component.html',
   styleUrls: ['./swipe-control.component.scss']
 })
-export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
-  // @Input() map: IgoMap;
 
-
+export class SwipeControlComponent implements AfterViewInit, OnDestroy {
   @Input()
+
+  /**
+   * Get an active map
+   */
   get map(): IgoMap {
     return this._map;
   }
+
+  /**
+   * Set an active map
+   */
   set map(value: IgoMap) {
     this._map = value;
   }
+
+  /**
+   * The map to swipe on
+   */
   private _map: IgoMap;
-  // private swipedLayers: Layer[] = [];
+
+  /**
+   * The list of layers for swipe
+   */
   private layers: Layer[];
+
+  /**
+   * Final position of the swiped element
+   */
   private pos1: number;
+
+  /**
+   * Intermediate position of the swiped element
+   */
   private pos3: number;
+
+  /**
+   * State of draggable action
+   */
   private inDragAction: boolean = false;
+
+  /**
+   * Listener of toggle from advanced-map-tool
+   */
   private swipeEnabled$$: Subscription;
-  public doSwipe: boolean = false;
-  constructor() { }
 
-  ngOnInit(): void {
-  }
+  /**
+   * Binder of prerender on the same element
+   */
+  private boundPrerender = this.prerender.bind(this);
+
+  constructor() {
+   }
+
+  /**
+   * Get the list of layers for swipe and activate of deactivate the swipe
+   * @internal
+   */
   ngAfterViewInit(): void {
-    this.checkEnabled();
-  }
-
-  ngOnDestroy(): void {
-    this.swipeEnabled$$.unsubscribe();
-    this.map.swipeEnabled$.unsubscribe();
-    this.displaySwipeOff();
-  }
-
-  checkEnabled() {
     this.getListOfLayers();
     this.swipeEnabled$$ = this.map.swipeEnabled$.subscribe(value => {
         value ? this.displaySwipe() : this.displaySwipeOff();
       });
   }
 
+  /**
+   * Clear the overlay layer and any interaction added by this component.
+   * @internal
+   */
+  ngOnDestroy(): void {
+    this.swipeEnabled$$.unsubscribe();
+    this.map.swipeEnabled$.unsubscribe();
+    this.displaySwipeOff();
+  }
+
+  /**
+   * Display a swipe-element and render the layers
+   */
   displaySwipe() {
-      this.doSwipe = true;
-      this.swipeId.style.visibility = 'visible';
-      this.renderLayers(this.layers);
-      this.map.ol.render();
-  }
-
-  displaySwipeOff() {
-    this.doSwipe = false;
-    this.swipeId.style.visibility = 'hidden';
-    this.renderLayers(this.layers);
+    this.swipeId.style.visibility = 'visible';
+    this.layers.map(layer => layer.ol.on('prerender', this.boundPrerender));
+    this.layers.map(layer => layer.ol.on('postrender', this.postrender));
     this.map.ol.render();
-    this.layers.map(layer => layer.ol.un('prerender', (event) => {
-        event.context.restore();
-        event.context.save();
-    } ));
-    // this.swipedLayers = [];
   }
 
-  get swipeId(){
+  /**
+   * Clear a swipe-element and render the layers on the initial state
+   */
+  displaySwipeOff() {
+    this.swipeId.style.visibility = 'hidden';
+    this.layers.map(layer => layer.ol.un('prerender', this.boundPrerender));
+    this.layers.map(layer => layer.ol.un('postrender', this.postrender));
+    this.map.ol.render();
+  }
+
+  /**
+   * Getter of element
+   */
+  get swipeId() {
     return  document.getElementById('igo-layer-swipe');
   }
+
+  /**
+   * Get the list of layers for swipe
+   */
   getListOfLayers() {
-    this.layers = [];
     this.map.selectedFeatures$.subscribe(layers => {
-        if (layers !== null) {
-          for (const layer of layers) {
-            if (!this.layers.includes(layer)) {
-              this.layers.push(layer);
-            }
+      this.layers = [];
+      if (layers !== null) {
+        for (const layer of layers) {
+          if (!this.layers.includes(layer)) {
+            this.layers.push(layer);
           }
         }
+      }
     });
   }
 
+  /**
+   * Get a position of click or touch
+   */
   dragDown(event) {
     this.inDragAction = true;
     event.preventDefault();
@@ -99,6 +149,9 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /**
+   * Listen a mouse- or touch-move and move the swipe-element
+   */
   elementDrag(event){
     if (this.inDragAction){
           event.preventDefault();
@@ -113,16 +166,21 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           this.swipeId.style.left = (this.swipeId.offsetLeft - this.pos1) + 'px';
         }
-    this.renderLayers(this.layers);
     this.map.ol.render();
   }
 
+  /**
+   * Deactivate a listener of a mouse-action
+   */
   closeDragMouseElement() {
     document.onmouseup = null;
     document.onmousemove = null;
     this.inDragAction = false;
   }
 
+  /**
+   * Deactivate a listener of a touch-action
+   */
   closeDragTouchElement() {
     document.ontouchend = null;
     document.ontouchmove = null;
@@ -130,20 +188,13 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
     this.inDragAction = false;
   }
 
-  renderLayers(layers: Layer[]){
-    for (const layer of layers){
-        this.prerender(layer);
-        this.postrender(layer);
-    }
-  }
-
-  prerender(layer) {
-    layer.ol.on('prerender', (event) => {
+  /**
+   * Cut the image of a layer by the position of swiped-element
+   */
+  prerender(event) {
       const ctx = event.context;
       const mapSize = this.map.ol.getSize();
-      const width = this.doSwipe ? this.swipeId.offsetLeft : mapSize[0];
-      // const width = this.swipeId.offsetLeft ;
-      // let width = document.getElementById('igo-layer-swipe').offsetLeft ;
+      const width = this.swipeId.offsetLeft ;
       const tl = getRenderPixel(event, [width, 0]);
       const tr = getRenderPixel(event, [0, 0]);
       const bl = getRenderPixel(event, [width, mapSize[1]]);
@@ -156,14 +207,13 @@ export class SwipeControlComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.lineTo(tr[0], tr[1]);
       ctx.closePath();
       ctx.clip();
-    });
-    // this.swipedLayers.push(layer);
   }
 
-  postrender(layer: Layer){
-    layer.ol.on('postrender', (event) => {
-      const ctx = event.context;
-      ctx.restore();
-    });
+  /**
+   * Save a current state of the context
+   */
+  postrender(event){
+    event.context.restore();
+    event.context.save();
   }
 }

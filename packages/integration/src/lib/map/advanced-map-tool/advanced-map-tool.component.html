@@ -1,13 +1,3 @@
-<!-- <igo-interactive-tour
-  mat-raised-button
-  tourToStart="global"
-  menuIsOpen=true
-  styleButton="raised"
-  [discoverTitleInLocale$]="discoverTitleInLocale$">
-</igo-interactive-tour> -->
-
-
-
 <form class="igo-form" [formGroup]="form">
     <!-- <div class="igo-swipe-select-container">
         <mat-form-field class="example-full-width">
@@ -29,41 +19,9 @@
     </div>
 </form>
 
-
 <mat-slide-toggle class="swipe-toogle"
     [checked]="swipe"
     [labelPosition]="'before'"
     (change)="startSwipe($event.checked)">
     {{'Swipe'}}
 </mat-slide-toggle> 
-
-<!-- <form class="igo-form" *ngIf="swipe" [formGroup]="form">
-  <div class="igo-input-container">
-      <mat-form-field class="example-full-width">
-          <mat-label>{{'igo.context.contextImportExport.export.exportContextName' | translate}}</mat-label>
-          <input formControlName="name" matInput [value]="">
-      </mat-form-field>
-  </div>
-  <div class="igo-input-container">
-      <mat-form-field>
-          <mat-label>{{'igo.context.contextImportExport.export.exportPlaceHolder' | translate}}</mat-label>
-          <mat-select formControlName="layers" multiple>
-              <mat-option [value]="1" (click)="selectAll(e)" #e>
-                  {{'igo.context.contextImportExport.export.exportSelectAll' | translate}}
-              </mat-option>
-              <mat-divider></mat-divider>
-              <mat-option *ngFor="let layer of userControlledLayerList" [value]="layer">{{layer.title}}</mat-option>
-          </mat-select>
-      </mat-form-field>
-  </div>
-  <div class="igo-form-button-group">
-      <button
-          mat-raised-button
-          type="button"
-          [disabled]="!form.valid || (loading$ | async)"
-          (click)="handleExportFormSubmit(form.value)">
-          {{'igo.geo.importExportForm.exportButton' | translate}}
-      </button>
-      <igo-spinner [shown]="loading$ | async"></igo-spinner>
-  </div>
-</form> -->
