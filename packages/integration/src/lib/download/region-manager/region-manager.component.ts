@@ -38,15 +38,15 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
     private mapState: MapState
   ) {
     this.updateRegions();
-
     this.regionDB.update$.subscribe(() => {
+        this.selectedRegion = undefined;
         this.updateRegions();
       }
     );
   }
 
   ngOnInit() {
-    this.selectRegion(this.selectedRegion);
+    
   }
 
   ngOnDestroy() {
@@ -64,7 +64,6 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   public updateRegions() {
     this.regionDB.getAll().pipe(first())
       .subscribe((dbRegions: DBRegion[]) => {
-        this.selectedRegion = undefined;
         const regions = this.createRegion(dbRegions);
         this.regions.next(regions);
       });

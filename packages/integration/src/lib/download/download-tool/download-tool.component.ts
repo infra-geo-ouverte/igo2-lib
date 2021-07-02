@@ -41,11 +41,10 @@ export class DownloadToolComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.regionEditor.showEditedRegionFeatures();
+    this.initTab(this.selectedTabIndex);
   }
 
   onTabChange(event) {
-    console.log(event);
     this.selectedTabIndex = event.index;
     const tabTitle: string = event.tab.textLabel;
     switch (tabTitle) {
@@ -57,6 +56,19 @@ export class DownloadToolComponent implements OnInit, AfterViewInit {
         this.regionManager.showSelectedRegionFeatures();
         break;
 
+      default:
+        break;
+    }
+  }
+
+  initTab(index: number) {
+    switch (index) {
+      case 0:
+        this.regionEditor.showEditedRegionFeatures();
+        break;
+      case 1:
+        this.regionManager.showSelectedRegionFeatures();
+        break;
       default:
         break;
     }
