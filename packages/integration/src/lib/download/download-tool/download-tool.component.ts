@@ -55,27 +55,15 @@ export class DownloadToolComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.downloadState.openedWithMouse = false;
-    this.initTab(this.selectedTabIndex);
+    this.switchTab(this.selectedTabIndex);
   }
 
   onTabChange(event) {
     this.selectedTabIndex = event.index;
-    const tabTitle: string = event.tab.textLabel;
-    switch (tabTitle) {
-      case Tab.Editor:
-        this.regionEditor.showEditedRegionFeatures();
-        break;
-
-      case Tab.Manager:
-        this.regionManager.showSelectedRegionFeatures();
-        break;
-
-      default:
-        break;
-    }
+    this.switchTab(this.selectedTabIndex);
   }
 
-  initTab(index: number) {
+  private switchTab(index: number) {
     switch (index) {
       case 0:
         this.regionEditor.showEditedRegionFeatures();
