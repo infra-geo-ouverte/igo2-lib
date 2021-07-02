@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DBMode } from 'ngx-indexed-db';
 import { Observable, Subscription, zip } from 'rxjs';
 import { skip, timestamp } from 'rxjs/operators';
-import { RegionTileDBData, TileDBService, RegionDBService } from '../storage';
+import { RegionTileDBData, TileDBService, RegionDBService, RegionStatus } from '../storage';
 import { TileDBData } from '../storage/tile-db/TileDBData.interface';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 // need to make region db
@@ -71,6 +71,7 @@ export class DownloadRegionService {
               const date = new Date();
               const regionDb: RegionTileDBData = {
                 id: regionID,
+                status: RegionStatus.Downloading,
                 name: regionName,
                 parentUrls,
                 parentFeatureText,
@@ -119,14 +120,9 @@ export class DownloadRegionService {
     }
 
     this.tileDB.getRegionTileCountByID(region.id).subscribe((count: number) => {
-      this.regionDB.update({
-        id: region.id,
-        name: region.name,
-        parentUrls: region.parentUrls,
-        parentFeatureText: region.parentFeatureText,
-        numberOfTiles: count,
-        timestamp: region.timestamp
-      });
+      const newRegion = region;
+      newRegion.numberOfTiles = count;
+      this.regionDB.update(newRegion);
     });
   }
 

@@ -10,4 +10,11 @@ export interface RegionDate extends Region {
 
 export interface RegionTileDBData extends RegionDate {
   id: number;
+  status: RegionStatus;
 }
+
+export enum RegionStatus {
+  Downloading = 'Downloading',
+  OK = 'OK',
+  Expired = 'Expired'
+} 
