@@ -64,7 +64,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row 
         *matRowDef="let row; columns: displayedColumns;" 
-        (click)="getRegion(row)" 
+        (click)="rowClick(row)" 
         matRipple
         [ngClass]="{'highlight': selectedRowID == row.id}"></mat-row>
 </table>

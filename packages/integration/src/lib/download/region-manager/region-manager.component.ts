@@ -26,9 +26,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   regions: BehaviorSubject<Region[]> = new BehaviorSubject(undefined);
   displayedColumns = ['edit', 'delete', 'name', 'nTiles', 'space'];
-  // selectedRegionUrls: string[];
-  // selectedRegionFeatures: Feature[];
-  // selectedRowID: number = -1;
+  buttonClicked: boolean = false;
 
   constructor(
     private regionDB: RegionDBService,
@@ -50,7 +48,7 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.clearFeature();
+    this.clearFeatures();
   }
 
   private get regionStore() {
@@ -103,10 +101,17 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   }
 
   public deleteRegion(region) {
+    this.buttonClicked = true
     this.downloadManager.deleteRegionByID(region.id);
+    console.log(this.selectedRegion.name);
+    if (region.id === this.selectedRegion.id) {
+      this.unselectRegion();
+      this.clearFeatures();
+    }
   }
 
   public editRegion(region) {
+    this.buttonClicked = true;
     console.log('Edit ', region);
   }
 
@@ -118,6 +123,10 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   private selectRegion(region: DisplayRegion) {
     this.selectedRegion = region;
+  }
+
+  private unselectRegion() {
+    this.selectedRegion = undefined;
   }
 
   public getRegionSpaceInMB(region: DisplayRegion) {
@@ -135,12 +144,20 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
     this.regionStore.updateMany(this.selectedRegionFeatures);
   }
 
-  private clearFeature() {
+  public clearFeatures() {
     this.regionStore.clear();
   }
 
   set selectedRegion(region: DisplayRegion) {
     this.state.selectedRegion = region;
+  }
+
+  public rowClick(row: DisplayRegion) {
+    if (this.buttonClicked) {
+      this.buttonClicked = false;
+      return;
+    }
+    this.getRegion(row);
   }
 
   get selectedRegion(): DisplayRegion {
