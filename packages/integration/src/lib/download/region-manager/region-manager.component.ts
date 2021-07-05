@@ -103,11 +103,8 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   public deleteRegion(region) {
     this.buttonClicked = true
     this.downloadManager.deleteRegionByID(region.id);
-    console.log(this.selectedRegion.name);
-    if (region.id === this.selectedRegion.id) {
-      this.unselectRegion();
-      this.clearFeatures();
-    }
+    this.unselectRegion();
+    this.clearFeatures();
   }
 
   public editRegion(region) {
