@@ -3,7 +3,7 @@ import { DBMode } from 'ngx-indexed-db';
 import { interval } from 'rxjs';
 import { TileDBData, TileDBService } from '../tile-db';
 import { RegionDBService } from './region-db.service';
-import { RegionStatus, RegionTileDBData } from './Region.interface';
+import { RegionStatus, RegionDBData } from './Region.interface';
 
 
 @Injectable({
@@ -26,8 +26,8 @@ export class RegionDBAdminService {
       });
   }
 
-  updateStatus(region: RegionTileDBData, newStatus: RegionStatus) {
-    const updatedRegion: RegionTileDBData = region;
+  updateStatus(region: RegionDBData, newStatus: RegionStatus) {
+    const updatedRegion: RegionDBData = region;
     updatedRegion.status = newStatus;
     this.regionDB.update(updatedRegion);
   }
@@ -68,7 +68,7 @@ export class RegionDBAdminService {
 
       const cursor = (event.target as IDBOpenDBRequest).result;
       if (cursor) {
-        const region: RegionTileDBData = (<any>cursor).value;
+        const region: RegionDBData = (<any>cursor).value;
         const tileCount = tileCountPerRegion.get(region.id);
         if (tileCount !== undefined) {
           region.numberOfTiles = tileCount;
@@ -96,7 +96,7 @@ export class RegionDBAdminService {
         }
         return;
       }
-      const region: RegionTileDBData = (<any>cursor).value;
+      const region: RegionDBData = (<any>cursor).value;
       if (region.status === RegionStatus.Downloading) {
         return;
       }
@@ -114,7 +114,7 @@ export class RegionDBAdminService {
     });
   }
 
-  public updateRegionTileCount(region: RegionTileDBData) {
+  public updateRegionTileCount(region: RegionDBData) {
     if (!region) {
       return;
     }

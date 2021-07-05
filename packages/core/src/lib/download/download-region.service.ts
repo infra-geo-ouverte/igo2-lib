@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DBMode } from 'ngx-indexed-db';
 import { Observable, Subscription, zip } from 'rxjs';
 import { skip, timestamp } from 'rxjs/operators';
-import { RegionTileDBData, TileDBService, RegionDBService, RegionStatus, Region } from '../storage';
+import { RegionDBData, TileDBService, RegionDBService, RegionStatus, Region } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
 import { TileDBData } from '../storage/tile-db/TileDBData.interface';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
@@ -80,7 +80,7 @@ export class DownloadRegionService {
               const collisionMap = this.tileDB.collisionsMap;
               const validTile = this.tileDownloader.validDownloadCount;
               const date = new Date();
-              const regionDb: RegionTileDBData = {
+              const regionDBData: RegionDBData = {
                 id: regionID,
                 status: RegionStatus.OK,
                 name: regionName,
@@ -89,7 +89,7 @@ export class DownloadRegionService {
                 numberOfTiles: validTile,
                 timestamp: date
               }
-              this.regionDB.update(regionDb);
+              this.regionDB.update(regionDBData);
               this.regionDB.updateWithCollisions(collisionMap);
               this.tileDB.resetCollisionMap();
           }

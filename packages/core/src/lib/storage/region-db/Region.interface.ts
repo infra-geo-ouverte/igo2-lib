@@ -9,7 +9,7 @@ export interface RegionDate extends Region {
   timestamp: Date;
 }
 
-export interface RegionTileDBData extends RegionDate {
+export interface RegionDBData extends RegionDate {
   id: number;
 }
 

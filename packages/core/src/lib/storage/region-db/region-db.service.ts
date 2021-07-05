@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DBMode, NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, Subject } from 'rxjs';
-import { Region, RegionDate, RegionTileDBData } from './Region.interface';
+import { Region, RegionDate, RegionDBData } from './Region.interface';
 
 
 
@@ -23,7 +23,7 @@ export class RegionDBService {
   readonly update$: Subject<boolean> = new Subject();
   constructor(private dbService: NgxIndexedDBService) { }
 
-  update(region: RegionTileDBData): Observable<RegionTileDBData[]> {
+  update(region: RegionDBData): Observable<RegionDBData[]> {
     if (!region) {
       return;
     }
@@ -46,7 +46,7 @@ export class RegionDBService {
     return dbRequest;
   }
 
-  getAll(): Observable<RegionTileDBData[]> {
+  getAll(): Observable<RegionDBData[]> {
     return this.dbService.getAll(this.dbName);
   }
 
@@ -77,7 +77,7 @@ export class RegionDBService {
     while (regionID !== undefined) {
       const collisions = collisionsMap.get(regionID);
       this.dbService.getByID(this.dbName, regionID).subscribe(
-        (region: RegionTileDBData) => {
+        (region: RegionDBData) => {
           region.numberOfTiles -= collisions;
           this.updateWithNoTimestamp(region);
         }
@@ -90,7 +90,7 @@ export class RegionDBService {
     this.update$.next(true);
   }
 
-  private updateWithNoTimestamp(region: RegionTileDBData): Observable<RegionTileDBData[]> {
+  private updateWithNoTimestamp(region: RegionDBData): Observable<RegionDBData[]> {
     if (!region) {
       return;
     }

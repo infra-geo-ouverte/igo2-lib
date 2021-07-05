@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { RegionTileDBData, DownloadRegionService, Region, RegionDBService } from '@igo2/core';
+import { RegionDBData, DownloadRegionService, Region, RegionDBService } from '@igo2/core';
 import { Feature } from '@igo2/geo/public_api';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -63,16 +63,16 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   public updateRegions() {
     this.regionDB.getAll().pipe(first())
-      .subscribe((RegionTileDBDatas: RegionTileDBData[]) => {
-        const regions = this.createRegion(RegionTileDBDatas);
+      .subscribe((RegionDBDatas: RegionDBData[]) => {
+        const regions = this.createRegion(RegionDBDatas);
         this.regions.next(regions);
       });
   }
 
-  private createRegion(RegionTileDBDatas: RegionTileDBData[]) {
+  private createRegion(RegionDBDatas: RegionDBData[]) {
     const regions: DisplayRegion[] = [];
     const nameOccurences: Map<string, number> = new Map();
-    for (const region of RegionTileDBDatas) {
+    for (const region of RegionDBDatas) {
       const name = region.name;
       let occurence = nameOccurences.get(name);
       if (occurence === undefined) {
