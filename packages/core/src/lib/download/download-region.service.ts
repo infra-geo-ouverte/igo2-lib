@@ -6,15 +6,10 @@ import { RegionDBData, TileDBService, RegionDBService, RegionStatus, Region } fr
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
 import { TileDBData } from '../storage/tile-db/TileDBData.interface';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
-// need to make region db
-// need to ajust download method of TileDownloaderService
-// need to create regionDBService
-// need to create geodata-db delete method
-// need to create geodata-db deleteRegion by id or name wtv method
 
 export interface TileToDownload {
   url: string;
-  coord: [number, number, number];
+  coord: [ number, number, number ];
   featureText: string;
   templateUrl: string;
   tileGrid;
@@ -25,7 +20,7 @@ export interface TileToDownload {
 })
 export class DownloadRegionService {
   isDownloading$$: Subscription;
-  //private isUpdating$$: Subscription;
+
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: TileDBService,
