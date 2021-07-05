@@ -25,15 +25,16 @@ export interface TileToDownload {
 })
 export class DownloadRegionService {
   isDownloading$$: Subscription;
-  private isUpdating$$: Subscription;
+  //private isUpdating$$: Subscription;
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: TileDBService,
     private regionDB: RegionDBService,
     private regionDBAdmin: RegionDBAdminService
   ) {
-    this.updateAllRegionTileCount();
+    this.regionDBAdmin.updateAllRegionTileCount();
   }
+  
   // need on right click method for the controler
   public downloadSelectedRegion(
     tilesToDownload: TileToDownload[],
@@ -60,7 +61,7 @@ export class DownloadRegionService {
       numberOfTiles,
       parentFeatureText
     };
-    
+
     this.regionDB.add(region)
       .subscribe((regionID: number) => {
         for (const tile of tilesToDownload) {
@@ -96,24 +97,6 @@ export class DownloadRegionService {
       });
   }
 
-  public addToSelectedRegion(parentCoords: [number, number, number]) {
-    // const url = generateUrl
-    //
-  }
-
-  public updateRegion(name: string) {
-    // get region in db
-  }
-
-  private getRegionsName() {
-    // get all regions names in db
-  }
-
-  public createRegion(name: string) {
-    // this.selectedRegion = new Region
-
-  }
-
   public deleteRegionByID(regionID: number): Observable<[boolean, boolean]> {
     if (!regionID) {
       return;
@@ -122,73 +105,6 @@ export class DownloadRegionService {
     const regionDBRequest = this.regionDB.deleteByRegionID(regionID);
     const tileDBRequest = this.tileDB.deleteByRegionID(regionID);
     return zip(regionDBRequest, tileDBRequest);
-  }
-
-  public updateRegionTileCount(region: RegionTileDBData) {
-    if (!region) {
-      return;
-    }
-
-    this.tileDB.getRegionTileCountByID(region.id).subscribe((count: number) => {
-      const newRegion = region;
-      newRegion.numberOfTiles = count;
-      this.regionDB.update(newRegion);
-    });
-  }
-
-  private updateRegionTileCountWithMap(tileCountPerRegion: Map<number, number>) {
-    if (!tileCountPerRegion) {
-      return;
-    }
-
-    this.regionDB.openCursor(undefined, DBMode.readwrite).subscribe((event) => {
-      if (!event) {
-        return;
-      }
-
-      const cursor = (event.target as IDBOpenDBRequest).result;
-      if (cursor) {
-        const region: RegionTileDBData = (<any>cursor).value;
-        const tileCount = tileCountPerRegion.get(region.id);
-        if (tileCount !== undefined) {
-          region.numberOfTiles = tileCount;
-        } else {
-          region.numberOfTiles = 0;
-        }
-        (<any>cursor).update(region);
-        (<any>cursor).continue();
-      } else {
-        this.regionDB.needUpdate();
-      }
-    });
-  }
-
-  public updateAllRegionTileCount() {
-    if (this.isUpdating$$) {
-      this.isUpdating$$.unsubscribe();
-    }
-    
-    const tileCountPerRegion: Map<number, number> = new Map();
-    this.isUpdating$$ = this.tileDB.openCursor().subscribe((event) => {
-      if (!event) {
-        return;
-      }
-      
-      const cursor = (event.target as IDBOpenDBRequest).result;
-      if(cursor) {
-        const value: TileDBData = (<any>cursor).value;
-        const regionID = value.regionID
-        let tileCount = tileCountPerRegion.get(regionID);
-        if (tileCount) {
-          tileCountPerRegion.set(regionID, ++tileCount);
-        } else {
-          tileCountPerRegion.set(regionID, 1);
-        }
-        (<any>cursor).continue();
-      } else {
-        this.updateRegionTileCountWithMap(tileCountPerRegion);
-      }
-    });
   }
 
   public getDownloadSpaceEstimate(nTiles: number): number {
