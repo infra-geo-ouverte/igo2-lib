@@ -2,31 +2,29 @@ import { Injectable } from '@angular/core';
 import { DisplayRegion } from './region-manager.component';
 
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class RegionManagerState {
-  private _selectedRegion: DisplayRegion = { 
-    id: -1,
-    status: undefined,
-    name: undefined,
-    numberOfTiles: undefined,
-    parentUrls: new Array(),
-    parentFeatureText: new Array()
-  };
+  private _selectedRegion: DisplayRegion = this.initDisplayRegion();
   
   constructor() {}
 
+  private initDisplayRegion(): DisplayRegion {
+    return { 
+      id: -1,
+      status: undefined,
+      name: undefined,
+      numberOfTiles: undefined,
+      parentUrls: new Array(),
+      parentFeatureText: new Array()
+    };
+  }
+
   set selectedRegion(region: DisplayRegion) {
     if (!region) {
-      this._selectedRegion = { 
-        id: -1,
-        status: undefined,
-        name: undefined,
-        numberOfTiles: undefined,
-        parentUrls: new Array(),
-        parentFeatureText: new Array()
-      }
+      this._selectedRegion = this.initDisplayRegion();
       return;
     }
     this._selectedRegion = region;
