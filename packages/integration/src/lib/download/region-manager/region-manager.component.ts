@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { RegionDBData, DownloadRegionService, Region, RegionDBService } from '@igo2/core';
+import { RegionDBData, DownloadRegionService, Region, RegionDBService, RegionStatus } from '@igo2/core';
 import { Feature } from '@igo2/geo/public_api';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -144,17 +144,20 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
   public clearFeatures() {
     this.regionStore.clear();
   }
-
-  set selectedRegion(region: DisplayRegion) {
-    this.state.selectedRegion = region;
-  }
-
+  
   public rowClick(row: DisplayRegion) {
     if (this.buttonClicked) {
       this.buttonClicked = false;
       return;
     }
     this.getRegion(row);
+  }
+
+  public disableDeleteButton(region: DisplayRegion) {
+    return region.status === RegionStatus.Downloading;
+  }
+  set selectedRegion(region: DisplayRegion) {
+    this.state.selectedRegion = region;
   }
 
   get selectedRegion(): DisplayRegion {
