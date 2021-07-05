@@ -8,6 +8,7 @@ import { Region, RegionDate, RegionTileDBData } from './Region.interface';
 function createRegionDateFromRegion(region: Region): RegionDate {
   const regionDate: RegionDate = <RegionDate>{};
   regionDate.name = region.name;
+  regionDate.status = region.status;
   regionDate.numberOfTiles = region.numberOfTiles;
   regionDate.parentUrls = region.parentUrls;
   regionDate.timestamp = new Date();

@@ -8,6 +8,7 @@ import { DisplayRegion } from './region-manager.component';
 export class RegionManagerState {
   private _selectedRegion: DisplayRegion = { 
     id: -1,
+    status: undefined,
     name: undefined,
     numberOfTiles: undefined,
     parentUrls: new Array(),
@@ -20,6 +21,7 @@ export class RegionManagerState {
     if (!region) {
       this._selectedRegion = { 
         id: -1,
+        status: undefined,
         name: undefined,
         numberOfTiles: undefined,
         parentUrls: new Array(),

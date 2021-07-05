@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { DBMode } from 'ngx-indexed-db';
 import { Observable, Subscription, zip } from 'rxjs';
 import { skip, timestamp } from 'rxjs/operators';
-import { RegionTileDBData, TileDBService, RegionDBService, RegionStatus } from '../storage';
+import { RegionTileDBData, TileDBService, RegionDBService, RegionStatus, Region } from '../storage';
+import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
 import { TileDBData } from '../storage/tile-db/TileDBData.interface';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
 // need to make region db
@@ -28,7 +29,8 @@ export class DownloadRegionService {
   constructor(
     private tileDownloader: TileDownloaderService,
     private tileDB: TileDBService,
-    private regionDB: RegionDBService
+    private regionDB: RegionDBService,
+    private regionDBAdmin: RegionDBAdminService
   ) {
     this.updateAllRegionTileCount();
   }
@@ -51,7 +53,15 @@ export class DownloadRegionService {
     })
 
     const numberOfTiles = this.tileDownloader.numberOfTiles(depth) * tilesToDownload.length;
-    this.regionDB.add({name: regionName, parentUrls, numberOfTiles, parentFeatureText})
+    const region: Region = {
+      name: regionName,
+      status: RegionStatus.Downloading,
+      parentUrls,
+      numberOfTiles,
+      parentFeatureText
+    };
+    
+    this.regionDB.add(region)
       .subscribe((regionID: number) => {
         for (const tile of tilesToDownload) {
           this.tileDownloader.downloadFromCoord(
@@ -71,7 +81,7 @@ export class DownloadRegionService {
               const date = new Date();
               const regionDb: RegionTileDBData = {
                 id: regionID,
-                status: RegionStatus.Downloading,
+                status: RegionStatus.OK,
                 name: regionName,
                 parentUrls,
                 parentFeatureText,

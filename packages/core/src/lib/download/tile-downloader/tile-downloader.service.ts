@@ -11,6 +11,7 @@ import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-g
 import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
 import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
 import { ChildTileGeneration } from './tile-generation-strategies/child-tile-generation';
+import { RegionDBAdminService } from '../../storage/region-db/region-db-admin.service';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -69,7 +70,8 @@ export class TileDownloaderService {
   constructor(
     private http: HttpClient,
     private network: GeoNetworkService,
-    private geoDB: TileDBService) { }
+    private geoDB: TileDBService,
+  ) { }
   
   // need to change the argument of the function then change the logic in the region-editor
   // component
