@@ -74,26 +74,12 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
       const name = region.name;
       let occurence = nameOccurences.get(name);
       if (occurence === undefined) {
-        // TODO: need refactor
-        regions.push({
-          id: region.id,
-          status: region.status,
-          name,
-          parentFeatureText: region.parentFeatureText,
-          numberOfTiles: region.numberOfTiles,
-          parentUrls: region.parentUrls
-        });
+        regions.push(region);
         nameOccurences.set(name, 1);
       } else {
         const newName = name + ' (' + occurence + ')';
-        regions.push({
-          id: region.id,
-          status: region.status,
-          name: newName,
-          parentFeatureText: region.parentFeatureText,
-          numberOfTiles: region.numberOfTiles,
-          parentUrls: region.parentUrls
-        });
+        region.name = newName;
+        regions.push(region);
         nameOccurences.set(name, ++occurence);
       }
     }
