@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { RegionDBData, DownloadRegionService, Region, RegionDBService, RegionStatus } from '@igo2/core';
-import { Feature } from '@igo2/geo/public_api';
+import { Feature } from '@igo2/geo';
 import { MatCarouselComponent } from '@ngbmodule/material-carousel';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
