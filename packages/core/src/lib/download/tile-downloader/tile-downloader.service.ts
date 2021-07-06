@@ -11,7 +11,6 @@ import { ParentTileGeneration } from './tile-generation-strategies/parent-tile-g
 import { TileGenerationStrategies } from './tile-generation-strategies/tile-generation-strategy.interface';
 import { MiddleTileGeneration } from './tile-generation-strategies/middle-tile-generation';
 import { ChildTileGeneration } from './tile-generation-strategies/child-tile-generation';
-import { RegionDBAdminService } from '../../storage/region-db/region-db-admin.service';
 
 function zoom(tile: Tile): Tile[] {
   const x0 = 2 * tile.X;
@@ -224,5 +223,19 @@ export class TileDownloaderService {
 
   get isDownloading() {
     return this._isDownloading;
+  }
+
+  get strategy(): TileGenerationStrategies {
+    const strategyName = this.tileGenerationStrategy.constructor.name;
+    switch (strategyName) {
+      case ChildTileGeneration.name:
+        return TileGenerationStrategies.CHILD;
+      case MiddleTileGeneration.name:
+        return TileGenerationStrategies.MIDDLE;
+      case ParentTileGeneration.name:
+        return TileGenerationStrategies.PARENT;
+      default:
+        return;
+    }
   }
 }

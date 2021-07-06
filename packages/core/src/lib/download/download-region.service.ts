@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { DBMode } from 'ngx-indexed-db';
 import { Observable, Subscription, zip } from 'rxjs';
-import { skip, timestamp } from 'rxjs/operators';
+import { skip } from 'rxjs/operators';
 import { RegionDBData, TileDBService, RegionDBService, RegionStatus, Region } from '../storage';
 import { RegionDBAdminService } from '../storage/region-db/region-db-admin.service';
-import { TileDBData } from '../storage/tile-db/TileDBData.interface';
 import { TileDownloaderService } from './tile-downloader/tile-downloader.service';
+import { TileGenerationParams } from './tile-downloader/tile-generation-strategies/tile-generation-params.interface';
 
 export interface TileToDownload {
   url: string;
@@ -56,7 +55,17 @@ export class DownloadRegionService {
       numberOfTiles,
       parentFeatureText
     };
+    // TODO: NEED CHANGE
+    // need to change after implementing generation strategy ***
+    const z = tilesToDownload[0].coord[0];
 
+    const generationParams: TileGenerationParams = {
+      startLevel: z,
+      endLevel: z + depth,
+      genMethod: this.tileDownloader.strategy
+    }
+
+    // need to change after implementing generation strategy ***
     this.regionDB.add(region)
       .subscribe((regionID: number) => {
         for (const tile of tilesToDownload) {
@@ -82,7 +91,8 @@ export class DownloadRegionService {
                 parentUrls,
                 parentFeatureText,
                 numberOfTiles: validTile,
-                timestamp: date
+                timestamp: date,
+                generationParams
               }
               this.regionDB.update(regionDBData);
               this.regionDB.updateWithCollisions(collisionMap);
