@@ -46,6 +46,10 @@ export class RegionDBService {
     return dbRequest;
   }
 
+  getByID(id: number): Observable<RegionDBData>{
+    return this.dbService.getByKey(this.dbName, id); 
+  }
+
   getAll(): Observable<RegionDBData[]> {
     return this.dbService.getAll(this.dbName);
   }
