@@ -95,6 +95,10 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   public editRegion(region) {
     this.buttonClicked = true;
+    const dbRequest = this.regionDB.getByID(region.id);
+    dbRequest.subscribe((regionDBData: RegionDBData) => {
+      this.regionToEdit$.next(regionDBData);
+    });
     console.log('Edit ', region);
   }
 
@@ -163,5 +167,9 @@ export class RegionManagerComponent implements OnInit, OnDestroy {
 
   get selectedRowID(): number{
     return this.selectedRegion.id;
+  }
+
+  get regionToEdit$() {
+    return this.state.regionToEdit$
   }
 }

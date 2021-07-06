@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { RegionDBData } from '@igo2/core/public_api';
+import { Subject } from 'rxjs';
 import { DisplayRegion } from './region-manager.component';
 
 
@@ -8,6 +10,7 @@ import { DisplayRegion } from './region-manager.component';
 })
 export class RegionManagerState {
   private _selectedRegion: DisplayRegion = this.initDisplayRegion();
+  readonly regionToEdit$: Subject<RegionDBData> = new Subject();
   
   constructor() {}
 
