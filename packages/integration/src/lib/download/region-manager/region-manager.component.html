@@ -66,5 +66,8 @@
         *matRowDef="let row; columns: displayedColumns;" 
         (click)="rowClick(row)" 
         matRipple
-        [ngClass]="{'highlight': selectedRowID == row.id}"></mat-row>
+        [ngClass]="{
+            'highlight': selectedRowID === row.id,
+            'expired': row.status === 'Expired'
+        }"></mat-row>
 </table>
