@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 export interface EditedRegion {
     name: string;
     urls: Set<string>;
+    parentUrls: Array<string>;
     tiles: TileToDownload[];
     depth: number;
     features: Feature[];
@@ -15,6 +16,7 @@ function newEditedRegion(): EditedRegion {
     return {
         name: undefined,
         urls: new Set(),
+        parentUrls: new Array(),
         tiles: new Array(),
         depth: 0,
         features: new Array()
@@ -25,49 +27,69 @@ function newEditedRegion(): EditedRegion {
    providedIn: 'root'
  })
 export class RegionEditorState {
-    private editedRegion: EditedRegion = newEditedRegion();
+    private _editedRegion: EditedRegion = newEditedRegion();
     progression$: Observable<number>;
     isDownloading: boolean;
     
     constructor() {}
 
+    set editedRegion(editedRegion: EditedRegion) {
+        if (!editedRegion) {
+            this._editedRegion = newEditedRegion();
+            return;
+        }
+        this._editedRegion = editedRegion;
+    }
+
+    get editedRegion(): EditedRegion {
+        return this._editedRegion;
+    }
+
     set regionName(name: string) {
-        this.editedRegion.name = name;
+        this._editedRegion.name = name;
     }
 
     get regionName(): string {
-        return this.editedRegion.name;
+        return this._editedRegion.name;
     }
 
     set urlsToDownload(urls: Set<string>) {
-        this.editedRegion.urls = urls;
+        this._editedRegion.urls = urls;
     }
 
     get urlsToDownload(): Set<string> {
-        return this.editedRegion.urls;
+        return this._editedRegion.urls;
+    }
+
+    set parentTileUrls(value: Array<string>) {
+        this._editedRegion.parentUrls = value;
+    }
+
+    get parentTileUrls(): Array<string> {
+        return this._editedRegion.parentUrls;
     }
 
     set tilesToDownload(tiles: TileToDownload[]) {
-        this.editedRegion.tiles = tiles;
+        this._editedRegion.tiles = tiles;
     }
 
     get tilesToDownload(): TileToDownload[] {
-        return this.editedRegion.tiles;
+        return this._editedRegion.tiles;
     }
 
     set depth(depth: number) {
-        this.editedRegion.depth = depth;
+        this._editedRegion.depth = depth;
     }
 
     get depth(): number {
-        return this.editedRegion.depth;
+        return this._editedRegion.depth;
     }
 
     set editedTilesFeatures(features: Feature[]) {
-        this.editedRegion.features = features;
+        this._editedRegion.features = features;
     }
 
     get editedTilesFeatures(): Feature[] {
-        return this.editedRegion.features;
+        return this._editedRegion.features;
     }
 }

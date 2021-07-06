@@ -5,7 +5,7 @@ import { createFromTemplate } from 'ol/tileurlfunction.js';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { DownloadState } from '../download.state';
 import { TransferedTile } from '../TransferedTile';
-import { MessageService } from '@igo2/core';
+import { MessageService, RegionDBData } from '@igo2/core';
 import { first, map, skip, takeUntil, takeWhile } from 'rxjs/operators';
 import { filter } from 'jszip';
 import { DownloadToolState } from './../download-tool/download-tool.state';
@@ -18,7 +18,11 @@ import OlFeature from 'ol/Feature';
 import * as olformat from 'ol/format';
 import { Feature, FEATURE } from '@igo2/geo';
 import { RegionDBService, StorageQuotaService } from '@igo2/core';
-import { RegionEditorState } from './region-editor.state';
+import { EditedRegion, RegionEditorState } from './region-editor.state';
+import { EditionStrategy } from './editing-strategy/edition-strategy';
+import { EditionStrategies } from './editing-strategy/edition-strategies';
+import { CreationEditionStrategy } from './editing-strategy/creation-editing-strategy';
+import { UpdateEditionStrategy } from './editing-strategy/update-editing-strategy';
 
 
 @Component({
@@ -33,11 +37,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private _nTilesToDownload: number;
   private _notEnoughSpace$: Observable<boolean>;
   private _progression: number = 0;
-
+  
   isDownloading$: Observable<boolean>; 
   isDownloading$$: Subscription;
 
   private addNewTile$$: Subscription;
+  private editionStrategy: EditionStrategy = new CreationEditionStrategy();
+  
+  //parentTileUrls: string[] = new Array();
+  
 
   constructor(
     private tileDownloader: TileDownloaderService,
@@ -157,6 +165,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         
         this.editedTilesFeature.push(feature);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
+        this.parentTileUrls.push(url);
         this.showEditedRegionFeatures();
         return;
       }
@@ -173,6 +182,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         
         this.editedTilesFeature.push(feature);
         this.tilesToDownload.push({ url, coord, templateUrl, tileGrid, featureText});
+        this.parentTileUrls.push(url);
         this.showEditedRegionFeatures();
         this.updateVariables();
       } else {
@@ -200,6 +210,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isDownloading = value;
         if (!value) {
           this.messageService.success('Your download is done');
+          this.clearEditedRegion();
         }
       });
 
@@ -210,12 +221,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       );
   }
 
-  public onCancelClick() {
-    this.tilesToDownload = new Array();
-    this.urlsToDownload = new Set();
-    this.regionName = undefined;
-    this.depth = 0;
+  private clearEditedRegion() {
+    this.editedRegion = undefined;
+    // need to put that in state
+    this.parentTileUrls = new Array();
     this.clearFeatures();
+  }
+
+  public onCancelClick() {
+    this.clearEditedRegion();
     this.updateVariables();
   }
 
@@ -241,12 +255,46 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return nTilesPerDownload * nDownloads;
   }
 
+  public updateRegion(region: RegionDBData) {
+    this.editionStrategy = new UpdateEditionStrategy(region);
+    this.parentTileUrls = region.parentUrls;
+    // need to change
+    this.regionName = region.name;
+    this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
+      return JSON.parse(featureText);
+    });
+    //this.changeGenerationParams(region.generationParams)
+    this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
+    // need to change
+  }
+
+  get downloadButtonTitle() {
+    return this.editionStrategy.downloadButtonTitle;
+  }
+
   private get regionStore() {
     return this.downloadState.regionStore;
   }
 
   private get map() {
     return this.downloadState.map;
+  }
+
+  set editedRegion(editedRegion) {
+    this.state.editedRegion = editedRegion;
+  }
+
+  get editedRegion(): EditedRegion {
+    return this.state.editedRegion;
+  }
+
+
+  get parentTileUrls(): Array<string> {
+    return this.state.parentTileUrls;
+  }
+
+  set parentTileUrls(urls: Array<string>) {
+    this.state.parentTileUrls = urls;
   }
 
   set regionName(name: string) {

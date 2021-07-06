@@ -15,8 +15,8 @@
   orientation="ltr">
 
     <mat-carousel-slide
-    *ngFor="let tile of tilesToDownload; let i = index"
-    [image]="tile.url"
+    *ngFor="let url of parentTileUrls; let i = index"
+    [image]="url"
     overlayColor="#00000040"
     [hideOverlay]="false"></mat-carousel-slide>
    
@@ -57,7 +57,7 @@
     <mat-progress-bar #progressBar mode="determinate" [value]="progression$ | async"></mat-progress-bar>
   </div>
   <div class="button-row">
-    <button mat-button #download (click)=onDownloadClick() [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">Download</button>
+    <button mat-button #download (click)=onDownloadClick() [disabled]="disableDownloadButton || (invalidDownloadSize$ | async)">{{ downloadButtonTitle }}</button>
     <button mat-button #cancel (click)=onCancelClick() [disabled]="disableCancelButton">Cancel</button>
   <div>
 </div>
