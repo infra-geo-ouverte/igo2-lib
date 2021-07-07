@@ -36,12 +36,14 @@ export class TileDBService {
           if (!dbObject) {
             dbRequest = this.dbService.addItem(this.dbName, TileDBData);
           } else {
-            const regionID = dbObject.regionID;
-            let nCollision = this.collisionsMap.get(regionID);
-            if (nCollision !== undefined) {
-              this.collisionsMap.set(regionID, ++nCollision);
-            } else {
-              this.collisionsMap.set(regionID, 1);
+            const currentRegionID = dbObject.regionID;
+            if (currentRegionID !== regionID) {
+              let nCollision = this.collisionsMap.get(currentRegionID);
+              if (nCollision !== undefined) {
+                this.collisionsMap.set(currentRegionID, ++nCollision);
+              } else {
+                this.collisionsMap.set(currentRegionID, 1);
+              }
             }
             dbRequest = this.customUpdate(TileDBData);
           }
