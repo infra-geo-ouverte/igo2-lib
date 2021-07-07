@@ -25,7 +25,16 @@ export class CreationEditionStrategy extends EditionStrategy {
         return 0;
     }
 
-    download(editedRegion: EditedRegion) {
+    download(editedRegion: EditedRegion, regionDownloader: DownloadRegionService) {
+        console.log("create strategy download");
+        regionDownloader.downloadSelectedRegion(
+            editedRegion.tiles,
+            editedRegion.name,
+            editedRegion.depth
+        );
+    }
 
+    get enableGenEdition() {
+        return true;
     }
 }

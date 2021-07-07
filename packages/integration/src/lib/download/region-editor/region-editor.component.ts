@@ -194,7 +194,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public onDownloadClick() {
-    if (this.tilesToDownload.length === 0) {
+    if (this.parentTileUrls.length === 0) {
       return;
     }
 
@@ -213,18 +213,15 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.clearEditedRegion();
         }
       });
-
-    this.downloadService.downloadSelectedRegion(
-      this.tilesToDownload,
-      this.regionName,
-      this.depth
-      );
+    
+    this.editionStrategy.download(this.editedRegion, this.downloadService);
   }
 
   private clearEditedRegion() {
     this.editedRegion = undefined;
     // need to put that in state
     this.parentTileUrls = new Array();
+    this.editionStrategy = new CreationEditionStrategy();
     this.clearFeatures();
   }
 
@@ -240,7 +237,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private sizeEstimationInBytes(): number {
     const space = this.tileDownloader.downloadEstimatePerDepth(this.depth);
-    const nDownloads = this.tilesToDownload.length;
+    const nDownloads = this.parentTileUrls.length;
     return space * nDownloads;
   }
 
@@ -251,13 +248,18 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public numberOfTilesToDownload() {
     const nTilesPerDownload = this.tileDownloader.numberOfTiles(this.depth);
-    const nDownloads = this.tilesToDownload.length;
+    const nDownloads = this.parentTileUrls.length;
     return nTilesPerDownload * nDownloads;
   }
 
   public updateRegion(region: RegionDBData) {
+    this.clearEditedRegion();
     this.editionStrategy = new UpdateEditionStrategy(region);
-    this.parentTileUrls = region.parentUrls;
+    
+    region.parentUrls.forEach((url: string) => {
+      this.parentTileUrls.push(url);
+      this.urlsToDownload.add(url);
+    });
     // need to change
     this.regionName = region.name;
     this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
@@ -362,11 +364,11 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get disableSlider() {
-    return this.isDownloading || this.tilesToDownload.length === 0;
+    return this.isDownloading || this.parentTileUrls.length === 0 || !this.editionStrategy.enableGenEdition;
   }
 
   get disableDownloadButton() {
-    return !this.regionName || this.isDownloading || this.tilesToDownload.length === 0;
+    return !this.regionName || this.isDownloading || this.parentTileUrls.length === 0;
   }
 
   get disableCancelButton() {
