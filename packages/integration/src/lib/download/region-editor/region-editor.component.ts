@@ -265,6 +265,7 @@ export class RegionEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.editedTilesFeature = region.parentFeatureText.map((featureText) => {
       return JSON.parse(featureText);
     });
+    this.showEditedRegionFeatures();
     //this.changeGenerationParams(region.generationParams)
     this.depth = region.generationParams.endLevel - region.generationParams.startLevel;
     // need to change
