@@ -30,6 +30,7 @@ export interface DetailedContext extends Context {
   tools?: Tool[];
   toolbar?: string[];
   message?: Message;
+  messages?: Message[];
   removeLayersOnContextChange?: boolean;
   extraFeatures?: any[];
 }

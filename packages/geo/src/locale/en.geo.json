@@ -179,6 +179,7 @@
         "selectField": "Choose a field"
       },
       "filter": {
+        "resetFilters": "(Apply no filters)",
         "addFilter": "Add an empty filter to the current list",
         "removeFilter": "Remove the current filter from the filters's list",
         "toggleFilterState": "Enable/disable the current filter",
@@ -211,8 +212,8 @@
         "activateSelectionMode": "Activate multiple selection mode",
         "deactivateSelectionMode": "Deactivate multiple selection mode",
         "tools": "Tools",
-        "selectAll": "Select all",
-        "deselectAll": "Deselect all",
+        "selectAll": "Select all layers",
+        "deselectAll": "Deselect all layers",
         "zoomLayer": "Zoom To Layer Extents",
         "zoomLayers": "Zoom To Selected Layers Extents",
         "opacity": "Opacity",
@@ -572,6 +573,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Perimeter in meters"
         },
+        "layerTitle": "Measure on map",
         "area": "Area",
         "areaHeader": "Area",
         "length": "Length",
@@ -598,7 +600,9 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activate measures",
-        "toggleMapTooltips": "Show map tooltips",
+        "toggleDisplayLines": "Display distances for the lines",
+        "toggleDisplayDistance": "Display distances for the areas",
+        "toggleDisplayAreas": "Display areas",
         "toggleAutoUnits": "Auto Units",
         "actionbar": {
           "calculate.tooltip": "Calculate",

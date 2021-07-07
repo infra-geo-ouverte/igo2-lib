@@ -178,6 +178,7 @@
         "selectField": "Choisir un champ"
       },
       "filter": {
+        "resetFilters": "(Appliquer aucun filtre)",
         "addFilter": "Ajouter un filtre vide à la liste courante",
         "removeFilter": "Supprimer le présent filtre à la liste des filtres",
         "toggleFilterState": "Activer/désactiver le présent filtre",
@@ -210,8 +211,8 @@
         "activateSelectionMode": "Activer le mode de sélection multiple",
         "deactivateSelectionMode": "Désactiver le mode de sélection multiple",
         "tools": "Outils",
-        "selectAll": "Tout sélectionner",
-        "deselectAll": "Tout désélectionner",
+        "selectAll": "Sélectionner toutes les couches",
+        "deselectAll": "Désélectionner toutes les couches",
         "zoomLayer": "Cadrer sur l'étendue de la couche",
         "zoomLayers": "Cadrer sur l'étendue des couches sélectionnées",
         "opacity": "Opacité",
@@ -572,6 +573,7 @@
           "areaInAcres": "Acres",
           "perimeterInMeters": "Périmètre en mètres"
         },
+        "layerTitle": "Mesure à la carte",
         "area": "Superficie",
         "areaHeader": "Superficie",
         "length": "Distance",
@@ -598,7 +600,9 @@
         "acres": "Acres",
         "ac": "ac",
         "toggleActive": "Activer le contrôle de mesure",
-        "toggleMapTooltips": "Mesures sur la carte",
+        "toggleDisplayLines": "Afficher les distances sur les lignes",
+        "toggleDisplayDistance": "Afficher les distances pour les superficies",
+        "toggleDisplayAreas": "Afficher les superficies",
         "toggleAutoUnits": "Unités automatiques",
         "actionbar": {
           "calculate.tooltip": "Calculer",
