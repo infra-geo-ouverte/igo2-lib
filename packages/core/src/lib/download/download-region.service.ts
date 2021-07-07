@@ -66,6 +66,7 @@ export class DownloadRegionService {
 
     const generationParams: TileGenerationParams = {
       startLevel: z,
+      parentLevel: z,
       endLevel: z + depth,
       genMethod: this.tileDownloader.strategy
     }
